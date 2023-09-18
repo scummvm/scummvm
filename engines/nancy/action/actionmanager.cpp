@@ -108,10 +108,26 @@ void ActionManager::handleInput(NancyInput &input) {
 	}
 }
 
-bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
+void ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
+	ActionRecord *newRecord = createAndLoadNewRecord(inputData);
+	if (!newRecord) {
+		inputData.seek(0x30);
+		byte ARType = inputData.readByte();
+
+		warning("Action Record type %i is unimplemented or invalid!", ARType);
+		return;
+	}
+	_records.push_back(newRecord);
+}
+
+ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &inputData) {
 	inputData.seek(0x30);
 	byte ARType = inputData.readByte();
 	ActionRecord *newRecord = createActionRecord(ARType);
+
+	if (!newRecord) {
+		return nullptr;
+	}
 
 	inputData.seek(0);
 	char descBuf[0x30];
@@ -134,10 +150,13 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 		uint singleDepSize = g_nancy->getGameType() <= kGameTypeNancy2 ? 12 : 16;
 		uint numDependencies = depsDataSize / singleDepSize;
 		if (depsDataSize % singleDepSize) {
-			error("Action record type %u, %s has incorrect read size!\ndescription:\n%s",
+			warning("Action record type %u, %s has incorrect read size!\ndescription:\n%s",
 				newRecord->_type,
 				newRecord->getRecordTypeName().c_str(),
 				newRecord->_description.c_str());
+
+				delete newRecord;
+				return nullptr;
 		}
 
 		if (numDependencies == 0) {
@@ -202,9 +221,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 		newRecord->_isActive = true;
 	}
 
-	_records.push_back(newRecord);
-
-	return true;
+	return newRecord;
 }
 
 void ActionManager::processActionRecords() {

@@ -789,9 +789,11 @@ void Scene::load() {
 	// Search for Action Records, maximum for a scene is 30
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
 
-	while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _actionManager._records.size()), actionRecordChunk != nullptr) {
+	uint numRecords = 0;
+	while (actionRecordChunk = sceneIFF.getChunkStream("ACT", numRecords), actionRecordChunk != nullptr) {
 		_actionManager.addNewActionRecord(*actionRecordChunk);
 		delete actionRecordChunk;
+		++numRecords;
 	}
 
 	if (_sceneState.currentScene.paletteID == -1) {

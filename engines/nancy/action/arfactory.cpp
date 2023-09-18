@@ -236,7 +236,6 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 215:
 		return new MazeChasePuzzle();
 	default:
-		error("Action Record type %i is invalid!", type);
 		return nullptr;
 	}
 }
