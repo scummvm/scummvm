@@ -34,6 +34,7 @@ private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
+	machine *_series1 = nullptr;
 
 protected:
 	const char *getDigi() override {
