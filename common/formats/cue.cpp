@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/stream.h"
 #include "common/formats/cue.h"
 
 namespace Common {
@@ -58,6 +59,21 @@ static String nexttok(const char *s, const char **newP = nullptr) {
 
 
 CueSheet::CueSheet(const char *sheet) {
+	parse(sheet);
+}
+
+CueSheet::CueSheet(SeekableReadStream *stream) {
+	int size = stream->size();
+	char *data = (char *)calloc(size + 1, 1); // null-terminated string
+
+	stream->read(data, size);
+
+	parse(data);
+
+	free(data);
+}
+
+void CueSheet::parse(const char *sheet) {
 	String line;
 	_context = kCueContextHeader;
 	const char *s = sheet;
