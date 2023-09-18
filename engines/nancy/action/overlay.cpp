@@ -91,6 +91,7 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream);
 	_flagsOnTrigger.readData(stream);
 	_sound.readNormal(stream);
+
 	uint numViewportFrames = stream.readUint16LE();
 
 	if (_overlayType == kPlayOverlayAnimated) {
@@ -118,12 +119,24 @@ void Overlay::execute() {
 	case kRun: {
 		// Check the timer to see if we need to draw the next animation frame
 		if (_overlayType == kPlayOverlayAnimated && _nextFrameTime <= _currentFrameTime) {
-			// World's worst if statement
-			if (NancySceneState.getEventFlag(_interruptCondition) ||
-				(	(((_currentFrame == _loopLastFrame) && (_playDirection == kPlayOverlayForward) && (_loop == kPlayOverlayOnce)) ||
-					((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayOverlayReverse) && (_loop == kPlayOverlayOnce))) &&
-						!g_nancy->_sound->isSoundPlaying(_sound))	) {
+			bool shouldTrigger = false;
 
+			// Check for interrupt flag
+			if (NancySceneState.getEventFlag(_interruptCondition)) {
+				shouldTrigger = true;
+			}
+
+			// Wait until sound stops (if present)
+			if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+				// Check if we're at the last frame
+				if ((_currentFrame == _loopLastFrame) && (_playDirection == kPlayOverlayForward) && (_loop == kPlayOverlayOnce)) {
+					shouldTrigger = true;
+				} else if ((_currentFrame == _loopFirstFrame) && (_playDirection == kPlayOverlayReverse) && (_loop == kPlayOverlayOnce)) {
+					shouldTrigger = true;
+				}
+			}
+
+			if (shouldTrigger) {
 				_state = kActionTrigger;
 			} else {
 				// Check if we've moved the viewport
@@ -150,13 +163,18 @@ void Overlay::execute() {
 					}
 				}
 
-				_nextFrameTime = _currentFrameTime + _frameTime;
+				if (_nextFrameTime == 0) {
+					_nextFrameTime = _currentFrameTime + _frameTime;
+				} else {
+					_nextFrameTime += _frameTime;
+				}
 
 				uint16 nextFrame = _currentFrame;
 
 				if (_playDirection == kPlayOverlayReverse) {
 					if (nextFrame - 1 < _loopFirstFrame) {
-						if (_loop == kPlayOverlayLoop) {
+						// We keep looping if sound is present (nancy1 only)
+						if (_loop == kPlayOverlayLoop || (_sound.name != "NO SOUND" && g_nancy->getGameType() == kGameTypeNancy1)) {
 							nextFrame = _loopLastFrame;
 						}
 					} else {
@@ -164,7 +182,7 @@ void Overlay::execute() {
 					}
 				} else {
 					if (nextFrame + 1 > _loopLastFrame) {
-						if (_loop == kPlayOverlayLoop) {
+						if (_loop == kPlayOverlayLoop || (_sound.name != "NO SOUND" && g_nancy->getGameType() == kGameTypeNancy1)) {
 							nextFrame = _loopFirstFrame;
 						}
 					} else {
@@ -237,31 +255,32 @@ Common::String Overlay::getRecordTypeName() const {
 void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
 
-	Common::Rect srcRect;
+	Common::Rect srcRect = _srcRects[frame];
 
-	// Workaround for:
-	// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
-	// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
-	// Assumes all rects in a single animation have the same dimensions
-	srcRect = _srcRects[frame];
-	if (!srcRect.isValidRect() || srcRect.height() > _srcRects[0].height()) {
-		srcRect.setWidth(_srcRects[0].width());
-		srcRect.setHeight(_srcRects[0].height());
-	}
-
-	if (_overlayType == kPlayOverlayStatic && srcRect.isEmpty()) {
-		// In static mode the srcRect above may be empty (see "out of service" sign in nancy5 scenes 2056, 2075),
-		// in which case we need to take the rect from the bitmap struct instead. Note that this is a backup,
-		// since if we use the bitmap src rect in all cases rendering can be incorrect (see same sign in nancy5 scene 2000)
-		for (uint i = 0; i < _bitmaps.size(); ++i) {
-			if (_currentViewportFrame == _bitmaps[i].frameID) {
-				srcRect = _bitmaps[i].src;
+	if (_overlayType == kPlayOverlayAnimated) {
+		// Workaround for:
+		// - the arcade machine in nancy1 scene 833
+		// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
+		// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
+		// Assumes all rects in a single animation have the same dimensions
+		if (!srcRect.isValidRect() || srcRect.width() != _srcRects[0].width() || srcRect.height() != _srcRects[0].height()) {
+			srcRect.setWidth(_srcRects[0].width());
+			srcRect.setHeight(_srcRects[0].height());
+		}
+	} else {
+		if (srcRect.isEmpty()) {
+			// In static mode the srcRect above may be empty (see "out of service" sign in nancy5 scenes 2056, 2075),
+			// in which case we need to take the rect from the bitmap struct instead. Note that this is a backup,
+			// since if we use the bitmap src rect in all cases rendering can be incorrect (see same sign in nancy5 scene 2000)
+			for (uint i = 0; i < _bitmaps.size(); ++i) {
+				if (_currentViewportFrame == _bitmaps[i].frameID) {
+					srcRect = _bitmaps[i].src;
+				}
 			}
 		}
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);
-
 	setTransparent(_transparency == kPlayOverlayTransparent);
 
 	_needsRedraw = true;
