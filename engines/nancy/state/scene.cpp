@@ -329,6 +329,10 @@ void Scene::installInventorySoundOverride(byte command, const SoundDescription &
 }
 
 void Scene::playItemCantSound(int16 itemID) {
+	if (ConfMan.getBool("subtitles") && g_nancy->getGameType() >= kGameTypeNancy2) {
+		_textbox.clear();
+	}
+
 	// Improvement: nancy2 never shows the caption text, even though it exists in the data; we show it
 	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
 	assert(inventoryData);
