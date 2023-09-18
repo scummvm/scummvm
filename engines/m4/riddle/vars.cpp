@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "m4/riddle/vars.h"
+#include "m4/riddle/inventory.h"
 #include "m4/gui/gui_vmng.h"
 
 namespace M4 {
@@ -31,6 +32,9 @@ Vars *g_vars;
 
 Vars::Vars() {
 	g_vars = this;
+
+	Inventory *inv = new Inventory();
+	_inventory = inv;
 }
 
 Vars::~Vars() {
@@ -126,8 +130,9 @@ void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
 }
 
 void Vars::custom_ascii_converter_proc(char *string) {
+	/*
 	char *str;
-/*
+
 	for (const auto *entry = ASCII_CONVERTERS; entry->_find; entry++) {
 		while ((str = strstr(string, entry->_find)) != nullptr)
 			*str = entry->_replace;
