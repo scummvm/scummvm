@@ -93,7 +93,7 @@ const char *Room304::getDigi() {
 
 void Room304::init() {
 	setupDigi();
-	// TODO: set_palette_brightness(70);
+	set_palette_brightness(70);
 
 	if (inv_player_has("MATCHES")) {
 		hotspot_set_active("MATCHES ", false);
@@ -102,10 +102,114 @@ void Room304::init() {
 		hotspot_set_active("MATCHES ", true);
 	}
 
-	// TODO
+	if (_G(flags)[V130]) {
+		_fire = series_play("304firel", 0xa00, 4, -1, 6, -1);
+	} else {
+		_fire = series_show("304firel", 0xa00);
+	}
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	case 302:
+		ws_demand_location(150, 306, 3);
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	default:
+		player_set_commands_allowed(true);
+		ws_demand_location(300, 306, 4);
+		break;
+	}
 }
 
 void Room304::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		term_message("Walking into scene....!");
+
+		if (_G(flags)[V129]) {
+			ws_walk(300, 306, nullptr, 2, 4);
+		} else {
+			_G(flags)[V129] = 1;
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 5;
+			ws_walk(300, 306, nullptr, gCHANGE_WILBUR_ANIMATION, 4);
+		}
+		break;
+
+	case 2:
+		player_set_commands_allowed(true);
+		break;
+
+	case 3:
+		setupDigi();
+		break;
+
+	case 4:
+		player_set_commands_allowed(false);
+		series_play_with_breaks(PLAY5, "304wi01", 0x600, -1, 2, 6);
+		kernel_trigger_dispatch_now(1);
+		break;
+
+	case 5:
+		_fire = series_play("304fire1", 0xa00, 0, -1, 6, -1);
+		_G(wilbur_should) = 10001;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		break;
+
+	case 6:
+		inv_give_to_player("MATCHES");
+		hotspot_set_active("MATCHES ", false);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 10002;
+			series_play_with_breaks(PLAY1, "304wi01", 0x600, 3001, 3, 8);
+			break;
+
+		case 2:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			terminateMachineAndNull(_fire);
+			series_play_with_breaks(PLAY4, "304wi05", 0xa00, 5, 3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			terminateMachineAndNull(_matches);
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY3, "304wb01", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY2, "304wi03", 0x101, gCHANGE_WILBUR_ANIMATION, 2);
+			break;
+
+		case 5:
+			_G(wilbur_should) = 10001;
+			_G(flags)[V129] = 1;
+			wilbur_speech("304w001");
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room304::pre_parser() {
@@ -113,7 +217,39 @@ void Room304::pre_parser() {
 }
 
 void Room304::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("OPEN", "DOOR") || player_said("GEAR", "DOOR")) {
+		_G(wilbur_should) = 1;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("LOOK AT", "MAP")) {
+		wilbur_speech(_G(flags)[V135] ? "304w012" : "304w011");
+	} else if (player_said("DISTILLED CARROT JUICE") &&
+			player_said_any("STOVE", "KETTLE", "FRYING PAN", "POT")) {
+		wilbur_speech("300w035");
+	} else if (player_said("CARROT JUICE") &&
+			player_said_any("STOVE", "KETTLE", "FRYING PAN", "POT")) {
+		wilbur_speech("300w051");
+	} else if (player_said("CARROT JUICE", "WASHTUB")) {
+		wilbur_speech("300w052");
+	} else if (player_said("DISTILLED CARROT JUICE", "WASHTUB")) {
+		wilbur_speech("300w035z");
+	} else if (player_said("MATCHES", "STOVE") && !_G(flags)[V130]) {
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TAKE", "MATCHES ")) {
+		_G(wilbur_should) = 3;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("READ", "RECIPE BOOK") || player_said("LOOK AT", "RECIPE BOOK")) {
+		_G(wilbur_should) = 4;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms
