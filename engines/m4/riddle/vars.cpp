@@ -39,15 +39,26 @@ Vars::~Vars() {
 }
 
 void Vars::main_cold_data_init() {
-	// TODO
+	_player.walker_loads_first = false;
+	_player.walker_visible = true;
+	_global_sound_room = 997;
+	_kernel.letter_box_y = 30;
+	_kernel.first_fade = 0;
+	_kernel.first_non_walker_cel_hash = 32;
+	_i_just_hyperwalked = false;
+	// val1 = 15;
+
+	conv_set_default_hv(6, 4);
+	// val2 = 1
+	_game.previous_room = 0;
+	_game.room_id = 0;
+
+	if (_game.new_room == 0)
+		_game.setRoom(901);
+
 	initMouseSeries("cursor", nullptr);
-
-	_kernel.first_fade = 32;
-	_G(custom_ascii_converter) = custom_ascii_converter_proc;
-
-	_game.setRoom(101);		/*****DEBUG*****/
-
-	font_set_colors(2, 1, 3);
+	conv_set_default_text_colour(7, 8);
+	//exit_button_code
 }
 
 void Vars::global_menu_system_init() {
