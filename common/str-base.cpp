@@ -720,20 +720,36 @@ TEMPLATE void BASESTRING::wordWrap(const uint32 maxLength) {
 #endif
 
 TEMPLATE void BASESTRING::toLowercase() {
-	makeUnique();
-	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] > 0 && _str[i] < 128) {
-			_str[i] = tolower(_str[i]);
-		}
-	}
+	toCase(tolower);
 }
 
 TEMPLATE void BASESTRING::toUppercase() {
-	makeUnique();
-	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] > 0 && _str[i] < 128) {
-			_str[i] = toupper(_str[i]);
+	toCase(toupper);
+}
+
+TEMPLATE void BASESTRING::toCase(int (*caseChangeFunc)(int)) {
+	uint32 sz = _size;
+	T *buf = _str;
+
+	uint32 i = 0;
+	for ( ; i < sz; ++i) {
+		value_type ch = buf[i];
+		if (ch > 0 && ch < 128) {
+			value_type newCh = static_cast<value_type>(caseChangeFunc(buf[i]));
+			if (ch != newCh) {
+				makeUnique();
+				buf = _str;
+				buf[i] = newCh;
+				i++;
+				break;
+			}
 		}
+	}
+
+	for (; i < sz; ++i) {
+		value_type ch = buf[i];
+		if (ch > 0 && ch < 128)
+			buf[i] = static_cast<value_type>(caseChangeFunc(ch));
 	}
 }
 

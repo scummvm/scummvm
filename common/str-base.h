@@ -263,6 +263,8 @@ protected:
 
 	uint getUnsignedValue(uint pos) const;
 
+	void toCase(int (*caseChangeFunc)(int));
+
 	static uint32 cStrLen(const value_type *str);
 };
 }
