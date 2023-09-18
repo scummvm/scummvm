@@ -170,7 +170,6 @@ void CueSheet::parseHeaderContext(const char *line) {
 
 		String type = nexttok(s, &s);
 
-		_files[_currentFile].type = kFileTypeBinary;
 		_files[_currentFile].type = (FileType)lookupInTable(fileTypes, type.c_str());
 
 		_context = kContextFiles;
@@ -253,7 +252,7 @@ void CueSheet::parseFilesContext(const char *line) {
 		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 1 != trackNum)) {
 			warning("CueSheet: Incorrect track number. Expected %d but got %d at line %d", _currentTrack + 1, trackNum, _lineNum);
 		} else {
-			for (int i = _files[_currentFile].tracks.size(); i <= trackNum; i++)
+			for (uint i = _files[_currentFile].tracks.size(); i <= trackNum; i++)
 				_files[_currentFile].tracks.push_back(CueTrack());
 
 			_currentTrack = trackNum;
@@ -293,7 +292,7 @@ void CueSheet::parseTracksContext(const char *line) {
 		int indexNum = atoi(nexttok(s, &s).c_str());
 		int frames = parseMSF(nexttok(s, &s).c_str());
 
-		for (int i = _files[_currentFile].tracks[_currentTrack].indices.size(); i <= indexNum; i++)
+		for (uint i = _files[_currentFile].tracks[_currentTrack].indices.size(); i <= indexNum; i++)
 			_files[_currentFile].tracks[_currentTrack].indices.push_back(0);
 
 		_files[_currentFile].tracks[_currentTrack].indices[indexNum] = frames;
