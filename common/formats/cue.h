@@ -27,7 +27,6 @@
 namespace Common {
 
 class SeekableReadStream;
-struct CueLookupTable;
 
 /**
  * A class able to load and parse Cue sheets
@@ -38,39 +37,39 @@ public:
 	CueSheet(SeekableReadStream *stream);
 
 public:
-	enum CueFileType {
-		kCueFileTypeBinary,
-		kCueFileTypeAIFF,
-		kCueFileTypeWave,
-		kCueFileTypeMP3,
-		kCueFileTypeMotorola,
+	enum FileType {
+		kFileTypeBinary,
+		kFileTypeAIFF,
+		kFileTypeWave,
+		kFileTypeMP3,
+		kFileTypeMotorola,
 	};
 
-	enum CueTrackType {
-		kCueFileTypeAudio,		// Audio (sector size: 2352)
-		kCueFileTypeCDG,		// Karaoke CD+G (sector size: 2448)
-		kCueFileTypeMode1_Raw,	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
-		kCueFileTypeMode1_2048,	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
-		kCueFileTypeMode1_2352,	// CD-ROM Mode 1 data (raw) (sector size: 2352)
-		kCueFileTypeMode2_Raw,	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
-		kCueFileTypeMode2_2048,	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
-		kCueFileTypeMode2_2324,	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
-		kCueFileTypeMode2_2366,	// CD-ROM Mode 2 data (sector size: 2336)
-		kCueFileTypeMode2_2352,	// CD-ROM Mode 2 data (raw) (sector size: 2352)
-		kCueFileTypeCDI_2336,	// CDI Mode 2 data
-		kCueFileTypeCDI_2352,	// CDI Mode 2 data
+	enum TrackType {
+		kTrackTypeAudio,		// Audio (sector size: 2352)
+		kTrackTypeCDG,			// Karaoke CD+G (sector size: 2448)
+		kTrackTypeMode1_Raw,	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
+		kTrackTypeMode1_2048,	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
+		kTrackTypeMode1_2352,	// CD-ROM Mode 1 data (raw) (sector size: 2352)
+		kTrackTypeMode2_Raw,	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
+		kTrackTypeMode2_2048,	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
+		kTrackTypeMode2_2324,	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
+		kTrackTypeMode2_2366,	// CD-ROM Mode 2 data (sector size: 2336)
+		kTrackTypeMode2_2352,	// CD-ROM Mode 2 data (raw) (sector size: 2352)
+		kTrackTypeCDI_2336,		// CDI Mode 2 data
+		kTrackTypeCDI_2352,		// CDI Mode 2 data
 	};
 
-	enum CueTrackFlags {
-		kCueTrackFlag4ch  = 1 << 0, // Four channel audio
-		kCueTrackFlagDCP  = 1 << 1, // Digital copy permitted
-		kCueTrackFlagPre  = 1 << 2, // Pre-emphasis enabled, for audio tracks only
-		kCueTrackFlagSCMS = 1 << 3, // Serial copy management system
+	enum TrackFlags {
+		kTrackFlag4ch  = 1 << 0, // Four channel audio
+		kTrackFlagDCP  = 1 << 1, // Digital copy permitted
+		kTrackFlagPre  = 1 << 2, // Pre-emphasis enabled, for audio tracks only
+		kTrackFlagSCMS = 1 << 3, // Serial copy management system
 	};
 
 	struct CueTrack {
 		int number = 0;
-		CueTrackType type;
+		TrackType type;
 		String title;
 		String performer;
 		Array<int> indices;
@@ -81,7 +80,7 @@ public:
 
 	struct CueFile {
 		String name;
-		CueFileType type = kCueFileTypeBinary;
+		FileType type = kFileTypeBinary;
 		Array<CueTrack> tracks;
 	};
 
@@ -93,10 +92,12 @@ public:
 		String catalog;
 	};
 
+	struct LookupTable;
+
 private:
 	void parse(const char *sheet);
 
-	int lookupInTable(CueLookupTable *table, const char *key);
+	int lookupInTable(LookupTable *table, const char *key);
 	int parseMSF(const char *str);
 
 	void parseHeaderContext(const char *line);
