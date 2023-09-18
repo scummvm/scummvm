@@ -37,6 +37,7 @@ private:
 	static const seriesPlayBreak PLAY4[];
 	static const seriesPlayBreak PLAY5[];
 	machine *_matches = nullptr;
+	machine *_fire = nullptr;
 
 protected:
 	const char *getDigi() override;
