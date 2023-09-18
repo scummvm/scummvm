@@ -66,7 +66,7 @@ HelpDialog::HelpDialog()
 "sites but beware of faulty games (e.g., scratched discs) and illegal game copies "
 "(e.g., from Butterfly Media).\n"
 "\n"
-"The ScummVM team does not recommend any individual supplier of games and thesr lists are "
+"The ScummVM team does not recommend any individual supplier of games and these lists are "
 "for reference purposes only. However, the ScummVM project does get a cut from every purchase on "
 "[GOG.com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and "
 "[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) "
