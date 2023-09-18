@@ -112,7 +112,6 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	readRectArray(ser, _destRects, numElements, maxNumElements);
 
-	_hotspots.resize(numElements);
 	if (isPiano) {
 		readRectArray(stream, _hotspots, numElements, maxNumElements);
 	} else {
@@ -464,16 +463,18 @@ void OrderingPuzzle::setToSecondState(uint id) {
 }
 
 void OrderingPuzzle::popUp(uint id) {
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		g_nancy->_sound->playSound("BUOK");
-	} else {
-		if (_popUpSound.name.size()) {
-			g_nancy->_sound->playSound(_popUpSound);
+	if (_itemsStayDown) {
+		// Make sure we only play the sound when the buttons don't auto-depress
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			g_nancy->_sound->playSound("BUOK");
 		} else {
-			g_nancy->_sound->playSound(_pushDownSound);
+			if (_popUpSound.name.size()) {
+				g_nancy->_sound->playSound(_popUpSound);
+			} else {
+				g_nancy->_sound->playSound(_pushDownSound);
+			}
 		}
 	}
-
 
 	_downItems[id] = false;
 	Common::Rect destRect = _destRects[id];
