@@ -88,8 +88,6 @@ void PlaySecondaryMovie::init() {
 			error("Couldn't load video file %s", _videoName.c_str());
 		}
 
-		_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
-
 		if (_paletteName.size()) {
 			GraphicsManager::loadSurfacePalette(_fullFrame, _paletteName);
 			GraphicsManager::loadSurfacePalette(_drawSurface, _paletteName);
@@ -176,7 +174,7 @@ void PlaySecondaryMovie::execute() {
 			}
 
 			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
-			_drawSurface.create(_fullFrame, _fullFrame.getBounds());
+			_drawSurface.create(_fullFrame, _videoDescs[_curViewportFrame].srcRect);
 			moveTo(_videoDescs[descID].destRect);
 
 			_needsRedraw = true;
