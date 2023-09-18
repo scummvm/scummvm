@@ -27,6 +27,7 @@
 namespace Common {
 
 class SeekableReadStream;
+struct CueLookupTable;
 
 /**
  * A class able to load and parse Cue sheets
@@ -92,6 +93,7 @@ public:
 	};
 
 private:
+	int lookupInTable(CueLookupTable *table, const char *key);
 	int parseMSF(const char *str);
 
 	void parseHeaderContext(const char *line);
