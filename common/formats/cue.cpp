@@ -26,9 +26,9 @@
 namespace Common {
 
 enum {
-	kCueContextHeader,
-	kCueContextFiles,
-	kCueContextTracks,
+	kContextHeader,
+	kContextFiles,
+	kContextTracks,
 };
 
 static String nexttok(const char *s, const char **newP = nullptr) {
@@ -75,7 +75,7 @@ CueSheet::CueSheet(SeekableReadStream *stream) {
 
 void CueSheet::parse(const char *sheet) {
 	String line;
-	_context = kCueContextHeader;
+	_context = kContextHeader;
 	const char *s = sheet;
 
 	while (*s) {
@@ -104,15 +104,15 @@ void CueSheet::parse(const char *sheet) {
 			continue;
 
 		switch (_context) {
-		case kCueContextHeader:
+		case kContextHeader:
 			parseHeaderContext(line.c_str());
 			break;
 
-		case kCueContextFiles:
+		case kContextFiles:
 			parseFilesContext(line.c_str());
 			break;
 
-		case kCueContextTracks:
+		case kContextTracks:
 			parseTracksContext(line.c_str());
 			break;
 
@@ -122,12 +122,12 @@ void CueSheet::parse(const char *sheet) {
 	}
 }
 
-struct CueLookupTable {
+struct CueSheet::LookupTable {
 	const char *key;
 	int value;
 };
 
-int CueSheet::lookupInTable(CueLookupTable *table, const char *key) {
+int CueSheet::lookupInTable(LookupTable *table, const char *key) {
 	while (table->key) {
 		if (!strcmp(key, table->key))
 			return table->value;
@@ -147,12 +147,12 @@ int CueSheet::parseMSF(const char *str) {
 	return frm + 75 * (sec + 60 * min);
 }
 
-CueLookupTable fileTypes[] = {
-	{ "BINARY",   CueSheet::kCueFileTypeBinary },
-	{ "AIFF",     CueSheet::kCueFileTypeAIFF },
-	{ "WAVE",     CueSheet::kCueFileTypeWave },
-	{ "MP3",      CueSheet::kCueFileTypeMP3 },
-	{ "MOTOROLA", CueSheet::kCueFileTypeMotorola },
+CueSheet::LookupTable fileTypes[] = {
+	{ "BINARY",   CueSheet::kFileTypeBinary },
+	{ "AIFF",     CueSheet::kFileTypeAIFF },
+	{ "WAVE",     CueSheet::kFileTypeWave },
+	{ "MP3",      CueSheet::kFileTypeMP3 },
+	{ "MOTOROLA", CueSheet::kFileTypeMotorola },
 	{ 0, 0 }
 };
 
@@ -170,10 +170,10 @@ void CueSheet::parseHeaderContext(const char *line) {
 
 		String type = nexttok(s, &s);
 
-		_files[_currentFile].type = kCueFileTypeBinary;
-		_files[_currentFile].type = (CueFileType)lookupInTable(fileTypes, type.c_str());
+		_files[_currentFile].type = kFileTypeBinary;
+		_files[_currentFile].type = (FileType)lookupInTable(fileTypes, type.c_str());
 
-		_context = kCueContextFiles;
+		_context = kContextFiles;
 
 		_currentTrack = -1;
 
@@ -209,23 +209,23 @@ void CueSheet::parseHeaderContext(const char *line) {
 	}
 }
 
-CueLookupTable trackTypes[] = {
-	{ "AUDIO",      CueSheet::kCueFileTypeAudio },		// Audio (sector size: 2352)
-	{ "CDG",        CueSheet::kCueFileTypeCDG },		// Karaoke CD+G (sector size: 2448)
-	{ "MODE1_RAW",  CueSheet::kCueFileTypeMode1_Raw },	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
-	{ "MODE1/2048", CueSheet::kCueFileTypeMode1_2048 },	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
-	{ "MODE1/2352", CueSheet::kCueFileTypeMode1_2352 },	// CD-ROM Mode 1 data (raw) (sector size: 2352)
-	{ "MODE2_RAW",  CueSheet::kCueFileTypeMode2_Raw },	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
-	{ "MODE2/2048", CueSheet::kCueFileTypeMode2_2048 },	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
-	{ "MODE2/2324", CueSheet::kCueFileTypeMode2_2324 },	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
-	{ "MODE2/2336", CueSheet::kCueFileTypeMode2_2366 },	// CD-ROM Mode 2 data (sector size: 2336)
-	{ "MODE2/2352", CueSheet::kCueFileTypeMode2_2352 },	// CD-ROM Mode 2 data (raw) (sector size: 2352)
-	{ "CDI/2336",   CueSheet::kCueFileTypeCDI_2336 },	// CDI Mode 2 data
-	{ "CDI/2352",   CueSheet::kCueFileTypeCDI_2352 },	// CDI Mode 2 data
+CueSheet::LookupTable trackTypes[] = {
+	{ "AUDIO",      CueSheet::kTrackTypeAudio },		// Audio (sector size: 2352)
+	{ "CDG",        CueSheet::kTrackTypeCDG },			// Karaoke CD+G (sector size: 2448)
+	{ "MODE1_RAW",  CueSheet::kTrackTypeMode1_Raw },	// CD-ROM Mode 1 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE1/2048", CueSheet::kTrackTypeMode1_2048 },	// CD-ROM Mode 1 data (cooked) (sector size: 2048)
+	{ "MODE1/2352", CueSheet::kTrackTypeMode1_2352 },	// CD-ROM Mode 1 data (raw) (sector size: 2352)
+	{ "MODE2_RAW",  CueSheet::kTrackTypeMode2_Raw },	// CD-ROM Mode 2 data (raw) (sector size: 2352), used by cdrdao
+	{ "MODE2/2048", CueSheet::kTrackTypeMode2_2048 },	// CD-ROM Mode 2 XA form-1 data (sector size: 2048)
+	{ "MODE2/2324", CueSheet::kTrackTypeMode2_2324 },	// CD-ROM Mode 2 XA form-2 data (sector size: 2324)
+	{ "MODE2/2336", CueSheet::kTrackTypeMode2_2366 },	// CD-ROM Mode 2 data (sector size: 2336)
+	{ "MODE2/2352", CueSheet::kTrackTypeMode2_2352 },	// CD-ROM Mode 2 data (raw) (sector size: 2352)
+	{ "CDI/2336",   CueSheet::kTrackTypeCDI_2336 },		// CDI Mode 2 data
+	{ "CDI/2352",   CueSheet::kTrackTypeCDI_2352 },		// CDI Mode 2 data
 	{ 0, 0 }
 };
 
-CueLookupTable trackTypesSectorSizes[] = {
+CueSheet::LookupTable trackTypesSectorSizes[] = {
 	{ "AUDIO",      2352 },
 	{ "CDG",        2448 },
 	{ "MODE1_RAW",  2352 },
@@ -257,24 +257,24 @@ void CueSheet::parseFilesContext(const char *line) {
 				_files[_currentFile].tracks.push_back(CueTrack());
 
 			_currentTrack = trackNum;
-			_files[_currentFile].tracks[_currentTrack].type = (CueTrackType)lookupInTable(trackTypes, trackType.c_str());
+			_files[_currentFile].tracks[_currentTrack].type = (TrackType)lookupInTable(trackTypes, trackType.c_str());
 			_files[_currentFile].tracks[_currentTrack].size = lookupInTable(trackTypesSectorSizes, trackType.c_str());
 
 			debug(5, "Track: %d type: %s (%d)", trackNum, trackType.c_str(), _files[_currentFile].tracks[_currentTrack].type);
 		}
 
-		_context = kCueContextTracks;
+		_context = kContextTracks;
 	} else {
 		warning("CueSheet: Unprocessed file command %s at line %d", command.c_str(), _lineNum);
 	}
 
 }
 
-CueLookupTable trackFlags[] = {
-	{ "4CH",  CueSheet::kCueTrackFlag4ch  },
-	{ "DCP",  CueSheet::kCueTrackFlagDCP  },
-	{ "PRE",  CueSheet::kCueTrackFlagPre  },
-	{ "SCMS", CueSheet::kCueTrackFlagSCMS },
+CueSheet::LookupTable trackFlags[] = {
+	{ "4CH",  CueSheet::kTrackFlag4ch  },
+	{ "DCP",  CueSheet::kTrackFlagDCP  },
+	{ "PRE",  CueSheet::kTrackFlagPre  },
+	{ "SCMS", CueSheet::kTrackFlagSCMS },
 	{ 0, 0 }
 };
 
