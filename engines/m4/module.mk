@@ -181,8 +181,18 @@ MODULE_OBJS = \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o \
+	riddle/rooms/section9/room901.o \
+	riddle/rooms/section9/room902.o \
+	riddle/rooms/section9/room903.o \
+	riddle/rooms/section9/room905.o \
+	riddle/rooms/section9/room907.o \
+	riddle/rooms/section9/room908.o \
+	riddle/rooms/section9/room917.o \
+	riddle/rooms/section9/room918.o \
+	riddle/rooms/section9/room996.o \
 	riddle/riddle.o \
 	ridle/vars.o
+
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_M4), DYNAMIC_PLUGIN)
