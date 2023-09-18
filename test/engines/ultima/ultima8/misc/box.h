@@ -10,24 +10,35 @@ class U8BoxTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_simple_box() {
+		// Note: These tests expect Box has reversed coordinates in x and y.
 		Ultima::Ultima8::Box box;
-		TS_ASSERT(!box.contains(0,0,1));
-		TS_ASSERT(!box.contains(0, 1, 0));
-		TS_ASSERT(!box.contains(1, 0, 0));
+		TS_ASSERT(box.isEmpty());
+		TS_ASSERT(box.isValid());
+		TS_ASSERT(!box.overlaps(box));
+		TS_ASSERT(box == box);
+		TS_ASSERT(!box.contains(0, 0, 0));
+		TS_ASSERT(!box.contains(0, 0, 1));
+		TS_ASSERT(!box.contains(0, -1, 0));
+		TS_ASSERT(!box.contains(-1, 0, 0));
+
 		box.resize(1, 1, 1);
+		TS_ASSERT(!box.isEmpty());
+		TS_ASSERT(box.isValid());
+		TS_ASSERT(box.contains(0, 0, 0));
 		TS_ASSERT(!box.contains(-1, 0, 0));
 		TS_ASSERT(!box.contains(0, -1, 0));
-		TS_ASSERT(!box.contains(0, 0, -1));
-		TS_ASSERT(box.overlaps(box));
-		TS_ASSERT(box == box);
-		box.resize(2, 2, 2);
-		TS_ASSERT(box.isValid());
+		TS_ASSERT(!box.contains(0, 0, 1));
 		TS_ASSERT(box.overlaps(box));
 		TS_ASSERT(box == box);
 
-		// Note: These tests expect Box has reversed coordinates in x and y.
+		box.resize(2, 2, 2);
+		TS_ASSERT(!box.isEmpty());
+		TS_ASSERT(box.isValid());
+		TS_ASSERT(box.overlaps(box));
+		TS_ASSERT(box == box);
 		TS_ASSERT(box.contains(-1, -1, 1));
 		TS_ASSERT(box.contains(-1, -1, 0));
+
 		box.moveTo(0, 0, 1);
 		TS_ASSERT(!box.contains(-1, -1, 0));
 		TS_ASSERT(box.contains(-1, -1, 2));
@@ -44,6 +55,17 @@ class U8BoxTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(box3.overlaps(box2));
 		box3.resize(1, 1, 1);
 		TS_ASSERT(!box3.overlaps(box2));
+
+		box3.moveTo(2, 2, 2);
+		box.extend(box3);
+		TS_ASSERT(!box.isEmpty());
+		TS_ASSERT(box.isValid());
+		TS_ASSERT(box._x == 2);
+		TS_ASSERT(box._y == 2);
+		TS_ASSERT(box._z == 1);
+		TS_ASSERT(box._xd == 4);
+		TS_ASSERT(box._yd == 4);
+		TS_ASSERT(box._zd == 2);
 	}
 
 };

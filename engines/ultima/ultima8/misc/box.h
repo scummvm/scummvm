@@ -27,6 +27,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
+/**
+ * Represents a worldspace bounding box and manipulation of those bounds.
+ * The box is build from a world point and positive dimensions
+ * The box has reversed coordinates for x and y, meaning those dimensions are
+ * subtracted from primary world point to calculate other points.
+ */
 struct Box {
 	int32 _x, _y, _z;
 	int32 _xd, _yd, _zd;
@@ -37,7 +43,7 @@ struct Box {
 
 	// Check if the Box is empty (its width, height, or depth is 0) or invalid (its width, height, or depth are negative).
 	bool isEmpty() const {
-		return _xd > 0 && _yd > 0 && _zd > 0;
+		return _xd <= 0 || _yd <= 0 || _zd <= 0;
 	}
 
 	// Check to see if a Box is 'valid'
@@ -73,10 +79,26 @@ struct Box {
 	}
 
 	bool overlaps(const Box &o) const {
-		if (_x <= o._x - o._xd || o._x <= _x - _xd) return false;
-		if (_y <= o._y - o._yd || o._y <= _y - _yd) return false;
-		if (_z + _zd <= o._z || o._z + o._zd <= _z) return false;
+		if (_x <= o._x - o._xd || o._x <= _x - _xd)
+			return false;
+		if (_y <= o._y - o._yd || o._y <= _y - _yd)
+			return false;
+		if (_z + _zd <= o._z || o._z + o._zd <= _z)
+			return false;
 		return true;
+	}
+
+	void extend(const Box &o) {
+		int32 x2 = MIN(_x - _xd, o._x - o._xd);
+		int32 y2 = MIN(_y - _yd, o._y - o._yd);
+		int32 z2 = MAX(_z + _zd, o._z + o._zd);
+
+		_x = MAX(_x, o._x);
+		_y = MAX(_y, o._y);
+		_z = MIN(_z, o._z);
+		_xd = _x - x2;
+		_yd = _y - y2;
+		_zd = z2 - _z;
 	}
 
 	bool operator==(const Box &rhs) const { return equals(rhs); }
