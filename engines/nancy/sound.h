@@ -145,7 +145,7 @@ protected:
 		uint32 nextRepeatTime = 0;
 	};
 
-	void soundEffectMaintenance(uint16 channelID);
+	void soundEffectMaintenance(uint16 channelID, bool force = false);
 
 	Audio::Mixer *_mixer;
 

@@ -366,7 +366,7 @@ void SoundManager::playSound(uint16 channelID) {
 						chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
 
-	soundEffectMaintenance(channelID);
+	soundEffectMaintenance(channelID, true);
 }
 
 void SoundManager::playSound(const SoundDescription &description) {
@@ -655,7 +655,7 @@ void SoundManager::soundEffectMaintenance() {
 	_shouldRecalculate = false;
 }
 
-void SoundManager::soundEffectMaintenance(uint16 channelID) {
+void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
 		return;
 
@@ -664,8 +664,8 @@ void SoundManager::soundEffectMaintenance(uint16 channelID) {
 
 	// Handle sound effects and 3D sound, which started being used from nancy3.
 	// The original engine used DirectSound 3D, whose effects are only approximated.
-	// In particular, there are some slight but noticeable differences in panning
-	bool hasStepped = false;
+// In particular, there are some slight but noticeable differences in panning
+	bool hasStepped = force;
 	if (g_nancy->getGameType() >= 3 && chan.effectData) {
 		uint16 playCommands = chan.playCommands;
 		SoundEffectDescription *effectData = chan.effectData;
