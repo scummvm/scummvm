@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 22:35+0000\n"
+"POT-Creation-Date: 2023-09-19 14:42+0000\n"
 "PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -7187,6 +7187,16 @@ msgstr ""
 #: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:60
+#, fuzzy
+#| msgid "Move"
+msgid "Auto Move"
+msgstr "चलें"
+
+#: engines/nancy/metaengine.cpp:61
+msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
 
 #: engines/neverhood/dialogs.cpp:53

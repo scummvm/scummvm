@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 22:35+0000\n"
+"POT-Creation-Date: 2023-09-19 14:42+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -7635,6 +7635,15 @@ msgstr ""
 #: engines/nancy/metaengine.cpp:50
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:60
+#, fuzzy
+msgid "Auto Move"
+msgstr "Autolagre:"
+
+#: engines/nancy/metaengine.cpp:61
+msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
 
 #: engines/neverhood/dialogs.cpp:53

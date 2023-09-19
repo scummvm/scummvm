@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 22:35+0000\n"
+"POT-Creation-Date: 2023-09-19 14:42+0000\n"
 "PO-Revision-Date: 2023-09-17 09:02+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7712,6 +7712,16 @@ msgid ""
 msgstr ""
 "Aktiviere Sprachausgabe für NPCs. Funktionier nur, wenn die Sprachausgabe in "
 "den Audio-Einstellungen aktiviert ist."
+
+#: engines/nancy/metaengine.cpp:60
+#, fuzzy
+#| msgid "Autosave"
+msgid "Auto Move"
+msgstr "Automatisches Speichern"
+
+#: engines/nancy/metaengine.cpp:61
+msgid "Automatically rotate the viewport when the mouse reaches an edge."
+msgstr ""
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"

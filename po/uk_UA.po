@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 22:35+0000\n"
+"POT-Creation-Date: 2023-09-19 14:42+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7700,6 +7700,16 @@ msgid ""
 msgstr ""
 "Ввімкнути озвучку героїв гри. Працює тільки коли озвучку також ввімкнено у "
 "налаштуваннях."
+
+#: engines/nancy/metaengine.cpp:60
+#, fuzzy
+#| msgid "Autosave"
+msgid "Auto Move"
+msgstr "Автозбереження"
+
+#: engines/nancy/metaengine.cpp:61
+msgid "Automatically rotate the viewport when the mouse reaches an edge."
+msgstr ""
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"

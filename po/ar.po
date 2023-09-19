@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-17 22:35+0000\n"
+"POT-Creation-Date: 2023-09-19 14:42+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -7621,6 +7621,16 @@ msgstr "خطاب الشخصية"
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr "تفعيل خطاب NPC. يعمل فقط إذا تم تمكين الكلام في إعدادات الصوت."
+
+#: engines/nancy/metaengine.cpp:60
+#, fuzzy
+#| msgid "Autosave"
+msgid "Auto Move"
+msgstr "الحفظ التلقائي"
+
+#: engines/nancy/metaengine.cpp:61
+msgid "Automatically rotate the viewport when the mouse reaches an edge."
+msgstr ""
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
