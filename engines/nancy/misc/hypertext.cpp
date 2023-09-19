@@ -131,7 +131,8 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		font = g_nancy->_graphicsManager->getFont(curFontID);
 		highlightFont = g_nancy->_graphicsManager->getFont(highlightFontID);
 
-		// Do word wrapping on the text, sans tokens
+		// Do word wrapping on the text, sans tokens. This assumes
+		// all text uses fonts of the same width
 		Array<Common::String> wrappedLines;
 		font->wordWrap(currentLine, textBounds.width(), wrappedLines, 0);
 

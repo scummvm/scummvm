@@ -113,9 +113,6 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 void TextBoxWrite::execute() {
 	auto &tb = NancySceneState.getTextbox();
 	tb.clear();
-	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
-	assert(textboxData);
-	tb.overrideFontID(textboxData->defaultFontID);
 	tb.addTextLine(_text);
 	tb.setVisible(true);
 	finishExecution();

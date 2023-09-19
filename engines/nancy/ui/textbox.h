@@ -49,7 +49,7 @@ public:
 	void clear() override;
 
 	void addTextLine(const Common::String &text, uint32 autoClearTime = 0);
-	void overrideFontID(const uint fontID);
+	void setOverrideFont(const uint fontID);
 
 private:
 	uint16 getInnerHeight() const;

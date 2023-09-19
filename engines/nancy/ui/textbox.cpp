@@ -145,7 +145,7 @@ void Textbox::drawTextbox() {
 	textBounds.right -= tbox->rightOffset;
 
 	HypertextParser::drawAllText(	textBounds,															// bounds of text within full surface
-									_fontIDOverride != -1 ? _fontIDOverride : tbox->conversationFontID,	// font for basic text
+									_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID,	// font for basic text
 									tbox->highlightConversationFontID);									// font for highlight text
 
 	setVisible(true);
@@ -172,7 +172,7 @@ void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
 	}
 }
 
-void Textbox::overrideFontID(const uint fontID) {
+void Textbox::setOverrideFont(const uint fontID) {
 	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
 	assert(bsum);
 
