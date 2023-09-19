@@ -186,6 +186,26 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		}
 
 		break;
+	case kMoveForward:
+		// Only valid for nancy4 and up
+		if (gameType >= kGameTypeNancy4) {
+			_curCursorID = kMoveForward;
+			return;
+		} else {
+			type = kHotspot;
+		}
+
+		break;
+	case kMoveBackward:
+		// Only valid for nancy4 and up
+		if (gameType >= kGameTypeNancy4) {
+			_curCursorID = kMoveBackward;
+			return;
+		} else {
+			type = kHotspot;
+		}
+
+		break;
 	case kExit:
 		// Not valid in TVD
 		if (gameType != kGameTypeVampire) {
