@@ -287,6 +287,8 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
 
 	if (pickUp) {
 		setHeldItem(id);
+	} else if (getHeldItem() == id) {
+		setHeldItem(-1);
 	}
 	
 	g_nancy->_sound->playSound("BUOK");

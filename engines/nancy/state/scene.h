@@ -135,7 +135,7 @@ public:
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
-	byte hasItem(int16 id) const { return _flags.items[id]; }
+	byte hasItem(int16 id) const { return _flags.items[id] || getHeldItem() == id; }
 
 	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
 	void playItemCantSound(int16 itemID = -1);
