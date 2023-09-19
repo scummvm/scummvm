@@ -462,7 +462,7 @@ void initGraphics3d(int width, int height) {
 
 	if (!splash && !GUI::GuiManager::instance()._launched) {
 		Common::Event event;
-		g_system->getEventManager()->pollEvent(event);
+		(void)g_system->getEventManager()->pollEvent(event);
 		splashScreen();
 	}
 }
@@ -646,7 +646,7 @@ void Engine::saveAutosaveIfEnabled() {
 	}
 
 	_lastAutosaveTime = _system->getMillis();
-	
+
 	if (!saveFlag) {
 		// Set the next autosave interval to be in 5 minutes, rather than whatever
 		// full autosave interval the user has selected
