@@ -45,7 +45,6 @@ protected:
 	int16 _scrolledX, _scrolledY;
 	int _scrollbarWidth;
 	uint16 _limitH;
-	uint32 _reflowCmd;
 	int _textWidth;
 
 	Common::String _imageArchive;
