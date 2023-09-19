@@ -1447,6 +1447,7 @@ yyerrlab:   /* here on detecting error */
 	if (! yyerrstatus) {
 		/* If not already recovering from an error, report this error.  */
 		++yynerrs;
+		(void)yynerrs;
 		yyerror("parse error");
 	}
 
