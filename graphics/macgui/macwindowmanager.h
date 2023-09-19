@@ -458,9 +458,9 @@ private:
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
 
-	MacCursorType _tempType;
+	MacCursorType _tempType = kMacCursorArrow;
 	Common::Stack<MacCursorType> _cursorTypeStack;
-	Cursor *_cursor;
+	Cursor *_cursor = nullptr;
 
 	MacWidget *_activeWidget;
 	MacWidget *_lockedWidget;
