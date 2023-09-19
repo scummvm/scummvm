@@ -97,18 +97,6 @@ InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 	_lines.push_back(Line(x2, y2, str2));
 }
 
-InfoMessage &InfoMessage::operator=(const InfoMessage &src) {
-	_lines = src._lines;
-	_callback = src._callback;
-	_nCallback = src._nCallback;
-	_keyCallback = src._keyCallback;
-	_largeMessage = src._largeMessage;
-	_sound = src._sound;
-	_delaySeconds = src._delaySeconds;
-	_fontReduced = src._fontReduced;
-	return *this;
-}
-
 size_t Line::size() const {
 	return _text.size();
 }

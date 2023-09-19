@@ -157,8 +157,6 @@ struct InfoMessage : public Message {
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
 		KeyCallback keyCallback);
-
-	InfoMessage &operator=(const InfoMessage &src);
 };
 
 struct SoundMessage : public InfoMessage {
