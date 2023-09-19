@@ -19,24 +19,24 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION3_ROOM319_H
-#define M4_BURGER_ROOMS_SECTION3_ROOM319_H
+#ifndef M4_BURGER_ROOMS_SECTION3_MINE_H
+#define M4_BURGER_ROOMS_SECTION3_MINE_H
 
-#include "m4/burger/rooms/section3/section3_room.h"
+#include "m4/burger/rooms/section3/mine_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room319 : public Section3Room {
+class Mine : public MineRoom {
 protected:
 	const char *getDigi() override {
 		return "300_004";
 	}
 
 public:
-	Room319() : Section3Room() {}
-	~Room319() override {}
+	Mine() : MineRoom() {}
+	~Mine() override {}
 
 	void init() override;
 	void daemon() override;

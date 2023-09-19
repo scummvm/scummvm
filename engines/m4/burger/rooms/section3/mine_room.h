@@ -19,48 +19,45 @@
  *
  */
 
-#include "m4/burger/rooms/section3/section3.h"
-#include "m4/burger/vars.h"
+#ifndef M4_BURGER_ROOMS_SECTION3_MINE_ROOM_H
+#define M4_BURGER_ROOMS_SECTION3_MINE_ROOM_H
+
+#include "m4/burger/rooms/section3/section3_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-static const seriesPlayBreak PLAY1[] = {
-	{  0, 15, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
-	{ 16, 46, "300w039", 1, 255, -1,    0, 0, nullptr, 0 },
-	{ 47, 60, "300_006", 2, 255, -1,    0, 0, nullptr, 0 },
-	{ 60, 60, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
-	{ 60, -1, nullptr,   0,   0, -1,    0, 0, nullptr, 0 },
-	PLAY_BREAK_END
+enum MineDirection {
+	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_WEST = 2, DIR_EAST = 3
 };
 
+struct MineEntry {
+	int32 _unknown;
+	int16 _indexes[7];
+	int32 _offset;
+	int16 _field16;
+};
 
-Section3::Section3() : Rooms::Section() {
-	add(301, &_room301);
-	add(302, &_room302);
-	add(303, &_room303);
-	add(304, &_room304);
-	add(305, &_room305);
-	add(306, &_room306);
-	add(307, &_room307);
-	add(310, &_room310);
-	add(311, &_mine);
-	add(312, &_mine);
-	add(313, &_mine);
-	add(314, &_mine);
-	add(315, &_mine);
-	add(316, &_mine);
-	add(317, &_mine);
-	add(318, &_mine);
-	add(319, &_mine);
-}
+class MineRoom : public Section3Room {
+private:
+	static const MineEntry MINE_DATA[];
+	static const char *SAID[][4];
+	int _mineCtr = 0;
 
-void Section3::daemon() {
-	// TODO
-	_G(kernel).continue_handling_trigger = true;
-}
+	int getPigDistance() const;
+	void changeRoom(MineDirection dir);
+
+public:
+	MineRoom() : Section3Room() {}
+	virtual ~MineRoom() {}
+
+	void preload() override;
+	void parser() override;
+};
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
+
+#endif

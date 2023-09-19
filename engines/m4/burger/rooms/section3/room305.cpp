@@ -108,6 +108,11 @@ void Room305::init() {
 void Room305::daemon() {
 }
 
+void Room305::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
