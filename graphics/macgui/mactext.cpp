@@ -2311,7 +2311,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 				break;
 		}
 
-		if (chunk >= _textLines[nrow].chunks.size())
+		if (chunk >= (int)_textLines[nrow].chunks.size())
 			chunk = _textLines[nrow].chunks.size() - 1;
 
 		if (chunk_)
