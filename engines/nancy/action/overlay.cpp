@@ -23,6 +23,8 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/input.h"
+#include "engines/nancy/cursor.h"
 
 #include "engines/nancy/action/overlay.h"
 
@@ -39,6 +41,25 @@ void Overlay::init() {
 	setFrame(_firstFrame);
 
 	RenderObject::init();
+}
+
+void Overlay::handleInput(NancyInput &input) {
+	// For no apparent reason, the original engine handles Overlay input as a special case,
+	// rather than simply set the general hotspot inside the ActionRecord struct. Special cases
+	// (a.k.a puzzle types) get handled before regular ActionRecords, which means an Overlay
+	// must take precedence when handling the mouse. Thus, out ActionManager class first iterates
+	// through all records and calls their handleInput() function just to make sure this special
+	// case is handled. This fixes nancy3 scene 7081.
+	if (_enableHotspot == kPlayOverlayWithHotspot) {
+		if (NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+
+			if (input.input & NancyInput::kLeftMouseButtonUp) {
+				_state = kActionTrigger;
+				input.eatMouseInput(); // Make sure nothing else gets triggered
+			}
+		}
+	}
 }
 
 void Overlay::readData(Common::SeekableReadStream &stream) {
@@ -155,7 +176,6 @@ void Overlay::execute() {
 
 							if (_enableHotspot == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
-								_hasHotspot = true;
 							}
 
 							break;

@@ -39,10 +39,14 @@ void ActionManager::handleInput(NancyInput &input) {
 	bool setHoverCursor = false;
 	for (auto &rec : _records) {
 		if (rec->_isActive) {
-			// Send input to all active records
+			// First, loop through all records and handle special cases.
+			// This needs to be a separate loop to handle Overlays as a special case
+			// (see note in Overlay::handleInput())
 			rec->handleInput(input);
 		}
+	}
 
+	for (auto &rec : _records) {
 		if (	rec->_isActive &&
 				rec->_hasHotspot &&
 				rec->_hotspot.isValidRect() && // Needed for nancy2 scene 1600

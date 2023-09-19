@@ -40,6 +40,7 @@ public:
 	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
+	void handleInput(NancyInput &input) override;
 
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
