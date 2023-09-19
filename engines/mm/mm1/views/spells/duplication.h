@@ -33,9 +33,9 @@ namespace Spells {
 class Duplication : public SpellView, public MM1::Game::Duplication {
 private:
 	enum Mode { SELECT_ITEM, CAST };
-	Mode _mode = SELECT_ITEM;
-	char _direction = '\0';
-	int _squares = 0;
+	//Mode _mode = SELECT_ITEM;
+	//char _direction = '\0';
+	//int _squares = 0;
 
 public:
 	/**
