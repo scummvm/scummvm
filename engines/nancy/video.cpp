@@ -214,7 +214,7 @@ bool AVFDecoder::AVFVideoTrack::endOfTrack() const {
 	if (_reversed)
 		return _curFrame < 0;
 
-	return _curFrame >= (getFrameCount() - 1);
+	return _curFrame >= getFrameCount();
 }
 
 bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const {
@@ -351,7 +351,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 }
 
 const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
-	return decodeFrame(_reversed ? _curFrame-- : _curFrame++);
+	return decodeFrame(_reversed ? --_curFrame : _curFrame++);
 }
 
 } // End of namespace Nancy
