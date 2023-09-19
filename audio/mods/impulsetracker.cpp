@@ -173,8 +173,8 @@ private:
 	DisposeAfterUse::Flag _dispose;
 	bool _mikmod_load_successful = false;
 	Common::SeekableReadStream *_stream;
-	MREADER *_reader;
-	MODULE *_mod;
+	MREADER *_reader = nullptr;
+	MODULE *_mod = nullptr;
 };
 
 ImpulseTrackerMod::ImpulseTrackerMod(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
