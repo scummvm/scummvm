@@ -334,6 +334,7 @@ void U6Lib_n::load_index(Common::ReadStream *index_f) {
 		offset_str[0] = '\0';
 		oc = 0;
 	}
+	(void)entry_count; // Fix "unused varable" warning
 }
 
 

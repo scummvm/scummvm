@@ -515,7 +515,6 @@ bool TileManager::loadAnimData() {
 
 void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num) {
 	uint8 len;
-	uint8 i;
 	uint16 disp;
 	uint8 x;
 	unsigned char *ptr;
@@ -529,7 +528,7 @@ void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num
 
 	memset(data_ptr, 0xff, 256); //set all pixels to transparent.
 
-	for (i = 0; ; i++) {
+	for (;;) {
 		disp = (ptr[0] + (ptr[1] << 8));
 
 		x = disp % 160 + (disp >= 1760 ? 160 : 0);
