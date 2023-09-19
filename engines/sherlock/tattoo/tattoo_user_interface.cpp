@@ -93,9 +93,9 @@ void TattooUserInterface::lookAtObject() {
 	} else {
 		// Check if there is a Look animation
 		if (_bgShape->_lookcAnim != 0) {
-			int cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
-			cAnimSpeed >>= 5;
-			++cAnimSpeed;
+			//int cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
+			//cAnimSpeed >>= 5;
+			//++cAnimSpeed;
 
 			_cAnimFramePause = _bgShape->_lookFrames;
 			desc = _bgShape->_examine;
