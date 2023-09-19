@@ -840,9 +840,6 @@ void CapcomPC98_FMChannel::updateVolume() {
 		vol += (((a * b) & 0x7FFF) >> 7);
 		vol += s[1];
 
-		if (vol > 0x7f)
-			vol=vol;
-
 		vol = MIN<uint16>(vol, 0x7F);
 
 		_ac->writeReg(0, 0x40 + i, vol & 0xFF);
