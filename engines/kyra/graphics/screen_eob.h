@@ -404,7 +404,7 @@ public:
 private:
 	uint16 convert(uint16 c) const;
 	const char *_convTable1, *_convTable2;
-	bool _defaultConv;
+	//bool _defaultConv;
 };
 
 /**

@@ -210,7 +210,7 @@ uint16 SJISFontEoB1PC98::convert(uint16 c) const {
 }
 
 SJISFontEoB2PC98::SJISFontEoB2PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const char *convTable1, const char *convTable2) : SJISFont(font, 0, false, false, 0),
-/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
+/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2)/*, _defaultConv(true)*/ {
 	assert(_convTable1);
 	assert(_convTable2);
 }
