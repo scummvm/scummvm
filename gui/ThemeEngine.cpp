@@ -1694,7 +1694,7 @@ TextColor ThemeEngine::getTextColor(DrawData ddId) const {
 
 TextColorData *ThemeEngine::getTextColorData(TextColor color) const {
 	if (color >= kTextColorMAX)
-		color = kTextColorMAX;
+		color = kTextColorNormal;
 
 	return _textColors[color];
 }
