@@ -267,7 +267,7 @@ void DecompressorState::resetEverything() {
 		b = 0;
 
 	_windowOffset = 0;
-	
+
 	uint16 nextValue = 0;
 	for (int i = 0; i < 30; i++) {
 		_matchVLCOffsets[i] = nextValue;
