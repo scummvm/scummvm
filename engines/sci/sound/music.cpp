@@ -537,7 +537,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				// but _does_ update channel state (including volume) with
 				// them. Specifically, prio/voices, patch, volume, pan.
 				// This should probably be implemented in MidiParser_SCI::loadMusic.
-				// 
+				//
 				// UPDATE: While we could change how we handle it, we DO
 				// read the commands into the channel data arrays when we call
 				// trackState(). So, I think what we do has the same result...
@@ -1231,6 +1231,7 @@ void SciMusic::remapChannels(bool mainThread) {
 				if (channelUsed[j])
 					debug(" Unmapping song %d, channel %d", songIndex, j);
 #endif
+				(void)songIndex;
 			}
 		}
 	}

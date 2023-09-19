@@ -4732,7 +4732,7 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 		} else {
 			flagMask = 0x8000 >> (flagNumber % 16);
 		}
-		
+
 		// set or clear the flag
 		bool already = false;
 		if (op == kGameFlagsSet) {
@@ -4750,7 +4750,7 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 				globalReg->setOffset(globalValue);
 			}
 		}
-		
+
 		const char *result = (globalValue & flagMask) ? "set" : "clear";
 		debugPrintf("Flag %d is %s%s (global var %d, flag %04x)\n",
 					flagNumber, already ? "already " : "", result, globalNumber, flagMask);
@@ -5038,6 +5038,8 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 			if (dest->isNull())
 				return 1;
 		}
+
+		(void)charsCountLetter; // Shut "unused variable" warning
 	}
 	if (offsetStr) {
 		int val = strtol(offsetStr, &endptr, 16);

@@ -313,7 +313,7 @@ reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	const Common::String fileName = s->_segMan->getString(argv[0]);
@@ -325,7 +325,7 @@ reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	// argv[0] is a broken x-coordinate
@@ -363,7 +363,7 @@ reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	const uint16 frameNo = argv[0].toUint16();
