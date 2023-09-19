@@ -186,9 +186,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 123:
 		return new InventorySoundOverride();
 	case 150:
-		return new PlayDigiSoundAndDie();
+		return new PlayDigiSound();
 	case 151:
-		return new PlayDigiSoundAndDie();
+		return new PlayDigiSound();
 	case 152:
 		return new PlaySoundPanFrameAnchorAndDie();
 	case 153:

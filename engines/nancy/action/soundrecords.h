@@ -27,24 +27,25 @@
 namespace Nancy {
 namespace Action {
 
-class PlayDigiSoundAndDie : public ActionRecord {
+class PlayDigiSound : public ActionRecord {
 public:
-	PlayDigiSoundAndDie() {}
-	~PlayDigiSoundAndDie() { delete _soundEffect; }
+	PlayDigiSound() {}
+	~PlayDigiSound() { delete _soundEffect; }
 	
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	SoundDescription _sound;
 	SoundEffectDescription *_soundEffect = nullptr;
+	bool _changeSceneImmediately = false;
 	SceneChangeDescription _sceneChange;
-	FlagDescription _flagOnTrigger;
+	FlagDescription _flagOnPlay;
 
 protected:
-	Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
+	Common::String getRecordTypeName() const override;
 };
 
-class PlayDigiSoundCC : public PlayDigiSoundAndDie {
+class PlayDigiSoundCC : public PlayDigiSound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;

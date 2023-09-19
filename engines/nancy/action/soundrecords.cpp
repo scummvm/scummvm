@@ -30,26 +30,38 @@
 namespace Nancy {
 namespace Action {
 
-void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
+void PlayDigiSound::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
 		_soundEffect = new SoundEffectDescription;
 		_soundEffect->readData(stream);
+
+		if (g_nancy->getGameType() >= kGameTypeNancy6) {
+			_changeSceneImmediately = stream.readByte();
+		}
 	}
 
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 
-	_flagOnTrigger.label = stream.readSint16LE();
-	_flagOnTrigger.flag = stream.readByte();
-	stream.skip(2);
+	_flagOnPlay.label = stream.readSint16LE();
+	_flagOnPlay.flag = stream.readByte();
+	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 }
 
-void PlayDigiSoundAndDie::execute() {
+void PlayDigiSound::execute() {
 	switch (_state) {
 	case kBegin:
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
+		NancySceneState.setEventFlag(_flagOnPlay);
+
+		if (_changeSceneImmediately) {
+			NancySceneState.changeScene(_sceneChange);
+			finishExecution();
+			break;
+		}
+
 		_state = kRun;
 		break;
 	case kRun:
@@ -63,7 +75,6 @@ void PlayDigiSoundAndDie::execute() {
 			NancySceneState.changeScene(_sceneChange);
 		}
 
-		NancySceneState.setEventFlag(_flagOnTrigger);
 		g_nancy->_sound->stopSound(_sound);
 
 		finishExecution();
@@ -71,8 +82,12 @@ void PlayDigiSoundAndDie::execute() {
 	}
 }
 
+Common::String PlayDigiSound::getRecordTypeName() const {
+	return g_nancy->getGameType() <= kGameTypeNancy2 ? "PlayDigiSoundAndDie" : "PlayDigiSound";
+}
+
 void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
-	PlayDigiSoundAndDie::readData(stream);
+	PlayDigiSound::readData(stream);
 
 	uint16 textSize = stream.readUint16LE();
 	if (textSize) {
@@ -88,7 +103,7 @@ void PlayDigiSoundCC::execute() {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_ccText);
 	}
-	PlayDigiSoundAndDie::execute();
+	PlayDigiSound::execute();
 }
 
 void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
