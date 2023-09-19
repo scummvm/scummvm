@@ -58,7 +58,6 @@ ItemSorter::ItemSorter(int capacity) :
 }
 
 ItemSorter::~ItemSorter() {
-	//
 	if (_itemsTail) {
 		_itemsTail->_next = _itemsUnused;
 		_itemsUnused = _items;
@@ -71,8 +70,6 @@ ItemSorter::~ItemSorter() {
 		delete _itemsUnused;
 		_itemsUnused = next;
 	}
-
-	delete [] _items;
 }
 
 void ItemSorter::BeginDisplayList(const Rect &clipWindow, int32 camx, int32 camy, int32 camz) {
@@ -160,6 +157,9 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		return;
 	}
 
+	si->_xAdjoin = nullptr;
+	si->_yAdjoin = nullptr;
+
 	// These help out with sorting. We calc them now, so it will be faster
 	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
 	si->_flat = zd == 0;
@@ -195,6 +195,25 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		// Get the insert point... which is before the first item that has higher z than us
 		if (!addpoint && si->listLessThan(*si2))
 			addpoint = si2;
+
+		// Find adjoining floor squares for better occlusion
+		if (si->_occl && si2->_occl && si->_fbigsq && si2->_fbigsq && si->_z == si2->_z) {
+			// Does this share an edge?
+			if (si->_y == si2->_y && si->_yFar == si2->_yFar) {
+				if (si->_xLeft == si2->_x) {
+					si->_xAdjoin = si2;
+				} else if (si->_x == si2->_xLeft) {
+					si2->_xAdjoin = si;
+				}
+			}
+			else if (si->_x == si2->_x && si->_xLeft == si2->_xLeft) {
+				if (si->_yFar == si2->_y) {
+					si->_yAdjoin = si2;
+				} else if (si->_y == si2->_yFar) {
+					si2->_yAdjoin = si;
+				}
+			}
+		}
 
 		// Doesn't overlap
 		if (si2->_occluded || !si->overlap(*si2))
@@ -254,12 +273,51 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
+void ItemSorter::CheckOcclusion() {
+	for (SortItem *it = _items; it != nullptr; it = it->_next) {
+		// Check if item is part of a 4x4 adjoined square
+		if (it->_occl && it->_fbigsq && it->_xAdjoin && it->_yAdjoin &&
+			it->_xAdjoin->_yAdjoin && it->_yAdjoin->_xAdjoin &&
+			it->_xAdjoin->_yAdjoin == it->_yAdjoin->_xAdjoin) {
+
+			SortItem si;
+			si._occl = true;
+			si._fbigsq = true;
+			si._flat = it->_flat;
+			si._solid = it->_solid;
+			si._roof = it->_roof;
+			si._fixed = it->_fixed;
+			si._land = it->_land;
+
+			Box box = it->_xAdjoin->_yAdjoin->getBoxBounds();
+			box.extend(it->getBoxBounds());
+			si.setBoxBounds(box, _camSx, _camSy);
+
+			for (SortItem *si2 = _items; si2 != nullptr; si2 = si2->_next) {
+				// Skip members of the adjoined square
+				if (si2 == it || si2 == it->_xAdjoin || si2 == it->_yAdjoin || si2 == it->_xAdjoin->_yAdjoin)
+					continue;
+
+				// Doesn't overlap
+				if (si2->_occluded || !si.overlap(*si2))
+					continue;
+
+				if (si2->below(si) && si.occludes(*si2)) {
+					si2->_occluded = true;
+				}
+			}
+		}
+	}
+}
+
 void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
 		uint32 color = TEX32_PACK_RGB(0, 0, 0);
 		surf->fill32(color, _clipWindow);
 	}
+
+	CheckOcclusion();
 
 	SortItem *it = _items;
 	SortItem *end = nullptr;

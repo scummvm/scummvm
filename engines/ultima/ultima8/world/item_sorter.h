@@ -69,6 +69,7 @@ public:
 	void IncSortLimit(int count);
 
 private:
+	void CheckOcclusion();
 	bool PaintSortItem(RenderSurface *surf, SortItem *si);
 };
 

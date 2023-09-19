@@ -93,6 +93,9 @@ struct SortItem {
 	int32   _sxBot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
 	int32   _syBot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
 
+	SortItem *_xAdjoin;  // Item sharing an right x edge with the left x edge - used for occlusion
+	SortItem *_yAdjoin;  // Item sharing an near y edge with the fay y edge - used for occlusion
+
 	bool    _fbigsq : 1;         // Needs 1 bit  0
 	bool    _flat : 1;           // Needs 1 bit  1
 	bool    _occl : 1;           // Needs 1 bit  2
@@ -219,6 +222,8 @@ struct SortItem {
 	// Set worldspace bounds and calculate screenspace at center point
 	inline void setBoxBounds(const Box &box, int32 sx, int32 sy);
 
+	inline Box getBoxBounds() const;
+
 	// Check if the given point is inside the screenpace bounds.
 	inline bool contains(int32 sx, int32 sy) const;
 
@@ -274,6 +279,17 @@ inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
 	_sr.top = _syTop;
 	_sr.right = _sxRight;
 	_sr.bottom = _syBot;
+}
+
+inline Box SortItem::getBoxBounds() const {
+	Box box;
+	box._x = _x;
+	box._y = _y;
+	box._z = _z;
+	box._xd = _x - _xLeft;
+	box._yd = _y - _yFar;
+	box._zd = _zTop - _z;
+	return box;
 }
 
 inline bool SortItem::contains(int32 sx, int32 sy) const {
