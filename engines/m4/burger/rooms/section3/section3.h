@@ -32,7 +32,7 @@
 #include "m4/burger/rooms/section3/room306.h"
 #include "m4/burger/rooms/section3/room307.h"
 #include "m4/burger/rooms/section3/room310.h"
-#include "m4/burger/rooms/section3/room319.h"
+#include "m4/burger/rooms/section3/mine.h"
 
 namespace M4 {
 namespace Burger {
@@ -48,7 +48,7 @@ private:
 	Room306 _room306;
 	Room307 _room307;
 	Room310 _room310;
-	Room319 _room319;
+	Mine _mine;
 
 public:
 	Section3();

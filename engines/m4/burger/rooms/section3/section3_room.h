@@ -43,7 +43,7 @@ protected:
 	void set_palette_brightness(int percent);
 
 public:
-	Section3Room() {}
+	Section3Room() : Rooms::Room() {}
 	virtual ~Section3Room() {}
 
 	void preload() override;

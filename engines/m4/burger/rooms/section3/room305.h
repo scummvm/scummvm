@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION3_ROOM305_H
 #define M4_BURGER_ROOMS_SECTION3_ROOM305_H
 
-#include "m4/burger/rooms/section3/section3_room.h"
+#include "m4/burger/rooms/section3/mine_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room305 : public Section3Room {
+class Room305 : public MineRoom {
 private:
 	static const char *SAID[][4];
 	static const seriesStreamBreak SERIES1[];
@@ -42,11 +42,12 @@ protected:
 	}
 
 public:
-	Room305() : Section3Room() {}
+	Room305() : MineRoom() {}
 	~Room305() override {}
 
 	void init() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

@@ -19,17 +19,17 @@
  *
  */
 
-#include "m4/burger/rooms/section3/room319.h"
+#include "m4/burger/rooms/section3/mine.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-void Room319::init() {
+void Mine::init() {
 }
 
-void Room319::daemon() {
+void Mine::daemon() {
 }
 
 } // namespace Rooms

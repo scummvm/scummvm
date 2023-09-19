@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION3_ROOM310_H
 #define M4_BURGER_ROOMS_SECTION3_ROOM310_H
 
-#include "m4/burger/rooms/section3/section3_room.h"
+#include "m4/burger/rooms/section3/mine_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room310 : public Section3Room {
+class Room310 : public MineRoom {
 private:
 	static const char *SAID[][4];
 	static const seriesPlayBreak PLAY1[];
