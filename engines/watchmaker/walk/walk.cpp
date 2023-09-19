@@ -798,6 +798,7 @@ void ForceAnimInBounds(int32 oc) {
 			}
 		}
 	}
+	(void)inters;
 }
 
 } // End of namespace Watchmaker

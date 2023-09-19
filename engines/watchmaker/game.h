@@ -54,7 +54,7 @@ class RoomManager;
 
 class WGame {
 	bool g_bReady, g_bActive;
-	bool g_bSkipActive = false;
+	//bool g_bSkipActive = false;
 	const char *CharName[32];
 	uint32 LoadChar;
 	MeshModifiers *_meshModifiers;

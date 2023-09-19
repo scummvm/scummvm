@@ -560,11 +560,11 @@ void t3dOptimizeMaterialList(t3dBODY *b) {
 	// TODO: The optimization leaves a bunch of materials as nullptr, we need to update all the
 	// references to them. Currently we do this by subtracting 1 from all references that were above
 	// a removed material. This works, but isn't really optimal.
-	int subtract = 0;
+	//int subtract = 0;
 	for (uint32 i = 0; i < b->NumMaterials(); i++) {
 		if (!b->MatTable[i]) {
 			b->MatTable.remove_at(i);
-			subtract++;
+			//subtract++;
 			for (uint32 k = 0; k < b->NumMeshes(); k++) {
 				auto &m = b->MeshTable[k];
 				for (int q = 0; q < m.NumFaces(); q++) {
