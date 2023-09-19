@@ -302,6 +302,10 @@ void SoundManager::playSound(uint16 channelID) {
 	Channel &chan = _channels[channelID];
 	chan.stream->seek(0);
 
+	// Set a minimum volume (10 percent was chosen arbitrarily, but sounds reasonably close)
+	// Fix for nancy3 scene 6112, but NOT a hack; the original engine also set a minimum volume for all sounds
+	chan.volume = 10 + ((int)chan.volume * 90) / 100;
+
 	// Init 3D sound
 	if (chan.playCommands & ~kPlaySequential && chan.effectData) {
 		uint16 playCommands = chan.playCommands;
@@ -363,7 +367,7 @@ void SoundManager::playSound(uint16 channelID) {
 						&chan.handle,
 						Audio::makeLoopingAudioStream(chan.stream, numLoops),
 						channelID,
-						chan.volume * 255 / 100,
+						(int)chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
 
 	soundEffectMaintenance(channelID, true);
