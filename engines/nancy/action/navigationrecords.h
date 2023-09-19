@@ -109,8 +109,8 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	SceneChangeDescription _onTrue;
-	SceneChangeDescription _onFalse;
+	SceneChangeWithFlag _onTrue;
+	SceneChangeWithFlag _onFalse;
 	byte _condType;
 	uint16 _conditionID;
 	byte _conditionPayload;

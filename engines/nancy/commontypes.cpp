@@ -47,11 +47,37 @@ void SceneChangeDescription::readData(Common::SeekableReadStream &stream, bool l
 	}
 }
 
-void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool longFormat) {
-	_sceneChange.readData(stream, longFormat);
-	stream.skip(2); // shouldStopRendering
-	_flag.label = stream.readSint16LE();
-	_flag.flag = stream.readByte();
+void SceneChangeWithFlag::readData(Common::SeekableReadStream &stream, bool reverseFormat) {
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.frameID = stream.readUint16LE();
+	_sceneChange.verticalOffset = stream.readUint16LE();
+	_sceneChange.continueSceneSound = stream.readUint16LE();
+
+	if (reverseFormat) {
+		// NO shouldStopRendering
+		_flag.label = stream.readSint16LE();
+		_flag.flag = stream.readByte();
+
+		if (g_nancy->getGameType() >= kGameTypeNancy3) {
+			int32 x = stream.readSint32LE();
+			int32 y = stream.readSint32LE();
+			int32 z = stream.readSint32LE();
+			_sceneChange.listenerFrontVector.set(x, y, z);
+			_sceneChange.frontVectorFrameID = _sceneChange.frameID;
+		}
+	} else {
+		if (g_nancy->getGameType() >= kGameTypeNancy3) {
+			int32 x = stream.readSint32LE();
+			int32 y = stream.readSint32LE();
+			int32 z = stream.readSint32LE();
+			_sceneChange.listenerFrontVector.set(x, y, z);
+			_sceneChange.frontVectorFrameID = _sceneChange.frameID;
+		}
+
+		stream.skip(2); // shouldStopRendering
+		_flag.label = stream.readSint16LE();
+		_flag.flag = stream.readByte();
+	}
 }
 
 void SceneChangeWithFlag::execute() {

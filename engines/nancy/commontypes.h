@@ -150,7 +150,7 @@ struct SceneChangeWithFlag {
 	SceneChangeDescription _sceneChange;
 	FlagDescription _flag;
 
-	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
+	void readData(Common::SeekableReadStream &stream, bool reverseFormat = false);
 	void execute();
 };
 

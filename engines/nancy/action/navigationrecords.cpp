@@ -96,8 +96,14 @@ void Hot1FrSceneChange::execute() {
 }
 
 void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
-	_onTrue.readData(stream);
-	_onFalse.readData(stream);
+	if (g_nancy->getGameType() <= kGameTypeNancy2) {
+		_onTrue._sceneChange.readData(stream);
+		_onFalse._sceneChange.readData(stream);
+	} else {
+		_onTrue.readData(stream, true);
+		_onFalse.readData(stream, true);
+	}
+	
 	_condType = stream.readByte();
 	_conditionID = stream.readUint16LE();
 	_conditionPayload = stream.readByte();
@@ -148,9 +154,9 @@ void HotMultiframeMultisceneChange::execute() {
 		}
 
 		if (conditionMet) {
-			NancySceneState.changeScene(_onTrue);
+			_onTrue.execute();
 		} else {
-			NancySceneState.changeScene(_onFalse);
+			_onFalse.execute();
 		}
 
 		break;
