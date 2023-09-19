@@ -5807,11 +5807,8 @@ EOF
 			append_var LIBS "$LIBMIKMOD_LIBS"
 			append_var INCLUDES "$LIBMIKMOD_CFLAGS"
 		fi
-
-		echo "$_libmikmod"
-
 	fi
-
+	echo "$_libmikmod"
 fi
 
 define_in_config_if_yes "$_libmikmod" "USE_MIKMOD"
