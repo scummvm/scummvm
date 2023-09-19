@@ -275,7 +275,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	// object ID
 	uint16 objectID = readField(file, 8);
 
-	if (objectID == 224 && objectType == 29)
+	if (objectID == 224 && (rawFlagsAndType & 0x1F) == 29) // If objectType is out of range, fix it
 		objectType = (ObjectType)7;
 
 	// size of object on disk; we've accounted for 8 bytes
