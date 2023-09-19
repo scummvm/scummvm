@@ -493,7 +493,7 @@ CapcomPC98Player_MIDI::CapcomPC98Player_MIDI(MidiDriver::DeviceHandle dev, bool 
 	uint8 *map = new uint8[128];
 	assert(map);
 
-	if (isMT32) {		
+	if (isMT32) {
 		memcpy(map, _programMapping_mt32ToGM, 128);
 	} else {
 		for (uint8 i = 0; i < 128; ++i)
@@ -584,7 +584,7 @@ void CapcomPC98Player_MIDI::updateMasterVolume()  {
 		for (int i = 4; i < 8; ++i)
 			chk += mt32VolSysEx[i];
 		mt32VolSysEx[8] = 0x80 - (chk & 0x7f);
-		_midi->sysEx(mt32VolSysEx, sizeof(mt32VolSysEx));	
+		_midi->sysEx(mt32VolSysEx, sizeof(mt32VolSysEx));
 	} else {
 		uint16 vol = _musicVolume * 0x3FFF / Audio::Mixer::kMaxMixerVolume;
 		byte vl = vol & 0x7F;
@@ -921,7 +921,7 @@ void CapcomPC98_FMChannel::setupVibrato() {
 		_vbrState = _vbrDelayTicker ? 0 : ((_instrument.vbrType == 2 ? -3072 : 3072) << 16);
 		_vbrCycleTicker = _instrument.vbrCycleLength - 1;
 		_vbrHandler = _vbrHandlers[_instrument.vbrType];
-		
+
 		break;
 
 	default:
@@ -1151,7 +1151,7 @@ bool CapcomPC98Player_FM::init() {
 	if (!(_chan && _ac && _ac->init()))
 		return false;
 
-	if (_volControlMask == 0xFFFF) 
+	if (_volControlMask == 0xFFFF)
 		setVolControlMask();
 
 	_ac->writeReg(0, 7, 0xBF);
