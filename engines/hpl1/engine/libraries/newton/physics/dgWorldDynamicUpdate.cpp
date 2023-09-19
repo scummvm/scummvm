@@ -3739,7 +3739,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 	dgInt32 prevJoint;
 	dgInt32 maxPasses;
 	dgInt32 forceRows;
-	dgInt32 totalPassesCount;
+	//dgInt32 totalPassesCount;
 	dgFloat32 akNum;
 	dgFloat32 accNorm;
 	dgFloat32 *const force = m_force;
@@ -4006,7 +4006,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 	}
 
 	maxPasses = forceRows;
-	totalPassesCount = 0;
+	//totalPassesCount = 0;
 	for (passes = 0; (passes < maxPasses) && (accNorm > maxAccNorm); passes++) {
 		dgInt32 clampedForceIndex;
 		dgInt32 clampedForceJoint;
@@ -4257,7 +4257,7 @@ void dgJacobianMemory::CalculateForcesSimulationMode(dgFloat32 maxAccNorm) const
 				}
 			}
 		}
-		totalPassesCount++;
+		//totalPassesCount++;
 	}
 	ApplyExternalForcesAndAcceleration(maxAccNorm);
 }
