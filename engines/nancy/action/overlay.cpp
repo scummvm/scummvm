@@ -288,14 +288,21 @@ void Overlay::setFrame(uint frame) {
 			srcRect.setHeight(_srcRects[0].height());
 		}
 	} else {
-		if (srcRect.isEmpty()) {
-			// In static mode the srcRect above may be empty (see "out of service" sign in nancy5 scenes 2056, 2075),
-			// in which case we need to take the rect from the bitmap struct instead. Note that this is a backup,
-			// since if we use the bitmap src rect in all cases rendering can be incorrect (see same sign in nancy5 scene 2000)
-			for (uint i = 0; i < _bitmaps.size(); ++i) {
-				if (_currentViewportFrame == _bitmaps[i].frameID) {
-					srcRect = _bitmaps[i].src;
-				}
+		// In static mode the animated srcRect above may or may not be valid.
+		// The way the original engine seems to work is that it creates an intermediate surface using
+		// the animation src bounds, and then copies from that surface to the screen using the static mode source
+		// rect below (or the other way around). We can achieve the same results by just offsetting one
+		// of the rects by the other's left/top coordinates, _provided they have the same dimensions_.
+		// Test cases for the way the two rects interact are nancy3 scene 3070, nancy5 scenes 2056, 2075, and 2000
+		for (uint i = 0; i < _bitmaps.size(); ++i) {
+			if (_currentViewportFrame == _bitmaps[i].frameID) {
+				Common::Rect staticSrc = _bitmaps[i].src;
+
+				// If this assertion fails, we need to start using an intermediate surface
+				assert((staticSrc.width() == srcRect.width() && staticSrc.height() == srcRect.height()) || srcRect.isEmpty());
+
+				staticSrc.translate(srcRect.left, srcRect.top);
+				srcRect = staticSrc;
 			}
 		}
 	}
