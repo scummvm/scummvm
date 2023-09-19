@@ -41,8 +41,8 @@ public:
 	Common::SeekableReadStream *createReadStream() const override;
 	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override;
 	Common::String getName() const override { return _name; }
-	Common::Path getPathInArchive() const { return _name; }
-	Common::String getFileName() const { return _name; }
+	Common::Path getPathInArchive() const override { return _name; }
+	Common::String getFileName() const override { return _name; }
 	uint32 getLength() const { return _length; }
 	uint32 getOffset() const { return _offset; }
 
