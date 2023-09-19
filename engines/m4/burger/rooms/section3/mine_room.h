@@ -46,6 +46,8 @@ private:
 	int _mineCtr = 0;
 
 	int getPigDistance() const;
+
+protected:
 	void changeRoom(MineDirection dir);
 
 public:
