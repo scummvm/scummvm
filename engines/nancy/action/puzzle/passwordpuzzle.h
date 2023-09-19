@@ -40,7 +40,7 @@ public:
 	void handleInput(NancyInput &input) override;
 
 	uint16 _fontID = 0;
-	uint16 _cursorBlinkTime;
+	uint16 _cursorBlinkTime = 500;
 	Common::Rect _nameBounds;
 	Common::Rect _passwordBounds;
 	// _screenPosition 0x24
