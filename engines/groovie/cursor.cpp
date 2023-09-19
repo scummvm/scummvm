@@ -220,6 +220,7 @@ byte *GrvCursorMan_t7g::loadImage(Common::SeekableReadStream &file) {
 			}
 		}
 	}
+	debug(9, "GrvCursorMan_t7g::loadImage(): decompressed %d bytes", decompbytes);
 
 	return cursorStorage;
 }
