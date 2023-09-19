@@ -110,7 +110,7 @@ private:
 	const uint8 _green[3]  = { 0  << 2, 63 << 2, 0  << 2};
 	const uint8 _purple[3] = { 32 << 2, 0  << 2, 32 << 2};
 	const uint8 _black[3]  = { 0  << 2, 0  << 2, 0  << 2};
-	const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2};
+	//const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2};
 
 	struct PaletteFadeInfo {
 		int16 paletteStatus;
