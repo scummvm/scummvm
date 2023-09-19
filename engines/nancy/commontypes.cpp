@@ -90,7 +90,7 @@ void HotspotDescription::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, coords);
 }
 
-void BitmapDescription::readData(Common::SeekableReadStream &stream, bool frameIsLong) {
+void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool frameIsLong) {
 	if (!frameIsLong) {
 		frameID = stream.readUint16LE();
 	} else {

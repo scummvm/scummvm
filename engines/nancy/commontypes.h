@@ -162,9 +162,9 @@ struct HotspotDescription {
 	void readData(Common::SeekableReadStream &stream);
 };
 
-// Describes a single bitmap draw
-struct BitmapDescription {
-	uint16 frameID = 0;
+// Describes a blit operation, dependent on a background frame
+struct FrameBlitDescription {
+	uint16 frameID = 0; // Frame ID of the Scene background
 	Common::Rect src;
 	Common::Rect dest;
 

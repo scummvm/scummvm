@@ -274,7 +274,7 @@ public:
 
 	uint16 _objectID = 0;
 	Common::String _imageName;
-	Common::Array<BitmapDescription> _bitmaps;
+	Common::Array<FrameBlitDescription> _blitDescriptions;
 
 	int16 _drawnFrameID = -1;
 	Graphics::ManagedSurface _fullSurface;

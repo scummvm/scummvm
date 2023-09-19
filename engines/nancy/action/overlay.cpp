@@ -121,8 +121,8 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	readRectArray(ser, _srcRects, numSrcRects);
 
-	_bitmaps.resize(numViewportFrames);
-	for (auto &bm : _bitmaps) {
+	_blitDescriptions.resize(numViewportFrames);
+	for (auto &bm : _blitDescriptions) {
 		bm.readData(stream, ser.getVersion() >= kGameTypeNancy2);
 	}
 }
@@ -169,9 +169,9 @@ void Overlay::execute() {
 					setVisible(false);
 					_hasHotspot = false;
 
-					for (uint i = 0; i < _bitmaps.size(); ++i) {
-						if (_currentViewportFrame == _bitmaps[i].frameID) {
-							moveTo(_bitmaps[i].dest);
+					for (uint i = 0; i < _blitDescriptions.size(); ++i) {
+						if (_currentViewportFrame == _blitDescriptions[i].frameID) {
+							moveTo(_blitDescriptions[i].dest);
 							setVisible(true);
 
 							if (_enableHotspot == kPlayOverlayWithHotspot) {
@@ -222,9 +222,9 @@ void Overlay::execute() {
 				setVisible(false);
 				_hasHotspot = false;
 
-				for (uint i = 0; i < _bitmaps.size(); ++i) {
-					if (_currentViewportFrame == _bitmaps[i].frameID) {
-						moveTo(_bitmaps[i].dest);
+				for (uint i = 0; i < _blitDescriptions.size(); ++i) {
+					if (_currentViewportFrame == _blitDescriptions[i].frameID) {
+						moveTo(_blitDescriptions[i].dest);
 						setVisible(true);
 
 						// In static mode every "animation" frame corresponds to a viewport frame
@@ -294,9 +294,9 @@ void Overlay::setFrame(uint frame) {
 		// rect below (or the other way around). We can achieve the same results by just offsetting one
 		// of the rects by the other's left/top coordinates, _provided they have the same dimensions_.
 		// Test cases for the way the two rects interact are nancy3 scene 3070, nancy5 scenes 2056, 2075, and 2000
-		for (uint i = 0; i < _bitmaps.size(); ++i) {
-			if (_currentViewportFrame == _bitmaps[i].frameID) {
-				Common::Rect staticSrc = _bitmaps[i].src;
+		for (uint i = 0; i < _blitDescriptions.size(); ++i) {
+			if (_currentViewportFrame == _blitDescriptions[i].frameID) {
+				Common::Rect staticSrc = _blitDescriptions[i].src;
 
 				// If this assertion fails, we need to start using an intermediate surface
 				assert((staticSrc.width() == srcRect.width() && staticSrc.height() == srcRect.height()) || srcRect.isEmpty());

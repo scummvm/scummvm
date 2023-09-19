@@ -67,7 +67,7 @@ public:
 	Common::Array<Common::Rect> _srcRects;
 	// Describes how the animation will be displayed on a single
 	// frame of the viewport
-	Common::Array<BitmapDescription> _bitmaps;
+	Common::Array<FrameBlitDescription> _blitDescriptions;
 
 	int16 _currentFrame = -1;
 	int16 _currentViewportFrame = -1;

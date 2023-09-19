@@ -315,7 +315,7 @@ void DifficultyLevel::execute() {
 void ShowInventoryItem::init() {
 	g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
-	_drawSurface.create(_fullSurface, _bitmaps[0].src);
+	_drawSurface.create(_fullSurface, _blitDescriptions[0].src);
 
 	RenderObject::init();
 }
@@ -330,14 +330,14 @@ void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 		stream.skip(2);
 	}
 
-	_bitmaps.resize(numFrames);
+	_blitDescriptions.resize(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
 		if (gameType <= kGameTypeNancy2) {
-			_bitmaps[i].readData(stream);
+			_blitDescriptions[i].readData(stream);
 		} else {
-			_bitmaps[i].frameID = i;
-			readRect(stream, _bitmaps[i].src);
-			readRect(stream, _bitmaps[i].dest);
+			_blitDescriptions[i].frameID = i;
+			readRect(stream, _blitDescriptions[i].src);
+			readRect(stream, _blitDescriptions[i].dest);
 		}
 	}
 }
@@ -352,8 +352,8 @@ void ShowInventoryItem::execute() {
 	case kRun: {
 		int newFrame = -1;
 
-		for (uint i = 0; i < _bitmaps.size(); ++i) {
-			if (_bitmaps[i].frameID == NancySceneState.getSceneInfo().frameID) {
+		for (uint i = 0; i < _blitDescriptions.size(); ++i) {
+			if (_blitDescriptions[i].frameID == NancySceneState.getSceneInfo().frameID) {
 				newFrame = i;
 				break;
 			}
@@ -364,9 +364,9 @@ void ShowInventoryItem::execute() {
 
 			if (newFrame != -1) {
 				_hasHotspot = true;
-				_hotspot = _bitmaps[newFrame].dest;
-				_drawSurface.create(_fullSurface, _bitmaps[newFrame].src);
-				_screenPosition = _bitmaps[newFrame].dest;
+				_hotspot = _blitDescriptions[newFrame].dest;
+				_drawSurface.create(_fullSurface, _blitDescriptions[newFrame].src);
+				_screenPosition = _blitDescriptions[newFrame].dest;
 				setVisible(true);
 			} else {
 				_hasHotspot = false;
