@@ -28,31 +28,68 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-enum MineDirection {
-	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_WEST = 2, DIR_EAST = 3
+enum MineDoors {
+	BACK, FRONT, LEFT, RIGHT, MAX_DOORS, NONE
 };
 
-struct MineEntry {
-	int32 _unknown;
-	int16 _indexes[7];
-	int32 _offset;
-	int16 _field16;
+enum MineScenes {
+	SCENE_305,	 // treasure
+	SCENE_310,	 // mine entrance
+	SCENE_311,	 // one door (a)
+	SCENE_312,	 // one door (b)
+	SCENE_313,	 // two doors (a)
+	SCENE_314,	 // two doors (b)
+	SCENE_315,	 // three doors (a)
+	SCENE_316,	 // three doors (b)
+	SCENE_317,	 // four doors (a)
+	SCENE_318,	 // four doors (b)
+	SCENE_319,	 // one door (c)
+	MAX_SCENE_TYPES,
+	TREASURE_SCENE = SCENE_310,
+	ENTRANCE_SCENE = SCENE_305,
+	NO_SCENE = MAX_SCENE_TYPES
+};
+
+
+struct MineRoom {
+	int16 roomNumber;    	  	// The mine room number
+	int16 scene_id;             // The scene id (indexes for mine_scene_numbers)
+	int16 link[4];              // Links to other mine rooms
+	int16 door[4];              // Specify doors to use
+	int16 correctLink;          // The correct link to take to get to the treasure
+	int16 check;            	// Used to check the maze sanity
+};
+
+struct Rectangle {
+	int16 x1 = 0;
+	int16 y1 = 0;
+	int16 x2 = 0;
+	int16 y2 = 0;
 };
 
 class Mine : public Section3Room {
 private:
-	static const MineEntry MINE_DATA[];
 	static const char *SAID[][4];
+	static const int16 MINE_SCENE_NUMBERS[];
+	static const MineRoom MINE_INFO[];
+	static Rectangle FADE_DOWN_INFO[MAX_SCENE_TYPES][4];
 	int _mineCtr = 0;
+	int16 _mineRoomIndex = 0;
+	int16 _presentSceneID = 0;
+	int16 _entranceDoor = FRONT;
+	MineRoom _mineRoomInfo;
+	bool _fade_down_rect_active = false;	// True if a fade down should occurr when walker in the fade_down_rect
+	Rectangle _fade_down_rect;				// If the walker is in his rectum and its active, turn off the lights
 
-	int getPigDistance() const;
+	int getTreasureDistance() const;
 
 protected:
 	const char *getDigi() override {
 		return "300_004";
 	}
 
-	void changeRoom(MineDirection dir);
+	void mine_travel_link(int16 takeLink);
+	void set_fade_down_rect(MineDoors exit_door);
 
 public:
 	Mine() : Section3Room() {}
@@ -60,6 +97,7 @@ public:
 
 	void preload() override;
 	void daemon() override;
+	void pre_parser() override;
 	void parser() override;
 };
 

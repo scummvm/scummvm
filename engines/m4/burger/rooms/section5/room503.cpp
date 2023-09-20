@@ -882,10 +882,10 @@ void Room503::pre_parser() {
 	} else {
 		if (_flag1) {
 			player_update_info();
-			HotSpotRec *hotspot = hotspot_which(_G(hotspot_x), _G(hotspot_y));
+			HotSpotRec *hotspot = hotspot_which(_G(click_x), _G(click_y));
 
-			if (_G(hotspot_x) > 272 && _G(hotspot_y) < 300 && player_said("FLOOR")) {
-				ws_walk(_G(hotspot_x), 301, nullptr, -1, 1);
+			if (_G(click_x) > 272 && _G(click_y) < 300 && player_said("FLOOR")) {
+				ws_walk(_G(click_x), 301, nullptr, -1, 1);
 			} else if (hotspot->feet_x > 272 && hotspot->feet_y < 300) {
 				player_hotspot_walk_override(hotspot->feet_x, 301, 1);
 			}

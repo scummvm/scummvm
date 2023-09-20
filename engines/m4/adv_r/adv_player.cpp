@@ -206,7 +206,7 @@ PlayerInfo *player_update_info() {
 }
 
 void player_set_facing_hotspot(int trigger) {
-	player_set_facing_at(trigger, _G(hotspot_x), _G(hotspot_y));
+	player_set_facing_at(trigger, _G(click_x), _G(click_y));
 }
 
 void player_set_facing_at(int x, int y, int trigger) {
