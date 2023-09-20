@@ -70,7 +70,7 @@ void Room305::init() {
 	setupDigi();
 	set_palette_brightness(60);
 	pal_cycle_init(96, 111, 6, -1, -1);
-	_G(flags)[V149] = 0;
+	_G(flags)[kMineRoomIndex] = 0;
 
 	if (_G(flags)[V134] && !_G(flags)[V135] && !_G(flags)[V137]) {
 		hotspot_set_active("DARKNESS", true);

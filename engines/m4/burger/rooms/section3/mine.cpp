@@ -93,10 +93,27 @@ const MineRoom Mine::MINE_INFO[] = {
       40,   NO_SCENE,   -1,   -1,   -1,  -1,    NONE,  NONE,  NONE,  NONE,   NONE,	    0  
 };																					 
 
-/**
- * Coords for starting fade down for exits
- */
-Rectangle Mine::FADE_DOWN_INFO[MAX_SCENE_TYPES][4] = {
+const EntranceInfo Mine::ENTRANCE_INFO[MAX_SCENE_TYPES][4] = {
+	//
+	// ( offscreen_x, offscreen_y, enter_facing, home_x, home_y, home_facing ) x 4 possible entrances
+	//
+	//	      Back				 	     Front					     Left					       Right 
+	//-----------------------  -------------------------  -------------------------  -------------------------
+   	285, 240, 5, 320, 290, 5,    0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0, // 305
+	  0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,   55, 245, 3, 225, 275, 3,    0,   0, 0,   0,   0, 0, // 310
+	315, 225, 7, 310, 275, 7,    0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0, // 311
+	  0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,   90, 240, 3, 220, 270, 4,    0,   0, 0,   0,   0, 0, // 312
+	  0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,   65, 230, 3, 215, 270, 4,  550, 240, 8, 400, 270, 8, // 313
+	  0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,   65, 240, 3, 190, 270, 4,  570, 250, 8, 440, 280, 8, // 314
+	320, 210, 7, 315, 270, 7,    0,   0, 0,   0,   0, 0,   60, 230, 3, 190, 270, 4,  560, 250, 9, 400, 270, 8, // 315
+	  0,   0, 0,   0,   0, 0,  400, 373,11, 335, 300, 7,   60, 220, 3, 200, 270, 4,  570, 240, 8, 400, 270, 7, // 316
+	320, 215, 7, 315, 270, 7,  230, 373, 1, 330, 300, 7,   60, 220, 3, 200, 270, 4,  570, 240, 8, 400, 270, 7, // 317
+	320, 215, 5, 315, 270, 7,  350, 373,11, 330, 300, 7,   60, 240, 3, 190, 270, 4,  560, 235, 9, 420, 270, 8, // 318
+	  0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,    0,   0, 0,   0,   0, 0,  530, 240, 9, 420, 270, 7  // 319
+};
+
+
+const Rectangle Mine::FADE_DOWN_INFO[MAX_SCENE_TYPES][4] = {
 	//
 	// ( x1, y1, x2, y2) for four directions
 	//
@@ -119,10 +136,18 @@ Rectangle Mine::FADE_DOWN_INFO[MAX_SCENE_TYPES][4] = {
 void Mine::preload() {
 	Section3Room::preload();
 	_mineCtr = 0;
+	_G(player).walker_type = 0;
+	_G(player).shadow_type = 0;
 }
 
 void Mine::daemon() {
 	switch (_G(kernel).trigger) {
+	case 301: {
+		const EntranceInfo &ei = ENTRANCE_INFO[_presentSceneID][_entranceDoor];
+		ws_demand_location(ei.offscreen_x, ei.offscreen_y, ei.enter_facing);
+		break;
+	}
+
 	case 304:
 		digi_play("300_007", 2);
 		break;
@@ -156,7 +181,7 @@ void Mine::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("LOOK AT") && player_said_any("WALL", "CEILING", "GROUND")) {
-		term_message("Room #: %d", _G(flags)[V149]);
+		term_message("Room #: %d", _G(flags)[kMineRoomIndex]);
 		term_message("Distance from pig: %d", getTreasureDistance());
 
 		_mineCtr = (_mineCtr + 1) % 5;
@@ -194,7 +219,7 @@ void Mine::parser() {
 int Mine::getTreasureDistance() const {
 	int distance = 0;
 
-	for (int index = _G(flags)[V149]; index != MINE_END; ++distance) {
+	for (int index = _G(flags)[kMineRoomIndex]; index != MINE_END; ++distance) {
 		const MineRoom &me = MINE_INFO[index];
 		index = me.link[me.correctLink];
 	}
@@ -203,11 +228,13 @@ int Mine::getTreasureDistance() const {
 }
 
 void Mine::mine_travel_link(int16 takeLink) {
-	_mineRoomInfo = MINE_INFO[_mineRoomIndex];		// Get this mine room info
-	_entranceDoor = _mineRoomInfo.door[takeLink];	// Get which door to enter from in new room
-	_mineRoomIndex = _mineRoomInfo.link[takeLink];	// Get which link to take
+	long &mineRoomIndex = _G(flags)[kMineRoomIndex];
 
-	_mineRoomInfo = MINE_INFO[_mineRoomIndex];		// Get new mine room info from new index
+	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get this mine room info
+	_entranceDoor = _mineRoomInfo.door[takeLink];	// Get which door to enter from in new room
+	mineRoomIndex = _mineRoomInfo.link[takeLink];	// Get which link to take
+
+	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get new mine room info from new index
 	_presentSceneID = _mineRoomInfo.scene_id;		// Set the scene ID
 	_G(game).new_room = MINE_SCENE_NUMBERS[_presentSceneID]; // Go to the corresponding scene number
 	_G(kernel).force_restart = true; 				// Makes the scene start over even if new_room = present room

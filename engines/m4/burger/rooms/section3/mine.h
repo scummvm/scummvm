@@ -60,6 +60,15 @@ struct MineRoom {
 	int16 check;            	// Used to check the maze sanity
 };
 
+struct EntranceInfo {
+	int16 offscreen_x;
+	int16 offscreen_y;
+	int16 enter_facing;
+	int16 home_x;
+	int16 home_y;
+	int16 home_facing;
+};
+
 struct Rectangle {
 	int16 x1 = 0;
 	int16 y1 = 0;
@@ -72,9 +81,18 @@ private:
 	static const char *SAID[][4];
 	static const int16 MINE_SCENE_NUMBERS[];
 	static const MineRoom MINE_INFO[];
-	static Rectangle FADE_DOWN_INFO[MAX_SCENE_TYPES][4];
+
+	/**
+	 * Coords for starting fade down for exits
+	 */
+	static const Rectangle FADE_DOWN_INFO[MAX_SCENE_TYPES][4];
+
+	/**
+	 * Room coords for entrance walk-ins
+	 */
+	static const EntranceInfo ENTRANCE_INFO[MAX_SCENE_TYPES][4];
+
 	int _mineCtr = 0;
-	int16 _mineRoomIndex = 0;
 	int16 _presentSceneID = 0;
 	int16 _entranceDoor = FRONT;
 	MineRoom _mineRoomInfo;
