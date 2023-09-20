@@ -214,6 +214,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		}
 
 		break;
+	case kRotateCW:
+		_curCursorID = kRotateCW;
+		return;
+	case kRotateCCW:
+		_curCursorID = kRotateCCW;
+		return;
 	case kSwivelLeft:
 		// Only valid for nancy6 and up, but we don't need a check for now
 		_curCursorID = kSwivelLeft;
