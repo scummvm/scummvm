@@ -39,17 +39,17 @@ class IdStreamFileRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void streamFileCallback(Networking::NetworkReadStreamResponse response);
-	void streamFileErrorCallback(Networking::ErrorResponse error);
+	void idResolvedCallback(const Storage::UploadResponse &response);
+	void idResolveFailedCallback(const Networking::ErrorResponse &error);
+	void streamFileCallback(const Networking::NetworkReadStreamResponse &response);
+	void streamFileErrorCallback(const Networking::ErrorResponse &error);
 	void finishStream(Networking::NetworkReadStream *stream);
 public:
-	IdStreamFileRequest(IdStorage *storage, Common::String path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdStreamFileRequest();
+	IdStreamFileRequest(IdStorage *storage, const Common::String &path, Networking::NetworkReadStreamCallback cb, Networking::ErrorCallback ecb);
+	~IdStreamFileRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 };
 
 } // End of namespace Id

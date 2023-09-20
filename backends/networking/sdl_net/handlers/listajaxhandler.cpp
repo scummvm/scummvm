@@ -32,14 +32,14 @@ ListAjaxHandler::ListAjaxHandler() {}
 
 ListAjaxHandler::~ListAjaxHandler() {}
 
-Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
+Common::JSONObject ListAjaxHandler::listDirectory(const Common::String &path_) {
 	Common::JSONArray itemsList;
 	Common::JSONObject errorResult;
 	Common::JSONObject successResult;
 	successResult.setVal("type", new Common::JSONValue("success"));
 	errorResult.setVal("type", new Common::JSONValue("error"));
 
-	if (path == "" || path == "/") {
+	if (path_ == "" || path_ == "/") {
 		if (ConfMan.hasKey("rootpath", "cloud"))
 			addItem(itemsList, IT_DIRECTORY, "/root/", Common::convertFromU32String(_("File system root")));
 		addItem(itemsList, IT_DIRECTORY, "/saves/", Common::convertFromU32String(_("Saved games")));
@@ -47,10 +47,11 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 		return successResult;
 	}
 
-	if (HandlerUtils::hasForbiddenCombinations(path))
+	if (HandlerUtils::hasForbiddenCombinations(path_))
 		return errorResult;
 
 	Common::String prefixToRemove = "", prefixToAdd = "";
+	Common::String path = path_;
 	if (!transformPath(path, prefixToRemove, prefixToAdd))
 		return errorResult;
 
@@ -112,7 +113,7 @@ ListAjaxHandler::ItemType ListAjaxHandler::detectType(bool isDirectory, const Co
 	return IT_UNKNOWN;
 }
 
-void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType itemType, Common::String path, Common::String name, Common::String size) {
+void ListAjaxHandler::addItem(Common::JSONArray &responseItemsList, ItemType itemType, const Common::String &path, const Common::String &name, const Common::String &size) {
 	Common::String icon;
 	bool isDirectory = (itemType == IT_DIRECTORY || itemType == IT_PARENT_DIRECTORY);
 	switch (itemType) {

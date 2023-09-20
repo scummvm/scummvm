@@ -43,16 +43,16 @@ class DropboxUploadRequest: public Networking::Request {
 
 	void start();
 	void uploadNextPart();
-	void partUploadedCallback(Networking::JsonResponse response);
-	void partUploadedErrorCallback(Networking::ErrorResponse error);
+	void partUploadedCallback(const Networking::JsonResponse &response);
+	void partUploadedErrorCallback(const Networking::ErrorResponse &error);
 	void finishUpload(StorageFile status);
 
 public:
-	DropboxUploadRequest(DropboxStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~DropboxUploadRequest();
+	DropboxUploadRequest(DropboxStorage *storage, const Common::String &path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+	~DropboxUploadRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 };
 
 } // End of namespace Dropbox

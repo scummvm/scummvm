@@ -28,9 +28,9 @@
 
 namespace Networking {
 
-typedef Response<Common::JSONValue *> JsonResponse;
-typedef Common::BaseCallback<JsonResponse> *JsonCallback;
-typedef Common::BaseCallback<Common::JSONValue *> *JSONValueCallback;
+typedef Response<const Common::JSONValue *> JsonResponse;
+typedef Common::BaseCallback<const JsonResponse &> *JsonCallback;
+typedef Common::BaseCallback<const Common::JSONValue *> *JSONValueCallback;
 
 #define CURL_JSON_REQUEST_BUFFER_SIZE 512 * 1024
 
@@ -41,22 +41,22 @@ protected:
 	byte *_buffer;
 
 	/** Sets FINISHED state and passes the JSONValue * into user's callback in JsonResponse. */
-	virtual void finishJson(Common::JSONValue *json);
+	virtual void finishJson(const Common::JSONValue *json);
 
 public:
-	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, Common::String url);
-	virtual ~CurlJsonRequest();
+	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, const Common::String &url);
+	~CurlJsonRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 
-	static bool jsonIsObject(Common::JSONValue *item, const char *warningPrefix);
-	static bool jsonContainsObject(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
-	static bool jsonContainsString(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
-	static bool jsonContainsIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
-	static bool jsonContainsArray(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
-	static bool jsonContainsStringOrIntegerNumber(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
-	static bool jsonContainsAttribute(Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonIsObject(const Common::JSONValue *item, const char *warningPrefix);
+	static bool jsonContainsObject(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsString(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsArray(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsStringOrIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
+	static bool jsonContainsAttribute(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional = false);
 };
 
 } // End of namespace Networking

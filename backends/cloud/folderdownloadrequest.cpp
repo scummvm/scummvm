@@ -29,7 +29,7 @@
 
 namespace Cloud {
 
-FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive):
+FolderDownloadRequest::FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::String &localDirectoryPath, bool recursive):
 	Request(nullptr, ecb), CommandSender(nullptr), _storage(storage), _fileArrayCallback(callback),
 	_remoteDirectoryPath(remoteDirectoryPath), _localDirectoryPath(localDirectoryPath), _recursive(recursive),
 	_workingRequest(nullptr), _ignoreCallback(false), _totalFiles(0) {
@@ -59,13 +59,13 @@ void FolderDownloadRequest::start() {
 	//list directory first
 	_workingRequest = _storage->listDirectory(
 		_remoteDirectoryPath,
-		new Common::Callback<FolderDownloadRequest, Storage::ListDirectoryResponse>(this, &FolderDownloadRequest::directoryListedCallback),
-		new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::directoryListedErrorCallback),
+		new Common::Callback<FolderDownloadRequest, const Storage::ListDirectoryResponse &>(this, &FolderDownloadRequest::directoryListedCallback),
+		new Common::Callback<FolderDownloadRequest, const Networking::ErrorResponse &>(this, &FolderDownloadRequest::directoryListedErrorCallback),
 		_recursive
 	);
 }
 
-void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryResponse response) {
+void FolderDownloadRequest::directoryListedCallback(const Storage::ListDirectoryResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -86,14 +86,14 @@ void FolderDownloadRequest::directoryListedCallback(Storage::ListDirectoryRespon
 	downloadNextFile();
 }
 
-void FolderDownloadRequest::directoryListedErrorCallback(Networking::ErrorResponse error) {
+void FolderDownloadRequest::directoryListedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 	finishError(error);
 }
 
-void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse response) {
+void FolderDownloadRequest::fileDownloadedCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -102,7 +102,7 @@ void FolderDownloadRequest::fileDownloadedCallback(Storage::BoolResponse respons
 	downloadNextFile();
 }
 
-void FolderDownloadRequest::fileDownloadedErrorCallback(Networking::ErrorResponse error) {
+void FolderDownloadRequest::fileDownloadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -143,8 +143,8 @@ void FolderDownloadRequest::downloadNextFile() {
 	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.c_str());
 	_workingRequest = _storage->downloadById(
 		_currentFile.id(), localPath,
-		new Common::Callback<FolderDownloadRequest, Storage::BoolResponse>(this, &FolderDownloadRequest::fileDownloadedCallback),
-		new Common::Callback<FolderDownloadRequest, Networking::ErrorResponse>(this, &FolderDownloadRequest::fileDownloadedErrorCallback)
+		new Common::Callback<FolderDownloadRequest, const Storage::BoolResponse &>(this, &FolderDownloadRequest::fileDownloadedCallback),
+		new Common::Callback<FolderDownloadRequest, const Networking::ErrorResponse &>(this, &FolderDownloadRequest::fileDownloadedErrorCallback)
 	);
 }
 

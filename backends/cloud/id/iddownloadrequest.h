@@ -39,17 +39,17 @@ class IdDownloadRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void downloadCallback(Storage::BoolResponse response);
-	void downloadErrorCallback(Networking::ErrorResponse error);
+	void idResolvedCallback(const Storage::UploadResponse &response);
+	void idResolveFailedCallback(const Networking::ErrorResponse &error);
+	void downloadCallback(const Storage::BoolResponse &response);
+	void downloadErrorCallback(const Networking::ErrorResponse &error);
 	void finishDownload(bool success);
 public:
-	IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdDownloadRequest();
+	IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::String &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+	~IdDownloadRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

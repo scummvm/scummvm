@@ -106,7 +106,7 @@ class Reader {
 
 	void handleFirstHeaders(Common::MemoryReadWriteStream *headers);
 	void parseFirstLine(const Common::String &headers);
-	void parsePathQueryAndAnchor(Common::String pathToParse);
+	void parsePathQueryAndAnchor(const Common::String &pathToParse);
 	void parseQueryParameters();
 
 	void makeWindow(uint32 size);
@@ -140,7 +140,7 @@ public:
 	Common::String method() const;
 	Common::String path() const;
 	Common::String query() const;
-	Common::String queryParameter(Common::String name) const;
+	Common::String queryParameter(const Common::String &name) const;
 	Common::String anchor() const;
 
 	static Common::String readEverythingFromMemoryStream(Common::MemoryReadWriteStream *stream);

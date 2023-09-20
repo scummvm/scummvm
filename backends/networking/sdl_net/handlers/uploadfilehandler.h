@@ -29,9 +29,9 @@ namespace Networking {
 class UploadFileHandler: public FilesBaseHandler {
 public:
 	UploadFileHandler();
-	virtual ~UploadFileHandler();
+	~UploadFileHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking

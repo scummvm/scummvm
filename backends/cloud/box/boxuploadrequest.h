@@ -41,19 +41,19 @@ class BoxUploadRequest: public Networking::Request {
 
 	void start();
 	void resolveId();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
+	void idResolvedCallback(const Storage::UploadResponse &response);
+	void idResolveFailedCallback(const Networking::ErrorResponse &error);
 	void upload();
-	void uploadedCallback(Networking::JsonResponse response);
-	void notUploadedCallback(Networking::ErrorResponse error);
-	void finishUpload(StorageFile status);
+	void uploadedCallback(const Networking::JsonResponse &response);
+	void notUploadedCallback(const Networking::ErrorResponse &error);
+	void finishUpload(const StorageFile &status);
 
 public:
-	BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
-	virtual ~BoxUploadRequest();
+	BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::String &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
+	~BoxUploadRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 };
 
 } // End of namespace Box

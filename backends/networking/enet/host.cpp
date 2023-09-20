@@ -67,7 +67,7 @@ uint8 Host::service(int timeout) {
 	return event.type;
 }
 
-bool Host::connectPeer(Common::String address, int port, int timeout, int numChannels) {
+bool Host::connectPeer(const Common::String &address, int port, int timeout, int numChannels) {
 	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
 		enetAddress.host = ENET_HOST_BROADCAST;
@@ -121,7 +121,7 @@ int Host::getPort() {
 	return _recentPort;
 }
 
-int Host::getPeerIndexFromHost(Common::String host, int port) {
+int Host::getPeerIndexFromHost(const Common::String &host, int port) {
 	for (int i = 0; i < (int)_host->peerCount; i++) {
 		char hostName[50];
 		if (enet_address_get_host_ip(&_host->peers[i].address, hostName, 50) == 0) {
@@ -165,7 +165,7 @@ bool Host::send(const char *data, int peerIndex, int channel, bool reliable) {
 	return true;
 }
 
-bool Host::sendRawData(Common::String address, int port, const char *data) {
+bool Host::sendRawData(const Common::String &address, int port, const char *data) {
 	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
 		enetAddress.host = ENET_HOST_BROADCAST;

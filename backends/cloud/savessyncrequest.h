@@ -44,17 +44,17 @@ class SavesSyncRequest: public Networking::Request {
 	uint32 _bytesToDownload, _bytesDownloaded;
 
 	void start();
-	void directoryListedCallback(Storage::ListDirectoryResponse response);
-	void directoryListedErrorCallback(Networking::ErrorResponse error);
-	void directoryCreatedCallback(Storage::BoolResponse response);
-	void directoryCreatedErrorCallback(Networking::ErrorResponse error);
-	void fileDownloadedCallback(Storage::BoolResponse response);
-	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
-	void fileUploadedCallback(Storage::UploadResponse response);
-	void fileUploadedErrorCallback(Networking::ErrorResponse error);
+	void directoryListedCallback(const Storage::ListDirectoryResponse &response);
+	void directoryListedErrorCallback(const Networking::ErrorResponse &error);
+	void directoryCreatedCallback(const Storage::BoolResponse &response);
+	void directoryCreatedErrorCallback(const Networking::ErrorResponse &error);
+	void fileDownloadedCallback(const Storage::BoolResponse &response);
+	void fileDownloadedErrorCallback(const Networking::ErrorResponse &error);
+	void fileUploadedCallback(const Storage::UploadResponse &response);
+	void fileUploadedErrorCallback(const Networking::ErrorResponse &error);
 	void downloadNextFile();
 	void uploadNextFile();
-	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
+	void finishError(const Networking::ErrorResponse &error, Networking::RequestState state = Networking::FINISHED) override;
 	void finishSync(bool success);
 
 	uint32 getDownloadedBytes() const;
@@ -62,10 +62,10 @@ class SavesSyncRequest: public Networking::Request {
 
 public:
 	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb);
-	virtual ~SavesSyncRequest();
+	~SavesSyncRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getDownloadingProgress() const;

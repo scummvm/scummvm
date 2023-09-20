@@ -46,8 +46,8 @@ class StorageFile {
 
 public:
 	StorageFile(); //invalid empty file
-	StorageFile(Common::String pth, uint32 sz, uint32 ts, bool dir);
-	StorageFile(Common::String fileId, Common::String filePath, Common::String fileName, uint32 sz, uint32 ts, bool dir);
+	StorageFile(const Common::String &pth, uint32 sz, uint32 ts, bool dir);
+	StorageFile(const Common::String &fileId, const Common::String &filePath, const Common::String &fileName, uint32 sz, uint32 ts, bool dir);
 
 	Common::String id() const { return _id; }
 	Common::String path() const { return _path; }
@@ -56,7 +56,7 @@ public:
 	uint32 timestamp() const { return _timestamp; }
 	bool isDirectory() const { return _isDirectory; }
 
-	void setPath(Common::String path_) { _path = path_; }
+	void setPath(const Common::String &path_) { _path = path_; }
 };
 
 } // End of namespace Cloud

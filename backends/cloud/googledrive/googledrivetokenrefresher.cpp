@@ -36,7 +36,7 @@ GoogleDriveTokenRefresher::GoogleDriveTokenRefresher(GoogleDriveStorage *parent,
 
 GoogleDriveTokenRefresher::~GoogleDriveTokenRefresher() {}
 
-void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
+void GoogleDriveTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("GoogleDriveTokenRefresher: failed to refresh token");
@@ -56,7 +56,7 @@ void GoogleDriveTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
+void GoogleDriveTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
 		CurlJsonRequest::finishJson(nullptr);
@@ -99,7 +99,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->refreshAccessToken(new Common::Callback<GoogleDriveTokenRefresher, Storage::BoolResponse>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<GoogleDriveTokenRefresher, const Storage::BoolResponse &>(this, &GoogleDriveTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
@@ -108,7 +108,7 @@ void GoogleDriveTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
+void GoogleDriveTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
@@ -116,7 +116,7 @@ void GoogleDriveTokenRefresher::setHeaders(Common::Array<Common::String> &header
 		CurlJsonRequest::addHeader(headers[i]);
 }
 
-void GoogleDriveTokenRefresher::addHeader(Common::String header) {
+void GoogleDriveTokenRefresher::addHeader(const Common::String &header) {
 	_headers.push_back(header);
 	CurlJsonRequest::addHeader(header);
 }

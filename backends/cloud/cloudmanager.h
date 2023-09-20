@@ -90,7 +90,7 @@ class CloudManager : public Common::Singleton<CloudManager>, public Common::Even
 
 public:
 	CloudManager();
-	virtual ~CloudManager();
+	~CloudManager() override;
 
 	/**
 	 * Loads all information from configs and creates current Storage instance.
@@ -178,7 +178,7 @@ public:
 	 * @param   index   Storage's index.
 	 * @param   name    username to set
 	 */
-	void setStorageUsername(uint32 index, Common::String name);
+	void setStorageUsername(uint32 index, const Common::String &name);
 
 	/**
 	 * Set Storage's used space field.
@@ -196,7 +196,7 @@ public:
 	 * @param   index   Storage's index.
 	 * @param   date    date to set
 	 */
-	void setStorageLastSync(uint32 index, Common::String date);
+	void setStorageLastSync(uint32 index, const Common::String &date);
 
 	/**
 	 * Replace Storage which has given index with a
@@ -206,7 +206,7 @@ public:
 	 * @param   code    OAuth2 code received from user
 	 * @param	cb		callback to notify of success or error
 	 */
-	void connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb = nullptr);
+	void connectStorage(uint32 index, const Common::String &code, Networking::ErrorCallback cb = nullptr);
 
 	/**
 	 * Replace Storage which has given index with a
@@ -237,10 +237,10 @@ public:
 	void disconnectStorage(uint32 index);
 
 	/** Returns ListDirectoryResponse with list of files. */
-	Networking::Request *listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	Networking::Request *listDirectory(const Common::String &path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	Networking::Request *downloadFolder(const Common::String &remotePath, const Common::String &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Return the StorageInfo struct. */
 	Networking::Request *info(Storage::StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
@@ -291,7 +291,7 @@ public:
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
-	bool startDownload(Common::String remotePath, Common::String localPath) const;
+	bool startDownload(const Common::String &remotePath, const Common::String &localPath) const;
 
 	/** Cancels running download. */
 	void cancelDownload() const;

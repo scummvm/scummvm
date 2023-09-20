@@ -32,14 +32,14 @@ CreateDirectoryHandler::CreateDirectoryHandler() {}
 
 CreateDirectoryHandler::~CreateDirectoryHandler() {}
 
-void CreateDirectoryHandler::handleError(Client &client, Common::String message) const {
+void CreateDirectoryHandler::handleError(Client &client, const Common::String &message) const {
 	if (client.queryParameter("answer_json") == "true")
 		setJsonResponseHandler(client, "error", message);
 	else
 		HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
 }
 
-void CreateDirectoryHandler::setJsonResponseHandler(Client &client, Common::String type, Common::String message) const {
+void CreateDirectoryHandler::setJsonResponseHandler(Client &client, const Common::String &type, const Common::String &message) const {
 	Common::JSONObject response;
 	response.setVal("type", new Common::JSONValue(type));
 	response.setVal("message", new Common::JSONValue(message));

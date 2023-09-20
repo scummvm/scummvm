@@ -31,18 +31,18 @@ class HandlerUtils {
 public:
 	static Common::Archive *getZipArchive();
 	static Common::ArchiveMemberList listArchive();
-	static Common::SeekableReadStream *getArchiveFile(Common::String name);
+	static Common::SeekableReadStream *getArchiveFile(const Common::String &name);
 	static Common::String readEverythingFromStream(Common::SeekableReadStream *const stream);
-	static Common::SeekableReadStream *makeResponseStreamFromString(Common::String response);
+	static Common::SeekableReadStream *makeResponseStreamFromString(const Common::String &response);
 
 	static Common::String normalizePath(const Common::String &path);
 	static bool hasForbiddenCombinations(const Common::String &path);
 	static bool isBlacklisted(const Common::String &path);
 	static bool hasPermittedPrefix(const Common::String &path);
-	static bool permittedPath(const Common::String path);
+	static bool permittedPath(const Common::String &path);
 
-	static void setMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
-	static void setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo = "");
+	static void setMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo = "");
+	static void setFilesManagerErrorMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo = "");
 };
 
 } // End of namespace Networking

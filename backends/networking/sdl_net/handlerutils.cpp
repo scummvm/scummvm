@@ -74,7 +74,7 @@ Common::ArchiveMemberList HandlerUtils::listArchive() {
 	return resultList;
 }
 
-Common::SeekableReadStream *HandlerUtils::getArchiveFile(Common::String name) {
+Common::SeekableReadStream *HandlerUtils::getArchiveFile(const Common::String &name) {
 	Common::SeekableReadStream *result = nullptr;
 	Common::Archive *zipArchive = getZipArchive();
 	if (zipArchive) {
@@ -98,7 +98,7 @@ Common::String HandlerUtils::readEverythingFromStream(Common::SeekableReadStream
 	return result;
 }
 
-Common::SeekableReadStream *HandlerUtils::makeResponseStreamFromString(Common::String response) {
+Common::SeekableReadStream *HandlerUtils::makeResponseStreamFromString(const Common::String &response) {
 	byte *data = new byte[response.size()];
 	memcpy(data, response.c_str(), response.size());
 	return new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
@@ -174,11 +174,11 @@ bool HandlerUtils::hasPermittedPrefix(const Common::String &path) {
 	       || normalizePath(prefix).compareTo(normalized + "/") == 0;
 }
 
-bool HandlerUtils::permittedPath(const Common::String path) {
+bool HandlerUtils::permittedPath(const Common::String &path) {
 	return hasPermittedPrefix(path) && !isBlacklisted(path);
 }
 
-void HandlerUtils::setMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
+void HandlerUtils::setMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo) {
 	Common::String response = "<html><head><title>ScummVM</title><meta charset=\"utf-8\"/></head><body>{message}</body></html>";
 
 	// load stylish response page from the archive
@@ -193,7 +193,7 @@ void HandlerUtils::setMessageHandler(Client &client, Common::String message, Com
 		LocalWebserver::setClientRedirectHandler(client, response, redirectTo);
 }
 
-void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, Common::String message, Common::String redirectTo) {
+void HandlerUtils::setFilesManagerErrorMessageHandler(Client &client, const Common::String &message, const Common::String &redirectTo) {
 	setMessageHandler(
 		client,
 		Common::String::format(

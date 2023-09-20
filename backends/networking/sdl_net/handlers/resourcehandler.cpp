@@ -29,7 +29,7 @@ ResourceHandler::ResourceHandler() {}
 
 ResourceHandler::~ResourceHandler() {}
 
-const char *ResourceHandler::determineMimeType(Common::String &filename) {
+const char *ResourceHandler::determineMimeType(const Common::String &filename) {
 	// text
 	if (filename.hasSuffix(".html")) return "text/html";
 	if (filename.hasSuffix(".css")) return "text/css";

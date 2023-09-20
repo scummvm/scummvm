@@ -54,7 +54,7 @@ public:
 	 * @retval nullptr on failure
 	 * @see Networking::Host
 	 */
-	Host *createHost(Common::String address, int port, int numClients, int numChannels = 1, int incBand = 0, int outBand = 0);
+	Host *createHost(const Common::String &address, int port, int numClients, int numChannels = 1, int incBand = 0, int outBand = 0);
 	/**
 	 * Creates a new ENet Host instance, and attempts to connect to the assigned address and port.
 	 * @param hostAddress the address this host will use to connect to this peer.  "0.0.0.0" may be to used to use the default host.
@@ -69,8 +69,8 @@ public:
 	 * @retval nullptr on failure
 	 * @see Networking::Host
 	 */
-	Host *connectToHost(Common::String hostAddress, int hostPort, Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
-	Host *connectToHost(Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
+	Host *connectToHost(const Common::String &hostAddress, int hostPort, const Common::String &address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
+	Host *connectToHost(const Common::String &address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
 	/**
 	 * Creates a Networking::Socket instance which is a representation of a raw UDP socket.
 	 * Useful for and sending and receiving data that is outside the ENet library protocol.
@@ -80,7 +80,7 @@ public:
 	 * @retval nullptr on failure
 	 * @see Networking::Socket
 	 */
-	Socket *createSocket(Common::String address, int port);
+	Socket *createSocket(const Common::String &address, int port);
 private:
 	/** 
 	 * Indicates if the ENet library has successfully initialized or not.
