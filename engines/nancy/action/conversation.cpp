@@ -351,6 +351,17 @@ void ConversationSound::addConditionalDialogue() {
 			
 			newResponse.sceneChange.sceneID = res.sceneID;
 			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+
+			// Check if the response is a repeat. This can happen when multiple condition combinations
+			// trigger the same response.
+			for (uint i = 0; i < _responses.size() - 1; ++i) {
+				if (	_responses[i].soundName == newResponse.soundName &&
+						_responses[i].text == newResponse.text &&
+						_responses[i].sceneChange.sceneID == newResponse.sceneChange.sceneID) {
+					_responses.pop_back();
+					break;
+				}
+			}
 		}
 	}
 }
