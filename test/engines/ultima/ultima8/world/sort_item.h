@@ -178,6 +178,43 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Bug in original game rendering order for roof pieces
+	 * Test case for rendering issue at MainActor::teleport 41 15484 13660 96
+	 */
+	void test_main_actor_roof_bug() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(15484, 13660, 96, 64, 64, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+
+		Ultima::Ultima8::Box b2(15423, 13631, 104, 128, 32, 8);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._occl = true;
+		si2._roof = true;
+		si2._land = true;
+
+		// This roof is below main actor
+		TS_ASSERT(!si1.below(si2));
+		TS_ASSERT(si2.below(si1));
+
+		Ultima::Ultima8::Box b3(15551, 13631, 104, 128, 32, 8);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._occl = true;
+		si2._roof = true;
+		si2._land = true;
+
+		// Original Game: This roof is above main actor
+		//TS_ASSERT(si1.below(si2));
+		//TS_ASSERT(!si2.below(si1));
+
+		// Our Behavior: This roof is below main actor
+		TS_ASSERT(!si1.below(si2));
+		TS_ASSERT(si2.below(si1));
+	}
+
+	/**
 	 * Overlapping non-flat items draw transparent after
 	 * Test case for rendering issue at MainActor::teleport 41 17627 16339 48
 	 * Wall with window should render after non-window wall
@@ -205,7 +242,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	 * Test case for rendering issue at MainActor::teleport 50 2316 7812 48
 	 * Skeleton in niche should render before cobweb
 	 */
-	void test_ignore_z_transparent_sort() {
+	void test_ignore_z_non_solid_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
