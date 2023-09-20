@@ -77,7 +77,7 @@ const seriesPlayBreak Room310::PLAY6[] = {
 long Room310::_state1;
 
 
-Room310::Room310() : MineRoom() {
+Room310::Room310() : Mine() {
 	_state1 = 0;
 }
 
