@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-09-20 07:49+0000\n"
-"PO-Revision-Date: 2023-09-18 16:56+0000\n"
+"PO-Revision-Date: 2023-09-20 16:42+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -7919,14 +7919,12 @@ msgstr ""
 "sont activées dans les paramètres Audio."
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "Sauvegarde auto"
+msgstr "Mouvement auto"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
-msgstr ""
+msgstr "Tourne automatiquement la vue lorsque la souris atteint un bord."
 
 #: engines/neverhood/dialogs.cpp:53
 msgid "Skip the Hall of Records storyboard scenes"
