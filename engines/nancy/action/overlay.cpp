@@ -275,7 +275,7 @@ Common::String Overlay::getRecordTypeName() const {
 void Overlay::setFrame(uint frame) {
 	_currentFrame = frame;
 
-	Common::Rect srcRect = _srcRects[frame];
+	Common::Rect srcRect;
 
 	if (_overlayType == kPlayOverlayAnimated) {
 		// Workaround for:
@@ -283,28 +283,47 @@ void Overlay::setFrame(uint frame) {
 		// - the fireplace in nancy2 scene 2491, where one of the rects is invalid.
 		// - the ball thing in nancy2 scene 1562, where one of the rects is twice as tall as it should be
 		// Assumes all rects in a single animation have the same dimensions
+		srcRect = _srcRects[frame];
 		if (!srcRect.isValidRect() || srcRect.width() != _srcRects[0].width() || srcRect.height() != _srcRects[0].height()) {
 			srcRect.setWidth(_srcRects[0].width());
 			srcRect.setHeight(_srcRects[0].height());
 		}
 	} else {
-		// In static mode the animated srcRect above may or may not be valid.
-		// The way the original engine seems to work is that it creates an intermediate surface using
-		// the animation src bounds, and then copies from that surface to the screen using the static mode source
-		// rect below (or the other way around). We can achieve the same results by just offsetting one
-		// of the rects by the other's left/top coordinates, _provided they have the same dimensions_.
-		// Test cases for the way the two rects interact are nancy3 scene 3070, nancy5 scenes 2056, 2075, and 2000
-		for (uint i = 0; i < _blitDescriptions.size(); ++i) {
-			if (_currentViewportFrame == _blitDescriptions[i].frameID) {
-				Common::Rect staticSrc = _blitDescriptions[i].src;
+		if (_currentViewportFrame == -1) {
+			return;
+		}
 
-				// If this assertion fails, we need to start using an intermediate surface
-				assert((staticSrc.width() == srcRect.width() && staticSrc.height() == srcRect.height()) || srcRect.isEmpty());
+		// Static mode overlays are an absolute mess, and use both the general source rects (_srcRects),
+		// and the ones inside the blit description struct corresponding to the current scene background.
 
-				staticSrc.translate(srcRect.left, srcRect.top);
-				srcRect = staticSrc;
+		// Firstly, the order of the blit descriptions does not necessarily correspond to the order of
+		// the general rects, as the general rects are ordered based on the scene's background frame id,
+		// while the blit descriptions can be in arbitrary order. 
+		// An example is nancy4 scene 3500, where the overlay appears on background frames 0, 1, 2, 18 and 19,
+		// while the blit descriptions are in order 18, 19, 0, 1, 2. Thus, if we don't do the counting below
+		// we get wildly inaccurate results.
+		uint srcID = 0;
+
+		for (int i = 0; i < _currentViewportFrame; ++i) {
+			for (uint j = 0; j < _blitDescriptions.size(); ++j) {
+				if (_blitDescriptions[j].frameID == i) {
+					++srcID;
+					continue;
+				}
 			}
 		}
+
+		srcRect = _srcRects[srcID];
+
+		// Second, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
+		// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
+		// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
+		// inside the blit description below were used for blitting from that intermediate surface to the screen.
+		// We can achieve the same results by doung the calculations below
+		Common::Rect staticSrc = _blitDescriptions[frame].src;
+		srcRect.translate(staticSrc.left, staticSrc.top);
+		srcRect.setWidth(staticSrc.width());
+		srcRect.setHeight(staticSrc.height());
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);
