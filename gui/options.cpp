@@ -424,19 +424,21 @@ void OptionsDialog::build() {
 	}
 
 	// Shader options
-	enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
+	if (_shader) {
+		enableShaderControls(g_system->hasFeature(OSystem::kFeatureShaders));
 
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		Common::String shader(ConfMan.get("shader", _domain));
-		if (ConfMan.isKeyTemporary("shader")) {
-			_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
-		}
-		if (shader.empty() || shader == "default" || !ConfMan.hasKey("shader", _domain)) {
-			_shader->setLabel(_c("None", "shader"));
-			_shaderClearButton->setEnabled(false);
-		} else {
-			_shader->setLabel(shader);
-			_shaderClearButton->setEnabled(true);
+		if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+			Common::String shader(ConfMan.get("shader", _domain));
+			if (ConfMan.isKeyTemporary("shader")) {
+				_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+			}
+			if (shader.empty() || shader == "default" || !ConfMan.hasKey("shader", _domain)) {
+				_shader->setLabel(_c("None", "shader"));
+				_shaderClearButton->setEnabled(false);
+			} else {
+				_shader->setLabel(shader);
+				_shaderClearButton->setEnabled(true);
+			}
 		}
 	}
 
