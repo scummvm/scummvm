@@ -58,6 +58,8 @@ struct MineRoom {
 	int16 door[4];              // Specify doors to use
 	int16 correctLink;          // The correct link to take to get to the treasure
 	int16 check;            	// Used to check the maze sanity
+
+	void clear();
 };
 
 struct EntranceInfo {
@@ -98,6 +100,9 @@ private:
 	MineRoom _mineRoomInfo;
 	bool _fade_down_rect_active = false;	// True if a fade down should occurr when walker in the fade_down_rect
 	Rectangle _fade_down_rect;				// If the walker is in his rectum and its active, turn off the lights
+	int _volume = 0;
+	int _random1 = 0;
+	int _random2 = 0;
 
 	int getTreasureDistance() const;
 
@@ -110,7 +115,7 @@ protected:
 	void set_fade_down_rect(MineDoors exit_door);
 
 public:
-	Mine() : Section3Room() {}
+	Mine();
 	virtual ~Mine() {}
 
 	void preload() override;

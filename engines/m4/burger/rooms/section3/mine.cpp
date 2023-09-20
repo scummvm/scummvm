@@ -132,6 +132,18 @@ const Rectangle Mine::FADE_DOWN_INFO[MAX_SCENE_TYPES][4] = {
 		0,   0,   0,   0,      0,   0,   0,   0,      0,   0,   0,   0,    470,   0, 639, 270   // 319
 };
 
+void MineRoom::clear() {
+	roomNumber = 0;
+	scene_id = 0;
+	Common::fill(link, link + 4, 0);
+	Common::fill(door, door + 4, 0);
+	correctLink = 0;
+	check = 0;
+}
+
+Mine::Mine() : Section3Room() {
+	_mineRoomInfo.clear();
+}
 
 void Mine::preload() {
 	Section3Room::preload();
@@ -148,9 +160,116 @@ void Mine::daemon() {
 		break;
 	}
 
+	case 302: {
+		const EntranceInfo &ei = ENTRANCE_INFO[_mineRoomInfo.roomNumber][_entranceDoor];
+		ws_demand_location(ei.offscreen_x, ei.offscreen_y, ei.enter_facing);
+		player_set_commands_allowed(false);
+		break;
+	}
+
+	case 303:
+		player_set_commands_allowed(true);
+
+		if (_G(game).room_id == 310) {
+			if (_G(flags)[V141]) {
+				_G(wilbur_should) = 10002;
+			} else {
+				_G(flags)[V141] = 1;
+				_G(wilbur_should) = 408;
+			}
+
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else if (_G(game).room_id != 305) {
+			if (!_G(flags)[V137]) {
+				_G(flags)[V137] = 1;
+				_G(wilbur_should) = _G(flags)[V111] ? 402 : 401;
+			} else if (!imath_rand_bool(3)) {
+				_G(wilbur_should) = 10002;
+			} else if (!_G(flags)[V111]) {
+				_G(wilbur_should) = 404;
+			} else {
+				_G(wilbur_should) = inv_player_has("WHISTLE") ? 406 : 405;
+			}
+
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+		break;
+
 	case 304:
 		digi_play("300_007", 2);
 		break;
+
+	case 305:
+		_volume = 160 - getTreasureDistance() * 25;
+		_random1 = imath_ranged_rand(0, 5);
+		digi_play(Common::String::format("300t001%c", 'a' + _random1).c_str(), 3, _volume);
+		break;
+
+	case 10008:
+		switch (_G(game).room_id) {
+		case 305:
+		case 310:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+
+		default:
+			if (_G(flags)[V111] && !_G(flags)[V144])
+				kernel_timing_trigger(15, 305);
+			break;
+		}
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 401:
+			wilbur_speech("311w001");
+			break;
+
+		case 402:
+			player_set_commands_allowed(false);
+			_G(wilbur_should) = 403;
+			wilbur_speech("311w002", gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 403:
+			player_set_commands_allowed(true);
+			wilbur_speech("311w003");
+			break;
+
+		case 404:
+			player_set_commands_allowed(true);
+			_random2 = imath_ranged_rand(0, 5);
+			wilbur_speech(Common::String::format("311w004%c", 'a' + _random2).c_str());
+			break;
+
+		case 405:
+			term_message("Wilbur enters the mine with no whistle!");
+			player_set_commands_allowed(true);
+			_random2 = imath_ranged_rand(0, 3);
+			digi_play(Common::String::format("311w005%c", 'a' + _random2).c_str(), 3, _volume);
+			break;
+
+		case 406:
+			_random2 = imath_ranged_rand(0, 2);
+			wilbur_speech(Common::String::format("311w006%c", 'a' + _random2).c_str());
+			break;
+
+		case 407:
+			if (_G(flags)[V136]) {
+				_random2 = imath_ranged_rand(0, 6);
+				wilbur_speech(Common::String::format("311w009%c", 'a' + _random2).c_str());
+			} else {
+				wilbur_speech("311w008");
+			}
+			break;
+
+		case g10013:
+			// TODO
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
 
 	// TODO: Further cases
 	default:
