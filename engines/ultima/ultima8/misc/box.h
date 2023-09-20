@@ -29,7 +29,7 @@ namespace Ultima8 {
 
 /**
  * Represents a worldspace bounding box and manipulation of those bounds.
- * The box is build from a world point and positive dimensions
+ * The box is built from a world point and positive dimensions
  * The box has reversed coordinates for x and y, meaning those dimensions are
  * subtracted from primary world point to calculate other points.
  */

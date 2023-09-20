@@ -275,7 +275,7 @@ void ItemSorter::AddItem(const Item *add) {
 
 void ItemSorter::CheckOcclusion() {
 	for (SortItem *it = _items; it != nullptr; it = it->_next) {
-		// Check if item is part of a 4x4 adjoined square
+		// Check if item is part of a 2x2 adjoined square
 		if (it->_occl && it->_fbigsq && it->_xAdjoin && it->_yAdjoin &&
 			it->_xAdjoin->_yAdjoin && it->_yAdjoin->_xAdjoin &&
 			it->_xAdjoin->_yAdjoin == it->_yAdjoin->_xAdjoin) {
