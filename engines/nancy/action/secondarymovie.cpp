@@ -36,7 +36,7 @@ namespace Action {
 PlaySecondaryMovie::~PlaySecondaryMovie() {
 	_decoder.close();
 
-	if (_playerCursorAllowed == kNoPlayerCursorAllowed && _videoSceneChange == kMovieSceneChange) {
+	if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 		g_nancy->setMouseEnabled(true);
 	}
 }
