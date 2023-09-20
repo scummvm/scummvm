@@ -285,6 +285,14 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 		case '\xdf':
 			offset = _eszettOffset;
 			break;
+		case '\x92':
+			if (g_nancy->getGameType() == kGameTypeNancy4) {
+				// Improvement: we fix a specific broken string in nancy4 ("It's too dark..." when entering a dark staircase)
+				offset = _apostropheOffset;
+			} else {
+				offset = -1;
+			}
+			break;
 		default:
 			offset = -1;
 			break;
