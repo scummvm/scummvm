@@ -78,10 +78,9 @@ private:
 	uint8 _threadSwitchCaller;
 	uint8_t _cursorStatus;
 	Common::String s_systemDir;
-	Common::String s_saveDir;
-	Common::String s_extraDir;
 	Common::String s_themeDir;
-	Common::String s_lastDir;
+	Common::String s_extraDir;
+	Common::String s_saveDir;
 	static Common::List<Common::Event> _events;
 
 public:
@@ -112,8 +111,12 @@ public:
 	void refreshRetroSettings(void);
 	void destroy(void);
 	void quit() override {}
+private:
+	bool checkPath(const char *setting, Common::String path);
+	void initPaths(void);
 
 	/* Graphics */
+public:
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 	const GraphicsMode *getSupportedGraphicsModes(void) const override;
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;

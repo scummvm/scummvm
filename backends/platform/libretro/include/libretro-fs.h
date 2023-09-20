@@ -114,6 +114,7 @@ public:
 	virtual Common::SeekableWriteStream *createWriteStream();
 	virtual bool createDirectory();
 
+	static Common::String getHomeDir(void);
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.

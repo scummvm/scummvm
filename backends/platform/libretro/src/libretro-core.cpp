@@ -719,34 +719,19 @@ void retro_get_system_av_info(struct retro_system_av_info *info) {
 }
 
 const char *retro_get_system_dir(void) {
-	const char *sysdir;
-	const char *coredir;
+	const char *sysdir = NULL;
 
-	if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &sysdir))
-		return sysdir;
-	else {
-		if (retro_log_cb)
-			retro_log_cb(RETRO_LOG_WARN, "No System directory specified, using current directory.\n");
-		if (! environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir))
-			coredir = ".";
-		return coredir;
-	}
+	environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &sysdir);
+
+	return sysdir;
 }
 
 const char *retro_get_save_dir(void) {
-	const char *savedir;
-	const char *coredir;
+	const char *savedir = NULL;
 
+	environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &savedir);
 
-	if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &savedir))
-		return savedir;
-	else {
-		if (retro_log_cb)
-			retro_log_cb(RETRO_LOG_WARN, "No Save directory specified, using current directory.\n");
-		if (! environ_cb(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH, &coredir))
-			coredir = ".";
-		return coredir;
-	}
+	return savedir;
 }
 
 void retro_init(void) {

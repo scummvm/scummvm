@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit // Needed for IRIX's unistd.h
 
 #include <file/file_path.h>
@@ -48,21 +49,23 @@ void LibRetroFilesystemNode::setFlags() {
 LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
 
+	char expanded_path[MAXPATHLEN];
+	fill_pathname_expand_special(expanded_path, p.c_str(), MAXPATHLEN);
+
 	// Expand "~/" to the value of the HOME env variable
 	if (p.hasPrefix("~/")) {
-		const char *home = getenv("HOME");
-		if (home != NULL && strlen(home) < MAXPATHLEN) {
-			_path = home;
-			// Skip over the tilda.  We know that p contains at least
-			// two chars, so this is safe:
-			_path += p.c_str() + 1;
-		}
-	} else {
-		_path = p;
+		Common::String homeDir = getHomeDir();
+		if (homeDir.empty())
+			homeDir = ".";
+
+		// Skip over the tilda.  We know that p contains at least
+		// two chars, so this is safe:
+		_path = homeDir + (p.c_str() + 1);
+
 	}
 
 	// Normalize the path (that is, remove unneeded slashes etc.)
-	_path = Common::normalizePath(_path, '/');
+	_path = Common::normalizePath(expanded_path, '/');
 	_displayName = Common::lastPathComponent(_path, '/');
 
 	setFlags();
@@ -226,3 +229,19 @@ bool assureDirectoryExists(const Common::String &dir, const char *prefix) {
 }
 
 } // End of namespace Posix
+
+Common::String LibRetroFilesystemNode::getHomeDir(void) {
+	Common::String path;
+#if defined(__WIN32)
+	const char *c_homeDriveDir = getenv("HOMEDRIVE");
+	const char *c_homePathDir = getenv("HOMEPATH");
+	char c_homeDir[strlen(c_homeDriveDir) + strlen(c_homePathDir) + 1] = {0};
+	strcat(strcat(c_homeDir, c_homeDriveDir), c_homePathDir);
+#else
+	const char *c_homeDir = getenv("HOME");
+#endif
+	if (c_homeDir && *c_homeDir)
+		path = c_homeDir;
+
+	return path;
+}
