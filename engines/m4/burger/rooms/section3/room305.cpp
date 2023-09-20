@@ -187,7 +187,7 @@ void Room305::daemon() {
 			break;
 
 		case 108:
-			changeRoom(DIR_NORTH);
+			mine_travel_link(FRONT);
 			break;
 
 		default:

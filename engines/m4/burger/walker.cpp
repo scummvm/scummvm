@@ -426,7 +426,7 @@ void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigge
 }
 
 void player_walk_to(int32 x, int32 y, int trigger) {
-	player_walk_to(x, y, _G(hotspot_x), _G(hotspot_y), trigger);
+	player_walk_to(x, y, _G(click_x), _G(click_y), trigger);
 }
 
 void wilbur_speech(const char *name, int trigger, int room, byte flags,
