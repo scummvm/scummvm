@@ -109,33 +109,14 @@ void Telephone::execute() {
 	case kRun:
 		switch (_callState) {
 		case kWaiting:
-			// Long phone numbers start with 1
-			if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
-				NancySceneState.getTextbox().clear();
-				NancySceneState.getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
-				g_nancy->_sound->loadSound(_ringSound);
-				g_nancy->_sound->playSound(_ringSound);
-				_callState = kRinging;
-			}
-
-			break;
-		case kButtonPress:
-			if (!g_nancy->_sound->isSoundPlaying(_genericButtonSound)) {
-				g_nancy->_sound->stopSound(_genericButtonSound);
-				undrawButton(_selected);
-				_callState = kWaiting;
-			}
-
-			break;
-		case kRinging:
-			if (!g_nancy->_sound->isSoundPlaying(_ringSound)) {
-				g_nancy->_sound->stopSound(_ringSound);
-				uint numberLength = _calledNumber[0] == 1 ? 11 : 7;
-
+			if (_checkNumbers) {
+				// Pressed a new button, check all numbers for match
+				// We do this before going to the ringing state to support nancy4's voice mail system,
+				// where call numbers can be 1 digit long
 				for (uint i = 0; i < _calls.size(); ++i) {
 					bool invalid = false;
 
-					for (uint j = 0; j < numberLength; ++j) {
+					for (uint j = 0; j < _calledNumber.size(); ++j) {
 						if (_calledNumber[j] != _calls[i].phoneNumber[j]) {
 							// Invalid number, move onto next
 							invalid = true;
@@ -143,28 +124,87 @@ void Telephone::execute() {
 						}
 					}
 
-					if (invalid) {
-						continue;
+					// We do not want to check for a terminator if the dialed number is of
+					// appropriate size (7 digits, or 11 when the number starts with '1')
+					bool checkNextDigit = true;
+					if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
+						checkNextDigit = false;
 					}
 
-					NancySceneState.getTextbox().clear();
-					NancySceneState.getTextbox().addTextLine(_calls[i].text);
+					if (!invalid && checkNextDigit) {
+						// Check if the next digit in the phone number is '10' (star). Presumably, that will never
+						// be contained in a valid phone number
+						if (_calls[i].phoneNumber[_calledNumber.size()] != 10) {
+							invalid = true;
+						}
+					}
 
-					_genericDialogueSound.name = _calls[i].soundName;
-					g_nancy->_sound->loadSound(_genericDialogueSound);
-					g_nancy->_sound->playSound(_genericDialogueSound);
-					_selected = i;
-					_callState = kCall;
-
-					return;
+					if (!invalid) {
+						_selected = i;
+						break;
+					}
 				}
 
-				NancySceneState.getTextbox().clear();
-				NancySceneState.getTextbox().addTextLine(_dialAgainString);
+				bool shouldRing = false;
 
-				g_nancy->_sound->loadSound(_dialAgainSound);
-				g_nancy->_sound->playSound(_dialAgainSound);
-				_callState = kBadNumber;
+				if (_selected == -1) {
+					// Did not find a suitable match, check if the dialed number is above allowed size
+					if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
+						shouldRing = true;
+					}
+				} else {
+					shouldRing = true;
+				}
+
+				if (shouldRing) {
+					if (_ringSound.name == "NO SOUND") {
+						// Will not ring, so skip text
+						_callState = kRinging;
+					} else {
+						NancySceneState.getTextbox().clear();
+						NancySceneState.getTextbox().addTextLine(g_nancy->getStaticData().ringingText);
+						g_nancy->_sound->loadSound(_ringSound);
+						g_nancy->_sound->playSound(_ringSound);
+						_callState = kRinging;
+					}
+				}
+
+				_checkNumbers = false;
+			}
+
+			break;
+		case kButtonPress:
+			if (!g_nancy->_sound->isSoundPlaying(_genericButtonSound)) {
+				g_nancy->_sound->stopSound(_genericButtonSound);
+				undrawButton(_buttonLastPushed);
+				_buttonLastPushed = -1;
+				_callState = kWaiting;
+			}
+
+			break;
+		case kRinging:
+			if (!g_nancy->_sound->isSoundPlaying(_ringSound)) {
+				g_nancy->_sound->stopSound(_ringSound);
+
+				if (_selected != -1) {
+					// Called a valid number
+					NancySceneState.getTextbox().clear();
+					NancySceneState.getTextbox().addTextLine(_calls[_selected].text);
+					
+					_genericDialogueSound.name = _calls[_selected].soundName;
+					g_nancy->_sound->loadSound(_genericDialogueSound);
+					g_nancy->_sound->playSound(_genericDialogueSound);
+					_callState = kCall;
+				} else {
+					// Called an invalid number
+					NancySceneState.getTextbox().clear();
+					NancySceneState.getTextbox().addTextLine(_dialAgainString);
+
+					g_nancy->_sound->loadSound(_dialAgainSound);
+					g_nancy->_sound->playSound(_dialAgainSound);
+					_callState = kBadNumber;
+				}
+
 				return;
 			}
 
@@ -264,8 +304,8 @@ void Telephone::handleInput(NancyInput &input) {
 
 			drawButton(buttonNr);
 
-			_selected = buttonNr;
-
+			_buttonLastPushed = buttonNr;
+			_checkNumbers = true;
 			_callState = kButtonPress;
 		}
 	}

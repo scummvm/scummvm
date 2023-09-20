@@ -41,7 +41,9 @@ public:
 	Telephone() :
 		RenderActionRecord(7),
 		_callState(kWaiting),
-		_selected(0) {}
+		_buttonLastPushed(-1),
+		_selected(-1),
+		_checkNumbers(false) {}
 	virtual ~Telephone() {}
 
 	void init() override;
@@ -70,7 +72,9 @@ public:
 	Common::Array<byte> _calledNumber;
 	Graphics::ManagedSurface _image;
 	CallState _callState;
-	uint _selected;
+	int _buttonLastPushed;
+	int _selected;
+	bool _checkNumbers;
 
 protected:
 	Common::String getRecordTypeName() const override { return "Telephone"; }
