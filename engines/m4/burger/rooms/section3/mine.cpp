@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -26,10 +26,92 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-void Mine::init() {
+#define MINE_END 39
+
+const MineEntry Mine::MINE_DATA[] = {
+	{ 0, 0 }
+};
+
+const char *Mine::SAID[][4] = {
+	{ "TUNNEL",  "311w007", "311w007z", nullptr    },
+	{ "DEBRIS",  nullptr,   "311w010",  "311w011"  },
+	{ "GROUND",  "311w012", "311w007z", "311w007z" },
+	{ "WALL",    "311w012", "311w007z", "311w007z" },
+	{ "CEILING", "311w012", "311w007z", "311w007z" },
+	{ nullptr, nullptr, nullptr, nullptr }
+};
+
+
+void Mine::preload() {
+	Section3Room::preload();
+	_mineCtr = 0;
 }
 
 void Mine::daemon() {
+	switch (_G(kernel).trigger) {
+	case 304:
+		digi_play("300_007", 2);
+		break;
+
+	// TODO: Further cases
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
+}
+
+void Mine::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (player_said("LOOK AT") && player_said_any("WALL", "CEILING", "GROUND")) {
+		term_message("Room #: %d", _G(flags)[V149]);
+		term_message("Distance from pig: %d", getPigDistance());
+
+		_mineCtr = (_mineCtr + 1) % 5;
+
+		if (_mineCtr == 0) {
+			wilbur_speech("311w012");
+			_G(player).command_ready = false;
+			return;
+		}
+	}
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("tunnel") && player_said_any("walk through", "GEAR")) {
+		pal_fade_set_start(0);
+
+		if (_G(hotspot_y) > 300)
+			changeRoom(DIR_SOUTH);
+		else if (_G(hotspot_x) < 200)
+			changeRoom(DIR_WEST);
+		else if (_G(hotspot_x) > 400)
+			changeRoom(DIR_EAST);
+		else
+			changeRoom(DIR_NORTH);
+	} else if (player_said("LOOK AT", "DEBRIS") && _G(game).room_id != 305) {
+		_G(wilbur_should) = 407;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+int Mine::getPigDistance() const {
+	int distance = 0;
+
+	for (int index = _G(flags)[V149]; index != MINE_END; ++distance) {
+		const MineEntry &me = MINE_DATA[index];
+		index = me._indexes[me._offset];
+	}
+
+	return distance;
+}
+
+void Mine::changeRoom(MineDirection dir) {
+	error("TODO: Mine::changeRoom");
 }
 
 } // namespace Rooms

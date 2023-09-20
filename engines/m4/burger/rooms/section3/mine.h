@@ -19,27 +19,48 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION3_MINE_H
-#define M4_BURGER_ROOMS_SECTION3_MINE_H
+#ifndef M4_BURGER_ROOMS_SECTION3_MINE_ROOM_H
+#define M4_BURGER_ROOMS_SECTION3_MINE_ROOM_H
 
-#include "m4/burger/rooms/section3/mine_room.h"
+#include "m4/burger/rooms/section3/section3_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Mine : public MineRoom {
+enum MineDirection {
+	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_WEST = 2, DIR_EAST = 3
+};
+
+struct MineEntry {
+	int32 _unknown;
+	int16 _indexes[7];
+	int32 _offset;
+	int16 _field16;
+};
+
+class Mine : public Section3Room {
+private:
+	static const MineEntry MINE_DATA[];
+	static const char *SAID[][4];
+	int _mineCtr = 0;
+
+	int getPigDistance() const;
+
 protected:
 	const char *getDigi() override {
 		return "300_004";
 	}
 
-public:
-	Mine() : MineRoom() {}
-	~Mine() override {}
+	void changeRoom(MineDirection dir);
 
-	void init() override;
+public:
+	Mine() : Section3Room() {}
+	virtual ~Mine() {}
+
+	void preload() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms

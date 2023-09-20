@@ -106,7 +106,7 @@ void Room305::init() {
 }
 
 void Room305::daemon() {
-	MineRoom::daemon();
+	Mine::daemon();
 	if (!_G(kernel).continue_handling_trigger)
 		return;
 	_G(kernel).continue_handling_trigger = false;
@@ -206,7 +206,7 @@ void Room305::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	// Handle any generic mine stuff
-	MineRoom::parser();
+	Mine::parser();
 	if (!_G(player).command_ready)
 		// Already handled
 		return;
