@@ -655,13 +655,13 @@ SoundManager::Channel::~Channel() {
 
 void SoundManager::soundEffectMaintenance() {
 	// Interpolate position and rotation when scene has changed to avoid audible chop in sound
-	if (_position != NancySceneState.getSceneSummary().listenerPosition) {
+	if (_position != NancySceneState.getSceneSummary().listenerPosition && _positionLerp == 0) {
 		++_positionLerp;
 	}
 
-	if (_positionLerp != 0) {
+	if (_positionLerp > 1) {
 		++_positionLerp;
-		if (_positionLerp == 10) {
+		if (_positionLerp > 10) {
 			_position = NancySceneState.getSceneSummary().listenerPosition;
 			_positionLerp = 0;
 		}
@@ -736,8 +736,8 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 		}
 	}
 
-	// Check if the player has moved OR if the sound itself has moved
-	if (!_shouldRecalculate && !hasStepped) {
+	// Check if the player has moved OR if the sound itself has moved, OR, if we're still interpolating
+	if (!_shouldRecalculate && !hasStepped && _positionLerp == 0) {
 		return;
 	}
 	
