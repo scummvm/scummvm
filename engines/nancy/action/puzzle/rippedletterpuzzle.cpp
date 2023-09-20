@@ -135,6 +135,9 @@ void RippedLetterPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
+
+		NancySceneState.setNoHeldItem();
+
 		if (!_puzzleState->playerHasTriedPuzzle) {
 			_puzzleState->order = _initOrder;
 			_puzzleState->rotations = _initRotations;

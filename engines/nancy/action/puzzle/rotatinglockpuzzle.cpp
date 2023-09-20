@@ -107,6 +107,8 @@ void RotatingLockPuzzle::execute() {
 		init();
 		registerGraphics();
 
+		NancySceneState.setNoHeldItem();
+
 		for (uint i = 0; i < _correctSequence.size(); ++i) {
 			_currentSequence.push_back(g_nancy->_randomSource->getRandomNumber(9));
 			drawDial(i);

@@ -204,6 +204,8 @@ void SoundEqualizerPuzzle::execute() {
 			updateSlider(i);
 		}
 
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		break;
 	case kRun:

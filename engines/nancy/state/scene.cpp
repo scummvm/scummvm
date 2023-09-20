@@ -300,6 +300,12 @@ void Scene::setHeldItem(int16 id)  {
 	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
 }
 
+void Scene::setNoHeldItem() {
+	if (getHeldItem() != -1) {
+		addItemToInventory(getHeldItem());
+	}
+}
+
 void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID) {
 	InventorySoundOverride newOverride;
 

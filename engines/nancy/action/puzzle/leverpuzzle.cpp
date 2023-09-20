@@ -96,6 +96,8 @@ void LeverPuzzle::execute() {
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_noMoveSound);
 
+		NancySceneState.setNoHeldItem();
+
 		for (uint i = 0; i < 3; ++i) {
 			drawLever(i);
 		}

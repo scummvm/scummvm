@@ -119,6 +119,8 @@ void TowerPuzzle::execute() {
 			}
 		}
 
+		NancySceneState.setNoHeldItem();
+
 		g_nancy->_sound->loadSound(_takeSound);
 		g_nancy->_sound->loadSound(_dropSound);
 

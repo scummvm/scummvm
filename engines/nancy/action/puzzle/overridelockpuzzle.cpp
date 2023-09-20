@@ -80,6 +80,8 @@ void OverrideLockPuzzle::execute() {
 		init();
 		registerGraphics();
 
+		NancySceneState.setNoHeldItem();
+
 		// Set the order of the button presses (always random)
 		// and of the lights (only random on expert difficulty)
 		uint numButtons = _buttonSrcs.size();

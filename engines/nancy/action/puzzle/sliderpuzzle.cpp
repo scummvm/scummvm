@@ -119,6 +119,8 @@ void SliderPuzzle::execute() {
 			}
 		}
 
+		NancySceneState.setNoHeldItem();
+
 		g_nancy->_sound->loadSound(_clickSound);
 		_state = kRun;
 		// fall through

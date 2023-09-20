@@ -139,11 +139,7 @@ void ConversationSound::execute() {
 		}
 
 		// Remove held item and re-add it to inventory
-		int heldItem = NancySceneState.getHeldItem();
-		if (heldItem != -1) {
-			NancySceneState.addItemToInventory(heldItem);
-			NancySceneState.setHeldItem(-1);
-		}
+		NancySceneState.setNoHeldItem();
 
 		// Move the mouse to the default position defined in CURS
 		const Common::Point initialMousePos = g_nancy->_cursorManager->getPrimaryVideoInitialPos();

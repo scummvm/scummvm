@@ -154,6 +154,9 @@ void SafeDialPuzzle::execute() {
 		g_nancy->_sound->loadSound(_resetSound);
 		_current = 0;
 		drawDialFrame(_current);
+
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		// fall through
 	case kRun :

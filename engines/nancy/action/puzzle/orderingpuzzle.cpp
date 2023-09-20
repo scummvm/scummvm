@@ -181,6 +181,9 @@ void OrderingPuzzle::execute() {
 				g_nancy->_sound->loadSound(_popUpSound);
 			}
 		}
+
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		// fall through
 	case kRun:

@@ -150,6 +150,9 @@ void TangramPuzzle::execute() {
 		g_nancy->_sound->loadSound(_pickUpSound);
 		g_nancy->_sound->loadSound(_putDownSound);
 		g_nancy->_sound->loadSound(_rotateSound);
+
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		// fall through
 	case kRun :

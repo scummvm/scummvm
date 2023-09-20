@@ -241,6 +241,7 @@ void CollisionPuzzle::execute() {
 		g_nancy->_sound->loadSound(_moveSound);
 		g_nancy->_sound->loadSound(_wallHitSound);
 		g_nancy->_sound->loadSound(_homeSound);
+		NancySceneState.setNoHeldItem();
 		_state = kRun;
 		// fall through
 	case kRun :

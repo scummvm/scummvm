@@ -196,6 +196,9 @@ void TurningPuzzle::execute() {
 		for (uint i = 0; i < _currentOrder.size(); ++i) {
 			drawObject(i, _currentOrder[i], 0);
 		}
+
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		// fall through
 	case kRun :

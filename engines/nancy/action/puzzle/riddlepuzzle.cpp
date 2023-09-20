@@ -134,6 +134,7 @@ void RiddlePuzzle::execute() {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().setOverrideFont(_textboxTextFontID);
 		NancySceneState.getTextbox().addTextLine(_riddles[_riddleID].text);
+		NancySceneState.setNoHeldItem();
 
 		_state = kRun;
 	}

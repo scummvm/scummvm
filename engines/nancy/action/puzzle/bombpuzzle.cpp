@@ -187,6 +187,8 @@ void BombPuzzle::execute() {
 		g_nancy->_sound->loadSound(_snipSound);
 		g_nancy->_sound->loadSound(_noToolSound);
 
+		NancySceneState.setNoHeldItem();
+
 		_state = kRun;
 		break;
 	case kRun: {
