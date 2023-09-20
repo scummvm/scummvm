@@ -39,7 +39,7 @@ public:
 	SoundEffectDescription *_soundEffect = nullptr;
 	bool _changeSceneImmediately = false;
 	SceneChangeDescription _sceneChange;
-	FlagDescription _flagOnPlay;
+	FlagDescription _flag;
 
 protected:
 	Common::String getRecordTypeName() const override;

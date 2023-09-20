@@ -44,8 +44,8 @@ void PlayDigiSound::readData(Common::SeekableReadStream &stream) {
 
 	_sceneChange.readData(stream, g_nancy->getGameType() == kGameTypeVampire);
 
-	_flagOnPlay.label = stream.readSint16LE();
-	_flagOnPlay.flag = stream.readByte();
+	_flag.label = stream.readSint16LE();
+	_flag.flag = stream.readByte();
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 }
 
@@ -54,7 +54,6 @@ void PlayDigiSound::execute() {
 	case kBegin:
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
 		g_nancy->_sound->playSound(_sound);
-		NancySceneState.setEventFlag(_flagOnPlay);
 
 		if (_changeSceneImmediately) {
 			NancySceneState.changeScene(_sceneChange);
@@ -71,9 +70,8 @@ void PlayDigiSound::execute() {
 
 		break;
 	case kActionTrigger:
-		if (_sceneChange.sceneID != 9999) {
-			NancySceneState.changeScene(_sceneChange);
-		}
+		NancySceneState.changeScene(_sceneChange);
+		NancySceneState.setEventFlag(_flag);
 
 		g_nancy->_sound->stopSound(_sound);
 
