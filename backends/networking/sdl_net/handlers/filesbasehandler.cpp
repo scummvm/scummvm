@@ -30,18 +30,19 @@ FilesBaseHandler::FilesBaseHandler() {}
 
 FilesBaseHandler::~FilesBaseHandler() {}
 
-Common::String FilesBaseHandler::parentPath(Common::String path) {
-	if (path.size() && (path.lastChar() == '/' || path.lastChar() == '\\')) path.deleteLastChar();
-	if (!path.empty()) {
-		for (int i = path.size() - 1; i >= 0; --i)
-			if (i == 0 || path[i] == '/' || path[i] == '\\') {
-				path.erase(i);
+Common::String FilesBaseHandler::parentPath(const Common::String &path) {
+	Common::String result = path;
+	if (result.size() && (result.lastChar() == '/' || result.lastChar() == '\\')) result.deleteLastChar();
+	if (!result.empty()) {
+		for (int i = result.size() - 1; i >= 0; --i)
+			if (i == 0 || result[i] == '/' || result[i] == '\\') {
+				result.erase(i);
 				break;
 			}
 	}
-	if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\')
-		path += '/';
-	return path;
+	if (result.size() && result.lastChar() != '/' && result.lastChar() != '\\')
+		result += '/';
+	return result;
 }
 
 bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory) {

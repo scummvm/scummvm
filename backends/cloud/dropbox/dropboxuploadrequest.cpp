@@ -35,7 +35,7 @@ namespace Dropbox {
 #define DROPBOX_API_FILES_UPLOAD "https://content.dropboxapi.com/2/files/upload"
 #define DROPBOX_API_FILES_UPLOAD_SESSION "https://content.dropboxapi.com/2/files/upload_session/"
 
-DropboxUploadRequest::DropboxUploadRequest(DropboxStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+DropboxUploadRequest::DropboxUploadRequest(DropboxStorage *storage, const Common::String &path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -108,8 +108,8 @@ void DropboxUploadRequest::uploadNextPart() {
 	}
 
 	Common::JSONValue value(jsonRequestParameters);
-	Networking::JsonCallback callback = new Common::Callback<DropboxUploadRequest, Networking::JsonResponse>(this, &DropboxUploadRequest::partUploadedCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxUploadRequest, Networking::ErrorResponse>(this, &DropboxUploadRequest::partUploadedErrorCallback);
+	Networking::JsonCallback callback = new Common::Callback<DropboxUploadRequest, const Networking::JsonResponse &>(this, &DropboxUploadRequest::partUploadedCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxUploadRequest, const Networking::ErrorResponse &>(this, &DropboxUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/octet-stream");
@@ -122,17 +122,17 @@ void DropboxUploadRequest::uploadNextPart() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
+void DropboxUploadRequest::partUploadedCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
@@ -184,7 +184,7 @@ void DropboxUploadRequest::partUploadedCallback(Networking::JsonResponse respons
 	delete json;
 }
 
-void DropboxUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
+void DropboxUploadRequest::partUploadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

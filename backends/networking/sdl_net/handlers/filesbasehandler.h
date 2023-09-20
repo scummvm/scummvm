@@ -28,7 +28,7 @@ namespace Networking {
 
 class FilesBaseHandler: public BaseHandler {
 protected:
-	Common::String parentPath(Common::String path);
+	Common::String parentPath(const Common::String &path);
 
 	/**
 	* Transforms virtual <path> into actual file system path.
@@ -41,9 +41,7 @@ protected:
 	bool transformPath(Common::String &path, Common::String &prefixToRemove, Common::String &prefixToAdd, bool isDirectory = true);
 public:
 	FilesBaseHandler();
-	virtual ~FilesBaseHandler();
-
-	virtual void handle(Client &client) = 0;
+	~FilesBaseHandler() override;
 };
 
 } // End of namespace Networking

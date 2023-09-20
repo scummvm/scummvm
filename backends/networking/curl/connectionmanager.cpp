@@ -100,7 +100,7 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 	return request;
 }
 
-Common::String ConnectionManager::urlEncode(Common::String s) const {
+Common::String ConnectionManager::urlEncode(const Common::String &s) const {
 	if (!_multi)
 		return "";
 #if LIBCURL_VERSION_NUM >= 0x070F04

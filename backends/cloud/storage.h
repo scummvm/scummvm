@@ -45,17 +45,17 @@ class FolderDownloadRequest;
 
 class Storage {
 public:
-	typedef Networking::Response<Common::Array<StorageFile>&> FileArrayResponse;
-	typedef Networking::Response<StorageInfo> StorageInfoResponse;
+	typedef Networking::Response<const Common::Array<StorageFile> &> FileArrayResponse;
+	typedef Networking::Response<const StorageInfo &> StorageInfoResponse;
 	typedef Networking::Response<bool> BoolResponse;
-	typedef Networking::Response<StorageFile> UploadResponse;
-	typedef Networking::Response<Common::Array<StorageFile> &> ListDirectoryResponse;
+	typedef Networking::Response<const StorageFile &> UploadResponse;
+	typedef Networking::Response<const Common::Array<StorageFile> &> ListDirectoryResponse;
 
-	typedef Common::BaseCallback<FileArrayResponse> *FileArrayCallback;
-	typedef Common::BaseCallback<StorageInfoResponse> *StorageInfoCallback;
-	typedef Common::BaseCallback<BoolResponse> *BoolCallback;
-	typedef Common::BaseCallback<UploadResponse> *UploadCallback;
-	typedef Common::BaseCallback<ListDirectoryResponse> *ListDirectoryCallback;
+	typedef Common::BaseCallback<const FileArrayResponse &> *FileArrayCallback;
+	typedef Common::BaseCallback<const StorageInfoResponse &> *StorageInfoCallback;
+	typedef Common::BaseCallback<const BoolResponse &> *BoolCallback;
+	typedef Common::BaseCallback<const UploadResponse &> *UploadCallback;
+	typedef Common::BaseCallback<const ListDirectoryResponse &> *ListDirectoryCallback;
 
 protected:
 	/** Keeps track of running requests. */
@@ -76,7 +76,7 @@ protected:
 	virtual Networking::ErrorCallback getErrorPrintingCallback();
 
 	/** Prints ErrorResponse contents with debug(). */
-	virtual void printErrorResponse(Networking::ErrorResponse error);
+	virtual void printErrorResponse(const Networking::ErrorResponse &error);
 
 	/**
 	 * Adds request to the ConnMan, but also increases _runningRequestsCount.
@@ -109,7 +109,7 @@ public:
 	 * @note every Storage must write keyPrefix + "type" key
 	 *       with common value (e.g. "Dropbox").
 	 */
-	virtual void saveConfig(Common::String keyPrefix) = 0;
+	virtual void saveConfig(const Common::String  &keyPrefix) = 0;
 
 	/**
 	* Return unique storage name.
@@ -136,31 +136,31 @@ public:
 	 */
 
 	/** Returns ListDirectoryResponse with list of files. */
-	virtual Networking::Request *listDirectory(Common::String path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
+	virtual Networking::Request *listDirectory(const Common::String &path, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false) = 0;
 
 	/** Returns StorageFile with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
-	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns whether Storage supports upload(ReadStream). */
 	virtual bool uploadStreamSupported();
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
-	virtual Networking::Request *streamFileById(Common::String id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *streamFile(const Common::String &path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
-	virtual Networking::Request *downloadById(Common::String remoteId, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	virtual Networking::Request *downloadById(const Common::String &remoteId, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Returns Common::Array<StorageFile> with list of files, which were not downloaded. */
-	virtual Networking::Request *downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
+	virtual Networking::Request *downloadFolder(const Common::String &remotePath, const Common::String &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive = false);
 
 	/** Calls the callback when finished. */
 	virtual SavesSyncRequest *syncSaves(BoolCallback callback, Networking::ErrorCallback errorCallback);
 
 	/** Calls the callback when finished. */
-	virtual Networking::Request *createDirectory(Common::String path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
+	virtual Networking::Request *createDirectory(const Common::String &path, BoolCallback callback, Networking::ErrorCallback errorCallback) = 0;
 
 	/**
 	 * Returns the StorageInfo struct via <callback>.
@@ -205,16 +205,16 @@ public:
 
 protected:
 	/** Finishes the sync. Shows an OSD message. */
-	virtual void savesSyncDefaultCallback(BoolResponse response);
+	virtual void savesSyncDefaultCallback(const BoolResponse &response);
 
 	/** Finishes the sync. Shows an OSD message. */
-	virtual void savesSyncDefaultErrorCallback(Networking::ErrorResponse error);
+	virtual void savesSyncDefaultErrorCallback(const Networking::ErrorResponse &error);
 
 public:
 	///// DownloadFolderRequest-related /////
 
 	/** Starts a folder download. */
-	virtual bool startDownload(Common::String remotePath, Common::String localPath);
+	virtual bool startDownload(const Common::String &remotePath, const Common::String &localPath);
 
 	/** Cancels running download. */
 	virtual void cancelDownload();
@@ -245,10 +245,10 @@ public:
 
 protected:
 	/** Finishes the download. Shows an OSD message. */
-	virtual void directoryDownloadedCallback(FileArrayResponse response);
+	virtual void directoryDownloadedCallback(const FileArrayResponse &response);
 
 	/** Finishes the download. Shows an OSD message. */
-	virtual void directoryDownloadedErrorCallback(Networking::ErrorResponse error);
+	virtual void directoryDownloadedErrorCallback(const Networking::ErrorResponse &error);
 };
 
 } // End of namespace Cloud

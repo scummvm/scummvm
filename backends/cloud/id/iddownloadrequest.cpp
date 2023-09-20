@@ -26,7 +26,7 @@
 namespace Cloud {
 namespace Id {
 
-IdDownloadRequest::IdDownloadRequest(IdStorage *storage, Common::String remotePath, Common::String localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
+IdDownloadRequest::IdDownloadRequest(IdStorage *storage, const Common::String &remotePath, const Common::String &localPath, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedFile(remotePath), _requestedLocalFile(localPath), _storage(storage), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -48,36 +48,36 @@ void IdDownloadRequest::start() {
 	_ignoreCallback = false;
 
 	//find file's id
-	Storage::UploadCallback innerCallback = new Common::Callback<IdDownloadRequest, Storage::UploadResponse>(this, &IdDownloadRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdDownloadRequest, Networking::ErrorResponse>(this, &IdDownloadRequest::idResolveFailedCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<IdDownloadRequest, const Storage::UploadResponse &>(this, &IdDownloadRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdDownloadRequest, const Networking::ErrorResponse &>(this, &IdDownloadRequest::idResolveFailedCallback);
 	_workingRequest = _storage->resolveFileId(_requestedFile, innerCallback, innerErrorCallback);
 }
 
-void IdDownloadRequest::idResolvedCallback(Storage::UploadResponse response) {
+void IdDownloadRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
-	Storage::BoolCallback innerCallback = new Common::Callback<IdDownloadRequest, Storage::BoolResponse>(this, &IdDownloadRequest::downloadCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdDownloadRequest, Networking::ErrorResponse>(this, &IdDownloadRequest::downloadErrorCallback);
+	Storage::BoolCallback innerCallback = new Common::Callback<IdDownloadRequest, const Storage::BoolResponse &>(this, &IdDownloadRequest::downloadCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdDownloadRequest, const Networking::ErrorResponse &>(this, &IdDownloadRequest::downloadErrorCallback);
 	_workingRequest = _storage->downloadById(response.value.id(), _requestedLocalFile, innerCallback, innerErrorCallback);
 }
 
-void IdDownloadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
+void IdDownloadRequest::idResolveFailedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 	finishError(error);
 }
 
-void IdDownloadRequest::downloadCallback(Storage::BoolResponse response) {
+void IdDownloadRequest::downloadCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 	finishDownload(response.value);
 }
 
-void IdDownloadRequest::downloadErrorCallback(Networking::ErrorResponse error) {
+void IdDownloadRequest::downloadErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

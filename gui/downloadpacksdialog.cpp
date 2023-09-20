@@ -68,9 +68,9 @@ struct DialogState {
 	void downloadList();
 	void proceedDownload();
 
-	void downloadListCallback(Networking::DataResponse response);
-	void downloadFileCallback(Networking::DataResponse response);
-	void errorCallback(Networking::ErrorResponse error);
+	void downloadListCallback(const Networking::DataResponse &response);
+	void downloadFileCallback(const Networking::DataResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
 
 private:
 	bool takeOneFile();
@@ -79,8 +79,8 @@ private:
 
 void DialogState::downloadList() {
 	Networking::SessionRequest *rq = session.get(Common::String::format("https://downloads.scummvm.org/frs/icons/%s", listfname), "",
-		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadListCallback),
-		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback),
+		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadListCallback),
+		new Common::Callback<DialogState, const Networking::ErrorResponse &>(this, &DialogState::errorCallback),
 		true);
 
 	rq->start();
@@ -104,14 +104,14 @@ bool DialogState::takeOneFile() {
 	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
 
 	Networking::SessionRequest *rq = session.get(url, localFile,
-		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadFileCallback),
-		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback));
+		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadFileCallback),
+		new Common::Callback<DialogState, const Networking::ErrorResponse &>(this, &DialogState::errorCallback));
 
 	rq->start();
 	return true;
 }
 
-void DialogState::downloadListCallback(Networking::DataResponse r) {
+void DialogState::downloadListCallback(const Networking::DataResponse &r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	Common::MemoryReadStream stream(response->buffer, response->len);
 
@@ -136,7 +136,7 @@ void DialogState::downloadListCallback(Networking::DataResponse r) {
 		dialog->sendCommand(kListDownloadFinishedCmd, 0);
 }
 
-void DialogState::downloadFileCallback(Networking::DataResponse r) {
+void DialogState::downloadFileCallback(const Networking::DataResponse &r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
 	downloadedSize += response->len;
@@ -156,7 +156,7 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 	}
 }
 
-void DialogState::errorCallback(Networking::ErrorResponse error) {
+void DialogState::errorCallback(const Networking::ErrorResponse &error) {
 	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
 
 	g_system->taskFinished(OSystem::kDataPackDownload);

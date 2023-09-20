@@ -35,7 +35,7 @@ namespace GoogleDrive {
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files%28id,mimeType,modifiedTime,name,size%29,nextPageToken&orderBy=folder,name"
 //files(id,mimeType,modifiedTime,name,size),nextPageToken
 
-GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
+GoogleDriveListDirectoryByIdRequest::GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, const Common::String &id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -58,20 +58,20 @@ void GoogleDriveListDirectoryByIdRequest::start() {
 	makeRequest("");
 }
 
-void GoogleDriveListDirectoryByIdRequest::makeRequest(Common::String pageToken) {
+void GoogleDriveListDirectoryByIdRequest::makeRequest(const Common::String &pageToken) {
 	Common::String url = GOOGLEDRIVE_API_FILES;
 	if (pageToken != "")
 		url += "&pageToken=" + pageToken;
 	url += "&q=%27" + _requestedId + "%27+in+parents";
 
-	Networking::JsonCallback callback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, Networking::JsonResponse>(this, &GoogleDriveListDirectoryByIdRequest::responseCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, Networking::ErrorResponse>(this, &GoogleDriveListDirectoryByIdRequest::errorCallback);
+	Networking::JsonCallback callback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, const Networking::JsonResponse &>(this, &GoogleDriveListDirectoryByIdRequest::responseCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, const Networking::ErrorResponse &>(this, &GoogleDriveListDirectoryByIdRequest::errorCallback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
+void GoogleDriveListDirectoryByIdRequest::responseCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) {
 		delete response.value;
@@ -81,11 +81,11 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "GoogleDriveListDirectoryByIdRequest::responseCallback");
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json) {
 		Common::JSONObject responseObject = json->asObject();
 
@@ -137,7 +137,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(Networking::JsonRespo
 	delete json;
 }
 
-void GoogleDriveListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
+void GoogleDriveListDirectoryByIdRequest::errorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

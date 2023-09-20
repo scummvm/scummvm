@@ -69,7 +69,7 @@ int CurlSocket::ready() {
 	return waitOnSocket(_socket, 1, 0);
 }
 
-bool CurlSocket::connect(Common::String url) {
+bool CurlSocket::connect(const Common::String &url) {
 	_easy = curl_easy_init();
 	if (_easy) {
 		curl_easy_setopt(_easy, CURLOPT_URL, url.c_str());

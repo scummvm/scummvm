@@ -35,7 +35,7 @@ namespace Networking {
 class NetworkReadStream;
 
 typedef Response<NetworkReadStream *> NetworkReadStreamResponse;
-typedef Common::BaseCallback<NetworkReadStreamResponse> *NetworkReadStreamCallback;
+typedef Common::BaseCallback<const NetworkReadStreamResponse &> *NetworkReadStreamCallback;
 
 class CurlRequest: public Request {
 protected:
@@ -52,30 +52,30 @@ protected:
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;
 
-	virtual NetworkReadStream *makeStream();
+	NetworkReadStream *makeStream();
 
 public:
-	CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url);
-	virtual ~CurlRequest();
+	CurlRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url);
+	~CurlRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 
 	/** Replaces all headers with the passed array of headers. */
-	virtual void setHeaders(Common::Array<Common::String> &headers);
+	virtual void setHeaders(const Common::Array<Common::String> &headers);
 
 	/** Adds a header into headers list. */
-	virtual void addHeader(Common::String header);
+	virtual void addHeader(const Common::String &header);
 
 	/** Adds a post field (key=value pair). */
-	virtual void addPostField(Common::String field);
+	virtual void addPostField(const Common::String &field);
 
 	/** Adds a form/multipart field (name, value). */
-	virtual void addFormField(Common::String name, Common::String value);
+	virtual void addFormField(const Common::String &name, const Common::String &value);
 
 	/** Adds a form/multipart file (field name, file name). */
-	virtual void addFormFile(Common::String name, Common::String filename);
+	virtual void addFormFile(const Common::String &name, const Common::String &filename);
 
 	/** Sets bytes buffer. */
 	virtual void setBuffer(byte *buffer, uint32 size);

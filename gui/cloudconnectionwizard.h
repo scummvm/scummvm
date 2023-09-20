@@ -119,9 +119,9 @@ class CloudConnectionWizard : public Dialog {
 	void removeWidgetChecked(EditTextWidget *&widget);
 
 	// logic
-	void storageConnectionCallback(Networking::ErrorResponse response);
+	void storageConnectionCallback(const Networking::ErrorResponse &response);
 	void manualModeConnect();
-	void manualModeStorageConnectionCallback(Networking::ErrorResponse response);
+	void manualModeStorageConnectionCallback(const Networking::ErrorResponse &response);
 
 public:
 	CloudConnectionWizard();

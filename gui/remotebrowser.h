@@ -64,8 +64,8 @@ protected:
 	void updateListing();
 	void goUp();
 	void listDirectory(const Cloud::StorageFile &node);
-	void directoryListedCallback(Cloud::Storage::ListDirectoryResponse response);
-	void directoryListedErrorCallback(Networking::ErrorResponse error);
+	void directoryListedCallback(const Cloud::Storage::ListDirectoryResponse &response);
+	void directoryListedErrorCallback(const Networking::ErrorResponse &error);
 
 	struct FileListOrder : public Common::BinaryFunction<Cloud::StorageFile, Cloud::StorageFile, bool> {
 		bool operator()(const Cloud::StorageFile &x, const Cloud::StorageFile &y) const {

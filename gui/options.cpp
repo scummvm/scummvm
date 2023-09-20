@@ -3358,7 +3358,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	// fall through
 	case kSyncSavesStorageCmd: {
 		CloudMan.syncSaves(
-			new Common::Callback<GlobalOptionsDialog, Cloud::Storage::BoolResponse>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
+			new Common::Callback<GlobalOptionsDialog, const Cloud::Storage::BoolResponse &>(this, &GlobalOptionsDialog::storageSavesSyncedCallback)
 		);
 		break;
 	}
@@ -3742,11 +3742,11 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 #endif // USE_SDL_NET
 
 #ifdef USE_LIBCURL
-void GlobalOptionsDialog::storageSavesSyncedCallback(Cloud::Storage::BoolResponse response) {
+void GlobalOptionsDialog::storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response) {
 	_redrawCloudTab = true;
 }
 
-void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse response) {
+void GlobalOptionsDialog::storageErrorCallback(const Networking::ErrorResponse &response) {
 	debug(9, "GlobalOptionsDialog: error response (%s, %ld):", (response.failed ? "failed" : "interrupted"), response.httpResponseCode);
 	debug(9, "%s", response.response.c_str());
 

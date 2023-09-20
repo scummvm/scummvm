@@ -36,7 +36,7 @@ class StorageInfo {
 	uint64 _usedBytes, _allocatedBytes;
 
 public:
-	StorageInfo(Common::String uid_, Common::String name_, Common::String email_, uint64 used_, uint64 allocated):
+	StorageInfo(const Common::String &uid_, const Common::String &name_, const Common::String &email_, uint64 used_, uint64 allocated):
 		_uid(uid_), _name(name_), _email(email_), _usedBytes(used_), _allocatedBytes(allocated) {}
 
 	Common::String uid() const { return _uid; }

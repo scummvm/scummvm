@@ -29,7 +29,7 @@
 
 namespace Networking {
 
-CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, Common::String url):
+CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url):
 	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
 	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
@@ -78,18 +78,18 @@ Common::String CurlRequest::date() const {
 	return "";
 }
 
-void CurlRequest::setHeaders(Common::Array<Common::String> &headers) {
+void CurlRequest::setHeaders(const Common::Array<Common::String> &headers) {
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
 	for (uint32 i = 0; i < headers.size(); ++i)
 		addHeader(headers[i]);
 }
 
-void CurlRequest::addHeader(Common::String header) {
+void CurlRequest::addHeader(const Common::String &header) {
 	_headersList = curl_slist_append(_headersList, header.c_str());
 }
 
-void CurlRequest::addPostField(Common::String keyValuePair) {
+void CurlRequest::addPostField(const Common::String &keyValuePair) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST fields would be ignored, because there is buffer present");
 
@@ -102,7 +102,7 @@ void CurlRequest::addPostField(Common::String keyValuePair) {
 		_postFields += "&" + keyValuePair;
 }
 
-void CurlRequest::addFormField(Common::String name, Common::String value) {
+void CurlRequest::addFormField(const Common::String &name, const Common::String &value) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST form fields would be ignored, because there is buffer present");
 
@@ -112,7 +112,7 @@ void CurlRequest::addFormField(Common::String name, Common::String value) {
 	_formFields[name] = value;
 }
 
-void CurlRequest::addFormFile(Common::String name, Common::String filename) {
+void CurlRequest::addFormFile(const Common::String &name, const Common::String &filename) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST form files would be ignored, because there is buffer present");
 

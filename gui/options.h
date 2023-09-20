@@ -365,8 +365,8 @@ protected:
 	void setupCloudTab();
 	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
 
-	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
-	void storageErrorCallback(Networking::ErrorResponse response);
+	void storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response);
+	void storageErrorCallback(const Networking::ErrorResponse &response);
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET

@@ -36,7 +36,7 @@ BoxTokenRefresher::BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallbac
 
 BoxTokenRefresher::~BoxTokenRefresher() {}
 
-void BoxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
+void BoxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	if (!response.value) {
 		//failed to refresh token, notify user with NULL in original callback
 		warning("BoxTokenRefresher: failed to refresh token");
@@ -56,7 +56,7 @@ void BoxTokenRefresher::tokenRefreshed(Storage::BoolResponse response) {
 	retry(0);
 }
 
-void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
+void BoxTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
 		CurlJsonRequest::finishJson(nullptr);
@@ -98,7 +98,7 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 
 			pause();
 			delete json;
-			_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
+			_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, const Storage::BoolResponse &>(this, &BoxTokenRefresher::tokenRefreshed));
 			return;
 		}
 	}
@@ -107,10 +107,10 @@ void BoxTokenRefresher::finishJson(Common::JSONValue *json) {
 	CurlJsonRequest::finishJson(json);
 }
 
-void BoxTokenRefresher::finishError(Networking::ErrorResponse error, Networking::RequestState state) {
+void BoxTokenRefresher::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
 	if (error.httpResponseCode == 401) { // invalid_token
 		pause();
-		_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, Storage::BoolResponse>(this, &BoxTokenRefresher::tokenRefreshed));
+		_parentStorage->refreshAccessToken(new Common::Callback<BoxTokenRefresher, const Storage::BoolResponse &>(this, &BoxTokenRefresher::tokenRefreshed));
 		return;
 	}
 
@@ -120,7 +120,7 @@ void BoxTokenRefresher::finishError(Networking::ErrorResponse error, Networking:
 	Request::finishError(error);
 }
 
-void BoxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
+void BoxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
@@ -128,7 +128,7 @@ void BoxTokenRefresher::setHeaders(Common::Array<Common::String> &headers) {
 		CurlJsonRequest::addHeader(headers[i]);
 }
 
-void BoxTokenRefresher::addHeader(Common::String header) {
+void BoxTokenRefresher::addHeader(const Common::String  &header) {
 	_headers.push_back(header);
 	CurlJsonRequest::addHeader(header);
 }

@@ -35,7 +35,7 @@ namespace Box {
 #define BOX_LIST_DIRECTORY_LIMIT 1000
 #define BOX_FOLDERS_API_LINK "https://api.box.com/2.0/folders/%s/items?offset=%u&limit=%u&fields=%s"
 
-BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
+BoxListDirectoryByIdRequest::BoxListDirectoryByIdRequest(BoxStorage *storage, const Common::String &id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _requestedId(id), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -65,14 +65,14 @@ void BoxListDirectoryByIdRequest::makeRequest(uint32 offset) {
 		"id,type,name,size,modified_at"
 	);
 
-	Networking::JsonCallback callback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::JsonResponse>(this, &BoxListDirectoryByIdRequest::responseCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<BoxListDirectoryByIdRequest, Networking::ErrorResponse>(this, &BoxListDirectoryByIdRequest::errorCallback);
+	Networking::JsonCallback callback = new Common::Callback<BoxListDirectoryByIdRequest, const Networking::JsonResponse &>(this, &BoxListDirectoryByIdRequest::responseCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<BoxListDirectoryByIdRequest, const Networking::ErrorResponse &>(this, &BoxListDirectoryByIdRequest::errorCallback);
 	Networking::CurlJsonRequest *request = new BoxTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse response) {
+void BoxListDirectoryByIdRequest::responseCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) {
 		delete response.value;
@@ -83,11 +83,11 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "BoxListDirectoryByIdRequest::responseCallback: unknown error");
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
@@ -172,7 +172,7 @@ void BoxListDirectoryByIdRequest::responseCallback(Networking::JsonResponse resp
 	delete json;
 }
 
-void BoxListDirectoryByIdRequest::errorCallback(Networking::ErrorResponse error) {
+void BoxListDirectoryByIdRequest::errorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	if (error.request) _date = error.request->date();

@@ -54,14 +54,14 @@ class UploadFileClientHandler: public ClientHandler {
 
 	void handleBlockHeaders(Client *client);
 	void handleBlockContent(Client *client);
-	void setErrorMessageHandler(Client &client, Common::String message);
+	void setErrorMessageHandler(Client &client, const Common::String &message);
 	void setSuccessHandler(Client &client);
 
 public:
-	UploadFileClientHandler(Common::String parentDirectoryPath);
-	virtual ~UploadFileClientHandler();
+	UploadFileClientHandler(const Common::String &parentDirectoryPath);
+	~UploadFileClientHandler() override;
 
-	virtual void handle(Client *client);
+	void handle(Client *client) override;
 };
 
 } // End of namespace Networking

@@ -46,10 +46,10 @@ void Storage::enable() {
 }
 
 Networking::ErrorCallback Storage::getErrorPrintingCallback() {
-	return new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::printErrorResponse);
+	return new Common::Callback<Storage, const Networking::ErrorResponse &>(this, &Storage::printErrorResponse);
 }
 
-void Storage::printErrorResponse(Networking::ErrorResponse error) {
+void Storage::printErrorResponse(const Networking::ErrorResponse &error) {
 	debug(9, "Storage: error response (%s, %ld):", (error.failed ? "failed" : "interrupted"), error.httpResponseCode);
 	debug(9, "%s", error.response.c_str());
 }
@@ -84,7 +84,7 @@ void Storage::requestFinishedCallback(Networking::Request *invalidRequestPointer
 		syncSaves(nullptr, nullptr);
 }
 
-Networking::Request *Storage::upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 
 	Common::File *f = new Common::File();
@@ -105,17 +105,17 @@ bool Storage::uploadStreamSupported() {
 	return true;
 }
 
-Networking::Request *Storage::streamFile(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::streamFile(const Common::String &path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	//most Storages use paths instead of ids, so this should work
 	return streamFileById(path, callback, errorCallback);
 }
 
-Networking::Request *Storage::download(Common::String remotePath, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::download(const Common::String &remotePath, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	//most Storages use paths instead of ids, so this should work
 	return downloadById(remotePath, localPath, callback, errorCallback);
 }
 
-Networking::Request *Storage::downloadById(Common::String remoteId, Common::String localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
+Networking::Request *Storage::downloadById(const Common::String &remoteId, const Common::String &localPath, BoolCallback callback, Networking::ErrorCallback errorCallback) {
 	if (!errorCallback) errorCallback = getErrorPrintingCallback();
 
 	Common::DumpFile *f = new Common::DumpFile();
@@ -131,7 +131,7 @@ Networking::Request *Storage::downloadById(Common::String remoteId, Common::Stri
 	return addRequest(new DownloadRequest(this, callback, errorCallback, remoteId, f));
 }
 
-Networking::Request *Storage::downloadFolder(Common::String remotePath, Common::String localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+Networking::Request *Storage::downloadFolder(const Common::String &remotePath, const Common::String &localPath, FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	if (!_isEnabled) {
 		warning("Storage::downloadFolder: cannot be run while Storage is disabled");
 		if (errorCallback)
@@ -159,9 +159,9 @@ SavesSyncRequest *Storage::syncSaves(BoolCallback callback, Networking::ErrorCal
 		return _savesSyncRequest;
 	}
 	if (!callback)
-		callback = new Common::Callback<Storage, BoolResponse>(this, &Storage::savesSyncDefaultCallback);
+		callback = new Common::Callback<Storage, const BoolResponse &>(this, &Storage::savesSyncDefaultCallback);
 	if (!errorCallback)
-		errorCallback = new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::savesSyncDefaultErrorCallback);
+		errorCallback = new Common::Callback<Storage, const Networking::ErrorResponse &>(this, &Storage::savesSyncDefaultErrorCallback);
 	_savesSyncRequest = new SavesSyncRequest(this, callback, errorCallback);
 	_syncRestartRequestsed = false;
 	_runningRequestsMutex.unlock();
@@ -226,7 +226,7 @@ void Storage::cancelSync() {
 	_runningRequestsMutex.unlock();
 }
 
-void Storage::savesSyncDefaultCallback(BoolResponse response) {
+void Storage::savesSyncDefaultCallback(const BoolResponse &response) {
 	_runningRequestsMutex.lock();
 	_savesSyncRequest = nullptr;
 	_runningRequestsMutex.unlock();
@@ -235,7 +235,7 @@ void Storage::savesSyncDefaultCallback(BoolResponse response) {
 		warning("SavesSyncRequest called success callback with `false` argument");
 }
 
-void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
+void Storage::savesSyncDefaultErrorCallback(const Networking::ErrorResponse &error) {
 	_runningRequestsMutex.lock();
 	_savesSyncRequest = nullptr;
 	_runningRequestsMutex.unlock();
@@ -250,7 +250,7 @@ void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
 
 ///// DownloadFolderRequest-related /////
 
-bool Storage::startDownload(Common::String remotePath, Common::String localPath) {
+bool Storage::startDownload(const Common::String &remotePath, const Common::String &localPath) {
 	_runningRequestsMutex.lock();
 	if (_downloadFolderRequest) {
 		warning("Storage::startDownload: there is a download in progress already");
@@ -259,8 +259,8 @@ bool Storage::startDownload(Common::String remotePath, Common::String localPath)
 	}
 	_downloadFolderRequest = (FolderDownloadRequest *)downloadFolder(
 		remotePath, localPath,
-		new Common::Callback<Storage, FileArrayResponse>(this, &Storage::directoryDownloadedCallback),
-		new Common::Callback<Storage, Networking::ErrorResponse>(this, &Storage::directoryDownloadedErrorCallback),
+		new Common::Callback<Storage, const FileArrayResponse &>(this, &Storage::directoryDownloadedCallback),
+		new Common::Callback<Storage, const Networking::ErrorResponse &>(this, &Storage::directoryDownloadedErrorCallback),
 		true
 	);
 	_runningRequestsMutex.unlock();
@@ -342,7 +342,7 @@ Common::String Storage::getDownloadLocalDirectory() {
 	return result;
 }
 
-void Storage::directoryDownloadedCallback(FileArrayResponse response) {
+void Storage::directoryDownloadedCallback(const FileArrayResponse &response) {
 	_runningRequestsMutex.lock();
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();
@@ -356,7 +356,7 @@ void Storage::directoryDownloadedCallback(FileArrayResponse response) {
 	Common::OSDMessageQueue::instance().addMessage(message);
 }
 
-void Storage::directoryDownloadedErrorCallback(Networking::ErrorResponse error) {
+void Storage::directoryDownloadedErrorCallback(const Networking::ErrorResponse &error) {
 	_runningRequestsMutex.lock();
 	_downloadFolderRequest = nullptr;
 	_runningRequestsMutex.unlock();

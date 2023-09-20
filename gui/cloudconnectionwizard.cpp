@@ -79,7 +79,7 @@ CloudConnectionWizard::CloudConnectionWizard() :
 
 	showStep(Step::MODE_SELECT);
 
-	_callback = new Common::Callback<CloudConnectionWizard, Networking::ErrorResponse>(this, &CloudConnectionWizard::storageConnectionCallback);
+	_callback = new Common::Callback<CloudConnectionWizard, const Networking::ErrorResponse &>(this, &CloudConnectionWizard::storageConnectionCallback);
 }
 
 CloudConnectionWizard::~CloudConnectionWizard() {
@@ -470,7 +470,7 @@ void CloudConnectionWizard::removeWidgetChecked(EditTextWidget *&widget) {
 
 // logic
 
-void CloudConnectionWizard::storageConnectionCallback(Networking::ErrorResponse response) {
+void CloudConnectionWizard::storageConnectionCallback(const Networking::ErrorResponse &response) {
 	if (response.failed || response.interrupted) {
 		return;
 	}
@@ -525,7 +525,7 @@ void CloudConnectionWizard::manualModeConnect() {
 
 	// pass JSON to the manager
 	_connecting = true;
-	Networking::ErrorCallback callback = new Common::Callback<CloudConnectionWizard, Networking::ErrorResponse>(this, &CloudConnectionWizard::manualModeStorageConnectionCallback);
+	Networking::ErrorCallback callback = new Common::Callback<CloudConnectionWizard, const Networking::ErrorResponse &>(this, &CloudConnectionWizard::manualModeStorageConnectionCallback);
 	Networking::JsonResponse jsonResponse(nullptr, json);
 	if (!CloudMan.connectStorage(jsonResponse, callback)) { // no "storage" in JSON (or invalid one)
 		_connecting = false;
@@ -550,7 +550,7 @@ void CloudConnectionWizard::manualModeConnect() {
 		_nextStepButton->setEnabled(false);
 }
 
-void CloudConnectionWizard::manualModeStorageConnectionCallback(Networking::ErrorResponse response) {
+void CloudConnectionWizard::manualModeStorageConnectionCallback(const Networking::ErrorResponse &response) {
 	if (response.failed || response.interrupted) {
 		if (response.failed) {
 			const char *knownErrorMessages[] = {

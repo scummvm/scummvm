@@ -34,7 +34,7 @@ namespace GoogleDrive {
 
 #define GOOGLEDRIVE_API_FILES "https://www.googleapis.com/upload/drive/v3/files"
 
-GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, Common::String path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+GoogleDriveUploadRequest::GoogleDriveUploadRequest(GoogleDriveStorage *storage, const Common::String &path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _contentsStream(contents), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -67,12 +67,12 @@ void GoogleDriveUploadRequest::start() {
 
 void GoogleDriveUploadRequest::resolveId() {
 	//check whether such file already exists
-	Storage::UploadCallback innerCallback = new Common::Callback<GoogleDriveUploadRequest, Storage::UploadResponse>(this, &GoogleDriveUploadRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::idResolveFailedCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<GoogleDriveUploadRequest, const Storage::UploadResponse &>(this, &GoogleDriveUploadRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::idResolveFailedCallback);
 	_workingRequest = _storage->resolveFileId(_savePath, innerCallback, innerErrorCallback);
 }
 
-void GoogleDriveUploadRequest::idResolvedCallback(Storage::UploadResponse response) {
+void GoogleDriveUploadRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -80,7 +80,7 @@ void GoogleDriveUploadRequest::idResolvedCallback(Storage::UploadResponse respon
 	startUpload();
 }
 
-void GoogleDriveUploadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
+void GoogleDriveUploadRequest::idResolveFailedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -116,8 +116,8 @@ void GoogleDriveUploadRequest::startUpload() {
 	if (_resolvedId != "")
 		url += "/" + ConnMan.urlEncode(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";
-	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, Networking::JsonResponse>(this, &GoogleDriveUploadRequest::startUploadCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);
+	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, const Networking::JsonResponse &>(this, &GoogleDriveUploadRequest::startUploadCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
@@ -140,13 +140,13 @@ void GoogleDriveUploadRequest::startUpload() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse response) {
+void GoogleDriveUploadRequest::startUploadCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "GoogleDriveUploadRequest::startUploadCallback", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -172,13 +172,13 @@ void GoogleDriveUploadRequest::startUploadCallback(Networking::JsonResponse resp
 		error.response += ": missing request object [improbable]";
 	}
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	delete json;
 
 	finishError(error);
 }
 
-void GoogleDriveUploadRequest::startUploadErrorCallback(Networking::ErrorResponse error) {
+void GoogleDriveUploadRequest::startUploadErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -189,8 +189,8 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 	Common::String url = _uploadUrl;
 
-	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, Networking::JsonResponse>(this, &GoogleDriveUploadRequest::partUploadedCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, Networking::ErrorResponse>(this, &GoogleDriveUploadRequest::partUploadedErrorCallback);
+	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, const Networking::JsonResponse &>(this, &GoogleDriveUploadRequest::partUploadedCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::partUploadedErrorCallback);
 	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->usePut();
@@ -246,26 +246,26 @@ bool GoogleDriveUploadRequest::handleHttp308(const Networking::NetworkReadStream
 	return false;
 }
 
-void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse response) {
+void GoogleDriveUploadRequest::partUploadedCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
 			long code = stream->httpResponseCode();
 			error.httpResponseCode = code;
 			if (code == 308 && handleHttp308(stream)) {
-				delete (Common::JSONValue *)response.value;
+				delete response.value;
 				return;
 			}
 		}
 	}
 
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
@@ -311,7 +311,7 @@ void GoogleDriveUploadRequest::partUploadedCallback(Networking::JsonResponse res
 	delete json;
 }
 
-void GoogleDriveUploadRequest::partUploadedErrorCallback(Networking::ErrorResponse error) {
+void GoogleDriveUploadRequest::partUploadedErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

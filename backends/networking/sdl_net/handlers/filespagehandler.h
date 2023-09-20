@@ -41,19 +41,19 @@ class FilesPageHandler: public FilesBaseHandler {
 	 *
 	 * Returns true on success.
 	 */
-	bool listDirectory(Common::String path, Common::String &content, const Common::String &itemTemplate);
+	bool listDirectory(const Common::String &path, Common::String &content, const Common::String &itemTemplate);
 
 	/** Helper method for detecting items' type. */
 	static ItemType detectType(bool isDirectory, const Common::String &name);
 
 	/** Helper method for adding items into the files list. */
-	void addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, Common::String path, Common::String name, Common::String size = "") const;
+	void addItem(Common::String &content, const Common::String &itemTemplate, ItemType itemType, const Common::String &path, const Common::String &name, const Common::String &size = Common::String()) const;
 
 public:
 	FilesPageHandler();
-	virtual ~FilesPageHandler();
+	~FilesPageHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking
