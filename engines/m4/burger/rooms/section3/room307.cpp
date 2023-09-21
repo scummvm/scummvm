@@ -45,9 +45,55 @@ const seriesPlayBreak Room307::PLAY1[] = {
 
 
 void Room307::init() {
+	_G(flags)[V099] = 1;
+	ws_demand_location(418, 309, 9);
+	ws_hide_walker();
+	digi_preload("307_001");
+	digi_play_loop("307_001", 3, 125, -1, 307);
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room307::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		digi_preload_stream_breaks(SERIES1);
+		series_stream_with_breaks(SERIES1, "307brig", 6, 1, 2);
+		break;
+
+	case 2:
+		digi_unload_stream_breaks(SERIES1);
+		_series1.show("307zg01", 0x400);
+		ws_unhide_walker();
+		kernel_trigger_dispatch_now(3);
+		break;
+
+	case 3:
+		wilbur_speech("307w001y", 4);
+		break;
+
+	case 4:
+		wilbur_speech("307w001z", 7);
+		break;
+
+	case 5:
+		digi_preload("608_002");
+		series_play("307door", 9, 16, -1, 7);
+		digi_play("608_002", 2, 200, 6);
+		break;
+
+	case 6:
+		wilbur_speech("307w002", g10027);
+		break;
+
+	case 7:
+		_series1.terminate();
+		series_play_with_breaks(PLAY1, "307zg01", 0x400, 5, 3, 5, 100, 0, 0);
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms

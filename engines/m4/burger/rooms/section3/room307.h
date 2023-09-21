@@ -32,6 +32,7 @@ class Room307 : public Room {
 private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesPlayBreak PLAY1[];
+	Series _series1;
 
 public:
 	Room307() : Room() {}
