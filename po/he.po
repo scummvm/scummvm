@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-21 16:05+0000\n"
+"POT-Creation-Date: 2023-09-21 19:41+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "למעלה"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:946
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2874
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "ביטול"
@@ -338,8 +338,8 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:946
-#: engines/sword1/logic.cpp:1663 engines/sword2/animation.cpp:426
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2874
+#: engines/sword1/logic.cpp:1664 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
@@ -9299,7 +9299,7 @@ msgstr "נמצאו סרטוני MPEG-2 אך ScummVM נבנה ללא תמיכה �
 msgid "Cutscene '%s' not found"
 msgstr "הסרטון '%s' לא נמצא"
 
-#: engines/sword1/control.cpp:944
+#: engines/sword1/control.cpp:2872
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9315,7 +9315,7 @@ msgstr ""
 "\n"
 "לחץ על OK כדי להמיר אותם כעת, אחרת תישאל שוב בפעם הבאה שתתחיל במשחק.\n"
 
-#: engines/sword1/control.cpp:1318
+#: engines/sword1/control.cpp:3058
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9324,15 +9324,15 @@ msgstr ""
 "יעד משחק שנשמר חדש קיים כבר!\n"
 "האם תרצה לשמור על המשחק השמור הישן (%s) או על המשחק החדש (%s)?\n"
 
-#: engines/sword1/control.cpp:1321
+#: engines/sword1/control.cpp:3061
 msgid "Keep the old one"
 msgstr "שמור על הישן"
 
-#: engines/sword1/control.cpp:1321
+#: engines/sword1/control.cpp:3061
 msgid "Keep the new one"
 msgstr "שמור על החדש"
 
-#: engines/sword1/logic.cpp:1663
+#: engines/sword1/logic.cpp:1664
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "זה סוף הדגמת שבור חרב 1"
 
