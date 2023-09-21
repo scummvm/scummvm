@@ -49,12 +49,19 @@ private:
 	Room307 _room307;
 	Room310 _room310;
 	Mine _mine;
+	int _random1 = 0;
+
+	void mine_check_maze();
 
 public:
 	Section3();
 	virtual ~Section3() {}
 
+	void init() override {
+		mine_check_maze();
+	}
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms
