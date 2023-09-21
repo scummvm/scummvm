@@ -68,7 +68,7 @@ enum global_triggers {
 	g10027 = 10027,
 	g10028 = 10028,
 
-	gCALLED_EACH_LOOP = 32764,
+	kCALLED_EACH_LOOP = 32764,
 
 	gLAST_GLOBAL_TRIGGER
 #if UNUSED

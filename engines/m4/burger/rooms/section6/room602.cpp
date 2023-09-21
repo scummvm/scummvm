@@ -1247,7 +1247,7 @@ void Room602::daemon() {
 			break;
 		}
 
-	case gCALLED_EACH_LOOP:
+	case kCALLED_EACH_LOOP:
 		if (_G(player).walker_in_this_scene) {
 			player_update_info();
 

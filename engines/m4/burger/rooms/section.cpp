@@ -132,7 +132,7 @@ void Section::init_series_players() {
 
 void Section::tick() {
 	int oldTrigger = _G(kernel).trigger;
-	_G(kernel).trigger = gCALLED_EACH_LOOP;
+	_G(kernel).trigger = kCALLED_EACH_LOOP;
 	g_engine->game_daemon_code();
 	_G(kernel).trigger = oldTrigger;
 }

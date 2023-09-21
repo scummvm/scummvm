@@ -625,7 +625,7 @@ void Room171::daemon() {
 		}
 		break;
 
-	case gCALLED_EACH_LOOP:
+	case kCALLED_EACH_LOOP:
 		if (_doorFlag) {
 			frontDoor();
 		} else {
