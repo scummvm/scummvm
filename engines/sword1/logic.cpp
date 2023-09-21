@@ -983,6 +983,12 @@ int Logic::fnIdle(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int
 
 	// George never idles, he just does rest anims (if in suitable pose)
 	if (id == GEORGE) {
+		// The PSX deliberately sets a flag here to instruct fnRandom() to return
+		// the minimum value of the target random range;
+		// this changes the way (rather, the timing at which) George idles in-game.
+		if (SwordEngine::isPsx())
+			_psxFudgeRandom = true;
+
 		fnNewScript(cpt, id, SCR_george_rest_anim_script, 0, 0, 0, 0, 0);
 	} else {
 		cpt->o_logic = LOGIC_idle;
@@ -1551,7 +1557,15 @@ int Logic::fnGetToError(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 
 }
 
 int Logic::fnRandom(Object *compact, int32 id, int32 min, int32 max, int32 e, int32 f, int32 z, int32 x) {
-	_scriptVars[RETURN_VALUE] = _rnd.getRandomNumberRng(min, max);
+	if (SwordEngine::isPsx() && _psxFudgeRandom) {
+		// If this PSX flag is active, just set the random value as the range minimum.
+		// This changes the timing at which George gets into is idle animation.
+		_psxFudgeRandom = false;
+		_scriptVars[RETURN_VALUE] = min;
+	} else {
+		_scriptVars[RETURN_VALUE] = _rnd.getRandomNumberRng(min, max);
+	}
+
 	return SCRIPT_CONT;
 }
 
