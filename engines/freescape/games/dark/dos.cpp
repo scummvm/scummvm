@@ -38,9 +38,9 @@ byte kDarkCGAPalettePinkBlue[4][3] = {
 
 byte kDarkCGAPaletteRedGreen[4][3] = {
 	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
 	{0xaa, 0x55, 0x00},
+	{0xaa, 0x00, 0x00},
+	{0x00, 0xaa, 0x00},
 };
 
 static const CGAPaletteEntry rawCGAPaletteByArea[] {
@@ -79,9 +79,9 @@ static const CGAPaletteEntry rawCGAPaletteByArea[] {
 
 void DarkEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
-		_viewArea = Common::Rect(40, 24, 279, 124);
+		_viewArea = Common::Rect(40, 24, 280, 125);
 	else if (_renderMode == Common::kRenderCGA)
-		_viewArea = Common::Rect(40, 24, 279, 124);
+		_viewArea = Common::Rect(40, 24, 280, 125);
 	else
 		error("Invalid or unknown render mode");
 

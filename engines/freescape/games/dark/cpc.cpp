@@ -29,8 +29,7 @@
 namespace Freescape {
 
 void DarkEngine::initCPC() {
-	_viewArea = Common::Rect(36, 24, 284, 124);
-
+	_viewArea = Common::Rect(36, 24, 284, 125);
 }
 
 extern byte kCPCPaletteTitleData[4][3];
