@@ -38,6 +38,11 @@ private:
 	static const seriesPlayBreak PLAY5[];
 	static const seriesPlayBreak PLAY6[];
 	static long _state1;
+	Series _series1;
+	machine *_series2 = nullptr;
+	noWalkRect *_walk1 = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
 
 protected:
 	const char *getDigi() override {
@@ -50,6 +55,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
