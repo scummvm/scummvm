@@ -23,6 +23,7 @@
 #define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
 
 #include "backends/networking/curl/request.h"
+#include "common/path.h"
 #include "common/str.h"
 #include "common/array.h"
 #include "common/hashmap.h"
@@ -44,7 +45,7 @@ protected:
 	curl_slist *_headersList;
 	Common::String _postFields;
 	Common::HashMap<Common::String, Common::String> _formFields;
-	Common::HashMap<Common::String, Common::String> _formFiles;
+	Common::HashMap<Common::String, Common::Path> _formFiles;
 	byte *_bytesBuffer;
 	uint32 _bytesBufferSize;
 	bool _uploading; //using PUT method
@@ -75,7 +76,7 @@ public:
 	virtual void addFormField(const Common::String &name, const Common::String &value);
 
 	/** Adds a form/multipart file (field name, file name). */
-	virtual void addFormFile(const Common::String &name, const Common::String &filename);
+	virtual void addFormFile(const Common::String &name, const Common::Path &filename);
 
 	/** Sets bytes buffer. */
 	virtual void setBuffer(byte *buffer, uint32 size);

@@ -112,7 +112,7 @@ void CurlRequest::addFormField(const Common::String &name, const Common::String 
 	_formFields[name] = value;
 }
 
-void CurlRequest::addFormFile(const Common::String &name, const Common::String &filename) {
+void CurlRequest::addFormFile(const Common::String &name, const Common::Path &filename) {
 	if (_bytesBuffer)
 		warning("CurlRequest: added POST form files would be ignored, because there is buffer present");
 

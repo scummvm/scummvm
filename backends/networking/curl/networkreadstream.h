@@ -23,6 +23,7 @@
 #define BACKENDS_NETWORKING_CURL_NETWORKREADSTREAM_H
 
 #include "common/memstream.h"
+#include "common/path.h"
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/hashmap.h"
@@ -52,7 +53,7 @@ class NetworkReadStream : public Common::ReadStream {
 	void initCurl(const char *url, curl_slist *headersList);
 	bool reuseCurl(const char *url, curl_slist *headersList);
 	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
-	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::String> &formFiles);
+	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
 
 	/**
 	 * Fills the passed buffer with _sendingContentsBuffer contents.
@@ -81,7 +82,7 @@ public:
 	NetworkReadStream(
 	    const char *url, curl_slist *headersList,
 	    const Common::HashMap<Common::String, Common::String> &formFields,
-	    const Common::HashMap<Common::String, Common::String> &formFiles,
+	    const Common::HashMap<Common::String, Common::Path> &formFiles,
 		bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	/** Send <buffer>, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
@@ -93,7 +94,7 @@ public:
 	bool reuse(
 		const char *url, curl_slist *headersList,
 		const Common::HashMap<Common::String, Common::String> &formFields,
-		const Common::HashMap<Common::String, Common::String> &formFiles);
+		const Common::HashMap<Common::String, Common::Path> &formFiles);
 	/** Send <buffer>, using POST by default. */
 	bool reuse(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 
