@@ -55,10 +55,16 @@ void Viewport::init() {
 }
 
 void Viewport::handleInput(NancyInput &input) {
+	const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 	Time systemTime = g_system->getMillis();
 	byte direction = 0;
 
-	_autoMove = ConfMan.getBool("auto_move", ConfMan.getActiveDomainName());
+	if (summary.slowMoveTimeDelta == kNoAutoScroll) {
+		// Individual scenes may disable auto-move even when it's globally turned on
+		_autoMove = false;
+	} else {
+		_autoMove = ConfMan.getBool("auto_move", ConfMan.getActiveDomainName());
+	}
 
 	// Make cursor sticky when scrolling the viewport
 	if (	g_nancy->getGameType() != kGameTypeVampire &&
@@ -125,9 +131,19 @@ void Viewport::handleInput(NancyInput &input) {
 
 	if (direction) {
 		if (direction & kLeft) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kRotateLeft);
+			if (summary.fastMoveTimeDelta == kInvertedNode) {
+				// Support nancy6+ inverted rotation scenes
+				g_nancy->_cursorManager->setCursorType(CursorManager::kInvertedRotateLeft);
+			} else {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kRotateLeft);
+			}
 		} else if (direction & kRight) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kRotateRight);
+			if (summary.fastMoveTimeDelta == kInvertedNode) {
+				// Support nancy6+ inverted rotation scenes
+				g_nancy->_cursorManager->setCursorType(CursorManager::kInvertedRotateRight);
+			} else {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kRotateRight);
+			}
 		} else if (direction & kUp) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
 		} else if (direction & kDown) {
@@ -165,7 +181,6 @@ void Viewport::handleInput(NancyInput &input) {
 
 	// Perform the movement
 	if (direction) {
-		const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 		Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);
 
 		if (systemTime > _nextMovementTime) {

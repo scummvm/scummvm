@@ -130,6 +130,14 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		}
 
 		return;
+	case kInvertedRotateLeft:
+		// Only valid for nancy6 and up
+		if (gameType >= kGameTypeNancy6) {
+			_curCursorID = kInvertedRotateLeft;
+			return;
+		}
+		
+		// fall through
 	case kRotateLeft:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
@@ -148,6 +156,14 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		}
 
 		break;
+	case kInvertedRotateRight:
+		// Only valid for nancy6 and up
+		if (gameType >= kGameTypeNancy6) {
+			_curCursorID = kInvertedRotateRight;
+			return;
+		}
+
+		// fall through
 	case kRotateRight:
 		// Only valid for nancy6 and up
 		if (gameType >= kGameTypeNancy6) {
@@ -219,14 +235,6 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		return;
 	case kRotateCCW:
 		_curCursorID = kRotateCCW;
-		return;
-	case kSwivelLeft:
-		// Only valid for nancy6 and up, but we don't need a check for now
-		_curCursorID = kSwivelLeft;
-		return;
-	case kSwivelRight:
-		// Only valid for nancy6 and up, but we don't need a check for now
-		_curCursorID = kSwivelRight;
 		return;
 	default:
 		break;

@@ -67,6 +67,10 @@ static const byte kFlagCursor						= 3;
 static const byte kContinueSceneSound				= 1;
 static const byte kLoadSceneSound					= 0;
 
+// Scene rotation special values
+static const uint16 kInvertedNode					= 77;
+static const uint16 kNoAutoScroll					= 333;
+
 // Clock bump types
 static const byte kAbsoluteClockBump 				= 1;
 static const byte kRelativeClockBump 				= 2;
