@@ -116,9 +116,11 @@ private:
 
 	Graphics::ManagedSurface _image;
 
-	int _fontHeight;
-	int _maxCharWidth;
-	uint _transColor;
+	const struct TBOX *_textboxData = nullptr;
+
+	int _fontHeight = 0;
+	int _maxCharWidth = 0;
+	uint _transColor = 0;
 };
 
 } // End of namespace Nancy

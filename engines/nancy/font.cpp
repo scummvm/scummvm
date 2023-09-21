@@ -24,6 +24,7 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/enginedata.h"
 
 namespace Nancy {
 
@@ -114,6 +115,9 @@ void Font::read(Common::SeekableReadStream &stream) {
 		_maxCharWidth = MAX<int>(cur.width(), _maxCharWidth);
 		_fontHeight = MAX<int>(cur.height(), _fontHeight);
 	}
+
+	_textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	assert(_textboxData);
 }
 
 int Font::getCharWidth(uint32 chr) const {
@@ -303,6 +307,9 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 		offset = chr + _lowercaseOffset - 0x61;
 	} else if (isDigit(chr)) {
 		offset = chr + _digitOffset - 0x30;
+	} else if (chr == '\t') {
+		ret.setWidth((_spaceWidth - 1) * _textboxData->tabWidth);
+		return ret;
 	} else if (isSpace(chr)) {
 		ret.setWidth(_spaceWidth - 1);
 		return ret;

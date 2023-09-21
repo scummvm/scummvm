@@ -53,10 +53,6 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 	const Font *font = nullptr;
 	const Font *highlightFont = nullptr;
 
-	// Used to get tab width
-	const TBOX *tbox = (const TBOX *)g_nancy->getEngineData("TBOX");
-	assert(tbox);
-
 	_numDrawnLines = 0;
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
@@ -65,6 +61,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		Rect hotspot;
 		Common::Queue<ColorChange> colorChanges;
 		int curFontID = fontID;
+		uint numNonSpaceChars = 0;
 
 		// Token braces plus invalid characters that are known to appear in strings
 		Common::StringTokenizer tokenizer(_textLines[lineID], "<>\"");
@@ -99,18 +96,16 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					continue;
 				case 't' :
 					// Tab
-					for (uint i = 0; i < tbox->tabWidth; ++i) {
-						currentLine += " ";
-					}
+					currentLine += '\t';
 					continue;
 				case 'c' :
 					// Color tokens
-					// We keep the positions and colors of the color tokens in a queue
+					// We keep the positions (excluding spaces) and colors of the color tokens in a queue
 					if (curToken.size() != 2) {
 						break;
 					}
 					
-					colorChanges.push({currentLine.size(), (byte)(curToken[1] - 48)});
+					colorChanges.push({numNonSpaceChars, (byte)(curToken[1] - 48)});
 					continue;
 				case 'f' :
 					// Font token
@@ -122,6 +117,15 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					curFontID = (int)Common::String(curToken[1]).asUint64();
 
 					continue;
+				}
+			}
+
+			// Count the number of non-space characters. We use this to keep track
+			// of where color changes should happen, since including whitespaces
+			// presents a lot of edge cases when combined with word wrapping
+			for (uint i = 0; i < curToken.size(); ++i) {
+				if (curToken[i] != ' ') {
+					++numNonSpaceChars;
 				}
 			}
 
@@ -151,11 +155,13 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		for (Common::String &line : wrappedLines) {
 			uint horizontalOffset = 0;
 
-			// Trim whitespaces at end of wrapped lines to make counting
-			// of characters consistent. We do this manually since we _want_
-			// some whitespaces at the beginning of a line (e.g. tabs)
-			if (Common::isSpace(line.lastChar())) {
+			// Trim whitespaces (only) at beginning and end of wrapped lines
+			while (line.lastChar() == ' ') {
 				line.deleteLastChar();
+			}
+
+			while (line.firstChar() == ' ') {
+				line.deleteChar(0);
 			}
 
 			// Set the width of the hotspot
@@ -163,7 +169,6 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(line)));
 			}
 
-			bool hasSplit = false;
 			while (!line.empty()) {
 				Common::String subLine;
 
@@ -179,19 +184,11 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 						// There's a token inside the current line, so split off the part before it
 						subLine = line.substr(0, colorChanges.front().numChars - totalCharsDrawn);
 						line = line.substr(subLine.size());
-						hasSplit = true;
 					}
 				}
 
 				// Choose whether to draw the subLine, or the full line
 				Common::String &stringToDraw = subLine.size() ? subLine : line;
-
-				// Clear (single!) whitespace from beginning of line. We do this after
-				bool clearedSpaceAtStart = false;
-				if (!hasSplit && line.firstChar() == ' ' && line.size() > 1 && line[1] != ' ') {
-					line.deleteChar(0);
-					clearedSpaceAtStart = true;
-				}
 
 				// Draw the normal text
 				font->drawString(				&_fullSurface,
@@ -211,21 +208,21 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 												colorID);
 				}
 
-				// Account for space cleared at start to make sure color calculations are correct
-				if (clearedSpaceAtStart) {
-					++totalCharsDrawn;
+				// Count number of non-space characters drawn. Used for color.
+				// Note that we use isSpace() specifically to exclude the tab character
+				for (uint i = 0; i < stringToDraw.size(); ++i) {
+					if (!isSpace(stringToDraw[i])) {
+						++totalCharsDrawn;
+					}
 				}
 
 				if (subLine.size()) {
 					horizontalOffset += font->getStringWidth(subLine);
-					totalCharsDrawn += subLine.size();
 				} else {
-					totalCharsDrawn += line.size();
 					break;
 				}
 			}
 
-			++totalCharsDrawn; // Account for newlines, which are removed from the string when doing word wrap
 			++_numDrawnLines;
 
 			// Record the height of the text currently drawn. Used for textbox scrolling
