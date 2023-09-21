@@ -296,26 +296,32 @@ void Overlay::setFrame(uint frame) {
 		// Static mode overlays are an absolute mess, and use both the general source rects (_srcRects),
 		// and the ones inside the blit description struct corresponding to the current scene background.
 
-		// Firstly, the order of the blit descriptions does not necessarily correspond to the order of
-		// the general rects, as the general rects are ordered based on the scene's background frame id,
-		// while the blit descriptions can be in arbitrary order. 
-		// An example is nancy4 scene 3500, where the overlay appears on background frames 0, 1, 2, 18 and 19,
-		// while the blit descriptions are in order 18, 19, 0, 1, 2. Thus, if we don't do the counting below
-		// we get wildly inaccurate results.
-		uint srcID = 0;
+		if (_srcRects.size() > 1) {
+			// First, the order of the blit descriptions does not necessarily correspond to the order of
+			// the general rects, as the general rects are ordered based on the scene's background frame id,
+			// while the blit descriptions can be in arbitrary order. 
+			// An example is nancy4 scene 3500, where the overlay appears on background frames 0, 1, 2, 18 and 19,
+			// while the blit descriptions are in order 18, 19, 0, 1, 2. Thus, if we don't do the counting below
+			// we get wildly inaccurate results.
+			uint srcID = 0;
 
-		for (int i = 0; i < _currentViewportFrame; ++i) {
-			for (uint j = 0; j < _blitDescriptions.size(); ++j) {
-				if (_blitDescriptions[j].frameID == i) {
-					++srcID;
-					continue;
+			for (int i = 0; i < _currentViewportFrame; ++i) {
+				for (uint j = 0; j < _blitDescriptions.size(); ++j) {
+					if (_blitDescriptions[j].frameID == i) {
+						++srcID;
+						continue;
+					}
 				}
 			}
+
+			srcRect = _srcRects[srcID];
+		} else {
+			// Second, the number of general source rects may also be just one, in which case it's valid
+			// for every blit description (nancy4 scene 1300)
+			srcRect = _srcRects[0];
 		}
 
-		srcRect = _srcRects[srcID];
-
-		// Second, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
+		// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
 		// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
 		// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
 		// inside the blit description below were used for blitting from that intermediate surface to the screen.
