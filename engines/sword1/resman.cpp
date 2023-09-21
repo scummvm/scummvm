@@ -538,37 +538,4 @@ uint32 ResMan::getDeathFontId() {
 	return 0;
 }
 
-
-uint32 ResMan::_srIdList[29] = { // the file numbers differ for the control panel file IDs, so we need this array
-	OTHER_SR_FONT,      // SR_FONT
-	0x04050000,         // SR_BUTTON
-	OTHER_SR_REDFONT,   // SR_REDFONT
-	0x04050001,         // SR_PALETTE
-	0x04050002,         // SR_PANEL_ENGLISH
-	0x04050003,         // SR_PANEL_FRENCH
-	0x04050004,         // SR_PANEL_GERMAN
-	0x04050005,         // SR_PANEL_ITALIAN
-	0x04050006,         // SR_PANEL_SPANISH
-	0x04050007,         // SR_PANEL_AMERICAN
-	0x04050008,         // SR_TEXT_BUTTON
-	0x04050009,         // SR_SPEED
-	0x0405000A,         // SR_SCROLL1
-	0x0405000B,         // SR_SCROLL2
-	0x0405000C,         // SR_CONFIRM
-	0x0405000D,         // SR_VOLUME
-	0x0405000E,         // SR_VLIGHT
-	0x0405000F,         // SR_VKNOB
-	0x04050010,         // SR_WINDOW
-	0x04050011,         // SR_SLAB1
-	0x04050012,         // SR_SLAB2
-	0x04050013,         // SR_SLAB3
-	0x04050014,         // SR_SLAB4
-	0x04050015,         // SR_BUTUF
-	0x04050016,         // SR_BUTUS
-	0x04050017,         // SR_BUTDS
-	0x04050018,         // SR_BUTDF
-	0x04050019,         // SR_DEATHPANEL
-	SR_DEATHFONT,
-};
-
 } // End of namespace Sword1
