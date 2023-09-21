@@ -41,7 +41,8 @@ enum GameType {
 };
 
 enum NancyGameFlags {
-	GF_COMPRESSED = 1 << 0
+	GF_COMPRESSED 		= 1 << 0,
+	GF_PLG_BYTE_IN_BSUM	= 1 << 1
 };
 
 struct NancyGameDescription {

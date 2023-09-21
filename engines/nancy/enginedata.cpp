@@ -54,9 +54,14 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint16LE(startTimeHours);
 	s.syncAsUint16LE(startTimeMinutes);
 
-	s.skip(0xA7, kGameTypeVampire, kGameTypeNancy2);
-	s.skip(4, kGameTypeNancy3, kGameTypeNancy3);
-	s.skip(3, kGameTypeNancy4);
+	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
+	s.skip(3); // Number of object, frame, and logo images
+	if (g_nancy->getGameFlags() & GF_PLG_BYTE_IN_BSUM) {
+		// There's a weird version of nancy3 with an extra byte counting the number of partner logos.
+		// On first glance this seems to be the only difference, but it'll need to be checked more thoroughly
+		// TODO
+		s.skip(1);
+	}
 
 	s.skip(8, kGameTypeVampire, kGameTypeVampire);
 	readRect(s, extraButtonHotspot, kGameTypeVampire, kGameTypeVampire);

@@ -149,7 +149,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("ciftree.dat", "ee5f8832226567c3610556497c451b09", 16256355),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_PLG_BYTE_IN_BSUM,
 			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
 		},
 		Nancy::kGameTypeNancy3
@@ -176,7 +176,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
+			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED | Nancy::GF_PLG_BYTE_IN_BSUM,
 			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
 		},
 		Nancy::kGameTypeNancy3
