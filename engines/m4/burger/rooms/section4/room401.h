@@ -33,11 +33,13 @@ private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesStreamBreak SERIES2[];
 	static const seriesStreamBreak SERIES3[];
+	machine *_series1 = nullptr;
 
 public:
 	Room401() : Room() {}
 	~Room401() override {}
 
+	void preload() override;
 	void init() override;
 	void daemon() override;
 };

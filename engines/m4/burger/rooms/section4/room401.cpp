@@ -62,10 +62,72 @@ const seriesStreamBreak Room401::SERIES3[] = {
 	STREAM_BREAK_END
 };
 
+void Room401::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room401::init() {
+	_G(flags).reset5();
+	player_set_commands_allowed(false);
+	digi_preload("401_001");
+	digi_preload_stream_breaks(SERIES1);
+	digi_preload_stream_breaks(SERIES2);
+	digi_preload_stream_breaks(SERIES3);
+	digi_play_loop("401_001", 3, 75, -1, 401);
+	kernel_trigger_dispatch_now(1);
 }
 
 void Room401::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		series_stream_with_breaks(SERIES1, "401_01a", 6, 1, 2);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 2:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 3);
+		break;
+
+	case 3:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 4);
+		break;
+
+	case 4:
+		series_stream_with_breaks(SERIES2, "401_01b", 6, 1, 5);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 5:
+		pal_fade_set_start(0);
+		kernel_timing_trigger(6, 6);
+		break;
+
+	case 6:
+		compact_mem_and_report();
+		kernel_timing_trigger(6, 7);
+		break;
+
+	case 7:
+		digi_unload_stream_breaks(SERIES1);
+		digi_unload_stream_breaks(SERIES2);
+		_series1 = series_stream_with_breaks(SERIES3, "401_02", 6, 1, 4002);
+		pal_fade_init(0, 255, 100, 30, -1);
+		break;
+
+	case 8:
+		series_set_frame_rate(_series1, 20);
+		break;
+
+	case 9:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, -1);
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
