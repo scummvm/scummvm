@@ -1558,7 +1558,7 @@ int Logic::fnGetToError(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 
 }
 
 int Logic::fnRandom(Object *compact, int32 id, int32 min, int32 max, int32 e, int32 f, int32 z, int32 x) {
-	if (SwordEngine::isPsx() && _psxFudgeRandom) {
+	if (SwordEngine::isPsx() && id == GEORGE && _psxFudgeRandom) {
 		// If this PSX flag is active, just set the random value as the range minimum.
 		// This changes the timing at which George gets into is idle animation.
 		_psxFudgeRandom = false;
