@@ -753,11 +753,12 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 	surf.free();
 
 	byte *buf = nullptr;
+	uint bufSize = 0;
 
 	if (treeName.size()) {
-		buf = getCifData(treeName, name, info);
+		buf = getCifData(treeName, name, info, &bufSize);
 	} else {
-		buf = getCifData(name, info);
+		buf = getCifData(name, info, &bufSize);
 	}
 
 	if (!buf && treeName.size() > 0) {
@@ -802,6 +803,13 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 	surf.pitch = info.pitch;
 	surf.setPixels(buf);
 	surf.format = g_nancy->_graphicsManager->getInputPixelFormat();
+	#ifdef SCUMM_BIG_ENDIAN
+	if (info.depth == 16) {
+		for (uint i = 0; i < bufSize / 2; ++i) {
+			((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
+		}
+	}
+	#endif
 	return true;
 }
 
@@ -810,11 +818,12 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	surf.free();
 
 	byte *buf = nullptr;
+	uint bufSize = 0;
 
 	if (treeName.size()) {
-		buf = getCifData(treeName, name, info);
+		buf = getCifData(treeName, name, info, &bufSize);
 	} else {
-		buf = getCifData(name, info);
+		buf = getCifData(name, info, &bufSize);
 	}
 
 	if (!buf) {
@@ -853,6 +862,14 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 		if (outDest) {
 			*outDest = info.dest;
 		}
+
+		#ifdef SCUMM_BIG_ENDIAN
+		if (info.depth == 16) {
+			for (uint i = 0; i < bufSize / 2; ++i) {
+				((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
+			}
+		}
+		#endif
 
 		GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
 		return true;
