@@ -211,24 +211,18 @@ void Telephone::execute() {
 			break;
 		case kBadNumber:
 			if (!g_nancy->_sound->isSoundPlaying(_dialAgainSound)) {
-				g_nancy->_sound->stopSound(_dialAgainSound);
-
 				_state = kActionTrigger;
 			}
 
 			break;
 		case kCall:
 			if (!g_nancy->_sound->isSoundPlaying(_genericDialogueSound)) {
-				g_nancy->_sound->stopSound(_genericDialogueSound);
-
 				_state = kActionTrigger;
 			}
 
 			break;
 		case kHangUp:
 			if (!g_nancy->_sound->isSoundPlaying(_hangUpSound)) {
-				g_nancy->_sound->stopSound(_hangUpSound);
-
 				_state = kActionTrigger;
 			}
 
@@ -258,6 +252,13 @@ void Telephone::execute() {
 		default:
 			break;
 		}
+
+				g_nancy->_sound->stopSound(_hangUpSound);
+				g_nancy->_sound->stopSound(_genericDialogueSound);
+				g_nancy->_sound->stopSound(_genericButtonSound);
+				g_nancy->_sound->stopSound(_dialAgainSound);
+				g_nancy->_sound->stopSound(_ringSound);
+				g_nancy->_sound->stopSound(_dialToneSound);
 
 		finishExecution();
 	}
