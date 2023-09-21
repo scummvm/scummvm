@@ -115,7 +115,7 @@ void Room510::daemon() {
 		buttonAction(7, 30, 34);
 		break;
 
-	case gCALLED_EACH_LOOP:
+	case kCALLED_EACH_LOOP:
 		if (player_commands_allowed())
 			updateButtons();
 		break;

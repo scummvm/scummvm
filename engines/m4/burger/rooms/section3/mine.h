@@ -103,6 +103,8 @@ private:
 	int _volume = 0;
 	int _random1 = 0;
 	int _random2 = 0;
+	int _treasureDistance = 0;
+	int _treasureThreshold = 0;
 
 	int getTreasureDistance() const;
 

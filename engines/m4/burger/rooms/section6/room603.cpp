@@ -558,7 +558,7 @@ void Room603::daemon() {
 		}
 		break;
 
-	case gCALLED_EACH_LOOP:
+	case kCALLED_EACH_LOOP:
 		player_update_info();
 
 		if (_G(player_info).x > 420 && _G(player_info).x < 490 &&

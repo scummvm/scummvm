@@ -263,8 +263,89 @@ void Mine::daemon() {
 			}
 			break;
 
+		case 408:
+			wilbur_speech("310w001");
+			break;
+
 		case g10013:
-			// TODO
+			player_set_commands_allowed(true);
+			ws_unhide_walker();
+			_G(wilbur_should) = 10002;
+			term_message("Mine whistle daemon thing");
+
+			switch (_G(game).room_id) {
+			case 305:
+				if (_G(flags)[V111]) {
+					_G(flags)[V002] = 1;
+					wilbur_speech("300w060");
+				}
+				break;
+
+			case 310:
+				if (_G(flags)[V111] && !_G(flags)[V144]) {
+					_G(flags)[V144] = 1;
+				} else {
+					wilbur_speech("300w069");
+				}
+				break;
+
+			default:
+				if (!_G(flags)[V111] && _G(flags)[V144]) {
+					wilbur_speech("300w061");
+				} else if (!_G(flags)[V148]) {
+					_G(flags)[V148] = 1;
+					_treasureDistance = getTreasureDistance();
+
+					switch (_treasureDistance) {
+					case 1:
+						wilbur_speech("300w062");
+						break;
+					case 2:
+						wilbur_speech("300w063");
+						break;
+					case 3:
+					case 4:
+						wilbur_speech("300w064");
+						break;
+					case 5:
+					case 6:
+						wilbur_speech("300w065");
+						break;
+					default:
+						break;
+					}
+				} else {
+					_treasureDistance = getTreasureDistance();
+
+					if (_treasureDistance < _treasureThreshold) {
+						wilbur_speech("300w068");
+					} else if (_treasureDistance == _treasureThreshold) {
+						wilbur_speech("300w067");
+					} else {
+						wilbur_speech("300w066");
+					}
+				}
+				break;
+			}
+			break;
+
+		case kCALLED_EACH_LOOP:
+			if (_fade_down_rect_active) {
+				player_update_info();
+
+				if (_G(player_info).x >= _fade_down_rect.x1 &&
+						_G(player_info).x <= _fade_down_rect.x2 &&
+						_G(player_info).y >= _fade_down_rect.y1 &&
+						_G(player_info).y <= _fade_down_rect.y2) {
+					if (player_commands_allowed()) {
+						pal_fade_set_start(100);
+						pal_fade_init(_G(kernel).first_fade, 255, 0, 40, -1);
+					}
+
+					player_set_commands_allowed(false);
+				}
+			}
+			break;
 
 		default:
 			_G(kernel).continue_handling_trigger = true;
