@@ -27,6 +27,8 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
+//#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -93,8 +95,12 @@ struct SortItem {
 	int32   _sxBot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
 	int32   _syBot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
 
-	SortItem *_xAdjoin;  // Item sharing a right x edge with the left x edge - used for occlusion
-	SortItem *_yAdjoin;  // Item sharing a near y edge with the far y edge - used for occlusion
+#ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
+	SortItem *_xAdjoin; // Item sharing a right x edge with the left x edge - used for occlusion
+	SortItem *_yAdjoin; // Item sharing a near y edge with the far y edge - used for occlusion
+	int32 _groupNum;   // Identifier for a member of an occlusion group
+#endif // SORTITEM_OCCLUSION_EXPERIMENTAL
+
 
 	bool    _fbigsq : 1;         // Needs 1 bit  0
 	bool    _flat : 1;           // Needs 1 bit  1

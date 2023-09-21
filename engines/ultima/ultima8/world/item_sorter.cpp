@@ -157,8 +157,11 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		return;
 	}
 
+#ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
 	si->_xAdjoin = nullptr;
 	si->_yAdjoin = nullptr;
+	si->_groupNum = 0;
+#endif // SORTITEM_OCCLUSION_EXPERIMENTAL
 
 	// These help out with sorting. We calc them now, so it will be faster
 	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
@@ -196,6 +199,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		if (!addpoint && si->listLessThan(*si2))
 			addpoint = si2;
 
+#ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
 		// Find adjoining floor squares for better occlusion
 		if (si->_occl && si2->_occl && si->_fbigsq && si2->_fbigsq && si->_z == si2->_z) {
 			// Does this share an edge?
@@ -214,6 +218,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 				}
 			}
 		}
+#endif // SORTITEM_OCCLUSION_EXPERIMENTAL
 
 		// Doesn't overlap
 		if (si2->_occluded || !si->overlap(*si2))
@@ -273,43 +278,6 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
-void ItemSorter::CheckOcclusion() {
-	for (SortItem *it = _items; it != nullptr; it = it->_next) {
-		// Check if item is part of a 2x2 adjoined square
-		if (it->_occl && it->_fbigsq && it->_xAdjoin && it->_yAdjoin &&
-			it->_xAdjoin->_yAdjoin && it->_yAdjoin->_xAdjoin &&
-			it->_xAdjoin->_yAdjoin == it->_yAdjoin->_xAdjoin) {
-
-			SortItem si;
-			si._occl = true;
-			si._fbigsq = true;
-			si._flat = it->_flat;
-			si._solid = it->_solid;
-			si._roof = it->_roof;
-			si._fixed = it->_fixed;
-			si._land = it->_land;
-
-			Box box = it->_xAdjoin->_yAdjoin->getBoxBounds();
-			box.extend(it->getBoxBounds());
-			si.setBoxBounds(box, _camSx, _camSy);
-
-			for (SortItem *si2 = _items; si2 != nullptr; si2 = si2->_next) {
-				// Skip members of the adjoined square
-				if (si2 == it || si2 == it->_xAdjoin || si2 == it->_yAdjoin || si2 == it->_xAdjoin->_yAdjoin)
-					continue;
-
-				// Doesn't overlap
-				if (si2->_occluded || !si.overlap(*si2))
-					continue;
-
-				if (si2->below(si) && si.occludes(*si2)) {
-					si2->_occluded = true;
-				}
-			}
-		}
-	}
-}
-
 void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
@@ -317,7 +285,86 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 		surf->fill32(color, _clipWindow);
 	}
 
-	CheckOcclusion();
+#ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
+	// This improved paint timing where the squares are 256x256 - MainActor::teleport 40 13095 9375 96
+	// but diminished where squares are 128x128 - MainActor::teleport 41 20207 13111 104
+
+	for (SortItem *si1 = _items; si1 != nullptr; si1 = si1->_next) {
+		// Check if item is part of a 2x2 adjoined square
+		if (si1->_occl && si1->_fbigsq && si1->_xAdjoin && si1->_yAdjoin &&
+			si1->_xAdjoin->_yAdjoin && si1->_yAdjoin->_xAdjoin &&
+			si1->_xAdjoin->_yAdjoin == si1->_yAdjoin->_xAdjoin) {
+			SortItem *si2 = si1->_xAdjoin->_yAdjoin;
+
+			int32 group = si1->_itemNum;
+			si1->_groupNum = group;
+			si2->_groupNum = group;
+			si1->_xAdjoin->_groupNum = group;
+			si1->_yAdjoin->_groupNum = group;
+
+			// Expand NxN adjoined square
+			for (int n = 3; n < 6; n++) {
+				SortItem *p1 = si1;
+				SortItem *p2 = si1;
+
+				// Expand out N - 1 times
+				for (int i = 1; i < n; i++) {
+					p1 = p1->_xAdjoin;
+					if (!p1)
+						break;
+					p2 = p2->_yAdjoin;
+					if (!p2)
+						break;
+
+					p1->_groupNum = group;
+					p2->_groupNum = group;
+				}
+
+				if (!p1 || !p2)
+					break;
+
+				// Converge in N - 1 times
+				for (int i = 1; i < n; i++) {
+					p1 = p1->_yAdjoin;
+					if (!p1)
+						break;
+					p2 = p2->_xAdjoin;
+					if (!p2)
+						break;
+
+					p1->_groupNum = group;
+					p2->_groupNum = group;
+				}
+
+				if (!p1 || !p2 || p1 != p2)
+					break;
+
+				// Set the new end point
+				si2 = p1;
+			}
+
+			SortItem oc;
+			oc._occl = true;
+			oc._fbigsq = true;
+			oc._flat = si1->_flat;
+			oc._solid = si1->_solid;
+			oc._roof = si1->_roof;
+			oc._fixed = si1->_fixed;
+			oc._land = si1->_land;
+
+			Box box = si1->getBoxBounds();
+			box.extend(si2->getBoxBounds());
+			oc.setBoxBounds(box, _camSx, _camSy);
+
+			for (si2 = _items; si2 != nullptr; si2 = si2->_next) {
+				if (si2->_groupNum != group && !si2->_occluded &&
+					si2->overlap(oc) && si2->below(oc) && oc.occludes(*si2)) {
+					si2->_occluded = true;
+				}
+			}
+		}
+	}
+#endif
 
 	SortItem *it = _items;
 	SortItem *end = nullptr;
