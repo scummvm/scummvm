@@ -51,10 +51,39 @@ const seriesStreamBreak Room306::SERIES3[] = {
 };
 
 
+void Room306::preload() {
+	_G(player).walker_in_this_scene = false;
+}
+
 void Room306::init() {
+	pal_cycle_init(101, 110, 6);
+	kernel_trigger_dispatch_now(3007);
 }
 
 void Room306::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
+		release_trigger_on_digi_state(g10027, 1);
+		break;
+
+	case 3007:
+		if (!_G(flags)[V112]) {
+			digi_preload_stream_breaks(SERIES2);
+			series_stream_with_breaks(SERIES2, "306burnt", 6, 1, 1);
+		} else if (_G(flags)[V118] == 3003) {
+			digi_preload_stream_breaks(SERIES3);
+			series_stream_with_breaks(SERIES3, "306burnt", 6, 1, 1);
+		} else {
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "306fail", 6, 1, 1);
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 } // namespace Rooms
