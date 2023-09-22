@@ -25,6 +25,7 @@
 #include "common/textconsole.h"
 #include "m4/riddle/hotkeys.h"
 #include "m4/riddle/walker.h"
+#include "m4/riddle/gui/interface.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -48,13 +49,14 @@ protected:
 public:
 	Riddle::Walker _walker;
 	Riddle::Hotkeys _hotkeys;
+	Riddle::GUI::Interface _interface;
 
 public:
 	Vars();
 	virtual ~Vars();
 
 	M4::Interface *getInterface() override {
-		return nullptr;
+		return &_interface;
 	}
 	Hotkeys *getHotkeys() override {
 		return &_hotkeys;
