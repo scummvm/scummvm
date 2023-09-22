@@ -286,61 +286,55 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	}
 
 #ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
-	// This improved paint timing where the squares are 256x256 - MainActor::teleport 40 13095 9375 96
-	// but diminished where squares are 128x128 - MainActor::teleport 41 20207 13111 104
+	int32 minZ = _items ? _items->_z : 0;
 
-	for (SortItem *si1 = _items; si1 != nullptr; si1 = si1->_next) {
+	// Reverse iterate to check higher z items first.
+	// This increases odds of occluding items below before checking them.
+	// Ignore items already occluded or at lowest Z as they are less likely occlude additional items.
+	for (SortItem *si1 = _itemsTail; si1 != nullptr; si1 = si1->_prev) {
 		// Check if item is part of a 2x2 adjoined square
-		if (si1->_occl && si1->_fbigsq && si1->_xAdjoin && si1->_yAdjoin &&
+		if (si1->_occl && si1->_fbigsq && !si1->_occluded && si1->_z > minZ &&
+			si1->_xAdjoin && si1->_yAdjoin &&
 			si1->_xAdjoin->_yAdjoin && si1->_yAdjoin->_xAdjoin &&
 			si1->_xAdjoin->_yAdjoin == si1->_yAdjoin->_xAdjoin) {
 			SortItem *si2 = si1->_xAdjoin->_yAdjoin;
+			SortItem *siX = si1->_xAdjoin;
+			SortItem *siY = si1->_yAdjoin;
 
 			int32 group = si1->_itemNum;
 			si1->_groupNum = group;
 			si2->_groupNum = group;
-			si1->_xAdjoin->_groupNum = group;
-			si1->_yAdjoin->_groupNum = group;
+			siX->_groupNum = group;
+			siY->_groupNum = group;
 
 			// Expand NxN adjoined square
 			for (int n = 3; n < 6; n++) {
-				SortItem *p1 = si1;
-				SortItem *p2 = si1;
-
-				// Expand out N - 1 times
-				for (int i = 1; i < n; i++) {
-					p1 = p1->_xAdjoin;
-					if (!p1)
-						break;
-					p2 = p2->_yAdjoin;
-					if (!p2)
-						break;
-
-					p1->_groupNum = group;
-					p2->_groupNum = group;
-				}
+				// Expand out 1 from X and Y edge points
+				SortItem *p1 = siX->_xAdjoin;
+				SortItem *p2 = siY->_yAdjoin;
 
 				if (!p1 || !p2)
 					break;
 
-				// Converge in N - 1 times
-				for (int i = 1; i < n; i++) {
-					p1 = p1->_yAdjoin;
-					if (!p1)
-						break;
-					p2 = p2->_xAdjoin;
-					if (!p2)
-						break;
-
+				// Converge to meet
+				while (p1 != p2 && p1->_yAdjoin && p2->_yAdjoin) {
 					p1->_groupNum = group;
 					p2->_groupNum = group;
+
+					p1 = p1->_yAdjoin;
+					p2 = p2->_xAdjoin;
 				}
 
-				if (!p1 || !p2 || p1 != p2)
+				if (p1 != p2)
 					break;
 
 				// Set the new end point
 				si2 = p1;
+				si2->_groupNum = group;
+
+				// Set the new edge points
+				siX = siX->_xAdjoin;
+				siY = siY->_yAdjoin;
 			}
 
 			SortItem oc;

@@ -27,7 +27,7 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
-//#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
+#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
 
 namespace Ultima {
 namespace Ultima8 {
