@@ -27,7 +27,7 @@
 namespace M4 {
 namespace Riddle {
 
-RiddleEngine::RiddleEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
 }
 

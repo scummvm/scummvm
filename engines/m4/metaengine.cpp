@@ -58,10 +58,10 @@ Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const
 
 	switch (gd->gameType) {
 	case M4::GType_Burger:
-		*engine = new M4::Burger::BurgerEngine(syst, desc);
+		*engine = new M4::Burger::BurgerEngine(syst, gd);
 		break;
 	case M4::GType_Riddle:
-		*engine = new M4::Riddle::RiddleEngine(syst, desc);
+		*engine = new M4::Riddle::RiddleEngine(syst, gd);
 		break;
 	default:
 		return Common::kUnsupportedGameidError;

@@ -651,7 +651,7 @@ void sysfile_init(bool in_hag_mode) {
 
 	if (in_hag_mode) {
 		_G(hag).hash_file = Common::String::format("%s.has",
-			g_engine->getGameId().c_str());
+			g_engine->getGameType() == GType_Riddle ? "ripley" : "burger");
 		term_message("Initialized in hag mode");
 	} else {
 		term_message("Initialized in file mode");

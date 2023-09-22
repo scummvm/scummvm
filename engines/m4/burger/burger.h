@@ -69,7 +69,7 @@ protected:
 	M4::Vars *createVars() override;
 
 public:
-	BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	~BurgerEngine() override {}
 
 	/**
