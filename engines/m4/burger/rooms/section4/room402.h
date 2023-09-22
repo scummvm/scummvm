@@ -49,6 +49,47 @@ private:
 	static const seriesPlayBreak PLAY14[];
 	static const seriesPlayBreak PLAY15[];
 	static const seriesPlayBreak PLAY16[];
+	const char *_digiName = nullptr;
+	bool _flag1 = false;
+	bool _series1Set = false;
+	Series _series1;
+	bool _series2Set = false;
+	Series _series2;
+	int _dr01 = -1, _dr01s = -1;
+	int _dr02 = -1, _dr02s = -1;
+	int _dr03 = -1, _dr03s = -1;
+	int _dr08 = -1, _dr08s = -1;
+	int _pe01 = -1, _pe01s = -1;
+	int _pe02 = -1, _pe02s = -1;
+	int _pe03 = -1, _pe03s = -1;
+	int _pe04 = -1, _pe04s = -1;
+	int _wi01 = -1, _wi01s = -1;
+	int _wi02 = -1, _wi02s = -1;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+
+	void conv84();
+	void freeSeries1();
+	void freeSeries2();
+
+	void loadDr1();
+	void freeDr1();
+	void loadDr2();
+	void freeDr2();
+	void loadDr8();
+	void freeDr8();
+	void loadPe1();
+	void freePe1();
+	void loadPe2();
+	void freePe2();
+	void loadPe3();
+	void freePe3();
+	void loadPe4();
+	void freePe4();
 
 public:
 	Room402() : Room() {}
@@ -56,6 +97,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
