@@ -23,11 +23,15 @@
 #define M4_RIDDLE_RIDDLE_H
 
 #include "m4/m4.h"
+#include "m4/riddle/rooms/section9/section9.h"
 
 namespace M4 {
 namespace Riddle {
 
 class RiddleEngine : public M4Engine {
+private:
+	Rooms::Section9 _section9;
+
 protected:
 	/**
 	 * Creates the structure that holds all the global variables

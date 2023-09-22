@@ -181,6 +181,8 @@ MODULE_OBJS = \
 	burger/series_player.o \
 	burger/vars.o \
 	burger/walker.o \
+	riddle/rooms/section.o \
+	riddle/rooms/section9/section9.o \
 	riddle/rooms/section9/room901.o \
 	riddle/rooms/section9/room902.o \
 	riddle/rooms/section9/room903.o \
