@@ -37,6 +37,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	readFilename(stream, imageName);
 
 	g_nancy->_resource->loadImage(imageName, _image);
+	_image.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 
 	char desc[31];
 	stream.read(desc, 30);
@@ -133,41 +134,20 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	}
 
 	uint vampireAdjust = g_nancy->getGameType() == kGameTypeVampire ? 1 : 0;
-	uint width = MAX<int>(srcRect.width() - vampireAdjust, 0);
+	srcRect.setWidth(MAX<int>(srcRect.width() - vampireAdjust, 0));
 	uint height = srcRect.height();
 	uint yOffset = getFontHeight() - height;
-	height = MAX<int>(height - vampireAdjust, 0);
+	srcRect.setHeight(MAX<int>(height - vampireAdjust, 0));
 
-	for (uint curY = 0; curY < height; ++curY) {
-		for (uint curX = 0; curX < width; ++curX) {
-			switch (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel) {
-			case 1: {
-				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
+	// Create a wrapper ManagedSurface to handle blitting/format differences
+	Graphics::ManagedSurface dest;
+	dest.w = dst->w;
+	dest.h = dst->h;
+	dest.pitch = dst->pitch;
+	dest.setPixels(dst->getPixels());
+	dest.format = dst->format;
 
-				if (colorID != _transColor) {
-					uint8 palette[1 * 3];
-					_image.grabPalette(palette, colorID, 1);
-					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(palette[0], palette[1], palette[2]);
-				}
-
-				break;
-			}
-			case 2: {
-				uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top + curY);
-
-				if (curColor != _transColor) {
-					uint8 r, g, b;
-					_image.format.colorToRGB(curColor, r, g, b);
-					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(r, g, b);
-				}
-
-				break;
-			}
-			default:
-				break;
-			}
-		}
-	}
+	dest.blitFrom(_image, srcRect, Common::Point(x, y + yOffset));
 }
 
 void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
