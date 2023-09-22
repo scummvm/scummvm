@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/random.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
@@ -176,6 +178,22 @@ void StopSound::readData(Common::SeekableReadStream &stream) {
 void StopSound::execute() {
 	g_nancy->_sound->stopSound(_channelID);
 	_sceneChange.execute();
+}
+
+void PlayRandomSound::readData(Common::SeekableReadStream &stream) {
+	uint16 numSounds = stream.readUint16LE();
+	readFilenameArray(stream, _soundNames, numSounds - 1);
+
+	PlayDigiSound::readData(stream);
+	_soundNames.push_back(_sound.name);
+}
+
+void PlayRandomSound::execute() {
+	if (_state == kBegin) {
+		_sound.name = _soundNames[g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1)];
+	}
+
+	PlayDigiSound::execute();
 }
 
 } // End of namespace Action

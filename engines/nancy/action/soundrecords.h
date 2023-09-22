@@ -93,6 +93,19 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopSound"; }
 };
 
+class PlayRandomSound : public PlayDigiSound {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<Common::String> _soundNames;
+
+	uint _selectedSound = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 
