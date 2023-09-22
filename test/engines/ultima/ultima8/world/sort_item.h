@@ -282,6 +282,27 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping x-flat vs non-flat items but the flat item was misplaced
+	 * Test case for rendering issue at MainActor::teleport 41 19411 15787 48
+	 */
+	void test_misplaced_flat_bug() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(19199, 15871, 88, 64, 128, 16);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._occl = true;
+		si1._land = true;
+
+		Ultima::Ultima8::Box b2(19167, 15775, 56, 0, 128, 40);
+		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(!si1.below(si2));
+		TS_ASSERT(si2.below(si1));
+	}
+
+	/**
 	 * Overlapping y-flat vs non-flat items
 	 * Test case for rendering issue at MainActor::teleport 41 20063 13887 48
 	 */
