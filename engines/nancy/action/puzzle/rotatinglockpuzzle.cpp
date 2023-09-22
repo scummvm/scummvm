@@ -180,7 +180,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_upHotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);
 
 				_currentSequence[i] = ++_currentSequence[i] > 9 ? 0 : _currentSequence[i];
@@ -195,7 +195,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_downHotspots[i]).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
+			if (!g_nancy->_sound->isSoundPlaying(_clickSound) && input.input & NancyInput::kLeftMouseButtonUp) {
 				g_nancy->_sound->playSound(_clickSound);
 
 				int8 n = _currentSequence[i];
