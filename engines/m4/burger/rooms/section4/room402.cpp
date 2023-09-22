@@ -481,7 +481,127 @@ void Room402::parser() {
 }
 
 void Room402::conv84() {
-	// TODO
+	int who = conv_whos_talking();
+	int entry = conv_current_entry();
+	int node = conv_current_node();
+	const char *sound = conv_sound_to_play();
+
+	switch (_G(kernel).trigger) {
+	case 6:
+		if (who == 0) {
+			_G(kernel).trigger_mode = KT_DAEMON;
+
+			if (node == 3 && entry == 1) {
+				_val2 = 47;
+				kernel_trigger_dispatch_now(2);
+			} else if (node == 1 && entry == 1) {
+				_val2 = 39;
+				kernel_trigger_dispatch_now(2);
+			} else if (node == 9 && entry == 0) {
+				_val2 = 39;
+				kernel_trigger_dispatch_now(2);
+				term_message("--------------------------------");
+			} else if (node == 9 && entry == 2) {
+				_val2 = 15;
+				kernel_trigger_dispatch_now(2);
+				term_message("HHHHHHHHHHHHHHHHHH");
+			} else if ((node == 1 && entry == 6) ||
+					(node == 2 && entry == 0) ||
+					(node == 3 && entry == 0) ||
+					(node == 4 && entry == 0) ||
+					(node == 5 && entry == 0) ||
+					(node == 6 && entry == 1) ||
+					(node == 6 && entry == 3) ||
+					(node == 8 && entry == 1) ||
+					(node == 9 && entry == 1)) {
+				_val3 = 47;
+			} else {
+				term_message("xxxxxxxxxxxxxxxxxxxxx");
+				_val2 = 47;
+				kernel_trigger_dispatch_now(2);
+			}
+
+			conv_resume(conv_get_handle());
+		}
+		break;
+
+	case 21:
+		_val3 = 47;
+
+		if (_val5 == 45)
+			_G(kernel).trigger_mode = KT_DAEMON;
+		break;
+
+	default:
+		if (sound) {
+			if (who <= 0) {
+				_digiName = sound;
+				_flag1 = true;
+				_val1 = 6;
+
+				if (node == 1 && entry == 0)
+					kernel_timing_trigger(180, 21);
+
+				if ((node == 4 && entry == 0) ||
+						(node == 1 && entry == 6) ||
+						(node == 9 && entry == 1)) {
+					if (!(node == 9 && entry == 1))
+						_val2 = 7;
+
+					if (_val6 == 45)
+						_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				if (node == 3 && entry == 1) {
+					_val2 = 40;
+					_G(kernel).trigger_mode = KT_DAEMON;
+					kernel_trigger_dispatch_now(2);
+				} else if (node == 6 && entry == 2) {
+					_val2 = 40;
+				} else if ((node == 1 && entry == 1) || (node == 9 && entry == 0)) {
+					_val2 = 40;
+
+					if (_val6 == 45)
+						_G(kernel).trigger_mode = KT_DAEMON;
+				} else if (node == 9 && entry == 2) {
+					_val2 = 40;
+					_G(kernel).trigger_mode = KT_DAEMON;
+					kernel_trigger_dispatch_now(2);
+				} else if ((node == 1 && entry == 6) ||
+						(node == 2 && entry == 0) ||
+						(node == 3 && entry == 0) ||
+						(node == 4 && entry == 0) ||
+						(node == 5 && entry == 0) ||
+						(node == 6 && entry == 1) ||
+						(node == 6 && entry == 3) ||
+						(node == 8 && entry == 1) ||
+						(node == 9 && entry == 1)) {
+					_val3 = 45;
+
+					if (_val5 == 45) {
+						_G(kernel).trigger_mode = KT_DAEMON;
+						kernel_trigger_dispatch_now(3);
+					}
+				} else {
+					_val2 = 45;
+
+					if (_val6 == 45)
+						_G(kernel).trigger_mode = KT_DAEMON;
+				}
+			} else if (who == 1) {
+				if ((node == 1 && entry == 1) || (node == 1 && entry == 3)) {
+					_val2 = 39;
+
+					if (_val6 == 45)
+						_G(kernel).trigger_mode = KT_DAEMON;
+				}
+
+				_G(kernel).trigger_mode = KT_DAEMON;
+				wilbur_speech(sound, 10001);
+			}
+		}
+		break;
+	}
 }
 
 void Room402::freeSeries1() {
