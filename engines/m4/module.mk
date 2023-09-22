@@ -193,7 +193,8 @@ MODULE_OBJS = \
 	riddle/riddle.o \
 	riddle/hotkeys.o \
 	riddle/inventory.o \
-	ridle/vars.o
+	ridle/vars.o \
+	riddle/walker.o
 
 
 # This module can be built as a plugin

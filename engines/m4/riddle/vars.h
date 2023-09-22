@@ -23,6 +23,7 @@
 #define M4_RIDDLE_VARS_H
 
 #include "common/textconsole.h"
+#include "m4/riddle/walker.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -44,7 +45,8 @@ protected:
 	void main_cold_data_init() override;
 
 public:
-	// Globals go here
+	Riddle::Walker _walker;
+
 public:
 	Vars();
 	virtual ~Vars();
@@ -56,7 +58,7 @@ public:
 		return nullptr;
 	}
 	M4::Walker *getWalker() override {
-		return nullptr;
+		return &_walker;
 	}
 	void initialize_game() override;
 
