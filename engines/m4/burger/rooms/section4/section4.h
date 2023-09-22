@@ -48,6 +48,9 @@ private:
 	Room407 _room407;
 
 public:
+	static void poof(int trigger);
+
+public:
 	Section4();
 	virtual ~Section4() {}
 

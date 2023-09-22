@@ -135,6 +135,28 @@ void Section4::daemon() {
 	_G(kernel).continue_handling_trigger = true;
 }
 
+void Section4::poof(int trigger) {
+	player_set_commands_allowed(false);
+	digi_preload("999_003");
+	player_update_info();
+
+	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+		ws_hide_walker();
+		series_play("999poof", _G(player_info).depth, 0, trigger, 6, 0,
+			_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+	} else {
+		kernel_timing_trigger(120, trigger);
+	}
+
+	digi_play("999_003", 2);
+
+	if (!_G(flags)[V154] || imath_rand_bool(8)) {
+		digi_preload("402w005z");
+		digi_play("402w005z", 1);
+		_G(flags)[V154] = 1;
+	}
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
