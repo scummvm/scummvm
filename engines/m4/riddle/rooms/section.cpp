@@ -129,14 +129,18 @@ void Section::global_room_init() {
 }
 
 void Section::init_series_players() {
+#ifdef TODO
 	_G(seriesPlayers).clear();
+#endif
 }
 
 void Section::tick() {
+#ifdef TODO
 	int oldTrigger = _G(kernel).trigger;
 	_G(kernel).trigger = gCALLED_EACH_LOOP;
 	g_engine->game_daemon_code();
 	_G(kernel).trigger = oldTrigger;
+#endif
 }
 
 void Section::daemon() {

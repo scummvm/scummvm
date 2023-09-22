@@ -29,6 +29,15 @@ namespace Riddle {
 
 RiddleEngine::RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);	// TODO: Replace with proper section
+	_sections.push_back(&_section9);
 }
 
 M4::Vars *RiddleEngine::createVars() {
