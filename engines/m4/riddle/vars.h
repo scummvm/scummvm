@@ -23,6 +23,7 @@
 #define M4_RIDDLE_VARS_H
 
 #include "common/textconsole.h"
+#include "m4/riddle/hotkeys.h"
 #include "m4/riddle/walker.h"
 #include "m4/vars.h"
 
@@ -46,6 +47,7 @@ protected:
 
 public:
 	Riddle::Walker _walker;
+	Riddle::Hotkeys _hotkeys;
 
 public:
 	Vars();
@@ -55,7 +57,7 @@ public:
 		return nullptr;
 	}
 	Hotkeys *getHotkeys() override {
-		return nullptr;
+		return &_hotkeys;
 	}
 	M4::Walker *getWalker() override {
 		return &_walker;
