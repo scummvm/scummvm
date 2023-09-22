@@ -42,7 +42,7 @@ namespace M4 {
 
 M4Engine *g_engine;
 
-M4Engine::M4Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("M4") {
 	g_engine = this;
 }
@@ -52,15 +52,19 @@ M4Engine::~M4Engine() {
 }
 
 uint32 M4Engine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String M4Engine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
+}
+
+int M4Engine::getGameType() const {
+	return _gameDescription->gameType;
 }
 
 Common::Language M4Engine::getLanguage() const {
-	return _gameDescription->language;
+	return _gameDescription->desc.language;
 }
 
 Common::Error M4Engine::run() {

@@ -243,7 +243,7 @@ static const char *GLOBAL_PARSER_LIST[] = {
 	nullptr
 };
 
-BurgerEngine::BurgerEngine(OSystem *syst, const ADGameDescription *gameDesc) :
+BurgerEngine::BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 		M4Engine(syst, gameDesc) {
 	_sections.push_back(&_section1);
 	_sections.push_back(&_section2);

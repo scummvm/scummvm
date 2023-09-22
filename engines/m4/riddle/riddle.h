@@ -35,7 +35,7 @@ protected:
 	M4::Vars *createVars() override;
 
 public:
-	RiddleEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	RiddleEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	~RiddleEngine() override {}
 
 	/**

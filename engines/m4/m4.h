@@ -44,7 +44,7 @@ struct M4GameDescription;
 
 class M4Engine : public Engine, public Sections {
 private:
-	const ADGameDescription *_gameDescription;
+	const M4GameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
 	/**
@@ -65,7 +65,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 
 public:
-	M4Engine(OSystem *syst, const ADGameDescription *gameDesc);
+	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	~M4Engine() override;
 
 	uint32 getFeatures() const;
@@ -74,6 +74,11 @@ public:
 	 * Returns the game Id
 	 */
 	Common::String getGameId() const;
+
+	/**
+	 * Returns the game type
+	 */
+	int getGameType() const;
 
 	/**
 	 * Return game language
