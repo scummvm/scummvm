@@ -60,6 +60,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sword1:
    - Major rewrite of palette fades, bringing it to match the original.
+   - Rewrote all the menu code to make it match the original.
 
  Sword2:
    - Added support for Chinese translation.
