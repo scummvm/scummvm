@@ -1113,7 +1113,7 @@ void MacText::render(int from, int to, int shadow) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (int j = start; j != end; j += delta) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x, font: %p",
 				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
 				  _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].fontSize, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_textLines[i].chunks[j].getFont());
