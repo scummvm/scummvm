@@ -317,7 +317,7 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 					break;
 
 				// Converge to meet
-				while (p1 != p2 && p1->_yAdjoin && p2->_yAdjoin) {
+				while (p1 != p2 && p1->_yAdjoin && p2->_xAdjoin) {
 					p1->_groupNum = group;
 					p2->_groupNum = group;
 
