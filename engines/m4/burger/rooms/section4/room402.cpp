@@ -187,7 +187,7 @@ void Room402::init() {
 	_pe04 = _pe04s = -1;
 	_wi01 = _wi01s = -1;
 	_wi02 = _wi02s = -1;
-	_series1Set = _series2Set = false;
+	_stolieSet = _series2Set = false;
 
 	pal_cycle_init(114, 127, 6);
 	digi_preload("400_001");
@@ -265,7 +265,605 @@ void Room402::init() {
 }
 
 void Room402::daemon() {
-	// TODO
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		_val2 = 15;
+		if (_stolieSet)
+			kernel_trigger_dispatch_now(2);
+
+		_val3 = 15;
+		if (_series2Set)
+			kernel_trigger_dispatch_now(3);
+
+		player_set_commands_allowed(true);
+		break;
+
+	case 2:
+		switch (_val6) {
+		case 6:
+			freeDr8();
+			_wi02 = series_load("402wi02");
+			_wi02s = series_load("402wi02s");
+			series_play("402dr04", 0x300, 0, 11, 6, 0, 100, 0, 0, 0, 25);
+			series_play("420dr04s", 0x301, 0, -1, 6, 0, 100, 0, 0, 0, 25);
+			break;
+
+		case 7:
+			switch (_val2) {
+			case 7:
+				loadDr8();
+				_stolie.play("402dr08", 0x300, 0, 2, 60, 0, 100, 0, 0, 75, 75);
+				break;
+
+			case 8:
+				_val6 = 45;
+				loadDr8();
+				_stolie.play("402dr08", 0x300, 2, 2, 6, 0, 100, 0, 0, 72, 75);
+				break;
+
+
+			default:
+				break;
+			}
+			break;
+
+		case 15:
+			switch (_val2) {
+			case 6:
+				_val6 = 6;
+				loadDr1();
+				Series::series_play("402dr01", 0x300, 0, 2, 6, 0, 100, 0, 0, 0, 7);
+				break;
+
+			case 8:
+				digi_unload_stream_breaks(SERIES1);
+				_val2 = 11;
+				series_play_with_breaks(PLAY2, "402dr06", 0x300, 2, 3);
+				break;
+
+			case 10:
+				_val2 = 8;
+				digi_preload("402_003");
+				series_play_with_breaks(PLAY1, "402DR10s", 0x300, -1, 2);
+				series_stream_with_breaks(SERIES1, "402dr10", 6, 0x300, 2);
+				break;
+
+			case 11:
+				_val2 = 12;
+				loadPe4();
+				series_play_with_breaks(PLAY3, "402DR11s", 0x301, -1, 2);
+				series_stream_with_breaks(SERIES2, "402dr11", 6, 0x300, 2);
+				break;
+
+			case 12:
+				digi_unload_stream_breaks(SERIES2);
+				_val2 = 13;
+				loadDr1();
+				Series::series_play("402dr01", 0x300, 0, 2, 6, 0, 100, 0, 0, 3, -1);
+				break;
+
+			case 13:
+				_stolieSet = true;
+				loadDr2();
+				_stolie.play("402dr02", 0x300, 0, -1, 6, -1, 100, 0, 0, 12, 12);
+				kernel_trigger_dispatch_now(27);
+				break;
+
+			case 15:
+				loadDr8();
+				series_play("402dr08", 0x300, 0, 2, 60, 0, 100, 0, 0, 0, 0);
+				series_play("402dr08s", 0x301, 0, -1, 60, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 16:
+				Series::series_play("402dr12", 0x300, 0, 2, 60, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 40:
+				_val6 = 39;
+				loadDr1();
+				_stolie.play("402dr01", 0x300, 0, 2, 6);
+				break;
+
+			case 45:
+			case 47:
+				_val6 = 48;
+				playRandom1();
+				loadDr8();
+				Series::series_play("402dr08", 0x300, 0, 2, 5, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 46:
+				_val6 = 45;
+				freeDr8();
+				series_play_with_breaks(PLAY16, "402dr08", 0x300, 2, 3, 5);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 39:
+			switch (_val2) {
+			case 39:
+				freeStolie();
+				_stolieSet = true;
+				loadDr2();
+				_stolie.play("402dr02", 0x300, 0, -1, 6, -1, 100, 0, 0, 12, 12);
+				break;
+
+			case 40:
+				freeStolie();
+				_val6 = 40;
+				loadDr2();
+				series_play("402dr02", 0x300, 4, 2, 6, 0, 100, 0, 0, 0, 2);
+				series_play("402dr02s", 0x301, 4, -1, 6, 0, 100, 0, 0, 0, 2);
+				playDigiName();
+				break;
+
+			default:
+				freeStolie();
+				_val6 = 15;
+				loadDr1();
+				series_play("402dr01", 0x300, 2, 2, 6);
+				series_play("402dr01s", 0x301, 2, -1, 6);
+				break;
+			}
+			break;
+
+		case 40:
+			if (_val2 == 40) {
+				freeStolie();
+				_stolieSet = true;
+				loadDr2();
+				_stolie.play("402dr02", 0x300, 4, -1, 6, -1, 100, 0, 0, 3, 5);
+			} else {
+				freeStolie();
+				_val6 = 39;
+				loadDr2();
+				Series::series_play("402dr02", 0x300, 0, 2, 6, 0, 100, 0, 0, 6, 12);
+			}
+			break;
+
+		case 45:
+			switch (_val2) {
+			case 7:
+				freeStolie();
+				_val6 = 7;
+				loadDr8();
+				_stolie.play("402dr08", 0x300, 0, 2, 6, 0, 100, 0, 0, 72, 75);
+				break;
+
+			case 46:
+				freeStolie();
+				_stolieSet = true;
+				loadDr8();
+				_stolie.play("402dr08", 0x300, 4, -1, 6, -1, 100, 0, 0, 67, 71);
+				playDigiName();
+				break;
+
+			case 47:
+				freeStolie();
+				loadDr8();
+				Series::series_play("402dr08", 0x300, 0, 2, 60, 0, 100, 0, 0, 67, 67);
+				break;
+
+			default:
+				freeStolie();
+				_val6 = 49;
+				loadDr8();
+				Series::series_play("402dr08", 0x300, 2, 2, 5, 0, 100, 0, 0, 64, 66);
+				break;
+			}
+			break;
+
+		case 48:
+			_val6 = 45;
+			loadDr8();
+			Series::series_play("402dr08", 0x300, 0, 2, 6, 0, 100, 0, 0, 64, 66);
+			break;
+
+		case 49:
+			_val6 = 15;
+			loadDr8();
+			Series::series_play("402dr08", 0x300, 2, 2, 6, 0, 100, 0, 0, 0, 8);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (_val5) {
+		case 15:
+			switch (_val3) {
+			case 15:
+				if (imath_ranged_rand(1, 7) == 1) {
+					_val5 = 17;
+					loadPe2();
+					Series::series_play("402pe02", 0x100, 0, 3, 6, 0, 100, 0, 0, 0, 3);
+					playRandom2();
+				} else {
+					loadPe2();
+					Series::series_play("402pe02", 0x100, 0, 3, 60, 0, 100, 0, 0, 7, 7);
+				}
+				break;
+
+			case 20:
+				_val3 = 21;
+				series_play_with_breaks(PLAY12, "402pe01", 0x100, 3, 3);
+				break;
+
+			case 21:
+				loadPe1();
+				_series2.show("402pe01", 0x100, 0, 3, 30, 9);
+				break;
+
+			case 27:
+				_val3 = 28;
+				_series2Set = true;
+				kernel_trigger_dispatch_now(27);
+
+				loadPe4();
+				_series2.show("402pe04", 0x100, 0, -1, -1, 16);
+				break;
+
+			case 28:
+				freeSeries2();
+				freePe4();
+				_val3 = 29;
+				series_play_with_breaks(PLAY7, "402pe04", 0x100, 3, 3);
+				break;
+
+			case 29:
+				_val3 = 30;
+				loadPe4();
+				_series2.play("402pe04", 0x100, 1, -1, 12, -1, 100, 0, 0, 19, 21);
+				break;
+
+			case 30:
+				_val3 = 20;
+				freeSeries2();
+				freePe4();
+				series_play_with_breaks(PLAY11, "402pe04", 0x100, 3, 3);
+				break;
+
+			case 34:
+				_val3 = 43;
+				series_play_with_breaks(PLAY15, "402pe05", 0x100, 3, 3);
+				break;
+
+			case 23:
+			case 42:
+			case 45:
+			case 47:
+				loadPe1();
+				_val5 = 45;
+				_series2.play("402pe01", 0x100, 0, 3, 5, 0, 100, 0, 0, 0, -1);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 17:
+			if (_val3 == 15) {
+				if (imath_ranged_rand(1, 7) == 1) {
+					_val5 = 15;
+					loadPe2();
+					Series::series_play("402pe02", 0x100, 0, 3, 6, 0, 100, 0, 0, 4, 7);
+					playRandom2();
+				} else {
+					loadPe2();
+					Series::series_play("402pe02", 0x100, 0, 3, 60, 0, 100, 0, 0, 3, 3);
+				}
+			} else {
+				_val5 = 15;
+				loadPe2();
+				Series::series_play("402pe02", 0x100, 0, 3, 6, 0, 100, 0, 0, 4, 7);
+			}
+			break;
+
+		case 45:
+			switch (_val3) {
+			case 23:
+				_val3 = 24;
+				freePe4();
+				series_play_with_breaks(PLAY4, "402pe04", 0x100, 3, 3);
+				break;
+
+			case 24:
+				_val3 = 25;
+				series_play_with_breaks(PLAY5, "402pe4n", 0x100, 3, 3);
+				break;
+
+			case 25:
+				_val3 = 27;
+				_val5 = 15;
+				freePe4();
+				series_play_with_breaks(PLAY6, "402pe04", 0x100, 3, 3);
+				break;
+
+			case 41:
+				loadPe1();
+				freePe3();
+				_series2Set = true;
+				_series2.play("402pe01", 0x100, 0, -1, 6, -1, 100, 0, 0, 9, 9);
+				break;
+
+			case 42:
+				Series::series_play("402pe01", 0x100, 0, 3, 60, 0, 100, 0, 0, 9, 9);
+				break;
+
+			case 45:
+				freeSeries2();
+
+				switch (imath_ranged_rand(1, 3)) {
+				case 1:
+					frame = 0;
+					break;
+				case 2:
+					frame = 1;
+					break;
+				default:
+					frame = 16;
+					break;
+				}
+
+				loadPe3();
+				Series::series_play("402pe03", 0x100, 0, 3, 4, 0, 100, 0, 0, frame, frame);
+				playDigiName();
+				break;
+
+			case 47:
+				loadPe3();
+				_series2Set = true;
+				Series::series_play("402pe03", 0x100, 0, -1, 6, -1, 100, 0, 0, 15, 15);
+				break;
+
+			default:
+				freeSeries2();
+				freePe3();
+				loadPe1();
+				_val5 = 15;
+				_series2.play("402pe01", 0x100, 2, 3, 5, 0, 100, 0, 0, 0, -1);
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:
+		freeStolie();
+		hotspot_set_active("stolie", false);
+		_G(flags)[V159] = 1;
+		break;
+
+	case 5:
+		freeSeries2();
+		hotspot_set_active("elmo", false);
+		break;
+
+	case 7:
+		digi_play("402_003", 2, 150, 8);
+		break;
+
+	case 8:
+		digi_unload("402_003");
+		break;
+
+	case 9:
+		_val3 = 23;
+		break;
+
+	case 11:
+		_stolie.play("402dr04", 0x300, 0, -1, 6, -1, 100, 0, 0, 25, 25);
+		ws_hide_walker();
+		series_play("402wi02", 0x100, 0, 12, 5, 0, 100, 0, 0, 0, 4);
+		series_play("402wi02s", 0x101, 0, -1, 5, 0, 100, 0, 0, 0, 4);
+		break;
+
+	case 12:
+		_stolie.terminate();
+		inv_give_to_player("fish");
+		series_play("402dr04", 0x300, 0, 14, 5, 0, 100, 0, 0, 26, -1);
+		series_play("402dr04s", 0x301, 0, -1, 5, 0, 100, 0, 0, 26, -1);
+		series_play("402wi02", 0x100, 0, 13, 5, 0, 100, 0, 0, 5, -1);
+		series_play("402wi02s", 0x101, 0, -1, 5, 0, 100, 0, 0, 5, -1);
+		break;
+
+	case 13:
+		series_unload(_wi02);
+		series_unload(_wi02s);
+		enable_player();
+		break;
+
+	case 14:
+		series_play_with_breaks(PLAY14, "402poof", 0x100, -1, 2);
+		_stolieSet = true;
+		_stolie.play("402dr04", 0x300, 0, -1, 6, -1, 100, 0, 0, 28, 28);
+		break;
+
+	case 15:
+		freeDr2();
+		_wi01 = series_load("402wi01");
+		_wi01s = series_load("402wi01s");
+		ws_hide_walker();
+
+		_val3 = 15;
+		series_play("402wi01", 0x100, 0, 16, 5, 0, 100, 0, 0, 0, 16);
+		series_play("402wi01s", 0x101, 0, -1, 5, 0, 100, 0, 0, 0, 16);
+		break;
+
+	case 16:
+		freeSeries2();
+		_series3.play("402wi01", 0, 0, -1, 6, -1, 100, 0, 0, 16, 16);
+		freePe1();
+		freePe2();
+		freePe3();
+		series_play("402pe05", 0x100, 0, 17, 5, 0, 100, 0, 0, 0, 5);
+		series_play("402pe05s", 0x101, 0, -1, 5, 0, 100, 0, 0, 0, 5);
+		break;
+
+	case 17:
+		_series3.terminate();
+		series_play("402wi01", 0x100, 0, 19, 5, 0, 100, 0, 0, 17, -1);
+		series_play("402wi01s", 0x101, 0, -1, 5, 0, 100, 0, 0, 17, -1);
+		digi_play("402p903b", 1, 255, -1);
+		series_play("402pe05", 0x100, 0, 18, 5, 0, 100, 0, 0, 6, -1);
+		series_play("402pe05s", 0x101, 0, -1, 5, 0, 100, 0, 0, 6, -1);
+		inv_move_object("deed", NOWHERE);
+		break;
+
+	case 18:
+		kernel_timing_trigger(1, 20);
+		_series2Set = true;
+		_series2.play("402pe05", 0x100, 0, -1, 6, -1, 100, 0, 0, 10, 10);
+		break;
+
+	case 19:
+		series_unload(_wi01);
+		series_unload(_wi01s);
+		ws_unhide_walker();
+		kernel_timing_trigger(1, 20);
+		break;
+
+	case 20:
+		if (++_val4 == 2) {
+			_val4 = 0;
+			_val2 = 6;
+			ws_walk(316, 354, 0, -1, 2);
+		}
+		break;
+
+	case 22:
+		_val3 = 42;
+		break;
+
+	case 25:
+		freeDr1();
+		series_play_with_breaks(PLAY8, "402dr01", 0x300, 26, 3);
+		break;
+
+	case 26:
+		loadDr1();
+		_stolieSet = true;
+		_stolie.show("402dr01", 0x300, 0, -1, -1, 10);
+		break;
+
+	case 27:
+		if (++_val4 >= 2) {
+			_val4 = 0;
+			freeStolie();
+			freeDr2();
+			series_play_with_breaks(PLAY9, "402dr02", 0x300, 28, 3);
+		}
+		break;
+
+	case 28:
+		series_play_with_breaks(PLAY10, "402dr03", 0x300, 30, 3);
+		break;
+
+	case 29:
+		_series2Set = true;
+		loadPe4();
+		_series2.show("402pe04", 0x100, 0, -1, -1, 21);
+		break;
+
+	case 30:
+		freeSeries2();
+		digi_play("402s010h", 1, 170);
+		_stolieSet = true;
+		_stolie.show("402dr03", 0x300, 0, -1, -1, 2);
+		_dr03 = series_load("402dr03");
+		_dr03s = series_load("402dr03s");
+
+		freePe4();
+		series_play_with_breaks(PLAY11, "402pe04", 0x100, 32, 3);
+		break;
+
+	case 32:
+		_val3 = 41;
+		_val5 = 45;
+		kernel_trigger_dispatch_now(3);
+		break;
+
+	case 33:
+		freeStolie();
+		series_play("402dr03", 0x300, 2, 34, 6, 0, 100, 0, 0, 0, 1);
+		series_play("402dr03s", 0x301, 2, -1, 6, 0, 100, 0, 0, 0, -1);
+		break;
+
+	case 34:
+		series_unload(_dr03);
+		series_unload(_dr03s);
+		freeDr2();
+		series_play_with_breaks(PLAY13, "402dr02", 0x300, 35, 3);
+		break;
+
+	case 35:
+		loadDr1();
+		series_play("402dr01", 0x300, 2, 36, 6, 0, 100, 0, 0, 0, -1);
+		series_play("402dr01s", 0x301, 2, -1, 6, 0, 100, 0, 0, 0, -1);
+		break;
+
+	case 36:
+		series_play("402dr12", 0x300, 0, 37, 6, 0, 100, 0, 0, 0, 0);
+		series_play("402dr12s", 0x301, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+		break;
+
+	case 37:
+		freeDr1();
+		_val2 = 15;
+		_val6 = 15;
+		kernel_trigger_dispatch_now(2);
+		player_set_commands_allowed(true);
+		break;
+
+	case 38:
+		freeSeries2();
+		loadPe4();
+		Series::series_play("402pe04", 0x100, 0, 29, 6, 0, 100, 0, 0, 17, 21);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 2:
+			_G(wilbur_should) = 3;
+			kernel_timing_trigger(180, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 3:
+			ws_unhide_walker();
+			_G(walker).wilbur_poof();
+			_val2 = 10;
+			kernel_timing_trigger(30, 22);
+			break;
+
+		case 5:
+			ws_unhide_walker();
+			_G(walker).wilbur_poof();
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room402::pre_parser() {
@@ -303,9 +901,9 @@ void Room402::parser() {
 
 		case 1:
 			_digiName = "402s006";
-			_flag1 = true;
+			_newMode = KT_PARSE;
 			_val1 = 2;
-			freeSeries1();
+			freeStolie();
 			_val2 = 45;
 			break;
 
@@ -393,7 +991,7 @@ void Room402::parser() {
 
 			case 1:
 				_digiName = "402p501";
-				_flag1 = true;
+				_newMode = KT_PARSE;
 				_val1 = 2;
 				_val3 = 45;
 				break;
@@ -420,7 +1018,7 @@ void Room402::parser() {
 			freeSeries2();
 			freeDr2();
 			_digiName = "402p902";
-			_flag1 = true;
+			_newMode = KT_PARSE;
 			_val1 = 2;
 			_val3 = 45;
 			break;
@@ -428,16 +1026,16 @@ void Room402::parser() {
 		case 2:
 			_val3 = 41;
 			_digiName = "402s007";
-			_flag1 = true;
+			_newMode = KT_PARSE;
 			_val1 = 3;
 			_val2 = 40;
 			break;
 
 		case 3:
 			_digiName = "402s008";
-			_flag1 = true;
+			_newMode = KT_PARSE;
 			_val1 = 4;
-			freeSeries1();
+			freeStolie();
 			freeDr2();
 			_val2 = 46;
 			kernel_trigger_dispatch_now(2);
@@ -452,7 +1050,7 @@ void Room402::parser() {
 
 		case 5:
 			_digiName = "402s009";
-			_flag1 = true;
+			_newMode = KT_PARSE;
 			_val1 = 6;
 			_val2 = 45;
 			break;
@@ -536,7 +1134,7 @@ void Room402::conv84() {
 		if (sound) {
 			if (who <= 0) {
 				_digiName = sound;
-				_flag1 = true;
+				_newMode = KT_PARSE;
 				_val1 = 6;
 
 				if (node == 1 && entry == 0)
@@ -604,10 +1202,30 @@ void Room402::conv84() {
 	}
 }
 
-void Room402::freeSeries1() {
-	if (_series1Set) {
-		_series1.terminate();
-		_series1Set = false;
+void Room402::playDigiName() {
+	if (_digiName) {
+		_G(kernel).trigger_mode = _newMode;
+		digi_play(_digiName, 1, 255, _val1);
+	}
+}
+
+void Room402::playRandom1() {
+	static const char *NAMES[5] = {
+		"402s010f", "402s010g", "402s010h", "402s010a", "402s010d"
+	};
+
+	if (!digi_play_state(1))
+		digi_play(NAMES[imath_ranged_rand(0, 4)], 1, 140, -1);
+}
+
+void Room402::playRandom2() {
+	digi_play(Common::String::format("402p903%c", 'a' + imath_ranged_rand(0, 5)).c_str(), 2, 140);
+}
+
+void Room402::freeStolie() {
+	if (_stolieSet) {
+		_stolie.terminate();
+		_stolieSet = false;
 	}
 }
 
