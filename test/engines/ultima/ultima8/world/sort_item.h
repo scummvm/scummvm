@@ -17,10 +17,13 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(0, 10, 0, 10, 10, 0);
-		Ultima::Ultima8::Box b2(0, 30, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b1(0, 10, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b2(0, 20, 0, 10, 10, 10);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
@@ -31,10 +34,13 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(10, 0, 0, 10, 10, 0);
-		Ultima::Ultima8::Box b2(30, 0, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b1(10, 0, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b2(20, 0, 0, 10, 10, 10);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
@@ -46,9 +52,12 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(10, 10, 0, 10, 10, 10);
-		Ultima::Ultima8::Box b2(10, 10, 20, 10, 10, 10);
+		Ultima::Ultima8::Box b2(10, 10, 10, 10, 10, 10);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
@@ -354,14 +363,17 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(129, 32, 0, 64, 64, 24);
+		Ultima::Ultima8::Box b1(7839, 19839, 24, 64, 64, 24);
 		si1.setBoxBounds(b1, 0, 0);
 		si1._anim = true;
 		si1._solid = true;
 
-		Ultima::Ultima8::Box b2(64, 69, 24, 64, 64, 40);
+		Ultima::Ultima8::Box b2(7774, 19876, 48, 64, 64, 40);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
