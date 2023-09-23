@@ -290,6 +290,8 @@ private:
 	// Contains a screenshot of the Scene state from the last time it was exited
 	Graphics::ManagedSurface _lastScreenshot;
 
+	RenderObject _hotspotDebug;
+
 	bool _destroyOnExit;
 
 	State _state;

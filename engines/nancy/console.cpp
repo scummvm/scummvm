@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/config-manager.h"
 
 #include "audio/audiostream.h"
 
@@ -66,6 +67,7 @@ NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("get_difficulty", WRAP_METHOD(NancyConsole, Cmd_getDifficulty));
 	registerCmd("set_difficulty", WRAP_METHOD(NancyConsole, Cmd_setDifficulty));
 	registerCmd("sound_info", WRAP_METHOD(NancyConsole, Cmd_soundInfo));
+	registerCmd("debug_hotspots", WRAP_METHOD(NancyConsole, Cmd_showHotspots));
 
 }
 
@@ -1012,5 +1014,12 @@ bool NancyConsole::Cmd_soundInfo(int argc, const char **argv) {
 
 	return true;
 }
+
+bool NancyConsole::Cmd_showHotspots(int argc, const char **argv) {
+	ConfMan.setBool("debug_hotspots", !ConfMan.getBool("debug_hotspots", ConfMan.kTransientDomain), ConfMan.kTransientDomain);
+
+	return cmdExit(0, nullptr);
+}
+
 
 } // End of namespace Nancy

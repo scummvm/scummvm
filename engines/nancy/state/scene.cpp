@@ -119,7 +119,8 @@ Scene::Scene() :
 		_difficulty(0),
 		_activeConversation(nullptr),
 		_lightning(nullptr),
-		_destroyOnExit(false) {}
+		_destroyOnExit(false),
+		_hotspotDebug(50) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -497,6 +498,7 @@ void Scene::registerGraphics() {
 	_viewport.registerGraphics();
 	_textbox.registerGraphics();
 	_inventoryBox.registerGraphics();
+	_hotspotDebug.registerGraphics();
 
 	if (_menuButton) {
 		_menuButton->registerGraphics();
@@ -717,6 +719,11 @@ void Scene::init() {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_lightning = new Misc::Lightning();
 	}
+
+	Common::Rect vpPos = _viewport.getScreenPosition();
+	_hotspotDebug._drawSurface.create(vpPos.width(), vpPos.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_hotspotDebug.moveTo(vpPos);
+	_hotspotDebug.setTransparent(true);
 
 	registerGraphics();
 	g_nancy->_graphicsManager->redrawAll();

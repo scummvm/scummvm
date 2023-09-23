@@ -75,6 +75,8 @@ protected:
 	static ActionRecord *createActionRecord(uint16 type);
 	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
 
+	void debugDrawHotspots();
+
 	Common::Array<ActionRecord *> _records;
 };
 

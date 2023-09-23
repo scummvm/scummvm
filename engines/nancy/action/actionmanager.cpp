@@ -27,6 +27,8 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
+#include "engines/nancy/font.h"
+#include "engines/nancy/graphics.h"
 
 #include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/actionrecord.h"
@@ -71,6 +73,8 @@ void ActionManager::handleInput(NancyInput &input) {
 					}
 				} else {
 					rec->_state = ActionRecord::ExecutionState::kActionTrigger;
+
+					input.eatMouseInput();
 
 					if (rec->_cursorDependency) {
 						int16 item = rec->_cursorDependency->label;
@@ -245,6 +249,8 @@ void ActionManager::processActionRecords() {
 			record->execute();
 		}
 	}
+
+	debugDrawHotspots();
 }
 
 void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor) {
@@ -526,6 +532,40 @@ void ActionManager::synchronize(Common::Serializer &ser) {
 	for (auto &rec : _records) {
 		ser.syncAsByte(rec->_isActive);
 		ser.syncAsByte(rec->_isDone);
+	}
+}
+
+void ActionManager::debugDrawHotspots() {
+	// Draws a rectangle around (non-puzzle) hotspots as well as the id
+	// and type of the owning ActionRecord. Hardcoded to font 0 since that's
+	// the smallest one available in the engine.
+	RenderObject &obj = NancySceneState._hotspotDebug;
+	if (ConfMan.getBool("debug_hotspots", ConfMan.kTransientDomain)) {
+		const Font *font = g_nancy->_graphicsManager->getFont(0);
+		assert(font);
+		uint16 yOffset = NancySceneState.getViewport().getCurVerticalScroll();
+		obj.setVisible(true);
+		obj._drawSurface.clear(obj._drawSurface.getTransparentColor());
+
+		for (uint i = 0; i < _records.size(); ++i) {
+			ActionRecord *rec = _records[i];
+			if (rec->_hasHotspot) {
+				Common::Rect hotspot = rec->_hotspot;
+				hotspot.translate(0, -yOffset);
+				hotspot.clip(obj._drawSurface.getBounds());
+
+				if (!hotspot.isEmpty()) {
+					font->drawString(&obj._drawSurface, Common::String::format("%u, %s", i, rec->getRecordTypeName().c_str()),
+					hotspot.left, hotspot.bottom - font->getFontHeight() - 2, hotspot.width(), 0,
+					Graphics::kTextAlignCenter, 0, true);
+					obj._drawSurface.frameRect(hotspot, 0xFFFFFF);
+				}
+			}
+		}
+	} else {
+		if (obj.isVisible()) {
+			obj.setVisible(false);
+		}
 	}
 }
 
