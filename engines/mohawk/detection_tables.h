@@ -965,6 +965,69 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Maths Workshop US
+	// Win/Mac
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAT", "5fc18dc4e12ed4988182af17d1f1cf8c", 10972138),
+			Common::EN_USA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
+	// Maths Workshop EU
+	// Win/Mac
+	// Has all languages as separate .DAE (English), .DAD (German), .DAF (French) files
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAE", "f42b70727bb3d5b224c85735339d4489", 7751154),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAD", "9d75b524de80ac99e6ef43e679c97340", 7748061),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+	{
+		{
+			"mathsworkshop",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAF", "260ba9aec6c16b3aee6377afe7e212e6", 7667595),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
 	// Harry and the Haunted House v1.0E
 	// English Windows 3.11
 	// From strangerke
