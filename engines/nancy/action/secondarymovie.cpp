@@ -50,7 +50,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	readFilename(ser, _bitmapOverlayName);
 
 	ser.skip(2); // videoPlaySource
-	ser.skip(2); // smallSize
+	ser.syncAsUint16LE(_videoFormat);
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
 	ser.skip(2); // hasBitmapOverlaySurface
 	ser.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
@@ -173,8 +173,8 @@ void PlaySecondaryMovie::execute() {
 				}
 			}
 
-			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, _paletteName.size() > 0);
-			_drawSurface.create(_fullFrame, _videoDescs[_curViewportFrame].srcRect);
+			GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == kSmallVideoFormat);
+			_drawSurface.create(_fullFrame, _videoDescs[descID].srcRect);
 			moveTo(_videoDescs[descID].destRect);
 
 			_needsRedraw = true;

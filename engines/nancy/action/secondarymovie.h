@@ -57,6 +57,7 @@ public:
 	Common::String _paletteName;
 	Common::String _bitmapOverlayName;
 
+	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoSceneChange = kMovieNoSceneChange;
 	byte _playerCursorAllowed = kPlayerCursorAllowed;
 	byte _playDirection = kPlayMovieForward;
