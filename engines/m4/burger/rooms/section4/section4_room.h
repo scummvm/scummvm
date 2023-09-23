@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION4_ROOM404_H
-#define M4_BURGER_ROOMS_SECTION4_ROOM404_H
+#ifndef M4_BURGER_ROOMS_SECTION4_ROOM_H
+#define M4_BURGER_ROOMS_SECTION4_ROOM_H
 
 #include "m4/burger/rooms/room.h"
 
@@ -28,23 +28,13 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-/**
- * Error: room not found
- */
-class Room404 : public Room {
-private:
-	static const char *SAID[][4];
-	static const seriesPlayBreak PLAY1[];
-	Series _quarter;
+class Section4Room : public Room {
+protected:
+	void setDest(int ticks);
 
 public:
-	Room404() : Room() {}
-	~Room404() override {}
-
-	void init() override;
-	void daemon() override;
-	void pre_parser() override;
-	void parser() override;
+	Section4Room() : Room() {}
+	~Section4Room() override {}
 };
 
 } // namespace Rooms

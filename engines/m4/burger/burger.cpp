@@ -436,7 +436,7 @@ void BurgerEngine::global_daemon() {
 			_G(player_trigger));
 		break;
 
-	case gSET_DEST:
+	case kSET_DEST:
 		ws_demand_location(_G(my_walker), _G(player_dest_x), _G(player_dest_y));
 		_G(walker).wilbur_poof();
 		kernel_trigger_dispatch_now(gSET_COMMANDS_ALLOWED);

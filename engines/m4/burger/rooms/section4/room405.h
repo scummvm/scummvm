@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION4_ROOM405_H
 #define M4_BURGER_ROOMS_SECTION4_ROOM405_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section4/section4_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room405 : public Room {
+class Room405 : public Section4Room {
 private:
 	static const char *SAID[][4];
 	static const seriesStreamBreak SERIES1[];
@@ -39,13 +39,39 @@ private:
 	static const seriesPlayBreak PLAY5[];
 	static const seriesPlayBreak PLAY6[];
 	static const seriesPlayBreak PLAY7[];
+	machine *_series1 = nullptr;
+	machine *_records = nullptr;
+	machine *_box = nullptr;
+	machine *_lid = nullptr;
+	machine *_eu02 = nullptr;
+	const char *_digiName = nullptr;
+	KernelTriggerType _newMode = (KernelTriggerType)0;
+	int _volume = 0;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _newTrigger = 0;
+
+	void conv86();
+	void conv89();
+	void conv90();
+	void conv91();
+	void conv92();
+	void startConv91();
+	void talkToVipe();
+	void talkToVera();
+	void playDigi();
 
 public:
-	Room405() : Room() {}
+	Room405() : Section4Room() {}
 	~Room405() override {}
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
