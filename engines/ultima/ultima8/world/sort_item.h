@@ -504,14 +504,15 @@ inline bool SortItem::below(const SortItem &si2) const {
 		return xFlat1 ? xCenter1 <= xCenter2 : xCenter1 < xCenter2;
 	}
 
-	// Y-Flat gets drawn after when past center point
-	bool yFlat1 = si1._yFar == si1._y;
-	bool yFlat2 = si2._yFar == si2._y;
-	if (yFlat1 != yFlat2) {
-		int32 yCenter1 = (si1._yFar + si1._y) / 2;
-		int32 yCenter2 = (si2._yFar + si2._y) / 2;
-		return yFlat1 ? yCenter1 <= yCenter2 : yCenter1 < yCenter2;
-	}
+	// Disabled: Y-Flat gets drawn after when past center point
+	// Not correct at starting area docks
+	//bool yFlat1 = si1._yFar == si1._y;
+	//bool yFlat2 = si2._yFar == si2._y;
+	//if (yFlat1 != yFlat2) {
+	//	int32 yCenter1 = (si1._yFar + si1._y) / 2;
+	//	int32 yCenter2 = (si2._yFar + si2._y) / 2;
+	//	return yFlat1 ? yCenter1 <= yCenter2 : yCenter1 < yCenter2;
+	//}
 
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y)
