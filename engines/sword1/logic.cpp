@@ -343,8 +343,10 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 }
 
 int Logic::speechDriver(Object *compact) {
-	if ((!_speechClickDelay) && (_mouse->testEvent() & BS1L_BUTTON_DOWN))
+	if ((!_speechClickDelay) &&
+		((_mouse->testEvent() & BS1L_BUTTON_DOWN) || (_mouse->testEvent() & BS1R_BUTTON_DOWN)))
 		_speechFinished = true;
+
 	if (_speechClickDelay)
 		_speechClickDelay--;
 
@@ -357,6 +359,7 @@ int Logic::speechDriver(Object *compact) {
 		else
 			compact->o_speech_time--;
 	}
+
 	if (_speechFinished) {
 		if (_speechRunning)
 			_sound->stopSpeech();
@@ -368,6 +371,7 @@ int Logic::speechDriver(Object *compact) {
 		_speechRunning = _textRunning = false;
 		_speechFinished = true;
 	}
+
 	if (compact->o_anim_resource) {
 		uint8 *animData = ((uint8 *)_resMan->openFetchRes(compact->o_anim_resource)) + sizeof(Header);
 		int32 numFrames = _resMan->readUint32(animData);
@@ -386,6 +390,7 @@ int Logic::speechDriver(Object *compact) {
 		compact->o_frame = _resMan->getUint32(animPtr->animFrame);
 		_resMan->resClose(compact->o_anim_resource);
 	}
+
 	return 0;
 }
 
