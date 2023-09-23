@@ -22,13 +22,13 @@
 #ifndef M4_BURGER_ROOMS_SECTION4_ROOM402_H
 #define M4_BURGER_ROOMS_SECTION4_ROOM402_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section4/section4_room.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room402 : public Room {
+class Room402 : public Section4Room {
 private:
 	static const char *SAID[][4];
 	static const seriesStreamBreak SERIES1[];
@@ -95,7 +95,7 @@ private:
 	void freePe4();
 
 public:
-	Room402() : Room() {}
+	Room402() : Section4Room() {}
 	~Room402() override {}
 
 	void init() override;

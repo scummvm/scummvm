@@ -887,9 +887,9 @@ void Room402::parser() {
 	} else if (player_said_any("disc", "disc ") && inv_player_has(_G(player).verb)) {
 		wilbur_speech("400w004");
 	} else if (player_said("poof") || player_said("gear", "disc")) {
-		Section4::poof(4006);
+		poof(4006);
 	} else if (player_said("poof ") || player_said("gear", "disc ")) {
-		Section4::poof(4005);
+		poof(4005);
 	} else if (player_said("stolie") && inv_player_has(_G(player).verb) &&
 			!player_said("deed")) {
 		switch (_G(kernel).trigger) {

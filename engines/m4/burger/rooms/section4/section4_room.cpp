@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section4/section4_room.h"
+#include "m4/burger/rooms/section4/section4.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
@@ -36,6 +37,10 @@ void Section4Room::setDest(int ticks) {
 	ws_demand_location(-100, _G(player_dest_y));
 	ws_unhide_walker();
 	kernel_timing_trigger(ticks, kSET_DEST);
+}
+
+void Section4Room::poof(int trigger) {
+	Section4::poof(trigger);
 }
 
 } // namespace Rooms
