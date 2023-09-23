@@ -152,9 +152,14 @@ Common::Error SwordEngine::init() {
 	}
 
 	_systemVars.showText = ConfMan.getBool("subtitles");
-
+	_systemVars.textNumber = 0;
 	_systemVars.playSpeech = true;
 	_mouseState = 0;
+
+	_systemVars.gamePaused = false;
+	_systemVars.displayDebugText = false;
+	_systemVars.framesPerSecondCounter = 0;
+	_systemVars.gameCycle = 0;
 
 	// Some Mac versions use big endian for the speech files but not all of them.
 	if (_systemVars.platform == Common::kPlatformMacintosh)
@@ -253,6 +258,30 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 }
 
 void SwordEngine::checkKeys() {
+
+	if (_systemVars.gamePaused) {
+		// TODO: Audio
+		//PauseSpeech();
+		//PauseMusic();
+		//PauseFx();
+		_mixer->pauseAll(true);
+
+		while (_keyPressed.keycode != Common::KEYCODE_p && !Engine::shouldQuit()) {
+			pollInput(0);
+			// TODO: Audio
+			// UpdateSampleStreaming();
+		}
+
+		// TODO: Audio
+		//UnpauseSpeech();
+		//UnpauseMusic();
+		//UnpauseFx();
+		_mixer->pauseAll(false);
+
+		_systemVars.gamePaused = false;
+		_keyPressed.reset();
+	}
+
 	switch (_keyPressed.keycode) {
 	case Common::KEYCODE_F5:
 	case Common::KEYCODE_ESCAPE:
@@ -262,6 +291,14 @@ void SwordEngine::checkKeys() {
 		}
 
 		break;
+	case Common::KEYCODE_q:
+		if (_keyPressed.hasFlags(Common::KBD_CTRL))
+			Engine::quitGame();
+
+		break;
+	case Common::KEYCODE_p:
+		_systemVars.gamePaused = true;
+		break;
 	default:
 		break;
 	}
@@ -269,6 +306,10 @@ void SwordEngine::checkKeys() {
 	// Debug keys!
 	if (!_systemVars.isDemo && _systemVars.debugMode) {
 		switch (_keyPressed.keycode) {
+		case Common::KEYCODE_t: // CTRL-T: Toggles debug text
+			if (_keyPressed.hasFlags(Common::KBD_CTRL))
+				_systemVars.displayDebugText = !_systemVars.displayDebugText;
+			break;
 		case Common::KEYCODE_1: // Slow mode
 			{
 				if (_systemVars.slowMode) {
@@ -303,6 +344,10 @@ void SwordEngine::checkKeys() {
 			break;
 		}
 	}
+}
+
+const uint8 *SwordEngine::getPauseString() {
+	return _control->getPauseString();
 }
 
 static const char *const errorMsgs[] = {
@@ -782,6 +827,7 @@ void SwordEngine::askForCd() {
 
 uint8 SwordEngine::mainLoop() {
 	_keyPressed.reset();
+	_systemVars.gameCycle = 1;
 
 	do {
 		if (shouldQuit())
@@ -803,6 +849,8 @@ uint8 SwordEngine::mainLoop() {
 
 			_systemVars.saveGameFlag = SGF_DONE;
 
+			_systemVars.gameCycle++;
+
 			_logic->engine();
 			_logic->updateScreenParams(); // sets scrolling
 
@@ -815,6 +863,8 @@ uint8 SwordEngine::mainLoop() {
 					scrollFrameShown = _screen->showScrollFrame();
 					pollInput((_targetFrameTime / 2) - (_system->getMillis() - frameTime));
 				}
+
+				_mainLoopFrameCount++;
 			}
 
 			_sound->engine();
@@ -822,9 +872,19 @@ uint8 SwordEngine::mainLoop() {
 			newTime = _system->getMillis();
 			if (((int32)(newTime - frameTime) < _targetFrameTime) || (!scrollFrameShown))
 				_screen->updateScreen();
+			_mainLoopFrameCount++;
 			pollInput((_targetFrameTime) - (_system->getMillis() - frameTime));
 
 			_vblCount = 0; // Reset the vBlank counter for the other timers...
+
+			// Calculation for the frames per second counter for the debug text
+			if (_ticker > 5000)
+				_ticker = 0;
+			if (_ticker > 1000) {
+				_systemVars.framesPerSecondCounter = _mainLoopFrameCount;
+				_mainLoopFrameCount = 0;
+				_ticker -= 1000;
+			}
 
 			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
@@ -959,6 +1019,7 @@ void SwordEngine::startFadePaletteUp(int speed) {
 static void vblCallback(void *refCon) {
 	SwordEngine *vm = (SwordEngine *)refCon;
 
+	vm->_ticker += 10;
 	vm->_inTimer++;
 
 	if (vm->_inTimer == 0) {
@@ -987,6 +1048,7 @@ static void vblCallback(void *refCon) {
 
 void SwordEngine::installTimerRoutines() {
 	debug(2, "SwordEngine::installTimerRoutines(): Installing timers...");
+	_ticker = 0;
 	getTimerManager()->installTimerProc(&vblCallback, 1000000 / TIMER_RATE, this, "AILTimer");
 }
 

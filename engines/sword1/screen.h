@@ -71,6 +71,7 @@ class Text; // Text objects use sprites that are created internally at run-time
 			// the buffer belongs to Text, so we need a reference here.
 
 class Screen {
+	friend class Text;
 public:
 	Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
 	~Screen();

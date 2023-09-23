@@ -70,6 +70,7 @@ struct SystemVars {
 	bool             wantFade;           // when true => fade during scene change, else cut.
 	bool             playSpeech;
 	bool             showText;
+	int32            textNumber;
 	uint8            language;
 	bool             isDemo;
 	bool             isSpanishDemo;
@@ -80,6 +81,10 @@ struct SystemVars {
 	bool             slowMode;
 	bool             fastMode;
 	bool             parallaxOn;
+	bool             gamePaused;
+	bool             displayDebugText;
+	uint32           framesPerSecondCounter;
+	uint32           gameCycle;
 };
 
 class SwordEngine : public Engine {
@@ -100,6 +105,8 @@ public:
 	int _vblCount = 0; // How many vblCallback calls have been made?
 	int _rate = DEFAULT_FRAME_TIME / 10;
 	int _targetFrameTime = DEFAULT_FRAME_TIME;
+	uint32 _mainLoopFrameCount = 0;
+	uint32 _ticker = 0; // For the frame time shown within the debug text
 
 	bool mouseIsActive();
 
@@ -114,6 +121,8 @@ public:
 	void startFadePaletteDown(int speed);
 	void startFadePaletteUp(int speed);
 	void waitForFade();
+
+	const uint8 *getPauseString();
 
 protected:
 	// Engine APIs

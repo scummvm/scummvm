@@ -126,6 +126,7 @@ public:
 	bool restoreGame();
 	void checkForOldSaveGames();
 	bool isPanelShown();
+	const uint8 *getPauseString();
 
 	void setSaveDescription(int slot, const char *desc) {
 		Common::strcpy_s((char *)_fileDescriptions[slot], sizeof(_fileDescriptions[slot]), desc);

@@ -36,6 +36,9 @@ namespace Sword1 {
 
 class ObjectMan;
 class ResMan;
+class Screen;
+class Logic;
+class SwordEngine;
 
 struct LineInfo {
 	uint16 width;  // width of line in pixels
@@ -44,22 +47,28 @@ struct LineInfo {
 
 class Text {
 public:
-	Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion);
+	Text(SwordEngine *vm, Logic *pLogic, ObjectMan *pObjMan, ResMan *pResMan, Screen *pScreen, bool czechVersion);
 	~Text();
 	FrameHeader *giveSpriteData(uint32 textTarget);
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
 	void makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 pen);
 	void releaseText(uint32 id, bool updateCount = true);
+	void showDebugInfo();
 
 private:
 	uint16 analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *info);
 	uint16 charWidth(uint8 ch);
 	uint16 copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen);
+	void printDebugLine(uint8 *ascii, uint8 *resourceAddress, uint8 first, int x, int y);
+
 	uint8 *_font;
 	uint8 _textCount;
 	uint16 _charHeight, _joinWidth;
+	SwordEngine *_vm;
+	Logic *_logic;
 	ObjectMan *_objMan;
 	ResMan *_resMan;
+	Screen *_screen;
 	FrameHeader *_textBlocks[MAX_TEXT_OBS];
 	uint32 _fontId;
 };

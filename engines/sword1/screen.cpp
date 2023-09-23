@@ -562,6 +562,8 @@ void Screen::draw() {
 		processImage(_foreList[cnt]);
 
 	_backLength = _sortLength = _foreLength = 0;
+
+	_textMan->showDebugInfo();
 }
 
 void Screen::initFadePaletteServer() {

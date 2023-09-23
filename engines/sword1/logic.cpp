@@ -88,7 +88,7 @@ void Logic::initialize() {
 	_eventMan = new EventManager();
 
 	delete _textMan;
-	_textMan = new Text(_objMan, _resMan,
+	_textMan = new Text(_vm, this, _objMan, _resMan, _screen,
 	                    (SwordEngine::_systemVars.language == BS1_CZECH) ? true : false);
 	_screen->useTextManager(_textMan);
 	_textRunning = _speechRunning = false;
@@ -1136,6 +1136,8 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 	}
 	cpt->o_logic = LOGIC_speech;
 
+	SwordEngine::_systemVars.textNumber = textNo;
+
 	// first setup the talk animation
 	if (cdt && (!spr)) { // if 'cdt' is non-zero but 'spr' is zero - 'cdt' is an anim table tag
 		AnimSet *animTab = (AnimSet *)((uint8 *)_resMan->openFetchRes(cdt) + sizeof(Header));
@@ -1821,6 +1823,10 @@ void Logic::startPositions(uint32 pos) {
 	fnEnterSection(compact, PLAYER, pos, 0, 0, 0, 0, 0);    // (automatically opens the compact resource for that section)
 	SwordEngine::_systemVars.controlPanelMode = CP_NORMAL;
 	SwordEngine::_systemVars.wantFade = true;
+}
+
+bool Logic::canShowDebugTextNumber() {
+	return _speechRunning || _textRunning;
 }
 
 const uint32 Logic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {

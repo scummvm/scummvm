@@ -3170,6 +3170,10 @@ bool Control::loadCustomStrings(const char *filename) {
 	return false;
 }
 
+const uint8 *Control::getPauseString() {
+	return _lStrings[STR_PAUSED];
+}
+
 const uint8 Control::_languageStrings[8 * 20][43] = {
 	// BS1_ENGLISH:
 	"PAUSED",
