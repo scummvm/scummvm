@@ -15,40 +15,29 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION4_ROOM404_H
-#define M4_BURGER_ROOMS_SECTION4_ROOM404_H
-
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section4/section4_room.h"
+#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-/**
- * Error: room not found
- */
-class Room404 : public Room {
-private:
-	static const char *SAID[][4];
-	static const seriesPlayBreak PLAY1[];
-	Series _quarter;
+void Section4Room::setDest(int ticks) {
+	player_set_commands_allowed(false);
+	player_update_info();
 
-public:
-	Room404() : Room() {}
-	~Room404() override {}
+	_G(player_dest_x) = _G(player_info).x;
+	_G(player_dest_y) = _G(player_info).y;
 
-	void init() override;
-	void daemon() override;
-	void pre_parser() override;
-	void parser() override;
-};
+	ws_demand_location(-100, _G(player_dest_y));
+	ws_unhide_walker();
+	kernel_timing_trigger(ticks, kSET_DEST);
+}
 
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
-
-#endif
