@@ -248,6 +248,7 @@ void *ResMan::cptResOpen(uint32 id) {
 }
 
 void ResMan::resOpen(uint32 id) {  // load resource ID into memory
+	Common::StackLock lock(_resourceAccessMutex);
 	MemHandle *memHandle = resHandle(id);
 
 	if (!memHandle)

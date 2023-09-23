@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "sword1/sworddefs.h"
 #include "common/endian.h"
+#include "common/mutex.h"
 
 namespace Sword1 {
 
@@ -125,6 +126,8 @@ private:
 	Clu *_openCluStart, *_openCluEnd;
 	int  _openClus;
 	bool _isBigEndian;
+
+	Common::Mutex _resourceAccessMutex;
 
 	uint32 _srIdList[29] = {
 		// the file numbers differ for the control panel file IDs, so we need this array
