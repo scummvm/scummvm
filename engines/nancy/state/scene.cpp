@@ -273,28 +273,32 @@ byte Scene::getPlayerTOD() const {
 }
 
 void Scene::addItemToInventory(uint16 id) {
-	_flags.items[id] = g_nancy->_true;
-	if (_flags.heldItem == id) {
-		setHeldItem(-1);
-	}
-	
-	g_nancy->_sound->playSound("BUOK");
+	if (_flags.items[id] == g_nancy->_false) {
+		_flags.items[id] = g_nancy->_true;
+		if (_flags.heldItem == id) {
+			setHeldItem(-1);
+		}
+		
+		g_nancy->_sound->playSound("BUOK");
 
-	_inventoryBox.addItem(id);
+		_inventoryBox.addItem(id);
+	}
 }
 
 void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
-	_flags.items[id] = g_nancy->_false;
+	if (_flags.items[id] == g_nancy->_true || getHeldItem() == id) {
+		_flags.items[id] = g_nancy->_false;
 
-	if (pickUp) {
-		setHeldItem(id);
-	} else if (getHeldItem() == id) {
-		setHeldItem(-1);
+		if (pickUp) {
+			setHeldItem(id);
+		} else if (getHeldItem() == id) {
+			setHeldItem(-1);
+		}
+		
+		g_nancy->_sound->playSound("BUOK");
+
+		_inventoryBox.removeItem(id);
 	}
-	
-	g_nancy->_sound->playSound("BUOK");
-
-	_inventoryBox.removeItem(id);
 }
 
 void Scene::setHeldItem(int16 id)  {
