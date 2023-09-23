@@ -1447,20 +1447,26 @@ int Logic::fnWalk(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stan
 	if ((routeRes == 1) || (routeRes == 2)) {
 		cpt->o_down_flag = 1; // 1 means okay.
 		// if both mouse buttons were pressed on an exit => skip george's walk
-		if ((id == GEORGE) && (_mouse->testEvent() == MOUSE_BOTH_BUTTONS)) {
-			int32 target = _scriptVars[CLICK_ID];
-			// exceptions: compacts that use hand pointers but are not actually exits
-			if ((target != LEFT_SCROLL_POINTER) && (target != RIGHT_SCROLL_POINTER) &&
-			        (target != FLOOR_63) && (target != ROOF_63) && (target != GUARD_ROOF_63) &&
-			        (target != LEFT_TREE_POINTER_71) && (target != RIGHT_TREE_POINTER_71)) {
+		if (SwordEngine::_systemVars.debugMode) {
+			if ((id == GEORGE) && (_mouse->testEvent() == MOUSE_BOTH_BUTTONS) && !SwordEngine::_systemVars.isDemo) {
+				int32 target = _scriptVars[CLICK_ID];
+				// exceptions: compacts that use hand pointers but are not actually exits
+				if ((target != LEFT_SCROLL_POINTER) && (target != RIGHT_SCROLL_POINTER) &&
+					(target != FLOOR_63) && (target != ROOF_63) && (target != GUARD_ROOF_63) &&
+					(target != LEFT_TREE_POINTER_71) && (target != RIGHT_TREE_POINTER_71)) {
 
-				target = _objMan->fetchObject(_scriptVars[CLICK_ID])->o_mouse_on;
-				if ((target >= SCR_exit0) && (target <= SCR_exit9)) {
-					fnStandAt(cpt, id, x, y, dir, stance, 0, 0);
-					return SCRIPT_STOP;
+					if (!_objMan->sectionAlive(_scriptVars[CLICK_ID] / ITM_PER_SEC))
+						_objMan->megaEntering(_scriptVars[CLICK_ID] / ITM_PER_SEC);
+
+					target = _objMan->fetchObject(_scriptVars[CLICK_ID])->o_mouse_on;
+					if ((target >= SCR_exit0) && (target <= SCR_exit9)) {
+						fnStandAt(cpt, id, x, y, dir, stance, 0, 0);
+						return SCRIPT_STOP;
+					}
 				}
 			}
 		}
+
 		cpt->o_logic = LOGIC_AR_animate;
 		return SCRIPT_STOP;
 	} else if (routeRes == 3)
