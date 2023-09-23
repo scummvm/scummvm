@@ -416,6 +416,9 @@ void GUIMain::SetClickable(bool on) {
 		_flags |= kGUIMain_Clickable;
 	else
 		_flags &= ~kGUIMain_Clickable;
+
+	if (!on)
+		ResetOverControl();
 }
 
 void GUIMain::SetConceal(bool on) {
