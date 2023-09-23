@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-23 11:21+0000\n"
+"POT-Creation-Date: 2023-09-23 12:28+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -335,7 +335,7 @@ msgstr ""
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2874
-#: engines/sword1/logic.cpp:1666 engines/sword2/animation.cpp:426
+#: engines/sword1/logic.cpp:1673 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
@@ -9128,7 +9128,7 @@ msgstr ""
 msgid "Keep the new one"
 msgstr ""
 
-#: engines/sword1/logic.cpp:1666
+#: engines/sword1/logic.cpp:1673
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr ""
 
