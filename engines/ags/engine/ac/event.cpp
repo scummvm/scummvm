@@ -351,25 +351,25 @@ void processallevents() {
 		return;
 	}
 
-	// Take ownership of the pending events
-	// Note: upstream AGS used std::move, which I haven't been able
-	// to properly implement in ScummVM. Luckily, our events are
-	// a pointer, so I could get the same result swapping them
-	std::vector<EventHappened> *evtCopy = new std::vector<EventHappened>();
-	SWAP(evtCopy, _G(events));
+	// Make a copy of the events to process them safely.
+	// WARNING: engine may actually add more events to the global events array,
+	// and they must NOT be processed here, but instead discarded at the end
+	// of this function; otherwise game may glitch.
+	// TODO: need to redesign engine events system?
+	std::vector<EventHappened> evtCopy = _GP(events);
 
 	int room_was = _GP(play).room_changes;
 
 	_G(inside_processevent)++;
 
-	for (size_t i = 0; i < evtCopy->size() && !_G(abort_engine); ++i) {
-		process_event(&(*evtCopy)[i]);
+	for (size_t i = 0; i < evtCopy.size() && !_G(abort_engine); ++i) {
+		process_event(&evtCopy[i]);
 
 		if (room_was != _GP(play).room_changes)
 			break;  // changed room, so discard other events
 	}
 
-	delete evtCopy;
+	_GP(events).clear();
 	_G(inside_processevent)--;
 }
 
