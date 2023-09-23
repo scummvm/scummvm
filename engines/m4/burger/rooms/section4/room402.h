@@ -50,11 +50,12 @@ private:
 	static const seriesPlayBreak PLAY15[];
 	static const seriesPlayBreak PLAY16[];
 	const char *_digiName = nullptr;
-	bool _flag1 = false;
-	bool _series1Set = false;
-	Series _series1;
+	KernelTriggerType _newMode = KT_DAEMON;
+	bool _stolieSet = false;
+	Series _stolie;
 	bool _series2Set = false;
 	Series _series2;
+	Series _series3;
 	int _dr01 = -1, _dr01s = -1;
 	int _dr02 = -1, _dr02s = -1;
 	int _dr03 = -1, _dr03s = -1;
@@ -73,9 +74,11 @@ private:
 	int _val6 = 0;
 
 	void conv84();
-	void freeSeries1();
+	void playDigiName();
+	void playRandom1();
+	void playRandom2();
+	void freeStolie();
 	void freeSeries2();
-
 	void loadDr1();
 	void freeDr1();
 	void loadDr2();
