@@ -32,6 +32,7 @@ class Room404 : public Room {
 private:
 	static const char *SAID[][4];
 	static const seriesPlayBreak PLAY1[];
+	Series _quarter;
 
 public:
 	Room404() : Room() {}
@@ -39,6 +40,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms
