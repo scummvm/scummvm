@@ -199,6 +199,9 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		if (!addpoint && si->listLessThan(*si2))
 			addpoint = si2;
 
+		if (si2->_occluded)
+			continue;
+
 #ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
 		// Find adjoining floor squares for better occlusion
 		if (si->_occl && si2->_occl && si->_fbigsq && si2->_fbigsq && si->_z == si2->_z) {
@@ -220,27 +223,25 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 		}
 #endif // SORTITEM_OCCLUSION_EXPERIMENTAL
 
-		// Doesn't overlap
-		if (si2->_occluded || !si->overlap(*si2))
-			continue;
-
-		// Attempt to find which is infront
-		if (si->below(*si2)) {
-			if (si2->_occl && si2->occludes(*si)) {
-				// No need to do any more checks, this isn't visible
-				si->_occluded = true;
-				break;
+		// Attempt to find paint dependency order
+		if (si->overlap(*si2)) {
+			if (si->below(*si2)) {
+				if (si2->_occl && si2->occludes(*si)) {
+					// No need to do any more checks, this isn't visible
+					si->_occluded = true;
+					break;
+				} else {
+					// si1 is behind si2, so add it to si2's dependency list
+					si2->_depends.insert_sorted(si);
+				}
 			} else {
-				// si1 is behind si2, so add it to si2's dependency list
-				si2->_depends.insert_sorted(si);
-			}
-		} else {
-			if (si->_occl && si->occludes(*si2)) {
-				// Occluded, but we can't remove it from the list
-				si2->_occluded = true;
-			} else {
-				// si2 is behind si1, so add it to si1's dependency list
-				si->_depends.insert_sorted(si2);
+				if (si->_occl && si->occludes(*si2)) {
+					// Occluded, but we can't remove it from the list
+					si2->_occluded = true;
+				} else {
+					// si2 is behind si1, so add it to si1's dependency list
+					si->_depends.insert_sorted(si2);
+				}
 			}
 		}
 	}
