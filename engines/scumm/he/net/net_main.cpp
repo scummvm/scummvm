@@ -71,8 +71,6 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 
 	_hostDataQueue = Common::Queue<Common::JSONValue *>();
 	_peerIndexQueue = Common::Queue<int>();
-
-	_waitForTimedResp = false;
 }
 
 Net::~Net() {
@@ -763,11 +761,6 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		_peerIndexQueue.push(sendTypeParam - 1);
 	} else {
 		_sessionHost->send(res.c_str(), 0, 0, reliable);
-		if (typeOfSend == PN_SENDTYPE_ALL_RELIABLE_TIMED) {
-			// Wait for a response to determine net lag.
-			_savedTime = g_system->getMillis();
-			_waitForTimedResp = true;
-		}
 	}
 	return defaultRes;
 }
@@ -1162,11 +1155,6 @@ void Net::remoteReceiveData() {
 					_vm->VAR(253) = 26; // gGameMode = GAME-OVER
 					_vm->runScript(2104, 1, 0, 0); // leave-game
 				}
-			} else {
-				// Football/Baseball
-
-				// We have lost our only other opponent, do not wait for a timed response.
-				_waitForTimedResp = false;
 			}
 			break;
 		}
@@ -1267,9 +1255,6 @@ void Net::doNetworkOnceAFrame(int msecs) {
 	if (!_enet || !_sessionHost)
 		return;
 
-	uint tickCount = 0;
-
-receiveData:
 	remoteReceiveData();
 
 	if (_sessionServerHost)
@@ -1285,26 +1270,12 @@ receiveData:
 		int peerIndex = _peerIndexQueue.pop();
 		handleGameDataHost(json, peerIndex);
 	}
-
-	if (_waitForTimedResp) {
-		g_system->delayMillis(msecs);
-
-		// Wait for 3 seconds for a response before giving up.
-		tickCount += msecs;
-		if (tickCount >= 3000) {
-			_savedTime = 0;
-			_waitForTimedResp = false;
-			return;
-		}
-		goto receiveData;
-	}
 }
 
 void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 	if (!_enet || !_sessionHost)
 		return;
 	_fromUserId = json->child("from")->asIntegerNumber();
-	uint to = json->child("to")->asIntegerNumber();
 	uint type = json->child("type")->asIntegerNumber();
 
 	uint32 *params;
@@ -1420,25 +1391,9 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 			_vm->runScript(_vm->VAR(_vm->VAR_NETWORK_RECEIVE_ARRAY_SCRIPT), 1, 0, (int *)_tmpbuffer);
 		}
 		break;
-	case PACKETTYPE_RELIABLETIMEDRESP:
-		{
-			int savedTime = ((g_system->getMillis() - _savedTime) / 2) ;	//div by 2 for one-way lag.
-			_vm->VAR(_vm->VAR_NETWORK_NET_LAG) = savedTime;
-			_waitForTimedResp = false;
-		}
-		break;
-
 	default:
 		warning("NETWORK: Received unknown network command %d", type);
 	}
-
-	if (to == PN_SENDTYPE_ALL_RELIABLE_TIMED) {
-		if (_fromUserId != _myUserId) {
-			// Send a response
-			remoteSendData(PN_SENDTYPE_INDIVIDUAL, _fromUserId, PACKETTYPE_RELIABLETIMEDRESP, "", PN_PRIORITY_HIGH);
-		}
-	}
-
 }
 
 void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
@@ -1495,17 +1450,6 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 						}
 					} else
 						_sessionHost->send(str.c_str(), i, 0, reliable);
-				}
-			}
-
-			if (to == PN_SENDTYPE_ALL_RELIABLE_TIMED) {
-				if (from == _myUserId) {
-					// That's us, wait for a response to determine net lag.
-					// Don't wait if we're the only ones here (our opponent disconnected).
-					if (getTotalPlayers() > 1) {
-						_savedTime = g_system->getMillis();
-						_waitForTimedResp = true;
-					}
 				}
 			}
 		}

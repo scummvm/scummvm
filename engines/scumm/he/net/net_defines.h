@@ -47,9 +47,6 @@ namespace Scumm {
 #define PACKETTYPE_REMOTESTARTSCRIPTRETURN			2
 #define PACKETTYPE_REMOTESTARTSCRIPTRESULT			3
 #define PACKETTYPE_REMOTESENDSCUMMARRAY				4
-// ScummVM specific type, used for determine
-// net lag
-#define PACKETTYPE_RELIABLETIMEDRESP				5
 
 const int MAX_PACKET_SIZE = 4096;	// bytes
 const int MAX_HOSTNAME_SIZE = 256;
