@@ -31,6 +31,7 @@ namespace Rooms {
 class Section4Room : public Room {
 protected:
 	void setDest(int ticks);
+	void poof(int trigger);
 
 public:
 	Section4Room() : Room() {}

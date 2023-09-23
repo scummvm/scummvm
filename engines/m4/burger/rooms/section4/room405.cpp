@@ -20,7 +20,6 @@
  */
 
 #include "m4/burger/rooms/section4/room405.h"
-#include "m4/burger/rooms/section4/section4.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
@@ -222,9 +221,9 @@ void Room405::parser() {
 	} else if (player_said("gear", "records") && inv_object_is_here("records") && _G(flags)[V166]) {
 		wilbur_speech("405w005");
 	} else if (player_said("poof") || player_said("gear", "disc")) {
-		Section4::poof(4006);
+		poof(4006);
 	} else if (player_said("poof ") || player_said("gear", "disc ")) {
-		Section4::poof(4005);
+		poof(4005);
 	} else if ((player_said("take", "records") && inv_object_is_here("records")) ||
 			(player_said("gear", "records") && inv_object_is_here("records"))) {
 		if (!_G(flags)[V166]) {
@@ -365,31 +364,246 @@ void Room405::parser() {
 }
 
 void Room405::conv86() {
-	// TODO: conv
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 18) {
+		if (who <= 0) {
+			if (_val2 == 39)
+				_val1 = 39;
+			else if (_val2 == 47)
+				_val1 = 47;
+			else
+				_val1 = 43;
+
+			conv_resume();
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+
+			conv_resume();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if (_val2 == 39)
+				_val1 = 40;
+			else if (_val2 == 47)
+				_val1 = 48;
+			else
+				_val1 = 44;
+
+			_digiName = sound;
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+
+			digi_play(sound, 1, 255, 18);
+		}
+
+		_newMode = KT_PARSE;
+		_newTrigger = 18;
+	} else {
+		conv_resume();
+	}
 }
 
 void Room405::conv89() {
-	// TODO: conv
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 18) {
+		if (who <= 0) {
+			if (_val2 == 39)
+				_val1 = 39;
+			else if (_val2 == 47)
+				_val1 = 47;
+			else
+				_val1 = 43;
+
+			conv_resume();
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+
+			conv_resume();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if ((node == 1 && entry == 0) || (node == 2 && entry == 0)) {
+				_val1 = 44;
+			} else if ((node == 1 && entry == 1) || (node == 2 && entry == 1)) {
+				_val1 = 48;
+			} else if (_val2 == 39) {
+				_val1 = 40;
+			} else if (_val2 == 47) {
+				_val1 = 48;
+			} else {
+				_val1 = 44;
+			}
+
+			_digiName = sound;
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+
+			digi_play(sound, 1, 255, 18);
+		}
+
+		_newMode = KT_PARSE;
+		_newTrigger = 18;
+	} else {
+		conv_resume();
+	}
 }
 
 void Room405::conv90() {
-	// TODO: conv
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 18) {
+		if (who <= 0) {
+			_val1 = 39;
+			conv_resume();
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+
+			conv_resume();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			_val1 = 44;
+			_digiName = sound;
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+
+			digi_play(sound, 1, 255, 18);
+		}
+
+		_newMode = KT_PARSE;
+		_newTrigger = 18;
+	} else {
+		conv_resume();
+	}
 }
 
 void Room405::conv91() {
-	// TODO: conv
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 18) {
+		if (who <= 0) {
+			_val1 = 39;
+			conv_resume();
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+
+			conv_resume();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			_val1 = 44;
+			_digiName = sound;
+		} else if (who == 1) {
+			if (_G(roomVal2))
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+
+			digi_play(sound, 1, 255, 18);
+		}
+
+		_newMode = KT_PARSE;
+		_newTrigger = 18;
+	} else {
+		conv_resume();
+	}
 }
 
 void Room405::conv92() {
-	// TODO: conv
+	_G(kernel).trigger_mode = KT_PARSE;
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+	const char *sound = conv_sound_to_play();
+
+	if (_G(kernel).trigger == 18) {
+		if (who <= 0) {
+			if (node == 5 && entry == 0) {
+				_val3 = 9;
+			} else if (node == 6 && entry == 1) {
+				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			} else if (node == 5 && entry == 1) {
+				digi_preload("92n0603");
+				_val3 = 9;
+			} else {
+				_val3 = 4;
+			}
+		} else if (who == 1) {
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			conv_resume();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if ((node == 2 && entry == 1) ||
+					(node == 3) ||
+					(node == 5 && entry == 1) ||
+					(node == 5 && entry == 3) ||
+					(node == 6 && entry == 2) ||
+					(node == 7 && entry == 0) ||
+					(node == 8 && entry == 2) ||
+					(node == 9 && entry == 1) ) {
+				if (node == 2 && entry == 1)
+					_val3 = 9;
+
+				digi_play(sound, 1, 255, 18);
+			} else if (node == 5 && entry == 0) {
+				_val3 = 10;
+				_digiName = sound;
+			} else if (node == 5 && entry == 2) {
+				_val3 = 14;
+			} else if (node == 6 && entry == 1) {
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+				digi_play(sound, 1, 255, 18);
+			} else if ((node == 1 && entry == 1) || (node == 2 && entry == 2) ||
+					(node == 1 && entry == 4)) {
+				_val3 = 17;
+				_digiName = sound;
+			} else if (node == 4) {
+				_val3 = 10;
+				_digiName = sound;
+			} else {
+				_val3 = 7;
+				_digiName = sound;
+			}
+		} else if (who == 1) {
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+			digi_play(sound, 1, 255, 18);
+		}
+
+		_newMode = KT_PARSE;
+		_newTrigger = 18;
+	} else {
+		conv_resume();
+	}
 }
 
 void Room405::talkToVipe() {
-	// TODO: talk
+	conv_load_and_prepare("conv86", 1, 0);
+	conv_export_pointer_curr(&_G(flags)[V165], 1);
+	conv_play_curr();
 }
 
 void Room405::talkToVera() {
-	// TODO: talk
+	conv_load_and_prepare("conv92", 5);
+	conv_export_value_curr(_G(flags)[V062], 0);
+	conv_play_curr();
 }
 
 void Room405::startConv91() {
