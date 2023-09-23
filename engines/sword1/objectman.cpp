@@ -201,7 +201,8 @@ uint32 ObjectMan::lastTextNumber(int section) {
 Object *ObjectMan::fetchObject(uint32 id) {
 	uint8 *addr = _cptData[id / ITM_PER_SEC];
 	if (!addr)
-		error("fetchObject: section %d is not open", id / ITM_PER_SEC);
+		addr = _cptData[id / ITM_PER_SEC] = ((uint8 *)_resMan->cptResOpen(_objectList[id / ITM_PER_SEC])) + sizeof(Header);
+
 	id &= ITM_ID;
 	// DON'T do endian conversion here. it's already done.
 	return (Object *)(addr + * (uint32 *)(addr + (id + 1) * 4));
