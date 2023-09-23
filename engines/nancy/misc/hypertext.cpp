@@ -28,9 +28,10 @@
 namespace Nancy {
 namespace Misc {
 
-struct ColorChange {
+struct ColorFontChange {
+	bool isFont;
 	uint numChars;
-	byte colorID;
+	byte colorOrFontID;
 };
 
 void HypertextParser::initSurfaces(uint width, uint height, const Graphics::PixelFormat &format, uint32 backgroundColor, uint32 highlightBackgroundColor) {
@@ -59,7 +60,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		Common::String currentLine;
 		bool hasHotspot = false;
 		Rect hotspot;
-		Common::Queue<ColorChange> colorChanges;
+		Common::Queue<ColorFontChange> colorTextChanges;
 		int curFontID = fontID;
 		uint numNonSpaceChars = 0;
 
@@ -105,17 +106,16 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 						break;
 					}
 					
-					colorChanges.push({numNonSpaceChars, (byte)(curToken[1] - 48)});
+					colorTextChanges.push({false, numNonSpaceChars, (byte)(curToken[1] - 48)});
 					continue;
 				case 'f' :
 					// Font token
-					// This selects a specific font ID for the current line
+					// This selects a specific font ID for the following text
 					if (curToken.size() != 2) {
 						break;
 					}
 
-					curFontID = (int)Common::String(curToken[1]).asUint64();
-
+					colorTextChanges.push({true, numNonSpaceChars, (byte)(curToken[1] - 48)});
 					continue;
 				}
 			}
@@ -143,7 +143,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		// Setup most of the hotspot
 		if (hasHotspot) {
 			hotspot.left = textBounds.left;
-			hotspot.top = textBounds.top + ((_numDrawnLines - 1) * font->getFontHeight()) - 1;
+			hotspot.top = textBounds.top + (_numDrawnLines * font->getFontHeight()) - 1;
 			hotspot.setHeight(wrappedLines.size() * font->getFontHeight());
 			hotspot.setWidth(0);
 		}
@@ -172,19 +172,21 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 			while (!line.empty()) {
 				Common::String subLine;
 
-				if (colorChanges.size()) {
-					// Text contains color part
-
-					if (totalCharsDrawn >= colorChanges.front().numChars) {
-						// Token is at begginning of (what's left of) the current line
-						colorID = colorChanges.pop().colorID;
+				while (colorTextChanges.size() && totalCharsDrawn >= colorTextChanges.front().numChars) {
+					// We have a color/font change token at begginning of (what's left of) the current line
+					ColorFontChange change = colorTextChanges.pop();
+					if (change.isFont) {
+						curFontID = change.colorOrFontID;
+						font = g_nancy->_graphicsManager->getFont(curFontID);
+					} else {
+						colorID = change.colorOrFontID;
 					}
+				}
 
-					if (totalCharsDrawn < colorChanges.front().numChars && colorChanges.front().numChars < (totalCharsDrawn + line.size())) {
-						// There's a token inside the current line, so split off the part before it
-						subLine = line.substr(0, colorChanges.front().numChars - totalCharsDrawn);
-						line = line.substr(subLine.size());
-					}
+				if (colorTextChanges.size() && totalCharsDrawn < colorTextChanges.front().numChars && colorTextChanges.front().numChars < (totalCharsDrawn + line.size())) {
+					// There's a token inside the current line, so split off the part before it
+					subLine = line.substr(0, colorTextChanges.front().numChars - totalCharsDrawn);
+					line = line.substr(subLine.size());
 				}
 
 				// Choose whether to draw the subLine, or the full line
@@ -194,7 +196,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 				font->drawString(				&_fullSurface,
 												stringToDraw,
 												textBounds.left + horizontalOffset,
-												textBounds.top + (_numDrawnLines - 1) * font->getFontHeight(),
+												textBounds.top + _numDrawnLines * font->getFontHeight(),
 												textBounds.width(),
 												colorID);
 
@@ -203,7 +205,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 					highlightFont->drawString(	&_textHighlightSurface,
 												stringToDraw,
 												textBounds.left + horizontalOffset,
-												textBounds.top + (_numDrawnLines - 1) * highlightFont->getFontHeight(),
+												textBounds.top + _numDrawnLines * highlightFont->getFontHeight(),
 												textBounds.width(),
 												colorID);
 				}

@@ -56,6 +56,8 @@ public:
 	const Graphics::PixelFormat &getScreenPixelFormat();
 	uint32 getTransColor() { return _transColor; }
 
+	Graphics::ManagedSurface &getAutotextSurface(uint16 id) { return _autotextSurfaces.getOrCreateVal(id); }
+
 	void grabViewportObjects(Common::Array<RenderObject *> &inArray);
 	void screenshotViewport(Graphics::ManagedSurface &inSurf);
 	void screenshotScreen(Graphics::ManagedSurface &inSurf);
@@ -88,6 +90,8 @@ private:
 	Common::Array<Font> _fonts;
 
 	Common::List<Common::Rect> _dirtyRects;
+
+	Common::HashMap<uint16, Graphics::ManagedSurface> _autotextSurfaces;
 
 	uint32 _transColor = 0;
 

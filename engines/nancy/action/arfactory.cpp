@@ -23,6 +23,7 @@
 #include "engines/nancy/action/soundrecords.h"
 #include "engines/nancy/action/miscrecords.h"
 
+#include "engines/nancy/action/autotext.h"
 #include "engines/nancy/action/conversation.h"
 #include "engines/nancy/action/overlay.h"
 #include "engines/nancy/action/secondaryvideo.h"
@@ -130,7 +131,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 			return new ConversationSoundT();
 		}
 	case 61:
-		return new MapCallHot1Fr();
+		if (g_nancy->getGameType() <= kGameTypeNancy5) {
+			// Only used in tvd and nancy1
+			return new MapCallHot1Fr();
+		} else {
+			return new Autotext();
+		}
 	case 62:
 		return new MapCallHotMultiframe();
 	case 75:

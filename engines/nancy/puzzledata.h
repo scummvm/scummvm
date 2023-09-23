@@ -21,6 +21,7 @@
 
 #include "common/serializer.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 
 #ifndef NANCY_PUZZLEDATA_H
 #define NANCY_PUZZLEDATA_H
@@ -85,6 +86,16 @@ struct SoundEqualizerPuzzleData : public PuzzleData {
 	virtual void synchronize(Common::Serializer &ser);
 
 	Common::Array<byte> sliderValues;
+};
+
+struct JournalData : public PuzzleData {
+	JournalData() {}
+	virtual ~JournalData() {}
+
+	static constexpr uint32 getTag() { return MKTAG('J', 'O', 'U', 'R'); }
+	virtual void synchronize(Common::Serializer &ser);
+
+	Common::HashMap<uint16, Common::Array<Common::String>> journalEntries;
 };
 
 PuzzleData *makePuzzleData(const uint32 tag);

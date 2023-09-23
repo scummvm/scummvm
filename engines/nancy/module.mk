@@ -4,6 +4,7 @@ MODULE_OBJS = \
   action/actionmanager.o \
   action/actionrecord.o \
   action/arfactory.o \
+  action/autotext.o \
   action/navigationrecords.o \
   action/soundrecords.o \
   action/miscrecords.o \

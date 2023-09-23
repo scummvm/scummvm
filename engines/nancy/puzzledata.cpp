@@ -104,6 +104,36 @@ void SoundEqualizerPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(sliderValues.data(), 6, Common::Serializer::Byte);
 }
 
+void JournalData::synchronize(Common::Serializer &ser) {
+	uint16 numEntries = journalEntries.size();
+	ser.syncAsUint16LE(numEntries);
+
+	if (ser.isLoading()) {
+		for (uint i = 0; i < numEntries; ++i) {
+			uint16 id = 0;
+			ser.syncAsUint16LE(id);
+			uint16 numStrings = 0;
+			ser.syncAsUint16LE(numStrings);
+			auto &entry = journalEntries[id];
+			for (uint j = 0; j < numStrings; ++j) {
+				Common::String l;
+				ser.syncString(l);
+				entry.push_back(l);
+			}
+		}
+	} else {
+		for (auto &a : journalEntries) {
+			uint16 id = a._key;
+			ser.syncAsUint16LE(id);
+			uint16 numStrings = a._value.size();
+			ser.syncAsUint16LE(numStrings);
+			for (uint i = 0; i < numStrings; ++i) {
+				ser.syncString(a._value[i]);
+			}
+		}
+	}
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -116,6 +146,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new RiddlePuzzleData();
 	case SoundEqualizerPuzzleData::getTag():
 		return new SoundEqualizerPuzzleData();
+	case JournalData::getTag():
+		return new JournalData();
 	default:
 		return nullptr;
 	}

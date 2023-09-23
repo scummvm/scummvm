@@ -144,6 +144,9 @@ void Textbox::drawTextbox() {
 	textBounds.left += tbox->leftOffset;
 	textBounds.right -= tbox->rightOffset;
 
+	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID);
+	textBounds.top -= font->getFontHeight();
+
 	HypertextParser::drawAllText(	textBounds,															// bounds of text within full surface
 									_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID,	// font for basic text
 									tbox->highlightConversationFontID);									// font for highlight text

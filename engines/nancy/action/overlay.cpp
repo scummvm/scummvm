@@ -25,6 +25,7 @@
 #include "engines/nancy/util.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/graphics.h"
 
 #include "engines/nancy/action/overlay.h"
 
@@ -36,7 +37,19 @@ namespace Nancy {
 namespace Action {
 
 void Overlay::init() {
-	g_nancy->_resource->loadImage(_imageName, _fullSurface);
+	// Check for special autotext strings, and use the requested surface as source
+	if (_imageName.hasPrefix("USE_AUTOTEXT")) {
+		uint surfID = _imageName[12] - '1';
+		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
+		_fullSurface.create(surf, surf.getBounds());
+	} else if (_imageName.hasPrefix("USE_AUTOJOURNAL")) {
+		uint surfID = _imageName.substr(15).asUint64() - 3;
+		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
+		_fullSurface.create(surf, surf.getBounds());
+	} else {
+		// No autotext, load image source
+		g_nancy->_resource->loadImage(_imageName, _fullSurface);
+	}
 
 	setFrame(_firstFrame);
 
