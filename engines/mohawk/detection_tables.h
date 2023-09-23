@@ -916,7 +916,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_UNSUPPORTED | ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
-		GType_ORLY,
+		GType_ALIENTALES,
 		0,
 		0
 	},
