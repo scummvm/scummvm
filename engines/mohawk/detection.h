@@ -46,6 +46,7 @@ enum MohawkGameType {
 	GType_ORLY,
 	GType_ALIENTALES,
 	GType_MATHSWORKSHOP,
+	GType_WRICAMACT,
 };
 
 #define GAMEOPTION_ME   GUIO_GAMEOPTIONS1

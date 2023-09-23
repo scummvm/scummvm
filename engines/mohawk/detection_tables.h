@@ -1028,6 +1028,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Write, Camera, Action!
+	// Mac/Win hybrid disc
+	{
+		{
+			"wricamact",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("SYSTEM.MHK", "ed7dec6e3a5d3a5f74307faaf12242bf", 460),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_WRICAMACT,
+		0,
+		0
+	},
+
 	// Harry and the Haunted House v1.0E
 	// English Windows 3.11
 	// From strangerke
