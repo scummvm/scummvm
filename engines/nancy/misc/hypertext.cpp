@@ -151,7 +151,7 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint fontID, u
 		// Go through the wrapped lines and draw them, making sure to
 		// respect color tokens
 		uint totalCharsDrawn = 0;
-		byte colorID = 0;
+		byte colorID = _defaultTextColor;
 		for (Common::String &line : wrappedLines) {
 			uint horizontalOffset = 0;
 

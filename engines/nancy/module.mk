@@ -19,6 +19,7 @@ MODULE_OBJS = \
   action/puzzle/orderingpuzzle.o \
   action/puzzle/overridelockpuzzle.o \
   action/puzzle/passwordpuzzle.o \
+  action/puzzle/peepholepuzzle.o \
   action/puzzle/raycastpuzzle.o \
   action/puzzle/riddlepuzzle.o \
   action/puzzle/rippedletterpuzzle.o \

@@ -34,7 +34,7 @@ void Autotext::readData(Common::SeekableReadStream &stream) {
 	_transparency = stream.readUint16LE();
 	_surfaceID = stream.readUint16LE();
 	_fontID = stream.readUint16LE();
-	_textColor = stream.readUint16LE();
+	_defaultTextColor = stream.readUint16LE();
 	_offset.x = stream.readUint16LE();
 	_offset.y = stream.readUint16LE();
 	_surfWidth = stream.readUint16LE();

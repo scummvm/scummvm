@@ -34,7 +34,8 @@ public:
 	HypertextParser() :
 		_numDrawnLines(0),
 		_drawnTextHeight(0),
-		_needsTextRedraw(false) {}
+		_needsTextRedraw(false),
+		_defaultTextColor(0) {}
 	virtual ~HypertextParser() {};
 
 protected:
@@ -50,6 +51,7 @@ protected:
 
 	uint32 _backgroundColor;
 	uint32 _highlightBackgroundColor;
+	uint _defaultTextColor;
 
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;

@@ -43,7 +43,7 @@ void Overlay::init() {
 		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
 		_fullSurface.create(surf, surf.getBounds());
 	} else if (_imageName.hasPrefix("USE_AUTOJOURNAL")) {
-		uint surfID = _imageName.substr(15).asUint64() - 3;
+		uint surfID = _imageName.substr(15).asUint64() + 2;
 		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
 		_fullSurface.create(surf, surf.getBounds());
 	} else {

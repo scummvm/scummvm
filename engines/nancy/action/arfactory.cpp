@@ -36,6 +36,7 @@
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
+#include "engines/nancy/action/puzzle/peepholepuzzle.h"
 #include "engines/nancy/action/puzzle/raycastpuzzle.h"
 #include "engines/nancy/action/puzzle/riddlepuzzle.h"
 #include "engines/nancy/action/puzzle/rippedletterpuzzle.h"
@@ -243,6 +244,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new OrderingPuzzle(OrderingPuzzle::PuzzleType::kKeypad);
 	case 215:
 		return new MazeChasePuzzle();
+	case 216:
+		return new PeepholePuzzle();
 	default:
 		return nullptr;
 	}
