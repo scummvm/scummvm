@@ -258,7 +258,8 @@ int run_dialog_script(int dialogID, int offse, int optionIndex) {
 			case DCMD_NEWROOM:
 				get_dialog_script_parameters(script, &param1, nullptr);
 				NewRoom(param1);
-				_G(in_new_room) = 1;
+				if (_G(in_new_room) <= 0)
+					_G(in_new_room) = 1; // set only in case NewRoom was scheduled
 				result = RUN_DIALOG_STOP_DIALOG;
 				script_running = false;
 				break;
