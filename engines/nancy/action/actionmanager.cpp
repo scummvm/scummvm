@@ -33,6 +33,9 @@
 #include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/actionrecord.h"
 
+#include "engines/nancy/action/secondarymovie.h"
+#include "engines/nancy/action/soundrecords.h"
+
 #include "engines/nancy/state/scene.h"
 namespace Nancy {
 namespace Action {
@@ -233,6 +236,8 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 }
 
 void ActionManager::processActionRecords() {
+	_activatedRecordsThisFrame.clear();
+
 	for (auto record : _records) {
 		if (record->_isDone) {
 			continue;
@@ -246,9 +251,15 @@ void ActionManager::processActionRecords() {
 		}
 
 		if (record->_isActive) {
+			if(record->_state == ActionRecord::kBegin) {
+				_activatedRecordsThisFrame.push_back(record);
+			}
+			
 			record->execute();
 		}
 	}
+
+	synchronizeMovieWithSound();
 
 	debugDrawHotspots();
 }
@@ -532,6 +543,59 @@ void ActionManager::synchronize(Common::Serializer &ser) {
 	for (auto &rec : _records) {
 		ser.syncAsByte(rec->_isActive);
 		ser.syncAsByte(rec->_isDone);
+	}
+}
+
+void ActionManager::synchronizeMovieWithSound() {
+	// Improvement:
+
+	// The original engine had really bad timing issues with AVF videos,
+	// as it set the next frame time by adding the frame length to the current evaluation
+	// time, instead of to the time the previous frame was drawn. As a result, all
+	// movie (and SecondaryVideos) frames play about 12 ms slower than they should.
+	// This results in some unfortunate issues in nancy4: if we do as the original
+	// engine did and just make frames 12 ms slower, some dialogue scenes (like scene 1400)
+	// are very visibly not in sync; also, the entire videocam sequence suffers from
+	// visible stitches where the scene changes not at the time it was intended to.
+	// On the other hand, if instead we don't add those 12ms, that same videocam
+	// sequence has a really nasty sound cutoff in the middle of a character speaking.
+
+	// This function intends to fix this issue by subtly manipulating the playback rate
+	// of the movie so its length ends up matching that of the sound; if the sound rate was
+	// changed instead, we would get slightly off-pitch dialogue, which would be undesirable.
+
+	// The heuristic for catching these cases relies on the scene having a movie and a sound
+	// record start at the same frame, and have a (valid) scene change to the same scene.
+	PlaySecondaryMovie *movie = nullptr;
+	PlayDigiSound *sound = nullptr;
+
+	for (uint i = 0; i < _activatedRecordsThisFrame.size(); ++i) {
+		byte type = _activatedRecordsThisFrame[i]->_type;
+		// Rely on _type for cheaper type check
+		if (type == 53) {
+			movie = (PlaySecondaryMovie *)_activatedRecordsThisFrame[i];
+		} else if (type == 150 || type == 151 || type == 157) {
+			sound = (PlayDigiSound *)_activatedRecordsThisFrame[i];
+		}
+
+		if (movie && sound) {
+			break;
+		}
+	}
+
+	if (movie && sound) {
+		// A movie and a sound both got activated this frame, check if their scene changes match
+		if (	movie->_videoSceneChange == PlaySecondaryMovie::kMovieSceneChange &&
+				movie->_sceneChange.sceneID == sound->_sceneChange.sceneID &&
+				movie->_sceneChange.sceneID != 9999) {
+			// They match, check how long the sound is...
+			Audio::Timestamp length = g_nancy->_sound->getLength(sound->_sound);
+
+			if (length.msecs() != 0) {
+				// ..and set the movie's playback speed to match
+				movie->_decoder.setRate(Common::Rational(movie->_decoder.getDuration().msecs(), length.msecs()));
+			}
+		}
 	}
 }
 

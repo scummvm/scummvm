@@ -569,6 +569,26 @@ void SoundManager::setRate(const Common::String &chunkName, uint32 rate) {
 	setRate(_commonSounds[chunkName], rate);
 }
 
+Audio::Timestamp SoundManager::getLength(uint16 channelID) {
+	if (channelID >= _channels.size() || _channels[channelID].stream == nullptr) {
+		return Audio::Timestamp();
+	}
+
+	return _channels[channelID].stream->getLength().convertToFramerate(getRate(channelID));
+}
+
+Audio::Timestamp SoundManager::getLength(const SoundDescription &description) {
+	if (description.name != "NO SOUND") {
+		return getLength(description.channelID);
+	}
+
+	return Audio::Timestamp();
+}
+
+Audio::Timestamp SoundManager::getLength(const Common::String &chunkName) {
+	return getLength(_commonSounds[chunkName]);
+}
+
 void SoundManager::recalculateSoundEffects() {
 	_shouldRecalculate = true;
 

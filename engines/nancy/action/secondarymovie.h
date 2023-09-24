@@ -79,11 +79,12 @@ public:
 	SceneChangeDescription _sceneChange;
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
+	AVFDecoder _decoder;
+
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
 	bool isViewportRelative() const override { return true; }
 
-	AVFDecoder _decoder;
 	Graphics::ManagedSurface _fullFrame;
 	int _curViewportFrame = -1;
 	bool _isFinished = false;

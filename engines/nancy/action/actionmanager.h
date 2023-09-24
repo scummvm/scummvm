@@ -75,9 +75,12 @@ protected:
 	static ActionRecord *createActionRecord(uint16 type);
 	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
 
+	void synchronizeMovieWithSound();
+
 	void debugDrawHotspots();
 
 	Common::Array<ActionRecord *> _records;
+	Common::Array<ActionRecord *> _activatedRecordsThisFrame;
 };
 
 } // End of namespace Action

@@ -113,6 +113,10 @@ public:
 	void setRate(const SoundDescription &description, uint32 rate);
 	void setRate(const Common::String &chunkName, uint32 rate);
 
+	Audio::Timestamp getLength(uint16 channelID);
+	Audio::Timestamp getLength(const SoundDescription &description);
+	Audio::Timestamp getLength(const Common::String &chunkName);
+
 	void soundEffectMaintenance();
 	void recalculateSoundEffects();
 
