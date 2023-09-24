@@ -22,7 +22,6 @@
 #include "backends/mixer/atari/atari-mixer.h"
 
 #include <math.h>
-#include <mint/cookie.h>
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
@@ -30,12 +29,14 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 
+// see https://github.com/mikrosk/atari_sound_setup
+#include "../../../../atari_sound_setup.git/atari_sound_setup.h"
+
 #define DEFAULT_OUTPUT_RATE 24585
+#define DEFAULT_SAMPLES 2048	// 83ms
 
 void AtariAudioShutdown() {
-	Sndstatus(SND_RESET);
-	Soundcmd(ADDERIN, ADCIN);	// restore key click
-	Unlocksnd();
+	AtariSoundSetupDeinitXbios();
 }
 
 AtariMixerManager::AtariMixerManager() : MixerManager() {
@@ -66,141 +67,22 @@ AtariMixerManager::~AtariMixerManager() {
 }
 
 void AtariMixerManager::init() {
-    long cookie, stfa = 0;
-	bool useDevconnectReturnValue = Getcookie(C__SND, &cookie) == C_FOUND && (cookie & SND_EXT) != 0;
+	AudioSpec desired, obtained;
 
-	int clk;
+	desired.frequency = _outputRate;
+	desired.channels = 2;
+	desired.format = AudioFormatSigned16MSB;
+	desired.samples = DEFAULT_SAMPLES;
 
-	if (Locksnd() < 0)
-		error("Sound system is locked");
-
-	// try XBIOS APIs which do not set SND_EXT in _SND
-    useDevconnectReturnValue |= (Getcookie(C_STFA, &stfa) == C_FOUND);	// STFA
-	useDevconnectReturnValue |= (Getcookie(C_McSn, &cookie) == C_FOUND);	// X-SOUND, MacSound
-
-    bool forceSoundCmd = false;
-    if (stfa) {
-        // see http://removers.free.fr/softs/stfa.php#STFA
-        struct STFA_control {
-            uint16 sound_enable;
-            uint16 sound_control;
-            uint16 sound_output;
-            uint32 sound_start;
-            uint32 sound_current;
-            uint32 sound_end;
-            uint16 version;
-            uint32 old_vbl;
-            uint32 old_timerA;
-            uint32 old_mfp_status;
-            uint32 stfa_vbl;
-            uint32 drivers_list;
-            uint32 play_stop;
-            uint16 timer_a_setting;
-            uint32 set_frequency;
-            uint16 frequency_treshold;
-            uint32 custom_freq_table;
-            int16 stfa_on_off;
-            uint32 new_drivers_list;
-            uint32 old_bit_2_of_cookie_snd;
-            uint32 it;
-        } __attribute__((packed));
-
-        STFA_control *stfaControl = (STFA_control *)stfa;
-        if (stfaControl->version < 0x0200) {
-            error("Your STFA version is too old, please upgrade to at least 2.00");
-        }
-        if (stfaControl->stfa_on_off == -1) {
-            // emulating 16-bit playback, force TT frequencies
-            enum {
-                MCH_ST = 0,
-                MCH_STE,
-                MCH_TT,
-                MCH_FALCON,
-                MCH_CLONE,
-                MCH_ARANYM
-            };
-
-            long mch = MCH_ST<<16;
-            Getcookie(C__MCH, &mch);
-            mch >>= 16;
-
-            if (mch == MCH_TT) {
-                debug("Forcing STE/TT compatible frequency");
-                forceSoundCmd = true;
-            }
-        }
-    }
-
-	// reset connection matrix (and other settings)
-	Sndstatus(SND_RESET);
-
-	int diff50, diff33, diff25, diff20, diff16, diff12, diff10, diff8, diff6;
-	diff50 = abs(49170 - (int)_outputRate);
-	diff33 = abs(32780 - (int)_outputRate);
-	diff25 = abs(24585 - (int)_outputRate);
-	diff20 = abs(19668 - (int)_outputRate);
-	diff16 = abs(16390 - (int)_outputRate);
-	diff12 = abs(12292 - (int)_outputRate);
-	diff10 = abs(9834  - (int)_outputRate);
-	diff8  = abs(8195  - (int)_outputRate);
-
-	if (diff50 < diff33) {
-		_outputRate = 49170;
-		clk = CLK50K;
-	} else if (diff33 < diff25) {
-		_outputRate = 32780;
-		clk = CLK33K;
-	} else if (diff25 < diff20) {
-		_outputRate = 24585;
-		clk = CLK25K;
-	} else if (diff20 < diff16) {
-		_outputRate = 19668;
-		clk = CLK20K;
-	} else if (diff16 < diff12) {
-		_outputRate = 16390;
-		clk = CLK16K;
-	} else if (diff12 < diff10) {
-		_outputRate = 12292;
-		clk = CLK12K;
-	} else if (diff10 < diff8) {
-		_outputRate = 9834;
-		clk = CLK10K;
-	} else {
-		_outputRate = 8195;
-		clk = CLK8K;
+	if (!AtariSoundSetupInitXbios(&desired, &obtained)) {
+		error("Sound system is not available");
 	}
 
-	// first try to use Devconnect() with a Falcon prescaler
-    if (forceSoundCmd || Devconnect(DMAPLAY, DAC, CLK25M, clk, NO_SHAKE) != 0) {
-		// the return value is broken on Falcon
-		if (useDevconnectReturnValue) {
-			if (Devconnect(DMAPLAY, DAC, CLK25M, CLKOLD, NO_SHAKE) == 0) {
-				// calculate compatible prescaler
-				diff50 = abs(50066 - (int)_outputRate);
-				diff25 = abs(25033 - (int)_outputRate);
-				diff12 = abs(12517 - (int)_outputRate);
-				diff6  = abs(6258  - (int)_outputRate);
-
-				if (diff50 < diff25) {
-					_outputRate = 50066;
-					clk = PRE160;
-				} else if (diff25 < diff12) {
-					_outputRate = 25033;
-					clk = PRE320;
-				} else if (diff12 < diff6) {
-					_outputRate = 12517;
-					clk = PRE640;
-				} else {
-					_outputRate = 6258;
-					clk = PRE1280;
-				}
-
-				Soundcmd(SETPRESCALE, clk);
-			} else {
-				error("Devconnect() failed");
-			}
-		}
+	if (obtained.channels != 2 && obtained.format != AudioFormatSigned16MSB) {
+		error("Sound system currently supports only 16-bit signed stereo samples (big endian)");
 	}
+
+	_outputRate = obtained.frequency;
 
 	ConfMan.setInt("output_rate", _outputRate);
 	debug("setting %d Hz mixing frequency", _outputRate);
@@ -229,8 +111,6 @@ void AtariMixerManager::init() {
 	_atariPhysicalSampleBuffer = _atariSampleBuffer;
 	_atariLogicalSampleBuffer = _atariSampleBuffer + _atariSampleBufferSize;
 
-	Setmode(MODE_STEREO16);
-	Soundcmd(ADDERIN, MATIN);
 	Setbuffer(SR_PLAY, _atariSampleBuffer, _atariSampleBuffer + 2 * _atariSampleBufferSize);
 
 	_samplesBuf = new uint8[_samples * 4];
@@ -266,7 +146,7 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 		debug("silencing the mixer");
 		return false;
 	default:
-		[[fallthrough]];
+		break;
 	}
 
 	return false;
