@@ -179,6 +179,7 @@ void AtariMixerManager::update() {
 
 		if (processed > 0) {
 			memcpy(_atariPhysicalSampleBuffer, _samplesBuf, processed * 4);
+			memset(_atariPhysicalSampleBuffer + processed, 0, (_samples - processed) * 4);
 			startPlayback(kPlayingFromPhysicalBuffer);
 		}
 	} else {
