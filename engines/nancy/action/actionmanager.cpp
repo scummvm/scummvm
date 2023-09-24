@@ -257,10 +257,14 @@ void ActionManager::processActionRecords() {
 			
 			record->execute();
 		}
+
+		if (NancySceneState._state == State::Scene::kLoad) {
+			// changeScene() must have been called, abort any further processing
+			return;
+		}
 	}
 
 	synchronizeMovieWithSound();
-
 	debugDrawHotspots();
 }
 
