@@ -27,7 +27,8 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
-#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
+// Multiple wrong occlusions at MainActor::teleport 39 14680 7344 48
+//#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
 
 namespace Ultima {
 namespace Ultima8 {
