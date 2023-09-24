@@ -85,6 +85,21 @@ protected:
 	Graphics::ManagedSurface _staticModeIntermediate;
 };
 
+class TableIndexOverlay : public Overlay {
+public:
+	TableIndexOverlay() : Overlay(true) {}
+	virtual ~TableIndexOverlay() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "TableIndexOverlay"; }
+
+	uint16 _tableIndex = 0;
+	int16 _lastIndexVal = -1;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

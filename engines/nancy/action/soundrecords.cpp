@@ -196,5 +196,27 @@ void PlayRandomSound::execute() {
 	PlayDigiSound::execute();
 }
 
+void TableIndexPlaySound::readData(Common::SeekableReadStream &stream) {
+	_tableIndex = stream.readUint16LE();
+	PlayDigiSound::readData(stream); // Data does NOT contain captions, so we call the PlayDigiSound version
+}
+
+void TableIndexPlaySound::execute() {
+	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	assert(playerTable);
+	const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+	assert(tabl);
+
+	if (_lastIndexVal != playerTable->currentIDs[_tableIndex - 1]) {
+		g_nancy->_sound->stopSound(_sound);
+		NancySceneState.getTextbox().clear();
+		_lastIndexVal = playerTable->currentIDs[_tableIndex - 1];
+		_sound.name = Common::String::format("%s%u", tabl->soundBaseName.c_str(), playerTable->currentIDs[_tableIndex - 1]);
+		_ccText = tabl->strings[playerTable->currentIDs[_tableIndex - 1] - 1];
+	}
+
+	PlayDigiSoundCC::execute();
+}
+
 } // End of namespace Action
 } // End of namespace Nancy

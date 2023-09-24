@@ -85,6 +85,26 @@ protected:
 	Common::String getRecordTypeName() const override { return "SpecialEffect"; }
 };
 
+class TableIndexSetValueHS : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	CursorManager::CursorType getHoverCursor() const override { return (CursorManager::CursorType)_cursorType; }
+
+protected:
+	Common::String getRecordTypeName() const override { return "TableIndexSetValueHS"; }
+
+	uint16 _tableIndex = 0;
+	byte _valueChangeType = kNoChangeTableValue;
+	int16 _entryCorrectFlagID = -1;
+	int16 _allEntriesCorrectFlagID = -1;
+
+	MultiEventFlagDescription _flags;
+	uint16 _cursorType = 1;
+	Common::Array<HotspotDescription> _hotspots;
+};
+
 class TextBoxWrite : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;

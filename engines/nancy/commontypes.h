@@ -103,6 +103,11 @@ static const byte kPlayOverlayReverse				= 2;
 static const byte kPlayOverlayWithHotspot			= 1;
 static const byte kPlayOverlayNoHotspot				= 2;
 
+// Table access
+static const byte kNoChangeTableValue				= 0;
+static const byte kIncrementTableValue				= 1;
+static const byte kDecrementTableValue				= 2;
+
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Separate namespace to remove possible clashes

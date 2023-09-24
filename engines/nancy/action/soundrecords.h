@@ -106,6 +106,18 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
 };
 
+class TableIndexPlaySound : public PlayDigiSoundCC {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "TableIndexPlaySound"; }
+
+	uint16 _tableIndex = 0;
+	int16 _lastIndexVal = -1;
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

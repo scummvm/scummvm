@@ -430,6 +430,16 @@ struct CVTX : public EngineData {
 	Common::HashMap<Common::String, Common::String> texts;
 };
 
+struct TABL : public EngineData {
+	TABL(Common::SeekableReadStream *chunkStream);
+
+	Common::String soundBaseName;
+	Common::Array<uint16> startIDs;
+	Common::Array<uint16> correctIDs;
+	Common::Array<Common::Rect> srcRects;
+	Common::Array<Common::String> strings;
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_ENGINEDATA_H

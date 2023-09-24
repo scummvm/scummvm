@@ -20,6 +20,8 @@
  */
 
 #include "engines/nancy/puzzledata.h"
+#include "engines/nancy/enginedata.h"
+#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 
@@ -134,6 +136,24 @@ void JournalData::synchronize(Common::Serializer &ser) {
 	}
 }
 
+TableData::TableData() {
+	const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+	assert(tabl);
+
+	currentIDs = tabl->startIDs;
+}
+
+void TableData::synchronize(Common::Serializer &ser) {
+	byte num = currentIDs.size();
+	ser.syncAsByte(num);
+
+	if (ser.isLoading()) {
+		currentIDs.resize(num);
+	}
+
+	ser.syncArray(currentIDs.data(), num, Common::Serializer::Uint16LE);
+}
+
 PuzzleData *makePuzzleData(const uint32 tag) {
 	switch(tag) {
 	case SliderPuzzleData::getTag():
@@ -148,6 +168,8 @@ PuzzleData *makePuzzleData(const uint32 tag) {
 		return new SoundEqualizerPuzzleData();
 	case JournalData::getTag():
 		return new JournalData();
+	case TableData::getTag():
+		return new TableData();
 	default:
 		return nullptr;
 	}

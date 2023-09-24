@@ -89,6 +89,90 @@ void SpecialEffect::execute() {
 	_isDone = true;
 }
 
+void TableIndexSetValueHS::readData(Common::SeekableReadStream &stream) {
+	_tableIndex = stream.readUint16LE();
+	_valueChangeType = stream.readByte();
+	_entryCorrectFlagID = stream.readSint16LE();
+	_allEntriesCorrectFlagID = stream.readSint16LE();
+
+	_flags.readData(stream);
+	_cursorType = stream.readUint16LE();
+	uint16 numHotspots = stream.readUint16LE();
+	_hotspots.resize(numHotspots);
+	for (uint i = 0; i < numHotspots; ++i) {
+		_hotspots[i].readData(stream);
+	}
+}
+
+void TableIndexSetValueHS::execute() {
+	switch (_state) {
+	case kBegin:
+		_state = kRun;
+		// fall through
+	case kRun:
+		_hasHotspot = false;
+		for (uint i = 0; i < _hotspots.size(); ++i) {
+			if (_hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
+				_hasHotspot = true;
+				_hotspot = _hotspots[i].coords;
+			}
+		}
+		break;
+	case kActionTrigger: {
+		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+		assert(playerTable);
+		const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+		assert(tabl);
+
+		// Edit table. Values start from 1!
+		switch (_valueChangeType) {
+		case kNoChangeTableValue:
+			break;
+		case kIncrementTableValue:
+			++playerTable->currentIDs[_tableIndex - 1];
+			if (playerTable->currentIDs[_tableIndex - 1] >= playerTable->currentIDs.size() + 1) {
+				playerTable->currentIDs[_tableIndex - 1] = 1;
+			}
+			break;
+		case kDecrementTableValue:
+			--playerTable->currentIDs[_tableIndex - 1];
+			if (playerTable->currentIDs[_tableIndex - 1] == 0) {
+				playerTable->currentIDs[_tableIndex - 1] = playerTable->currentIDs.size();
+			}
+			
+			break;
+		}
+
+		// Check for correctness...
+
+		// ...of current index only...
+		if (playerTable->currentIDs[_tableIndex] == tabl->correctIDs[_tableIndex]) {
+			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_true);
+		} else {
+			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_false);
+		}
+
+		// ..and of all indices
+		bool allCorrect = true;
+		for (uint i = 0; i < tabl->correctIDs.size(); ++i) {
+			if (playerTable->currentIDs[i] != tabl->correctIDs[i]) {
+				allCorrect = false;
+				break;
+			}
+		}
+
+		if (allCorrect) {
+			NancySceneState.setEventFlag(_allEntriesCorrectFlagID, g_nancy->_true);
+		} else {
+			NancySceneState.setEventFlag(_allEntriesCorrectFlagID, g_nancy->_false);
+		}
+
+		_flags.execute();
+		finishExecution();
+	}
+	}
+}
+
 void LightningOn::execute() {
 	NancySceneState.beginLightning(_distance, _pulseTime, _rgbPercent);
 	_isDone = true;

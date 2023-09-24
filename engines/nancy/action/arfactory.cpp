@@ -113,7 +113,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 53:
 		return new PlaySecondaryMovie();
 	case 54:
-		return new Overlay(false); // PlayStaticBitmapAnimation
+		if (g_nancy->getGameType() <= kGameTypeNancy1) {
+			return new Overlay(false); // PlayStaticBitmapAnimation
+		}
+		// fall through
 	case 55:
 		return new Overlay(true); // PlayIntStaticBitmapAnimation
 	case 56:
@@ -140,6 +143,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		}
 	case 62:
 		return new MapCallHotMultiframe();
+	case 65:
+		return new TableIndexOverlay();
+	case 66:
+		return new TableIndexPlaySound();
+	case 67:
+		return new TableIndexSetValueHS();
 	case 75:
 		return new TextBoxWrite();
 	case 76:

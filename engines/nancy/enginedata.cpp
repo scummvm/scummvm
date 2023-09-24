@@ -734,4 +734,32 @@ CVTX::CVTX(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	delete[] buf;
 }
 
+TABL::TABL(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
+	uint numEntries = chunkStream->readUint16LE();
+
+	readFilename(*chunkStream, soundBaseName);
+
+	startIDs.resize(numEntries);
+	for (uint i = 0; i < numEntries; ++i) {
+		startIDs[i] = chunkStream->readUint16LE();
+	}
+	chunkStream->skip((20 - numEntries) * 2);
+
+	correctIDs.resize(numEntries);
+	for (uint i = 0; i < numEntries; ++i) {
+		correctIDs[i] = chunkStream->readUint16LE();
+	}
+	chunkStream->skip((20 - numEntries) * 2);
+
+	readRectArray(*chunkStream, srcRects, numEntries, 20);
+
+	char buf[1000];
+	strings.resize(numEntries);
+	for (uint i = 0; i < numEntries; ++i) {
+		chunkStream->read(buf, 1000);
+		assembleTextLine(buf, strings[i], 1000);
+	}
+	chunkStream->skip((20 - numEntries) * 1000);
+}
+
 } // End of namespace Nancy

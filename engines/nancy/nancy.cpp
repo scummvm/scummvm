@@ -422,6 +422,7 @@ void NancyEngine::bootGameEngine() {
 	LOAD_BOOT(SPEC)
 	LOAD_BOOT(RCPR)
 	LOAD_BOOT(RCLB)
+	LOAD_BOOT(TABL)
 
 	LOAD_BOOT_L(ImageChunk, "OB0")
 	LOAD_BOOT_L(ImageChunk, "FR0")

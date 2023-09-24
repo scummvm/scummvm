@@ -104,13 +104,9 @@ void Overlay::readData(Common::SeekableReadStream &stream) {
 
 	ser.syncAsUint16LE(_z, kGameTypeNancy1, kGameTypeNancy1);
 
-	if (ser.getVersion() > kGameTypeNancy1) {
-		_isInterruptible = true;
-		
-		if (ser.getVersion() > kGameTypeNancy2) {
-			if (_overlayType == kPlayOverlayStatic) {
-				_enableHotspot = (_hasSceneChange == kPlayOverlaySceneChange) ? kPlayOverlayWithHotspot : kPlayOverlayNoHotspot;
-			}
+	if (ser.getVersion() > kGameTypeNancy2) {
+		if (_overlayType == kPlayOverlayStatic) {
+			_enableHotspot = (_hasSceneChange == kPlayOverlaySceneChange) ? kPlayOverlayWithHotspot : kPlayOverlayNoHotspot;
 		}
 	}
 
@@ -349,6 +345,33 @@ void Overlay::setFrame(uint frame) {
 	setTransparent(_transparency == kPlayOverlayTransparent);
 
 	_needsRedraw = true;
+}
+
+void TableIndexOverlay::readData(Common::SeekableReadStream &stream) {
+	_tableIndex = stream.readUint16LE();
+	Overlay::readData(stream);
+}
+
+void TableIndexOverlay::execute() {
+	if (_state == kBegin) {
+		Overlay::execute();
+	}
+
+	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
+	assert(playerTable);
+	const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+	assert(tabl);
+
+	if (_lastIndexVal != playerTable->currentIDs[_tableIndex - 1]) {
+		_lastIndexVal = playerTable->currentIDs[_tableIndex - 1];
+		_srcRects.clear();
+		_srcRects.push_back(tabl->srcRects[_lastIndexVal - 1]);
+		_currentViewportFrame = -1; // Force redraw 
+	}
+
+	if (_state != kBegin) {
+		Overlay::execute();
+	}
 }
 
 } // End of namespace Action
