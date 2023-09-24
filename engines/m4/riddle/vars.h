@@ -23,6 +23,7 @@
 #define M4_RIDDLE_VARS_H
 
 #include "common/textconsole.h"
+#include "m4/riddle/flags.h"
 #include "m4/riddle/hotkeys.h"
 #include "m4/riddle/walker.h"
 #include "m4/riddle/gui/interface.h"
@@ -47,6 +48,7 @@ protected:
 	void main_cold_data_init() override;
 
 public:
+	Riddle::Flags _flags;
 	Riddle::Walker _walker;
 	Riddle::Hotkeys _hotkeys;
 	Riddle::GUI::Interface _interface;
