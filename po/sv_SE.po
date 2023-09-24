@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-24 16:59+0000\n"
+"POT-Creation-Date: 2023-09-24 19:19+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "Uppåt"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2874
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2880
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Avbryt"
@@ -336,7 +336,7 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2874
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2880
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9351,7 +9351,7 @@ msgstr "MPEG-2-filmscener hittades men ScummVM har byggts utan stöd för MPEG-2
 msgid "Cutscene '%s' not found"
 msgstr "Filmscenen '%s' hittades ej"
 
-#: engines/sword1/control.cpp:2872
+#: engines/sword1/control.cpp:2878
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9369,7 +9369,7 @@ msgstr ""
 "Tryck på \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
 "nästa gång du startar spelet.\n"
 
-#: engines/sword1/control.cpp:3058
+#: engines/sword1/control.cpp:3064
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9378,11 +9378,11 @@ msgstr ""
 "Den valda spardatan existerar redan!\n"
 "Vill du behålla den gamla spardatan (%s) eller den nya (%s)?\n"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the old one"
 msgstr "Behåll den gamla"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the new one"
 msgstr "Behåll den nya"
 

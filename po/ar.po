@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-24 16:59+0000\n"
+"POT-Creation-Date: 2023-09-24 19:19+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "اذهب للأعلى"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2874
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2880
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "إلغاء"
@@ -336,7 +336,7 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2874
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2880
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9346,7 +9346,7 @@ msgstr "تم العثور على قطع MPEG-2 ولكن تم إنشاء ScummVM 
 msgid "Cutscene '%s' not found"
 msgstr "لم يتم العثور على Cutscene '%s'"
 
-#: engines/sword1/control.cpp:2872
+#: engines/sword1/control.cpp:2878
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9363,7 +9363,7 @@ msgstr ""
 "اضغط على \"موافق\" لتحويلها الآن ، وإلا فسيُطلب منك مرة أخرى في المرة التالية "
 "التي تبدأ فيها اللعبة.\n"
 
-#: engines/sword1/control.cpp:3058
+#: engines/sword1/control.cpp:3064
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9372,11 +9372,11 @@ msgstr ""
 "الهدف من اللعبة المحفوظة الجديدة موجود بالفعل!\n"
 "هل ترغب في الاحتفاظ باللعبة المحفوظة القديمة (%s) أم اللعبة الجديدة (%s)؟\n"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the old one"
 msgstr "احتفظ بالقديم"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the new one"
 msgstr "احتفظ بالجديد"
 

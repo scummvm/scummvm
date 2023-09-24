@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-24 16:59+0000\n"
+"POT-Creation-Date: 2023-09-24 19:19+0000\n"
 "PO-Revision-Date: 2023-09-23 08:58+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -83,7 +83,7 @@ msgstr "Siirry ylös"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2874
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2880
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Peruuta"
@@ -324,7 +324,7 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2874
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2880
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9497,7 +9497,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Videotiedosto '%s' ei löytynyt"
 
-#: engines/sword1/control.cpp:2872
+#: engines/sword1/control.cpp:2878
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9515,7 +9515,7 @@ msgstr ""
 "Paina OK muuntaaksesi tallenteet nyt, muuten kysymme sinulta uudelleestaan "
 "seuraavalla kerralla\n"
 
-#: engines/sword1/control.cpp:3058
+#: engines/sword1/control.cpp:3064
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9524,11 +9524,11 @@ msgstr ""
 "Kohdetiedosto on jo olemassa!\n"
 "Säilytetäänkö vanha pelitallennus (%s), vai uusi pelitallennus (%s)?\n"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the old one"
 msgstr "Säilytä vanha tallennus"
 
-#: engines/sword1/control.cpp:3061
+#: engines/sword1/control.cpp:3067
 msgid "Keep the new one"
 msgstr "Säilytä uusi tallennus"
 
