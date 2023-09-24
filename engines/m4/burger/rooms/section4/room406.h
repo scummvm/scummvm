@@ -22,14 +22,14 @@
 #ifndef M4_BURGER_ROOMS_SECTION4_ROOM406_H
 #define M4_BURGER_ROOMS_SECTION4_ROOM406_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section4/section4_room.h"
 #include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room406 : public Room {
+class Room406 : public Section4Room {
 private:
 	static const char *SAID[][4];
 	static const WilburMatch MATCH[];
@@ -74,6 +74,31 @@ private:
 	static long _state2;
 	static long _state3;
 	static long _state4;
+	Series _coll;
+	Series _gate;
+	int32 _gateS1 = 0, _gateS2 = 0;
+	int32 _tire = 0;
+	machine *_tt = nullptr;
+	machine *_tts = nullptr;
+	machine *_fish = nullptr;
+	noWalkRect *_walk1 = nullptr;
+	noWalkRect *_walk2 = nullptr;
+	noWalkRect *_walk3 = nullptr;
+	noWalkRect *_walk4 = nullptr;
+	bool _flag1 = false;
+	bool _flag2 = false;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+
+	void loadSeries();
+	void setHotspots1();
+	void setHotspots2();
+	void setHotspots3();
+	void setHotspots4();
+	void setupFish();
+	void setupTt();
+	void setNoWalk();
 
 public:
 	Room406();
