@@ -416,7 +416,7 @@ long Room406::_state3;
 long Room406::_state4;
 
 
-Room406::Room406() : Room() {
+Room406::Room406() : Section4Room() {
 	_state1 = 0;
 	_state2 = 0;
 	_state3 = 0;
@@ -424,9 +424,314 @@ Room406::Room406() : Room() {
 }
 
 void Room406::init() {
+	digi_preload("400_001");
+	digi_play_loop("400_001", 3, 125);
+	pal_cycle_init(119, 127, 10);
+	_flag1 = false;
+
+	if (_G(flags)[V172] != 10026) {
+		loadSeries();
+
+		if (_G(game).previous_room == RESTORING_GAME) {
+			switch (_G(flags)[V172]) {
+			case 10023:
+				_val1 = 51;
+				break;
+			case 10024:
+				_val1 = 58;
+				break;
+			case 10025:
+				_val1 = 64;
+				break;
+			default:
+				break;
+			}
+
+			if (_G(flags)[V172] == 10026)
+				kernel_trigger_dispatch_now(12);
+		} else {
+			_val1 = imath_ranged_rand(1, 2) == 1 ? 49 : 50;
+
+			if (_G(flags)[V172] == 10025) {
+				_val1 = 64;
+				kernel_trigger_dispatch_now(12);
+			}
+		}
+	}
+
+	setHotspots1();
+	_val2 = 0;
+
+	if (_G(game).previous_room != RESTORING_GAME) {
+		if (player_been_here(406) || _G(flags)[V176]) {
+			if (_G(flags)[V172] != 10025 && _G(flags)[V172] != 10026) {
+				_val2 = 23;
+				kernel_trigger_dispatch_now(1);
+			}
+		} else {
+			_val2 = 22;
+			kernel_trigger_dispatch_now(22);
+		}
+	}
+
+	_flag2 = !_G(flags)[V176];
+
+	if (!_val2 && _flag2)
+		kernel_timing_trigger(300, 9);
+
+	if (_G(flags)[V171] == 4001)
+		_coll.show("406coll", 0x4fd, 0, -1, -1, 2);
+	
+	setHotspots2();
+
+	if (!_G(flags)[V175]) {
+		_gateS1 = series_load("406gate");
+		_gateS2 = series_load("406gateS");
+		_gate.show("406gate", 0x4fd);
+	}
+
+	series_show("406tire", 0x702);
+	_tire = 0;
+	setupTt();
+	setNoWalk();
+
+	if (_G(flags)[V174] != 4003)
+		_tts = series_show("406tts", 0x601);
+
+	setHotspots4();
+	setupFish();
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		if (_G(flags)[V174] == 4003) {
+			ws_hide_walker();
+			_G(wilbur_should) = 7;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+		break;
+
+	case 402:
+		ws_demand_location(44, 310);
+		setDest(120);
+		break;
+
+	case 404:
+		ws_demand_location(173, 302, 1);
+		ws_walk(237, 308, nullptr, -1);
+		break;
+
+	case 405:
+		ws_demand_location(460, 346);
+		setDest(120);
+		break;
+
+	default:
+		ws_demand_location(169, 336, 5);
+		break;
+	}
 }
 
 void Room406::daemon() {
+}
+
+void Room406::loadSeries() {
+	if (_G(flags)[V172] == 10025) {
+		series_load("406dg02");
+		series_load("406dg02s");
+	}
+
+	if (_G(flags)[V172] == 10023 || _G(flags)[V172] == 10024) {
+		if (_val1 == 49) {
+			series_load("406dg06");
+			series_load("406dg06s");
+		}
+
+		if (_val1 == 50) {
+			series_load("406dg07");
+			series_load("406dg07s");
+		}
+
+		series_load("406dg11");
+		series_load("406dg11s");
+		series_load("406dg15");
+		series_load("406dg15s");
+	}			
+}
+
+void Room406::setHotspots1() {
+	hotspot_set_active("PEGLEG", false);
+	hotspot_set_active("PEGLEG ", false);
+	hotspot_set_active("PEGLEG  ", false);
+	hotspot_set_active("DOG COLLAR ", false);
+	hotspot_set_active("DOG COLLAR  ", false);
+	hotspot_set_active("DOG COLLAR   ", false);
+	hotspot_set_active("DOG COLLAR    ", false);
+
+	switch (_G(flags)[V172]) {
+	case 10023:
+		hotspot_set_active("PEGLEG", true);
+		hotspot_set_active("DOG COLLAR ", true);
+		break;
+
+	case 10024:
+		hotspot_set_active("PEGLEG ", true);
+		hotspot_set_active("DOG COLLAR  ", true);
+		break;
+
+	case 10025:
+		if (!_G(flags)[V173]) {
+			hotspot_set_active("PEGLEG  ", true);
+			if (_G(flags)[V171] == 4000)
+				hotspot_set_active("DOG COLLAR   ", true);
+		}
+
+		hotspot_set_active("HOLE", false);
+		break;
+
+	case 10026:
+		if (_G(flags)[V171] == 4001)
+			hotspot_set_active("DOG COLLAR    ", true);
+
+	default:
+		break;
+	}
+}
+
+void Room406::setHotspots2() {
+	if (_G(flags)[V175]) {
+		hotspot_set_active("GATE", false);
+		hotspot_set_active("LOCK", false);
+		hotspot_set_active("CHAIN", false);
+		hotspot_set_active("RAZOR WIRE ", false);
+		hotspot_set_active("YARD", true);
+	} else {
+		hotspot_set_active("GATE", true);
+		hotspot_set_active("LOCK", true);
+		hotspot_set_active("CHAIN", true);
+		hotspot_set_active("RAZOR WIRE ", true);
+		hotspot_set_active("YARD", false);
+	}
+}
+
+void Room406::setHotspots3() {
+	hotspot_set_active("HOOK ", false);
+	hotspot_set_active("HOOK  ", false);
+	hotspot_set_active("HOOK   ", false);
+	hotspot_set_active("HOOK    ", false);
+	hotspot_set_active("CHAIN ", false);
+	hotspot_set_active("CHAIN  ", false);
+	hotspot_set_active("CHAIN   ", false);
+	hotspot_set_active("CHAIN    ", false);
+	hotspot_set_active("LEVER", false);
+	hotspot_set_active("LEVER ", false);
+
+	switch (_G(flags)[V174]) {
+	case 4000:
+		hotspot_set_active("HOOK ", true);
+		hotspot_set_active("CHAIN ", true);
+		hotspot_set_active("LEVER", true);
+		break;
+
+	case 4001:
+		hotspot_set_active("HOOK ", true);
+		hotspot_set_active("CHAIN ", true);
+		hotspot_set_active("LEVER ", true);
+		break;
+
+	case 4002:
+		hotspot_set_active("HOOK   ", true);
+		hotspot_set_active("CHAIN   ", true);
+		hotspot_set_active("LEVER ", true);
+		break;
+
+	case 4003:
+		hotspot_set_active("CHAIN ", true);
+		hotspot_set_active("LEVER ", true);
+		break;
+
+	case 4004:
+		hotspot_set_active("HOOK    ", true);
+		hotspot_set_active("CHAIN    ", true);
+		hotspot_set_active("LEVER", true);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Room406::setHotspots4() {
+	hotspot_set_active("JAIL CELL ", false);
+	hotspot_set_active("RUBBLE", false);
+	hotspot_set_active("BARRED WINDOW  ", false);
+	hotspot_set_active("HOOK    ", false);
+
+	if (_G(flags)[V174] == 4004) {
+		hotspot_set_active("JAIL CELL ", true);
+		hotspot_set_active("RUBBLE", true);
+		hotspot_set_active("BARRED WINDOW ", false);
+		hotspot_set_active("BARRED WINDOW  ", true);
+		hotspot_set_active("HOOK    ", true);
+	}
+}
+
+void Room406::setupFish() {
+	hotspot_set_active("FISH ", false);
+	hotspot_set_active("FISH  ", false);
+
+	if (_G(flags)[V173]) {
+		_fish = series_show("406fish", 0x4fd);
+		hotspot_set_active("FISH ", true);
+	}
+
+	if (_G(flags)[V172] == 10025)
+		hotspot_set_active("FISH  ", true);
+}
+
+void Room406::setupTt() {
+	if (_tt)
+		terminateMachineAndNull(_tt);
+	if (_tire)
+		series_unload(_tire);
+
+	switch (_G(flags)[V174]) {
+	case 4000:
+		_tire = series_load("406tt");
+		_tt = series_show("406tt", 0x600);
+		break;
+
+	case 4001:
+		_tire = series_load("406tt02");
+		_tt = series_show("406tt02", 0x600);
+		break;
+
+	case 4002:
+		_tire = series_load("406tt03");
+		_tt = series_show("406tt03", 0x600);
+		break;
+
+	case 4004:
+		_tire = series_load("406tt05");
+		_tt = series_show("406tt05", 0x600);
+		break;
+
+	default:
+		break;
+	}
+
+	setHotspots3();
+}
+
+void Room406::setNoWalk() {
+	if (_G(flags)[V174] == 4002) {
+		_walk1 = intr_add_no_walk_rect(180, 271, 309, 280, 179, 281);
+		_walk2 = intr_add_no_walk_rect(350, 263, 409, 283, 349, 284);
+	}
+
+	if (_G(flags)[V174] == 4004) {
+		_walk3 = intr_add_no_walk_rect(336, 272, 388, 291, 335, 292);
+		_walk4 = intr_add_no_walk_rect(378, 259, 409, 291, 377, 292);
+	}
 }
 
 } // namespace Rooms
