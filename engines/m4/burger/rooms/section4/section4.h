@@ -49,6 +49,7 @@ private:
 
 public:
 	static void poof(int trigger);
+	static bool checkOrderWindow();
 
 public:
 	Section4();

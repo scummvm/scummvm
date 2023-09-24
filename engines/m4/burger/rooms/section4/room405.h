@@ -44,7 +44,10 @@ private:
 	machine *_box = nullptr;
 	machine *_lid = nullptr;
 	machine *_eu02 = nullptr;
+	Series _vp03;
+	Series _cat;
 	const char *_digiName = nullptr;
+	int32 _vpoof = -1;
 	KernelTriggerType _newMode = (KernelTriggerType)0;
 	int _volume = 0;
 	int _val1 = 0;
@@ -59,10 +62,15 @@ private:
 	void conv90();
 	void conv91();
 	void conv92();
+	void startConv89();
+	void startConv90();
 	void startConv91();
 	void talkToVipe();
 	void talkToVera();
 	void playDigi();
+	void playDigi2() {
+		playDigi();
+	}
 
 public:
 	Room405() : Section4Room() {}

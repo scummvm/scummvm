@@ -20,6 +20,7 @@
  */
 
 #include "m4/burger/rooms/section4/room405.h"
+#include "m4/burger/rooms/section4/section4.h"
 #include "m4/burger/vars.h"
 
 namespace M4 {
@@ -185,7 +186,694 @@ void Room405::init() {
 }
 
 void Room405::daemon() {
-	// TODO: daemon
+	int frame;
+
+	switch (_G(kernel).trigger) {
+	case 1:
+	case 4:
+		player_set_commands_allowed(true);
+		_val1 = 39;
+		break;
+
+	case 2:
+		player_set_commands_allowed(false);
+		_val1 = 49;
+		break;
+
+	case 3:
+		player_set_commands_allowed(false);
+		_G(wilbur_should) = 30;
+		break;
+
+	case 5:
+		player_set_commands_allowed(true);
+		_val3 = 4;
+		break;
+
+	case 7:
+		_volume -= 10;
+		if (_volume >= 6) {
+			digi_change_volume(3, _volume);
+			kernel_timing_trigger(3, 7);
+		} else {
+			digi_stop(3);
+		}
+		break;
+
+	case 8:
+		ws_unhide_walker();
+		_G(walker).wilbur_poof();
+		player_set_commands_allowed(true);
+		break;
+
+	case 9:
+		digi_play("92n0603", 1, 255);
+		digi_play("405_009", 2, 255, 12);
+		break;
+
+	case 11:
+		terminateMachineAndNull(_series1);
+		_series1 = nullptr;
+		break;
+
+	case 13:
+		digi_play("405v513", 1, 255);
+		break;
+
+	case 15:
+		switch (_val2) {
+		case 39:
+			switch (_val1) {
+			case 39:
+				if (imath_ranged_rand(1, 20) == 1) {
+					_val2 = 42;
+					Series::series_play("405vp03", 0x900, 0, 15, 6, 0, 100, 0, 0, 0, 4);
+				} else {
+					Series::series_play("405vp01", 0x900, 0, 15, 60, 0, 100, 0, 0, 0, 0);
+				}
+				break;
+
+			case 40:
+				frame = imath_ranged_rand(0, 5);
+				Series::series_play("405vp02", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				playDigi2();
+				break;
+
+			default:
+				_val2 = 42;
+				Series::series_play("405vp03", 0x900, 0, 15, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 41:
+			if (_val1 == 39) {
+				if (imath_ranged_rand(1, 10) == 1) {
+					Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 5, 6);
+				} else {
+					Series::series_play("405vp07", 0x900, 2, 15, 60, 0, 100, 0, 0, 4, 4);
+				}
+			} else {
+				_val2 = 42;
+				Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 5, 6);				
+			}
+			break;
+
+		case 42:
+			switch (_val1) {
+			case 39:
+				switch (imath_ranged_rand(1, 20)) {
+				case 1:
+					_val2 = 39;
+					Series::series_play("405vp03", 0x900, 2, 15, 10, 0, 100, 0, 0, 0, 4);
+					break;
+				case 2:
+					_val2 = 41;
+					Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 0, 4);
+					break;
+
+				default:
+					Series::series_play("405vp03", 0x900, 0, 15, 60, 0, 100, 0, 0, 4, 4);
+					break;
+				}
+				break;
+
+			case 43:
+				Series::series_play("405vp03", 0x900, 0, 15, 60, 0, 100, 0, 0, 4, 4);
+				break;
+
+			case 44:
+				frame = imath_ranged_rand(0, 5);
+				Series::series_play("405vp05", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				playDigi2();
+				break;
+
+			case 45:
+				frame = imath_ranged_rand(0, 6);
+				Series::series_play("405vp06", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 49:
+				digi_preload("999_003");
+				_vpoof = series_load("405vpoof");
+				_val1 = 50;
+				Series::series_play("405vp13", 0x900, 0, 15, 7, 0, 100, 0, 0, 0, 16);
+				break;
+
+			case 50:
+				_val1 = 51;
+				Series::series_play("405vp13", 0x900, 0, -1, 7, 0, 100, 0, 0, 17, 18);
+
+				_G(flags)[V166] = 1;
+				digi_play("999_003", 1, 255);
+				series_play("405vpoof", 0x500, 0, 15, 7, 0, 70, 40, 40, 0, -1);
+				_val5 = 2;
+				kernel_trigger_dispatch_now(16);
+				break;
+
+			case 51:
+				series_unload(_vpoof);
+				player_set_commands_allowed(true);
+				break;
+
+			default:
+				kernel_trigger_dispatch_now(25);
+				break;
+			}
+			break;
+
+		case 46:
+			switch (_val1) {
+			case 47:
+				Series::series_play("405vp10", 0x900, 0, 15, 60, 0, 100, 0, 0, 5, 5);
+				break;
+
+			case 48:
+				frame = imath_ranged_rand(0, 6);
+				Series::series_play("405vp11", 0x900, 0, 15, 5, 0, 100, 0, 0, frame, frame);
+				playDigi2();
+				break;
+
+			case 49:
+				_val2 = 42;
+				kernel_trigger_dispatch_now(15);
+				break;
+
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+		case 16:
+			switch (_val5) {
+			case 1:
+				_cat.terminate();
+				_val5 = 3;
+				series_play_with_breaks(PLAY3, "405cat", 0, 16, 3, 9, 100, 0, 0);
+				break;
+
+			case 2:
+				_cat.terminate();
+				_val5 = 3;
+				series_play_with_breaks(PLAY4, "405cat", 0, 16, 3, 6, 100, 0, 0);
+				break;
+
+			case 3:
+				_cat.show("405cat", 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+	case 17:
+		switch (_val4) {
+		case 4:
+			switch (_val3) {
+			case 4:
+				switch (imath_ranged_rand(1, 15)) {
+				case 1:
+					series_play_with_breaks(PLAY1, "405ve02", 0xf00, 17, 2);
+					break;
+				case 2:
+					series_play("405ve03", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 3);
+					break;
+				default:
+					series_play("405ve01", 0xf00, 0, 17, 60, 0);
+					break;
+				}
+				break;
+
+			case 7:
+				_val4 = 6;
+				series_play("405ve03", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 3);
+				break;
+
+			case 11:
+				_val4 = 9;
+				series_play("405ve14", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 17:
+				_val4 = 16;
+				series_play("405ve08", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			case 21:
+				_val4 = 22;
+				series_play("405ve04", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 5);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 5:
+			switch (_val3) {
+			case 4:
+				if (imath_ranged_rand(1, 10) == 1) {
+					_val4 = 16;
+					Series::series_play("405ve10", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 3);
+				} else {
+					Series::series_play("405ve10", 0xf00, 0, 17, 6, 0, 100, 0, 0, 3, 3);
+				}
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 16;
+				Series::series_play("405ve10", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 3);
+				break;
+			}
+			break;
+
+		case 6:
+			switch (_val3) {
+			case 4:
+				if (imath_ranged_rand(1, 10) == 1) {
+					series_play("405ve03", 0xf00, 2, 17, 10, 0, 100, 0, 0, 0, 3);
+				} else {
+					series_play("405ve03", 0xf00, 0, 17, 60, 0, 100, 0, 0, 3, 3);
+				}
+				break;
+
+			case 7:
+				frame = imath_ranged_rand(3, 6);
+				series_play("405ve03", 0xf00, 2, 17, 4, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 4;
+				series_play("405ve03", 0xf00, 2, 17, 10, 0, 100, 0, 0, 0, 3);
+				break;
+			}
+			break;
+
+		case 9:
+			switch (_val3) {
+			case 9:
+				Series::series_play("405ve15", 0xf00, 0, 17, 60, 0, 100, 0, 0, 4, 4);
+				break;
+
+			case 10:
+				_val4 = 10;
+				Series::series_play("405ve17", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 2);
+				break;
+
+			case 11:
+				_val4 = imath_ranged_rand(1, 2) == 1 ? 12 : 13;
+				Series::series_play("405ve18", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 14:
+				_val3 = 15;
+				digi_preload("405_009");
+				series_play_with_breaks(PLAY2, "405ve16", 0x100, 17, 3);
+				break;
+
+			case 15:
+				_val3 = 9;
+				kernel_trigger_dispatch_now(17);
+				break;
+
+			case 16:
+				_val4 = 16;
+				Series::series_play("405ve15", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			default:
+				_val4 = 4;
+				Series::series_play("405ve08", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 10:
+			switch (_val3) {
+			case 10:
+				frame = imath_ranged_rand(3, 5);
+				Series::series_play("405ve17", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 9;
+				Series::series_play("405ve17", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 2);
+				break;
+			}
+			break;
+
+		case 12:
+			switch (_val3) {
+			case 11:
+				frame = imath_ranged_rand(1, 4);
+				Series::series_play("405ve18", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 9;
+				Series::series_play("405ve18", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 0);
+				break;
+			}
+			break;
+
+		case 13:
+			switch (_val3) {
+			case 11:
+				frame = imath_ranged_rand(5, 8);
+				Series::series_play("405ve18", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 9;
+				Series::series_play("405ve18", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 0);
+				break;
+			}
+			break;
+
+		case 16:
+			switch (_val3) {
+			case 11:
+				_val4 = 9;
+				Series::series_play("405ve15", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			case 16:
+				if (imath_ranged_rand(1, 10) == 1) {
+					_val4 = 5;
+					Series::series_play("405ve10", 0xf00, 0, 17, 10, 0, 100, 0, 0, 0, 3);
+				} else {
+					series_play("405ve08", 0xf00, 0, 17, 60, 0, 100, 0, 0, 4, 4);
+				}
+				break;
+
+			case 17:
+				if (imath_ranged_rand(1, 2) == 1) {
+					_val4 = 18;
+					kernel_trigger_dispatch_now(17);
+				} else {
+					_val4 = 19;
+					Series::series_play("405ve11", 0xf00, 0, 17, 6, 0, 100, 0, 0, 2, 4);
+				}
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 4;
+				series_play("405ve08", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 18:
+			switch (_val3) {
+			case 17:
+				frame = imath_ranged_rand(0, 1);
+				Series::series_play("405ve11", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 16;
+				kernel_trigger_dispatch_now(17);
+				break;
+			}
+			break;
+
+		case 19:
+			switch (_val3) {
+			case 17:
+				frame = imath_ranged_rand(4, 6);
+				Series::series_play("405ve11", 0xf00, 0, 17, 4, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				Series::series_play("405ve11", 0xf00, 2, 17, 6, 0, 100, 0, 0, 2, 4);
+				break;
+			}
+			break;
+
+		case 20:
+			switch (_val3) {
+			case 20:
+				Series::series_play("405ve06", 0xf00, 0, 17, 60, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 21:
+				frame = imath_ranged_rand(0, 4);
+				Series::series_play("405ve06", 0xf00, 0, 17, 5, 0, 100, 0, 0, frame, frame);
+				playDigi();
+				break;
+
+			case 24:
+				break;
+
+			default:
+				_val4 = 23;
+				Series::series_play("405ve05", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 22:
+			_val4 = 20;
+			Series::series_play("405ve05", 0xf00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+			break;
+
+		case 23:
+			_val4 = 4;
+			series_play("405ve04", 0xf00, 2, 17, 6, 0, 100, 0, 0, 0, 5);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 19:
+		_val5 = 1;
+		kernel_trigger_dispatch_now(16);
+		break;
+
+	case 20:
+		player_set_commands_allowed(true);
+		break;
+
+	case 21:
+		ws_unhide_walker();
+		break;
+
+	case 22:
+		pal_fade_init(15, 255, 100, 0, -1);
+		break;
+
+	case 23:
+		player_update_info();
+		ws_demand_location(_G(player_info).x - 5, _G(player_info).y);
+		player_set_commands_allowed(false);
+		ws_hide_walker();
+		terminateMachineAndNull(_records);
+
+		Series::series_play("405wi02", 0, 0, 24, 6, 0, 100);
+		break;
+
+	case 24:
+		conv_resume_curr();
+		ws_unhide_walker();
+		inv_give_to_player("records");
+		hotspot_set_active("records", false);
+		player_set_commands_allowed(true);
+		break;
+
+	case 25:
+		_vp03.terminate();
+		_vp03.series_play("405vp03", 0x900, 0, -1, 600, -1, 100, 0, 0, 4, 4);
+		Series::series_play("405wi01", 0x100, 0, 26, 7, 0, 100, 0, 0, 16, 18);
+		break;
+
+	case 26:
+		_vp03.terminate();
+		Series::series_play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 18, 18);
+		Series::series_play("405vp09", 0x900, 0, 27, 7, 0, 100, 0, 0, 0, 3);
+		break;
+
+	case 27:
+		_vp03.terminate();
+		inv_move_object("dog collar", 405);
+
+		_G(flags)[V171] = 4003;
+		Series::series_play("405wi01", 0x100, 0, 21, 7, 0, 100, 0, 0, 19, 24);
+		Series::series_play("405vp09", 0x900, 0, 28, 7, 0, 100, 0, 0, 4, 4);
+		break;
+
+	case 28:
+		_val2 = 47;
+		Series::series_play("405vp10", 0x900, 0, 15, 7, 0, 100, 0, 0, 0, 5);
+		break;
+
+	case 29:
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 30);
+		break;
+
+	case 30:
+		digi_play("405w503", 1, 255, 31);
+		break;
+
+	case 31:
+		_G(flags)[V168] = 1;
+		hotspot_set_active("order window", false);
+		if (!Section4::checkOrderWindow())
+			_G(game).room_id = 1;
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 25:
+			disable_player();
+			_G(wilbur_should) = 26;
+			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
+			break;
+
+		case 26:
+			_vp03.series_play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 15, 15);
+			startConv89();
+			break;
+
+		case 27:
+			disable_player();
+			_G(wilbur_should) = 28;
+			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 11);
+			break;
+
+		case 28:
+			_G(wilbur_should) = 29;
+			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 11, 11);
+			startConv90();
+			break;
+			
+		case 29:
+			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 60, 0, 100, 0, 0, 11, 11);
+			break;
+
+		case 30:
+			_G(wilbur_should) = 31;
+			Series::series_play("405wi01", 0x100, 2, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 11);
+			break;
+
+		case 31:
+			enable_player();
+			break;
+
+		case 32:
+			terminateMachineAndNull(_lid);
+			disable_player();
+			_G(wilbur_should) = 33;
+			series_play_with_breaks(PLAY5, "405wi07", 0x100, gCHANGE_WILBUR_ANIMATION, 3, 7, 100, 0, 0);
+			break;
+
+		case 33:
+			inv_move_object("records", NOWHERE);
+			_G(flags)[V167] = 1;
+
+			_lid = series_play("405lid", 0xf00, 2, -1, 600, -1, 100, 0, 0, 0, 0);
+			_box = series_play("405box1", 0xf00, 2, -1, 600, -1, 100, 0, 0, 0, 0);
+			hotspot_set_active("box", true);
+			enable_player();
+			break;
+
+		case 34:
+			disable_player();
+			_G(wilbur_should) = 35;
+			series_play_with_breaks(PLAY6, "405wi04", 0xe00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			break;
+
+		case 35:
+			inv_move_object("quarter", 405);
+			_G(wilbur_should) = 36;
+			series_play_with_breaks(PLAY7, "405wi05", 0xe00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			break;
+
+		case 36:
+			digi_preload("405_001");
+			digi_play("405_001", 2, 255);
+			ws_unhide_walker();
+			player_update_info();
+
+			_G(wilbur_should) = 37;
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, gCHANGE_WILBUR_ANIMATION, 5);
+			break;
+
+		case 37:
+			_G(wilbur_should) = 38;
+			gr_backup_palette();
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 15, gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 38:
+			player_update_info();
+			_G(walker).unloadSprites();
+			_cat.terminate();
+			terminateMachineAndNull(_lid);
+			terminateMachineAndNull(_box);
+
+			if (_series1)
+				terminateMachineAndNull(_series1);
+
+			_val3 = 24;
+
+			digi_preload("405_007");
+			digi_preload("405w503");
+			digi_preload("405v513");
+
+			digi_stop(3);
+			digi_unload("405_010");
+			digi_play_loop("405_007", 3, 255);
+
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "405disco", 7, 0, 6);
+			break;
+
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room405::pre_parser() {
@@ -603,6 +1291,18 @@ void Room405::talkToVipe() {
 void Room405::talkToVera() {
 	conv_load_and_prepare("conv92", 5);
 	conv_export_value_curr(_G(flags)[V062], 0);
+	conv_play_curr();
+}
+
+void Room405::startConv89() {
+	conv_load_and_prepare("conv89", 2);
+	conv_export_value_curr(_G(flags)[V165], 0);
+	conv_play_curr();
+}
+
+void Room405::startConv90() {
+	conv_load_and_prepare("conv90", 3);
+	conv_export_value_curr(_G(flags)[V165], 0);
 	conv_play_curr();
 }
 
