@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-23 15:02+0000\n"
+"POT-Creation-Date: 2023-09-24 08:17+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5464,10 +5464,10 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/mohawk/detection_tables.h:1429
 #: engines/mohawk/detection_tables.h:1447
 #: engines/mohawk/detection_tables.h:1462
-#: engines/mohawk/detection_tables.h:2495
-#: engines/mohawk/detection_tables.h:2510
-#: engines/mohawk/detection_tables.h:3612
-#: engines/mohawk/detection_tables.h:3627 engines/myst3/detection.cpp:142
+#: engines/mohawk/detection_tables.h:2511
+#: engines/mohawk/detection_tables.h:2526
+#: engines/mohawk/detection_tables.h:3628
+#: engines/mohawk/detection_tables.h:3643 engines/myst3/detection.cpp:142
 #: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5283
 #: engines/sci/detection_tables.h:5291 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
