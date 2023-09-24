@@ -64,7 +64,7 @@ void render_header(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, i
 
 	debug(1, "render_header(%s)", PR(text));
 
-	Common::String res = Common::String::format("\016+00%01x0" "%s" "\001\016-00f0\n", level, Common::String((const char *)text->data , text->size).c_str());
+	Common::String res = Common::String::format("\001\016+00%01x0" "%s" "\001\016-00f0\n", level, Common::String((const char *)text->data , text->size).c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
 }
