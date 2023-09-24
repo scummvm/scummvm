@@ -74,16 +74,16 @@ void MemMan::setCondition(MemHandle *bsMem, uint16 pCond) {
 }
 
 void MemMan::flush() {
-	if (_memListFree && !_memListFreeEnd) {
-		warning("MemMan::flush(): _memListFreeEnd is nullptr");
-	} else {
-		while (_memListFree) {
-			free(_memListFreeEnd->data);
-			_memListFreeEnd->data = NULL;
-			_memListFreeEnd->cond = MEM_FREED;
-			_alloced -= _memListFreeEnd->size;
-			removeFromFreeList(_memListFreeEnd);
+	while (_memListFree) {
+		if (_memListFreeEnd == nullptr) {
+			warning("MemMan::flush(): _memListFreeEnd is nullptr");
+			break;
 		}
+		free(_memListFreeEnd->data);
+		_memListFreeEnd->data = NULL;
+		_memListFreeEnd->cond = MEM_FREED;
+		_alloced -= _memListFreeEnd->size;
+		removeFromFreeList(_memListFreeEnd);
 	}
 
 	if (_alloced)
@@ -91,16 +91,16 @@ void MemMan::flush() {
 }
 
 void MemMan::checkMemoryUsage() {
-	if ((_alloced > MAX_ALLOC) && _memListFree && !_memListFreeEnd) {
-		warning("MemMan::checkMemoryUsage(): _memListFreeEnd is nullptr");
-	} else {
-		while ((_alloced > MAX_ALLOC) && _memListFree) {
-			free(_memListFreeEnd->data);
-			_memListFreeEnd->data = NULL;
-			_memListFreeEnd->cond = MEM_FREED;
-			_alloced -= _memListFreeEnd->size;
-			removeFromFreeList(_memListFreeEnd);
+	while ((_alloced > MAX_ALLOC) && _memListFree) {
+		if (_memListFreeEnd == nullptr) {
+			warning("MemMan::checkMemoryUsage(): _memListFreeEnd is nullptr");
+			break;
 		}
+		free(_memListFreeEnd->data);
+		_memListFreeEnd->data = NULL;
+		_memListFreeEnd->cond = MEM_FREED;
+		_alloced -= _memListFreeEnd->size;
+		removeFromFreeList(_memListFreeEnd);
 	}
 }
 
