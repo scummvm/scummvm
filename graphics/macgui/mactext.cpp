@@ -857,12 +857,23 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					char cmd = *s++;
 
 					if (cmd == 'h') { // Header, beginning of the table
+						if (_inTable)
+							error("MacText: Nested tables are not supported");
+
+						_inTable = true;
+
+						_textLines[curLine].table = new Common::Array<MacTextTableRow>();
 					} else if (cmd == 'b') { // Body start
 					} else if (cmd == 'B') { // Body end
+						_inTable = false;
 					} else if (cmd == 'r') { // Row
+						_textLines[curLine].table->push_back(MacTextTableRow());
 					} else if (cmd == 'c') { // Cell start
 						uint16 flags;
 						s = readHex(&flags, s, 2);
+
+						_textLines[curLine].table->back().cells.push_back(MacTextTableCell());
+						_textLines[curLine].table->back().cells.back().flags = flags;
 					} else if (cmd == 'C') { // Cell end
 					} else {
 						error("MacText: Unknown table subcommand (%c)", cmd);

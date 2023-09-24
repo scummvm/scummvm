@@ -117,6 +117,20 @@ struct MacFontRun {
 	Common::String getEncodedText();
 };
 
+struct MacTextLine;
+
+struct MacTextTableCell {
+	Common::Array<MacTextLine> text;
+	uint16 flags = 0;
+	ManagedSurface surf;
+	int textWidth = -1;
+};
+
+struct MacTextTableRow {
+	Common::Array<MacTextTableCell> cells;
+	int heght = -1;
+};
+
 struct MacTextLine {
 	int width = -1;
 	int height = -1;
@@ -128,6 +142,7 @@ struct MacTextLine {
 	Common::String picfname;
 	Common::U32String picalt, pictitle;
 	uint16 picpercent = 50;
+	Common::Array<MacTextTableRow> *table = nullptr;
 
 	Common::Array<MacFontRun> chunks;
 
@@ -383,6 +398,8 @@ protected:
 	MacFontRun _currentFormatting;
 
 	bool _macFontMode;
+
+	bool _inTable = false;
 
 private:
 	ManagedSurface *_cursorSurface;
