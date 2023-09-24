@@ -568,8 +568,16 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 // formatting
 void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
 	int curLine = *curLinePtr;
-	int curChunk = _textLines[curLine].chunks.size() - 1;
-	MacFontRun *chunk = &_textLines[curLine].chunks[curChunk];
+	int curChunk;
+	MacFontRun *chunk;
+
+	if (!_inTable) {
+		curChunk = _textLines[curLine].chunks.size() - 1;
+		chunk = &_textLines[curLine].chunks[curChunk];
+	} else {
+		curChunk = _textLines[curLine].table->back().cells.back().text.back().chunks.size() - 1;
+		chunk = &_textLines[curLine].table->back().cells.back().text.back().chunks[curChunk];
+	}
 
 	// Check if there is nothing to add, then remove the last chunk
 	// This happens when the previous run is finished only with
@@ -617,9 +625,14 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
 	for (uint i = 1; i < text.size(); i++) {
 		newchunk.text = text[i];
 
-		curLine++;
-		_textLines.insert_at(curLine, MacTextLine());
-		_textLines[curLine].chunks.push_back(newchunk);
+		if (!_inTable) {
+			curLine++;
+			_textLines.insert_at(curLine, MacTextLine());
+			_textLines[curLine].chunks.push_back(newchunk);
+		} else {
+			_textLines[curLine].table->back().cells.back().text.push_back(MacTextLine());
+			_textLines[curLine].table->back().cells.back().text.back().chunks.push_back(newchunk);
+		}
 
 		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
 	}
@@ -684,6 +697,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 		tmp.clear();
 
+		MacTextLine *curTextLine = &_textLines[curLine];
+
 		while (*s) {
 			// Scan till next font change or end of line
 			while (*s && *s != '\001') {
@@ -707,6 +722,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
 			chopChunk(tmp, &curLine);
+
+			curTextLine = &_textLines[curLine];
 
 			tmp.clear();
 
@@ -880,18 +897,24 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 						_inTable = true;
 
-						_textLines[curLine].table = new Common::Array<MacTextTableRow>();
+						curTextLine->table = new Common::Array<MacTextTableRow>();
 					} else if (cmd == 'b') { // Body start
 					} else if (cmd == 'B') { // Body end
 						_inTable = false;
+
+						curTextLine = &_textLines[curLine];
 					} else if (cmd == 'r') { // Row
-						_textLines[curLine].table->push_back(MacTextTableRow());
+						curTextLine->table->push_back(MacTextTableRow());
 					} else if (cmd == 'c') { // Cell start
 						uint16 flags;
 						s = readHex(&flags, s, 2);
 
-						_textLines[curLine].table->back().cells.push_back(MacTextTableCell());
-						_textLines[curLine].table->back().cells.back().flags = flags;
+						curTextLine->table->back().cells.push_back(MacTextTableCell());
+						curTextLine->table->back().cells.back().flags = flags;
+
+						curTextLine->table->back().cells.back().text.resize(1);
+						curTextLine = &curTextLine->table->back().cells.back().text[0];
+						curTextLine->chunks.push_back(_defaultFormatting);
 					} else if (cmd == 'C') { // Cell end
 					} else {
 						error("MacText: Unknown table subcommand (%c)", cmd);
@@ -922,11 +945,11 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			}
 
 
-			_textLines[curLine].indent = indentSize;
-			_textLines[curLine].firstLineIndent = firstLineIndent;
+			curTextLine->indent = indentSize;
+			curTextLine->firstLineIndent = firstLineIndent;
 
 			// Push new formatting
-			_textLines[curLine].chunks.push_back(chunk);
+			curTextLine->chunks.push_back(chunk);
 		}
 
 		if (!*l) { // If this is end of the string, we're done here
@@ -936,16 +959,20 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 		// Add new line
 		D(9, "** splitString: new line");
 
-		_textLines[curLine].paragraphEnd = true;
+		curTextLine->paragraphEnd = true;
 		// if the chunks is empty, which means the line will not be rendered properly
 		// so we add a empty string here
-		if (_textLines[curLine].chunks.empty()) {
-			_textLines[curLine].chunks.push_back(_defaultFormatting);
+		if (curTextLine->chunks.empty()) {
+			curTextLine->chunks.push_back(_defaultFormatting);
 		}
 
-		curLine++;
-		_textLines.insert_at(curLine, MacTextLine());
-		_textLines[curLine].chunks.push_back(chunk);
+		if (!_inTable) {
+			curLine++;
+			_textLines.insert_at(curLine, MacTextLine());
+			_textLines[curLine].chunks.push_back(chunk);
+
+			curTextLine = &_textLines[curLine];
+		}
 	}
 
 #if DEBUG

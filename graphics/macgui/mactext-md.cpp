@@ -133,7 +133,7 @@ void render_table(Common::SDDataBuffer *ob, const Common::SDDataBuffer *header, 
 	if (!body)
 		return;
 
-	Common::String res = Common::String::format("\016Th" "%s\n" "\001\016Tb" "%s\n" "\016TB\n",
+	Common::String res = Common::String::format("\001\016Th" "%s" "\001\016Tb" "%s" "\001\016TB",
 			Common::String((const char *)header->data , header->size).c_str(), Common::String((const char *)body->data , body->size).c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
