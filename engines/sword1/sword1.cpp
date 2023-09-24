@@ -158,6 +158,8 @@ Common::Error SwordEngine::init() {
 
 	_systemVars.gamePaused = false;
 	_systemVars.displayDebugText = false;
+	_systemVars.displayDebugMouse = false;
+	_systemVars.displayDebugGrid = false;
 	_systemVars.framesPerSecondCounter = 0;
 	_systemVars.gameCycle = 0;
 
@@ -310,6 +312,16 @@ void SwordEngine::checkKeys() {
 			if (_keyPressed.hasFlags(Common::KBD_CTRL))
 				_systemVars.displayDebugText = !_systemVars.displayDebugText;
 			break;
+		case Common::KEYCODE_m: // SHIFT-M: Toggles debug mouse tracking
+			// This was originally CTRL-M, but ScummVM steals that event to
+			// lock the mouse cursor within the window boundaries.
+			if (_keyPressed.hasFlags(Common::KBD_SHIFT))
+				_systemVars.displayDebugMouse = !_systemVars.displayDebugMouse;
+			break;
+		case Common::KEYCODE_g: // CTRL-G: Toggles walkgrid displaying
+			if (_keyPressed.hasFlags(Common::KBD_CTRL))
+				_systemVars.displayDebugGrid = !_systemVars.displayDebugGrid;
+			break;
 		case Common::KEYCODE_1: // Slow mode
 			{
 				if (_systemVars.slowMode) {
@@ -344,10 +356,6 @@ void SwordEngine::checkKeys() {
 			break;
 		}
 	}
-}
-
-const uint8 *SwordEngine::getPauseString() {
-	return _control->getPauseString();
 }
 
 static const char *const errorMsgs[] = {
@@ -738,6 +746,173 @@ Common::Error SwordEngine::go() {
 	return Common::kNoError;
 }
 
+void SwordEngine::showDebugInfo() {
+	Object *playerCompact = _objectMan->fetchObject(PLAYER);
+
+	// Screen coordinates for game cycle string
+	int32 gameCycleX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
+	int32 gameCycleY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for mouse coordinates string
+	int32 mouseCoordsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 220;
+	int32 mouseCoordsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for special item string
+	int32 specialItemX = Logic::_scriptVars[SCROLL_OFFSET_X] + 350;
+	int32 specialItemY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for player coordinates string
+	int32 playerCoordsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 475;
+	int32 playerCoordsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for Paris flag string
+	int32 parisFlagX = Logic::_scriptVars[SCROLL_OFFSET_X] + 590;
+	int32 parisFlagY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for player's script level string
+	int32 scriptLevelX = Logic::_scriptVars[SCROLL_OFFSET_X] + 660;
+	int32 scriptLevelY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for the talk flag string
+	int32 talkFlagX = Logic::_scriptVars[SCROLL_OFFSET_X] + 720;
+	int32 talkFlagY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
+
+	// Screen coordinates for FPS counter string
+	int32 fpsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
+	int32 fpsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
+
+	// Screen coordinates for game speed string
+	int32 gameSpeedX = Logic::_scriptVars[SCROLL_OFFSET_X] + 220;
+	int32 gameSpeedY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
+
+	// Screen coordinates for screen number string
+	int32 screenX = Logic::_scriptVars[SCROLL_OFFSET_X] + 350;
+	int32 screenY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
+
+	// Screen coordinates for current CD string
+	int32 currentCDX = Logic::_scriptVars[SCROLL_OFFSET_X] + 475;
+	int32 currentCDY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
+
+	// Screen coordinates for the end sequence phase string
+	int32 endSceneX = Logic::_scriptVars[SCROLL_OFFSET_X] + 590;
+	int32 endSceneY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
+
+	// Screen coordinates for the current text line number string
+	int32 textNoX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
+	int32 textNoY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 165;
+
+	// Screen coordinates for debug flags string
+	int32 debugFlagsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
+	int32 debugFlagsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 185;
+
+	// Screen coordinates for the paused message string
+	int32 pausedX = Logic::_scriptVars[SCROLL_OFFSET_X] + 400;
+	int32 pausedY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 315;
+
+	uint8 buf[255];
+
+	if (_systemVars.gamePaused) {
+		Common::sprintf_s(buf, "%s", _control->getPauseString());
+		_screen->printDebugLine(buf, ' ', pausedX, pausedY);
+	}
+
+	if ((_systemVars.displayDebugText) && (!_systemVars.isDemo)) {
+		// Game cycle
+		Common::sprintf_s(buf, "%d", _systemVars.gameCycle);
+		_screen->printDebugLine(buf, ' ', gameCycleX, gameCycleY);
+
+		// Mouse coordinates
+		Common::sprintf_s(buf, "m %d,%d", Logic::_scriptVars[MOUSE_X], Logic::_scriptVars[MOUSE_Y]);
+		_screen->printDebugLine(buf, ' ', mouseCoordsX, mouseCoordsY);
+
+		// Special item
+		Common::sprintf_s(buf, "id %d", Logic::_scriptVars[SPECIAL_ITEM]);
+		_screen->printDebugLine(buf, ' ', specialItemX, specialItemY);
+
+		// Player coordinates
+		Common::sprintf_s(buf, "G %d,%d", playerCompact->o_xcoord, playerCompact->o_ycoord);
+		_screen->printDebugLine(buf, ' ', playerCoordsX, playerCoordsY);
+
+		// Paris status flag
+		Common::sprintf_s(buf, "pf %d", Logic::_scriptVars[PARIS_FLAG]);
+		_screen->printDebugLine(buf, ' ', parisFlagX, parisFlagY);
+
+		// Player script level
+		Common::sprintf_s(buf, "lv %d", playerCompact->o_tree.o_script_level);
+		_screen->printDebugLine(buf, ' ', scriptLevelX, scriptLevelY);
+
+		// Talk flag
+		Common::sprintf_s(buf, "tf %d", Logic::_scriptVars[TALK_FLAG]);
+		_screen->printDebugLine(buf, ' ', talkFlagX, talkFlagY);
+
+		// Frames per second
+		Common::sprintf_s(buf, "%u fps", _systemVars.framesPerSecondCounter);
+		_screen->printDebugLine(buf, ' ', fpsX, fpsY);
+
+		// Debug game speed (based on pressing keys '1' & '4')
+		if (_systemVars.slowMode) {
+			Common::sprintf_s(buf, "(slow)");
+		} else if (_systemVars.fastMode) {
+			Common::sprintf_s(buf, "(fast)");
+		} else {
+			Common::sprintf_s(buf, "(norm)");
+		}
+
+		_screen->printDebugLine(buf, ' ', gameSpeedX, gameSpeedY);
+
+		// Screen number
+		Common::sprintf_s(buf, "screen %d", Logic::_scriptVars[SCREEN]);
+		_screen->printDebugLine(buf, ' ', screenX, screenY);
+
+		// CD in use
+		Common::sprintf_s(buf, "CD-%d", _systemVars.currentCD);
+		_screen->printDebugLine(buf, ' ', currentCDX, currentCDY);
+
+		// End sequence scene number
+		if (Logic::_scriptVars[END_SCENE]) {
+			Common::sprintf_s(buf, "scene %d", Logic::_scriptVars[END_SCENE]);
+			_screen->printDebugLine(buf, ' ', endSceneX, endSceneY);
+		}
+
+		// Debug flags
+		if ((Logic::_scriptVars[DEBUG_FLAG_1] > 0) || (Logic::_scriptVars[DEBUG_FLAG_2] > 0) || (Logic::_scriptVars[DEBUG_FLAG_3] > 0)) {
+			Common::sprintf_s(buf, "debug flags: %d, %d, %d",
+							  Logic::_scriptVars[DEBUG_FLAG_1],
+							  Logic::_scriptVars[DEBUG_FLAG_2],
+							  Logic::_scriptVars[DEBUG_FLAG_3]);
+			_screen->printDebugLine(buf, ' ', debugFlagsX, debugFlagsY);
+		}
+	}
+
+	if (_systemVars.displayDebugText) {
+		// Text line number
+		if (_logic->canShowDebugTextNumber()) {
+			Common::sprintf_s(buf, "TEXT %d", _systemVars.textNumber);
+			_screen->printDebugLine(buf, ' ', textNoX, textNoY);
+		}
+	}
+
+	if (_systemVars.displayDebugGrid) {
+		_logic->plotRouteGrid(playerCompact);
+	}
+
+	if (_systemVars.displayDebugMouse) {
+		// Draw a cross shaped cursor under the mouse cursor
+		_screen->plotPoint(Logic::_scriptVars[MOUSE_X] - 128, Logic::_scriptVars[MOUSE_Y] - 128, 255);
+		_screen->plotPoint(Logic::_scriptVars[MOUSE_X] - 130, Logic::_scriptVars[MOUSE_Y] - 128, 255);
+		_screen->plotPoint(Logic::_scriptVars[MOUSE_X] - 128, Logic::_scriptVars[MOUSE_Y] - 130, 255);
+		_screen->plotPoint(Logic::_scriptVars[MOUSE_X] - 128, Logic::_scriptVars[MOUSE_Y] - 126, 255);
+		_screen->plotPoint(Logic::_scriptVars[MOUSE_X] - 126, Logic::_scriptVars[MOUSE_Y] - 128, 255);
+
+		// Draw a cross shaped cursor on the player coordinates
+		_screen->plotPoint(playerCompact->o_xcoord - 128, playerCompact->o_ycoord - 128, 255);
+		_screen->plotPoint(playerCompact->o_xcoord - 130, playerCompact->o_ycoord - 128, 255);
+		_screen->plotPoint(playerCompact->o_xcoord - 128, playerCompact->o_ycoord - 130, 255);
+		_screen->plotPoint(playerCompact->o_xcoord - 128, playerCompact->o_ycoord - 126, 255);
+		_screen->plotPoint(playerCompact->o_xcoord - 126, playerCompact->o_ycoord - 128, 255);
+	}
+}
+
 void SwordEngine::checkCd() {
 	uint8 needCd = _cdList[Logic::_scriptVars[NEW_SCREEN]];
 	if (_systemVars.runningFromCd) { // are we running from cd?
@@ -855,6 +1030,9 @@ uint8 SwordEngine::mainLoop() {
 			_logic->updateScreenParams(); // sets scrolling
 
 			_screen->draw();
+
+			showDebugInfo();
+
 			_mouse->animate();
 
 			if (!Logic::_scriptVars[NEW_PALETTE]) {

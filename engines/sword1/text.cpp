@@ -227,7 +227,7 @@ void Text::releaseText(uint32 id, bool updateCount) {
 	}
 }
 
-void Text::printDebugLine(uint8 *ascii, uint8 *resourceAddress, uint8 first, int x, int y) {
+void Text::printDebugLine(uint8 *ascii, uint8 first, int x, int y) {
 	FrameHeader *head;
 	int chr;
 
@@ -235,7 +235,7 @@ void Text::printDebugLine(uint8 *ascii, uint8 *resourceAddress, uint8 first, int
 		chr = (int)*(ascii);
 		chr -= first;
 
-		head = (FrameHeader *)_resMan->fetchFrame(resourceAddress, chr);
+		head = (FrameHeader *)_resMan->fetchFrame(_font, chr);
 
 		uint8 *sprData = (uint8 *)head + sizeof(FrameHeader);
 
@@ -258,154 +258,6 @@ void Text::printDebugLine(uint8 *ascii, uint8 *resourceAddress, uint8 first, int
 
 		ascii++;
 	} while (*ascii);
-}
-
-void Text::showDebugInfo() {
-
-	Object *playerCompact = _objMan->fetchObject(PLAYER);
-
-	// Screen coordinates for game cycle string
-	int32 gameCycleX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
-	int32 gameCycleY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for mouse coordinates string
-	int32 mouseCoordsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 220;
-	int32 mouseCoordsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for special item string
-	int32 specialItemX = Logic::_scriptVars[SCROLL_OFFSET_X] + 350;
-	int32 specialItemY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for player coordinates string
-	int32 playerCoordsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 475;
-	int32 playerCoordsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for Paris flag string
-	int32 parisFlagX = Logic::_scriptVars[SCROLL_OFFSET_X] + 590;
-	int32 parisFlagY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for player's script level string
-	int32 scriptLevelX = Logic::_scriptVars[SCROLL_OFFSET_X] + 660;
-	int32 scriptLevelY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for the talk flag string
-	int32 talkFlagX = Logic::_scriptVars[SCROLL_OFFSET_X] + 720;
-	int32 talkFlagY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 125;
-
-	// Screen coordinates for FPS counter string
-	int32 fpsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
-	int32 fpsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
-
-	// Screen coordinates for game speed string
-	int32 gameSpeedX = Logic::_scriptVars[SCROLL_OFFSET_X] + 220;
-	int32 gameSpeedY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
-
-	// Screen coordinates for screen number string
-	int32 screenX = Logic::_scriptVars[SCROLL_OFFSET_X] + 350;
-	int32 screenY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
-
-	// Screen coordinates for current CD string
-	int32 currentCDX = Logic::_scriptVars[SCROLL_OFFSET_X] + 475;
-	int32 currentCDY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
-
-	// Screen coordinates for the end sequence phase string
-	int32 endSceneX = Logic::_scriptVars[SCROLL_OFFSET_X] + 590;
-	int32 endSceneY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 145;
-
-	// Screen coordinates for the current text line number string
-	int32 textNoX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
-	int32 textNoY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 165;
-
-	// Screen coordinates for debug flags string
-	int32 debugFlagsX = Logic::_scriptVars[SCROLL_OFFSET_X] + 130;
-	int32 debugFlagsY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 185;
-
-	// Screen coordinates for the paused message string
-	int32 pausedX = Logic::_scriptVars[SCROLL_OFFSET_X] + 400;
-	int32 pausedY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 315;
-
-	uint8 buf[255];
-
-	if (SwordEngine::_systemVars.gamePaused) {
-		Common::sprintf_s(buf, "%s", _vm->getPauseString());
-		printDebugLine(buf, _font, ' ', pausedX, pausedY);
-	}
-
-	if ((SwordEngine::_systemVars.displayDebugText) && (!SwordEngine::_systemVars.isDemo)) {
-		// Game cycle
-		Common::sprintf_s(buf, "%d", SwordEngine::_systemVars.gameCycle);
-		printDebugLine(buf, _font, ' ', gameCycleX, gameCycleY);
-
-		// Mouse coordinates
-		Common::sprintf_s(buf, "m %d,%d", Logic::_scriptVars[MOUSE_X], Logic::_scriptVars[MOUSE_Y]);
-		printDebugLine(buf, _font, ' ', mouseCoordsX, mouseCoordsY);
-
-		// Special item
-		Common::sprintf_s(buf, "id %d", Logic::_scriptVars[SPECIAL_ITEM]);
-		printDebugLine(buf, _font, ' ', specialItemX, specialItemY);
-
-		// Player coordinates
-		Common::sprintf_s(buf, "G %d,%d", playerCompact->o_xcoord, playerCompact->o_ycoord);
-		printDebugLine(buf, _font, ' ', playerCoordsX, playerCoordsY);
-
-		// Paris flag
-		Common::sprintf_s(buf, "pf %d", Logic::_scriptVars[PARIS_FLAG]);
-		printDebugLine(buf, _font, ' ', parisFlagX, parisFlagY);
-
-		// Player script level
-		Common::sprintf_s(buf, "lv %d", playerCompact->o_tree.o_script_level);
-		printDebugLine(buf, _font, ' ', scriptLevelX, scriptLevelY);
-
-		// Talk flag
-		Common::sprintf_s(buf, "tf %d", Logic::_scriptVars[TALK_FLAG]);
-		printDebugLine(buf, _font, ' ', talkFlagX, talkFlagY);
-
-		// Frames per second
-		Common::sprintf_s(buf, "%u fps", SwordEngine::_systemVars.framesPerSecondCounter);
-		printDebugLine(buf, _font, ' ', fpsX, fpsY);
-
-		// Debug game speed (based on pressing keys '1' & '4')
-		if (SwordEngine::_systemVars.slowMode) {
-			Common::sprintf_s(buf, "(slow)");
-		} else if (SwordEngine::_systemVars.fastMode) {
-			Common::sprintf_s(buf, "(fast)");
-		} else {
-			Common::sprintf_s(buf, "(norm)");
-		}
-
-		printDebugLine(buf, _font, ' ', gameSpeedX, gameSpeedY);
-
-		// Screen number
-		Common::sprintf_s(buf, "screen %d", Logic::_scriptVars[SCREEN]);
-		printDebugLine(buf, _font, ' ', screenX, screenY);
-
-		// CD in use
-		Common::sprintf_s(buf, "CD-%d", SwordEngine::_systemVars.currentCD);
-		printDebugLine(buf, _font, ' ', currentCDX, currentCDY);
-
-		// End sequence scene number
-		if (Logic::_scriptVars[END_SCENE]) {
-			Common::sprintf_s(buf, "scene %d", Logic::_scriptVars[END_SCENE]);
-			printDebugLine(buf, _font, ' ', endSceneX, endSceneY);
-		}
-
-		// Debug flags
-		if ((Logic::_scriptVars[DEBUG_FLAG_1] > 0) || (Logic::_scriptVars[DEBUG_FLAG_2] > 0) || (Logic::_scriptVars[DEBUG_FLAG_3] > 0)) {
-			Common::sprintf_s(buf, "debug flags: %d, %d, %d",
-				Logic::_scriptVars[DEBUG_FLAG_1],
-				Logic::_scriptVars[DEBUG_FLAG_2],
-				Logic::_scriptVars[DEBUG_FLAG_3]);
-			printDebugLine(buf, _font, ' ', debugFlagsX, debugFlagsY);
-		}
-	}
-
-	if (SwordEngine::_systemVars.displayDebugText) {
-		// Text line number
-		if (_logic->canShowDebugTextNumber()) {
-			Common::sprintf_s(buf, "TEXT %d", SwordEngine::_systemVars.textNumber);
-			printDebugLine(buf, _font, ' ', textNoX, textNoY);
-		}
-	}
 }
 
 } // End of namespace Sword1

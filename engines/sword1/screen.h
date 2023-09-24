@@ -104,6 +104,13 @@ public:
 
 	static void decompressHIF(uint8 *src, uint8 *dest);
 
+	void printDebugLine(uint8 *ascii, uint8 first, int x, int y);
+
+	// Functions used by the router debug visualization routines
+	void plotLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
+	void plotPoint(int32 x, int32 y, uint8 color);
+	void bresenhamLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
+
 private:
 	// The original values are 6-bit RGB numbers, so they have to be shifted,
 	// except for white, which for some reason has to stay unshifted in order
@@ -127,15 +134,6 @@ private:
 	};
 
 	PaletteFadeInfo _paletteFadeInfo;
-
-	// for router debugging
-	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void vline(uint16 x, uint16 y1, uint16 y2);
-	void hline(uint16 x1, uint16 x2, uint16 y);
-	void bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
 	void verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight);
 	void blitBlockClear(uint16 x, uint16 y, uint8 *data);

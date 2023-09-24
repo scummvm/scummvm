@@ -83,6 +83,8 @@ struct SystemVars {
 	bool             parallaxOn;
 	bool             gamePaused;
 	bool             displayDebugText;
+	bool             displayDebugMouse;
+	bool             displayDebugGrid;
 	uint32           framesPerSecondCounter;
 	uint32           gameCycle;
 };
@@ -122,7 +124,7 @@ public:
 	void startFadePaletteUp(int speed);
 	void waitForFade();
 
-	const uint8 *getPauseString();
+	void showDebugInfo();
 
 protected:
 	// Engine APIs

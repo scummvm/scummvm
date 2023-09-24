@@ -1848,6 +1848,58 @@ bool Logic::canShowDebugTextNumber() {
 	return _speechRunning || _textRunning;
 }
 
+void Logic::plotRouteGrid(Object *megaObject) {
+	WalkGridHeader floorHeader;
+
+	// Load the floor grid for the input megaObject
+	Object *floorObject = _objMan->fetchObject(megaObject->o_place);
+
+	uint8 *fPolygrid = (uint8 *)_resMan->openFetchRes(floorObject->o_resource);
+
+	fPolygrid += sizeof(Header);
+	memmove(&floorHeader, fPolygrid, sizeof(WalkGridHeader));
+	fPolygrid += sizeof(WalkGridHeader);
+
+	_router->_nBars = floorHeader.numBars;
+	if (_router->_nBars >= O_GRID_SIZE) {
+		debug(3, "Logic::plotRouteGrid(): RouteFinder: too many bars %d", _router->_nBars);
+		_resMan->resClose(floorObject->o_resource);
+		return;
+	}
+
+	_router->_nNodes = floorHeader.numNodes + 1;
+	if (_router->_nNodes >= O_GRID_SIZE) {
+		debug(3, "Logic::plotRouteGrid(): RouteFinder: too many nodes %d", _router->_nNodes);
+		_resMan->resClose(floorObject->o_resource);
+		return;
+	}
+
+	memmove(&_router->_bars[0], fPolygrid, _router->_nBars * sizeof(BarData));
+	fPolygrid += _router->_nBars * sizeof(BarData);
+
+	// Parse the grid...
+	for (int j = 1; j < _router->_nNodes; j++) {
+		memmove(&_router->_node[j].x, fPolygrid, 2 * sizeof(int16));
+		fPolygrid += 2 * sizeof(int16);
+	}
+
+	// Draw the grid (color 254)...
+	for (int j = 0; j < _router->_nBars; j++) {
+		_screen->plotLine(_router->_bars[j].x1 - 128, _router->_bars[j].y1 - 128, _router->_bars[j].x2 - 128, _router->_bars[j].y2 - 128, 254);
+	}
+
+	// Draw the nodes (color 255)...
+	for (int j = 1; j < _router->_nNodes; j++) {
+		_screen->plotPoint(_router->_node[j].x - 128, _router->_node[j].y - 128, 255);
+	}
+
+	// At this point the original code plotted more lines related to the collision engine,
+	// which was coded but never used in the game, so we skip right through the end of the
+	// function and deallocate the previously opened resource.
+
+	_resMan->resClose(floorObject->o_resource);
+}
+
 const uint32 Logic::_scriptVarInit[NON_ZERO_SCRIPT_VARS][2] = {
 	{  42,  448}, {  43,  378}, {  51,    1}, {  92,    1}, { 147,   71}, { 201,   1},
 	{ 209,    1}, { 215,    1}, { 242,    2}, { 244,    1}, { 246,    3}, { 247,   1},

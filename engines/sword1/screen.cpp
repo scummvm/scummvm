@@ -99,6 +99,10 @@ void Screen::useTextManager(Text *pTextMan) {
 	_textMan = pTextMan;
 }
 
+void Screen::printDebugLine(uint8 *ascii, uint8 first, int x, int y) {
+	_textMan->printDebugLine(ascii, first, x, y);
+}
+
 void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 	offsetX = CLIP<int32>(offsetX, 0, Logic::_scriptVars[MAX_SCROLL_OFFSET_X]);
 	offsetY = CLIP<int32>(offsetY, 0, Logic::_scriptVars[MAX_SCROLL_OFFSET_Y]);
@@ -579,8 +583,6 @@ void Screen::draw() {
 		processImage(_foreList[cnt]);
 
 	_backLength = _sortLength = _foreLength = 0;
-
-	_textMan->showDebugInfo();
 }
 
 void Screen::initFadePaletteServer() {
@@ -1438,139 +1440,127 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 	_system->copyRectToScreen(frame, 40, x, y, 40, 40);
 }
 
-// ------------------- router debugging code --------------------------------
+// ------------------- Router debugging code --------------------------------
 
-void Screen::vline(uint16 x, uint16 y1, uint16 y2) {
-	for (uint16 cnty = y1; cnty <= y2; cnty++)
-		_screenBuf[x + _scrnSizeX * cnty] = 0;
-}
+void Screen::bresenhamLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
+	int32 tmpX, tmpY;
+	uint8 *dstPt1, *dstPt2;
+	int32 dx, dy;
+	int32 screenWidth = _scrnSizeX;
+	int32 screenHeight = _scrnSizeY;
 
-void Screen::hline(uint16 x1, uint16 x2, uint16 y) {
-	for (uint16 cntx = x1; cntx <= x2; cntx++)
-		_screenBuf[y * _scrnSizeX + cntx] = 0;
-}
+	if (x1 != x2 || y1 != y2) {
+		if (x1 >= x2) {
+			tmpX = x1; x1 = x2; x2 = tmpX;
+			tmpY = y1; y1 = y2; y2 = tmpY;
+		}
 
-void Screen::bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x2 - x1);
-	ddy = ABS(y2 - y1) << 1;
-	e = ddx - ddy;
-	ddx <<= 1;
+		if (x1 >= 0 && x2 < screenWidth) {
+			dstPt1 = &_screenBuf[x1 + screenWidth * y1];
+			dstPt2 = &_screenBuf[x2 + screenWidth * y2];
 
-	if (x1 > x2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
-	}
+			if (y2 < y1) {
+				screenWidth = -screenWidth;
+				tmpY = y1; y1 = y2; y2 = tmpY;
+			}
 
-	for (x = x1, y = y1; x <= x2; x++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			y++;
-			e += ddx - ddy;
-		} else {
-			e -= ddy;
+			if (y1 >= 0 && y2 < screenHeight) {
+				dx = 2 * (x2 - x1);
+				dy = 2 * (y2 - y1);
+				if (dx < dy) {
+					for (int i = dx - (dy >> 1); true; i += dx) {
+						*dstPt1 = color;
+
+						if (dstPt1 == dstPt2)
+							break;
+
+						if (i >= 0) {
+							++dstPt1;
+							i -= dy;
+						}
+
+						dstPt1 += screenWidth;
+					}
+				} else {
+					for (int j = dy - (dx >> 1); true; j += dy) {
+						*dstPt1 = color;
+
+						if (dstPt1 == dstPt2)
+							break;
+
+						if (j >= 0) {
+							dstPt1 += screenWidth;
+							j -= dx;
+						}
+
+						++dstPt1;
+					}
+				}
+			}
 		}
 	}
 }
 
-void Screen::bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x2 - x1) << 1;
-	ddy = ABS(y2 - y1);
-	e = ddy - ddx;
-	ddy <<= 1;
-
-	if (y1 > y2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
-	}
-
-	for (y = y1, x = x1; y <= y2; y++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			x++;
-			e += ddy - ddx;
-		} else {
-			e -= ddx;
-		}
-	}
+void Screen::plotPoint(int32 x, int32 y, uint8 color) {
+	if (x >= 0 && x <= _scrnSizeX && y >= 0 && y <= _scrnSizeY)
+		_screenBuf[_scrnSizeX * y + x] = color;
 }
 
-void Screen::bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddx = ABS(x1 - x2) << 1;
-	ddy = ABS(y2 - y1);
-	e = ddy - ddx;
-	ddy <<= 1;
+void Screen::plotLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
+#define SWAP(a, b) \
+	temp = a;      \
+	a = b;         \
+	b = temp;
+#define DX (x2 - x1)
+#define DY (y2 - y1)
 
-	if (y1 > y2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
+	int32 temp;
+	int32 screenWidth = _scrnSizeX;
+	int32 screenHeight = _scrnSizeY;
+
+	//sort line to go down
+	if (y2 < y1) { // its was going up so swap ends
+		SWAP(x1, x2);
+		SWAP(y1, y2);
 	}
 
-	for (y = y1, x = x1; y <= y2; y++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			x--;
-			e += ddy - ddx;
-		} else {
-			e -= ddx;
-		}
-	}
-}
+	if ((y2 < 0) || (y1 >= screenHeight))
+		return; // all of line off screen
 
-void Screen::bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	int x, y, ddx, ddy, e;
-	ddy = ABS(y2 - y1) << 1;
-	ddx = ABS(x1 - x2);
-	e = ddx - ddy;
-	ddx <<= 1;
-
-	if (x1 > x2) {
-		uint16 tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
+	if (y1 < 0) { // clip to top
+		temp = (-y1) * DX / DY;
+		x1 = x1 + temp;
+		y1 = 0;
 	}
 
-	for (x = x1, y = y1; x <= x2; x++) {
-		_screenBuf[y * _scrnSizeX + x] = 0;
-		if (e < 0) {
-			y--;
-			e += ddx - ddy;
-		} else {
-			e -= ddy;
-		}
-	}
-}
-
-void Screen::drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2) {
-	if ((x1 == x2) && (y1 == y2)) {
-		_screenBuf[x1 + y1 * _scrnSizeX] = 0;
-	}
-	if (x1 == x2) {
-		vline(x1, MIN(y1, y2), MAX(y1, y2));
-		return;
+	if (y2 >= screenHeight) { // clip to bottom
+		temp = (y2 - screenHeight - 1) * DX / DY;
+		x2 = x2 - temp;
+		y2 = screenHeight - 1;
 	}
 
-	if (y1 == y2) {
-		hline(MIN(x1, x2), MAX(x1, x2), y1);
-		return;
+	//sort line to go left right
+	if (x2 < x1) { //it was going left so swap ends
+		SWAP(x1, x2);
+		SWAP(y1, y2);
 	}
 
-	float k = float(y2 - y1) / float(x2 - x1);
+	if ((x2 < 0) || (x1 >= screenWidth))
+		return; //all of line off screen
 
-	if ((k >= 0) && (k <= 1)) {
-		bsubline_1(x1, y1, x2, y2);
-	} else if (k > 1) {
-		bsubline_2(x1, y1, x2, y2);
-	} else if ((k < 0) && (k >= -1)) {
-		bsubline_4(x1, y1, x2, y2);
-	} else {
-		bsubline_3(x1, y1, x2, y2);
+	if (x1 < 0) { //clip to left
+		temp = (-x1) * DY / DX;
+		y1 = y1 + temp;
+		x1 = 0;
 	}
+
+	if (x2 >= screenWidth) { //clip to right
+		temp = (x2 - screenWidth - 1) * DY / DX;
+		y2 = y2 - temp;
+		x2 = screenWidth - 1;
+	}
+
+	bresenhamLine(x1, y1, x2, y2, color);
 }
 
 } // End of namespace Sword1

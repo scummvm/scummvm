@@ -64,6 +64,7 @@ public:
 	void runMouseScript(Object *cpt, int32 scriptId);
 	void startPositions(uint32 pos);
 	bool canShowDebugTextNumber();
+	void plotRouteGrid(Object *megaObject);
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
 // public for mouse (menu looking)

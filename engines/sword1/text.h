@@ -53,13 +53,12 @@ public:
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
 	void makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 pen);
 	void releaseText(uint32 id, bool updateCount = true);
-	void showDebugInfo();
+	void printDebugLine(uint8 *ascii, uint8 first, int x, int y);
 
 private:
 	uint16 analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *info);
 	uint16 charWidth(uint8 ch);
 	uint16 copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen);
-	void printDebugLine(uint8 *ascii, uint8 *resourceAddress, uint8 first, int x, int y);
 
 	uint8 *_font;
 	uint8 _textCount;
