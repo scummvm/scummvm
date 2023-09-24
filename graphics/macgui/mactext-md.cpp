@@ -25,7 +25,7 @@
 
 namespace Graphics {
 
-#define PR(x) ((x && x->data) ? Common::String((const char *)(x)->data , (x)->size).c_str() : "(null)")
+#define PR(x) ((x && x->data) ? Common::toPrintable(Common::String((const char *)(x)->data , (x)->size)).c_str() : "(null)")
 
 struct MDState {
 	Common::List<int> listNum;
