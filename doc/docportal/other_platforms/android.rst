@@ -136,6 +136,7 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
         Double tap + movement, "Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island"
         Two finger tap, Right mouse button click
         Two finger tap + movement of second finger, "Right mouse button hold and drag, such as for selection from action wheel in Tony Tough"
+        Two finger slide up/down, Scroll (reverse mouse wheel)
         Three finger tap, Middle mouse button click
         Three finger tap + movement of third finger, Middle mouse button hold and drag
         Long press system Back button, Opens Global Main Menu
@@ -164,12 +165,17 @@ To display or hide the small controller icon, from the Launcher select **Options
 Two finger tap
 ^^^^^^^^^^^^^^^^^
 
-To do a two finger tap, hold one finger down and then tap with a second finger.
+To perform a two finger tap, hold one finger down and then tap with a second finger.
 
 Three finger tap
 ^^^^^^^^^^^^^^^^^^
 
-To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.
+To perform a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.
+
+Two finger slide
+^^^^^^^^^^^^^^^^^
+
+To perform a two finger slide, place two fingers on the touch screen (typically the index and middle finger) and slide them upwards or downwards.
 
 Immersive Sticky fullscreen mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
