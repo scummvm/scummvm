@@ -37,6 +37,7 @@ int retro_setting_get_analog_deadzone(void);
 bool retro_setting_get_analog_response_is_quadratic(void);
 float retro_setting_get_mouse_speed(void);
 int retro_setting_get_mouse_fine_control_speed_reduction(void);
+bool retro_setting_get_gamepad_cursor_only(void);
 float retro_setting_get_gamepad_cursor_speed(void);
 float retro_setting_get_gamepad_acceleration_time(void);
 

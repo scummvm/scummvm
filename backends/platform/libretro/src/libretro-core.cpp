@@ -68,6 +68,7 @@ static int analog_deadzone = (int)(0.15f * ANALOG_RANGE);
 
 static float gamepad_cursor_speed = 1.0f;
 static bool analog_response_is_quadratic = false;
+static bool gamepad_cursor_only = false;
 
 static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
@@ -192,6 +193,14 @@ static void update_variables(void) {
 	struct retro_variable var;
 	updating_variables = true;
 	const char *osd_msg = "";
+
+	var.key = "scummvm_gamepad_cursor_only";
+	var.value = NULL;
+	gamepad_cursor_only = false;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
+		if (strcmp(var.value, "enabled") == 0)
+			gamepad_cursor_only = true;
+	}
 
 	var.key = "scummvm_gamepad_cursor_speed";
 	var.value = NULL;
@@ -509,6 +518,10 @@ bool retro_setting_get_timing_inaccuracies_enabled() {
 		return (performance_switch & PERF_SWITCH_ENABLE_TIMING_INACCURACIES);
 	else
 		return timing_inaccuracies_enabled;
+}
+
+bool retro_setting_get_gamepad_cursor_only(void) {
+	return gamepad_cursor_only;
 }
 
 int retro_setting_get_analog_deadzone(void) {

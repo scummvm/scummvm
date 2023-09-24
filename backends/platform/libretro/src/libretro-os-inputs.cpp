@@ -207,6 +207,9 @@ void OSystem_libretro::processInputs(void) {
 		}
 	}
 
+	if (retro_setting_get_gamepad_cursor_only())
+		return;
+
 #if defined(WIIU) || defined(__SWITCH__)
 	int p_x = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
 	int p_y = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);

@@ -72,7 +72,7 @@ extern "C" {
 struct retro_core_option_v2_category option_cats_it[] = {
 	{
 		"cursor",
-		"Movimento del cursore",
+		"Cursore",
 		"Impostazioni relative al movimento del cursore"
 	},
 	{
@@ -94,6 +94,20 @@ struct retro_core_option_v2_category option_cats_it[] = {
 };
 
 struct retro_core_option_v2_definition option_defs_it[] = {
+	{
+		"scummvm_gamepad_cursor_only",
+		"Cursore > Controllo esclusivo del cursore con RetroPad",
+		"Controllo esclusivo del cursore con RetroPad",
+		"Consente di usare solo RetroPad per il controllo del cursore del mouse, escludento gli altri input (es. mouse fisico, touch screen).",
+		NULL,
+		"cursor",
+		{
+			{"disabled", NULL},
+			{"enabled", NULL},
+			{NULL, NULL},
+		},
+		"disabled"
+	},
 	{
 		"scummvm_gamepad_cursor_speed",
 		"Cursore > Velocità del cursore",
