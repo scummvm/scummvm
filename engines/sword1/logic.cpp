@@ -1860,27 +1860,39 @@ void Logic::plotRouteGrid(Object *megaObject) {
 	memmove(&floorHeader, fPolygrid, sizeof(WalkGridHeader));
 	fPolygrid += sizeof(WalkGridHeader);
 
-	_router->_nBars = floorHeader.numBars;
+	_router->_nBars = (int32)_resMan->getUint32(floorHeader.numBars);
 	if (_router->_nBars >= O_GRID_SIZE) {
 		debug(3, "Logic::plotRouteGrid(): RouteFinder: too many bars %d", _router->_nBars);
 		_resMan->resClose(floorObject->o_resource);
 		return;
 	}
 
-	_router->_nNodes = floorHeader.numNodes + 1;
+	_router->_nNodes = (int32)_resMan->getUint32(floorHeader.numNodes) + 1;
 	if (_router->_nNodes >= O_GRID_SIZE) {
 		debug(3, "Logic::plotRouteGrid(): RouteFinder: too many nodes %d", _router->_nNodes);
 		_resMan->resClose(floorObject->o_resource);
 		return;
 	}
 
-	memmove(&_router->_bars[0], fPolygrid, _router->_nBars * sizeof(BarData));
-	fPolygrid += _router->_nBars * sizeof(BarData);
+	// Parse the grid lines...
+	for (int j = 0; j < _router->_nBars; j++) {
+		_router->_bars[j].x1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].y1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].x2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].y2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].xmin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].ymin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].xmax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].ymax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].dx   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].dy   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].co   = _resMan->readUint32(fPolygrid); fPolygrid += 4;
+	}
 
-	// Parse the grid...
+	// Parse the node points...
 	for (int j = 1; j < _router->_nNodes; j++) {
-		memmove(&_router->_node[j].x, fPolygrid, 2 * sizeof(int16));
-		fPolygrid += 2 * sizeof(int16);
+		_router->_node[j].x = (int16)_resMan->readUint16(fPolygrid); fPolygrid += sizeof(int16);
+		_router->_node[j].y = (int16)_resMan->readUint16(fPolygrid); fPolygrid += sizeof(int16);
 	}
 
 	// Draw the grid (color 254)...
