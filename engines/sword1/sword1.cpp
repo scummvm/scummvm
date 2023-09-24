@@ -317,10 +317,12 @@ void SwordEngine::checkKeys() {
 			// lock the mouse cursor within the window boundaries.
 			if (_keyPressed.hasFlags(Common::KBD_SHIFT))
 				_systemVars.displayDebugMouse = !_systemVars.displayDebugMouse;
+			_screen->fullRefresh(true);
 			break;
 		case Common::KEYCODE_g: // CTRL-G: Toggles walkgrid displaying
 			if (_keyPressed.hasFlags(Common::KBD_CTRL))
 				_systemVars.displayDebugGrid = !_systemVars.displayDebugGrid;
+			_screen->fullRefresh(true);
 			break;
 		case Common::KEYCODE_1: // Slow mode
 			{
@@ -894,6 +896,7 @@ void SwordEngine::showDebugInfo() {
 
 	if (_systemVars.displayDebugGrid) {
 		_logic->plotRouteGrid(playerCompact);
+		_screen->fullRefresh(true);
 	}
 
 	if (_systemVars.displayDebugMouse) {
@@ -910,6 +913,8 @@ void SwordEngine::showDebugInfo() {
 		_screen->plotPoint(playerCompact->o_xcoord - 128, playerCompact->o_ycoord - 130, 255);
 		_screen->plotPoint(playerCompact->o_xcoord - 128, playerCompact->o_ycoord - 126, 255);
 		_screen->plotPoint(playerCompact->o_xcoord - 126, playerCompact->o_ycoord - 128, 255);
+
+		_screen->fullRefresh(true);
 	}
 }
 
