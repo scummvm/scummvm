@@ -157,6 +157,17 @@ void Section4::poof(int trigger) {
 	}
 }
 
+bool Section4::checkOrderWindow() {
+	if (_G(flags)[V168] && _G(flags)[V181] && _G(flags)[V176] && _G(flags)[V159]) {
+		player_set_commands_allowed(false);
+		_G(flags)[V152] = 1;
+		disable_player_commands_and_fade_init(g10027);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } // namespace Rooms
 } // namespace Burger
 } // namespace M4
