@@ -1693,6 +1693,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From European Arthur's Teacher Trouble CD [English, German, French]
+	{
+		{
+			"tortoise",
+			"Demo",
+			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"TORTB.EXE"
+	},
+
 	{
 		{
 			"tortoise",
