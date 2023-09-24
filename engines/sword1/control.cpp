@@ -1950,6 +1950,9 @@ void Control::implementSave() {
 			}
 		}
 
+		if (useWheelScroll)
+			_scroll = 0;
+
 		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
 			if (_buttonPressed > SAVEBUTTONS - 6) {
 				switch (_buttonPressed) {
@@ -2354,6 +2357,9 @@ void Control::implementRestore() {
 				}
 			}
 		}
+
+		if (useWheelScroll)
+			_scroll = 0;
 
 		if ((_mouseState & BS1L_BUTTON_UP) && (_buttonPressed)) {
 			if (_buttonPressed > SAVEBUTTONS - 6) {
