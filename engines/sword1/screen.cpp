@@ -139,6 +139,13 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 }
 
 void Screen::startFadePaletteDown(int speed) {
+	if (_forceNextFadeOutToBlack) {
+		// See Logic::fnPlaySequence() for more details about this...
+		debug(1, "Screen::startFadePaletteDown(): forced bogus fade out to black after Smacker video");
+		_forceNextFadeOutToBlack = false;
+		fnSetFadeTargetPalette(0, 255, 0, BORDER_BLACK);
+	}
+
 	if (SwordEngine::_systemVars.wantFade) {
 		_paletteFadeInfo.paletteIndex = speed;
 		_paletteFadeInfo.paletteCount = 64;
@@ -150,6 +157,11 @@ void Screen::startFadePaletteDown(int speed) {
 }
 
 void Screen::startFadePaletteUp(int speed) {
+	if (_forceNextFadeOutToBlack) {
+		// See Logic::fnPlaySequence() for more details about this...
+		_forceNextFadeOutToBlack = false;
+	}
+
 	if (SwordEngine::_systemVars.wantFade) {
 		// Set up the source palette;
 		// We are deliberately casting these to signed byte,
@@ -224,6 +236,11 @@ void Screen::fullRefresh(bool soft) {
 	_fullRefresh = true;
 	if (!soft)
 		_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
+}
+
+void Screen::setNextFadeOutToBlack() {
+	// See Logic::fnPlaySequence() for more details about this...
+	_forceNextFadeOutToBlack = true;
 }
 
 int16 Screen::stillFading() {

@@ -93,6 +93,7 @@ public:
 	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor = -1);
 	int16 stillFading();
 	void fullRefresh(bool soft = false);
+	void setNextFadeOutToBlack();
 
 	bool showScrollFrame();
 	void updateScreen();
@@ -185,6 +186,8 @@ private:
 	uint8 _targetPalette[256 * 3];
 	uint8 _currentPalette[256 * 3]; // for fading
 	uint8 _zeroPalette[256 * 3];
+
+	bool _forceNextFadeOutToBlack = false;
 };
 
 } // End of namespace Sword1

@@ -985,8 +985,9 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 		// and the video is finished earlier, another palette fade(-out) is performed with the
 		// wrong palette. This happens when traveling to Spain or Ireland. It couldn't happen
 		// in the original, as it asked for the CD before loading the scene.
-		// Let's fix this by forcing a black fade palette.
-		_screen->fnSetFadeTargetPalette(0, 255, 0, BORDER_BLACK);
+		// Let's fix this by forcing a black fade palette on the next fade out. If a fade-in
+		// is then scheduled, we will clear the flag without doing anything different from the usual.
+		_screen->setNextFadeOutToBlack();
 	}
 	return SCRIPT_CONT;
 }
