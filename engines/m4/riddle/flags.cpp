@@ -19,32 +19,37 @@
  *
  */
 
-#ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM901_H
-#define M4_RIDDLE_ROOMS_SECTION9_ROOM901_H
-
-#include "m4/core/rooms.h"
+#include "m4/riddle/flags.h"
+#include "m4/riddle/vars.h"
+#include "m4/core/term.h"
+#include "m4/adv_r/adv.h"
+#include "m4/adv_r/adv_inv.h"
 
 namespace M4 {
 namespace Riddle {
-namespace Rooms {
 
-class Room901 : public Room {
-private:
-	bool _btnPressed = false;
+long Flags::_flags[FLAGS_COUNT];
 
-	static void escapePressed(void *, void *);
+Flags::Flags() {
+	reset();
+}
 
-public:
-	Room901() : Room() {}
-	~Room901() override {}
+void Flags::sync(Common::Serializer &s) {
+	size_t count = size();
+	for (uint i = 0; i < count; ++i)
+		s.syncAsSint32LE((*this)[i]);
+}
 
-	void preload() override;
-	void init() override;
-	void daemon() override;
-};
+void Flags::reset() {
+	Common::fill(&(*this)[0], &(*this)[0] + FLAGS_COUNT, 0);
+	_flags[V071] = 2;
+	_flags[V088] = 1;
+	_flags[V086] = 2;
+	_flags[V014] = 1;
+	_flags[V270] = 824;
+	_flags[V282] = 1;
+	_flags[V292] = 1;
+}
 
-} // namespace Rooms
 } // namespace Riddle
 } // namespace M4
-
-#endif
