@@ -28,7 +28,17 @@
 namespace Nancy {
 namespace Action {
 
-// The base class for conversations, with no video data
+// The base class for conversations, with no video data. Contains the following:
+// - a base sound for the NPC's speech and its caption (mandatory)
+// - a list of possible player responses, also with sounds and captions (optional)
+// Captions are displayed in the Textbox, and player responses are also selectable there.
+// Captions are hypertext; meaning, they contain extra data related to the text (see misc/hypertext.h)
+// A conversation will auto-advance to a next scene when no responses are available; the next scene
+// can either be described within the Conversation data, or can be whatever's pushed onto the scene "stack".
+// Also supports branching scenes depending on a condition, though that is only used in older games.
+// Player responses can also be conditional; the original engine had special-purpose "infocheck"
+// functions, two per character ID, which were used to evaluate those conditions. We replace that with
+// the data bundled inside nancy.dat (see devtools/create_nancy).
 class ConversationSound : public RenderActionRecord {
 public:
 	ConversationSound();

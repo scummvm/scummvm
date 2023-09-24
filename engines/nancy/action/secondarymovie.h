@@ -28,6 +28,14 @@
 namespace Nancy {
 namespace Action {
 
+// Plays an AVF video. Optionally supports:
+// - playing a sound;
+// - reverse playback;
+// - moving with the scene's background frame;
+// - hiding of player cursor (and thus, disabling input);
+// - setting event flags on a specific frame, as well as at the end of the video;
+// - changing the scene after playback ends
+// Mostly used for cinematics, with some occasional uses for background animations
 class PlaySecondaryMovie : public RenderActionRecord {
 public:
 	static const byte kMovieSceneChange			= 5;

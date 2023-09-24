@@ -28,8 +28,7 @@
 namespace Nancy {
 namespace Action {
 
-// Action record used for rendering text inside the game viewport
-// (before its introduction all text outside the textbox was prerendered)
+// Action record used for rendering text inside the game viewport.
 // Can be used in two ways: for single-use texts that get thrown away
 // after a scene change, or for permanent storage (used in nancy's journal)
 // Does not own or display any image data; it draws to a surface inside

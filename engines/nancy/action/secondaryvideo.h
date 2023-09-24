@@ -28,8 +28,10 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord that shows NPC animations outside of dialogue. Supports
-// different animations depending on whether the NPC is hovered by the mouse
+// Shows an (optionally) looping AVF video, which can move around
+// the screen with the background frame. When hovered, the video can
+// play a special animation instead of the normal looping one.
+// Used for character animations _outside_ of conversations.
 class PlaySecondaryVideo : public RenderActionRecord {
 public:
 	static const byte kNoVideoHotspots	= 1;

@@ -27,13 +27,20 @@
 namespace Nancy {
 namespace Action {
 
-// ActionRecord describing an overlay on top of the viewport.
-// That overlay can be either a short animation, or a static bitmap
-// that changes depending on the current viewport frame.
-// This class covers three different ActionRecord types:
-// - PlayStaticBitmapAnimation: nancy1 only, does not support static mode
-// - PlayIntStaticBitmapAnimation: nancy1 only, same as above but supports being interrupted by an event flag
-// - Overlay: nancy2 and above, supports static mode
+// Places a static image or a looping animation on top of the background
+// Can move along with the scene's background frame, however:
+// - in animation mode, the animation is the same for every background frame
+// - in static mode, every background frame gets its own static image
+// Also supports:
+// - playing a sound;
+// - playing backwards;
+// - looping (non-looping animated overlays are very rare);
+// - getting interrupted by an event flag;
+// - changing the scene/setting flags when clicked/interrupted
+// Originally introduced in nancy1, where it was split into two different types:
+// PlayStaticBitmapAnimation and PlayIntStaticBitmapAnimation (the latter was interruptible)
+// In nancy2, the two got merged inside the newly-renamed Overlay;
+// that was also when static mode got introduced.
 class Overlay : public RenderActionRecord {
 public:
 	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible) {}
