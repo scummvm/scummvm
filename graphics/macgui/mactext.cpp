@@ -851,6 +851,25 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					break;
 					}
 
+				case 'T': { // \016T -- table
+					s++;
+
+					char cmd = *s++;
+
+					if (cmd == 'h') { // Header, beginning of the table
+					} else if (cmd == 'b') { // Body start
+					} else if (cmd == 'B') { // Body end
+					} else if (cmd == 'r') { // Row
+					} else if (cmd == 'c') { // Cell start
+						uint16 flags;
+						s = readHex(&flags, s, 2);
+					} else if (cmd == 'C') { // Cell end
+					} else {
+						error("MacText: Unknown table subcommand (%c)", cmd);
+					}
+					break;
+					}
+
 				default: {
 					uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
 

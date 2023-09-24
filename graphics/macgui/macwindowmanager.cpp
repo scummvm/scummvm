@@ -618,6 +618,14 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					uint16 len;
 					s = readHex(&len, s, 2);
 					s += len;
+				} else if (*s == 'T') { // table
+					s++;
+					char cmd = *s;
+
+					if (cmd == 'h' || cmd == 'b' || cmd == 'B' || cmd == 'r' || cmd == 'C')
+						s++;
+					else if (cmd == 'c') // cell
+						s += 3;
 				} else
 					s += 22;
 			} else {

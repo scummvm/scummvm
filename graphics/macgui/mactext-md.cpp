@@ -133,21 +133,33 @@ void render_table(Common::SDDataBuffer *ob, const Common::SDDataBuffer *header, 
 	if (!body)
 		return;
 
-	warning("STUB: render_table(%s, %s)", PR(header), PR(body));
+	Common::String res = Common::String::format("\016Th" "%s\n" "\001\016Tb" "%s\n" "\016TB\n",
+			Common::String((const char *)header->data , header->size).c_str(), Common::String((const char *)body->data , body->size).c_str());
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_table(%s, %s)", PR(header), PR(body));
 }
 
 void render_table_row(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, void *opaque) {
 	if (!text)
 		return;
 
-	warning("STUB: render_table_row(%s)", PR(text));
+	Common::String res = Common::String::format("\001\016Tr" "%s\n", Common::String((const char *)text->data , text->size).c_str());
+	sd_bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_table_row(%s)", PR(text));
 }
 
 void render_table_cell(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int flags, void *opaque) {
 	if (!text)
 		return;
 
-	warning("STUB: render_table_cell(%s)", PR(text));
+	Common::String res = Common::String::format("\001\016Tc%02x" "%s" "\001\016TC", flags, Common::String((const char *)text->data , text->size).c_str());
+
+	sd_bufput(ob, res.c_str(), res.size());
+
+	debug(1, "render_table_cell(%s), flags: %d", PR(text), flags);
 }
 
 int render_autolink(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, Common::MKDAutolink type, void *opaque) {
@@ -327,7 +339,7 @@ void MacText::setMarkdownText(const Common::U32String &str) {
 	mdState.linkg = 0;
 	mdState.linkb = 0xff;
 
-	Common::SDMarkdown md(0, 16, &cb, &mdState);
+	Common::SDMarkdown md(Common::MKDEXT_TABLES, 16, &cb, &mdState);
 	Common::String rendered = md.render((const byte *)input.c_str(), input.size());
 
 	setText(rendered);
