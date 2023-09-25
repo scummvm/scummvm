@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "m4/riddle/rooms/section9/room901.h"
+#include "m4/riddle/hotkeys.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
 #include "m4/gui/gui_sys.h"
@@ -39,7 +41,13 @@ void Room901::preload() {
 }
 
 void Room901::init() {
-	if (true) {
+	// WORKAROUND: Original created a dummy file called believe.it 
+	// on first run with "Never forget the llama and the spleen."
+	// For ScummVM, I've instead used a simple config manager flag
+
+	if (!ConfMan.getBool("believe_it")) {
+		ConfMan.setBool("believe_it", true);
+
 		_G(game).previous_room = 494;
 		digi_preload("wind", 901);
 		_G(flags)[V001] = 1;
@@ -73,11 +81,10 @@ void Room901::daemon() {
 
 	case 7:
 	case 56:
-#ifdef TODO
-		AddSystemHotkey(KEY_ESCAPE, cb_Esc);
-		AddSystemHotkey(KEY_F2, cb_F2);
-		AddSystemHotkey(KEY_F3, cb_F3);
-#endif
+		AddSystemHotkey(KEY_ESCAPE, Hotkeys::escape_key_pressed);
+		AddSystemHotkey(KEY_F2, Hotkeys::cb_F2);
+		AddSystemHotkey(KEY_F3, Hotkeys::cb_F3);
+
 		_G(game).setRoom(494);
 		break;
 
@@ -121,9 +128,9 @@ void Room901::daemon() {
 }
 
 void Room901::escapePressed(void *, void *) {
-	// TODO
+	_G(kernel).trigger_mode = KT_DAEMON;
+	disable_player_commands_and_fade_init(56);
 }
-
 
 } // namespace Rooms
 } // namespace Riddle
