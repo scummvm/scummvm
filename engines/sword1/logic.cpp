@@ -1886,7 +1886,7 @@ void Logic::plotRouteGrid(Object *megaObject) {
 		_router->_bars[j].ymax = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
 		_router->_bars[j].dx   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
 		_router->_bars[j].dy   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].co   = (int16)_resMan->readUint32(fPolygrid); fPolygrid += 4;
+		_router->_bars[j].co   = (int32)_resMan->readUint32(fPolygrid); fPolygrid += 4;
 	}
 
 	// Parse the node points...
