@@ -1216,6 +1216,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// English / Spanish demo
+	// from einstein95
+	{
+		{
+			"harryhh",
+			"Demo English/Spanish",
+			AD_ENTRY1s("Harry & the Haunted House Demo", "42b5171277e7dee1edd47812f85760af", 622),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
 	// part of "Super Living Books" compilation
 	// from rgemini, bug #5726
 	{
@@ -3016,6 +3033,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		"MONSTER.EXE"
 	},
+
+	// English / Spanish demo
+	// from einstein95
+	{
+		{
+			"lilmonster",
+			"Demo English/Spanish",
+			AD_ENTRY1s("Little Monster at School Demo", "52eee4e6ea83ff494765d92affe5613e", 622),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"Living Books Player"
+	},
+
 
 	{
 		{
