@@ -2592,6 +2592,7 @@ void ScummEngine_v5::o5_setVarRange() {
 
 	// Macintosh version of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
+#if 0
 		VAR(68) = 0;
 		VAR(69) = 0;
 		VAR(70) = 168;
@@ -2606,6 +2607,7 @@ void ScummEngine_v5::o5_setVarRange() {
 		VAR(79) = 184;
 		VAR(80) = 192;
 		VAR(81) = 192;
+#endif
 	}
 }
 
@@ -2949,6 +2951,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh version of indy3ega used different interface, so adjust values.
 			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {
+#if 0
 				switch (verb) {
 				case 1:
 				case 2:
@@ -2982,6 +2985,7 @@ void ScummEngine_v5::o5_verbOps() {
 				default:
 					break;
 				}
+#endif
 			} else if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 				if (_game.id == GID_ZAK && verb == 116)
 					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
