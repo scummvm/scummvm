@@ -85,11 +85,13 @@ private:
 	noWalkRect *_walk2 = nullptr;
 	noWalkRect *_walk3 = nullptr;
 	noWalkRect *_walk4 = nullptr;
+	HotSpotRec *_hotspot = nullptr;
 	bool _flag1 = false;
 	bool _flag2 = false;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	int _val4 = 0;
 
 	void loadSeries();
 	void setHotspots1();
@@ -99,6 +101,9 @@ private:
 	void setupFish();
 	void setupTt();
 	void setNoWalk();
+	void parseJail();
+
+	int tabooAreaY(int x) const;
 
 public:
 	Room406();
@@ -106,6 +111,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

@@ -532,6 +532,94 @@ void Room406::init() {
 }
 
 void Room406::daemon() {
+	// TODO
+}
+
+void Room406::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (inv_player_has("HOOK")) {
+		if (player_said("HOOK", "BARRED WINDOW ")) {
+			_G(wilbur_should) = 11;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		} else if (!player_said("HOOK") ||
+				(player_said("HOOK") && player_said_any("YARD", "YARD "))) {
+			_G(wilbur_should) = 8;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		}
+	} else if (player_said("GATE") && _G(flags)[V172] == 10025) {
+		player_hotspot_walk_override(280, 296, 2);
+	} else if (player_said("GEAR") && player_said_any("WINCH", "LEVER", "LEVER ") && _G(flags)[V175]) {
+		player_hotspot_walk_override(546, 284, 9);
+	} else if (player_said("TAKE", "DOG COLLAR   ") || player_said("FISH", "TIRE")) {
+		player_hotspot_walk_override(248, 298, 1);
+	} else if (player_said_any("CHAIN    ", "CHAIN   ")) {
+		player_walk_to(340, 300);
+	} else if (player_said("GEAR", "DISC")) {
+		_val4 = 4007;
+		player_hotspot_walk_override(44, 310, -1, 5);
+	} else if (player_said("GEAR", "DISC ")) {
+		_val4 = 4007;
+		player_hotspot_walk_override(460, 346, -1, 5);
+	} else if (player_said("LOOK AT") && player_said_any("JAIL CELL", "JAIL CELL ") && _G(flags)[V174] == 4004) {
+		if (!_flag1) {
+			parseJail();
+			_G(kernel).call_daemon_every_loop = true;
+
+			if (player_said("LOOK AT", "JAIL CELL"))
+				player_hotspot_walk_override(173, 302, 10);
+		}
+	} else {
+		if (_G(flags)[V174] == 4002) {
+			if (_G(player).walk_x >= 180 && _G(player).walk_x <= 309 &&
+				_G(player).walk_y >= 271 && _G(player).walk_y <= 280)
+				player_walk_to(_G(player).walk_x, 281);
+
+			if (_G(player).walk_x >= 350 && _G(player).walk_x <= 409 &&
+				_G(player).walk_y >= 263 && _G(player).walk_y <= 283)
+				player_walk_to(_G(player).walk_x, 284);
+		}
+
+		if (_G(flags)[V174] == 4004) {
+			if (_G(player).walk_x >= 336 && _G(player).walk_x <= 388 &&
+				_G(player).walk_y >= 272 && _G(player).walk_y <= 291)
+				player_walk_to(_G(player).walk_x, 292);
+
+			if (_G(player).walk_x >= 378 && _G(player).walk_x <= 409 &&
+				_G(player).walk_y >= 259 && _G(player).walk_y <= 291)
+				player_walk_to(_G(player).walk_x, 292);
+		}
+
+		if (player_said("FORCE FIELD")) {
+			player_set_facing_hotspot();
+		} else if (!_G(flags)[V175]) {
+			_hotspot = hotspot_which(_G(click_x), _G(click_y));
+			assert(_hotspot);
+
+			if (_hotspot->feet_y == 0x7fff) {
+				term_message("click_y: %d     taboo_area_y (click_x)",
+					_G(click_x), tabooAreaY(_G(click_x)));
+			} else {
+				term_message("feet_y: %d     taboo_area_y (feet_x): %d",
+					_hotspot->feet_y, tabooAreaY(_hotspot->feet_x));
+			}
+
+			if (_hotspot->feet_x > _hotspot->feet_y ||
+					(_hotspot->feet_y == 0x7fff && _G(click_y) > tabooAreaY(_G(click_x))))
+				player_walk_to(_hotspot->feet_x, tabooAreaY(_hotspot->feet_x) + 1);
+		}
+
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room406::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID) || _G(walker).wilbur_match(MATCH))
+		_G(player).command_ready = false;
 }
 
 void Room406::loadSeries() {
@@ -732,6 +820,22 @@ void Room406::setNoWalk() {
 		_walk3 = intr_add_no_walk_rect(336, 272, 388, 291, 335, 292);
 		_walk4 = intr_add_no_walk_rect(378, 259, 409, 291, 377, 292);
 	}
+}
+
+void Room406::parseJail() {
+	if (player_said("LOOK AT") && player_said_any("JAIL CELL", "JAIL CELL "))
+		_flag1 = true;
+
+	if (_flag1) {
+		player_update_info();
+
+		if (_G(player_info).x < 183 && _G(player_info).y < 312 && player_commands_allowed())
+			disable_player_commands_and_fade_init(4003);
+	}
+}
+
+int Room406::tabooAreaY(int x) const {
+	return ((double)x * -0.1050583 + -240.21069) * -1.0;
 }
 
 } // namespace Rooms
