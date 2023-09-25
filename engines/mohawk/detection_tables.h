@@ -1045,6 +1045,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// The Amazing Writing Machine
+	// Mac/Win hybrid disc
+	{
+		{
+			"amazingwriting",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("system.dat", "h:6d65aa2cc7d437bb352aa18c0d63e332", 131),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_AMAZINGWRITING,
+		0,
+		0
+	},
+
 	// Harry and the Haunted House v1.0E
 	// English Windows 3.11
 	// From strangerke

@@ -76,6 +76,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"wsg", "Williams-Sonoma Guide to Good Cooking" },
 	{"mathsworkshop", "Maths Workshop" },
 	{"wricamact", "Write, Camera, Action!"},
+	{"amazingwriting", "The Amazing Writing Machine"},
 	{nullptr, nullptr}
 };
 
