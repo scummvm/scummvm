@@ -199,7 +199,7 @@ MODULE_OBJS = \
 	riddle/flags.o \
 	riddle/hotkeys.o \
 	riddle/inventory.o \
-	ridle/vars.o \
+	riddle/vars.o \
 	riddle/walker.o
 
 
