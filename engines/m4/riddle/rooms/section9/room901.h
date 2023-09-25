@@ -22,20 +22,18 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM901_H
 #define M4_RIDDLE_ROOMS_SECTION9_ROOM901_H
 
-#include "m4/core/rooms.h"
+#include "m4/riddle/rooms/section9/section9_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room901 : public Room {
+class Room901 : public Section9Room {
 private:
 	bool _btnPressed = false;
 
-	static void escapePressed(void *, void *);
-
 public:
-	Room901() : Room() {}
+	Room901() : Section9Room() {}
 	~Room901() override {}
 
 	void preload() override;

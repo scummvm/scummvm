@@ -15,44 +15,30 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
-#include "m4/riddle/rooms/section9/room902.h"
-#include "m4/riddle/vars.h"
-#include "m4/graphics/gr_series.h"
-#include "m4/gui/gui_sys.h"
-#include "m4/platform/keys.h"
+#ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM_H
+#define M4_RIDDLE_ROOMS_SECTION9_ROOM_H
+
+#include "m4/riddle/rooms/room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-void Room902::preload() {
-	_G(player).walker_type = 1;
-	_G(player).shadow_type = 1;
-	_G(player).walker_in_this_scene = false;
-}
+class Section9Room : public Room {
+protected:
+	static void escapePressed(void *, void *);
 
-void Room902::init() {
-	player_set_commands_allowed(false);
-	digi_preload("gunshot1", 902);
-	digi_preload("gunshot2", 902);
-	digi_preload("introcu-", 901);
-	digi_play("introcu-", 1, 255, -1, 901);
-	series_load("902 one frame hold");
-	kernel_timing_trigger(1, 1);
-	interface_hide();
-
-	AddSystemHotkey(KEY_ESCAPE, escapePressed);
-	_G(kernel).call_daemon_every_loop = true;
-}
-
-void Room902::daemon() {
-	// TODO
-}
+public:
+	Section9Room() : Room() {}
+	virtual ~Section9Room() {}
+};
 
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
+
+#endif

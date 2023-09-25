@@ -22,15 +22,18 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION9_ROOM902_H
 #define M4_RIDDLE_ROOMS_SECTION9_ROOM902_H
 
-#include "m4/core/rooms.h"
+#include "m4/riddle/rooms/section9/section9_room.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Room902 : public Room {
+class Room902 : public Section9Room {
+private:
+	machine *_title = nullptr;
+
 public:
-	Room902() : Room() {}
+	Room902() : Section9Room() {}
 	~Room902() override {}
 
 	void preload() override;

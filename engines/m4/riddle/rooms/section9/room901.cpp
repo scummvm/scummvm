@@ -127,11 +127,6 @@ void Room901::daemon() {
 		disable_player_commands_and_fade_init(55);
 }
 
-void Room901::escapePressed(void *, void *) {
-	_G(kernel).trigger_mode = KT_DAEMON;
-	disable_player_commands_and_fade_init(56);
-}
-
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
