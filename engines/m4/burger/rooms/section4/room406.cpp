@@ -513,7 +513,7 @@ void Room406::init() {
 
 	case 402:
 		ws_demand_location(44, 310);
-		setDest(120);
+		setDest();
 		break;
 
 	case 404:
@@ -523,7 +523,7 @@ void Room406::init() {
 
 	case 405:
 		ws_demand_location(460, 346);
-		setDest(120);
+		setDest();
 		break;
 
 	default:
