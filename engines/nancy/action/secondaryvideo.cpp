@@ -109,7 +109,7 @@ void PlaySecondaryVideo::updateGraphics() {
 
 			if (lastAnimationFrame > -1 &&
 					(_decoder.atEnd() ||
-					 _decoder.getCurFrame() == lastAnimationFrame + (_decoder.getRate().getNumerator() > 0 ? 1 : -1))) {
+					 _decoder.getCurFrame() == lastAnimationFrame)) {
 				if (_hoverState == kNoHover) {
 					_decoder.seekToFrame(_loopFirstFrame);
 				} else {

@@ -212,7 +212,7 @@ bool AVFDecoder::AVFVideoTrack::setReverse(bool reverse) {
 
 bool AVFDecoder::AVFVideoTrack::endOfTrack() const {
 	if (_reversed)
-		return _curFrame < 0;
+		return _curFrame <= 0;
 
 	return _curFrame >= getFrameCount();
 }

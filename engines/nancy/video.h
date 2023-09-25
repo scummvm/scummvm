@@ -63,7 +63,7 @@ private:
 		uint16 getWidth() const override { return _width; }
 		uint16 getHeight() const override { return _height; }
 		Graphics::PixelFormat getPixelFormat() const override { return _pixelFormat; }
-		int getCurFrame() const override { return _curFrame - 1; }
+		int getCurFrame() const override { return _reversed ? _curFrame : _curFrame - 1; }
 		int getFrameCount() const override { return _frameCount; }
 		bool isSeekable() const override { return true; }
 		bool seek(const Audio::Timestamp &time) override;
