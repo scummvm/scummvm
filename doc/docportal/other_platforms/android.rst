@@ -46,8 +46,6 @@ Click on the correct package to start the download. After it has downloaded, go 
 Transferring game files
 ========================================
 
-Transfer all the required game data files to your device, into a folder accessible by the ScummVM app.
-
 ScummVM has built-in Cloud functionality, which lets you connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page.
 
 There are a few other options to transfer the game files:
@@ -59,61 +57,61 @@ There are a few other options to transfer the game files:
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 
-Adding SAF paths to ScummVM directory list
-==========================================
-Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
-If you find that your existing added games or custom paths no longer work, please edit those paths and this time use the SAF system to browse to the desired locations.
-To do that:
+Adding games
+================
 
-1. For each game whose data is not found, go to the "Paths" tab in the "Game Options" and change the "Game path"
+1. Select **Add Game...** from the launcher.
 
-2. Inside the ScummVM file browser, use "Go Up" until you reach the "root" folder where you will see the "<Add a new folder>" option.
+2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder which has the **<Add a new folder>** option. 
 
 .. figure:: ../images/android/browser-root.png
 
-    File Browser root with <Add a new folder> item
+    Root folder with <Add a new folder> option
 
-3. Choose that, then browse and select the "parent" folder for your games subfolders, e.g. "SD Card > ScummVMgames". Click on "Use this folder".
+3. Select **<Add a new folder>**, browse your device, and select the parent folder for your games subfolders. For example, **SD Card > ScummVMgames**. Select **Use this folder**. 
 
 .. figure:: ../images/android/fs-root.png
     :width: 300 px
 
-    OS file browser root
+    Android file browser root
 
 .. figure:: ../images/android/fs-folder.png
     :width: 300 px
 
-    OS file browser selectable folder with "Use this folder" button
+    Android file browser selectable folder with **Use this folder** button
+
+4. Select **ALLOW** to grant ScummVM access to the content of the folder.  
 
 .. figure:: ../images/android/fs-permission.png
     :width: 300 px
 
-    OS file browser ask to grant ScummVM directory access permission
+    Android file browser request to grant ScummVM directory access permission
 
-4. Then, a new folder "ScummVMgames" will appear on the "root" folder of the ScummVM browser.
+5. In the ScummVM file browser, double-tap to on the added folder to browse through the subfolders. Add a game by selecting the subfolder containing the game files. 
 
-.. figure:: ../images/android/browser-folder-in-list.png
+Step 2, 3 and 4 are done only once. To add more games, repeat Steps 1 and 5. 
 
-    File browser with added SAF folder in root
+.. _addSAFpath:
 
-5. Browse through this folder to your game data.
+    .. note::
+        Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
 
-Steps 2 and 3 need to be done only once for all of your games.
+        If existing added games or custom paths no longer work, go to **Game Options > Paths**, select the path to update, then follow steps 2 through 5 above.
 
+Removing permissions
+************************
 
-Removing SAF path authorizations
-=============================
-In case you would like to revoke any of the granted SAF authorizations, there is an option for this in the "Global Options > Backend" tab as shown on the screenshot below:
+To remove any folder permissions granted to ScummVM, go to the **Global Options > Backend** tab. 
 
 .. figure:: ../images/android/gui-remove-permissions.png
 
-    GUI tab with "Remove folder authorizations..." button
+    Backend tab with "Remove folder authorizations..." button
 
 .. figure:: ../images/android/gui-remove-list.png
 
-    GUI dialog with list of authorizations to revoke
+    Dialog with list of permissions to remove
 
-In case you revoke authorization to a path, still used for specific games/titles, please follow the procedure of fixing them outlined in the previous subheading.
+If any permissions are removed in error, see :ref:`this note <addSAFpath>` for instructions to reinstate them. 
 
 
 Controls
@@ -209,14 +207,14 @@ Configuration file
 The configuration file is in the internal app folder, and this path cannot be changed.
 
 Accessing the internal app folder
-************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To access the internal app folder, use ScummVM's built-in LAN functionality:
 
 1. From the Launcher, select **Options** and then the **LAN** tab.
 2. Select **/root/Path**.
-3. Use the file browser to **Go up** to the root of the ScummVM internal app folder.
-4. Select the **ScummVM data (int)** shortcut, and tap **Choose**.
+3. Use the file browser to **Go up** to the root of the ScummVM file browser.
+4. Select the **ScummVM data (Internal)** folder, and tap **Choose**.
 5. Run the server to access the ``scummvm.ini`` configuration file.
 
 For more information, see the :doc:`../use_scummvm/LAN` page.
