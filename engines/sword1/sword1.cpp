@@ -1150,7 +1150,9 @@ void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
 			}
 		}
 
+		_screen->_screenAccessMutex.lock();
 		_system->updateScreen();
+		_screen->_screenAccessMutex.unlock();
 
 		if (delay > 0)
 			_system->delayMillis(10);

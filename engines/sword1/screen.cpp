@@ -156,7 +156,9 @@ void Screen::startFadePaletteDown(int speed) {
 		_paletteFadeInfo.fadeCount = 0;
 		_paletteFadeInfo.paletteStatus = FADE_DOWN;
 	} else {
+		_screenAccessMutex.lock();
 		_system->getPaletteManager()->setPalette(_zeroPalette, 0, 256);
+		_screenAccessMutex.unlock();
 	}
 }
 
@@ -190,7 +192,9 @@ void Screen::startFadePaletteUp(int speed) {
 			shiftedPalette[i] = _currentPalette[i] << 2;
 		}
 
+		_screenAccessMutex.lock();
 		_system->getPaletteManager()->setPalette(shiftedPalette, 0, 256);
+		_screenAccessMutex.unlock();
 	}
 }
 
@@ -211,7 +215,9 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id) {
 	}
 	_resMan->resClose(id);
 
+	_screenAccessMutex.lock();
 	_system->getPaletteManager()->setPalette(_targetPalette + 3 * start, start, length);
+	_screenAccessMutex.unlock();
 }
 
 void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor) {
@@ -238,8 +244,11 @@ void Screen::fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int s
 
 void Screen::fullRefresh(bool soft) {
 	_fullRefresh = true;
-	if (!soft)
+	if (!soft) {
+		_screenAccessMutex.lock();
 		_system->getPaletteManager()->setPalette(_targetPalette, 0, 256);
+		_screenAccessMutex.unlock();
+	}
 }
 
 void Screen::setNextFadeOutToBlack() {
@@ -281,7 +290,9 @@ void Screen::fadePalette() {
 		outPal[i] = ((byte)curValueSigned) << 2;
 	}
 
+	_screenAccessMutex.lock();
 	_system->getPaletteManager()->setPalette((const byte *)outPal, 0, 256);
+	_screenAccessMutex.unlock();
 
 	_paletteFadeInfo.paletteCount--;
 
@@ -317,7 +328,11 @@ bool Screen::showScrollFrame() {
 	uint16 avgScrlY = (uint16)(_oldScrollY + Logic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
 
 	_system->copyRectToScreen(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
+
+	_screenAccessMutex.lock();
 	_system->updateScreen();
+	_screenAccessMutex.unlock();
+
 	return true;
 }
 
@@ -430,7 +445,10 @@ void Screen::updateScreen() {
 			scrnBuf += _scrnSizeX * SCRNGRID_Y;
 		}
 	}
+
+	_screenAccessMutex.lock();
 	_system->updateScreen();
+	_screenAccessMutex.unlock();
 }
 
 void Screen::newScreen(uint32 screen) {
@@ -595,7 +613,9 @@ void Screen::initFadePaletteServer() {
 	memset(_paletteFadeInfo.dstPalette, 0, sizeof(_paletteFadeInfo.dstPalette));
 	memset(_paletteFadeInfo.srcPalette, 0, sizeof(_paletteFadeInfo.srcPalette));
 
+	_screenAccessMutex.lock();
 	_system->getPaletteManager()->setPalette((const byte *)_paletteFadeInfo.srcPalette, 0, 256);
+	_screenAccessMutex.unlock();
 }
 
 void Screen::processImage(uint32 id) {
@@ -1376,7 +1396,9 @@ void Screen::fnFlash(uint8 color) {
 		return;
 	}
 
+	_screenAccessMutex.lock();
 	_system->getPaletteManager()->setPalette(targetColor, 0, 1);
+	_screenAccessMutex.unlock();
 
 	if (color == FLASH_RED || color == FLASH_BLUE) {
 		// This is what the original did here to induce a small wait cycle
@@ -1387,7 +1409,9 @@ void Screen::fnFlash(uint8 color) {
 		// We induce a delay instead
 		_system->delayMillis(200);
 
+		_screenAccessMutex.lock();
 		_system->getPaletteManager()->setPalette(_black, 0, 1);
+		_screenAccessMutex.unlock();
 	}
 }
 

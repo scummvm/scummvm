@@ -23,6 +23,7 @@
 #define SWORD1_SCREEN_H
 
 #include "sword1/sworddefs.h"
+#include "common/mutex.h"
 
 class OSystem;
 
@@ -110,6 +111,8 @@ public:
 	void plotLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
 	void plotPoint(int32 x, int32 y, uint8 color);
 	void bresenhamLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
+
+	Common::Mutex _screenAccessMutex; // To coordinate actions between the main thread and the palette fade thread
 
 private:
 	// The original values are 6-bit RGB numbers, so they have to be shifted,

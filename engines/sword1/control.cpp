@@ -2756,7 +2756,10 @@ void Control::delay(uint32 msecs) {
 			}
 		}
 
+		_screen->_screenAccessMutex.lock();
 		_system->updateScreen();
+		_screen->_screenAccessMutex.unlock();
+
 		_system->delayMillis(10);
 	} while (_system->getMillis() < endTime);
 }
