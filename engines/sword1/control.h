@@ -194,12 +194,16 @@ private:
 	bool convertSaveGame(uint8 slot, char *desc);
 
 	void delay(uint32 msecs);
+	bool gameVersionIsAkella();
+	bool gameVersionIsMediaHouse();
 	bool loadCustomStrings(const char *filename);
 
 	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
 
 	Common::MemoryWriteStreamDynamic *_tempThumbnail;
 	static const uint8 _languageStrings[8 * 20][43];
+	static const uint8 _akellaLanguageStrings[20][43];
+	static const uint8 _mediaHouseLanguageStrings[20][43];
 	uint8 _customStrings[20][43];
 	const uint8(*_lStrings)[43];
 	SwordEngine *_vm;

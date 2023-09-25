@@ -196,7 +196,14 @@ Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *
 	_screen = pScreen;
 	_logic = pLogic;
 
-	_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
+	if (gameVersionIsAkella()) {
+		_lStrings = _akellaLanguageStrings;
+	} else if (gameVersionIsMediaHouse()) {
+		_lStrings = _mediaHouseLanguageStrings;
+	} else {
+		_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
+	}
+
 	_selectedButton = 255;
 	_panelShown = false;
 	_tempThumbnail = 0;
@@ -3159,6 +3166,24 @@ void Control::doRestore() {
 		Logic::_scriptVars[PLAYINGDEMO] = 1;
 }
 
+bool Control::gameVersionIsAkella() {
+	if (SwordEngine::_systemVars.realLanguage == Common::RU_RUS) {
+		uint32 resId = _resMan->getDeathFontId();
+		return resId == SR_DEATHFONT;
+	} else {
+		return false;
+	}
+}
+
+bool Control::gameVersionIsMediaHouse() {
+	if (SwordEngine::_systemVars.realLanguage == Common::RU_RUS) {
+		uint32 resId = _resMan->getDeathFontId();
+		return resId == SR_FONT;
+	} else {
+		return false;
+	}
+}
+
 bool Control::loadCustomStrings(const char *filename) {
 	Common::File f;
 
@@ -3331,6 +3356,53 @@ const uint8 Control::_languageStrings[8 * 20][43] = {
 	"Efeitos",
 	"Fim",
 	"UNIDADE CHEIA!",
+};
+
+// Russian versions
+const uint8 Control::_akellaLanguageStrings[20][43] = {
+	"\x20\x20\x20\x20\x20\x20",                                         // "PAUSED",
+	"\x93\x91\x92\x80\x8D\x8E\x82\x88\x92\x85\x20\x84\x88\x91\x8A\x2D", // "PLEASE INSERT CD-",
+	"\x45\x4E\x54\x45\x52\x2D\xAF\xE0\xAE\xA4\xAE\xAB\xA6\xA8\xE2\xEC", // "THEN PRESS A KEY",
+	"\x8D\x85\x82\x85\x90\x8D\x9B\x89\x20\x43\x44",                     // "INCORRECT CD",
+	"\x40",                                                             // "Save",
+	"\x7F",                                                             // "Restore",
+	"\xD7",                                                             // "Restart",
+	"\xD7",                                                             // "Start",
+	"\xD8",                                                             // "Quit",
+	"\xDD",                                                             // "Speed",
+	"\xDE",                                                             // "Volume",
+	"\xF7",                                                             // "Text",
+	"\xFE",                                                             // "Done",
+	"OK",
+	"\x8E\xE2\xAC\xA5\xAD\xA0",                                         // "Cancel",
+	"\x20\x20\x20\x20\x20",                                             // "Music",
+	"\x20\x20\x20\x20\x20",                                             // "Speech",
+	"\x20\x20",                                                         // "Fx",
+	"\x8A\xAE\xAD\xA5\xE6",                                             // "The End",
+	"DRIVE FULL!",
+};
+
+const uint8 Control::_mediaHouseLanguageStrings[20][43] = {
+	"\x8F\x80\x93\x87\x80",                                                                         // "PAUSED",
+	"\x82\x91\x92\x80\x82\x9C\x92\x85\x20\x43\x44\x2D",                                             // "PLEASE INSERT CD-",
+	"\x88\x20\x8D\x80\x86\x8C\x88\x92\x85\x20\x8B\x9E\x81\x93\x9E\x20\x8A\x8B\x80\x82\x88\x98\x93", // "THEN PRESS A KEY",
+	"\x8D\x85\x20\x92\x8E\x92\x20\x84\x88\x91\x8A",                                                 // "INCORRECT CD",
+	"\x91\xAE\xE5\x70\xA0\xAD\xA8\xE2\xEC",                                                         // "Save",
+	"\x87\xA0\xA3\x70\xE3\xA7\xA8\xE2\xEC",                                                         // "Restore",
+	"\x90\xA5\xE1\xE2\xA0\x70\xE2",                                                                 // "Restart",
+	"\x91\xE2\xA0\x70\xE2",                                                                         // "Start",
+	"\x82\xEB\xE5\xAE\xA4",                                                                         // "Quit",
+	"\x91\xAA\xAE\x70\xAE\xE1\xE2\xEC",                                                             // "Speed",
+	"\x83\x70\xAE\xAC\xAA\xAE\xE1\xE2\xEC",                                                         // "Volume",
+	"\x92\xA5\xAA\xE1\xE2",                                                                         // "Text",
+	"\x82\xE1\xA5",                                                                                 // "Done",
+	"\x8E\xAA",                                                                                     // "OK",
+	"\x8E\xE2\xAC\xA5\xAD\xA0",                                                                     // "Cancel",
+	"\x8C\xE3\xA7\xEB\xAA\xA0",                                                                     // "Music",
+	"\x83\xAE\xAB\xAE\xE1",                                                                         // "Speech",
+	"\x87\xA2\xE3\xAA",                                                                             // "Fx",
+	"\x8A\xAE\xAD\xA5\xE6\x00\x45\x20\x43\x44\x2D\x00",                                             // "The End",
+	"DRIVE FULL!",
 };
 
 } // End of namespace Sword1
