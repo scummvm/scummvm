@@ -77,6 +77,7 @@ private:
 	void create_mouse_watch_dialog();
 
 protected:
+	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
 	virtual void main_cold_data_init() = 0;
 
 public:
