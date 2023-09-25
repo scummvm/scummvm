@@ -606,7 +606,10 @@ bool NancyConsole::Cmd_listActionRecords(int argc, const char **argv) {
 		Common::Queue<Common::String> unknownDescs;
 		Common::SeekableReadStream *chunk;
 		IFF sceneIFF("S" + s);
-		sceneIFF.load();
+		if (!sceneIFF.load()) {
+			debugPrintf("Invalid scene S%s\n", argv[1]);
+			return true;
+		}
 
 		while (chunk = sceneIFF.getChunkStream("ACT", records.size()), chunk != nullptr) {
 			ActionRecord *rec = ActionManager::createAndLoadNewRecord(*chunk);

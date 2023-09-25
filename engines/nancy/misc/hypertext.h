@@ -32,6 +32,8 @@ namespace Misc {
 class HypertextParser {
 public:
 	HypertextParser() :
+		_backgroundColor(0),
+		_highlightBackgroundColor(0),
 		_numDrawnLines(0),
 		_drawnTextHeight(0),
 		_needsTextRedraw(false),

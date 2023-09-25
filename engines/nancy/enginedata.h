@@ -61,7 +61,10 @@ struct BSUM : public EngineData {
 	Common::Rect clockHighlightSrc;
 
 	// Transparent color
-	byte paletteTrans, rTrans, gTrans, bTrans;
+	byte paletteTrans = 0;
+	byte rTrans = 0;
+	byte gTrans = 0;
+	byte bTrans = 0;
 
 	uint16 horizontalEdgesSize;
 	uint16 verticalEdgesSize;
