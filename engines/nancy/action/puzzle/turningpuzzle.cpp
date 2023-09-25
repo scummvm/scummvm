@@ -273,6 +273,9 @@ void TurningPuzzle::handleInput(NancyInput &input) {
 				g_nancy->_sound->playSound(_turnSound);
 				_objectCurrentlyTurning = i;
 			}
+			
+			// fixes nancy4 scene 4308
+			input.eatMouseInput();
 
 			return;
 		}
