@@ -130,13 +130,13 @@ void Room405::init() {
 	case 406:
 		player_set_commands_allowed(false);
 		ws_demand_location(413, 356, 10);
-		setDest(120);
+		setDest();
 		break;
 
 	default:
 		player_set_commands_allowed(false);
 		ws_demand_location(241, 266, 4);
-		setDest(120);
+		setDest();
 		break;
 	}
 

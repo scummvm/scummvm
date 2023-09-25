@@ -22,14 +22,14 @@
 #ifndef M4_BURGER_ROOMS_SECTION4_ROOM407_H
 #define M4_BURGER_ROOMS_SECTION4_ROOM407_H
 
-#include "m4/burger/rooms/room.h"
+#include "m4/burger/rooms/section4/section4_room.h"
 #include "m4/burger/walker.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room407 : public Room {
+class Room407 : public Section4Room {
 private:
 	static const char *SAID[][4];
 	static const WilburMatch MATCH[];
@@ -53,6 +53,16 @@ private:
 	static const seriesPlayBreak PLAY18[];
 	static const seriesPlayBreak PLAY19[];
 	static long _state1;
+	Series _vp02;
+	noWalkRect *_walk1 = nullptr;
+	bool _flag1 = false;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+
+	void loadSeries();
+	void conv87();
+	void conv88();
 
 public:
 	Room407();
@@ -60,6 +70,8 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
+	void parser() override;
 };
 
 } // namespace Rooms

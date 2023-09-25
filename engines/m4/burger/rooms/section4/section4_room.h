@@ -30,7 +30,7 @@ namespace Rooms {
 
 class Section4Room : public Room {
 protected:
-	void setDest(int ticks);
+	void setDest(int ticks = 120);
 	void poof(int trigger);
 
 public:

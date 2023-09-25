@@ -156,14 +156,119 @@ const seriesPlayBreak Room407::PLAY19[] = {
 long Room407::_state1;
 
 
-Room407::Room407() : Room() {
+Room407::Room407() : Section4Room() {
 	_state1 = 0;
 }
 
 void Room407::init() {
+	digi_preload("400_001");
+	digi_play_loop("400_001", 3, 125, -1);
+	pal_cycle_init(112, 127, 6);
+
+	if (!_G(flags)[V181] && _G(flags)[V171] == 4003) {
+		_G(flags)[V298] = 1;
+		player_set_commands_allowed(false);
+	}
+
+	_flag1 = false;
+	if (_G(flags)[V181]) {
+		hotspot_set_active("DRUMZ", false);
+		hotspot_set_active("VIPE", false);
+		hotspot_set_active("ROXY", false);
+
+	} else {
+		loadSeries();
+		_walk1 = intr_add_no_walk_rect(140, 295, 240, 325, 139, 326);
+		_val2 = 10;
+		kernel_trigger_dispatch_now(7);
+
+		_val3 = 22;
+		kernel_trigger_dispatch_now(8);
+
+		if (_G(flags)[V171] == 4003)
+			_vp02.series_show("407vp02", 0x300);
+	}
+
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 402:
+		ws_demand_location(43, 302);
+		setDest();
+		break;
+
+	case 405:
+		ws_demand_location(578, 296);
+		setDest();
+		break;
+
+	default:
+		ws_demand_location(520, 330, 9);
+		break;
+	}
 }
 
 void Room407::daemon() {
+	// TODO
+}
+
+void Room407::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (!_G(flags)[V067] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
+		_G(player).walk_y >= 295 && _G(player).walk_y <= 325)
+		player_walk_to(139, 326);
+
+	if (player_said("FORCE FIELD")) {
+		player_set_facing_hotspot();
+	} else if (player_said("GEAR", "DISC")) {
+		_val1 = 4007;
+		player_hotspot_walk_override(43, 302, -1, 1);
+		_G(player).command_ready = false;
+	} else if (player_said("GEAR", "DISC ")) {
+		_val1 = 4007;
+		player_hotspot_walk_override(578, 296, -1, 1);
+		_G(player).command_ready = false;
+	}
+}
+
+void Room407::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("conv87")) {
+		conv87();
+	} else if (player_said("conv88")) {
+		conv88();
+	} else if (!_G(walker).wilbur_match(MATCH)) {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room407::loadSeries() {
+	static const char *NAMES[16] = {
+		"407dz01", "407dz01s", "407dz02", "407dz02s", "407dz05",
+		"407dz05s", "407dz06", "407dz06s", "407rx04",
+		"407vp03", "407vp03s", "407vp05", "407vp05s", "407rx06",
+		"407rx08", "407rx09"
+	};
+	for (int i = 0; i < (_G(flags)[V171] == 4003 ? 16 : 9); ++i)
+		series_load(NAMES[i]);
+
+	digi_preload("407_001");
+	digi_preload("145_004");
+}
+
+void Room407::conv87() {
+
+}
+
+void Room407::conv88() {
+
 }
 
 } // namespace Rooms
