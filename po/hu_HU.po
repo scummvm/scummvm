@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-24 19:19+0000\n"
+"POT-Creation-Date: 2023-09-25 07:29+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -83,7 +83,7 @@ msgstr "Feljebb"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2880
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2883
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Mégse"
@@ -337,7 +337,7 @@ msgstr "A JSON kód tartalma hibás."
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2880
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2883
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9460,7 +9460,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "'%s' átvezetõ nem található"
 
-#: engines/sword1/control.cpp:2878
+#: engines/sword1/control.cpp:2881
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9478,7 +9478,7 @@ msgstr ""
 "Nyomj OK-t az átalakításhoz, vagy rákérdezzek ha legközelebb elindítod a "
 "játékot.\n"
 
-#: engines/sword1/control.cpp:3064
+#: engines/sword1/control.cpp:3067
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9487,11 +9487,11 @@ msgstr ""
 "A választott játékmentés már létezik!\n"
 "Megtartod a régi játékmentést (%s) vagy kicseréled az újra (%s)?\n"
 
-#: engines/sword1/control.cpp:3067
+#: engines/sword1/control.cpp:3070
 msgid "Keep the old one"
 msgstr "A régit megtartom"
 
-#: engines/sword1/control.cpp:3067
+#: engines/sword1/control.cpp:3070
 msgid "Keep the new one"
 msgstr "Az újat megtartom"
 
