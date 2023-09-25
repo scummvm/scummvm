@@ -130,6 +130,7 @@ void GfxFrameout::clear() {
 	_planes.clear();
 	_visiblePlanes.clear();
 	_showList.clear();
+	_screenItemLists.clear();
 }
 
 bool GfxFrameout::detectHiRes() const {
@@ -481,23 +482,23 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 
 	// SSCI allocated these as static arrays of 100 pointers to
 	// ScreenItemList / RectList
-	ScreenItemListList screenItemLists;
-	EraseListList eraseLists;
-
-	screenItemLists.resize(_planes.size());
-	eraseLists.resize(_planes.size());
+	_screenItemLists.resize(_planes.size());
+	for (DrawList::size_type i = 0; i < _screenItemLists.size(); ++i) {
+		_screenItemLists[i].clear();
+	}
+	EraseListList eraseLists(_planes.size());
 
 	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
 		remapMarkRedraw();
 	}
 
-	calcLists(screenItemLists, eraseLists, eraseRect);
+	calcLists(_screenItemLists, eraseLists, eraseRect);
 
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+	for (ScreenItemListList::iterator list = _screenItemLists.begin(); list != _screenItemLists.end(); ++list) {
 		list->sort();
 	}
 
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+	for (ScreenItemListList::iterator list = _screenItemLists.begin(); list != _screenItemLists.end(); ++list) {
 		for (DrawList::iterator drawItem = list->begin(); drawItem != list->end(); ++drawItem) {
 			(*drawItem)->screenItem->getCelObj().submitPalette();
 		}
@@ -507,7 +508,7 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 
 	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
 		drawEraseList(eraseLists[i], *_planes[i]);
-		drawScreenItemList(screenItemLists[i]);
+		drawScreenItemList(_screenItemLists[i]);
 	}
 
 	if (robotIsActive) {
