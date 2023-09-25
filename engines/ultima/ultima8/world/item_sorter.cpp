@@ -279,7 +279,7 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
-void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
+void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool showFootpads) {
 	if (_sortLimit) {
 		// Clear the surface when debugging the sorter
 		uint32 color = TEX32_PACK_RGB(0, 0, 0);
@@ -365,7 +365,9 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
 	SortItem *end = nullptr;
 	_painted = nullptr;  // Reset the paint tracking
 	while (it != end) {
-		if (it->_order == -1) if (PaintSortItem(surf, it)) return;
+		if (it->_order == -1)
+			if (PaintSortItem(surf, it, showFootpads))
+				return;
 		it = it->_next;
 	}
 
@@ -393,7 +395,7 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight) {
  * Recursively paint this item and all its dependencies.
  * Returns true if recursion should stop.
  */
-bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
+bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootpad) {
 	// Don't paint this, or dependencies (yet) if occluded
 	if (si->_occluded)
 		return false;
@@ -411,7 +413,7 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 			break;
 		}
 		else if ((*it)->_order == -1) {
-			if (PaintSortItem(surf, *it))
+			if (PaintSortItem(surf, *it, showFootpad))
 				return true;
 		}
 		++it;
@@ -419,8 +421,6 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 
 	// Now paint us!
 	if (surf) {
-		//	if (wire) si->info->draw_box_back(s, dispx, dispy, 255);
-
 		if (si->_extFlags & Item::EXT_HIGHLIGHT && si->_extFlags & Item::EXT_TRANSPARENT)
 			surf->PaintHighlightInvis(si->_shape, si->_frame, si->_sxBot, si->_syBot, si->_trans, (si->_flags & Item::FLG_FLIPPED) != 0, TRANSPARENT_COLOR);
 		if (si->_extFlags & Item::EXT_HIGHLIGHT)
@@ -432,7 +432,28 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si) {
 		else
 			surf->Paint(si->_shape, si->_frame, si->_sxBot, si->_syBot, (si->_flags & Item::FLG_FLIPPED) != 0);
 
-	//	if (wire) si->info->draw_box_front(s, dispx, dispy, 255);
+		// Draw wire frame footpads
+		if (showFootpad) {
+			uint32 color = TEX32_PACK_RGB(0xFF, 0xFF, 0xFF);
+			int32 syLeftTop = (si->_xLeft + si->_y) / 8 - si->_zTop - _camSy;
+			int32 syRightTop = (si->_x + si->_yFar) / 8 - si->_zTop - _camSy;
+			int32 syNearTop = (si->_x + si->_y) / 8 - si->_zTop - _camSy;
+
+			surf->drawLine32(color, si->_sxTop, si->_syTop, si->_sxLeft, syLeftTop);
+			surf->drawLine32(color, si->_sxTop, si->_syTop, si->_sxRight, syRightTop);
+			surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxLeft, syLeftTop);
+			surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxRight, syRightTop);
+
+			if (si->_z < si->_zTop) {
+				int32 syLeftBot = (si->_xLeft + si->_y) / 8 - si->_z - _camSy;
+				int32 syRightBot = (si->_x + si->_yFar) / 8 - si->_z - _camSy;
+				surf->drawLine32(color, si->_sxLeft, syLeftTop, si->_sxLeft, syLeftBot);
+				surf->drawLine32(color, si->_sxRight, syRightTop, si->_sxRight, syRightBot);
+				surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxBot, si->_syBot);
+				surf->drawLine32(color, si->_sxLeft, syLeftBot, si->_sxBot, si->_syBot);
+				surf->drawLine32(color, si->_sxRight, syRightBot, si->_sxBot, si->_syBot);
+			}
+		}
 
 		// weapon overlay
 		// FIXME: use highlight/invisibility, also add to Trace() ?
@@ -479,7 +500,9 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 		it = _items;
 		_painted = nullptr;
 		while (it != nullptr) {
-			if (it->_order == -1) if (PaintSortItem(nullptr ,it)) break;
+			if (it->_order == -1)
+				if (PaintSortItem(nullptr, it, false))
+					break;
 
 			it = it->_next;
 		}

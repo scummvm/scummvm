@@ -42,6 +42,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameMapGump)
 
 bool GameMapGump::_highlightItems = false;
+bool GameMapGump::_showFootpads = false;
 
 GameMapGump::GameMapGump() :
 	Gump(), _displayDragging(false), _displayList(0), _draggingShape(0),
@@ -167,7 +168,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	}
 
 
-	_displayList->PaintDisplayList(surf, _highlightItems);
+	_displayList->PaintDisplayList(surf, _highlightItems, _showFootpads);
 }
 
 // Trace a click, and return ObjId
