@@ -28,10 +28,16 @@ namespace Sci {
 
 /**
  * StablePointerArray holds pointers in a fixed-size array that maintains
- * position of erased items until `pack` is called. It is used by DrawList,
- * RectList, and ScreenItemList. StablePointerArray takes ownership of all
- * pointers that are passed to it and deletes them when calling `erase` or when
+ * position of erased items until `pack` is called. It is used by RectList
+ * and ScreenItemList. StablePointerArray takes ownership of all pointers
+ * that are passed to it and deletes them when calling `erase` or when
  * destroying the StablePointerArray.
+ *
+ * StablePointerArray used to be used for DrawList, until it was discovered
+ * that an LSL7 room with many screen items can overflow the fixed array.
+ * StablePointerDynamicArray was created below to handle DrawList, while
+ * StablePointerArray keeps the performance advantages of fixed arrays on
+ * the stack when rendering frames.
  */
 template<class T, uint N>
 class StablePointerArray {
@@ -179,6 +185,147 @@ public:
 	 */
 	size_type size() const {
 		return _size;
+	}
+};
+
+/**
+ * StablePointerDynamicArray is like StablePointerArray above, except that
+ * it uses a Common::Array for storage instead of a fixed array.
+ * It is only used by DrawList, and was created upon discovering that LSL7
+ * room 301 can overflow DrawList when displaying a large menu. Bug #14632
+ */
+template<class T, uint N>
+class StablePointerDynamicArray {
+	Common::Array<T *> _items;
+
+public:
+	typedef T **iterator;
+	typedef T *const *const_iterator;
+	typedef T *value_type;
+	typedef uint size_type;
+
+	StablePointerDynamicArray() {
+		_items.reserve(N);
+	}
+	StablePointerDynamicArray(const StablePointerDynamicArray &other) {
+		_items.reserve(MAX(N, other.size()));
+		for (size_type i = 0; i < other.size(); ++i) {
+			if (other._items[i] == nullptr) {
+				_items.push_back(nullptr);
+			} else {
+				_items.push_back(new T(*other._items[i]));
+			}
+		}
+	}
+	~StablePointerDynamicArray() {
+		for (size_type i = 0; i < _items.size(); ++i) {
+			delete _items[i];
+		}
+	}
+
+	void operator=(StablePointerDynamicArray &other) {
+		clear();
+		for (size_type i = 0; i < other.size(); ++i) {
+			if (other._items[i] == nullptr) {
+				_items.push_back(nullptr);
+			} else {
+				_items.push_back(new T(*other._items[i]));
+			}
+		}
+	}
+
+	T *const &operator[](size_type index) const {
+		return _items[index];
+	}
+
+	T *&operator[](size_type index) {
+		return _items[index];
+	}
+
+	/**
+	 * Adds a new pointer to the array.
+	 */
+	void add(T *item) {
+		_items.push_back(item);
+	}
+
+	iterator begin() {
+		return _items.begin();
+	}
+
+	const_iterator begin() const {
+		return _items.begin();
+	}
+
+	void clear() {
+		for (size_type i = 0; i < _items.size(); ++i) {
+			delete _items[i];
+		}
+		_items.resize(0);
+	}
+
+	iterator end() {
+		return _items.end();
+	}
+
+	const_iterator end() const {
+		return _items.end();
+	}
+
+	/**
+	 * Erases the object pointed to by the given iterator.
+	 */
+	void erase(T *item) {
+		for (iterator it = begin(); it != end(); ++it) {
+			if (*it == item) {
+				delete *it;
+				*it = nullptr;
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Erases the object pointed to by the given iterator.
+	 */
+	void erase(iterator &it) {
+		assert(it >= begin() && it < end());
+		delete *it;
+		*it = nullptr;
+	}
+
+	/**
+	 * Erases the object pointed to at the given index.
+	 */
+	void erase_at(size_type index) {
+		delete _items[index];
+		_items[index] = nullptr;
+	}
+
+	/**
+	 * Removes freed pointers from the pointer list.
+	 */
+	size_type pack() {
+		iterator freePtr = begin();
+		size_type newSize = 0;
+
+		for (iterator it = begin(), last = end(); it != last; ++it) {
+			if (*it != nullptr) {
+				*freePtr = *it;
+				++freePtr;
+				++newSize;
+			}
+		}
+		_items.resize(newSize);
+		return newSize;
+	}
+
+	/**
+	 * The number of populated slots in the array. The size
+	 * of the array will only go down once `pack` is called.
+	 */
+	size_type size() const {
+		return _items.size();
 	}
 };
 
