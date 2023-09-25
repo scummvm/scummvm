@@ -81,10 +81,14 @@ void OSystem_libretro::initBackend() {
 		s_homeDir = s_systemDir;
 
 	//Register default paths
-	if (! s_homeDir.empty())
+	if (! s_homeDir.empty()) {
 		ConfMan.registerDefault("browser_lastpath", s_homeDir);
-	if (! s_saveDir.empty())
+		retro_log_cb(RETRO_LOG_DEBUG, "Default browser last path set to: %s\n", s_homeDir.c_str());
+	}
+	if (! s_saveDir.empty()) {
 		ConfMan.registerDefault("savepath", s_saveDir);
+		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
+	}
 
 	//Check current paths
 	if (!checkPath("savepath", s_saveDir))
