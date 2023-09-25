@@ -21,6 +21,7 @@
 
 #include "m4/burger/rooms/section4/room406.h"
 #include "m4/burger/vars.h"
+#include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
@@ -532,7 +533,805 @@ void Room406::init() {
 }
 
 void Room406::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(false);
+
+		switch (_val2) {
+		case 22:
+			switch (_val1) {
+			case 49:
+				_state2 = imath_ranged_rand(1, 7);
+				_val1 = 51;
+				series_play_with_breaks(PLAY20, "406dg06", 0x701, 12, 3);
+				break;
+
+			case 50:
+				_val1 = 51;
+				series_play_with_breaks(PLAY21, "406dg07", 0x701, 12, 3);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 23:
+			switch (_val1) {
+			case 49:
+				_state2 = imath_ranged_rand(1, 7);
+				series_play_with_breaks(PLAY20, "406dg06", 0x701, 2, 3);
+				break;
+
+			case 50:
+				series_play_with_breaks(PLAY21, "406dg07", 0x701, 2, 3);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		switch (_val2) {
+		case 22:
+			playRandom(3);
+			break;
+
+		case 23:
+			_state2 = imath_ranged_rand(1, 6);
+			series_play_with_breaks(PLAY22, "406dg16", 0x701, 3, 3);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 3:
+		switch (_val2) {
+		case 22:
+			kernel_timing_trigger(300, 9);
+			_state4 = 22;
+			ws_turn_to_face(calc_facing(162, 191), 8);
+			break;
+
+		case 23:
+			_val1 = 51;
+			kernel_trigger_dispatch_now(12);
+			kernel_timing_trigger(300, 9);
+			_state4 = 23;
+			ws_turn_to_face(calc_facing(415, 234), 8);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 5:
+		poof(6);
+		break;
+
+	case 6:
+		disable_player_commands_and_fade_init(_val4);
+		break;
+
+	case 7:
+		_G(walker).wilbur_poof();
+
+		if (_val2)
+			ws_unhide_walker();
+		else
+			enable_player();
+		break;
+
+	case 8:
+		switch (_state4) {
+		case 22:
+			player_set_commands_allowed(true);
+			wilbur_speech("406w001");
+			break;
+
+		case 23:
+			player_set_commands_allowed(true);
+			_G(walker).wilbur_speech_random("406w002a", "406w002b", "406w002c");
+			break;
+
+		case 24:
+			wilbur_speech("400w001");
+			break;
+
+		case 25:
+			wilbur_speech("406w013");
+			break;
+
+		case 26:
+			wilbur_speech("406w014");
+			break;
+
+		case 27:
+			wilbur_speech("406w015");
+			break;
+
+		case 28:
+			term_message("The gate isn't open yet.  I can't get over there!");
+			break;
+
+		case 29:
+			wilbur_speech("406w020");
+			break;
+
+		case 30:
+			wilbur_speech("406w021");
+			break;
+
+		case 31:
+			wilbur_speech("406w022");
+			break;
+
+		case 32:
+			wilbur_speech("406w023");
+			break;
+
+		case 33:
+			wilbur_speech("406w024");
+			break;
+
+		case 34:
+			_G(wilbur_should) = 13;
+			wilbur_speech("406w017", gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 35:
+			wilbur_speech("406w019");
+			break;
+
+		case 36:
+			wilbur_speech("406w026");
+			break;
+
+		case 37:
+			wilbur_speech("406w008");
+			break;
+
+		case 38:
+			wilbur_speech("406w009");
+			break;
+
+		case 39:
+			wilbur_speech("406w027");
+			break;
+
+		case 40:
+			wilbur_speech("406w029");
+			break;
+
+		case 41:
+			wilbur_speech("406w030");
+			break;
+
+		case 42:
+			wilbur_speech("406w031");
+			break;
+
+		case 43:
+			wilbur_speech("406w032");
+			break;
+
+		case 44:
+			wilbur_speech("406w033");
+			break;
+
+		case 45:
+			digi_unload("406_111");
+			_G(wilbur_should) = 15;
+			wilbur_speech("406w018", gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 46:
+			_val5 = 68;
+			wilbur_speech("406w901", 11);
+			break;
+
+		case 47:
+			_val5 = 71;
+			_state1 = 80;
+			wilbur_speech("406w902", 11);
+			break;
+
+		case 48:
+			wilbur_speech("406w038");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 9:
+		if (_flag2) {
+			_flag3 = false;
+			playRandom(-1);
+			_ticks = imath_ranged_rand(300, 600);
+			kernel_timing_trigger(_ticks - 120, 10);
+			kernel_timing_trigger(_ticks, 9);
+		}
+		break;
+
+	case 10:
+		_flag3 = true;
+		break;
+
+	case 11:
+		switch (_val5) {
+		case 68:
+			_val5 = 69;
+			digi_play("406g002", 1, 255, 11);
+			break;
+
+		case 69:
+			_val5 = 70;
+			series_play_with_breaks(PLAY11, "406mg01", 0x5ff, 11, 3);
+			break;
+
+		case 70:
+			_state1 = 79;
+			_val5 = 71;
+			series_play_with_breaks(PLAY12, "406mg03", 0x5ff, 11, 3);
+			break;
+
+		case 71:
+			_mg03.terminate();
+
+			switch (_state1) {
+			case 80:
+				_val5 = 73;
+				break;
+			case 81:
+				_val5 = 74;
+				break;
+			case 82:
+				_val5 = 72;
+				break;
+			default:
+				break;
+			}
+
+			series_play_with_breaks(PLAY13, "406mg04", 0x5ff, 11, 3);
+			break;
+
+		case 72:
+			_mg03.show("406mg03", 0x5ff);
+			_state4 = 47;
+			kernel_trigger_dispatch_now(8);
+			break;
+
+		case 73:
+			_val5 = 71;
+			_state1 = 81;
+			series_play_with_breaks(PLAY14, "406mg05", 0x5ff, 11, 3);
+			break;
+
+		case 74:
+			_val1 = 67;
+			_mg03.show("406mg03", 0x5ff, 0, -1, -1, 14);
+			break;
+
+		case 75:
+			_mg03.terminate();
+			_val5 = 76;
+			series_play_with_breaks(PLAY15,
+				_G(flags)[V171] == 4000 ? "406mg06" : "406mg07",
+				0x5ff, 11, 3);
+			break;
+
+		case 76:
+			_val6 = 85;
+			_val5 = 77;
+
+			if (_G(flags)[V171] == 4000)
+				series_play_with_breaks(PLAY16, "405mg06", 0x6fe, 11, 3);
+			else
+				series_play_with_breaks(PLAY17, "405mg07", 0x6fe, 11, 3);
+			break;
+
+		case 77:
+			_G(flags)[V176] = 1;
+			_G(flags)[V172] = 10026;
+
+			if (_G(flags)[V171] == 4000)
+				_G(flags)[V171] = 4001;
+
+			setHotspots1();
+			_val5 = 78;
+			series_play_with_breaks(PLAY18, "406mgpof", 0x6fe, 11, 2);
+			_val6 = 77;
+			kernel_trigger_dispatch_now(15);
+			break;
+
+		case 78:
+			hotspot_set_active("HOLE", true);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 12:
+		switch (_val1) {
+		case 51:
+			_G(flags)[V172] = 10023;
+			setHotspots1();
+
+			if (_G(flags)[V173]) {
+				_val1 = 62;
+				kernel_trigger_dispatch_now(12);
+			} else {
+				switch (imath_ranged_rand(1, 4)) {
+				case 1:
+					_val1 = 51;
+					break;
+				case 2:
+					_val1 = 55;
+					break;
+				case 3:
+					_val3 = 53;
+					break;
+				case 4:
+					_val4 = 54;
+					break;
+				default:
+					break;
+				}
+
+				Series::series_show("406dg15", 0x701, 0, 12, 120, 0);
+			}
+			break;
+
+		case 53:
+			_state2 = imath_ranged_rand(1, 7);
+			_val1 = 51;
+
+			if (!digi_play_state(1) && !digi_play_state(2)) {
+				series_play_with_breaks(PLAY23, "406dg08", 0x701, 12, 3);
+			} else {
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 54:
+			if (!digi_play_state(1) && !digi_play_state(2)) {
+				_G(flags)[V172] = 10024;
+				_state2 = imath_ranged_rand(1, 3);
+				_val1 = 58;
+				series_play_with_breaks(PLAY24, "406dg10", 0x701, 12, 3);
+			} else {
+				_val1 = 51;
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 55:
+			_state2 = imath_ranged_rand(1, 6);
+			_val1 = 51;
+
+			if (!digi_play_state(1) && !digi_play_state(2)) {
+				series_play_with_breaks(PLAY22, "406dg16", 0x701, 12, 3);
+			} else {
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 56:
+			_state2 = imath_ranged_rand(1, 6);
+			_val1 = 58;
+
+			if (!digi_play_state(1) && !digi_play_state(2)) {
+				series_play_with_breaks(PLAY22, "406dg12", 0x701, 12, 3);
+			} else {
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 57:
+			if ((!digi_play_state(1) && !digi_play_state(2)) || _G(flags)[V173]) {
+				_state2 = imath_ranged_rand(1, 3);
+				_val1 = 51;
+				_G(flags)[V172] = 10023;
+				series_play_with_breaks(PLAY25, "406dg14", 0x701, 12, 3);
+			} else {
+				_val1 = 58;
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 58:
+			_G(flags)[V172] = 10024;
+			setHotspots1();
+
+			if (_G(flags)[V173]) {
+				_val1 = 57;
+				kernel_trigger_dispatch_now(12);
+			} else {
+				switch (imath_ranged_rand(1, 3)) {
+				case 1:
+					_val1 = 58;
+					break;
+				case 2:
+					_val1 = 57;
+					break;
+				case 3:
+					_val1 = 56;
+					break;
+				default:
+					break;
+				}
+
+				Series::series_show("406dg11", 0x701, 0, 12, 120);
+			}
+			break;
+
+		case 59:
+			_state2 = imath_ranged_rand(1, 6);
+			_val1 = 54;
+			series_play_with_breaks(PLAY26, "406dg09", 0x701, 12, 3);
+			break;
+
+		case 60:
+			_state2 = imath_ranged_rand(1, 6);
+			_val1 = 56;
+			series_play_with_breaks(PLAY27, "406dg13", 0x701, 12, 3);
+			break;
+
+		case 61:
+			_state2 = imath_ranged_rand(1, 6);
+			_val1 = 64;
+			series_play_with_breaks(PLAY28,
+				_G(flags)[V171] == 4000 ? "406dg04" : "406dg05", 0x6fe, 12, 3);
+			break;
+
+		case 62:
+			_G(flags)[V172] = 10025;
+			_G(flags)[V173] = 0;
+			setHotspots1();
+			terminateMachineAndNull(_fish);
+			series_unload(_fishS);
+			_state2 = imath_ranged_rand(1, 4);
+			_state3 = imath_ranged_rand(1, 4);
+			_val1 = 63;
+			series_play_with_breaks(PLAY29, "406dg01", 0x6fe, 12, 3);
+			break;
+
+		case 63:
+			setupFish();
+			setHotspots1();
+			kernel_trigger_dispatch_now(12);
+			hotspot_set_active("HOLE", false);
+			break;
+
+		case 64:
+			_val1 = imath_ranged_rand(1, 3) == 1 ? 66 : 64;
+			_state2 = imath_ranged_rand(1, 6);
+
+			if (digi_play_state(2) || _flag3)
+				_state2 = 0;
+
+			_seriesName = _G(flags)[V171] == 4000 ? "406dg02" : "406dg03";
+			series_play_with_breaks(PLAY30, _seriesName, 0x6fe, 12, 3, 10);
+			break;
+
+		case 65:
+			_G(wilbur_should) = 21;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			_val1 = 64;
+			kernel_trigger_dispatch_now(12);
+			break;
+
+		case 66:
+			_val1 = 64;
+			_state2 = imath_ranged_rand(1, 5);
+
+			if (!digi_play_state(1) && !digi_play_state(2)) {
+				const seriesPlayBreak *PLAY[6] = {
+					PLAY31, PLAY32, PLAY33, PLAY34, PLAY35, PLAY36
+				};
+
+				_seriesName = _G(flags)[V171] == 4000 ? "406dg02" : "406dg03";
+				series_play_with_breaks(PLAY[imath_ranged_rand(0, 5)],
+					_seriesName, 0x6fe, 12, 3);
+			} else {
+				kernel_trigger_dispatch_now(12);
+			}
+			break;
+
+		case 67:
+			_val5 = 75;
+			kernel_trigger_dispatch_now(11);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 13:
+		digi_play("406_113", 2);
+		break;
+
+	case 14:
+		switch (_val7) {
+		case 82:
+			terminateMachineAndNull(_tt);
+			_G(flags)[V174] = 4001;
+			_val7 = 83;
+			series_play_with_breaks(PLAY10, "406tt06", 0x600, 14, 2);
+			break;
+
+		case 83:
+			player_set_commands_allowed(true);
+			setupTt();
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 15:
+		switch (_val6) {
+		case 77:
+			terminateMachineAndNull(_fish);
+			series_play_with_breaks(PLAY19, "406fishp", 0x4fd, -1, 2);
+			break;
+
+		case 84:
+			_G(flags)[V173] = 1;
+			setupFish();
+			inv_move_object("FISH", NOWHERE);
+
+			if (_G(flags)[V172] == 10024)
+				_val1 = 57;
+			if (_G(flags)[V172] == 10023)
+				_val1 = 62;
+			break;
+
+		case 85:
+			_fish = series_play("406fish2", 0x4fd, 16);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 16:
+		_state4 = 45;
+		digi_play("406_111", 1, 255, 8);
+		break;
+
+	case 17:
+		_coll.play("406coll", 0x4fd, 16);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			ws_unhide_walker();
+			break;
+
+		case 2:
+			disable_player();
+			_val6 = 84;
+			_fishS = series_load("406fish");
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY2, "406wi05", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 3:
+			disable_player();
+			_val7 = 82;
+			kernel_trigger_dispatch_now(14);
+			_G(wilbur_should) = 1;
+			series_play_with_breaks(PLAY4, "406wi03", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 4:
+			terminateMachineAndNull(_tt);
+			disable_player();
+			_G(wilbur_should) = 5;
+			series_play_with_breaks(PLAY5, "406tt6a", 0x4fd, gCHANGE_WILBUR_ANIMATION, 2);
+			_wi03 = series_play("406wi03s", 0x4fe, 18);
+			break;
+
+		case 5:
+			terminateMachineAndNull(_wi03);
+			enable_player();
+			_G(flags)[V174] = 4000;
+			setupTt();
+			break;
+
+		case 6:
+			terminateMachineAndNull(_tt);
+			disable_player();
+			_G(wilbur_should) = 7;
+			series_play_with_breaks(PLAY6, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 7:
+			_general.show("406wi04", 0x4fd);
+			inv_give_to_player("HOOK");
+			_G(flags)[V174] = 4003;
+			setHotspots3();
+			break;
+
+		case 8:
+			_general.terminate();
+			disable_player();
+			_G(wilbur_should) = 9;
+			series_play_with_breaks(PLAY7, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 9:
+			inv_move_object("HOOK", NOWHERE);
+			_G(flags)[V174] = 4001;
+			setupTt();
+			enable_player();
+
+			if (!player_said("HOOK") || !player_said_any("YARD", "YARD "))
+				triggerPreparser();
+			break;
+
+		case 11:
+			_general.terminate();
+			_G(flags)[V174] = 4002;
+			ws_demand_location(183, 281, 10);
+			disable_player();
+			_G(wilbur_should) = 12;
+			series_play_with_breaks(PLAY8, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 12:
+			inv_move_object("HOOK", NOWHERE);
+			setupTt();
+			enable_player();
+			setNoWalk();
+			break;
+
+		case 13:
+			terminateMachineAndNull(_tt);
+			_G(flags)[V174] = 4004;
+			_flag2 = false;
+			digi_preload("406_111");
+			disable_player();
+
+			_G(wilbur_should) = 14;
+			digi_preload_stream_breaks(SERIES1);
+			series_stream_with_breaks(SERIES1, "406tt04", 6, 0x600, gCHANGE_WILBUR_ANIMATION);
+
+			_wi03 = series_play("406wi03s", 0x601, 18);
+			break;
+
+		case 14:
+			digi_unload_stream_breaks(SERIES1);
+			setupTt();
+			setHotspots4();
+			intr_remove_no_walk_rect(_walk1);
+			intr_remove_no_walk_rect(_walk2);
+			setNoWalk();
+
+			_flag2 = _flag3 = false;
+			terminateMachineAndNull(_wi03);
+			ws_unhide_walker();
+			break;
+
+		case 15:
+			_state4 = 46;
+			ws_walk(292, 333, nullptr, 8, 10);
+			break;
+
+		case 16:
+			if (player_commands_allowed()) {
+				player_set_commands_allowed(false);
+				_flag2 = false;
+				_flag3 = true;
+			}
+
+			if (digi_play_state(2)) {
+				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+			} else {
+				_gate.terminate();
+				series_unload(_gateS1);
+				series_unload(_gateS2);
+				ws_hide_walker();
+
+				_G(flags)[V175] = 1;
+				_G(flags)[V177] = 1;
+				setHotspots2();
+
+				_G(wilbur_should) = 17;
+				series_play_with_breaks(PLAY1, "406wi01", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			}
+			break;
+
+		case 17:
+			enable_player();
+			_flag2 = true;
+			_flag3 = false;
+			kernel_trigger_dispatch_now(9);
+			break;
+
+		case 18:
+			disable_player();
+			terminateMachineAndNull(_coll406);
+			_G(wilbur_should) = 19;
+			series_play_with_breaks(PLAY3, "406wi02", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 19:
+			enable_player();
+			inv_give_to_player("DOG COLLAR");
+			_G(flags)[V171] = 4002;
+			setHotspots1();
+			break;
+
+		case 20:
+			player_set_commands_allowed(false);
+			_G(flags)[V171] = 4002;
+			_val1 = 65;
+			break;
+
+		case 21:
+			ws_hide_walker();
+			_G(wilbur_should) = 19;
+			series_play_with_breaks(PLAY9, "406wi06", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 10008:
+		switch (_G(flags)[V172]) {
+		case 10023:
+			_val1 = 59;
+			break;
+		case 10024:
+			_val1 = 60;
+			break;
+		case 10025:
+			_val1 = 61;
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case gSET_COMMANDS_ALLOWED:
+		if (!_val2)
+			player_set_commands_allowed(true);
+		break;
+
+	case kCALLED_EACH_LOOP:
+		if (_flag1)
+			parseJail();
+		else
+			_G(kernel).call_daemon_every_loop = false;
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Room406::pre_parser() {
@@ -836,6 +1635,34 @@ void Room406::parseJail() {
 
 int Room406::tabooAreaY(int x) const {
 	return ((double)x * -0.1050583 + -240.21069) * -1.0;
+}
+
+void Room406::playRandom(int trigger) {
+	digi_unload(_randomDigi);
+
+	if (!digi_play_state(2)) {
+		_randomDigi = Common::String::format("406g001%c", 'a' + imath_ranged_rand(0, 18));
+		digi_preload(_randomDigi);
+		digi_play(_randomDigi.c_str(), 2, 125, trigger);
+	}
+}
+
+void Room406::triggerPreparser() {
+	_G(player).waiting_for_walk = true;
+	_G(player).ready_to_walk = true;
+	_G(player).need_to_walk = true;
+	_G(player).command_ready = true;
+	_G(kernel).trigger = -1;
+	_G(kernel).trigger_mode = KT_PREPARSE;
+	_G(player).walker_trigger = -1;
+
+	pre_parser();
+	if (_G(player).command_ready) {
+		g_engine->_activeSection->pre_parser();
+
+		if (_G(player).command_ready)
+			g_engine->global_pre_parser();
+	}
 }
 
 } // namespace Rooms

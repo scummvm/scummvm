@@ -76,11 +76,17 @@ private:
 	static long _state4;
 	Series _coll;
 	Series _gate;
+	Series _mg03;
 	int32 _gateS1 = 0, _gateS2 = 0;
 	int32 _tire = 0;
+	const char *_seriesName = nullptr;
 	machine *_tt = nullptr;
 	machine *_tts = nullptr;
 	machine *_fish = nullptr;
+	machine *_wi03 = nullptr;
+	machine *_coll406 = nullptr;
+	int32 _fishS = 0;
+	Common::String _randomDigi;
 	noWalkRect *_walk1 = nullptr;
 	noWalkRect *_walk2 = nullptr;
 	noWalkRect *_walk3 = nullptr;
@@ -88,10 +94,15 @@ private:
 	HotSpotRec *_hotspot = nullptr;
 	bool _flag1 = false;
 	bool _flag2 = false;
+	bool _flag3 = false;
+	int _ticks = 0;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
+	int _val5 = 0;
+	int _val6 = 0;
+	int _val7 = 0;
 
 	void loadSeries();
 	void setHotspots1();
@@ -102,8 +113,9 @@ private:
 	void setupTt();
 	void setNoWalk();
 	void parseJail();
-
+	void playRandom(int trigger);
 	int tabooAreaY(int x) const;
+	void triggerPreparser();
 
 public:
 	Room406();
