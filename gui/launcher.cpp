@@ -258,8 +258,7 @@ void LauncherDialog::build() {
 #endif
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 
-	//if (g_system->hasFeature(OSystem::kFeatureHelpDialog))
-		new ButtonWidget(this, _title + ".HelpButton", Common::U32String("?"), _("Help"), kHelpCmd);
+	new ButtonWidget(this, _title + ".HelpButton", Common::U32String("?"), _("Help"), kHelpCmd);
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		// I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
