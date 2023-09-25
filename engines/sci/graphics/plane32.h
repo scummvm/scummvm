@@ -78,7 +78,7 @@ struct DrawItem {
 	}
 };
 
-typedef StablePointerArray<DrawItem, 250> DrawListBase;
+typedef StablePointerDynamicArray<DrawItem, 250> DrawListBase;
 class DrawList : public DrawListBase {
 private:
 	inline static bool sortHelper(const DrawItem *a, const DrawItem *b) {
