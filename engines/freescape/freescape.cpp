@@ -162,6 +162,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_maxShield = 63;
 	_maxEnergy = 63;
+	_gameStateBits = 0;
 
 	g_freescape = this;
 }
