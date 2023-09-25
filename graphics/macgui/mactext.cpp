@@ -575,6 +575,9 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
 		curChunk = _textLines[curLine].chunks.size() - 1;
 		chunk = &_textLines[curLine].chunks[curChunk];
 	} else {
+		if (str.empty())
+			return;
+
 		curChunk = _textLines[curLine].table->back().cells.back().text.back().chunks.size() - 1;
 		chunk = &_textLines[curLine].table->back().cells.back().text.back().chunks[curChunk];
 	}
@@ -898,6 +901,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						_inTable = true;
 
 						curTextLine->table = new Common::Array<MacTextTableRow>();
+						continue;
 					} else if (cmd == 'b') { // Body start
 					} else if (cmd == 'B') { // Body end
 						_inTable = false;
@@ -905,6 +909,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						curTextLine = &_textLines[curLine];
 					} else if (cmd == 'r') { // Row
 						curTextLine->table->push_back(MacTextTableRow());
+						continue;
 					} else if (cmd == 'c') { // Cell start
 						uint16 flags;
 						s = readHex(&flags, s, 2);
@@ -915,6 +920,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						curTextLine->table->back().cells.back().text.resize(1);
 						curTextLine = &curTextLine->table->back().cells.back().text[0];
 						curTextLine->chunks.push_back(_defaultFormatting);
+						continue;
 					} else if (cmd == 'C') { // Cell end
 					} else {
 						error("MacText: Unknown table subcommand (%c)", cmd);
