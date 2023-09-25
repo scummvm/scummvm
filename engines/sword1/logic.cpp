@@ -1876,17 +1876,17 @@ void Logic::plotRouteGrid(Object *megaObject) {
 
 	// Parse the grid lines...
 	for (int j = 0; j < _router->_nBars; j++) {
-		_router->_bars[j].x1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].y1   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].x2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].y2   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].xmin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].ymin = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].xmax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].ymax = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].dx   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].dy   = _resMan->readUint16(fPolygrid); fPolygrid += 2;
-		_router->_bars[j].co   = _resMan->readUint32(fPolygrid); fPolygrid += 4;
+		_router->_bars[j].x1   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].y1   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].x2   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].y2   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].xmin = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].ymin = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].xmax = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].ymax = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].dx   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].dy   = (int16)_resMan->readUint16(fPolygrid); fPolygrid += 2;
+		_router->_bars[j].co   = (int16)_resMan->readUint32(fPolygrid); fPolygrid += 4;
 	}
 
 	// Parse the node points...
