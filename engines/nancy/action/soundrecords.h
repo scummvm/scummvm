@@ -87,6 +87,7 @@ public:
 	Common::Array<HotspotDescription> _hotspots; // 0x31
 
 protected:
+	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
 };
 

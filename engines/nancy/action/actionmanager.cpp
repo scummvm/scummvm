@@ -72,7 +72,7 @@ void ActionManager::handleInput(NancyInput &input) {
 					if (rec->_cursorDependency != nullptr) {
 						NancySceneState.playItemCantSound(rec->_cursorDependency->label);
 					} else {
-						NancySceneState.playItemCantSound();
+						continue;
 					}
 				} else {
 					rec->_state = ActionRecord::ExecutionState::kActionTrigger;
@@ -243,12 +243,9 @@ void ActionManager::processActionRecords() {
 			continue;
 		}
 
-		if (!record->_isActive) {
-			processDependency(record->_dependencies, *record, record->canHaveHotspot());
-			if (record->_dependencies.satisfied) {
-				record->_isActive = true;
-			}
-		}
+		// Process dependencies every call
+		processDependency(record->_dependencies, *record, record->canHaveHotspot());
+		record->_isActive = record->_dependencies.satisfied;
 
 		if (record->_isActive) {
 			if(record->_state == ActionRecord::kBegin) {
