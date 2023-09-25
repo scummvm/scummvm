@@ -1028,6 +1028,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Maths Workshop Deluxe US
+	// Win/Mac
+	{
+		{
+			"mathsworkshopdx",
+			_s("Missing game code"), // Reason for being unsupported,
+			AD_ENTRY1s("MAINSCRN.DAT", "338563e58ac1313bc7606c5584a3576a", 7756078),
+			Common::EN_USA,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MATHSWORKSHOP,
+		0,
+		0
+	},
+
+
 	// Write, Camera, Action!
 	// Mac/Win hybrid disc
 	{
