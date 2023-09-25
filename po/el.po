@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-25 07:29+0000\n"
+"POT-Creation-Date: 2023-09-25 10:57+0000\n"
 "PO-Revision-Date: 2023-09-23 18:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -82,7 +82,7 @@ msgstr "Μετάβαση πάνω"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2883
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2890
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Ακύρωση"
@@ -327,7 +327,7 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2883
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2890
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9802,7 +9802,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Η ταινία '%s' δε βρέθηκε"
 
-#: engines/sword1/control.cpp:2881
+#: engines/sword1/control.cpp:2888
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9820,7 +9820,7 @@ msgstr ""
 "Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
 "επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
-#: engines/sword1/control.cpp:3067
+#: engines/sword1/control.cpp:3074
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9829,11 +9829,11 @@ msgstr ""
 "Το νέο αποθηκευμένο παιχνίδι υπάρχει ήδη στον προορισμό!\n"
 "Θέλετε να διατηρήσετε το παλιό αποθηκευμένο παιχνίδι (%s) ή το νέο (%s);\n"
 
-#: engines/sword1/control.cpp:3070
+#: engines/sword1/control.cpp:3077
 msgid "Keep the old one"
 msgstr "Κράτησε το παλιό"
 
-#: engines/sword1/control.cpp:3070
+#: engines/sword1/control.cpp:3077
 msgid "Keep the new one"
 msgstr "Κράτησε το καινούργιο"
 
