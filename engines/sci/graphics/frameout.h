@@ -329,6 +329,12 @@ private:
 	RectList _showList;
 
 	/**
+	 * A list of DrawLists used by frameOut(). This is a field to avoid
+	 * constructing and destroying DrawLists on every frame.
+	 */
+	ScreenItemListList _screenItemLists;
+
+	/**
 	 * The amount of extra overdraw that is acceptable when merging two show
 	 * list rectangles together into a single larger rectangle.
 	 *
