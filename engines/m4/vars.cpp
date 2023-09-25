@@ -294,4 +294,37 @@ void Vars::create_mouse_watch_dialog() {
 	Dialog_Configure(_mousePosDialog, 0, 0, 0);
 }
 
+void Vars::initMouseSeries(const Common::String &assetName, RGB8 *myPalette) {
+	int32 maxW, maxH;
+
+	_mouseSeriesHandle = nullptr;
+	_mouseSeriesOffset = 0;
+	_mouseSeriesPalOffset = 0;
+
+	if (_mouseSprite)
+		_mouseSprite->data = nullptr;
+	if (_mouseBuffer.data)
+		mem_free(_mouseBuffer.data);
+
+	if (LoadSpriteSeries(assetName.c_str(), &_mouseSeriesHandle, &_mouseSeriesOffset, &_mouseSeriesPalOffset, myPalette) > 0) {
+		_mouseSeriesResource = assetName;
+
+		if (ws_GetSSMaxWH(_mouseSeriesHandle, _mouseSeriesOffset, &maxW, &maxH)) {
+			if (maxW && maxH) {
+				_mouseBuffer.data = (byte *)mem_alloc(maxW * maxH, "mouse graphic");
+				_mouseBuffer.w = maxW;
+				_mouseBuffer.h = maxH;
+				_mouseBuffer.stride = maxW;
+
+				vmng_screen_show(_mouseScreenSource);
+				ResizeScreen(_mouseScreenSource, maxW, maxH);
+
+				_currMouseNum = -1;
+				_mouseIsLocked = false;
+				mouse_set_sprite(kArrowCursor);
+			}
+		}
+	}
+}
+
 } // namespace M4

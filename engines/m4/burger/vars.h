@@ -79,7 +79,6 @@ enum global_triggers {
 
 class Vars : public M4::Vars {
 private:
-	void initMouseSeries(const Common::String &assetName, RGB8 *myPalette);
 	static void custom_ascii_converter_proc(char *string);
 	static void escape_key_pressed(void *, void *);
 	static void cb_F2(void *, void *);
