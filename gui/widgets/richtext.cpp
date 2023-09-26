@@ -89,6 +89,16 @@ void RichTextWidget::init() {
 	_limitH = 140;
 }
 
+
+RichTextWidget::~RichTextWidget() {
+	delete _txtWnd;
+
+	if (_surface)
+		_surface->free();
+
+	delete _surface;
+}
+
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	_verticalScroll->handleMouseWheel(x, y, direction);
 }

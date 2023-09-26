@@ -54,6 +54,8 @@ public:
 	RichTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 	RichTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String());
 
+	~RichTextWidget();
+
 	void reflowLayout() override;
 	void draw() override;
 
