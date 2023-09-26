@@ -398,6 +398,7 @@ void Room801::daemon() {
 
 		freeSeries1();
 		digi_unload_stream_breaks(SERIES7);
+		digi_unload("804_005");
 		kernel_trigger_dispatch_now(20);
 		break;
 
