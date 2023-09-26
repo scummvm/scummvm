@@ -29,6 +29,26 @@ namespace Burger {
 namespace Rooms {
 
 class Room971 : public Rooms::Room {
+private:
+	static const seriesStreamBreak SERIES1[];
+	static const seriesStreamBreak SERIES2[];
+	static const seriesStreamBreak SERIES3[];
+	static const seriesStreamBreak SERIES4[];
+	static const seriesStreamBreak SERIES5[];
+	static const seriesStreamBreak SERIES6[];
+	static const seriesStreamBreak SERIES7[];
+	static const seriesStreamBreak SERIES8[];
+	static const seriesStreamBreak SERIES9[];
+	static const seriesStreamBreak SERIES10[];
+	static const seriesStreamBreak SERIES11[];
+	static const seriesStreamBreak SERIES12[];
+	static const seriesStreamBreak SERIES13[];
+	static const seriesStreamBreak SERIES14[];
+	static const seriesStreamBreak SERIES15[];
+	static const seriesStreamBreak SERIES16[];
+	int32 _comeSoonS = 0;
+	machine *_comeSoon = nullptr;
+
 public:
 	Room971() : Rooms::Room() {}
 	~Room971() override {}
