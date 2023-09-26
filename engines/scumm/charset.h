@@ -24,11 +24,15 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "graphics/fonts/macfont.h"
 #include "graphics/sjis.h"
 #include "scumm/charset_v7.h"
 #include "scumm/scumm.h"
 #include "scumm/gfx.h"
+
+namespace Graphics {
+class MacFontManager;
+class Font;
+}
 
 namespace Scumm {
 
@@ -281,12 +285,12 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	Graphics::MacFONTFont _macFonts[2];
+	Graphics::MacFontManager *_macFontManager;
+	const Graphics::Font *_macFonts[2];
 	bool _useRealCharWidth;
 	bool _useCorrectFontSpacing;
 	bool _pad;
 	int _lastTop;
-
 
 	int getDrawWidthIntern(uint16 chr) const;
 
