@@ -264,12 +264,78 @@ void Room407::loadSeries() {
 }
 
 void Room407::conv87() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
 
+	if (sound) {
+		if (who == 1)
+			wilbur_speech(sound, 10001);
+		else
+			playConvSound();
+	}
 }
 
 void Room407::conv88() {
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
 
+	if (sound) {
+		if (who == 1) {
+			wilbur_speech(sound, 10001);
+		} else if (_flag1) {
+			_val2 = 18;
+		} else if (node == 1) {
+			switch (entry) {
+			case 0:
+			case 2:
+			case 4:
+				_val2 = 13;
+				break;
+			case 1:
+				_val2 = 12;
+				break;
+			case 3:
+			case 5:
+				_val2 = 11;
+				break;
+			case 6:
+				_val2 = 10;
+				conv_resume_curr();
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
+
+int Room407::getRandomState() const {
+	switch (imath_ranged_rand(1, 10)) {
+	case 1:
+		return 15;
+	case 2:
+		return 16;
+	default:
+		return 10;
+	}
+}
+
+void Room407::freeDz() {
+	_dz.terminate();
+	series_unload(_dzS1);
+	series_unload(_dzS2);
+}
+
+void Room407::playConvSound() {
+	terminateMachineAndNull(_rx);
+
+	_val3 = 25;
+	digi_play(conv_sound_to_play(), 1, 255, 8);
+	_rx = series_play("407rx04", 0x901, 4, -1, 6, -1);
+}
+
 
 } // namespace Rooms
 } // namespace Burger

@@ -54,6 +54,9 @@ private:
 	static const seriesPlayBreak PLAY19[];
 	static long _state1;
 	Series _vp02;
+	Series _dz;
+	int _dzS1 = 0, _dzS2 = 0;
+	machine *_rx = nullptr;
 	noWalkRect *_walk1 = nullptr;
 	bool _flag1 = false;
 	int _val1 = 0;
@@ -63,6 +66,9 @@ private:
 	void loadSeries();
 	void conv87();
 	void conv88();
+	int getRandomState() const;
+	void freeDz();
+	void playConvSound();
 
 public:
 	Room407();
