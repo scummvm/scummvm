@@ -286,7 +286,7 @@ public:
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
 	Graphics::MacFontManager *_macFontManager;
-	const Graphics::Font *_macFonts[2];
+	const Graphics::Font *_macFonts[5];
 	bool _useRealCharWidth;
 	bool _useCorrectFontSpacing;
 	bool _pad;
