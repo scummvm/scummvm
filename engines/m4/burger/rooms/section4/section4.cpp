@@ -119,7 +119,15 @@ const char *Section4::PARSER[] = {
 	"Th-th-th-that's all folks...",
 	nullptr
 };
-	
+
+const Section4::TeleportEntry Section4::TELEPORTS[] = {
+	{ 402, 407, 406 },
+	{ 405, 407, 406 },
+	{ 406, 402, 405 },
+	{ 407, 402, 405 },
+	{   0,   0,   0 }
+};
+
 
 Section4::Section4() : Rooms::Section() {
 	add(401, &_room401);
@@ -130,9 +138,67 @@ Section4::Section4() : Rooms::Section() {
 	add(407, &_room407);
 }
 
+void Section4::init() {
+	if (_G(executing) != WHOLE_GAME) {
+		inv_give_to_player("JAWZ O' LIFE");
+		inv_give_to_player("DEED");
+	}
+}
+
 void Section4::daemon() {
-	// TODO
-	_G(kernel).continue_handling_trigger = true;
+	switch (_G(kernel).trigger) {
+	case 4001:
+		_G(game).new_room = 401;
+		break;
+
+	case 4002:
+		_G(game).new_room = 402;
+		break;
+
+	case 4003:
+		_G(game).new_room = 404;
+		break;
+
+	case 4004:
+		_G(game).new_room = 405;
+		break;
+
+	case 4005:
+		_G(game).new_room = 406;
+		break;
+
+	case 4006:
+		_G(game).new_room = 407;
+		break;
+
+	case 4007:
+		term_message("Teleporting...");
+		term_message(teleport() ? "...scuccessful" : "ERROR while teleporting!");
+		break;
+
+	case 4008:
+		player_set_commands_allowed(!checkOrderWindow());
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		if (_G(wilbur_should) == 10015) {
+			kernel_trigger_dispatch_now(10027);
+		} else {
+			_G(kernel).continue_handling_trigger = true;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
+}
+
+void Section4::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (_G(walker).wilbur_parser(PARSER))
+		_G(player).command_ready = false;
 }
 
 void Section4::poof(int trigger) {
@@ -163,6 +229,28 @@ bool Section4::checkOrderWindow() {
 		_G(flags)[V152] = 1;
 		disable_player_commands_and_fade_init(g10027);
 		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Section4::teleport() {
+	const TeleportEntry *te;
+	for (te = TELEPORTS; te->_room && te->_room != _G(game).room_id; ++te) {
+	}
+
+	if (te->_room) {
+		if (player_said("DISC")) {
+			_G(game).new_room = te->_newRoom1;
+			term_message("...%d...", te->_newRoom1);
+			return true;
+		} else if (player_said("DISC ")) {
+			_G(game).new_room = te->_newRoom2;
+			term_message("...%d...", te->_newRoom2);
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}

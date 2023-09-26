@@ -334,6 +334,13 @@ Section5::Section5() : Rooms::Section() {
 	add(513, &_room513);
 }
 
+void Section5::init() {
+	if (_G(executing) != WHOLE_GAME) {
+		inv_give_to_player("AMPLIFIER");
+		inv_give_to_player("BOTTLE");
+	}
+}
+
 void Section5::daemon() {
 	// TODO: daemon method
 	_G(kernel).continue_handling_trigger = true;

@@ -36,8 +36,14 @@ namespace Burger {
 namespace Rooms {
 
 class Section4 : public Rooms::Section {
+	struct TeleportEntry {
+		int _room;
+		int _newRoom1;
+		int _newRoom2;
+	};
 private:
 	static const char *PARSER[];
+	static const TeleportEntry TELEPORTS[];
 
 private:
 	Room401 _room401;
@@ -47,6 +53,8 @@ private:
 	Room406 _room406;
 	Room407 _room407;
 
+	bool teleport();
+
 public:
 	static void poof(int trigger);
 	static bool checkOrderWindow();
@@ -55,7 +63,9 @@ public:
 	Section4();
 	virtual ~Section4() {}
 
+	void init() override;
 	void daemon() override;
+	void parser() override;
 };
 
 } // namespace Rooms
