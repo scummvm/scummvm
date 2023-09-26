@@ -337,8 +337,16 @@ void Overlay::setFrame(uint frame) {
 		// We can achieve the same results by doung the calculations below
 		Common::Rect staticSrc = _blitDescriptions[frame].src;
 		srcRect.translate(staticSrc.left, staticSrc.top);
-		srcRect.setWidth(staticSrc.width());
-		srcRect.setHeight(staticSrc.height());
+
+		if (srcRect.isEmpty()) {
+			srcRect.setWidth(staticSrc.width());
+			srcRect.setHeight(staticSrc.height());
+		} else {
+			// Grab whichever dimensions are smaller. Fixes the book in nancy5 scene 3000
+			srcRect.setWidth(MIN<int>(staticSrc.width(), srcRect.width()));
+			srcRect.setHeight(MIN<int>(staticSrc.height(), srcRect.height()));
+		}
+		
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);
