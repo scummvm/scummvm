@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-25 10:57+0000\n"
+"POT-Creation-Date: 2023-09-25 21:32+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -223,7 +223,7 @@ msgstr "הדבקה"
 msgid "Paste code from clipboard"
 msgstr "הדבקת קוד מהלוח"
 
-#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:315
 #: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
@@ -283,8 +283,8 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
-#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:426 gui/launcher.cpp:455
+#: gui/launcher.cpp:498 gui/options.cpp:3401 gui/options.cpp:3782
 #: base/main.cpp:601 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -297,8 +297,8 @@ msgstr "כן"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
-#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:426 gui/launcher.cpp:455
+#: gui/launcher.cpp:498 gui/options.cpp:3401 gui/options.cpp:3782
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -321,7 +321,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:555 gui/launcher.cpp:559
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:554 gui/launcher.cpp:558
 #: gui/massadd.cpp:90 gui/options.cpp:2331 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
@@ -383,7 +383,7 @@ msgstr "העלאת הקובץ נכשלה!"
 msgid "Select directory where to download game data"
 msgstr "בחירת תיקיה להורדת נתוני משחק"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:312
 msgid "Select directory with game data"
 msgstr "בחירת תיקיה עם נתוני משחק"
 
@@ -417,7 +417,7 @@ msgid ""
 "files with it?"
 msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת קבצים?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:657
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:656
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM לא הצליח לפתוח את התיקיה שנבחרה!"
 
@@ -1055,7 +1055,7 @@ msgstr "פלטפורמה"
 msgid "Select Group by"
 msgstr "נא לבחור קיבוץ לפי"
 
-#: gui/launcher.cpp:232 gui/launcher.cpp:883
+#: gui/launcher.cpp:232 gui/launcher.cpp:882
 msgid "Group:"
 msgstr "קיבוץ לפי:"
 
@@ -1067,224 +1067,224 @@ msgstr "בחירת קריטריון לקיבוץ הרשומות על פיו"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: gui/launcher.cpp:262 backends/platform/sdl/macosx/appmenu_osx.mm:262
+#: gui/launcher.cpp:261 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr "עזרה"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:266 engines/dialogs.cpp:95
+#: gui/launcher.cpp:265 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "~י~ציאה"
 
-#: gui/launcher.cpp:266 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:265 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "סגירת ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:269
 msgid "A~b~out"
 msgstr "על ~א~ודות"
 
-#: gui/launcher.cpp:270 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:269 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "על אודות ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:271
 msgid "Global ~O~ptions..."
 msgstr "א~פ~שרויות מקיפות..."
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:271
 msgid "Change global ScummVM options"
 msgstr "שנה הגדרות ScummVM מקיפות"
 
-#: gui/launcher.cpp:272
+#: gui/launcher.cpp:271
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "א~פ~שרויות מקיפות..."
 
-#: gui/launcher.cpp:276
+#: gui/launcher.cpp:275
 #, fuzzy
 #| msgid "Download game files"
 msgid "Download Games"
 msgstr "הורדת קבצי משחק"
 
-#: gui/launcher.cpp:276
+#: gui/launcher.cpp:275
 msgid "Download freeware games for ScummVM"
 msgstr ""
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:282
 msgid "~A~dd Game..."
 msgstr "ה~ו~ספת משחק..."
 
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:282
 msgid "Add games to the list"
 msgstr "הוספת משחקים לרשימה"
 
-#: gui/launcher.cpp:283
+#: gui/launcher.cpp:282
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "ה~ו~ספת משחק..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:286
 msgid "~R~emove Game"
 msgstr "ה~ס~רת משחק"
 
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:286
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "הסרת משחק מרשימת המשחקים. קבצי המשחק לא ימחקו"
 
-#: gui/launcher.cpp:287
+#: gui/launcher.cpp:286
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "ה~ס~רת משחק"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:290
+#: gui/launcher.cpp:289
 msgid "Mass Add..."
 msgstr "הוספה המונית..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:292
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "הוספה המונית..."
 
-#: gui/launcher.cpp:301 gui/launcher.cpp:853 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:300 gui/launcher.cpp:852 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "חיפוש ברשימת המשחקים"
 
-#: gui/launcher.cpp:305 gui/launcher.cpp:874 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:304 gui/launcher.cpp:873 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "חיפוש:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:98 engines/engine.cpp:915
+#: gui/launcher.cpp:315 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
 msgstr "טעינת משחק:"
 
-#: gui/launcher.cpp:415
+#: gui/launcher.cpp:414
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr "תיקיה זו אינה ניתנת לשימוש כל עוד יש הורדה פעילה!"
 
-#: gui/launcher.cpp:426
+#: gui/launcher.cpp:425
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr "האם באמת להפעיל את מגלה המשחקים? זה עשוי להוסיף כמות ענקית של משחקים."
 
-#: gui/launcher.cpp:456
+#: gui/launcher.cpp:455
 msgid "Do you really want to remove this game configuration?"
 msgstr "האם למחוק תצורת משחק זו?"
 
-#: gui/launcher.cpp:498
+#: gui/launcher.cpp:497
 msgid "Do you want to load saved game?"
 msgstr "האם לטעון את המשחק שנשמר?"
 
-#: gui/launcher.cpp:555
+#: gui/launcher.cpp:554
 msgid "This game does not support loading games from the launcher."
 msgstr "המשחק שנבחר אינו תומך בטעינת משחקים מתוך מסך הרצת המשחקים."
 
-#: gui/launcher.cpp:559
+#: gui/launcher.cpp:558
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM לא הצליח למצוא מנוע שמסוגל להריץ את המשחק שנבחר!"
 
-#: gui/launcher.cpp:676
+#: gui/launcher.cpp:675
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM לא מצא שום משחק בתיקייה שנבחרה!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:692
+#: gui/launcher.cpp:691
 msgid "Unknown variant"
 msgstr "גרסה לא ידועה"
 
-#: gui/launcher.cpp:698
+#: gui/launcher.cpp:697
 msgid "Pick the game:"
 msgstr "בחר משחק:"
 
-#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:922 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "תצוגת רשימה"
 
-#: gui/launcher.cpp:924 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "תצוגת רשת"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1085
 msgid "~S~tart"
 msgstr "~ה~תחלה"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1085
 msgid "Start selected game"
 msgstr "התחלת המשחק שנבחר"
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1088
 msgid "~L~oad..."
 msgstr "~ט~עינה..."
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1088
 msgid "Load saved game for selected game"
 msgstr "טעינת משחק שנשמר עבור המשחק שנבחר"
 
-#: gui/launcher.cpp:1091
+#: gui/launcher.cpp:1090
 msgid "Record..."
 msgstr "הקלטה..."
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1096
 msgid "~G~ame Options..."
 msgstr "א~פ~שרויות משחק..."
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1096
 msgid "Change game options"
 msgstr "שינוי אפשרויות המשחק"
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1096
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "א~פ~שרויות משחק..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1372
+#: gui/launcher.cpp:1188 gui/launcher.cpp:1371
 msgid "Unknown Engine"
 msgstr "מנוע לא ידוע"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1389
+#: gui/launcher.cpp:1205 gui/launcher.cpp:1388
 msgid "Unknown Publisher"
 msgstr "חברה מפיצה לא ידועה"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1223 gui/launcher.cpp:1406
+#: gui/launcher.cpp:1222 gui/launcher.cpp:1405
 msgid "No Series"
 msgstr "ללא סדרה"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1237 gui/launcher.cpp:1420
+#: gui/launcher.cpp:1236 gui/launcher.cpp:1419
 msgid "Language not detected"
 msgstr "לא זוהתה שפה"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1251 gui/launcher.cpp:1434
+#: gui/launcher.cpp:1250 gui/launcher.cpp:1433
 msgid "Platform not detected"
 msgstr "לא זוהתה פלטפורמה"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1445 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1444 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "הכל"
 
-#: gui/launcher.cpp:1594
+#: gui/launcher.cpp:1593
 msgid "Icons per row:"
 msgstr "צלמיות בשורה:"
 
