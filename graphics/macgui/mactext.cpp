@@ -566,7 +566,7 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 // Adds the given string to the end of the last line/chunk
 // while observing the _maxWidth and keeping this chunk's
 // formatting
-void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
+void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int indent) {
 	int curLine = *curLinePtr;
 	int curChunk;
 	MacFontRun *chunk;
@@ -632,6 +632,7 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr) {
 			curLine++;
 			_textLines.insert_at(curLine, MacTextLine());
 			_textLines[curLine].chunks.push_back(newchunk);
+			_textLines[curLine].indent = indent;
 		} else {
 			_textLines[curLine].table->back().cells.back().text.push_back(MacTextLine());
 			_textLines[curLine].table->back().cells.back().text.back().chunks.push_back(newchunk);
@@ -724,7 +725,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
-			chopChunk(tmp, &curLine);
+			chopChunk(tmp, &curLine, indentSize);
 
 			curTextLine = &_textLines[curLine];
 

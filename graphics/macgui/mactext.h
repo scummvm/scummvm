@@ -345,7 +345,7 @@ private:
 	 */
 	void reshuffleParagraph(int *row, int *col);
 
-	void chopChunk(const Common::U32String &str, int *curLine);
+	void chopChunk(const Common::U32String &str, int *curLine, int indent);
 	void splitString(const Common::U32String &str, int curLine = -1);
 	void render(int from, int to, int shadow);
 	void render(int from, int to);
