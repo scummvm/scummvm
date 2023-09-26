@@ -717,7 +717,7 @@ void Room405::daemon() {
 
 	case 25:
 		_vp03.terminate();
-		_vp03.series_play("405vp03", 0x900, 0, -1, 600, -1, 100, 0, 0, 4, 4);
+		_vp03.play("405vp03", 0x900, 0, -1, 600, -1, 100, 0, 0, 4, 4);
 		Series::series_play("405wi01", 0x100, 0, 26, 7, 0, 100, 0, 0, 16, 18);
 		break;
 
@@ -765,7 +765,7 @@ void Room405::daemon() {
 			break;
 
 		case 26:
-			_vp03.series_play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 15, 15);
+			_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 15, 15);
 			startConv89();
 			break;
 

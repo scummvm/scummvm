@@ -58,10 +58,14 @@ private:
 	int _dzS1 = 0, _dzS2 = 0;
 	machine *_rx = nullptr;
 	noWalkRect *_walk1 = nullptr;
+	Common::String _digiName;
 	bool _flag1 = false;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
+	int _val4 = 0;
+	int _val5 = 0;
+	int _digiTrigger = 0;
 
 	void loadSeries();
 	void conv87();
