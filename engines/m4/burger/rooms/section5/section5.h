@@ -75,6 +75,7 @@ public:
 	Section5();
 	virtual ~Section5() {}
 
+	void init() override;
 	void daemon() override;
 	void parser() override;
 };
