@@ -36,7 +36,7 @@ void render_blockcode(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text
 	if (!text)
 		return;
 
-	Common::String res = Common::String::format("\n\016+0001" "\001\016t%04x" "%s" "\001\016tffff" "\n\016-0001",
+	Common::String res = Common::String::format("\n\001\016+0001" "\001\016t%04x" "%s" "\001\016tffff" "\n\001\016-0001",
 			kMacFontMonaco, Common::String((const char *)text->data , text->size).c_str());
 
 	sd_bufput(ob, res.c_str(), res.size());
@@ -78,7 +78,7 @@ void render_list_start(Common::SDDataBuffer *ob, const Common::SDDataBuffer *tex
 
 	mdstate->listNum.push_back(flags & MKD_LIST_ORDERED ? 1 : -1);
 
-	sd_bufput(ob, "\016+0001", 6);
+	sd_bufput(ob, "\001\016+0001", 7);
 
 	debug(1, "render_list_start(%s, %d)", PR(text), flags);
 }
@@ -89,7 +89,7 @@ void render_list(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, int
 	mdstate->listNum.pop_back();
 
 	sd_bufput(ob, text->data, text->size);
-	sd_bufput(ob, "\n\016-0001", 7);
+	sd_bufput(ob, "\n\001\016-0001", 8);
 
 	debug(1, "render_list(%s, %d)", PR(text), flags);
 }
