@@ -1136,7 +1136,15 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			return;
 
 		tmp = _charset->_center;
-		drawString(4, msg);
+
+		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && _macScreen) {
+			int oldId = _string[4].charset;
+			_string[4].charset = (vs->curmode == 2) ? 4 : 5;
+			drawString(4, msg);
+			_string[4].charset = oldId;
+		} else
+			drawString(4, msg);
+
 		_charset->_center = tmp;
 
 		if (isRtl)

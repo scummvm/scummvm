@@ -1583,9 +1583,10 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 
 	Common::String fontFamily = (_vm->_game.id == GID_LOOM) ? "Loom" : "Indy";
 	const Common::Array<Graphics::MacFontFamily *> &fontFamilies = _macFontManager->getFontFamilies();
+	int fontId = 0;
 	for (uint i = 0; i < fontFamilies.size(); i++) {
 		if (fontFamilies[i]->getName() == fontFamily) {
-			_macFontManager->registerFontName(fontFamilies[i]->getName(), fontFamilies[i]->getFontFamilyId());
+			fontId = _macFontManager->registerFontName(fontFamilies[i]->getName(), fontFamilies[i]->getFontFamilyId());
 			break;
 		}
 	}
@@ -1594,11 +1595,14 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 		_macFonts[i] = nullptr;
 
 	if (_vm->_game.id == GID_INDY3) {
-		_macFonts[0] = _macFontManager->getFont(Graphics::MacFont(_macFontManager->getFontIdByName(fontFamily), 12));
-		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(_macFontManager->getFontIdByName(fontFamily), 9));
+		_macFonts[0] = _macFontManager->getFont(Graphics::MacFont(fontId, 12));
+		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(fontId, 9));
+		_macFonts[2] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
+		_macFonts[3] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
+		_macFonts[4] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline));
 	} else {
-		_macFonts[0] = _macFontManager->getFont(Graphics::MacFont(_macFontManager->getFontIdByName(fontFamily), 13));
-		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(_macFontManager->getFontIdByName(fontFamily), 12));
+		_macFonts[0] = _macFontManager->getFont(Graphics::MacFont(fontId, 13));
+		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(fontId, 12));
 	}
 
 	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
@@ -1635,15 +1639,20 @@ void CharsetRendererMac::setCurID(int32 id) {
 	// by the looks of it the Mac version uses the same font for both
 	// cases. In ScummVM, we match id 0 and 1 to font 0 and id 2 (which is
 	// only used to print the text box caption) to font 1.
+	//
+	// Id 3 and upwards are used by the GUI.
 	if (_vm->_game.id == GID_INDY3) {
-		if (id == 1) {
+		if (id == 0 || id == 1) {
 			id = 0;
 		} else if (id == 2) {
 			id = 1;
+		} else if (id >= 3) {
+			id--;
+			_useRealCharWidth = true;
 		}
 	}
 
-	if (id > 1) {
+	if (id < 0 || id > ARRAYSIZE(_macFonts) || !_macFonts[id]) {
 		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
