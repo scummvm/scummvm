@@ -304,20 +304,20 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
+	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
+	bool unwrapFilename = true;
+
+	// SQ4 floppy prepends /\ to the filenames, QFG4 import does too.
+	// Do this before the empty test to handle QFG4.
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
 
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
 		debugC(kDebugLevelFile, "Attempted to open a file with an empty filename");
 		return SIGNAL_REG;
-	}
-
-	kFileOpenMode mode = (kFileOpenMode)argv[1].toUint16();
-	bool unwrapFilename = true;
-
-	// SQ4 floppy prepends /\ to the filenames
-	if (name.hasPrefix("/\\")) {
-		name.deleteChar(0);
-		name.deleteChar(0);
 	}
 
 	// SQ4 floppy attempts to update the savegame index file sq4sg.dir when

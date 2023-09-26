@@ -869,6 +869,10 @@ reg_t kArrayCopy(EngineState *s, int argc, reg_t *argv) {
 	const uint16 sourceIndex = argv[3].toUint16();
 	const int16 count = argv[4].toSint16();
 
+	if (argv[2].isNull()) {
+		return argv[0];
+	}
+
 	if (!s->_segMan->isArray(argv[2])) {
 		// String copies may be made from static script data
 		SciArray source;
