@@ -298,18 +298,15 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 			si1->_xAdjoin && si1->_yAdjoin &&
 			si1->_xAdjoin->_yAdjoin && si1->_yAdjoin->_xAdjoin &&
 			si1->_xAdjoin->_yAdjoin == si1->_yAdjoin->_xAdjoin) {
-			SortItem *si2 = si1->_xAdjoin->_yAdjoin;
-			SortItem *siX = si1->_xAdjoin;
-			SortItem *siY = si1->_yAdjoin;
+			SortItem *si2 = si1;
+			SortItem *siX = si1;
+			SortItem *siY = si1;
 
 			int32 group = si1->_itemNum;
 			si1->_groupNum = group;
-			si2->_groupNum = group;
-			siX->_groupNum = group;
-			siY->_groupNum = group;
 
 			// Expand NxN adjoined square
-			for (int n = 3; n < 6; n++) {
+			for (int n = 2; n < 6; n++) {
 				// Expand out 1 from X and Y edge points
 				SortItem *p1 = siX->_xAdjoin;
 				SortItem *p2 = siY->_yAdjoin;
@@ -338,23 +335,29 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 				siY = siY->_yAdjoin;
 			}
 
-			SortItem oc;
-			oc._occl = true;
-			oc._fbigsq = true;
-			oc._flat = si1->_flat;
-			oc._solid = si1->_solid;
-			oc._roof = si1->_roof;
-			oc._fixed = si1->_fixed;
-			oc._land = si1->_land;
+			if (si1 != si2) {
+				SortItem oc;
+				oc._occl = true;
+				oc._fbigsq = true;
+				oc._flat = si1->_flat;
+				oc._solid = si1->_solid;
+				oc._roof = si1->_roof;
+				oc._fixed = si1->_fixed;
+				oc._land = si1->_land;
 
-			Box box = si1->getBoxBounds();
-			box.extend(si2->getBoxBounds());
-			oc.setBoxBounds(box, _camSx, _camSy);
+				Box box = si1->getBoxBounds();
+				box.extend(si2->getBoxBounds());
 
-			for (si2 = _items; si2 != nullptr; si2 = si2->_next) {
-				if (si2->_groupNum != group && !si2->_occluded &&
-					si2->overlap(oc) && si2->below(oc) && oc.occludes(*si2)) {
-					si2->_occluded = true;
+				// Keep the box flat to avoid wrong occlusions caused by different heights
+				box._zd = 0;
+
+				oc.setBoxBounds(box, _camSx, _camSy);
+
+				for (si2 = _items; si2 != nullptr; si2 = si2->_next) {
+					if (si2->_groupNum != group && !si2->_occluded &&
+						si2->overlap(oc) && si2->below(oc) && oc.occludes(*si2)) {
+						si2->_occluded = true;
+					}
 				}
 			}
 		}
