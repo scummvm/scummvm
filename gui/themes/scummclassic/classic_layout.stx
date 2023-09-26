@@ -22,7 +22,7 @@
 <layout_info resolution = 'y>=H'>
 	<globals>
 		<def var = 'Line.Height' value = '16' scalable = 'yes'/>
-		<def var = 'Font.Height' value = '16' scalable = 'yes'/>
+		<def var = 'Font.Height' value = '12' scalable = 'yes'/>
 
 		<def var = 'About.OuterBorder' value = '80' scalable = 'yes'/>
 
