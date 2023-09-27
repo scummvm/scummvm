@@ -1154,50 +1154,54 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	if ((uint)line >= _textLines.size())
 		return 0;
 
-	if (_textLines[line].width != -1 && !enforce && col == -1)
-		return _textLines[line].width;
+	return getLineWidth(&_textLines[line], enforce, col);
+}
 
-	if (!_textLines[line].picfname.empty()) {
-		const Surface *image = getImageSurface(_textLines[line].picfname);
+int MacText::getLineWidth(MacTextLine *line, bool enforce, int col) {
+	if (line->width != -1 && !enforce && col == -1)
+		return line->width;
+
+	if (!line->picfname.empty()) {
+		const Surface *image = getImageSurface(line->picfname);
 
 		if (image) {
-			float ratio = _maxWidth * _textLines[line].picpercent / 100.0 / (float)image->w;
-			_textLines[line].width = _maxWidth;
-			_textLines[line].height = image->h * ratio;
-			_textLines[line].charwidth = image->w * ratio;
+			float ratio = _maxWidth * line->picpercent / 100.0 / (float)image->w;
+			line->width = _maxWidth;
+			line->height = image->h * ratio;
+			line->charwidth = image->w * ratio;
 		} else {
-			_textLines[line].width = _maxWidth;
-			_textLines[line].height = 1;
-			_textLines[line].charwidth = 1;
+			line->width = _maxWidth;
+			line->height = 1;
+			line->charwidth = 1;
 		}
 
-		return _textLines[line].width;
+		return line->width;
 	}
 
-	int width = _textLines[line].indent + _textLines[line].firstLineIndent;
+	int width = line->indent + line->firstLineIndent;
 	int height = 0;
 	int charwidth = 0;
 	int minWidth = 0;
 	bool firstWord = true;
 
-	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
+	for (uint i = 0; i < line->chunks.size(); i++) {
 		if (enforce && _macFontMode)
-			_textLines[line].chunks[i].font = nullptr;
+			line->chunks[i].font = nullptr;
 
 		if (col >= 0) {
-			if (col >= (int)_textLines[line].chunks[i].text.size()) {
-				col -= _textLines[line].chunks[i].text.size();
+			if (col >= (int)line->chunks[i].text.size()) {
+				col -= line->chunks[i].text.size();
 			} else {
-				Common::U32String tmp = _textLines[line].chunks[i].text.substr(0, col);
+				Common::U32String tmp = line->chunks[i].text.substr(0, col);
 
-				width += getStringWidth(_textLines[line].chunks[i], tmp);
+				width += getStringWidth(line->chunks[i], tmp);
 
 				return width;
 			}
 		}
 
-		if (!_textLines[line].chunks[i].text.empty()) {
-			int w = getStringWidth(_textLines[line].chunks[i], _textLines[line].chunks[i].text);
+		if (!line->chunks[i].text.empty()) {
+			int w = getStringWidth(line->chunks[i], line->chunks[i].text);
 
 			if (firstWord) {
 				minWidth = w + width; // Take indent into account
@@ -1206,17 +1210,17 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 				minWidth = MAX(minWidth, w);
 			}
 			width += w;
-			charwidth += _textLines[line].chunks[i].text.size();
+			charwidth += line->chunks[i].text.size();
 		}
 
-		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
+		height = MAX(height, line->chunks[i].getFont()->getFontHeight());
 	}
 
 
-	_textLines[line].width = width;
-	_textLines[line].minWidth = minWidth;
-	_textLines[line].height = height;
-	_textLines[line].charwidth = charwidth;
+	line->width = width;
+	line->minWidth = minWidth;
+	line->height = height;
+	line->charwidth = charwidth;
 
 	return width;
 }

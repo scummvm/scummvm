@@ -339,6 +339,8 @@ private:
 	 */
 	int getLineWidth(int line, bool enforce = false, int col = -1);
 
+	int getLineWidth(MacTextLine *line, bool enforce = false, int col = -1);
+
 	/**
 	 * Rewraps paragraph containing given text row.
 	 * When text is modified, we redo whole thing again without touching
