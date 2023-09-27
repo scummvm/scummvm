@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-25 21:32+0000\n"
+"POT-Creation-Date: 2023-09-27 09:57+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -469,7 +469,7 @@ msgstr ""
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
-#: gui/gui-manager.cpp:162 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
+#: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: backends/platform/ios7/ios7_options.mm:197 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
@@ -882,19 +882,19 @@ msgid ""
 msgstr ""
 "Vil du verkeleg sette alle FluidSynth-innstillingar til standardverdiar?"
 
-#: gui/gui-manager.cpp:153 gui/options.cpp:2269
+#: gui/gui-manager.cpp:155 gui/options.cpp:2269
 msgid "GUI"
 msgstr ""
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:157 engines/hpl1/metaengine.cpp:91
+#: gui/gui-manager.cpp:159 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:844
 #, fuzzy
 msgid "Interact"
 msgstr "Interpolering:"
 
-#: gui/gui-manager.cpp:168 engines/metaengine.cpp:116
+#: gui/gui-manager.cpp:170 engines/metaengine.cpp:116
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
@@ -908,7 +908,7 @@ msgstr "Interpolering:"
 msgid "Up"
 msgstr "Opp"
 
-#: gui/gui-manager.cpp:174 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:176 engines/metaengine.cpp:122
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
@@ -922,7 +922,7 @@ msgstr "Opp"
 msgid "Down"
 msgstr "Ned"
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:128
+#: gui/gui-manager.cpp:182 engines/metaengine.cpp:128
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
@@ -937,7 +937,7 @@ msgstr "Ned"
 msgid "Left"
 msgstr "Venstre"
 
-#: gui/gui-manager.cpp:186 engines/metaengine.cpp:134
+#: gui/gui-manager.cpp:188 engines/metaengine.cpp:134
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
@@ -952,7 +952,7 @@ msgstr "Venstre"
 msgid "Right"
 msgstr "Høgre"
 
-#: gui/gui-manager.cpp:192 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
