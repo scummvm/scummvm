@@ -697,7 +697,7 @@ iCollideShape *cMesh::CreateCollideShapeFromCollider(cMeshCollider *pCollider, i
 	// Collider creation and updating changed between the version of the Newton physics library we are using and the original version. The changes are probably in dgBody::UpdateCollisionMatrix
 	// (or in one of the functions called inside of it), called when at the creation of the helmet's PhysicsBodyNewton and after modifying the body's transformation matrix later in the loading process.
 	if (GetName() == "iron_mine_helmet.dae") {
-		return apWorld->CreateBoxShape(pCollider->mvSize - cVector3f(0.04, 0.0, 0.04), &pCollider->m_mtxOffset);
+		return apWorld->CreateBoxShape(pCollider->mvSize - cVector3f(0.04f, 0.0f, 0.04f), &pCollider->m_mtxOffset);
 	}
 	switch (pCollider->mType) {
 	case eCollideShapeType_Box:
