@@ -134,19 +134,419 @@ const seriesPlayBreak Room143::PLAY11[] = {
 
 
 void Room143::init() {
+	_frame = 0;
+	_flag1 = false;
+	digi_preload("143_001");
+	_G(kernel).call_daemon_every_loop = true;
 
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 142:
+		player_set_commands_allowed(false);
+		ws_demand_location(148, 247, 3);
+		ws_walk(249, 252, 0, 13, 4);
+		break;
+
+	default:
+		ws_demand_location(290, 300, 5);
+		break;
+	}
+
+	_plate = series_play("143plate", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+
+	if (_G(flags)[V000] == 1003 && _G(flags)[V063])
+		digi_preload("143_002");
+
+	_val1 = 8;
+	_val2 = 8;
+	kernel_trigger_dispatch_now(44);
+	_val3 = 0;
+	_val4 = 6;
+	kernel_trigger_dispatch_now(43);
+
+	if (_G(flags)[V064] == 1)
+		loadCheese();
+	else
+		hotspot_set_active("cheese", false);
+
+	if (_G(flags)[V000] == 1003) {
+		if (_G(flags)[V063]) {
+			_val5 = _val6 = 42;
+		} else {
+			_val5 = _val6 = 31;
+		}
+
+		kernel_trigger_dispatch_now(45);
+	} else {
+		hotspot_set_active("burl", false);
+	}
+
+	if (inv_object_in_scene("BROKEN MOUSE TRAP", 143)) {
+		_walk1 = intr_add_no_walk_rect(298, 310, 348, 343, 285, 314);
+		_mouseTrap = series_play("143mtrap", 0xf00, 0, -1, 600, -1, 100, 25, 0, 0, 0);
+	} else {
+		hotspot_set_active("MOUSE TRAP", false);
+	}
+
+	if (_G(flags)[V000] == 1004) {
+		loadMoney();
+		series_play("143money", 0xf02, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	} else {
+		hotspot_set_active("money ", false);
+	}
+
+	digi_play_loop("143_001", 3, 255, -1);
 }
 
 void Room143::daemon() {
-
+	// TODO
 }
 
 void Room143::pre_parser() {
-
+	if (player_said("outside") && player_said_any("exit", "gear", "look", "look at"))
+		player_hotspot_walk_override_just_face(9, 0);
 }
 
 void Room143::parser() {
+	bool lookFlag = player_said_any("look", "look at");
+	bool money = player_said("money ");
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (player_said("conv35")) {
+		conv35();
+	} else if (player_said("conv30")) {
+		conv30();
+	} else if (money && lookFlag) {
+		wilbur_speech("143w030");
+	} else if (money && player_said_any("take", "gear")) {
+		wilbur_speech("143w031");
+	} else if (money && player_said("take")) {
+		wilbur_speech("143w030");
+	} else if (player_said("take", "mouse trap")) {
+		_G(wilbur_should) = 2;
+		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("talk to", "vera")) {
+		talkToVera();
+	} else if (player_said("talk to", "burl")) {
+		if (player_commands_allowed() || INTERFACE_VISIBLE) {
+			talkToBurl();
+
+			if (_val5 != 42 && _val5 != 43) {
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_timing_trigger(60, 19);
+			}
+		}
+	} else if (player_said("outside") && (lookFlag || player_said_any("exit", "gear"))) {
+		player_set_commands_allowed(false);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1014);
+	} else if (player_said("laxative", "burl")) {
+		kernel_trigger_dispatch_now(28);
+	} else if (player_said("burl") && inv_player_has(_G(player).verb)) {
+		kernel_trigger_dispatch_now(24);
+	} else if (player_said("vera") && inv_player_has(_G(player).verb)) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_val1 = 22;
+			_digiName = "143v511";
+			_val7 = 1;
+			_val8 = 1;
+			break;
+
+		case 1:
+			player_set_commands_allowed(false);
+			_val1 = 8;
+			kernel_trigger_dispatch_now(44);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("burl") && inv_player_has(_G(player).verb)) {
+		// This seems a duplicate of a prior check
+		wilbur_speech("143w005");
+	} else if (player_said("swinging door") && player_said_any("enter", "gear")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_val1 = 11;
+			_digiName = "143v504";
+			_val7 = 1;
+			_val8 = 1;
+			break;
+
+		case 1:
+			_val1 = 8;
+			kernel_trigger_dispatch_now(44);
+			digi_play("143e502", 1, 255, 1);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("quarter", "jukebox") || player_said("gear", "jukebox")) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_val1 = 22;
+			_digiName = "143v510";
+			_val7 = 1;
+			_val8 = 1;
+			_G(flags)[V062] = 1;
+			break;
+
+		case 1:
+			_val1 = 8;
+			kernel_trigger_dispatch_now(44);
+			player_set_commands_allowed(true);
+			break;
+
+		default:
+			break;
+		}
+	} else if (player_said("muffin") &&
+			(player_said_any("take", "gear") || inv_player_has(_G(player).verb))) {
+		switch (_G(kernel).trigger) {
+		case -1:
+			player_set_commands_allowed(false);
+			_val1 = 26;
+			_digiName = "143v502";
+			_val7 = 1;
+			_val8 = 1;
+			_val4 = 21;
+			kernel_trigger_dispatch_now(43);
+			break;
+
+		case 1:
+			_val1 = 13;
+			kernel_trigger_dispatch_now(44);
+			_G(kernel).trigger_mode = KT_PARSE;
+			digi_play("143e501", 1, 255, 2);
+			break;
+
+		case 2:
+			_val1 = 14;
+			_digiName = "143V503";
+			_val7 = 1;
+			_val8 = 3;
+			break;
+
+		case 3:
+			player_set_commands_allowed(true);
+			_val1 = 8;
+			kernel_trigger_dispatch_now(44);
+			break;
+
+		default:
+			break;
+		}
+	} else if (lookFlag && player_said("burl")) {
+		if (_val5 == 42 || _val5 == 43 || _val5 == 44)
+			wilbur_speech("143w004");
+		else
+			wilbur_speech("143w003");
+	} if (!_G(walker).wilbur_said(SAID)) {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room143::conv35() {
+	_G(kernel).trigger_mode = KT_PARSE;
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	switch (_G(kernel).trigger) {
+	case 9:
+		if (who <= 0) {
+			if ((node == 9 && entry == 1) || (node == 5 && entry == 1) ||
+					(node == 17 && entry == 0) || (node == 19 && entry == 0)) {
+				terminateMachineAndNull(_eu02);
+				series_play("14eu02", 0xf00, 2, -1, 4, 0, 100, 0, 0, 0, 3);
+			}
+
+			if (node == 11 && entry == 0) {
+				_val1 = 13;
+			} else if ((node == 1 && entry == 4) ||
+					(node == 4 && entry == 0) ||
+					(node == 5 && entry == 1) ||
+					(node == 7 && entry == 0) ||
+					(node == 7 && entry == 1) ||
+					(node == 9 && entry == 1) ||
+					(node == 10 && entry == 1) ||
+					(node == 11 && entry == 0) ||
+					(node == 12 && entry == 2) ||
+					(node == 13 && entry == 2) ||
+					(node == 13 && entry == 1) ||
+					(node == 15) ||
+					(node == 16 && entry == 0) ||
+					(node == 16 && entry == 2) ||
+					(node == 17 && entry == 0) ||
+					(node == 18 && entry == 0) ||
+					(node == 19 && entry == 0)) {
+				// Do nothing
+			} else {
+				_val1 = 8;
+				if (_val2 != 13) {
+					_G(kernel).trigger = KT_DAEMON;
+					kernel_trigger_dispatch_now(44);
+				}
+			}
+
+			conv_resume();
+		} else if (who == 1) {
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			conv_resume();
+		}
+		break;
+
+	case 27:
+		_eu02 = series_play("143eu02", 0xf00, 0, -1, 600, -1, 100, 0, 0, 3, 3);
+		break;
+
+	default:
+		if (sound) {
+			if (who <= 0) {
+				if (node == 5 && entry == 3) {
+					_G(kernel).trigger_mode = KT_DAEMON;
+					kernel_timing_trigger(300, 21);
+					_G(kernel).trigger_mode = KT_PARSE;
+				}
+
+				if ((node == 9 && entry == 1) || (node == 5 && entry == 1) ||
+						(node == 17 && entry == 0) || (node == 19 && entry == 0)) {
+					series_play("143eu02", 0xf00, 0, 27, 4, 0, 100, 0, 0, 0, 3);
+				}
+
+				if ((node == 1 && entry == 4) ||
+						(node == 4 && entry == 0) ||
+						(node == 5 && entry == 1) ||
+						(node == 7 && entry == 0) ||
+						(node == 7 && entry == 1) ||
+						(node == 9 && entry == 1) ||
+						(node == 10 && entry == 1) ||
+						(node == 11 && entry == 0) ||
+						(node == 12 && entry == 2) ||
+						(node == 13 && entry == 1) ||
+						(node == 15) ||
+						(node = 16 && entry == 0) ||
+						(node == 16 && entry == 2) ||
+						(node == 17 && entry == 0) ||
+						(node == 18 && entry == 0) ||
+						(node == 19 && entry == 0)) {
+					digi_play(sound, 1, 255, 9);
+				} else if (node == 3) {
+					_val6 = 34;
+					_digiName = sound;
+				} else if ((node == 9 && entry == 0) || (node == 17 && entry == 1)) {
+					_val1 = 15;
+					_digiName = sound;
+				} else if (node == 5 && entry == 3) {
+					_val1 = 26;
+					_digiName = sound;
+				} else if ((node == 5 && entry == 0) ||
+						(node == 1 && entry == 7) ||
+						(node == 11 && entry == 1) ||
+						(node == 18 && entry == 1) ||
+						(node == 8) ||
+						(node == 9 && entry == 0) ||
+						(node == 10 && entry == 0)) {
+					_val1 = 14;
+					_digiName = sound;
+				} else {
+					_val1 = 11;
+					_digiName = sound;
+				}
+			} else if (who == 1) {
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+				digi_play(sound, 1, 255, 9);
+			}
+
+			_val7 = 1;
+			_val8 = 9;
+		} else {
+			conv_resume();
+		}
+		break;
+	}
+}
+
+void Room143::conv30() {
+	_G(kernel).trigger_mode = KT_PARSE;
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+
+	if (_G(kernel).trigger == 9) {
+		if (who <= 0) {
+			if (_val5 == 37 || _val5 == 31) {
+				_val6 = 37;
+			} else if (_val5 == 42 || _val5 == 43) {
+				_val6 = 43;
+				digi_change_volume(2, 255);
+			}
+
+			conv_resume();
+		} else if (who == 1) {
+			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if (_val5 == 37 || _val5 == 31) {
+				_val6 = 36;
+			} else if (_val5 == 42 || _val5 == 43) {
+				_val6 = 44;
+			}
+
+			_digiName = sound;
+		} else if (who == 1) {
+			sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
+			digi_play(sound, 1, 255, 9);
+		}
+
+		_val7 = 1;
+		_val8 = 9;
+	} else {
+		conv_resume();
+	}
+}
+
+void Room143::talkToVera() {
+	conv_load_and_prepare("conv35", 10);
+
+	if (_G(flags)[V000] == 1003) {
+		conv_export_value_curr(1, 0);
+	} else {
+		conv_export_value_curr(0, 0);
+	}
+
+	conv_export_value_curr(_G(flags)[V062], 1);
+	conv_play_curr();
+}
+
+void Room143::talkToBurl() {
+	conv_load_and_prepare("conv30", 11, 0);
+
+	if (_val5 == 42 || _val5 == 43)
+		conv_export_value_curr(1, 0);
+	else
+		conv_export_value_curr(0, 0);
+
+	conv_export_pointer_curr(&_G(flags)[V053], 3);
+	conv_export_pointer_curr(&_G(flags)[V052], 4);
+	conv_play_curr();
+}
+
+void Room143::loadCheese() {
+	_cheese = series_play("143CHES", 0xf00, 0, -1, 600, -1, 100, 35, -5, 0, 0);
+}
+
+void Room143::loadMoney() {
+	Series::series_play("143pl01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 }
 
 } // namespace Rooms

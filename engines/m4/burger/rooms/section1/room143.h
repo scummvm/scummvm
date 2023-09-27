@@ -42,15 +42,29 @@ private:
 	static const seriesPlayBreak PLAY9[];
 	static const seriesPlayBreak PLAY10[];
 	static const seriesPlayBreak PLAY11[];
-	machine *_plate = nullptr;
+	machine *_cheese = nullptr;
 	machine *_mouseTrap = nullptr;
+	machine *_plate = nullptr;
+	machine *_eu02 = nullptr;
 	noWalkRect *_walk1 = nullptr;
+	const char *_digiName = nullptr;
+	bool _flag1 = false;
+	int _frame = 0;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
+	int _val7 = 0;
+	int _val8 = 0;
+
+	void conv35();
+	void conv30();
+	void talkToVera();
+	void talkToBurl();
+	void loadCheese();
+	void loadMoney();
 
 public:
 	Room143() : Room() {}
