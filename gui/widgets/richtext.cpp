@@ -34,22 +34,6 @@
 
 namespace GUI {
 
-Graphics::MacWindowManager *_wm = nullptr;
-
-void ensureWM() {
-	if (_wm)
-		return;
-
-	if (ConfMan.hasKey("extrapath")) {
-		Common::FSNode dir(ConfMan.get("extrapath"));
-		SearchMan.addDirectory(dir.getPath(), dir);
-	}
-
-	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;
-
-	_wm = new Graphics::MacWindowManager(wmMode);
-}
-
 RichTextWidget::RichTextWidget(GuiObject *boss, int x, int y, int w, int h, bool scale, const Common::U32String &text, const Common::U32String &tooltip)
 	: Widget(boss, x, y, w, h, scale, tooltip), CommandSender(nullptr)  {
 
@@ -83,8 +67,6 @@ void RichTextWidget::init() {
 	_scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
 	_textWidth = _w - _scrollbarWidth - _x;
-
-	ensureWM();
 
 	_limitH = 140;
 }
@@ -148,22 +130,24 @@ void RichTextWidget::recalc() {
 }
 
 void RichTextWidget::createWidget() {
-	uint32 bg = _wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
+	Graphics::MacWindowManager *wm = g_gui.getWM();
+
+	uint32 bg = wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff); // transparent
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
-	uint32 fg = _wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
+	uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
 
 	const int fontHeight = g_gui.xmlEval()->getVar("Globals.Font.Height", 25);
 
 	Graphics::MacFont macFont(Graphics::kMacFontNewYork, fontHeight, Graphics::kMacFontRegular);
 
-	_txtWnd = new Graphics::MacText(Common::U32String(), _wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
+	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
 	if (!_imageArchive.empty())
 		_txtWnd->setImageArchive(_imageArchive);
 
 	_txtWnd->setMarkdownText(_text);
 
-	_surface = new Graphics::ManagedSurface(_w, _h, _wm->_pixelformat);
+	_surface = new Graphics::ManagedSurface(_w, _h, wm->_pixelformat);
 
 	recalc();
 }
@@ -186,7 +170,7 @@ void RichTextWidget::drawWidget() {
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	_surface->clear(_wm->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
+	_surface->clear(g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xff, 0xff, 0xff)); // transparent
 
 	_txtWnd->draw(_surface, 0, _scrolledY, _w - _scrollbarWidth, _h, 0, 0);
 

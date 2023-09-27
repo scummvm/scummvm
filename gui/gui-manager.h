@@ -36,6 +36,7 @@ class OSystem;
 
 namespace Graphics {
 class Font;
+class MacWindowManager;
 }
 
 namespace Common {
@@ -143,6 +144,8 @@ public:
 
 	void displayTopDialogOnly(bool mode);
 
+	Graphics::MacWindowManager *getWM();
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -177,6 +180,8 @@ protected:
 	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
 	bool _iconsSetChanged;
+
+	Graphics::MacWindowManager *_wm = nullptr;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {
