@@ -134,6 +134,7 @@ struct MacTextTableRow {
 struct MacTextLine {
 	int width = -1;
 	int height = -1;
+	int minWidth = -1;
 	int y = 0;
 	int charwidth = -1;
 	bool paragraphEnd = false;

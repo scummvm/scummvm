@@ -1177,6 +1177,8 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	int width = _textLines[line].indent + _textLines[line].firstLineIndent;
 	int height = 0;
 	int charwidth = 0;
+	int minWidth = 0;
+	bool firstWord = true;
 
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
 		if (enforce && _macFontMode)
@@ -1195,7 +1197,15 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 		}
 
 		if (!_textLines[line].chunks[i].text.empty()) {
-			width += getStringWidth(_textLines[line].chunks[i], _textLines[line].chunks[i].text);
+			int w = getStringWidth(_textLines[line].chunks[i], _textLines[line].chunks[i].text);
+
+			if (firstWord) {
+				minWidth = w + width; // Take indent into account
+				firstWord = false;
+			} else {
+				minWidth = MAX(minWidth, w);
+			}
+			width += w;
 			charwidth += _textLines[line].chunks[i].text.size();
 		}
 
@@ -1204,6 +1214,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 
 
 	_textLines[line].width = width;
+	_textLines[line].minWidth = minWidth;
 	_textLines[line].height = height;
 	_textLines[line].charwidth = charwidth;
 
