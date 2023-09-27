@@ -201,6 +201,332 @@ void Room143::init() {
 }
 
 void Room143::daemon() {
+	// TODO: Room143::daemon is in progress
+
+	if (_G(flags)[V064] == 1) {
+		if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			player_update_info();
+
+			if (_G(player_info).y < 260) {
+				_G(flags)[V064] = 2;
+				kernel_timing_trigger(1, 5);
+			}
+		}
+	}
+
+	if (_G(flags)[V063] && !digi_play_state(2))
+		digi_play_loop("143_002", 2, 255, -1);
+
+	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE && _flag1) {
+		player_update_info();
+
+		if (_G(player_info).y > 324)
+			ws_demand_location(_G(player_info).x, 324);
+	}
+
+	switch (_G(kernel).trigger) {
+	case 1:
+		player_set_commands_allowed(true);
+		break;
+
+	case 2:
+		ws_unhide_walker();
+		break;
+
+	case 3:
+		digi_play("143_010", 2, 255, 4);
+		break;
+
+	case 4:
+		digi_unload("143_010");
+		break;
+
+	case 5:
+		terminateMachineAndNull(_cheese);
+		hotspot_set_active("cheese", false);
+		_flag1 = true;
+		digi_preload("143_010", false);
+		series_play_with_breaks(PLAY3, "143mous", 0xf00, 6, 3, 4, 100, 35, -5);
+		break;
+
+	case 6:
+		_flag1 = false;
+		break;
+
+	case 7:
+		digi_play("143e600", 1, 255, 1);
+		_val1 = 8;
+		kernel_trigger_dispatch_now(44);
+		break;
+
+	case 12:
+		_G(flags)[V063] = 1;
+		break;
+
+	case 13:
+		if (_G(visited_room)) {
+			if (inv_object_is_here("broken mouse trap")) {
+				wilbur_speech("143w507", 14);
+			} else {
+				_digiName = "143v508";
+				_val1 = 11;
+				_val7 = 2;
+				_val8 = 15;
+			}
+		} else {
+			wilbur_speech("143w506");
+		}
+		break;
+
+	case 14:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			_digiName = "143v509a";
+			break;
+		case 2:
+			_digiName = "143v509b";
+			break;
+		default:
+			_digiName = "143v509c";
+			break;
+		}
+		_val1 = 11;
+		_val7 = 2;
+		_val8 = 15;
+		break;
+
+	case 15:
+		_val1 = 8;
+		kernel_trigger_dispatch_now(44);
+		player_set_commands_allowed(true);
+		break;
+
+	case 16:
+		_digiName = "143v506";
+		_val1 = 22;
+		_val7 = 2;
+		_val8 = 17;
+		break;
+
+	case 17:
+		_val1 = 13;
+		kernel_trigger_dispatch_now(44);
+		digi_play("143e503", 1, 255, 18);
+		break;
+
+	case 18:
+		_digiName = "143v507";
+		_val1 = 14;
+		_val7 = 2;
+		_val8 = 15;
+		break;
+
+	case 22:
+		_digiName = "143b001";
+		_val7 = 2;
+		_val8 = 23;
+		_val6 = 30;
+		_val5 = 29;
+		_val1 = 21;
+		kernel_trigger_dispatch_now(45);
+		break;
+
+	case 23:
+		_digiName = "143v901";
+		_val7 = 2;
+		_val8 = 24;
+		_val6 = 29;
+		_val1 = 22;
+		break;
+
+	case 25:
+		_digiName = "143v902";
+		_val7 = 2;
+		_val8 = 26;
+		_val6 = 29;
+		_val1 = 22;
+		break;
+
+	case 26:
+		_digiName = "143v903";
+		_val7 = 2;
+		_val8 = 7;
+		_val1 = 14;
+		_val6 = 31;
+		kernel_trigger_dispatch_now(44);
+		break;
+
+	case 28:
+		disable_player();
+		digi_play("143w610", 1, 255, 29);
+		series_play("143wi03", 0x100, 0, 31, 8, 0, 100, 0, 0, 0, 10);
+		break;
+
+	case 29:
+		_digiName = "143b006";
+		_val7 = 2;
+		_val8 = 30;
+		_val6 = 36;
+		break;
+
+	case 30:
+		_val6 = 39;
+		break;
+
+	case 31:
+		_wi03 = series_play("143wi03", 0x100, 0, -1, 600, -1, 100, 0, 0, 10, 10);
+		break;
+
+	case 32:
+		terminateMachineAndNull(_wi03);
+		series_play("143wi03", 0x100, 0, 33, 6, 0, 100, 0, 0, 11, -1);
+		break;
+
+	case 33:
+		ws_unhide_walker();
+		break;
+
+	case 34:
+		disable_player();
+		Series::series_play("143wi03", 0x100, 0, 35, 8, 0, 100, 0, 0, 0, 10);
+		break;
+
+	case 35:
+		_wi03 = series_play("143wi03", 0x100, 0, -1, 600, -1, 100, 0, 0, 10, 10);
+		_wi03S = series_play("143wi03s", 0x101, 0, -1, 600, -1, 100, 0, 0, 10, 10);
+		_digiName = "143b005";
+		_val7 = 2;
+		_val8 = 39;
+		_val6 = (_val5 == 42) ? 44 : 36;
+		break;
+
+	case 38:
+		enable_player();
+		break;
+
+	case 39:
+		terminateMachineAndNull(_wi03);
+		terminateMachineAndNull(_wi03S);
+		Series::series_play("143wi03", 0x100, 0, 38, 6, 0, 100, 0, 0, 11, -1);
+		_val6 = (_val5 == 42) ? 42 : 31;
+		break;
+
+	case 40:
+		_digiName = "143v904";
+		_val7 = 2;
+		_val8 = 41;
+		_val6 = 35;
+		_val1 = 11;
+		break;
+
+	case 45:
+		switch (_val5) {
+		case 31:
+			switch (_val6) {
+			case 31: {
+				int rand = imath_ranged_rand(1, 20);
+
+				if (_val3 != -1) {
+					++_val3;
+
+					if (imath_ranged_rand(10, 20) >= _val3)
+						rand = 2;
+					else
+						_val3 = -1;
+				}
+
+				switch (rand) {
+				case 1:
+					_val5 = 47;
+					Series::series_play("143bu10", 0xa00, 0, 45);
+					break;
+
+				case 2:
+					if (_val3 == -1)
+						_val3 = 0;
+
+					Series::series_play("143bu05", 0xa00, 0, 45);
+					break;
+
+				default:
+					Series::series_play("143bu05", 0xa00, 0, 45, 20, 0, 100, 0, 0, 0, 0);
+					break;
+				}
+				break;
+			}
+
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 2:
+			terminateMachineAndNull(_mouseTrap);
+			disable_player();
+			_G(wilbur_should) = 3;
+			series_play_with_breaks(PLAY1, "143wi02", 0xf00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 25, 0);
+			_val1 = 21;
+			break;
+
+		case 3:
+			ws_unhide_walker();
+			intr_remove_no_walk_rect(_walk1);
+			inv_move_object("BROKEN MOUSE TRAP", NOWHERE);
+			inv_give_to_player("SPRING");
+			hotspot_set_active("MOUSE TRAP", false);
+
+			_val1 = 22;
+			_digiName = "143v501";
+			_val7 = 2;
+			_G(wilbur_should) = 5;
+			_val8 = gCHANGE_WILBUR_ANIMATION;
+			_G(flags)[V064] = 1;
+			loadCheese();
+			hotspot_set_active("cheese", true);
+			break;
+
+		case 5:
+			_val1 = 8;
+			kernel_trigger_dispatch_now(44);
+			player_set_commands_allowed(true);
+			break;
+
+		case 10017:
+			_G(kernel).continue_handling_trigger = true;
+			if (_G(flags)[V064] == 1)
+				_G(flags)[V064] = 2;
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	case 10029:
+		if (_G(flags)[V000] == 1002) {
+			_G(kernel).continue_handling_trigger = true;
+		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			_val1 = 20;
+			player_set_commands_allowed(false);
+			intr_freshen_sentence();
+			Section1::walk();
+		} else {
+			kernel_timing_trigger(60, 10029);
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 	// TODO
 }
 
