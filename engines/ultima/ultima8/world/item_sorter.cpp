@@ -440,9 +440,11 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 		// Draw wire frame footpads
 		if (showFootpad) {
 			uint32 color = TEX32_PACK_RGB(0xFF, 0xFF, 0xFF);
-			int32 syLeftTop = (si->_xLeft + si->_y) / 8 - si->_zTop - _camSy;
-			int32 syRightTop = (si->_x + si->_yFar) / 8 - si->_zTop - _camSy;
-			int32 syNearTop = (si->_x + si->_y) / 8 - si->_zTop - _camSy;
+
+			// NOTE: Precision loss from integer division is intention
+			int32 syLeftTop = si->_xLeft / 8 + si->_y / 8 - si->_zTop - _camSy;
+			int32 syRightTop = si->_x / 8 + si->_yFar / 8 - si->_zTop - _camSy;
+			int32 syNearTop = si->_x / 8 + si->_y / 8 - si->_zTop - _camSy;
 
 			surf->drawLine32(color, si->_sxTop, si->_syTop, si->_sxLeft, syLeftTop);
 			surf->drawLine32(color, si->_sxTop, si->_syTop, si->_sxRight, syRightTop);
@@ -450,8 +452,8 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 			surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxRight, syRightTop);
 
 			if (si->_z < si->_zTop) {
-				int32 syLeftBot = (si->_xLeft + si->_y) / 8 - si->_z - _camSy;
-				int32 syRightBot = (si->_x + si->_yFar) / 8 - si->_z - _camSy;
+				int32 syLeftBot = si->_xLeft / 8 + si->_y / 8 - si->_z - _camSy;
+				int32 syRightBot = si->_x / 8 + si->_yFar / 8 - si->_z - _camSy;
 				surf->drawLine32(color, si->_sxLeft, syLeftTop, si->_sxLeft, syLeftBot);
 				surf->drawLine32(color, si->_sxRight, syRightTop, si->_sxRight, syRightBot);
 				surf->drawLine32(color, si->_sxBot, syNearTop, si->_sxBot, si->_syBot);

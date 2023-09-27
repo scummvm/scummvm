@@ -265,20 +265,23 @@ inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
 	_yFar = _y - box._yd;
 	_zTop = _z + box._zd;
 
+	// NOTE: Precision loss from integer division is intention to fix
+	// rendering issue at MainActor::teleport 37 18168 17656 104
+
 	// Screenspace bounding box left extent    (LNT x coord)
-	_sxLeft = (_xLeft - _y) / 4 - sx;
+	_sxLeft = _xLeft / 4 - _y / 4 - sx;
 	// Screenspace bounding box right extent   (RFT x coord)
-	_sxRight = (_x - _yFar) / 4 - sx;
+	_sxRight = _x / 4 - _yFar / 4 - sx;
 
 	// Screenspace bounding box top x coord    (LFT x coord)
-	_sxTop = (_xLeft - _yFar) / 4 - sx;
+	_sxTop = _xLeft / 4 - _yFar / 4 - sx;
 	// Screenspace bounding box top extent     (LFT y coord)
-	_syTop = (_xLeft + _yFar) / 8 - _zTop - sy;
+	_syTop = _xLeft / 8 + _yFar / 8 - _zTop - sy;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	_sxBot = (_x - _y) / 4 - sx;
+	_sxBot = _x / 4 - _y / 4 - sx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	_syBot = (_x + _y) / 8 - _z - sy;
+	_syBot = _x / 8 + _y / 8 - _z - sy;
 
 	// Screenspace rect - replace with shape frame calculations
 	_sr.left = _sxLeft;
