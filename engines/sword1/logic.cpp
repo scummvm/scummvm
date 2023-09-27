@@ -1205,8 +1205,8 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 
 		// now set text coords, above the player, usually
 
-#define TEXT_MARGIN 3 // distance kept from edges of screen
-#define ABOVE_HEAD 20 // distance kept above talking sprite
+		int textMargin = SwordEngine::_systemVars.isDemo ? 5 : 3; // distance kept from edges of screen
+		int aboveHead = SwordEngine::_systemVars.isDemo ? 10 : 20; // distance kept above talking sprite
 		uint16 textX, textY;
 		if (((id == GEORGE) || ((id == NICO) && (_scriptVars[SCREEN] == 10))) && (!cpt->o_anim_resource)) {
 			// if George is doing Voice-Over text (centered at the bottom of the screen)
@@ -1218,14 +1218,14 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 			else
 				textX = (cpt->o_mouse_x1 + cpt->o_mouse_x2) / 2 - textSpriteWidth / 2;
 
-			textY = cpt->o_mouse_y1 - textSpriteHeight - ABOVE_HEAD;
+			textY = cpt->o_mouse_y1 - textSpriteHeight - aboveHead;
 		}
 		// now ensure text is within visible screen
 		uint16 textLeftMargin, textRightMargin, textTopMargin, textBottomMargin;
-		textLeftMargin   = SCREEN_LEFT_EDGE   + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X];
-		textRightMargin  = SCREEN_RIGHT_EDGE  - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_X] - textSpriteWidth;
-		textTopMargin    = SCREEN_TOP_EDGE    + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y];
-		textBottomMargin = SCREEN_BOTTOM_EDGE - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y] - textSpriteHeight;
+		textLeftMargin   = SCREEN_LEFT_EDGE   + textMargin + _scriptVars[SCROLL_OFFSET_X];
+		textRightMargin  = SCREEN_RIGHT_EDGE  - textMargin + _scriptVars[SCROLL_OFFSET_X] - textSpriteWidth;
+		textTopMargin    = SCREEN_TOP_EDGE    + textMargin + _scriptVars[SCROLL_OFFSET_Y];
+		textBottomMargin = SCREEN_BOTTOM_EDGE - textMargin + _scriptVars[SCROLL_OFFSET_Y] - textSpriteHeight;
 
 		textCpt->o_anim_x = textCpt->o_xcoord = CLIP<uint16>(textX, textLeftMargin, textRightMargin);
 		textCpt->o_anim_y = textCpt->o_ycoord = CLIP<uint16>(textY, textTopMargin, textBottomMargin);

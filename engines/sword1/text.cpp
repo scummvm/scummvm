@@ -35,10 +35,11 @@
 
 namespace Sword1 {
 
-#define OVERLAP 3
+#define OVERLAP       3
+#define DEMO_OVERLAP  1
 #define DEBUG_OVERLAP 2
-#define SPACE ' '
-#define MAX_LINES       30
+#define SPACE         ' '
+#define MAX_LINES     30
 
 
 Text::Text(SwordEngine *vm, Logic *pLogic, ObjectMan *pObjMan, ResMan *pResMan, Screen *pScreen, bool czechVersion) {
@@ -51,7 +52,14 @@ Text::Text(SwordEngine *vm, Logic *pLogic, ObjectMan *pObjMan, ResMan *pResMan, 
 	_fontId = (czechVersion) ? CZECH_GAME_FONT : GAME_FONT;
 	_font = (uint8 *)_resMan->openFetchRes(_fontId);
 
-	_joinWidth = charWidth(SPACE) - 2 * OVERLAP;
+	_joinWidth = charWidth(SPACE);
+
+	if (!SwordEngine::_systemVars.isDemo) {
+		_joinWidth -= 2 * OVERLAP;
+	} else {
+		_joinWidth -= 2 * DEMO_OVERLAP;
+	}
+
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
 	for (int i = 0; i < MAX_TEXT_OBS; i++)
 		_textBlocks[i] = NULL;
@@ -112,8 +120,16 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 			textString = Common::convertBiDiString(textLogical, Common::kWindows1255);
 			curTextLine = (const uint8 *)textString.c_str();
 		}
-		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++)
-			sprPtr += copyChar(*curTextLine++, sprPtr, sprWidth, pen) - OVERLAP;
+		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++) {
+			sprPtr += copyChar(*curTextLine++, sprPtr, sprWidth, pen);
+
+			if (!SwordEngine::_systemVars.isDemo) {
+				sprPtr -= OVERLAP;
+			} else {
+				sprPtr -= DEMO_OVERLAP;
+			}
+		}
+
 		curTextLine++; // skip space at the end of the line
 		text += lines[lineCnt].length + 1;
 
@@ -139,14 +155,28 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 		uint16 wordLength = 0;
 
 		while ((*text != SPACE) && *text) {
-			wordWidth += charWidth(*text) - OVERLAP;
+			wordWidth += charWidth(*text);
+
+			if (!SwordEngine::_systemVars.isDemo) {
+				wordWidth -= OVERLAP;
+			} else {
+				wordWidth -= DEMO_OVERLAP;
+			}
+
 			wordLength++;
 			text++;
 		}
+
 		if (*text == SPACE)
 			text++;
 
-		wordWidth += OVERLAP; // no overlap on final letter of word!
+		// no overlap on final letter of word!
+		if (!SwordEngine::_systemVars.isDemo) {
+			wordWidth += OVERLAP;
+		} else {
+			wordWidth += DEMO_OVERLAP;
+		}
+
 		if (firstWord)  { // first word on first line, so no separating SPACE needed
 			line[0].width = wordWidth;
 			line[0].length = wordLength;

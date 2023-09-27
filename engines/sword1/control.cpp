@@ -697,7 +697,10 @@ void Control::renderText(const uint8 *str, int32 x, int32 y, bool useSpeechFont)
 		}
 
 		l += _resMan->getUint16(f->width);
-		l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+
+		if (!SwordEngine::_systemVars.isDemo)
+			l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+
 		i += 1;
 	}
 }
@@ -737,7 +740,11 @@ void Control::renderRedText(const uint8 *str, int32 x, int32 y) {
 			}
 		}
 
-		l += (_resMan->getUint16(f->width) - OVERLAP);
+		l += _resMan->getUint16(f->width);
+
+		if (!SwordEngine::_systemVars.isDemo)
+			l -= OVERLAP;
+
 		i += 1;
 	}
 }
@@ -791,7 +798,10 @@ int32 Control::getTextLength(const uint8 *str, bool useSpeechFont) {
 	while (str[i] != 0) {
 		f = (FrameHeader *)((uint8 *)srFont +  _resMan->getUint32(srFont->spriteOffset[str[i] - 32]));
 		l += _resMan->getUint16(f->width);
-		l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+
+		if (!SwordEngine::_systemVars.isDemo)
+			l -= useSpeechFont ? SP_OVERLAP : OVERLAP;
+
 		i += 1;
 	}
 
