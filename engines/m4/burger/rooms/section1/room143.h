@@ -46,6 +46,8 @@ private:
 	machine *_mouseTrap = nullptr;
 	machine *_plate = nullptr;
 	machine *_eu02 = nullptr;
+	machine *_wi03 = nullptr;
+	machine *_wi03S = nullptr;
 	noWalkRect *_walk1 = nullptr;
 	const char *_digiName = nullptr;
 	bool _flag1 = false;
