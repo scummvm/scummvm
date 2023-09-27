@@ -411,8 +411,10 @@ bool ItemSorter::PaintSortItem(RenderSurface *surf, SortItem *si, bool showFootp
 	SortItem::DependsList::iterator end = si->_depends.end();
 	while (it != end) {
 		if ((*it)->_order == -2) {
-			debugC(kDebugObject, "Cycle in paint dependency graph %d -> %d -> ... -> %d",
-					si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+			if (!_sortLimit) {
+				debugC(kDebugObject, "Cycle in paint dependency graph %d -> %d -> ... -> %d",
+					   si->_shapeNum, (*it)->_shapeNum, si->_shapeNum);
+			}
 			break;
 		}
 		else if ((*it)->_order == -1) {
