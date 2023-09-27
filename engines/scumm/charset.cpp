@@ -1682,7 +1682,12 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
 }
 
 int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
-	return _macFonts[_curId]->getCharWidth(chr);
+	int width = _macFonts[_curId]->getCharWidth(chr);
+
+	// Indy 3 draws the button texts closer than outlined text usually is.
+	if (_vm->_game.id == GID_INDY3 && _curId == 4)
+		width--;
+	return width;
 }
 
 // HACK: Usually, we want the approximate width and height in the unscaled
@@ -1862,8 +1867,8 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 byte CharsetRendererMac::getTextColor() {
 	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
 		// White and black can be rendered as is, and 8 is the color
-		// used for disabled text (verbs in Indy 3, notes in Loom).
-		// Everything else should be white.
+		// used for disabled text (notes in Loom). Everything else
+		// should be white.
 
 		if (_color == 0 || _color == 15 || _color == 8)
 			return _color;
@@ -1944,6 +1949,13 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			}
 		} else {
 			_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x, y, color);
+
+			// Outlined text in Indy 3 should be filled. We simulate
+			// that by drawing the text again in bold.
+			if (_vm->_game.id == GID_INDY3 && _curId == 4) {
+				_macFonts[3]->drawChar(&_vm->_textSurface, chr, x, y, 0);
+				_macFonts[3]->drawChar(_vm->_macScreen, chr, x, y, 15);
+			}
 		}
 	}
 }
