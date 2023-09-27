@@ -305,8 +305,8 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 			int32 group = si1->_itemNum;
 			si1->_groupNum = group;
 
-			// Expand NxN adjoined square
-			for (int n = 2; n < 6; n++) {
+			// Expand NxN adjoined square - up to 4x4 appears sufficient
+			for (int n = 2; n <= 4; n++) {
 				// Expand out 1 from X and Y edge points
 				SortItem *p1 = siX->_xAdjoin;
 				SortItem *p2 = siY->_yAdjoin;
