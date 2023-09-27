@@ -496,4 +496,3 @@ TGLenum TGLTexture::GetGLWrap(eTextureWrap aMode) {
 }
 
 } // namespace hpl
-  //-----------------------------------------------------------------------
