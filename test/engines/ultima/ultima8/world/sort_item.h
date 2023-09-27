@@ -12,6 +12,36 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	U8SortItemTestSuite() {
 	}
 
+	/**
+	 * Floor tile placed in position not consistent with others nearby
+	 * Test case for rendering issue at MainActor::teleport 37 18168 17656 104
+	 *
+	 * !TODO: One of the Y values will need to change by one to properly align.
+	 * The original game may have been more lossy when translating worldspace position to screenspace.
+	 */
+	void test_screenspace_position() {
+		Ultima::Ultima8::SortItem si1;
+
+		si1._flat = true;
+		si1._solid = true;
+		si1._occl = true;
+		si1._fbigsq = true;
+		si1._roof = true;
+		si1._land = true;
+
+		// Normal placement
+		Ultima::Ultima8::Box b1(18047, 17663, 104, 128, 128, 104);
+		si1.setBoxBounds(b1, 0, 0);
+		TS_ASSERT(si1._sxBot == 96);
+		TS_ASSERT(si1._syBot == 4359);
+
+		// Inconsistent placement
+		Ultima::Ultima8::Box b2(18168, 17656, 104, 128, 128, 104);
+		si1.setBoxBounds(b2, 0, 0);
+		TS_ASSERT(si1._sxBot == 128);
+		TS_ASSERT(si1._syBot == 4374);
+	}
+
 	/* Non-overlapping with lower Y position should always be below */
 	void test_basic_y_sort() {
 		Ultima::Ultima8::SortItem si1;
