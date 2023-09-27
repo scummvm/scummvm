@@ -94,8 +94,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b1(34142, 41150, 0, 256, 64, 8);
 		si1.setBoxBounds(b1, 0, 0);
-		si2._solid = true;
-		si2._land = true;
+		si1._solid = true;
+		si1._land = true;
 
 		Ultima::Ultima8::Box b2(34110, 41118, 0, 64, 64, 0);
 		si2.setBoxBounds(b2, 0, 0);
