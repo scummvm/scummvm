@@ -362,6 +362,8 @@ private:
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
 
+	void processTable(int line);
+
 public:
 	int _cursorX, _cursorY;
 	bool _cursorState;

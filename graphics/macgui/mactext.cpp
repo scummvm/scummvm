@@ -935,6 +935,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					} else if (cmd == 'B') { // Body end
 						_inTable = false;
 
+						processTable(curLine);
+
 						curTextLine = &_textLines[curLine];
 					} else if (cmd == 'r') { // Row
 						curTextLine->table->push_back(MacTextTableRow());
@@ -2857,6 +2859,95 @@ const Surface *MacText::getImageSurface(Common::String &fname) {
 
 	return _imageCache[fname]->getSurface();
 #endif // USE_PNG
+}
+
+void MacText::processTable(int line) {
+	Common::Array<MacTextTableRow> *table = _textLines[line].table;
+	uint numCols = table->front().cells.size();
+	Common::Array<int> maxW(numCols), maxL(numCols), colW(numCols);
+	Common::Array<bool> flex(numCols), wrap(numCols);
+
+	int width = _maxWidth * 0.9;
+	int gutter = 10;
+
+	// Compute column widths, both minimal and maximal
+	for (auto &row : *table) {
+		int i = 0;
+		for (auto &cell : row.cells) {
+			int cW = 0, cL = 0;
+			for (auto &l : cell.text) {
+				(void)getLineWidth(&l); // calculate it
+
+				cW = MAX(cW, l.width);
+				cL = MAX(cL, l.minWidth);
+			}
+
+			maxW[i] = MAX(maxW[i], cW);
+			maxL[i] = MAX(maxL[i], cL);
+
+			i++;
+		}
+	}
+
+	for (int i = 0; i < numCols; i++) {
+		warning("%d: %d - %d", i, maxL[i], maxW[i]);
+
+		wrap[i] = (maxW[i] != maxL[i]);
+	}
+
+	int left = width - (numCols - 1) * gutter;
+	int avg = left / numCols;
+	int nflex = 0;
+
+	// determine whether columns should be flexible and assign
+	// width of non-flexible cells
+	for (int i = 0; i < numCols; i++) {
+		flex[i] = (maxW[i] > 2 * avg);
+		if (flex[i]) {
+			nflex++;
+		} else {
+			colW[i] = maxW[i];
+			left -= colW[i];
+		}
+	}
+
+	// if there is not enough space, make columns that could
+	// be word-wrapped flexible, too
+	if (left < nflex * avg) {
+		for (int i = 0; i < numCols; i++) {
+			if (!flex[i] && wrap[i]) {
+				left += colW[i];
+				colW[i] = 0;
+				flex[i] = true;
+				nflex += 1;
+			}
+		}
+	}
+
+	// Calculate weights for flexible columns. The max width
+	// is capped at the page width to treat columns that have to
+	// be wrapped more or less equal
+	int tot = 0;
+	for (int i = 0; i < numCols; i++) {
+		if (flex[i]) {
+			maxW[i] = MIN(maxW[i], width);
+			tot += maxW[i];
+		}
+	}
+
+	// Now assign the actual width for flexible columns. Make
+	// sure that it is at least as long as the longest word length
+	for (int i = 0; i < numCols; i++) {
+		if (flex[i]) {
+			colW[i] = left * maxW[i] / tot;
+			colW[i] = MAX(colW[i], maxL[i]);
+			left -= colW[i];
+		}
+	}
+
+	for (int i = 0; i < numCols; i++) {
+		warning("%d: %d", i, colW[i]);
+	}
 }
 
 } // End of namespace Graphics
