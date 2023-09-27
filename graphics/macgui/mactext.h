@@ -264,6 +264,7 @@ private:
 	void insertTextFromClipboard();
 	// getStringWidth for mactext version, because we may have the plain bytes mode
 	int getStringWidth(MacFontRun &format, const Common::U32String &str);
+	int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str);
 	int getAlignOffset(int row);
 	MacFontRun getFgColor();
 

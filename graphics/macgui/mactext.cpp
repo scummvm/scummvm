@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/timer.h"
+#include "common/tokenizer.h"
 #include "common/unicode-bidi.h"
 #include "common/compression/unzip.h"
 
@@ -305,6 +306,33 @@ int MacText::getStringWidth(MacFontRun &format, const Common::U32String &str) {
 	else
 		return format.getFont()->getStringWidth(str);
 }
+
+int MacText::getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
+	if (format.plainByteMode()) {
+		Common::StringTokenizer tok(Common::convertFromU32String(str, format.getEncoding()));
+		int maxW = 0;
+
+		while (!tok.empty()) {
+			int w = format.getFont()->getStringWidth(tok.nextToken());
+
+			maxW = MAX(maxW, w);
+		}
+
+		return maxW;
+	} else {
+		Common::U32StringTokenizer tok(str);
+		int maxW = 0;
+
+		while (!tok.empty()) {
+			int w = format.getFont()->getStringWidth(tok.nextToken());
+
+			maxW = MAX(maxW, w);
+		}
+
+		return maxW;
+	}
+}
+
 
 void MacText::setMaxWidth(int maxWidth) {
 	if (maxWidth == _maxWidth)
@@ -1202,12 +1230,13 @@ int MacText::getLineWidth(MacTextLine *line, bool enforce, int col) {
 
 		if (!line->chunks[i].text.empty()) {
 			int w = getStringWidth(line->chunks[i], line->chunks[i].text);
+			int mW = getStringMaxWordWidth(line->chunks[i], line->chunks[i].text);
 
 			if (firstWord) {
-				minWidth = w + width; // Take indent into account
+				minWidth = mW + width; // Take indent into account
 				firstWord = false;
 			} else {
-				minWidth = MAX(minWidth, w);
+				minWidth = MAX(minWidth, mW);
 			}
 			width += w;
 			charwidth += line->chunks[i].text.size();
