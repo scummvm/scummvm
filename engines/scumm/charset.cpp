@@ -1599,7 +1599,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(fontId, 9));
 		_macFonts[2] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
 		_macFonts[3] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
-		_macFonts[4] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline));
+		_macFonts[4] = _macFontManager->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
 	} else {
 		_macFonts[0] = _macFontManager->getFont(Graphics::MacFont(fontId, 13));
 		_macFonts[1] = _macFontManager->getFont(Graphics::MacFont(fontId, 12));
@@ -1682,12 +1682,7 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
 }
 
 int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
-	int width = _macFonts[_curId]->getCharWidth(chr);
-
-	// Indy 3 draws the button texts closer than outlined text usually is.
-	if (_vm->_game.id == GID_INDY3 && _curId == 4)
-		width--;
-	return width;
+	return _macFonts[_curId]->getCharWidth(chr);
 }
 
 // HACK: Usually, we want the approximate width and height in the unscaled
@@ -1953,8 +1948,8 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			// Outlined text in Indy 3 should be filled. We simulate
 			// that by drawing the text again in bold.
 			if (_vm->_game.id == GID_INDY3 && _curId == 4) {
-				_macFonts[3]->drawChar(&_vm->_textSurface, chr, x, y, 0);
-				_macFonts[3]->drawChar(_vm->_macScreen, chr, x, y, 15);
+				_macFonts[3]->drawChar(&_vm->_textSurface, chr, x + 1, y, 0);
+				_macFonts[3]->drawChar(_vm->_macScreen, chr, x + 1, y, 15);
 			}
 		}
 	}
