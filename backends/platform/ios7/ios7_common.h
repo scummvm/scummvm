@@ -61,6 +61,11 @@ enum ScreenOrientation {
 	kScreenOrientationFlippedLandscape
 };
 
+enum DirectionalInput {
+	kDirectionalInputThumbstick,
+	kDirectionalInputDpad,
+};
+
 enum UIViewSwipeDirection {
 	kUIViewSwipeUp = 1,
 	kUIViewSwipeDown = 2,

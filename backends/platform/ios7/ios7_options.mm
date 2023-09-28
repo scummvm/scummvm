@@ -53,6 +53,9 @@ private:
 	// OptionsContainerWidget API
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	uint32 loadDirectionalInput(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
+	void saveDirectionalInput(const Common::String &setting, uint32 input);
+
 #if TARGET_OS_IOS
 	uint32 loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
 	void saveOrientation(const Common::String &setting, uint32 orientation);
@@ -62,6 +65,8 @@ private:
 	GUI::StaticTextWidget *_gamepadControllerOpacityDesc;
 	GUI::SliderWidget *_gamepadControllerOpacitySlider;
 	GUI::StaticTextWidget *_gamepadControllerOpacityLabel;
+	GUI::StaticTextWidget *_gamepadControllerDirectionalInputDesc;
+	GUI::PopUpWidget *_gamepadControllerDirectionalInputPopUp;
 	GUI::CheckboxWidget *_touchpadCheckbox;
 	GUI::CheckboxWidget *_clickAndDragCheckbox;
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
@@ -86,6 +91,10 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_gamepadControllerOpacityLabel = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacityLabel", Common::U32String(" "), Common::U32String(), GUI::ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_gamepadControllerOpacitySlider->setMinValue(1);
 	_gamepadControllerOpacitySlider->setMaxValue(10);
+	_gamepadControllerDirectionalInputDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerLeftButton", _("Directional button:"));
+	_gamepadControllerDirectionalInputPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerLeftButtonPopUp");
+	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Thumbstick"), kDirectionalInputThumbstick);
+	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Dpad"), kDirectionalInputDpad);
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
 	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
@@ -132,6 +141,11 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("GamepadController", "Checkbox")
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+				.addPadding(0, 0, 0, 0)
+				.addWidget("GamepadControllerLeftButton", "OptionsLabel")
+				.addWidget("GamepadControllerLeftButtonPopUp", "PopUp")
+			.closeLayout()
 	        .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("GamepadControllerOpacity", "OptionsLabel")
@@ -210,6 +224,36 @@ void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	}
 }
 
+uint32 IOS7OptionsWidget::loadDirectionalInput(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
+	if (!acceptDefault || ConfMan.hasKey(setting, _domain)) {
+		Common::String input = ConfMan.get(setting, _domain);
+		if (input == "thumbstick") {
+			return kDirectionalInputThumbstick;
+		} else if (input == "dpad") {
+			return kScreenOrientationPortrait;
+		} else {
+			return defaultValue;
+		}
+	} else {
+		return kDirectionalInputThumbstick;
+	}
+}
+
+void IOS7OptionsWidget::saveDirectionalInput(const Common::String &setting, uint32 input) {
+	switch (input) {
+	case kDirectionalInputThumbstick:
+		ConfMan.set(setting, "thumbstick", _domain);
+		break;
+	case kDirectionalInputDpad:
+		ConfMan.set(setting, "dpad", _domain);
+		break;
+	default:
+		// default
+		ConfMan.removeKey(setting, _domain);
+		break;
+	}
+}
+
 #if TARGET_OS_IOS
 uint32 IOS7OptionsWidget::loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
 	if (!acceptDefault || ConfMan.hasKey(setting, _domain)) {
@@ -253,6 +297,7 @@ void IOS7OptionsWidget::load() {
 	_gamepadControllerCheckbox->setState(ConfMan.getBool("gamepad_controller", _domain));
 	_gamepadControllerOpacitySlider->setValue(ConfMan.getInt("gamepad_controller_opacity", _domain));
 	_gamepadControllerOpacityLabel->setValue(_gamepadControllerOpacitySlider->getValue());
+	_gamepadControllerDirectionalInputPopUp->setSelectedTag(loadDirectionalInput("gamepad_controller_directional_input", !inAppDomain, kDirectionalInputThumbstick));
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mode", _domain));
 	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
@@ -271,6 +316,7 @@ bool IOS7OptionsWidget::save() {
 	if (_enabled) {
 		ConfMan.setBool("gamepad_controller", _gamepadControllerCheckbox->getState(), _domain);
 		ConfMan.setInt("gamepad_controller_opacity", _gamepadControllerOpacitySlider->getValue(), _domain);
+		ConfMan.setInt("gamepad_controller_directional_input", _gamepadControllerDirectionalInputPopUp->getSelectedTag(), _domain);
 		ConfMan.setBool("touchpad_mode", _touchpadCheckbox->getState(), _domain);
 		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
@@ -284,6 +330,7 @@ bool IOS7OptionsWidget::save() {
 	} else {
 		ConfMan.removeKey("gamepad_controller", _domain);
 		ConfMan.removeKey("gamepad_controller_opacity", _domain);
+		ConfMan.removeKey("gamepad_controller_directional_input", _domain);
 		ConfMan.removeKey("touchpad_mode", _domain);
 		ConfMan.removeKey("clickanddrag_mode", _domain);
 		ConfMan.removeKey("keyboard_fn_bar", _domain);
@@ -302,6 +349,7 @@ bool IOS7OptionsWidget::save() {
 bool IOS7OptionsWidget::hasKeys() {
 	bool hasKeys = ConfMan.hasKey("gamepad_controller", _domain) ||
 	ConfMan.hasKey("gamepad_controller_opacity", _domain) ||
+	ConfMan.hasKey("gamepad_controller_directional_input", _domain) ||
 	ConfMan.hasKey("touchpad_mode", _domain) ||
 	ConfMan.hasKey("clickanddrag_mode", _domain);
 
@@ -322,17 +370,21 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	// On-screen controls (virtual controller is supported in iOS 15 and later)
 	if (@available(iOS 15.0, *)) {
 		_gamepadControllerCheckbox->setEnabled(e);
+		_gamepadControllerDirectionalInputPopUp->setEnabled(e);
 		_gamepadControllerOpacityDesc->setEnabled(e);
 		_gamepadControllerOpacitySlider->setEnabled(e);
 		_gamepadControllerOpacityLabel->setEnabled(e);
 	} else {
 		_gamepadControllerCheckbox->setEnabled(false);
+		_gamepadControllerDirectionalInputPopUp->setEnabled(false);
 		_gamepadControllerOpacityDesc->setEnabled(false);
 		_gamepadControllerOpacitySlider->setEnabled(false);
 		_gamepadControllerOpacityLabel->setEnabled(false);
 	}
 #else
 	_gamepadControllerCheckbox->setEnabled(false);
+	_gamepadControllerDirectionalInputDesc->setEnabled(false);
+	_gamepadControllerDirectionalInputPopUp->setEnabled(false);
 	_gamepadControllerOpacityDesc->setEnabled(false);
 	_gamepadControllerOpacitySlider->setEnabled(false);
 	_gamepadControllerOpacityLabel->setEnabled(false);
@@ -362,6 +414,7 @@ GUI::OptionsContainerWidget *OSystem_iOS7::buildBackendOptionsWidget(GUI::GuiObj
 void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("gamepad_controller", false);
 	ConfMan.registerDefault("gamepad_controller_opacity", 6);
+	ConfMan.registerDefault("gamepad_controller_directional_input", kDirectionalInputThumbstick);
 	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
 	ConfMan.registerDefault("clickanddrag_mode", false);
 	ConfMan.registerDefault("keyboard_fn_bar", true);
