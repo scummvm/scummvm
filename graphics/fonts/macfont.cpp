@@ -594,7 +594,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		int grayLevel = src->_data._fRectHeight * srcglyph->width / 4;
 
 #if DEBUGSCALING
-		int ccc = 'c';
+		uint ccc = 'c';
 #endif
 
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -670,7 +670,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			if (i == ccc) {
 				debugN(1, "--> %d ", grayLevel);
 
-				grayPtr = &dstGray[y * glyph->width];
+				int *grayPtr = &dstGray[y * glyph->width];
 				for (int x = 0; x < glyph->width; x++, grayPtr++)
 					debugN("%c", *grayPtr > grayLevel ? '#' : '.');
 			}
