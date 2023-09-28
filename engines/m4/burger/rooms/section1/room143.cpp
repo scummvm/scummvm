@@ -467,7 +467,7 @@ void Room143::daemon() {
 	case 43:
 		switch (_val4) {
 		case 6:
-			_cat.series_show("143cat", 0);
+			_cat.show("143cat", 0);
 			break;
 
 		case 7:
