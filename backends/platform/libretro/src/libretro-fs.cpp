@@ -26,6 +26,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getenv
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit // Needed for IRIX's unistd.h
 
 #include <file/file_path.h>
@@ -62,8 +63,12 @@ LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	} else
 		_path = p;
 
+	char portable_path[_path.size()+1];
+	strcpy(portable_path,_path.c_str());
+	pathname_make_slashes_portable(portable_path);
+
 	// Normalize the path (that is, remove unneeded slashes etc.)
-	_path = Common::normalizePath(expanded_path, '/');
+	_path = Common::normalizePath(Common::String(portable_path), '/');
 	_displayName = Common::lastPathComponent(_path, '/');
 
 	setFlags();
