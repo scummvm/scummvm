@@ -110,7 +110,7 @@ public:
 	void destroy(void);
 	void quit() override {}
 private:
-	bool checkPathSetting(const char *setting, Common::String const &defaultPath);
+	bool checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory = true);
 
 	/* Graphics */
 public:

@@ -67,11 +67,14 @@ void OSystem_libretro::initBackend() {
 	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
 	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
 	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
+	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
 
 	if (! LibRetroFilesystemNode(s_themeDir).isDirectory())
 		s_themeDir.clear();
 	if (! LibRetroFilesystemNode(s_extraDir).isDirectory())
 		s_extraDir.clear();
+	if (! LibRetroFilesystemNode(s_soundfontPath).exists())
+		s_soundfontPath.clear();
 	if ((s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory()) && ! s_systemDir.empty())
 		s_homeDir = s_systemDir;
 
@@ -92,6 +95,7 @@ void OSystem_libretro::initBackend() {
 		retro_osd_notification("ScummVM theme folder not found.");
 	if (!checkPathSetting("extrapath", s_extraDir))
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
+	checkPathSetting("soundfont", s_soundfontPath, false);
 	checkPathSetting("browser_lastpath", s_homeDir);
 
 	_savefileManager = new DefaultSaveFileManager();
@@ -151,9 +155,10 @@ void OSystem_libretro::destroy() {
 	delete this;
 }
 
-bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath) {
+bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory) {
 	Common::String setPath(ConfMan.get(setting));
-	if (setPath.empty() || ! LibRetroFilesystemNode(setPath).isDirectory())
+
+	if (setPath.empty() || ! (isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
 	if (! ConfMan.hasKey(setting))
 		if (defaultPath.empty())
