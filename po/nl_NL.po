@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-27 09:57+0000\n"
+"POT-Creation-Date: 2023-09-27 20:03+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -84,7 +84,7 @@ msgstr "Ga omhoog"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2890
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2900
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Annuleren"
@@ -328,7 +328,7 @@ msgstr "JSON code heeft niet het juiste formaat."
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2890
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2900
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9388,7 +9388,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Cutscene '%s' niet gevonden"
 
-#: engines/sword1/control.cpp:2888
+#: engines/sword1/control.cpp:2898
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9406,7 +9406,7 @@ msgstr ""
 "Klik OK om ze nu te converteren, anders zult u de volgende keer als u het "
 "spel start dit weer gevraagd worden.\n"
 
-#: engines/sword1/control.cpp:3074
+#: engines/sword1/control.cpp:3084
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9415,11 +9415,11 @@ msgstr ""
 "Bestand voor het nieuwe opgeslagen spel bestaat al!\n"
 "Wilt u het oude opgeslagen spel (%s) of de nieuwe (%s) behouden?\n"
 
-#: engines/sword1/control.cpp:3077
+#: engines/sword1/control.cpp:3087
 msgid "Keep the old one"
 msgstr "Houd de oude"
 
-#: engines/sword1/control.cpp:3077
+#: engines/sword1/control.cpp:3087
 msgid "Keep the new one"
 msgstr "Houd de nieuwe"
 

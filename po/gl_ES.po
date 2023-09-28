@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-27 09:57+0000\n"
+"POT-Creation-Date: 2023-09-27 20:03+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -83,7 +83,7 @@ msgstr "Arriba"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2890
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2900
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Cancelar"
@@ -332,7 +332,7 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2890
+#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2900
 #: engines/sword1/logic.cpp:1685 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
@@ -9397,7 +9397,7 @@ msgstr ""
 msgid "Cutscene '%s' not found"
 msgstr "Non se atopou a secuencia %s"
 
-#: engines/sword1/control.cpp:2888
+#: engines/sword1/control.cpp:2898
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9415,7 +9415,7 @@ msgstr ""
 "Preme Aceptar para convertilos. Se non, volverás ver esta mensaxe a próxima "
 "vez que inicies o xogo.\n"
 
-#: engines/sword1/control.cpp:3074
+#: engines/sword1/control.cpp:3084
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -9424,11 +9424,11 @@ msgstr ""
 "Xa existe unha partida con ese nome!\n"
 "Queres conservar a vella (%s) ou a nova (%s)?\n"
 
-#: engines/sword1/control.cpp:3077
+#: engines/sword1/control.cpp:3087
 msgid "Keep the old one"
 msgstr "Conservar a vella"
 
-#: engines/sword1/control.cpp:3077
+#: engines/sword1/control.cpp:3087
 msgid "Keep the new one"
 msgstr "Conservar a nova"
 
