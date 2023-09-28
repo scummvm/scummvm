@@ -49,11 +49,8 @@ void LibRetroFilesystemNode::setFlags() {
 LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 	assert(p.size() > 0);
 
-	char expanded_path[MAXPATHLEN];
-	fill_pathname_expand_special(expanded_path, p.c_str(), MAXPATHLEN);
-
 	// Expand "~/" to the value of the HOME env variable
-	if (p.hasPrefix("~/")) {
+	if (p.hasPrefix("~/") || p.hasPrefix("~\\")) {
 		Common::String homeDir = getHomeDir();
 		if (homeDir.empty())
 			homeDir = ".";
@@ -62,7 +59,8 @@ LibRetroFilesystemNode::LibRetroFilesystemNode(const Common::String &p) {
 		// two chars, so this is safe:
 		_path = homeDir + (p.c_str() + 1);
 
-	}
+	} else
+		_path = p;
 
 	// Normalize the path (that is, remove unneeded slashes etc.)
 	_path = Common::normalizePath(expanded_path, '/');
