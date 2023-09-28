@@ -327,9 +327,8 @@ bool Screen::showScrollFrame() {
 	uint16 avgScrlX = (uint16)(_oldScrollX + Logic::_scriptVars[SCROLL_OFFSET_X]) / 2;
 	uint16 avgScrlY = (uint16)(_oldScrollY + Logic::_scriptVars[SCROLL_OFFSET_Y]) / 2;
 
-	_system->copyRectToScreen(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
-
 	_screenAccessMutex.lock();
+	_system->copyRectToScreen(_screenBuf + avgScrlY * _scrnSizeX + avgScrlX, _scrnSizeX, 0, 40, SCREEN_WIDTH, SCREEN_DEPTH);
 	_system->updateScreen();
 	_screenAccessMutex.unlock();
 
@@ -364,7 +363,10 @@ void Screen::updateScreen() {
 			copyWidth = _scrnSizeX - scrlX;
 		if (scrlY + copyHeight > _scrnSizeY)
 			copyHeight = _scrnSizeY - scrlY;
+
+		_screenAccessMutex.lock();
 		_system->copyRectToScreen(_screenBuf + scrlY * _scrnSizeX + scrlX, _scrnSizeX, 0, 40, copyWidth, copyHeight);
+		_screenAccessMutex.unlock();
 	} else {
 		// partial screen update only. The screen coordinates probably won't fit to the
 		// grid holding the informations on which blocks have to be updated.
@@ -387,14 +389,21 @@ void Screen::updateScreen() {
 					int16 xPos = (cntx - cpWidth) * SCRNGRID_X - diffX;
 					if (xPos < 0)
 						xPos = 0;
+
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos, 40, cpWidth * SCRNGRID_X, diffY);
+					_screenAccessMutex.unlock();
+
 					cpWidth = 0;
 				}
 			if (cpWidth) {
 				int16 xPos = (gridW - cpWidth) * SCRNGRID_X - diffX;
 				if (xPos < 0)
 					xPos = 0;
+
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos, 40, SCREEN_WIDTH - xPos, diffY);
+				_screenAccessMutex.unlock();
 			}
 			scrlY += diffY;
 		}
@@ -410,14 +419,21 @@ void Screen::updateScreen() {
 					cpHeight++;
 				} else if (cpHeight) {
 					uint16 yPos = (cnty - cpHeight) * SCRNGRID_Y;
+
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, cpHeight * SCRNGRID_Y);
+					_screenAccessMutex.unlock();
+
 					cpHeight = 0;
 				}
 				gridPos += _gridSizeX;
 			}
 			if (cpHeight) {
 				uint16 yPos = (gridH - cpHeight) * SCRNGRID_Y;
+
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + yPos * _scrnSizeX, _scrnSizeX, 0, yPos + diffY + 40, diffX, SCREEN_DEPTH - (yPos + diffY));
+				_screenAccessMutex.unlock();
 			}
 			scrlX += diffX;
 		}
@@ -434,12 +450,17 @@ void Screen::updateScreen() {
 					gridPos[cntx] >>= 1;
 					cpWidth++;
 				} else if (cpWidth) {
+					_screenAccessMutex.lock();
 					_system->copyRectToScreen(scrnBuf + (cntx - cpWidth) * SCRNGRID_X, _scrnSizeX, (cntx - cpWidth) * SCRNGRID_X + diffX, cnty * SCRNGRID_Y + diffY + 40, cpWidth * SCRNGRID_X, cpHeight);
+					_screenAccessMutex.unlock();
+
 					cpWidth = 0;
 				}
 			if (cpWidth) {
 				uint16 xPos = (gridW - cpWidth) * SCRNGRID_X;
+				_screenAccessMutex.lock();
 				_system->copyRectToScreen(scrnBuf + xPos, _scrnSizeX, xPos + diffX, cnty * SCRNGRID_Y + diffY + 40, SCREEN_WIDTH - (xPos + diffX), cpHeight);
+				_screenAccessMutex.unlock();
 			}
 			gridPos += _gridSizeX;
 			scrnBuf += _scrnSizeX * SCRNGRID_Y;
@@ -1461,7 +1482,9 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 		}
 	}
 
+	_screenAccessMutex.lock();
 	_system->copyRectToScreen(frame, 40, x, y, 40, 40);
+	_screenAccessMutex.unlock();
 }
 
 // ------------------- Router debugging code --------------------------------
