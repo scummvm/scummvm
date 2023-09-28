@@ -725,17 +725,8 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 		int *dst = &dstGray[y * glyph->bitmapWidth];
 
 		for (uint16 x = 0; x < glyph->bitmapWidth; x++, srcPtr++, dst++) {
-			bool left = x ? *(srcPtr - 1) == 1 : false;
-			bool center = *srcPtr == 1;
-			bool right = x > glyph->bitmapWidth - 1 ? false : *(srcPtr + 1) == 1;
-
-			bool edge, bold, res;
-
-			bold = center || left;
-			edge = !center && right;
-			res = (bold && !edge);
-
-			*dst = res ? 1 : 0;
+			*dst |= *srcPtr;
+			*(dst + 1) |= *srcPtr;
 		}
 	}
 }
