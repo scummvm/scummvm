@@ -498,22 +498,42 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._roof != si2._roof)
 		return si1._roof > si2._roof;
 
-	// X-Flat gets drawn after when past center point
+	// X-Flat gets drawn after under specific conditions
 	bool xFlat1 = si1._xLeft == si1._x;
 	bool xFlat2 = si2._xLeft == si2._x;
 	if (xFlat1 != xFlat2 && si1._fixed == si2._fixed) {
-		int32 xCenter1 = (si1._xLeft + si1._x) / 2;
-		int32 xCenter2 = (si2._xLeft + si2._x) / 2;
-		return xFlat1 ? xCenter1 <= xCenter2 : xCenter1 < xCenter2;
+		if (xFlat1) {
+			if (si2._x - 32 > si2._xLeft) {
+				int32 xCenter2 = (si2._xLeft + si2._x) / 2;
+				return si1._x <= xCenter2;
+			}
+			return false;
+		} else {
+			if (si1._x - 32 > si1._xLeft) {
+				int32 xCenter1 = (si1._xLeft + si1._x) / 2;
+				return xCenter1 < si2._x;
+			}
+			return true;
+		}
 	}
 
-	// Y-Flat gets drawn after when past center point
+	// Y-Flat gets drawn after under specific conditions
 	bool yFlat1 = si1._yFar == si1._y;
 	bool yFlat2 = si2._yFar == si2._y;
 	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
-		int32 yCenter1 = (si1._yFar + si1._y) / 2;
-		int32 yCenter2 = (si2._yFar + si2._y) / 2;
-		return yFlat1 ? yCenter1 <= yCenter2 : yCenter1 < yCenter2;
+		if (yFlat1) {
+			if (si2._y - 32 > si2._yFar) {
+				int32 yCenter2 = (si2._yFar + si2._y) / 2;
+				return si1._y <= yCenter2;
+			}
+			return false;
+		} else {
+			if (si1._y - 32 > si1._yFar) {
+				int32 yCenter1 = (si1._yFar + si1._y) / 2;
+				return yCenter1 < si2._y;
+			}
+			return true;
+		}
 	}
 
 	// Partial in X + Y front

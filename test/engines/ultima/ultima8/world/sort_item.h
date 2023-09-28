@@ -320,6 +320,30 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping x-flat vs non-flat wall with x-flat far inside wall
+	 * Test case for rendering issue at MainActor::teleport 37 17619 17767 104
+	 * Tapestry should draw after wall again
+	 */
+	void test_x_flat_vs_thin_wall_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(17439, 17535, 104, 32, 128, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._occl = true;
+		si1._land = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(17410, 17502, 96, 0, 96, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Overlapping x-flat vs non-flat items but the flat item was misplaced
 	 * Test case for rendering issue at MainActor::teleport 41 19411 15787 48
 	 */
@@ -406,9 +430,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._trans = true;
 		si1._solid = true;
 		si1._land = true;
+		si1._fixed = true;
 
 		Ultima::Ultima8::Box b2(20543, 9855, 48, 96, 0, 16);
 		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
 
 		TS_ASSERT(si1.overlap(si2));
 		TS_ASSERT(si2.overlap(si1));
