@@ -163,6 +163,7 @@ void ResMan::freeCluDescript() {
 }
 
 void ResMan::flush() {
+	Common::StackLock lock(_resourceAccessMutex);
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
 		Clu *cluster = _prj.clu + clusCnt;
 		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
@@ -273,6 +274,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 }
 
 void ResMan::resClose(uint32 id) {
+	Common::StackLock lock(_resourceAccessMutex);
 	MemHandle *handle = resHandle(id);
 	if (!handle)
 		return;
