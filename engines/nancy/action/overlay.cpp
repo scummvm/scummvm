@@ -63,7 +63,7 @@ void Overlay::handleInput(NancyInput &input) {
 	// must take precedence when handling the mouse. Thus, out ActionManager class first iterates
 	// through all records and calls their handleInput() function just to make sure this special
 	// case is handled. This fixes nancy3 scene 7081.
-	if (_enableHotspot == kPlayOverlayWithHotspot) {
+	if (_hasHotspot) {
 		if (NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
@@ -240,9 +240,19 @@ void Overlay::execute() {
 						if (_overlayType == kPlayOverlayStatic) {
 							setFrame(i);
 
-							if (_enableHotspot == kPlayOverlayWithHotspot) {
-								_hotspot = _screenPosition;
-								_hasHotspot = true;
+							if (g_nancy->getGameType() <= kGameTypeNancy2) {
+								// In nancy2, the presence of a hotspot relies on whether the Overlay has a scene change
+								if (_enableHotspot == kPlayOverlayWithHotspot) {
+									_hotspot = _screenPosition;
+									_hasHotspot = true;
+								}
+							} else {
+								// nancy3 added a per-frame flag for hotspots. This allows the overlay to be clickable
+								// even without a scene change (useful for setting flags).
+								if (_blitDescriptions[i].hasHotspot == kPlayOverlayWithHotspot) {
+									_hotspot = _screenPosition;
+									_hasHotspot = true;
+								}
 							}
 						}
 

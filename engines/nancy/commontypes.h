@@ -174,10 +174,11 @@ struct HotspotDescription {
 // Describes a blit operation, dependent on a background frame
 struct FrameBlitDescription {
 	uint16 frameID = 0; // Frame ID of the Scene background
+	uint hasHotspot = kPlayOverlayNoHotspot;
 	Common::Rect src;
 	Common::Rect dest;
 
-	void readData(Common::SeekableReadStream &stream, bool frameIsLong = false);
+	void readData(Common::SeekableReadStream &stream, bool longFormat = false);
 };
 
 // Describes 10 event flag changes to be executed when an action is triggered

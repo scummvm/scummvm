@@ -90,16 +90,16 @@ void HotspotDescription::readData(Common::SeekableReadStream &stream) {
 	readRect(stream, coords);
 }
 
-void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool frameIsLong) {
-	if (!frameIsLong) {
-		frameID = stream.readUint16LE();
-	} else {
-		frameID = stream.readUint32LE();
+void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool longFormat) {
+	frameID = stream.readUint16LE();
+	
+	if (longFormat) {
+		// Related to static mode, seems to be a frame ID? However, it is always set to zero so we skip it.
+		stream.skip(2);
 	}
 
-	if (g_nancy->getGameType() >= kGameTypeNancy3) {
-		// Most likely transparency
-		stream.skip(2);
+	if (g_nancy->getGameType() >= kGameTypeNancy3 && longFormat) {
+		hasHotspot = stream.readUint16LE();
 	}
 
 	readRect(stream, src);

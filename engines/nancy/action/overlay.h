@@ -89,7 +89,6 @@ protected:
 	void setFrame(uint frame);
 
 	Graphics::ManagedSurface _fullSurface;
-	Graphics::ManagedSurface _staticModeIntermediate;
 };
 
 class TableIndexOverlay : public Overlay {
