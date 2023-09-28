@@ -34,9 +34,15 @@
 #if TARGET_OS_IOS
 #ifdef __IPHONE_15_0
 	API_AVAILABLE(ios(15.0))
-	GCVirtualController *_virtualController;
+	GCVirtualController *_virtualControllerThumbstick;
 	API_AVAILABLE(ios(15.0))
-	GCVirtualControllerConfiguration *_config;
+	GCVirtualController *_virtualControllerDpad;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_currentController;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configDpad;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configThumbstick;
 #endif
 #endif
 	int _currentDpadXValue;
@@ -58,9 +64,13 @@
 #ifdef __IPHONE_15_0
 	if (@available(iOS 15.0, *)) {
 		// Configure a simple game controller with dPad and A and B buttons
-		_config = [[GCVirtualControllerConfiguration alloc] init];
-		_config.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
-		_virtualController = [[GCVirtualController alloc] initWithConfiguration:_config];
+		_configDpad = [[GCVirtualControllerConfiguration alloc] init];
+		_configDpad.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_configThumbstick = [[GCVirtualControllerConfiguration alloc] init];
+		_configThumbstick.elements = [[NSSet alloc] initWithObjects:GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
+		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
+		_currentController = _virtualControllerThumbstick;
 	}
 #endif
 #endif
@@ -125,13 +135,19 @@
 #if TARGET_OS_IOS
 #ifdef __IPHONE_15_0
 	if (@available(iOS 15.0, *)) {
+		GCVirtualController *controller = ConfMan.getInt("gamepad_controller_directional_input") == kDirectionalInputThumbstick ? _virtualControllerThumbstick : _virtualControllerDpad;
+		if (_currentController != controller) {
+			[_currentController disconnect];
+		}
+
 		if (connect) {
-			[_virtualController connectWithReplyHandler:^(NSError * _Nullable error) {
+			[controller connectWithReplyHandler:^(NSError * _Nullable error) {
 				[self setGCControllerViewProperties:[[[UIApplication sharedApplication] keyWindow] subviews]];
 			}];
+			_currentController = controller;
 		}
 		else {
-			[_virtualController disconnect];
+			[_currentController disconnect];
 			[self setIsConnected:NO];
 		}
 	}
