@@ -56,10 +56,23 @@ private:
 	static const seriesPlayBreak PLAY21[];
 	static const seriesPlayBreak PLAY22[];
 	static const seriesPlayBreak PLAY23[];
-
 	static long _state1;
 	static long _state2;
 	static long _state3;
+	noWalkRect *_walk1 = nullptr;
+	noWalkRect *_walk2 = nullptr;
+	noWalkRect *_walk3 = nullptr;
+	machine *_amplifier = nullptr;
+	int _val1 = 0;
+	int _val2 = 0;
+	int _val3 = 0;
+	int _val4 = 0;
+
+	void loadDrum();
+	void loadRx();
+	void conv21();
+	void conv22();
+	void conv23();
 
 public:
 	Room145();
