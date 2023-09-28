@@ -106,6 +106,7 @@ Common::Error SwordEngine::init() {
 	_menu = new Menu(_screen, _mouse);
 	_logic = new Logic(this, _objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
+	_mouse->useScreenMutex(&_screen->_screenAccessMutex);
 
 	syncSoundSettings();
 

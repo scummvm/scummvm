@@ -84,6 +84,10 @@ void Mouse::useLogicAndMenu(Logic *pLogic, Menu *pMenu) {
 	_menu = pMenu;
 }
 
+void Mouse::useScreenMutex(Common::Mutex *mutex) {
+	_screenAccessMutex = mutex;
+}
+
 void Mouse::addToList(int id, Object *compact) {
 	_objList[_numObjs].id = id;
 	_objList[_numObjs].compact = compact;
@@ -309,7 +313,9 @@ void Mouse::animate() {
 		uint8 *ptrData = (uint8 *)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
 
+		_screenAccessMutex->lock();
 		CursorMan.replaceCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY, 255);
+		_screenAccessMutex->unlock();
 
 		_activeFrame = _frame;
 	}
