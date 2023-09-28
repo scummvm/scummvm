@@ -559,13 +559,15 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	int newBitmapWidth = 0;
 
 	// add the offset which we may use when we are making fonts
-	int bitmapOffset = 2;
+	int bitmapOffset = 0;
 
-	// for italic, we need to calc our self. for shadow, it's 3
-	// for bold and outline, it's 2
+	if (slant & kMacFontBold)
+		bitmapOffset++;
+	if (slant & kMacFontOutline)
+		bitmapOffset += 2;
 	if (slant & kMacFontItalic)
 		bitmapOffset = (data._fRectHeight - 1) / SLANTDEEP;
-	else if (slant & kMacFontShadow)
+	if (slant & kMacFontShadow)
 		bitmapOffset++;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
