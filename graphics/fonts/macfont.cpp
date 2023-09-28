@@ -649,6 +649,12 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			srcSurf.copyFrom(tmpSurf);
 		}
 
+		if (slant & kMacFontCondense)
+			glyph->width--;
+
+		if (slant & kMacFontExtend)
+			glyph->width++;
+
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 
 		for (int y = 0; y < data._fRectHeight; y++) {
