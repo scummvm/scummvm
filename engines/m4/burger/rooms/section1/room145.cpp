@@ -208,19 +208,129 @@ Room145::Room145() : Room() {
 }
 
 void Room145::init() {
+	digi_preload("145_006");
+	digi_play_loop("145_006", 3, 255, -1);
+	_state2 = 0;
 
+	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
+	case 142:
+		ws_demand_location(680, 340, 9);
+		ws_walk(570, 330, 0, -1, -1);
+		break;
+
+	default:
+		ws_demand_location(570, 330, 9);
+		break;
+	}
+
+	kernel_timing_trigger(600, 7);
+
+	if (_G(flags)[V067]) {
+		series_show("145drum", 0xa01);
+		hotspot_set_active("DRUMZ", false);
+	} else {
+		loadDrum();
+		_walk1 = intr_add_no_walk_rect(140, 295, 240, 325, 139, 326);
+		_val1 = 19;
+		kernel_trigger_dispatch_now(2);
+	}
+
+	loadRx();
+
+	_walk2 = intr_add_no_walk_rect(423, 308, 540, 340, 541, 341);
+	_val2 = 101;
+	_val3 = 33;
+	kernel_trigger_dispatch_now(4);
+
+	_walk3 = intr_add_no_walk_rect(341, 326, 480, 365, 481, 366);
+	_val4 = 43;
+	kernel_trigger_dispatch_now(5);
+
+	if (inv_player_has("AMPLIFIER")) {
+		hotspot_set_active("AMPLIFIER ", false);
+	} else {
+		_amplifier = series_show("145amp", 0xa01);
+	}
 }
 
 void Room145::daemon() {
-
+	// TODO
 }
 
 void Room145::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (!_G(flags)[V067] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
+			_G(player).walk_y >= 295 && _G(player).walk_y <= 325)
+		player_walk_to(139, 326);
+
+	if (_G(player).walk_x >= 423 && _G(player).walk_x <= 540 &&
+		_G(player).walk_y >= 308 && _G(player).walk_y <= 340)
+		player_walk_to(541, 341);
+
+	if (_G(player).walk_x >= 341 && _G(player).walk_x <= 480 &&
+		_G(player).walk_y >= 326 && _G(player).walk_y <= 365)
+		player_walk_to(481, 366);
+
+	if (player_said("GEAR") && player_said("VERA'S DINER "))
+		player_set_facing_at(680, 340);
 }
 
 void Room145::parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
 
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said("conv21")) {
+		conv21();
+	} else if (player_said("conv22")) {
+		conv22();
+	} else if (player_said("conv23")) {
+		conv23();
+	} else if (player_said("GEAR", "VERA'S DINER ")) {
+		disable_player_commands_and_fade_init(1014);
+	} else if (!_G(walker).wilbur_match(MATCH)) {
+		return;
+	}
+
+	_G(player).command_ready = false;
+}
+
+void Room145::loadDrum() {
+	static const char *NAMES[12] = {
+		"145dz01", "145dz02", "145dz03", "145dz04", "145dz05",
+		"145dz06", "145dz01s", "145dz02s", "145dz03s", "145dz04s",
+		"145dz05s", "145dz06s"
+	};
+	for (int i = 0; i < 12; ++i)
+		series_load(NAMES[i]);
+
+	digi_preload("145_003");
+	digi_preload("145_004");
+}
+
+void Room145::loadRx() {
+	static const char *NAMES[8] = {
+		"145rx01", "145rx02", "145rx04", "145rx06",
+		 "145rx01s", "145rx02s", "145rx04s", "145rx06s"
+	};
+	for (int i = 0; i < 8; ++i)
+		series_load(NAMES[i]);
+}
+
+void Room145::conv21() {
+	// TODO: conv
+}
+
+void Room145::conv22() {
+	// TODO: conv
+}
+
+void Room145::conv23() {
+	// TODO: conv
 }
 
 } // namespace Rooms
