@@ -24,8 +24,6 @@
 #endif
 
 #include <features/features_cpu.h>
-#include <file/file_path.h>
-#include <retro_miscellaneous.h>
 
 #include "audio/mixer_intern.h"
 #include "backends/base-backend.h"
@@ -43,23 +41,13 @@
 OSystem_libretro::OSystem_libretro() : _mousePaletteEnabled(false), _mouseVisible(false), _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _mouseHotspotX(0), _mouseHotspotY(0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mouseKeyColor(0), _mouseDontScale(false), _mixer(0), _startTime(0), _threadSwitchCaller(0), _cursorStatus(0) {
 	_fsFactory = new FS_SYSTEM_FACTORY();
 
-	const char *c_systemDir = retro_get_system_dir();
-	if (path_is_directory(c_systemDir)) {
-		s_systemDir = c_systemDir;
-		char c_themeDir[PATH_MAX_LENGTH];
-		fill_pathname_join_special(c_themeDir, c_systemDir, SCUMMVM_SYSTEM_SUBDIR "/" SCUMMVM_THEME_SUBDIR, PATH_MAX_LENGTH);
-		if (path_is_directory(c_themeDir))
-			s_themeDir = c_themeDir;
+	s_systemDir = retro_get_system_dir();
+	if (s_systemDir.empty() || ! LibRetroFilesystemNode(s_systemDir).isDirectory())
+		s_systemDir.clear();
 
-		char c_extraDir[PATH_MAX_LENGTH];
-		fill_pathname_join_special(c_extraDir, c_systemDir, SCUMMVM_SYSTEM_SUBDIR "/" SCUMMVM_EXTRA_SUBDIR, PATH_MAX_LENGTH);
-		if (path_is_directory(c_extraDir))
-			s_extraDir = c_extraDir;
-	}
-
-	const char *c_saveDir = retro_get_save_dir();
-	if (path_is_directory(c_saveDir))
-		s_saveDir = c_saveDir;
+	s_saveDir = retro_get_save_dir();
+	if (s_saveDir.empty() || ! LibRetroFilesystemNode(s_saveDir).isDirectory())
+		s_saveDir.clear();
 
 	memset(_mouseButtons, 0, sizeof(_mouseButtons));
 
@@ -76,8 +64,15 @@ OSystem_libretro::~OSystem_libretro() {
 }
 
 void OSystem_libretro::initBackend() {
-	Common::String s_homeDir = LibRetroFilesystemNode::getHomeDir();
-	if ((s_homeDir.empty() || ! path_is_directory(s_homeDir.c_str())) && !s_systemDir.empty())
+	Common::String s_homeDir(LibRetroFilesystemNode::getHomeDir());
+	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
+	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
+
+	if (! LibRetroFilesystemNode(s_themeDir).isDirectory())
+		s_themeDir.clear();
+	if (! LibRetroFilesystemNode(s_extraDir).isDirectory())
+		s_extraDir.clear();
+	if ((s_homeDir.empty() || ! LibRetroFilesystemNode(s_homeDir).isDirectory()) && ! s_systemDir.empty())
 		s_homeDir = s_systemDir;
 
 	//Register default paths
@@ -91,13 +86,13 @@ void OSystem_libretro::initBackend() {
 	}
 
 	//Check current paths
-	if (!checkPath("savepath", s_saveDir))
+	if (!checkPathSetting("savepath", s_saveDir))
 		retro_osd_notification("ScummVM save folder not found.");
-	if (!checkPath("themepath", s_themeDir))
+	if (!checkPathSetting("themepath", s_themeDir))
 		retro_osd_notification("ScummVM theme folder not found.");
-	if (!checkPath("extrapath", s_extraDir))
+	if (!checkPathSetting("extrapath", s_extraDir))
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
-	checkPath("browser_lastpath", s_homeDir);
+	checkPathSetting("browser_lastpath", s_homeDir);
 
 	_savefileManager = new DefaultSaveFileManager();
 
@@ -156,13 +151,14 @@ void OSystem_libretro::destroy() {
 	delete this;
 }
 
-bool OSystem_libretro::checkPath(const char *setting, Common::String path) {
-	if (ConfMan.get(setting).empty() || ! path_is_directory(ConfMan.get(setting).c_str()))
+bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath) {
+	Common::String setPath(ConfMan.get(setting));
+	if (setPath.empty() || ! LibRetroFilesystemNode(setPath).isDirectory())
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
 	if (! ConfMan.hasKey(setting))
-		if (path.empty())
+		if (defaultPath.empty())
 			return false;
 		else
-			ConfMan.set(setting, path);
+			ConfMan.set(setting, defaultPath);
 	return true;
 }

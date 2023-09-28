@@ -78,8 +78,6 @@ private:
 	uint8 _threadSwitchCaller;
 	uint8_t _cursorStatus;
 	Common::String s_systemDir;
-	Common::String s_themeDir;
-	Common::String s_extraDir;
 	Common::String s_saveDir;
 	static Common::List<Common::Event> _events;
 
@@ -112,8 +110,7 @@ public:
 	void destroy(void);
 	void quit() override {}
 private:
-	bool checkPath(const char *setting, Common::String path);
-	void initPaths(void);
+	bool checkPathSetting(const char *setting, Common::String const &defaultPath);
 
 	/* Graphics */
 public:
