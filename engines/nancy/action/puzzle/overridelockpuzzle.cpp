@@ -80,7 +80,10 @@ void OverrideLockPuzzle::execute() {
 		init();
 		registerGraphics();
 
-		NancySceneState.setNoHeldItem();
+		if (g_nancy->getGameType() != kGameTypeNancy5 || NancySceneState.getHeldItem() != 12) {
+			// Hardcoded check for rubber gloves in nancy5
+			NancySceneState.setNoHeldItem();
+		}
 
 		// Set the order of the button presses (always random)
 		// and of the lights (only random on expert difficulty)
