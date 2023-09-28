@@ -1206,7 +1206,11 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		// now set text coords, above the player, usually
 
 		int textMargin = SwordEngine::_systemVars.isDemo ? 5 : 3; // distance kept from edges of screen
-		int aboveHead = SwordEngine::_systemVars.isDemo ? 10 : 20; // distance kept above talking sprite
+
+		if (SwordEngine::isPsx())
+			textMargin = 33;
+
+		int aboveHead = (SwordEngine::_systemVars.isDemo || SwordEngine::isPsx()) ? 10 : 20; // distance kept above talking sprite
 		uint16 textX, textY;
 		if (((id == GEORGE) || ((id == NICO) && (_scriptVars[SCREEN] == 10))) && (!cpt->o_anim_resource)) {
 			// if George is doing Voice-Over text (centered at the bottom of the screen)

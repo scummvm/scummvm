@@ -61,6 +61,10 @@ Text::Text(SwordEngine *vm, Logic *pLogic, ObjectMan *pObjMan, ResMan *pResMan, 
 	}
 
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
+
+	if (SwordEngine::isPsx())
+		_charHeight /= 2;
+
 	for (int i = 0; i < MAX_TEXT_OBS; i++)
 		_textBlocks[i] = NULL;
 }
@@ -98,6 +102,11 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 			sprWidth = lines[lineCnt].width;
 
 	uint16 sprHeight = _charHeight * numLines;
+	if (SwordEngine::isPsx()) {
+		sprHeight = 2 * _charHeight * numLines - 4 * (numLines - 1);
+		sprWidth = (sprWidth + 1) & 0xFFFE;
+	}
+
 	uint32 sprSize = sprWidth * sprHeight;
 	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call Text::releaseText.
 	_textBlocks[slot] = (FrameHeader *)malloc(sprSize + sizeof(FrameHeader));
@@ -133,8 +142,8 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 		curTextLine++; // skip space at the end of the line
 		text += lines[lineCnt].length + 1;
 
-		if (SwordEngine::isPsx()) //Chars are half height in psx version
-			linePtr += (_charHeight / 2) * sprWidth;
+		if (SwordEngine::isPsx())
+			linePtr += (_charHeight - 4) * sprWidth;
 		else
 			linePtr += _charHeight * sprWidth;
 	}
@@ -148,8 +157,11 @@ uint16 Text::charWidth(uint8 ch) {
 
 uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line) {
 	uint16 lineNo = 0;
-
 	bool firstWord = true;
+
+	if (SwordEngine::isPsx())
+		maxWidth = 254;
+
 	while (*text) {
 		uint16 wordWidth = 0;
 		uint16 wordLength = 0;
