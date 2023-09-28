@@ -48,6 +48,8 @@ private:
 	machine *_eu02 = nullptr;
 	machine *_wi03 = nullptr;
 	machine *_wi03S = nullptr;
+	machine *_ve03 = nullptr, *_ve03S = nullptr;
+	Series _cat;
 	noWalkRect *_walk1 = nullptr;
 	const char *_digiName = nullptr;
 	bool _flag1 = false;
@@ -58,8 +60,8 @@ private:
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
-	int _val8 = 0;
+	KernelTriggerType _digiMode = (KernelTriggerType)0;
+	int _digiTrigger = 0;
 
 	void conv35();
 	void conv30();
@@ -67,6 +69,8 @@ private:
 	void talkToBurl();
 	void loadCheese();
 	void loadMoney();
+	void playDigi1();
+	void playDigi2();
 
 public:
 	Room143() : Room() {}

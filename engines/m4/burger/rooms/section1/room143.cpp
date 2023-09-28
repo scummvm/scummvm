@@ -201,7 +201,7 @@ void Room143::init() {
 }
 
 void Room143::daemon() {
-	// TODO: Room143::daemon is in progress
+	int frame;
 
 	if (_G(flags)[V064] == 1) {
 		if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
@@ -259,6 +259,20 @@ void Room143::daemon() {
 		kernel_trigger_dispatch_now(44);
 		break;
 
+	case 8:
+		hotspot_set_active("money ", true);
+		series_play("143money", 0xf02, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		break;
+
+	case 10:
+		player_set_commands_allowed(true);
+		break;
+
+	case 11:
+		_val6 = (_val5 == 42) ? 42 : 31;
+		player_set_commands_allowed(true);
+		break;
+
 	case 12:
 		_G(flags)[V063] = 1;
 		break;
@@ -270,8 +284,8 @@ void Room143::daemon() {
 			} else {
 				_digiName = "143v508";
 				_val1 = 11;
-				_val7 = 2;
-				_val8 = 15;
+				_digiMode = KT_DAEMON;
+				_digiTrigger = 15;
 			}
 		} else {
 			wilbur_speech("143w506");
@@ -291,8 +305,8 @@ void Room143::daemon() {
 			break;
 		}
 		_val1 = 11;
-		_val7 = 2;
-		_val8 = 15;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 15;
 		break;
 
 	case 15:
@@ -304,8 +318,8 @@ void Room143::daemon() {
 	case 16:
 		_digiName = "143v506";
 		_val1 = 22;
-		_val7 = 2;
-		_val8 = 17;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 17;
 		break;
 
 	case 17:
@@ -317,14 +331,23 @@ void Room143::daemon() {
 	case 18:
 		_digiName = "143v507";
 		_val1 = 14;
-		_val7 = 2;
-		_val8 = 15;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 15;
+		break;
+
+	case 19:
+		_val6 = 37;
+		break;
+
+	case 21:
+		_val4 = 7;
+		kernel_trigger_dispatch_now(43);
 		break;
 
 	case 22:
 		_digiName = "143b001";
-		_val7 = 2;
-		_val8 = 23;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 23;
 		_val6 = 30;
 		_val5 = 29;
 		_val1 = 21;
@@ -333,24 +356,33 @@ void Room143::daemon() {
 
 	case 23:
 		_digiName = "143v901";
-		_val7 = 2;
-		_val8 = 24;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 24;
 		_val6 = 29;
 		_val1 = 22;
 		break;
 
+	case 24:
+		_digiName = "143b002";
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 25;
+		_val6 = 30;
+		_val1 = 21;
+		kernel_trigger_dispatch_now(44);
+		break;
+
 	case 25:
 		_digiName = "143v902";
-		_val7 = 2;
-		_val8 = 26;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 26;
 		_val6 = 29;
 		_val1 = 22;
 		break;
 
 	case 26:
 		_digiName = "143v903";
-		_val7 = 2;
-		_val8 = 7;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 7;
 		_val1 = 14;
 		_val6 = 31;
 		kernel_trigger_dispatch_now(44);
@@ -364,8 +396,8 @@ void Room143::daemon() {
 
 	case 29:
 		_digiName = "143b006";
-		_val7 = 2;
-		_val8 = 30;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 30;
 		_val6 = 36;
 		break;
 
@@ -395,8 +427,8 @@ void Room143::daemon() {
 		_wi03 = series_play("143wi03", 0x100, 0, -1, 600, -1, 100, 0, 0, 10, 10);
 		_wi03S = series_play("143wi03s", 0x101, 0, -1, 600, -1, 100, 0, 0, 10, 10);
 		_digiName = "143b005";
-		_val7 = 2;
-		_val8 = 39;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 39;
 		_val6 = (_val5 == 42) ? 44 : 36;
 		break;
 
@@ -413,14 +445,352 @@ void Room143::daemon() {
 
 	case 40:
 		_digiName = "143v904";
-		_val7 = 2;
-		_val8 = 41;
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 41;
 		_val6 = 35;
 		_val1 = 11;
 		break;
 
+	case 41:
+		_val6 = 34;
+		_digiName = "143b003";
+		_digiMode = KT_DAEMON;
+		_digiTrigger = 42;
+		_val1 = 8;
+		kernel_trigger_dispatch_now(44);
+		break;
+
+	case 42:
+		_val6 = 42;
+		break;
+
+	case 43:
+		switch (_val4) {
+		case 6:
+			_cat.series_show("143cat", 0);
+			break;
+
+		case 7:
+			_cat.terminate();
+			_val4 = 6;
+			series_play_with_breaks(PLAY4, "143cat", 0, 43, 3, 10, 100, 0, 0);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 44:
+		switch (_val2) {
+		case 8:
+			switch (_val1) {
+			case 8:
+				switch (imath_ranged_rand(1, 20)) {
+				case 1:
+					series_play_with_breaks(PLAY5, "143ve02", 0xf00, 44, 2);
+					break;
+
+				case 2:
+					_val2 = 10;
+					series_play("143ve03", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 3);
+					break;
+
+				default:
+					series_play("143ve01", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 0);
+					break;
+				}
+				break;
+
+			case 11:
+				_val2 = 10;
+				series_play("143ve03", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 3);
+				break;
+
+			case 15:
+				_val2 = 13;
+				Series::series_play("143ve14", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 8);
+				break;
+
+			case 20:
+				_val1 = 8;
+				series_play_with_breaks(PLAY6, "143ve07", 0xf00, 44, 3);
+				break;
+
+			case 22:
+				_val2 = 21;
+				Series::series_play("143ve08", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			case 26:
+				_val2 = 27;
+				series_play("143ve04", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 5);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case 9:
+			if (_val1 == 8) {
+				if (imath_ranged_rand(1, 20) == 1) {
+					_val2 = 21;
+					Series::series_play("143ve10", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 3);
+				} else {
+					Series::series_play("143ve10", 0xf00, 0, 44, 10, 0, 100, 0, 0, 3, 3);
+				}
+			} else {
+				_val2 = 21;
+				Series::series_play("143ve10", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 3);
+			}
+			break;
+
+		case 10:
+			switch (_val1) {
+			case 8:
+				if (imath_ranged_rand(1, 20) == 1) {
+					_val2 = 8;
+					series_play("143ve03", 0xf00, 2, 44, 10, 0, 100, 0, 0, 0, 3);
+				} else {
+					series_play("143ve03", 0xf00, 0, 44, 10, 0, 100, 0, 0, 3, 3);
+				}
+				break;
+
+			case 11:
+				_val2 = 11;
+				series_play("143ve03", 0xf00, 0, 44, 4, 0, 100, 0, 0, 3, 3);
+				break;
+
+			default:
+				_val2 = 8;
+				series_play("143ve03", 0xf00, 2, 44, 10, 0, 100, 0, 0, 0, 3);
+				break;
+			}
+			break;
+
+		case 11:
+			if (_val1 == 11) {
+				_ve03 = series_play("143ve03", 0xf00, 4, -1, 4, -1, 100, 0, 0, 3, 6);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				_val2 = 10;
+				kernel_trigger_dispatch_now(44);
+			}
+			break;
+
+		case 13:
+			switch (_val1) {
+			case 13:
+				Series::series_play("143ve15", 0xf00, 0, 44, 10, 0, 100, 0, 0, 4, 4);
+				break;
+
+			case 14:
+				_val2 = 14;
+				Series::series_play("143ve17", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 2);
+				break;
+
+			case 15:
+				_val2 = (imath_ranged_rand(1, 2) == 1) ? 16 : 17;
+				Series::series_play("143ve18", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 18:
+				_val1 = 19;
+				Series::series_play("143ve16", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 1);
+				break;
+
+			case 19:
+				terminateMachineAndNull(_plate);
+				_val1 = 13;
+				Series::series_play("143ve16", 0xf00, 0, 44, 6, 0, 100, 0, 0, 2, 15);
+				break;
+
+			case 21:
+				_val2 = 21;
+				Series::series_play("143ve15", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			default:
+				_val2 = 10;
+				Series::series_play("143ve19", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, -1);
+				break;
+			}
+			break;
+
+		case 14:
+			if (_val1 == 14) {
+				_ve03 = series_play("143ve18", 0xf00, 4, -1, 4, -1, 100, 0, 0, 1, 4);
+				_ve03S = series_play("143ve18s", 0xf01, 4, -1, 4, -1, 100, 0, 0, 1, 4);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 13;
+				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+		case 16:
+			if (_val1 == 15) {
+				_ve03 = series_play("143ve17", 0xf00, 4, -1, 4, -1, 100, 0, 0, 3, 5);
+				_ve03S = series_play("143ve17s", 0xf01, 4, -1, 4, -1, 100, 0, 0, 3, 5);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 13;
+				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 2);
+			}
+			break;
+
+		case 17:
+			if (_val1 == 15) {
+				_ve03 = series_play("143ve18", 0xf00, 4, -1, 4, -1, 100, 0, 0, 5, 8);
+				_ve03S = series_play("143ve18s", 0xf01, 4, -1, 4, -1, 100, 0, 0, 5, 8);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 13;
+				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 0);
+			}
+			break;
+
+
+		case 21:
+			switch (_val1) {
+			case 15:
+				_val2 = 13;
+				Series::series_play("143ve15", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+				break;
+
+			case 21:
+				if (imath_ranged_rand(1, 20) == 1) {
+					_val2 = 9;
+					Series::series_play("143ve10", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 3);
+				} else {
+					Series::series_play("143ve08", 0xf00, 0, 44, 10, 0, 100, 0, 0, 4, 4);
+				}
+				break;
+
+			case 22:
+				if (imath_ranged_rand(1, 2) == 1) {
+					_val2 = 23;
+					kernel_trigger_dispatch_now(44);
+				} else {
+					_val2 = 24;
+					Series::series_play("143ve11", 0xf00, 0, 44, 6, 0, 100, 0, 0, 2, 4);
+				}
+				break;
+
+			default:
+				_val2 = 8;
+				Series::series_play("143ve08", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 23:
+			if (_val1 == 22) {
+				_ve03 = series_play("143ve11", 0xf00, 0, -1, 6, -1, 100, 0, 0, 0, 1);
+				_ve03S = series_play("143ve11s", 0xf01, 0, -1, 6, -1, 100, 0, 0, 0, 1);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 21;
+				kernel_trigger_dispatch_now(44);
+			}
+			break;
+
+		case 24:
+			if (_val1 == 22) {
+				_ve03 = series_play("143ve11", 0xf00, 4, -1, 6, -1, 100, 0, 0, 4, 6);
+				_ve03S = series_play("143ve11s", 0xf01, 4, -1, 6, -1, 100, 0, 0, 4, 6);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 21;
+				Series::series_play("143ve11", 0xf00, 2, 44, 6, 0, 100, 0, 0, 2, 4);
+			}
+			break;
+
+		case 25:
+			switch (_val1) {
+			case 25:
+				Series::series_play("143ve06", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 26:
+				_val2 = 26;
+				Series::series_play("143ve06", 0xf00, 0, 44, 4, 0, 100, 0, 0, 0, 0);
+				break;
+
+			default:
+				_val2 = 28;
+				Series::series_play("143ve05", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				break;
+			}
+			break;
+
+		case 26:
+			if (_val1 == 26) {
+				_ve03 = series_play("143ve06", 0xf00, 4, -1, 5, -1, 100, 0, 0, 0, 4);
+				_ve03S = series_play("143ve06s", 0xf01, 4, -1, 5, -1, 100, 0, 0, 0, 4);
+				playDigi2();
+			} else {
+				terminateMachineAndNull(_ve03);
+				terminateMachineAndNull(_ve03S);
+				_val2 = 25;
+				kernel_trigger_dispatch_now(44);
+			}
+			break;
+
+		case 27:
+			_val2 = 25;
+			Series::series_play("143ve05", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+			break;
+
+		case 28:
+			_val2 = 8;
+			Series::series_play("143ve04", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 5);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
 	case 45:
 		switch (_val5) {
+		case 20:
+			_val5 = 31;
+			kernel_trigger_dispatch_now(45);
+			break;
+
+		case 29:
+			switch (_val6) {
+			case 29:
+				Series::series_play("143bu02", 0xa00, 0, 45, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 30:
+				frame = imath_ranged_rand(0, 5);
+				Series::series_play("143bu03", 0xa00, 0, 45, 6, 0, 100, 0, 0, frame, frame);
+				playDigi1();
+				break;
+
+			default:
+				_G(flags)[V298] = 0;
+				_val5 = 20;
+				series_play_with_breaks(PLAY9, "143bu04", 0xa00, 45, 3);				
+				break;
+			}
+			break;
+
 		case 31:
 			switch (_val6) {
 			case 31: {
@@ -455,9 +825,195 @@ void Room143::daemon() {
 				break;
 			}
 
+			case 33:
+				_val6 = 31;
+				series_play_with_breaks(PLAY11, "143bu11", 0xa00, 45, 3);
+				break;
+
+			case 35:
+				_val5 = 35;
+				Series::series_play("143bu06", 0xa00, 0, 45, 6, 0, 100, 0, 0, 0, 3);
+				break;
+
+			case 39:
+				_val5 = 37;
+				Series::series_play("143bu11", 0xa00, 0, 45);
+				break;
+
+			case 45:
+				series_load("143money");
+				series_play_with_breaks(PLAY8, "143bu24", 0xe00, 1, 3);
+				break;
+
 			default:
+				_val5 = 41;
+				Series::series_play("143bu17", 0xa00, 0, 45, 6, 0, 100, 0, 0, 0, 7);
 				break;
 			}
+			break;
+
+		case 32:
+			digi_stop(2);
+			_G(flags)[V063] = 0;
+
+			_val5 = 31;
+			loadMoney();
+			Series::series_play("143bu25", 0xa00, 2, 45);
+			break;
+
+		case 35:
+			switch (_val6) {
+			case 34:
+				Series::series_play("143bu06", 0xa00, 0, 45, 10, 0, 100, 0, 0, 3, 3);
+				playDigi1();
+				break;
+
+			case 35:
+				Series::series_play("143bu06", 0xa00, 0, 45, 10, 0, 100, 0, 0, 3, 3);
+				break;
+
+			default:
+				_val5 = 31;
+				Series::series_play("143bu06", 0xa00, 0, 45, 10, 0, 100, 0, 0, 0, 3);
+				break;
+			}
+			break;
+
+		case 37:
+			switch (_val6) {
+			case 36:
+				frame = imath_ranged_rand(0, 5);
+				Series::series_play("143bu13", 0xa00, 0, 45, 6, 0, 100, 0, 0, frame, frame);
+				playDigi1();
+				break;
+
+			case 37:
+				if (imath_ranged_rand(1, 60) == 22) {
+					// Talk about unlikely chance of happening
+					Series::series_play("143bu14", 0xa00, 0, 45);
+
+					switch (imath_ranged_rand(1, 4)) {
+					case 1:
+						digi_play("143b007", 2, 255, -1);
+						break;
+					case 2:
+						digi_play("143b011", 2, 255, -1);
+						break;
+					case 3:
+						digi_play("143b012", 2, 255, -1);
+						break;
+					case 4:
+						digi_play("143b013", 2, 255, -1);
+						break;
+					default:
+						break;
+					}
+				} else {
+					Series::series_play("143bu13", 0xa00, 0, 45, 10, 0, 100, 0, 0, 0, 0);
+				}
+				break;
+
+			case 39:
+				_val6 = 40;
+				series_play_with_breaks(PLAY10, "143bu15", 0xa00, 45);
+				break;
+
+			case 40:
+				digi_play("143b008", 1, 255, 1);
+				_val6 = 31;
+				kernel_trigger_dispatch_now(45);
+				break;
+
+			default:
+				_val5 = 31;
+				Series::series_play("143bu11", 0xa00, 2, 45, 6, 0, 100, 0, 0, 0, 7);
+				break;
+			}
+			break;
+
+		case 41:
+			_val5 = 42;
+			digi_preload("143_002");
+			player_set_commands_allowed(true);
+			series_play_with_breaks(PLAY2, "143bu18", 0xa00, 45, 3, 6, 100, 0, 0);
+			break;
+
+		case 42:
+			switch (_val6) {
+			case 42:
+				++_val3;
+
+				if (imath_ranged_rand(10, 15) >= _val3) {
+					do {
+						if (_frame >= 5)
+							_frame = 0;
+						frame = imath_ranged_rand(0, 5);
+					} while (frame <= _frame);
+
+					_frame = frame;
+					Series::series_play("143bu19", 0xa00, 0, 45, 8, 0, 100, 0, 0, frame, frame);
+
+				} else if (imath_ranged_rand(1, 30) == 1) {
+					Series::series_play("143bu19", 0xa00, 0, -1, 8, 0, 100, 0, 0, 6, 12);
+				} else {
+					do {
+						if (_frame >= 5)
+							_frame = 0;
+						frame = imath_ranged_rand(0, 5);
+					} while (frame <= _frame);
+
+					_frame = frame;
+					Series::series_play("143bu19", 0xa00, 0, 45, 8, 0, 100, 0, 0, frame, frame);
+				}
+				break;
+
+			case 44:
+				_val5 = 43;
+				Series::series_play("143bu20", 0xa00, 0, 45, 4);
+				break;
+
+			case 45:
+				_G(flags)[V063] = 0;
+				_val5 = 46;
+				Series::series_play("143bu19", 0xa00, 0, 45, 4, 0, 100, 0, 0, 13, -1);
+				break;
+
+			default:
+				_G(flags)[V063] = 0;
+				_val5 = 32;
+				Series::series_play("143bu19", 0xa00, 0, 45, 4, 0, 100, 0, 0, 13, -1);
+				break;
+			}
+			break;
+
+		case 43:
+			switch (_val6) {
+			case 43:
+				frame = imath_ranged_rand(0, 5);
+				Series::series_play("143bu21", 0xa00, 0, 45, 6, 0, 100, 0, 0, frame, frame);
+				break;
+
+			case 44:
+				frame = imath_ranged_rand(0, 4);
+				Series::series_play("143bu22", 0xa00, 0, 45, 6, 0, 100, 0, 0, frame, frame);
+				break;
+
+			default:
+				Series::series_play("143bu20", 0xa00, 2, 45, 6, 0, 100, 0, 0, 0, 7);
+				break;
+			}
+			break;
+
+		case 46:
+			digi_stop(3);
+			loadMoney();
+			series_load("143money");
+			series_play_with_breaks(PLAY8, "143bu24", 0xe00, 1, 3);
+			break;
+
+		case 47:
+			_val5 = 31;
+			Series::series_play("143bu10", 0xa00, 0, 45, 6, 0, 100, 0, 0, 0, 0);
 			break;
 
 		default:
@@ -484,9 +1040,9 @@ void Room143::daemon() {
 
 			_val1 = 22;
 			_digiName = "143v501";
-			_val7 = 2;
+			_digiMode = KT_DAEMON;
 			_G(wilbur_should) = 5;
-			_val8 = gCHANGE_WILBUR_ANIMATION;
+			_digiTrigger = gCHANGE_WILBUR_ANIMATION;
 			_G(flags)[V064] = 1;
 			loadCheese();
 			hotspot_set_active("cheese", true);
@@ -510,6 +1066,28 @@ void Room143::daemon() {
 		}
 		break;
 
+	case 10028:
+		if (_G(flags)[kRoadOpened]) {
+			_G(kernel).continue_handling_trigger = true;
+		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			_G(flags)[V000] = 1003;
+			hotspot_set_active("burl", true);
+			player_set_commands_allowed(false);
+			intr_freshen_sentence();
+			Section1::walk();
+
+			player_update_info();
+			if (_G(player_info).y < 304) {
+				ws_walk(220, 304, 0, -1, 2);
+				_G(flags)[V298] = 1;
+			}
+
+			series_play_with_breaks(PLAY7, "143bu01", 0xe00, 22, 3);
+		} else {
+			kernel_timing_trigger(60, 10028);
+		}
+		break;
+
 	case 10029:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
@@ -520,6 +1098,36 @@ void Room143::daemon() {
 			Section1::walk();
 		} else {
 			kernel_timing_trigger(60, 10029);
+		}
+		break;
+
+	case 10030:
+		if (_G(flags)[V000] == 1002) {
+			_G(kernel).continue_handling_trigger = true;
+		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			_val6 = 31;
+		} else {
+			kernel_timing_trigger(60, 10030);
+		}
+		break;
+
+	case 10031:
+		if (_G(flags)[V000] == 1002) {
+			_G(kernel).continue_handling_trigger = true;
+		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			_G(kernel).continue_handling_trigger = true;
+			player_update_info();
+			player_set_commands_allowed(false);
+			intr_freshen_sentence();
+			Section1::walk();
+
+			if (_G(player_info).y < 300)
+				ws_walk(213, 287, 0, -1, 2);
+
+			_val6 = 45;
+			hotspot_set_active("burl", false);
+		} else {
+			kernel_timing_trigger(60, 10031);
 		}
 		break;
 
@@ -577,8 +1185,8 @@ void Room143::parser() {
 			player_set_commands_allowed(false);
 			_val1 = 22;
 			_digiName = "143v511";
-			_val7 = 1;
-			_val8 = 1;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 1;
 			break;
 
 		case 1:
@@ -599,8 +1207,8 @@ void Room143::parser() {
 			player_set_commands_allowed(false);
 			_val1 = 11;
 			_digiName = "143v504";
-			_val7 = 1;
-			_val8 = 1;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 1;
 			break;
 
 		case 1:
@@ -618,8 +1226,8 @@ void Room143::parser() {
 			player_set_commands_allowed(false);
 			_val1 = 22;
 			_digiName = "143v510";
-			_val7 = 1;
-			_val8 = 1;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 1;
 			_G(flags)[V062] = 1;
 			break;
 
@@ -639,8 +1247,8 @@ void Room143::parser() {
 			player_set_commands_allowed(false);
 			_val1 = 26;
 			_digiName = "143v502";
-			_val7 = 1;
-			_val8 = 1;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 1;
 			_val4 = 21;
 			kernel_trigger_dispatch_now(43);
 			break;
@@ -655,8 +1263,8 @@ void Room143::parser() {
 		case 2:
 			_val1 = 14;
 			_digiName = "143V503";
-			_val7 = 1;
-			_val8 = 3;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 3;
 			break;
 
 		case 3:
@@ -793,8 +1401,8 @@ void Room143::conv35() {
 				digi_play(sound, 1, 255, 9);
 			}
 
-			_val7 = 1;
-			_val8 = 9;
+			_digiMode = KT_PARSE;
+			_digiTrigger = 9;
 		} else {
 			conv_resume();
 		}
@@ -834,8 +1442,8 @@ void Room143::conv30() {
 			digi_play(sound, 1, 255, 9);
 		}
 
-		_val7 = 1;
-		_val8 = 9;
+		_digiMode = KT_PARSE;
+		_digiTrigger = 9;
 	} else {
 		conv_resume();
 	}
@@ -873,6 +1481,25 @@ void Room143::loadCheese() {
 
 void Room143::loadMoney() {
 	Series::series_play("143pl01", 0xf00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+}
+
+void Room143::playDigi1() {
+	if (_digiName) {
+		_G(kernel).trigger_mode = _digiMode;
+		digi_play(_digiName, 1, 255, _digiTrigger);
+		_digiName = nullptr;
+
+		if (_val5 == 43)
+			digi_change_volume(2, 0);
+	}
+}
+
+void Room143::playDigi2() {
+	if (_digiName) {
+		_G(kernel).trigger_mode = _digiMode;
+		digi_play(_digiName, 1, 255, _digiTrigger);
+		_digiName = nullptr;
+	}
 }
 
 } // namespace Rooms
