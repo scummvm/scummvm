@@ -75,6 +75,7 @@ public:
 	void fnStartMenu();
 	void fnEndMenu();
 	void checkTopMenu();
+	void setToTargetState();
 	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 
 private:

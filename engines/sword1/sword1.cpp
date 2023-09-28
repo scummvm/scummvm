@@ -919,6 +919,10 @@ void SwordEngine::showDebugInfo() {
 	}
 }
 
+void SwordEngine::setMenuToTargetState() {
+	_menu->setToTargetState();
+}
+
 void SwordEngine::checkCd() {
 	uint8 needCd = _cdList[Logic::_scriptVars[NEW_SCREEN]];
 	if (_systemVars.runningFromCd) { // are we running from cd?
@@ -1212,12 +1216,20 @@ static void vblCallback(void *refCon) {
 		vm->_vblCount++;
 		vm->_vbl60HzUSecElapsed += TIMER_USEC;
 
-		if ((vm->_vblCount == 1) || (vm->_vblCount == 5)) {
-			vm->updateTopMenu();
-		}
+		if (!vm->screenIsFading()) {
+			if ((vm->_vblCount == 1) || (vm->_vblCount == 5)) {
+				vm->updateTopMenu();
+			}
 
-		if ((vm->_vblCount == 3) || (vm->_vblCount == 7)) {
-			vm->updateBottomMenu();
+			if ((vm->_vblCount == 3) || (vm->_vblCount == 7)) {
+				vm->updateBottomMenu();
+			}
+		} else {
+			// This is an optimization for all the locks introduced
+			// with the fade palette changes: we disable the menu
+			// updates whenever the palette is fading, and we bring
+			// the menu to its target state.
+			vm->setMenuToTargetState();
 		}
 
 		if (vm->_vbl60HzUSecElapsed >= PALETTE_FADE_USEC) {
@@ -1230,6 +1242,10 @@ static void vblCallback(void *refCon) {
 	}
 
 	vm->_inTimer--;
+}
+
+bool SwordEngine::screenIsFading() {
+	return _screen->stillFading() != 0;
 }
 
 void SwordEngine::installTimerRoutines() {

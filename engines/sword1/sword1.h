@@ -123,6 +123,8 @@ public:
 	void startFadePaletteDown(int speed);
 	void startFadePaletteUp(int speed);
 	void waitForFade();
+	bool screenIsFading();
+	void setMenuToTargetState();
 
 	void showDebugInfo();
 

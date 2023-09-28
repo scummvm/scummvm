@@ -367,6 +367,24 @@ void Menu::checkTopMenu() {
 		checkMenuClick(MENU_TOP);
 }
 
+void Menu::setToTargetState() {
+	// This is an optimization for all the locks introduced
+	// with the fade palette changes: we disable the menu
+	// updates whenever the palette is fading, and we bring
+	// the menu to its target state.
+	// Note that we are only doing this for the top menu:
+	// I haven't seen any instance of a bottom menu (dialog)
+	// being able to immediately open after a palette fade.
+	if (_objectBarStatus == MENU_CLOSING)
+		_objectBarStatus = MENU_CLOSED;
+
+	if (_objectBarStatus == MENU_OPENING) {
+		_objectBarStatus = MENU_OPEN;
+		_fadeObject = 8;
+		showMenu(MENU_TOP);
+	}
+}
+
 int Menu::logicChooser(Object *compact) {
 	uint8 objSelected = 0;
 	if (_objectBarStatus == MENU_OPEN)
