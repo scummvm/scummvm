@@ -309,9 +309,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._solid = true;
 		si1._occl = true;
 		si1._land = true;
+		si1._fixed = true;
 
 		Ultima::Ultima8::Box b2(13244, 9876, 48, 0, 96, 40);
 		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
@@ -330,9 +332,11 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._solid = true;
 		si1._occl = true;
 		si1._land = true;
+		si1._fixed = true;
 
 		Ultima::Ultima8::Box b2(19167, 15775, 56, 0, 128, 40);
 		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
 
 		TS_ASSERT(!si1.below(si2));
 		TS_ASSERT(si2.below(si1));
@@ -340,19 +344,50 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/**
 	 * Overlapping y-flat vs non-flat items
-	 * Test case for rendering issue at MainActor::teleport 41 20063 13887 48
+	 * Test case for rendering issue at MainActor::teleport 37 18992 17664 104
 	 */
 	void test_y_flat_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(64, 0, 16, 64, 0, 16);
+		Ultima::Ultima8::Box b1(19007, 17439, 104, 64, 32, 40);
 		si1.setBoxBounds(b1, 0, 0);
 		si1._solid = true;
+		si1._occl = true;
+		si1._land = true;
+		si1._fixed = true;
 
-		Ultima::Ultima8::Box b2(64, 64, 0, 64, 64, 40);
+		Ultima::Ultima8::Box b2(19008, 17432, 104, 96, 0, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Overlapping fixed y-flat vs non-fixed non-flat items where the flat should draw first
+	 * Test case for rendering issue at MainActor::teleport 3 12355 5467 8
+	 * Barrel at docks render after flat vines
+	 */
+	void test_y_flat_exception_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(12255, 5503, 0, 128, 0, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(12260, 5532, 8, 64, 64, 16);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
+		si2._land = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));

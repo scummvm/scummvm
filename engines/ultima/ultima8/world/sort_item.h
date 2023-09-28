@@ -501,21 +501,20 @@ inline bool SortItem::below(const SortItem &si2) const {
 	// X-Flat gets drawn after when past center point
 	bool xFlat1 = si1._xLeft == si1._x;
 	bool xFlat2 = si2._xLeft == si2._x;
-	if (xFlat1 != xFlat2) {
+	if (xFlat1 != xFlat2 && si1._fixed == si2._fixed) {
 		int32 xCenter1 = (si1._xLeft + si1._x) / 2;
 		int32 xCenter2 = (si2._xLeft + si2._x) / 2;
 		return xFlat1 ? xCenter1 <= xCenter2 : xCenter1 < xCenter2;
 	}
 
-	// Disabled: Y-Flat gets drawn after when past center point
-	// Not correct at starting area docks
-	//bool yFlat1 = si1._yFar == si1._y;
-	//bool yFlat2 = si2._yFar == si2._y;
-	//if (yFlat1 != yFlat2) {
-	//	int32 yCenter1 = (si1._yFar + si1._y) / 2;
-	//	int32 yCenter2 = (si2._yFar + si2._y) / 2;
-	//	return yFlat1 ? yCenter1 <= yCenter2 : yCenter1 < yCenter2;
-	//}
+	// Y-Flat gets drawn after when past center point
+	bool yFlat1 = si1._yFar == si1._y;
+	bool yFlat2 = si2._yFar == si2._y;
+	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
+		int32 yCenter1 = (si1._yFar + si1._y) / 2;
+		int32 yCenter2 = (si2._yFar + si2._y) / 2;
+		return yFlat1 ? yCenter1 <= yCenter2 : yCenter1 < yCenter2;
+	}
 
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y)
@@ -566,6 +565,8 @@ Common::String SortItem::dumpInfo() const {
 		info += "land ";
 	if (_noisy)
 		info += "noisy ";
+	if (_fixed)
+		info += "fixed ";
 
 	return info;
 }
