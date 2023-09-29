@@ -67,6 +67,7 @@ class SeekableWriteStream;
 }
 namespace Graphics {
 class FontSJIS;
+class MacFontManager;
 }
 
 /**
@@ -90,6 +91,7 @@ class BaseScummFile;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
+class MacIndy3Gui;
 class MusicEngine;
 class Player_Towns;
 class ScummEngine;
@@ -1559,8 +1561,11 @@ public:
 	 */
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier = 0;
+
+	Graphics::MacFontManager *_macFontManager = nullptr;
 	Graphics::Surface *_macScreen = nullptr;
 	Graphics::Surface *_macIndy3TextBox = nullptr;
+	MacIndy3Gui *_macIndy3Gui = nullptr;
 
 protected:
 	byte _charsetColor = 0;

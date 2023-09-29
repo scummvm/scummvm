@@ -30,7 +30,6 @@
 #include "scumm/gfx.h"
 
 namespace Graphics {
-class MacFontManager;
 class Font;
 }
 
@@ -285,8 +284,7 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	Graphics::MacFontManager *_macFontManager;
-	const Graphics::Font *_macFonts[5];
+	const Graphics::Font *_macFonts[2];
 	bool _useRealCharWidth;
 	bool _useCorrectFontSpacing;
 	bool _pad;
