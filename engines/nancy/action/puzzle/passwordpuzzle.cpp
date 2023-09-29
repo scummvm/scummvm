@@ -53,29 +53,30 @@ void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	uint numNames = 1;
 	uint numPasswords = 1;
-	char buf[20];
+	char buf[33];
+	uint fieldSize = s.getVersion() <= kGameTypeNancy5 ? 20 : 33; // nancy6 changed the size of text fields to 33
 
 	s.syncAsUint16LE(numNames, kGameTypeNancy4);
 	_names.resize(numNames);
 	for (uint i = 0; i < numNames; ++i) {
-		stream.read(buf, 20);
-		buf[19] = '\0';
+		stream.read(buf, fieldSize);
+		buf[fieldSize - 1] = '\0';
 		_names[i] = buf;
 
 		_maxNameLength = MAX(_maxNameLength, _names[i].size());
 	}
-	s.skip((5 - numNames) * 20, kGameTypeNancy4);
+	s.skip((5 - numNames) * fieldSize, kGameTypeNancy4);
 
 	s.syncAsUint16LE(numPasswords, kGameTypeNancy4);
 	_passwords.resize(numPasswords);
 	for (uint i = 0; i < numPasswords; ++i) {
-		stream.read(buf, 20);
+		stream.read(buf, fieldSize);
 		buf[19] = '\0';
 		_passwords[i] = buf;
 
 		_maxPasswordLength = MAX(_maxPasswordLength, _passwords[i].size());
 	}
-	s.skip((5 - numPasswords) * 20, kGameTypeNancy4);
+	s.skip((5 - numPasswords) * fieldSize, kGameTypeNancy4);
 
 	_solveExitScene.readData(stream);
 	_solveSound.readNormal(stream);
