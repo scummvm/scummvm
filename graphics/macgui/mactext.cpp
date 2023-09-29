@@ -2890,7 +2890,7 @@ void MacText::processTable(int line) {
 		}
 	}
 
-	for (int i = 0; i < numCols; i++) {
+	for (uint i = 0; i < numCols; i++) {
 		warning("%d: %d - %d", i, maxL[i], maxW[i]);
 
 		wrap[i] = (maxW[i] != maxL[i]);
@@ -2902,7 +2902,7 @@ void MacText::processTable(int line) {
 
 	// determine whether columns should be flexible and assign
 	// width of non-flexible cells
-	for (int i = 0; i < numCols; i++) {
+	for (uint i = 0; i < numCols; i++) {
 		flex[i] = (maxW[i] > 2 * avg);
 		if (flex[i]) {
 			nflex++;
@@ -2915,7 +2915,7 @@ void MacText::processTable(int line) {
 	// if there is not enough space, make columns that could
 	// be word-wrapped flexible, too
 	if (left < nflex * avg) {
-		for (int i = 0; i < numCols; i++) {
+		for (uint i = 0; i < numCols; i++) {
 			if (!flex[i] && wrap[i]) {
 				left += colW[i];
 				colW[i] = 0;
@@ -2929,7 +2929,7 @@ void MacText::processTable(int line) {
 	// is capped at the page width to treat columns that have to
 	// be wrapped more or less equal
 	int tot = 0;
-	for (int i = 0; i < numCols; i++) {
+	for (uint i = 0; i < numCols; i++) {
 		if (flex[i]) {
 			maxW[i] = MIN(maxW[i], width);
 			tot += maxW[i];
@@ -2938,7 +2938,7 @@ void MacText::processTable(int line) {
 
 	// Now assign the actual width for flexible columns. Make
 	// sure that it is at least as long as the longest word length
-	for (int i = 0; i < numCols; i++) {
+	for (uint i = 0; i < numCols; i++) {
 		if (flex[i]) {
 			colW[i] = left * maxW[i] / tot;
 			colW[i] = MAX(colW[i], maxL[i]);
@@ -2946,7 +2946,7 @@ void MacText::processTable(int line) {
 		}
 	}
 
-	for (int i = 0; i < numCols; i++) {
+	for (uint i = 0; i < numCols; i++) {
 		warning("%d: %d", i, colW[i]);
 	}
 }
