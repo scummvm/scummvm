@@ -76,7 +76,7 @@ protected:
 	Common::Array<uint16> _correctOrder;
 
 	SceneChangeWithFlag _solveScene;
-	uint16 _soundDelayTime = 0;
+	uint16 _solveSoundDelay = 0;
 	SoundDescription _solveSound;
 
 	SceneChangeWithFlag _exitScene;
