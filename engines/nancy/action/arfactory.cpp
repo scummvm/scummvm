@@ -49,6 +49,7 @@
 #include "engines/nancy/action/puzzle/telephone.h"
 #include "engines/nancy/action/puzzle/towerpuzzle.h"
 #include "engines/nancy/action/puzzle/turningpuzzle.h"
+#include "engines/nancy/action/puzzle/twodialpuzzle.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -255,6 +256,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new MazeChasePuzzle();
 	case 216:
 		return new PeepholePuzzle();
+	case 220:
+		return new TwoDialPuzzle();
 	default:
 		return nullptr;
 	}

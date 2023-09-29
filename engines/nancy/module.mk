@@ -32,6 +32,7 @@ MODULE_OBJS = \
   action/puzzle/telephone.o \
   action/puzzle/towerpuzzle.o \
   action/puzzle/turningpuzzle.o \
+  action/puzzle/twodialpuzzle.o \
   ui/fullscreenimage.o \
   ui/animatedbutton.o \
   ui/button.o \
