@@ -136,8 +136,8 @@ void Room101::init() {
 
 	case 102:
 		player_set_commands_allowed(false);
-		if (_G(flags)[ROOM101_FLAG1]) {
-			_G(flags)[ROOM101_FLAG1] = 0;
+		if (_G(flags)[V014]) {
+			_G(flags)[V014] = 0;
 			ws_demand_facing(_G(my_walker), 10);
 			ws_demand_location(_G(my_walker), 338, 265);
 			_G(wilbur_should) = 16;
