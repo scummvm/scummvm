@@ -66,6 +66,7 @@ void ActionManager::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
 
+				rec->_cursorDependency = nullptr;
 				processDependency(rec->_dependencies, *rec, false);
 
 				if (!rec->_dependencies.satisfied) {
@@ -243,7 +244,8 @@ void ActionManager::processActionRecords() {
 			continue;
 		}
 
-		// Process dependencies every call
+		// Process dependencies every call. We make sure to ignore cursor dependencies,
+		// as they are only handled when calling from handleInput()
 		processDependency(record->_dependencies, *record, record->canHaveHotspot());
 		record->_isActive = record->_dependencies.satisfied;
 
@@ -438,7 +440,6 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 		case DependencyType::kCursorType: {
 			if (doNotCheckCursor) {
 				dep.satisfied = true;
-				record._cursorDependency = &dep;
 			} else {
 				bool isSatisfied = false;
 				int heldItem = NancySceneState.getHeldItem();
@@ -456,7 +457,19 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				}
 
 				dep.satisfied = isSatisfied;
-				record._cursorDependency = &dep;
+
+				if (isSatisfied) {
+					// A satisfied dependency must be moved into the _cursorDependency slot, to make sure
+					// the remove from/re-add to inventory logic works correctly
+					record._cursorDependency = &dep;
+				} else {
+					if (record._cursorDependency == nullptr) {
+						// However, if the current dependency was not satisfied, we only move it into
+						// the _cursorDependency slot if nothing else was there before. This ensures
+						// the "can't" sound played is the first dependency's
+						record._cursorDependency = &dep;
+					}
+				}
 			}
 
 			break;
