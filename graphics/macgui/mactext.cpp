@@ -594,7 +594,7 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 // Adds the given string to the end of the last line/chunk
 // while observing the _maxWidth and keeping this chunk's
 // formatting
-void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int indent) {
+void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int indent, int maxWidth) {
 	int curLine = *curLinePtr;
 	int curChunk;
 	MacFontRun *chunk;
@@ -621,15 +621,21 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int inden
 		return;
 	}
 
+	if (maxWidth == -1) {
+		chunk->text += str;
+
+		return;
+	}
+
 	Common::Array<Common::U32String> text;
 
 	int w = getLineWidth(curLine, true);
 	D(9, "** chopChunk before wrap \"%s\"", Common::toPrintable(str.encode()).c_str());
 
-	chunk->getFont()->wordWrapText(str, _maxWidth, text, w);
+	chunk->getFont()->wordWrapText(str, maxWidth, text, w);
 
 	if (text.size() == 0) {
-		warning("chopChunk: too narrow width, >%d", _maxWidth);
+		warning("chopChunk: too narrow width, >%d", maxWidth);
 		chunk->text += str;
 		getLineCharWidth(curLine, true);
 
@@ -644,7 +650,7 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int inden
 	// Recalc dims
 	getLineWidth(curLine, true);
 
-	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), _maxWidth);
+	D(9, "** chopChunk, subchunk: \"%s\" (%d lines, maxW: %d)", toPrintable(text[0].encode()).c_str(), text.size(), maxWidth);
 
 	// We do not overlap, so we're done
 	if (text.size() == 1)
@@ -753,7 +759,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
-			chopChunk(tmp, &curLine, indentSize);
+			chopChunk(tmp, &curLine, indentSize, _inTable ? -1 : _maxWidth);
 
 			curTextLine = &_textLines[curLine];
 
