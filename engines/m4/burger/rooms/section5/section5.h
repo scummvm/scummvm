@@ -65,8 +65,11 @@ private:
 	void gizmoDigiPlay(const char *name, int vol, bool &done);
 
 public:
+	static const char *PARSER[];
+	static const seriesPlayBreak PLAY1[];
 	static machine *_bork;
 	static const char *_digiName;
+	static const char *_bgDigiName;
 
 	static bool checkFlags();
 	static void flagsTrigger();
