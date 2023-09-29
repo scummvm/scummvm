@@ -561,8 +561,9 @@ inline bool SortItem::below(const SortItem &si2) const {
 }
 
 Common::String SortItem::dumpInfo() const {
-	Common::String info = Common::String::format("%u:%u (%d, %d, %d) (%d, %d, %d): ",
-								_shapeNum, _frame, _xLeft, _yFar, _z, _x, _y, _zTop);
+	Box b = getBoxBounds();
+	Common::String info = Common::String::format("%u:%u (%d, %d, %d, %d, %d, %d): ",
+								_shapeNum, _frame, b._x, b._y, b._z, b._xd, b._yd, b._zd);
 	if (_sprite)
 		info += "sprite ";
 	if (_flat)
