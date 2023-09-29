@@ -652,8 +652,8 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 }
 
 bool Console::cmdKernelCall(int argc, const char **argv) {
-	const size_t MAX_ARGS_ALLOWED = 20;
-	
+	const int MAX_ARGS_ALLOWED = 20;
+
 	if (argc <= 1) {
 		debugPrintf("Calls a kernel function by name.\n");
 		debugPrintf("(You must ensure you invoke the kernel function with the correct signature.)\n");
