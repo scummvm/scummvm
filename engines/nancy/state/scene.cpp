@@ -223,6 +223,11 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 		return;
 	}
 
+	// Increment scene count on scene exit in order to:
+	// - keep values needed for the kSceneCount dependency correct
+	// - make sure we don't increment when loading a save
+	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
+
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
 }
@@ -857,9 +862,6 @@ void Scene::load() {
 	_inventorySoundOverrides.clear();
 
 	_timers.sceneTime = 0;
-
-	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
-
 	g_nancy->_sound->recalculateSoundEffects();
 
 	_state = kStartSound;
