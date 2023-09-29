@@ -416,51 +416,42 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._sprite != si2._sprite)
 		return si1._sprite < si2._sprite;
 
-	// Clearly in z and lower is non-flat?
-	if (si1._z < si2._z && si1._zTop <= si2._z)
+	// Clearly in Z and one must not be flat - lower cannot be inventory
+	if (si1._zTop <= si2._z && !(si1._flat && si2._flat) && !si1._invitem)
 		return true;
-
-	if (si1._z > si2._z && si1._z >= si2._zTop)
+	if (si1._z >= si2._zTop && !(si1._flat && si2._flat) && !si2._invitem)
 		return false;
 
-	// Clearly in y?
-	if (si1._y <= si2._yFar)
+	// Clearly in Y and one must not be flat
+	bool yFlat1 = si1._yFar == si1._y;
+	bool yFlat2 = si2._yFar == si2._y;
+	if (si1._y <= si2._yFar && !(yFlat1 && yFlat2))
 		return true;
-	if (si1._yFar >= si2._y)
+	if (si1._yFar >= si2._y && !(yFlat1 && yFlat2))
 		return false;
 
-	// Clearly in x?
-	if (si1._x <= si2._xLeft)
+	// Clearly in X and one must not be flat
+	bool xFlat1 = si1._xLeft == si1._x;
+	bool xFlat2 = si2._xLeft == si2._x;
+	if (si1._x <= si2._xLeft && !(xFlat1 && xFlat2))
 		return true;
-	if (si1._xLeft >= si2._x)
+	if (si1._xLeft >= si2._x && !(xFlat1 && xFlat2))
 		return false;
-
-	// Overlapping z-bottom check
-	// If an object's base (z-bottom) is higher another's, it should be rendered after.
-	// This check must be on the z-bottom and not the z-top because two objects with the
-	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1._z != si2._z && si1._solid == si2._solid)
-		return si1._z < si2._z;
-
-	// Are overlapping in all 3 dimensions if we come here
-
-	// Inv items always drawn after
-	if (si1._invitem != si2._invitem)
-		return si1._invitem < si2._invitem;
-
-	// Flat always gets drawn before
-	if (si1._flat != si2._flat)
-		return si1._flat > si2._flat;
-
-	// Specialist handling for same location
-	if (si1._x == si2._x && si1._y == si2._y) {
-		// Trans always gets drawn after
-		if (si1._trans != si2._trans)
-			return si1._trans < si2._trans;
-	}
 
 	// Specialist z flat handling
-	if (si1._flat && si2._flat) {
+	if (si1._flat || si2._flat) {
+		// Lower z-bottom drawn before
+		if (si1._z != si2._z)
+			return si1._z < si2._z;
+
+		// Inv items always drawn after
+		if (si1._invitem != si2._invitem)
+			return si1._invitem < si2._invitem;
+
+		// Flat gets drawn before
+		if (si1._flat != si2._flat)
+			return si1._flat > si2._flat;
+
 		// Trans always gets drawn after
 		if (si1._trans != si2._trans)
 			return si1._trans < si2._trans;
@@ -486,21 +477,24 @@ inline bool SortItem::below(const SortItem &si2) const {
 			return si1._fbigsq > si2._fbigsq;
 	}
 
-	// Disabled: Land always gets drawn first
-	//if (si1._land != si2._land)
-	//	return si1._land > si2._land;
+	// Y-flat vs non-flat handling
+	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
+		if (yFlat1) {
+			if (si2._y - 32 > si2._yFar) {
+				int32 yCenter2 = (si2._yFar + si2._y) / 2;
+				return si1._y <= yCenter2;
+			}
+			return false;
+		} else {
+			if (si1._y - 32 > si1._yFar) {
+				int32 yCenter1 = (si1._yFar + si1._y) / 2;
+				return yCenter1 < si2._y;
+			}
+			return true;
+		}
+	}
 
-	// Land always gets drawn before roof
-	if (si1._land && si2._land && si1._roof != si2._roof)
-		return si1._roof < si2._roof;
-
-	// Roof always gets drawn first
-	if (si1._roof != si2._roof)
-		return si1._roof > si2._roof;
-
-	// X-Flat gets drawn after under specific conditions
-	bool xFlat1 = si1._xLeft == si1._x;
-	bool xFlat2 = si2._xLeft == si2._x;
+	// X-flat vs non-flat handling
 	if (xFlat1 != xFlat2 && si1._fixed == si2._fixed) {
 		if (xFlat1) {
 			if (si2._x - 32 > si2._xLeft) {
@@ -517,24 +511,36 @@ inline bool SortItem::below(const SortItem &si2) const {
 		}
 	}
 
-	// Y-Flat gets drawn after under specific conditions
-	bool yFlat1 = si1._yFar == si1._y;
-	bool yFlat2 = si2._yFar == si2._y;
-	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
-		if (yFlat1) {
-			if (si2._y - 32 > si2._yFar) {
-				int32 yCenter2 = (si2._yFar + si2._y) / 2;
-				return si1._y <= yCenter2;
-			}
-			return false;
-		} else {
-			if (si1._y - 32 > si1._yFar) {
-				int32 yCenter1 = (si1._yFar + si1._y) / 2;
-				return yCenter1 < si2._y;
-			}
+	// Check z-bottom with a tolerance
+	if (si1._z != si2._z) {
+		if (si1._z < si2._z - 8)
 			return true;
-		}
+		else if (si1._z - 8 > si2._z)
+			return false;
 	}
+
+	// Specialist handling for same location
+	if (si1._x == si2._x && si1._y == si2._y) {
+		// Trans always gets drawn after
+		if (si1._trans != si2._trans)
+			return si1._trans < si2._trans;
+	}
+
+	// Disabled: Land always gets drawn first
+	// if (si1._land != si2._land)
+	//	return si1._land > si2._land;
+
+	// Land always gets drawn before roof
+	if (si1._land && si2._land && si1._roof != si2._roof)
+		return si1._roof < si2._roof;
+
+	// Roof always gets drawn first
+	if (si1._roof != si2._roof)
+		return si1._roof > si2._roof;
+
+	// Lower z-bottom drawn before
+	if (si1._z != si2._z)
+		return si1._z < si2._z;
 
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y)

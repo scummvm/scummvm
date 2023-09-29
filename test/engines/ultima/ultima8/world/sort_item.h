@@ -369,6 +369,33 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Completely Overlapping y-flats differing only in item number and frame
+	 * Test case for rendering issue at MainActor::teleport 37 17628 19668 56
+	 */
+	void test_y_flat_layered_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(17599, 19455, 56, 128, 0, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._fixed = true;
+		si1._shapeNum = 322;
+		si1._frame = 1;
+
+		Ultima::Ultima8::Box b2(17599, 19455, 56, 128, 0, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+		si2._shapeNum = 322;
+		si2._frame = 3;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Overlapping y-flat vs non-flat items
 	 * Test case for rendering issue at MainActor::teleport 37 18992 17664 104
 	 */
@@ -445,6 +472,34 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!si2.below(si1));
 	}
 
+	/**
+	 * Overlapping z-flat vs x-flat items
+	 * Test case for rendering issue at MainActor::teleport 37 17736 18320 144
+	 */
+	void test_z_flat_vs_x_flat_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(17535, 18559, 144, 128, 128, 0);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._flat = true;
+		si1._solid = true;
+		si1._occl = true;
+		si1._fbigsq = true;
+		si1._roof = true;
+		si1._land = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(17440, 18448, 106, 0, 96, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(!si1.below(si2));
+		TS_ASSERT(si2.below(si1));
+	}
 	/**
 	 * Overlapping non-flat items clearly in z - avatar above candle
 	 * Test case for rendering issue at MainActor::teleport 6 7774 19876 48
