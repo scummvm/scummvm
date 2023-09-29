@@ -170,6 +170,7 @@ void Room141::init() {
 
 		series_load("140pe01");
 		series_load("140pe01s");
+		loadSeries();
 		digi_preload("20n01011", 140);
 		digi_preload("20n01012", 140);
 		digi_preload("20n01013", 140);
@@ -1082,6 +1083,20 @@ void Room141::playRandom() {
 		digi_play(Common::String::format("140t001%c", 'a' + imath_ranged_rand(0, 5)).c_str(),
 			2, 100, 9);
 	}
+}
+
+void Room141::loadSeries() {
+	static const char *NAMES[34] = {
+		"140pe02", "140pe02s", "140pe03", "140pe03s", "140pe04",
+		"140pe04s", "140pe06", "140pe06s", "140pe07", "140pe07s",
+		"140pe08", "140pe08s", "140pe09", "140pe09s", "140pe11",
+		"140pe11s", "140pe13", "140pe13s", "140pe14", "140pe14s",
+		"140pe15", "140pe15s", "140pe16", "140pe16s", "140pe17",
+		"140pe17s", "140pe18", "140pe18s", "140pe19", "140pe19s",
+		"140pe20", "140pe20s", "140pe21", "140pe21s"
+	};
+	for (int i = 0; i < 34; ++i)
+		series_load(NAMES[i]);
 }
 
 } // namespace Rooms
