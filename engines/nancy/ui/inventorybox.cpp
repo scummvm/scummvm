@@ -222,7 +222,7 @@ void InventoryBox::onScrollbarMove() {
 	uint curPage = MIN<uint>(scrollPos / pageFrac, numPages - 1);
 
 	Common::Rect sourceRect = _screenPosition;
-	sourceRect.moveTo(0, curPage * sourceRect.height());
+	sourceRect.moveTo(0, curPage * (sourceRect.height() - 1));
 	_drawSurface.create(_fullInventorySurface, sourceRect);
 
 	setHotspots(curPage);
