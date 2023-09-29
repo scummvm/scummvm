@@ -688,13 +688,13 @@ RCPR::RCPR(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	Common::String tmp;
 	while (chunkStream->pos() < chunkStream->size()) {
 		readFilename(*chunkStream, tmp);
-		if (tmp.hasPrefix("Wall")) {
+		if (tmp.hasPrefixIgnoreCase("Wall")) {
 			wallNames.push_back(tmp);
-		} else if (tmp.hasPrefix("SpW")) {
+		} else if (tmp.hasPrefixIgnoreCase("SpW")) {
 			specialWallNames.push_back(tmp);
-		} else if (tmp.hasPrefix("Ceil")) {
+		} else if (tmp.hasPrefixIgnoreCase("Ceil")) {
 			ceilingNames.push_back(tmp);
-		} else if (tmp.hasPrefix("Floor")) {
+		} else if (tmp.hasPrefixIgnoreCase("Floor")) {
 			floorNames.push_back(tmp);
 		}
 	}
