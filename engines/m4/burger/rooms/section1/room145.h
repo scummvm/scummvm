@@ -63,16 +63,29 @@ private:
 	noWalkRect *_walk2 = nullptr;
 	noWalkRect *_walk3 = nullptr;
 	machine *_amplifier = nullptr;
+	Series _vp;
+	Series _rx;
+	const char *_digiName1 = nullptr;
+	const char *_digiName2 = nullptr;
+	bool _flag1 = false;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
+	int _val5 = 0;
 
 	void loadDrum();
 	void loadRx();
 	void conv21();
 	void conv22();
 	void conv23();
+	void loadVp4();
+	void loadRx4();
+	void loadSeries1();
+	int getRandomState() const;
+	void resetRoxy();
+	void playRandomDigi1();
+	void playRandomDigi2();
 
 public:
 	Room145();

@@ -322,15 +322,192 @@ void Room145::loadRx() {
 }
 
 void Room145::conv21() {
-	// TODO: conv
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (sound) {
+		if (who == 1) {
+			wilbur_speech(sound, 10001);
+		} else {
+			switch (node) {
+			case 2:
+			case 7:
+			case 12:
+				loadVp4();
+				break;
+
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 8:
+			case 11:
+				loadRx4();
+				break;
+
+			case 9:
+				if (entry <= 0) {
+					loadRx4();
+				} else if (entry == 2) {
+					loadVp4();
+				}
+				break;
+
+			case 10:
+				if (entry <= 0) {
+					loadVp4();
+				} else if (entry == 1) {
+					loadRx4();
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void Room145::conv22() {
-	// TODO: conv
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+
+	if (sound) {
+		if (who == 1)
+			wilbur_speech(sound, 10001);
+		else
+			loadRx4();
+	}
 }
 
 void Room145::conv23() {
-	// TODO: conv
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (sound) {
+		if (who == 1) {
+			wilbur_speech(sound, 10001);
+		} else {
+			switch (node) {
+			case 2:
+				switch (entry) {
+				case 0:
+					_val1 = 20;
+					break;
+				case 1:
+					_val1 = 21;
+					break;
+				case 2:
+				case 3:
+					_val1 = 22;
+					break;
+				case 4:
+					_val1 = 21;
+					break;
+				case 5:
+					_val1 = 20;
+					break;
+				case 6:
+					_val1 = 20;
+					break;
+				case 7:
+					conv_resume_curr();
+					break;
+				default:
+					break;
+				}
+				break;
+
+			case 5:
+				_val1 = 20;
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void Room145::loadVp4() {
+	_vp.terminate();
+	_val4 = 39;
+	digi_play(conv_sound_to_play(), 1, 255, 5);
+	_vp.play("145vp04", 0x300, 4, -1);
+}
+
+void Room145::loadRx4() {
+	_rx.terminate();
+	_val3 = 39;
+	digi_play(conv_sound_to_play(), 1, 255, 4);
+	_rx.play("145rx04", 0x900, 4, -1);
+}
+
+void Room145::loadSeries1() {
+	series_load("145wi02");
+	series_load("145wi02s");
+	series_load("145wi03");
+	series_load("145wi03s");
+	series_load("145dz08");
+	series_load("145dz08s");
+}
+
+int Room145::getRandomState() const {
+	switch (imath_ranged_rand(1, 10)) {
+	case 1:
+		return 24;
+	case 2:
+		return 25;
+	default:
+		return 19;
+	}
+}
+
+void Room145::resetRoxy() {
+	switch (_val5) {
+	case 31:
+		_rx.terminate();
+		_val3 = 32;
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	case 33:
+		_rx.terminate();
+		_val3 = 33;
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	default:
+		term_message("Can't move roxy to home state, just have to wait!");
+		break;
+	}
+}
+
+void Room145::playRandomDigi1() {
+	_state2 = 1;
+	static const char *NAMES[4] = { "145v907", "145v908", "145v909", "145v910" };
+
+	_digiName1 = NAMES[imath_ranged_rand(0, 3)];
+	digi_preload(_digiName1);
+	digi_play(_digiName1, 2, 125, 6);
+}
+
+void Room145::playRandomDigi2() {
+	_state2 = 1;
+	static const char *NAMES[13] = {
+		"145r907", "145r908", "145r909", "145r910", "145r911",
+		"145r912", "145r913", "145r914", "145r915", "145r916",
+		"145r917", "145r918", "145r919"
+	};
+
+	_digiName1 = NAMES[imath_ranged_rand(0, 12)];
+	_val3 = 34;
+	digi_preload(_digiName1);
+	npc_say(_digiName2, 4, "145rx01", 0x900, 1, 3, 7, 2);
 }
 
 } // namespace Rooms
