@@ -146,13 +146,6 @@ const seriesPlayBreak Room407::PLAY18[] = {
 	PLAY_BREAK_END
 };
 
-const seriesPlayBreak Room407::PLAY19[] = {
-	{ 0, 25, 0, 1, 0, -1, 2048, 0, 0, 0 },
-	{ 26, 42, "500_030", 1, 255, -1, 0, 0, 0, 0 },
-	{ 43, -1, "500_030", 1, 255, -1, 0, 0, 0, 0 },
-	PLAY_BREAK_END
-};
-
 long Room407::_state1;
 
 

@@ -51,7 +51,6 @@ private:
 	static const seriesPlayBreak PLAY16[];
 	static const seriesPlayBreak PLAY17[];
 	static const seriesPlayBreak PLAY18[];
-	static const seriesPlayBreak PLAY19[];
 	static long _state1;
 	Series _vp02;
 	Series _dz;

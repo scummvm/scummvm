@@ -32,6 +32,8 @@ void Section5Room::preload() {
 	Rooms::Room::preload();
 	_G(flags)[V186] = 0;
 	_initFlag = false;
+	Section5::_digiName = nullptr;
+	Section5::_bgDigiName = nullptr;
 }
 
 void Section5Room::init() {

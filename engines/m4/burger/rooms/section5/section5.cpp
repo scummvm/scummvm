@@ -29,7 +29,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-static const char *PARSER[] = {
+const char *Section5::PARSER[] = {
 	"GIZMO",
 	"LOOK AT",
 	"500w006",
@@ -311,8 +311,16 @@ static const char *PARSER[] = {
 	nullptr
 };
 
+const seriesPlayBreak Section5::PLAY1[] = {
+	{ 0, 25, 0, 1, 0, -1, 2048, 0, 0, 0 },
+	{ 26, 42, "500_030", 1, 255, -1, 0, 0, 0, 0 },
+	{ 43, -1, "500_030", 1, 255, -1, 0, 0, 0, 0 },
+	PLAY_BREAK_END
+};
+
 machine *Section5::_bork;
 const char *Section5::_digiName;
+const char *Section5::_bgDigiName;
 
 Section5::Section5() : Rooms::Section() {
 	_bork = nullptr;
@@ -342,8 +350,179 @@ void Section5::init() {
 }
 
 void Section5::daemon() {
-	// TODO: daemon method
-	_G(kernel).continue_handling_trigger = true;
+	switch (_G(kernel).trigger) {
+	case 5001:
+		flagsTrigger();
+		break;
+
+	case 5002:
+		break;
+
+	case 5003: {
+		term_message("SET AMBIENCE trigger hit");
+		Section5Room *room = dynamic_cast<Section5Room *>(g_engine->_activeRoom);
+		assert(room);
+		room->init();
+		break;
+	}
+
+	case 5004:
+		term_message("Bork ambient noises trigger hit");
+
+		if (!digi_play_state(1) && _bgDigiName) {
+			digi_unload(_bgDigiName);
+			_bgDigiName = nullptr;
+		}
+
+		if (!digi_play_state(1) && !digi_play_state(2)) {
+			// FIXME: The original does a random of 1 to 9, but the switch has 1 to 13.
+			// Check if extra cases are valid, and if so, re-enable them
+			switch (imath_ranged_rand(1, 9)) {
+			case 1:
+				_bgDigiName = "500_015";
+				break;
+			case 2:
+				_bgDigiName = "500_016";
+				break;
+			case 3:
+				_bgDigiName = "500_017";
+				break;
+			case 4:
+				_bgDigiName = "500_018";
+				break;
+			case 5:
+				_bgDigiName = "500_019";
+				break;
+			case 6:
+				_bgDigiName = "500_020";
+				break;
+			case 7:
+				_bgDigiName = "500_021";
+				break;
+			case 8:
+				_bgDigiName = "500_022";
+				break;
+			case 9:
+				_bgDigiName = "500_023";
+				break;
+			case 10:
+				_bgDigiName = "500_024";
+				break;
+			case 11:
+				_bgDigiName = "500_025";
+				break;
+			case 12:
+				_bgDigiName = "500_026";
+				break;
+			case 13:
+				_bgDigiName = "500_027";
+				break;
+			default:
+				break;
+			}
+
+			digi_preload(_bgDigiName);
+			digi_play(_bgDigiName, 1, 125, -1);
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(240, 360), 5004);
+		break;
+
+	case 5006:
+		_G(game).new_room = 502;
+		break;
+
+	case 5007:
+		_G(game).new_room = 503;
+		break;
+
+	case 5008:
+		_G(game).new_room = 504;
+		break;
+
+	case 5009:
+		_G(game).new_room = 505;
+		break;
+
+	case 5010:
+		_G(game).new_room = 506;
+		break;
+
+	case 5011:
+		_G(game).new_room = 507;
+		break;
+
+	case 5012:
+		_G(game).new_room = 508;
+		break;
+
+	case 5013:
+		_G(game).new_room = 509;
+		break;
+
+	case 5014:
+		player_update_info();
+		_G(flags)[V187] = _G(player_info).x;
+		_G(flags)[V188] = _G(player_info).y;
+		_G(flags)[V189] = _G(walkTrigger);
+		_G(game).new_room = 510;
+		break;
+
+	case 5015:
+		_G(game).new_room = 511;
+		break;
+
+	case 5016:
+		_G(game).new_room = 512;
+		break;
+
+	case 5017:
+		_G(game).new_room = 513;
+		break;
+
+	case 5018:
+		disable_player_commands_and_fade_init(5017);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 5001:
+			_G(flags)[V234] = 1;
+			ws_hide_walker();
+			_G(wilbur_should) = 5002;
+			player_update_info();
+			series_play_with_breaks(PLAY1, "503wi07", _G(player_info).depth,
+				gCHANGE_WILBUR_ANIMATION, 3, _G(player_info).scale,
+				_G(player_info).x, _G(player_info).y);
+			break;
+
+		case 5002:
+			inv_move_object("RUBBER GLOVES", NOWHERE);
+			ws_unhide_walker();
+			player_set_commands_allowed(true);
+			wilbur_speech("500w077");
+			break;
+
+		case 5003:
+			player_set_commands_allowed(false);
+			ws_unhide_walker();
+			wilbur_speech("500w092", 5018);
+			break;
+
+		case 10015:
+			_G(game).new_room = 512;
+			break;
+
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
 }
 
 void Section5::parser() {
