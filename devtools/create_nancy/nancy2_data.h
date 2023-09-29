@@ -44,156 +44,156 @@ const Common::Array<Common::Language> _nancy2LanguagesOrder = {
 const Common::Array<Common::Array<ConditionalDialogue>> _nancy2ConditionalDialogue = {
 {	// Dwayne, 7 responses + 2 repeats
 	{	0, 816, "nda33",
-		{ { kEv, 0x32, kTrue }, { kEv, 0x76, kFalse } } },
+		{ { kEv, 50, kTrue }, { kEv, 118, kFalse } } },
 	{	1, 817, "nda34",
-		{ { kEv, 0x31, kTrue }, { kEv, 0x77, kFalse } } },
+		{ { kEv, 49, kTrue }, { kEv, 119, kFalse } } },
 	{	2, 820, "nda35",
-		{ { kEv, 0x37, kTrue }, { kEv, 0x78, kFalse }, { kEv, 0x4C, kFalse } } },
+		{ { kEv, 55, kTrue }, { kEv, 120, kFalse }, { kEv, 76, kFalse } } },
 	{	3, 821, "nda15",
-		{ { kEv, 0x43, kTrue }, { kEv, 0x79, kFalse }, { kEv, 0x50, kFalse } } },
+		{ { kEv, 67, kTrue }, { kEv, 121, kFalse }, { kEv, 80, kFalse } } },
 	{	4, 823, "nda19",
-		{ { kEv, 0x7B, kTrue }, { kEv, 0x7A, kFalse } } },
+		{ { kEv, 123, kTrue }, { kEv, 122, kFalse } } },
 	{	5, 824, "nda22",
-		{ { kEv, 0x7C, kFalse }, { kEv, 0x44, kTrue } } },
+		{ { kEv, 124, kFalse }, { kEv, 68, kTrue } } },
 	{	5, 824, "nda22",
-		{ { kEv, 0x7C, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+		{ { kEv, 124, kFalse }, { kEv, 64, kTrue } } },
 	{	6, 826, "nda27",
-		{ { kEv, 0x7E, kFalse }, { kEv, 0x38, kTrue } } },
+		{ { kEv, 126, kFalse }, { kEv, 56, kTrue } } },
 	{	6, 826, "nda27",
-		{ { kEv, 0x7E, kFalse }, { kEv, 0x38, kFalse }, { kEv, 0x3A, kTrue } } },
+		{ { kEv, 126, kFalse }, { kEv, 58, kTrue } } },
 	{	7, 829, "nda28",
-		{ { kEv, 0x27, kTrue }, { kEv, 0x7F, kFalse } } }
+		{ { kEv, 39, kTrue }, { kEv, 127, kFalse } } }
 },
 {	// Rick, 4 responses + 1 repeat
 	{	8, 729, "NRD29",
-		{ { kEv, 0x73, kFalse }, { kEv, 0x44, kTrue } } },
+		{ { kEv, 115, kFalse }, { kEv, 68, kTrue } } },
 	{	8, 729, "NRD29",
-		{ { kEv, 0x73, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+		{ { kEv, 15, kFalse }, { kEv, 64, kTrue } } },
 	{	9, 728, "NRD28",
-		{ { kEv, 0x32, kTrue }, { kEv, 0x72, kFalse } } },
+		{ { kEv, 50, kTrue }, { kEv, 114, kFalse } } },
 	{	10, 717, "NRD18",
-		{ { kEv, 0x30, kTrue }, { kEv, 0x70, kFalse } } },
+		{ { kEv, 48, kTrue }, { kEv, 112, kFalse } } },
 	{	11, 721, "NRD21",
-		{ { kEv, 0x97, kTrue }, { kEv, 0x71, kFalse } } }
+		{ { kEv, 151, kTrue }, { kEv, 113, kFalse } } }
 },
 {	// Millie, 2 responses
 	{	12, 317, "NPR12",
-		{ { kEv, 0x34, kTrue }, { kEv, 0x85, kFalse } } },
+		{ { kEv, 52, kTrue }, { kEv, 133, kFalse } } },
 	{	13, 321, "NPR15",
-		{ { kEv, 0x40, kTrue }, { kEv, 0x86, kFalse } } }
+		{ { kEv, 64, kTrue }, { kEv, 134, kFalse } } }
 },
 {	// Lillian, 4 responses + 1 repeat
 	{	14, 503, "NLR07",
-		{ { kEv, 0x41, kTrue }, { kEv, 0x81, kFalse } } },
+		{ { kEv, 65, kTrue }, { kEv, 129, kFalse } } },
 	{	15, 504, "NLR08",
-		{ { kEv, 0x97, kTrue }, { kEv, 0x82, kFalse } } },
+		{ { kEv, 151, kTrue }, { kEv, 130, kFalse } } },
 	{	16, 510, "NLR15",
-		{ { kEv, 0x83, kFalse }, { kEv, 0x44, kTrue } } },
+		{ { kEv, 131, kFalse }, { kEv, 68, kTrue } } },
 	{	16, 510, "NLR15",
-		{ { kEv, 0x83, kFalse }, { kEv, 0x44, kFalse }, { kEv, 0x40, kTrue } } },
+		{ { kEv, 131, kFalse }, { kEv, 64, kTrue } } },
 	{	17, 512, "NLR17",
-		{ { kEv, 0x84, kTrue }, { kEv, 0x35, kTrue }, { kEv, 0x83, kTrue }, { kEv, 0x7B, kFalse } } }
+		{ { kEv, 132, kTrue }, { kEv, 53, kTrue }, { kEv, 131, kTrue }, { kEv, 123, kFalse } } }
 },
 {	// Ned, 9 responses
 	{	18, 3007, "NNP08",
-		{ { kEv, 0x34, kTrue }, { kEv, 0x65, kFalse }, { kEv, 0x49, kFalse } } },
+		{ { kEv, 52, kTrue }, { kEv, 101, kFalse }, { kEv, 73, kFalse } } },
 	{	19, 3010, "NNP11",
-		{ { kEv, 0x29, kTrue }, { kEv, 0x4F, kFalse }, { kEv, 0x66, kFalse } } },
+		{ { kEv, 41, kTrue }, { kEv, 79, kFalse }, { kEv, 102, kFalse } } },
 	{	20, 3013, "NNP14",
-		{ { kEv, 0x67, kFalse }, { kIn, 0xF, kTrue } } },
+		{ { kEv, 103, kFalse }, { kIn, 15, kTrue } } },
 	{	21, 3014, "NNP15",
-		{ { kEv, 0x69, kTrue }, { kEv, 0x2D, kFalse }, { kEv, 0x5C, kFalse } } },
+		{ { kEv, 105, kTrue }, { kEv, 45, kFalse }, { kEv, 92, kFalse } } },
 	{	22, 3015, "NNP16",
-		{ { kEv, 0x44, kTrue }, { kEv, 0x40, kTrue }, { kEv, 0x3B, kFalse }, { kEv, 0x6A, kFalse } } },
+		{ { kEv, 68, kTrue }, { kEv, 64, kTrue }, { kEv, 59, kFalse }, { kEv, 106, kFalse } } },
 	{	23, 3016, "NNP17",
-		{ { kEv, 0x38, kTrue }, { kEv, 0x39, kFalse }, { kEv, 0x6B, kFalse }, { kEv, 0x3A, kTrue } } },
+		{ { kEv, 56, kTrue }, { kEv, 57, kFalse }, { kEv, 107, kFalse }, { kEv, 58, kTrue } } },
 	{	24, 3017, "NNP28",
-		{ { kEv, 0x39, kTrue }, { kEv, 0x6B, kTrue }, { kEv, 0x6C, kFalse } } },
+		{ { kEv, 57, kTrue }, { kEv, 107, kTrue }, { kEv, 108, kFalse } } },
 	{	25, 3019, "NNP20",
-		{ { kEv, 0x43, kTrue }, { kEv, 0x50, kFalse }, { kEv, 0x6D, kFalse } } },
+		{ { kEv, 67, kTrue }, { kEv, 80, kFalse }, { kEv, 109, kFalse } } },
 	{	26, 3020, "NNP21",
-		{ { kEv, 0x43, kTrue }, { kEv, 0x50, kFalse }, { kEv, 0x6E, kFalse } } }
+		{ { kEv, 67, kTrue }, { kEv, 80, kFalse }, { kEv, 110, kFalse } } }
 },
 {	// Bess, 18 responses
 	{	27, 3123, "NBES32g",
-		{ { kEv, 0x50, kTrue }, { kEv, 0x2C, kFalse }, { kEv, 0x9B, kFalse } } },
+		{ { kEv, 80, kTrue }, { kEv, 44, kFalse }, { kEv, 155, kFalse } } },
 	{	28, 3124, "NBES35",
-		{ { kEv, 0x55, kTrue }, { kEv, 0x3E, kFalse }, { kEv, 0x9C, kFalse } } },
+		{ { kEv, 85, kTrue }, { kEv, 62, kFalse }, { kEv, 156, kFalse } } },
 	{	29, 3125, "NBES36",
-		{ { kEv, 0x56, kTrue }, { kEv, 0x4C, kFalse }, { kEv, 0x9D, kFalse } } },
+		{ { kEv, 86, kTrue }, { kEv, 76, kFalse }, { kEv, 157, kFalse } } },
 	{	30, 3127, "NBES38",
-		{ { kEv, 0x57, kTrue }, { kEv, 0x3B, kFalse }, { kEv, 0x9F, kFalse } } },
+		{ { kEv, 87, kTrue }, { kEv, 59, kFalse }, { kEv, 159, kFalse } } },
 	{	31, 3128, "NBES39g",
-		{ { kEv, 0x84, kTrue }, { kEv, 0x35, kFalse }, { kEv, 0xA0, kFalse } } },
+		{ { kEv, 132, kTrue }, { kEv, 53, kFalse }, { kEv, 160, kFalse } } },
 	{	32, 3129, "NBES41g",
-		{ { kEv, 0x84, kTrue }, { kEv, 0x23, kTrue }, { kEv, 0xA1, kFalse } } },
+		{ { kEv, 132, kTrue }, { kEv, 35, kTrue }, { kEv, 161, kFalse } } },
 	{	33, 3130, "NBES43",
-		{ { kEv, 0x7B, kTrue }, { kEv, 0xA2, kFalse } } },
+		{ { kEv, 123, kTrue }, { kEv, 162, kFalse } } },
 	{	34, 3131, "NBES46",
-		{ { kEv, 0x58, kTrue }, { kEv, 0xA3, kFalse } } },
+		{ { kEv, 88, kTrue }, { kEv, 163, kFalse } } },
 	{	35, 3133, "NBES48",
-		{ { kEv, 0x3D, kTrue }, { kEv, 0xA6, kFalse }, { kIn, 0xC, kFalse } } },
+		{ { kEv, 61, kTrue }, { kEv, 166, kFalse }, { kIn, 12, kFalse } } },
 	{	36, 3136, "NBES53",
-		{ { kEv, 0x40, kTrue }, { kEv, 0xA8, kFalse } } },
+		{ { kEv, 64, kTrue }, { kEv, 168, kFalse } } },
 	{	37, 3137, "NBES55",
-		{ { kEv, 0x55, kFalse }, { kEv, 0x3E, kTrue }, { kEv, 0xA9, kFalse } } },
+		{ { kEv, 85, kFalse }, { kEv, 62, kTrue }, { kEv, 169, kFalse } } },
 	{	38, 3138, "NBES61g",
-		{ { kEv, 0x40, kTrue }, { kEv, 0x44, kFalse }, { kEv, 0xAA, kFalse } } },
+		{ { kEv, 64, kTrue }, { kEv, 68, kFalse }, { kEv, 170, kFalse } } },
 	{	39, 3139, "NBES65",
-		{ { kEv, 0x2A, kTrue }, { kEv, 0x2B, kFalse }, { kEv, 0x9B, kFalse } } },
+		{ { kEv, 42, kTrue }, { kEv, 43, kFalse }, { kEv, 155, kFalse } } },
 	{	40, 3140, "NBES66",
-		{ { kEv, 0x53, kTrue }, { kEv, 0x4A, kFalse }, { kEv, 0xAB, kFalse } } },
+		{ { kEv, 83, kTrue }, { kEv, 74, kFalse }, { kEv, 171, kFalse } } },
 	{	41, 3141, "NBES67g",
-		{ { kEv, 0x48, kTrue }, { kEv, 0xAC, kFalse } } },
+		{ { kEv, 72, kTrue }, { kEv, 172, kFalse } } },
 	{	42, 3142, "NBES72",
-		{ { kEv, 0xA8, kTrue }, { kEv, 0x44, kTrue }, { kEv, 0xAD, kFalse } } },
+		{ { kEv, 168, kTrue }, { kEv, 68, kTrue }, { kEv, 173, kFalse } } },
 	{	43, 3144, "NBES76",
-		{ { kEv, 0x24, kTrue }, { kEv, 0xAE, kFalse } } },
+		{ { kEv, 36, kTrue }, { kEv, 174, kFalse } } },
 	{	44, 3145, "NBES79g",
-		{ { kEv, 0x1F, kTrue }, { kEv, 0xAF, kFalse } } }
+		{ { kEv, 31, kTrue }, { kEv, 175, kFalse } } }
 },
 {	// George, 6 responses
 	{	45, 3207, "NGEO14",
-		{ { kEv, 0x68, kTrue }, { kEv, 0xB1, kFalse }, { kEv, 0x3D, kFalse }, { kIn, 0xA, kFalse } } },
+		{ { kEv, 104, kTrue }, { kEv, 177, kFalse }, { kEv, 61, kFalse }, { kIn, 10, kFalse } } },
 	{	46, 3209, "NGEO16",
-		{ { kEv, 0x3D, kFalse }, { kEv, 0xB3, kFalse }, { kIn, 0xA, kTrue } } },
+		{ { kEv, 61, kFalse }, { kEv, 179, kFalse }, { kIn, 10, kTrue } } },
 	{	47, 3210, "NGEO17",
-		{ { kEv, 0x3D, kTrue }, { kEv, 0xB4, kFalse } } },
+		{ { kEv, 61, kTrue }, { kEv, 180, kFalse } } },
 	{	48, 3213, "NGEO18",
-		{ { kEv, 0xB5, kFalse }, { kIn, 0x4, kTrue } } },
+		{ { kEv, 181, kFalse }, { kIn, 4, kTrue } } },
 	{	49, 3214, "NGEO19",
-		{ { kEv, 0x29, kTrue }, { kEv, 0x9A, kFalse }, { kEv, 0x4F, kFalse } } },
+		{ { kEv, 41, kTrue }, { kEv, 154, kFalse }, { kEv, 79, kFalse } } },
 	{	50, 3215, "NGEO20",
-		{ { kEv, 0xB6, kFalse }, { kEv, 0x49, kFalse }, { kIn, 0xE, kTrue } } }
+		{ { kEv, 182, kFalse }, { kEv, 73, kFalse }, { kIn, 14, kTrue } } }
 },
 {	// Security guard, 3 responses + 1 repeat
 	{	51, 401, "NG01",
-		{ { kEv, 0x3D, kFalse }, { kIn, 0xA, kFalse }, { kIn, 0x4, kFalse } } },
+		{ { kEv, 61, kFalse }, { kIn, 10, kFalse }, { kIn, 4, kFalse } } },
 	{	52, 403, "NG02",
-		{ { kEv, 0x75, kTrue }, { kIn, 0x4, kFalse } } },
+		{ { kEv, 117, kTrue }, { kIn, 0x4, kFalse } } },
 	{	53, 409, "NG04",
-		{ { kIn, 0xA, kTrue } } },
+		{ { kIn, 10, kTrue } } },
 	{	53, 409, "NG04",
-		{ { kIn, 0xA, kFalse }, { kIn, 0x4, kTrue } } }
+		{ { kIn, 4, kTrue } } }
 },
 {	// Mattie, 2 responses
 	{	54, 215, "NMD20",
-		{ { kEv, 0x97, kTrue }, { kEv, 0x89, kFalse } } },
+		{ { kEv, 151, kTrue }, { kEv, 137, kFalse } } },
 	{	55, 230, "NMD31",
-		{ { kEv, 0x40, kTrue }, { kEv, 0x8A, kFalse } } }
+		{ { kEv, 64, kTrue }, { kEv, 138, kFalse } } }
 }
 };
 
 const Common::Array<Goodbye> _nancy2Goodbyes = {
-	{ "NDA29", { { { 890, 891, 892, 893 }, {}, NOFLAG } } }, // Dwayne
-	{ "NRD35", { { { 791, 792, 793, 794 }, {}, NOFLAG } } }, // Rick
-	{ "NPR16", { { { 391, 392, 394 }, {}, NOFLAG } } },		// Millie
-	{ "NLR18", { { { 590, 591, 593 }, {}, NOFLAG } } },		// Lillian
-	{ "NPR16", { { { 3090, 3092, 3093 }, {}, NOFLAG } } },	// Ned
-	{ "NBES86", { { { 3190 }, {}, NOFLAG } } },				  // Bess
-	{ "NGEO90", { { { 3290 }, {}, NOFLAG } } },				  // George
-	{ "", { { {}, {}, NOFLAG } } },				  			 // Security guard, no goodbye
-	{ "NMD32", { { { 290, 291, 292, 293 }, {}, NOFLAG } } }, // Mattie
+	{ "NDA29", { { { 890, 891, 892, 893 }, {}, NOFLAG } } },	// Dwayne
+	{ "NRD35", { { { 791, 792, 793, 794 }, {}, NOFLAG } } },	// Rick
+	{ "NPR16", { { { 391, 392, 394 }, {}, NOFLAG } } },			// Millie
+	{ "NLR18", { { { 590, 591, 593 }, {}, NOFLAG } } },			// Lillian
+	{ "NPR16", { { { 3090, 3092, 3093 }, {}, NOFLAG } } },		// Ned
+	{ "NBES86", { { { 3190 }, {}, NOFLAG } } },					// Bess
+	{ "NGEO90", { { { 3290 }, {}, NOFLAG } } },					// George
+	{ "", { { {}, {}, NOFLAG } } },								// Security guard, no goodbye
+	{ "NMD32", { { { 290, 291, 292, 293 }, {}, NOFLAG } } },	// Mattie
 };
 
 const Common::Array<Common::Array<const char *>> _nancy2ConditionalDialogueTexts {
