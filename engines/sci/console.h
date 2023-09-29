@@ -58,6 +58,7 @@ private:
 	bool cmdSelector(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelFunctions(int argc, const char **argv);
+	bool cmdKernelCall(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);
 	// Parser
 	bool cmdSuffixes(int argc, const char **argv);
