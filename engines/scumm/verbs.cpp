@@ -1078,6 +1078,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	if (!verb)
 		return;
 
+	if (_macIndy3Gui)
+		return;
+
 	// The way we implement high-resolution font on a scaled low-resolution
 	// background requires there to always be a text surface telling which
 	// pixels have been drawn on. This means that the "has mask" feature is
@@ -1136,15 +1139,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 			return;
 
 		tmp = _charset->_center;
-
-		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && _macScreen) {
-			int oldId = _string[4].charset;
-			_string[4].charset = (vs->curmode == 2) ? 4 : 5;
-			drawString(4, msg);
-			_string[4].charset = oldId;
-		} else
-			drawString(4, msg);
-
+		drawString(4, msg);
 		_charset->_center = tmp;
 
 		if (isRtl)

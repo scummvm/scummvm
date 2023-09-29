@@ -20,9 +20,14 @@
  */
 
 #include "common/system.h"
+
 #include "graphics/macega.h"
+#include "graphics/fonts/macfont.h"
+#include "graphics/macgui/macfontmanager.h"
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/usage_bits.h"
 #include "scumm/verbs.h"
 
@@ -49,6 +54,9 @@ void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
 }
 
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
+	// The verb screen is completely replaced with a custom GUI
+	if (vs->number == kVerbVirtScreen && VAR(VAR_VERB_SCRIPT) == 4)
+		return;
 
 	const byte *pixels = vs->getPixels(x, top);
 	const byte *ts = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
@@ -348,6 +356,72 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	_messageBannerActive = false;
 
 	return ks;
+}
+
+MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
+	_system(system), _vm(vm), _macScreen(vm->_macScreen) {
+	Graphics::MacFontManager *mfm = _vm->_macFontManager;
+
+	_fonts[0] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
+	_fonts[1] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
+	_fonts[2] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
+}
+
+MacIndy3Gui::~MacIndy3Gui() {
+}
+
+void MacIndy3Gui::handleEvent(Common::Event &event) {
+	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return;
+
+	debug("Handle Indy 3 click at %d, %d", event.mouse.x, event.mouse.y);
+}
+
+void MacIndy3Gui::clear() {
+	_macScreen->fillRect(Common::Rect(0, 288, 640, 289), 0);
+	_macScreen->fillRect(Common::Rect(0, 290, 640, 373), 7);
+
+	byte corner[] = {
+		0, 0, 0, 0,
+		0, 0, 7, 7,
+		0, 7, 7, 7,
+		0, 7, 7, 7
+	};
+
+	byte *ul = (byte *)_macScreen->getBasePtr(0, 290);
+	byte *ur = (byte *)_macScreen->getBasePtr(636, 290);
+	byte *ll = (byte *)_macScreen->getBasePtr(0, 369);
+	byte *lr = (byte *)_macScreen->getBasePtr(636, 369);
+
+	int pitch = _macScreen->pitch;
+
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			*(ul + y * pitch + x) = corner[y * 4 + x];
+			*(ur + y * pitch + x) = corner[y * 4 + (3 - x)];
+			*(ll + y * pitch + x) = corner[(3 - y) * 4 + x];
+			*(lr + y * pitch + x) = corner[(3 - y) * 4 + (3 - x)];
+		}
+	}
+
+	for (int i = 0; i < 15; i++)
+		drawButton(i, false);
+
+	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
+}
+
+void MacIndy3Gui::drawButton(int n, bool pressed) {
+	int x = _buttons[n].x;
+	int y = _buttons[n].y;
+	int w = _buttons[n].w;
+	int h = _buttons[n].h;
+
+	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h), 15);
+
+	_macScreen->hLine(x, y, x + w, 0);
+	_macScreen->hLine(x, y + h, x + w, 0);
+	_macScreen->vLine(x, y, y + h, 0);
+	_macScreen->vLine(x + w, y, y + h, 0);
 }
 
 } // End of namespace Scumm

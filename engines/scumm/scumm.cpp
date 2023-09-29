@@ -36,6 +36,7 @@
 #include "gui/message.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "scumm/akos.h"
 #include "scumm/charset.h"
@@ -45,6 +46,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/smush/smush_player.h"
@@ -427,6 +429,7 @@ ScummEngine::~ScummEngine() {
 	for (int i = 0; i < 20; i++)
 		if (_2byteMultiFontPtr[i])
 			delete _2byteMultiFontPtr[i];
+	delete _macFontManager;
 	delete _charset;
 	delete _messageDialog;
 	delete _pauseDialog;
@@ -473,6 +476,8 @@ ScummEngine::~ScummEngine() {
 		_macIndy3TextBox->free();
 		delete _macIndy3TextBox;
 	}
+
+	delete _macIndy3Gui;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
@@ -1593,9 +1598,10 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 #endif
 		if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
-		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty())
+		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty()) {
+			_macFontManager = new Graphics::MacFontManager(0, Common::Language::UNK_LANG);
 			_charset = new CharsetRendererMac(this, macFontFile);
-		else
+		} else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 7) {
@@ -1675,6 +1681,7 @@ void ScummEngine::resetScumm() {
 
 	if (_macIndy3TextBox) {
 		_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
+		_macIndy3Gui = new MacIndy3Gui(_system, this);
 	}
 
 	if (_game.version == 0) {

@@ -27,6 +27,7 @@
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
@@ -218,6 +219,10 @@ void ScummEngine::parseEvent(Common::Event event) {
 
 		_mouse.x = event.mouse.x;
 		_mouse.y = event.mouse.y;
+
+		// Handle Mac Indy3 events before scaling the mouse coordinates
+		if (_macIndy3Gui)
+			_macIndy3Gui->handleEvent(event);
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
