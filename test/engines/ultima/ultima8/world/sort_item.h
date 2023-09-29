@@ -192,20 +192,22 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._fbigsq = false;
 	}
 
-	/* Overlapping non-flat items also follow a set of rules */
+	/**
+	 * Overlapping non-flat items also follow a set of rules
+	 * Test case for rendering issue at MainActor::teleport 6 7642 19776 48
+	 */
 	void test_non_flat_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		// Land always gets drawn below
-		// MainActor::teleport 6 7642 19776 48
-		Ultima::Ultima8::Box b1(36, 0, 0, 128, 32, 8);
+		Ultima::Ultima8::Box b1(7679, 19743, 48, 128, 32, 8);
 		si1.setBoxBounds(b1, 0, 0);
 		si1._occl = true;
 		si1._roof = true;
 		si1._land = true;
+		si1._fixed = true;
 
-		Ultima::Ultima8::Box b2(0, 32, 0, 120, 64, 40);
+		Ultima::Ultima8::Box b2(7642, 19776, 48, 64, 64, 40);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._solid = true;
 
