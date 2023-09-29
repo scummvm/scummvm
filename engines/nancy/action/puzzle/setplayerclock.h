@@ -75,7 +75,7 @@ protected:
 	SoundDescription _buttonSound;
 	SceneChangeWithFlag _alarmSetScene;
 	uint16 _alarmSoundDelay = 0;
-	SoundDescription _alarmRingSound; // NO SOUND in MHM
+	SoundDescription _alarmSetSound; // NO SOUND in MHM
 	SceneChangeWithFlag _exitScene;
 
 	Graphics::ManagedSurface _image;

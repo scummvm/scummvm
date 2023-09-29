@@ -85,7 +85,7 @@ void SetPlayerClock::readData(Common::SeekableReadStream &stream) {
 	_buttonSound.readNormal(stream);
 	_alarmSetScene.readData(stream);
 	_alarmSoundDelay = stream.readUint16LE();
-	_alarmRingSound.readNormal(stream);
+	_alarmSetSound.readNormal(stream);
 	_exitScene.readData(stream);
 }
 
@@ -96,7 +96,6 @@ void SetPlayerClock::execute() {
 		registerGraphics();
 
 		g_nancy->_sound->loadSound(_buttonSound);
-		g_nancy->_sound->loadSound(_alarmRingSound);
 
 		_alarmHours = NancySceneState.getPlayerTime().getHours();
 
@@ -153,14 +152,27 @@ void SetPlayerClock::execute() {
 		}
 
 		if (_alarmState == kWait) {
-			// Alarm has been set, wait for timer
-			if (g_system->getMillis() > _sceneChangeTime) {
-				NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
-				_alarmSetScene.execute();
-				finishExecution();
+			if (_sceneChangeTime != 0) {
+				// Alarm has been set, wait for timer
+				if (g_system->getMillis() > _sceneChangeTime) {
+					_sceneChangeTime = 0;
+					g_nancy->_sound->loadSound(_alarmSetSound);
+					g_nancy->_sound->playSound(_alarmSetSound);
+				}
 			}
+			if (_sceneChangeTime == 0) {
+				if (!g_nancy->_sound->isSoundPlaying(_alarmSetSound)) {
+					g_nancy->_sound->stopSound(_buttonSound);
+					g_nancy->_sound->stopSound(_alarmSetSound);;
+					NancySceneState.setPlayerTime(_alarmHours * 3600000, false);
+					_alarmSetScene.execute();
+					finishExecution();
+				}
+			}
+			
 		} else {
 			// Cancel button pressed, go to exit scene
+			g_nancy->_sound->stopSound(_buttonSound);
 			_exitScene.execute();
 			finishExecution();
 		}
