@@ -257,6 +257,482 @@ void Room145::init() {
 }
 
 void Room145::daemon() {
+	switch (_G(kernel).trigger) {
+	case 1:
+		switch (_state1) {
+		case 12:
+			wilbur_speech("145w004");
+			break;
+
+		case 13:
+			wilbur_speech("145w007");
+			break;
+
+		case 14:
+			wilbur_speech("145w008");
+			break;
+
+		case 15:
+			wilbur_speech("145w014");
+			break;
+
+		case 16:
+			wilbur_speech("145w015");
+			break;
+
+		case 17:
+			wilbur_speech("145w018");
+			break;
+
+		case 18:
+			wilbur_speech("145w003");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:
+		switch (_val1) {
+		case 19:
+			if (!digi_play_state(2))
+				digi_play_loop("145_003", 2, 125, -1);
+
+			_val1 = getRandomState();
+			series_play_with_breaks(PLAY5, "145dz01", 0xa01, 2, 3);
+			break;
+
+		case 20:
+			_val1 = 23;
+			series_play_with_breaks(PLAY6, "145dz02", 0xa01, 2, 3);
+			break;
+
+		case 21:
+			_val1 = 23;
+			series_play_with_breaks(PLAY7, "145dz03", 0xa01, 2, 3);
+			break;
+
+		case 22:
+			if (!_state2)
+				digi_stop(2);
+
+			_val1 = 23;
+			series_play_with_breaks(PLAY8, "145dz04", 0xa01, 2, 3);
+			break;
+
+		case 23:
+			kernel_trigger_dispatch_now(10001);
+			_val1 = getRandomState();
+			kernel_trigger_dispatch_now(2);
+			break;
+
+		case 24:
+			_val1 = getRandomState();
+			series_play_with_breaks(PLAY9, "145dz05", 0xa01, 2, 3);
+			break;
+
+		case 25:
+			if (!_state2)
+				digi_stop(2);
+
+			_val1 = getRandomState();
+			series_play_with_breaks(PLAY10, "145dz06", 0xa01, 2, 3);
+			break;
+
+		case 26:
+			_val1 = 27;
+			series_play_with_breaks(PLAY11, "145dz05", 0xa01, 2, 3);
+			_G(wilbur_should) = 2;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		case 27:
+			_val1 = getRandomState();
+			series_play_with_breaks(PLAY12, "145dz06", 0xa01, 2, 3);
+			break;
+
+		case 28:
+			if (!_state2)
+				digi_stop(2);
+
+			_G(wilbur_should) = 5;
+			_val1 = 29;
+			series_play_with_breaks(PLAY13, "145dz08", 0xa01, 2, 3);
+			break;
+
+		case 29:
+			hotspot_set_active("DRUMZ", false);
+			intr_remove_no_walk_rect(_walk1);
+
+			_G(flags)[V067] = 1;
+			series_play_with_breaks(PLAY14, "145dz08", 0, -1, 3);
+			series_show("145drum", 0xa01);
+			_G(wilbur_should) = 6;
+			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:
+		_val5 = _val3;
+
+		switch (_val3) {
+		case 30:
+			_rx.terminate();
+			_val3 = 31;
+			series_play_with_breaks(PLAY15, "145rx01", 0x900, 4, 3, 6, 100, 0, 0);
+			break;
+
+		case 31:
+			_duration = imath_ranged_rand(180, 360);
+			_val3 = 32;
+			_rx.show("145rx01", 0x900, 0, 4, _duration);
+			break;
+
+		case 32:
+			_rx.terminate();
+			_val3 = 33;
+			series_play_with_breaks(PLAY16, "145rx01", 0x900, 4, 3);
+			break;
+
+		case 33:
+			if (_val2 == 101) {
+				_duration = imath_ranged_rand(180, 360);
+				_val3 = 30;
+				_rx.show("145rx01", 0x900, 0, 4, _duration, 3);
+			} else if (_val2 == 17) {
+				playRandomDigi2();
+			} else {
+				_val3 = 35;
+				kernel_trigger_dispatch_now(4);
+			}
+			break;
+
+		case 34:
+			digi_unload(_digiName2);
+			_state2 = 0;
+			_val2 = 101;
+			_val3 = 33;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		case 35:
+			switch (_val2) {
+			case 0:
+				player_set_commands_allowed(false);
+				_val3 = 36;
+				break;
+
+			case 15:
+				_val3 = 37;
+				break;
+
+			case 100:
+				_val3 = 40;
+				break;
+
+			default:
+				term_message("ERROR!!! Who is roxy talking to???");
+				break;
+			}
+
+			series_play_with_breaks(PLAY17, "145rx02", 0x900, 4, 3);
+			break;
+
+		case 36:
+			kernel_trigger_dispatch_now(9);
+			_val3 = 40;
+			kernel_trigger_dispatch_now(4);
+			break;
+
+		case 37:
+			_state2 = 1;
+			_val3 = 38;
+			series_play_with_breaks(PLAY18, "145rx04", 0x900, 4, 3);
+			break;
+
+		case 38:
+			_rx.show("145rx04", 0x900);
+
+			switch (_state3) {
+			case 1:
+				_digiName1 = "145v901";
+				break;
+			case 2:
+				_digiName1 = "145v902";
+				break;
+			case 3:
+				_digiName1 = "145v903";
+				break;
+			case 4:
+				_digiName1 = "145v904";
+				break;
+			case 5:
+				_digiName1 = "145v905";
+				break;
+			case 6:
+				_digiName1 = "145v906";
+				break;
+			default:
+				break;
+			}
+
+			digi_preload(_digiName1);
+			digi_play(_digiName1, 2, 125, -1);
+			_val3 = 42;
+			kernel_timing_trigger(120, 4);
+			break;
+
+		case 39:
+			_rx.terminate();
+			_val3 = 40;
+			kernel_trigger_dispatch_now(4);
+			kernel_trigger_dispatch_now(10001);
+			break;
+
+		case 40:
+			_rx.show("145rx04", 0x900);
+			break;
+
+		case 41:
+			_val2 = 101;
+			_rx.terminate();
+			_val3 = 33;
+			series_play_with_breaks(PLAY19, "145rx02", 0x900, 4, 3);
+			break;
+
+		case 42:
+			digi_unload(_digiName1);
+			_state2 = 0;
+			_rx.terminate();
+			_val3 = 41;
+			series_play_with_breaks(PLAY20, "145rx06", 0x900, 4, 3);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 5:
+		switch (_val4) {
+		case 39:
+			_vp.terminate();
+			_val4 = 40;
+			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(10001);
+			break;
+
+		case 40:
+			_vp.show("145vp04", 0x300);
+			break;
+
+		case 43:
+			player_set_commands_allowed(true);
+			_vp.show("145vp02", 0x300);
+			break;
+
+		case 44:
+			player_set_commands_allowed(true);
+			_flag1 = true;
+
+			if (_val2 == 101) {
+				_val2 = 100;
+				resetRoxy();
+				_vp.terminate();
+				_val4 = 45;
+				series_play_with_breaks(PLAY21, "145vp02", 0x300, 5, 3);
+			} else {
+				kernel_timing_trigger(15, 5);
+			}
+			break;
+
+		case 45:
+			_val4 = 46;
+			series_play_with_breaks(PLAY22, "145vp06", 0x300, 5, 3);
+			break;
+
+		case 46:
+			kernel_trigger_dispatch_now(8);
+			_val4 = 40;
+			kernel_trigger_dispatch_now(5);
+			break;
+
+		case 47:
+			_vp.terminate();
+			_val4 = 43;
+			series_play_with_breaks(PLAY23, "145vp02", 0x300, 5, 3);
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 6:
+		digi_unload(_digiName1);
+		_state2 = 0;
+		break;
+
+	case 7:
+		if (!digi_play_state(1) && !_flag1 && _val2 == 101) {
+			switch (imath_ranged_rand(1, 3)) {
+			case 1:
+				_state3 = imath_ranged_rand(1, 6);
+				_val2 = 15;
+				resetRoxy();
+				break;
+
+			case 2:
+				playRandomDigi2();
+				break;
+
+			default:
+				_val2 = 17;
+				resetRoxy();
+				break;
+			}
+		}
+
+		kernel_timing_trigger(imath_ranged_rand(600, 900), 7);
+		break;
+
+	case 8:
+		conv_load_and_prepare("conv21", 11);
+		conv_export_pointer_curr(&_G(flags)[V068], 0);
+		conv_export_pointer_curr(&_G(flags)[V069], 1);
+		conv_export_pointer_curr(&_G(flags)[V070], 2);
+		conv_export_pointer_curr(&_G(flags)[V071], 3);
+		conv_export_pointer_curr(&_G(flags)[V072], 4);
+		conv_play_curr();
+		break;
+
+	case 9:
+		conv_load_and_prepare("conv22", 12);
+		conv_export_pointer_curr(&_G(flags)[V073], 0);
+		break;
+
+	case 10:
+		player_set_commands_allowed(false);
+		conv_load_and_prepare("conv23", 13);
+		conv_export_value_curr(_G(flags)[V068], 0);
+		conv_export_value_curr(_G(flags)[V069], 1);
+		conv_export_pointer_curr(&_G(flags)[V074], 2);
+		conv_export_pointer_curr(&_G(flags)[V075], 3);
+		conv_export_pointer_curr(&_G(flags)[V076], 4);
+		conv_play_curr();
+		break;
+
+	case 11:
+		_val4 = 47;
+		kernel_trigger_dispatch_now(5);
+		_val3 = 41;
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	case 12:
+		_G(flags)[V073] = 1;
+		player_set_commands_allowed(true);
+		_val3 = 41;
+		kernel_trigger_dispatch_now(4);
+		break;
+
+	case 13:
+		_G(flags)[V070] = 1;
+		player_set_commands_allowed(true);
+		break;
+
+	case gCHANGE_WILBUR_ANIMATION:
+		switch (_G(wilbur_should)) {
+		case 1:
+			player_set_commands_allowed(false);
+			_val1 = 26;
+			break;
+
+		case 2:
+			disable_player();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY1, "145wi04", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 3:
+			player_set_commands_allowed(false);
+			loadSeries1();
+			ws_hide_walker();
+			_G(wilbur_should) = 4;
+			_general.play("145wi02", 0xa00, 16, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 14);
+			digi_play("145w020", 1, 255, -1);
+			break;
+
+		case 4:
+			_val1 = 28;
+			break;
+
+		case 5:
+			_general.terminate();
+			_G(wilbur_should) = 7;
+			series_play_with_breaks(PLAY3, "145wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 6:
+			disable_player();
+			_G(wilbur_should) = 10001;
+			series_play_with_breaks(PLAY4, "145wi03", 0xa01, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 7:
+			ws_unhide_walker();
+			break;
+
+		case 8:
+			player_set_commands_allowed(false);
+			ws_hide_walker();
+			terminateMachineAndNull(_amplifier);
+			_G(wilbur_should) = 9;
+			series_play_with_breaks(PLAY2, "145wi04", 0xa01, gCHANGE_WILBUR_ANIMATION, 3);
+			break;
+
+		case 9:
+			hotspot_set_active("AMPLIFIER ", false);
+			inv_give_to_player("AMPLIFIER");
+			break;
+
+		case 10:
+			player_set_commands_allowed(false);
+
+			if (_state2) {
+				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+			} else {
+				_val4 = 44;
+				kernel_trigger_dispatch_now(5);
+			}
+			break;
+
+		case 11:
+			player_set_commands_allowed(false);
+
+			if (_val2 == 101) {
+				_val2 = 0;
+				resetRoxy();
+			} else {
+				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+			}
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
+	}
+
 	// TODO
 }
 
