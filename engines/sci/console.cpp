@@ -100,7 +100,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	registerCmd("selector",			WRAP_METHOD(Console, cmdSelector));
 	registerCmd("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	registerCmd("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("kernfunctions",		WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("functions",		WRAP_METHOD(Console, cmdKernelFunctions));	// alias
+	registerCmd("kerncall", 		WRAP_METHOD(Console, cmdKernelCall));
+	registerCmd("kc",				WRAP_METHOD(Console, cmdKernelCall));	// alias
 	registerCmd("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	// Parser
 	registerCmd("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
@@ -620,26 +623,97 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	debugPrintf("Kernel function names in numeric order:\n");
+	debugPrintf("+ denotes Kernel functions with subcommands\n");
 	uint column = 0;
 	for (uint seeker = 0; seeker <  _engine->getKernel()->getKernelNamesSize(); seeker++) {
 		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
 		if (kernelName == "Dummy")
 			continue;
 
+		const KernelFunction &kernelCall = _engine->getKernel()->_kernelFuncs[seeker];
+		const char *subCmdNote = kernelCall.subFunctionCount ? "+" : "";
+		
 		if (argc == 1) {
-			debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+			debugPrintf("%03x: %20s | ", seeker, (kernelName + subCmdNote).c_str());
 			if ((column++ % 3) == 2)
 				debugPrintf("\n");
 		} else {
 			for (int i = 1; i < argc; ++i) {
 				if (kernelName.equalsIgnoreCase(argv[i])) {
-					debugPrintf("%03x: %s\n", seeker, kernelName.c_str());
+					debugPrintf("%03x: %s\n", seeker, (kernelName + subCmdNote).c_str());
 				}
 			}
 		}
 	}
 
 	debugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdKernelCall(int argc, const char **argv) {
+	const size_t MAX_ARGS_ALLOWED = 20;
+	
+	if (argc <= 1) {
+		debugPrintf("Calls a kernel function by name.\n");
+		debugPrintf("(You must ensure you invoke the kernel function with the correct signature.)\n");
+		debugPrintf("Usage: %s <kernel-func-name> <param1> <param2> ... <paramn>\n", argv[0]);
+		debugPrintf("Example 1: %s GameIsRestarting\n", argv[0]);
+		debugPrintf("Example 2: %s Random 3 7\n", argv[0]);
+		debugPrintf("Example 3: %s Memory 6 002a:0012 0x6566\n", argv[0]);
+		return true;
+	}
+
+	const int kern_argc = argc - 2;
+
+	if (kern_argc > MAX_ARGS_ALLOWED) {
+		debugPrintf("No more than %d args allowed for a kernel call, you gave: %d.\n", (int)MAX_ARGS_ALLOWED, kern_argc);
+		return true;
+	}
+
+	Kernel *kernel = _engine->getKernel();
+
+	// Identify kernel call code by name.
+	int kernIdx = kernel->findKernelFuncPos(argv[1]);
+	if (kernIdx == -1) {
+		debugPrintf("No kernel function with name - see command \"kernfunctions\" for a list: %s\n", argv[1]);
+		return true;
+	}
+
+	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernIdx];
+	
+	reg_t kernArgArr[MAX_ARGS_ALLOWED];
+
+	for (int i = 0; i < kern_argc; i++) {
+		if (parse_reg_t(_engine->_gamestate, argv[2+i], &kernArgArr[i])) {
+			debugPrintf("Invalid address \"%s\" passed.\n", argv[2+i]);
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	reg_t kernResult;
+
+	if (!kernelCall.subFunctionCount) {
+		// Must be a regular kernel function.
+		kernResult = kernelCall.function(_engine->_gamestate, kern_argc, kernArgArr);
+	} else {
+		// Must be a kernel function that supports sub commands.
+
+		// Pull out the first argument register as the sub function id.
+		uint subId = kernArgArr[0].getOffset();
+
+		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
+		if (!kernelSubCall.function) {
+			debugPrintf("Kernel sub function with id:%d does not exist\n", 0);
+			return true;
+		}
+
+		// Pass a pointer to the remaining reg_t args.
+		kernResult = kernelSubCall.function(_engine->_gamestate, kern_argc-1, &(kernArgArr[1]));
+	}	
+
+	debugPrintf("kernel call result is: %04x:%04x\n", PRINT_REG(kernResult));
 
 	return true;
 }
@@ -3487,8 +3561,8 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 			continue;
 
 		curScriptObj = (Script *)curSegmentObj;
-		debugPrintf("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
-		debugN("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugPrintf("=== SCRIPT %d inside Segment %04x (%dd) ===\n", curScriptObj->getScriptNumber(), curSegmentNr, curSegmentNr);
+		debugN("=== SCRIPT %d inside Segment %04x (%dd) ===\n", curScriptObj->getScriptNumber(), curSegmentNr, curSegmentNr);
 
 		// now print the list
 		scriptOffsetLookupArray = curScriptObj->getOffsetArray();
