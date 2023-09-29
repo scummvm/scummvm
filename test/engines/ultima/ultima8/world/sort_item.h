@@ -19,10 +19,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	void test_screenspace_position() {
 		Ultima::Ultima8::SortItem si1;
 
-		si1._flat = true;
 		si1._solid = true;
 		si1._occl = true;
-		si1._fbigsq = true;
 		si1._roof = true;
 		si1._land = true;
 
@@ -126,7 +124,6 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b2(34110, 41118, 0, 64, 64, 0);
 		si2.setBoxBounds(b2, 0, 0);
-		si2._flat = true;
 		si2._invitem = true;
 
 		TS_ASSERT(si1.overlap(si2));
@@ -145,9 +142,6 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 0);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
-
-		si1._flat = true;
-		si2._flat = true;
 
 		// If one has a higher z, it's above
 		si2._z = 1;
@@ -482,10 +476,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b1(17535, 18559, 144, 128, 128, 0);
 		si1.setBoxBounds(b1, 0, 0);
-		si1._flat = true;
 		si1._solid = true;
 		si1._occl = true;
-		si1._fbigsq = true;
 		si1._roof = true;
 		si1._land = true;
 		si1._fixed = true;

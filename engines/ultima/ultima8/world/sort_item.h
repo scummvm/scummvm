@@ -288,6 +288,10 @@ inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
 	_sr.top = _syTop;
 	_sr.right = _sxRight;
 	_sr.bottom = _syBot;
+
+	// These help out with sorting. We calc them now, so it will be faster
+	_fbigsq = box._xd == box._yd && box._xd >= 128;
+	_flat = box._zd == 0;
 }
 
 inline Box SortItem::getBoxBounds() const {

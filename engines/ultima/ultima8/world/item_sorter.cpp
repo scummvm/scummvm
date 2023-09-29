@@ -163,10 +163,6 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_groupNum = 0;
 #endif // SORTITEM_OCCLUSION_EXPERIMENTAL
 
-	// These help out with sorting. We calc them now, so it will be faster
-	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
-	si->_flat = zd == 0;
-
 	si->_draw = info->is_draw();
 	si->_solid = info->is_solid();
 	si->_occl = info->is_occl() && !(si->_flags & Item::FLG_INVISIBLE) &&
