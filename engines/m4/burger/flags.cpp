@@ -135,7 +135,7 @@ void Flags::reset1() {
 	(*this)[V011] = 0;
 	(*this)[V012] = 0;
 	(*this)[V013] = 0;
-	(*this)[ROOM101_FLAG1] = 0;
+	(*this)[V014] = 0;
 	(*this)[V015] = 0;
 	(*this)[V017] = 0;
 	(*this)[V018] = 0;

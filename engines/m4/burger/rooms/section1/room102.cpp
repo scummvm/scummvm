@@ -678,7 +678,7 @@ void Room102::daemon() {
 				if (_G(flags)[V013]) {
 					_play1 = "102h204";
 					_val11 = 56;
-					_G(flags)[ROOM101_FLAG1] = 1;
+					_G(flags)[V014] = 1;
 				} else {
 					_val11 = 55;
 					_play1 = _G(flags)[V015] ? "102h203" : "102h201";
@@ -1514,15 +1514,209 @@ void Room102::freshen() {
 }
 
 void Room102::conv04() {
-	error("TODO: conv04");
+	_G(kernel).trigger_mode = KT_PARSE;
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 22) {
+		if (who <= 0) {
+			_G(kernel).trigger_mode = KT_DAEMON;
+
+			if (node == 1 && entry == 0) {
+				_val11 = 26;
+				kernel_trigger_dispatch_now(3);
+				player_update_info();
+				ws_walk(192, 327, 0, -1, 4);
+			} else if (node == 4 && entry == 0) {
+				digi_preload("102_030");
+				digi_preload("102_031");
+				digi_preload("102_032");
+				digi_preload("102_033");
+				_val1 = 28;
+				kernel_trigger_dispatch_now(3);
+			} else if ((node == 4 && entry == 1) || (node == 4 && entry == 2)) {
+				_val1 = 35;
+				conv_resume_curr();
+			} else {
+				_val1 = 19;
+				kernel_trigger_dispatch_now(3);
+				conv_resume_curr();
+			}
+		} else if (who == 1) {
+			if (node == 4 && entry == 1) {
+				// Nothing
+			} else if (node == 4 && entry == 2) {
+				_val13 = 58;
+				conv_resume_curr();
+			} else {
+				_G(wilbur_should) = 10002;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				conv_resume_curr();
+			}
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if ((node == 4 && entry == 1) || (node == 4 && entry == 2)) {
+				_val11 = 36;
+				digi_play(sound, 1, 255, 22);
+				_G(flags)[V012] = 1;
+			} else {
+				queuePlay(sound, 22, KT_PARSE);
+			}
+		} else if (who == 1) {
+			player_update_info();
+
+			if (_G(walkTrigger) != 2) {
+				ws_walk(192, 327, 0, 7, 2);
+			} else if (node == 4 && entry == 1) {
+				digi_preload("04p0502", 102);
+				digi_play(sound, 1, 255, 22);
+			} else if (node == 4 && entry == 2) {
+				_val13 = 60;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(4);
+				_G(kernel).trigger_mode = KT_PARSE;
+				digi_play(sound, 1, 255, 22);
+			} else {
+				wilbur_speech(sound, 22);
+			}
+		}
+	} else {
+		conv_resume_curr();
+	}
 }
 
 void Room102::conv05() {
-	error("TODO: conv05");
+	_G(kernel).trigger_mode = KT_PARSE;
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 22) {
+		if (who <= 0) {
+			if ((node == 1 && entry == 3) || (node == 3 && entry == 9) ||
+					(node == 5 && entry == 8) || (node == 2)) {
+				_val11 = 41;
+				conv_resume_curr();
+			} else if ((node == 1 && entry == 0) || (node == 3 && entry == 8) ||
+					(node == 5 && entry == 7)) {
+				_val11 = _G(flags)[V019] ? 38 : 37;
+				conv_resume_curr();
+			} else {
+				_val11 = 55;
+				conv_resume_curr();
+			}		
+		} else if (who == 1) {
+			_val13 = 58;
+			conv_resume_curr();
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			_val11 = 36;
+		} else if (who == 1) {
+			if ((node == 1 && entry == 1) || (node == 3 && entry == 0) ||
+					(node == 3 && entry == 3) || (node == 5 && entry == 3)) {
+				_val13 = 61;				
+			} else {
+				_val13 = 60;
+			}
+
+			_G(kernel).trigger_mode = KT_DAEMON;
+			kernel_trigger_dispatch_now(4);
+		}
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		digi_play(sound, 1, 255, 22);
+	} else {
+		conv_resume_curr();
+	}
 }
 
 void Room102::conv06() {
-	error("TODO: conv06");
+	_G(kernel).trigger_mode = KT_PARSE;
+	const char *sound = conv_sound_to_play();
+	int who = conv_whos_talking();
+	int node = conv_current_node();
+	int entry = conv_current_entry();
+
+	if (_G(kernel).trigger == 22) {
+		if (who <= 0) {
+			if (node == 2) {
+				_val11 = 19;
+				_G(kernel).trigger_mode = KT_PARSE;
+				kernel_trigger_dispatch_now(3);
+			} else if (node == 1 && entry == 4) {
+				_G(flags)[V014] = 1;
+				_val11 = 43;
+			} else if (node != 1 || entry != 1) {
+				_val11 = 43;
+			}
+
+			conv_resume_curr();
+
+		} else if (who == 1) {
+			if (node == 1 && entry == 1) {
+				_val13 = 63;
+			} else if (node == 2) {
+				_val11 = _G(flags)[GLB_TEMP_4] == 1 ? 49 : 48;
+				_val13 = 58;
+			} else {
+				_val13 = 58;
+				conv_resume_curr();
+			}
+		}
+	} else if (sound) {
+		if (who <= 0) {
+			if (node == 1 && entry == 3) {
+				_G(flags)[GLB_TEMP_4] = 3;
+
+				if (_G(flags)[GLB_TEMP_5] == 1)
+					_G(flags)[V021] = 10034;
+			}
+
+			if (node == 2) {
+				term_message("gonna_say_sheepdog %d %d", _val12, _val11);
+				queuePlay(sound, 22, KT_PARSE);
+				_flag1 = true;
+			} else if (node == 1 && entry == 1) {
+				_G(flags)[GLB_TEMP_4] = 1;
+				_G(flags)[V001] -= 8;
+
+				if (_G(flags)[GLB_TEMP_5] == 1)
+					_G(flags)[V021] = 10032;
+			} else if (node == 1 && entry == 4) {
+				_val11 = 21;
+				_G(flags)[GLB_TEMP_4] = 2;
+
+				if (_G(flags)[GLB_TEMP_5] == 1)
+					_G(flags)[V021] = 10033;
+
+				_G(flags)[V013] = 1;
+				_flag1 = false;
+			} else {
+				_val11 = 20;
+			}
+
+		} else if (who == 1) {
+			if (_val14 == 64) {
+				kernel_timing_trigger(30, 7);
+			} else {
+				_val13 = 60;
+				_G(kernel).trigger_mode = KT_DAEMON;
+				kernel_trigger_dispatch_now(4);
+			}
+		}
+
+		_G(kernel).trigger_mode = KT_PARSE;
+		digi_play(sound, 1, 255, 22);
+
+	} else {
+		conv_resume_curr();
+	}
 }
 
 
