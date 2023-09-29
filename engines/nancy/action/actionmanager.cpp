@@ -43,7 +43,7 @@ namespace Action {
 void ActionManager::handleInput(NancyInput &input) {
 	bool setHoverCursor = false;
 	for (auto &rec : _records) {
-		if (rec->_isActive) {
+		if (rec->_isActive && !rec->_isDone) {
 			// First, loop through all records and handle special cases.
 			// This needs to be a separate loop to handle Overlays as a special case
 			// (see note in Overlay::handleInput())
@@ -53,6 +53,7 @@ void ActionManager::handleInput(NancyInput &input) {
 
 	for (auto &rec : _records) {
 		if (	rec->_isActive &&
+				!rec->_isDone &&
 				rec->_hasHotspot &&
 				rec->_hotspot.isValidRect() && // Needed for nancy2 scene 1600
 				NancySceneState.getViewport().convertViewportToScreen(rec->_hotspot).contains(input.mousePos)) {
@@ -627,7 +628,7 @@ void ActionManager::debugDrawHotspots() {
 
 		for (uint i = 0; i < _records.size(); ++i) {
 			ActionRecord *rec = _records[i];
-			if (rec->_hasHotspot) {
+			if (rec->_isActive && !rec->_isDone && rec->_hasHotspot) {
 				Common::Rect hotspot = rec->_hotspot;
 				hotspot.translate(0, -yOffset);
 				hotspot.clip(obj._drawSurface.getBounds());
