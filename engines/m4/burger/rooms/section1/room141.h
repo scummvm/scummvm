@@ -44,6 +44,7 @@ private:
 
 	void conv20();
 	void playRandom();
+	void loadSeries();
 
 public:
 	Room141() : Room() {}
