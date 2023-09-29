@@ -636,25 +636,27 @@ int ScummEngine::readVar(uint var) {
 		else
 			assertRange(0, var, 20, "local variable (reading)");
 #if defined(USE_ENET) && defined(USE_LIBCURL)
+		// Mod for Backyard Baseball 2001 online competitive play: change impact of
+		// batter's power stat on hit power
 		if (ConfMan.getBool("enable_competitive_mods")) {
 			if (_game.id == GID_BASEBALL2001 &&
 				_currentRoom == 4 && vm.slot[_currentScript].number == 2090  // The script that calculates hit power
 				&& readVar(399) == 1  // Check that we're playing online
-				&& var == 2  // Local var for batter's hiting power stat
+				&& var == 2  // Local var for batter's hitting power stat
 			) {
 				int swingType = vm.localvar[_currentScript][0];
 				int powerStat, powerStatModified;
 				switch (swingType) {
-					case 2:  // Line drive or grounder swing
-						powerStat = vm.localvar[_currentScript][var];
-						powerStatModified = 20 + vm.localvar[_currentScript][var] * 4 / 5;
-						return powerStatModified;
-					case 1:  // Power swing
-						powerStat = vm.localvar[_currentScript][var];
-						powerStatModified = 20 + vm.localvar[_currentScript][var] * 7 / 10;;
-						return powerStatModified;
-					default:
-						break;
+				case 2:  // Line drive or grounder swing
+					powerStat = vm.localvar[_currentScript][var];
+					powerStatModified = 20 + vm.localvar[_currentScript][var] * 4 / 5;
+					return powerStatModified;
+				case 1:  // Power swing
+					powerStat = vm.localvar[_currentScript][var];
+					powerStatModified = 20 + vm.localvar[_currentScript][var] * 7 / 10;;
+					return powerStatModified;
+				default:
+					break;
 				}
 			}
 		}

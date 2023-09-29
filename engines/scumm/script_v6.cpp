@@ -931,16 +931,16 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 		int hitQuality = -2;
 		if (stance == 2) {  // Batter is in a squared stance
 			switch (zone) {
-				case 25:
-					hitQuality = 3;
-				case 18: case 24: case 26: case 32:
-					hitQuality = 2;
-				case 10: case 11: case 12: case 17: case 19: case 23: case 27: case 31: case 33: case 38: case 39: case 40:
-					hitQuality = 1;
-				case 4: case 16: case 20: case 30: case 34: case 46:
-					hitQuality = 0;
-				case 3: case 5: case 9: case 13: case 15: case 21: case 22: case 28: case 29: case 35: case 37: case 41: case 45: case 47:
-					hitQuality = -1;
+			case 25:
+				hitQuality = 3;
+			case 18: case 24: case 26: case 32:
+				hitQuality = 2;
+			case 10: case 11: case 12: case 17: case 19: case 23: case 27: case 31: case 33: case 38: case 39: case 40:
+				hitQuality = 1;
+			case 4: case 16: case 20: case 30: case 34: case 46:
+				hitQuality = 0;
+			case 3: case 5: case 9: case 13: case 15: case 21: case 22: case 28: case 29: case 35: case 37: case 41: case 45: case 47:
+				hitQuality = -1;
 			}
 			push(hitQuality);
 			return;
@@ -952,16 +952,16 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 			zone  = ((zone - 1) / 7) * 7 + (6 - ((zone - 1) % 7)) + 1;  // "Flip" zone horizontally across center
 		}
 		switch (zone) {
-			case 24:
-				hitQuality = 3;
-			case 17: case 23: case 25: case 31:
-				hitQuality = 2;
-			case 9: case 10: case 16: case 18: case 22: case 26: case 30: case 32: case 37: case 38:
-				hitQuality = 1;
-			case 3: case 11: case 15: case 19: case 29: case 33: case 39: case 45:
-				hitQuality = 0;
-			case 2: case 4: case 8: case 12: case 20: case 27: case 34: case 36: case 40: case 44: case 46:
-				hitQuality = -1;
+		case 24:
+			hitQuality = 3;
+		case 17: case 23: case 25: case 31:
+			hitQuality = 2;
+		case 9: case 10: case 16: case 18: case 22: case 26: case 30: case 32: case 37: case 38:
+			hitQuality = 1;
+		case 3: case 11: case 15: case 19: case 29: case 33: case 39: case 45:
+			hitQuality = 0;
+		case 2: case 4: case 8: case 12: case 20: case 27: case 34: case 36: case 40: case 44: case 46:
+			hitQuality = -1;
 		}
 		push(hitQuality);
 		return;
