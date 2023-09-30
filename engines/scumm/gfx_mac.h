@@ -40,7 +40,7 @@ public:
 	
 	void handleEvent(Common::Event &event);
 	void clear();
-	void drawButton(int n, bool pressed);
+	void drawButton(int n, char *text, bool enabled, bool pressed);
 
 private:
 	OSystem *_system;
@@ -77,6 +77,8 @@ private:
 		{  67, 352, 151, 18 }, // Conversation 4
 		{ 423, 352, 151, 18 }  // Conversation 5
 	};
+
+	void fill(Common::Rect r);
 };
 
 } // End of namespace Scumm
