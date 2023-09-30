@@ -569,6 +569,13 @@ void MacIndy3Gui::drawInventoryWidget() {
 
 	drawInventoryArrowUp(false);
 	drawInventoryArrowDown(false);
+
+	drawInventoryText(0, "small key", false);
+	drawInventoryText(1, "painting", false);
+	drawInventoryText(2, "old book", false);
+	drawInventoryText(3, "Grail Diary", false);
+	drawInventoryText(4, "whip", false);
+	drawInventoryText(5, "manual", false);
 }
 
 void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped) {
@@ -635,9 +642,39 @@ void MacIndy3Gui::drawInventoryScrollbar() {
 	fill(Common::Rect(556, 313, 569, 350));
 }
 
+void MacIndy3Gui::drawInventoryText(int slot, char *text, bool highlighted) {
+	int slotX = 423;
+	int slotY = 298 + slot * 11;
+
+	int fg, bg;
+
+	if (highlighted) {
+		fg = 15;
+		bg = 0;
+	} else {
+		fg = 0;
+		bg = 15;
+	}
+
 #if 0
-void MacIndy3Gui::drawInventoryText(int slot, char *text) {
-}
+	// The inventory slots overlap slightly, so we have to clear the entire
+	// area, then highlight the at most single one that's highlighted.
+	_macScreen->fillRect(Common::Rect(423, 298, 551, 365), 15);
 #endif
+
+	int height = 12;
+	int width = 128;
+
+	if (highlighted)
+		_macScreen->fillRect(Common::Rect(slotX, slotY, slotX + width, slotY + height), bg);
+
+	int y = slotY - 1;
+	int x = slotX + 4;
+
+	for (int i = 0; text[i]; i++) {
+		_fonts[0]->drawChar(_macScreen, text[i], x, y, fg);
+		x += _fonts[0]->getCharWidth(text[i]);
+	}
+}
 
 } // End of namespace Scumm
