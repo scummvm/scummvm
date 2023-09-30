@@ -537,6 +537,7 @@ MODULE_OBJS := \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
 	ultima8/world/snap_process.o \
+	ultima8/world/sort_item.o \
 	ultima8/world/split_item_process.o \
 	ultima8/world/sprite_process.o \
 	ultima8/world/super_sprite_process.o \
