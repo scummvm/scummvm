@@ -536,10 +536,9 @@ void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecor
 			debugPrintf("kElapsedPlayerDay");
 			break;
 		case DependencyType::kCursorType :
-			debugPrintf("kCursorType, item %u, %s, %s",
+			debugPrintf("kCursorType, item %u, %s",
 				dep.label,
-				inventoryData->itemDescriptions[dep.label].name.c_str(),
-				dep.condition == ActionManager::kCursInvHolding ? "kCursInvHolding" : "kCursInvNotHolding");
+				inventoryData->itemDescriptions[dep.label].name.c_str());
 			break;
 		case DependencyType::kPlayerTOD :
 			debugPrintf("kPlayerTOD, %s",
