@@ -45,6 +45,7 @@ public:
 	void drawInventoryScrollbar();
 	void drawInventoryArrowUp(bool highlight);
 	void drawInventoryArrowDown(bool highlight);
+	void drawInventoryText(int slot, char *text, bool highlighted);
 
 private:
 	OSystem *_system;
