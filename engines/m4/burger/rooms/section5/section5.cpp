@@ -549,7 +549,7 @@ void Section5::parser() {
 void Section5::takeGizmo(RGB8 *pal) {
 	if (player_commands_allowed() && INTERFACE_VISIBLE &&
 			!_G(pal_fade_in_progress) && !_GIZMO(initialized)) {
-		gizmoAnim(pal);
+		GUI::gizmo_anim(pal);
 		player_set_commands_allowed(false);
 
 		if (_G(flags)[V238] == 0) {
@@ -560,10 +560,6 @@ void Section5::takeGizmo(RGB8 *pal) {
 			++_G(flags)[V238];
 		}
 	}
-}
-
-void Section5::gizmoAnim(RGB8 *pal) {
-	// TODO
 }
 
 void Section5::gizmoDigiPlay(const char *name, int vol, bool &done) {
