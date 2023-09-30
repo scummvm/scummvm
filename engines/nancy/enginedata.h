@@ -73,6 +73,8 @@ struct BSUM : public EngineData {
 
 	uint16 playerTimeMinuteLength;
 	uint16 buttonPressTimeDelay;
+	uint16 dayStartMinutes = 0;
+	uint16 dayEndMinutes = 0;
 	byte overrideMovementTimeDeltas;
 	uint16 slowMovementTimeDelta;
 	uint16 fastMovementTimeDelta;

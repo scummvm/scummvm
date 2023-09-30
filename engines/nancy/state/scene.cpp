@@ -267,9 +267,21 @@ byte Scene::getPlayerTOD() const {
 		} else {
 			return kPlayerDuskDawn;
 		}
-	} else {
+	} else if (g_nancy->getGameType() <= kGameTypeNancy5) {
 		// nancy2 and up removed dusk/dawn
 		if (_timers.playerTime.getHours() >= 6 && _timers.playerTime.getHours() < 18) {
+			return kPlayerDay;
+		} else {
+			return kPlayerNight;
+		}
+	} else {
+		// nancy6 added the day start/end times (in minutes) to BSUM
+		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		assert(bootSummary);
+
+		uint16 minutes = _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
+
+		if (minutes >= bootSummary->dayStartMinutes && minutes < bootSummary->dayEndMinutes) {
 			return kPlayerDay;
 		} else {
 			return kPlayerNight;

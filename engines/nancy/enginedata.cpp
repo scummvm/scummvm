@@ -97,7 +97,8 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	s.syncAsSint16LE(playerTimeMinuteLength);
 	s.syncAsUint16LE(buttonPressTimeDelay);
-	s.skip(4, kGameTypeNancy6);
+	s.syncAsUint16LE(dayStartMinutes, kGameTypeNancy6);
+	s.syncAsUint16LE(dayEndMinutes, kGameTypeNancy6);
 	s.syncAsByte(overrideMovementTimeDeltas);
 	s.syncAsSint16LE(slowMovementTimeDelta);
 	s.syncAsSint16LE(fastMovementTimeDelta);
