@@ -42,8 +42,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(0, 10, 0, 10, 10, 10);
-		Ultima::Ultima8::Box b2(0, 20, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b1(0, 32, 0, 32, 32, 8);
+		Ultima::Ultima8::Box b2(0, 64, 0, 32, 32, 8);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
 
@@ -59,8 +59,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(10, 0, 0, 10, 10, 10);
-		Ultima::Ultima8::Box b2(20, 0, 0, 10, 10, 10);
+		Ultima::Ultima8::Box b1(32, 0, 0, 32, 32, 8);
+		Ultima::Ultima8::Box b2(64, 0, 0, 32, 32, 8);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
 
@@ -76,8 +76,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(10, 10, 0, 10, 10, 10);
-		Ultima::Ultima8::Box b2(10, 10, 10, 10, 10, 10);
+		Ultima::Ultima8::Box b1(32, 32, 0, 32, 32, 8);
+		Ultima::Ultima8::Box b2(32, 32, 8, 32, 32, 8);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
 
@@ -136,8 +136,8 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(0, 0, 0, 10, 10, 0);
-		Ultima::Ultima8::Box b2(0, 0, 0, 10, 10, 0);
+		Ultima::Ultima8::Box b1(0, 0, 0, 32, 32, 0);
+		Ultima::Ultima8::Box b2(0, 0, 0, 32, 32, 0);
 		si1.setBoxBounds(b1, 0, 0);
 		si2.setBoxBounds(b2, 0, 0);
 
