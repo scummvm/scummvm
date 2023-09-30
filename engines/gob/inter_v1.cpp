@@ -1615,6 +1615,20 @@ void Inter_v1::o1_copySprite(OpFuncParams &params) {
 
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
+	if (_vm->_draw->_sourceSurface != 100 &&
+		_vm->_draw->_sourceSurface != 101 &&
+		(_vm->_draw->_sourceSurface < 0 || _vm->_draw->_sourceSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid source surface index %d", _vm->_draw->_sourceSurface);
+		return;
+	}
+
+	if (_vm->_draw->_destSurface != 100 &&
+		_vm->_draw->_destSurface != 101 &&
+		(_vm->_draw->_destSurface < 0 || _vm->_draw->_destSurface >= Draw::kSpriteCount)) {
+		warning("o1_copySprite(): Invalid destination surface index %d", _vm->_draw->_destSurface);
+		return;
+	}
+
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 }
 

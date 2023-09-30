@@ -214,6 +214,12 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 		index = _vm->_game->_script->readInt16();
 	else
 		index = _vm->_game->_script->readValExpr();
+
+	if (index < 0 || index >= Draw::kSpriteCount) {
+		warning("oPlaytoons_freeSprite: invalid sprite index %d", index);
+		return;
+	}
+
 	_vm->_draw->freeSprite(index);
 }
 
