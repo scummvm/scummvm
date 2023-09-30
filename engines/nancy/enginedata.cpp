@@ -182,18 +182,18 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		if (s.getVersion() == kGameTypeNancy2) {
 			s.syncBytes(textBuf, 60);
 			textBuf[59] = '\0';
-			item.specificCantText = (char *)textBuf;
+			assembleTextLine((char *)textBuf, item.specificCantText, 60);
 
 			s.syncBytes(textBuf, 60);
 			textBuf[59] = '\0';
-			item.generalCantText = (char *)textBuf;
+			assembleTextLine((char *)textBuf, item.generalCantText, 60);
 
 			item.specificCantSound.readNormal(*chunkStream);
 			item.generalCantSound.readNormal(*chunkStream);
 		} else if (s.getVersion() >= kGameTypeNancy3) {
 			s.syncBytes(textBuf, 60);
 			textBuf[59] = '\0';
-			item.specificCantText = (char *)textBuf;
+			assembleTextLine((char *)textBuf, item.specificCantText, 60);
 
 			item.specificCantSound.readNormal(*chunkStream);
 		}
