@@ -61,7 +61,6 @@ private:
 	bool _gizmoRoomNums[15];
 
 	void takeGizmo(RGB8 *pal);
-	void gizmoAnim(RGB8 *pal);
 	void gizmoDigiPlay(const char *name, int vol, bool &done);
 
 public:

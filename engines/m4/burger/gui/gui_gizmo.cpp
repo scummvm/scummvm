@@ -24,7 +24,10 @@
 #include "m4/core/errors.h"
 #include "m4/adv_r/adv_background.h"
 #include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_sprite.h"
+#include "m4/gui/gui_event.h"
 #include "m4/mem/mem.h"
+#include "m4/platform/keys.h"
 
 namespace M4 {
 namespace Burger {
@@ -35,7 +38,8 @@ static void gizmo_restore_interface(bool fade);
 static void gizmo_free_gui(ScreenContext *screenContext);
 static bool gizmo_load_sprites(const char *name, size_t count);
 static void gizmo_free_sprites();
-static ScreenContext *gui_create_gizmo(M4sprite *sprite, int zero1, int zero2, int v505);
+static void gizmo_draw_sprite(M4sprite *sprite, Buffer *dest, int destX, int destY);
+static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags);
 
 void gizmo_anim(RGB8 *pal) {
 	if (!_GIZMO(initialized))
@@ -151,7 +155,80 @@ static void gizmo_free_sprites() {
 	}
 }
 
-static ScreenContext *gui_create_gizmo(M4sprite *sprite, int zero1, int zero2, int v505) {
+void gizmo_draw_sprite(M4sprite *sprite, Buffer *dest, int destX, int destY) {
+	Buffer src;
+	DrawRequest dr;
+
+	if (sprite && dest) {
+		HLock(sprite->sourceHandle);
+		sprite->data = (uint8 *)((intptr)*sprite->sourceHandle + sprite->sourceOffset);
+		src.stride = src.w = sprite->w;
+		src.h = sprite->h;
+		src.encoding = sprite->encoding & 0x7f;
+		src.data = sprite->data;
+
+		dr.Src = &src;
+		dr.Dest = dest;
+		dr.x = destX;
+		dr.y = destY;
+		dr.scaleX = dr.scaleY = 100;
+		dr.srcDepth = 0;
+		dr.depthCode = nullptr;
+		dr.Pal = nullptr;
+		dr.ICT = nullptr;
+		gr_sprite_draw(&dr);
+		HUnLock(sprite->sourceHandle);
+	}
+}
+
+static void gui_gizmo_show(ScreenContext *s, RectList *r, Buffer *dest, int32 destX, int32 destY) {
+	if (!s)
+		return;
+	void *scrnContent = s->scrnContent;
+	if (!scrnContent)
+		return;
+
+	GrBuff *buf = (GrBuff *)s->scrnContent;
+	if (!buf)
+		return;
+	Buffer *src = buf->get_buffer();
+	if (!src)
+		return;
+
+	if (dest) {
+		for (RectList *rect = r; rect; rect = rect->next) {
+			vmng_refresh_video(rect->x1, rect->y1,
+				rect->x1 - s->x1, rect->y1 - s->y1, rect->x2 - s->x1, rect->y2 - s->y1,
+				src);
+		}
+	} else {
+		for (RectList *rect = r; rect; rect = rect->next) {
+			gr_buffer_rect_copy_2(src, dest,
+				rect->x1 - s->x1, rect->y1 - s->y1, destX, destY,
+				rect->x2 - rect->x1 + 1, rect->y2 - rect->y1 + 1);
+		}
+	}
+}
+
+static bool gui_gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
+	ScreenContext *srcBuffer = (ScreenContext *)s;
+	*z = false;
+	/*
+	int32 status = 0;
+	ScreenContext *ctx = vmng_screen_find(s, &status);
+	if (!ctx || status != 1)
+		return false;
+
+	if (eventType == EVENT_KEY && event == KEY_ESCAPE && myScreen->y1 != 0) {
+		_GIZMO(val1) = 0;
+
+	}
+	*/
+	// TODO: event handler
+	return false;
+}
+
+static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags) {
 	if (!sprite)
 		return nullptr;
 
@@ -161,10 +238,25 @@ static ScreenContext *gui_create_gizmo(M4sprite *sprite, int zero1, int zero2, i
 
 	GrBuff *grBuff = new GrBuff(sprite->w, sprite->h);
 	gui->_grBuff = grBuff;
+	gui->_eventHandler = gui_gizmo_eventHandler;
 
+	Buffer *dest = gui->_grBuff->get_buffer();
+	Buffer *src = _G(gameDrawBuff)->get_buffer();
 
-	// TODO: More stuff
-	return nullptr;
+	if ((_G(gameDrawBuff)->h - sy) >= dest->h) {
+		gr_buffer_rect_copy_2(src, dest, sx, sy, 0, 0, dest->w, dest->h);
+	} else {
+		gr_buffer_rect_copy_2(src, dest, sx, sy, 0, 0, dest->w, _G(gameDrawBuff)->h - sy);
+	}
+
+	_G(gameDrawBuff)->release();
+	if (sprite->sourceHandle)
+		gizmo_draw_sprite(sprite, dest, 0, 0);
+
+	gui->_grBuff->release();
+
+	return vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
+		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gui_gizmo_eventHandler);
 }
 
 } // namespace GUI
