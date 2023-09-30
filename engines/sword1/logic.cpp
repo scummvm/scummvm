@@ -1460,9 +1460,6 @@ int Logic::fnWalk(Object *cpt, int32 id, int32 x, int32 y, int32 dir, int32 stan
 					(target != FLOOR_63) && (target != ROOF_63) && (target != GUARD_ROOF_63) &&
 					(target != LEFT_TREE_POINTER_71) && (target != RIGHT_TREE_POINTER_71)) {
 
-					if (!_objMan->sectionAlive(_scriptVars[CLICK_ID] / ITM_PER_SEC))
-						_objMan->megaEntering(_scriptVars[CLICK_ID] / ITM_PER_SEC);
-
 					target = _objMan->fetchObject(_scriptVars[CLICK_ID])->o_mouse_on;
 					if ((target >= SCR_exit0) && (target <= SCR_exit9)) {
 						fnStandAt(cpt, id, x, y, dir, stance, 0, 0);
