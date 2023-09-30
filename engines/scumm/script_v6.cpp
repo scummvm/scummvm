@@ -658,7 +658,16 @@ void ScummEngine_v6::o6_le() {
 
 void ScummEngine_v6::o6_ge() {
 	int a = pop();
-	push(pop() >= a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
+	// required to reach top speed
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 &&
+		_currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
+		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
+	}
+	push(b >= a);
+#endif
 }
 
 void ScummEngine_v6::o6_add() {
@@ -684,8 +693,8 @@ void ScummEngine_v6::o6_div() {
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
 	// running half-speed on a popup
-	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3
-		&& vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
+		vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
 		// Normally divides speed by two here
 		int runnerIdx = readVar(0x4000);
 		int runnerReSprint = readArray(344, runnerIdx, 1);
