@@ -56,6 +56,10 @@ include:
     file: '/ios9.yml'
     
   ################################## CONSOLES ################################
+    # Nintendo Wii
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/wii-static.yml'
+
   # Nintendo WiiU
   - project: 'libretro-infrastructure/ci-templates'
     file: '/wiiu-static.yml'
@@ -190,6 +194,12 @@ libretro-build-tvos-arm64:
     - .core-defs
 
 ################################### CONSOLES #################################
+# Nintendo Wii
+libretro-build-wii:
+  extends:
+    - .libretro-wii-static-retroarch-master
+    - .core-defs
+
 # Nintendo WiiU
 libretro-build-wiiu:
   extends:

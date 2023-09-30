@@ -132,8 +132,9 @@ else ifeq ($(platform), wii)
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT) rcs
-   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include -DDEFAULT_PERF_TUNER
-   STATIC_LINKING=1
+   DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__ -I$(DEVKITPRO)/libogc/include -DDEFAULT_PERF_TUNER -DRETRO_IS_BIG_ENDIAN=1 -DRETRO_IS_LITTLE_ENDIAN=0 -DWORDS_BIGENDIAN=1
+   LITE := 1
+   STATIC_LINKING = 1
 
 # Nintendo Switch (libnx)
 else ifeq ($(platform), libnx)
