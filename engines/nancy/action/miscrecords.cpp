@@ -359,11 +359,30 @@ void WinGame::execute() {
 
 void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 	_itemID = stream.readUint16LE();
+
+	if (g_nancy->getGameType() >= kGameTypeNancy6) {
+		_setCursor = stream.readUint16LE();
+		_forceCursor = stream.readUint16LE();
+	}
 }
 
 void AddInventoryNoHS::execute() {
-	if (NancySceneState.hasItem(_itemID) == g_nancy->_false) {
-		NancySceneState.addItemToInventory(_itemID);
+	if (_setCursor) {
+		if (NancySceneState.getHeldItem() != -1) {
+			// Currently holding another item
+			if (_forceCursor) {
+				NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
+				NancySceneState.setHeldItem(_itemID);
+			} else {
+				NancySceneState.addItemToInventory(_itemID);
+			}
+		} else {
+			NancySceneState.setHeldItem(_itemID);
+		}
+	} else {
+		if (NancySceneState.hasItem(_itemID) == g_nancy->_false) {
+			NancySceneState.addItemToInventory(_itemID);
+		}
 	}
 
 	_isDone = true;

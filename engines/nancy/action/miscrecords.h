@@ -283,7 +283,9 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
-	uint _itemID;
+	uint16 _itemID = 0;
+	bool _setCursor = false;
+	bool _forceCursor = false;
 
 protected:
 	Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
