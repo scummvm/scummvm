@@ -301,6 +301,8 @@ else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
 # Emscripten
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
+   DEFINES += -DEMSCRIPTEN -DUSE_CXX11
+   CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
    USE_CLOUD = 0
 
