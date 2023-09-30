@@ -41,6 +41,10 @@ public:
 	void handleEvent(Common::Event &event);
 	void clear();
 	void drawButton(int n, char *text, bool enabled, bool pressed);
+	void drawInventoryWidget();
+	void drawInventoryScrollbar();
+	void drawInventoryArrowUp(bool highlight);
+	void drawInventoryArrowDown(bool highlight);
 
 private:
 	OSystem *_system;
@@ -79,6 +83,7 @@ private:
 	};
 
 	void fill(Common::Rect r);
+	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
 };
 
 } // End of namespace Scumm
