@@ -680,7 +680,23 @@ void ScummEngine_v6::o6_div() {
 	int a = pop();
 	if (a == 0)
 		error("division by zero");
-	push(pop() / a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
+	// running half-speed on a popup
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3
+		&& vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
+		// Normally divides speed by two here
+		int runnerIdx = readVar(0x4000);
+		int runnerReSprint = readArray(344, runnerIdx, 1);
+		// But if the runner is sprinting, don't divide by two
+		if (runnerReSprint > 1) {
+			push(b);
+			return;
+		}
+	}
+#endif
+	push(b / a);
 }
 
 void ScummEngine_v6::o6_land() {
