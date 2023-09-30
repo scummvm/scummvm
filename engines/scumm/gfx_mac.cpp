@@ -379,49 +379,128 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 
 void MacIndy3Gui::clear() {
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 289), 0);
-	_macScreen->fillRect(Common::Rect(0, 290, 640, 373), 7);
+	fill(Common::Rect(0, 290, 640, 373));
 
 	byte corner[] = {
-		0, 0, 0, 0,
-		0, 0, 7, 7,
-		0, 7, 7, 7,
-		0, 7, 7, 7
+		1, 1, 1, 1,
+		1, 1, 0, 0,
+		1, 0, 0, 0,
+		1, 0, 0, 0
 	};
 
 	byte *ul = (byte *)_macScreen->getBasePtr(0, 290);
-	byte *ur = (byte *)_macScreen->getBasePtr(636, 290);
-	byte *ll = (byte *)_macScreen->getBasePtr(0, 369);
-	byte *lr = (byte *)_macScreen->getBasePtr(636, 369);
+	byte *ur = (byte *)_macScreen->getBasePtr(639, 290);
+	byte *ll = (byte *)_macScreen->getBasePtr(0, 372);
+	byte *lr = (byte *)_macScreen->getBasePtr(639, 372);
 
 	int pitch = _macScreen->pitch;
 
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
-			*(ul + y * pitch + x) = corner[y * 4 + x];
-			*(ur + y * pitch + x) = corner[y * 4 + (3 - x)];
-			*(ll + y * pitch + x) = corner[(3 - y) * 4 + x];
-			*(lr + y * pitch + x) = corner[(3 - y) * 4 + (3 - x)];
+			if (corner[y * 4 + x]) {
+				*(ul + y * pitch + x) = 0;
+				*(ur + y * pitch - x) = 0;
+				*(ll - y * pitch + x) = 0;
+				*(lr - y * pitch - x) = 0;
+			}
 		}
 	}
 
+	const char *text[] = {
+		"Drawn by ScummVM, but just a mock-up",
+		"Push", "Pull", "Give",
+		"Open", "Close", "Look at",
+		"Walk to", "Pick up", "What is",
+		"Use", "Turn on", "Turn off",
+		"Talk", "Travel"
+	};
+
 	for (int i = 0; i < 15; i++)
-		drawButton(i, false);
+		drawButton(i, (char *)text[i], i < 13, i == 8);
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
 }
 
-void MacIndy3Gui::drawButton(int n, bool pressed) {
+void MacIndy3Gui::fill(Common::Rect r) {
+	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
+		byte *row = (byte *)_macScreen->getBasePtr(r.left, r.top);
+		int pitch = _macScreen->pitch;
+
+		for (int y = r.top; y < r.bottom; y++) {
+			byte *ptr = row;
+			for (int x = r.left; x < r.right; x++) {
+				*ptr++ = ((x + y) & 1) ? 15 : 0;
+			}
+			row += pitch;
+		}
+	} else
+		_macScreen->fillRect(r, 7);
+}
+
+void MacIndy3Gui::drawButton(int n, char *text, bool enabled, bool pressed) {
 	int x = _buttons[n].x;
 	int y = _buttons[n].y;
 	int w = _buttons[n].w;
 	int h = _buttons[n].h;
 
-	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h), 15);
+	fill(Common::Rect(x, y, x + w, y + h));
 
-	_macScreen->hLine(x, y, x + w, 0);
-	_macScreen->hLine(x, y + h, x + w, 0);
-	_macScreen->vLine(x, y, y + h, 0);
-	_macScreen->vLine(x + w, y, y + h, 0);
+	if (!pressed) {
+		_macScreen->hLine(x + 1, y, x + w - 3, 0);
+		_macScreen->hLine(x + 1, y + h - 2, x + w - 3, 0);
+		_macScreen->vLine(x, y + 1, y + h - 3, 0);
+		_macScreen->vLine(x + w - 2, y + 1, y + h - 3, 0);
+
+		_macScreen->hLine(x + 2, y + h - 1, x + w - 1, 0);
+		_macScreen->vLine(x + w - 1, y + 2, y + h - 1, 0);
+		_macScreen->hLine(x + 1, y + 1, x + w - 3, 15);
+		_macScreen->vLine(x + 1, y + 2, y + h - 3, 15);
+	} else {
+		// I have only been able to capture a screenshot of the pressed
+		// button in black and white, where the checkerboard background
+		// makes it hard to see exactly which pixels should be drawn.
+		// Basilisk II runs it too fast, and I haven't gotten Mini vMac
+		// to run it in 16-color mode.
+		//
+		// All I can say for certain is that the upper left corner is
+		// rounded while the lower right is not. I'm going to assume
+		// that the shadow is always drawn, and the rest of the button
+		// is just shifted down to the right. That would make the other
+		// two corners rounded.
+		_macScreen->hLine(x + 2, y + 1, x + w - 2, 0);
+		_macScreen->hLine(x + 2, y + h - 1, x + w - 1, 0);
+		_macScreen->vLine(x + 1, y + 2, y + h - 2, 0);
+		_macScreen->vLine(x + w - 1, y + 2, y + h - 2, 0);
+
+		_macScreen->hLine(x + 2, y + 2, x + w - 2, 15);
+		_macScreen->vLine(x + 2, y + 3, y + h - 2, 15);
+	}
+
+	// The text is drawn centered. Based on experimentation, I think the
+	// width is always based on the outlined font, and the button shadow is
+	// not counted as part of the button width.
+	//
+	// This gives us pixel perfect rendering for the English verbs.
+
+	int stringWidth = 0;
+	for (int i = 0; text[i]; i++)
+		stringWidth += _fonts[2]->getCharWidth(text[i]);
+
+	int textX = (x + (_buttons[n].w - 1 - stringWidth) / 2) - 1;
+	int textY = y + 2;
+	int color = enabled ? 15 : 0;
+
+	if (pressed) {
+		textX++;
+		textY++;
+	}
+
+	for (int i = 0; text[i]; i++) {
+		if (enabled)
+			_fonts[2]->drawChar(_macScreen, text[i], textX, textY, 0);
+		_fonts[1]->drawChar(_macScreen, text[i], textX + 1, textY, color);
+		textX += _fonts[2]->getCharWidth(text[i]);
+	}
 }
 
 } // End of namespace Scumm
