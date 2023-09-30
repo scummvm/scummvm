@@ -33,6 +33,7 @@
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
 #include "engines/nancy/action/puzzle/mazechasepuzzle.h"
+#include "engines/nancy/action/puzzle/mouselightpuzzle.h"
 #include "engines/nancy/action/puzzle/orderingpuzzle.h"
 #include "engines/nancy/action/puzzle/overridelockpuzzle.h"
 #include "engines/nancy/action/puzzle/passwordpuzzle.h"
@@ -256,6 +257,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new MazeChasePuzzle();
 	case 216:
 		return new PeepholePuzzle();
+	case 217:
+		return new MouseLightPuzzle();
 	case 220:
 		return new TwoDialPuzzle();
 	default:
