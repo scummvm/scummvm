@@ -326,8 +326,8 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	// 'normal' of bot right line (-2, 1) of the bounding box
 	const int32 dot_bot_right = -point_bot_diff[0] - point_bot_diff[1] * 2;
 
-	const bool right_clear = _sxRight < si2._sxLeft;
-	const bool left_clear = _sxLeft > si2._sxRight;
+	const bool right_clear = _sxRight <= si2._sxLeft;
+	const bool left_clear = _sxLeft >= si2._sxRight;
 	const bool top_left_clear = dot_top_left >= 0;
 	const bool top_right_clear = dot_top_right >= 0;
 	const bool bot_left_clear = dot_bot_left >= 0;
