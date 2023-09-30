@@ -138,6 +138,7 @@ void Menu::refreshMenus() {
 }
 
 uint8 Menu::checkMenuClick(uint8 menuType) {
+	Common::StackLock lock(_menuMutex);
 	uint16 mouseEvent = _mouse->testEvent();
 	if (!mouseEvent)
 		return 0;
@@ -211,6 +212,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 }
 
 void Menu::buildSubjects() {
+	Common::StackLock lock(_menuMutex);
 	uint8 cnt;
 	for (cnt = 0; cnt < 16; cnt++)
 		if (_subjects[cnt]) {
@@ -229,6 +231,7 @@ void Menu::buildSubjects() {
 }
 
 void Menu::refresh(uint8 menuType) {
+	Common::StackLock lock(_menuMutex);
 	uint i;
 
 	if (menuType == MENU_TOP) {
@@ -285,6 +288,7 @@ void Menu::refresh(uint8 menuType) {
 }
 
 void Menu::buildMenu() {
+	Common::StackLock lock(_menuMutex);
 	uint32 *pockets = Logic::_scriptVars + POCKET_1;
 	for (uint8 cnt = 0; cnt < _inMenu; cnt++)
 		if (_objects[cnt]) {
@@ -316,6 +320,7 @@ void Menu::buildMenu() {
 }
 
 void Menu::showMenu(uint8 menuType) {
+	Common::StackLock lock(_menuMutex);
 	if (menuType == MENU_TOP) {
 		if (_objectBarStatus == MENU_OPEN) {
 			for (uint8 cnt = 0; cnt < 16; cnt++) {
@@ -341,6 +346,7 @@ void Menu::fnStartMenu() {
 }
 
 void Menu::fnEndMenu() {
+	Common::StackLock lock(_menuMutex);
 	if (_objectBarStatus != MENU_CLOSED)
 		_objectBarStatus = MENU_CLOSING;
 }
@@ -351,23 +357,31 @@ void Menu::fnChooser(Object *compact) {
 	buildSubjects();
 	compact->o_logic = LOGIC_choose;
 	_mouse->controlPanel(true); // so the mouse cursor will be shown.
+
+	Common::StackLock lock(_menuMutex);
 	_subjectBarStatus = MENU_OPENING;
 }
 
 void Menu::fnEndChooser() {
 	Logic::_scriptVars[OBJECT_HELD] = 0;
+
+	_menuMutex.lock();
 	_subjectBarStatus = MENU_CLOSING;
 	_objectBarStatus = MENU_CLOSING;
+	_menuMutex.unlock();
+
 	_mouse->controlPanel(false);
 	_mouse->setLuggage(0, 0);
 }
 
 void Menu::checkTopMenu() {
+	Common::StackLock lock(_menuMutex);
 	if (_objectBarStatus == MENU_OPEN)
 		checkMenuClick(MENU_TOP);
 }
 
 void Menu::setToTargetState() {
+	Common::StackLock lock(_menuMutex);
 	// This is an optimization for all the locks introduced
 	// with the fade palette changes: we disable the menu
 	// updates whenever the palette is fading, and we bring
@@ -386,6 +400,7 @@ void Menu::setToTargetState() {
 }
 
 int Menu::logicChooser(Object *compact) {
+	Common::StackLock lock(_menuMutex);
 	uint8 objSelected = 0;
 	if (_objectBarStatus == MENU_OPEN)
 		objSelected = checkMenuClick(MENU_TOP);
@@ -399,11 +414,13 @@ int Menu::logicChooser(Object *compact) {
 }
 
 void Menu::fnAddSubject(int32 sub) {
+	Common::StackLock lock(_menuMutex);
 	_subjectBar[Logic::_scriptVars[IN_SUBJECT]] = sub;
 	Logic::_scriptVars[IN_SUBJECT]++;
 }
 
 void Menu::cfnReleaseMenu() {
+	Common::StackLock lock(_menuMutex);
 	_objectBarStatus = MENU_CLOSING;
 }
 
