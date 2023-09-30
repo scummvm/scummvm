@@ -560,9 +560,6 @@ void MacIndy3Gui::drawInventoryWidget() {
 	_macScreen->vLine(554, 297, 364, 0);
 	_macScreen->vLine(569, 297, 364, 0);
 
-	_macScreen->hLine(555, 311, 568, 0);
-	_macScreen->hLine(555, 350, 568, 0);
-
 	drawInventoryScrollbar();
 
 	_macScreen->hLine(555, 297, 568, 15);
@@ -629,6 +626,9 @@ void MacIndy3Gui::drawInventoryArrowDown(bool highlighted) {
 }
 
 void MacIndy3Gui::drawInventoryScrollbar() {
+	_macScreen->hLine(555, 311, 568, 0);
+	_macScreen->hLine(555, 350, 568, 0);
+
 	_macScreen->hLine(555, 312, 568, 0);
 	_macScreen->vLine(555, 313, 349, 0);
 
