@@ -2949,44 +2949,7 @@ void ScummEngine_v5::o5_verbOps() {
 		case 5:		// SO_VERB_AT
 			vs->curRect.left = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
-			// Macintosh version of indy3ega used different interface, so adjust values.
-			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {
-#if 0
-				switch (verb) {
-				case 1:
-				case 2:
-				case 9:
-					vs->curRect.left += 16;
-					break;
-				case 10:
-				case 11:
-				case 12:
-					vs->curRect.left += 36;
-					break;
-				case 4:
-				case 5:
-				case 8:
-					vs->curRect.left += 60;
-					break;
-				case 13:
-				case 32:
-				case 33:
-				case 34:
-					vs->curRect.left += 90;
-					break;
-				case 107:
-					vs->curRect.left -= 54;
-					vs->curRect.top += 16;
-					break;
-				case 108:
-					vs->curRect.left -= 54;
-					vs->curRect.top += 8;
-					break;
-				default:
-					break;
-				}
-#endif
-			} else if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
+			if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 				if (_game.id == GID_ZAK && verb == 116)
 					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 					// if we trim to 200 pixels, we need to move the 'down arrow' (verb 116) to higher location
