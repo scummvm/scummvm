@@ -71,12 +71,12 @@ bool SortItem::below(const SortItem &si2) const {
 	if (si1._flat && si2._flat) {
 		if (si1._z != si2._z)
 			return si1._z < si2._z;
-	} else {
-		// Check against z top with a tolerance based on footpad calculations
+	} else if (si1._invitem == si2._invitem) {
+		// Check with a tolerance based on footpad calculations
 		// Lower item cannot be inventory
-		if (si1._zTop - 8 < si2._z && !si1._invitem)
+		if (si1._zTop - 8 < si2._z)
 			return true;
-		if (si1._z > si2._zTop - 8 && !si2._invitem)
+		if (si1._z > si2._zTop - 8)
 			return false;
 	}
 
@@ -146,37 +146,31 @@ bool SortItem::below(const SortItem &si2) const {
 	}
 
 	// Y-flat vs non-flat handling
-	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
-		if (yFlat1) {
-			if (si2._y - 32 > si2._yFar) {
-			int32 yCenter2 = (si2._yFar + si2._y) / 2;
-			return si1._y <= yCenter2;
-			}
-			return false;
-		} else {
-			if (si1._y - 32 > si1._yFar) {
-			int32 yCenter1 = (si1._yFar + si1._y) / 2;
-			return yCenter1 < si2._y;
-		}
+	if (yFlat1 != yFlat2) {
+		// Check with a precision loss based on footpad calculations
+		if (si1._y / 32 <= si2._yFar / 32)
 			return true;
-		}
+		if (si1._yFar / 32 >= si2._y / 32)
+			return false;
+
+		int32 yCenter1 = (si1._yFar / 32 + si1._y / 32) / 2;
+		int32 yCenter2 = (si2._yFar / 32 + si2._y / 32) / 2;
+		if (yCenter1 != yCenter2)
+			return yCenter1 < yCenter2;
 	}
 
 	// X-flat vs non-flat handling
-	if (xFlat1 != xFlat2 && si1._fixed == si2._fixed) {
-		if (xFlat1) {
-			if (si2._x - 32 > si2._xLeft) {
-			int32 xCenter2 = (si2._xLeft + si2._x) / 2;
-			return si1._x <= xCenter2;
-			}
-			return false;
-		} else {
-			if (si1._x - 32 > si1._xLeft) {
-			int32 xCenter1 = (si1._xLeft + si1._x) / 2;
-			return xCenter1 < si2._x;
-		}
+	if (xFlat1 != xFlat2) {
+		// Check with a precision loss based on footpad calculations
+		if (si1._x / 32 <= si2._xLeft / 32)
 			return true;
-		}
+		if (si1._xLeft / 32 >= si2._x / 32)
+			return false;
+
+		int32 xCenter1 = (si1._xLeft / 32 + si1._x / 32) / 2;
+		int32 xCenter2 = (si2._xLeft / 32 + si2._x / 32) / 2;
+		if (xCenter1 != xCenter2)
+			return xCenter1 < xCenter2;
 	}
 
 	// Check z-bottom with a tolerance
