@@ -381,7 +381,7 @@ void MacIndy3Gui::clear() {
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 289), 0);
 	fill(Common::Rect(0, 290, 640, 373));
 
-	byte corner[] = {
+	const byte corner[] = {
 		1, 1, 1, 1,
 		1, 1, 0, 0,
 		1, 0, 0, 0,
@@ -452,7 +452,8 @@ void MacIndy3Gui::drawButton(int n, char *text, bool enabled, bool pressed) {
 		_macScreen->vLine(x + w - 2, y + 1, y + h - 3, 0);
 
 		_macScreen->hLine(x + 2, y + h - 1, x + w - 1, 0);
-		_macScreen->vLine(x + w - 1, y + 2, y + h - 1, 0);
+		_macScreen->vLine(x + w - 1, y + 2, y + h - 2, 0);
+
 		_macScreen->hLine(x + 1, y + 1, x + w - 3, 15);
 		_macScreen->vLine(x + 1, y + 2, y + h - 3, 15);
 	} else {
@@ -501,6 +502,142 @@ void MacIndy3Gui::drawButton(int n, char *text, bool enabled, bool pressed) {
 		_fonts[1]->drawChar(_macScreen, text[i], textX + 1, textY, color);
 		textX += _fonts[2]->getCharWidth(text[i]);
 	}
+
+	drawInventoryWidget();
 }
+
+// Desired behavior:
+//
+// The drag handle of the scrollbar never changes size. It's only drawn when
+// there are enough inventory items to scroll.
+//
+// The size of the scroll handle is fixed, not scaled to indicate the number of
+// objects in your inventory.
+//
+// The exact positions of the scroll handle are not yet known. Probably just a
+// simple calculation.
+//
+// Clicking on an arrow scrolls up or down by one row. Clicking and holding
+// scrolls the inventory. The time between scrolling is constant, i.e. the
+// first delay is not different. The delay seems to depend on the speed of the
+// Mac, so pick something that feels right.
+//
+// Clicking above or below the handle scrolls up or down by - probably - one
+// page. I've never seen the inventory full enough for this to mean anything
+// else than scrolling to the top or bottom.
+//
+// Dragging the handle is not possible. Clicking on the handle is probably
+// indistinguishable from clicking above or below.
+
+void MacIndy3Gui::drawInventoryWidget() {
+	fill(Common::Rect(417, 292, 574, 370));
+
+	// Main outline and shadow
+	_macScreen->hLine(418, 292, 571, 0);
+	_macScreen->hLine(418, 368, 571, 0);
+	_macScreen->vLine(417, 293, 367, 0);
+	_macScreen->vLine(572, 293, 367, 0);
+
+	_macScreen->hLine(419, 369, 573, 0);
+	_macScreen->vLine(573, 294, 368, 0);
+
+	_macScreen->hLine(418, 293, 571, 15);
+	_macScreen->vLine(418, 294, 367, 15);
+
+	// Inner frame
+	_macScreen->hLine(421, 296, 551, 0);
+	_macScreen->hLine(421, 297, 551, 0);
+	_macScreen->hLine(421, 365, 551, 0);
+	_macScreen->vLine(421, 298, 364, 0);
+	_macScreen->vLine(422, 298, 364, 0);
+	_macScreen->vLine(551, 298, 364, 0);
+
+	_macScreen->fillRect(Common::Rect(423, 298, 551, 365), 15);
+
+	// Scrollbar, outer frame
+	_macScreen->hLine(554, 296, 569, 0);
+	_macScreen->hLine(554, 365, 569, 0);
+	_macScreen->vLine(554, 297, 364, 0);
+	_macScreen->vLine(569, 297, 364, 0);
+
+	_macScreen->hLine(555, 311, 568, 0);
+	_macScreen->hLine(555, 350, 568, 0);
+
+	drawInventoryScrollbar();
+
+	_macScreen->hLine(555, 297, 568, 15);
+	_macScreen->vLine(555, 298, 310, 15);
+	_macScreen->hLine(555, 351, 568, 15);
+	_macScreen->vLine(555, 352, 364, 15);
+
+	drawInventoryArrowUp(false);
+	drawInventoryArrowDown(false);
+}
+
+void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped) {
+	const byte arrow[110] = {
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0,
+		0, 0, 0, 1, 2, 2, 2, 1, 0, 0, 0,
+		0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0,
+		0, 1, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+		1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1,
+		0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0,
+		0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0,
+		0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0,
+		0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0
+	};
+
+	byte palette[] = { 0, 15 };
+
+	if (highlighted)
+		palette[1] = 0;
+
+	int y0, y1, yd;
+
+	if (flipped) {
+		y0 = 9;
+		y1 = 0;
+		yd = -1;
+	} else {
+		y0 = 0;
+		y1 = 9;
+		yd = 1;
+	}
+
+	byte *ptr = (byte *)_macScreen->getBasePtr(arrowX, arrowY);
+	int pitch = _macScreen->pitch;
+
+	int y = y0 - yd;
+	do {
+		y += yd;
+		for (int x = 0; x < 11; x++) {
+			byte color = arrow[11 * y + x];
+			if (color)
+				ptr[x] = palette[color - 1];
+		}
+		ptr += pitch;
+	} while (y != y1);
+}
+
+void MacIndy3Gui::drawInventoryArrowUp(bool highlighted) {
+	drawInventoryArrow(557, 299, highlighted, false);
+}
+
+void MacIndy3Gui::drawInventoryArrowDown(bool highlighted) {
+	drawInventoryArrow(557, 354, highlighted, true);
+}
+
+void MacIndy3Gui::drawInventoryScrollbar() {
+	_macScreen->hLine(555, 312, 568, 0);
+	_macScreen->vLine(555, 313, 349, 0);
+
+	fill(Common::Rect(556, 313, 569, 350));
+}
+
+#if 0
+void MacIndy3Gui::drawInventoryText(int slot, char *text) {
+}
+#endif
 
 } // End of namespace Scumm
