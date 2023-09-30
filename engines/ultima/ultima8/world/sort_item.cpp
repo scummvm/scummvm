@@ -67,27 +67,44 @@ bool SortItem::below(const SortItem &si2) const {
 	if (si1._sprite != si2._sprite)
 		return si1._sprite < si2._sprite;
 
-	// Clearly in Z and one must not be flat - lower cannot be inventory
-	if (si1._zTop <= si2._z && !(si1._flat && si2._flat) && !si1._invitem)
-		return true;
-	if (si1._z >= si2._zTop && !(si1._flat && si2._flat) && !si2._invitem)
-		return false;
+	// Check clearly in Z
+	if (si1._flat && si2._flat) {
+		if (si1._z != si2._z)
+			return si1._z < si2._z;
+	} else {
+		// Check against z top with a tolerance based on footpad calculations
+		// Lower item cannot be inventory
+		if (si1._zTop - 8 < si2._z && !si1._invitem)
+			return true;
+		if (si1._z > si2._zTop - 8 && !si2._invitem)
+			return false;
+	}
 
-	// Clearly in Y and one must not be flat
+	// Check clearly in Y
 	bool yFlat1 = si1._yFar == si1._y;
 	bool yFlat2 = si2._yFar == si2._y;
-	if (si1._y <= si2._yFar && !(yFlat1 && yFlat2))
-		return true;
-	if (si1._yFar >= si2._y && !(yFlat1 && yFlat2))
-		return false;
+	if (yFlat1 && yFlat2) {
+		if (si1._y != si2._y)
+			return si1._y < si2._y;
+	} else {
+		if (si1._y <= si2._yFar)
+			return true;
+		if (si1._yFar >= si2._y)
+			return false;
+	}
 
-	// Clearly in X and one must not be flat
+	// Check clearly in X
 	bool xFlat1 = si1._xLeft == si1._x;
 	bool xFlat2 = si2._xLeft == si2._x;
-	if (si1._x <= si2._xLeft && !(xFlat1 && xFlat2))
-		return true;
-	if (si1._xLeft >= si2._x && !(xFlat1 && xFlat2))
-		return false;
+	if (xFlat1 && xFlat2) {
+		if (si1._x != si2._x)
+			return si1._x < si2._x;
+	} else {
+		if (si1._x <= si2._xLeft)
+			return true;
+		if (si1._xLeft >= si2._x)
+			return false;
+	}
 
 	// Specialist z flat handling
 	if (si1._flat || si2._flat) {
@@ -132,15 +149,15 @@ bool SortItem::below(const SortItem &si2) const {
 	if (yFlat1 != yFlat2 && si1._fixed == si2._fixed) {
 		if (yFlat1) {
 			if (si2._y - 32 > si2._yFar) {
-				int32 yCenter2 = (si2._yFar + si2._y) / 2;
-				return si1._y <= yCenter2;
+			int32 yCenter2 = (si2._yFar + si2._y) / 2;
+			return si1._y <= yCenter2;
 			}
 			return false;
 		} else {
 			if (si1._y - 32 > si1._yFar) {
-				int32 yCenter1 = (si1._yFar + si1._y) / 2;
-				return yCenter1 < si2._y;
-			}
+			int32 yCenter1 = (si1._yFar + si1._y) / 2;
+			return yCenter1 < si2._y;
+		}
 			return true;
 		}
 	}
@@ -149,15 +166,15 @@ bool SortItem::below(const SortItem &si2) const {
 	if (xFlat1 != xFlat2 && si1._fixed == si2._fixed) {
 		if (xFlat1) {
 			if (si2._x - 32 > si2._xLeft) {
-				int32 xCenter2 = (si2._xLeft + si2._x) / 2;
-				return si1._x <= xCenter2;
+			int32 xCenter2 = (si2._xLeft + si2._x) / 2;
+			return si1._x <= xCenter2;
 			}
 			return false;
 		} else {
 			if (si1._x - 32 > si1._xLeft) {
-				int32 xCenter1 = (si1._xLeft + si1._x) / 2;
-				return xCenter1 < si2._x;
-			}
+			int32 xCenter1 = (si1._xLeft + si1._x) / 2;
+			return xCenter1 < si2._x;
+		}
 			return true;
 		}
 	}

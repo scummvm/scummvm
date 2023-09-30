@@ -94,17 +94,15 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::SortItem si2;
 
 		Ultima::Ultima8::Box b1(59454, 49246, 80, 32, 160, 16);
-		Ultima::Ultima8::Box b2(59440, 49144, 63, 32, 32, 63);
 		si1.setBoxBounds(b1, 0, 0);
+
+		Ultima::Ultima8::Box b2(59440, 49144, 63, 32, 32, 63);
 		si2.setBoxBounds(b2, 0, 0);
+		si2._sprite = true;
 
 		TS_ASSERT(si1.overlap(si2));
 		TS_ASSERT(si2.overlap(si1));
 
-		TS_ASSERT(!si1.below(si2));
-		TS_ASSERT(si2.below(si1));
-
-		si2._sprite = true;
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
 	}
@@ -310,6 +308,34 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		Ultima::Ultima8::Box b2(13244, 9876, 48, 0, 96, 40);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._fixed = true;
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Overlapping x-flat vs non-flat floor where z order not clear
+	 * Test case for rendering issue at MainActor::teleport 40 12311 9415 48
+	 * Tapestry should draw after floor
+	 */
+	void test_x_flat_z_tolerance_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(12543, 9727, 40, 256, 256, 8);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._occl = true;
+		si1._roof = true;
+		si1._land = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(12287, 9791, 46, 0, 96, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
