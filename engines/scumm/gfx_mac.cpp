@@ -380,6 +380,7 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 void MacIndy3Gui::clear() {
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 289), 0);
 	fill(Common::Rect(0, 290, 640, 373));
+	_macScreen->fillRect(Common::Rect(0, 373, 640, 400), 0);
 
 	const byte corner[] = {
 		1, 1, 1, 1,
