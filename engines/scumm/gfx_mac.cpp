@@ -400,6 +400,7 @@ MacIndy3Gui::~MacIndy3Gui() {
 void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 	Widget *w = &_widgets[n];
 
+	w->slot = -1;
 	w->x = x;
 	w->y = y;
 	w->width = width;
@@ -407,7 +408,8 @@ void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 	w->timer = 0;
 	w->visible = false;
 	w->enabled = false;
-	w->dirty = false;
+	w->redraw = false;
+	w->kill = false;
 }
 
 bool MacIndy3Gui::isActive() {
@@ -425,6 +427,17 @@ void MacIndy3Gui::update() {
 	if (!_visible)
 		show();
 
+	// Decrease all timers
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
+		Widget *w = &_widgets[i];
+		if (w->timer > 0) {
+			w->timer--;
+			if (w->timer == 0 && w->visible)
+				w->redraw = true;
+		}
+		w->kill = true;
+	}
+
 	// REMEMBER: Once we've mapped all the verb ids to their buttons,
 	// we may be able to revoke the friendship with ScummEngine, and
 	// optimize this loop quite a bit.
@@ -433,45 +446,63 @@ void MacIndy3Gui::update() {
 		VerbSlot *vs = &_vm->_verbs[i];
 
 		if (!vs->saveid && vs->curmode && vs->verbid) {
-			// Verb is there
+			int id = -1;
 
-			const byte *ptr = _vm->getResourceAddress(rtVerb, i);
+			if (vs->verbid >= 1 && vs->verbid <= 13) {
+				id = i;
+			} else if (vs->verbid == 32) {
+				id = 14;
+			} else if (vs->verbid == 100) {
+				id = 0;
+			} else if (vs->verbid >= 120 && vs->verbid <= 123) {
+				id = vs->verbid - 105;
+			} else {
+//				debug("Unknown verb: %d", vs->verbid);
+			}
+
+			if (id != -1) {
+				Widget *w = &_widgets[id];
+				bool enabled = (vs->curmode == 1);
+
+				w->slot = i;
+
+				if (!w->visible || w->redraw || w->enabled != enabled)
+					w->redraw = true;
+				w->kill = false;
+			}
+		}
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
+		Widget *w = &_widgets[i];
+		if (w->kill && w->visible) {
+			fill(Common::Rect(w->x, w->y, w->x + w->width, w->y + w->height));
+			w->slot = -1;
+			w->timer = 0;
+			w->enabled = false;
+			w->visible = false;
+			w->redraw = false;
+		}
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
+		Widget *w = &_widgets[i];
+
+		if (w->slot == -1)
+			continue;
+
+		if (w->redraw) {
+			const byte *ptr = _vm->getResourceAddress(rtVerb, w->slot);
 			if (ptr) {
+				VerbSlot *vs = &_vm->_verbs[w->slot];
 				byte buf[270];
 
 				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-				int id = -1;
-
-				if (vs->verbid >= 1 && vs->verbid <= 13) {
-					id = i;
-				} else if (vs->verbid == 32) {
-					id = 14;
-				} else if (vs->verbid == 100) {
-					id = 0;
-				} else if (vs->verbid >= 120 && vs->verbid <= 123) {
-					id = vs->verbid - 105;
-				} else {
-//					debug("Unknown verb: [%d] %s", vs->verbid, buf);
-				}
-
-				if (id != -1) {
-					Widget *w = &_widgets[id];
-					bool enabled = (vs->curmode == 1);
-
-					if (w->timer) {
-						w->timer--;
-						if (!w->timer)
-							w->dirty = true;
-					}
-
-					if (!w->visible || w->dirty || w->enabled != enabled) {
-						debug("Drawing button: %s", buf);
-						drawButton(id, buf, vs->curmode != 2, w->timer);
-						w->visible = true;
-						w->enabled = enabled;
-						w->dirty = false;
-					}
-				}
+				debug("Drawing button: %s", buf);
+				drawButton(i, buf, vs->curmode != 2, w->timer);
+				w->visible = true;
+				w->enabled = (vs->curmode == 1);
+				w->redraw = false;
 			}
 		}
 	}
@@ -489,7 +520,7 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 
 		if (w->visible && w->enabled) {
 			if (x >= w->x && x < w->x + w->width && y >= w->y && y < w->y + w->height) {
-				w->dirty = true;
+				w->redraw = true;
 				w->timer = 15;
 			}
 		}
@@ -550,9 +581,10 @@ void MacIndy3Gui::clear() {
 }
 
 void MacIndy3Gui::fill(Common::Rect r) {
+	int pitch = _macScreen->pitch;
+
 	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
 		byte *row = (byte *)_macScreen->getBasePtr(r.left, r.top);
-		int pitch = _macScreen->pitch;
 
 		for (int y = r.top; y < r.bottom; y++) {
 			byte *ptr = row;
@@ -563,6 +595,8 @@ void MacIndy3Gui::fill(Common::Rect r) {
 		}
 	} else
 		_macScreen->fillRect(r, 7);
+
+	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {

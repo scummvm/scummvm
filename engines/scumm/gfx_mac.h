@@ -51,6 +51,7 @@ private:
 	bool _visible = false;
 
 	struct Widget {
+		int slot;
 		int x;
 		int y;
 		int width;
@@ -58,7 +59,8 @@ private:
 		int timer;
 		bool visible;
 		bool enabled;
-		bool dirty;
+		bool redraw;
+		bool kill;
 	};
 
 	Widget _widgets[21];
