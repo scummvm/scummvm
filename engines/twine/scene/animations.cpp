@@ -229,7 +229,7 @@ void Animations::copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyDat
 	}
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setInterDepObjet(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 	const int32 keyFrameLength = keyFrame->length;
 
@@ -250,7 +250,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 		animTimerDataPtr->time = _engine->timerRef;
-		return true;
+		return true; // finished animation
 	}
 
 	_animStepBeta = (_animStepBeta * deltaTime) / keyFrameLength;
@@ -563,7 +563,7 @@ void Animations::doAnim(int32 actorIdx) {
 
 			bool keyFramePassed = false;
 			if (_engine->_resources->_bodyData[actor->_body].isAnimated()) {
-				keyFramePassed = verifyAnimAtKeyframe(actor->_frame, animData, &actor->_animTimerData);
+				keyFramePassed = setInterDepObjet(actor->_frame, animData, &actor->_animTimerData);
 			}
 
 			if (_animMasterRot) {
