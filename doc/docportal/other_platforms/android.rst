@@ -68,35 +68,32 @@ Adding games
 
     Root folder with <Add a new folder> option
 
-3. Select **<Add a new folder>**, browse your device, and select the parent folder for your games subfolders. For example, **SD Card > ScummVMgames**. Select **Use this folder**. 
+3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder containing all your game folders. For example, **SD Card > ScummVMgames** 
 
 .. figure:: ../images/android/fs-root.png
-    :width: 300 px
 
     Android file browser root
 
 .. figure:: ../images/android/fs-folder.png
-    :width: 300 px
 
     Android file browser selectable folder with **Use this folder** button
-
-4. Select **ALLOW** to grant ScummVM access to the content of the folder.  
+4. Select **Use this folder**.
+5. Select **ALLOW** to give ScummVM permission to access the folder. 
 
 .. figure:: ../images/android/fs-permission.png
-    :width: 300 px
 
     Android file browser request to grant ScummVM directory access permission
 
-5. In the ScummVM file browser, double-tap to on the added folder to browse through the subfolders. Add a game by selecting the subfolder containing the game files. 
+6. In the ScummVM file browser, double-tap to browse through your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**.
 
-Step 2, 3 and 4 are done only once. To add more games, repeat Steps 1 and 5. 
+To add more games, repeat Steps 1 and 6. 
 
 .. _addSAFpath:
 
     .. note::
         Starting with version 2.7.0 of ScummVM for Android, significant changes were made to the file access system to allow support for modern versions of the Android Operating System.
 
-        If existing added games or custom paths no longer work, go to **Game Options > Paths**, select the path to update, then follow steps 2 through 5 above.
+        If existing added games or custom paths no longer work, go to **Game Options > Paths**, select the path to update, then follow steps 2 through 6 above.
 
 Removing permissions
 ************************
