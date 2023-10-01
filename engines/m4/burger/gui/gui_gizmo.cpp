@@ -26,6 +26,7 @@
 #include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/gui/gui_event.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/platform/keys.h"
 
@@ -49,6 +50,7 @@ void gizmo_anim(RGB8 *pal) {
 		_GIZMO(gui) = gui_create_gizmo(_GIZMO(sprites)[0], 0, 0, 505);
 
 		if (_GIZMO(gui)) {
+
 			// TODO
 		}
 	}
@@ -211,9 +213,10 @@ static void gui_gizmo_show(ScreenContext *s, RectList *r, Buffer *dest, int32 de
 }
 
 static bool gui_gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
+	/*
 	ScreenContext *srcBuffer = (ScreenContext *)s;
 	*z = false;
-	/*
+	
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(s, &status);
 	if (!ctx || status != 1)
@@ -228,6 +231,88 @@ static bool gui_gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 
 	return false;
 }
 
+static void gizmo_item_fn1(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2) {
+	// TODO
+}
+
+static void gizmo_item_fn2(GizmoItem *item) {
+	// TODO
+}
+
+static GrBuff *gizmo_create_buffer(Gizmo *gizmo, int sx, int sy, int w, int h) {
+	if (!gizmo || !gizmo->_grBuff)
+		return nullptr;
+
+	GrBuff *grBuff = new GrBuff(w, h);
+	Buffer *src = gizmo->_grBuff->get_buffer();
+	Buffer *dest = grBuff->get_buffer();
+	assert(src && dest);
+
+	gr_buffer_rect_copy_2(src, dest, sx, sy, 0, 0, w, h);
+	gizmo->_grBuff->release();
+	grBuff->release();
+
+	return grBuff;
+}
+
+static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
+		int boundsX, int boundsY, int boundsW, int boundsH,
+		int rect1X, int rect1Y, int rect1W, int rect1H, int arg5,
+		int arg6, int arg7, bool hasBuffer, int arg9, int arg10) {
+	if (!gizmo)
+		return nullptr;
+
+	// Create new item
+	GizmoItem *item = (GizmoItem *)mem_alloc(sizeof(GizmoItem), "*gui gizmo item");
+	assert(item);
+
+	// Put the new item at the head of the list
+	item->_next = gizmo->_items;
+	item->_prior = nullptr;
+	item->_gizmo = gizmo;
+
+	if (gizmo->_items)
+		gizmo->_items->_prior = item;
+	gizmo->_items = item;
+
+	// Set fields
+	item->_id = id;
+	item->_bounds = Common::Rect(boundsX, boundsY, boundsX + boundsW - 1,
+		boundsY + boundsH - 1);
+	item->_rect1 = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y - rect1H - 1);
+	item->_field39 = arg5;
+
+	item->_hasBuffer = hasBuffer;
+	if (hasBuffer) {
+		item->_grBuff = gizmo_create_buffer(gizmo, rect1X, rect1Y, rect1W, rect1H);
+	} else {
+		item->_grBuff = nullptr;
+	}
+
+	GizmoButton *btn = (GizmoButton *)mem_alloc(sizeof(GizmoButton), "*gizmo button");
+	assert(btn);
+
+	btn->_field4 = arg6;
+	btn->_field8 = arg9;
+	btn->_field10 = id - 1000;
+	item->_button = btn;
+
+	item->_fn1 = gizmo_item_fn1;
+	item->_fn2 = gizmo_item_fn2;
+	item->_field45 = arg10;
+	(*item->_fn1)(item, gizmo, rect1X, rect1Y, 0, 0);
+
+	int32 status = 0;
+	ScreenContext *ctx = vmng_screen_find(gizmo, &status);
+
+	if (ctx && status == 1) {
+		RestoreScreens(ctx->x1 + item->_bounds.left, ctx->y1 + item->_bounds.top,
+			ctx->x1 + item->_bounds.right, ctx->y1 + item->_bounds.bottom);
+	}
+
+	return item;
+}
+
 static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags) {
 	if (!sprite)
 		return nullptr;
@@ -238,6 +323,8 @@ static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint sc
 
 	GrBuff *grBuff = new GrBuff(sprite->w, sprite->h);
 	gui->_grBuff = grBuff;
+	//gui->_items = nullptr;
+
 	gui->_eventHandler = gui_gizmo_eventHandler;
 
 	Buffer *dest = gui->_grBuff->get_buffer();

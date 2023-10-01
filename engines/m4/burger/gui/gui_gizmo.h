@@ -23,6 +23,7 @@
 #ifndef M4_BURGER_GUI_GIZMO_H
 #define M4_BURGER_GUI_GIZMO_H
 
+#include "common/rect.h"
 #include "m4/m4_types.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/graphics/gr_buff.h"
@@ -49,20 +50,42 @@ struct Gizmo_Globals {
 	M4sprite **_sprites = nullptr;
 };
 
+struct GizmoItem;
+
 struct Gizmo {
 	GrBuff *_grBuff = nullptr;
-	int _field4 = 0;
+	GizmoItem *_items = nullptr;
 	int _field8 = 0;
 	int _fieldC = 0;
 	EventHandler _eventHandler = nullptr;
 };
 
-struct GizmoItem {
-	// TODO
+struct GizmoButton {
+	int _field0 = 0;
+	int _field4 = 0;
+	int _field8 = 0;
+	int _fieldC = 0;
+	int _field10 = 0;
 };
 
-struct GizmoButton {
-	// TODO
+typedef void (*GizmoItemFn1)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
+typedef void (*GizmoItemFn2)(GizmoItem *item);
+
+struct GizmoItem {
+	GizmoItem *_next = nullptr;
+	GizmoItem *_prior = nullptr;
+	Gizmo *_gizmo = nullptr;
+	GrBuff *_grBuff = nullptr;
+	GizmoButton *_button = nullptr;
+
+	int _id = 0;
+	Common::Rect _bounds;
+	Common::Rect _rect1;
+	bool _hasBuffer = false;
+	int _field39 = 0;
+	GizmoItemFn1 _fn1 = nullptr;
+	GizmoItemFn2 _fn2 = nullptr;
+	int _field45 = 0;
 };
 
 extern void gizmo_anim(RGB8 *pal);
