@@ -52,6 +52,8 @@ struct Gizmo_Globals {
 	int _spriteCount = 0;
 	M4sprite **_sprites = nullptr;
 	bool _roomNums[15];
+
+	~Gizmo_Globals();
 };
 
 struct Gizmo {

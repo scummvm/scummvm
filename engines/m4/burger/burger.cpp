@@ -258,7 +258,6 @@ BurgerEngine::BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 }
 
 BurgerEngine::~BurgerEngine() {
-	GUI::gizmo_shutdown();
 }
 
 M4::Vars *BurgerEngine::createVars() {
