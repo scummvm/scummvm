@@ -235,7 +235,7 @@ void ObjectMan::mainLoopPatch() {
 	// This patch is available in every executable after the
 	// original UK one. Its purpose is to turn off scripts which
 	// were causing issues by continuing running past their scope.
-	// The patch, as descripted within the the original source
+	// The patch, as descripted within the original source
 	// code, checks if the game is past the Syria section,
 	// and if so it checks if the Market Stall section is still
 	// alive, and if so it closes both the section (45) and
