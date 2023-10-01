@@ -180,13 +180,13 @@ bool OSystem_iOS7::handleEvent_touchFirstDown(Common::Event &event, int x, int y
 	_lastPadX = x;
 	_lastPadY = y;
 
-	if (!_touchpadModeEnabled) {
+	if (_currentTouchMode == kTouchModeDirect) {
 		Common::Point mouse(x, y);
 		dynamic_cast<iOSCommonGraphics *>(_graphicsManager)->notifyMousePosition(mouse);
 	}
 
 	if (_mouseClickAndDragEnabled) {
-		if (_touchpadModeEnabled) {
+		if (_currentTouchMode == kTouchModeTouchpad) {
 			_queuedInputEvent.type = Common::EVENT_LBUTTONDOWN;
 			_queuedEventTime = getMillis() + 250;
 			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
@@ -209,7 +209,7 @@ bool OSystem_iOS7::handleEvent_touchFirstUp(Common::Event &event, int x, int y) 
 		if (!handleEvent_touchSecondUp(event, x, y))
 			return false;
 	} else if (_mouseClickAndDragEnabled) {
-		if (_touchpadModeEnabled && _queuedInputEvent.type == Common::EVENT_LBUTTONDOWN) {
+		if (_currentTouchMode == kTouchModeTouchpad && _queuedInputEvent.type == Common::EVENT_LBUTTONDOWN) {
 			// This has not been sent yet, send it right away
 			event = _queuedInputEvent;
 			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
@@ -280,7 +280,7 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 	_lastPadX = x;
 	_lastPadY = y;
 
-	if (_touchpadModeEnabled) {
+	if (_currentTouchMode == kTouchModeTouchpad) {
 		if (_mouseClickAndDragEnabled && _queuedInputEvent.type == Common::EVENT_LBUTTONDOWN) {
 			// Cancel the button down event since this was a pure mouse move
 			_queuedInputEvent.type = Common::EVENT_INVALID;
@@ -439,11 +439,14 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 
 		case kUIViewSwipeRight: {
 			// Swipe right
-			_touchpadModeEnabled = !_touchpadModeEnabled;
-			ConfMan.setBool("touchpad_mode", _touchpadModeEnabled);
-			ConfMan.flushToDisk();
+			if (_currentTouchMode == kTouchModeDirect) {
+				_currentTouchMode = kTouchModeTouchpad;
+			} else {
+				_currentTouchMode = kTouchModeDirect;
+			}
+
 			Common::U32String dialogMsg;
-			if (_touchpadModeEnabled)
+			if (_currentTouchMode == kTouchModeTouchpad)
 				dialogMsg = _("Touchpad mode enabled.");
 			else
 				dialogMsg = _("Touchpad mode disabled.");

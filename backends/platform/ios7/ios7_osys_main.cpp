@@ -93,7 +93,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_screenOrientation(kScreenOrientationAuto),
 	_timeSuspended(0), _runningTasks(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
-	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
+	_currentTouchMode = kTouchModeTouchpad;
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 	_chrootBasePath = iOS7_getDocumentsDir();
@@ -110,10 +110,6 @@ OSystem_iOS7::~OSystem_iOS7() {
 
 	delete _mixer;
 	delete _graphicsManager;
-}
-
-bool OSystem_iOS7::touchpadModeEnabled() const {
-	return _touchpadModeEnabled;
 }
 
 #if defined(USE_OPENGL) && defined(USE_GLAD)
@@ -429,13 +425,16 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	}
 }
 
-bool iOS7_touchpadModeEnabled() {
-	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
-	return sys && sys->touchpadModeEnabled();
-}
-
 void iOS7_buildSharedOSystemInstance() {
 	OSystem_iOS7::sharedInstance();
+}
+
+TouchMode iOS7_getCurrentTouchMode() {
+	OSystem_iOS7 *sys = dynamic_cast<OSystem_iOS7 *>(g_system);
+	if (!sys) {
+		abort();
+	}
+	return sys->getCurrentTouchMode();
 }
 
 void iOS7_main(int argc, char **argv) {

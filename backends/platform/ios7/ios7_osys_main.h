@@ -68,7 +68,7 @@ protected:
 	Common::Event _queuedInputEvent;
 	bool _secondaryTapped;
 	bool _mouseClickAndDragEnabled;
-	bool _touchpadModeEnabled;
+	TouchMode _currentTouchMode;
 	int _lastPadX;
 	int _lastPadY;
 
@@ -101,7 +101,8 @@ public:
 
 	bool setGraphicsMode(int mode, uint flags) override;
 
-	bool touchpadModeEnabled() const;
+	TouchMode getCurrentTouchMode() const { return _currentTouchMode; };
+	void setCurrentTouchMode(TouchMode mode) { _currentTouchMode = mode; };
 
 #if TARGET_OS_IOS
 	void applyOrientationSettings();
