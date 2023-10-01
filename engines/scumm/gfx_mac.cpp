@@ -438,6 +438,8 @@ void MacIndy3Gui::update() {
 		w->kill = true;
 	}
 
+	bool keepGuiAlive = false;
+
 	// REMEMBER: Once we've mapped all the verb ids to their buttons,
 	// we may be able to revoke the friendship with ScummEngine, and
 	// optimize this loop quite a bit.
@@ -469,6 +471,7 @@ void MacIndy3Gui::update() {
 				if (!w->visible || w->redraw || w->enabled != enabled)
 					w->redraw = true;
 				w->kill = false;
+				keepGuiAlive = true;
 			}
 		}
 	}
@@ -506,6 +509,9 @@ void MacIndy3Gui::update() {
 			}
 		}
 	}
+
+	if (!keepGuiAlive)
+		hide();
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
@@ -528,7 +534,6 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 }
 
 void MacIndy3Gui::show() {
-	debug("SHOW");
 	if (_visible)
 		return;
 
@@ -537,7 +542,6 @@ void MacIndy3Gui::show() {
 }
 
 void MacIndy3Gui::hide() {
-	debug("HIDE");
 	if (!_visible)
 		return;
 
