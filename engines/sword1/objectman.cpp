@@ -231,6 +231,28 @@ void ObjectMan::loadLiveList(uint16 *src) {
 	}
 }
 
+void ObjectMan::mainLoopPatch() {
+	// This patch is available in every executable after the
+	// original UK one. Its purpose is to turn off scripts which
+	// were causing issues by continuing running past their scope.
+	// The patch, as descripted within the the original source
+	// code, checks if the game is past the Syria section,
+	// and if so it checks if the Market Stall section is still
+	// alive, and if so it closes both the section (45) and
+	// the Mega object for Duane (134), effectively terminating
+	// their scripts.
+
+	if (_liveList[45] > 0) {
+		_liveList[45] = 0; // Turn off the Syria Market Stall
+		_resMan->resClose(_objectList[45]);
+
+		if (_liveList[134] > 0) {
+			_liveList[134] = 0; // Turn off Duane
+			_resMan->resClose(_objectList[134]);
+		}
+	}
+}
+
 void ObjectMan::saveLiveList(uint16 *dest) {
 	memcpy(dest, _liveList, TOTAL_SECTIONS * sizeof(uint16));
 }

@@ -1018,7 +1018,9 @@ uint8 SwordEngine::mainLoop() {
 		if (shouldQuit())
 			break;
 
-		// do we need the section45-hack from sword.c here?
+		if (Logic::_scriptVars[NEW_SCREEN] > 50)
+			_objectMan->mainLoopPatch();
+
 		checkCd();
 
 		_screen->newScreen(Logic::_scriptVars[NEW_SCREEN]);

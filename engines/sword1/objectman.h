@@ -51,6 +51,9 @@ public:
 
 	void saveLiveList(uint16 *dest); // for loading/saving
 	void loadLiveList(uint16 *src);
+
+	void mainLoopPatch();
+
 private:
 	char *lockText(uint32 textId, uint8 language);
 	void unlockText(uint32 textId, uint8 language);
