@@ -325,7 +325,6 @@ const char *Section5::_bgDigiName;
 Section5::Section5() : Rooms::Section() {
 	_bork = nullptr;
 	_digiName = nullptr;
-	Common::fill(_GIZMO(roomNums), _GIZMO(roomNums) + 15, false);
 
 	add(501, &_room501);
 	add(502, &_room502);
