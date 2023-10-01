@@ -940,6 +940,7 @@ void Room502::setup2() {
 		kernel_trigger_dispatch_now(18);
 	} else {
 		loadSeries3();
+		_borkTable = BORK_TABLE;
 		_val4 = _G(game).previous_room == 505 ? 33 : 27;
 		kernel_trigger_dispatch_now(13);
 	}
