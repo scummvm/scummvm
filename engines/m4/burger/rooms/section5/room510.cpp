@@ -262,7 +262,8 @@ void Room510::setButtonState(int index, GUI::ControlStatus state) {
 }
 
 void Room510::buttonAction(int index, int firstFrame, int lastFrame) {
-	digi_play(Common::String::format("510b00%d%c", index, 'a' + imath_ranged_rand(0, 2)).c_str(), 2);
+	int max = (index == 4) ? 1 : 2;
+	digi_play(Common::String::format("510b00%d%c", index, 'a' + imath_ranged_rand(0, max)).c_str(), 2);
 	series_play("510waves", 0, 0, 2, 6, 2, 100, 0, 0, firstFrame, lastFrame);
 }
 
