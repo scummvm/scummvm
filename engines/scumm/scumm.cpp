@@ -2463,6 +2463,10 @@ void ScummEngine::waitForTimer(int quarterFrames) {
 		uint32 screenUpdateTimerStart = _system->getMillis();
 		towns_updateGfx();
 #endif
+
+		if (_macIndy3Gui)
+			_macIndy3Gui->update();
+
 		_system->updateScreen();
 		cur = _system->getMillis();
 

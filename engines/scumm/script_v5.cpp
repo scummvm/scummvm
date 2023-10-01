@@ -3026,6 +3026,7 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 		case 20:	// SO_VERB_NAME_STR
 			ptr = getResourceAddress(rtString, getVarOrDirectWord(PARAM_1));
+
 			if (!ptr)
 				_res->nukeResource(rtVerb, slot);
 			else {

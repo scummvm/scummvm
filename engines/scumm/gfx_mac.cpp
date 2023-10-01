@@ -54,8 +54,9 @@ void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
 }
 
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
-	// The verb screen is completely replaced with a custom GUI
-	if (vs->number == kVerbVirtScreen && VAR(VAR_VERB_SCRIPT) == 4)
+	// The verb screen is completely replaced with a custom GUI. All
+	// other drawing to that area is suspended.
+	if (vs->number == kVerbVirtScreen && _macIndy3Gui->isActive())
 		return;
 
 	const byte *pixels = vs->getPixels(x, top);
@@ -370,11 +371,46 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 MacIndy3Gui::~MacIndy3Gui() {
 }
 
+bool MacIndy3Gui::isActive() {
+	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
+	return verbScript == 4 || verbScript == 18;
+}
+
+void MacIndy3Gui::update() {
+	if (isActive()) {
+		if (!_visible)
+			show();
+	} else {
+		if (_visible)
+			hide();
+	}
+}
+
 void MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (event.type != Common::EVENT_LBUTTONDOWN)
 		return;
 
 	debug("Handle Indy 3 click at %d, %d", event.mouse.x, event.mouse.y);
+}
+
+void MacIndy3Gui::show() {
+	debug("SHOW");
+	if (_visible)
+		return;
+
+	clear();
+	_visible = true;
+}
+
+void MacIndy3Gui::hide() {
+	debug("HIDE");
+	if (!_visible)
+		return;
+
+	_visible = false;
+
+	_macScreen->fillRect(Common::Rect(0, 288, 640, 400), 0);
+	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
 }
 
 void MacIndy3Gui::clear() {
@@ -406,18 +442,6 @@ void MacIndy3Gui::clear() {
 			}
 		}
 	}
-
-	const char *text[] = {
-		"Drawn by ScummVM, but just a mock-up",
-		"Push", "Pull", "Give",
-		"Open", "Close", "Look at",
-		"Walk to", "Pick up", "What is",
-		"Use", "Turn on", "Turn off",
-		"Talk", "Travel"
-	};
-
-	for (int i = 0; i < 15; i++)
-		drawButton(i, (char *)text[i], i < 13, i == 8);
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
 }
@@ -570,13 +594,6 @@ void MacIndy3Gui::drawInventoryWidget() {
 
 	drawInventoryArrowUp(false);
 	drawInventoryArrowDown(false);
-
-	drawInventoryText(0, "small key", false);
-	drawInventoryText(1, "painting", false);
-	drawInventoryText(2, "old book", false);
-	drawInventoryText(3, "Grail Diary", false);
-	drawInventoryText(4, "whip", false);
-	drawInventoryText(5, "manual", false);
 }
 
 void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped) {
