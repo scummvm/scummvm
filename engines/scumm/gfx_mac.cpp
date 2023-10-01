@@ -447,7 +447,7 @@ void MacIndy3Gui::update() {
 	// we may be able to revoke the friendship with ScummEngine, and
 	// optimize this loop quite a bit.
 
-	for (int i = 0; i < _vm->_numVerbs; i++) {
+	for (int i = 1; i < _vm->_numVerbs; i++) {
 		VerbSlot *vs = &_vm->_verbs[i];
 
 		if (!vs->saveid && vs->curmode && vs->verbid) {
@@ -493,6 +493,8 @@ void MacIndy3Gui::update() {
 		Widget *w = &_widgets[i];
 		if (w->kill && w->visible) {
 			fill(Common::Rect(w->x, w->y, w->x + w->width, w->y + w->height));
+			free(w->text);
+			w->text = nullptr;
 			w->slot = -1;
 			w->timer = 0;
 			w->enabled = false;
