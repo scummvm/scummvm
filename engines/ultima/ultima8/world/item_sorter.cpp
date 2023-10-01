@@ -199,8 +199,8 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 			continue;
 
 #ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
-		// Find adjoining floor squares for better occlusion
-		if (si->_occl && si2->_occl && si->_fbigsq && si2->_fbigsq && si->_z == si2->_z) {
+		// Find adjoining rects for better occlusion
+		if (si->_occl && si2->_occl && si->_z == si2->_z) {
 			// Does this share an edge?
 			if (si->_y == si2->_y && si->_yFar == si2->_yFar) {
 				if (si->_xLeft == si2->_x) {
@@ -289,8 +289,8 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 	// This increases odds of occluding items below before checking them.
 	// Ignore items already occluded or at lowest Z as they are less likely occlude additional items.
 	for (SortItem *si1 = _itemsTail; si1 != nullptr; si1 = si1->_prev) {
-		// Check if item is part of a 2x2 adjoined square
-		if (si1->_occl && si1->_fbigsq && !si1->_occluded && si1->_z > minZ &&
+		// Check if item is part of a 2x2 rects square
+		if (si1->_occl && !si1->_occluded && si1->_z > minZ &&
 			si1->_xAdjoin && si1->_yAdjoin &&
 			si1->_xAdjoin->_yAdjoin && si1->_yAdjoin->_xAdjoin &&
 			si1->_xAdjoin->_yAdjoin == si1->_yAdjoin->_xAdjoin) {
@@ -298,10 +298,12 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 			SortItem *siX = si1;
 			SortItem *siY = si1;
 
-			int32 group = si1->_itemNum;
+			uint16 group = si1->_itemNum;
 			si1->_groupNum = group;
 
-			// Expand NxN adjoined square - up to 4x4 appears sufficient
+			int32 zTop = si1->_zTop;
+
+			// Expand NxN rects square - up to 4x4 appears sufficient
 			for (int n = 2; n <= 4; n++) {
 				// Expand out 1 from X and Y edge points
 				SortItem *p1 = siX->_xAdjoin;
@@ -315,6 +317,9 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 					p1->_groupNum = group;
 					p2->_groupNum = group;
 
+					zTop = MIN(zTop, p1->_zTop);
+					zTop = MIN(zTop, p2->_zTop);
+
 					p1 = p1->_yAdjoin;
 					p2 = p2->_xAdjoin;
 				}
@@ -326,6 +331,8 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 				si2 = p1;
 				si2->_groupNum = group;
 
+				zTop = MIN(zTop, p2->_zTop);
+
 				// Set the new edge points
 				siX = siX->_xAdjoin;
 				siY = siY->_yAdjoin;
@@ -334,7 +341,6 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 			if (si1 != si2) {
 				SortItem oc;
 				oc._occl = true;
-				oc._fbigsq = true;
 				oc._flat = si1->_flat;
 				oc._solid = si1->_solid;
 				oc._roof = si1->_roof;
@@ -344,8 +350,8 @@ void ItemSorter::PaintDisplayList(RenderSurface *surf, bool item_highlight, bool
 				Box box = si1->getBoxBounds();
 				box.extend(si2->getBoxBounds());
 
-				// Keep the box flat to avoid wrong occlusions caused by different heights
-				box._zd = 0;
+				// Use min z top to avoid wrong occlusions caused by different heights
+				box._zd = zTop - box._z;
 
 				oc.setBoxBounds(box, _camSx, _camSy);
 

@@ -98,7 +98,7 @@ struct SortItem {
 #ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
 	SortItem *_xAdjoin; // Item sharing a right x edge with the left x edge - used for occlusion
 	SortItem *_yAdjoin; // Item sharing a near y edge with the far y edge - used for occlusion
-	int32 _groupNum;   // Identifier for a member of an occlusion group
+	uint16 _groupNum;   // Identifier for a member of an occlusion group
 #endif // SORTITEM_OCCLUSION_EXPERIMENTAL
 
 
