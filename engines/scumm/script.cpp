@@ -24,7 +24,6 @@
 #include "common/system.h"
 
 #include "scumm/actor.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/util.h"
@@ -759,12 +758,6 @@ void ScummEngine::writeVar(uint var, int value) {
 				mac_drawLoomPracticeMode();
 			}
 		}
-
-		// I don't know how the original did it, but we trigger the
-		// Indy3 Mac GUI based on the verb script.
-
-		if (_macIndy3Gui && var == VAR_VERB_SCRIPT && value == 4)
-			_macIndy3Gui->clear();
 
 		if ((_varwatch == (int)var || _varwatch == 0) && _currentScript < NUM_SCRIPT_SLOT) {
 			if (vm.slot[_currentScript].number < 100)

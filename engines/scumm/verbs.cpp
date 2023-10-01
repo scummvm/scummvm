@@ -1078,9 +1078,6 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	if (!verb)
 		return;
 
-	if (_macIndy3Gui)
-		return;
-
 	// The way we implement high-resolution font on a scaled low-resolution
 	// background requires there to always be a text surface telling which
 	// pixels have been drawn on. This means that the "has mask" feature is

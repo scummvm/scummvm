@@ -37,21 +37,18 @@ class MacIndy3Gui {
 public:
 	MacIndy3Gui(OSystem *system, ScummEngine *vm);
 	~MacIndy3Gui();
-	
+
+	bool isActive();
+	void update();
 	void handleEvent(Common::Event &event);
-	void clear();
-	void drawButton(int n, char *text, bool enabled, bool pressed);
-	void drawInventoryWidget();
-	void drawInventoryScrollbar();
-	void drawInventoryArrowUp(bool highlight);
-	void drawInventoryArrowDown(bool highlight);
-	void drawInventoryText(int slot, char *text, bool highlighted);
 
 private:
 	OSystem *_system;
 	ScummEngine *_vm;
 	Graphics::Surface *_macScreen;
 	const Graphics::Font *_fonts[3];
+
+	bool _visible = false;
 
 	struct GuiButtonData {
 		int x;
@@ -83,8 +80,17 @@ private:
 		{ 423, 352, 151, 18 }  // Conversation 5
 	};
 
+	void clear();
+	void show();
+	void hide();
 	void fill(Common::Rect r);
+	void drawButton(int n, char *text, bool enabled, bool pressed);
+	void drawInventoryWidget();
 	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
+	void drawInventoryArrowUp(bool highlight);
+	void drawInventoryArrowDown(bool highlight);
+	void drawInventoryScrollbar();
+	void drawInventoryText(int slot, char *text, bool highlighted);
 };
 
 } // End of namespace Scumm
