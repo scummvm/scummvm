@@ -519,7 +519,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_id = id;
 	item->_bounds = Common::Rect(boundsX, boundsY, boundsX + boundsW - 1,
 		boundsY + boundsH - 1);
-	item->_rect1 = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y - rect1H - 1);
+	item->_rect1 = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y + rect1H - 1);
 	item->_fn0 = fn0;
 
 	item->_hasBuffer = hasBuffer;
