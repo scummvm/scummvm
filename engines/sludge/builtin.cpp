@@ -2566,7 +2566,7 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 		if (builtInFunctionArray[whichFunc].func) {
 			debugC(3, kSludgeDebugBuiltin,
 					"Run built-in function %i : %s",
-					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : "Unknown");
+					whichFunc, (whichFunc < numBIFNames) ? allBIFNames[whichFunc].c_str() : builtInFunctionArray[whichFunc].name);
 			return builtInFunctionArray[whichFunc].func(numParams, fun);
 		}
 	}
