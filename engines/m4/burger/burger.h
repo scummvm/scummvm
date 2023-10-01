@@ -70,7 +70,7 @@ protected:
 
 public:
 	BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc);
-	~BurgerEngine() override {}
+	~BurgerEngine() override;
 
 	/**
 	 * Show the engine information

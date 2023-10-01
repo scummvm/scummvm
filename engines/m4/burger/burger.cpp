@@ -23,6 +23,7 @@
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/core/conv.h"
+#include "m4/burger/gui/gui_gizmo.h"
 #include "m4/graphics/krn_pal.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
@@ -254,6 +255,10 @@ BurgerEngine::BurgerEngine(OSystem *syst, const M4GameDescription *gameDesc) :
 	_sections.push_back(&_section7);
 	_sections.push_back(&_section8);
 	_sections.push_back(&_section9);
+}
+
+BurgerEngine::~BurgerEngine() {
+	GUI::gizmo_shutdown();
 }
 
 M4::Vars *BurgerEngine::createVars() {
