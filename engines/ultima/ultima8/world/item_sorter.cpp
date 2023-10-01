@@ -165,8 +165,9 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 
 	si->_draw = info->is_draw();
 	si->_solid = info->is_solid();
-	si->_occl = info->is_occl() && !(si->_flags & Item::FLG_INVISIBLE) &&
-			   !(si->_extFlags & Item::EXT_TRANSPARENT);
+	si->_occl = info->is_occl() && !info->is_translucent() &&
+				!(si->_flags & Item::FLG_INVISIBLE) &&
+				!(si->_extFlags & Item::EXT_TRANSPARENT);
 	si->_roof = info->is_roof();
 	si->_noisy = info->is_noisy();
 	si->_anim = info->_animType != 0;
