@@ -29,32 +29,6 @@
 #endif
 #include <unistd.h>
 
-#ifdef PLAYSTATION3
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#define F_OK 0    /* test for existence of file */
-#define W_OK 0x02 /* test for write permission */
-#define R_OK 0x04 /* test for read permission */
-
-#ifndef S_ISDIR
-#define S_ISDIR(x) (x & 0040000)
-#endif
-
-static inline int access(const char *pn, int mode) {
-	warning("access: pn %s\n", pn);
-	int fd = open(pn, O_RDONLY);
-	if (fd < 0)
-		return -1;
-
-	// XXX lie about it, for now..
-	close(fd);
-	return 0;
-}
-
-static inline char *getenv(const char *name) {
-	return 0;
-}
-#endif
-
 /**
  * Implementation of the ScummVM file system API based on LibRetro.
  *

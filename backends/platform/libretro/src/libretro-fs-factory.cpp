@@ -27,25 +27,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit // Needed for IRIX's unistd.h
-#ifdef PLAYSTATION3
-#include <stdlib.h>
-#include <string.h>
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-extern char *getwd(char *);
-extern int errno;
-
-#ifndef PATH_MAX
-#define PATH_MAX 1024
-#endif
-
-#define ERANGE 34 // Result too large
-#define ENOMEM 12 // Cannot allocate memory
-
-static inline char *getcwd(char *buf, size_t len) {
-	return 0;
-}
-#endif
 
 #include "backends/platform/libretro/include/libretro-fs-factory.h"
 #include "backends/platform/libretro/include/libretro-fs.h"
