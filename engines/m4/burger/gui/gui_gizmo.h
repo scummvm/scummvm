@@ -27,6 +27,7 @@
 #include "m4/m4_types.h"
 #include "m4/gui/gui_vmng_core.h"
 #include "m4/graphics/gr_buff.h"
+#include "m4/burger/gui/gui_cheapo.h"
 
 namespace M4 {
 namespace Burger {
@@ -65,15 +66,15 @@ struct Gizmo {
 };
 
 struct GizmoButton {
-	int _field0 = 0;
-	int _field4 = 0;
+	ControlStatus _state = NOTHING;
+	int _index = 0;
 	int _field8 = 0;
 	int _fieldC = 0;
 	int _field10 = 0;
 };
 
 typedef void (*GizmoItemFn0)();
-typedef void (*GizmoItemFn1)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
+typedef void (*GizmoItemFnDraw)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
 typedef void (*GizmoItemFn2)(GizmoItem *item);
 typedef void (*GizmoItemFn3)();
 
@@ -89,7 +90,7 @@ struct GizmoItem {
 	Common::Rect _rect1;
 	bool _hasBuffer = false;
 	GizmoItemFn0 _fn0 = nullptr;
-	GizmoItemFn1 _fn1 = nullptr;
+	GizmoItemFnDraw _draw = nullptr;
 	GizmoItemFn2 _fn2 = nullptr;
 	GizmoItemFn3 _fn3 = nullptr;
 };

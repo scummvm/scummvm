@@ -38,7 +38,7 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 	uint32 inv_size, scene;
 	int32 i;
 
-	inv_size = _tail * MAX_NAME_LENGTH;
+	inv_size = _tail * (MAX_NAME_LENGTH + sizeof(uint32));
 	s.syncAsUint32LE(inv_size);
 	if (s.isLoading()) {
 		assert((inv_size % (MAX_NAME_LENGTH + sizeof(uint32))) == 0);
