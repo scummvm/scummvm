@@ -226,7 +226,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "edd7403e5dc2a14459d2665a4c17714d", 209534},
 			{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
@@ -280,7 +280,7 @@
 { // Found in Found in french ADI 2.5 Anglais Multimedia 5e
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "edd7403e5dc2a14459d2665a4c17714d", 209534),
 		FR_FRA,
 		kPlatformWindows,
@@ -534,7 +534,7 @@
 {
 	{
 		"gob3",
-		"Interactive Demo 2",
+		"Interactive Demo 2 (v0.02)",
 		AD_ENTRY1s("intro.stk", "e5dcbc9f6658ebb1e8fe26bc4da0806d", 590631),
 		FR_FRA,
 		kPlatformDOS,
@@ -548,7 +548,7 @@
 {
 	{
 		"gob3",
-		"Interactive Demo 3",
+		"Interactive Demo 3 (v0.02)",
 		AD_ENTRY1s("intro.stk", "9e20ad7b471b01f84db526da34eaf0a2", 395561),
 		EN_ANY,
 		kPlatformDOS,

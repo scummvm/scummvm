@@ -43,7 +43,7 @@
 {
 	{
 		"gob2",
-		"",
+		"v1.03",
 		AD_ENTRY1("intro.stk", "dedb5d31d8c8050a8cf77abedcc53dae"),
 		EN_USA,
 		kPlatformDOS,
@@ -57,7 +57,7 @@
 { // Supplied by raziel_ in bug report #3621
 	{
 		"gob2",
-		"",
+		"v1.02",
 		AD_ENTRY1s("intro.stk", "25a99827cd59751a80bed9620fb677a0", 893302),
 		EN_USA,
 		kPlatformDOS,
@@ -361,7 +361,7 @@
 {
 	{
 		"gob2",
-		"",
+		"v1.02",
 		{
 			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
 			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
@@ -379,7 +379,7 @@
 {
 	{
 		"gob2",
-		"",
+		"v1.02",
 		{
 			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
 			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
@@ -397,7 +397,7 @@
 {
 	{
 		"gob2",
-		"",
+		"v1.02",
 		{
 			{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
 			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
@@ -640,7 +640,7 @@
 {
 	{
 		"gob2",
-		"Interactive Demo",
+		"Interactive Demo (v1.01)",
 		AD_ENTRY1("intro.stk", "cf1c95b2939bd8ff58a25c756cb6125e"),
 		UNK_LANG,
 		kPlatformDOS,
