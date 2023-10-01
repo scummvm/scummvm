@@ -39,6 +39,7 @@ public:
 	~MacIndy3Gui();
 
 	bool isActive();
+	void resetAfterLoad();
 	void update();
 	void handleEvent(Common::Event &event);
 
@@ -67,6 +68,7 @@ private:
 	Widget _widgets[21];
 
 	void initWidget(int n, int x, int y, int w, int h);
+	void resetWidget(int n);
 	void clear();
 	void show();
 	void hide();

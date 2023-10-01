@@ -27,6 +27,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/players/player_towns.h"
@@ -864,6 +865,9 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (_macScreen)
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	clearTextSurface();
+
+	if (_macIndy3Gui)
+		_macIndy3Gui->resetAfterLoad();
 
 	_lastCodePtr = nullptr;
 	_drawObjectQueNr = 0;
