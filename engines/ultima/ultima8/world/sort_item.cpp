@@ -84,7 +84,8 @@ bool SortItem::below(const SortItem &si2) const {
 	bool yFlat1 = si1._yFar == si1._y;
 	bool yFlat2 = si2._yFar == si2._y;
 	if (yFlat1 && yFlat2) {
-		if (si1._y != si2._y)
+		// Check with a precision loss based on footpad calculations
+		if (si1._y / 32 != si2._y / 32)
 			return si1._y < si2._y;
 	} else {
 		if (si1._y <= si2._yFar)
@@ -97,7 +98,8 @@ bool SortItem::below(const SortItem &si2) const {
 	bool xFlat1 = si1._xLeft == si1._x;
 	bool xFlat2 = si2._xLeft == si2._x;
 	if (xFlat1 && xFlat2) {
-		if (si1._x != si2._x)
+		// Check with a precision loss based on footpad calculations
+		if (si1._x / 32 != si2._x / 32)
 			return si1._x < si2._x;
 	} else {
 		if (si1._x <= si2._xLeft)
@@ -204,21 +206,29 @@ bool SortItem::below(const SortItem &si2) const {
 	if (si1._z != si2._z)
 		return si1._z < si2._z;
 
-	// Partial in X + Y front
-	if (si1._x + si1._y != si2._x + si2._y)
-		return (si1._x + si1._y < si2._x + si2._y);
+	// Higher screenspace left drawn before?
+	if (si1._sxLeft != si2._sxLeft)
+		return si1._sxLeft > si2._sxLeft;
 
-	// Partial in X + Y back
-	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
-		return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
+	// Lower screenspace bottom drawn before?
+	if (si1._syBot != si2._syBot)
+		return si1._syBot < si2._syBot;
 
-	// Partial in y?
-	if (si1._y != si2._y)
-		return si1._y < si2._y;
+	//// Partial in X + Y front
+	//if (si1._x + si1._y != si2._x + si2._y)
+	//	return (si1._x + si1._y < si2._x + si2._y);
 
-	// Partial in x?
-	if (si1._x != si2._x)
-		return si1._x < si2._x;
+	//// Partial in X + Y back
+	//if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
+	//	return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
+
+	//// Partial in y?
+	//if (si1._y != si2._y)
+	//	return si1._y < si2._y;
+
+	//// Partial in x?
+	//if (si1._x != si2._x)
+	//	return si1._x < si2._x;
 
 	// Just sort by shape number
 	if (si1._shapeNum != si2._shapeNum)

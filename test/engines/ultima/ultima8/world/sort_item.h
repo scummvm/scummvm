@@ -389,10 +389,56 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping x-flats differing in y position and slightly by x position
+	 * Test case for rendering issue at MainActor::teleport 37 17631 17831 104
+	 */
+	void test_x_flat_layered_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(17410, 17806, 96, 0, 96, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(17408, 17888, 96, 0, 96, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si1._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Overlapping y-flats differing in x position
+	 * Test case for rendering issue at MainActor::teleport 8 2063 1207 48
+	 */
+	void test_y_flat_layered_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(2175, 1055, 48, 96, 0, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(2111, 1055, 48, 96, 0, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si1._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Completely Overlapping y-flats differing only in item number and frame
 	 * Test case for rendering issue at MainActor::teleport 37 17628 19668 56
 	 */
-	void test_y_flat_layered_sort() {
+	void test_y_flat_same_position_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
