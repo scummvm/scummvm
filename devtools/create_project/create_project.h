@@ -265,8 +265,8 @@ struct BuildSetup {
 		useVcpkg = false;
 	}
 
-	bool featureEnabled(std::string feature) const;
-	Feature getFeature(std::string feature) const;
+	bool featureEnabled(const std::string &feature) const;
+	Feature getFeature(const std::string &feature) const;
 };
 
 /**
