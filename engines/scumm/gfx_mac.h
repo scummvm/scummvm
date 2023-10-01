@@ -56,6 +56,7 @@ private:
 		int y;
 		int width;
 		int height;
+		byte *text;
 		int timer;
 		bool visible;
 		bool enabled;
