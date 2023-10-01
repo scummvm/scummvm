@@ -365,9 +365,47 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_fonts[0] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
 	_fonts[1] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
 	_fonts[2] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
+	// This list has been arranged so that most of the standard verbs
+	// have the same index as their verb number in the game. The rest
+	// have been arranged tastefully.
+	//
+	// I think 101-106 are inventory items.
+
+	initWidget( 0,  67, 292, 348, 18); // 100: Sentence line
+	initWidget( 1, 137, 312,  68, 18); // 1: Open
+	initWidget( 2, 137, 332,  68, 18); // 2: Close
+	initWidget( 3,  67, 352,  68, 18); // 3: Give
+	initWidget( 4, 277, 332,  68, 18); // 4: Turn on
+	initWidget( 5, 277, 352,  68, 18); // 5: Turn off
+	initWidget( 6,  67, 312,  68, 18); // 6: Push
+	initWidget( 7,  67, 332,  68, 18); // 7: Pull
+	initWidget( 8, 277, 312,  68, 18); // 8: Use
+	initWidget( 9, 137, 352,  68, 18); // 9: Look at
+	initWidget(10, 207, 312,  68, 18); // 10: Walk to
+	initWidget(11, 207, 332,  68, 18); // 11: Pick up
+	initWidget(12, 207, 352,  68, 18); // 12: What is
+	initWidget(13, 347, 312,  68, 18); // 13: Talk
+	initWidget(14, 347, 332,  68, 18); // 32: Travel
+	initWidget(15,  67, 292, 507, 18); // 120: Conversation 1
+	initWidget(16,  67, 312, 507, 18); // 121: Conversation 2
+	initWidget(17,  67, 332, 507, 18); // 122: Conversation 3
+	initWidget(18,  67, 352, 507, 18); // 123: Conversation 4
+	initWidget(19,  67, 352, 151, 18); // Conversation 5
+	initWidget(20, 423, 352, 151, 18); // Conversation 6
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
+}
+
+void MacIndy3Gui::initWidget(int n, int x, int y, int w, int h) {
+	Widget *widget = &_widgets[n];
+
+	widget->x = x;
+	widget->y = y;
+	widget->w = w;
+	widget->h = h;
+	widget->visible = false;
+	widget->enabled = false;
 }
 
 bool MacIndy3Gui::isActive() {
@@ -382,12 +420,16 @@ void MacIndy3Gui::update() {
 		return;
 	}
 
+	if (!_visible)
+		show();
+
 	// REMEMBER: Once we've mapped all the verb ids to their buttons,
 	// we may be able to revoke the friendship with ScummEngine, and
 	// optimize this loop quite a bit.
 
 	for (int i = 0; i < _vm->_numVerbs; i++) {
 		VerbSlot *vs = &_vm->_verbs[i];
+
 		if (!vs->saveid && vs->curmode && vs->verbid) {
 			// Verb is there
 
@@ -396,31 +438,34 @@ void MacIndy3Gui::update() {
 				byte buf[270];
 
 				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-				int button = -1;
+				int id = -1;
 
 				if (vs->verbid >= 1 && vs->verbid <= 13) {
-					button = i;
+					id = i;
 				} else if (vs->verbid == 32) {
-					button = 14;
+					id = 14;
 				} else if (vs->verbid == 100) {
-					button = 0;
+					id = 0;
 				} else if (vs->verbid >= 120 && vs->verbid <= 123) {
-					button = vs->verbid - 105;
+					id = vs->verbid - 105;
 				} else {
-					debug("Unknown verb: [%d] %s", vs->verbid, buf);
+//					debug("Unknown verb: [%d] %s", vs->verbid, buf);
 				}
 
-				if (button != -1) {
-					drawButton(button, buf, vs->curmode != 2, false);
+				if (id != -1) {
+					Widget *w = &_widgets[id];
+					bool enabled = (vs->curmode == 2);
+
+					if (!w->visible || w->enabled != enabled) {
+						debug("Drawing button: %s", buf);
+						drawButton(id, buf, vs->curmode != 2, false);
+						w->visible = true;
+						w->enabled = enabled;
+					}
 				}
 			}
-		} else {
-			// Verb is gone
 		}
 	}
-
-	if (!_visible)
-		show();
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
@@ -500,10 +545,10 @@ void MacIndy3Gui::fill(Common::Rect r) {
 }
 
 void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
-	int x = _buttons[n].x;
-	int y = _buttons[n].y;
-	int w = _buttons[n].w;
-	int h = _buttons[n].h;
+	int x = _widgets[n].x;
+	int y = _widgets[n].y;
+	int w = _widgets[n].w;
+	int h = _widgets[n].h;
 
 	fill(Common::Rect(x, y, x + w, y + h));
 
@@ -549,7 +594,7 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	for (int i = 0; text[i]; i++)
 		stringWidth += _fonts[2]->getCharWidth(text[i]);
 
-	int textX = (x + (_buttons[n].w - 1 - stringWidth) / 2) - 1;
+	int textX = (x + (w - 1 - stringWidth) / 2) - 1;
 	int textY = y + 2;
 	int color = enabled ? 15 : 0;
 
