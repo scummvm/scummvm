@@ -108,6 +108,7 @@ public:
 	void applyOrientationSettings();
 	void setSupportedScreenOrientation(ScreenOrientation screenOrientation);
 #endif
+	void applyTouchSettings(bool _3dMode, bool overlayShown);
 
 	uint createOpenGLContext();
 	void destroyOpenGLContext();

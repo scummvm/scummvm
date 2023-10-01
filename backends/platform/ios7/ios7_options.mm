@@ -57,6 +57,8 @@ private:
 	void saveDirectionalInput(const Common::String &setting, uint32 input);
 
 #if TARGET_OS_IOS
+	uint32 loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
+	void saveTouchMode(const Common::String &setting, uint32 mode);
 	uint32 loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue);
 	void saveOrientation(const Common::String &setting, uint32 orientation);
 #endif
@@ -67,10 +69,18 @@ private:
 	GUI::StaticTextWidget *_gamepadControllerOpacityLabel;
 	GUI::StaticTextWidget *_gamepadControllerDirectionalInputDesc;
 	GUI::PopUpWidget *_gamepadControllerDirectionalInputPopUp;
-	GUI::CheckboxWidget *_touchpadCheckbox;
+
 	GUI::CheckboxWidget *_clickAndDragCheckbox;
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
 #if TARGET_OS_IOS
+	GUI::StaticTextWidget *_preferredTouchModeDesc;
+	GUI::StaticTextWidget *_preferredTouchModeMenusDesc;
+	GUI::PopUpWidget *_preferredTouchModeMenusPopUp;
+	GUI::StaticTextWidget *_preferredTouchMode2DGamesDesc;
+	GUI::PopUpWidget *_preferredTouchMode2DGamesPopUp;
+	GUI::StaticTextWidget *_preferredTouchMode3DGamesDesc;
+	GUI::PopUpWidget *_preferredTouchMode3DGamesPopUp;
+
 	GUI::StaticTextWidget *_orientationDesc;
 	GUI::StaticTextWidget *_orientationMenusDesc;
 	GUI::PopUpWidget *_orientationMenusPopUp;
@@ -95,11 +105,38 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_gamepadControllerDirectionalInputPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerLeftButtonPopUp");
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Thumbstick"), kDirectionalInputThumbstick);
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Dpad"), kDirectionalInputDpad);
-	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
+
 	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
 
 #if TARGET_OS_IOS
+	_preferredTouchModeDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.PreferredTouchModeText", _("Choose the preferred touch mode:"));
+	if (inAppDomain) {
+		_preferredTouchModeMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.TouchModeMenusText", _("In menus"));
+		_preferredTouchModeMenusPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.TouchModeMenus");
+		_preferredTouchModeMenusPopUp->appendEntry(_("Touchpad emulation"), kTouchModeTouchpad);
+		_preferredTouchModeMenusPopUp->appendEntry(_("Direct mouse"), kTouchModeDirect); // TODO: Find a better name
+	} else {
+		_preferredTouchModeMenusDesc = nullptr;
+		_preferredTouchModeMenusPopUp = nullptr;
+	}
+
+	_preferredTouchMode2DGamesDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.TouchMode2DGamesText", _("In 2D games"));
+	_preferredTouchMode2DGamesPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.TouchMode2DGames");
+	_preferredTouchMode3DGamesDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.TouchMode3DGamesText", _("In 3D games"));
+	_preferredTouchMode3DGamesPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.TouchMode3DGames");
+
+	if (!inAppDomain) {
+		_preferredTouchMode2DGamesPopUp->appendEntry(_("<default>"), kTouchModeTouchpad);
+		_preferredTouchMode3DGamesPopUp->appendEntry(_("<default>"), kTouchModeTouchpad);
+	}
+
+	_preferredTouchMode2DGamesPopUp->appendEntry(_("Touchpad emulation"), kTouchModeTouchpad);
+	_preferredTouchMode3DGamesPopUp->appendEntry(_("Touchpad emulation"), kTouchModeTouchpad);
+
+	_preferredTouchMode2DGamesPopUp->appendEntry(_("Direct mouse"), kTouchModeDirect); // TODO: Find a better name
+	_preferredTouchMode3DGamesPopUp->appendEntry(_("Direct mouse"), kTouchModeDirect);
+
 	_orientationDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OrientationText", _("Select the orientation:"));
 	if (inAppDomain) {
 		_orientationMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OMenusText", _("In menus"));
@@ -152,13 +189,32 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	            .addWidget("GamepadControllerOpacitySlider", "Slider")
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
-	            .addWidget("TouchpadMouseMode", "Checkbox")
 	            .addWidget("ClickAndDragMode", "Checkbox")
 	            .addWidget("KeyboardFunctionBar", "Checkbox")
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("ControlsHelp", "WideButton");
 
 #if TARGET_OS_IOS
+	layouts.addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
+	if (inAppDomain) {
+		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("TouchModeMenusText", "OptionsLabel")
+			.addWidget("TouchModeMenus", "PopUp")
+			.closeLayout();
+	}
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+		.addPadding(0, 0, 0, 0)
+		.addWidget("TouchMode2DGamesText", "OptionsLabel")
+		.addWidget("TouchMode2DGames", "PopUp")
+		.closeLayout();
+
+	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+		.addPadding(0, 0, 0, 0)
+		.addWidget("TouchMode3DGamesText", "OptionsLabel")
+		.addWidget("TouchMode3DGames", "PopUp")
+		.closeLayout();
+
 	layouts.addWidget("OrientationText", "", -1, layouts.getVar("Globals.Line.Height"));
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
@@ -255,6 +311,36 @@ void IOS7OptionsWidget::saveDirectionalInput(const Common::String &setting, uint
 }
 
 #if TARGET_OS_IOS
+uint32 IOS7OptionsWidget::loadTouchMode(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
+	if (!acceptDefault || ConfMan.hasKey(setting, _domain)) {
+		Common::String mode = ConfMan.get(setting, _domain);
+		if (mode == "direct") {
+			return kTouchModeDirect;
+		} else if (mode == "touchpad") {
+			return kTouchModeTouchpad;
+		} else {
+			return defaultValue;
+		}
+	} else {
+		return iOS7_isBigDevice() ? kTouchModeDirect : kTouchModeTouchpad;
+	}
+}
+
+void IOS7OptionsWidget::saveTouchMode(const Common::String &setting, uint32 mode) {
+	switch (mode) {
+	case kTouchModeDirect:
+		ConfMan.set(setting, "direct", _domain);
+		break;
+	case kTouchModeTouchpad:
+		ConfMan.set(setting, "touchpad", _domain);
+		break;
+	default:
+		// default
+		ConfMan.removeKey(setting, _domain);
+		break;
+	}
+}
+
 uint32 IOS7OptionsWidget::loadOrientation(const Common::String &setting, bool acceptDefault, uint32 defaultValue) {
 	if (!acceptDefault || ConfMan.hasKey(setting, _domain)) {
 		Common::String orientation = ConfMan.get(setting, _domain);
@@ -298,11 +384,17 @@ void IOS7OptionsWidget::load() {
 	_gamepadControllerOpacitySlider->setValue(ConfMan.getInt("gamepad_controller_opacity", _domain));
 	_gamepadControllerOpacityLabel->setValue(_gamepadControllerOpacitySlider->getValue());
 	_gamepadControllerDirectionalInputPopUp->setSelectedTag(loadDirectionalInput("gamepad_controller_directional_input", !inAppDomain, kDirectionalInputThumbstick));
-	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mode", _domain));
+
 	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
 
 #if TARGET_OS_IOS
+	if (inAppDomain) {
+		_preferredTouchModeMenusPopUp->setSelectedTag(loadTouchMode("touch_mode_menus", !inAppDomain, kTouchModeDirect));
+	}
+	_preferredTouchMode2DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_2d_games", !inAppDomain, kTouchModeTouchpad));
+	_preferredTouchMode3DGamesPopUp->setSelectedTag(loadTouchMode("touch_mode_3d_games", !inAppDomain, kTouchModeDirect));
+
 	if (inAppDomain) {
 		_orientationMenusPopUp->setSelectedTag(loadOrientation("orientation_menus", !inAppDomain, kScreenOrientationAuto));
 	}
@@ -317,11 +409,17 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.setBool("gamepad_controller", _gamepadControllerCheckbox->getState(), _domain);
 		ConfMan.setInt("gamepad_controller_opacity", _gamepadControllerOpacitySlider->getValue(), _domain);
 		ConfMan.setInt("gamepad_controller_directional_input", _gamepadControllerDirectionalInputPopUp->getSelectedTag(), _domain);
-		ConfMan.setBool("touchpad_mode", _touchpadCheckbox->getState(), _domain);
+
 		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
 
 #if TARGET_OS_IOS
+		if (inAppDomain) {
+			saveTouchMode("touch_mode_menus", _preferredTouchModeMenusPopUp->getSelectedTag());
+		}
+		saveTouchMode("touch_mode_2d_games", _preferredTouchMode2DGamesPopUp->getSelectedTag());
+		saveTouchMode("touch_mode_3d_games", _preferredTouchMode3DGamesPopUp->getSelectedTag());
+
 		if (inAppDomain) {
 			saveOrientation("orientation_menus", _orientationMenusPopUp->getSelectedTag());
 		}
@@ -331,11 +429,17 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.removeKey("gamepad_controller", _domain);
 		ConfMan.removeKey("gamepad_controller_opacity", _domain);
 		ConfMan.removeKey("gamepad_controller_directional_input", _domain);
-		ConfMan.removeKey("touchpad_mode", _domain);
+
+#if TARGET_OS_IOS
+		if (inAppDomain) {
+			ConfMan.removeKey("touch_mode_menus", _domain);
+		}
+		ConfMan.removeKey("touch_mode_2d_games", _domain);
+		ConfMan.removeKey("touch_mode_3d_games", _domain);
+
 		ConfMan.removeKey("clickanddrag_mode", _domain);
 		ConfMan.removeKey("keyboard_fn_bar", _domain);
 
-#if TARGET_OS_IOS
 		if (inAppDomain) {
 			ConfMan.removeKey("orientation_menus", _domain);
 		}
@@ -350,7 +454,11 @@ bool IOS7OptionsWidget::hasKeys() {
 	bool hasKeys = ConfMan.hasKey("gamepad_controller", _domain) ||
 	ConfMan.hasKey("gamepad_controller_opacity", _domain) ||
 	ConfMan.hasKey("gamepad_controller_directional_input", _domain) ||
-	ConfMan.hasKey("touchpad_mode", _domain) ||
+
+	ConfMan.hasKey("touch_mode_menus", _domain) ||
+	ConfMan.hasKey("touch_mode_2d_games", _domain) ||
+	ConfMan.hasKey("touch_mode_3d_games", _domain) ||
+
 	ConfMan.hasKey("clickanddrag_mode", _domain);
 
 #if TARGET_OS_IOS
@@ -359,7 +467,6 @@ bool IOS7OptionsWidget::hasKeys() {
 #endif
 
 	return hasKeys;
-	       
 }
 
 void IOS7OptionsWidget::setEnabled(bool e) {
@@ -388,16 +495,21 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	_gamepadControllerOpacityDesc->setEnabled(false);
 	_gamepadControllerOpacitySlider->setEnabled(false);
 	_gamepadControllerOpacityLabel->setEnabled(false);
-#endif
-#if TARGET_OS_IOS
-	_touchpadCheckbox->setEnabled(e);
-#else
-	_touchpadCheckbox->setEnabled(false);
-#endif
+#endif /* TARGET_OS_IOS */
+
 	_clickAndDragCheckbox->setEnabled(e);
 	_keyboardFnBarCheckbox->setEnabled(e);
 
 #if TARGET_OS_IOS
+	if (inAppDomain) {
+		_preferredTouchModeMenusDesc->setEnabled(e);
+		_preferredTouchModeMenusPopUp->setEnabled(e);
+	}
+	_preferredTouchMode2DGamesDesc->setEnabled(e);
+	_preferredTouchMode2DGamesPopUp->setEnabled(e);
+	_preferredTouchMode3DGamesDesc->setEnabled(e);
+	_preferredTouchMode3DGamesPopUp->setEnabled(e);
+
 	if (inAppDomain) {
 		_orientationMenusDesc->setEnabled(e);
 		_orientationMenusPopUp->setEnabled(e);
@@ -415,7 +527,15 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("gamepad_controller", false);
 	ConfMan.registerDefault("gamepad_controller_opacity", 6);
 	ConfMan.registerDefault("gamepad_controller_directional_input", kDirectionalInputThumbstick);
-	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
+
+	ConfMan.registerDefault("touch_mode_menus", "direct");
+	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
+	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
+
+	ConfMan.registerDefault("touch_mode_menus", "direct");
+	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
+	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
+
 	ConfMan.registerDefault("clickanddrag_mode", false);
 	ConfMan.registerDefault("keyboard_fn_bar", true);
 
@@ -427,7 +547,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 
 void OSystem_iOS7::applyBackendSettings() {
 	virtualController(ConfMan.getBool("gamepad_controller"));
-	_currentTouchMode = ConfMan.getBool("touchpad_mode") ? kTouchModeTouchpad : kTouchModeDirect;
+	// _currentTouchMode is applied by the graphic manager
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 #if TARGET_OS_IOS
@@ -457,5 +577,35 @@ void OSystem_iOS7::applyOrientationSettings() {
 	} else {
 		setSupportedScreenOrientation(kScreenOrientationAuto);
 	}
- }
+}
 #endif
+
+void OSystem_iOS7::applyTouchSettings(bool _3dMode, bool overlayShown) {
+#if TARGET_OS_IOS
+	Common::String setting;
+	Common::String defaultMode;
+
+	if (overlayShown) {
+		setting = "touch_mode_menus";
+		defaultMode = "direct";
+	} else if (_3dMode) {
+		setting = "touch_mode_3d_games";
+		defaultMode = "direct";
+	} else {
+		setting = "touch_mode_2d_games";
+		defaultMode = "touchpad";
+	}
+
+	Common::String preferredTouchMode = ConfMan.get(setting);
+	if (preferredTouchMode == "direct") {
+	 _currentTouchMode = kTouchModeDirect;
+	} else if (preferredTouchMode == "touchpad") {
+	 _currentTouchMode = kTouchModeTouchpad;
+	} else {
+	 _currentTouchMode = kTouchModeTouchpad;
+	}
+#else
+	(void)_3dMode;
+	(void)overlayShown;
+#endif
+}
