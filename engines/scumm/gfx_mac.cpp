@@ -359,7 +359,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 }
 
 MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
-	_system(system), _vm(vm), _macScreen(vm->_macScreen) {
+	_system(system), _vm(vm), _macScreen(vm->_macScreen), _visible(false) {
 	Graphics::MacFontManager *mfm = _vm->_macFontManager;
 
 	_fonts[0] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
@@ -402,12 +402,22 @@ MacIndy3Gui::~MacIndy3Gui() {
 void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 	Widget *w = &_widgets[n];
 
-	w->slot = -1;
 	w->x = x;
 	w->y = y;
 	w->width = width;
 	w->height = height;
 	w->text = nullptr;
+
+	resetWidget(n);
+}
+
+void MacIndy3Gui::resetWidget(int n) {
+	Widget *w = &_widgets[n];
+
+	free(w->text);
+
+	w->text = nullptr;
+	w->slot = -1;
 	w->timer = 0;
 	w->visible = false;
 	w->enabled = false;
@@ -418,6 +428,13 @@ void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 bool MacIndy3Gui::isActive() {
 	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
 	return verbScript == 4 || verbScript == 18;
+}
+
+void MacIndy3Gui::resetAfterLoad() {
+	_visible = false;
+
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
+		resetWidget(i);
 }
 
 void MacIndy3Gui::update() {
@@ -560,6 +577,9 @@ void MacIndy3Gui::hide() {
 		return;
 
 	_visible = false;
+
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
+		resetWidget(i);
 
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 400), 0);
 	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
