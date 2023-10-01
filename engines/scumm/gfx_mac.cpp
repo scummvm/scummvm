@@ -397,15 +397,17 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 MacIndy3Gui::~MacIndy3Gui() {
 }
 
-void MacIndy3Gui::initWidget(int n, int x, int y, int w, int h) {
-	Widget *widget = &_widgets[n];
+void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
+	Widget *w = &_widgets[n];
 
-	widget->x = x;
-	widget->y = y;
-	widget->w = w;
-	widget->h = h;
-	widget->visible = false;
-	widget->enabled = false;
+	w->x = x;
+	w->y = y;
+	w->width = width;
+	w->height = height;
+	w->timer = 0;
+	w->visible = false;
+	w->enabled = false;
+	w->dirty = false;
 }
 
 bool MacIndy3Gui::isActive() {
@@ -454,13 +456,20 @@ void MacIndy3Gui::update() {
 
 				if (id != -1) {
 					Widget *w = &_widgets[id];
-					bool enabled = (vs->curmode == 2);
+					bool enabled = (vs->curmode == 1);
 
-					if (!w->visible || w->enabled != enabled) {
+					if (w->timer) {
+						w->timer--;
+						if (!w->timer)
+							w->dirty = true;
+					}
+
+					if (!w->visible || w->dirty || w->enabled != enabled) {
 						debug("Drawing button: %s", buf);
-						drawButton(id, buf, vs->curmode != 2, false);
+						drawButton(id, buf, vs->curmode != 2, w->timer);
 						w->visible = true;
 						w->enabled = enabled;
+						w->dirty = false;
 					}
 				}
 			}
@@ -472,7 +481,19 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (event.type != Common::EVENT_LBUTTONDOWN)
 		return;
 
-	debug("Handle Indy 3 click at %d, %d", event.mouse.x, event.mouse.y);
+	int x = event.mouse.x;
+	int y = event.mouse.y;
+
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
+		Widget *w = &_widgets[i];
+
+		if (w->visible && w->enabled) {
+			if (x >= w->x && x < w->x + w->width && y >= w->y && y < w->y + w->height) {
+				w->dirty = true;
+				w->timer = 15;
+			}
+		}
+	}
 }
 
 void MacIndy3Gui::show() {
@@ -547,22 +568,22 @@ void MacIndy3Gui::fill(Common::Rect r) {
 void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	int x = _widgets[n].x;
 	int y = _widgets[n].y;
-	int w = _widgets[n].w;
-	int h = _widgets[n].h;
+	int width = _widgets[n].width;
+	int height = _widgets[n].height;
 
-	fill(Common::Rect(x, y, x + w, y + h));
+	fill(Common::Rect(x, y, x + width, y + height));
 
 	if (!pressed) {
-		_macScreen->hLine(x + 1, y, x + w - 3, 0);
-		_macScreen->hLine(x + 1, y + h - 2, x + w - 3, 0);
-		_macScreen->vLine(x, y + 1, y + h - 3, 0);
-		_macScreen->vLine(x + w - 2, y + 1, y + h - 3, 0);
+		_macScreen->hLine(x + 1, y, x + width - 3, 0);
+		_macScreen->hLine(x + 1, y + height - 2, x + width - 3, 0);
+		_macScreen->vLine(x, y + 1, y + height - 3, 0);
+		_macScreen->vLine(x + width - 2, y + 1, y + height - 3, 0);
 
-		_macScreen->hLine(x + 2, y + h - 1, x + w - 1, 0);
-		_macScreen->vLine(x + w - 1, y + 2, y + h - 2, 0);
+		_macScreen->hLine(x + 2, y + height - 1, x + width - 1, 0);
+		_macScreen->vLine(x + width - 1, y + 2, y + height - 2, 0);
 
-		_macScreen->hLine(x + 1, y + 1, x + w - 3, 15);
-		_macScreen->vLine(x + 1, y + 2, y + h - 3, 15);
+		_macScreen->hLine(x + 1, y + 1, x + width - 3, 15);
+		_macScreen->vLine(x + 1, y + 2, y + height - 3, 15);
 	} else {
 		// I have only been able to capture a screenshot of the pressed
 		// button in black and white, where the checkerboard background
@@ -575,13 +596,13 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 		// that the shadow is always drawn, and the rest of the button
 		// is just shifted down to the right. That would make the other
 		// two corners rounded.
-		_macScreen->hLine(x + 2, y + 1, x + w - 2, 0);
-		_macScreen->hLine(x + 2, y + h - 1, x + w - 1, 0);
-		_macScreen->vLine(x + 1, y + 2, y + h - 2, 0);
-		_macScreen->vLine(x + w - 1, y + 2, y + h - 2, 0);
+		_macScreen->hLine(x + 2, y + 1, x + width - 2, 0);
+		_macScreen->hLine(x + 2, y + height - 1, x + width - 1, 0);
+		_macScreen->vLine(x + 1, y + 2, y + height - 2, 0);
+		_macScreen->vLine(x + width - 1, y + 2, y + height - 2, 0);
 
-		_macScreen->hLine(x + 2, y + 2, x + w - 2, 15);
-		_macScreen->vLine(x + 2, y + 3, y + h - 2, 15);
+		_macScreen->hLine(x + 2, y + 2, x + width - 2, 15);
+		_macScreen->vLine(x + 2, y + 3, y + height - 2, 15);
 	}
 
 	// The text is drawn centered. Based on experimentation, I think the
@@ -594,7 +615,7 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	for (int i = 0; text[i]; i++)
 		stringWidth += _fonts[2]->getCharWidth(text[i]);
 
-	int textX = (x + (w - 1 - stringWidth) / 2) - 1;
+	int textX = (x + (width - 1 - stringWidth) / 2) - 1;
 	int textY = y + 2;
 	int color = enabled ? 15 : 0;
 
@@ -610,7 +631,7 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 		textX += _fonts[2]->getCharWidth(text[i]);
 	}
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x, y), _macScreen->pitch, x, y, w, h);
+	_system->copyRectToScreen(_macScreen->getBasePtr(x, y), _macScreen->pitch, x, y, width, height);
 }
 
 // Desired behavior:
