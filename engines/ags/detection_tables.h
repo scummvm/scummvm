@@ -2183,6 +2183,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "nickitandrun", "Al Gurbish in... Nick It & Run!!!" },
 	{ "niemandsland", "Das Niemandsland" },
 	{ "nightandday", "Night and Day" },
+	{ "nighthag", "Night Hag Syndrome" },
 	{ "nightmare", "Nightmare" },
 	{ "nightoftheravingfeminist", "Night of the Raving Feminist" },
 	{ "nightofthetesticle", "Night of the Testicle" },
@@ -2955,6 +2956,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thedeathoflukesimpson", "The Death of Luke Simpson" },
 	{ "thedecorcist", "The Decorcist" },
 	{ "thedeed", "The Deed" },
+	{ "thedelivery", "The Delivery" },
 	{ "thedevilsshroudpart1", "The Devil's Shroud - Part I" },
 	{ "thedevilsshroudpart2", "The Devil's Shroud - Part II" },
 	{ "thedevilsshroudpart3", "The Devil's Shroud - Part III" },
@@ -6147,7 +6149,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("heroeswyrdale", "mags1904.exe", "7971a7c02d414dc8cb33b6ec36080b91", 195444903),  // Windows
 	GAME_ENTRY_EN("heroeswyrdale", "mags1904.ags", "51ff78da52b2873cacb5e9b21cc1c610", 192947863),  // Linux
 	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 7014402),  // v1.2.6   Multilang
-	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827),  // v1.2.7-8 "
+	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827),  // v1.2.7-8
+	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.ags", "5a61e3d27494f480ba0e8af34cd872ac", 77680620),  // v1.2.9  Win/Linux
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "0b19953a0a879b5027c98b0cdd8142f1", 6825340),
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 6952250),
 	GAME_ENTRY_LANG("heroquestbeuk", "HeroQuestbeuk.exe", "06a03fe35791b0578068ab1873455463", 45021220, Common::FR_FRA),
@@ -6780,6 +6783,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("mmm52", "52 v2.exe", "4d7d2addcde045dae6e0363a43f9acad", 15632826, Common::DE_DEU),
 	GAME_ENTRY("mmm53", "MMM-dksz.exe", "c1df737ef943e6e3cc09d36fcd4b1ed0", 8689677),
 	GAME_ENTRY("mmm53", "MMM-dksz.exe", "c1df737ef943e6e3cc09d36fcd4b1ed0", 8708254),  //v1.7 En-Fr-De-It
+	GAME_ENTRY("mmm53", "MMM53-dksz.exe", "c1df737ef943e6e3cc09d36fcd4b1ed0", 50995033),  //v1.8 En-Fr-De-It + De speech
 	GAME_ENTRY_LANG("mmm54", "CSI_RONVILLE.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 19836078, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm55", "ChapterofDream.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5539795, Common::DE_DEU),
 	GAME_ENTRY_LANG("mmm56", "Grotten-Urlaub.exe", "615e806856b7730afadf1fea9a756b70", 6641264, Common::DE_DEU),
@@ -7009,6 +7013,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17187367),  //v1.0
 	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17206287),  //v1.1
 	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17209105),  //v1.2
+	GAME_ENTRY_EN("nighthag", "NHS.exe", "f2332e54784086e5a2f249c1867897df", 8776852),
 	GAME_ENTRY_EN("nightofthetesticle", "testicle2.exe", "18b284c22010850f79bc5c20054a70c4", 145543486),
 	GAME_ENTRY_EN("nightowl", "LD51.exe", "dbe9bab672130b9a84925cb6da64a3db", 33871100),
 	GAME_ENTRY_EN("nightowl", "LD51.ags", "475ee6971bd15088ab7c4271ef6dccfd", 30762728),
@@ -7950,6 +7955,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thedeathoflukesimpson", "LukeDead.exe", "06a03fe35791b0578068ab1873455463", 3233789),
 	GAME_ENTRY_EN("thedecorcist", "The Decorcist.exe", "d982a9e174e944d06e1332bf6cef96c3", 15139291),
 	GAME_ENTRY_EN("thedeed", "TheDeed.exe", "a524cbb1c51589903c4043b98917f1d9", 3428218),
+	GAME_ENTRY_EN("thedelivery", "TheDelivery.exe", "ae2e93ae61a612dd8cad1290bd5f7443", 4655690),
+	GAME_ENTRY_EN("thedelivery", "TheDelivery.ags", "eb22467716d7885c0b4c96e429830ed1", 1543734),
 	GAME_ENTRY_EN("thedevilsshroudpart1", "DevilTorino256.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16661573),
 	GAME_ENTRY_EN("thedevilsshroudpart1", "DevilTurin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16780039),
 	GAME_ENTRY_EN("thedevilsshroudpart2", "devillione256.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 23776250),
