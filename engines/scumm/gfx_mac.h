@@ -65,7 +65,7 @@ private:
 		bool kill;
 	};
 
-	Widget _widgets[21];
+	Widget _widgets[23];
 
 	void initWidget(int n, int x, int y, int w, int h);
 	void resetWidget(int n);
