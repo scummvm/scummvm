@@ -66,6 +66,11 @@ enum DirectionalInput {
 	kDirectionalInputDpad,
 };
 
+enum TouchMode {
+	kTouchModeDirect,
+	kTouchModeTouchpad,
+};
+
 enum UIViewSwipeDirection {
 	kUIViewSwipeUp = 1,
 	kUIViewSwipeDown = 2,
@@ -98,6 +103,6 @@ void iOS7_buildSharedOSystemInstance();
 void iOS7_main(int argc, char **argv);
 Common::String iOS7_getDocumentsDir();
 Common::String iOS7_getAppBundleDir();
-bool iOS7_touchpadModeEnabled();
+TouchMode iOS7_getCurrentTouchMode();
 
 #endif

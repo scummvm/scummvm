@@ -427,7 +427,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 
 void OSystem_iOS7::applyBackendSettings() {
 	virtualController(ConfMan.getBool("gamepad_controller"));
-	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
+	_currentTouchMode = ConfMan.getBool("touchpad_mode") ? kTouchModeTouchpad : kTouchModeDirect;
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 #if TARGET_OS_IOS
