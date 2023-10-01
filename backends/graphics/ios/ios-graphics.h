@@ -66,6 +66,9 @@ public:
 	 * Sets up a basic state of the graphics manager.
 	 */
 	virtual bool setState(const State &state) = 0;
+
+protected:
+	int _old_touch_mode;
 };
 
 class iOSGraphicsManager :
@@ -91,6 +94,8 @@ protected:
 	void setSystemMousePosition(const int x, const int y) override {}
 
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
+	void showOverlay(bool inGUI) override;
+	void hideOverlay() override;
 
 	void refreshScreen() override;
 };
