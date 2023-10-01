@@ -261,16 +261,20 @@ Common::Error NancyEngine::run() {
 		}
 	}
 
+	bool graphicsWereSuppressed = false;
+
 	// Main loop
-	while (!shouldQuit()) {
+	while (true) {
+		_input->processEvents();
+		if (shouldQuit()) {
+			break;
+		}
+
 		uint32 frameEndTime = _system->getMillis() + 16;
 
-		bool graphicsWereSuppressed = _graphicsManager->_isSuppressed;
 		if (!graphicsWereSuppressed) {
 			_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		}
-
-		_input->processEvents();
 
 		State::State *s;
 
@@ -288,6 +292,8 @@ Common::Error NancyEngine::run() {
 			s->process();
 		}
 
+		graphicsWereSuppressed = _graphicsManager->_isSuppressed;
+
 		_graphicsManager->draw();
 
 		if (_gameFlow.changingState) {
@@ -295,7 +301,7 @@ Common::Error NancyEngine::run() {
 
 			s = getStateObject(_gameFlow.prevState);
 			if (s) {
-				if(s->onStateExit(_gameFlow.prevState)) {
+				if (s->onStateExit(_gameFlow.prevState)) {
 					destroyState(_gameFlow.prevState);
 				}
 			}
