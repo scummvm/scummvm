@@ -80,6 +80,11 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs[i].readData(stream);
 	}
+
+	if (ser.getVersion() >= kGameTypeNancy6) {
+		// Movie sound was deliberately disabled in nancy6
+		_sound.name = "NO SOUND";
+	}
 }
 
 void PlaySecondaryMovie::init() {
