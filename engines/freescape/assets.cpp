@@ -65,6 +65,8 @@ void FreescapeEngine::loadAssetsDemo() {
 		loadAssetsDOSDemo();
 	} else if (isSpectrum()) {
 		loadAssetsZXDemo();
+	} else if (isCPC()) {
+		loadAssetsCPCDemo();
 	} else
 		error("Unsupported demo");
 }

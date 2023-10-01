@@ -443,6 +443,19 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"totaleclipse",
+		"Demo",
+		{
+			{"TECON.BIN", 0, "990f9a5e6d29142f98d53e53b1e43cc9", 16512},
+			{"TEPROG.BIN", 0, "093a3a9a65c7914b93e13675fedafcc6", 29824},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformAmstradCPC,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
 		"",
 		{
 			{"TOTAL.EXE", 0, "959703c1cd37b0d9744c492240a8178b", 13327},

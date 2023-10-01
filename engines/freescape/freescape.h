@@ -618,7 +618,13 @@ public:
 	void gotoArea(uint16 areaID, int entranceID) override;
 
 	void loadAssetsDOSFullGame() override;
-	void drawUI() override;
+
+	void initDOS();
+	void initCPC();
+	void loadAssetsCPCDemo() override;
+
+	void drawDOSUI(Graphics::Surface *surface) override;
+	void drawCPCUI(Graphics::Surface *surface) override;
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;

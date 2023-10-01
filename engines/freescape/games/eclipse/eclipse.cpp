@@ -48,7 +48,11 @@ static const char *rawMessagesTable[] = {
 	NULL};
 
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	_viewArea = Common::Rect(40, 32, 280, 132);
+	if (isDOS())
+		initDOS();
+	else if (isCPC())
+		initCPC();
+
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);
@@ -74,41 +78,6 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_playerSteps.push_back(25);
 }
 
-extern byte kEGADefaultPalette[16][3];
-
-void EclipseEngine::loadAssetsDOSFullGame() {
-	Common::File file;
-	if (_renderMode == Common::kRenderEGA) {
-		file.open("SCN1E.DAT");
-		if (file.isOpen()) {
-			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-		}
-		file.close();
-		file.open("TOTEE.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open TOTEE.EXE");
-
-		loadFonts(&file, 0xd403);
-		load8bitBinary(&file, 0x3ce0, 16);
-		for (auto &it : _areaMap) {
-			it._value->addStructure(_areaMap[255]);
-			for (int16 id = 183; id < 207; id++)
-				it._value->addObjectFromArea(id, _areaMap[255]);
-		}
-		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kEGADefaultPalette, 0, 16);
-	} else if (_renderMode == Common::kRenderCGA) {
-		file.open("TOTEC.EXE");
-
-		if (!file.isOpen())
-			error("Failed to open TOTEC.EXE");
-		load8bitBinary(&file, 0x7bb0, 4); // TODO
-	} else
-		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
-}
-
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	debugC(1, kFreescapeDebugMove, "Jumping to area: %d, entrance: %d", areaID, entranceID);
 
@@ -131,31 +100,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 0;
 	} else
 		_gfx->_keyColor = 255;
-}
 
-void EclipseEngine::drawUI() {
-	_gfx->setViewport(_fullscreenViewArea);
+	swapPalette(areaID);
+	//_currentArea->_skyColor = isCPC() ? 1 : 0;
+	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
 
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
-	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
-	surface->fillRect(_fullscreenViewArea, gray);
-	drawCrossair(surface);
-
-	int score = _gameStateVars[k8bitVariableScore];
-	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
-	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
-
-	if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentAreaMessages[0], 102, 135, black, yellow, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 136, 6, black, white, surface);
-
-	drawFullscreenSurface(surface);
-	surface->free();
-	delete surface;
-
-	_gfx->setViewport(_viewArea);
+	resetInput();
 }
 
 Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {

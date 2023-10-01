@@ -18,7 +18,9 @@ MODULE_OBJS := \
 	games/driller/dos.o \
 	games/driller/driller.o \
 	games/driller/zx.o \
-	games/eclipse.o \
+	games/eclipse/dos.o \
+	games/eclipse/eclipse.o \
+	games/eclipse/cpc.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \
