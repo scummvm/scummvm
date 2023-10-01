@@ -94,7 +94,7 @@ struct GizmoItem {
 
 extern void gizmo_anim(RGB8 *pal);
 extern void gizmo_initialize(RGB8 *pal);
-extern void gizmo_shutdown(void *, void *);
+extern void gizmo_shutdown(void *v1 = nullptr, void *v2 = nullptr);
 extern void gizmo_digi_play(const char *name, int vol, bool &done);
 
 } // namespace GUI

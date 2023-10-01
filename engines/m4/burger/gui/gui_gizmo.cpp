@@ -64,20 +64,6 @@ void gizmo_digi_play(const char *name, int vol, bool &done) {
 	}
 }
 
-void gizmo_anim(RGB8 *pal) {
-	if (!_GIZMO(initialized))
-		gizmo_initialize(pal);
-
-	if (gizmo_load_sprites("500gizmo", 58)) {
-		_GIZMO(gui) = gui_create_gizmo(_GIZMO(sprites)[0], 0, 0, 505);
-
-		if (_GIZMO(gui)) {
-
-			// TODO
-		}
-	}
-}
-
 void gizmo_initialize(RGB8 *pal) {
 	if (!_GIZMO(initialized)) {
 		_GIZMO(initialized) = true;
@@ -593,6 +579,35 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 	ScreenContext *ctx = vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
 		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gui_gizmo_eventHandler);
 	return ctx ? gui : nullptr;
+}
+
+void gizmo_anim(RGB8 *pal) {
+	if (!_GIZMO(initialized))
+		gizmo_initialize(pal);
+	if (!gizmo_load_sprites("500gizmo", 58))
+		return;
+
+	Gizmo *gizmo = gui_create_gizmo(_GIZMO(sprites)[0], 0, 0, 505);
+	_GIZMO(gui) = gizmo;
+	assert(gizmo);
+
+	gizmo_add_item(gizmo, 1, 234, 153, 178, 48, 251, 163, 144, 25,
+		[]() { gizmo_daemon(5000); }, 0);
+	gizmo_add_item(gizmo, 2, 234, 178, 178, 48, 254, 188, 136, 25,
+		[]() { gizmo_daemon(5001); }, 1);
+	gizmo_add_item(gizmo, 3, 235, 203, 178, 48, 256, 212, 128, 27,
+		[]() { gizmo_daemon(5002); }, 2);
+	gizmo_add_item(gizmo, 6, 234, 230, 178, 48, 260, 239, 119, 25,
+		[]() { gizmo_daemon(5003); }, 3);
+	gizmo_add_item(gizmo, 5, 234, 255, 178, 48, 264, 264, 109, 25,
+		[]() { gizmo_daemon(5004); }, 4);
+	gizmo_add_item(gizmo, 6, 234, 278, 178, 48, 266, 289, 102, 25,
+		[]() { gizmo_daemon(5005); }, 5);
+	gizmo_add_item(gizmo, 7, 234, 300, 178, 48, 268, 314, 96, 25,
+		[]() { gizmo_daemon(5006); }, 6);
+
+	vmng_screen_show(gizmo);
+	mouse_lock_sprite(0);
 }
 
 } // namespace GUI
