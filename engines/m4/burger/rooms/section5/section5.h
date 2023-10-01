@@ -58,10 +58,8 @@ private:
 	Room511 _room511;
 	Room512 _room512;
 	Room513 _room513;
-	bool _gizmoRoomNums[15];
 
 	void takeGizmo(RGB8 *pal);
-	void gizmoDigiPlay(const char *name, int vol, bool &done);
 
 public:
 	static const char *PARSER[];

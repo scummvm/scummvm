@@ -26,9 +26,11 @@
 #include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/gui/gui_event.h"
+#include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
 #include "m4/mem/mem.h"
 #include "m4/platform/keys.h"
+#include "m4/m4.h"
 
 namespace M4 {
 namespace Burger {
@@ -41,6 +43,24 @@ static bool gizmo_load_sprites(const char *name, size_t count);
 static void gizmo_free_sprites();
 static void gizmo_draw_sprite(M4sprite *sprite, Buffer *dest, int destX, int destY);
 static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags);
+static void gizmo_digi_daemon(int trigger);
+
+void gizmo_digi_play(const char *name, int vol, bool &done) {
+	if (!done) {
+		done = true;
+		digi_play(name, 2, vol);
+		digi_read_another_chunk();
+		player_set_commands_allowed(false);
+
+		while (!g_engine->shouldQuit() && digi_play_state(2)) {
+			digi_read_another_chunk();
+			midi_loop();
+			gui_system_event_handler();
+		}
+
+		player_set_commands_allowed(true);
+	}
+}
 
 void gizmo_anim(RGB8 *pal) {
 	if (!_GIZMO(initialized))
@@ -76,6 +96,69 @@ void gizmo_initialize(RGB8 *pal) {
 void gizmo_shutdown(void *, void *) {
 	gizmo_dispose_gui();
 	gizmo_restore_interface(true);
+}
+
+static void gizmo_digi_daemon(int trigger) {
+	switch (trigger) {
+	case 5000:
+		if (player_been_here(503)) {
+			if (_G(flags)[kBORK_STATE] == 16)
+				gizmo_digi_play("510w005", 255, _GIZMO(roomNums)[3]);
+			else
+				gizmo_digi_play("510w004", 255, _GIZMO(roomNums)[2]);
+		}
+		break;
+
+	case 5001:
+		if (player_been_here(507)) {
+			if (_G(flags)[V223] == 2)
+				gizmo_digi_play("510w008", 255, _GIZMO(roomNums)[5]);
+			else
+				gizmo_digi_play("510w007", 255, _GIZMO(roomNums)[4]);
+		}
+		break;
+
+	case 5002:
+		if (player_been_here(504)) {
+			if (_G(flags)[V210] == 5002)
+				gizmo_digi_play("510w011", 255, _GIZMO(roomNums)[7]);
+			else
+				gizmo_digi_play("510w010", 255, _GIZMO(roomNums)[6]);
+		}
+		break;
+
+	case 5003:
+		if (player_been_here(508)) {
+			if (_G(flags)[V227] != 0)
+				gizmo_digi_play("510w014", 255, _GIZMO(roomNums)[9]);
+			else
+				gizmo_digi_play("510w013", 255, _GIZMO(roomNums)[8]);
+		}
+		break;
+
+	case 5004:
+		if (player_been_here(506)) {
+			if (_G(flags)[V218] == 5003)
+				gizmo_digi_play("510w017", 255, _GIZMO(roomNums)[11]);
+			else
+				gizmo_digi_play("510w016", 255, _GIZMO(roomNums)[10]);
+		}
+		break;
+
+	case 5005:
+		if (_G(flags)[V200] == 5003)
+			gizmo_digi_play("510w019", 255, _GIZMO(roomNums)[13]);
+		else
+			gizmo_digi_play("510w018", 255, _GIZMO(roomNums)[12]);
+		break;
+
+	case 5006:
+		gizmo_digi_play("510w020", 255, _GIZMO(roomNums)[14]);
+		break;
+
+	default:
+		break;
+	}
 }
 
 static void gizmo_restore_interface(bool fade) {
@@ -255,10 +338,15 @@ static GrBuff *gizmo_create_buffer(Gizmo *gizmo, int sx, int sy, int w, int h) {
 	return grBuff;
 }
 
+static void gizmo_item_fn3() {
+	// TODO
+}
+
 static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 		int boundsX, int boundsY, int boundsW, int boundsH,
-		int rect1X, int rect1Y, int rect1W, int rect1H, int arg5,
-		int arg6, int arg7, bool hasBuffer, int arg9, int arg10) {
+		int rect1X, int rect1Y, int rect1W, int rect1H,
+		GizmoItemFn0 fn0, int arg6, int arg7 = 0, bool hasBuffer = false,
+		int arg9 = 0, GizmoItemFn3 fn3 = gizmo_item_fn3) {
 	if (!gizmo)
 		return nullptr;
 
@@ -280,7 +368,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_bounds = Common::Rect(boundsX, boundsY, boundsX + boundsW - 1,
 		boundsY + boundsH - 1);
 	item->_rect1 = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y - rect1H - 1);
-	item->_field39 = arg5;
+	item->_fn0 = fn0;
 
 	item->_hasBuffer = hasBuffer;
 	if (hasBuffer) {
@@ -299,7 +387,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 
 	item->_fn1 = gizmo_item_fn1;
 	item->_fn2 = gizmo_item_fn2;
-	item->_field45 = arg10;
+	item->_fn3 = fn3;
 	(*item->_fn1)(item, gizmo, rect1X, rect1Y, 0, 0);
 
 	int32 status = 0;
