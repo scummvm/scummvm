@@ -65,7 +65,7 @@ private:
 	UI::Button *_noButton;
 	UI::Button *_cancelButton;
 
-	const SDLG *_dialogData;
+	const SDLG::Dialog *_dialogData;
 };
 
 } // End of namespace State

@@ -93,6 +93,8 @@ private:
 	bool _enteringNewState;
 	uint32 _nextBlink;
 
+	bool _destroyOnExit = true;
+
 	const LOAD *_loadSaveData;
 };
 

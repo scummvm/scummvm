@@ -486,22 +486,28 @@ LOAD::LOAD(Common::SeekableReadStream *chunkStream) :
 }
 
 SDLG::SDLG(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
-	readFilename(*chunkStream, _imageName);
+	while (chunkStream->pos() < chunkStream->size()) {
+		dialogs.push_back(Dialog(chunkStream));
+	}
+}
+
+SDLG::Dialog::Dialog(Common::SeekableReadStream *chunkStream) {
+	readFilename(*chunkStream, imageName);
 	chunkStream->skip(16);
 
-	readRect(*chunkStream, _yesDest);
-	readRect(*chunkStream, _noDest);
-	readRect(*chunkStream, _cancelDest);
+	readRect(*chunkStream, yesDest);
+	readRect(*chunkStream, noDest);
+	readRect(*chunkStream, cancelDest);
 
 	chunkStream->skip(16);
 
-	readRect(*chunkStream, _yesHighlightSrc);
-	readRect(*chunkStream, _noHighlightSrc);
-	readRect(*chunkStream, _cancelHighlightSrc);
+	readRect(*chunkStream, yesHighlightSrc);
+	readRect(*chunkStream, noHighlightSrc);
+	readRect(*chunkStream, cancelHighlightSrc);
 
-	readRect(*chunkStream, _yesDownSrc);
-	readRect(*chunkStream, _noDownSrc);
-	readRect(*chunkStream, _cancelDownSrc);
+	readRect(*chunkStream, yesDownSrc);
+	readRect(*chunkStream, noDownSrc);
+	readRect(*chunkStream, cancelDownSrc);
 }
 
 HINT::HINT(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {

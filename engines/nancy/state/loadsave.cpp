@@ -85,9 +85,13 @@ void LoadSaveMenu::process() {
 	case kSuccess:
 		success();
 		break;
-	case kStop:
-		stop();
+	default:
 		break;
+	}
+
+	// Make sure stop runs on the same frame
+	if (_state == kStop) {
+		stop();
 	}
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
@@ -98,7 +102,7 @@ void LoadSaveMenu::onStateEnter(const NancyState::NancyState prevState) {
 }
 
 bool LoadSaveMenu::onStateExit(const NancyState::NancyState nextState) {
-	return true;
+	return _destroyOnExit;
 }
 
 void LoadSaveMenu::registerGraphics() {
@@ -130,6 +134,8 @@ void LoadSaveMenu::registerGraphics() {
 
 	_blinkingCursorOverlay.registerGraphics();
 	_successOverlay.registerGraphics();
+
+	g_nancy->_graphicsManager->redrawAll();
 }
 
 void LoadSaveMenu::init() {
@@ -443,6 +449,42 @@ void LoadSaveMenu::enterFilename() {
 }
 
 void LoadSaveMenu::save() {
+	const SDLG *sdlg = (const SDLG *)g_nancy->getEngineData("SDLG");
+
+	if (sdlg && sdlg->dialogs.size() > 1) {
+		// nancy6 added a "Do you want to overwrite this save" dialog.
+		// First, check if we are actually overwriting
+		SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), _selectedSave + 1);
+		if (desc.isValid()) {
+			if (!ConfMan.hasKey("sdlg_return", ConfMan.kTransientDomain)) {
+				// Request the dialog
+				ConfMan.setInt("sdlg_id", 1, ConfMan.kTransientDomain);
+				_destroyOnExit = false;
+				g_nancy->setState(NancyState::kSaveDialog);
+				return;
+			} else {
+				// Dialog has returned
+				g_nancy->_graphicsManager->suppressNextDraw();
+				_destroyOnExit = true;
+				uint ret = ConfMan.getInt("sdlg_return", ConfMan.kTransientDomain);
+				ConfMan.removeKey("sdlg_return", ConfMan.kTransientDomain);
+				switch (ret) {
+				case 1 :
+					// "No" keeps us in the LoadSave state but doesn't save
+					_state = kRun;
+					return;
+				case 2 :
+					// "Cancel" returns to the main menu
+					g_nancy->setState(NancyState::kMainMenu);
+					return;
+				default:
+					// "Yes" actually saves
+					break;
+				}
+			}
+		}
+	}
+	
 	// Improvement: not providing a name doesn't result in the
 	// savefile being named "--- Empty ---" or "Nothing Saved Here".
 	// Instead, we use ScummVM's built-in save name generator
@@ -468,6 +510,38 @@ void LoadSaveMenu::save() {
 }
 
 void LoadSaveMenu::load() {
+	const SDLG *sdlg = (const SDLG *)g_nancy->getEngineData("SDLG");
+
+	if (sdlg && sdlg->dialogs.size() > 1 && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
+		// nancy6 added a "Do you want load without saving" dialog.
+		if (!ConfMan.hasKey("sdlg_return", ConfMan.kTransientDomain)) {
+			// Request the dialog
+			ConfMan.setInt("sdlg_id", 2, ConfMan.kTransientDomain);
+			_destroyOnExit = false;
+			g_nancy->setState(NancyState::kSaveDialog);
+			return;
+		} else {
+			// Dialog has returned
+			_destroyOnExit = true;
+			g_nancy->_graphicsManager->suppressNextDraw();
+			uint ret = ConfMan.getInt("sdlg_return", ConfMan.kTransientDomain);
+			ConfMan.removeKey("sdlg_return", ConfMan.kTransientDomain);
+			switch (ret) {
+			case 1 :
+				// "No" keeps us in the LoadSave state but doesn't load
+				_state = kRun;
+				return;
+			case 2 :
+				// "Cancel" returns to the main menu
+				g_nancy->setState(NancyState::kMainMenu);
+				return;
+			default:
+				// "Yes" actually loads
+				break;
+			}
+		}
+	}
+
 	if (Nancy::State::Scene::hasInstance()) {
 		Nancy::State::Scene::destroy();
 	}

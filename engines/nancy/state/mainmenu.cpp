@@ -24,6 +24,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/graphics.h"
 
 #include "engines/nancy/state/mainmenu.h"
 #include "engines/nancy/state/scene.h"
@@ -63,7 +64,7 @@ void MainMenu::onStateEnter(const NancyState::NancyState prevState) {
 }
 
 bool MainMenu::onStateExit(const NancyState::NancyState nextState) {
-	return true;
+	return _destroyOnExit;
 }
 
 void MainMenu::registerGraphics() {
@@ -72,6 +73,8 @@ void MainMenu::registerGraphics() {
 	for (auto *button : _buttons) {
 		button->registerGraphics();
 	}
+
+	g_nancy->_graphicsManager->redrawAll();
 }
 
 void MainMenu::clearButtonState() {
@@ -188,8 +191,40 @@ void MainMenu::stop() {
 	case 6:
 		// Exit Game
 		if (g_nancy->getEngineData("SDLG") && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
-			g_nancy->setState(NancyState::kSaveDialog);
+			if (!ConfMan.hasKey("sdlg_return", ConfMan.kTransientDomain)) {
+				// Request the "Do you want to save before quitting" dialog
+				ConfMan.setInt("sdlg_id", 0, ConfMan.kTransientDomain);
+				_destroyOnExit = false;
+				g_nancy->setState(NancyState::kSaveDialog);
+			} else {
+				// Dialog has returned
+				_destroyOnExit = true;
+				g_nancy->_graphicsManager->suppressNextDraw();
+				uint ret = ConfMan.getInt("sdlg_return", ConfMan.kTransientDomain);
+				ConfMan.removeKey("sdlg_return", ConfMan.kTransientDomain);
+				switch (ret) {
+				case 0 :
+					// "Yes" switches to LoadSave
+					g_nancy->setState(NancyState::kLoadSave);
+					break;
+				case 1 :
+					// "No" quits the game
+					g_nancy->quitGame();
+					break;
+				case 2 :
+					// "Cancel" keeps us in the main menu
+					_selected = -1;
+					for (uint i = 0; i < _buttons.size(); ++i) {
+						_buttons[i]->_isClicked = false;
+					}
+					_state = kRun;
+					break;
+				default:
+					break;
+				}
+			}
 		} else {
+			// Earlier games had no "Do you want to save before quitting" dialog, directly quit
 			g_nancy->quitGame();
 		}
 		

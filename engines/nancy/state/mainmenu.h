@@ -64,6 +64,8 @@ private:
 
 	Common::Array<UI::Button *> _buttons;
 
+	bool _destroyOnExit = true;
+
 	const MENU *_menuData;
 };
 

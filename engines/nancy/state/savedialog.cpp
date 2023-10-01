@@ -29,6 +29,8 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/ui/button.h"
 
+#include "common/config-manager.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::SaveDialog);
 }
@@ -87,14 +89,17 @@ void SaveDialog::registerGraphics() {
 }
 
 void SaveDialog::init() {
-	_dialogData = (const SDLG*)g_nancy->getEngineData("SDLG");
-	assert(_dialogData);
+	const SDLG* sdlg = (const SDLG*)g_nancy->getEngineData("SDLG");
+	assert(sdlg);
 
-	_background.init(_dialogData->_imageName);
+	_dialogData = &sdlg->dialogs[ConfMan.getInt("sdlg_id", ConfMan.kTransientDomain)];
+	ConfMan.removeKey("sdlg_id", ConfMan.kTransientDomain);
 
-	_yesButton = new UI::Button(1, _background._drawSurface, _dialogData->_yesDownSrc, _dialogData->_yesDest, _dialogData->_yesHighlightSrc);
-	_noButton = new UI::Button(1, _background._drawSurface, _dialogData->_noDownSrc, _dialogData->_noDest, _dialogData->_noHighlightSrc);
-	_cancelButton = new UI::Button(1, _background._drawSurface, _dialogData->_cancelDownSrc, _dialogData->_cancelDest, _dialogData->_cancelHighlightSrc);
+	_background.init(_dialogData->imageName);
+
+	_yesButton = new UI::Button(1, _background._drawSurface, _dialogData->yesDownSrc, _dialogData->yesDest, _dialogData->yesHighlightSrc);
+	_noButton = new UI::Button(1, _background._drawSurface, _dialogData->noDownSrc, _dialogData->noDest, _dialogData->noHighlightSrc);
+	_cancelButton = new UI::Button(1, _background._drawSurface, _dialogData->cancelDownSrc, _dialogData->cancelDest, _dialogData->cancelHighlightSrc);
 
 	registerGraphics();
 
@@ -127,19 +132,8 @@ void SaveDialog::run() {
 }
 
 void SaveDialog::stop() {
-	switch (_selected) {
-	case 0 :
-		g_nancy->setState(NancyState::kLoadSave);
-		break;
-	case 1 :
-		g_nancy->quitGame();
-		break;
-	case 2 :
-		g_nancy->setToPreviousState();
-		break;
-	default:
-		break;
-	}
+	ConfMan.setInt("sdlg_return", _selected, ConfMan.kTransientDomain);
+	g_nancy->setToPreviousState();
 }
 
 } // End of namespace State
