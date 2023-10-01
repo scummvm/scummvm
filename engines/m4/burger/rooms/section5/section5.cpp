@@ -325,7 +325,7 @@ const char *Section5::_bgDigiName;
 Section5::Section5() : Rooms::Section() {
 	_bork = nullptr;
 	_digiName = nullptr;
-	Common::fill(_gizmoRoomNums, _gizmoRoomNums + 15, false);
+	Common::fill(_GIZMO(roomNums), _GIZMO(roomNums) + 15, false);
 
 	add(501, &_room501);
 	add(502, &_room502);
@@ -553,29 +553,12 @@ void Section5::takeGizmo(RGB8 *pal) {
 		player_set_commands_allowed(false);
 
 		if (_G(flags)[V238] == 0) {
-			gizmoDigiPlay("510w001", 255, _gizmoRoomNums[0]);
+			GUI::gizmo_digi_play("510w001", 255, _GIZMO(roomNums)[0]);
 			++_G(flags)[V238];
 		} else if (_G(flags)[V238] == 1) {
-			gizmoDigiPlay("510w002", 255, _gizmoRoomNums[1]);
+			GUI::gizmo_digi_play("510w002", 255, _GIZMO(roomNums)[1]);
 			++_G(flags)[V238];
 		}
-	}
-}
-
-void Section5::gizmoDigiPlay(const char *name, int vol, bool &done) {
-	if (!done) {
-		done = true;
-		digi_play(name, 2, vol);
-		digi_read_another_chunk();
-		player_set_commands_allowed(false);
-
-		while (!g_engine->shouldQuit() && digi_play_state(2)) {
-			digi_read_another_chunk();
-			midi_loop();
-			gui_system_event_handler();
-		}
-
-		player_set_commands_allowed(true);
 	}
 }
 

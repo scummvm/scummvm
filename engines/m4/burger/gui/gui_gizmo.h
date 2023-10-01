@@ -48,6 +48,7 @@ struct Gizmo_Globals {
 	char *_assetName = nullptr;
 	int _spriteCount = 0;
 	M4sprite **_sprites = nullptr;
+	bool _roomNums[15];
 };
 
 struct GizmoItem;
@@ -68,8 +69,10 @@ struct GizmoButton {
 	int _field10 = 0;
 };
 
+typedef void (*GizmoItemFn0)();
 typedef void (*GizmoItemFn1)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
 typedef void (*GizmoItemFn2)(GizmoItem *item);
+typedef void (*GizmoItemFn3)();
 
 struct GizmoItem {
 	GizmoItem *_next = nullptr;
@@ -82,15 +85,16 @@ struct GizmoItem {
 	Common::Rect _bounds;
 	Common::Rect _rect1;
 	bool _hasBuffer = false;
-	int _field39 = 0;
+	GizmoItemFn0 _fn0 = nullptr;
 	GizmoItemFn1 _fn1 = nullptr;
 	GizmoItemFn2 _fn2 = nullptr;
-	int _field45 = 0;
+	GizmoItemFn3 _fn3 = nullptr;
 };
 
 extern void gizmo_anim(RGB8 *pal);
 extern void gizmo_initialize(RGB8 *pal);
 extern void gizmo_shutdown(void *, void *);
+extern void gizmo_digi_play(const char *name, int vol, bool &done);
 
 } // namespace GUI
 } // namespace Burger
