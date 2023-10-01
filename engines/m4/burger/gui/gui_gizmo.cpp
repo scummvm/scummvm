@@ -441,7 +441,9 @@ static void gui_gizmo_show(ScreenContext *s, RectList *r, Buffer *dest, int32 de
 	}
 }
 
-static bool gui_gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
+static bool gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
+	warning("TODO: gizmo_eventHandler %d %d", eventType, event);
+
 	/*
 	ScreenContext *srcBuffer = (ScreenContext *)s;
 	*z = false;
@@ -559,7 +561,7 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 	gui->_grBuff = grBuff;
 	//gui->_items = nullptr;
 
-	gui->_eventHandler = gui_gizmo_eventHandler;
+	gui->_eventHandler = gizmo_eventHandler;
 
 	Buffer *dest = gui->_grBuff->get_buffer();
 	Buffer *src = _G(gameDrawBuff)->get_buffer();
@@ -577,7 +579,7 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 	gui->_grBuff->release();
 
 	ScreenContext *ctx = vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
-		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gui_gizmo_eventHandler);
+		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gizmo_eventHandler);
 	return ctx ? gui : nullptr;
 }
 
