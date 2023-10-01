@@ -759,7 +759,8 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 	}
 
 	// Check if the player has moved OR if the sound itself has moved, OR, if we're still interpolating
-	if (!_shouldRecalculate && !hasStepped && _positionLerp == 0) {
+	// Also, make sure we don't accidentally create a Scene state during game startup
+	if (!State::Scene::hasInstance() || (!_shouldRecalculate && !hasStepped && _positionLerp == 0)) {
 		return;
 	}
 	
