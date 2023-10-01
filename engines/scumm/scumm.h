@@ -521,6 +521,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class CharsetRenderer;
 	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
+	friend class MacIndy3Gui;
 
 public:
 	/* Put often used variables at the top.

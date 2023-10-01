@@ -57,34 +57,41 @@ private:
 		int h;
 	};
 
-	const GuiButtonData _buttons[20] = {
-		{  67, 292, 348, 18 }, // Sentence line
-		{  67, 312,  68, 18 }, // Push
-		{  67, 332,  68, 18 }, // Pull
-		{  67, 352,  68, 18 }, // Give
-		{ 137, 312,  68, 18 }, // Open
-		{ 137, 332,  68, 18 }, // Close
-		{ 137, 352,  68, 18 }, // Look at
-		{ 207, 312,  68, 18 }, // Walk to
-		{ 207, 332,  68, 18 }, // Pick up
-		{ 207, 352,  68, 18 }, // What is
-		{ 277, 312,  68, 18 }, // Use
-		{ 277, 332,  68, 18 }, // Turn on
-		{ 277, 352,  68, 18 }, // Turn off
-		{ 347, 312,  68, 18 }, // Talk
-		{ 347, 332,  68, 18 }, // Travel
-		{  67, 292, 507, 18 }, // Conversation 1
-		{  67, 312, 507, 18 }, // Conversation 2
-		{  67, 332, 507, 18 }, // Conversation 3
-		{  67, 352, 151, 18 }, // Conversation 4
-		{ 423, 352, 151, 18 }  // Conversation 5
+	// This list has been arranged so that most of the standard verbs
+	// have the same index as their verb number in the game. The rest
+	// have been arranged tastefully.
+	//
+	// I think 101-106 are inventory items.
+
+	const GuiButtonData _buttons[21] = {
+		{  67, 292, 348, 18 }, // 100: Sentence line
+		{ 137, 312,  68, 18 }, // 1: Open
+		{ 137, 332,  68, 18 }, // 2: Close
+		{  67, 352,  68, 18 }, // 3: Give
+		{ 277, 332,  68, 18 }, // 4: Turn on
+		{ 277, 352,  68, 18 }, // 5: Turn off
+		{  67, 312,  68, 18 }, // 6: Push
+		{  67, 332,  68, 18 }, // 7: Pull
+		{ 277, 312,  68, 18 }, // 8: Use
+		{ 137, 352,  68, 18 }, // 9: Look at
+		{ 207, 312,  68, 18 }, // 10: Walk to
+		{ 207, 332,  68, 18 }, // 11: Pick up
+		{ 207, 352,  68, 18 }, // 12: What is
+		{ 347, 312,  68, 18 }, // 13: Talk
+		{ 347, 332,  68, 18 }, // 32: Travel
+		{  67, 292, 507, 18 }, // 120: Conversation 1
+		{  67, 312, 507, 18 }, // 121: Conversation 2
+		{  67, 332, 507, 18 }, // 122: Conversation 3
+		{  67, 352, 507, 18 }, // 123: Conversation 4
+		{  67, 352, 151, 18 }, // Conversation 5
+		{ 423, 352, 151, 18 }  // Conversation 6
 	};
 
 	void clear();
 	void show();
 	void hide();
 	void fill(Common::Rect r);
-	void drawButton(int n, char *text, bool enabled, bool pressed);
+	void drawButton(int n, byte *text, bool enabled, bool pressed);
 	void drawInventoryWidget();
 	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
 	void drawInventoryArrowUp(bool highlight);

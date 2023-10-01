@@ -116,7 +116,6 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 		}
 	}
 
-
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
 
@@ -377,13 +376,51 @@ bool MacIndy3Gui::isActive() {
 }
 
 void MacIndy3Gui::update() {
-	if (isActive()) {
-		if (!_visible)
-			show();
-	} else {
+	if (!isActive()) {
 		if (_visible)
 			hide();
+		return;
 	}
+
+	// REMEMBER: Once we've mapped all the verb ids to their buttons,
+	// we may be able to revoke the friendship with ScummEngine, and
+	// optimize this loop quite a bit.
+
+	for (int i = 0; i < _vm->_numVerbs; i++) {
+		VerbSlot *vs = &_vm->_verbs[i];
+		if (!vs->saveid && vs->curmode && vs->verbid) {
+			// Verb is there
+
+			const byte *ptr = _vm->getResourceAddress(rtVerb, i);
+			if (ptr) {
+				byte buf[270];
+
+				_vm->convertMessageToString(ptr, buf, sizeof(buf));
+				int button = -1;
+
+				if (vs->verbid >= 1 && vs->verbid <= 13) {
+					button = i;
+				} else if (vs->verbid == 32) {
+					button = 14;
+				} else if (vs->verbid == 100) {
+					button = 0;
+				} else if (vs->verbid >= 120 && vs->verbid <= 123) {
+					button = vs->verbid - 105;
+				} else {
+					debug("Unknown verb: [%d] %s", vs->verbid, buf);
+				}
+
+				if (button != -1) {
+					drawButton(button, buf, vs->curmode != 2, false);
+				}
+			}
+		} else {
+			// Verb is gone
+		}
+	}
+
+	if (!_visible)
+		show();
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
@@ -462,7 +499,7 @@ void MacIndy3Gui::fill(Common::Rect r) {
 		_macScreen->fillRect(r, 7);
 }
 
-void MacIndy3Gui::drawButton(int n, char *text, bool enabled, bool pressed) {
+void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	int x = _buttons[n].x;
 	int y = _buttons[n].y;
 	int w = _buttons[n].w;
@@ -528,7 +565,7 @@ void MacIndy3Gui::drawButton(int n, char *text, bool enabled, bool pressed) {
 		textX += _fonts[2]->getCharWidth(text[i]);
 	}
 
-	drawInventoryWidget();
+	_system->copyRectToScreen(_macScreen->getBasePtr(x, y), _macScreen->pitch, x, y, w, h);
 }
 
 // Desired behavior:

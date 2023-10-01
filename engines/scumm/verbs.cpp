@@ -21,6 +21,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -960,6 +961,9 @@ void ScummEngine::verbMouseOver(int verb) {
 }
 
 int ScummEngine::findVerbAtPos(int x, int y) const {
+	if (_macIndy3Gui && _macIndy3Gui->isActive())
+		return 0;
+
 	if (!_numVerbs)
 		return 0;
 
