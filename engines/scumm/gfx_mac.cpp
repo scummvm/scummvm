@@ -385,13 +385,15 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	initWidget(11, 277, 332,  68, 18); // 4: Turn on
 	initWidget(12, 277, 352,  68, 18); // 5: Turn off
 	initWidget(13, 347, 312,  68, 18); // 13: Talk
-	initWidget(14, 347, 332,  68, 18); // 32: Travel
-	initWidget(15,  67, 292, 507, 18); // 120: Conversation 1
-	initWidget(16,  67, 312, 507, 18); // 121: Conversation 2
-	initWidget(17,  67, 332, 507, 18); // 122: Conversation 3
-	initWidget(18,  67, 352, 507, 18); // 123: Conversation 4
-	initWidget(19,  67, 352, 151, 18); // Conversation 5
-	initWidget(20, 423, 352, 151, 18); // Conversation 6
+	initWidget(14,  97, 312, 121, 18); // 14: Never mind.
+	initWidget(15, 347, 332,  68, 18); // 32: Travel
+	initWidget(16, 324, 312,  91, 18); // 119: Take this:
+	initWidget(17,  67, 292, 507, 18); // 120: Conversation 1
+	initWidget(18,  67, 312, 507, 18); // 121: Conversation 2
+	initWidget(19,  67, 332, 507, 18); // 122: Conversation 3
+	initWidget(20,  67, 352, 507, 18); // 123: Conversation 4
+	initWidget(21,  67, 352, 151, 18); // Conversation 5
+	initWidget(22, 423, 352, 151, 18); // Conversation 6
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
@@ -470,16 +472,19 @@ void MacIndy3Gui::update() {
 		if (!vs->saveid && vs->curmode && vs->verbid) {
 			int id = -1;
 
-			if (vs->verbid >= 1 && vs->verbid <= 13) {
-				id = i;
-			} else if (vs->verbid == 32) {
-				id = 14;
-			} else if (vs->verbid == 100) {
+			if (vs->verbid == 100) {
 				id = 0;
-			} else if (vs->verbid >= 120 && vs->verbid <= 123) {
-				id = vs->verbid - 105;
+			} else if (vs->verbid >= 1 && vs->verbid <= 14) {
+				id = vs->verbid;
+			} else if (vs->verbid == 32) {
+				id = 15;
+			} else if (vs->verbid >= 119 && vs->verbid <= 125) {
+				id = vs->verbid - 103;
 			} else {
-//				debug("Unknown verb: %d", vs->verbid);
+				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
+				byte buf[270];
+				_vm->convertMessageToString(ptr, buf, sizeof(buf));
+//				debug("Unknown verb: %d %s", vs->verbid, buf);
 			}
 
 			if (id != -1) {
