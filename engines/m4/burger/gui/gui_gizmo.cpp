@@ -22,6 +22,7 @@
 #include "m4/burger/gui/gui_gizmo.h"
 #include "m4/burger/vars.h"
 #include "m4/core/errors.h"
+#include "m4/core/imath.h"
 #include "m4/adv_r/adv_background.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_sprite.h"
@@ -38,12 +39,13 @@ namespace GUI {
 
 static void gizmo_dispose_gui();
 static void gizmo_restore_interface(bool fade);
-static void gizmo_free_gui(ScreenContext *screenContext);
+static void gizmo_free_gui(Gizmo *gizmo);
 static bool gizmo_load_sprites(const char *name, size_t count);
 static void gizmo_free_sprites();
 static void gizmo_draw_sprite(M4sprite *sprite, Buffer *dest, int destX, int destY);
-static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags);
+static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags);
 static void gizmo_digi_daemon(int trigger);
+static void gizmo_daemon(int trigger);
 
 void gizmo_digi_play(const char *name, int vol, bool &done) {
 	if (!done) {
@@ -161,6 +163,164 @@ static void gizmo_digi_daemon(int trigger) {
 	}
 }
 
+static void gizmo_restore_sprite(int spriteIndex) {
+	if (!_GIZMO(gui))
+		return;
+
+	Buffer *dest = _GIZMO(gui)->_grBuff->get_buffer();
+	if (!dest)
+		return;
+
+	if (spriteIndex >= 22)
+		gizmo_draw_sprite(_GIZMO(sprites)[spriteIndex], dest, 270, 38);
+
+	int32 status = 0;
+	ScreenContext *ctx = vmng_screen_find(_GIZMO(gui), &status);
+
+	if (ctx && status == 1)
+		RestoreScreens(270, 38, 381, 93);
+}
+
+static void gizmo_digi_wait(int spriteIndex1, int spriteIndex2) {
+	player_set_commands_allowed(false);
+	digi_read_another_chunk();
+
+	int spriteNum = spriteIndex1;
+	while (digi_play_state(2)) {
+		// Cycle displayed sprite
+		gizmo_restore_sprite(spriteIndex1);
+		spriteNum = (spriteNum == spriteIndex2) ? spriteIndex1 : spriteNum + 1;
+
+		uint32 timer = timer_read_60();
+		while (!g_engine->shouldQuit() && (timer_read_60() - timer) < 6) {
+			digi_read_another_chunk();
+			midi_loop();
+			gui_system_event_handler();
+		}
+	}
+}
+
+static void gizmo_daemon(int trigger) {
+	switch (trigger) {
+	case 5000:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b001a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b001b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b001c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(32, 36);
+		break;
+
+	case 5001:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b002a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b002b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b002c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(27, 31);
+		break;
+
+	case 5002:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b003a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b003b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b003c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(32, 36);
+		break;
+
+	case 5003:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b004a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b004b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b004c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(37, 41);
+		break;
+
+	case 5004:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b005a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b005b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b005c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(42, 46);
+		break;
+
+	case 5005:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b006a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b006b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b006c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(47, 51);
+		break;
+
+	case 5006:
+		switch (imath_ranged_rand(1, 3)) {
+		case 1:
+			digi_play("510b007a", 2, 255, -1);
+			break;
+		case 2:
+			digi_play("510b007b", 2, 255, -1);
+			break;
+		default:
+			digi_play("510b007c", 2, 255, -1);
+			break;
+		}
+
+		gizmo_digi_wait(52, 56);
+		break;
+
+	default:
+		break;
+	}
+
+	gizmo_digi_daemon(trigger);
+}
+
 static void gizmo_restore_interface(bool fade) {
 	if (_GIZMO(initialized)) {
 		_GIZMO(val1) = 0;
@@ -195,7 +355,7 @@ static void gizmo_dispose_gui() {
 	}
 }
 
-static void gizmo_free_gui(ScreenContext *screenContext) {
+static void gizmo_free_gui(Gizmo *gizmo) {
 	// TODO
 }
 
@@ -401,7 +561,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	return item;
 }
 
-static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags) {
+static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags) {
 	if (!sprite)
 		return nullptr;
 
@@ -430,8 +590,9 @@ static ScreenContext *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint sc
 
 	gui->_grBuff->release();
 
-	return vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
+	ScreenContext *ctx = vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
 		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gui_gizmo_eventHandler);
+	return ctx ? gui : nullptr;
 }
 
 } // namespace GUI

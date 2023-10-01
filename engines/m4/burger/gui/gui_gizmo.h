@@ -34,14 +34,17 @@ namespace GUI {
 
 #define _GIZMO(X) g_vars->_gizmo._##X
 
+struct Gizmo;
+struct GizmoItem;
+
 struct Gizmo_Globals {
 	bool _initialized = false;
 	bool _interface_visible = false;
+	Gizmo *_gui = nullptr;
 	RGB8 *_palette = nullptr;
 	bool _lowMemory1 = false;
 	bool _lowMemory2 = false;
 	int _val1 = 0;
-	ScreenContext *_gui = nullptr;
 	MemHandle _seriesHandle = nullptr;
 	int32 _celsOffset = 0;
 	int32 _palOffset = 0;
@@ -50,8 +53,6 @@ struct Gizmo_Globals {
 	M4sprite **_sprites = nullptr;
 	bool _roomNums[15];
 };
-
-struct GizmoItem;
 
 struct Gizmo {
 	GrBuff *_grBuff = nullptr;
