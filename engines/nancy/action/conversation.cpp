@@ -347,6 +347,7 @@ void ConversationSound::addConditionalDialogue() {
 			
 			newResponse.sceneChange.sceneID = res.sceneID;
 			newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+			newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
 
 			// Check if the response is a repeat. This can happen when multiple condition combinations
 			// trigger the same response.
@@ -429,12 +430,12 @@ void ConversationSound::addGoodbye() {
 
 	// The reply from the character is picked randomly
 	newResponse.sceneChange.sceneID = sceneChange.sceneIDs[g_nancy->_randomSource->getRandomNumber(sceneChange.sceneIDs.size() - 1)];
+	newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
+	newResponse.sceneChange.listenerFrontVector.set(0, 0, 1);
 
 	// Set an event flag if applicable
 	// Assumes flagToSet is an event flag
 	NancySceneState.setEventFlag(sceneChange.flagToSet.label, sceneChange.flagToSet.flag);
-
-	newResponse.sceneChange.continueSceneSound = kContinueSceneSound;
 }
 
 void ConversationSound::ConversationFlag::read(Common::SeekableReadStream &stream) {
