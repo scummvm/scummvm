@@ -372,18 +372,18 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	// I think 101-106 are inventory items.
 
 	initWidget( 0,  67, 292, 348, 18); // 100: Sentence line
-	initWidget( 1, 137, 312,  68, 18); // 1: Open
-	initWidget( 2, 137, 332,  68, 18); // 2: Close
+	initWidget( 1,  67, 312,  68, 18); // 6: Push
+	initWidget( 2,  67, 332,  68, 18); // 7: Pull
 	initWidget( 3,  67, 352,  68, 18); // 3: Give
-	initWidget( 4, 277, 332,  68, 18); // 4: Turn on
-	initWidget( 5, 277, 352,  68, 18); // 5: Turn off
-	initWidget( 6,  67, 312,  68, 18); // 6: Push
-	initWidget( 7,  67, 332,  68, 18); // 7: Pull
-	initWidget( 8, 277, 312,  68, 18); // 8: Use
-	initWidget( 9, 137, 352,  68, 18); // 9: Look at
-	initWidget(10, 207, 312,  68, 18); // 10: Walk to
-	initWidget(11, 207, 332,  68, 18); // 11: Pick up
-	initWidget(12, 207, 352,  68, 18); // 12: What is
+	initWidget( 4, 137, 312,  68, 18); // 1: Open
+	initWidget( 5, 137, 332,  68, 18); // 2: Close
+	initWidget( 6, 137, 352,  68, 18); // 9: Look at
+	initWidget( 7, 207, 312,  68, 18); // 10: Walk to
+	initWidget( 8, 207, 332,  68, 18); // 11: Pick up
+	initWidget( 9, 207, 352,  68, 18); // 12: What is
+	initWidget(10, 277, 312,  68, 18); // 8: Use
+	initWidget(11, 277, 332,  68, 18); // 4: Turn on
+	initWidget(12, 277, 352,  68, 18); // 5: Turn off
 	initWidget(13, 347, 312,  68, 18); // 13: Talk
 	initWidget(14, 347, 332,  68, 18); // 32: Travel
 	initWidget(15,  67, 292, 507, 18); // 120: Conversation 1
@@ -395,6 +395,8 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
+	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
+		free(_widgets[i].text);
 }
 
 void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
@@ -405,6 +407,7 @@ void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 	w->y = y;
 	w->width = width;
 	w->height = height;
+	w->text = nullptr;
 	w->timer = 0;
 	w->visible = false;
 	w->enabled = false;
@@ -468,6 +471,16 @@ void MacIndy3Gui::update() {
 
 				w->slot = i;
 
+				const byte *ptr = _vm->getResourceAddress(rtVerb, w->slot);
+				byte buf[270];
+
+				_vm->convertMessageToString(ptr, buf, sizeof(buf));
+				if (w->text == nullptr || strcmp((char *)w->text, (char *)buf) != 0) {
+					free(w->text);
+					w->text = (byte *)scumm_strdup((const char *)buf);
+					w->redraw = true;
+				}
+
 				if (!w->visible || w->redraw || w->enabled != enabled)
 					w->redraw = true;
 				w->kill = false;
@@ -495,18 +508,12 @@ void MacIndy3Gui::update() {
 			continue;
 
 		if (w->redraw) {
-			const byte *ptr = _vm->getResourceAddress(rtVerb, w->slot);
-			if (ptr) {
-				VerbSlot *vs = &_vm->_verbs[w->slot];
-				byte buf[270];
-
-				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-				debug("Drawing button: %s", buf);
-				drawButton(i, buf, vs->curmode != 2, w->timer);
-				w->visible = true;
-				w->enabled = (vs->curmode == 1);
-				w->redraw = false;
-			}
+			VerbSlot *vs = &_vm->_verbs[w->slot];
+			debug("Drawing button %d: (%d) %s", i, vs->verbid, w->text);
+			drawButton(i, w->text, vs->curmode != 2, w->timer);
+			w->visible = true;
+			w->enabled = (vs->curmode == 1);
+			w->redraw = false;
 		}
 	}
 
@@ -528,6 +535,11 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 			if (x >= w->x && x < w->x + w->width && y >= w->y && y < w->y + w->height) {
 				w->redraw = true;
 				w->timer = 15;
+
+				if (w->slot != -1) {
+					VerbSlot *vs = &_vm->_verbs[w->slot];
+					_vm->runInputScript(kVerbClickArea, vs->verbid, 1);
+				}
 			}
 		}
 	}
@@ -649,24 +661,26 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	//
 	// This gives us pixel perfect rendering for the English verbs.
 
-	int stringWidth = 0;
-	for (int i = 0; text[i]; i++)
-		stringWidth += _fonts[2]->getCharWidth(text[i]);
+	if (text) {
+		int stringWidth = 0;
+		for (int i = 0; text[i]; i++)
+			stringWidth += _fonts[2]->getCharWidth(text[i]);
 
-	int textX = (x + (width - 1 - stringWidth) / 2) - 1;
-	int textY = y + 2;
-	int color = enabled ? 15 : 0;
+		int textX = (x + (width - 1 - stringWidth) / 2) - 1;
+		int textY = y + 2;
+		int color = enabled ? 15 : 0;
 
-	if (pressed) {
-		textX++;
-		textY++;
-	}
+		if (pressed) {
+			textX++;
+			textY++;
+		}
 
-	for (int i = 0; text[i]; i++) {
-		if (enabled)
-			_fonts[2]->drawChar(_macScreen, text[i], textX, textY, 0);
-		_fonts[1]->drawChar(_macScreen, text[i], textX + 1, textY, color);
-		textX += _fonts[2]->getCharWidth(text[i]);
+		for (int i = 0; text[i]; i++) {
+			if (enabled)
+				_fonts[2]->drawChar(_macScreen, text[i], textX, textY, 0);
+			_fonts[1]->drawChar(_macScreen, text[i], textX + 1, textY, color);
+			textX += _fonts[2]->getCharWidth(text[i]);
+		}
 	}
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(x, y), _macScreen->pitch, x, y, width, height);

@@ -638,6 +638,9 @@ void ScummEngine::checkExecVerbs() {
 			// Verb was clicked
 			runInputScript(kVerbClickArea, _verbs[over].verbid, code);
 		} else {
+			if (zone->number != kMainVirtScreen && _macIndy3Gui && _macIndy3Gui->isActive())
+				return;
+
 			// Scene was clicked
 			runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);
 		}
