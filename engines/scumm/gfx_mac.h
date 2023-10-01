@@ -53,10 +53,12 @@ private:
 	struct Widget {
 		int x;
 		int y;
-		int w;
-		int h;
-		int visible;
-		int enabled;
+		int width;
+		int height;
+		int timer;
+		bool visible;
+		bool enabled;
+		bool dirty;
 	};
 
 	Widget _widgets[21];
