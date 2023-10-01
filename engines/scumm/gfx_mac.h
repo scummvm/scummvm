@@ -50,43 +50,18 @@ private:
 
 	bool _visible = false;
 
-	struct GuiButtonData {
+	struct Widget {
 		int x;
 		int y;
 		int w;
 		int h;
+		int visible;
+		int enabled;
 	};
 
-	// This list has been arranged so that most of the standard verbs
-	// have the same index as their verb number in the game. The rest
-	// have been arranged tastefully.
-	//
-	// I think 101-106 are inventory items.
+	Widget _widgets[21];
 
-	const GuiButtonData _buttons[21] = {
-		{  67, 292, 348, 18 }, // 100: Sentence line
-		{ 137, 312,  68, 18 }, // 1: Open
-		{ 137, 332,  68, 18 }, // 2: Close
-		{  67, 352,  68, 18 }, // 3: Give
-		{ 277, 332,  68, 18 }, // 4: Turn on
-		{ 277, 352,  68, 18 }, // 5: Turn off
-		{  67, 312,  68, 18 }, // 6: Push
-		{  67, 332,  68, 18 }, // 7: Pull
-		{ 277, 312,  68, 18 }, // 8: Use
-		{ 137, 352,  68, 18 }, // 9: Look at
-		{ 207, 312,  68, 18 }, // 10: Walk to
-		{ 207, 332,  68, 18 }, // 11: Pick up
-		{ 207, 352,  68, 18 }, // 12: What is
-		{ 347, 312,  68, 18 }, // 13: Talk
-		{ 347, 332,  68, 18 }, // 32: Travel
-		{  67, 292, 507, 18 }, // 120: Conversation 1
-		{  67, 312, 507, 18 }, // 121: Conversation 2
-		{  67, 332, 507, 18 }, // 122: Conversation 3
-		{  67, 352, 507, 18 }, // 123: Conversation 4
-		{  67, 352, 151, 18 }, // Conversation 5
-		{ 423, 352, 151, 18 }  // Conversation 6
-	};
-
+	void initWidget(int n, int x, int y, int w, int h);
 	void clear();
 	void show();
 	void hide();
