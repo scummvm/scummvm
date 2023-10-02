@@ -53,10 +53,7 @@ private:
 
 	struct Widget {
 		int slot;
-		int x;
-		int y;
-		int width;
-		int height;
+		Common::Rect bounds;
 		byte *text;
 		int timer;
 		bool visible;
