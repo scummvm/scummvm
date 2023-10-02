@@ -231,6 +231,16 @@ protected:
 	Common::String getRecordTypeName() const override { return _isCursor ? "EventFlagsCursorHS" : "EventFlagsMultiHS"; }
 };
 
+// Returns the player back to the main menu
+class GotoMenu : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "GotoMenu"; }
+};
+
 // Stops the game and boots the player back to the Menu screen, while also making sure
 // they can't Continue. The devs took care to add Second Chance saves before every one
 // of these, to make sure the player can return to a state just before the dangerous part.

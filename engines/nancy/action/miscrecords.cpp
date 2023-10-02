@@ -308,6 +308,23 @@ void EventFlagsMultiHS::execute() {
 	}
 }
 
+void GotoMenu::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void GotoMenu::execute() {
+	if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
+		g_nancy->setState(NancyState::kMainMenu);
+	} else {
+		Common::Event ev;
+		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;
+		g_system->getEventManager()->pushEvent(ev);
+	}
+
+	_isDone = true;
+}
+
+
 void LoseGame::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }

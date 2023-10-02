@@ -174,7 +174,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 	case 107:
 		return new EventFlags();
 	case 108:
-		return new OrderingPuzzle(OrderingPuzzle::kOrdering);
+		if (g_nancy->getGameType() <= kGameTypeNancy6) {
+			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
+		} else {
+			return new GotoMenu();
+		}
 	case 109:
 		return new LoseGame();
 	case 110:
@@ -195,6 +199,12 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new SliderPuzzle();
 	case 118:
 		return new PasswordPuzzle();
+	case 119:
+		if (g_nancy->getGameType() >= kGameTypeNancy7) {
+			// This got moved in nancy7
+			return new OrderingPuzzle(OrderingPuzzle::kOrdering);
+		}
+		return nullptr;
 	case 120:
 		return new AddInventoryNoHS();
 	case 121:
