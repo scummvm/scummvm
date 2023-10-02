@@ -32,7 +32,8 @@
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/conv_io.h"
 #include "m4/gui/hotkeys.h"
-#include "m4/platform/sound.h"
+#include "m4/platform/sound/digi.h"
+#include "m4/platform/sound/midi.h"
 #include "m4/detection.h"
 #include "m4/console.h"
 #include "m4/metaengine.h"
@@ -137,10 +138,8 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 		_G(kernel).restore_game = true;
 		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
-#ifdef TODO
-		digi_set_overall_volume(game.digi_overall_volume_percent);
-		midi_set_overall_volume(game.midi_overall_volume_percent);
-#endif
+		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
+		midi_set_overall_volume(_G(game).midi_overall_volume_percent);
 	}
 
 	return Common::kNoError;
