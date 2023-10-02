@@ -187,7 +187,13 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 			readVar(291) < 2 &&  // Less than two outs
 			// This is the array of baserunner status info, and the value in position 8 specifies whether the runner is forced
 			array == 295 && idx1 == 8) {
-			return 0;
+				int runnerIdx = readVar(342);
+				if (readArray(array, runnerIdx, 6) == 1 && readArray(array, runnerIdx, 7) == 1) {
+					// Bugfix: if runner is going forward to 1st base, return 1 so they can't turn around
+					return 1;
+				} else {
+					return 0;
+				}
 		}
 	}
 #endif

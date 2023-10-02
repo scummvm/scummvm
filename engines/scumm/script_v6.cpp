@@ -658,7 +658,16 @@ void ScummEngine_v6::o6_le() {
 
 void ScummEngine_v6::o6_ge() {
 	int a = pop();
-	push(pop() >= a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
+	// required to reach top speed
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 &&
+		_currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
+		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
+	}
+#endif
+	push(b >= a);
 }
 
 void ScummEngine_v6::o6_add() {
@@ -680,7 +689,23 @@ void ScummEngine_v6::o6_div() {
 	int a = pop();
 	if (a == 0)
 		error("division by zero");
-	push(pop() / a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
+	// running half-speed on a popup
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
+		vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
+		// Normally divides speed by two here
+		int runnerIdx = readVar(0x4000);
+		int runnerReSprint = readArray(344, runnerIdx, 1);
+		// But if the runner is sprinting, don't divide by two
+		if (runnerReSprint > 1) {
+			push(b);
+			return;
+		}
+	}
+#endif
+	push(b / a);
 }
 
 void ScummEngine_v6::o6_land() {
@@ -921,6 +946,66 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: change effect of
+	// pitch location on hit quality
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
+		int zone = _roomVars[2];
+		int stance = readVar(447);
+		int handedness = _roomVars[0];
+		int hitQuality = -2;
+		if (stance == 2) {  // Batter is in a squared stance
+			switch (zone) {
+			case 25:
+				hitQuality = 3;
+				break;
+			case 18: case 24: case 26: case 32:
+				hitQuality = 2;
+				break;
+			case 10: case 11: case 12: case 17: case 19: case 23: case 27: case 31: case 33: case 38: case 39: case 40:
+				hitQuality = 1;
+				break;
+			case 4: case 16: case 20: case 30: case 34: case 46:
+				hitQuality = 0;
+				break;
+			case 3: case 5: case 9: case 13: case 15: case 21: case 22: case 28: case 29: case 35: case 37: case 41: case 45: case 47:
+				hitQuality = -1;
+				break;
+			default:
+				break;
+			}
+			push(hitQuality);
+			return;
+		}
+		if (
+			(handedness == 2 && stance == 1)  // Left-handed batter in open stance
+			|| (handedness == 1 && stance == 3)  // Right-handed batter in closed stance
+		) {
+			zone  = ((zone - 1) / 7) * 7 + (6 - ((zone - 1) % 7)) + 1;  // "Flip" zone horizontally across center
+		}
+		switch (zone) {
+		case 24:
+			hitQuality = 3;
+			break;
+		case 17: case 23: case 25: case 31:
+			hitQuality = 2;
+			break;
+		case 9: case 10: case 16: case 18: case 22: case 26: case 30: case 32: case 37: case 38:
+			hitQuality = 1;
+			break;
+		case 3: case 11: case 15: case 19: case 29: case 33: case 39: case 45:
+			hitQuality = 0;
+			break;
+		case 2: case 4: case 8: case 12: case 20: case 27: case 34: case 36: case 40: case 44: case 46:
+			hitQuality = -1;
+			break;
+		default:
+			break;
+		}
+		push(hitQuality);
+		return;
+	}
+#endif
 	runScript(script, 0, 1, args);
 }
 
