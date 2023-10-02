@@ -685,8 +685,9 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 	}
 
 	Common::Array<Common::String> list;
-	// Action records only appear in the ciftree
+	// Action records only appear in the ciftree and promotree
 	g_nancy->_resource->list("ciftree", list, ResourceManager::kResTypeScript);
+	g_nancy->_resource->list("promotree", list, ResourceManager::kResTypeScript);
 
 	char descBuf[0x30];
 

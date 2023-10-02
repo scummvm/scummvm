@@ -126,7 +126,8 @@ bool NancyEngine::canSaveGameStateCurrently() {
 	// TODO also disable during secondary movie
 	return State::Scene::hasInstance() &&
 			NancySceneState._state == State::Scene::kRun &&
-			NancySceneState.getActiveConversation() == nullptr;
+			NancySceneState.getActiveConversation() == nullptr &&
+			!NancySceneState.isRunningAd();
 }
 
 void NancyEngine::secondChance() {

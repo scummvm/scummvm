@@ -132,6 +132,7 @@ Scene::Scene() :
 		_activeConversation(nullptr),
 		_lightning(nullptr),
 		_destroyOnExit(false),
+		_isRunningAd(false),
 		_hotspotDebug(50) {}
 
 Scene::~Scene()  {
@@ -699,6 +700,9 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
+	_isRunningAd = false;
+	ConfMan.removeKey("restore_after_ad", ConfMan.kTransientDomain);
+
 	g_nancy->_graphicsManager->suppressNextDraw();
 }
 
@@ -725,7 +729,13 @@ void Scene::init() {
 	_timers.playerTimeNextMinute = 0;
 	_timers.pushedPlayTime = 0;
 
-	changeScene(bootSummary->firstScene);
+	if (ConfMan.hasKey("load_ad", ConfMan.kTransientDomain)) {
+		changeScene(bootSummary->adScene);
+		ConfMan.removeKey("load_ad", ConfMan.kTransientDomain);
+		_isRunningAd = true;
+	} else {
+		changeScene(bootSummary->firstScene);
+	}
 
 	if (hintData) {
 		_hintsRemaining.clear();

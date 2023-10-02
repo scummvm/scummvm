@@ -631,6 +631,10 @@ void ResourceManager::initialize() {
 	if (g_nancy->getGameType() != kGameTypeVampire) {
 		loadCifTree("ciftree", "dat");
 	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		loadCifTree("promotree", "dat");
+	}
 }
 
 bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) const {

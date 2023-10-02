@@ -47,6 +47,9 @@ struct BSUM : public EngineData {
 	uint16 startTimeHours;
 	uint16 startTimeMinutes;
 
+	// More Nancy Drew! scene
+	SceneChangeDescription adScene;
+
 	// UI
 	Common::Rect extraButtonHotspot;	// Extra button is map in tvd, clock in nancy2 and up
 	Common::Rect extraButtonHighlightDest;

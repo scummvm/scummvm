@@ -124,6 +124,8 @@ public:
 	// Used when winning/losing game
 	void setDestroyOnExit() { _destroyOnExit = true; }
 
+	bool isRunningAd() { return _isRunningAd; }
+
 	void changeScene(const SceneChangeDescription &sceneDescription);
 	void pushScene();
 	void popScene();
@@ -295,6 +297,7 @@ private:
 	RenderObject _hotspotDebug;
 
 	bool _destroyOnExit;
+	bool _isRunningAd;
 
 	State _state;
 };

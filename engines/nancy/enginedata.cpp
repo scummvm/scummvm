@@ -54,6 +54,10 @@ BSUM::BSUM(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 	s.syncAsUint16LE(startTimeHours);
 	s.syncAsUint16LE(startTimeMinutes);
 
+	s.syncAsUint16LE(adScene.sceneID, kGameTypeNancy7);
+	s.syncAsUint16LE(adScene.frameID, kGameTypeNancy7);
+	s.syncAsUint16LE(adScene.verticalOffset, kGameTypeNancy7);
+
 	s.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 	s.skip(3); // Number of object, frame, and logo images
 	if (g_nancy->getGameFlags() & GF_PLG_BYTE_IN_BSUM) {
@@ -369,7 +373,7 @@ MENU::MENU(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 	ser.skip(22);
 
-	uint numOptions = 8;
+	uint numOptions = g_nancy->getGameType() <= kGameTypeNancy6 ? 8 : 9;
 
 	readRectArray16(ser, _buttonDests, numOptions, numOptions, kGameTypeVampire, kGameTypeNancy1);
 	readRectArray16(ser, _buttonDownSrcs, numOptions, numOptions, kGameTypeVampire, kGameTypeNancy1);

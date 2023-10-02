@@ -113,6 +113,11 @@ void MainMenu::init() {
 	// Perhaps could be enabled always, and just load the latest save?
 	if (!Scene::hasInstance()) {
 		_buttons[3]->setDisabled(true);
+	} else {
+		if (NancySceneState.isRunningAd() && ConfMan.hasKey("restore_after_ad", ConfMan.kTransientDomain)) {
+			// Force immediate load of second chance save, if we need to restore the game that was running
+			g_nancy->loadGameState(g_nancy->getMetaEngine()->getMaximumSaveSlot());
+		}
 	}
 
 	_state = kRun;
@@ -232,6 +237,18 @@ void MainMenu::stop() {
 	case 7:
 		// Help
 		g_nancy->setState(NancyState::kHelp);
+		break;
+	case 8:
+		// More Nancy Drew!
+		if (Scene::hasInstance()) {
+			// The second chance slot is used as temporary save
+			g_nancy->secondChance();
+			NancySceneState.destroy();
+			ConfMan.setBool("restore_after_ad", true, ConfMan.kTransientDomain);
+		}
+
+		ConfMan.setBool("load_ad", true, ConfMan.kTransientDomain);
+		g_nancy->setState(NancyState::kScene);
 		break;
 	}
 }
