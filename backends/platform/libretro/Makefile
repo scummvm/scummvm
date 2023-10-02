@@ -27,12 +27,14 @@ endif
 TARGET_64BIT := $(BUILD_64BIT)
 
 LD        = $(CXX)
-AR        = ar cru
-RANLIB    = ranlib
-LS        = ls
-MKDIR     = mkdir -p
-RM        = rm -f
-RM_REC    = rm -rf
+AR       := ar cru
+RANLIB   := ranlib
+LS       := ls
+MKDIR    := mkdir -p
+RM       := rm -f
+RM_REC   := rm -rf
+CP       := cp
+
 
 LDFLAGS :=
 
@@ -165,7 +167,6 @@ else ifeq ($(platform), wiiu)
    DEFINES += -DHAVE_STRTOUL -DWIIU
    CXXFLAGS := -fpermissive
    LITE := 1
-   CP := cp
    STATIC_LINKING = 1
 
 # Nintendo 3DS
@@ -304,9 +305,12 @@ else ifneq (,$(findstring oga_a35_neon_hardfloat,$(platform)))
 # Emscripten
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
+   AR_ALONE := emar
+   AR := emar rcs
    DEFINES += -DEMSCRIPTEN -DUSE_CXX11
    CXXFLAGS += -std=c++11
    STATIC_LINKING = 1
+   USE_LIBCO  = 0
    USE_CLOUD = 0
 
 # Windows MSVC 2017 all architectures
@@ -565,7 +569,7 @@ else
 endif
 endif
 
-ifeq ($(platform), wiiu)
+ifneq (,$(filter $(platform), wiiu emscripten))
 $(TARGET): $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
 	$(CP) $+ libtemp/
@@ -578,7 +582,7 @@ $(TARGET): libnx-ln $(OBJS) libdeps.a libdetect.a
 else ifeq ($(STATIC_LINKING), 1)
 $(TARGET): $(OBJS) libdeps.a libdetect.a
 	$(MKDIR) libtemp
-	cp $+ libtemp/
+	$(CP) $+ libtemp/
 	@echo Linking $@...
 	$(AR) -M < $(ROOT_PATH)/script.mri
 else
