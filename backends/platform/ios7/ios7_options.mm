@@ -86,6 +86,8 @@ private:
 	GUI::PopUpWidget *_orientationMenusPopUp;
 	GUI::StaticTextWidget *_orientationGamesDesc;
 	GUI::PopUpWidget *_orientationGamesPopUp;
+
+	GUI::CheckboxWidget *_onscreenCheckbox;
 #endif
 	bool _enabled;
 };
@@ -159,6 +161,8 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_orientationGamesPopUp->appendEntry(_("Automatic"), kScreenOrientationAuto);
 	_orientationGamesPopUp->appendEntry(_("Portrait"), kScreenOrientationPortrait);
 	_orientationGamesPopUp->appendEntry(_("Landscape"), kScreenOrientationLandscape);
+
+	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnscreenControl", _("Show On-screen control"));
 #endif
 
 	new GUI::ButtonWidget(widgetsBoss(), "IOS7OptionsDialog.ControlsHelp", _("Controls Help"), Common::U32String(), kHelpCmd);
@@ -177,6 +181,9 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
+#if TARGET_OS_IOS
+	            .addWidget("OnscreenControl", "Checkbox")
+#endif
 	            .addWidget("GamepadController", "Checkbox")
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 				.addPadding(0, 0, 0, 0)
@@ -399,6 +406,8 @@ void IOS7OptionsWidget::load() {
 		_orientationMenusPopUp->setSelectedTag(loadOrientation("orientation_menus", !inAppDomain, kScreenOrientationAuto));
 	}
 	_orientationGamesPopUp->setSelectedTag(loadOrientation("orientation_games", !inAppDomain, kScreenOrientationAuto));
+
+	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
 #endif
 }
 
@@ -424,6 +433,8 @@ bool IOS7OptionsWidget::save() {
 			saveOrientation("orientation_menus", _orientationMenusPopUp->getSelectedTag());
 		}
 		saveOrientation("orientation_games", _orientationGamesPopUp->getSelectedTag());
+
+		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
 #endif
 	} else {
 		ConfMan.removeKey("gamepad_controller", _domain);
@@ -444,6 +455,8 @@ bool IOS7OptionsWidget::save() {
 			ConfMan.removeKey("orientation_menus", _domain);
 		}
 		ConfMan.removeKey("orientation_games", _domain);
+
+		ConfMan.removeKey("onscreen_control", _domain);
 #endif
 	}
 
@@ -463,7 +476,8 @@ bool IOS7OptionsWidget::hasKeys() {
 
 #if TARGET_OS_IOS
 	hasKeys = hasKeys || (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("orientation_menus", _domain)) ||
-	ConfMan.hasKey("orientation_games", _domain);
+	ConfMan.hasKey("orientation_games", _domain) ||
+	ConfMan.hasKey("onscreen_control", _domain);
 #endif
 
 	return hasKeys;
@@ -473,7 +487,10 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 	_enabled = e;
 
-#if TARGET_OS_IOS && defined (__IPHONE_15_0)
+#if TARGET_OS_IOS
+	_onscreenCheckbox->setEnabled(e);
+
+#if __IPHONE_15_0
 	// On-screen controls (virtual controller is supported in iOS 15 and later)
 	if (@available(iOS 15.0, *)) {
 		_gamepadControllerCheckbox->setEnabled(e);
@@ -488,7 +505,8 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 		_gamepadControllerOpacitySlider->setEnabled(false);
 		_gamepadControllerOpacityLabel->setEnabled(false);
 	}
-#else
+#endif /* __IPHONE_15_0  */
+#else /* TARGET_OS_IOS */
 	_gamepadControllerCheckbox->setEnabled(false);
 	_gamepadControllerDirectionalInputDesc->setEnabled(false);
 	_gamepadControllerDirectionalInputPopUp->setEnabled(false);
@@ -542,6 +560,8 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 #if TARGET_OS_IOS
 	ConfMan.registerDefault("orientation_menus", "auto");
 	ConfMan.registerDefault("orientation_games", "auto");
+
+	ConfMan.registerDefault("onscreen_control", true);
 #endif
 }
 
