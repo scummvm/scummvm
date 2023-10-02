@@ -45,7 +45,7 @@ struct Gizmo_Globals {
 	RGB8 *_palette = nullptr;
 	bool _lowMemory1 = false;
 	bool _lowMemory2 = false;
-	int _val1 = 0;
+	GizmoItem *_currentItem = nullptr;
 	MemHandle _seriesHandle = nullptr;
 	int32 _celsOffset = 0;
 	int32 _palOffset = 0;
@@ -54,14 +54,18 @@ struct Gizmo_Globals {
 	M4sprite **_sprites = nullptr;
 	bool _roomNums[15];
 
+	bool _savedFlag = false;
+	int _savedX = 0;
+	int _savedY = 0;
+
 	~Gizmo_Globals();
 };
 
 struct Gizmo {
 	GrBuff *_grBuff = nullptr;
 	GizmoItem *_items = nullptr;
-	int _field8 = 0;
-	int _fieldC = 0;
+	void (*_fnEnter)() = nullptr;
+	void (*_fnEscape)() = nullptr;
 	EventHandler _eventHandler = nullptr;
 };
 
@@ -76,7 +80,8 @@ struct GizmoButton {
 typedef void (*GizmoItemFn0)();
 typedef void (*GizmoItemFnDraw)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
 typedef void (*GizmoItemFn2)(GizmoItem *item);
-typedef void (*GizmoItemFn3)();
+typedef bool (*GizmoItemFnEvents)(GizmoItem *item, int eventType, int event, int x, int y,
+	GizmoItem **currentItem);
 
 struct GizmoItem {
 	GizmoItem *_next = nullptr;
@@ -87,12 +92,12 @@ struct GizmoItem {
 
 	int _id = 0;
 	Common::Rect _bounds;
-	Common::Rect _rect1;
+	Common::Rect _btnRect;
 	bool _hasBuffer = false;
 	GizmoItemFn0 _fn0 = nullptr;
-	GizmoItemFnDraw _draw = nullptr;
+	GizmoItemFnDraw _fnDraw = nullptr;
 	GizmoItemFn2 _fn2 = nullptr;
-	GizmoItemFn3 _fn3 = nullptr;
+	GizmoItemFnEvents _fnEvents = nullptr;
 };
 
 extern void gizmo_anim(RGB8 *pal);
