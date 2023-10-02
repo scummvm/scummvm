@@ -21,6 +21,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v3.h"
@@ -2589,26 +2590,6 @@ void ScummEngine_v5::o5_setVarRange() {
 		setResult(b);
 		_resultVarNumber++;
 	} while (--a);
-
-	// Macintosh version of indy3ega used different interface, so adjust values.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-#if 0
-		VAR(68) = 0;
-		VAR(69) = 0;
-		VAR(70) = 168;
-		VAR(71) = 0;
-		VAR(72) = 168;
-		VAR(73) = 0;
-		VAR(74) = 168;
-		VAR(75) = 0;
-		VAR(76) = 176;
-		VAR(77) = 176;
-		VAR(78) = 184;
-		VAR(79) = 184;
-		VAR(80) = 192;
-		VAR(81) = 192;
-#endif
-	}
 }
 
 void ScummEngine_v5::o5_startMusic() {
@@ -2958,25 +2939,11 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->origLeft = vs->curRect.left;
 			break;
 		case 6:		// SO_VERB_ON
-			// It seems that the Mac version of Indiana Jones and
-			// the Last Crusade treats the entire inventory as a
-			// single verb, or at least that's my guess as far as
-			// script 12 is concerned. In the 256-color DOS
-			// version (I don't have the EGA version), the script
-			// enables all inventory verbs, and possibly the
-			// inventory arrows. Well, that's what the hard-coded
-			// inventory script does, so this should be fine.
-			//
-			// This fixes a problem where if you offer an object
-			// to someone and then press "Never mind", the next
-			// time you try you see only one inventory object.
-			//
-			// I don't know if it has to be limited to this
-			// particular script, but that's what I'll do for now.
-			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12) {
-				inventoryScriptIndy3Mac();
-			} else
-				vs->curmode = 1;
+			vs->curmode = 1;
+
+			if (_macIndy3Gui && vs->verbid == 101) {
+				_macIndy3Gui->updateInventory();
+			}
 			break;
 		case 7:		// SO_VERB_OFF
 			vs->curmode = 0;
