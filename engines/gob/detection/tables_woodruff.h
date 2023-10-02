@@ -29,7 +29,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		EN_GRB,
 		kPlatformDOS,
@@ -43,7 +43,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		DE_DEU,
 		kPlatformDOS,
@@ -57,7 +57,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		FR_FRA,
 		kPlatformDOS,
@@ -71,7 +71,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		IT_ITA,
 		kPlatformDOS,
@@ -85,7 +85,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		ES_ESP,
 		kPlatformDOS,
@@ -99,7 +99,7 @@
 { // Russian Akella version
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
 		RU_RUS,
 		kPlatformDOS,

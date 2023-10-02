@@ -29,7 +29,7 @@
 {
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
 		EN_ANY,
 		kPlatformDOS,
@@ -43,7 +43,7 @@
 {
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
 		DE_DEU,
 		kPlatformDOS,
@@ -57,7 +57,7 @@
 { // Supplied by misterhands in bug report #6079
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "0c4c16090921664f50baefdfd24d7f5d", 211889),
 		FR_FRA,
 		kPlatformDOS,
@@ -71,7 +71,7 @@
 { // Supplied by einstein95 in bug report #6102
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
 		ES_ESP,
 		kPlatformDOS,
@@ -85,7 +85,7 @@
 { // Supplied by einstein95 in bug report #6102
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
 		IT_ITA,
 		kPlatformDOS,
@@ -99,7 +99,7 @@
 { // Supplied by alestedx in bug report #6269
 	{
 		"geisha",
-		"",
+		"v1.0",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212164),
 		ES_ESP,
 		kPlatformDOS,

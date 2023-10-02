@@ -144,7 +144,7 @@
 { // Included in a German version of Adi 2
 	{
 		"littlered",
-		"",
+		"v1.1",
 		AD_ENTRY1s("intro.stk", "1c00173d73a3691cc93948f6575d7c75", 1188138),
 		DE_DEU,
 		kPlatformWindows,

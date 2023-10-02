@@ -29,7 +29,7 @@
 {
 	{
 		"playtoons1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
@@ -200,10 +200,10 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Version 1.002. Bug #7052
+{ // Bug #7052
 	{
 		"playtoons2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		FR_FRA,
@@ -266,7 +266,7 @@
 {
 	{
 		"playtoons3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
@@ -425,7 +425,7 @@
 {
 	{
 		"playtnck1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"906d67b3e438d5e95ec7ea9e781a94f3", 3000320),
 		FR_FRA,
@@ -443,7 +443,7 @@
 {
 	{
 		"playtnck2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"74eeb075bd2cb47b243349730264af01", 3213312),
 		FR_FRA,
@@ -461,7 +461,7 @@
 {
 	{
 		"playtnck3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"9a8f62809eca5a52f429b5b6a8e70f8f", 2861056),
 		FR_FRA,
