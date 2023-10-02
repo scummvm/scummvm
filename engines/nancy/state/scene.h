@@ -200,7 +200,7 @@ public:
 
 private:
 	void init();
-	void load();
+	void load(bool fromSaveFile = false);
 	void run();
 	void handleInput();
 

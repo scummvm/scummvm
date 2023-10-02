@@ -232,11 +232,6 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 		return;
 	}
 
-	// Increment scene count on scene exit in order to:
-	// - keep values needed for the kSceneCount dependency correct
-	// - make sure we don't increment when loading a save
-	_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
-
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
 }
@@ -579,7 +574,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 
 		g_nancy->_sound->stopAllSounds();
 
-		load();
+		load(true);
 	}
 
 	ser.syncAsUint16LE(_sceneState.pushedScene.sceneID);
@@ -803,7 +798,7 @@ PuzzleData *Scene::getPuzzleData(const uint32 tag) {
 	}
 }
 
-void Scene::load() {
+void Scene::load(bool fromSaveFile) {
 	if (_specialEffects.size()) {
 		_specialEffects.front().onSceneChange();
 	}
@@ -899,6 +894,12 @@ void Scene::load() {
 
 	_timers.sceneTime = 0;
 	g_nancy->_sound->recalculateSoundEffects();
+
+	// Increment the number of times we've visited this scene, unless we're
+	// loading from a save
+	if (!fromSaveFile) {
+		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
+	}
 
 	_state = kStartSound;
 }

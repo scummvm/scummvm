@@ -392,23 +392,26 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 		case DependencyType::kSceneCount: {
 			// Check how many times a scene has been visited.
 			// This dependency type keeps its data in the time variables
+			// Note: nancy7 completely flipped the meaning of 1 and 2
 			int count = NancySceneState._flags.sceneCounts.contains(dep.hours) ?
 				NancySceneState._flags.sceneCounts[dep.hours] : 0;
 			switch (dep.milliseconds) {
 			case 1:
-				if (dep.seconds < count) {
+				if (	(dep.minutes < count && g_nancy->getGameType() <= kGameTypeNancy6) ||
+						(dep.minutes > count && g_nancy->getGameType() >= kGameTypeNancy7)) {
 					dep.satisfied = true;
 				}
 
 				break;
 			case 2:
-				if (dep.seconds > count) {
+				if (	(dep.minutes > count && g_nancy->getGameType() <= kGameTypeNancy6) ||
+						(dep.minutes < count && g_nancy->getGameType() >= kGameTypeNancy7)) {
 					dep.satisfied = true;
 				}
 
 				break;
 			case 3:
-				if (dep.seconds == count) {
+				if (dep.minutes == count) {
 					dep.satisfied = true;
 				}
 

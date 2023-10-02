@@ -530,7 +530,7 @@ void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecor
 			debugPrintf("kSceneCount, scene ID %i, hit count %s %i",
 				dep.hours,
 				dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
-				dep.seconds);
+				dep.minutes);
 			break;
 		case DependencyType::kElapsedPlayerDay :
 			debugPrintf("kElapsedPlayerDay");
