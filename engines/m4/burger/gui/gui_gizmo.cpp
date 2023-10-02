@@ -555,7 +555,7 @@ static bool gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, i
 	return true;
 }
 
-static void gizmo_item_draw(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2) {
+static void gizmo_item_draw(GizmoItem *item, Gizmo *gizmo, int x, int y) {
 	if (!item || !item->_button || !gizmo)
 		return;
 
@@ -625,10 +625,130 @@ static GrBuff *gizmo_create_buffer(Gizmo *gizmo, int sx, int sy, int w, int h) {
 	return grBuff;
 }
 
+static bool gizmo_item_contains(GizmoItem *item, int x, int y) {
+	return item->_btnRect.contains(x, y);
+}
+
 static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, int y,
-	GizmoItem **currentItem) {
-	// TODO
-	return false;
+		GizmoItem **currentItem) {
+	if (!item || !item->_button || eventType != EVENT_MOUSE)
+		return false;
+
+	GizmoButton *btn = item->_button;
+	if (btn->_state == SELECTED)
+		return false;
+
+	bool flag1 = false;
+	bool flag2 = false;
+	bool flag3 = false;
+
+	switch (event) {
+	case _ME_move:
+		if (gizmo_item_contains(item, x, y)) {
+			if (!player_commands_allowed())
+				return false;
+
+			*currentItem = item;
+
+			if (btn->_state != IN_CONTROL) {
+				btn->_state = IN_CONTROL;
+				flag1 = true;
+			}
+		} else {
+			*currentItem = nullptr;
+
+			if (btn->_state != NOTHING) {
+				btn->_state = NOTHING;
+				flag1 = true;
+				flag3 = false;
+			}
+		}
+		break;
+
+	case _ME_L_click:
+	case _ME_doubleclick:
+		if (gizmo_item_contains(item, x, y)) {
+			if (!player_commands_allowed())
+				return false;
+
+			btn->_state = OVER_CONTROL;
+			*currentItem = item;
+			flag1 = true;
+
+		} else {
+			*currentItem = nullptr;
+
+			if (btn->_state != NOTHING) {
+				btn->_state = NOTHING;
+				flag1 = true;
+			}
+		}
+		break;
+
+	case _ME_L_hold:
+	case _ME_doubleclick_hold:
+		break;
+
+	case _ME_L_drag:
+	case _ME_doubleclick_drag:
+		if (!*currentItem)
+			return true;
+
+		if (gizmo_item_contains(item, x, y)) {
+			if (!player_commands_allowed())
+				return false;
+
+			if (btn->_state != OVER_CONTROL) {
+				btn->_state = OVER_CONTROL;
+				flag1 = true;
+			}
+		} else {
+			if (btn->_state != IN_CONTROL) {
+				btn->_state = IN_CONTROL;
+				flag1 = true;
+			}
+		}
+		break;
+
+	case _ME_L_release:
+	case _ME_doubleclick_release:
+		if (gizmo_item_contains(item, x, y)) {
+			if (!player_commands_allowed())
+				return false;
+
+			if (*currentItem)
+				flag2 = true;
+			else
+				*currentItem = item;
+		} else {
+			*currentItem = nullptr;
+			btn->_state = NOTHING;
+			flag1 = true;
+			flag3 = false;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (flag1) {
+		(*item->_fnDraw)(item, item->_gizmo, item->_bounds.left, item->_bounds.top);
+
+		int32 status;
+		ScreenContext *ctx = vmng_screen_find(item->_gizmo, &status);
+
+		if (ctx && status == 1)
+			RestoreScreens(item->_bounds.left + ctx->x1, item->_bounds.top + ctx->y1,
+				item->_bounds.right + ctx->x1, item->_bounds.bottom + ctx->y1);
+	}
+
+	if (flag2 && item->_fn0) {
+		// TODO: drag release code
+		error("TODO: fn0");
+	}
+
+	return flag3;
 }
 
 static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
@@ -679,7 +799,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_fnDraw = gizmo_item_draw;
 	item->_fnFree = gizmo_item_free;
 	item->_fnEvents = events;
-	(*item->_fnDraw)(item, gizmo, rect1X, rect1Y, 0, 0);
+	(*item->_fnDraw)(item, gizmo, rect1X, rect1Y);
 
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(gizmo, &status);
