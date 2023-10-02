@@ -201,19 +201,23 @@ protected:
 // Sets up to 10 flags at once.
 class EventFlags : public ActionRecord {
 public:
+	EventFlags(bool terse = false) : _isTerse(terse) {}
+	virtual ~EventFlags() {}
+
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
 	MultiEventFlagDescription _flags;
+	bool _isTerse;
 
 protected:
-	Common::String getRecordTypeName() const override { return "EventFlags"; }
+	Common::String getRecordTypeName() const override { return _isTerse ? "EventFlagsTerse" : "EventFlags"; }
 };
 
 // Sets up to 10 flags when clicked. Hotspot can move alongside background frame.
 class EventFlagsMultiHS : public EventFlags {
 public:
-	EventFlagsMultiHS(bool isCursor) : _isCursor(isCursor) {}
+	EventFlagsMultiHS(bool isCursor, bool terse = false) : EventFlags(terse), _isCursor(isCursor) {}
 	virtual ~EventFlagsMultiHS() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -228,7 +232,7 @@ public:
 
 protected:
 	bool canHaveHotspot() const override { return true; }
-	Common::String getRecordTypeName() const override { return _isCursor ? "EventFlagsCursorHS" : "EventFlagsMultiHS"; }
+	Common::String getRecordTypeName() const override { return _isCursor ? (_isTerse ? "EventFlagsHSTerse" : "EventFlagsCursorHS") : "EventFlagsMultiHS"; }
 };
 
 // Returns the player back to the main menu

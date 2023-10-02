@@ -258,7 +258,15 @@ void StopTimer::execute() {
 }
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {
-	_flags.readData(stream);
+	if (!_isTerse) {
+		_flags.readData(stream);
+	} else {
+		// Terse version only has 2 flags
+		_flags.descs[0].label = stream.readSint16LE();
+		_flags.descs[0].flag = stream.readUint16LE();
+		_flags.descs[1].label = stream.readSint16LE();
+		_flags.descs[1].flag = stream.readUint16LE();
+	}
 }
 
 void EventFlags::execute() {
