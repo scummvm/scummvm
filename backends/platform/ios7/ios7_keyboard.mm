@@ -405,6 +405,8 @@
 	BOOL _keyboardVisible;
 }
 
+@synthesize hwKeyboardConnected;
+
 #if TARGET_OS_IOS
 - (void)resizeParentFrame:(NSNotification*)notification keyboardDidShow:(BOOL)didShow
 {
@@ -414,7 +416,15 @@
 
 	// Base the new frame size on the current parent frame size
 	CGRect newFrame = self.superview.frame;
-	newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+	if ([self hwKeyboardConnected]) {
+		if (inputView.inputAccessoryView.hidden) {
+			return;
+		} else {
+			newFrame.size.height += (inputView.inputAccessoryView.frame.size.height) * (didShow ? -1 : 1);
+		}
+	} else {
+		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+	}
 
 	// Resize with a fancy animation
 	NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];

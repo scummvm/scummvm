@@ -31,6 +31,10 @@
 
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
+#ifdef __IPHONE_14_0
+#include <GameController/GameController.h>
+#endif
+
 #if 0
 static long g_lastTick = 0;
 static int g_frames = 0;
@@ -533,6 +537,17 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #endif
 
 - (void)showKeyboard {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		// This will check if any hardware keyboard is connected, this also includes keyboards connected through Universal
+		// Control. If hardware keyboard is disconnected it might take some time before the software keyboard is shown again.
+		// This also happens in iOS system as well so it's not specific to ScummVM.
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			[_keyboardView setHwKeyboardConnected:YES];
+		} else {
+			[_keyboardView setHwKeyboardConnected:NO];
+		}
+	}
+
 	[_keyboardView showKeyboard];
 #if TARGET_OS_IOS
 	[_toggleTouchModeButton setImage:[UIImage imageNamed:@"ic_action_keyboard"] forState:UIControlStateNormal];
