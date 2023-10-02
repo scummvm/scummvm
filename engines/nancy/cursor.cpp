@@ -40,14 +40,41 @@ CursorManager::CursorManager()  :
 
 void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
-
 	chunkStream->seek(0);
 
+	// First, we need to figure out the number of possible CursorTypes in the current game
+	// These grew as the engine got more complicated, so we use nancy.dat to store a related property
+	// TODO: Change nancy.dat so it just directly stores the number of cursor types
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 2;
 	} else {
 		_numCursorTypes = g_nancy->getStaticData().numNonItemCursors / 3;
 	}
+
+	// The structure of CURS is weird:
+
+	// The data is divided in half: first half is source rectangles, second half is hotspots (all of which are identical...)
+	// However, each of those halves are divided into a number of arrays, each one of size _numCursorTypes.
+
+	// The first few arrays are the following:
+	// - an array of cursors used when the mouse is in the VIEWPORT (hourglass, directional arrows, etc.)
+	// - an array of cursors used in the FRAME
+	// - an array of cursors used in MENUS (not present in TVD)
+	// The only frame cursors used are the first two: the classic arrow cursor, and its hotspot variant, which is slightly shorter
+	// The same applies to the menu cursors; however, we completely ignore those (technically the arrow cursor has sliiiiightly
+	// different shading from the one in the frame array, but I don't care enough to implement it).
+	
+	// Following those are the ITEM arrays; these cursors are used to indicate that the player is holding an item.
+	// Their number is the same as the number of items described in INV, and their size is also _numCursorTypes.
+	// Out of those arrays, the only cursors that get used are the kNormal and kHotspot ones. The first few games also
+	// had kMove item cursors, but the Move cursors quickly fell out of use.
+
+	// Due to the logic in setCursor(), directional arrow cursors found in the VIEWPORT array take precedence over
+	// the ones in the item arrays. As a result, most of the CURS data is effectively junk that never gets used.
+
+	// Perhaps in the future the class could be modified so we no longer have to store or care about all of the junk cursors;
+	// however, this cannot happen until the engine is more mature and I'm more aware of what changes they made to the
+	// cursor code in later games.
 
 	uint numCursors = g_nancy->getStaticData().numNonItemCursors + g_nancy->getStaticData().numItems * _numCursorTypes;
 	_cursors.resize(numCursors);
@@ -103,32 +130,10 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	// value of the CursorType enum.
 	switch (type) {
 	case kNormalArrow:
-		if (gameType <= kGameTypeNancy1) {
-			_curCursorID = 4;
-		} else if (gameType == kGameTypeNancy2) {
-			_curCursorID = 5;
-		} else if (gameType ==  kGameTypeNancy3) {
-			_curCursorID = 8;
-		} else if (gameType <= kGameTypeNancy5) {
-			_curCursorID = 12;
-		} else {
-			_curCursorID = 16;
-		}
-
+		_curCursorID = _numCursorTypes;
 		return;
 	case kHotspotArrow:
-		if (gameType <= kGameTypeNancy1) {
-			_curCursorID = 5;
-		} else if (gameType == kGameTypeNancy2) {
-			_curCursorID = 6;
-		} else if (gameType == kGameTypeNancy3) {
-			_curCursorID = 9;
-		} else if (gameType <= kGameTypeNancy5) {
-			_curCursorID = 13;
-		} else {
-			_curCursorID = 17;
-		}
-
+		_curCursorID = _numCursorTypes + 1;
 		return;
 	case kInvertedRotateLeft:
 		// Only valid for nancy6 and up
