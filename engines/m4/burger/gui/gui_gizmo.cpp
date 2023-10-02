@@ -416,31 +416,31 @@ void gizmo_draw_sprite(M4sprite *sprite, Buffer *dest, int destX, int destY) {
 	}
 }
 
-static void gui_gizmo_show(ScreenContext *s, RectList *r, Buffer *dest, int32 destX, int32 destY) {
+static void gizmo_draw(ScreenContext *s, RectList *r, Buffer *dest, int32 destX, int32 destY) {
 	if (!s)
 		return;
 	void *scrnContent = s->scrnContent;
 	if (!scrnContent)
 		return;
 
-	GrBuff *buf = (GrBuff *)s->scrnContent;
-	if (!buf)
+	Gizmo *gizmo = (Gizmo *)s->scrnContent;
+	if (!gizmo)
 		return;
-	Buffer *src = buf->get_buffer();
+	Buffer *src = gizmo->_grBuff->get_buffer();
 	if (!src)
 		return;
 
 	if (dest) {
 		for (RectList *rect = r; rect; rect = rect->next) {
-			vmng_refresh_video(rect->x1, rect->y1,
-				rect->x1 - s->x1, rect->y1 - s->y1, rect->x2 - s->x1, rect->y2 - s->y1,
-				src);
-		}
-	} else {
-		for (RectList *rect = r; rect; rect = rect->next) {
 			gr_buffer_rect_copy_2(src, dest,
 				rect->x1 - s->x1, rect->y1 - s->y1, destX, destY,
 				rect->x2 - rect->x1 + 1, rect->y2 - rect->y1 + 1);
+		}
+	} else {
+		for (RectList *rect = r; rect; rect = rect->next) {
+			vmng_refresh_video(rect->x1, rect->y1,
+				rect->x1 - s->x1, rect->y1 - s->y1, rect->x2 - s->x1, rect->y2 - s->y1,
+				src);
 		}
 	}
 }
@@ -623,7 +623,7 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 	gui->_grBuff->release();
 
 	ScreenContext *ctx = vmng_screen_create(sx, sy, sx + sprite->w, sy + sprite->h,
-		69, scrnFlags, gui, (RefreshFunc)gui_gizmo_show, gizmo_eventHandler);
+		69, scrnFlags, gui, (RefreshFunc)gizmo_draw, gizmo_eventHandler);
 	return ctx ? gui : nullptr;
 }
 
