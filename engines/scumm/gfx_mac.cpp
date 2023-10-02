@@ -462,10 +462,6 @@ void MacIndy3Gui::update() {
 
 	bool keepGuiAlive = false;
 
-	// REMEMBER: Once we've mapped all the verb ids to their buttons,
-	// we may be able to revoke the friendship with ScummEngine, and
-	// optimize this loop quite a bit.
-
 	for (int i = 1; i < _vm->_numVerbs; i++) {
 		VerbSlot *vs = &_vm->_verbs[i];
 
