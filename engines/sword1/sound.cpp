@@ -171,38 +171,75 @@ double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &max
 	return diff_sum / cpt;
 }
 
-
-int Sound::addToQueue(int32 fxNo) {
+int Sound::addToQueue(uint32 fxNo) {
 	bool alreadyInQueue = false;
-	for (uint8 cnt = 0; (cnt < _endOfQueue) && (!alreadyInQueue); cnt++)
-		if (_fxQueue[cnt].id == (uint32)fxNo)
+	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++) {
+		if (_fxQueue[cnt].id == fxNo) {
 			alreadyInQueue = true;
-	if (!alreadyInQueue) {
+			break;
+		}
+	}
+
+	if (alreadyInQueue) {
+		debug(5, "Sound::addToQueue(): Sound %d is already in the queue, ignoring...", fxNo);
+		return 0;
+	} else {
 		if (_endOfQueue == MAX_FXQ_LENGTH) {
-			warning("Sound queue overflow");
+			warning("Sound::addToQueue(): Sound queue overflow");
 			return 0;
 		}
+
 		uint32 sampleId = getSampleId(fxNo);
 		if ((sampleId & 0xFF) != 0xFF) {
 			_resMan->resOpen(sampleId);
 			_fxQueue[_endOfQueue].id = fxNo;
-			if (_fxList[fxNo].type == FX_SPOT)
+
+			if (_fxList[fxNo].type == FX_SPOT) {
 				_fxQueue[_endOfQueue].delay = _fxList[fxNo].delay + 1;
-			else
+			} else {
 				_fxQueue[_endOfQueue].delay = 1;
+			}
+
 			_endOfQueue++;
-			return 1;
+			return 1; // Success!
 		}
+
 		return 0;
 	}
-	return 0;
+}
+
+void Sound::removeFromQueue(uint32 fxNo) {
+	uint32 i, j;
+	bool alreadyInQueue = false;
+	uint8 cnt = 0;
+	for (cnt = 0; cnt < _endOfQueue; j++) {
+		if (_fxQueue[cnt].id == fxNo) {
+			alreadyInQueue = true;
+			break;
+		}
+	}
+
+	if (alreadyInQueue) {
+		_resMan->resClose(getSampleId(_fxQueue[cnt].id));
+
+		for (uint8 j = 0; j < _endOfQueue; j++) { // scan fxq from start to last element stored
+			if (_fxQueue[j].id == fxNo) { // if we've found the fxNo in question
+				for (i = j; i < (_endOfQueue - 1); i++) { // move all the others down one to fill this space
+					_fxQueue[i].id = _fxQueue[i + 1].id;
+					_fxQueue[i].delay = _fxQueue[i + 1].delay;
+				}
+
+				debug(5, "Sound::addToQueue(): Sound fxNo %d removed from _fxQueue[%d] (_endOfQueue = %d)\n", fxNo, j, _endOfQueue - 1);
+				_endOfQueue--; // decrement the end of queue element-number
+
+				break;
+			}
+		}
+	}
 }
 
 void Sound::engine() {
-	// TODO: FX fading step
-
-
-	// first of all, add any random sfx to the queue...
+	// First of all, add any random sfx to the queue...
 	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
 		uint16 fxNo = _roomsFixedFx[Logic::_scriptVars[SCREEN]][cnt];
 		if (fxNo) {
@@ -213,19 +250,19 @@ void Sound::engine() {
 		} else
 			break;
 	}
-	// now process the queue
-	for (uint8 cnt2 = 0; cnt2 < _endOfQueue; cnt2++) {
-		if (_fxQueue[cnt2].delay > 0) {
-			_fxQueue[cnt2].delay--;
-			if (_fxQueue[cnt2].delay == 0)
-				playSample(&_fxQueue[cnt2]);
-		} else {
-			if (!_mixer->isSoundHandleActive(_fxQueue[cnt2].handle)) { // sound finished
-				_resMan->resClose(getSampleId(_fxQueue[cnt2].id));
-				if (cnt2 != _endOfQueue - 1)
-					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
-				_endOfQueue--;
-			}
+
+	// Now process the queue...
+	int32 fxNo = 0;
+	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++) {
+		fxNo = _fxQueue[cnt].id;
+		if (_fxQueue[cnt].delay > 0) {
+			_fxQueue[cnt].delay--;
+			if (_fxQueue[cnt].delay == 0)
+				PlaySample(fxNo);
+		} else if (CheckSampleStatus(fxNo) == 1) {
+			// Delay countdown was already zero, so the sample has
+			// already been played, so check if it's finished...
+			removeFromQueue(fxNo);
 		}
 	}
 }
@@ -244,9 +281,40 @@ void Sound::fnStopFx(int32 fxNo) {
 	debug(8, "fnStopFx: id not found in queue");
 }
 
-bool Sound::amISpeaking() {
-	_waveVolPos++;
-	return _waveVolume[_waveVolPos - 1];
+bool Sound::amISpeaking(byte *buf) {
+	int16 *offset;
+	int16 count;
+	int32 readPos;
+
+	if (!speechSampleBusy)
+		return (0);
+
+	if (true /* AIL_sample_status(hSampleSpeech) != SMP_DONE*/) {
+
+		speechCount += 1;
+
+		readPos = speechCount * 919 * 2;
+
+		// Ensure that we don't read beyond the buffer
+		if (readPos + 150 * sizeof(int16) > speechSize)
+			return false;
+
+		offset = (int16 *)&buf[readPos];
+		count = 0;
+		for (int i = 0; i < 150; i++) {
+			if ((offset[i] < NEG_MOUTH_THRESHOLD) || (offset[i] > POS_MOUTH_THRESHOLD)) {
+				count += 1;
+				if (count == 50) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+
+	//_waveVolPos++;
+	//return _waveVolume[_waveVolPos - 1];
 }
 
 bool Sound::speechFinished() {
@@ -269,12 +337,6 @@ void Sound::newScreen(uint32 screen) {
 		} else
 			break;
 	}
-}
-
-void Sound::quitScreen() {
-	// stop all running SFX
-	while (_endOfQueue)
-		fnStopFx(_fxQueue[0].id);
 }
 
 void Sound::playSample(QueueElement *elem) {
@@ -697,6 +759,180 @@ void Sound::closeCowSystem() {
 	free(_cowHeader);
 	_cowHeader = NULL;
 	_currentCowFile = 0;
+}
+
+// New stuff
+
+//  This function checks to see whether a specific sound effect has completed
+//  playing yet.  It returns 1 if finished, 0 if still playing
+//
+int32 Sound::CheckSampleStatus(int32 id) {
+	uint32 i = 0;
+	while (i < MAX_FX) {
+		if (fxSampleID[i] == id) {
+			//if ((AIL_sample_status(hSampleFX[i]) == SMP_DONE) && (fxSampleBusy[i]) && (!fxPaused[i])) {
+				fxSampleBusy[i] = 0;
+				return (1);
+			//} else {
+			//	return (0);
+			//}
+		}
+		i += 1;
+	}
+
+	return (0);
+}
+
+int32 Sound::CheckSpeechStatus() {
+	if (!speechSampleBusy || speechSamplePaused)
+		return (1);
+
+	//if (AIL_sample_status(hSampleSpeech) == SMP_DONE) {
+		speechSampleBusy = 0;
+		RestoreMusicVolume();
+		return (1);
+	//}
+	//return (0);
+}
+
+void Sound::PlaySample(int32 fxNo) {
+}
+
+int32 Sound::StreamSample(char filename[], int32 looped) {
+	return int32();
+}
+
+void Sound::UpdateSampleStreaming() {
+}
+
+int32 Sound::PlayFX(int32 fxID, int32 type, void *wavData, uint32 vol[2]) {
+	return int32();
+}
+
+int32 Sound::StopFX(int32 fxID) {
+	for (uint32 i = 0; i < MAX_FX; i++) {
+		if (fxSampleID[i] == fxID) {
+			//if (AIL_sample_status(hSampleFX[i]) != SMP_DONE) {
+			//	AIL_end_sample(hSampleFX[i]);
+				fxSampleBusy[i] = 0;
+				return (1);
+			//}
+		}
+	}
+	return (0);
+}
+
+void Sound::clearAllFx() {
+	for (int j = _endOfQueue - 1; j >= 0; j--) { // remove them from the end
+		if (CheckSampleStatus(_fxQueue[j].id) == 0) // delay countdown was already zero, so the sample has already been played, so check if it's finished
+			StopFX(_fxQueue[j].id);
+		removeFromQueue(_fxQueue[j].id);
+	}
+
+	_endOfQueue = 0; // just to be sure, like
+}
+
+void Sound::FadeVolumeDown(int32 rate) {
+	volumeFadingFlag = -1;
+	volumeFadingRate = 2 * rate;
+	volumeCount = 0;
+}
+
+void Sound::FadeVolumeUp(int32 rate) {
+	volumeFadingFlag = 1;
+	volumeFadingRate = 2 * rate;
+	volumeCount = 0;
+}
+
+void Sound::FadeMusicDown(int32 rate) {
+	streamSampleFading[1 - streamSamplePlaying[0]] = -12;
+}
+
+void Sound::FadeMusicUp(int32 rate) {
+	musicFadingFlag = 1;
+	musicFadingRate = 2 * rate;
+	musicCount = 0;
+}
+
+void Sound::FadeFxDown(int32 rate) {
+	fxFadingFlag = -1;
+	fxFadingRate = 2 * rate;
+	fxCount = 0;
+}
+
+void Sound::FadeFxUp(int32 rate) {
+	fxFadingFlag = 1;
+	fxFadingRate = 2 * rate;
+	fxCount = 0;
+}
+
+int32 Sound::GetSpeechSize(void *compData) {
+	return int32();
+}
+
+void Sound::ReduceMusicVolume() {
+	musicFadeVolume[0] = volMusic[0] * MUSIC_UNDERSCORE / 100;
+	musicFadeVolume[1] = volMusic[0] * MUSIC_UNDERSCORE / 100;
+
+	//AIL_set_sample_volume(hStreamSample[0], (musicFadeVolume[0] + musicFadeVolume[1]) * 3);
+}
+
+void Sound::RestoreMusicVolume() {
+	//AIL_set_sample_volume(hStreamSample[0], (volMusic[0] + volMusic[1]) * 3);
+}
+
+void Sound::SetCrossFadeIncrement() {
+	crossFadeIncrement = true;
+}
+
+void Sound::PauseSpeech() {
+	if ((speechSampleBusy) && (!speechSamplePaused)) {
+		speechSamplePaused = true;
+		//AIL_stop_sample(hSampleSpeech);
+	}
+}
+
+void Sound::UnpauseSpeech() {
+	if ((speechSampleBusy) && (speechSamplePaused)) {
+		speechSamplePaused = false;
+		//AIL_resume_sample(hSampleSpeech);
+	}
+}
+
+void Sound::PauseMusic() {
+	for (int32 i = 0; i < MAX_MUSIC; i++) {
+		if (streamSamplePlaying[i]) {
+			musicPaused[i] = true;
+			//AIL_stop_sample(hStreamSample[i]);
+		}
+	}
+}
+
+void Sound::UnpauseMusic() {
+	for (int32 i = 0; i < MAX_MUSIC; i++) {
+		if (musicPaused[i]) {
+			//AIL_resume_sample(hStreamSample[i]);
+			musicPaused[i] = false;
+		}
+	}
+}
+
+void Sound::PauseFx() {
+	for (uint32 i = 0; i < MAX_FX; i++) {
+		if (fxSampleBusy[i]) {
+			//AIL_stop_sample(hSampleFX[i]);
+			fxPaused[i] = true;
+		}
+	}
+}
+
+void Sound::UnpauseFx() {
+	for (uint32 i = 0; i < MAX_FX; i++) {
+		if (fxPaused[i]) {
+			//AIL_resume_sample(hSampleFX[i]);
+			fxPaused[i] = false;
+		}
+	}
 }
 
 } // End of namespace Sword1

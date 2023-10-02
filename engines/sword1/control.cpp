@@ -249,7 +249,7 @@ void Control::getPlayerOptions() {
 
 	_screen->startFadePaletteDown(1);
 	_vm->waitForFade();
-	_sound->quitScreen();
+	_sound->clearAllFx();
 	_keyPressed.reset();
 
 	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {

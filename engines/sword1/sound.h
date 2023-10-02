@@ -39,8 +39,8 @@ namespace Sword1 {
 #define MAX_ROOMS_PER_FX    7       // max no. of rooms in the fx's room,vol list
 #define MAX_FXQ_LENGTH      32      // max length of sound queue - ie. max number of fx that can be stored up/playing together
 
-#define FX_SPOT 1
-#define FX_LOOP 2
+#define FX_SPOT   1
+#define FX_LOOP   2
 #define FX_RANDOM 3
 
 struct QueueElement {
@@ -67,6 +67,11 @@ struct FxDef {
 class ResMan;
 #define WAVE_VOL_TAB_LENGTH 480
 #define WAVE_VOL_THRESHOLD 190000 //120000
+#define MUSIC_UNDERSCORE 50
+#define NEG_MOUTH_THRESHOLD (-750)
+#define POS_MOUTH_THRESHOLD 750
+#define MAX_FX 4
+#define MAX_MUSIC 2
 
 enum CowMode {
 	CowWave = 0,
@@ -88,16 +93,17 @@ public:
 	void giveSpeechVol(uint8 *volL, uint8 *volR) { *volL = _speechVolL; *volR = _speechVolR; }
 	void giveSfxVol(uint8 *volL, uint8 *volR) { *volL = _sfxVolL; *volR = _sfxVolR; }
 	void newScreen(uint32 screen);
-	void quitScreen();
+	void clearAllFx();
 	void closeCowSystem();
 
 	bool startSpeech(uint16 roomNo, uint16 localNo);
 	bool speechFinished();
 	void stopSpeech();
-	bool amISpeaking();
+	bool amISpeaking(byte *buf);
 
 	void fnStopFx(int32 fxNo);
-	int addToQueue(int32 fxNo);
+	int addToQueue(uint32 fxNo);
+	void removeFromQueue(uint32 fxNo);
 
 	void engine();
 
@@ -131,6 +137,77 @@ private:
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
 	static const FxDef _fxList[312];
 
+	// New stuff
+public:
+	void PlaySample(int32 fxNo);
+
+	int32 StreamSample(char filename[], int32 looped);
+	void UpdateSampleStreaming();
+
+	int32 PlayFX(int32 fxID, int32 type, void *wavData, uint32 vol[2]);
+	int32 StopFX(int32 fxID);
+	int32 CheckSampleStatus(int32 id);
+	int32 CheckSpeechStatus();
+	int32 PlaySpeech(void *wavData, int32 size);
+	int32 StopSpeech();
+	void FadeVolumeDown(int32 rate);
+	void FadeVolumeUp(int32 rate);
+	void FadeMusicDown(int32 rate);
+	void FadeMusicUp(int32 rate);
+	void FadeFxDown(int32 rate);
+	void FadeFxUp(int32 rate);
+	int32 GetSpeechSize(void *compData);
+	void SetCrossFadeIncrement();
+	void PauseSpeech();
+	void UnpauseSpeech();
+	void PauseMusic();
+	void UnpauseMusic();
+	void PauseFx();
+	void UnpauseFx();
+
+	void ReduceMusicVolume();
+	void RestoreMusicVolume();
+
+	uint32 volFX[2] = { 0, 0 };
+	uint32 volSpeech[2] = { 0, 0 };
+	uint32 volMusic[2] = { 0, 0 };
+
+	//  Volume variables
+	int32 volumeFadingFlag = 0;
+	int32 volumeFadingRate = 0;
+	int32 musicFadingFlag = 0;
+	int32 musicFadingRate = 0;
+	int32 fxFadingFlag = 0;
+	int32 fxFadingRate = 0;
+	int32 masterVolume[2] = { 0, 0 };
+	int32 fadeVolume[2] = { 0, 0 };
+	int32 musicFadeVolume[2] = { 0, 0 };
+	int32 fxFadeVolume[2] = { 0, 0 };
+	int32 volumeCount = 0;
+	int32 musicCount = 0;
+	int32 fxCount = 0;
+	int32 speechCount = 0;
+	int32 speechSize = 0;
+
+//  Sample handles and information.
+
+	Audio::SoundHandle hSampleFX[MAX_FX];
+	Audio::SoundHandle hSampleSpeech;
+	Audio::SoundHandle hSampleMusic[MAX_MUSIC];
+	int32 streamSamplePlaying[MAX_MUSIC] = { 0, 0 };
+	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
+	int32 streamLoopingFlag[MAX_MUSIC] = { 0, 0 };
+	Audio::SoundHandle hStreamSample[MAX_MUSIC];
+	int32 streamFile[MAX_MUSIC];
+	byte *streamBuffer[MAX_MUSIC][2];
+	int32 fxSampleBusy[MAX_FX] = { 0, 0, 0, 0 };
+	int32 fxSampleID[MAX_FX] = { 0, 0, 0, 0 };
+	int32 speechSampleBusy;
+	uint32 musicSamples = 0;
+	bool crossFadeIncrement = false;
+	bool speechSamplePaused = false;
+	bool fxPaused[MAX_FX] = { false, false, false, false };
+	bool musicPaused[MAX_MUSIC] = { false, false };
 };
 
 } // End of namespace Sword1

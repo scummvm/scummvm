@@ -181,7 +181,7 @@ Common::Error SwordEngine::init() {
 }
 
 void SwordEngine::reinitialize() {
-	_sound->quitScreen();
+	_sound->clearAllFx();
 	_resMan->flush(); // free everything that's currently alloced and opened. (*evil*)
 
 	_logic->initialize();     // now reinitialize these objects as they (may) have locked
@@ -1103,7 +1103,7 @@ uint8 SwordEngine::mainLoop() {
 		_screen->quitScreen(); // Close graphic resources
 		waitForFade();
 
-		_sound->quitScreen(); // Purge the sound AFTER they've been faded
+		_sound->clearAllFx(); // Purge the sound AFTER they've been faded
 
 		_objectMan->closeSection(Logic::_scriptVars[SCREEN]); // Close the section that PLAYER has just left, if it's empty now
 	} while ((_systemVars.saveGameFlag < SGF_RESTORE) && (!shouldQuit()));

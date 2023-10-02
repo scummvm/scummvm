@@ -972,7 +972,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 
 	// A cutscene usually (always?) means the room will change. In the
 	// meantime, we don't want any looping sound effects still playing.
-	_sound->quitScreen();
+	_sound->clearAllFx();
 
 	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _system);
 	if (player) {
@@ -1627,8 +1627,8 @@ int Logic::fnPlayFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d
 }
 
 int Logic::fnStopFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	_sound->fnStopFx(fxNo);
-	//_sound->removeFromQueue(fxNo);
+	_sound->StopFX(fxNo);
+	_sound->removeFromQueue(fxNo);
 	return SCRIPT_CONT;
 }
 
@@ -1640,13 +1640,14 @@ int Logic::fnPlayMusic(Object *cpt, int32 id, int32 tuneId, int32 loopFlag, int3
 	else
 		_scriptVars[CURRENT_MUSIC] = 0;
 
+	//_sound->StreamSample(tuneId, loopFlag);
 	_music->startMusic(tuneId, loopFlag);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnStopMusic(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_scriptVars[CURRENT_MUSIC] = 0;
-	_music->fadeDown();
+	_sound->FadeMusicDown(1);
 	return SCRIPT_CONT;
 }
 
