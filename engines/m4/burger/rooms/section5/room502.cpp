@@ -273,6 +273,10 @@ void Room502::init() {
 
 	bool skip = false;
 	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
 	case 503:
 		ws_demand_location(620, 311, 9);
 		ws_walk(304, 308, 0, -1, -1);
