@@ -230,11 +230,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 123:
 		return new InventorySoundOverride();
 	case 150:
-		return new PlayDigiSound();
+		return new PlaySound();
 	case 151:
-		return new PlayDigiSound();
+		return new PlaySound();
 	case 152:
-		return new PlaySoundPanFrameAnchorAndDie();
+		return new PlaySoundFrameAnchor();
 	case 153:
 		return new PlaySoundMultiHS();
 	case 154:
@@ -242,7 +242,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 155:
 		return new StopSound(); // StopAndUnloadSound, but we always unload
 	case 157:
-		return new PlayDigiSoundCC();
+		return new PlaySoundCC();
 	case 158:
 		return new PlayRandomSound();
 	case 160:

@@ -32,7 +32,7 @@
 namespace Nancy {
 namespace Action {
 
-void PlayDigiSound::readData(Common::SeekableReadStream &stream) {
+void PlaySound::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3) {
@@ -51,7 +51,7 @@ void PlayDigiSound::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
 }
 
-void PlayDigiSound::execute() {
+void PlaySound::execute() {
 	switch (_state) {
 	case kBegin:
 		g_nancy->_sound->loadSound(_sound, &_soundEffect);
@@ -82,12 +82,18 @@ void PlayDigiSound::execute() {
 	}
 }
 
-Common::String PlayDigiSound::getRecordTypeName() const {
-	return g_nancy->getGameType() <= kGameTypeNancy2 ? "PlayDigiSoundAndDie" : "PlayDigiSound";
+Common::String PlaySound::getRecordTypeName() const {
+	if (g_nancy->getGameType() <= kGameTypeNancy2) {
+		return "PlayDigiSoundAndDie";
+	} else if (g_nancy->getGameType() <= kGameTypeNancy5) {
+		return "PlayDigiSound";
+	} else {
+		return "PlaySound";
+	}
 }
 
-void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
-	PlayDigiSound::readData(stream);
+void PlaySoundCC::readData(Common::SeekableReadStream &stream) {
+	PlaySound::readData(stream);
 
 	uint16 textSize = stream.readUint16LE();
 	if (textSize) {
@@ -98,24 +104,40 @@ void PlayDigiSoundCC::readData(Common::SeekableReadStream &stream) {
 	}
 }
 
-void PlayDigiSoundCC::execute() {
+void PlaySoundCC::execute() {
 	if (_state == kBegin) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_ccText);
 	}
-	PlayDigiSound::execute();
+	PlaySound::execute();
 }
 
-void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
+Common::String PlaySoundCC::getRecordTypeName() const {
+	if (g_nancy->getGameType() <= kGameTypeNancy5) {
+		return "PlayDigiSoundCC";
+	} else {
+		return "PlaySoundCC";
+	}
+}
+
+void PlaySoundFrameAnchor::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 	stream.skip(2);
 	_sound.isPanning = true;
 }
 
-void PlaySoundPanFrameAnchorAndDie::execute() {
+void PlaySoundFrameAnchor::execute() {
 	g_nancy->_sound->loadSound(_sound);
 	g_nancy->_sound->playSound(_sound);
 	_isDone = true;
+}
+
+Common::String PlaySoundFrameAnchor::getRecordTypeName() const {
+	if (g_nancy->getGameType() <= kGameTypeNancy2) {
+		return "PlaySoundPanFrameAnchorAndDie";
+	} else {
+		return "PlaySoundFrameAnchor";
+	}
 }
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
@@ -184,7 +206,7 @@ void PlayRandomSound::readData(Common::SeekableReadStream &stream) {
 	uint16 numSounds = stream.readUint16LE();
 	readFilenameArray(stream, _soundNames, numSounds - 1);
 
-	PlayDigiSound::readData(stream);
+	PlaySound::readData(stream);
 	_soundNames.push_back(_sound.name);
 }
 
@@ -193,12 +215,12 @@ void PlayRandomSound::execute() {
 		_sound.name = _soundNames[g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1)];
 	}
 
-	PlayDigiSound::execute();
+	PlaySound::execute();
 }
 
 void TableIndexPlaySound::readData(Common::SeekableReadStream &stream) {
 	_tableIndex = stream.readUint16LE();
-	PlayDigiSound::readData(stream); // Data does NOT contain captions, so we call the PlayDigiSound version
+	PlaySound::readData(stream); // Data does NOT contain captions, so we call the PlaySound version
 }
 
 void TableIndexPlaySound::execute() {
@@ -215,7 +237,7 @@ void TableIndexPlaySound::execute() {
 		_ccText = tabl->strings[playerTable->currentIDs[_tableIndex - 1] - 1];
 	}
 
-	PlayDigiSoundCC::execute();
+	PlaySoundCC::execute();
 }
 
 } // End of namespace Action

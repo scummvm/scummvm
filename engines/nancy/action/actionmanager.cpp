@@ -581,7 +581,7 @@ void ActionManager::synchronizeMovieWithSound() {
 	// The heuristic for catching these cases relies on the scene having a movie and a sound
 	// record start at the same frame, and have a (valid) scene change to the same scene.
 	PlaySecondaryMovie *movie = nullptr;
-	PlayDigiSound *sound = nullptr;
+	PlaySound *sound = nullptr;
 
 	for (uint i = 0; i < _activatedRecordsThisFrame.size(); ++i) {
 		byte type = _activatedRecordsThisFrame[i]->_type;
@@ -589,7 +589,7 @@ void ActionManager::synchronizeMovieWithSound() {
 		if (type == 53) {
 			movie = (PlaySecondaryMovie *)_activatedRecordsThisFrame[i];
 		} else if (type == 150 || type == 151 || type == 157) {
-			sound = (PlayDigiSound *)_activatedRecordsThisFrame[i];
+			sound = (PlaySound *)_activatedRecordsThisFrame[i];
 		}
 
 		if (movie && sound) {

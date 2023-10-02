@@ -30,10 +30,10 @@ namespace Action {
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag
-class PlayDigiSound : public ActionRecord {
+class PlaySound : public ActionRecord {
 public:
-	PlayDigiSound() {}
-	~PlayDigiSound() { delete _soundEffect; }
+	PlaySound() {}
+	~PlaySound() { delete _soundEffect; }
 	
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -48,9 +48,9 @@ protected:
 	Common::String getRecordTypeName() const override;
 };
 
-// The same as PlayDigiSound, but with the addition of captioning text,
+// The same as PlaySound, but with the addition of captioning text,
 // which gets displayed inside the Textbox.
-class PlayDigiSoundCC : public PlayDigiSound {
+class PlaySoundCC : public PlaySound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -58,12 +58,12 @@ public:
 	Common::String _ccText;
 
 protected:
-	Common::String getRecordTypeName() const override { return "PlayDigiSoundCC"; }
+	Common::String getRecordTypeName() const override;
 };
 
 // Used for sounds that pan left-right depending on the scene background frame.
-// Only used in The Vampire Diaries; later games use PlayDigiSound's 3D sound capabilities instead
-class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
+// Only used in The Vampire Diaries; later games use PlaySound's 3D sound capabilities instead
+class PlaySoundFrameAnchor : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -71,7 +71,7 @@ public:
 	SoundDescription _sound;
 
 protected:
-	Common::String getRecordTypeName() const override { return "PlaySoundPanFrameAnchorAndDie"; }
+	Common::String getRecordTypeName() const override;
 };
 
 // Plays a sound effect; has multiple hotspots, one per scene background frame.
@@ -105,9 +105,9 @@ protected:
 	Common::String getRecordTypeName() const override { return "StopSound"; }
 };
 
-// Same as PlayDigiSound, except it randomly picks between one of several
+// Same as PlaySound, except it randomly picks between one of several
 // provided sound files; all other settings for the sound are shared.
-class PlayRandomSound : public PlayDigiSound {
+class PlayRandomSound : public PlaySound {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -120,11 +120,11 @@ protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
 };
 
-// Same as PlayDigiSound, except it discards the filename provided in the data.
+// Same as PlaySound, except it discards the filename provided in the data.
 // Instead, it takes the current value of an item in TableData, and appends that
 // value to the end of the base filename provided in the TABL chunk. Does not contain
 // any CC text inside the record data; instead, that also gets copied over from TABL.
-class TableIndexPlaySound : public PlayDigiSoundCC {
+class TableIndexPlaySound : public PlaySoundCC {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
