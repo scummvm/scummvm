@@ -24,9 +24,13 @@
 
 #include "sword1/object.h"
 #include "sword1/sworddefs.h"
+
 #include "common/file.h"
-#include "common/util.h"
+#include "common/mutex.h"
 #include "common/random.h"
+#include "common/timer.h"
+#include "common/util.h"
+
 #include "audio/mixer.h"
 
 namespace Audio {
@@ -65,6 +69,8 @@ struct FxDef {
 };
 
 class ResMan;
+class SwordEngine;
+
 #define WAVE_VOL_TAB_LENGTH 480
 #define WAVE_VOL_THRESHOLD 190000 //120000
 #define MUSIC_UNDERSCORE 50
@@ -86,7 +92,7 @@ class Sound {
 	friend class SwordConsole;
 	friend class Control;
 public:
-	Sound(Audio::Mixer *mixer, ResMan *pResMan);
+	Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan);
 	~Sound();
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; }
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; }
@@ -110,6 +116,8 @@ public:
 	void checkSpeechFileEndianness();
 	double endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples);
 
+	Common::Mutex _soundMutex;
+
 private:
 	uint8 _sfxVolL, _sfxVolR, _speechVolL, _speechVolR;
 	void playSample(QueueElement *elem);
@@ -131,7 +139,9 @@ private:
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
 	uint8        _endOfQueue;
 	Audio::Mixer *_mixer;
+	SwordEngine *_vm;
 	ResMan *_resMan;
+
 	bool _bigEndianSpeech;
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
@@ -139,6 +149,8 @@ private:
 
 	// New stuff
 public:
+	void installFadeTimer();
+	void uninstallFadeTimer();
 	void PlaySample(int32 fxNo);
 
 	int32 StreamSample(char filename[], int32 looped);
