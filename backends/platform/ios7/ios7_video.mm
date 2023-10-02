@@ -343,6 +343,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 - (void)updateTouchMode {
 	UIImage *btnImage;
 	TouchMode currentTouchMode = iOS7_getCurrentTouchMode();
+	bool isEnabled = ConfMan.getBool("onscreen_control");
 
 	if (currentTouchMode == kTouchModeDirect) {
 		btnImage = [UIImage imageNamed:@"ic_action_mouse"];
@@ -353,6 +354,11 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	}
 
     [_toggleTouchModeButton setImage: btnImage forState:UIControlStateNormal];
+
+	[_toggleTouchModeButton setEnabled:isEnabled];
+	[_toggleTouchModeButton setHidden:!isEnabled];
+	[_menuButton setEnabled:isEnabled];
+	[_menuButton setHidden:!isEnabled];
 }
 #endif
 
