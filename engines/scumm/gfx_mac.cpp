@@ -404,10 +404,10 @@ MacIndy3Gui::~MacIndy3Gui() {
 void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
 	Widget *w = &_widgets[n];
 
-	w->x = x;
-	w->y = y;
-	w->width = width;
-	w->height = height;
+	w->bounds.left = x;
+	w->bounds.top = y;
+	w->bounds.right = x + width;
+	w->bounds.bottom = y + height;
 	w->text = nullptr;
 
 	resetWidget(n);
@@ -484,7 +484,7 @@ void MacIndy3Gui::update() {
 				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
 				byte buf[270];
 				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-//				debug("Unknown verb: %d %s", vs->verbid, buf);
+				debug("Unknown verb: %d %s", vs->verbid, buf);
 			}
 
 			if (id != -1) {
@@ -513,8 +513,9 @@ void MacIndy3Gui::update() {
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
+
 		if (w->kill && w->visible) {
-			fill(Common::Rect(w->x, w->y, w->x + w->width, w->y + w->height));
+			fill(w->bounds);
 			free(w->text);
 			w->text = nullptr;
 			w->slot = -1;
@@ -556,7 +557,7 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 		Widget *w = &_widgets[i];
 
 		if (w->visible && w->enabled) {
-			if (x >= w->x && x < w->x + w->width && y >= w->y && y < w->y + w->height) {
+			if (w->bounds.contains(x, y)) {
 				w->redraw = true;
 				w->timer = 15;
 
@@ -643,24 +644,21 @@ void MacIndy3Gui::fill(Common::Rect r) {
 }
 
 void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
-	int x = _widgets[n].x;
-	int y = _widgets[n].y;
-	int width = _widgets[n].width;
-	int height = _widgets[n].height;
+	Common::Rect r = _widgets[n].bounds;
 
-	fill(Common::Rect(x, y, x + width, y + height));
+	fill(r);
 
 	if (!pressed) {
-		_macScreen->hLine(x + 1, y, x + width - 3, 0);
-		_macScreen->hLine(x + 1, y + height - 2, x + width - 3, 0);
-		_macScreen->vLine(x, y + 1, y + height - 3, 0);
-		_macScreen->vLine(x + width - 2, y + 1, y + height - 3, 0);
+		_macScreen->hLine(r.left + 1, r.top, r.right - 3, 0);
+		_macScreen->hLine(r.left + 1, r.bottom - 2, r.right - 3, 0);
+		_macScreen->vLine(r.left, r.top + 1, r.bottom - 3, 0);
+		_macScreen->vLine(r.right - 2, r.top + 1, r.bottom - 3, 0);
 
-		_macScreen->hLine(x + 2, y + height - 1, x + width - 1, 0);
-		_macScreen->vLine(x + width - 1, y + 2, y + height - 2, 0);
+		_macScreen->hLine(r.left + 2, r.bottom - 1, r.right - 1, 0);
+		_macScreen->vLine(r.right - 1, r.top + 2, r.bottom - 2, 0);
 
-		_macScreen->hLine(x + 1, y + 1, x + width - 3, 15);
-		_macScreen->vLine(x + 1, y + 2, y + height - 3, 15);
+		_macScreen->hLine(r.left + 1, r.top + 1, r.right - 3, 15);
+		_macScreen->vLine(r.left + 1, r.top + 2, r.bottom - 3, 15);
 	} else {
 		// I have only been able to capture a screenshot of the pressed
 		// button in black and white, where the checkerboard background
@@ -673,13 +671,13 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 		// that the shadow is always drawn, and the rest of the button
 		// is just shifted down to the right. That would make the other
 		// two corners rounded.
-		_macScreen->hLine(x + 2, y + 1, x + width - 2, 0);
-		_macScreen->hLine(x + 2, y + height - 1, x + width - 1, 0);
-		_macScreen->vLine(x + 1, y + 2, y + height - 2, 0);
-		_macScreen->vLine(x + width - 1, y + 2, y + height - 2, 0);
+		_macScreen->hLine(r.left + 2, r.top + 1, r.right - 2, 0);
+		_macScreen->hLine(r.left + 2, r.bottom - 1, r.right - 1, 0);
+		_macScreen->vLine(r.left + 1, r.top + 2, r.bottom - 2, 0);
+		_macScreen->vLine(r.right - 1, r.top + 2, r.bottom - 2, 0);
 
-		_macScreen->hLine(x + 2, y + 2, x + width - 2, 15);
-		_macScreen->vLine(x + 2, y + 3, y + height - 2, 15);
+		_macScreen->hLine(r.left + 2, r.top + 2, r.right - 2, 15);
+		_macScreen->vLine(r.left + 2, r.top + 3, r.bottom - 2, 15);
 	}
 
 	// The text is drawn centered. Based on experimentation, I think the
@@ -693,24 +691,24 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 		for (int i = 0; text[i]; i++)
 			stringWidth += _fonts[2]->getCharWidth(text[i]);
 
-		int textX = (x + (width - 1 - stringWidth) / 2) - 1;
-		int textY = y + 2;
+		int x = (r.left + (r.width() - 1 - stringWidth) / 2) - 1;
+		int y = r.top + 2;
 		int color = enabled ? 15 : 0;
 
 		if (pressed) {
-			textX++;
-			textY++;
+			x++;
+			y++;
 		}
 
 		for (int i = 0; text[i]; i++) {
 			if (enabled)
-				_fonts[2]->drawChar(_macScreen, text[i], textX, textY, 0);
-			_fonts[1]->drawChar(_macScreen, text[i], textX + 1, textY, color);
-			textX += _fonts[2]->getCharWidth(text[i]);
+				_fonts[2]->drawChar(_macScreen, text[i], x, y, 0);
+			_fonts[1]->drawChar(_macScreen, text[i], x + 1, y, color);
+			x += _fonts[2]->getCharWidth(text[i]);
 		}
 	}
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(x, y), _macScreen->pitch, x, y, width, height);
+	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), _macScreen->pitch, r.left, r.top, r.width(), r.height());
 }
 
 // Desired behavior:
