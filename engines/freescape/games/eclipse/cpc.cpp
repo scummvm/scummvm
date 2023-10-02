@@ -23,7 +23,7 @@
 #include "common/memstream.h"
 
 #include "freescape/freescape.h"
-#include "freescape/games/dark/dark.h"
+#include "freescape/games/eclipse/eclipse.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
