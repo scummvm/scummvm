@@ -346,7 +346,19 @@ static void gizmo_dispose_gui() {
 }
 
 static void gizmo_free_gui(Gizmo *gizmo) {
-	// TODO
+	if (!gizmo)
+		return;
+
+	for (GizmoItem *item = gizmo->_items; item; item = gizmo->_items) {
+		gizmo->_items = item->_next;
+		(*item->_fnFree)(item);
+	}
+
+	GrBuff *grBuff = gizmo->_grBuff;
+	if (grBuff)
+		delete grBuff;
+
+	mem_free(gizmo);
 }
 
 static bool gizmo_load_sprites(const char *name, size_t count) {
@@ -585,8 +597,16 @@ static void gizmo_item_draw(GizmoItem *item, Gizmo *gizmo, int x, int y, int zer
 	gizmo->_grBuff->release();
 }
 
-static void gizmo_item_fn2(GizmoItem *item) {
-	// TODO
+static void gizmo_item_free(GizmoItem *item) {
+	if (!item)
+		return;
+
+	if (item->_grBuff)
+		delete item->_grBuff;
+
+	if (item->_button)
+		mem_free(item->_button);
+	mem_free(item);
 }
 
 static GrBuff *gizmo_create_buffer(Gizmo *gizmo, int sx, int sy, int w, int h) {
@@ -657,7 +677,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_button = btn;
 
 	item->_fnDraw = gizmo_item_draw;
-	item->_fn2 = gizmo_item_fn2;
+	item->_fnFree = gizmo_item_free;
 	item->_fnEvents = events;
 	(*item->_fnDraw)(item, gizmo, rect1X, rect1Y, 0, 0);
 
