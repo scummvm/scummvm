@@ -315,14 +315,14 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 	/**
 	 * Overlapping x-flat vs non-flat floor where z order not clear
-	 * Test case for rendering issue at MainActor::teleport 40 12311 9415 48
+	 * Test case for rendering issue at MainActor::teleport 37 17620 19260 104
 	 * Tapestry should draw after floor
 	 */
 	void test_x_flat_z_tolerance_sort() {
 		Ultima::Ultima8::SortItem si1;
 		Ultima::Ultima8::SortItem si2;
 
-		Ultima::Ultima8::Box b1(12543, 9727, 40, 256, 256, 8);
+		Ultima::Ultima8::Box b1(17663, 19199, 96, 256, 256, 8);
 		si1.setBoxBounds(b1, 0, 0);
 		si1._solid = true;
 		si1._occl = true;
@@ -330,7 +330,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._land = true;
 		si1._fixed = true;
 
-		Ultima::Ultima8::Box b2(12287, 9791, 46, 0, 96, 40);
+		Ultima::Ultima8::Box b2(17410, 19110, 96, 0, 96, 40);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._fixed = true;
 

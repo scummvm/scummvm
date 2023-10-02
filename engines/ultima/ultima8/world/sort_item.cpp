@@ -72,11 +72,10 @@ bool SortItem::below(const SortItem &si2) const {
 		if (si1._z != si2._z)
 			return si1._z < si2._z;
 	} else if (si1._invitem == si2._invitem) {
-		// Check with a tolerance based on footpad calculations
 		// Lower item cannot be inventory
-		if (si1._zTop - 8 < si2._z)
+		if (si1._zTop <= si2._z)
 			return true;
-		if (si1._z > si2._zTop - 8)
+		if (si1._z >= si2._zTop)
 			return false;
 	}
 
@@ -147,6 +146,12 @@ bool SortItem::below(const SortItem &si2) const {
 			return si1._fbigsq > si2._fbigsq;
 	}
 
+	// Check with a tolerance based on footpad calculations
+	if (si1._zTop - 8 <= si2._z && si1._z < si2._zTop - 8)
+		return true;
+	if (si1._z >= si2._zTop - 8 && si1._zTop - 8 > si2._z)
+		return false;
+
 	// Y-flat vs non-flat handling
 	if (yFlat1 != yFlat2) {
 		// Check with a precision loss based on footpad calculations
@@ -173,14 +178,6 @@ bool SortItem::below(const SortItem &si2) const {
 		int32 xCenter2 = (si2._xLeft / 32 + si2._x / 32) / 2;
 		if (xCenter1 != xCenter2)
 			return xCenter1 < xCenter2;
-	}
-
-	// Check z-bottom with a tolerance
-	if (si1._z != si2._z) {
-		if (si1._z < si2._z - 8)
-			return true;
-		else if (si1._z - 8 > si2._z)
-			return false;
 	}
 
 	// Specialist handling for same location
