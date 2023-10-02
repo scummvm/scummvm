@@ -100,6 +100,18 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	delete[] buf;
 }
 
+void Scene::SceneSummary::readTerse(Common::SeekableReadStream &stream) {
+	char *buf = new char[0x32];
+	stream.read(buf, 0x32);
+	description = buf;
+	readFilename(stream, videoFile);
+	readFilename(stream, sound.name);
+	sound.channelID = stream.readUint16LE();
+	sound.numLoops = stream.readUint32LE();
+	sound.volume = stream.readUint16LE();
+	stream.skip(2);
+}
+
 Scene::Scene() :
 		_state (kInit),
 		_lastHintCharacter(-1),
@@ -802,12 +814,18 @@ void Scene::load() {
 	}
 
 	Common::SeekableReadStream *sceneSummaryChunk = sceneIFF.getChunkStream("SSUM");
+	if (sceneSummaryChunk) {
+		_sceneState.summary.read(*sceneSummaryChunk);
+	} else {
+		sceneSummaryChunk = sceneIFF.getChunkStream("TSUM");
+		if (sceneSummaryChunk) {
+			_sceneState.summary.readTerse(*sceneSummaryChunk);
+		}
+	}
 
 	if (!sceneSummaryChunk) {
 		error("Invalid IFF Chunk SSUM");
 	}
-
-	_sceneState.summary.read(*sceneSummaryChunk);
 
 	delete sceneSummaryChunk;
 

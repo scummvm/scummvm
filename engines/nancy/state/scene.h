@@ -85,30 +85,32 @@ public:
 		kMap = 1 << 6
 	};
 
-	struct SceneSummary { // SSUM
+	struct SceneSummary {
+		// SSUM and TSUM
+		// Default values set to match those applied when loading from a TSUM chunk
 		Common::String description;
 		Common::String videoFile;
 		
-		uint16 videoFormat;
+		uint16 videoFormat = kLargeVideoFormat;
 		Common::Array<Common::String> palettes;
-		Common::String audioFile;
 		SoundDescription sound;
 		
-		byte panningType;
-		uint16 numberOfVideoFrames;
-		uint16 degreesPerRotation;
-		uint16 totalViewAngle;
-		uint16 horizontalScrollDelta;
-		uint16 verticalScrollDelta;
-		uint16 horizontalEdgeSize;
-		uint16 verticalEdgeSize;
-		Time slowMoveTimeDelta;
-		Time fastMoveTimeDelta;
+		byte panningType = kPan360;
+		uint16 numberOfVideoFrames = 0;
+		uint16 degreesPerRotation = 18;
+		uint16 totalViewAngle = 0;
+		uint16 horizontalScrollDelta = 1;
+		uint16 verticalScrollDelta = 10;
+		uint16 horizontalEdgeSize = 15;
+		uint16 verticalEdgeSize = 15;
+		Time slowMoveTimeDelta = 400;
+		Time fastMoveTimeDelta = 66;
 		
 		// Sound start vectors, used in nancy3 and up
 		Math::Vector3d listenerPosition;
 
 		void read(Common::SeekableReadStream &stream);
+		void readTerse(Common::SeekableReadStream &stream);
 	};
 
 	Scene();

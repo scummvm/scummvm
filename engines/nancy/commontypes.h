@@ -63,6 +63,11 @@ static const byte kFlagEvent						= 1;
 static const byte kFlagInventory					= 2;
 static const byte kFlagCursor						= 3;
 
+// Scene panning
+static const byte kPanNone							= 0;
+static const byte kPan360							= 1;
+static const byte kPanLeftRight						= 2;
+
 // Scene sound flags
 static const byte kContinueSceneSound				= 1;
 static const byte kLoadSceneSound					= 0;

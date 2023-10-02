@@ -40,10 +40,6 @@ namespace UI {
 
 class Viewport : public Nancy::RenderObject {
 public:
-	static const byte kPanNone		= 0;
-	static const byte kPan360		= 1;
-	static const byte kPanLeftRight	= 2;
-
 	Viewport() :
 		RenderObject(6),
 		_movementLastFrame(0),
