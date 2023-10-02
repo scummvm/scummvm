@@ -313,7 +313,7 @@ static void gizmo_daemon(int trigger) {
 
 static void gizmo_restore_interface(bool fade) {
 	if (_GIZMO(initialized)) {
-		_GIZMO(val1) = 0;
+		_GIZMO(currentItem) = 0;
 
 		if (_GIZMO(lowMemory2)) {
 			if (!adv_restoreBackground())
@@ -446,24 +446,101 @@ static void gizmo_draw(ScreenContext *s, RectList *r, Buffer *dest, int32 destX,
 }
 
 static bool gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, int32 y, bool *z) {
-	warning("TODO: gizmo_eventHandler %d %d", eventType, event);
-
-	/*
-	ScreenContext *srcBuffer = (ScreenContext *)s;
-	*z = false;
-	
+	Gizmo *gizmo = (Gizmo *)s;
+	bool flag = false;
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(s, &status);
+	*z = false;
+	
 	if (!ctx || status != 1)
 		return false;
 
-	if (eventType == EVENT_KEY && event == KEY_ESCAPE && myScreen->y1 != 0) {
-		_GIZMO(val1) = 0;
-
+	if (eventType == EVENT_KEY) {
+		if (event == KEY_ESCAPE && gizmo->_fnEscape) {
+			_GIZMO(currentItem) = nullptr;
+			(*gizmo->_fnEscape)();
+			return true;
+		} else if (event == KEY_RETURN && gizmo->_fnEnter) {
+			_GIZMO(currentItem) = nullptr;
+			(*gizmo->_fnEnter)();
+			return true;
+		}
 	}
-	*/
-	// TODO: event handler
-	return false;
+
+	int xs = x + ctx->x1;
+	int ys = y + ctx->y1;
+
+	if (!_GIZMO(currentItem)) {
+		flag = (*_GIZMO(currentItem)->_fnEvents)(_GIZMO(currentItem),
+			eventType, event, xs, ys, &_GIZMO(currentItem));
+
+		if (_GIZMO(currentItem))
+			*z = true;
+
+		if (flag)
+			return true;
+	}
+
+	if (eventType == EVENT_MOUSE) {
+		GizmoItem *item;
+		for (item = gizmo->_items; item; item = item->_next) {
+			if (item->_btnRect.contains(xs, ys))
+				break;
+		}
+
+		if (item && item->_fnEvents) {
+			item->_fnEvents(item, eventType, event, xs, ys, &_GIZMO(currentItem));
+
+			if (_GIZMO(currentItem))
+				*z = true;
+
+			return true;
+		}
+
+	} else if (eventType == EVENT_KEY) {
+		GizmoItem *item;
+		for (item = gizmo->_items; item && !flag; item = item->_next) {
+			if (item->_fnEvents)
+				flag = (*item->_fnEvents)(item, eventType, event, -1, -1, nullptr);
+		}
+
+		return flag;
+	}
+
+	switch (event) {
+	case 2:
+	case 14:
+		if (!(ctx->scrnFlags & SF_IMMOVABLE)) {
+			*z = true;
+			_GIZMO(savedFlag) = true;
+			_GIZMO(savedX) = x;
+			_GIZMO(savedY) = y;
+		}
+
+		if (xs < 230 || xs > 420 || ys > 374)
+			gizmo_shutdown();
+		break;
+
+	case 4:
+	case 16:
+		if (_GIZMO(savedFlag)) {
+			MoveScreenDelta(ctx, _GIZMO(savedX), _GIZMO(savedY));
+			_GIZMO(savedX) = x;
+			_GIZMO(savedY) = y;
+		}
+		break;
+
+	case 5:
+	case 17:
+		*z = false;
+		_GIZMO(savedFlag) = false;
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 static void gizmo_item_draw(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2) {
@@ -528,8 +605,10 @@ static GrBuff *gizmo_create_buffer(Gizmo *gizmo, int sx, int sy, int w, int h) {
 	return grBuff;
 }
 
-static void gizmo_item_fn3() {
+static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, int y,
+	GizmoItem **currentItem) {
 	// TODO
+	return false;
 }
 
 static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
@@ -537,7 +616,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 		int rect1X, int rect1Y, int rect1W, int rect1H,
 		GizmoItemFn0 fn0, int btnIndex, bool selected = false,
 		bool hasBuffer = false, int arg9 = 0,
-		GizmoItemFn3 fn3 = gizmo_item_fn3) {
+		GizmoItemFnEvents events = gizmo_item_events) {
 	if (!gizmo)
 		return nullptr;
 
@@ -558,7 +637,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_id = id;
 	item->_bounds = Common::Rect(boundsX, boundsY, boundsX + boundsW - 1,
 		boundsY + boundsH - 1);
-	item->_rect1 = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y + rect1H - 1);
+	item->_btnRect = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y + rect1H - 1);
 	item->_fn0 = fn0;
 
 	item->_hasBuffer = hasBuffer;
@@ -577,10 +656,10 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	btn->_field10 = id - 1000;
 	item->_button = btn;
 
-	item->_draw = gizmo_item_draw;
+	item->_fnDraw = gizmo_item_draw;
 	item->_fn2 = gizmo_item_fn2;
-	item->_fn3 = fn3;
-	(*item->_draw)(item, gizmo, rect1X, rect1Y, 0, 0);
+	item->_fnEvents = events;
+	(*item->_fnDraw)(item, gizmo, rect1X, rect1Y, 0, 0);
 
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(gizmo, &status);
