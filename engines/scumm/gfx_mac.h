@@ -42,6 +42,7 @@ public:
 	void resetAfterLoad();
 	void update();
 	void handleEvent(Common::Event &event);
+	void updateInventory();
 
 private:
 	OSystem *_system;
@@ -52,31 +53,37 @@ private:
 	bool _visible = false;
 
 	struct Widget {
-		int slot;
 		Common::Rect bounds;
-		byte *text;
-		int timer;
-		bool visible;
-		bool enabled;
-		bool redraw;
-		bool kill;
+		int verbid = 0;
+		int verbslot = -1;
+		byte *text = nullptr;
+		int timer = 0;
+		bool visible = false;
+		bool enabled = false;
+		bool redraw = false;
+		bool kill = false;
 	};
 
-	Widget _widgets[23];
+	Widget _widgets[26];
 
-	void initWidget(int n, int x, int y, int w, int h);
-	void resetWidget(int n);
+	void initWidget(int n, int verbid, int x, int y, int w, int h);
+	void resetWidget(Widget *w);
 	void clear();
 	void show();
 	void hide();
-	void fill(Common::Rect r);
-	void drawButton(int n, byte *text, bool enabled, bool pressed);
-	void drawInventoryWidget();
+	void drawWidget(Widget *w);
+	void undrawWidget(Widget *w);
+	void drawButton(Widget *w);
+	void drawInventoryWidget(Widget *w);
 	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
-	void drawInventoryArrowUp(bool highlight);
-	void drawInventoryArrowDown(bool highlight);
-	void drawInventoryScrollbar();
 	void drawInventoryText(int slot, char *text, bool highlighted);
+
+	// Primitives
+	void fill(Common::Rect r);
+	void drawShadowBox(Common::Rect r);
+	void drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor);
+
+	void copyRectToScreen(Common::Rect r);
 };
 
 } // End of namespace Scumm

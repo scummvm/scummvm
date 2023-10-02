@@ -854,78 +854,11 @@ void ScummEngine::stopObjectCode() {
 
 void ScummEngine::runInventoryScript(int i) {
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
-		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-			inventoryScriptIndy3Mac();
-		} else {
-			int args[NUM_SCRIPT_LOCAL];
-			memset(args, 0, sizeof(args));
-			args[0] = i;
-			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
-		}
+		int args[NUM_SCRIPT_LOCAL];
+		memset(args, 0, sizeof(args));
+		args[0] = i;
+		runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 	}
-}
-
-void ScummEngine::inventoryScriptIndy3Mac() {
-	int slot;
-
-	// VAR(67) controls the scroll offset of the inventory in Indy3 for Macintosh.
-	// The inventory consists of two columns with three items visible in each,
-	// so a maximum of six items are visible at once.
-
-	// The scroll offset must be non-negative and if there are six or less items
-	// in the inventory, the inventory is fixed in the top position.
-	const int invCount = getInventoryCount(VAR(VAR_EGO));
-	if (VAR(67) < 0 || invCount <= 6) {
-		VAR(67) = 0;
-	}
-
-	// If there are more than six items in the inventory, clamp the scroll position
-	// to be at most invCount-6, rounded up to the next even integer.
-	bool scrolledToBottom = false;
-	if (invCount > 6 && VAR(67) >= invCount - 6) {
-		VAR(67) = invCount - 6;
-		// Odd number of inventory items? -> increment VAR(67) to make it even
-		if (invCount & 1) {
-			VAR(67)++;
-		}
-		scrolledToBottom = true;
-	}
-
-	// Now update var 83 till 89 to contain the inventory IDs of the
-	// corresponding inventory slots.
-	// Also setup fake verbs for the inventory
-	byte tmp[6] = { 0xFF, 0x06, 0x52, 0x00, 0x00, 0x00 };
-	for (int j = 1; j < 7; j++) {
-		int tmpA = (VAR(67) + j);
-		int tmpB = findInventory(VAR(VAR_EGO), tmpA);
-		VAR(82 + j) = tmpB;
-
-		// Setup fake verb
-		tmp[2] = 0x52 + j;
-		slot = getVerbSlot(100 + j, 0);
-		loadPtrToResource(rtVerb, slot, tmp);
-
-		VerbSlot *vs = &_verbs[slot];
-		vs->type = kTextVerbType;
-		vs->imgindex = 0;
-		vs->curmode = 1;
-		drawVerb(slot, 0);
-	}
-
-	// Enable up arrow if there are more than six items and we are not already
-	// scrolled all the way up.
-	slot = getVerbSlot(107, 0);
-	_verbs[slot].curmode = (invCount > 6 && VAR(67)) ? 1 : 0;
-	drawVerb(slot, 0);
-
-	// Enable down arrow if there are more than six items and we are not already
-	// scrolled all the way down.
-	slot = getVerbSlot(108, 0);
-	_verbs[slot].curmode = (invCount > 6 && !scrolledToBottom) ? 1 : 0;
-	drawVerb(slot, 0);
-
-	// Redraw!
-	verbMouseOver(0);
 }
 
 void ScummEngine::freezeScripts(int flag) {
@@ -1470,21 +1403,6 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 
 	// Macintosh version of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-		if (clickArea == kVerbClickArea && (val >= 101 && val <= 108)) {
-			if (val == 107) {
-				VAR(67) -= 2;
-				inventoryScriptIndy3Mac();
-				return;
-			} else if (val == 108) {
-				VAR(67) += 2;
-				inventoryScriptIndy3Mac();
-				return;
-			} else {
-				args[0] = kInventoryClickArea;
-				args[1] = VAR(82 + (val - 100));
-			}
-		}
-
 		// Clicks are handled differently in Indy3 mac: param 2 of the
 		// input script is set to 0 for normal clicks, and to 1 for double clicks.
 		// The EGA DOS version of Loom also checks that the second click happens

@@ -358,6 +358,8 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
+// Verb GUI for Indiana Jones and the Last Crusade
+
 MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_system(system), _vm(vm), _macScreen(vm->_macScreen), _visible(false) {
 	Graphics::MacFontManager *mfm = _vm->_macFontManager;
@@ -365,35 +367,33 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_fonts[0] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
 	_fonts[1] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
 	_fonts[2] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
-	// This list has been arranged so that most of the standard verbs
-	// have the same index as their verb number in the game. The rest
-	// have been arranged tastefully.
-	//
-	// I think 101-106 are inventory items.
 
-	initWidget( 0,  67, 292, 348, 18); // 100: Sentence line
-	initWidget( 1, 137, 312,  68, 18); // 1: Open
-	initWidget( 2, 137, 332,  68, 18); // 2: Close
-	initWidget( 3,  67, 352,  68, 18); // 3: Give
-	initWidget( 4, 277, 332,  68, 18); // 4: Turn on
-	initWidget( 5, 277, 352,  68, 18); // 5: Turn off
-	initWidget( 6,  67, 312,  68, 18); // 6: Push
-	initWidget( 7,  67, 332,  68, 18); // 7: Pull
-	initWidget( 8, 277, 312,  68, 18); // 8: Use
-	initWidget( 9, 137, 352,  68, 18); // 9: Look at
-	initWidget(10, 207, 312,  68, 18); // 10: Walk to
-	initWidget(11, 207, 332,  68, 18); // 11: Pick up
-	initWidget(12, 207, 352,  68, 18); // 12: What is
-	initWidget(13, 347, 312,  68, 18); // 13: Talk
-	initWidget(14,  97, 312, 121, 18); // 14: Never mind.
-	initWidget(15, 347, 332,  68, 18); // 32: Travel
-	initWidget(16, 324, 312,  91, 18); // 119: Take this:
-	initWidget(17,  67, 292, 507, 18); // 120: Conversation 1
-	initWidget(18,  67, 312, 507, 18); // 121: Conversation 2
-	initWidget(19,  67, 332, 507, 18); // 122: Conversation 3
-	initWidget(20,  67, 352, 507, 18); // 123: Conversation 4
-	initWidget(21,  67, 352, 151, 18); // Conversation 5
-	initWidget(22, 423, 352, 151, 18); // Conversation 6
+	initWidget( 0,   1, 137, 312,  68, 18); // Open
+	initWidget( 1,   2, 137, 332,  68, 18); // Close
+	initWidget( 2,   3,  67, 352,  68, 18); // Give
+	initWidget( 3,   4, 277, 332,  68, 18); // Turn on
+	initWidget( 4,   5, 277, 352,  68, 18); // Turn off
+	initWidget( 5,   6,  67, 312,  68, 18); // Push
+	initWidget( 6,   7,  67, 332,  68, 18); // Pull
+	initWidget( 7,   8, 277, 312,  68, 18); // Use
+	initWidget( 8,   9, 137, 352,  68, 18); // Look at
+	initWidget( 9,  10, 207, 312,  68, 18); // Walk to
+	initWidget(10,  11, 207, 332,  68, 18); // Pick up
+	initWidget(11,  12, 207, 352,  68, 18); // What is
+	initWidget(12,  13, 347, 312,  68, 18); // Talk
+	initWidget(13,  14,  97, 312, 121, 18); // Never mind.
+	initWidget(14,  32, 347, 332,  68, 18); // Travel
+	initWidget(15,  33, 347, 352,  68, 18); // To Indy
+	initWidget(16,  34, 347, 352,  68, 18); // To Henry
+	initWidget(17, 100,  67, 292, 348, 18); // Sentence line
+	initWidget(18, 101, 417, 292, 157, 78); // Inventory widget
+	initWidget(19, 119, 324, 312,  91, 18); // Take this:
+	initWidget(20, 120,  67, 292, 507, 18); // Conversation 1
+	initWidget(21, 121,  67, 312, 507, 18); // Conversation 2
+	initWidget(22, 122,  67, 332, 507, 18); // Conversation 3
+	initWidget(23, 123,  67, 352, 507, 18); // Conversation 4
+	initWidget(24, 124,  67, 352, 151, 18); // Conversation 5
+	initWidget(25, 125, 423, 352, 151, 18); // Conversation 6
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
@@ -401,25 +401,21 @@ MacIndy3Gui::~MacIndy3Gui() {
 		free(_widgets[i].text);
 }
 
-void MacIndy3Gui::initWidget(int n, int x, int y, int width, int height) {
+void MacIndy3Gui::initWidget(int n, int verbid, int x, int y, int width, int height) {
 	Widget *w = &_widgets[n];
 
+	w->verbid = verbid;
 	w->bounds.left = x;
 	w->bounds.top = y;
 	w->bounds.right = x + width;
 	w->bounds.bottom = y + height;
-	w->text = nullptr;
-
-	resetWidget(n);
 }
 
-void MacIndy3Gui::resetWidget(int n) {
-	Widget *w = &_widgets[n];
-
+void MacIndy3Gui::resetWidget(Widget *w) {
 	free(w->text);
 
+	w->verbslot = -1;
 	w->text = nullptr;
-	w->slot = -1;
 	w->timer = 0;
 	w->visible = false;
 	w->enabled = false;
@@ -436,7 +432,21 @@ void MacIndy3Gui::resetAfterLoad() {
 	_visible = false;
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-		resetWidget(i);
+		resetWidget(&_widgets[i]);
+
+	// In the DOS version, verb ID 102-106 were used for the visible
+	// inventory items, and 107-108 for inventory arrow buttons. In the
+	// Macintosh version, the entire inventory widget is verb ID 101.
+	//
+	// In old savegames, the DOS verb IDs may still be present, and have
+	// to be updated when loading them.
+
+	// TODO: Collect the inventory objects
+
+	for (int i = 0; i < _vm->_numVerbs; i++) {
+		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108)
+			_vm->killVerb(i);
+	}
 }
 
 void MacIndy3Gui::update() {
@@ -454,28 +464,33 @@ void MacIndy3Gui::update() {
 		Widget *w = &_widgets[i];
 		if (w->timer > 0) {
 			w->timer--;
-			if (w->timer == 0 && w->visible)
+			if (w->timer == 0 && w->visible) {
+				_vm->runInputScript(kVerbClickArea, w->verbid, 1);
 				w->redraw = true;
+			}
 		}
 		w->kill = true;
 	}
 
 	bool keepGuiAlive = false;
 
+	// Collect all active verbs
 	for (int i = 1; i < _vm->_numVerbs; i++) {
 		VerbSlot *vs = &_vm->_verbs[i];
 
 		if (!vs->saveid && vs->curmode && vs->verbid) {
 			int id = -1;
 
-			if (vs->verbid == 100) {
-				id = 0;
-			} else if (vs->verbid >= 1 && vs->verbid <= 14) {
-				id = vs->verbid;
-			} else if (vs->verbid == 32) {
-				id = 15;
+			if (vs->verbid >= 1 && vs->verbid <= 14) {
+				id = vs->verbid - 1;
+			} else if (vs->verbid >= 32 && vs->verbid <= 34) {
+				id = vs->verbid - 18;
+			} else if (vs->verbid == 100) {
+				id = 17;
+			} else if (vs->verbid == 101) {
+				id = 18;
 			} else if (vs->verbid >= 119 && vs->verbid <= 125) {
-				id = vs->verbid - 103;
+				id = vs->verbid - 100;
 			} else {
 				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
 				byte buf[270];
@@ -487,9 +502,16 @@ void MacIndy3Gui::update() {
 				Widget *w = &_widgets[id];
 				bool enabled = (vs->curmode == 1);
 
-				w->slot = i;
+				assert(w->verbid == vs->verbid);
 
-				const byte *ptr = _vm->getResourceAddress(rtVerb, w->slot);
+				if (w->enabled != enabled)
+					w->redraw = true;
+				w->verbslot = i;
+				w->verbid = vs->verbid;
+				w->enabled = enabled;
+				w->kill = false;
+
+				const byte *ptr = _vm->getResourceAddress(rtVerb, w->verbslot);
 				byte buf[270];
 
 				_vm->convertMessageToString(ptr, buf, sizeof(buf));
@@ -499,42 +521,34 @@ void MacIndy3Gui::update() {
 					w->redraw = true;
 				}
 
-				if (!w->visible || w->redraw || w->enabled != enabled)
-					w->redraw = true;
-				w->kill = false;
 				keepGuiAlive = true;
 			}
 		}
 	}
 
+	// Erase all inactive buttons. Since buttons are overlapping, we have
+	// to do this first.
+
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
 
 		if (w->kill && w->visible) {
-			fill(w->bounds);
-			free(w->text);
-			w->text = nullptr;
-			w->slot = -1;
-			w->timer = 0;
-			w->enabled = false;
-			w->visible = false;
-			w->redraw = false;
+			undrawWidget(w);
+			resetWidget(w);
 		}
 	}
+
+	// Draw all active buttons
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
 
-		if (w->slot == -1)
+		if (w->verbslot == -1)
 			continue;
 
 		if (w->redraw) {
-			VerbSlot *vs = &_vm->_verbs[w->slot];
-			debug("Drawing button %d: (%d) %s", i, vs->verbid, w->text);
-			drawButton(i, w->text, vs->curmode != 2, w->timer);
-			w->visible = true;
-			w->enabled = (vs->curmode == 1);
-			w->redraw = false;
+			debug("Drawing button %d: (%d) %s", i, w->verbid, w->text);
+			drawWidget(w);
 		}
 	}
 
@@ -552,18 +566,23 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
 
-		if (w->visible && w->enabled) {
-			if (w->bounds.contains(x, y)) {
-				w->redraw = true;
-				w->timer = 15;
-
-				if (w->slot != -1) {
-					VerbSlot *vs = &_vm->_verbs[w->slot];
-					_vm->runInputScript(kVerbClickArea, vs->verbid, 1);
-				}
-			}
+		if (w->verbid && w->enabled && w->bounds.contains(x, y)) {
+			// The input script is invoked when the button animation
+			// times out. Speed-runners will probably hate this, but
+			// I think it looks better this way.
+			//
+			// Besides, wouldn't real speed runners use keyboard
+			// shortcuts? (TODO: Check if they're really different
+			// than in the DOS version.)
+			w->redraw = true;
+			w->timer = 15;
+			return;
 		}
 	}
+}
+
+void MacIndy3Gui::updateInventory() {
+	debug("TODO: Update inventory");
 }
 
 void MacIndy3Gui::show() {
@@ -581,7 +600,7 @@ void MacIndy3Gui::hide() {
 	_visible = false;
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-		resetWidget(i);
+		resetWidget(&_widgets[i]);
 
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 400), 0);
 	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
@@ -617,44 +636,38 @@ void MacIndy3Gui::clear() {
 		}
 	}
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
+	copyRectToScreen(Common::Rect(0, 288, 640, 400));
 }
 
-void MacIndy3Gui::fill(Common::Rect r) {
-	int pitch = _macScreen->pitch;
+void MacIndy3Gui::drawWidget(Widget *w) {
+	// Clear the area used by the widget
+	fill(w->bounds);
 
-	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
-		byte *row = (byte *)_macScreen->getBasePtr(r.left, r.top);
+	switch (w->verbid) {
+	case 101:
+		drawInventoryWidget(w);
+		break;
+	default:
+		drawButton(w);
+		break;
+	}
 
-		for (int y = r.top; y < r.bottom; y++) {
-			byte *ptr = row;
-			for (int x = r.left; x < r.right; x++) {
-				*ptr++ = ((x + y) & 1) ? 15 : 0;
-			}
-			row += pitch;
-		}
-	} else
-		_macScreen->fillRect(r, 7);
+	w->visible = true;
+	w->redraw = false;
 
-	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), pitch, r.left, r.top, r.width(), r.height());
+	copyRectToScreen(w->bounds);
 }
 
-void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
-	Common::Rect r = _widgets[n].bounds;
+void MacIndy3Gui::undrawWidget(Widget *w) {
+	fill(w->bounds);
+	copyRectToScreen(w->bounds);
+}
 
-	fill(r);
+void MacIndy3Gui::drawButton(Widget *w) {
+	Common::Rect r = w->bounds;
 
-	if (!pressed) {
-		_macScreen->hLine(r.left + 1, r.top, r.right - 3, 0);
-		_macScreen->hLine(r.left + 1, r.bottom - 2, r.right - 3, 0);
-		_macScreen->vLine(r.left, r.top + 1, r.bottom - 3, 0);
-		_macScreen->vLine(r.right - 2, r.top + 1, r.bottom - 3, 0);
-
-		_macScreen->hLine(r.left + 2, r.bottom - 1, r.right - 1, 0);
-		_macScreen->vLine(r.right - 1, r.top + 2, r.bottom - 2, 0);
-
-		_macScreen->hLine(r.left + 1, r.top + 1, r.right - 3, 15);
-		_macScreen->vLine(r.left + 1, r.top + 2, r.bottom - 3, 15);
+	if (w->timer == 0) {
+		drawShadowBox(r);
 	} else {
 		// I have only been able to capture a screenshot of the pressed
 		// button in black and white, where the checkerboard background
@@ -682,29 +695,27 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 	//
 	// This gives us pixel perfect rendering for the English verbs.
 
-	if (text) {
+	if (w->text) {
 		int stringWidth = 0;
-		for (int i = 0; text[i]; i++)
-			stringWidth += _fonts[2]->getCharWidth(text[i]);
+		for (int i = 0; w->text[i]; i++)
+			stringWidth += _fonts[2]->getCharWidth(w->text[i]);
 
 		int x = (r.left + (r.width() - 1 - stringWidth) / 2) - 1;
 		int y = r.top + 2;
-		int color = enabled ? 15 : 0;
+		int color = w->enabled ? 15 : 0;
 
-		if (pressed) {
+		if (w->timer) {
 			x++;
 			y++;
 		}
 
-		for (int i = 0; text[i]; i++) {
-			if (enabled)
-				_fonts[2]->drawChar(_macScreen, text[i], x, y, 0);
-			_fonts[1]->drawChar(_macScreen, text[i], x + 1, y, color);
-			x += _fonts[2]->getCharWidth(text[i]);
+		for (int i = 0; w->text[i]; i++) {
+			if (w->enabled)
+				_fonts[2]->drawChar(_macScreen, w->text[i], x, y, 0);
+			_fonts[1]->drawChar(_macScreen, w->text[i], x + 1, y, color);
+			x += _fonts[2]->getCharWidth(w->text[i]);
 		}
 	}
-
-	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), _macScreen->pitch, r.left, r.top, r.width(), r.height());
 }
 
 // Desired behavior:
@@ -730,46 +741,22 @@ void MacIndy3Gui::drawButton(int n, byte *text, bool enabled, bool pressed) {
 // Dragging the handle is not possible. Clicking on the handle is probably
 // indistinguishable from clicking above or below.
 
-void MacIndy3Gui::drawInventoryWidget() {
-	fill(Common::Rect(417, 292, 574, 370));
+void MacIndy3Gui::drawInventoryWidget(Widget *w) {
+	Common::Rect r = w->bounds;
 
-	// Main outline and shadow
-	_macScreen->hLine(418, 292, 571, 0);
-	_macScreen->hLine(418, 368, 571, 0);
-	_macScreen->vLine(417, 293, 367, 0);
-	_macScreen->vLine(572, 293, 367, 0);
+	drawShadowBox(r);
+	drawShadowFrame(Common::Rect(r.left + 4, r.top + 4, r.right - 22, r.bottom - 4), 0, 15);
 
-	_macScreen->hLine(419, 369, 573, 0);
-	_macScreen->vLine(573, 294, 368, 0);
+	// TODO: Draw inventory text
 
-	_macScreen->hLine(418, 293, 571, 15);
-	_macScreen->vLine(418, 294, 367, 15);
+	// Scrollbar
 
-	// Inner frame
-	_macScreen->hLine(421, 296, 551, 0);
-	_macScreen->hLine(421, 297, 551, 0);
-	_macScreen->hLine(421, 365, 551, 0);
-	_macScreen->vLine(421, 298, 364, 0);
-	_macScreen->vLine(422, 298, 364, 0);
-	_macScreen->vLine(551, 298, 364, 0);
+	drawShadowFrame(Common::Rect(r.right - 20, r.top + 4, r.right - 4, r.top + 20), 15, 255);
+	drawShadowFrame(Common::Rect(r.right - 20, r.top + 19, r.right - 4, r.bottom - 19), 0, 255);
+	drawShadowFrame(Common::Rect(r.right - 20, r.bottom - 20, r.right - 4, r.bottom - 4), 15, 255);
 
-	_macScreen->fillRect(Common::Rect(423, 298, 551, 365), 15);
-
-	// Scrollbar, outer frame
-	_macScreen->hLine(554, 296, 569, 0);
-	_macScreen->hLine(554, 365, 569, 0);
-	_macScreen->vLine(554, 297, 364, 0);
-	_macScreen->vLine(569, 297, 364, 0);
-
-	drawInventoryScrollbar();
-
-	_macScreen->hLine(555, 297, 568, 15);
-	_macScreen->vLine(555, 298, 310, 15);
-	_macScreen->hLine(555, 351, 568, 15);
-	_macScreen->vLine(555, 352, 364, 15);
-
-	drawInventoryArrowUp(false);
-	drawInventoryArrowDown(false);
+	drawInventoryArrow(r.right - 17, r.top + 7, false, false);
+	drawInventoryArrow(r.right - 17, r.bottom - 16, false, true);
 }
 
 void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped) {
@@ -818,24 +805,6 @@ void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, b
 	} while (y != y1);
 }
 
-void MacIndy3Gui::drawInventoryArrowUp(bool highlighted) {
-	drawInventoryArrow(557, 299, highlighted, false);
-}
-
-void MacIndy3Gui::drawInventoryArrowDown(bool highlighted) {
-	drawInventoryArrow(557, 354, highlighted, true);
-}
-
-void MacIndy3Gui::drawInventoryScrollbar() {
-	_macScreen->hLine(555, 311, 568, 0);
-	_macScreen->hLine(555, 350, 568, 0);
-
-	_macScreen->hLine(555, 312, 568, 0);
-	_macScreen->vLine(555, 313, 349, 0);
-
-	fill(Common::Rect(556, 313, 569, 350));
-}
-
 void MacIndy3Gui::drawInventoryText(int slot, char *text, bool highlighted) {
 	int slotX = 423;
 	int slotY = 298 + slot * 11;
@@ -869,6 +838,59 @@ void MacIndy3Gui::drawInventoryText(int slot, char *text, bool highlighted) {
 		_fonts[0]->drawChar(_macScreen, text[i], x, y, fg);
 		x += _fonts[0]->getCharWidth(text[i]);
 	}
+}
+
+void MacIndy3Gui::fill(Common::Rect r) {
+	int pitch = _macScreen->pitch;
+
+	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
+		byte *row = (byte *)_macScreen->getBasePtr(r.left, r.top);
+
+		for (int y = r.top; y < r.bottom; y++) {
+			byte *ptr = row;
+			for (int x = r.left; x < r.right; x++) {
+				*ptr++ = ((x + y) & 1) ? 15 : 0;
+			}
+			row += pitch;
+		}
+	} else
+		_macScreen->fillRect(r, 7);
+}
+
+void MacIndy3Gui::drawShadowBox(Common::Rect r) {
+	_macScreen->hLine(r.left + 1, r.top, r.right - 3, 0);
+	_macScreen->hLine(r.left + 1, r.bottom - 2, r.right - 3, 0);
+	_macScreen->vLine(r.left, r.top + 1, r.bottom - 3, 0);
+	_macScreen->vLine(r.right - 2, r.top + 1, r.bottom - 3, 0);
+
+	_macScreen->hLine(r.left + 2, r.bottom - 1, r.right - 1, 0);
+	_macScreen->vLine(r.right - 1, r.top + 2, r.bottom - 2, 0);
+
+	_macScreen->hLine(r.left + 1, r.top + 1, r.right - 3, 15);
+	_macScreen->vLine(r.left + 1, r.top + 2, r.bottom - 3, 15);
+}
+
+void MacIndy3Gui::drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor) {
+	_macScreen->hLine(r.left, r.top, r.right - 1, 0);
+	_macScreen->hLine(r.left, r.bottom - 1, r.right - 1, 0);
+	_macScreen->vLine(r.left, r.top + 1, r.bottom - 2, 0);
+	_macScreen->vLine(r.right - 1, r.top + 1, r.bottom - 2, 0);
+
+	_macScreen->hLine(r.left + 1, r.top + 1, r.right - 2, shadowColor);
+	_macScreen->vLine(r.left + 1, r.top + 2, r.bottom - 2, shadowColor);
+
+	if (fillColor != 255) {
+		Common::Rect fillRect(r.left + 2, r.top + 2, r.right - 1, r.bottom - 1);
+
+		if (fillColor == 0)
+			fill(fillRect);
+		else
+			_macScreen->fillRect(fillRect, fillColor);
+	}
+}
+
+void MacIndy3Gui::copyRectToScreen(Common::Rect r) {
+	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), _macScreen->pitch, r.left, r.top, r.width(), r.height());
 }
 
 } // End of namespace Scumm

@@ -990,7 +990,6 @@ protected:
 	void executeScript();
 	void updateScriptPtr();
 	virtual void runInventoryScript(int i);
-	void inventoryScriptIndy3Mac();
 	virtual void checkAndRunSentenceScript();
 	void runExitScript();
 	void runEntryScript();
