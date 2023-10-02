@@ -113,6 +113,11 @@ static const byte kNoChangeTableValue				= 0;
 static const byte kIncrementTableValue				= 1;
 static const byte kDecrementTableValue				= 2;
 
+// 3D sound rotation
+static const byte kRotateAroundX					= 0;
+static const byte kRotateAroundY					= 1;
+static const byte kRotateAroundZ					= 2;
+
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Separate namespace to remove possible clashes
@@ -204,9 +209,10 @@ struct SecondaryVideoDescription {
 };
 
 // Describes set of effects that can be applied to sounds.
+// Defaults are set according to the values used by PlaySoundTerse
 struct SoundEffectDescription {
-	uint32 minTimeDelay = 0;
-	uint32 maxTimeDelay = 0;
+	uint32 minTimeDelay = 500;
+	uint32 maxTimeDelay = 2000;
 
 	int32 randomMoveMinX = 0;
 	int32 randomMoveMaxX = 0;
@@ -219,8 +225,8 @@ struct SoundEffectDescription {
 	int32 fixedPosY = 0;
 	int32 fixedPosZ = 0;
 
-	uint32 moveStepTime = 0;
-	int32 numMoveSteps = 0;
+	uint32 moveStepTime = 1000;
+	int32 numMoveSteps = 10;
 
 	int32 linearMoveStartX = 0;
 	int32 linearMoveEndX = 0;
@@ -232,7 +238,7 @@ struct SoundEffectDescription {
 	int32 rotateMoveStartX = 0;
 	int32 rotateMoveStartY = 0;
 	int32 rotateMoveStartZ = 0;
-	byte rotateMoveAxis = 0;
+	byte rotateMoveAxis = kRotateAroundY;
 
 	uint32 minDistance = 0;
 	uint32 maxDistance = 0;
@@ -255,6 +261,7 @@ struct SoundDescription {
 	void readDIGI(Common::SeekableReadStream &stream);
 	void readMenu(Common::SeekableReadStream &stream);
 	void readScene(Common::SeekableReadStream &stream);
+	void readTerse(Common::SeekableReadStream &stream);
 };
 
 // Structs inside nancy.dat, which contains all the data that was

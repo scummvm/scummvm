@@ -55,10 +55,21 @@ public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
 
+	void readCCText(Common::SeekableReadStream &stream, Common::String &out);
+
 	Common::String _ccText;
 
 protected:
 	Common::String getRecordTypeName() const override;
+};
+
+// Short version of PlaySoundCC
+class PlaySoundTerse : public PlaySoundCC {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlaySoundTerse"; }
 };
 
 // Used for sounds that pan left-right depending on the scene background frame.
@@ -118,6 +129,21 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlayRandomSound"; }
+};
+
+// Short version of PlayRandomSound, but ALSO supports closed captioning text
+class PlayRandomSoundTerse : public PlaySoundTerse {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	Common::Array<Common::String> _soundNames;
+	Common::Array<Common::String> _ccTexts;
+
+	uint _selectedSound = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PlayRandomSoundTerse"; }	
 };
 
 // Same as PlaySound, except it discards the filename provided in the data.

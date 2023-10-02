@@ -255,6 +255,14 @@ void SoundDescription::readScene(Common::SeekableReadStream &stream) {
 	s.syncAsUint32LE(samplesPerSec, kGameTypeVampire, kGameTypeNancy2);
 }
 
+void SoundDescription::readTerse(Common::SeekableReadStream &stream) {
+	readFilename(stream, name);
+	channelID = stream.readUint16LE();
+	numLoops = stream.readUint32LE();
+	volume = stream.readUint16LE();
+	stream.skip(2);
+}
+
 void ConditionalDialogue::readData(Common::SeekableReadStream &stream) {
 	textID = stream.readByte();
 	sceneID = stream.readUint16LE();

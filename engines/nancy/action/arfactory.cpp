@@ -232,7 +232,11 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 150:
 		return new PlaySound();
 	case 151:
-		return new PlaySound();
+		if (g_nancy->getGameType() <= kGameTypeNancy6)  {
+			return new PlaySound(); // PlayStreamSound
+		} else {
+			return new PlayRandomSoundTerse();
+		}		
 	case 152:
 		return new PlaySoundFrameAnchor();
 	case 153:
@@ -245,6 +249,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PlaySoundCC();
 	case 158:
 		return new PlayRandomSound();
+	case 159:
+		return new PlaySoundTerse();
 	case 160:
 		return new HintSystem();
 	case 170:

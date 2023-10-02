@@ -59,12 +59,6 @@ public:
 		kPlayMoveCircular			= 0x0300,	// Move sound position in a circular direction (see SoundRotationAxis)
 		kPlayRandomMove				= 0x0500	// Move along random vector. Does not combine with kPlayMoveCircular
 	};
-
-	enum SoundRotationAxis {
-		kRotateAroundX = 0,
-		kRotateAroundY = 1,
-		kRotateAroundZ = 2
-	};
 	
 	SoundManager();
 	~SoundManager();

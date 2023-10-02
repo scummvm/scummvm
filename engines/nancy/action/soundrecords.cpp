@@ -20,6 +20,7 @@
  */
 
 #include "common/random.h"
+#include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -94,22 +95,34 @@ Common::String PlaySound::getRecordTypeName() const {
 
 void PlaySoundCC::readData(Common::SeekableReadStream &stream) {
 	PlaySound::readData(stream);
-
-	uint16 textSize = stream.readUint16LE();
-	if (textSize) {
-		char *strBuf = new char[textSize];
-		stream.read(strBuf, textSize);
-		assembleTextLine(strBuf, _ccText, textSize);
-		delete[] strBuf;
-	}
+	readCCText(stream, _ccText);
 }
 
 void PlaySoundCC::execute() {
-	if (_state == kBegin) {
+	if (_state == kBegin && _ccText.size() && ConfMan.getBool("subtitles", ConfMan.getActiveDomainName())) {
 		NancySceneState.getTextbox().clear();
 		NancySceneState.getTextbox().addTextLine(_ccText);
 	}
 	PlaySound::execute();
+}
+
+void PlaySoundCC::readCCText(Common::SeekableReadStream &stream, Common::String &out) {
+	int16 textSize = stream.readUint16LE();
+
+	if (textSize > 0) {
+		char *strBuf = new char[textSize];
+		stream.read(strBuf, textSize);
+		assembleTextLine(strBuf, out, textSize);
+		delete[] strBuf;
+	} else if (textSize == -1) {
+		// Text is in Autotext chunk
+		Common::String key;
+		readFilename(stream, key);
+		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+		assert(autotext);
+
+		out = autotext->texts[key];
+	}
 }
 
 Common::String PlaySoundCC::getRecordTypeName() const {
@@ -118,6 +131,17 @@ Common::String PlaySoundCC::getRecordTypeName() const {
 	} else {
 		return "PlaySoundCC";
 	}
+}
+
+void PlaySoundTerse::readData(Common::SeekableReadStream &stream) {
+	_sound.readTerse(stream);
+	_changeSceneImmediately = stream.readByte();
+	_sceneChange.sceneID = stream.readUint16LE();
+
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+	_soundEffect = new SoundEffectDescription;
+
+	readCCText(stream, _ccText);
 }
 
 void PlaySoundFrameAnchor::readData(Common::SeekableReadStream &stream) {
@@ -216,6 +240,32 @@ void PlayRandomSound::execute() {
 	}
 
 	PlaySound::execute();
+}
+
+void PlayRandomSoundTerse::readData(Common::SeekableReadStream &stream) {
+	uint16 numSounds = stream.readUint16LE();
+	readFilenameArray(stream, _soundNames, numSounds - 1);
+
+	PlaySoundTerse::readData(stream);
+
+	// The call above will have read the last sound name and the first cc text
+	_soundNames.push_back(_sound.name);
+	_ccTexts.push_back(_ccText);
+
+	for (int i = 0; i < numSounds - 1; ++i) {
+		_ccTexts.push_back(Common::String());
+		readCCText(stream, _ccTexts.back());
+	}
+}
+
+void PlayRandomSoundTerse::execute() {
+	if (_state == kBegin) {
+		uint16 randomID = g_nancy->_randomSource->getRandomNumber(_soundNames.size() - 1);
+		_sound.name = _soundNames[randomID];;
+		_ccText = _ccTexts[randomID];
+	}
+
+	PlaySoundCC::execute();
 }
 
 void TableIndexPlaySound::readData(Common::SeekableReadStream &stream) {

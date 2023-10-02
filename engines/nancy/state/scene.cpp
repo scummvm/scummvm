@@ -105,11 +105,7 @@ void Scene::SceneSummary::readTerse(Common::SeekableReadStream &stream) {
 	stream.read(buf, 0x32);
 	description = buf;
 	readFilename(stream, videoFile);
-	readFilename(stream, sound.name);
-	sound.channelID = stream.readUint16LE();
-	sound.numLoops = stream.readUint32LE();
-	sound.volume = stream.readUint16LE();
-	stream.skip(2);
+	sound.readTerse(stream);
 }
 
 Scene::Scene() :
