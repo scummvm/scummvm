@@ -20,6 +20,7 @@
  */
 
 #include "m4/adv_r/adv_game.h"
+#include "m4/core/rooms.h"
 
 namespace M4 {
 

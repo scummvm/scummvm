@@ -102,6 +102,9 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String * msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStateDoIt(int slot);
+
 	/**
 	 * Uses a serializer to allow implementing savegame
 	 * loading and saving using a single method
