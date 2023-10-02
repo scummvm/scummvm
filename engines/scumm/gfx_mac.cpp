@@ -372,18 +372,18 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	// I think 101-106 are inventory items.
 
 	initWidget( 0,  67, 292, 348, 18); // 100: Sentence line
-	initWidget( 1,  67, 312,  68, 18); // 6: Push
-	initWidget( 2,  67, 332,  68, 18); // 7: Pull
+	initWidget( 1, 137, 312,  68, 18); // 1: Open
+	initWidget( 2, 137, 332,  68, 18); // 2: Close
 	initWidget( 3,  67, 352,  68, 18); // 3: Give
-	initWidget( 4, 137, 312,  68, 18); // 1: Open
-	initWidget( 5, 137, 332,  68, 18); // 2: Close
-	initWidget( 6, 137, 352,  68, 18); // 9: Look at
-	initWidget( 7, 207, 312,  68, 18); // 10: Walk to
-	initWidget( 8, 207, 332,  68, 18); // 11: Pick up
-	initWidget( 9, 207, 352,  68, 18); // 12: What is
-	initWidget(10, 277, 312,  68, 18); // 8: Use
-	initWidget(11, 277, 332,  68, 18); // 4: Turn on
-	initWidget(12, 277, 352,  68, 18); // 5: Turn off
+	initWidget( 4, 277, 332,  68, 18); // 4: Turn on
+	initWidget( 5, 277, 352,  68, 18); // 5: Turn off
+	initWidget( 6,  67, 312,  68, 18); // 6: Push
+	initWidget( 7,  67, 332,  68, 18); // 7: Pull
+	initWidget( 8, 277, 312,  68, 18); // 8: Use
+	initWidget( 9, 137, 352,  68, 18); // 9: Look at
+	initWidget(10, 207, 312,  68, 18); // 10: Walk to
+	initWidget(11, 207, 332,  68, 18); // 11: Pick up
+	initWidget(12, 207, 352,  68, 18); // 12: What is
 	initWidget(13, 347, 312,  68, 18); // 13: Talk
 	initWidget(14,  97, 312, 121, 18); // 14: Never mind.
 	initWidget(15, 347, 332,  68, 18); // 32: Travel
