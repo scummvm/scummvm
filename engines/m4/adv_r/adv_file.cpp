@@ -284,7 +284,7 @@ int kernel_save_game(int slot, const char *desc, int32 sizeofDesc, M4sprite *thu
 }
 
 bool kernel_load_game(int slot) {
-	return g_engine->loadGameState(slot).getCode() == Common::kNoError;
+	return g_engine->loadGameStateDoIt(slot).getCode() == Common::kNoError;
 }
 
 int32 extract_room_num(const Common::String &name) {

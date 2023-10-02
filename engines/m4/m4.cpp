@@ -79,6 +79,12 @@ Common::Error M4Engine::run() {
 		// Set the console
 		setDebugger(new Console());
 
+		// Check for launcher savegame to load
+		if (ConfMan.hasKey("save_slot")) {
+			_G(kernel).restore_slot = ConfMan.getInt("save_slot");
+			_G(game).previous_room = RESTORING_GAME;
+		}
+
 		// Run game here
 		m4_inflight();
 	}
@@ -94,7 +100,7 @@ void M4Engine::m4_inflight() {
 	_G(kernel).going = true;
 
 	while (KEEP_PLAYING) {
-		if (_G(game).previous_room == -2) {
+		if (_G(game).previous_room == RESTORING_GAME) {
 			midi_stop();
 			kernel_load_game(_G(kernel).restore_slot);
 		}
@@ -121,6 +127,21 @@ bool M4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return g_vars && g_vars->getInterface() && g_vars->getInterface()->_visible;
 }
 
+Common::Error M4Engine::loadGameState(int slot) {
+	// Don't load savegame immediately, just set the slot for the engine's
+	// kernel to take care of in the outer game loop
+	_G(kernel).restore_slot = slot;
+	_G(game).new_room = RESTORING_GAME;
+	_G(game).new_section = RESTORING_GAME;
+	_G(game).previous_room = RESTORING_GAME;
+
+	return Common::kNoError;
+}
+
+Common::Error M4Engine::loadGameStateDoIt(int slot) {
+	return Engine::loadGameState(slot);
+}
+
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	_G(game).syncGame(s);
 	_G(player).syncGame(s);
@@ -136,6 +157,7 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		// set up variables so everyone knows we've teleported
 		_G(kernel).restore_game = true;
+		_G(between_rooms) = true;
 		_G(game).previous_room = KERNEL_RESTORING_GAME;
 
 		digi_set_overall_volume(_G(game).digi_overall_volume_percent);
