@@ -47,6 +47,7 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 
 	for (i = 0; i < _tail; ++i) {
 		char *objName = _G(inventory)->_objects[i]->name;
+		scene = _G(inventory)->_objects[i]->scene;
 
 		if (s.isLoading()) {
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
@@ -59,6 +60,7 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 		} else {
 			Common::strcpy_s(invName, MAX_NAME_LENGTH, objName);
 			s.syncBytes((byte *)invName, MAX_NAME_LENGTH);
+			s.syncAsUint32LE(scene);
 		}
 
 	}

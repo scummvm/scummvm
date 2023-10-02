@@ -30,13 +30,29 @@ void Midi::task() {
 }
 
 void Midi::loop() {
-	warning("TODO: Midi::loop");
+	// No implementation
+}
+
+void Midi::stop() {
+	warning("TODO: Midi::stop");
+}
+
+void Midi::set_overall_volume(int vol) {
+	warning("TODO: Midi::set_overall_volume");
 }
 
 } // namespace Sound
 
 void midi_loop() {
 	_G(midi).loop();
+}
+
+void midi_stop() {
+	_G(midi).stop();
+}
+
+void midi_set_overall_volume(int vol) {
+	_G(midi).set_overall_volume(vol);
 }
 
 } // namespace M4

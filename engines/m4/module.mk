@@ -67,7 +67,6 @@ MODULE_OBJS = \
 	mem/res.o \
 	platform/draw.o \
 	platform/events.o \
-	platform/sound.o \
 	platform/timer.o \
 	platform/sound/digi.o \
 	platform/sound/midi.o \

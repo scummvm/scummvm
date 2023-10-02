@@ -32,11 +32,15 @@ class Midi {
 public:
 	void task();
 	void loop();
+	void stop();
+	void set_overall_volume(int vol);
 };
 
 } // namespace Sound
 
 extern void midi_loop();
+extern void midi_stop();
+extern void midi_set_overall_volume(int vol);
 
 } // namespace M4
 
