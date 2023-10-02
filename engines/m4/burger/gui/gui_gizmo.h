@@ -78,7 +78,7 @@ struct GizmoButton {
 };
 
 typedef void (*GizmoItemFn0)();
-typedef void (*GizmoItemFnDraw)(GizmoItem *item, Gizmo *gizmo, int x, int y, int zero1, int zero2);
+typedef void (*GizmoItemFnDraw)(GizmoItem *item, Gizmo *gizmo, int x, int y);
 typedef void (*GizmoItemFnFree)(GizmoItem *item);
 typedef bool (*GizmoItemFnEvents)(GizmoItem *item, int eventType, int event, int x, int y,
 	GizmoItem **currentItem);
