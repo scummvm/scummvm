@@ -435,6 +435,30 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping y-flats vs non-flat item only by one pixel edge
+	 * Test case for rendering issue at MainActor::teleport 8 2143 1215 48
+	 */
+	void test_y_flat_edge_overlap_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(2239, 1055, 48, 64, 32, 40);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(2175, 1055, 48, 96, 0, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si1._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Completely Overlapping y-flats differing only in item number and frame
 	 * Test case for rendering issue at MainActor::teleport 37 17628 19668 56
 	 */
@@ -696,9 +720,9 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(si1.contains(si1._sxTop, si1._syTop));
 		TS_ASSERT(si1.contains(si1._sxLeft, (si1._syTop + si1._syBot) / 2));
 
-		// Exclusive of right and bottom
-		TS_ASSERT(!si1.contains(si1._sxBot, si1._syBot));
-		TS_ASSERT(!si1.contains(si1._sxRight, (si1._syTop + si1._syBot) / 2));
+		// Inclusive of right and bottom
+		TS_ASSERT(si1.contains(si1._sxBot, si1._syBot));
+		TS_ASSERT(si1.contains(si1._sxRight, (si1._syTop + si1._syBot) / 2));
 
 		// Outside bounds
 		TS_ASSERT(!si1.contains(si1._sxBot, si1._syBot + 1));
@@ -760,17 +784,30 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!si1.overlap(si2));
 		TS_ASSERT(!si2.overlap(si1));
 
-		// Check outside left & right bounds using non-flats
+		// Check edge left & right bounds using non-flats
 		b1 = Ultima::Ultima8::Box(0, 0, 0, 128, 128, 32);
 		si1.setBoxBounds(b1, 0, 0);
 
 		b2 = Ultima::Ultima8::Box(128, -128, 0, 128, 128, 32);
 		si2.setBoxBounds(b2, 0, 0);
 
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		b2 = Ultima::Ultima8::Box(-128, 128, 0, 128, 128, 32);
+		si2.setBoxBounds(b2, 0, 0);
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		// Check outside left & right bounds using non-flats
+		b2 = Ultima::Ultima8::Box(160, -128, 0, 128, 128, 32);
+		si2.setBoxBounds(b2, 0, 0);
+
 		TS_ASSERT(!si1.overlap(si2));
 		TS_ASSERT(!si2.overlap(si1));
 
-		b2 = Ultima::Ultima8::Box(-128, 128, 0, 128, 128, 32);
+		b2 = Ultima::Ultima8::Box(-128, 160, 0, 128, 128, 32);
 		si2.setBoxBounds(b2, 0, 0);
 
 		TS_ASSERT(!si1.overlap(si2));

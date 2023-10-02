@@ -53,8 +53,8 @@ void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
 	// Screenspace rect - replace with shape frame calculations
 	_sr.left = _sxLeft;
 	_sr.top = _syTop;
-	_sr.right = _sxRight;
-	_sr.bottom = _syBot;
+	_sr.right = _sxRight + 1;
+	_sr.bottom = _syBot + 1;
 
 	// These help out with sorting. We calc them now, so it will be faster
 	_fbigsq = box._xd == box._yd && box._xd >= 128;
