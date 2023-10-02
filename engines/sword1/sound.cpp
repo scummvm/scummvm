@@ -43,8 +43,9 @@ namespace Sword1 {
 #define SOUND_SPEECH_ID 1
 #define SPEECH_FLAGS (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN)
 
-Sound::Sound(Audio::Mixer *mixer, ResMan *pResMan)
+Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 	: _rnd("sword1sound") {
+	_vm = vm;
 	_mixer = mixer;
 	_resMan = pResMan;
 	_bigEndianSpeech = false;
@@ -768,6 +769,7 @@ void Sound::closeCowSystem() {
 //
 int32 Sound::CheckSampleStatus(int32 id) {
 	uint32 i = 0;
+	Common::StackLock lock(_soundMutex);
 	while (i < MAX_FX) {
 		if (fxSampleID[i] == id) {
 			//if ((AIL_sample_status(hSampleFX[i]) == SMP_DONE) && (fxSampleBusy[i]) && (!fxPaused[i])) {
@@ -795,21 +797,246 @@ int32 Sound::CheckSpeechStatus() {
 	//return (0);
 }
 
+int32 Sound::PlaySpeech(void *wavData, int32 size) {
+	speechSize = size;
+	speechCount = 0;
+
+	//  Check to see if the handle is free, else free it
+	if (speechSampleBusy)
+		StopSpeech();
+
+	//  Reset the sample parameters
+	//AIL_init_sample(hSampleSpeech);
+	speechSampleBusy = 1;
+
+	//  And point the sample to our new wav data
+	if (true/* AIL_set_sample_file(hSampleSpeech, wavData, -1) == 0*/) {
+		speechSampleBusy = 0;
+		return (0);
+	} else {
+		//  We have found a free handle, and the wav file header
+		//  has been successfully parsed.
+		//
+		//  Modify the volume according to the master volume
+		//AIL_set_sample_volume(hSampleSpeech, 4 * (volSpeech[0] + volSpeech[1]));
+
+		//  Now set the pan position for the sample
+		//AIL_set_sample_pan(hSampleSpeech, 64 + (4 * (volSpeech[1] - volSpeech[0])));
+
+		//  Start the sample
+		//AIL_start_sample(hSampleSpeech);
+
+		ReduceMusicVolume();
+
+		//  and exit the function.
+		return (1);
+	}
+}
+
+int32 Sound::StopSpeech() {
+	if (true/* AIL_sample_status(hSampleSpeech) != SMP_DONE*/) {
+		//AIL_end_sample(hSampleSpeech);
+		speechSampleBusy = 0;
+		RestoreMusicVolume();
+		return (1);
+	}
+	return (0);
+}
+
+static void soundCallback(void *refCon) {
+	Sound *snd = (Sound *)refCon;
+	Common::StackLock lock(snd->_soundMutex);
+
+	if (snd->volumeFadingFlag) {
+		snd->volumeCount += 1;
+		if (snd->volumeCount > 128 / snd->volumeFadingRate) {
+			snd->volumeFadingFlag = 0;
+		} else {
+			if (snd->volumeFadingFlag == 1) {
+				//Fade the volume up
+				snd->fadeVolume[0] = snd->masterVolume[0] * snd->volumeCount * snd->volumeFadingRate / 128;
+				snd->fadeVolume[1] = snd->masterVolume[1] * snd->volumeCount * snd->volumeFadingRate / 128;
+			} else {
+				//Fade the volume down
+				snd->fadeVolume[0] = snd->masterVolume[0] - (snd->masterVolume[0] * snd->volumeCount * snd->volumeFadingRate / 128);
+				snd->fadeVolume[1] = snd->masterVolume[1] - (snd->masterVolume[1] * snd->volumeFadingRate * snd->volumeCount / 128);
+			}
+
+			//AIL_set_digital_master_volume(hDigiDriver, (snd->fadeVolume[0] + snd->fadeVolume[1]) / 2);
+		}
+	}
+
+	if (snd->musicFadingFlag) {
+		snd->musicCount += 1;
+		if (snd->musicCount > 128 / snd->musicFadingRate) {
+			snd->musicFadingFlag = 0;
+		} else {
+			if (snd->musicFadingFlag == 1) {
+				//Fade the volume up
+				snd->musicFadeVolume[0] = 8 * snd->volMusic[0] * snd->musicCount * snd->musicFadingRate / 128;
+				snd->musicFadeVolume[1] = 8 * snd->volMusic[1] * snd->musicCount * snd->musicFadingRate / 128;
+			} else {
+				//Fade the volume down
+				snd->musicFadeVolume[0] = 8 * snd->volMusic[0] - (8 * snd->volMusic[0] * snd->musicCount * snd->musicFadingRate / 128);
+				snd->musicFadeVolume[1] = 8 * snd->volMusic[1] - (8 * snd->volMusic[1] * snd->musicFadingRate * snd->musicCount / 128);
+			}
+
+			for (int i = 0; i < MAX_MUSIC; i++) {
+				if (snd->streamSamplePlaying[i])
+					;
+					//AIL_set_sample_volume(snd->hStreamSample[i], (snd->musicFadeVolume[0] + snd->musicFadeVolume[1]) / 2);
+			}
+
+		}
+	}
+
+	if (snd->fxFadingFlag) {
+		snd->fxCount += 1;
+		if (snd->fxCount > 128 / snd->fxFadingRate) {
+			snd->fxFadingFlag = 0;
+		} else {
+			if (snd->fxFadingFlag == 1) {
+				//Fade the volume up
+				snd->fxFadeVolume[0] = 8 * snd->volFX[0] * snd->fxCount * snd->fxFadingRate / 128;
+				snd->fxFadeVolume[1] = 8 * snd->volFX[1] * snd->fxCount * snd->fxFadingRate / 128;
+			} else {
+				//Fade the volume down
+				snd->fxFadeVolume[0] = 8 * snd->volFX[0] - (8 * snd->volFX[0] * snd->fxCount * snd->fxFadingRate / 128);
+				snd->fxFadeVolume[1] = 8 * snd->volFX[1] - (8 * snd->volFX[1] * snd->fxFadingRate * snd->fxCount / 128);
+			}
+			for (int i = 0; i < MAX_FX; i++) {
+				if (snd->fxSampleBusy[i])
+					;
+					//AIL_set_sample_volume(hSampleFX[i], (fxFadeVolume[0] + fxFadeVolume[1]) / 2);
+			}
+		}
+	}
+}
+
+void Sound::installFadeTimer() {
+	_vm->getTimerManager()->installTimerProc(&soundCallback, 1000000 / TIMER_RATE, this, "AILFadeTimer");
+}
+
+void Sound::uninstallFadeTimer() {
+	_vm->getTimerManager()->removeTimerProc(&soundCallback);
+}
+
 void Sound::PlaySample(int32 fxNo) {
+	uint8 *samplePtr;
+	uint32 vol[2] = { 0, 0 };
+	int32 screen = Logic::_scriptVars[SCREEN];
+
+	samplePtr = (uint8 *)_resMan->fetchRes(getSampleId(fxNo));
+
+	for (int i = 0; i < MAX_ROOMS_PER_FX; i++) {
+		if (_fxList[fxNo].roomVolList[i].roomNo != 0) {
+			if ((_fxList[fxNo].roomVolList[i].roomNo == screen) ||
+				(_fxList[fxNo].roomVolList[i].roomNo == -1)) { // -1 indicates 'all rooms'
+				vol[0] = (_fxList[fxNo].roomVolList[i].leftVol);
+				vol[1] = (_fxList[fxNo].roomVolList[i].rightVol);
+
+				debug(5, "Sound::PlaySample(): fxNo=%d, vol[0]=%d, vol[1]=%d)",fxNo,vol[0],vol[1]);
+				PlayFX(fxNo, _fxList[fxNo].type, samplePtr, vol);
+				break;
+			}
+		} else {
+			break;
+		}
+	}
 }
 
 int32 Sound::StreamSample(char filename[], int32 looped) {
-	return int32();
+	return 0;
 }
 
 void Sound::UpdateSampleStreaming() {
+	Common::StackLock lock(_soundMutex);
+	for (int i = 0; i < MAX_MUSIC; i++) {
+		if ((streamSamplePlaying[i]) && (!musicPaused[i])) {
+			if (streamSampleFading[i]) {
+				if (crossFadeIncrement) {
+					crossFadeIncrement = false;
+
+					if (streamSampleFading[i] < 0) {
+						//AIL_set_sample_volume(hStreamSample[i], ((0 - streamSampleFading[i]) * 3 * (volMusic[0] + volMusic[1])) / 16);
+						streamSampleFading[i] += 1;
+						if (streamSampleFading[i] == 0) {
+							//AIL_stop_sample(hStreamSample[i]);
+							//AIL_release_sample_handle(hStreamSample[i]);
+							//close(streamFile[i]);
+							streamSamplePlaying[i] = 0;
+							//MEM_free_lock(streamBuffer[i][0], bufferSize);
+							//MEM_free_lock(streamBuffer[i][1], bufferSize);
+						}
+					} else {
+						//AIL_set_sample_volume(hStreamSample[i], (streamSampleFading[i] * 3 * (volMusic[0] + volMusic[1])) / 16);
+						streamSampleFading[i] += 1;
+						if (streamSampleFading[i] == 17) {
+							streamSampleFading[i] = 0;
+						}
+					}
+				}
+			}
+			//ServeSample(hStreamSample[i], streamBuffer[i], bufferSize, streamFile[i], i);
+			//if (AIL_sample_status(hStreamSample[i]) != SMP_PLAYING) {
+			//	AIL_release_sample_handle(hStreamSample[i]);
+			//	streamSamplePlaying[i] = FALSE;
+			//	close(streamFile[i]);
+			//	MEM_free_lock(streamBuffer[i][0], bufferSize);
+			//	MEM_free_lock(streamBuffer[i][1], bufferSize);
+			//}
+		}
+	}
 }
 
 int32 Sound::PlayFX(int32 fxID, int32 type, void *wavData, uint32 vol[2]) {
-	return int32();
+	int32 i = 0;
+	int32 v0, v1;
+	Common::StackLock lock(_soundMutex);
+	//  Search through the fx sample handles for a free slot
+	while (i < MAX_FX) {
+		//  Check to see if the handle is free
+		if (fxSampleBusy[i] == 0) {
+			//  Reset the sample parameters
+			//AIL_init_sample(hSampleFX[i]);
+			fxSampleBusy[i] = 1;
+			fxSampleID[i] = fxID;
+
+			//if (type == FX_LOOP)
+			//	AIL_set_sample_loop_count(hSampleFX[i], 0);
+
+			//  And point the sample to our new wav data
+			if (true /* AIL_set_sample_file(hSampleFX[i], wavData, -1) == 0*/) {
+				return (0);
+			} else {
+				//  We have found a free handle, and the wav file header
+				//  has been successfully parsed.
+				//
+				//  Modify the volume according to the master volume
+				v0 = volFX[0] * vol[0];
+				v1 = volFX[1] * vol[1];
+
+				//AIL_set_sample_volume(hSampleFX[i], (v0 + v1) / 8);
+
+				//  Now set the pan position for the sample
+				//AIL_set_sample_pan(hSampleFX[i], 64 + ((v1 - v0) / 4));
+
+				//  Start the sample
+				//AIL_start_sample(hSampleFX[i]);
+
+				//  and exit the function.
+				return (1);
+			}
+		}
+		i += 1;
+
+	} // while
+
+	return (0);
 }
 
 int32 Sound::StopFX(int32 fxID) {
+	Common::StackLock lock(_soundMutex);
 	for (uint32 i = 0; i < MAX_FX; i++) {
 		if (fxSampleID[i] == fxID) {
 			//if (AIL_sample_status(hSampleFX[i]) != SMP_DONE) {
@@ -833,44 +1060,74 @@ void Sound::clearAllFx() {
 }
 
 void Sound::FadeVolumeDown(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	volumeFadingFlag = -1;
 	volumeFadingRate = 2 * rate;
 	volumeCount = 0;
 }
 
 void Sound::FadeVolumeUp(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	volumeFadingFlag = 1;
 	volumeFadingRate = 2 * rate;
 	volumeCount = 0;
 }
 
 void Sound::FadeMusicDown(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	streamSampleFading[1 - streamSamplePlaying[0]] = -12;
 }
 
 void Sound::FadeMusicUp(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	musicFadingFlag = 1;
 	musicFadingRate = 2 * rate;
 	musicCount = 0;
 }
 
 void Sound::FadeFxDown(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	fxFadingFlag = -1;
 	fxFadingRate = 2 * rate;
 	fxCount = 0;
 }
 
 void Sound::FadeFxUp(int32 rate) {
+	Common::StackLock lock(_soundMutex);
 	fxFadingFlag = 1;
 	fxFadingRate = 2 * rate;
 	fxCount = 0;
 }
 
 int32 Sound::GetSpeechSize(void *compData) {
-	return int32();
+	typedef struct wavHeader {
+		char riff[4];
+		int fileLength;
+		char wavID[4];
+		char format[4];
+		int formatLen;
+		short int formatTag;
+		short int channels;
+		short int samplesPerSec;
+		short int avgBytesPerSec;
+		short int blockAlign;
+		short int formatSpecific;
+		short int unused[8];
+	} wavHeader;
+
+	wavHeader *head;
+
+	head = (wavHeader *)compData;
+
+	//Pdebug("Getting speech size : %d", head->fileLength + 8);
+	//Pdebug("riff %c%c%c%c", head->riff[0], head->riff[1], head->riff[2], head->riff[3]);
+	//Pdebug("file length %d\n", head->fileLength);
+
+	return (head->fileLength + 8);
 }
 
 void Sound::ReduceMusicVolume() {
+	Common::StackLock lock(_soundMutex);
 	musicFadeVolume[0] = volMusic[0] * MUSIC_UNDERSCORE / 100;
 	musicFadeVolume[1] = volMusic[0] * MUSIC_UNDERSCORE / 100;
 
@@ -878,6 +1135,7 @@ void Sound::ReduceMusicVolume() {
 }
 
 void Sound::RestoreMusicVolume() {
+	Common::StackLock lock(_soundMutex);
 	//AIL_set_sample_volume(hStreamSample[0], (volMusic[0] + volMusic[1]) * 3);
 }
 
@@ -900,6 +1158,7 @@ void Sound::UnpauseSpeech() {
 }
 
 void Sound::PauseMusic() {
+	Common::StackLock lock(_soundMutex);
 	for (int32 i = 0; i < MAX_MUSIC; i++) {
 		if (streamSamplePlaying[i]) {
 			musicPaused[i] = true;
@@ -909,6 +1168,7 @@ void Sound::PauseMusic() {
 }
 
 void Sound::UnpauseMusic() {
+	Common::StackLock lock(_soundMutex);
 	for (int32 i = 0; i < MAX_MUSIC; i++) {
 		if (musicPaused[i]) {
 			//AIL_resume_sample(hStreamSample[i]);
@@ -918,6 +1178,7 @@ void Sound::UnpauseMusic() {
 }
 
 void Sound::PauseFx() {
+	Common::StackLock lock(_soundMutex);
 	for (uint32 i = 0; i < MAX_FX; i++) {
 		if (fxSampleBusy[i]) {
 			//AIL_stop_sample(hSampleFX[i]);
@@ -927,6 +1188,7 @@ void Sound::PauseFx() {
 }
 
 void Sound::UnpauseFx() {
+	Common::StackLock lock(_soundMutex);
 	for (uint32 i = 0; i < MAX_FX; i++) {
 		if (fxPaused[i]) {
 			//AIL_resume_sample(hSampleFX[i]);

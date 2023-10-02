@@ -379,7 +379,7 @@ int Logic::speechDriver(Object *compact) {
 		compact->o_anim_pc++; // go to next frame of anim
 
 		if (_speechFinished || (compact->o_anim_pc >= numFrames) ||
-		        (_speechRunning && (_sound->amISpeaking() == 0)))
+		        (_speechRunning && (_sound->amISpeaking(nullptr) == 0)))
 			compact->o_anim_pc = 0; //set to frame 0, closed mouth
 
 		AnimUnit *animPtr = (AnimUnit *)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
