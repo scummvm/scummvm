@@ -134,42 +134,42 @@ void ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 }
 
 ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &inputData) {
-	inputData.seek(0x30);
-	byte ARType = inputData.readByte();
-	ActionRecord *newRecord = createActionRecord(ARType);
-
-	if (!newRecord) {
-		return nullptr;
-	}
-
 	inputData.seek(0);
 	char descBuf[0x30];
 	inputData.read(descBuf, 0x30);
 	descBuf[0x2F] = '\0';
+	byte ARType = inputData.readByte();
+	byte execType = inputData.readByte();
+	ActionRecord *newRecord = createActionRecord(ARType, &inputData);
+
+	if (!newRecord) {
+		newRecord = new Unimplemented();
+	}
+	
 	newRecord->_description = descBuf;
+	newRecord->_type = ARType;
+	newRecord->_execType = (ActionRecord::ExecutionType)execType;
 
-	newRecord->_type = inputData.readByte(); // redundant
-	newRecord->_execType = (ActionRecord::ExecutionType)inputData.readByte();
-
-	uint16 localChunkSize = inputData.pos();
 	newRecord->readData(inputData);
-	localChunkSize = inputData.pos() - localChunkSize;
-	localChunkSize += 0x32;
 
-	// If the localChunkSize is less than the total data, there must be dependencies at the end of the chunk
-	uint16 depsDataSize = (uint16)inputData.size() - localChunkSize;
-	if (depsDataSize > 0) {
+	// If the remaining data is less than the total data, there must be dependencies at the end of the chunk
+	int64 dataRemaining = inputData.size() - inputData.pos();
+	if (dataRemaining > 0 && newRecord->getRecordTypeName() != "Unimplemented") {
 		// Each dependency is 12 (up to nancy2) or 16 (nancy3 and up) bytes long
 		uint singleDepSize = g_nancy->getGameType() <= kGameTypeNancy2 ? 12 : 16;
-		uint numDependencies = depsDataSize / singleDepSize;
-		if (depsDataSize % singleDepSize) {
+		uint numDependencies = dataRemaining / singleDepSize;
+		if (dataRemaining % singleDepSize) {
 			warning("Action record type %u, %s has incorrect read size!\ndescription:\n%s",
 				newRecord->_type,
 				newRecord->getRecordTypeName().c_str(),
 				newRecord->_description.c_str());
 
 				delete newRecord;
-				return nullptr;
+				
+				newRecord = new Unimplemented();
+				newRecord->_description = descBuf;
+				newRecord->_type = ARType;
+				newRecord->_execType = (ActionRecord::ExecutionType)execType;
 		}
 
 		if (numDependencies == 0) {
@@ -180,7 +180,6 @@ ActionRecord *ActionManager::createAndLoadNewRecord(Common::SeekableReadStream &
 		depStack.push(&newRecord->_dependencies);
 
 		// Initialize the dependencies data
-		inputData.seek(localChunkSize);
 		for (uint16 i = 0; i < numDependencies; ++i) {
 			depStack.top()->children.push_back(DependencyRecord());
 			DependencyRecord &dep = depStack.top()->children.back();

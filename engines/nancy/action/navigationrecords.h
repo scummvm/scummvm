@@ -86,10 +86,15 @@ public:
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
 
 	HotspotDescription _hotspotDesc;
+	bool _isTerse = false;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override {
+		if (_isTerse) {
+			return "HotSceneChangeTerse";
+		}
+
 		switch (_hoverCursor) {
 		case CursorManager::kExit:
 			return "Hot1FrExitSceneChange";

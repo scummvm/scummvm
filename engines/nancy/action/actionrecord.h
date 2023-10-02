@@ -155,6 +155,13 @@ public:
 	void onPause(bool pause) override { if (!pause) registerGraphics(); }
 };
 
+// Dummy AR for classes that haven't been implemented/don't work in the current game version
+class Unimplemented : public ActionRecord {
+	void execute() override;
+	void readData(Common::SeekableReadStream &stream) override {}
+	Common::String getRecordTypeName() const override { return "Unimplemented"; }
+};
+
 } // End of namespace Action
 } // End of namespace Nancy
 

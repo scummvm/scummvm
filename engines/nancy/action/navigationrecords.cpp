@@ -72,8 +72,15 @@ void HotMultiframeSceneChange::execute() {
 }
 
 void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
-	SceneChange::readData(stream);
-	_hotspotDesc.readData(stream);
+	if (!_isTerse) {
+		SceneChange::readData(stream);
+		_hotspotDesc.readData(stream);
+	} else {
+		_sceneChange.sceneID = stream.readUint16LE();
+		_sceneChange.continueSceneSound = kContinueSceneSound;
+		_sceneChange.listenerFrontVector.set(0, 0, 1);
+		readRect(stream, _hotspotDesc.coords);
+	}
 }
 
 void Hot1FrSceneChange::execute() {

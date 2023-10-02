@@ -20,6 +20,7 @@
  */
 
 #include "common/stack.h"
+#include "engines/nancy/detection.h"
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
@@ -51,6 +52,11 @@ void ActionRecord::finishExecution() {
 		_state = kBegin;
 		break;
 	}
+}
+
+void Unimplemented::execute() {
+	debugC(Nancy::kDebugActionRecord, "Unimplemented or changed ActionRecord type %u", _type);
+	_isDone = true;
 }
 
 } // End of namespace Action

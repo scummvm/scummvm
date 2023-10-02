@@ -34,11 +34,6 @@
 namespace Nancy {
 namespace Action {
 
-void Unimplemented::execute() {
-	debugC(Nancy::kDebugActionRecord, "Unimplemented Action Record type %s", getRecordTypeName().c_str());
-	_isDone = true;
-}
-
 void PaletteThisScene::readData(Common::SeekableReadStream &stream) {
 	_paletteID = stream.readByte();
 	_unknownEnum = stream.readByte();

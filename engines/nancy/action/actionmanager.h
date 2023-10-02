@@ -72,7 +72,7 @@ public:
 	void synchronize(Common::Serializer &serializer);
 
 protected:
-	static ActionRecord *createActionRecord(uint16 type);
+	static ActionRecord *createActionRecord(uint16 type, Common::SeekableReadStream *recordStream = nullptr);
 	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
 
 	void synchronizeMovieWithSound();

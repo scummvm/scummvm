@@ -59,7 +59,7 @@
 namespace Nancy {
 namespace Action {
 
-ActionRecord *ActionManager::createActionRecord(uint16 type) {
+ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableReadStream *recordStream) {
 	switch (type) {
 	case 10:
 		return new Hot1FrSceneChange(CursorManager::kHotspot);
@@ -99,6 +99,18 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new Hot1FrSceneChange(CursorManager::kMoveRight);
 	case 24:
 		return new HotMultiframeMultisceneCursorTypeSceneChange();
+	case 25: {
+		// Weird case; instead of storing the cursor id, they instead chose to store
+		// an AR id corresponding to one of the directional Hot1FrSceneChange variants.
+		// Thus, we need to scan the incoming chunk and make another call to createActionRecord().
+		// This is not the most elegant solution, but it works :)
+		assert(recordStream);
+		uint16 innerID = recordStream->readUint16LE();
+		Hot1FrSceneChange *newRec = dynamic_cast<Hot1FrSceneChange *>(createActionRecord(innerID));
+		assert(newRec);
+		newRec->_isTerse = true;
+		return newRec;
+	}
 	case 40:
 		if (g_nancy->getGameType() < kGameTypeNancy2) {
 			// Only used in TVD

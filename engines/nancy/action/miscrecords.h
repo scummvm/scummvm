@@ -30,10 +30,6 @@ class NancyEngine;
 
 namespace Action {
 
-class Unimplemented : public ActionRecord {
-	void execute() override;
-};
-
 // Changes the palette for the current scene's background. TVD only.
 class PaletteThisScene : public ActionRecord {
 public:
