@@ -1108,431 +1108,431 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "apollo38",           "Apollo 18+20 #38: Space Suit" },
 
 	// The 1995 Annual Interactive Fiction Competition
-	{ "if95_weather",       "A Change in the Weather" },                                                //  1st Place
-	{ "if95_mindelectric",  "The Mind Electric" },                                                      //  2nd Place
-	{ "if95_magictoyshop",  "The Magic Toyshop" },                                                      //  3rd Place
-	{ "if95_mst3k1",        "Mystery Science Theater 3000 Presents 'Detective'" },                      //  4th Place
-	{ "if95_libraryfront",  "All Quiet on the Library Front" },                                         //  5th Place
-	{ "if95_tubetrouble",   "Tube Trouble" },                                                           //  6th Place
+	{ "if95_weather",       "A Change in the Weather" },                                                //    1st Place
+	{ "if95_mindelectric",  "The Mind Electric" },                                                      //    2nd Place
+	{ "if95_magictoyshop",  "The Magic Toyshop" },                                                      //    3rd Place
+	{ "if95_mst3k1",        "Mystery Science Theater 3000 Presents 'Detective'" },                      //    4th Place
+	{ "if95_libraryfront",  "All Quiet on the Library Front" },                                         //    5th Place
+	{ "if95_tubetrouble",   "Tube Trouble" },                                                           //    6th Place
 
 	// The 1996 Annual Interactive Fiction Competition
-	{ "if96_sherbet",       "The Meteor, the Stone and a Long Glass of Sherbet" },                      //  1st Place
-	{ "if96_tapestry",      "Tapestry" },                                                               //  2nd Place
-	{ "if96_delusions",     "Delusions" },                                                              //  3rd Place
-	{ "if96_fear",          "Fear" },                                                                   //  6th Place
-	{ "if96_claw",          "Wearing the Claw" },                                                       //  8th Place
-	{ "if96_lists",         "Lists and Lists" },                                                        // 11th Place
-	{ "if96_ralph",         "Ralph" },                                                                  // 12th Place
-	{ "if96_reverb",        "Reverberations" },                                                         // 13th Place
-	{ "if96_intheend",      "In the End" },                                                             // 15th Place
-	{ "if96_piece",         "Piece of Mind" },                                                          // 16th Place
-	{ "if96_phlegm",        "Phlegm" },                                                                 // 17th Place
-	{ "if96_stargaze",      "Stargazer" },                                                              // 19th Place
-	{ "if96_forms",         "Of Forms Unknown" },                                                       // 20th Place
-	{ "if96_stalkerzcode",  "House of the Stalker" },                                                   // 23rd Place
-	{ "if96_ripflesh",      "Rippled Flesh" },                                                          // 24th Place
-	{ "if96_liquid",        "Punkirita Quest 1: Liquid" },                                              // 25th Place
+	{ "if96_sherbet",       "The Meteor, the Stone and a Long Glass of Sherbet" },                      //    1st Place
+	{ "if96_tapestry",      "Tapestry" },                                                               //    2nd Place
+	{ "if96_delusions",     "Delusions" },                                                              //    3rd Place
+	{ "if96_fear",          "Fear" },                                                                   //    6th Place
+	{ "if96_claw",          "Wearing the Claw" },                                                       //    8th Place
+	{ "if96_lists",         "Lists and Lists" },                                                        //   11th Place
+	{ "if96_ralph",         "Ralph" },                                                                  //   12th Place
+	{ "if96_reverb",        "Reverberations" },                                                         //   13th Place
+	{ "if96_intheend",      "In the End" },                                                             //   15th Place
+	{ "if96_piece",         "Piece of Mind" },                                                          //   16th Place
+	{ "if96_phlegm",        "Phlegm" },                                                                 //   17th Place
+	{ "if96_stargaze",      "Stargazer" },                                                              //   19th Place
+	{ "if96_forms",         "Of Forms Unknown" },                                                       //   20th Place
+	{ "if96_stalkerzcode",  "House of the Stalker" },                                                   //   23rd Place
+	{ "if96_ripflesh",      "Rippled Flesh" },                                                          //   24th Place
+	{ "if96_liquid",        "Punkirita Quest 1: Liquid" },                                              //   25th Place
 	{ "comp96",             "IF Competition '96 Unofficial FE Game" },
 
 	// The 1997 Annual Interactive Fiction Competition
-	{ "if97_edifice",       "The Edifice" },                                                            // 	1st Place
-	{ "if97_spring",        "She's Got a Thing For a Spring" },                                         // 	4th Place
-	{ "if97_bear",          "A Bear's Night Out" },                                                     // 	5th Place
-	{ "if97_lostspellmaker", "The Lost Spellmaker" },                                                   // 	8th Place
-	{ "if97_mimesis",       "Sins Against Mimesis" },                                                   //	9th Place
-	{ "if97_newday",        "A New Day" },                                                              // 10th Place
-	{ "if97_erden",         "Travels in the Land of Erden: In Quest of the Adventure" },                // 14th Place
-	{ "if97_friday",        "Friday Afternoon" },                                                       // 16th Place
-	{ "if97_estrange",      "Madame L'Estrange and the Troubled Spirit" },                              // 17th Place
-	{ "if97_sylenius",      "Sylenius Mysterium" },                                                     // 18th Place
-	{ "if97_pizza",         "Phred Phontious and the Quest for Pizza" },                                // 19th Place
-	{ "if97_agb",           "A Good Breakfast" },                                                       // 23rd Place
-	{ "if97_tdragon",       "Town Dragon" },                                                            // 24th Place
-	{ "if97_thetempest",    "The Tempest" },                                                            // 25th Place
-	{ "if97_pintown",       "Pintown" },                                                                // 28th Place
-	{ "if97_congrats",      "Congratulations!" },                                                       // 30th Place
-	{ "if97_cask",          "Cask" },                                                                   // 31st Place
-	{ "if97_symetry",       "Symetry" },                                                                // 32nd Place
-	{ "if97_auntnancy",     "Aunt Nancy's House" },                                                     // 33rd Place
-	{ "if97_cominghome",    "Coming Home" },                                                            // 34th Place
+	{ "if97_edifice",       "The Edifice" },                                                            //    1st Place
+	{ "if97_spring",        "She's Got a Thing For a Spring" },                                         //    4th Place
+	{ "if97_bear",          "A Bear's Night Out" },                                                     // 	  5th Place
+	{ "if97_lostspellmaker", "The Lost Spellmaker" },                                                   //    8th Place
+	{ "if97_mimesis",       "Sins Against Mimesis" },                                                   //	  9th Place
+	{ "if97_newday",        "A New Day" },                                                              //   10th Place
+	{ "if97_erden",         "Travels in the Land of Erden: In Quest of the Adventure" },                //   14th Place
+	{ "if97_friday",        "Friday Afternoon" },                                                       //   16th Place
+	{ "if97_estrange",      "Madame L'Estrange and the Troubled Spirit" },                              //   17th Place
+	{ "if97_sylenius",      "Sylenius Mysterium" },                                                     //   18th Place
+	{ "if97_pizza",         "Phred Phontious and the Quest for Pizza" },                                //   19th Place
+	{ "if97_agb",           "A Good Breakfast" },                                                       //   23rd Place
+	{ "if97_tdragon",       "Town Dragon" },                                                            //   24th Place
+	{ "if97_thetempest",    "The Tempest" },                                                            //   25th Place
+	{ "if97_pintown",       "Pintown" },                                                                //   28th Place
+	{ "if97_congrats",      "Congratulations!" },                                                       //   30th Place
+	{ "if97_cask",          "Cask" },                                                                   //   31st Place
+	{ "if97_symetry",       "Symetry" },                                                                //   32nd Place
+	{ "if97_auntnancy",     "Aunt Nancy's House" },                                                     //   33rd Place
+	{ "if97_cominghome",    "Coming Home" },                                                            //   34th Place
 	{ "comp97",             "IF Competition '97 Unofficial FE Game" },
 
 	// The 1998 Annual Interactive Fiction Competition
-	{ "if98_photopia",      "Photopia" },                                                               // 	1st Place
-	{ "if98_muse",          "Muse: An Autumn Romance" },                                                //  2nd Place
-	{ "if98_enlighte",      "Enlightenment" },                                                          // 	5th Place
-	{ "if98_motherloose",   "Mother Loose" },                                                           // 	6th Place
-	{ "if98_bluemen",       "Little Blue Men" },                                                        // 	7th Place
-	{ "if98_dilly",         "Trapped in a One-Room Dilly" },                                            // 	8th Place
-	{ "if98_downtowntokyo", "Downtown Tokyo Present Day" },                                             // 10th Place
-	{ "if98_informatory",   "Informatory" },                                                            // 11th Place
-	{ "if98_ritualpurification", "Ritual of Purification" },                                            // 12th Place
-	{ "if98_city",          "The City" },                                                               // 13th Place
-	{ "if98_evildwells",    "Where Evil Dwells" },                                                      // 14th Place
-	{ "if98_purple",        "Purple" },                                                                 // 15th Place
-	{ "if98_research",      "Research Dig" },                                                           // 17th Place
-	{ "if98_spacestation",  "Space Station: Based on Planetfall Example Transcript" },                  // 19th Place
-	{ "if98_cattusatrox",   "Cattus Atrox" },                                                           // 20th Place
-	{ "if98_spotlite",      "In the Spotlight" },                                                       // 21st Place
-	{ "if98_acidwhiplash",  "Acid Whiplash" },                                                          // 23rd Place
-	{ "if98_fifteen",       "Fifteen" },                                                                // 25th Place
-	{ "if98_hrs",           "Human Resources Stories" },                                                // 27th Place
+	{ "if98_photopia",      "Photopia" },                                                               //    1st Place
+	{ "if98_muse",          "Muse: An Autumn Romance" },                                                //    2nd Place
+	{ "if98_enlighte",      "Enlightenment" },                                                          // 	  5th Place
+	{ "if98_motherloose",   "Mother Loose" },                                                           // 	  6th Place
+	{ "if98_bluemen",       "Little Blue Men" },                                                        // 	  7th Place
+	{ "if98_dilly",         "Trapped in a One-Room Dilly" },                                            // 	  8th Place
+	{ "if98_downtowntokyo", "Downtown Tokyo Present Day" },                                             //   10th Place
+	{ "if98_informatory",   "Informatory" },                                                            //   11th Place
+	{ "if98_ritualpurification", "Ritual of Purification" },                                            //   12th Place
+	{ "if98_city",          "The City" },                                                               //   13th Place
+	{ "if98_evildwells",    "Where Evil Dwells" },                                                      //   14th Place
+	{ "if98_purple",        "Purple" },                                                                 //   15th Place
+	{ "if98_research",      "Research Dig" },                                                           //   17th Place
+	{ "if98_spacestation",  "Space Station: Based on Planetfall Example Transcript" },                  //   19th Place
+	{ "if98_cattusatrox",   "Cattus Atrox" },                                                           //   20th Place
+	{ "if98_spotlite",      "In the Spotlight" },                                                       //   21st Place
+	{ "if98_acidwhiplash",  "Acid Whiplash" },                                                          //   23rd Place
+	{ "if98_fifteen",       "Fifteen" },                                                                //   25th Place
+	{ "if98_hrs",           "Human Resources Stories" },                                                //   27th Place
 	{ "comp98",             "IF Competition '98 Unofficial FE Game" },
 
 	// The 1999 Annual Interactive Fiction Competition
-	{ "if99_winterwonder",  "Winter Wonderland" },                                                      // 	1st Place
-	{ "if99_forachange",    "For a Change" },                                                           //  2nd Place
-	{ "if99_softfood",      "A Day for Soft Food" },                                                    // 	4th Place
-	{ "if99_halo",          "Halothane" },                                                              //  5th Place
-	{ "if99_hunterdark",    "Hunter, In Darkness" },                                                    // 	8th Place
-	{ "if99_beatdevil",     "Beat the Devil" },                                                         //  9th Place
-	{ "if99_jacks",         "Jacks or Better to Murder, Aces to Win" },                                 // 10th Place
-	{ "if99_oad",           "Only After Dark" },                                                        // 17th Place
-	{ "if99_lomalow",       "Lomalow" },                                                                // 21st Place
-	{ "if99_calliope",      "Calliope" },                                                               // 23rd Place
-	{ "if99_museduction",   "Music Education" },                                                        // 24th Place
-	{ "if99_wossname",      "Spodgeville Murphy and the Jewelled Eye of Wossname" },                    // 25th Place
-	{ "if99_thorfinn",      "Thorfinn's Realm" },                                                       // 28th Place
-	{ "if99_death",         "Death to my Enemies" },                                                    // 29th Place
-	{ "if99_chix",          "Chicks Dig Jerks" },                                                       // 31st Place
-	{ "if99_passbanana",    "Pass the Banana" },                                                        // 33th Place
-	{ "if99_outsided",      "Outsided" },                                                               // 34th Place
-	{ "if99_ludite",        "Lurk. Unite. Die. Invent. Think. Expire." },                               // 35th Place
-	{ "if99_guard",         "Guard Duty" },                                                             // 36th Place
+	{ "if99_winterwonder",  "Winter Wonderland" },                                                      //    1st Place
+	{ "if99_forachange",    "For a Change" },                                                           //    2nd Place
+	{ "if99_softfood",      "A Day for Soft Food" },                                                    // 	  4th Place
+	{ "if99_halo",          "Halothane" },                                                              //    5th Place
+	{ "if99_hunterdark",    "Hunter, In Darkness" },                                                    // 	  8th Place
+	{ "if99_beatdevil",     "Beat the Devil" },                                                         //    9th Place
+	{ "if99_jacks",         "Jacks or Better to Murder, Aces to Win" },                                 //   10th Place
+	{ "if99_oad",           "Only After Dark" },                                                        //   17th Place
+	{ "if99_lomalow",       "Lomalow" },                                                                //   21st Place
+	{ "if99_calliope",      "Calliope" },                                                               //   23rd Place
+	{ "if99_museduction",   "Music Education" },                                                        //   24th Place
+	{ "if99_wossname",      "Spodgeville Murphy and the Jewelled Eye of Wossname" },                    //   25th Place
+	{ "if99_thorfinn",      "Thorfinn's Realm" },                                                       //   28th Place
+	{ "if99_death",         "Death to my Enemies" },                                                    //   29th Place
+	{ "if99_chix",          "Chicks Dig Jerks" },                                                       //   31st Place
+	{ "if99_passbanana",    "Pass the Banana" },                                                        //   33th Place
+	{ "if99_outsided",      "Outsided" },                                                               //   34th Place
+	{ "if99_ludite",        "Lurk. Unite. Die. Invent. Think. Expire." },                               //   35th Place
+	{ "if99_guard",         "Guard Duty" },                                                             //   36th Place
 	{ "comp99",             "IF Competition '99 Unofficial FE Game" },
 
 	// The 2000 Annual Interactive Fiction Competition
-	{ "if00_metamorphoses", "Metamorphoses" },                                                          //  2nd Place
-	{ "if00_andrewplotkin", "Being Andrew Plotkin" },                                                   //  3rd Place
-	{ "if00_adverbum",      "Ad Verbum" },                                                              //  4th Place
-	{ "if00_transfer",      "Transfer" },                                                               //  5th Place
-	{ "if00_myangel",       "My Angel" },                                                               // 	6th Place
-	{ "if00_nevermore",     "Nevermore" },                                                              //  7th Place
-	{ "if00_masquerade",    "Masquerade" },                                                             //  8th Place
-	{ "if00_yagwad",        "YAGWAD: Yes, Another Game With a Dragon!" },                               //  9th Place
-	{ "if00_shade",         "Shade" },                                                                  // 10th Place
-	{ "if00_guess",         "Guess The Verb!" },                                                        // 11th Place
-	{ "if00_letters",       "Letters From Home" },                                                      // 12th Place
-	{ "if00_rameses",       "Rameses, A Tale of Heroes" },                                              // 13th Place
-	{ "if00_djinni",        "The Djinni Chronicles" },                                                  // 14th Place
-	{ "if00_bestman",       "The Best Man" },                                                           // 15th Place
-	{ "if00_atwctw",        "And the Waves Choke the Wind" },                                           // 16th Place
-	{ "if00_dinner",        "Dinner with Andre" },                                                      // 18th Place
-	{ "if00_bigmama",       "The Big Mama" },                                                           // 20th Place
-	{ "if00_punkpoints",    "Punk Points" },                                                            // 22th Place
-	{ "if00_enlisted",      "Enlisted" },                                                               // 23rd Place
-	{ "if00_rtzas",         "Return to Zork: Another Story" },                                          // 26rd Place
-	{ "if00_gotid",         "Got ID?" },                                                                // 29th Place
-	{ "if00_castleamnos",   "Castle Amnos" },                                                           // 30th Place
-	{ "if00_masque",        "Masque of the Last Faeries" },                                             // 31st Place
-	{ "if00_ppocket",       "The Pickpocket" },                                                         // 32nd Place
-	{ "if00_happyeverafter", "Happy Ever After" },                                                      // 34th Place
-	{ "if00_prodly",        "Prodly the Puffin" },                                                      // 35th Place
-	{ "if00_withdraw",      "Withdrawal Symptoms" },                                                    // 36th Place
-	{ "if00_123",           "1-2-3..." },                                                               // 42nd Place
-	{ "if00_kitty",         "Stupid Kittens" },                                                         // 44th Place
-	{ "if00_comp00tr",      "Comp00ter Game" },                                                         // 49th Place
-	{ "if00_asendent",      "Asendent" },                                                               // 51st Place
-	{ "if00_whatif",        "What-IF?" },                                                               // 52nd Place
+	{ "if00_metamorphoses", "Metamorphoses" },                                                          //    2nd Place
+	{ "if00_andrewplotkin", "Being Andrew Plotkin" },                                                   //    3rd Place
+	{ "if00_adverbum",      "Ad Verbum" },                                                              //    4th Place
+	{ "if00_transfer",      "Transfer" },                                                               //    5th Place
+	{ "if00_myangel",       "My Angel" },                                                               //    6th Place
+	{ "if00_nevermore",     "Nevermore" },                                                              //    7th Place
+	{ "if00_masquerade",    "Masquerade" },                                                             //    8th Place
+	{ "if00_yagwad",        "YAGWAD: Yes, Another Game With a Dragon!" },                               //    9th Place
+	{ "if00_shade",         "Shade" },                                                                  //   10th Place
+	{ "if00_guess",         "Guess The Verb!" },                                                        //   11th Place
+	{ "if00_letters",       "Letters From Home" },                                                      //   12th Place
+	{ "if00_rameses",       "Rameses, A Tale of Heroes" },                                              //   13th Place
+	{ "if00_djinni",        "The Djinni Chronicles" },                                                  //   14th Place
+	{ "if00_bestman",       "The Best Man" },                                                           //   15th Place
+	{ "if00_atwctw",        "And the Waves Choke the Wind" },                                           //   16th Place
+	{ "if00_dinner",        "Dinner with Andre" },                                                      //   18th Place
+	{ "if00_bigmama",       "The Big Mama" },                                                           //   20th Place
+	{ "if00_punkpoints",    "Punk Points" },                                                            //   22th Place
+	{ "if00_enlisted",      "Enlisted" },                                                               //   23rd Place
+	{ "if00_rtzas",         "Return to Zork: Another Story" },                                          //   26rd Place
+	{ "if00_gotid",         "Got ID?" },                                                                //   29th Place
+	{ "if00_castleamnos",   "Castle Amnos" },                                                           //   30th Place
+	{ "if00_masque",        "Masque of the Last Faeries" },                                             //   31st Place
+	{ "if00_ppocket",       "The Pickpocket" },                                                         //   32nd Place
+	{ "if00_happyeverafter", "Happy Ever After" },                                                      //   34th Place
+	{ "if00_prodly",        "Prodly the Puffin" },                                                      //   35th Place
+	{ "if00_withdraw",      "Withdrawal Symptoms" },                                                    //   36th Place
+	{ "if00_123",           "1-2-3..." },                                                               //   42nd Place
+	{ "if00_kitty",         "Stupid Kittens" },                                                         //   44th Place
+	{ "if00_comp00tr",      "Comp00ter Game" },                                                         //   49th Place
+	{ "if00_asendent",      "Asendent" },                                                               //   51st Place
+	{ "if00_whatif",        "What-IF?" },                                                               //   52nd Place
 	{ "comp00",             "IF Competition '00 Unofficial FE Game" },
 
 	// The 2001 Annual Interactive Fiction Competition
-	{ "if01_allroads",      "All Roads" },                                                              //  1st Place
-	{ "if01_moments",       "Moments Out of Time" },                                                    //  2nd Place
-	{ "if01_heroes",        "Heroes" },                                                                 //  3rd Place
-	{ "if01_cycles",        "Vicious Cycles" },                                                         //  6th Place
-	{ "if01_eas",           "Earth and Sky" },                                                          //  8th Place
-	{ "if01_eleven",        "Film at Eleven" },                                                         // 10th Place
-	{ "if01_prized",        "Prized Possession" },                                                      // 11th Place
-	{ "if01_finetuned",     "Fine-Tuned" },                                                             // 18th Place
-	{ "if01_evil",          "The Evil Sorcerer" },                                                      // 20th Place
-	{ "if01_gostak",        "The Gostak" },                                                             // 21nd Place
-	{ "if01_crusadezcode",  "Crusade" },                                                                // 23rd Place
-	{ "if01_urhere",        "You Are Here" },                                                           // 25th Place
-	{ "if01_elements",      "Elements" },                                                               // 26th Place
-	{ "if01_banebuilders",  "Bane of the Builders" },                                                   // 28th Place
-	{ "if01_colours",       "Colours" },                                                                // 32nd Place
-	{ "if01_siliconcastle", "Silicon Castles" },                                                        // 32nd Place
-	{ "if01_timeout",       "Timeout" },                                                                // 35th Place
-	{ "if01_schroed",       "Schroedinger's Cat" },                                                     // 39th Place
-	{ "if01_jump",          "Jump" },                                                                   // 41th Place
-	{ "if01_newcomer",      "The Newcomer" },                                                           // 49th Place
+	{ "if01_allroads",      "All Roads" },                                                              //    1st Place
+	{ "if01_moments",       "Moments Out of Time" },                                                    //    2nd Place
+	{ "if01_heroes",        "Heroes" },                                                                 //    3rd Place
+	{ "if01_cycles",        "Vicious Cycles" },                                                         //    6th Place
+	{ "if01_eas",           "Earth and Sky" },                                                          //    8th Place
+	{ "if01_eleven",        "Film at Eleven" },                                                         //   10th Place
+	{ "if01_prized",        "Prized Possession" },                                                      //   11th Place
+	{ "if01_finetuned",     "Fine-Tuned" },                                                             //   18th Place
+	{ "if01_evil",          "The Evil Sorcerer" },                                                      //   20th Place
+	{ "if01_gostak",        "The Gostak" },                                                             //   21nd Place
+	{ "if01_crusadezcode",  "Crusade" },                                                                //   23rd Place
+	{ "if01_urhere",        "You Are Here" },                                                           //   25th Place
+	{ "if01_elements",      "Elements" },                                                               //   26th Place
+	{ "if01_banebuilders",  "Bane of the Builders" },                                                   //   28th Place
+	{ "if01_colours",       "Colours" },                                                                //   32nd Place
+	{ "if01_siliconcastle", "Silicon Castles" },                                                        //   32nd Place
+	{ "if01_timeout",       "Timeout" },                                                                //   35th Place
+	{ "if01_schroed",       "Schroedinger's Cat" },                                                     //   39th Place
+	{ "if01_jump",          "Jump" },                                                                   //   41th Place
+	{ "if01_newcomer",      "The Newcomer" },                                                           //   49th Place
 	{ "comp01",             "IF Competition '01 Unofficial FE Game" },
 
 	// The 2002 Annual Interactive Fiction Competition
-	{ "if02_photograph",    "Photograph" },                                                             //  3rd Place
-	{ "if02_moonlittower",  "The Moonlit Tower" },                                                      //  4th Place
-	{ "if02_janitor",       "Janitor" },                                                                //  5th Place
-	{ "if02_tookiessong",   "TOOKiE'S SONG" },                                                          //  7th Place
-	{ "if02_ftaegea",       "Fort Aegea" },                                                             //  8th Place
-	{ "if02_thetemple",     "The Temple" },                                                             //  9th Place
-	{ "if02_jane",          "Jane" },                                                                   // 10th Place
-	{ "if02_mythtale",      "MythTale" },                                                               // 11th Place
-	{ "if02_idthief",       "Identity Thief" },                                                         // 13th Place
-	{ "if02_rentaspy",      "Rent-A-Spy" },                                                             // 15th Place
-	{ "if02_whenhelp",      "When Help Collides" },                                                     // 18th Place
-	{ "if02_constraints",   "Constraints" },                                                            // 19th Place
-	{ "if02_hell0",         "Hell: A Comedy of Errors" },                                               // 23th Place
-	{ "if02_bofh",          "The Bastard Operator from Hell" },                                         // 26th Place
-	{ "if02_samuelgregor",  "The Case of Samuel Gregor" },                                              // 27th Place
-	{ "if02_screen",        "Screen" },                                                                 // 29th Place
-	{ "if02_shamulet",      "Scary House Amulet" },                                                     // 31st Place
-	{ "if02_koan",          "KOAN" },                                                                   // 35th Place
-	{ "if02_ramandjona",    "Ramón and Jonathan" },                                                     // 36th Place
+	{ "if02_photograph",    "Photograph" },                                                             //    3rd Place
+	{ "if02_moonlittower",  "The Moonlit Tower" },                                                      //    4th Place
+	{ "if02_janitor",       "Janitor" },                                                                //    5th Place
+	{ "if02_tookiessong",   "TOOKiE'S SONG" },                                                          //    7th Place
+	{ "if02_ftaegea",       "Fort Aegea" },                                                             //    8th Place
+	{ "if02_thetemple",     "The Temple" },                                                             //    9th Place
+	{ "if02_jane",          "Jane" },                                                                   //   10th Place
+	{ "if02_mythtale",      "MythTale" },                                                               //   11th Place
+	{ "if02_idthief",       "Identity Thief" },                                                         //   13th Place
+	{ "if02_rentaspy",      "Rent-A-Spy" },                                                             //   15th Place
+	{ "if02_whenhelp",      "When Help Collides" },                                                     //   18th Place
+	{ "if02_constraints",   "Constraints" },                                                            //   19th Place
+	{ "if02_hell0",         "Hell: A Comedy of Errors" },                                               //   23th Place
+	{ "if02_bofh",          "The Bastard Operator from Hell" },                                         //   26th Place
+	{ "if02_samuelgregor",  "The Case of Samuel Gregor" },                                              //   27th Place
+	{ "if02_screen",        "Screen" },                                                                 //   29th Place
+	{ "if02_shamulet",      "Scary House Amulet" },                                                     //   31st Place
+	{ "if02_koan",          "KOAN" },                                                                   //   35th Place
+	{ "if02_ramandjona",    "Ramón and Jonathan" },                                                     //   36th Place
 	{ "comp02",             "IF Competition '02 Unofficial FE Game" },
 
 	// The 2003 Annual Interactive Fiction Competition
-	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },                                             //  1st Place
-	{ "if03_risorg",        "Risorgimento Represso" },                                                  //  2nd Place
-	{ "if03_gourmet",       "Gourmet" },                                                                //  5th Place
-	{ "if03_baluthar",      "Baluthar" },                                                               //  9th Place
-	{ "if03_atomicheart",   "The Atomic Heart" },                                                       // 10th Place
-	{ "if03_papermoon",     "A Paper Moon" },                                                           // 12th Place
-	{ "if03_caffeination",  "Caffeination" },                                                           // 14th Place
-	{ "if03_adoo",          "Adoo's Stinky Story" },                                                    // 17th Place
-	{ "if03_domicile",      "Domicile" },                                                               // 18th Place
-	{ "if03_internaldocs",  "Internal Documents" },                                                     // 19th Place
-	{ "if03_noroom",        "No Room" },                                                                // 22th Place
-	{ "if03_lardo",         "The Fat Lardo and the Rubber Ducky" },                                     // 29th Place
+	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },                                             //    1st Place
+	{ "if03_risorg",        "Risorgimento Represso" },                                                  //    2nd Place
+	{ "if03_gourmet",       "Gourmet" },                                                                //    5th Place
+	{ "if03_baluthar",      "Baluthar" },                                                               //    9th Place
+	{ "if03_atomicheart",   "The Atomic Heart" },                                                       //   10th Place
+	{ "if03_papermoon",     "A Paper Moon" },                                                           //   12th Place
+	{ "if03_caffeination",  "Caffeination" },                                                           //   14th Place
+	{ "if03_adoo",          "Adoo's Stinky Story" },                                                    //   17th Place
+	{ "if03_domicile",      "Domicile" },                                                               //   18th Place
+	{ "if03_internaldocs",  "Internal Documents" },                                                     //   19th Place
+	{ "if03_noroom",        "No Room" },                                                                //   22th Place
+	{ "if03_lardo",         "The Fat Lardo and the Rubber Ducky" },                                     //   29th Place
 	{ "comp03",             "IF Competition '03 Unofficial FE Game" },
 
 	// The 2004 Annual Interactive Fiction Competition
-	{ "if04_bluechairs",    "Blue Chairs" },                                                            //  2nd Place
-	{ "if04_devours",       "All Things Devours" },                                                     //  3rd Place
-	{ "if04_stingwasp",     "Sting of the Wasp" },                                                      //  4th Place
-	{ "if04_orion",         "The Orion Agenda" },                                                       //  6th Place
-	{ "if04_mingsheng",     "MingSheng" },                                                              //  7th Place
-	{ "if04_splashdown",    "Splashdown" },                                                             //  8th Place
-	{ "if04_gamlet",        "Gamlet" },                                                                 //  9th Place
-	{ "if04_greatxavio",    "The Great Xavio" },                                                        // 11th Place
-	{ "if04_geb",           "Goose, Egg, Badger" },                                                     // 12th Place
-	{ "if04_bigscoop",      "The Big Scoop" },                                                          // 13th Place
-	{ "if04_identity",      "Identity" },                                                               // 15th Place
-	{ "if04_murderaeroclub", "Murder at the Aero Club" },                                               // 16th Place
-	{ "if04_bellclap",      "Bellclap" },                                                               // 17th Place
-	{ "if04_typo",          "Typo!" },                                                                  // 19th Place
-	{ "if04_blink",         "Blink" },                                                                  // 21nd Place
-	{ "if04_playtorn",      "Chronicle Play Torn" },                                                    // 22nd Place
-	{ "if04_order00",       "Order" },                                                                  // 24th Place
-	{ "if04_bluesky",       "Blue Sky" },                                                               // 26th Place
-	{ "if04_stackoverflow", "Stack Overflow" },                                                         // 29th Place
+	{ "if04_bluechairs",    "Blue Chairs" },                                                            //    2nd Place
+	{ "if04_devours",       "All Things Devours" },                                                     //    3rd Place
+	{ "if04_stingwasp",     "Sting of the Wasp" },                                                      //    4th Place
+	{ "if04_orion",         "The Orion Agenda" },                                                       //    6th Place
+	{ "if04_mingsheng",     "MingSheng" },                                                              //    7th Place
+	{ "if04_splashdown",    "Splashdown" },                                                             //    8th Place
+	{ "if04_gamlet",        "Gamlet" },                                                                 //    9th Place
+	{ "if04_greatxavio",    "The Great Xavio" },                                                        //   11th Place
+	{ "if04_geb",           "Goose, Egg, Badger" },                                                     //   12th Place
+	{ "if04_bigscoop",      "The Big Scoop" },                                                          //   13th Place
+	{ "if04_identity",      "Identity" },                                                               //   15th Place
+	{ "if04_murderaeroclub", "Murder at the Aero Club" },                                               //   16th Place
+	{ "if04_bellclap",      "Bellclap" },                                                               //   17th Place
+	{ "if04_typo",          "Typo!" },                                                                  //   19th Place
+	{ "if04_blink",         "Blink" },                                                                  //   21nd Place
+	{ "if04_playtorn",      "Chronicle Play Torn" },                                                    //   22nd Place
+	{ "if04_order00",       "Order" },                                                                  //   24th Place
+	{ "if04_bluesky",       "Blue Sky" },                                                               //   26th Place
+	{ "if04_stackoverflow", "Stack Overflow" },                                                         //   29th Place
 	{ "comp04",             "IF Competition '04 Unofficial FE Game" },
 
 	// The 2005 Annual Interactive Fiction Competition
-	{ "if05_vespers",       "Vespers" },                                                                //  1st Place
-	{ "if05_beyond",        "Beyond" },                                                                 //  2nd Place
-	{ "if05_anewlife",      "A New Life" },                                                             //  3rd Place
-	{ "if05_toughbeans",    "Tough Beans" },                                                            //  5th Place
-	{ "if05_colourpink",    "The Colour Pink" },                                                        //  6th Place
-	{ "if05_unforgotten",   "Unforgotten" },                                                            //  7th Place
-	{ "if05_snatches",      "Snatches" },                                                               //  8th Place
-	{ "if05_vigilance",     "Internal Vigilance" },                                                     // 10th Place
-	{ "if05_historyrepeating", "History Repeating" },                                                   // 11th Place
-	{ "if05_soa",           "Son of a..." },                                                            // 15th Place
-	{ "if05_psycheslament", "Psyche's Lament" },                                                        // 21st Place
-	{ "if05_onoptimism",    "On Optimism" },                                                            // 24th Place
-	{ "if05_neonnirvana",   "Neon Nirvana" },                                                           // 27th Place
-	{ "if05_swordofmalice", "The Sword of Malice" },                                                    // 28th Place
-	{ "if05_drearylands",   "Dreary Lands" },                                                           // 29th Place
-	{ "if05_hellosword",    "Hello Sword: The Journey" },                                               // 30th Place
-	{ "if05_phantomcaverns", "Phantom: Caverns of the killer" },                                        // 31st Place
-	{ "if05_futuregame",    "FutureGame" },                                                             // 33rd Place
+	{ "if05_vespers",       "Vespers" },                                                                //    1st Place
+	{ "if05_beyond",        "Beyond" },                                                                 //    2nd Place
+	{ "if05_anewlife",      "A New Life" },                                                             //    3rd Place
+	{ "if05_toughbeans",    "Tough Beans" },                                                            //    5th Place
+	{ "if05_colourpink",    "The Colour Pink" },                                                        //    6th Place
+	{ "if05_unforgotten",   "Unforgotten" },                                                            //    7th Place
+	{ "if05_snatches",      "Snatches" },                                                               //    8th Place
+	{ "if05_vigilance",     "Internal Vigilance" },                                                     //   10th Place
+	{ "if05_historyrepeating", "History Repeating" },                                                   //   11th Place
+	{ "if05_soa",           "Son of a..." },                                                            //   15th Place
+	{ "if05_psycheslament", "Psyche's Lament" },                                                        //   21st Place
+	{ "if05_onoptimism",    "On Optimism" },                                                            //   24th Place
+	{ "if05_neonnirvana",   "Neon Nirvana" },                                                           //   27th Place
+	{ "if05_swordofmalice", "The Sword of Malice" },                                                    //   28th Place
+	{ "if05_drearylands",   "Dreary Lands" },                                                           //   29th Place
+	{ "if05_hellosword",    "Hello Sword: The Journey" },                                               //   30th Place
+	{ "if05_phantomcaverns", "Phantom: Caverns of the killer" },                                        //   31st Place
+	{ "if05_futuregame",    "FutureGame" },                                                             //   33rd Place
 	{ "comp05",             "IF Competition '05 Unofficial FE Game" },
 
 	// The 2006 Annual Interactive Fiction Competition
-	{ "if06_floatpointz",   "Floatpoint" },                                                             //  1st Place
-	{ "if06_primrose",      "The Primrose Path" },                                                      //  2nd Place
-	{ "if06_moonshaped",    "Moon-Shaped" },                                                            //  5th Place
-	{ "if06_wallpaper",     "Delightful Wallpaper" },                                                   //  6th Place
-	{ "if06_legion",        "Legion" },                                                                 //  7th Place
-	{ "if06_madamspider",   "Madam Spider's Web" },                                                     //  8th Place
-	{ "if06_mobius",        "Möbius" },                                                                 //  9th Place
-	{ "if06_gameproducer",  "Game Producer!" },                                                         // 11th Place
-	{ "if06_starcity",      "Star City" },                                                              // 13th Place
-	{ "if06_strangegeometry", "Strange Geometries" },                                                   // 14th Place
-	{ "if06_towerofelephant", "The Tower of the Elephant" },                                            // 15th Place
-	{ "if06_labyrinth",     "Labyrinth" },                                                              // 18th Place
-	{ "if06_cdst",          "Carmen Devine: Supernatural Troubleshooter" },                             // 20th Place
-	{ "if06_bibleretold1",  "The Bible Retold: The Bread and the Fishes" },                             // 21st Place
-	{ "if06_anothergoddamn", "Another Goddamn Escape the Locked Room Game" },                           // 22nd Place
-	{ "if06_fightorflight", "Fight or Flight" },                                                        // 23rd Place
-	{ "if06_manalive1",     "Manlive I - Enigma" },                                                    // 24th Place
-	{ "if06_hedge",         "Hedge" },                                                                  // 25th Place
-	{ "if06_polendina",     "Polendina" },                                                              // 27th Place
-	{ "if06_manalive2",     "Manlive II" },                                                            // 29th Place
-	{ "if06_pathfinder",    "Pathfinder" },                                                             // 30th Place
-	{ "if06_apocalypseclock", "The Apocalypse Clock" },                                                 // 31st Place
-	{ "if06_sisyphus",      "Sisyphus" },                                                               // 39th Place
+	{ "if06_floatpointz",   "Floatpoint" },                                                             //    1st Place
+	{ "if06_primrose",      "The Primrose Path" },                                                      //    2nd Place
+	{ "if06_moonshaped",    "Moon-Shaped" },                                                            //    5th Place
+	{ "if06_wallpaper",     "Delightful Wallpaper" },                                                   //    6th Place
+	{ "if06_legion",        "Legion" },                                                                 //    7th Place
+	{ "if06_madamspider",   "Madam Spider's Web" },                                                     //    8th Place
+	{ "if06_mobius",        "Möbius" },                                                                 //    9th Place
+	{ "if06_gameproducer",  "Game Producer!" },                                                         //   11th Place
+	{ "if06_starcity",      "Star City" },                                                              //   13th Place
+	{ "if06_strangegeometry", "Strange Geometries" },                                                   //   14th Place
+	{ "if06_towerofelephant", "The Tower of the Elephant" },                                            //   15th Place
+	{ "if06_labyrinth",     "Labyrinth" },                                                              //   18th Place
+	{ "if06_cdst",          "Carmen Devine: Supernatural Troubleshooter" },                             //   20th Place
+	{ "if06_bibleretold1",  "The Bible Retold: The Bread and the Fishes" },                             //   21st Place
+	{ "if06_anothergoddamn", "Another Goddamn Escape the Locked Room Game" },                           //   22nd Place
+	{ "if06_fightorflight", "Fight or Flight" },                                                        //   23rd Place
+	{ "if06_manalive1",     "Manlive I - Enigma" },                                                     //   24th Place
+	{ "if06_hedge",         "Hedge" },                                                                  //   25th Place
+	{ "if06_polendina",     "Polendina" },                                                              //   27th Place
+	{ "if06_manalive2",     "Manlive II" },                                                             //   29th Place
+	{ "if06_pathfinder",    "Pathfinder" },                                                             //   30th Place
+	{ "if06_apocalypseclock", "The Apocalypse Clock" },                                                 //   31st Place
+	{ "if06_sisyphus",      "Sisyphus" },                                                               //   39th Place
 	{ "comp06",             "IF Competition '06 Unofficial FE Game" },
 
 	// The 2007 Annual Interactive Fiction Competition
-	{ "if07_lostpig",       "Lost Pig" },                                                               //  1st Place
-	{ "if07_actofmurder",   "An Act of Murder" },                                                       //  2nd Place
-	{ "if07_bellwater",     "Lord Bellwater's Secret" },                                                //  3rd Place
-	{ "if07_acrossthestars", "Across the Stars" },                                                      //  4th Place
-	{ "if07_orevore",       "Orevore Courier" },                                                        //  8th Place
-	{ "if07_jackmills",     "My Name is Jack Mills" },                                                  //  9th Place
-	{ "if07_deadlinenchanter", "Deadline Enchanter" },                                                  // 12th Place
-	{ "if07_fff",           "Fox, Fowl and Feed" },                                                     // 16th Place
-	{ "if07_wish",          "Wish" },                                                                   // 17th Place
-	{ "if07_packrat",       "Packrat" },                                                                // 18th Place
-	{ "if07_beneathtransform", "BENEATH: A Transformation" },                                           // 21st Place
-	{ "if07_theimmortal",   "The Immortal" },                                                           // 22nd Place
-	{ "if07_eduardseminarist", "Eduard the Seminarist" },                                               // 23rd Place
-	{ "if07_pets",          "Press [Escape] to Save" },                                                 // 24th Place
+	{ "if07_lostpig",       "Lost Pig" },                                                               //    1st Place
+	{ "if07_actofmurder",   "An Act of Murder" },                                                       //    2nd Place
+	{ "if07_bellwater",     "Lord Bellwater's Secret" },                                                //    3rd Place
+	{ "if07_acrossthestars", "Across the Stars" },                                                      //    4th Place
+	{ "if07_orevore",       "Orevore Courier" },                                                        //    8th Place
+	{ "if07_jackmills",     "My Name is Jack Mills" },                                                  //    9th Place
+	{ "if07_deadlinenchanter", "Deadline Enchanter" },                                                  //   12th Place
+	{ "if07_fff",           "Fox, Fowl and Feed" },                                                     //   16th Place
+	{ "if07_wish",          "Wish" },                                                                   //   17th Place
+	{ "if07_packrat",       "Packrat" },                                                                //   18th Place
+	{ "if07_beneathtransform", "BENEATH: A Transformation" },                                           //   21st Place
+	{ "if07_theimmortal",   "The Immortal" },                                                           //   22nd Place
+	{ "if07_eduardseminarist", "Eduard the Seminarist" },                                               //   23rd Place
+	{ "if07_pets",          "Press [Escape] to Save" },                                                 //   24th Place
 	{ "comp07",             "IF Competition '07 Unofficial FE Game" },
 
 	// The 2008 Annual Interactive Fiction Competition
-	{ "if08_violet",        "Violet" },                                                                 //  1st Place
-	{ "if08_afflicted",     "Afflicted" },                                                              //  2nd Place
-	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //  3rd Place
-	{ "if08_snacktime",     "Snack Time!" },                                                            //  6th Place
-	{ "if08_openingnight",  "Opening Night" },                                                          //  7th Place
-	{ "if08_minionunderworld", "Escape from the Underworld" },                                          // 12th Place
-	{ "if08_bishoes",       "Buried in Shoes" },                                                        // 13th Place
-	{ "if08_grief",         "Grief" },                                                                  // 16th Place
-	{ "if08_trein",         "Trein" },                                                                  // 17th Place
-	{ "if08_redmoonz",      "Red Moon" },                                                               // 19th Place
-	{ "if08_draculascrypt", "Dracula's Underground Crypt" },                                            // 20th Place
-	{ "if08_anachronist",   "Anachronist" },                                                            // 22nd Place
-	{ "if08_whenmachinesattack", "wHen mAchines aTtack" },                                              // 23rd Place
-	{ "if08_thelucubrator", "The Lucubrator" },                                                         // 23rd Place
-	{ "if08_freedom",       "Freedom" },                                                                // 30th Place
-	{ "if08_riverside",     "Riverside" },                                                              // 31st Place
-	{ "if08_thelighthouse", "The Lighthouse" },                                                         // 34th Place
-	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },                              // 35th Place
+	{ "if08_violet",        "Violet" },                                                                 //    1st Place
+	{ "if08_afflicted",     "Afflicted" },                                                              //    2nd Place
+	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //    3rd Place
+	{ "if08_snacktime",     "Snack Time!" },                                                            //    6th Place
+	{ "if08_openingnight",  "Opening Night" },                                                          //    7th Place
+	{ "if08_minionunderworld", "Escape from the Underworld" },                                          //   12th Place
+	{ "if08_bishoes",       "Buried in Shoes" },                                                        //   13th Place
+	{ "if08_grief",         "Grief" },                                                                  //   16th Place
+	{ "if08_trein",         "Trein" },                                                                  //   17th Place
+	{ "if08_redmoonz",      "Red Moon" },                                                               //   19th Place
+	{ "if08_draculascrypt", "Dracula's Underground Crypt" },                                            //   20th Place
+	{ "if08_anachronist",   "Anachronist" },                                                            //   22nd Place
+	{ "if08_whenmachinesattack", "wHen mAchines aTtack" },                                              //   23rd Place
+	{ "if08_thelucubrator", "The Lucubrator" },                                                         //   23rd Place
+	{ "if08_freedom",       "Freedom" },                                                                //   30th Place
+	{ "if08_riverside",     "Riverside" },                                                              //   31st Place
+	{ "if08_thelighthouse", "The Lighthouse" },                                                         //   34th Place
+	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },                              //   35th Place
 	{ "comp08",             "IF Competition '08 Unofficial FE Game" },
 
 	// The 2009 Annual Interactive Fiction Competition
-	{ "if09_snowquest",     "Snowquest" },                                                              //  3rd Place
-	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },                                       //  4th Place
-	{ "if09_duelinsnow",    "The Duel in the Snow" },                                                   //  6th Place
-	{ "if09_interface",     "Interface" },                                                              //  8th Place
-	{ "if09_byzantineperspect", "Byzantine Perspective" },                                              //  9th Place
-	{ "if09_condemned",     "Condemned" },                                                              // 12th Place
-	{ "if09_eruption",      "Eruption" },                                                               // 13th Place
-	{ "if09_betatester",    "Beta Tester" },                                                            // 14th Place
-	{ "if09_spelunkersquest", "Spelunker's Quest" },                                                    // 16th Place
-	{ "if09_invisibleman",  "The Believable Adventures of an Invisible Man" },                          // 17th Place
-	{ "if09_thegrandquest", "The Grand Quest" },                                                        // 18th Place
-	{ "if09_starhunter",    "Star Hunter" },                                                            // 19th Place
-	{ "if09_gatoron",       "GATOR-ON, Friend to Wetlands!" },                                          // 20th Place
-	{ "if09_gleamingtheverb", "Gleaming the Verb" },                                                    // 21st Place
-	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },                                        // 22nd Place
+	{ "if09_snowquest",     "Snowquest" },                                                              //    3rd Place
+	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },                                       //    4th Place
+	{ "if09_duelinsnow",    "The Duel in the Snow" },                                                   //    6th Place
+	{ "if09_interface",     "Interface" },                                                              //    8th Place
+	{ "if09_byzantineperspect", "Byzantine Perspective" },                                              //    9th Place
+	{ "if09_condemned",     "Condemned" },                                                              //   12th Place
+	{ "if09_eruption",      "Eruption" },                                                               //   13th Place
+	{ "if09_betatester",    "Beta Tester" },                                                            //   14th Place
+	{ "if09_spelunkersquest", "Spelunker's Quest" },                                                    //   16th Place
+	{ "if09_invisibleman",  "The Believable Adventures of an Invisible Man" },                          //   17th Place
+	{ "if09_thegrandquest", "The Grand Quest" },                                                        //   18th Place
+	{ "if09_starhunter",    "Star Hunter" },                                                            //   19th Place
+	{ "if09_gatoron",       "GATOR-ON, Friend to Wetlands!" },                                          //   20th Place
+	{ "if09_gleamingtheverb", "Gleaming the Verb" },                                                    //   21st Place
+	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },                                        //   22nd Place
 	{ "comp09",             "IF Competition '09 Unofficial FE Game" },
 
 	// The 2010 Annual Interactive Fiction Competition
-	{ "if10_deathoffthecuffz", "Death Off The Cuff" },                                                  //  5th Place
-	{ "if10_mite",          "Mite" },                                                                   //  6th Place
-	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },           //  7th Place
-	{ "if10_hummingbird",   "Flight of the Hummingbird" },                                              //  8th Place
-	{ "if10_warblersnest",  "The Warbler's Nest" },                                                     //  9th Place
-	{ "if10_asgard",        "The 12:54 to Asgard" },                                                    // 17th Place
-	{ "if10_penandpaint",   "Pen and Paint" },                                                          // 17th Place
-	{ "if10_bibleretold2",  "The Bible Retold: The Lost Sheep" },                                       // 19th Place
-	{ "if10_heated",        "Heated" },                                                                 // 20th Place
-	{ "if10_ninjasfate",    "Ninja's Fate" },                                                           // 21th Place
-	{ "if10_eastgrovehills", "East Grove Hills" },                                                      // 23rd Place
-	{ "if10_quietevening",  "A Quiet Evening at Home" },                                                // 25th Place
-	{ "if10_chronicler0",   "The Chronicler" },                                                         // 26th Place
+	{ "if10_deathoffthecuffz", "Death Off The Cuff" },                                                  //    5th Place
+	{ "if10_mite",          "Mite" },                                                                   //    6th Place
+	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },           //    7th Place
+	{ "if10_hummingbird",   "Flight of the Hummingbird" },                                              //    8th Place
+	{ "if10_warblersnest",  "The Warbler's Nest" },                                                     //    9th Place
+	{ "if10_asgard",        "The 12:54 to Asgard" },                                                    //   17th Place
+	{ "if10_penandpaint",   "Pen and Paint" },                                                          //   17th Place
+	{ "if10_bibleretold2",  "The Bible Retold: The Lost Sheep" },                                       //   19th Place
+	{ "if10_heated",        "Heated" },                                                                 //   20th Place
+	{ "if10_ninjasfate",    "Ninja's Fate" },                                                           //   21th Place
+	{ "if10_eastgrovehills", "East Grove Hills" },                                                      //   23rd Place
+	{ "if10_quietevening",  "A Quiet Evening at Home" },                                                //   25th Place
+	{ "if10_chronicler0",   "The Chronicler" },                                                         //   26th Place
 	{ "comp10",             "IF Competition '10 Unofficial FE Game" },
 
 	// The 2011 Annual Interactive Fiction Competition
-	{ "if11_santaland",     "Escape from Santaland" },                                                  //  4th Place
-	{ "if11_canamicah",     "Cana According To Micah" },                                                //  9th Place
-	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             // 10th Place
-	{ "if11_tenthplague",   "Tenth Plague" },                                                           // 12th Place
-	{ "if11_coldiron",      "Cold Iron" },                                                              // 15th Place
-	{ "if11_andromedaawakeningz", "Andromeda Awakening" },                                              // 17th Place
-	{ "if11_keepsake",      "Keepsake" },                                                               // 18th Place
-	{ "if11_theguardian",   "The Guardian" },                                                           // 21st Place
-	{ "if11_lastdaysummer", "Last Day of Summer" },                                                     // 25th Place
-	{ "if11_shipofwhimsy",  "Ship of Whimsy" },                                                         // 32th Place
-	{ "if11_pfrank",        "Professor Frank" },                                                        // 34th Place
-	{ "if11_vestiges",      "Vestiges" },                                                               // 38th Place
+	{ "if11_santaland",     "Escape from Santaland" },                                                  //    4th Place
+	{ "if11_canamicah",     "Cana According To Micah" },                                                //    9th Place
+	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             //   10th Place
+	{ "if11_tenthplague",   "Tenth Plague" },                                                           //   12th Place
+	{ "if11_coldiron",      "Cold Iron" },                                                              //   15th Place
+	{ "if11_andromedaawakeningz", "Andromeda Awakening" },                                              //   17th Place
+	{ "if11_keepsake",      "Keepsake" },                                                               //   18th Place
+	{ "if11_theguardian",   "The Guardian" },                                                           //   21st Place
+	{ "if11_lastdaysummer", "Last Day of Summer" },                                                     //   25th Place
+	{ "if11_shipofwhimsy",  "Ship of Whimsy" },                                                         //   32th Place
+	{ "if11_pfrank",        "Professor Frank" },                                                        //   34th Place
+	{ "if11_vestiges",      "Vestiges" },                                                               //   38th Place
 	{ "comp11",             "IF Competition '11 Unofficial FE Game" },
 
 	// The 2012 Annual Interactive Fiction Competition
-	{ "if12_eurydice",      "Eurydice" },                                                               //  2nd Place
-	{ "if12_guildedyouth",  "Guilded Youth" },                                                          //  3rd Place
-	{ "if12_changes",       "Changes" },                                                                //  4th Place
-	{ "if12_sundayafternoon", "Sunday Afternoon" },                                                     //  5th Place
-	{ "if12_spiral",        "Spiral" },                                                                 //  6th Place
-	{ "if12_bodybargain",   "Body Bargain" },                                                           //  8th Place
-	{ "if12_fishbowl",      "Fish Bowl" },                                                              // 12th Place
-	{ "if12_summerland",    "Escape from Summerland" },                                                 // 13th Place
-	{ "if12_lunarbase1",    "Lunar Base 1" },                                                           // 14th Place
-	{ "if12_murphyslaw",    "Murphy's Law" },                                                           // 15th Place
-	{ "if12_testisready",   "The Test is Now READY" },                                                  // 15th Place
-	{ "if12_castleadventure", "Castle Adventure!" },                                                    // 23rd Place
+	{ "if12_eurydice",      "Eurydice" },                                                               //    2nd Place
+	{ "if12_guildedyouth",  "Guilded Youth" },                                                          //    3rd Place
+	{ "if12_changes",       "Changes" },                                                                //    4th Place
+	{ "if12_sundayafternoon", "Sunday Afternoon" },                                                     //    5th Place
+	{ "if12_spiral",        "Spiral" },                                                                 //    6th Place
+	{ "if12_bodybargain",   "Body Bargain" },                                                           //    8th Place
+	{ "if12_fishbowl",      "Fish Bowl" },                                                              //   12th Place
+	{ "if12_summerland",    "Escape from Summerland" },                                                 //   13th Place
+	{ "if12_lunarbase1",    "Lunar Base 1" },                                                           //   14th Place
+	{ "if12_murphyslaw",    "Murphy's Law" },                                                           //   15th Place
+	{ "if12_testisready",   "The Test is Now READY" },                                                  //   15th Place
+	{ "if12_castleadventure", "Castle Adventure!" },                                                    //   23rd Place
 	{ "comp12",             "IF Competition '12 Unofficial FE Game" },
 
 	// The 2013 Annual Interactive Fiction Competition
-	{ "if13_threediopolis", "Threediopolis" },                                                          //  7th Place
-	{ "if13_paperbagprincess", "The Paper Bag Princess" },                                              // 17th Place
-	{ "if13_furtherz",      "Further" },                                                                // 21st Place
-	{ "if13_9lives",        "9Lives" },                                                                 // 30th Place
+	{ "if13_threediopolis", "Threediopolis" },                                                          //    7th Place
+	{ "if13_paperbagprincess", "The Paper Bag Princess" },                                              //   17th Place
+	{ "if13_furtherz",      "Further" },                                                                //   21st Place
+	{ "if13_9lives",        "9Lives" },                                                                 //   30th Place
 
 	// The 2014 Annual Interactive Fiction Competition
-	{ "if14_15minutes",     "Fifteen Minutes" },                                                        //  6th Place
-	{ "if14_teaceremony",   "Tea Ceremony" },                                                           // 10th Place
-	{ "if14_enigmasd",      "Enigma (by Simon Deimel)" },                                                // 12th Place
-	{ "if14_blacklily",     "The Black Lily" },                                                         // 16th Place
-	{ "if14_tower",         "Tower" },                                                                  // 21th Place
-	{ "if14_excelsior",     "Excelsior" },                                                              // 35th Place
+	{ "if14_15minutes",     "Fifteen Minutes" },                                                        //    6th Place
+	{ "if14_teaceremony",   "Tea Ceremony" },                                                           //   10th Place
+	{ "if14_enigmasd",      "Enigma (by Simon Deimel)" },                                               //   12th Place
+	{ "if14_blacklily",     "The Black Lily" },                                                         //   16th Place
+	{ "if14_tower",         "Tower" },                                                                  //   21th Place
+	{ "if14_excelsior",     "Excelsior" },                                                              //   35th Place
 
 	// The 2015 Annual Interactive Fiction Competition
-	{ "if15_finalexam",     "Final Exam" },                                                             //  9th Place
-	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire I: The Awakening" },                         // 12th Place
-	{ "if15_lifeonmars",    "Life on Mars?" },                                                          // 13th Place
-	{ "if15_gbvb",          "Grandma Bethlinda's Variety Box" },                                        // 21st Place
-	{ "if15_5minutes",      "5 Minutes To Burn Something!" },                                           // 32nd Place
-	{ "if15_kingcrown",     "The King and the Crown" },                                                 // 42nd Place
-	{ "if15_pitcondemned",  "Pit of the Condemned" },                                                   // 45th Place
+	{ "if15_finalexam",     "Final Exam" },                                                             //    9th Place
+	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire I: The Awakening" },                         //   12th Place
+	{ "if15_lifeonmars",    "Life on Mars?" },                                                          //   13th Place
+	{ "if15_gbvb",          "Grandma Bethlinda's Variety Box" },                                        //   21st Place
+	{ "if15_5minutes",      "5 Minutes To Burn Something!" },                                           //   32nd Place
+	{ "if15_kingcrown",     "The King and the Crown" },                                                 //   42nd Place
+	{ "if15_pitcondemned",  "Pit of the Condemned" },                                                   //   45th Place
 
 	// The 2016 Annual Interactive Fiction Competition
-	{ "if16_insidefacility", "Inside the Facility" },                                                   // 13th Place
-	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      // 17th Place
-	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            // 31th Place
-	{ "if16_slickercity",   "Slicker City" },                                                           // 39th Place
-	{ "if16_youarestanding", "You Are Standing in a Cave..." },                                         // 48th Place
-	{ "if16_toiletworld",   "Toiletworld" },                                                            // 58th Place
+	{ "if16_insidefacility", "Inside the Facility" },                                                   //   13th Place
+	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      //   17th Place
+	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            //   31th Place
+	{ "if16_slickercity",   "Slicker City" },                                                           //   39th Place
+	{ "if16_youarestanding", "You Are Standing in a Cave..." },                                         //   48th Place
+	{ "if16_toiletworld",   "Toiletworld" },                                                            //   58th Place
 
 	// The 2017 Annual Interactive Fiction Competition
-	{ "if17_tuuli",         "Tuuli" },                                                                  // 16th Place
-	{ "if17_thecubecavern", "The Cube in the Cavern" },                                                 // 39th Place
-	{ "if17_squirrel",      "Goodbye Cruel Squirrel" },                                                 // 42th Place
-	{ "if17_grue",          "Grue" },                                                                   // 54th Place
-	{ "if17_richardmines",  "The Richard Mines" },                                                      // 55th Place
-	{ "if17_onewayout",     "One Way Out" },                                                            // 56th Place
-	{ "if17_inevitamp",     "Inevitable (by Matthew Pfeiffer)" },                                        // 60th Place
-	{ "if17_walkinthepark", "A Walk in the Park" },                                                     // 68th Place
+	{ "if17_tuuli",         "Tuuli" },                                                                  //   16th Place
+	{ "if17_thecubecavern", "The Cube in the Cavern" },                                                 //   39th Place
+	{ "if17_squirrel",      "Goodbye Cruel Squirrel" },                                                 //   42th Place
+	{ "if17_grue",          "Grue" },                                                                   //   54th Place
+	{ "if17_richardmines",  "The Richard Mines" },                                                      //   55th Place
+	{ "if17_onewayout",     "One Way Out" },                                                            //   56th Place
+	{ "if17_inevitamp",     "Inevitable (by Matthew Pfeiffer)" },                                       //   60th Place
+	{ "if17_walkinthepark", "A Walk in the Park" },                                                     //   68th Place
 
 	// The 2018 Annual Interactive Fiction Competition
-	{ "if18_tethered",      "Tethered" },                                                               // 23th Place
+	{ "if18_tethered",      "Tethered" },                                                               //   23th Place
 
 	// The 2019 Annual Interactive Fiction Competition
-	{ "if19_out",           "Out" },                                                                    // 25th Place
-	{ "if19_oldjim",        "Old Jim's Convenience Store" },                                            // 34th Place
-	{ "if19_extromnivore",  "Extreme Omnivore: Text Edition" },                                         // 74th Place
+	{ "if19_out",           "Out" },                                                                    //   25th Place
+	{ "if19_oldjim",        "Old Jim's Convenience Store" },                                            //   34th Place
+	{ "if19_extromnivore",  "Extreme Omnivore: Text Edition" },                                         //   74th Place
 
 	// The 2020 Annual Interactive Fiction Competition
-	{ "if20_impossiblebottle", "The Impossible Bottle" },                                               //  1st Place
-	{ "if20_entangled",     "Entangled" },                                                              // 26th Place
-	{ "if20_drego",         "Dr Ego and the Egg of ManToomba" },                                        // 44th Place
-	{ "if20_sheepcrossing", "Sheep Crossing" },                                                         // 88th Place
+	{ "if20_impossiblebottle", "The Impossible Bottle" },                                               //    1st Place
+	{ "if20_entangled",     "Entangled" },                                                              //   26th Place
+	{ "if20_drego",         "Dr Ego and the Egg of ManToomba" },                                        //   44th Place
+	{ "if20_sheepcrossing", "Sheep Crossing" },                                                         //   88th Place
 
 	// The 2021 Annual Interactive Fiction Competition
-	{ "if21_darkun",        "D'Arkun" },                                                                // 21st Place
-	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },                               // 41st Place
-	{ "if21_fourbyfourian", "Fourbyfourian Quarryin'" },                                                // 45th Place
-	{ "if21_bravebear",     "Brave Bear" },                                                             // 46th Place
+	{ "if21_darkun",        "D'Arkun" },                                                                //   21st Place
+	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },                               //   41st Place
+	{ "if21_fourbyfourian", "Fourbyfourian Quarryin'" },                                                //   45th Place
+	{ "if21_bravebear",     "Brave Bear" },                                                             //   46th Place
 
 	// The 2022 Annual Interactive Fiction Competition
-	{ "if22_intosun",       "Into the Sun" },                                                           // 25th Place
-	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           // 41st Place
-	{ "if22_campusinvaders", "Campus Invaders" },                                                       // 45th Place
-	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                // 52nd Place
+	{ "if22_intosun",       "Into the Sun" },                                                           //   25th Place
+	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           //   41st Place
+	{ "if22_campusinvaders", "Campus Invaders" },                                                       //   45th Place
+	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                //   52nd Place
 
 	// Marnie Parker's "Spring 1999 IF Art Show"
 	{ "ifas_tpold",         "The Possibility of Life's Destruction" },
@@ -1576,48 +1576,48 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "wherethere",         "Where There's a Will" },
 
 	// "IF Arcade" Competition
-	{ "ifa_rox",            "Rox" },                                                                    // Episode 1
-	{ "ifa_centipede",      "Centipede" },                                                              // Episode 2
-	{ "ifa_donkeykong",     "Donkey Kong" },                                                            // Episode 4
-	{ "ifa_driver",         "Night Driver" },                                                           // Episode 5
-	{ "ifa_galaxian",       "Galaxian" },                                                               // Episode 6
-	{ "ifa_invaders",       "Invaders" },                                                               // Episode 7
-	{ "ifa_joust",          "Joust" },                                                                  // Episode 9
-	{ "ifa_loderunner",     "Lode Runner" },                                                            // Episode 10
-	{ "ifa_marble",         "Marble Madness" },                                                         // Episode 11
-	{ "ifa_pacman",         "Pac-Man" },                                                                // Episode 12
+	{ "ifa_rox",            "Rox" },                                                                    //   Episode  1
+	{ "ifa_centipede",      "Centipede" },                                                              //   Episode  2
+	{ "ifa_donkeykong",     "Donkey Kong" },                                                            //   Episode  4
+	{ "ifa_driver",         "Night Driver" },                                                           //   Episode  5
+	{ "ifa_galaxian",       "Galaxian" },                                                               //   Episode  6
+	{ "ifa_invaders",       "Invaders" },                                                               //   Episode  7
+	{ "ifa_joust",          "Joust" },                                                                  //   Episode  9
+	{ "ifa_loderunner",     "Lode Runner" },                                                            //   Episode 10
+	{ "ifa_marble",         "Marble Madness" },                                                         //   Episode 11
+	{ "ifa_pacman",         "Pac-Man" },                                                                //   Episode 12
 
 	// Casual Gameplay Design Competition #7
-	{ "cgdc7_hoosegow",     "Hoosegow" },                                                               //  1st Place
-	{ "cgdc7_fragileshells", "Fragile Shells" },                                                        //  2nd Place
-	{ "cgdc7_dual",         "Dual Transform" },                                                         //  3rd Place
-	{ "cgdc7_partyfoul",    "Party Foul" },                                                             //  4th Place
-	{ "cgdc7_roofed",       "Roofed" },                                                                 //  5th Place
-	{ "cgdc7_ka",           "Ka" },                                                                     //  6th Place
-	{ "cgdc7_monday",       "Monday, 16:30" },                                                          //  7th Place
-	{ "cgdc7_theusher",     "The Usher" },                                                              //  8th Place
-	{ "cgdc7_intoopensky",  "Into the Open Sky" },                                                      //  9th Place
-	{ "cgdc7_luriddreams",  "Lurid Dreaming" },                                                         // 10th Place
-	{ "cgdc7_containment",  "Containment" },                                                            // 11th Place
-	{ "cgdc7_thecube",      "The Cube" },                                                               // 12th Place
-	{ "cgdc7_blueprint",    "The Blueprint" },                                                          // 13th Place
-	{ "cgdc7_criticalbreach", "Critical Breach" },                                                      // 14th Place
-	{ "cgdc7_themanorwhitby", "The Manor at Whitby" },                                                  // 15th Place
-	{ "cgdc7_heavenly",     "Heavenly" },                                                               // 16th Place
-	{ "cgdc7_iexpectyoutodie", "I Expect You to Die" },                                                 // 17th Place
-	{ "cgdc7_virtuality",   "Virtuality" },                                                             // 18th Place
-	{ "cgdc7_dramaqueen",   "Drama Queen 7 - Mother Knows Best" },                                      // 19th Place
-	{ "cgdc7_terminal",     "Terminal" },                                                               // 20th Place
-	{ "cgdc7_couchofdoom",  "Couch of Doom" },                                                          // 21st Place
-	{ "cgdc7_basictraining", "Basic Train-ing" },                                                       // 22nd Place
-	{ "cgdc7_paintzcode",   "Paint" },                                                                  // 23rd Place
-	{ "cgdc7_goldenshadow", "Golden Shadow" },                                                          // 24th Place
-	{ "cgdc7_escapeinthedark", "Escape in the Dark" },                                                  // 25th Place
-	{ "cgdc7_escapefiction", "Escape Into Fiction" },                                                   // 26th Place
-	{ "cgdc7_zeroeth",      "A Zeroeth Dimension" },                                                    // 27th Place
-	{ "cgdc7_openfield",    "An Open Field" },                                                          // 28th Place
-	{ "cgdc7_survive",      "Survive" },                                                                // 29th Place
-	{ "cgdc7_zegro",        "Zegrothenus" },                                                            // 30th Place
+	{ "cgdc7_hoosegow",     "Hoosegow" },                                                               //    1st Place
+	{ "cgdc7_fragileshells", "Fragile Shells" },                                                        //    2nd Place
+	{ "cgdc7_dual",         "Dual Transform" },                                                         //    3rd Place
+	{ "cgdc7_partyfoul",    "Party Foul" },                                                             //    4th Place
+	{ "cgdc7_roofed",       "Roofed" },                                                                 //    5th Place
+	{ "cgdc7_ka",           "Ka" },                                                                     //    6th Place
+	{ "cgdc7_monday",       "Monday, 16:30" },                                                          //    7th Place
+	{ "cgdc7_theusher",     "The Usher" },                                                              //    8th Place
+	{ "cgdc7_intoopensky",  "Into the Open Sky" },                                                      //    9th Place
+	{ "cgdc7_luriddreams",  "Lurid Dreaming" },                                                         //   10th Place
+	{ "cgdc7_containment",  "Containment" },                                                            //   11th Place
+	{ "cgdc7_thecube",      "The Cube" },                                                               //   12th Place
+	{ "cgdc7_blueprint",    "The Blueprint" },                                                          //   13th Place
+	{ "cgdc7_criticalbreach", "Critical Breach" },                                                      //   14th Place
+	{ "cgdc7_themanorwhitby", "The Manor at Whitby" },                                                  //   15th Place
+	{ "cgdc7_heavenly",     "Heavenly" },                                                               //   16th Place
+	{ "cgdc7_iexpectyoutodie", "I Expect You to Die" },                                                 //   17th Place
+	{ "cgdc7_virtuality",   "Virtuality" },                                                             //   18th Place
+	{ "cgdc7_dramaqueen",   "Drama Queen 7 - Mother Knows Best" },                                      //   19th Place
+	{ "cgdc7_terminal",     "Terminal" },                                                               //   20th Place
+	{ "cgdc7_couchofdoom",  "Couch of Doom" },                                                          //   21st Place
+	{ "cgdc7_basictraining", "Basic Train-ing" },                                                       //   22nd Place
+	{ "cgdc7_paintzcode",   "Paint" },                                                                  //   23rd Place
+	{ "cgdc7_goldenshadow", "Golden Shadow" },                                                          //   24th Place
+	{ "cgdc7_escapeinthedark", "Escape in the Dark" },                                                  //   25th Place
+	{ "cgdc7_escapefiction", "Escape Into Fiction" },                                                   //   26th Place
+	{ "cgdc7_zeroeth",      "A Zeroeth Dimension" },                                                    //   27th Place
+	{ "cgdc7_openfield",    "An Open Field" },                                                          //   28th Place
+	{ "cgdc7_survive",      "Survive" },                                                                //   29th Place
+	{ "cgdc7_zegro",        "Zegrothenus" },                                                            //   30th Place
 
 	// Adam Cadre's "Chicken Competition"
 	{ "cc_chknmt",          "Are you Too Chicken to Make a Deal?" },
@@ -1687,12 +1687,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "stc22_wry",          "Wry" },
 
 	// Dave Bernazzani's "Commodore 32 Z-Machine Competition"
-	{ "c32_endgame",        "Endgame" },                                                                //  1st Place
-	{ "c32_turningpoint",   "Turning Point" },                                                          //  2nd Place
-	{ "c32_amusementpark",  "Amusement Park" },                                                         //  3rd Place
-	{ "c32_downtowntrain",  "Downtown Train" },                                                         //  4th Place
-	{ "c32_zombiescl",      "Zombies!" },                                                               //  5th Place
-	{ "c32_paparazzi",      "Paparazzi" },                                                              //  6th Place
+	{ "c32_endgame",        "Endgame" },                                                                //    1st Place
+	{ "c32_turningpoint",   "Turning Point" },                                                          //    2nd Place
+	{ "c32_amusementpark",  "Amusement Park" },                                                         //    3rd Place
+	{ "c32_downtowntrain",  "Downtown Train" },                                                         //    4th Place
+	{ "c32_zombiescl",      "Zombies!" },                                                               //    5th Place
+	{ "c32_paparazzi",      "Paparazzi" },                                                              //    6th Place
 	{ "c32",                "C32 Contest 2004" },
 
 	// Sam Kabo Ashwell's "Cover Stories Game-Jam"
@@ -1725,30 +1725,30 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "dr_lastlaugh",       "The Last Laugh" },
 
 	// Duncan Bowsman's "2011 Ectocomp"
-	{ "ec11_bloodless",     "Bloodless on the Orient Express" },                                        //  1st Place
-	{ "ec11_blue",          "Blue" },                                                                   //  3rd Place
-	{ "ec11_dashslapney",   "Dash Slapney, Patrol Leader" },                                            //  5th Place
+	{ "ec11_bloodless",     "Bloodless on the Orient Express" },                                        //    1st Place
+	{ "ec11_blue",          "Blue" },                                                                   //    3rd Place
+	{ "ec11_dashslapney",   "Dash Slapney, Patrol Leader" },                                            //    5th Place
 
 	// Duncan Bowsman's "2012 Ectocomp"
-	{ "ec12_ghosteringtonnightz", "Ghosterington Night" },                                              //  1st Place
-	{ "ec12_littlegirls",   "What Are Little Girls Made Of" },                                          //  2nd Place
-	{ "ec12_parasites",     "Parasites" },                                                              //  4th Place
+	{ "ec12_ghosteringtonnightz", "Ghosterington Night" },                                              //    1st Place
+	{ "ec12_littlegirls",   "What Are Little Girls Made Of" },                                          //    2nd Place
+	{ "ec12_parasites",     "Parasites" },                                                              //    4th Place
 
 	// Duncan Bowsman's "2013 Ectocomp"
-	{ "ec13_horriblepyra",  "The Horrible Pyramid" },                                                   //  1st Place
-	{ "ec13_headlesshapless", "Headless, Hapless" },                                                    //  3rd Place
-	{ "ec13_faithfulcomp",  "Faithful Companion" },                                                     //  4th Place
-	{ "ec13_deadpavane",    "Dead Pavane for a Princess" },                                             //  5th Place
-	{ "ec13_icehouse",      "Ice House of Horrors" },                                                   //  6th Place
-	{ "ec13_blackness",     "Blackness" },                                                              //  9th Place
-	{ "ec13_argument",      "The Argument-Winner's Ghost" },                                            // 11th Place
-	{ "ec13_fishdreams",    "Fish Dreams" },                                                            // 13th Place
-	{ "ec13_cursedeagle",   "The Tale of the Cursed Eagle" },                                           // 14th Place
-	{ "ec13_cenriccurse",   "The Cenric Family Curse" },                                                // 15th Place
-	{ "ec13_nessaslasher",  "The Nessa Springs Slasher" },                                              // 18th Place
-	{ "ec13_cratercreek",   "Crater Creek" },                                                           // 19th Place
-	{ "ec13_hillofsouls",   "Hill of Souls" },                                                          // 22nd Place
-	{ "ec13_wisp",          "Wisp" },                                                                   // 23th Place
+	{ "ec13_horriblepyra",  "The Horrible Pyramid" },                                                   //    1st Place
+	{ "ec13_headlesshapless", "Headless, Hapless" },                                                    //    3rd Place
+	{ "ec13_faithfulcomp",  "Faithful Companion" },                                                     //    4th Place
+	{ "ec13_deadpavane",    "Dead Pavane for a Princess" },                                             //    5th Place
+	{ "ec13_icehouse",      "Ice House of Horrors" },                                                   //    6th Place
+	{ "ec13_blackness",     "Blackness" },                                                              //    9th Place
+	{ "ec13_argument",      "The Argument-Winner's Ghost" },                                            //   11th Place
+	{ "ec13_fishdreams",    "Fish Dreams" },                                                            //   13th Place
+	{ "ec13_cursedeagle",   "The Tale of the Cursed Eagle" },                                           //   14th Place
+	{ "ec13_cenriccurse",   "The Cenric Family Curse" },                                                //   15th Place
+	{ "ec13_nessaslasher",  "The Nessa Springs Slasher" },                                              //   18th Place
+	{ "ec13_cratercreek",   "Crater Creek" },                                                           //   19th Place
+	{ "ec13_hillofsouls",   "Hill of Souls" },                                                          //   22nd Place
+	{ "ec13_wisp",          "Wisp" },                                                                   //   23th Place
 
 	// Duncan Bowsman's "2014 Ectocomp"
 	{ "ec14_weddingday",    "Wedding Day" },
@@ -1758,20 +1758,20 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec14_monstermaker",  "Monster Maker" },
 
 	// Duncan Bowsman's "2015 Ectocomp - La Petite Mort"
-	{ "ec15_openthatvein",  "Open That Vein" },                                                         //  1st Place
-	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },                                          //  2nd Place
-	{ "ec15_heezypark",     "Heezy Park" },                                                             //  3rd Place
-	{ "ec15_storyshinoboo", "The Story of the Shinoboo" },                                              //  4th Place
-	{ "ec15_ghostship",     "The Ghost Ship" },                                                         //  7th Place
-	{ "ec15_physiognomist", "The Physiognomist's Office" },                                             //  8th Place
+	{ "ec15_openthatvein",  "Open That Vein" },                                                         //    1st Place
+	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },                                          //    2nd Place
+	{ "ec15_heezypark",     "Heezy Park" },                                                             //    3rd Place
+	{ "ec15_storyshinoboo", "The Story of the Shinoboo" },                                              //    4th Place
+	{ "ec15_ghostship",     "The Ghost Ship" },                                                         //    7th Place
+	{ "ec15_physiognomist", "The Physiognomist's Office" },                                             //    8th Place
 
 	// Duncan Bowsman's "2015 Ectocomp - Le Grand Guignol"
-	{ "ec15_ninelives",     "Nine Lives" },                                                             //  3rd Place
+	{ "ec15_ninelives",     "Nine Lives" },                                                             //    3rd Place
 
 	// Duncan Bowsman's "2016 Ectocomp - La Petite Mort"
-	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //  4th Place
-	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //  6th Place
-	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               // 10th Place
+	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //    4th Place
+	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //    6th Place
+	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               //   10th Place
 
 	// David Fisher's "EnvComp"
 	{ "ec_laseine",         "La Seine" },
@@ -1903,8 +1903,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lo01_doghouse",      "The Dog/House" },
 
 	// Mark Silcox's "2005 LOTECH Competition"
-	{ "lo05_stormy",        "A Dark and Stormy Entry" },                                                //  2nd Place
-	{ "lo05_knapsack",      "The Knapsack Problem" },                                                   //  6th Place
+	{ "lo05_stormy",        "A Dark and Stormy Entry" },                                                //    2nd Place
+	{ "lo05_knapsack",      "The Knapsack Problem" },                                                   //    6th Place
 
 	// Admiral Jota's "Manos Mini-Competition"
 	{ "ma_manoz",           "ManoZ" },
