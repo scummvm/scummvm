@@ -184,6 +184,11 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 - (void)setupGestureRecognizers {
 #if TARGET_OS_IOS
+	UILongPressGestureRecognizer *longPressKeyboard = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressKeyboard:)];
+	[longPressKeyboard setMinimumPressDuration:1];
+	[_toggleTouchModeButton addGestureRecognizer:longPressKeyboard];
+	[longPressKeyboard release];
+
 	UIPinchGestureRecognizer *pinchKeyboard = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardPinch:)];
 
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
@@ -337,7 +342,11 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 #if TARGET_OS_IOS
 - (void)triggerTouchModeChanged {
-	[self addEvent:InternalEvent(kInputTouchModeChanged, 0, 0)];
+	if ([self isKeyboardShown]) {
+		[self hideKeyboard];
+	} else {
+		[self addEvent:InternalEvent(kInputTouchModeChanged, 0, 0)];
+	}
 }
 
 - (void)updateTouchMode {
@@ -525,10 +534,16 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 - (void)showKeyboard {
 	[_keyboardView showKeyboard];
+#if TARGET_OS_IOS
+	[_toggleTouchModeButton setImage:[UIImage imageNamed:@"ic_action_keyboard"] forState:UIControlStateNormal];
+#endif
 }
 
 - (void)hideKeyboard {
 	[_keyboardView hideKeyboard];
+#if TARGET_OS_IOS
+	[self updateTouchMode];
+#endif
 }
 
 - (BOOL)isKeyboardShown {
@@ -620,6 +635,14 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #endif
 
 #if TARGET_OS_IOS
+- (void)longPressKeyboard:(UILongPressGestureRecognizer *)recognizer {
+	if (![self isKeyboardShown]) {
+		if (recognizer.state == UIGestureRecognizerStateBegan) {
+			[self showKeyboard];
+		}
+	}
+}
+
 - (void)keyboardPinch:(UIPinchGestureRecognizer *)recognizer {
 	if ([recognizer scale] < 0.8)
 		[self showKeyboard];
