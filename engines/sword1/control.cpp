@@ -1041,7 +1041,7 @@ void Control::setVolumes() {
 	if (volBalance != ConfMan.getInt("music_balance"))
 		ConfMan.setInt("music_balance", volBalance);
 
-	_sound->giveSpeechVol(&volL, &volR);
+	//_sound->giveSpeechVol(&volL, &volR);
 	vol = (int)((volR + volL) / 2);
 	volBalance = volToBalance(volL, volR);
 	if (vol != ConfMan.getInt("speech_volume"))

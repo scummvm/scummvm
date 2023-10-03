@@ -91,8 +91,10 @@ void Logic::initialize() {
 	_textMan = new Text(_vm, this, _objMan, _resMan, _screen,
 	                    (SwordEngine::_systemVars.language == BS1_CZECH) ? true : false);
 	_screen->useTextManager(_textMan);
-	_textRunning = _speechRunning = false;
-	_speechFinished = true;
+
+	SwordEngine::_systemVars.textRunning = false;
+	SwordEngine::_systemVars.speechRunning = 0;
+	SwordEngine::_systemVars.speechFinished = true;
 }
 
 void Logic::newScreen(uint32 screen) {
@@ -345,31 +347,41 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 int Logic::speechDriver(Object *compact) {
 	if ((!_speechClickDelay) &&
 		((_mouse->testEvent() & BS1L_BUTTON_DOWN) || (_mouse->testEvent() & BS1R_BUTTON_DOWN)))
-		_speechFinished = true;
+		SwordEngine::_systemVars.speechFinished = true;
 
 	if (_speechClickDelay)
 		_speechClickDelay--;
 
-	if (_speechRunning) {
-		if (_sound->speechFinished())
-			_speechFinished = true;
+	if (SwordEngine::_systemVars.speechRunning >= 2) {
+		SwordEngine::_systemVars.speechRunning--;
+		if (SwordEngine::_systemVars.speechRunning == 1)
+			_sound->PlaySpeech();
+	} else if (SwordEngine::_systemVars.speechRunning == 1) {
+		if (_sound->CheckSpeechStatus() == S_STATUS_FINISHED)
+			SwordEngine::_systemVars.speechFinished = true;
+
+		if (SwordEngine::_systemVars.speechFinished) {
+			_sound->StopSpeech();
+			free(_sound->speechSample);
+			_sound->speechSample = nullptr;
+		}
 	} else {
 		if (!compact->o_speech_time)
-			_speechFinished = true;
+			SwordEngine::_systemVars.speechFinished = true;
 		else
 			compact->o_speech_time--;
 	}
 
-	if (_speechFinished) {
-		if (_speechRunning)
-			_sound->stopSpeech();
+	if (SwordEngine::_systemVars.speechFinished) {
 		compact->o_logic = LOGIC_script;
-		if (_textRunning) {
+		if (SwordEngine::_systemVars.textRunning) {
 			_textMan->releaseText(compact->o_text_id);
 			_objMan->fetchObject(compact->o_text_id)->o_status = 0; // kill compact linking text sprite
 		}
-		_speechRunning = _textRunning = false;
-		_speechFinished = true;
+
+		SwordEngine::_systemVars.speechRunning = 0;
+		SwordEngine::_systemVars.textRunning = false;
+		SwordEngine::_systemVars.speechFinished = true;
 	}
 
 	if (compact->o_anim_resource) {
@@ -378,8 +390,8 @@ int Logic::speechDriver(Object *compact) {
 		animData += 4;
 		compact->o_anim_pc++; // go to next frame of anim
 
-		if (_speechFinished || (compact->o_anim_pc >= numFrames) ||
-		        (_speechRunning && (_sound->amISpeaking(nullptr) == 0)))
+		if (SwordEngine::_systemVars.speechFinished || (compact->o_anim_pc >= numFrames) ||
+			(SwordEngine::_systemVars.speechRunning != 0 && (_sound->amISpeaking() == 0)))
 			compact->o_anim_pc = 0; //set to frame 0, closed mouth
 
 		AnimUnit *animPtr = (AnimUnit *)(animData + sizeof(AnimUnit) * compact->o_anim_pc);
@@ -1180,13 +1192,14 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 
 		_resMan->resClose(cpt->o_resource);
 	}
+
+	SwordEngine::_systemVars.speechRunning = 0;
 	if (SwordEngine::_systemVars.playSpeech)
-		_speechRunning = _sound->startSpeech(textNo >> 16, textNo & 0xFFFF);
-	else
-		_speechRunning = false;
-	_speechFinished = false;
-	if (SwordEngine::_systemVars.showText || (!_speechRunning)) {
-		_textRunning = true;
+		_sound->startSpeech(textNo >> 16, textNo & 0xFFFF); // This will set speechRunning
+
+	SwordEngine::_systemVars.speechFinished = false;
+	if (SwordEngine::_systemVars.showText || (SwordEngine::_systemVars.speechRunning == 0)) {
+		SwordEngine::_systemVars.textRunning = true;
 
 		char *text = _objMan->lockText(textNo);
 		cpt->o_speech_time = strlen(text) + 5;
@@ -1234,6 +1247,16 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		textCpt->o_anim_x = textCpt->o_xcoord = CLIP<uint16>(textX, textLeftMargin, textRightMargin);
 		textCpt->o_anim_y = textCpt->o_ycoord = CLIP<uint16>(textY, textTopMargin, textBottomMargin);
 	}
+
+	if (SwordEngine::_systemVars.speechRunning != 0) {
+		// This helps delaying the speech to make it play in sync with the text
+		if (SwordEngine::_systemVars.realLanguage == Common::EN_ANY) {
+			SwordEngine::_systemVars.speechRunning = 2; // Verified from disasm
+		} else {
+			SwordEngine::_systemVars.speechRunning = 3; // International versions
+		}
+	}
+
 	return SCRIPT_STOP;
 }
 
@@ -1844,7 +1867,7 @@ void Logic::startPositions(uint32 pos) {
 }
 
 bool Logic::canShowDebugTextNumber() {
-	return _speechRunning || _textRunning;
+	return SwordEngine::_systemVars.speechRunning || SwordEngine::_systemVars.textRunning;
 }
 
 void Logic::plotRouteGrid(Object *megaObject) {

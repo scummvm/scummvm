@@ -69,6 +69,9 @@ struct SystemVars {
 	int              snrStatus;
 	bool             wantFade;           // when true => fade during scene change, else cut.
 	bool             playSpeech;
+	bool             textRunning;
+	uint32           speechRunning;
+	bool             speechFinished;
 	bool             showText;
 	int32            textNumber;
 	uint8            language;

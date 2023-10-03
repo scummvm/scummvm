@@ -245,10 +245,10 @@ void SwordEngine::syncSoundSettings() {
 
 	if (mute) {
 		_music->setVolume(0, 0);
-		_sound->setSpeechVol(0, 0);
+		//_sound->setSpeechVol(0, 0);
 	} else {
 		_music->setVolume(musicVolL, musicVolR);
-		_sound->setSpeechVol(speechVolL, speechVolR);
+		//_sound->setSpeechVol(speechVolL, speechVolR);
 	}
 }
 
