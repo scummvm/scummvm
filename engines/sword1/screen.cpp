@@ -44,8 +44,9 @@ namespace Sword1 {
 #define FADE_UP              1
 #define FADE_DOWN           -1
 
-Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
+Screen::Screen(OSystem *system, SwordEngine *vm, ResMan *pResMan, ObjectMan *pObjMan) {
 	_system = system;
+	_vm = vm;
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_screenBuf = _screenGrid = NULL;
@@ -349,7 +350,7 @@ void Screen::updateScreen() {
 		if (SwordEngine::isMac())
 			fnSetFadeTargetPalette(255, 1, 0, BORDER_BLACK);
 
-		startFadePaletteUp(1);
+		_vm->startFadePaletteUp(1);
 		_updatePalette = false;
 	}
 
