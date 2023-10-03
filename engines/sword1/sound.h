@@ -145,35 +145,32 @@ public:
 
 	int8 scalePan(int pan); // From 0,127 to -127,127
 
-	void PlaySample(int32 fxNo);
-	int32 PlayFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
-	int32 StopFX(int32 fxID);
-	int32 CheckSampleStatus(int32 id);
+	void playSample(int32 fxNo);
+	void playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
+	void stopFX(int32 fxID);
+	int32 checkSampleStatus(int32 id);
 
-	void UpdateSampleStreaming();
-	int32 CheckSpeechStatus();
-	int32 PlaySpeech();
-	int32 StopSpeech();
-	int32 GetSpeechSize(byte *compData, uint32 compSize);
+	void updateSampleStreaming();
+	int32 checkSpeechStatus();
+	void playSpeech();
+	void stopSpeech();
+	int32 getSpeechSize(byte *compData, uint32 compSize);
 
-	int32 StreamSample(char filename[], int32 looped);
-	void ReduceMusicVolume();
-	void RestoreMusicVolume();
+	int32 streamSample(char filename[], int32 looped);
+	void reduceMusicVolume();
+	void restoreMusicVolume();
 
-	void FadeVolumeDown(int32 rate);
-	void FadeVolumeUp(int32 rate);
-	void FadeMusicDown(int32 rate);
-	void FadeMusicUp(int32 rate);
-	void FadeFxDown(int32 rate);
-	void FadeFxUp(int32 rate);
+	void fadeMusicDown(int32 rate);
+	void fadeFxDown(int32 rate);
+	void fadeFxUp(int32 rate);
 
-	void SetCrossFadeIncrement();
-	void PauseSpeech();
-	void UnpauseSpeech();
-	void PauseMusic();
-	void UnpauseMusic();
-	void PauseFx();
-	void UnpauseFx();
+	void setCrossFadeIncrement();
+	void pauseSpeech();
+	void unpauseSpeech();
+	void pauseMusic();
+	void unpauseMusic();
+	void pauseFx();
+	void unpauseFx();
 
 	// Handles for external volume changes (control panel)
 	uint32 volFX[2] = { 0, 0 };
@@ -194,7 +191,7 @@ public:
 	int32 volumeCount = 0;
 	int32 musicCount = 0;
 	int32 fxCount = 0;
-	int32 speechCount = 0;
+	int32 speechLipsyncCounter = 0;
 	int32 speechSize = 0;
 
 	// Sample handles and information.

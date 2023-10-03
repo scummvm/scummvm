@@ -255,10 +255,10 @@ void Control::getPlayerOptions() {
 	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {
 		delay(DEFAULT_FRAME_TIME / 2);
 
-		_sound->SetCrossFadeIncrement();
+		_sound->setCrossFadeIncrement();
 
 		_mouse->animate();
-		_sound->UpdateSampleStreaming(); // stream music
+		_sound->updateSampleStreaming(); // stream music
 		saveRestoreScreen();
 	}
 
@@ -288,7 +288,7 @@ void Control::getPlayerOptions() {
 	if (SwordEngine::_systemVars.saveGameFlag == SGF_SAVE) {
 		saveGame();
 	} else if (SwordEngine::_systemVars.saveGameFlag == SGF_QUIT) {
-		_sound->FadeMusicDown(1);
+		_sound->fadeMusicDown(1);
 
 		Engine::quitGame();
 	}
