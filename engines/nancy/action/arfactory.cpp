@@ -19,6 +19,7 @@
  *
  */
 
+#include "engines/nancy/action/inventoryrecords.h"
 #include "engines/nancy/action/navigationrecords.h"
 #include "engines/nancy/action/soundrecords.h"
 #include "engines/nancy/action/miscrecords.h"
