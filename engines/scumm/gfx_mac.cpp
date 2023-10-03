@@ -358,7 +358,28 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
-// Verb GUI for Indiana Jones and the Last Crusade
+/*
+ * The infamous verb GUI for the Macintosh version of Indiana Jones and the
+ * Last Crusade.
+ *
+ * It's likely that the original interpreter used more hooks from the engine
+ * into the GUI. In particular, the inventory script uses a variable that I
+ * haven't been able to find in any of the early scripts of the game.
+ *
+ * But the design goal here is to keep things as simple as possible, even if
+ * that means using brute force. So the GUI figures out which verbs are active
+ * by scanning all the verbs, and which objects are in the inventory by
+ * scanning all objects.
+ *
+ * We used to coerce the Mac verb GUI into something that looked like the
+ * GUI from all other versions. This used a number of variables and hard-coded
+ * verbs. The only thing still used of all this is variable 67, to keep track
+ * of the inventory scroll position. The fake verbs are removed when loading
+ * old savegames, but the variables are assumed to be harmless.
+ */
+
+#define BUTTON_TIMER			15
+#define INVENTORY_SLOT_TIMER	7
 
 MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_system(system), _vm(vm), _macScreen(vm->_macScreen), _visible(false) {
@@ -367,6 +388,9 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_fonts[0] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
 	_fonts[1] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
 	_fonts[2] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
+
+	// There is one widget for every verb in the game. Verbs include the
+    // inventory widget and conversation options.
 
 	initWidget( 0,   1, 137, 312,  68, 18); // Open
 	initWidget( 1,   2, 137, 332,  68, 18); // Close
@@ -385,15 +409,39 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	initWidget(14,  32, 347, 332,  68, 18); // Travel
 	initWidget(15,  33, 347, 352,  68, 18); // To Indy
 	initWidget(16,  34, 347, 352,  68, 18); // To Henry
-	initWidget(17, 100,  67, 292, 348, 18); // Sentence line
-	initWidget(18, 101, 417, 292, 157, 78); // Inventory widget
-	initWidget(19, 119, 324, 312,  91, 18); // Take this:
-	initWidget(20, 120,  67, 292, 507, 18); // Conversation 1
-	initWidget(21, 121,  67, 312, 507, 18); // Conversation 2
-	initWidget(22, 122,  67, 332, 507, 18); // Conversation 3
-	initWidget(23, 123,  67, 352, 507, 18); // Conversation 4
-	initWidget(24, 124,  67, 352, 151, 18); // Conversation 5
-	initWidget(25, 125, 423, 352, 151, 18); // Conversation 6
+	initWidget(17,  90,  67, 292, 507, 18); // Travel option 1
+	initWidget(18,  91,  67, 312, 507, 18); // Travel option 2
+	initWidget(19,  92,  67, 332, 507, 18); // Travel option 3
+	initWidget(20, 100,  67, 292, 348, 18); // Sentence line
+	initWidget(21, 101, 417, 292, 157, 78); // Inventory widget
+	initWidget(22, 119, 324, 312,  91, 18); // Take this:
+	initWidget(23, 120,  67, 292, 507, 18); // Conversation 1
+	initWidget(24, 121,  67, 312, 507, 18); // Conversation 2
+	initWidget(25, 122,  67, 332, 507, 18); // Conversation 3
+	initWidget(26, 123,  67, 352, 507, 18); // Conversation 4
+	initWidget(27, 124,  67, 352, 151, 18); // Conversation 5
+	initWidget(28, 125, 423, 352, 151, 18); // Conversation 6
+
+	// Inventory widget sub-widgets.
+
+	// No matter how many objects you are carrying, only six inventory slots
+	// are visible.
+
+	Widget *inventoryWidget = &_widgets[21];
+	assert(inventoryWidget->verbid == 101);
+
+	int x = inventoryWidget->bounds.left + 6;
+	int y = inventoryWidget->bounds.top + 6;
+
+	// There is only space in the inventory widget for each slot to be 11
+	// pixels tall. But when a slot is highlighted, the highlight is 12 pixels
+	// tall. It's assumed that this will never collide with the text in the
+	// next slot.
+
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
+		initInventorySlot(i, x, y, 128, 12);
+		y += 11;
+	}
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
@@ -423,9 +471,32 @@ void MacIndy3Gui::resetWidget(Widget *w) {
 	w->kill = false;
 }
 
+void MacIndy3Gui::initInventorySlot(int n, int x, int y, int width, int height) {
+	InventorySlot *s = &_inventorySlots[n];
+
+	s->slot = n;
+	s->bounds.left = x;
+	s->bounds.top = y;
+	s->bounds.right = x + width;
+	s->bounds.bottom = y + height;
+}
+
+void MacIndy3Gui::resetInventorySlot(InventorySlot *s) {
+	free(s->name);
+	s->name = nullptr;
+	s->obj = -1;
+	s->timer = 0;
+	s->redraw = false;
+}
+
 bool MacIndy3Gui::isActive() {
+	// Verb script 4 is the regular verb gui.
+	// Verb script 18 is for conversations.
+	// Verb script 200 is for Venice.
+	// Verb script 201 is for travelling from the US.
+	// Verb script 205 is for travelling from Venice.
 	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
-	return verbScript == 4 || verbScript == 18;
+	return verbScript == 4 || verbScript == 18 || verbScript == 200 || verbScript == 201 || verbScript == 205;
 }
 
 void MacIndy3Gui::resetAfterLoad() {
@@ -434,19 +505,31 @@ void MacIndy3Gui::resetAfterLoad() {
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
 		resetWidget(&_widgets[i]);
 
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++)
+		resetInventorySlot(&_inventorySlots[i]);
+
 	// In the DOS version, verb ID 102-106 were used for the visible
 	// inventory items, and 107-108 for inventory arrow buttons. In the
 	// Macintosh version, the entire inventory widget is verb ID 101.
 	//
 	// In old savegames, the DOS verb IDs may still be present, and have
-	// to be updated when loading them.
+	// to be removed.
 
-	// TODO: Collect the inventory objects
+	bool oldSavegame = false;
 
 	for (int i = 0; i < _vm->_numVerbs; i++) {
-		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108)
+		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108) {
 			_vm->killVerb(i);
+			oldSavegame = true;
+		}
 	}
+
+	// The old GUI adjusted the offset by 2 when scrolling the inventory.
+
+	if (oldSavegame)
+		_vm->VAR(67) /= 2;
+
+	_inventoryOffset = _vm->VAR(67);
 }
 
 void MacIndy3Gui::update() {
@@ -459,7 +542,27 @@ void MacIndy3Gui::update() {
 	if (!_visible)
 		show();
 
-	// Decrease all timers
+	updateTimers();
+
+	bool keepGuiAlive = false;
+	bool inventoryIsActive = false;
+
+	updateButtons(keepGuiAlive, inventoryIsActive);
+
+	if (!keepGuiAlive) {
+		hide();
+		return;
+	}
+
+	drawButtons();
+
+	if (inventoryIsActive) {
+		updateInventorySlots();
+		drawInventorySlots();
+	}
+}
+
+void MacIndy3Gui::updateTimers() {
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
 		if (w->timer > 0) {
@@ -472,9 +575,22 @@ void MacIndy3Gui::update() {
 		w->kill = true;
 	}
 
-	bool keepGuiAlive = false;
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
+		InventorySlot *s = &_inventorySlots[i];
+		if (s->timer > 0) {
+			s->timer--;
+			if (s->timer == 0) {
+				s->redraw = true;
+				_vm->runInputScript(kInventoryClickArea, s->obj, 1);
+			}
+		}
+	}
+}
 
-	// Collect all active verbs
+void MacIndy3Gui::updateButtons(bool &keepGuiAlive, bool &inventoryIsActive) {
+	// Collect all active verbs. Verb slot 0 is special, apparently, so we
+	// don't look at that one.
+
 	for (int i = 1; i < _vm->_numVerbs; i++) {
 		VerbSlot *vs = &_vm->_verbs[i];
 
@@ -485,12 +601,15 @@ void MacIndy3Gui::update() {
 				id = vs->verbid - 1;
 			} else if (vs->verbid >= 32 && vs->verbid <= 34) {
 				id = vs->verbid - 18;
+			} else if (vs->verbid >= 90 && vs->verbid <= 92) {
+				id = vs->verbid - 73;
 			} else if (vs->verbid == 100) {
-				id = 17;
+				id = 20;
 			} else if (vs->verbid == 101) {
-				id = 18;
+				id = 21;
+				inventoryIsActive = true;
 			} else if (vs->verbid >= 119 && vs->verbid <= 125) {
-				id = vs->verbid - 100;
+				id = vs->verbid - 97;
 			} else {
 				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
 				byte buf[270];
@@ -518,6 +637,7 @@ void MacIndy3Gui::update() {
 				if (w->text == nullptr || strcmp((char *)w->text, (char *)buf) != 0) {
 					free(w->text);
 					w->text = (byte *)scumm_strdup((const char *)buf);
+					w->timer = 0;
 					w->redraw = true;
 				}
 
@@ -525,9 +645,76 @@ void MacIndy3Gui::update() {
 			}
 		}
 	}
+}
 
-	// Erase all inactive buttons. Since buttons are overlapping, we have
-	// to do this first.
+void MacIndy3Gui::updateInventorySlots() {
+	int owner = _vm->VAR(_vm->VAR_EGO);
+
+	int invCount = _vm->getInventoryCount(owner);
+	int invOffset = _vm->VAR(67);
+
+	// The scroll offset must be non-negative and if there are six or less
+	// items in the inventory, the inventory is fixed in the top position.
+
+	if (invOffset < 0 || invCount <= 6)
+		invOffset = 0;
+
+	// If there are more than six items in the inventory, clamp the scroll
+	// offset to be at most invCount - 6.
+
+	if (invCount > 6 && invOffset >= invCount - 6)
+		invOffset = invCount - 6;
+
+	_vm->VAR(67) = invOffset;
+
+	int invSlot = 0;
+	invCount = 0;
+
+	for (int i = 0; i < _vm->_numInventory && invSlot < ARRAYSIZE(_inventorySlots); i++) {
+		int obj = _vm->_inventory[i];
+		if (obj && _vm->getOwner(obj) == owner) {
+			if (++invCount >= invOffset) {
+				InventorySlot *s = &_inventorySlots[invSlot];
+				const byte *name = _vm->getObjOrActorName(obj);
+
+				if (name) {
+					if (!s->name || strcmp((char *)s->name, (const char *)name) != 0) {
+						free(s->name);
+						s->name = (byte *)scumm_strdup((const char *)name);
+						s->timer = 0;
+						s->redraw = true;
+					}
+				} else {
+					if (s->name) {
+						free(s->name);
+						s->name = nullptr;
+						s->timer = 0;
+						s->redraw = true;
+					}
+				}
+
+				s->obj = obj;
+				invSlot++;
+			}
+		}
+	}
+
+	for (int i = invSlot; i < ARRAYSIZE(_inventorySlots); i++) {
+		InventorySlot *s = &_inventorySlots[i];
+
+		if (s->name) {
+			free(s->name);
+			s->name = nullptr;
+			s->obj = -1;
+			s->timer = 0;
+			s->redraw = true;
+		}
+	}
+}
+
+void MacIndy3Gui::drawButtons() {
+	// Erase all inactive buttons. Since active buttons may overlap ones
+	// that are now inactive, we have to do this first.
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
@@ -543,21 +730,37 @@ void MacIndy3Gui::update() {
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
 		Widget *w = &_widgets[i];
 
-		if (w->verbslot == -1)
-			continue;
-
-		if (w->redraw) {
+		if (w->verbslot != -1 && w->redraw) {
 			debug("Drawing button %d: (%d) %s", i, w->verbid, w->text);
 			drawWidget(w);
 		}
 	}
+}
 
-	if (!keepGuiAlive)
-		hide();
+void MacIndy3Gui::drawInventorySlots() {
+	// Since the inventory slots overlap, draw the highlighted ones (and there
+	// should really only be one at a time) first.
+
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
+		InventorySlot *s = &_inventorySlots[i];
+
+		if (s->redraw && s->timer == 0)
+			drawInventorySlot(s);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
+		InventorySlot *s = &_inventorySlots[i];
+
+		if (s->redraw)
+			drawInventorySlot(s);
+	}
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return;
+
+	if (_vm->_userPut <= 0)
 		return;
 
 	int x = event.mouse.x;
@@ -567,36 +770,24 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 		Widget *w = &_widgets[i];
 
 		if (w->verbid && w->enabled && w->bounds.contains(x, y)) {
-			// The input script is invoked when the button animation
-			// times out. Speed-runners will probably hate this, but
-			// I think it looks better this way.
-			//
-			// Besides, wouldn't real speed runners use keyboard
-			// shortcuts? (TODO: Check if they're really different
-			// than in the DOS version.)
-			w->redraw = true;
-			w->timer = 15;
-			return;
-		}
-	}
-}
+			if (w->verbid != 101) {
+				// The input script is invoked when the button animation
+				// times out. Speed-runners will probably hate this, but
+				// I think it looks better this way.
+				w->redraw = true;
+				w->timer = BUTTON_TIMER;
+				return;
+			} else {
+				for (int j = 0; j < ARRAYSIZE(_inventorySlots); j++) {
+					InventorySlot *s = &_inventorySlots[j];
 
-void MacIndy3Gui::updateInventory() {
-	// The Mac inventory script simply turns on the inventory widget and
-	// sets its text to the name of the object in variable 83. However, I
-	// can't find anywhere where this variable is set, so maybe it's set by
-	// the engine itself?
-	//
-	// Rather than guessing, just brute force it.
-
-	int owner = _vm->VAR(_vm->VAR_EGO);
-	int slot = 0;
-	for (int i = 0; i < _vm->_numInventory; i++) {
-		int obj = _vm->_inventory[i];
-		if (obj && _vm->getOwner(obj) == owner) {
-			const byte *name = _vm->getObjOrActorName(obj);
-			drawInventoryText(slot, name, false);
-			slot++;
+					if (s->obj != -1 && s->bounds.contains(x, y)) {
+						s->redraw = true;
+						s->timer = INVENTORY_SLOT_TIMER;
+						return;
+					}
+				}
+			}
 		}
 	}
 }
@@ -758,12 +949,13 @@ void MacIndy3Gui::drawButton(Widget *w) {
 // indistinguishable from clicking above or below.
 
 void MacIndy3Gui::drawInventoryWidget(Widget *w) {
+	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++)
+		resetInventorySlot(&_inventorySlots[i]);
+
 	Common::Rect r = w->bounds;
 
 	drawShadowBox(r);
 	drawShadowFrame(Common::Rect(r.left + 4, r.top + 4, r.right - 22, r.bottom - 4), 0, 15);
-
-	// TODO: Draw inventory text
 
 	// Scrollbar
 
@@ -821,13 +1013,11 @@ void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, b
 	} while (y != y1);
 }
 
-void MacIndy3Gui::drawInventoryText(int slot, const byte *text, bool highlighted) {
-	int slotX = 423;
-	int slotY = 298 + slot * 11;
-
+void MacIndy3Gui::drawInventorySlot(InventorySlot *s) {
+	debug("Drawing inventory slot: [%d] %s", s->slot, s->name);
 	int fg, bg;
 
-	if (highlighted) {
+	if (s->timer) {
 		fg = 15;
 		bg = 0;
 	} else {
@@ -835,29 +1025,22 @@ void MacIndy3Gui::drawInventoryText(int slot, const byte *text, bool highlighted
 		bg = 15;
 	}
 
-#if 0
-	// The inventory slots overlap slightly, so we have to clear the entire
-	// area, then highlight the at most single one that's highlighted.
-	_macScreen->fillRect(Common::Rect(423, 298, 551, 365), 15);
-#endif
+	_macScreen->fillRect(s->bounds, bg);
 
-	int height = 12;
-	int width = 128;
+	if (s->name) {
+		int y = s->bounds.top - 1;
+		int x = s->bounds.left + 4;
 
-	if (highlighted)
-		_macScreen->fillRect(Common::Rect(slotX, slotY, slotX + width, slotY + height), bg);
-
-	int y = slotY - 1;
-	int x = slotX + 4;
-
-	for (int i = 0; text[i]; i++) {
-		if (text[i] != '@') {
-			_fonts[0]->drawChar(_macScreen, text[i], x, y, fg);
-			x += _fonts[0]->getCharWidth(text[i]);
+		for (int i = 0; s->name[i]; i++) {
+			if (s->name[i] != '@') {
+				_fonts[0]->drawChar(_macScreen, s->name[i], x, y, fg);
+				x += _fonts[0]->getCharWidth(s->name[i]);
+			}
 		}
 	}
 
-	copyRectToScreen(Common::Rect(slotX, slotY, slotX + width, slotY + height));
+	s->redraw = false;
+	copyRectToScreen(s->bounds);
 }
 
 void MacIndy3Gui::fill(Common::Rect r) {

@@ -728,6 +728,8 @@ void ScummEngine::writeVar(uint var, int value) {
 			}
 		}
 
+		if (var == VAR_VERB_SCRIPT)
+			debug("VAR_VERB_SCRIPT = %d", value);
 		_scummVars[var] = value;
 
 		// Unlike the PC version, the Macintosh version of Loom appears

@@ -40,14 +40,15 @@ public:
 
 	bool isActive();
 	void resetAfterLoad();
+
 	void update();
+
 	void handleEvent(Common::Event &event);
-	void updateInventory();
 
 private:
-	OSystem *_system;
-	ScummEngine *_vm;
-	Graphics::Surface *_macScreen;
+	OSystem *_system = nullptr;
+	ScummEngine *_vm = nullptr;
+	Graphics::Surface *_macScreen = nullptr;
 	const Graphics::Font *_fonts[3];
 
 	bool _visible = false;
@@ -64,19 +65,42 @@ private:
 		bool kill = false;
 	};
 
-	Widget _widgets[26];
+	Widget _widgets[29];
 
-	void initWidget(int n, int verbid, int x, int y, int w, int h);
+	struct InventorySlot {
+		Common::Rect bounds;
+		byte *name = nullptr;
+		int slot = -1;
+		int obj = -1;
+		int timer = 0;
+		bool redraw = false;
+	};
+
+	InventorySlot _inventorySlots[6];
+	int _inventoryOffset = 0;
+
+	void initWidget(int n, int verbid, int x, int y, int width, int height);
 	void resetWidget(Widget *w);
+	void initInventorySlot(int n, int x, int y, int width, int height);
+	void resetInventorySlot(InventorySlot *s);
+
 	void clear();
 	void show();
 	void hide();
+
+	void updateTimers();
+	void updateButtons(bool &keepGuiAlive, bool &inventoryIsActive);
+	void updateInventorySlots();
+
+	void drawButtons();
+	void drawInventorySlots();
+
 	void drawWidget(Widget *w);
 	void undrawWidget(Widget *w);
 	void drawButton(Widget *w);
 	void drawInventoryWidget(Widget *w);
 	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
-	void drawInventoryText(int slot, const byte *text, bool highlighted);
+	void drawInventorySlot(InventorySlot *slot);
 
 	// Primitives
 	void fill(Common::Rect r);

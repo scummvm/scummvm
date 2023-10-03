@@ -21,7 +21,6 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v3.h"
@@ -2940,10 +2939,6 @@ void ScummEngine_v5::o5_verbOps() {
 			break;
 		case 6:		// SO_VERB_ON
 			vs->curmode = 1;
-
-			if (_macIndy3Gui && vs->verbid == 101) {
-				_macIndy3Gui->updateInventory();
-			}
 			break;
 		case 7:		// SO_VERB_OFF
 			vs->curmode = 0;
