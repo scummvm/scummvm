@@ -462,6 +462,11 @@ static bool gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, i
 	bool flag = false;
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(s, &status);
+
+	// WORKAROUND: gui_system_event_handler may call without z being set
+	bool dummyZ = false;
+	if (!z)
+		z = &dummyZ;
 	*z = false;
 	
 	if (!ctx || status != 1)
