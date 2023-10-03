@@ -355,13 +355,13 @@ int Logic::speechDriver(Object *compact) {
 	if (SwordEngine::_systemVars.speechRunning >= 2) {
 		SwordEngine::_systemVars.speechRunning--;
 		if (SwordEngine::_systemVars.speechRunning == 1)
-			_sound->PlaySpeech();
+			_sound->playSpeech();
 	} else if (SwordEngine::_systemVars.speechRunning == 1) {
-		if (_sound->CheckSpeechStatus() == S_STATUS_FINISHED)
+		if (_sound->checkSpeechStatus() == S_STATUS_FINISHED)
 			SwordEngine::_systemVars.speechFinished = true;
 
 		if (SwordEngine::_systemVars.speechFinished) {
-			_sound->StopSpeech();
+			_sound->stopSpeech();
 			free(_sound->speechSample);
 			_sound->speechSample = nullptr;
 		}
@@ -1650,7 +1650,7 @@ int Logic::fnPlayFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d
 }
 
 int Logic::fnStopFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	_sound->StopFX(fxNo);
+	_sound->stopFX(fxNo);
 	_sound->removeFromQueue(fxNo);
 	return SCRIPT_CONT;
 }
@@ -1663,14 +1663,14 @@ int Logic::fnPlayMusic(Object *cpt, int32 id, int32 tuneId, int32 loopFlag, int3
 	else
 		_scriptVars[CURRENT_MUSIC] = 0;
 
-	//_sound->StreamSample(tuneId, loopFlag);
+	//_sound->streamSample(tuneId, loopFlag);
 	_music->startMusic(tuneId, loopFlag);
 	return SCRIPT_CONT;
 }
 
 int Logic::fnStopMusic(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_scriptVars[CURRENT_MUSIC] = 0;
-	_sound->FadeMusicDown(1);
+	_sound->fadeMusicDown(1);
 	return SCRIPT_CONT;
 }
 
