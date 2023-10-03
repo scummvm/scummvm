@@ -552,12 +552,14 @@ void Section5::takeGizmo(RGB8 *pal) {
 		player_set_commands_allowed(false);
 
 		if (_G(flags)[V238] == 0) {
-			GUI::gizmo_digi_play("510w001", 255, _GIZMO(roomNums)[0]);
+			GUI::gizmo_digi_play("510w001", 255, _GIZMO(roomFlags)[0]);
 			++_G(flags)[V238];
 		} else if (_G(flags)[V238] == 1) {
-			GUI::gizmo_digi_play("510w002", 255, _GIZMO(roomNums)[1]);
+			GUI::gizmo_digi_play("510w002", 255, _GIZMO(roomFlags)[1]);
 			++_G(flags)[V238];
 		}
+
+		player_set_commands_allowed(true);
 	}
 }
 
