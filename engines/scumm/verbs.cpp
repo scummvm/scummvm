@@ -1082,6 +1082,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
+	if (_macIndy3Gui && _macIndy3Gui->isActive())
+		return;
+
 	if (!verb)
 		return;
 
@@ -1158,6 +1161,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
+	if (_macIndy3Gui && _macIndy3Gui->isActive())
+		return;
+
 	VerbSlot *vs;
 
 	vs = &_verbs[verb];
