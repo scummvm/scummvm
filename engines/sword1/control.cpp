@@ -255,12 +255,10 @@ void Control::getPlayerOptions() {
 	while (SwordEngine::_systemVars.snrStatus != SNR_BLANK && !Engine::shouldQuit()) {
 		delay(DEFAULT_FRAME_TIME / 2);
 
-		// TODO: audio
-		// SetCrossFadeIncrement();
+		_sound->SetCrossFadeIncrement();
 
 		_mouse->animate();
-		// TODO: audio
-		// UpdateSampleStreaming(); // stream music
+		_sound->UpdateSampleStreaming(); // stream music
 		saveRestoreScreen();
 	}
 
@@ -290,8 +288,7 @@ void Control::getPlayerOptions() {
 	if (SwordEngine::_systemVars.saveGameFlag == SGF_SAVE) {
 		saveGame();
 	} else if (SwordEngine::_systemVars.saveGameFlag == SGF_QUIT) {
-		// TODO: audio
-		// FadeMusicDown(1);
+		_sound->FadeMusicDown(1);
 
 		Engine::quitGame();
 	}
@@ -978,21 +975,18 @@ void Control::renderVolumeLight(int32 i) {
 
 	switch (i) {
 	case 0: //music
-		_music->giveVolume(&vol[0], &vol[1]);
-		//vol[0] = volMusic[0];
-		//vol[1] = volMusic[1];
+		vol[0] = _sound->volMusic[0];
+		vol[1] = _sound->volMusic[1];
 		x = 158;
 		break;
 	case 1: //speech
-		_sound->giveSpeechVol(&vol[0], &vol[1]);
-		//vol[0] = volSpeech[0];
-		//vol[1] = volSpeech[1];
+		vol[0] = _sound->volSpeech[0];
+		vol[1] = _sound->volSpeech[1];
 		x = 291;
 		break;
 	case 2: //fx
-		_sound->giveSfxVol(&vol[0], &vol[1]);
-		//vol[0] = volFX[0];
-		//vol[1] = volFX[1];
+		vol[0] = _sound->volFX[0];
+		vol[1] = _sound->volFX[1];
 		x = 424;
 		break;
 	default:
@@ -1078,15 +1072,15 @@ void Control::volUp(int32 i, int32 j) {
 	switch (i) {
 	case 0:
 		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volMusic[j];
+		//vol = &_sound->volMusic[j];
 		break;
 	case 1:
 		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volSpeech[j];
+		//vol = &_sound->volSpeech[j];
 		break;
 	case 2:
 		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volFX[j];
+		//vol = &_sound->volFX[j];
 		break;
 	}
 
@@ -1098,15 +1092,15 @@ void Control::volUp(int32 i, int32 j) {
 	switch (i) {
 	case 0:
 		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volMusic[j];
+		//vol = &_sound->volMusic[j];
 		break;
 	case 1:
 		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volSpeech[j];
+		//vol = &_sound->volSpeech[j];
 		break;
 	case 2:
 		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volFX[j];
+		//vol = &_sound->volFX[j];
 		break;
 	}
 }
@@ -1121,15 +1115,15 @@ void Control::volDown(int32 i, int32 j) {
 	switch (i) {
 	case 0:
 		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volMusic[j];
+		//vol = &_sound->volMusic[j];
 		break;
 	case 1:
 		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volSpeech[j];
+		//vol = &_sound->volSpeech[j];
 		break;
 	case 2:
 		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &volFX[j];
+		//vol = &_sound->volFX[j];
 		break;
 	}
 
@@ -1141,15 +1135,15 @@ void Control::volDown(int32 i, int32 j) {
 	switch (i) {
 	case 0:
 		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volMusic[j];
+		//vol = &_sound->volMusic[j];
 		break;
 	case 1:
 		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volSpeech[j];
+		//vol = &_sound->volSpeech[j];
 		break;
 	case 2:
 		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &volFX[j];
+		//vol = &_sound->volFX[j];
 		break;
 	}
 }
