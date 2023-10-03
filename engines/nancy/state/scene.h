@@ -141,6 +141,8 @@ public:
 	void setHeldItem(int16 id);
 	void setNoHeldItem();
 	byte hasItem(int16 id) const { return _flags.items[id] || getHeldItem() == id; }
+	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
+	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
 
 	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
 	void playItemCantSound(int16 itemID = -1);
@@ -248,6 +250,7 @@ private:
 		Common::Array<byte> eventFlags;
 		Common::HashMap<uint16, uint16> sceneCounts;
 		Common::Array<byte> items;
+		Common::Array<byte> disabledItems;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;
 	};

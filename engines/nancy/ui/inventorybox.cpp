@@ -125,17 +125,28 @@ void InventoryBox::handleInput(NancyInput &input) {
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					uint16 itemID = _itemHotspots[i].itemID;
 					INV::ItemDescription item = _inventoryData->itemDescriptions[itemID];
+					byte disabled = NancySceneState.getItemDisabledState(itemID);
 
-					NancySceneState.removeItemFromInventory(itemID, item.keepItem != kInvItemNewSceneView);
-					_highlightedHotspot = -1;
-					hoveredHotspot = -1;
+					if (!disabled) {
+						// Item is not disabled
+						NancySceneState.removeItemFromInventory(itemID, item.keepItem != kInvItemNewSceneView);
+						_highlightedHotspot = -1;
+						hoveredHotspot = -1;
 
-					if (item.keepItem == kInvItemNewSceneView) {
-						NancySceneState.pushScene(itemID);
-						SceneChangeDescription sceneChange;
-						sceneChange.sceneID = item.sceneID;
-						sceneChange.continueSceneSound = item.sceneSoundFlag;
-						NancySceneState.changeScene(sceneChange);
+						if (item.keepItem == kInvItemNewSceneView) {
+							// Transport the player to a close-up scene, temporarily remove the item from the inventory
+							NancySceneState.pushScene(itemID);
+							SceneChangeDescription sceneChange;
+							sceneChange.sceneID = item.sceneID;
+							sceneChange.continueSceneSound = item.sceneSoundFlag;
+							NancySceneState.changeScene(sceneChange);
+						}
+					} else {
+						// Item is disabled
+						if (disabled == 2) {
+							// ...and set so it plays the "can't" sound when you click it
+							NancySceneState.playItemCantSound(itemID);
+						}
 					}
 				}
 			}

@@ -637,6 +637,10 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
 
+	if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		ser.syncArray(_flags.disabledItems.data(), g_nancy->getStaticData().numItems, Common::Serializer::Byte);
+	}
+
 	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);
 	ser.syncAsUint32LE((uint32 &)_timers.sceneTime);
 	ser.syncAsUint32LE((uint32 &)_timers.playerTime);
@@ -732,6 +736,7 @@ void Scene::init() {
 	_flags.sceneCounts.clear();
 
 	_flags.items.resize(g_nancy->getStaticData().numItems, g_nancy->_false);
+	_flags.disabledItems.resize(_flags.items.size(), 0);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = bootSummary->startTimeHours * 3600000;

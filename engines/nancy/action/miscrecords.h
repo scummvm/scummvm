@@ -372,6 +372,18 @@ protected:
 	Common::String getRecordTypeName() const override { return "InventorySoundOverride"; }
 };
 
+class EnableDisableInventory : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint16 _itemID = 0;
+	byte _disabledState = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "EnableDisableInventory"; }
+};
+
 // Pops the scene and item that get pushed when a player clicks a kInvItemNewSceneView item
 class PopInvViewPriorScene : public ActionRecord {
 public:

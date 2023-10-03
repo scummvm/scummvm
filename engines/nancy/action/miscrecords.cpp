@@ -522,6 +522,24 @@ void InventorySoundOverride::execute() {
 	_isDone = true;
 }
 
+void EnableDisableInventory::readData(Common::SeekableReadStream &stream) {
+	_itemID = stream.readUint16LE();
+	bool disabled = stream.readUint16LE();
+	bool playSound = stream.readUint16LE();
+
+	if (disabled) {
+		++_disabledState;
+		if (playSound) {
+			++_disabledState;
+		}
+	}
+}
+
+void EnableDisableInventory::execute() {
+	NancySceneState.setItemDisabledState(_itemID, _disabledState);
+	_isDone = true;
+}
+
 void PopInvViewPriorScene::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }
