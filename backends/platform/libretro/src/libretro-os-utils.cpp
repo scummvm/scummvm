@@ -25,6 +25,7 @@
 #include "backends/platform/libretro/include/libretro-defs.h"
 #include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
+#include "backends/platform/libretro/include/libretro-options-widget.h"
 
 void OSystem_libretro::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	uint32 curTime = (uint32)(cpu_features_get_time_usec() / 1000000);
@@ -152,4 +153,78 @@ int OSystem_libretro::testGame(const char *filedata, bool autodetect) {
 	PluginManager::instance().unloadAllPlugins();
 	PluginManager::destroy();
 	return res;
+}
+
+GUI::OptionsContainerWidget *OSystem_libretro::buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	if (target.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain))
+		return new LibretroOptionsWidget(boss, name, target);
+	else
+		return nullptr;
+
+}
+
+void OSystem_libretro::applyBackendSettings() {
+	return;
+}
+
+static const char * const helpTabs[] = {
+_s("Libretro playlist"),
+"",
+_s(
+"## Libretro playlists for ScummVM core\n"
+"Playlists used in Libretro frontends (e.g. Retroarch) are plain text lists used to directly launch a game with a specific core from the user interface. Those lists are structured to pass to the core the path of a specific content file to be loaded (e.g. ROM).\n"
+"\n"
+"ScummVM core can accept as content the path to any of the files inside a valid game folder, the detection system will try to autodetect the game from the content file parent folder and run the game with default ScummVM options.\n"
+"\n"
+"The core also supports dedicated per game **hook** plain text files with **." CORE_EXTENSIONS "** extension, which can be used as target in the playlist to specify one of the following ScummVM identifiers:\n"
+"\n"
+"  - **game ID**: this is a unique identifier for any game supported by ScummVM. In this case hook files must be placed inside each game folder, and there is no need to add the game from within ScummVM. Game will be launched with default ScummVM options.\n"
+"\n"
+"  - **target**: this is the game identifier from ScummVM configuration file (e.g. 'scummvm.ini'). In this case the game must be added from ScummVM GUI first, and the hook files can be placed anywhere, as the path for the game files is already part of the target configuration. The game will be launched with the options set in ScummVM\n"
+"\n"
+"## Creating ScummVM core playlist\n"
+"ScummVM core playlist can be created in the following ways:\n"
+"\n"
+"  1. Manually (hook files to be created manually - optional)\n"
+"\n"
+"  2. Automatically from Retroarch scanner (hook files not used)\n"
+"\n"
+"  3. Automatically from ScummVM GUI (hook files created automatically)\n"
+"\n"
+"First two methods are not covered here, as outside of ScummVM scope. Detailed info can be found in [Libretro documentation](https://docs.libretro.com/guides/roms-playlists-thumbnails/).\n"
+"Note that Retroarch scanner is based on a third party database instead of ScummVM game detection system, hence it is not guaranteed to work properly.\n"
+"\n"
+"Third method is covered in the following subheading.\n"
+"\n"
+"## ScummVM Playlist Generator\n"
+"ScummVM core includes a tool to generate a Libretro playlist and needed hook files based on current ScummVM games list.\n"
+"\n"
+" - Load the core from RetroArch and start it to reach the ScummVM GUI (i.e. the Launcher)\n"
+"\n"
+" - Add games to the list as required using the GUI buttons ('Mass Add' available).\n"
+"\n"
+" - Select **Global Options** and then the **Backend** tab.\n"
+"\n"
+" - Check or select the path of frontend playlists. A '" CORE_NAME ".lpl' file will be created or overwritten in there.\n"
+"\n"
+" - Check the 'Hooks location' setting, to have one '." CORE_EXTENSIONS "' in each game folder or all of them in a '" COMMON_HOOKS_FOLDER "' folder in the 'save' path.\n"
+"\n"
+" - Check the 'Playlist version' setting. JSON format should be selected, 6-lines format is deprecated and provided for backwards compatibility only.\n"
+"\n"
+" - Select the 'Clear existing hooks' checkbox to remove any existing '." CORE_EXTENSIONS "' file in the working folders.\n"
+"\n"
+" - Press the 'Generate playlist' button.\n"
+"\n"
+"Operation status will be shown in the same dialog, while details will be given in frontend logs."
+),
+
+0 // End of list
+};
+
+const char * const *OSystem_libretro::buildHelpDialogData() {
+	return helpTabs;
+}
+
+Common::String OSystem_libretro::getSaveDir(void) {
+	return s_saveDir;
 }

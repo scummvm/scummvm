@@ -144,6 +144,8 @@ public:
 	PaletteManager *getPaletteManager() override { return this; }
 	Graphics::Surface *lockScreen() override { return &_gameScreen; }
 	void unlockScreen() override {}
+	GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	void applyBackendSettings() override;
 protected:
 	void setPalette(const byte *colors, uint start, uint num) override;
 	void grabPalette(byte *colors, uint start, uint num) const override;
@@ -165,6 +167,8 @@ public:
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	int testGame(const char *filedata, bool autodetect);
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override {}
+	const char * const *buildHelpDialogData() override;
+	Common::String getSaveDir(void);
 private:
 	bool parseGameName(const Common::String &gameName, Common::String &engineId, Common::String &gameId);
 

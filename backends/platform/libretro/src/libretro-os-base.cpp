@@ -88,7 +88,7 @@ void OSystem_libretro::initBackend() {
 		retro_log_cb(RETRO_LOG_DEBUG, "Default save path set to: %s\n", s_saveDir.c_str());
 	}
 
-	//Check current paths
+	//Check current path settings
 	if (!checkPathSetting("savepath", s_saveDir))
 		retro_osd_notification("ScummVM save folder not found.");
 	if (!checkPathSetting("themepath", s_themeDir))
@@ -97,6 +97,17 @@ void OSystem_libretro::initBackend() {
 		retro_osd_notification("ScummVM extra folder not found. Some engines/features (e.g. Virtual Keyboard) will not work without relevant datafiles.");
 	checkPathSetting("soundfont", s_soundfontPath, false);
 	checkPathSetting("browser_lastpath", s_homeDir);
+	checkPathSetting("libretro_playlist_path", s_homeDir);
+
+	//Check other settings
+	if (! ConfMan.hasKey("libretro_playlist_version"))
+		ConfMan.set("libretro_playlist_version", 0);
+
+	if (! ConfMan.hasKey("libretro_hooks_location"))
+		ConfMan.set("libretro_hooks_location", 0);
+
+	if (! ConfMan.hasKey("libretro_hooks_clear"))
+		ConfMan.set("libretro_hooks_clear", 0);
 
 	_savefileManager = new DefaultSaveFileManager();
 
@@ -158,7 +169,7 @@ void OSystem_libretro::destroy() {
 }
 
 bool OSystem_libretro::checkPathSetting(const char *setting, Common::String const &defaultPath, bool isDirectory) {
-	Common::String setPath(ConfMan.get(setting));
+	Common::String setPath(Common::Path::fromConfig(setting).toString());
 
 	if (setPath.empty() || ! (isDirectory ? LibRetroFilesystemNode(setPath).isDirectory() : LibRetroFilesystemNode(setPath).exists()))
 		ConfMan.removeKey(setting, Common::ConfigManager::kApplicationDomain);
