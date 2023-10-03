@@ -19,84 +19,13 @@
  *
  */
 
-#include "m4/burger/rooms/room.h"
-#include "m4/burger/vars.h"
+#include "m4/riddle/rooms/room.h"
+#include "m4/riddle/vars.h"
 
 namespace M4 {
-namespace Burger {
+namespace Riddle {
 namespace Rooms {
 
-HotSpotRec Room::_wilburHotspot;
-char Room::_wilburName[16];
-char Room::_wilburVerb = 0;
-
-void Room::setWilburHotspot() {
-	Common::strcpy_s(_wilburName, "Wilbur");
-
-	_wilburHotspot.clear();
-	_wilburHotspot.vocab = _wilburName;
-	_wilburHotspot.verb = &_wilburVerb;
-	_wilburHotspot.feet_x = 0x7fff;
-	_wilburHotspot.feet_y = 0x7fff;
-	_wilburHotspot.cursor_number = kArrowCursor;
-}
-
-
-void Room::shutdown() {
-}
-
-void Room::parser_code() {
-	warning("TODO: global_parser_code");
-}
-
-HotSpotRec *Room::custom_hotspot_which(int32 x, int32 y) {
-	if (!_G(player).walker_in_this_scene || !_G(roomVal2))
-		return nullptr;
-
-	player_update_info();
-	int y2 = _G(player_info).y - (_G(player_info).scale * 75 / 100);
-	int y1 = _G(player_info).y - (_G(player_info).scale * 150 / 100);
-	int xSize = _G(player_info).scale * 22 / 100;
-
-	if (y > y2 || y <= y1 || imath_abs(x - _G(player_info).x) >= xSize)
-		return nullptr;
-
-	return &_wilburHotspot;
-}
-
-void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
-		int layer, bool shadow, int firstFrame, int lastFrame, int digiSlot, int digiVol) {
-	term_message("npc_say: %s     npc_series: %s     npc_trigger: %d",
-		digiName, seriesName, trigger);
-
-	_G(npcTrigger) = trigger;
-
-	if (seriesName) {
-		_G(npcSpeech1) = series_play(seriesName, layer, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
-
-		if (shadow) {
-			char temp[20];
-			Common::strcpy_s(temp, 20, seriesName);
-			Common::strcat_s(temp, 20, "s");
-			_G(npcSpeech2) = series_play(temp, layer + 1, 4, -1, 6, -1, 100, 0, 0, firstFrame, lastFrame);
-		}
-	}
-
-	kernel_trigger_dispatch_now(gNPC_SPEECH_STARTED);
-	KernelTriggerType oldMode = _G(kernel).trigger_mode;
-
-	_G(kernel).trigger_mode = KT_DAEMON;
-	digi_play(digiName, digiSlot, digiVol, gNPC_SPEECH_FINISHED);
-
-	_G(kernel).trigger_mode = oldMode;
-}
-
-void Room::npc_say(int trigger, const char *seriesName, int layer, bool shadow,
-		int firstFrame, int lastFrame, int digiSlot, int digiVol) {
-	npc_say(conv_sound_to_play(), trigger, seriesName, layer, shadow,
-		firstFrame, lastFrame, digiSlot, digiVol);
-}
-
 } // namespace Rooms
-} // namespace Burger
+} // namespace Riddle
 } // namespace M4

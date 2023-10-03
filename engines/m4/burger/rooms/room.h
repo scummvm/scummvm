@@ -52,9 +52,6 @@ public:
 	Room() : M4::Room() {}
 	~Room() override {}
 
-	void shutdown() override;
-	void parser_code() override;
-
 	/**
 	 * Used to tell if x,y is over the walker hotspot
 	 */
