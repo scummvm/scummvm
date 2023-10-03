@@ -279,11 +279,11 @@ void LauncherDialog::build() {
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	DropdownButtonWidget *addButton =
 		// I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-		new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd, 0, _c("~A~dd Game...", "lowres"));
+		new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd, 0, _c("~A~dd...", "lowres"));
 	_addButton = addButton;
 	_removeButton =
 		// I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove Game", "lowres"));
+		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove", "lowres"));
 	if (!g_gui.useLowResGUI()) {
 		// I18N: Button caption. Mass add games
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
