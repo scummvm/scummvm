@@ -77,7 +77,7 @@ struct GizmoButton {
 	int _field10 = 0;
 };
 
-typedef void (*GizmoItemFn0)();
+typedef void (*GizmoItemFnSelect)();
 typedef void (*GizmoItemFnDraw)(GizmoItem *item, Gizmo *gizmo, int x, int y);
 typedef void (*GizmoItemFnFree)(GizmoItem *item);
 typedef bool (*GizmoItemFnEvents)(GizmoItem *item, int eventType, int event, int x, int y,
@@ -94,7 +94,7 @@ struct GizmoItem {
 	Common::Rect _bounds;
 	Common::Rect _btnRect;
 	bool _hasBuffer = false;
-	GizmoItemFn0 _fn0 = nullptr;
+	GizmoItemFnSelect _select = nullptr;
 	GizmoItemFnDraw _fnDraw = nullptr;
 	GizmoItemFnFree _fnFree = nullptr;
 	GizmoItemFnEvents _fnEvents = nullptr;
