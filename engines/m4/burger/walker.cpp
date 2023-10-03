@@ -271,10 +271,6 @@ void Walker::wilburs_speech_finished() {
 	kernel_trigger_dispatchx(_trigger);
 }
 
-void Walker::wilbur_teleported() {
-	error("TODO: wilbur_teleported");
-}
-
 void enable_player() {
 	player_set_commands_allowed(true);
 	ws_unhide_walker(_G(my_walker));

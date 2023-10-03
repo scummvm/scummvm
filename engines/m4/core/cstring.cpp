@@ -248,52 +248,6 @@ void str_add_final_lf(char *mystring) {
 	*temp = '\0';
 }
 
-#ifdef TODO
-char str_parse_buffer[STR_PARSE_BUFFER_SIZE + 1];
-char str_parse_delimiter;
-bool str_parse_done = YES;
-
-void str_parse_init(char *instring, char delimiter) {
-	if (!instring)
-		return;
-
-	int len;
-
-	len = strlen(instring); /* Eval once since C's STRLEN is way slow */
-
-	Common::strcpy_s(str_parse_buffer, instring);
-	str_parse_delimiter = delimiter;
-	str_parse_done = NO;
-}
-
-char *str_parse(char *out) {
-	if (!out)
-		return NULL;
-
-	char *test;
-	char tmp[STR_PARSE_BUFFER_SIZE + 1];
-
-	Common::strcpy_s(tmp, str_parse_buffer);
-	test = tmp;
-	while (test[0] != 0 && test[0] != str_parse_delimiter)
-		test++;
-
-	if (test[0] == 0) { 	/* Last segment in original string */
-		Common::strcpy_s(out, str_parse_buffer);
-		str_parse_done = YES;
-		return(out);
-	}
-
-	/* Otherwise, there must be more left in the buffer */
-	test[0] = 0;  	/* Force an end-of-string in our temp area */
-	Common::strcpy_s(out, tmp);  /* Copy the good part to the output string */
-	Common::strcpy_s(str_parse_buffer, test + 1); /* Copy back the remainder */
-	return(out);
-}
-
-#endif
-
-//new!
 int16 char_IsIn(char ch, char *str) {
 	if (!str)
 		return -1;
