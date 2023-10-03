@@ -223,7 +223,7 @@ void SysFile::open_read() {
 }
 
 void SysFile::open_write() {
-	error("TODO: open_write");
+	error("TODO: open_write if needed");
 }
 
 Common::String SysFile::get_last_string(const Common::String &src) {
