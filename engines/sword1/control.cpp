@@ -247,7 +247,7 @@ void Control::getPlayerOptions() {
 
 	Logic::_scriptVars[CURRENT_MUSIC] = safeCurrentMusic;
 
-	_screen->startFadePaletteDown(1);
+	_vm->startFadePaletteDown(1);
 	_vm->waitForFade();
 	_sound->clearAllFx();
 	_keyPressed.reset();
@@ -279,7 +279,7 @@ void Control::getPlayerOptions() {
 		_logic->fnStopMusic(nullptr, 0, 0, 0, 0, 0, 0, 0);
 	}
 
-	_screen->startFadePaletteDown(1);
+	_vm->startFadePaletteDown(1);
 	_vm->waitForFade();
 
 	_logic->fnNormalMouse(nullptr, 0, 0, 0, 0, 0, 0, 0);
@@ -464,7 +464,7 @@ void Control::saveRestoreScreen() {
 
 		if (_newPal) {
 			_newPal = false;
-			_screen->startFadePaletteUp(1);
+			_vm->startFadePaletteUp(1);
 		}
 
 		break;
@@ -1049,7 +1049,7 @@ void Control::setVolumes() {
 	if (volBalance != ConfMan.getInt("speech_balance"))
 		ConfMan.setInt("speech_balance", volBalance);
 
-	_sound->giveSfxVol(&volL, &volR);
+	//_sound->giveSfxVol(&volL, &volR);
 	vol = (int)((volR + volL) / 2);
 	volBalance = volToBalance(volL, volR);
 	if (vol != ConfMan.getInt("sfx_volume"))
@@ -1063,89 +1063,41 @@ void Control::setVolumes() {
 }
 
 void Control::volUp(int32 i, int32 j) {
-	// TODO: This function has been mangled to accomodate the current
-	// audio engine, which will partly get rewritten in the immediate
-	// future :)
-
-	uint32 vol[2] = { 0, 0 };
+	uint32 *vol = nullptr;
 
 	switch (i) {
 	case 0:
-		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volMusic[j];
+		vol = &_sound->volMusic[j];
 		break;
 	case 1:
-		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volSpeech[j];
+		vol = &_sound->volSpeech[j];
 		break;
 	case 2:
-		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volFX[j];
+		vol = &_sound->volFX[j];
 		break;
 	}
 
-	if ((vol[j] >> 4) < 16)
-		vol[j] += 1 << 4;
-
-	vol[j] = CLIP<uint32>(vol[j], 0, 255);
-
-	switch (i) {
-	case 0:
-		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volMusic[j];
-		break;
-	case 1:
-		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volSpeech[j];
-		break;
-	case 2:
-		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volFX[j];
-		break;
-	}
+	if (vol && *vol < 16)
+		*vol += 1;
 }
 
 void Control::volDown(int32 i, int32 j) {
-	// TODO: This function has been mangled to accomodate the current
-	// audio engine, which will partly get rewritten in the immediate
-	// future :)
-
-	uint32 vol[2] = {0, 0};
+	uint32 *vol = nullptr;
 
 	switch (i) {
 	case 0:
-		_music->giveVolume((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volMusic[j];
+		vol = &_sound->volMusic[j];
 		break;
 	case 1:
-		_sound->giveSpeechVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volSpeech[j];
+		vol = &_sound->volSpeech[j];
 		break;
 	case 2:
-		_sound->giveSfxVol((uint8 *)&vol[0], (uint8 *)&vol[1]);
-		//vol = &_sound->volFX[j];
+		vol = &_sound->volFX[j];
 		break;
 	}
 
-	if (vol[j] > 1 << 4)
-		vol[j] -= 1 << 4;
-
-	vol[j] = CLIP<uint32>(vol[j], 0, 255);
-
-	switch (i) {
-	case 0:
-		_music->setVolume((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volMusic[j];
-		break;
-	case 1:
-		_sound->setSpeechVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volSpeech[j];
-		break;
-	case 2:
-		_sound->setSfxVol((uint8)vol[0], (uint8)vol[1]);
-		//vol = &_sound->volFX[j];
-		break;
-	}
+	if (vol && *vol > 0)
+		*vol -= 1;
 }
 
 void Control::renderVolumeDisc(int32 i, int32 j) {

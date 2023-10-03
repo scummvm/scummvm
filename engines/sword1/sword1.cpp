@@ -100,7 +100,7 @@ Common::Error SwordEngine::init() {
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
-	_screen = new Screen(_system, _resMan, _objectMan);
+	_screen = new Screen(_system, this, _resMan, _objectMan);
 	_music = new Music(_mixer);
 	_sound = new Sound(_mixer, this, _resMan);
 	_menu = new Menu(_screen, _mouse);
@@ -246,11 +246,9 @@ void SwordEngine::syncSoundSettings() {
 	if (mute) {
 		_music->setVolume(0, 0);
 		_sound->setSpeechVol(0, 0);
-		_sound->setSfxVol(0, 0);
 	} else {
 		_music->setVolume(musicVolL, musicVolR);
 		_sound->setSpeechVol(speechVolL, speechVolR);
-		_sound->setSfxVol(sfxVolL, sfxVolR);
 	}
 }
 
@@ -972,7 +970,7 @@ void SwordEngine::askForCd() {
 			pollInput(0);
 		}
 
-		_screen->startFadePaletteDown(1);
+		startFadePaletteDown(1);
 
 		startTime = _system->getMillis();
 		while (_screen->stillFading()) {
@@ -1092,7 +1090,7 @@ uint8 SwordEngine::mainLoop() {
 			(!shouldQuit()));
 
 		if ((Logic::_scriptVars[SCREEN] != 53) && !shouldQuit()) {
-			_screen->startFadePaletteDown(1);
+			startFadePaletteDown(1);
 		}
 
 		_screen->quitScreen(); // Close graphic resources
@@ -1197,13 +1195,11 @@ void SwordEngine::fadePaletteStep() {
 
 void SwordEngine::startFadePaletteDown(int speed) {
 	_screen->startFadePaletteDown(speed);
-
 	_sound->FadeFxDown(speed);
 }
 
 void SwordEngine::startFadePaletteUp(int speed) {
 	_screen->startFadePaletteUp(speed);
-
 	_sound->FadeFxUp(speed);
 }
 

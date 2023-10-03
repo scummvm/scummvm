@@ -78,6 +78,8 @@ class SwordEngine;
 #define POS_MOUTH_THRESHOLD 750
 #define MAX_FX 4
 #define MAX_MUSIC 2
+#define S_STATUS_FINISHED 1
+#define S_STATUS_RUNNING  0
 
 enum CowMode {
 	CowWave = 0,
@@ -95,9 +97,7 @@ public:
 	Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan);
 	~Sound();
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; }
-	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; }
 	void giveSpeechVol(uint8 *volL, uint8 *volR) { *volL = _speechVolL; *volR = _speechVolR; }
-	void giveSfxVol(uint8 *volL, uint8 *volR) { *volL = _sfxVolL; *volR = _sfxVolR; }
 	void newScreen(uint32 screen);
 	void clearAllFx();
 	void closeCowSystem();
@@ -117,10 +117,10 @@ public:
 	double endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples);
 
 	Common::Mutex _soundMutex;
+	Audio::Mixer *_mixer;
 
 private:
-	uint8 _sfxVolL, _sfxVolR, _speechVolL, _speechVolR;
-	void playSample(QueueElement *elem);
+	uint8 _speechVolL, _speechVolR;
 	void initCowSystem();
 
 	uint32 getSampleId(int32 fxNo);
@@ -138,7 +138,6 @@ private:
 
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
 	uint8        _endOfQueue;
-	Audio::Mixer *_mixer;
 	SwordEngine *_vm;
 	ResMan *_resMan;
 
@@ -156,7 +155,7 @@ public:
 	int32 StreamSample(char filename[], int32 looped);
 	void UpdateSampleStreaming();
 
-	int32 PlayFX(int32 fxID, int32 type, void *wavData, uint32 vol[2]);
+	int32 PlayFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
 	int32 StopFX(int32 fxID);
 	int32 CheckSampleStatus(int32 id);
 	int32 CheckSpeechStatus();
@@ -177,14 +176,17 @@ public:
 	void PauseFx();
 	void UnpauseFx();
 
+	int8 scalePan(int pan); // From 0,127 to -127,127
+
 	void ReduceMusicVolume();
 	void RestoreMusicVolume();
 
+	// Handles for external volume changes (control panel)
 	uint32 volFX[2] = { 0, 0 };
 	uint32 volSpeech[2] = { 0, 0 };
 	uint32 volMusic[2] = { 0, 0 };
 
-	//  Volume variables
+	// Volume variables
 	int32 volumeFadingFlag = 0;
 	int32 volumeFadingRate = 0;
 	int32 musicFadingFlag = 0;
@@ -201,8 +203,7 @@ public:
 	int32 speechCount = 0;
 	int32 speechSize = 0;
 
-//  Sample handles and information.
-
+	// Sample handles and information.
 	Audio::SoundHandle hSampleFX[MAX_FX];
 	Audio::SoundHandle hSampleSpeech;
 	Audio::SoundHandle hSampleMusic[MAX_MUSIC];
@@ -212,9 +213,9 @@ public:
 	Audio::SoundHandle hStreamSample[MAX_MUSIC];
 	int32 streamFile[MAX_MUSIC];
 	byte *streamBuffer[MAX_MUSIC][2];
-	int32 fxSampleBusy[MAX_FX] = { 0, 0, 0, 0 };
+	bool fxSampleBusy[MAX_FX] = { false, false, false, false };
 	int32 fxSampleID[MAX_FX] = { 0, 0, 0, 0 };
-	int32 speechSampleBusy;
+	bool speechSampleBusy = false;
 	uint32 musicSamples = 0;
 	bool crossFadeIncrement = false;
 	bool speechSamplePaused = false;
