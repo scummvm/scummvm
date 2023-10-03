@@ -84,7 +84,6 @@ private:
 	Menu *_menu;
 	Music *_music;
 	uint32 _newScript; // <= ugly, but I can't avoid it.
-	bool _speechRunning, _speechFinished, _textRunning;
 	uint8 _speechClickDelay;
 	Common::RandomSource _rnd;
 	bool _psxFudgeRandom = false; // Used within fnIdle() and fnRandom() for the PSX version

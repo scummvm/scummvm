@@ -96,18 +96,13 @@ class Sound {
 public:
 	Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan);
 	~Sound();
-	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; }
-	void giveSpeechVol(uint8 *volL, uint8 *volR) { *volL = _speechVolL; *volR = _speechVolR; }
 	void newScreen(uint32 screen);
 	void clearAllFx();
 	void closeCowSystem();
 
-	bool startSpeech(uint16 roomNo, uint16 localNo);
-	bool speechFinished();
-	void stopSpeech();
-	bool amISpeaking(byte *buf);
+	void startSpeech(uint16 roomNo, uint16 localNo);
+	bool amISpeaking();
 
-	void fnStopFx(int32 fxNo);
 	int addToQueue(uint32 fxNo);
 	void removeFromQueue(uint32 fxNo);
 
@@ -120,20 +115,17 @@ public:
 	Audio::Mixer *_mixer;
 
 private:
-	uint8 _speechVolL, _speechVolR;
 	void initCowSystem();
 
 	uint32 getSampleId(int32 fxNo);
-	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size, bool* ok = 0);
-	void calcWaveVolume(int16 *data, uint32 length);
-	bool _waveVolume[WAVE_VOL_TAB_LENGTH];
-	uint16 _waveVolPos;
+	bool expandSpeech(byte *src, byte *dst, uint32 dstSize,
+		bool *endiannessCheck = nullptr, uint32 *sizeForEndiannessCheck = nullptr);
+
 	Common::File _cowFile;
 	uint32       *_cowHeader;
 	uint32       _cowHeaderSize;
 	uint8        _currentCowFile;
 	CowMode      _cowMode;
-	Audio::SoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
 
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
@@ -150,24 +142,31 @@ private:
 public:
 	void installFadeTimer();
 	void uninstallFadeTimer();
+
+	int8 scalePan(int pan); // From 0,127 to -127,127
+
 	void PlaySample(int32 fxNo);
-
-	int32 StreamSample(char filename[], int32 looped);
-	void UpdateSampleStreaming();
-
 	int32 PlayFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
 	int32 StopFX(int32 fxID);
 	int32 CheckSampleStatus(int32 id);
+
+	void UpdateSampleStreaming();
 	int32 CheckSpeechStatus();
-	int32 PlaySpeech(void *wavData, int32 size);
+	int32 PlaySpeech();
 	int32 StopSpeech();
+	int32 GetSpeechSize(byte *compData, uint32 compSize);
+
+	int32 StreamSample(char filename[], int32 looped);
+	void ReduceMusicVolume();
+	void RestoreMusicVolume();
+
 	void FadeVolumeDown(int32 rate);
 	void FadeVolumeUp(int32 rate);
 	void FadeMusicDown(int32 rate);
 	void FadeMusicUp(int32 rate);
 	void FadeFxDown(int32 rate);
 	void FadeFxUp(int32 rate);
-	int32 GetSpeechSize(void *compData);
+
 	void SetCrossFadeIncrement();
 	void PauseSpeech();
 	void UnpauseSpeech();
@@ -175,11 +174,6 @@ public:
 	void UnpauseMusic();
 	void PauseFx();
 	void UnpauseFx();
-
-	int8 scalePan(int pan); // From 0,127 to -127,127
-
-	void ReduceMusicVolume();
-	void RestoreMusicVolume();
 
 	// Handles for external volume changes (control panel)
 	uint32 volFX[2] = { 0, 0 };
@@ -221,6 +215,7 @@ public:
 	bool speechSamplePaused = false;
 	bool fxPaused[MAX_FX] = { false, false, false, false };
 	bool musicPaused[MAX_MUSIC] = { false, false };
+	byte *speechSample = nullptr;
 };
 
 } // End of namespace Sword1
