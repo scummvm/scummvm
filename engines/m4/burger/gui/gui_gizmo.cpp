@@ -823,7 +823,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_fnDraw = gizmo_item_draw;
 	item->_fnFree = gizmo_item_free;
 	item->_fnEvents = events;
-	(*item->_fnDraw)(item, gizmo, rect1X, rect1Y);
+	(*item->_fnDraw)(item, gizmo, boundsX, boundsY);
 
 	int32 status = 0;
 	ScreenContext *ctx = vmng_screen_find(gizmo, &status);
