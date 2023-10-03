@@ -19,59 +19,27 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_ROOM_H
-#define M4_BURGER_ROOMS_ROOM_H
+#ifndef M4_RIDDLE_ROOMS_ROOM_H
+#define M4_RIDDLE_ROOMS_ROOM_H
 
 #include "m4/core/rooms.h"
-#include "m4/burger/core/play_break.h"
-#include "m4/burger/core/stream_break.h"
-#include "m4/burger/core/conv.h"
 #include "m4/adv_r/conv_io.h"
 #include "m4/core/imath.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {
-namespace Burger {
+namespace Riddle {
 namespace Rooms {
 
 class Room : public M4::Room {
-private:
-	static char _wilburName[16];
-	static char _wilburVerb;
-
-protected:
-	static HotSpotRec _wilburHotspot;
-	Series _roomSeries1;
-	Series _general;
-
-public:
-	static void setWilburHotspot();
-
 public:
 	Room() : M4::Room() {}
 	~Room() override {}
-
-	void shutdown() override;
-	void parser_code() override;
-
-	/**
-	 * Used to tell if x,y is over the walker hotspot
-	 */
-	HotSpotRec *custom_hotspot_which(int32 x, int32 y) override;
-
-	void compact_mem_and_report() {}
-
-	void npc_say(const char *digiName, int trigger = -1, const char *seriesName = nullptr,
-		int layer = 0, bool shadow = true, int firstFrame = 0, int lastFrame = -1,
-		int digiSlot = 1, int digiVol = 255);
-	void npc_say(int trigger = -1, const char *seriesName = nullptr,
-		int layer = 0, bool shadow = true, int firstFrame = 0, int lastFrame = -1,
-		int digiSlot = 1, int digiVol = 255);
 };
 
 } // namespace Rooms
-} // namespace Burger
+} // namespace Riddle
 } // namespace M4
 
 #endif

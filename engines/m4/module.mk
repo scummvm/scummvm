@@ -184,6 +184,7 @@ MODULE_OBJS = \
 	burger/vars.o \
 	burger/walker.o \
 	riddle/gui/interface.o \
+	riddle/rooms/room.o \
 	riddle/rooms/section.o \
 	riddle/rooms/section9/section9.o \
 	riddle/rooms/section9/section9_room.o \
