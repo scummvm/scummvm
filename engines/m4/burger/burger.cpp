@@ -340,51 +340,51 @@ void BurgerEngine::global_daemon() {
 			break;
 		case 10003:
 			player_set_commands_allowed(false);
-			player_update_info(_G(my_walker), &_G(player_info));
-			ws_hide_walker(_G(my_walker));
+			player_update_info();
+			ws_hide_walker();
 			_G(wilbur_should) = 10013;
-			series_play_with_breaks(PLAY_BREAKS1, "999wbw", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 7,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS1, "999wbw", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 7,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10004:
 			player_set_commands_allowed(false);
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10012;
-			series_play_with_breaks(PLAY_BREAKS2, "999wbj", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS2, "999wbj", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10005:
 			player_set_commands_allowed(false);
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10009;
-			series_play_with_breaks(PLAY_BREAKS3, "600wek", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS3, "600wek", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10006:
 			player_set_commands_allowed(false);
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 7,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 7,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10007:
 			player_set_commands_allowed(false);
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10014;
-			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10008:
 			player_set_commands_allowed(false);
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", UNKNOWN_DEPTH_1, gCHANGE_WILBUR_ANIMATION, 3, 6,
-				UNKNOWN_SCALE_1, _G(player_info).x, _G(player_info).y);
+			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10009:
 			ws_unhide_walker(_G(my_walker));

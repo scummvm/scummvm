@@ -296,38 +296,38 @@ void wilbur_abduct(int trigger) {
 		switch (_G(walkTrigger)) {
 		case 1:
 		case 2:
-			series_play("999ab02", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
-			series_play("999ab02s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 		case 3:
 		case 4:
 		case 5:
-			series_play("999ab04", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab04", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
-			series_play("999ab04s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab04s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 		case 7:
 		case 8:
 		case 9:
-			series_play("999ab08", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab08", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
-			series_play("999ab08s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab08s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 		case 10:
 		case 11:
-			series_play("999ab10", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab10", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
-			series_play("999ab10s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab10s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 		default:
-			series_play("999ab02", UNKNOWN_DEPTH_1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
-			series_play("999ab02s", UNKNOWN_DEPTH_1 + 1, 0, -1, 6, 0, UNKNOWN_SCALE_1,
+			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 		}
