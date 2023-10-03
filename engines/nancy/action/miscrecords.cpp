@@ -522,6 +522,15 @@ void InventorySoundOverride::execute() {
 	_isDone = true;
 }
 
+void PopInvViewPriorScene::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void PopInvViewPriorScene::execute() {
+	NancySceneState.popScene(true);
+	_isDone = true;
+}
+
 void HintSystem::readData(Common::SeekableReadStream &stream) {
 	_characterID = stream.readByte();
 	_genericSound.readNormal(stream);

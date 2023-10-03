@@ -105,7 +105,9 @@ struct PCAL : public EngineData {
 struct INV : public EngineData {
 	struct ItemDescription {
 		Common::String name;
-		byte keepItem;
+		byte keepItem = kInvItemKeepAlways;
+		uint16 sceneID = 9999;
+		uint16 sceneSoundFlag = kContinueSceneSound;
 		Common::Rect sourceRect;
 		Common::Rect highlightedSourceRect;
 

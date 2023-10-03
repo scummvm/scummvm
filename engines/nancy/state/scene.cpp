@@ -236,15 +236,28 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 	_state = kLoad;
 }
 
-void Scene::pushScene() {
-	_sceneState.pushedScene = _sceneState.currentScene;
-	_sceneState.isScenePushed = true;
+void Scene::pushScene(int16 itemID) {
+	if (itemID == -1) {
+		_sceneState.pushedScene = _sceneState.currentScene;
+		_sceneState.isScenePushed = true;
+	} else {
+		_sceneState.pushedInvScene = _sceneState.currentScene;
+		_sceneState.isInvScenePushed = true;
+		_sceneState.pushedInvItemID = itemID;
+	}
 }
 
-void Scene::popScene() {
-	_sceneState.pushedScene.continueSceneSound = true;
-	changeScene(_sceneState.pushedScene);
-	_sceneState.isScenePushed = false;
+void Scene::popScene(bool inventory) {
+	if (!inventory) {
+		_sceneState.pushedScene.continueSceneSound = true;
+		changeScene(_sceneState.pushedScene);
+		_sceneState.isScenePushed = false;
+	} else {
+		_sceneState.pushedInvScene.continueSceneSound = true;
+		changeScene(_sceneState.pushedInvScene);
+		_sceneState.isInvScenePushed = false;
+		addItemToInventory(_sceneState.pushedInvItemID);
+	}
 }
 
 void Scene::setPlayerTime(Time time, byte relative) {
@@ -581,6 +594,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(_sceneState.pushedScene.frameID);
 	ser.syncAsUint16LE(_sceneState.pushedScene.verticalOffset);
 	ser.syncAsByte(_sceneState.isScenePushed);
+
+	// Inventory scene "stack" was introduced in nancy7
+	if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		ser.syncAsUint16LE(_sceneState.pushedInvScene.sceneID);
+		ser.syncAsUint16LE(_sceneState.pushedInvScene.frameID);
+		ser.syncAsUint16LE(_sceneState.pushedInvScene.verticalOffset);
+		ser.syncAsByte(_sceneState.isInvScenePushed);
+	}
 
 	// hardcoded number of logic conditions, check if there can ever be more/less
 	for (uint i = 0; i < 30; ++i) {

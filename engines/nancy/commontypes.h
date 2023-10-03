@@ -51,6 +51,7 @@ static const int8 kFrNoFrame						= -1;
 static const byte kInvItemUseThenLose				= 0;
 static const byte kInvItemKeepAlways				= 1;
 static const byte kInvItemReturn					= 2;
+static const byte kInvItemNewSceneView				= 3;
 
 // Inventory item sound override commands
 static const byte kInvSoundOverrideCommandNoSound	= 0;

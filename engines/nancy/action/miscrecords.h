@@ -372,6 +372,16 @@ protected:
 	Common::String getRecordTypeName() const override { return "InventorySoundOverride"; }
 };
 
+// Pops the scene and item that get pushed when a player clicks a kInvItemNewSceneView item
+class PopInvViewPriorScene : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "PopInvViewPriorScene"; }
+};
+
 // Checks how many hints the player is allowed to get. If they are still allowed hints,
 // it selects an appropriate one and plays its sound/displays its caption in the Textbox.
 // The hint system was _only_ used in nancy1, since it's pretty limited and overly punishing.

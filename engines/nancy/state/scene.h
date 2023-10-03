@@ -127,8 +127,8 @@ public:
 	bool isRunningAd() { return _isRunningAd; }
 
 	void changeScene(const SceneChangeDescription &sceneDescription);
-	void pushScene();
-	void popScene();
+	void pushScene(int16 itemID = -1);
+	void popScene(bool inventory = false);
 	
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
@@ -222,6 +222,9 @@ private:
 		SceneChangeDescription nextScene;
 		SceneChangeDescription pushedScene;
 		bool isScenePushed = false;
+		SceneChangeDescription pushedInvScene;
+		int16 pushedInvItemID = -1;
+		bool isInvScenePushed = false;
 	};
 
 	struct Timers {

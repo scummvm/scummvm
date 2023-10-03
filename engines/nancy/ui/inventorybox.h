@@ -107,6 +107,8 @@ private:
 	Common::Array<int16> _order;
 	ItemHotspot _itemHotspots[4];
 	int _highlightedHotspot;
+
+	const struct INV *_inventoryData;
 };
 
 } // End of namespace UI

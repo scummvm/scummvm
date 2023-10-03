@@ -181,6 +181,8 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 		item.name = (char *)textBuf;
 
 		s.syncAsUint16LE(item.keepItem);
+		s.syncAsUint16LE(item.sceneID, kGameTypeNancy7);
+		s.syncAsUint16LE(item.sceneSoundFlag, kGameTypeNancy7);
 		readRect(s, item.sourceRect);
 		readRect(s, item.highlightedSourceRect, kGameTypeNancy2);
 
