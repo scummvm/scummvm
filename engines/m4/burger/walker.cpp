@@ -409,7 +409,11 @@ bool Walker::wilbur_match(const WilburMatch *list) {
 }
 
 void Walker::wilbur_poof() {
-	error("TODO: Walker::wilbur_poof");
+	player_update_info();
+	_wilburPoof = series_load("999poof");
+	series_play("999poof", _G(player_info).depth, 0, gUNPOOF, 6, 0,
+		_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+	digi_play("999_003", 1, 255);
 }
 
 void Walker::wilbur_unpoof() {
