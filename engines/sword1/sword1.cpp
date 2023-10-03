@@ -267,23 +267,18 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 void SwordEngine::checkKeys() {
 
 	if (_systemVars.gamePaused) {
-		// TODO: Audio
-		//PauseSpeech();
-		//PauseMusic();
-		//PauseFx();
-		_mixer->pauseAll(true);
+		_sound->PauseSpeech();
+		_sound->PauseMusic();
+		_sound->PauseFx();
 
 		while (_keyPressed.keycode != Common::KEYCODE_p && !Engine::shouldQuit()) {
 			pollInput(0);
-			// TODO: Audio
-			// UpdateSampleStreaming();
+			_sound->UpdateSampleStreaming();
 		}
 
-		// TODO: Audio
-		//UnpauseSpeech();
-		//UnpauseMusic();
-		//UnpauseFx();
-		_mixer->pauseAll(false);
+		_sound->UnpauseSpeech();
+		_sound->UnpauseMusic();
+		_sound->UnpauseFx();
 
 		_systemVars.gamePaused = false;
 		_keyPressed.reset();
@@ -1203,13 +1198,13 @@ void SwordEngine::fadePaletteStep() {
 void SwordEngine::startFadePaletteDown(int speed) {
 	_screen->startFadePaletteDown(speed);
 
-	// TODO: Fade audio here
+	_sound->FadeFxDown(speed);
 }
 
 void SwordEngine::startFadePaletteUp(int speed) {
 	_screen->startFadePaletteUp(speed);
 
-	// TODO: Fade audio here
+	_sound->FadeFxUp(speed);
 }
 
 static void vblCallback(void *refCon) {
@@ -1243,8 +1238,6 @@ static void vblCallback(void *refCon) {
 
 			vm->fadePaletteStep();
 		}
-
-		// TODO: Volume fading here...
 	}
 
 	vm->_inTimer--;
