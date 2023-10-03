@@ -482,7 +482,7 @@ static bool gizmo_eventHandler(void *s, int32 eventType, int32 event, int32 x, i
 	int xs = x + ctx->x1;
 	int ys = y + ctx->y1;
 
-	if (!_GIZMO(currentItem)) {
+	if (_GIZMO(currentItem)) {
 		flag = (*_GIZMO(currentItem)->_fnEvents)(_GIZMO(currentItem),
 			eventType, event, xs, ys, &_GIZMO(currentItem));
 
@@ -629,6 +629,15 @@ static bool gizmo_item_contains(GizmoItem *item, int x, int y) {
 	return item->_btnRect.contains(x, y);
 }
 
+static GizmoItem *gizmo_findItem(int id, Gizmo *gizmo) {
+	for (GizmoItem *item = gizmo->_items; item; item = item->_next) {
+		if (item->_id == id)
+			return item;
+	}
+
+	return nullptr;
+}
+
 static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, int y,
 		GizmoItem **currentItem) {
 	if (!item || !item->_button || eventType != EVENT_MOUSE)
@@ -743,9 +752,19 @@ static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, 
 				item->_bounds.right + ctx->x1, item->_bounds.bottom + ctx->y1);
 	}
 
-	if (flag2 && item->_fn0) {
-		// TODO: drag release code
-		error("TODO: fn0");
+	if (flag2 && item->_select) {
+		(*item->_select)();
+
+		int32 status;
+		ScreenContext *ctx = vmng_screen_find(item->_gizmo, &status);
+
+		if (ctx && status == 1) {
+			if (!gizmo_findItem(item->_id, item->_gizmo))
+				*currentItem = nullptr;
+
+		} else {
+			*currentItem = nullptr;
+		}
 	}
 
 	return flag3;
@@ -754,7 +773,7 @@ static bool gizmo_item_events(GizmoItem *item, int eventType, int event, int x, 
 static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 		int boundsX, int boundsY, int boundsW, int boundsH,
 		int rect1X, int rect1Y, int rect1W, int rect1H,
-		GizmoItemFn0 fn0, int btnIndex, bool selected = false,
+		GizmoItemFnSelect select, int btnIndex, bool selected = false,
 		bool hasBuffer = false, int arg9 = 0,
 		GizmoItemFnEvents events = gizmo_item_events) {
 	if (!gizmo)
@@ -778,7 +797,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	item->_bounds = Common::Rect(boundsX, boundsY, boundsX + boundsW - 1,
 		boundsY + boundsH - 1);
 	item->_btnRect = Common::Rect(rect1X, rect1Y, rect1X + rect1W - 1, rect1Y + rect1H - 1);
-	item->_fn0 = fn0;
+	item->_select = select;
 
 	item->_hasBuffer = hasBuffer;
 	if (hasBuffer) {
