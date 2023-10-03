@@ -1135,7 +1135,6 @@ void Room143::daemon() {
 		_G(kernel).continue_handling_trigger = true;
 		break;
 	}
-	// TODO
 }
 
 void Room143::pre_parser() {

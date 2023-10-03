@@ -88,7 +88,6 @@ Vars::~Vars() {
 }
 
 void Vars::main_cold_data_init() {
-	// TODO
 	initMouseSeries("cursor", nullptr);
 
 	_kernel.first_fade = 32;

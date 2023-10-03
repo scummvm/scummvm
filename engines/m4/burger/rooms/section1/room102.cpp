@@ -1291,7 +1291,6 @@ void Room102::parser() {
 		} else if (player_said("take", "stove")) {
 			_G(walker).wilbur_speech("102w040");
 		} else if (player_said("gear", "stove")) {
-			// TODO
 			flagAction("102w041", "102h031");
 		} else if (player_said("harry") && inv_player_has(_G(player).verb) && !_G(flags)[V012]) {
 			queuePlay(imath_ranged_rand(1, 2) == 1 ? "102h009y" : "102h009z");

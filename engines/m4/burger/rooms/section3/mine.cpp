@@ -352,7 +352,6 @@ void Mine::daemon() {
 			break;
 		}
 
-	// TODO: Further cases
 	default:
 		_G(kernel).continue_handling_trigger = true;
 		break;
