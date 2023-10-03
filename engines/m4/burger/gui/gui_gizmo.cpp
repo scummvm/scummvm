@@ -188,6 +188,9 @@ static void gizmo_digi_wait(int spriteIndex1, int spriteIndex2) {
 			gui_system_event_handler();
 		}
 	}
+
+	gizmo_restore_sprite(57);
+	player_set_commands_allowed(true);
 }
 
 static void gizmo_daemon(int trigger) {
