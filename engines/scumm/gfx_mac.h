@@ -76,7 +76,7 @@ private:
 	void drawButton(Widget *w);
 	void drawInventoryWidget(Widget *w);
 	void drawInventoryArrow(int arrowX, int arrowY, bool highlighted, bool flipped);
-	void drawInventoryText(int slot, char *text, bool highlighted);
+	void drawInventoryText(int slot, const byte *text, bool highlighted);
 
 	// Primitives
 	void fill(Common::Rect r);

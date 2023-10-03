@@ -582,7 +582,23 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 }
 
 void MacIndy3Gui::updateInventory() {
-	debug("TODO: Update inventory");
+	// The Mac inventory script simply turns on the inventory widget and
+	// sets its text to the name of the object in variable 83. However, I
+	// can't find anywhere where this variable is set, so maybe it's set by
+	// the engine itself?
+	//
+	// Rather than guessing, just brute force it.
+
+	int owner = _vm->VAR(_vm->VAR_EGO);
+	int slot = 0;
+	for (int i = 0; i < _vm->_numInventory; i++) {
+		int obj = _vm->_inventory[i];
+		if (obj && _vm->getOwner(obj) == owner) {
+			const byte *name = _vm->getObjOrActorName(obj);
+			drawInventoryText(slot, name, false);
+			slot++;
+		}
+	}
 }
 
 void MacIndy3Gui::show() {
@@ -805,7 +821,7 @@ void MacIndy3Gui::drawInventoryArrow(int arrowX, int arrowY, bool highlighted, b
 	} while (y != y1);
 }
 
-void MacIndy3Gui::drawInventoryText(int slot, char *text, bool highlighted) {
+void MacIndy3Gui::drawInventoryText(int slot, const byte *text, bool highlighted) {
 	int slotX = 423;
 	int slotY = 298 + slot * 11;
 
@@ -835,9 +851,13 @@ void MacIndy3Gui::drawInventoryText(int slot, char *text, bool highlighted) {
 	int x = slotX + 4;
 
 	for (int i = 0; text[i]; i++) {
-		_fonts[0]->drawChar(_macScreen, text[i], x, y, fg);
-		x += _fonts[0]->getCharWidth(text[i]);
+		if (text[i] != '@') {
+			_fonts[0]->drawChar(_macScreen, text[i], x, y, fg);
+			x += _fonts[0]->getCharWidth(text[i]);
+		}
 	}
+
+	copyRectToScreen(Common::Rect(slotX, slotY, slotX + width, slotY + height));
 }
 
 void MacIndy3Gui::fill(Common::Rect r) {
