@@ -145,16 +145,6 @@ extern Vars *g_vars;
 #define _GI(X) _G(interface)._##X
 #define _GINT() _G(interface)
 
-
-inline int UNKNOWN_depth1() {
-	error("TODO: Uninitialized? depth UNKNOWN_1");
-}
-inline int UNKNOWN_scale1() {
-	error("TODO: Uninitialized? depth UNKNOWN_1");
-}
-#define UNKNOWN_DEPTH_1 UNKNOWN_depth1()
-#define UNKNOWN_SCALE_1 UNKNOWN_scale1()
-
 } // namespace Burger
 } // namespace M4
 
