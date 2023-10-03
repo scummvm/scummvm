@@ -235,7 +235,7 @@ void LauncherDialog::build() {
 	Common::String grouping = ConfMan.get("grouping");
 	const GroupingMode *mode = groupingModes;
 	while (mode->name) {
-		if (mode->lowresDescription && g_gui.getGUIWidth() <= 320) {
+		if (mode->lowresDescription && g_gui.useLowResGUI()) {
 			_grpChooserPopup->appendEntry(_c(mode->lowresDescription, "group"), mode->id);
 		} else {
 			_grpChooserPopup->appendEntry(_c(mode->description, "group"), mode->id);
@@ -284,7 +284,7 @@ void LauncherDialog::build() {
 	_removeButton =
 		// I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove Game", "lowres"));
-	if (g_gui.getGUIWidth() > 320) {
+	if (!g_gui.useLowResGUI()) {
 		// I18N: Button caption. Mass add games
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
 	} else {

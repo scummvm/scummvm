@@ -1391,7 +1391,7 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 
 	// Keyboard and joystick mouse speed
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
-		if (g_gui.getGUIWidth() > 320)
+		if (!g_gui.useLowResGUI())
 			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _("Pointer Speed:"), _("Speed for keyboard/joystick mouse pointer control"));
 		else
 			_kbdMouseSpeedDesc = new StaticTextWidget(boss, prefix + "grKbdMouseSpeedDesc", _c("Pointer Speed:", "lowres"), _("Speed for keyboard/joystick mouse pointer control"));
@@ -1404,7 +1404,7 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 
 	// Joystick deadzone
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-		if (g_gui.getGUIWidth() > 320)
+		if (!g_gui.useLowResGUI())
 			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _("Joy Deadzone:"), _("Analog joystick Deadzone"));
 		else
 			_joystickDeadzoneDesc = new StaticTextWidget(boss, prefix + "grJoystickDeadzoneDesc", _c("Joy Deadzone:", "lowres"), _("Analog joystick Deadzone"));
@@ -1442,10 +1442,10 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	uint16 width;
 	uint16 textline_numchars;  // max number of chars in textline
 	uint16 progressBarWidth;
-	uint16 commentDelta = g_gui.getGUIWidth() <= 320 ? 20 : 30; // textline left tabbing
+	uint16 commentDelta = g_gui.useLowResGUI() ? 20 : 30; // textline left tabbing
 	float scale_factor = g_gui.getScaleFactor();
 
-	if (g_gui.getGUIWidth() > 320) { // hires
+	if (!g_gui.useLowResGUI()) { // hires
 		width = 440 + 800 * (scale_factor - 1);
 		textline_numchars = 70 + 80 * (scale_factor - 1);
 		progressBarWidth = 240;
@@ -1531,7 +1531,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 	uint16 yStep = lineHeight;
 	uint16 ySmallStep = yStep / 3;
 	uint16 yPos = lineHeight;
-	uint16 width = g_gui.getGUIWidth() <= 320 ? 240 : 410;
+	uint16 width = g_gui.useLowResGUI() ? 240 : 410;
 
 	for (uint16 idx = 0; idx < nMax ; idx++) {
 		const Common::StatDescription *descr = AchMan.getStatDescription(idx);
@@ -1550,7 +1550,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 	Common::String context;
-	if (g_gui.getGUIWidth() <= 320)
+	if (g_gui.useLowResGUI())
 		context = "lowres";
 
 	// The GFX mode popup
@@ -1615,7 +1615,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		updateScaleFactors(_scalerPopUp->getSelectedTag());
 	}
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
 	else
 		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
@@ -1639,7 +1639,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	Common::Array<Graphics::RendererTypeDescription> rt = Graphics::Renderer::listTypes();
 	if (!rt.empty()) {
-		if (g_gui.getGUIWidth() > 320)
+		if (!g_gui.useLowResGUI())
 			_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
 		else
 			_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _c("Game 3D Renderer:", "lowres"));
@@ -1649,7 +1649,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		_rendererTypePopUp->appendEntry("");
 		for (Common::Array<Graphics::RendererTypeDescription>::iterator it = rt.begin();
 		        it != rt.end(); ++it) {
-			if (g_gui.getGUIWidth() > 320) {
+			if (!g_gui.useLowResGUI()) {
 				_rendererTypePopUp->appendEntry(_(it->description), it->id);
 			} else {
 				_rendererTypePopUp->appendEntry(_c(it->description, "lowres"), it->id);
@@ -1691,7 +1691,7 @@ void OptionsDialog::enableShaderControls(bool enable) {
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred device:") : _("Music device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	else
 		_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _c("Preferred dev.:", "lowres") : _c("Music device:", "lowres"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
@@ -1770,7 +1770,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	}
 
 	// SoundFont
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
 	else
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, FluidSynth and Timidity"), kChooseSoundFontCmd);
@@ -1796,7 +1796,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
 
 	// Native mt32 setting
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 	else
 		_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _c("True Roland MT-32 (no GM emulation)", "lowres"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
@@ -1837,7 +1837,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
-	if (g_gui.getGUIWidth() > 320) {
+	if (!g_gui.useLowResGUI()) {
 		_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and speech:"));
 
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
@@ -1877,7 +1877,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
 
 	// Volume controllers
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
 	else
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
@@ -1891,7 +1891,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 
 	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute all"), Common::U32String(), kMuteAllChanged);
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
 	else
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _c("SFX volume:", "lowres"), _("Special sound effects volume"));
@@ -1903,7 +1903,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
 	else
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
@@ -2001,7 +2001,7 @@ void OptionsDialog::updateSpeechVolume(const int newValue) const {
 
 void OptionsDialog::reflowLayout() {
 	if (_graphicsTabId != -1 && _tabWidget)
-		_tabWidget->setTabTitle(_graphicsTabId, g_gui.getGUIWidth() > 320 ? _("Graphics") : _("GFX"));
+		_tabWidget->setTabTitle(_graphicsTabId, g_gui.useLowResGUI() ? _("GFX") : _("Graphics"));
 
 	Dialog::reflowLayout();
 	setupGraphicsTab();
@@ -2175,7 +2175,7 @@ void GlobalOptionsDialog::build() {
 	//
 	// 1) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_gui.getGUIWidth() > 320 ? _("Graphics") : _("GFX"), "GlobalOptions_Graphics", false);
+	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GlobalOptions_Graphics", false);
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", "GlobalOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
@@ -2234,7 +2234,7 @@ void GlobalOptionsDialog::build() {
 	addAudioControls(tab, "GlobalOptions_Audio.");
 	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("Volume"), "GlobalOptions_Volume");
 	else
 		tab->addTab(_c("Volume", "lowres"), "GlobalOptions_Volume");
@@ -2257,11 +2257,11 @@ void GlobalOptionsDialog::build() {
 	//
 	// 5) The Paths tab
 	//
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_pathsTabId = tab->addTab(_("Paths"), "GlobalOptions_Paths");
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths");
-	addPathsControls(tab, "GlobalOptions_Paths.", g_gui.getGUIWidth() <= 320);
+	addPathsControls(tab, "GlobalOptions_Paths.", g_gui.useLowResGUI());
 
 	//
 	// 6) The GUI tab
@@ -2270,7 +2270,7 @@ void GlobalOptionsDialog::build() {
 	ScrollContainerWidget *guiContainer = new ScrollContainerWidget(tab, "GlobalOptions_GUI.Container", "GlobalOptions_GUI_Container");
 	guiContainer->setTarget(this);
 	guiContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
-	addGUIControls(guiContainer, "GlobalOptions_GUI_Container.", g_gui.getGUIWidth() <= 320);
+	addGUIControls(guiContainer, "GlobalOptions_GUI_Container.", g_gui.useLowResGUI());
 
 	//
 	// 7) The miscellaneous tab
@@ -2279,14 +2279,14 @@ void GlobalOptionsDialog::build() {
 	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
 	miscContainer->setTarget(this);
 	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
-	addMiscControls(miscContainer, "GlobalOptions_Misc_Container.", g_gui.getGUIWidth() <= 320);
+	addMiscControls(miscContainer, "GlobalOptions_Misc_Container.", g_gui.useLowResGUI());
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	//
 	// 8) The Cloud tab (remote storages)
 	//
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("Cloud"), "GlobalOptions_Cloud", false);
 	else
 		tab->addTab(_c("Cloud", "lowres"), "GlobalOptions_Cloud", false);
@@ -2296,17 +2296,17 @@ void GlobalOptionsDialog::build() {
 	container->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	setTarget(container);
 
-	addCloudControls(container, "GlobalOptions_Cloud_Container.", g_gui.getGUIWidth() <= 320);
+	addCloudControls(container, "GlobalOptions_Cloud_Container.", g_gui.useLowResGUI());
 #endif // USE_LIBCURL
 #ifdef USE_SDL_NET
 	//
 	// 9) The LAN tab (local "cloud" webserver)
 	//
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("LAN"), "GlobalOptions_Network");
 	else
 		tab->addTab(_c("LAN", "lowres"), "GlobalOptions_Network");
-	addNetworkControls(tab, "GlobalOptions_Network.", g_gui.getGUIWidth() <= 320);
+	addNetworkControls(tab, "GlobalOptions_Network.", g_gui.useLowResGUI());
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
@@ -2314,7 +2314,7 @@ void GlobalOptionsDialog::build() {
 	// 10) Accessibility
 	//
 #ifdef USE_TTS
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("Accessibility"), "GlobalOptions_Accessibility");
 	else
 		tab->addTab(_c("Accessibility", "lowres"), "GlobalOptions_Accessibility");

@@ -52,7 +52,7 @@ RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	_fileList->setNumberingMode(kListNumberingOff);
 	_fileList->setEditable(false);
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);

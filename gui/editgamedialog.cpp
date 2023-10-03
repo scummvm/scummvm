@@ -131,14 +131,14 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	tab->addTab(_("Game"), "GameOptions_Game");
 
 	// GUI:  Label & edit widget for the game ID
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
 	else
 		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
 	else
 		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
@@ -160,7 +160,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	}
 
 	// Platform popup
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
 	else
 		_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _c("Platform:", "lowres"), _("Platform the game was originally designed for"));
@@ -188,12 +188,12 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_gui.getGUIWidth() > 320 ? _("Graphics") : _("GFX"), "GameOptions_Graphics", false);
+	_graphicsTabId = tab->addTab(g_gui.useLowResGUI() ? _("GFX") : _("Graphics"), "GameOptions_Graphics", false);
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", "GameOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	graphicsContainer->setTarget(this);
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), Common::U32String(), kCmdGlobalGraphicsOverride);
 	else
 		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), Common::U32String(), kCmdGlobalGraphicsOverride);
@@ -218,7 +218,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	int backendTabId = tab->addTab(_("Backend"), "GameOptions_Backend", false);
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_globalBackendOverride = new CheckboxWidget(tab, "GameOptions_Backend.EnableTabCheckbox", _("Override global backend settings"), Common::U32String(), kCmdGlobalBackendOverride);
 	else
 		_globalBackendOverride = new CheckboxWidget(tab, "GameOptions_Backend.EnableTabCheckbox", _c("Override global backend settings", "lowres"), Common::U32String(), kCmdGlobalBackendOverride);
@@ -237,7 +237,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	tab->addTab(_("Audio"), "GameOptions_Audio");
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), Common::U32String(), kCmdGlobalAudioOverride);
 	else
 		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), Common::U32String(), kCmdGlobalAudioOverride);
@@ -248,12 +248,12 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 5) The volume tab
 	//
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("Volume"), "GameOptions_Volume");
 	else
 		tab->addTab(_c("Volume", "lowres"), "GameOptions_Volume");
 
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), Common::U32String(), kCmdGlobalVolumeOverride);
 	else
 		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), Common::U32String(), kCmdGlobalVolumeOverride);
@@ -269,7 +269,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	if (showMidi) {
 		tab->addTab(_("MIDI"), "GameOptions_MIDI");
 
-		if (g_gui.getGUIWidth() > 320)
+		if (!g_gui.useLowResGUI())
 			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), Common::U32String(), kCmdGlobalMIDIOverride);
 		else
 			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), Common::U32String(), kCmdGlobalMIDIOverride);
@@ -284,7 +284,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	if (showMidi) {
 		tab->addTab(_("MT-32"), "GameOptions_MT32");
 
-		if (g_gui.getGUIWidth() > 320)
+		if (!g_gui.useLowResGUI())
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), Common::U32String(), kCmdGlobalMT32Override);
 		else
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), Common::U32String(), kCmdGlobalMT32Override);
@@ -295,7 +295,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	//
 	// 8) The Paths tab
 	//
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		tab->addTab(_("Paths"), "GameOptions_Paths");
 	else
 		tab->addTab(_c("Paths", "lowres"), "GameOptions_Paths");
@@ -304,14 +304,14 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), Common::U32String(), kCmdGameBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), Common::U32String(), kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
@@ -320,7 +320,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	_extraPathClearButton = addClearButton(tab, "GameOptions_Paths.ExtraPathClearButton", kCmdExtraPathClear);
 
 	// GUI:  Button + Label for the save path
-	if (g_gui.getGUIWidth() > 320)
+	if (!g_gui.useLowResGUI())
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kCmdSaveBrowser);

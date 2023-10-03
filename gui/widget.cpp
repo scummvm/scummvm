@@ -434,7 +434,7 @@ void ButtonWidget::setLowresLabel(const Common::U32String &label) {
 const Common::U32String &ButtonWidget::getLabel() {
 	bool useLowres = false;
 	if (!_lowresLabel.empty())
-		useLowres = g_gui.getGUIWidth() <= 320;
+		useLowres = g_gui.useLowResGUI();
 	_hotkey = useLowres ? _lowresHotkey : _highresHotkey;
 	return useLowres ? _lowresLabel : _label;
 }
