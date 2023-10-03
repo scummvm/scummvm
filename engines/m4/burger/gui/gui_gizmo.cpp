@@ -95,57 +95,57 @@ static void gizmo_digi_daemon(int trigger) {
 	case 5000:
 		if (player_been_here(503)) {
 			if (_G(flags)[kBORK_STATE] == 16)
-				gizmo_digi_play("510w005", 255, _GIZMO(roomNums)[3]);
+				gizmo_digi_play("510w005", 255, _GIZMO(roomFlags)[3]);
 			else
-				gizmo_digi_play("510w004", 255, _GIZMO(roomNums)[2]);
+				gizmo_digi_play("510w004", 255, _GIZMO(roomFlags)[2]);
 		}
 		break;
 
 	case 5001:
 		if (player_been_here(507)) {
 			if (_G(flags)[V223] == 2)
-				gizmo_digi_play("510w008", 255, _GIZMO(roomNums)[5]);
+				gizmo_digi_play("510w008", 255, _GIZMO(roomFlags)[5]);
 			else
-				gizmo_digi_play("510w007", 255, _GIZMO(roomNums)[4]);
+				gizmo_digi_play("510w007", 255, _GIZMO(roomFlags)[4]);
 		}
 		break;
 
 	case 5002:
 		if (player_been_here(504)) {
 			if (_G(flags)[V210] == 5002)
-				gizmo_digi_play("510w011", 255, _GIZMO(roomNums)[7]);
+				gizmo_digi_play("510w011", 255, _GIZMO(roomFlags)[7]);
 			else
-				gizmo_digi_play("510w010", 255, _GIZMO(roomNums)[6]);
+				gizmo_digi_play("510w010", 255, _GIZMO(roomFlags)[6]);
 		}
 		break;
 
 	case 5003:
 		if (player_been_here(508)) {
 			if (_G(flags)[V227] != 0)
-				gizmo_digi_play("510w014", 255, _GIZMO(roomNums)[9]);
+				gizmo_digi_play("510w014", 255, _GIZMO(roomFlags)[9]);
 			else
-				gizmo_digi_play("510w013", 255, _GIZMO(roomNums)[8]);
+				gizmo_digi_play("510w013", 255, _GIZMO(roomFlags)[8]);
 		}
 		break;
 
 	case 5004:
 		if (player_been_here(506)) {
 			if (_G(flags)[V218] == 5003)
-				gizmo_digi_play("510w017", 255, _GIZMO(roomNums)[11]);
+				gizmo_digi_play("510w017", 255, _GIZMO(roomFlags)[11]);
 			else
-				gizmo_digi_play("510w016", 255, _GIZMO(roomNums)[10]);
+				gizmo_digi_play("510w016", 255, _GIZMO(roomFlags)[10]);
 		}
 		break;
 
 	case 5005:
 		if (_G(flags)[V200] == 5003)
-			gizmo_digi_play("510w019", 255, _GIZMO(roomNums)[13]);
+			gizmo_digi_play("510w019", 255, _GIZMO(roomFlags)[13]);
 		else
-			gizmo_digi_play("510w018", 255, _GIZMO(roomNums)[12]);
+			gizmo_digi_play("510w018", 255, _GIZMO(roomFlags)[12]);
 		break;
 
 	case 5006:
-		gizmo_digi_play("510w020", 255, _GIZMO(roomNums)[14]);
+		gizmo_digi_play("510w020", 255, _GIZMO(roomFlags)[14]);
 		break;
 
 	default:
@@ -846,9 +846,10 @@ static Gizmo *gui_create_gizmo(M4sprite *sprite, int sx, int sy, uint scrnFlags)
 
 	GrBuff *grBuff = new GrBuff(sprite->w, sprite->h);
 	gui->_grBuff = grBuff;
-	//gui->_items = nullptr;
-
-	gui->_eventHandler = gizmo_eventHandler;
+	gui->_items = nullptr;
+	gui->_fnEnter = nullptr;
+	gui->_fnEscape = nullptr;
+	gui->_fnEvents = gizmo_eventHandler;
 
 	Buffer *dest = gui->_grBuff->get_buffer();
 	Buffer *src = _G(gameDrawBuff)->get_buffer();

@@ -52,7 +52,7 @@ struct Gizmo_Globals {
 	char *_assetName = nullptr;
 	int _spriteCount = 0;
 	M4sprite **_sprites = nullptr;
-	bool _roomNums[15];
+	bool _roomFlags[15];
 
 	bool _savedFlag = false;
 	int _savedX = 0;
@@ -66,7 +66,7 @@ struct Gizmo {
 	GizmoItem *_items = nullptr;
 	void (*_fnEnter)() = nullptr;
 	void (*_fnEscape)() = nullptr;
-	EventHandler _eventHandler = nullptr;
+	EventHandler _fnEvents = nullptr;
 };
 
 struct GizmoButton {
