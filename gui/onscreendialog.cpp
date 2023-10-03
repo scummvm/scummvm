@@ -64,26 +64,26 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 		GUI::PicButtonWidget *button;
 
 		button = new PicButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String(), kStopCmd, 0);
-		if (g_system->getOverlayWidth() > 320)
+		if (g_gui.getGUIWidth() > 320)
 			button->setGfxFromTheme(ThemeEngine::kImageStopButton);
 		else
 			button->setGfxFromTheme(ThemeEngine::kImageStopSmallButton);
 
 		if (isRecord) {
 			button = new PicButtonWidget(this, "OnScreenDialog.EditButton", Common::U32String(), kEditCmd, 0);
-			if (g_system->getOverlayWidth() > 320)
+			if (g_gui.getGUIWidth() > 320)
 				button->setGfxFromTheme(ThemeEngine::kImageEditButton);
 			else
 				button->setGfxFromTheme(ThemeEngine::kImageEditSmallButton);
 		} else {
 			button = new PicButtonWidget(this, "OnScreenDialog.SwitchModeButton", Common::U32String(), kSwitchModeCmd, 0);
-			if (g_system->getOverlayWidth() > 320)
+			if (g_gui.getGUIWidth() > 320)
 				button->setGfxFromTheme(ThemeEngine::kImageSwitchModeButton);
 			else
 				button->setGfxFromTheme(ThemeEngine::kImageSwitchModeSmallButton);
 
 			button = new PicButtonWidget(this, "OnScreenDialog.FastReplayButton", Common::U32String(), kFastModeCmd, 0);
-			if (g_system->getOverlayWidth() > 320)
+			if (g_gui.getGUIWidth() > 320)
 				button->setGfxFromTheme(ThemeEngine::kImageFastReplayButton);
 			else
 				button->setGfxFromTheme(ThemeEngine::kImageFastReplaySmallButton);
@@ -91,7 +91,7 @@ OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
 	} else
 #endif
 	{
-		if (g_system->getOverlayWidth() > 320)
+		if (g_gui.getGUIWidth() > 320)
 			new ButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String("[ ]"), _("Stop"), kStopCmd);
 		else
 			new ButtonWidget(this, "OnScreenDialog.StopButton", Common::U32String("[]"), _("Stop"), kStopCmd);
