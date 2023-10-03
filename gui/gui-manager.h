@@ -107,7 +107,7 @@ public:
 	float getScaleFactor() const { return _scaleFactor; }
 	void computeScaleFactor();
 
-	bool useLowResGUI() const { return _baseWidth <= 320; }
+	bool useLowResGUI() const { return _baseWidth <= 450; }
 
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
