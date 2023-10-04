@@ -137,7 +137,7 @@ void Sound::checkSpeechFileEndianness() {
 		_cowFile.seek(index + _cowHeaderSize, SEEK_SET);
 		_cowFile.read(compSample, sampleSize);
 		byte *data = (byte *)malloc(getSpeechSize(compSample, sampleSize));
-		bool success = expandSpeech(compSample, data, sampleSize, &leOk, &size);
+		expandSpeech(compSample, data, sampleSize, &leOk, &size);
 		uint32 maxSamples = size > 2000 ? 2000 : size;
 		double le_diff = endiannessHeuristicValue((int16 *)data, size, maxSamples);
 		free(data);
@@ -147,7 +147,7 @@ void Sound::checkSpeechFileEndianness() {
 		_cowFile.seek(index + _cowHeaderSize, SEEK_SET);
 		_cowFile.read(compSample, sampleSize);
 		data = (byte *)malloc(getSpeechSize(compSample, sampleSize));
-		success = expandSpeech(compSample, data, sampleSize, &beOk, &size);
+		expandSpeech(compSample, data, sampleSize, &beOk, &size);
 		double be_diff = endiannessHeuristicValue((int16 *)data, size, maxSamples);
 		free(data);
 
@@ -306,7 +306,7 @@ bool Sound::amISpeaking() {
 		readPos = _speechLipsyncCounter * 919 * 2;
 
 		// Ensure that we don't read beyond the buffer...
-		if (readPos + 150 * sizeof(int16) > _speechSize)
+		if (readPos + (int32)(150 * sizeof(int16)) > _speechSize)
 			return false;
 
 		offset = (int16 *)&_speechSample[readPos];
