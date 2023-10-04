@@ -37,6 +37,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/xa.h"
+#include "audio/decoders/aiff.h"
 
 namespace Sword1 {
 
@@ -52,8 +53,8 @@ Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 	_endOfQueue = 0;
 	_currentCowFile = 0;
 
-	_stream[0] = Audio::makeQueuingAudioStream(11025, false);
-	_stream[1] = Audio::makeQueuingAudioStream(11025, false);
+	_musicOutputStream[0] = Audio::makeQueuingAudioStream(DEFAULT_SAMPLE_RATE, false);
+	_musicOutputStream[1] = Audio::makeQueuingAudioStream(DEFAULT_SAMPLE_RATE, false);
 	//if (!GetVolumes()) {
 		volFX[0] = 8;
 		volFX[1] = 8;
@@ -698,7 +699,7 @@ int32 Sound::checkSampleStatus(int32 id) {
 int32 Sound::checkSpeechStatus() {
 	Common::StackLock lock(_soundMutex);
 
-	if (!speechSampleBusy || speechSamplePaused)
+	if (!speechSampleBusy || speechPaused)
 		return S_STATUS_FINISHED;
 
 	if (!_mixer->isSoundHandleActive(hSampleSpeech)) {
@@ -765,12 +766,13 @@ static void soundCallback(void *refCon) {
 				snd->fxFadeVolume[0] = 8 * snd->volFX[0] - (8 * snd->volFX[0] * snd->fxCount * snd->fxFadingRate / 128);
 				snd->fxFadeVolume[1] = 8 * snd->volFX[1] - (8 * snd->volFX[1] * snd->fxFadingRate * snd->fxCount / 128);
 			}
+
 			for (int i = 0; i < MAX_FX; i++) {
 				if (snd->fxSampleBusy[i]) {
 					int32 targetVolume = (snd->fxFadeVolume[0] + snd->fxFadeVolume[1]) / 2;
 
 					// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-					snd->_mixer->setChannelVolume(snd->hSampleFX[i], targetVolume * 2);
+					snd->setFXVolume((byte)(targetVolume * 2), i);
 				}
 			}
 		}
@@ -783,6 +785,10 @@ void Sound::installFadeTimer() {
 
 void Sound::uninstallFadeTimer() {
 	_vm->getTimerManager()->removeTimerProc(&soundCallback);
+}
+
+void Sound::setFXVolume(byte targetVolume, int handleIdx) {
+	_mixer->setChannelVolume(hSampleFX[handleIdx], targetVolume);
 }
 
 void Sound::playSample(int32 fxNo) {
@@ -809,43 +815,91 @@ void Sound::playSample(int32 fxNo) {
 	}
 }
 
+void Sound::stopSample(int32 fxNo) {
+	stopFX(fxNo);
+}
+
+void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint32 volume, int8 pan, MusCompMode assignedMode) {
+	int sampleRate = DEFAULT_SAMPLE_RATE;
+	WaveHeader wavHead;
+	Audio::RewindableAudioStream *compressedStream = nullptr;
+	bool isStereo = false;
+
+	if (filename.empty())
+		return;
+
+	if (!streamFile[newHandleId].open(filename))
+		debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
+
+	if (assignedMode == MusWav) {
+		if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
+			debug(5, "Sound::streamMusicFile(): couldn't read from file %s, bailing out...", filename.c_str());
+			streamFile[newHandleId].close();
+			return;
+		}
+
+		sampleRate = wavHead.dwSamplesPerSec;
+	} else if (assignedMode == MusFLAC) {
+		compressedStream = Audio::makeFLACStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = compressedStream->getRate();
+	} else if (assignedMode == MusVorbis) {
+		compressedStream = Audio::makeVorbisStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = compressedStream->getRate();
+	} else if (assignedMode == MusMP3) {
+		compressedStream = Audio::makeMP3Stream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = compressedStream->getRate();
+	} else if (assignedMode == MusAif) {
+		compressedStream = Audio::makeAIFFStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = compressedStream->getRate();
+	}
+
+	if (assignedMode != MusWav && !compressedStream) {
+		debug(5, "Sound::streamMusicFile(): couldn't process compressed file %s, bailing out...", filename.c_str());
+		streamFile[newHandleId].close();
+		return;
+	}
+
+	_musicOutputStream[newHandleId] = Audio::makeQueuingAudioStream(sampleRate, isStereo);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _musicOutputStream[newHandleId]);
+
+	if (assignedMode != MusWav) {
+		_musicOutputStream[newHandleId]->queueAudioStream(compressedStream);
+	}
+
+	_mixer->setChannelRate(hSampleMusic[newHandleId], sampleRate);
+	_mixer->setChannelVolume(hSampleMusic[newHandleId], volume);
+	_mixer->setChannelBalance(hSampleMusic[newHandleId], pan);
+
+	streamSamplePlaying[newHandleId] = true;
+	streamFormat[newHandleId] = assignedMode;
+}
+
 int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 	int32 oldHandleId, newHandleId;
 
-	struct WaveHeader {
-		uint32 riffTag;
-		uint32 riffSize;
-		uint32 waveTag;
-		uint32 fmtTag;
-		uint32 fmtSize;
-
-		// Format subchunk
-		uint16 wFormatTag;
-		uint16 wChannels;
-		uint32 dwSamplesPerSec;
-		uint32 dwAvgBytesPerSec;
-		uint16 wBlockAlign;
-		uint16 wBitsPerSample;
-		uint32 dwDataTag;
-		uint32 dwDataSize;
-	};
-
-	WaveHeader wavHead;
 	Common::File tmp;
 	Common::String filename(_tuneList[tuneId]);
 
+	MusCompMode assignedMode = MusWav;
+
 	if (tmp.exists(filename + ".flac")) {
 		filename = filename + ".flac";
+		assignedMode = MusFLAC;
 	} else if (tmp.exists(filename + ".fla")) {
 		filename = filename + ".fla";
+		assignedMode = MusFLAC;
 	} else if (tmp.exists(filename + ".ogg")) {
 		filename = filename + ".ogg";
+		assignedMode = MusVorbis;
 	} else if (tmp.exists(filename + ".mp3")) {
 		filename = filename + ".mp3";
+		assignedMode = MusMP3;
 	} else if (tmp.exists(filename + ".wav")) {
 		filename = filename + ".wav";
+		assignedMode = MusWav;
 	} else if (tmp.exists(filename + ".aif")) {
 		filename = filename + ".aif";
+		assignedMode = MusAif;
 	}
 
 	newHandleId = 0;
@@ -863,73 +917,29 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 			_mixer->stopHandle(hSampleMusic[newHandleId]);
 			streamFile[newHandleId].close();
 
-			if (filename.empty())
-				return 1;
+			prepareMusicStreaming(filename, newHandleId,
+								  2 * (2 * (volMusic[0] + volMusic[1])),
+								  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+								  assignedMode);
 
 			debug(5, "Sound::streamMusicFile(): interrupting sound in handle %d to play %s", newHandleId, filename.c_str());
-			_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
 
-			_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
-			_mixer->setChannelVolume(hSampleMusic[newHandleId], 2 * (2 * (volMusic[0] + volMusic[1])));
-			_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
-
-			if (!streamFile[newHandleId].open(filename))
-				debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
-
-			if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
-				streamFile[newHandleId].close();
-				return 1;
-			}
-
-			streamSamplePlaying[newHandleId] = true;
 			return 2;
 		} else {
-			if (filename.empty())
-				return 1;
+			prepareMusicStreaming(filename, newHandleId,
+								  0,
+								  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+								  assignedMode);
 
 			debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d with other handle busy", filename.c_str(), newHandleId);
-			_mixer->stopHandle(hSampleMusic[newHandleId]);
-			_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
-
-			_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
-			_mixer->setChannelVolume(hSampleMusic[newHandleId], 0);
-			_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
-
-			if (!streamFile[newHandleId].open(filename))
-				debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
-
-			if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
-				streamFile[newHandleId].close();
-				return 1;
-			}
-
-			streamSamplePlaying[newHandleId] = true;
 		}
 	} else {
-		if (filename.empty())
-			return 1;
+		prepareMusicStreaming(filename, newHandleId,
+							  2 * (3 * (volMusic[0] + volMusic[1])),
+							  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+							  assignedMode);
 
 		debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d", filename.c_str(), newHandleId);
-
-		_mixer->stopHandle(hSampleMusic[newHandleId]);
-		_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
-
-		_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
-		_mixer->setChannelVolume(hSampleMusic[newHandleId], 2 * (3 * (volMusic[0] + volMusic[1])));
-		_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
-
-		if (!streamFile[newHandleId].open(filename))
-			debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
-
-		if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
-			streamFile[newHandleId].close();
-			return 4;
-		}
-
-		streamSamplePlaying[newHandleId] = true;
 	}
 
 	streamLoopingFlag[newHandleId] = looped;
@@ -956,6 +966,8 @@ void Sound::updateSampleStreaming() {
 							streamFile[i].close();
 
 							streamSamplePlaying[i] = false;
+							_musicOutputStream[i]->finish();
+							_musicOutputStream[i] = nullptr;
 						}
 					} else {
 						debug("Sound::updateSampleStreaming(): Fading %s to %d", streamFile[i].getName(),
@@ -974,11 +986,12 @@ void Sound::updateSampleStreaming() {
 			if (streamFile[i].isOpen())
 				serveSample(&streamFile[i], i);
 
-			if (!_mixer->isSoundHandleActive(hSampleMusic[i]) || _stream[i]->endOfData()) {
+			if (!_mixer->isSoundHandleActive(hSampleMusic[i]) ||
+				(_musicOutputStream[i] && _musicOutputStream[i]->endOfData())) {
 				streamSamplePlaying[i] = false;
 				streamFile[i].close();
-				_stream[i]->finish();
-				_stream[i] = nullptr;
+				_musicOutputStream[i]->finish();
+				_musicOutputStream[i] = nullptr;
 			}
 		}
 	}
@@ -989,8 +1002,8 @@ void Sound::serveSample(Common::File *file, int32 i) {
 	int32 nominalSize = MUSIC_BUFFER_SIZE;
 	byte *buf = (byte *)malloc(nominalSize);
 
-	if (!musicPaused[i]) {
-		if (_stream[i]->numQueuedStreams() < 4) {
+	if (!musicPaused[i] && streamFormat[i] == MusWav) {
+		if (_musicOutputStream[i]->numQueuedStreams() < 4) {
 			len = file->read(buf, nominalSize);
 			if (len < nominalSize) {
 				if (streamLoopingFlag[i]) {
@@ -1005,8 +1018,10 @@ void Sound::serveSample(Common::File *file, int32 i) {
 				}
 			}
 
-			_stream[i]->queueBuffer(buf, len, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+			_musicOutputStream[i]->queueBuffer(buf, len, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 		}
+	} else if (streamFormat[i] != MusWav && streamLoopingFlag[i]) {
+
 	}
 }
 
@@ -1105,24 +1120,6 @@ void Sound::fadeFxUp(int32 rate) {
 
 int32 Sound::getSpeechSize(byte *compData, uint32 compSize) {
 	if ((_cowMode == CowWave) || (_cowMode == CowDemo)) {
-		struct WaveHeader {
-			uint32 riffTag;
-			uint32 riffSize;
-			uint32 waveTag;
-			uint32 fmtTag;
-			uint32 fmtSize;
-
-			// Format subchunk
-			uint16 wFormatTag;
-			uint16 wChannels;
-			uint32 dwSamplesPerSec;
-			uint32 dwAvgBytesPerSec;
-			uint16 wBlockAlign;
-			uint16 wBitsPerSample;
-			uint32 dwDataTag;
-			uint32 dwDataSize;
-		};
-
 		WaveHeader *waveHeader = (WaveHeader *)compData;
 
 		return (waveHeader->riffSize + 8) - sizeof(WaveHeader);
@@ -1183,15 +1180,15 @@ void Sound::setCrossFadeIncrement() {
 }
 
 void Sound::pauseSpeech() {
-	if ((speechSampleBusy) && (!speechSamplePaused)) {
-		speechSamplePaused = true;
+	if ((speechSampleBusy) && (!speechPaused)) {
+		speechPaused = true;
 		_mixer->pauseHandle(hSampleSpeech, true);
 	}
 }
 
 void Sound::unpauseSpeech() {
-	if ((speechSampleBusy) && (speechSamplePaused)) {
-		speechSamplePaused = false;
+	if ((speechSampleBusy) && (speechPaused)) {
+		speechPaused = false;
 		_mixer->pauseHandle(hSampleSpeech, false);
 	}
 }
