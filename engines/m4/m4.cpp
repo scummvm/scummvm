@@ -120,11 +120,11 @@ void M4Engine::m4_inflight() {
 }
 
 bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return g_vars && g_vars->getInterface() && g_vars->getInterface()->_visible;
+	return g_vars && INTERFACE_VISIBLE;
 }
 
 bool M4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return g_vars && g_vars->getInterface() && g_vars->getInterface()->_visible;
+	return g_vars && INTERFACE_VISIBLE;
 }
 
 Common::Error M4Engine::loadGameState(int slot) {
@@ -189,6 +189,9 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 		_G(kernel).pause = false;
 
 	// To match the original, we sync a set of fields from kernel and game
+	if (getGameType() == GType_Riddle)
+		s.syncAsByte(_G(kernel).going);
+
 	s.syncAsByte(_G(kernel).pause);
 	for (int i = 0; i < KERNEL_SCRATCH_SIZE; ++i)
 		s.syncAsUint32LE(_G(kernel).scratch[i]);
@@ -202,11 +205,15 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_G(game).new_section);
 	s.syncAsSint16LE(_G(game).previous_room);
 
-	s.syncAsSint16LE(_G(kernel).restore_game);
-	s.syncAsSint16LE(_G(game).digi_overall_volume_percent);
-	s.syncAsSint16LE(_G(game).midi_overall_volume_percent);
-	s.syncAsByte(_G(kernel)._val2);
-	s.skip(1);
+	if (getGameType() == GType_Riddle) {
+		s.skip(20);
+
+	} else {
+		s.syncAsByte(_G(kernel).restore_game);
+		s.syncAsSint32LE(_G(game).digi_overall_volume_percent);
+		s.syncAsSint32LE(_G(game).midi_overall_volume_percent);
+		s.syncAsByte(_G(kernel)._val2);
+	}
 
 	_G(player).syncGame(s);
 
