@@ -278,7 +278,7 @@ void Room143::daemon() {
 		break;
 
 	case 13:
-		if (_G(visited_room)) {
+		if (_G(player).been_here_before) {
 			if (inv_object_is_here("broken mouse trap")) {
 				wilbur_speech("143w507", 14);
 			} else {

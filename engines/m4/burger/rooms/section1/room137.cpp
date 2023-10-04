@@ -578,7 +578,7 @@ void Room137::daemon() {
 		case 4:
 			player_set_commands_allowed(true);
 
-			if (!_G(visited_room))
+			if (!_G(player).been_here_before)
 				wilbur_speech("137w001");
 			break;
 
