@@ -463,7 +463,7 @@ void Section5::daemon() {
 		player_update_info();
 		_G(flags)[V187] = _G(player_info).x;
 		_G(flags)[V188] = _G(player_info).y;
-		_G(flags)[V189] = _G(walkTrigger);
+		_G(flags)[V189] = _G(player_info).trigger;
 		_G(game).new_room = 510;
 		break;
 

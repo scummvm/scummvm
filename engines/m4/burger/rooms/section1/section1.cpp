@@ -94,7 +94,7 @@ void Section1::walk(int facing, int trigger) {
 		player_update_info(_G(my_walker), &_G(player_info));
 
 		if (facing == -1)
-			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, trigger, _G(walkTrigger));
+			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, trigger, _G(player_info).trigger);
 		else
 			ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, trigger, facing, _G(completeWalk));
 	}

@@ -1254,7 +1254,7 @@ void Room602::daemon() {
 			if (_G(player_info).x >= (_val2 + 330) &&
 					_G(player_info).y > 289 && _G(player_info).y < 305) {
 				if (_G(flags)[V255] == 1 && _G(flags)[V278] == 0 &&
-						_G(walkTrigger) > 2 && _G(walkTrigger) < 7) {
+						_G(player_info).trigger > 2 && _G(player_info).trigger < 7) {
 					if (_G(flags)[V264]) {
 						_G(flags)[V264] = 1;
 					} else {

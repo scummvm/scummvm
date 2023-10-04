@@ -110,7 +110,6 @@ public:
 	int _roomVal3 = 0;
 	int _roomVal4 = 0;
 	int _roomVal7 = 3;
-	int _walkTrigger = 0;
 	machine *_npcSpeech1 = nullptr;
 	machine *_npcSpeech2 = nullptr;
 	int _npcTrigger = -1;
