@@ -25,6 +25,9 @@
 #include "engines/advancedDetector.h"
 
 class M4MetaEngine : public AdvancedMetaEngine {
+private:
+	Common::InSaveFile *getOriginalSave(const Common::String &saveName) const;
+
 public:
 	const char *getName() const override;
 
@@ -38,6 +41,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 #endif // M4_METAENGINE_H

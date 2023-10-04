@@ -20,6 +20,8 @@
  */
 
 #include "common/translation.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 #include "m4/metaengine.h"
 #include "m4/detection.h"
@@ -73,6 +75,45 @@ Common::Error M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const
 bool M4MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+SaveStateDescriptor M4MetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String saveName = Common::String::format("%s.%03u", target, slot);
+	Common::InSaveFile *save = getOriginalSave(saveName);
+
+	if (save) {
+		save->skip(4);
+		char saveDesc[32];
+		save->read(saveDesc, 32);
+		saveDesc[31] = '\0';
+		delete save;
+
+		SaveStateDescriptor desc(this, slot, saveDesc);
+		return desc;
+	} else {
+		return AdvancedMetaEngine::querySaveMetaInfos(target, slot);
+	}
+}
+
+Common::InSaveFile *M4MetaEngine::getOriginalSave(const Common::String &saveName) const {
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(saveName);
+	char name[16];
+
+	if (save) {
+		if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+			!strncmp(name, "MIRROR", 7)) {
+			save->seek(0);
+			return save;
+		} else if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+			!strncmp(name, "FAUCET ", 7)) {
+			save->seek(0);
+			return save;
+		}
+
+		delete save;
+	}
+
+	return nullptr;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(M4)
