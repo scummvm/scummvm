@@ -289,7 +289,7 @@ void wilbur_abduct(int trigger) {
 	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		player_update_info(_G(my_walker), &_G(player_info));
 
-		switch (_G(walkTrigger)) {
+		switch (_G(player_info).trigger) {
 		case 1:
 		case 2:
 			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,

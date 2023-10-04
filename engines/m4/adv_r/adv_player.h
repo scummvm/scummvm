@@ -90,7 +90,9 @@ struct Player {
 };
 
 struct PlayerInfo {
-	int32 x = 0, y = 0, facing = 0, scale = 0, depth = 0;
+	int32 x = 0, y = 0, facing = 0;
+	int32 trigger = 0;
+	int32 scale = 0, depth = 0;
 	int32 camera_x = 0, camera_y = 0;
 
 	void syncGame(Common::Serializer &s);
