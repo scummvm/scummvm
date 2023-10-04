@@ -493,16 +493,27 @@ bool MacIndy3Gui::isActive() {
 	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
 		return false;
 
-	// Verb script 4 is the regular verb gui.
-	// Verb script 18 is for conversations.
-	// Verb script 200 is for Venice.
-	// Verb script 201 is for travelling from the US.
-	// Verb script 205 is for travelling from Venice.
+	// Known verb scripts
+	//
+	//   4 - Regular verb GUI
+	//  18 - Conversations
+	// 200 - Venice, outdoors
+	// 201 - Travel to Henry's or Venice
+	// 205 - Travel from Venice
+	//
+	//  19 - Boxing
+
 	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
 	if (verbScript == 4 || verbScript == 18 || verbScript == 200 || verbScript == 201 || verbScript == 205)
 		return true;
 
-	debug("VAR_VERB_SCRIPT = %d", verbScript);
+	static int lastWarnVerbScript = -1;
+
+	if (verbScript != lastWarnVerbScript) {
+		debug("VAR_VERB_SCRIPT = %d", verbScript);
+		lastWarnVerbScript = verbScript;
+	}
+
 	return false;
 }
 
@@ -555,6 +566,9 @@ void MacIndy3Gui::update() {
 
 	if (!keepGuiAlive) {
 		// We haven't drawn anything yet, so just silently hide it.
+		for (int i = 0; i < ARRAYSIZE(_widgets); i++)
+			resetWidget(&_widgets[i]);
+
 		_visible = false;
 		return;
 	}
