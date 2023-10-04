@@ -175,7 +175,7 @@ const seriesPlayBreak Room402::PLAY16[] = {
 
 
 void Room402::init() {
-	term_message(_G(visited_room) ? " been here before" : " NOT been here before");
+	term_message(_G(player).been_here_before ? " been here before" : " NOT been here before");
 	_val4 = 0;
 	_dr01 = _dr01s = -1;
 	_dr02 = _dr02s = -1;
@@ -231,7 +231,7 @@ void Room402::init() {
 		_val3 = 15;
 		kernel_trigger_dispatch_now(3);
 
-		if (_G(visited_room)) {
+		if (_G(player).been_here_before) {
 			if (_G(game).previous_room == RESTORING_GAME) {
 				_val2 = 15;
 			} else {

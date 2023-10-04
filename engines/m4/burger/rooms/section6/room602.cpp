@@ -796,7 +796,7 @@ void Room602::daemon() {
 			ws_unhide_walker();
 			player_set_commands_allowed(true);
 
-			if (_G(visited_room)) {
+			if (_G(player).been_here_before) {
 				_G(wilbur_should) = 10001;
 				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 			} else {

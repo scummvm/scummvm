@@ -55,7 +55,7 @@ void Room609::init() {
 void Room609::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		_state1 = _G(visited_room) ? 1 : imath_ranged_rand(2, 3);
+		_state1 = _G(player).been_here_before ? 1 : imath_ranged_rand(2, 3);
 		digi_preload_stream_breaks(SERIES1);
 		series_stream_with_breaks(SERIES1, "609wi01", 6, 1, 6010);
 		break;
