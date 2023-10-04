@@ -228,7 +228,7 @@ bool Scene::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
-	if (sceneDescription.sceneID == 9999 || _state == kLoad) {
+	if (sceneDescription.sceneID == kNoScene || _state == kLoad) {
 		return;
 	}
 

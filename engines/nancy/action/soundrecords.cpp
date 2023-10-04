@@ -184,7 +184,7 @@ void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 		stream.skip(2);
 	} else {
 		_flag.label = kEvNoEvent;
-		_sceneChange.sceneID = 9999;
+		_sceneChange.sceneID = kNoScene;
 	}
 
 	uint16 numHotspots = stream.readUint16LE();

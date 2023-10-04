@@ -604,7 +604,7 @@ void ActionManager::synchronizeMovieWithSound() {
 		// A movie and a sound both got activated this frame, check if their scene changes match
 		if (	movie->_videoSceneChange == PlaySecondaryMovie::kMovieSceneChange &&
 				movie->_sceneChange.sceneID == sound->_sceneChange.sceneID &&
-				movie->_sceneChange.sceneID != 9999) {
+				movie->_sceneChange.sceneID != kNoScene) {
 			// They match, check how long the sound is...
 			Audio::Timestamp length = g_nancy->_sound->getLength(sound->_sound);
 

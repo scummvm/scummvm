@@ -46,6 +46,7 @@ class NancyEngine;
 static const int8 kFlagNoLabel						= -1;
 static const int8 kEvNoEvent						= -1;
 static const int8 kFrNoFrame						= -1;
+static const uint16 kNoScene						= 9999;
 
 // Inventory items use types
 static const byte kInvItemUseThenLose				= 0;
@@ -147,7 +148,7 @@ enum NancyState {
 
 // Describes a scene transition
 struct SceneChangeDescription {
-	uint16 sceneID = 0;
+	uint16 sceneID = kNoScene;
 	uint16 frameID = 0;
 	uint16 verticalOffset = 0;
 	uint16 continueSceneSound = kLoadSceneSound;
