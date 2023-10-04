@@ -133,6 +133,18 @@ void ConsoleDialog::resetPrompt() {
 	_prompt = PROMPT;
 }
 
+void ConsoleDialog::clearBuffer() {
+	// Reset the line buffer.
+	memset(_buffer, ' ', kBufferSize);
+
+	// Along with a few key vars.
+	_currentPos = 0;
+	_scrollLine = _linesPerPage - 1;
+	_firstLineInBuffer = 0;
+
+	updateScrollBuffer();
+}
+
 void ConsoleDialog::slideUpAndClose() {
 	if (_slideMode == kNoSlideMode) {
 		_slideTime = g_system->getMillis();
