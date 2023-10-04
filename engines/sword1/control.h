@@ -151,7 +151,6 @@ private:
 	int32 implementConfirmation();
 	void removeConfirmation();
 
-	void setVolumes();
 	void volUp(int32 i, int32 j);
 	void volDown(int32 i, int32 j);
 	void renderVolumeLight(int32 i);

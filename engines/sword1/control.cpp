@@ -176,14 +176,6 @@ const Button Control::volumeButtons[25] = {
 
 };
 
-static int volToBalance(int volL, int volR) {
-	if (volL + volR == 0) {
-		return 50;
-	} else {
-		return (100 * volL / (volL + volR));
-	}
-}
-
 Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen, Logic *pLogic) {
 	_vm = vm;
 	_saveFileMan = saveFileMan;
@@ -383,7 +375,7 @@ void Control::saveRestoreScreen() {
 			break;
 		case SNR_MAINPANEL:
 			removeControlPanel();
-			setVolumes();
+			_sound->setVolumes();
 			break;
 		case SNR_SAVE:
 			removeSave();
@@ -400,7 +392,7 @@ void Control::saveRestoreScreen() {
 			break;
 		case SNR_VOLUME:
 			removeVolume();
-			setVolumes();
+			_sound->setVolumes();
 			break;
 		case SNR_DRIVEFULL:
 			removeConfirmation();
@@ -417,7 +409,7 @@ void Control::saveRestoreScreen() {
 				initialiseResources();
 			}
 
-			//GetVolumes();
+			_sound->getVolumes();
 			initialiseControlPanel();
 			break;
 		case SNR_SAVE:
@@ -442,7 +434,7 @@ void Control::saveRestoreScreen() {
 			initialiseSpeed();
 			break;
 		case SNR_VOLUME:
-			//GetVolumes();
+			_sound->getVolumes();
 			initialiseVolume();
 			break;
 		case SNR_DRIVEFULL:
@@ -963,10 +955,6 @@ void Control::removeConfirmation() {
 }
 
 void Control::renderVolumeLight(int32 i) {
-	// TODO: This function has been mangled to accomodate the current
-	// audio engine, which will partly get rewritten in the immediate
-	// future :)
-
 	uint8 *src, *dst;
 	uint8 vol[2] = { 0, 0 };
 	int32 x;
@@ -974,17 +962,17 @@ void Control::renderVolumeLight(int32 i) {
 	Sprite *srVlight;
 
 	switch (i) {
-	case 0: //music
+	case 0:
 		vol[0] = _sound->volMusic[0];
 		vol[1] = _sound->volMusic[1];
 		x = 158;
 		break;
-	case 1: //speech
+	case 1:
 		vol[0] = _sound->volSpeech[0];
 		vol[1] = _sound->volSpeech[1];
 		x = 291;
 		break;
-	case 2: //fx
+	case 2:
 		vol[0] = _sound->volFX[0];
 		vol[1] = _sound->volFX[1];
 		x = 424;
@@ -997,7 +985,7 @@ void Control::renderVolumeLight(int32 i) {
 	srVlight = (Sprite *)_resMan->fetchRes(SR_VLIGHT);
 
 	// Render left light
-	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[0] >> 4]));
+	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[0]]));
 	src = (uint8 *)f + sizeof(FrameHeader);
 	dst = _screenBuf + x + 211 * SCREEN_WIDTH;
 
@@ -1012,7 +1000,7 @@ void Control::renderVolumeLight(int32 i) {
 	}
 
 	// Render right light
-	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[1] >> 4]));
+	f = (FrameHeader *)((uint8 *)srVlight + _resMan->getUint32(srVlight->spriteOffset[vol[1]]));
 	src = (uint8 *)f + sizeof(FrameHeader);
 	dst = _screenBuf + x + 32 + 211 * SCREEN_WIDTH;
 
@@ -1025,41 +1013,6 @@ void Control::renderVolumeLight(int32 i) {
 			dst += SCREEN_WIDTH;
 		}
 	}
-}
-
-void Control::setVolumes() {
-	// TODO: This function has been mangled to accomodate the current
-	// audio engine, which will partly get rewritten in the immediate
-	// future :)
-
-	uint8 volL, volR;
-	_music->giveVolume(&volL, &volR);
-	int vol = (int)((volR + volL) / 2);
-	int volBalance = volToBalance(volL, volR);
-	if (vol != ConfMan.getInt("music_volume"))
-		ConfMan.setInt("music_volume", vol);
-	if (volBalance != ConfMan.getInt("music_balance"))
-		ConfMan.setInt("music_balance", volBalance);
-
-	//_sound->giveSpeechVol(&volL, &volR);
-	vol = (int)((volR + volL) / 2);
-	volBalance = volToBalance(volL, volR);
-	if (vol != ConfMan.getInt("speech_volume"))
-		ConfMan.setInt("speech_volume", vol);
-	if (volBalance != ConfMan.getInt("speech_balance"))
-		ConfMan.setInt("speech_balance", volBalance);
-
-	//_sound->giveSfxVol(&volL, &volR);
-	vol = (int)((volR + volL) / 2);
-	volBalance = volToBalance(volL, volR);
-	if (vol != ConfMan.getInt("sfx_volume"))
-		ConfMan.setInt("sfx_volume", vol);
-	if (volBalance != ConfMan.getInt("sfx_balance"))
-		ConfMan.setInt("sfx_balance", volBalance);
-
-	if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
-		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
-	ConfMan.flushToDisk();
 }
 
 void Control::volUp(int32 i, int32 j) {
@@ -2023,7 +1976,7 @@ void Control::removeSave() {
 		_resMan->resClose(SR_REDFONT);
 	}
 
-	setVolumes();
+	_sound->setVolumes();
 }
 
 bool Control::restoreGame() {
@@ -2434,7 +2387,7 @@ void Control::removeRestore() {
 		_resMan->resClose(SR_REDFONT);
 	}
 
-	setVolumes();
+	_sound->setVolumes();
 }
 
 void Control::initialiseControlPanel() {
