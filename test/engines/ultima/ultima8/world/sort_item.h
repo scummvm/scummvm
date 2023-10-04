@@ -268,6 +268,33 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 	}
 
 	/**
+	 * Overlapping non-flat items partially in front draw after
+	 * Test case for rendering issue at MainActor::teleport 37 22730 18016 56
+	 */
+	void test_nonflat_partial_front_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(22591, 17599, 56, 160, 160, 8);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._land = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(22719, 17695, 56, 160, 160, 8);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._solid = true;
+		si2._land = true;
+		si2._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
 	 * Overlapping lower Z position transparent non-solid draw after
 	 * Test case for rendering issue at MainActor::teleport 50 2316 7812 48
 	 * Skeleton in niche should render before cobweb

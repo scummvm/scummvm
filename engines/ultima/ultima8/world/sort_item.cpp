@@ -203,29 +203,31 @@ bool SortItem::below(const SortItem &si2) const {
 	if (si1._z != si2._z)
 		return si1._z < si2._z;
 
-	// Higher screenspace left drawn before?
-	if (si1._sxLeft != si2._sxLeft)
-		return si1._sxLeft > si2._sxLeft;
+	if (xFlat1 || xFlat2 || yFlat1 || yFlat2) {
+		// Higher screenspace left drawn before?
+		if (si1._sxLeft != si2._sxLeft)
+			return si1._sxLeft > si2._sxLeft;
 
-	// Lower screenspace bottom drawn before?
-	if (si1._syBot != si2._syBot)
-		return si1._syBot < si2._syBot;
+		// Lower screenspace bottom drawn before?
+		if (si1._syBot != si2._syBot)
+			return si1._syBot < si2._syBot;
+	}
 
-	//// Partial in X + Y front
-	//if (si1._x + si1._y != si2._x + si2._y)
-	//	return (si1._x + si1._y < si2._x + si2._y);
+	// Partial in X + Y front
+	if (si1._x + si1._y != si2._x + si2._y)
+		return (si1._x + si1._y < si2._x + si2._y);
 
-	//// Partial in X + Y back
-	//if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
-	//	return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
+	// Partial in X + Y back
+	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
+		return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
 
-	//// Partial in y?
-	//if (si1._y != si2._y)
-	//	return si1._y < si2._y;
+	// Partial in y?
+	if (si1._y != si2._y)
+		return si1._y < si2._y;
 
-	//// Partial in x?
-	//if (si1._x != si2._x)
-	//	return si1._x < si2._x;
+	// Partial in x?
+	if (si1._x != si2._x)
+		return si1._x < si2._x;
 
 	// Just sort by shape number
 	if (si1._shapeNum != si2._shapeNum)
