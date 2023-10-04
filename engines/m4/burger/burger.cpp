@@ -429,7 +429,7 @@ void BurgerEngine::global_daemon() {
 
 	case 10017:
 		if (!player_commands_allowed() && !_G(flags)[V299] && _G(my_walker) &&
-				_G(player).walker_in_this_scene && _G(roomVal2))
+				_G(player).walker_in_this_scene && _G(player).walker_visible)
 			sendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
 
 		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
@@ -514,7 +514,7 @@ void BurgerEngine::global_parser() {
 				_G(walker).wilbur_speech("300w056");
 				goto done;
 
-			} else if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			} else if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 				_G(flags)[V123] = 1;
 				_G(wilbur_should) = 10004;
 				ws_turn_to_face(_G(my_walker), 3, gCHANGE_WILBUR_ANIMATION);
@@ -524,35 +524,35 @@ void BurgerEngine::global_parser() {
 	}
 
 	if (player_said("WHISTLE") && player_said_any("GEAR", "WILBUR") &&
-			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10003;
 		ws_turn_to_face(_G(my_walker), 7, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("kibble") && player_said_any("gear", "wilbur") &&
-			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10005;
 		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("rubber ducky") && player_said_any("gear", "wilbur") &&
-			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10006;
 		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("broken puz dispenser") && player_said_any("gear", "wilbur") &&
-			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10007;
 		ws_turn_to_face(_G(my_walker), 5, 10016);
 		goto done;
 	}
 
 	if (player_said("puz dispenser") && player_said_any("gear", "wilbur") &&
-			_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10008;
 		ws_turn_to_face(_G(my_walker), 5, gCHANGE_WILBUR_ANIMATION);
 		goto done;

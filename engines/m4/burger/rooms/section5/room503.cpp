@@ -685,7 +685,7 @@ void Room503::daemon() {
 
 	case 16:
 		if (!_flag4) {
-			if (_G(roomVal2) && player_commands_allowed()) {
+			if (_G(player).walker_visible && player_commands_allowed()) {
 				intr_cancel_sentence();
 				player_set_commands_allowed(false);
 				ws_walk(260, 300, 0, 17, 2, true);

@@ -206,7 +206,7 @@ void Section4::poof(int trigger) {
 	digi_preload("999_003");
 	player_update_info();
 
-	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		ws_hide_walker();
 		series_play("999poof", _G(player_info).depth, 0, trigger, 6, 0,
 			_G(player_info).scale, _G(player_info).x, _G(player_info).y);

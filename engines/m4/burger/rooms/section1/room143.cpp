@@ -204,7 +204,7 @@ void Room143::daemon() {
 	int frame;
 
 	if (_G(flags)[V064] == 1) {
-		if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			player_update_info();
 
 			if (_G(player_info).y < 260) {
@@ -217,7 +217,7 @@ void Room143::daemon() {
 	if (_G(flags)[V063] && !digi_play_state(2))
 		digi_play_loop("143_002", 2, 255, -1);
 
-	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE && _flag1) {
+	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE && _flag1) {
 		player_update_info();
 
 		if (_G(player_info).y > 324)
@@ -1069,7 +1069,7 @@ void Room143::daemon() {
 	case 10028:
 		if (_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
-		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			_G(flags)[V000] = 1003;
 			hotspot_set_active("burl", true);
 			player_set_commands_allowed(false);
@@ -1091,7 +1091,7 @@ void Room143::daemon() {
 	case 10029:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
-		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			_val1 = 20;
 			player_set_commands_allowed(false);
 			intr_freshen_sentence();
@@ -1104,7 +1104,7 @@ void Room143::daemon() {
 	case 10030:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
-		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			_val6 = 31;
 		} else {
 			kernel_timing_trigger(60, 10030);
@@ -1114,7 +1114,7 @@ void Room143::daemon() {
 	case 10031:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
-		} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			_G(kernel).continue_handling_trigger = true;
 			player_update_info();
 			player_set_commands_allowed(false);

@@ -960,7 +960,7 @@ void Room102::daemon() {
 		break;
 
 	case 1037:
-		if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE)
+		if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE)
 			freshen();
 		else
 			kernel_timing_trigger(60, 1037);

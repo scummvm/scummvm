@@ -150,11 +150,11 @@ machine *Walker::walk_initialize_walker() {
 	int32 s;
 
 	if (!_G(player).walker_in_this_scene) {
-		_G(roomVal2) = 0;
+		_G(player).walker_visible = false;
 		m = nullptr;
 
 	} else {
-		_G(roomVal2) = 1;
+		_G(player).walker_visible = true;
 
 		// Wilbur walker
 		_G(player).walker_type = WALKER_WILBUR;

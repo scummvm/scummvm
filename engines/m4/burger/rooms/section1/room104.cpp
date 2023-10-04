@@ -105,7 +105,7 @@ void Room104::init() {
 void Room104::daemon() {
 	int frame, frameRate;
 
-	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 		player_update_info();
 
 		if (_G(player_info).y > 374) {

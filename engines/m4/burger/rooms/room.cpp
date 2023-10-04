@@ -42,7 +42,7 @@ void Room::setWilburHotspot() {
 }
 
 HotSpotRec *Room::custom_hotspot_which(int32 x, int32 y) {
-	if (!_G(player).walker_in_this_scene || !_G(roomVal2))
+	if (!_G(player).walker_in_this_scene || !_G(player).walker_visible)
 		return nullptr;
 
 	player_update_info();
