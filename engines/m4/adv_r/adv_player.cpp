@@ -29,36 +29,28 @@
 namespace M4 {
 
 void Player::syncGame(Common::Serializer &s) {
-	// TODO: Make this match the original's field ordering
-	s.syncAsSint32LE(x);
-	s.syncAsSint32LE(y);
-	s.syncAsSint32LE(facing);
-
+	s.skip(12);
 	s.syncBytes((byte *)verb, MAX_PLYR_STRING_LEN);
 	s.syncBytes((byte *)noun, MAX_PLYR_STRING_LEN);
-	s.syncBytes((byte *)prep, MAX_PLYR_STRING_LEN);
 	s.syncBytes((byte *)object, MAX_PLYR_STRING_LEN);
-	s.syncBytes((byte *)ws_asset_name, 32);
-	s.syncBytes((byte *)ws_shadow_name, 32);
+	s.syncBytes((byte *)prep, MAX_PLYR_STRING_LEN);
+	s.skip(64);
 
 	s.syncAsSint16LE(walker_type);
 	s.syncAsSint16LE(shadow_type);
-	s.syncAsSint32LE(walk_off_edge_to_room);
+	s.skip(4);
 	s.syncAsByte(need_to_walk);
 	s.syncAsByte(ready_to_walk);
 	s.syncAsByte(waiting_for_walk);
 	s.syncAsByte(comm_allowed);
-
-	s.syncAsSint32LE(command_ready);
+	s.syncAsUint32LE(command_ready);
 	s.syncAsByte(walker_visible);
-	s.syncAsByte(look_around);
+	s.skip(1);
 	s.syncAsByte(been_here_before);
-
 	s.syncAsByte(walker_reload_palette);
 	s.syncAsByte(disable_hyperwalk);
 	s.syncAsByte(walker_loads_first);
 	s.syncAsByte(walker_in_this_scene);
-
 	s.syncAsSint32LE(walker_trigger);
 	s.syncAsSint32LE(walk_x);
 	s.syncAsSint32LE(walk_y);

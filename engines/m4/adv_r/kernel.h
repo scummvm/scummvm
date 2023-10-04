@@ -29,8 +29,10 @@ namespace M4 {
 
 #define CACHE_NOT_OVERRIDE_BY_FLAG_PARSE 2
 #define KERNEL_RESTORING_GAME -2
+#define KERNEL_SCRATCH_SIZE 256	// Size of game scratch area
 
 struct Kernel {
+	uint32	scratch[KERNEL_SCRATCH_SIZE];  // Scratch variables for room
 	bool hag_mode = true;
 
 	uint32 	clock = 0;						// Current game timing clock

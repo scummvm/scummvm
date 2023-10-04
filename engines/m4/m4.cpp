@@ -185,16 +185,39 @@ Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
-	_G(game).syncGame(s);
+	if (s.isSaving())
+		_G(kernel).pause = false;
+
+	// To match the original, we sync a set of fields from kernel and game
+	s.syncAsByte(_G(kernel).pause);
+	for (int i = 0; i < KERNEL_SCRATCH_SIZE; ++i)
+		s.syncAsUint32LE(_G(kernel).scratch[i]);
+
+	s.syncAsByte(_G(kernel)._val1);
+	s.syncAsSint16LE(_G(kernel).last_save);
+	s.syncAsSint16LE(_G(game).room_id);
+	s.syncAsSint16LE(_G(game).new_room);
+	s.syncAsSint16LE(_G(game).previous_section);
+	s.syncAsSint16LE(_G(game).section_id);
+	s.syncAsSint16LE(_G(game).new_section);
+	s.syncAsSint16LE(_G(game).previous_room);
+
+	s.syncAsSint16LE(_G(kernel).restore_game);
+	s.syncAsSint16LE(_G(game).digi_overall_volume_percent);
+	s.syncAsSint16LE(_G(game).midi_overall_volume_percent);
+	s.syncAsByte(_G(kernel)._val2);
+	s.skip(1);
+
 	_G(player).syncGame(s);
+
 	_G(player_info).syncGame(s);
 
 	syncFlags(s);
 
 	player_been_sync(s);
+
 	_G(conversations).syncGame(s);
 	_G(inventory)->syncGame(s);
-
 
 	if (s.isLoading()) {
 		// set up variables so everyone knows we've teleported
