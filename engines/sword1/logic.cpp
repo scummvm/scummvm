@@ -129,7 +129,7 @@ void Logic::newScreen(uint32 screen) {
 			_scriptVars[GEORGE_WALKING] = 0;
 		}
 		SwordEngine::_systemVars.justRestoredGame = 0;
-		_music->startMusic(_scriptVars[CURRENT_MUSIC], 1);
+		_sound->streamMusicFile(_scriptVars[CURRENT_MUSIC], 1);
 	} else { // if we haven't just restored a game, set George to stand, etc
 		compact->o_screen = _scriptVars[NEW_SCREEN]; //move the mega/player at this point between screens
 		fnStandAt(compact, PLAYER, _scriptVars[CHANGE_X], _scriptVars[CHANGE_Y], _scriptVars[CHANGE_DIR], _scriptVars[CHANGE_STANCE], 0, 0);
@@ -986,7 +986,7 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	// meantime, we don't want any looping sound effects still playing.
 	_sound->clearAllFx();
 
-	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _system);
+	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _sound, _system);
 	if (player) {
 		_screen->clearScreen();
 		if (player->load(sequenceId))
@@ -1663,8 +1663,7 @@ int Logic::fnPlayMusic(Object *cpt, int32 id, int32 tuneId, int32 loopFlag, int3
 	else
 		_scriptVars[CURRENT_MUSIC] = 0;
 
-	//_sound->streamSample(tuneId, loopFlag);
-	_music->startMusic(tuneId, loopFlag);
+	_sound->streamMusicFile(tuneId, loopFlag);
 	return SCRIPT_CONT;
 }
 

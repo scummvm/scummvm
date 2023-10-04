@@ -32,6 +32,7 @@
 #include "common/util.h"
 
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Audio {
 class Mixer;
@@ -71,15 +72,15 @@ struct FxDef {
 class ResMan;
 class SwordEngine;
 
-#define WAVE_VOL_TAB_LENGTH 480
-#define WAVE_VOL_THRESHOLD 190000 //120000
-#define MUSIC_UNDERSCORE 50
-#define NEG_MOUTH_THRESHOLD (-750)
-#define POS_MOUTH_THRESHOLD 750
-#define MAX_FX 4
-#define MAX_MUSIC 2
-#define S_STATUS_FINISHED 1
-#define S_STATUS_RUNNING  0
+#define MUSIC_UNDERSCORE     50
+#define NEG_MOUTH_THRESHOLD -750
+#define POS_MOUTH_THRESHOLD  750
+#define MAX_FX               4
+#define MAX_MUSIC            2
+#define S_STATUS_FINISHED    1
+#define S_STATUS_RUNNING     0
+#define MUSIC_BUFFER_SIZE    0x4000
+#define TOTAL_TUNES          270
 
 enum CowMode {
 	CowWave = 0,
@@ -137,6 +138,7 @@ private:
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
 	static const FxDef _fxList[312];
+	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 
 	// New stuff
 public:
@@ -156,7 +158,8 @@ public:
 	void stopSpeech();
 	int32 getSpeechSize(byte *compData, uint32 compSize);
 
-	int32 streamSample(char filename[], int32 looped);
+	int32 streamMusicFile(int32 tuneId, int32 looped);
+	void serveSample(Common::File *file, int32 i);
 	void reduceMusicVolume();
 	void restoreMusicVolume();
 
@@ -198,12 +201,14 @@ public:
 	Audio::SoundHandle hSampleFX[MAX_FX];
 	Audio::SoundHandle hSampleSpeech;
 	Audio::SoundHandle hSampleMusic[MAX_MUSIC];
-	int32 streamSamplePlaying[MAX_MUSIC] = { 0, 0 };
+	bool streamSamplePlaying[MAX_MUSIC] = { false, false };
 	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
-	int32 streamLoopingFlag[MAX_MUSIC] = { 0, 0 };
+	bool streamLoopingFlag[MAX_MUSIC] = { false, false };
 	Audio::SoundHandle hStreamSample[MAX_MUSIC];
-	int32 streamFile[MAX_MUSIC];
-	byte *streamBuffer[MAX_MUSIC][2];
+	Audio::QueuingAudioStream *_stream[MAX_MUSIC];
+	int lastStreamBufferIdx[MAX_MUSIC] = { 0, 0 };
+
+	Common::File streamFile[MAX_MUSIC];
 	bool fxSampleBusy[MAX_FX] = { false, false, false, false };
 	int32 fxSampleID[MAX_FX] = { 0, 0, 0, 0 };
 	bool speechSampleBusy = false;

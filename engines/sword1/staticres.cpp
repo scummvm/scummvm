@@ -2587,7 +2587,7 @@ RoomDef Screen::_roomDefTable[TOTAL_ROOMS] = { // these are NOT const
 	}
 };
 
-const char Music::_tuneList[TOTAL_TUNES][8] = {
+const char Sound::_tuneList[TOTAL_TUNES][8] = {
 	"",				// 0	SPARE
 	"1m2",		// DONE 1	George picks up the newspaper
 	"1m3",		// DONE 2	In the alley for the first time

@@ -1036,6 +1036,7 @@ uint8 SwordEngine::mainLoop() {
 			_systemVars.gameCycle++;
 
 			_logic->engine();
+			_sound->setCrossFadeIncrement();
 			_logic->updateScreenParams(); // sets scrolling
 
 			_screen->draw();
@@ -1153,6 +1154,8 @@ void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
 				break;
 			}
 		}
+
+		_sound->updateSampleStreaming();
 
 		_screen->_screenAccessMutex.lock();
 		_system->updateScreen();

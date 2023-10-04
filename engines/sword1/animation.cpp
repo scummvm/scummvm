@@ -101,8 +101,8 @@ static const char *const sequenceListPSX[20] = {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _resMan(resMan), _system(system), _textX(0), _textY(0), _textWidth(0), _textHeight(0), _textColor(1) {
+MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Sound *sound, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
+	: _vm(vm), _textMan(textMan), _resMan(resMan), _sound(sound), _system(system), _textX(0), _textY(0), _textWidth(0), _textHeight(0), _textColor(1) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
@@ -318,6 +318,9 @@ bool MoviePlayer::playVideo() {
 					_vm->_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 			}
 
+			_sound->setCrossFadeIncrement();
+			_sound->updateSampleStreaming();
+
 			if (_decoder->hasDirtyPalette()) {
 				_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);
 
@@ -512,7 +515,7 @@ void MoviePlayer::drawFramePSX(const Graphics::Surface *frame) {
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system) {
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Sound *sound, OSystem *system) {
 	Common::String filename;
 
 	// For the PSX version, we'll try the PlayStation stream files
@@ -524,7 +527,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 #ifdef USE_RGB_COLOR
 			// All BS1 PSX videos run the videos at 2x speed
 			Video::VideoDecoder *psxDecoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
-			return new MoviePlayer(vm, textMan, resMan, system, psxDecoder, kVideoDecoderPSX);
+			return new MoviePlayer(vm, textMan, resMan, sound, system, psxDecoder, kVideoDecoderPSX);
 #else
 			GUI::MessageDialog dialog(Common::U32String::format(_("PSX stream cutscene '%s' cannot be played in paletted mode"), filename.c_str()), _("OK"));
 			dialog.runModal();
@@ -537,14 +540,14 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 
 	if (Common::File::exists(filename)) {
 		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
-		return new MoviePlayer(vm, textMan, resMan, system, smkDecoder, kVideoDecoderSMK);
+		return new MoviePlayer(vm, textMan, resMan, sound, system, smkDecoder, kVideoDecoderSMK);
 	}
 
 	filename = Common::String::format("%s.dxa", sequenceList[id]);
 
 	if (Common::File::exists(filename)) {
 		Video::VideoDecoder *dxaDecoder = new Video::DXADecoder();
-		return new MoviePlayer(vm, textMan, resMan, system, dxaDecoder, kVideoDecoderDXA);
+		return new MoviePlayer(vm, textMan, resMan, sound, system, dxaDecoder, kVideoDecoderDXA);
 	}
 
 	// Old MPEG2 cutscenes
@@ -555,7 +558,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *
 		// HACK: Old ScummVM builds ignored the AVI frame rate field and forced the video
 		// to be played back at 12fps.
 		Video::VideoDecoder *aviDecoder = new Video::AVIDecoder(12);
-		return new MoviePlayer(vm, textMan, resMan, system, aviDecoder, kVideoDecoderMP2);
+		return new MoviePlayer(vm, textMan, resMan, sound, system, aviDecoder, kVideoDecoderMP2);
 #else
 		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
 		dialog.runModal();
