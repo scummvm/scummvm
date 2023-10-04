@@ -190,7 +190,7 @@ void SwordEngine::reinitialize() {
 void SwordEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	_sound->setVolumes();
+	_sound->getVolumes();
 }
 
 void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
