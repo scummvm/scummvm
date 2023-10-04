@@ -402,7 +402,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b2(17408, 17888, 96, 0, 96, 40);
 		si2.setBoxBounds(b2, 0, 0);
-		si1._fixed = true;
+		si2._fixed = true;
 
 		TS_ASSERT(si1.overlap(si2));
 		TS_ASSERT(si2.overlap(si1));
@@ -425,7 +425,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b2(2111, 1055, 48, 96, 0, 40);
 		si2.setBoxBounds(b2, 0, 0);
-		si1._fixed = true;
+		si2._fixed = true;
 
 		TS_ASSERT(si1.overlap(si2));
 		TS_ASSERT(si2.overlap(si1));
@@ -449,7 +449,7 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 
 		Ultima::Ultima8::Box b2(2175, 1055, 48, 96, 0, 40);
 		si2.setBoxBounds(b2, 0, 0);
-		si1._fixed = true;
+		si2._fixed = true;
 
 		// These share a one pixel edge, but we need to ignore that currently to prevent paint dependency cycles
 		TS_ASSERT(!si1.overlap(si2));
@@ -502,6 +502,33 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si1._fixed = true;
 
 		Ultima::Ultima8::Box b2(19008, 17432, 104, 96, 0, 40);
+		si2.setBoxBounds(b2, 0, 0);
+		si2._fixed = true;
+
+		TS_ASSERT(si1.overlap(si2));
+		TS_ASSERT(si2.overlap(si1));
+
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+	}
+
+	/**
+	 * Overlapping y-flat vs z-flat floor where z order not clear
+	 * Test case for rendering issue at MainActor::teleport 37 22546 18656 56
+	 * Vines should draw after floor
+	 */
+	void test_y_flat_z_tolerance_sort() {
+		Ultima::Ultima8::SortItem si1;
+		Ultima::Ultima8::SortItem si2;
+
+		Ultima::Ultima8::Box b1(22271, 18431, 56, 128, 128, 0);
+		si1.setBoxBounds(b1, 0, 0);
+		si1._solid = true;
+		si1._occl = true;
+		si1._land = true;
+		si1._fixed = true;
+
+		Ultima::Ultima8::Box b2(22367, 18399, 48, 128, 0, 40);
 		si2.setBoxBounds(b2, 0, 0);
 		si2._fixed = true;
 

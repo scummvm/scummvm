@@ -107,6 +107,40 @@ bool SortItem::below(const SortItem &si2) const {
 			return false;
 	}
 
+	// Check with a tolerance based on footpad calculations
+	if (si1._zTop - 8 <= si2._z && si1._z < si2._zTop - 8)
+		return true;
+	if (si1._z >= si2._zTop - 8 && si1._zTop - 8 > si2._z)
+		return false;
+
+	// Y-flat vs non-flat handling
+	if (yFlat1 != yFlat2) {
+		// Check with a precision loss based on footpad calculations
+		if (si1._y / 32 <= si2._yFar / 32)
+			return true;
+		if (si1._yFar / 32 >= si2._y / 32)
+			return false;
+
+		int32 yCenter1 = (si1._yFar / 32 + si1._y / 32) / 2;
+		int32 yCenter2 = (si2._yFar / 32 + si2._y / 32) / 2;
+		if (yCenter1 != yCenter2)
+			return yCenter1 < yCenter2;
+	}
+
+	// X-flat vs non-flat handling
+	if (xFlat1 != xFlat2) {
+		// Check with a precision loss based on footpad calculations
+		if (si1._x / 32 <= si2._xLeft / 32)
+			return true;
+		if (si1._xLeft / 32 >= si2._x / 32)
+			return false;
+
+		int32 xCenter1 = (si1._xLeft / 32 + si1._x / 32) / 2;
+		int32 xCenter2 = (si2._xLeft / 32 + si2._x / 32) / 2;
+		if (xCenter1 != xCenter2)
+			return xCenter1 < xCenter2;
+	}
+
 	// Specialist z flat handling
 	if (si1._flat || si2._flat) {
 		// Lower z-bottom drawn before
@@ -144,40 +178,6 @@ bool SortItem::below(const SortItem &si2) const {
 		// Large flats squares get drawn first
 		if (si1._fbigsq != si2._fbigsq)
 			return si1._fbigsq > si2._fbigsq;
-	}
-
-	// Check with a tolerance based on footpad calculations
-	if (si1._zTop - 8 <= si2._z && si1._z < si2._zTop - 8)
-		return true;
-	if (si1._z >= si2._zTop - 8 && si1._zTop - 8 > si2._z)
-		return false;
-
-	// Y-flat vs non-flat handling
-	if (yFlat1 != yFlat2) {
-		// Check with a precision loss based on footpad calculations
-		if (si1._y / 32 <= si2._yFar / 32)
-			return true;
-		if (si1._yFar / 32 >= si2._y / 32)
-			return false;
-
-		int32 yCenter1 = (si1._yFar / 32 + si1._y / 32) / 2;
-		int32 yCenter2 = (si2._yFar / 32 + si2._y / 32) / 2;
-		if (yCenter1 != yCenter2)
-			return yCenter1 < yCenter2;
-	}
-
-	// X-flat vs non-flat handling
-	if (xFlat1 != xFlat2) {
-		// Check with a precision loss based on footpad calculations
-		if (si1._x / 32 <= si2._xLeft / 32)
-			return true;
-		if (si1._xLeft / 32 >= si2._x / 32)
-			return false;
-
-		int32 xCenter1 = (si1._xLeft / 32 + si1._x / 32) / 2;
-		int32 xCenter2 = (si2._xLeft / 32 + si2._x / 32) / 2;
-		if (xCenter1 != xCenter2)
-			return xCenter1 < xCenter2;
 	}
 
 	// Specialist handling for same location
