@@ -1568,7 +1568,7 @@ void Room102::conv04() {
 		} else if (who == 1) {
 			player_update_info();
 
-			if (_G(player_info).trigger != 2) {
+			if (_G(player_info).facing != 2) {
 				ws_walk(192, 327, 0, 7, 2);
 			} else if (node == 4 && entry == 1) {
 				digi_preload("04p0502", 102);
