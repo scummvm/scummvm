@@ -139,7 +139,49 @@ Common::Error M4Engine::loadGameState(int slot) {
 }
 
 Common::Error M4Engine::loadGameStateDoIt(int slot) {
-	return Engine::loadGameState(slot);
+	Common::InSaveFile *save = getOriginalSave(slot);
+
+	if (save) {
+		// Skip original description
+		int descSize = save->readUint32LE();
+		save->seek(descSize + 45, SEEK_CUR);
+
+		int thumbSize = save->readUint32LE();
+		save->seek(thumbSize, SEEK_CUR);
+
+		// We're now at data section, handle it
+		Common::Serializer s(save, nullptr);
+		Common::Error result = syncGame(s);
+
+		delete save;
+
+		return result;
+
+	} else {
+		return Engine::loadGameState(slot);
+	}
+}
+
+Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(
+		getSaveStateName(slot));
+	char name[16];
+
+	if (save) {
+		if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+				!strncmp(name, "MIRROR", 7)) {
+			save->seek(0);
+			return save;
+		} else if (save->seek(-44, SEEK_END) && save->read(name, 7) == 7 &&
+				!strncmp(name, "FAUCET ", 7)) {
+			save->seek(0);
+			return save;
+		}
+
+		delete save;
+	}
+
+	return nullptr;
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {

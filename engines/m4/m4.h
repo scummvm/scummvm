@@ -52,6 +52,12 @@ private:
 	 */
 	void m4_inflight();
 
+	/**
+	 * Opens up a savefile in a given slot, and if it's an
+	 * original savegame, returns a reference to it
+	 */
+	Common::InSaveFile *getOriginalSave(int slot) const;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
