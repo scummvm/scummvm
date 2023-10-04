@@ -79,7 +79,7 @@ class SwordEngine;
 #define MAX_MUSIC            2
 #define S_STATUS_FINISHED    1
 #define S_STATUS_RUNNING     0
-#define MUSIC_BUFFER_SIZE    0x4000
+#define MUSIC_BUFFER_SIZE    0x2000
 #define TOTAL_TUNES          270
 #define DEFAULT_SAMPLE_RATE  11025
 
@@ -107,15 +107,9 @@ class Sound {
 public:
 	Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan);
 	~Sound();
+
 	void newScreen(uint32 screen);
-	void clearAllFx();
 	void closeCowSystem();
-
-	void startSpeech(uint16 roomNo, uint16 localNo);
-	bool amISpeaking();
-
-	int addToQueue(uint32 fxNo);
-	void removeFromQueue(uint32 fxNo);
 
 	void engine();
 
@@ -124,23 +118,29 @@ public:
 
 	void installFadeTimer();
 	void uninstallFadeTimer();
-	void setFXVolume(byte targetVolume, int handleIdx);
 
 	void playSample(int32 fxNo);
 	void stopSample(int32 fxNo);
+	void setFXVolume(byte targetVolume, int handleIdx);
+	void clearAllFx();
+	int addToQueue(uint32 fxNo);
+	void removeFromQueue(uint32 fxNo);
 
-	void updateSampleStreaming();
+	void startSpeech(uint16 roomNo, uint16 localNo);
+	bool amISpeaking();
 	int32 checkSpeechStatus();
 	void playSpeech();
 	void stopSpeech();
 
 	int32 streamMusicFile(int32 tuneId, int32 looped);
+	void updateSampleStreaming();
+	void setCrossFadeIncrement();
 
 	void fadeMusicDown(int32 rate);
 	void fadeFxDown(int32 rate);
 	void fadeFxUp(int32 rate);
 
-	void setCrossFadeIncrement();
+
 	void pauseSpeech();
 	void unpauseSpeech();
 	void pauseMusic();
@@ -243,7 +243,8 @@ private:
 	bool streamLoopingFlag[MAX_MUSIC]   = { false, false };
 	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
 	MusCompMode streamFormat[MAX_MUSIC] = { MusWav, MusWav };
-	Audio::QueuingAudioStream *_musicOutputStream[MAX_MUSIC];
+	Audio::QueuingAudioStream *_musicOutputStream[MAX_MUSIC] = { nullptr, nullptr };
+	Audio::RewindableAudioStream *_compressedMusicStream[MAX_MUSIC] = { nullptr, nullptr };
 	Common::File streamFile[MAX_MUSIC];
 
 	// Sound FX information

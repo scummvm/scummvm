@@ -822,7 +822,6 @@ void Sound::stopSample(int32 fxNo) {
 void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint32 volume, int8 pan, MusCompMode assignedMode) {
 	int sampleRate = DEFAULT_SAMPLE_RATE;
 	WaveHeader wavHead;
-	Audio::RewindableAudioStream *compressedStream = nullptr;
 	bool isStereo = false;
 
 	if (filename.empty())
@@ -830,6 +829,8 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 
 	if (!streamFile[newHandleId].open(filename))
 		debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
+
+	delete _compressedMusicStream[newHandleId];
 
 	if (assignedMode == MusWav) {
 		if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
@@ -840,20 +841,20 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 
 		sampleRate = wavHead.dwSamplesPerSec;
 	} else if (assignedMode == MusFLAC) {
-		compressedStream = Audio::makeFLACStream(&streamFile[newHandleId], DisposeAfterUse::NO);
-		sampleRate = compressedStream->getRate();
+		_compressedMusicStream[newHandleId] = Audio::makeFLACStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = _compressedMusicStream[newHandleId]->getRate();
 	} else if (assignedMode == MusVorbis) {
-		compressedStream = Audio::makeVorbisStream(&streamFile[newHandleId], DisposeAfterUse::NO);
-		sampleRate = compressedStream->getRate();
+		_compressedMusicStream[newHandleId] = Audio::makeVorbisStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = _compressedMusicStream[newHandleId]->getRate();
 	} else if (assignedMode == MusMP3) {
-		compressedStream = Audio::makeMP3Stream(&streamFile[newHandleId], DisposeAfterUse::NO);
-		sampleRate = compressedStream->getRate();
+		_compressedMusicStream[newHandleId] = Audio::makeMP3Stream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = _compressedMusicStream[newHandleId]->getRate();
 	} else if (assignedMode == MusAif) {
-		compressedStream = Audio::makeAIFFStream(&streamFile[newHandleId], DisposeAfterUse::NO);
-		sampleRate = compressedStream->getRate();
+		_compressedMusicStream[newHandleId] = Audio::makeAIFFStream(&streamFile[newHandleId], DisposeAfterUse::NO);
+		sampleRate = _compressedMusicStream[newHandleId]->getRate();
 	}
 
-	if (assignedMode != MusWav && !compressedStream) {
+	if (assignedMode != MusWav && !_compressedMusicStream[newHandleId]) {
 		debug(5, "Sound::streamMusicFile(): couldn't process compressed file %s, bailing out...", filename.c_str());
 		streamFile[newHandleId].close();
 		return;
@@ -861,10 +862,6 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 
 	_musicOutputStream[newHandleId] = Audio::makeQueuingAudioStream(sampleRate, isStereo);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _musicOutputStream[newHandleId]);
-
-	if (assignedMode != MusWav) {
-		_musicOutputStream[newHandleId]->queueAudioStream(compressedStream);
-	}
 
 	_mixer->setChannelRate(hSampleMusic[newHandleId], sampleRate);
 	_mixer->setChannelVolume(hSampleMusic[newHandleId], volume);
@@ -1000,28 +997,57 @@ void Sound::updateSampleStreaming() {
 void Sound::serveSample(Common::File *file, int32 i) {
 	int32 len;
 	int32 nominalSize = MUSIC_BUFFER_SIZE;
-	byte *buf = (byte *)malloc(nominalSize);
+	byte *buf = nullptr;
 
-	if (!musicPaused[i] && streamFormat[i] == MusWav) {
+	if (!musicPaused[i]) {
 		if (_musicOutputStream[i]->numQueuedStreams() < 4) {
-			len = file->read(buf, nominalSize);
-			if (len < nominalSize) {
-				if (streamLoopingFlag[i]) {
-					file->seek(44, SEEK_SET);
-					file->read(buf + len, nominalSize - len);
-					len = nominalSize;
-					debug(5, "Sound::serveSample(): Looping music file %s", file->getName());
-				} else {
-					Common::String fname(file->getName());
-					if (!fname.empty())
-						debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
+			if (streamFormat[i] == MusWav) {
+				buf = (byte *)malloc(nominalSize);
+				if (!buf) {
+					warning("Sound::serveSample(): Couldn't allocate memory for streaming file %s", file->getName());
+					return;
+				}
+
+				len = file->read(buf, nominalSize);
+				if (len < nominalSize) {
+					if (streamLoopingFlag[i]) {
+						file->seek(44, SEEK_SET);
+						file->read(buf + len, nominalSize - len);
+						len = nominalSize;
+						debug(5, "Sound::serveSample(): Looping music file %s", file->getName());
+					} else {
+						Common::String fname(file->getName());
+						if (!fname.empty())
+							debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
+					}
+				}
+			} else {
+				buf = (byte *)malloc(nominalSize * 2);
+				if (!buf) {
+					warning("Sound::serveSample(): Couldn't allocate memory for streaming file %s", file->getName());
+					return;
+				}
+
+				len = _compressedMusicStream[i]->readBuffer((int16 *)buf, nominalSize);
+				if (len < nominalSize) {
+					if (streamLoopingFlag[i]) {
+						_compressedMusicStream[i]->rewind();
+						 _compressedMusicStream[i]->readBuffer((int16 *)buf + len, nominalSize - len);
+						len = nominalSize;
+						debug(5, "Sound::serveSample(): Looping music file %s", file->getName());
+					} else {
+						Common::String fname(file->getName());
+						if (!fname.empty())
+							debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
+					}
 				}
 			}
 
+			if (streamFormat[i] != MusWav)
+				len *= 2;
+
 			_musicOutputStream[i]->queueBuffer(buf, len, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 		}
-	} else if (streamFormat[i] != MusWav && streamLoopingFlag[i]) {
-
 	}
 }
 
