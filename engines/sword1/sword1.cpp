@@ -108,6 +108,10 @@ Common::Error SwordEngine::init() {
 	_mouse->useLogicAndMenu(_logic, _menu);
 	_mouse->useScreenMutex(&_screen->_screenAccessMutex);
 
+	// Init the virtual mouse coordinates to be at the center of the screen
+	_mouseCoord.x = SCREEN_WIDTH / 2;
+	_mouseCoord.y = SCREEN_FULL_DEPTH / 2;
+
 	syncSoundSettings();
 
 	_systemVars.justRestoredGame = 0;
