@@ -365,6 +365,50 @@ void Overlay::setFrame(uint frame) {
 	_needsRedraw = true;
 }
 
+void OverlayStaticTerse::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	_transparency = stream.readUint16LE();
+	_z = stream.readUint16LE();
+
+	Common::Rect dest, src;
+	readRect(stream, dest);
+	readRect(stream, src);
+
+	_srcRects.push_back(src);
+	_blitDescriptions.resize(1);
+	_blitDescriptions[0].src = Common::Rect(src.width(), src.height());
+	_blitDescriptions[0].dest = dest;
+
+	_overlayType = kPlayOverlayStatic;
+}
+
+void OverlayAnimTerse::readData(Common::SeekableReadStream &stream) {
+	readFilename(stream, _imageName);
+	stream.skip(2); // VIDEO_STOP_RENDERING, VIDEO_CONTINUE_RENDERING
+	_transparency = stream.readUint16LE();
+	_hasSceneChange = stream.readUint16LE();
+	_z = stream.readUint16LE();
+	_playDirection = stream.readUint16LE();
+	_loop = stream.readUint16LE();
+
+	_sceneChange.sceneID = stream.readUint16LE();
+	_sceneChange.continueSceneSound = kContinueSceneSound;
+	_sceneChange.listenerFrontVector.set(0, 0, 1);
+	_flagsOnTrigger.descs[0].label = stream.readSint16LE();
+	_flagsOnTrigger.descs[0].flag = stream.readUint16LE();
+
+	_firstFrame = _loopFirstFrame = stream.readUint16LE();
+	_loopLastFrame = stream.readUint16LE();
+
+	_blitDescriptions.resize(1);
+	readRect(stream, _blitDescriptions[0].dest);
+
+	readRectArray(stream, _srcRects, _loopLastFrame - _loopFirstFrame + 1);
+
+	_overlayType = kPlayOverlayAnimated;
+	_frameTime = Common::Rational(1000, 15).toInt(); // Always set to 15 fps
+}
+
 void TableIndexOverlay::readData(Common::SeekableReadStream &stream) {
 	_tableIndex = stream.readUint16LE();
 	Overlay::readData(stream);

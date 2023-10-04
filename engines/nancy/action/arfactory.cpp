@@ -130,12 +130,23 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 54:
 		if (g_nancy->getGameType() <= kGameTypeNancy1) {
 			return new Overlay(false); // PlayStaticBitmapAnimation
+		} else {
+			return new Overlay(true);
 		}
-		// fall through
 	case 55:
-		return new Overlay(true); // PlayIntStaticBitmapAnimation
+		if (g_nancy->getGameType() <= kGameTypeNancy1) {
+			return new Overlay(true); // PlayIntStaticBitmapAnimation
+		} else if (g_nancy->getGameType() >= kGameTypeNancy7) {
+			return new OverlayStaticTerse();
+		}
+		return nullptr;
 	case 56:
-		return new ConversationVideo();
+		if (g_nancy->getGameType() <= kGameTypeNancy6) {
+			return new ConversationVideo();
+		} else if (g_nancy->getGameType() >= kGameTypeNancy7) {
+			return new OverlayAnimTerse();
+		}
+		return nullptr;
 	case 57:
 		return new ConversationCel();
 	case 58:

@@ -91,6 +91,30 @@ protected:
 	Graphics::ManagedSurface _fullSurface;
 };
 
+// Short version of a static overlay; assumes scene background doesn't move
+class OverlayStaticTerse : public Overlay {
+public:
+	OverlayStaticTerse() : Overlay(true) {}
+	virtual ~OverlayStaticTerse() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayStaticTerse"; }
+};
+
+// Short version of an animated overlay; assumes scene background doesn't move
+class OverlayAnimTerse : public Overlay {
+public:
+	OverlayAnimTerse() : Overlay(true) {}
+	virtual ~OverlayAnimTerse() {}
+
+	void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	Common::String getRecordTypeName() const override { return "OverlayAnimTerse"; }
+};
+
 class TableIndexOverlay : public Overlay {
 public:
 	TableIndexOverlay() : Overlay(true) {}
