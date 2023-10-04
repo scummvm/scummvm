@@ -140,13 +140,15 @@ public:
 	void fadeFxDown(int32 rate);
 	void fadeFxUp(int32 rate);
 
-
 	void pauseSpeech();
 	void unpauseSpeech();
 	void pauseMusic();
 	void unpauseMusic();
 	void pauseFx();
 	void unpauseFx();
+
+	void getVolumes();
+	void setVolumes();
 
 	Common::Mutex _soundMutex;
 	Audio::Mixer *_mixer;

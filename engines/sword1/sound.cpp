@@ -20,11 +20,11 @@
  */
 
 
+#include "common/config-manager.h"
 #include "common/endian.h"
-
-#include "common/util.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "sword1/sound.h"
 #include "sword1/resman.h"
@@ -55,15 +55,7 @@ Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 
 	_musicOutputStream[0] = Audio::makeQueuingAudioStream(DEFAULT_SAMPLE_RATE, false);
 	_musicOutputStream[1] = Audio::makeQueuingAudioStream(DEFAULT_SAMPLE_RATE, false);
-	//if (!GetVolumes()) {
-		volFX[0] = 8;
-		volFX[1] = 8;
-		volSpeech[0] = 8;
-		volSpeech[1] = 8;
-		volMusic[0] = 8;
-		volMusic[1] = 8;
-	//	SetVolumes();
-	//}
+	getVolumes();
 
 	memset(_fxQueue, 0, sizeof(_fxQueue));
 }
@@ -1292,6 +1284,107 @@ void Sound::unpauseFx() {
 			_mixer->pauseHandle(hSampleFX[i], false);
 			fxPaused[i] = false;
 		}
+	}
+}
+
+static void getConfigVolumes(uint32 volL, uint32 volR, int &balance, int &volume) {
+	// Calculate the balance
+	if (volL + volR == 0) {
+		balance = 50;
+	} else {
+		balance = (int)(100.0f * volL / (volL + volR) + 0.5f);
+	}
+
+	// Calculate and scale the volume to the 0-255 range
+	volume = (int)(((volL + volR) * 255.0f / 32) + 0.5f);
+	volume =  CLIP<int>(((volL + volR) * 255 / 32), 0, 255);
+}
+
+static void getGameVolumes(int balance, int volume, uint32 &volL, uint32 &volR) {
+	volume = CLIP<int>(volume, 0, 255);
+
+	int totalVolume = (int)(volume * 32.0f / 255 + 0.5f);
+
+	if (balance == 50) {
+		volL = totalVolume / 2;
+		volR = volL;
+		return;
+	}
+
+	volL = (uint32)(totalVolume * (balance / 100.0f) + 0.5f);
+	volR = totalVolume - volL;
+}
+
+void Sound::getVolumes() {
+	int musicVol = ConfMan.getInt("music_volume");
+	int sfxVol = ConfMan.getInt("sfx_volume");
+	int speechVol = ConfMan.getInt("speech_volume");
+
+	int musicBal = 50;
+	if (ConfMan.hasKey("music_balance")) {
+		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
+	}
+
+	int speechBal = 50;
+	if (ConfMan.hasKey("speech_balance")) {
+		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
+	}
+
+	int sfxBal = 50;
+	if (ConfMan.hasKey("sfx_balance")) {
+		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
+	}
+
+	getGameVolumes(musicBal,  musicVol,  volMusic[0],  volMusic[1]);
+	getGameVolumes(speechBal, speechVol, volSpeech[0], volSpeech[1]);
+	getGameVolumes(sfxBal,    sfxVol,    volFX[0],     volFX[1]);
+
+	if (ConfMan.getBool("mute")) {
+		volSpeech[0] = 0;
+		volSpeech[1] = 0;
+	}
+
+	SwordEngine::_systemVars.showText = ConfMan.getBool("subtitles");
+
+	if (volSpeech[0] + volSpeech[1] == 0) {
+		SwordEngine::_systemVars.showText = true;
+		SwordEngine::_systemVars.playSpeech = false;
+	} else {
+		SwordEngine::_systemVars.playSpeech = true;
+	}
+}
+
+void Sound::setVolumes() {
+	int volume = 0;
+	int balance = 0;
+
+	getConfigVolumes(volMusic[0], volMusic[1], balance, volume);
+	if (volume != ConfMan.getInt("music_volume"))
+		ConfMan.setInt("music_volume", volume);
+	if (balance != ConfMan.getInt("music_balance"))
+		ConfMan.setInt("music_balance", balance);
+
+	getConfigVolumes(volSpeech[0], volSpeech[1], balance, volume);
+	if (volume != ConfMan.getInt("speech_volume"))
+		ConfMan.setInt("speech_volume", volume);
+	if (balance != ConfMan.getInt("speech_balance"))
+		ConfMan.setInt("speech_balance", balance);
+
+	getConfigVolumes(volFX[0], volFX[1], balance, volume);
+	if (volume != ConfMan.getInt("sfx_volume"))
+		ConfMan.setInt("sfx_volume", volume);
+	if (balance != ConfMan.getInt("sfx_balance"))
+		ConfMan.setInt("sfx_balance", balance);
+
+	if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
+		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
+	ConfMan.flushToDisk();
+
+	if (volSpeech[0] + volSpeech[1] == 0) {
+		SwordEngine::_systemVars.showText = true;
+		SwordEngine::_systemVars.playSpeech = false;
+	} else {
+		SwordEngine::_systemVars.playSpeech = true;
 	}
 }
 
