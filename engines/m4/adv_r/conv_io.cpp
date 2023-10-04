@@ -49,20 +49,20 @@ namespace M4 {
 #define DECL_POINTER	1
 
 void Converstation_Globals::syncGame(Common::Serializer &s) {
-	uint32 val;
+	uint32 count;
 
 	if (s.isLoading())
 		conv_reset_all();
 
 	// Handle size
-	val = conv_save_buff.size();
-	s.syncAsUint32LE(val);
+	count = conv_save_buff.size();
+	s.syncAsUint32LE(count);
 	if (s.isLoading())
-		conv_save_buff.resize(val);
+		conv_save_buff.resize(count);
 
 	// Read in the buffer
-	if (val)
-		s.syncBytes(&conv_save_buff[0], val);
+	if (count)
+		s.syncBytes(&conv_save_buff[0], count);
 }
 
 void Converstation_Globals::conv_reset_all() {
