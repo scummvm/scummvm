@@ -490,13 +490,20 @@ void MacIndy3Gui::resetInventorySlot(InventorySlot *s) {
 }
 
 bool MacIndy3Gui::isActive() {
+	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
+		return false;
+
 	// Verb script 4 is the regular verb gui.
 	// Verb script 18 is for conversations.
 	// Verb script 200 is for Venice.
 	// Verb script 201 is for travelling from the US.
 	// Verb script 205 is for travelling from Venice.
 	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
-	return verbScript == 4 || verbScript == 18 || verbScript == 200 || verbScript == 201 || verbScript == 205;
+	if (verbScript == 4 || verbScript == 18 || verbScript == 200 || verbScript == 201 || verbScript == 205)
+		return true;
+
+	debug("VAR_VERB_SCRIPT = %d", verbScript);
+	return false;
 }
 
 void MacIndy3Gui::resetAfterLoad() {
@@ -539,9 +546,6 @@ void MacIndy3Gui::update() {
 		return;
 	}
 
-	if (!_visible)
-		show();
-
 	updateTimers();
 
 	bool keepGuiAlive = false;
@@ -550,9 +554,13 @@ void MacIndy3Gui::update() {
 	updateButtons(keepGuiAlive, inventoryIsActive);
 
 	if (!keepGuiAlive) {
-		hide();
+		// We haven't drawn anything yet, so just silently hide it.
+		_visible = false;
 		return;
 	}
+
+	if (!_visible)
+		show();
 
 	drawButtons();
 
@@ -760,7 +768,7 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (event.type != Common::EVENT_LBUTTONDOWN)
 		return;
 
-	if (_vm->_userPut <= 0)
+	if (!isActive() || _vm->_userPut <= 0)
 		return;
 
 	int x = event.mouse.x;
@@ -793,8 +801,10 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 }
 
 void MacIndy3Gui::show() {
-	if (_visible)
+	if (_visible || !isActive())
 		return;
+
+	debug("SHOW");
 
 	clear();
 	_visible = true;
@@ -808,6 +818,11 @@ void MacIndy3Gui::hide() {
 
 	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
 		resetWidget(&_widgets[i]);
+
+	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
+		return;
+
+	debug("HIDE");
 
 	_macScreen->fillRect(Common::Rect(0, 288, 640, 400), 0);
 	_system->copyRectToScreen(_macScreen->getBasePtr(0, 288), _macScreen->pitch, 0, 288, 640, 112);
