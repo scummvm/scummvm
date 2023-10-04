@@ -451,8 +451,9 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		si2.setBoxBounds(b2, 0, 0);
 		si1._fixed = true;
 
-		TS_ASSERT(si1.overlap(si2));
-		TS_ASSERT(si2.overlap(si1));
+		// These share a one pixel edge, but we need to ignore that currently to prevent paint dependency cycles
+		TS_ASSERT(!si1.overlap(si2));
+		TS_ASSERT(!si2.overlap(si1));
 
 		TS_ASSERT(si1.below(si2));
 		TS_ASSERT(!si2.below(si1));
@@ -791,14 +792,15 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		b2 = Ultima::Ultima8::Box(128, -128, 0, 128, 128, 32);
 		si2.setBoxBounds(b2, 0, 0);
 
-		TS_ASSERT(si1.overlap(si2));
-		TS_ASSERT(si2.overlap(si1));
+		// These often share a one pixel edge, but we need to ignore that currently to prevent paint dependency cycles
+		TS_ASSERT(!si1.overlap(si2));
+		TS_ASSERT(!si2.overlap(si1));
 
 		b2 = Ultima::Ultima8::Box(-128, 128, 0, 128, 128, 32);
 		si2.setBoxBounds(b2, 0, 0);
 
-		TS_ASSERT(si1.overlap(si2));
-		TS_ASSERT(si2.overlap(si1));
+		TS_ASSERT(!si1.overlap(si2));
+		TS_ASSERT(!si2.overlap(si1));
 
 		// Check outside left & right bounds using non-flats
 		b2 = Ultima::Ultima8::Box(160, -128, 0, 128, 128, 32);
