@@ -73,6 +73,8 @@ Debugger::Debugger() {
 	registerCmd("md5",				WRAP_METHOD(Debugger, cmdMd5));
 	registerCmd("md5mac",			WRAP_METHOD(Debugger, cmdMd5Mac));
 #endif
+	registerCmd("clear",			WRAP_METHOD(Debugger, cmdClearLog));
+	registerCmd("cls",			WRAP_METHOD(Debugger, cmdClearLog)); // alias
 	registerCmd("exec",				WRAP_METHOD(Debugger, cmdExecFile));
 
 	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
@@ -805,6 +807,13 @@ bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 			debugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
 		}
 	}
+	return true;
+}
+
+bool Debugger::cmdClearLog(int argc, const char **argv) {
+	#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	_debuggerDialog->clearBuffer();
+	#endif
 	return true;
 }
 

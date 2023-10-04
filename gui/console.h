@@ -165,6 +165,7 @@ public:
 
 	void setPrompt(Common::String prompt);
 	void resetPrompt();
+	void clearBuffer();
 
 protected:
 	inline char &buffer(int idx) {
