@@ -199,7 +199,7 @@ private:
 		bool *endiannessCheck = nullptr, uint32 *sizeForEndiannessCheck = nullptr);
 	int32 getSpeechSize(byte *compData, uint32 compSize);
 
-	void prepareMusicStreaming(Common::String filename, int newHandleId,
+	bool prepareMusicStreaming(Common::String filename, int newHandleId, int32 tuneId,
 							   uint32 volume, int8 pan, MusCompMode assignedMode);
 	void serveSample(Common::File *file, int32 i);
 	void reduceMusicVolume();

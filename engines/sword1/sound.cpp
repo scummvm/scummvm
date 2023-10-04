@@ -819,16 +819,18 @@ void Sound::stopSample(int32 fxNo) {
 	stopFX(fxNo);
 }
 
-void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint32 volume, int8 pan, MusCompMode assignedMode) {
+bool Sound::prepareMusicStreaming(Common::String filename, int newHandleId, int32 tuneId, uint32 volume, int8 pan, MusCompMode assignedMode) {
 	int sampleRate = DEFAULT_SAMPLE_RATE;
 	WaveHeader wavHead;
 	bool isStereo = false;
 
 	if (filename.empty())
-		return;
+		return false;
 
-	if (!streamFile[newHandleId].open(filename))
+	if (!streamFile[newHandleId].open(filename)) {
 		debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
+		return false;
+	}
 
 	delete _compressedMusicStream[newHandleId];
 
@@ -836,7 +838,7 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 		if (streamFile[newHandleId].read(&wavHead, sizeof(WaveHeader)) != sizeof(WaveHeader)) {
 			debug(5, "Sound::streamMusicFile(): couldn't read from file %s, bailing out...", filename.c_str());
 			streamFile[newHandleId].close();
-			return;
+			return false;
 		}
 
 		sampleRate = wavHead.dwSamplesPerSec;
@@ -852,12 +854,37 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 	} else if (assignedMode == MusAif) {
 		_compressedMusicStream[newHandleId] = Audio::makeAIFFStream(&streamFile[newHandleId], DisposeAfterUse::NO);
 		sampleRate = _compressedMusicStream[newHandleId]->getRate();
+	} else if (assignedMode == MusPSX) {
+		Common::File tableFile;
+		if (!tableFile.open("tunes.tab")) {
+			debug(5, "Sound::streamMusicFile(): couldn't open the tunes.tab file, bailing out...");
+			return false;
+		}
+
+
+		// The PSX demo has a broken/truncated tunes.tab. So we check here that the offset is not
+		// beyond the end of the file.
+		int32 tableOffset = (tuneId - 1) * 8;
+		if (tableOffset >= tableFile.size())
+			return false;
+		tableFile.seek(tableOffset, SEEK_SET);
+		uint32 offset = tableFile.readUint32LE() * 0x800;
+		uint32 size = tableFile.readUint32LE();
+
+		tableFile.close();
+
+		// Because of broken tunes.dat/tab in psx demo, also check that tune offset is
+		// not over file size
+		if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= streamFile[newHandleId].size())) {
+			streamFile[newHandleId].seek(offset, SEEK_SET);
+			_compressedMusicStream[newHandleId] = Audio::makeXAStream(streamFile[newHandleId].readStream(size), DEFAULT_SAMPLE_RATE);
+		}
 	}
 
 	if (assignedMode != MusWav && !_compressedMusicStream[newHandleId]) {
 		debug(5, "Sound::streamMusicFile(): couldn't process compressed file %s, bailing out...", filename.c_str());
 		streamFile[newHandleId].close();
-		return;
+		return false;
 	}
 
 	_musicOutputStream[newHandleId] = Audio::makeQueuingAudioStream(sampleRate, isStereo);
@@ -869,6 +896,8 @@ void Sound::prepareMusicStreaming(Common::String filename, int newHandleId, uint
 
 	streamSamplePlaying[newHandleId] = true;
 	streamFormat[newHandleId] = assignedMode;
+
+	return true;
 }
 
 int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
@@ -878,10 +907,12 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 	Common::String filename(_tuneList[tuneId]);
 
 	MusCompMode assignedMode = MusWav;
-
-	if (tmp.exists(filename + ".flac")) {
-		filename = filename + ".flac";
-		assignedMode = MusFLAC;
+	if (tmp.exists(filename + ".wav")) {
+		filename = filename + ".wav";
+		assignedMode = MusWav;
+	} else if (SwordEngine::isPsx() && tmp.exists("tunes.dat") && tmp.exists("tunes.tab")) {
+		filename = "tunes.dat";
+		assignedMode = MusPSX;
 	} else if (tmp.exists(filename + ".fla")) {
 		filename = filename + ".fla";
 		assignedMode = MusFLAC;
@@ -891,12 +922,14 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 	} else if (tmp.exists(filename + ".mp3")) {
 		filename = filename + ".mp3";
 		assignedMode = MusMP3;
-	} else if (tmp.exists(filename + ".wav")) {
-		filename = filename + ".wav";
-		assignedMode = MusWav;
+	} else if (tmp.exists(filename + ".flac")) {
+		filename = filename + ".flac";
+		assignedMode = MusFLAC;
 	} else if (tmp.exists(filename + ".aif")) {
 		filename = filename + ".aif";
 		assignedMode = MusAif;
+	} else {
+		filename = "";
 	}
 
 	newHandleId = 0;
@@ -914,29 +947,32 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 			_mixer->stopHandle(hSampleMusic[newHandleId]);
 			streamFile[newHandleId].close();
 
-			prepareMusicStreaming(filename, newHandleId,
-								  2 * (2 * (volMusic[0] + volMusic[1])),
-								  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
-								  assignedMode);
+			bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+												 2 * (2 * (volMusic[0] + volMusic[1])),
+												 scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+												 assignedMode);
 
-			debug(5, "Sound::streamMusicFile(): interrupting sound in handle %d to play %s", newHandleId, filename.c_str());
+			if (success)
+				debug(5, "Sound::streamMusicFile(): interrupting sound in handle %d to play %s", newHandleId, filename.c_str());
 
 			return 2;
 		} else {
-			prepareMusicStreaming(filename, newHandleId,
-								  0,
-								  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
-								  assignedMode);
+			bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+												 0,
+												 scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+												 assignedMode);
 
-			debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d with other handle busy", filename.c_str(), newHandleId);
+			if (success)
+				debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d with other handle busy", filename.c_str(), newHandleId);
 		}
 	} else {
-		prepareMusicStreaming(filename, newHandleId,
-							  2 * (3 * (volMusic[0] + volMusic[1])),
-							  scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
-							  assignedMode);
+		bool success = prepareMusicStreaming(filename, newHandleId, tuneId,
+											 2 * (3 * (volMusic[0] + volMusic[1])),
+											 scalePan(64 + (4 * (volMusic[1] - volMusic[0]))),
+											 assignedMode);
 
-		debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d", filename.c_str(), newHandleId);
+		if (success)
+			debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d", filename.c_str(), newHandleId);
 	}
 
 	streamLoopingFlag[newHandleId] = looped;
