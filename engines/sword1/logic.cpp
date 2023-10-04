@@ -33,7 +33,6 @@
 #include "sword1/screen.h"
 #include "sword1/mouse.h"
 #include "sword1/sword1.h"
-#include "sword1/music.h"
 #include "sword1/swordres.h"
 #include "sword1/animation.h"
 #include "sword1/control.h"
@@ -50,7 +49,7 @@ namespace Sword1 {
 
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
-Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer)
+Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Menu *pMenu, OSystem *system, Audio::Mixer *mixer)
 	: _rnd("sword1") {
 
 	_vm = vm;
@@ -58,7 +57,6 @@ Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScree
 	_resMan = resMan;
 	_screen = pScreen;
 	_mouse = pMouse;
-	_music = pMusic;
 	_sound = pSound;
 	_menu = pMenu;
 	_textMan = NULL;

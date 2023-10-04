@@ -29,7 +29,6 @@
 #include "sword1/screen.h"
 #include "sword1/swordres.h"
 #include "sword1/menu.h"
-#include "sword1/music.h"
 #include "sword1/control.h"
 
 #include "common/config-manager.h"
@@ -73,7 +72,6 @@ SwordEngine::SwordEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_logic = 0;
 	_sound = 0;
 	_menu = 0;
-	_music = 0;
 	_control = 0;
 }
 
@@ -82,7 +80,6 @@ SwordEngine::~SwordEngine() {
 	delete _logic;
 	delete _menu;
 	delete _sound;
-	delete _music;
 	delete _screen;
 	delete _mouse;
 	delete _objectMan;
@@ -101,10 +98,9 @@ Common::Error SwordEngine::init() {
 	_objectMan = new ObjectMan(_resMan);
 	_mouse = new Mouse(_system, _resMan, _objectMan);
 	_screen = new Screen(_system, this, _resMan, _objectMan);
-	_music = new Music(_mixer);
 	_sound = new Sound(_mixer, this, _resMan);
 	_menu = new Menu(_screen, _mouse);
-	_logic = new Logic(this, _objectMan, _resMan, _screen, _mouse, _sound, _music, _menu, _system, _mixer);
+	_logic = new Logic(this, _objectMan, _resMan, _screen, _mouse, _sound, _menu, _system, _mixer);
 	_mouse->useLogicAndMenu(_logic, _menu);
 	_mouse->useScreenMutex(&_screen->_screenAccessMutex);
 
@@ -175,7 +171,7 @@ Common::Error SwordEngine::init() {
 	_logic->initialize();
 	_objectMan->initialize();
 	_mouse->initialize();
-	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _music, _screen, _logic);
+	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _screen, _logic);
 
 	return Common::kNoError;
 }
@@ -874,7 +870,6 @@ void SwordEngine::checkCd() {
 				askForCd();
 			} // else: there is already a cd inserted and we don't care if it's cd1 or cd2.
 		} else if (needCd != _systemVars.currentCD) { // we need a different CD than the one in drive.
-			_music->startMusic(0, 0); //
 			_sound->closeCowSystem(); // close music and sound files before changing CDs
 			_systemVars.currentCD = needCd; // askForCd will ask the player to insert _systemVars.currentCd,
 			askForCd();           // so it has to be updated before calling it.

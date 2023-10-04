@@ -57,7 +57,6 @@ class Mouse;
 class ResMan;
 class ObjectMan;
 class Menu;
-class Music;
 class Control;
 
 struct SystemVars {
@@ -182,7 +181,6 @@ private:
 	Logic       *_logic;
 	Sound       *_sound;
 	Menu        *_menu;
-	Music       *_music;
 	Control     *_control;
 	static const uint8  _cdList[TOTAL_SECTIONS];
 	static const CdFile _pcCdFileList[];
