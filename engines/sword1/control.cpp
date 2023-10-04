@@ -36,7 +36,6 @@
 #include "sword1/control.h"
 #include "sword1/logic.h"
 #include "sword1/mouse.h"
-#include "sword1/music.h"
 #include "sword1/objectman.h"
 #include "sword1/resman.h"
 #include "sword1/sound.h"
@@ -176,14 +175,13 @@ const Button Control::volumeButtons[25] = {
 
 };
 
-Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Music *pMusic, Screen *pScreen, Logic *pLogic) {
+Control::Control(SwordEngine *vm, Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMan *pObjMan, OSystem *system, Mouse *pMouse, Sound *pSound, Screen *pScreen, Logic *pLogic) {
 	_vm = vm;
 	_saveFileMan = saveFileMan;
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
 	_mouse = pMouse;
-	_music = pMusic;
 	_sound = pSound;
 	_screen = pScreen;
 	_logic = pLogic;

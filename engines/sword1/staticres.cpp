@@ -26,7 +26,6 @@
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/menu.h"
-#include "sword1/music.h"
 #include "sword1/sound.h"
 #include "sword1/sword1.h"
 #include "sword1/logic.h"
