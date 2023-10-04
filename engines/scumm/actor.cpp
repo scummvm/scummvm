@@ -1515,12 +1515,13 @@ void Actor::setDirection(int direction) {
 	int i;
 	uint16 vald;
 
+	direction = (direction + 360) % 360;
+
 	// Do nothing if actor is already facing in the given direction
-	if (_facing == (direction + 360) % 360)
+	if (_facing == direction)
 		return;
 
-	// Normalize the angle
-	_facing = normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), direction);
+	_facing = direction;
 
 	// If there is no costume set for this actor, we are finished
 	if (_costume == 0)

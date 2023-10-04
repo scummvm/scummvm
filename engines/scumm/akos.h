@@ -48,9 +48,6 @@ public:
 
 	//void animateLimb(int limb, int f);
 	bool hasManyDirections(int id) override {
-		if (id == 0)
-			return false;
-
 		loadCostume(id);
 		return hasManyDirections();
 	}
