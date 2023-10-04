@@ -563,7 +563,7 @@ void Room603::daemon() {
 
 		if (_G(player_info).x > 420 && _G(player_info).x < 490 &&
 				_G(player_info).y > 284 && _G(player_info).y < 305 &&
-				_G(player_info).trigger > 2 && _G(player_info).trigger < 7 &&
+				_G(player_info).facing > 2 && _G(player_info).facing < 7 &&
 				_G(flags)[V269] == 1) {
 			if (_G(flags)[V264]) {
 				_G(flags)[V264] = 1;

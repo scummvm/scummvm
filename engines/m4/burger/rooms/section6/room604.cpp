@@ -640,7 +640,7 @@ void Room604::daemon() {
 		player_update_info();
 		if (_G(player_info).x > 319 && _G(player_info).x < 413 &&
 				_G(player_info).y > 280 && _G(player_info).y < 305 &&
-				_G(player_info).trigger > 2 && _G(player_info).trigger < 7 &&
+				_G(player_info).facing > 2 && _G(player_info).facing < 7 &&
 				_G(flags)[V273] == 1) {
 			if (_G(flags)[V264]) {
 				_G(flags)[V264] = 1;
