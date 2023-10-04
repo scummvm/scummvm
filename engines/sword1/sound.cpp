@@ -860,8 +860,7 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 		streamSampleFading[newHandleId] = 1;
 
 		if (streamSamplePlaying[newHandleId]) {
-			_mixer->stopHandle(hStreamSample[newHandleId]);
-			_stream[newHandleId]->finish();
+			_mixer->stopHandle(hSampleMusic[newHandleId]);
 			streamFile[newHandleId].close();
 
 			if (filename.empty())
@@ -869,11 +868,11 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 
 			debug(5, "Sound::streamMusicFile(): interrupting sound in handle %d to play %s", newHandleId, filename.c_str());
 			_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hStreamSample[newHandleId], _stream[newHandleId]);
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
 
-			_mixer->setChannelRate(hStreamSample[newHandleId], 11025);
-			_mixer->setChannelVolume(hStreamSample[newHandleId], 2 * (2 * (volMusic[0] + volMusic[1])));
-			_mixer->setChannelBalance(hStreamSample[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
+			_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
+			_mixer->setChannelVolume(hSampleMusic[newHandleId], 2 * (2 * (volMusic[0] + volMusic[1])));
+			_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
 
 			if (!streamFile[newHandleId].open(filename))
 				debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
@@ -890,13 +889,13 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 				return 1;
 
 			debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d with other handle busy", filename.c_str(), newHandleId);
-			_mixer->stopHandle(hStreamSample[newHandleId]);
+			_mixer->stopHandle(hSampleMusic[newHandleId]);
 			_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hStreamSample[newHandleId], _stream[newHandleId]);
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
 
-			_mixer->setChannelRate(hStreamSample[newHandleId], 11025);
-			_mixer->setChannelVolume(hStreamSample[newHandleId], 0);
-			_mixer->setChannelBalance(hStreamSample[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
+			_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
+			_mixer->setChannelVolume(hSampleMusic[newHandleId], 0);
+			_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
 
 			if (!streamFile[newHandleId].open(filename))
 				debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
@@ -914,13 +913,13 @@ int32 Sound::streamMusicFile(int32 tuneId, int32 looped) {
 
 		debug(5, "Sound::streamMusicFile(): playing sound %s in handle %d", filename.c_str(), newHandleId);
 
-		_mixer->stopHandle(hStreamSample[newHandleId]);
+		_mixer->stopHandle(hSampleMusic[newHandleId]);
 		_stream[newHandleId] = Audio::makeQueuingAudioStream(11025, false);
-		_mixer->playStream(Audio::Mixer::kMusicSoundType, &hStreamSample[newHandleId], _stream[newHandleId]);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &hSampleMusic[newHandleId], _stream[newHandleId]);
 
-		_mixer->setChannelRate(hStreamSample[newHandleId], 11025);
-		_mixer->setChannelVolume(hStreamSample[newHandleId], 2 * (3 * (volMusic[0] + volMusic[1])));
-		_mixer->setChannelBalance(hStreamSample[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
+		_mixer->setChannelRate(hSampleMusic[newHandleId], 11025);
+		_mixer->setChannelVolume(hSampleMusic[newHandleId], 2 * (3 * (volMusic[0] + volMusic[1])));
+		_mixer->setChannelBalance(hSampleMusic[newHandleId], scalePan(64 + (4 * (volMusic[1] - volMusic[0]))));
 
 		if (!streamFile[newHandleId].open(filename))
 			debug(5, "Sound::streamMusicFile(): couldn't find file %s, bailing out...", filename.c_str());
@@ -949,7 +948,7 @@ void Sound::updateSampleStreaming() {
 					if (streamSampleFading[i] < 0) {
 						debug("Sound::updateSampleStreaming(): Fading %s to %d", streamFile[i].getName(),
 							2 * (((0 - streamSampleFading[i]) * 3 * (volMusic[0] + volMusic[1])) / 16));
-						_mixer->setChannelVolume(hStreamSample[i],
+						_mixer->setChannelVolume(hSampleMusic[i],
 							2 * (((0 - streamSampleFading[i]) * 3 * (volMusic[0] + volMusic[1])) / 16));
 
 						streamSampleFading[i] += 1;
@@ -961,7 +960,7 @@ void Sound::updateSampleStreaming() {
 					} else {
 						debug("Sound::updateSampleStreaming(): Fading %s to %d", streamFile[i].getName(),
 							2 * ((streamSampleFading[i] * 3 * (volMusic[0] + volMusic[1])) / 16));
-						_mixer->setChannelVolume(hStreamSample[i],
+						_mixer->setChannelVolume(hSampleMusic[i],
 							2 * ((streamSampleFading[i] * 3 * (volMusic[0] + volMusic[1])) / 16));
 
 						streamSampleFading[i] += 1;
@@ -975,9 +974,11 @@ void Sound::updateSampleStreaming() {
 			if (streamFile[i].isOpen())
 				serveSample(&streamFile[i], i);
 
-			if (!_mixer->isSoundHandleActive(hStreamSample[i]) || _stream[i]->endOfData()) {
+			if (!_mixer->isSoundHandleActive(hSampleMusic[i]) || _stream[i]->endOfData()) {
 				streamSamplePlaying[i] = false;
 				streamFile[i].close();
+				_stream[i]->finish();
+				_stream[i] = nullptr;
 			}
 		}
 	}
@@ -998,7 +999,9 @@ void Sound::serveSample(Common::File *file, int32 i) {
 					len = nominalSize;
 					debug(5, "Sound::serveSample(): Looping music file %s", file->getName());
 				} else {
-					debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
+					Common::String fname(file->getName());
+					if (!fname.empty())
+						debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
 				}
 			}
 
@@ -1165,14 +1168,14 @@ void Sound::reduceMusicVolume() {
 	musicFadeVolume[1] = volMusic[0] * MUSIC_UNDERSCORE / 100; // We are explicitly accessing volMusic[0] again
 
 	// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-	_mixer->setChannelVolume(hStreamSample[0], 2 * ((musicFadeVolume[0] + musicFadeVolume[1]) * 3));
+	_mixer->setChannelVolume(hSampleMusic[0], 2 * ((musicFadeVolume[0] + musicFadeVolume[1]) * 3));
 }
 
 void Sound::restoreMusicVolume() {
 	Common::StackLock lock(_soundMutex);
 
 	// Multiplying by 2 because Miles Sound System uses 0-127 and we use 0-255
-	_mixer->setChannelVolume(hStreamSample[0], 2 * ((volMusic[0] + volMusic[1]) * 3));
+	_mixer->setChannelVolume(hSampleMusic[0], 2 * ((volMusic[0] + volMusic[1]) * 3));
 }
 
 void Sound::setCrossFadeIncrement() {
