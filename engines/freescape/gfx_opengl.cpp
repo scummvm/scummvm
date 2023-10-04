@@ -334,8 +334,10 @@ void OpenGLRenderer::setStippleData(byte *data) {
 
 void OpenGLRenderer::useStipple(bool enabled) {
 	if (enabled) {
+		GLfloat factor = 0;
+		glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &factor);
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(0.0f, -1.0f);
+		glPolygonOffset(factor - 1.0f, -1.0f);
 		glEnable(GL_POLYGON_STIPPLE);
 		if (_renderMode == Common::kRenderZX  ||
 			_renderMode == Common::kRenderCPC ||

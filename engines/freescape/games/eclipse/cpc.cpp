@@ -56,7 +56,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadFonts(&file, 0x63ce);
 	load8bitBinary(&file, 0x65c6, 16);
 	for (auto &it : _areaMap) {
-		it._value->_name = "Now training";
+		it._value->_name = "  NOW TRAINING  ";
 		it._value->addStructure(_areaMap[255]);
 		for (int16 id = 183; id < 207; id++)
 			it._value->addObjectFromArea(id, _areaMap[255]);
@@ -85,11 +85,16 @@ void EclipseEngine::drawCPCUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+	color = _currentArea->_inkColor;
+
+	_gfx->readFromPalette(color, r, g, b);
+	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+
 	int score = _gameStateVars[k8bitVariableScore];
 
 	if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentAreaMessages[0], 102, 135, front, back, surface);
-	drawStringInSurface(Common::String::format("%07d", score), 136, 6, front, back, surface);
+		drawStringInSurface(_currentAreaMessages[0], 102, 135, back, front, surface);
+	drawStringInSurface(Common::String::format("%08d", score), 136, 6, back, other, surface);
 }
 
 } // End of namespace Freescape
