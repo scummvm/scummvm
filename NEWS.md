@@ -82,6 +82,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VI crash using look action on walls.
    - Fix several other miscellaneous crashes.
    - Fix spawners and projectiles to more closely match the original.
+   - Fix multiple Ultima VIII render order issues.
+   - Add support for Ultima VIII Spanish fan translation.
+   - Support Pentagram save game files.
+   - Added configurable double-click time for Ultima VIII.
 
  Voyeur:
    - Added support for German fan translation.
