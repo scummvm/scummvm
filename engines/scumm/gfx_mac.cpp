@@ -507,13 +507,6 @@ bool MacIndy3Gui::isActive() {
 	if (verbScript == 4 || verbScript == 18 || verbScript == 200 || verbScript == 201 || verbScript == 205)
 		return true;
 
-	static int lastWarnVerbScript = -1;
-
-	if (verbScript != lastWarnVerbScript) {
-		debug("VAR_VERB_SCRIPT = %d", verbScript);
-		lastWarnVerbScript = verbScript;
-	}
-
 	return false;
 }
 
@@ -551,6 +544,13 @@ void MacIndy3Gui::resetAfterLoad() {
 }
 
 void MacIndy3Gui::update() {
+	static int lastVerbScript = -1;
+
+	if (_vm->VAR(_vm->VAR_VERB_SCRIPT) != lastVerbScript) {
+		debug("VAR_VERB_SCRIPT = %d", _vm->VAR(_vm->VAR_VERB_SCRIPT));
+		lastVerbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
+	}
+
 	if (!isActive()) {
 		if (_visible)
 			hide();
@@ -565,11 +565,7 @@ void MacIndy3Gui::update() {
 	updateButtons(keepGuiAlive, inventoryIsActive);
 
 	if (!keepGuiAlive) {
-		// We haven't drawn anything yet, so just silently hide it.
-		for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-			resetWidget(&_widgets[i]);
-
-		_visible = false;
+		hide();
 		return;
 	}
 
