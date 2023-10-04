@@ -204,7 +204,7 @@ public:
 	bool streamSamplePlaying[MAX_MUSIC] = { false, false };
 	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
 	bool streamLoopingFlag[MAX_MUSIC] = { false, false };
-	Audio::SoundHandle hStreamSample[MAX_MUSIC];
+
 	Audio::QueuingAudioStream *_stream[MAX_MUSIC];
 	int lastStreamBufferIdx[MAX_MUSIC] = { 0, 0 };
 
