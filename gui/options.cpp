@@ -742,7 +742,7 @@ void OptionsDialog::apply() {
 	Common::U32String previousShader;
 
 	// Shader options
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+	if (g_system->hasFeature(OSystem::kFeatureShaders) && _shader) {
 		if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
 			previousShader = ConfMan.get("shader", _domain);
 
