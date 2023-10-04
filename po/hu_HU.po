@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-09-30 07:11+0000\n"
+"POT-Creation-Date: 2023-10-04 10:49+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -6026,60 +6026,60 @@ msgstr ""
 "Szövegfelolvasó engedélyezése az objektumok, opciók és a Biblia idézet "
 "számára"
 
-#: engines/freescape/metaengine.cpp:35
+#: engines/freescape/metaengine.cpp:37
 msgid "Prerecorded sounds"
 msgstr "Előre felvett hangok"
 
-#: engines/freescape/metaengine.cpp:36
+#: engines/freescape/metaengine.cpp:38
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Jó minőségű előre rögzített hangok használata a pc speaker emuláció helyett"
 
-#: engines/freescape/metaengine.cpp:46
+#: engines/freescape/metaengine.cpp:48
 msgid "Extended timer"
 msgstr "Kiterjesztett időzítő"
 
-#: engines/freescape/metaengine.cpp:47
+#: engines/freescape/metaengine.cpp:49
 msgid "Start the game timer at 99:59:59"
 msgstr "Játékidőzítő indítás 99:59:59-nél"
 
-#: engines/freescape/metaengine.cpp:57
+#: engines/freescape/metaengine.cpp:59
 msgid "Automatic drilling"
 msgstr "Automatikus fúrás"
 
-#: engines/freescape/metaengine.cpp:58
+#: engines/freescape/metaengine.cpp:60
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Hagyja sikeresen fúrni a terület bármely részén a Drillerben"
 
-#: engines/freescape/metaengine.cpp:68
+#: engines/freescape/metaengine.cpp:70
 msgid "Disable demo mode"
 msgstr "Demó mód tiltása"
 
-#: engines/freescape/metaengine.cpp:69
+#: engines/freescape/metaengine.cpp:71
 msgid "Never activate demo mode"
 msgstr "Soha ne aktiválja a demó módot"
 
-#: engines/freescape/metaengine.cpp:79
+#: engines/freescape/metaengine.cpp:81
 msgid "Disable sensors"
 msgstr "Érzékelők letiltása"
 
-#: engines/freescape/metaengine.cpp:80
+#: engines/freescape/metaengine.cpp:82
 msgid "Sensors will not shoot the player"
 msgstr "Az érzékelők nem lövik le a játékost"
 
-#: engines/freescape/metaengine.cpp:90
+#: engines/freescape/metaengine.cpp:92
 msgid "Disable falling"
 msgstr "Leesés tiltása"
 
-#: engines/freescape/metaengine.cpp:91
+#: engines/freescape/metaengine.cpp:93
 msgid "Player cannot fall over edges"
 msgstr "A játékos nem eshet át a széleken"
 
-#: engines/freescape/metaengine.cpp:101
+#: engines/freescape/metaengine.cpp:103
 msgid "Invert Y-axis on mouse"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:102
+#: engines/freescape/metaengine.cpp:104
 #, fuzzy
 #| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
