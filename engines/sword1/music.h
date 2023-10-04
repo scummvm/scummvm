@@ -85,7 +85,7 @@ private:
 	static void passMixerFunc(void *param, int16 *buf, uint len);
 	void mixer(int16 *buf, uint32 len);
 
-	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
+	char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 };
 
 } // End of namespace Sword1
