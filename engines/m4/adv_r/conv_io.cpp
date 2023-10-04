@@ -51,7 +51,8 @@ namespace M4 {
 void Converstation_Globals::syncGame(Common::Serializer &s) {
 	uint32 val;
 
-	conv_reset_all();
+	if (s.isLoading())
+		conv_reset_all();
 
 	// Handle size
 	val = conv_save_buff.size();

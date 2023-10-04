@@ -29,10 +29,7 @@
 
 namespace M4 {
 
-#define KERNEL_SCRATCH_SIZE 256 // Size of game scratch area
-
 struct GameControl {
-	uint32	scratch[KERNEL_SCRATCH_SIZE];  // Scratch variables for room
 	int16 room_id = 0;
 	int16 new_room = 0;
 	int16 previous_section = 0;
@@ -51,8 +48,6 @@ struct GameControl {
 		new_room = newRoom;
 		new_section = newRoom / 100;
 	}
-
-	void syncGame(Common::Serializer &s);
 };
 
 } // End of namespace M4
