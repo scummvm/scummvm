@@ -234,6 +234,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new EnableDisableInventory();
 	case 125:
 		return new PopInvViewPriorScene();
+	case 140:
+		return new SetVolume();
 	case 150:
 		return new PlaySound();
 	case 151:

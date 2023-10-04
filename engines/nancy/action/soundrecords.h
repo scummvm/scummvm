@@ -27,6 +27,19 @@
 namespace Nancy {
 namespace Action {
 
+// Sets the volume for a particular channel.
+class SetVolume : public ActionRecord {
+public:
+	void readData(Common::SeekableReadStream &stream) override;
+	void execute() override;
+
+	uint16 channel = 0;
+	uint16 volume = 0;
+
+protected:
+	Common::String getRecordTypeName() const override { return "SetVolume"; }
+};
+
 // Used for sound effects. From nancy3 up it includes 3D sound data, which lets
 // the sound move in 3D space as the player rotates/changes scenes. Also supports
 // changing the scene and/or setting a flag

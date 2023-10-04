@@ -498,10 +498,10 @@ byte SoundManager::getVolume(const Common::String &chunkName) {
 }
 
 void SoundManager::setVolume(uint16 channelID, uint16 volume) {
-	if (channelID >= _channels.size())
+	if (channelID >= _channels.size() || !isSoundPlaying(channelID))
 		return;
 
-	_mixer->setChannelVolume(_channels[channelID].handle, volume);
+	_mixer->setChannelVolume(_channels[channelID].handle, volume * 255 / 100);
 }
 
 void SoundManager::setVolume(const SoundDescription &description, uint16 volume) {

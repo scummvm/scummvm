@@ -33,6 +33,16 @@
 namespace Nancy {
 namespace Action {
 
+void SetVolume::readData(Common::SeekableReadStream &stream) {
+	channel = stream.readUint16LE();
+	volume = stream.readUint16LE();
+}
+
+void SetVolume::execute() {
+	g_nancy->_sound->setVolume(channel, volume);
+	_isDone = true;
+}
+
 void PlaySound::readData(Common::SeekableReadStream &stream) {
 	_sound.readDIGI(stream);
 
