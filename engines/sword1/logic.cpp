@@ -362,8 +362,8 @@ int Logic::speechDriver(Object *compact) {
 
 		if (SwordEngine::_systemVars.speechFinished) {
 			_sound->stopSpeech();
-			free(_sound->speechSample);
-			_sound->speechSample = nullptr;
+			free(_sound->_speechSample);
+			_sound->_speechSample = nullptr;
 		}
 	} else {
 		if (!compact->o_speech_time)

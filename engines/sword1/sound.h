@@ -132,8 +132,8 @@ public:
 	void playSpeech();
 	void stopSpeech();
 
-	int32 streamMusicFile(int32 tuneId, int32 looped);
-	void updateSampleStreaming();
+	void streamMusicFile(int32 tuneId, int32 looped);
+	void updateMusicStreaming();
 	void setCrossFadeIncrement();
 
 	void fadeMusicDown(int32 rate);
@@ -154,22 +154,22 @@ public:
 	Audio::Mixer *_mixer;
 
 	// Handles for external volume changes (control panel)
-	uint32 volFX[2]     = { 0, 0 };
-	uint32 volSpeech[2] = { 0, 0 };
-	uint32 volMusic[2]  = { 0, 0 };
+	uint32 _volFX[2]     = { 0, 0 };
+	uint32 _volSpeech[2] = { 0, 0 };
+	uint32 _volMusic[2]  = { 0, 0 };
 
 	// Volume fading variables
-	int32 fxCount = 0;
-	int32 fxFadingFlag = 0;
-	int32 fxFadingRate = 0;
-	int32 fxFadeVolume[2]    = { 0, 0 };
-	int32 musicFadeVolume[2] = { 0, 0 };
+	int32 _fxCount = 0;
+	int32 _fxFadingFlag = 0;
+	int32 _fxFadingRate = 0;
+	int32 _fxFadeVolume[2]    = { 0, 0 };
+	int32 _musicFadeVolume[2] = { 0, 0 };
 
 	// Sound FX information
-	bool fxSampleBusy[MAX_FX] = { false, false, false, false };
+	bool _fxSampleBusy[MAX_FX] = { false, false, false, false };
 
 	// Speech data
-	byte *speechSample = nullptr;
+	byte *_speechSample = nullptr;
 
 private:
 	struct WaveHeader {
@@ -225,39 +225,39 @@ private:
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
 	static const FxDef _fxList[312];
-	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
+	static const char _tuneList[TOTAL_TUNES][8]; // In staticres.cpp
 
 	// Volume fading variables
-	bool crossFadeIncrement = false;
+	bool _crossFadeIncrement = false;
 
 	// Speech variables
-	int32 speechLipsyncCounter = 0;
-	int32 speechSize = 0;
-	bool speechSampleBusy = false;
+	int32 _speechLipsyncCounter = 0;
+	int32 _speechSize = 0;
+	bool _speechSampleBusy = false;
 
 	// Sound handles
-	Audio::SoundHandle hSampleFX[MAX_FX];
-	Audio::SoundHandle hSampleSpeech;
-	Audio::SoundHandle hSampleMusic[MAX_MUSIC];
+	Audio::SoundHandle _hSampleFX[MAX_FX];
+	Audio::SoundHandle _hSampleSpeech;
+	Audio::SoundHandle _hSampleMusic[MAX_MUSIC];
 
 	// Music stream information
-	bool streamSamplePlaying[MAX_MUSIC] = { false, false };
-	bool streamLoopingFlag[MAX_MUSIC]   = { false, false };
-	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
-	MusCompMode streamFormat[MAX_MUSIC] = { MusWav, MusWav };
+	bool _musicStreamPlaying[MAX_MUSIC] = { false, false };
+	bool _streamLoopingFlag[MAX_MUSIC]  = { false, false };
+	int32 _musicStreamFading[MAX_MUSIC] = { 0, 0 };
+	MusCompMode _musicStreamFormat[MAX_MUSIC] = { MusWav, MusWav };
 	Audio::QueuingAudioStream *_musicOutputStream[MAX_MUSIC] = { nullptr, nullptr };
 	Audio::RewindableAudioStream *_compressedMusicStream[MAX_MUSIC] = { nullptr, nullptr };
-	Common::File streamFile[MAX_MUSIC];
+	Common::File _musicFile[MAX_MUSIC];
 
 	// Sound FX information
-	int32 fxSampleID[MAX_FX] = { 0, 0, 0, 0 };
+	int32 _fxSampleId[MAX_FX] = { 0, 0, 0, 0 };
 
 	// Pause variables
-	bool speechPaused = false;
-	bool fxPaused[MAX_FX] = { false, false, false, false };
-	bool musicPaused[MAX_MUSIC] = { false, false };
+	bool _speechPaused = false;
+	bool _fxPaused[MAX_FX] = { false, false, false, false };
+	bool _musicPaused[MAX_MUSIC] = { false, false };
 };
 
 } // End of namespace Sword1
 
-#endif //BSSOUND_H
+#endif // SOUND_H

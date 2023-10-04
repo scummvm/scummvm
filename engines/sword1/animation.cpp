@@ -319,7 +319,7 @@ bool MoviePlayer::playVideo() {
 			}
 
 			_sound->setCrossFadeIncrement();
-			_sound->updateSampleStreaming();
+			_sound->updateMusicStreaming();
 
 			if (_decoder->hasDirtyPalette()) {
 				_vm->_system->getPaletteManager()->setPalette(_decoder->getPalette(), 0, 256);

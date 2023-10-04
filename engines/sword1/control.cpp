@@ -250,7 +250,7 @@ void Control::getPlayerOptions() {
 		_sound->setCrossFadeIncrement();
 
 		_mouse->animate();
-		_sound->updateSampleStreaming(); // stream music
+		_sound->updateMusicStreaming();
 		saveRestoreScreen();
 	}
 
@@ -963,18 +963,18 @@ void Control::renderVolumeLight(int32 i) {
 
 	switch (i) {
 	case 0:
-		vol[0] = _sound->volMusic[0];
-		vol[1] = _sound->volMusic[1];
+		vol[0] = _sound->_volMusic[0];
+		vol[1] = _sound->_volMusic[1];
 		x = 158;
 		break;
 	case 1:
-		vol[0] = _sound->volSpeech[0];
-		vol[1] = _sound->volSpeech[1];
+		vol[0] = _sound->_volSpeech[0];
+		vol[1] = _sound->_volSpeech[1];
 		x = 291;
 		break;
 	case 2:
-		vol[0] = _sound->volFX[0];
-		vol[1] = _sound->volFX[1];
+		vol[0] = _sound->_volFX[0];
+		vol[1] = _sound->_volFX[1];
 		x = 424;
 		break;
 	default:
@@ -1020,13 +1020,13 @@ void Control::volUp(int32 i, int32 j) {
 
 	switch (i) {
 	case 0:
-		vol = &_sound->volMusic[j];
+		vol = &_sound->_volMusic[j];
 		break;
 	case 1:
-		vol = &_sound->volSpeech[j];
+		vol = &_sound->_volSpeech[j];
 		break;
 	case 2:
-		vol = &_sound->volFX[j];
+		vol = &_sound->_volFX[j];
 		break;
 	}
 
@@ -1039,13 +1039,13 @@ void Control::volDown(int32 i, int32 j) {
 
 	switch (i) {
 	case 0:
-		vol = &_sound->volMusic[j];
+		vol = &_sound->_volMusic[j];
 		break;
 	case 1:
-		vol = &_sound->volSpeech[j];
+		vol = &_sound->_volSpeech[j];
 		break;
 	case 2:
-		vol = &_sound->volFX[j];
+		vol = &_sound->_volFX[j];
 		break;
 	}
 
