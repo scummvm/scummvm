@@ -216,7 +216,7 @@ void SwordEngine::checkKeys() {
 
 		while (_keyPressed.keycode != Common::KEYCODE_p && !Engine::shouldQuit()) {
 			pollInput(0);
-			_sound->updateSampleStreaming();
+			_sound->updateMusicStreaming();
 		}
 
 		_sound->unpauseSpeech();
@@ -1100,7 +1100,7 @@ void SwordEngine::pollInput(uint32 delay) { //copied and mutilated from sky.cpp
 			}
 		}
 
-		_sound->updateSampleStreaming();
+		_sound->updateMusicStreaming();
 
 		_screen->_screenAccessMutex.lock();
 		_system->updateScreen();
