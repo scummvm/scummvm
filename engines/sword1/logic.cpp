@@ -1650,7 +1650,7 @@ int Logic::fnPlayFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d
 }
 
 int Logic::fnStopFx(Object *cpt, int32 id, int32 fxNo, int32 b, int32 c, int32 d, int32 z, int32 x) {
-	_sound->stopFX(fxNo);
+	_sound->stopSample(fxNo);
 	_sound->removeFromQueue(fxNo);
 	return SCRIPT_CONT;
 }

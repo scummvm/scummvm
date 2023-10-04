@@ -81,6 +81,7 @@ class SwordEngine;
 #define S_STATUS_RUNNING     0
 #define MUSIC_BUFFER_SIZE    0x4000
 #define TOTAL_TUNES          270
+#define DEFAULT_SAMPLE_RATE  11025
 
 enum CowMode {
 	CowWave = 0,
@@ -89,6 +90,15 @@ enum CowMode {
 	CowMP3,
 	CowDemo,
 	CowPSX
+};
+
+enum MusCompMode {
+	MusWav = 0,
+	MusAif,
+	MusFLAC,
+	MusVorbis,
+	MusMP3,
+	MusPSX
 };
 
 class Sound {
@@ -112,15 +122,90 @@ public:
 	void checkSpeechFileEndianness();
 	double endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples);
 
+	void installFadeTimer();
+	void uninstallFadeTimer();
+	void setFXVolume(byte targetVolume, int handleIdx);
+
+	void playSample(int32 fxNo);
+	void stopSample(int32 fxNo);
+
+	void updateSampleStreaming();
+	int32 checkSpeechStatus();
+	void playSpeech();
+	void stopSpeech();
+
+	int32 streamMusicFile(int32 tuneId, int32 looped);
+
+	void fadeMusicDown(int32 rate);
+	void fadeFxDown(int32 rate);
+	void fadeFxUp(int32 rate);
+
+	void setCrossFadeIncrement();
+	void pauseSpeech();
+	void unpauseSpeech();
+	void pauseMusic();
+	void unpauseMusic();
+	void pauseFx();
+	void unpauseFx();
+
 	Common::Mutex _soundMutex;
 	Audio::Mixer *_mixer;
 
+	// Handles for external volume changes (control panel)
+	uint32 volFX[2]     = { 0, 0 };
+	uint32 volSpeech[2] = { 0, 0 };
+	uint32 volMusic[2]  = { 0, 0 };
+
+	// Volume fading variables
+	int32 fxCount = 0;
+	int32 fxFadingFlag = 0;
+	int32 fxFadingRate = 0;
+	int32 fxFadeVolume[2]    = { 0, 0 };
+	int32 musicFadeVolume[2] = { 0, 0 };
+
+	// Sound FX information
+	bool fxSampleBusy[MAX_FX] = { false, false, false, false };
+
+	// Speech data
+	byte *speechSample = nullptr;
+
 private:
+	struct WaveHeader {
+		uint32 riffTag;
+		uint32 riffSize;
+		uint32 waveTag;
+		uint32 fmtTag;
+		uint32 fmtSize;
+
+		// Format subchunk
+		uint16 wFormatTag;
+		uint16 wChannels;
+		uint32 dwSamplesPerSec;
+		uint32 dwAvgBytesPerSec;
+		uint16 wBlockAlign;
+		uint16 wBitsPerSample;
+		uint32 dwDataTag;
+		uint32 dwDataSize;
+	};
+
 	void initCowSystem();
 
 	uint32 getSampleId(int32 fxNo);
+	void playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
+	void stopFX(int32 fxID);
+	int32 checkSampleStatus(int32 id);
+
 	bool expandSpeech(byte *src, byte *dst, uint32 dstSize,
 		bool *endiannessCheck = nullptr, uint32 *sizeForEndiannessCheck = nullptr);
+	int32 getSpeechSize(byte *compData, uint32 compSize);
+
+	void prepareMusicStreaming(Common::String filename, int newHandleId,
+							   uint32 volume, int8 pan, MusCompMode assignedMode);
+	void serveSample(Common::File *file, int32 i);
+	void reduceMusicVolume();
+	void restoreMusicVolume();
+
+	int8 scalePan(int pan); // From 0,127 to -127,127
 
 	Common::File _cowFile;
 	uint32       *_cowHeader;
@@ -140,84 +225,34 @@ private:
 	static const FxDef _fxList[312];
 	static const char _tuneList[TOTAL_TUNES][8]; // in staticres.cpp
 
-	// New stuff
-public:
-	void installFadeTimer();
-	void uninstallFadeTimer();
+	// Volume fading variables
+	bool crossFadeIncrement = false;
 
-	int8 scalePan(int pan); // From 0,127 to -127,127
-
-	void playSample(int32 fxNo);
-	void playFX(int32 fxID, int32 type, uint8 *wavData, uint32 vol[2]);
-	void stopFX(int32 fxID);
-	int32 checkSampleStatus(int32 id);
-
-	void updateSampleStreaming();
-	int32 checkSpeechStatus();
-	void playSpeech();
-	void stopSpeech();
-	int32 getSpeechSize(byte *compData, uint32 compSize);
-
-	int32 streamMusicFile(int32 tuneId, int32 looped);
-	void serveSample(Common::File *file, int32 i);
-	void reduceMusicVolume();
-	void restoreMusicVolume();
-
-	void fadeMusicDown(int32 rate);
-	void fadeFxDown(int32 rate);
-	void fadeFxUp(int32 rate);
-
-	void setCrossFadeIncrement();
-	void pauseSpeech();
-	void unpauseSpeech();
-	void pauseMusic();
-	void unpauseMusic();
-	void pauseFx();
-	void unpauseFx();
-
-	// Handles for external volume changes (control panel)
-	uint32 volFX[2] = { 0, 0 };
-	uint32 volSpeech[2] = { 0, 0 };
-	uint32 volMusic[2] = { 0, 0 };
-
-	// Volume variables
-	int32 volumeFadingFlag = 0;
-	int32 volumeFadingRate = 0;
-	int32 musicFadingFlag = 0;
-	int32 musicFadingRate = 0;
-	int32 fxFadingFlag = 0;
-	int32 fxFadingRate = 0;
-	int32 masterVolume[2] = { 0, 0 };
-	int32 fadeVolume[2] = { 0, 0 };
-	int32 musicFadeVolume[2] = { 0, 0 };
-	int32 fxFadeVolume[2] = { 0, 0 };
-	int32 volumeCount = 0;
-	int32 musicCount = 0;
-	int32 fxCount = 0;
+	// Speech variables
 	int32 speechLipsyncCounter = 0;
 	int32 speechSize = 0;
+	bool speechSampleBusy = false;
 
-	// Sample handles and information.
+	// Sound handles
 	Audio::SoundHandle hSampleFX[MAX_FX];
 	Audio::SoundHandle hSampleSpeech;
 	Audio::SoundHandle hSampleMusic[MAX_MUSIC];
+
+	// Music stream information
 	bool streamSamplePlaying[MAX_MUSIC] = { false, false };
+	bool streamLoopingFlag[MAX_MUSIC]   = { false, false };
 	int32 streamSampleFading[MAX_MUSIC] = { 0, 0 };
-	bool streamLoopingFlag[MAX_MUSIC] = { false, false };
-
-	Audio::QueuingAudioStream *_stream[MAX_MUSIC];
-	int lastStreamBufferIdx[MAX_MUSIC] = { 0, 0 };
-
+	MusCompMode streamFormat[MAX_MUSIC] = { MusWav, MusWav };
+	Audio::QueuingAudioStream *_musicOutputStream[MAX_MUSIC];
 	Common::File streamFile[MAX_MUSIC];
-	bool fxSampleBusy[MAX_FX] = { false, false, false, false };
+
+	// Sound FX information
 	int32 fxSampleID[MAX_FX] = { 0, 0, 0, 0 };
-	bool speechSampleBusy = false;
-	uint32 musicSamples = 0;
-	bool crossFadeIncrement = false;
-	bool speechSamplePaused = false;
+
+	// Pause variables
+	bool speechPaused = false;
 	bool fxPaused[MAX_FX] = { false, false, false, false };
 	bool musicPaused[MAX_MUSIC] = { false, false };
-	byte *speechSample = nullptr;
 };
 
 } // End of namespace Sword1
