@@ -763,7 +763,7 @@ void Room135::daemon() {
 		break;
 
 	case 10028:
-		if (player_commands_allowed() && _G(roomVal2) &&
+		if (player_commands_allowed() && _G(player).walker_visible &&
 				INTERFACE_VISIBLE && !digi_play_state(1)) {
 			Section1::updateDisablePlayer();
 			digi_preload("100_013");

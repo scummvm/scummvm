@@ -1067,7 +1067,7 @@ void Room405::conv86() {
 
 			conv_resume();
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 
 			conv_resume();
@@ -1083,7 +1083,7 @@ void Room405::conv86() {
 
 			_digiName = sound;
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 
 			digi_play(sound, 1, 255, 18);
@@ -1114,7 +1114,7 @@ void Room405::conv89() {
 
 			conv_resume();
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 
 			conv_resume();
@@ -1135,7 +1135,7 @@ void Room405::conv89() {
 
 			_digiName = sound;
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 
 			digi_play(sound, 1, 255, 18);
@@ -1158,7 +1158,7 @@ void Room405::conv90() {
 			_val1 = 39;
 			conv_resume();
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 
 			conv_resume();
@@ -1168,7 +1168,7 @@ void Room405::conv90() {
 			_val1 = 44;
 			_digiName = sound;
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 
 			digi_play(sound, 1, 255, 18);
@@ -1191,7 +1191,7 @@ void Room405::conv91() {
 			_val1 = 39;
 			conv_resume();
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 
 			conv_resume();
@@ -1201,7 +1201,7 @@ void Room405::conv91() {
 			_val1 = 44;
 			_digiName = sound;
 		} else if (who == 1) {
-			if (_G(roomVal2))
+			if (_G(player).walker_visible)
 				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 
 			digi_play(sound, 1, 255, 18);

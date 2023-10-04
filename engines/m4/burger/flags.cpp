@@ -91,7 +91,7 @@ void Flags::set_boonsville_time(int32 time) {
 }
 
 bool Flags::advance_boonsville_time_and_check_schedule(int32 time) {
-	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 		(*this)[BOONSVILLE_TIME2] = (*this)[BOONSVILLE_TIME];
 		(*this)[BOONSVILLE_TIME] = time;
 		return dispatch_scheduled_boonsville_time_trigger(

@@ -173,7 +173,7 @@ void Room103::daemon() {
 				_flag1 = false;
 				term_message("left");
 
-			} else if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+			} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 				term_message("caught");
 				kernel_timing_trigger(1, 8);
 				intr_freshen_sentence();

@@ -202,7 +202,7 @@ void Room101::init() {
 }
 
 void Room101::daemon() {
-	if (player_commands_allowed() && _G(roomVal2) && INTERFACE_VISIBLE) {
+	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 		player_update_info(_G(my_walker), &_G(player_info));
 
 		if (_G(player_info).y > 374 && player_said("old bridge")) {
@@ -601,7 +601,7 @@ void Room101::daemon() {
 		if (_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
 
-		} else if (player_commands_allowed() && _G(roomVal2) &&
+		} else if (player_commands_allowed() && _G(player).walker_visible &&
 				INTERFACE_VISIBLE && !digi_play_state(1)) {
 			Section1::updateDisablePlayer();
 			digi_preload("100_013");

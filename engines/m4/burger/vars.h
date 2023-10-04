@@ -107,7 +107,6 @@ public:
 	bool _menuSystemInitialized = false;
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
-	int _roomVal2 = 0;
 	int _roomVal3 = 0;
 	int _roomVal4 = 0;
 	int _roomVal7 = 3;

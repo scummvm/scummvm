@@ -147,11 +147,11 @@ machine *Walker::walk_initialize_walker() {
 	int32 s;
 
 	if (!_G(player).walker_in_this_scene) {
-		_G(roomVal2) = 0;
+		_G(player).walker_visible = false;
 		m = nullptr;
 
 	} else {
-		_G(roomVal2) = 1;
+		_G(player).walker_visible = true;
 
 		// Wilbur walker
 		_G(player).walker_type = WALKER_WILBUR;
@@ -226,7 +226,7 @@ void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, 
 void Walker::wilbur_say() {
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
-	if (_flag && _G(player).walker_in_this_scene && _G(roomVal2))
+	if (_flag && _G(player).walker_in_this_scene && _G(player).walker_visible)
 		sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilbur_say:  wilburs_talk_trigger = %d", _trigger);
@@ -264,7 +264,7 @@ bool Walker::wilbur_said(const char *list[][4]) {
 }
 
 void Walker::wilburs_speech_finished() {
-	if (_flag && !_G(player).walker_in_this_scene && !_G(roomVal2))
+	if (_flag && !_G(player).walker_in_this_scene && !_G(player).walker_visible)
 		sendWSMessage(0x150000, 0, _G(my_walker), 0, 0, 1);
 
 	term_message("wilburs_speech_finished: dispatching wilburs_talk_trigger = %d", _trigger);
@@ -286,7 +286,7 @@ void wilbur_abduct(int trigger) {
 	digi_stop(1);
 	digi_preload("999_004");
 
-	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(roomVal2)) {
+	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		player_update_info(_G(my_walker), &_G(player_info));
 
 		switch (_G(walkTrigger)) {
