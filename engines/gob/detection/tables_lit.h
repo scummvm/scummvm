@@ -29,7 +29,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.10",
 		AD_ENTRY1s("intro.stk", "7b7f48490dedc8a7cb999388e2fadbe3", 3930674),
 		EN_USA,
 		kPlatformDOS,
