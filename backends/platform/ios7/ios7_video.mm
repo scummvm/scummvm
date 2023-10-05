@@ -713,9 +713,14 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 - (void)handleMainMenuKey {
 	if ([self isInGame]) {
 		[self addEvent:InternalEvent(kInputMainMenu, 0, 0)];
-	} else {
+	}
+#if TARGET_OS_TV
+	else {
+		// According to Apple's guidelines the app should return to the
+		// home screen when pressing the menu button from the root view.
 		[[UIApplication sharedApplication] performSelector:@selector(suspend)];
 	}
+#endif
 }
 
 - (void)applicationSuspend {
