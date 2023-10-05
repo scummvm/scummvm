@@ -257,8 +257,9 @@ void ActionManager::processActionRecords() {
 			record->execute();
 		}
 
-		if (NancySceneState._state == State::Scene::kLoad) {
-			// changeScene() must have been called, abort any further processing
+		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState._state == State::Scene::kLoad) {
+			// changeScene() must have been called, abort any further processing.
+			// Both old and new behavior is needed (nancy3 intro narration, nancy4 garden gate)
 			return;
 		}
 	}
