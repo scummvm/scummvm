@@ -329,6 +329,13 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
+	// ECO2 has a print feature in the Ecorder that writes text to PRN,
+	// which is a DOS alias for the printer. Ignore these attempts,
+	// otherwise an actual file will be created.
+	if (g_sci->getGameId() == GID_ECOQUEST2 && name == "prn") {
+		return SIGNAL_REG;
+	}
+
 #ifdef ENABLE_SCI32
 	// GK1, GK2, KQ7, LSL6hires, Phant1, PQ4, PQ:SWAT, and SQ6 read in
 	// their game version from the VERSION file
