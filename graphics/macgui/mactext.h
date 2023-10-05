@@ -123,8 +123,14 @@ struct MacTextCanvas {
 	Common::Array<MacTextLine> text;
 	uint16 flags = 0;
 	ManagedSurface *surface = nullptr, *shadowSurface = nullptr;
-	int textWidth = -1;
-	int textMaxHeigh = 0;
+	int maxWidth = 0;
+	int textMaxWidth = 0;
+	int textMaxHeight = 0;
+
+	~MacTextCanvas() {
+		delete surface;
+		delete shadowSurface;
+	}
 };
 
 struct MacTextTableRow {
@@ -204,7 +210,7 @@ public:
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
-	ManagedSurface *getSurface() { return _surface; }
+	ManagedSurface *getSurface() { return _canvas.surface; }
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
@@ -277,9 +283,9 @@ public:
 	int getLineCount() { return _canvas.text.size(); }
 	int getLineCharWidth(int line, bool enforce = false);
 	int getLastLineWidth();
-	int getTextHeight() { return _textMaxHeight; }
+	int getTextHeight() { return _canvas.textMaxHeight; }
 	int getLineHeight(int line);
-	int getTextMaxWidth() { return _textMaxWidth; }
+	int getTextMaxWidth() { return _canvas.textMaxWidth; }
 
 	void setText(const Common::U32String &str);
 
@@ -383,7 +389,6 @@ protected:
 	Common::U32String _str;
 	const MacFont *_macFont;
 
-	int _maxWidth;
 	int _interLinear;
 	int _textShadow;
 
@@ -391,12 +396,6 @@ protected:
 
 	int _selEnd;
 	int _selStart;
-
-	int _textMaxWidth;
-	int _textMaxHeight;
-
-	ManagedSurface *_surface;
-	ManagedSurface *_shadowSurface;
 
 	TextAlign _textAlignment;
 
