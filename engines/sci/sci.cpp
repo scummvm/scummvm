@@ -715,6 +715,64 @@ void SciEngine::runGame() {
 	} while (true);
 }
 
+// When the SCI engine enters an error state, this block will add additional VM engine context for error reporting
+void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	EngineState *s = _gamestate;
+	Script *sci = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.getSegment());
+
+	// If a script is actively loaded at the time of error.
+	if (sci) {
+		// Query the top-most stack frame even if it's not committed yet within the VM cycle.
+		const ExecStack *call = &(s->_executionStack.back());
+		Kernel *k = g_sci->getKernel();
+
+		// Note: if we are too early in the initialization process, this may not be populated yet.
+		const reg_t regVersion = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
+		const Common::String version = (regVersion.getOffset() > 0) ? ", Version: " + s->_segMan->getString(regVersion) : "";
+
+		const char *objname = s->_segMan->getObjectName(call->sendp);
+		Common::String callType;
+		Common::String callingFunc;
+		Common::String pcStr;
+
+		switch (call->type) {
+		case EXEC_STACK_TYPE_CALL: // Normal function
+			callType = "selector";
+			callingFunc += Common::String::format("%s::%s", objname, k->getSelectorName(call->debugSelector).c_str());
+			pcStr = Common::String::format("%04x:%04x", PRINT_REG(call->addr.pc));
+			break;
+		case EXEC_STACK_TYPE_KERNEL: // Kernel function
+			if (call->debugKernelSubFunction == -1){
+				callType = "kernel";
+				callingFunc += Common::String::format("k%s(", k->getKernelName(call->debugKernelFunction).c_str());
+			} else {
+				callType = "subkernel";
+				callingFunc += Common::String::format("k%s(", k->getKernelName(call->debugKernelFunction, call->debugKernelSubFunction).c_str());
+			}
+			pcStr = "none";
+			break;
+		default:
+			break;
+		}
+
+		// TODO: When a stack frame utilizes parameters, include those in the output.
+		Common::String errorStr = Common::String::format("Game: %s-%s%s\nRoom: %03d, Script: %03d, %s: %s() @ pc=%s",
+			_gameDescription->gameId, _gameDescription->extra, version.c_str(),
+			s->currentRoomNumber(), s->_segMan->getScript(call->addr.pc.getSegment())->getScriptNumber(), 
+			callType.c_str(), callingFunc.c_str(),
+			pcStr.c_str());
+
+		snprintf(buf_output, buf_output_size, "%s\n%s", buf_input, errorStr.c_str());
+		
+	} else {
+		// VM not initialized yet, so just copy over the initial error.
+		strncpy(buf_output, buf_input, buf_output_size);
+		if (buf_output_size > 0) {
+			buf_output[buf_output_size - 1] = '\0';
+		}
+	}
+}
+
 void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
