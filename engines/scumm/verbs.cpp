@@ -638,9 +638,6 @@ void ScummEngine::checkExecVerbs() {
 			// Verb was clicked
 			runInputScript(kVerbClickArea, _verbs[over].verbid, code);
 		} else {
-			if (zone->number != kMainVirtScreen && _macIndy3Gui && _macIndy3Gui->isActive())
-				return;
-
 			// Scene was clicked
 			runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);
 		}
@@ -964,7 +961,7 @@ void ScummEngine::verbMouseOver(int verb) {
 }
 
 int ScummEngine::findVerbAtPos(int x, int y) const {
-	if (_macIndy3Gui && _macIndy3Gui->isActive())
+	if (_macIndy3Gui)
 		return 0;
 
 	if (!_numVerbs)
@@ -1082,7 +1079,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	VerbSlot *vs;
 	bool tmp;
 
-	if (_macIndy3Gui && _macIndy3Gui->isActive())
+	if (_macIndy3Gui)
 		return;
 
 	if (!verb)
@@ -1161,7 +1158,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 }
 
 void ScummEngine::restoreVerbBG(int verb) {
-	if (_macIndy3Gui && _macIndy3Gui->isActive())
+	if (_macIndy3Gui)
 		return;
 
 	VerbSlot *vs;
