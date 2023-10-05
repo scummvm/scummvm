@@ -153,6 +153,7 @@ public:
 	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
+	void errorString(const char *buf1, char *buf2, int size) override;
 
 	/**
 	 * Disable support for ScummVM autosaves.
