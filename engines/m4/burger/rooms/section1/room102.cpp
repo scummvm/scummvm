@@ -147,7 +147,7 @@ void Room102::init() {
 
 	_trigger = -1;
 
-	if (_G(game).previous_room == -2) {
+	if (_G(game).previous_room == RESTORING_GAME) {
 		if (_G(flags)[V012] == 1) {
 			ws_demand_location(321, 343);
 			ws_demand_facing(4);

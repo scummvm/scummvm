@@ -34,8 +34,7 @@ private:
 	int _val2 = 14;
 	int _val3 = 0;
 	bool _flag1 = false;
-	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
+	Series _series1;
 
 	void conv();
 	void freeSeries();
