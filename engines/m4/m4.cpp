@@ -206,7 +206,8 @@ Common::Error M4Engine::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_G(game).previous_room);
 
 	if (getGameType() == GType_Riddle) {
-		s.skip(20);
+		// TODO: Determinate if the extra fields need to be synced
+		s.skip(22);
 
 	} else {
 		s.syncAsByte(_G(kernel).restore_game);
