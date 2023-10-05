@@ -119,15 +119,16 @@ struct MacFontRun {
 
 struct MacTextLine;
 
-struct MacTextTableCell {
+struct MacTextCanvas {
 	Common::Array<MacTextLine> text;
 	uint16 flags = 0;
-	ManagedSurface surf;
+	ManagedSurface *surface = nullptr, *shadowSurface = nullptr;
 	int textWidth = -1;
+	int textMaxHeigh = 0;
 };
 
 struct MacTextTableRow {
-	Common::Array<MacTextTableCell> cells;
+	Common::Array<MacTextCanvas> cells;
 	int heght = -1;
 };
 
@@ -273,7 +274,7 @@ public:
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
 	void removeLastLine();
-	int getLineCount() { return _textLines.size(); }
+	int getLineCount() { return _canvas.text.size(); }
 	int getLineCharWidth(int line, bool enforce = false);
 	int getLastLineWidth();
 	int getTextHeight() { return _textMaxHeight; }
@@ -399,7 +400,8 @@ protected:
 
 	TextAlign _textAlignment;
 
-	Common::Array<MacTextLine> _textLines;
+	MacTextCanvas _canvas;
+
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
 
