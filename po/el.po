@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-04 10:49+0000\n"
+"POT-Creation-Date: 2023-10-05 07:23+0000\n"
 "PO-Revision-Date: 2023-09-23 18:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
 #: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2900
-#: engines/sword1/logic.cpp:1686 engines/sword2/animation.cpp:426
+#: engines/sword1/logic.cpp:1683 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
@@ -9837,7 +9837,7 @@ msgstr "Κράτησε το παλιό"
 msgid "Keep the new one"
 msgstr "Κράτησε το καινούργιο"
 
-#: engines/sword1/logic.cpp:1686
+#: engines/sword1/logic.cpp:1683
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
 
