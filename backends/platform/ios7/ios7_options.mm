@@ -35,7 +35,7 @@
 
 enum {
 	kHelpCmd = 'Help',
-	kOnscreenOpacityChanged = 'osoc',
+	kGamepadControllerOpacityChanged = 'gcoc',
 };
 
 class IOS7OptionsWidget final : public GUI::OptionsContainerWidget {
@@ -58,10 +58,10 @@ private:
 	void saveOrientation(const Common::String &setting, uint32 orientation);
 #endif
 
-	GUI::CheckboxWidget *_onscreenCheckbox;
-	GUI::StaticTextWidget *_onscreenOpacityDesc;
-	GUI::SliderWidget *_onscreenOpacitySlider;
-	GUI::StaticTextWidget *_onscreenOpacityLabel;
+	GUI::CheckboxWidget *_gamepadControllerCheckbox;
+	GUI::StaticTextWidget *_gamepadControllerOpacityDesc;
+	GUI::SliderWidget *_gamepadControllerOpacitySlider;
+	GUI::StaticTextWidget *_gamepadControllerOpacityLabel;
 	GUI::CheckboxWidget *_touchpadCheckbox;
 	GUI::CheckboxWidget *_clickAndDragCheckbox;
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
@@ -80,12 +80,12 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 
 	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
-	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControl", _("Show On-screen control (iOS 15 and later)"));
-	_onscreenOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacity", _("Control opacity"));
-	_onscreenOpacitySlider = new GUI::SliderWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacitySlider", _("Control opacity"), kOnscreenOpacityChanged);
-	_onscreenOpacityLabel = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.OnScreenControlOpacityLabel", Common::U32String(" "), Common::U32String(), GUI::ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
-	_onscreenOpacitySlider->setMinValue(1);
-	_onscreenOpacitySlider->setMaxValue(10);
+	_gamepadControllerCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadController", _("Show Gamepad Controller (iOS 15 and later)"));
+	_gamepadControllerOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacity", _("Gamepad opacity"));
+	_gamepadControllerOpacitySlider = new GUI::SliderWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacitySlider", _("Gamepad opacity"), kGamepadControllerOpacityChanged);
+	_gamepadControllerOpacityLabel = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacityLabel", Common::U32String(" "), Common::U32String(), GUI::ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
+	_gamepadControllerOpacitySlider->setMinValue(1);
+	_gamepadControllerOpacitySlider->setMaxValue(10);
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.TouchpadMouseMode", _("Touchpad mouse mode"));
 	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
@@ -117,7 +117,7 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 
 	new GUI::ButtonWidget(widgetsBoss(), "IOS7OptionsDialog.ControlsHelp", _("Controls Help"), Common::U32String(), kHelpCmd);
 
-	// setEnabled is normally only called from the EditGameDialog, but some options (OnScreenControl)
+	// setEnabled is normally only called from the EditGameDialog, but some options (GamepadController)
 	// should be disabled in all domains if system is running a lower version of iOS than 15.0.
 	setEnabled(_enabled);
 }
@@ -131,12 +131,12 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
 	            .addPadding(0, 0, 0, 0)
-	            .addWidget("OnScreenControl", "Checkbox")
+	            .addWidget("GamepadController", "Checkbox")
 	        .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 	            .addPadding(0, 0, 0, 0)
-	            .addWidget("OnScreenControlOpacity", "OptionsLabel")
-	            .addWidget("OnScreenControlOpacitySlider", "Slider")
-	            .addWidget("OnScreenControlOpacityLabel", "OptionsLabel")
+	            .addWidget("GamepadControllerOpacity", "OptionsLabel")
+	            .addWidget("GamepadControllerOpacitySlider", "Slider")
+	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
 	            .addWidget("TouchpadMouseMode", "Checkbox")
 	            .addWidget("ClickAndDragMode", "Checkbox")
@@ -199,10 +199,10 @@ void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		help.runModal();
 		break;
 	}
-	case kOnscreenOpacityChanged: {
-		const int newValue = _onscreenOpacitySlider->getValue();
-		_onscreenOpacityLabel->setValue(newValue);
-		_onscreenOpacityLabel->markAsDirty();
+	case kGamepadControllerOpacityChanged: {
+		const int newValue = _gamepadControllerOpacitySlider->getValue();
+		_gamepadControllerOpacityLabel->setValue(newValue);
+		_gamepadControllerOpacityLabel->markAsDirty();
 		break;
 	}
 	default:
@@ -250,9 +250,9 @@ void IOS7OptionsWidget::saveOrientation(const Common::String &setting, uint32 or
 void IOS7OptionsWidget::load() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
-	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
-	_onscreenOpacitySlider->setValue(ConfMan.getInt("onscreen_control_opacity", _domain));
-	_onscreenOpacityLabel->setValue(_onscreenOpacitySlider->getValue());
+	_gamepadControllerCheckbox->setState(ConfMan.getBool("gamepad_controller", _domain));
+	_gamepadControllerOpacitySlider->setValue(ConfMan.getInt("gamepad_controller_opacity", _domain));
+	_gamepadControllerOpacityLabel->setValue(_gamepadControllerOpacitySlider->getValue());
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mode", _domain));
 	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
@@ -269,8 +269,8 @@ bool IOS7OptionsWidget::save() {
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	if (_enabled) {
-		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
-		ConfMan.setInt("onscreen_control_opacity", _onscreenOpacitySlider->getValue(), _domain);
+		ConfMan.setBool("gamepad_controller", _gamepadControllerCheckbox->getState(), _domain);
+		ConfMan.setInt("gamepad_controller_opacity", _gamepadControllerOpacitySlider->getValue(), _domain);
 		ConfMan.setBool("touchpad_mode", _touchpadCheckbox->getState(), _domain);
 		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
@@ -282,8 +282,8 @@ bool IOS7OptionsWidget::save() {
 		saveOrientation("orientation_games", _orientationGamesPopUp->getSelectedTag());
 #endif
 	} else {
-		ConfMan.removeKey("onscreen_control", _domain);
-		ConfMan.removeKey("onscreen_control_opacity", _domain);
+		ConfMan.removeKey("gamepad_controller", _domain);
+		ConfMan.removeKey("gamepad_controller_opacity", _domain);
 		ConfMan.removeKey("touchpad_mode", _domain);
 		ConfMan.removeKey("clickanddrag_mode", _domain);
 		ConfMan.removeKey("keyboard_fn_bar", _domain);
@@ -300,8 +300,8 @@ bool IOS7OptionsWidget::save() {
 }
 
 bool IOS7OptionsWidget::hasKeys() {
-	bool hasKeys = ConfMan.hasKey("onscreen_control", _domain) ||
-	ConfMan.hasKey("onscreen_control_opacity", _domain) ||
+	bool hasKeys = ConfMan.hasKey("gamepad_controller", _domain) ||
+	ConfMan.hasKey("gamepad_controller_opacity", _domain) ||
 	ConfMan.hasKey("touchpad_mode", _domain) ||
 	ConfMan.hasKey("clickanddrag_mode", _domain);
 
@@ -321,21 +321,21 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 #if TARGET_OS_IOS && defined (__IPHONE_15_0)
 	// On-screen controls (virtual controller is supported in iOS 15 and later)
 	if (@available(iOS 15.0, *)) {
-		_onscreenCheckbox->setEnabled(e);
-		_onscreenOpacityDesc->setEnabled(e);
-		_onscreenOpacitySlider->setEnabled(e);
-		_onscreenOpacityLabel->setEnabled(e);
+		_gamepadControllerCheckbox->setEnabled(e);
+		_gamepadControllerOpacityDesc->setEnabled(e);
+		_gamepadControllerOpacitySlider->setEnabled(e);
+		_gamepadControllerOpacityLabel->setEnabled(e);
 	} else {
-		_onscreenCheckbox->setEnabled(false);
-		_onscreenOpacityDesc->setEnabled(false);
-		_onscreenOpacitySlider->setEnabled(false);
-		_onscreenOpacityLabel->setEnabled(false);
+		_gamepadControllerCheckbox->setEnabled(false);
+		_gamepadControllerOpacityDesc->setEnabled(false);
+		_gamepadControllerOpacitySlider->setEnabled(false);
+		_gamepadControllerOpacityLabel->setEnabled(false);
 	}
 #else
-	_onscreenCheckbox->setEnabled(false);
-	_onscreenOpacityDesc->setEnabled(false);
-	_onscreenOpacitySlider->setEnabled(false);
-	_onscreenOpacityLabel->setEnabled(false);
+	_gamepadControllerCheckbox->setEnabled(false);
+	_gamepadControllerOpacityDesc->setEnabled(false);
+	_gamepadControllerOpacitySlider->setEnabled(false);
+	_gamepadControllerOpacityLabel->setEnabled(false);
 #endif
 #if TARGET_OS_IOS
 	_touchpadCheckbox->setEnabled(e);
@@ -360,8 +360,8 @@ GUI::OptionsContainerWidget *OSystem_iOS7::buildBackendOptionsWidget(GUI::GuiObj
 }
 
 void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
-	ConfMan.registerDefault("onscreen_control", false);
-	ConfMan.registerDefault("onscreen_control_opacity", 6);
+	ConfMan.registerDefault("gamepad_controller", false);
+	ConfMan.registerDefault("gamepad_controller_opacity", 6);
 	ConfMan.registerDefault("touchpad_mode", !iOS7_isBigDevice());
 	ConfMan.registerDefault("clickanddrag_mode", false);
 	ConfMan.registerDefault("keyboard_fn_bar", true);
@@ -373,7 +373,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 }
 
 void OSystem_iOS7::applyBackendSettings() {
-	virtualController(ConfMan.getBool("onscreen_control"));
+	virtualController(ConfMan.getBool("gamepad_controller"));
 	_touchpadModeEnabled = ConfMan.getBool("touchpad_mode");
 	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 

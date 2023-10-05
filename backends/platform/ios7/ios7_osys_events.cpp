@@ -454,8 +454,8 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 
 		case kUIViewSwipeLeft: {
 			// Swipe left
-			bool connect = !ConfMan.getBool("onscreen_control");
-			ConfMan.setBool("onscreen_control", connect);
+			bool connect = !ConfMan.getBool("gamepad_controller");
+			ConfMan.setBool("gamepad_controller", connect);
 			ConfMan.flushToDisk();
 			virtualController(connect);
 			return false;

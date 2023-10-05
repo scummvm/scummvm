@@ -341,7 +341,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		[self virtualController:false];
 	} else {
 		// Connect or disconnect the virtual controller
-		[self virtualController:ConfMan.getBool("onscreen_control")];
+		[self virtualController:ConfMan.getBool("gamepad_controller")];
 	}
 #endif
 }
