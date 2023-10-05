@@ -371,10 +371,7 @@ void TangramPuzzle::rotateTile(uint id) {
 	
 	Common::Rect newPos = tileToRotate._drawSurface.getBounds();
 	newPos.moveTo(oldPos.left + oldPos.width() / 2 - newPos.width() / 2, oldPos.top + oldPos.height() / 2 - newPos.height() / 2);
-
-	// Do NOT use moveTo()!
-	// If moved and rotated in the same frame, we need to make sure the last position isn't overwritten
-	tileToRotate._screenPosition = newPos;
+	tileToRotate.moveTo(newPos);
 	_needsRedraw = true;
 
 

@@ -78,6 +78,7 @@ protected:
 
 	bool _needsRedraw;
 	bool _isVisible;
+	bool _hasMoved;
 	uint16 _z;
 	Common::Rect _previousScreenPosition;
 	Common::Rect _screenPosition;

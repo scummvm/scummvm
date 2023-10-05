@@ -94,6 +94,7 @@ void GraphicsManager::draw(bool updateScreen) {
 		}
 
 		current._needsRedraw = false;
+		current._hasMoved = false;
 		current._previousScreenPosition = current._screenPosition;
 	}
 

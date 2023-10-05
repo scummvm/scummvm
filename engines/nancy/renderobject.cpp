@@ -30,7 +30,8 @@ namespace Nancy {
 RenderObject::RenderObject(uint16 zOrder) :
 		_needsRedraw(true),
 		_isVisible(true),
-		_z(zOrder) {}
+		_z(zOrder),
+		_hasMoved(false) {}
 
 RenderObject::RenderObject(uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
 		RenderObject(zOrder) {
@@ -54,15 +55,25 @@ RenderObject::~RenderObject() {
 }
 
 void RenderObject::moveTo(const Common::Point &position) {
-	_previousScreenPosition = _screenPosition;
+	// Make sure we don't overwrite the _actual_ last position
+	if (!_hasMoved) {
+		_previousScreenPosition = _screenPosition;
+	}
+
 	_screenPosition.moveTo(position);
 	_needsRedraw = true;
+	_hasMoved = true;
 }
 
 void RenderObject::moveTo(const Common::Rect &bounds) {
-	_previousScreenPosition = _screenPosition;
+	// Make sure we don't overwrite the _actual_ last position
+	if (!_hasMoved) {
+		_previousScreenPosition = _screenPosition;
+	}
+
 	_screenPosition = bounds;
 	_needsRedraw = true;
+	_hasMoved = true;
 }
 
 void RenderObject::setVisible(bool visible) {
