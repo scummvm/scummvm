@@ -808,6 +808,11 @@ void Scene::specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime) {
 	_specialEffects.back().init();
 }
 
+void Scene::specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect) {
+	_specialEffects.push(Misc::SpecialEffect(type, totalTime, fadeToBlackTime, rect));
+	_specialEffects.back().init();
+}
+
 PuzzleData *Scene::getPuzzleData(const uint32 tag) {
 	// Lazy initialization ensures both init() and synchronize() will not need
 	// to care about which puzzles a specific game has
@@ -938,18 +943,6 @@ void Scene::run() {
 	}
 
 	Time currentPlayTime = g_nancy->getTotalPlayTime();
-
-	if (_specialEffects.size()) {
-		if (_specialEffects.front().isInitialized()) {
-			if (_specialEffects.front().isDone()) {
-				_specialEffects.pop();
-				g_nancy->_graphicsManager->redrawAll();
-			}
-		} else {
-			_specialEffects.front().afterSceneChange();
-		}
-	}
-
 	Time deltaTime = currentPlayTime - _timers.lastTotalTime;
 	_timers.lastTotalTime = currentPlayTime;
 
@@ -979,6 +972,18 @@ void Scene::run() {
 
 	if (_lightning) {
 		_lightning->run();
+	}
+
+	// Do this after the first records are processed to fix the text in nancy3 intro
+	if (_specialEffects.size()) {
+		if (_specialEffects.front().isInitialized()) {
+			if (_specialEffects.front().isDone()) {
+				_specialEffects.pop();
+				g_nancy->_graphicsManager->redrawAll();
+			}
+		} else {
+			_specialEffects.front().afterSceneChange();
+		}
 	}
 
 	g_nancy->_sound->soundEffectMaintenance();

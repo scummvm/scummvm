@@ -33,14 +33,22 @@ namespace Misc {
 
 class SpecialEffect : public RenderObject {
 public:
-	static const byte kSceneChangeFadeOutToBlack 	= 1;
-	static const byte kSceneChangeFadeCrossDissolve = 1;
+	static const byte kBlackout			= 1;
+	static const byte kCrossDissolve	= 2;
+	static const byte kThroughBlack		= 3;
 
 	SpecialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime) :
 		RenderObject(16),
 		_type(type),
 		_fadeToBlackTime(fadeToBlackTime),
 		_frameTime(frameTime) {}
+	
+	SpecialEffect(byte type, uint32 totalTime, uint16 fadeToBlackTime, Common::Rect rect) :
+		RenderObject(16),
+		_type(type),
+		_totalTime(totalTime),
+		_fadeToBlackTime(fadeToBlackTime),
+		_rect(rect) {}
 	virtual ~SpecialEffect() {}
 
 	void init() override;
@@ -55,20 +63,22 @@ public:
 protected:
 	bool _initialized = false;
 
-	Time _nextFrameTime;
-	Time _fadeToBlackEndTime;
+	uint32 _nextFrameTime = 0;
+	uint32 _fadeToBlackEndTime = 0;
 
 	Graphics::ManagedSurface _fadeFrom;
 	Graphics::ManagedSurface _fadeTo;
 
 	byte _type = 1;
 	uint16 _fadeToBlackTime = 0;
-	uint16 _frameTime = 0;
+	uint32 _frameTime = 0;
+	uint32 _totalTime = 0;
+	Common::Rect _rect;
 
 	int _currentFrame = 0;
 	uint _numFrames = 0;
-
-	const SPEC *_specialEffectData = nullptr;
+	uint32 _startTime = 0;
+	bool _throughBlackStarted2nd = false;
 };
 
 } // End of namespace Misc

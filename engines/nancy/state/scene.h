@@ -196,6 +196,7 @@ public:
 
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
+	void specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect);
 
 	// Get the persistent data for a given puzzle type
 	PuzzleData *getPuzzleData(const uint32 tag);

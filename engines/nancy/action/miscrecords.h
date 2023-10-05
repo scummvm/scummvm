@@ -80,6 +80,8 @@ public:
 	byte _type = 1;
 	uint16 _fadeToBlackTime = 0;
 	uint16 _frameTime = 0;
+	uint16 _totalTime = 0;
+	Common::Rect _rect;
 
 protected:
 	Common::String getRecordTypeName() const override { return "SpecialEffect"; }

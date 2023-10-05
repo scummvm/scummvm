@@ -74,13 +74,25 @@ void LightningOn::readData(Common::SeekableReadStream &stream) {
 }
 
 void SpecialEffect::readData(Common::SeekableReadStream &stream) {
-	_type = stream.readByte();
-	_fadeToBlackTime = stream.readUint16LE();
-	_frameTime = stream.readUint16LE();
+	if (g_nancy->getGameType() <= kGameTypeNancy6) {
+		_type = stream.readByte();
+		_fadeToBlackTime = stream.readUint16LE();
+		_frameTime = stream.readUint16LE();
+	} else {
+		_type = stream.readByte();
+		_totalTime = stream.readUint16LE();
+		_fadeToBlackTime = stream.readUint16LE();
+		readRect(stream, _rect);
+	}
 }
 
 void SpecialEffect::execute() {
-	NancySceneState.specialEffect(_type, _fadeToBlackTime, _frameTime);
+	if (g_nancy->getGameType() <= kGameTypeNancy6) {
+		NancySceneState.specialEffect(_type, _fadeToBlackTime, _frameTime);
+	} else {
+		NancySceneState.specialEffect(_type, _totalTime, _fadeToBlackTime, _rect);
+	}
+	
 	_isDone = true;
 }
 
