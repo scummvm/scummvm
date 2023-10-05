@@ -53,7 +53,7 @@ public:
 	const Graphics::Font *getFont(int n) { return _fonts[n]; }
 
 	void resetAfterLoad();
-	void update();
+	void update(int delta);
 	void handleEvent(Common::Event &event);
 
 private:
@@ -82,7 +82,7 @@ private:
 
 		virtual void draw() = 0;
 		virtual void undraw() {}
-		virtual bool updateTimer();
+		virtual bool updateTimer(int delta);
 
 		// Primitives
 		void copyRectToScreen(Common::Rect r);
@@ -120,7 +120,7 @@ private:
 		bool handleEvent(Common::Event &event);
 
 		void reset();
-		bool updateTimer();
+		bool updateTimer(int delta);
 		void updateVerb(int verbslot);
 		void draw();
 	};
@@ -157,7 +157,7 @@ private:
 			Slot(int slot, int x, int y, int width, int height);
 			void reset();
 			bool handleEvent(Common::Event &event);
-			bool updateTimer();
+			bool updateTimer(int delta);
 			void draw();
 		};
 
@@ -174,7 +174,7 @@ private:
 		void updateVerb(int verbslot);
 
 		bool handleEvent(Common::Event &event);
-		bool updateTimer();
+		bool updateTimer(int delta);
 
 		void draw();
 	};

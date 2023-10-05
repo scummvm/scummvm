@@ -105,6 +105,10 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 #endif
 
 void ScummEngine::parseEvent(Common::Event event) {
+	// Handle Mac Indy3 events before scaling the mouse coordinates
+	if (_macIndy3Gui)
+		_macIndy3Gui->handleEvent(event);
+
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (event.customType >= kScummActionCount) {
@@ -219,10 +223,6 @@ void ScummEngine::parseEvent(Common::Event event) {
 
 		_mouse.x = event.mouse.x;
 		_mouse.y = event.mouse.y;
-
-		// Handle Mac Indy3 events before scaling the mouse coordinates
-		if (_macIndy3Gui)
-			_macIndy3Gui->handleEvent(event);
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
