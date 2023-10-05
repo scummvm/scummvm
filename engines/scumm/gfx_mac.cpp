@@ -378,9 +378,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
  * old savegames, but the variables are assumed to be harmless.
  */
 
-#define BUTTON_TIMER			15
-#define INVENTORY_SLOT_TIMER	7
-
 ScummEngine *MacIndy3Gui::Widget::_vm = nullptr;
 Graphics::Surface *MacIndy3Gui::Widget::_surface = nullptr;
 MacIndy3Gui *MacIndy3Gui::Widget::_gui = nullptr;
@@ -448,22 +445,18 @@ void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, byte shadowColor, byte
 	}
 }
 
-MacIndy3Gui::GuiWidget::GuiWidget(int verbid, int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
-	_verbid = verbid;
-}
-
-void MacIndy3Gui::GuiWidget::reset() {
+void MacIndy3Gui::VerbWidget::reset() {
 	MacIndy3Gui::Widget::reset();
 	_verbslot = -1;
 	_visible = false;
 	_kill = false;
 }
 
-void MacIndy3Gui::GuiWidget::updateVerb(int verbslot) {
+void MacIndy3Gui::VerbWidget::updateVerb(int verbslot) {
 	VerbSlot *vs = &_vm->_verbs[verbslot];
 	bool enabled = (vs->curmode == 1);
 
-	if (_enabled != enabled)
+	if (!_visible || _enabled != enabled)
 		_redraw = true;
 
 	_verbslot = verbslot;
@@ -472,29 +465,21 @@ void MacIndy3Gui::GuiWidget::updateVerb(int verbslot) {
 	_kill = false;
 }
 
-void MacIndy3Gui::GuiWidget::draw() {
+void MacIndy3Gui::VerbWidget::draw() {
 	// Clear the area used by the widget
 	fill(_bounds);
 	_visible = true;
 	_redraw = false;
 }
 
-void MacIndy3Gui::GuiWidget::undraw() {
+void MacIndy3Gui::VerbWidget::undraw() {
 	fill(_bounds);
 	copyRectToScreen(_bounds);
 }
 
-MacIndy3Gui::Button::Button(int verbid, int x, int y, int width, int height) : MacIndy3Gui::GuiWidget(verbid, x, y, width, height) {
-}
-
-MacIndy3Gui::Button::~Button() {
-	free(_text);
-}
-
 void MacIndy3Gui::Button::reset() {
-	MacIndy3Gui::GuiWidget::reset();
-	free(_text);
-	_text = nullptr;
+	MacIndy3Gui::VerbWidget::reset();
+	_text.clear();
 }
 
 bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
@@ -514,7 +499,7 @@ bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
 }
 
 bool MacIndy3Gui::Button::updateTimer() {
-	bool ret = GuiWidget::updateTimer();
+	bool ret = VerbWidget::updateTimer();
 
 	if (ret) {
 		if (_visible) {
@@ -527,22 +512,26 @@ bool MacIndy3Gui::Button::updateTimer() {
 }
 
 void MacIndy3Gui::Button::updateVerb(int verbslot) {
-	MacIndy3Gui::GuiWidget::updateVerb(verbslot);
+	MacIndy3Gui::VerbWidget::updateVerb(verbslot);
 
 	const byte *ptr = _vm->getResourceAddress(rtVerb, verbslot);
 	byte buf[270];
 
 	_vm->convertMessageToString(ptr, buf, sizeof(buf));
-	if (!_text || strcmp((char *)_text, (char *)buf) != 0) {
-		free(_text);
-		_text = (byte *)scumm_strdup((const char *)buf);
+	if (_text != (char *)buf) {
+		_text = (char *)buf;
 		_timer = 0;
 		_redraw = true;
 	}
 }
 
 void MacIndy3Gui::Button::draw() {
-	MacIndy3Gui::GuiWidget::draw();
+	if (!_redraw)
+		return;
+
+	debug("Drawing button [%d] %s", _verbid, _text.c_str());
+
+	MacIndy3Gui::VerbWidget::draw();
 
 	if (_timer == 0) {
 		drawShadowBox(_bounds);
@@ -573,12 +562,12 @@ void MacIndy3Gui::Button::draw() {
 	//
 	// This gives us pixel perfect rendering for the English verbs.
 
-	if (_text) {
+	if (!_text.empty()) {
 		const Graphics::Font *boldFont = _gui->getFont(1);
 		const Graphics::Font *outlineFont = _gui->getFont(2);
 
 		int stringWidth = 0;
-		for (int i = 0; _text[i]; i++)
+		for (uint i = 0; i < _text.size(); i++)
 			stringWidth += outlineFont->getCharWidth(_text[i]);
 
 		int x = (_bounds.left + (_bounds.width() - 1 - stringWidth) / 2) - 1;
@@ -590,10 +579,12 @@ void MacIndy3Gui::Button::draw() {
 			y++;
 		}
 
-		for (int i = 0; _text[i]; i++) {
-			if (_enabled)
-				outlineFont->drawChar(_surface, _text[i], x, y, 0);
-			boldFont->drawChar(_surface, _text[i], x + 1, y, color);
+		for (uint i = 0; i < _text.size() && x < _bounds.right; i++) {
+			if (x >= _bounds.left) {
+				if (_enabled)
+					outlineFont->drawChar(_surface, _text[i], x, y, 0);
+				boldFont->drawChar(_surface, _text[i], x + 1, y, color);
+			}
 			x += boldFont->getCharWidth(_text[i]);
 		}
 	}
@@ -624,47 +615,218 @@ void MacIndy3Gui::Button::draw() {
 // Dragging the handle is not possible. Clicking on the handle is probably
 // indistinguishable from clicking above or below.
 
-MacIndy3Gui::InventoryWidget::InventoryWidget(int verbid, int x, int y, int width, int height) : MacIndy3Gui::GuiWidget(verbid, x, y, width, height) {
+const uint16 MacIndy3Gui::Inventory::_upArrow[16] = {
+	0x0000, 0x0000, 0x0000, 0x0080,	0x0140, 0x0220, 0x0410, 0x0808,
+	0x1C1C, 0x0410, 0x0410, 0x0410,	0x07F0, 0x0000, 0x0000, 0x0000
+};
+
+const uint16 MacIndy3Gui::Inventory::_downArrow[16] = {
+	0x0000, 0x0000, 0x0000, 0x0000,	0x07F0, 0x0410, 0x0410, 0x0410,
+	0x1C1C, 0x0808, 0x0410, 0x0220,	0x0140, 0x0080, 0x0000, 0x0000
+};
+
+MacIndy3Gui::Inventory::Inventory(int x, int y, int width, int height) : MacIndy3Gui::VerbWidget(x, y, width, height) {
+	x = _bounds.left + 6;
+	y = _bounds.top + 6;
+
+	// There are always six slots, no matter how many objects you are
+	// carrying.
+	//
+	// Each slot is 12 pixels tall (as seen when they are highlighted),
+	// which means they have to overlap slightly to fit. It is assumed
+	// that this will never interfere with the text drawing.
+
+	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
+		_slots[i] = new Slot(i, x, y, 128, 12);
+		y += 11;
+	}
+
+	x = _bounds.right - 20;
+	y = _bounds.top + 4;
+
+	_scrollButtons[0] = new ScrollButton(x, _bounds.top + 4, 16, 16, kScrollUp);
+	_scrollButtons[1] = new ScrollButton(x, _bounds.bottom - 20, 16, 16, kScrollDown);
 }
 
-bool MacIndy3Gui::InventoryWidget::handleEvent(Common::Event &event) {
+MacIndy3Gui::Inventory::~Inventory() {
+	for (int i = 0; i < ARRAYSIZE(_slots); i++)
+		delete _slots[i];
+
+	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++)
+		delete _scrollButtons[i];
+}
+
+void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
+	MacIndy3Gui::VerbWidget::updateVerb(verbslot);
+
+	int owner = _vm->VAR(_vm->VAR_EGO);
+
+	int invCount = _vm->getInventoryCount(owner);
+	int invOffset = _vm->VAR(67);
+
+	// The scroll offset must be non-negative and if there are six or less
+	// items in the inventory, the inventory is fixed in the top position.
+
+	if (invOffset < 0 || invCount <= 6)
+		invOffset = 0;
+
+	// If there are more than six items in the inventory, clamp the scroll
+	// offset to be at most invCount - 6.
+
+	if (invCount > 6 && invOffset >= invCount - 6)
+		invOffset = invCount - 6;
+
+	_vm->VAR(67) = invOffset;
+
+	int invSlot = 0;
+	invCount = 0;
+
+	for (int i = 0; i < _vm->_numInventory && invSlot < ARRAYSIZE(_slots); i++) {
+		int obj = _vm->_inventory[i];
+		if (obj && _vm->getOwner(obj) == owner) {
+			if (++invCount >= invOffset) {
+				Slot *s = _slots[invSlot];
+				const byte *name = _vm->getObjOrActorName(obj);
+
+				if (name) {
+					if (s->_name != (const char *)name) {
+						s->_name = (const char *)name;
+						s->_timer = 0;
+						s->_redraw = true;
+					}
+				} else {
+					if (!s->_name.empty()) {
+						s->_name.clear();
+						s->_timer = 0;
+						s->_redraw = true;
+					}
+				}
+
+				s->_obj = obj;
+				invSlot++;
+			}
+		}
+	}
+
+	for (int i = invSlot; i < ARRAYSIZE(_slots); i++) {
+		Slot *s = _slots[i];
+
+		if (!s->_name.empty()) {
+			s->_name.clear();
+			s->_obj = -1;
+			s->_timer = 0;
+			s->_redraw = true;
+		}
+	}
+}
+
+bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
+	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return false;
+
+	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
+		if (_slots[i]->handleEvent(event))
+			return true;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
+		if (_scrollButtons[i]->handleEvent(event))
+			return true;
+	}
+
 	return false;
 }
 
-void MacIndy3Gui::InventoryWidget::draw() {
-	MacIndy3Gui::GuiWidget::draw();
+bool MacIndy3Gui::Inventory::updateTimer() {
+	VerbWidget::updateTimer();
 
-#if 0
-	for (int i = 0; i < ARRAYSIZE(_slots); i++)
-		_slots[i]->reset();
-#endif
+	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
+		Slot *s = _slots[i];
 
-	drawShadowBox(_bounds);
-	drawShadowFrame(Common::Rect(_bounds.left + 4, _bounds.top + 4, _bounds.right - 22, _bounds.bottom - 4), 0, 15);
+		if (s->updateTimer()) {
+			s->_redraw = true;
+			_vm->runInputScript(kInventoryClickArea, s->_obj, 1);
+		}
+	}
 
-#if 0
-	// Scrollbar
-	drawInventoryScrollButton(_inventoryScrollButtons[0]);
-	drawInventoryScrollButton(_inventoryScrollButtons[1]);
-#endif
+	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
+		ScrollButton *b = _scrollButtons[i];
 
-	drawShadowFrame(Common::Rect(_bounds.right - 20, _bounds.top + 19, _bounds.right - 4, _bounds.bottom - 19), 0, 255);
+		if (b->updateTimer()) {
+			b->_redraw = true;
+		}
+	}
 
-	copyRectToScreen(_bounds);
+	return false;
 }
 
-MacIndy3Gui::InventorySlot::InventorySlot(int slot, int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
+void MacIndy3Gui::Inventory::draw() {
+	if (_redraw) {
+		debug("Drawing button [%d] Inventory", _verbid);
+
+		MacIndy3Gui::VerbWidget::draw();
+
+		for (int i = 0; i < ARRAYSIZE(_slots); i++)
+			_slots[i]->reset();
+
+		drawShadowBox(_bounds);
+		drawShadowFrame(Common::Rect(_bounds.left + 4, _bounds.top + 4, _bounds.right - 22, _bounds.bottom - 4), 0, 15);
+		drawShadowFrame(Common::Rect(_bounds.right - 20, _bounds.top + 19, _bounds.right - 4, _bounds.bottom - 19), 0, 255);
+
+		for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
+			ScrollButton *s = _scrollButtons[i];
+			const uint16 *arrow = (s->_direction == kScrollUp) ? _upArrow : _downArrow;
+
+			drawShadowFrame(s->_bounds, 15, 255);
+			drawBitmap(s->_bounds, arrow, 0);
+			s->draw();
+			s->_redraw = true;
+		}
+
+		copyRectToScreen(_bounds);
+	}
+
+	// Since the inventory slots overlap, draw the highlighted ones (and
+	// there should really only be one at a time) last.
+
+	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
+		if (!_slots[i]->_timer)
+			_slots[i]->draw();
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
+		if (_slots[i]->_timer)
+			_slots[i]->draw();
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++)
+		_scrollButtons[i]->draw();
+}
+
+MacIndy3Gui::Inventory::Slot::Slot(int slot, int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
 	_slot = slot;
 }
 
-void MacIndy3Gui::InventorySlot::reset() {
+void MacIndy3Gui::Inventory::Slot::reset() {
 	Widget::reset();
-	free(_name);
-	_name = nullptr;
+	_name.clear();
 	_obj = -1;
 }
 
-bool MacIndy3Gui::InventorySlot::updateTimer() {
+bool MacIndy3Gui::Inventory::Slot::handleEvent(Common::Event &event) {
+	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return false;
+
+	if (_obj != -1 && _bounds.contains(event.mouse.x, event.mouse.y)) {
+		_redraw = true;
+		_timer = 7;
+		return true;
+	}
+
+	return false;
+}
+
+bool MacIndy3Gui::Inventory::Slot::updateTimer() {
 	bool ret = Widget::updateTimer();
 
 	if (ret) {
@@ -675,14 +837,81 @@ bool MacIndy3Gui::InventorySlot::updateTimer() {
 	return ret;
 }
 
-void MacIndy3Gui::InventorySlot::draw() {
+void MacIndy3Gui::Inventory::Slot::draw() {
+	if (!_redraw)
+		return;
+
+	debug("Drawing inventory slot: [%d] %s", _slot, _name.c_str());
+	int fg, bg;
+
+	if (_timer) {
+		fg = 15;
+		bg = 0;
+	} else {
+		fg = 0;
+		bg = 15;
+	}
+
+	_surface->fillRect(_bounds, bg);
+
+	if (!_name.empty()) {
+		const Graphics::Font *font = _gui->getFont(0);
+
+		int y = _bounds.top - 1;
+		int x = _bounds.left + 4;
+
+		for (uint i = 0; i < _name.size(); i++) {
+			if (_name[i] != '@') {
+				font->drawChar(_surface, _name[i], x, y, fg);
+				x += font->getCharWidth(_name[i]);
+			}
+		}
+	}
+
+	_redraw = false;
+	copyRectToScreen(_bounds);
 }
 
-MacIndy3Gui::InventoryScrollButton::InventoryScrollButton(int x, int y, int width, int height, ScrollDirection direction) : MacIndy3Gui::Widget(x, y, width, height) {
+const uint16 MacIndy3Gui::Inventory::ScrollButton::_upArrow[16] = {
+	0x0000, 0x0000, 0x0000, 0x0000,	0x0080, 0x01C0, 0x03E0, 0x07F0,
+	0x03E0, 0x03E0, 0x03E0, 0x03E0,	0x0000, 0x0000, 0x0000, 0x0000
+};
+
+const uint16 MacIndy3Gui::Inventory::ScrollButton::_downArrow[16] = {
+	0x0000, 0x0000, 0x0000, 0x0000,	0x0000, 0x03E0, 0x03E0, 0x03E0,
+	0x03E0, 0x07F0,	0x03E0, 0x01C0,	0x0080, 0x0000, 0x0000, 0x0000
+};
+
+MacIndy3Gui::Inventory::ScrollButton::ScrollButton(int x, int y, int width, int height, ScrollDirection direction) : MacIndy3Gui::Widget(x, y, width, height) {
 	_direction = direction;
 }
 
-void MacIndy3Gui::InventoryScrollButton::draw() {
+bool MacIndy3Gui::Inventory::ScrollButton::handleEvent(Common::Event &event) {
+	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return false;
+
+	if (_enabled && _bounds.contains(event.mouse.x, event.mouse.y)) {
+		_redraw = true;
+		_timer = 15;
+		return true;
+	}
+
+	return false;
+}
+
+void MacIndy3Gui::Inventory::ScrollButton::draw() {
+	if (!_redraw)
+		return;
+
+	debug("Drawing inventory arrow %d", _direction);
+
+	_redraw = false;
+
+	const uint16 *arrow = (_direction == kScrollUp) ? _upArrow : _downArrow;
+	byte color = _timer ? 0 : 15;
+
+	drawBitmap(_bounds, arrow, color);
+	copyRectToScreen(_bounds);
 }
 
 MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
@@ -700,82 +929,43 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	Widget::_surface = _macScreen;
 	Widget::_gui = this;
 
-	_widgets[0]  = new Button(  1, 137, 312,  68, 18); // Open
-	_widgets[1]  = new Button(  2, 137, 332,  68, 18); // Close
-	_widgets[2]  = new Button(  3,  67, 352,  68, 18); // Give
-	_widgets[3]  = new Button(  4, 277, 332,  68, 18); // Turn on
-	_widgets[4]  = new Button(  5, 277, 352,  68, 18); // Turn off
-	_widgets[5]  = new Button(  6,  67, 312,  68, 18); // Push
-	_widgets[6]  = new Button(  7,  67, 332,  68, 18); // Pull
-	_widgets[7]  = new Button(  8, 277, 312,  68, 18); // Use
-	_widgets[8]  = new Button(  9, 137, 352,  68, 18); // Look at
-	_widgets[9]  = new Button( 10, 207, 312,  68, 18); // Walk to
-	_widgets[10] = new Button( 11, 207, 332,  68, 18); // Pick up
-	_widgets[11] = new Button( 12, 207, 352,  68, 18); // What is
-	_widgets[12] = new Button( 13, 347, 312,  68, 18); // Talk
-	_widgets[13] = new Button( 14,  97, 312, 121, 18); // Never mind.
-	_widgets[14] = new Button( 32, 347, 332,  68, 18); // Travel
-	_widgets[15] = new Button( 33, 347, 352,  68, 18); // To Indy
-	_widgets[16] = new Button( 34, 347, 352,  68, 18); // To Henry
-	_widgets[17] = new Button( 90,  67, 292, 507, 18); // Travel 1
-	_widgets[18] = new Button( 91,  67, 312, 507, 18); // Travel 2
-	_widgets[19] = new Button( 92,  67, 332, 507, 18); // Travel 3
-	_widgets[20] = new Button(100,  67, 292, 348, 18); // Sentence
-	_widgets[21] = new InventoryWidget(101, 417, 292, 157, 78);
-	_widgets[22] = new Button(119, 324, 312,  91, 18); // Take this:
-	_widgets[23] = new Button(120,  67, 292, 507, 18); // Converse 1
-	_widgets[24] = new Button(121,  67, 312, 507, 18); // Converse 2
-	_widgets[25] = new Button(122,  67, 332, 507, 18); // Converse 3
-	_widgets[26] = new Button(123,  67, 352, 507, 18); // Converse 4
-	_widgets[27] = new Button(124,  67, 352, 151, 18); // Converse 5
-	_widgets[28] = new Button(125, 423, 352, 151, 18); // Converse 6
+	_widgets[  1] = new Button(137, 312,  68, 18); // Open
+	_widgets[  2] = new Button(137, 332,  68, 18); // Close
+	_widgets[  3] = new Button( 67, 352,  68, 18); // Give
+	_widgets[  4] = new Button(277, 332,  68, 18); // Turn on
+	_widgets[  5] = new Button(277, 352,  68, 18); // Turn off
+	_widgets[  6] = new Button( 67, 312,  68, 18); // Push
+	_widgets[  7] = new Button( 67, 332,  68, 18); // Pull
+	_widgets[  8] = new Button(277, 312,  68, 18); // Use
+	_widgets[  9] = new Button(137, 352,  68, 18); // Look at
+	_widgets[ 10] = new Button(207, 312,  68, 18); // Walk to
+	_widgets[ 11] = new Button(207, 332,  68, 18); // Pick up
+	_widgets[ 12] = new Button(207, 352,  68, 18); // What is
+	_widgets[ 13] = new Button(347, 312,  68, 18); // Talk
+	_widgets[ 14] = new Button( 97, 312, 121, 18); // Never mind.
+	_widgets[ 32] = new Button(347, 332,  68, 18); // Travel
+	_widgets[ 33] = new Button(347, 352,  68, 18); // To Indy
+	_widgets[ 34] = new Button(347, 352,  68, 18); // To Henry
+	_widgets[ 90] = new Button( 67, 292, 507, 18); // Travel 1
+	_widgets[ 91] = new Button( 67, 312, 507, 18); // Travel 2
+	_widgets[ 92] = new Button( 67, 332, 507, 18); // Travel 3
+	_widgets[100] = new Button( 67, 292, 348, 18); // Sentence
+	_widgets[101] = new Inventory(417, 292, 157, 78);
+	_widgets[119] = new Button(324, 312,  91, 18); // Take this:
+	_widgets[120] = new Button( 67, 292, 507, 18); // Converse 1
+	_widgets[121] = new Button( 67, 312, 507, 18); // Converse 2
+	_widgets[122] = new Button( 67, 332, 507, 18); // Converse 3
+	_widgets[123] = new Button( 67, 352, 507, 18); // Converse 4
+	_widgets[124] = new Button( 67, 352, 151, 18); // Converse 5
+	_widgets[125] = new Button(423, 352, 151, 18); // Converse 6
 
-#if 0
-	// Inventory widget sub-widgets.
-
-	// No matter how many objects you are carrying, only six inventory slots
-	// are visible.
-
-	Widget *w = _widgets[21];
-	assert(w->_verbid == 101);
-
-	int x = w->_bounds.left + 6;
-	int y = w->_bounds.top + 6;
-
-	// Each slot is 12 pixels tall (as seen when they are highlighted), which
-	// means they have to overlap slightly to fit. It is assumed that this will
-	// never interfere with the text drawing.
-
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
-		_inventorySlots[i] = new InventorySlot(i, x, y, 128, 12);
-		_inventorySlots[i]->setGui(this);
-		_inventorySlots[i]->setSurface(_vm->_macScreen);
-		y += 11;
-	}
-
-	// Scrollbar arrow buttons
-	x = w->_bounds.left + 137;
-	y = w->_bounds.top + 4;
-
-	_inventoryScrollButtons[0] = new InventoryScrollButton(x, w->_bounds.top + 4, 16, 16, kScrollUp);
-	_inventoryScrollButtons[1] = new InventoryScrollButton(x, w->_bounds.bottom - 20, 16, 16, kScrollDown);
-
-	for (int i = 0; i < ARRAYSIZE(_inventoryScrollButtons); i++) {
-		_inventoryScrollButtons[i]->setGui(this);
-		_inventoryScrollButtons[i]->setSurface(_vm->_macScreen);
-	}
-#endif
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		i->_value->_verbid = i->_key;
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-		delete _widgets[i];
-#if 0
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++)
-		delete _inventorySlots[i];
-	for (int i = 0; i < ARRAYSIZE(_inventoryScrollButtons); i++)
-		delete _inventoryScrollButtons[i];
-#endif
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		delete i->_value;
 }
 
 bool MacIndy3Gui::isActive() {
@@ -812,13 +1002,8 @@ bool MacIndy3Gui::isActive() {
 void MacIndy3Gui::resetAfterLoad() {
 	_visible = false;
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-		_widgets[i]->reset();
-
-#if 0
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++)
-		_inventorySlots[i]->reset();
-#endif
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		i->_value->reset();
 
 	// In the DOS version, verb ID 102-106 were used for the visible
 	// inventory items, and 107-108 for inventory arrow buttons. In the
@@ -860,15 +1045,38 @@ void MacIndy3Gui::update() {
 		return;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		_widgets[i]->updateTimer();
-		_widgets[i]->_kill = true;
+	// Tentatively mark the verb widgets for removal. Any widget that wants
+	// to stay has to say so.
+
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
+		VerbWidget *w = i->_value;
+
+		w->updateTimer();
+		w->threaten();
 	}
 
 	bool keepGuiAlive = false;
-	bool hasInventory = false;
 
-	updateWidgets(keepGuiAlive, hasInventory);
+	// Collect all active verbs. Verb slot 0 is special, apparently, so we
+	// don't look at that one.
+
+	for (int i = 1; i < _vm->_numVerbs; i++) {
+		VerbSlot *vs = &_vm->_verbs[i];
+
+		if (!vs->saveid && vs->curmode && vs->verbid) {
+			VerbWidget *w = _widgets.getValOrDefault(vs->verbid);
+
+			if (w) {
+				w->updateVerb(i);
+				keepGuiAlive = true;
+			} else {
+				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
+				byte buf[270];
+				_vm->convertMessageToString(ptr, buf, sizeof(buf));
+				debug("Unknown verb: %d %s", vs->verbid, buf);
+			}
+		}
+	}
 
 	if (!keepGuiAlive) {
 		hide();
@@ -878,182 +1086,8 @@ void MacIndy3Gui::update() {
 	if (!isVisible())
 		show();
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		GuiWidget *w = _widgets[i];
-		if (w->_kill && w->_visible) {
-			w->undraw();
-			w->reset();
-		}
-	}
-
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		GuiWidget *w = _widgets[i];
-		if (w->_verbslot != -1 && w->_redraw) {
-			debug("Drawing button %d: (%d) %s", i, w->_verbid, w->name());
-			w->draw();
-		}
-	}
-
-#if 0
-	drawButtons();
-#endif
-
-#if 0
-	if (hasInventory) {
-		updateInventorySlots();
-		drawInventorySlots();
-		fillInventoryArrows();
-	}
-#endif
-}
-
-#if 0
-void MacIndy3Gui::updateTimers() {
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		Widget *w = _widgets[i];
-		if (w->_timer > 0) {
-			w->_timer--;
-			if (w->_timer == 0 && w->_visible) {
-				_vm->runInputScript(kVerbClickArea, w->_verbid, 1);
-				w->_redraw = true;
-			}
-		}
-		w->_kill = true;
-	}
-
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
-		InventorySlot *s = _inventorySlots[i];
-		if (s->_timer > 0) {
-			s->_timer--;
-			if (s->_timer == 0) {
-				s->_redraw = true;
-				_vm->runInputScript(kInventoryClickArea, s->_obj, 1);
-			}
-		}
-	}
-
-	for (int i = 0; i < ARRAYSIZE(_inventoryScrollButtons); i++) {
-		InventoryScrollButton *b = _inventoryScrollButtons[i];
-		if (b->_timer > 0) {
-			b->_timer--;
-			if (b->_timer == 0)
-				b->_redraw = true;
-		}
-	}
-}
-#endif
-
-void MacIndy3Gui::updateWidgets(bool &keepGuiAlive, bool &hasInventory) {
-	// Collect all active verbs. Verb slot 0 is special, apparently, so we
-	// don't look at that one.
-
-	for (int i = 1; i < _vm->_numVerbs; i++) {
-		VerbSlot *vs = &_vm->_verbs[i];
-
-		if (!vs->saveid && vs->curmode && vs->verbid) {
-			int id = -1;
-
-			if (vs->verbid >= 1 && vs->verbid <= 14) {
-				id = vs->verbid - 1;
-			} else if (vs->verbid >= 32 && vs->verbid <= 34) {
-				id = vs->verbid - 18;
-			} else if (vs->verbid >= 90 && vs->verbid <= 92) {
-				id = vs->verbid - 73;
-			} else if (vs->verbid == 100) {
-				id = 20;
-			} else if (vs->verbid == 101) {
-				id = 21;
-				hasInventory = true;
-			} else if (vs->verbid >= 119 && vs->verbid <= 125) {
-				id = vs->verbid - 97;
-			} else {
-				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
-				byte buf[270];
-				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-				debug("Unknown verb: %d %s", vs->verbid, buf);
-			}
-
-			if (id != -1) {
-				_widgets[id]->updateVerb(i);
-				keepGuiAlive = true;
-			}
-		}
-	}
-}
-
-#if 0
-void MacIndy3Gui::updateInventorySlots() {
-	int owner = _vm->VAR(_vm->VAR_EGO);
-
-	int invCount = _vm->getInventoryCount(owner);
-	int invOffset = _vm->VAR(67);
-
-	// The scroll offset must be non-negative and if there are six or less
-	// items in the inventory, the inventory is fixed in the top position.
-
-	if (invOffset < 0 || invCount <= 6)
-		invOffset = 0;
-
-	// If there are more than six items in the inventory, clamp the scroll
-	// offset to be at most invCount - 6.
-
-	if (invCount > 6 && invOffset >= invCount - 6)
-		invOffset = invCount - 6;
-
-	_vm->VAR(67) = invOffset;
-
-	int invSlot = 0;
-	invCount = 0;
-
-	for (int i = 0; i < _vm->_numInventory && invSlot < ARRAYSIZE(_inventorySlots); i++) {
-		int obj = _vm->_inventory[i];
-		if (obj && _vm->getOwner(obj) == owner) {
-			if (++invCount >= invOffset) {
-				InventorySlot *s = _inventorySlots[invSlot];
-				const byte *name = _vm->getObjOrActorName(obj);
-
-				if (name) {
-					if (!s->_name || strcmp((char *)s->_name, (const char *)name) != 0) {
-						free(s->_name);
-						s->_name = (byte *)scumm_strdup((const char *)name);
-						s->_timer = 0;
-						s->_redraw = true;
-					}
-				} else {
-					if (s->_name) {
-						free(s->_name);
-						s->_name = nullptr;
-						s->_timer = 0;
-						s->_redraw = true;
-					}
-				}
-
-				s->_obj = obj;
-				invSlot++;
-			}
-		}
-	}
-
-	for (int i = invSlot; i < ARRAYSIZE(_inventorySlots); i++) {
-		InventorySlot *s = _inventorySlots[i];
-
-		if (s->_name) {
-			free(s->_name);
-			s->_name = nullptr;
-			s->_obj = -1;
-			s->_timer = 0;
-			s->_redraw = true;
-		}
-	}
-}
-
-#if 0
-void MacIndy3Gui::drawButtons() {
-	// Erase all inactive buttons. Since active buttons may overlap ones
-	// that are now inactive, we have to do this first.
-
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		Widget *w = _widgets[i];
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
+		VerbWidget *w = i->_value;
 
 		if (w->_kill && w->_visible) {
 			w->undraw();
@@ -1061,89 +1095,23 @@ void MacIndy3Gui::drawButtons() {
 		}
 	}
 
-	// Draw all active buttons
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
+		VerbWidget *w = i->_value;
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		Widget *w = _widgets[i];
-
-		if (w->_verbslot != -1 && w->_redraw) {
-			debug("Drawing button %d: (%d) %s", i, w->_verbid, w->name());
+		if (w->_verbslot != -1) {
 			w->draw();
 		}
 	}
 }
-#endif
-
-void MacIndy3Gui::drawInventorySlots() {
-	// Since the inventory slots overlap, draw the highlighted ones (and there
-	// should really only be one at a time) first.
-
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
-		InventorySlot *s = _inventorySlots[i];
-
-		if (s->_redraw && s->_timer == 0)
-			drawInventorySlot(s);
-	}
-
-	for (int i = 0; i < ARRAYSIZE(_inventorySlots); i++) {
-		InventorySlot *s = _inventorySlots[i];
-
-		if (s->_redraw)
-			drawInventorySlot(s);
-	}
-}
-
-void MacIndy3Gui::fillInventoryArrows() {
-	for (int i = 0; i < ARRAYSIZE(_inventoryScrollButtons); i++) {
-		InventoryScrollButton *b = _inventoryScrollButtons[i];
-
-		if (b->_redraw)
-			fillInventoryArrow(b);
-	}
-}
-#endif
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (!isVisible() || _vm->_userPut <= 0)
 		return;
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++) {
-		if (_widgets[i]->handleEvent(event))
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
+		if (i->_value->handleEvent(event))
 			break;
 	}
-
-#if 0
-			if (w->_verbid != 101) {
-				// The input script is invoked when the button animation
-				// times out. Speed-runners will probably hate this, but
-				// I think it looks better this way.
-				w->_redraw = true;
-				w->_timer = BUTTON_TIMER;
-				return;
-			} else {
-				for (int j = 0; j < ARRAYSIZE(_inventorySlots); j++) {
-					InventorySlot *s = _inventorySlots[j];
-
-					if (s->_obj != -1 && s->_bounds.contains(x, y)) {
-						s->_redraw = true;
-						s->_timer = INVENTORY_SLOT_TIMER;
-						return;
-					}
-				}
-
-				for (int j = 0; j < ARRAYSIZE(_inventoryScrollButtons); j++) {
-					InventoryScrollButton *b = _inventoryScrollButtons[j];
-
-					if (b->_enabled && b->_bounds.contains(x, y)) {
-						b->_redraw = true;
-						b->_timer = BUTTON_TIMER;
-						return;
-					}
-				}
-			}
-		}
-	}
-#endif
 }
 
 void MacIndy3Gui::show() {
@@ -1162,8 +1130,8 @@ void MacIndy3Gui::hide() {
 
 	_visible = false;
 
-	for (int i = 0; i < ARRAYSIZE(_widgets); i++)
-		_widgets[i]->reset();
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+		i->_value->reset();
 
 	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
 		return;
@@ -1186,70 +1154,6 @@ void MacIndy3Gui::clear() {
 
 	copyRectToScreen(Common::Rect(0, 288, 640, 400));
 }
-
-#if 0
-void MacIndy3Gui::drawInventoryScrollButton(InventoryScrollButton *b) {
-	Common::Rect r = b->_bounds;
-	uint16 *outline;
-	uint16 *arrow;
-
-	if (b->_direction == kScrollUp) {
-		outline = _upArrowOutline;
-		arrow = _upArrow;
-	} else {
-		outline = _downArrowOutline;
-		arrow = _downArrow;
-	}
-
-	// Don't use fillInventoryArrow() here, because it will needlessly copy
-	// the arrow to the screen. We assume the arrow is always white.
-
-	drawShadowFrame(r, 15, 255);
-	drawBitmap(r, outline, 0);
-	drawBitmap(r, arrow, 15);
-}
-
-void MacIndy3Gui::fillInventoryArrow(InventoryScrollButton *b) {
-	Common::Rect r = b->_bounds;
-	uint16 *bitmap = b->_direction == kScrollUp ? _upArrow : _downArrow;
-	byte color = b->_timer ? 0 : 15;
-
-	drawBitmap(r, bitmap, color);
-	b->_redraw = false;
-	copyRectToScreen(r);
-}
-
-void MacIndy3Gui::drawInventorySlot(InventorySlot *s) {
-	debug("Drawing inventory slot: [%d] %s", s->_slot, s->_name);
-	Common::Rect r = s->_bounds;
-	int fg, bg;
-
-	if (s->_timer) {
-		fg = 15;
-		bg = 0;
-	} else {
-		fg = 0;
-		bg = 15;
-	}
-
-	_macScreen->fillRect(r, bg);
-
-	if (s->_name) {
-		int y = _bounds.top - 1;
-		int x = _bounds.left + 4;
-
-		for (int i = 0; s->_name[i]; i++) {
-			if (s->_name[i] != '@') {
-				_fonts[0]->drawChar(_macScreen, s->_name[i], x, y, fg);
-				x += _fonts[0]->getCharWidth(s->_name[i]);
-			}
-		}
-	}
-
-	s->_redraw = false;
-	copyRectToScreen(r);
-}
-#endif
 
 void MacIndy3Gui::copyRectToScreen(Common::Rect r) {
 	_system->copyRectToScreen(_macScreen->getBasePtr(r.left, r.top), _macScreen->pitch, r.left, r.top, r.width(), r.height());
