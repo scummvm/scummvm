@@ -1750,11 +1750,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec13_wisp",          "Wisp" },                                                                   //   23th Place
 
 	// Ectocomp 2014
-	{ "ec14_weddingday",    "Wedding Day" },
-	{ "ec14_lime",          "Lime Ergot" },
-	{ "ec14_candyrushsaga", "Candy Rush Saga" },
-	{ "ec14_flywall",       "A Fly on the Wall" },
-	{ "ec14_monstermaker",  "Monster Maker" },
+	{ "ec14_weddingday",    "Wedding Day" },                                                            //    5th Place
+	{ "ec14_lime",          "Lime Ergot" },                                                             //    6th Place
+	{ "ec14_candyrushsaga", "Candy Rush Saga" },                                                        //    8th Place
+	{ "ec14_flywall",       "A Fly on the Wall" },                                                      //   11th Place
+	{ "ec14_monstermaker",  "Monster Maker" },                                                          //   16th Place
 
 	// Ectocomp 2015 - La Petite Mort
 	{ "ec15_openthatvein",  "Open That Vein" },                                                         //    1st Place
@@ -1803,82 +1803,82 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ig_garbage",         "Garbage Collection" },
 
 	// IntroComp 2002
-	{ "ic02_timetrap",      "TimeTrap" },
-	{ "ic02_waterhouse",    "The Waterhouse Women" },
+	{ "ic02_timetrap",      "TimeTrap" },                                                               //      Entrant
+	{ "ic02_waterhouse",    "The Waterhouse Women" },                                                   // 3° Runner-Up
 
 	// IntroComp 2003
-	{ "ic03_agency",        "Agency" },
-	{ "ic03_harlequin",     "Harlequin Girl" },
-	{ "ic03_harringtonhouse", "Harrington House" },
-	{ "ic03_realend",       "Reality's End" },
-	{ "ic03_statue",        "The Mage Wars: Statue" },
+	{ "ic03_agency",        "Agency" },                                                                 // 2° Runner-Up
+	{ "ic03_harlequin",     "Harlequin Girl" },                                                         //      Entrant
+	{ "ic03_harringthouse", "Harrington House" },                                                       //      Entrant
+	{ "ic03_realend",       "Reality's End" },                                                          // 1° Runner-Up
+	{ "ic03_statue",        "The Mage Wars: Statue" },                                                  //       Winner
 
 	// IntroComp 2004
-	{ "ic04_auden",         "Auden's Eden" },
-	{ "ic04_jbbrwkyi",      "Intro to Jabberwocky" },
-	{ "ic04_cross",         "On the Cross" },
-	{ "ic04_passenger",     "Passenger" },
-	{ "ic04_runes",         "Runes" },
+	{ "ic04_auden",         "Auden's Eden" },                                                           // 1° Runner-Up
+	{ "ic04_jbbrwkyi",      "Intro to Jabberwocky" },                                                   //    1st Place
+	{ "ic04_cross",         "On the Cross" },                                                           //      Entrant
+	{ "ic04_passenger",     "Passenger" },                                                              // 2° Runner-Up
+	{ "ic04_runes",         "Runes" },                                                                  //      Entrant
 
 	// IntroComp 2005
-	{ "ic05_deadsville",    "Deadsville" },
-	{ "ic05_stale",         "The Fox, The Dragon, and the Stale Loaf of Bread" },
-	{ "ic05_hobbit",        "The Hobbit" },
-	{ "ic05_somewhen",      "Somewhen" },
-	{ "ic05_wscholars",     "Weishaupt Scholars" },
+	{ "ic05_deadsville",    "Deadsville" },                                                             //    1st Place
+	{ "ic05_stale",         "The Fox, The Dragon, and the Stale Loaf of Bread" },                       // 2° Runner-Up
+	{ "ic05_hobbit",        "The Hobbit" },                                                             //      Entrant
+	{ "ic05_somewhen",      "Somewhen" },                                                               //      Entrant
+	{ "ic05_wscholars",     "Weishaupt Scholars" },                                                     // 1° Runner-Up
 
 	// IntroComp 2006
-	{ "ic06_artdeception",  "The Art of Deception" },
-	{ "ic06_childsplay7",   "Child's Play" },
-	{ "ic06_mechs",         "Mechs" },
-	{ "ic06_sabotage",      "Sabotage" },
-	{ "ic06_southerngothic", "Southern Gothic" },
-	{ "ic06_ufury",         "Unyielding Fury" },
+	{ "ic06_artdeception",  "The Art of Deception" },                                                   //      Entrant
+	{ "ic06_childsplay",    "Child's Play" },                                                           // 1° Runner-Up
+	{ "ic06_mechs",         "Mechs" },                                                                  // Hon. Mention
+	{ "ic06_sabotage",      "Sabotage" },                                                               // Hon. Mention
+	{ "ic06_southerngoth",  "Southern Gothic" },                                                        //       Winner
+	{ "ic06_ufury",         "Unyielding Fury" },                                                        // Hon. Mention
 
 	// IntroComp 2007
-	{ "ic07_jackbox",       "Jack in the Box" },
-	{ "ic07_jacobst",       "Jacob's Travels" },
-	{ "ic07_shredspatches", "The King of Shreds and Patches" },
-	{ "ic07_trainstopping", "Trainstopping" },
+	{ "ic07_jackbox",       "Jack in the Box" },                                                        // Hon. Mention
+	{ "ic07_jacobst",       "Jacob's Travels" },                                                        // 2° Runner-Up
+	{ "ic07_shredspatches", "The King of Shreds and Patches" },                                         //       Winner
+	{ "ic07_trainstopping", "Trainstopping" },                                                          // Hon. Mention
 
 	// IntroComp 2008
-	{ "ic08_fiendishzoo",   "Fiendish Zoo" },
-	{ "ic08_stormcellar",   "Storm Cellar" },
-	{ "ic08_bedtimestory",  "Bedtime Story" },
-	{ "ic08_ninetenths",    "Nine-tenths of the Law" },
+	{ "ic08_fiendishzoo",   "Fiendish Zoo" },                                                           // Hon. Mention
+	{ "ic08_stormcellar",   "Storm Cellar" },                                                           // 1° Runner-Up
+	{ "ic08_bedtimestory",  "Bedtime Story" },                                                          // Hon. Mention
+	{ "ic08_ninetenths",    "Nine-tenths of the Law" },                                                 // Hon. Mention
 
 	// IntroComp 2009
-	{ "ic09_gossip",        "Gossip" },
-	{ "ic09_obituary",      "Obituary" },
-	{ "ic09_selves",        "Selves" },
+	{ "ic09_gossip",        "Gossip" },                                                                 // 1° Runner-Up
+	{ "ic09_obituary",      "Obituary" },                                                               //       Winner
+	{ "ic09_selves",        "Selves" },                                                                 // 2° Runner-Up
 
 	// IntroComp 2010
-	{ "ic10_touristtrap",   "Tourist Trap" },
-	{ "ic10_moratori",      "A Fleeting Case of Self-Possession, or, Memento Moratori" },
-	{ "ic10_plan6",         "Plan 6 from Inner Earth" },
-	{ "ic10_waker",         "Waker" },
+	{ "ic10_touristtrap",   "Tourist Trap" },                                                           //       Winner
+	{ "ic10_moratori",      "A Fleeting Case of Self-Possession, or, Memento Moratori" },               // 1° Runner-Up
+	{ "ic10_plan6",         "Plan 6 From Inner Earth" },                                                // 2° Runner-Up
+	{ "ic10_waker",         "Waker" },                                                                  // Hon. Mention
 
 	// IntroComp 2011
-	{ "ic11_bender",        "Bender" },
-	{ "ic11_despondencyindex", "The Despondency Index" },
-	{ "ic11_parthenon",     "Parthenon" },
-	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },
-	{ "ic11_stallingtime",  "Stalling for Time" },
+	{ "ic11_bender",        "Bender" },                                                                 // Hon. Mention
+	{ "ic11_despondencyindex", "The Despondency Index" },                                               // Hon. Mention
+	{ "ic11_parthenon",     "Parthenon" },                                                              // Hon. Mention
+	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },                                //    2nd Place
+	{ "ic11_stallingtime",  "Stalling for Time" },                                                      // Hon. Mention
 
 	// IntroComp 2013
-	{ "ic13_thechickensexer", "The Example of the Chicken Sexer" },
+	{ "ic13_thechickensexer", "The Example of the Chicken Sexer" },                                     // Hon. Mention
 
 	// IntroComp 2014
-	{ "ic14_talessoulthief", "Tales of the Soul Thief" },
+	{ "ic14_talessoulthief", "Tales of the Soul Thief" },                                               // Hon. Mention
 
 	// IntroComp 2016
-	{ "ic16_grubbyville",   "Grubbyville" },
+	{ "ic16_grubbyville",   "Grubbyville" },                                                            //    3nd Place
 
 	// IntroComp 2018
-	{ "ic18_napier",        "Napier’s Cache" },
+	{ "ic18_napier",        "Napier’s Cache" },                                                         // Hon. Mention
 
 	// IntroComp 2019
-	{ "ic19_homeland",      "Homeland" },
+	{ "ic19_homeland",      "Homeland" },                                                               // Hon. Mention
 
 	// IF Library Competition 2003
 	{ "lc_serve",           "Serving Your Country" },
@@ -2492,51 +2492,51 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "vindaloofr",         "Vindaloo" },
 
 	// French games: French Comp 2005
-	{ "frc_cercledesgros",  "Le Cercle des Gros Geeks Disparus" },
-	{ "frc_dreamlands",     "Echappee Belle Dans Les Contrees du Reve" },
-	{ "frc_templedefeu",    "Le Temple de Feu" },
+	{ "frc_cercledesgros",  "Le Cercle des Gros Geeks Disparus" },                                      //    1st Place
+	{ "frc_dreamlands",     "Echappee Belle Dans Les Contrees du Reve" },                               //    2nd Place
+	{ "frc_templedefeu",    "Le Temple de Feu" },                                                       //    3rd Place
 
 	// French games: French Comp 2006
-	{ "frc_citeeaux",       "La Cité des Eaux" },
-	{ "frc_sarvegne",       "Sarvegne" },
+	{ "frc_citeeaux",       "La Cité des Eaux" },                                                       //    1st Place
+	{ "frc_sarvegne",       "Sarvegne" },                                                               //    2nd Place
 
 	// French games: French Comp 2007
-	{ "frc_heuresduvent",   "Heures Du Vent" },
-	{ "frc_divinebonace",   "Divine Bonace" },
-	{ "frc_brrr",           "Brrr!" },
-	{ "frc_phareabandonne", "L'Ile du Phare Abandonné" },
+	{ "frc_heuresduvent",   "Heures Du Vent" },                                                         //    1st Place
+	{ "frc_divinebonace",   "Divine Bonace" },                                                          //    2nd Place
+	{ "frc_brrr",           "Brrr!" },                                                                  //    3rd Place
+	{ "frc_phareabandonne", "L'Ile du Phare Abandonné" },                                               //    5th Place
 
 	// French games: French Comp 2008
-	{ "frc_brume", "Brume" },
-	{ "frc_lettresvolees",  "Les Lettres Volées" },
-	{ "frc_louplachevre",   "Le Loup, la Chèvre, et la Salade" },
+	{ "frc_brume",          "Brume" },                                                                  //    1st Place
+	{ "frc_lettresvolees",  "Les Lettres Volées" },                                                     //    2nd Place
+	{ "frc_louplachevre",   "Le Loup, la Chèvre, et la Salade" },                                       //    4th Place
 
 	// French games: French Comp 2009
-	{ "frc_catapole",       "Catapole" },
-	{ "frc_chambresyrion",  "La Chambre de Syrion" },
-	{ "frc_mechants",       "Les Méchants Meurent au Moins deux Fois" },
+	{ "frc_catapole",       "Catapole" },                                                               //    1st Place
+	{ "frc_chambresyrion",  "La Chambre de Syrion" },                                                   //    2nd Place
+	{ "frc_mechants",       "Les Méchants Meurent au Moins deux Fois" },                                //    3rd Place
 
 	// French games: French Comp 2011
-	{ "frc_aventureszeus",  "Les Aventures de Zeus" },
-	{ "frc_dardenfer",      "Dard d'Enfer" },
-	{ "frc_terreciel",      "Entre Terre et Ciel" },
-	{ "frc_astrologue",     "La Grande Prédiction ou l'Astrologue Etourdi" },
-	{ "frc_homelandsec",    "Homeland Security" },
+	{ "frc_aventureszeus",  "Les Aventures de Zeus" },                                                  //    1st Place
+	{ "frc_dardenfer",      "Dard d'Enfer" },                                                           //    2nd Place
+	{ "frc_terreciel",      "Entre Terre et Ciel" },                                                    //    3rd Place
+	{ "frc_astrologue",     "La Grande Prédiction ou l'Astrologue Etourdi" },                           //    4th Place
+	{ "frc_homelandsec",    "Homeland Security" },                                                      //    5th Place
 
 	// French games: French Comp 2013
-	{ "frc_lifeonmarsfr",   "Life on Mars?" },
-	{ "frc_sourcedezig",    "La Source de Zig" },
-	{ "frc_trac",           "Trac" },
+	{ "frc_lifeonmarsfr",   "Life on Mars?" },                                                          //    1st Place
+	{ "frc_sourcedezig",    "La Source de Zig" },                                                       //    3rd Place
+	{ "frc_trac",           "Trac" },                                                                   //    4th Place
 
 	// French games: French Comp 2015
-	{ "frc_envol",          "L'Envol" },
+	{ "frc_envol",          "L'Envol" },                                                                //    1st Place
 
 	// French games: French Comp 2016
-	{ "frc_tipelau",        "Tipelau" },
-	{ "frc_diamantblanc",   "Le Diamant Blanc" },
+	{ "frc_tipelau",        "Tipelau" },                                                                //    2nd Place
+	{ "frc_diamantblanc",   "Le Diamant Blanc" },                                                       //    3rd Place
 
 	// French games: French Comp 2018
-	{ "frc_exil",           "L'Exil" },
+	{ "frc_exil",           "L'Exil" },                                                                 //    5th Place
 
 	// German games
 	{ "abenteuer",          "Abenteuer" },
