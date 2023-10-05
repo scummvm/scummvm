@@ -22,13 +22,16 @@
 #ifndef NANCY_ACTION_SECONDARYMOVIE_H
 #define NANCY_ACTION_SECONDARYMOVIE_H
 
-#include "engines/nancy/video.h"
 #include "engines/nancy/action/actionrecord.h"
+
+namespace Video {
+class VideoDecoder;
+}
 
 namespace Nancy {
 namespace Action {
 
-// Plays an AVF video. Optionally supports:
+// Plays an AVF or Bink video. Optionally supports:
 // - playing a sound;
 // - reverse playback;
 // - moving with the scene's background frame;
@@ -65,6 +68,7 @@ public:
 	Common::String _paletteName;
 	Common::String _bitmapOverlayName;
 
+	uint16 _videoType = kVideoPlaytypeAVF;
 	uint16 _videoFormat = kLargeVideoFormat;
 	uint16 _videoSceneChange = kMovieNoSceneChange;
 	byte _playerCursorAllowed = kPlayerCursorAllowed;
@@ -79,7 +83,7 @@ public:
 	SceneChangeDescription _sceneChange;
 	Common::Array<SecondaryVideoDescription> _videoDescs;
 
-	AVFDecoder _decoder;
+	Video::VideoDecoder *_decoder = nullptr;
 
 protected:
 	Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }

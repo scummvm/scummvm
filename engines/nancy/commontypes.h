@@ -91,6 +91,9 @@ static const byte kPlayerDuskDawn					= 2;
 static const byte kSmallVideoFormat					= 1;
 static const byte kLargeVideoFormat					= 2;
 
+static const byte kVideoPlaytypeAVF					= 0;
+static const byte kVideoPlaytypeBink				= 1;
+
 // Overlay
 static const byte kPlayOverlayPlain					= 1;
 static const byte kPlayOverlayTransparent			= 2;

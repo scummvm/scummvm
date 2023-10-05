@@ -644,7 +644,7 @@ void ActionManager::synchronizeMovieWithSound() {
 
 			if (length.msecs() != 0) {
 				// ..and set the movie's playback speed to match
-				movie->_decoder.setRate(Common::Rational(movie->_decoder.getDuration().msecs(), length.msecs()));
+				movie->_decoder->setRate(Common::Rational(movie->_decoder->getDuration().msecs(), length.msecs()));
 			}
 		}
 	}
