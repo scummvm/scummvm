@@ -192,30 +192,33 @@ void Overlay::execute() {
 					}
 				}
 
+				uint16 frameDiff = 1;
+				uint16 nextFrame = _currentFrame;
+
 				if (_nextFrameTime == 0) {
 					_nextFrameTime = _currentFrameTime + _frameTime;
 				} else {
-					_nextFrameTime += _frameTime;
+					uint32 timeDiff = _currentFrameTime - _nextFrameTime;
+					frameDiff = timeDiff / _frameTime;
+					_nextFrameTime += _frameTime * frameDiff;
 				}
 
-				uint16 nextFrame = _currentFrame;
-
 				if (_playDirection == kPlayOverlayReverse) {
-					if (nextFrame - 1 < _loopFirstFrame) {
+					if (nextFrame - frameDiff < _loopFirstFrame) {
 						// We keep looping if sound is present (nancy1 only)
 						if (_loop == kPlayOverlayLoop || (_sound.name != "NO SOUND" && g_nancy->getGameType() == kGameTypeNancy1)) {
-							nextFrame = _loopLastFrame;
+							nextFrame = _loopLastFrame - (frameDiff % (_loopLastFrame - _loopFirstFrame + 1));
 						}
 					} else {
-						--nextFrame;
+						nextFrame -= frameDiff;
 					}
 				} else {
-					if (nextFrame + 1 > _loopLastFrame) {
+					if (nextFrame + frameDiff > _loopLastFrame) {
 						if (_loop == kPlayOverlayLoop || (_sound.name != "NO SOUND" && g_nancy->getGameType() == kGameTypeNancy1)) {
-							nextFrame = _loopFirstFrame;
+							nextFrame = _loopFirstFrame + (frameDiff % (_loopLastFrame - _loopFirstFrame + 1));
 						}
 					} else {
-						++nextFrame;
+						nextFrame += frameDiff;
 					}
 				}
 

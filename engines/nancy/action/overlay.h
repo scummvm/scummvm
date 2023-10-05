@@ -63,7 +63,7 @@ public:
 	uint16 _firstFrame = 0;
 	uint16 _loopFirstFrame = 0;
 	uint16 _loopLastFrame = 0;
-	Time _frameTime;
+	uint32 _frameTime = 0;
 	FlagDescription _interruptCondition;
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _flagsOnTrigger;
@@ -78,7 +78,7 @@ public:
 
 	int16 _currentFrame = -1;
 	int16 _currentViewportFrame = -1;
-	Time _nextFrameTime;
+	uint32 _nextFrameTime = 0;
 	bool _isInterruptible;
 
 protected:
