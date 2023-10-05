@@ -1410,7 +1410,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	// Separate iphoneos and iphonesimulator definitions since simulator running on x86_64
 	// hosts doesn't support NEON
 	ValueList scummvmIOS_defines = scummvmIOSsimulator_defines;
-	ADD_DEFINE(scummvmIOS_defines, "SCUMMVM_NEON");
+	//	ADD_DEFINE(scummvmIOS_defines, "SCUMMVM_NEON");
 	ADD_SETTING_LIST(iPhone_Debug, "\"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*]\"", scummvmIOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
 	ADD_SETTING(iPhone_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
@@ -1573,7 +1573,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	// Separate appletvos and appletvsimulator definitions since simulator running on x86_64
 	// hosts doesn't support NEON
 	ValueList scummvmTVOS_defines = scummvmTVOSsimulator_defines;
-	ADD_DEFINE(scummvmTVOS_defines, "SCUMMVM_NEON");
+	//	ADD_DEFINE(scummvmTVOS_defines, "SCUMMVM_NEON");
 	ADD_SETTING_LIST(tvOS_Debug, "\"GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*]\"", scummvmTVOS_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(tvOS_Debug, "ASSETCATALOG_COMPILER_APPICON_NAME", "AppIcon");
 	ADD_SETTING(tvOS_Debug, "ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME", "LaunchImage");
