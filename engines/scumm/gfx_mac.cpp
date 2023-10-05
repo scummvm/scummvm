@@ -395,10 +395,15 @@ void MacIndy3Gui::Widget::reset() {
 	_redraw = false;
 }
 
-bool MacIndy3Gui::Widget::updateTimer() {
+bool MacIndy3Gui::Widget::updateTimer(int delta) {
 	if (_timer == 0)
 		return false;
-	return --_timer == 0;
+
+	if (delta > _timer)
+		delta = _timer;
+
+	_timer -= MIN(delta, _timer);
+	return _timer == 0;
 }
 
 void MacIndy3Gui::Widget::copyRectToScreen(Common::Rect r) {
@@ -483,23 +488,41 @@ void MacIndy3Gui::Button::reset() {
 }
 
 bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
-	if (event.type != Common::EVENT_LBUTTONDOWN)
+	if (!_verbid || !_enabled)
 		return false;
 
-	int x = event.mouse.x;
-	int y = event.mouse.y;
+	bool caughtEvent = false;
 
-	if (_verbid && _enabled && _bounds.contains(x, y)) {
-		_redraw = true;
-		_timer = 15;
-		return true;
+	uint8 key = _vm->_verbs[_verbslot].key;
+
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (!event.kbd.hasFlags(Common::KBD_NON_STICKY) && event.kbd.keycode == key) {
+			caughtEvent = true;
+		}
+	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+		int x = event.mouse.x;
+		int y = event.mouse.y;
+
+		if (_bounds.contains(x, y))
+			caughtEvent = true;
 	}
 
-	return false;
+	// Events are handled at the end of the animation. This blatant attack
+	// on speedrunners all over the world was done because that's what the
+	// original seems to do, and it looks better. Based on tests in Mac
+	// emulators, the speed of the animation depended on the speed of your
+	// computer, so we just set something that looks good here.
+
+	if (caughtEvent) {
+		_redraw = true;
+		_timer = 12;
+	}
+
+	return caughtEvent;
 }
 
-bool MacIndy3Gui::Button::updateTimer() {
-	bool ret = VerbWidget::updateTimer();
+bool MacIndy3Gui::Button::updateTimer(int delta) {
+	bool ret = VerbWidget::updateTimer(delta);
 
 	if (ret) {
 		if (_visible) {
@@ -721,6 +744,9 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 }
 
 bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
+	if (!_verbid || !_enabled)
+		return false;
+
 	if (event.type != Common::EVENT_LBUTTONDOWN)
 		return false;
 
@@ -737,13 +763,13 @@ bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
 	return false;
 }
 
-bool MacIndy3Gui::Inventory::updateTimer() {
-	VerbWidget::updateTimer();
+bool MacIndy3Gui::Inventory::updateTimer(int delta) {
+	VerbWidget::updateTimer(delta);
 
 	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
 		Slot *s = _slots[i];
 
-		if (s->updateTimer()) {
+		if (s->updateTimer(delta)) {
 			s->_redraw = true;
 			_vm->runInputScript(kInventoryClickArea, s->_obj, 1);
 		}
@@ -752,7 +778,7 @@ bool MacIndy3Gui::Inventory::updateTimer() {
 	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
 		ScrollButton *b = _scrollButtons[i];
 
-		if (b->updateTimer()) {
+		if (b->updateTimer(delta)) {
 			b->_redraw = true;
 		}
 	}
@@ -819,15 +845,15 @@ bool MacIndy3Gui::Inventory::Slot::handleEvent(Common::Event &event) {
 
 	if (_obj != -1 && _bounds.contains(event.mouse.x, event.mouse.y)) {
 		_redraw = true;
-		_timer = 7;
+		_timer = 12;
 		return true;
 	}
 
 	return false;
 }
 
-bool MacIndy3Gui::Inventory::Slot::updateTimer() {
-	bool ret = Widget::updateTimer();
+bool MacIndy3Gui::Inventory::Slot::updateTimer(int delta) {
+	bool ret = Widget::updateTimer(delta);
 
 	if (ret) {
 		_vm->runInputScript(kInventoryClickArea, _obj, 1);
@@ -892,7 +918,7 @@ bool MacIndy3Gui::Inventory::ScrollButton::handleEvent(Common::Event &event) {
 
 	if (_enabled && _bounds.contains(event.mouse.x, event.mouse.y)) {
 		_redraw = true;
-		_timer = 15;
+		_timer = 12;
 		return true;
 	}
 
@@ -1031,7 +1057,7 @@ void MacIndy3Gui::resetAfterLoad() {
 #endif
 }
 
-void MacIndy3Gui::update() {
+void MacIndy3Gui::update(int delta) {
 	static int lastVerbScript = -1;
 
 	if (_vm->VAR(_vm->VAR_VERB_SCRIPT) != lastVerbScript) {
@@ -1051,7 +1077,7 @@ void MacIndy3Gui::update() {
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
 		VerbWidget *w = i->_value;
 
-		w->updateTimer();
+		w->updateTimer(delta);
 		w->threaten();
 	}
 
