@@ -76,6 +76,7 @@ uint getSizeNextPOT(uint size);
 
 #if TARGET_OS_IOS
 - (void)interfaceOrientationChanged:(UIInterfaceOrientation)orientation;
+- (void)updateTouchMode;
 #endif
 
 - (void)showKeyboard;

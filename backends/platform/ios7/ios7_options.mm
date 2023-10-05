@@ -552,6 +552,7 @@ void OSystem_iOS7::applyBackendSettings() {
 
 #if TARGET_OS_IOS
 	applyOrientationSettings();
+	updateTouchMode();
 #endif
 }
 
@@ -604,6 +605,8 @@ void OSystem_iOS7::applyTouchSettings(bool _3dMode, bool overlayShown) {
 	} else {
 	 _currentTouchMode = kTouchModeTouchpad;
 	}
+
+	updateTouchMode();
 #else
 	(void)_3dMode;
 	(void)overlayShown;

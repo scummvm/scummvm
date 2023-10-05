@@ -161,6 +161,10 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_SCREEN_CHANGED;
 			break;
 
+		case kInputTouchModeChanged:
+			handleEvent_touchModeChanged();
+			break;
+
 		default:
 			break;
 		}
@@ -351,6 +355,20 @@ void  OSystem_iOS7::handleEvent_orientationChanged(int orientation) {
 		_screenOrientation = newOrientation;
 		rebuildSurface();
 	}
+}
+
+void OSystem_iOS7::handleEvent_touchModeChanged() {
+	switch (_currentTouchMode) {
+	case kTouchModeDirect:
+		_currentTouchMode = kTouchModeTouchpad;
+		break;
+	case kTouchModeTouchpad:
+	default:
+		_currentTouchMode = kTouchModeDirect;
+		break;
+	}
+
+	updateTouchMode();
 }
 
 void OSystem_iOS7::rebuildSurface() {

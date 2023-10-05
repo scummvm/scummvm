@@ -169,6 +169,7 @@ public:
 
 protected:
 	void updateOutputSurface();
+	void updateTouchMode();
 	void setShowKeyboard(bool);
 	bool isKeyboardShown() const;
 
@@ -183,6 +184,7 @@ protected:
 	bool handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches);
 	void handleEvent_keyPressed(Common::Event &event, int keyPressed);
 	void handleEvent_orientationChanged(int orientation);
+	void handleEvent_touchModeChanged();
 	void handleEvent_applicationSuspended();
 	void handleEvent_applicationResumed();
 	void handleEvent_applicationSaveState();
