@@ -84,7 +84,7 @@
 		if ([[view classForCoder] isEqual:NSClassFromString(@"GCControllerView")]) {
 			// Set the frame alpha to the user specified value
 			// to make the virtual controller more transparent
-			view.alpha = ((float)ConfMan.getInt("onscreen_control_opacity") / 10.0);
+			view.alpha = ((float)ConfMan.getInt("gamepad_controller_opacity") / 10.0);
 
 			// Since the iOS7 view controller frame is adjusted for the safe area, the same
 			// has to be done for the gamepad controller view. One could think that subviews
