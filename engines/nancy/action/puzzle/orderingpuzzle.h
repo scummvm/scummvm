@@ -34,11 +34,12 @@ namespace Action {
 //		- OrderItemsPuzzle: Buttons may depress or stay down, but player can't depress manually.
 //			Has second button state that is activated when player is holding a specific item. (see fingerprint keypad puzzle in nancy4)
 //		- KeypadPuzzle: Buttons may auto-depress, stay down, and can be depressed manually by player.
-//			Adds an optional button for manually checking for correct solution, and doubles the number of possible buttons.
+//			Adds an optional button for manually checking for correct solution, number of possible buttons is 30.
+//		- KeypadPuzzleTerse: Same as above, but data format is shorter, and supports up to 100 buttons
 class OrderingPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad };
+	enum PuzzleType { kOrdering, kPiano, kOrderItems, kKeypad, kKeypadTerse };
 	OrderingPuzzle(PuzzleType type) : RenderActionRecord(7), _puzzleType(type) {}
 	virtual ~OrderingPuzzle() {}
 
@@ -61,6 +62,7 @@ protected:
 	bool _hasSecondState = false;
 	bool _itemsStayDown = true;
 	bool _needButtonToCheckSuccess = false;
+	bool _checkOrder = true;
 	Common::Rect _checkButtonSrc;
 	Common::Rect _checkButtonDest;
 	Common::Array<Common::Rect> _down1Rects;

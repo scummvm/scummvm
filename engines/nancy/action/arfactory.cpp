@@ -311,6 +311,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new MouseLightPuzzle();
 	case 220:
 		return new TwoDialPuzzle();
+	case 224:
+		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	default:
 		return nullptr;
 	}
