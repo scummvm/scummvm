@@ -6,8 +6,8 @@ build:
     python: "3.10"
 
 sphinx:
-  configuration: docportal/conf.py
+  configuration: doc/docportal/conf.py
 
 python:
   install:
-    - requirements: docportal/requirements.txt
+    - requirements: doc/docportal/requirements.txt
