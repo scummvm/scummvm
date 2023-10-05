@@ -326,11 +326,15 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				if (NancySceneState._flags.items[dep.label] == g_nancy->_false &&
 					dep.label != NancySceneState._flags.heldItem) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 			} else {
 				if (NancySceneState._flags.items[dep.label] == g_nancy->_true ||
 					dep.label == NancySceneState._flags.heldItem) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 			}
 
@@ -340,6 +344,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				// nancy1 has code for some timer array that never gets used
 				// and is discarded from nancy2 onward
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
@@ -353,7 +359,11 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 
 					if (elapsed >= dep.timeData) {
 						dep.satisfied = true;
+					} else {
+						dep.satisfied = false;
 					}
+				} else {
+					dep.satisfied = false;
 				}
 			} else {
 				dep.satisfied = NancySceneState.getLogicCondition(dep.label, dep.condition);
@@ -363,12 +373,16 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 		case DependencyType::kElapsedGameTime:
 			if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
 		case DependencyType::kElapsedSceneTime:
 			if (NancySceneState._timers.sceneTime >= dep.timeData) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
@@ -400,6 +414,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				if (	(dep.minutes < count && g_nancy->getGameType() <= kGameTypeNancy6) ||
 						(dep.minutes > count && g_nancy->getGameType() >= kGameTypeNancy7)) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 
 				break;
@@ -407,12 +423,16 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 				if (	(dep.minutes > count && g_nancy->getGameType() <= kGameTypeNancy6) ||
 						(dep.minutes < count && g_nancy->getGameType() >= kGameTypeNancy7)) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 
 				break;
 			case 3:
 				if (dep.minutes == count) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 
 				break;
@@ -480,24 +500,32 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 		case DependencyType::kPlayerTOD:
 			if (dep.label == NancySceneState.getPlayerTOD()) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
 		case DependencyType::kTimerLessThanDependencyTime:
 			if (NancySceneState._timers.timerTime <= dep.timeData) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
 		case DependencyType::kTimerGreaterThanDependencyTime:
 			if (NancySceneState._timers.timerTime > dep.timeData) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
 		case DependencyType::kDifficultyLevel:
 			if (dep.condition == NancySceneState._difficulty) {
 				dep.satisfied = true;
+			} else {
+				dep.satisfied = false;
 			}
 
 			break;
@@ -505,10 +533,14 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			if (ConfMan.getBool("subtitles")) {
 				if (dep.condition == 2) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 			} else {
 				if (dep.condition == 1) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 			}
 
@@ -527,6 +559,8 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			if (!dep.stopEvaluating) {
 				if ((int)g_nancy->_randomSource->getRandomNumber(99) < dep.condition) {
 					dep.satisfied = true;
+				} else {
+					dep.satisfied = false;
 				}
 
 				dep.stopEvaluating = true;
