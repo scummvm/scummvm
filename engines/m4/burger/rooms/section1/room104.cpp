@@ -84,8 +84,7 @@ void Room104::init() {
 		break;
 
 	default:
-		ws_demand_location(213, 297);
-		ws_demand_facing(5);
+		ws_demand_location(213, 297, 5);
 		break;
 	}
 
@@ -129,50 +128,45 @@ void Room104::daemon() {
 		case 6:
 			_flag1 = false;
 			_val2 = 9;
-			series_play("104dr04", 512, 2, 3, 6, 0, 100, 0, 0, 0, 10);
-			series_play("104dr04s", 513, 2, -1, 6, 0, 100, 0, 0, 0, 10);
+			Series::series_play("104dr04", 0x200, 2, 3, 6, 0, 100, 0, 0, 0, 10);
 			break;
 
 		case 8:
 			_flag1 = false;
 			_val2 = 13;
-			series_play("104dr04", 512, 2, 3, 6, 0, 100, 0, 0, 0, 10);
-			series_play("104dr04s", 513, 2, -1, 6, 0, 100, 0, 0, 0, 10);
+			Series::series_play("104dr04", 0x200, 2, 3, 6, 0, 100, 0, 0, 0, 10);
 			break;
 
 		case 9:
 			_flag1 = false;
 			_val2 = 14;
-			series_play("104dr02", 512, 0, 3, 6, 0, 100, 0, 0, 0, 7);
-			series_play("104dr02s", 513, 0, -1, 6, 0, 100, 0, 0, 0, 7);
+			Series::series_play("104dr02", 0x200, 0, 3, 6, 0, 100, 0, 0, 0, 7);
 			break;
 
 		case 10:
 			digi_stop(2);
 			freeSeries();
 			_flag1 = true;
-			_series1 = series_play("104DR04", 512, 16, 4, 6, 0, 100, 0, 0, 0, 10);
-			_series2 = series_play("104DR04S", 513, 16, -1, 6, 0, 100, 0, 0, 0, 10);
+			_series1.play("104DR04", 0x200, 16, 4, 6, 0, 100, 0, 0, 0, 10);
 			break;
 
 		case 12:
 			freeSeries();
 			_val2 = 10;
-			series_play_with_breaks(PLAY1, "104DR03", 512, 3, 1);
+			series_play_with_breaks(PLAY1, "104DR03", 0x200, 3, 1);
 			break;
 
 		case 13:
 			_flag1 = false;
 			_val2 = 9;
-			series_play_with_breaks(PLAY2, "104dr01", 512, 3, 1);
+			series_play_with_breaks(PLAY2, "104dr01", 0x200, 3, 1);
 			break;
 
 		case 14:
 			if (!digi_play_state(2)) {
 				if (imath_ranged_rand(1, 4) == 1) {
 					_val2 = 15;
-					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 13, 14);
-					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 13, 14);
+					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 13, 14);
 					return;
 				}
 
@@ -225,8 +219,7 @@ void Room104::daemon() {
 			}
 
 			frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
-			series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
-			series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
+			Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
 			break;
 
 		case 15:
@@ -234,13 +227,11 @@ void Room104::daemon() {
 				switch (imath_ranged_rand(1, 6)) {
 				case 1:
 					_val2 = 14;
-					series_play("104dr02", 512, 2, 3, 8, 0, 100, 0, 0, 13, 14);
-					series_play("104dr02s", 513, 2, -1, 8, 0, 100, 0, 0, 13, 14);
+					Series::series_play("104dr02", 0x200, 2, 3, 8, 0, 100, 0, 0, 13, 14);
 					return;
 				case 2:
 					_val2 = 16;
-					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 20, 20);
-					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 20, 20);
+					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 20, 20);
 					return;
 				default:
 					break;
@@ -268,43 +259,41 @@ void Room104::daemon() {
 				default:
 					break;
 				}
-
-				_flag1 = false;
-				++_val1;
-
-				frame = 0;
-				if (_val1 < 3)
-					frame = 16;
-				else if (_val1 < 14)
-					frame = 18;
-				else {
-					switch (imath_ranged_rand(1, 3)) {
-					case 1:
-						frame = 15;
-						break;
-					case 2:
-						frame = 17;
-						break;
-					case 3:
-						frame = 19;
-						break;
-					default:
-						break;
-					}
-				}
-
-				frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
-				series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
-				series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
 			}
+
+			_flag1 = false;
+			++_val1;
+
+			frame = 0;
+			if (_val1 < 3)
+				frame = 11;
+			else if (_val1 < 14)
+				frame = 10;
+			else {
+				switch (imath_ranged_rand(1, 3)) {
+				case 1:
+					frame = 8;
+					break;
+				case 2:
+					frame = 9;
+					break;
+				case 3:
+					frame = 12;
+					break;
+				default:
+					break;
+				}
+			}
+
+			frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
+			Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
 			break;
 
 		case 16:
 			if (!digi_play_state(2)) {
 				if (imath_ranged_rand(1, 4) == 1) {
 					_val2 = 15;
-					series_play("104dr02", 512, 0, 3, 8, 0, 100, 0, 0, 20, 20);
-					series_play("104dr02s", 513, 0, -1, 8, 0, 100, 0, 0, 20, 20);
+					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 20, 20);
 					break;
 				} else {
 					switch (getRandom()) {
@@ -353,8 +342,7 @@ void Room104::daemon() {
 					}
 
 					frameRate = (_val1 < 14) ? 15 : imath_ranged_rand(6, 15);
-					series_play("104dr02", 512, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
-					series_play("104dr02s", 513, 0, -1, frameRate, 0, 100, 0, 0, frame, frame);
+					Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
 				}
 			}
 			break;
@@ -363,16 +351,14 @@ void Room104::daemon() {
 			freeSeries();
 			_flag1 = true;
 			_val2 = 18;
-			_series1 = series_play("104DR04", 512, 4, -1, 6, -1, 100, 0, 0, 11, 15);
-			_series2 = series_show("104DR04S", 513, 0, -1, -1, 11);
+			_series1.play("104DR04", 512, 4, -1, 6, -1, 100, 0, 0, 11, 15);
 			digi_play(conv_sound_to_play(), 1, 255, 3);
 			break;
 
 		case 18:
 			freeSeries();
 			_flag1 = true;
-			_series1 = series_show("104DR04", 512, 0, -1, -1, 11);
-			_series2 = series_show("104DR04S", 513, 0, -1, -1, 11);
+			_series1.show("104DR04", 512, 0, -1, -1, 11);
 			conv_resume_curr();
 			break;
 
@@ -529,8 +515,7 @@ void Room104::conv() {
 
 void Room104::freeSeries() {
 	if (_flag1) {
-		terminateMachine(_series1);
-		terminateMachine(_series2);
+		_series1.terminate();
 		_flag1 = false;
 	}
 }
