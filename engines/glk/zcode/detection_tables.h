@@ -1067,7 +1067,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "10indiansi5",        "Mysterious Adventures #10: Ten Little Indians" },
 	{ "waxworksi5",         "Mysterious Adventures #11: Waxworks" },
 
-	// 1992 album Apollo 18+20, by They Might be Giants
+	// Apollo 18+20: The IF Tribute Album
 	{ "apollo1",            "Apollo 18+20 #01: Dig My Grave" },
 	{ "apollo2",            "Apollo 18+20 #02: I Palindrome I" },
 	{ "apollo3",            "Apollo 18+20 #03: She's Actual Size" },
@@ -1107,7 +1107,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "apollo37",           "Apollo 18+20 #37: Fingertips - I Walk Along Darkened Corridors" },
 	{ "apollo38",           "Apollo 18+20 #38: Space Suit" },
 
-	// The 1995 Annual Interactive Fiction Competition
+	// IFComp 1995
 	{ "if95_weather",       "A Change in the Weather" },                                                //    1st Place
 	{ "if95_mindelectric",  "The Mind Electric" },                                                      //    2nd Place
 	{ "if95_magictoyshop",  "The Magic Toyshop" },                                                      //    3rd Place
@@ -1115,7 +1115,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if95_libraryfront",  "All Quiet on the Library Front" },                                         //    5th Place
 	{ "if95_tubetrouble",   "Tube Trouble" },                                                           //    6th Place
 
-	// The 1996 Annual Interactive Fiction Competition
+	// IFComp 1996
 	{ "if96_sherbet",       "The Meteor, the Stone and a Long Glass of Sherbet" },                      //    1st Place
 	{ "if96_tapestry",      "Tapestry" },                                                               //    2nd Place
 	{ "if96_delusions",     "Delusions" },                                                              //    3rd Place
@@ -1134,7 +1134,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if96_liquid",        "Punkirita Quest 1: Liquid" },                                              //   25th Place
 	{ "comp96",             "IF Competition '96 Unofficial FE Game" },
 
-	// The 1997 Annual Interactive Fiction Competition
+	// IFComp 1997
 	{ "if97_edifice",       "The Edifice" },                                                            //    1st Place
 	{ "if97_spring",        "She's Got a Thing For a Spring" },                                         //    4th Place
 	{ "if97_bear",          "A Bear's Night Out" },                                                     // 	  5th Place
@@ -1157,7 +1157,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if97_cominghome",    "Coming Home" },                                                            //   34th Place
 	{ "comp97",             "IF Competition '97 Unofficial FE Game" },
 
-	// The 1998 Annual Interactive Fiction Competition
+	// IFComp 1998
 	{ "if98_photopia",      "Photopia" },                                                               //    1st Place
 	{ "if98_muse",          "Muse: An Autumn Romance" },                                                //    2nd Place
 	{ "if98_enlighte",      "Enlightenment" },                                                          // 	  5th Place
@@ -1179,7 +1179,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if98_hrs",           "Human Resources Stories" },                                                //   27th Place
 	{ "comp98",             "IF Competition '98 Unofficial FE Game" },
 
-	// The 1999 Annual Interactive Fiction Competition
+	// IFComp 1999
 	{ "if99_winterwonder",  "Winter Wonderland" },                                                      //    1st Place
 	{ "if99_forachange",    "For a Change" },                                                           //    2nd Place
 	{ "if99_softfood",      "A Day for Soft Food" },                                                    // 	  4th Place
@@ -1201,7 +1201,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if99_guard",         "Guard Duty" },                                                             //   36th Place
 	{ "comp99",             "IF Competition '99 Unofficial FE Game" },
 
-	// The 2000 Annual Interactive Fiction Competition
+	// IFComp 2000
 	{ "if00_metamorphoses", "Metamorphoses" },                                                          //    2nd Place
 	{ "if00_andrewplotkin", "Being Andrew Plotkin" },                                                   //    3rd Place
 	{ "if00_adverbum",      "Ad Verbum" },                                                              //    4th Place
@@ -1236,7 +1236,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if00_whatif",        "What-IF?" },                                                               //   52nd Place
 	{ "comp00",             "IF Competition '00 Unofficial FE Game" },
 
-	// The 2001 Annual Interactive Fiction Competition
+	// IFComp 2001
 	{ "if01_allroads",      "All Roads" },                                                              //    1st Place
 	{ "if01_moments",       "Moments Out of Time" },                                                    //    2nd Place
 	{ "if01_heroes",        "Heroes" },                                                                 //    3rd Place
@@ -1259,7 +1259,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if01_newcomer",      "The Newcomer" },                                                           //   49th Place
 	{ "comp01",             "IF Competition '01 Unofficial FE Game" },
 
-	// The 2002 Annual Interactive Fiction Competition
+	// IFComp 2002
 	{ "if02_photograph",    "Photograph" },                                                             //    3rd Place
 	{ "if02_moonlittower",  "The Moonlit Tower" },                                                      //    4th Place
 	{ "if02_janitor",       "Janitor" },                                                                //    5th Place
@@ -1281,7 +1281,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if02_ramandjona",    "Ramón and Jonathan" },                                                     //   36th Place
 	{ "comp02",             "IF Competition '02 Unofficial FE Game" },
 
-	// The 2003 Annual Interactive Fiction Competition
+	// IFComp 2003
 	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },                                             //    1st Place
 	{ "if03_risorg",        "Risorgimento Represso" },                                                  //    2nd Place
 	{ "if03_gourmet",       "Gourmet" },                                                                //    5th Place
@@ -1296,7 +1296,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if03_lardo",         "The Fat Lardo and the Rubber Ducky" },                                     //   29th Place
 	{ "comp03",             "IF Competition '03 Unofficial FE Game" },
 
-	// The 2004 Annual Interactive Fiction Competition
+	// IFComp 2004
 	{ "if04_bluechairs",    "Blue Chairs" },                                                            //    2nd Place
 	{ "if04_devours",       "All Things Devours" },                                                     //    3rd Place
 	{ "if04_stingwasp",     "Sting of the Wasp" },                                                      //    4th Place
@@ -1318,7 +1318,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if04_stackoverflow", "Stack Overflow" },                                                         //   29th Place
 	{ "comp04",             "IF Competition '04 Unofficial FE Game" },
 
-	// The 2005 Annual Interactive Fiction Competition
+	// IFComp 2005
 	{ "if05_vespers",       "Vespers" },                                                                //    1st Place
 	{ "if05_beyond",        "Beyond" },                                                                 //    2nd Place
 	{ "if05_anewlife",      "A New Life" },                                                             //    3rd Place
@@ -1339,7 +1339,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if05_futuregame",    "FutureGame" },                                                             //   33rd Place
 	{ "comp05",             "IF Competition '05 Unofficial FE Game" },
 
-	// The 2006 Annual Interactive Fiction Competition
+	// IFComp 2006
 	{ "if06_floatpointz",   "Floatpoint" },                                                             //    1st Place
 	{ "if06_primrose",      "The Primrose Path" },                                                      //    2nd Place
 	{ "if06_moonshaped",    "Moon-Shaped" },                                                            //    5th Place
@@ -1365,7 +1365,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if06_sisyphus",      "Sisyphus" },                                                               //   39th Place
 	{ "comp06",             "IF Competition '06 Unofficial FE Game" },
 
-	// The 2007 Annual Interactive Fiction Competition
+	// IFComp 2007
 	{ "if07_lostpig",       "Lost Pig" },                                                               //    1st Place
 	{ "if07_actofmurder",   "An Act of Murder" },                                                       //    2nd Place
 	{ "if07_bellwater",     "Lord Bellwater's Secret" },                                                //    3rd Place
@@ -1382,7 +1382,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if07_pets",          "Press [Escape] to Save" },                                                 //   24th Place
 	{ "comp07",             "IF Competition '07 Unofficial FE Game" },
 
-	// The 2008 Annual Interactive Fiction Competition
+	// IFComp 2008
 	{ "if08_violet",        "Violet" },                                                                 //    1st Place
 	{ "if08_afflicted",     "Afflicted" },                                                              //    2nd Place
 	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //    3rd Place
@@ -1403,7 +1403,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },                              //   35th Place
 	{ "comp08",             "IF Competition '08 Unofficial FE Game" },
 
-	// The 2009 Annual Interactive Fiction Competition
+	// IFComp 2009
 	{ "if09_snowquest",     "Snowquest" },                                                              //    3rd Place
 	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },                                       //    4th Place
 	{ "if09_duelinsnow",    "The Duel in the Snow" },                                                   //    6th Place
@@ -1421,7 +1421,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },                                        //   22nd Place
 	{ "comp09",             "IF Competition '09 Unofficial FE Game" },
 
-	// The 2010 Annual Interactive Fiction Competition
+	// IFComp 2010
 	{ "if10_deathoffthecuffz", "Death Off The Cuff" },                                                  //    5th Place
 	{ "if10_mite",          "Mite" },                                                                   //    6th Place
 	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },           //    7th Place
@@ -1437,7 +1437,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if10_chronicler0",   "The Chronicler" },                                                         //   26th Place
 	{ "comp10",             "IF Competition '10 Unofficial FE Game" },
 
-	// The 2011 Annual Interactive Fiction Competition
+	// IFComp 2011
 	{ "if11_santaland",     "Escape from Santaland" },                                                  //    4th Place
 	{ "if11_canamicah",     "Cana According To Micah" },                                                //    9th Place
 	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             //   10th Place
@@ -1452,7 +1452,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if11_vestiges",      "Vestiges" },                                                               //   38th Place
 	{ "comp11",             "IF Competition '11 Unofficial FE Game" },
 
-	// The 2012 Annual Interactive Fiction Competition
+	// IFComp 2012
 	{ "if12_eurydice",      "Eurydice" },                                                               //    2nd Place
 	{ "if12_guildedyouth",  "Guilded Youth" },                                                          //    3rd Place
 	{ "if12_changes",       "Changes" },                                                                //    4th Place
@@ -1467,13 +1467,13 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if12_castleadventure", "Castle Adventure!" },                                                    //   23rd Place
 	{ "comp12",             "IF Competition '12 Unofficial FE Game" },
 
-	// The 2013 Annual Interactive Fiction Competition
+	// IFComp 2013
 	{ "if13_threediopolis", "Threediopolis" },                                                          //    7th Place
 	{ "if13_paperbagprincess", "The Paper Bag Princess" },                                              //   17th Place
 	{ "if13_furtherz",      "Further" },                                                                //   21st Place
 	{ "if13_9lives",        "9Lives" },                                                                 //   30th Place
 
-	// The 2014 Annual Interactive Fiction Competition
+	// IFComp 2014
 	{ "if14_15minutes",     "Fifteen Minutes" },                                                        //    6th Place
 	{ "if14_teaceremony",   "Tea Ceremony" },                                                           //   10th Place
 	{ "if14_enigmasd",      "Enigma (by Simon Deimel)" },                                               //   12th Place
@@ -1481,7 +1481,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if14_tower",         "Tower" },                                                                  //   21th Place
 	{ "if14_excelsior",     "Excelsior" },                                                              //   35th Place
 
-	// The 2015 Annual Interactive Fiction Competition
+	// IFComp 2015
 	{ "if15_finalexam",     "Final Exam" },                                                             //    9th Place
 	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire I: The Awakening" },                         //   12th Place
 	{ "if15_lifeonmars",    "Life on Mars?" },                                                          //   13th Place
@@ -1490,7 +1490,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if15_kingcrown",     "The King and the Crown" },                                                 //   42nd Place
 	{ "if15_pitcondemned",  "Pit of the Condemned" },                                                   //   45th Place
 
-	// The 2016 Annual Interactive Fiction Competition
+	// IFComp 2016
 	{ "if16_insidefacility", "Inside the Facility" },                                                   //   13th Place
 	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      //   17th Place
 	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            //   31th Place
@@ -1498,7 +1498,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if16_youarestanding", "You Are Standing in a Cave..." },                                         //   48th Place
 	{ "if16_toiletworld",   "Toiletworld" },                                                            //   58th Place
 
-	// The 2017 Annual Interactive Fiction Competition
+	// IFComp 2017
 	{ "if17_tuuli",         "Tuuli" },                                                                  //   16th Place
 	{ "if17_thecubecavern", "The Cube in the Cavern" },                                                 //   39th Place
 	{ "if17_squirrel",      "Goodbye Cruel Squirrel" },                                                 //   42th Place
@@ -1508,40 +1508,40 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if17_inevitamp",     "Inevitable (by Matthew Pfeiffer)" },                                       //   60th Place
 	{ "if17_walkinthepark", "A Walk in the Park" },                                                     //   68th Place
 
-	// The 2018 Annual Interactive Fiction Competition
+	// IFComp 2018
 	{ "if18_tethered",      "Tethered" },                                                               //   23th Place
 
-	// The 2019 Annual Interactive Fiction Competition
+	// IFComp 2019
 	{ "if19_out",           "Out" },                                                                    //   25th Place
 	{ "if19_oldjim",        "Old Jim's Convenience Store" },                                            //   34th Place
 	{ "if19_extromnivore",  "Extreme Omnivore: Text Edition" },                                         //   74th Place
 
-	// The 2020 Annual Interactive Fiction Competition
+	// IFComp 2020
 	{ "if20_impossiblebottle", "The Impossible Bottle" },                                               //    1st Place
 	{ "if20_entangled",     "Entangled" },                                                              //   26th Place
 	{ "if20_drego",         "Dr Ego and the Egg of ManToomba" },                                        //   44th Place
 	{ "if20_sheepcrossing", "Sheep Crossing" },                                                         //   88th Place
 
-	// The 2021 Annual Interactive Fiction Competition
+	// IFComp 2021
 	{ "if21_darkun",        "D'Arkun" },                                                                //   21st Place
 	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },                               //   41st Place
 	{ "if21_fourbyfourian", "Fourbyfourian Quarryin'" },                                                //   45th Place
 	{ "if21_bravebear",     "Brave Bear" },                                                             //   46th Place
 
-	// The 2022 Annual Interactive Fiction Competition
+	// IFComp 2022
 	{ "if22_intosun",       "Into the Sun" },                                                           //   25th Place
 	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           //   41st Place
 	{ "if22_campusinvaders", "Campus Invaders" },                                                       //   45th Place
 	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                //   52nd Place
 
-	// Marnie Parker's "Spring 1999 IF Art Show"
+	// Spring IF Art Show 1999
 	{ "ifas_tpold",         "The Possibility of Life's Destruction" },
 
-	// Marnie Parker's "Summer 1999 IF Art Show"
+	// Summer IF Art Show 1999
 	{ "ifas_statuedac",     "Statue" },
 	{ "ifas_wheelzcode",    "Wheel" },
 
-	// Marnie Parker's "2000 IF Art Show"
+	// IF Art Show 2000
 	{ "ifas_custard",       "Custard" },
 	{ "ifas_galatea",       "Galatea" },
 	{ "ifas_guitar",        "Guitar of the Immortal Bard" },
@@ -1551,22 +1551,22 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ifas_visitor",       "The Visitor" },
 	{ "ifas_words",         "Words Get Twisted Round and Tumble Down" },
 
-	// Marnie Parker's "2001 IF Art Show"
+	// IF Art Show 2001
 	{ "ifas_esgarden",      "English Suburban Garden" },
 	{ "ifas_lagoon",        "La Lagune de Montaigne" },
 	{ "ifas_ribbons",       "Ribbons" },
 
-	// Marnie Parker's "2003 IF Art Show"
+	// IF Art Show 2003
 	{ "ifas_stopnight",     "A Stop for the Night" },
 	{ "ifas_queen",         "Queen of Swords" },
 	{ "ifas_redeem",        "Redemption" },
 
-	// Marnie Parker's "2004 IF Art Show"
+	// IF Art Show 2004
 	{ "ifas_flametop",      "Flametop" },
 	{ "ifas_swanglass",     "Swanglass" },
 	{ "ifas_firetower",     "The Fire Tower" },
 
-	// Marnie Parker's "2007 IF Art Show"
+	// IF Art Show 2007
 	{ "ifas_rendition",     "Rendition" },
 	{ "ifas_engine",        "The Symbolic Engine" },
 	{ "ifas_varronismuseum", "Varronis Museum" },
@@ -1575,7 +1575,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "mhp",                "Mystery House Possessed" },
 	{ "wherethere",         "Where There's a Will" },
 
-	// "IF Arcade" Competition
+	// Arcade Collection
 	{ "ifa_rox",            "Rox" },                                                                    //   Episode  1
 	{ "ifa_centipede",      "Centipede" },                                                              //   Episode  2
 	{ "ifa_donkeykong",     "Donkey Kong" },                                                            //   Episode  4
@@ -1619,7 +1619,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cgdc7_survive",      "Survive" },                                                                //   29th Place
 	{ "cgdc7_zegro",        "Zegrothenus" },                                                            //   30th Place
 
-	// Adam Cadre's "Chicken Competition"
+	// Chicken Competition
 	{ "cc_chknmt",          "Are you Too Chicken to Make a Deal?" },
 	{ "cc_behavior",        "Behavior" },
 	{ "cc_chickenzcode",    "Chicken!" },
@@ -1634,59 +1634,59 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cc_saied",           "Saied" },
 	{ "cc_xchicken",        "The X Chicken" },
 
-	// Adam Cadre's "2002 Spring Comp"
+	// Spring Thing 2002
 	{ "stc02_blues",        "Tinseltown Blues" },
 
-	// Adam Cadre's "2003 Spring Comp"
+	// Spring Thing 2003
 	{ "stc03_inevita",      "Inevitable" },
 	{ "stc03_cofire",       "The Cross of Fire" },
 
-	// Greg Boettcher's "2005 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2005
 	{ "stc05_authority",    "Authority" },
 	{ "stc05_flatfeet",     "Flat Feet" },
 	{ "stc05_telling",      "Whom the Telling Changed" },
 
-	// Greg Boettcher's "2006 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2006
 	{ "stc06_debaron",      "De Baron" },
 	{ "stc06_thebaron",     "The Baron" },
 
-	// Greg Boettcher's "2007 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2007
 	{ "stc07_fate",         "Fate" },
 
-	// Greg Boettcher's "2008 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2008
 	{ "stc08_pascal",       "Pascal's Wager" },
 
-	// Greg Boettcher's "2009 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2009
 	{ "stc09_milkparadise", "The Milk of Paradise" },
 
-	// Greg Boettcher's "2012 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2012
 	{ "stc12_rocketman",    "The Rocket Man from the Sea" },
 
-	// Aaron Reed's "2014 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2014
 	{ "stc14_mrp",          "The Story of Mr. P." },
 
-	// Aaron Reed's "2016 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2016
 	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },
 
-	// Aaron Reed's "2017 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2017
 	{ "stc17_enlightened",  "Enlightened Master" },
 
-	// Aaron Reed's "2018 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2018
 	{ "stc18_gopher",       "Best Gopher Ever" },
 	{ "stc18_murderbig",    "Murder on the Big Nothing" },
 
-	// Aaron Reed's "2019 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2019
 	{ "stc19_69105keys",    "69,105 Keys" },
 	{ "stc19_pca",          "Porte Cave Adventure" },
 
-	// Aaron Reed's "2021 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2021
 	{ "stc21_takethedogout", "Take the Dog Out" },
 
-	// Aaron Reed's "2022 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2022
 	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },
 	{ "stc22_wry",          "Wry" },
 
-	// Dave Bernazzani's "Commodore 32 Z-Machine Competition"
+	// Commodore 32 Z-Machine Competition
 	{ "c32_endgame",        "Endgame" },                                                                //    1st Place
 	{ "c32_turningpoint",   "Turning Point" },                                                          //    2nd Place
 	{ "c32_amusementpark",  "Amusement Park" },                                                         //    3rd Place
@@ -1695,7 +1695,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "c32_paparazzi",      "Paparazzi" },                                                              //    6th Place
 	{ "c32",                "C32 Contest 2004" },
 
-	// Sam Kabo Ashwell's "Cover Stories Game-Jam"
+	// Cover Stories Game-Jam
 	{ "cs_antifascista",    "Antifascista" },
 	{ "cs_leaves",          "Leaves" },
 	{ "cs_legendmissinghat", "The Legend of the Missing Hat" },
@@ -1724,17 +1724,17 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "dr_herebe",          "Here Be Dragons!!!" },
 	{ "dr_lastlaugh",       "The Last Laugh" },
 
-	// Duncan Bowsman's "2011 Ectocomp"
+	// Ectocomp 2011
 	{ "ec11_bloodless",     "Bloodless on the Orient Express" },                                        //    1st Place
 	{ "ec11_blue",          "Blue" },                                                                   //    3rd Place
 	{ "ec11_dashslapney",   "Dash Slapney, Patrol Leader" },                                            //    5th Place
 
-	// Duncan Bowsman's "2012 Ectocomp"
+	// Ectocomp 2012
 	{ "ec12_ghosteringtonnightz", "Ghosterington Night" },                                              //    1st Place
 	{ "ec12_littlegirls",   "What Are Little Girls Made Of" },                                          //    2nd Place
 	{ "ec12_parasites",     "Parasites" },                                                              //    4th Place
 
-	// Duncan Bowsman's "2013 Ectocomp"
+	// Ectocomp 2013
 	{ "ec13_horriblepyra",  "The Horrible Pyramid" },                                                   //    1st Place
 	{ "ec13_headlesshapless", "Headless, Hapless" },                                                    //    3rd Place
 	{ "ec13_faithfulcomp",  "Faithful Companion" },                                                     //    4th Place
@@ -1750,14 +1750,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec13_hillofsouls",   "Hill of Souls" },                                                          //   22nd Place
 	{ "ec13_wisp",          "Wisp" },                                                                   //   23th Place
 
-	// Duncan Bowsman's "2014 Ectocomp"
+	// Ectocomp 2014
 	{ "ec14_weddingday",    "Wedding Day" },
 	{ "ec14_lime",          "Lime Ergot" },
 	{ "ec14_candyrushsaga", "Candy Rush Saga" },
 	{ "ec14_flywall",       "A Fly on the Wall" },
 	{ "ec14_monstermaker",  "Monster Maker" },
 
-	// Duncan Bowsman's "2015 Ectocomp - La Petite Mort"
+	// Ectocomp 2015 - La Petite Mort
 	{ "ec15_openthatvein",  "Open That Vein" },                                                         //    1st Place
 	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },                                          //    2nd Place
 	{ "ec15_heezypark",     "Heezy Park" },                                                             //    3rd Place
@@ -1765,70 +1765,70 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec15_ghostship",     "The Ghost Ship" },                                                         //    7th Place
 	{ "ec15_physiognomist", "The Physiognomist's Office" },                                             //    8th Place
 
-	// Duncan Bowsman's "2015 Ectocomp - Le Grand Guignol"
+	// Ectocomp 2015 - Le Grand Guignol
 	{ "ec15_ninelives",     "Nine Lives" },                                                             //    3rd Place
 
-	// Duncan Bowsman's "2016 Ectocomp - La Petite Mort"
+	// Ectocomp 2016 - La Petite Mort
 	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //    4th Place
 	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //    6th Place
 	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               //   10th Place
 
-	// David Fisher's "EnvComp"
+	// EnvComp
 	{ "ec_laseine",         "La Seine" },
 
-	// David Fisher's "GameplayComp 2009"
+	// GameplayComp 2009
 	{ "gc_fantasticfinaleiv", "Fantastic Finale IV" },
 
-	// Stephen Granade's "1998 IF Fan Fest"
+	// IF Fan Fest 1998
 	{ "ff_ite2",            "In the End II" },
 
-	// Scott Adams' Ghost Town Redux
+	// Ghost Town Redux
 	{ "gtr_ghosttownzcode", "Ghost Town: The Lost Treasure" },
 
-	// Graeme Porter's "HighlandComp"
+	// HighlandComp
 	{ "hc_highland",        "Highland Chef" },
 	{ "hc_roots",           "Roots" },
 
-	// "24 Hours of Inform" Comp
+	// 24 Hours of Inform Competition
 	{ "24h_aesthetic",      "Aesthetic Deletions" },
 	{ "24h_dastardly",      "Dastardly" },
 	{ "24h_defra",          "The Man from DEFRA" },
 	{ "24h_borgaris",       "Escape From the SS Borgaris" },
 	{ "24h_ghostship",      "Ghost Ship" },
 
-	// "2008 IFBeginnersComp"
+	// IFBeginnersComp 2008
 	{ "ifb_connect",        "Connect" },
 	{ "ifb_limelight",      "Limelight" },
 
-	// Jason Dyer's "Imaginary Games From Imaginary Universes Jam"
+	// Imaginary Games From Imaginary Universes Jam
 	{ "ig_garbage",         "Garbage Collection" },
 
-	// Neil deMause's "2002 IntroComp"
+	// IntroComp 2002
 	{ "ic02_timetrap",      "TimeTrap" },
 	{ "ic02_waterhouse",    "The Waterhouse Women" },
 
-	// Jacqueline Lott's "2003 IntroComp"
+	// IntroComp 2003
 	{ "ic03_agency",        "Agency" },
 	{ "ic03_harlequin",     "Harlequin Girl" },
 	{ "ic03_harringtonhouse", "Harrington House" },
 	{ "ic03_realend",       "Reality's End" },
 	{ "ic03_statue",        "The Mage Wars: Statue" },
 
-	// Jacqueline Lott's "2004 IntroComp"
+	// IntroComp 2004
 	{ "ic04_auden",         "Auden's Eden" },
 	{ "ic04_jbbrwkyi",      "Intro to Jabberwocky" },
 	{ "ic04_cross",         "On the Cross" },
 	{ "ic04_passenger",     "Passenger" },
 	{ "ic04_runes",         "Runes" },
 
-	// Jacqueline Lott's "2005 IntroComp"
+	// IntroComp 2005
 	{ "ic05_deadsville",    "Deadsville" },
 	{ "ic05_stale",         "The Fox, The Dragon, and the Stale Loaf of Bread" },
 	{ "ic05_hobbit",        "The Hobbit" },
 	{ "ic05_somewhen",      "Somewhen" },
 	{ "ic05_wscholars",     "Weishaupt Scholars" },
 
-	// Jacqueline Lott's "2006 IntroComp"
+	// IntroComp 2006
 	{ "ic06_artdeception",  "The Art of Deception" },
 	{ "ic06_childsplay7",   "Child's Play" },
 	{ "ic06_mechs",         "Mechs" },
@@ -1836,80 +1836,80 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ic06_southerngothic", "Southern Gothic" },
 	{ "ic06_ufury",         "Unyielding Fury" },
 
-	// Jacqueline Lott's "2007 IntroComp"
+	// IntroComp 2007
 	{ "ic07_jackbox",       "Jack in the Box" },
 	{ "ic07_jacobst",       "Jacob's Travels" },
 	{ "ic07_shredspatches", "The King of Shreds and Patches" },
 	{ "ic07_trainstopping", "Trainstopping" },
 
-	// Jacqueline Lott's "2008 IntroComp"
+	// IntroComp 2008
 	{ "ic08_fiendishzoo",   "Fiendish Zoo" },
 	{ "ic08_stormcellar",   "Storm Cellar" },
 	{ "ic08_bedtimestory",  "Bedtime Story" },
 	{ "ic08_ninetenths",    "Nine-tenths of the Law" },
 
-	// Jacqueline Lott's "2009 IntroComp"
+	// IntroComp 2009
 	{ "ic09_gossip",        "Gossip" },
 	{ "ic09_obituary",      "Obituary" },
 	{ "ic09_selves",        "Selves" },
 
-	// Jacqueline Lott's "2010 IntroComp"
+	// IntroComp 2010
 	{ "ic10_touristtrap",   "Tourist Trap" },
 	{ "ic10_moratori",      "A Fleeting Case of Self-Possession, or, Memento Moratori" },
 	{ "ic10_plan6",         "Plan 6 from Inner Earth" },
 	{ "ic10_waker",         "Waker" },
 
-	// Jacqueline Lott's "2011 IntroComp"
+	// IntroComp 2011
 	{ "ic11_bender",        "Bender" },
 	{ "ic11_despondencyindex", "The Despondency Index" },
 	{ "ic11_parthenon",     "Parthenon" },
 	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },
 	{ "ic11_stallingtime",  "Stalling for Time" },
 
-	// Jacqueline Lott's "2013 IntroComp"
+	// IntroComp 2013
 	{ "ic13_thechickensexer", "The Example of the Chicken Sexer" },
 
-	// Jacqueline Lott's "2014 IntroComp"
+	// IntroComp 2014
 	{ "ic14_talessoulthief", "Tales of the Soul Thief" },
 
-	// Jacqueline Lott's "2016 IntroComp"
+	// IntroComp 2016
 	{ "ic16_grubbyville",   "Grubbyville" },
 
-	// Xalavier Nelson Jr's "2018 IntroComp"
+	// IntroComp 2018
 	{ "ic18_napier",        "Napier’s Cache" },
 
-	// Xalavier Nelson Jr's "2019 IntroComp"
+	// IntroComp 2019
 	{ "ic19_homeland",      "Homeland" },
 
-	// David Cornelson's "2003 IF Library Competitions"
+	// IF Library Competition 2003
 	{ "lc_serve",           "Serving Your Country" },
 	{ "lc_trappedschool",   "Trapped in School" },
 
-	// David Cornelson's "MCDream Competition"
+	// MCDream Competition
 	{ "mc_dreadwine",       "Dreadwine" },
 	{ "mc_nofamous",        "No Famous" },
 	{ "mc_retreat",         "The Retreat" },
 
-	// David Cornelson's "Segment Mini-Comp"
+	// Segment Mini-Comp
 	{ "snowmanzcode2",      "Snowman Sextet Part II" },
 	{ "kaboot",             "Kaboot's Story" },
 	{ "snowmanzcode",       "Fran and Bart Want a Snowman!" },
 
-	// Andrew Plotkin's "IF Logic Puzzle Mini-Competition"
+	// IF Logic Puzzle Mini-Competition
 	{ "lp_logicpuz",        "Logic Puzzle Sampler" },
 	{ "lp_traffic",         "The Traffic Light" },
 
-	// Mark Silcox's "2001 LOTECH Competition"
+	// LOTECH Competition 2001
 	{ "lo01_doghouse",      "The Dog/House" },
 
-	// Mark Silcox's "2005 LOTECH Competition"
+	// LOTECH Competition 2005
 	{ "lo05_stormy",        "A Dark and Stormy Entry" },                                                //    2nd Place
 	{ "lo05_knapsack",      "The Knapsack Problem" },                                                   //    6th Place
 
-	// Admiral Jota's "Manos Mini-Competition"
+	// Manos Mini-Competition
 	{ "ma_manoz",           "ManoZ" },
 
-	// 2009 Metafilter IF Competition
+	// Metafilter IF Competition 2009
 	{ "me09_bunt",          "Bunt" },
 	{ "me09_downout",       "Down and Out at the Big Creepy House on the Poison Lake" },
 	{ "me09_underpig",      "Down With the Underpig" },
@@ -1918,37 +1918,37 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "me09_burndown",      "Let Us Burn Down Science" },
 	{ "me09_rockrider",     "Rockrider" },
 
-	// 2010 Metafilter IF Competition
+	// Metafilter IF Competition 2010
 	{ "me10_greatrent",     "The Great Rent Money Adventure" },
 
-	// Lucian Smith's "1998 IF Mini-Competition"
+	// IF Mini-Competition 1998
 	{ "mc98_bloodline",     "Bloodline" },
 	{ "mc98_inherit",       "Inherit!" },
 	{ "mc98_sumbunny",      "Something About the Bunny" },
 
-	// Ben Caplan's "Minigames Minicomp"
+	// Minigames Minicomp
 	{ "mm_hamhall",         "Hamilton Hall" },
 	{ "mm_insider",         "Insider Information" },
 
-	// Marius Müller's "Neinth Annual New Year's Mincomp"
+	// 9th Annual New Year's Mincomp
 	{ "ny09_egyptianwalk",  "Egyptian Walking Simulator" },
 
-	// Marius Müller's "Eleventh Annual New Year's Mincomp"
+	// 11th Annual New Year's Mincomp
 	{ "ny11_halflife",      "Half-Life 3 Confirmed" },
 
-	// Michael Gentry's "1999 No-Inventory-Competition"
+	// No-Inventory-Competition 1999
 	{ "ni_annoyedundead",   "Annoyed Undead" },
 	{ "ni_camping",         "Camping" },
 
-	// 2002 One Room Game Competition
+	// One Room Game Competition 2002
 	{ "1r02_artif",         "L'Artificiere" },
 	{ "1r02_sottomarinogiallo", "Il Sottomarino Giallo" },
 
-	// 2003 One Room Game Competition
+	// One Room Game Competition 2003
 	{ "1r03_floppy",        "Due Dischetti, Un Incubo" },
 	{ "1r03_successo",      "Successo: Non Aprite Quella Porta!" },
 
-	// 2006 One Room Game Competition
+	// One Room Game Competition 2006
 	{ "1r06_finalselection", "Final Selection" },
 	{ "1r06_sforacchiato",  "Lo Sforacchiato Giallo" },
 	{ "1r06_venicezcode",   "Il Diavolo a Venezia" },
@@ -1958,17 +1958,17 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "1r06_dereditu",      "De Reditu" },
 	{ "1r06_frankenstein3", "Frankenstein III" },
 
-	// 2007 One Room Game Competition
+	// One Room Game Competition 2007
 	{ "1r07_dreimp",        "A Dream Imprint" },
 	{ "1r07_kinesis",       "Kinesis" },
 	{ "1r07_necromante",    "Il Necromante" },
 	{ "1r07_suvehnux",      "Suveh Nux" },
 	{ "1r07_urbanconflict", "Urban Conflict" },
 
-	// Storme Winfield's "2002 RomanceNovelComp"
+	// RomanceNovelComp 2002
 	{ "rnc_chooseromance",  "Choose Your Own Romance" },
 
-	// Sam Kabo Ashwell's "2014 Shufflecomp Competition"
+	// Shufflecomp Competition 2014
 	{ "sh14_50shades",      "50 Shades of Jilting" },
 	{ "sh14_flotsam",       "Flotsam & Driftwood" },
 	{ "sh14_robotempire",   "Holy Robot Empire" },
@@ -1980,12 +1980,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sh14_truth",         "Truth" },
 	{ "sh14_whitehouses",   "White Houses" },
 
-	// Neil Butters's "ShuffleComp: Disc 2 Competition"
+	// ShuffleComp: Disc 2 Competition
 	{ "shd_everythinggame", "Everything We Do Is Games" },
 	{ "shd_headingeast",    "Heading East" },
 	{ "shd_starryseeksorrow", "Starry Seeksorrow" },
 
-	// Emily Short's "SmoochieComp 2001"
+	// SmoochieComp 2001
 	{ "sc_1981",            "1981" },
 	{ "sc_august",          "August" },
 	{ "sc_deadofwinter",    "Dead of Winter" },
@@ -2116,7 +2116,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_literacy",       "Literacy" },
 	{ "sif_woodencat",      "WOODEN CAT vs. ROBOT MONKEY" },
 
-	// David Cornelson's "18th Anniversary SpeedIF Competition"
+	// SpeedIF 18th Anniversary Competition
 	{ "sif_farout",         "Far-Out Space Freaks" },
 
 	// SpeedIF 2000 Competition
@@ -2132,15 +2132,15 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_crouton",        "The Crouton Caper" },
 	{ "sif_speedif17v1",    "Tooth Ow Zunden Too" },
 
-	// Eleventh Anniversary SpeedIF Competition
+	// SpeedIF 11th Anniversary Competition
 	{ "sif_nqaa",           "Not Quite an Anniversary" },
 	{ "sif_reptile",        "Reptile" },
 	{ "sif_teachinghertodance", "Teaching Her to Dance" },
 
-	// Third Anniversary SpeedIF Competition
+	// SpeedIF 3rd Anniversary Competition
 	{ "sif_henry",          "Finding Henry" },
 
-	// Fifth Anniversary SpeedIF Competition
+	// SpeedIF 5th Anniversary Competition
 	{ "sif_coughcough",     "**COUGH COUGH**" },
 
 	// SpeedIF Argonaut Competition
@@ -2162,7 +2162,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF Crinkle Cut Competition
 	{ "sif_travels",        "The Travels of Fitzwilliam Pound" },
 
-	// Douglas Adams Tribute SpeedIF Competition
+	// SpeedIF Douglas Adams Tribute Competition
 	{ "sif_nightmilliways", "A Night at Milliways" },
 	{ "sif_deadlinebda",    "Deadline, or, Being Douglas Adams" },
 	{ "sif_howmany",        "How Many Roads Must a Man Walk Down?" },
@@ -2185,7 +2185,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_losing",         "Losing Your Step" },
 	{ "sif_oldsherwoodcemetary", "The Old Sherwood Cemetary" },
 
-	// Jacqueline Lott's "Indigo New Language Speed IF competition"
+	// SpeedIF Indigo New Language Competition
 	{ "sif_hauntedhouse",    "Haunted House" },
 
 	// SpeedIF Introcomp
@@ -2243,28 +2243,28 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_expedition",     "Expedition" },
 	{ "sif_speedifnockle",  "Revenge of the Nockle : A Speed IF" },
 
-	// 2007 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2007
 	{ "sif_nazimice",       "Nazi Mice" },
 	{ "sif_notsameols",     "Not the Same Old Lang Syne" },
 	{ "sif_shothitler",     "The Day I Shot Hitler" },
 	{ "sif_newyearswar",    "The War on New Year’s" },
 
-	// 2008 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2008
 	{ "sif_leaptime",       "Leap Time" },
 	{ "sif_mauled",         "The Day I Mauled Mao!" },
 	{ "sif_escapist",       "The Escapist" },
 
-	// 2009 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2009
 	{ "sif_dullegriet",     "Dulle Griet and the Antenorian Icebox" },
 	{ "sif_stabbed",        "The Day I Stabbed Stalin" },
 
-	// 2013 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2013
 	{ "sif_faithfulcompv2", "Faithful Companion" },
 	{ "sif_talemorning",    "The Mundane Tale of the Morning After" },
 	{ "sif_thedayicameback", "The Day I Came Back" },
 	{ "sif_youhavetoputthebaby", "You Have to Put the Baby New Year in the Champagne Bottle" },
 
-	// 2014 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2014
 	{ "sif_youwerehere",    "You Were Here" },
 
 	// SpeedIF O Competition
@@ -2273,7 +2273,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_getting",        "Getting to Know the General" },
 	{ "sif_astrology",      "Practical Astrology" },
 
-	// David Cornelson's "SpeedIF PAX East 2010"
+	// SpeedIF PAX East 2010
 	{ "sif_wizshop",        "A Wizard Goes Shopping" },
 	{ "sif_apoptosis",      "Apoptosis" },
 	{ "sif_foodmagic",      "Food Magic" },
@@ -2285,7 +2285,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_safehouse",      "Safehouse" },
 	{ "sif_vortex2305",     "Vortex 2305" },
 
-	// David Cornelson's "SpeedIF PAX East 2011"
+	// SpeedIF PAX East 2011
 	{ "sif_scurvy",         "A Scurvy of Wonders" },
 	{ "sif_helpfulmanzcode", "A Shadow of Helpfulman" },
 	{ "sif_boredladders",   "Bored Ladders" },
@@ -2299,7 +2299,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_appall",         "Appallatron: Annoyotron 3" },
 	{ "sif_descent",        "Descent of Man" },
 
-	// Pi-Theta-Aleph-Parallax SpeedIF Competition
+	// SpeedIF Pi-Theta-Aleph-Parallax Competition
 	{ "sif_parallaxdream",  "A Parallax Dream" },
 	{ "sif_pethertheta",    "Peter Theta Fixes the Holodeck" },
 	{ "sif_putiap",         "Pick Up the IF-Archive and Pi" },
@@ -2308,7 +2308,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_moonbar",        "The Parallax Moon Bar Conspiracy" },
 	{ "sif_thpoint",        "The Theta Point" },
 
-	// 2011 New Year's Speed IF - The penultimate not numbered New Year's Speed IF Competition
+	// SpeedIF New Year's Speed Competition 2011
 	{ "sif_beingendbeg",    "Being the Ending of the Beginning" },
 	{ "sif_birthmind",      "Birth of Mind" },
 	{ "sif_dashslapney",    "Dash Slapney, Patrol Leader" },
@@ -2354,7 +2354,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_cheatingdeath",  "Cheating Death" },
 	{ "sif_rrr",            "Reality Railroad" },
 
-	// Ultimate not numbered New Year's Speed IF Competition
+	// SpeedIF Ultimate not numbered New Year's Competition
 	{ "sif_shortof",        "Short of Sushi" },
 	{ "sif_disenchantmentbay", "Disenchantment Bay" },
 	{ "sif_thedayidied",    "The Day I Died" },
@@ -2385,16 +2385,16 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF Zombie Competition
 	{ "sif_speedifzombie",  "SpeedIF Zombie" },
 
-	// Bouchercomp SpeedIF Competition
+	// SpeedIF Bouchercomp Competition
 	{ "sif_lowellzcode",    "Lowell’s Paradise" },
 	{ "sif_putpbad",        "Pick Up the Pine Box and Die" },
 	{ "sif_seekingsolace",  "Seeking Solace" },
 	{ "sif_wideopengate",   "The Wide-Open Gate" },
 
-	// Emily Short's "Swash Comp"
+	// Swash Comp
 	{ "swa_seacaptains",    "Sea Captains" },
 
-	// Mark Musante's "Toaster Competition"
+	// Toaster Competition
 	{ "toa_burnttoast",     "Burnt Toast" },
 	{ "toa_friarbaconstreet", "Friar Bacon's Secret" },
 	{ "toa_gottoast",       "Got Toast?" },
@@ -2402,7 +2402,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "toa_shrinkingwoman", "The Incredible Shrinking Woman, Too!" },
 	{ "toa_tommytoaster",   "Tommy the Toaster" },
 
-	// Jack Welch's "TWIFcomp"
+	// TWIFcomp
 	{ "twif_putpbat",       "Putpbat" },
 	{ "twif_sin1",          "Sin 1" },
 	{ "twif_sin2",          "Sin 2" },
@@ -2414,14 +2414,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "twif_sin8",          "Sin 8" },
 	{ "twif_war",           "War" },
 
-	// Emily Short's "Walkthrough Competition"
+	// Walkthrough Competition
 	{ "wlk_wtf",            "A Walk Through Forever" },
 	{ "wlk_dreams",         "Dreams Run Solid" },
 	{ "wlk_fit",            "Fit for a Queen" },
 	{ "wlk_jigsaw2",        "Jigsaw 2" },
 	{ "wlk_exile",          "Twilight in the Garden of Exile" },
 
-	//  David A. Cornelson's "1999 XComp"
+	// XComp 1999
 	{ "xco_sixfoot",        "The Six-Foot-Tall Man-Eating Chicken" },
 
 	// Danish games
@@ -2492,51 +2492,51 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "verdeterre",         "Le Butin du Capitaine Verdeterre" },
 	{ "vindaloofr",         "Vindaloo" },
 
-	// French Comp 2005
+	// French games: French Comp 2005
 	{ "frc_cercledesgros",  "Le Cercle des Gros Geeks Disparus" },
 	{ "frc_dreamlands",     "Echappee Belle Dans Les Contrees du Reve" },
 	{ "frc_templedefeu",    "Le Temple de Feu" },
 
-	// French Comp 2006
+	// French games: French Comp 2006
 	{ "frc_citeeaux",       "La Cité des Eaux" },
 	{ "frc_sarvegne",       "Sarvegne" },
 
-	// French Comp 2007
+	// French games: French Comp 2007
 	{ "frc_heuresduvent",   "Heures Du Vent" },
 	{ "frc_divinebonace",   "Divine Bonace" },
 	{ "frc_brrr",           "Brrr!" },
 	{ "frc_phareabandonne", "L'Ile du Phare Abandonné" },
 
-	// French Comp 2008
+	// French games: French Comp 2008
 	{ "frc_brume", "Brume" },
 	{ "frc_lettresvolees",  "Les Lettres Volées" },
 	{ "frc_louplachevre",   "Le Loup, la Chèvre, et la Salade" },
 
-	// French Comp 2009
+	// French games: French Comp 2009
 	{ "frc_catapole",       "Catapole" },
 	{ "frc_chambresyrion",  "La Chambre de Syrion" },
 	{ "frc_mechants",       "Les Méchants Meurent au Moins deux Fois" },
 
-	// French Comp 2011
+	// French games: French Comp 2011
 	{ "frc_aventureszeus",  "Les Aventures de Zeus" },
 	{ "frc_dardenfer",      "Dard d'Enfer" },
 	{ "frc_terreciel",      "Entre Terre et Ciel" },
 	{ "frc_astrologue",     "La Grande Prédiction ou l'Astrologue Etourdi" },
 	{ "frc_homelandsec",    "Homeland Security" },
 
-	// French Comp 2013
+	// French games: French Comp 2013
 	{ "frc_lifeonmarsfr",   "Life on Mars?" },
 	{ "frc_sourcedezig",    "La Source de Zig" },
 	{ "frc_trac",           "Trac" },
 
-	// French Comp 2015
+	// French games: French Comp 2015
 	{ "frc_envol",          "L'Envol" },
 
-	// French Comp 2016
+	// French games: French Comp 2016
 	{ "frc_tipelau",        "Tipelau" },
 	{ "frc_diamantblanc",   "Le Diamant Blanc" },
 
-	// French Comp 2018
+	// French games: French Comp 2018
 	{ "frc_exil",           "L'Exil" },
 
 	// German games
@@ -4815,7 +4815,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("waxworksi5", "041209", "859a006a14bd69b22135688248756ba0", 30720),
 	ENTRY0("waxworksi5", "110126", "c51e911d1228d8adfc07ed138bc90079", 116220),
 
-	// 1992 album Apollo 18, by They Might be Giants
+	// Apollo 18+20: The IF Tribute Album
 	ENTRY0("apollo1", "120315", "1aec299147675a5c6e10d548a4eeba05", 251100),
 	ENTRY0("apollo4", "120322", "83f92f1fc39bd699ac32935d8eefd35a", 426528),
 	ENTRY0("apollo5", "120324", "6c889ec9c330169740afafe7694030cf", 199680),
@@ -4848,7 +4848,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("apollo37", "120323", "55b8607a451ab30d03314f815a30e40b", 327144),
 	ENTRY0("apollo38", "120321", "a760169a6643d08ff3db22be84caed37", 353734),
 
-	// The 1995 Annual Interactive Fiction Competition
+	// IFComp 1995
 	ENTRY0("if95_weather", "950819", "0f8eca394c2956f12e0efc6027a60395", 93696),
 	ENTRY0("if95_mindelectric", "950830", "570cd97c66cea6097533fefbd9072f56", 70144),
 	ENTRY0("if95_magictoyshop", "950726", "4ad2912aa56d0962a74c4fb51b472f10", 71680),
@@ -4856,7 +4856,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if95_libraryfront", "950829", "fc1d5c6b54efb2fd051eef2f1322afff", 55296),
 	ENTRY0("if95_tubetrouble", "950831", "3651c39edb3d9cf0f63f32e6e52e705c", 50176),
 
-	// The 1996 Annual Interactive Fiction Competition
+	// IFComp 1996
 	ENTRY0("if96_sherbet", "960928", "d3539f871e1b25f279e98857ce8e514e", 157696),
 	ENTRY0("if96_tapestry", "961010", "a8e97156b7211dea1aa94471f0509042", 185344),
 	ENTRY0("if96_delusions", "961021", "c1f63eacbe78cb0e7721e8c0d403fab5", 166400),
@@ -4875,7 +4875,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if96_liquid", "960927", "5ff0e573df8126e6142a66716b90acf9", 68608),
 	ENTRY0("comp96", "970626", "208b6f721e472f89654e6feb1b54b747", 84992),
 
-	// The 1997 Annual Interactive Fiction Competition
+	// IFComp 1997
 	ENTRY0("if97_edifice", "970930", "15d3cb03378412c6c3d0b050e5d6392c", 173568),
 	ENTRY0("if97_spring", "970929", "9b891a246a0a5869e73c42527950143b", 256000),
 	ENTRY0("if97_bear", "971011", "71d95521937e8c4e6753d656ae264a28", 105984),
@@ -4898,7 +4898,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if97_cominghome", "970719", "249537ad84a4dd9ee255eb8c9e91d7a7", 71168),
 	ENTRY0("comp97", "971009", "28737e33e980aa77c9e52a3bbbeec6fb", 103424),
 
-	// The 1998 Annual Interactive Fiction Competition
+	// IFComp 1998
 	ENTRY0("if98_photopia", "970918", "6e5e8f088a763de43516926b3e2dc3bc", 188416),
 	ENTRY0("if98_muse", "980927", "d4d3442d178c99a1ba88293a66c244bb", 162304),
 	ENTRY0("if98_enlighte", "981001", "1d259d57bb8e4a84fee03b95554a9c7e", 111616),
@@ -4920,7 +4920,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if98_hrs", "980830", "685018bc292fec68de973567f47519bf", 19456),
 	ENTRY0("comp98", "981002", "31cca005f642f01f741daba6e861df27", 122368),
 
-	// The 1999 Annual Interactive Fiction Competition
+	// IFComp 1999
 	ENTRY0("if99_winterwonder", "990928", "62ed5cae5f7957cd7174d0053cc0aeb7", 190976),
 	ENTRY0("if99_forachange", "990925", "e5e67ba8c7db64b0a58cf57a4d220807", 91648),
 	ENTRY0("if99_softfood", "990930", "c45d8a94151e6f3016f238450995dba6", 128000),
@@ -4942,7 +4942,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if99_guard", "990930", "904703d1341fd6f26b867990a800c360", 346112),
 	ENTRY0("comp99", "991005", "a8500f2cbb186a08fcad4d4bb1c71322", 161280),
 
-	// The 2000 Annual Interactive Fiction Competition
+	// IFComp 2000
 	ENTRY0("if00_metamorphoses", "000930", "f8e84ac3d9f80397c8cbd1201b38ab12", 167424),
 	ENTRY0("if00_andrewplotkin", "009999", "8e2294d36ba2668c83da94065633cade", 203264),
 	ENTRY0("if00_adverbum", "000925", "f9bf871dc7059293b0c6a096d2b5e6ce", 135680),
@@ -4977,7 +4977,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if00_whatif", "000926", "c678e52cda08e06b709746b519fb58c3", 92160),
 	ENTRY0("comp00", "001002", "e5bd908fb7735764916c195a8d07f9ab", 178688),
 
-	// The 2001 Annual Interactive Fiction Competition
+	// IFComp 2001
 	ENTRY0("if01_allroads", "010908", "1259e45e9adf77ecbe34ae2279fdb5c2", 172032),
 	ENTRY0("if01_moments", "010908", "06b906e9484d0b858dab813476b66922", 303616),
 	ENTRY0("if01_heroes", "010928", "5a1da81f028ff0b81ca1b86771e5ff8b", 200192),
@@ -5000,7 +5000,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if01_newcomer", "010928", "c618e4e185c85df8a1d4728537397a4d", 64000),
 	ENTRY0("comp01", "010930", "82c631364cedf25ab4e78bbdc4034327", 169472),
 
-	// The 2002 Annual Interactive Fiction Competition
+	// IFComp 2002
 	ENTRY0("if02_photograph", "020926", "8b5edf2a02123aadbd28bff37a324a95", 196608),
 	ENTRY0("if02_moonlittower", "020927", "99126839757b62c48ddaaed723390f26", 138752),
 	ENTRY0("if02_janitor", "020927", "61035b376a21cafc434d8a5657e8804b", 146944),
@@ -5022,7 +5022,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if02_ramandjona", "020926", "eea6527824140b1f6b0479e937ae3043", 64512),
 	ENTRY0("comp02", "020928", "db8ba8f1596fb801021c99a92d111b38", 114176),
 
-	// The 2003 Annual Interactive Fiction Competition
+	// IFComp 2003
 	ENTRY0("if03_slouchingbedlam", "030925", "0f870671f3d7569d57eb79a8be9b4a28", 216576),
 	ENTRY0("if03_risorg", "030925", "37c4b5b109c7005ae663e989024720d4", 443392),
 	ENTRY0("if03_gourmet", "030927", "d10a75ea4d4485b24c513d9bfefdfe7f", 181760),
@@ -5037,7 +5037,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if03_lardo", "030830", "8741a6ccd5cb8123a0cd37c23f1721c9", 66048),
 	ENTRY0("comp03", "030928", "55ee4ebe831b1f4dbc1c2865a6b59ef3", 112128),
 
-	// The 2004 Annual Interactive Fiction Competition
+	// IFComp 2004
 	ENTRY0("if04_bluechairs", "040930", "a95e06ff11b68d1c6ab887e568cd0d60", 238080),
 	ENTRY0("if04_devours", "040930", "646ce501f1a42de40fb48f945514e0c1", 155648),
 	ENTRY0("if04_stingwasp", "040622", "ca5589359f90fc20d9a6acb3312681f9", 239616),
@@ -5060,7 +5060,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp04", "041006", "8906d8be4439cfc8d2e34f7e1914462c", 116736),
 	ENTRY0("comp04", "041007", "644fa97fda92e961969ca2525f7b947b", 116224),
 
-	// The 2005 Annual Interactive Fiction Competition
+	// IFComp 2005
 	ENTRY0("if05_vespers", "050929", "a8ff87d7ab10b3e6825db32f093d1f08", 286720),
 	ENTRY0("if05_beyond", "050930", "7c40cfec00e949e0c104b7b415ecb04a", 320512),
 	ENTRY0("if05_anewlife", "", "b767db9117f533064d3113e159ef03e8", 260608),
@@ -5081,7 +5081,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if05_futuregame", "", "94a44dc4c563b1f4468b13b32ef601f0", 10752),
 	ENTRY0("comp05", "051001", "05e1dac27091bce08cc61a28ba71afa2", 116224),
 
-	// The 2006 Annual Interactive Fiction Competition
+	// IFComp 2006
 	ENTRY0("if06_floatpointz", "060930", "1350e61da647efffc0e36f705dbc90f4", 1377946),
 	ENTRY0("if06_primrose", "060929", "d4a2ee947d42598eaa8f09c23c4ef2a4", 428544),
 	ENTRY0("if06_moonshaped", "060929", "aa2bf7a42417827ac31ce7d8d3453a1f", 323584),
@@ -5107,7 +5107,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if06_sisyphus", "060915", "5af751766ddacab843bd190fe5a6fe46", 134144),
 	ENTRY0("comp06", "061002", "8b72e6e68f62f53bb97646b108f31b0c", 149504),
 
-	// The 2007 Annual Interactive Fiction Competition
+	// IFComp 2007
 	ENTRY0("if07_lostpig", "070917", "10dcc48e7312cc26eae89d1648af50c6", 317952),
 	ENTRY0("if07_actofmurder", "070927", "2b8e594dc3d1d6b06153494bd47bb4db", 386048),
 	ENTRY0("if07_bellwater", "070929", "67feb5edbb49ea993ca7a94f07556ce9", 348520),
@@ -5124,7 +5124,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if07_pets", "070926", "c6a7ab54d9b9482cc459a9c975f48314", 146432),
 	ENTRY0("comp07", "070930", "383572627817ce8cebd71080d5cc2245", 141312),
 
-	// The 2008 Annual Interactive Fiction Competition
+	// IFComp 2008
 	ENTRY0("if08_violet", "080126", "df37a3ee028b439580ff3f138ff200cf", 598190),
 	ENTRY0("if08_afflicted", "080906", "20ecfc89ef0fca5a58d53f3bc6b7057e", 326656),
 	ENTRY0("if08_piracy2", "080926", "e722ca46b86a2a86b979c791ac970646", 250880),
@@ -5146,7 +5146,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if08_absoluteworstgame", "080614", "3c902f43a5393f41655df1f028057e65", 133632),
 	ENTRY0("comp08", "081003", "0ea5f859a1aa09b42bd7229786160a5b", 144384),
 
-	// The 2009 Annual Interactive Fiction Competition
+	// IFComp 2009
 	ENTRY0("if09_snowquest", "090792", "7a558ea909edca386a9f225a744a9cca", 1022942),
 	ENTRY0("if09_duelthatspanned", "090925", "e7808064e6569e31be830b07be97cbb5", 379904),
 	ENTRY0("if09_duelinsnow", "090930", "b669e90797eb4ce3adf37fba9f1447d8", 383488),
@@ -5164,7 +5164,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if09_zorkburiedchaos", "080126", "dd1cb30fccde813a3301a324e5d6ac02", 163218),
 	ENTRY0("comp09", "091001", "c937fadc20db485baa8f35e8d841d77d", 145408),
 
-	// The 2010 Annual Interactive Fiction Competition
+	// IFComp 2010
 	ENTRY0("if10_deathoffthecuffz", "100926", "288dfb6066beba825f49d2c6080f9081", 311196),
 	ENTRY0("if10_mite", "100930", "fa6eb58ea0db68211fa924fa1530d234", 186368),
 	ENTRY0("if10_gloriousrevolution", "100930", "123d7b02f338fe27f4b8f39ba2d15845", 854008),
@@ -5180,7 +5180,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if10_chronicler0", "100930", "c16c8d34195c9f29c03629f20be7f800", 68608),
 	ENTRY0("comp10", "101008", "113f48207ab14aed979b6034faf50959", 142336),
 
-	// The 2011 Annual Interactive Fiction Competition
+	// IFComp 2011
 	ENTRY0("if11_santaland", "110913", "e0e8181bbfe04b6cf55c3903153d5ae2", 410112),
 	ENTRY0("if11_canamicah", "110930", "309cde7bcb427088940ac701b7b18040", 363008),
 	ENTRY0("if11_comedyerror", "111017", "9219e4a1ac32b67d508d661f0e00eb6c", 885682),
@@ -5195,7 +5195,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if11_vestiges", "110930", "ce7506d0fe65344e502c857018f21b68", 265660),
 	ENTRY0("comp11", "111001", "b220acb7a5d268278bf4c665f5f693d7", 151552),
 
-	// The 2012 Annual Interactive Fiction Competition
+	// IFComp 2012
 	ENTRY0("if12_eurydice", "120921", "a1e210d32afac8619fb8117c9826a4df", 792470),
 	ENTRY0("if12_guildedyouth", "12????", "75980e9b28e4c2b78e79f833e5829fe4", 322040),
 	ENTRY0("if12_changes", "120930", "50d536eedd00ca0d566a369586f75db7", 450560),
@@ -5211,13 +5211,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if12_castleadventure", "120315", "d748b6dd5c380a2f3438f8b957b17345", 240128),
 	ENTRY0("comp12", "121001", "a21991ba784590176bd0570647227fab", 149504),
 
-	// The 2013 Annual Interactive Fiction Competition
+	// IFComp 2013
 	ENTRY0("if13_threediopolis", "130928", "942c317ad151633d5eff4a1fe5c0eb0e", 444252),
 	ENTRY0("if13_paperbagprincess", "130928", "f6b455548bfb5f40f9beeff98927c21d", 307712),
 	ENTRY0("if13_furtherz", "130929", "49f7ad5cd55692627c5535585368820e", 398556),
 	ENTRY0("if13_9lives", "130817", "0fff213f0d61c01c281d7180e016711e", 337374),
 
-	// The 2014 Annual Interactive Fiction Competition
+	// IFComp 2014
 	ENTRY0("if14_15minutes", "140929", "794388850a60ce63f181efb194519bee", 402308),
 	ENTRY0("if14_teaceremony", "140918", "f8b04f52fc3294539405893474413e16", 268352),
 	ENTRY0("if14_enigmasd", "140929", "3e2bfc7b4a45cb0bf3936cb7b164ee17", 414884),
@@ -5225,7 +5225,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if14_tower", "140912", "9e4e1ffe01254b8f45f22c79d664cbb2", 390132),
 	ENTRY0("if14_excelsior", "140924", "036fa721ea95f31da9a99b1bea4e1d99", 351232),
 
-	// The 2015 Annual Interactive Fiction Competition
+	// IFComp 2015
 	ENTRY0("if15_finalexam", "150928", "bfdfd2d2daccc201e38f1234ccd6dc25", 165376),
 	ENTRY0("if15_darkiss1", "150927", "5b0a30d18bdcca783d4348d58daa4bf4", 133120),
 	ENTRY0("if15_lifeonmars", "150925", "69b0feca1bdd05f8d3240e6441941f98", 160256),
@@ -5234,7 +5234,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if15_kingcrown", "150823", "76c9f8ffed03f81aa9d3d8e5aef77597", 380928),
 	ENTRY0("if15_pitcondemned", "150927", "f8c86cd430512f4caae1ddc13e4e28a2", 468432),
 
-	// The 2016 Annual Interactive Fiction Competition
+	// IFComp 2016
 	ENTRY0("if16_insidefacility", "160925", "3f2c1695de721218fdee36c34374e222", 463872),
 	ENTRY0("if16_darkiss2", "160928", "405f407e2009e20317522375bf53e154", 179712),
 	ENTRY0("if16_zigamus", "160928", "8d5ad5bd2aa48b2003b7c6bfc5803669", 89600),
@@ -5242,7 +5242,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if16_youarestanding", "160926", "8471b92b86d52dc9ce417adfac02fff7", 490456),
 	ENTRY0("if16_toiletworld", "161009", "56b58c66b5ae7d9e7282a01924e24135", 418206),
 
-	// The 2017 Annual Interactive Fiction Competition
+	// IFComp 2017
 	ENTRY0("if17_tuuli", "170929", "653637e9c257745d2ce77202fe14aa13", 590220),
 	ENTRY0("if17_thecubecavern", "170928", "6afede8923f992bbb6849200b1672efb", 374824),
 	ENTRY0("if17_squirrel", "050102", "02c19fa852425c6593a4ef4ab383de4b", 112640),
@@ -5252,42 +5252,42 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if17_inevitamp", "170727", "8ef2c50928f72be5e131e43dff63754f", 433072),
 	ENTRY0("if17_walkinthepark", "091120", "de3cbe750e75112d05d3a03d676cbb12", 123392),
 
-	// The 2018 Annual Interactive Fiction Competition
+	// IFComp 2018
 	ENTRY0("if18_tethered", "180926", "b458728de80b1510a29ed8f3f7ee9cef", 394086),
 
-	// The 2019 Annual Interactive Fiction Competition
+	// IFComp 2019
 	ENTRY0("if19_out", "190929", "30a16ff0bf6ad33faa24c209edbe5bf8", 388608),
 	ENTRY0("if19_oldjim", "190928", "0e11c750f7490241a0e8c8286caf3b71", 413696),
 	ENTRY0("if19_extromnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
 
-	// The 2020 Annual Interactive Fiction Competition
+	// IFComp 2020
 	ENTRY0("if20_impossiblebottle", "200928", "ca6e77c892f34f602ea25277a8ac6a20", 759930),
 	ENTRY0("if20_entangled", "200928", "773ad8d10e980531127a040679a4e3eb", 494080),
 	ENTRY0("if20_drego", "400410", "8a983690928e36c8a77ed50bdbe98bd9", 132096),
 	ENTRY0("if20_sheepcrossing", "200928", "22c2f8a7784272952125344f9e52ccd0", 411456),
 
-	// The 2021 Annual Interactive Fiction Competition
+	// IFComp 2021
 	ENTRY0("if21_darkun", "210928", "1d86626167b93297f3d96cdf822d7594", 335512),
 	ENTRY0("if21_codexsadistica", "210928", "956d15d106c982d3a50ef7069b07b84f", 581378),
 	ENTRY0("if21_fourbyfourian", "210928", "593c4f5fb864cf5d43709f4028b37e15", 425190),
 	ENTRY0("if21_bravebear", "210928", "f6b245a25d510c871671097a158cf215", 72192),
 
-	// The 2022 Annual Interactive Fiction Competition
+	// IFComp 2022
 	ENTRY0("if22_campusinvaders", "220926", "2067ac08742356f2e5f99ad417adab34", 82944),
 	ENTRY0("if22_intosun", "220928", "16616858fd3c197b3c6f3e69df6b4bfa", 348160),
 	ENTRY0("if22_lowkey", "220928", "59279a95782344dc98303a5e492664b8", 534510),
 	ENTRY0("if22_zerochance", "220928", "fc11a5a21798584e3dd6441479dbc8d9", 259678),
 
-	// Marnie Parker's "Spring 1999 IF Art Show"
+	// Spring IF Art Show 1999
 	ENTRY0("ifas_tpold", "990417", "fdcd6216895f55cfc591f9d77c32bfed", 46080),
 
-	// Marnie Parker's "Summer 1999 IF Art Show"
+	// Summer IF Art Show 1999
 	ENTRY0("ifas_statuedac", "990827", "16c2855284cbe8510e700d6455346326", 52736),
 	ENTRY0("ifas_statuedac", "990903", "d6bbd50d6da814aa75206eb359dd75a1", 53248),
 	ENTRY0("ifas_wheelzcode", "001128", "7c582d943b29451caceb1140931a9b48", 54784),
 	ENTRY0("ifas_wheelzcode", "990824", "20d6b5c3931aded353868935e5433b85", 52224),
 
-	// Marnie Parker's "2000 IF Art Show"
+	// IF Art Show 2000
 	ENTRY0("ifas_custard", "000314", "7a0d6ba2488c4998bb7c7f91342cfdcb", 290304),
 	ENTRY0("ifas_galatea", "000324", "68e59da119f3c1a71c54710e24c8a243", 187392),
 	ENTRY0("ifas_guitar", "000323", "20f80779fc85654e1831e5c2937bb1fa", 65024),
@@ -5297,31 +5297,31 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ifas_visitor", "000321", "9786e58864fdd7429c3218b07d023498", 56832),
 	ENTRY0("ifas_words", "000225", "6cc34f6b4ed49a769d53a0ab48434112", 5632),
 
-	// Marnie Parker's "2001 IF Art Show"
+	// IF Art Show 2001
 	ENTRY0("ifas_esgarden", "010417", "b77a37124c15e23b416d0ea9b74f9c86", 145408),
 	ENTRY0("ifas_lagoon", "010406", "b7410c419427885c4b755e8cc555ab38", 81408),
 	ENTRY0("ifas_ribbons", "010331", "5fb456f05ac161de3601dacfdf72075a", 109568),
 
-	// Marnie Parker's "2003 IF Art Show"
+	// IF Art Show 2003
 	ENTRY0("ifas_stopnight", "030425", "81b6332707329c64b5967e94238e84be", 136704),
 	ENTRY0("ifas_queen", "030426", "dfd3a6dcb6c8a6b1becf6b69011ae3dd", 73728),
 	ENTRY0("ifas_redeem", "030425", "f9ea63216ca6e20c2150ae3139e2aa61", 129536),
 
-	// Marnie Parker's "2004 IF Art Show"
+	// IF Art Show 2004
 	ENTRY0("ifas_flametop", "040528", "58c67a57ac6f077a8d1a7be3fc3c73f6", 70144),
 	ENTRY0("ifas_swanglass", "160702", "daf5f866bbaa6ec159456887e5945d29", 71680),
 	ENTRY0("ifas_firetower", "040528", "fa8d9146120139c768a698e93f70812e", 270336),
 
-	// Marnie Parker's "2007 IF Art Show"
+	// IF Art Show 2007
 	ENTRY0("ifas_rendition", "070407", "1a8fbde9c57754958882ddc4d5ed1bb3", 187392),
 	ENTRY0("ifas_engine", "070518", "cb3434c4917d95b1ff3154acbf3a4dbc", 361578),
 	ENTRY0("ifas_varronismuseum", "070518", "a1eeb2342999c2e3d394c9d718cc8b6f", 434176),
 
-	// Marnie Parker's "Spring 1999 IF Art Show"
+	// The Mystery House Taken Over project
 	ENTRY0("mhp", "050315", "e2f93006c311f50932c974ba0b213a9c", 452096),
 	ENTRY0("wherethere", "050314", "aba2efcaa2394b315a461bc41a6bd04e", 107008),
 
-	// "IF Arcade" Competition
+	// Arcade Collection
 	ENTRY0("ifa_rox", "001231", "0d473c955611eb9b6a07c8487bcb4914", 70656),
 	ENTRY0("ifa_rox", "010105", "369f512671b6f317b033ea6ebe1c2f4e", 71168),
 	ENTRY0("ifa_centipede", "001231", "fadf5f5ac0315307d881ad7d5a05f95c", 201216),
@@ -5366,7 +5366,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cgdc7_survive", "100208", "4cfdfa675947460bb5faf56d5d96bc06", 86016),
 	ENTRY0("cgdc7_zegro", "021310", "a113089b3256dbe600bd43e3616f1f40", 176640),
 
-	// Adam Cadre's "Chicken Competition"
+	// Chicken Competition
 	ENTRY0("cc_chknmt", "980609", "a7461a48ec077946965496712ef3119b", 55296),
 	ENTRY0("cc_behavior", "980611", "72b4c3eddf40183fa1c1cfdbdf7e99b7", 50688),
 	ENTRY0("cc_chickenzcode", "980616", "4c857164047f2babed601c1d351efda0", 48128),
@@ -5381,59 +5381,59 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cc_saied", "980608", "e9fc656cee21ac488bc72f17dbef0901", 56832),
 	ENTRY0("cc_xchicken", "980614", "e0da060d09f8ec64223e7ee07c92cadf", 60928),
 
-	// Adam Cadre's "2002 Spring Comp"
+	// Spring Thing 2002
 	ENTRY0("stc02_blues", "020618", "dea57d7b1b41b5961143e7faa6125ad9", 261632),
 
-	// Adam Cadre's "2003 Spring Comp"
+	// Spring Thing 2003
 	ENTRY0("stc03_inevita", "030225", "8eb1204dade23de158a71f68e81b0437", 213504),
 	ENTRY0("stc03_cofire", "030329", "1f84d501e89c64f2e04f84996b8d0ca3", 252416),
 
-	// Greg Boettcher's "2005 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2005
 	ENTRY0("stc05_authority", "050205", "8def535c876448e1cc532a6d6dec328f", 171008),
 	ENTRY0("stc05_flatfeet", "050313", "8b92f0777c98d72c1701bd080531f5b4", 275456),
 	ENTRY0("stc05_telling", "050330", "e50190b0a236084d01595dee39749478", 210944),
 
-	// Greg Boettcher's "2006 Interactive Fiction Spring Thing"Spring Thing Competition"
+	// Spring Thing 2006
 	ENTRY1("stc06_debaron", "060329", "32a2298f08a7274e1c1e8ed28d8b99fe", 322560, Common::DE_DEU),
 	ENTRY0("stc06_thebaron", "060329", "cac25a2e2ce7aa87bccccb07dffad212", 310272),
 
-	// Greg Boettcher's "2007 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2007
 	ENTRY0("stc07_fate", "070329", "b030c4881ced350f51c1a64bd0f45584", 481792),
 
-	// Greg Boettcher's "2008 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2008
 	ENTRY0("stc08_pascal", "080217", "ccdf58a87467b4e822565d54b3ca2a20", 237568),
 
-	// Greg Boettcher's "2009 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2009
 	ENTRY0("stc09_milkparadise", "090214", "37f34b58e9907dd1bc7549d451987a86", 239984),
 
-	// Greg Boettcher's "2012 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2012
 	ENTRY0("stc12_rocketman", "120405", "a2aac06a0481334279c64ad069865006", 1977066),
 
-	// Aaron Reed's "2014 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2014
 	ENTRY0("stc14_mrp", "140406", "35da82199a79e37358de984a5db5d0d1", 174308),
 
-	// Aaron Reed's "2016 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2016
 	ENTRY0("stc16_harmonic", "030321", "d3cc582cb71a3a911229b331490cac94", 380416),
 
-	// Aaron Reed's "2017 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2017
 	ENTRY0("stc17_enlightened", "170402", "94d384fe0b5f3f6cead8653b4496d1d3", 218112),
 
-	// Aaron Reed's "2018 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2018
 	ENTRY0("stc18_gopher", "180327", "1af73704d303624fcc88397bdd1cd4a4", 383488),
 	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
 
-	// Aaron Reed's "2019 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2019
 	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
 	ENTRY0("stc19_pca", "181128", "8908ecd93be90264935432fc0986dfb2", 100864),
 
-	// Aaron Reed's "2021 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2021
 	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
 
-	// Aaron Reed's "2022 Interactive Fiction Spring Thing Competition"
+	// Spring Thing 2022
 	ENTRY0("stc22_hypercubic", "220320", "6895d310aa8d3bc7dfb67860ab1bc09e", 263680),
 	ENTRY0("stc22_wry", "220407", "a7c52c575f68f1affe727cec8647c572", 460216),
 
-	// Dave Bernazzani's "Commodore 32 Z-Machine Competition"
+	// Commodore 32 Z-Machine Competition
 	ENTRY0("c32_endgame", "041130", "e7bb3a957c8d80e5ab014630de53b046", 30720),
 	ENTRY0("c32_turningpoint", "041127", "54a0aa0762e2a8cc8db3ef2498ab8153", 32768),
 	ENTRY0("c32_amusementpark", "041201", "7f1c810417318d6a8d318335b14a95ee", 32768),
@@ -5442,7 +5442,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("c32_paparazzi", "041130", "7dd95b7f52e93f1ea3684f22d70ac645", 32256),
 	ENTRY0("c32", "041130", "02f050055728d8081fe5afee18898c26", 27648),
 
-	// Sam Kabo Ashwell's "Cover Stories Game-Jam"
+	// Cover Stories Game-Jam
 	ENTRY0("cs_antifascista", "120612", "ea02a0f92f7c2c40fa39abd48fd1ccf2", 406208),
 	ENTRY0("cs_leaves", "120610", "d8f48c9a46689a07106dccdc165a3119", 523862),
 	ENTRY0("cs_legendmissinghat", "120610", "c12e8daaff707325e446ef0b557ab044", 586960),
@@ -5471,17 +5471,17 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("dr_herebe", "000314", "dd605eff65c76194fe33ad8ce95def50", 51712),
 	ENTRY0("dr_lastlaugh", "000414", "798b6d7697d27b83d2362e7cd2874f78", 83968),
 
-	// Duncan Bowsman's "2011 Ectocomp"
+	// Ectocomp 2011
 	ENTRY0("ec11_bloodless", "111012", "9e3c069d69a6e240f161c16c317010fb", 184320),
 	ENTRY0("ec11_blue", "111030", "429a5d229c4d6fbf808ce8370ceb8128", 260028),
 	ENTRY0("ec11_dashslapney", "111001", "35215328fcc344c2dd932d4d1a09f15f", 281916),
 
-	// Duncan Bowsman's "2012 Ectocomp"
+	// Ectocomp 2012
 	ENTRY0("ec12_ghosteringtonnightz", "121029", "c295d2c2dfe5f3feee2b833a32a2400d", 236544),
 	ENTRY0("ec12_littlegirls", "121031", "d96c3cd0a7609166f70e67cc1ac5f055", 232960),
 	ENTRY0("ec12_parasites", "121021", "bbdb3ff64bea5ab24b0c7dcc68f1f90a", 164864),
 
-	// Duncan Bowsman's "2013 Ectocomp"
+	// Ectocomp 2013
 	ENTRY0("ec13_horriblepyra", "131029", "d39833192d0c8e0c3872423a740683a5", 321958),
 	ENTRY0("ec13_headlesshapless", "131030", "046e0b958f9900a8733d04e52ab6631b", 262594),
 	ENTRY0("ec13_faithfulcomp", "131030", "a9be7589b843ef43b326cfe477ade7d4", 311716),
@@ -5498,14 +5498,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec13_hillofsouls", "131026", "ebffb813147946e416623c17e7b3ab86", 442546),
 	ENTRY0("ec13_wisp", "131030", "dc4b6d8674622873f5d6fb26aee1a227", 307598),
 
-	// Duncan Bowsman's "2014 Ectocomp"
+	// Ectocomp 2014
 	ENTRY0("ec14_weddingday", "141031", "bde9af024968d3d70615555a41e806fc", 319424),
 	ENTRY0("ec14_lime", "141016", "d7f102df1f7ed0d0cc646190706dd331", 169984),
 	ENTRY0("ec14_candyrushsaga", "141031", "d6a271282be8d91a073e9f86ea3d4b79", 263626),
 	ENTRY0("ec14_flywall", "141023", "f263225a38d2eae685e5bb569f6c50b7", 463332),
 	ENTRY0("ec14_monstermaker", "150817", "f0565d38e01ae2ec048b5f3b8ceb4de4", 285696),
 
-	// Duncan Bowsman's "2015 Ectocomp - La Petite Mort"
+	// Ectocomp 2015 - La Petite Mort
 	ENTRY0("ec15_openthatvein", "15????", "e24844c7028262c8117c2ef07138c6f7", 449548),
 	ENTRY0("ec15_oldesthangover", "151030", "e53693405ea9f9e4a7f6bf70cb14ec87", 334848),
 	ENTRY0("ec15_heezypark", "151030", "fd714eb77e36ec59083e922c52d61722", 316860),
@@ -5513,70 +5513,70 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec15_ghostship", "151009", "f76aba5c59c6376edcfdccd76cb9e590", 634812),
 	ENTRY0("ec15_physiognomist", "151030", "f050387c1eb46061c7aacc13c1a366ab", 252890),
 
-	// Duncan Bowsman's "2015 Ectocomp - Le Grand Guignol"
+	// Ectocomp 2015 - Le Grand Guignol
 	ENTRY0("ec15_ninelives", "151030", "e7d97c11b47c0b59d2093700ad936264", 464836),
 
-	// Duncan Bowsman's "2016 Ectocomp - La Petite Mort"
+	// Ectocomp 2016 - La Petite Mort
 	ENTRY0("ec16_bonesaw", "161027", "bbf02174af7d8891d435a37c1cc9b058", 342016),
 	ENTRY0("ec16_checkeredhaunting", "161031", "d8ddc04e13caf50e5bd7d3f8931e8cda", 305616),
 	ENTRY0("ec16_lightdarkness", "161030", "03df7e40dca78a7e2aee74b5049136bb", 258516),
 
-	// David Fisher's "EnvComp"
+	// EnvComp
 	ENTRY0("ec_laseine", "090320", "1073245f6178172de42f73208b8cfcc2", 167424),
 
-	// David Fisher's "GameplayComp 2009"
+	// GameplayComp 2009
 	ENTRY0("gc_fantasticfinaleiv", "090914", "f0f2cf8c1be71de23cd08d7216f5feca", 160768),
 
-	// Stephen Granade's "1998 IF Fan Fest"
+	// IF Fan Fest 1998
 	ENTRY0("ff_ite2", "980726", "b7f93aa7570757b814b030d0d5e1759f", 68608),
 
-	// Scott Adams' Ghost Town Redux
+	// Ghost Town Redux
 	ENTRY0("gtr_ghosttownzcode", "070725", "f430038611ee776ab82af369d81b6bb6", 171412),
 
-	// Graeme Porter's "HighlandComp"
+	// HighlandComp
 	ENTRY0("hc_highland", "010225", "3257620cd54c43c842de8f6a398d358b", 95744),
 	ENTRY0("hc_roots", "010227", "131dd528660c2eeeb19257ad1b43258d", 71168),
 
-	// "24 Hours of Inform" Comp
+	// 24 Hours of Inform Competition
 	ENTRY0("24h_aesthetic", "310103", "dd1296e1c1ce31ea4321bad5b7a9959c", 107520),
 	ENTRY0("24h_dastardly", "060122", "79b5c728180c097c3dd01c25ea2663aa", 79872),
 	ENTRY0("24h_defra", "022228", "2866e4e634c136009303b8bce0dd0952", 98304),
 	ENTRY0("24h_borgaris", "030204", "2800f77bb7d1db2c2f94d5c4360e9348", 147968),
 	ENTRY0("24h_ghostship", "030505", "38b15466da3c4c20c6947c9974649e68", 101888),
 
-	// "2008 IFBeginnersComp"
+	// IFBeginnersComp 2008
 	ENTRY0("ifb_connect", "080219", "4c81a7fc404b50d36a47947c10fb7814", 221184),
 	ENTRY0("ifb_limelight", "080215", "4fe735af2e7f328106d9674d8c29bd9e", 214656),
 
-	// Jason Dyer's "Imaginary Games From Imaginary Universes Jam"
+	// Imaginary Games From Imaginary Universes Jam
 	ENTRY0("ig_garbage", "160207", "1d1d0dec9fc382dc4e3c303e37e56afe", 425936),
 
-	// Neil deMause's "2002 IntroComp"
+	// IntroComp 2002
 	ENTRY0("ic02_timetrap", "020319", "dc9d9b5c4af9d6a763465caf2770b22b", 141824),
 	ENTRY0("ic02_waterhouse", "020319", "b36b7a0db435e1f2b28514f87bf1a756", 141824),
 
-	// Jacqueline Lott's "2003 IntroComp"
+	// IntroComp 2003
 	ENTRY0("ic03_agency", "030320", "1fd608f827bae4d5ff3cbfb913293d3c", 70144),
 	ENTRY0("ic03_harlequin", "030321", "0aaeed0851aaa0338ed653ec3e485eb7", 92160),
 	ENTRY0("ic03_harringtonhouse", "030321", "83e4af82d7077019597f6014b7c05b94", 124928),
 	ENTRY0("ic03_realend", "030318", "cb8aa32666ba4e48cd191537e28a79f4", 114176),
 	ENTRY0("ic03_statue", "030321", "17652647e855fa7f94c7be0987aca13b", 276992),
 
-	// Jacqueline Lott's "2004 IntroComp"
+	// IntroComp 2004
 	ENTRY0("ic04_auden", "040707", "e9468a39f7dc696db24c057819f8bfbd", 67072),
 	ENTRY0("ic04_jbbrwkyi", "040714", "dfbf529105d6eff2610accf0e4e1e9ea", 119296),
 	ENTRY0("ic04_cross", "040718", "9de8aa41ff0ead846e55fb2d7dc609c2", 65024),
 	ENTRY0("ic04_passenger", "040718", "8a8f0ba481aafd3f30f2650290f61ea7", 94720),
 	ENTRY0("ic04_runes", "040706", "41fe4fc08bbbd803baf1b9edee61e095", 87040),
 
-	// Jacqueline Lott's "2005 IntroComp"
+	// IntroComp 2005
 	ENTRY0("ic05_deadsville", "072305", "f6666723bb7dcda541c2d591acc7a1fd", 119808),
 	ENTRY0("ic05_stale", "050723", "d6db29b6290672b7faa620f8ecce876f", 87552),
 	ENTRY0("ic05_hobbit", "050621", "47f280042669ec7330e9378266c33558", 100352),
 	ENTRY0("ic05_somewhen", "050705", "8796d65ae9dd1c540d5ecf24760f4ee6", 75264),
 	ENTRY0("ic05_wscholars", "071107", "03d438cfb4920cc831da090e0c150f2a", 587032),
 
-	// Jacqueline Lott's "2006 IntroComp"
+	// IntroComp 2006
 	ENTRY0("ic06_artdeception", "060713", "804cd3fd69b98c0f03fd39e0a2d4de12", 156160),
 	ENTRY0("ic06_childsplay7", "060714", "fe8b789b87f715d63f678608db42ae92", 310628),
 	ENTRY0("ic06_mechs", "060716", "4d7d7204634951bb6f999f03894f2148", 89600),
@@ -5584,80 +5584,80 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ic06_southerngothic", "060702", "5c5fab8b67a94080e52d0f553a72410c", 192506),
 	ENTRY0("ic06_ufury", "060716", "953ab8c4066d4362247bf444b9b36fe3", 125952),
 
-	// Jacqueline Lott's "2007 IntroComp"
+	// IntroComp 2007
 	ENTRY0("ic07_jackbox", "070731", "8569084f577156621c43d8b3dcf328e6", 184726),
 	ENTRY0("ic07_jacobst", "070804", "8755b906f2732a0739c7a63b557294a4", 210944),
 	ENTRY0("ic07_shredspatches", "070803", "a30d837fe5316756fe423afb198fa562", 276992),
 	ENTRY0("ic07_trainstopping", "070804", "a24d31b0fffb5503cdca093007d84a4e", 179712),
 
-	// Jacqueline Lott's "2008 IntroComp"
+	// IntroComp 2008
 	ENTRY0("ic08_fiendishzoo", "080820", "31992ae38abe111e24f01cc299ec639c", 156562),
 	ENTRY0("ic08_stormcellar", "080818", "f9ec8dd06ef3cd6b76d37083d6c20cad", 253338),
 	ENTRY0("ic08_bedtimestory", "080819", "defc39612662db16cc20f905a577273f", 286720),
 	ENTRY0("ic08_ninetenths", "080818", "b7972406a4065706b5a0a9bd09cfd228", 224768),
 
-	// Jacqueline Lott's "2009 IntroComp"
+	// IntroComp 2009
 	ENTRY0("ic09_gossip", "090828", "0de83be147d1b6de3ec0a02b9ffc0a8a", 148480),
 	ENTRY0("ic09_obituary", "090829", "c3ec0a2225c71e901a6f52e4f56955bd", 219648),
 	ENTRY0("ic09_selves", "090828", "899a425d9327b8252934ca73d78e86d4", 301502),
 
-	// Jacqueline Lott's "2010 IntroComp"
+	// IntroComp 2010
 	ENTRY0("ic10_touristtrap", "100705", "4166fc534ae96607232ee13bc9898eb2", 277504),
 	ENTRY0("ic10_moratori", "100704", "34bfe10267a23efaf78b3167ad3ca004", 380058),
 	ENTRY0("ic10_plan6", "100630", "68ac09ff777cff2f9078c4aa39acd98c", 85504),
 	ENTRY0("ic10_waker", "100704", "5c814efafb5da7811c05b138ea5a896e", 506854),
 
-	// Jacqueline Lott's "2011 IntroComp"
+	// IntroComp 2011
 	ENTRY0("ic11_bender", "110611", "1140eb6ddef1ef25d8c14868bcd342cd", 333512),
 	ENTRY0("ic11_despondencyindex", "110629", "ad62e7b6f5565ea6ba41057a357c0e0f", 262608),
 	ENTRY0("ic11_parthenon", "110622", "f663f08ce250614ddcf6cbf1b5bc3580", 261576),
 	ENTRY0("ic11_sfiction", "110630", "242c7a127c04f8a0e01d183dc9acb4b3", 98816),
 	ENTRY0("ic11_stallingtime", "110630", "939ae90866da68944a48c4e277c4c9e5", 326752),
 
-	// Jacqueline Lott's "2013 IntroComp"
+	// IntroComp 2013
 	ENTRY0("ic13_thechickensexer", "130716", "f3f6d761378d1de0176624d6df85de3e", 370648),
 
-	// Jacqueline Lott's "2014 IntroComp"
+	// IntroComp 2014
 	ENTRY0("ic14_talessoulthief", "140720", "cfdeeacc120c9a2bc5702f996e59d645", 352720),
 
-	// Jacqueline Lott's "2016 IntroComp"
+	// IntroComp 2016
 	ENTRY0("ic16_grubbyville", "160805", "bfb73ae5770b3794bded32092c14cb64", 284218),
 
-	// Xalavier Nelson Jr's "2018 IntroComp"
+	// IntroComp 2018
 	ENTRY0("ic18_napier", "180727", "ad181efef44aed7ab1162cc4f193e5ec", 921026),
 
-	// Xalavier Nelson Jr's "2019 IntroComp"
+	// IntroComp 2019
 	ENTRY0("ic19_homeland", "190728", "a95092c8e4d929e5462f7e99896107c1", 99328),
 
-	// David Cornelson's "2003 IF Library Competitions"
+	// IF Library Competition 2003
 	ENTRY0("lc_serve", "030315", "77e8343a373c442074e6f832d904818d", 139264),
 	ENTRY0("lc_trappedschool", "020920", "ba57356b20fa4ca3fd9bd1fd9c390abc", 135680),
 
-	// David Cornelson's "MCDream Competition"
+	// MCDream Competition
 	ENTRY0("mc_dreadwine", "060723", "55734ff823a29f039b093e460ea2a071", 473876),
 	ENTRY0("mc_nofamous", "060816", "2a5cfaa1b541ea238f4d29d4ad6f97cf", 227328),
 	ENTRY0("mc_retreat", "060814", "72b81c21592c4f6fef1452fb7fdd3c3b", 213516),
 
-	// David Cornelson's "Segment Mini-Comp"
+	// Segment Mini-Comp
 	ENTRY0("snowmanzcode2", "050318", "564cd46b498aff8bc07b9bebf120d8a6", 90112),
 	ENTRY0("kaboot", "000001", "f62f20c9a96c93ebefdef4dadfdd3d31", 81920),
 	ENTRY0("snowmanzcode", "050306", "88f22098e7794ac9415ddd95b8e3a713", 175104),
 
-	// Andrew Plotkin's "IF Logic Puzzle Mini-Competition"
+	// IF Logic Puzzle Mini-Competition
 	ENTRY0("lp_logicpuz", "030211", "6ec37cc157a28f2c5dafc0d0f80d30ba", 95232),
 	ENTRY0("lp_traffic", "041303", "7c456f06a8b544b7e39f6504b0fdbd4b", 58880),
 
-	// Mark Silcox's "2001 LOTECH Competition"
+	// LOTECH Competition 2001
 	ENTRY0("lo01_doghouse", "050630", "8cf8ceac10efec821d906ed6d618fd45", 66048),
 
-	// Mark Silcox's "2005 LOTECH Competition"
+	// LOTECH Competition 2005
 	ENTRY0("lo05_stormy", "010415", "99d8cc39c86128559467cdcf4e030126", 124928),
 	ENTRY0("lo05_knapsack", "010415", "9b82f92549f74d9f406cc4de91ad19a5", 15872),
 
-	// Admiral Jota's "Manos Mini-Competition"
+	// Manos Mini-Competition
 	ENTRY0("ma_manoz", "000506", "e1c2b5e831c7b65a7c84b4e6795a8234", 64512),
 
-	// 2009 Metafilter IF Competition
+	// Metafilter IF Competition 2009
 	ENTRY0("me09_bunt", "090402", "67561ed3290dfcf350d3199d1c68e1f3", 77824),
 	ENTRY0("me09_downout", "090402", "7cf5f82737e9477e0c4a203d92763187", 327010),
 	ENTRY0("me09_underpig", "090413", "9b0b2394a0c9ccc05f0f9ec389cc1a30", 154112),
@@ -5666,37 +5666,37 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("me09_burndown", "090404", "95d1d1650305e213317b13c1128b3688", 157556),
 	ENTRY0("me09_rockrider", "090401", "4b38c9071633db404d19462196c729f6", 241506),
 
-	// 2010 Metafilter IF Competition
+	// Metafilter IF Competition 2010
 	ENTRY0("me10_greatrent", "100531", "9e68a7ff9194e38fcdeb0d5ce922f04a", 255964),
 
-	// Lucian Smith's "1998 IF Mini-Competition"
+	// IF Mini-Competition 1998
 	ENTRY0("mc98_bloodline", "980619", "574f0caa07476e82bcc6967e9ec70171", 58880),
 	ENTRY0("mc98_inherit", "980622", "99cd60a8a1b0b02bffffd5ceba8f1dce", 49152),
 	ENTRY0("mc98_sumbunny", "980623", "a13fa568408aa300adbce0b2d33ffaa0", 108032),
 
-	// Ben Caplan's "Minigames Minicomp"
+	// Minigames Minicomp
 	ENTRY0("mm_hamhall", "030607", "565a327a90408ad167ea16dbfd683419", 30720),
 	ENTRY0("mm_insider", "03????", "e38ce038ffd97c33cf9887cfef29d8f0", 42172),
 
-	// Marius Müller's "Neinth Annual New Year's Mincomp"
+	// 9th Annual New Year's Mincomp
 	ENTRY0("ny09_egyptianwalk", "151231", "ef80dd50c700becf2b4b254ce3ad3c9f", 334848),
 
-	// Marius Müller's "Eleventh Annual New Year's Mincomp"
+	// 11th Annual New Year's Mincomp
 	ENTRY0("ny11_halflife", "180102", "982d29c2516cf97ed2b9dd2cdd0d7ffb", 489416),
 
-	// Michael Gentry's "1999 No-Inventory-Competition"
+	// No-Inventory-Competition 1999
 	ENTRY0("ni_annoyedundead", "990220", "745496c251191b520688bdec23495b35", 64000),
 	ENTRY0("ni_camping", "990127", "11780d271a71c52caebf73332df83be2", 71168),
 
-	// 2002 One Room Game Competition
+	// One Room Game Competition 2002
 	ENTRY1("1r02_artif", "020615", "57e9591631815f341356340eb3336994", 102912, Common::IT_ITA),
 	ENTRY1("1r02_sottomarinogiallo", "020611", "9e05ab30b21c2189359ebb87f07ed79e", 106496, Common::IT_ITA),
 
-	// 2003 One Room Game Competition
+	// One Room Game Competition 2003
 	ENTRY1("1r03_floppy", "040114", "178d3034872888adf68d6ea8d4e013d4", 67072, Common::IT_ITA),
 	ENTRY1("1r03_successo", "040114", "bb4b43e17b1ee5faffe3824653c30ff9", 81920, Common::IT_ITA),
 
-	// 2006 One Room Game Competition
+	// One Room Game Competition 2006
 	ENTRY0("1r06_finalselection", "060419", "2690bfb5cc529c338ed6df923d44e28e", 151040),
 	ENTRY1("1r06_sforacchiato", "051114", "32b25f95b3fa4d12df956d80483af22f", 128512, Common::IT_ITA),
 	ENTRY1("1r06_venicezcode", "060514", "fad46e7b7fcba0ec52a91d188c3b0c90", 87552, Common::IT_ITA),
@@ -5706,7 +5706,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("1r06_dereditu", "060502", "f7413ac65ef04a99d63688f1f0ad85b0", 96768, Common::IT_ITA),
 	ENTRY1("1r06_frankenstein3", "000001", "afd4d53fcce2188d0a1fec585e56a690", 87040, Common::IT_ITA),
 
-	// 2007 One Room Game Competition
+	// One Room Game Competition 2007
 	ENTRY1("1r07_dreimp", "071117", "940f42557242f109cd87c3be791a056a", 70144, Common::IT_ITA),
 	ENTRY1("1r07_kinesis", "071118", "b86d57a022ce0f0fd6881dd6558ae5e3", 179200, Common::IT_ITA),
 	ENTRY1("1r07_necromante", "071107", "d38417af6003c64cefdb1cd59446c611", 109568, Common::IT_ITA),
@@ -5714,10 +5714,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("1r07_urbanconflict", "071116/z8", "19d9fe507d8ab34b7583a3ace48dc372", 385024),
 	ENTRY0("1r07_urbanconflict", "071116/zblorb", "3df26fcba4d30314f5d071a814e6525b", 886834),
 
-	// Storme Winfield's "2002 RomanceNovelComp"
+	// RomanceNovelComp 2002
 	ENTRY0("rnc_chooseromance", "020131", "c851c0eed65417b51cc2a21a7267d377", 38912),
 
-	// Sam Kabo Ashwell's "2014 Shufflecomp Competition"
+	// Shufflecomp Competition 2014
 	ENTRY0("sh14_50shades", "140513", "35ba30fad41bdb74dbad8c5127bc657d", 252928),
 	ENTRY0("sh14_flotsam", "140512", "a22df7cc5b1aa4e8d273b4e0d87e3ee1", 503778),
 	ENTRY0("sh14_robotempire", "140511", "1b1adf587847239ef90eafdb2dfa756c", 431472),
@@ -5729,13 +5729,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sh14_truth", "140512", "713d190c6296a877de3d2a4fd48e93f6", 187904),
 	ENTRY0("sh14_whitehouses", "140511", "bfa0206e9903d19551db483f810efa09", 423362),
 
-	// 	Neil Butters's "ShuffleComp: Disc 2 Competition"
+	// ShuffleComp: Disc 2 Competition
 	ENTRY0("shd_everythinggame", "150418/z8", "9be1a20d73ed0db81972287766aa3cbc", 315392),
 	ENTRY0("shd_everythinggame", "150418/zblorb", "130aa6031169e969258ef8e6e1105f52", 1490056),
 	ENTRY0("shd_headingeast", "150507", "ee6869fc4d02966a7ebc7681ae751dc2", 109568),
 	ENTRY0("shd_starryseeksorrow", "150505", "0e37bd629858f51e2c83649973170dec", 1362330),
 
-	// Emily Short's "SmoochieComp 2001"
+	// SmoochieComp 2001
 	ENTRY0("sc_1981", "001207", "8ffc6af37b119a05d9b0c92e63eaacce", 66048),
 	ENTRY0("sc_august", "010201", "3d3f28c6bfb3884045aebb4cc2280c5d", 180736),
 	ENTRY0("sc_deadofwinter", "010104", "20b4288688fd46267ebbad67bd83e18e", 59392),
@@ -5866,7 +5866,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_literacy", "011118", "245b365f8ef81c146b3d091aa664848b", 52736),
 	ENTRY0("sif_woodencat", "011119", "3628449c452f7d0795d89cdfcce7d6da", 56320),
 
-	// David Cornelson's "18th Anniversary SpeedIF Competition"
+	// SpeedIF 18th Anniversary Competition
 	ENTRY0("sif_farout", "161009", "1ad837661bb8b49c4dde09f149ede7fe", 254422),
 
 	// SpeedIF 2000 Competition
@@ -5913,7 +5913,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// SpeedIF Crinkle Cut Competition
 	ENTRY0("sif_travels", "020323", "e794ec45a8872fcf5125427c84590a26", 52736),
 
-	// Douglas Adams Tribute SpeedIF Competition
+	// SpeedIF Douglas Adams Tribute Competition
 	ENTRY0("sif_nightmilliways", "010514", "92e9a393aa3bc7dcad6e42ef38575dec", 84480),
 	ENTRY0("sif_deadlinebda", "010513", "b9b5a235e36e70b5aeca511a9a02a9f8", 51712),
 	ENTRY0("sif_howmany", "010513", "64156dd269c213a2f104a0fa1eaa83ef", 86016),
@@ -5936,7 +5936,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_losing", "021031", "68073c13dddeb29ce8e9530d27fd28c0", 51712),
 	ENTRY0("sif_oldsherwoodcemetary", "021031", "c40277f69d0d57f960bca6351043dabb", 85504),
 
-	// Jacqueline Lott's "Indigo New Language Speed IF competition"
+	// SpeedIF Indigo New Language Competition
 	ENTRY0("sif_hauntedhouse", "110507", "760df7716aecc0f1e457a2c22735c854", 298436),
 
 	// SpeedIF Introcomp
@@ -5994,28 +5994,28 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_expedition", "060514", "c0851711fe1037eca6a3f3f66faaf5b5", 118640),
 	ENTRY0("sif_speedifnockle", "060513", "fb7d8536e61e1f70dc641cee73846200", 121254),
 
-	// 2007 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2007
 	ENTRY0("sif_nazimice", "071229", "ee0520b15d0fdd8633498b42154d8486", 139264),
 	ENTRY0("sif_notsameols", "071230", "ef765c232443f661c817d8f9a9bbd00d", 223232),
 	ENTRY0("sif_shothitler", "071229", "6a2f3c72e4cf395b29c07ea88756a668", 173568),
 	ENTRY0("sif_newyearswar", "071229", "6a9e22fe827900831f665a16132ffa81", 154624),
 
-	// 2008 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2008
 	ENTRY0("sif_leaptime", "081226", "42e6f54aabedcdb8ccf4caaff341b4ce", 228352),
 	ENTRY0("sif_mauled", "081224", "bf6f8e0783aa8980e81c501d55f52bb9", 173056),
 	ENTRY0("sif_escapist", "081227", "086efab633103cc9f2bf8c223df436c9", 148480),
 
-	// 2009 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2009
 	ENTRY0("sif_dullegriet", "100116", "00c9f618ec2299548ae5d961ad27a500", 169472),
 	ENTRY0("sif_stabbed", "091225", "33b36976ba3a34ccd4f73ce7b95ed468", 187392),
 
-	// 2013 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2013
 	ENTRY0("sif_faithfulcompv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
 	ENTRY0("sif_talemorning", "140103", "a189df712a5254487eb9a9d8cb8fffca", 253952),
 	ENTRY0("sif_thedayicameback", "140104", "c1abdfa44ae62d8194ce301f38f986c4", 356302),
 	ENTRY0("sif_youhavetoputthebaby", "140103", "ce8c2720fd4adab602737e31e3c15554", 152844),
 
-	// 2014 SpeedIF New Year's Speed Competition
+	// SpeedIF New Year's Speed Competition 2014
 	ENTRY0("sif_youwerehere", "150101", "44d44bcc5e4a09b2b5a8c91ff6e6ffe9", 659824),
 
 	// SpeedIF O Competition
@@ -6024,7 +6024,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_getting", "010619", "c4ecc47413d22b405139e3e1aad71e31", 57344),
 	ENTRY0("sif_astrology", "010619", "8b822d755dbd37c3bef517f7824c4ab2", 57344),
 
-	// David Cornelson's "SpeedIF PAX East 2010"
+	// SpeedIF PAX East 2010
 	ENTRY0("sif_wizshop", "100327", "3c288b1b9a0738c055949f77d7a1d904", 188416),
 	ENTRY0("sif_apoptosis", "100327", "41a8f9ed1cda9df15ce634e6c95ef13f", 289728),
 	ENTRY0("sif_foodmagic", "100327", "ea2ba1dec06b945d13509eb5a7cf4404", 279028),
@@ -6037,7 +6037,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_safehouse", "100327", "e2b98a8b1dfc7364ef96b668ddcd281b", 190464),
 	ENTRY0("sif_vortex2305", "100327", "539c5143e05f8ee96e724e88e2fc76ac", 196680),
 
-	// David Cornelson's "SpeedIF PAX East 2011"
+	// SpeedIF PAX East 2011
 	ENTRY0("sif_scurvy", "110313", "1345c0f052db46981d21dfca1f61164e", 266224),
 	ENTRY0("sif_helpfulmanzcode", "110312", "413e1a37570643c936bf5d953b23d792", 183808),
 	ENTRY0("sif_boredladders", "110313", "67c2a4d28c2d9b4010eb5df84bf5ac23", 256416),
@@ -6051,7 +6051,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_appall", "020223", "1659420ba9bdac0036857ceef6544826", 52736),
 	ENTRY0("sif_descent", "020223", "ed6f047a085184879b62cfbdd8b00bb6", 55296),
 
-	// Pi-Theta-Aleph-Parallax SpeedIF Competition
+	// SpeedIF Pi-Theta-Aleph-Parallax Competition
 	ENTRY0("sif_parallaxdream", "010722", "eec02151066a419e37945c4d0524febb", 74752),
 	ENTRY0("sif_pethertheta", "010722", "fdbd5f400e09d787c41f9983e40e77dd", 50688),
 	ENTRY0("sif_putiap", "010721", "b72c110cf4e03388bc5c3aeef9718adc", 53760),
@@ -6060,7 +6060,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_moonbar", "010722", "19d87eff290b6672ea6bcfeec864711c", 53248),
 	ENTRY0("sif_thpoint", "010721", "28fcea7b45429830ec60a7aaefb66609", 110592),
 
-	// 2011 New Year's Speed IF - The penultimate not numbered New Year's Speed IF Competition.
+	// SpeedIF New Year's Speed Competition 2011
 	ENTRY0("sif_beingendbeg", "111230", "7bd6ecaf3861cd0f35798ad64a33fef7", 375758),
 	ENTRY0("sif_birthmind", "111230", "3903332c627cba6350885c17b2bde4b0", 351772),
 	ENTRY0("sif_dashslapney", "111230", "798921e044aaed9d16f8b2b238b7dbf9", 331726),
@@ -6071,7 +6071,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_silencegods", "111230", "0aeca7f64c8a551f4cadefca0ae57aca", 294828),
 	ENTRY0("sif_threemore", "111230", "356403c4a1f4e86ae5ed1a26b20013f0", 152576),
 
-	// `R*IF` Spam SpeedIF Competition
+	// SpeedIF `R*IF` Spam Competition
 	ENTRY0("sif_htp", "090926", "d6ee7e9f0522592ebfdfc689a0639e9c", 148480),
 
 	// SpeedIF Scenario 1 Competition
@@ -6106,7 +6106,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_cheatingdeath", "030525", "eda221a4306e0942e9e589504756fd20", 54272),
 	ENTRY0("sif_rrr", "030525", "ecf72d85d6056bdaeed7de43942248dc", 59392),
 
-	// Ultimate not numbered New Year's Speed IF Competition
+	// SpeedIF Ultimate not numbered New Year's Competition
 	ENTRY0("sif_disenchantmentbay", "130106", "4a982fea8dab9bebd65062f958a0d81f", 330634),
 	ENTRY0("sif_disenchantmentbay", "130104", "dbf7fe64ac7a33b362eb9e8f2e40c29e", 282804),
 	ENTRY0("sif_shortof", "130103", "180dbfc43c99c579b6409fcfaf86dd91", 131072),
@@ -6139,16 +6139,16 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// SpeedIF Zombie Competition
 	ENTRY0("sif_speedifzombie", "050823", "389f6c2083b608fd64c5b98e745b9318", 77824),
 
-	// Bouchercomp SpeedIF Competition
+	// SpeedIF Bouchercomp Competition
 	ENTRY0("sif_lowellzcode", "080528", "7718a75e194ec0fdf84a2460733a4d0a", 142828),
 	ENTRY0("sif_putpbad", "080528", "69a7ab928c7d1f5196ee8cb954276861", 131584),
 	ENTRY0("sif_seekingsolace", "080528", "bda0aec03bd17c8816c053ea5b25acac", 183544),
 	ENTRY0("sif_wideopengate", "080528", "1898e262d619428285276aa626ff8b6c", 147968),
 
-	// Emily Short's "Swash Comp"
+	// Swash Comp
 	ENTRY0("swa_seacaptains", "030902", "7fb736fb5ffd548d87e0e0d36475a451", 120832),
 
-	// Mark Musante's "Toaster Competition"
+	// Toaster Competition
 	ENTRY0("toa_burnttoast", "000931", "70dba603317dff1feafe1e1941021c95", 80384),
 	ENTRY0("toa_friarbaconstreet", "000831", "b499ff3d6468e7f3dffba37bb2ecd458", 92160),
 	ENTRY0("toa_gottoast", "000818", "9b9efc642110f9cf8cf02d427926c420", 128512),
@@ -6156,7 +6156,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("toa_shrinkingwoman", "000901", "e856b8d56da1c76283159728ec75b636", 52224),
 	ENTRY0("toa_tommytoaster", "000815", "e85536f32722533a9aaa3fd3d6f88037", 59392),
 
-	// Jack Welch's "TWIFcomp"
+	// TWIFcomp
 	ENTRY0("twif_putpbat", "100414", "331ac3c5bb168e99453e5e74043b37c2", 140288),
 	ENTRY0("twif_sin1", "100411", "725d9ec5b537fbd089fa23a7171ad875", 140800),
 	ENTRY0("twif_sin2", "100411", "651b1474b605e6cca52bc6cfeedd8040", 140288),
@@ -6168,14 +6168,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("twif_sin8", "100411", "f24f52f675b678db3608d52e6563bf4a", 140288),
 	ENTRY0("twif_war", "100411", "f93714ad73e07cd75ad5d00afde37c8e", 140288),
 
-	// Emily Short's "Walkthrough Competition"
+	// Walkthrough Competition
 	ENTRY0("wlk_wtf", "010522", "dc7a87253da4ff3c05b2217ed564137d", 94208),
 	ENTRY0("wlk_dreams", "010516", "fd9d677f57c1fb0b8a0b4d00dd8d52cf", 110080),
 	ENTRY0("wlk_fit", "010520", "8b735022d6a71cef1d746123193cf304", 133632),
 	ENTRY0("wlk_jigsaw2", "010421", "de554e3d1faca74b0d4a02d7bacd2da0", 61440),
 	ENTRY0("wlk_exile", "010520", "bd4e1fb0b26eb5577db72e5b8788f416", 134656),
 
-	//  David A. Cornelson's "1999 XComp"
+	// XComp 1999
 	ENTRY0("xco_sixfoot", "990323", "37724e6551435bdbd674e7ffc4937d7c", 113664),
 
 	// Danish games
@@ -6264,51 +6264,51 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("verdeterre", "150805", "a2bd16f0dbf5cae8cf90ce71c4c71fb4", 1402584, Common::FR_FRA),
 	ENTRY1("vindaloofr", "021001", "95642b4ec28e36f1e250d343c1342bba", 98816, Common::FR_FRA),
 
-	// French Comp 2005
+	// French games: French Comp 2005
 	ENTRY1("frc_cercledesgros", "051008", "091a9ab30302eb20d421ccbd0c530439", 128512, Common::FR_FRA),
 	ENTRY1("frc_dreamlands", "050908", "79cecc22e3f020a3ccc23912122785d4", 79872, Common::FR_FRA),
 	ENTRY1("frc_templedefeu", "080317", "ce4d11a46341d6307f4cd2bb303d1c74", 134656, Common::FR_FRA),
 
-	// French Comp 2006
+	// French games: French Comp 2006
 	ENTRY1("frc_citeeaux", "061024", "aec85f8500c931d478d43bb25d75cf90", 159232, Common::FR_FRA),
 	ENTRY1("frc_sarvegne", "081227", "5f6b489cd12c151e4bf67822a5d22b8a", 239104, Common::FR_FRA),
 
-	// French Comp 2007
+	// French games: French Comp 2007
 	ENTRY1("frc_heuresduvent", "080220", "5b9470352594bb79edee84ecc0134e4e", 337920, Common::FR_FRA),
 	ENTRY1("frc_divinebonace", "070711", "a09271e95d3720d1e8016600b7871906", 103936, Common::FR_FRA),
 	ENTRY1("frc_brrr", "070709", "8657c6e47832ce1a1a976fc1107e16fc", 73216, Common::FR_FRA),
 	ENTRY1("frc_phareabandonne", "071220", "b9a70f4bbebbcdca4c52baa6dbac143f", 102912, Common::FR_FRA),
 
-	// French Comp 2008
+	// French games: French Comp 2008
 	ENTRY1("frc_brume", "100424", "b661a3f9a2f9a3700c6cfee216063615", 152576, Common::FR_FRA),
 	ENTRY0("frc_lettresvolees", "081227", "2590cafc6a7b22b40bd3765c16a0e3d0", 250880),
 	ENTRY1("frc_louplachevre", "081121", "473a02087280f01a81e4ee4035249ed5", 98304, Common::FR_FRA),
 
-	// French Comp 2009
+	// French games: French Comp 2009
 	ENTRY1("frc_catapole", "100114", "e326f5ab2f236791b5b8f122d75bdb7d", 156672, Common::FR_FRA),
 	ENTRY1("frc_chambresyrion", "100111", "7db1461b938e392ced1d36747525437d", 123392, Common::FR_FRA),
 	ENTRY1("frc_mechants", "100117", "0d580033a9b180484ea6c8bbc2b6106b", 270848, Common::FR_FRA),
 
-	// French Comp 2011
+	// French games: French Comp 2011
 	ENTRY1("frc_aventureszeus", "120122", "bef1f77e9dfd65d7d39350e3c50b40ce", 91136, Common::FR_FRA),
 	ENTRY1("frc_dardenfer", "120822", "fea4fe5607327d8f0c15c88b65ac5d9a", 275968, Common::FR_FRA),
 	ENTRY1("frc_terreciel", "120122", "cf24a28bea8bb8f80e006acebbef8e33", 245248, Common::FR_FRA),
 	ENTRY1("frc_astrologue", "120122", "4259e9bb2a97152e454ba8feda4f9a04", 198656, Common::FR_FRA),
 	ENTRY1("frc_homelandsec", "120124", "ea70cf57b134c45c2234c976d06d1948", 155136, Common::FR_FRA),
 
-	// French Comp 2013
+	// French games: French Comp 2013
 	ENTRY1("frc_lifeonmarsfr", "140108", "8ef2f4e9dfe63bcce9ff7726cdcca7ea", 163840, Common::FR_FRA),
 	ENTRY1("frc_sourcedezig", "140102", "675d4956a12d6a23cf2a7d491e13cbff", 88064, Common::FR_FRA),
 	ENTRY1("frc_trac", "131213", "5db3d7270a0b2c7b8dab1672b2f24b8c", 334848, Common::FR_FRA),
 
-	// French Comp 2015
+	// French games: French Comp 2015
 	ENTRY1("frc_envol", "150201", "5aa75d7b333fdb69c71601d95d2def30", 157696, Common::FR_FRA),
 
-	// French Comp 2016
+	// French games: French Comp 2016
 	ENTRY1("frc_tipelau", "160104", "e4c8b0d99ceab57393db70b64dcd49c4", 173568, Common::FR_FRA),
 	ENTRY1("frc_diamantblanc", "160103", "d349be5b008ee06ad93bb7342d5ffbea", 167936, Common::FR_FRA),
 
-	// French Comp 2018
+	// French games: French Comp 2018
 	ENTRY1("frc_exil", "180114", "ff9628e84c46771168b5be5a9e23acd9", 107520, Common::FR_FRA),
 
 	// German games
