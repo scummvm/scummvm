@@ -78,7 +78,12 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	return fetched;
 }
 
-@implementation iPhoneView
+@implementation iPhoneView {
+#if TARGET_OS_IOS
+	UIButton *_menuButton;
+	UIButton *_toggleTouchModeButton;
+#endif
+}
 
 + (Class)layerClass {
 	return [CAEAGLLayer class];
@@ -293,6 +298,22 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	_backgroundSaveStateTask = UIBackgroundTaskInvalid;
 #if TARGET_OS_IOS
 	_currentOrientation = UIInterfaceOrientationUnknown;
+
+	// On-screen control buttons
+	UIImage *menuBtnImage = [UIImage imageNamed:@"ic_action_menu"];
+	_menuButton = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - menuBtnImage.size.width, 0, menuBtnImage.size.width, menuBtnImage.size.height)];
+	[_menuButton setImage:menuBtnImage forState:UIControlStateNormal];
+	[_menuButton setAlpha:0.5];
+	[_menuButton addTarget:self action:@selector(handleMainMenuKey) forControlEvents:UIControlEventTouchUpInside];
+	[self addSubview:_menuButton];
+
+	// The mode will be updated when OSystem has loaded its presets
+	UIImage *toggleTouchModeBtnImage = [UIImage imageNamed:@"ic_action_touchpad"];
+	_toggleTouchModeButton = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - menuBtnImage.size.width - toggleTouchModeBtnImage.size.width, 0, toggleTouchModeBtnImage.size.width, toggleTouchModeBtnImage.size.height)];
+	[_toggleTouchModeButton setImage:toggleTouchModeBtnImage forState:UIControlStateNormal];
+	[_toggleTouchModeButton setAlpha:0.5];
+	[_toggleTouchModeButton addTarget:self action:@selector(triggerTouchModeChanged) forControlEvents:UIControlEventTouchUpInside];
+	[self addSubview:_toggleTouchModeButton];
 #endif
 
 	[self setupGestureRecognizers];
@@ -313,6 +334,27 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 	return self;
 }
+
+#if TARGET_OS_IOS
+- (void)triggerTouchModeChanged {
+	[self addEvent:InternalEvent(kInputTouchModeChanged, 0, 0)];
+}
+
+- (void)updateTouchMode {
+	UIImage *btnImage;
+	TouchMode currentTouchMode = iOS7_getCurrentTouchMode();
+
+	if (currentTouchMode == kTouchModeDirect) {
+		btnImage = [UIImage imageNamed:@"ic_action_mouse"];
+	} else if (currentTouchMode == kTouchModeTouchpad) {
+		btnImage = [UIImage imageNamed:@"ic_action_touchpad"];
+	} else {
+		return;
+	}
+
+    [_toggleTouchModeButton setImage: btnImage forState:UIControlStateNormal];
+}
+#endif
 
 - (void)dealloc {
 	[_keyboardView release];
@@ -390,6 +432,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		} else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
 			newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, height);
 		}
+
+		// The onscreen control buttons have to be moved accordingly
+		[_menuButton setFrame:CGRectMake(newFrame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
+		[_toggleTouchModeButton setFrame:CGRectMake(newFrame.size.width - _toggleTouchModeButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
 #endif
 		self.frame = newFrame;
 	}
@@ -455,6 +501,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	} else { // UIInterfaceOrientationLandscapeLeft
 		screenOrientation = kScreenOrientationFlippedLandscape;
 	}
+
+	// The onscreen control buttons have to be moved accordingly
+	[_menuButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width, 0, _menuButton.imageView.image.size.width, _menuButton.imageView.image.size.height)];
+	[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _menuButton.imageView.image.size.width - _toggleTouchModeButton.imageView.image.size.width, 0, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
 
 	[self addEvent:InternalEvent(kInputOrientationChanged, screenOrientation, 0)];
 	if (UIInterfaceOrientationIsLandscape(orientation)) {
