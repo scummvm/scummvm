@@ -561,13 +561,15 @@ void ScummEngine::checkExecVerbs() {
 			// This is disabled in the SegaCD version as the "vs->key" values setup
 			// by script-17 conflict with the values expected by the generic keyboard
 			// input script. See tracker item #2013.
-			vs = &_verbs[1];
-			for (i = 1; i < _numVerbs; i++, vs++) {
-				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
-					if (_mouseAndKeyboardStat == vs->key) {
-						// Trigger verb as if the user clicked it
-						runInputScript(kVerbClickArea, vs->verbid, 1);
-						return;
+			if (!_macIndy3Gui || !_macIndy3Gui->isVisible()) {
+				vs = &_verbs[1];
+				for (i = 1; i < _numVerbs; i++, vs++) {
+					if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
+						if (_mouseAndKeyboardStat == vs->key) {
+							// Trigger verb as if the user clicked it
+							runInputScript(kVerbClickArea, vs->verbid, 1);
+							return;
+						}
 					}
 				}
 			}
