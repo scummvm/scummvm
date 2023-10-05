@@ -491,12 +491,15 @@ bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
 	if (!_verbid || !_enabled)
 		return false;
 
+	VerbSlot *vs = &_vm->_verbs[_verbslot];
+
+	if (vs->saveid)
+		return false;
+
 	bool caughtEvent = false;
 
-	uint8 key = _vm->_verbs[_verbslot].key;
-
 	if (event.type == Common::EVENT_KEYDOWN) {
-		if (!event.kbd.hasFlags(Common::KBD_NON_STICKY) && event.kbd.keycode == key) {
+		if (!event.kbd.hasFlags(Common::KBD_NON_STICKY) && event.kbd.keycode == vs->key) {
 			caughtEvent = true;
 		}
 	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
