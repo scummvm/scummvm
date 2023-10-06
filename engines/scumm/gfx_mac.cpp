@@ -481,6 +481,7 @@ void MacIndy3Gui::VerbWidget::draw() {
 }
 
 void MacIndy3Gui::VerbWidget::undraw() {
+	debug("Undrawing button [%d]", _verbid);
 	fill(_bounds);
 	copyRectToScreen(_bounds);
 }
@@ -691,7 +692,7 @@ MacIndy3Gui::Inventory::~Inventory() {
 }
 
 void MacIndy3Gui::Inventory::reset() {
-	MacIndy3Gui::Widget::reset();
+	MacIndy3Gui::VerbWidget::reset();
 
 	for (int i = 0; i < ARRAYSIZE(_slots); i++)
 		_slots[i]->reset();
