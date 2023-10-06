@@ -89,12 +89,10 @@ public:
 
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _queuedEventTime(0),
-	_secondaryTapped(false),
 	_screenOrientation(kScreenOrientationAuto),
 	_timeSuspended(0), _runningTasks(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_currentTouchMode = kTouchModeTouchpad;
-	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 	_chrootBasePath = iOS7_getDocumentsDir();
 	ChRootFilesystemFactory *chFsFactory = new ChRootFilesystemFactory(_chrootBasePath);

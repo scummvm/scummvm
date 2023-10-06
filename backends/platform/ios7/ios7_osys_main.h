@@ -66,8 +66,6 @@ protected:
 	long _lastMouseDown;
 	long _queuedEventTime;
 	Common::Event _queuedInputEvent;
-	bool _secondaryTapped;
-	bool _mouseClickAndDragEnabled;
 	TouchMode _currentTouchMode;
 	int _lastPadX;
 	int _lastPadY;

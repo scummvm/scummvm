@@ -70,7 +70,6 @@ private:
 	GUI::StaticTextWidget *_gamepadControllerDirectionalInputDesc;
 	GUI::PopUpWidget *_gamepadControllerDirectionalInputPopUp;
 
-	GUI::CheckboxWidget *_clickAndDragCheckbox;
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
 #if TARGET_OS_IOS
 	GUI::StaticTextWidget *_preferredTouchModeDesc;
@@ -108,7 +107,6 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Thumbstick"), kDirectionalInputThumbstick);
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Dpad"), kDirectionalInputDpad);
 
-	_clickAndDragCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.ClickAndDragMode", _("Mouse-click-and-drag mode"));
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
 
 #if TARGET_OS_IOS
@@ -250,7 +248,6 @@ void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 			  "One finger tap: Left mouse click\n"
 			  "Two finger tap: Right mouse click\n"
 			  "Two finger double tap: ESC\n"
-			  "Two finger swipe (bottom to top): Toggles Click and drag mode\n"
 			  "Two finger swipe (left to right): Toggles between touch direct mode and touchpad mode\n"
 			  "Two finger swipe (right to left): Shows/hides on-screen controls\n"
 			  "Two finger swipe (top to bottom): Global Main Menu\n"
@@ -392,7 +389,6 @@ void IOS7OptionsWidget::load() {
 	_gamepadControllerOpacityLabel->setValue(_gamepadControllerOpacitySlider->getValue());
 	_gamepadControllerDirectionalInputPopUp->setSelectedTag(loadDirectionalInput("gamepad_controller_directional_input", !inAppDomain, kDirectionalInputThumbstick));
 
-	_clickAndDragCheckbox->setState(ConfMan.getBool("clickanddrag_mode", _domain));
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
 
 #if TARGET_OS_IOS
@@ -419,7 +415,6 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.setInt("gamepad_controller_opacity", _gamepadControllerOpacitySlider->getValue(), _domain);
 		ConfMan.setInt("gamepad_controller_directional_input", _gamepadControllerDirectionalInputPopUp->getSelectedTag(), _domain);
 
-		ConfMan.setBool("clickanddrag_mode", _clickAndDragCheckbox->getState(), _domain);
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
 
 #if TARGET_OS_IOS
@@ -448,7 +443,6 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.removeKey("touch_mode_2d_games", _domain);
 		ConfMan.removeKey("touch_mode_3d_games", _domain);
 
-		ConfMan.removeKey("clickanddrag_mode", _domain);
 		ConfMan.removeKey("keyboard_fn_bar", _domain);
 
 		if (inAppDomain) {
@@ -470,9 +464,7 @@ bool IOS7OptionsWidget::hasKeys() {
 
 	ConfMan.hasKey("touch_mode_menus", _domain) ||
 	ConfMan.hasKey("touch_mode_2d_games", _domain) ||
-	ConfMan.hasKey("touch_mode_3d_games", _domain) ||
-
-	ConfMan.hasKey("clickanddrag_mode", _domain);
+	ConfMan.hasKey("touch_mode_3d_games", _domain);
 
 #if TARGET_OS_IOS
 	hasKeys = hasKeys || (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("orientation_menus", _domain)) ||
@@ -515,7 +507,6 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	_gamepadControllerOpacityLabel->setEnabled(false);
 #endif /* TARGET_OS_IOS */
 
-	_clickAndDragCheckbox->setEnabled(e);
 	_keyboardFnBarCheckbox->setEnabled(e);
 
 #if TARGET_OS_IOS
@@ -554,7 +545,6 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
 	ConfMan.registerDefault("touch_mode_3d_games", "gamepad");
 
-	ConfMan.registerDefault("clickanddrag_mode", false);
 	ConfMan.registerDefault("keyboard_fn_bar", true);
 
 #if TARGET_OS_IOS
@@ -568,7 +558,6 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 void OSystem_iOS7::applyBackendSettings() {
 	virtualController(ConfMan.getBool("gamepad_controller"));
 	// _currentTouchMode is applied by the graphic manager
-	_mouseClickAndDragEnabled = ConfMan.getBool("clickanddrag_mode");
 
 #if TARGET_OS_IOS
 	applyOrientationSettings();
