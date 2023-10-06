@@ -78,7 +78,8 @@ private:
 		Widget(int x, int y, int width, int height);
 		virtual ~Widget() {}
 
-		void reset();
+		virtual void reset();
+		virtual void setRedraw(bool redraw) { _redraw = redraw; }
 
 		virtual void draw() = 0;
 		virtual void undraw() {}
@@ -132,6 +133,14 @@ private:
 
 	class Inventory : public VerbWidget {
 	private:
+		class ScrollBar : public Widget {
+		public:
+			ScrollBar(int x, int y, int width, int height);
+
+			bool handleEvent(Common::Event &event);
+			void draw();
+		};
+
 		class ScrollButton : public Widget {
 		private:
 			static const uint16 _upArrow[16];
@@ -162,6 +171,7 @@ private:
 		};
 
 		Slot *_slots[6];
+		ScrollBar *_scrollBar;
 		ScrollButton *_scrollButtons[2];
 
 		static const uint16 _upArrow[16];
@@ -170,6 +180,9 @@ private:
 	public:
 		Inventory(int x, int y, int width, int height);
 		~Inventory();
+
+		void reset();
+		void setRedraw(bool redraw);
 
 		void updateVerb(int verbslot);
 
