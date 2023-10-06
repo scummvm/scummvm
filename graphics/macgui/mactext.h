@@ -119,17 +119,18 @@ struct MacFontRun {
 
 struct MacTextLine;
 
-struct MacTextCanvas {
-	Common::Array<MacTextLine> text;
-	uint16 flags = 0;
-	ManagedSurface *surface = nullptr, *shadowSurface = nullptr;
-	int maxWidth = 0;
-	int textMaxWidth = 0;
-	int textMaxHeight = 0;
+class MacTextCanvas {
+public:
+	Common::Array<MacTextLine> _text;
+	uint16 _flags = 0;
+	ManagedSurface *_surface = nullptr, *_shadowSurface = nullptr;
+	int _maxWidth = 0;
+	int _textMaxWidth = 0;
+	int _textMaxHeight = 0;
 
 	~MacTextCanvas() {
-		delete surface;
-		delete shadowSurface;
+		delete _surface;
+		delete _shadowSurface;
 	}
 };
 
@@ -210,7 +211,7 @@ public:
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
-	ManagedSurface *getSurface() { return _canvas.surface; }
+	ManagedSurface *getSurface() { return _canvas._surface; }
 	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
@@ -280,12 +281,12 @@ public:
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
 	void removeLastLine();
-	int getLineCount() { return _canvas.text.size(); }
+	int getLineCount() { return _canvas._text.size(); }
 	int getLineCharWidth(int line, bool enforce = false);
 	int getLastLineWidth();
-	int getTextHeight() { return _canvas.textMaxHeight; }
+	int getTextHeight() { return _canvas._textMaxHeight; }
 	int getLineHeight(int line);
-	int getTextMaxWidth() { return _canvas.textMaxWidth; }
+	int getTextMaxWidth() { return _canvas._textMaxWidth; }
 
 	void setText(const Common::U32String &str);
 
