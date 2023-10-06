@@ -146,7 +146,8 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 				break;
 
 			byte v = *srcP;
-			if (destX >= 0 && v != 0 && (!depthP || *depthP == 0 || srcDepth < *depthP)) {
+			byte depth = depthP ? *depthP & 0xf : 0;
+			if (destX >= 0 && v != 0 && (!depthP || depth == 0 || srcDepth < depth)) {
 				*destP = v;
 			}
 
