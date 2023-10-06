@@ -46,6 +46,7 @@ enum InputEvent {
 	kInputApplicationRestoreState,
 	kInputSwipe,
 	kInputTap,
+	kInputLongPress,
 	kInputMainMenu,
 	kInputJoystickAxisMotion,
 	kInputJoystickButtonDown,
@@ -82,6 +83,11 @@ enum UIViewSwipeDirection {
 enum UIViewTapDescription {
 	kUIViewTapSingle = 1,
 	kUIViewTapDouble = 2
+};
+
+enum UIViewLongPressDescription {
+	UIViewLongPressStarted = 1,
+	UIViewLongPressEnded = 2
 };
 
 struct InternalEvent {

@@ -86,6 +86,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 #if TARGET_OS_IOS
 	UIButton *_menuButton;
 	UIButton *_toggleTouchModeButton;
+	UITapGestureRecognizer *oneFingerTapGesture;
+	UITapGestureRecognizer *twoFingerTapGesture;
 #endif
 }
 
@@ -193,6 +195,33 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[_toggleTouchModeButton addGestureRecognizer:longPressKeyboard];
 	[longPressKeyboard release];
 
+	oneFingerTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(oneFingerTap:)];
+	[oneFingerTapGesture setNumberOfTapsRequired:1];
+	[oneFingerTapGesture setNumberOfTouchesRequired:1];
+	[oneFingerTapGesture setDelaysTouchesBegan:NO];
+	[oneFingerTapGesture setDelaysTouchesEnded:NO];
+
+	twoFingerTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingerTap:)];
+	[twoFingerTapGesture setNumberOfTapsRequired:1];
+	[twoFingerTapGesture setNumberOfTouchesRequired:2];
+	[twoFingerTapGesture setDelaysTouchesBegan:NO];
+	[twoFingerTapGesture setDelaysTouchesEnded:NO];
+
+	// Default long press duration is 0.5 seconds which suits us well
+	UILongPressGestureRecognizer *oneFingerLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(oneFingerLongPress:)];
+	[oneFingerLongPressGesture setNumberOfTouchesRequired:1];
+	[oneFingerLongPressGesture setDelaysTouchesBegan:NO];
+	[oneFingerLongPressGesture setDelaysTouchesEnded:NO];
+	[oneFingerLongPressGesture setCancelsTouchesInView:NO];
+	[oneFingerLongPressGesture canPreventGestureRecognizer:oneFingerTapGesture];
+
+	UILongPressGestureRecognizer *twoFingerLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingerLongPress:)];
+	[twoFingerLongPressGesture setNumberOfTouchesRequired:2];
+	[twoFingerLongPressGesture setDelaysTouchesBegan:NO];
+	[twoFingerLongPressGesture setDelaysTouchesEnded:NO];
+	[twoFingerLongPressGesture setCancelsTouchesInView:NO];
+	[twoFingerLongPressGesture canPreventGestureRecognizer:twoFingerTapGesture];
+
 	UIPinchGestureRecognizer *pinchKeyboard = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardPinch:)];
 
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
@@ -259,6 +288,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[self addGestureRecognizer:swipeUp3];
 	[self addGestureRecognizer:swipeDown3];
 	[self addGestureRecognizer:doubleTapTwoFingers];
+	[self addGestureRecognizer:oneFingerTapGesture];
+	[self addGestureRecognizer:twoFingerTapGesture];
+	[self addGestureRecognizer:oneFingerLongPressGesture];
+	[self addGestureRecognizer:twoFingerLongPressGesture];
 
 	[pinchKeyboard release];
 	[swipeRight release];
@@ -270,6 +303,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	[swipeUp3 release];
 	[swipeDown3 release];
 	[doubleTapTwoFingers release];
+	[oneFingerTapGesture release];
+	[twoFingerTapGesture release];
+	[oneFingerLongPressGesture release];
+	[twoFingerLongPressGesture release];
 #elif TARGET_OS_TV
 	UITapGestureRecognizer *tapUpGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(threeFingersSwipeUp:)];
 	[tapUpGestureRecognizer setAllowedPressTypes:@[@(UIPressTypeUpArrow)]];
@@ -574,6 +611,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+	[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+	[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
 			[(TouchController *)c touchesMoved:touches withEvent:event];
@@ -665,6 +704,34 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		[self hideKeyboard];
 }
 #endif
+
+- (void)oneFingerTap:(UITapGestureRecognizer *)recognizer {
+	if (recognizer.state == UIGestureRecognizerStateEnded) {
+		[self addEvent:InternalEvent(kInputTap, kUIViewTapSingle, 1)];
+	}
+}
+
+- (void)twoFingerTap:(UITapGestureRecognizer *)recognizer {
+	if (recognizer.state == UIGestureRecognizerStateEnded) {
+		[self addEvent:InternalEvent(kInputTap, kUIViewTapSingle, 2)];
+	}
+}
+
+- (void)oneFingerLongPress:(UILongPressGestureRecognizer *)recognizer {
+	if (recognizer.state == UIGestureRecognizerStateBegan) {
+		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressStarted, 1)];
+	} else if (recognizer.state == UIGestureRecognizerStateEnded) {
+		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressEnded, 1)];
+	}
+}
+
+- (void)twoFingerLongPress:(UILongPressGestureRecognizer *)recognizer {
+	if (recognizer.state == UIGestureRecognizerStateBegan) {
+		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressStarted, 2)];
+	} else if (recognizer.state == UIGestureRecognizerStateEnded) {
+		[self addEvent:InternalEvent(kInputLongPress, UIViewLongPressEnded, 2)];
+	}
+}
 
 - (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
 	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];

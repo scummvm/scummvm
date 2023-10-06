@@ -133,6 +133,11 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 				return false;
 			break;
 
+		case kInputLongPress:
+			if (!handleEvent_longPress(event, (UIViewLongPressDescription) internalEvent.value1, internalEvent.value2))
+				return false;
+			break;
+
 		case kInputMainMenu:
 			event.type = Common::EVENT_MAINMENU;
 			_queuedInputEvent.type = Common::EVENT_INVALID;
@@ -491,15 +496,25 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 
 bool OSystem_iOS7::handleEvent_tap(Common::Event &event, UIViewTapDescription type, int touches) {
 	if (touches == 1) {
-		if (type == kUIViewTapDouble) {
-			event.type = Common::EVENT_RBUTTONDOWN;
-			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+		if (type == kUIViewTapSingle) {
+			event.type = Common::EVENT_LBUTTONDOWN;
+			handleEvent_mouseEvent(event, 0, 0);
+
+			_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
 			return true;
 		}
-	}
-	else if (touches == 2) {
-		if (type == kUIViewTapDouble) {
+	} else if (touches == 2) {
+		if (type == kUIViewTapSingle) {
+			event.type = Common::EVENT_RBUTTONDOWN;
+			handleEvent_mouseEvent(event, 0, 0);
+
+			_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+			handleEvent_mouseEvent(_queuedInputEvent, 0, 0);
+			return true;
+		} else if (type == kUIViewTapDouble) {
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
 			event.type = Common::EVENT_KEYDOWN;
@@ -508,6 +523,29 @@ bool OSystem_iOS7::handleEvent_tap(Common::Event &event, UIViewTapDescription ty
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 			return true;
 		}
+	}
+	return false;
+}
+
+bool OSystem_iOS7::handleEvent_longPress(Common::Event &event, UIViewLongPressDescription type, int touches) {
+	if (touches == 1) {
+		if (type == UIViewLongPressStarted) {
+			event.type = Common::EVENT_LBUTTONDOWN;
+			handleEvent_mouseEvent(event, 0, 0);
+		} else {
+			event.type = Common::EVENT_LBUTTONUP;
+			handleEvent_mouseEvent(event, 0, 0);
+		}
+		return true;
+	} else if (touches == 2) {
+		if (type == UIViewLongPressStarted) {
+			event.type = Common::EVENT_RBUTTONDOWN;
+			handleEvent_mouseEvent(event, 0, 0);
+		} else {
+			event.type = Common::EVENT_RBUTTONUP;
+			handleEvent_mouseEvent(event, 0, 0);
+		}
+		return true;
 	}
 	return false;
 }
