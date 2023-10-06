@@ -31,6 +31,8 @@ namespace Rooms {
 class Room902 : public Section9Room {
 private:
 	machine *_title = nullptr;
+	machine *_everything = nullptr;
+	bool _buttonDown = false;
 
 public:
 	Room902() : Section9Room() {}
