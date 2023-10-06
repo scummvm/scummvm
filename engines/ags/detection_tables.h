@@ -1785,6 +1785,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "losno", "Ladies of Sorrow: Night One" },
 	{ "lostanswers", "Lost Answers" },
 	{ "lostdollar", "Max Griff in: The Lost Dollar" },
+	{ "lostfound", "Lost & Found" },
 	{ "lostinparadise", "Lost In Paradise" },
 	{ "lostinthenightmare", "Lost In The Nightmare" },
 	{ "lostinthenightmare2", "Lost In The Nightmare 2: Unforgettable Memories" },
@@ -4939,7 +4940,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("abettermousetrap", "trap.exe", "0b7529a76f38283d6e850b8d56526fc1", 4735739),
 	GAME_ENTRY_EN("ablemabel", "Able Mabel.exe", "618d7dce9631229b4579340b964c6810", 16175891),
 	GAME_ENTRY_EN("abominationobtainer", "ABOMINATION OBTAINER.exe", "b4c0b8c907a1785b3612863610f1210c", 8582210),
-	GAME_ENTRY_EN("absent", "absent.exe", "aabdafae8b57dfc48fdf158a72326c23", 39284149),
+	GAME_ENTRY_EN("absent", "absent.exe", "aabdafae8b57dfc48fdf158a72326c23", 39263755),  // v1.1
+	GAME_ENTRY_EN("absent", "absent.exe", "aabdafae8b57dfc48fdf158a72326c23", 39284149),  // v1.21
 	GAME_ENTRY_EN("absentpart1", "absent - part i.exe", "34ca36e3948aae8527dd0e90f0861a75", 31421924),
 	GAME_ENTRY_EN("absin", "black_project.exe", "b142b43c146c25443a1d155d441a6a81", 8787461),
 	GAME_ENTRY_EN("absurdistan", "Absurdistan.exe", "4588012d3077d6b6791fce8cd4b15885", 84568958),
@@ -6316,6 +6318,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("jack", "JACK.exe", "615e73fc1874e92d60a1996c2330ea36", 243357628),
 	GAME_ENTRY("jacktrasheaterch1", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),  //En-It
 	GAME_ENTRY_EN("jacktrekker", "Jack Trekker.exe", "cb07ae51acec1830dd67c508b90f8951", 51900973),
+	GAME_ENTRY_EN("jacktrekker", "Jack Trekker - Somewhere in Egypt.exe", "17c889c0228c401c3dbf6148d3767a14", 101912263),  // v1.0.1
 	GAME_ENTRY_EN_PLATFORM("jacktrekker", "Jack Trekker.exe", "8cc8a212d8ffb923db0ba740074dfa69", 43817137, "OROW"),
 	GAME_ENTRY_EN("jacob", "Jacob.exe", "90413e9ae57e222f8913b09d2bc847bc", 7101001),
 	GAME_ENTRY_EN("jacobvacut", "JacobVAcut.exe", "06a03fe35791b0578068ab1873455463", 8017226),
@@ -6553,6 +6556,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("lostanswers", "Lost Answers.exe", "c88de182eae58fdb43e5b4e587095ff5", 254684884),  // Windows  Eng-Tur
 	GAME_ENTRY("lostanswers", "Lost Answers.ags", "ee0ec2b06f61dd4cb5e57fe5d7898aa0", 252104900),  // Linux  Eng-Tur
 	GAME_ENTRY_EN("lostdollar", "Ron.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4542929),
+	GAME_ENTRY_EN("lostfound", "Lost and Found.exe", "fae163b58c16e194688727d0903684be", 714253827),
 	GAME_ENTRY_EN("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5492994),  //v1.0
 	GAME_ENTRY_EN("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5493239),  //v1.1
 	GAME_ENTRY_EN_PLATFORM("lostinthenightmare", "litn.exe", "06a03fe35791b0578068ab1873455463", 7973076, "Deluxe"),  // Deluxe/SoS
