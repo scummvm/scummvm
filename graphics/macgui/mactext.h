@@ -128,6 +128,7 @@ public:
 	int _textMaxWidth = 0;
 	int _textMaxHeight = 0;
 	TextAlign _textAlignment = kTextAlignRight;
+	int _textShadow = 0;
 	MacWindowManager *_wm = nullptr;
 	uint32 _bgcolor = 0;
 	bool _macFontMode = true;
@@ -139,6 +140,8 @@ public:
 		delete _shadowSurface;
 	}
 
+	void reallocSurface();
+	void render(int from, int to);
 	void render(int from, int to, int shadow);
 	int getAlignOffset(int row);
 
@@ -153,6 +156,7 @@ public:
 	 * @return line width in pixels, or 0 for non-existent lines
 	 */
 	int getLineWidth(int line, bool enforce = false, int col = -1);
+	int getLineHeight(int line);
 };
 
 struct MacTextTableRow {
@@ -360,10 +364,7 @@ private:
 
 	void chopChunk(const Common::U32String &str, int *curLine, int indent, int maxWidth);
 	void splitString(const Common::U32String &str, int curLine = -1);
-	void render(int from, int to, int shadow);
-	void render(int from, int to);
 	void recalcDims();
-	void reallocSurface();
 
 	void drawSelection(int xoff, int yoff);
 	void updateCursorPos();
@@ -392,7 +393,6 @@ protected:
 	const MacFont *_macFont;
 
 	int _interLinear;
-	int _textShadow;
 
 	bool _fixedDims;
 

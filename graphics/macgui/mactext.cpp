@@ -130,10 +130,10 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_textShadow = textShadow;
 
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
+	_canvas._textShadow = textShadow;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = true;
@@ -163,10 +163,10 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_textShadow = 0;
 
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
+	_canvas._textShadow = 0;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = true;
@@ -196,10 +196,10 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_textShadow = 0;
 
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
+	_canvas._textShadow = 0;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = false;
@@ -279,7 +279,7 @@ void MacText::init() {
 	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface2->clear(_bgcolor);
 
-	reallocSurface();
+	_canvas.reallocSurface();
 	setAlignOffset(_canvas._textAlignment);
 	updateCursorPos();
 	render();
@@ -1050,37 +1050,37 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 }
 
 
-void MacText::reallocSurface() {
+void MacTextCanvas::reallocSurface() {
 	// round to closest 10
 	//TODO: work out why this rounding doesn't correctly fill the entire width
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
 
-	if (!_canvas._surface) {
-		_canvas._surface = new ManagedSurface(_canvas._maxWidth, _canvas._textMaxHeight, _wm->_pixelformat);
+	if (!_surface) {
+		_surface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 
 		if (_textShadow)
-			_canvas._shadowSurface = new ManagedSurface(_canvas._maxWidth, _canvas._textMaxHeight, _wm->_pixelformat);
+			_shadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 
 		return;
 	}
 
-	if (_canvas._surface->w < _canvas._maxWidth || _canvas._surface->h < _canvas._textMaxHeight) {
+	if (_surface->w < _maxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(_canvas._maxWidth, _canvas._textMaxHeight, _wm->_pixelformat);
+		ManagedSurface *n = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 		n->clear(_bgcolor);
-		n->blitFrom(*_canvas._surface, Common::Point(0, 0));
+		n->blitFrom(*_surface, Common::Point(0, 0));
 
-		delete _canvas._surface;
-		_canvas._surface = n;
+		delete _surface;
+		_surface = n;
 
 		// same as shadow surface
 		if (_textShadow) {
-			ManagedSurface *newShadowSurface = new ManagedSurface(_canvas._maxWidth, _canvas._textMaxHeight, _wm->_pixelformat);
+			ManagedSurface *newShadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 			newShadowSurface->clear(_bgcolor);
-			newShadowSurface->blitFrom(*_canvas._shadowSurface, Common::Point(0, 0));
+			newShadowSurface->blitFrom(*_shadowSurface, Common::Point(0, 0));
 
-			delete _canvas._shadowSurface;
-			_canvas._shadowSurface = newShadowSurface;
+			delete _shadowSurface;
+			_shadowSurface = newShadowSurface;
 		}
 	}
 }
@@ -1088,10 +1088,10 @@ void MacText::reallocSurface() {
 void MacText::render() {
 	if (_fullRefresh) {
 		_canvas._surface->clear(_bgcolor);
-		if (_textShadow)
+		if (_canvas._textShadow)
 			_canvas._shadowSurface->clear(_bgcolor);
 
-		render(0, _canvas._text.size());
+		_canvas.render(0, _canvas._text.size());
 
 		_fullRefresh = false;
 
@@ -1104,10 +1104,6 @@ void MacText::render() {
 		}
 #endif
 	}
-}
-
-void MacText::render(int from, int to, int shadow) {
-	_canvas.render(from, to, shadow);
 }
 
 void MacTextCanvas::render(int from, int to, int shadow) {
@@ -1180,17 +1176,17 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 	}
 }
 
-void MacText::render(int from, int to) {
-	if (_canvas._text.empty())
+void MacTextCanvas::render(int from, int to) {
+	if (_text.empty())
 		return;
 
 	reallocSurface();
 
 	from = MAX<int>(0, from);
-	to = MIN<int>(to, _canvas._text.size() - 1);
+	to = MIN<int>(to, _text.size() - 1);
 
 	// Clear the screen
-	_canvas._surface->fillRect(Common::Rect(0, _canvas._text[from].y, _canvas._surface->w, _canvas._text[to].y + getLineHeight(to)), _bgcolor);
+	_surface->fillRect(Common::Rect(0, _text[from].y, _surface->w, _text[to].y + getLineHeight(to)), _bgcolor);
 
 	// render the shadow surface;
 	if (_textShadow)
@@ -1198,11 +1194,11 @@ void MacText::render(int from, int to) {
 
 	render(from, to, 0);
 
-	for (uint i = 0; i < _canvas._text.size(); i++) {
-		debugN(9, "MacText::render: %2d ", i);
+	for (uint i = 0; i < _text.size(); i++) {
+		debugN(9, "MacTextCanvas::render: %2d ", i);
 
-		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++)
-			debugN(9, "[%d (%d)] \"%s\" ", _canvas._text[i].chunks[j].fontId, _canvas._text[i].chunks[j].textSlant, _canvas._text[i].chunks[j].text.encode().c_str());
+		for (uint j = 0; j < _text[i].chunks.size(); j++)
+			debugN(9, "[%d (%d)] \"%s\" ", _text[i].chunks[j].fontId, _text[i].chunks[j].textSlant, _text[i].chunks[j].text.encode().c_str());
 
 		debug(9, "%s", "");
 	}
@@ -1309,12 +1305,16 @@ int MacText::getLastLineWidth() {
 }
 
 int MacText::getLineHeight(int line) {
-	if ((uint)line >= _canvas._text.size())
+	return _canvas.getLineHeight(line);
+}
+
+int MacTextCanvas::getLineHeight(int line) {
+	if ((uint)line >= _text.size())
 		return 0;
 
-	_canvas.getLineWidth(line); // This calculates height also
+	(void)getLineWidth(line); // This calculates height also
 
-	return _canvas._text[line].height;
+	return _text[line].height;
 }
 
 void MacText::setInterLinear(int interLinear) {
@@ -1350,7 +1350,7 @@ void MacText::recalcDims() {
 			_dims.bottom = newBottom;
 			delete _composeSurface;
 			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
-			reallocSurface();
+			_canvas.reallocSurface();
 			if (!_fullRefresh) {
 				_fullRefresh = true;
 				render();
@@ -1496,7 +1496,7 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	splitString(strWithFont);
 	recalcDims();
 
-	render(oldLen - 1, _canvas._text.size());
+	_canvas.render(oldLen - 1, _canvas._text.size());
 
 	_contentIsDirty = true;
 
@@ -1522,7 +1522,7 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	splitString(strWithFont);
 	recalcDims();
 
-	render(oldLen - 1, _canvas._text.size());
+	_canvas.render(oldLen - 1, _canvas._text.size());
 }
 
 void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
@@ -1565,8 +1565,8 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _bgcolor);
 
 	// blit shadow surface first
-	if (_textShadow)
-		g->blitFrom(*_canvas._shadowSurface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff + _textShadow, yoff + _textShadow));
+	if (_canvas._textShadow)
+		g->blitFrom(*_canvas._shadowSurface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff + _canvas._textShadow, yoff + _canvas._textShadow));
 
 	uint32 bgcolor = _bgcolor < 0xff ? _bgcolor : 0;
 	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), bgcolor);
@@ -2608,7 +2608,7 @@ void MacText::insertChar(byte c, int *row, int *col) {
 		render();
 	} else {
 		recalcDims();
-		render(*row, *row);
+		_canvas.render(*row, *row);
 	}
 	for (int i = 0; i < (int)_canvas._text.size(); i++) {
 		D(9, "**insertChar line %d isEnd %d", i, _canvas._text[i].paragraphEnd);
