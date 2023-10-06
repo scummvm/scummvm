@@ -134,7 +134,7 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 			// Above top of screen
 			continue;
 
-		const byte *srcP = forwards ? src.getBasePtr(0, srcY) : getBasePtr(src.w - 1, srcY);
+		const byte *srcP = forwards ? src.getBasePtr(0, srcY) : src.getBasePtr(src.w - 1, srcY);
 		byte *destP = getBasePtr(x, y);
 		const byte *depthP = depthCodes ? depthCodes + y * w + x : nullptr;
 		int deltaX = forwards ? 1 : -1;
