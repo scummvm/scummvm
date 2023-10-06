@@ -127,11 +127,32 @@ public:
 	int _maxWidth = 0;
 	int _textMaxWidth = 0;
 	int _textMaxHeight = 0;
+	TextAlign _textAlignment = kTextAlignRight;
+	MacWindowManager *_wm = nullptr;
+	uint32 _bgcolor = 0;
+	bool _macFontMode = true;
+	MacText *_macText;
 
+public:
 	~MacTextCanvas() {
 		delete _surface;
 		delete _shadowSurface;
 	}
+
+	void render(int from, int to, int shadow);
+	int getAlignOffset(int row);
+
+	/**
+	 * Returns line width in pixels. This takes into account chunks.
+	 * The result is cached for faster subsequent calls.
+	 *
+	 * @param line Line number
+	 * @param enforce Flag for indicating skipping the cache and computing the width,
+	 *                must be called when text gets changed
+	 * @param col Compute line width up to specified column, including this column
+	 * @return line width in pixels, or 0 for non-existent lines
+	 */
+	int getLineWidth(int line, bool enforce = false, int col = -1);
 };
 
 struct MacTextTableRow {
@@ -220,7 +241,7 @@ public:
 	const MacFontRun &getDefaultFormatting() { return _defaultFormatting; }
 
 	void setAlignOffset(TextAlign align);
-	TextAlign getAlign() { return _textAlignment; }
+	TextAlign getAlign() { return _canvas._textAlignment; }
 	virtual Common::Point calculateOffset();
 	void setActive(bool active) override;
 	void setEditable(bool editable);
@@ -270,10 +291,6 @@ private:
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
 	void deletePreviousCharInternal(int *row, int *col);
 	void insertTextFromClipboard();
-	// getStringWidth for mactext version, because we may have the plain bytes mode
-	int getStringWidth(MacFontRun &format, const Common::U32String &str);
-	int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str);
-	int getAlignOffset(int row);
 	MacFontRun getFgColor();
 
 public:
@@ -328,27 +345,11 @@ public:
 	// Markdown
 public:
 	void setMarkdownText(const Common::U32String &str);
-
-private:
 	const Surface *getImageSurface(Common::String &fname);
 
 private:
 	void init();
 	bool isCutAllowed();
-
-	/**
-	 * Returns line width in pixels. This takes into account chunks.
-	 * The result is cached for faster subsequent calls.
-	 *
-	 * @param line Line number
-	 * @param enforce Flag for indicating skipping the cache and computing the width,
-	 *                must be called when text gets changed
-	 * @param col Compute line width up to specified column, including this column
-	 * @return line width in pixels, or 0 for non-existent lines
-	 */
-	int getLineWidth(int line, bool enforce = false, int col = -1);
-
-	int getLineWidth(MacTextLine *line, bool enforce = false, int col = -1);
 
 	/**
 	 * Rewraps paragraph containing given text row.
@@ -398,14 +399,10 @@ protected:
 	int _selEnd;
 	int _selStart;
 
-	TextAlign _textAlignment;
-
 	MacTextCanvas _canvas;
 
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
-
-	bool _macFontMode;
 
 	bool _inTable = false;
 
