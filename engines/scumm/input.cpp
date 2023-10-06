@@ -105,8 +105,8 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 #endif
 
 void ScummEngine::parseEvent(Common::Event event) {
-	// Handle Mac Indy3 events before scaling the mouse coordinates
-	if (_macIndy3Gui)
+	// Handle Mac Indy3 events before scaling the mouse coordinates.
+	if (_macIndy3Gui && _macIndy3Gui->isVisible())
 		_macIndy3Gui->handleEvent(event);
 
 	switch (event.type) {
