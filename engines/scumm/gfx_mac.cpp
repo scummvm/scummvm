@@ -889,7 +889,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 		int y = _bounds.top - 1;
 		int x = _bounds.left + 4;
 
-		for (uint i = 0; i < _name.size(); i++) {
+		for (uint i = 0; i < _name.size() && x < _bounds.right; i++) {
 			if (_name[i] != '@') {
 				font->drawChar(_surface, _name[i], x, y, fg);
 				x += font->getCharWidth(_name[i]);

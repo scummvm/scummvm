@@ -556,20 +556,28 @@ void ScummEngine::checkExecVerbs() {
 		return;
 
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
+		bool ignoreVerbKeys = false;
+
+		// This is disabled in the SegaCD version as the "vs->key" values setup
+		// by script-17 conflict with the values expected by the generic keyboard
+		// input script. See tracker item #2013.
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+			ignoreVerbKeys = true;
+
+		// The Mac version of Last Crusade handles verb shortcut keys on
+		// its own, so that is also disabled here.
+		if (_macIndy3Gui && _macIndy3Gui->isVisible())
+			ignoreVerbKeys = true;
+
 		/* Check keypresses */
-		if (!(_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)) {
-			// This is disabled in the SegaCD version as the "vs->key" values setup
-			// by script-17 conflict with the values expected by the generic keyboard
-			// input script. See tracker item #2013.
-			if (!_macIndy3Gui || !_macIndy3Gui->isVisible()) {
-				vs = &_verbs[1];
-				for (i = 1; i < _numVerbs; i++, vs++) {
-					if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
-						if (_mouseAndKeyboardStat == vs->key) {
-							// Trigger verb as if the user clicked it
-							runInputScript(kVerbClickArea, vs->verbid, 1);
-							return;
-						}
+		if (!ignoreVerbKeys) {
+			vs = &_verbs[1];
+			for (i = 1; i < _numVerbs; i++, vs++) {
+				if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
+					if (_mouseAndKeyboardStat == vs->key) {
+						// Trigger verb as if the user clicked it
+						runInputScript(kVerbClickArea, vs->verbid, 1);
+						return;
 					}
 				}
 			}
@@ -633,6 +641,9 @@ void ScummEngine::checkExecVerbs() {
 		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
+			return;
+
+		if (_macIndy3Gui && _macIndy3Gui->isVisible() && zone->number == kVerbVirtScreen)
 			return;
 
 		over = findVerbAtPos(_mouse.x, _mouse.y);
@@ -963,9 +974,6 @@ void ScummEngine::verbMouseOver(int verb) {
 }
 
 int ScummEngine::findVerbAtPos(int x, int y) const {
-	if (_macIndy3Gui)
-		return 0;
-
 	if (!_numVerbs)
 		return 0;
 
