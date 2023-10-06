@@ -35,6 +35,38 @@ class ScummEngine;
 
 class MacIndy3Gui {
 public:
+	enum Color {
+		kBlack = 0,
+		kBlue = 1,
+		kGreen = 2,
+		kCyan = 3,
+		kRed = 4,
+		kMagenta = 5,
+		kBrown = 6,
+		kLightGray = 7,
+		kDarkGray = 8,
+		kBrightBlue = 9,
+		kBrightGreen = 10,
+		kBrightCyan = 11,
+		kBrightRed = 12,
+		kBrightMagenta = 13,
+		kBrightYellow = 14,
+		kWhite = 15,
+		kBackground = 254,	// Gray or checkerboard
+		kTransparency = 255
+	};
+
+	enum FontId {
+		kRegular = 0,
+		kBold = 1,
+		kOutline = 2
+	};
+
+	enum ScrollDirection {
+		kScrollUp,
+		kScrollDown
+	};
+
 	MacIndy3Gui(OSystem *system, ScummEngine *vm);
 	~MacIndy3Gui();
 
@@ -49,63 +81,91 @@ public:
 	// the verb area to clear the power meters and text.
 
 	bool isVisible() { return _visible; }
-
 	const Graphics::Font *getFont(int n) { return _fonts[n]; }
 
 	void resetAfterLoad();
 	void update(int delta);
 	void handleEvent(Common::Event &event);
 
+	int getInventoryScrollOffset();
+	void setInventoryScrollOffset(int n);
+
 private:
 	OSystem *_system = nullptr;
 	ScummEngine *_vm = nullptr;
-	Graphics::Surface *_macScreen = nullptr;
+	Graphics::Surface *_surface = nullptr;
 	const Graphics::Font *_fonts[3];
 
 	bool _visible = false;
 
+	bool _leftButtonIsPressed = false;
+	Common::Point _leftButtonPressed;
+	Common::Point _leftButtonHeld;
+
+	int _timer = 0;
+
 	class Widget {
+	private:
+		int _timer = 0;
+
+	protected:
+		bool _redraw = false;
+		bool _enabled = false;
+
 	public:
 		static ScummEngine *_vm;
 		static MacIndy3Gui *_gui;
 		static Graphics::Surface *_surface;
 
 		Common::Rect _bounds;
-		int _timer = 0;
-		bool _enabled = false;
-		bool _redraw = false;
 
 		Widget(int x, int y, int width, int height);
 		virtual ~Widget() {}
 
-		virtual void reset();
+		void setEnabled(bool b) { _enabled = b; }
+
+		void setTimer(int t) { _timer = t; }
+		void clearTimer() { _timer = 0; }
+		bool hasTimer() { return _timer > 0; }
+
 		virtual void setRedraw(bool redraw) { _redraw = redraw; }
+
+		virtual void reset();
+
+		virtual bool handleEvent(Common::Event &event) = 0;
+		virtual bool handleMouseHeld(Common::Point &pressed, Common::Point &held) { return false; }
+		virtual bool updateTimer(int delta);
 
 		virtual void draw() = 0;
 		virtual void undraw() {}
-		virtual bool updateTimer(int delta);
 
 		// Primitives
 		void copyRectToScreen(Common::Rect r);
 		void fill(Common::Rect r);
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, byte color);
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color);
 		void drawShadowBox(Common::Rect r);
-		void drawShadowFrame(Common::Rect r, byte shadowColor, byte fillColor);
+		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
 	};
 
 	class VerbWidget : public Widget {
-	public:
+	protected:
+		bool _visible = false;
 		int _verbid = 0;
 		int _verbslot = -1;
-		bool _visible = false;
 		bool _kill = false;
+
+	public:
 
 		VerbWidget(int x, int y, int width, int height) : Widget(x, y, width, height) {}
 
-		void reset();
+		void setVerbid(int n) { _verbid = n; }
+		bool hasVerb() { return _verbslot != -1; }
+		bool isVisible() { return _visible; }
 		void threaten() { _kill = true; }
+		bool isDying() { return _kill; }
 
-		virtual bool handleEvent(Common::Event &event) = 0;
+		void reset();
+
 		virtual void updateVerb(int verbslot);
 
 		void draw();
@@ -113,8 +173,10 @@ private:
 	};
 
 	class Button : public VerbWidget {
-	public:
+	private:
 		Common::String _text;
+
+	public:
 
 		Button(int x, int y, int width, int height) : VerbWidget(x, y, width, height) {}
 
@@ -123,21 +185,28 @@ private:
 		void reset();
 		bool updateTimer(int delta);
 		void updateVerb(int verbslot);
-		void draw();
-	};
 
-	enum ScrollDirection {
-		kScrollUp,
-		kScrollDown
+		void draw();
 	};
 
 	class Inventory : public VerbWidget {
 	private:
 		class ScrollBar : public Widget {
+		private:
+			int _invCount = 0;
+			int _invOffset = 0;
+
 		public:
 			ScrollBar(int x, int y, int width, int height);
 
+			void setCounters(int invCount, int invOffset);
+			void moveInvOffset(int offset);
+			int getHandlePosition();
+
+			void reset();
+
 			bool handleEvent(Common::Event &event);
+
 			void draw();
 		};
 
@@ -152,21 +221,33 @@ private:
 			ScrollButton(int x, int y, int width, int height, ScrollDirection direction);
 
 			bool handleEvent(Common::Event &event);
+			bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
+
 			void draw();
 		};
 
 		class Slot : public Widget {
 		private:
+			Common::String _name;
 			int _slot = -1;
+			int _obj = -1;
 
 		public:
-			int _obj = -1;
-			Common::String _name;
-
 			Slot(int slot, int x, int y, int width, int height);
+
+			void clearName() { _name.clear(); }
+			bool hasName() { return !_name.empty(); }
+
+			void clearObject() { _obj = -1; }
+
+			void setObject(int n);
+			int getObject() { return _obj; }
+
 			void reset();
+
 			bool handleEvent(Common::Event &event);
 			bool updateTimer(int delta);
+
 			void draw();
 		};
 
@@ -181,13 +262,14 @@ private:
 		Inventory(int x, int y, int width, int height);
 		~Inventory();
 
-		void reset();
 		void setRedraw(bool redraw);
 
-		void updateVerb(int verbslot);
+		void reset();
 
 		bool handleEvent(Common::Event &event);
+		bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
 		bool updateTimer(int delta);
+		void updateVerb(int verbslot);
 
 		void draw();
 	};
@@ -207,7 +289,7 @@ private:
 
 	void copyRectToScreen(Common::Rect r);
 	void fill(Common::Rect r);
-	void drawBitmap(Common::Rect r, const uint16 *bitmap, byte color);
+	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color);
 };
 
 } // End of namespace Scumm
