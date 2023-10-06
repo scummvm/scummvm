@@ -1251,6 +1251,16 @@ bool MacIndy3Gui::isActive() {
 	return false;
 }
 
+bool MacIndy3Gui::isVisible() {
+	if (!_visible)
+		return false;
+
+	// The visibility flag may not have been updated yet, so better check
+	// that the GUI is still active.
+
+	return isActive();
+}
+
 void MacIndy3Gui::resetAfterLoad() {
 	_visible = false;
 
@@ -1280,11 +1290,11 @@ void MacIndy3Gui::resetAfterLoad() {
 }
 
 void MacIndy3Gui::update(int delta) {
-#if DEBUG_VERB_SCRIPT
+#if DEBUG_VERB_SCRIPTS
 	static int lastVerbScript = -1;
 
 	if (_vm->VAR(_vm->VAR_VERB_SCRIPT) != lastVerbScript) {
-		debug(1, "MacIndy3Gui: New verb script: %d", _vm->VAR(_vm->VAR_VERB_SCRIPT));
+		debug("MacIndy3Gui: New verb script: %d", _vm->VAR(_vm->VAR_VERB_SCRIPT));
 		lastVerbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
 	}
 #endif
@@ -1295,7 +1305,7 @@ void MacIndy3Gui::update(int delta) {
 		return;
 	}
 
-	if (_leftButtonIsPressed) {
+	if (delta > 0 && _leftButtonIsPressed) {
 		_timer -= delta;
 
 		if (_timer <= 0) {
@@ -1315,7 +1325,8 @@ void MacIndy3Gui::update(int delta) {
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
 		VerbWidget *w = i->_value;
 
-		w->updateTimer(delta);
+		if (delta > 0)
+			w->updateTimer(delta);
 		w->threaten();
 	}
 
