@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+ /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -190,14 +190,8 @@ protected:
 	void handleEvent_applicationRestoreState();
 	void handleEvent_applicationClearState();
 
-	bool handleEvent_touchFirstDown(Common::Event &event, int x, int y);
-	bool handleEvent_touchFirstUp(Common::Event &event, int x, int y);
-
-	bool handleEvent_touchSecondDown(Common::Event &event, int x, int y);
-	bool handleEvent_touchSecondUp(Common::Event &event, int x, int y);
-
-	bool handleEvent_touchFirstDragged(Common::Event &event, int x, int y);
-	bool handleEvent_touchSecondDragged(Common::Event &event, int x, int y);
+	bool handleEvent_touchBegan(Common::Event &event, int x, int y);
+	bool handleEvent_touchMoved(Common::Event &event, int x, int y);
 
 	void handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y);
 	void handleEvent_mouseLeftButtonUp(Common::Event &event, int x, int y);

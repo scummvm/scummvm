@@ -45,18 +45,13 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 
 	if (iOS7_fetchEvent(&internalEvent)) {
 		switch (internalEvent.type) {
-		case kInputTouchFirstDown:
-			if (!handleEvent_touchFirstDown(event, internalEvent.value1, internalEvent.value2))
+		case kInputTouchBegan:
+			if (!handleEvent_touchBegan(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
-		case kInputTouchFirstUp:
-			if (!handleEvent_touchFirstUp(event, internalEvent.value1, internalEvent.value2))
-				return false;
-			break;
-
-		case kInputTouchFirstDragged:
-			if (!handleEvent_touchFirstDragged(event, internalEvent.value1, internalEvent.value2))
+		case kInputTouchMoved:
+			if (!handleEvent_touchMoved(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
@@ -103,19 +98,6 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 		case kInputApplicationClearState:
 			handleEvent_applicationClearState();
 			return false;
-
-		case kInputTouchSecondDragged:
-			if (!handleEvent_touchSecondDragged(event, internalEvent.value1, internalEvent.value2))
-				return false;
-			break;
-		case kInputTouchSecondDown:
-			if (!handleEvent_touchSecondDown(event, internalEvent.value1, internalEvent.value2))
-				return false;
-			break;
-		case kInputTouchSecondUp:
-			if (!handleEvent_touchSecondUp(event, internalEvent.value1, internalEvent.value2))
-				return false;
-			break;
 
 		case kInputKeyPressed:
 			handleEvent_keyPressed(event, internalEvent.value1);
@@ -177,7 +159,7 @@ bool OSystem_iOS7::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_iOS7::handleEvent_touchFirstDown(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_touchBegan(Common::Event &event, int x, int y) {
 	_lastPadX = x;
 	_lastPadY = y;
 
@@ -189,19 +171,7 @@ bool OSystem_iOS7::handleEvent_touchFirstDown(Common::Event &event, int x, int y
 	return false;
 }
 
-bool OSystem_iOS7::handleEvent_touchFirstUp(Common::Event &event, int x, int y) {
-	return false;
-}
-
-bool OSystem_iOS7::handleEvent_touchSecondDown(Common::Event &event, int x, int y) {
-	return false;
-}
-
-bool OSystem_iOS7::handleEvent_touchSecondUp(Common::Event &event, int x, int y) {
-	return false;
-}
-
-bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, int y) {
+bool OSystem_iOS7::handleEvent_touchMoved(Common::Event &event, int x, int y) {
 	int deltaX = _lastPadX - x;
 	int deltaY = _lastPadY - y;
 	_lastPadX = x;
@@ -217,10 +187,6 @@ bool OSystem_iOS7::handleEvent_touchFirstDragged(Common::Event &event, int x, in
 		handleEvent_mouseEvent(event, deltaX, deltaY);
 	}
 	return true;
-}
-
-bool OSystem_iOS7::handleEvent_touchSecondDragged(Common::Event &event, int x, int y) {
-	return false;
 }
 
 void OSystem_iOS7::handleEvent_mouseLeftButtonDown(Common::Event &event, int x, int y) {
