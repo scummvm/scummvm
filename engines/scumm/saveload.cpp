@@ -2064,7 +2064,7 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 	// invisible after loading.
 
 	if (s.isLoading() && _game.platform == Common::kPlatformMacintosh) {
-		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || (_game.id == GID_INDY3 && _macScreen)) {
+		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || _macIndy3Gui) {
 			setBuiltinCursor(0);
 		}
 	}
