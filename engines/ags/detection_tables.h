@@ -272,6 +272,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "astroloco", "Astroloco: Worst Contact" },
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "avcsurvivalguide", "AVC's Survival Guide / Guía de supervivencia en CAV" },
+	{ "beekeeperpicnic", "The Beekeeper's Picnic" },
 	{ "beer", "Beer!" },
 	{ "beyondowlsgard","Beyond the Edge of Owlsgard" },
 	{ "bizarreearthquake", "Bizarre Earthquake" },
@@ -313,6 +314,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "graceward", "Graceward" },
 	{ "grandmabadass", "GrandMa Badass" },
 	{ "guardduty", "Guard Duty" },
+	{ "hauntingcliffhouse", "Haunting At Cliffhouse" },
 	{ "herdiscoming", "Herd is Coming" },
 	{ "incantamentum","Incantamentum" },
 	{ "insectophobiaep1","Insectophobia: Episode 1" },
@@ -2714,6 +2716,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sma9", "Second Moon Adventure - Part IX: Zwei Welten in Einer" },
 	{ "sma10", "Second Moon Adventure - Part X: Walder Hier Und Dort" },
 	{ "sma11", "Second Moon Adventure - Part XI: Jahrtausendwende" },
+	{ "smasher", "Smasher" },
 	{ "smgilbert", "Sam & Max - Il caso Gilbert" },
 	{ "smileordie", "Smile or Die" },
 	{ "smileysquest", "Smiley's Quest" },
@@ -4083,6 +4086,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020335),  // En-Fr-De-Es
 	GAME_ENTRY_GOG("guardduty", "guardduty.exe", "98d09f79129a5f96b6622661e2a7bc64", 706020743),
 	GAME_ENTRY_PLATFORM("guardduty", "AGSProject.ags", "a7745eea8e5b81209688b0e57922deb9", 703433226, "Switch"), // Nintendo Switch
+	GAME_ENTRY_EN_STEAM("hauntingcliffhouse", "Cliffhouse.exe", "615e73fc1874e92d60a1996c2330ea36", 452123357),
 	GAME_ENTRY_EN_STEAM("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 7321217),
 	GAME_ENTRY_STEAM("insectophobiaep1", "insect.exe", "b142b43c146c25443a1d155d441a6a81", 16950265),  // Multilang
 	GAME_ENTRY_STEAM("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926),  // Multilang
@@ -4131,7 +4135,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("nellycootalot-hd", "ac2game.dat", "914d76b051867892f78883a2ff6be6ea", 11060916),  // Mac En-Fr-De-Es-Pl
 	GAME_ENTRY_EN_STEAM("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517),
 	GAME_ENTRY_EN("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743375),
-	GAME_ENTRY_STEAM("nightmareframes", "Nightmare Frames.exe", "55a84a70f80cba8dd2373ea04c2b04ce", 2697804016),  // Eng-Esp
+	GAME_ENTRY_STEAM("nightmareframes", "Nightmare Frames.exe", "aec3371f8e8572efe5b0f601fff7913e", 2697791318),  // Eng-Esp 1.0
+	GAME_ENTRY_STEAM("nightmareframes", "Nightmare Frames.exe", "55a84a70f80cba8dd2373ea04c2b04ce", 2697804016),
 	GAME_ENTRY("nightmareframes", "Nightmare Frames.exe", "55a84a70f80cba8dd2373ea04c2b04ce", 2697804015), // itch.io Eng-Esp
 	GAME_ENTRY("odissea", "ODISSEA.exe", "5bb86de9245242046c309711ff02dad3", 717438956),  // itch.io  Eng-Ita
 	GAME_ENTRY_EN_GOG("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855),
@@ -4426,6 +4431,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("bachelorstory", "Bachelor Story.exe", "a524cbb1c51589903c4043b98917f1d9", 7436465),
 	DEMO_ENTRY_EN("bananaman", "banana man demo.exe", "615e806856b7730afadf1fea9a756b70", 53524952),
 	DEMO_ENTRY("battlewarriorsrt", "battle.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16314318),  //En-Ru
+	DEMO_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.exe", "1177e20f6a84ded5fad2a5d79fff8cb5", 190595833),
+	DEMO_ENTRY_EN("beekeeperpicnic", "beekeeperspicnic.ags", "8ad3471b1f914371dae6a24d031ce8bf", 187427045),
 	DEMO_ENTRY_EN("beforeww2", "beforeww.exe", "4d17844029d8910fbaae1bdc99e250f2", 9759616),
 	DEMO_ENTRY_EN("beyondowlsgard", "Owlsgard Demo.exe", "ef70606d7030e9f6fa7c39f6437391c1", 783490949),
 	DEMO_ENTRY_EN("beyondowlsgard", "Owlsgard Demo.ags", "7c5ebe409626b03744ac569970917a68", 766792869), // Linux
@@ -7643,6 +7650,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("sma9", "sma9.exe", "465f972675db2da6040518221af5b0ba", 16823935, Common::DE_DEU),
 	GAME_ENTRY_LANG("sma10", "smax.exe", "465f972675db2da6040518221af5b0ba", 20034862, Common::DE_DEU),
 	GAME_ENTRY_LANG("sma11", "SMA11.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 27866451, Common::DE_DEU),
+	GAME_ENTRY_EN("smasher", "LudumDare.ags", "938e27363ec11e95ecffaf89b8fd1d6c", 11934612),
 	GAME_ENTRY_EN("smileysquest", "Smiley.exe", "90413e9ae57e222f8913b09d2bc847bc", 4938049),
 	GAME_ENTRY_EN("smileysquest2", "mags.exe", "3128b9f90e2f954ba704414ae854d10b", 2108492),
 	GAME_ENTRY_EN("smokinweed", "SWeed.exe", "be65afc1ea59889c05e4e4cc143b3dbc", 2171942),
