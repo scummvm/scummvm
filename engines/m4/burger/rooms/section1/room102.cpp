@@ -159,6 +159,12 @@ void Room102::init() {
 		digi_preload("102_038");
 		digi_play("102_038", 2, 255, gCHANGE_WILBUR_ANIMATION);
 		player_set_commands_allowed(false);
+
+		// FIXME: In the ScummVM implemention, Wilbur appears bottom center by default,
+		// but it seems like in the original game he doesn't, and remains hidden until
+		// explicitly positioned in the new scene. Doing the positioning below ensures
+		// he doesn't appear briefly in the default location as the scene fades in
+		ws_demand_location(628, 325, 9);
 	}
 
 	kernel_trigger_dispatch_now(6);
@@ -953,7 +959,7 @@ void Room102::daemon() {
 		break;
 
 	case 29:
-		if (_G(flags)[V012] == 2)
+		if (_G(flags)[V012] != 2)
 			player_set_commands_allowed(true);
 		_val11 = 19;
 		kernel_trigger_dispatch_now(3);
