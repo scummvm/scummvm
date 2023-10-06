@@ -60,7 +60,7 @@
 
 	if ([self shouldHandleTouch:_touch]) {
 		CGPoint p = [self getLocationInView:_touch];
-		[[self view] addEvent:InternalEvent(kInputTouchFirstDown, p.x, p.y)];
+		[[self view] addEvent:InternalEvent(kInputTouchBegan, p.x, p.y)];
 	}
 }
 
@@ -74,7 +74,7 @@
 	_touch = t;
 	if ([self shouldHandleTouch:_touch]) {
 		CGPoint p = [self getLocationInView:_touch];
-		[[self view] addEvent:InternalEvent(kInputTouchFirstDragged, p.x, p.y)];
+		[[self view] addEvent:InternalEvent(kInputTouchMoved, p.x, p.y)];
 	}
 }
 
