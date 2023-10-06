@@ -58,7 +58,9 @@
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
 #if TARGET_OS_IOS
-	_view.multipleTouchEnabled = YES;
+	// This property does not affect the gesture recognizers attached to the view.
+	// Gesture recognizers receive all touches that occur in the view.
+	_view.multipleTouchEnabled = NO;
 #endif
 	_controller.view = _view;
 

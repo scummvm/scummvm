@@ -26,8 +26,7 @@
 #include "backends/platform/ios7/ios7_video.h"
 
 @implementation TouchController {
-	UITouch *_firstTouch;
-	UITouch *_secondTouch;
+	UITouch *_touch;
 }
 
 @dynamic view;
@@ -36,9 +35,7 @@
 - (id)initWithView:(iPhoneView *)view {
 	self = [super initWithView:view];
 
-	_firstTouch = NULL;
-	_secondTouch = NULL;
-
+	_touch = nil;
 	// Touches should always be present in iOS view
 	[self setIsConnected:YES];
 
@@ -52,90 +49,41 @@
 	// they are required as the Apple TV remote sends touh events
 	// but no mouse events.
 #if TARGET_OS_IOS
-	return touch.type == UITouchTypeDirect;
+	return touch != nil && touch.type == UITouchTypeDirect;
 #else
 	return YES;
 #endif
 }
 
-- (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
-	NSArray *all = [set allObjects];
-	for (UITouch *t in all) {
-		if (t != touch) {
-			return t;
-		}
-	}
-	return nil;
-}
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	switch (allTouches.count) {
-	case 1: {
-		_firstTouch = [allTouches anyObject];
-		if ([self shouldHandleTouch:_firstTouch]) {
-			CGPoint p = [self getLocationInView:_firstTouch];
-			[[self view] addEvent:InternalEvent(kInputTouchFirstDown, p.x, p.y)];
-		}
-		break;
-	}
-	case 2: {
-		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
-		if (_secondTouch && [self shouldHandleTouch:_secondTouch]) {
-			CGPoint p = [self getLocationInView:_firstTouch];
-			[[self view] addEvent:InternalEvent(kInputTouchSecondDown, p.x, p.y)];
-		}
-		break;
-	}
-	default:
-		break;
+	_touch = [touches anyObject];
+
+	if ([self shouldHandleTouch:_touch]) {
+		CGPoint p = [self getLocationInView:_touch];
+		[[self view] addEvent:InternalEvent(kInputTouchFirstDown, p.x, p.y)];
 	}
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	for (UITouch *touch in allTouches) {
-		if ([self shouldHandleTouch:touch]) {
-			if (touch == _firstTouch) {
-				CGPoint p = [self getLocationInView:touch];
-				[[self view] addEvent:InternalEvent(kInputTouchFirstDragged , p.x, p.y)];
-			} else if (touch == _secondTouch) {
-				CGPoint p = [self getLocationInView:touch];
-				[[self view] addEvent:InternalEvent(kInputTouchSecondDragged , p.x, p.y)];
-			}
-		}
+	UITouch *t = [touches anyObject];
+
+	if (t != _touch) {
+		// We shouldn't end up here but if we do bail out
+		return;
+	}
+	_touch = t;
+	if ([self shouldHandleTouch:_touch]) {
+		CGPoint p = [self getLocationInView:_touch];
+		[[self view] addEvent:InternalEvent(kInputTouchFirstDragged, p.x, p.y)];
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet *allTouches = [event allTouches];
-	switch (allTouches.count) {
-	case 1: {
-		_firstTouch = [allTouches anyObject];
-		if ([self shouldHandleTouch:_firstTouch]) {
-			CGPoint p = [self getLocationInView:_firstTouch];
-			[[self view] addEvent:InternalEvent(kInputTouchFirstUp, p.x, p.y)];
-		}
-		break;
-	}
-	case 2: {
-		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
-		if (_secondTouch && [self shouldHandleTouch:_secondTouch]) {
-			CGPoint p = [self getLocationInView:_firstTouch];
-			[[self view] addEvent:InternalEvent(kInputTouchSecondUp, p.x, p.y)];
-		}
-		break;
-	}
-	default:
-		break;
-	}
-	_firstTouch = nil;
-	_secondTouch = nil;
+	_touch = nil;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	_firstTouch = nil;
-	_secondTouch = nil;
+	_touch = nil;
 }
 
 @end
