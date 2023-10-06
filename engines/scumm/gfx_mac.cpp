@@ -1054,10 +1054,6 @@ void MacIndy3Gui::resetAfterLoad() {
 
 	if (oldSavegame)
 		_vm->VAR(67) /= 2;
-
-#if 0
-	_inventoryOffset = _vm->VAR(67);
-#endif
 }
 
 void MacIndy3Gui::update(int delta) {
