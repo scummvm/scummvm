@@ -80,7 +80,7 @@ public:
 	// it's not drawing verbs, so the SCUMM engine is allowed to draw in
 	// the verb area to clear the power meters and text.
 
-	bool isVisible() { return _visible; }
+	bool isVisible();
 	const Graphics::Font *getFont(int n) { return _fonts[n]; }
 
 	void resetAfterLoad();
