@@ -287,4 +287,27 @@ machine *series_play(const char *seriesName, frac16 layer, uint32 flags, int16 t
 	return m;
 }
 
+machine *series_ranged_play(const char *seriesName, int32 loopCount, uint32 flags,
+		int32 firstFrame, int32 lastFrame, int32 s, uint32 layer,
+		int32 frameRate, int32 trigger, bool stickWhenDone) {
+	if (loopCount != 1)
+		loopCount = 0;
+	if (stickWhenDone)
+		flags |= 0x10;
+
+	return series_play(seriesName, layer, flags, trigger, frameRate,
+		loopCount, s, 0, 0, firstFrame, lastFrame);
+}
+
+machine *series_plain_play(const char *seriesName, int32 loopCount, uint32 flags,
+		int32 s, int32 layer, int32 frameRate, int32 trigger, bool stickWhenDone) {
+	if (stickWhenDone)
+		flags |= 0x10;
+	if (loopCount != 1)
+		loopCount = 0;
+
+	return series_play(seriesName, layer, flags, trigger, frameRate, loopCount, s);
+}
+
+
 } // namespace M4

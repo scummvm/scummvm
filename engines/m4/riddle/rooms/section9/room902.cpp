@@ -50,7 +50,80 @@ void Room902::init() {
 }
 
 void Room902::daemon() {
-	// TODO
+	switch (_G(kernel).trigger) {
+	case -1:
+		// TODO: Is this index correct? Is any of the trigger cases correct?
+		digi_stop(2);
+		break;
+
+	case 0:
+		adv_kill_digi_between_rooms(false);
+		_G(game).setRoom(903);
+		break;
+
+	case 1:
+		series_plain_play("902 one frame hold", -1, 0, 100, 256, 3000);
+		disable_player_commands_and_fade_init(132);
+		break;
+
+	case 2:
+		digi_play("gunshot2", 3, 255, -1, 902);
+		break;
+
+	case 3:
+		digi_play("gunshot1", 3);
+		series_stream_break_on_frame(_everything, 144, 102);
+		break;
+
+	case 4:
+		_G(game).setRoom(494);
+		break;
+
+	case 5:
+		_G(game).setRoom(304);
+		break;
+
+	case 54:
+		_everything = series_stream("EVERYTHING MINUS TITLE FADE", 6, 0x100, 131);
+		series_stream_break_on_frame(_everything, 121, 101);
+		break;
+
+	case 55:
+		kernel_timing_trigger(120, 6);
+		break;
+
+	case 100:
+		terminateMachineAndNull(_title);
+		series_ranged_play("902 TITLE", 1, 2, 0, 9, 100, 0xa00, 5, 5, 0);
+		break;
+
+	case 101:
+		_title = series_ranged_play("902 TITLE", -1, 0, 9, 9, 100, 0xa00, 500, -1, 0);
+		break;
+
+	case 130:
+		series_ranged_play("902 TITLE", 1, 0, 0, 9, 100, 0xa00, 5, 3, 0);
+		break;
+
+	case 131:
+		kernel_timing_trigger(120, 2);
+		kernel_timing_trigger(100, 789);
+		break;
+
+	default:
+		break;
+	}
+
+	bool flag = false;
+	if (_G(MouseState).ButtonState) {
+		_buttonDown = true;
+	} else if (_buttonDown) {
+		_buttonDown = false;
+		flag = true;
+	}
+
+	if (flag)
+		disable_player_commands_and_fade_init(55);
 }
 
 } // namespace Rooms
