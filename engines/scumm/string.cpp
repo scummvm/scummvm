@@ -1124,7 +1124,7 @@ void ScummEngine::CHARSET_1() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
-	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
+	bool createTextBox = (_macIndy3Gui != nullptr);
 	bool drawTextBox = false;
 
 	while (handleNextCharsetCode(a, &c)) {
@@ -1230,33 +1230,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->setColor(_string[a].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
-
-	// HACK: Correct positions of text in books in Indy3 Mac.
-	// See also bug #8759. Not needed when using the Mac font.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1 && !_macScreen) {
-		if (_currentRoom == 75) {
-			// Grail Diary Page 1 (Library)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 22;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 90) {
-			// Grail Diary Page 2 (Catacombs - Engravings)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 21;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-		} else if (_currentRoom == 69) {
-			// Grail Diary Page 3 (Catacombs - Music)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 74) {
-			// Biplane Manual
-			_charset->_startLeft = _charset->_left = _string[a].xpos - 35;
-		}
-	}
 
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);

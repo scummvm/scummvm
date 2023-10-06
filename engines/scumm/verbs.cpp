@@ -1095,29 +1095,6 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	if (!verb)
 		return;
 
-	// The way we implement high-resolution font on a scaled low-resolution
-	// background requires there to always be a text surface telling which
-	// pixels have been drawn on. This means that the "has mask" feature is
-	// not correctly implemented, and in most cases this works just fine
-	// for both Loom and Indiana Jones and the Last Crusade.
-	//
-	// However, there is at least one scene in Indiana Jones - room 80,
-	// where you escape from the zeppelin on a biplane - where the game
-	// (sloppily, in my opinion) draws two disabled verbs (Travel and Talk)
-	// and then counts on the background to draw over them. Obviously that
-	// won't work here.
-	//
-	// I thought it would be possible to base this workaround on room
-	// height, but then verbs aren't redrawn after reading books. So I
-	// guess the safest path is to limit it to this particular room.
-	//
-	// Note that with the low-resolution font, which does implement the
-	// "has mask" feature, the Macintosh version still needs a hack in
-	// printChar() for black text to work properly. This version of the
-	// game is weird.
-	if (_game.id == GID_INDY3 && _macScreen && _currentRoom == 80)
-		return;
-
 	vs = &_verbs[verb];
 
 	if (!vs->saveid && vs->curmode && vs->verbid) {
