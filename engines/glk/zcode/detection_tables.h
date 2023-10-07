@@ -1635,56 +1635,56 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cc_xchicken",        "The X Chicken" },
 
 	// Spring Thing 2002
-	{ "stc02_blues",        "Tinseltown Blues" },
+	{ "stc02_blues",        "Tinseltown Blues" },                                                       //       Winner
 
 	// Spring Thing 2003
-	{ "stc03_inevita",      "Inevitable" },
-	{ "stc03_cofire",       "The Cross of Fire" },
+	{ "stc03_inevita",      "Inevitable" },                                                             //    Runner-Up
+	{ "stc03_cofire",       "The Cross of Fire" },                                                      //      Entrant
 
 	// Spring Thing 2005
-	{ "stc05_authority",    "Authority" },
-	{ "stc05_flatfeet",     "Flat Feet" },
-	{ "stc05_telling",      "Whom the Telling Changed" },
+	{ "stc05_authority",    "Authority" },                                                              //    6th Place
+	{ "stc05_flatfeet",     "Flat Feet" },                                                              //    4th Place
+	{ "stc05_telling",      "Whom the Telling Changed" },                                               //    1st Place
 
 	// Spring Thing 2006
-	{ "stc06_debaron",      "De Baron" },
-	{ "stc06_thebaron",     "The Baron" },
+	{ "stc06_debaron",      "De Baron" },                                                               //    1st Place
+	{ "stc06_thebaron",     "The Baron" },                                                              //    1st Place
 
 	// Spring Thing 2007
-	{ "stc07_fate",         "Fate" },
+	{ "stc07_fate",         "Fate" },                                                                   //    1st Place
 
 	// Spring Thing 2008
-	{ "stc08_pascal",       "Pascal's Wager" },
+	{ "stc08_pascal",       "Pascal's Wager" },                                                         //    1st Place
 
 	// Spring Thing 2009
-	{ "stc09_milkparadise", "The Milk of Paradise" },
+	{ "stc09_milkparadise", "The Milk of Paradise" },                                                   //    4th Place
 
 	// Spring Thing 2012
-	{ "stc12_rocketman",    "The Rocket Man from the Sea" },
+	{ "stc12_rocketman",    "The Rocket Man from the Sea" },                                            //    1st Place
 
 	// Spring Thing 2014
-	{ "stc14_mrp",          "The Story of Mr. P." },
+	{ "stc14_mrp",          "The Story of Mr. P." },                                                    //    7th Place
 
 	// Spring Thing 2016
-	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },
+	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },                                     //      Entrant
 
 	// Spring Thing 2017
-	{ "stc17_enlightened",  "Enlightened Master" },
+	{ "stc17_enlightened",  "Enlightened Master" },                                                     //      Entrant
 
 	// Spring Thing 2018
-	{ "stc18_gopher",       "Best Gopher Ever" },
-	{ "stc18_murderbig",    "Murder on the Big Nothing" },
+	{ "stc18_gopher",       "Best Gopher Ever" },                                                       //      Entrant
+	{ "stc18_murderbig",    "Murder on the Big Nothing" },                                              //      Entrant
 
 	// Spring Thing 2019
-	{ "stc19_69105keys",    "69,105 Keys" },
-	{ "stc19_pca",          "Porte Cave Adventure" },
+	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
+	{ "stc19_pca",          "Porte Cave Adventure" },                                                   //      Entrant
 
 	// Spring Thing 2021
-	{ "stc21_takethedogout", "Take the Dog Out" },
+	{ "stc21_takethedogout", "Take the Dog Out" },                                                      //      Entrant
 
 	// Spring Thing 2022
-	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },
-	{ "stc22_wry",          "Wry" },
+	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },                         //      Entrant
+	{ "stc22_wry",          "Wry" },                                                                    //      Entrant
 
 	// Commodore 32 Z-Machine Competition
 	{ "c32_endgame",        "Endgame" },                                                                //    1st Place
