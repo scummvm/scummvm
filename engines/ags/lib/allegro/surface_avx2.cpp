@@ -479,13 +479,13 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	// Clip the bounds ahead of time (so we don't waste time checking if we are in bounds when
 	// we are in the inner loop)
 	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = args.dstRect.width();
-	if (args.xStart + xCtrWidth > args.destArea.w) {
-		xCtrWidth = args.destArea.w - args.xStart;
-	}
 	if (args.xStart < 0) {
 		xCtrStart = -args.xStart;
 		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
 		args.xStart = 0;
+	}
+	if (args.xStart + xCtrWidth > args.destArea.w) {
+		xCtrWidth = args.destArea.w - args.xStart;
 	}
 	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 4 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
 	if (Scale) yCtrHeight = args.dstRect.height();

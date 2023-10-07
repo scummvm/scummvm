@@ -34,13 +34,13 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 	// Instead of skipping pixels outside our boundary here, we just clip
 	// our area instead.
 	int xCtrStart = 0, xCtrBppStart = 0, xCtrWidth = args.dstRect.width();
-	if (args.xStart + xCtrWidth > args.destArea.w) { // Clip the right
-		xCtrWidth = args.destArea.w - args.xStart;
-	}
 	if (args.xStart < 0) { // Clip the left
 		xCtrStart = -args.xStart;
 		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
 		args.xStart = 0;
+	}
+	if (args.xStart + xCtrWidth > args.destArea.w) { // Clip the right
+		xCtrWidth = args.destArea.w - args.xStart;
 	}
 	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) { // Clip the top
