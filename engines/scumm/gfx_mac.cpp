@@ -1015,13 +1015,16 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 	// page at a time, but I haven't had enough inventory items for this to
 	// mean anything other than scrolling to the top or the bottom.
 	//
-	// The direction depends on if you click above or below the handle.
-	// There is nothing special about clicking the handle itself.
+	// The direction depends on if you click above or below the handle. The
+	// original also allowed you to click on the handle itself, but the
+	// behavior was hard to predict so we ignore those completely.
 
 	if (_bounds.contains(event.mouse)) {
-		if (event.mouse.y < _bounds.top + getHandlePosition() + 4)
+		int pos = _bounds.top + getHandlePosition();
+
+		if (event.mouse.y < pos)
 			moveInvOffset(-6);
-		else
+		else if (event.mouse.y >= pos + 8)
 			moveInvOffset(6);
 	}
 
@@ -1132,7 +1135,10 @@ bool MacIndy3Gui::Inventory::ScrollButton::handleMouseHeld(Common::Point &presse
 	if (!_enabled)
 		return false;
 
-	return _bounds.contains(pressed) && _bounds.contains(held);
+	// The scroll button doesn't care if the mouse has moved outside while
+	// being held.
+
+	return _bounds.contains(pressed);
 }
 
 void MacIndy3Gui::Inventory::ScrollButton::draw() {
