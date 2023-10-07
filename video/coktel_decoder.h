@@ -525,7 +525,7 @@ private:
 
 	// Sound properties
 	uint16 _soundFlags;
-	int16  _soundFreq;
+	uint16  _soundFreq;
 	int16  _soundSliceSize;
 	int16  _soundSlicesCount;
 	byte   _soundBytesPerSample;
