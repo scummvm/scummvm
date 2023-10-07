@@ -416,22 +416,22 @@ bool MacIndy3Gui::Widget::updateTimer(int delta) {
 	return _timer == 0;
 }
 
-void MacIndy3Gui::Widget::copyRectToScreen(Common::Rect r) {
+void MacIndy3Gui::Widget::copyRectToScreen(Common::Rect r) const {
 	_gui->copyRectToScreen(r);
 }
 
-void MacIndy3Gui::Widget::fill(Common::Rect r) {
+void MacIndy3Gui::Widget::fill(Common::Rect r) const {
 	_gui->fill(r);
 }
 
-void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) {
+void MacIndy3Gui::Widget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
 	_gui->drawBitmap(r, bitmap, color);
 }
 
 // The shadow box is the basic outline of the verb buttons and the inventory
 // widget. A slightly rounded rectangle with a shadow and a highlight.
 
-void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) {
+void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) const {
 	_surface->hLine(r.left + 1, r.top, r.right - 3, kBlack);
 	_surface->hLine(r.left + 1, r.bottom - 2, r.right - 3, kBlack);
 	_surface->vLine(r.left, r.top + 1, r.bottom - 3, kBlack);
@@ -447,7 +447,7 @@ void MacIndy3Gui::Widget::drawShadowBox(Common::Rect r) {
 // The shadow frame is a rectangle with a highlight. It can be filled or
 // unfilled.
 
-void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) {
+void MacIndy3Gui::Widget::drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) const {
 	_surface->hLine(r.left, r.top, r.right - 1, kBlack);
 	_surface->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
 	_surface->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
@@ -1213,15 +1213,15 @@ MacIndy3Gui::~MacIndy3Gui() {
 // continue that tradition, just in case. If nothing else, it gives us an easy
 // way to still store it in savegames.
 
-int MacIndy3Gui::getInventoryScrollOffset() {
+int MacIndy3Gui::getInventoryScrollOffset() const {
 	return _vm->VAR(67);
 }
 
-void MacIndy3Gui::setInventoryScrollOffset(int n) {
+void MacIndy3Gui::setInventoryScrollOffset(int n) const {
 	_vm->VAR(67) = n;
 }
 
-bool MacIndy3Gui::isActive() {
+bool MacIndy3Gui::isActive() const {
 	// The GUI is only allowed if the verb area has the expected size. There
 	// are scenes (e.g. the flight path to Venice) where it's not.
 
@@ -1252,7 +1252,7 @@ bool MacIndy3Gui::isActive() {
 	return false;
 }
 
-bool MacIndy3Gui::isVisible() {
+bool MacIndy3Gui::isVisible() const {
 	if (!_visible)
 		return false;
 
@@ -1444,11 +1444,11 @@ void MacIndy3Gui::clear() {
 	copyRectToScreen(Common::Rect(0, 288, 640, 400));
 }
 
-void MacIndy3Gui::copyRectToScreen(Common::Rect r) {
+void MacIndy3Gui::copyRectToScreen(Common::Rect r) const {
 	_system->copyRectToScreen(_surface->getBasePtr(r.left, r.top), _surface->pitch, r.left, r.top, r.width(), r.height());
 }
 
-void MacIndy3Gui::fill(Common::Rect r) {
+void MacIndy3Gui::fill(Common::Rect r) const {
 	int pitch = _surface->pitch;
 
 	// Fill the screen with either gray of a checkerboard pattern.
@@ -1466,7 +1466,7 @@ void MacIndy3Gui::fill(Common::Rect r) {
 		_surface->fillRect(r, kLightGray);
 }
 
-void MacIndy3Gui::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) {
+void MacIndy3Gui::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
 	byte *ptr = (byte *)_surface->getBasePtr(r.left, r.top);
 	int pitch = _surface->pitch;
 
