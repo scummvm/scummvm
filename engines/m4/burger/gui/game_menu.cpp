@@ -144,21 +144,17 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 
 	// Paint the interface section of the thumbnail
 	if (currRow < MAX_VIDEO_Y) {
-
 		// If the interface is visible, grab it
 		if (intrBuff) {
-
 			srcRowPtr = intrBuff->data;
 			endRow = imath_min(MAX_VIDEO_Y, beginRow + intrBuff->h - 1);
 			for (currRow = beginRow; currRow <= endRow; currRow += 3) {
-
 				// Set the src pointers
 				srcPtr = srcRowPtr;
 				srcPtr2 = srcRowPtr + intrBuff->stride;
 				srcPtr3 = srcRowPtr + (intrBuff->stride << 1);
 
 				for (i = 0; i < (MAX_VIDEO_X + 1) / 3; i++) {
-
 					// If the pix is outside of the inventory objects in the interface, set to black
 					// If ((srcPtr - srcRowPtr < 180) || (srcPtr - srcRowPtr > 575)) {
 					if (true) {			// for now make everything in the interface black
@@ -192,9 +188,8 @@ Sprite *menu_CreateThumbnail(int32 *spriteSize) {
 				// Update the row pointer
 				srcRowPtr += intrBuff->stride * 3;
 			}
-		}
-		// Else paint the bottom of the thumbnail black
-		else {
+		} else {
+			// Else paint the bottom of the thumbnail black
 			destPtr = (uint8 *)(destBuff->data + ((currRow / 3) * destBuff->stride));
 			memset(destPtr, 21, (destBuff->h - (currRow / 3)) * destBuff->stride);
 		}
@@ -377,7 +372,7 @@ menuItem *menu_MsgAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, int
 	menuItem *newItem;
 	menuItemMsg *msgInfo;
 	ScreenContext *myScreen;
-	int32					status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -667,10 +662,10 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 bool button_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemButton *myButton;
-	bool					redrawItem, execCallback, handled;
+	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
-	int32					status;
-	int32					currTag;
+	int32 status;
+	int32 currTag;
 	guiMenu *currMenu;
 	menuItem *tempItem;
 
@@ -802,7 +797,7 @@ menuItem *menu_ButtonAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w, 
 	menuItem *newItem;
 	menuItemButton *buttonInfo;
 	ScreenContext *myScreen;
-	int32					status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -989,12 +984,12 @@ void menu_DrawHSlider(void *theItem, void *theMenu, int32 x, int32 y, int32, int
 bool hslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemHSlider *mySlider;
-	bool					redrawItem, execCallback, handled;
+	bool redrawItem, execCallback, handled;
 	ScreenContext *myScreen;
-	int32					status;
-	int32					deltaSlide;
-	static bool			movingFlag;
-	static int32		movingX;
+	int32 status;
+	int32 deltaSlide;
+	static bool movingFlag;
+	static int32 movingX;
 
 	// Verify params
 	if ((!myItem) || (!myItem->itemInfo)) {
@@ -1131,7 +1126,7 @@ menuItem *menu_HSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	menuItem *newItem;
 	menuItemHSlider *sliderInfo;
 	ScreenContext *myScreen;
-	int32					status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -1321,15 +1316,15 @@ int32 vslider_WhereIsCursor(menuItemVSlider *myVSlider, int32 y) {
 bool vslider_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemVSlider *myVSlider;
-	bool					redrawItem, execCallback, handled;
-	int32					tempFlags;
+	bool redrawItem, execCallback, handled;
+	int32 tempFlags;
 	ScreenContext *myScreen;
-	int32					status;
-	int32					deltaSlide;
-	int32					currTime;
-	static bool			movingFlag;
-	static int32		movingY;
-	static int32		callbackTime;
+	int32 status;
+	int32 deltaSlide;
+	int32 currTime;
+	static bool movingFlag;
+	static int32 movingY;
+	static int32 callbackTime;
 
 	// Verify params
 	if ((!myItem) || (!myItem->itemInfo)) {
@@ -1524,7 +1519,7 @@ menuItem *menu_VSliderAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 w,
 	menuItem *newItem;
 	menuItemVSlider *vsliderInfo;
 	ScreenContext *myScreen;
-	int32					status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -1652,8 +1647,8 @@ void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, i
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
-	char					tempStr[64], tempChar;
-	int32					cursorX;
+	char tempStr[64], tempChar;
+	int32 cursorX;
 
 	// Verify params
 	if ((!myItem) || (!myItem->itemInfo) || (!myMenu)) {
@@ -1921,7 +1916,7 @@ menuItem *menu_TextFieldAdd(guiMenu *myMenu, int32 tag, int32 x, int32 y, int32 
 	menuItem *newItem;
 	menuItemTextField *textInfo;
 	ScreenContext *myScreen;
-	int32					status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -2007,7 +2002,7 @@ bool menu_LoadSprites(const char *series, int32 numSprites) {
 	_GM(menuSeriesResource) = mem_strdup(series);
 
 	// Update the palette for the menu        
-	gr_pal_set_range(_GM(menuPalette), 59, 197);  // rid
+	gr_pal_set_range(_GM(menuPalette), 59, 197);  // Rid
 
 	_GM(spriteCount) = numSprites;
 
@@ -2072,7 +2067,7 @@ bool menu_Initialize(RGB8 *myPalette) {
 	game_pause(true);
 
 	// Hide the telegram window
-	// Hide_telegram_dialog(); // ripley shit again!
+	// Hide_telegram_dialog(); // Ripley shit again!
 
 	// Hide the interface
 	if (INTERFACE_VISIBLE) {
@@ -2327,7 +2322,7 @@ guiMenu *menu_Create(Sprite *backgroundSprite, int32 x1, int32 y1, int32 scrnFla
 	} else {
 		gr_buffer_rect_copy_2(matte, tempBuff, x1, y1, 0, 0, tempBuff->w, tempBuff->h);			  // copy all of it
 	}
-	_G(gameDrawBuff)->release();	 // release the buffer so it can be moved if nesessary
+	_G(gameDrawBuff)->release();	 // Release the buffer so it can be moved if nesessary
 
 	// draw the sprite
 	if (backgroundSprite->sourceHandle) {
@@ -2403,11 +2398,11 @@ bool menu_EventHandler(void *theMenu, int32 eventType, int32 parm1, int32 parm2,
 	ScreenContext *myScreen;
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem;
-	int32							status, menuX, menuY;
-	bool							handled;
-	static int32				movingX;
-	static int32				movingY;
-	static bool					movingScreen = false;
+	int32 status, menuX, menuY;
+	bool handled;
+	static int32 movingX;
+	static int32 movingY;
+	static bool movingScreen = false;
 
 	// Initialize the vars
 	handled = false;
@@ -2596,7 +2591,7 @@ void menu_ItemDelete(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 
 void menu_ItemRefresh(menuItem *myItem, int32 tag, guiMenu *myMenu) {
 	ScreenContext *myScreen;
-	int32				status;
+	int32 status;
 
 	// Verify params
 	if (!myMenu) {
@@ -2763,7 +2758,7 @@ void DestroyOptionsMenu();
 
 
 void cb_Options_Game_Cancel(void *, void *) {
-	// reset values of items to what they were when options menu came up
+	// Reset values of items to what they were when options menu came up
 	digi_set_overall_volume(_GM(remember_digi_volume));
 	_G(flags)[digestability] = _GM(remember_digestability);
 
@@ -2792,7 +2787,7 @@ void cb_Options_Digi(void *theItem, void *theMenu) {
 	digi_set_overall_volume(mySlider->percent);
 	term_message("digi volume: %d", mySlider->percent);
 
-	// this scroller control has been moved, so make sure that the DONE button is not greyed out
+	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
 	menu_ItemRefresh(nullptr, OM_TAG_DONE, myMenu);
 
@@ -2808,7 +2803,7 @@ void cb_Options_Digestability(void *theItem, void *theMenu) {
 	term_message("digestability: %d", mySlider->percent);
 	_G(flags)[digestability] = mySlider->percent;
 
-	// this scroller control has been moved, so make sure that the DONE button is not greyed out
+	// This scroller control has been moved, so make sure that the DONE button is not greyed out
 	menu_EnableButton(nullptr, OM_TAG_DONE, myMenu);
 	menu_ItemRefresh(nullptr, OM_TAG_DONE, myMenu);
 }
@@ -2855,7 +2850,7 @@ void CreateOptionsMenu(RGB8 *myPalette) {
 	menu_HSliderAdd(_GM(opMenu), OM_TAG_DIGESTABILITY, OM_DIGESTABILITY_X, OM_DIGESTABILITY_Y,
 		OM_DIGESTABILITY_W, OM_DIGESTABILITY_H, _G(flags)[digestability], cb_Options_Digestability, true);
 
-	// remember the values of the items in case the user cancels
+	// Remember the values of the items in case the user cancels
 	_GM(remember_digi_volume) = digi_get_overall_volume();
 	_GM(remember_digestability) = _G(flags)[digestability];
 
@@ -3060,7 +3055,6 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 	firstSlot = imath_max(imath_min(firstSlot, 89), 0);
 
 	if (firstSlot > _GM(thumbIndex)) {
-
 		// Dump Out all thumbnails in slots which don't overlap
 		startIndex = _GM(thumbIndex);
 		endIndex = imath_min(_GM(thumbIndex) + 9, firstSlot - 1);
@@ -3080,11 +3074,8 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 				}
 			}
 		}
-	}
-
-	// Else firstSlot < _GM(thumbIndex)
-	else {
-
+	} else {
+		// Else firstSlot < _GM(thumbIndex)
 		// Dump Out all thumbnails in slots which don't overlap
 		startIndex = imath_max(firstSlot + 10, _GM(thumbIndex));
 		endIndex = imath_min(_GM(thumbIndex) + 9, 98);
@@ -3114,7 +3105,7 @@ void UpdateThumbNails(int32 firstSlot, guiMenu *myMenu) {
 void SetFirstSlot(int32 firstSlot, guiMenu *myMenu) {
 	menuItem *tempItem;
 	menuItemButton *myButton;
-	int32					i;
+	int32 i;
 
 	if (!myMenu) {
 		return;
@@ -3143,7 +3134,7 @@ void cb_SaveLoad_VSlider(void *theItem, void *theMenu) {
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemVSlider *mySlider;
-	bool					redraw;
+	bool redraw;
 
 	if ((!myMenu) || (!myItem) || (!myItem->itemInfo)) {
 		return;
@@ -3340,7 +3331,7 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 void cb_SaveLoad_Cancel(void *, void *theMenu) {
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem;
-	int32			i, x, y, w, h;
+	int32 i, x, y, w, h;
 
 	// If a slot has been selected, cancel will re-enable all slots
 	if (_GM(slotSelected) >= 0) {
@@ -3417,7 +3408,7 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 	guiMenu *myMenu = (guiMenu *)theMenu;
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemButton *myButton;
-	int32					i, x, y, w, h;
+	int32 i, x, y, w, h;
 
 	// Verify params
 	if ((!myMenu) || (!myItem) || (!myItem->itemInfo)) {
@@ -3547,7 +3538,7 @@ bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y,
 
 
 void DestroySaveLoadMenu(bool saveMenu) {
-	int32		i;
+	int32 i;
 
 	if (!_GM(slMenu)) {
 		return;
@@ -3581,7 +3572,7 @@ void DestroySaveLoadMenu(bool saveMenu) {
 
 void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 	ItemHandlerFunction	i_handler;
-	bool						buttonGreyed;
+	bool buttonGreyed;
 
 	if (!_G(menuSystemInitialized)) {
 		menu_Initialize(myPalette);
@@ -3634,6 +3625,7 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 		buttonGreyed = true;
 		i_handler = load_Handler;
 	}
+
 	for (int32 i = 0; i < MAX_SLOTS_SHOWN; i++) {
 		menu_ButtonAdd(_GM(slMenu), 1001 + i,
 			SL_SCROLL_FIELD_X, SL_SCROLL_FIELD_Y + i * SL_SCROLL_LINE_H,
@@ -3649,6 +3641,7 @@ void CreateSaveLoadMenu(RGB8 *myPalette, bool saveMenu) {
 		UpdateThumbNails(0, _GM(slMenu));
 		_GM(saveLoadThumbNail) = _GM(menuSprites)[SL_EMPTY_THUMB];
 	}
+
 	menu_MsgAdd(_GM(slMenu), SL_TAG_THUMBNAIL, SL_THUMBNAIL_X, SL_THUMBNAIL_Y, SL_THUMBNAIL_W, SL_THUMBNAIL_H, false);
 
 	if (_GM(currMenuIsSave)) {
@@ -3670,6 +3663,7 @@ void CreateGameMenu(RGB8 *myPalette) {
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
+
 	_GM(gameMenuFromMain) = false;
 	CreateGameMenuMain(myPalette);
 }
@@ -3678,6 +3672,7 @@ void CreateGameMenuFromMain(RGB8 *myPalette) {
 	if (_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
+
 	_GM(gameMenuFromMain) = true;
 	CreateGameMenuMain(myPalette);
 }
@@ -3692,6 +3687,7 @@ void CreateF2SaveMenu(RGB8 *myPalette) {
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
+
 	_GM(saveLoadFromHotkey) = true;
 	_GM(gameMenuFromMain) = false;
 	CreateSaveLoadMenu(myPalette, true);
@@ -3707,6 +3703,7 @@ void CreateF3LoadMenu(RGB8 *myPalette) {
 		_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
+
 	_GM(saveLoadFromHotkey) = true;
 	_GM(gameMenuFromMain) = false;
 	CreateSaveLoadMenu(myPalette, false);
@@ -3716,6 +3713,7 @@ void CreateLoadMenuFromMain(RGB8 *myPalette) {
 	if (_G(pal_fade_in_progress) || _G(menuSystemInitialized)) {
 		return;
 	}
+
 	_GM(saveLoadFromHotkey) = true;
 	_GM(gameMenuFromMain) = true;
 	CreateSaveLoadMenu(myPalette, false);
