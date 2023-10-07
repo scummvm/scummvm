@@ -89,7 +89,7 @@ void ActionManager::handleInput(NancyInput &input) {
 
 						// Re-add the object to the inventory unless it's marked as a one-time use
 						if (item == NancySceneState.getHeldItem() && item != -1) {
-							const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+							auto *inventoryData = GetEngineData(INV);
 							assert(inventoryData);
 
 							switch (inventoryData->itemDescriptions[item].keepItem) {

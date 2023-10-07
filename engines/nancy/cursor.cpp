@@ -92,7 +92,7 @@ void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	_primaryVideoInitialPos.x = chunkStream->readUint16LE();
 	_primaryVideoInitialPos.y = chunkStream->readUint16LE();
 
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
 	g_nancy->_resource->loadImage(inventoryData->inventoryCursorsImageName, _invCursorsSurface);

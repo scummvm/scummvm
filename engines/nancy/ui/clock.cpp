@@ -125,7 +125,7 @@ void Clock::drawClockHands() {
 }
 
 void Clock::ClockAnim::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	_srcRects = _owner->_clockData->animSrcs;
@@ -187,7 +187,7 @@ void Clock::ClockAnim::onTrigger() {
 }
 
 void Nancy5Clock::init() {
-	_clockData = (const CLOK *)g_nancy->getEngineData("CLOK");
+	_clockData = GetEngineData(CLOK);
 	assert(_clockData);
 
 	setVisible(true);

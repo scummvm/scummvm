@@ -139,7 +139,7 @@ void LoadSaveMenu::registerGraphics() {
 }
 
 void LoadSaveMenu::init() {
-	_loadSaveData = (const LOAD*)g_nancy->getEngineData("LOAD");
+	_loadSaveData = GetEngineData(LOAD);
 	assert(_loadSaveData);
 
 	_background.init(_loadSaveData->_imageName);
@@ -449,7 +449,7 @@ void LoadSaveMenu::enterFilename() {
 }
 
 void LoadSaveMenu::save() {
-	const SDLG *sdlg = (const SDLG *)g_nancy->getEngineData("SDLG");
+	auto *sdlg = GetEngineData(SDLG);
 
 	if (sdlg && sdlg->dialogs.size() > 1) {
 		// nancy6 added a "Do you want to overwrite this save" dialog.
@@ -510,7 +510,7 @@ void LoadSaveMenu::save() {
 }
 
 void LoadSaveMenu::load() {
-	const SDLG *sdlg = (const SDLG *)g_nancy->getEngineData("SDLG");
+	auto *sdlg = GetEngineData(SDLG);
 
 	if (sdlg && sdlg->dialogs.size() > 1 && Nancy::State::Scene::hasInstance() && !g_nancy->_hasJustSaved) {
 		// nancy6 added a "Do you want load without saving" dialog.

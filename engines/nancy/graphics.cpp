@@ -40,7 +40,7 @@ GraphicsManager::GraphicsManager() :
 	_isSuppressed(false) {}
 
 void GraphicsManager::init() {
-	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bsum = GetEngineData(BSUM);
 	assert(bsum);
 
 	// Extract transparent color from the boot summary
@@ -133,7 +133,7 @@ void GraphicsManager::draw(bool updateScreen) {
 }
 
 void GraphicsManager::loadFonts(Common::SeekableReadStream *chunkStream) {
-	const BSUM *bsum = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bsum = GetEngineData(BSUM);
 	assert(bsum);
 	assert(chunkStream);
 

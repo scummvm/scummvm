@@ -29,7 +29,7 @@ namespace Nancy {
 namespace UI {
 
 void ViewportOrnaments::init() {
-	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	auto *viewportData = GetEngineData(VIEW);
 	assert(viewportData);
 
 	Common::Rect viewportBounds = viewportData->bounds;
@@ -74,10 +74,10 @@ void ViewportOrnaments::init() {
 }
 
 void TextboxOrnaments::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	auto *textboxData = GetEngineData(TBOX);
 	assert(textboxData);
 
 	moveTo(bootSummary->textboxScreenPosition);
@@ -105,10 +105,10 @@ void TextboxOrnaments::init() {
 }
 
 void InventoryBoxOrnaments::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
 	moveTo(bootSummary->inventoryBoxScreenPosition);

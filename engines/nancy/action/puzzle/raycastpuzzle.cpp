@@ -106,7 +106,7 @@ public:
 };
 
 RaycastLevelBuilder::RaycastLevelBuilder(uint width, uint height, uint verticalHeight) {
-	_themeData = (const RCLB *)g_nancy->getEngineData("RCLB");
+	_themeData = GetEngineData(RCLB);
 	assert(_themeData);
 
 	_verticalHeight = verticalHeight;
@@ -896,7 +896,7 @@ private:
 bool RaycastDeferredLoader::loadInner() {
 	switch(_loadState) {
 	case kInitDrawSurface : {
-		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		auto *viewportData = GetEngineData(VIEW);
 		assert(viewportData);
 		
 		Common::Rect viewport = viewportData->bounds;
@@ -954,7 +954,7 @@ bool RaycastDeferredLoader::loadInner() {
 	}
 	case kInitTables1 : {
 		Common::Rect selectedBounds = _owner._puzzleData->screenViewportSizes[_owner._puzzleData->viewportSizeUsed];
-		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		auto *viewportData = GetEngineData(VIEW);
 		assert(viewportData);
 
 		_owner._wallCastColumnAngles.resize(viewportData->screenPosition.width());
@@ -972,7 +972,7 @@ bool RaycastDeferredLoader::loadInner() {
 		break;
 	}
 	case kInitTables2 : {
-		const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+		auto *viewportData = GetEngineData(VIEW);
 		assert(viewportData);
 
 		_owner._sinTable.resize(4096);
@@ -1065,7 +1065,7 @@ bool RaycastDeferredLoader::loadInner() {
 }
 
 void RaycastPuzzle::init() {
-	_puzzleData = (const RCPR *)g_nancy->getEngineData("RCPR");
+	_puzzleData = GetEngineData(RCPR);
 	assert(_puzzleData);
 
 	RaycastDeferredLoader *loader = _loaderPtr.get();
@@ -1350,7 +1350,7 @@ void RaycastPuzzle::updateGraphics() {
 
 void RaycastPuzzle::drawMap() {
 	// Improvement: the original map is drawn upside-down; ours isn't
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	_mapBaseSurface.create(_mapFullWidth, _mapFullHeight, g_nancy->_graphicsManager->getInputPixelFormat());

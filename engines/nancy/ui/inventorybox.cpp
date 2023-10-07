@@ -49,10 +49,10 @@ InventoryBox::~InventoryBox() {
 }
 
 void InventoryBox::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
-	_inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	_inventoryData = GetEngineData(INV);
 	assert(_inventoryData);
 
 	_order.clear();
@@ -251,10 +251,10 @@ void InventoryBox::onScrollbarMove() {
 }
 
 void InventoryBox::Curtains::init() {
-	const INV *_inventoryData = (const INV *)g_nancy->getEngineData("INV");
-	assert(_inventoryData);
+	auto *inventoryData = GetEngineData(INV);
+	assert(inventoryData);
 
-	moveTo(_inventoryData->curtainsScreenPosition);
+	moveTo(inventoryData->curtainsScreenPosition);
 	Common::Rect bounds = _screenPosition;
 	bounds.moveTo(0, 0);
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
@@ -277,11 +277,11 @@ void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
 		if (_curFrame < g_nancy->getStaticData().numCurtainAnimationFrames && time > _nextFrameTime) {
-			const INV *_inventoryData = (const INV *)g_nancy->getEngineData("INV");
-			assert(_inventoryData);
+			auto *inventoryData = GetEngineData(INV);
+			assert(inventoryData);
 
 			setAnimationFrame(++_curFrame);
-			_nextFrameTime = time + _inventoryData->curtainsFrameTime;
+			_nextFrameTime = time + inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -290,11 +290,11 @@ void InventoryBox::Curtains::updateGraphics() {
 		}
 	} else {
 		if (_curFrame > 0 && time > _nextFrameTime) {
-			const INV *_inventoryData = (const INV *)g_nancy->getEngineData("INV");
-			assert(_inventoryData);
+			auto *inventoryData = GetEngineData(INV);
+			assert(inventoryData);
 
 			setAnimationFrame(--_curFrame);
-			_nextFrameTime = time + _inventoryData->curtainsFrameTime;
+			_nextFrameTime = time + inventoryData->curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -324,17 +324,17 @@ void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 		setVisible(true);
 	}
 
-	const INV *_inventoryData = (const INV *)g_nancy->getEngineData("INV");
-	assert(_inventoryData);
+	auto *inventoryData = GetEngineData(INV);
+	assert(inventoryData);
 
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	// Draw left curtain
-	srcRect = _inventoryData->curtainAnimationSrcs[frame * 2];
+	srcRect = inventoryData->curtainAnimationSrcs[frame * 2];
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
 	// Draw right curtain
-	srcRect = _inventoryData->curtainAnimationSrcs[frame * 2 + 1];
+	srcRect = inventoryData->curtainAnimationSrcs[frame * 2 + 1];
 	destPoint.x = getBounds().width() - srcRect.width();
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 

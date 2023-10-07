@@ -89,7 +89,7 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
 	ser.skip(1); // CD required for scene
 
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	if (bootSummary->overrideMovementTimeDeltas) {
@@ -269,7 +269,7 @@ void Scene::setPlayerTime(Time time, byte relative) {
 		_timers.playerTime = _timers.playerTime.getDays() * 86400000 + time;
 	}
 
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	_timers.playerTimeNextMinute = g_nancy->getTotalPlayTime() + bootSummary->playerTimeMinuteLength;
@@ -293,7 +293,7 @@ byte Scene::getPlayerTOD() const {
 		}
 	} else {
 		// nancy6 added the day start/end times (in minutes) to BSUM
-		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
 		uint16 minutes = _timers.playerTime.getHours() * 60 + _timers.playerTime.getMinutes();
@@ -381,7 +381,7 @@ void Scene::playItemCantSound(int16 itemID) {
 	}
 
 	// Improvement: nancy2 never shows the caption text, even though it exists in the data; we show it
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
 	if (itemID < 0) {
@@ -727,8 +727,8 @@ UI::Clock *Scene::getClock() {
 }
 
 void Scene::init() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
-	const HINT *hintData = (const HINT *)g_nancy->getEngineData("HINT");
+	auto *bootSummary = GetEngineData(BSUM);
+	auto *hintData = GetEngineData(HINT);
 	assert(bootSummary);
 
 	_flags.eventFlags.resize(g_nancy->getStaticData().numEventFlags, g_nancy->_false);
@@ -954,7 +954,7 @@ void Scene::run() {
 
 	// Calculate the in-game time (playerTime)
 	if (currentPlayTime > _timers.playerTimeNextMinute) {
-		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
 		_timers.playerTime += 60000; // Add a minute
@@ -1063,7 +1063,7 @@ void Scene::handleInput() {
 
 		if (_menuButton->_isClicked) {
 			if (_buttonPressActivationTime == 0) {
-				const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+				auto *bootSummary = GetEngineData(BSUM);
 				assert(bootSummary);
 
 				g_nancy->_sound->playSound("BUOK");
@@ -1081,7 +1081,7 @@ void Scene::handleInput() {
 
 		if (_helpButton->_isClicked) {
 			if (_buttonPressActivationTime == 0) {
-				const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+				auto *bootSummary = GetEngineData(BSUM);
 				assert(bootSummary);
 
 				g_nancy->_sound->playSound("BUOK");
@@ -1096,13 +1096,13 @@ void Scene::handleInput() {
 }
 
 void Scene::initStaticData() {
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	const ImageChunk *fr0 = (const ImageChunk *)g_nancy->getEngineData("FR0");
 	assert(fr0);
 
-	const MAP *mapData = (const MAP *)g_nancy->getEngineData("MAP");
+	auto *mapData = GetEngineData(MAP);
 
 	_frame.init(fr0->imageName);
 	_viewport.init();

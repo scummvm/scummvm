@@ -161,6 +161,7 @@ private:
 };
 
 extern NancyEngine *g_nancy;
+#define GetEngineData(s) (const s*)g_nancy->getEngineData(#s);
 
 } // End of namespace Nancy
 

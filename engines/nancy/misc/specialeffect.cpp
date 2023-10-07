@@ -30,7 +30,7 @@ namespace Misc {
 void SpecialEffect::init() {
 	if (g_nancy->getGameType() <= kGameTypeNancy6) {
 		// nancy2-6 have a fixed number of frames for the effect, which is defined in the SPEC chunk
-		const SPEC *specialEffectData = (const SPEC *)g_nancy->getEngineData("SPEC");
+		auto *specialEffectData = GetEngineData(SPEC);
 		assert(specialEffectData);
 
 		_numFrames = _type == kBlackout ? specialEffectData->fadeToBlackNumFrames : specialEffectData->crossDissolveNumFrames;

@@ -286,7 +286,7 @@ void TableIndexPlaySound::readData(Common::SeekableReadStream &stream) {
 void TableIndexPlaySound::execute() {
 	TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 	assert(playerTable);
-	const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+	auto *tabl = GetEngineData(TABL);
 	assert(tabl);
 
 	if (_lastIndexVal != playerTable->currentIDs[_tableIndex - 1]) {

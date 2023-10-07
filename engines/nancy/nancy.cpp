@@ -457,7 +457,7 @@ void NancyEngine::bootGameEngine() {
 	delete iff;
 
 	// Load convo texts and autotext
-	const BSUM *bsum = (const BSUM *)getEngineData("BSUM");
+	auto *bsum = GetEngineData(BSUM);
 	if (bsum && bsum->conversationTextsFilename.size() && bsum->autotextFilename.size())  {
 		iff = new IFF(bsum->conversationTextsFilename);
 		if (!iff->load()) {
@@ -566,7 +566,7 @@ void NancyEngine::destroyState(NancyState::NancyState state) const {
 }
 
 void NancyEngine::preloadCals() {
-	const PCAL *pcal = (const PCAL *)getEngineData("PCAL");
+	auto *pcal = GetEngineData(PCAL);
 	if (!pcal) {
 		// CALs only appeared in nancy2 so a PCAL chunk may not exist
 		return;
@@ -620,7 +620,7 @@ void NancyEngine::readDatFile() {
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
-	const BSUM *bootSummary = (const BSUM *)getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	// Sync boot summary header, which includes full game title

@@ -128,7 +128,7 @@ void TableIndexSetValueHS::execute() {
 	case kActionTrigger: {
 		TableData *playerTable = (TableData *)NancySceneState.getPuzzleData(TableData::getTag());
 		assert(playerTable);
-		const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+		auto *tabl = GetEngineData(TABL);
 		assert(tabl);
 
 		// Edit table. Values start from 1!

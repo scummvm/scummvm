@@ -44,7 +44,7 @@ void SliderPuzzle::init() {
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
-	_spuzData = (const SPUZ*)g_nancy->getEngineData("SPUZ");
+	_spuzData = GetEngineData(SPUZ);
 	assert(_spuzData);
 
 	_puzzleState = (SliderPuzzleData *)NancySceneState.getPuzzleData(SliderPuzzleData::getTag());

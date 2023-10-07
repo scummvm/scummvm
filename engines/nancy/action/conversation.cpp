@@ -165,7 +165,7 @@ void ConversationSound::execute() {
 	case kRun:
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
-			const TBOX *textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+			auto *textboxData = GetEngineData(TBOX);
 			assert(textboxData);
 			NancySceneState.getTextbox().clear();
 			NancySceneState.getTextbox().setOverrideFont(textboxData->conversationFontID);

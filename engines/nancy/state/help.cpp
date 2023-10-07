@@ -80,7 +80,7 @@ bool Help::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Help::init() {
-	const HELP *helpData = (const HELP *)g_nancy->getEngineData("HELP");
+	auto *helpData = GetEngineData(HELP);
 	assert(helpData);
 	
 	_image.init(helpData->imageName);
@@ -110,7 +110,7 @@ void Help::run() {
 	_button->handleInput(input);
 
 	if (_button->_isClicked) {
-		const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+		auto *bootSummary = GetEngineData(BSUM);
 		assert(bootSummary);
 
 		_button->_isClicked = false;

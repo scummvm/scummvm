@@ -84,7 +84,7 @@ void MainMenu::clearButtonState() {
 }
 
 void MainMenu::init() {
-	_menuData = (const MENU*)g_nancy->getEngineData("MENU");
+	_menuData = GetEngineData(MENU);
 	assert(_menuData);
 
 	_background.init(_menuData->_imageName);

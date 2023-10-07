@@ -69,7 +69,7 @@ bool Credits::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Credits::init() {
-	_creditsData = (const CRED *)g_nancy->getEngineData("CRED");
+	_creditsData = GetEngineData(CRED);
 	assert(_creditsData);
 
 	_background.init(_creditsData->imageName);

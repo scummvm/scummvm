@@ -478,7 +478,7 @@ void NancyConsole::printActionRecord(const Nancy::Action::ActionRecord *record, 
 void NancyConsole::recursePrintDependencies(const Nancy::Action::DependencyRecord &record) {
 	using namespace Nancy::Action;
 
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
 	for (const DependencyRecord &dep : record.children) {
@@ -816,7 +816,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 	}
 
 	uint numItems = g_nancy->getStaticData().numItems;
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 
 	debugPrintf("Total number of inventory items: %u\n", numItems);
@@ -853,7 +853,7 @@ bool NancyConsole::Cmd_getInventory(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_setInventory(int argc, const char **argv) {
-	const INV *inventoryData = (const INV *)g_nancy->getEngineData("INV");
+	auto *inventoryData = GetEngineData(INV);
 	assert(inventoryData);
 	
 	if (g_nancy->_gameFlow.curState != NancyState::kScene) {

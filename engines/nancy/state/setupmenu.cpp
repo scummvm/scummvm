@@ -128,7 +128,7 @@ const Common::String SetupMenu::getToggleConfManKey(uint id) {
 }
 
 void SetupMenu::init() {
-	_setupData = (const SET*)g_nancy->getEngineData("SET");
+	_setupData = GetEngineData(SET);
 	assert(_setupData);
 
 	if (g_nancy->getGameType() == kGameTypeVampire) {

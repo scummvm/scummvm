@@ -117,7 +117,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 		_fontHeight = MAX<int>(cur.height(), _fontHeight);
 	}
 
-	_textboxData = (const TBOX *)g_nancy->getEngineData("TBOX");
+	_textboxData = GetEngineData(TBOX);
 	assert(_textboxData);
 }
 

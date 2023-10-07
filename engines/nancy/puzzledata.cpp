@@ -137,7 +137,7 @@ void JournalData::synchronize(Common::Serializer &ser) {
 }
 
 TableData::TableData() {
-	const TABL *tabl = (const TABL *)g_nancy->getEngineData("TABL");
+	auto *tabl = GetEngineData(TABL);
 	assert(tabl);
 
 	currentIDs = tabl->startIDs;

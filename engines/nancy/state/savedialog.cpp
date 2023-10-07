@@ -89,7 +89,7 @@ void SaveDialog::registerGraphics() {
 }
 
 void SaveDialog::init() {
-	const SDLG* sdlg = (const SDLG*)g_nancy->getEngineData("SDLG");
+	auto *sdlg = GetEngineData(SDLG);
 	assert(sdlg);
 
 	_dialogData = &sdlg->dialogs[ConfMan.getInt("sdlg_id", ConfMan.kTransientDomain)];

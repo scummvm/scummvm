@@ -54,7 +54,7 @@ Map::Map() : _state(kInit),
 			_label(7),
 			_closedLabel(7),
 			_background(0) {
-	_mapData = (const MAP*)g_nancy->getEngineData("MAP");
+	_mapData = GetEngineData(MAP);
 	assert(_mapData);
 }
 
@@ -146,7 +146,7 @@ void Map::setLabel(int labelID) {
 }
 
 void Map::MapViewport::init() {
-	const VIEW *viewportData = (const VIEW *)g_nancy->getEngineData("VIEW");
+	auto *viewportData = GetEngineData(VIEW);
 	assert(viewportData);
 
 	moveTo(viewportData->screenPosition);
@@ -193,7 +193,7 @@ void TVDMap::init() {
 	_ornaments.init();
 	_globe.init();
 
-	const BSUM *bootSummary = (const BSUM *)g_nancy->getEngineData("BSUM");
+	auto *bootSummary = GetEngineData(BSUM);
 	assert(bootSummary);
 
 	Common::Rect textboxScreenPosition = bootSummary->textboxScreenPosition;
