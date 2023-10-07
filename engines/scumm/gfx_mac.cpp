@@ -924,11 +924,14 @@ void MacIndy3Gui::Inventory::Slot::setObject(int obj) {
 	_obj = obj;
 	setEnabled(true);
 
-	const byte *name = _vm->getObjOrActorName(obj);
+	const byte *ptr = _vm->getObjOrActorName(obj);
 
-	if (name) {
-		if (_name != (const char *)name) {
-			_name = (const char *)name;
+	if (ptr) {
+		byte buf[270];
+		_vm->convertMessageToString(ptr, buf, sizeof(buf));
+
+		if (_name != (const char *)buf) {
+			_name = (const char *)buf;
 			clearTimer();
 			setRedraw(true);
 		}
@@ -987,10 +990,8 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 		int x = _bounds.left + 4;
 
 		for (uint i = 0; i < _name.size() && x < _bounds.right; i++) {
-			if (_name[i] != '@') {
-				font->drawChar(_surface, _name[i], x, y, fg);
-				x += font->getCharWidth(_name[i]);
-			}
+			font->drawChar(_surface, _name[i], x, y, fg);
+			x += font->getCharWidth(_name[i]);
 		}
 	}
 
