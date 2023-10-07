@@ -163,7 +163,7 @@ machine *Walker::walk_initialize_walker() {
 
 		// initialize with bogus data (this is for the real walker)
 		s = _G(globals)[GLB_MIN_SCALE] + FixedMul((400 << 16) - _G(globals)[GLB_MIN_Y], _G(globals)[GLB_SCALER]);
-		_G(globals)[GLB_TEMP_4] = 320 << 16;
+		_G(globals)[GLB_TEMP_4] = -320 << 16;
 		_G(globals)[GLB_TEMP_5] = 400 << 16;
 		_G(globals)[GLB_TEMP_6] = s;
 		_G(globals)[GLB_TEMP_7] = 3 << 16;	 // facing
