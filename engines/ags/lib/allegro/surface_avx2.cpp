@@ -505,7 +505,9 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	const byte *srcP = (const byte *)args.src.getBasePtr(
 	                       args.horizFlip ? args.srcArea.right - 8 : args.srcArea.left,
 	                       args.vertFlip ? args.srcArea.bottom - 1 - yCtr : args.srcArea.top + yCtr);
-	for (; yCtr < yCtrHeight; ++destY, ++yCtr, scaleYCtr += args.scaleY) {
+
+	// When not scaling, last row is handled separately
+	for (; Scale ? (yCtr < yCtrHeight) : (yCtr < yCtrHeight - 1); ++destY, ++yCtr, scaleYCtr += args.scaleY) {
 		__m256i xCtrWidthSIMD = _mm256_set1_epi32(xCtrWidth); // This is the width of the row
 
 		if (!Scale) {
