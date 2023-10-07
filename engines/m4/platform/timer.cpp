@@ -25,20 +25,24 @@
 
 namespace M4 {
 
+// FIXME: I'm honestly not sure what the timer rate is meant to be.
+// THe methods seem indicative of 60 time increments a second,
+// but in ScummVM that makes things too slow. Doubling it to 120
+// seems to resolve the slowness, so I'm leaving the change in place.
 uint32 timer_read() {
-	return g_system->getMillis() * 60 / 1000;
+	return g_system->getMillis() * 120 / 1000;
 }
 
 uint32 timer_read_dos() {
-	return g_system->getMillis() * 60 / 1000;
+	return g_system->getMillis() * 120 / 1000;
 }
 
 uint32 timer_read_600() {
-	return g_system->getMillis() * 600 / 1000;
+	return g_system->getMillis() * 1200 / 1000;
 }
 
 uint32 timer_read_60() {
-	return g_system->getMillis() * 60 / 1000;
+	return g_system->getMillis() * 120 / 1000;
 }
 
 } // End of namespace M4
