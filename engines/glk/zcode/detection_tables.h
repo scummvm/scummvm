@@ -1633,58 +1633,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cc_saied",           "Saied" },
 	{ "cc_xchicken",        "The X Chicken" },
 
-	// Spring Thing 2002
-	{ "stc02_blues",        "Tinseltown Blues" },                                                       //       Winner
-
-	// Spring Thing 2003
-	{ "stc03_inevita",      "Inevitable" },                                                             //    Runner-Up
-	{ "stc03_cofire",       "The Cross of Fire" },                                                      //      Entrant
-
-	// Spring Thing 2005
-	{ "stc05_authority",    "Authority" },                                                              //    6th Place
-	{ "stc05_flatfeet",     "Flat Feet" },                                                              //    4th Place
-	{ "stc05_telling",      "Whom the Telling Changed" },                                               //    1st Place
-
-	// Spring Thing 2006
-	{ "stc06_debaron",      "De Baron" },                                                               //    1st Place
-	{ "stc06_thebaron",     "The Baron" },                                                              //    1st Place
-
-	// Spring Thing 2007
-	{ "stc07_fate",         "Fate" },                                                                   //    1st Place
-
-	// Spring Thing 2008
-	{ "stc08_pascal",       "Pascal's Wager" },                                                         //    1st Place
-
-	// Spring Thing 2009
-	{ "stc09_milkparadise", "The Milk of Paradise" },                                                   //    4th Place
-
-	// Spring Thing 2012
-	{ "stc12_rocketman",    "The Rocket Man from the Sea" },                                            //    1st Place
-
-	// Spring Thing 2014
-	{ "stc14_mrp",          "The Story of Mr. P." },                                                    //    7th Place
-
-	// Spring Thing 2016
-	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },                                     //      Entrant
-
-	// Spring Thing 2017
-	{ "stc17_enlightened",  "Enlightened Master" },                                                     //      Entrant
-
-	// Spring Thing 2018
-	{ "stc18_gopher",       "Best Gopher Ever" },                                                       //      Entrant
-	{ "stc18_murderbig",    "Murder on the Big Nothing" },                                              //      Entrant
-
-	// Spring Thing 2019
-	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
-	{ "stc19_pca",          "Porte Cave Adventure" },                                                   //      Entrant
-
-	// Spring Thing 2021
-	{ "stc21_takethedogout", "Take the Dog Out" },                                                      //      Entrant
-
-	// Spring Thing 2022
-	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },                         //      Entrant
-	{ "stc22_wry",          "Wry" },                                                                    //      Entrant
-
 	// Commodore 32 Z-Machine Competition
 	{ "c32_endgame",        "Endgame" },                                                                //    1st Place
 	{ "c32_turningpoint",   "Turning Point" },                                                          //    2nd Place
@@ -1778,9 +1726,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// GameplayComp 2009
 	{ "gc_fantasticfinaleiv", "Fantastic Finale IV" },
 
-	// IF Fan Fest 1998
-	{ "ff_ite2",            "In the End II" },
-
 	// Ghost Town Redux
 	{ "gtr_ghosttownzcode", "Ghost Town: The Lost Treasure" },
 
@@ -1794,6 +1739,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "24h_defra",          "The Man from DEFRA" },
 	{ "24h_borgaris",       "Escape From the SS Borgaris" },
 	{ "24h_ghostship",      "Ghost Ship" },
+
+	// IF Fan Fest 1998
+	{ "ff_ite2",            "In the End II" },
 
 	// IFBeginnersComp 2008
 	{ "ifb_connect",        "Connect" },
@@ -1884,16 +1832,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lc_serve",           "Serving Your Country" },
 	{ "lc_trappedschool",   "Trapped in School" },
 
-	// MCDream Competition
-	{ "mc_dreadwine",       "Dreadwine" },
-	{ "mc_nofamous",        "No Famous" },
-	{ "mc_retreat",         "The Retreat" },
-
-	// Segment Mini-Comp
-	{ "snowmanzcode2",      "Snowman Sextet Part II" },
-	{ "kaboot",             "Kaboot's Story" },
-	{ "snowmanzcode",       "Fran and Bart Want a Snowman!" },
-
 	// IF Logic Puzzle Mini-Competition
 	{ "lp_logicpuz",        "Logic Puzzle Sampler" },
 	{ "lp_traffic",         "The Traffic Light" },
@@ -1907,6 +1845,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// Manos Mini-Competition
 	{ "ma_manoz",           "ManoZ" },
+
+	// MCDream Competition
+	{ "mc_dreadwine",       "Dreadwine" },
+	{ "mc_nofamous",        "No Famous" },
+	{ "mc_retreat",         "The Retreat" },
 
 	// Metafilter IF Competition 2009
 	{ "me09_bunt",          "Bunt" },
@@ -1966,6 +1909,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// RomanceNovelComp 2002
 	{ "rnc_chooseromance",  "Choose Your Own Romance" },
+
+	// Segment Mini-Comp
+	{ "snowmanzcode2",      "Snowman Sextet Part II" },
+	{ "kaboot",             "Kaboot's Story" },
+	{ "snowmanzcode",       "Fran and Bart Want a Snowman!" },
 
 	// Shufflecomp Competition 2014
 	{ "sh14_50shades",      "50 Shades of Jilting" },
@@ -2131,16 +2079,16 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_crouton",        "The Crouton Caper" },
 	{ "sif_speedif17v1",    "Tooth Ow Zunden Too" },
 
-	// SpeedIF 11th Anniversary Competition
-	{ "sif_nqaa",           "Not Quite an Anniversary" },
-	{ "sif_reptile",        "Reptile" },
-	{ "sif_teachinghertodance", "Teaching Her to Dance" },
-
 	// SpeedIF 3rd Anniversary Competition
 	{ "sif_henry",          "Finding Henry" },
 
 	// SpeedIF 5th Anniversary Competition
 	{ "sif_coughcough",     "**COUGH COUGH**" },
+
+	// SpeedIF 11th Anniversary Competition
+	{ "sif_nqaa",           "Not Quite an Anniversary" },
+	{ "sif_reptile",        "Reptile" },
+	{ "sif_teachinghertodance", "Teaching Her to Dance" },
 
 	// SpeedIF Argonaut Competition
 	{ "sif_asciargo",       "ASCII and the Argonauts" },
@@ -2257,6 +2205,17 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_dullegriet",     "Dulle Griet and the Antenorian Icebox" },
 	{ "sif_stabbed",        "The Day I Stabbed Stalin" },
 
+	// SpeedIF New Year's Speed Competition 2011
+	{ "sif_beingendbeg",    "Being the Ending of the Beginning" },
+	{ "sif_birthmind",      "Birth of Mind" },
+	{ "sif_dashslapney",    "Dash Slapney, Patrol Leader" },
+	{ "sif_postchrist",     "Post-Christmas Letdown" },
+	{ "sif_ragnarok",       "Ragnarok: Twilight of the Gods" },
+	{ "sif_stupidcreek",    "Stupid Creek. Stupid Christmas" },
+	{ "sif_savedelvis",     "The Day I Saved Elvis" },
+	{ "sif_silencegods",    "The Silence of the Gods" },
+	{ "sif_threemore",      "Three More Visitors" },
+
 	// SpeedIF New Year's Speed Competition 2013
 	{ "sif_faithfulcompv2", "Faithful Companion" },
 	{ "sif_talemorning",    "The Mundane Tale of the Morning After" },
@@ -2306,17 +2265,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_ptap",           "The Grade 3 Parallax" },
 	{ "sif_moonbar",        "The Parallax Moon Bar Conspiracy" },
 	{ "sif_thpoint",        "The Theta Point" },
-
-	// SpeedIF New Year's Speed Competition 2011
-	{ "sif_beingendbeg",    "Being the Ending of the Beginning" },
-	{ "sif_birthmind",      "Birth of Mind" },
-	{ "sif_dashslapney",    "Dash Slapney, Patrol Leader" },
-	{ "sif_postchrist",     "Post-Christmas Letdown" },
-	{ "sif_ragnarok",       "Ragnarok: Twilight of the Gods" },
-	{ "sif_stupidcreek",    "Stupid Creek. Stupid Christmas" },
-	{ "sif_savedelvis",     "The Day I Saved Elvis" },
-	{ "sif_silencegods",    "The Silence of the Gods" },
-	{ "sif_threemore",      "Three More Visitors" },
 
 	// `R*IF` Spam SpeedIF Competition
 	{ "sif_htp",            "HTP" },
@@ -2422,6 +2370,58 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// XComp 1999
 	{ "xco_sixfoot",        "The Six-Foot-Tall Man-Eating Chicken" },
+
+	// Spring Thing 2002
+	{ "stc02_blues",        "Tinseltown Blues" },                                                       //       Winner
+
+	// Spring Thing 2003
+	{ "stc03_inevita",      "Inevitable" },                                                             //    Runner-Up
+	{ "stc03_cofire",       "The Cross of Fire" },                                                      //      Entrant
+
+	// Spring Thing 2005
+	{ "stc05_authority",    "Authority" },                                                              //    6th Place
+	{ "stc05_flatfeet",     "Flat Feet" },                                                              //    4th Place
+	{ "stc05_telling",      "Whom the Telling Changed" },                                               //    1st Place
+
+	// Spring Thing 2006
+	{ "stc06_debaron",      "De Baron" },                                                               //    1st Place
+	{ "stc06_thebaron",     "The Baron" },                                                              //    1st Place
+
+	// Spring Thing 2007
+	{ "stc07_fate",         "Fate" },                                                                   //    1st Place
+
+	// Spring Thing 2008
+	{ "stc08_pascal",       "Pascal's Wager" },                                                         //    1st Place
+
+	// Spring Thing 2009
+	{ "stc09_milkparadise", "The Milk of Paradise" },                                                   //    4th Place
+
+	// Spring Thing 2012
+	{ "stc12_rocketman",    "The Rocket Man from the Sea" },                                            //    1st Place
+
+	// Spring Thing 2014
+	{ "stc14_mrp",          "The Story of Mr. P." },                                                    //    7th Place
+
+	// Spring Thing 2016
+	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },                                     //      Entrant
+
+	// Spring Thing 2017
+	{ "stc17_enlightened",  "Enlightened Master" },                                                     //      Entrant
+
+	// Spring Thing 2018
+	{ "stc18_gopher",       "Best Gopher Ever" },                                                       //      Entrant
+	{ "stc18_murderbig",    "Murder on the Big Nothing" },                                              //      Entrant
+
+	// Spring Thing 2019
+	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
+	{ "stc19_pca",          "Porte Cave Adventure" },                                                   //      Entrant
+
+	// Spring Thing 2021
+	{ "stc21_takethedogout", "Take the Dog Out" },                                                      //      Entrant
+
+	// Spring Thing 2022
+	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },                         //      Entrant
+	{ "stc22_wry",          "Wry" },                                                                    //      Entrant
 
 	// Danish games
 	{ "nissen",             "Pa Loftet Sidder Nissen" },
@@ -5380,58 +5380,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cc_saied", "980608", "e9fc656cee21ac488bc72f17dbef0901", 56832),
 	ENTRY0("cc_xchicken", "980614", "e0da060d09f8ec64223e7ee07c92cadf", 60928),
 
-	// Spring Thing 2002
-	ENTRY0("stc02_blues", "020618", "dea57d7b1b41b5961143e7faa6125ad9", 261632),
-
-	// Spring Thing 2003
-	ENTRY0("stc03_inevita", "030225", "8eb1204dade23de158a71f68e81b0437", 213504),
-	ENTRY0("stc03_cofire", "030329", "1f84d501e89c64f2e04f84996b8d0ca3", 252416),
-
-	// Spring Thing 2005
-	ENTRY0("stc05_authority", "050205", "8def535c876448e1cc532a6d6dec328f", 171008),
-	ENTRY0("stc05_flatfeet", "050313", "8b92f0777c98d72c1701bd080531f5b4", 275456),
-	ENTRY0("stc05_telling", "050330", "e50190b0a236084d01595dee39749478", 210944),
-
-	// Spring Thing 2006
-	ENTRY1("stc06_debaron", "060329", "32a2298f08a7274e1c1e8ed28d8b99fe", 322560, Common::DE_DEU),
-	ENTRY0("stc06_thebaron", "060329", "cac25a2e2ce7aa87bccccb07dffad212", 310272),
-
-	// Spring Thing 2007
-	ENTRY0("stc07_fate", "070329", "b030c4881ced350f51c1a64bd0f45584", 481792),
-
-	// Spring Thing 2008
-	ENTRY0("stc08_pascal", "080217", "ccdf58a87467b4e822565d54b3ca2a20", 237568),
-
-	// Spring Thing 2009
-	ENTRY0("stc09_milkparadise", "090214", "37f34b58e9907dd1bc7549d451987a86", 239984),
-
-	// Spring Thing 2012
-	ENTRY0("stc12_rocketman", "120405", "a2aac06a0481334279c64ad069865006", 1977066),
-
-	// Spring Thing 2014
-	ENTRY0("stc14_mrp", "140406", "35da82199a79e37358de984a5db5d0d1", 174308),
-
-	// Spring Thing 2016
-	ENTRY0("stc16_harmonic", "030321", "d3cc582cb71a3a911229b331490cac94", 380416),
-
-	// Spring Thing 2017
-	ENTRY0("stc17_enlightened", "170402", "94d384fe0b5f3f6cead8653b4496d1d3", 218112),
-
-	// Spring Thing 2018
-	ENTRY0("stc18_gopher", "180327", "1af73704d303624fcc88397bdd1cd4a4", 383488),
-	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
-
-	// Spring Thing 2019
-	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
-	ENTRY0("stc19_pca", "181128", "8908ecd93be90264935432fc0986dfb2", 100864),
-
-	// Spring Thing 2021
-	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
-
-	// Spring Thing 2022
-	ENTRY0("stc22_hypercubic", "220320", "6895d310aa8d3bc7dfb67860ab1bc09e", 263680),
-	ENTRY0("stc22_wry", "220407", "a7c52c575f68f1affe727cec8647c572", 460216),
-
 	// Commodore 32 Z-Machine Competition
 	ENTRY0("c32_endgame", "041130", "e7bb3a957c8d80e5ab014630de53b046", 30720),
 	ENTRY0("c32_turningpoint", "041127", "54a0aa0762e2a8cc8db3ef2498ab8153", 32768),
@@ -5526,15 +5474,15 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// GameplayComp 2009
 	ENTRY0("gc_fantasticfinaleiv", "090914", "f0f2cf8c1be71de23cd08d7216f5feca", 160768),
 
-	// IF Fan Fest 1998
-	ENTRY0("ff_ite2", "980726", "b7f93aa7570757b814b030d0d5e1759f", 68608),
-
 	// Ghost Town Redux
 	ENTRY0("gtr_ghosttownzcode", "070725", "f430038611ee776ab82af369d81b6bb6", 171412),
 
 	// HighlandComp
 	ENTRY0("hc_highland", "010225", "3257620cd54c43c842de8f6a398d358b", 95744),
 	ENTRY0("hc_roots", "010227", "131dd528660c2eeeb19257ad1b43258d", 71168),
+
+	// IF Fan Fest 1998
+	ENTRY0("ff_ite2", "980726", "b7f93aa7570757b814b030d0d5e1759f", 68608),
 
 	// 24 Hours of Inform Competition
 	ENTRY0("24h_aesthetic", "310103", "dd1296e1c1ce31ea4321bad5b7a9959c", 107520),
@@ -5632,16 +5580,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("lc_serve", "030315", "77e8343a373c442074e6f832d904818d", 139264),
 	ENTRY0("lc_trappedschool", "020920", "ba57356b20fa4ca3fd9bd1fd9c390abc", 135680),
 
-	// MCDream Competition
-	ENTRY0("mc_dreadwine", "060723", "55734ff823a29f039b093e460ea2a071", 473876),
-	ENTRY0("mc_nofamous", "060816", "2a5cfaa1b541ea238f4d29d4ad6f97cf", 227328),
-	ENTRY0("mc_retreat", "060814", "72b81c21592c4f6fef1452fb7fdd3c3b", 213516),
-
-	// Segment Mini-Comp
-	ENTRY0("snowmanzcode2", "050318", "564cd46b498aff8bc07b9bebf120d8a6", 90112),
-	ENTRY0("kaboot", "000001", "f62f20c9a96c93ebefdef4dadfdd3d31", 81920),
-	ENTRY0("snowmanzcode", "050306", "88f22098e7794ac9415ddd95b8e3a713", 175104),
-
 	// IF Logic Puzzle Mini-Competition
 	ENTRY0("lp_logicpuz", "030211", "6ec37cc157a28f2c5dafc0d0f80d30ba", 95232),
 	ENTRY0("lp_traffic", "041303", "7c456f06a8b544b7e39f6504b0fdbd4b", 58880),
@@ -5655,6 +5593,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Manos Mini-Competition
 	ENTRY0("ma_manoz", "000506", "e1c2b5e831c7b65a7c84b4e6795a8234", 64512),
+
+	// MCDream Competition
+	ENTRY0("mc_dreadwine", "060723", "55734ff823a29f039b093e460ea2a071", 473876),
+	ENTRY0("mc_nofamous", "060816", "2a5cfaa1b541ea238f4d29d4ad6f97cf", 227328),
+	ENTRY0("mc_retreat", "060814", "72b81c21592c4f6fef1452fb7fdd3c3b", 213516),
 
 	// Metafilter IF Competition 2009
 	ENTRY0("me09_bunt", "090402", "67561ed3290dfcf350d3199d1c68e1f3", 77824),
@@ -5715,6 +5658,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// RomanceNovelComp 2002
 	ENTRY0("rnc_chooseromance", "020131", "c851c0eed65417b51cc2a21a7267d377", 38912),
+
+	// Segment Mini-Comp
+	ENTRY0("snowmanzcode2", "050318", "564cd46b498aff8bc07b9bebf120d8a6", 90112),
+	ENTRY0("kaboot", "000001", "f62f20c9a96c93ebefdef4dadfdd3d31", 81920),
+	ENTRY0("snowmanzcode", "050306", "88f22098e7794ac9415ddd95b8e3a713", 175104),
 
 	// Shufflecomp Competition 2014
 	ENTRY0("sh14_50shades", "140513", "35ba30fad41bdb74dbad8c5127bc657d", 252928),
@@ -5881,17 +5829,17 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_crouton", "010120", "e6d2fe9ce2aeee4943a165cf777e1ef3", 50688),
 	ENTRY0("sif_speedif17v1", "010121", "b9a7b208928c7c71f3df61654e496240", 51200),
 
-	// SpeedIF 11th Anniversary Competition
-	ENTRY0("sif_nqaa", "090901", "50f7abd76e9f972b4ee07a6f22259513", 132096),
-	ENTRY0("sif_reptile", "090901", "f919b917e924b9d4f5465e4f262082a0", 159232),
-	ENTRY0("sif_teachinghertodance", "090901/z5", "05f40a30e9fcbff5785042452b3d2c27", 146944),
-	ENTRY0("sif_teachinghertodance", "090901/zblorb", "d9c77a55fb2397f35e1de9f8bff92723", 239054),
-
 	// SpeedIF 3rd Anniversary Competition
 	ENTRY0("sif_henry", "011130", "922ca75bdcb5f53b92dd951f0747f30e", 52224),
 
 	// SpeedIF 5th Anniversary Competition
 	ENTRY0("sif_coughcough", "090715", "b62aa1f1f815251d64f734ed991bf74c", 82432),
+
+	// SpeedIF 11th Anniversary Competition
+	ENTRY0("sif_nqaa", "090901", "50f7abd76e9f972b4ee07a6f22259513", 132096),
+	ENTRY0("sif_reptile", "090901", "f919b917e924b9d4f5465e4f262082a0", 159232),
+	ENTRY0("sif_teachinghertodance", "090901/z5", "05f40a30e9fcbff5785042452b3d2c27", 146944),
+	ENTRY0("sif_teachinghertodance", "090901/zblorb", "d9c77a55fb2397f35e1de9f8bff92723", 239054),
 
 	// SpeedIF Argonaut Competition
 	ENTRY0("sif_asciargo", "030309", "d660f5a1a71653e2701528ec9340ae20", 69120),
@@ -6008,6 +5956,17 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_dullegriet", "100116", "00c9f618ec2299548ae5d961ad27a500", 169472),
 	ENTRY0("sif_stabbed", "091225", "33b36976ba3a34ccd4f73ce7b95ed468", 187392),
 
+	// SpeedIF New Year's Speed Competition 2011
+	ENTRY0("sif_beingendbeg", "111230", "7bd6ecaf3861cd0f35798ad64a33fef7", 375758),
+	ENTRY0("sif_birthmind", "111230", "3903332c627cba6350885c17b2bde4b0", 351772),
+	ENTRY0("sif_dashslapney", "111230", "798921e044aaed9d16f8b2b238b7dbf9", 331726),
+	ENTRY0("sif_postchrist", "111231", "8b63e6a1d662b58bc19bf0dfcdc6ea60", 272568),
+	ENTRY0("sif_ragnarok", "111230", "2ecebb2b217411de0f4cd4920443e200", 82432),
+	ENTRY0("sif_stupidcreek", "111225", "c69426c0a17abc2622a4dfade83a4266", 237568),
+	ENTRY0("sif_savedelvis", "111231", "10ca0d67db593ee6c81cadd57b2043b2", 191488),
+	ENTRY0("sif_silencegods", "111230", "0aeca7f64c8a551f4cadefca0ae57aca", 294828),
+	ENTRY0("sif_threemore", "111230", "356403c4a1f4e86ae5ed1a26b20013f0", 152576),
+
 	// SpeedIF New Year's Speed Competition 2013
 	ENTRY0("sif_faithfulcompv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
 	ENTRY0("sif_talemorning", "140103", "a189df712a5254487eb9a9d8cb8fffca", 253952),
@@ -6058,17 +6017,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_ptap", "010721", "be484b2ac6ca2915c558f0fe85f1f922", 82944),
 	ENTRY0("sif_moonbar", "010722", "19d87eff290b6672ea6bcfeec864711c", 53248),
 	ENTRY0("sif_thpoint", "010721", "28fcea7b45429830ec60a7aaefb66609", 110592),
-
-	// SpeedIF New Year's Speed Competition 2011
-	ENTRY0("sif_beingendbeg", "111230", "7bd6ecaf3861cd0f35798ad64a33fef7", 375758),
-	ENTRY0("sif_birthmind", "111230", "3903332c627cba6350885c17b2bde4b0", 351772),
-	ENTRY0("sif_dashslapney", "111230", "798921e044aaed9d16f8b2b238b7dbf9", 331726),
-	ENTRY0("sif_postchrist", "111231", "8b63e6a1d662b58bc19bf0dfcdc6ea60", 272568),
-	ENTRY0("sif_ragnarok", "111230", "2ecebb2b217411de0f4cd4920443e200", 82432),
-	ENTRY0("sif_stupidcreek", "111225", "c69426c0a17abc2622a4dfade83a4266", 237568),
-	ENTRY0("sif_savedelvis", "111231", "10ca0d67db593ee6c81cadd57b2043b2", 191488),
-	ENTRY0("sif_silencegods", "111230", "0aeca7f64c8a551f4cadefca0ae57aca", 294828),
-	ENTRY0("sif_threemore", "111230", "356403c4a1f4e86ae5ed1a26b20013f0", 152576),
 
 	// SpeedIF `R*IF` Spam Competition
 	ENTRY0("sif_htp", "090926", "d6ee7e9f0522592ebfdfc689a0639e9c", 148480),
@@ -6176,6 +6124,58 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// XComp 1999
 	ENTRY0("xco_sixfoot", "990323", "37724e6551435bdbd674e7ffc4937d7c", 113664),
+
+	// Spring Thing 2002
+	ENTRY0("stc02_blues", "020618", "dea57d7b1b41b5961143e7faa6125ad9", 261632),
+
+	// Spring Thing 2003
+	ENTRY0("stc03_inevita", "030225", "8eb1204dade23de158a71f68e81b0437", 213504),
+	ENTRY0("stc03_cofire", "030329", "1f84d501e89c64f2e04f84996b8d0ca3", 252416),
+
+	// Spring Thing 2005
+	ENTRY0("stc05_authority", "050205", "8def535c876448e1cc532a6d6dec328f", 171008),
+	ENTRY0("stc05_flatfeet", "050313", "8b92f0777c98d72c1701bd080531f5b4", 275456),
+	ENTRY0("stc05_telling", "050330", "e50190b0a236084d01595dee39749478", 210944),
+
+	// Spring Thing 2006
+	ENTRY1("stc06_debaron", "060329", "32a2298f08a7274e1c1e8ed28d8b99fe", 322560, Common::DE_DEU),
+	ENTRY0("stc06_thebaron", "060329", "cac25a2e2ce7aa87bccccb07dffad212", 310272),
+
+	// Spring Thing 2007
+	ENTRY0("stc07_fate", "070329", "b030c4881ced350f51c1a64bd0f45584", 481792),
+
+	// Spring Thing 2008
+	ENTRY0("stc08_pascal", "080217", "ccdf58a87467b4e822565d54b3ca2a20", 237568),
+
+	// Spring Thing 2009
+	ENTRY0("stc09_milkparadise", "090214", "37f34b58e9907dd1bc7549d451987a86", 239984),
+
+	// Spring Thing 2012
+	ENTRY0("stc12_rocketman", "120405", "a2aac06a0481334279c64ad069865006", 1977066),
+
+	// Spring Thing 2014
+	ENTRY0("stc14_mrp", "140406", "35da82199a79e37358de984a5db5d0d1", 174308),
+
+	// Spring Thing 2016
+	ENTRY0("stc16_harmonic", "030321", "d3cc582cb71a3a911229b331490cac94", 380416),
+
+	// Spring Thing 2017
+	ENTRY0("stc17_enlightened", "170402", "94d384fe0b5f3f6cead8653b4496d1d3", 218112),
+
+	// Spring Thing 2018
+	ENTRY0("stc18_gopher", "180327", "1af73704d303624fcc88397bdd1cd4a4", 383488),
+	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
+
+	// Spring Thing 2019
+	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
+	ENTRY0("stc19_pca", "181128", "8908ecd93be90264935432fc0986dfb2", 100864),
+
+	// Spring Thing 2021
+	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
+
+	// Spring Thing 2022
+	ENTRY0("stc22_hypercubic", "220320", "6895d310aa8d3bc7dfb67860ab1bc09e", 263680),
+	ENTRY0("stc22_wry", "220407", "a7c52c575f68f1affe727cec8647c572", 460216),
 
 	// Danish games
 	ENTRY1("nissen", "r4/171207", "c81784afb569b863098e8374dfdd4f32", 142848, Common::DA_DNK),
