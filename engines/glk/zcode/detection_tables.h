@@ -267,8 +267,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "chix",               "Chicks Dig Jerks" },
 	{ "christminster",      "Christminster" },
 	{ "cia",                "CIA Adventure" },
-	{ "civil",              "Civil Seeming Drivel Dreaming" },
-	{ "civilmimic",         "Civil Mimic" },
 	{ "classchallenge",     "Class Challenge" },
 	{ "claw",               "Wearing the Claw" },
 	{ "clean",              "A Clean Getaway" },
@@ -352,7 +350,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "dragon",             "Dragon Adventure" },
 	{ "dragonflies",        "Dragon Flies Like Labradorite" },
 	{ "dragontroll",        "The Dragon and the Troll" },
-	{ "dreamcorruptor",     "Corrupter of Dreams" },
 	{ "dramaclass",         "Drama Class" },
 	{ "dreamhold",          "The Dreamhold" },
 	{ "dreamtooreal",       "A Dream Too Real" },
@@ -376,7 +373,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "enemies",            "Enemies" },
 	{ "enigma",             "Enigma" },
 	{ "enigmasd",           "Enigma (by Simon Deimel)" },
-	{ "enigmamanor",        "The Enigma of the Old Manor House" },
 	{ "enterprise",         "The Enterprise Incidents" },
 	{ "entropy",            "Entropy" },
 	{ "epyk",               "Eypk" },
@@ -426,7 +422,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "forms",              "Of Forms Unknown" },
 	{ "fractalz",           "Fractalz" },
 	{ "fracture",           "Fractured Metamorphoses" },
-	{ "fracturezcode",      "Fracture" },
 	{ "fragileshells",      "Fragile Shells" },
 	{ "frankie",            "Frankenstein Adventure" },
 	{ "freefall",           "Free Fall" },
@@ -678,7 +673,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ogisoas",            "One Game in Search of a Story" },
 	{ "omniquest",          "Omniquest" },
 	{ "once",               "Once" },
-	{ "onceuponwinter",     "Once Upon a Winter Night, the Ragman Came Singing Under Your Window" },
 	{ "onegirl",            "One Girl" },
 	{ "onlywar",            "Only War - Warhammer 40.000" },
 	{ "onyourback",         "On Your Back" },
@@ -715,18 +709,15 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "pigpancake",         "Pigpancake" },
 	{ "piracy2",            "Piracy 2.0 - A Text Adventure in Space" },
 	{ "piraterailroad",     "Pirate Railroad" },
-	{ "pleasehelpme",       "Please Help Me" },
 	{ "ponderances",        "Ponderances" },
 	{ "praser5",            "Praser 5" },
 	{ "pressedon",          "I Pressed On, Being Chased by a Stapler With My Name on It" },
 	{ "priceoffreedom",     "The Price of Freedom" },
-	{ "primer",             "Primer" },
 	{ "primrose",           "The Primrose Path" },
 	{ "prize",              "The Prize" },
 	{ "probing",            "Offensive Probing" },
 	{ "progressive1",       "IF Progressive One" },
 	{ "promoted",           "Promoted!" },
-	{ "psyops",             "Psyops, Yo" },
 	{ "pueblofantasma",     "Pueblo Fantasma" },
 	{ "puerto",             "The Board Game Puerto Rico" },
 	{ "punkpoints",         "Punk Points" },
@@ -736,7 +727,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "pytho",              "Pytho's Mask" },
 	{ "quidditch1954",      "The Quidditch Final of 1954" },
 	{ "quietevening",       "A Quiet Evening at Home" },
-	{ "quitequeer",         "Quite Queer Night Near" },
 	{ "rachaelbadday",      "Rachel Has a Bad Day" },
 	{ "ralph",              "Ralph" },
 	{ "rameses",            "Rameses, a Tale of Heroes" },
@@ -926,7 +916,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "typo",               "Typo!" },
 	{ "uhohdemo",           "Uh-Oh!" },
 	{ "umw",                "UMW" },
-	{ "uxmulbrufyuz",       "Uxmulbrufyuz" },
 	{ "underdoos",          "The Underoos That Ate New York!" },
 	{ "undergroundz",       "Underground" },
 	{ "underthebed",        "Under the Bed" },
@@ -952,15 +941,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "voices",             "Voices" },
 	{ "vosr",               "Voices of Spoon River" },
 	{ "wadewar3",           "The WadeWars Book III" },
-	{ "wakeup",             "Wake Up" },
-	{ "walkamongus",        "Walk Among Us" },
 	{ "walkinthepark",      "A Walk in the Park" },
 	{ "wallpaper",          "Delightful Wallpaper" },
 	{ "warblersnest",       "The Warbler's Nest" },
 	{ "warp",               "Warp!" },
 	{ "weapon",             "The Weapon" },
 	{ "weareunfinished",    "We Are Unfinished" },
-	{ "wearyeerieway",      "Weary Eerie Way" },
 	{ "weather",            "A Change in the Weather" },
 	{ "weirdcity",          "Weird City Interloper" },
 	{ "weirdness",          "Weirdness" },
@@ -972,7 +958,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "wernersquest4",      "Werner's Quest 4: Unchanter" },
 	{ "whenhelp",           "When Help Collides" },
 	{ "whispers",           "The Corn Identity" },
-	{ "whoahcubswoe",       "Whoah Cubs Woe" },
 	{ "wildflowers",        "Wildflowers" },
 	{ "williamtell",        "William Tell" },
 	{ "winchester",         "Winchester's Nightmare" },
@@ -1719,6 +1704,40 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //    4th Place
 	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //    6th Place
 	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               //   10th Place
+
+	// Ectocomp 2017 - La Petite Mort
+	{ "ec17_primer",        "Primer" },                                                                 //    1st Place
+	{ "ec17_dreamcorrupt",  "Corrupter of Dreams" },                                                    //    4th Place
+	{ "ec17_uxmulbrufyuz",  "Uxmulbrufyuz" },                                                           //   10th Place
+	{ "ec17_civilmimic",    "Civil Mimic" },                                                            //   12th Place
+
+	// Ectocomp 2018 - La Petite Mort
+	{ "ec18_moongoon",      "Moon Goon" },                                                              //       Winner
+	{ "ec18_wakeup_zcode",  "Wake Up" },                                                                //      Entrant
+	{ "ec18_whoahcubswoe",  "Whoah Cubs Woe" },                                                         //      Entrant
+
+	// Ectocomp 2018 - Le Grand Guignol
+	{ "ec18_plshel_zcode",  "Please Help Me" },                                                         //      Entrant
+	{ "ec18_walkamongus",   "Walk Among Us" },                                                          //      Entrant
+
+	// Ectocomp 2019 - La Petite Mort
+	{ "ec19_quitequeer",    "Prime Pro-Rhyme Row #2: Quite Queer Night Near" },                         //    9th Place
+
+	// Ectocomp 2019 - Le Grand Guignol
+	{ "ec19_onceuponwint",  "Once Upon a Winter Night, the Ragman Came Singing Under Your Window" },    //    9th Place
+
+	// Ectocomp 2020 - La Petite Mort
+	{ "ec20_fracture",      "Fracture" },                                                               //    8th Place
+
+	// Ectocomp 2021 - La Petite Mort
+	{ "ec21_wearyeerie",    "Weary Eerie Way" },
+	{ "ec21_psyops",        "Psyops, Yo" },
+
+	// Ectocomp 2022 - La Petite Mort
+	{ "ec22_enigmamanor",   "The Enigma of the Old Manor House" },                                      //    1st Place
+
+	// Ectocomp 2022 - Le Grand Guignol
+	{ "ec22_civil",         "Prime Pro-Rhyme Row #4: Civil Seeming Drivel Dreaming" },                  //   15th Place
 
 	// EnvComp
 	{ "ec_laseine",         "La Seine" },
@@ -3880,9 +3899,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("chix", "991124", "760b7fb0fcd9c99ae1295c06ff52529d", 206848),
 	ENTRY0("christminster", "961117", "86e6349dfa3ef6153cd1c0ecb9b4fc6a", 228352),
 	ENTRY0("cia", "961218", "2cdacedf416e7a575de47412e1d164f8", 54784),
-	ENTRY0("civil", "221122", "6dff9f0c6b642590a41daed3642a6ae7", 339172),
-	ENTRY0("civil", "221212", "b9384e68587e6bec4890d62c40f47a5d", 339684),
-	ENTRY0("civilmimic", "171031", "3e56399f54b6e0ae2c85f72ef3cc23a8", 305086),
 	ENTRY0("classchallenge", "190724", "d6caad7ab6a6964f0526f5b4c7a41316", 163840),
 	ENTRY0("classchallenge", "201112", "cf1cc6017a784a8f52daaaa7c617772a", 163840),
 	ENTRY0("claw", "970327", "4d3992e95530a301ca58939a197c6b1b", 130048),
@@ -3985,7 +4001,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("dragontroll", "070120", "44e48cb9689e156d322a1de0a14d420e", 3584),
 	ENTRY0("dramaclass", "120521", "3b7d6bcecc2adf6921562d56217f07ac", 250324),
 	ENTRY0("dreamhold", "041231", "78eb852b88f9424647a4e18caa4c6707", 386560),
-	ENTRY0("dreamcorruptor", "171029", "1f4f956de3054621f928204c0e6b0d6d", 429160),
 	ENTRY0("dreamtrap", "130521", "d3d036c2895fd097b4c11efc6ad7e44d", 314368),
 	ENTRY0("dreamtooreal", "061128", "ac2bc1ebcfd2c8b5eed405c4f7fcb10c", 138124),
 	ENTRY0("dual", "100109", "dbee7f9e8c76d4810d2e8a99752bd9d0", 367526),
@@ -4008,7 +4023,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("enemies", "990115", "ff9fc17bf66ffbfba125d9a7c20c2c60", 289280),
 	ENTRY0("enigmasd", "141020", "5f933e199785495bc884d003a4579b9b", 415396),
 	ENTRY0("enigmasd", "160202", "743b7440094810ebe9b9d86d994ef07b", 418468),
-	ENTRY0("enigmamanor", "221121", "43b8411bc971e5aa83801099f7826044", 769044),
 	ENTRY0("enterprise", "020428", "791a68da0a0da75307ce60bcf6f07f55", 156672),
 	ENTRY0("entropy", "090516", "2acf5da303368989679bbb8ee71da5ea", 125440),
 	ENTRY0("epyk", "091111", "2d14b9b9499bc87ecad01215009fa2c7", 236988),
@@ -4065,7 +4079,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("forms", "970206", "7de27dd6539ed6ef1c6176ab030510dd", 91136),
 	ENTRY0("fractalz", "000714", "847523b3d366b2621d593ee260f4d9a6", 6144),
 	ENTRY0("fracture", "010306/Demo", "d684caf97f01d447b37376ef7c708a85", 111104),
-	ENTRY0("fracturezcode", "201031", "84d04db287befa9c46fbc94591b31bb2", 345600),
 	ENTRY0("fragileshells", "100204", "1eb855145d3016bcf2f7a415fd9a9a01", 546586),
 	ENTRY0("fragileshells", "111109", "6232ef15b7508aab6072a85afb86908c", 547610),
 	ENTRY0("frankie", "040304", "1ce64a1c5a2d928cfb48b4d760246972", 91648),
@@ -4290,7 +4303,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("mornelune", "100525", "280074bfad86ecaa56cf6813e3a031f4", 182784),
 	ENTRY0("monzasphantom", "070219", "b5f91ecd114f3257ad269f1afb64b64e", 116092),
 	ENTRY0("moonglow", "041011", "3ee29824d9875a4ae21e82b88813990e", 10239),
-	ENTRY0("moongoon", "181029", "55fc4e3ccf26bdf636316220a77ffb10", 433662),
 	ENTRY0("moonshaped", "080710", "1cfa040aace3a4cb249818684fb43b9f", 447840),
 	ENTRY0("moonwrecked", "110309", "1cc71e3087cb4f92fc244a5c72b8a078", 264668),
 	ENTRY0("more", "140604", "6e3ec8554b9c877c088fa586c965d896", 315392),
@@ -4348,7 +4360,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ogisoas", "101102", "673a5bb3476d15e3d54ddba3176d9568", 155648),
 	ENTRY0("omniquest", "040127", "6d246b048e071dca1c2f47e64e76f10d", 95744),
 	ENTRY0("once", "980324", "4ef97819cbc6adab0487ca1256ee6ddf", 55296),
-	ENTRY0("onceuponwinter", "191030", "0df83d2e0c56c3afabfdfacb22a9b34d", 613468),
 	ENTRY0("onegirl", "020113", "7ff5749ec2881b1343c06fc5950f928e", 173568),
 	ENTRY0("onlywar", "210331", "58dd2a0d423e51ed2b923bc153195dfe", 410568),
 	ENTRY0("onyourback", "130506", "c942e2c31131f799481e61ebd878b4f2", 173056),
@@ -4391,25 +4402,21 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("pigpancake", "110410", "7e6e0b1c90a9a01b4fbaea21ad729d55", 236446),
 	ENTRY0("piracy2", "100408", "86e2ed40f55413f29fa97bd6e4c31260", 249856),
 	ENTRY0("piraterailroad", "110920", "20d019cd1654f5d9d3c1bcffdbded2cc", 333500),
-	ENTRY0("pleasehelpme", "180923", "d9a47f9750f47d9c08fdd800e450cb89", 342016),
 	ENTRY0("ponderances", "160220", "58c4f08222dfc27cab23036e9e37a6ea", 371214),
 	ENTRY0("praser5", "050509", "d7f86984c2a35d0304a48989f56cb0aa", 35328),
 	ENTRY0("pressedon", "130323", "26ece4d715035234a5d6d8275bd4de85", 246968),
 	ENTRY0("priceoffreedom", "120919", "589c7d77bae5aaa502807021e506fb6b", 178072),
-	ENTRY0("primer", "171025", "744648014bb7291f42eae31a79410d59", 255430),
 	ENTRY0("primrose", "091222", "47b4978d4709f5783a674de899e2d73e", 620384),
 	ENTRY0("prize", "120827", "9dc341cb340b6950602c52bd8ef76305", 408786),
 	ENTRY0("probing", "990919", "f7cbdd49ae15d380f66ab247c118f17d", 73216),
 	ENTRY0("progressive1", "090623", "b734369549d094a71cb4fd0b3ffe8bb0", 278488),
 	ENTRY0("promoted", "1.1", "b5ef006c83dcf2e2f175aebb64c7870a", 124928),
-	ENTRY0("psyops", "211030", "fac6e93acb93bdd6420f49918f20267c", 374812),
 	ENTRY0("punkpoints", "010108", "ffb32fb83c4480a3109755572819623a", 136704),
 	ENTRY0("puppetman", "040803", "ad3143a695c3406e7ede1f39dfb6ba63", 110080),
 	ENTRY0("putpbaa", "010618", "458a35f2318afa617fe4679f8c0ec9a5", 132096),
 	ENTRY0("puzzle", "200714", "d83d896abaa1b8f8883fb61b203fcd9e", 89600),
 	ENTRY0("pytho", "020223", "a5e3d0ebd1f81ca341cf93a721f6ed3c", 293376),
 	ENTRY0("quidditch1954", "121022", "ae9626ce114047e0d1247d226cd9cc4a", 330710),
-	ENTRY0("quitequeer", "191030", "d09302a713495016a0376fc8ce7d7237", 329686),
 	ENTRY0("rachaelbadday", "070328", "3147589b43da574303bffb26c5f317ba", 269312),
 	ENTRY0("ralph", "040309", "ff6d29e293d82c49b4a5f4b21ce96655", 78848),
 	ENTRY0("rameses", "061023", "6ea654d98a64cb50eff35d7a613cdfb1", 167166),
@@ -4634,7 +4641,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("typo", "041119", "549875ea83b4230896fa7d3fa18ba0a3", 100864),
 	ENTRY0("uhohdemo", "980218/Demo", "4e8b90354c96760f36bfbfa2ba4fc04c", 176640),
 	ENTRY0("umw", "201215", "24c7e6f775b9c10d9579f2a77be872fd", 167936),
-	ENTRY0("uxmulbrufyuz", "171029", "85ee9e7844c6be74b26c1707255f110a", 236760),
 	ENTRY0("underdoos", "970329", "3ef9b348b4223b901bdfacb854fee16e", 58880),
 	ENTRY0("undergroundz", "190730", "18c3cc7098f9e613e6c108e84c8947df", 368128),
 	ENTRY0("undergroundz", "191215/zblorb", "c7eef6e46e4b4868fd140c0ec06f3e7d", 3458170),
@@ -4667,9 +4673,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("voices", "010504", "9a78da996a62281db9047c9998cce0a2", 84992),
 	ENTRY0("vosr", "060925", "73746a1dd6938ca4b034eb424936ffe7", 267776),
 	ENTRY0("wadewar3", "020512", "458b5b368a71329dcfc59223c449cf88", 143872),
-	ENTRY0("wakeup", "181006", "c0ea31ea66528b08ef090813267c417e", 337920),
-	ENTRY0("walkamongus", "181031", "5b6b726c28b897d299d4add5fcd3943e", 2292016),
-	ENTRY0("walkamongus", "181202", "0a79a4dec57d44b6ee09fec8e868ea8e", 780152),
 	ENTRY0("walkinthepark", "100213", "d116d7a9a5160fc336b36f7e8a077a42", 145408),
 	ENTRY0("wallpaper", "061117", "b25d80417e7b783bdc377302a3b53138", 344978),
 	ENTRY0("warblersnest", "131221", "147d80b524cf8ee812459c0a7426cb87", 863268),
@@ -4677,7 +4680,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("weapon", "010706", "b28a2d2ab4a2ba54e5c5d980764c26a4", 142336),
 	ENTRY0("weareunfinished", "160419", "28d307b40b627af2708c71aaf43a64d5", 413298),
 	ENTRY0("weather", "960613", "00f90d5b28604243708ad41cc6a7dcea", 93696),
-	ENTRY0("wearyeerieway", "211030", "f8e693a21ccb457a9c5b58251b635060", 188824),
 	ENTRY0("weirdness", "030922", "e98bc679d94c0c1c6a241737f7c8ae28", 89600),
 	ENTRY0("weirdcity", "140613", "0a434b5011389e47b391b707ccf6611a", 339786),
 	ENTRY0("welcometohell", "980816", "1c7493e0ca533b9cc04097d90b112b24", 51200),
@@ -4693,7 +4695,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("whenhelp", "030208", "2185bd75e8cc26ac7773effc300ec210", 286720),
 	ENTRY0("whispers", "050905", "4cbba9cf2b5bce84ccef8e40482ef230", 205824),
 	ENTRY0("whispers", "050926", "360c24ec5c47ced2b03ce38c6e4e2e8d", 177152),
-	ENTRY0("whoahcubswoe", "181030", "fb9e91fc58040e4ec2871b35e3194746", 244006),
 	ENTRY0("wildflowers", "140825", "11df47a8f9ddebbe3ed903ef8c85597a", 518936),
 	ENTRY0("williamtell", "021025", "4f098036ffdc7463000c4f81b6300123", 68096),
 	ENTRY0("winchester", "020131", "9abc235bc791a3f38ee81aa6496112d0", 293888),
@@ -5467,6 +5468,43 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec16_bonesaw", "161027", "bbf02174af7d8891d435a37c1cc9b058", 342016),
 	ENTRY0("ec16_checkeredhaunting", "161031", "d8ddc04e13caf50e5bd7d3f8931e8cda", 305616),
 	ENTRY0("ec16_lightdarkness", "161030", "03df7e40dca78a7e2aee74b5049136bb", 258516),
+
+	// Ectocomp 2017 - La Petite Mort
+	ENTRY0("ec17_primer", "171025", "744648014bb7291f42eae31a79410d59", 255430),
+	ENTRY0("ec17_dreamcorrupt", "171029", "1f4f956de3054621f928204c0e6b0d6d", 429160),
+	ENTRY0("ec17_uxmulbrufyuz", "171029", "85ee9e7844c6be74b26c1707255f110a", 236760),
+	ENTRY0("ec17_civilmimic", "171031", "3e56399f54b6e0ae2c85f72ef3cc23a8", 305086),
+
+	// Ectocomp 2018 - La Petite Mort
+	ENTRY0("ec18_moongoon", "181029", "55fc4e3ccf26bdf636316220a77ffb10", 433662),
+	ENTRY0("ec18_wakeup_zcode", "181006/z8", "c0ea31ea66528b08ef090813267c417e", 337920),
+	ENTRY0("ec18_whoahcubswoe", "181030", "fb9e91fc58040e4ec2871b35e3194746", 244006),
+
+	// Ectocomp 2018 - Le Grand Guignol
+	ENTRY0("ec18_plshel_zcode", "180923", "d9a47f9750f47d9c08fdd800e450cb89", 342016),
+	ENTRY0("ec18_walkamongus", "181031", "5b6b726c28b897d299d4add5fcd3943e", 2292016),
+	ENTRY0("ec18_walkamongus", "181202", "0a79a4dec57d44b6ee09fec8e868ea8e", 780152),
+
+	// Ectocomp 2019 - La Petite Mort
+	ENTRY0("ec19_quitequeer", "191030", "d09302a713495016a0376fc8ce7d7237", 329686),
+
+	// Ectocomp 2019 - Le Grand Guignol
+	ENTRY0("ec19_onceuponwint", "191030", "0df83d2e0c56c3afabfdfacb22a9b34d", 613468),
+
+	// Ectocomp 2020 - La Petite Mort
+	ENTRY0("ec20_fracture", "201031/z8", "84d04db287befa9c46fbc94591b31bb2", 345600),
+	ENTRY0("ec20_fracture", "201031/zblorb", "23744075265e1a0fae0453df0bb14c34", 363830),
+
+	// Ectocomp 2021 - La Petite Mort
+	ENTRY0("ec21_wearyeerie", "211030", "f8e693a21ccb457a9c5b58251b635060", 188824),
+	ENTRY0("ec21_psyops", "211030", "fac6e93acb93bdd6420f49918f20267c", 374812),
+
+	// Ectocomp 2022 - La Petite Mort
+	ENTRY0("ec22_enigmamanor", "221121", "43b8411bc971e5aa83801099f7826044", 769044),
+
+	// Ectocomp 2022 - Le Grand Guignol
+	ENTRY0("ec22_civil", "221122", "6dff9f0c6b642590a41daed3642a6ae7", 339172),
+	ENTRY0("ec22_civil", "221212", "b9384e68587e6bec4890d62c40f47a5d", 339684),
 
 	// EnvComp
 	ENTRY0("ec_laseine", "090320", "1073245f6178172de42f73208b8cfcc2", 167424),
