@@ -3474,46 +3474,25 @@ void cb_SaveLoad_Slot(void *theItem, void *theMenu) {
 	}
 }
 
-
 void InitializeSlotTables(void) {
-#ifdef TODO
-	int32 i, j;
-	char saveFN[80];
-	FILE *handle;
-	int32 read1, read2;
+	const SaveStateList saves = g_engine->listSaves();
 
-	Common::sprintf_s(saveFN, "%s\\saves.dir", homeDir);
-	handle = fopen(saveFN, "rb");
-
-	if (handle) {
-		for (i = 0; i < MAX_SLOTS; i++) {
-			read1 = fread(&_GM(slotInUse)[i], 1, 1, handle);
-			read2 = fread(_GM(slotTitles)[i], 80, 1, handle);
-			if ((!read1) || (!read2)) {
-				for (j = i; j < MAX_SLOTS; j++) {
-					_GM(slotInUse)[j] = false;
-					Common::strcpy_s(_GM(slotTitles)[j], "<empty>");
-				}
-				i = MAX_SLOTS;
-			}
-		}
-		fclose(handle);
-	} else {
-		for (i = 0; i < MAX_SLOTS; i++) {
-			Common::strcpy_s(_GM(slotTitles)[i], "<empty>");
-			_GM(slotInUse)[i] = false;
-		}
+	// First reset all the slots to empty
+	for (int i = 0; i < MAX_SLOTS; ++i) {
+		Common::strcpy_s(_GM(slotTitles)[i], 80, "<empty>");
+		_GM(slotInUse)[i] = false;
 	}
-#else
-	error("TODO: InitializeSlotTables");
-#endif
-}
 
+	for (const auto &save : saves) {
+		Common::String desc = save.getDescription();
+		Common::strcpy_s(_GM(slotTitles)[save.getSaveSlot()], 80, desc.c_str());
+	}
+}
 
 bool load_Handler(void *theItem, int32 eventType, int32 event, int32 x, int32 y, void **currItem) {
 	menuItem *myItem = (menuItem *)theItem;
 	menuItemButton *myButton;
-	bool					handled;
+	bool handled;
 
 	// Handle the event just like any other button
 	handled = button_Handler(theItem, eventType, event, x, y, currItem);

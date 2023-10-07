@@ -249,8 +249,12 @@ bool M4Engine::autosaveExists() const {
 	return result;
 }
 
+SaveStateList M4Engine::listSaves() const {
+	return getMetaEngine()->listSaves(_targetName.c_str());
+}
+
 bool M4Engine::savesExist() const {
-	return !getMetaEngine()->listSaves(_targetName.c_str()).empty();
+	return !listSaves().empty();
 }
 
 } // End of namespace M4

@@ -139,6 +139,11 @@ public:
 	bool savesExist() const;
 
 	/**
+	 * Lists the saves
+	 */
+	SaveStateList listSaves() const;
+
+	/**
 	 * Show the engine information
 	 */
 	virtual void showEngineInfo() = 0;
