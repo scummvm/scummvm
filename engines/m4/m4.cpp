@@ -250,7 +250,7 @@ bool M4Engine::autosaveExists() const {
 }
 
 bool M4Engine::savesExist() const {
-	return getMetaEngine()->listSaves(_targetName.c_str()).empty();
+	return !getMetaEngine()->listSaves(_targetName.c_str()).empty();
 }
 
 } // End of namespace M4
