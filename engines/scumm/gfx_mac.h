@@ -70,17 +70,17 @@ public:
 	MacIndy3Gui(OSystem *system, ScummEngine *vm);
 	~MacIndy3Gui();
 
-	// There is a distinction between the GUI being active and being
-	// visible. Active means that it's allowed to draw verbs. Visible
-	// means that it's actually drawn verbs. From the outside, only the
-	// visibility is relevant.
+	// There is a distinction between the GUI being allowed and being
+	// active. Allowed means that it's allowed to draw verbs, but not that
+	// it necessarily is. Active means that there are verbs on scren. From
+	// the outside, only the latter is relevant.
 	//
 	// One case where this makes a difference is when boxing with the
 	// coach. During the "10 minutes later" sign, the GUI is active but
 	// it's not drawing verbs, so the SCUMM engine is allowed to draw in
 	// the verb area to clear the power meters and text.
 
-	bool isVisible() const;
+	bool isGuiActive() const;
 	const Graphics::Font *getFont(int n) const { return _fonts[n]; }
 
 	void resetAfterLoad();
@@ -281,7 +281,7 @@ private:
 	const uint16 _llCorner[4] = { 0x8000, 0x8000, 0xC000, 0xF000 };
 	const uint16 _lrCorner[5] = { 0x1000, 0x1000, 0x3000, 0xF000 };
 
-	bool isActive() const;
+	bool isGuiAllowed() const;
 
 	void clear();
 	void show();

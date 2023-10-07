@@ -54,9 +54,9 @@ void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
 }
 
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
-	// The verb screen is completely replaced with a custom GUI. All
-	// other drawing to that area is suspended.
-	if (vs->number == kVerbVirtScreen && _macIndy3Gui->isVisible())
+	// The verb screen is completely replaced with a custom GUI. While
+	// it is active, all other drawing to that area is suspended.
+	if (vs->number == kVerbVirtScreen && _macIndy3Gui->isGuiActive())
 		return;
 
 	const byte *pixels = vs->getPixels(x, top);
@@ -1227,64 +1227,25 @@ void MacIndy3Gui::setInventoryScrollOffset(int n) const {
 	_vm->VAR(67) = n;
 }
 
-bool MacIndy3Gui::isActive() const {
-	// The GUI is only allowed if the verb area has the expected size. There
-	// are scenes (e.g. the flight path to Venice) where it's not.
+bool MacIndy3Gui::isGuiAllowed() const {
+	// The GUI is only allowed if the verb area has the expected size. That
+	// really seems to be all that's needed.
 
 	VirtScreen *vs = &_vm->_virtscr[kVerbVirtScreen];
 	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
-	struct VerbScript {
-		int script;
-		int room;
-	};
-
-	// The GUI is only allowed for certain verb scripts. It's not even
-	// always used then, but those cases are caught by the VirtScreen
-	// check above.
-
-	VerbScript verbScripts[] = {
-		{   4,  0 },	// Regular verb GUI
-		{  18,  0 },	// Conversations
-		{ 200, 15 },	// Venice, outdoors
-		{ 200, 83 },	// Endgame, first trial
-		{ 201,  6 },	// Travel from Barnet College
-		{ 205, 15 }	// Travel from Venice
-	};
-
-	int script = _vm->VAR(_vm->VAR_VERB_SCRIPT);
-	int room = _vm->_currentRoom;
-
-	for (int i = 0; i < ARRAYSIZE(verbScripts); i++) {
-		if (verbScripts[i].script < 100 || verbScripts[i].room == room) {
-			if (verbScripts[i].script == script)
-				return true;
-		}
-	}
-
-#if DEBUG_VERB_SCRIPTS
-	static int lastVerbScript = -1;
-	static int lastRoom = -1;
-
-	if (script != lastVerbScript || room != lastRoom) {
-		debug("MacIndy3Gui: Unhandled verb script: %d (%d)", script, room);
-		lastVerbScript = script;
-		lastRoom = room;
-	}
-#endif
-
-	return false;
+	return true;
 }
 
-bool MacIndy3Gui::isVisible() const {
+bool MacIndy3Gui::isGuiActive() const {
 	if (!_visible)
 		return false;
 
 	// The visibility flag may not have been updated yet, so better check
-	// that the GUI is still active.
+	// that the GUI is still allowed.
 
-	return isActive();
+	return isGuiAllowed();
 }
 
 void MacIndy3Gui::resetAfterLoad() {
@@ -1307,8 +1268,8 @@ void MacIndy3Gui::resetAfterLoad() {
 }
 
 void MacIndy3Gui::update(int delta) {
-	if (!isActive()) {
-		if (isVisible())
+	if (!isGuiAllowed()) {
+		if (_visible)
 			hide();
 		return;
 	}
@@ -1366,7 +1327,7 @@ void MacIndy3Gui::update(int delta) {
 		return;
 	}
 
-	if (!isVisible())
+	if (!_visible)
 		show();
 
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
@@ -1387,7 +1348,7 @@ void MacIndy3Gui::update(int delta) {
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
-	if (!isVisible() || _vm->_userPut <= 0)
+	if (!isGuiActive() || _vm->_userPut <= 0)
 		return;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
@@ -1418,7 +1379,7 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 }
 
 void MacIndy3Gui::show() {
-	if (isVisible())
+	if (_visible)
 		return;
 
 	debug(1, "MacIndy3Gui: Showing");
@@ -1428,7 +1389,7 @@ void MacIndy3Gui::show() {
 }
 
 void MacIndy3Gui::hide() {
-	if (!isVisible())
+	if (!_visible)
 		return;
 
 	_visible = false;
