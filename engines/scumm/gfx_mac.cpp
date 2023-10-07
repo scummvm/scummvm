@@ -1235,25 +1235,44 @@ bool MacIndy3Gui::isActive() const {
 	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
-	// The GUI is only allowed for certain verb scripts:
-	//
-	//   4 - Regular verb GUI
-	//  18 - Conversations
-	// 200 - Venice, outdoors
-	// 201 - Travel to Henry's or Venice
-	// 205 - Travel from Venice
-	//
-	// Other known verb scripts where the GUI is not allowed:
-	//
-	//  19 - Boxing
+	struct VerbScript {
+		int script;
+		int room;
+	};
 
-	int verbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
-	int guiVerbScripts[] = { 4, 18, 200, 201, 205 };
+	// The GUI is only allowed for certain verb scripts. It's not even
+	// always used then, but those cases are caught by the VirtScreen
+	// check above.
 
-	for (int i = 0; i < ARRAYSIZE(guiVerbScripts); i++) {
-		if (verbScript == guiVerbScripts[i])
-			return true;
+	VerbScript verbScripts[] = {
+		{   4,  0 },	// Regular verb GUI
+		{  18,  0 },	// Conversations
+		{ 200, 15 },	// Venice, outdoors
+		{ 200, 83 },	// Endgame, first trial
+		{ 201,  6 },	// Travel from Barnet College
+		{ 205, 15 }	// Travel from Venice
+	};
+
+	int script = _vm->VAR(_vm->VAR_VERB_SCRIPT);
+	int room = _vm->_currentRoom;
+
+	for (int i = 0; i < ARRAYSIZE(verbScripts); i++) {
+		if (verbScripts[i].script < 100 || verbScripts[i].room == room) {
+			if (verbScripts[i].script == script)
+				return true;
+		}
 	}
+
+#if DEBUG_VERB_SCRIPTS
+	static int lastVerbScript = -1;
+	static int lastRoom = -1;
+
+	if (script != lastVerbScript || room != lastRoom) {
+		debug("MacIndy3Gui: Unhandled verb script: %d (%d)", script, room);
+		lastVerbScript = script;
+		lastRoom = room;
+	}
+#endif
 
 	return false;
 }
@@ -1288,15 +1307,6 @@ void MacIndy3Gui::resetAfterLoad() {
 }
 
 void MacIndy3Gui::update(int delta) {
-#if DEBUG_VERB_SCRIPTS
-	static int lastVerbScript = -1;
-
-	if (_vm->VAR(_vm->VAR_VERB_SCRIPT) != lastVerbScript) {
-		debug("MacIndy3Gui: New verb script: %d", _vm->VAR(_vm->VAR_VERB_SCRIPT));
-		lastVerbScript = _vm->VAR(_vm->VAR_VERB_SCRIPT);
-	}
-#endif
-
 	if (!isActive()) {
 		if (isVisible())
 			hide();
