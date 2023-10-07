@@ -1275,19 +1275,10 @@ void MacIndy3Gui::resetAfterLoad() {
 	// In old savegames, the DOS verb IDs may still be present, and have
 	// to be removed.
 
-	bool oldSavegame = false;
-
 	for (int i = 0; i < _vm->_numVerbs; i++) {
-		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108) {
+		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108)
 			_vm->killVerb(i);
-			oldSavegame = true;
-		}
 	}
-
-	// The old GUI adjusted the offset by 2 when scrolling the inventory.
-
-	if (oldSavegame)
-		setInventoryScrollOffset(getInventoryScrollOffset() / 2);
 }
 
 void MacIndy3Gui::update(int delta) {
