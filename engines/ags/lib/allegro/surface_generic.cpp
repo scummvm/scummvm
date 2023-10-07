@@ -88,7 +88,7 @@ void BITMAP::drawInnerGeneric(DrawInnerArgs &args) {
 				*destVal = srcCol;
 				continue;
 			} else if ((DestBytesPerPixel == SrcBytesPerPixel) && args.srcAlpha == -1) {
-				if (DestBytesPerPixel)
+				if (DestBytesPerPixel == 4)
 					*(uint32 *)destVal = srcCol;
 				else
 					*(uint16 *)destVal = srcCol;
