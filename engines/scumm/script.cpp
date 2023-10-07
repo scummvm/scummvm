@@ -649,11 +649,11 @@ int ScummEngine::readVar(uint var) {
 				switch (swingType) {
 				case 2:  // Line drive or grounder swing
 					powerStat = vm.localvar[_currentScript][var];
-					powerStatModified = 20 + vm.localvar[_currentScript][var] * 4 / 5;
+					powerStatModified = 20 + powerStat * 4 / 5;
 					return powerStatModified;
 				case 1:  // Power swing
 					powerStat = vm.localvar[_currentScript][var];
-					powerStatModified = 20 + vm.localvar[_currentScript][var] * 7 / 10;;
+					powerStatModified = 20 + powerStat * 7 / 10;;
 					return powerStatModified;
 				default:
 					break;
