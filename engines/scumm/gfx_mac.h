@@ -80,15 +80,15 @@ public:
 	// it's not drawing verbs, so the SCUMM engine is allowed to draw in
 	// the verb area to clear the power meters and text.
 
-	bool isVisible();
-	const Graphics::Font *getFont(int n) { return _fonts[n]; }
+	bool isVisible() const;
+	const Graphics::Font *getFont(int n) const { return _fonts[n]; }
 
 	void resetAfterLoad();
 	void update(int delta);
 	void handleEvent(Common::Event &event);
 
-	int getInventoryScrollOffset();
-	void setInventoryScrollOffset(int n);
+	int getInventoryScrollOffset() const;
+	void setInventoryScrollOffset(int n) const;
 
 private:
 	OSystem *_system = nullptr;
@@ -126,7 +126,7 @@ private:
 
 		void setTimer(int t) { _timer = t; }
 		void clearTimer() { _timer = 0; }
-		bool hasTimer() { return _timer > 0; }
+		bool hasTimer() const { return _timer > 0; }
 
 		virtual void setRedraw(bool redraw) { _redraw = redraw; }
 
@@ -140,11 +140,11 @@ private:
 		virtual void undraw() {}
 
 		// Primitives
-		void copyRectToScreen(Common::Rect r);
-		void fill(Common::Rect r);
-		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color);
-		void drawShadowBox(Common::Rect r);
-		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
+		void copyRectToScreen(Common::Rect r) const;
+		void fill(Common::Rect r) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+		void drawShadowBox(Common::Rect r) const;
+		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) const;
 	};
 
 	class VerbWidget : public Widget {
@@ -159,10 +159,10 @@ private:
 		VerbWidget(int x, int y, int width, int height) : Widget(x, y, width, height) {}
 
 		void setVerbid(int n) { _verbid = n; }
-		bool hasVerb() { return _verbslot != -1; }
-		bool isVisible() { return _visible; }
+		bool hasVerb() const { return _verbslot != -1; }
+		bool isVisible() const { return _visible; }
 		void threaten() { _kill = true; }
-		bool isDying() { return _kill; }
+		bool isDying() const { return _kill; }
 
 		void reset();
 
@@ -236,12 +236,12 @@ private:
 			Slot(int slot, int x, int y, int width, int height);
 
 			void clearName() { _name.clear(); }
-			bool hasName() { return !_name.empty(); }
+			bool hasName() const { return !_name.empty(); }
 
 			void clearObject() { _obj = -1; }
 
 			void setObject(int n);
-			int getObject() { return _obj; }
+			int getObject() const { return _obj; }
 
 			void reset();
 
@@ -281,15 +281,15 @@ private:
 	const uint16 _llCorner[4] = { 0x8000, 0x8000, 0xC000, 0xF000 };
 	const uint16 _lrCorner[5] = { 0x1000, 0x1000, 0x3000, 0xF000 };
 
-	bool isActive();
+	bool isActive() const;
 
 	void clear();
 	void show();
 	void hide();
 
-	void copyRectToScreen(Common::Rect r);
-	void fill(Common::Rect r);
-	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color);
+	void copyRectToScreen(Common::Rect r) const;
+	void fill(Common::Rect r) const;
+	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 };
 
 } // End of namespace Scumm
