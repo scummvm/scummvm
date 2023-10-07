@@ -495,7 +495,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
-		yCtrHeight = args.destArea.h - args.yStart;
+		yCtrHeight = (xCtrWidth % 4 == 0) ? args.destArea.h - args.yStart : args.destArea.h - args.yStart - 1;
 	}
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);

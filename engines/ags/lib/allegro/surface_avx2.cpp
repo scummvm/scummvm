@@ -487,7 +487,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
 		args.xStart = 0;
 	}
-	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 4 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
+	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 8 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
 	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
@@ -498,7 +498,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
-		yCtrHeight = args.destArea.h - args.yStart;
+		yCtrHeight = (xCtrWidth % 8 == 0) ? args.destArea.h - args.yStart : args.destArea.h - args.yStart - 1;
 	}
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
@@ -573,7 +573,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 
 	// Get the last x values of the last row
 	int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart;
-	// We have a picture that is a multiple of 4, so no extra pixels to draw
+	// We have a picture that is a multiple of 8, so no extra pixels to draw
 	if (xCtrWidth % 8 == 0) return;
 	// Drawing the last few not scaled pixels here.
 	// Same as the loop above but now we check if we are going to overflow,
