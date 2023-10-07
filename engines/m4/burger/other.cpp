@@ -41,7 +41,7 @@ void other_resurrect_player() {
 	old_mode = _G(kernel).trigger_mode;
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	other_fade_me_out(255);
+	other_fade_me_out(32001);
 
 	_G(kernel).trigger_mode = old_mode;
 	player_set_commands_allowed(false);
