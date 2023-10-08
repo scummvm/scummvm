@@ -119,6 +119,7 @@ void vmng_Dialog_Destroy(Dialog *d) {
 		Item_destroy(tempItem);
 		tempItem = myItems;
 	}
+
 	delete d->dlgBuffer;
 	mem_free((void *)d);
 }
@@ -126,7 +127,9 @@ void vmng_Dialog_Destroy(Dialog *d) {
 void DialogDestroy(Dialog *d, M4Rect *r) {
 	ScreenContext *myScreen;
 
-	if (!d) return;
+	if (!d)
+		return;
+
 	if (r) {
 		if ((myScreen = vmng_screen_find((void *)d, nullptr)) != nullptr) {
 			r->x1 = myScreen->x1;
@@ -135,14 +138,18 @@ void DialogDestroy(Dialog *d, M4Rect *r) {
 			r->y2 = myScreen->y2;
 		}
 	}
+
 	vmng_screen_dispose((void *)d);
 	vmng_Dialog_Destroy(d);
 }
 
 bool GetDialogCoords(Dialog *d, M4Rect *r) {
 	ScreenContext *myScreen;
-	if ((!d) || (!r)) return false;
-	if ((myScreen = vmng_screen_find((void *)d, nullptr)) == nullptr) return false;
+	if ((!d) || (!r))
+		return false;
+	if ((myScreen = vmng_screen_find((void *)d, nullptr)) == nullptr)
+		return false;
+
 	r->x1 = myScreen->x1;
 	r->x2 = myScreen->x2;
 	r->y1 = myScreen->y1;
@@ -155,7 +162,9 @@ bool Dialog_Add_Message(Dialog *d, int32 x, int32 y, const char *prompt, int32 t
 	if ((myItem = ItemAdd(d->itemList, x, y, 0, 0, prompt, tag, MESSAGE, nullptr, 0)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+
+	if (!d->itemList)
+		d->itemList = myItem;
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -167,7 +176,10 @@ bool Dialog_Add_Picture(Dialog *d, int32 x, int32 y, Buffer *myBuff, int32 tag) 
 		myBuff->w, myBuff->h, (char *)myBuff->data, tag, PICTURE, nullptr, 0)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+
+	if (!d->itemList)
+		d->itemList = myItem;
+
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -178,7 +190,9 @@ bool Dialog_Add_Button(Dialog *d, int32 x, int32 y, const char *prompt, M4CALLBA
 	if ((myItem = ItemAdd(d->itemList, x, y, 0, 0, prompt, tag, BUTTON, cb, 0)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+	if (!d->itemList)
+		d->itemList = myItem;
+
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -189,7 +203,10 @@ bool Dialog_Add_RepeatButton(Dialog *d, int32 x, int32 y, const char *prompt, M4
 	if ((myItem = ItemAdd(d->itemList, x, y, 0, 0, prompt, tag, REPEAT_BUTTON, cb, 0)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+
+	if (!d->itemList)
+		d->itemList = myItem;
+
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -201,7 +218,9 @@ bool Dialog_Add_List(Dialog *d, int32 x1, int32 y1, int32 x2, int32 y2,
 	if ((myItem = ItemAdd(d->itemList, x1, y1, x2 - x1 + 1, y2 - y1 + 1, nullptr, tag, LISTBOX, cb, 0)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+	if (!d->itemList)
+		d->itemList = myItem;
+
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -213,7 +232,9 @@ bool Dialog_Add_TextField(Dialog *d, int32 x1, int32 y1, int32 x2,
 	if ((myItem = ItemAdd(d->itemList, x1, y1, x2 - x1 + 1, 0, defaultPrompt, tag, TEXTFIELD, cb, fieldLength)) == nullptr) {
 		return false;
 	}
-	if (!d->itemList) d->itemList = myItem;
+	if (!d->itemList)
+		d->itemList = myItem;
+
 	d->listBottom = myItem;
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return true;
@@ -230,17 +251,26 @@ bool Dialog_Remove_Key(Dialog *d, long myKey) {
 bool Dialog_Remove_Item(Dialog *d, Item *myItem, int32 tag) {
 	Buffer *tempBuffer;
 	ScreenContext *myScreen;
-	int32				status;
+	int32 status;
 
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
-	if (!myItem) myItem = ItemFind(d->itemList, tag);
-	if (!myItem) return false;
-	//NOTE: if the item removed is the default, cancel, or return item, problems could happen...
-	if (myItem->next) myItem->next->prev = myItem->prev;
-	else d->listBottom = myItem;
-	if (myItem->prev) myItem->prev->next = myItem->next;
-	else d->itemList = myItem->next;
+	if (!myScreen)
+		return false;
+	if (!myItem)
+		myItem = ItemFind(d->itemList, tag);
+	if (!myItem)
+		return false;
+
+	// NOTE: if the item removed is the default, cancel, or return item, problems could happen...
+	if (myItem->next)
+		myItem->next->prev = myItem->prev;
+	else
+		d->listBottom = myItem;
+	if (myItem->prev)
+		myItem->prev->next = myItem->next;
+	else
+		d->itemList = myItem->next;
+
 	gr_color_set(__LTGRAY);
 	tempBuffer = d->dlgBuffer->get_buffer();
 	gr_buffer_rect_fill(tempBuffer, myItem->x, myItem->y, myItem->w, myItem->h);
@@ -250,35 +280,48 @@ bool Dialog_Remove_Item(Dialog *d, Item *myItem, int32 tag) {
 			myScreen->x1 + myItem->x + myItem->w - 1,
 			myScreen->y1 + myItem->y + myItem->h - 1);
 	}
+
 	Item_destroy(myItem);
 	return true;
 }
 
 bool Dialog_ListItemExists(Dialog *d, Item *myItem, int32 tag, char *prompt, int32 listTag) {
-	if ((!myItem) && (!d)) return false;
-	if (!myItem) myItem = ItemFind(d->itemList, tag);
-	if (!myItem) return false;
+	if ((!myItem) && (!d))
+		return false;
+	if (!myItem)
+		myItem = ItemFind(d->itemList, tag);
+	if (!myItem)
+		return false;
+
 	return ListItemExists(myItem, prompt, listTag);
 }
 
 bool Dialog_Add_List_Item(Dialog *d, Item *myItem, char *prompt, int32 tag, int32 listTag, int32 addMode, bool refresh) {
 	ScreenContext *myScreen;
-	int32			status;
-	bool			retValue;
+	int32 status;
+	bool retValue;
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
-	if (!myItem) myItem = ItemFind(d->itemList, tag);
+
+	if (!myScreen)
+		return false;
+	if (!myItem)
+		myItem = ItemFind(d->itemList, tag);
+
 	retValue = ListItemAdd(myItem, prompt, listTag, addMode, nullptr);
+
 	if (retValue && refresh) {
 		Dialog_Refresh_Item(d, myItem, myItem->tag);
 	}
+
 	return true;
 }
 
 bool Dialog_Delete_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myListItem, int32 listTag) {
 	ScreenContext *myScreen;
-	int32			status;
-	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr) return false;
+	int32 status;
+	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr)
+		return false;
+
 	if (!myItem) {
 		myItem = ItemFind(d->itemList, tag);
 		myListItem = nullptr;
@@ -286,46 +329,55 @@ bool Dialog_Delete_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myLis
 	if (ListItemDelete(myItem, myListItem, listTag)) {
 		Dialog_Refresh_Item(d, myItem, myItem->tag);
 	}
+
 	return true;
 }
 
 bool Dialog_Change_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myListItem,
 	int32 listTag, char *newPrompt, int32 newListTag, int32 changeMode, bool refresh) {
 	ScreenContext *myScreen;
-	int32			status;
-	bool			retValue;
+	int32 status;
+	bool retValue;
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
+
+	if (!myScreen)
+		return false;
 	if (!myItem) {
 		myItem = ItemFind(d->itemList, tag);
 		myListItem = nullptr;
 	}
+
 	retValue = ListItemChange(myItem, myListItem, listTag, newPrompt, newListTag, changeMode);
 	if (retValue && refresh) {
 		Dialog_Refresh_Item(d, myItem, myItem->tag);
 	}
+
 	return retValue;
 }
 
 void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, int32 tag) {
 	Buffer *tempBuffer;
 	ScreenContext *myScreen;
-	int32				status, tempWidth, tempHeight, itemType;
+	int32 status, tempWidth, tempHeight, itemType;
+
 	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr) {
 		return;
 	}
 	if (!myItem) {
 		myItem = ItemFind(d->itemList, tag);
 	}
+
 	if (myItem) {
 		tempWidth = myItem->w;
 		tempHeight = myItem->h;
+
 		if (Item_change_prompt(myItem, newPrompt)) {
 			tempWidth = imath_max(tempWidth, myItem->w);
 			tempHeight = imath_max(tempHeight, myItem->h);
 			gr_color_set(__LTGRAY);
 			tempBuffer = d->dlgBuffer->get_buffer();
 			gr_buffer_rect_fill(tempBuffer, myItem->x, myItem->y, tempWidth, tempHeight);
+
 			if (myItem == d->default_item) {
 				itemType = ITEM_DEFAULT;
 			} else if (myItem == d->return_item) {
@@ -333,6 +385,7 @@ void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, i
 			} else {
 				itemType = ITEM_NORMAL;
 			}
+
 			if (Item_show(myItem, (void *)d, tempBuffer, itemType)) {
 				if (status == SCRN_ACTIVE) {
 					RestoreScreens(myScreen->x1 + myItem->x, myScreen->y1 + myItem->y,
@@ -340,6 +393,7 @@ void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, i
 						myScreen->y1 + myItem->y + tempHeight - 1);
 				}
 			}
+
 			d->dlgBuffer->release();
 		}
 	}
@@ -347,33 +401,50 @@ void Dialog_Change_Item_Prompt(Dialog *d, const char *newPrompt, Item *myItem, i
 
 bool Dialog_ListboxSearch(Dialog *d, Item *myItem, int32 tag, int32 searchMode, char *searchStr, int32 parm1) {
 	ScreenContext *myScreen;
-	int32			status;
-	bool			returnValue;
+	int32 status;
+	bool returnValue;
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
-	if (!myItem) myItem = ItemFind(d->itemList, tag);
-	if (!myItem || (myItem->type != LISTBOX)) return false;
+
+	if (!myScreen)
+		return false;
+	if (!myItem)
+		myItem = ItemFind(d->itemList, tag);
+	if (!myItem || (myItem->type != LISTBOX))
+		return false;
+
 	returnValue = ListItemSearch(myItem, searchMode, searchStr, parm1);
 	Dialog_Refresh_Item(d, myItem, myItem->tag);
 	return returnValue;
 }
 
 Item *Dialog_Get_Item(Dialog *d, int32 tag) {
-	if (!d) return nullptr;
+	if (!d)
+		return nullptr;
+
 	return ItemFind(d->itemList, tag);
 }
 
 void Dialog_Refresh_Item(Dialog *d, Item *myItem, int32 tag) {
 	Buffer *tempBuffer;
 	ScreenContext *myScreen;
-	int32					status, itemType;
-	if (!d) return;
-	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr) return;
-	if (!myItem) myItem = ItemFind(d->itemList, tag);
-	if (!myItem) return;
-	if (myItem == d->default_item) itemType = ITEM_DEFAULT;
-	else if (myItem == d->return_item) itemType = ITEM_RETURN;
-	else itemType = ITEM_NORMAL;
+	int32 status, itemType;
+
+	if (!d)
+		return;
+	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr)
+		return;
+	if (!myItem)
+		myItem = ItemFind(d->itemList, tag);
+	if (!myItem)
+		return;
+
+	if (myItem == d->default_item)
+		itemType = ITEM_DEFAULT;
+	else if (myItem == d->return_item)
+		itemType = ITEM_RETURN;
+	else
+		itemType = ITEM_NORMAL;
+
 	tempBuffer = d->dlgBuffer->get_buffer();
 	if (Item_show(myItem, (void *)d, tempBuffer, itemType)) {
 		if (status == SCRN_ACTIVE) {
@@ -382,6 +453,7 @@ void Dialog_Refresh_Item(Dialog *d, Item *myItem, int32 tag) {
 				myScreen->y1 + myItem->y + myItem->h - 1);
 		}
 	}
+
 	d->dlgBuffer->release();
 }
 
@@ -389,8 +461,8 @@ void Dialog_Refresh(Dialog *d) {
 	Buffer *tempBuffer;
 	ScreenContext *myScreen;
 	Item *i;
-	int32					status, itemType;
-	ButtonDrawRec		bdr;
+	int32 status, itemType;
+	ButtonDrawRec bdr;
 
 	if (!d) return;
 
@@ -407,9 +479,11 @@ void Dialog_Refresh(Dialog *d) {
 		else itemType = ITEM_NORMAL;
 		Item_show(i, (void *)d, tempBuffer, itemType);
 	}
+
 	d->dlgBuffer->release();
 
-	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr) return;
+	if ((myScreen = vmng_screen_find((void *)d, &status)) == nullptr)
+		return;
 	if (status == SCRN_ACTIVE) {
 		RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
 	}
@@ -461,12 +535,14 @@ static void DialogShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 	Dialog *d;
 	RectList *myRect;
 
-	//parameter verification
-	if (!myScreen) return;
+	// Parameter verification
+	if (!myScreen)
+		return;
 	d = (Dialog *)(myScreen->scrnContent);
-	if (!d) return;
+	if (!d)
+		return;
 
-	//if no destBuffer, then draw directly to video
+	// If no destBuffer, then draw directly to video
 	if (!destBuffer) {
 		myRect = myRectList;
 		while (myRect) {
@@ -476,26 +552,29 @@ static void DialogShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 			//							myRect->x2 - myScreen->x1, myRect->y2 - myScreen->y1, d->dlgBuffer);
 			myRect = myRect->next;
 		}
-	}
-
-	//else draw to the dest buffer
-	else {
+	} else {
+		// Else draw to the dest buffer
 		tempBuffer = d->dlgBuffer->get_buffer();
 		myRect = myRectList;
+
 		while (myRect) {
 			gr_buffer_rect_copy_2(tempBuffer, destBuffer, myRect->x1 - myScreen->x1, myRect->y1 - myScreen->y1,
 				destX, destY, myRect->x2 - myRect->x1 + 1, myRect->y2 - myRect->y1 + 1);
 			myRect = myRect->next;
 		}
+
 		d->dlgBuffer->release();
 	}
 }
 
 void Dialog_Configure(Dialog *d, int32 defaultTag, int32 returnTag, int32 cancelTag) {
-	if (!d) return;
+	if (!d)
+		return;
+
 	d->return_item = ItemFind(d->itemList, returnTag);
 	d->cancel_item = ItemFind(d->itemList, cancelTag);
 	Dialog_SetDefault(d, defaultTag);
+
 	if (d->default_item) {
 		Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 	}
@@ -504,11 +583,14 @@ void Dialog_Configure(Dialog *d, int32 defaultTag, int32 returnTag, int32 cancel
 void Dialog_SetDefault(Dialog *d, int32 tag) {
 	ScreenContext *myScreen;
 	Item *origItem, *newDefault;
-	int32			status;
+	int32 status;
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return;
+	if (!myScreen)
+		return;
+
 	origItem = d->default_item;
 	newDefault = Item_set_default(d->itemList, d->default_item, tag);
+
 	if ((!newDefault) || ((newDefault->type != LISTBOX) && (newDefault->type != TEXTFIELD))) {
 		d->default_item = nullptr;
 	} else {
@@ -524,35 +606,51 @@ void Dialog_SetDefault(Dialog *d, int32 tag) {
 bool Dialog_SetPressed(Dialog *d, int32 tag) {
 	ScreenContext *myScreen;
 	Item *myItem;
-	int32			status;
+	int32 status;
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
+
+	if (!myScreen)
+		return false;
+
 	myItem = Item_set_pressed(d->itemList, nullptr, tag);
+
 	if (myItem) {
 		Dialog_Refresh_Item(d, myItem, myItem->tag);
 		return true;
-	} else return false;
+	} else {
+		return false;
+	}
 }
 
 static bool Dialog_SetUnpressed(Dialog *d, int32 tag) {
 	ScreenContext *myScreen;
 	Item *myItem;
-	int32			status;
+	int32 status;
+
 	myScreen = vmng_screen_find((void *)d, &status);
-	if (!myScreen) return false;
+	if (!myScreen)
+		return false;
+
 	myItem = Item_set_unpressed(d->itemList, nullptr, tag);
 	if (myItem) {
 		Dialog_Refresh_Item(d, myItem, myItem->tag);
 		return true;
-	} else return false;
+	} else {
+		return false;
+	}
 }
 
 static bool Dialog_SetNextDefault(ScreenContext *myScreen, Dialog *d) {
-	int32				status;
+	int32 status;
 	Item *origItem;
-	if (!myScreen) myScreen = vmng_screen_find((void *)d, &status);
-	else status = SCRN_ACTIVE;
-	if (!myScreen) return false;
+
+	if (!myScreen)
+		myScreen = vmng_screen_find((void *)d, &status);
+	else
+		status = SCRN_ACTIVE;
+	if (!myScreen)
+		return false;
+
 	origItem = d->default_item;
 	d->default_item = Item_set_next_default(d->default_item, d->itemList);
 	if (status == SCRN_ACTIVE) {
@@ -563,18 +661,27 @@ static bool Dialog_SetNextDefault(ScreenContext *myScreen, Dialog *d) {
 			Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 		}
 	}
-	if (d->default_item) return true;
-	else return false;
+
+	if (d->default_item)
+		return true;
+	else
+		return false;
 }
 
 static bool Dialog_SetPrevDefault(ScreenContext *myScreen, Dialog *d) {
-	int32				status;
+	int32 status;
 	Item *origItem;
-	if (!myScreen) myScreen = vmng_screen_find((void *)d, &status);
-	else status = SCRN_ACTIVE;
-	if (!myScreen) return false;
+
+	if (!myScreen)
+		myScreen = vmng_screen_find((void *)d, &status);
+	else
+		status = SCRN_ACTIVE;
+	if (!myScreen)
+		return false;
+
 	origItem = d->default_item;
 	d->default_item = Item_set_prev_default(d->default_item, d->listBottom);
+
 	if (status == SCRN_ACTIVE) {
 		if (origItem && (origItem != d->default_item)) {
 			Dialog_Refresh_Item(d, origItem, origItem->tag);
@@ -583,54 +690,69 @@ static bool Dialog_SetPrevDefault(ScreenContext *myScreen, Dialog *d) {
 			Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 		}
 	}
-	if (d->default_item) return true;
-	else return false;
+
+	if (d->default_item)
+		return true;
+	else
+		return false;
 }
 
 void Dialog_GetNextListItem(Dialog *d) {
-	if ((!d->default_item) || (d->default_item->type != LISTBOX)) return;
+	if ((!d->default_item) || (d->default_item->type != LISTBOX))
+		return;
 	if (GetNextListItem(d->default_item)) {
 		Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 	}
 }
 
 static void Dialog_GetNextPageList(Dialog *d) {
-	if ((!d->default_item) || (d->default_item->type != LISTBOX)) return;
+	if ((!d->default_item) || (d->default_item->type != LISTBOX))
+		return;
 	if (GetNextPageList(d->default_item)) {
 		Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 	}
 }
 
 void Dialog_GetPrevListItem(Dialog *d) {
-	if ((!d->default_item) || (d->default_item->type != LISTBOX)) return;
+	if ((!d->default_item) || (d->default_item->type != LISTBOX))
+		return;
 	if (GetPrevListItem(d->default_item)) {
 		Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 	}
 }
 
 static void Dialog_GetPrevPageList(Dialog *d) {
-	if ((!d->default_item) || (d->default_item->type != LISTBOX)) return;
+	if ((!d->default_item) || (d->default_item->type != LISTBOX))
+		return;
 	if (GetPrevPageList(d->default_item)) {
 		Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 	}
 }
 
 ListItem *Dialog_GetCurrListItem(Dialog *d, Item *i, int32 tag) {
-	if ((!i) && (!d)) return nullptr;
-	if (!i) i = ItemFind(d->itemList, tag);
-	if (!i) return nullptr;
+	if ((!i) && (!d))
+		return nullptr;
+	if (!i)
+		i = ItemFind(d->itemList, tag);
+	if (!i)
+		return nullptr;
+
 	return i->currItem;
 }
 
 char *Dialog_GetCurrListItemPrompt(Dialog *d, Item *i, int32 tag) {
 	ListItem *myListItem;
-	if ((myListItem = Dialog_GetCurrListItem(d, i, tag)) == nullptr) return nullptr;
+	if ((myListItem = Dialog_GetCurrListItem(d, i, tag)) == nullptr)
+		return nullptr;
+
 	return myListItem->prompt;
 }
 
 bool Dialog_GetCurrListItemTag(Dialog *d, Item *i, int32 tag, int32 *listTag) {
 	ListItem *myListItem;
-	if ((myListItem = Dialog_GetCurrListItem(d, i, tag)) == nullptr) return false;
+	if ((myListItem = Dialog_GetCurrListItem(d, i, tag)) == nullptr)
+		return false;
+
 	*listTag = myListItem->tag;
 	return true;
 }
@@ -638,18 +760,27 @@ bool Dialog_GetCurrListItemTag(Dialog *d, Item *i, int32 tag, int32 *listTag) {
 char *Dialog_GetListItemPrompt(Dialog *d, Item *i, int32 tag, int32 listTag) {
 	ListItem *myListItem;
 
-	if (!i) i = ItemFind(d->itemList, tag);
-	if (!i) return nullptr;
-	if ((myListItem = ListItemFind(i, LIST_BY_TAG, nullptr, listTag)) == nullptr) return nullptr;
+	if (!i)
+		i = ItemFind(d->itemList, tag);
+	if (!i)
+		return nullptr;
+	if ((myListItem = ListItemFind(i, LIST_BY_TAG, nullptr, listTag)) == nullptr)
+		return nullptr;
+
 	return myListItem->prompt;
 }
 
 void Dialog_EmptyListBox(Dialog *d, Item *i, int32 tag) {
 	ScreenContext *myScreen;
-	int32				status;
-	if ((!i) && (!d)) return;
-	if (!i) i = ItemFind(d->itemList, tag);
-	if (!i) return;
+	int32 status;
+
+	if ((!i) && (!d))
+		return;
+	if (!i)
+		i = ItemFind(d->itemList, tag);
+	if (!i)
+		return;
+
 	Item_empty_list(i);
 	myScreen = vmng_screen_find((void *)d, &status);
 	Dialog_Refresh_Item(d, i, i->tag);
@@ -658,11 +789,13 @@ void Dialog_EmptyListBox(Dialog *d, Item *i, int32 tag) {
 void Dialog_RegisterTextField(Dialog *d) {
 	Item *myItem = nullptr;
 	ScreenContext *myScreen;
-	int32				status;
+	int32 status;
 
 	myScreen = vmng_screen_find((void *)d, &status);
-	if ((!myScreen) || (status != SCRN_ACTIVE)) return;
-	if ((myItem = Item_CheckTextField()) == nullptr) return;
+	if ((!myScreen) || (status != SCRN_ACTIVE))
+		return;
+	if ((myItem = Item_CheckTextField()) == nullptr)
+		return;
 	if (myItem->callback) {
 		(myItem->callback)((void *)myItem, (void *)d);
 		myScreen = vmng_screen_find((void *)d, &status);
@@ -675,7 +808,6 @@ static void SystemErrCallback(void *, void *) {
 }
 
 void Dialog_SystemError(char *s) {
-
 	Dialog *aDlog = DialogCreateAbsolute(0, 0, MAX_VIDEO_X, MAX_VIDEO_Y, SF_ALERT);
 	Dialog_Add_Message(aDlog, 20, 60, s, 2);
 	Dialog_Add_Button(aDlog, 50, 80, " OK ", SystemErrCallback, 100);
@@ -683,9 +815,11 @@ void Dialog_SystemError(char *s) {
 	Dialog_Configure(aDlog, 0, 100, 0);
 	vmng_screen_show((void *)aDlog);
 	_GD(okButton) = false;
+
 	while (!_GD(okButton)) {
 		gui_system_event_handler();
 	}
+
 	DialogDestroy(aDlog, (M4Rect *)nullptr);
 }
 
@@ -695,6 +829,7 @@ void Dialog_KeyMouseCollision(void) {
 	_GD(clickItem) = nullptr;
 	_GD(doubleClickItem) = nullptr;
 	_GD(listboxSearchStr)[0] = '\0';
+
 	if ((textItem = Item_CheckTextField()) != nullptr) {
 		if (textItem->callback) {
 			(textItem->callback)((void *)textItem, nullptr);
@@ -706,18 +841,19 @@ static bool Dialog_EventHandler(void *myDialog, int32 eventType, int32 parm1, in
 	ScreenContext *myScreen;
 	Dialog *d = (Dialog *)myDialog;
 	Item *myItem, *textItem;
-	int32							status;
-	bool							handled;
-	bool							clearClickItem;
-	static uint32				repeatTime;
-	int32							scrollable = 0;
-	uint32						tempTime;
-	static int32				movingX;
-	static int32				movingY;
-	char							tempStr[2];
+	int32 status;
+	bool handled;
+	bool clearClickItem;
+	static uint32 repeatTime;
+	int32 scrollable = 0;
+	uint32 tempTime;
+	static int32 movingX;
+	static int32 movingY;
+	char tempStr[2];
 
 	myScreen = vmng_screen_find(myDialog, &status);
-	if ((!myScreen) || (status != SCRN_ACTIVE)) return false;
+	if ((!myScreen) || (status != SCRN_ACTIVE))
+		return false;
 
 	if (eventType == EVENT_KEY) {
 		handled = false;
@@ -736,8 +872,8 @@ static bool Dialog_EventHandler(void *myDialog, int32 eventType, int32 parm1, in
 							if ((!myScreen) || (status != SCRN_ACTIVE)) handled = true;
 						}
 					}
-				}		//will fall out to catch the "set next/prev default"
-				else {
+				} else {
+					// will fall out to catch the "set next/prev default"
 					handled = Item_TextEdit(d->default_item, parm1);
 					Dialog_Refresh_Item(d, d->default_item, d->default_item->tag);
 				}
@@ -991,13 +1127,14 @@ static bool Dialog_EventHandler(void *myDialog, int32 eventType, int32 parm1, in
 			_GD(doubleClickItem) = _GD(clickItem);
 			_GD(clickItem) = nullptr;
 		}
+
 		return true;
 	}
+
 	return false;
 }
 
-//TEXTSCRN STUFF...
-
+// TEXTSCRN STUFF...
 
 static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
@@ -1017,69 +1154,65 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	RectList *newUpdateList;
 	Font *currFont;
 
-	//parameter verification
-	if (!myScreen) return;
+	// Parameter verification
+	if (!myScreen)
+		return;
 	myTextScrn = (TextScrn *)(myScreen->scrnContent);
-	if (!myTextScrn) return;
+	if (!myTextScrn)
+		return;
 
-#if defined(__WIN)
-	myGrBuff = (CDIBSectionBuffer *)(myTextScrn->textScrnBuffer);
-#else
 	myGrBuff = (GrBuff *)(myTextScrn->textScrnBuffer);
-#endif
 
-	if (!myGrBuff) return;
+	if (!myGrBuff)
+		return;
 
-	//if no destBuffer, then draw directly to video
+	// If no destBuffer, then draw directly to video
 	if (!destBuffer) {
-
 		tempMatte.nextMatte = nullptr;
 
-		//create an updateRectList to catch the black areas afterwards
+		// Create an updateRectList to catch the black areas afterwards
 		updateList = vmng_CreateNewRect(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
 		updateList->prev = nullptr;
 		updateList->next = nullptr;
 
-		//now loop through all the screens behind myScreen
+		// Now loop through all the screens behind myScreen
 		tempScreen = myScreen->behind;
 		while (tempScreen && updateList) {
-
-			//duplicate the updateList
+			// Duplicate the updateList
 			newUpdateList = vmng_DuplicateRectList(updateList);
 
-			//loop through the updateList
+			// Loop through the updateList
 			updateRect = updateList;
 			while (updateRect) {
-
-				//see if it intersects
+				// See if it intersects
 				tempMatte.x1 = imath_max(updateRect->x1, tempScreen->x1);
 				tempMatte.y1 = imath_max(updateRect->y1, tempScreen->y1);
 				tempMatte.x2 = imath_min(updateRect->x2, tempScreen->x2);
 				tempMatte.y2 = imath_min(updateRect->y2, tempScreen->y2);
 
 				if (tempScreen->redraw && (tempMatte.x1 <= tempMatte.x2) && (tempMatte.y1 <= tempMatte.y2)) {
-					//draw the intersected part of tempScreen onto myBuffer
+					// Draw the intersected part of tempScreen onto myBuffer
 					myBuff = myGrBuff->get_buffer();
 					(tempScreen->redraw)(tempScreen, (void *)&tempMatte, myBuff, tempMatte.x1 - myScreen->x1, tempMatte.y1 - myScreen->y1);
 					myGrBuff->release();
-					//remove that rectangle from the update list
+					// Remove that rectangle from the update list
 					vmng_RemoveRectFromRectList(&newUpdateList, tempMatte.x1, tempMatte.y1, tempMatte.x2, tempMatte.y2);
 				}
 
-				//get the next updateRect
+				// Get the next updateRect
 				updateRect = updateRect->next;
 			}
 
-			//the newUpdateList now contains all the pieces not covered by tempScreen;
-			//turf the update list, and replace it with the newupdateList
+			// The newUpdateList now contains all the pieces not covered by tempScreen;
+			// Turf the update list, and replace it with the newupdateList
 			vmng_DisposeRectList(&updateList);
 			updateList = newUpdateList;
 
-			//now get the next screen
+			// Now get the next screen
 			tempScreen = tempScreen->behind;
 		}
 
-		//now we've gone through all the screens, whatever is left in the updateList should be filled in with black
+		// Now we've gone through all the screens, whatever is left in the updateList should be filled in with black
 		gr_color_set(__BLACK);
 		updateRect = updateList;
 		myBuff = myGrBuff->get_buffer();
@@ -1090,35 +1223,37 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 		}
 		myGrBuff->release();
 
-		//now dispose of the updateList
+		// Now dispose of the updateList
 		vmng_DisposeRectList(&updateList);
 
-		//now we darken (or lighten) the screen by the luminance percentage	
+		// Now we darken (or lighten) the screen by the luminance percentage	
 		myBuff = myGrBuff->get_buffer();
 		krn_ChangeBufferLuminance(myBuff, myTextScrn->luminance);
 		myGrBuff->release();
 
-		//now myBuff should contain a copy of everything on the screen, except the actual contents of this transparent screen
-		//now would be the time to draw the contents
+		// Now myBuff should contain a copy of everything on the screen, except the actual contents of this transparent screen
+		// Now would be the time to draw the contents
 		currFont = gr_font_get();
 		gr_font_set(myTextScrn->myFont);
 		myItem = myTextScrn->myTextItems;
 		myBuff = myGrBuff->get_buffer();
+
 		while (myItem) {
 			if (myItem == myTextScrn->hiliteItem) {
-				//gr_font_set_color(myTextScrn->hiliteColor);
+				// Gr_font_set_color(myTextScrn->hiliteColor);
 				font_set_colors(myTextScrn->hiliteColor_alt1, myTextScrn->hiliteColor_alt2, myTextScrn->hiliteColor);
 			} else {
-				//gr_font_set_color(myTextScrn->textColor);
+				// Gr_font_set_color(myTextScrn->textColor);
 				font_set_colors(myTextScrn->textColor_alt1, myTextScrn->textColor_alt2, myTextScrn->textColor);
 			}
 			gr_font_write(myBuff, myItem->prompt, myItem->x, myItem->y, 0, 0); // MattP no auto spacing
 			myItem = myItem->next;
 		}
+
 		myGrBuff->release();
 		gr_font_set(currFont);
 
-		//now dump the matte list out to video
+		// Now dump the matte list out to video
 		myMatte = myRectList;
 		while (myMatte) {
 			myGrBuff->refresh_video(myMatte->x1, myMatte->y1, myMatte->x1 - myScreen->x1, myMatte->y1 - myScreen->y1,
@@ -1127,10 +1262,8 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 			//							myMatte->x2 - myScreen->x1, myMatte->y2 - myScreen->y1, myBuff);
 			myMatte = myMatte->nextMatte;
 		}
-	}
-
-	//else draw to the dest buffer
-	else {
+	} else {
+		// Else draw to the dest buffer
 		myMatte = myRectList;
 		myBuff = myGrBuff->get_buffer();
 		while (myMatte) {
@@ -1138,6 +1271,7 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 				destX, destY, myMatte->x2 - myMatte->x1 + 1, myMatte->y2 - myMatte->y1 + 1);
 			myMatte = myMatte->nextMatte;
 		}
+
 		myGrBuff->release();
 	}
 }
@@ -1203,7 +1337,9 @@ bool TextScrn_Add_TextItem(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 	if (!myTextScrn) {
 		return false;
 	}
-	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "text item")) == nullptr) return false;
+	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "text item")) == nullptr)
+		return false;
+
 	myTextItem->w = gr_font_string_width(prompt, 0); // No auto spacing
 	myTextItem->h = gr_font_get_height() + 1;
 	myTextItem->y = y;
@@ -1240,11 +1376,14 @@ bool TextScrn_Add_Message(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 	if (!myTextScrn) {
 		return false;
 	}
-	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "textscrn msg")) == nullptr) return false;
-	myTextItem->w = gr_font_string_width(prompt, 0); //No auto spacing
+	if ((myTextItem = (TextItem *)mem_alloc(sizeof(TextItem), "textscrn msg")) == nullptr)
+		return false;
+
+	myTextItem->w = gr_font_string_width(prompt, 0); // No auto spacing
 	myTextItem->h = gr_font_get_height() + 1;
 	myTextItem->y = y;
 	myTextItem->justification = justification;
+
 	switch (justification) {
 	case TS_JUST_LEFT:
 		myTextItem->x = 0;
@@ -1271,11 +1410,14 @@ bool TextScrn_Add_Message(TextScrn *myTextScrn, int32 x, int32 y, int32 tag,
 
 void TextScrn_Delete_TextItem(TextScrn *myTextScrn, int32 tag) {
 	ScreenContext *myScreen;
-	int32			status, x, y, w, h;
+	int32 status, x, y, w, h;
 	TextItem *myTextItem, *tempTextItem;
 
-	if ((myScreen = vmng_screen_find((void *)myTextScrn, &status)) == nullptr) return;
+	if ((myScreen = vmng_screen_find((void *)myTextScrn, &status)) == nullptr)
+		return;
+
 	myTextItem = myTextScrn->myTextItems;
+
 	if (myTextItem->tag == tag) {
 		myTextScrn->myTextItems = myTextItem->next;
 		tempTextItem = myTextItem;
@@ -1284,12 +1426,14 @@ void TextScrn_Delete_TextItem(TextScrn *myTextScrn, int32 tag) {
 		if ((tempTextItem = myTextItem->next) == nullptr) return;
 		myTextItem->next = tempTextItem->next;
 	}
+
 	x = tempTextItem->x;
 	y = tempTextItem->y;
 	w = tempTextItem->w;
 	h = tempTextItem->h;
 	mem_free(tempTextItem->prompt);
 	mem_free((void *)tempTextItem);
+
 	if (status == SCRN_ACTIVE) {
 		RestoreScreens(myScreen->x1 + x, myScreen->y1 + y, myScreen->x1 + x + w - 1, myScreen->y1 + y + h - 1);
 	}
@@ -1299,16 +1443,17 @@ static bool TextScrn_EventHandler(void *theTextScrn, int32 eventType, int32 parm
 	ScreenContext *myScreen;
 	TextScrn *myTextScrn = (TextScrn *)theTextScrn;
 	TextItem *myTextItem, *oldHiliteItem;
-	int32						status;
-	static int32				movingX;
-	static int32				movingY;
+	int32 status;
+	static int32 movingX;
+	static int32 movingY;
 
 	myScreen = vmng_screen_find(theTextScrn, &status);
-	if ((!myScreen) || (status != SCRN_ACTIVE)) return false;
 
-	if (!(eventType == EVENT_MOUSE)) {
+	if ((!myScreen) || (status != SCRN_ACTIVE))
 		return false;
-	}
+	if (!(eventType == EVENT_MOUSE))
+		return false;
+
 	myTextItem = myTextScrn->myTextItems;
 	while (myTextItem && (!((parm2 >= myScreen->x1) &&
 		(parm2 <= myScreen->x2) &&
@@ -1316,9 +1461,11 @@ static bool TextScrn_EventHandler(void *theTextScrn, int32 eventType, int32 parm
 		(parm3 - myScreen->y1 <= (myTextItem->y + myTextItem->h - 1))))) {
 		myTextItem = myTextItem->next;
 	}
+
 	if (myTextItem && (myTextItem->type == MESSAGE)) {
 		myTextItem = nullptr;
 	}
+
 	if (myTextItem != myTextScrn->hiliteItem) {
 		oldHiliteItem = myTextScrn->hiliteItem;
 		myTextScrn->hiliteItem = myTextItem;
@@ -1333,6 +1480,7 @@ static bool TextScrn_EventHandler(void *theTextScrn, int32 eventType, int32 parm
 				myScreen->y1 + myTextItem->y + myTextItem->h - 1);
 		}
 	}
+
 	switch (parm1) {
 	case _ME_L_click:
 		if (currScreen) {
