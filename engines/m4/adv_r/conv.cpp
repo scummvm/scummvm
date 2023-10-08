@@ -31,11 +31,10 @@
 namespace M4 {
 
 // ---------------
-
-//set entry stats,
-//get next node pointer
-//process declarations
-//get message text
+// Set entry stats,
+// Get next node pointer
+// Process declarations
+// Get message text
 static void conv_exec_entry(long offset, Conv *c) {
 	long i = offset, entry_count;
 	long l_op, r_op;
@@ -167,7 +166,7 @@ static void conv_exec_entry(long offset, Conv *c) {
 			break;
 
 		case COND_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_GOTO_CHUNK\n" ); //aug2
+			//fprintf( conv_fp, "COND_GOTO_CHUNK\n" );
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
@@ -178,13 +177,13 @@ static void conv_exec_entry(long offset, Conv *c) {
 				c->myCNode = c_goto->index;
 
 				//////term_message( "COND GOTO %x", c->myCNode );
-				//fprintf( conv_fp, "COND GOTO %x\n", c->myCNode ); //aug2
+				//fprintf( conv_fp, "COND GOTO %x\n", c->myCNode );
 				return;
 			}
 			break;
 
 		case COND_EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "COND_EXIT_GOTO_CHUNK\n" ); //aug2
+			//fprintf( conv_fp, "COND_EXIT_GOTO_CHUNK\n" );
 			c_goto = get_c_goto(c, i);
 			decl = get_decl(c, c_goto->opnd1);
 
@@ -200,14 +199,13 @@ static void conv_exec_entry(long offset, Conv *c) {
 					c->myCNode = CONV_QUIT;
 				}
 				//////term_message( "COND EXIT GOTO %x", c->myCNode );
-				//fprintf( conv_fp, "COND EXIT GOTO %x\n", c->myCNode ); //aug2
-
+				//fprintf( conv_fp, "COND EXIT GOTO %x\n", c->myCNode );
 				return;
 			}
 			break;
 
 		case EXIT_GOTO_CHUNK:
-			//fprintf( conv_fp, "EXIT_GOTO_CHUNK\n" ); //aug2
+			//fprintf( conv_fp, "EXIT_GOTO_CHUNK\n" );
 			go = get_goto(c, i);
 
 			if (go->index != CONV_QUIT) {
@@ -218,7 +216,7 @@ static void conv_exec_entry(long offset, Conv *c) {
 				c->myCNode = CONV_QUIT;
 			}
 			//////term_message( "EXIT GOTO %x", c->myCNode );
-			//fprintf( conv_fp, "EXIT GOTO %x\n", c->myCNode ); //aug2
+			//fprintf( conv_fp, "EXIT GOTO %x\n", c->myCNode );
 			return;
 
 		case GOTO_CHUNK:
@@ -226,7 +224,7 @@ static void conv_exec_entry(long offset, Conv *c) {
 			go = get_goto(c, i);
 			c->myCNode = go->index;
 			//////term_message( "GOTO %x", c->myCNode );
-			//fprintf( conv_fp, "GOTO %x\n", c->myCNode ); //aug2
+			//fprintf( conv_fp, "GOTO %x\n", c->myCNode );
 			return;
 
 			//replies are non-player responses
@@ -293,7 +291,7 @@ static int conv_get_mesg(long offset, long is_valid, Conv *c) {
 			break;
 
 		case FALL_CHUNK:
-			//fprintf( conv_fp, "FALL_CHUNK\n" ); //aug2
+			//fprintf( conv_fp, "FALL_CHUNK\n" );
 			break;
 
 		case C_ASGN_CHUNK:
@@ -504,7 +502,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 	int result = 1;
 
 	for (;; ) {
-		//start by getting the current NODE or LNODE
+		// Start by getting the current NODE or LNODE
 		conv_ops_get_entry(ent, &next, &tag, c);
 		switch (tag) {
 		case LNODE_CHUNK:
@@ -533,7 +531,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 		case FALL_CHUNK:
 			//we either want to jump to a new node
 			//or skip to the first offset.
-			//fprintf( conv_fp, "FALL_CHUNK 1.\n" ); //aug2
+			//fprintf( conv_fp, "FALL_CHUNK 1.\n" );
 
 			fall = get_fall(c, sub_ent);
 
@@ -575,7 +573,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 }
 
 
-//simplify me now that all changes have been made.
+// Simplify me now that all changes have been made.
 static int conv_get_node_text(Conv *c) {
 	lnode_chunk *lnode = nullptr;
 	node_chunk *node = nullptr;
@@ -617,7 +615,7 @@ static int conv_get_node_text(Conv *c) {
 	case LNODE_CHUNK:
 		//was in bounds.
 		//lnode->entry_num starts at 0. in the chunk.
-		if (lnode->entry_num >= lnode->num_entries) //aug4: was >
+		if (lnode->entry_num >= lnode->num_entries)
 			lnode->entry_num = 0;
 
 		for (i = 0; (i <= lnode->entry_num) && (i < num_ents); i++) {
@@ -629,7 +627,7 @@ static int conv_get_node_text(Conv *c) {
 
 		offset -= sizeof(long);
 
-		//set sound file name instead.?
+		// Set sound file name instead.?
 		if ((entry->status != 0) && (num_ents != 0) && ok_status(entry)) {
 			//here here here.
 			if (conv_get_text(offset + ent, entry->size, c)) {
@@ -679,9 +677,9 @@ static int conv_get_node_text(Conv *c) {
 				_GC(n_t_e) = 0;
 
 				c->myCNode = fall->index;
-				c->mode = CONV_GET_TEXT_MODE; //aug2: was CONV_UPDATE_MODE;
-				//fprintf( conv_fp, "FALLTHROUGH!\n" ); //aug2
-				result = 0; //was 1
+				c->mode = CONV_GET_TEXT_MODE;
+				//fprintf( conv_fp, "FALLTHROUGH!\n" );
+				result = 0;
 			}
 		}
 		break;
@@ -700,21 +698,21 @@ void conv_shutdown(void) {
 	_GC(myTextScrn) = nullptr;
 }
 
-//simplify me.
+// Simplify me.
 static void conv_start(Conv *c) {
 	long		ok = 1, ent = 0, tag = 0, next;
 	decl_chunk *decl;
 
 	switch (c->exit_now) {
-	case CONV_OK: //potential prob. when entering while loop.
+	case CONV_OK: // Potential prob. when entering while loop.
 		break;
 
-		//goto_exit encountered.
+		// Goto_exit encountered.
 		//a conversation state.
 	case CONV_BAIL:
 		return;
 
-		//goodbye forever.
+		// Goodbye forever.
 	case CONV_QUIT:
 		return;
 
@@ -764,7 +762,7 @@ static int conv_next_node(Conv *c) {
 		return 0;
 
 	case CONV_NEW:
-		conv_start(c); //should go in conv_load.
+		conv_start(c); // Should go in conv_load.
 		return 1;
 	}
 	return 1;
@@ -784,7 +782,7 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 
 	//repeat fallthrough till done
 	for (;; ) {
-		//start by getting the current NODE or LNODE
+		// Start by getting the current NODE or LNODE
 		conv_ops_get_entry(ent, &next, &tag, c);
 		switch (tag) {
 		case LNODE_CHUNK:
@@ -895,7 +893,7 @@ static int conv_run(Conv *c) {
 					//////fprintf( conv_fp, "conv_run cdd_init\n" );
 
 					//////term_message( "conv_run CONV_GET_TEXT_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_GET_TEXT_MODE %x\n", c->myCNode ); //aug2
+					//////fprintf( conv_fp, "conv_run CONV_GET_TEXT_MODE %x\n", c->myCNode );
 
 					c->mode = CONV_GET_MESG_MODE;
 					if (conv_get_node_text(c)) {
@@ -920,10 +918,9 @@ static int conv_run(Conv *c) {
 					//////fprintf( conv_fp, "conv_run cdd_init\n" );
 
 					//////term_message( "conv_run CONV_GET_MESG_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_GET_MESG_MODE %x %d\n", c->myCNode, c->c_entry_num ); //aug2
+					//////fprintf( conv_fp, "conv_run CONV_GET_MESG_MODE %x %d\n", c->myCNode, c->c_entry_num );
 
 					if (conv_process_entry(c->c_entry_num, c, CONV_GET_MESG_MODE)) {
-						//aug15
 						mouse_unlock_sprite();
 						mouse_lock_sprite(5);
 
@@ -938,7 +935,7 @@ static int conv_run(Conv *c) {
 
 				case CONV_UPDATE_MODE:
 					//////term_message( "conv_run CONV_UPDATE_MODE" );
-					//////fprintf( conv_fp, "conv_run CONV_UPDATE_MODE %x\n", c->myCNode ); //aug2
+					//////fprintf( conv_fp, "conv_run CONV_UPDATE_MODE %x\n", c->myCNode );
 					//////term_message( "conv_process_entry %d", c->c_entry_num );
 					conv_process_entry(c->c_entry_num, c, CONV_UPDATE_MODE);
 
@@ -959,7 +956,6 @@ static int conv_run(Conv *c) {
 static void convtestCallback(void *a, void *) {
 	Conv *c;
 
-	//aug15
 	mouse_unlock_sprite();
 	mouse_lock_sprite(5);
 
@@ -1063,7 +1059,7 @@ void set_dlg_rect() {
 }
 
 static void textBoxInit() {
-	int32	i;
+	int32 i;
 
 	player_set_commands_allowed(true);
 	mouse_set_sprite(0);
