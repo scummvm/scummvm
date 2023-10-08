@@ -813,23 +813,26 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 
 	int invCount = _vm->getInventoryCount(owner);
 	int invOffset = _gui->getInventoryScrollOffset();
+	int numSlots = ARRAYSIZE(_slots);
 
-	// The scroll offset must be non-negative and if there are six or less
-	// items in the inventory, the inventory is fixed in the top position.
+	// The scroll offset must be non-negative and if there are numSlots or
+	// less objects in the inventory, the inventory is fixed in the top
+	// position.
 
-	if (invOffset < 0 || invCount <= 6)
+	if (invOffset < 0 || invCount <= numSlots)
 		invOffset = 0;
 
-	// If there are more than six items in the inventory, clamp the scroll
-	// offset to be at most invCount - 6.
+	// If there are more than numSlots objects in the inventory, clamp the
+	// scroll offset so that the inventory does not go past the last
+	// numSlots objets.
 
-	if (invCount > 6 && invOffset >= invCount - 6)
-		invOffset = invCount - 6;
+	if (invCount > numSlots && invOffset > invCount - numSlots)
+		invOffset = invCount - numSlots;
 
-	_scrollButtons[0]->setEnabled(invCount > 0 && invOffset > 0);
-	_scrollButtons[1]->setEnabled(invCount > 0 && invOffset + 6 < invCount);
+	_scrollButtons[0]->setEnabled(invOffset > 0);
+	_scrollButtons[1]->setEnabled(invCount > numSlots && invOffset < invCount - numSlots);
 
-	_scrollBar->setEnabled(invCount > 6);
+	_scrollBar->setEnabled(invCount > numSlots);
 	_scrollBar->setCounters(invCount, invOffset);
 
 	_gui->setInventoryScrollOffset(invOffset);
@@ -838,7 +841,7 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 
 	// Assign the objects to the inventory slots
 
-	for (int i = 0; i < _vm->_numInventory && invSlot < ARRAYSIZE(_slots); i++) {
+	for (int i = 0; i < _vm->_numInventory && invSlot < numSlots; i++) {
 		int obj = _vm->_inventory[i];
 		if (obj && _vm->getOwner(obj) == owner) {
 			if (--invOffset < 0) {
@@ -850,7 +853,7 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 
 	// Clear the remaining slots
 
-	for (int i = invSlot; i < ARRAYSIZE(_slots); i++) {
+	for (int i = invSlot; i < numSlots; i++) {
 		Slot *s = _slots[i];
 
 		if (s->hasName()) {
@@ -1021,11 +1024,12 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 
 	if (_bounds.contains(event.mouse)) {
 		int pos = _bounds.top + getHandlePosition();
+		int numSlots = ARRAYSIZE(_slots);
 
 		if (event.mouse.y < pos)
-			moveInvOffset(-6);
+			moveInvOffset(-numSlots);
 		else if (event.mouse.y >= pos + 8)
-			moveInvOffset(6);
+			moveInvOffset(numSlots);
 	}
 
 	return false;
@@ -1041,11 +1045,12 @@ void MacIndy3Gui::Inventory::ScrollBar::setCounters(int invCount, int invOffset)
 
 void MacIndy3Gui::Inventory::ScrollBar::moveInvOffset(int offset) {
 	int newOffset = _invOffset + offset;
+	int maxOffset = _invCount - ARRAYSIZE(_slots);
 
 	if (newOffset < 0)
 		newOffset = 0;
-	else if (newOffset > _invCount - 6)
-		newOffset = _invCount - 6;
+	else if (newOffset > maxOffset)
+		newOffset = maxOffset;
 
 	if (newOffset != _invOffset) {
 		_invOffset = newOffset;
@@ -1061,11 +1066,12 @@ int MacIndy3Gui::Inventory::ScrollBar::getHandlePosition() {
 	// Hopefully this matches the original scroll handle position.
 
 	int maxPos = _bounds.height() - 8;
+	int maxOffset = _invCount - ARRAYSIZE(_slots);
 
-	if (_invOffset >= _invCount - 6)
+	if (_invOffset >= maxOffset)
 		return maxPos;
 
-	return maxPos * _invOffset / (_invCount - 6);
+	return maxPos * _invOffset / maxOffset;
 }
 
 void MacIndy3Gui::Inventory::ScrollBar::reset() {
