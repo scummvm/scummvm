@@ -3737,18 +3737,20 @@ void asCScriptEngine::CallObjectMethod(void *obj, asSSystemFunctionInterface *i,
 		asCGeneric gen(const_cast<asCScriptEngine *>(this), s, obj, 0);
 		void (*f)(asIScriptGeneric *) = (void (*)(asIScriptGeneric *))(i->func);
 		f(&gen);
-	} else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
+	}
+#ifndef AS_NO_CLASS_METHODS
+	else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
 		// For virtual thiscalls we must call the method as a true class method
 		// so that the compiler will lookup the function address in the vftable
 		union {
 			asSIMPLEMETHOD_t mthd;
 			struct {
 				asFUNCTION_t func;
-				asPWORD baseOffset;  // Same size as the pointer
+				asPWORD baseOffset; // Same size as the pointer
 			} f;
 		} p;
 
-		obj = (void *)((char *) obj +  i->compositeOffset);
+		obj = (void *)((char *)obj + i->compositeOffset);
 		if (i->isCompositeIndirect)
 			obj = *((void **)obj);
 
@@ -3756,7 +3758,9 @@ void asCScriptEngine::CallObjectMethod(void *obj, asSSystemFunctionInterface *i,
 		p.f.baseOffset = asPWORD(i->baseOffset);
 		void (asCSimpleDummy::*f)() = p.mthd;
 		(((asCSimpleDummy *)obj)->*f)();
-	} else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
+	}
+#endif
+	else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
 		void (*f)(void *) = (void (*)(void *))(i->func);
 		f(obj);
 	}
@@ -3800,7 +3804,9 @@ bool asCScriptEngine::CallObjectMethodRetBool(void *obj, int func) const {
 		void (*f)(asIScriptGeneric *) = (void (*)(asIScriptGeneric *))(i->func);
 		f(&gen);
 		return *(bool *)gen.GetReturnPointer();
-	} else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
+	}
+#ifndef AS_NO_CLASS_METHODS
+	else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
 		// For virtual thiscalls we must call the method as a true class method so that the compiler will lookup the function address in the vftable
 		union {
 			asSIMPLEMETHOD_t mthd;
@@ -3810,15 +3816,17 @@ bool asCScriptEngine::CallObjectMethodRetBool(void *obj, int func) const {
 			} f;
 		} p;
 
-		obj = (void *)((char *) obj +  i->compositeOffset);
+		obj = (void *)((char *)obj + i->compositeOffset);
 		if (i->isCompositeIndirect)
 			obj = *((void **)obj);
 
 		p.f.func = (asFUNCTION_t)(i->func);
 		p.f.baseOffset = asPWORD(i->baseOffset);
-		bool (asCSimpleDummy::*f)() = (bool (asCSimpleDummy::*)())(p.mthd);
+		bool (asCSimpleDummy::*f)() = (bool(asCSimpleDummy::*)())(p.mthd);
 		return (((asCSimpleDummy *)obj)->*f)();
-	} else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
+	}
+#endif
+	else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
 		bool (*f)(void *) = (bool (*)(void *))(i->func);
 		return f(obj);
 	}
@@ -3863,7 +3871,9 @@ int asCScriptEngine::CallObjectMethodRetInt(void *obj, int func) const {
 		void (*f)(asIScriptGeneric *) = (void (*)(asIScriptGeneric *))(i->func);
 		f(&gen);
 		return *(int *)gen.GetReturnPointer();
-	} else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
+	}
+#ifndef AS_NO_CLASS_METHODS
+	else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
 		// For virtual thiscalls we must call the method as a true class method so that the compiler will lookup the function address in the vftable
 		union {
 			asSIMPLEMETHOD_t mthd;
@@ -3875,13 +3885,15 @@ int asCScriptEngine::CallObjectMethodRetInt(void *obj, int func) const {
 		p.f.func = (asFUNCTION_t)(i->func);
 		p.f.baseOffset = asPWORD(i->baseOffset);
 
-		obj = (void *)((char *) obj +  i->compositeOffset);
+		obj = (void *)((char *)obj + i->compositeOffset);
 		if (i->isCompositeIndirect)
 			obj = *((void **)obj);
 
-		int (asCSimpleDummy::*f)() = (int (asCSimpleDummy::*)())(p.mthd);
+		int (asCSimpleDummy::*f)() = (int(asCSimpleDummy::*)())(p.mthd);
 		return (((asCSimpleDummy *)obj)->*f)();
-	} else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
+	}
+#endif
+	else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
 		int (*f)(void *) = (int (*)(void *))(i->func);
 		return f(obj);
 	}
@@ -3926,7 +3938,9 @@ void *asCScriptEngine::CallObjectMethodRetPtr(void *obj, int func) const {
 		void (*f)(asIScriptGeneric *) = (void (*)(asIScriptGeneric *))(i->func);
 		f(&gen);
 		return *(void **)gen.GetReturnPointer();
-	} else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
+	}
+#ifndef AS_NO_CLASS_METHODS
+	else if (i->callConv == ICC_THISCALL || i->callConv == ICC_VIRTUAL_THISCALL) {
 		// For virtual thiscalls we must call the method as a true class method so that the compiler will lookup the function address in the vftable
 		union {
 			asSIMPLEMETHOD_t mthd;
@@ -3938,13 +3952,15 @@ void *asCScriptEngine::CallObjectMethodRetPtr(void *obj, int func) const {
 		p.f.func = (asFUNCTION_t)(i->func);
 		p.f.baseOffset = asPWORD(i->baseOffset);
 
-		obj = (void *)((char *) obj +  i->compositeOffset);
+		obj = (void *)((char *)obj + i->compositeOffset);
 		if (i->isCompositeIndirect)
 			obj = *((void **)obj);
 
 		void *(asCSimpleDummy::*f)() = (void *(asCSimpleDummy::*)())(p.mthd);
 		return (((asCSimpleDummy *)obj)->*f)();
-	} else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
+	}
+#endif
+	else { /*if( i->callConv == ICC_CDECL_OBJLAST || i->callConv == ICC_CDECL_OBJFIRST )*/
 		void *(*f)(void *) = (void *(*)(void *))(i->func);
 		return f(obj);
 	}
@@ -4093,26 +4109,30 @@ void asCScriptEngine::CallObjectMethod(void *obj, void *param, asSSystemFunction
 		asCGeneric gen(const_cast<asCScriptEngine *>(this), s, obj, (asDWORD *)&param);
 		void (*f)(asIScriptGeneric *) = (void (*)(asIScriptGeneric *))(i->func);
 		f(&gen);
-	} else if (i->callConv == ICC_VIRTUAL_THISCALL || i->callConv == ICC_THISCALL) {
+	}
+#ifndef AS_NO_CLASS_METHODS
+	else if (i->callConv == ICC_VIRTUAL_THISCALL || i->callConv == ICC_THISCALL) {
 		// For virtual thiscalls we must call the method as a true class method
 		// so that the compiler will lookup the function address in the vftable
 		union {
 			asSIMPLEMETHOD_t mthd;
 			struct {
 				asFUNCTION_t func;
-				asPWORD baseOffset;  // Same size as the pointer
+				asPWORD baseOffset; // Same size as the pointer
 			} f;
 		} p;
 		p.f.func = (asFUNCTION_t)(i->func);
 		p.f.baseOffset = asPWORD(i->baseOffset);
 
-		obj = (void *)((char *) obj +  i->compositeOffset);
+		obj = (void *)((char *)obj + i->compositeOffset);
 		if (i->isCompositeIndirect)
 			obj = *((void **)obj);
 
-		void (asCSimpleDummy::*f)(void *) = (void (asCSimpleDummy::*)(void *))(p.mthd);
+		void (asCSimpleDummy::*f)(void *) = (void(asCSimpleDummy::*)(void *))(p.mthd);
 		(((asCSimpleDummy *)obj)->*f)(param);
-	} else { /*if( i->callConv == ICC_CDECL_OBJFIRST */
+	}
+#endif
+	else { /*if( i->callConv == ICC_CDECL_OBJFIRST */
 		void (*f)(void *, void *) = (void (*)(void *, void *))(i->func);
 		f(obj, param);
 	}

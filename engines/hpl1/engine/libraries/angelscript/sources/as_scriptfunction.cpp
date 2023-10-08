@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2021 Andreas Jonsson
+   Copyright (c) 2003-2023 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any
@@ -11,15 +11,15 @@
    redistribute it freely, subject to the following restrictions:
 
    1. The origin of this software must not be misrepresented; you
-      must not claim that you wrote the original software. If you use
-      this software in a product, an acknowledgment in the product
-      documentation would be appreciated but is not required.
+	  must not claim that you wrote the original software. If you use
+	  this software in a product, an acknowledgment in the product
+	  documentation would be appreciated but is not required.
 
    2. Altered source versions must be plainly marked as such, and
-      must not be misrepresented as being the original software.
+	  must not be misrepresented as being the original software.
 
    3. This notice may not be removed or altered from any source
-      distribution.
+	  distribution.
 
    The original version of this library can be located at:
    http://www.angelcode.com/angelscript/
@@ -52,7 +52,7 @@
 
 BEGIN_AS_NAMESPACE
 
-#ifdef AS_MAX_PORTABILITY
+#if defined(AS_MAX_PORTABILITY) || defined(AS_NO_CLASS_METHODS)
 
 static void ScriptFunction_AddRef_Generic(asIScriptGeneric *gen) {
 	asCScriptFunction *self = (asCScriptFunction *)gen->GetObject();
@@ -91,11 +91,13 @@ static void ScriptFunction_ReleaseAllHandles_Generic(asIScriptGeneric *gen) {
 	self->ReleaseAllHandles(engine);
 }
 
+#ifdef AS_MAX_PORTABILITY
 static void ScriptFunction_CreateDelegate_Generic(asIScriptGeneric *gen) {
 	asCScriptFunction *func = (asCScriptFunction *)gen->GetArgAddress(0);
 	void *obj = gen->GetArgAddress(1);
 	gen->SetReturnAddress(CreateDelegate(func, obj));
 }
+#endif
 
 // TODO: operator==
 /*static void ScriptFunction_opEquals_Generic(asIScriptGeneric *gen)
