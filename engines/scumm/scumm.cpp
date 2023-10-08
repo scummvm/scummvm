@@ -1164,10 +1164,8 @@ Common::Error ScummEngine::init() {
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
-"be disabled."), _("OK"));
-				dialog.runModal();
+				return Common::Error(Common::kReadingFailed, _(
+"This game requires the 'Indy' Macintosh executable for its fonts."));
 			}
 
 		} else if (_game.id == GID_LOOM) {
@@ -1190,10 +1188,8 @@ Common::Error ScummEngine::init() {
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
-"versions of font and cursor will be disabled."), _("OK"));
-				dialog.runModal();
+				return Common::Error(Common::kReadingFailed, _(
+"This game requires the 'Loom' Macintosh executable for its music and fonts."));
 			}
 		} else if (_game.id == GID_MONKEY) {
 			// Try both with and without underscore in the
