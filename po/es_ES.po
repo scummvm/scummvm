@@ -4576,8 +4576,8 @@ msgstr ""
 "Solo es necesario seguir los pasos 2 y 3 una vez. Si quieres añadir más "
 "juegos, repite los pasos 1 y 6. \n"
 "\n"
-"Para más información, puedes ver nuestra [documentación sobre "
-"Android](https://docs.scummvm.org/en/latest/other_platforms/android.html).\n"
+"Para más información, puedes ver nuestra [documentación sobre Android]"
+"(https://docs.scummvm.org/en/latest/other_platforms/android.html).\n"
 
 #: backends/platform/android/options.cpp:131
 msgid "Show On-screen control"
