@@ -513,13 +513,13 @@ void Room706::daemon() {
 		_G(game).setRoom(_G(executing) == WHOLE_GAME ? 903 : 901);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_G(wilbur_should) = 21;
 			_flag6 = true;
 			_series6 = series_play("706WIT01", 0x200);
-			digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+			digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 21:
@@ -559,7 +559,7 @@ void Room706::conv83() {
 
 		} else if (who == 1) {
 			_G(wilbur_should) = 1;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	}
 }

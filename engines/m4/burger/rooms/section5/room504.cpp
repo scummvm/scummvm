@@ -241,13 +241,13 @@ void Room504::init() {
 
 	case 503:
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -297,7 +297,7 @@ void Room504::daemon() {
 				_val1 = 26;
 				kernel_trigger_dispatch_now(5);
 				_G(wilbur_should) = 6;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_val1 = imath_ranged_rand(0, 100) >= 75 ? 25 : 22;
 				kernel_trigger_dispatch_now(5);
@@ -314,7 +314,7 @@ void Room504::daemon() {
 		case 23:
 			_state2 = imath_ranged_rand(1, 3);
 			_G(wilbur_should) = 12;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			_val1 = 21;
 			series_play_with_breaks(PLAY14, "504BK09", 0x850, 5, 2, 12);
 			break;
@@ -477,10 +477,10 @@ void Room504::daemon() {
 
 	case 5002:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(true);
@@ -499,14 +499,14 @@ void Room504::daemon() {
 				_G(wilbur_should) = 1;
 			}
 
-			series_play_with_breaks(PLAY1, "504wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "504wi01", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			series_play_with_breaks(PLAY2, "504wi02", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "504wi02", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			pal_fade_init(_G(kernel).first_fade, 255, 0, 60, 5007);
 			break;
 
@@ -514,7 +514,7 @@ void Room504::daemon() {
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			series_play_with_breaks(PLAY8, "504wi06", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY8, "504wi06", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
@@ -523,7 +523,7 @@ void Room504::daemon() {
 			_val1 = 27;
 			_G(wilbur_should) = 39;
 
-			series_play_with_breaks(PLAY9, "504Wi07", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY9, "504Wi07", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			inv_move_object("DIRTY SOCK", NOWHERE);
 			break;
 
@@ -534,7 +534,7 @@ void Room504::daemon() {
 			ws_hide_walker();
 			_val3 = 34;
 
-			series_play_with_breaks(PLAY3, "504wi3b", 0x200, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY3, "504wi3b", 0x200, kCHANGE_WILBUR_ANIMATION, 2);
 			_G(flags)[V211] = 5000;
 			break;
 
@@ -543,7 +543,7 @@ void Room504::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_val3 = 35;
-			series_play_with_breaks(PLAY4, "504Wi3A", 0x200, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY4, "504Wi3A", 0x200, kCHANGE_WILBUR_ANIMATION, 2);
 			_G(flags)[V211] = 5001;
 			break;
 
@@ -558,7 +558,7 @@ void Room504::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_val4 = 34;
-			series_play_with_breaks(PLAY6, "504Wi4B", 0x200, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY6, "504Wi4B", 0x200, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 11:
@@ -566,7 +566,7 @@ void Room504::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_val4 = 35;
-			series_play_with_breaks(PLAY7, "504Wi4A", 0x200, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY7, "504Wi4A", 0x200, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 12: {
@@ -577,7 +577,7 @@ void Room504::daemon() {
 
 			ws_demand_location(x, _G(player_info).y);
 			ws_hide_walker();
-			series_play_with_breaks(PLAY10, "504Wi08", 0x200, gCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY10, "504Wi08", 0x200, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		}
@@ -665,32 +665,32 @@ void Room504::parser() {
 		player_set_commands_allowed(false);
 		_G(kernel).trigger_mode = KT_DAEMON;
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "DIRTY SOCK ")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("DIRTY SOCK", "WRINGER")) {
 		player_set_commands_allowed(false);
 		_flag1 = true;
 	} else if (player_said("GEAR", "INSIDE BREAKER")) {
 		if (_G(flags)[V211] == 5000) {
 			_G(wilbur_should) = 8;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			_G(wilbur_should) = 7;
 			_G(flags)[V211] = 5000;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("GEAR", "OUTSIDE BREAKER")) {
 		if (_G(flags)[V212] == 5000) {
 			_G(wilbur_should) = 11;
 			_G(flags)[V212] = 5001;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			_G(wilbur_should) = 10;
 			_G(flags)[V212] = 5000;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("LOOK AT", "HOLE")) {
 		_val5 = 19;

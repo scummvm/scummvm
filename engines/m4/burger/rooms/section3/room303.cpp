@@ -230,7 +230,7 @@ void Room303::doDaemon(int trigger) {
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(290, 325, 0, gCHANGE_WILBUR_ANIMATION, 1);
+			ws_walk(290, 325, 0, kCHANGE_WILBUR_ANIMATION, 1);
 		}
 		break;
 
@@ -241,7 +241,7 @@ void Room303::doDaemon(int trigger) {
 		} else {
 			_G(wilbur_should) = 18;
 			player_set_commands_allowed(false);
-			ws_walk(261, 276, 0, gCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(261, 276, 0, kCHANGE_WILBUR_ANIMATION, 3);
 		}
 		break;
 
@@ -316,7 +316,7 @@ void Room303::doDaemon(int trigger) {
 			_series3 = series_play("303ft_on", 0xd00, 0, -1, 0, -1);
 
 			if (_G(wilbur_should) == 19)
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 3:
@@ -338,7 +338,7 @@ void Room303::doDaemon(int trigger) {
 				doDaemon(8);
 			}
 			if (_G(wilbur_should) == 20)
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -492,13 +492,13 @@ void Room303::doDaemon(int trigger) {
 		hotspot_set_active("JUG  ", false);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 11:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 
 			if (_val5 > 0 && _val5 < 15) {
 				_val8 = 27;
@@ -516,7 +516,7 @@ void Room303::doDaemon(int trigger) {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 			kernel_trigger_dispatch_now(11);
 
 			_val6 = 34;
@@ -530,7 +530,7 @@ void Room303::doDaemon(int trigger) {
 			player_set_commands_allowed(false);
 			kernel_trigger_dispatch_now(11);
 			_G(wilbur_should) = 10001;
-			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 			_val6 = 34;
 			_val9 = 10;
 			series_play_with_breaks(PLAY4, "303wi4a", 0x100, 1, 3);
@@ -541,7 +541,7 @@ void Room303::doDaemon(int trigger) {
 			ws_hide_walker();
 
 			_G(wilbur_should) = 10001;
-			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 			_val6 = _G(flags)[V122] ? 32 : 30;
 			_val9 = 10;
 			series_play_with_breaks(PLAY5, "303wi4a", 0x100, 1, 3);
@@ -551,14 +551,14 @@ void Room303::doDaemon(int trigger) {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 23;
-			series_play_with_breaks(PLAY10, "303wi15", 0x100, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY10, "303wi15", 0x100, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 16:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 17;
-			series_play_with_breaks(PLAY2, "303wi03", 0x100, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "303wi03", 0x100, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 17:
@@ -640,7 +640,7 @@ void Room303::doDaemon(int trigger) {
 void Room303::pre_parser() {
 	if (player_said("GEAR", "BOILER") && !_G(flags)[V119]) {
 		_G(wilbur_should) = 15;
-		player_hotspot_walk_override(409, 312, 3, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(409, 312, 3, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	} else {
 		if (player_said("FRONT YARD") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
@@ -675,13 +675,13 @@ void Room303::parser() {
 	} else if (player_said("JUG", "STOOL") || player_said("DISTILLED CARROT JUICE", "STOOL")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 11;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("JUG", "JUG ", "JUG  ") && player_said("CARROT JUICE")) {
 		wilbur_speech("300w046");
 	} else if (player_said("JUG", "STUMP") || player_said("DISTILLED CARROT JUICE", "STUMP")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 14;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BOTTLE", "BOILER")) {
 		wilbur_speech("300w074");
 	} else if (player_said("BOTTLE", "STOOL")) {
@@ -698,10 +698,10 @@ void Room303::parser() {
 		kernel_trigger_dispatch_now(7);
 	} else if (player_said("LOOK AT", "BURNER")) {
 		_G(wilbur_should) = 21;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("GEAR", "BURNER")) {
 		_G(wilbur_should) = 22;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("MATCHES", "BURNER")) {
 		if (_G(flags)[V118] == 3001) {
 			player_set_commands_allowed(false);
@@ -711,16 +711,16 @@ void Room303::parser() {
 	} else if (player_said("GEAR", "BOILER")) {
 		if (_G(flags)[V119])
 			_G(wilbur_should) = 24;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);		
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);		
 	} else if (player_said("BOILER", "CARROT JUICE")) {
 		_G(wilbur_should) = 16;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "JUG ") || player_said("TAKE", "DISTILLED CARROT JUICE ")) {
 		_G(wilbur_should) = 12;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "JUG  ") || player_said("TAKE", "DISTILLED CARROT JUICE  ")) {
 		_G(wilbur_should) = 13;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("LOOK AT", "KEG")) {
 		wilbur_speech(_G(flags)[V120] ? "303w027" : "303w026");
 	} else if (player_said("BURNER")) {

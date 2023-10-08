@@ -82,7 +82,7 @@ void Room307::daemon() {
 		break;
 
 	case 6:
-		wilbur_speech("307w002", g10027);
+		wilbur_speech("307w002", k10027);
 		break;
 
 	case 7:

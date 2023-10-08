@@ -1021,13 +1021,13 @@ void Room143::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 2:
 			terminateMachineAndNull(_mouseTrap);
 			disable_player();
 			_G(wilbur_should) = 3;
-			series_play_with_breaks(PLAY1, "143wi02", 0xf00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 25, 0);
+			series_play_with_breaks(PLAY1, "143wi02", 0xf00, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 25, 0);
 			_val1 = 21;
 			break;
 
@@ -1042,7 +1042,7 @@ void Room143::daemon() {
 			_digiName = "143v501";
 			_digiMode = KT_DAEMON;
 			_G(wilbur_should) = 5;
-			_digiTrigger = gCHANGE_WILBUR_ANIMATION;
+			_digiTrigger = kCHANGE_WILBUR_ANIMATION;
 			_G(flags)[V064] = 1;
 			loadCheese();
 			hotspot_set_active("cheese", true);
@@ -1159,7 +1159,7 @@ void Room143::parser() {
 		wilbur_speech("143w030");
 	} else if (player_said("take", "mouse trap")) {
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("talk to", "vera")) {
 		talkToVera();
 	} else if (player_said("talk to", "burl")) {

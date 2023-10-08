@@ -136,7 +136,7 @@ void Room304::daemon() {
 			_G(flags)[V129] = 1;
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 5;
-			ws_walk(300, 306, nullptr, gCHANGE_WILBUR_ANIMATION, 4);
+			ws_walk(300, 306, nullptr, kCHANGE_WILBUR_ANIMATION, 4);
 		}
 		break;
 
@@ -157,7 +157,7 @@ void Room304::daemon() {
 	case 5:
 		_fire = series_play("304fire1", 0xa00, 0, -1, 6, -1);
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 6:
@@ -165,7 +165,7 @@ void Room304::daemon() {
 		hotspot_set_active("MATCHES ", false);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
@@ -186,14 +186,14 @@ void Room304::daemon() {
 			ws_hide_walker();
 			terminateMachineAndNull(_matches);
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY3, "304wb01", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY3, "304wb01", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY2, "304wi03", 0x101, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY2, "304wi03", 0x101, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 5:
@@ -223,7 +223,7 @@ void Room304::parser() {
 		// Already handled
 	} else if (player_said("OPEN", "DOOR") || player_said("GEAR", "DOOR")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("LOOK AT", "MAP")) {
 		wilbur_speech(_G(flags)[V135] ? "304w012" : "304w011");
 	} else if (player_said("DISTILLED CARROT JUICE") &&
@@ -238,13 +238,13 @@ void Room304::parser() {
 		wilbur_speech("300w035z");
 	} else if (player_said("MATCHES", "STOVE") && !_G(flags)[V130]) {
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "MATCHES ")) {
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("READ", "RECIPE BOOK") || player_said("LOOK AT", "RECIPE BOOK")) {
 		_G(wilbur_should) = 4;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

@@ -483,7 +483,7 @@ void Section5::daemon() {
 		disable_player_commands_and_fade_init(5017);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 5001:
 			_G(flags)[V234] = 1;
@@ -491,7 +491,7 @@ void Section5::daemon() {
 			_G(wilbur_should) = 5002;
 			player_update_info();
 			series_play_with_breaks(PLAY1, "503wi07", _G(player_info).depth,
-				gCHANGE_WILBUR_ANIMATION, 3, _G(player_info).scale,
+				kCHANGE_WILBUR_ANIMATION, 3, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 
@@ -531,7 +531,7 @@ void Section5::parser() {
 			_G(flags)[V234] == 0 && _G(game).previous_room != 508) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 5001;
-		ws_turn_to_face(4, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(4, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GIZMO") && player_said_any("WILBUR", "GEAR", "TAKE")) {
 		takeGizmo(_G(master_palette));
@@ -574,7 +574,7 @@ void Section5::flagsTrigger() {
 
 	if (checkFlags()) {
 		_G(wilbur_should) = 5003;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		kernel_trigger_dispatch_now(5002);
 	}

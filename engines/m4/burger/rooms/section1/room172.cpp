@@ -284,7 +284,7 @@ void Room172::daemon() {
 		_G(flags)[V299] = 0;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_convName = _G(flags)[V087] ? "172p903" : "172p902";
@@ -295,7 +295,7 @@ void Room172::daemon() {
 		case 2:
 			disable_player();
 			_G(wilbur_should) = 3;
-			series_play_with_breaks(PLAY1, "172wi01", 0x700, gCHANGE_WILBUR_ANIMATION, 3, 8);
+			series_play_with_breaks(PLAY1, "172wi01", 0x700, kCHANGE_WILBUR_ANIMATION, 3, 8);
 			break;
 
 		case 3:
@@ -350,12 +350,12 @@ void Room172::parser() {
 			kernel_trigger_dispatch_now(1);
 		} else {
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("WHISTLE", "AUNT POLLY")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 1;
-		wilbur_speech("172w901", gCHANGE_WILBUR_ANIMATION);
+		wilbur_speech("172w901", kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TALK", "AUNT POLLY")) {
 		kernel_trigger_dispatch_now(3);
 	} else if (player_said("AUNT POLLY") && player_said_any("PHONE BILL", "CARROT JUICE")) {

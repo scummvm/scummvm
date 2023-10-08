@@ -88,12 +88,12 @@ void Room404::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_G(wilbur_should) = 2;
 			disable_player();
-			series_play_with_breaks(PLAY1, "404wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 1);
+			series_play_with_breaks(PLAY1, "404wi01", 0x200, kCHANGE_WILBUR_ANIMATION, 1);
 			break;
 
 		case 2:
@@ -134,7 +134,7 @@ void Room404::parser() {
 	} else if (player_said("IMPOUND YARD")) {
 		if (player_said("TAKE", "QUARTER ")) {
 			_G(wilbur_should) = 1;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("TOILET")) {
 			wilbur_speech("404w004");
 		} else if (player_said("BARS")) {

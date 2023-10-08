@@ -525,7 +525,7 @@ void Room407::daemon() {
 		_G(flags)[V181] = 1;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
@@ -561,7 +561,7 @@ void Room407::daemon() {
 		}
 		break;
 
-	case gSET_COMMANDS_ALLOWED:
+	case kSET_COMMANDS_ALLOWED:
 		if (!_G(flags)[V181] && _G(flags)[V171] == 4003) {
 			_val5 = 38;
 			kernel_timing_trigger(60, 9);

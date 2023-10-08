@@ -215,7 +215,7 @@ void Room402::init() {
 
 		if (_G(game).previous_room != RESTORING_GAME) {
 			_G(wilbur_should) = 5;
-			kernel_timing_trigger(120, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(120, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else {
 		_G(flags)[V298] = 1;
@@ -236,7 +236,7 @@ void Room402::init() {
 				_val2 = 15;
 			} else {
 				_G(wilbur_should) = 5;
-				kernel_timing_trigger(120, gCHANGE_WILBUR_ANIMATION);
+				kernel_timing_trigger(120, kCHANGE_WILBUR_ANIMATION);
 				_val2 = 15;
 			}
 		} else {
@@ -253,7 +253,7 @@ void Room402::init() {
 
 				_val2 = 16;
 				_G(wilbur_should) = 2;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 		}
 
@@ -834,11 +834,11 @@ void Room402::daemon() {
 		Series::series_play("402pe04", 0x100, 0, 29, 6, 0, 100, 0, 0, 17, 21);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 2:
 			_G(wilbur_should) = 3;
-			kernel_timing_trigger(180, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(180, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 3:

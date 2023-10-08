@@ -601,12 +601,12 @@ void Room138::daemon() {
 		kernel_timing_trigger(10, 13);
 		break;
 
-	case gWILBURS_SPEECH_START:
+	case kWILBURS_SPEECH_START:
 		_val8 = 15;
 		player_set_commands_allowed(false);
 		break;
 
-	case gWILBURS_SPEECH_FINISHED:
+	case kWILBURS_SPEECH_FINISHED:
 		_val8 = 1;
 		player_set_commands_allowed(true);
 		_G(kernel).continue_handling_trigger = true;

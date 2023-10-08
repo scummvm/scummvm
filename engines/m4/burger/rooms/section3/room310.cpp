@@ -206,7 +206,7 @@ void Room310::daemon() {
 		_val2 = 16;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			ws_hide_walker();
@@ -218,7 +218,7 @@ void Room310::daemon() {
 		case 2:
 			_general.terminate();
 			_G(wilbur_should) = 3;
-			series_play_with_breaks(PLAY4, "310wi01", 0xb00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY4, "310wi01", 0xb00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -257,7 +257,7 @@ void Room310::daemon() {
 		case 6:
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 1;
-			wilbur_speech("310w008", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("310w008", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		default:
@@ -277,7 +277,7 @@ void Room310::pre_parser() {
 
 	if (player_said("GEAR", "PROBE") && (!_G(flags)[V111] || _G(flags)[V144] == 1)) {
 		_G(wilbur_should) = 6;
-		player_hotspot_walk_override(293, 288, 3, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(293, 288, 3, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	} else if (!_G(flags)[V144]) {
 		HotSpotRec *hotspot = hotspot_which(_G(click_x), _G(click_y));
@@ -309,7 +309,7 @@ void Room310::parser() {
 		}
 	} else if (player_said("LOOK AT", "TRUFFLES")) {
 		_G(wilbur_should) = 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

@@ -64,7 +64,7 @@ void Room306::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
-		release_trigger_on_digi_state(g10027, 1);
+		release_trigger_on_digi_state(k10027, 1);
 		break;
 
 	case 3007:

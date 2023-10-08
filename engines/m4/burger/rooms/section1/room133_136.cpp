@@ -77,7 +77,7 @@ void Room133_136::init() {
 	case 134:
 	case 135:
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 136:
@@ -86,7 +86,7 @@ void Room133_136::init() {
 
 	case 137:
 		_G(wilbur_should) = 4;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -246,7 +246,7 @@ void Room133_136::daemon() {
 		wilbur_speech("136w0004");
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 3:
 			player_set_commands_allowed(true);

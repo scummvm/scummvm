@@ -107,7 +107,7 @@ void Room170::daemon() {
 		disable_player_commands_and_fade_init(1018);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
@@ -117,7 +117,7 @@ void Room170::daemon() {
 		case 3:
 			disable_player();
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY2, "170wi03", 0xa00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY2, "170wi03", 0xa00, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 4:
@@ -132,7 +132,7 @@ void Room170::daemon() {
 		case 5:
 			disable_player();
 			_G(wilbur_should) = 6;
-			series_play_with_breaks(PLAY3, "170wi03", 0xa00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY3, "170wi03", 0xa00, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 6:
@@ -193,17 +193,17 @@ void Room170::parser() {
 		disable_player_commands_and_fade_init(1014);
 	} else if (player_said_any("GEAR", "LOOK AT") && player_said("FRONT DOOR")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said_any("GEAR", "LOOK AT") && player_said("MAILBOX")) {
 		if (_G(flags)[V079]) {
 			player_set_commands_allowed(false);
 
 			if (_G(flags)[V080]) {
 				_G(wilbur_should) = 5;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_G(wilbur_should) = 3;
-				wilbur_speech("170w004", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("170w004", kCHANGE_WILBUR_ANIMATION);
 			}
 		} else {
 			wilbur_speech("170w008");

@@ -93,7 +93,7 @@ void Room505::init() {
 	case 502:
 		ws_demand_location(333, 271, 3);
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 506:
@@ -117,7 +117,7 @@ void Room505::init() {
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -255,14 +255,14 @@ void Room505::daemon() {
 		_series1 = series_play("505fan", 0xbff);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
 			ws_demand_location(333, 271, 3);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY1, "505wi01", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "505wi01", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -275,7 +275,7 @@ void Room505::daemon() {
 
 		case 3:
 			_G(wilbur_should) = 2;
-			wilbur_speech("500w054", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("500w054", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		default:
@@ -321,12 +321,12 @@ void Room505::parser() {
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("SOAPY WATER", "RAILING")) {
 		_G(flags)[V196] = 1;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

@@ -178,7 +178,7 @@ void Mine::daemon() {
 				_G(wilbur_should) = 408;
 			}
 
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (_G(game).room_id != 305) {
 			if (!_G(flags)[V137]) {
 				_G(flags)[V137] = 1;
@@ -191,7 +191,7 @@ void Mine::daemon() {
 				_G(wilbur_should) = inv_player_has("WHISTLE") ? 406 : 405;
 			}
 
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -219,7 +219,7 @@ void Mine::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 401:
 			wilbur_speech("311w001");
@@ -228,7 +228,7 @@ void Mine::daemon() {
 		case 402:
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 403;
-			wilbur_speech("311w002", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("311w002", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 403:
@@ -267,7 +267,7 @@ void Mine::daemon() {
 			wilbur_speech("310w001");
 			break;
 
-		case g10013:
+		case kWILBUR_SPEECH_STARTED:
 			player_set_commands_allowed(true);
 			ws_unhide_walker();
 			_G(wilbur_should) = 10002;
@@ -407,7 +407,7 @@ void Mine::parser() {
 			mine_travel_link(BACK);
 	} else if (player_said("LOOK AT", "DEBRIS") && _G(game).room_id != 305) {
 		_G(wilbur_should) = 407;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

@@ -219,7 +219,7 @@ void Walker::wilbur_speech(const char *name, int trigger, int room, byte flags, 
 	_flag = (flags & 1) != 0;
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatch_now(gWILBURS_SPEECH_START);
+	kernel_trigger_dispatch_now(kWILBURS_SPEECH_START);
 	_G(kernel).trigger_mode = oldMode;
 }
 
@@ -233,8 +233,8 @@ void Walker::wilbur_say() {
 	digi_stop(_channel);
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatch_now(10013);
-	digi_play(_name, _channel, _vol, gWILBURS_SPEECH_FINISHED, _room);
+	kernel_trigger_dispatch_now(kWILBUR_SPEECH_STARTED);
+	digi_play(_name, _channel, _vol, kWILBURS_SPEECH_FINISHED, _room);
 
 	_G(kernel).trigger_mode = oldMode;
 }
@@ -407,7 +407,7 @@ bool Walker::wilbur_match(const WilburMatch *list) {
 void Walker::wilbur_poof() {
 	player_update_info();
 	_wilburPoof = series_load("999poof");
-	series_play("999poof", _G(player_info).depth, 0, gUNPOOF, 6, 0,
+	series_play("999poof", _G(player_info).depth, 0, kUNPOOF, 6, 0,
 		_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 	digi_play("999_003", 1, 255);
 }
@@ -422,7 +422,7 @@ void player_walk_to(int32 x, int32 y, int32 facing_x, int32 facing_y, int trigge
 	_G(player_facing_x) = facing_x;
 	_G(player_facing_y) = facing_y;
 	_G(player_trigger) = trigger;
-	player_hotspot_walk_override(x, y, -1, gSET_FACING);
+	player_hotspot_walk_override(x, y, -1, kSET_FACING);
 }
 
 void player_walk_to(int32 x, int32 y, int trigger) {

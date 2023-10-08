@@ -373,14 +373,14 @@ void Room139_144::daemon() {
 		}
 		break;
 
-	case g10028:
+	case k10028:
 		if (!_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
 			Section1::updateDisablePlayer();
 			kernel_timing_trigger(1, 3);
 		} else {
-			kernel_timing_trigger(60, g10028);
+			kernel_timing_trigger(60, k10028);
 		}
 		break;
 

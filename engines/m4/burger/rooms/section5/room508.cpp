@@ -209,7 +209,7 @@ void Room508::init() {
 			_val6 = 10;
 		}
 
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -224,7 +224,7 @@ void Room508::init() {
 			_G(wilbur_should) = 4;
 		}
 
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 	}
 
@@ -279,7 +279,7 @@ void Room508::daemon() {
 
 		case 17:
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			++_state3;
 			_val6 = 11;
 			setup();
@@ -363,14 +363,14 @@ void Room508::daemon() {
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, 5010);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_val1 = 3;
 			player_set_commands_allowed(false);
 			_flag1 = false;
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY6, "508Wi01", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY6, "508Wi01", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 2:
@@ -379,7 +379,7 @@ void Room508::daemon() {
 			terminateMachineAndNull(_series4);
 			_val1 = 1;
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY1, "508Wi06", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY1, "508Wi06", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 3:
@@ -391,10 +391,10 @@ void Room508::daemon() {
 
 			if (_G(flags)[V212] == 5000) {
 				_G(wilbur_should) = 6;
-				series_play_with_breaks(PLAY2, "508Wi06", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY2, "508Wi06", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 			} else {
 				_G(wilbur_should) = 5;
-				series_play_with_breaks(PLAY2, "508Wi03", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY2, "508Wi03", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 			}
 			break;
 
@@ -413,25 +413,25 @@ void Room508::daemon() {
 			if (_flag3) {
 				_G(wilbur_should) = 9;
 				_flag3 = false;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 
 			if (_val1 == 1) {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_show("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 0);
+					_series4 = series_show("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 0);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
 					_val1 = 1;
-					_series4 = series_play("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				default:
@@ -441,17 +441,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508Wi09", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508Wi09", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_show("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 2);
+					_series4 = series_show("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_play("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				default:
@@ -461,17 +461,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508Wi09", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508Wi09", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508Wi09", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508Wi09", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_show("508Wi09", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 3);
+					_series4 = series_show("508Wi09", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 3);
 					break;
 
 				default:
@@ -492,17 +492,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_show("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 0);
+					_series4 = series_show("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 0);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_play("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				default:
@@ -512,17 +512,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508wi10", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508wi10", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_show("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 2);
+					_series4 = series_show("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_play("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				default:
@@ -532,17 +532,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508wi10", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508wi10", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_show("508wi10", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 3);
+					_series4 = series_show("508wi10", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 3);
 					break;
 
 				default:
@@ -563,17 +563,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_show("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 0);
+					_series4 = series_show("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 0);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_play("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				default:
@@ -583,17 +583,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508wi11", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
+					_series4 = series_play("508wi11", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 2);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_show("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 2);
+					_series4 = series_show("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 2);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_play("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				default:
@@ -603,17 +603,17 @@ void Room508::daemon() {
 				switch (imath_ranged_rand(0, 2)) {
 				case 0:
 					_val1 = 1;
-					_series4 = series_play("508wi11", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
+					_series4 = series_play("508wi11", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 0, 3);
 					break;
 
 				case 1:
 					_val1 = 2;
-					_series4 = series_play("508wi11", 0x200, 2, gCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
+					_series4 = series_play("508wi11", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 20, 0, 100, 0, 0, 2, 3);
 					break;
 
 				case 2:
 					_val1 = 3;
-					_series4 = series_show("508wi11", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 40, 3);
+					_series4 = series_show("508wi11", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 40, 3);
 					break;
 
 				default:
@@ -631,10 +631,10 @@ void Room508::daemon() {
 			_val1 = 1;
 
 			if (_G(flags)[V212] == 5000) {
-				series_play_with_breaks(PLAY3, "508Wi07", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY3, "508Wi07", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 				inv_move_object("CHRISTMAS LIGHTS ", 508);
 			} else {
-				series_play_with_breaks(PLAY3, "508Wi04", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY3, "508Wi04", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 				inv_move_object("CHRISTMAS LIGHTS", 508);
 			}
 			break;
@@ -648,10 +648,10 @@ void Room508::daemon() {
 			_val1 = 1;
 
 			if (_G(flags)[V212] == 5000) {
-				series_play_with_breaks(PLAY4, "508Wi08", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY4, "508Wi08", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 				inv_move_object("CHRISTMAS LIGHTS ", 508);
 			} else {
-				series_play_with_breaks(PLAY4, "508Wi05", 0x300, gCHANGE_WILBUR_ANIMATION, 2);
+				series_play_with_breaks(PLAY4, "508Wi05", 0x300, kCHANGE_WILBUR_ANIMATION, 2);
 				inv_move_object("CHRISTMAS LIGHTS", 508);
 			}
 			break;
@@ -664,7 +664,7 @@ void Room508::daemon() {
 
 			if (inv_player_has("CHRISTMAS LIGHTS") || player_said("CHRISTMAS LIGHTS ")) {
 				_G(wilbur_should) = 8;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				_G(kernel).continue_handling_trigger = true;
 			} else {
 				terminateMachineAndNull(_series4);
@@ -700,16 +700,16 @@ void Room508::parser() {
 	} else if (player_said("HOLE") && player_said_any("CHRISTMAS LIGHTS ", "CHRISTMAS LIGHTS")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 7;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("ROOF") && player_said_any("CHRISTMAS LIGHTS ", "CHRISTMAS LIGHTS")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 8;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("WILBUR'S ROOM") && player_said_any("LEAVE", "LOOK AT", "GEAR")) {
 		player_set_commands_allowed(false);
 		_flag3 = true;
 		_G(wilbur_should) = 9;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

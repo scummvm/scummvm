@@ -99,7 +99,7 @@ void Section3::daemon() {
 			kernel_timing_trigger(15, 3008);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 3001:
 			player_update_info();
@@ -108,7 +108,7 @@ void Section3::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 3002;
 			series_play_with_breaks(PLAY1, "300wdcj", _G(player_info).depth,
-				gCHANGE_WILBUR_ANIMATION, 3, 6, _G(player_info).scale,
+				kCHANGE_WILBUR_ANIMATION, 3, 6, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 
@@ -119,7 +119,7 @@ void Section3::daemon() {
 			_G(wilbur_should) = 10001;
 
 			wilbur_speech(_G(flags)[V101] ? "300w041" : "300w040");
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 10013:
@@ -159,7 +159,7 @@ void Section3::parser() {
 			wilbur_speech("300w031");
 		} else if (player_said_any("GEAR", "WILBUR")) {
 			_G(wilbur_should) = 3001;
-			ws_turn_to_face(3, gCHANGE_WILBUR_ANIMATION);
+			ws_turn_to_face(3, kCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("BOTTLE")) {
 			wilbur_speech("300w076");
 		} else if (player_said("TAKE") && inv_player_has("DISTILLED CARROT JUICE")) {

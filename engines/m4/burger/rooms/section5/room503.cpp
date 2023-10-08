@@ -309,7 +309,7 @@ void Room503::init() {
 
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -461,7 +461,7 @@ void Room503::daemon() {
 		case 11:
 			_val6 = 26;
 			_G(wilbur_should) = 4;
-			wilbur_speech("500w017", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("500w017", kCHANGE_WILBUR_ANIMATION);
 			break;
 		case 12:
 			player_set_commands_allowed(false);
@@ -762,10 +762,10 @@ void Room503::daemon() {
 
 	case 5002:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(true);
@@ -785,7 +785,7 @@ void Room503::daemon() {
 				term_message("Wilbur waiting for bork to snarl at him but bork snarling already");
 				break;
 			default:
-				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+				kernel_timing_trigger(15, kCHANGE_WILBUR_ANIMATION);
 				break;
 			}
 			break;
@@ -795,7 +795,7 @@ void Room503::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY20, "503wi01", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY20, "503wi01", 0x800, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
@@ -819,7 +819,7 @@ void Room503::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 6;
 			_G(flags)[V204] = 5003;
-			series_play_with_breaks(PLAY22, "503wi03", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY22, "503wi03", 0x800, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
@@ -833,14 +833,14 @@ void Room503::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY23, "503wi06", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY23, "503wi06", 0x800, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 8:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY24, "503wi05", 0x800, gCHANGE_WILBUR_ANIMATION, 3, 6);
+			series_play_with_breaks(PLAY24, "503wi05", 0x800, kCHANGE_WILBUR_ANIMATION, 3, 6);
 			break;
 
 		default:
@@ -863,13 +863,13 @@ void Room503::pre_parser() {
 		_flag2 = true;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
-		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(260, 300, 2, kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "RUBBER GLOVES ") && !_flag3 &&
 			_G(flags)[kBORK_STATE] == 13 && _G(flags)[kBORK_STATE] != 16) {
 		_flag3 = true;
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
-		player_hotspot_walk_override(260, 300, 2, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(260, 300, 2, kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK", "ROLLING PIN") &&
 			(_G(flags)[kBORK_STATE] == 12 || _G(flags)[kBORK_STATE] == 11)) {
 		_flag1 = false;
@@ -878,7 +878,7 @@ void Room503::pre_parser() {
 		_val4 = 11;
 		_G(wilbur_should) = 1;
 		player_set_commands_allowed(false);
-		player_hotspot_walk_override(346, 283, 2, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(346, 283, 2, kCHANGE_WILBUR_ANIMATION);
 	} else {
 		if (_flag1) {
 			player_update_info();
@@ -955,24 +955,24 @@ void Room503::parser() {
 		// Already handled
 	} else if (player_said("TAKE", "ROLLING PIN ")) {
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "RUBBER GLOVES ") &&
 			(_G(flags)[kBORK_STATE] == 16 || _G(flags)[kBORK_STATE] == 13)) {
 		_G(wilbur_should) = 7;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("BORK") && player_said("LOOK AT") &&
 			(_G(flags)[kBORK_STATE] == 0 || _G(flags)[kBORK_STATE] == 1) &&
 			!player_said_any("GIZMO", "ROLLING PIN", "SOCK", "SOAPY WATER", "RUBBER_GLOVES") &&
 			!player_said("LAXATIVE")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("GEAR", "MICROWAVE") && _G(flags)[kBORK_STATE] == 13) {
 		_G(wilbur_should) = 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("GEAR", "OVEN") && (_G(flags)[kBORK_STATE] == 16 || _G(flags)[kBORK_STATE] == 13)) {
 		_G(wilbur_should) = 8;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("PARLOUR") && player_said_any("ENTER", "LOOK AT", "GEAR")) {
 		term_message("Going into 502!");
 		_val5 = 5006;

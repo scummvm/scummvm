@@ -60,7 +60,7 @@ void Room608::init() {
 	_G(wilbur_should) = (_G(game).previous_room == 605 ||
 		_G(game).previous_room == 606) ? 10016 : 10015;
 
-	kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+	kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 }
 
 void Room608::daemon() {
@@ -70,7 +70,7 @@ void Room608::daemon() {
 		release_trigger_on_digi_state(10027, 1);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 10015:
 			term_message("failed normally");

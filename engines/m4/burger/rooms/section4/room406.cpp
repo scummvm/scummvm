@@ -507,7 +507,7 @@ void Room406::init() {
 		if (_G(flags)[V174] == 4003) {
 			ws_hide_walker();
 			_G(wilbur_should) = 7;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -685,7 +685,7 @@ void Room406::daemon() {
 
 		case 34:
 			_G(wilbur_should) = 13;
-			wilbur_speech("406w017", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("406w017", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 35:
@@ -731,7 +731,7 @@ void Room406::daemon() {
 		case 45:
 			digi_unload("406_111");
 			_G(wilbur_should) = 15;
-			wilbur_speech("406w018", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("406w018", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 46:
@@ -1030,7 +1030,7 @@ void Room406::daemon() {
 
 		case 65:
 			_G(wilbur_should) = 21;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			_val1 = 64;
 			kernel_trigger_dispatch_now(12);
 			break;
@@ -1121,7 +1121,7 @@ void Room406::daemon() {
 		_coll.play("406coll", 0x4fd, 16);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			ws_unhide_walker();
@@ -1132,7 +1132,7 @@ void Room406::daemon() {
 			_val6 = 84;
 			_fishS = series_load("406fish");
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY2, "406wi05", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "406wi05", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -1140,14 +1140,14 @@ void Room406::daemon() {
 			_val7 = 82;
 			kernel_trigger_dispatch_now(14);
 			_G(wilbur_should) = 1;
-			series_play_with_breaks(PLAY4, "406wi03", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY4, "406wi03", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
 			terminateMachineAndNull(_tt);
 			disable_player();
 			_G(wilbur_should) = 5;
-			series_play_with_breaks(PLAY5, "406tt6a", 0x4fd, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY5, "406tt6a", 0x4fd, kCHANGE_WILBUR_ANIMATION, 2);
 			_wi03 = series_play("406wi03s", 0x4fe, 18);
 			break;
 
@@ -1162,7 +1162,7 @@ void Room406::daemon() {
 			terminateMachineAndNull(_tt);
 			disable_player();
 			_G(wilbur_should) = 7;
-			series_play_with_breaks(PLAY6, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "406wi04", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 7:
@@ -1176,7 +1176,7 @@ void Room406::daemon() {
 			_general.terminate();
 			disable_player();
 			_G(wilbur_should) = 9;
-			series_play_with_breaks(PLAY7, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY7, "406wi04", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 9:
@@ -1195,7 +1195,7 @@ void Room406::daemon() {
 			ws_demand_location(183, 281, 10);
 			disable_player();
 			_G(wilbur_should) = 12;
-			series_play_with_breaks(PLAY8, "406wi04", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY8, "406wi04", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 12:
@@ -1214,7 +1214,7 @@ void Room406::daemon() {
 
 			_G(wilbur_should) = 14;
 			digi_preload_stream_breaks(SERIES1);
-			series_stream_with_breaks(SERIES1, "406tt04", 6, 0x600, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(SERIES1, "406tt04", 6, 0x600, kCHANGE_WILBUR_ANIMATION);
 
 			_wi03 = series_play("406wi03s", 0x601, 18);
 			break;
@@ -1245,7 +1245,7 @@ void Room406::daemon() {
 			}
 
 			if (digi_play_state(2)) {
-				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+				kernel_timing_trigger(15, kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_gate.terminate();
 				series_unload(_gateS1);
@@ -1257,7 +1257,7 @@ void Room406::daemon() {
 				setHotspots2();
 
 				_G(wilbur_should) = 17;
-				series_play_with_breaks(PLAY1, "406wi01", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY1, "406wi01", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -1272,7 +1272,7 @@ void Room406::daemon() {
 			disable_player();
 			terminateMachineAndNull(_coll406);
 			_G(wilbur_should) = 19;
-			series_play_with_breaks(PLAY3, "406wi02", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY3, "406wi02", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 19:
@@ -1291,7 +1291,7 @@ void Room406::daemon() {
 		case 21:
 			ws_hide_walker();
 			_G(wilbur_should) = 19;
-			series_play_with_breaks(PLAY9, "406wi06", 0x4fd, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY9, "406wi06", 0x4fd, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		default:
@@ -1316,7 +1316,7 @@ void Room406::daemon() {
 		}
 		break;
 
-	case gSET_COMMANDS_ALLOWED:
+	case kSET_COMMANDS_ALLOWED:
 		if (!_val2)
 			player_set_commands_allowed(true);
 		break;
@@ -1340,11 +1340,11 @@ void Room406::pre_parser() {
 	if (inv_player_has("HOOK")) {
 		if (player_said("HOOK", "BARRED WINDOW ")) {
 			_G(wilbur_should) = 11;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (!player_said("HOOK") ||
 				(player_said("HOOK") && player_said_any("YARD", "YARD "))) {
 			_G(wilbur_should) = 8;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("GATE") && _G(flags)[V172] == 10025) {
 		player_hotspot_walk_override(280, 296, 2);

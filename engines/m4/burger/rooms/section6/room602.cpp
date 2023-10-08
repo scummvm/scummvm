@@ -371,7 +371,7 @@ void Room602::init() {
 		player_set_commands_allowed(true);
 		if (_G(flags)[V263]) {
 			_G(wilbur_should) = 11;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -379,17 +379,17 @@ void Room602::init() {
 		ws_hide_walker();
 		if (_G(roomVal7) == 1) {
 			_G(wilbur_should) = 2;
-			kernel_timing_trigger(30, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(30, kCHANGE_WILBUR_ANIMATION);
 		} else {
 			_G(wilbur_should) = 3;
-			kernel_timing_trigger(60, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(60, kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
 	case 604:
 		ws_hide_walker();
 		_G(wilbur_should) = 3;
-		kernel_timing_trigger(60, gCHANGE_WILBUR_ANIMATION);
+		kernel_timing_trigger(60, kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 609:
@@ -455,7 +455,7 @@ void Room602::daemon() {
 			wilbur_speech("602w005");
 			_series8 = series_play("612mot01", 0x400, 0, 1, 0, 0, 100, 0, 0, 8, 18);
 			_G(wilbur_should) = 10001;
-			kernel_timing_trigger(30, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(30, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 55:
@@ -529,7 +529,7 @@ void Room602::daemon() {
 			kernel_trigger_dispatch_now(1);
 
 			_G(wilbur_should) = (_G(flags)[V280] == 1) ? 10001 : 35;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 61:
@@ -667,7 +667,7 @@ void Room602::daemon() {
 	case 7:
 		inv_give_to_player("KIBBLE");
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 8:
@@ -676,7 +676,7 @@ void Room602::daemon() {
 
 	case 9:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(10);
 		break;
 
@@ -703,7 +703,7 @@ void Room602::daemon() {
 		break;
 
 	case 14:
-		digi_play("602w015", 1, 255, gCHANGE_WILBUR_ANIMATION, 602);
+		digi_play("602w015", 1, 255, kCHANGE_WILBUR_ANIMATION, 602);
 		break;
 
 	case 6011:
@@ -767,7 +767,7 @@ void Room602::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
@@ -781,7 +781,7 @@ void Room602::daemon() {
 			ws_demand_location(283, 338, 7);
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY2, "602wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "602wi01", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -789,7 +789,7 @@ void Room602::daemon() {
 			ws_demand_location(367, 280, 5);
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY1, "602wi02", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "602wi02", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
@@ -798,11 +798,11 @@ void Room602::daemon() {
 
 			if (_G(player).been_here_before) {
 				_G(wilbur_should) = 10001;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				player_set_commands_allowed(false);
 				_G(wilbur_should) = 45;
-				ws_turn_to_face(10, gCHANGE_WILBUR_ANIMATION);
+				ws_turn_to_face(10, kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
@@ -813,9 +813,9 @@ void Room602::daemon() {
 			_G(wilbur_should) = 30;
 
 			if (_G(game).room_id == 602) {
-				series_play_with_breaks(PLAY4, "602wi05", 0x500, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY4, "602wi05", 0x500, kCHANGE_WILBUR_ANIMATION, 3);
 			} else {
-				series_play_with_breaks(PLAY5, "602wi19", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY5, "602wi19", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -824,7 +824,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 31;
-			series_play_with_breaks(PLAY5, "602wi19", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY5, "602wi19", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 8:
@@ -832,7 +832,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 32;
-			series_play_with_breaks(PLAY6, "602wi18", 0x300, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "602wi18", 0x300, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 9:
@@ -840,7 +840,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 33;
-			series_play_with_breaks(PLAY7, "602wi21", 0x900, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY7, "602wi21", 0x900, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 10:
@@ -848,7 +848,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY8, "602wi40", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY8, "602wi40", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 11:
@@ -887,7 +887,7 @@ void Room602::daemon() {
 
 				if (_G(flags)[V263]) {
 					kernel_trigger_dispatch_now(13);
-					kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+					kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 				} else {
 					// TODO: This seems like it's incorrect in the original
@@ -905,10 +905,10 @@ void Room602::daemon() {
 		case 12:
 			if (_G(flags)[V262] == 4) {
 				digi_play(Common::String::format("602w017%c", 'a' + imath_ranged_rand(0, 6)).c_str(),
-					1, 255, gCHANGE_WILBUR_ANIMATION, 602);
+					1, 255, kCHANGE_WILBUR_ANIMATION, 602);
 			} else {
 				digi_play(Common::String::format("602w016%c", 'a' + imath_ranged_rand(0, 3)).c_str(),
-					1, 255, gCHANGE_WILBUR_ANIMATION, 602);
+					1, 255, kCHANGE_WILBUR_ANIMATION, 602);
 			}
 			break;
 
@@ -922,9 +922,9 @@ void Room602::daemon() {
 			_G(wilbur_should) = 14;
 
 			if (_G(game).room_id == 602) {
-				series_stream_with_breaks(SERIES2, "602wi07c", 6, 0x380, gCHANGE_WILBUR_ANIMATION);
+				series_stream_with_breaks(SERIES2, "602wi07c", 6, 0x380, kCHANGE_WILBUR_ANIMATION);
 			} else {
-				series_stream_with_breaks(SERIES2, "612wi07c", 6, 0x380, gCHANGE_WILBUR_ANIMATION);
+				series_stream_with_breaks(SERIES2, "612wi07c", 6, 0x380, kCHANGE_WILBUR_ANIMATION);
 			}
 
 			if (_G(flags)[V262] >= 4)
@@ -983,7 +983,7 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			player_update_info();
 			_G(wilbur_should) = 21;
-			ws_walk(_G(player_info).x + 1, 304, 0, gCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(_G(player_info).x + 1, 304, 0, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 21:
@@ -994,7 +994,7 @@ void Room602::daemon() {
 			_G(wilbur_should) = 46;
 			_test1 = imath_ranged_rand(0, 5);
 			series_play_with_breaks((_G(game).room_id == 602) ? PLAY16 : PLAY17,
-				"602wi13", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, Section6::_savedX, 0);
+				"602wi13", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, Section6::_savedX, 0);
 			break;
 
 		case 22:
@@ -1027,7 +1027,7 @@ void Room602::daemon() {
 				series_play_with_breaks(PLAY10, "612wi17", 0x700, 1, 3, 6, 100, 114, -2);
 			} else {
 				_G(wilbur_should) = 24;
-				series_play_with_breaks(PLAY9, "612wi17", 0x700, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY9, "612wi17", 0x700, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -1042,7 +1042,7 @@ void Room602::daemon() {
 				_G(wilbur_should) = 34;
 			}
 
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 25:
@@ -1053,7 +1053,7 @@ void Room602::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 44;
 
-			series_play_with_breaks(PLAY19, "612wi14", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY19, "612wi14", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 26:
@@ -1064,11 +1064,11 @@ void Room602::daemon() {
 			if (_G(flags)[V278]) {
 				_G(wilbur_should) = 10001;
 				_test2 = imath_ranged_rand(0, 1);
-				series_play_with_breaks(PLAY20, "612wi15", 0x600, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 114, 0);
+				series_play_with_breaks(PLAY20, "612wi15", 0x600, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 114, 0);
 			} else {
 				_G(wilbur_should) = 40;
 				_test2 = imath_ranged_rand(0, 1);
-				series_play_with_breaks(PLAY20, "612wi15", 0x600, gCHANGE_WILBUR_ANIMATION, 3, 6);
+				series_play_with_breaks(PLAY20, "612wi15", 0x600, kCHANGE_WILBUR_ANIMATION, 3, 6);
 			}
 			break;
 
@@ -1087,10 +1087,10 @@ void Room602::daemon() {
 				digi_preload("602_005");
 				_val1 = 58;
 				_G(wilbur_should) = 29;
-				series_play_with_breaks(PLAY22, "612wi18", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY22, "612wi18", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			} else {
 				_G(wilbur_should) = 28;
-				series_play_with_breaks(PLAY21, "612wi16", 0x700, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY21, "612wi16", 0x700, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -1098,14 +1098,14 @@ void Room602::daemon() {
 			_G(wilbur_should) = 41;
 			_val1 = 56;
 			kernel_trigger_dispatch_now(1);
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 29:
 			_G(wilbur_should) = 41;
 			_val1 = 58;
 			kernel_trigger_dispatch_now(1);
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 30:
@@ -1161,14 +1161,14 @@ void Room602::daemon() {
 
 			if (!_G(flags)[V261]) {
 				_G(flags)[V261] = 1;
-				wilbur_speech("602w031", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("602w031", kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
 		case 39:
 			_G(wilbur_should) = 27;
 			player_set_commands_allowed(false);
-			wilbur_speech("612w056", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("612w056", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 40:
@@ -1194,12 +1194,12 @@ void Room602::daemon() {
 		case 43:
 			wilbur_speech("600w003");
 			_G(wilbur_should) = 10001;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 44:
 			_G(wilbur_should) = 10001;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 			if (_G(flags)[V279] > 4)
 				wilbur_speech("612w066");
@@ -1225,7 +1225,7 @@ void Room602::daemon() {
 				_G(wilbur_should) = 38;
 
 				series_play_with_breaks(_G(flags)[V261] ? PLAY14 : PLAY13,
-					"602wi09", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+					"602wi09", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -1262,7 +1262,7 @@ void Room602::daemon() {
 						term_message("Wilbur now slips on kibble!");
 						intr_cancel_sentence();
 						_G(wilbur_should) = 20;
-						kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+						kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 					}
 				}
 			}
@@ -1294,7 +1294,7 @@ void Room602::pre_parser() {
 		if (_G(flags)[V278] == 0) {
 			if (_G(flags)[V255] == 0) {
 				_G(wilbur_should) = 22;
-				player_hotspot_walk_override(423, 303, 9, gCHANGE_WILBUR_ANIMATION);
+				player_hotspot_walk_override(423, 303, 9, kCHANGE_WILBUR_ANIMATION);
 			} else {
 				wilbur_speech("600w008z");
 			}
@@ -1302,56 +1302,56 @@ void Room602::pre_parser() {
 	} else if (player_said("RAY GUN", "KIBBLE TRAY")) {
 		_G(wilbur_should) = 6;
 		if (_G(game).room_id == 602) {
-			player_hotspot_walk_override(172, 325, 9, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(172, 325, 9, kCHANGE_WILBUR_ANIMATION);
 		} else {
-			player_hotspot_walk_override(151, 315, 9, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(151, 315, 9, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("RAY GUN", "KIBBLE ")) {
 		_G(wilbur_should) = 7;
-		player_hotspot_walk_override(151, 315, 9, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(151, 315, 9, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "EXERCISE WHEEL") && !_G(flags)[V278]) {
 		_G(wilbur_should) = 8;
-		player_hotspot_walk_override(409, 359, 2, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(409, 359, 2, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "DOOR")) {
 		_G(wilbur_should) = 9;
-		player_hotspot_walk_override(331, 303, 10, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(331, 303, 10, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "GERBILS")) {
 		_G(wilbur_should) = 10;
-		player_hotspot_walk_override(315, 317, 10, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(315, 317, 10, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GEAR", "DOOR")) {
 		_G(wilbur_should) = 47;
-		player_hotspot_walk_override(257, 290, 10, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(257, 290, 10, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GEAR", "MOTOR") || player_said("GEAR", "MOTOR ")) {
 		if (_G(flags)[V278] == 0) {
 			if (_G(flags)[V277] == 6001) {
 				_G(wilbur_should) = 25;
-				player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+				player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
 			}
 			if (_G(flags)[V277] == 6002 || _G(flags)[V277] == 6003) {
 				if (_G(flags)[V255] == 1) {
 					_G(wilbur_should) = 39;
-					player_hotspot_walk_override(200, 21, 3, gCHANGE_WILBUR_ANIMATION);
+					player_hotspot_walk_override(200, 21, 3, kCHANGE_WILBUR_ANIMATION);
 				} else {
 					_G(wilbur_should) = 26;
-					player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+					player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
 				}
 			}
 		} else {
 			_G(wilbur_should) = 26;
-			player_hotspot_walk_override(314, 319, 3, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(314, 319, 3, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if ((player_said("GEAR", "MOTOR ") || player_said("PANTYHOSE", "MOTOR ")) &&
 			_G(flags)[V277] != 6002) {
 		_G(wilbur_should) = 37;
 		if (_G(flags)[V278]) {
-			player_hotspot_walk_override(313, 319, 3, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(313, 319, 3, kCHANGE_WILBUR_ANIMATION);
 		} else {
-			player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else {
 		return;
@@ -1368,50 +1368,50 @@ void Room602::parser() {
 			player_said("MAGNET"))) {
 		_G(wilbur_should) = 43;
 		intr_cancel_sentence();
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "PEANUT")) {
 		wilbur_speech("602w047");
 		intr_cancel_sentence();
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GEAR", "TUBE") || player_said("CLIMB IN", "TUBE")) {
 		_G(flags)[V246] = 1;
 		Section6::_state2 = 2;
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("EXIT")) {
 		_G(wilbur_should) = 42;
-		ws_turn_to_face(5, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(5, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("PANTYHOSE", "MOTOR") || player_said("PANTYHOSE", "MOTOR ")) {
 		if (_G(flags)[V277] == 6001) {
 			_G(wilbur_should) = 25;
 			if (_G(flags)[V278]) {
-				player_hotspot_walk_override(314, 321, 3, gCHANGE_WILBUR_ANIMATION);
+				player_hotspot_walk_override(314, 321, 3, kCHANGE_WILBUR_ANIMATION);
 			} else {
-				player_hotspot_walk_override(200, 321, 3, gCHANGE_WILBUR_ANIMATION);
+				player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
 			}
 		}
 
 		if (_G(flags)[V280]) {
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
-			wilbur_speech("612w064", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("612w064", kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("GEAR", "EXERCISE WHEEL")) {
 		_G(wilbur_should) = 11;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GEAR", "DOOR")) {
 		_G(wilbur_should) = 47;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("KIBBLE ", "TAKE")) {
 		_G(wilbur_should) = 18;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("LOOK AT", "EXERCISE WHEEL")) {
 		if (_G(flags)[V278] == 1 && _G(flags)[V277] == 6003) {

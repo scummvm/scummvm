@@ -124,7 +124,7 @@ void Section6::daemon() {
 
 			kernel_trigger_dispatch_now(6013);
 			_G(wilbur_should) = 10001;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 6002:
@@ -262,7 +262,7 @@ void Section6::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 6000:
 			player_set_commands_allowed(false);
@@ -283,7 +283,7 @@ void Section6::daemon() {
 			}
 
 			_G(wilbur_should) = 6001;
-			ws_walk(352, 276, 0, gCHANGE_WILBUR_ANIMATION, 9);
+			ws_walk(352, 276, 0, kCHANGE_WILBUR_ANIMATION, 9);
 			break;
 
 		case 6001:
@@ -293,7 +293,7 @@ void Section6::daemon() {
 				_state1 = 6001;
 				_G(wilbur_should) = 6002;
 				_G(flags)[V244] = 10028;
-				series_play_with_breaks(PLAY1, "602melt", 0x999, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY1, "602melt", 0x999, kCHANGE_WILBUR_ANIMATION, 3);
 				break;
 
 			case 603:
@@ -301,7 +301,7 @@ void Section6::daemon() {
 				_state1 = 6001;
 				_G(wilbur_should) = 6002;
 				_G(flags)[V244] = 10029;
-				series_play_with_breaks(PLAY1, "603melt", 0x999, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY1, "603melt", 0x999, kCHANGE_WILBUR_ANIMATION, 3);
 				break;
 
 			case 604:
@@ -313,7 +313,7 @@ void Section6::daemon() {
 					ws_hide_walker();
 					_state1 = 6001;
 					_G(wilbur_should) = 6002;
-					series_play_with_breaks(PLAY1, "604melt", 0x999, gCHANGE_WILBUR_ANIMATION, 3);
+					series_play_with_breaks(PLAY1, "604melt", 0x999, kCHANGE_WILBUR_ANIMATION, 3);
 				}
 				break;
 
@@ -362,17 +362,17 @@ void Section6::parser() {
 	if (player_said("RAY GUN", "BLOCK OF ICE")) {
 		_G(flags)[V247] = 1;
 		_G(wilbur_should) = 6000;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		
 	} else if (player_said("RAY GUN", "GERBILS") && _G(flags)[V243] == 6006) {
 		_G(flags)[V247] = 1;
 		term_message("Taking gun out to shoot gerbils...");
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "KIBBLE ")) {
 		if (inv_player_has("KIBBLE")) {
-			_G(wilbur_should) = gSERIES_PLAY_BREAK_2;
-			ws_turn_to_face(9, gCHANGE_WILBUR_ANIMATION);
+			_G(wilbur_should) = kSERIES_PLAY_BREAK_2;
+			ws_turn_to_face(9, kCHANGE_WILBUR_ANIMATION);
 
 		} else {
 			wilbur_speech("602w011");

@@ -180,7 +180,7 @@ void Section4::daemon() {
 		player_set_commands_allowed(!checkOrderWindow());
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		if (_G(wilbur_should) == 10015) {
 			kernel_trigger_dispatch_now(10027);
 		} else {
@@ -227,7 +227,7 @@ bool Section4::checkOrderWindow() {
 	if (_G(flags)[V168] && _G(flags)[V181] && _G(flags)[V176] && _G(flags)[V159]) {
 		player_set_commands_allowed(false);
 		_G(flags)[V152] = 1;
-		disable_player_commands_and_fade_init(g10027);
+		disable_player_commands_and_fade_init(k10027);
 		return true;
 	} else {
 		return false;
