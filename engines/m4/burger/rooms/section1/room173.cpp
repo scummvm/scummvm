@@ -61,7 +61,7 @@ void Room173::init() {
 	case 172:
 		ws_demand_location(136, 318, 5);
 		_G(wilbur_should) = player_been_here(173) ? 1 : 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -76,18 +76,18 @@ void Room173::daemon() {
 		disable_player_commands_and_fade_init(1019);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY1, "173wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "173wi01", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
 			disable_player();
 			_G(wilbur_should) = 3;
-			series_play_with_breaks(PLAY1, "173wi01", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "173wi01", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -119,7 +119,7 @@ void Room173::parser() {
 		// Already handled
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 4;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

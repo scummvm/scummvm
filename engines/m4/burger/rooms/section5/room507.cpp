@@ -257,7 +257,7 @@ void Room507::init() {
 	case 510:
 		ws_demand_location(_G(flags)[V187], _G(flags)[V188], _G(flags)[V189]);
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -459,7 +459,7 @@ void Room507::daemon() {
 
 		case 25:
 			_G(wilbur_should) = _val5;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			_val2 = _val6;
 			kernel_trigger_dispatch_now(6);
 			break;
@@ -577,10 +577,10 @@ void Room507::daemon() {
 
 	case 5002:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(true);
@@ -592,7 +592,7 @@ void Room507::daemon() {
 			ws_hide_walker();
 			_val7 = 0;
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY2, "507wi01", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "507wi01", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -600,28 +600,28 @@ void Room507::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
 			_val2 = 18;
-			series_play_with_breaks(PLAY5, "507wi04", 0x8ff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY5, "507wi04", 0x8ff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
 			ws_hide_walker();
 			player_update_info();
 			_G(wilbur_should) = _flag2 ? 8 : 5;
-			series_play_with_breaks(PLAY3, "507wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY3, "507wi02", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 5:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY6, "507wi04", 0x8ff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "507wi04", 0x8ff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 7;
-			series_play_with_breaks(PLAY1, "507wi03", 0xaff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "507wi03", 0xaff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 7:
@@ -649,7 +649,7 @@ void Room507::daemon() {
 				_val3 = 28;
 			}
 
-			_triggers[0] = gCHANGE_WILBUR_ANIMATION;
+			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 			_val8 = 10;
 			series_play_with_breaks(PLAY7, "507wi05", 0x8ff, 1, 3);
 			break;
@@ -658,7 +658,7 @@ void Room507::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY8, "507wi06", 0xd00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY8, "507wi06", 0xd00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		default:
@@ -721,18 +721,18 @@ void Room507::parser() {
 		_val2 = 23;
 	} else if (player_said("TAKE", "RUBBER DUCKY ")) {
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("RUBBER DUCKY") && player_said_any("GEAR", "WILBUR")) {
 		_G(wilbur_should) = 3;
-		ws_walk(197, 274, nullptr, gCHANGE_WILBUR_ANIMATION, 9);
+		ws_walk(197, 274, nullptr, kCHANGE_WILBUR_ANIMATION, 9);
 	} else if (player_said("RUBBER DUCKY", "TOILET")) {
 		_flag2 = true;
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("GEAR") && player_said_any("TOILET", "FLUSH CHAIN")) {
 		if (_G(flags)[V223] == 1 || _G(flags)[V223] == 2) {
 			_G(wilbur_should) = 9;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (inv_where_is("RUBBER DUCKY") == 500) {
 			_val5 = 9;
 			_val6 = 21;
@@ -745,7 +745,7 @@ void Room507::parser() {
 	} else if (player_said("BOTTLE") && player_said_any("SOAPY WATER ", "TUB ")) {
 		if (_G(flags)[V223] == 1 || _G(flags)[V223] == 2) {
 			_G(wilbur_should) = 11;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			wilbur_speech("507w038");
 		}

@@ -78,13 +78,13 @@ void Room176::init() {
 
 void Room176::daemon() {
 	switch (_G(kernel).trigger) {
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
 			terminateMachineAndNull(_puzDispenser);
 			_G(wilbur_should) = 2;
-			series_play_with_breaks(PLAY1, "176wi01", 0x500, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "176wi01", 0x500, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -118,7 +118,7 @@ void Room176::parser() {
 		disable_player_commands_and_fade_init(1022);
 	} else if (player_said("TAKE", "PUZ DISPENSER ")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

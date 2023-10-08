@@ -89,7 +89,7 @@ void Room305::init() {
 
 	case 302:
 		_G(wilbur_should) = 101;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 319:
@@ -116,14 +116,14 @@ void Room305::daemon() {
 		_series1 = series_show("305genx", 0x200);
 		_G(flags)[V134] = 1;
 		_G(wilbur_should) = 105;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 3001:
 		_G(game).new_room = 302;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 101:
 			ws_demand_location(372, 267, 9);
@@ -137,7 +137,7 @@ void Room305::daemon() {
 				_G(wilbur_should) = 104;
 			}
 
-			series_play_with_breaks(PLAY1, "305wi01", 0x700, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "305wi01", 0x700, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 102:
@@ -168,22 +168,22 @@ void Room305::daemon() {
 
 			if (_G(flags)[V135]) {
 				_G(wilbur_should) = 106;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_G(flags)[V135] = 1;
 				_G(wilbur_should) = 106;
-				wilbur_speech("305w011", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("305w011", kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
 		case 106:
 			_G(wilbur_should) = 10001;
-			wilbur_speech(_G(flags)[V137] ? "305w013" : "305w012", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech(_G(flags)[V137] ? "305w013" : "305w012", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 107:
 			_G(wilbur_should) = 10001;
-			wilbur_speech("305w012", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("305w012", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 108:
@@ -227,7 +227,7 @@ void Room305::parser() {
 			_G(wilbur_should) = 108;
 
 			if (_G(flags)[V137]) {
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				wilbur_speech("305w005");
 			}
@@ -256,7 +256,7 @@ void Room305::parser() {
 			wilbur_speech("305w014");
 		} else {
 			_G(wilbur_should) = 103;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (!player_said("LOOK AT WALL")) {
 		return;

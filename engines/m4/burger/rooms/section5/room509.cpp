@@ -119,7 +119,7 @@ void Room509::init() {
 		if (inv_player_has("CHRISTMAS LIGHTS") || inv_player_has("CHRISTMAS LIGHTS ")) {
 			disable_player();
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -137,7 +137,7 @@ void Room509::init() {
 	default:
 		ws_demand_location(272, 325);
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 	}
 
@@ -244,10 +244,10 @@ void Room509::daemon() {
 
 	case 5002:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
@@ -280,13 +280,13 @@ void Room509::daemon() {
 			_G(wilbur_should) = 14;
 
 			series_play_with_breaks(PLAY2, (_G(flags)[V212] == 5000) ? "509wi04" : "509wi02",
-				0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+				0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
 			_general.terminate();
 			_G(wilbur_should) = 5;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 5:
@@ -297,14 +297,14 @@ void Room509::daemon() {
 				if (_G(flags)[V234]) {
 					_G(wilbur_should) = 6;
 					_val5 = 1;
-					series_play_with_breaks(PLAY3, "509wi05", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+					series_play_with_breaks(PLAY3, "509wi05", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 				} else {
 					_G(wilbur_should) = 7;
-					series_play_with_breaks(PLAY4, "509wi05", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+					series_play_with_breaks(PLAY4, "509wi05", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 				}
 			} else {
 				_G(wilbur_should) = 8;
-				series_play_with_breaks(PLAY5, "509wi07", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);				
+				series_play_with_breaks(PLAY5, "509wi07", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);				
 			}
 			break;
 
@@ -312,7 +312,7 @@ void Room509::daemon() {
 			_val5 = 2;
 			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
 			_G(wilbur_should) = 8;
-			series_play_with_breaks(PLAY6, "609wi08", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "609wi08", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 7:
@@ -334,7 +334,7 @@ void Room509::daemon() {
 			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
 			_series2 = series_show("509wire", 0x900);
 			_series1 = series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 9:
@@ -359,33 +359,33 @@ void Room509::daemon() {
 
 			switch (_val2) {
 			case 0:
-				digi_play("500w079", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w079", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 1:
-				digi_play("500w080", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w080", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 2:
-				digi_play("500w089", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w089", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 3:
-				digi_play("500w090", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w090", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 4:
-				digi_play("500w091", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w091", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 5:
 				_G(wilbur_should) = 4;
-				digi_play("500w084", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w084", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 6:
 				_G(wilbur_should) = 4;
-				digi_play("500w085", 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play("500w085", 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			default:
@@ -402,7 +402,7 @@ void Room509::daemon() {
 		case 13:
 			_general.terminate();
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 14:
@@ -461,7 +461,7 @@ void Room509::pre_parser() {
 
 		_G(player).ready_to_walk = false;
 		_general.terminate();
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	}
 }
@@ -486,7 +486,7 @@ void Room509::parser() {
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 5009);
 	} else if (player_said("TAKE", "CHRISTMAS LIGHTS  ")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

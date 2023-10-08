@@ -344,7 +344,7 @@ void Room145::daemon() {
 			_val1 = 27;
 			series_play_with_breaks(PLAY11, "145dz05", 0xa01, 2, 3);
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 27:
@@ -369,7 +369,7 @@ void Room145::daemon() {
 			series_play_with_breaks(PLAY14, "145dz08", 0, -1, 3);
 			series_show("145drum", 0xa01);
 			_G(wilbur_should) = 6;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		default:
@@ -646,7 +646,7 @@ void Room145::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
@@ -656,7 +656,7 @@ void Room145::daemon() {
 		case 2:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY1, "145wi04", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "145wi04", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 3:
@@ -664,7 +664,7 @@ void Room145::daemon() {
 			loadSeries1();
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
-			_general.play("145wi02", 0xa00, 16, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 14);
+			_general.play("145wi02", 0xa00, 16, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 14);
 			digi_play("145w020", 1, 255, -1);
 			break;
 
@@ -675,13 +675,13 @@ void Room145::daemon() {
 		case 5:
 			_general.terminate();
 			_G(wilbur_should) = 7;
-			series_play_with_breaks(PLAY3, "145wi02", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY3, "145wi02", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY4, "145wi03", 0xa01, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY4, "145wi03", 0xa01, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 7:
@@ -693,7 +693,7 @@ void Room145::daemon() {
 			ws_hide_walker();
 			terminateMachineAndNull(_amplifier);
 			_G(wilbur_should) = 9;
-			series_play_with_breaks(PLAY2, "145wi04", 0xa01, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "145wi04", 0xa01, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 9:
@@ -705,7 +705,7 @@ void Room145::daemon() {
 			player_set_commands_allowed(false);
 
 			if (_state2) {
-				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+				kernel_timing_trigger(15, kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_val4 = 44;
 				kernel_trigger_dispatch_now(5);
@@ -719,7 +719,7 @@ void Room145::daemon() {
 				_val2 = 0;
 				resetRoxy();
 			} else {
-				kernel_timing_trigger(15, gCHANGE_WILBUR_ANIMATION);
+				kernel_timing_trigger(15, kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 

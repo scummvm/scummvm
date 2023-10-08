@@ -43,38 +43,34 @@ enum GameMode {
 };
 
 enum global_triggers {
-	gFIRST_GLOBAL_TRIGGER = 10000,
+	kFIRST_GLOBAL_TRIGGER = 10000,
 
 	// System triggers 
-	gRESUME_CONVERSATION = 10001,	// Yep, that's what it does!
-	gSERIES_STREAM_BREAK = 10002,	// Used only by set_next_stream_break () in global.cpp
-	gSERIES_PLAY_BREAK_0 = 10003,
-	gSERIES_PLAY_BREAK_1 = 10004,
-	gSERIES_PLAY_BREAK_2 = 10005,
-	gRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
+	kRESUME_CONVERSATION = 10001,	// Yep, that's what it does!
+	kSERIES_STREAM_BREAK = 10002,	// Used only by set_next_stream_break () in global.cpp
+	kSERIES_PLAY_BREAK_0 = 10003,
+	kSERIES_PLAY_BREAK_1 = 10004,
+	kSERIES_PLAY_BREAK_2 = 10005,
+	kRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
 
-	gNPC_SPEECH_STARTED = 10010,	// NPC talk started
-	gNPC_SPEECH_FINISHED = 10011,	// NPC talk finished
-	g10013 = 10013,
-	gWILBURS_SPEECH_FINISHED = 10014,
-	gWILBURS_SPEECH_START = 10015,
-	gCHANGE_WILBUR_ANIMATION = 10016,
-	gSET_FACING = 10018,
+	kNPC_SPEECH_STARTED = 10010,	// NPC talk started
+	kNPC_SPEECH_FINISHED = 10011,	// NPC talk finished
+	kWILBUR_SPEECH_STARTED = 10013,
+	kWILBURS_SPEECH_FINISHED = 10014,
+	kWILBURS_SPEECH_START = 10015,
+	kCHANGE_WILBUR_ANIMATION = 10016,
+	kSET_FACING = 10018,
 	kSET_DEST = 10019,
-	gSET_COMMANDS_ALLOWED = 10020,
-	gUNPOOF = 10021,
-	gTELEPROTED1 = 10024,
-	gTELEPROTED2 = 10025,
-	g10027 = 10027,
-	g10028 = 10028,
+	kSET_COMMANDS_ALLOWED = 10020,
+	kUNPOOF = 10021,
+	kTELEPROTED1 = 10024,
+	kTELEPROTED2 = 10025,
+	k10027 = 10027,
+	k10028 = 10028,
 
 	kCALLED_EACH_LOOP = 32764,
 
-	gLAST_GLOBAL_TRIGGER
-#if UNUSED
-	gREACT_TO_WHISTLE,				// For anything that reacts to the wistle being blown
-	gCHANGE_WILBUR_ANIMATION,
-#endif
+	kLAST_GLOBAL_TRIGGER
 };
 
 class Vars : public M4::Vars {

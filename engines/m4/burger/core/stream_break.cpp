@@ -37,7 +37,7 @@ static void set_next_series_stream_break() {
 		// If variable is null or variable = value then this break is used
 		// Note: if Variable != value this break is skipped
 		if ((!_GB(my_stream_break)->variable) || (*(_GB(my_stream_break)->variable) == _GB(my_stream_break)->value)) {
-			series_stream_break_on_frame(_GB(my_stream_viewer), _GB(my_stream_break)->frame, gSERIES_STREAM_BREAK);
+			series_stream_break_on_frame(_GB(my_stream_viewer), _GB(my_stream_break)->frame, kSERIES_STREAM_BREAK);
 			break;
 		}
 

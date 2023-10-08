@@ -34,7 +34,7 @@ void release_trigger_on_digi_state(int32 trigger, int32 checkChannels, int32 mat
 
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 	_G(kernel).trigger_mode = KT_DAEMON;
-	kernel_trigger_dispatch_now(gRELEASE_TRIGGER_DIGI_CHECK);
+	kernel_trigger_dispatch_now(kRELEASE_TRIGGER_DIGI_CHECK);
 	_G(kernel).trigger_mode = oldMode;
 }
 
@@ -58,7 +58,7 @@ void release_trigger_digi_check() {
 	if (digi_state == _GT(match_value)) {
 		kernel_trigger_dispatchx(_GT(released_digi_trigger));
 	} else {
-		kernel_timing_trigger(TENTH_SECOND, gRELEASE_TRIGGER_DIGI_CHECK);
+		kernel_timing_trigger(TENTH_SECOND, kRELEASE_TRIGGER_DIGI_CHECK);
 	}
 }
 

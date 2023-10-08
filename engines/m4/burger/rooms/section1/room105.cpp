@@ -284,7 +284,7 @@ void Room105::init() {
 	case 104:
 		ws_demand_location(310, 353, 11);
 		_G(wilbur_should) = 62;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -1279,7 +1279,7 @@ void Room105::daemon() {
 		ws_unhide_walker();
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 62:
 			if (_G(flags)[V112] && !_G(flags)[V034]) {

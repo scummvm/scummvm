@@ -66,7 +66,7 @@ void Room175::init() {
 	case 171:
 		ws_demand_location(331, 272, 3);
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 174:
@@ -91,12 +91,12 @@ void Room175::init() {
 
 void Room175::daemon() {
 	switch (_G(kernel).trigger) {
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY1, "175wi01", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "175wi01", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -108,7 +108,7 @@ void Room175::daemon() {
 		case 3:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY3, "175wi03", 0xc00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY3, "175wi03", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		default:
@@ -141,7 +141,7 @@ void Room175::parser() {
 		// Already handled
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said_any("GEAR", "LOOK AT") && player_said("BATHROOM")) {
 		disable_player_commands_and_fade_init(1021);
 	} else if (player_said_any("GEAR", "LOOK AT") && player_said("WILBUR'S ROOM")) {

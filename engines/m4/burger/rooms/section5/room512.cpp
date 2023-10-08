@@ -60,7 +60,7 @@ void Room512::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		switch (_G(wilbur_should)) {
-		case gCHANGE_WILBUR_ANIMATION:
+		case kCHANGE_WILBUR_ANIMATION:
 			_state1 = imath_ranged_rand(11, 12);
 			digi_preload_stream_breaks(SERIES1);
 			series_stream_with_breaks(SERIES1, "512burnt", 6, 1, 2);
@@ -82,7 +82,7 @@ void Room512::daemon() {
 
 	case 2:
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
-		release_trigger_on_digi_state(g10027, 1);
+		release_trigger_on_digi_state(k10027, 1);
 		break;
 
 	default:

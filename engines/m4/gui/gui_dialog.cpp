@@ -513,11 +513,7 @@ void Dialog_Resize(Dialog *d, int32 newW, int32 newH) {
 	}
 
 	delete d->dlgBuffer;
-#if defined(__WIN)
-	d->dlgBuffer = new CDIBSectionBuffer(((CM4App *)GetWigalApp())->GetMainWindow(), newW, newH);
-#else
 	d->dlgBuffer = new GrBuff(newW, newH);
-#endif
 
 	d->w = newW;
 	d->h = newH;
@@ -1143,11 +1139,7 @@ static void TextScrn_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	matte *myRectList = (matte *)r;
 	Buffer *destBuffer = (Buffer *)b;
 	Buffer *myBuff;
-#if defined(__WIN)
-	CDIBSectionBuffer *myGrBuff;
-#else
 	GrBuff *myGrBuff;
-#endif
 	ScreenContext *tempScreen;
 	matte *myMatte, tempMatte;
 	RectList *updateList, *updateRect;
@@ -1300,11 +1292,8 @@ TextScrn *TextScrn_Create(int32 x1, int32 y1, int32 x2, int32 y2, int32 luminanc
 	myTextScrn->myTextItems = nullptr;
 	myTextScrn->hiliteItem = nullptr;
 
-#if defined(__WIN)
-	myTextScrn->textScrnBuffer = new CDIBSectionBuffer(((CM4App *)GetWigalApp())->GetMainWindow(), myTextScrn->w, myTextScrn->h);
-#else
 	myTextScrn->textScrnBuffer = new GrBuff(myTextScrn->w, myTextScrn->h);
-#endif
+
 	if (!myTextScrn->textScrnBuffer) {
 		return nullptr;
 	}

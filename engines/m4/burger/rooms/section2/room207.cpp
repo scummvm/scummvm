@@ -305,7 +305,7 @@ void Room207::daemon() {
 		_G(wilbur_should) = 4;
 		_val2 = 0;
 		_val1 = 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(1);
 		break;
 
@@ -339,16 +339,16 @@ void Room207::daemon() {
 		disable_player_commands_and_fade_init(8);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			if (!strcmp(conv_sound_to_play(), "53p0101")) {
 				_G(wilbur_should) = 3;
 				conv_resume_curr();
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				_G(wilbur_should) = 2;
-				digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 				_general1 = series_play("207wi01", 0x400, 4);
 			}
 			break;
@@ -357,17 +357,17 @@ void Room207::daemon() {
 			terminateMachineAndNull(_general1);
 			_G(wilbur_should) = 3;
 			conv_resume_curr();
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 3:
 			_G(wilbur_should) = getShould();
-			series_show("207wi01", 0x400, 0, gCHANGE_WILBUR_ANIMATION, 30, 0);
+			series_show("207wi01", 0x400, 0, kCHANGE_WILBUR_ANIMATION, 30, 0);
 			break;
 
 		case 4:
 			_G(wilbur_should) = getShould();
-			series_play("207wi01", 0x400, 1, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
+			series_play("207wi01", 0x400, 1, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
 			break;
 
 		default:

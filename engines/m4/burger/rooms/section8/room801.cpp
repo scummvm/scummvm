@@ -267,7 +267,7 @@ void Room801::daemon() {
 			_G(wilbur_should) = getWilburShould();
 			_G(roomVal4) = 2;
 			_val3 = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			kernel_trigger_dispatch_now(16);
 			kernel_trigger_dispatch_now(15);
 
@@ -291,7 +291,7 @@ void Room801::daemon() {
 		_val3 = 2;
 
 		_series9 = series_play("804FL01", 2, 0, -1, 6, -1);
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(16);
 		kernel_trigger_dispatch_now(15);
 		conv_load_and_prepare("conv80", 18);
@@ -435,7 +435,7 @@ void Room801::daemon() {
 
 			_G(game).new_room = 802;
 		} else {
-			kernel_trigger_dispatch_now(g10027);
+			kernel_trigger_dispatch_now(k10027);
 		}
 		break;
 
@@ -509,7 +509,7 @@ void Room801::daemon() {
 	case 36:
 		_G(flags)[V287] = 1;
 		adv_kill_digi_between_rooms(1);
-		kernel_trigger_dispatch_now(g10027);
+		kernel_trigger_dispatch_now(k10027);
 		break;
 
 	case 37:
@@ -539,18 +539,18 @@ void Room801::daemon() {
 			digi_play("806w001", 1, 128);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_val1) {
 		case 9:
 			switch (_G(wilbur_should)) {
 			case 7:
-				_series12 = series_play("804WI04", 0x200, 2, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI04", 0x200, 2, kCHANGE_WILBUR_ANIMATION);
 				_val1 = 11;
 				break;
 
 			default:
 				_G(wilbur_should) = getWilburShould();
-				_series12 = series_show("804Wi04", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 30, 1);
+				_series12 = series_show("804Wi04", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 30, 1);
 				break;
 			}
 			break;
@@ -559,26 +559,26 @@ void Room801::daemon() {
 			switch (_G(wilbur_should)) {
 			case 4:
 			case 7:
-				_series12 = series_play("804WI05", 0x200, 2, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI05", 0x200, 2, kCHANGE_WILBUR_ANIMATION);
 				_val1 = 11;
 				break;
 
 			case 5:
 				_G(wilbur_should) = 12;
 				_series12 = series_play("804WI01", 0x200, 4);
-				digi_play(conv_sound_to_play(), 1, 255, gCHANGE_WILBUR_ANIMATION);
+				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 12:
 				terminateMachineAndNull(_series12);
 				_G(wilbur_should) = getWilburShould();
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				conv_resume_curr();
 				break;
 
 			default:
 				_G(wilbur_should) = getWilburShould();
-				_series12 = series_show("804WI05", 0x200, 0, gCHANGE_WILBUR_ANIMATION, 30, 3);
+				_series12 = series_show("804WI05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 30, 3);
 				break;
 			}
 			break;
@@ -586,24 +586,24 @@ void Room801::daemon() {
 		case 11:
 			switch (_G(wilbur_should)) {
 			case 4:
-				_series12 = series_play("804WI04", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI04", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
 				_val1 = 9;
 				break;
 
 			case 5:
 			case 6:
-				_series12 = series_play("804WI05", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI05", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
 				_val1 = 10;
 				break;
 
 			case 7:
 				_G(wilbur_should) = getWilburShould();
-				_series12 = series_play("804WI03", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI03", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			default:
 				_G(wilbur_should) = getWilburShould();
-				_series12 = series_play("804WI02", 0x200, 0, gCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI02", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
 				break;
 			}
 			break;

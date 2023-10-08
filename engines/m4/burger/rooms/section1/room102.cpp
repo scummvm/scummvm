@@ -157,7 +157,7 @@ void Room102::init() {
 		_G(wilbur_should) = 1;
 		_val16 = 1;
 		digi_preload("102_038");
-		digi_play("102_038", 2, 255, gCHANGE_WILBUR_ANIMATION);
+		digi_play("102_038", 2, 255, kCHANGE_WILBUR_ANIMATION);
 		player_set_commands_allowed(false);
 	}
 
@@ -973,33 +973,33 @@ void Room102::daemon() {
 		_G(kernel).continue_handling_trigger = true;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			digi_unload("102_038");
 			ws_demand_location(628, 325);
 			ws_demand_facing(9);
 			_G(wilbur_should) = 2;
-			ws_walk(435, 329, 0, gCHANGE_WILBUR_ANIMATION, 9, 1);
+			ws_walk(435, 329, 0, kCHANGE_WILBUR_ANIMATION, 9, 1);
 			break;
 
 		case 2:
 			if (_G(flags)[V012] == 2) {
 				_G(wilbur_should) = 3;
-				_G(walker).wilbur_speech("102w003", gCHANGE_WILBUR_ANIMATION);
+				_G(walker).wilbur_speech("102w003", kCHANGE_WILBUR_ANIMATION);
 			} else if (_G(flags)[V012] == 0) {
 				_G(wilbur_should) = 5;
 
 				if (_G(flags)[V018]) {
-					_G(walker).wilbur_speech("102w002", gCHANGE_WILBUR_ANIMATION);
+					_G(walker).wilbur_speech("102w002", kCHANGE_WILBUR_ANIMATION);
 				} else {
-					queuePlay("102h001", gCHANGE_WILBUR_ANIMATION);
+					queuePlay("102h001", kCHANGE_WILBUR_ANIMATION);
 				}
 			}
 			break;
 
 		case 3:
-			_G(walker).wilbur_speech("102w004", gCHANGE_WILBUR_ANIMATION);
+			_G(walker).wilbur_speech("102w004", kCHANGE_WILBUR_ANIMATION);
 			_G(wilbur_should) = 4;
 			break;
 
@@ -1036,7 +1036,7 @@ void Room102::daemon() {
 			_G(wilbur_should) = 72;
 			digi_preload_stream_breaks(STREAMS6);
 			series_play("102wi07s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi07", 6, 256, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(STREAMS6, "102wi07", 6, 256, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 72:
@@ -1050,7 +1050,7 @@ void Room102::daemon() {
 			_G(wilbur_should) = 74;
 			digi_preload_stream_breaks(STREAMS7);
 			series_play("102wi06s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi06", 6, 256, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(STREAMS7, "102wi06", 6, 256, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 74:
@@ -1064,7 +1064,7 @@ void Room102::daemon() {
 			_G(wilbur_should) = 76;
 			digi_preload_stream_breaks(STREAMS6);
 			series_play("102wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi11", 6, 256, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(STREAMS6, "102wi11", 6, 256, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 76:
@@ -1078,7 +1078,7 @@ void Room102::daemon() {
 			_G(wilbur_should) = 78;
 			digi_preload_stream_breaks(STREAMS7);
 			series_play("102wi10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi10", 6, 256, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(STREAMS7, "102wi10", 6, 256, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 78:
@@ -1097,7 +1097,7 @@ void Room102::daemon() {
 			if (!_G(flags)[V020])
 				digi_preload("102w008");
 
-			series_play_with_breaks(PLAY4, "102wi09", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi09", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 80:
@@ -1123,7 +1123,7 @@ void Room102::daemon() {
 			terminateMachineAndNull(_laz2);
 			_G(flags)[V019] = 0;
 			_G(wilbur_should) = 83;
-			series_play_with_breaks(PLAY4, "102wi08", 256, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi08", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 83:
@@ -1185,7 +1185,7 @@ void Room102::parser() {
 
 		if (player_said("USE", "GO", "DOORWAY")) {
 			_G(wilbur_should) = 1;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 
 		if (player_said("USE", "GO", "FIRE ESCAPE")) {
@@ -1199,7 +1199,7 @@ void Room102::parser() {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
 				_G(wilbur_should) = _G(flags)[V019] ? 82 : 79;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				queuePlay("102h005");
 			}
@@ -1209,7 +1209,7 @@ void Room102::parser() {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
 				_G(wilbur_should) = player_said("hair wax") ? 71 : 75;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				queuePlay("102h007");
 			}
@@ -1223,7 +1223,7 @@ void Room102::parser() {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
 				_G(wilbur_should) = player_said("hair wax  ") ? 73 : 77;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				queuePlay("102h007");
 			}
@@ -1552,7 +1552,7 @@ void Room102::conv04() {
 			} else {
 				_G(wilbur_should) = 10002;
 				_G(kernel).trigger_mode = KT_DAEMON;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				conv_resume_curr();
 			}
 		}

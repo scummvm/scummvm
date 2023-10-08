@@ -206,17 +206,17 @@ void Room302::init() {
 
 	case 303:
 		_G(wilbur_should) = _G(flags)[V125] ? 6 : 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 304:
 		_G(wilbur_should) = 4;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 305:
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -343,7 +343,7 @@ void Room302::daemon() {
 		case 27:
 			ws_hide_walker();
 			_G(wilbur_should) = 11;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			_val1 = 28;
 			series_play_with_breaks(PLAY7, "302tr01", 0x700, 9, 3);
 			break;
@@ -352,7 +352,7 @@ void Room302::daemon() {
 			hotspot_set_active("truffles", false);
 			_G(flags)[V111] = 1;
 			_G(wilbur_should) = 8;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			series_play_with_breaks(PLAY8, "302tr01", 0x900, -1, 3);
 			break;
 
@@ -366,7 +366,7 @@ void Room302::daemon() {
 		case 29:
 			digi_preload_stream_breaks(SERIES2);
 			_G(wilbur_should) = 9;
-			series_stream_with_breaks(SERIES2, "302pr01", 6, 1, gCHANGE_WILBUR_ANIMATION);
+			series_stream_with_breaks(SERIES2, "302pr01", 6, 1, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 30:
@@ -384,7 +384,7 @@ void Room302::daemon() {
 		_val1 = 26;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			ws_hide_walker();
@@ -434,37 +434,37 @@ void Room302::daemon() {
 		case 8:
 			ws_unhide_walker();
 			_G(wilbur_should) = _G(flags)[V110] ? 10001 : 18;
-			ws_turn_to_face(3, gCHANGE_WILBUR_ANIMATION);
+			ws_turn_to_face(3, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 9:
 			digi_unload_stream_breaks(SERIES2);
 			_G(wilbur_should) = 12;
 			hotspot_set_active("BURGER MORSEL ", true);
-			series_play_with_breaks(PLAY4, "302wi10", 0x200, gCHANGE_WILBUR_ANIMATION, 2);
+			series_play_with_breaks(PLAY4, "302wi10", 0x200, kCHANGE_WILBUR_ANIMATION, 2);
 			break;
 
 		case 10:
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY6, "302wi06", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "302wi06", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 11:
 			_G(wilbur_should) = 17;
-			series_play_with_breaks(PLAY9, "302wi07", 0x200, gCHANGE_WILBUR_ANIMATION, 3, 4);
+			series_play_with_breaks(PLAY9, "302wi07", 0x200, kCHANGE_WILBUR_ANIMATION, 3, 4);
 			break;
 
 		case 12:
 			_series1 = series_show("302BURG", 0x200);
 			_G(flags)[V107] = 0;
 			_G(wilbur_should) = 15;
-			series_play_with_breaks(PLAY5, "302wi09", 0x200, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY5, "302wi09", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 13:
 			_G(wilbur_should) = 14;
-			kernel_timing_trigger(30, gCHANGE_WILBUR_ANIMATION);
+			kernel_timing_trigger(30, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 14:
@@ -478,16 +478,16 @@ void Room302::daemon() {
 
 			if (_G(flags)[V108]) {
 				_val5 = imath_ranged_rand(0, 9);
-				wilbur_speech(Common::String::format("302w004%c", 'a' + _val5).c_str(), gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech(Common::String::format("302w004%c", 'a' + _val5).c_str(), kCHANGE_WILBUR_ANIMATION);
 			} else {
-				wilbur_speech("302w003", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("302w003", kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
 		case 16:
 			_G(wilbur_should) = 7;
 			player_set_commands_allowed(false);
-			wilbur_speech(_G(flags)[V110] ? "300w010" : "300w007", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech(_G(flags)[V110] ? "300w010" : "300w007", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 17:
@@ -538,7 +538,7 @@ void Room302::parser() {
 	} else if (player_said("LOOK AT", "BURGER MORSEL ")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 13;
-		wilbur_speech("302w009y", gCHANGE_WILBUR_ANIMATION);
+		wilbur_speech("302w009y", kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("LOOK AT", "DOOR")) {
 		wilbur_speech(player_been_here(304) ? "302w006" : "302w005");
 	} else if (player_said("DISTILLED CARROT JUICE", "CRASHED ROCKET")) {
@@ -550,11 +550,11 @@ void Room302::parser() {
 	} else if (player_said("TAKE", "BURGER MORSEL ")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 10;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("ENTER", "DOOR") || player_said("GEAR", "DOOR")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 3;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("MATCHES", "PROBE")) {
 		wilbur_speech("300w023");
 	} else if (player_said("BOTTLE", "TROUGH")) {
@@ -562,16 +562,16 @@ void Room302::parser() {
 	} else if (player_said("LOOK AT", "STORM CELLAR")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 1;
-		wilbur_speech("302w007", gCHANGE_WILBUR_ANIMATION);
+		wilbur_speech("302w007", kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said_any("GEAR", "ENTER") && player_said("STORM CELLAR")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 1;
 
 		if (_G(flags)[V133]) {
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			term_message("Wilbur: Here we go...!");
-			wilbur_speech("302w008", gCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("302w008", kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("CARROT JUICE", "TROUGH")) {
 		wilbur_speech("300w044");
@@ -587,7 +587,7 @@ void Room302::parser() {
 		if (player_said("BURGER MORSEL")) {
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 16;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("LOOK AT")) {
 			wilbur_speech(_G(flags)[V109] ? "302w012" : "302w011");
 		} else if (player_said("MATCHES")) {

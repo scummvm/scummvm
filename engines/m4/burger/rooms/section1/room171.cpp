@@ -302,7 +302,7 @@ kernel_trigger_dispatch_now(6);
 	case 175:
 		ws_demand_location(237, 232, 9);
 		_G(wilbur_should) = 2;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	default:
@@ -588,7 +588,7 @@ void Room171::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
@@ -598,7 +598,7 @@ void Room171::daemon() {
 		case 2:
 			disable_player();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY2, "171wi02", 0xc01, gCHANGE_WILBUR_ANIMATION, 3, 5, 100, 0, -3);
+			series_play_with_breaks(PLAY2, "171wi02", 0xc01, kCHANGE_WILBUR_ANIMATION, 3, 5, 100, 0, -3);
 			break;
 
 		case 3:
@@ -679,12 +679,12 @@ void Room171::parser() {
 
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("WHISTLE", "AUNT POLLY")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 3;
-		wilbur_speech("171w901", gCHANGE_WILBUR_ANIMATION);
+		wilbur_speech("171w901", kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("TALK", "AUNT POLLY")) {
 		kernel_trigger_dispatch_now(6);

@@ -57,7 +57,7 @@ void Room513::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		digi_preload_stream_breaks(SERIES1);
-		series_stream_with_breaks(SERIES1, "513OUTRO", 6, 1, g10027);
+		series_stream_with_breaks(SERIES1, "513OUTRO", 6, 1, k10027);
 		break;
 
 	default:

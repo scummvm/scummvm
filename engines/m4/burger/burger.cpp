@@ -279,27 +279,27 @@ void BurgerEngine::syncFlags(Common::Serializer &s) {
 
 void BurgerEngine::global_daemon() {
 	switch (_G(kernel).trigger) {
-	case gRESUME_CONVERSATION:
+	case kRESUME_CONVERSATION:
 		conv_resume_curr();
 		break;
 
-	case gSERIES_STREAM_BREAK:
+	case kSERIES_STREAM_BREAK:
 		handle_series_stream_break();
 		break;
 
-	case gSERIES_PLAY_BREAK_0:
+	case kSERIES_PLAY_BREAK_0:
 		handle_series_play_break(0);
 		break;
 
-	case gSERIES_PLAY_BREAK_1:
+	case kSERIES_PLAY_BREAK_1:
 		handle_series_play_break(1);
 		break;
 
-	case gSERIES_PLAY_BREAK_2:
+	case kSERIES_PLAY_BREAK_2:
 		handle_series_play_break(2);
 		break;
 
-	case gRELEASE_TRIGGER_DIGI_CHECK:
+	case kRELEASE_TRIGGER_DIGI_CHECK:
 		release_trigger_digi_check();
 		break;
 
@@ -308,7 +308,7 @@ void BurgerEngine::global_daemon() {
 		kernel_timing_trigger(300, 10007);
 		break;
 
-	case gNPC_SPEECH_FINISHED:
+	case kNPC_SPEECH_FINISHED:
 		if (_G(npcSpeech1))
 			terminateMachineAndNull(_G(npcSpeech1));
 		if (_G(npcSpeech2))
@@ -317,15 +317,15 @@ void BurgerEngine::global_daemon() {
 		kernel_trigger_dispatch_now(_G(npcTrigger));
 		break;
 
-	case gWILBURS_SPEECH_FINISHED:
+	case kWILBURS_SPEECH_FINISHED:
 		_G(walker).wilburs_speech_finished();
 		break;
 
-	case gWILBURS_SPEECH_START:
+	case kWILBURS_SPEECH_START:
 		_G(walker).wilbur_say();
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 10001:
 			ws_unhide_walker(_G(my_walker));
@@ -343,7 +343,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info();
 			ws_hide_walker();
 			_G(wilbur_should) = 10013;
-			series_play_with_breaks(PLAY_BREAKS1, "999wbw", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 7,
+			series_play_with_breaks(PLAY_BREAKS1, "999wbw", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 7,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10004:
@@ -351,7 +351,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10012;
-			series_play_with_breaks(PLAY_BREAKS2, "999wbj", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS2, "999wbj", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10005:
@@ -359,7 +359,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10009;
-			series_play_with_breaks(PLAY_BREAKS3, "600wek", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS3, "600wek", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10006:
@@ -367,7 +367,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 7,
+			series_play_with_breaks(PLAY_BREAKS4, "999wsdu", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 7,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10007:
@@ -375,7 +375,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10014;
-			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS5, "999wtpe", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10008:
@@ -383,17 +383,17 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS6, "999wtpf", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10009:
 			ws_unhide_walker(_G(my_walker));
 			_G(wilbur_should) = 10018;
-			_G(walker).wilbur_speech("602w012x", gCHANGE_WILBUR_ANIMATION);
+			_G(walker).wilbur_speech("602w012x", kCHANGE_WILBUR_ANIMATION);
 			break;
 		case 10010:
 			_G(wilbur_should) = 10011;
-			_G(walker).wilbur_speech("602w012y", gCHANGE_WILBUR_ANIMATION);
+			_G(walker).wilbur_speech("602w012y", kCHANGE_WILBUR_ANIMATION);
 			break;
 		case 10011:
 			player_set_commands_allowed(true);
@@ -435,7 +435,7 @@ void BurgerEngine::global_daemon() {
 		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
 		break;
 
-	case gSET_FACING:
+	case kSET_FACING:
 		player_set_facing_at(_G(player_facing_x), _G(player_facing_y),
 			_G(player_trigger));
 		break;
@@ -443,20 +443,20 @@ void BurgerEngine::global_daemon() {
 	case kSET_DEST:
 		ws_demand_location(_G(my_walker), _G(player_dest_x), _G(player_dest_y));
 		_G(walker).wilbur_poof();
-		kernel_trigger_dispatch_now(gSET_COMMANDS_ALLOWED);
+		kernel_trigger_dispatch_now(kSET_COMMANDS_ALLOWED);
 
-	case gSET_COMMANDS_ALLOWED:
+	case kSET_COMMANDS_ALLOWED:
 		player_set_commands_allowed(true);
 		break;
 
-	case gUNPOOF:
+	case kUNPOOF:
 		_G(walker).wilbur_unpoof();
 		break;
 
 	case 10022:
 		if (_G(game).room_id < 200) {
 			_G(wilbur_should) = 10017;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			error_show(FL, 'Burg', "Time to abduct Wilbur in space?");
 		}
@@ -465,15 +465,15 @@ void BurgerEngine::global_daemon() {
 	case 10023:
 		if (_G(game).room_id < 700) {
 			_G(wilbur_should) = 10018;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
-	case gTELEPROTED1:
-		disable_player_commands_and_fade_init(gTELEPROTED2);
+	case kTELEPROTED1:
+		disable_player_commands_and_fade_init(kTELEPROTED2);
 		break;
 
-	case gTELEPROTED2:
+	case kTELEPROTED2:
 		testDone();
 		break;
 
@@ -517,7 +517,7 @@ void BurgerEngine::global_parser() {
 			} else if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 				_G(flags)[V123] = 1;
 				_G(wilbur_should) = 10004;
-				ws_turn_to_face(_G(my_walker), 3, gCHANGE_WILBUR_ANIMATION);
+				ws_turn_to_face(_G(my_walker), 3, kCHANGE_WILBUR_ANIMATION);
 				goto done;
 			}
 		}
@@ -526,21 +526,21 @@ void BurgerEngine::global_parser() {
 	if (player_said("WHISTLE") && player_said_any("GEAR", "WILBUR") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10003;
-		ws_turn_to_face(_G(my_walker), 7, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(_G(my_walker), 7, kCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("kibble") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10005;
-		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(_G(my_walker), 9, kCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
 	if (player_said("rubber ducky") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10006;
-		ws_turn_to_face(_G(my_walker), 9, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(_G(my_walker), 9, kCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 
@@ -554,7 +554,7 @@ void BurgerEngine::global_parser() {
 	if (player_said("puz dispenser") && player_said_any("gear", "wilbur") &&
 			_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
 		_G(wilbur_should) = 10008;
-		ws_turn_to_face(_G(my_walker), 5, gCHANGE_WILBUR_ANIMATION);
+		ws_turn_to_face(_G(my_walker), 5, kCHANGE_WILBUR_ANIMATION);
 		goto done;
 	}
 

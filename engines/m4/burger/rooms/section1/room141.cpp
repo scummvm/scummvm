@@ -888,7 +888,7 @@ void Room141::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
-	case g10013:
+	case kWILBUR_SPEECH_STARTED:
 		_G(kernel).continue_handling_trigger = 1;
 		_val6 = 53;
 		break;

@@ -71,7 +71,7 @@ void Room702::daemon() {
 		_G(roomVal4) = 8;
 		_G(wilbur_should) = 10;
 		digi_play_loop("700_001", 3, 50, -1, 700);
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(5);
 		kernel_trigger_dispatch_now(6);
 		_G(flags)[V298] = 1;
@@ -213,7 +213,7 @@ void Room702::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 10:
 			ws_walk(236, 338, 0, 11, 4);

@@ -74,11 +74,11 @@ void Room::npc_say(const char *digiName, int trigger, const char *seriesName,
 		}
 	}
 
-	kernel_trigger_dispatch_now(gNPC_SPEECH_STARTED);
+	kernel_trigger_dispatch_now(kNPC_SPEECH_STARTED);
 	KernelTriggerType oldMode = _G(kernel).trigger_mode;
 
 	_G(kernel).trigger_mode = KT_DAEMON;
-	digi_play(digiName, digiSlot, digiVol, gNPC_SPEECH_FINISHED);
+	digi_play(digiName, digiSlot, digiVol, kNPC_SPEECH_FINISHED);
 
 	_G(kernel).trigger_mode = oldMode;
 }

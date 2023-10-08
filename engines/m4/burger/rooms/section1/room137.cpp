@@ -89,7 +89,7 @@ void Room137::init() {
 	case 136:
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 3;
-		kernel_timing_trigger(1, gCHANGE_WILBUR_ANIMATION);
+		kernel_timing_trigger(1, kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 138:
@@ -104,7 +104,7 @@ void Room137::init() {
 			ws_hide_walker();
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 1;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 
 		if (_G(flags)[V048] < 200 && _G(flags)[V048] && _G(flags)[V047] == 4)
@@ -555,11 +555,11 @@ void Room137::daemon() {
 			_series2 = series_play("137jaws", 0x600, 0, -1, 7, -1, 100, 0, 0, 0, 0);
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_G(wilbur_should) = 2;
-			series_play("137wi01", 0x100, 2, gCHANGE_WILBUR_ANIMATION,
+			series_play("137wi01", 0x100, 2, kCHANGE_WILBUR_ANIMATION,
 				6, 0, 100, 0, 0, 0, 9);
 			series_play("137wi01s", 0x101, 2, -1, 6, 0, 100, 0, 0, 0, 9);
 			break;
@@ -572,7 +572,7 @@ void Room137::daemon() {
 		case 3:
 			ws_demand_location(183, 216, 8);
 			_G(wilbur_should) = 4;
-			ws_walk(171, 236, 0, gCHANGE_WILBUR_ANIMATION, 5);
+			ws_walk(171, 236, 0, kCHANGE_WILBUR_ANIMATION, 5);
 			break;
 
 		case 4:
@@ -586,7 +586,7 @@ void Room137::daemon() {
 			ws_hide_walker();
 			player_set_commands_allowed(false);
 			series_load("137jaws");
-			series_play_with_breaks(PLAY1, "137wi02", 0x100, gCHANGE_WILBUR_ANIMATION,
+			series_play_with_breaks(PLAY1, "137wi02", 0x100, kCHANGE_WILBUR_ANIMATION,
 				3, 6, 100, 0, 0);
 			hotspot_set_active("keys", true);
 			hotspot_set_active("trunk ", true);
@@ -601,7 +601,7 @@ void Room137::daemon() {
 			ws_hide_walker();
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 9;
-			series_play_with_breaks(PLAY2, "137wi03", 0x100, gCHANGE_WILBUR_ANIMATION,
+			series_play_with_breaks(PLAY2, "137wi03", 0x100, kCHANGE_WILBUR_ANIMATION,
 				3, 6, 100, 0, 0);
 			hotspot_set_active("keys", false);
 			hotspot_set_active("trunk ", false);
@@ -613,7 +613,7 @@ void Room137::daemon() {
 			ws_hide_walker();
 			player_set_commands_allowed(false);
 			_G(wilbur_should) = 9;
-			series_play_with_breaks(PLAY3, "137wi04", 0x100, gCHANGE_WILBUR_ANIMATION,
+			series_play_with_breaks(PLAY3, "137wi04", 0x100, kCHANGE_WILBUR_ANIMATION,
 				3, 6, 100, 0, 0);
 			hotspot_set_active("jawz o' life", false);
 			break;
@@ -626,13 +626,13 @@ void Room137::daemon() {
 		case 35:
 			_G(wilbur_should) = 36;
 			ws_hide_walker();
-			series_play("137wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION,
+			series_play("137wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION,
 				6, 0, 100, 0, 0, 0, 9);
 			series_play("137wi01s", 0x100, 0, -1, 6, 0, 100, 0, 0, 0, 9);
 			break;
 
 		case 36:
-			series_play("137wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION,
+			series_play("137wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION,
 				600, 0, 100, 0, 0, 9, 9);
 			series_play("137wi01s", 0x100, 0, -1, 600, 0, 100, 0, 0, 9, 9);
 			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1011);
@@ -668,7 +668,7 @@ void Room137::parser() {
 
 	if (_G(flags)[V046] && (player_said("gear", "trunk") || player_said("gear", "trunk "))) {
 		_G(wilbur_should) = 7;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("conv15")) {
 		conv15();
@@ -683,16 +683,16 @@ void Room137::parser() {
 		}
 	} else if (player_said("keys", "trunk")) {
 		_G(wilbur_should) = 6;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("take", "jawz o' life") && inv_object_is_here("jawz o' life")) {
 		_G(wilbur_should) = 8;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if ((player_said("take", "keys") || player_said("gear", "keys")) &&
 			!inv_player_has("keys")) {
 		_G(wilbur_should) = 7;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("gear", "jawz o' life") && inv_object_is_here("jawz o' life")) {
 		wilbur_speech("137w011");
@@ -705,7 +705,7 @@ void Room137::parser() {
 	} else if (player_said("LOOK AT", "CAR WINDOW")) {
 		_G(wilbur_should) = 35;
 		player_set_commands_allowed(false);
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else {
 		return;
 	}

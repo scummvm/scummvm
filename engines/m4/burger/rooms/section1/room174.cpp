@@ -111,14 +111,14 @@ void Room174::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			disable_player();
 			terminateMachineAndNull(_series2);
 			_action = 5;
 			_G(wilbur_should) = 2;
-			series_play_with_breaks(PLAY1, "174wi03", 0x8ff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "174wi03", 0x8ff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -131,7 +131,7 @@ void Room174::daemon() {
 			_laxative.terminate();
 			ws_hide_walker();
 			_G(wilbur_should) = 4;
-			series_play_with_breaks(PLAY2, "174wi01", 0x400, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY2, "174wi01", 0x400, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 4:
@@ -166,11 +166,11 @@ void Room174::parser() {
 		disable_player_commands_and_fade_init(1022);
 	} else if (player_said("GEAR") && player_said_any("TOILET", "FLUSH CHAIN")) {
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "LAXATIVE ")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 3;
-		wilbur_speech("174w013", gCHANGE_WILBUR_ANIMATION);
+		wilbur_speech("174w013", kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("TAKE", "MIRROR")) {
 		wilbur_speech("174w001");
 	} else {

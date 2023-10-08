@@ -756,12 +756,12 @@ void Room405::daemon() {
 			_G(game).room_id = 1;
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 25:
 			disable_player();
 			_G(wilbur_should) = 26;
-			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
 			break;
 
 		case 26:
@@ -772,22 +772,22 @@ void Room405::daemon() {
 		case 27:
 			disable_player();
 			_G(wilbur_should) = 28;
-			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 11);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 11);
 			break;
 
 		case 28:
 			_G(wilbur_should) = 29;
-			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 11, 11);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 11, 11);
 			startConv90();
 			break;
 			
 		case 29:
-			Series::series_play("405wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION, 60, 0, 100, 0, 0, 11, 11);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 60, 0, 100, 0, 0, 11, 11);
 			break;
 
 		case 30:
 			_G(wilbur_should) = 31;
-			Series::series_play("405wi01", 0x100, 2, gCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 11);
+			Series::series_play("405wi01", 0x100, 2, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 11);
 			break;
 
 		case 31:
@@ -798,7 +798,7 @@ void Room405::daemon() {
 			terminateMachineAndNull(_lid);
 			disable_player();
 			_G(wilbur_should) = 33;
-			series_play_with_breaks(PLAY5, "405wi07", 0x100, gCHANGE_WILBUR_ANIMATION, 3, 7, 100, 0, 0);
+			series_play_with_breaks(PLAY5, "405wi07", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 7, 100, 0, 0);
 			break;
 
 		case 33:
@@ -814,13 +814,13 @@ void Room405::daemon() {
 		case 34:
 			disable_player();
 			_G(wilbur_should) = 35;
-			series_play_with_breaks(PLAY6, "405wi04", 0xe00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY6, "405wi04", 0xe00, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 35:
 			inv_move_object("quarter", 405);
 			_G(wilbur_should) = 36;
-			series_play_with_breaks(PLAY7, "405wi05", 0xe00, gCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY7, "405wi05", 0xe00, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 36:
@@ -830,13 +830,13 @@ void Room405::daemon() {
 			player_update_info();
 
 			_G(wilbur_should) = 37;
-			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, gCHANGE_WILBUR_ANIMATION, 5);
+			ws_walk(_G(player_info).x, _G(player_info).y, nullptr, kCHANGE_WILBUR_ANIMATION, 5);
 			break;
 
 		case 37:
 			_G(wilbur_should) = 38;
 			gr_backup_palette();
-			pal_fade_init(_G(kernel).first_fade, 255, 0, 15, gCHANGE_WILBUR_ANIMATION);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 15, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 38:
@@ -922,7 +922,7 @@ void Room405::parser() {
 		}
 	} else if (player_said("dog collar", "vipe")) {
 		_G(wilbur_should) = 25;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		hotspot_set_active("vipe", false);
 		hotspot_set_active("guitar", false);
 	} else if (player_said("swinging door") && player_said_any("enter", "gear") && !_G(flags)[V168]) {
@@ -992,16 +992,16 @@ void Room405::parser() {
 		}
 	} else if (player_said("vipe") && inv_player_has(_G(player).verb)) {
 		_G(wilbur_should) = 27;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("records", "jukebox")) {
 		_G(wilbur_should) = 32;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (!_G(flags)[V168] && (player_said("quarter", "jukebox") || player_said("gear", "jukebox"))) {
 		if (!inv_player_has("quarter")) {
 			wilbur_speech("405w008");
 		}  else if (_G(flags)[V167]) {
 			_G(wilbur_should) = 34;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:

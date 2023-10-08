@@ -224,7 +224,7 @@ void Room604::init() {
 
 		if (_G(flags)[V242]) {
 			_roomSeries1.show("604wi04", 1);
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			kernel_trigger_dispatch_now(0);
 		}
@@ -235,10 +235,10 @@ void Room604::init() {
 	case 612:
 		if (Section6::_state2) {
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else {
 			_G(wilbur_should) = 6;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -251,7 +251,7 @@ void Room604::init() {
 		player_set_commands_allowed(false);
 		_roomSeries1.show("604wi04", 1);
 		_G(wilbur_should) = 1;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 	}
 }
@@ -268,7 +268,7 @@ void Room604::daemon() {
 		_roomSeries1.show("604wi04", 1);
 		_val1 = 25;
 		kernel_trigger_dispatch_now(6012);
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 2:
@@ -278,7 +278,7 @@ void Room604::daemon() {
 
 	case 3:
 		_G(wilbur_should) = 10001;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(4);
 		break;
 
@@ -396,17 +396,17 @@ void Room604::daemon() {
 		}
 		break;
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			_G(wilbur_should) = 2;
-			digi_play("604_006", 2, 155, gCHANGE_WILBUR_ANIMATION);
+			digi_play("604_006", 2, 155, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 2:
 			_roomSeries1.terminate();
 			inv_give_to_player("RAY GUN");
-			series_play_with_breaks(PLAY1, "604wi04", 1, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY1, "604wi04", 1, kCHANGE_WILBUR_ANIMATION, 3);
 			_G(wilbur_should) = 3;
 			break;
 
@@ -465,10 +465,10 @@ void Room604::daemon() {
 				Section6::_state3 = 6004;
 				series_stream("604mg06", 4, 0xc80, 6011);
 				series_play("604mg06s", 4, 0xc80, 0, -1);
-				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, kCHANGE_WILBUR_ANIMATION, 3);
 			} else {
 				_G(wilbur_should) = 10001;
-				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY4, "604wi08", 0x4ff, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -476,7 +476,7 @@ void Room604::daemon() {
 			_G(wilbur_should) = 10001;
 			ws_demand_location(337, 279, 7);
 			ws_hide_walker();
-			series_play_with_breaks(PLAY5, "604wi09", 0xc80, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY5, "604wi09", 0xc80, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 8:
@@ -484,20 +484,20 @@ void Room604::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY12, "604wi40", 0x800, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY12, "604wi40", 0x800, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 9:
 			ws_hide_walker();
 			_G(wilbur_should) = 20;
-			series_play_with_breaks(PLAY6, "604wi10", 0xcc0, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "604wi10", 0xcc0, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 10:
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(false);
-			series_play_with_breaks(PLAY10, "604wi11", 0xa00, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY10, "604wi11", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 
 			if (_G(flags)[V274] == 0 && _G(flags)[V243] == 600) {
 				_G(flags)[V243] = 6006;
@@ -516,7 +516,7 @@ void Room604::daemon() {
 			_series2 = series_load("604chips");
 			_G(wilbur_should) = 12;
 
-			series_play_with_breaks(PLAY11, "604wi12", 0x600, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY11, "604wi12", 0x600, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 12:
@@ -534,7 +534,7 @@ void Room604::daemon() {
 		case 13:
 			ws_hide_walker();
 			_G(wilbur_should) = 10001;
-			series_play_with_breaks(PLAY7, "604wi10", 0xcc0, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY7, "604wi10", 0xcc0, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 14:
@@ -543,7 +543,7 @@ void Room604::daemon() {
 			player_update_info();
 			_G(wilbur_should) = 15;
 
-			ws_walk(_G(player_info).x + 1, 316, 0, gCHANGE_WILBUR_ANIMATION, 3);
+			ws_walk(_G(player_info).x + 1, 316, 0, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 15:
@@ -553,7 +553,7 @@ void Room604::daemon() {
 			Section6::_savedX = _G(player_info).x - 358;
 			Section6::_state1 = imath_ranged_rand(0, 5);
 
-			series_play_with_breaks(PLAY8, "604wi31", _G(player_info).depth, gCHANGE_WILBUR_ANIMATION,
+			series_play_with_breaks(PLAY8, "604wi31", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION,
 				3, 6, 100, Section6::_savedX, 0);
 			break;
 
@@ -580,7 +580,7 @@ void Room604::daemon() {
 			} else {
 				_G(wilbur_should) = 11;
 				player_set_commands_allowed(false);
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
@@ -607,13 +607,13 @@ void Room604::daemon() {
 				digi_preload("604w014");
 				player_set_commands_allowed(true);
 				_G(wilbur_should) = 10002;
-				wilbur_speech("604w014", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("604w014", kCHANGE_WILBUR_ANIMATION);
 			} else {
 				digi_preload("604w012");
 				player_set_commands_allowed(false);
 				_G(wilbur_should) = 10001;
 				_G(flags)[V248] = 1;
-				wilbur_speech("604w012", gCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("604w012", kCHANGE_WILBUR_ANIMATION);
 			}
 			break;
 
@@ -648,7 +648,7 @@ void Room604::daemon() {
 				_G(flags)[V264] = 1;
 				intr_cancel_sentence();
 				_G(wilbur_should) = 14;
-				kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
 		} else {
 			_G(flags)[V264] = 0;
@@ -673,15 +673,15 @@ void Room604::pre_parser() {
 
 		if (_G(flags)[V274] == 0) {
 			_G(wilbur_should) = 17;
-			player_hotspot_walk_override(353, 313, 10, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(353, 313, 10, kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("WOOD SHAVINGS", "KIBBLE")) {
 		_G(wilbur_should) = 10;
-		player_hotspot_walk_override(308, 301, 10, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(308, 301, 10, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("RAY GUN", "GERBILS")) {
 		_G(wilbur_should) = 8;
-		player_hotspot_walk_override(286, 297, 10, gCHANGE_WILBUR_ANIMATION);
+		player_hotspot_walk_override(286, 297, 10, kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("KIBBLE", "FLOOR")) {
 		if (_G(flags)[V273]) {
@@ -690,7 +690,7 @@ void Room604::pre_parser() {
 			wilbur_speech("600w008z");
 		} else {
 			_G(wilbur_should) = 16;
-			player_hotspot_walk_override(425, 303, 9, gCHANGE_WILBUR_ANIMATION);
+			player_hotspot_walk_override(425, 303, 9, kCHANGE_WILBUR_ANIMATION);
 			_G(player).command_ready = false;
 		}
 
@@ -721,13 +721,13 @@ void Room604::parser() {
 		_G(flags)[V246] = 1;
 		Section6::_state2 = 2;
 		_G(wilbur_should) = 5;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (player_said("GEAR", "TUBE") || player_said("CLIMB IN", "TUBE")) {
 		_G(flags)[V246] = 1;
 		Section6::_state2 = 0;
 		_G(wilbur_should) = 4;
-		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
 	} else if (rayGun && player_said("APPLE CORE")) {
 		wilbur_speech("604w029");

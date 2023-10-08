@@ -54,8 +54,8 @@ const WilburMatch Room142::MATCH[] = {
 	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
 	{ "GEAR", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
 	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
-	{ "GEAR", "ICE BOX", gCHANGE_WILBUR_ANIMATION, &_G(flags)[V059], 0, &Vars::_wilbur_should, 1 },
-	{ "TAKE", "FANBELT", gCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
+	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &_G(flags)[V059], 0, &Vars::_wilbur_should, 1 },
+	{ "TAKE", "FANBELT", kCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
 	{ "GEAR", "BACK DOOR", 6, nullptr, 0, nullptr, 0 },
 	WILBUR_MATCH_END
 };
@@ -176,7 +176,7 @@ void Room142::init() {
 		if (_G(flags)[V059]) {
 			ws_hide_walker();
 			_G(wilbur_should) = 2;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
@@ -406,13 +406,13 @@ void Room142::daemon() {
 		break;
 
 
-	case gCHANGE_WILBUR_ANIMATION:
+	case kCHANGE_WILBUR_ANIMATION:
 		switch (_G(wilbur_should)) {
 		case 1:
 			terminateMachineAndNull(_series5);
 			disable_player();
 			_G(wilbur_should) = 2;
-			series_play_with_breaks(PLAY9, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY9, "142wi04", 0xdff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -432,7 +432,7 @@ void Room142::daemon() {
 				terminateMachineAndNull(_series7);
 				_G(wilbur_should) = 4;
 
-				series_play_with_breaks(PLAY11, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
+				series_play_with_breaks(PLAY11, "142wi04", 0xdff, kCHANGE_WILBUR_ANIMATION, 3);
 			}
 			break;
 
@@ -450,7 +450,7 @@ void Room142::daemon() {
 			terminateMachineAndNull(_series7);
 			_G(wilbur_should) = 6;
 
-			series_play_with_breaks(PLAY10, "142wi02", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY10, "142wi02", 0xdff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 6:
@@ -466,7 +466,7 @@ void Room142::daemon() {
 			terminateMachineAndNull(_series7);
 			_G(wilbur_should) = 8;
 
-			series_play_with_breaks(PLAY10, "142wi04", 0xdff, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY10, "142wi04", 0xdff, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 8:
@@ -480,7 +480,7 @@ void Room142::daemon() {
 		case 9:
 			disable_player();
 			_G(wilbur_should) = 10;
-			series_play_with_breaks(PLAY12, "142wi05", 0x400, gCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY12, "142wi05", 0x400, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 10:
@@ -599,7 +599,7 @@ void Room142::pre_parser() {
 
 		if (player_said("GEAR", "ICE BOX")) {
 			_G(wilbur_should) = 5;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (player_said("ICE")) {
 			if (player_said("LOOK AT")) {
 				if (_G(flags)[V040] && !inv_player_has("BLOCK OF ICE")) {
@@ -613,7 +613,7 @@ void Room142::pre_parser() {
 				} else if (inv_player_has("BLOCK_OF_ICE")) {
 					wilbur_speech("142w009");
 				} else {
-					kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+					kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				}
 			} else if (player_said("GEAR")) {
 				wilbur_speech("142w002");
@@ -622,7 +622,7 @@ void Room142::pre_parser() {
 			}
 		} else {
 			_G(wilbur_should) = 7;
-			kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 
 		_G(player).command_ready = false;

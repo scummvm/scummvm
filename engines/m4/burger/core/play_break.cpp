@@ -63,7 +63,7 @@ static void set_next_series_play_break(int32 slot) {
 					// There is a sound to play and it is not looping (finite) 
 					if (_G(seriesPlayers)[slot].current_break.loopCount == -1) {	// Check if series is to loop as long as sound plays (loopCount = -1)
 						_G(seriesPlayers)[slot].digi_trigger = true;	// Remember that the gSERIES_PLAY_BREAK will be a sound trigger
-						digi_play(player->current_break.sound, player->current_break.channel, player->current_break.volume, gSERIES_PLAY_BREAK_0 + slot);
+						digi_play(player->current_break.sound, player->current_break.channel, player->current_break.volume, kSERIES_PLAY_BREAK_0 + slot);
 					} else {
 						// Use the play break trigger 
 						digi_play(player->current_break.sound, player->current_break.channel, player->current_break.volume, player->current_break.trigger);
@@ -84,7 +84,7 @@ static void set_next_series_play_break(int32 slot) {
 					player->scale, player->x, player->y,
 					player->current_break.firstFrame, player->current_break.lastFrame);
 			} else { // ask for the gSERIES_PLAY_BREAK trigger
-				player->series_machine = series_play(player->name, player->depth, player->current_break.flags, (int16)slot + gSERIES_PLAY_BREAK_0,
+				player->series_machine = series_play(player->name, player->depth, player->current_break.flags, (int16)slot + kSERIES_PLAY_BREAK_0,
 					player->framerate, player->current_break.loopCount,
 					player->scale, player->x, player->y,
 					player->current_break.firstFrame, player->current_break.lastFrame);
