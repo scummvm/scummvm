@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-06 20:25+0000\n"
+"POT-Creation-Date: 2023-10-08 06:32+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -8141,7 +8141,7 @@ msgstr ""
 "Каб усталяваць, заладуйце:\n"
 "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:863
+#: engines/sci/sci.cpp:921
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
