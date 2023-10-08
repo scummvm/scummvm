@@ -2655,6 +2655,19 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "zombie",             "Uno Zombie a Deadville" },
 	{ "zorkita",            "Zork I: Il Grande Impero Sotterraneo" },
 
+	// Italian games: Marmellata d'Avventura 2018
+	{ "ma_lastprigioniero", "I Cinque Feudi" },
+	{ "ma_skepto",          "Skepto!" },
+	{ "ma_dejavu_zcode",    "Déjà Vu" },
+	{ "ma_lazystranocaso",  "Lazy Jones e lo Strano Caso" },
+	{ "ma_pilastri",        "Sigehao - I Quattro Pilastri" },
+
+	// Italian games: Marmellata d'Avventura 2019
+	{ "ma_salagamescastle", "La Sala dei Giochi del Castello del Signore di Ylourgne in Averoigne" },
+	{ "ma_tesorosalagames", "Il Tesoro della Sala Giochi" },
+	{ "ma_lazysalagiochi",  "Lazy Jones e la Sala Giochi" },
+	{ "ma_5feudi",          "I Cinque Feudi" },
+
 	// Slovenian games
 	{ "zenin",              "Zenin na Begu" },
 
@@ -6495,6 +6508,19 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("zombie", "230620", "265679a116cca1867a8b05d6b7267318", 135680, Common::IT_ITA),
 	ENTRY1("zorkita", "000031", "3d85a97ddfc1fb0f6bfbf1cb00b4df7b", 192512, Common::IT_ITA),
 	ENTRY1("zorkita", "v6/000031", "be15759f2273cdaf124dbc40436244b0", 192512, Common::IT_ITA),
+
+	// Italian games: Marmellata d'Avventura 2018
+	ENTRY1("ma_lastprigioniero", "180723", "e658aef675c3b44a5027f52b49d53abb", 199168, Common::IT_ITA),
+	ENTRY1("ma_skepto", "989484", "b1642bac5df936d0d6e56e141a4fd120", 145408, Common::IT_ITA),
+	ENTRY1("ma_dejavu_zcode", "180331/z5", "2fdfccb2539bf6d73ea5b86fe1cb7e81", 116224, Common::IT_ITA),
+	ENTRY1("ma_lazystranocaso", "180331", "6d78774d7c8cc30f8bed2e33458e7fc5", 175616, Common::IT_ITA),
+	ENTRY1("ma_pilastri", "180330", "ff72f757570e2a9d0675507c05a6bf69", 75776, Common::IT_ITA),
+
+	// Italian games: Marmellata d'Avventura 2019
+	ENTRY1("ma_salagamescastle", "191222", "6285d40140396eb6b45a3900d4e79577", 239616, Common::IT_ITA),
+	ENTRY1("ma_tesorosalagames", "191210", "bce5e94aa0667c83a869f9a71774086f", 137216, Common::IT_ITA),
+	ENTRY1("ma_lazysalagiochi", "191215", "f8f5030501e6640dbfef11c850967e93", 114176, Common::IT_ITA),
+	ENTRY1("ma_5feudi", "191213", "175cdef793bf9316f70714921e178ac3", 82944, Common::IT_ITA),
 
 	// Russian games
 	ENTRY0("allroads", "070701", "427693ae57580bbc57f204c50437d3cc", 198656),
