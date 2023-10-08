@@ -184,7 +184,6 @@ void ScummEngine::clearOwnerOf(int obj) {
 			}
 		}
 	} else {
-
 		// Alternatively, scan the inventory to see if the object is in there...
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj) {
@@ -194,18 +193,22 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
 
-				// Now fill up the gap removing the object from the inventory created.
-				for (i = 0; i < _numInventory - 1; i++) {
-					if (!_inventory[i] && _inventory[i+1]) {
-						_inventory[i] = _inventory[i+1];
-						_inventory[i+1] = 0;
-						// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
-						_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
-						_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
-						_res->_types[rtInventory][i + 1]._address = nullptr;
-						_res->_types[rtInventory][i + 1]._size = 0;
+				// Verified from INDY3 disasm, the gaps were not being filled up before v4...
+				if (_game.version < 4) {
+					// Now fill up the gap removing the object from the inventory created.
+					for (i = 0; i < _numInventory - 1; i++) {
+						if (!_inventory[i] && _inventory[i + 1]) {
+							_inventory[i] = _inventory[i + 1];
+							_inventory[i + 1] = 0;
+							// FIXME FIXME FIXME: This is incomplete, as we do not touch flags, status... BUG
+							_res->_types[rtInventory][i]._address = _res->_types[rtInventory][i + 1]._address;
+							_res->_types[rtInventory][i]._size = _res->_types[rtInventory][i + 1]._size;
+							_res->_types[rtInventory][i + 1]._address = nullptr;
+							_res->_types[rtInventory][i + 1]._size = 0;
+						}
 					}
 				}
+
 				break;
 			}
 		}
