@@ -416,8 +416,8 @@ bool MacIndy3Gui::Widget::updateTimer(int delta) {
 	return _timer == 0;
 }
 
-void MacIndy3Gui::Widget::copyRectToScreen(Common::Rect r) const {
-	_gui->copyRectToScreen(r);
+void MacIndy3Gui::Widget::markScreenAsDirty(Common::Rect r) const {
+	_gui->markScreenAsDirty(r);
 }
 
 void MacIndy3Gui::Widget::fill(Common::Rect r) const {
@@ -506,7 +506,7 @@ void MacIndy3Gui::VerbWidget::undraw() {
 
 	_visible = false;
 	fill(_bounds);
-	copyRectToScreen(_bounds);
+	markScreenAsDirty(_bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -651,7 +651,7 @@ void MacIndy3Gui::Button::draw() {
 	}
 
 	setRedraw(false);
-	copyRectToScreen(_bounds);
+	markScreenAsDirty(_bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -884,7 +884,7 @@ void MacIndy3Gui::Inventory::draw() {
 			s->draw();
 		}
 
-		copyRectToScreen(_bounds);
+		markScreenAsDirty(_bounds);
 	}
 
 	// Since the inventory slots overlap, draw the highlighted ones (and
@@ -906,7 +906,6 @@ void MacIndy3Gui::Inventory::draw() {
 		_scrollButtons[i]->draw();
 
 	setRedraw(false);
-	// Everything has already been copied to the screen
 }
 
 // ---------------------------------------------------------------------------
@@ -999,7 +998,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 	}
 
 	setRedraw(false);
-	copyRectToScreen(_bounds);
+	markScreenAsDirty(_bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -1101,7 +1100,7 @@ void MacIndy3Gui::Inventory::ScrollBar::draw() {
 	}
 
 	setRedraw(false);
-	copyRectToScreen(_bounds);
+	markScreenAsDirty(_bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -1159,7 +1158,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 	drawBitmap(_bounds, arrow, color);
 
 	setRedraw(false);
-	copyRectToScreen(_bounds);
+	markScreenAsDirty(_bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -1214,6 +1213,8 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 		i->_value->setVerbid(i->_key);
+
+	_dirtyRects.clear();
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
@@ -1351,6 +1352,8 @@ void MacIndy3Gui::update(int delta) {
 		if (w->hasVerb())
 			w->draw();
 	}
+
+	copyDirtyRectsToScreen();
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
@@ -1424,11 +1427,31 @@ void MacIndy3Gui::clear() {
 	drawBitmap(Common::Rect(  0, 369,   4, 373), _llCorner, kBlack);
 	drawBitmap(Common::Rect(636, 369, 640, 373), _lrCorner, kBlack);
 
-	copyRectToScreen(Common::Rect(0, 288, 640, 400));
+	markScreenAsDirty(Common::Rect(0, 288, 640, 400));
 }
 
-void MacIndy3Gui::copyRectToScreen(Common::Rect r) const {
-	_system->copyRectToScreen(_surface->getBasePtr(r.left, r.top), _surface->pitch, r.left, r.top, r.width(), r.height());
+void MacIndy3Gui::markScreenAsDirty(Common::Rect r) {
+	// As long as we always call this with the most encompassing rect
+	// first, it is trivial to filter out unnecessary calls.
+
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
+		if (_dirtyRects[i].contains(r))
+			return;
+	}
+
+	_dirtyRects.push_back(r);
+}
+
+void MacIndy3Gui::copyDirtyRectsToScreen() {
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
+		_system->copyRectToScreen(
+			_surface->getBasePtr(_dirtyRects[i].left, _dirtyRects[i].top),
+			_surface->pitch,
+			_dirtyRects[i].left, _dirtyRects[i].top,
+			_dirtyRects[i].width(), _dirtyRects[i].height());
+	}
+
+	_dirtyRects.clear();
 }
 
 void MacIndy3Gui::fill(Common::Rect r) const {
