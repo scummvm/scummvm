@@ -128,6 +128,7 @@ public:
 	int _textMaxWidth = 0;
 	int _textMaxHeight = 0;
 	TextAlign _textAlignment = kTextAlignRight;
+	int _interLinear = 0;
 	int _textShadow = 0;
 	MacWindowManager *_wm = nullptr;
 	uint32 _bgcolor = 0;
@@ -140,6 +141,7 @@ public:
 		delete _shadowSurface;
 	}
 
+	void recalcDims();
 	void reallocSurface();
 	void render(int from, int to);
 	void render(int from, int to, int shadow);
@@ -237,7 +239,7 @@ public:
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
 	ManagedSurface *getSurface() { return _canvas._surface; }
-	int getInterLinear() { return _interLinear; }
+	int getInterLinear() { return _canvas._interLinear; }
 	void setInterLinear(int interLinear);
 	void setMaxWidth(int maxWidth);
 	void setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
@@ -329,7 +331,7 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
-	int getLineSpacing() { return _interLinear; }
+	int getLineSpacing() { return _canvas._interLinear; }
 
 	/**
 	 * set the selection of mactext
@@ -391,8 +393,6 @@ public:
 protected:
 	Common::U32String _str;
 	const MacFont *_macFont;
-
-	int _interLinear;
 
 	bool _fixedDims;
 

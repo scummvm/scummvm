@@ -119,7 +119,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
-	_macFont(macFont), _interLinear(interlinear) {
+	_macFont(macFont) {
 
 	D(6, "MacText::MacText(): fgcolor: %d, bgcolor: %d s: \"%s\"", fgcolor, bgcolor, Common::toPrintable(s.encode()).c_str());
 
@@ -134,6 +134,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
 	_canvas._textShadow = textShadow;
+	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = true;
@@ -155,7 +156,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(macFont), _interLinear(interlinear) {
+	_macFont(macFont) {
 
 	_str = s;
 
@@ -167,6 +168,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
 	_canvas._textShadow = 0;
+	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = true;
@@ -188,7 +190,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 // Working with plain Font
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(nullptr), _interLinear(interlinear) {
+	_macFont(nullptr) {
 
 	_str = s;
 
@@ -200,6 +202,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_canvas._maxWidth = maxWidth;
 	_canvas._textAlignment = textAlignment;
 	_canvas._textShadow = 0;
+	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
 	_canvas._bgcolor = bgcolor;
 	_canvas._macFontMode = false;
@@ -1318,7 +1321,7 @@ int MacTextCanvas::getLineHeight(int line) {
 }
 
 void MacText::setInterLinear(int interLinear) {
-	_interLinear = interLinear;
+	_canvas._interLinear = interLinear;
 
 	recalcDims();
 	_fullRefresh = true;
@@ -1327,22 +1330,7 @@ void MacText::setInterLinear(int interLinear) {
 }
 
 void MacText::recalcDims() {
-	if (_canvas._text.empty())
-		return;
-
-	int y = 0;
-	_canvas._textMaxWidth = 0;
-
-	for (uint i = 0; i < _canvas._text.size(); i++) {
-		_canvas._text[i].y = y;
-
-		// We must calculate width first, because it enforces
-		// the computation. Calling Height() will return cached value!
-		_canvas._textMaxWidth = MAX(_canvas._textMaxWidth, _canvas.getLineWidth(i, true));
-		y += MAX(getLineHeight(i), _interLinear);
-	}
-
-	_canvas._textMaxHeight = y;
+	_canvas.recalcDims();
 
 	if (!_fixedDims) {
 		int newBottom = _dims.top + _canvas._textMaxHeight + (2 * _border) + _gutter + _shadow;
@@ -1359,6 +1347,25 @@ void MacText::recalcDims() {
 			_contentIsDirty = true;
 		}
 	}
+}
+
+void MacTextCanvas::recalcDims() {
+	if (_text.empty())
+		return;
+
+	int y = 0;
+	_textMaxWidth = 0;
+
+	for (uint i = 0; i < _text.size(); i++) {
+		_text[i].y = y;
+
+		// We must calculate width first, because it enforces
+		// the computation. Calling Height() will return cached value!
+		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
+		y += MAX(getLineHeight(i), _interLinear);
+	}
+
+	_textMaxHeight = y;
 }
 
 void MacText::setAlignOffset(TextAlign align) {
@@ -1547,7 +1554,7 @@ void MacText::removeLastLine() {
 	if (!_canvas._text.size())
 		return;
 
-	int h = getLineHeight(_canvas._text.size() - 1) + _interLinear;
+	int h = getLineHeight(_canvas._text.size() - 1) + _canvas._interLinear;
 
 	_canvas._surface->fillRect(Common::Rect(0, _canvas._textMaxHeight - h, _canvas._surface->w, _canvas._textMaxHeight), _bgcolor);
 
@@ -2974,6 +2981,20 @@ void MacText::processTable(int line) {
 
 	for (uint i = 0; i < numCols; i++) {
 		warning("%d: %d", i, colW[i]);
+	}
+
+	for (auto &row : *table) {
+		int i = 0;
+		for (auto &cell : row.cells) {
+			cell._maxWidth = colW[i];
+
+			cell.recalcDims();
+			cell.reallocSurface();
+			cell._surface->clear(_bgcolor);
+			cell.render(0, cell._text.size());
+
+			i++;
+		}
 	}
 }
 
