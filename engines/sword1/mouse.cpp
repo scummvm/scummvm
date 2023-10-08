@@ -171,10 +171,25 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		Logic::_scriptVars[SPECIAL_ITEM] = 0;
 	if (_state & MOUSE_DOWN_MASK) {
 		if (_inTopMenu) {
-			if (Logic::_scriptVars[SECOND_ITEM])
+			if (Logic::_scriptVars[SECOND_ITEM]) {
+				if (Logic::_scriptVars[GEORGE_DOING_REST_ANIM] == 1) {
+					Logic::_scriptVars[GEORGE_DOING_REST_ANIM] = 0;
+				} else if (Logic::_scriptVars[GEORGE_WALKING]) {
+					Logic::_scriptVars[GEORGE_WALKING] = 2;
+				}
+
 				_logic->runMouseScript(NULL, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
-			if (Logic::_scriptVars[MENU_LOOKING])
+			}
+
+			if (Logic::_scriptVars[MENU_LOOKING]) {
+				if (Logic::_scriptVars[GEORGE_DOING_REST_ANIM] == 1) {
+					Logic::_scriptVars[GEORGE_DOING_REST_ANIM] = 0;
+				} else if (Logic::_scriptVars[GEORGE_WALKING]) {
+					Logic::_scriptVars[GEORGE_WALKING] = 2;
+				}
+
 				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
+			}
 		}
 
 		Logic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
