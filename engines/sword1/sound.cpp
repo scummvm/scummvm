@@ -427,6 +427,12 @@ void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.read(compSample, sampleFileSize);
 			_speechSize = getSpeechSize(compSample, sampleFileSize);
 			_speechSample = (byte *)malloc(_speechSize);
+
+			// Sometimes, the decompressed speech size is slightly longer than the actual
+			// decompressed sample data we are about to receive; this is normal, but to
+			// fully emulate what the original does, let's zero out the sample buffer.
+			memset(_speechSample, 0, _speechSize);
+
 			if (_speechSample) {
 				SwordEngine::_systemVars.speechRunning = expandSpeech(compSample, _speechSample, sampleFileSize);
 				free(compSample);
