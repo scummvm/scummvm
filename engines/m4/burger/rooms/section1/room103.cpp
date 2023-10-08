@@ -609,7 +609,7 @@ void Room103::daemon() {
 			_val2 = 2;
 
 			if (!_G(flags)[V023])
-				pal_fade_init(1001);
+				pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 			break;
 
 		default:

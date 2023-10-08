@@ -314,12 +314,12 @@ void Room133_136::parser() {
 	} else if (player_said("enter", "old bridge") || player_said("gear", "old bridge") ||
 			(lookFlag && player_said("old bridge"))) {
 		player_set_commands_allowed(false);
-		pal_fade_init(1008);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1008);
 
 	} else if (player_said("enter", "town limits") || player_said("gear", "town limits") ||
 			(lookFlag && player_said("town limits"))) {
 		player_set_commands_allowed(false);
-		pal_fade_init(1010);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1010);
 
 	} else if (inv_player_has(_G(player).verb) &&
 		player_said_any("old bridge", "town limits", "construction")) {

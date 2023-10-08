@@ -877,7 +877,7 @@ void Room141::daemon() {
 		break;
 
 	case 18:
-		pal_fade_init(1012);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1012);
 		break;
 
 	case 19:

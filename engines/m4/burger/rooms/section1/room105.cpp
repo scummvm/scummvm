@@ -1380,7 +1380,7 @@ void Room105::parser() {
 			wilbur_speech("105w011");
 		} else if (player_said("exit", "STAIRS")) {
 			player_set_commands_allowed(false);
-			pal_fade_init(7);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 7);
 		} else if (!player_said("take", "baitbox")) {
 			return;
 		}

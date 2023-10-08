@@ -153,7 +153,7 @@ void Room137::daemon() {
 
 		if (_G(player_info).y < 235 && player_said("FORK IN THE ROAD")) {
 			player_set_commands_allowed(false);
-			pal_fade_init(1009);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 		}
 	}
 
@@ -515,10 +515,10 @@ void Room137::daemon() {
 			inv_move_object("keys", 138);
 			inv_move_object("jawz o' life", 137);
 			_G(flags)[V046] = 0;
-			pal_fade_init(1006);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1006);
 
 		} else {
-			pal_fade_init(1009);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 		}
 		break;
 
@@ -635,7 +635,7 @@ void Room137::daemon() {
 			series_play("137wi01", 0x100, 0, gCHANGE_WILBUR_ANIMATION,
 				600, 0, 100, 0, 0, 9, 9);
 			series_play("137wi01s", 0x100, 0, -1, 600, 0, 100, 0, 0, 9, 9);
-			pal_fade_init(1011);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1011);
 			break;
 
 		default:
@@ -700,7 +700,7 @@ void Room137::parser() {
 	} else if (player_said("ENTER", "FORK IN THE ROAD") ||
 			player_said("look at", "FORK IN THE ROAD")) {
 		player_set_commands_allowed(false);
-		pal_fade_init(1009);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 
 	} else if (player_said("LOOK AT", "CAR WINDOW")) {
 		_G(wilbur_should) = 35;
