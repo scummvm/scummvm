@@ -242,6 +242,7 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 						_pickedUpPiece._drawSurface.blitFrom(_drawSurface, _destRects[i], Common::Point());
 						_pickedUpPiece.setVisible(true);
 						_pickedUpPiece.setTransparent(true);
+						_pickedUpPiece.pickUp();
 
 						// ...then change the data...
 						_pickedUpPieceID = _puzzleState->order[i];
@@ -296,34 +297,9 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 		}
 	}
 
-	// Now move the carried piece
-	if (_pickedUpPieceID != -1) {
-		// First, move the piece so its center is below the mouse hotspot
-		Common::Rect newLocation = _pickedUpPiece._drawSurface.getBounds();
-		newLocation.moveTo(input.mousePos.x, input.mousePos.y);
-		newLocation.translate(-newLocation.width() / 2, -newLocation.height() / 2);
+	_pickedUpPiece.handleInput(input);
 
-		// Then, make sure it doesn't escape outside the viewport bounds
-		Common::Rect screen = NancySceneState.getViewport().getScreenPosition();
-
-		if (newLocation.left < screen.left) {
-			newLocation.translate(screen.left - newLocation.left, 0);
-		}
-
-		if (newLocation.top < screen.top) {
-			newLocation.translate(0, screen.top - newLocation.top);
-		}
-
-		if (newLocation.right > screen.right) {
-			newLocation.translate(screen.right - newLocation.right, 0);
-		}
-
-		if (newLocation.bottom > screen.bottom) {
-			newLocation.translate(0, screen.bottom - newLocation.bottom);
-		}
-
-		_pickedUpPiece.moveTo(newLocation);
-	} else {
+	if (_pickedUpPieceID == -1) {
 		// No piece picked up, check the exit hotspot
 		if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(g_nancy->_cursorManager->_puzzleExitCursor);

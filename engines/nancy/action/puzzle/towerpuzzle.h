@@ -23,6 +23,7 @@
 #define NANCY_ACTION_TOWERPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 
@@ -33,7 +34,7 @@ namespace Action {
 class TowerPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	TowerPuzzle() : RenderActionRecord(7), _heldRing(8) {}
+	TowerPuzzle() : RenderActionRecord(7) {}
 	virtual ~TowerPuzzle() {}
 
 	void init() override;
@@ -67,7 +68,7 @@ protected:
 	Common::Rect _exitHotspot;
 
 	Graphics::ManagedSurface _image;
-	RenderObject _heldRing;
+	Misc::MouseFollowObject _heldRing;
 	int8 _heldRingID = -1;
 	int8 _heldRingPoleID = -1;
 	SolveState _solveState = kNotSolved;

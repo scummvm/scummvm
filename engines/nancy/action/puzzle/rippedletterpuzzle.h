@@ -23,6 +23,7 @@
 #define NANCY_ACTION_RIPPEDLETTERPUZZLE_H
 
 #include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
 
@@ -33,7 +34,7 @@ namespace Action {
 class RippedLetterPuzzle : public RenderActionRecord {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	RippedLetterPuzzle() : RenderActionRecord(7), _pickedUpPiece(8) {}
+	RippedLetterPuzzle() : RenderActionRecord(7) {}
 	virtual ~RippedLetterPuzzle() {}
 
 	void init() override;
@@ -60,7 +61,7 @@ public:
 	SceneChangeWithFlag _exitScene;
 	Common::Rect _exitHotspot;
 
-	RenderObject _pickedUpPiece;
+	Misc::MouseFollowObject _pickedUpPiece;
 	int8 _pickedUpPieceID = -1;
 	byte _pickedUpPieceRot = 0;
 

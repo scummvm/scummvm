@@ -55,6 +55,7 @@ MODULE_OBJS = \
   state/setupmenu.o \
   misc/hypertext.o \
   misc/lightning.o \
+  misc/mousefollow.o \
   misc/specialeffect.o \
   commontypes.o \
   console.o \
