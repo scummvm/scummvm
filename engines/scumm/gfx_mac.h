@@ -146,11 +146,12 @@ private:
 		virtual void undraw() {}
 
 		// Primitives
-		void copyRectToScreen(Common::Rect r) const;
 		void fill(Common::Rect r) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 		void drawShadowBox(Common::Rect r) const;
 		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) const;
+
+		void markScreenAsDirty(Common::Rect r) const;
 	};
 
 	class VerbWidget : public Widget {
@@ -282,6 +283,8 @@ private:
 
 	Common::HashMap<int, VerbWidget *> _widgets;
 
+	Common::Array<Common::Rect> _dirtyRects;
+
 	const uint16 _ulCorner[4] = { 0xF000, 0xC000, 0x8000, 0x8000 };
 	const uint16 _urCorner[4] = { 0xF000, 0x3000, 0x1000, 0x1000 };
 	const uint16 _llCorner[4] = { 0x8000, 0x8000, 0xC000, 0xF000 };
@@ -293,9 +296,11 @@ private:
 	void show();
 	void hide();
 
-	void copyRectToScreen(Common::Rect r) const;
 	void fill(Common::Rect r) const;
 	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+
+	void markScreenAsDirty(Common::Rect r);
+	void copyDirtyRectsToScreen();
 };
 
 } // End of namespace Scumm
