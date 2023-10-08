@@ -134,6 +134,7 @@ private:
 		void clearTimer() { _timer = 0; }
 		bool hasTimer() const { return _timer > 0; }
 
+		bool getRedraw() const { return _redraw; }
 		virtual void setRedraw(bool redraw) { _redraw = redraw; }
 
 		virtual void reset();

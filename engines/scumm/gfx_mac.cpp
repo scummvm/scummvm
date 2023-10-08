@@ -581,7 +581,7 @@ void MacIndy3Gui::Button::updateVerb(int verbslot) {
 }
 
 void MacIndy3Gui::Button::draw() {
-	if (!_redraw)
+	if (!getRedraw())
 		return;
 
 	debug(1, "Button: Drawing [%d] %s", _verbid, _text.c_str());
@@ -867,7 +867,7 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 }
 
 void MacIndy3Gui::Inventory::draw() {
-	if (_redraw) {
+	if (getRedraw()) {
 		debug(1, "Inventory: Drawing [%d]", _verbid);
 
 		MacIndy3Gui::VerbWidget::draw();
@@ -969,7 +969,7 @@ bool MacIndy3Gui::Inventory::Slot::updateTimer(int delta) {
 }
 
 void MacIndy3Gui::Inventory::Slot::draw() {
-	if (!_redraw)
+	if (!getRedraw())
 		return;
 
 	debug(1, "Inventory::Slot: Drawing [%d] %s", _slot, _name.c_str());
@@ -1080,7 +1080,7 @@ void MacIndy3Gui::Inventory::ScrollBar::reset() {
 }
 
 void MacIndy3Gui::Inventory::ScrollBar::draw() {
-	if (!_redraw)
+	if (!getRedraw())
 		return;
 
 	debug(1, "Inventory::Scrollbar: Drawing");
@@ -1147,7 +1147,7 @@ bool MacIndy3Gui::Inventory::ScrollButton::handleMouseHeld(Common::Point &presse
 }
 
 void MacIndy3Gui::Inventory::ScrollButton::draw() {
-	if (!_redraw)
+	if (!getRedraw())
 		return;
 
 	debug(1, "Inventory::ScrollButton: Drawing [%d]", _direction);
@@ -1381,9 +1381,18 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 			_leftButtonHeld = event.mouse;
 	}
 
+	// It probably doesn't make much of a difference, but if a widget
+	// responds to an event, and marks itself as wanting to be redraw,
+	// we do that redrawing immediately, not on the next update.
+
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		if (i->_value->handleEvent(event))
+		if (i->_value->handleEvent(event)) {
+			if (i->_value->getRedraw()) {
+				i->_value->draw();
+				copyDirtyRectsToScreen();
+			}
 			break;
+		}
 	}
 }
 
