@@ -194,7 +194,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_inventory[i] = 0;
 
 				// Verified from INDY3 disasm, the gaps were not being filled up before v4...
-				if (_game.version < 4) {
+				if (_game.version >= 4) {
 					// Now fill up the gap removing the object from the inventory created.
 					for (i = 0; i < _numInventory - 1; i++) {
 						if (!_inventory[i] && _inventory[i + 1]) {
