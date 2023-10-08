@@ -199,7 +199,7 @@ void Room139_144::daemon() {
 		break;
 
 	case 8:
-		pal_fade_init(1013);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1013);
 		break;
 
 	case 9:
@@ -432,7 +432,7 @@ void Room139_144::parser() {
 
 	} else if (player_said("enter", "vera's diner") || (lookFlag && player_said("vera's diner"))) {
 		player_set_commands_allowed(false);
-		pal_fade_init(1014);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1014);
 
 	} else if (player_said("gear", "rowboat") || player_said("go island")) {
 		player_set_commands_allowed(false);

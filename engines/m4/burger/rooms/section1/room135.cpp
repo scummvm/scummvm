@@ -800,11 +800,11 @@ void Room135::parser() {
 		if (player_said("ENTER", "FORK IN THE ROAD") || player_said("gear", "fork in the road") ||
 				(lookFlag && player_said("fork in the road"))) {
 			player_set_commands_allowed(false);
-			pal_fade_init(1009);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 
 		} else if (player_said("ENTER", "MAIN STREET") || player_said("gear", "main street") ||
 				(lookFlag && player_said("main street"))) {
-			pal_fade_init(1001);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 		} else if (player_said("conv01")) {
 			conv01();
 		} else if (player_said("conv02")) {

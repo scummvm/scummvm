@@ -556,7 +556,7 @@ void Room138::daemon() {
 		break;
 
 	case 7:
-		pal_fade_init(1010);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1010);
 		break;
 
 	case 8:
@@ -669,7 +669,7 @@ void Room138::parser() {
 
 	} else if (player_said("exit") || player_said("look at", "exit")) {
 		player_set_commands_allowed(false);
-		pal_fade_init(1010);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1010);
 
 	} else {
 		return;

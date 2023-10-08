@@ -129,8 +129,8 @@ void Room801::init() {
 	const char *HEADER = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
 	interface_hide();
 	player_set_commands_allowed(false);
-	pal_fade_set_start(_G(master_palette), 0);
-	pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 0, -1);
+	pal_fade_set_start(0);
+	pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
 	_val1 = 10;
 	digi_preload("800_001");
 
@@ -155,7 +155,7 @@ void Room801::init() {
 			digi_preload_stream_breaks(SERIES7);
 			digi_preload_stream_breaks(SERIES8);
 
-			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 0, -1);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
 			kernel_trigger_dispatch_now(1);
 			break;
 
@@ -187,7 +187,7 @@ void Room801::init() {
 void Room801::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		pal_fade_init(-1);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
 		series_stream_with_breaks(SERIES6, "801A", 6, 1, 2);
 		kernel_timing_trigger(1, 39);
 		break;
@@ -203,7 +203,7 @@ void Room801::daemon() {
 
 	case 4:
 		digi_play_loop("802_002", 3);
-		pal_fade_init(-1);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 0, -1);
 		series_stream_with_breaks(SERIES7, "802A", 6, 1, 5);
 		kernel_timing_trigger(1, 39);
 		break;
@@ -226,7 +226,7 @@ void Room801::daemon() {
 	case 7:
 		digi_unload_stream_breaks(SERIES6);
 		series_stream_with_breaks(SERIES8, "803A", 6, 1, 8);
-		pal_fade_init(-1);
+		pal_fade_init(0, 255, 100, 30, -1);
 		kernel_timing_trigger(1, 40);
 		break;
 
@@ -254,7 +254,7 @@ void Room801::daemon() {
 		_series3 = series_load("804FX03");
 		_series4 = series_load("804FX04");
 		series_stream_with_breaks(SERIES9, "804A", 6, 1, 11);
-		pal_fade_init(-1);
+		pal_fade_init(0, 255, 100, 30, -1);
 		break;
 
 	case 11:
@@ -513,7 +513,7 @@ void Room801::daemon() {
 		break;
 
 	case 37:
-		pal_fade_init(30);
+		pal_fade_init(_G(kernel).first_fade, 255, 100, 30, -1);
 		break;
 
 	case 38:
@@ -525,7 +525,7 @@ void Room801::daemon() {
 		break;
 		
 	case 40:
-		pal_mirror_colours(119, 112, _G(master_palette));
+		pal_mirror_colours(119, 122, _G(master_palette));
 		gr_pal_set_range(119, 8);
 		pal_cycle_init(119, 126, 6, -1, -1);
 		break;
