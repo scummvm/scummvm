@@ -1230,7 +1230,7 @@ static void vblCallback(void *refCon) {
 			if ((vm->_vblCount == 3) || (vm->_vblCount == 7)) {
 				vm->updateBottomMenu();
 			}
-		} else {
+		} else if (vm->fadeDirectionIsUp()) {
 			// This is an optimization for all the locks introduced
 			// with the fade palette changes: we disable the menu
 			// updates whenever the palette is fading, and we bring
@@ -1252,6 +1252,10 @@ static void vblCallback(void *refCon) {
 
 bool SwordEngine::screenIsFading() {
 	return _screen->stillFading() != 0;
+}
+
+bool SwordEngine::fadeDirectionIsUp() {
+	return _screen->stillFading() == 1;
 }
 
 void SwordEngine::installTimerRoutines() {

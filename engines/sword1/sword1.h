@@ -124,6 +124,7 @@ public:
 	void startFadePaletteUp(int speed);
 	void waitForFade();
 	bool screenIsFading();
+	bool fadeDirectionIsUp();
 	void setMenuToTargetState();
 
 	void showDebugInfo();
