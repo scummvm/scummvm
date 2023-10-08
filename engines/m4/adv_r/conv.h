@@ -223,7 +223,116 @@ struct c_assign_chunk {
 	long opnd1;		// Integer value.
 };
 
+/**
+  "xxxxxxxx"  means the size you have calculated a conversation box to be,
+   x      x   given the sentences that are in it, and whatever border
+   x      x   space you may have in it.  The boxes in Figure A may be
+   xxxxxxxx   where the user wants to place them.  Obviously, the user
+			  won't try to put them out in hyperspace, but may do this
+			  if he wants the box to be flush with a corner (to grow
+			  up, down, left, or right.)   Figure B is the re-calculated
+			  coordinates of the boxes in order to get them onto the
+			  background.  The new boxes should not be in the interface
+			  or in the letterboxed areas at the top and bottom.
+
+
+
+
+		   xxxxxxxxx
+		   x   (d) x
+		   x       x             Figure A                       xxxxxxxxxxxx
+   0,0     xxxxxxxxx                                            x      (b) x
+																x          x
+																x          x
+							 (letterbox at top)                 xxxxxxxxxxxx
+
+
+
+
+							 (background)
+
+
+
+
+
+
+
+
+
+														xxxxxxxxxxxxx
+														x     (c)   x
+														x           x
+														x           x
+														x           x
+														x           x
+ xxxxxxxxxxxxxxxxxx                                     x           x
+ x                x                                     xxxxxxxxxxxxx
+ x                x         (interface)
+ x                x
+ x                x
+ x                x
+ x                x         (letterbox at bottom)
+ x                x
+ x                x
+ x (a)            x                                                  640,479
+ xxxxxxxxxxxxxxxxxx
+
+
+
+
+
+
+								 Figure B
+   0,0
+
+
+
+
+
+
+		   xxxxxxxx                                       xxxxxxxxxxx
+		   x  (d) x                                       x     (b) x
+		   x      x                                       x         x
+		   xxxxxxxx                                       x         x
+														  xxxxxxxxxxx
+		 xxxxxxxxxxxxxxxxxx
+		 x                x
+		 x                x
+		 x                x                             xxxxxxxxxxxxx
+		 x                x                             x     (c)   x
+		 x                x                             x           x
+		 x                x                             x           x
+		 x                x                             x           x
+		 x (a)            x                             x           x
+		 xxxxxxxxxxxxxxxxxx                             xxxxxxxxxxxxx
+
+
+
+
+
+
+
+
+
+
+
+																	 640,479
+
+
+
+
+  If someone says to draw conversation box (a) at the location in Figure 1,
+  then have it automatically re-position itself into where it is in Figure 2.
+  The extra space around the newly re-positioned box should be about 10 pixels
+  wide and/or tall.  Make the spacing visually look identical.  In other
+  words, if the height of the border is 10 pixels, the width on the side of
+  the new conversation box may need to be 15.  You may have to experiment
+  with this.  In even other words, you should correct for the aspect ration.
+
+  The same thing should work for boxes (b), (c), and (d).
+*/
 extern void set_dlg_rect();
+
 extern void conv_go(Conv *c);
 
 } // End of namespace M4
