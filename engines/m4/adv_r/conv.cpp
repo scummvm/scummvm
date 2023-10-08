@@ -126,7 +126,7 @@ static void conv_exec_entry(long offset, Conv *c) {
 			misc = get_misc(c, i);
 			entry = get_hash_entry(c, misc->index);
 			if (!(entry->status & DESTROYED)) {
-				entry->status &= 0xfffffffb; //mask HIDDEN bit
+				entry->status &= 0xfffffffb; // Mask HIDDEN bit
 				entry->status |= 0x00000001;
 			}
 			break;
@@ -956,243 +956,6 @@ static int conv_run(Conv *c) {
 	return result;
 }
 
-
-
-/*
-  "xxxxxxxx"  means the size you have calculated a conversation box to be,
-   x      x   given the sentences that are in it, and whatever border
-   x      x   space you may have in it.  The boxes in Figure A may be
-   xxxxxxxx   where the user wants to place them.  Obviously, the user
-			  won't try to put them out in hyperspace, but may do this
-			  if he wants the box to be flush with a corner (to grow
-			  up, down, left, or right.)   Figure B is the re-calculated
-			  coordinates of the boxes in order to get them onto the
-			  background.  The new boxes should not be in the interface
-			  or in the letterboxed areas at the top and bottom.
-
-
-
-
-		   xxxxxxxxx
-		   x   (d) x
-		   x       x             Figure A                       xxxxxxxxxxxx
-   0,0     xxxxxxxxx                                            x      (b) x
-																x          x
-																x          x
-							 (letterbox at top)                 xxxxxxxxxxxx
-
-
-
-
-							 (background)
-
-
-
-
-
-
-
-
-
-														xxxxxxxxxxxxx
-														x     (c)   x
-														x           x
-														x           x
-														x           x
-														x           x
- xxxxxxxxxxxxxxxxxx                                     x           x
- x                x                                     xxxxxxxxxxxxx
- x                x         (interface)
- x                x
- x                x
- x                x
- x                x         (letterbox at bottom)
- x                x
- x                x
- x (a)            x                                                  640,479
- xxxxxxxxxxxxxxxxxx
-
-
-
-
-
-
-								 Figure B
-   0,0
-
-
-
-
-
-
-		   xxxxxxxx                                       xxxxxxxxxxx
-		   x  (d) x                                       x     (b) x
-		   x      x                                       x         x
-		   xxxxxxxx                                       x         x
-														  xxxxxxxxxxx
-		 xxxxxxxxxxxxxxxxxx
-		 x                x
-		 x                x
-		 x                x                             xxxxxxxxxxxxx
-		 x                x                             x     (c)   x
-		 x                x                             x           x
-		 x                x                             x           x
-		 x                x                             x           x
-		 x (a)            x                             x           x
-		 xxxxxxxxxxxxxxxxxx                             xxxxxxxxxxxxx
-
-
-
-
-
-
-
-
-
-
-
-																	 640,479
-
-
-
-
-  If someone says to draw conversation box (a) at the location in Figure 1,
-  then have it automatically re-position itself into where it is in Figure 2.
-  The extra space around the newly re-positioned box should be about 10 pixels
-  wide and/or tall.  Make the spacing visually look identical.  In other
-  words, if the height of the border is 10 pixels, the width on the side of
-  the new conversation box may need to be 15.  You may have to experiment
-  with this.  In even other words, you should correct for the aspect ration.
-
-  The same thing should work for boxes (b), (c), and (d).
-
-
-*/
-
-
-
-static void convtestCallback(void *a, void *b);
-//static TextScrn	*_GC(myTextScrn); //nov27
-
-int32 glob_x = 0, glob_y = 0;
-static int32 r_x1, r_y1, r_x2, r_y2;
-
-void set_dlg_rect() {
-	int32 sizex = 0, sizey = 0;
-	int32 screen_x_center = 0, screen_y_center = 0;
-	int32 screen_x_size = 0, screen_y_size = 0;
-	int32 status;
-
-	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
-	if (!game_buff_ptr) error_show(FL, 'BUF!');
-
-	screen_x_center = VIDEO_W / 2;
-	screen_y_center = (game_buff_ptr->y2 - game_buff_ptr->y1) / 2;
-	screen_x_size = VIDEO_W;
-	screen_y_size = (game_buff_ptr->y2 - game_buff_ptr->y1);
-
-	//term_message( "y2 %d", game_buff_ptr->y2 );
-	//term_message( "y1 %d", game_buff_ptr->y1 );
-
-	_GC(height) = gr_font_get_height() + _GC(conv_font_spacing_v); //must have....
-	_GC(width) += 2 * _GC(conv_font_spacing_h);
-
-	//fprintf( conv_fp, "_GC(width) %d _GC(height) %d _G(cdd).nte %d\n", _GC(width), _GC(height), _G(cdd).num_txt_ents );
-	sizex = _GC(width);
-	sizey = _G(cdd).num_txt_ents * (_GC(height))+_GC(conv_font_spacing_v);
-
-	switch (glob_x) {
-	case DLG_CENTER_H:
-		r_x1 = screen_x_center - (sizex / 2);
-		break;
-
-	case DLG_FLUSH_LEFT:
-		r_x1 = 0;
-		break;
-
-	case DLG_FLUSH_RIGHT:
-		r_x1 = screen_x_size - sizex;
-		break;
-
-	default:
-		r_x1 = glob_x;
-		r_x1 += game_buff_ptr->x1;
-		break;
-	}
-
-	switch (glob_y) {
-	case DLG_CENTER_V:
-		r_y1 = screen_y_center - (sizey / 2);
-		break;
-
-	case DLG_FLUSH_TOP:
-		r_y1 = 0;
-		break;
-
-	case DLG_FLUSH_BOTTOM:
-		r_y1 = screen_y_size - sizey + game_buff_ptr->y1 - 10;
-		break;
-
-	default:
-		r_y1 = glob_y;
-		r_y1 += game_buff_ptr->y1;
-		break;
-	}
-
-	if (r_x1 < 0)
-		r_x1 = 0;
-
-	if (r_y1 < 0)
-		r_y1 = 0;
-
-	//fprintf( conv_fp, "r_x1 %d sizex %d\n", r_x1, sizex );
-	r_y2 = r_y1 + sizey - 1;
-	r_x2 = r_x1 + sizex - 1;
-
-	r_x2 = imath_min(VIDEO_W, r_x2);
-	r_y2 = imath_min(VIDEO_H, r_y2);
-}
-
-static void textBoxInit() {
-	int32	i;
-
-	player_set_commands_allowed(true);
-	mouse_set_sprite(0);
-
-	gr_font_set(_G(font_conv));
-
-	conv_get_node_text(conv_get_handle());
-	set_dlg_rect();
-
-	_GC(myTextScrn) = TextScrn_Create(r_x1, r_y1, r_x2, r_y2, _GC(conv_shading),
-		6 | SF_GET_MOUSE | SF_IMMOVABLE | SF_BLOCK_MOUSE,
-		_GC(conv_normal_colour), _GC(conv_hilite_colour), _GC(conv_normal_colour_alt1),
-		_GC(conv_hilite_colour_alt1), _GC(conv_normal_colour_alt2),
-		_GC(conv_hilite_colour_alt2));
-
-	for (i = 0; i < _G(cdd).num_txt_ents; i++) {
-		TextScrn_Add_TextItem(_GC(myTextScrn), _GC(conv_font_spacing_h),
-			(i * _GC(height)) + _GC(conv_font_spacing_v), i + 1, TS_GIVEN,
-			_G(cdd).text[i], convtestCallback);
-	}
-
-	TextScrn_Activate(_GC(myTextScrn));
-}
-
-void conv_get_dlg_coords(int32 *x1, int32 *y1, int32 *x2, int32 *y2) {
-	*x1 = r_x1;
-	*y1 = r_y1;
-	*x2 = r_x2;
-	*y2 = r_y2;
-}
-
-void conv_set_dlg_coords(int32 x1, int32 y1, int32 x2, int32 y2) {
-	r_x1 = x1;
-	r_y1 = y1;
-	r_x2 = x2;
-	r_y2 = y2;
-}
-
 static void convtestCallback(void *a, void *) {
 	Conv *c;
 
@@ -1220,7 +983,123 @@ static void convtestCallback(void *a, void *) {
 
 	Common::strcpy_s(_G(player).verb, get_conv_name());
 	_G(player).command_ready = true;
-	conv_set_event(-1); //must have or conv freezes.
+	conv_set_event(-1); // Must have or conv freezes.
+}
+
+void set_dlg_rect() {
+	int32 sizex = 0, sizey = 0;
+	int32 screen_x_center = 0, screen_y_center = 0;
+	int32 screen_x_size = 0, screen_y_size = 0;
+	int32 status;
+
+	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
+	if (!game_buff_ptr) error_show(FL, 'BUF!');
+
+	screen_x_center = VIDEO_W / 2;
+	screen_y_center = (game_buff_ptr->y2 - game_buff_ptr->y1) / 2;
+	screen_x_size = VIDEO_W;
+	screen_y_size = (game_buff_ptr->y2 - game_buff_ptr->y1);
+
+	//term_message( "y2 %d", game_buff_ptr->y2 );
+	//term_message( "y1 %d", game_buff_ptr->y1 );
+
+	_GC(height) = gr_font_get_height() + _GC(conv_font_spacing_v); // Must have....
+	_GC(width) += 2 * _GC(conv_font_spacing_h);
+
+	//fprintf( conv_fp, "_GC(width) %d _GC(height) %d _G(cdd).nte %d\n", _GC(width), _GC(height), _G(cdd).num_txt_ents );
+	sizex = _GC(width);
+	sizey = _G(cdd).num_txt_ents * (_GC(height))+_GC(conv_font_spacing_v);
+
+	switch (_GC(glob_x)) {
+	case DLG_CENTER_H:
+		_GC(r_x1) = screen_x_center - (sizex / 2);
+		break;
+
+	case DLG_FLUSH_LEFT:
+		_GC(r_x1) = 0;
+		break;
+
+	case DLG_FLUSH_RIGHT:
+		_GC(r_x1) = screen_x_size - sizex;
+		break;
+
+	default:
+		_GC(r_x1) = _GC(glob_x);
+		_GC(r_x1) += game_buff_ptr->x1;
+		break;
+	}
+
+	switch (_GC(glob_y)) {
+	case DLG_CENTER_V:
+		_GC(r_y1) = screen_y_center - (sizey / 2);
+		break;
+
+	case DLG_FLUSH_TOP:
+		_GC(r_y1) = 0;
+		break;
+
+	case DLG_FLUSH_BOTTOM:
+		_GC(r_y1) = screen_y_size - sizey + game_buff_ptr->y1 - 10;
+		break;
+
+	default:
+		_GC(r_y1) = _GC(glob_y);
+		_GC(r_y1) += game_buff_ptr->y1;
+		break;
+	}
+
+	if (_GC(r_x1) < 0)
+		_GC(r_x1) = 0;
+
+	if (_GC(r_y1) < 0)
+		_GC(r_y1) = 0;
+
+	//fprintf( conv_fp, "_GC(r_x1) %d sizex %d\n", _GC(r_x1), sizex );
+	_GC(r_y2) = _GC(r_y1) + sizey - 1;
+	_GC(r_x2) = _GC(r_x1) + sizex - 1;
+
+	_GC(r_x2) = imath_min(VIDEO_W, _GC(r_x2));
+	_GC(r_y2) = imath_min(VIDEO_H, _GC(r_y2));
+}
+
+static void textBoxInit() {
+	int32	i;
+
+	player_set_commands_allowed(true);
+	mouse_set_sprite(0);
+
+	gr_font_set(_G(font_conv));
+
+	conv_get_node_text(conv_get_handle());
+	set_dlg_rect();
+
+	_GC(myTextScrn) = TextScrn_Create(_GC(r_x1), _GC(r_y1), _GC(r_x2), _GC(r_y2), _GC(conv_shading),
+		6 | SF_GET_MOUSE | SF_IMMOVABLE | SF_BLOCK_MOUSE,
+		_GC(conv_normal_colour), _GC(conv_hilite_colour), _GC(conv_normal_colour_alt1),
+		_GC(conv_hilite_colour_alt1), _GC(conv_normal_colour_alt2),
+		_GC(conv_hilite_colour_alt2));
+
+	for (i = 0; i < _G(cdd).num_txt_ents; i++) {
+		TextScrn_Add_TextItem(_GC(myTextScrn), _GC(conv_font_spacing_h),
+			(i * _GC(height)) + _GC(conv_font_spacing_v), i + 1, TS_GIVEN,
+			_G(cdd).text[i], convtestCallback);
+	}
+
+	TextScrn_Activate(_GC(myTextScrn));
+}
+
+void conv_get_dlg_coords(int32 *x1, int32 *y1, int32 *x2, int32 *y2) {
+	*x1 = _GC(r_x1);
+	*y1 = _GC(r_y1);
+	*x2 = _GC(r_x2);
+	*y2 = _GC(r_y2);
+}
+
+void conv_set_dlg_coords(int32 x1, int32 y1, int32 x2, int32 y2) {
+	_GC(r_x1) = x1;
+	_GC(r_y1) = y1;
+	_GC(r_x2) = x2;
+	_GC(r_y2) = y2;
 }
 
 void conv_go(Conv *c) {
