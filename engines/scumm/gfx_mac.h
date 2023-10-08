@@ -122,7 +122,13 @@ private:
 		Widget(int x, int y, int width, int height);
 		virtual ~Widget() {}
 
-		void setEnabled(bool b) { _enabled = b; }
+		void setEnabled(bool enabled) {
+			if (enabled != _enabled)
+				setRedraw(true);
+			if (!_enabled)
+				_timer = 0;
+			_enabled = enabled;
+		}
 
 		void setTimer(int t) { _timer = t; }
 		void clearTimer() { _timer = 0; }
@@ -199,7 +205,7 @@ private:
 		public:
 			ScrollBar(int x, int y, int width, int height);
 
-			void setCounters(int invCount, int invOffset);
+			void setInventoryParameters(int invCount, int invOffset);
 			void moveInvOffset(int offset);
 			int getHandlePosition();
 

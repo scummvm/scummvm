@@ -833,7 +833,7 @@ void MacIndy3Gui::Inventory::updateVerb(int verbslot) {
 	_scrollButtons[1]->setEnabled(invCount > numSlots && invOffset < invCount - numSlots);
 
 	_scrollBar->setEnabled(invCount > numSlots);
-	_scrollBar->setCounters(invCount, invOffset);
+	_scrollBar->setInventoryParameters(invCount, invOffset);
 
 	_gui->setInventoryScrollOffset(invOffset);
 
@@ -1035,8 +1035,8 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 	return false;
 }
 
-void MacIndy3Gui::Inventory::ScrollBar::setCounters(int invCount, int invOffset) {
-	if (invCount != _invCount || invOffset != _invOffset)
+void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int invOffset) {
+	if (invOffset != _invOffset)
 		setRedraw(true);
 
 	_invCount = invCount;
