@@ -2983,11 +2983,11 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		}
 
 		// Show the cursor
-		_cursor.state++;
+		_cursor.state = 1;
 		verbMouseOver(0);
 
 		// Enable user interaction
-		_userPut++;
+		_userPut = 1;
 
 		// Stop code for all the objects in the save screen
 		stopObjectCode();
@@ -3059,11 +3059,11 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		}
 
 		// Show the cursor
-		_cursor.state++;
+		_cursor.state = 1;
 		verbMouseOver(0);
 
 		// Enable user interaction
-		_userPut++;
+		_userPut = 1;
 
 		// Stop code for all the objects in the save screen
 		stopObjectCode();
@@ -3118,11 +3118,11 @@ void ScummEngine_v3::terminateSaveMenuScript() {
 		}
 
 		// Show the cursor
-		_cursor.state++;
+		_cursor.state = 1;
 		verbMouseOver(0);
 
 		// Enable user interaction
-		_userPut++;
+		_userPut = 1;
 
 		// Chain script 5 (or 6 for FM-Towns)
 		int chainedArgs[NUM_SCRIPT_LOCAL];
