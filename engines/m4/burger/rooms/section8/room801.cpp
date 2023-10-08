@@ -290,7 +290,7 @@ void Room801::daemon() {
 		_G(roomVal4) = 2;
 		_val3 = 2;
 
-		_series9 = series_play("804FL01", 2);
+		_series9 = series_play("804FL01", 2, 0, -1, 6, -1);
 		kernel_trigger_dispatch_now(gCHANGE_WILBUR_ANIMATION);
 		kernel_trigger_dispatch_now(16);
 		kernel_trigger_dispatch_now(15);
@@ -313,7 +313,7 @@ void Room801::daemon() {
 					_G(roomVal4) = 13;
 				}
 			} else if (who == 1) {
-				_val3 = 13;
+				_G(wilbur_should) = 5;
 			}
 		}
 		break;
