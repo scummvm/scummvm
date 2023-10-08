@@ -85,7 +85,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		EN_USA,
 		kPlatformDOS,
@@ -99,7 +99,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		FR_FRA,
 		kPlatformDOS,
@@ -113,7 +113,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		IT_ITA,
 		kPlatformDOS,
@@ -127,7 +127,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		DE_DEU,
 		kPlatformDOS,
@@ -141,7 +141,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		ES_ESP,
 		kPlatformDOS,
@@ -155,7 +155,7 @@
 {
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		EN_GRB,
 		kPlatformDOS,
