@@ -2559,44 +2559,69 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// German games
 	{ "abenteuer",          "Abenteuer" },
-	{ "absturzmomente",     "Absturzmomente" },
-	{ "ausgerechnet",       "Ausgerechnet Mamph Pamph!" },
 	{ "bearg",              "Ein Bar Geht Aus" },
-	{ "bewerbung",          "Die Bewerbung" },
 	{ "dasspiel",           "Das Spiel, Zuvor Bekannt als Verborgener Nazi-Modus" },
 	{ "debaron",            "De Baron" },
 	{ "deklinator",         "Object Declination Tool" },
-	{ "die5",               "Die 5. Kammer" },
-	{ "dieakte",            "Die Akte Paul Bennet" },
-	{ "dieerstenacht",      "Die Erste Nacht" },
 	{ "diegerechtenricht",  "Die Gerechten Richter" },
-	{ "eden",               "Eden" },
-	{ "emilia",             "Der Tag an dem Emilia W. Verschwand" },
 	{ "eskmausden",         "Es Kam aus den Alpen" },
-	{ "felleisen",          "Das Felleisen" },
-	{ "fischstaebchen",     "Fischstaebchen" },
-	{ "gennorden",          "Gen Norden" },
-	{ "gorgonir",           "Gorgonir" },
 	{ "halb2",              "Halb Zwei" },
-	{ "hausaufgabe",        "Die Hausaufgabe" },
 	{ "herr",               "Die Geschichte des Herrn P. von Hannes Schuller" },
-	{ "jazteg",             "Jazz auf Tegemis" },
 	{ "karisma",            "Klub Karisma" },
 	{ "kleine",             "Der Kleine Halbling" },
 	{ "knack",              "Knack!" },
-	{ "kopialbuch",         "Das Kopialbuch" },
-	{ "lilie",              "Die Schwarze Lilie" },
-	{ "linear",             "Linear" },
 	{ "mchatton",           "Tutorial Eine Einfuhrung in Textadventures von Cooper McHatton" },
 	{ "o",                  "O" },
-	{ "schief",             "Schief" },
 	{ "seestrasse",         "Seestraße" },
-	{ "seite",              "Mein Leben für Seite Drei" },
 	{ "starrider",          "Star Rider" },
 	{ "trampelviecher",     "Trampelvieche: Eine Halloween-Kurzgeschichte" },
-	{ "unterwelt",          "Unterwelt" },
 	{ "wasserhasser",       "Wasser-Hasser" },
 	{ "wichtel",            "Wichtel" },
+
+	// German games: Textfire Grand Prix 2002
+	{ "tgp_eden",           "Eden" },                                                                   //    1st Place
+	{ "tgp_bewerbung",      "Die Bewerbung" },                                                          //    3rd Place
+	{ "tgp_seite",          "Mein Leben für Seite Drei" },                                              //    4th Place
+
+	// German games: Textfire Grand Prix 2003
+	{ "tgp_linear",         "Linear" },                                                                 //    1st Place
+
+	// German games: Textfire Grand Prix 2004
+	{ "tgp_jazteg",         "Jazz auf Tegemis" },                                                       //    1st Place
+	{ "tgp_spater",         "Zwei Jahre später" },                                                      //    4th Place
+	{ "tgp_unterwelt",      "Unterwelt" },                                                              //    5th Place
+	{ "tgp_die5",           "Die 5 Kammer" },                                                           //    8th Place
+	{ "tgp_dichter",        "Dichter" },                                                                //    9th Place
+
+	// German games: Textfire Grand Prix 2005
+	{ "tgp_kopialbuch",     "Das Kopialbuch" },                                                         //    1st Place
+
+	// German games: Textfire Grand Prix 2006
+	{ "tgp_felleisen",      "Das Felleisen" },                                                          //    1st Place
+	{ "tgp_pmason",         "P. Mason und der Schlitzerhans und die Busenkathi" },                      //    2nd Place
+
+	// German games: Textfire Grand Prix 2010
+	{ "tgp_hausaufgabe",    "Die Hausaufgabe" },                                                        //    3rd Place
+	{ "tgp_absturzmomente", "Absturzmomente" },                                                         //    4th Place
+
+	// German games: Textfire Grand Prix 2011
+	{ "tgp_gorgonir",       "Gorgonir" },                                                               //    2nd Place
+	{ "tgp_ausgerechnet",   "Ausgerechnet Mamph Pamph!" },                                              //    4th Place
+
+	// German games: IF Grand Prix 2015
+	{ "tgp_dieakte",        "Die Akte Paul Bennet" },                                                   //    1st Place
+	{ "tgp_lilie",          "Die Schwarze Lilie" },                                                     //    1st Place
+
+	// German games: IF Grand Prix 2016
+	{ "tgp_emilia",         "Der Tag an dem Emilia W. Verschwand" },                                    //    3rd Place
+
+	// German games: IF Grand Prix 2022
+	{ "tgp_schief",         "Schief" },                                                                 //    1st Place
+	{ "tgp_dieerstenacht",  "Die Erste Nacht" },                                                        //    2nd Place
+
+	// German games: IF Grand Prix 2023
+	{ "tgp_fischstaebchen", "Fischstaebchen" },                                                         //    3rd Place
+	{ "tgp_gennorden",      "Gen Norden" },                                                             //    4th Place
 
 	// Italian games
 	{ "aldila",             "Beyond" },
@@ -6350,54 +6375,79 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// German games
 	ENTRY1("abenteuer", "990712", "f849c7a06ebfe21c50819e4222ffee4e", 135680, Common::DE_DEU),
-	ENTRY1("absturzmomente", "100405", "eac3e7f2a6eff119dd4141dc1af7608e", 283542, Common::DE_DEU),
 	ENTRY1("adv", "980419", "6a04a6b303f09359155eb23baa201efc", 126464, Common::DE_DEU),
-	ENTRY1("ausgerechnet", "110403", "5c4cc7e4689850d0726423cb4d14f6d0", 158720, Common::DE_DEU),
 	ENTRY1("bearg", "981201", "59c94a5d3a4f62cfbb4a34d9ac99f747", 139264, Common::DE_DEU),
 	ENTRY1("bearg", "990131", "b18427877fdfdaebac36fc3402244ae1", 134656, Common::DE_DEU),
 	ENTRY1("bearg", "000326", "b85bc696a58e11f6a0cf72f4cf08ad7c", 134656, Common::DE_DEU),
-	ENTRY1("bewerbung", "020429", "5b2a90b66bfcf4564b37dab92afe846a", 114688, Common::DE_DEU),
 	ENTRY1("dasspiel", "101229", "dae98c657d7cdd82757b0c841a211027", 505150, Common::DE_DEU),
 	ENTRY1("debaron", "041104", "222874a5a0fdfd1f5a1d4df8df3c736f", 81408, Common::DE_DEU),
 	ENTRY1("debaron", "050729", "e4e83cae1b826c901776fc6ba6c900da", 122368, Common::DE_DEU),
 	ENTRY1("debaron", "051013", "0c0f7ce043b8b83abdefea52448309d9", 262144, Common::DE_DEU),
 	ENTRY1("debaron", "060507", "34a4236301eaebe6c5f9897c36516ed7", 323072, Common::DE_DEU),
 	ENTRY1("deklinator", "040630", "1ca69e16e8e3e1941eb5c4cd403b2022", 103424, Common::DE_DEU),
-	ENTRY1("die5", "200304", "2a2139d806fc179c98cf8633f671559f", 121344, Common::DE_DEU),
-	ENTRY1("dieakte", "141113", "a4e9bc0f32e66c521e21373ec67e7b8f", 264704, Common::DE_DEU),
-	ENTRY1("dieakte", "150514", "f85adc48c759f62636cb435f2fc7dbee", 279040, Common::DE_DEU),
-	ENTRY1("dieerstenacht", "220326", "c9a1532c6122c33ac40fd4cf19f41dbb", 104412, Common::DE_DEU),
 	ENTRY1("diegerechtenricht", "101024", "47f0308a684a569ed6df68dbdc92387e", 439064, Common::DE_DEU),
-	ENTRY1("eden", "020401/z5", "cac7c7f917cc93824f41efa96bf77e57", 120320, Common::DE_DEU),
-	ENTRY1("eden", "020401/zblorb", "73a6cf485aa833ca895b0f860493cfce", 221618, Common::DE_DEU),
-	ENTRY1("emilia", "160401", "bb5872728bbc705c3dbaee32e2629d7c", 161280, Common::DE_DEU),
 	ENTRY1("eskmausden", "130714", "71d37a2c11f9c0b085ff1ce06ba488f9", 199168, Common::DE_DEU),
-	ENTRY1("felleisen", "060331", "51b62cb229fde3719ddc616f450ba1e2", 131072, Common::DE_DEU),
-	ENTRY1("fischstaebchen", "230401", "6c07ebfdcfe23bfcac98cc2a8fdf2c48", 869242, Common::DE_DEU),
-	ENTRY1("gennorden", "230331", "dcc67e5b97f6aaf5f0c7e90a3c62f128", 208896, Common::DE_DEU),
-	ENTRY1("gorgonir", "110330", "7b1f7c22b6fb7aceb630958e19c76e54", 542304, Common::DE_DEU),
 	ENTRY1("halb2", "020523", "d424290a37b5efc67482e4fc9224bc0e", 30208, Common::DE_DEU),
-	ENTRY1("hausaufgabe", "100405", "74a0227fcee105fed02e7458ab8a4e51", 199168, Common::DE_DEU),
 	ENTRY1("herr", "140620", "a6493768373d50096344f4319e7f074a", 208028, Common::DE_DEU),
-	ENTRY1("jazteg", "040522", "6635a44223e0017418acdeb0c78a9c7a", 192000, Common::DE_DEU),
 	ENTRY1("karisma", "130908", "48d6eb07a649a614b037722af9718bf2", 291328, Common::DE_DEU),
 	ENTRY1("karisma", "151213", "7ede806c41268f8fc50e6a50b816d71c", 292352, Common::DE_DEU),
 	ENTRY1("kleine", "181019", "2c2c6112c51bf47da4b5f3c7301c4729", 590784, Common::DE_DEU),
 	ENTRY1("knack", "081215", "b8fa6a55c469cd92d01985933ac093a3", 64388, Common::DE_DEU),
-	ENTRY1("kopialbuch", "050330", "3e4b21e39f57ad741fae18b4836e1d64", 151040, Common::DE_DEU),
-	ENTRY1("lilie", "150318", "645bb70a097de033452216d5ef85c8dd", 241256, Common::DE_DEU),
-	ENTRY1("linear", "030331", "427dd13d669e139f31011da42cdd6c6c", 116736, Common::DE_DEU),
 	ENTRY1("mchatton", "120413", "1485309be7aed1ed0ada396fe3eeb1ec", 290768, Common::DE_DEU),
 	ENTRY1("o", "120412", "850ed6092daa2dcc87862404a2e88338", 240424, Common::DE_DEU),
-	ENTRY1("schief", "220401", "8e74eeb93f60b63ec4eee8a7db80880b", 515794, Common::DE_DEU),
-	ENTRY1("schief", "220404", "78aaa2553d490488b96bda6abe9a7aa7", 516306, Common::DE_DEU),
-	ENTRY1("seite", "020330", "7f1bcab47897d5bbed1351aea77e6f56", 169984, Common::DE_DEU),
 	ENTRY1("seestrasse", "090315", "4739869217c7c79eaddafaf493039277", 192512, Common::DE_DEU),
 	ENTRY1("starrider", "040110", "6c42a3e46e29419d9d0e3786117ab94b", 222208, Common::DE_DEU),
-	ENTRY1("unterwelt", "040330", "606d95b5e66ccdeb54febbbf2de7c60c", 92160, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/z5", "b87ebdaca633e964a575abd70cb88c5a", 151040, Common::DE_DEU),
 	ENTRY1("wasserhasser", "140105/zblorb", "1d332f660aec117a4460d0555a2b30f6", 165336, Common::DE_DEU),
 	ENTRY1("wichtel", "021006", "f52166e02c6bd5e0311145683f415ef5", 88576, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2002
+	ENTRY1("tgp_eden", "020401/z5", "cac7c7f917cc93824f41efa96bf77e57", 120320, Common::DE_DEU),
+	ENTRY1("tgp_eden", "020401/zblorb", "73a6cf485aa833ca895b0f860493cfce", 221618, Common::DE_DEU),
+	ENTRY1("tgp_bewerbung", "020429", "5b2a90b66bfcf4564b37dab92afe846a", 114688, Common::DE_DEU),
+	ENTRY1("tgp_seite", "020330", "7f1bcab47897d5bbed1351aea77e6f56", 169984, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2003
+	ENTRY1("tgp_linear", "030331", "427dd13d669e139f31011da42cdd6c6c", 116736, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2004
+	ENTRY1("tgp_jazteg", "040522", "6635a44223e0017418acdeb0c78a9c7a", 192000, Common::DE_DEU),
+	ENTRY1("tgp_spater", "040330", "1dc330438f4f064b5bbc22e3f80d1c2c", 84208, Common::DE_DEU),
+	ENTRY1("tgp_unterwelt", "040330", "606d95b5e66ccdeb54febbbf2de7c60c", 92160, Common::DE_DEU),
+	ENTRY1("tgp_die5", "200304", "2a2139d806fc179c98cf8633f671559f", 121344, Common::DE_DEU),
+	ENTRY1("tgp_dichter", "040222", "ea4afef4907aa5d232fe61168ceca08d", 13808, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2005
+	ENTRY1("tgp_kopialbuch", "050330", "3e4b21e39f57ad741fae18b4836e1d64", 151040, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2006
+	ENTRY1("tgp_felleisen", "060331", "51b62cb229fde3719ddc616f450ba1e2", 131072, Common::DE_DEU),
+	ENTRY1("tgp_pmason", "060329", "7c7ec84f10d40a90f76685558abaf81c", 138240, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2010
+	ENTRY1("tgp_hausaufgabe", "100405", "74a0227fcee105fed02e7458ab8a4e51", 199168, Common::DE_DEU),
+	ENTRY1("tgp_absturzmomente", "100405", "eac3e7f2a6eff119dd4141dc1af7608e", 283542, Common::DE_DEU),
+
+	// German games: Textfire Grand Prix 2011
+	ENTRY1("tgp_gorgonir", "110330", "7b1f7c22b6fb7aceb630958e19c76e54", 542304, Common::DE_DEU),
+	ENTRY1("tgp_ausgerechnet", "110403", "5c4cc7e4689850d0726423cb4d14f6d0", 158720, Common::DE_DEU),
+
+	// German games: IF Grand Prix 2015
+	ENTRY1("tgp_dieakte", "141113", "a4e9bc0f32e66c521e21373ec67e7b8f", 264704, Common::DE_DEU),
+	ENTRY1("tgp_dieakte", "150514", "f85adc48c759f62636cb435f2fc7dbee", 279040, Common::DE_DEU),
+	ENTRY1("tgp_lilie", "150318", "645bb70a097de033452216d5ef85c8dd", 241256, Common::DE_DEU),
+
+	// German games: IF Grand Prix 2016
+	ENTRY1("tgp_emilia", "160401", "bb5872728bbc705c3dbaee32e2629d7c", 161280, Common::DE_DEU),
+
+	// German games: IF Grand Prix 2022
+	ENTRY1("tgp_schief", "220401", "8e74eeb93f60b63ec4eee8a7db80880b", 515794, Common::DE_DEU),
+	ENTRY1("tgp_schief", "220404", "78aaa2553d490488b96bda6abe9a7aa7", 516306, Common::DE_DEU),
+	ENTRY1("tgp_dieerstenacht", "220326", "c9a1532c6122c33ac40fd4cf19f41dbb", 104412, Common::DE_DEU),
+
+	// German games: IF Grand Prix 2023
+	ENTRY1("tgp_fischstaebchen", "230401", "6c07ebfdcfe23bfcac98cc2a8fdf2c48", 869242, Common::DE_DEU),
+	ENTRY1("tgp_gennorden", "230331", "dcc67e5b97f6aaf5f0c7e90a3c62f128", 208896, Common::DE_DEU),
 
 	// Italian games
 	ENTRY1("aldila", "100115", "4b87d3038bdf6df986f44a6fc1d8772c", 349840, Common::IT_ITA),
