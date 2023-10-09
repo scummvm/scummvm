@@ -179,6 +179,9 @@
 				<widget name = 'AddGameButton'
 						height = '20'
 				/>
+				<widget name = 'DownloadGamesButton'
+						height = '20'
+				/>
 				<widget name = 'EditGameButton'
 						height = '20'
 				/>
