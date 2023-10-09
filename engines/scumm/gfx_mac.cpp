@@ -244,24 +244,11 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 }
 
 void ScummEngine::mac_undrawIndy3CreditsText() {
-	if (_macScreen) {
-		// Set _masMask to make the text clear, and _textScreenID to
-		// ensure that it's the main area that's cleared. Note that
-		// this only works with the high-resolution font.
-		_charset->_hasMask = true;
-		_charset->_textScreenID = kMainVirtScreen;
-		restoreCharsetBg();
-	} else {
-		// The DOS VGA version clear the text by using the putState
-		// opcode. I would have been more comfortable if I could have
-		// compared it to the EGA version, but I don't have that.
-		// Judging by the size and position of the object, they should
-		// be the same.
-		putState(946, 0);
-		markObjectRectAsDirty(946);
-		if (_bgNeedsRedraw)
-			clearDrawObjectQueue();
-	}
+	// Set _masMask to make the text clear, and _textScreenID to ensure
+	// that it's the main area that's cleared.
+	_charset->_hasMask = true;
+	_charset->_textScreenID = kMainVirtScreen;
+	restoreCharsetBg();
 }
 
 void ScummEngine::mac_drawBorder(int x, int y, int w, int h, byte color) {
