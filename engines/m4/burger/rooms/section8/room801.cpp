@@ -337,7 +337,7 @@ void Room801::daemon() {
 		case 13:
 			_G(roomVal4) = 12;
 			_G(wilbur_should) = 6;
-			_series10 = series_play("804FLT01", 1, 4);
+			_series10 = series_play("804FLT01", 1, 4, -1, 6, -1);
 			digi_play(conv_sound_to_play(), 1, 255, 15);
 			break;
 
@@ -370,13 +370,13 @@ void Room801::daemon() {
 		case 13:
 			_val3 = 12;
 			_G(wilbur_should) = 4;
-			_series11 = series_play("804ZLT01", 1, 4);
+			_series11 = series_play("804ZLT01", 1, 4, -1, 6, -1);
 			digi_play(conv_sound_to_play(), 1, 255, 16);
 			break;
 
 		default:
 			_val3 = 2;
-			_series11 = series_play("804ZFX01", 1, 0, 16);
+			_series11 = series_play("804ZFX01", 1, 0, 16, 6, 0);
 			break;
 		}
 		break;
@@ -544,7 +544,7 @@ void Room801::daemon() {
 		case 9:
 			switch (_G(wilbur_should)) {
 			case 7:
-				_series12 = series_play("804WI04", 0x200, 2, kCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI04", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				_val1 = 11;
 				break;
 
@@ -559,13 +559,13 @@ void Room801::daemon() {
 			switch (_G(wilbur_should)) {
 			case 4:
 			case 7:
-				_series12 = series_play("804WI05", 0x200, 2, kCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI05", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				_val1 = 11;
 				break;
 
 			case 5:
 				_G(wilbur_should) = 12;
-				_series12 = series_play("804WI01", 0x200, 4);
+				_series12 = series_play("804WI01", 0x200, 4, -1, 6, -1);
 				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 				break;
 
@@ -586,19 +586,19 @@ void Room801::daemon() {
 		case 11:
 			switch (_G(wilbur_should)) {
 			case 4:
-				_series12 = series_play("804WI04", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI04", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				_val1 = 9;
 				break;
 
 			case 5:
 			case 6:
-				_series12 = series_play("804WI05", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				_val1 = 10;
 				break;
 
 			case 7:
 				_G(wilbur_should) = getWilburShould();
-				_series12 = series_play("804WI03", 0x200, 0, kCHANGE_WILBUR_ANIMATION);
+				_series12 = series_play("804WI03", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				break;
 
 			default:
