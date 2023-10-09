@@ -1011,11 +1011,14 @@ void Sound::updateMusicStreaming() {
 
 						_musicStreamFading[i] += 1;
 						if (_musicStreamFading[i] == 0) {
+							_mixer->setChannelVolume(_hSampleMusic[i], 0);
+							_musicOutputStream[i]->finish();
+							_musicOutputStream[i] = nullptr;
+
+							_mixer->stopHandle(_hSampleMusic[i]);
 							_musicFile[i].close();
 
 							_musicStreamPlaying[i] = false;
-							_musicOutputStream[i]->finish();
-							_musicOutputStream[i] = nullptr;
 						}
 					} else {
 						debug("Sound::updateMusicStreaming(): Fading %s to %d", _musicFile[i].getName(),
@@ -1037,9 +1040,14 @@ void Sound::updateMusicStreaming() {
 			if (!_mixer->isSoundHandleActive(_hSampleMusic[i]) ||
 				(_musicOutputStream[i] && _musicOutputStream[i]->endOfData())) {
 				_musicStreamPlaying[i] = false;
-				_musicFile[i].close();
-				_musicOutputStream[i]->finish();
-				_musicOutputStream[i] = nullptr;
+
+				if (_musicFile[i].isOpen())
+					_musicFile[i].close();
+
+				if (_musicOutputStream[i]) {
+					_musicOutputStream[i]->finish();
+					_musicOutputStream[i] = nullptr;
+				}
 			}
 		}
 	}
