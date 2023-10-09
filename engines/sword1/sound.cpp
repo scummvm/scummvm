@@ -1074,10 +1074,6 @@ void Sound::serveSample(Common::File *file, int32 i) {
 						file->read(buf + len, nominalSize - len);
 						len = nominalSize;
 						debug(5, "Sound::serveSample(): Looping music file %s", file->getName());
-					} else {
-						Common::String fname(file->getName());
-						if (!fname.empty())
-							debug(5, "Sound::serveSample(): Finished feeding music file %s", file->getName());
 					}
 				}
 			} else {
