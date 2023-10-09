@@ -774,12 +774,8 @@ bool MacIndy3Gui::Inventory::updateTimer(int delta) {
 	VerbWidget::updateTimer(delta);
 
 	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
-		Slot *s = _slots[i];
-
-		if (s->updateTimer(delta)) {
-			s->setRedraw(true);
-			_vm->runInputScript(kInventoryClickArea, s->getObject(), 1);
-		}
+		if (_slots[i]->updateTimer(delta))
+			return true;
 	}
 
 	for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
