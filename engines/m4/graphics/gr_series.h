@@ -60,7 +60,7 @@ struct Series {
 	machine *_seriesS = nullptr;
 
 	void play(const char *seriesName, frac16 layer, uint32 flags = 0,
-		int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = -1, int32 s = 100,
+		int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = 0, int32 s = 100,
 		int32 x = 0, int32 y = 0, int32 firstFrame = 0, int32 lastFrame = -1);
 	void show(const char *seriesName, frac16 layer, uint32 flags = 0,
 		int16 triggerNum = -1, int32 duration = -1, int32 index = 0, int32 s = 100,
@@ -78,7 +78,7 @@ struct Series {
 	}
 
 	static void series_play(const char *seriesName, frac16 layer, uint32 flags = 0,
-		int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = -1, int32 s = 100,
+		int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = 0, int32 s = 100,
 		int32 x = 0, int32 y = 0, int32 firstFrame = 0, int32 lastFrame = -1);
 	static void series_show(const char *seriesName, frac16 layer, uint32 flags = 0,
 		int16 triggerNum = -1, int32 duration = -1, int32 index = 0, int32 s = 100,
@@ -94,7 +94,7 @@ extern bool series_show_frame(int32 spriteHash, int32 index, Buffer *destBuff, i
 //extern machine *series_show_sprite(const char *seriesName, int32 index, int32 layer);	// was simple_show_sprite
 
 extern machine *series_play(const char *seriesName, frac16 layer, uint32 flags = 0,
-	int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = -1, int32 s = 100,
+	int16 triggerNum = -1, int32 frameRate = 6, int32 loopCount = 0, int32 s = 100,
 	int32 x = 0, int32 y = 0, int32 firstFrame = 0, int32 lastFrame = -1);
 //extern machine *series_simple_play(char *seriesName, frac16 layer, bool stick_when_done);
 
