@@ -74,7 +74,7 @@
 { // Supplied by scoriae in the forums
 	{
 		"playtoons1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "archi.stk",		"00d8274519dfcf8a0d8ae3099daea0f8", 5532135),
 		EN_ANY,
@@ -248,7 +248,7 @@
 { // Supplied by scoriae in the forums
 	{
 		"playtoons2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "spirou.stk",	"993737f112ca6a9b33c814273280d832", 9825760),
 		EN_ANY,
@@ -281,7 +281,7 @@
 {
 	{
 		"playtoons3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "chato.stk",		"8fc8d0da5b3e758908d1d7298d497d0b", 6041026),
 		EN_ANY,
@@ -374,7 +374,7 @@
 { //Supplied by goodoldgeorg in bug report #4390
 	{
 		"playtoons4",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "manda.stk",		"69a79c9f61b2618e482726f2ff68078d", 6499208),
 		EN_ANY,
@@ -407,7 +407,7 @@
 { // Supplied by indy4fan in bug report #13099. Orig title: "Der Stein von Wakan"
 	{
 		"playtoons5",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "wakan.stk",		"5518139580becd8c49bbfbdd4f49187a", 5523417),
 		DE_DEU,
