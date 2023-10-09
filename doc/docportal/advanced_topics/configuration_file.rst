@@ -519,7 +519,7 @@ Screenshot path
 		.. panels::
 			:column: col-lg-12 mb-2
 
-			In ``Users\username\My Pictures\ScummVM Screenshots``
+			In ``%USERPROFILE%\Pictures\ScummVM Screenshots``
 
 	.. tabbed:: macOS
 
