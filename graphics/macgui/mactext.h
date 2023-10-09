@@ -179,6 +179,7 @@ struct MacTextLine {
 	Common::U32String picalt, pictitle;
 	uint16 picpercent = 50;
 	Common::Array<MacTextTableRow> *table = nullptr;
+	ManagedSurface *tableSurface = nullptr;
 
 	Common::Array<MacFontRun> chunks;
 

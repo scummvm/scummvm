@@ -1134,6 +1134,12 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 			continue;
 		}
 
+		if (_text[i].tableSurface) {
+			surface->blitFrom(*_text[i].tableSurface, Common::Point(0, _text[i].y));
+
+			continue;
+		}
+
 		int xOffset = getAlignOffset(i) + _text[i].indent + _text[i].firstLineIndent;
 		xOffset++;
 
@@ -2898,7 +2904,8 @@ const Surface *MacText::getImageSurface(Common::String &fname) {
 void MacText::processTable(int line) {
 	Common::Array<MacTextTableRow> *table = _canvas._text[line].table;
 	uint numCols = table->front().cells.size();
-	Common::Array<int> maxW(numCols), maxL(numCols), colW(numCols);
+	uint numRows = table->size();
+	Common::Array<int> maxW(numCols), maxL(numCols), colW(numCols), rowH(numRows);
 	Common::Array<bool> flex(numCols), wrap(numCols);
 
 	int width = _canvas._maxWidth * 0.9;
@@ -2983,19 +2990,69 @@ void MacText::processTable(int line) {
 		warning("%d: %d", i, colW[i]);
 	}
 
+	int r = 0;
 	for (auto &row : *table) {
-		int i = 0;
+		int c = 0;
+		rowH[r] = 0;
 		for (auto &cell : row.cells) {
-			cell._maxWidth = colW[i];
+			cell._maxWidth = colW[c];
 
 			cell.recalcDims();
 			cell.reallocSurface();
 			cell._surface->clear(_bgcolor);
 			cell.render(0, cell._text.size());
 
-			i++;
+			rowH[r] = MAX(rowH[r], cell._textMaxHeight);
+
+			c++;
 		}
+
+		r++;
 	}
+
+	int tW = 1, tH = 1;
+	for (uint i = 0; i < table->size(); i++)
+		tH += rowH[i] + gutter * 2 + 1;
+
+	for (uint i = 0; i < table->front().cells.size(); i++)
+		tW += colW[i] + gutter * 2 + 1;
+
+	ManagedSurface *surf = new ManagedSurface(tW, tH, _wm->_pixelformat);
+	_canvas._text[line].tableSurface = surf;
+	_canvas._text[line].height = tH;
+	surf->clear(_bgcolor);
+
+	surf->hLine(0, 0, tW, _fgcolor);
+	surf->vLine(0, 0, tH, _fgcolor);
+
+	int y = 1;
+	for (uint i = 0; i < table->size(); i++) {
+		y += gutter * 2 + rowH[i];
+		surf->hLine(0, y, tW, _fgcolor);
+		y++;
+	}
+
+	int x = 1;
+	for (uint i = 0; i < table->front().cells.size(); i++) {
+		x += gutter * 2 + rowH[i];
+		surf->vLine(x, 0, tH, _fgcolor);
+		x++;
+	}
+
+	r = 0;
+	x = 1 + gutter;
+	y = 1 + gutter;
+	for (auto &row : *table) {
+		int c = 0;
+		for (auto &cell : row.cells) {
+			surf->blitFrom(*cell._surface, Common::Point(x, y));
+			x += gutter * 2 + 1 + colW[c];
+			c++;
+		}
+		y += gutter * 2 + 1 + rowH[r];
+		r++;
+	}
+
 }
 
 } // End of namespace Graphics
