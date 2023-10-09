@@ -1428,26 +1428,8 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 		_lastInputScriptTime = time;
 	}
 
-	if (verbScript) {
-		// It seems that script 18 expects to be called twice: Once
-		// with parameter 1 (kVerbClickArea) to clear all the verbs,
-		// and once with 3 (kInventoryClickArea) to print the "Take
-		// this <something>" message.
-		//
-		// In the 256-color DOS version, this is all done in the same
-		// call to the script.
-		//
-		// Should this workaround apply to other input scripts
-		// as well? I don't know.
-		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verbScript == 18 && val >= 101 && val <= 106) {
-			args[0] = kVerbClickArea;
-			runScript(verbScript, 0, 0, args);
-
-			args[0] = kInventoryClickArea;
-			runScript(verbScript, 0, 0, args);
-		} else
-			runScript(verbScript, 0, 0, args);
-	}
+	if (verbScript)
+		runScript(verbScript, 0, 0, args);
 }
 
 void ScummEngine::decreaseScriptDelay(int amount) {
