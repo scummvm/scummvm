@@ -300,6 +300,7 @@ void Room801::daemon() {
 		break;
 
 	case 14:
+		// Conversation handler
 		if (conv_sound_to_play()) {
 			int who = conv_whos_talking();
 			int node = conv_current_node();
@@ -319,6 +320,7 @@ void Room801::daemon() {
 		break;
 
 	case 15:
+		// Flummox
 		switch (_G(roomVal4)) {
 		case 3:
 			terminateMachineAndNull(_series10);
@@ -349,6 +351,7 @@ void Room801::daemon() {
 		break;
 
 	case 16:
+		// Zlarg
 		switch (_val3) {
 		case 2:
 			if (imath_ranged_rand(0, 15) <= 12) {
@@ -543,6 +546,8 @@ void Room801::daemon() {
 		switch (_val1) {
 		case 9:
 			switch (_G(wilbur_should)) {
+			case 5:
+			case 6:
 			case 7:
 				_series12 = series_play("804WI04", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0);
 				_val1 = 11;
