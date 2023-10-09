@@ -80,7 +80,7 @@ public:
 	// it's not drawing verbs, so the SCUMM engine is allowed to draw in
 	// the verb area to clear the power meters and text.
 
-	bool isGuiActive() const;
+	bool isVerbGuiActive() const;
 	const Graphics::Font *getFont(int n) const { return _fonts[n]; }
 
 	void resetAfterLoad();
@@ -141,10 +141,11 @@ private:
 
 		virtual bool handleEvent(Common::Event &event) = 0;
 		virtual bool handleMouseHeld(Common::Point &pressed, Common::Point &held) { return false; }
-		virtual bool updateTimer(int delta);
+		virtual void updateTimer(int delta);
+		virtual void timeOut() {}
 
-		virtual void draw() = 0;
-		virtual void undraw() {}
+		virtual void draw();
+		virtual void undraw();
 
 		// Primitives
 		void fill(Common::Rect r) const;
@@ -191,7 +192,7 @@ private:
 		bool handleEvent(Common::Event &event);
 
 		void reset();
-		bool updateTimer(int delta);
+		void timeOut();
 		void updateVerb(int verbslot);
 
 		void draw();
@@ -230,6 +231,7 @@ private:
 
 			bool handleEvent(Common::Event &event);
 			bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
+			void timeOut();
 
 			void draw();
 		};
@@ -246,15 +248,14 @@ private:
 			void clearName() { _name.clear(); }
 			bool hasName() const { return !_name.empty(); }
 
-			void clearObject() { _obj = -1; }
-
+			void clearObject();
 			void setObject(int n);
 			int getObject() const { return _obj; }
 
 			void reset();
 
 			bool handleEvent(Common::Event &event);
-			bool updateTimer(int delta);
+			void timeOut();
 
 			void draw();
 		};
@@ -276,7 +277,7 @@ private:
 
 		bool handleEvent(Common::Event &event);
 		bool handleMouseHeld(Common::Point &pressed, Common::Point &held);
-		bool updateTimer(int delta);
+		void updateTimer(int delta);
 		void updateVerb(int verbslot);
 
 		void draw();
@@ -291,7 +292,7 @@ private:
 	const uint16 _llCorner[4] = { 0x8000, 0x8000, 0xC000, 0xF000 };
 	const uint16 _lrCorner[5] = { 0x1000, 0x1000, 0x3000, 0xF000 };
 
-	bool isGuiAllowed() const;
+	bool isVerbGuiAllowed() const;
 
 	void clear();
 	void show();
