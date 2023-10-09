@@ -1397,6 +1397,14 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			pVtxBuffer = CreateVertexBuffer(*apGeom, eVertexBufferUsageType_Static);
 			pVtxBuffer->Transform(apNode->m_mtxWorldTransform);
 		}
+		// WORKAROUND: Bug #14571: "HPL1: sliding door does not move"
+		// The original version of the Newton Dynamics library created incorrect colliders for the wall that allowed the door to move correctly.
+		// The newer version fixes that, tilting the door (which should slide upwards) forward, making it unable to move.
+		// Modifying the door collider did not solve the issue as the player would get partially blocked if they entered from the wrong direction.
+		// Position 22 is the y coordinate of the wall vertex that intersects the door, and the value is taken from another vertex position in the list.
+		if (apNode->msName == "room4_wall2") {
+			pVtxBuffer->GetArray(eVertexFlag_Position)[22] = -64.470757f;
+		}
 
 		iCollideShape *pShape = apWorld->GetPhysicsWorld()->CreateMeshShape(pVtxBuffer);
 		iPhysicsBody *pBody = apWorld->GetPhysicsWorld()->CreateBody(apNode->msName, pShape);
