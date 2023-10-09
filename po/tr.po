@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-08 22:23+0000\n"
+"POT-Creation-Date: 2023-10-09 20:04+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -584,15 +584,15 @@ msgid "Platform:"
 msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2004 gui/options.cpp:2178
+#, fuzzy
+msgid "GFX"
+msgstr "GFX"
+
+#: gui/editgamedialog.cpp:191 gui/options.cpp:2004 gui/options.cpp:2178
 #: backends/graphics/atari/atari-graphics.cpp:953
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
 msgstr "Grafik Ayarları"
-
-#: gui/editgamedialog.cpp:191 gui/options.cpp:2004 gui/options.cpp:2178
-#, fuzzy
-msgid "GFX"
-msgstr "GFX"
 
 #: gui/editgamedialog.cpp:197
 msgid "Override global graphic settings"
