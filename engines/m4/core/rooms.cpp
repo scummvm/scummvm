@@ -239,7 +239,7 @@ void Sections::m4EndScene() {
 void Sections::get_ipl() {
 	if (_G(inverse_pal))
 		delete _G(inverse_pal);
-	_G(inverse_pal) = NULL;
+	_G(inverse_pal) = nullptr;
 
 	char *name;
 	Common::String filename;

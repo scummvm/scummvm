@@ -298,7 +298,7 @@ void kernel_examine_inventory_object(char *picName, RGB8 *pal, int steps, int de
 	interface_hide();
 
 	_GP(exam_saved_hotspots) = _G(currentSceneDef).hotspots;
-	_G(currentSceneDef).hotspots = NULL;
+	_G(currentSceneDef).hotspots = nullptr;
 
 	_GP(myFadeTrigger) = kernel_trigger_create(triggerNum);
 
@@ -350,7 +350,7 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 
 	terminateMachine(_GP(seriesAnim8));
 	series_unload(_GP(seriesHash));
-	_GP(seriesAnim8) = NULL;
+	_GP(seriesAnim8) = nullptr;
 	_GP(seriesHash) = 0;
 
 	Buffer *grey_screen = _G(gameDrawBuff)->get_buffer();

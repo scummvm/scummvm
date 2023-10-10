@@ -166,7 +166,7 @@ MemHandle Resources::rget(const Common::String &resourceName, int32 *resourceSiz
 
 void Resources::rtoss(const Common::String &resourceName) {
 	int hash_val;
-	Entry *resEntry = NULL;
+	Entry *resEntry = nullptr;
 	Common::String lowerName;
 
 	lowerName = resourceName;

@@ -184,7 +184,7 @@ void Vars::game_systems_shutdown() {
 	f_stream_Shutdown();
 
 	term_message("mouse dialog be gone!");
-	DialogDestroy(_mousePosDialog, NULL);
+	DialogDestroy(_mousePosDialog, nullptr);
 
 	term_message("sounds stop");
 	midi_stop();
@@ -207,7 +207,7 @@ void Vars::game_systems_shutdown() {
 	digi_uninstall();
 	midi_uninstall();
 
-	f_io_report(NULL, NULL);
+	f_io_report(nullptr, nullptr);
 	term_message("calling registry shutdown");
 	registry_shutdown_all();
 	term_shutdown();

@@ -97,7 +97,7 @@ struct PlayerInfo {
 	void syncGame(Common::Serializer &s);
 };
 
-extern bool player_said(const char *w0, const char *w1 = NULL, const char *w2 = NULL);
+extern bool player_said(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr);
 extern bool player_said_any(const char *w0, const char *w1 = nullptr, const char *w2 = nullptr,
 	const char *w3 = nullptr, const char *w4 = nullptr, const char *w5 = nullptr, const char *w6 = nullptr,
 	const char *w7 = nullptr, const char *w8 = nullptr, const char *w9 = nullptr);

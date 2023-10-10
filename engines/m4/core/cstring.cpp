@@ -161,7 +161,7 @@ void strseg(char *work, char *work2, int indx, int count) {
 	if (!work || !work2)
 		return;
 
-	char *s = NULL;
+	char *s = nullptr;
 
 	s = &work2[indx];
 	strncpy(work, s, count);
@@ -231,7 +231,7 @@ char *str_strip_final_lf(char *mystring) {
 	char *temp;
 
 	temp = strrchr(mystring, 0x0a);
-	if (temp != NULL) {
+	if (temp != nullptr) {
 		*temp = '\0';
 	}
 	return (temp);
@@ -274,7 +274,7 @@ int16 stringIsIn(char *str, char *strings[]) {
 		return -1;
 
 	int16 index = 0;
-	while (*strings != NULL) {
+	while (*strings != nullptr) {
 		if (!strcmp(str, *strings))
 			return index;
 		++index;

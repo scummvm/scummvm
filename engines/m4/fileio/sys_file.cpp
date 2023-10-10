@@ -117,7 +117,7 @@ void SysFile::open_read_low_level() {
 			if (!temp_fp.seek(hash_table_size * HASH_RECORD_LENGTH, SEEK_CUR))
 				error("fail to seek");
 
-			_G(hag).hag_name_list = NULL;
+			_G(hag).hag_name_list = nullptr;
 			while (!temp_fp.eos()) {
 				if (temp_fp.read(hag_name, 33) != 33)
 					break;

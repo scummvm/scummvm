@@ -274,10 +274,10 @@ bool MoveScreenDelta(ScreenContext *myScreen, int32 parmX, int32 parmY) {
 
 void vmng_screen_to_back(void *scrnContent) {
 	ScreenContext *myScreen, *tempScreen;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == NULL) return;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr) return;
 	if (!_G(backScreen)) {
-		myScreen->infront = NULL;
-		myScreen->behind = NULL;
+		myScreen->infront = nullptr;
+		myScreen->behind = nullptr;
 		_G(frontScreen) = myScreen;
 		_G(backScreen) = myScreen;
 	} else {
@@ -287,13 +287,13 @@ void vmng_screen_to_back(void *scrnContent) {
 			tempScreen = tempScreen->infront;
 		}
 		if (!tempScreen) {
-			myScreen->infront = NULL;
+			myScreen->infront = nullptr;
 			myScreen->behind = _G(frontScreen);
 			_G(frontScreen)->infront = myScreen;
 			_G(frontScreen) = myScreen;
 		} else if (tempScreen == _G(backScreen)) {
 			myScreen->infront = _G(backScreen);
-			myScreen->behind = NULL;
+			myScreen->behind = nullptr;
 			_G(backScreen)->behind = myScreen;
 			_G(backScreen) = myScreen;
 		} else {

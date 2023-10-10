@@ -81,8 +81,8 @@ public:
 
 	/**
 	 * Takes an array of string constants in the form of "object", "lookline", "takeline", "useline".
-	 * The array has to end with four NULLs: NULL, NULL, NULL, NULL
-	 * Use NULL in place of a lookline, takeline, or useline if you don't want to this function
+	 * The array has to end with four NULLs: nullptr, nullptr, nullptr, nullptr
+	 * Use nullptr in place of a lookline, takeline, or useline if you don't want to this function
 	 * to handle it
 	 */
 	bool wilbur_said(const char *list[][4]);

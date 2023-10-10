@@ -37,7 +37,7 @@ extern void tt_read_header(SysFile *ifp, long *file_x, long *file_y,
 /**
  * Returns a pointer to an initialized buffer containing the image data.
  * If an error occurs, out.x contains the error number while out.y is zero,
- * and out.data is NULL.
+ * and out.data is nullptr.
  */
 extern Buffer *tt_read(SysFile *ifp, int index, long tile_x, long tile_y);
 

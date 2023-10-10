@@ -72,8 +72,8 @@ extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 #define ws_walk_dump_walker_series(xx, yy) (ws_walk_dump_series (xx, yy))
 #define ws_walk_dump_shadow_series(xx, yy) (ws_walk_dump_series (xx, yy))
 
-#define player_walk(xx, yy, ff, tt)    (ws_walk(_G(my_walker), xx, yy, NULL, tt, ff, true))
-#define player_walk_no_finish(xx, yy, ff, tt)      (ws_walk(_G(my_walker), xx, yy, NULL, tt, ff, FALSE))
+#define player_walk(xx, yy, ff, tt)    (ws_walk(_G(my_walker), xx, yy, nullptr, tt, ff, true))
+#define player_walk_no_finish(xx, yy, ff, tt)      (ws_walk(_G(my_walker), xx, yy, nullptr, tt, ff, FALSE))
 #define player_demand_facing(dd)       (ws_demand_facing(_G(my_walker), dd))
 #define player_demand_location(xx, yy) (ws_demand_location(_G(my_walker), xx, yy))
 #define player_turn_to_face(dd, tt) (ws_turn_to_face(_G(my_walker), dd, tt))
@@ -87,8 +87,8 @@ extern void ws_walk_dump_series(int16 num_directions, int16 start_hash);
 extern void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool complete_walk = true);
 #define adv_walker_custom_walk(ww, ff, tt)      (ws_custom_walk(ww, ff, tt, true))
 #define adv_walker_custom_walk_no_finish(ww, ff, tt)     (ws_custom_walk(ww, ff, tt, FALSE))
-#define adv_walker_walk(ww, xx, yy, ff, tt)     (ws_walk(ww, xx, yy, NULL, tt, ff, true))
-#define adv_walker_walk_no_finish(ww, xx, yy, ff, tt)    (ws_walk(ww, xx, yy, NULL, tt, ff, FALSE))
+#define adv_walker_walk(ww, xx, yy, ff, tt)     (ws_walk(ww, xx, yy, nullptr, tt, ff, true))
+#define adv_walker_walk_no_finish(ww, xx, yy, ff, tt)    (ws_walk(ww, xx, yy, nullptr, tt, ff, FALSE))
 #define adv_walker_face(ww, dd)              (ws_demand_facing(ww, dd))
 #define adv_walker_turn_to_face(ww, dd, tt)  (ws_turn_to_face(ww, dd, tt))
 #define adv_walker_move(ww, xx, yy)          (ws_demand_location(ww, xx, yy))
