@@ -166,7 +166,7 @@ struct WSMachine_Globals {
 	bool _enginesPaused = false;
 
 	int32 *_dataFormats = nullptr;
-	uint32	_machineIDCount = 0;
+	uint32 _machineIDCount = 0;
 	machine *_firstMachine = nullptr;
 
 	machine *_nextXM = nullptr;

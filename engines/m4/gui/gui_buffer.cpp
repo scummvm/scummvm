@@ -65,7 +65,7 @@ static void Buffer_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 }
 
 bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler) {
-	int32			x2, y2;
+	int32 x2, y2;
 
 	x2 = x1 + myBuf->w - 1;
 	y2 = y1 + myBuf->h - 1;

@@ -317,8 +317,8 @@ void Item_empty_list(Item *myItem) {
 
 static int32 item_string_width(char *myStr, int32 spacing) {
 	char *tempPtr, *tempPtr2, *tempPtr3, highlightChar[2];
-	int32		highlightNum;
-	int32		strWidth, column;
+	int32 highlightNum;
+	int32 strWidth, column;
 
 	highlightChar[0] = '~';
 	highlightChar[1] = '\0';
@@ -346,8 +346,8 @@ static int32 item_string_width(char *myStr, int32 spacing) {
 static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, int32 w, int32 spacing, int32 color, int32 highlight) {
 	char *tempPtr, *strPtr, *nextStrPtr;
 	char *highlightPtr;
-	char		tempStr[2];
-	int32		currX, column;
+	char tempStr[2];
+	int32 currX, column;
 
 	if (!target) return false;
 	if ((tempPtr = strchr(myStr, '^')) == nullptr) {
@@ -501,17 +501,21 @@ Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *pr
 }
 
 Item *ItemFind(Item *itemList, int32 tag) {
-	if (!itemList) return nullptr;
+	if (!itemList)
+		return nullptr;
 	if (tag > 0) {
 		while (itemList && (itemList->tag != tag)) itemList = itemList->next;
-	} else itemList = nullptr;
+	} else {
+		itemList = nullptr;
+	}
+
 	return itemList;
 }
 
 bool Item_SetViewBottom(Item *i) {
-	int32			count;
+	int32 count;
 	ListItem *myListItem;
-	bool			found = false;
+	bool found = false;
 
 	if ((!i) || (!i->viewTop)) return false;
 	myListItem = i->viewTop;
@@ -545,7 +549,8 @@ static void CalculateViewIndex(Item *myItem) {
 
 static void SetViewIndex(Item *myItem) {
 	ListItem *myListItem;
-	int32			i;
+	int32 i;
+
 	if ((!myItem) || (!myItem->myList)) return;
 	if (myItem->thumbY == myItem->h - maxThumbY) {
 		myItem->viewIndex = myItem->myListCount - myItem->listView;
@@ -748,8 +753,8 @@ bool GetNextListItem(Item *myItem) {
 }
 
 bool GetNextPageList(Item *myItem) {
-	int32			i;
-	bool			changed = false;
+	int32 i;
+	bool changed = false;
 
 	if (myItem->currItem && myItem->viewBottom) {
 		for (i = 0; i < (myItem->listView - 1); i++) {
@@ -805,9 +810,9 @@ bool GetPrevPageList(Item *myItem) {
 }
 
 void ViewCurrListItem(Item *myItem) {
-	int32			i, j;
+	int32 i, j;
 	ListItem *tempItem;
-	bool			breakFlag = false;
+	bool breakFlag = false;
 
 	if (!myItem->currItem) {
 		myItem->viewTop = nullptr;
@@ -842,8 +847,10 @@ void ViewCurrListItem(Item *myItem) {
 
 ListItem *ListItemFind(Item *myItem, int32 searchMode, char *searchStr, int32 parm1) {
 	ListItem *myList;
-	int32			i;
-	if (!myItem) return nullptr;
+	int32 i;
+	if (!myItem)
+		return nullptr;
+
 	myList = myItem->myList;
 	if (searchMode == LIST_BY_TAG) {
 		while (myList && (myList->tag != parm1)) myList = myList->next;
@@ -923,14 +930,14 @@ bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset) {
 }
 
 bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType) {
-	int32				fontHeight, itemOffset, boxWidth;
+	int32 fontHeight, itemOffset, boxWidth;
 	ListItem *myListItem;
-	bool				scrollable = false;
-	bool				changed = false;
-	int32				newThumbY, i;
-	static int32		thumbOffset;
-	M4Rect				interiorRect;
-	ButtonDrawRec		bdr;
+	bool scrollable = false;
+	bool changed = false;
+	int32 newThumbY, i;
+	static int32 thumbOffset;
+	M4Rect interiorRect;
+	ButtonDrawRec bdr;
 	Font *currFont;
 
 	if (!myItem) return false;

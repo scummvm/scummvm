@@ -33,7 +33,7 @@ namespace M4 {
 #define RIGHT_EDGE  0x08
 
 bool InitRails() {
-	int32			i, edgeTableSize;
+	int32 i, edgeTableSize;
 
 	// Register with the stash the frequently used structs
 	if (!mem_register_stash_type(&_G(rails).memtypePATHN, sizeof(pathNode), 32, "+PATHNODE")) {
@@ -92,7 +92,7 @@ void rail_system_shutdown(void) {
 
 
 void ClearRails(void) {
-	int32			i, edgeTableSize;
+	int32 i, edgeTableSize;
 	noWalkRect *myRect;
 
 	if (_G(rails).myNodes) {
@@ -624,7 +624,7 @@ void RestoreEdgeList(Buffer *walkCodes) {
 }
 
 int32 AddRailNode(int32 x, int32 y, Buffer *walkCodes, bool restoreEdges) {
-	int32			i, j;
+	int32 i, j;
 	railNode *newNode;
 
 	if ((!_G(rails).myNodes) || (!_G(rails).myEdges)) {
@@ -696,8 +696,8 @@ bool RailNodeExists(int32 nodeID, int32 *nodeX, int32 *nodeY) {
 }
 
 int16 GetEdgeLength(int32 node1, int32 node2) {
-	int32		temp;
-	int32		index;
+	int32 temp;
+	int32 index;
 	if (!_G(rails).myEdges) return 0;
 	if (node1 == node2) return 0;
 	if (node2 < node1) {
@@ -762,9 +762,9 @@ static railNode *DuplicatePath(railNode *pathStart) {
 
 
 railNode *CreateCustomPath(int32 coord, ...) {
-	va_list		argPtr;
+	va_list argPtr;
 	railNode *firstNode, *prevNode = nullptr, *newNode;
-	int32			 x, y;
+	int32 x, y;
 
 	// Initialize firstNode
 	firstNode = nullptr;
