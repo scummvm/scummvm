@@ -454,7 +454,7 @@ void Room706::daemon() {
 		break;
 
 	case 34:
-		switch (_G(roomVal4)) {
+		switch (_G(flumix_should)) {
 		case 2:
 			getRoomVal();
 			series_play("706FLX01", 0x400, 0, 34, 6);
@@ -466,7 +466,7 @@ void Room706::daemon() {
 			break;
 
 		default:
-			_G(roomVal4) = 4;
+			_G(flumix_should) = 4;
 			break;
 		}
 		break;
@@ -565,7 +565,7 @@ void Room706::conv83() {
 }
 
 void Room706::getRoomVal() {
-	_G(roomVal4) = imath_ranged_rand(1, 100) >= 10 ? 3 : 2;
+	_G(flumix_should) = imath_ranged_rand(1, 100) >= 10 ? 3 : 2;
 }
 
 } // namespace Rooms

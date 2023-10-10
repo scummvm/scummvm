@@ -104,7 +104,7 @@ public:
 	bool _gameMenuFromMain = false;
 	int _room902Flag = 0;
 	int _roomVal3 = 0;
-	int _roomVal4 = 0;
+	int _flumix_should = 0;
 	int _roomVal7 = 3;
 	machine *_npcSpeech1 = nullptr;
 	machine *_npcSpeech2 = nullptr;

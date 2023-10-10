@@ -230,7 +230,7 @@ void Room802::daemon() {
 			digi_unload_stream_breaks(SERIES3);
 
 			_G(wilbur_should) = getWilburShould();
-			_G(roomVal4) = 6;
+			_G(flumix_should) = 6;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			kernel_trigger_dispatch_now(17);
 
@@ -247,7 +247,7 @@ void Room802::daemon() {
 
 	case 13:
 		_G(wilbur_should) = 19;
-		_G(roomVal4) = 19;
+		_G(flumix_should) = 19;
 
 		if (_flag2 && _flag1) {
 			terminateMachineAndNull(_series5);
@@ -288,9 +288,10 @@ void Room802::daemon() {
 		break;
 
 	case 17:
+		// Flumix
 		switch (_val2) {
 		case 1:
-			switch (_G(roomVal4)) {
+			switch (_G(flumix_should)) {
 			case 5:
 				_flag1 = true;
 				_val2 = 3;
@@ -305,13 +306,13 @@ void Room802::daemon() {
 
 			case 9:
 				_flag1 = false;
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				series_play_with_breaks(PLAY2, "802BF02", 0x100, 17, 3);
 				break;
 
 			case 10:
 				_flag1 = false;
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_val4 = 30;
 				series_play_with_breaks(PLAY3, "802BF02", 0x100, 17, 1);
 				break;
@@ -324,14 +325,14 @@ void Room802::daemon() {
 			default:
 				_flag1 = false;
 				_val4 = 30;
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				series_play_with_breaks(PLAY1, "802BF02", 0x100, 17, 3);
 				break;
 			}
 			break;
 
 		case 2:
-			switch (_G(roomVal4)) {
+			switch (_G(flumix_should)) {
 			case 5:
 				_flag1 = true;
 				_val2 = 3;
@@ -340,7 +341,7 @@ void Room802::daemon() {
 
 			case 6:
 				_flag1 = true;
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_series3.show("802BF03", 0x100, 0, 17, 30, 1);
 				break;
 
@@ -358,17 +359,17 @@ void Room802::daemon() {
 			break;
 
 		case 3:
-			switch (_G(roomVal4)) {
+			switch (_G(flumix_should)) {
 			case 5:
 				_flag1 = true;
-				_G(roomVal4) = 20;
+				_G(flumix_should) = 20;
 				_G(wilbur_should) = 16;
 				_series3.play("802BF01", 0x100, 4, -1, 6);
 				break;
 
 			case 20:
 				_series3.terminate();
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series3.show("802BF01", 0x100, 0, 17, 30, 0);
 				conv_resume_curr();
@@ -396,7 +397,7 @@ void Room802::daemon() {
 		if (conv_sound_to_play()) {
 			int who = conv_whos_talking();
 			if (who <= 0)
-				_G(roomVal4) = 5;
+				_G(flumix_should) = 5;
 			else if (who == 1)
 				_G(wilbur_should) = 14;
 		}
@@ -423,7 +424,7 @@ void Room802::daemon() {
 			case 14:
 				_flag2 = true;
 				_G(wilbur_should) = 20;
-				_G(roomVal4) = 6;
+				_G(flumix_should) = 6;
 				_series5 = series_play("802BW03", 0x100, 4, -1, 6, -1);
 				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION, 802);
 				break;
@@ -463,7 +464,7 @@ void Room802::daemon() {
 			switch (_G(wilbur_should)) {
 			case 14:
 				_flag2 = true;
-				_G(roomVal4) = 6;
+				_G(flumix_should) = 6;
 				_val1 = 11;
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				break;
