@@ -150,11 +150,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "androawake",         "Andromeda Awakening" },
 	{ "andromedagenesis",   "Andromeda Genesis" },
 	{ "anotherterminal",    "Another Terminal Beach" },
-	{ "animals",            "Animals 1.1" },
+	{ "animals",            "Animals" },
 	{ "annoy",              "Annoyotron" },
 	{ "aotyrz",             "Attack of the Yeti Robot Zombies" },
 	{ "aphasiaquest",       "Aphasia Quest" },
-	{ "apollo11z",          "Apollo 11" },
+	{ "apollo11z",          "Apollo 11 (by B)" },
 	{ "appall",             "Appallatron: Annoyotron 3" },
 	{ "arc3h",              "Alien Research Centre 3: Footprints in the Snow" },
 	{ "argument",           "The Argument-Winner's Ghost" },
@@ -166,17 +166,17 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "aug4",               "Augmented Fourth" },
 	{ "avon",               "Avon" },
 	{ "awakening",          "The Awakening" },
-	{ "awakeningzcode",     "Awakening" },
+	{ "awakeningzcode",     "Awakening (by Pete Gardner)" },
 	{ "awitl",              "A Week in the Life" },
 	{ "ayac",               "Are You a Chef?" },
 	{ "azteca",             "Azteca" },
-	{ "b2demo",             "Pick up the Phone Booth and Die, Part 2 (Demo)" },
+	{ "b2demo",             "Pick up the Phone Booth and Die II (Demo)" },
 	{ "b7snare",            "Snare" },
 	{ "babytree",           "Baby Tree" },
 	{ "backtowakeup",       "Back to WakeUp" },
 	{ "backup",             "Backup" },
 	{ "badguys",            "Bad Guys" },
-	{ "bakingwithlizzie",   "Baking with Lizzie" },
+	{ "bakingwithlizzie",   "Baking With Lizzie" },
 	{ "balances_zcode",     "Balances" },
 	{ "baldersdeath",       "Balder's Death" },
 	{ "ballerina102",       "Not Just an Ordinary Ballerina" },
@@ -197,21 +197,21 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "bicon",              "BiCon" },
 	{ "bignose",            "Big Nose on the Big Pyramid" },
 	{ "biscuit",            "Biscuit" },
-	{ "bishoes",            "Buried In Shoes" },
+	{ "bishoes",            "Buried in Shoes" },
 	{ "bj",                 "Blow Job Drifter" },
 	{ "blacklily",          "The Black Lily" },
 	{ "blair",              "Tales From the College Presents a Breath of Fresh Blair" },
 	{ "bloodless",          "Bloodless on the Orient Express" },
 	{ "bluechairs",         "Blue Chairs" },
 	{ "bodybargain",        "Body Bargain" },
-	{ "bofh",               "The Bastard Operator from Hell" },
+	{ "bofh",               "The Bastard Operator From Hell" },
 	{ "bomber",             "The Mad Bomber" },
 	{ "bookvol",            "Book and Volume" },
 	{ "booth",              "Pick up the Phone Booth and Die" },
 	{ "boothdye",           "Pick up the Phone Booth and Dye" },
 	{ "boxes",              "Boxes" },
 	{ "brandx",             "BrandX" },
-	{ "breakin",            "Break-In" },
+	{ "breakin",            "Break-in" },
 	{ "briantimmons",       "The Surprising Case of Brian Timmons" },
 	{ "bronze",             "Bronze" },
 	{ "bryantcollection",   "The Bryant Collection" },
@@ -258,10 +258,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cheshirecat_zcode",  "Save the Cheshire Cat!" },
 	{ "chickenunder",       "The Chicken Under the Window" },
 	{ "chico",              "Chico and I Ran" },
-	{ "childsplay",         "Child’s Play, a Child, a Toy, and a Rival" },
+	{ "childsplay",         "Child’s Play" },
 	{ "chix",               "Chicks Dig Jerks" },
 	{ "christminster",      "Christminster" },
-	{ "cia",                "CIA Adventure" },
+	{ "cia",                "C.I.A. Adventure" },
 	{ "classchallenge",     "Class Challenge" },
 	{ "claw",               "Wearing the Claw" },
 	{ "clean",              "A Clean Getaway" },
@@ -317,7 +317,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "deephome",           "Deephome" },
 	{ "deformuseum",        "Deformuseum" },
 	{ "degeneracy",         "Degeneracy" },
-	{ "dejavuz",            "Deja Vu" },
+	{ "dejavuz",            "Deja Vu (by Graham Nelson)" },
 	{ "deliciousbreakfast", "Delicious Breakfast" },
 	{ "delusions",          "Delusions" },
 	{ "desert_zcode",       "Desert Adventure" },
@@ -373,7 +373,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "eric",               "Eric The Power-Mad Dungeon Master" },
 	{ "escapade",           "Escapade!" },
 	{ "escape",             "Escape!" },
-	{ "escaperemember",     "An Escape To Remember" },
+	{ "escaperemember",     "An Escape to Remember" },
 	{ "eto",                "ETO" },
 	{ "eurydice",           "Eurydice" },
 	{ "everydaysamedream",  "Every Day the Same Dream" },
@@ -396,7 +396,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "figueres",           "Figueres in My Basement" },
 	{ "finalselection",     "Final Selection" },
 	{ "finalexam",          "Final Exam" },
-	{ "findesick",          "Fin de sickleburg" },
+	{ "findesick",          "Fin de Sickleburg" },
 	{ "findthemouse",       "Finding the Mouse" },
 	{ "findthebed",         "Find the Bed" },
 	{ "finetuned",          "Fine-Tuned" },
@@ -441,7 +441,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "glass_zcode",        "Glass" },
 	{ "glik1",              "Glik I" },
 	{ "gnuzoo",             "Gnu in the Zoo" },
-	{ "godot",              "Looking For Godot" },
+	{ "godot",              "Looking for Godot" },
 	{ "goldilocks",         "Goldilocks is a Fox!" },
 	{ "golf",               "Textfire Golf" },
 	{ "gossip",             "Gossip" },
@@ -470,7 +470,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "heidi",              "Heidi" },
 	{ "heist",              "Heist: The Crime of the Century" },
 	{ "heliopause",         "Hoist Sail for the Heliopause and Home" },
-	{ "hellosword",         "Hello Sword: The journey" },
+	{ "hellosword",         "Hello Sword: The Journey" },
 	{ "hellsbasement",      "Hell's Basement" },
 	{ "henribeauchamp",     "The Gallery of Henri Beauchamp" },
 	{ "heroes",             "Heroes" },
@@ -479,7 +479,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "hiddennazi",         "The Game Formerly Known as Hidden Nazi Mode" },
 	{ "hiddenverbiage",     "Hidden Verbiage" },
 	{ "hidepachyderm",      "Hide a Pachyderm!" },
-	{ "hipponewyear",       "And A Hippo New Year" },
+	{ "hipponewyear",       "And a Hippo New Year" },
 	{ "hlainform",          "HLA Adventure" },
 	{ "hobbitredux_zcode",  "The Hobbit - The True Story - Redux, Director's Cut" },
 	{ "homecoming",         "Homecoming" },
@@ -517,7 +517,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "insidewoman",        "Inside Woman" },
 	{ "insight",            "Insight" },
 	{ "intangible",         "Intangible" },
-	{ "interviewrockstar",  "Interview with a Rock Star" },
+	{ "interviewrockstar",  "Interview With a Rock Star" },
 	{ "inthenavy",          "In the Navy" },
 	{ "intruder",           "Intruder" },
 	{ "invisibleman",       "The Believable Adventures of an Invisible Man" },
@@ -542,7 +542,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "kiiwii",             "Kii!Wii! A Tiny Friend to Brighten Your Day" },
 	{ "killingthedoctor",   "Killing the Doctor" },
 	{ "kirby",              "The X-Child, Kevin Johnson Residence Hall Saga 2" },
-	{ "kitten",             "robotfindskitten" },
+	{ "kitten",             "Robot Finds Kitten" },
 	{ "kooku",              "Kook U" },
 	{ "lackofvision",       "Lack of Vision" },
 	{ "lambs",              "Silence of the Lambs" },
@@ -554,7 +554,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lecture",            "Lecture Feature" },
 	{ "legacy",             "The Family Legacy" },
 	{ "lex",                "LeX" },
-	{ "librarian",          "Life of A Librarian" },
+	{ "librarian",          "Life of a Librarian" },
 	{ "libraryfront",       "All Quiet on the Library Front" },
 	{ "lifeordeath",        "Life or Death" },
 	{ "limp",               "Limp" },
@@ -573,7 +573,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lockeddoor8",        "Locked Door VIII" },
 	{ "lockeddoor9",        "Locked Door IX" },
 	{ "lookingtothesky",    "Looking to the Sky" },
-	{ "lostpigandplace",    "Lost Pig And Place Under Ground" },
+	{ "lostpigandplace",    "Lost Pig and Place Under Ground" },
 	{ "lostspellmaker",     "The Lost Spellmaker" },
 	{ "ludicorp",           "The Ludicorp Mystery" },
 	{ "magicmirror",        "Magic Mirror" },
@@ -598,7 +598,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "mines",              "Mines" },
 	{ "minimalistgame",     "The Minimalist Game" },
 	{ "minimalistgame2",    "The Minimalist Game 2" },
-	{ "misdirection",       "The Act Of Misdirection" },
+	{ "misdirection",       "The Act of Misdirection" },
 	{ "missinggrandpa",     "Missing Grandpa: Lost in Time" },
 	{ "mite",               "Mite" },
 	{ "mobius",             "Möbius" },
@@ -625,7 +625,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "mulldoon",           "The Mulldoon Legacy" },
 	{ "mulldoonmurders",    "The Mulldoon Murders" },
 	{ "murdac",             "Murdac" },
-	{ "murdererleft",       "What The Murderer Had Left" },
+	{ "murdererleft",       "What the Murderer Had Left" },
 	{ "muse",               "Muse: An Autumn Romance" },
 	{ "musician",           "The Musician" },
 	{ "myangel",            "My Angel" },
@@ -686,7 +686,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "penury",             "The Algophilists' Penury" },
 	{ "perilousmagic",      "Perilous Magic" },
 	{ "perrysworld",        "Perry's World" },
-	{ "pfrank",             "PROFESSOR FRANK" },
+	{ "pfrank",             "Professor Frank" },
 	{ "philosophersstone",  "The Quest for the Philosopher's Stone" },
 	{ "phlegm",             "Phlegm" },
 	{ "phoenix",            "Phoenix's Landing: Destiny" },
@@ -709,14 +709,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "puerto",             "The Board Game Puerto Rico" },
 	{ "punkpoints",         "Punk Points" },
 	{ "puppetman",          "The Puppet-Man" },
-	{ "putpbaa",            "Pick Up the Phone Booth and Aisle" },
+	{ "putpbaa",            "Pick up the Phone Booth and Aisle" },
 	{ "puzzle",             "Puzzle" },
 	{ "pytho_zcode",        "Pytho's Mask" },
 	{ "quidditch1954",      "The Quidditch Final of 1954" },
 	{ "quietevening",       "A Quiet Evening at Home" },
 	{ "rachaelbadday",      "Rachel Has a Bad Day" },
 	{ "ralph",              "Ralph" },
-	{ "rameses",            "Rameses, a Tale of Heroes" },
+	{ "rameses",            "Rameses" },
 	{ "ranshints",          "RANS Hints" },
 	{ "rans",               "RANS" },
 	{ "readinginmay",       "A Reading in May" },
@@ -726,7 +726,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "reser",              "Rock'Em Sock'Em Robots" },
 	{ "resident",           "The Resident" },
 	{ "returncastle",       "Return to the Castle" },
-	{ "revengebabes",       "Revenge of the Killer Surf Nazi Robot Babes from Hell" },
+	{ "revengebabes",       "Revenge of the Killer Surf Nazi Robot Babes From Hell" },
 	{ "revenger",           "Revenger" },
 	{ "reverb",             "Reverberations" },
 	{ "reverzi",            "Reverzi" },
@@ -737,7 +737,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "robotempire",        "Holy Robot Empire" },
 	{ "robotgardening",     "Robot Gardening" },
 	{ "robots",             "Robots - Another Abuse of the Z-Machine" },
-	{ "rogue",              "Rogue" },
+	{ "rogue",              "zROGUE" },
 	{ "roomserial",         "Room Serial" },
 	{ "roofed",             "Roofed" },
 	{ "robopuppyredux",     "Robopuppy Redux" },
@@ -820,7 +820,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "strainedtea",        "Strained Tea" },
 	{ "strangeworld",       "Strange World" },
 	{ "suicide",            "Suicide" },
-	{ "summerland",         "Escape from Summerland" },
+	{ "summerland",         "Escape From Summerland" },
 	{ "sunburst",           "Sunburst: A C64 Science Fiction Adventure Game" },
 	{ "sundayafternoon",    "Sunday Afternoon" },
 	{ "surfboard",          "Surfboard" },
@@ -902,7 +902,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "underthebed",        "Under the Bed" },
 	{ "ungodlyhour",        "Ungodly Hour" },
 	{ "unicornpool",        "The Unicorn Pool" },
-	{ "uninvited",          "Uninvited" },
+	{ "uninvited",          "UNINVITED" },
 	{ "vacation",           "Vacation Gone Awry" },
 	{ "vagueness",          "What Happens in Vagueness" },
 	{ "vampiresun",         "House of the Midnight Sun" },
@@ -910,7 +910,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "varronismuseum",     "Varronis Museum" },
 	{ "vengeance",          "Vengeance" },
 	{ "vergingpaths",       "The Garden of Verging Paths" },
-	{ "veryvile_zcode",     "Very Vile Fairy File" },
+	{ "veryvile_zcode",     "Prime Pro-Rhyme Row #1: Very Vile Fairy File" },
 	{ "vespers",            "Vespers" },
 	{ "vestiges",           "Vestiges" },
 	{ "vigilance",          "Internal Vigilance" },
@@ -921,7 +921,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "visualizing",        "Visualizing" },
 	{ "voices",             "Voices" },
 	{ "vosr",               "Voices of Spoon River" },
-	{ "wadewar3",           "The WadeWars Book III" },
+	{ "wadewar3",           "The WadeWars Book III: Aski" },
 	{ "walkinthepark",      "A Walk in the Park" },
 	{ "wallpaper",          "Delightful Wallpaper" },
 	{ "warblersnest",       "The Warbler's Nest" },
@@ -945,14 +945,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "windhall",           "The Path to Fortune" },
 	{ "winterwonder",       "Winter Wonderland" },
 	{ "wir1",               "When in Rome 1: Accounting for Taste" },
-	{ "wir2",               "When in Rome 2: Far from Home" },
+	{ "wir2",               "When in Rome 2: Far From Home" },
 	{ "wireless",           "Get Magazine. Open Magazine. Read Article" },
 	{ "wizardscastle",      "Wizard's Castle" },
 	{ "wizardsmagic",       "Wizards Magic" },
 	{ "worldupsidedown",    "The World Turned Upside Down" },
-	{ "wossname",           "Spodgeville Murphy and The Jewelled Eye of Wossname" },
+	{ "wossname",           "Spodgeville Murphy and the Jewelled Eye of Wossname" },
 	{ "wsp",                "Weishaupt Scholars: Prologue" },
-	{ "wump2ka",            "Wumpus 2000, The Virulent Labyrinth Of Yob-Shuggoth" },
+	{ "wump2ka",            "Wumpus 2000, The Virulent Labyrinth of Yob-Shuggoth" },
 	{ "wumpus",             "Hunt the Wumpus" },
 	{ "wurm",               "Wurm" },
 	{ "wwwanderer",         "Werewolves and Wanderer" },
@@ -971,7 +971,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "zegro",              "Zegrothenus" },
 	{ "zenon",              "Escape From the Starship Zenon" },
 	{ "zenspeak",           "Zen Speaks!" },
-	{ "zigamus_zcode",      "Zigamus: Zombies at Vigamus" },
+	{ "zigamus_zcode",      "Zigamus: Zombies at Vigamus!" },
 	{ "zlife",              "Z-Life" },
 	{ "zokoban",            "Z-Machine Sokoban" },
 	{ "zombies",            "Zombies, Yet Another Abuse of the Z-Machine" },
@@ -1024,7 +1024,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "timemachinei5",      "Mysterious Adventures #02: The Time Machine" },
 	{ "arrowofdeath1i5",    "Mysterious Adventures #03: Arrow of Death Part 1" },
 	{ "arrowofdeath2i5",    "Mysterious Adventures #04: Arrow of Death Part 2" },
-	{ "pulsar7i5",          "Mysterious Adventures #05: Escape from Pulsar 7" },
+	{ "pulsar7i5",          "Mysterious Adventures #05: Escape From Pulsar 7" },
 	{ "circusi5",           "Mysterious Adventures #06: Circus" },
 	{ "feasibilityi5",      "Mysterious Adventures #07: Feasibility Experiment" },
 	{ "akyrzi5",            "Mysterious Adventures #08: The Wizard of Akyrz" },
@@ -1136,7 +1136,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if98_evildwells",    "Where Evil Dwells" },                                                      //   14th Place
 	{ "if98_purple",        "Purple" },                                                                 //   15th Place
 	{ "if98_research",      "Research Dig" },                                                           //   17th Place
-	{ "if98_spacestation",  "Space Station: Based on Planetfall Example Transcript" },                  //   19th Place
+	{ "if98_spacestation",  "Space Station" },                                                          //   19th Place
 	{ "if98_cattusatrox",   "Cattus Atrox" },                                                           //   20th Place
 	{ "if98_spotlite",      "In the Spotlight" },                                                       //   21st Place
 	{ "if98_acidwhiplash",  "Acid Whiplash" },                                                          //   23rd Place
@@ -1178,11 +1178,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if00_shade",         "Shade" },                                                                  //   10th Place
 	{ "if00_guess",         "Guess The Verb!" },                                                        //   11th Place
 	{ "if00_letters",       "Letters From Home" },                                                      //   12th Place
-	{ "if00_rameses",       "Rameses, A Tale of Heroes" },                                              //   13th Place
+	{ "if00_rameses",       "Rameses" },                                                                //   13th Place
 	{ "if00_djinni",        "The Djinni Chronicles" },                                                  //   14th Place
 	{ "if00_bestman",       "The Best Man" },                                                           //   15th Place
 	{ "if00_atwctw",        "And the Waves Choke the Wind" },                                           //   16th Place
-	{ "if00_dinner",        "Dinner with Andre" },                                                      //   18th Place
+	{ "if00_dinner",        "Dinner With Andre" },                                                      //   18th Place
 	{ "if00_bigmama",       "The Big Mama" },                                                           //   20th Place
 	{ "if00_punkpoints",    "Punk Points" },                                                            //   22th Place
 	{ "if00_enlisted",      "Enlisted" },                                                               //   23rd Place
@@ -1238,7 +1238,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if02_whenhelp",      "When Help Collides" },                                                     //   18th Place
 	{ "if02_constraints",   "Constraints" },                                                            //   19th Place
 	{ "if02_hell0",         "Hell: A Comedy of Errors" },                                               //   23th Place
-	{ "if02_bofh",          "The Bastard Operator from Hell" },                                         //   26th Place
+	{ "if02_bofh",          "The Bastard Operator From Hell" },                                         //   26th Place
 	{ "if02_samuelgregor",  "The Case of Samuel Gregor" },                                              //   27th Place
 	{ "if02_screen",        "Screen" },                                                                 //   29th Place
 	{ "if02_shamulet",      "Scary House Amulet" },                                                     //   31st Place
@@ -1321,10 +1321,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if06_bibleretold1",  "The Bible Retold: The Bread and the Fishes" },                             //   21st Place
 	{ "if06_anothergodamn", "Another Goddamn Escape the Locked Room Game" },                            //   22nd Place
 	{ "if06_fightorflight", "Fight or Flight" },                                                        //   23rd Place
-	{ "if06_manalive1",     "Manlive I - Enigma" },                                                     //   24th Place
+	{ "if06_manalive1",     "Manalive I - Enigma" },                                                    //   24th Place
 	{ "if06_hedge",         "Hedge" },                                                                  //   25th Place
 	{ "if06_polendina",     "Polendina" },                                                              //   27th Place
-	{ "if06_manalive2",     "Manlive II" },                                                             //   29th Place
+	{ "if06_manalive2",     "Manalive II" },                                                            //   29th Place
 	{ "if06_pathfinder",    "Pathfinder" },                                                             //   30th Place
 	{ "if06_apocalypclock", "The Apocalypse Clock" },                                                   //   31st Place
 	{ "if06_sisyphus",      "Sisyphus" },                                                               //   39th Place
@@ -1353,7 +1353,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //    3rd Place
 	{ "if08_snacktime",     "Snack Time!" },                                                            //    6th Place
 	{ "if08_openingnight",  "Opening Night" },                                                          //    7th Place
-	{ "if08_escunderworld", "Escape from the Underworld" },                                             //   12th Place
+	{ "if08_escunderworld", "Escape From the Underworld" },                                             //   12th Place
 	{ "if08_bishoes",       "Buried in Shoes" },                                                        //   13th Place
 	{ "if08_grief",         "Grief" },                                                                  //   16th Place
 	{ "if08_trein",         "Trein" },                                                                  //   17th Place
@@ -1387,7 +1387,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "comp09",             "IF Competition '09 Unofficial FE Game" },
 
 	// IFComp 2010
-	{ "if10_deathofftc",    "Death Off The Cuff" },                                                     //    5th Place
+	{ "if10_deathofftc",    "Death off the Cuff" },                                                     //    5th Place
 	{ "if10_mite",          "Mite" },                                                                   //    6th Place
 	{ "if10_gloriousrevol", "The People's Glorious Revolutionary Text Adventure Game" },                //    7th Place
 	{ "if10_hummingbird",   "Flight of the Hummingbird" },                                              //    8th Place
@@ -1403,8 +1403,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "comp10",             "IF Competition '10 Unofficial FE Game" },
 
 	// IFComp 2011
-	{ "if11_santaland",     "Escape from Santaland" },                                                  //    4th Place
-	{ "if11_canamicah",     "Cana According To Micah" },                                                //    9th Place
+	{ "if11_santaland",     "Escape From Santaland" },                                                  //    4th Place
+	{ "if11_canamicah",     "Cana According to Micah" },                                                //    9th Place
 	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             //   10th Place
 	{ "if11_tenthplague",   "Tenth Plague" },                                                           //   12th Place
 	{ "if11_coldiron",      "Cold Iron" },                                                              //   15th Place
@@ -1425,7 +1425,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if12_spiral",        "Spiral" },                                                                 //    6th Place
 	{ "if12_bodybargain",   "Body Bargain" },                                                           //    8th Place
 	{ "if12_fishbowl",      "Fish Bowl" },                                                              //   12th Place
-	{ "if12_summerland",    "Escape from Summerland" },                                                 //   13th Place
+	{ "if12_summerland",    "Escape From Summerland" },                                                 //   13th Place
 	{ "if12_lunarbase1",    "Lunar Base 1" },                                                           //   14th Place
 	{ "if12_murphyslaw",    "Murphy's Law" },                                                           //   15th Place
 	{ "if12_testisready",   "The Test is Now READY" },                                                  //   15th Place
@@ -1448,7 +1448,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// IFComp 2015
 	{ "if15_finalexam",     "Final Exam" },                                                             //    9th Place
-	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire I: The Awakening" },                         //   12th Place
+	{ "if15_darkiss1",      "Darkiss! Wrath of the Vampire - Chapter 1: The Awakening" },               //   12th Place
 	{ "if15_lifeonmars",    "Life on Mars?" },                                                          //   13th Place
 	{ "if15_gbvb",          "Grandma Bethlinda's Variety Box" },                                        //   21st Place
 	{ "if15_5minutes",      "5 Minutes To Burn Something!" },                                           //   32nd Place
@@ -1457,7 +1457,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// IFComp 2016
 	{ "if16_insidefacility", "Inside the Facility" },                                                   //   13th Place
-	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      //   17th Place
+	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire - Chapter 2: Journey to Hell" },             //   17th Place
 	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            //   31th Place
 	{ "if16_slickercity",   "Slicker City" },                                                           //   39th Place
 	{ "if16_youarestand",   "You Are Standing in a Cave..." },                                          //   48th Place
@@ -1495,7 +1495,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// IFComp 2022
 	{ "if22_intosun",       "Into the Sun" },                                                           //   25th Place
-	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           //   41st Place
+	{ "if22_lowkey",        "Prime Pro-Rhyme Row #3: Low-Key Learny Jokey Journey" },                   //   41st Place
 	{ "if22_campusinvader", "Campus Invaders" },                                                        //   45th Place
 	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                //   52nd Place
 
@@ -1537,8 +1537,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ifas_varronismuseu", "Varronis Museum" },
 
 	// The Mystery House Taken Over project
-	{ "mhp",                "Mystery House Possessed" },
-	{ "wherethere",         "Where There's a Will" },
+	{ "mhp",                "Mystery House Taken Over Ep. 1: House Possessed" },
+	{ "wherethere",         "Mystery House Taken Over Ep. 2: Where There's a Will" },
 
 	// Arcade Collection
 	{ "ifa_rox",            "Rox" },                                                                    //   Episode  1
@@ -1585,7 +1585,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cgdc7_zegro",        "Zegrothenus" },                                                            //   30th Place
 
 	// Chicken Competition
-	{ "cc_chknmt",          "Are you Too Chicken to Make a Deal?" },
+	{ "cc_chknmt",          "Are You Too Chicken to Make a Deal?" },
 	{ "cc_behavior",        "Behavior" },
 	{ "cc_chickenzcode",    "Chicken!" },
 	{ "cc_chickenegg",      "Chicken and Egg" },
@@ -1736,7 +1736,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// 24 Hours of Inform Competition
 	{ "24h_aesthetic",      "Aesthetic Deletions" },
 	{ "24h_dastardly",      "Dastardly" },
-	{ "24h_defra",          "The Man from DEFRA" },
+	{ "24h_defra",          "The Man From DEFRA" },
 	{ "24h_borgaris",       "Escape From the SS Borgaris" },
 	{ "24h_ghostship",      "Ghost Ship" },
 
@@ -2015,7 +2015,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_garden",         "Garden of the Dragon" },
 	{ "sif_inspector",      "Health Inspector" },
 	{ "sif_potstick",       "Potsticker" },
-	{ "sif_service",        "Service with a Smile" },
+	{ "sif_service",        "Service With a Smile" },
 
 	// SpeedIF 14 Competition
 	{ "sif_halloweenzcode", "Hallowe'en" },
@@ -2037,7 +2037,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_2604",           "2604" },
 	{ "sif_roof",           "A Stroll on the Roof" },
 	{ "sif_123102",         "December 31, 2002" },
-	{ "sif_speedif17",      "Tooth Ow Zunden Too" },
+	{ "sif_speedif17",      "Tooth Ow Zunden Won!" },
 
 	// SpeedIF 18 Competition
 	{ "sif_fishspaceships", "Fish and Spaceships" },
@@ -2077,7 +2077,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_moonjupiter",    "Moon Over Jupiter" },
 	{ "sif_crescent",       "The Crescent City at the Edge of Disaster" },
 	{ "sif_crouton",        "The Crouton Caper" },
-	{ "sif_speedif17v1",    "Tooth Ow Zunden Too" },
+	{ "sif_speedif17v1",    "Tooth Ow Zunden Won!" },
 
 	// SpeedIF 3rd Anniversary Competition
 	{ "sif_henry",          "Finding Henry" },
@@ -2307,7 +2307,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_thedayidied",    "The Day I Died" },
 
 	// SpeedIF Without Number Competition
-	{ "sif_sushi",          "A Day For Fresh Sushi" },
+	{ "sif_sushi",          "A Day for Fresh Sushi" },
 	{ "sif_anotherday",     "Another Day, Another Sea Monster" },
 	{ "sif_lobster",        "The Lobster" },
 	{ "sif_grape",          "Triumphant Return of the Evil Sea Grape" },
@@ -2397,7 +2397,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "stc09_milkparadise", "The Milk of Paradise" },                                                   //    4th Place
 
 	// Spring Thing 2012
-	{ "stc12_rocketman",    "The Rocket Man from the Sea" },                                            //    1st Place
+	{ "stc12_rocketman",    "The Rocket Man From the Sea" },                                            //    1st Place
 
 	// Spring Thing 2014
 	{ "stc14_mrp",          "The Story of Mr. P." },                                                    //    7th Place
@@ -2625,7 +2625,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sfida",              "Sfida all'Ignoto" },
 	{ "sognosangue_zcode",  "Sogno di Sangue" },
 	{ "strega",             "La Strega di Maughn" },
-	{ "stregatto_zcode",    "Salvate lo Stregatto" },
+	{ "stregatto_zcode",    "Salvate lo Stregatto!" },
 	{ "terkhen",            "Ogul e lo Scettro di Terkhen" },
 	{ "tesla_zcode",        "In Cerca di Tesla" },
 	{ "villamorgana_zcode", "Villa Morgana" },
@@ -2675,7 +2675,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "elcontinente",       "El Continente" },
 	{ "ellibro",            "El Libro" },
 	{ "encierro",           "Encierro" },
-	{ "ergotdelima_zcode",  "Lime Ergot" },
+	{ "ergotdelima_zcode",  "Ergot de Lima" },
 	{ "estacion",           "Secuestro" },
 	{ "excessus",           "Excessus" },
 	{ "forrajeo",           "Forrajeo" },
@@ -3067,7 +3067,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "freeparking",        "Free Parking" },
 	{ "freighterraphus",    "Freighter Raphus" },
 	{ "fridayafteroffice",  "Friday Afternoon in the Office" },
-	{ "fungus",             "Fungus, a Super Mario Interactive Fan Fiction" },
+	{ "fungus",             "Fungus" },
 	{ "galisancommence",    "Galisan, Le Commencement" },
 	{ "gamerstereotypes",   "Gamer Stereotypes" },
 	{ "generations",        "Generations" },
@@ -3229,7 +3229,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "piecethingtogether", "Piecing Things Together" },
 	{ "piratesofhighseas",  "Pirates of the High Seas" },
 	{ "pitchblack",         "Pitch Black" },
-	{ "playwithrocco",      "Play with Rocco" },
+	{ "playwithrocco",      "Play With Rocco" },
 	{ "playfictutorial",    "Playfic Tutorial" },
 	{ "ploc",               "PLOC" },
 	{ "poisoned",           "Poisoned" },
@@ -3337,7 +3337,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "suicideprevention",  "Suicide Prevention" },
 	{ "summertimeshy",      "Summertime Shy" },
 	{ "sunrise",            "Sunrise" },
-	{ "survivalrun",        "Survival: Run from the Zombies" },
+	{ "survivalrun",        "Survival: Run From the Zombies" },
 	{ "survival",           "Survival!" },
 	{ "survivemathclass",   "Survive Math Class" },
 	{ "survseafoamisle4",   "Survivor Seafoam Islands IV: Three Tribes, Three Shibes" },
