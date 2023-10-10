@@ -133,7 +133,7 @@ long conv_current_node() {
 }
 
 int32 conv_current_entry() {
-	return _GC(ent);
+	return _GC(ent) - 1;
 }
 
 void conv_reset(const char *filename) {
