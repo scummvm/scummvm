@@ -110,7 +110,7 @@ void Vars::main_cold_data_init() {
 		break;
 	}
 
-	_game.setRoom(801); //*****DEBUG****
+	_game.setRoom(802); //*****DEBUG****
 
 	font_set_colors(2, 1, 3);
 }
