@@ -969,6 +969,9 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 // more objects than are visible on screen.
 // ---------------------------------------------------------------------------
 
+// NB: This class makes several references to ARRAYSIZE(_slots), but accessing
+//     members of the enclosing class like that should be ok in C++11.
+
 MacIndy3Gui::Inventory::ScrollBar::ScrollBar(int x, int y, int width, int height) : MacIndy3Gui::Widget(x, y, width, height) {
 }
 
