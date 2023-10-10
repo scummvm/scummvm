@@ -191,8 +191,8 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 - (void)setupGestureRecognizers {
 #if TARGET_OS_IOS
 	UILongPressGestureRecognizer *longPressKeyboard = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressKeyboard:)];
-	[longPressKeyboard setMinimumPressDuration:1];
 	[_toggleTouchModeButton addGestureRecognizer:longPressKeyboard];
+	[longPressKeyboard setNumberOfTouchesRequired:1];
 	[longPressKeyboard release];
 
 	oneFingerTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(oneFingerTap:)];
