@@ -68,7 +68,7 @@ void Room702::daemon() {
 		player_set_commands_allowed(true);
 		ws_demand_location(302, 284, 6);
 		_val2 = 12;
-		_G(roomVal4) = 8;
+		_G(flumix_should) = 8;
 		_G(wilbur_should) = 10;
 		digi_play_loop("700_001", 3, 50, -1, 700);
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
@@ -84,7 +84,7 @@ void Room702::daemon() {
 		break;
 
 	case 3:
-		_G(roomVal4) = 4;
+		_G(flumix_should) = 4;
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 90, -1);
 		kernel_timing_trigger(30, 5);
 		break;
@@ -96,7 +96,7 @@ void Room702::daemon() {
 	case 5:
 		switch (_val1) {
 		case 1:
-			switch (_G(roomVal4)) {
+			switch (_G(flumix_should)) {
 			case 3:
 				_val1 = 2;
 				break;
@@ -109,7 +109,7 @@ void Room702::daemon() {
 				break;
 
 			case 5:
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series10 = series_play("702C1FL2", 0, 2, 5);
 
@@ -121,7 +121,7 @@ void Room702::daemon() {
 				break;
 
 			case 6:
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series10 = series_play("702C1FL3", 0, 1, 5);
 
@@ -133,7 +133,7 @@ void Room702::daemon() {
 				break;
 
 			case 7:
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series10 = series_play("702C1FL2", 0, 0, 5);
 
@@ -145,14 +145,14 @@ void Room702::daemon() {
 				break;
 
 			case 8:
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series10 = series_play("702C1FL1", 0, 0, 5);
 				digi_play("702F003B", 2, 120);
 				break;
 
 			case 9:
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				_flag1 = true;
 				_series10 = series_play("702FLT01", 0, 0, 5, 60);
 				break;
@@ -163,13 +163,13 @@ void Room702::daemon() {
 			break;
 
 		case 2:
-			switch (_G(roomVal4)) {
+			switch (_G(flumix_should)) {
 			case 3:
 				if (_flag1)
 					terminateMachineAndNull(_series10);
 
 				_flag1 = true;
-				_G(roomVal4) = 21;
+				_G(flumix_should) = 21;
 				_series10 = series_play("702FLT01", 0, 4);
 				digi_play(conv_sound_to_play(), 1, 255, 5);
 				break;
@@ -177,7 +177,7 @@ void Room702::daemon() {
 			case 21:
 				terminateMachineAndNull(_series10);
 				_flag1 = false;
-				_G(roomVal4) = getRoomVal();
+				_G(flumix_should) = getRoomVal();
 				kernel_trigger_dispatch_now(5);
 				conv_resume_curr();
 				break;
@@ -263,7 +263,7 @@ void Room702::conv82() {
 
 	if (conv_sound_to_play()) {
 		if (who <= 0) {
-			_G(roomVal4) = 3;
+			_G(flumix_should) = 3;
 			kernel_trigger_dispatch_now(5);
 
 		} else if (who == 1) {

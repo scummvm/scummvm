@@ -265,7 +265,7 @@ void Room801::daemon() {
 			kernel_trigger_dispatch_now(13);
 		} else {
 			_G(wilbur_should) = getWilburShould();
-			_G(roomVal4) = 2;
+			_G(flumix_should) = 2;
 			_val3 = 2;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			kernel_trigger_dispatch_now(16);
@@ -287,7 +287,7 @@ void Room801::daemon() {
 		loadSeries2();
 
 		_G(wilbur_should) = getWilburShould();
-		_G(roomVal4) = 2;
+		_G(flumix_should) = 2;
 		_val3 = 2;
 
 		_series9 = series_play("804FL01", 2, 0, -1, 6, -1);
@@ -311,7 +311,7 @@ void Room801::daemon() {
 					(node == 6 && entry == 1) || (node == 8 && entry == 0)) {
 					_val3 = 13;
 				} else {
-					_G(roomVal4) = 13;
+					_G(flumix_should) = 13;
 				}
 			} else if (who == 1) {
 				_G(wilbur_should) = 5;
@@ -320,8 +320,8 @@ void Room801::daemon() {
 		break;
 
 	case 15:
-		// Flummox
-		switch (_G(roomVal4)) {
+		// Flumix
+		switch (_G(flumix_should)) {
 		case 3:
 			terminateMachineAndNull(_series10);
 			_series10 = series_show("804FLX01", 1);
@@ -331,20 +331,20 @@ void Room801::daemon() {
 
 		case 12:
 			terminateMachineAndNull(_series10);
-			_G(roomVal4) = 2;
+			_G(flumix_should) = 2;
 			kernel_trigger_dispatch_now(15);
 			conv_resume_curr();
 			break;
 
 		case 13:
-			_G(roomVal4) = 12;
+			_G(flumix_should) = 12;
 			_G(wilbur_should) = 6;
 			_series10 = series_play("804FLT01", 1, 4, -1, 6, -1);
 			digi_play(conv_sound_to_play(), 1, 255, 15);
 			break;
 
 		default:
-			_G(roomVal4) = 2;
+			_G(flumix_should) = 2;
 			_series10 = series_show("804FL01", 1, 0, 15, 30, 0);
 			break;
 		}
@@ -388,7 +388,7 @@ void Room801::daemon() {
 		// Beginning the first test
 		terminateMachineAndNull(_series10);
 		terminateMachineAndNull(_series9);
-		_G(roomVal4) = 3;
+		_G(flumix_should) = 3;
 		_series10 = series_play("804FLX01", 1, 16, -1, 6, 0, 100, 0, 0, 0, 7);
 		kernel_timing_trigger(180, 15);
 		break;
