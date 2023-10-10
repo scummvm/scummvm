@@ -84,7 +84,7 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		//fprintf( conv_fp, "CONV_CHUNK\n" );
 		CC = (conv_chunk *)&outChunk[i];
 
-		j = CC->size; //oct11 was +=
+		j = CC->size;
 		break;
 
 	case DECL_CHUNK:
@@ -101,14 +101,13 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		//fprintf( conv_fp, "LNODE_CHUNK\n" );
 		L = (lnode_chunk *)&outChunk[i];
 
-		//oct11
 		k = sizeof(lnode_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(L->num_entries) * sizeof(long); //was +=
-			j = convert_intel32(j); //oct11
+			j = convert_intel32(L->num_entries) * sizeof(long);
+			j = convert_intel32(j);
 		} else {
-			j = L->num_entries * sizeof(long); //was +=
+			j = L->num_entries * sizeof(long);
 		}
 		break;
 
@@ -116,11 +115,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		//fprintf( conv_fp, "NODE_CHUNK\n" );
 		N = (node_chunk *)&outChunk[i];
 
-		//oct11
 		k = sizeof(node_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(N->num_entries) * sizeof(long); //was +=
+			j = convert_intel32(N->num_entries) * sizeof(long);
 			j = convert_intel32(j);
 		} else {
 			j = N->num_entries * sizeof(long); //was +=
@@ -218,19 +216,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		break;
 
 	default:
-#ifdef TEST_CONV
-		printf("tag %d node %d %x\n", *tag, c->myCNode, c->myCNode);
-#else
-		//oct11
 		error_show(FL, 'PARS', "Tag: %d (%x) Node: %d (%x hex)", *tag, *tag, c->myCNode, c->myCNode);
-#endif
-
-		conv_ops_unknown_chunk(*tag, "conv_ops_get_entry");
-		//exit( 1 ); //fix me!!!! //oct10
 		break;
 	}
 
-	//oct11
 	if (_GC(swap))
 		j = convert_intel32(j);
 	j += k;
@@ -343,8 +332,6 @@ static void swap_lnode(lnode_chunk *l) {
 	l->entry_num = convert_intel32(l->entry_num);
 	l->num_entries = convert_intel32(l->num_entries);
 
-	//oct11
-	//
 	L = (long *)l; //was &l
 	L += 5; // *sizeof( long );
 	for (i = 0; i < l->num_entries; i++) {
@@ -373,8 +360,6 @@ static void swap_node(node_chunk *n) {
 	n->size = convert_intel32(n->size);
 	n->num_entries = convert_intel32(n->num_entries);
 
-	//oct11
-	//
 	j = sizeof(long);
 	L = (long *)n; //was &n
 	L += 4; // *sizeof( long ); //was sizeof node_chunk

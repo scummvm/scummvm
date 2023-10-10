@@ -70,7 +70,7 @@ namespace M4 {
 //reply
 #define	REPLY_CHUNK					((long) ('R' << 24) | ('P' << 16) | ('L' << 8) | 'Y')
 #define	WEIGHT_REPLY_CHUNK			((long) ('W' << 24) | ('R' << 16) | ('P' << 8) | 'L')
-#define	WEIGHT_PREPLY_CHUNK			((long) ('W' << 24) | ('P' << 16) | ('R' << 8) | 'L') //jun27
+#define	WEIGHT_PREPLY_CHUNK			((long) ('W' << 24) | ('P' << 16) | ('R' << 8) | 'L')
 #define	COND_REPLY_CHUNK			((long) ('C' << 24) | ('R' << 16) | ('P' << 8) | 'L')
 
 #define	MESSAGE_CHUNK				((long) ('M' << 24) | ('E' << 16) | ('S' << 8) | 'G')
