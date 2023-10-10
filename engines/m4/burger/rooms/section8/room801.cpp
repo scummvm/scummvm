@@ -356,7 +356,7 @@ void Room801::daemon() {
 		case 2:
 			if (imath_ranged_rand(0, 15) <= 12) {
 				_val3 = 2;
-				_series11 = series_show("804ZL01", 1, 0, 16);
+				_series11 = series_show("804ZL01", 1, 0, 16, 30, 0);
 			} else {
 				_val3 = 1;
 				kernel_trigger_dispatch_now(16);
@@ -385,6 +385,7 @@ void Room801::daemon() {
 		break;
 
 	case  18:
+		// Beginning the first test
 		terminateMachineAndNull(_series10);
 		terminateMachineAndNull(_series9);
 		_G(roomVal4) = 3;
