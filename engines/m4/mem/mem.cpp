@@ -108,7 +108,7 @@ void *mem_get_from_stash(int32 memType, const Common::String &name) {
 
 char *mem_strdup(const char *str) {
 	char *new_str = nullptr;
-	//jul4
+
 	if (!str) {
 		new_str = (char *)mem_alloc(1, "string");
 		new_str[0] = '\0';

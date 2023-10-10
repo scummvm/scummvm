@@ -161,10 +161,10 @@ void strseg(char *work, char *work2, int indx, int count) {
 	if (!work || !work2)
 		return;
 
-	char *s = NULL; //may26 MJE   
+	char *s = NULL;
 
 	s = &work2[indx];
-	strncpy(work, s, count); //may26 MJE
+	strncpy(work, s, count);
 }
 
 

@@ -356,8 +356,8 @@ static int conv_get_mesg(long offset, long is_valid, Conv *c) {
 					////fprintf( conv_fp, "reply->index %x text_len %d\n", reply->index, text_len );
 					Common::strcpy_s(_G(cdd).mesg, get_string(c, reply->index + sizeof(mesg_chunk) + text_len));
 					_G(cdd).mesg_snd_file = get_string(c, reply->index + sizeof(mesg_chunk));
-					//////term_message( "Rreply %s", _G(cdd).mesg_snd_file ); //jun10
-					////fprintf( conv_fp, "Rreply %s %x\n", _G(cdd).mesg_snd_file, c->myCNode ); //jun10/jun14
+					//////term_message( "Rreply %s", _G(cdd).mesg_snd_file );
+					////fprintf( conv_fp, "Rreply %s %x\n", _G(cdd).mesg_snd_file, c->myCNode );
 				} else {
 					Common::strcat_s(_G(cdd).mesg, " ");
 					text_len = conv_ops_text_strlen(get_string(c, reply->index + sizeof(mesg_chunk)));
@@ -465,7 +465,7 @@ static int conv_get_mesg(long offset, long is_valid, Conv *c) {
 
 			if (is_valid) {
 				result = 1;
-				_G(cdd).player_non_player = 1; //jun27 was 0;
+				_G(cdd).player_non_player = 1;
 
 				if (!strcmp(_G(cdd).mesg, "")) {
 					text_len = conv_ops_text_strlen(get_string(c, s_offset + sizeof(mesg_chunk)));
@@ -486,10 +486,10 @@ static int conv_get_mesg(long offset, long is_valid, Conv *c) {
 		}
 		i = next;
 	}
+
 	return result;
 }
 
-//oct10: here.
 static void find_true_ent(int entry_num, Conv *c) {
 	node_chunk *node = nullptr;
 	lnode_chunk *lnode = nullptr;
@@ -501,7 +501,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 	long sub_ent = 0;
 	int result = 1;
 
-	for (;; ) {
+	for (;;) {
 		// Start by getting the current NODE or LNODE
 		conv_ops_get_entry(ent, &next, &tag, c);
 		switch (tag) {
@@ -692,7 +692,6 @@ void conv_shutdown(void) {
 	if (conv_get_handle())
 		conv_unload(conv_get_handle());
 
-	//nov27
 	if (_GC(myTextScrn))
 		TextScrn_Destroy(_GC(myTextScrn));
 	_GC(myTextScrn) = nullptr;
@@ -908,7 +907,7 @@ static int conv_run(Conv *c) {
 							conv_set_event(-1);
 							//////term_message( "conv_run LNODE text entry" );
 							Common::strcpy_s(_G(player).verb, get_conv_name()); //was verb.
-							c->c_entry_num = 1; //jun11 : as from conv.cp1
+							c->c_entry_num = 1;
 						}
 					} ////else fprintf( conv_fp, "didn't get any text\n" );
 					break;
@@ -970,7 +969,7 @@ static void convtestCallback(void *a, void *) {
 	c->mode = CONV_GET_MESG_MODE;
 
 	TextScrn_Destroy(_GC(myTextScrn));
-	_GC(myTextScrn) = nullptr; //nov27
+	_GC(myTextScrn) = nullptr;
 
 	find_true_ent(c->c_entry_num, c);
 
