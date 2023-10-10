@@ -264,8 +264,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cia",                "C.I.A. Adventure" },
 	{ "classchallenge",     "Class Challenge" },
 	{ "claw",               "Wearing the Claw" },
-	{ "cleangetaway",       "A Clean Getaway" },
 	{ "cleanair",           "Clean Air" },
+	{ "cleangetaway",       "A Clean Getaway" },
 	{ "cliffedge",          "Edge of the Cliff" },
 	{ "cockandbull",        "A Cock and Bull Story" },
 	{ "clockwork",          "A Clockwork Noir" },
@@ -871,8 +871,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "threecows",          "Three Cows and Two Doors" },
 	{ "threediopolis",      "Threediopolis" },
 	{ "threemore",          "Three More Visitors" },
-	{ "timefortea",         "Time For Tea: A Game of Tea, Cakes, and Deadly Secrets" },
 	{ "timedwarves",        "Time and Dwarves" },
+	{ "timefortea",         "Time For Tea: A Game of Tea, Cakes, and Deadly Secrets" },
 	{ "tirehoax",           "My Magic Tire Hoax" },
 	{ "tk1",                "Time Killer #1: Claustrophobia" },
 	{ "tkatc",              "The King and the Crown, Special Edition" },
@@ -1740,64 +1740,62 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "24h_borgaris",       "Escape From the SS Borgaris" },
 	{ "24h_ghostship",      "Ghost Ship" },
 
-	// IF Fan Fest 1998
-	{ "ff_ite2",            "In the End II" },
-
 	// IFBeginnersComp 2008
 	{ "ifb_connect",        "Connect" },
 	{ "ifb_limelight",      "Limelight" },
+
+	// IF Fan Fest 1998
+	{ "ff_ite2",            "In the End II" },
 
 	// Imaginary Games From Imaginary Universes Jam
 	{ "ig_garbage",         "Garbage Collection" },
 
 	// IntroComp 2002
-	{ "ic02_timetrap",      "TimeTrap" },                                                               //      Entrant
 	{ "ic02_waterhouse",    "The Waterhouse Women" },                                                   // 3° Runner-Up
+	{ "ic02_timetrap",      "TimeTrap" },                                                               //      Entrant
 
 	// IntroComp 2003
+	{ "ic03_statue",        "The Mage Wars: Statue" },                                                  //       Winner
+	{ "ic03_realend",       "Reality's End" },                                                          // 1° Runner-Up
 	{ "ic03_agency",        "Agency" },                                                                 // 2° Runner-Up
 	{ "ic03_harlequin",     "Harlequin Girl" },                                                         //      Entrant
 	{ "ic03_harringthouse", "Harrington House" },                                                       //      Entrant
-	{ "ic03_realend",       "Reality's End" },                                                          // 1° Runner-Up
-	{ "ic03_statue",        "The Mage Wars: Statue" },                                                  //       Winner
 
 	// IntroComp 2004
-	{ "ic04_auden",         "Auden's Eden" },                                                           // 1° Runner-Up
 	{ "ic04_jbbrwkyi",      "Intro to Jabberwocky" },                                                   //    1st Place
-	{ "ic04_cross",         "On the Cross" },                                                           //      Entrant
+	{ "ic04_auden",         "Auden's Eden" },                                                           // 1° Runner-Up
 	{ "ic04_passenger",     "Passenger" },                                                              // 2° Runner-Up
+	{ "ic04_cross",         "On the Cross" },                                                           //      Entrant
 	{ "ic04_runes",         "Runes" },                                                                  //      Entrant
 
 	// IntroComp 2005
 	{ "ic05_deadsville",    "Deadsville" },                                                             //    1st Place
+	{ "ic05_wscholars",     "Weishaupt Scholars" },                                                     // 1° Runner-Up
 	{ "ic05_stale",         "The Fox, The Dragon, and the Stale Loaf of Bread" },                       // 2° Runner-Up
 	{ "ic05_hobbit",        "The Hobbit" },                                                             //      Entrant
 	{ "ic05_somewhen",      "Somewhen" },                                                               //      Entrant
-	{ "ic05_wscholars",     "Weishaupt Scholars" },                                                     // 1° Runner-Up
 
 	// IntroComp 2006
 	{ "ic06_artdeception",  "The Art of Deception" },                                                   //      Entrant
-	{ "ic06_childsplay",    "Child's Play" },                                                           // 1° Runner-Up
 	{ "ic06_mechs",         "Mechs" },                                                                  // Hon. Mention
 	{ "ic06_sabotage",      "Sabotage" },                                                               // Hon. Mention
-	{ "ic06_southerngoth",  "Southern Gothic" },                                                        //       Winner
 	{ "ic06_ufury",         "Unyielding Fury" },                                                        // Hon. Mention
 
 	// IntroComp 2007
-	{ "ic07_jackbox",       "Jack in the Box" },                                                        // Hon. Mention
-	{ "ic07_jacobst",       "Jacob's Travels" },                                                        // 2° Runner-Up
 	{ "ic07_shredspatches", "The King of Shreds and Patches" },                                         //       Winner
+	{ "ic07_jacobst",       "Jacob's Travels" },                                                        // 2° Runner-Up
+	{ "ic07_jackbox",       "Jack in the Box" },                                                        // Hon. Mention
 	{ "ic07_trainstopping", "Trainstopping" },                                                          // Hon. Mention
 
 	// IntroComp 2008
-	{ "ic08_fiendishzoo",   "Fiendish Zoo" },                                                           // Hon. Mention
 	{ "ic08_stormcellar",   "Storm Cellar" },                                                           // 1° Runner-Up
 	{ "ic08_bedtimestory",  "Bedtime Story" },                                                          // Hon. Mention
+	{ "ic08_fiendishzoo",   "Fiendish Zoo" },                                                           // Hon. Mention
 	{ "ic08_ninetenths",    "Nine-tenths of the Law" },                                                 // Hon. Mention
 
 	// IntroComp 2009
-	{ "ic09_gossip",        "Gossip" },                                                                 // 1° Runner-Up
 	{ "ic09_obituary",      "Obituary" },                                                               //       Winner
+	{ "ic09_gossip",        "Gossip" },                                                                 // 1° Runner-Up
 	{ "ic09_selves",        "Selves" },                                                                 // 2° Runner-Up
 
 	// IntroComp 2010
@@ -1807,10 +1805,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ic10_waker",         "Waker" },                                                                  // Hon. Mention
 
 	// IntroComp 2011
+	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },                                //    2nd Place
 	{ "ic11_bender",        "Bender" },                                                                 // Hon. Mention
 	{ "ic11_despondenidx",  "The Despondency Index" },                                                  // Hon. Mention
 	{ "ic11_parthenon",     "Parthenon" },                                                              // Hon. Mention
-	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },                                //    2nd Place
 	{ "ic11_stallingtime",  "Stalling for Time" },                                                      // Hon. Mention
 
 	// IntroComp 2013
@@ -2063,9 +2061,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_literacy",       "Literacy" },
 	{ "sif_woodencat",      "WOODEN CAT vs. ROBOT MONKEY" },
 
-	// SpeedIF 18th Anniversary Competition
-	{ "sif_farout",         "Far-Out Space Freaks" },
-
 	// SpeedIF 2000 Competition
 	{ "sif_ritual",         "The Great Ritual" },
 
@@ -2089,6 +2084,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_nqaa",           "Not Quite an Anniversary" },
 	{ "sif_reptile",        "Reptile" },
 	{ "sif_teachher2dance", "Teaching Her to Dance" },
+
+	// SpeedIF 18th Anniversary Competition
+	{ "sif_farout",         "Far-Out Space Freaks" },
 
 	// SpeedIF Argonaut Competition
 	{ "sif_asciargo",       "ASCII and the Argonauts" },
@@ -2379,9 +2377,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "stc03_cofire",       "The Cross of Fire" },                                                      //      Entrant
 
 	// Spring Thing 2005
-	{ "stc05_authority",    "Authority" },                                                              //    6th Place
-	{ "stc05_flatfeet",     "Flat Feet" },                                                              //    4th Place
 	{ "stc05_telling",      "Whom the Telling Changed" },                                               //    1st Place
+	{ "stc05_flatfeet",     "Flat Feet" },                                                              //    4th Place
+	{ "stc05_authority",    "Authority" },                                                              //    6th Place
 
 	// Spring Thing 2006
 	{ "stc06_debaron",      "De Baron" },                                                               //    1st Place
@@ -5571,48 +5569,48 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ig_garbage", "160207", "1d1d0dec9fc382dc4e3c303e37e56afe", 425936),
 
 	// IntroComp 2002
-	ENTRY0("ic02_timetrap", "020319", "dc9d9b5c4af9d6a763465caf2770b22b", 141824),
 	ENTRY0("ic02_waterhouse", "020319", "b36b7a0db435e1f2b28514f87bf1a756", 141824),
+	ENTRY0("ic02_timetrap", "020319", "dc9d9b5c4af9d6a763465caf2770b22b", 141824),
 
 	// IntroComp 2003
+	ENTRY0("ic03_statue", "030321", "17652647e855fa7f94c7be0987aca13b", 276992),
+	ENTRY0("ic03_realend", "030318", "cb8aa32666ba4e48cd191537e28a79f4", 114176),
 	ENTRY0("ic03_agency", "030320", "1fd608f827bae4d5ff3cbfb913293d3c", 70144),
 	ENTRY0("ic03_harlequin", "030321", "0aaeed0851aaa0338ed653ec3e485eb7", 92160),
 	ENTRY0("ic03_harringtonhouse", "030321", "83e4af82d7077019597f6014b7c05b94", 124928),
-	ENTRY0("ic03_realend", "030318", "cb8aa32666ba4e48cd191537e28a79f4", 114176),
-	ENTRY0("ic03_statue", "030321", "17652647e855fa7f94c7be0987aca13b", 276992),
 
 	// IntroComp 2004
-	ENTRY0("ic04_auden", "040707", "e9468a39f7dc696db24c057819f8bfbd", 67072),
 	ENTRY0("ic04_jbbrwkyi", "040714", "dfbf529105d6eff2610accf0e4e1e9ea", 119296),
-	ENTRY0("ic04_cross", "040718", "9de8aa41ff0ead846e55fb2d7dc609c2", 65024),
+	ENTRY0("ic04_auden", "040707", "e9468a39f7dc696db24c057819f8bfbd", 67072),
 	ENTRY0("ic04_passenger", "040718", "8a8f0ba481aafd3f30f2650290f61ea7", 94720),
+	ENTRY0("ic04_cross", "040718", "9de8aa41ff0ead846e55fb2d7dc609c2", 65024),
 	ENTRY0("ic04_runes", "040706", "41fe4fc08bbbd803baf1b9edee61e095", 87040),
 
 	// IntroComp 2005
 	ENTRY0("ic05_deadsville", "072305", "f6666723bb7dcda541c2d591acc7a1fd", 119808),
+	ENTRY0("ic05_wscholars", "071107", "03d438cfb4920cc831da090e0c150f2a", 587032),
 	ENTRY0("ic05_stale", "050723", "d6db29b6290672b7faa620f8ecce876f", 87552),
 	ENTRY0("ic05_hobbit", "050621", "47f280042669ec7330e9378266c33558", 100352),
 	ENTRY0("ic05_somewhen", "050705", "8796d65ae9dd1c540d5ecf24760f4ee6", 75264),
-	ENTRY0("ic05_wscholars", "071107", "03d438cfb4920cc831da090e0c150f2a", 587032),
 
 	// IntroComp 2006
-	ENTRY0("ic06_artdeception", "060713", "804cd3fd69b98c0f03fd39e0a2d4de12", 156160),
+	ENTRY0("ic06_southerngothic", "060702", "5c5fab8b67a94080e52d0f553a72410c", 192506),
 	ENTRY0("ic06_childsplay7", "060714", "fe8b789b87f715d63f678608db42ae92", 310628),
+	ENTRY0("ic06_artdeception", "060713", "804cd3fd69b98c0f03fd39e0a2d4de12", 156160),
 	ENTRY0("ic06_mechs", "060716", "4d7d7204634951bb6f999f03894f2148", 89600),
 	ENTRY0("ic06_sabotage", "060512", "b73c47a5c80cd0ad14adf7393d50ae7e", 107008),
-	ENTRY0("ic06_southerngothic", "060702", "5c5fab8b67a94080e52d0f553a72410c", 192506),
 	ENTRY0("ic06_ufury", "060716", "953ab8c4066d4362247bf444b9b36fe3", 125952),
 
 	// IntroComp 2007
-	ENTRY0("ic07_jackbox", "070731", "8569084f577156621c43d8b3dcf328e6", 184726),
-	ENTRY0("ic07_jacobst", "070804", "8755b906f2732a0739c7a63b557294a4", 210944),
 	ENTRY0("ic07_shredspatches", "070803", "a30d837fe5316756fe423afb198fa562", 276992),
+	ENTRY0("ic07_jacobst", "070804", "8755b906f2732a0739c7a63b557294a4", 210944),
+	ENTRY0("ic07_jackbox", "070731", "8569084f577156621c43d8b3dcf328e6", 184726),
 	ENTRY0("ic07_trainstopping", "070804", "a24d31b0fffb5503cdca093007d84a4e", 179712),
 
 	// IntroComp 2008
-	ENTRY0("ic08_fiendishzoo", "080820", "31992ae38abe111e24f01cc299ec639c", 156562),
 	ENTRY0("ic08_stormcellar", "080818", "f9ec8dd06ef3cd6b76d37083d6c20cad", 253338),
 	ENTRY0("ic08_bedtimestory", "080819", "defc39612662db16cc20f905a577273f", 286720),
+	ENTRY0("ic08_fiendishzoo", "080820", "31992ae38abe111e24f01cc299ec639c", 156562),
 	ENTRY0("ic08_ninetenths", "080818", "b7972406a4065706b5a0a9bd09cfd228", 224768),
 
 	// IntroComp 2009
@@ -5627,10 +5625,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ic10_waker", "100704", "5c814efafb5da7811c05b138ea5a896e", 506854),
 
 	// IntroComp 2011
+	ENTRY0("ic11_sfiction", "110630", "242c7a127c04f8a0e01d183dc9acb4b3", 98816),
 	ENTRY0("ic11_bender", "110611", "1140eb6ddef1ef25d8c14868bcd342cd", 333512),
 	ENTRY0("ic11_despondenidx", "110629", "ad62e7b6f5565ea6ba41057a357c0e0f", 262608),
 	ENTRY0("ic11_parthenon", "110622", "f663f08ce250614ddcf6cbf1b5bc3580", 261576),
-	ENTRY0("ic11_sfiction", "110630", "242c7a127c04f8a0e01d183dc9acb4b3", 98816),
 	ENTRY0("ic11_stallingtime", "110630", "939ae90866da68944a48c4e277c4c9e5", 326752),
 
 	// IntroComp 2013
