@@ -3020,6 +3020,7 @@ void MacText::processTable(int line) {
 	ManagedSurface *surf = new ManagedSurface(tW, tH, _wm->_pixelformat);
 	_canvas._text[line].tableSurface = surf;
 	_canvas._text[line].height = tH;
+	_canvas._text[line].width = tW;
 	surf->clear(_bgcolor);
 
 	surf->hLine(0, 0, tW, _fgcolor);
@@ -3034,7 +3035,7 @@ void MacText::processTable(int line) {
 
 	int x = 1;
 	for (uint i = 0; i < table->front().cells.size(); i++) {
-		x += gutter * 2 + rowH[i];
+		x += gutter * 2 + colW[i];
 		surf->vLine(x, 0, tH, _fgcolor);
 		x++;
 	}
