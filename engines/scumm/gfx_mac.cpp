@@ -1001,6 +1001,9 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 	if (invOffset != _invOffset)
 		setRedraw(true);
 
+	if (invCount != _invCount && _invCount >= ARRAYSIZE(_slots))
+		setRedraw(true);
+
 	_invCount = invCount;
 	_invOffset = invOffset;
 }
