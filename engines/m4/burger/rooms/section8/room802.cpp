@@ -306,13 +306,13 @@ void Room802::daemon() {
 
 			case 9:
 				_flag1 = false;
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				series_play_with_breaks(PLAY2, "802BF02", 0x100, 17, 3);
 				break;
 
 			case 10:
 				_flag1 = false;
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_val4 = 30;
 				series_play_with_breaks(PLAY3, "802BF02", 0x100, 17, 1);
 				break;
@@ -325,7 +325,7 @@ void Room802::daemon() {
 			default:
 				_flag1 = false;
 				_val4 = 30;
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				series_play_with_breaks(PLAY1, "802BF02", 0x100, 17, 3);
 				break;
 			}
@@ -341,7 +341,7 @@ void Room802::daemon() {
 
 			case 6:
 				_flag1 = true;
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_series3.show("802BF03", 0x100, 0, 17, 30, 1);
 				break;
 
@@ -369,7 +369,7 @@ void Room802::daemon() {
 
 			case 20:
 				_series3.terminate();
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
 				_series3.show("802BF01", 0x100, 0, 17, 30, 0);
 				conv_resume_curr();
@@ -580,7 +580,7 @@ int Room802::getWilburShould() {
 	}
 }
 
-int Room802::getRoomVal() {
+int Room802::getFlumixShould() {
 	switch (imath_ranged_rand(1, 16)) {
 	case 1:
 	case 3:

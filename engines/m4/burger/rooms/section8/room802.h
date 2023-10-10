@@ -43,7 +43,7 @@ private:
 
 	void loadSeries();
 	int getWilburShould();
-	int getRoomVal();
+	int getFlumixShould();
 
 public:
 	Room802() : Room() {}
