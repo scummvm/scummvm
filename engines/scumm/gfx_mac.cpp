@@ -1389,6 +1389,8 @@ void MacIndy3Gui::hide() {
 	if (!_visible)
 		return;
 
+	debug(1, "MacIndy3Gui: Hiding");
+
 	_visible = false;
 	_leftButtonIsPressed = false;
 	_timer = 0;
@@ -1398,8 +1400,6 @@ void MacIndy3Gui::hide() {
 
 	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
 		return;
-
-	debug(1, "MacIndy3Gui: Hiding");
 
 	_surface->fillRect(Common::Rect(0, 288, 640, 400), kBlack);
 	_system->copyRectToScreen(_surface->getBasePtr(0, 288), _surface->pitch, 0, 288, 640, 112);
