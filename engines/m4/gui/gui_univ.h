@@ -47,12 +47,12 @@ struct Hotkey {
 struct ScreenContext {
 	ScreenContext *infront;
 	ScreenContext *behind;
-	int32			 		 x1, y1, x2, y2;
-	int32					 scrnType;
-	uint32					 scrnFlags;
+	int32 x1, y1, x2, y2;
+	int32 scrnType;
+	uint32 scrnFlags;
 	void *scrnContent;
-	RefreshFunc				 redraw;
-	EventHandler			 evtHandler;
+	RefreshFunc redraw;
+	EventHandler evtHandler;
 	Hotkey *scrnHotkeys;
 };
 

@@ -253,7 +253,7 @@ Anim8 *ws_AddAnim8ToCruncher(machine *m, int32 sequHash) {
 
 bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 	Anim8 *myAnim8;
-	int32	numLocalVars;
+	int32 numLocalVars;
 
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_ChangeAnim8Program()");
@@ -838,7 +838,7 @@ static void op_POINT(Anim8 *myAnim8) {
 }
 
 static void op_DIST2D(Anim8 *myAnim8) {
-	int32		temp1, temp2;
+	int32 temp1, temp2;
 	if (!_GWS(myArg3)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0252, "functionality: arg1 = distance from (x, y) to (arg2, arg3)");
 	}
@@ -875,7 +875,7 @@ static void op_CRUNCH(Anim8 *myAnim8) {
 }
 
 static void op_BRANCH(Anim8 *myAnim8) {
-	int32		myOffset;
+	int32 myOffset;
 
 	if (!_GWS(myArg2)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0251, "check the CCR, arg1 is the branch type, arg2 is the PC offset");
@@ -976,7 +976,8 @@ static void op_SEQ_SEND_MSG(Anim8 *myAnim8) {
 
 static void op_PUSH(Anim8 *myAnim8) {
 	uint32 *data;
-	int32		direction, numOfArgs, i; //,startReg
+	int32 direction, numOfArgs, i; //,startReg
+
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: push arg1  or start with arg1, and push a total of arg2 values");
 	}
@@ -1008,7 +1009,8 @@ static void op_PUSH(Anim8 *myAnim8) {
 
 static void op_POP(Anim8 *myAnim8) {
 	uint32 *data;
-	int32		direction, numOfArgs, i;	// startReg,
+	int32 direction, numOfArgs, i;	// startReg,
+
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: pop into arg1  or start with arg1, and pop a total of arg2 values");
 	}
@@ -1035,7 +1037,7 @@ static void op_POP(Anim8 *myAnim8) {
 }
 
 static void op_JSR(Anim8 *myAnim8) {
-	int32		dummy;
+	int32 dummy;
 
 	if (myAnim8->returnStackIndex >= JSR_STACK_MAX) {
 		ws_LogErrorMsg(FL, "Max number of nested jsr instructions is: %d", JSR_STACK_MAX);
@@ -1055,8 +1057,8 @@ static void op_JSR(Anim8 *myAnim8) {
 }
 
 static void op_RETURN(Anim8 *myAnim8) {
-	int32		dummy, dummy2;
-	uint32		returnSequHash, returnOffset;
+	int32 dummy, dummy2;
+	uint32 returnSequHash, returnOffset;
 
 	if (myAnim8->returnStackIndex <= 0) {
 		op_END(myAnim8);
@@ -1107,7 +1109,7 @@ static void op_SET_INDEX(Anim8 *myAnim8) {
 
 static void op_SET_LAYER(Anim8 *myAnim8) {
 	Anim8 *tempAnim8;
-	int32	myLayer, newLayer;
+	int32 myLayer, newLayer;
 	if (!_GWS(myArg1)) {
 		ws_Error(myAnim8->myMachine, ERR_SEQU, 0x0250, "functionality: set_layer(arg1)");
 	}
@@ -1543,7 +1545,7 @@ void ws_CrunchAnim8s(int16 *depth_table) {
 }
 
 void ws_CrunchEOSreqs(void) {
-	int32		pcOffset, pcCount;
+	int32 pcOffset, pcCount;
 	machine *myXM;
 	EOSreq *tempEOSreq;
 

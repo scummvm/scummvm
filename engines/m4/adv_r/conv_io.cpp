@@ -98,7 +98,7 @@ Conv *conv_get_handle(void) {
 
 void conv_set_handle(Conv *c) {
 	_GC(globConv) = c;
-}
+} 
 
 void conv_resume(Conv *c) {
 	conv_go(c);
@@ -197,10 +197,10 @@ void conv_set_decl_val(decl_chunk *decl, long val) {
 }
 
 void conv_export_value(Conv *c, long val, int index) {
-	long			ent = 0, tag = 0, next;
+	long ent = 0, tag = 0, next;
 	decl_chunk *decl;
-	long			ent_old = 0;
-	int			i = 0;
+	long ent_old = 0;
+	int i = 0;
 
 	if (!c)
 		return;
@@ -322,7 +322,7 @@ handled:
 }
 
 void find_and_set_conv_name(Conv *c) {
-	long			ent = 0, tag = 0, next = 0;
+	long ent = 0, tag = 0, next = 0;
 	conv_chunk *conv;
 
 	c->myCNode = 0;
@@ -885,7 +885,7 @@ void conv_unload() {
 // only called if node is visible.
 // gets the TEXT chunks inside a node.
 int conv_get_text(long offset, long size, Conv *c) {
-	long	i = offset, tag, next, text_len, text_width;
+	long i = offset, tag, next, text_len, text_width;
 	text_chunk *text;
 	int	result = 0;
 

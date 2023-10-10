@@ -580,8 +580,8 @@ static int conv_get_node_text(Conv *c) {
 	entry_chunk *entry = nullptr;
 	fall_chunk *fall = nullptr;
 
-	long	ent = 0, offset = 0, tag, next, num_ents = 0;
-	int		i = 0, num_vis = 0, result = 0;
+	long ent = 0, offset = 0, tag, next, num_ents = 0;
+	int i = 0, num_vis = 0, result = 0;
 
 	_G(cdd).num_txt_ents = 0;
 	_GC(width) = 0; _GC(height) = 0;
@@ -700,7 +700,7 @@ void conv_shutdown(void) {
 
 // Simplify me.
 static void conv_start(Conv *c) {
-	long		ok = 1, ent = 0, tag = 0, next;
+	long ok = 1, ent = 0, tag = 0, next;
 	decl_chunk *decl;
 
 	switch (c->exit_now) {

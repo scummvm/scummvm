@@ -1206,7 +1206,7 @@ int32 GetWSAssetCELCount(uint32 hash) {
 
 int32 GetWSAssetCELFrameRate(uint32 hash) {
 	uint32 *celsPtr;	// *mainAssetPtr, 
-//	int32		 assetSize;
+//	int32 assetSize;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1234,7 +1234,7 @@ int32 GetWSAssetCELFrameRate(uint32 hash) {
 
 int32 GetWSAssetCELPixSpeed(uint32 hash) {
 	uint32 *celsPtr;	// *mainAssetPtr, 
-//	int32		 assetSize;
+//	int32 assetSize;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1262,7 +1262,7 @@ int32 GetWSAssetCELPixSpeed(uint32 hash) {
 
 int32 ws_get_sprite_width(uint32 hash, int32 index) {
 	uint32 *celsPtr, *offsets, *data, *myCelSource;	// *mainAssetPtr, 
-	int32	numCels;	// AssetSize, 
+	int32 numCels;	// AssetSize, 
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1307,7 +1307,7 @@ int32 ws_get_sprite_width(uint32 hash, int32 index) {
 
 int32 ws_get_sprite_height(uint32 hash, int32 index) {
 	uint32 *celsPtr, *offsets, *data, *myCelSource;	// *mainAssetPtr, 
-	int32		 numCels;	// assetSize, 
+	int32 numCels;	// assetSize, 
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {
@@ -1460,7 +1460,7 @@ MemHandle ws_GetDATA(uint32 hash, uint32 index, int32 *rowOffset) {
 
 int32 ws_GetDATACount(uint32 hash) {
 	uint32 *dataPtr;	// *mainAssetPtr, 
-//	int32		 assetSize;
+//	int32 assetSize;
 
 	// Ensure the WS loader has been initialized.
 	if (!_GWS(wsloaderInitialized)) {

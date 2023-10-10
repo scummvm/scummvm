@@ -478,13 +478,13 @@ struct MenuGlobals {
 	//menu sprite series vars
 	char *menuSeriesResource = nullptr;
 	MemHandle menuSeriesHandle;
-	int32	menuSeriesOffset;
-	int32	menuSeriesPalOffset;
+	int32 menuSeriesOffset;
+	int32 menuSeriesPalOffset;
 
 	Font *menuFont = nullptr;
 
 	// menu sprites array (used to hold all the sprites for the current menu, spriteCount is set tot he number of sprites in the series)
-	int32	spriteCount = 0;
+	int32 spriteCount = 0;
 	Sprite **menuSprites = nullptr;
 
 	// VARS SPECIFIC TO THE GAME MENUS SYSTEM
@@ -497,8 +497,8 @@ struct MenuGlobals {
 
 	Sprite **thumbNails = nullptr;
 	Sprite *saveLoadThumbNail = nullptr;
-	int32	sizeofThumbData = -1;
-	int32	thumbIndex = 0;
+	int32 sizeofThumbData = -1;
+	int32 thumbIndex = 0;
 
 	bool currMenuIsSave = true;			// Used to determine load or save menu
 	bool saveLoadFromHotkey = false;	// Come from hotkey, not through game menu

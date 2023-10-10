@@ -228,7 +228,7 @@ void krn_fade_to_grey(RGB8 *pal, int32 steps, int32 delay) {
 
 void krn_fade_from_grey(RGB8 *pal, int32 steps, int32 delay, int32 fadeType) {
 	uint8 *tempPtr;
-	int32		i;
+	int32 i;
 
 	if (!_G(kernel).fading_to_grey) {
 		return;
