@@ -96,6 +96,8 @@
 #include "backends/fs/android/android-fs-factory.h"
 #endif
 
+#include "gui/dump-all-dialogs.h"
+
 static bool launcherDialog() {
 
 	// Discard any command line options. Those that affect the graphics
@@ -655,7 +657,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"\n"
 				"  1. From the Launcher, go to **Game Options > Paths**."
 				" Select **Game Path** or **Extra Path**, as appropriate. \n"
-				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder" 
+				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder"
 				"which has the **<Add a new folder>** option.\n"
 				"  3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder"
 				"containing all your game folders. For example, **SD Card > ScummVMgames** \n"
@@ -680,7 +682,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				"To add a game:\n"
 				"\n"
 				"  1. Select **Add Game...** from the launcher. \n"
-				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder" 
+				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder"
 				"which has the **<Add a new folder>** option.\n"
 				"  3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder"
 				"containing all your game folders. For example, **SD Card > ScummVMgames** \n"
@@ -706,6 +708,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	CloudMan.init();
 	CloudMan.syncSaves();
+#endif
+
+#if 0
+	GUI::dumpAllDialogs();
 #endif
 
 	// Unless a game was specified, show the launcher dialog
