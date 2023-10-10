@@ -417,7 +417,7 @@ void Room801::daemon() {
 
 	case 21:
 		pal_fade_set_start(0);
-		kernel_timing_trigger(6, 16);
+		kernel_timing_trigger(6, 22);
 		digi_unload_stream_breaks(SERIES9);
 		break;
 

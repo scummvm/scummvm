@@ -129,8 +129,8 @@ void Room802::init() {
 	interface_hide();
 	player_set_commands_allowed(false);
 	digi_preload("800_001");
-	pal_fade_set_start(_G(master_palette), 0);
-	pal_fade_init(_G(master_palette), 0, 255, 100, 40, -1);
+	pal_fade_set_start(0);
+	pal_fade_init(0, 255, 100, 40, -1);
 
 	_val1 = 11;
 	_val2 = 2;
@@ -190,7 +190,7 @@ void Room802::daemon() {
 	case 4:
 		kernel_trigger_dispatch_now(24);
 		series_stream_with_breaks(SERIES3, "803B", 6, 1, 5);
-		pal_fade_init(0, 255, 10, 30, -1);
+		pal_fade_init(0, 255, 100, 30, -1);
 		kernel_timing_trigger(1, 23);
 		break;
 
@@ -234,8 +234,8 @@ void Room802::daemon() {
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			kernel_trigger_dispatch_now(17);
 
-			_series1 = series_play("802BFX03", 0x101);
-			_series2 = series_play("802BFX02", 0x100);
+			_series1 = series_play("802BFX03", 0x101, 0, -1, 6, -1);
+			_series2 = series_play("802BFX02", 0x100, 1, -1, 6, -1);
 			conv_load_and_prepare("conv81", 13);
 			conv_play_curr();
 
