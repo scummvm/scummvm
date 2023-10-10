@@ -32,8 +32,8 @@ namespace M4 {
 static void transShow(void *s, void *r, void *b, int32 destX, int32 destY);
 
 bool gui_mouse_init() {
-	_G(mouseBuffer).data = NULL;
-	if ((_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic")) == NULL) {
+	_G(mouseBuffer).data = nullptr;
+	if ((_G(mouseBuffer).data = (uint8 *)mem_alloc(32 * 32, "mouse graphic")) == nullptr) {
 		return false;
 	}
 	_G(mouseBuffer).w = 32;
@@ -42,7 +42,7 @@ bool gui_mouse_init() {
 
 	auto &mouseSprite = _G(mouseSprite);
 	if (!mouseSprite) {
-		if ((mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite")) == NULL) {
+		if ((mouseSprite = (M4sprite *)mem_alloc(sizeof(M4sprite), "mouse sprite")) == nullptr) {
 			return false;
 		}
 
@@ -54,7 +54,7 @@ bool gui_mouse_init() {
 		mouseSprite->yOffset = 0;
 		mouseSprite->encoding = 0;
 		mouseSprite->data = GetMousePicture();
-		mouseSprite->sourceHandle = NULL;
+		mouseSprite->sourceHandle = nullptr;
 		mouseSprite->sourceOffset = 0;
 
 		_G(mouseX1offset) = mouseSprite->xOffset;
@@ -63,7 +63,7 @@ bool gui_mouse_init() {
 		_G(mouseY2offset) = mouseSprite->h - _G(mouseY1offset) - 1;
 	}
 
-	if ((_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite")) == NULL) {
+	if ((_G(mouseScreenSource) = (transSprite *)mem_alloc(sizeof(transSprite), "mouse transSprite")) == nullptr) {
 		return false;
 	}
 
@@ -126,7 +126,7 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 	// If no destBuffer, then draw directly to video
 	if (!destBuffer) {
-		tempMatte.nextMatte = NULL;
+		tempMatte.nextMatte = nullptr;
 
 		// Loop through the dirty matte list
 		myMatte = myRectList;
@@ -134,8 +134,8 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 
 			// Create an updateRectList to catch the black areas afterwards
 			updateList = vmng_CreateNewRect(myMatte->x1, myMatte->y1, myMatte->x2, myMatte->y2);
-			updateList->prev = NULL;
-			updateList->next = NULL;
+			updateList->prev = nullptr;
+			updateList->next = nullptr;
 
 			// Now loop through all the screens behind myScreen
 			tempScreen = myScreen->behind;
@@ -208,9 +208,9 @@ void transShow(void *s, void *r, void *b, int32 destX, int32 destY) {
 			spriteDrawReq.scaleX = 100;
 			spriteDrawReq.scaleY = 100;
 			spriteDrawReq.srcDepth = 0;
-			spriteDrawReq.depthCode = NULL;
-			spriteDrawReq.Pal = NULL;
-			spriteDrawReq.ICT = NULL;
+			spriteDrawReq.depthCode = nullptr;
+			spriteDrawReq.Pal = nullptr;
+			spriteDrawReq.ICT = nullptr;
 
 			gr_sprite_draw(&spriteDrawReq);
 

@@ -73,10 +73,10 @@ extern ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2,
  * exists but is inactive (invisible, no events are received or blocked), or is undefined
  * (does not exist).
  * @param scrnContent	The window identifier.
- * @param status		If not NULL, the status: SCRN_ACTIVE, SCRN_INACTIVE, or SCRN_UNDEFN
+ * @param status		If not nullptr, the status: SCRN_ACTIVE, SCRN_INACTIVE, or SCRN_UNDEFN
  * is recoreded here.
  * @returns		the ScreenContext* associated with the window which was created for
- * the structure scrnContent. returns NULL if now window was found.
+ * the structure scrnContent. returns nullptr if now window was found.
  */
 extern ScreenContext *vmng_screen_find(void *scrnContent, int32 *status);	// was FindScreen
 

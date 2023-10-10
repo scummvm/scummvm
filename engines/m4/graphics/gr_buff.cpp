@@ -87,7 +87,7 @@ uint8 *GrBuff::get_pixmap() {
 		lock();
 		return (uint8 *)*pixmap;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Buffer *GrBuff::get_buffer() {
@@ -102,7 +102,7 @@ Buffer *GrBuff::get_buffer() {
 
 		return &dummy;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void GrBuff::refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x2, int32 y2) {
@@ -113,9 +113,9 @@ void GrBuff::refresh_video(int32 scrnX, int32 scrnY, int32 x1, int32 y1, int32 x
 int32 gr_buffer_free(Buffer *buf) {
 	buf->w = buf->h = buf->stride = 0;
 
-	if (buf->data != NULL) {
+	if (buf->data != nullptr) {
 		mem_free((char *)buf->data);
-		buf->data = NULL;
+		buf->data = nullptr;
 		return true;
 	}
 
@@ -150,7 +150,7 @@ int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	buf->stride = w;
 
 	buf->data = (uint8 *)mem_alloc(buf->stride * h, name);
-	if (buf->data == NULL)
+	if (buf->data == nullptr)
 		error_show(FL, 'OOM!', "buffer: %s - w:%d h:%d bytes:%d", name, buf->stride, h, buf->stride * h);
 
 	memset(buf->data, 0, buf->stride * h);

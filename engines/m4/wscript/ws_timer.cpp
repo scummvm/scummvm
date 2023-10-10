@@ -65,7 +65,7 @@ void ws_MakeOnTimeReq(int32 wakeUpTime, machine *myXM, int32 pcOffset, int32 pcC
 	// Insert the new time req into the list in ascending order
 	// If the list is empty...
 	if (!_GWS(firstTimeReq)) {
-		newTimeReq->next = NULL;
+		newTimeReq->next = nullptr;
 		_GWS(firstTimeReq) = newTimeReq;
 	} else if (newTimeReq->myTime <= _GWS(firstTimeReq)->myTime) {
 		// Else if it belongs at the front of a non-empty list..

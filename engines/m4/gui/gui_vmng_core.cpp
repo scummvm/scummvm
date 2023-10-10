@@ -174,7 +174,7 @@ ScreenContext *vmng_screen_create(int32 x1, int32 y1, int32 x2, int32 y2, int32 
 void vmng_screen_dispose(void *scrnContent) {
 	ScreenContext *myScreen;
 	Hotkey *myHotkeys, *tempHotkey;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == NULL) return;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ANY)) == nullptr) return;
 	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
 	myHotkeys = myScreen->scrnHotkeys;
 	tempHotkey = myHotkeys;
@@ -188,7 +188,7 @@ void vmng_screen_dispose(void *scrnContent) {
 
 void vmng_screen_hide(void *scrnContent) {
 	ScreenContext *myScreen;
-	if ((myScreen = ExtractScreen(scrnContent, SCRN_ACTIVE)) == NULL) return;
+	if ((myScreen = ExtractScreen(scrnContent, SCRN_ACTIVE)) == nullptr) return;
 	RestoreScreens(myScreen->x1, myScreen->y1, myScreen->x2, myScreen->y2);
 	myScreen->behind = _G(inactiveScreens);
 	myScreen->infront = nullptr;
