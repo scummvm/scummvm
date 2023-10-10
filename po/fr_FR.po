@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-10 18:55+0000\n"
+"POT-Creation-Date: 2023-10-10 21:24+0000\n"
 "PO-Revision-Date: 2023-10-10 20:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -66,7 +66,7 @@ msgstr "Remonter"
 #: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
 #: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:601
+#: gui/unknown-game-dialog.cpp:53 base/main.cpp:603
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -275,7 +275,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:426 gui/launcher.cpp:455
 #: gui/launcher.cpp:498 gui/options.cpp:3401 gui/options.cpp:3782
-#: base/main.cpp:601 backends/events/default/default-events.cpp:193
+#: base/main.cpp:603 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -2594,12 +2594,12 @@ msgstr "Jouer"
 msgid "Saves"
 msgstr "Sauvegardes"
 
-#: base/main.cpp:601
+#: base/main.cpp:603
 msgid "Bad config file format. overwrite?"
 msgstr "Mauvais format de fichier de configuration. Ecraser ?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:650
+#: base/main.cpp:652
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2643,7 +2643,7 @@ msgstr ""
 "\n"
 "Répétez les étapes 1 et 6 pour chaque jeu."
 
-#: base/main.cpp:668 base/main.cpp:693
+#: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1261
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
@@ -2652,12 +2652,12 @@ msgstr "Ok"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:670 base/main.cpp:695
+#: base/main.cpp:672 base/main.cpp:697
 msgid "Read Later"
 msgstr "Lire plus tard"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:677
+#: base/main.cpp:679
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2698,11 +2698,11 @@ msgstr ""
 "puis tapez **Choisir**.\n"
 "Répétez les étapes 1 et 6 pour chaque jeu."
 
-#: base/main.cpp:791
+#: base/main.cpp:797
 msgid "Error running game:"
 msgstr "Erreur lors de l'exécution du jeu :"
 
-#: base/main.cpp:838
+#: base/main.cpp:844
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Impossible de trouver un moteur pour exécuter le jeu sélectionné"
 
