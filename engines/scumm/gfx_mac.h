@@ -104,6 +104,10 @@ private:
 
 	int _timer = 0;
 
+	bool updateVerbs(int delta);
+	void updateMouseHeldTimer(int delta);
+	void drawVerbs();
+
 	class Widget {
 	private:
 		int _timer = 0;
@@ -220,10 +224,6 @@ private:
 		};
 
 		class ScrollButton : public Widget {
-		private:
-			static const uint16 _upArrow[16];
-			static const uint16 _downArrow[16];
-
 		public:
 			ScrollDirection _direction;
 
@@ -284,17 +284,10 @@ private:
 	};
 
 	Common::HashMap<int, VerbWidget *> _widgets;
-
 	Common::Array<Common::Rect> _dirtyRects;
-
-	const uint16 _ulCorner[4] = { 0xF000, 0xC000, 0x8000, 0x8000 };
-	const uint16 _urCorner[4] = { 0xF000, 0x3000, 0x1000, 0x1000 };
-	const uint16 _llCorner[4] = { 0x8000, 0x8000, 0xC000, 0xF000 };
-	const uint16 _lrCorner[5] = { 0x1000, 0x1000, 0x3000, 0xF000 };
 
 	bool isVerbGuiAllowed() const;
 
-	void clear();
 	void show();
 	void hide();
 

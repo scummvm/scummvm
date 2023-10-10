@@ -643,16 +643,6 @@ void MacIndy3Gui::Button::draw() {
 // the scrollbar.
 // ---------------------------------------------------------------------------
 
-const uint16 MacIndy3Gui::Inventory::_upArrow[16] = {
-	0x0000, 0x0000, 0x0000, 0x0080,	0x0140, 0x0220, 0x0410, 0x0808,
-	0x1C1C, 0x0410, 0x0410, 0x0410,	0x07F0, 0x0000, 0x0000, 0x0000
-};
-
-const uint16 MacIndy3Gui::Inventory::_downArrow[16] = {
-	0x0000, 0x0000, 0x0000, 0x0000,	0x07F0, 0x0410, 0x0410, 0x0410,
-	0x1C1C, 0x0808, 0x0410, 0x0220,	0x0140, 0x0080, 0x0000, 0x0000
-};
-
 MacIndy3Gui::Inventory::Inventory(int x, int y, int width, int height) : MacIndy3Gui::VerbWidget(x, y, width, height) {
 	x = _bounds.left + 6;
 	y = _bounds.top + 6;
@@ -837,9 +827,23 @@ void MacIndy3Gui::Inventory::draw() {
 		drawShadowBox(_bounds);
 		drawShadowFrame(Common::Rect(_bounds.left + 4, _bounds.top + 4, _bounds.right - 22, _bounds.bottom - 4), kBlack, kWhite);
 
+		const uint16 upArrow[] = {
+			0x0000, 0x0000, 0x0000, 0x0080,
+			0x0140, 0x0220, 0x0410, 0x0808,
+			0x1C1C, 0x0410, 0x0410, 0x0410,
+			0x07F0, 0x0000, 0x0000, 0x0000
+		};
+
+		const uint16 downArrow[] = {
+			0x0000, 0x0000, 0x0000, 0x0000,
+			0x07F0, 0x0410, 0x0410, 0x0410,
+			0x1C1C, 0x0808, 0x0410, 0x0220,
+			0x0140, 0x0080, 0x0000, 0x0000
+		};
+
 		for (int i = 0; i < ARRAYSIZE(_scrollButtons); i++) {
 			ScrollButton *s = _scrollButtons[i];
-			const uint16 *arrow = (s->_direction == kScrollUp) ? _upArrow : _downArrow;
+			const uint16 *arrow = (s->_direction == kScrollUp) ? upArrow : downArrow;
 
 			drawShadowFrame(s->_bounds, kWhite, kTransparency);
 			drawBitmap(s->_bounds, arrow, kBlack);
@@ -1080,16 +1084,6 @@ void MacIndy3Gui::Inventory::ScrollBar::draw() {
 // since the rest of the buttons are drawn by the Inventory widget itself.
 // ---------------------------------------------------------------------------
 
-const uint16 MacIndy3Gui::Inventory::ScrollButton::_upArrow[16] = {
-	0x0000, 0x0000, 0x0000, 0x0000,	0x0080, 0x01C0, 0x03E0, 0x07F0,
-	0x03E0, 0x03E0, 0x03E0, 0x03E0,	0x0000, 0x0000, 0x0000, 0x0000
-};
-
-const uint16 MacIndy3Gui::Inventory::ScrollButton::_downArrow[16] = {
-	0x0000, 0x0000, 0x0000, 0x0000,	0x0000, 0x03E0, 0x03E0, 0x03E0,
-	0x03E0, 0x07F0,	0x03E0, 0x01C0,	0x0080, 0x0000, 0x0000, 0x0000
-};
-
 MacIndy3Gui::Inventory::ScrollButton::ScrollButton(int x, int y, int width, int height, ScrollDirection direction) : MacIndy3Gui::Widget(x, y, width, height) {
 	_direction = direction;
 }
@@ -1130,7 +1124,21 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 
 	Widget::draw();
 
-	const uint16 *arrow = (_direction == kScrollUp) ? _upArrow : _downArrow;
+	const uint16 upArrow[] = {
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0080, 0x01C0, 0x03E0, 0x07F0,
+		0x03E0, 0x03E0, 0x03E0, 0x03E0,
+		0x0000, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 downArrow[] = {
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x03E0, 0x03E0, 0x03E0,
+		0x03E0, 0x07F0,	0x03E0, 0x01C0,
+		0x0080, 0x0000, 0x0000, 0x0000
+	};
+
+	const uint16 *arrow = (_direction == kScrollUp) ? upArrow : downArrow;
 	Color color = hasTimer() ? kBlack : kWhite;
 
 	drawBitmap(_bounds, arrow, color);
@@ -1224,13 +1232,10 @@ bool MacIndy3Gui::isVerbGuiAllowed() const {
 }
 
 bool MacIndy3Gui::isVerbGuiActive() const {
-	if (!_visible)
-		return false;
-
 	// The visibility flag may not have been updated yet, so better check
 	// that the GUI is still allowed.
 
-	return isVerbGuiAllowed();
+	return _visible && isVerbGuiAllowed();
 }
 
 void MacIndy3Gui::resetAfterLoad() {
@@ -1253,12 +1258,60 @@ void MacIndy3Gui::resetAfterLoad() {
 }
 
 void MacIndy3Gui::update(int delta) {
-	if (!isVerbGuiAllowed()) {
+	if (isVerbGuiAllowed() && updateVerbs(delta)) {
+		if (!_visible)
+			show();
+
+		updateMouseHeldTimer(delta);
+		drawVerbs();
+	} else {
 		if (_visible)
 			hide();
-		return;
 	}
 
+	copyDirtyRectsToScreen();
+}
+
+bool MacIndy3Gui::updateVerbs(int delta) {
+	// Tentatively mark the verb widgets for removal. Any widget that wants
+	// to stay has to say so.
+
+	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
+		VerbWidget *w = i->_value;
+
+		if (delta > 0)
+			w->updateTimer(delta);
+
+		w->threaten();
+	}
+
+	bool hasActiveVerbs = false;
+
+	// Collect all active verbs. Verb slot 0 is special, apparently, so we
+	// don't look at that one.
+
+	for (int i = 1; i < _vm->_numVerbs; i++) {
+		VerbSlot *vs = &_vm->_verbs[i];
+
+		if (!vs->saveid && vs->curmode && vs->verbid) {
+			VerbWidget *w = _widgets.getValOrDefault(vs->verbid);
+
+			if (w) {
+				w->updateVerb(i);
+				hasActiveVerbs = true;
+			} else {
+				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
+				byte buf[270];
+				_vm->convertMessageToString(ptr, buf, sizeof(buf));
+				warning("MacIndy3Gui: Unknown verb: %d %s", vs->verbid, buf);
+			}
+		}
+	}
+
+	return hasActiveVerbs;
+}
+
+void MacIndy3Gui::updateMouseHeldTimer(int delta) {
 	if (delta > 0 && _leftButtonIsPressed) {
 		_timer -= delta;
 
@@ -1272,49 +1325,10 @@ void MacIndy3Gui::update(int delta) {
 					break;
 		}
 	}
+}
 
-	// Tentatively mark the verb widgets for removal. Any widget that wants
-	// to stay has to say so.
-
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		VerbWidget *w = i->_value;
-
-		if (delta > 0)
-			w->updateTimer(delta);
-
-		w->threaten();
-	}
-
-	bool keepGuiAlive = false;
-
-	// Collect all active verbs. Verb slot 0 is special, apparently, so we
-	// don't look at that one.
-
-	for (int i = 1; i < _vm->_numVerbs; i++) {
-		VerbSlot *vs = &_vm->_verbs[i];
-
-		if (!vs->saveid && vs->curmode && vs->verbid) {
-			VerbWidget *w = _widgets.getValOrDefault(vs->verbid);
-
-			if (w) {
-				w->updateVerb(i);
-				keepGuiAlive = true;
-			} else {
-				const byte *ptr = _vm->getResourceAddress(rtVerb, i);
-				byte buf[270];
-				_vm->convertMessageToString(ptr, buf, sizeof(buf));
-				warning("MacIndy3Gui: Unknown verb: %d %s", vs->verbid, buf);
-			}
-		}
-	}
-
-	if (!keepGuiAlive) {
-		hide();
-		return;
-	}
-
-	if (!_visible)
-		show();
+void MacIndy3Gui::drawVerbs() {
+	// The possible verbs overlap each other. Remove the dead ones first, then draw the live ones.
 
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
 		VerbWidget *w = i->_value;
@@ -1331,8 +1345,6 @@ void MacIndy3Gui::update(int delta) {
 		if (w->hasVerb())
 			w->draw();
 	}
-
-	copyDirtyRectsToScreen();
 }
 
 void MacIndy3Gui::handleEvent(Common::Event &event) {
@@ -1381,8 +1393,24 @@ void MacIndy3Gui::show() {
 
 	debug(1, "MacIndy3Gui: Showing");
 
-	clear();
 	_visible = true;
+
+	_surface->fillRect(Common::Rect(0, 288, 640, 289), kBlack);
+	_surface->fillRect(Common::Rect(0, 373, 640, 400), kBlack);
+
+	fill(Common::Rect(0, 290, 640, 373));
+
+	const uint16 ulCorner[] = { 0xF000, 0xC000, 0x8000, 0x8000 };
+	const uint16 urCorner[] = { 0xF000, 0x3000, 0x1000, 0x1000 };
+	const uint16 llCorner[] = { 0x8000, 0x8000, 0xC000, 0xF000 };
+	const uint16 lrCorner[] = { 0x1000, 0x1000, 0x3000, 0xF000 };
+
+	drawBitmap(Common::Rect(  0, 290,   4, 294), ulCorner, kBlack);
+	drawBitmap(Common::Rect(636, 290, 640, 294), urCorner, kBlack);
+	drawBitmap(Common::Rect(  0, 369,   4, 373), llCorner, kBlack);
+	drawBitmap(Common::Rect(636, 369, 640, 373), lrCorner, kBlack);
+
+	markScreenAsDirty(Common::Rect(0, 288, 640, 400));
 }
 
 void MacIndy3Gui::hide() {
@@ -1398,24 +1426,10 @@ void MacIndy3Gui::hide() {
 	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 		i->_value->reset();
 
-	if (_vm->_virtscr[kVerbVirtScreen].topline != 144)
-		return;
-
-	_surface->fillRect(Common::Rect(0, 288, 640, 400), kBlack);
-	_system->copyRectToScreen(_surface->getBasePtr(0, 288), _surface->pitch, 0, 288, 640, 112);
-}
-
-void MacIndy3Gui::clear() {
-	_surface->fillRect(Common::Rect(0, 288, 640, 289), kBlack);
-	_surface->fillRect(Common::Rect(0, 373, 640, 400), kBlack);
-
-	fill(Common::Rect(0, 290, 640, 373));
-	drawBitmap(Common::Rect(  0, 290,   4, 294), _ulCorner, kBlack);
-	drawBitmap(Common::Rect(636, 290, 640, 294), _urCorner, kBlack);
-	drawBitmap(Common::Rect(  0, 369,   4, 373), _llCorner, kBlack);
-	drawBitmap(Common::Rect(636, 369, 640, 373), _lrCorner, kBlack);
-
-	markScreenAsDirty(Common::Rect(0, 288, 640, 400));
+	if (isVerbGuiAllowed()) {
+		_surface->fillRect(Common::Rect(0, 288, 640, 400), kBlack);
+		markScreenAsDirty(Common::Rect(0, 288, 640, 400));
+	}
 }
 
 void MacIndy3Gui::markScreenAsDirty(Common::Rect r) {
