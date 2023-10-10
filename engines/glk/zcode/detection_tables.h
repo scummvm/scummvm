@@ -56,12 +56,12 @@ const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	{ "hollywoodhijinx",    "Hollywood Hijinx" },
 	{ "hypochondriac",      "Hypochondriac" },
 	{ "infidel",            "Infidel" },
-	{ "infocomsampler1b",   "Infocom Sampler 1B" },
-	{ "infocomsampler1z",   "Infocom Sampler 1Z" },
-	{ "infocomsampler2zt",  "Infocom Sampler 2ZT" },
-	{ "infocomsampler3zpi", "Infocom Sampler 3ZPI" },
-	{ "infocomsampler3ztl", "Infocom Sampler 3ZTL" },
-	{ "infocomsampler4zpiw", "Infocom Sampler 4ZPIW" },
+	{ "infocomsample1b",    "Infocom Sampler 1B" },
+	{ "infocfdeomsample1z", "Infocom Sampler 1Z" },
+	{ "infocomsample2zt",   "Infocom Sampler 2ZT" },
+	{ "infocomsample3zpi",  "Infocom Sampler 3ZPI" },
+	{ "infocomsample3ztl",  "Infocom Sampler 3ZTL" },
+	{ "infocomsample4zpiw", "Infocom Sampler 4ZPIW" },
 	{ "journey",            "Journey" },
 	{ "lgop",               "Leather Goddesses of Phobos" },
 	{ "lurkinghorror",      "The Lurking Horror" },
@@ -127,7 +127,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "adv440",             "Adventure II, 440 Point Colossal Cave" },
 	{ "adv550",             "Adventure 3, 550 Point Colossal Cave" },
 	{ "adv551",             "Adventure 6, 551 Point Colossal Cave" },
-	{ "adventurelandzcode", "Adventureland" },
+	{ "adventland",         "Adventureland" },
 	{ "adventurelobjan",    "Adventure (Lobjan translation)" },
 	{ "adventuretime",      "Adventure Time" },
 	{ "adverbum",           "Ad Verbum" },
@@ -141,12 +141,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "alongtheriver",      "Along the River" },
 	{ "alpha",              "Journey to Alpha Centauri (In Real Time)" },
 	{ "amazingmaze",        "The Amazing Maze" },
-	{ "ambassadorsdaughter", "The Ambassador''s Daughter" },
+	{ "ambassadorsdaught",  "The Ambassador Daughter" },
 	{ "amish",              "Amishville" },
 	{ "amiss",              "Amissville" },
 	{ "anchor",             "Anchorhead" },
 	{ "andrewplotkin",      "Being Andrew Plotkin" },
-	{ "andromedaawakeningz", "Andromeda Awakening" },
+	{ "androawake",         "Andromeda Awakening" },
 	{ "andromedagenesis",   "Andromeda Genesis" },
 	{ "anotherterminal",    "Another Terminal Beach" },
 	{ "animals",            "Animals 1.1" },
@@ -916,7 +916,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "vindaloo",           "Vindaloo" },
 	{ "violet",             "Violet" },
 	{ "virtuality",         "Virtuality" },
-	{ "virtualgrandnational", "The Virtual Grand National" },
+	{ "virtualgrandnation", "The Virtual Grand National" },
 	{ "visualizing",        "Visualizing" },
 	{ "voices",             "Voices" },
 	{ "vosr",               "Voices of Spoon River" },
@@ -1001,7 +1001,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Converted Scott Adams Classic Adventures games
 	{ "adventurelandi5",    "S.A.C.A. #1: Adventureland" },
 	{ "pirateadventurei5",  "S.A.C.A. #2: Pirate Adventure" },
-	{ "missionimpossiblei5", "S.A.C.A. #3: Mission Impossible" },
+	{ "missionimpossibli5", "S.A.C.A. #3: Mission Impossible" },
 	{ "voodoocastlei5",     "S.A.C.A. #4: Voodoo Castle" },
 	{ "thecounti5",         "S.A.C.A. #5: The Count" },
 	{ "strangeodysseyi5",   "S.A.C.A. #6: Strange Odyssey" },
@@ -1011,10 +1011,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "savageisland1i5",    "S.A.C.A. #10: Savage Island, Part I" },
 	{ "savageisland2i5",    "S.A.C.A. #11: Savage Island, Part II" },
 	{ "goldenvoyagei5",     "S.A.C.A. #12: The Golden Voyage" },
-	{ "sorcererclaycastlei5", "S.A.C.A. #13: Sorcerer of Claymorgue Castle" },
+	{ "sorcererclaycstli5", "S.A.C.A. #13: Sorcerer of Claymorgue Castle" },
 	{ "returnpirteislei5",  "S.A.C.A. #14A: Return to Pirate's Isle" },
 	{ "buckaroobanzaii5",   "S.A.C.A. #14B: Buckaroo Banzai" },
-	{ "adventurelandsmpleri5", "S.A.C.A.: Adventureland Sampler" },
+	{ "adventlandsmpleri5", "S.A.C.A.: Adventureland Sampler" },
 	{ "marveladventurei5",  "S.A.C.A.: The Hulk" },
 	{ "questprobe2i5",      "S.A.C.A.: Spiderman" },
 
@@ -1102,7 +1102,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if97_edifice",       "The Edifice" },                                                            //    1st Place
 	{ "if97_spring",        "She's Got a Thing For a Spring" },                                         //    4th Place
 	{ "if97_bear",          "A Bear's Night Out" },                                                     // 	  5th Place
-	{ "if97_lostspellmaker", "The Lost Spellmaker" },                                                   //    8th Place
+	{ "if97_lostspellmake", "The Lost Spellmaker" },                                                    //    8th Place
 	{ "if97_mimesis",       "Sins Against Mimesis" },                                                   //	  9th Place
 	{ "if97_newday",        "A New Day" },                                                              //   10th Place
 	{ "if97_erden",         "Travels in the Land of Erden: In Quest of the Adventure" },                //   14th Place
@@ -1130,7 +1130,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if98_dilly",         "Trapped in a One-Room Dilly" },                                            // 	  8th Place
 	{ "if98_downtowntokyo", "Downtown Tokyo Present Day" },                                             //   10th Place
 	{ "if98_informatory",   "Informatory" },                                                            //   11th Place
-	{ "if98_ritualpurification", "Ritual of Purification" },                                            //   12th Place
+	{ "if98_ritualpurific", "Ritual of Purification" },                                                 //   12th Place
 	{ "if98_city",          "The City" },                                                               //   13th Place
 	{ "if98_evildwells",    "Where Evil Dwells" },                                                      //   14th Place
 	{ "if98_purple",        "Purple" },                                                                 //   15th Place
@@ -1190,7 +1190,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if00_castleamnos",   "Castle Amnos" },                                                           //   30th Place
 	{ "if00_masque",        "Masque of the Last Faeries" },                                             //   31st Place
 	{ "if00_ppocket",       "The Pickpocket" },                                                         //   32nd Place
-	{ "if00_happyeverafter", "Happy Ever After" },                                                      //   34th Place
+	{ "if00_happyeveraft",  "Happy Ever After" },                                                       //   34th Place
 	{ "if00_prodly",        "Prodly the Puffin" },                                                      //   35th Place
 	{ "if00_withdraw",      "Withdrawal Symptoms" },                                                    //   36th Place
 	{ "if00_123",           "1-2-3..." },                                                               //   42nd Place
@@ -1246,7 +1246,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "comp02",             "IF Competition '02 Unofficial FE Game" },
 
 	// IFComp 2003
-	{ "if03_slouchingbedlam", "Slouching Towards Bedlam" },                                             //    1st Place
+	{ "if03_slouchbedlam",  "Slouching Towards Bedlam" },                                               //    1st Place
 	{ "if03_risorg",        "Risorgimento Represso" },                                                  //    2nd Place
 	{ "if03_gourmet",       "Gourmet" },                                                                //    5th Place
 	{ "if03_baluthar",      "Baluthar" },                                                               //    9th Place
@@ -1272,7 +1272,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if04_geb",           "Goose, Egg, Badger" },                                                     //   12th Place
 	{ "if04_bigscoop",      "The Big Scoop" },                                                          //   13th Place
 	{ "if04_identity",      "Identity" },                                                               //   15th Place
-	{ "if04_murderaeroclub", "Murder at the Aero Club" },                                               //   16th Place
+	{ "if04_murderaeroclb", "Murder at the Aero Club" },                                                //   16th Place
 	{ "if04_bellclap",      "Bellclap" },                                                               //   17th Place
 	{ "if04_typo",          "Typo!" },                                                                  //   19th Place
 	{ "if04_blink",         "Blink" },                                                                  //   21nd Place
@@ -1291,7 +1291,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if05_unforgotten",   "Unforgotten" },                                                            //    7th Place
 	{ "if05_snatches",      "Snatches" },                                                               //    8th Place
 	{ "if05_vigilance",     "Internal Vigilance" },                                                     //   10th Place
-	{ "if05_historyrepeating", "History Repeating" },                                                   //   11th Place
+	{ "if05_historyrepeat", "History Repeating" },                                                      //   11th Place
 	{ "if05_soa",           "Son of a..." },                                                            //   15th Place
 	{ "if05_psycheslament", "Psyche's Lament" },                                                        //   21st Place
 	{ "if05_onoptimism",    "On Optimism" },                                                            //   24th Place
@@ -1299,7 +1299,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if05_swordofmalice", "The Sword of Malice" },                                                    //   28th Place
 	{ "if05_drearylands",   "Dreary Lands" },                                                           //   29th Place
 	{ "if05_hellosword",    "Hello Sword: The Journey" },                                               //   30th Place
-	{ "if05_phantomcaverns", "Phantom: Caverns of the killer" },                                        //   31st Place
+	{ "if05_phantomcavern", "Phantom: Caverns of the killer" },                                         //   31st Place
 	{ "if05_futuregame",    "FutureGame" },                                                             //   33rd Place
 	{ "comp05",             "IF Competition '05 Unofficial FE Game" },
 
@@ -1313,19 +1313,19 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if06_mobius",        "Möbius" },                                                                 //    9th Place
 	{ "if06_gameproducer",  "Game Producer!" },                                                         //   11th Place
 	{ "if06_starcity",      "Star City" },                                                              //   13th Place
-	{ "if06_strangegeometry", "Strange Geometries" },                                                   //   14th Place
-	{ "if06_towerofelephant", "The Tower of the Elephant" },                                            //   15th Place
+	{ "if06_strangegeo",    "Strange Geometries" },                                                     //   14th Place
+	{ "if06_towerelephant", "The Tower of the Elephant" },                                              //   15th Place
 	{ "if06_labyrinth",     "Labyrinth" },                                                              //   18th Place
 	{ "if06_cdst",          "Carmen Devine: Supernatural Troubleshooter" },                             //   20th Place
 	{ "if06_bibleretold1",  "The Bible Retold: The Bread and the Fishes" },                             //   21st Place
-	{ "if06_anothergoddamn", "Another Goddamn Escape the Locked Room Game" },                           //   22nd Place
+	{ "if06_anothergodamn", "Another Goddamn Escape the Locked Room Game" },                            //   22nd Place
 	{ "if06_fightorflight", "Fight or Flight" },                                                        //   23rd Place
 	{ "if06_manalive1",     "Manlive I - Enigma" },                                                     //   24th Place
 	{ "if06_hedge",         "Hedge" },                                                                  //   25th Place
 	{ "if06_polendina",     "Polendina" },                                                              //   27th Place
 	{ "if06_manalive2",     "Manlive II" },                                                             //   29th Place
 	{ "if06_pathfinder",    "Pathfinder" },                                                             //   30th Place
-	{ "if06_apocalypseclock", "The Apocalypse Clock" },                                                 //   31st Place
+	{ "if06_apocalypclock", "The Apocalypse Clock" },                                                   //   31st Place
 	{ "if06_sisyphus",      "Sisyphus" },                                                               //   39th Place
 	{ "comp06",             "IF Competition '06 Unofficial FE Game" },
 
@@ -1333,16 +1333,16 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if07_lostpig",       "Lost Pig" },                                                               //    1st Place
 	{ "if07_actofmurder",   "An Act of Murder" },                                                       //    2nd Place
 	{ "if07_bellwater",     "Lord Bellwater's Secret" },                                                //    3rd Place
-	{ "if07_acrossthestars", "Across the Stars" },                                                      //    4th Place
+	{ "if07_acrossstars",   "Across the Stars" },                                                       //    4th Place
 	{ "if07_orevore",       "Orevore Courier" },                                                        //    8th Place
 	{ "if07_jackmills",     "My Name is Jack Mills" },                                                  //    9th Place
-	{ "if07_deadlinenchanter", "Deadline Enchanter" },                                                  //   12th Place
+	{ "if07_deadlinenchan", "Deadline Enchanter" },                                                     //   12th Place
 	{ "if07_fff",           "Fox, Fowl and Feed" },                                                     //   16th Place
 	{ "if07_wish",          "Wish" },                                                                   //   17th Place
 	{ "if07_packrat",       "Packrat" },                                                                //   18th Place
-	{ "if07_beneathtransform", "BENEATH: A Transformation" },                                           //   21st Place
+	{ "if07_beneathtransf", "BENEATH: A Transformation" },                                              //   21st Place
 	{ "if07_theimmortal",   "The Immortal" },                                                           //   22nd Place
-	{ "if07_eduardseminarist", "Eduard the Seminarist" },                                               //   23rd Place
+	{ "if07_eduardseminar", "Eduard the Seminarist" },                                                  //   23rd Place
 	{ "if07_pets",          "Press [Escape] to Save" },                                                 //   24th Place
 	{ "comp07",             "IF Competition '07 Unofficial FE Game" },
 
@@ -1352,43 +1352,43 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if08_piracy2",       "Piracy 2.0 - A Text Adventure in Space" },                                 //    3rd Place
 	{ "if08_snacktime",     "Snack Time!" },                                                            //    6th Place
 	{ "if08_openingnight",  "Opening Night" },                                                          //    7th Place
-	{ "if08_minionunderworld", "Escape from the Underworld" },                                          //   12th Place
+	{ "if08_escunderworld", "Escape from the Underworld" },                                             //   12th Place
 	{ "if08_bishoes",       "Buried in Shoes" },                                                        //   13th Place
 	{ "if08_grief",         "Grief" },                                                                  //   16th Place
 	{ "if08_trein",         "Trein" },                                                                  //   17th Place
 	{ "if08_redmoonz",      "Red Moon" },                                                               //   19th Place
 	{ "if08_draculascrypt", "Dracula's Underground Crypt" },                                            //   20th Place
 	{ "if08_anachronist",   "Anachronist" },                                                            //   22nd Place
-	{ "if08_whenmachinesattack", "wHen mAchines aTtack" },                                              //   23rd Place
+	{ "if08_whenmachsatt",  "wHen mAchines aTtack" },                                                   //   23rd Place
 	{ "if08_thelucubrator", "The Lucubrator" },                                                         //   23rd Place
 	{ "if08_freedom",       "Freedom" },                                                                //   30th Place
 	{ "if08_riverside",     "Riverside" },                                                              //   31st Place
 	{ "if08_thelighthouse", "The Lighthouse" },                                                         //   34th Place
-	{ "if08_absoluteworstgame", "The Absolute Worst IF Game in History" },                              //   35th Place
+	{ "if08_absworstgame",  "The Absolute Worst IF Game in History" },                                  //   35th Place
 	{ "comp08",             "IF Competition '08 Unofficial FE Game" },
 
 	// IFComp 2009
 	{ "if09_snowquest",     "Snowquest" },                                                              //    3rd Place
-	{ "if09_duelthatspanned", "The Duel that Spanned the Ages" },                                       //    4th Place
+	{ "if09_duelspanned",   "The Duel that Spanned the Ages" },                                         //    4th Place
 	{ "if09_duelinsnow",    "The Duel in the Snow" },                                                   //    6th Place
 	{ "if09_interface",     "Interface" },                                                              //    8th Place
-	{ "if09_byzantineperspect", "Byzantine Perspective" },                                              //    9th Place
+	{ "if09_byzantinpersp", "Byzantine Perspective" },                                                  //    9th Place
 	{ "if09_condemned",     "Condemned" },                                                              //   12th Place
 	{ "if09_eruption",      "Eruption" },                                                               //   13th Place
 	{ "if09_betatester",    "Beta Tester" },                                                            //   14th Place
-	{ "if09_spelunkersquest", "Spelunker's Quest" },                                                    //   16th Place
+	{ "if09_spelunkquest",  "Spelunker's Quest" },                                                      //   16th Place
 	{ "if09_invisibleman",  "The Believable Adventures of an Invisible Man" },                          //   17th Place
 	{ "if09_thegrandquest", "The Grand Quest" },                                                        //   18th Place
 	{ "if09_starhunter",    "Star Hunter" },                                                            //   19th Place
 	{ "if09_gatoron",       "GATOR-ON, Friend to Wetlands!" },                                          //   20th Place
-	{ "if09_gleamingtheverb", "Gleaming the Verb" },                                                    //   21st Place
-	{ "if09_zorkburiedchaos", "Welcome to Zork, Buried Chaos" },                                        //   22nd Place
+	{ "if09_gleamingverb",  "Gleaming the Verb" },                                                      //   21st Place
+	{ "if09_zorkburychaos", "Welcome to Zork, Buried Chaos" },                                          //   22nd Place
 	{ "comp09",             "IF Competition '09 Unofficial FE Game" },
 
 	// IFComp 2010
-	{ "if10_deathoffthecuffz", "Death Off The Cuff" },                                                  //    5th Place
+	{ "if10_deathofftc",    "Death Off The Cuff" },                                                     //    5th Place
 	{ "if10_mite",          "Mite" },                                                                   //    6th Place
-	{ "if10_gloriousrevolution", "The People's Glorious Revolutionary Text Adventure Game" },           //    7th Place
+	{ "if10_gloriousrevol", "The People's Glorious Revolutionary Text Adventure Game" },                //    7th Place
 	{ "if10_hummingbird",   "Flight of the Hummingbird" },                                              //    8th Place
 	{ "if10_warblersnest",  "The Warbler's Nest" },                                                     //    9th Place
 	{ "if10_asgard",        "The 12:54 to Asgard" },                                                    //   17th Place
@@ -1396,7 +1396,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if10_bibleretold2",  "The Bible Retold: The Lost Sheep" },                                       //   19th Place
 	{ "if10_heated",        "Heated" },                                                                 //   20th Place
 	{ "if10_ninjasfate",    "Ninja's Fate" },                                                           //   21th Place
-	{ "if10_eastgrovehills", "East Grove Hills" },                                                      //   23rd Place
+	{ "if10_eastgrovehill", "East Grove Hills" },                                                       //   23rd Place
 	{ "if10_quietevening",  "A Quiet Evening at Home" },                                                //   25th Place
 	{ "if10_chronicler0",   "The Chronicler" },                                                         //   26th Place
 	{ "comp10",             "IF Competition '10 Unofficial FE Game" },
@@ -1407,7 +1407,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if11_comedyerror",   "A Comedy of Error Messages" },                                             //   10th Place
 	{ "if11_tenthplague",   "Tenth Plague" },                                                           //   12th Place
 	{ "if11_coldiron",      "Cold Iron" },                                                              //   15th Place
-	{ "if11_andromedaawakeningz", "Andromeda Awakening" },                                              //   17th Place
+	{ "if11_androawake",    "Andromeda Awakening" },                                                    //   17th Place
 	{ "if11_keepsake",      "Keepsake" },                                                               //   18th Place
 	{ "if11_theguardian",   "The Guardian" },                                                           //   21st Place
 	{ "if11_lastdaysummer", "Last Day of Summer" },                                                     //   25th Place
@@ -1420,7 +1420,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if12_eurydice",      "Eurydice" },                                                               //    2nd Place
 	{ "if12_guildedyouth",  "Guilded Youth" },                                                          //    3rd Place
 	{ "if12_changes",       "Changes" },                                                                //    4th Place
-	{ "if12_sundayafternoon", "Sunday Afternoon" },                                                     //    5th Place
+	{ "if12_sundayafterno", "Sunday Afternoon" },                                                       //    5th Place
 	{ "if12_spiral",        "Spiral" },                                                                 //    6th Place
 	{ "if12_bodybargain",   "Body Bargain" },                                                           //    8th Place
 	{ "if12_fishbowl",      "Fish Bowl" },                                                              //   12th Place
@@ -1428,12 +1428,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if12_lunarbase1",    "Lunar Base 1" },                                                           //   14th Place
 	{ "if12_murphyslaw",    "Murphy's Law" },                                                           //   15th Place
 	{ "if12_testisready",   "The Test is Now READY" },                                                  //   15th Place
-	{ "if12_castleadventure", "Castle Adventure!" },                                                    //   23rd Place
+	{ "if12_castleadvent",  "Castle Adventure!" },                                                      //   23rd Place
 	{ "comp12",             "IF Competition '12 Unofficial FE Game" },
 
 	// IFComp 2013
 	{ "if13_threediopolis", "Threediopolis" },                                                          //    7th Place
-	{ "if13_paperbagprincess", "The Paper Bag Princess" },                                              //   17th Place
+	{ "if13_paperbagprinc", "The Paper Bag Princess" },                                                 //   17th Place
 	{ "if13_furtherz",      "Further" },                                                                //   21st Place
 	{ "if13_9lives",        "9Lives" },                                                                 //   30th Place
 
@@ -1459,7 +1459,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire II: Journey to Hell" },                      //   17th Place
 	{ "if16_zigamus",       "Zigamus: Zombies at Vigamus" },                                            //   31th Place
 	{ "if16_slickercity",   "Slicker City" },                                                           //   39th Place
-	{ "if16_youarestanding", "You Are Standing in a Cave..." },                                         //   48th Place
+	{ "if16_youarestand",   "You Are Standing in a Cave..." },                                          //   48th Place
 	{ "if16_toiletworld",   "Toiletworld" },                                                            //   58th Place
 
 	// IFComp 2017
@@ -1481,21 +1481,21 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if19_extromnivore",  "Extreme Omnivore: Text Edition" },                                         //   74th Place
 
 	// IFComp 2020
-	{ "if20_impossiblebottle", "The Impossible Bottle" },                                               //    1st Place
+	{ "if20_impossbottle",  "The Impossible Bottle" },                                                  //    1st Place
 	{ "if20_entangled",     "Entangled" },                                                              //   26th Place
 	{ "if20_drego",         "Dr Ego and the Egg of ManToomba" },                                        //   44th Place
 	{ "if20_sheepcrossing", "Sheep Crossing" },                                                         //   88th Place
 
 	// IFComp 2021
 	{ "if21_darkun",        "D'Arkun" },                                                                //   21st Place
-	{ "if21_codexsadistica", "Codex Sadistica: A Heavy-Metal Minigame" },                               //   41st Place
+	{ "if21_codexsadistic", "Codex Sadistica: A Heavy-Metal Minigame" },                                //   41st Place
 	{ "if21_fourbyfourian", "Fourbyfourian Quarryin'" },                                                //   45th Place
 	{ "if21_bravebear",     "Brave Bear" },                                                             //   46th Place
 
 	// IFComp 2022
 	{ "if22_intosun",       "Into the Sun" },                                                           //   25th Place
 	{ "if22_lowkey",        "Low-Key Learny Jokey Journey" },                                           //   41st Place
-	{ "if22_campusinvaders", "Campus Invaders" },                                                       //   45th Place
+	{ "if22_campusinvader", "Campus Invaders" },                                                        //   45th Place
 	{ "if22_zerochance",    "Zero Chance of Recovery" },                                                //   52nd Place
 
 	// Spring IF Art Show 1999
@@ -1533,7 +1533,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// IF Art Show 2007
 	{ "ifas_rendition",     "Rendition" },
 	{ "ifas_engine",        "The Symbolic Engine" },
-	{ "ifas_varronismuseum", "Varronis Museum" },
+	{ "ifas_varronismuseu", "Varronis Museum" },
 
 	// The Mystery House Taken Over project
 	{ "mhp",                "Mystery House Possessed" },
@@ -1553,7 +1553,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// Casual Gameplay Design Competition #7
 	{ "cgdc7_hoosegow",     "Hoosegow" },                                                               //    1st Place
-	{ "cgdc7_fragileshells", "Fragile Shells" },                                                        //    2nd Place
+	{ "cgdc7_fragileshell", "Fragile Shells" },                                                         //    2nd Place
 	{ "cgdc7_dual",         "Dual Transform" },                                                         //    3rd Place
 	{ "cgdc7_partyfoul",    "Party Foul" },                                                             //    4th Place
 	{ "cgdc7_roofed",       "Roofed" },                                                                 //    5th Place
@@ -1565,19 +1565,19 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cgdc7_containment",  "Containment" },                                                            //   11th Place
 	{ "cgdc7_thecube",      "The Cube" },                                                               //   12th Place
 	{ "cgdc7_blueprint",    "The Blueprint" },                                                          //   13th Place
-	{ "cgdc7_criticalbreach", "Critical Breach" },                                                      //   14th Place
-	{ "cgdc7_themanorwhitby", "The Manor at Whitby" },                                                  //   15th Place
+	{ "cgdc7_critbreach",   "Critical Breach" },                                                        //   14th Place
+	{ "cgdc7_manorwhitby",  "The Manor at Whitby" },                                                    //   15th Place
 	{ "cgdc7_heavenly",     "Heavenly" },                                                               //   16th Place
-	{ "cgdc7_iexpectyoutodie", "I Expect You to Die" },                                                 //   17th Place
+	{ "cgdc7_expecttodie",  "I Expect You to Die" },                                                    //   17th Place
 	{ "cgdc7_virtuality",   "Virtuality" },                                                             //   18th Place
 	{ "cgdc7_dramaqueen",   "Drama Queen 7 - Mother Knows Best" },                                      //   19th Place
 	{ "cgdc7_terminal",     "Terminal" },                                                               //   20th Place
 	{ "cgdc7_couchofdoom",  "Couch of Doom" },                                                          //   21st Place
-	{ "cgdc7_basictraining", "Basic Train-ing" },                                                       //   22nd Place
+	{ "cgdc7_basictrain",   "Basic Train-ing" },                                                        //   22nd Place
 	{ "cgdc7_paintzcode",   "Paint" },                                                                  //   23rd Place
 	{ "cgdc7_goldenshadow", "Golden Shadow" },                                                          //   24th Place
-	{ "cgdc7_escapeinthedark", "Escape in the Dark" },                                                  //   25th Place
-	{ "cgdc7_escapefiction", "Escape Into Fiction" },                                                   //   26th Place
+	{ "cgdc7_escapeindark", "Escape in the Dark" },                                                     //   25th Place
+	{ "cgdc7_escapefict",   "Escape Into Fiction" },                                                    //   26th Place
 	{ "cgdc7_zeroeth",      "A Zeroeth Dimension" },                                                    //   27th Place
 	{ "cgdc7_openfield",    "An Open Field" },                                                          //   28th Place
 	{ "cgdc7_survive",      "Survive" },                                                                //   29th Place
@@ -1610,11 +1610,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Cover Stories Game-Jam
 	{ "cs_antifascista",    "Antifascista" },
 	{ "cs_leaves",          "Leaves" },
-	{ "cs_legendmissinghat", "The Legend of the Missing Hat" },
+	{ "cs_legendmisshat",   "The Legend of the Missing Hat" },
 	{ "cs_monkeybusiness",  "Monkey Business" },
 	{ "cs_offering",        "Offering" },
 	{ "cs_sloth",           "Sloth on a Stroller" },
-	{ "cs_subtropicservroom", "The Subtropical Server Room" },
+	{ "cs_subtropservroom", "The Subtropical Server Room" },
 
 	// Dinosaur Mini-Competition
 	{ "dino_rowr",          "Rowr!" },
@@ -1642,13 +1642,13 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec11_dashslapney",   "Dash Slapney, Patrol Leader" },                                            //    5th Place
 
 	// Ectocomp 2012
-	{ "ec12_ghosteringtonnightz", "Ghosterington Night" },                                              //    1st Place
+	{ "ec12_ghosternight",  "Ghosterington Night" },                                                    //    1st Place
 	{ "ec12_littlegirls",   "What Are Little Girls Made Of" },                                          //    2nd Place
 	{ "ec12_parasites",     "Parasites" },                                                              //    4th Place
 
 	// Ectocomp 2013
 	{ "ec13_horriblepyra",  "The Horrible Pyramid" },                                                   //    1st Place
-	{ "ec13_headlesshapless", "Headless, Hapless" },                                                    //    3rd Place
+	{ "ec13_headleshaples", "Headless, Hapless" },                                                      //    3rd Place
 	{ "ec13_faithfulcomp",  "Faithful Companion" },                                                     //    4th Place
 	{ "ec13_deadpavane",    "Dead Pavane for a Princess" },                                             //    5th Place
 	{ "ec13_icehouse",      "Ice House of Horrors" },                                                   //    6th Place
@@ -1671,7 +1671,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// Ectocomp 2015 - La Petite Mort
 	{ "ec15_openthatvein",  "Open That Vein" },                                                         //    1st Place
-	{ "ec15_oldesthangover", "The Oldest Hangover on Earth" },                                          //    2nd Place
+	{ "ec15_oldhangover",   "The Oldest Hangover on Earth" },                                           //    2nd Place
 	{ "ec15_heezypark",     "Heezy Park" },                                                             //    3rd Place
 	{ "ec15_storyshinoboo", "The Story of the Shinoboo" },                                              //    4th Place
 	{ "ec15_ghostship",     "The Ghost Ship" },                                                         //    7th Place
@@ -1683,7 +1683,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Ectocomp 2016 - La Petite Mort
 	{ "ec16_lightdarkness", "Light into Darkness" },                                                    //    4th Place
 	{ "ec16_bonesaw",       "The Unstoppable Vengeance of Doctor Bonesaw" },                            //    6th Place
-	{ "ec16_checkeredhaunting", "A Checkered Haunting" },                                               //   10th Place
+	{ "ec16_checkerhaunt",  "A Checkered Haunting" },                                                   //   10th Place
 
 	// Ectocomp 2017 - La Petite Mort
 	{ "ec17_primer",        "Primer" },                                                                 //    1st Place
@@ -1723,7 +1723,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ec_laseine",         "La Seine" },
 
 	// GameplayComp 2009
-	{ "gc_fantasticfinaleiv", "Fantastic Finale IV" },
+	{ "gc_fantafinaleiv",   "Fantastic Finale IV" },
 
 	// Ghost Town Redux
 	{ "gtr_ghosttownzcode", "Ghost Town: The Lost Treasure" },
@@ -1807,16 +1807,16 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// IntroComp 2011
 	{ "ic11_bender",        "Bender" },                                                                 // Hon. Mention
-	{ "ic11_despondencyindex", "The Despondency Index" },                                               // Hon. Mention
+	{ "ic11_despondenidx",  "The Despondency Index" },                                                  // Hon. Mention
 	{ "ic11_parthenon",     "Parthenon" },                                                              // Hon. Mention
 	{ "ic11_sfiction",      "Speculative Fiction: Beginner's Lessons" },                                //    2nd Place
 	{ "ic11_stallingtime",  "Stalling for Time" },                                                      // Hon. Mention
 
 	// IntroComp 2013
-	{ "ic13_thechickensexer", "The Example of the Chicken Sexer" },                                     // Hon. Mention
+	{ "ic13_chickensexer",  "The Example of the Chicken Sexer" },                                       // Hon. Mention
 
 	// IntroComp 2014
-	{ "ic14_talessoulthief", "Tales of the Soul Thief" },                                               // Hon. Mention
+	{ "ic14_talesoulthief", "Tales of the Soul Thief" },                                                // Hon. Mention
 
 	// IntroComp 2016
 	{ "ic16_grubbyville",   "Grubbyville" },                                                            //    3nd Place
@@ -1883,19 +1883,19 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// One Room Game Competition 2002
 	{ "1r02_artif",         "L'Artificiere" },
-	{ "1r02_sottomarinogiallo", "Il Sottomarino Giallo" },
+	{ "1r02_sottogiallo",   "Il Sottomarino Giallo" },
 
 	// One Room Game Competition 2003
 	{ "1r03_floppy",        "Due Dischetti, Un Incubo" },
 	{ "1r03_successo",      "Successo: Non Aprite Quella Porta!" },
 
 	// One Room Game Competition 2006
-	{ "1r06_finalselection", "Final Selection" },
+	{ "1r06_finalselect",   "Final Selection" },
 	{ "1r06_sforacchiato",  "Lo Sforacchiato Giallo" },
 	{ "1r06_venicezcode",   "Il Diavolo a Venezia" },
 	{ "1r06_galeotto",      "Galeotto Fu il Canotto" },
 	{ "1r06_easter",        "It's Easter, Peeps!" },
-	{ "1r06_lazyjonescrostata", "Lazy Jones e l’Ultima Crostata" },
+	{ "1r06_lazyjonescrst", "Lazy Jones e l’Ultima Crostata" },
 	{ "1r06_dereditu",      "De Reditu" },
 	{ "1r06_frankenstein3", "Frankenstein III" },
 
@@ -1929,7 +1929,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// ShuffleComp: Disc 2 Competition
 	{ "shd_everythinggame", "Everything We Do Is Games" },
 	{ "shd_headingeast",    "Heading East" },
-	{ "shd_starryseeksorrow", "Starry Seeksorrow" },
+	{ "shd_starryseeksorr", "Starry Seeksorrow" },
 
 	// SmoochieComp 2001
 	{ "sc_1981",            "1981" },
@@ -1999,7 +1999,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF 10^-9 Competition
 	{ "sif_krakatoa",       "Krakatoa Tuna Melt" },
-	{ "sif_roaddestruction", "The Road to Destruction (featuring Bob Hope)" },
+	{ "sif_roadestruction", "The Road to Destruction (featuring Bob Hope)" },
 
 	// SpeedIF 11 Competition
 	{ "sif_spiders",        "EPISODE 2: Revenge of the Mutant Spiders" },
@@ -2010,7 +2010,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_plaque",          "Plaque" },
 
 	// SpeedIF 13 Competition
-	{ "sif_elephantsafterlife", "Elephants and the Afterlife" },
+	{ "sif_elephantaflife", "Elephants and the Afterlife" },
 	{ "sif_garden",         "Garden of the Dragon" },
 	{ "sif_inspector",      "Health Inspector" },
 	{ "sif_potstick",       "Potsticker" },
@@ -2070,7 +2070,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF 2001 Competition
 	{ "sif_battleplanets",  "Battle of the Planets" },
-	{ "sif_destinychihuahua", "Destiny of the Chihuahua" },
+	{ "sif_destinychihuah", "Destiny of the Chihuahua" },
 	{ "sif_infiltrt",       "Infiltration on Io" },
 	{ "sif_inspiration",    "Inspiration" },
 	{ "sif_moonjupiter",    "Moon Over Jupiter" },
@@ -2087,7 +2087,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF 11th Anniversary Competition
 	{ "sif_nqaa",           "Not Quite an Anniversary" },
 	{ "sif_reptile",        "Reptile" },
-	{ "sif_teachinghertodance", "Teaching Her to Dance" },
+	{ "sif_teachher2dance", "Teaching Her to Dance" },
 
 	// SpeedIF Argonaut Competition
 	{ "sif_asciargo",       "ASCII and the Argonauts" },
@@ -2103,7 +2103,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF Copyright Competition
 	{ "sif_piratescaribou", "Pirates of the Caribou" },
-	{ "sif_sharingalltheway", "Sharing All the Way to the Bank" },
+	{ "sif_sharingallway",  "Sharing All the Way to the Bank" },
 
 	// SpeedIF Crinkle Cut Competition
 	{ "sif_travels",        "The Travels of Fitzwilliam Pound" },
@@ -2129,7 +2129,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF Halloween 2002 Competition
 	{ "sif_losing",         "Losing Your Step" },
-	{ "sif_oldsherwoodcemetary", "The Old Sherwood Cemetary" },
+	{ "sif_oldsherwoodcem", "The Old Sherwood Cemetary" },
 
 	// SpeedIF Indigo New Language Competition
 	{ "sif_hauntedhouse",    "Haunted House" },
@@ -2139,7 +2139,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_alcohol",        "Alcohol Solves Everything" },
 	{ "sif_djibouti",       "Djibouti Dirigible Discombobulation" },
 	{ "sif_faetttiw",       "Fætt Tiw" },
-	{ "sif_velocitasfictus", "In Search of Velocitas Fictus" },
+	{ "sif_velocitasficts", "In Search of Velocitas Fictus" },
 	{ "sif_baptist",        "The Twelve Heads of St. John the Baptist" },
 	{ "sif_zefrench",       "Ze French Countryside Is Full of Fresh Air" },
 
@@ -2218,8 +2218,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF New Year's Speed Competition 2013
 	{ "sif_faithfulcompv2", "Faithful Companion" },
 	{ "sif_talemorning",    "The Mundane Tale of the Morning After" },
-	{ "sif_thedayicameback", "The Day I Came Back" },
-	{ "sif_youhavetoputthebaby", "You Have to Put the Baby New Year in the Champagne Bottle" },
+	{ "sif_dayicameback",   "The Day I Came Back" },
+	{ "sif_youhavetoput",   "You Have to Put the Baby New Year in the Champagne Bottle" },
 
 	// SpeedIF New Year's Speed Competition 2014
 	{ "sif_youwerehere",    "You Were Here" },
@@ -2234,7 +2234,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_wizshop",        "A Wizard Goes Shopping" },
 	{ "sif_apoptosis",      "Apoptosis" },
 	{ "sif_foodmagic",      "Food Magic" },
-	{ "sif_lobsteronaplane", "Lobsters on a Plane" },
+	{ "sif_lobsteronplane", "Lobsters on a Plane" },
 	{ "sif_mango",          "Mango" },
 	{ "sif_midairmadness",  "Midair Madness" },
 	{ "sif_paxeast",        "PAX East 2010 Speed-IF" },
@@ -2244,11 +2244,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF PAX East 2011
 	{ "sif_scurvy",         "A Scurvy of Wonders" },
-	{ "sif_helpfulmanzcode", "A Shadow of Helpfulman" },
+	{ "sif_shhelpfulman",   "A Shadow of Helpfulman" },
 	{ "sif_boredladders",   "Bored Ladders" },
-	{ "sif_brainnightguest", "Brain of the Night Guest" },
+	{ "sif_brainightguest", "Brain of the Night Guest" },
 	{ "sif_delusionsagain", "Delusions Again" },
-	{ "sif_diggingzcode",   "Digging Time!" },
+	{ "sif_diggingtime",    "Digging Time!" },
 	{ "sif_merk",           "Merk" },
 	{ "sif_therighttool",   "The Right Tool" },
 
@@ -2287,7 +2287,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF Thanksgiving Competition
 	{ "sif_dragonflies",    "Dragon Flies Like Labradorite" },
 	{ "sif_crystalpalace",  "The Crystal Palace" },
-	{ "sif_extraordinaryevents", "The Extraordinary Events of the Last Day of Professor Mangleworth" },
+	{ "sif_extraordevents", "The Extraordinary Events of the Last Day of Professor Mangleworth" },
 	{ "sif_youareaturkey",  "You Are a Turkey!" },
 
 	// SpeedIF ToasterComp II Competition
@@ -2302,7 +2302,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF Ultimate not numbered New Year's Competition
 	{ "sif_shortof",        "Short of Sushi" },
-	{ "sif_disenchantmentbay", "Disenchantment Bay" },
+	{ "sif_disenchantbay",  "Disenchantment Bay" },
 	{ "sif_thedayidied",    "The Day I Died" },
 
 	// SpeedIF Without Number Competition
@@ -2317,7 +2317,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sif_tragedy",        "Tragedy Strikes at the XYZZY Awards!" },
 
 	// SpeedIF Y Competition
-	{ "sif_bananapocalaypse", "Banana Apocalypse and the Rocket Pants of Destiny" },
+	{ "sif_bananapocalayp", "Banana Apocalypse and the Rocket Pants of Destiny" },
 	{ "sif_barton",         "Barton" },
 	{ "sif_bearsx3",        "Bears, Bears, Bears" },
 	{ "sif_flexible",       "Flexible Pants" },
@@ -2342,7 +2342,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// Toaster Competition
 	{ "toa_burnttoast",     "Burnt Toast" },
-	{ "toa_friarbaconstreet", "Friar Bacon's Secret" },
+	{ "toa_friarbaconstr",  "Friar Bacon's Secret" },
 	{ "toa_gottoast",       "Got Toast?" },
 	{ "toa_spittingcrumbs", "Spitting Crumbs" },
 	{ "toa_shrinkingwoman", "The Incredible Shrinking Woman, Too!" },
@@ -3578,16 +3578,16 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("hypochondriac", "11-870225", "a05a1e4b23d107cf3999fae25116ff49", 52376),
 	ENTRY0("infidel", "22-830916", "38f713e53af720624434529ea780040c", 93556),
 	ENTRY0("infidel", "22-840522-MAC", "1e5279c762c2521ff95dca6eea2177c0", 94144),
-	ENTRY0("infocomsampler1z", "15-840330", "0dea0c4d7e87b18a97c5bee0c61ac857", 62326),
-	ENTRY0("infocomsampler3zpi", "5-840512", "a72086f6e7c10aff5cdd199efca32f93", 105196),
-	ENTRY0("infocomsampler4zpiw", "24-840627", "1ba87ecd487866c4fd7775665dd383a8", 112478),
-	ENTRY0("infocomsampler4zpiw", "26-840731", "5483febc51abd55fb5e04c4c97a0b260", 112610),
-	ENTRY0("infocomsampler4zpiw", "52-850402", "239897f0eb9ba5995e9978684829047b", 126976),
-	ENTRY0("infocomsampler4zpiw", "53-850407", "47b8b8394e25faec870a798145529688", 126708),
-	ENTRY0("infocomsampler4zpiw", "55-850823", "05d9d1a1c3c73fce9e24ab695ece16c8", 126902),
-	ENTRY0("infocomsampler1b", "8-870119", "1fb0738cbf5d620cf8625ba9d9904f3b", 55472),
-	ENTRY0("infocomsampler2zt", "8-870601", "148ea96bfd110c87a96cb011007f0825", 106094),
-	ENTRY0("infocomsampler3ztl", "97-870601", "201fa230a942df5aa75bb5b5f609e8ce", 125314),
+	ENTRY0("infocfdeomsample1z", "15-840330", "0dea0c4d7e87b18a97c5bee0c61ac857", 62326),
+	ENTRY0("infocomsample3zpi", "5-840512", "a72086f6e7c10aff5cdd199efca32f93", 105196),
+	ENTRY0("infocomsample4zpiw", "24-840627", "1ba87ecd487866c4fd7775665dd383a8", 112478),
+	ENTRY0("infocomsample4zpiw", "26-840731", "5483febc51abd55fb5e04c4c97a0b260", 112610),
+	ENTRY0("infocomsample4zpiw", "52-850402", "239897f0eb9ba5995e9978684829047b", 126976),
+	ENTRY0("infocomsample4zpiw", "53-850407", "47b8b8394e25faec870a798145529688", 126708),
+	ENTRY0("infocomsample4zpiw", "55-850823", "05d9d1a1c3c73fce9e24ab695ece16c8", 126902),
+	ENTRY0("infocomsample1b", "8-870119", "1fb0738cbf5d620cf8625ba9d9904f3b", 55472),
+	ENTRY0("infocomsample2zt", "8-870601", "148ea96bfd110c87a96cb011007f0825", 106094),
+	ENTRY0("infocomsample3ztl", "97-870601", "201fa230a942df5aa75bb5b5f609e8ce", 125314),
 	ENTRY0("journey", "46-880603-DEV", "7bc3d57b3b6bf01788c07b2c4f007643", 280472),
 	ENTRY0("journey", "142-890205-DEV", "2327731ae4a2f2c058ed88f9bfeb493c", 281088),
 	ENTRY0("journey", "2-890303", "490df9e507aacba8fd113baabefb6e58", 280936),
@@ -3812,7 +3812,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("adv550", "160307", "631ab32f7370e1c1e5b4e9fe6ad539fb", 231424),
 	ENTRY0("adv551", "160307", "14f0d78e0a1c447cdf8ad6daf4d22a5b", 334336),
 	ENTRY0("adv551", "171110", "24449bf1875c0b75491173ba4243bc99", 334848),
-	ENTRY0("adventurelandzcode", "961111", "21f1bd1815a8b3ba5730fe168ff88e59", 49152),
+	ENTRY0("adventland", "961111", "21f1bd1815a8b3ba5730fe168ff88e59", 49152),
 	ENTRY0("adventurelobjan", "961209", "e8cdbc003c5bc0965ad2f04a4a7806db", 147968),
 	ENTRY0("adventuretime", "110111", "b6e0e55780b699e37411f0eb176f7496", 359368),
 	ENTRY0("adverbum", "060905", "e5c04bcadb953ad0a280b541f7510338", 138240),
@@ -3827,13 +3827,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("alpha", "981017", "f8fbbc64455efc259f9b41517d82b4ab", 51200),
 	ENTRY0("amazingmaze", "200415", "0f881bf71c7c401367c0adb52d496fff", 169984),
 	ENTRY0("amazingmaze", "201015", "bc1657b2778d09829102af96105eaa61", 169984),
-	ENTRY0("ambassadorsdaughter", "150525", "d415de88a7a756be04f5203f8b4668ee", 255488),
+	ENTRY0("ambassadorsdaught", "150525", "d415de88a7a756be04f5203f8b4668ee", 255488),
 	ENTRY0("amish", "020603", "d4194b4de41c9663f464bb33f1917a7d", 50688),
 	ENTRY0("amiss", "020409", "fa22d754f2b9daedc232bfbc6b28b6d1", 143872),
 	ENTRY0("anchor", "990206", "2bc49d98d980bfefa064ae76f4a217e5", 520192),
 	ENTRY0("andrewplotkin", "080423", "9679960dde743ff1f506c12db29c5214", 366740),
 	ENTRY0("andromedagenesis", "130701", "3dc7a53837dfcfed4895aad148b78f27", 245248),
-	ENTRY0("andromedaawakeningz", "111019", "7d82fa4cbcc943aefb3ddc65a38a0b7d", 527028),
+	ENTRY0("androawake", "111019", "7d82fa4cbcc943aefb3ddc65a38a0b7d", 527028),
 	ENTRY0("animals", "071201", "98e57ff531a97d26d16418b343d9682d", 32768),
 	ENTRY0("animals", "150314", "d5e0c7c6641709eeb5c4c0797519962c", 32768),
 	ENTRY0("annoy", "990127", "0383c40a28c606ddf8bfba3a66469055", 71168),
@@ -4701,7 +4701,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("vindaloo", "960613", "d4e69f29f435b55dff5057a1d0d5bd45", 53248),
 	ENTRY0("violet", "081123", "0941c8db96a7ef82ebf10fe6cdd1859e", 601262),
 	ENTRY0("virtuality", "100131", "a68fe31bf3cce9b3dea7da0d733f45b0", 397244),
-	ENTRY0("virtualgrandnational", "200426", "e8f662bdd08fa0f7520e8ef5615c12b5", 175104),
+	ENTRY0("virtualgrandnation", "200426", "e8f662bdd08fa0f7520e8ef5615c12b5", 175104),
 	ENTRY0("visualizing", "000218", "81458ba52d6deb8b30ee2628b45976dc", 97792),
 	ENTRY0("voices", "010504", "9a78da996a62281db9047c9998cce0a2", 84992),
 	ENTRY0("vosr", "060925", "73746a1dd6938ca4b034eb424936ffe7", 267776),
@@ -4795,12 +4795,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Converted Scott Adams Classic Adventures games
 	ENTRY0("adventurelandi5", "941017", "cde66d37efaff46f18e67b0f39e4d0cd", 43008),
-	ENTRY0("adventurelandsmpleri5", "980329", "86c473c81e86637105108afa943c3ced", 23040),
+	ENTRY0("adventlandsmpleri5", "980329", "86c473c81e86637105108afa943c3ced", 23040),
 	ENTRY0("buckaroobanzaii5", "980329", "cdbf748cdcee3cade378cf62cfe01d43", 24064),
 	ENTRY0("ghosttowni5", "980329", "0240f4119bb9b8e8197f37049c9b4f82", 25600),
 	ENTRY0("goldenvoyagei5", "980329", "d986f2ac673abdce741c90e8b9fc3acf", 26112),
 	ENTRY0("marveladventurei5", "980329", "964dfa22fcd54d2674123951af79136b", 25600),
-	ENTRY0("missionimpossiblei5", "980329", "9c759b65e43e2d9d6aa02122248040ae", 24064),
+	ENTRY0("missionimpossibli5", "980329", "9c759b65e43e2d9d6aa02122248040ae", 24064),
 	ENTRY0("mysteryfunhousei5", "980329", "4b78c1883356db8184b351c5a269fdce", 24064),
 	ENTRY0("pirateadventurei5", "980329", "0c3d27eaa6563835bfb1aadd309e7a00", 24064),
 	ENTRY0("pyramidofdoomi5", "980329", "a6fc7fd81b7330bc254afbac17b29058", 26112),
@@ -4808,7 +4808,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("returnpirteislei5", "980329", "56e5d7c33d5403ed59a62f67744f4d02", 26624),
 	ENTRY0("savageisland1i5", "980329", "6f6cf307a97becb32524fe66a910587e", 24576),
 	ENTRY0("savageisland2i5", "980329", "a43ab1063e6a8d4849ad3b69f1e4cacb", 25600),
-	ENTRY0("sorcererclaycastlei5", "980329", "54cc89bbead7dac21455b9c00f32f604", 25088),
+	ENTRY0("sorcererclaycstli5", "980329", "54cc89bbead7dac21455b9c00f32f604", 25088),
 	ENTRY0("strangeodysseyi5", "980329", "8216fc5ca7ed593d6a9c4265064d83a4", 24576),
 	ENTRY0("thecounti5", "980329", "a0060ef9c9fa5cc3d3dbbc060f6451c2", 25088),
 	ENTRY0("voodoocastlei5", "980329", "bff285e6c9291fc6ba77c9743b610c2d", 24064),
@@ -4912,7 +4912,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if97_edifice", "970930", "15d3cb03378412c6c3d0b050e5d6392c", 173568),
 	ENTRY0("if97_spring", "970929", "9b891a246a0a5869e73c42527950143b", 256000),
 	ENTRY0("if97_bear", "971011", "71d95521937e8c4e6753d656ae264a28", 105984),
-	ENTRY0("if97_lostspellmaker", "970927", "e06790b6d56f8b3efafc24c990d5138b", 117248),
+	ENTRY0("if97_lostspellmake", "970927", "e06790b6d56f8b3efafc24c990d5138b", 117248),
 	ENTRY0("if97_mimesis", "970925", "c52b125a2fa69127500a1fbb35796c28", 87552),
 	ENTRY0("if97_newday", "970929", "7bebae12833d6253517493de19dd5f91", 121344),
 	ENTRY0("if97_erden", "970930", "964d7e321582389e1a43c9022876787d", 322560),
@@ -4940,7 +4940,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if98_dilly", "980917", "07e1ffdbfdaf760d77a97a78900c8557", 101376),
 	ENTRY0("if98_downtowntokyo", "980930", "bd8868ae2b5467fa157483026d480fc9", 80384),
 	ENTRY0("if98_informatory", "980929", "bdb68ba2a7b4cc2db474cfc4a6ad90bd", 139264),
-	ENTRY0("if98_ritualpurification", "980927", "3eb48bc2b376d8d3b2f4c3c4249525bb", 115712),
+	ENTRY0("if98_ritualpurific", "980927", "3eb48bc2b376d8d3b2f4c3c4249525bb", 115712),
 	ENTRY0("if98_city", "970930", "2b263a9ede155127d8c0d7af62fd1f91", 87552),
 	ENTRY0("if98_evildwells", "980930", "2553619a35b7376f808ed2f60aa38bf8", 130048),
 	ENTRY0("if98_purple", "980929", "760bd290430bd4056e3d139dfacac011", 133120),
@@ -5000,7 +5000,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if00_castleamnos", "000930", "6f2cb75c73c0f29ea67d8a7c817c63da", 124416),
 	ENTRY0("if00_masque", "000929", "a445df49ab60a2295fbb42d74276c557", 162304),
 	ENTRY0("if00_ppocket", "000929", "2b5bf3234652544ec6cc87f0d9ffd925", 129024),
-	ENTRY0("if00_happyeverafter", "000930", "02c281fff208a4480237140b2c1e4d25", 127488),
+	ENTRY0("if00_happyeveraft", "000930", "02c281fff208a4480237140b2c1e4d25", 127488),
 	ENTRY0("if00_prodly", "000921", "d9bacb93727ab1876a1bac84472b2718", 116736),
 	ENTRY0("if00_withdraw", "000930", "6d42f8a5f721b240b3eda80d4fdbf24f", 66560),
 	ENTRY0("if00_123", "000929", "bada858e1a1ff3f5a712ca8658181496", 87040),
@@ -5056,7 +5056,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp02", "020928", "db8ba8f1596fb801021c99a92d111b38", 114176),
 
 	// IFComp 2003
-	ENTRY0("if03_slouchingbedlam", "030925", "0f870671f3d7569d57eb79a8be9b4a28", 216576),
+	ENTRY0("if03_slouchbedlam", "030925", "0f870671f3d7569d57eb79a8be9b4a28", 216576),
 	ENTRY0("if03_risorg", "030925", "37c4b5b109c7005ae663e989024720d4", 443392),
 	ENTRY0("if03_gourmet", "030927", "d10a75ea4d4485b24c513d9bfefdfe7f", 181760),
 	ENTRY0("if03_baluthar", "030926", "750377a64b3d502970e3bcf30adc9c5d", 121344),
@@ -5082,7 +5082,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if04_geb", "040930", "85c3f43cfe5d7b86799efc2f596ef0aa", 163840),
 	ENTRY0("if04_bigscoop", "040916", "2ca8203bd4ae6bfc4e76f5b430a8737d", 173056),
 	ENTRY0("if04_identity", "040928", "1e459aceb4c0071c970dca5484c5617b", 126464),
-	ENTRY0("if04_murderaeroclub", "040921", "aff927b5be8d78a0900bf495f605395b", 108032),
+	ENTRY0("if04_murderaeroclb", "040921", "aff927b5be8d78a0900bf495f605395b", 108032),
 	ENTRY0("if04_bellclap", "040930", "70be7c0e420f7236fae11c34589158db", 123904),
 	ENTRY0("if04_typo", "040924", "827e420f98cfdc0b014203a53a11ff00", 96768),
 	ENTRY0("if04_blink", "040926", "7f8957455ed7187729239a73bd52b625", 88064),
@@ -5102,7 +5102,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if05_unforgotten", "050930", "94966251577ca5807102f1acab09750e", 249856),
 	ENTRY0("if05_snatches", "050930", "c0d612653fc6a3f4bd01f1b7ed492058", 183808),
 	ENTRY0("if05_vigilance", "051001", "93727f29c7a981ef006b4318e1231c3b", 182784),
-	ENTRY0("if05_historyrepeating", "050930", "cd8fab96b41ee0949de6b769a635e2dc", 114176),
+	ENTRY0("if05_historyrepeat", "050930", "cd8fab96b41ee0949de6b769a635e2dc", 114176),
 	ENTRY0("if05_soa", "050927", "49e31704b96971f0e51bfa3dcad39c0f", 115200),
 	ENTRY0("if05_psycheslament", "050929", "67fd7b02ce32ef3da8ad54a5e483e382", 89088),
 	ENTRY0("if05_onoptimism", "050930", "489ef2faedfca7255b3c5aa0fd71c462", 152576),
@@ -5110,7 +5110,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if05_swordofmalice", "050908", "9b43f402cc13e02f57a464ca6f843b32", 96256),
 	ENTRY0("if05_drearylands", "050928", "25b26f262bdc8acca9e149d3ae2a0e4c", 97280),
 	ENTRY0("if05_hellosword", "050929", "ccbda9f1be8df8e5f656db548a002ed1", 152576),
-	ENTRY0("if05_phantomcaverns", "280727", "3dff9322c3f141ff17b47fc1e9d98929", 97792),
+	ENTRY0("if05_phantomcavern", "280727", "3dff9322c3f141ff17b47fc1e9d98929", 97792),
 	ENTRY0("if05_futuregame", "", "94a44dc4c563b1f4468b13b32ef601f0", 10752),
 	ENTRY0("comp05", "051001", "05e1dac27091bce08cc61a28ba71afa2", 116224),
 
@@ -5124,12 +5124,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if06_mobius", "060929", "8535e1058ea7bd3ccbe098a40ddbdbd5", 425828),
 	ENTRY0("if06_gameproducer", "060928", "b4e0ff39edec9d291e78bfa95d6dcf22", 179200),
 	ENTRY0("if06_starcity", "060928", "a7366438459f23661e8d178d8e690f49", 288256),
-	ENTRY0("if06_strangegeometry", "060929", "eead1528f100a3340167a909a9f5e97d", 308224),
-	ENTRY0("if06_towerofelephant", "060922", "74fa5a6e7d9b654ca2805edf6a7b0330", 281048),
+	ENTRY0("if06_strangegeo", "060929", "eead1528f100a3340167a909a9f5e97d", 308224),
+	ENTRY0("if06_towerelephant", "060922", "74fa5a6e7d9b654ca2805edf6a7b0330", 281048),
 	ENTRY0("if06_labyrinth", "060929", "abc2409764b3eee49a97ea90d58fc22d", 118272),
 	ENTRY0("if06_cdst", "060929", "c91836c10f543523cd61a6b24020eb3d", 348152),
 	ENTRY0("if06_bibleretold1", "100000", "e387804ec98ad477e6aa5911fbc74338", 191488),
-	ENTRY0("if06_anothergoddamn", "060927", "45a30649c871479e2060e95cc6bda3f4", 232448),
+	ENTRY0("if06_anothergodamn", "060927", "45a30649c871479e2060e95cc6bda3f4", 232448),
 	ENTRY0("if06_fightorflight", "060929", "80db0fdf1d6b3951fc954b48de1e0c83", 270336),
 	ENTRY0("if06_manalive1", "000002", "27e3e2afffe206fca0f0f78f97c2f175", 175616),
 	ENTRY0("if06_hedge", "060929", "c7c17fffb437878b48990ed564960e5b", 216064),
@@ -5147,13 +5147,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if07_acrossthestars", "070929", "4dd6a382a08b2865ad22a99cff8746e4", 492544),
 	ENTRY0("if07_orevore", "070929", "aab0bd90d0a29605e8000590d0205c88", 410624),
 	ENTRY0("if07_jackmills", "070923", "26689533940170a64107b27adce69cef", 422776),
-	ENTRY0("if07_deadlinenchanter", "07????", "0abf2e1124bf4da63a7efbd6cb239e57", 219648),
+	ENTRY0("if07_deadlinenchan", "07????", "0abf2e1124bf4da63a7efbd6cb239e57", 219648),
 	ENTRY0("if07_fff", "070927", "bf7ad79002812c5b08ef0c98a3f73053", 99840),
 	ENTRY0("if07_wish", "070928", "c32139de52463c844ed063e0b0e6a227", 92160),
 	ENTRY0("if07_packrat", "070928", "71ab8ff0a6ea40b11e5c0c4990358bc9", 120320),
-	ENTRY0("if07_beneathtransform", "070927", "95b99d50b0c38cfd2907da023233ca82", 139776),
+	ENTRY0("if07_beneathtransf", "070927", "95b99d50b0c38cfd2907da023233ca82", 139776),
 	ENTRY0("if07_theimmortal", "070928", "2fee83a968aa436d25be899d3bdcc02e", 293376),
-	ENTRY0("if07_eduardseminarist", "070926", "b02853e34c156c8feee8895c9f749490", 71168),
+	ENTRY0("if07_eduardseminar", "070926", "b02853e34c156c8feee8895c9f749490", 71168),
 	ENTRY0("if07_pets", "070926", "c6a7ab54d9b9482cc459a9c975f48314", 146432),
 	ENTRY0("comp07", "070930", "383572627817ce8cebd71080d5cc2245", 141312),
 
@@ -5164,43 +5164,43 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if08_snacktime", "080929/z8", "6cc88dd0f8c3fbea98fa16525a845b11", 339456),
 	ENTRY0("if08_snacktime", "080929/zblorb", "35e2fb47b2a3ef13377be9556d673bf7", 1331682),
 	ENTRY0("if08_openingnight", "080920", "56690c62b68ed95e6f5266c4bf5593de", 240128),
-	ENTRY0("if08_minionunderworld", "080922", "6e02c3844947612a8c6e3b0849568b2f", 108032),
+	ENTRY0("if08_escunderworld", "080922", "6e02c3844947612a8c6e3b0849568b2f", 108032),
 	ENTRY0("if08_bishoes", "080912", "616d0a27ebeaddba73cbee9c7a8406d6", 73728),
 	ENTRY0("if08_grief", "080929", "10ac0c11f6687f75d940c197dd79f88c", 287744),
 	ENTRY0("if08_trein", "080718", "515fc480d1276c6a83e4af57fcb40670", 341618),
 	ENTRY0("if08_redmoonz", "080905", "cb8f73a536cfd474c548b38d03e08c65", 178176),
 	ENTRY0("if08_draculascrypt", "080929", "e6be6ce15da3e50df3558c7c1a8a66b3", 238854),
 	ENTRY0("if08_anachronist", "080927", "6e3816a87b03e9c82f92b87c2ceea361", 243092),
-	ENTRY0("if08_whenmachinesattack", "080927", "448e05c036c352e6def70a32ee68128a", 424960),
+	ENTRY0("if08_whenmachsatt", "080927", "448e05c036c352e6def70a32ee68128a", 424960),
 	ENTRY0("if08_thelucubrator", "080928", "110d123776a561ba8c14d72c8d534bf7", 191488),
 	ENTRY0("if08_freedom", "080929", "6e37889524794022328582687754d173", 69120),
 	ENTRY0("if08_riverside", "080903", "965457e0208af211943cb88707059bd0", 191488),
 	ENTRY0("if08_thelighthouse", "080921", "8d29781a8de397439ba40645c9430803", 140800),
-	ENTRY0("if08_absoluteworstgame", "080614", "3c902f43a5393f41655df1f028057e65", 133632),
+	ENTRY0("if08_absworstgame", "080614", "3c902f43a5393f41655df1f028057e65", 133632),
 	ENTRY0("comp08", "081003", "0ea5f859a1aa09b42bd7229786160a5b", 144384),
 
 	// IFComp 2009
 	ENTRY0("if09_snowquest", "090792", "7a558ea909edca386a9f225a744a9cca", 1022942),
-	ENTRY0("if09_duelthatspanned", "090925", "e7808064e6569e31be830b07be97cbb5", 379904),
+	ENTRY0("if09_duelspanned", "090925", "e7808064e6569e31be830b07be97cbb5", 379904),
 	ENTRY0("if09_duelinsnow", "090930", "b669e90797eb4ce3adf37fba9f1447d8", 383488),
 	ENTRY0("if09_interface", "090929", "afae3500034d118e0fd732ccd0d858f6", 293286),
-	ENTRY0("if09_byzantineperspect", "090930", "dbb1fbf7245f6801d1a8619a95211340", 1690344),
+	ENTRY0("if09_byzantinpersp", "090930", "dbb1fbf7245f6801d1a8619a95211340", 1690344),
 	ENTRY0("if09_condemned", "090930", "1a73a405571a1413481c47d63392ee3c", 257024),
 	ENTRY0("if09_eruption", "090616", "a1136a2e48d40399bfa17200503dbd04", 113664),
 	ENTRY0("if09_betatester", "090929", "157045ea9339e149dc4686ad229a27ef", 391168),
-	ENTRY0("if09_spelunkersquest", "090929", "81ce5c3f5aac8c3ac9a6c012cff4bda7", 297928),
+	ENTRY0("if09_spelunkquest", "090929", "81ce5c3f5aac8c3ac9a6c012cff4bda7", 297928),
 	ENTRY0("if09_invisibleman", "090927", "fee503f8a8562bb7dc31ee606f23ca7d", 298496),
 	ENTRY0("if09_thegrandquest", "090926", "bbb8e21c2c2f71ba29f74cd30940493e", 178176),
 	ENTRY0("if09_starhunter", "090930", "60e33decd1e4a5c1f13298688d4eea39", 134656),
 	ENTRY0("if09_gatoron", "090830", "99688a1be3791575a575c33fb98587b6", 122368),
-	ENTRY0("if09_gleamingtheverb", "090930", "6971a0e1b91dffbe75b4efefe7f9540f", 148992),
+	ENTRY0("if09_gleamingverb", "090930", "6971a0e1b91dffbe75b4efefe7f9540f", 148992),
 	ENTRY0("if09_zorkburiedchaos", "080126", "dd1cb30fccde813a3301a324e5d6ac02", 163218),
 	ENTRY0("comp09", "091001", "c937fadc20db485baa8f35e8d841d77d", 145408),
 
 	// IFComp 2010
 	ENTRY0("if10_deathoffthecuffz", "100926", "288dfb6066beba825f49d2c6080f9081", 311196),
 	ENTRY0("if10_mite", "100930", "fa6eb58ea0db68211fa924fa1530d234", 186368),
-	ENTRY0("if10_gloriousrevolution", "100930", "123d7b02f338fe27f4b8f39ba2d15845", 854008),
+	ENTRY0("if10_gloriousrevol", "100930", "123d7b02f338fe27f4b8f39ba2d15845", 854008),
 	ENTRY0("if10_hummingbird", "100913", "4454cc4266f275a4d8a175aa21f5b0b5", 719972),
 	ENTRY0("if10_warblersnest", "100930", "526aaf64cec2fb85b63b2d329befc086", 799282),
 	ENTRY0("if10_asgard", "100928", "4b69b276e770d6ca6b0b7ff24c91bc13", 569460),
@@ -5208,7 +5208,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if10_bibleretold2", "130000", "9559cb4601fbfe195b36cf5970f7619c", 190976),
 	ENTRY0("if10_heated", "100930", "148d0e98c403af802c3c8108a2e60d2d", 231424),
 	ENTRY0("if10_ninjasfate", "100930", "a314c020fe002482c522c927d2012af1", 321024),
-	ENTRY0("if10_eastgrovehills", "100930", "e627884c529415399883702fb5abf43c", 417266),
+	ENTRY0("if10_eastgrovehill", "100930", "e627884c529415399883702fb5abf43c", 417266),
 	ENTRY0("if10_quietevening", "100924", "14d27fc0f84c6eb9bbad0046938000db", 397964),
 	ENTRY0("if10_chronicler0", "100930", "c16c8d34195c9f29c03629f20be7f800", 68608),
 	ENTRY0("comp10", "101008", "113f48207ab14aed979b6034faf50959", 142336),
@@ -5219,7 +5219,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if11_comedyerror", "111017", "9219e4a1ac32b67d508d661f0e00eb6c", 885682),
 	ENTRY0("if11_tenthplague", "??????", "358056bdf0d1df7dad3ebbfc46e4f4e0", 379176),
 	ENTRY0("if11_coldiron", "110909", "e917805948c99b02fdf1491542c2d8dc", 227328),
-	ENTRY0("if11_andromedaawakeningz", "110930", "1c38c3eba0c484048416cbff512b59ba", 512312),
+	ENTRY0("if11_androawake", "110930", "1c38c3eba0c484048416cbff512b59ba", 512312),
 	ENTRY0("if11_keepsake", "110906", "293a92fcd66e8351a7062ed954df5d9e", 462088),
 	ENTRY0("if11_theguardian", "110929", "f707abfb7a69506d1d680a055abc21b3", 254976),
 	ENTRY0("if11_lastdaysummer", "110930", "27a77f98d578a4ee5b0aadc6e81953e6", 372294),
@@ -5241,12 +5241,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if12_lunarbase1", "120929/zblorb", "f1fe0b501a7af58a305d85ce3738c1e6", 1371878),
 	ENTRY0("if12_murphyslaw", "120929", "3ad61af558113bb14c67024bb7ec9bb6", 567000),
 	ENTRY0("if12_testisready", "120929", "bcea384062b6cab396890e08e6e4d590", 510612),
-	ENTRY0("if12_castleadventure", "120315", "d748b6dd5c380a2f3438f8b957b17345", 240128),
+	ENTRY0("if12_castleadvent", "120315", "d748b6dd5c380a2f3438f8b957b17345", 240128),
 	ENTRY0("comp12", "121001", "a21991ba784590176bd0570647227fab", 149504),
 
 	// IFComp 2013
 	ENTRY0("if13_threediopolis", "130928", "942c317ad151633d5eff4a1fe5c0eb0e", 444252),
-	ENTRY0("if13_paperbagprincess", "130928", "f6b455548bfb5f40f9beeff98927c21d", 307712),
+	ENTRY0("if13_paperbagprinc", "130928", "f6b455548bfb5f40f9beeff98927c21d", 307712),
 	ENTRY0("if13_furtherz", "130929", "49f7ad5cd55692627c5535585368820e", 398556),
 	ENTRY0("if13_9lives", "130817", "0fff213f0d61c01c281d7180e016711e", 337374),
 
@@ -5272,7 +5272,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if16_darkiss2", "160928", "405f407e2009e20317522375bf53e154", 179712),
 	ENTRY0("if16_zigamus", "160928", "8d5ad5bd2aa48b2003b7c6bfc5803669", 89600),
 	ENTRY0("if16_slickercity", "160928", "fa5141ef64408dbb2535b61355324284", 485840),
-	ENTRY0("if16_youarestanding", "160926", "8471b92b86d52dc9ce417adfac02fff7", 490456),
+	ENTRY0("if16_youarestand", "160926", "8471b92b86d52dc9ce417adfac02fff7", 490456),
 	ENTRY0("if16_toiletworld", "161009", "56b58c66b5ae7d9e7282a01924e24135", 418206),
 
 	// IFComp 2017
@@ -5294,7 +5294,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if19_extromnivore", "190928", "e7a93522643ad1e1921fb13046ccc620", 428066),
 
 	// IFComp 2020
-	ENTRY0("if20_impossiblebottle", "200928", "ca6e77c892f34f602ea25277a8ac6a20", 759930),
+	ENTRY0("if20_impossbottle", "200928", "ca6e77c892f34f602ea25277a8ac6a20", 759930),
 	ENTRY0("if20_entangled", "200928", "773ad8d10e980531127a040679a4e3eb", 494080),
 	ENTRY0("if20_drego", "400410", "8a983690928e36c8a77ed50bdbe98bd9", 132096),
 	ENTRY0("if20_sheepcrossing", "200928", "22c2f8a7784272952125344f9e52ccd0", 411456),
@@ -5348,7 +5348,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// IF Art Show 2007
 	ENTRY0("ifas_rendition", "070407", "1a8fbde9c57754958882ddc4d5ed1bb3", 187392),
 	ENTRY0("ifas_engine", "070518", "cb3434c4917d95b1ff3154acbf3a4dbc", 361578),
-	ENTRY0("ifas_varronismuseum", "070518", "a1eeb2342999c2e3d394c9d718cc8b6f", 434176),
+	ENTRY0("ifas_varronismuseu", "070518", "a1eeb2342999c2e3d394c9d718cc8b6f", 434176),
 
 	// The Mystery House Taken Over project
 	ENTRY0("mhp", "050315", "e2f93006c311f50932c974ba0b213a9c", 452096),
@@ -5369,7 +5369,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Casual Gameplay Design Competition #7
 	ENTRY0("cgdc7_hoosegow", "100209", "d53ed83532308ca3ea01915e2e9ec05c", 1992422),
-	ENTRY0("cgdc7_fragileshells", "110222", "7a9e1beed6ef25cc11ab5593e859d4cc", 547098),
+	ENTRY0("cgdc7_fragileshell", "110222", "7a9e1beed6ef25cc11ab5593e859d4cc", 547098),
 	ENTRY0("cgdc7_dual", "100225", "57f0e173be4258de1ce224e74172ea11", 430282),
 	ENTRY0("cgdc7_partyfoul", "100208", "e890e53c4454315d4c7bc4ddcb4420f0", 507346),
 	ENTRY0("cgdc7_roofed", "100223", "1e2cb89b420ba5c109169dd05a5dc011", 548342),
@@ -5381,19 +5381,19 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cgdc7_containment", "100206", "069d65c43c2c70064ad660a8475209c8", 221184),
 	ENTRY0("cgdc7_thecube", "100130", "b37effeaf558c7d406db3efd2d4d68fe", 230400),
 	ENTRY0("cgdc7_blueprint", "100208", "1f63cdc8d96f7c5c0408aaed9b9ca620", 183296),
-	ENTRY0("cgdc7_criticalbreach", "100203", "e27b0ade8558173cd370d92f320be144", 267776),
+	ENTRY0("cgdc7_critbreach", "100203", "e27b0ade8558173cd370d92f320be144", 267776),
 	ENTRY0("cgdc7_themanorwhitby", "100201", "8a965849cb2ec58cc7c89df0e046206f", 370084),
 	ENTRY0("cgdc7_heavenly", "091213", "e5c9c808c47510348bdf9bcb14ef1f9d", 284672),
-	ENTRY0("cgdc7_iexpectyoutodie", "100209", "242d660192fb79236647842f03ba1c12", 192000),
+	ENTRY0("cgdc7_expecttodie", "100209", "242d660192fb79236647842f03ba1c12", 192000),
 	ENTRY0("cgdc7_virtuality", "100203", "6690eaf9869b53c49696030c072728bc", 397756),
 	ENTRY0("cgdc7_dramaqueen", "100130", "1cd2a0e48662a5bed209366aaad6c53e", 356938),
 	ENTRY0("cgdc7_terminal", "100205", "544d65a88ac7965f5334cae7078f9cc8", 340930),
 	ENTRY0("cgdc7_couchofdoom", "100210", "91e50fdfde64789bc6be1a786224c850", 259584),
-	ENTRY0("cgdc7_basictraining", "090402", "d14365fc61e36672e781e8bbc37c6051", 272320),
+	ENTRY0("cgdc7_basictrain", "090402", "d14365fc61e36672e781e8bbc37c6051", 272320),
 	ENTRY0("cgdc7_paintzcode", "100209", "fbe7f5356d171e92f4011b33dff06625", 205312),
 	ENTRY0("cgdc7_goldenshadow", "100203", "a99de59ca4478ccc758aabc357931a36", 244682),
-	ENTRY0("cgdc7_escapeinthedark", "100203", "acb5cba872017ed4acf6a97cca18e12c", 165376),
-	ENTRY0("cgdc7_escapefiction", "100203", "4f61e28d71955057ff7f7660f6557740", 273860),
+	ENTRY0("cgdc7_escapeindark", "100203", "acb5cba872017ed4acf6a97cca18e12c", 165376),
+	ENTRY0("cgdc7_escapefict", "100203", "4f61e28d71955057ff7f7660f6557740", 273860),
 	ENTRY0("cgdc7_zeroeth", "100221", "bfa89880cfe414dfd743c36c3186207d", 194048),
 	ENTRY0("cgdc7_openfield", "100131", "e40d2c10d464ff2dfbf4090d2568bb9d", 247234),
 	ENTRY0("cgdc7_survive", "100208", "4cfdfa675947460bb5faf56d5d96bc06", 86016),
@@ -5426,11 +5426,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Cover Stories Game-Jam
 	ENTRY0("cs_antifascista", "120612", "ea02a0f92f7c2c40fa39abd48fd1ccf2", 406208),
 	ENTRY0("cs_leaves", "120610", "d8f48c9a46689a07106dccdc165a3119", 523862),
-	ENTRY0("cs_legendmissinghat", "120610", "c12e8daaff707325e446ef0b557ab044", 586960),
+	ENTRY0("cs_legendmisshat", "120610", "c12e8daaff707325e446ef0b557ab044", 586960),
 	ENTRY0("cs_monkeybusiness", "120610", "da1805563d40cbed5d275e8438f108a4", 416856),
 	ENTRY0("cs_offering", "120610", "6dad4b91d08dc6536acd1f9f7687beac", 670832),
 	ENTRY0("cs_sloth", "120604", "55e327dcf77ca6d2217d008e71fc9613", 1365970),
-	ENTRY0("cs_subtropicservroom", "120611", "79a7fc6f52c2f6dfe5eb606f924f3b74", 797652),
+	ENTRY0("cs_subtropservroom", "120611", "79a7fc6f52c2f6dfe5eb606f924f3b74", 797652),
 
 	// Dinosaur Mini-Competition
 	ENTRY0("dino_rowr", "000301", "41fce26b11af40f57cdedfe5e926eaf2", 52736),
@@ -5458,13 +5458,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec11_dashslapney", "111001", "35215328fcc344c2dd932d4d1a09f15f", 281916),
 
 	// Ectocomp 2012
-	ENTRY0("ec12_ghosteringtonnightz", "121029", "c295d2c2dfe5f3feee2b833a32a2400d", 236544),
+	ENTRY0("ec12_ghosternight", "121029", "c295d2c2dfe5f3feee2b833a32a2400d", 236544),
 	ENTRY0("ec12_littlegirls", "121031", "d96c3cd0a7609166f70e67cc1ac5f055", 232960),
 	ENTRY0("ec12_parasites", "121021", "bbdb3ff64bea5ab24b0c7dcc68f1f90a", 164864),
 
 	// Ectocomp 2013
 	ENTRY0("ec13_horriblepyra", "131029", "d39833192d0c8e0c3872423a740683a5", 321958),
-	ENTRY0("ec13_headlesshapless", "131030", "046e0b958f9900a8733d04e52ab6631b", 262594),
+	ENTRY0("ec13_headleshaples", "131030", "046e0b958f9900a8733d04e52ab6631b", 262594),
 	ENTRY0("ec13_faithfulcomp", "131030", "a9be7589b843ef43b326cfe477ade7d4", 311716),
 	ENTRY0("ec13_deadpavane", "131031", "18e8bdfbbc704dbc582305b868a1216f", 269232),
 	ENTRY0("ec13_icehouse", "131029", "c85bfbce5eaa4e0db3621c5e6515e5a5", 214528),
@@ -5488,7 +5488,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Ectocomp 2015 - La Petite Mort
 	ENTRY0("ec15_openthatvein", "15????", "e24844c7028262c8117c2ef07138c6f7", 449548),
-	ENTRY0("ec15_oldesthangover", "151030", "e53693405ea9f9e4a7f6bf70cb14ec87", 334848),
+	ENTRY0("ec15_oldhangover", "151030", "e53693405ea9f9e4a7f6bf70cb14ec87", 334848),
 	ENTRY0("ec15_heezypark", "151030", "fd714eb77e36ec59083e922c52d61722", 316860),
 	ENTRY0("ec15_storyshinoboo", "151030", "78988da1e65fa38328b01c569d585321", 202240),
 	ENTRY0("ec15_ghostship", "151009", "f76aba5c59c6376edcfdccd76cb9e590", 634812),
@@ -5499,7 +5499,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Ectocomp 2016 - La Petite Mort
 	ENTRY0("ec16_bonesaw", "161027", "bbf02174af7d8891d435a37c1cc9b058", 342016),
-	ENTRY0("ec16_checkeredhaunting", "161031", "d8ddc04e13caf50e5bd7d3f8931e8cda", 305616),
+	ENTRY0("ec16_checkerhaunt", "161031", "d8ddc04e13caf50e5bd7d3f8931e8cda", 305616),
 	ENTRY0("ec16_lightdarkness", "161030", "03df7e40dca78a7e2aee74b5049136bb", 258516),
 
 	// Ectocomp 2017 - La Petite Mort
@@ -5627,13 +5627,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// IntroComp 2011
 	ENTRY0("ic11_bender", "110611", "1140eb6ddef1ef25d8c14868bcd342cd", 333512),
-	ENTRY0("ic11_despondencyindex", "110629", "ad62e7b6f5565ea6ba41057a357c0e0f", 262608),
+	ENTRY0("ic11_despondenidx", "110629", "ad62e7b6f5565ea6ba41057a357c0e0f", 262608),
 	ENTRY0("ic11_parthenon", "110622", "f663f08ce250614ddcf6cbf1b5bc3580", 261576),
 	ENTRY0("ic11_sfiction", "110630", "242c7a127c04f8a0e01d183dc9acb4b3", 98816),
 	ENTRY0("ic11_stallingtime", "110630", "939ae90866da68944a48c4e277c4c9e5", 326752),
 
 	// IntroComp 2013
-	ENTRY0("ic13_thechickensexer", "130716", "f3f6d761378d1de0176624d6df85de3e", 370648),
+	ENTRY0("ic13_chickensexer", "130716", "f3f6d761378d1de0176624d6df85de3e", 370648),
 
 	// IntroComp 2014
 	ENTRY0("ic14_talessoulthief", "140720", "cfdeeacc120c9a2bc5702f996e59d645", 352720),
@@ -5703,19 +5703,19 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// One Room Game Competition 2002
 	ENTRY1("1r02_artif", "020615", "57e9591631815f341356340eb3336994", 102912, Common::IT_ITA),
-	ENTRY1("1r02_sottomarinogiallo", "020611", "9e05ab30b21c2189359ebb87f07ed79e", 106496, Common::IT_ITA),
+	ENTRY1("1r02_sottogiallo", "020611", "9e05ab30b21c2189359ebb87f07ed79e", 106496, Common::IT_ITA),
 
 	// One Room Game Competition 2003
 	ENTRY1("1r03_floppy", "040114", "178d3034872888adf68d6ea8d4e013d4", 67072, Common::IT_ITA),
 	ENTRY1("1r03_successo", "040114", "bb4b43e17b1ee5faffe3824653c30ff9", 81920, Common::IT_ITA),
 
 	// One Room Game Competition 2006
-	ENTRY0("1r06_finalselection", "060419", "2690bfb5cc529c338ed6df923d44e28e", 151040),
+	ENTRY0("1r06_finalselect", "060419", "2690bfb5cc529c338ed6df923d44e28e", 151040),
 	ENTRY1("1r06_sforacchiato", "051114", "32b25f95b3fa4d12df956d80483af22f", 128512, Common::IT_ITA),
 	ENTRY1("1r06_venicezcode", "060514", "fad46e7b7fcba0ec52a91d188c3b0c90", 87552, Common::IT_ITA),
 	ENTRY1("1r06_galeotto", "060507", "f4fd45e121933080813f7616838a3292", 81920, Common::IT_ITA),
 	ENTRY0("1r06_easter", "060506", "7824bb61c8f4476decfbc0cae326aa19", 79872),
-	ENTRY1("1r06_lazyjonescrostata", "040383", "c8d6a6982b29f8eb32ca269b8ad71959", 91648, Common::IT_ITA),
+	ENTRY1("1r06_lazyjonescrst", "040383", "c8d6a6982b29f8eb32ca269b8ad71959", 91648, Common::IT_ITA),
 	ENTRY1("1r06_dereditu", "060502", "f7413ac65ef04a99d63688f1f0ad85b0", 96768, Common::IT_ITA),
 	ENTRY1("1r06_frankenstein3", "000001", "afd4d53fcce2188d0a1fec585e56a690", 87040, Common::IT_ITA),
 
@@ -5751,7 +5751,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("shd_everythinggame", "150418/z8", "9be1a20d73ed0db81972287766aa3cbc", 315392),
 	ENTRY0("shd_everythinggame", "150418/zblorb", "130aa6031169e969258ef8e6e1105f52", 1490056),
 	ENTRY0("shd_headingeast", "150507", "ee6869fc4d02966a7ebc7681ae751dc2", 109568),
-	ENTRY0("shd_starryseeksorrow", "150505", "0e37bd629858f51e2c83649973170dec", 1362330),
+	ENTRY0("shd_starryseeksorr", "150505", "0e37bd629858f51e2c83649973170dec", 1362330),
 
 	// SmoochieComp 2001
 	ENTRY0("sc_1981", "001207", "8ffc6af37b119a05d9b0c92e63eaacce", 66048),
@@ -5821,7 +5821,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// SpeedIF 10^-9 Competition
 	ENTRY0("sif_krakatoa", "021215", "3c62064723cfd8a89beb081c1703d133", 73728),
-	ENTRY0("sif_roaddestruction", "021214", "34d12792dda75cd8036455b2b2d74855", 58368),
+	ENTRY0("sif_roadestruction", "021214", "34d12792dda75cd8036455b2b2d74855", 58368),
 
 	// SpeedIF 11 Competition
 	ENTRY0("sif_spiders", "000529", "0303538d9e2755d79d9f6e9bd4500487", 54272),
@@ -5832,7 +5832,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_plaque", "000713", "56afa6230573c3f74aac8c4e9949e2de", 57856),
 
 	// SpeedIF 13 Competition
-	ENTRY0("sif_elephantsafterlife", "000728", "31f78d010a7ea81621ea606d3002901f", 53760),
+	ENTRY0("sif_elephantaflife", "000728", "31f78d010a7ea81621ea606d3002901f", 53760),
 	ENTRY0("sif_garden", "000801", "dd8d5ee2e9d4d251ab6a7710f808013e", 53248),
 	ENTRY0("sif_inspector", "000728", "67ffeee55cf1f664e68ae28fd21bd14d", 90624),
 	ENTRY0("sif_potstick", "000728", "3a6548770a04a2bfdf337fdcb30e4801", 86528),
@@ -5892,7 +5892,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// SpeedIF 2001 Competition
 	ENTRY0("sif_battleplanets", "010121", "3fcc87126411e841608884a01d136ccf", 51712),
-	ENTRY0("sif_destinychihuahua", "010121", "006a95783c9a801962b5d4a72da37df5", 56320),
+	ENTRY0("sif_destinychihuah", "010121", "006a95783c9a801962b5d4a72da37df5", 56320),
 	ENTRY0("sif_infiltrt", "010120", "58b67bb5aa44391f787d69af2d8c3406", 88064),
 	ENTRY0("sif_inspiration", "010120", "4c06fd195b9b710d4a3776bbb70f65cb", 82432),
 	ENTRY0("sif_moonjupiter", "010120", "54129d64d0b157c8160b67e86eae31e7", 88064),
@@ -5909,8 +5909,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// SpeedIF 11th Anniversary Competition
 	ENTRY0("sif_nqaa", "090901", "50f7abd76e9f972b4ee07a6f22259513", 132096),
 	ENTRY0("sif_reptile", "090901", "f919b917e924b9d4f5465e4f262082a0", 159232),
-	ENTRY0("sif_teachinghertodance", "090901/z5", "05f40a30e9fcbff5785042452b3d2c27", 146944),
-	ENTRY0("sif_teachinghertodance", "090901/zblorb", "d9c77a55fb2397f35e1de9f8bff92723", 239054),
+	ENTRY0("sif_teachher2dance", "090901/z5", "05f40a30e9fcbff5785042452b3d2c27", 146944),
+	ENTRY0("sif_teachher2dance", "090901/zblorb", "d9c77a55fb2397f35e1de9f8bff92723", 239054),
 
 	// SpeedIF Argonaut Competition
 	ENTRY0("sif_asciargo", "030309", "d660f5a1a71653e2701528ec9340ae20", 69120),
@@ -5926,7 +5926,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// SpeedIF Copyright Competition
 	ENTRY0("sif_piratescaribou", "030413", "63864258392ef2294ee96bba367edfdc", 119186),
-	ENTRY0("sif_sharingalltheway", "061023", "b21fcf0445928c6954968760a2977f56", 124284),
+	ENTRY0("sif_sharingallway", "061023", "b21fcf0445928c6954968760a2977f56", 124284),
 
 	// SpeedIF Crinkle Cut Competition
 	ENTRY0("sif_travels", "020323", "e794ec45a8872fcf5125427c84590a26", 52736),
@@ -5952,7 +5952,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// SpeedIF Halloween 2002 Competition
 	ENTRY0("sif_losing", "021031", "68073c13dddeb29ce8e9530d27fd28c0", 51712),
-	ENTRY0("sif_oldsherwoodcemetary", "021031", "c40277f69d0d57f960bca6351043dabb", 85504),
+	ENTRY0("sif_oldsherwoodcem", "021031", "c40277f69d0d57f960bca6351043dabb", 85504),
 
 	// SpeedIF Indigo New Language Competition
 	ENTRY0("sif_hauntedhouse", "110507", "760df7716aecc0f1e457a2c22735c854", 298436),
@@ -5962,7 +5962,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_alcohol", "070827", "539270360a14005cd2fc1eddfbb5b21e", 136192),
 	ENTRY0("sif_djibouti", "070825", "fb22ff8e39ba2d46fa892370fda57b8d", 159102),
 	ENTRY0("sif_faetttiw", "070824", "c14f57f0a8225ebf553730633dcc7d4a", 149246),
-	ENTRY0("sif_velocitasfictus", "070826", "3bf4260115172d5e5e595c0055a24b4f", 154664),
+	ENTRY0("sif_velocitasficts", "070826", "3bf4260115172d5e5e595c0055a24b4f", 154664),
 	ENTRY0("sif_baptist", "070826", "726d3eeee1b405005a6f01f3531d6f5a", 145408),
 	ENTRY0("sif_zefrench", "070827", "62fbd05552dd52ea6959017b4c3a20f1", 140288),
 
@@ -6041,7 +6041,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// SpeedIF New Year's Speed Competition 2013
 	ENTRY0("sif_faithfulcompv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
 	ENTRY0("sif_talemorning", "140103", "a189df712a5254487eb9a9d8cb8fffca", 253952),
-	ENTRY0("sif_thedayicameback", "140104", "c1abdfa44ae62d8194ce301f38f986c4", 356302),
+	ENTRY0("sif_dayicameback", "140104", "c1abdfa44ae62d8194ce301f38f986c4", 356302),
 	ENTRY0("sif_youhavetoputthebaby", "140103", "ce8c2720fd4adab602737e31e3c15554", 152844),
 
 	// SpeedIF New Year's Speed Competition 2014
@@ -6057,7 +6057,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_wizshop", "100327", "3c288b1b9a0738c055949f77d7a1d904", 188416),
 	ENTRY0("sif_apoptosis", "100327", "41a8f9ed1cda9df15ce634e6c95ef13f", 289728),
 	ENTRY0("sif_foodmagic", "100327", "ea2ba1dec06b945d13509eb5a7cf4404", 279028),
-	ENTRY0("sif_lobsteronaplane", "100327", "60d4c46b482fa3e064bbb6f4ade216a4", 204288),
+	ENTRY0("sif_lobsteronplane", "100327", "60d4c46b482fa3e064bbb6f4ade216a4", 204288),
 	ENTRY0("sif_mango", "010505", "d59a1a92f7855161a9d11df40eb14f33", 268226),
 	ENTRY0("sif_midairmadness", "100327", "a3e636c4c0e87291e64dece9226a2c59", 78848),
 	ENTRY0("sif_paxeast", "100327", "e457d1a18a37b2f33428cac8d8d8c4ab", 18772),
@@ -6068,11 +6068,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// SpeedIF PAX East 2011
 	ENTRY0("sif_scurvy", "110313", "1345c0f052db46981d21dfca1f61164e", 266224),
-	ENTRY0("sif_helpfulmanzcode", "110312", "413e1a37570643c936bf5d953b23d792", 183808),
+	ENTRY0("sif_shhelpfulman", "110312", "413e1a37570643c936bf5d953b23d792", 183808),
 	ENTRY0("sif_boredladders", "110313", "67c2a4d28c2d9b4010eb5df84bf5ac23", 256416),
-	ENTRY0("sif_brainnightguest", "110312", "a53b823f032f6f24cf726cb3807126e0", 232448),
+	ENTRY0("sif_brainightguest", "110312", "a53b823f032f6f24cf726cb3807126e0", 232448),
 	ENTRY0("sif_delusionsagain", "110312", "d2f2e384a82561770b1ba346c4cecd48", 247242),
-	ENTRY0("sif_diggingzcode", "110312", "d61670df1a94d9272acdf9282e2ea587", 82432),
+	ENTRY0("sif_diggingtime", "110312", "d61670df1a94d9272acdf9282e2ea587", 82432),
 	ENTRY0("sif_merk", "110312", "1ac23aa5b9044df12be4c9a690e51ee5", 317392),
 	ENTRY0("sif_therighttool", "110312", "0d6fa415b46bf15400f215beb212cbe6", 152576),
 
@@ -6111,7 +6111,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// SpeedIF Thanksgiving Competition
 	ENTRY0("sif_dragonflies", "111126", "d2183016a28394ca8e3dca3e26abd68b", 208384),
 	ENTRY0("sif_crystalpalace", "111125", "70b49b3ed49f022f73796765008e1e6a", 310316),
-	ENTRY0("sif_extraordinaryevents", "111127", "062ed8c5329ef1460a7662da4409de11", 252990),
+	ENTRY0("sif_extraordevents", "111127", "062ed8c5329ef1460a7662da4409de11", 252990),
 	ENTRY0("sif_youareaturkey", "111127", "b3b0da101be635d2a8f0ee75dce5e599", 154624),
 
 	// SpeedIF ToasterComp II Competition
@@ -6125,8 +6125,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_rrr", "030525", "ecf72d85d6056bdaeed7de43942248dc", 59392),
 
 	// SpeedIF Ultimate not numbered New Year's Competition
-	ENTRY0("sif_disenchantmentbay", "130106", "4a982fea8dab9bebd65062f958a0d81f", 330634),
-	ENTRY0("sif_disenchantmentbay", "130104", "dbf7fe64ac7a33b362eb9e8f2e40c29e", 282804),
+	ENTRY0("sif_disenchantbay", "130106", "4a982fea8dab9bebd65062f958a0d81f", 330634),
+	ENTRY0("sif_disenchantbay", "130104", "dbf7fe64ac7a33b362eb9e8f2e40c29e", 282804),
 	ENTRY0("sif_shortof", "130103", "180dbfc43c99c579b6409fcfaf86dd91", 131072),
 	ENTRY0("sif_thedayidied", "130103", "d8bc1ebc8d76fd060ec370618514fd1c", 342474),
 
@@ -6168,7 +6168,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// Toaster Competition
 	ENTRY0("toa_burnttoast", "000931", "70dba603317dff1feafe1e1941021c95", 80384),
-	ENTRY0("toa_friarbaconstreet", "000831", "b499ff3d6468e7f3dffba37bb2ecd458", 92160),
+	ENTRY0("toa_friarbaconstr", "000831", "b499ff3d6468e7f3dffba37bb2ecd458", 92160),
 	ENTRY0("toa_gottoast", "000818", "9b9efc642110f9cf8cf02d427926c420", 128512),
 	ENTRY0("toa_spittingcrumbs", "000831", "2af8723590a4c2d1525e6f390da92053", 54272),
 	ENTRY0("toa_shrinkingwoman", "000901", "e856b8d56da1c76283159728ec75b636", 52224),
