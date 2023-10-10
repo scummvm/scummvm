@@ -155,7 +155,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 				}
 			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
 				for (uint8 cnt = 0; cnt < Logic::_scriptVars[IN_SUBJECT]; cnt++) {
-					if (_subjects[cnt]->wasClicked(x, y)) {
+					if (_subjects[cnt] && _subjects[cnt]->wasClicked(x, y)) {
 						Logic::_scriptVars[OBJECT_HELD] = _subjectBar[cnt];
 						refreshMenus();
 						break;
@@ -170,7 +170,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 				}
 			} else if (mouseEvent & BS1L_BUTTON_DOWN) {
 				for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
-					if (_objects[cnt]->wasClicked(x, y)) {
+					if (_objects[cnt] && _objects[cnt]->wasClicked(x, y)) {
 						Logic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 						refreshMenus();
 						break;
@@ -182,7 +182,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 		// Normal use, i.e. inventory. Things happen on mouse-down.
 		if (menuType == MENU_TOP) {
 			for (uint8 cnt = 0; cnt < _inMenu; cnt++) {
-				if (_objects[cnt]->wasClicked(x, y)) {
+				if (_objects[cnt] && _objects[cnt]->wasClicked(x, y)) {
 					if (mouseEvent & BS1R_BUTTON_DOWN) { // looking at item
 						Logic::_scriptVars[OBJECT_HELD] = _menuList[cnt];
 						Logic::_scriptVars[MENU_LOOKING] = 1;
