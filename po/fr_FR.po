@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-10 18:55+0000\n"
-"PO-Revision-Date: 2023-10-09 20:55+0000\n"
+"PO-Revision-Date: 2023-10-10 20:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4689,29 +4689,25 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Mise à l'échelle logicielle (bonne qualité mais plus lent)"
 
 #: backends/platform/ios7/ios7_options.mm:100
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Afficher les contrôles sur l'écran (iOS 15 et supérieur)"
+msgstr "Afficher la manette de jeu (iOS 15 et supérieur)"
 
 #: backends/platform/ios7/ios7_options.mm:101
 #: backends/platform/ios7/ios7_options.mm:102
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Emulation d'une manette"
+msgstr "Opacité de la manette"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Directional button:"
-msgstr ""
+msgstr "Bouton de direction :"
 
 #: backends/platform/ios7/ios7_options.mm:108
 msgid "Thumbstick"
-msgstr ""
+msgstr "Stick analogique"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Dpad"
-msgstr ""
+msgstr "Croix directionnelle"
 
 #: backends/platform/ios7/ios7_options.mm:111
 msgid "Mouse-click-and-drag mode"
