@@ -230,7 +230,7 @@ void Room802::daemon() {
 			digi_unload_stream_breaks(SERIES3);
 
 			_G(wilbur_should) = getWilburShould();
-			_val2 = 6;
+			_G(roomVal4) = 6;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			kernel_trigger_dispatch_now(17);
 
@@ -398,7 +398,7 @@ void Room802::daemon() {
 			if (who <= 0)
 				_G(roomVal4) = 5;
 			else if (who == 1)
-				_G(roomVal4) = 14;
+				_G(wilbur_should) = 14;
 		}
 		break;
 
@@ -424,7 +424,7 @@ void Room802::daemon() {
 				_flag2 = true;
 				_G(wilbur_should) = 20;
 				_G(roomVal4) = 6;
-				_series5 = series_play("802BW03", 0x100, 4);
+				_series5 = series_play("802BW03", 0x100, 4, -1, 6, -1);
 				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_WILBUR_ANIMATION, 802);
 				break;
 
