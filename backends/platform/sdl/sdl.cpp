@@ -1009,7 +1009,7 @@ void OSystem_SDL::clearGraphicsModes() {
 static const char * const helpTabs[] = {
 _s("Keyboard"),
 "",
-#if 1
+#if 0
 _s(
 "## Keyboard shortcuts\n"
 "\n"
