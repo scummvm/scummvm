@@ -1027,6 +1027,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("gui/themes/translations.dat");
 		files.push_back("dists/engine-data/access.dat");
 		files.push_back("dists/engine-data/achievements.dat");
+		files.push_back("dists/engine-data/classicmacfonts.dat");
 		files.push_back("dists/engine-data/cryo.dat");
 		files.push_back("dists/engine-data/cryomni3d.dat");
 		files.push_back("dists/engine-data/drascula.dat");
