@@ -337,12 +337,13 @@ bool OSystem_iOS7::handleEvent_swipe(Common::Event &event, int direction, int to
 			} else {
 				_currentTouchMode = kTouchModeDirect;
 			}
+			updateTouchMode();
 
 			Common::U32String dialogMsg;
 			if (_currentTouchMode == kTouchModeTouchpad)
-				dialogMsg = _("Touchpad mode enabled.");
+				dialogMsg = _("Touchpad emulation");
 			else
-				dialogMsg = _("Touchpad mode disabled.");
+				dialogMsg = _("Direct mouse");
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;
