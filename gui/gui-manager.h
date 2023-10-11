@@ -47,6 +47,20 @@ namespace Common {
 namespace GUI {
 
 enum {
+	kActionEnter,
+	kActionEscape,
+	kActionBackspace,
+	kActionDelete,
+	kActionEnd,
+	kActionLeft,
+	kActionRight,
+	kActionHome,
+	kActionCopy,
+	kActionCut,
+	kActionPaste,
+};
+
+enum {
 	kIconsSetLoadedCmd  = 'icns'
 };
 

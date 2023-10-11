@@ -374,6 +374,11 @@ void Dialog::handleTickle() {
 		_tickleWidget->handleTickle();
 }
 
+void Dialog::handleOtherEvent(const Common::Event &evt) {
+	if (_focusedWidget)
+		_focusedWidget->handleOtherEvent(evt);
+}
+
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kCloseCmd:

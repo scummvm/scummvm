@@ -52,6 +52,9 @@ extern const char *kStandardActionLoad;
 extern const char *kStandardActionSave;
 extern const char *kStandardActionOpenSettings;
 extern const char *kStandardActionEE;
+extern const char *kStandardActionCut;
+extern const char *kStandardActionCopy;
+extern const char *kStandardActionPaste;
 
 } //namespace Common
 

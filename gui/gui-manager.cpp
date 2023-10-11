@@ -191,6 +191,96 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
+	act = new Action("ENTER", _("New Line"));
+	act->setCustomEngineActionEvent(kActionEnter);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("ESC", _("Close Dialog"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	guiMap->addAction(act);
+
+	act = new Action("BACKSPACE", _("Backspace"));
+	act->setCustomEngineActionEvent(kActionBackspace);
+	act->addDefaultInputMapping("BACKSPACE");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("DEL", _("Delete Character"));
+	act->setCustomEngineActionEvent(kActionDelete);
+	act->addDefaultInputMapping("DELETE");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("END", _("Go to end of line"));
+	act->setCustomEngineActionEvent(kActionEnd);
+
+#ifdef MACOSX
+	act->addDefaultInputMapping("C+e");
+#endif
+
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("END");
+	guiMap->addAction(act);
+
+	act = new Action("CHAR_LEFT", _("Move cursor left"));
+	act->setCustomEngineActionEvent(kActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("CHAR_RIGHT", _("Move cursor right"));
+	act->setCustomEngineActionEvent(kActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->allowKbdRepeats();
+	guiMap->addAction(act);
+
+	act = new Action("HOME", _("Go to start of line"));
+	act->setCustomEngineActionEvent(kActionHome);
+
+#ifdef MACOSX
+	act->addDefaultInputMapping("C+a");
+#endif
+
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("HOME");
+	guiMap->addAction(act);
+
+#ifdef MACOSX
+	act = new Action(kStandardActionCut, _("Cut"));
+	act->setCustomEngineActionEvent(kActionCut);
+	act->addDefaultInputMapping("M+x");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionPaste, _("Paste"));
+	act->setCustomEngineActionEvent(kActionPaste);
+	act->addDefaultInputMapping("M+v");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionCopy, _("Copy"));
+	act->setCustomEngineActionEvent(kActionCopy);
+	act->addDefaultInputMapping("M+c");
+	guiMap->addAction(act);
+#else
+	act = new Action(kStandardActionCut, _("Cut"));
+	act->setCustomEngineActionEvent(kActionCut);
+	act->addDefaultInputMapping("C+x");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionPaste, _("Paste"));
+	act->setCustomEngineActionEvent(kActionPaste);
+	act->addDefaultInputMapping("C+v");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionCopy, _("Copy"));
+	act->setCustomEngineActionEvent(kActionCopy);
+	act->addDefaultInputMapping("C+c");
+	guiMap->addAction(act);
+#endif
+
 	act = new Action(kStandardActionEE, _("???"));
 	act->setKeyEvent(KEYCODE_v);
 	guiMap->addAction(act);
@@ -758,7 +848,6 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	if (g_gui.useRTL()) {
 		mouse.x = g_system->getOverlayWidth() - event.mouse.x - activeDialog->_x + g_gui.getOverlayOffset();
 	}
-
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		activeDialog->handleKeyDown(event.kbd);
