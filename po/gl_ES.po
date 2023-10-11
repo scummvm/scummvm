@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-11 19:33+0000\n"
+"POT-Creation-Date: 2023-10-11 21:14+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -482,9 +482,9 @@ msgstr ""
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:274 engines/scumm/help.cpp:127
-#: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
+#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:193
+#: engines/scumm/help.cpp:211
 msgid "Close"
 msgstr "Pechar"
 
@@ -564,9 +564,9 @@ msgstr "Idioma do xogo. Non converterá a versión galega do xogo en inglesa"
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
+#: backends/platform/ios7/ios7_options.mm:130
 #: backends/platform/ios7/ios7_options.mm:131
-#: backends/platform/ios7/ios7_options.mm:132
-#: backends/platform/ios7/ios7_options.mm:157 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -4529,19 +4529,19 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/options.cpp:131
-#: backends/platform/ios7/ios7_options.mm:164
+#: backends/platform/ios7/ios7_options.mm:163
 msgid "Show On-screen control"
 msgstr "Mostrar controis na pantalla"
 
 #: backends/platform/android/options.cpp:132
-#: backends/platform/ios7/ios7_options.mm:111
+#: backends/platform/ios7/ios7_options.mm:110
 msgid "Choose the preferred touch mode:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:116
-#: backends/platform/ios7/ios7_options.mm:143
+#: backends/platform/ios7/ios7_options.mm:115
+#: backends/platform/ios7/ios7_options.mm:142
 #, fuzzy
 msgid "In menus"
 msgstr "Activar Venus"
@@ -4549,9 +4549,9 @@ msgstr "Activar Venus"
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
 #: backends/platform/android/options.cpp:155
-#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:117
+#: backends/platform/ios7/ios7_options.mm:134
 #: backends/platform/ios7/ios7_options.mm:135
-#: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 #, fuzzy
 msgid "Touchpad emulation"
@@ -4560,9 +4560,9 @@ msgstr "Emulador de MT-32"
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
-#: backends/platform/ios7/ios7_options.mm:119
+#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:137
 #: backends/platform/ios7/ios7_options.mm:138
-#: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_osys_events.cpp:346
 #, fuzzy
 msgid "Direct mouse"
@@ -4576,45 +4576,45 @@ msgid "Gamepad emulation"
 msgstr "Emulador de MT-32"
 
 #: backends/platform/android/options.cpp:144
-#: backends/platform/ios7/ios7_options.mm:125
+#: backends/platform/ios7/ios7_options.mm:124
 msgid "In 2D games"
 msgstr ""
 
 #: backends/platform/android/options.cpp:146
-#: backends/platform/ios7/ios7_options.mm:127
+#: backends/platform/ios7/ios7_options.mm:126
 msgid "In 3D games"
 msgstr ""
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:141
+#: backends/platform/ios7/ios7_options.mm:140
 msgid "Select the orientation:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:145
-#: backends/platform/ios7/ios7_options.mm:160
+#: backends/platform/ios7/ios7_options.mm:144
+#: backends/platform/ios7/ios7_options.mm:159
 #, fuzzy
 msgid "Automatic"
 msgstr "Autogardado:"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:146
-#: backends/platform/ios7/ios7_options.mm:161
+#: backends/platform/ios7/ios7_options.mm:145
+#: backends/platform/ios7/ios7_options.mm:160
 msgid "Portrait"
 msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:147
-#: backends/platform/ios7/ios7_options.mm:162
+#: backends/platform/ios7/ios7_options.mm:146
+#: backends/platform/ios7/ios7_options.mm:161
 #, fuzzy
 msgid "Landscape"
 msgstr "ESC"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:153
+#: backends/platform/ios7/ios7_options.mm:152
 #, fuzzy
 msgid "In games"
 msgstr "Gardar partida:"
@@ -4641,69 +4641,32 @@ msgstr "Escala por hardware (rápida, mais baixa calidade)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Escala por software (boa calidade, mais lenta)"
 
-#: backends/platform/ios7/ios7_options.mm:97
+#: backends/platform/ios7/ios7_options.mm:96
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "Mostrar controis na pantalla"
 
+#: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#: backends/platform/ios7/ios7_options.mm:99
 #, fuzzy
 msgid "Gamepad opacity"
 msgstr "Emulador de MT-32"
 
-#: backends/platform/ios7/ios7_options.mm:103
+#: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:106
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:108
+#: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
-msgstr ""
-
-#: backends/platform/ios7/ios7_options.mm:167
-#, fuzzy
-msgid "Controls Help"
-msgstr "Control"
-
-#: backends/platform/ios7/ios7_options.mm:249
-msgid ""
-"Gestures and controls:\n"
-"\n"
-"One finger tap: Left mouse click\n"
-"Two finger tap: Right mouse click\n"
-"Two finger double tap: ESC\n"
-"Two finger swipe (left to right): Toggles between touch direct mode and "
-"touchpad mode\n"
-"Two finger swipe (right to left): Shows/hides on-screen controls\n"
-"Two finger swipe (top to bottom): Global Main Menu\n"
-"Three finger swipe: Arrow keys\n"
-"Pinch gesture: Enables/disables keyboard\n"
-"Keyboard spacebar: Pause"
-msgstr ""
-
-#: backends/platform/ios7/ios7_options.mm:261
-msgid ""
-"Using the Apple TV remote control:\n"
-"\n"
-"Press Touch area: Left mouse click\n"
-"Press Play/Pause button: Right mouse click\n"
-"Press Back/Menu button in game: Global Main menu\n"
-"Press Back/Menu button in launcher: Apple TV Home\n"
-"Press and hold Play/Pause button: Show keyboard with extra keys\n"
-"Touch (not press) on top of Touch area: Up arrow key\n"
-"Touch (not press) on left of Touch area: Left arrow key\n"
-"Touch (not press) on right of Touch area: Right arrow key\n"
-"Touch (not press) on bottom of Touch area: Down arrow key\n"
-"Keyboard spacebar: Pause"
 msgstr ""
 
 #: backends/platform/maemo/maemo.cpp:157
@@ -10845,6 +10808,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Controls Help"
+#~ msgstr "Control"
 
 #, fuzzy
 #~| msgid "Mouse-click-and-drag mode enabled."
