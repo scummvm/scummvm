@@ -89,12 +89,12 @@ void cCredits::OnPostSceneDraw() {
 void cCredits::OnDraw() {
 	float fSize[2] = {17, 19};
 	float fY = mfYPos;
-	for (size_t i = 0; i < mvTextRows.size(); ++i) {
+	for (const auto &textRow : mvTextRows) {
 		int lSize = 0;
-		if (!mvTextRows[i].empty() && mvTextRows[i][0] == '*') {
+		if (!textRow.empty() && textRow[0] == '*') {
 			lSize = 1;
 		}
-		if (mvTextRows[i].size() <= 1) {
+		if (textRow.size() <= 1) {
 			fY += fSize[lSize];
 		}
 
@@ -108,10 +108,10 @@ void cCredits::OnDraw() {
 
 			if (lSize == 0)
 				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(1, fAlpha), eFontAlign_Center,
-							 mvTextRows[i]);
+							 textRow);
 			else
 				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(0.8f, fAlpha), eFontAlign_Center,
-							 mvTextRows[i].substr(1));
+							 textRow.substr(1));
 		}
 		fY += fSize[lSize];
 	}
@@ -126,11 +126,11 @@ void cCredits::Update(float afTimeStep) {
 	// Check if the credits are over.
 	float fSize[2] = {17, 19};
 	float fY = mfYPos;
-	for (size_t i = 0; i < mvTextRows.size(); ++i) {
+	for (const auto &textRow : mvTextRows) {
 		int lSize = 0;
-		if (!mvTextRows[i].empty() && mvTextRows[i][0] == '*')
+		if (!textRow.empty() && textRow[0] == '*')
 			lSize = 1;
-		if (mvTextRows[i].size() <= 1)
+		if (textRow.size() <= 1)
 			fY += fSize[lSize];
 		fY += fSize[lSize];
 	}
