@@ -48,6 +48,9 @@ namespace Ultima8 {
 
 typedef Std::list<Item *> item_list;
 
+const int INT_MAX_VALUE = 0x7fffffff;
+const int INT_MIN_VALUE = -INT_MAX_VALUE - 1;
+
 CurrentMap::CurrentMap() : _currentMap(0), _eggHatcher(0),
 	  _fastXMin(-1), _fastYMin(-1), _fastXMax(-1), _fastYMax(-1) {
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
@@ -742,8 +745,8 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 	                         ShapeInfo::SI_ROOF);
 	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
-	int32 floorz = INT32_MIN;
-	int32 roofz = INT32_MAX;
+	int32 floorz = INT_MIN_VALUE;
+	int32 roofz = INT_MAX_VALUE;
 
 	int minx = ((target._x - target._xd) / _mapChunkSize) - 1;
 	int maxx = (target._x / _mapChunkSize) + 1;
