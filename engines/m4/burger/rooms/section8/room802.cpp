@@ -339,7 +339,7 @@ void Room802::daemon() {
 				_series3.show("802BF01", 0x100, 0, 17, 1);
 				break;
 
-			case 6:
+			case 6 :
 				_flag1 = true;
 				_G(flumix_should) = getFlumixShould();
 				_series3.show("802BF03", 0x100, 0, 17, 30, 1);
@@ -364,7 +364,13 @@ void Room802::daemon() {
 				_flag1 = true;
 				_G(flumix_should) = 20;
 				_G(wilbur_should) = 16;
-				_series3.play("802BF01", 0x100, 4, -1, 6);
+				_series3.play("802BF01", 0x100, 4, -1, 6, -1);
+				digi_play(conv_sound_to_play(), 1, 255, 17);
+				break;
+
+			case 19:
+				_flag1 = true;
+				_series3.show("802BF02", 0x100, 0, -1, -1, 5);
 				break;
 
 			case 20:
@@ -373,11 +379,6 @@ void Room802::daemon() {
 				_flag1 = true;
 				_series3.show("802BF01", 0x100, 0, 17, 30, 0);
 				conv_resume_curr();
-				break;
-
-			case 21:
-				_flag1 = true;
-				_series3.show("802BF02", 0x100, 0, -1, -1, 5);
 				break;
 
 			default:
