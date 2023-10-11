@@ -213,7 +213,7 @@ private:
 			ScrollBar(int x, int y, int width, int height);
 
 			void setInventoryParameters(int invCount, int invOffset);
-			void moveInvOffset(int offset);
+			void scroll(ScrollDirection dir);
 			int getHandlePosition();
 
 			void reset();

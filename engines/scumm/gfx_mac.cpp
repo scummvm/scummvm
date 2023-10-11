@@ -717,7 +717,7 @@ bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
 		// hold down the mouse button to repeat.
 
 		if (b->handleEvent(event)) {
-			_scrollBar->moveInvOffset((b->_direction == kScrollUp) ? -1 : 1);
+			_scrollBar->scroll(b->_direction);
 			return true;
 		}
 	}
@@ -741,7 +741,7 @@ bool MacIndy3Gui::Inventory::handleMouseHeld(Common::Point &pressed, Common::Poi
 		ScrollButton *b = _scrollButtons[i];
 
 		if (b->handleMouseHeld(pressed, held)) {
-			_scrollBar->moveInvOffset((b->_direction == kScrollUp) ? -1 : 1);
+			_scrollBar->scroll(b->_direction);
 			return true;
 		}
 	}
@@ -1020,9 +1020,14 @@ void MacIndy3Gui::Inventory::ScrollBar::setInventoryParameters(int invCount, int
 	_invOffset = invOffset;
 }
 
-void MacIndy3Gui::Inventory::ScrollBar::moveInvOffset(int offset) {
-	int newOffset = _invOffset + offset;
+void MacIndy3Gui::Inventory::ScrollBar::scroll(ScrollDirection dir) {
+	int newOffset = _invOffset;
 	int maxOffset = _invCount - ARRAYSIZE(_slots);
+
+	if (dir == kScrollUp)
+		newOffset--;
+	else
+		newOffset++;
 
 	if (newOffset < 0)
 		newOffset = 0;
