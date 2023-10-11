@@ -34,7 +34,6 @@
 #include <TargetConditionals.h>
 
 enum {
-	kHelpCmd = 'Help',
 	kGamepadControllerOpacityChanged = 'gcoc',
 };
 
@@ -164,8 +163,6 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.OnscreenControl", _("Show On-screen control"));
 #endif
 
-	new GUI::ButtonWidget(widgetsBoss(), "IOS7OptionsDialog.ControlsHelp", _("Controls Help"), Common::U32String(), kHelpCmd);
-
 	// setEnabled is normally only called from the EditGameDialog, but some options (GamepadController)
 	// should be disabled in all domains if system is running a lower version of iOS than 15.0.
 	setEnabled(_enabled);
@@ -195,9 +192,7 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
 	            .addWidget("ClickAndDragMode", "Checkbox")
-	            .addWidget("KeyboardFunctionBar", "Checkbox")
-	            .addPadding(0, 0, 0, 0)
-	            .addWidget("ControlsHelp", "WideButton");
+	            .addWidget("KeyboardFunctionBar", "Checkbox");
 
 #if TARGET_OS_IOS
 	layouts.addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
@@ -243,39 +238,6 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 void IOS7OptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kHelpCmd: {
-		GUI::MessageDialog help(
-#if TARGET_OS_IOS
-			_("Gestures and controls:\n"
-			  "\n"
-			  "One finger tap: Left mouse click\n"
-			  "Two finger tap: Right mouse click\n"
-			  "Two finger double tap: ESC\n"
-			  "Two finger swipe (left to right): Toggles between touch direct mode and touchpad mode\n"
-			  "Two finger swipe (right to left): Shows/hides on-screen controls\n"
-			  "Two finger swipe (top to bottom): Global Main Menu\n"
-			  "Three finger swipe: Arrow keys\n"
-			  "Pinch gesture: Enables/disables keyboard\n"
-			  "Keyboard spacebar: Pause"),
-#else // TVOS
-			_("Using the Apple TV remote control:\n"
-			  "\n"
-			  "Press Touch area: Left mouse click\n"
-			  "Press Play/Pause button: Right mouse click\n"
-			  "Press Back/Menu button in game: Global Main menu\n"
-			  "Press Back/Menu button in launcher: Apple TV Home\n"
-			  "Press and hold Play/Pause button: Show keyboard with extra keys\n"
-			  "Touch (not press) on top of Touch area: Up arrow key\n"
-			  "Touch (not press) on left of Touch area: Left arrow key\n"
-			  "Touch (not press) on right of Touch area: Right arrow key\n"
-			  "Touch (not press) on bottom of Touch area: Down arrow key\n"
-			  "Keyboard spacebar: Pause"),
-#endif
-			Common::U32String(_("Close")), Common::U32String(), Graphics::kTextAlignLeft);
-
-		help.runModal();
-		break;
-	}
 	case kGamepadControllerOpacityChanged: {
 		const int newValue = _gamepadControllerOpacitySlider->getValue();
 		_gamepadControllerOpacityLabel->setValue(newValue);
