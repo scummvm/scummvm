@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-10 21:24+0000\n"
+"POT-Creation-Date: 2023-10-11 04:28+0000\n"
 "PO-Revision-Date: 2023-10-10 20:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -470,7 +470,7 @@ msgstr "Téléchargement terminé, %d packs téléchargés, %s %S"
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:274 engines/scumm/help.cpp:127
+#: backends/platform/ios7/ios7_options.mm:271 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 msgid "Close"
@@ -556,9 +556,9 @@ msgstr ""
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:132
-#: backends/platform/ios7/ios7_options.mm:133
-#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:130
+#: backends/platform/ios7/ios7_options.mm:131
+#: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<défaut>"
 
@@ -3222,7 +3222,7 @@ msgstr ""
 "ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
 #: engines/engine.cpp:636 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:293 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:291 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Sauvegarde auto"
@@ -4586,37 +4586,39 @@ msgstr ""
 "other_platforms/android.html) pour plus d'informations.\n"
 
 #: backends/platform/android/options.cpp:131
-#: backends/platform/ios7/ios7_options.mm:165
+#: backends/platform/ios7/ios7_options.mm:163
 msgid "Show On-screen control"
 msgstr "Afficher les contrôles sur l'écran"
 
 #: backends/platform/android/options.cpp:132
-#: backends/platform/ios7/ios7_options.mm:115
+#: backends/platform/ios7/ios7_options.mm:113
 msgid "Choose the preferred touch mode:"
 msgstr "Choix du mode tactile préféré :"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:117
-#: backends/platform/ios7/ios7_options.mm:144
+#: backends/platform/ios7/ios7_options.mm:115
+#: backends/platform/ios7/ios7_options.mm:142
 msgid "In menus"
 msgstr "Dans les menus"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
 #: backends/platform/android/options.cpp:155
-#: backends/platform/ios7/ios7_options.mm:119
-#: backends/platform/ios7/ios7_options.mm:136
-#: backends/platform/ios7/ios7_options.mm:137
+#: backends/platform/ios7/ios7_options.mm:117
+#: backends/platform/ios7/ios7_options.mm:134
+#: backends/platform/ios7/ios7_options.mm:135
+#: backends/platform/ios7/ios7_osys_events.cpp:344
 msgid "Touchpad emulation"
 msgstr "Emulation d'un touchpad"
 
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
-#: backends/platform/ios7/ios7_options.mm:120
-#: backends/platform/ios7/ios7_options.mm:139
-#: backends/platform/ios7/ios7_options.mm:140
+#: backends/platform/ios7/ios7_options.mm:118
+#: backends/platform/ios7/ios7_options.mm:137
+#: backends/platform/ios7/ios7_options.mm:138
+#: backends/platform/ios7/ios7_osys_events.cpp:346
 msgid "Direct mouse"
 msgstr "Souris directe"
 
@@ -4627,43 +4629,43 @@ msgid "Gamepad emulation"
 msgstr "Emulation d'une manette"
 
 #: backends/platform/android/options.cpp:144
-#: backends/platform/ios7/ios7_options.mm:126
+#: backends/platform/ios7/ios7_options.mm:124
 msgid "In 2D games"
 msgstr "Dans les jeux 2D"
 
 #: backends/platform/android/options.cpp:146
-#: backends/platform/ios7/ios7_options.mm:128
+#: backends/platform/ios7/ios7_options.mm:126
 msgid "In 3D games"
 msgstr "Dans les jeux 3D"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:142
+#: backends/platform/ios7/ios7_options.mm:140
 msgid "Select the orientation:"
 msgstr "Choix de l'orientation :"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:146
-#: backends/platform/ios7/ios7_options.mm:161
+#: backends/platform/ios7/ios7_options.mm:144
+#: backends/platform/ios7/ios7_options.mm:159
 msgid "Automatic"
 msgstr "Automatique"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:147
-#: backends/platform/ios7/ios7_options.mm:162
+#: backends/platform/ios7/ios7_options.mm:145
+#: backends/platform/ios7/ios7_options.mm:160
 msgid "Portrait"
 msgstr "Portrait"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:148
-#: backends/platform/ios7/ios7_options.mm:163
+#: backends/platform/ios7/ios7_options.mm:146
+#: backends/platform/ios7/ios7_options.mm:161
 msgid "Landscape"
 msgstr "Paysage"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:154
+#: backends/platform/ios7/ios7_options.mm:152
 msgid "In games"
 msgstr "Dans les jeux"
 
@@ -4688,47 +4690,57 @@ msgstr "Mise à l'échelle matérielle (rapide mais qualité faible)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Mise à l'échelle logicielle (bonne qualité mais plus lent)"
 
-#: backends/platform/ios7/ios7_options.mm:100
+#: backends/platform/ios7/ios7_options.mm:99
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "Afficher la manette de jeu (iOS 15 et supérieur)"
 
+#: backends/platform/ios7/ios7_options.mm:100
 #: backends/platform/ios7/ios7_options.mm:101
-#: backends/platform/ios7/ios7_options.mm:102
 msgid "Gamepad opacity"
 msgstr "Opacité de la manette"
 
-#: backends/platform/ios7/ios7_options.mm:106
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Directional button:"
 msgstr "Bouton de direction :"
 
-#: backends/platform/ios7/ios7_options.mm:108
+#: backends/platform/ios7/ios7_options.mm:107
 msgid "Thumbstick"
 msgstr "Stick analogique"
 
-#: backends/platform/ios7/ios7_options.mm:109
+#: backends/platform/ios7/ios7_options.mm:108
 msgid "Dpad"
 msgstr "Croix directionnelle"
 
-#: backends/platform/ios7/ios7_options.mm:111
-msgid "Mouse-click-and-drag mode"
-msgstr "Mode clic-souris-et-déplacer"
-
-#: backends/platform/ios7/ios7_options.mm:112
+#: backends/platform/ios7/ios7_options.mm:110
 msgid "Show keyboard function bar"
 msgstr "Afficher la barre de fonctions du clavier"
 
-#: backends/platform/ios7/ios7_options.mm:168
+#: backends/platform/ios7/ios7_options.mm:166
 msgid "Controls Help"
 msgstr "Aide Contrôles"
 
-#: backends/platform/ios7/ios7_options.mm:248
+#: backends/platform/ios7/ios7_options.mm:246
+#, fuzzy
+#| msgid ""
+#| "Gestures and controls:\n"
+#| "\n"
+#| "One finger tap: Left mouse click\n"
+#| "Two finger tap: Right mouse click\n"
+#| "Two finger double tap: ESC\n"
+#| "Two finger swipe (bottom to top): Toggles Click and drag mode\n"
+#| "Two finger swipe (left to right): Toggles between touch direct mode and "
+#| "touchpad mode\n"
+#| "Two finger swipe (right to left): Shows/hides on-screen controls\n"
+#| "Two finger swipe (top to bottom): Global Main Menu\n"
+#| "Three finger swipe: Arrow keys\n"
+#| "Pinch gesture: Enables/disables keyboard\n"
+#| "Keyboard spacebar: Pause"
 msgid ""
 "Gestures and controls:\n"
 "\n"
 "One finger tap: Left mouse click\n"
 "Two finger tap: Right mouse click\n"
 "Two finger double tap: ESC\n"
-"Two finger swipe (bottom to top): Toggles Click and drag mode\n"
 "Two finger swipe (left to right): Toggles between touch direct mode and "
 "touchpad mode\n"
 "Two finger swipe (right to left): Shows/hides on-screen controls\n"
@@ -4753,7 +4765,7 @@ msgstr ""
 "Geste de pincement : Active/désactive le clavier\n"
 "Barre Espace du clavier : Pause"
 
-#: backends/platform/ios7/ios7_options.mm:261
+#: backends/platform/ios7/ios7_options.mm:258
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
@@ -4781,22 +4793,6 @@ msgstr ""
 "Toucher (sans appui) à droite de la zone tactile : Touche Flèche droite\n"
 "Toucher (sans appui) en bas de la zone tactile : Touche Flèche bas\n"
 "Barre Espace du clavier : Pause"
-
-#: backends/platform/ios7/ios7_osys_events.cpp:442
-msgid "Mouse-click-and-drag mode enabled."
-msgstr "Mode clic-souris-et-déplacer activé."
-
-#: backends/platform/ios7/ios7_osys_events.cpp:444
-msgid "Mouse-click-and-drag mode disabled."
-msgstr "Mode clic-souris-et-déplacer désactivé."
-
-#: backends/platform/ios7/ios7_osys_events.cpp:468
-msgid "Touchpad mode enabled."
-msgstr "Mode touchpad activé."
-
-#: backends/platform/ios7/ios7_osys_events.cpp:470
-msgid "Touchpad mode disabled."
-msgstr "Mode touchpad désactivé."
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -11078,6 +11074,21 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Mouse-click-and-drag mode"
+#~ msgstr "Mode clic-souris-et-déplacer"
+
+#~ msgid "Mouse-click-and-drag mode enabled."
+#~ msgstr "Mode clic-souris-et-déplacer activé."
+
+#~ msgid "Mouse-click-and-drag mode disabled."
+#~ msgstr "Mode clic-souris-et-déplacer désactivé."
+
+#~ msgid "Touchpad mode enabled."
+#~ msgstr "Mode touchpad activé."
+
+#~ msgid "Touchpad mode disabled."
+#~ msgstr "Mode touchpad désactivé."
 
 #~ msgid "Control opacity"
 #~ msgstr "Opacité des contrôles"
