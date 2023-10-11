@@ -153,7 +153,7 @@ public:
 	bool setTextInClipboard(const Common::U32String &text) override;
 
 	bool openUrl(const Common::String &url) override;
-
+	const char * const *buildHelpDialogData() override;
 	Common::String getSystemLanguage() const override;
 
 	bool isConnectionLimited() override;
