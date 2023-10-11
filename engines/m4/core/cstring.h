@@ -22,9 +22,32 @@
 #ifndef M4_CORE_CSTRING_H
 #define M4_CORE_CSTRING_H
 
+#include "common/str-array.h"
 #include "m4/m4_types.h"
 
 namespace M4 {
+
+class StringArray : public Common::StringArray {
+public:
+	StringArray() : Common::StringArray() {}
+
+	int indexOf(const Common::String &str) const {
+		for (uint i = 0; i < size(); ++i) {
+			if ((*this)[i] == str)
+				return i;
+		}
+		return -1;
+	}
+
+	bool contains(const Common::String &str) const {
+		return indexOf(str) != -1;
+	}
+	void remove(const Common::String &str) {
+		int idx = indexOf(str);
+		if (idx != -1)
+			remove_at(idx);
+	}
+};
 
 #define STR_PARSE_BUFFER_SIZE 255
 
