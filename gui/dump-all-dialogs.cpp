@@ -58,7 +58,9 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	// Update resolution
 	ConfMan.setInt("last_window_width", res, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("last_window_height", 600, Common::ConfigManager::kApplicationDomain);
-	g_system->initSize(res, 600);
+	g_system->beginGFXTransaction();
+		g_system->initSize(res, 600);
+	g_system->endGFXTransaction();
 
 	Graphics::Surface surf;
 	surf.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
@@ -119,7 +121,10 @@ void dumpAllDialogs(const Common::String &message) {
 #endif
 	ConfMan.setInt("last_window_width", original_window_width, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("last_window_height", original_window_height, Common::ConfigManager::kApplicationDomain);
-	g_system->initSize(original_window_width, original_window_height);
+
+	g_system->beginGFXTransaction();
+		g_system->initSize(original_window_width, original_window_height);
+	g_system->endGFXTransaction();
 }
 
 } // End of namespace GUI
