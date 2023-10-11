@@ -94,8 +94,6 @@ private:
 IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		OptionsContainerWidget(boss, name, "IOS7OptionsDialog", false, domain), _enabled(true) {
 
-	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
-
 	_gamepadControllerCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadController", _("Show Gamepad Controller (iOS 15 and later)"));
 	_gamepadControllerOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacity", _("Gamepad opacity"));
 	_gamepadControllerOpacitySlider = new GUI::SliderWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacitySlider", _("Gamepad opacity"), kGamepadControllerOpacityChanged);
@@ -111,6 +109,9 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 
 #if TARGET_OS_IOS
 	_preferredTouchModeDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.PreferredTouchModeText", _("Choose the preferred touch mode:"));
+
+	const bool inAppDomain = domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
+
 	if (inAppDomain) {
 		_preferredTouchModeMenusDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.TouchModeMenusText", _("In menus"));
 		_preferredTouchModeMenusPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.TouchModeMenus");
@@ -174,7 +175,6 @@ IOS7OptionsWidget::~IOS7OptionsWidget() {
 }
 
 void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
-	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
@@ -201,6 +201,9 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 #if TARGET_OS_IOS
 	layouts.addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
+
+	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
+
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 			.addPadding(0, 0, 0, 0)
@@ -408,7 +411,9 @@ void IOS7OptionsWidget::load() {
 }
 
 bool IOS7OptionsWidget::save() {
+#if TARGET_OS_IOS
 	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
+#endif
 
 	if (_enabled) {
 		ConfMan.setBool("gamepad_controller", _gamepadControllerCheckbox->getState(), _domain);
@@ -476,7 +481,6 @@ bool IOS7OptionsWidget::hasKeys() {
 }
 
 void IOS7OptionsWidget::setEnabled(bool e) {
-	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
 	_enabled = e;
 
 #if TARGET_OS_IOS
@@ -510,6 +514,8 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	_keyboardFnBarCheckbox->setEnabled(e);
 
 #if TARGET_OS_IOS
+	const bool inAppDomain = _domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain);
+
 	if (inAppDomain) {
 		_preferredTouchModeMenusDesc->setEnabled(e);
 		_preferredTouchModeMenusPopUp->setEnabled(e);

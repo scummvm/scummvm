@@ -456,9 +456,9 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	// available when running on iOS 11+ if it has been compiled on iOS 11+
 #ifdef __IPHONE_11_0
 	if ( @available(iOS 11, tvOS 11, *) ) {
-		CGRect screenSize = [[UIScreen mainScreen] bounds];
 		CGRect newFrame = self.frame;
 #if TARGET_OS_IOS
+		CGRect screenSize = [[UIScreen mainScreen] bounds];
 		UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
 		UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
 
@@ -611,8 +611,10 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+#if TARGET_OS_IOS
 	[oneFingerTapGesture setState:UIGestureRecognizerStateCancelled];
 	[twoFingerTapGesture setState:UIGestureRecognizerStateCancelled];
+#endif
 	for (GameController *c : _controllers) {
 		if ([c isKindOfClass:TouchController.class]) {
 			[(TouchController *)c touchesMoved:touches withEvent:event];
