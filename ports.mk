@@ -294,6 +294,7 @@ endif
 	$(STRIP) scummvm
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
+	cp $(srcdir)/dists/ios7/ios-help.zip $(bundle_name)/ios-help.zip
 	cp $(srcdir)/dists/ios7/Images.xcassets/AppIcon.appiconset/icon4-29@2x.png $(bundle_name)/AppIcon29x29@2x.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/AppIcon.appiconset/icon4-29@2x.png $(bundle_name)/AppIcon29x29@2x~ipad.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/AppIcon.appiconset/icon4-29@3x.png $(bundle_name)/AppIcon29x29@3x.png
