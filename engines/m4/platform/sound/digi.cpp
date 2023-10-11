@@ -60,11 +60,11 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 	MemHandle workHandle;
 	int32 assetSize;
 
-	Common::String fileName = expand_name_2_RAW(name, roomNum);
-	if (_sounds.contains(fileName))
+	if (_sounds.contains(name))
 		return true;
 
 	// Load in the sound
+	Common::String fileName = expand_name_2_RAW(name, roomNum);
 	if ((workHandle = rget(fileName, &assetSize)) == nullptr)
 		error("Could not find sound - %s", fileName.c_str());
 
@@ -75,7 +75,7 @@ bool Digi::preload(const Common::String &name, int roomNum) {
 
 	HUnLock(workHandle);
 
-	_sounds[name] = DigiEntry(pDest, assetSize);
+	_sounds[name] = DigiEntry(fileName, pDest, assetSize);
 	return false;
 }
 
@@ -87,6 +87,13 @@ void Digi::unload(const Common::String &name) {
 				stop(channel);
 		}
 
+		// Remove the underlying resource
+		if (!_sounds[name]._filename.empty()) {
+			rtoss(_sounds[name]._filename);
+			_sounds[name]._filename.clear();
+		}
+
+		// Delete the sound entry
 		delete _sounds[name]._data;
 		_sounds.erase(name);
 	}
