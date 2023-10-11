@@ -15,43 +15,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/ },.
  *
  */
 
-#ifndef M4_RIDDLE_ROOMS_SECTION_H
-#define M4_RIDDLE_ROOMS_SECTION_H
-
-#include "m4/core/rooms.h"
+#include "m4/riddle/rooms/section6/room643.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Section : public M4::Section {
-private:
-	void init_series_players();
+void Room643::init() {
+}
 
-public:
-	Section() : M4::Section() {}
-	~Section() override {}
-
-	void global_room_init() override;
-	void tick() override;
-	void daemon() override;
-};
-
-/**
- * Dummy section 1, since Riddle doesn't have any rooms in it
- */
-class Section1 : public Section {
-public:
-	Section1() : Section() {}
-	~Section1() override {}
-};
+void Room643::daemon() {
+}
 
 } // namespace Rooms
 } // namespace Riddle
 } // namespace M4
-
-#endif
