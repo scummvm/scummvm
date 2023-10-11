@@ -1197,15 +1197,15 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_widgets[124] = new Button( 67, 352, 151, 18); // Converse 5
 	_widgets[125] = new Button(423, 352, 151, 18); // Converse 6
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
-		i->_value->setVerbid(i->_key);
+	for (auto &it: _widgets)
+		it._value->setVerbid(it._key);
 
 	_dirtyRects.clear();
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
-		delete i->_value;
+	for (auto &it: _widgets)
+		delete it._value;
 }
 
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
@@ -1241,8 +1241,8 @@ bool MacIndy3Gui::isVerbGuiActive() const {
 void MacIndy3Gui::resetAfterLoad() {
 	_visible = false;
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
-		i->_value->reset();
+	for (auto &it: _widgets)
+		it._value->reset();
 
 	// In the DOS version, verb ID 102-106 were used for the visible
 	// inventory items, and 107-108 for inventory arrow buttons. In the
@@ -1276,8 +1276,8 @@ bool MacIndy3Gui::updateVerbs(int delta) {
 	// Tentatively mark the verb widgets for removal. Any widget that wants
 	// to stay has to say so.
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		VerbWidget *w = i->_value;
+	for (auto &it: _widgets) {
+		VerbWidget *w = it._value;
 
 		if (delta > 0)
 			w->updateTimer(delta);
@@ -1320,9 +1320,10 @@ void MacIndy3Gui::updateMouseHeldTimer(int delta) {
 
 			_timer = REPEAT_TIMER_JIFFIES;
 
-			for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
-				if (i->_value->handleMouseHeld(_leftButtonPressed, _leftButtonHeld))
+			for (auto &it: _widgets) {
+				if (it._value->handleMouseHeld(_leftButtonPressed, _leftButtonHeld))
 					break;
+			}
 		}
 	}
 }
@@ -1330,8 +1331,8 @@ void MacIndy3Gui::updateMouseHeldTimer(int delta) {
 void MacIndy3Gui::drawVerbs() {
 	// The possible verbs overlap each other. Remove the dead ones first, then draw the live ones.
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		VerbWidget *w = i->_value;
+	for (auto &it: _widgets) {
+		VerbWidget *w = it._value;
 
 		if (w->isDying() && w->isVisible()) {
 			w->undraw();
@@ -1339,8 +1340,8 @@ void MacIndy3Gui::drawVerbs() {
 		}
 	}
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		VerbWidget *w = i->_value;
+	for (auto &it: _widgets) {
+		VerbWidget *w = it._value;
 
 		if (w->hasVerb())
 			w->draw();
@@ -1376,10 +1377,12 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 	// responds to an event, and marks itself as wanting to be redraw,
 	// we do that redrawing immediately, not on the next update.
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i) {
-		if (i->_value->handleEvent(event)) {
-			if (i->_value->getRedraw()) {
-				i->_value->draw();
+	for (auto &it: _widgets) {
+		Widget *w = it._value;
+
+		if (w->handleEvent(event)) {
+			if (w->getRedraw()) {
+				w->draw();
 				copyDirtyRectsToScreen();
 			}
 			break;
@@ -1423,8 +1426,8 @@ void MacIndy3Gui::hide() {
 	_leftButtonIsPressed = false;
 	_timer = 0;
 
-	for (Common::HashMap<int, VerbWidget *>::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
-		i->_value->reset();
+	for (auto &it: _widgets)
+		it._value->reset();
 
 	if (isVerbGuiAllowed()) {
 		_surface->fillRect(Common::Rect(0, 288, 640, 400), kBlack);
