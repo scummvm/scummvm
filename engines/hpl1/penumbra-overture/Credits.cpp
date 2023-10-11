@@ -91,7 +91,7 @@ void cCredits::OnDraw() {
 	float fY = mfYPos;
 	for (size_t i = 0; i < mvTextRows.size(); ++i) {
 		int lSize = 0;
-		if (mvTextRows[i][0] == '*') {
+		if (!mvTextRows[i].empty() && mvTextRows[i][0] == '*') {
 			lSize = 1;
 		}
 		if (mvTextRows[i].size() <= 1) {
@@ -128,7 +128,7 @@ void cCredits::Update(float afTimeStep) {
 	float fY = mfYPos;
 	for (size_t i = 0; i < mvTextRows.size(); ++i) {
 		int lSize = 0;
-		if (mvTextRows[i][0] == '*')
+		if (!mvTextRows[i].empty() && mvTextRows[i][0] == '*')
 			lSize = 1;
 		if (mvTextRows[i].size() <= 1)
 			fY += fSize[lSize];
