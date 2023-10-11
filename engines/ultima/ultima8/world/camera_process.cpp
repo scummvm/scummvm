@@ -289,9 +289,10 @@ uint16 CameraProcess::findRoof(int32 factor) {
 
 	int32 dx, dy, dz;
 	avatar->getFootpadWorld(dx, dy, dz);
-	uint16 roofid;
-	World::get_instance()->getCurrentMap()->isValidPosition(x, y, z - 10, dx / 2, dy / 2, dz / 2, 0, 1, 0, &roofid);
-	return roofid;
+
+	Box target(x, y, z - 10, dx / 2, dy / 2, dz / 2);
+	PositionInfo info = World::get_instance()->getCurrentMap()->getPositionInfo(target, target, 0, 1);
+	return info.roof ? info.roof->getObjId() : 0;
 }
 
 void CameraProcess::saveData(Common::WriteStream *ws) {

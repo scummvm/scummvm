@@ -1444,7 +1444,7 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 				moveToEtherealVoid();
 				CurrentMap *cm = world->getCurrentMap();
 				/* 0x576 - flaming guy running around */
-				bool can_create_koresh = cm->isValidPosition(_x, _y, _z, 0x576, _objId);
+				bool can_create_koresh = cm->getPositionInfo(_x, _y, _z, 0x576, _objId).valid;
 				returnFromEtherealVoid();
 
 				if (can_create_koresh) {

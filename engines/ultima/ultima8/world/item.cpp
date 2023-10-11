@@ -653,10 +653,13 @@ bool Item::isPartlyOnScreen() const {
 
 bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	const Item *support;
-	bool valid = cm->isValidPosition(x, y, z, getShape(), getObjId(),
-	                                 &support, 0);
-	return valid && (!needsupport || support);
+	int32 xd, yd, zd;
+	getFootpadWorld(xd, yd, zd);
+	Box target(x, y, z, xd, yd, zd);
+	Box empty;
+
+	PositionInfo info = cm->getPositionInfo(target, empty, 0, getObjId());
+	return info.valid && (!needsupport || info.supported);
 }
 
 Direction Item::getDirToItemCentre(const Item &item2) const {
@@ -1210,13 +1213,12 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
 	int damage = firetypedat->getRandomDamage();
 
-	const Item *blocker = nullptr;
 	// CHECKME: the original doesn't exclude the source like this,
 	// but it seems obvious we have to or NPCs shoot themselves?
-	bool isvalid = currentmap->isValidPosition(ix, iy, iz, BULLET_SPLASH_SHAPE, _objId, nullptr, nullptr, &blocker);
+	PositionInfo info = currentmap->getPositionInfo(ix, iy, iz, BULLET_SPLASH_SHAPE, _objId);
 
-	if (!isvalid && blocker) {
-		Item *block = getItem(blocker->getObjId());
+	if (!info.valid && info.blocker) {
+		Item *block = getItem(info.blocker->getObjId());
 		Point3 blockpt;
 		block->getLocation(blockpt);
 		Direction damagedir = Direction_GetWorldDir(blockpt.y - iy, blockpt.x - ix, dirmode_8dirs);
@@ -1433,11 +1435,9 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 		int32 cx = x + (i == 0 ? xoff : xoff2);
 		int32 cy = y + (i == 0 ? yoff : yoff2);
 		int32 cz = z + (i == 0 ? zoff : zoff2);
-		const Item *blocker = nullptr;
-		bool valid = cm->isValidPosition(cx, cy, cz, BULLET_SPLASH_SHAPE,
-										 getObjId(), nullptr, nullptr, &blocker);
-		if (!valid) {
-			if (blocker->getObjId() == other->getObjId())
+		PositionInfo info = cm->getPositionInfo(cx, cy, cz, BULLET_SPLASH_SHAPE, getObjId());
+		if (!info.valid && info.blocker) {
+			if (info.blocker->getObjId() == other->getObjId())
 				dist = MAX(abs(_x - ox), abs(_y - oy));
 		} else {
 			int32 ocx, ocy, ocz;
@@ -3142,8 +3142,8 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
-	if (!valid)
+	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
+	if (!info.valid)
 		return 0;
 
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
@@ -3174,8 +3174,8 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
-	if (!valid)
+	PositionInfo info = cm->getPositionInfo(x, y, z, shape, 0);
+	if (!info.valid)
 		return 0;
 
 	// if yes, create it

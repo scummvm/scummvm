@@ -307,16 +307,13 @@ bool AnimationTracker::step() {
 		// If it succeeded, we proceed as usual
 	}
 
-	const Item *support;
-	bool targetok = cm->isValidPosition(tx, ty, tz,
-	                                    _startX, _startY, _startZ,
-	                                    xd, yd, zd,
-	                                    a->getShapeInfo()->_flags,
-	                                    _actor, &support, 0);
+	Box target(tx, ty, tz, xd, yd, zd);
+	Box start(_startX, _startY, _startZ, xd, yd, zd);
+	PositionInfo info = cm->getPositionInfo(target, start, a->getShapeInfo()->_flags, _actor);
 
-	if (is_u8 && targetok && support) {
+	if (is_u8 && info.valid && info.supported) {
 		// Might need to check for bridge traversal adjustments
-		uint32 supportshape = support->getShape();
+		uint32 supportshape = info.floor->getShape();
 		if (supportshape >= 675 && supportshape <= 681) {
 			// Could be a sloping portion of a bridge.  For a bridge along the
 			// X axis, positive descent delta is a positive change in Y when
@@ -331,13 +328,13 @@ bool AnimationTracker::step() {
 				descentdelta = -20;         // Descend
 
 			if (descentdelta) {
-				if (dy == 0 && dx != 0 && !support->hasFlags(Item::FLG_FLIPPED)) {
+				if (dy == 0 && dx != 0 && !info.floor->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving left or right on horizontal bridge
 					// descentdelta = 60*dy/dx
 					// 60*dy = descentdelta * dx
 					// dy = descentdelta * dx / 60;
 					ty += descentdelta * dx / 60;
-				} else if (dx == 0 && dy != 0 && support->hasFlags(Item::FLG_FLIPPED)) {
+				} else if (dx == 0 && dy != 0 && info.floor->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving up or down on vertical bridge
 					tx += descentdelta * dy / 60;
 				}
@@ -345,14 +342,14 @@ bool AnimationTracker::step() {
 		}
 	}
 
-	if (!targetok || (f.is_onground() && !support)) {
+	if (!info.valid || (f.is_onground() && !info.supported)) {
 		// If on ground, try to adjust properly. Never do it for dead Crusader NPCs,
 		// as they don't get gravity and the death process gets stuck.
 		// TODO: Profile the effect of disabling this for pathfinding.
 		//       It shouldn't be necessary in that case, and may provide a
 		//       worthwhile speed-up.
 		if (f.is_onground() && zd > 8 && !(is_crusader && a->isDead())) {
-			targetok = cm->scanForValidPosition(tx, ty, tz, a, _dir,
+			bool targetok = cm->scanForValidPosition(tx, ty, tz, a, _dir,
 			                                    true, tx, ty, tz);
 
 			if (!targetok) {
@@ -367,7 +364,7 @@ bool AnimationTracker::step() {
 #endif
 			}
 		} else {
-			if (!targetok) {
+			if (!info.valid) {
 				_blocked = true;
 				return false;
 			}
@@ -394,14 +391,10 @@ bool AnimationTracker::step() {
 
 	if (f.is_onground()) {
 		// needs support
+		target = Box(tx, ty, tz, xd, yd, zd);
+		info = cm->getPositionInfo(target, start, a->getShapeInfo()->_flags, _actor);
 
-		/*bool targetok = */ cm->isValidPosition(tx, ty, tz,
-		        _startX, _startY, _startZ,
-		        xd, yd, zd,
-		        a->getShapeInfo()->_flags,
-		        _actor, &support, 0);
-
-		if (!support) {
+		if (!info.supported) {
 			_unsupported = true;
 			return false;
 		}

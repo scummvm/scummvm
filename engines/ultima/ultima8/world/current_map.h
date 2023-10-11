@@ -24,11 +24,13 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/world/position_info.h"
 #include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
+struct Box;
 class Map;
 class Item;
 class UCList;
@@ -105,35 +107,13 @@ public:
 	                   int32 origin[3], int32 dims[2],
 	                   bool above, bool below, bool recurse = false) const;
 
-	// Collision detection. Returns true if the box [x,y,z]-[x-xd,y-yd,z+zd]
-	// does not collide with any solid items.
-	// Additionally:
-	// * If support is not NULL, *support is set to the item supporting
-	//   the given box, or 0 if it isn't supported.
-	// * If roof is not NULL, *roof is set to the roof item with the lowest
-	//   z coordinate that's over the box, or 0 if there is no roof above box.
-	// * If blocker is not NULL, *blocker will be set to an item blocking
-	//   the whole box if there is one, or 0 if there is no such item.
-	// Ignores collisions which were already occurring at the start position.
-	// NB: isValidPosition doesn't consider item 'item'.
-	bool isValidPosition(int32 x, int32 y, int32 z,
-	                     int32 startx, int32 starty, int32 startz,
-	                     int xd, int yd, int zd, uint32 shapeflags,
-	                     ObjId item, const Item **support = 0,
-	                     ObjId *roof = 0, const Item **blocker = 0) const;
+	// Collision detection. Returns position information with valid being true
+	// when the target box does not collide with any solid items.
+	// Ignores collisions when overlapping with the start box.
+	PositionInfo getPositionInfo(const Box &target, const Box &start, uint32 shapeflags, ObjId id) const;
 
-	// Note that this version of isValidPosition does not look for start
-	// position collisions.
-	bool isValidPosition(int32 x, int32 y, int32 z,
-	                     int xd, int yd, int zd, uint32 shapeflags,
-	                     ObjId item, const Item **support = 0,
-						 ObjId *roof = 0, const Item **blocker = 0) const;
-
-	// Note that this version of isValidPosition can not take 'flipped'
-	// into account!
-	bool isValidPosition(int32 x, int32 y, int32 z, uint32 shape,
-	                     ObjId item, const Item **support = 0,
-						 ObjId *roof = 0, const Item **blocker = 0) const;
+	// Note that this version of getPositionInfo can not take 'flipped' into account!
+	PositionInfo getPositionInfo(int32 x, int32 y, int32 z, uint32 shape, ObjId id) const;
 
 	//! Scan for a valid position for item in directions orthogonal to movedir
 	bool scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
