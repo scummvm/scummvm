@@ -38,5 +38,8 @@ const char *kStandardActionLoad          = "LOAD";
 const char *kStandardActionSave          = "SAVE";
 const char *kStandardActionOpenSettings  = "OPTS";
 const char *kStandardActionEE            = "WTF";
+const char *kStandardActionCut			 = "CUT";
+const char *kStandardActionCopy		     = "COPY";
+const char *kStandardActionPaste	     = "PASTE";
 
 } //namespace Common
