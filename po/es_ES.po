@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-11 04:28+0000\n"
+"POT-Creation-Date: 2023-10-11 19:33+0000\n"
 "PO-Revision-Date: 2023-10-11 09:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -468,7 +468,7 @@ msgstr "Descarga completada, se ha(n) descargado %d paquete(s) nuevo(s), %s %S"
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:271 engines/scumm/help.cpp:127
+#: backends/platform/ios7/ios7_options.mm:274 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 msgid "Close"
@@ -554,9 +554,9 @@ msgstr ""
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:130
 #: backends/platform/ios7/ios7_options.mm:131
-#: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:132
+#: backends/platform/ios7/ios7_options.mm:157 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -4582,28 +4582,28 @@ msgstr ""
 "(https://docs.scummvm.org/en/latest/other_platforms/android.html).\n"
 
 #: backends/platform/android/options.cpp:131
-#: backends/platform/ios7/ios7_options.mm:163
+#: backends/platform/ios7/ios7_options.mm:164
 msgid "Show On-screen control"
 msgstr "Mostrar controles en pantalla"
 
 #: backends/platform/android/options.cpp:132
-#: backends/platform/ios7/ios7_options.mm:113
+#: backends/platform/ios7/ios7_options.mm:111
 msgid "Choose the preferred touch mode:"
 msgstr "Selecciona el modo táctil que prefieres:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:115
-#: backends/platform/ios7/ios7_options.mm:142
+#: backends/platform/ios7/ios7_options.mm:116
+#: backends/platform/ios7/ios7_options.mm:143
 msgid "In menus"
 msgstr "Dentro de menús"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
 #: backends/platform/android/options.cpp:155
-#: backends/platform/ios7/ios7_options.mm:117
-#: backends/platform/ios7/ios7_options.mm:134
+#: backends/platform/ios7/ios7_options.mm:118
 #: backends/platform/ios7/ios7_options.mm:135
+#: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 msgid "Touchpad emulation"
 msgstr "Emulación de pantalla táctil"
@@ -4611,9 +4611,9 @@ msgstr "Emulación de pantalla táctil"
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
-#: backends/platform/ios7/ios7_options.mm:118
-#: backends/platform/ios7/ios7_options.mm:137
+#: backends/platform/ios7/ios7_options.mm:119
 #: backends/platform/ios7/ios7_options.mm:138
+#: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_osys_events.cpp:346
 msgid "Direct mouse"
 msgstr "Control directo de ratón"
@@ -4625,43 +4625,43 @@ msgid "Gamepad emulation"
 msgstr "Emulación de mando"
 
 #: backends/platform/android/options.cpp:144
-#: backends/platform/ios7/ios7_options.mm:124
+#: backends/platform/ios7/ios7_options.mm:125
 msgid "In 2D games"
 msgstr "En juegos 2D"
 
 #: backends/platform/android/options.cpp:146
-#: backends/platform/ios7/ios7_options.mm:126
+#: backends/platform/ios7/ios7_options.mm:127
 msgid "In 3D games"
 msgstr "En juegos 3D"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:140
+#: backends/platform/ios7/ios7_options.mm:141
 msgid "Select the orientation:"
 msgstr "Selecciona la orientación:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:144
-#: backends/platform/ios7/ios7_options.mm:159
+#: backends/platform/ios7/ios7_options.mm:145
+#: backends/platform/ios7/ios7_options.mm:160
 msgid "Automatic"
 msgstr "Automática"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:145
-#: backends/platform/ios7/ios7_options.mm:160
+#: backends/platform/ios7/ios7_options.mm:146
+#: backends/platform/ios7/ios7_options.mm:161
 msgid "Portrait"
 msgstr "Vertical"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:146
-#: backends/platform/ios7/ios7_options.mm:161
+#: backends/platform/ios7/ios7_options.mm:147
+#: backends/platform/ios7/ios7_options.mm:162
 msgid "Landscape"
 msgstr "Horizontal"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:152
+#: backends/platform/ios7/ios7_options.mm:153
 msgid "In games"
 msgstr "En juegos"
 
@@ -4686,36 +4686,36 @@ msgstr "Escalado por hardware (rápido, pero de baja calidad)"
 msgid "Software scale (good quality, but slower)"
 msgstr "Escalado por software (buena calidad, pero más lento)"
 
-#: backends/platform/ios7/ios7_options.mm:99
+#: backends/platform/ios7/ios7_options.mm:97
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "Mostrar mando (iOS 15 en adelante)"
 
-#: backends/platform/ios7/ios7_options.mm:100
-#: backends/platform/ios7/ios7_options.mm:101
+#: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:99
 msgid "Gamepad opacity"
 msgstr "Opacidad de mando"
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
 msgstr "Botones de dirección:"
 
-#: backends/platform/ios7/ios7_options.mm:107
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
 msgstr "Joystick"
 
-#: backends/platform/ios7/ios7_options.mm:108
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
 msgstr "Cruceta"
 
-#: backends/platform/ios7/ios7_options.mm:110
+#: backends/platform/ios7/ios7_options.mm:108
 msgid "Show keyboard function bar"
 msgstr "Mostrar barra de funciones del teclado"
 
-#: backends/platform/ios7/ios7_options.mm:166
+#: backends/platform/ios7/ios7_options.mm:167
 msgid "Controls Help"
 msgstr "Ayuda sobre controles"
 
-#: backends/platform/ios7/ios7_options.mm:246
+#: backends/platform/ios7/ios7_options.mm:249
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4744,7 +4744,7 @@ msgstr ""
 "Gesto de pellizcar: activar o desactivar el teclado\n"
 "Barra espaciadora del teclado: pausar"
 
-#: backends/platform/ios7/ios7_options.mm:258
+#: backends/platform/ios7/ios7_options.mm:261
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"

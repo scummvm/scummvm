@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-11 04:28+0000\n"
+"POT-Creation-Date: 2023-10-11 19:33+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -487,7 +487,7 @@ msgstr "Завантаження закінчено, завантажено %d �
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
-#: backends/platform/ios7/ios7_options.mm:271 engines/scumm/help.cpp:127
+#: backends/platform/ios7/ios7_options.mm:274 engines/scumm/help.cpp:127
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
 msgid "Close"
@@ -573,9 +573,9 @@ msgstr ""
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:130
 #: backends/platform/ios7/ios7_options.mm:131
-#: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:132
+#: backends/platform/ios7/ios7_options.mm:157 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -4527,28 +4527,28 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/options.cpp:131
-#: backends/platform/ios7/ios7_options.mm:163
+#: backends/platform/ios7/ios7_options.mm:164
 msgid "Show On-screen control"
 msgstr "Показувати екранне керування"
 
 #: backends/platform/android/options.cpp:132
-#: backends/platform/ios7/ios7_options.mm:113
+#: backends/platform/ios7/ios7_options.mm:111
 msgid "Choose the preferred touch mode:"
 msgstr "Оберіть уподобаний режим дотику:"
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:115
-#: backends/platform/ios7/ios7_options.mm:142
+#: backends/platform/ios7/ios7_options.mm:116
+#: backends/platform/ios7/ios7_options.mm:143
 msgid "In menus"
 msgstr "В меню"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
 #: backends/platform/android/options.cpp:155
-#: backends/platform/ios7/ios7_options.mm:117
-#: backends/platform/ios7/ios7_options.mm:134
+#: backends/platform/ios7/ios7_options.mm:118
 #: backends/platform/ios7/ios7_options.mm:135
+#: backends/platform/ios7/ios7_options.mm:136
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 msgid "Touchpad emulation"
 msgstr "Емуляція тачпаду"
@@ -4556,9 +4556,9 @@ msgstr "Емуляція тачпаду"
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
-#: backends/platform/ios7/ios7_options.mm:118
-#: backends/platform/ios7/ios7_options.mm:137
+#: backends/platform/ios7/ios7_options.mm:119
 #: backends/platform/ios7/ios7_options.mm:138
+#: backends/platform/ios7/ios7_options.mm:139
 #: backends/platform/ios7/ios7_osys_events.cpp:346
 msgid "Direct mouse"
 msgstr "Віртуальна миша"
@@ -4570,24 +4570,24 @@ msgid "Gamepad emulation"
 msgstr "Емуляція геймпаду"
 
 #: backends/platform/android/options.cpp:144
-#: backends/platform/ios7/ios7_options.mm:124
+#: backends/platform/ios7/ios7_options.mm:125
 msgid "In 2D games"
 msgstr "У 2D іграх"
 
 #: backends/platform/android/options.cpp:146
-#: backends/platform/ios7/ios7_options.mm:126
+#: backends/platform/ios7/ios7_options.mm:127
 msgid "In 3D games"
 msgstr "У 3D іграх"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:140
+#: backends/platform/ios7/ios7_options.mm:141
 msgid "Select the orientation:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:144
-#: backends/platform/ios7/ios7_options.mm:159
+#: backends/platform/ios7/ios7_options.mm:145
+#: backends/platform/ios7/ios7_options.mm:160
 #, fuzzy
 #| msgid "Automatic drilling"
 msgid "Automatic"
@@ -4595,22 +4595,22 @@ msgstr "Автоматичне свердління"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:145
-#: backends/platform/ios7/ios7_options.mm:160
+#: backends/platform/ios7/ios7_options.mm:146
+#: backends/platform/ios7/ios7_options.mm:161
 msgid "Portrait"
 msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:146
-#: backends/platform/ios7/ios7_options.mm:161
+#: backends/platform/ios7/ios7_options.mm:147
+#: backends/platform/ios7/ios7_options.mm:162
 #, fuzzy
 #| msgid "Escape"
 msgid "Landscape"
 msgstr "Втікти"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:152
+#: backends/platform/ios7/ios7_options.mm:153
 #, fuzzy
 #| msgid "In 2D games"
 msgid "In games"
@@ -4637,42 +4637,42 @@ msgstr "Хардварне масштабування (швидко, але ни
 msgid "Software scale (good quality, but slower)"
 msgstr "Програмне масштабування (хороша якість, але повільніше)"
 
-#: backends/platform/ios7/ios7_options.mm:99
+#: backends/platform/ios7/ios7_options.mm:97
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "Показувати екранне керування"
 
-#: backends/platform/ios7/ios7_options.mm:100
-#: backends/platform/ios7/ios7_options.mm:101
+#: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:99
 #, fuzzy
 #| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
 msgstr "Емуляція геймпаду"
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:107
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:108
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:110
+#: backends/platform/ios7/ios7_options.mm:108
 msgid "Show keyboard function bar"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:166
+#: backends/platform/ios7/ios7_options.mm:167
 #, fuzzy
 #| msgid "Controls"
 msgid "Controls Help"
 msgstr "Керування"
 
-#: backends/platform/ios7/ios7_options.mm:246
+#: backends/platform/ios7/ios7_options.mm:249
 msgid ""
 "Gestures and controls:\n"
 "\n"
@@ -4688,7 +4688,7 @@ msgid ""
 "Keyboard spacebar: Pause"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:258
+#: backends/platform/ios7/ios7_options.mm:261
 msgid ""
 "Using the Apple TV remote control:\n"
 "\n"
