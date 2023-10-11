@@ -985,22 +985,25 @@ bool MacIndy3Gui::Inventory::ScrollBar::handleEvent(Common::Event &event) {
 	if (!_enabled || event.type != Common::EVENT_LBUTTONDOWN)
 		return false;
 
-	// I'm guessing that clicking on the scrollbar is supposed to scroll one
-	// page at a time, but I haven't had enough inventory items for this to
-	// mean anything other than scrolling to the top or the bottom.
+	// Clicking on the scrollbar scrolls it to the top or the bottom, not
+	// one page as one might suspect. Though you're rarely carrying enough
+	// objects for this to make a difference.
 	//
-	// The direction depends on if you click above or below the handle. The
-	// original also allowed you to click on the handle itself, but the
-	// behavior was hard to predict so we ignore those completely.
+	// The direction depends on if you click above or below the handle.
+	// Clicking on the handle also works, though the behavior strikes me
+	// as a bit unintuitive. If you click on Y coordinate pos + 5, nothing
+	// happens at all.
 
 	if (_bounds.contains(event.mouse)) {
 		int pos = _bounds.top + getHandlePosition();
-		int numSlots = ARRAYSIZE(_slots);
 
-		if (event.mouse.y < pos)
-			moveInvOffset(-numSlots);
-		else if (event.mouse.y >= pos + 8)
-			moveInvOffset(numSlots);
+		if (event.mouse.y <= pos + 4)
+			_invOffset = 0;
+		else if (event.mouse.y >= pos + 6)
+			_invOffset = _invCount - ARRAYSIZE(_slots);
+
+		_gui->setInventoryScrollOffset(_invOffset);
+		setRedraw(true);
 	}
 
 	return false;
