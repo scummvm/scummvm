@@ -41,11 +41,13 @@ class Digi {
 	 * Digital sound entry
 	 */
 	struct DigiEntry {
+		Common::String _filename;
 		byte *_data = nullptr;
 		size_t _size = 0;
 		bool _preloaded = false;
 		DigiEntry() {}
-		DigiEntry(byte *data, size_t size) : _data(data), _size(size) {}
+		DigiEntry(Common::String &name, byte *data, size_t size) :
+			_filename(name), _data(data), _size(size) {}
 	};
 	/**
 	 * Sound channel
