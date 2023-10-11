@@ -1406,6 +1406,13 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			pVtxBuffer->GetArray(eVertexFlag_Position)[22] = -64.470757f;
 		}
 
+		// WORKAROUND: Bug #14572: "HPL1: crash after breaking the ice in level "Lake Utuqaq""
+		// The object below has an empty mesh that generates an invalid collider, which causes a crash when the Newton library
+		// tries to resolve a collision between the object and another physics body called "ice4_broken_pieceShape3".
+		if (apNode->msName == "Shape01") {
+			return nullptr;
+		}
+
 		iCollideShape *pShape = apWorld->GetPhysicsWorld()->CreateMeshShape(pVtxBuffer);
 		iPhysicsBody *pBody = apWorld->GetPhysicsWorld()->CreateBody(apNode->msName, pShape);
 
