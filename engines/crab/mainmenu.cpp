@@ -315,6 +315,10 @@ void MainMenu::changeState(MenuState ms, const bool &start) {
 			g_engine->_musicManager->playMusic(_musicKey._credits);
 	}
 
+	// Disable keymapper if switching state to input savename so inputs do not get "eaten".
+	KeyBindingMode mode = (ms == STATE_SAVENAME ? KBM_NONE : KBM_GAME);
+	g_engine->_inputManager->setKeyBindingMode(mode);
+
 	// Set current state
 	_state = ms;
 

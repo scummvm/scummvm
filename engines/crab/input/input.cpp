@@ -280,16 +280,21 @@ void InputManager::setKeyBindingMode(KeyBindingMode mode) {
 	_keyMode = mode;
 
 	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
-	mapper->disableAllGameKeymaps();
-
-	mapper->setGameKeymapState("Unrest-HUD", true);
 
 	switch (mode) {
+	case KBM_NONE:
+		mapper->disableAllGameKeymaps();
+		break;
+
 	case KBM_GAME:
+		mapper->disableAllGameKeymaps();
+		mapper->setGameKeymapState("Unrest-HUD", true);
 		mapper->setGameKeymapState("Unrest-Game", true);
 		break;
 
 	case KBM_UI:
+		mapper->disableAllGameKeymaps();
+		mapper->setGameKeymapState("Unrest-HUD", true);
 		mapper->setGameKeymapState("Unrest-UI", true);
 		break;
 	}

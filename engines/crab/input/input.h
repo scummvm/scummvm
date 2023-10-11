@@ -80,8 +80,9 @@ enum InputType {
 };
 
 enum KeyBindingMode {
-	KBM_GAME = 0,
-	KBM_UI = 1
+	KBM_NONE = 0,
+	KBM_GAME = 1,
+	KBM_UI = 2
 };
 
 // Constants related to menu size
