@@ -923,6 +923,8 @@ bool MacIndy3Gui::Inventory::Slot::handleEvent(Common::Event &event) {
 
 	if (_bounds.contains(event.mouse)) {
 		setRedraw(true);
+		if (hasTimer())
+			timeOut();
 		setTimer(WIDGET_TIMER_JIFFIES);
 		return true;
 	}
