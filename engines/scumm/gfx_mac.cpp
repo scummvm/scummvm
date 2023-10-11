@@ -417,6 +417,12 @@ void MacIndy3Gui::Widget::markScreenAsDirty(Common::Rect r) const {
 	_gui->markScreenAsDirty(r);
 }
 
+byte MacIndy3Gui::Widget::translateChar(byte c) const {
+	if (c == '^')
+		return 0xC9;
+	return c;
+}
+
 void MacIndy3Gui::Widget::fill(Common::Rect r) const {
 	_gui->fill(r);
 }
@@ -626,12 +632,13 @@ void MacIndy3Gui::Button::draw() {
 		}
 
 		for (uint i = 0; i < _text.size() && x < _bounds.right; i++) {
+			byte c = translateChar(_text[i]);
 			if (x >= _bounds.left) {
 				if (_enabled)
-					outlineFont->drawChar(_surface, _text[i], x, y, kBlack);
-				boldFont->drawChar(_surface, _text[i], x + 1, y, color);
+					outlineFont->drawChar(_surface, c, x, y, kBlack);
+				boldFont->drawChar(_surface, c, x + 1, y, color);
 			}
-			x += boldFont->getCharWidth(_text[i]);
+			x += boldFont->getCharWidth(c);
 		}
 	}
 }
@@ -964,8 +971,10 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 		int x = _bounds.left + 4;
 
 		for (uint i = 0; i < _name.size() && x < _bounds.right; i++) {
-			font->drawChar(_surface, _name[i], x, y, fg);
-			x += font->getCharWidth(_name[i]);
+			byte c = translateChar(_name[i]);
+
+			font->drawChar(_surface, c, x, y, fg);
+			x += font->getCharWidth(c);
 		}
 	}
 }
