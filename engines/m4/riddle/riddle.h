@@ -23,6 +23,13 @@
 #define M4_RIDDLE_RIDDLE_H
 
 #include "m4/m4.h"
+#include "m4/riddle/rooms/section2/section2.h"
+#include "m4/riddle/rooms/section3/section3.h"
+#include "m4/riddle/rooms/section4/section4.h"
+#include "m4/riddle/rooms/section5/section5.h"
+#include "m4/riddle/rooms/section6/section6.h"
+#include "m4/riddle/rooms/section7/section7.h"
+#include "m4/riddle/rooms/section8/section8.h"
 #include "m4/riddle/rooms/section9/section9.h"
 
 namespace M4 {
@@ -30,6 +37,14 @@ namespace Riddle {
 
 class RiddleEngine : public M4Engine {
 private:
+	Rooms::Section1 _section1;
+	Rooms::Section2 _section2;
+	Rooms::Section3 _section3;
+	Rooms::Section4 _section4;
+	Rooms::Section5 _section5;
+	Rooms::Section6 _section6;
+	Rooms::Section7 _section7;
+	Rooms::Section8 _section8;
 	Rooms::Section9 _section9;
 
 protected:

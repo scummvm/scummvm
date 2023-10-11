@@ -19,35 +19,34 @@
  *
  */
 
-#ifndef M4_RIDDLE_ROOMS_SECTION_H
-#define M4_RIDDLE_ROOMS_SECTION_H
+#ifndef M4_RIDDLE_ROOMS_SECTION2_H
+#define M4_RIDDLE_ROOMS_SECTION2_H
 
-#include "m4/core/rooms.h"
+#include "m4/riddle/rooms/section.h"
+#include "m4/riddle/rooms/section2/room201.h"
+#include "m4/riddle/rooms/section2/room202.h"
+#include "m4/riddle/rooms/section2/room203.h"
+#include "m4/riddle/rooms/section2/room204.h"
+#include "m4/riddle/rooms/section2/room205.h"
+#include "m4/riddle/rooms/section2/room207.h"
 
 namespace M4 {
 namespace Riddle {
 namespace Rooms {
 
-class Section : public M4::Section {
+class Section2 : public Section {
 private:
-	void init_series_players();
-
+	Room201 _room201;
+	Room202 _room202;
+	Room203 _room203;
+	Room204 _room204;
+	Room205 _room205;
+	Room207 _room207;
 public:
-	Section() : M4::Section() {}
-	~Section() override {}
+	Section2();
+	virtual ~Section2() {}
 
-	void global_room_init() override;
-	void tick() override;
 	void daemon() override;
-};
-
-/**
- * Dummy section 1, since Riddle doesn't have any rooms in it
- */
-class Section1 : public Section {
-public:
-	Section1() : Section() {}
-	~Section1() override {}
 };
 
 } // namespace Rooms
