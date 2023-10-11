@@ -151,6 +151,8 @@ private:
 		virtual void draw();
 		virtual void undraw();
 
+		byte translateChar(byte c) const;
+
 		// Primitives
 		void fill(Common::Rect r) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
