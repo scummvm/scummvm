@@ -191,7 +191,6 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	            .addWidget("GamepadControllerOpacitySlider", "Slider")
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
-	            .addWidget("ClickAndDragMode", "Checkbox")
 	            .addWidget("KeyboardFunctionBar", "Checkbox");
 
 #if TARGET_OS_IOS
