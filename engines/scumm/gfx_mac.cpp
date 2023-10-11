@@ -56,7 +56,7 @@ void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
 	// The verb screen is completely replaced with a custom GUI. While
 	// it is active, all other drawing to that area is suspended.
-	if (vs->number == kVerbVirtScreen && _macIndy3Gui->isVerbGuiActive())
+	if (_macIndy3Gui && vs->number == kVerbVirtScreen && _macIndy3Gui->isVerbGuiActive())
 		return;
 
 	const byte *pixels = vs->getPixels(x, top);
