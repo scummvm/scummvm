@@ -417,10 +417,10 @@
 	// Base the new frame size on the current parent frame size
 	CGRect newFrame = self.superview.frame;
 	if ([self hwKeyboardConnected]) {
-		if (inputView.inputAccessoryView.hidden) {
-			return;
-		} else {
+		if (ConfMan.getBool("keyboard_fn_bar")) {
 			newFrame.size.height += (inputView.inputAccessoryView.frame.size.height) * (didShow ? -1 : 1);
+		} else {
+			return;
 		}
 	} else {
 		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
