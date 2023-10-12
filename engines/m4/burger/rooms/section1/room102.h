@@ -46,7 +46,7 @@ private:
 	int _trigger = -1;
 	KernelTriggerType _triggerMode = KT_DAEMON;
 	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
+	machine *_series1s = nullptr;
 	machine *_series3 = nullptr;
 	machine *_series4 = nullptr;
 	machine *_series5 = nullptr;
