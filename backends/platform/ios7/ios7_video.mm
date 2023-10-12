@@ -198,18 +198,21 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 	oneFingerTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(oneFingerTap:)];
 	[oneFingerTapGesture setNumberOfTapsRequired:1];
 	[oneFingerTapGesture setNumberOfTouchesRequired:1];
+	[oneFingerTapGesture setAllowedTouchTypes:@[@(UITouchTypeDirect)]];
 	[oneFingerTapGesture setDelaysTouchesBegan:NO];
 	[oneFingerTapGesture setDelaysTouchesEnded:NO];
 
 	twoFingerTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingerTap:)];
 	[twoFingerTapGesture setNumberOfTapsRequired:1];
 	[twoFingerTapGesture setNumberOfTouchesRequired:2];
+	[twoFingerTapGesture setAllowedTouchTypes:@[@(UITouchTypeDirect)]];
 	[twoFingerTapGesture setDelaysTouchesBegan:NO];
 	[twoFingerTapGesture setDelaysTouchesEnded:NO];
 
 	// Default long press duration is 0.5 seconds which suits us well
 	UILongPressGestureRecognizer *oneFingerLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(oneFingerLongPress:)];
 	[oneFingerLongPressGesture setNumberOfTouchesRequired:1];
+	[oneFingerLongPressGesture setAllowedTouchTypes:@[@(UITouchTypeDirect)]];
 	[oneFingerLongPressGesture setDelaysTouchesBegan:NO];
 	[oneFingerLongPressGesture setDelaysTouchesEnded:NO];
 	[oneFingerLongPressGesture setCancelsTouchesInView:NO];
@@ -217,6 +220,7 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 
 	UILongPressGestureRecognizer *twoFingerLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingerLongPress:)];
 	[twoFingerLongPressGesture setNumberOfTouchesRequired:2];
+	[twoFingerLongPressGesture setAllowedTouchTypes:@[@(UITouchTypeDirect)]];
 	[twoFingerLongPressGesture setDelaysTouchesBegan:NO];
 	[twoFingerLongPressGesture setDelaysTouchesEnded:NO];
 	[twoFingerLongPressGesture setCancelsTouchesInView:NO];
