@@ -103,7 +103,8 @@ void GravityProcess::run() {
 
 	// Shouldn't go negative as original did not allow it
 	if (iz <= 0 && _zSpeed < 0) {
-		terminate();
+		terminateDeferred();
+		fallStopped();
 		return;
 	}
 
