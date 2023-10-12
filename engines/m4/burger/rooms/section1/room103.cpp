@@ -138,13 +138,13 @@ void Room103::init() {
 	}
 
 	if (_G(flags)[V023]) {
-		_series1 = series_play("103wi06", 0x500, 0, -1, 100);
+		_series1 = series_play("103wi06", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	} else {
-		_series1 = series_play("103wi05", 0x500, 0, -1, 100);
+		_series1 = series_play("103wi05", 0x500, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 	}
 
-	_series2 = series_play("103door", 0x800, 0, -1, 100);
-	series_play("103vent", 0x100);
+	_series2 = series_play("103door", 0x800, 0, -1, 100, -1, 100, 0, 0, 0, 0);
+	series_play("103vent", 0x100, 0, -1, 6, -1, 100, 0, 0, 0, 3);
 
 	_val4 = 12;
 	kernel_trigger_dispatch_now(10);
