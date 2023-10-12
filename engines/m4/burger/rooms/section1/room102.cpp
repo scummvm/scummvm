@@ -1178,7 +1178,7 @@ void Room102::parser() {
 	} else if (player_said("exit") || player_said("gear", "main_street")) {
 		player_set_commands_allowed(false);
 		digi_preload("102_038");
-		digi_play("103_038", 2, 255, 17);
+		digi_play("102_038", 2, 255, 17);
 	} else {
 		if (player_said("TAKE", "DOORWAY"))
 			_G(walker).wilbur_speech("102W003");
@@ -1375,7 +1375,7 @@ void Room102::flagAction(const char *name1, const char *name2) {
 			_G(walker).wilbur_speech(name1);
 		} else {
 			_G(kernel).trigger_mode = KT_PARSE;
-			_G(walker).wilbur_speech(name1);
+			_G(walker).wilbur_speech(name1, 1);
 			player_set_commands_allowed(false);
 		}
 		break;

@@ -135,6 +135,7 @@ void Room101::init() {
 		break;
 
 	case 102:
+		// Exiting barber shop
 		player_set_commands_allowed(false);
 		if (_G(flags)[V014]) {
 			_G(flags)[V014] = 0;
@@ -149,10 +150,11 @@ void Room101::init() {
 		}
 
 		ws_hide_walker(_G(my_walker));
-		kernel_trigger_dispatch_now(10015);
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 103:
+		// Returning from rooftop
 		player_set_commands_allowed(false);
 		ws_demand_facing(_G(my_walker), 1);
 		ws_demand_location(_G(my_walker), 197, 276);
@@ -163,21 +165,25 @@ void Room101::init() {
 		break;
 
 	case 104:
+		// From Town Hall
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 106:
+		// Leaving alley
 		_G(wilbur_should) = 3;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 135:
+		// From Old Bridge
 		_G(wilbur_should) = 4;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
 	case 142:
+		// From Vera's Diner
 		_G(wilbur_should) = 5;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
