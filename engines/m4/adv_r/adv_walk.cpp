@@ -295,14 +295,13 @@ static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, i
 	_G(globals)[GLB_TEMP_2] = y << 16;
 	_G(globals)[GLB_TEMP_3] = s;
 
-	if (facing > 0 && facing < 13) {
-		// If there is a facing to be set
-		_G(globals)[GLB_TEMP_4] = directions[facing] << 16;
-		sendWSMessage(747 << 16, 0, myWalker, 0, nullptr, 1);
-	} else {
-		sendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
-		_G(player).waiting_for_walk = false; // lets parse code get called when there is no facing set (from scenedit)
-	}
+	if (facing > 0 && facing < 13)
+		// WORKAROUND: The original's hyperwalk didn't work. By doing
+		// the facing set separately, this is fixed
+		ws_demand_facing(facing);
+
+	sendWSMessage(DEMAND_LOCATION << 16, 0, myWalker, 0, nullptr, 1);
+	_G(player).waiting_for_walk = false; // lets parse code get called when there is no facing set (from scenedit)
 }
 
 void ws_turn_to_face(machine *myWalker, int32 facing, int32 trigger) {

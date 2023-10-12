@@ -96,6 +96,8 @@ extern void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, 
 #define adv_walker_unhide(ww)                (ws_unhide_walker(ww))
 extern bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y);
 
+extern void adv_hyperwalk_to_final_destination(void *, void *);
+
 } // End of namespace M4
 
 #endif
