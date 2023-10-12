@@ -22,6 +22,7 @@
 #include "m4/gui/hotkeys.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
+#include "m4/adv_r/adv_walk.h"
 #include "m4/vars.h"
 
 namespace M4 {
@@ -115,6 +116,7 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_ALT_Q, exit_program);
 	AddSystemHotkey(KEY_CTRL_Q, exit_program);
 	AddSystemHotkey(KEY_SPACE, adv_hyperwalk_to_final_destination);
+	AddSystemHotkey('f', adv_hyperwalk_to_final_destination);
 
 	if (_G(cheating_enabled)) {
 		adv_enable_system_hot_keys();
@@ -183,7 +185,7 @@ void Hotkeys::version_ok_button(void *a, void *b) {
 }
 
 void Hotkeys::adv_hyperwalk_to_final_destination(void *a, void *b) {
-	warning("TODO: hotkey");
+	M4::adv_hyperwalk_to_final_destination(a, b);
 }
 
 void Hotkeys::f_io_report(void *, void *) {
