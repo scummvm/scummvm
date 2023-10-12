@@ -33,6 +33,8 @@ private:
 	bool Cmd_room(int argc, const char **argv);
 	bool Cmd_flag(int argc, const char **argv);
 	bool Cmd_item(int argc, const char **argv);
+	bool Cmd_hyperwalk(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override;
