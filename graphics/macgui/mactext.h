@@ -195,6 +195,10 @@ struct MacTextLine {
 	 * @note If requested column is too big, returns last character in the line
 	 */
 	uint getChunkNum(int *col);
+
+	~MacTextLine() {
+		delete tableSurface;
+	}
 };
 
 struct SelectedText {
