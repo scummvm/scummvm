@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-11 21:17+0000\n"
-"PO-Revision-Date: 2023-10-10 07:41+0000\n"
+"PO-Revision-Date: 2023-10-12 09:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -4664,29 +4664,25 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Redimensionamento por Software (boa qualidade, porém mais lento)"
 
 #: backends/platform/ios7/ios7_options.mm:96
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Mostrar controle na tela (iOS 15 ou superior)"
+msgstr "Exibir Controlador de Gamepad (iOS 15 ou superior)"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Emulação de joystick"
+msgstr "Opacidade do Gamepad"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
-msgstr ""
+msgstr "Botão direcional:"
 
 #: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
-msgstr ""
+msgstr "Analógico"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
-msgstr ""
+msgstr "Direcional"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
