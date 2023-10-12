@@ -691,6 +691,13 @@ void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 		action = Animation::stand;
 	}
 
+	if (action == Animation::walk && res == Animation::END_OFF_LAND) {
+		action = Animation::step;
+	}
+
+	if (action == Animation::run && res == Animation::END_OFF_LAND) {
+		action = Animation::walk;
+	}
 
 	bool moving = (action == Animation::run || action == Animation::walk);
 
