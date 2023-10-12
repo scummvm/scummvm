@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-11 21:17+0000\n"
+"POT-Creation-Date: 2023-10-12 21:54+0000\n"
 "PO-Revision-Date: 2023-09-23 18:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -82,7 +82,7 @@ msgstr "Μετάβαση πάνω"
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 #: engines/parallaction/saveload.cpp:270
 #: engines/scumm/dialog-createsession.cpp:47
-#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2900
+#: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2797
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
 msgstr "Ακύρωση"
@@ -326,9 +326,9 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/scumm/scumm.cpp:1190 engines/scumm/scumm.cpp:1212
 #: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
 #: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:529 engines/sword1/animation.cpp:560
-#: engines/sword1/animation.cpp:568 engines/sword1/control.cpp:2900
-#: engines/sword1/logic.cpp:1683 engines/sword2/animation.cpp:426
+#: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
+#: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
+#: engines/sword1/logic.cpp:1702 engines/sword2/animation.cpp:426
 #: engines/sword2/animation.cpp:456 engines/sword2/animation.cpp:466
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
@@ -10133,25 +10133,25 @@ msgstr ""
 "Αφαιρεί κάποιες επαναλαμβανόμενες ενέργειες, προσθέτει δυνατότητα εναλλαγής "
 "ρημάτων από το πληκτρολόγιο"
 
-#: engines/sword1/animation.cpp:529
+#: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
 "Το αρχείο (τύπου ροής PSX) ταινίας '%s' δεν γίνεται να αναπαραχθεί σε "
 "λειτουργία παλέτας"
 
-#: engines/sword1/animation.cpp:560 engines/sword2/animation.cpp:456
+#: engines/sword1/animation.cpp:563 engines/sword2/animation.cpp:456
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
 "Βρέθηκαν βίντεο MPEG-2 αλλά το ScummVM κατασκευάστηκε χωρίς υποστήριξη MPEG-2"
 
-#: engines/sword1/animation.cpp:567 engines/sword2/animation.cpp:465
+#: engines/sword1/animation.cpp:570 engines/sword2/animation.cpp:465
 #, c-format
 msgid "Cutscene '%s' not found"
 msgstr "Η ταινία '%s' δε βρέθηκε"
 
-#: engines/sword1/control.cpp:2898
+#: engines/sword1/control.cpp:2795
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -10169,7 +10169,7 @@ msgstr ""
 "Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
 "επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
 
-#: engines/sword1/control.cpp:3084
+#: engines/sword1/control.cpp:2981
 #, c-format
 msgid ""
 "Target new saved game already exists!\n"
@@ -10178,15 +10178,15 @@ msgstr ""
 "Το νέο αποθηκευμένο παιχνίδι υπάρχει ήδη στον προορισμό!\n"
 "Θέλετε να διατηρήσετε το παλιό αποθηκευμένο παιχνίδι (%s) ή το νέο (%s);\n"
 
-#: engines/sword1/control.cpp:3087
+#: engines/sword1/control.cpp:2984
 msgid "Keep the old one"
 msgstr "Κράτησε το παλιό"
 
-#: engines/sword1/control.cpp:3087
+#: engines/sword1/control.cpp:2984
 msgid "Keep the new one"
 msgstr "Κράτησε το καινούργιο"
 
-#: engines/sword1/logic.cpp:1683
+#: engines/sword1/logic.cpp:1702
 msgid "This is the end of the Broken Sword 1 Demo"
 msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
 
