@@ -31,24 +31,24 @@ class Item;
  * Position information for a desired target box for an item.
  * The position is valid when the target box does not collide with any solid items.
  *
- * Floor is set to the solid item with the highest z coordinate under the target box,
- * or null if there is no floor below box.
+ * Land is set to the item with the highest z coordinate under the target box,
+ * or null if there is no land below box.
  * 
- * Roof is set to the roof item with the lowest z coordinate over the target box,
+ * Roof is set to the item with the lowest z coordinate over the target box,
  * or null if there is no roof above box.
  *
  * Blocker is set to an item blocking the target box, or null if there is no such item.
  *
- * Supported is true if the floor is appropriate to support the item when at the target.
+ * Supported is true if the land is appropriate to support the item when at the target.
  */
 struct PositionInfo {
 	bool valid;
 	bool supported;
-	const Item *floor;
+	const Item *land;
 	const Item *roof;
 	const Item *blocker;
 
-	PositionInfo() : valid(false), supported(false), floor(nullptr), roof(nullptr), blocker(nullptr) {}
+	PositionInfo() : valid(false), supported(false), land(nullptr), roof(nullptr), blocker(nullptr) {}
 };
 
 } // End of namespace Ultima8

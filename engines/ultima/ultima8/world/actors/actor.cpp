@@ -625,30 +625,21 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 		state->_direction = dir;
 	}
 
-
 	if (tracker.isUnsupported()) {
 		return Animation::END_OFF_LAND;
 	}
 
 	// isUnsupported only checks for AFF_ONGROUND, we need either
-	int32 end[3], dims[3];
-	getFootpadWorld(dims[0], dims[1], dims[2]);
-	tracker.getPosition(end[0], end[1], end[2]);
+	Box start = getWorldBox();
+	Box target = start;
+	tracker.getPosition(target._x, target._y, target._z);
 
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
+	PositionInfo info = cm->getPositionInfo(target, start, getShapeInfo()->_flags, _objId);
+	if (!info.supported)
+		return Animation::END_OFF_LAND;
 
-	UCList uclist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	cm->surfaceSearch(&uclist, script, sizeof(script),
-	                  getObjId(), end, dims,
-	                  false, true, false);
-	for (uint32 i = 0; i < uclist.getSize(); i++) {
-		Item *item = getItem(uclist.getuint16(i));
-		if (item->getShapeInfo()->is_land())
-			return Animation::SUCCESS;
-	}
-
-	return Animation::END_OFF_LAND;
+	return Animation::SUCCESS;
 }
 
 DirectionMode Actor::animDirMode(Animation::Sequence anim) const {

@@ -741,12 +741,17 @@ PositionInfo CurrentMap::getPositionInfo(int32 x, int32 y, int32 z, uint32 shape
 
 PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, uint32 shapeflags, ObjId id) const {
 	PositionInfo info;
-	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
-	                         ShapeInfo::SI_ROOF);
-	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
+	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 supportmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 landmask = (ShapeInfo::SI_LAND | ShapeInfo::SI_ROOF);
+	static const uint32 blockmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
-	int32 floorz = INT_MIN_VALUE;
+	int32 supportz = INT_MIN_VALUE;
+	int32 landz = INT_MIN_VALUE;
 	int32 roofz = INT_MAX_VALUE;
+
+	int32 midx = target._x - target._xd / 2;
+	int32 midy = target._y - target._yd / 2;
 
 	int minx = ((target._x - target._xd) / _mapChunkSize) - 1;
 	int maxx = (target._x / _mapChunkSize) + 1;
@@ -766,14 +771,13 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 					continue;
 
 				const ShapeInfo *si = item->getShapeInfo();
-				//!! need to check is_sea() and is_land() maybe?
 				if (!(si->_flags & flagmask))
 					continue; // not an interesting item
 
 				Box ib = item->getWorldBox();
 
 				// check overlap
-				if ((si->_flags & shapeflags & blockflagmask) &&
+				if ((si->_flags & shapeflags & blockmask) &&
 					target.overlaps(ib) && !start.overlaps(ib)) {
 					// overlapping an item. Invalid position
 #if 0
@@ -787,10 +791,9 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 				// check xy overlap
 				if (target._x > ib._x - ib._xd && target._x - target._xd < ib._x &&
 					target._y > ib._y - ib._yd && target._y - target._yd < ib._y) {
-					// check floor
-					if (si->is_solid() && ib._z + ib._zd > floorz && ib._z + ib._zd <= target._z) {
-						info.floor = item;
-						floorz = ib._z + ib._zd;
+					// check support
+					if (si->_flags & supportmask && ib._z + ib._zd > supportz && ib._z + ib._zd <= target._z) {
+						supportz = ib._z + ib._zd;
 					}
 
 					// check roof
@@ -799,12 +802,22 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 						roofz = ib._z;
 					}
 				}
+
+				// check xy center
+				if (midx >= ib._x - ib._xd && midx <= ib._x && midy >= ib._y - ib._yd && midy <= ib._y) {
+					// check land
+					if (si->_flags & landmask && ib._z + ib._zd > landz && ib._z + ib._zd <= target._z) {
+						info.land = item;
+						landz = ib._z + ib._zd;
+					}
+				}
 			}
 		}
 	}
 
 	info.valid = info.blocker == nullptr;
-	info.supported = floorz == target._z;
+	// Partial support allowed if land is close
+	info.supported = supportz == target._z && landz + 8 >= target._z;
 	return info;
 }
 

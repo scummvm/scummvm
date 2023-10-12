@@ -313,7 +313,7 @@ bool AnimationTracker::step() {
 
 	if (is_u8 && info.valid && info.supported) {
 		// Might need to check for bridge traversal adjustments
-		uint32 supportshape = info.floor->getShape();
+		uint32 supportshape = info.land->getShape();
 		if (supportshape >= 675 && supportshape <= 681) {
 			// Could be a sloping portion of a bridge.  For a bridge along the
 			// X axis, positive descent delta is a positive change in Y when
@@ -328,13 +328,13 @@ bool AnimationTracker::step() {
 				descentdelta = -20;         // Descend
 
 			if (descentdelta) {
-				if (dy == 0 && dx != 0 && !info.floor->hasFlags(Item::FLG_FLIPPED)) {
+				if (dy == 0 && dx != 0 && !info.land->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving left or right on horizontal bridge
 					// descentdelta = 60*dy/dx
 					// 60*dy = descentdelta * dx
 					// dy = descentdelta * dx / 60;
 					ty += descentdelta * dx / 60;
-				} else if (dx == 0 && dy != 0 && info.floor->hasFlags(Item::FLG_FLIPPED)) {
+				} else if (dx == 0 && dy != 0 && info.land->hasFlags(Item::FLG_FLIPPED)) {
 					// Moving up or down on vertical bridge
 					tx += descentdelta * dy / 60;
 				}
