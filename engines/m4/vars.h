@@ -187,6 +187,7 @@ public:
 	cursor_states _cursor_state = kARROW;
 	int _iPitch = 0;
 	int _click_x = 0, _click_y = 0;
+	bool _hyperwalk = false;
 };
 
 #define _G(X) (g_vars->_##X)

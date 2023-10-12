@@ -176,6 +176,9 @@ void ws_walk(machine *myWalker, int32 x, int32 y, GrBuff **, int16 trigger, int3
 		_G(completeWalk) = complete_walk;
 		ws_walkto_node(myWalker, myWalker->walkPath, true);
 	}
+
+	if (_G(hyperwalk))
+		adv_hyperwalk_to_final_destination(nullptr, nullptr);
 }
 
 bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y) {

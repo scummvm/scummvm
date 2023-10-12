@@ -30,6 +30,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("room",   WRAP_METHOD(Console, Cmd_room));
 	registerCmd("flag",   WRAP_METHOD(Console, Cmd_flag));
 	registerCmd("item",   WRAP_METHOD(Console, Cmd_item));
+	registerCmd("hyperwalk", WRAP_METHOD(Console, Cmd_hyperwalk));
 }
 
 Console::~Console() {
@@ -76,6 +77,17 @@ bool Console::Cmd_item(int argc, const char **argv) {
 		debugPrintf("item <item name>\n");
 		return true;
 	}
+}
+
+bool Console::Cmd_hyperwalk(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("hyperwalk [on | off]\n");
+	} else {
+		_G(hyperwalk) = !strcmp(argv[1], "on");
+		debugPrintf("hyperwalk is now %s\n", _G(hyperwalk) ? "on" : "off");
+	}
+
+	return true;
 }
 
 } // End of namespace M4
