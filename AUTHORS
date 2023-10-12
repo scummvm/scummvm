@@ -144,6 +144,9 @@ ScummVM Team
     Composer:
        Alyssa Milburn
 
+    Crab:
+       Kartik Agarwala
+
     CruisE:
        Paul Gilbert
        Vincent Hamm                   - (retired)
@@ -424,6 +427,7 @@ ScummVM Team
        Ludvig Strigeus                - (retired)
 
     SCUMM HE:
+       Andrea Boscarino               - Digital audio
        Jonathan Gray                  - (retired)
        Travis Howell
        Gregory Montoir                - (retired)
@@ -459,6 +463,7 @@ ScummVM Team
 
     Sword1:
        Fabio Battaglia                - PSX version support
+       Andrea Boscarino               - Palette fading, menus, audio
        Thierry Crozat                 - Mac version support
        Robert Goeffringmann           - (retired)
 

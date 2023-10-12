@@ -342,6 +342,15 @@ Composer
    * - Alyssa Milburn
      -
 
+Crab
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Kartik Agarwala
+     -
+
 CruisE
 ^^^^^^
 
@@ -1067,6 +1076,8 @@ SCUMM HE
 .. list-table::
    :widths: 35 65
 
+   * - Andrea Boscarino
+     - Digital audio
    * - Jonathan Gray
      - (retired)
    * - Travis Howell
@@ -1158,6 +1169,8 @@ Sword1
 
    * - Fabio Battaglia
      - PSX version support
+   * - Andrea Boscarino
+     - Palette fading, menus, audio
    * - Thierry Crozat
      - Mac version support
    * - Robert Göffringmann
