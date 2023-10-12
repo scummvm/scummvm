@@ -858,7 +858,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 					chunk.palinfo3 = palinfo3;
 					chunk.fgcolor  = _wm->findBestColor(palinfo1 & 0xff, palinfo2 & 0xff, palinfo3 & 0xff);
 
-					D(9, "** splitString[: %08x", fgcolor);
+					D(9, "** splitString[: %08x", chunk.fgcolor);
 					break;
 					}
 
@@ -914,8 +914,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'",
 						_canvas._text[curLine].picpercent,
-						_canvas._text[curLine].picfname.c_str(), _canvas._text[curLine].picalt.c_str(),
-						_canvas._text[curLine].pictitle.c_str());
+						_canvas._text[curLine].picfname.c_str(), _canvas._text[curLine].picalt.encode().c_str(),
+						_canvas._text[curLine].pictitle.encode().c_str());
 					break;
 					}
 
@@ -1157,7 +1157,7 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 
 		// TODO: _canvas._textMaxWidth, when -1, was not rendering ANY text.
 		for (int j = start; j != end; j += delta) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x, font: %p",
+			D(9, "MacTextCanvas::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x, font: %p",
 				  i, j, _text[i].height, xOffset, _text[i].y, _text[i].chunks[j].text.encode().c_str(),
 				  _text[i].chunks[j].fontId, _text[i].chunks[j].fontSize, _surface->w, _surface->h, _text[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_text[i].chunks[j].getFont());
