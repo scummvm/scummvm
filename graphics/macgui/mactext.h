@@ -197,6 +197,7 @@ struct MacTextLine {
 	uint getChunkNum(int *col);
 
 	~MacTextLine() {
+		delete table;
 		delete tableSurface;
 	}
 };
