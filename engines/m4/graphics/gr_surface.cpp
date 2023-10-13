@@ -102,11 +102,11 @@ void M4Surface::rleDraw(const byte *src, int x, int y) {
 }
 
 void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
-		const byte *depthCodes, int srcDepth) {
+		const byte *depthCodes, int srcDepth, const byte *inverseColorTable) {
 	if ((src.encoding & 0x7f) == RLE8) {
 		// The standard case of RLE sprite drawing onto screen can directly
 		// use RLE decompression for performance
-		if (forwards && !depthCodes && !depthCodes && x >= 0 && y >= 0 &&
+		if (forwards && !depthCodes && !inverseColorTable && x >= 0 && y >= 0 &&
 				(x + src.w) <= this->w && (y + src.h) <= this->h) {
 			rleDraw(src.data, x, y);
 
@@ -114,16 +114,16 @@ void M4Surface::draw(const Buffer &src, int x, int y, bool forwards,
 			// All other RLE drawing first decompresses the sprite, and then does
 			// the various clipping, reverse, etc. on that
 			M4Surface tmp(src.data, src.w, src.h);
-			drawInner(tmp, depthCodes, x, y, forwards, srcDepth);
+			drawInner(tmp, depthCodes, x, y, forwards, srcDepth, inverseColorTable);
 		}
 	} else {
 		// Uncompressed images get passed to inner drawing
-		drawInner(src, depthCodes, x, y, forwards, srcDepth);
+		drawInner(src, depthCodes, x, y, forwards, srcDepth, inverseColorTable);
 	}
 }
 
 void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
-		int x, int y, bool forwards, int srcDepth) {
+		int x, int y, bool forwards, int srcDepth, const byte *inverseColorTable) {
 	assert((src.encoding & 0x7f) == NO_COMPRESS);
 
 	for (int srcY = 0; srcY < src.h; ++srcY, ++y) {
@@ -148,6 +148,9 @@ void M4Surface::drawInner(const Buffer &src, const byte *depthCodes,
 			byte v = *srcP;
 			byte depth = depthP ? *depthP & 0xf : 0;
 			if (destX >= 0 && v != 0 && (!depthP || depth == 0 || srcDepth < depth)) {
+				if (inverseColorTable)
+					v = inverseColorTable[v];
+
 				*destP = v;
 			}
 

@@ -157,12 +157,10 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source = afterScaled;
 	}
 
-	if ((drawReq->Src->encoding & SHADOW) != 0)
-		warning("TODO: shadowed sprites drawing");
-
 	M4Surface dst(*drawReq->Dest);
 	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
-		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth);
+		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth,
+		(drawReq->Src->encoding & SHADOW) != 0 ? drawReq->ICT : nullptr);
 
 	if (shadowBuff)
 		mem_free(shadowBuff);
