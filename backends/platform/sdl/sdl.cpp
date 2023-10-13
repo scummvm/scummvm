@@ -1009,41 +1009,6 @@ void OSystem_SDL::clearGraphicsModes() {
 static const char * const helpTabs[] = {
 _s("Keyboard"),
 "",
-#if 1
-_s(
-"## Keyboard shortcuts\n"
-"\n"
-"ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the **Keymaps tab**, or in the **configuration file**.\n"
-"\n"
-"For game-specific controls, see the [wiki entry](https://wiki.scummvm.org/index.php?title=Category:Supported_Games) for the game you are playing.\n"
-"\n"
-"Default shortcuts are shown in the table.\n"
-"\n"
-"| Shortcut      | Description\n"
-"| --------------------------------\n"
-"| `Ctrl+F5` -- Displays the Global Main Menu\n")
-#if defined(MACOSX)
-_s("| `Cmd+q`    -- Quit (macOS)\n")
-#elif defined(WIN32)
-_s("| `Alt+F4`  -- Quit (Windows)\n")
-#else
-_s("| `Ctrl+q`  -- Quit (Linux/Unix)\n")
-_s("| `Ctrl+z`  -- Quit (other platforms)\n")
-#endif
-_s(
-"| `Ctrl+u`  -- Mutes all sounds\n"
-"| `Ctrl+m`  -- Toggles mouse capture\n"
-"| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics filters\n"
-"| `Ctrl+Alt` and `+` or `-` -- Increases/decreases the scale factor\n"
-"| `Ctrl+Alt+a` -- Toggles aspect ratio correction on/off\n"
-"| `Ctrl+Alt+f` -- Toggles between nearest neighbor and bilinear interpolation (graphics filtering on/off)\n"
-"| `Ctrl+Alt+s` -- Cycles through stretch modes\n"
-"| `Alt+Enter`   -- Toggles full screen/windowed mode\n"
-"| `Alt+s`          -- Takes a screenshot\n"
-"| `Ctrl+F7`       -- Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel.\n"
-"| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
-),
-#else
 _s(
 "## Keyboard shortcuts\n"
 "\n"
@@ -1077,7 +1042,6 @@ _s(
 "| `Ctrl+F7`       | Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 ),
-#endif
 
 0,
 	};
