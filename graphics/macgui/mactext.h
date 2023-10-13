@@ -122,12 +122,11 @@ struct MacTextLine;
 class MacTextCanvas {
 public:
 	Common::Array<MacTextLine> _text;
-	uint16 _flags = 0;
 	ManagedSurface *_surface = nullptr, *_shadowSurface = nullptr;
 	int _maxWidth = 0;
 	int _textMaxWidth = 0;
 	int _textMaxHeight = 0;
-	TextAlign _textAlignment = kTextAlignRight;
+	TextAlign _textAlignment = kTextAlignLeft;
 	int _interLinear = 0;
 	int _textShadow = 0;
 	MacWindowManager *_wm = nullptr;

@@ -967,17 +967,18 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						curTextLine->table->push_back(MacTextTableRow());
 						continue;
 					} else if (cmd == 'c') { // Cell start
-						uint16 flags;
-						s = readHex(&flags, s, 2);
+						uint16 align;
+						s = readHex(&align, s, 2);
 
 						curTextLine->table->back().cells.push_back(MacTextCanvas());
-						curTextLine->table->back().cells.back()._flags = flags;
+						curTextLine->table->back().cells.back()._textAlignment = (TextAlign)align;
 						curTextLine->table->back().cells.back()._wm = _wm;
 						curTextLine->table->back().cells.back()._macText = this;
 
 						curTextLine->table->back().cells.back()._text.resize(1);
 						curTextLine = &curTextLine->table->back().cells.back()._text[0];
 						curTextLine->chunks.push_back(_defaultFormatting);
+
 						continue;
 					} else if (cmd == 'C') { // Cell end
 					} else {
