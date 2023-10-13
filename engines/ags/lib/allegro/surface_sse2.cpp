@@ -504,7 +504,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		xCtrBppStart = xCtrStart * SrcBytesPerPixel;
 		args.xStart = 0;
 	}
-	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 4 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
+	int destY = args.yStart, srcYCtr = 0, yCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
 	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
@@ -515,7 +515,10 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 		}
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
-		yCtrHeight = (xCtrWidth % 4 == 0) ? args.destArea.h - args.yStart : args.destArea.h - args.yStart - 1;
+		yCtrHeight = args.destArea.h - args.yStart;
+	}
+	if (xCtrWidth % 4 != 0) {
+		--yCtrHeight;
 	}
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
