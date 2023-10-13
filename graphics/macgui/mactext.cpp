@@ -3049,10 +3049,10 @@ void MacText::processTable(int line) {
 	}
 
 	r = 0;
-	x = 1 + gutter;
 	y = 1 + gutter;
 	for (auto &row : *table) {
 		int c = 0;
+		x = 1 + gutter;
 		for (auto &cell : row.cells) {
 			surf->blitFrom(*cell._surface, Common::Point(x, y));
 			x += gutter * 2 + 1 + colW[c];
@@ -3061,7 +3061,6 @@ void MacText::processTable(int line) {
 		y += gutter * 2 + 1 + rowH[r];
 		r++;
 	}
-
 }
 
 } // End of namespace Graphics
