@@ -817,7 +817,13 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 
 	info.valid = info.blocker == nullptr;
 	// Partial support allowed if land is close
-	info.supported = supportz == target._z && landz + 8 >= target._z;
+	if (supportz == target._z && landz + 8 >= target._z)
+		info.supported = true;
+
+	// Mark supported at minimum z
+	if (target._z <= 0)
+		info.supported = true;
+
 	return info;
 }
 

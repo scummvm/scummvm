@@ -311,7 +311,7 @@ bool AnimationTracker::step() {
 	Box start(_startX, _startY, _startZ, xd, yd, zd);
 	PositionInfo info = cm->getPositionInfo(target, start, a->getShapeInfo()->_flags, _actor);
 
-	if (is_u8 && info.valid && info.supported) {
+	if (is_u8 && info.valid && info.supported && info.land) {
 		// Might need to check for bridge traversal adjustments
 		uint32 supportshape = info.land->getShape();
 		if (supportshape >= 675 && supportshape <= 681) {
