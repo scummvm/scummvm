@@ -4196,6 +4196,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("ozorwell1", "OZORWELL.exe", "7036a7f21cfe585bc890093b4e004d52", 588631118), // itch.io  Eng-Ita
 	GAME_ENTRY("ozorwell2", "OZ2.exe", "99a9a592b2ffe51a93b5f18b927441b0", 1028373987), // itch.io  Eng-Ita
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Win v1.0.2
+	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243795250),  // Win v2.0
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201066930),  // Mac
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
