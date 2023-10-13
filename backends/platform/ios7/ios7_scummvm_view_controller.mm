@@ -49,7 +49,7 @@
 #if TARGET_OS_IOS
 
 - (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
-	return UIRectEdgeLeft | UIRectEdgeBottom | UIRectEdgeRight;
+	return UIRectEdgeAll;
 }
 
 - (UIInterfaceOrientation)interfaceOrientation {
@@ -111,6 +111,9 @@
 		UIInterfaceOrientation orientationAfter = [self interfaceOrientation];
 		if (orientationAfter != UIInterfaceOrientationUnknown) {
 			[self setCurrentOrientation:orientationAfter];
+			if (@available(iOS 11.0, *)) {
+				[self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+			}
 		}
 	}];
 }
