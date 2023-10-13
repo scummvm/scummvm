@@ -1205,7 +1205,7 @@ void MacTextCanvas::render(int from, int to) {
 	render(from, to, 0);
 
 	for (uint i = 0; i < _text.size(); i++) {
-		debugN(9, "MacTextCanvas::render: %2d ", i);
+		debugN(9, "MacTextCanvas::render: %2d (firstInd: %d indent: %d) ", i, _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			debugN(9, "[%d (%d)] \"%s\" ", _text[i].chunks[j].fontId, _text[i].chunks[j].textSlant, _text[i].chunks[j].text.encode().c_str());
