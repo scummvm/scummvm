@@ -544,7 +544,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaYFactor = deltaYFactor;
 
 	if (_vm->_game.version >= 7)
-		_targetFacing = normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), (int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI));
+		_targetFacing = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
 	else
 		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
 
@@ -600,7 +600,7 @@ int Actor::actorWalkStep() {
 	int nextFacing = (_vm->_game.version < 7) ? updateActorDirection(true) : _targetFacing;
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
-			startWalkAnim(1, nextFacing);
+			startWalkAnim(_vm->_game.version >= 7 && (_moving & MF_IN_LEG) ? 2 : 1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
 	}
