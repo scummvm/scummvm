@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-12 21:54+0000\n"
-"PO-Revision-Date: 2023-10-10 07:41+0000\n"
+"PO-Revision-Date: 2023-10-13 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -4593,29 +4593,25 @@ msgid "Software scale (good quality, but slower)"
 msgstr "ソフトウェアスケーリング(低速・高画質)"
 
 #: backends/platform/ios7/ios7_options.mm:96
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "画面上コントロールを表示(iOS 15以上)"
+msgstr "パッドコントロールを表示(iOS 15以上)"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "ゲームパッドを再現"
+msgstr "パッドの透明度"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
-msgstr ""
+msgstr "方向ボタン："
 
 #: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
-msgstr ""
+msgstr "サムスティック"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
-msgstr ""
+msgstr "十字キー"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
