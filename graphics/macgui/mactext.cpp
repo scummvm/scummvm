@@ -1239,6 +1239,14 @@ int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 		return line->width;
 	}
 
+	if (line->table) {
+		line->width = _maxWidth;
+		line->height = line->tableSurface->h;
+		line->charwidth = _maxWidth;
+
+		return line->width;
+	}
+
 	int width = line->indent + line->firstLineIndent;
 	int height = 0;
 	int charwidth = 0;
