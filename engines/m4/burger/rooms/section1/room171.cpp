@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_POLLY_ANIMATION = 5
+};
+
 static const char *SAID[][4] = {
 	{ "AUNT POLLY", "171w001", "171w002", "171w002" },
 	{ "FRONT DOOR", "171w003", "171w002", nullptr   },
@@ -179,10 +183,10 @@ void Room171::init() {
 		case 170:
 			player_set_commands_allowed(false);
 
-			if (_G(flags)[V084] && _G(flags)[V085] && _G(flags)[V086]) {
+			if (_G(flags)[V083] && _G(flags)[V084] && _G(flags)[V085] && _G(flags)[V086]) {
 				loadSeries1();
-				_val2 = 26;
-				kernel_trigger_dispatch_now(5);
+				_pollyShould = 26;
+				kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			} else {
 				while (!_val1) {
 					switch (imath_ranged_rand(1, 4)) {
@@ -190,16 +194,18 @@ void Room171::init() {
 						if (!_G(flags)[V083]) {
 							_val1 = 10019;
 							loadSeries2();
-							_val2 = 5;
-							kernel_trigger_dispatch_now(5);
+							_pollyShould = 5;
+							kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 						}
 						break;
 
 					case 2:
-						_val1 = 10021;
-						loadSeries3();
-						digi_preload("171_002");
-						digi_play_loop("171_002", 2);
+						if (!_G(flags)[V084]) {
+							_val1 = 10021;
+							loadSeries3();
+							digi_preload("171_002");
+							digi_play_loop("171_002", 2);
+						}
 						break;
 
 					case 3:
@@ -221,8 +227,8 @@ void Room171::init() {
 						if (!_G(flags)[V086]) {
 							_val1 = 10022;
 							loadSeries5();
-							_val2 = 20;
-							kernel_trigger_dispatch_now(5);
+							_pollyShould = 20;
+							kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 						}
 						break;
 
@@ -237,20 +243,20 @@ void Room171::init() {
 			if (!_G(flags)[V092]) {
 				if (_G(flags)[V086]) {
 					loadSeries1();
-					_val2 = 26;
-					kernel_trigger_dispatch_now(5);
+					_pollyShould = 26;
+					kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 				} else {
 					_val1 = 10022;
 					loadSeries5();
-kernel_trigger_dispatch_now(6);
+					kernel_trigger_dispatch_now(6);
 				}
 			}
 			break;
 
 		default:
 			loadSeries1();
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 		}
 	}
@@ -266,7 +272,7 @@ kernel_trigger_dispatch_now(6);
 
 	if (_val1 == 10020 || _val1 == 10019) {
 		hotspot_set_active("PIANO STOOL ", true);
-		intr_add_no_walk_rect(378, 300, 518, 354, 377, 355, _G(screenCodeBuff)->get_buffer());
+		intr_add_no_walk_rect(378, 300, 518, 354, 377, 355);
 
 		if (_val1 == 10020) {
 			series_show("171stool", 0x300);
@@ -283,6 +289,9 @@ kernel_trigger_dispatch_now(6);
 		series_show("171phone", 0x700);
 
 	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
 	case 170:
 		ws_demand_location(84, 275, 3);
 
@@ -326,23 +335,24 @@ void Room171::daemon() {
 		break;
 
 	case 4:
-		if (_val2 == 28 || _val2 == 36 || _val2 == 34 || _val2 == 33 ||
-				_val2 == 38 || _val2 == 30) {
+		if (_pollyShould == 28 || _pollyShould == 36 || _pollyShould == 34 || _pollyShould == 33 ||
+				_pollyShould == 38 || _pollyShould == 30) {
 			digi_stop(2);
 			freeSeries();
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		}
 		break;
 
-	case 5:
-		switch (_val2) {
+	case kCHANGE_POLLY_ANIMATION:
+		// Aunt Polly
+		switch (_pollyShould) {
 		case 5:
 			digi_play_loop("171_003", 2);
-			_series.play("171ap01", 0x300);
+			_series.play("171ap01", 0x300, 0, -1, 6, -1);
 			break;
 
 		case 6:
-			npc_say(conv_sound_to_play(), 10001, "171ap01n", 0x2ff);
+			npc_say(conv_sound_to_play(), 10001, "171ap01n", 0x2ff, false);
 			break;
 
 		case 7:
@@ -352,13 +362,13 @@ void Room171::daemon() {
 			break;
 
 		case 8:
-			_val2 = 9;
+			_pollyShould = 9;
 			npc_say(conv_sound_to_play(), 5, "171ap02", 0x300, 1, 17, 22);
 			break;
 
 		case 9:
 			freeSeries();
-			_val2 = 10;
+			_pollyShould = 10;
 			series_play_with_breaks(PLAY4, "171ap03", 0x300, 5, 3);
 			break;
 
@@ -368,8 +378,8 @@ void Room171::daemon() {
 
 			series_show("171stool", 0x300);
 			series_show("171stols", 0x301);
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 11:
@@ -383,35 +393,35 @@ void Room171::daemon() {
 			break;
 
 		case 13:
-			_val2 = 14;
+			_pollyShould = 14;
 			npc_say(5, "171ap05", 0x800);
 			break;
 
 		case 14:
 			_G(flags)[V084] = 1;
 			_chair.terminate();
-			_val2 = 26;
+			_pollyShould = 26;
 			series_play_with_breaks(PLAY6, "171ap06", 0x800, 5, 3);
 			break;
 
 		case 15:
 			terminateMachineAndNull(_lid);
-			_val2 = 16;
-			series_play_with_breaks(PLAY7, "171ap07", 0, 6, 2);
+			_pollyShould = 16;
+			series_play_with_breaks(PLAY7, "171ap07", 0, 5, 2);
 			break;
 
 		case 16:
-			npc_say(10001, "171ap08");
+			npc_say(10001, "171ap08", 0, false);
 			break;
 
 		case 17:
 			freeSeries();
-			_val2 = 18;
+			_pollyShould = 18;
 			series_play_with_breaks(PLAY8, "171ap09", 0, 5, 3);
 			break;
 
 		case 18:
-			_val2 = 19;
+			_pollyShould = 19;
 			series_play_with_breaks(PLAY9, "171ap09", 0x301, 5, 3);
 			series_show("171plid", 0);
 			break;
@@ -419,8 +429,8 @@ void Room171::daemon() {
 		case 19:
 			_G(flags)[V085] = 1;
 			_chair.terminate();
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 20:
@@ -429,7 +439,7 @@ void Room171::daemon() {
 
 		case 21:
 			freeSeries();
-			npc_say(10001, "171ap10", 0x700);
+			npc_say(10001, "171ap10", 0x700, true, 0, 6);
 			break;
 
 		case 22:
@@ -438,13 +448,13 @@ void Room171::daemon() {
 			break;
 
 		case 23:
-			_val2 = 24;
-			_series.play("171ap10", 0x700);
+			_pollyShould = 24;
+			_series.play("171ap10", 0x700, 0, -1, 6, -1, 100, 0, 0, 0, 6);
 			break;
 
 		case 24:
 			freeSeries();
-			_val2 = 25;
+			_pollyShould = 25;
 			series_play_with_breaks(PLAY11, "171ap10", 0x700, 5, 3);
 			break;
 
@@ -452,8 +462,8 @@ void Room171::daemon() {
 			_G(flags)[V086] = 1;
 			_chair.terminate();
 			series_show("171phone", 0x700);
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 26:
@@ -463,27 +473,27 @@ void Room171::daemon() {
 				ws_walk(436, 288, 0, 10001, 2);
 
 			digi_play_loop("171_009", 2, 50);
-			_series.play("171ap11", 0x8ff, 32, 4);
+			_series.play("171ap11", 0x8ff, 32, 4, 6, -1);
 			break;
 
 		case 28:
-			_val2 = 29;
+			_pollyShould = 29;
 			npc_say(_digi1, 5, "171ap13", 0x8fe);
 			break;
 
 		case 29:
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			player_set_commands_allowed(true);
 			break;
 
 		case 30:
-			_val2 = 32;
+			_pollyShould = 32;
 			series_play_with_breaks(PLAY15, "171ap16", 0x8ff, 5, 3);
 			break;
 
 		case 31:
-			_val2 = 32;
+			_pollyShould = 32;
 			series_play_with_breaks(PLAY16, "171ap17", 0x8ff, 5, 3);
 			break;
 
@@ -497,18 +507,18 @@ void Room171::daemon() {
 			break;
 
 		case 34:
-			_val2 = 35;
+			_pollyShould = 35;
 			npc_say(5, "171ap13", 0x8fe);
 			break;
 
 		case 35:
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			conv_resume_curr();
 			break;
 
 		case 36:
-			_val2 = 26;
+			_pollyShould = 26;
 			series_play_with_breaks(PLAY12, "171ap12", 0x8ff, 5, 3);
 			break;
 
@@ -517,24 +527,26 @@ void Room171::daemon() {
 			break;
 
 		case 38:
-			_val2 = 39;
+			_pollyShould = 39;
 			npc_say(5, "171ap13", 0x8fe);
 			break;
 
 		case 39:
+			freeSeries();
 			_chair.show("171chair", "171chars", 0x900);
 
 			if (_series3)
 				terminateMachineAndNull(_series3);
 
+			_pollyShould = 40;
 			series_play_with_breaks(PLAY14, "171ap15", 0x700, 5, 2, 8);
 			break;
 
 		case 40:
 			_chair.terminate();
 			_series3 = series_show("171pills", 0x700);
-			_val2 = 26;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 26;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			conv_resume_curr();
 			break;
 
@@ -580,11 +592,11 @@ void Room171::daemon() {
 		_G(flags)[V299] = 0;
 		_flag1 = false;
 		player_set_commands_allowed(true);
-		_val2 = 26;
+		_pollyShould = 26;
 
 		if (_series) {
 			freeSeries();
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		}
 		break;
 
@@ -609,7 +621,7 @@ void Room171::daemon() {
 				_G(flags)[V087] = 1;
 			}
 
-			_val2 = 28;
+			_pollyShould = 28;
 			break;
 
 		case 10001:
@@ -674,7 +686,7 @@ void Room171::parser() {
 			disable_player_commands_and_fade_init(1019);
 		} else {
 			player_set_commands_allowed(false);
-			_val2 = 30;
+			_pollyShould = 30;
 		}
 
 	} else if (player_said("GEAR", "STAIRS")) {
@@ -692,7 +704,7 @@ void Room171::parser() {
 	} else if (player_said("AUNT POLLY") && player_said_any("PHONE BILL", "CARROT JUICE")) {
 		player_set_commands_allowed(false);
 		_digi1 = "171p901";
-		_val2 = 28;
+		_pollyShould = 28;
 
 	} else if (player_said("ROCKER")) {
 		if (player_said("LOOK AT")) {
@@ -785,21 +797,21 @@ void Room171::conv40() {
 		switch (node) {
 		case 6:
 			if (entry <= 0 || (entry == 6 || entry == 7))
-				_val2 = 36;
+				_pollyShould = 36;
 			break;
 
 		case 7:
-			_val2 = 36;
+			_pollyShould = 36;
 			break;
 
 		case 10:
 			if (entry == 0)
-				_val2 = 36;
+				_pollyShould = 36;
 			break;
 
 		case 15:
 			if (entry == 1 || entry == 2 || entry == 5)
-				_val2 = 36;
+				_pollyShould = 36;
 			break;
 
 		default:
@@ -811,96 +823,96 @@ void Room171::conv40() {
 		case 1:
 			switch (entry) {
 			case 0:
-				_val2 = 6;
+				_pollyShould = 6;
 				break;
 			case 1:
-				_val2 = 7;
+				_pollyShould = 7;
 				break;
 			case 2:
-				_val2 = 8;
+				_pollyShould = 8;
 				break;
 			default:
 				break;
 			}
 
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 2:
 			switch (entry) {
 			case 0:
-				_val2 = 11;
+				_pollyShould = 11;
 				break;
 			case 1:
-				_val2 = 12;
+				_pollyShould = 12;
 				break;
 			case 2:
-				_val2 = 13;
+				_pollyShould = 13;
 				break;
 			default:
 				break;
 			}
 
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 3:
 			switch (entry) {
 			case 0:
-				_val2 = 15;
+				_pollyShould = 15;
 				break;
 			case 1:
-				_val2 = 17;
+				_pollyShould = 17;
 				break;
 			default:
 				break;
 			}
 
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 4:
 			switch (entry) {
 			case 0:
-				_val2 = 21;
+				_pollyShould = 21;
 				break;
 			case 1:
-				_val2 = 22;
+				_pollyShould = 22;
 				break;
 			default:
 				break;
 			}
 
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 5:
 		case 7:
-			_val2 = 34;
+			_pollyShould = 34;
 			break;
 
 		case 6:
-			_val2 = (entry == 6) ? 33 : 34;
+			_pollyShould = (entry == 6) ? 33 : 34;
 			break;
 
 		case 8:
 			switch (entry) {
 			case 0:
-				_val2 = 33;
+				_pollyShould = 33;
 				break;
 			case 1:
-				_val2 = 38;
+				_pollyShould = 38;
 				break;
 			default:
 				break;
 			}
 
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 9:
-			_val2 = 34;
-			kernel_trigger_dispatch_now(5);
+			_pollyShould = 34;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		default:

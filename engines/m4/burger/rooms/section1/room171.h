@@ -56,7 +56,7 @@ private:
 	bool _flag1 = false;
 	bool _doorFlag = false;
 	int _val1 = 0;
-	int _val2 = 0;
+	int _pollyShould = 0;
 
 	void loadSeries1();
 	void loadSeries2();
