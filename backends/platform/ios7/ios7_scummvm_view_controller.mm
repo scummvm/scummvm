@@ -47,6 +47,11 @@
 }
 
 #if TARGET_OS_IOS
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
+	return UIRectEdgeLeft | UIRectEdgeBottom | UIRectEdgeRight;
+}
+
 - (UIInterfaceOrientation)interfaceOrientation {
 	if (@available(iOS 13.0, *)) {
 		return [[[[self view] window] windowScene] interfaceOrientation];
