@@ -1173,11 +1173,6 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 
 MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	_system(system), _vm(vm), _surface(vm->_macScreen), _visible(false) {
-	Graphics::MacFontManager *mfm = _vm->_macFontManager;
-
-	_fonts[kRegular] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9));
-	_fonts[kBold] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold));
-	_fonts[kOutline] = mfm->getFont(Graphics::MacFont(Graphics::kMacFontGeneva, 9, Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense));
 
 	// There is one widget for every verb in the game. Verbs include the
 	// inventory widget and conversation options.
@@ -1185,6 +1180,9 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
 	Widget::_vm = _vm;
 	Widget::_surface = _surface;
 	Widget::_gui = this;
+
+	for (int i = 0; i < ARRAYSIZE(_fonts); i++)
+		_fonts[i] = nullptr;
 
 	_widgets[  1] = new Button(137, 312,  68, 18); // Open
 	_widgets[  2] = new Button(137, 332,  68, 18); // Close
@@ -1257,11 +1255,43 @@ bool MacIndy3Gui::isVerbGuiActive() const {
 	return _visible && isVerbGuiAllowed();
 }
 
-void MacIndy3Gui::resetAfterLoad() {
+const Graphics::Font *MacIndy3Gui::getFont(FontId fontId) {
+	if (!_fonts[fontId]) {
+		int id = Graphics::kMacFontGeneva;
+		int size = 9;
+		int slant = Graphics::kMacFontRegular;
+
+		switch (fontId) {
+		case kRegular:
+			break;
+
+		case kBold:
+			slant = Graphics::kMacFontBold;
+			break;
+
+		case kOutline:
+			slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
+			break;
+
+		default:
+			error("MacIndy3Gui: getFont: Unknown font id %d", fontId);
+		}
+
+		_fonts[fontId] = _vm->_macFontManager->getFont(Graphics::MacFont(id, size, slant));
+	}
+
+	return _fonts[fontId];
+}
+
+void MacIndy3Gui::reset() {
 	_visible = false;
 
 	for (auto &it: _widgets)
 		it._value->reset();
+}
+
+void MacIndy3Gui::resetAfterLoad() {
+	reset();
 
 	// In the DOS version, verb ID 102-106 were used for the visible
 	// inventory items, and 107-108 for inventory arrow buttons. In the
@@ -1441,12 +1471,10 @@ void MacIndy3Gui::hide() {
 
 	debug(1, "MacIndy3Gui: Hiding");
 
-	_visible = false;
 	_leftButtonIsPressed = false;
 	_timer = 0;
 
-	for (auto &it: _widgets)
-		it._value->reset();
+	reset();
 
 	if (isVerbGuiAllowed()) {
 		_surface->fillRect(Common::Rect(0, 288, 640, 400), kBlack);

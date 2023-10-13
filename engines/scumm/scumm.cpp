@@ -1159,6 +1159,7 @@ Common::Error ScummEngine::init() {
 
 					_macIndy3TextBox = new Graphics::Surface();
 					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
+					_macIndy3Gui = new MacIndy3Gui(_system, this);
 					break;
 				}
 			}
@@ -1675,9 +1676,9 @@ void ScummEngine::resetScumm() {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	}
 
-	if (_macIndy3TextBox) {
+	if (_macIndy3Gui) {
 		_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
-		_macIndy3Gui = new MacIndy3Gui(_system, this);
+		_macIndy3Gui->reset();
 	}
 
 	if (_game.version == 0) {

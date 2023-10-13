@@ -81,8 +81,9 @@ public:
 	// the verb area to clear the power meters and text.
 
 	bool isVerbGuiActive() const;
-	const Graphics::Font *getFont(int n) const { return _fonts[n]; }
+	const Graphics::Font *getFont(FontId fontId);
 
+	void reset();
 	void resetAfterLoad();
 	void update(int delta);
 	void handleEvent(Common::Event &event);
