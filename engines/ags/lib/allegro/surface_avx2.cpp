@@ -663,7 +663,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 		xCtrBppStart = xCtrStart * 2;
 		args.xStart = 0;
 	}
-	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = (xCtrWidth % 16 == 0) ? args.dstRect.height() : (args.dstRect.height() - 1);
+	int destY = args.yStart, yCtr = 0, srcYCtr = 0, scaleYCtr = 0, yCtrHeight = args.dstRect.height();
 	if (Scale) yCtrHeight = args.dstRect.height();
 	if (args.yStart < 0) {
 		yCtr = -args.yStart;
@@ -675,6 +675,9 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	}
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
+	}
+	if (xCtrWidth % 16 != 0) {
+		--yCtrHeight;
 	}
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
