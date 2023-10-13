@@ -91,7 +91,7 @@ void MD5CheckDialog::handleTickle() {
 	_progressSliderWidget->setValue(p * 100 / t);
 	_progressSliderWidget->markAsDirty();
 
-	if (p == t) {
+	if (p == t || MD5Check::userCanceled()) {
 		setResult(_checkOk);
 		close();
 	}

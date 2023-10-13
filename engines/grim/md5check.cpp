@@ -23,10 +23,12 @@
 #include "common/md5.h"
 #include "common/translation.h"
 
+#include "gui/message.h"
 #include "gui/error.h"
 
 #include "engines/grim/md5check.h"
 #include "engines/grim/grim.h"
+
 
 namespace Grim {
 
@@ -417,6 +419,7 @@ const char *emi_installer[] = {
 	"a42f8aa079a6d23c285fceba191e67a4", // English (Monkey Island 4 Installer)
 };
 
+bool MD5Check::_userCanceled = false;
 bool MD5Check::_initted = false;
 Common::Array<MD5Check::MD5Sum> *MD5Check::_files = nullptr;
 int MD5Check::_iterator = -1;
@@ -425,6 +428,8 @@ void MD5Check::init() {
 	if (_initted) {
 		return;
 	}
+
+	_userCanceled = false;
 	_initted = true;
 	_files = new Common::Array<MD5Sum>();
 
@@ -572,6 +577,10 @@ bool MD5Check::checkFiles() {
 	return ok;
 }
 
+bool MD5Check::userCanceled() {
+	return _userCanceled;
+}
+
 void MD5Check::startCheckFiles() {
 	init();
 	_iterator = 0;
@@ -598,9 +607,16 @@ bool MD5Check::advanceCheck(int *pos, int *total) {
 		Common::String md5 = Common::computeStreamMD5AsString(file);
 		if (!checkMD5(sum, md5.c_str())) {
 			warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
-			GUI::displayErrorDialog(Common::U32String::format(_("The game data file %s may be corrupted.\nIf you are sure it is "
+			auto noticeMsg = Common::U32String::format(_("The game data file %s may be corrupted.\nIf you are sure it is "
 									"not please provide the ScummVM team the following code, along with the file name, the language and a "
-									"description of your game version (i.e. dvd-box or jewelcase):\n%s"), sum.filename, md5.c_str()));
+									"description of your game version (i.e. dvd-box or jewelcase):\n%s"), sum.filename, md5.c_str());
+			auto alert = GUI::MessageDialog(noticeMsg, _("Continue"), _("Stop"));
+			if (alert.runModal() == GUI::kMessageAlt) {
+				// The user requested to stop processing md5 checksums so this will bail early.
+				_userCanceled = true;
+				return false;
+			}
+
 			return false;
 		}
 	} else {

@@ -30,6 +30,7 @@ class MD5Check {
 public:
 	static bool checkFiles();
 	static void startCheckFiles();
+	static bool userCanceled();
 	static bool advanceCheck(int *pos, int *total);
 	inline static bool advanceCheck() { return advanceCheck(NULL, NULL); }
 	static void clear();
@@ -45,6 +46,7 @@ private:
 	};
 	static bool checkMD5(const MD5Sum &sums, const char *md5);
 
+	static bool _userCanceled;
 	static bool _initted;
 	static Common::Array<MD5Sum> *_files;
 	static int _iterator;
