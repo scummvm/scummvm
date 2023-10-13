@@ -92,10 +92,6 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 
 uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	Buffer source;
-#if 0
-	int32 leftOffset = 0, rightOffset = 0, YPos;
-	uint8 bottomCut = 0;
-#endif
 	uint8 *shadowBuff = nullptr, *scaledBuff = nullptr;
 	Buffer afterScaled = { 0, 0, nullptr, 0, 0 };
 
@@ -167,126 +163,6 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	M4Surface dst(*drawReq->Dest);
 	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
 		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth);
-
-#if 0
-	YPos = drawReq->y;
-
-	// Check for clipping
-	// If sprite is off edge of destination buffer, do something special
-	if (Clipped) {
-		if (-YPos >= source.h)
-			goto truly_done;
-
-		if (YPos >= drawReq->Dest->h)
-			goto truly_done;
-
-		if (-drawReq->x >= source.w)
-			goto truly_done;
-
-		if (drawReq->x >= drawReq->Dest->w)
-			goto truly_done;
-
-		// if clipped off top, scan into sprite
-		if (YPos < 0) {
-			if (Rle)
-				source.data = SkipRLE_Lines(-YPos, source.data);
-			else
-				source.data += -YPos * source.stride;
-
-			source.h += YPos;
-			YPos = 0;
-		}
-
-		// Find out if we're losing pixels on left or right
-		if (drawReq->x < 0)
-			leftOffset = -drawReq->x;
-
-		if (drawReq->x + source.w > drawReq->Dest->w)
-			rightOffset = drawReq->x + source.w - drawReq->Dest->w;
-
-		if (YPos + source.h > drawReq->Dest->h) {
-			source.h -= YPos + source.h - drawReq->Dest->h;
-			bottomCut = 1;
-		}
-	}
-
-	// After all the necessary changes (scaling/shadow RLE expansion)
-	if (Rle) {
-		// Will be RLE_Draw
-		if (ClipD)
-			if (Depthed)
-				if (Forward)
-					RLE_DrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
-				else
-					RLE_DrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
-			else
-				if (Forward)
-					RLE_DrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
-				else
-					RLE_DrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
-		else
-			if (Depthed)
-				if (Forward)
-					RLE_DrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
-				else
-					RLE_DrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
-			else
-				if (Forward)
-					RLE_Draw(&source, drawReq->Dest, drawReq->x, YPos);
-				else
-					RLE_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
-	} else if (Shadow) {
-		// Will be Raw_SDraw
-		if (ClipD)
-			if (Depthed)
-				if (Forward)
-					Raw_SDrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
-				else
-					Raw_SDrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
-			else
-				if (Forward)
-					Raw_SDrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
-				else
-					Raw_SDrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset, drawReq->Pal, drawReq->ICT);
-		else
-			if (Depthed)
-				if (Forward)
-					Raw_SDrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, drawReq->Pal, drawReq->ICT);
-				else
-					Raw_SDrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, drawReq->Pal, drawReq->ICT);
-			else
-				if (Forward)
-					Raw_SDraw(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
-				else
-					Raw_SDrawRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->Pal, drawReq->ICT);
-	} else {
-		// Will be Raw_Draw
-		if (ClipD)
-			if (Depthed)
-				if (Forward)
-					Raw_DrawDepthOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
-				else
-					Raw_DrawDepthRevOffs(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode, leftOffset, rightOffset);
-			else
-				if (Forward)
-					Raw_DrawOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
-				else
-					Raw_DrawRevOffs(&source, drawReq->Dest, drawReq->x, YPos, leftOffset, rightOffset);
-		else
-			if (Depthed)
-				if (Forward)
-					Raw_DrawDepth(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
-				else
-					Raw_DrawDepthRev(&source, drawReq->Dest, drawReq->x, YPos, drawReq->srcDepth, drawReq->depthCode);
-			else
-				if (Forward)
-					Raw_Draw(&source, drawReq->Dest, drawReq->x, YPos);
-				else
-					Raw_DrawRev(&source, drawReq->Dest, drawReq->x, YPos);
-	}
-
-truly_done:
-#endif
 
 	if (shadowBuff)
 		mem_free(shadowBuff);
