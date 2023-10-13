@@ -283,14 +283,18 @@ uint16 CameraProcess::findRoof(int32 factor) {
 	_earthquake = 0;
 	GetLerped(x, y, z, factor);
 	_earthquake = earthquake_old;
-	Item *avatar = getItem(1);
-	if (!avatar) // avatar gone?
-		return 0;
+ 
+	Box target(x, y, z, 32, 32, 0);
 
-	int32 dx, dy, dz;
-	avatar->getFootpadWorld(dx, dy, dz);
+	// Should _itemNum be used when not focused on main actor?
+	Item *item = getItem(1);
+	if (item) {
+		int32 dx, dy, dz;
+		item->getFootpadWorld(dx, dy, dz);
+		target._xd = dx;
+		target._yd = dy;
+	}
 
-	Box target(x, y, z - 10, dx / 2, dy / 2, dz / 2);
 	PositionInfo info = World::get_instance()->getCurrentMap()->getPositionInfo(target, target, 0, 1);
 	return info.roof ? info.roof->getObjId() : 0;
 }
