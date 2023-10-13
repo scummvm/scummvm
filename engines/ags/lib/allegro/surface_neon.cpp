@@ -20,9 +20,6 @@
  */
 
 #include "ags/ags.h"
-
-#ifdef SCUMMVM_NEON
-
 #include <arm_neon.h>
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
@@ -33,7 +30,9 @@
 
 namespace AGS3 {
 
-inline uint32x4_t simd2BppTo4Bpp(uint16x4_t pixels) {
+class DrawInnerImpl_NEON {
+
+static inline uint32x4_t simd2BppTo4Bpp(uint16x4_t pixels) {
 	uint32x4_t x = vmovl_u16(pixels);
 
 	// c is the extracted 5/6 bit color from the image
@@ -51,7 +50,7 @@ inline uint32x4_t simd2BppTo4Bpp(uint16x4_t pixels) {
 	return vorrq_u32(vorrq_u32(vorrq_u32(r, g), b), vmovq_n_u32(0xff000000));
 }
 
-inline uint16x4_t simd4BppTo2Bpp(uint32x4_t pixels) {
+static inline uint16x4_t simd4BppTo2Bpp(uint32x4_t pixels) {
 	// x is the final 16 bit rgb pixel
 	uint32x4_t x = vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x000000ff)), 3);
 	x = vorrq_u32(x, vshlq_n_u32(vshrq_n_u32(vandq_u32(pixels, vmovq_n_u32(0x0000ff00)), 8+2), 5));
@@ -59,7 +58,7 @@ inline uint16x4_t simd4BppTo2Bpp(uint32x4_t pixels) {
 	return vmovn_u32(x);
 }
 
-inline uint16x8_t rgbBlendSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) {
+static inline uint16x8_t rgbBlendSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) {
 	// Here we add 1 to alphas if its 0. This is what the original blender function did
 	alphas = vaddq_u16(alphas, vandq_u16(vceqq_u16(alphas, vmovq_n_u16(0)), vmovq_n_u16(1)));
 
@@ -116,7 +115,7 @@ inline uint16x8_t rgbBlendSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint
 // preserveAlpha:
 //		false => set destCols's alpha to 0
 // 		true => keep destCols's alpha
-inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool preserveAlpha) {
+static inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool preserveAlpha) {
 	// Here we add 1 to alphas if its 0. This is what the original blender function did
 	alphas = vaddq_u32(alphas, vandq_u32(vcgtq_u32(alphas, vmovq_n_u32(0)), vmovq_n_u32(1)));
 
@@ -157,7 +156,7 @@ inline uint32x4_t rgbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4
 }
 
 // uses the alpha from srcCols and destCols
-inline uint32x4_t argbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols) {
+static inline uint32x4_t argbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols) {
 	float32x4_t srcA = vcvtq_f32_u32(vshrq_n_u32(srcCols, 24));
 	srcA = vmulq_n_f32(srcA, 1.0f / 255.0f);
 	float32x4_t srcR = vcvtq_f32_u32(vandq_u32(vshrq_n_u32(srcCols, 16), vmovq_n_u32(0xff)));
@@ -188,7 +187,7 @@ inline uint32x4_t argbBlendSIMD(uint32x4_t srcCols, uint32x4_t destCols) {
 			vcvtq_u32_f32(destB))));
 }
 
-inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool light) {
+static inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas, bool light) {
 	// This function is NOT 1 to 1 with the original... It just approximates it
 	// It gets the value of the HSV of the dest color
 	// Then it gets the HSV of the srcCols
@@ -287,7 +286,7 @@ inline uint32x4_t blendTintSpriteSIMD(uint32x4_t srcCols, uint32x4_t destCols, u
 	return final;
 }
 
-inline uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) {
+static inline uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32x4_t alphas) {
 	uint32x4_t srcAlphas, difAlphas, mask, ch1, ch2;
 	auto setupArgbAlphas = [&]() {
 		// This acts the same as this in the normal blender functions
@@ -352,7 +351,7 @@ inline uint32x4_t blendPixelSIMD(uint32x4_t srcCols, uint32x4_t destCols, uint32
 	return srcCols;
 }
 
-inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) {
+static inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, uint16x8_t alphas) {
 	uint16x8_t mask, ch1, ch2;
 	switch (_G(_blender_mode)) {
 	case kSourceAlphaBlender:
@@ -389,7 +388,7 @@ inline uint16x8_t blendPixelSIMD2Bpp(uint16x8_t srcCols, uint16x8_t destCols, ui
 }
 
 template<int DestBytesPerPixel, int SrcBytesPerPixel>
-inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, uint32x4_t tint, uint32x4_t alphas, uint32x4_t maskedAlphas, uint32x4_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint32x4_t skipMask) {
+static inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, uint32x4_t tint, uint32x4_t alphas, uint32x4_t maskedAlphas, uint32x4_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint32x4_t skipMask) {
 	uint32x4_t srcCols, destCol;
 
 	if (DestBytesPerPixel == 4)
@@ -425,7 +424,7 @@ inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, uint32x4_t tint, uin
 	}
 }
 
-inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, uint16x8_t tint, uint16x8_t alphas, uint16x8_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint16x8_t skipMask) {
+static inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, uint16x8_t tint, uint16x8_t alphas, uint16x8_t transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, uint16x8_t skipMask) {
 	uint16x8_t destCol = vld1q_u16((uint16 *)destPtr);
 	uint16x8_t srcCols = vld1q_u16((const uint16 *)(srcP2 + xDir * xCtrBpp));
 	uint16x8_t mask1 = skipTrans ? vceqq_u16(srcCols, transColors) : vmovq_n_u16(0);
@@ -448,7 +447,6 @@ inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, uint16x8_t tint,
 	vst1q_u16((uint16 *)destPtr, final);
 }
 
-class DrawInnerImpl {
 public:
 
 // This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
@@ -910,20 +908,20 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	}
 }
 
-}; // end of class DrawInnerImpl
+}; // end of class DrawInnerImpl_NEON
 
 template<bool Scale>
 void BITMAP::drawNEON(DrawInnerArgs &args) {
 	if (args.sameFormat) {
 		switch (format.bytesPerPixel) {
-		case 1: DrawInnerImpl::drawInner1Bpp<Scale>(args); break;
-		case 2: DrawInnerImpl::drawInner2Bpp<Scale>(args); break;
-		case 4: DrawInnerImpl::drawInner4BppWithConv<4, 4, Scale>(args); break;
+		case 1: DrawInnerImpl_NEON::drawInner1Bpp<Scale>(args); break;
+		case 2: DrawInnerImpl_NEON::drawInner2Bpp<Scale>(args); break;
+		case 4: DrawInnerImpl_NEON::drawInner4BppWithConv<4, 4, Scale>(args); break;
 		}
 	} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) {
-		DrawInnerImpl::drawInner4BppWithConv<4, 2, Scale>(args);
+		DrawInnerImpl_NEON::drawInner4BppWithConv<4, 2, Scale>(args);
 	} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-		DrawInnerImpl::drawInner4BppWithConv<2, 4, Scale>(args);
+		DrawInnerImpl_NEON::drawInner4BppWithConv<2, 4, Scale>(args);
 	}
 }
 
@@ -931,4 +929,3 @@ template void BITMAP::drawNEON<false>(DrawInnerArgs &);
 template void BITMAP::drawNEON<true>(DrawInnerArgs &);
 
 } // namespace AGS3
-#endif // SCUMMVM_NEON

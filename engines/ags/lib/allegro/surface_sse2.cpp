@@ -30,7 +30,9 @@
 
 namespace AGS3 {
 
-inline __m128i simd2BppTo4Bpp(__m128i pixels) {
+class DrawInnerImpl_SSE2 {
+
+static inline __m128i simd2BppTo4Bpp(__m128i pixels) {
 	__m128i x = _mm_unpacklo_epi16(pixels, _mm_setzero_si128());
 
 	// c is the extracted 5/6 bit color from the image
@@ -48,7 +50,7 @@ inline __m128i simd2BppTo4Bpp(__m128i pixels) {
 	return _mm_or_si128(_mm_or_si128(_mm_or_si128(r, g), b), _mm_set1_epi32(0xff000000));
 }
 
-inline __m128i simd4BppTo2Bpp(__m128i pixels) {
+static inline __m128i simd4BppTo2Bpp(__m128i pixels) {
 	// x is the final 16 bit rgb pixel
 	__m128i x = _mm_srli_epi32(_mm_and_si128(pixels, _mm_set1_epi32(0x000000ff)), 3);
 	x = _mm_or_si128(x, _mm_slli_epi32(_mm_srli_epi32(_mm_and_si128(pixels, _mm_set1_epi32(0x0000ff00)), 8+2), 5));
@@ -58,7 +60,7 @@ inline __m128i simd4BppTo2Bpp(__m128i pixels) {
 	return _mm_packs_epi32(x, _mm_setzero_si128());
 }
 
-inline __m128i rgbBlendSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alphas) {
+static inline __m128i rgbBlendSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alphas) {
 	// Here we add 1 to alphas if its 0. This is what the original blender function did
 	alphas = _mm_add_epi16(alphas, _mm_and_si128(_mm_cmpgt_epi16(alphas, _mm_setzero_si128()), _mm_set1_epi16(1)));
 
@@ -98,7 +100,7 @@ inline __m128i rgbBlendSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alpha
 	return _mm_or_si128(diffs[0], _mm_slli_epi16(diffs[2], 11));
 }
 
-inline __m128i mul32_as32(__m128i a, __m128i b) {
+static inline __m128i mul32_as32(__m128i a, __m128i b) {
 	__m128i tmp1 = _mm_mul_epu32(a,b);
 	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(a,4), _mm_srli_si128(b,4));
 	return _mm_unpacklo_epi32(_mm_shuffle_epi32(tmp1, _MM_SHUFFLE (0,0,2,0)), _mm_shuffle_epi32(tmp2, _MM_SHUFFLE (0,0,2,0))); /* shuffle results to [63..0] and pack */
@@ -107,7 +109,7 @@ inline __m128i mul32_as32(__m128i a, __m128i b) {
 // preserveAlpha:
 //		false => set destCols's alpha to 0
 // 		true => keep destCols's alpha
-inline __m128i rgbBlendSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, bool preserveAlpha) {
+static inline __m128i rgbBlendSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, bool preserveAlpha) {
 	// Here we add 1 to alphas if its 0. This is what the original blender function did.
 	alphas = _mm_add_epi32(alphas, _mm_and_si128(_mm_cmpgt_epi32(alphas, _mm_setzero_si128()), _mm_set1_epi32(1)));
 
@@ -149,7 +151,7 @@ inline __m128i rgbBlendSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, b
 	return srcCols;
 }
 
-inline __m128i argbBlendSIMD(__m128i srcCols, __m128i destCols) {
+static inline __m128i argbBlendSIMD(__m128i srcCols, __m128i destCols) {
 	__m128 srcA = _mm_cvtepi32_ps(_mm_srli_epi32(srcCols, 24));
 	srcA = _mm_mul_ps(srcA, _mm_set1_ps(1.0f / 255.0f));
 	__m128 srcR = _mm_cvtepi32_ps(_mm_and_si128(_mm_srli_epi32(srcCols, 16), _mm_set1_epi32(0xff)));
@@ -180,7 +182,7 @@ inline __m128i argbBlendSIMD(__m128i srcCols, __m128i destCols) {
 			_mm_cvtps_epi32(destB))));
 }
 
-inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, bool light) {
+static inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i alphas, bool light) {
 	// This function is NOT 1 to 1 with the original... It just approximates it
 	// It gets the value of the HSV of the dest color
 	// Then it gets the HSV of the srcCols
@@ -280,21 +282,21 @@ inline __m128i blendTintSpriteSIMD(__m128i srcCols, __m128i destCols, __m128i al
 	return final;
 }
 
-inline __m128i mul32_as16(__m128i a, __m128i b) {
+static inline __m128i mul32_as16(__m128i a, __m128i b) {
 	__m128i a16 = _mm_packs_epi32(a, _mm_setzero_si128());
 	__m128i b16 = _mm_packs_epi32(b, _mm_setzero_si128());
 	__m128i res = _mm_mullo_epi16(a16, b16);
 	return _mm_unpacklo_epi16(res, _mm_setzero_si128());
 }
 
-inline __m128i findmin32_as16(__m128i a, __m128i b) {
+static inline __m128i findmin32_as16(__m128i a, __m128i b) {
 	__m128i a16 = _mm_packs_epi32(a, _mm_setzero_si128());
 	__m128i b16 = _mm_packs_epi32(b, _mm_setzero_si128());
 	__m128i res = _mm_min_epi16(a16, b16);
 	return _mm_unpacklo_epi16(res, _mm_setzero_si128());
 }
 
-inline __m128i blendPixelSIMD(__m128i srcCols, __m128i destCols, __m128i alphas) {
+static inline __m128i blendPixelSIMD(__m128i srcCols, __m128i destCols, __m128i alphas) {
 	__m128i srcAlphas, difAlphas, mask, ch1, ch2;
 	auto setupArgbAlphas = [&]() {
 		// This acts the same as this in the normal blender functions
@@ -359,7 +361,7 @@ inline __m128i blendPixelSIMD(__m128i srcCols, __m128i destCols, __m128i alphas)
 	return _mm_setzero_si128();
 }
 
-inline __m128i blendPixelSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alphas) {
+static inline __m128i blendPixelSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alphas) {
 	__m128i mask, ch1, ch2;
 	switch (_G(_blender_mode)) {
 	case kSourceAlphaBlender:
@@ -396,7 +398,7 @@ inline __m128i blendPixelSIMD2Bpp(__m128i srcCols, __m128i destCols, __m128i alp
 }
 
 template<int DestBytesPerPixel, int SrcBytesPerPixel>
-inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, __m128i tint, __m128i alphas, __m128i maskedAlphas, __m128i transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, __m128i skipMask) {
+static inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, __m128i tint, __m128i alphas, __m128i maskedAlphas, __m128i transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, __m128i skipMask) {
 	__m128i srcCols, destCol;
 
 	if (DestBytesPerPixel == 4)
@@ -432,7 +434,7 @@ inline void drawPixelSIMD(byte *destPtr, const byte *srcP2, __m128i tint, __m128
 	}
 }
 
-inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, __m128i tint, __m128i alphas, __m128i transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, __m128i skipMask) {
+static inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, __m128i tint, __m128i alphas, __m128i transColors, int xDir, int xCtrBpp, int srcAlpha, int skipTrans, bool horizFlip, bool useTint, __m128i skipMask) {
 	__m128i destCol = _mm_loadu_si128((const __m128i *)destPtr);
 	__m128i srcCols = _mm_loadu_si128((const __m128i *)(srcP2 + xDir * xCtrBpp));
 	__m128i mask1 = skipTrans ? _mm_cmpeq_epi16(srcCols, transColors) : _mm_setzero_si128();
@@ -456,20 +458,19 @@ inline void drawPixelSIMD2Bpp(byte *destPtr, const byte *srcP2, __m128i tint, __
 	_mm_storeu_si128((__m128i *)destPtr, final);
 }
 
-inline uint32 extract32_idx0(__m128i x) {
+static inline uint32 extract32_idx0(__m128i x) {
 	return _mm_cvtsi128_si32(x);
 }
-inline uint32 extract32_idx1(__m128i x) {
+static inline uint32 extract32_idx1(__m128i x) {
 	return _mm_cvtsi128_si32(_mm_shuffle_epi32(x, _MM_SHUFFLE(1, 1, 1, 1)));
 }
-inline uint32 extract32_idx2(__m128i x) {
+static inline uint32 extract32_idx2(__m128i x) {
 	return _mm_cvtsi128_si32(_mm_shuffle_epi32(x, _MM_SHUFFLE(2, 2, 2, 2)));
 }
-inline uint32 extract32_idx3(__m128i x) {
+static inline uint32 extract32_idx3(__m128i x) {
 	return _mm_cvtsi128_si32(_mm_shuffle_epi32(x, _MM_SHUFFLE(3, 3, 3, 3)));
 }
 
-class DrawInnerImpl {
 public:
 
 // This template handles 2bpp and 4bpp, the other specializations handle 1bpp and format conversion blits
@@ -938,20 +939,20 @@ static void drawInner1Bpp(BITMAP::DrawInnerArgs &args) {
 	}
 }
 
-}; // end of class DrawInnerImpl
+}; // end of class DrawInnerImpl_SSE2
 
 template<bool Scale>
 void BITMAP::drawSSE2(DrawInnerArgs &args) {
 	if (args.sameFormat) {
 		switch (format.bytesPerPixel) {
-		case 1: DrawInnerImpl::drawInner1Bpp<Scale>(args); break;
-		case 2: DrawInnerImpl::drawInner2Bpp<Scale>(args); break;
-		case 4: DrawInnerImpl::drawInner4BppWithConv<4, 4, Scale>(args); break;
+		case 1: DrawInnerImpl_SSE2::drawInner1Bpp<Scale>(args); break;
+		case 2: DrawInnerImpl_SSE2::drawInner2Bpp<Scale>(args); break;
+		case 4: DrawInnerImpl_SSE2::drawInner4BppWithConv<4, 4, Scale>(args); break;
 		}
 	} else if (format.bytesPerPixel == 4 && args.src.format.bytesPerPixel == 2) {
-		DrawInnerImpl::drawInner4BppWithConv<4, 2, Scale>(args);
+		DrawInnerImpl_SSE2::drawInner4BppWithConv<4, 2, Scale>(args);
 	} else if (format.bytesPerPixel == 2 && args.src.format.bytesPerPixel == 4) {
-		DrawInnerImpl::drawInner4BppWithConv<2, 4, Scale>(args);
+		DrawInnerImpl_SSE2::drawInner4BppWithConv<2, 4, Scale>(args);
 	}
 }
 

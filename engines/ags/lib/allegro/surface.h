@@ -265,6 +265,10 @@ public:
 	// kTintBlenderMode and kTintLightBlenderMode
 	void blendTintSprite(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha, bool light) const;
 
+	friend class DrawInnerImpl_AVX2;
+	friend class DrawInnerImpl_SSE2;
+	friend class DrawInnerImpl_NEON;
+
 	constexpr static int SCALE_THRESHOLD_BITS = 8;
 	constexpr static int SCALE_THRESHOLD = 1 << SCALE_THRESHOLD_BITS;
 	struct DrawInnerArgs {
@@ -287,7 +291,7 @@ public:
 					  bool vertFlip, int tintRed, int tintGreen, int tintBlue,
 					  bool doScale);
 	};
-	friend class DrawInnerImpl;
+
 	template<bool Scale>
 	void drawGeneric(DrawInnerArgs &args);
 #ifdef SCUMMVM_NEON
