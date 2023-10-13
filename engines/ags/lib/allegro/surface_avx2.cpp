@@ -539,7 +539,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 			// scaling size, we create a small dummy buffer that we copy the pixels into and then
 			// call the drawPixelsSIMD function
 			byte srcBuffer[4*8] = {0};
-			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart, scaleXCtr = xCtrStart * args.scaleX; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
+			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart, scaleXCtr = xCtrStart * args.scaleX; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += SrcBytesPerPixel*4) {
 				if (yCtr + 1 == yCtrHeight && xCtr + 4 > xCtrWidth) break; // Don't go past the last 4 pixels
 				__m256i indexes = _mm256_set1_epi32(scaleXCtr);
 				// Calculate in parallel the indexes of the pixels
