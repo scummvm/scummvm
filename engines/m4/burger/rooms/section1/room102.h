@@ -39,7 +39,7 @@ private:
 	int _val9 = 0;
 	uint32 _val10 = 99999;
 	int _val11 = 0;
-	int _val12 = 0;
+	int _harryShould = 0;
 	int _val13 = 0;
 	int _val14 = 0;
 	int _val16 = 0;
