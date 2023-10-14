@@ -444,6 +444,7 @@ void Room171::daemon() {
 
 		case 22:
 			npc_say(5);
+			_pollyShould = 23;
 			series_play_with_breaks(PLAY10, "171ap10", 0x700, 5, 3);
 			break;
 
@@ -660,7 +661,7 @@ void Room171::pre_parser() {
 		player_walk_to(_G(click_x), 355);
 	}
 
-	if (player_said("GEAR") && player_said("FRONT DOOR")) {
+	if (!player_said("GEAR") && player_said("FRONT DOOR")) {
 		player_set_facing_at(94, 281);
 
 	} else if (player_said_any("GEAR", "LOOK AT") && player_said("KITCHEN")) {
