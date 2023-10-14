@@ -779,7 +779,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
-			chopChunk(tmp, &curLine, indentSize, _inTable ? -1 : _canvas._maxWidth);
+			chopChunk(tmp, &curLine, indentSize, _inTable ? -1 : _canvas._maxWidth - indentSize);
 
 			curTextLine = &_canvas._text[curLine];
 
