@@ -29,6 +29,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_HARRY_ANIMATION = 3
+};
+
 static const seriesStreamBreak STREAMS1[] = {
 	{ 40, nullptr,   1, 255, 12, 0, nullptr, 0 },
 	{ 57, nullptr,   1, 255,  1, 0, nullptr, 0 },
@@ -111,8 +115,8 @@ void Room102::init() {
 		_index1 = series_load("102ha01", -1);
 		_index2 = series_load("102ha03", -1);
 		_val11 = 35;
-		_val12 = 35;
-		kernel_trigger_dispatch_now(3);
+		_harryShould = 35;
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 
 		_val13 = 58;
 		_val14 = 62;
@@ -136,8 +140,8 @@ void Room102::init() {
 		setup(0, 0);
 
 		_val11 = 19;
-		_val12 = 19;
-		kernel_trigger_dispatch_now(3);
+		_harryShould = 19;
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		++_G(flags)[V015];
 
 		_series1s = series_play("102seats", 0xa01, 0, -1, 100, -1, 100, 0, 0, 0, 0);
@@ -174,11 +178,13 @@ void Room102::daemon() {
 	case 1:
 		conv_resume_curr();
 		break;
+
 	case 2:
-		ws_unhide_walker(_G(my_walker));
+		ws_unhide_walker();
 		break;
-	case 3:
-		switch (_val12) {
+
+	case kCHANGE_HARRY_ANIMATION:
+		switch (_harryShould) {
 		case 19:
 			term_message(" mumble or change channel");
 
@@ -203,26 +209,26 @@ void Room102::daemon() {
 				case 1:
 				case 2:
 				case 3:
-					series_play("102ha01", 0xa00, 1, 3, 4, 0, 100, 0, 0, 0, 0);
+					series_play("102ha01", 0xa00, 1, 3, 4, 0, 100, 0, 0, 0, 2);
 					break;
 				case 6:
-					_val12 = 30;
-					series_play("102ha01", 0xa00, 2, 3, 10, 0, 100, 0, 0, 19, 19);
+					_harryShould = 30;
+					series_play("102ha01", 0xa00, 2, 3, 10, 0, 100, 0, 0, 16, 19);
 					break;
 				case 7:
-					_val12 = 31;
+					_harryShould = 31;
 					series_play("102ha01", 0xa00, 2, 3, 10, 0, 100, 0, 0, 20, 23);
 					break;
 				case 8:
-					_val12 = 24;
+					_harryShould = 24;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 					break;
 				case 9:
-					_val12 = 25;
+					_harryShould = 25;
 					series_play("102ha01", 0xa00, 0, 3, 7, 0, 100, 0, 0, 3, 4);
 					break;
 				case 10:
-					_val12 = 23;
+					_harryShould = 23;
 					series_play("102ha01", 0xa00, 0, 3, 8, 0, 100, 0, 0, 46, 48);
 					break;
 				default:
@@ -232,12 +238,12 @@ void Room102::daemon() {
 				break;
 
 			case 20:
-				_val12 = 20;
+				_harryShould = 20;
 				series_play("102ha01", 0xa00, 0, 3, 4, 0, 100, 0, 0, 24, 24);
 				break;
 
 			case 21:
-				_val12 = 21;
+				_harryShould = 21;
 				series_play("102ha01", 0xa00, 0, 3, 4, 0, 100, 0, 0, 30, 30);
 				break;
 
@@ -250,8 +256,8 @@ void Room102::daemon() {
 				if (player_commands_allowed() && !digi_play_state(1)) {
 					setup();
 					_val11 = 19;
-					_val12 = 26;
-					kernel_trigger_dispatch_now(3);
+					_harryShould = 26;
+					kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				} else {
 					series_play("102ha01", 0xa00, 0, 3, 60, 0, 100, 0, 0, 14, 14);
 				}
@@ -272,9 +278,9 @@ void Room102::daemon() {
 				series_unload(_index1);
 				terminateMachineAndNull(_series1s);
 				_val11 = 33;
-				series_play("102ha02s", 3841, 0, 11, 6, 0, 100, 0, 0, 0, 41);
+				series_play("102ha02s", 0xf01, 0, 11, 6, 0, 100, 0, 0, 0, 41);
 				digi_preload_stream_breaks(STREAMS1);
-				series_stream_with_breaks(STREAMS1, "102ha02", 6, 3840, 3);
+				series_stream_with_breaks(STREAMS1, "102ha02", 6, 0xf00, 3);
 				break;
 
 			case 33:
@@ -285,14 +291,13 @@ void Room102::daemon() {
 				digi_stop(2);
 				_index2 = series_load("102ha03", -1);
 				_val11 = 34;
-				series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 4);
-				series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 34:
 				_val11 = 35;
-				_val12 = 35;
-				kernel_trigger_dispatch_now(3);
+				_harryShould = 35;
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				hotspot_set_active("harry", false);
 				hotspot_set_active("harry ", true);
 				conv_resume_curr();
@@ -316,7 +321,7 @@ void Room102::daemon() {
 			} else {
 				terminateMachineAndNull(_series3);
 				_series3 = nullptr;
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 4, 0, 100, 0, 0, 24, 24);
 			}
 			break;
@@ -332,31 +337,31 @@ void Room102::daemon() {
 			} else {
 				terminateMachineAndNull(_series3);
 				_series3 = nullptr;
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 4, 0, 100, 0, 0, 30, 30);
 			}
 			break;
 
 		case 22:
-			_val12 = 23;
+			_harryShould = 23;
 			series_play("102ha01", 0xa00, 2, 3, 6, 0, 100, 0, 0, 44, 48);
 			break;
 
 		case 23:
-			_val12 = 19;
+			_harryShould = 19;
 			series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 44, 46);
 			break;
 
 		case 24:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
-					_val12 = 19;
+					_harryShould = 19;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 0);
 				} else {
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 1, 1);
 				}
 			} else {
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 0);
 			}
 			break;
@@ -364,13 +369,13 @@ void Room102::daemon() {
 		case 25:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
-					_val12 = 19;
+					_harryShould = 19;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 5, 7);
 				} else {
-					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 1, 1);
+					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 4, 4);
 				}
 			} else {
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 5, 7);
 			}
 			break;
@@ -378,13 +383,13 @@ void Room102::daemon() {
 		case 26:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 17) == 1) {
-					_val12 = 19;
+					_harryShould = 19;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 15, 15);
 				} else {
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 14, 14);
 				}
 			} else {
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 15, 15);
 			}
 			break;
@@ -392,13 +397,13 @@ void Room102::daemon() {
 		case 30:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
-					_val12 = 19;
+					_harryShould = 19;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 19);
 				} else {
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 16);
 				}
 			} else {
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 19);
 			}
 			break;
@@ -406,13 +411,13 @@ void Room102::daemon() {
 		case 31:
 			if (_val11 == 19) {
 				if (imath_ranged_rand(1, 15) == 1) {
-					_val12 = 19;
+					_harryShould = 19;
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 20, 23);
 				} else {
 					series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 20, 20);
 				}
 			} else {
-				_val12 = 19;
+				_harryShould = 19;
 				series_play("102ha01", 0xa00, 0, 3, 6, 0, 100, 0, 0, 20, 23);
 			}
 			break;
@@ -425,32 +430,28 @@ void Room102::daemon() {
 					if (!digi_play_state(2))
 						digi_play("102_030", 2, 255, -1);
 
-					series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 4, 6);
-					series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 4, 6);
+					Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 4, 6);
 					break;
 
 				case 2:
 					if (!digi_play_state(2))
 						digi_play("102_031", 2, 255, -1);
 
-					series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 7, 8);
-					series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 7, 8);
+					Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 7, 8);
 					break;
 
 				case 3:
 					if (!digi_play_state(2))
 						digi_play("102_032", 2, 255, -1);
 
-					series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 9, 11);
-					series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 9, 11);
+					Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 9, 11);
 					break;
 
 				case 4:
 					if (!digi_play_state(2))
 						digi_play("102_033", 2, 255, -1);
 
-					series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 12, 15);
-					series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 12, 15);
+					Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 12, 15);
 					break;
 
 				default:
@@ -466,7 +467,7 @@ void Room102::daemon() {
 				break;
 
 			case 36:
-				_val12 = 36;
+				_harryShould = 36;
 				series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 16);
 				series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 16, 16);
 				break;
@@ -475,7 +476,7 @@ void Room102::daemon() {
 				_val11 = 39;
 				_G(flags)[GLB_TEMP_5] = 2;
 				digi_preload_stream_breaks(STREAMS2);
-				series_play("102ha09s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("102ha09s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				series_stream_with_breaks(STREAMS2, "102ha09", 6, 256, 3);
 				break;
 
@@ -483,20 +484,20 @@ void Room102::daemon() {
 				_val11 = 40;
 				_G(flags)[GLB_TEMP_5] = 1;
 				digi_preload_stream_breaks(STREAMS3);
-				series_play("102ha10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-				series_stream_with_breaks(STREAMS3, "102ha10", 6, 256, 3);
+				series_play("102ha10s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS3, "102ha10", 6, 0x100, 3);
 				break;
 
 			case 39:
 				digi_unload_stream_breaks(STREAMS2);
 				_val11 = 41;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				break;
 
 			case 40:
 				digi_unload_stream_breaks(STREAMS3);
 				_val11 = 41;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				break;
 
 			case 41:
@@ -507,7 +508,7 @@ void Room102::daemon() {
 
 				digi_preload_stream_breaks(STREAMS4);
 				series_play("102ha04s", 1024, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-				series_stream_with_breaks(STREAMS4, "102ha04", 6, 768, 3);
+				series_stream_with_breaks(STREAMS4, "102ha04", 6, 0x300, 3);
 				break;
 
 			case 42:
@@ -520,10 +521,9 @@ void Room102::daemon() {
 				_index3 = series_load("102wi05", -1);
 				_index4 = series_load("102ha05", -1);
 				_val11 = 43;
-				_val12 = 43;
+				_harryShould = 43;
 
-				series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 4);
-				series_play("102ha05s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 0, 4);
 
 				conv_load_and_prepare("conv06", 21, false);
 				conv_export_pointer_curr(&_val4, 0);
@@ -567,14 +567,12 @@ void Room102::daemon() {
 				while ((frame = imath_ranged_rand(16, 21)) == _val3) {
 				}
 
-				_val13 = frame;
-				series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, frame, frame);
-				series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, frame, frame);
+				_val3 = frame;
+				Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				_val13 = 35;
-				series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 16);
-				series_play("102ha03s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 16, 16);
+				_harryShould = 35;
+				Series::series_play("102ha03", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 16);
 			}
 			break;
 
@@ -582,43 +580,36 @@ void Room102::daemon() {
 			switch (_val11) {
 			case 20:
 				frame = imath_ranged_rand(8, 11);
-				series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play("102ha05s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 21:
 				frame = imath_ranged_rand(12, 15);
-				series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play("102ha05s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 43:
 				frame = imath_ranged_rand(4, 7);
-				series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
-				series_play("102ha05s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("102ha05", 0xa00, 0, 3, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 44:
 				_val11 = 45;
-				series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 24);
-				series_play("102ha05s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 16, 24);
+				Series::series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 16, 24);
 				break;
 
 			case 45:
-				series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 24, 24);
-				series_play("102ha05s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 24, 24);
+				Series::series_play("102ha05", 0xa00, 0, 3, 6, 0, 100, 0, 0, 24, 24);
 				break;
 
 			case 48:
 				_val11 = 49;
-				series_play("102ha05", 0xa00, 2, 3, 6, 0, 100, 0, 0, 0, 3);
-				series_play("102ha05s", 0xa01, 2, -1, 6, 0, 100, 0, 0, 0, 3);
+				Series::series_play("102ha05", 0xa00, 2, 3, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 49:
 				_val11 = 50;
-				series_play("102ha05", 2818, 2, 3, 30, 0, 100, 0, 0, 8, 8);
-				series_play("102ha05s", 2818, 2, -1, 30, 0, 100, 0, 0, 8, 8);
+				Series::series_play("102ha05", 0xb02, 2, 3, 30, 0, 100, 0, 0, 8, 8);
 				break;
 
 			case 50:
@@ -657,9 +648,9 @@ void Room102::daemon() {
 				_series1s = series_play("102seats", 0xa01, 0, -1, 100, -1, 100, 0, 0, 0, 0);
 				_index1 = series_load("102ha01", -1);
 				_val11 = 19;
-				_val12 = 19;
+				_harryShould = 19;
 
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				player_set_commands_allowed(true);
 
 				if (_G(flags)[V015] && !_G(flags)[V013])
@@ -672,8 +663,7 @@ void Room102::daemon() {
 			case 53:
 				_val11 = 54;
 				_index5 = series_load("102ha07", -1);
-				series_play("102ha07", 3840, 0, 3, 10, 0, 100, 0, 0, 0, 7);
-				series_play("102ha07s", 3841, 0, -1, 10, 0, 100, 0, 0, 0, 7);
+				Series::series_play("102ha07", 0xf00, 0, kCHANGE_HARRY_ANIMATION, 10, 0, 100, 0, 0, 0, 7);
 
 				if (_G(flags)[V013]) {
 					_play1 = "102h204";
@@ -686,8 +676,7 @@ void Room102::daemon() {
 				break;
 
 			case 54:
-				series_play("102ha07", 3840, 0, 3, 30, 0, 100, 0, 0, 23, 23);
-				series_play("102ha07s", 3841, 0, -1, 30, 0, 100, 0, 0, 23, 23);
+				Series::series_play("102ha07", 0xf00, 0, kCHANGE_HARRY_ANIMATION, 30, 0, 100, 0, 0, 23, 23);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 10);
@@ -696,22 +685,20 @@ void Room102::daemon() {
 				break;
 
 			case 55:
-				_val12 = 55;
-				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 30, 30);
-				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 30, 30);
+				_harryShould = 55;
+				Series::series_play("102ha07", 0xf00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 30, 30);
 				break;
 
 			case 56:
-				_val12 = 56;
-				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 9, 10);
-				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 9, 10);
+				_harryShould = 56;
+				Series::series_play("102ha07", 0xf00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 9, 10);
 				break;
 
 			case 57:
 				series_unload(_index5);
 				_val11 = 46;
-				series_play("102ha08s", 3841, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-				series_stream_with_breaks(STREAMS5, "102ha08", 6, 3840, 3);
+				series_play("102ha08s", 0xf01, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_stream_with_breaks(STREAMS5, "102ha08", 6, 0xf00, 3);
 				break;
 
 			default:
@@ -721,8 +708,8 @@ void Room102::daemon() {
 
 		case 55:
 			if (_val11 == 55) {
-				_series3 = series_play("102ha07", 3840, 4, -1, 6, -1, 100, 0, 0, 30, 33);
-				_series6 = series_play("102ha07s", 3841, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+				_series3 = series_play("102ha07", 0xf00, 4, -1, 6, -1, 100, 0, 0, 30, 33);
+				_series6 = series_play("102ha07s", 0xf01, 4, -1, 6, -1, 100, 0, 0, 30, 33);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 10);
@@ -733,16 +720,15 @@ void Room102::daemon() {
 				terminateMachineAndNull(_series3);
 				terminateMachineAndNull(_series6);
 				_series3 = nullptr;
-				_val12 = 54;
-				series_play("102ha07", 3840, 2, 3, 6, 0, 100, 0, 0, 30, 30);
-				series_play("102ha07s", 3841, 2, -1, 6, 0, 100, 0, 0, 30, 30);
+				_harryShould = 54;
+				Series::series_play("102ha07", 0xf00, 2, 3, 6, 0, 100, 0, 0, 30, 30);
 			}
 			break;
 
 		case 56:
 			if (_val11 == 56) {
-				_series3 = series_play("102ha07", 3840, 4, -1, 4, -1, 100, 0, 0, 11, 19);
-				_series6 = series_play("102ha07s", 3841, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+				_series3 = series_play("102ha07", 0xf00, 4, -1, 4, -1, 100, 0, 0, 11, 19);
+				_series6 = series_play("102ha07s", 0xf01, 4, -1, 4, -1, 100, 0, 0, 11, 19);
 
 				if (_play1) {
 					digi_play(_play1, 1, 255, 15);
@@ -752,9 +738,8 @@ void Room102::daemon() {
 				terminateMachineAndNull(_series3);
 				terminateMachineAndNull(_series6);
 				_series3 = nullptr;
-				_val12 = 54;
-				series_play("102ha07", 3840, 0, 3, 6, 0, 100, 0, 0, 20, 21);
-				series_play("102ha07s", 3841, 0, -1, 6, 0, 100, 0, 0, 20, 21);
+				_harryShould = 54;
+				Series::series_play("102ha07", 0xf00, 0, kCHANGE_HARRY_ANIMATION, 6, 0, 100, 0, 0, 20, 21);
 			}
 			break;
 
@@ -768,21 +753,22 @@ void Room102::daemon() {
 		case 59:
 			switch (_val13) {
 			case 58:
-				_series4 = series_play("102wi05", 2816, 0, 4, 10, -1, 100, 0, 0, 0, 0);
-				_series5 = series_play("102wi05s", 2817, 0, -1, 10, -1, 100, 0, 0, 0, 0);
+				_series4 = series_play("102wi05", 0xb00, 0, 4, 10, -1, 100, 0, 0, 0, 0);
+				_series5 = series_play("102wi05s", 0xb01, 0, -1, 10, -1, 100, 0, 0, 0, 0);
 				break;
 
 			case 60:
+				sub1();
 				frame = imath_ranged_rand(1, 5);
-				series_play("102wi05", 2816, 0, 4, 4, 0, 100, 0, 0, frame, frame);
-				series_play("102wi05s", 2817, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102wi05", 0xb00, 0, 4, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102wi05s", 0xb01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 63:
 				sub1();
-				_val1 = 64;
+				_val14 = 64;
 				_val13 = 58;
-				series_play_with_breaks(PLAY3, "102wi05", 2816, 4, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY3, "102wi05", 0xb00, 4, 3, 6, 100, 0, 0);
 				break;
 
 			default:
@@ -794,22 +780,22 @@ void Room102::daemon() {
 		case 62:
 			switch (_val13) {
 			case 58:
-				_series4 = series_play("102wi03", 2816, 0, -1, 600, -1, 100, 0, 0, 2, 2);
-				_series5 = series_play("102wi03s", 2816, 0, -1, 600, -1, 100, 0, 0, 2, 2);
+				_series4 = series_play("102wi03", 0xb00, 0, -1, 600, -1, 100, 0, 0, 2, 2);
+				_series5 = series_play("102wi03s", 0xb00, 0, -1, 600, -1, 100, 0, 0, 2, 2);
 				break;
 
 			case 60:
 				sub1();
 				frame = imath_ranged_rand(0, 5);
-				_series4 = series_play("102wi03", 2816, 0, 4, 4, 0, 100, 0, 0, frame, frame);
-				_series5 = series_play("102wi03s", 2816, 0, 4, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102wi03", 0xb00, 0, 4, 4, 0, 100, 0, 0, frame, frame);
+				series_play("102wi03s", 0xb00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 61:
 				sub1();
 				_val13 = 60;
-				series_play("102wi03", 2816, 1, 4, 6, 0, 100, 0, 0, 6, 9);
-				series_play("102wi03s", 2816, 1, -1, 6, 0, 100, 0, 0, 6, 9);
+				series_play("102wi03", 0xb00, 1, 4, 6, 0, 100, 0, 0, 6, 9);
+				series_play("102wi03s", 0xb00, 1, -1, 6, 0, 100, 0, 0, 6, 9);
 				break;
 
 			default:
@@ -842,51 +828,50 @@ void Room102::daemon() {
 
 	case 10:
 		_val11 = 57;
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		break;
 
 	case 11:
-		_series7 = series_play("102ha02s", 3841, 0, -1, 600, -1, 100, 0, 0, 40, 40);
+		_series7 = series_play("102ha02s", 0xf01, 0, -1, 600, -1, 100, 0, 0, 40, 40);
 		break;
 
 	case 12:
 		series_set_frame_rate(_stream1, 30000);
-		ws_walk(_G(my_walker), 324, 341, 0, 13, 10, 1);
+		ws_walk(324, 341, 0, 13, 10, 1);
 		break;
 
 	case 13:
 		terminateMachineAndNull(_series7);
-		series_play("102ha02s", 3841, 0, -1, 6, 0, 100, 0, 0, 42, -1);
+		series_play("102ha02s", 0xf01, 0, -1, 6, 0, 100, 0, 0, 42, -1);
 		series_set_frame_rate(_stream1, 6);
 		ws_OverrideCrunchTime(_stream1);
-		ws_demand_location(_G(my_walker), 321, 343);
-		ws_demand_facing(_G(my_walker), 4);
-		ws_hide_walker(_G(my_walker));
+		ws_demand_location(321, 343, 4);
+		ws_hide_walker();
 		break;
 
 	case 14:
-		ws_hide_walker(_G(my_walker));
+		ws_hide_walker();
 		break;
 
 	case 15:
 		_val11 = 54;
-		kernel_trigger_dispatch_now(3);
-		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1001);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 		break;
 
 	case 16:
-		ws_walk(_G(my_walker), 318, 343, 0, -1, 2, 1);
+		ws_walk(318, 343, 0, -1, 2, 1);
 		break;
 
 	case 17:
-		pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1001);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 		break;
 
 	case 18:
 		_val8 = 1;
 		_val9 = 0;
 		_val11 = player_commands_allowed() && !digi_play_state(1) ? 26 : 19;
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		break;
 
 	case 19:
@@ -895,7 +880,7 @@ void Room102::daemon() {
 
 	case 21:
 		if (_G(flags)[V013]) {
-			pal_fade_init(_G(master_palette), _G(kernel).first_fade, 255, 0, 30, 1001);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1001);
 		} else {
 			player_set_commands_allowed(_flag1);
 		}
@@ -930,9 +915,9 @@ void Room102::daemon() {
 
 	case 25:
 		_series1s = series_play("102seats", 0xa01, 0, -1, 100, -1, 100, 0, 0, 0, 0);
-		_val12 = 19;
+		_harryShould = 19;
 		_val11 = 19;
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		conv_resume_curr();
 		break;
 
@@ -956,7 +941,7 @@ void Room102::daemon() {
 		if (_G(flags)[V012] != 2)
 			player_set_commands_allowed(true);
 		_val11 = 19;
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		break;
 
 	case 1037:
@@ -980,18 +965,18 @@ void Room102::daemon() {
 			ws_demand_location(628, 325);
 			ws_demand_facing(9);
 			_G(wilbur_should) = 2;
-			ws_walk(435, 329, 0, kCHANGE_WILBUR_ANIMATION, 9, 1);
+			ws_walk(435, 329, 0, kCHANGE_WILBUR_ANIMATION, 9);
 			break;
 
 		case 2:
 			if (_G(flags)[V012] == 2) {
 				_G(wilbur_should) = 3;
-				_G(walker).wilbur_speech("102w003", kCHANGE_WILBUR_ANIMATION);
+				wilbur_speech("102w003", kCHANGE_WILBUR_ANIMATION);
 			} else if (_G(flags)[V012] == 0) {
 				_G(wilbur_should) = 5;
 
 				if (_G(flags)[V018]) {
-					_G(walker).wilbur_speech("102w002", kCHANGE_WILBUR_ANIMATION);
+					wilbur_speech("102w002", kCHANGE_WILBUR_ANIMATION);
 				} else {
 					queuePlay("102h001", kCHANGE_WILBUR_ANIMATION);
 				}
@@ -999,7 +984,7 @@ void Room102::daemon() {
 			break;
 
 		case 3:
-			_G(walker).wilbur_speech("102w004", kCHANGE_WILBUR_ANIMATION);
+			wilbur_speech("102w004", kCHANGE_WILBUR_ANIMATION);
 			_G(wilbur_should) = 4;
 			break;
 
@@ -1025,8 +1010,8 @@ void Room102::daemon() {
 				}
 			} else {
 				_val11 = 19;
-				kernel_trigger_dispatch_now(3);
-				_G(walker).wilbur_speech("102w001", 28);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
+				wilbur_speech("102w001", 28);
 				_G(flags)[V018] = 1;
 			}
 			break;
@@ -1035,56 +1020,56 @@ void Room102::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 72;
 			digi_preload_stream_breaks(STREAMS6);
-			series_play("102wi07s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi07", 6, 256, kCHANGE_WILBUR_ANIMATION);
+			series_play("102wi07s", 0xb00, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+			series_stream_with_breaks(STREAMS6, "102wi07", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 72:
 			digi_unload_stream_breaks(STREAMS6);
 			ws_unhide_walker();
-			_G(walker).wilbur_speech("102w011", 28);
+			wilbur_speech("102w011", 28);
 			break;
 
 		case 73:
 			ws_hide_walker();
 			_G(wilbur_should) = 74;
 			digi_preload_stream_breaks(STREAMS7);
-			series_play("102wi06s", 2816, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi06", 6, 256, kCHANGE_WILBUR_ANIMATION);
+			series_play("102wi06s", 0xb00, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+			series_stream_with_breaks(STREAMS7, "102wi06", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 74:
 			digi_unload_stream_breaks(STREAMS7);
 			ws_unhide_walker();
-			_G(walker).wilbur_speech("102w011", 28);
+			wilbur_speech("102w011", 28);
 			break;
 
 		case 75:
 			ws_hide_walker();
 			_G(wilbur_should) = 76;
 			digi_preload_stream_breaks(STREAMS6);
-			series_play("102wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS6, "102wi11", 6, 256, kCHANGE_WILBUR_ANIMATION);
+			series_play("102wi11s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+			series_stream_with_breaks(STREAMS6, "102wi11", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 76:
 			digi_unload_stream_breaks(STREAMS6);
 			ws_unhide_walker();
-			_G(walker).wilbur_speech("102w011", 28);
+			wilbur_speech("102w011", 28);
 			break;
 
 		case 77:
 			ws_hide_walker();
 			_G(wilbur_should) = 78;
 			digi_preload_stream_breaks(STREAMS7);
-			series_play("102wi10s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-			series_stream_with_breaks(STREAMS7, "102wi10", 6, 256, kCHANGE_WILBUR_ANIMATION);
+			series_play("102wi10s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+			series_stream_with_breaks(STREAMS7, "102wi10", 6, 0x100, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 78:
 			digi_unload_stream_breaks(STREAMS7);
 			ws_unhide_walker();
-			_G(walker).wilbur_speech("102w011", 28);
+			wilbur_speech("102w011", 28);
 			break;
 
 		case 79:
@@ -1097,7 +1082,7 @@ void Room102::daemon() {
 			if (!_G(flags)[V020])
 				digi_preload("102w008");
 
-			series_play_with_breaks(PLAY4, "102wi09", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi09", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 80:
@@ -1123,7 +1108,7 @@ void Room102::daemon() {
 			terminateMachineAndNull(_laz2);
 			_G(flags)[V019] = 0;
 			_G(wilbur_should) = 83;
-			series_play_with_breaks(PLAY4, "102wi08", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
+			series_play_with_breaks(PLAY4, "102wi08", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, 0);
 			break;
 
 		case 83:
@@ -1174,14 +1159,14 @@ void Room102::parser() {
 		conv_export_value_curr(_G(flags)[V016], 1);
 		conv_play_curr();
 	} else if (inv_player_has(_G(player).verb) && player_said("main street")) {
-		_G(walker).wilbur_speech("102w015");
+		wilbur_speech("102w015");
 	} else if (player_said("exit") || player_said("gear", "main_street")) {
 		player_set_commands_allowed(false);
 		digi_preload("102_038");
 		digi_play("102_038", 2, 255, 17);
 	} else {
 		if (player_said("TAKE", "DOORWAY"))
-			_G(walker).wilbur_speech("102W003");
+			wilbur_speech("102W003");
 
 		if (player_said("USE", "GO", "DOORWAY")) {
 			_G(wilbur_should) = 1;
@@ -1189,7 +1174,7 @@ void Room102::parser() {
 		}
 
 		if (player_said("USE", "GO", "FIRE ESCAPE")) {
-			_G(walker).wilbur_speech("102W005");
+			wilbur_speech("102W005");
 			kernel_trigger_dispatch_now(1003);
 		}
 
@@ -1204,7 +1189,7 @@ void Room102::parser() {
 				queuePlay("102h005");
 			}
 		} else if (player_said("GEAR", "harry") || player_said("take", "harry")) {
-			_G(walker).wilbur_speech("102w015");
+			wilbur_speech("102w015");
 		} else if (player_said("take", "hair wax") || player_said("take", "hair wax ")) {
 			if (_G(flags)[V012]) {
 				player_set_commands_allowed(false);
@@ -1230,7 +1215,7 @@ void Room102::parser() {
 		} else if (player_said("gear", "hair wax  ") || player_said("gear", "hair wax   ")) {
 			flagAction("102w012", "102h007");
 		} else if (player_said("take", "back room") || player_said("gear", "back room")) {
-			_G(walker).wilbur_speech("102w015");
+			wilbur_speech("102w015");
 		} else if (player_said("enter", "back room")) {
 			if (_G(flags)[V012]) {
 				switch (_G(kernel).trigger) {
@@ -1257,7 +1242,7 @@ void Room102::parser() {
 		} else if (player_said("gear", "fish")) {
 			flagAction("102w026", "102h020");
 		} else if (player_said("gear", "bottles")) {
-			_G(walker).wilbur_speech("102w029");
+			wilbur_speech("102w029");
 		} else if (player_said("take", "bottles")) {
 			if (_G(flags)[V012]) {
 				switch (_G(kernel).trigger) {
@@ -1268,7 +1253,7 @@ void Room102::parser() {
 					break;
 				case 1:
 					_G(kernel).trigger_mode = KT_PARSE;
-					_G(walker).wilbur_speech("102w028");
+					wilbur_speech("102w028");
 					break;
 				default:
 					break;
@@ -1277,19 +1262,19 @@ void Room102::parser() {
 				player_set_commands_allowed(false);
 			}
 		} else if (player_said("take", "towels")) {
-			_G(walker).wilbur_speech("102w2029");
+			wilbur_speech("102w2029");
 		} else if (player_said("gear", "towels")) {
 			flagAction("102w032", "102h025");
 		} else if (player_said("take", "mirror")) {
-			_G(walker).wilbur_speech("102w015");
+			wilbur_speech("102w015");
 		} else if (player_said("gear", "mirror")) {
 			flagAction("102w034", "102h027");
 		} else if (player_said("take", "sink")) {
-			_G(walker).wilbur_speech("102w037");
+			wilbur_speech("102w037");
 		} else if (player_said("gear", "sink")) {
 			flagAction("102w038", "102h029");
 		} else if (player_said("take", "stove")) {
-			_G(walker).wilbur_speech("102w040");
+			wilbur_speech("102w040");
 		} else if (player_said("gear", "stove")) {
 			flagAction("102w041", "102h031");
 		} else if (player_said("harry") && inv_player_has(_G(player).verb) && !_G(flags)[V012]) {
@@ -1300,7 +1285,7 @@ void Room102::parser() {
 				case -1:
 					if (!_G(flags)[V012]) {
 						_G(kernel).trigger_mode = KT_PARSE;
-						_G(walker).wilbur_speech("102w014");
+						wilbur_speech("102w014");
 						player_set_commands_allowed(false);
 					}
 					break;
@@ -1308,7 +1293,7 @@ void Room102::parser() {
 					queuePlay("102h009", 2, KT_PARSE);
 					break;
 				case 2:
-					kernel_trigger_dispatch_now(3);
+					kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 					_G(kernel).trigger_mode = KT_PARSE;
 					kernel_timing_trigger(120, 3);
 					break;
@@ -1344,7 +1329,7 @@ void Room102::parser() {
 					queuePlay("102h014");
 				}
 			} else if (player_said("barber's chair")) {
-				_G(walker).wilbur_speech("102W020");
+				wilbur_speech("102W020");
 			} else if (player_said("fish")) {
 				flagAction("102w023", "102h018");
 			} else if (player_said("bottles")) {
@@ -1372,10 +1357,10 @@ void Room102::flagAction(const char *name1, const char *name2) {
 	switch (_G(kernel).trigger) {
 	case -1:
 		if (_G(flags)[V012]) {
-			_G(walker).wilbur_speech(name1);
+			wilbur_speech(name1);
 		} else {
 			_G(kernel).trigger_mode = KT_PARSE;
-			_G(walker).wilbur_speech(name1, 1);
+			wilbur_speech(name1, 1);
 			player_set_commands_allowed(false);
 		}
 		break;
@@ -1490,12 +1475,12 @@ void Room102::queuePlay(const char *filename, int trigger, KernelTriggerType tri
 	_triggerMode = triggerMode;
 	player_set_commands_allowed(false);
 
-	term_message("spleen %d %d    %d %d", _val12, _val11, 19, 20);
+	term_message("spleen %d %d    %d %d", _harryShould, _val11, 19, 20);
 
-	if (_val12 == 20) {
+	if (_harryShould == 20) {
 		term_message("spleen2");
 		_G(kernel).trigger_mode = KT_DAEMON;
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 	}
 }
 
@@ -1503,10 +1488,10 @@ void Room102::freshen() {
 	if (_G(flags)[V012] == 2) {
 		player_set_commands_allowed(false);
 		_G(flags)[V012] = 0;
-		_val12 = 54;
+		_harryShould = 54;
 		_val11 = 53;
 
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 		g_vars->getInterface()->freshen_sentence();
 		Section1::walk();
 	}
@@ -1525,7 +1510,7 @@ void Room102::conv04() {
 
 			if (node == 1 && entry == 0) {
 				_val11 = 26;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				player_update_info();
 				ws_walk(192, 327, 0, -1, 4);
 			} else if (node == 4 && entry == 0) {
@@ -1534,13 +1519,13 @@ void Room102::conv04() {
 				digi_preload("102_032");
 				digi_preload("102_033");
 				_val1 = 28;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 			} else if ((node == 4 && entry == 1) || (node == 4 && entry == 2)) {
 				_val1 = 35;
 				conv_resume_curr();
 			} else {
 				_val1 = 19;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 				conv_resume_curr();
 			}
 		} else if (who == 1) {
@@ -1647,7 +1632,7 @@ void Room102::conv06() {
 			if (node == 2) {
 				_val11 = 19;
 				_G(kernel).trigger_mode = KT_PARSE;
-				kernel_trigger_dispatch_now(3);
+				kernel_trigger_dispatch_now(kCHANGE_HARRY_ANIMATION);
 			} else if (node == 1 && entry == 4) {
 				_G(flags)[V014] = 1;
 				_val11 = 43;
@@ -1678,7 +1663,7 @@ void Room102::conv06() {
 			}
 
 			if (node == 2) {
-				term_message("gonna_say_sheepdog %d %d", _val12, _val11);
+				term_message("gonna_say_sheepdog %d %d", _harryShould, _val11);
 				queuePlay(sound, 22, KT_PARSE);
 				_flag1 = true;
 			} else if (node == 1 && entry == 1) {
