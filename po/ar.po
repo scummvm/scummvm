@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-12 21:54+0000\n"
+"POT-Creation-Date: 2023-10-13 23:54+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -4766,59 +4766,7 @@ msgstr "وضعية النقر"
 msgid "Keyboard"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1014
-msgid ""
-"## Keyboard shortcuts\n"
-"\n"
-"ScummVM supports various in-game keyboard and mouse shortcuts, and since "
-"version 2.2.0 these can be manually configured in the **Keymaps tab**, or in "
-"the **configuration file**.\n"
-"\n"
-"For game-specific controls, see the [wiki entry](https://wiki.scummvm.org/"
-"index.php?title=Category:Supported_Games) for the game you are playing.\n"
-"\n"
-"Default shortcuts are shown in the table.\n"
-"\n"
-"| Shortcut      | Description\n"
-"| --------------------------------\n"
-"| `Ctrl+F5` -- Displays the Global Main Menu\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1026
-msgid "| `Cmd+q`    -- Quit (macOS)\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1028
-msgid "| `Alt+F4`  -- Quit (Windows)\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1030
-msgid "| `Ctrl+q`  -- Quit (Linux/Unix)\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1031
-msgid "| `Ctrl+z`  -- Quit (other platforms)\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1034
-msgid ""
-"| `Ctrl+u`  -- Mutes all sounds\n"
-"| `Ctrl+m`  -- Toggles mouse capture\n"
-"| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics "
-"filters\n"
-"| `Ctrl+Alt` and `+` or `-` -- Increases/decreases the scale factor\n"
-"| `Ctrl+Alt+a` -- Toggles aspect ratio correction on/off\n"
-"| `Ctrl+Alt+f` -- Toggles between nearest neighbor and bilinear "
-"interpolation (graphics filtering on/off)\n"
-"| `Ctrl+Alt+s` -- Cycles through stretch modes\n"
-"| `Alt+Enter`   -- Toggles full screen/windowed mode\n"
-"| `Alt+s`          -- Takes a screenshot\n"
-"| `Ctrl+F7`       -- Opens virtual keyboard (if enabled). This can also be "
-"opened with a long press of the middle mouse button or wheel.\n"
-"| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
-msgstr ""
-
-#: backends/platform/sdl/sdl.cpp:1048
+#: backends/platform/sdl/sdl.cpp:1013
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -4836,23 +4784,23 @@ msgid ""
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1060
+#: backends/platform/sdl/sdl.cpp:1025
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1062
+#: backends/platform/sdl/sdl.cpp:1027
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1064
+#: backends/platform/sdl/sdl.cpp:1029
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1065
+#: backends/platform/sdl/sdl.cpp:1030
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1068
+#: backends/platform/sdl/sdl.cpp:1033
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
