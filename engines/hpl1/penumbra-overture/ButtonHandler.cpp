@@ -287,8 +287,10 @@ void cButtonHandler::Update(float afTimeStep) {
 			mpInit->mpMainMenu->OnMouseDoubleClick(eMButton_Left);
 		}
 		/// Mouse Movement
-		cVector2f vRel = mpInput->GetMouse()->GetRelPosition();
-		mpInit->mpMainMenu->AddMousePos(vRel * mfMouseSensitivity);
+		const auto virtualScreenSize = mpLowLevelGraphics->GetVirtualSize();
+		const auto screenSize = mpLowLevelGraphics->GetScreenSize();
+		const auto vRel = (mpInput->GetMouse()->GetAbsPosition() / screenSize) * virtualScreenSize;
+		mpInit->mpMainMenu->SetMousePos(vRel);
 
 	}
 	///////////////////////////////////
