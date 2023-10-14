@@ -387,7 +387,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "fajfeta",            "Fajfeta Sur la Luno" },
 	{ "fallingpieces",      "Falling to Pieces" },
 	{ "farm",               "The Farmer's Daughter" },
-	{ "fate",               "Fate" },
 	{ "fff",                "Fox, Fowl and Feed" },
 	{ "fifthcontinent",     "The Fifth Continent" },
 	{ "figaro",             "Figaro" },
@@ -401,7 +400,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "fingertipsfriend",   "Fingertips: I Found a New Friend" },
 	{ "fingertipsmilk",     "Fingertips: Please Pass the Milk Please" },
 	{ "firstday",           "The First Day of My New Life" },
-	{ "firstparish",        "Below the First Parish Cemetery" },
 	{ "flat",               "Flat" },
 	{ "flowers",            "Flowers for Algernon" },
 	{ "fmvpoker",           "Frobozz Magic Video Poker" },
@@ -748,7 +746,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sanddancer_zcode",   "Sand-dancer" },
 	{ "sangraal",           "Sangraal" },
 	{ "santassleighride",   "Santa's Sleigh Ride" },
-	{ "sauguslibrary",      "Late Night in the Saugus Public Library" },
+	{ "sauguslibrary",      "Saugus.net HSC 2002: Late Night in the Saugus Public Library" },
+	{ "saugusfirstparish",  "Saugus.net HSC 2003: Below the First Parish Cemetery" },
 	{ "saveprinceton",      "Save Princeton" },
 	{ "savoirfaire",        "Savoir-Faire" },
 	{ "scald",              "Scald" },
@@ -2603,9 +2602,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "tgp_gennorden",      "Gen Norden" },                                                             //    4th Place
 
 	// Italian games
-	{ "beyondita_zcode",    "Beyond" },
 	{ "armando",            "L'Armando" },
 	{ "ayon_zcode",         "Nel Mondo di Ayon" },
+	{ "beyondita_zcode",    "Beyond" },
 	{ "darkiss1ita_zcode",  "Darkiss! Il bacio del Vampiro - Capitolo 1: Il Risveglio" },
 	{ "darkiss2ita_zcode",  "Darkiss! Il bacio del Vampiro - Capitolo 2: Viaggio all'Inferno" },
 	{ "enigma_zcode",       "Enigma" },
@@ -3776,8 +3775,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("905", "160430", "d46825116a6f56e14076713230ada85d", 87552),
 	ENTRY0("905", "120724", "885acc1cf4ae18428d8a1998d57f2925", 87040),
 	ENTRY0("9dancers", "040718", "8a7faee46b0d6f35cb0cbeb7ac8631b2", 99328),
-	ENTRY0("a1rl0ck", "230317", "11c071867ac8bb4f3a104069fb6c9c3d", 82432 ),
-	ENTRY0("a1rl0ck", "230402/z5/v1", "b0685da79e0c783b69a3944658ea34f6", 83456),
 	ENTRY0("aaaaaaaa", "080817", "ead4d097d838d8ca05463ae61babc95d", 131072),
 	ENTRY0("aasmasters", "030410", "bb6645f33130c7881da72ff0bfb6fb5b", 68608),
 	ENTRY0("accuse", "070321", "3a1098524f8d6964a5d7a2579e9367f1", 129528),
@@ -4024,8 +4021,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("dogshow", "101130", "6476e788310c44c52d5249a66d07d037", 712070),
 	ENTRY0("dogslife", "981015", "e6f0adca898d757c49c9d81a67d3b6cc", 67584),
 	ENTRY0("dontgo", "120119", "5b153263f946a6013d80d07fa1573dbf", 195584),
+	ENTRY0("dontpeeyourself", "131107", "1eb2f9ebe332d9bdb3b6468b1fdab833", 298222),
 	ENTRY0("dontpeeyourself", "150807", "ffbdd3b0860e5a5b5ffbbdbb6ac4fc46", 211968),
-	ENTRY0("dontpeeyourself", "150924", "1eb2f9ebe332d9bdb3b6468b1fdab833", 298222),
 	ENTRY0("dontpushthemailbox", "191228", "d8fcacf89d5a5f1ec1b877775d137598", 332288),
 	ENTRY0("dorm", "230319", "2c93e859a58d2e41e89a660d6baff06b", 129536),
 	ENTRY0("dotd", "050619", "48b47df16c2d32612fe2f09f234d99dd", 245248),
@@ -4084,8 +4081,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("fajfeta", "020101", "284de92bd57df8398562dd2c659fef35", 51712),
 	ENTRY0("fallingpieces", "180713", "6493ae5c940165d185ac17e2efce4eaa", 45056),
 	ENTRY0("farm", "020101", "9838d582cdd87814598eff791775a53d", 135168),
-	ENTRY0("fate", "070304", "03b02750dac39a92ef6dccf2bc1ced4f", 434568),
-	ENTRY0("fate", "070910", "a659ea01a268760a28bd9a990c8bfb73", 503138),
 	ENTRY0("fff", "080121", "c29786d16b5498656e19f06eb3d58d94", 100864),
 	ENTRY0("fifthcontinent", "190816", "69d659a6910d04332a1f517d5630b01a", 172544),
 	ENTRY0("fifthcontinent", "201104", "b8749102dd7be7e2ef31dcd8cbacd69a", 171520),
@@ -4102,7 +4097,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("fingertipsfriend", "140106", "44cad06c5c79a7f99e53974a7d08c273", 423480),
 	ENTRY0("fingertipsmilk", "140312/zblorb", "01d3504181777b30f96de20dfedda359", 278664),
 	ENTRY0("firstday", "110119", "58c46cbeeaf96c3302515cb3e9aedcec", 454606),
-	ENTRY0("firstparish", "031113", "4006f8f809c69a21f730dc2203b50795", 103936),
 	ENTRY0("flat", "020922", "00e8daaacb7651adb9db0dd91e02bfd5", 78336),
 	ENTRY0("flowers", "980301", "c948c03dc3b25f784f822cb623d5bffb", 47616),
 	ENTRY0("fmvpoker", "000913", "3f4ee585aa91660d5483ef2f132fb1d3", 19456),
@@ -5869,9 +5863,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_literacy", "011118", "245b365f8ef81c146b3d091aa664848b", 52736),
 	ENTRY0("sif_woodencat", "011119", "3628449c452f7d0795d89cdfcce7d6da", 56320),
 
-	// SpeedIF 18th Anniversary Competition
-	ENTRY0("sif_farout", "161009", "1ad837661bb8b49c4dde09f149ede7fe", 254422),
-
 	// SpeedIF 2000 Competition
 	ENTRY0("sif_ritual", "991212", "f3a53b9e837a99e58a07133aef9cb23e", 55808),
 
@@ -5896,6 +5887,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_reptile", "090901", "f919b917e924b9d4f5465e4f262082a0", 159232),
 	ENTRY0("sif_teachher2dance", "090901/z5", "05f40a30e9fcbff5785042452b3d2c27", 146944),
 	ENTRY0("sif_teachher2dance", "090901/zblorb", "d9c77a55fb2397f35e1de9f8bff92723", 239054),
+
+	// SpeedIF 18th Anniversary Competition
+	ENTRY0("sif_farout", "161009", "1ad837661bb8b49c4dde09f149ede7fe", 254422),
 
 	// SpeedIF Argonaut Competition
 	ENTRY0("sif_asciargo", "030309", "d660f5a1a71653e2701528ec9340ae20", 69120),
@@ -6198,7 +6192,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("stc06_thebaron", "060329", "cac25a2e2ce7aa87bccccb07dffad212", 310272),
 
 	// Spring Thing 2007
+	ENTRY0("stc07_fate", "070304", "03b02750dac39a92ef6dccf2bc1ced4f", 434568),
 	ENTRY0("stc07_fate", "070329", "b030c4881ced350f51c1a64bd0f45584", 481792),
+	ENTRY0("stc07_fate", "070910", "a659ea01a268760a28bd9a990c8bfb73", 503138),
 
 	// Spring Thing 2008
 	ENTRY0("stc08_pascal", "080217", "ccdf58a87467b4e822565d54b3ca2a20", 237568),
