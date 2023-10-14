@@ -6669,6 +6669,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("allroads", "070701", "427693ae57580bbc57f204c50437d3cc", 198656, Common::RU_RUS),
 	ENTRY1("bluechairs", "111222", "9d6af2460c034fa9078846180ec31f05", 338944, Common::RU_RUS),
 	ENTRY1("metamorphoses", "080518", "bc16740cc10500b0d1e1e8e768da6417", 203776, Common::RU_RUS),
+	ENTRY1("photopia_zcode", "130531", "8ec6305361537ecca28b40376b28b98f", 271360, Common::RU_RUS),
 	ENTRY1("spiderandweb", "091122", "3ea174936bc6d56c3f4d0bd5fa1fe720", 321536, Common::RU_RUS),
 
 	// Slovenian games
