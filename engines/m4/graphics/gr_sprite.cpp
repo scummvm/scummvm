@@ -157,10 +157,13 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 		source = afterScaled;
 	}
 
+	bool shadow = (drawReq->Src->encoding & SHADOW) != 0;
+	assert(!shadow || drawReq->ICT);
+
 	M4Surface dst(*drawReq->Dest);
 	dst.draw(source, drawReq->x, drawReq->y, drawReq->scaleX > 0,
 		drawReq->srcDepth ? drawReq->depthCode : nullptr, drawReq->srcDepth,
-		(drawReq->Src->encoding & SHADOW) != 0 ? drawReq->ICT : nullptr);
+		shadow ? drawReq->ICT : nullptr);
 
 	if (shadowBuff)
 		mem_free(shadowBuff);
