@@ -28,6 +28,25 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSController {
 
+struct Controller : public IAGSScriptManagedObject {
+public:
+
+	int Dispose(const char *address, bool force) override {
+		return true;
+	}
+
+	const char *GetType() override {
+		return "Controller";
+	};
+
+	int Serialize(const char *address, char *buffer, int bufsize) override {
+		return 0;
+	}
+};
+
+Controller ctrlInterface;
+ConReader ctrlReader;
+
 const char *AGSController::AGS_GetPluginName() {
 	return "AGSController";
 }
@@ -50,6 +69,7 @@ void AGSController::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ClickMouse, AGSController::ClickMouse);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
+	_engine->AddManagedObjectReader("Controller", &ctrlReader);
 }
 
 int64 AGSController::AGS_EngineOnEvent(int event, NumberPtr data) {
@@ -61,7 +81,11 @@ int64 AGSController::AGS_EngineOnEvent(int event, NumberPtr data) {
 }
 
 void AGSController::Controller_Update() {
-//	::AGS::g_events->pollEvents();
+	//	::AGS::g_events->pollEvents();
+}
+
+void ConReader::Unserialize(int key, const char *serializedData, int dataSize) {
+	//	no implementation
 }
 
 void AGSController::ControllerCount(ScriptMethodParams &params) {
@@ -79,11 +103,13 @@ void AGSController::ControllerCount(ScriptMethodParams &params) {
 }
 
 void AGSController::Controller_Open(ScriptMethodParams &params) {
-	// No implemented needed
+	Controller *newCtrl = new Controller();
+	_engine->RegisterManagedObject(newCtrl, &ctrlInterface);
+	params._result = newCtrl;
 }
 
 void AGSController::Controller_Close(ScriptMethodParams &params) {
-	// No implemented needed
+	// No implementation needed
 }
 
 void AGSController::Controller_Plugged(ScriptMethodParams &params) {
@@ -93,31 +119,43 @@ void AGSController::Controller_Plugged(ScriptMethodParams &params) {
 
 void AGSController::Controller_GetAxis(ScriptMethodParams &params) {
 	PARAMS1(int, axis);
-	params._result = ::AGS::g_events->getJoystickAxis(axis);
+	if (axis < 0 || axis > 31)
+		params._result = false;
+	else
+		params._result = ::AGS::g_events->getJoystickAxis(axis);
 }
 
 void AGSController::Controller_GetPOV(ScriptMethodParams &params) {
 	// Not supported
+	debug(0, "AGSController: POV is not implemented");
 	params._result = 0;
 }
 
 void AGSController::Controller_IsButtonDown(ScriptMethodParams &params) {
 	PARAMS1(int, button);
-	params._result = ::AGS::g_events->getJoystickButton(button);
+	if (button < 0 || button > 31)
+		params._result = false;
+	else
+		params._result = ::AGS::g_events->getJoystickButton(button);
 }
 
 void AGSController::Controller_GetName(ScriptMethodParams &params) {
 	int joystickNum = ConfMan.getInt("joystick_num");
-	params._result = (joystickNum != -1) ? "Joystick" : "";
+	params._result = (joystickNum != -1) ? _engine->CreateScriptString("Joystick")
+										 : _engine->CreateScriptString("");
 }
 
 void AGSController::Controller_Rumble(ScriptMethodParams &params) {
 	// Not supported
+	debug(0, "AGSController: Rumble is not supported");
 }
 
 void AGSController::Controller_IsButtonDownOnce(ScriptMethodParams &params) {
 	PARAMS1(int, button);
-	params._result = ::AGS::g_events->getJoystickButtonOnce(button);
+	if (button < 0 || button > 31)
+		params._result = false;
+	else
+		params._result = ::AGS::g_events->getJoystickButtonOnce(button);
 }
 
 void AGSController::Controller_PressAnyKey(ScriptMethodParams &params) {
@@ -133,6 +171,7 @@ void AGSController::Controller_PressAnyKey(ScriptMethodParams &params) {
 
 void AGSController::Controller_BatteryStatus(ScriptMethodParams &params) {
 	// Not supported, so return -1 for "UNKNOWN"
+	debug(0, "AGSController: Battery status is not supported");
 	params._result = -1;
 }
 
