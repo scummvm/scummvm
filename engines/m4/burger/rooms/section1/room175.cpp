@@ -63,6 +63,9 @@ static const seriesPlayBreak PLAY3[] = {
 
 void Room175::init() {
 	switch (_G(game).previous_room) {
+	case RESTORING_GAME:
+		break;
+
 	case 171:
 		ws_demand_location(331, 272, 3);
 		_G(wilbur_should) = 1;
@@ -86,7 +89,7 @@ void Room175::init() {
 
 	digi_preload("175_001");
 	digi_play_loop("175_001", 2, 125);
-	series_play("175fan", 0xf00);
+	series_play("175fan", 0xf00, 0, -1, 6, -1);
 }
 
 void Room175::daemon() {
@@ -115,6 +118,7 @@ void Room175::daemon() {
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	default:
 		_G(kernel).continue_handling_trigger = true;
