@@ -1776,6 +1776,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ic05_somewhen",      "Somewhen" },                                                               //      Entrant
 
 	// IntroComp 2006
+	{ "ic06_southerngoth",  "Southern Gothic" },                                                        //       Winner
+	{ "ic06_childsplay",    "Child's Play" },                                                           // 1° Runner-Up
 	{ "ic06_artdeception",  "The Art of Deception" },                                                   //      Entrant
 	{ "ic06_mechs",         "Mechs" },                                                                  // Hon. Mention
 	{ "ic06_sabotage",      "Sabotage" },                                                               // Hon. Mention
@@ -1825,6 +1827,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// IntroComp 2019
 	{ "ic19_homeland",      "Homeland" },                                                               // Hon. Mention
+
+	 // IntroComp 2020
+	{ "ic20_navigatio",     "Navigatio" },                                                              //    3rd Place
 
 	// IF Library Competition 2003
 	{ "lc_serve",           "Serving Your Country" },
@@ -2400,6 +2405,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Spring Thing 2014
 	{ "stc14_mrp",          "The Story of Mr. P." },                                                    //    7th Place
 
+	// Spring Thing 2015 - Back Garden
+	{ "stc15_dirk",         "Dirk" },                                                                   //      Entrant
+
 	// Spring Thing 2016
 	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },                                     //      Entrant
 
@@ -2420,6 +2428,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Spring Thing 2022
 	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },                         //      Entrant
 	{ "stc22_wry",          "Wry" },                                                                    //      Entrant
+
+	// Spring Thing 2023 - Main Festival
+	{ "stc23_mariewaits",   "Marie Waits" },                                                            //      Entrant
 
 	// Danish games
 	{ "nissen",             "Pa Loftet Sidder Nissen" },
@@ -2535,6 +2546,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// French games: French Comp 2018
 	{ "frc_exil",           "L'Exil" },                                                                 //    5th Place
+
+	// French games: French Comp 2021
+	{ "frc_donjon",          "Le Donjon de BatteMan" },                                                 //      Entrant
+	{ "frc_stationspatial",  "Station Spatiale S16: Prologue" },                                        //      Entrant
 
 	// German games
 	{ "abenteuer",          "Abenteuer" },
@@ -5647,6 +5662,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// IntroComp 2019
 	ENTRY0("ic19_homeland", "190728", "a95092c8e4d929e5462f7e99896107c1", 99328),
 
+	// IntroComp 2020
+	ENTRY0("ic20_navigatio", "200613", "0a841691a8b7d704abf7b125b76e1b39", 457746),
+
 	// IF Library Competition 2003
 	ENTRY0("lc_serve", "030315", "77e8343a373c442074e6f832d904818d", 139264),
 	ENTRY0("lc_trappedschool", "020920", "ba57356b20fa4ca3fd9bd1fd9c390abc", 135680),
@@ -6227,6 +6245,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Spring Thing 2014
 	ENTRY0("stc14_mrp", "140406", "35da82199a79e37358de984a5db5d0d1", 174308),
 
+	// Spring Thing 2015 - Back Garden
+	ENTRY0("stc15_dirk", "150416", "b2d0a81eaf7008fa9a1c8654fdc5578d", 362462),
+
 	// Spring Thing 2016
 	ENTRY0("stc16_harmonic", "030321", "d3cc582cb71a3a911229b331490cac94", 380416),
 
@@ -6247,6 +6268,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Spring Thing 2022
 	ENTRY0("stc22_hypercubic", "220320", "6895d310aa8d3bc7dfb67860ab1bc09e", 263680),
 	ENTRY0("stc22_wry", "220407", "a7c52c575f68f1affe727cec8647c572", 460216),
+
+	// Spring Thing 2023 - Main Festival
+	ENTRY0("stc23_mariewaits", "230402", "8d6e47991a8eff1925acb14f918eb2dd", 105472),
 
 	// Danish games
 	ENTRY1("nissen", "r4/171207", "c81784afb569b863098e8374dfdd4f32", 142848, Common::DA_DNK),
@@ -6380,6 +6404,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// French games: French Comp 2018
 	ENTRY1("frc_exil", "180114", "ff9628e84c46771168b5be5a9e23acd9", 107520, Common::FR_FRA),
+
+	// French games: French Comp 2021
+	ENTRY1("frc_donjon", "210110", "923d5ef805cb1ab6ecaef82e35750b7f", 201728, Common::FR_FRA),
+	ENTRY1("frc_stationspatial", "210110", "6b9e23599bb921aaf4fc744d80e193f5", 130048, Common::FR_FRA),
 
 	// German games
 	ENTRY1("abenteuer", "990712", "f849c7a06ebfe21c50819e4222ffee4e", 135680, Common::DE_DEU),
