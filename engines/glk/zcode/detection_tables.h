@@ -362,7 +362,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "emptyroom",          "The Empty Room" },
 	{ "endofearth",         "The End of Earth" },
 	{ "enemies",            "Enemies" },
-	{ "enigma",             "Enigma" },
 	{ "enigmasd",           "Enigma (by Simon Deimel)" },
 	{ "enterprise",         "The Enterprise Incidents" },
 	{ "entropy",            "Entropy" },
@@ -602,7 +601,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "monstermaker",       "Monster Maker" },
 	{ "monzasphantom",      "Monza's Phantom" },
 	{ "moonglow",           "Miniventure #1: Moonglow" },
-	{ "moongoon",           "Moon Goon" },
 	{ "moonshaped",         "Moon-Shaped" },
 	{ "moonwrecked",        "Moonwrecked" },
 	{ "mornelune",          "Morne Lune" },
@@ -805,7 +803,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "starlight_zcode",    "Starlight" },
 	{ "starrydepths_zcode", "Secret of the Starry Depths" },
 	{ "starshit",           "Starshit" },
-	{ "stealthy",           "Stealthy" },
 	{ "steine",             "Steine" },
 	{ "stewgoing",          "You've Got a Stew Going!" },
 	{ "stiffmst",           "Stiffy Makane: Mystery Science Theater 3000" },
@@ -1301,7 +1298,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "comp05",             "IF Competition '05 Unofficial FE Game" },
 
 	// IFComp 2006
-	{ "if06_floatpointz",   "Floatpoint" },                                                             //    1st Place
 	{ "if06_primrose",      "The Primrose Path" },                                                      //    2nd Place
 	{ "if06_moonshaped",    "Moon-Shaped" },                                                            //    5th Place
 	{ "if06_wallpaper",     "Delightful Wallpaper" },                                                   //    6th Place
@@ -2674,7 +2670,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cavernad",           "La Caverna del Drgon de Bronce" },
 	{ "cronicasparaiso",    "Cronicas del Paraiso" },
 	{ "cruzado",            "El Cruzado" },
-	{ "cubo",               "Cubo" },
 	{ "cueva",              "La Oscura Cueva" },
 	{ "despert",            "El Despertar" },
 	{ "draculasp",          "Dracula: Episodio 1, La Primera Noche" },
@@ -2705,7 +2700,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "paraiso",            "Llave Hacia el Paraíso" },
 	{ "perseo",             "Perseo y Andromeda" },
 	{ "peso",               "Una Cuestión de Peso" },
-	{ "pincoya",            "Ofrenda a La Pincoya" },
 	{ "playera",            "En la Playa" },
 	{ "premios",            "II Concurso de Mini-Aventuras" },
 	{ "pyramid",            "Piramide de la Perdicion" },
@@ -4578,7 +4572,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("starlight_zcode", "130802/zblorb", "a8e0e1a9fb1cecddde690342e01b6fba", 452000),
 	ENTRY0("starrydepths_zcode", "202005", "db40ba5514b49fbb835621c8577da56b", 92672),
 	ENTRY0("starshit", "120614", "c2d72febb61a9365d6c6b35f597bcf7e", 394688),
-	ENTRY0("stealthy", "161222", "6daa42b7ae7f933fcf2fa441e702ea70", 424914),
 	ENTRY0("steine", "030831", "224de592a0fa832195e78b74f17635a0", 72192),
 	ENTRY0("stewgoing", "130422", "f7af48ec219fa3703d194f8fd8e82eb0", 378696),
 	ENTRY0("stewgoing", "150410", "93fdaa375c1db772b27918f096f43f53", 1604582),
@@ -5122,7 +5115,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("comp05", "051001", "05e1dac27091bce08cc61a28ba71afa2", 116224),
 
 	// IFComp 2006
-	ENTRY0("if06_floatpointz", "060930", "1350e61da647efffc0e36f705dbc90f4", 1377946),
 	ENTRY0("if06_primrose", "060929", "d4a2ee947d42598eaa8f09c23c4ef2a4", 428544),
 	ENTRY0("if06_moonshaped", "060929", "aa2bf7a42417827ac31ce7d8d3453a1f", 323584),
 	ENTRY0("if06_wallpaper", "060928", "4e0b9814068b066ff8a7703f59902f93", 342912),
@@ -6872,7 +6864,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("alienabductescape", "140607", "dbbb6d79336ec63e269651dac42077a1", 160256),
 	ENTRY0("alloneneedscarrot", "121109", "b5cb7a36aeb1bfcf152bab1cbd62e379", 161792),
 	ENTRY0("almostadream", "151028", "51ef716ea2715d585f4712838cbd417b", 174080),
-	ENTRY0("amnesiazcode", "130623", "a0bacf26ed285681dd6a617f5b3656db", 222208),
 	ENTRY0("analchemicaladvent", "141121", "bb13f99cf335da4be6219106de7f721c", 176640),
 	ENTRY0("anartistneeds", "160310", "ea143276354a6415d93e64dc397f22d9", 159744),
 	ENTRY0("anotherolddude", "190517", "31e6c16849aeea4dd91637e4beba9521", 163840),
@@ -7502,7 +7493,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// PunyJam #3
 	ENTRY0("pj3_submarinesabot", "230512/z3", "9f4843bb85c7c5dbfc06bbe09ad4bf7f", 65536),
 	ENTRY0("pj3_submarinesabot", "230512/z5", "5cc0529faba276319dce0ccf0a3681fc", 68608),
-	ENTRY0("pj3_a1rl0ck", "230225", "c41cdba49309a60aaafb79238e814726", 86528),
 	ENTRY0("pj3_a1rl0ck", "230225", "c41cdba49309a60aaafb79238e814726", 86528),
 	ENTRY0("pj3_a1rl0ck", "230317", "11c071867ac8bb4f3a104069fb6c9c3d", 82432 ),
 	ENTRY0("pj3_a1rl0ck", "230402", "b0685da79e0c783b69a3944658ea34f6", 83456),
