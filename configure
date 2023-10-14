@@ -2455,8 +2455,15 @@ if test "$_debug_build" != no; then
 	echo_n -- "$debug_mode"
 
 	echo "int main() { return 0; }" > $TMPC
-	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
-		append_var CXXFLAGS "-gsplit-dwarf"
+
+	# HACK: The default DWARF version "for most targets" is 5. However, that
+	#       causes a segfault on at least some Linux distributions. Related
+	#       to https://sourceware.org/bugzilla/show_bug.cgi?id=15447
+	#       perhaps? That bug report suggests using DWARF version 4, so
+	#       let's do that for now, because it seems to work.
+
+	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
 		if test "$_lld" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=lld -Wl,--gdb-index; then
