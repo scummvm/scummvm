@@ -57,6 +57,7 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_MOVE_LEFT, "MOVE_LEFT", "Move Left", "AvatarMoverProcess::startMoveLeft", "AvatarMoverProcess::stopMoveLeft", nullptr, "JOY_LEFT" },
 	{ ACTION_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", "AvatarMoverProcess::startMoveRight", "AvatarMoverProcess::stopMoveRight", nullptr, "JOY_RIGHT" },
 	{ ACTION_MOVE_RUN, "MOVE_RUN", "Run", "AvatarMoverProcess::startMoveRun", "AvatarMoverProcess::stopMoveRun", "LSHIFT", "JOY_RIGHT_TRIGGER" },
+	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Highlight Items", "GameMapGump::startHighlightItems", "GameMapGump::stopHighlightItems", "h", nullptr },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
@@ -116,7 +117,6 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 
 #ifndef RELEASE_BUILD
 static const KeybindingRecord DEBUG_KEYS[] = {
-	{ ACTION_HIGHLIGHT_ITEMS, "HIGHLIGHT_ITEMS", "Show Highlight Items", "GameMapGump::startHighlightItems", "GameMapGump::stopHighlightItems", "h", nullptr },
 	{ ACTION_TOGGLE_TOUCHING, "TOUCHING", "Show Touching Items", "GUIApp::toggleShowTouchingItems", nullptr, "C+h", nullptr },
 	{ ACTION_TOGGLE_PAINT, "TOGGLE_PAINT", "Toggle Paint Editor Items", "GUIApp::togglePaintEditorItems", nullptr, "F9", nullptr },
 	{ ACTION_DEC_SORT_ORDER, "DEC_SORT_ORDER", "Decrement Map Sort Order", "GameMapGump::decrementSortOrder", nullptr, "LEFTBRACKET", nullptr },
