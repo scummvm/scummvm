@@ -6228,7 +6228,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Spring Thing 2021 - Main Festival
 	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
 
-	// Spring Thing 2022
+	// Spring Thing 2022 - Main Festival
 	ENTRY0("stc22_hypercubic", "220320", "6895d310aa8d3bc7dfb67860ab1bc09e", 263680),
 	ENTRY0("stc22_wry", "220407", "a7c52c575f68f1affe727cec8647c572", 460216),
 
