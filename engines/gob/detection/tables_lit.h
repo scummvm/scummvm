@@ -169,7 +169,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		EN_USA,
 		kPlatformDOS,
@@ -183,7 +183,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		FR_FRA,
 		kPlatformDOS,
@@ -197,7 +197,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		IT_ITA,
 		kPlatformDOS,
@@ -211,7 +211,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		DE_DEU,
 		kPlatformDOS,
@@ -225,7 +225,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		ES_ESP,
 		kPlatformDOS,
@@ -239,7 +239,7 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		EN_GRB,
 		kPlatformDOS,

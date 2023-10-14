@@ -29,7 +29,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),
 		EN_GRB,
 		kPlatformDOS,
@@ -71,7 +71,7 @@
 {
 	{
 		"gob3",
-		"",
+		"v1.00",
 		AD_ENTRY1("intro.stk", "1e2f64ec8dfa89f42ee49936a27e66e7"),
 		EN_USA,
 		kPlatformDOS,
@@ -297,7 +297,7 @@
 { // Supplied by fac76 in bug report #3272
 	{
 		"gob3",
-		"",
+		"v1.00",
 		{
 			{"intro.stk", 0, "32b0f57f5ae79a9ae97e8011df38af42", 157084},
 			{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
