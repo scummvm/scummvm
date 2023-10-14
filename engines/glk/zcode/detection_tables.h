@@ -2428,8 +2428,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "stc18_murderbig",    "Murder on the Big Nothing" },                                              //      Entrant
 
 	// Spring Thing 2019 - Main Festival
-	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
 	{ "stc19_pca",          "Porte Cave Adventure" },                                                   //      Entrant
+
+	// Spring Thing 2019 - Back Garden
+	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
 
 	// Spring Thing 2021 - Main Festival
 	{ "stc21_takethedogout", "Take the Dog Out" },                                                      //      Entrant
@@ -6334,8 +6336,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
 
 	// Spring Thing 2019 - Main Festival
-	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
 	ENTRY0("stc19_pca", "181128", "8908ecd93be90264935432fc0986dfb2", 100864),
+
+	// Spring Thing 2019 - Back Garden
+	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
 
 	// Spring Thing 2021 - Main Festival
 	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
