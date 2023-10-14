@@ -28,9 +28,14 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSController {
 
+class ConReader : public IAGSManagedObjectReader {
+public:
+	virtual void Unserialize(int key, const char *serializedData, int dataSize);
+};
+
 class AGSController : public PluginBase {
 	SCRIPT_HASH(AGSController)
-private:
+protected:
 	void Controller_Update();
 
 	void ControllerCount(ScriptMethodParams &params);

@@ -324,6 +324,7 @@ MODULE_OBJS = \
 	plugins/ags_collision_detector/ags_collision_detector.o \
 	plugins/ags_consoles/ags_consoles.o \
 	plugins/ags_controller/ags_controller.o \
+	plugins/ags_controller/ags_controller_arcnor.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \

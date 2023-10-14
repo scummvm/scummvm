@@ -28,6 +28,7 @@
 #include "ags/plugins/ags_collision_detector/ags_collision_detector.h"
 #include "ags/plugins/ags_consoles/ags_consoles.h"
 #include "ags/plugins/ags_controller/ags_controller.h"
+#include "ags/plugins/ags_controller/ags_controller_arcnor.h"
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
 #include "ags/plugins/ags_fire/ags_fire.h"
@@ -89,6 +90,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSController"))
 		return new AGSController::AGSController();
+
+	if (fname.equalsIgnoreCase("agscontrollerplugin"))
+		return new AGSController::AGSControllerArcnor();
 
 	if (fname.equalsIgnoreCase("AGS_Collision_Detector"))
 		return new AGSCollisionDetector::AGSCollisionDetector();
