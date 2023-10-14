@@ -686,12 +686,13 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int inden
 			_canvas._text.insert_at(curLine, MacTextLine());
 			_canvas._text[curLine].chunks.push_back(newchunk);
 			_canvas._text[curLine].indent = indent;
+			_canvas._text[curLine].firstLineIndent = 0;
 		} else {
 			_canvas._text[curLine].table->back().cells.back()._text.push_back(MacTextLine());
 			_canvas._text[curLine].table->back().cells.back()._text.back().chunks.push_back(newchunk);
 		}
 
-		D(9, "** chopChunk, added line: \"%s\"", toPrintable(text[i].encode()).c_str());
+		D(9, "** chopChunk, added line (firstIndent: %d): \"%s\"", _canvas._text[curLine].firstLineIndent, toPrintable(text[i].encode()).c_str());
 	}
 
 	*curLinePtr = curLine;
@@ -781,6 +782,8 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			chopChunk(tmp, &curLine, indentSize, _inTable ? -1 : _canvas._maxWidth);
 
 			curTextLine = &_canvas._text[curLine];
+
+			firstLineIndent = curTextLine->firstLineIndent;
 
 			tmp.clear();
 
