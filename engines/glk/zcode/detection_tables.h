@@ -6506,10 +6506,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ma_5feudi", "191213", "175cdef793bf9316f70714921e178ac3", 82944, Common::IT_ITA),
 
 	// Russian games
-	ENTRY0("allroads", "070701", "427693ae57580bbc57f204c50437d3cc", 198656),
-	ENTRY0("bluechairs", "111222", "9d6af2460c034fa9078846180ec31f05", 338944),
-	ENTRY0("metamorphoses", "080518", "bc16740cc10500b0d1e1e8e768da6417", 203776),
-	ENTRY0("spiderandweb", "091122", "3ea174936bc6d56c3f4d0bd5fa1fe720", 321536),
+	ENTRY1("allroads", "070701", "427693ae57580bbc57f204c50437d3cc", 198656, Common::RU_RUS),
+	ENTRY1("bluechairs", "111222", "9d6af2460c034fa9078846180ec31f05", 338944, Common::RU_RUS),
+	ENTRY1("metamorphoses", "080518", "bc16740cc10500b0d1e1e8e768da6417", 203776, Common::RU_RUS),
+	ENTRY1("spiderandweb", "091122", "3ea174936bc6d56c3f4d0bd5fa1fe720", 321536, Common::RU_RUS),
 
 	// Slovenian games
 	ENTRY1("zenin", "070628", "bda2d35eb0614374d02bae623d3a22ec", 90112, Common::SK_SVK),
