@@ -3928,7 +3928,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cheater", "960920", "69753e7cb886a003615b8aa415702135", 48640),
 	ENTRY0("checkerhaunt", "211209", "24920f69ad800a977555b5404c86d515", 261210),
 	ENTRY0("cheesedoff_zcode", "160724", "f22a5e611479057236e0a8af31b62e70", 448080),
-	ENTRY0("cheeseshop", "021230", "88329068474b92abf4b4363c177f6971", 85504),
+	ENTRY0("cheeseshop", "021230/v1", "88329068474b92abf4b4363c177f6971", 85504),
 	ENTRY0("cheshirecat_zcode", "140803", "69dced03ab92e1efeae0ea4a496743d5", 78848),
 	ENTRY0("cheshirecat_zcode", "141012", "0a8c570fb7499bcc35109fdf7320132b", 79872),
 	ENTRY0("cheshirecat_zcode", "150918/z5", "97f1096761d27951a1715c627390b6ba", 76800),
@@ -4590,7 +4590,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("tgm", "050330", "e345e2527801880bffc74981571875c9", 44544),
 	ENTRY0("thanet", "200313", "48029d6809ec3d3ddb5d6c69f8e88bb1", 176128),
 	ENTRY0("thanet", "201113", "d0dfcc5c81ac97509731211b5733fdee", 176128),
-	ENTRY0("thatdamnelevator", "160710", "4986a2629b35b9092b5bddf40df5417b", 415184),
+	ENTRY0("thatdamnelevator", "160710/v1", "4986a2629b35b9092b5bddf40df5417b", 415184),
 	ENTRY0("thatdamnremote", "091214", "2b10cdcc7a83f6e82d3909838e5b439f", 251490),
 	ENTRY0("the5continent", "190719", "945907c269cf9e20a7584544df8db671", 171520),
 	ENTRY0("theatre", "951203", "8b3db2f9039696ffa0114d55ac219ab9", 185856),
@@ -4644,8 +4644,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("tutorial", "111030", "36147ba605eb49902f9d514a08638cd1", 468142),
 	ENTRY0("tutorialhotel", "100713", "2d57f52f53fa0845eb19ea97a29005fa", 154624),
 	ENTRY0("tuuli", "171008", "dbdcb2acfa69c6eb352343eb556f5d2b", 591756),
-	ENTRY0("tuuli", "r3/180501", "0ee525701efafda124902b1b26f84bdf", 611734),
-	ENTRY0("tuuli", "r4/180501", "0b7e2bb3f6887f30fb98b54230acf039", 611734),
+	ENTRY0("tuuli", "180501/v1", "0ee525701efafda124902b1b26f84bdf", 611734),
+	ENTRY0("tuuli", "180501/v2", "0b7e2bb3f6887f30fb98b54230acf039", 611734),
 	ENTRY0("txtadv", "051019", "c8bae5d42c33802db953d2ffb45216b0", 86016),
 	ENTRY0("typo", "041119", "549875ea83b4230896fa7d3fa18ba0a3", 100864),
 	ENTRY0("uhohdemo", "980218", "4e8b90354c96760f36bfbfa2ba4fc04c", 176640),
@@ -5192,7 +5192,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if11_santaland", "110913", "e0e8181bbfe04b6cf55c3903153d5ae2", 410112),
 	ENTRY0("if11_canamicah", "110930", "309cde7bcb427088940ac701b7b18040", 363008),
 	ENTRY0("if11_comedyerror", "111017", "9219e4a1ac32b67d508d661f0e00eb6c", 885682),
-	ENTRY0("if11_tenthplague", "??????", "358056bdf0d1df7dad3ebbfc46e4f4e0", 379176),
+	ENTRY0("if11_tenthplague", "?????\?/v1", "358056bdf0d1df7dad3ebbfc46e4f4e0", 379176),
 	ENTRY0("if11_coldiron", "110909", "e917805948c99b02fdf1491542c2d8dc", 227328),
 	ENTRY0("if11_androawake", "110930", "1c38c3eba0c484048416cbff512b59ba", 512312),
 	ENTRY0("if11_keepsake", "110906", "293a92fcd66e8351a7062ed954df5d9e", 462088),
@@ -5210,7 +5210,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if12_sundayafterno", "120929", "782342798ab1966ae14c740c2702e1e0", 327168),
 	ENTRY0("if12_spiral", "120929", "5ae949fd69c4549d97402a3a7b3d6dfb", 347648),
 	ENTRY0("if12_bodybargain", "120929", "3f6416efb106a73251b731bccd61e18c", 393344),
-	ENTRY0("if12_fishbowl", "12????", "d78a44277239ae80788a322e49109813", 392262),
+	ENTRY0("if12_fishbowl", "12???\?/v1", "d78a44277239ae80788a322e49109813", 392262),
 	ENTRY0("if12_summerland", "120930", "b57f5c37a65a09b7df789167a027624f", 392238),
 	ENTRY0("if12_lunarbase1", "120929/z8", "8496b5fe70c738144e85031ea243f830", 311296),
 	ENTRY0("if12_lunarbase1", "120929/zblorb", "f1fe0b501a7af58a305d85ce3738c1e6", 1371878),
@@ -5798,7 +5798,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_taxes", "123456", "4cfde3ed88043fce6bb953021be69287", 79360),
 
 	// SpeedIF 10^-9 Competition
-	ENTRY0("sif_krakatoa", "021215", "3c62064723cfd8a89beb081c1703d133", 73728),
+	ENTRY0("sif_krakatoa", "021215/v1", "3c62064723cfd8a89beb081c1703d133", 73728),
 	ENTRY0("sif_roadestruction", "021214", "34d12792dda75cd8036455b2b2d74855", 58368),
 
 	// SpeedIF 11 Competition
@@ -6235,8 +6235,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("stc23_mariewaits", "230402", "8d6e47991a8eff1925acb14f918eb2dd", 105472),
 
 	// Danish games
-	ENTRY1("nissen", "r4/171207", "c81784afb569b863098e8374dfdd4f32", 142848, Common::DA_DNK),
-	ENTRY1("nissen", "r3/171207", "fb28905b7ff93a22d5fe43a18efa90c3", 142848, Common::DA_DNK),
+	ENTRY1("nissen", "171207/v1", "fb28905b7ff93a22d5fe43a18efa90c3", 142848, Common::DA_DNK),
+	ENTRY1("nissen", "171207/v2", "c81784afb569b863098e8374dfdd4f32", 142848, Common::DA_DNK),
 
 	// Dutch games
 	ENTRY1("adv", "020822", "dff45a0d89ed78a204d49d18341d15ce", 153600, Common::NL_NLD),
@@ -6264,7 +6264,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("citronille", "090111", "17a97c92575acb22cb3a33797b5218c2", 131072, Common::FR_FRA),
 	ENTRY1("enfant", "081228", "33b8b7c8c7c0c1cdc61e9c02fb34f683", 77312, Common::FR_FRA),
 	ENTRY1("escaperoom", "110301", "c039c9749a754f312f4fb4fc45f9dc90", 75264, Common::FR_FRA),
-	ENTRY1("espions", "070417", "c592155da4dd1bb360c3c4129a1bd54b", 129536, Common::FR_FRA),
+	ENTRY1("espions", "070417/v1", "c592155da4dd1bb360c3c4129a1bd54b", 129536, Common::FR_FRA),
 	ENTRY1("etoiles", "080211", "19affb3442f83e3cd0d46c245bc81bcc", 69632, Common::FR_FRA),
 	ENTRY1("etoiles", "190825", "313ea6b0a4f1978d6ad67180dd3c000b", 72704, Common::FR_FRA),
 	ENTRY1("femme", "080103", "5edba9471b92073b15f8f15ebe2890d3", 69632, Common::FR_FRA),
@@ -6572,7 +6572,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("paraiso", "000214", "28abb3f35a041ea425b9ec3e93086440", 68096, Common::ES_ESP),
 	ENTRY1("perseo", "150428", "5242114f236e71848be5f6c92fdcb6ef", 26624, Common::ES_ESP),
 	ENTRY1("peso", "981021", "db6fa2c6d6e9d385e0625f9b66c84f6b", 65536, Common::ES_ESP),
-	ENTRY1("playera", "010101", "9866408f548c8606e521075907b33ca7", 80896, Common::ES_ESP),
+	ENTRY1("playera", "010101/v1", "9866408f548c8606e521075907b33ca7", 80896, Common::ES_ESP),
 	ENTRY1("playera", "021100", "a30d9013d71a6277e2b062fde304ff22", 80384, Common::ES_ESP),
 	ENTRY1("premios", "000502", "085f093d0ab40c7a46ed2ca5a8382b86", 71168, Common::ES_ESP),
 	ENTRY1("pueblofantasma", "140305", "37284904beae0eedbfb98b17585bcaae", 33792, Common::ES_ESP),
