@@ -66,7 +66,7 @@ void Room170::init() {
 	digi_preload("100_001");
 	digi_play_loop("100_001", 3, 255);
 
-	_firstTime = player_been_here(170);
+	_firstTime = !player_been_here(170);
 	series_show("170box", 0xa00);
 
 	switch (_G(game).previous_room) {
