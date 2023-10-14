@@ -57,7 +57,7 @@ const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	{ "hypochondriac",      "Hypochondriac" },
 	{ "infidel",            "Infidel" },
 	{ "infocomsample1b",    "Infocom Sampler 1B" },
-	{ "infocfdeomsample1z", "Infocom Sampler 1Z" },
+	{ "infocomsample1z",    "Infocom Sampler 1Z" },
 	{ "infocomsample2zt",   "Infocom Sampler 2ZT" },
 	{ "infocomsample3zpi",  "Infocom Sampler 3ZPI" },
 	{ "infocomsample3ztl",  "Infocom Sampler 3ZTL" },
@@ -3576,7 +3576,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("hypochondriac", "11-870225", "a05a1e4b23d107cf3999fae25116ff49", 52376),
 	ENTRY0("infidel", "22-830916", "38f713e53af720624434529ea780040c", 93556),
 	ENTRY0("infidel", "22-840522-MAC", "1e5279c762c2521ff95dca6eea2177c0", 94144),
-	ENTRY0("infocfdeomsample1z", "15-840330", "0dea0c4d7e87b18a97c5bee0c61ac857", 62326),
+	ENTRY0("infocomsample1z", "15-840330", "0dea0c4d7e87b18a97c5bee0c61ac857", 62326),
 	ENTRY0("infocomsample3zpi", "5-840512", "a72086f6e7c10aff5cdd199efca32f93", 105196),
 	ENTRY0("infocomsample4zpiw", "24-840627", "1ba87ecd487866c4fd7775665dd383a8", 112478),
 	ENTRY0("infocomsample4zpiw", "26-840731", "5483febc51abd55fb5e04c4c97a0b260", 112610),
@@ -5135,7 +5135,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if06_polendina", "060929", "e7e3e0ab767c330635feb9b009bc14ff", 111104),
 	ENTRY0("if06_manalive2", "000002", "de9b6bae4432ef6585d06f65fc93a7ed", 149504),
 	ENTRY0("if06_pathfinder", "060928", "f632512392d33c75fed4a0bc0f0c5fd5", 146432),
-	ENTRY0("if06_apocalypseclock", "060801", "fe06ae2560d153af32bb29e74813d436", 92672),
+	ENTRY0("if06_apocalypclock", "060801", "fe06ae2560d153af32bb29e74813d436", 92672),
 	ENTRY0("if06_sisyphus", "060915", "5af751766ddacab843bd190fe5a6fe46", 134144),
 	ENTRY0("comp06", "061002", "8b72e6e68f62f53bb97646b108f31b0c", 149504),
 
@@ -5143,7 +5143,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if07_lostpig", "070917", "10dcc48e7312cc26eae89d1648af50c6", 317952),
 	ENTRY0("if07_actofmurder", "070927", "2b8e594dc3d1d6b06153494bd47bb4db", 386048),
 	ENTRY0("if07_bellwater", "070929", "67feb5edbb49ea993ca7a94f07556ce9", 348520),
-	ENTRY0("if07_acrossthestars", "070929", "4dd6a382a08b2865ad22a99cff8746e4", 492544),
+	ENTRY0("if07_acrossstars", "070929", "4dd6a382a08b2865ad22a99cff8746e4", 492544),
 	ENTRY0("if07_orevore", "070929", "aab0bd90d0a29605e8000590d0205c88", 410624),
 	ENTRY0("if07_jackmills", "070923", "26689533940170a64107b27adce69cef", 422776),
 	ENTRY0("if07_deadlinenchan", "07????", "0abf2e1124bf4da63a7efbd6cb239e57", 219648),
@@ -5193,11 +5193,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if09_starhunter", "090930", "60e33decd1e4a5c1f13298688d4eea39", 134656),
 	ENTRY0("if09_gatoron", "090830", "99688a1be3791575a575c33fb98587b6", 122368),
 	ENTRY0("if09_gleamingverb", "090930", "6971a0e1b91dffbe75b4efefe7f9540f", 148992),
-	ENTRY0("if09_zorkburiedchaos", "080126", "dd1cb30fccde813a3301a324e5d6ac02", 163218),
+	ENTRY0("if09_zorkburychaos", "080126", "dd1cb30fccde813a3301a324e5d6ac02", 163218),
 	ENTRY0("comp09", "091001", "c937fadc20db485baa8f35e8d841d77d", 145408),
 
 	// IFComp 2010
-	ENTRY0("if10_deathoffthecuffz", "100926", "288dfb6066beba825f49d2c6080f9081", 311196),
+	ENTRY0("if10_deathofftc", "100926", "288dfb6066beba825f49d2c6080f9081", 311196),
 	ENTRY0("if10_mite", "100930", "fa6eb58ea0db68211fa924fa1530d234", 186368),
 	ENTRY0("if10_gloriousrevol", "100930", "123d7b02f338fe27f4b8f39ba2d15845", 854008),
 	ENTRY0("if10_hummingbird", "100913", "4454cc4266f275a4d8a175aa21f5b0b5", 719972),
@@ -5231,7 +5231,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if12_eurydice", "120921", "a1e210d32afac8619fb8117c9826a4df", 792470),
 	ENTRY0("if12_guildedyouth", "12????", "75980e9b28e4c2b78e79f833e5829fe4", 322040),
 	ENTRY0("if12_changes", "120930", "50d536eedd00ca0d566a369586f75db7", 450560),
-	ENTRY0("if12_sundayafternoon", "120929", "782342798ab1966ae14c740c2702e1e0", 327168),
+	ENTRY0("if12_sundayafterno", "120929", "782342798ab1966ae14c740c2702e1e0", 327168),
 	ENTRY0("if12_spiral", "120929", "5ae949fd69c4549d97402a3a7b3d6dfb", 347648),
 	ENTRY0("if12_bodybargain", "120929", "3f6416efb106a73251b731bccd61e18c", 393344),
 	ENTRY0("if12_fishbowl", "12????", "d78a44277239ae80788a322e49109813", 392262),
@@ -5300,12 +5300,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// IFComp 2021
 	ENTRY0("if21_darkun", "210928", "1d86626167b93297f3d96cdf822d7594", 335512),
-	ENTRY0("if21_codexsadistica", "210928", "956d15d106c982d3a50ef7069b07b84f", 581378),
+	ENTRY0("if21_codexsadistic", "210928", "956d15d106c982d3a50ef7069b07b84f", 581378),
 	ENTRY0("if21_fourbyfourian", "210928", "593c4f5fb864cf5d43709f4028b37e15", 425190),
 	ENTRY0("if21_bravebear", "210928", "f6b245a25d510c871671097a158cf215", 72192),
 
 	// IFComp 2022
-	ENTRY0("if22_campusinvaders", "220926", "2067ac08742356f2e5f99ad417adab34", 82944),
+	ENTRY0("if22_campusinvader", "220926", "2067ac08742356f2e5f99ad417adab34", 82944),
 	ENTRY0("if22_intosun", "220928", "16616858fd3c197b3c6f3e69df6b4bfa", 348160),
 	ENTRY0("if22_lowkey", "220928", "59279a95782344dc98303a5e492664b8", 534510),
 	ENTRY0("if22_zerochance", "220928", "fc11a5a21798584e3dd6441479dbc8d9", 259678),
@@ -5381,7 +5381,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cgdc7_thecube", "100130", "b37effeaf558c7d406db3efd2d4d68fe", 230400),
 	ENTRY0("cgdc7_blueprint", "100208", "1f63cdc8d96f7c5c0408aaed9b9ca620", 183296),
 	ENTRY0("cgdc7_critbreach", "100203", "e27b0ade8558173cd370d92f320be144", 267776),
-	ENTRY0("cgdc7_themanorwhitby", "100201", "8a965849cb2ec58cc7c89df0e046206f", 370084),
+	ENTRY0("cgdc7_manorwhitby", "100201", "8a965849cb2ec58cc7c89df0e046206f", 370084),
 	ENTRY0("cgdc7_heavenly", "091213", "e5c9c808c47510348bdf9bcb14ef1f9d", 284672),
 	ENTRY0("cgdc7_expecttodie", "100209", "242d660192fb79236647842f03ba1c12", 192000),
 	ENTRY0("cgdc7_virtuality", "100203", "6690eaf9869b53c49696030c072728bc", 397756),
@@ -5542,7 +5542,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ec_laseine", "090320", "1073245f6178172de42f73208b8cfcc2", 167424),
 
 	// GameplayComp 2009
-	ENTRY0("gc_fantasticfinaleiv", "090914", "f0f2cf8c1be71de23cd08d7216f5feca", 160768),
+	ENTRY0("gc_fantafinaleiv", "090914", "f0f2cf8c1be71de23cd08d7216f5feca", 160768),
 
 	// Ghost Town Redux
 	ENTRY0("gtr_ghosttowntlt", "070725", "f430038611ee776ab82af369d81b6bb6", 171412),
@@ -5577,7 +5577,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ic03_realend", "030318", "cb8aa32666ba4e48cd191537e28a79f4", 114176),
 	ENTRY0("ic03_agency", "030320", "1fd608f827bae4d5ff3cbfb913293d3c", 70144),
 	ENTRY0("ic03_harlequin", "030321", "0aaeed0851aaa0338ed653ec3e485eb7", 92160),
-	ENTRY0("ic03_harringtonhouse", "030321", "83e4af82d7077019597f6014b7c05b94", 124928),
+	ENTRY0("ic03_harringthouse", "030321", "83e4af82d7077019597f6014b7c05b94", 124928),
 
 	// IntroComp 2004
 	ENTRY0("ic04_jbbrwkyi", "040714", "dfbf529105d6eff2610accf0e4e1e9ea", 119296),
@@ -5594,8 +5594,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ic05_somewhen", "050705", "8796d65ae9dd1c540d5ecf24760f4ee6", 75264),
 
 	// IntroComp 2006
-	ENTRY0("ic06_southerngothic", "060702", "5c5fab8b67a94080e52d0f553a72410c", 192506),
-	ENTRY0("ic06_childsplay7", "060714", "fe8b789b87f715d63f678608db42ae92", 310628),
+	ENTRY0("ic06_southerngoth", "060702", "5c5fab8b67a94080e52d0f553a72410c", 192506),
+	ENTRY0("ic06_childsplay", "060714", "fe8b789b87f715d63f678608db42ae92", 310628),
 	ENTRY0("ic06_artdeception", "060713", "804cd3fd69b98c0f03fd39e0a2d4de12", 156160),
 	ENTRY0("ic06_mechs", "060716", "4d7d7204634951bb6f999f03894f2148", 89600),
 	ENTRY0("ic06_sabotage", "060512", "b73c47a5c80cd0ad14adf7393d50ae7e", 107008),
@@ -5635,7 +5635,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("ic13_chickensexer", "130716", "f3f6d761378d1de0176624d6df85de3e", 370648),
 
 	// IntroComp 2014
-	ENTRY0("ic14_talessoulthief", "140720", "cfdeeacc120c9a2bc5702f996e59d645", 352720),
+	ENTRY0("ic14_talesoulthief", "140720", "cfdeeacc120c9a2bc5702f996e59d645", 352720),
 
 	// IntroComp 2016
 	ENTRY0("ic16_grubbyville", "160805", "bfb73ae5770b3794bded32092c14cb64", 284218),
@@ -6041,7 +6041,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_faithfulcompv2", "131231", "2aaed4f67468e3e269f211ba1caadd54", 343450),
 	ENTRY0("sif_talemorning", "140103", "a189df712a5254487eb9a9d8cb8fffca", 253952),
 	ENTRY0("sif_dayicameback", "140104", "c1abdfa44ae62d8194ce301f38f986c4", 356302),
-	ENTRY0("sif_youhavetoputthebaby", "140103", "ce8c2720fd4adab602737e31e3c15554", 152844),
+	ENTRY0("sif_youhavetoput", "140103", "ce8c2720fd4adab602737e31e3c15554", 152844),
 
 	// SpeedIF New Year's Speed Competition 2014
 	ENTRY0("sif_youwerehere", "150101", "44d44bcc5e4a09b2b5a8c91ff6e6ffe9", 659824),
@@ -6142,7 +6142,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sif_tragedy", "010312", "5bab2d25280f18504487fcf6b3312107", 51712),
 
 	// SpeedIF Y Competition
-	ENTRY0("sif_bananapocalaypse", "010525", "2c0d8c77d046daeb54906b2a59e066a9", 58368),
+	ENTRY0("sif_bananapocalayp", "010525", "2c0d8c77d046daeb54906b2a59e066a9", 58368),
 	ENTRY0("sif_barton", "010524", "e7e96181e9bc2827f5124b54689854fa", 81408),
 	ENTRY0("sif_bearsx3", "260702", "03b6e09ed4cff7c98b55c84986983caf", 56832),
 	ENTRY0("sif_flexible", "010524", "756fc59448127e97929a5dc189ec1393", 81920),
