@@ -760,7 +760,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sfiction",           "Speculative Fiction: Beginner's Lessons" },
 	{ "sgtguffysday",       "Sergeant Guffy's Day" },
 	{ "shade",              "Shade" },
-	{ "shadowgatez",        "Shadowgate" },
+	{ "shadowgate_dg",      "Shadowgate (by David Griffith)" },
 	{ "shadowofmemories",   "Shadow of Memories" },
 	{ "shadowsoldiers",     "Shadow Soldiers" },
 	{ "shallow",            "Shallow" },
@@ -877,7 +877,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "townmusicians",      "The Town Musicians" },
 	{ "toxinx",             "Toxin X" },
 	{ "trapped",            "Trapped" },
-	{ "tristamisland",      "Tristam Island" },
+	{ "tristamisland",      "Tristam Island (Demo)" },
 	{ "troll",              "Zork: A Troll's Eye View" },
 	{ "trunspecified",      "Treasures of an Unspecified Region or District" },
 	{ "trw",                "Tull Road Warrior" },
@@ -915,7 +915,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "visualizing",        "Visualizing" },
 	{ "voices",             "Voices" },
 	{ "vosr",               "Voices of Spoon River" },
-	{ "wadewar3",           "The WadeWars Book III: Aski" },
+	{ "wadewar3",           "The WadeWars Book III: Askin" },
 	{ "walkinthepark",      "A Walk in the Park" },
 	{ "wallpaper",          "Delightful Wallpaper" },
 	{ "warblersnest",       "The Warbler's Nest" },
@@ -1200,7 +1200,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "if01_finetuned",     "Fine-Tuned" },                                                             //   18th Place
 	{ "if01_evil",          "The Evil Sorcerer" },                                                      //   20th Place
 	{ "if01_gostak",        "The Gostak" },                                                             //   21nd Place
-	{ "if01_crusadezcode",  "Crusade" },                                                                //   23rd Place
+	{ "if01_crusadejg",     "Crusade (by John Gorenfeld)" },                                            //   23rd Place
 	{ "if01_urhere",        "You Are Here" },                                                           //   25th Place
 	{ "if01_elements",      "Elements" },                                                               //   26th Place
 	{ "if01_banebuilders",  "Bane of the Builders" },                                                   //   28th Place
@@ -2250,13 +2250,13 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// SpeedIF Pi-Theta-Aleph-Parallax Competition
 	{ "sif_parallaxdream",  "A Parallax Dream" },
 	{ "sif_pethertheta",    "Peter Theta Fixes the Holodeck" },
-	{ "sif_putiap",         "Pick Up the IF-Archive and Pi" },
+	{ "sif_putiap",         "Pick up the IF-Archive and Pi" },
 	{ "sif_squeaky",        "Squeaky on the Moon" },
 	{ "sif_ptap",           "The Grade 3 Parallax" },
 	{ "sif_moonbar",        "The Parallax Moon Bar Conspiracy" },
 	{ "sif_thpoint",        "The Theta Point" },
 
-	// `R*IF` Spam SpeedIF Competition
+	// SpeedIF `R*IF` Spam Competition
 	{ "sif_htp",            "HTP" },
 
 	// SpeedIF Scenario 1 Competition
@@ -2324,7 +2324,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 
 	// SpeedIF Bouchercomp Competition
 	{ "sif_lowellparadise", "Lowell’s Paradise" },
-	{ "sif_putpbad",        "Pick Up the Pine Box and Die" },
+	{ "sif_putpbad",        "Pick up the Pine Box and Die" },
 	{ "sif_seekingsolace",  "Seeking Solace" },
 	{ "sif_wideopengate",   "The Wide-Open Gate" },
 
@@ -2398,21 +2398,21 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// Spring Thing 2016
 	{ "stc16_harmonic",     "Harmonic Time-Bind Ritual Symphony" },                                     //      Entrant
 
-	// Spring Thing 2017
+	// Spring Thing 2017 - Back Garden
 	{ "stc17_enlightened",  "Enlightened Master" },                                                     //      Entrant
 
-	// Spring Thing 2018
+	// Spring Thing 2018 - Main Festival
 	{ "stc18_gopher",       "Best Gopher Ever" },                                                       //      Entrant
 	{ "stc18_murderbig",    "Murder on the Big Nothing" },                                              //      Entrant
 
-	// Spring Thing 2019
+	// Spring Thing 2019 - Main Festival
 	{ "stc19_69105keys",    "69,105 Keys" },                                                            //      Entrant
 	{ "stc19_pca",          "Porte Cave Adventure" },                                                   //      Entrant
 
-	// Spring Thing 2021
+	// Spring Thing 2021 - Main Festival
 	{ "stc21_takethedogout", "Take the Dog Out" },                                                      //      Entrant
 
-	// Spring Thing 2022
+	// Spring Thing 2022 - Main Festival
 	{ "stc22_hypercubic",   "Hypercubic Time Warp All-go-rhythmic Synchrony" },                         //      Entrant
 	{ "stc22_wry",          "Wry" },                                                                    //      Entrant
 
@@ -4489,6 +4489,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sangraal", "111115", "b663b3dd73ca57b4ddd6fafe7ec4ac0d", 150016),
 	ENTRY0("santassleighride", "081227", "a4b5276e5885ed3e93f1ae0319488404", 441730),
 	ENTRY0("sauguslibrary", "020905", "04054a1d02d24a1374662b9fbb676c46", 71680),
+	ENTRY0("saugusfirstparish", "031113", "4006f8f809c69a21f730dc2203b50795", 103936),
 	ENTRY0("saveprinceton", "041125", "13f9e45a4cbf39d541dea08b774377d1", 288256),
 	ENTRY0("savoirfaire", "040205", "eb122ee416ee8fa1e6f909b6de6ad9c0", 442212),
 	ENTRY0("scald", "180206", "07fb2e2748c3835bf4d1aaba70a708c7", 194048),
@@ -4502,7 +4503,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sueursfroides", "090104", "14609bd3ad9bd0b7b88c438ee57932b3", 173056),
 	ENTRY0("sgtguffysday", "200613", "f4843d92f702814b2a043d857b3cb8a3", 127488),
 	ENTRY0("shade", "001127", "e9ef7c17a40a4d0a30bb30c37ae1e4c5", 108544),
-	ENTRY0("shadowgatez", "040616", "9015104db32c046798870273f0754d3c", 141824),
+	ENTRY0("shadowgate_dg", "040616", "9015104db32c046798870273f0754d3c", 141824),
 	ENTRY0("shadowofmemories", "061124", "07b4c14e309c00f8adec901afbc0e58b", 179094),
 	ENTRY0("shadowsoldiers", "070625", "985406d500afb5e29a3b174b28b1f21e", 150418),
 	ENTRY0("shallow", "121109", "cc2d82b5453ec921e69a80c04e1f1ad7", 245696),
@@ -4639,8 +4640,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("toxinx", "110519", "2223181742216f1c1bb74bca88dda729", 200704),
 	ENTRY0("trampelviecher", "090611", "4d7871da10dd418a9b4ed3e00fab97c9", 207360),
 	ENTRY0("trapped", "110413", "b05f8909d1bbedb97f6c50eac19d6b2a", 254362),
-	ENTRY0("tristamisland", "200925/Demo", "6fc31da7d0afb034f05b12da56d075a8", 56320),
-	ENTRY0("tristamisland", "220107/Demo", "a0b1f6d3aa9167bb2c8039fe9e4c69c0", 56832),
+	ENTRY0("tristamisland", "200925", "6fc31da7d0afb034f05b12da56d075a8", 56320),
+	ENTRY0("tristamisland", "220107", "a0b1f6d3aa9167bb2c8039fe9e4c69c0", 56832),
 	ENTRY0("troll", "980518", "3e0f69e678dd289cd32bf41b2be58bd6", 64000),
 	ENTRY0("trunspecified", "101224", "cc1ee9ddc4b64f0e5a2b6b91bcf8f363", 273920),
 	ENTRY0("trw", "021229", "1fdb2baeefcabb635ddbbb3433b1b125", 126464),
@@ -5003,7 +5004,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if01_finetuned", "010928", "db40fa5a3a42006b70666c91c2de54ff", 271360),
 	ENTRY0("if01_evil", "010902", "14cecf79c9445057799632835034e560", 125440),
 	ENTRY0("if01_gostak", "010926", "3aad7233e05fae59f499fedaaecf75f9", 88064),
-	ENTRY0("if01_crusadezcode", "010913", "cc05c6b1940ed5e5bb53a0abecfbe1bf", 128000),
+	ENTRY0("if01_crusadejg", "010913", "cc05c6b1940ed5e5bb53a0abecfbe1bf", 128000),
 	ENTRY0("if01_urhere", "010928", "2f0240d8c028d9c249b8892c0de7f547", 196096),
 	ENTRY0("if01_elements", "010928", "cb2d89f904f8e4494e4b35561ca888be", 129024),
 	ENTRY0("if01_banebuilders", "010925", "fa7780e270430b2959b49f57d780efb1", 90624),
@@ -6217,18 +6218,18 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Spring Thing 2016
 	ENTRY0("stc16_harmonic", "030321", "d3cc582cb71a3a911229b331490cac94", 380416),
 
-	// Spring Thing 2017
+	// Spring Thing 2017 - Back Garden
 	ENTRY0("stc17_enlightened", "170402", "94d384fe0b5f3f6cead8653b4496d1d3", 218112),
 
-	// Spring Thing 2018
+	// Spring Thing 2018 - Main Festival
 	ENTRY0("stc18_gopher", "180327", "1af73704d303624fcc88397bdd1cd4a4", 383488),
 	ENTRY0("stc18_murderbig", "180403", "45b044f05a4f5b6fbd54a913d33e9dfe", 740794),
 
-	// Spring Thing 2019
+	// Spring Thing 2019 - Main Festival
 	ENTRY0("stc19_69105keys", "190401", "4e8c195b1023319a0875ebec71d7a5f5", 318492),
 	ENTRY0("stc19_pca", "181128", "8908ecd93be90264935432fc0986dfb2", 100864),
 
-	// Spring Thing 2021
+	// Spring Thing 2021 - Main Festival
 	ENTRY0("stc21_takethedogout", "210404", "48879bdbfdebc9e4cc57a8261fc4be96", 657462),
 
 	// Spring Thing 2022
