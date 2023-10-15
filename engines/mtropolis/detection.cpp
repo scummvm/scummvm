@@ -34,6 +34,7 @@ static const PlainGameDescriptor mTropolisGames[] = {
 	{"albert3", "Uncle Albert's Mysterious Island"},
 	{"spqr", "SPQR: The Empire's Darkest Hour"},
 	{"sttgs", "Star Trek: The Game Show"},
+	{"unit", "Unit: Re-Booted"},
 	{nullptr, nullptr}
 };
 
