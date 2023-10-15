@@ -41,9 +41,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "airport",            "The Airport" },
 	{ "alabaster",          "Alabaster" },
 	{ "aliasthemagpie",     "Alias 'The Magpie'" },
-	{ "alone",              "Alone" },
 	{ "alongdrink",         "A Long Drink" },
-	{ "amatter",            "A Matter of Heist Urgency" },
 	{ "anatidaephobia",     "A N A T I D A E P H O B I A" },
 	{ "anchorheaddemo",     "Anchorhead: Special Edition Demo" },
 	{ "anchorhead",         "Anchorhead" },
@@ -57,7 +55,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "archaeologicalfiction", "Archaeological Fiction" },
 	{ "ariadneinaeaea",     "Ariadne in Aeaea" },
 	{ "aroilingoriginal",   "A Roiling Original: Squeeal! A Sequel!" },
-	{ "aropeofchalk",       "A Rope of Chalk" },
 	{ "artoffugue",         "Art of Fugue" },
 	{ "ascensionlimbs",     "Ascension of Limbs" },
 	{ "ascentgothictower",  "The Ascent of the Gothic Tower" },
@@ -68,16 +65,13 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "barroombrawl",       "Barroom Brawl: Punch for your life" },
 	{ "batman66",           "Batman 66" },
 	{ "beasttorrackmoor",   "The Beast of Torrack Moor" },
-	{ "beautyaustere",      "A Beauty Cold and Austere" },
 	{ "becauseyouremine",   "Because You're Mine" },
 	{ "beingthere",         "Being There" },
 	{ "blackknife",         "Black Knife London" },
 	{ "bluelacuna",         "Blue Lacuna" },
 	{ "bonehead",           "Bonehead, a Regrettable and Mostly True Tale" },
-	{ "brainguzzlers",      "Brain Guzzlers from Beyond!" },
 	{ "briar",              "Briar, a Grimmly Perverted Fairy Tale" },
 	{ "btyt",               "Bigger Than You Think" },
-	{ "bullhockey",         "Bullhockey!" },
 	{ "bullhockey2",        "Bullhockey 2 - The Return of the Leather Whip" },
 	{ "bureaucrocyglulx",   "Bureaucrocy, a boring tale about paperwork" },
 	{ "buygold",            "Buy Gold" },
@@ -93,7 +87,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "codetopia",          "Codetopia - A Code Adventure" },
 	{ "colderlight",        "The Colder Light: A Winter's Tale" },
 	{ "colorthetruth",      "Color the Truth" },
-	{ "comehouse",          "And Then You Come to a House Not Unlike the Previous One" },
 	{ "comp01tr",           "Comp01ter Game: N0n C0mp0s Ment1s" },
 	{ "confhist",           "Conflicting Histories" },
 	{ "cos",                "City of Secrets" },
@@ -110,7 +103,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "deadcities",         "Dead Cities" },
 	{ "deathoffthecuff",    "Death Off the Cuff" },
 	{ "delphinashouse",     "Delphina's House" },
-	{ "desolation",         "Desolation" },
 	{ "diaperquest",        "Diaper Quest" },
 	{ "discovertheworld",   "Discover The World" },
 	{ "donotmeddle",        "Do Not Meddle" },
@@ -122,31 +114,25 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "dragondemons",       "Dragon Demons: A World Traveling RPG" },
 	{ "dragonglulx",        "Dragon Adventure" },
 	{ "dragonpass",         "Dragon's Pass" },
-	{ "drhorror",           "Dr Horror's House of Terror" },
 	{ "drolltolltroll",     "Droll Toll Troll" },
 	{ "dudewheresmyscapula", "Dude, Where's My Scapula" },
 	{ "duelspannedages",    "The Duel that Spanned the Ages" },
 	{ "dungeonspuzzle",     "Dungeon's Puzzle" },
 	{ "dungeontext1",       "Dungeon Text I - Escape From Darkness" },
 	{ "dynamitepowers",     "Dynamite Powers vs. the Ray of Night!" },
-	{ "eatme",              "Eat Me" },
 	{ "elsegar1",           "Elsegar I - Arrival" },
 	{ "endlesssands",       "Endless Sands" },
 	{ "endling",            "The Endling Archive" },
 	{ "enterpriseincidents", "The Enterprise Incidents: A Middle School Fantasy" },
 	{ "equivocalingredient", "The Equivocal Ingredient" },
 	{ "exigentseasons",     "The Exigent Seasons" },
-	{ "fair",               "Fair, an extra-curricular activity" },
 	{ "fairest",            "Fairest" },
 	{ "familiar",           "The Familiar" },
 	{ "farmquest",          "Farm Quest" },
 	{ "fatevanguard",       "Fate of the Vanguard" },
-	{ "fatfair",            "Fat Fair" },
-	{ "ferrymansgate",      "Ferryman's Gate" },
 	{ "finalproject",       "Final Project" },
 	{ "flattenedlondon",    "Flattened London" },
 	{ "flexiblesurvival",   "Flexible Survival" },
-	{ "foraplace",          "For a Place by the Putrid Sea" },
 	{ "further",            "Further, a color-coded existential tangle" },
 	{ "gaiawebch12",        "Gaia-Web Chapter 12: The Silence of the Thunder" },
 	{ "gatewayferrets",     "Gateway of the Ferrets" },
@@ -154,7 +140,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "getout",             "Get Out!" },
 	{ "ghosteringtonnight", "Ghosterington Night" },
 	{ "ghostglulx",         "Ghost" },
-	{ "ghostguessed",       "What Heart Heard Of, Ghost Guessed" },
 	{ "glkchess",           "Glk Chess" },
 	{ "glkebook",           "GlkeBook" },
 	{ "greenmountains",     "The Green Mountains" },
@@ -164,7 +149,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "hardpuzzle2",        "Hard Puzzle 2: The Cow" },
 	{ "hardpuzzle3",        "Hard Puzzle 3: Origins" },
 	{ "haroldnight2003",    "Harold Night 2003" },
-	{ "hercules",           "Hercules!" },
 	{ "herecomestreble",    "Here Comes Treble" },
 	{ "hismajesty",         "His Majesty's Royal Space Navy Service Handbook" },
 	{ "hlmarooned",         "Hinterlands: Marooned!" },
@@ -184,7 +168,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "kingshredspatches",  "The King of Shreds and Patches" },
 	{ "klaustrophobia",     "Klaustrophobia" },
 	{ "koa",                "Kingdom of Amphibia" },
-	{ "lasthouse",          "Last House on the Block" },
 	{ "lastresort",         "Last Resort, a sweltering afternoon in the Deep South" },
 	{ "limeergot",          "Lime Ergot" },
 	{ "limen",              "Limen" },
@@ -196,7 +179,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "lonelytroll",        "The Lonely Troll" },
 	{ "lostislandsofalabaz", "The Lost Islands of Alabaz" },
 	{ "lovelyassistant",    "Lovely Assistant Magical Girl" },
-	{ "madametime",         "The Origin of Madame Time" },
 	{ "magicword",          "The Magic Word" },
 	{ "makechangeglulx",    "Maybe make some change" },
 	{ "makingme",           "The Making of Me" },
@@ -222,7 +204,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "onefishtwofish",     "One Fish Two Fish" },
 	{ "oppositelyopal",     "Oppositely Opal" },
 	{ "ottumwaglulx",       "PDFA Ottumwa" },
-	{ "owlconsults",        "The Owl Consults" },
 	{ "phoenixfire",        "Phoenix-Fire" },
 	{ "photopiaglulx",      "Photopia" },
 	{ "piedaterreblunders", "Captain Piedaterre's Blunders" },
@@ -256,7 +237,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "shapes",             "Shapes: an Interactive Surrealism" },
 	{ "sheephere",          "Sheep Here" },
 	{ "signalerror",        "Signal Error: Tongue-in-cheek glitch correction" },
-	{ "skiesabove",         "Skies Above" },
 	{ "skmmc",              "Someone Keeps Moving My Chair" },
 	{ "slouchingbedlamglulx", "Slouching Towards Bedlam" },
 	{ "smittenkittens",     "Smitten Kittens" },
@@ -268,16 +248,11 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "standingshoulders",  "Standing on the Shoulders of Giants" },
 	{ "starlight",          "Starlight" },
 	{ "stiffymakane",       "Stiffy Makane - Apocolocyntosis" },
-	{ "sting",              "Sting: An interactive memoir" },
-	{ "stuffoflegend",      "Stuff of Legend" },
-	{ "subrosa",            "Sub Rosa: The Seven Deceits of Confessor Destine" },
 	{ "superluminalvagranttwin", "Superluminal Vagrant Twin" },
 	{ "tcom",               "The Colour of Magic" },
-	{ "templeshorgil",      "The Temple of Shorgil" },
 	{ "terminatorchaser",   "Terminator Chaser" },
 	{ "terminatorrobotrescue", "Terminator, a Robot Rescue" },
 	{ "theabbey",           "The Abbey, a medieval murder mystery" },
-	{ "theabsenceoflaw",    "The Absence of Law" },
 	{ "thebigfall",         "The Big Fall" },
 	{ "thebox",             "The Box" },
 	{ "thecrew",            "The Crew – Journey to the Pale Planet" },
@@ -307,29 +282,23 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "thetimemachine2021", "The Time Machine" },
 	{ "thetinyhouse",       "The Tiny House" },
 	{ "thetraintoabaddon",  "The Train To Abaddon" },
-	{ "thewaywardstory",    "The Wayward Story" },
 	{ "thiefpokemon",       "Thief, a Pokemon Text Adventure" },
 	{ "timecapsule",        "A Time Capsule" },
 	{ "timeless",           "Timeless" },
-	{ "timmott",            "The Incredibly Mild Misadventures of Tom Trundle" },
 	{ "todayisthesame",     "Today is the Same as Any Other" },
 	{ "tohellinahamper",    "To Hell in a Hamper" },
 	{ "tomtrundle",         "The Incredibly Mild Misadventures of Tom Trundle" },
-	{ "transparent",        "Transparent, an interactive exploration" },
 	{ "trialofthetnuop",    "Trial of the Inuop" },
 	{ "trollslayer",        "Trollslayer" },
 	{ "tryagain",           "Try Again " },
 	{ "turbochesthair",     "Turbo Chest Hair Massacre" },
-	{ "uglyoafs",           "Ugly Oafs. Save Green Terra! Repel the Wrath Pulse!" },
 	{ "uie",                "Under, In Erebus" },
 	{ "umwglulx",           "UMW" },
 	{ "uncleclemswill",     "Uncle Clem's Will" },
 	{ "underground",        "Underground" },
 	{ "undertheythunder",   "Under They Thunder" },
 	{ "unscientificfiction", "Unscientific Fiction" },
-	{ "vainempires",        "Vain Empires" },
 	{ "valleyofsteel",      "Valley of Steel" },
-	{ "vampireltd",         "Vampire Ltd" },
 	{ "walking",            "Walking" },
 	{ "walkneighborhood",   "A Walk Around the Neighborhood" },
 	{ "wand",               "The Wand" },
@@ -337,7 +306,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "wishertheurgist",    "Wisher, Theurgist, Fatalist" },
 	{ "wizardsniffer",      "The Wizard Sniffer" },
 	{ "wof",                "Works of Fiction" },
-	{ "wordoftheday",       "Word of the Day" },
 	{ "wordsofpower",       "Words of Power" },
 	{ "yourdeath4acts",     "Your Death, in four acts" },
 	{ "zeldata",            "The Legend of Zelda: A Text Adventure" },
@@ -437,6 +405,154 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if13_mazredugin",    "Mazredugin" },                                                             //   28th Place
 	{ "if13_cardewhouse",   "The Cardew House" },                                                       //   32nd Place
 
+	// IFComp 2014
+	{ "if14_hungerdeamon",  "Hunger Daemon" },                                                          //    1st Place
+	{ "if14_transparent",   "Transparent" },                                                            //   11th Place
+	{ "if14_uglyoafs",      "Ugly Oafs" },                                                              //   18th Place
+	{ "if14_jessedoorway",  "Jesse Stavro's Doorway" },                                                 //   19th Place
+	{ "if14_andyetitmoves", "And Yet it Moves" },                                                       //   27th Place
+	{ "if14_hill160",       "Hill 160" },                                                               //   36th Place
+	{ "if14_arqon",         "Arqon" },                                                                  //   39th Place
+
+	// IFComp 2015
+	{ "if15_brainguzzlers", "Brain Guzzlers from Beyond!" },                                            //    1st Place
+	{ "if15_map",           "Map" },                                                                    //    2nd Place
+	{ "if15_midswordfight", "Midnight, Swordfight" },                                                   //    3rd Place
+	{ "if15_subrosa",       "Sub Rosa" },                                                               //    6th Place
+	{ "if15_untriches",     "Untold Riches" },                                                          //    8th Place
+	{ "if15_ether",         "Ether" },                                                                  //   10th Place
+	{ "if15_thesueno",      "The Sueño" },                                                              //   17th Place
+	{ "if15_shireton",      "The Baker of Shireton" },                                                  //   19th Place
+	{ "if15_gotomomi",      "Gotomomi" },                                                               //   20th Place
+	{ "if15_probcompound",  "The Problems Compound" },                                                  //   24th Place
+	{ "if15_laidoff",       "Laid off From the Synesthesia Factory" },                                  //   30th Place
+	{ "if15_pilgrimage",    "Pilgrimage" },                                                             //   43rd Place
+	{ "if15_recorded",      "Recorded" },                                                               //   51st Place
+
+	// IFComp 2016
+	{ "if16_colortruth",    "Color the Truth" },                                                        //    2nd Place
+	{ "if16_pogomango",     "Pogoman GO!" },                                                            //    6th Place
+	{ "if16_fair",          "Fair" },                                                                   //    7th Place
+	{ "if16_rockpapsciss",  "How to Win at Rock Paper Scissors" },                                      //   10th Place
+	{ "if16_ariadne",       "Ariadne in Aeaea" },                                                       //   12th Place
+	{ "if16_worldstourn",   "The Game of Worlds TOURNAMENT!" },                                         //   14th Place
+	{ "if16_mirrorqueen",   "Mirror and Queen" },                                                       //   22nd Place
+	{ "if16_take",          "Take" },                                                                   //   28th Place
+	{ "if16_sigilreader",   "Sigil Reader (Field)" },                                                   //   39th Place
+	{ "if16_ventilator",    "Ventilator" },                                                             //   42nd Place
+	{ "if16_theatrepeople", "Theatre People" },                                                         //   46th Place
+	{ "if16_steamsacr",     "Steam and Sacrilege" },                                                    //  47th Place
+
+	// IFComp 2017
+	{ "if17_eatme",         "Eat Me" },                                                                 //    2nd Place
+	{ "if17_absenceoflaw",  "Absence of Law" },                                                         //    5th Place
+	{ "if17_owlconsults",   "The Owl Consults" },                                                       //    6th Place
+	{ "if17_beautyaustere", "A Beauty Cold and Austere" },                                              //    7th Place
+	{ "if17_1958dancing",   "1958 Dancing With Fear" },                                                 //    8th Place
+	{ "if17_futurthreads",  "Future Threads" },                                                         //    9th Place
+	{ "if17_thewand",       "The Wand" },                                                               //   11th Place
+	{ "if17_wordoftheday",  "Word of the Day" },                                                        //   13th Place
+	{ "if17_swigian",       "Swigian" },                                                                //   21st Place
+	{ "if17_castlethread",  "A Castle of Thread" },                                                     //   35th Place
+	{ "if17_rainbowbrdg",   "Rainbow Bridge" },                                                         //   37th Place
+	{ "if17_measureless",   "Measureless to Man" },                                                     //   43th Place
+	{ "if17_uerifcity",     "Ultimate Escape Room: IF City" },                                          //   47th Place
+	{ "if17_8shoesshelves", "8 Shoes on the Shelves" },                                                 //   66th Place
+	{ "if17_escapeterra",   "Escape From Terra" },                                                      //   75th Place
+	{ "if17_hauntedp",      "Haunted P" },                                                              //   78th Place
+
+	// IFComp 2018
+	{ "if18_aliasmagpie",   "Alias The Magpie" },                                                       //    1st Place
+	{ "if18_arithmancer",   "Junior Arithmancer" },                                                     //    7th Place
+	{ "if18_engarde",       "En Garde" },                                                               //   14th Place
+	{ "if18_rcm301303",     "Terminal Interface for Models RCM301303" },                                //   16th Place
+	{ "if18_madametime",    "The Origin of Madame Time" },                                              //   17th Place
+	{ "if18_templeshorgil", "The Temple of Shorgil" },                                                  //   20th Place
+	{ "if18_charming",      "Charming" },                                                               //   24th Place
+	{ "if18_dynapowers",    "Dynamite Powers vs. The Ray of Night!" },                                  //   25th Place
+	{ "if18_redragon",      "Re: Dragon" },                                                             //   26th Place
+	{ "if18_ailihphilia",   "Ailihphilia" },                                                            //   28th Place
+	{ "if18_diddlebucker",  "Diddlebucker!" },                                                          //   30th Place
+	{ "if18_pegasus",       "Pegasus" },                                                                //   41st Place
+	{ "if18_bordereivers",  "Border Reivers" },                                                         //   46th Place
+	{ "if18_bullhockey",    "Bullhockey!" },                                                            //   49th Place
+	{ "if18_eunice",        "Eunice" },                                                                 //   59th Place
+	{ "if18_birminghamiv",  "Birmingham IV" },                                                          //   69th Place
+
+	// IFComp 2019
+	{ "if19_zozzled",       "Zozzled" },                                                                //    1st Place
+	{ "if19_sugarlawn",     "Sugarlawn" },                                                              //    4th Place
+	{ "if19_skiesabove",    "Skies Above" },                                                            //   10th Place
+	{ "if19_remedialwitch", "Remedial Witchcraft" },                                                    //   14th Place
+	{ "if19_frenemies",     "Frenemies; or, I Won An Andy Phillips Game!" },                            //   17th Place
+	{ "if19_underthesea",   "Under the Sea" },                                                          //   20th Place
+	{ "if19_forthemoon",    "For the Moon Never Beams" },                                               //   22th Place
+	{ "if19_clusterflux",   "Clusterflux" },                                                            //   27th Place
+	{ "if19_goneoutfor",    "Gone Out For Gruyere" },                                                   //   30th Place
+	{ "if19_4eccentrics",   "The Four Eccentrics" },                                                    //   31st Place
+	{ "if19_hardpuzzle4",   "Hard Puzzle 4: The Ballad of Bob and Cheryl" },                            //   31st Place
+	{ "if19_winterbreak",   "Winter Break at Hogwarts" },                                               //   41st Place
+	{ "if19_mentertain",    "Mental Entertainment" },                                                   //   45th Place
+	{ "if19_sycamorelane",  "The House on Sycamore Lane" },                                             //   50th Place
+	{ "if19_jondoe",        "Jon Doe - Wildcard Nucleus" },                                             //   51st Place
+	{ "if19_letsplay",      "Let's Play: Ancient Greek Punishment - The Text Adventure" },              //   54th Place
+	{ "if19_citizennow",    "Citizen of Nowhere" },                                                     //   55th Place
+	{ "if19_fatfair",       "Fat Fair" },                                                               //   66th Place
+	{ "if19_oceanbeach",    "Ocean Beach" },                                                            //   68th Place
+	{ "if19_randomescape",  "Randomized Escapeh" },                                                     //   76th Place
+	{ "if19_vegibalisle",   "The Secret of Vegibal Island" },                                           //   77th Place
+
+	// IFComp 2020
+	{ "if20_vainempires",   "Vain Empires" },                                                           //    3rd Place
+	{ "if20_magpietrain",   "The Magpie Takes the Train" },                                             //    5th Place
+	{ "if20_eleusinian",    "The Eleusinian Miseries" },                                                //    6th Place
+	{ "if20_aropeofchalk",  "A Rope of Chalk" },                                                        //    7th Place
+	{ "if20_stuffoflegend", "Stuff of Legend" },                                                        //    8th Place
+	{ "if20_flattenlondon", "Flattened London" },                                                       //   11th Place
+	{ "if20_vampireltd",    "Vampire Ltd" },                                                            //   13th Place
+	{ "if20_alone",         "Alone" },                                                                  //   14th Place
+	{ "if20_sagesanctum",   "Sage Sanctum Scramble" },                                                  //   15th Place
+	{ "if20_shadowoper",    "Shadow Operative" },                                                       //   20th Place
+	{ "if20_ascensionlimb", "Ascension of Limbs" },                                                     //   22nd Place
+	{ "if20_ferrymansgate", "Ferryman's Gate" },                                                        //   23rd Place
+	{ "if20_academregular", "Academic Pursuits as Opposed to Regular Pursuits" },                       //   27th Place
+	{ "if20_seasonapocal",  "Seasonal Apocalypse Disorder" },                                           //   33rd Place
+	{ "if20_loveassistant", "Lovely Assistant Magical Girl" },                                          //   35th Place
+	{ "if20_turbochest",    "Turbo Chest Hair Massacre" },                                              //   36th Place
+	{ "if20_foraplace",     "For a Place by the Putrid Sea" },                                          //   41st Place
+	{ "if20_timmott",       "The Incredibly Mild Misadventures of Tom Trundle" },                       //   59th Place
+	{ "if20_desolation",    "Desolation" },                                                             //   70th Place
+	{ "if20_waywardstory",  "The Wayward Story" },                                                      //   73rd Place
+	{ "if20_underthey",     "Under They Thunder" },                                                     //   75th Place
+	{ "if20_standshoulder", "Standing on the Shoulders of Giants" },                                    //   83rd Place
+	{ "if20_lasthouse",     "Last House on the Block" },                                                //   93rd Place
+
+	// IFComp 2021
+	{ "if21_comehouse",     "And Then You Come to a House Not Unlike the Previous One" },               //    1st Place
+	{ "if21_drhorror",      "Dr Horror's House of Terror" },                                            //    2nd Place
+	{ "if21_songmockbird",  "The Song of the Mockingbird" },                                            //    3rd Place
+	{ "if21_ghostguessed",  "What Heart Heard Of, Ghost Guessed" },                                     //    4th Place
+	{ "if21_sting",         "Sting" },                                                                  //   13th Place
+	{ "if21_findinglight",  "Finding Light" },                                                          //   18th Place
+	{ "if21_remarkegg",     "Grandma Bethlinda's Remarkable Egg" },                                     //   23rd Place
+	{ "if21_closure",       "Closure" },                                                                //   27th Place
+	{ "if21_aardvarkhype",  "AardVarK versus The Hype" },                                               //   32nd Place
+	{ "if21_hercules",      "Hercules!" },                                                              //   36th Place
+	{ "if21_unfortunate",   "Unfortunate" },                                                            //   61st Place
+	{ "if21_planewalker",   "Plane Walker" },                                                           //   68th Place
+
+	// IFComp 2022
+	{ "if22_sector471",     "Trouble in Sector 471" },                                                  //    5th Place
+	{ "if22_awalkaround",   "A Walk Around the Neighborhood" },                                         //   14th Place
+	{ "if22_arborea",       "Arborea" },                                                                //   15th Place
+	{ "if22_crash",         "Crash" },                                                                  //   22nd Place
+	{ "if22_amatter",       "A Matter of Heist Urgency" },                                              //   34th Place
+	{ "if22_whoshotgum",    "Who Shot Gum E. Bear?" },                                                  //   35th Place
+	{ "if22_youmaynotesc",  "You May Not Escape!" },                                                    //   38th Place
+	{ "if22_lastchristmas", "The Last Christmas Present" },                                             //   43rd Place
+	{ "if22_hiddentomb",    "The Hidden King's Tomb" },                                                 //   60th Place
+	{ "if22_towerplargh",   "Tower of Plargh" },                                                        //   68th Place
+
 
 	// French games
 	{ "ekphrasis",          "Ekphrasis, les Aventures de Gilbert Fontenelle" },
@@ -502,10 +618,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("alabaster", "090609", "7f664b6eef28485a2f85a1831b041246", 3132122),
 	DT_ENTRY1("alabaster", "r1/090604", "3e7913a97275d57d4f2fcec7b014b167", 3374558),
 	DT_ENTRY1("aliasthemagpie", "190206", "a4281a03b797582ea53aa203b1eb7236", 1875956),
-	DT_ENTRY1("alone", "200927", "8ceba612963681d5c8a61cead9c8f1f0", 1078102),
-	DT_ENTRY1("alone", "r10/201006", "891fb305a00a9a8f957f01629f59bfe5", 1093464),
 	DT_ENTRY1("alongdrink", "150214", "8120604cd0cb566897fdb0f2786f4b43", 2164954),
-	DT_ENTRY1("amatter", "r5/221218", "3a141c1fffed5dc6195f9a517fa1d628", 7509290),
 	DT_ENTRY1("anatidaephobia", "170121", "a651c03db50e624fc8da5679ac731b53", 786902),
 	DT_ENTRY1("anchorheaddemo", "070202", "f2e60c4c3aad4c6a2b18d4d20040ed76", 635974),
 	DT_ENTRY0("anchorhead", "8913be5c1feeca879111c356daf87291", 18634158),
@@ -519,8 +632,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("archaeologicalfiction", "r2/210618", "7ad460c904ac49f6d0857ea0d10d3f30", 762222472),
 	DT_ENTRY1("ariadneinaeaea", "161129", "f796d793ea7b26e21abf6478ecb841a8", 1219646),
 	DT_ENTRY1("aroilingoriginal", "150327", "48719b01e0b805df27fcf1e021c6780f", 3731214),
-	DT_ENTRY1("aropeofchalk", "r1/200926", "26dfd5161d72ec2a9e88b93c74e79e36", 1653800),
-	DT_ENTRY1("aropeofchalk", "r3/221202", "a90192092cb1616b22b6af769811c851", 1707862),
 	DT_ENTRY1("artoffugue", "100911 No Music", "b570048a98acb680b8305043f1f1c866", 1596664),
 	DT_ENTRY1("artoffugue", "100911", "2be7f91abade14d81b85843d82d52e86", 21605450),
 	DT_ENTRY1("ascensionlimbs", "200927", "30aa45bec407ff833a56e552b451ff95", 1160460),
@@ -533,10 +644,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("barroombrawl", "160226", "a6b2641c76c1a28e5ff8f5188a06c63e", 637692),
 	DT_ENTRY1("batman66", "r7/220303", "a692872f5d50d2d78b937c884a9d50b7", 949954),
 	DT_ENTRY1("beasttorrackmoor", "071014", "80d093ceb324b7288b6c5715f8391d3d", 579578),
-	DT_ENTRY1("beautyaustere", "180112", "7efa8da4a65c8e70f6783f30750f7a00", 2127234),
-	DT_ENTRY1("beautyaustere", "180928", "41a6d2b620c211118e2b9586fd354ea7", 2127234),
-	DT_ENTRY1("beautyaustere", "r4/190516", "9176001159f15db15a3f674ddd5642f8", 2129538),
-	DT_ENTRY1("beautyaustere", "r5/220220", "456b687530dd14817ac2268ddde4fd3a", 2129538),
 	DT_ENTRY1("becauseyouremine", "161019", "643df12ae55ed54c9c1172753fc71d52", 648134),
 	DT_ENTRY0("beingthere", "6a7f51d6c09acca156e3ceadce7edcb9", 6005766),
 	DT_ENTRY0("beyondglulx", "64a351bc6757a58080b801a14d878fc2", 1303364),
@@ -545,14 +652,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("bluelacuna", "090304", "86c24b7fa879780038056d5e9a084a28", 5649260),
 	DT_ENTRY1("bluelacuna", "Full Version r4/100717", "8a2cd2e898f7375d39393b56ed64c5dd", 5673294),
 	DT_ENTRY1("bonehead", "120229", "34563c2af093239b5a908a64031eedac", 1804252),
-	DT_ENTRY1("brainguzzlers", "160123", "23d22c7e8d7dff3660c436ef4951f4ae", 3210594),
 	DT_ENTRY1("briar", "130707", "fb40823ab510ca052c8736163332ea6d", 766272),
 	DT_ENTRY1("btyt", "130101", "97c6c3622d0d5a2f7a5e4f9ca521c13d", 412214),
-	DT_ENTRY1("bullhockey", "181125", "8919f32151fdc862688fb3c27aa7c46d", 2036232),
-	DT_ENTRY1("bullhockey", "181218", "8414393ff71519dc842cfe758ac2b0ad", 2066952),
-	DT_ENTRY1("bullhockey", "181220", "a2ad2f228e37ea52062e4f4f110232d3", 2065672),
-	DT_ENTRY1("bullhockey", "190103", "6cec5f7e1bfba0cbfa76bad81c197eba", 2065672),
-	DT_ENTRY1("bullhockey", "190106", "877fd221c0f6e7f7393597a8c6a4e3ca", 2065672),
 	DT_ENTRY0("bullhockey2", "e66411e7d47061243c7f47277727a2a8", 2892260),
 	DT_ENTRY1("bureaucrocyglulx", "140401", "530a9efefff27ce37d75e5dc8de8ad5d", 565522),
 	DT_ENTRY1("buygold", "160302", "7db70c24b2533800187a1884ca9eacf1", 897480),
@@ -571,8 +672,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("colderlight", "120312", "eed41f2779bdf940f84b4e0a33036e69", 1192960),
 	DT_ENTRY0("colorthetruth", "b9ea873d69fd82d1e0535d55b4b84cac", 1372266),
 	DT_ENTRY0("comp01tr", "1d51522ee3057a3f7206fa83c151a6de", 149760),
-	DT_ENTRY1("comehouse", "210813", "6e1c6b40d1ab32ffa2985ae457a8f291", 1526508),
-	DT_ENTRY1("comehouse", "211213", "27662487116ce47c2b0112faebae1bb6", 1539308),
 	DT_ENTRY1("confhist", "190603", "7409eea74565594355edb7fd6f64ee5c", 646882),
 	DT_ENTRY1("cos", "030624", "21bbf38c4e358ff2fd34e3d7424c8d36", 8462908),
 	DT_ENTRY1("cosmoserveglulx", "r1/171005", "a0e995309ba2b1bc0fda138da86ca366", 1798024),
@@ -595,8 +694,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("deadcities", "081214", "0d276d62017b6b1b9e07b79e3fd98b5f", 1195136),
 	DT_ENTRY1("deathoffthecuff", "130930", "8e48819a77855adf1a1879b2fb2e03ab", 1211826),
 	DT_ENTRY1("delphinashouse", "150214", "5c6e7d0f23ccc3fb17d64bcfdc14ae5e", 2199754),
-	DT_ENTRY0("desolation", "6a9f300f70d246e52dafbc65430e6cad", 675208),
-	DT_ENTRY1("desolation", "r4/201021", "cd2d1dda98cefc25b351f8330563996a", 702856),
 	DT_ENTRY1("diaperquest", "171224", "31d355119d0aa4c719cd8093457857b3", 417101284),
 	DT_ENTRY1("discovertheworld", "150731", "77b1b18260082d25f4de51318e885eaa", 17127846),
 	DT_ENTRY0("donotmeddle", "7f2864618567e6d8f587ea5dc9afe879", 800588),
@@ -608,14 +705,12 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("dragondemons", "000001", "ce5c6c3e9eb5c45d83edcdba263729e9", 982528),
 	DT_ENTRY1("dragonglulx", "040211", "8daf42fd31e76a075fd2a831e6be23ac", 1625986),
 	DT_ENTRY1("dragonpass", "r1/211111", "20511b3e33d0f9a72505e42ce3708b22", 919824),
-	DT_ENTRY1("drhorror", "r1/211121", "f36db5fb5f4249d413b268cb9e20074c", 2914710),
 	DT_ENTRY1("drolltolltroll", "131021", "518955b338fca036fa9611c86c30f9ae", 435544),
 	DT_ENTRY1("dudewheresmyscapula", "160323", "95911f3a23498a24912f5cf64ddfb88d", 642518),
 	DT_ENTRY1("duelspannedages", "100403", "4887e9c2e6df64ac85be17bedaed36f9", 628480),
 	DT_ENTRY1("dungeonspuzzle", "180428", "6f9413eb4901da34adbdd79753094c2a", 662208),
 	DT_ENTRY1("dungeontext1", "130317", "1c69e410ff3fa7c7dcf83875a7f3a963", 746466),
 	DT_ENTRY1("dynamitepowers", "Director's Cut r2/210627", "be66a1e09cb19cff49a2fa115ff4d097", 1836560),
-	DT_ENTRY1("eatme", "171013", "5e9c50e06ae1f954b9dd41abcfc0f09b", 2570070),
 	DT_ENTRY1("elsegar1", "200917", "76925bff593a871c2668bedafe099058", 863114),
 	DT_ENTRY1("endlesssands", "150215", "2105d775eb759af04ab788e046d965e0", 982748),
 	DT_ENTRY1("endlesssands", "150712", "55b31591423b011bb99be2724a6bdbe9", 1005788),
@@ -624,22 +719,16 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("equivocalingredient", "090509", "537279579b7c0dd2f5d8213a84209c7f", 1285236),
 	DT_ENTRY1("exigentseasons", "r1/210827", "959b453f617f5de41f5265226912236c", 1612108),
 	DT_ENTRY1("exigentseasons", "r2/220219", "7ee8c390fbddb20b72934a517e52a17e", 1616972),
-	DT_ENTRY1("fair", "161116", "eca63537d9198a10dd6a84bf51b097b6", 1190090),
 	DT_ENTRY1("fairest", "r1/220331", "b39cff09fc0dafe9fc2218224c76d405", 1766826),
 	DT_ENTRY1("familiar", "200702", "4e347fdc86a979e865fa790d94bbf30a", 2294330),
 	DT_ENTRY1("farmquest", "111028", "e49e02b73047fb16427c8882035a4be6", 415940),
 	DT_ENTRY1("fatevanguard", "r1/230209", "02ceac676b2aa8835e253e5a4b3ba346", 1104470),
-	DT_ENTRY1("fatfair", "r3/191118", "006e6b5b3edf2233e020a61edf4a59ad", 1383018),
-	DT_ENTRY1("ferrymansgate", "200928", "276ff9f09734b59364199fc948f9e221", 2655820),
-	DT_ENTRY1("ferrymansgate", "r1/201006", "ed9aca691b1ce35f78c13fbd75077ec4", 2657868),
 	DT_ENTRY1("finalproject", "140517", "9ace3f9fa908a3b96a6153afa0e30720", 738248),
 	DT_ENTRY1("flattenedlondon", "200926", "f3fa437bc2e99ceb97b43c5617f0d4db", 1785910),
 	DT_ENTRY1("flattenedlondon", "r8/210106", "55a9d547c9222483e72e3e76871246cf", 1790262),
 	DT_ENTRY1("flexiblesurvival", "110307", "0d225782edd27fffb7ab0e423e9bad4d", 860108),
 	DT_ENTRY1("flexiblesurvival", "r67/200611", "2ee899c54cfd6c2eb8e4f8e737fa4ac9", 264677996),
 	DT_ENTRY1("flexiblesurvival", "230412", "429e583862248f2bebed062d61dee351", 530020822),
-	DT_ENTRY1("foraplace", "200928", "0a27fe6717a60a99e7130ea54354eaf5", 1476540),
-	DT_ENTRY1("foraplace", "r1/201014", "f7196abf00de2d25c9d398756e5d92e5", 1477052),
 	DT_ENTRY1("further", "150117", "227bf3da188ae42e43b8b88b66561252", 682770),
 	DT_ENTRY1("gaiawebch12", "r1/160104", "876c8ad8648b4035db67d09f38e9f4d4", 2458080),
 	DT_ENTRY1("gatewayferrets", "191206", "0db20a85e6f044d0968dd1c6eea47c2f", 776178),
@@ -647,7 +736,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("getout", "190823", "61d1b8622f47bf01027d6537dcdb256a", 641758),
 	DT_ENTRY1("ghosteringtonnight", "150815", "29ee591bd93084b5a450f2324d47de3b", 1940030),
 	DT_ENTRY1("ghostglulx", "r1/210716", "8a612292dd5c09cabb64ad0cb41d842b", 794292),
-	DT_ENTRY1("ghostguessed", "r1/211117", "7b2920b6c3222e184037e2d1fdc166e8", 1368358),
 	DT_ENTRY0("glkchess", "43a14ea7a35d7944504d3017f33fd40b", 252340),
 	DT_ENTRY0("glkebook", "1dc4d02840ee7cbf61dc359bc6a69c22", 61162),
 	DT_ENTRY1("greenmountains", "110116", "4049179c3a28703705de72be734e05bc", 337868),
@@ -657,7 +745,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("hardpuzzle2", "151209", "db2880a4bf6539b30b922c83d1f35877", 626752),
 	DT_ENTRY1("hardpuzzle3", "160107", "9dffb3f6fc8daf2bf4a27b4b43745b93", 796682),
 	DT_ENTRY1("haroldnight2003", "141007", "ac404358f94472c2e9c8bc07596995db", 949134),
-	DT_ENTRY1("hercules", "r1/211121", "8883c8f48d19165bf53d9a4216240f1e", 1426246),
 	DT_ENTRY1("herecomestreble", "160619", "573a53ce59a78c09bdfcf4f09b5cfd60", 666278),
 	DT_ENTRY1("hismajesty", "r1/230305", "615014064a099b45861feac57868d91a", 2701802),
 	DT_ENTRY1("hlmarooned", "r1/220611", "db487dd770829aa94447eadfe3f260c6", 860582),
@@ -681,8 +768,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("kingshredspatches", "090722", "87765824be7facf6400a392633f84602", 4340676),
 	DT_ENTRY1("klaustrophobia", "110926", "d8751353ff883a1439c4c90cac2991fa", 3599478),
 	DT_ENTRY1("koa", "000001", "f70361a47c2e9571a4fdc72ce7453197", 1085696),
-	DT_ENTRY1("lasthouse", "200928", "94ca1a21467c2b2f07e9cf6afeeb818a", 933328),
-	DT_ENTRY1("lasthouse", "r1/201013", "78cb28bc7b4a3c4d006fa4ccad759a58", 933584),
 	DT_ENTRY1("lastresort", "070213", "bc26a4383290d3c04657ea58841b3d91", 787200),
 	DT_ENTRY1("limeergot", "151130", "1290543b3d72115bc31201ed244b5011", 1008590),
 	DT_ENTRY1("limen", "r1/210814", "d196f9bb0ea07b178b6b3fb7b5eb8649", 683000),
@@ -695,7 +780,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("lostislandsofalabaz", "110524", "9f439a77eccf4813aebebbe8093e8c57", 3145932),
 	DT_ENTRY1("lovelyassistant", "200923", "16931f135f38efaee72dac89a7c9ae27", 1051098),
 	DT_ENTRY1("lovelyassistant", "r1/201011", "1c219d4b89551afde0545cdfbd3d6995", 1044186),
-	DT_ENTRY1("madametime", "r2/190902", "b8c0d099b3da134b7163cb4b07a3268b", 1182340),
 	DT_ENTRY1("magicword", "r1/230226", "d8a4512ef0d952eecc1dbfcf5feeb810", 935362),
 	DT_ENTRY1("makechangeglulx", "120107", "0ee70eea03ca810bf0de3dcecfd9c741", 6456118),
 	DT_ENTRY1("makingme", "r1/220209", "96f4346cdf887a6ced4026e13ecc64ea", 2082406),
@@ -724,7 +808,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("onefishtwofish", "r1/211025", "121e6cd8d048525f9a67ad7b127fd3bc", 906032),
 	DT_ENTRY1("oppositelyopal", "150214", "e7bbe4bca68cf243c64528b464b99ebf", 1515910),
 	DT_ENTRY1("ottumwaglulx", "021409", "1fc1da4f374493bee3a13c143beeba58", 537712),
-	DT_ENTRY1("owlconsults", "171124", "d1d4bd725f5e64a80f97cfc6e687a8e8", 287488),
 	DT_ENTRY1("phoenixfire", "190204", "1aab4fc41f54524f98988045aa6be1df", 767690),
 	DT_ENTRY1("photopiaglulx", "10274", "eab3f6371531c78b2e80803e1636da7d", 627050),
 	DT_ENTRY1("piedaterreblunders", "171216", "6195647baed23df20a1e16e02d046505", 1115466),
@@ -766,7 +849,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("shapes", "000001", "a011827749eeef8afe6f6b8d5bfb78db", 1254912),
 	DT_ENTRY1("sheephere", "160416", "1de700b758ef6f975150a6bd8926880d", 621466),
 	DT_ENTRY1("signalerror", "111116", "739510541192f01467b319b70ed7bf1f", 2138394),
-	DT_ENTRY1("skiesabove", "r1/191120", "d2f2071d0432a657ddff53bd1a38370c", 1159352),
 	DT_ENTRY1("skmmc", "150116", "46aee190f69d75592d72b1e3c573b6a8", 831452),
 	DT_ENTRY1("slouchingbedlamglulx", "140613", "c3ee4e636fb1ef2a0438dc3a08d4c1eb", 982754),
 	DT_ENTRY0("smittenkittens", "c3402d5d8b94675af5e3e0069366d4fd", 1240942),
@@ -778,18 +860,12 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("standingshoulders", "200925", "78cb38272e79595781f5e1be65171a75", 836802),
 	DT_ENTRY1("starlight", "151119", "ee4d2ed91518392981bf3cfd0fcf644d", 885152),
 	DT_ENTRY0("stiffymakane", "f978ca1dafb3e44f1b29bd26527f342c", 2486436),
-	DT_ENTRY1("sting", "r2/211211", "8e17a75bfadf744e64a06534d1fe4d83", 1152828),
-	DT_ENTRY0("stuffoflegend", "447ea6caf1c51226b3f6a54d857b76b6", 1536382),
-	DT_ENTRY1("stuffoflegend", "r2/201006", "9dbf623f1bd82be91dc728024600fe91", 1534576),
-	DT_ENTRY1("subrosa", "160324", "30e7ded8624c26c04e8361d235f42c67", 1481628),
 	DT_ENTRY1("superluminalvagranttwin", "160316", "7beb275a3e66b7b9840019caa3041723", 1162788),
 	DT_ENTRY1("tcom", "121103 (No Gfx)", "24feef55d07cc46bcc5479ce580cbe3e", 246272),
 	DT_ENTRY1("tcom", "121103", "67504ebc3d525f6a29fa800b6e12229d", 326226),
-	DT_ENTRY1("templeshorgil", "r2/190807", "2b5e689ac5ef0a57acdda20aa4cef496", 2029052),
 	DT_ENTRY1("terminatorchaser", "r2/150315", "ac10ba4e7d15ebe4262cb3b9d683ef12", 1698614),
 	DT_ENTRY1("terminatorrobotrescue", "150214", "596b41d3ecc38bfb9a6aee085f333591", 1054550),
 	DT_ENTRY1("theabbey", "080626", "3abcc1b85a36efb73815e1cd37143210", 645274),
-	DT_ENTRY1("theabsenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
 	DT_ENTRY1("thebigfall", "r1/210624", "4fcfb19c283e3860aa463dd9e3a77263", 1342530),
 	DT_ENTRY1("thebigfall", "r2/210711", "dad981d1fde0f573fd7c4b4d2652ca69", 1389634),
 	DT_ENTRY1("thebigfall", "r2/210814", "7b5f8df5b909e2ca49ab7aedf1661f56", 1389378),
@@ -826,35 +902,25 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("thetinyhouse", "091210", "5e86e6852c049ac973af5175d61b60e9", 823552),
 	DT_ENTRY1("thetinyhouse", "r1/100425", "44d3e300ced2828af1509e5019271b26", 838656),
 	DT_ENTRY1("thetraintoabaddon", "141107", "55a4a454fba273067cc127c4f1a8ce3a", 848180),
-	DT_ENTRY1("thewaywardstory", "200929", "4fe03ab93289d4d8d53b04983010f529", 929536),
-	DT_ENTRY1("thewaywardstory", "r1/201005", "fd731a09e32f85a38ea3ae61e153d0ed", 929792),
 	DT_ENTRY1("thiefpokemon", "140111", "2bfabf36b6171ed487858c10af0ea88d", 358392),
 	DT_ENTRY1("timecapsule", "r1/201005", "0d570e4c2cd8383fa45c99d000a40c2c", 613632),
 	DT_ENTRY1("timeless", "190510", "29aeb64448b6df40399bbd41152e925a", 616386),
-	DT_ENTRY1("timmott", "r1/201024", "5952d3a8dcb659269791ceecef106d95", 2887404),
 	DT_ENTRY1("todayisthesame", "190518", "ba4478b484043d7943f834c672d5835a", 1800722),
 	DT_ENTRY1("tohellinahamper", "170412", "f12baa1762e29c9528baec31347a18b0", 973550),
 	DT_ENTRY1("tohellinahamper", "r2/191217", "40cccc5fcce65c03e41dfa664487de10", 1978492),
 	DT_ENTRY1("tomtrundle", "200928", "8d720c498a6a7115628f70b61eb413c6", 2885100),
-	DT_ENTRY1("transparent", "150401", "3f4e5effb8ed8f4d0c3f277bb47ba161", 11084272),
-	DT_ENTRY1("transparent", "150626 (No Sound)", "13dc495dc3ed802e663b193bd862b994", 2284454),
 	DT_ENTRY1("trialofthetnuop", "170813", "d8a34dc6c9b0e2d037d8cc3de006f42b", 616062),
 	DT_ENTRY1("trollslayer", "151112", "fa3dee31c195732ad6a13a6e0b54d625", 920230),
 	DT_ENTRY1("tryagain", "160922", "64de60e3dbc7eb492a34a0a693156659", 626116),
 	DT_ENTRY1("turbochesthair", "200928", "420f40b233e4b221e6fff2bec050dc23", 2091802),
 	DT_ENTRY1("turbochesthair", "r1/201031", "b744b2b71afbf863b387bacaa2f33da4", 2210346),
-	DT_ENTRY1("uglyoafs", "150403", "39ba113801d9b90d506b356f6b3ba25a", 660078),
 	DT_ENTRY1("uie", "101122", "ed892c12a8b2d65fcda5ba6a228e04ed", 2016322),
 	DT_ENTRY1("umwglulx", "200426", "c843d3a02c0f6862401c13b45a3e85b1", 635558),
 	DT_ENTRY1("uncleclemswill", "200425", "60527f2feb48e14d1fdfa7b94a8838c1", 763614),
 	DT_ENTRY1("underground", "r2/191215", "48966f89d00f4c8ce1fc2946636bd190", 3715706),
 	DT_ENTRY1("undertheythunder", "200928", "bd069d2e3e841cea7a7d2694681b548a", 1070370),
 	DT_ENTRY1("unscientificfiction", "090803", "de1c4a2bf4024eb4c0e5fee0e0fd4746", 679608),
-	DT_ENTRY1("vainempires", "200928", "4b28e67ecabbb8e6db40e5e99f5e8140", 3914438),
-	DT_ENTRY1("vainempires", "r2/210223", "adab9cfa61fbeb284fdeb6779f014028", 3920070),
 	DT_ENTRY1("valleyofsteel", "140330", "88311986461cec17e776d82a5ac18416", 1853024),
-	DT_ENTRY1("vampireltd", "200926", "7d5d5a10930db0adfcadf79860f3223f", 829986),
-	DT_ENTRY1("vampireltd", "r4/210129", "8a879f2a2757822b03c3d91a3289a6d5", 889540),
 	DT_ENTRY1("walking", "200626", "0a8f6530e5a619ad9e0764a645e8404d", 822256),
 	DT_ENTRY1("walkneighborhood", "r1/221124", "593e57ec12999ee4ce6c2a2309ffb32c", 841136),
 	DT_ENTRY1("wand", "171118", "b824638fc1d015b0837688322839ada0", 830208),
@@ -862,8 +928,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("wishertheurgist", "160708", "4bbe0b3a29d57d1428e6cd6cf7c97fce", 824204),
 	DT_ENTRY1("wizardsniffer", "171007", "834fbcad9b93f6fab461ad4b8ff48bb5", 1240012),
 	DT_ENTRY1("wof", "100515", "7de6ef1ecdec5066f65b1283b9203dc6", 10185552),
-	DT_ENTRY1("wordoftheday", "171129", "c45a9d68e80765ceff7654366fa47328", 4506970),
-	DT_ENTRY1("wordoftheday", "r3/230321", "29f4dd74be498351f6d9a673075468ad", 4740364),
 	DT_ENTRY1("wordsofpower", "021229 (No Sound)", "487ab63bce62d7fd86852b1974ba1a1c", 465306),
 	DT_ENTRY1("wordsofpower", "021229", "dfb5064095b4d71291b81dd281d8c520", 6240896),
 	DT_ENTRY1("yourdeath4acts", "r1/211123", "eadf48993ab9e2e8d841f60cef89d22d", 840054),
@@ -996,6 +1060,204 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if13_awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
 	DT_ENTRY1("if13_mazredugin", "131024", "510431bad4f9463b5f667cf22d414b85", 563948),
 	DT_ENTRY1("if13_cardewhouse", "13????", "f99076e11ff40c0bbc9d566143d71ca9", 477126),
+
+	// IFComp 2014
+	DT_ENTRY1("if14_hungerdeamon", "140928", "fd95c400739c643d8118e8f751590c47", 1676510),
+	DT_ENTRY1("if14_transparent", "?????\?/NotWorking", "bce9f905654b16d332916bb33f23d8fb", 9267518),
+	DT_ENTRY1("if14_transparent", "150401", "3f4e5effb8ed8f4d0c3f277bb47ba161", 11084272),
+	DT_ENTRY1("if14_transparent", "150626", "13dc495dc3ed802e663b193bd862b994", 2284454),
+	DT_ENTRY1("if14_uglyoafs", "140928", "cdd8fcdc5057dedabda23df19ff5de46", 604552),
+	DT_ENTRY1("if14_uglyoafs", "150403", "39ba113801d9b90d506b356f6b3ba25a", 660078),
+	DT_ENTRY1("if14_jessedoorway", "140927", "f950714c28edfd199f8bc275be7e1018", 1187326),
+	DT_ENTRY1("if14_andyetitmoves", "140925", "137ddc2c132b6d86232f96af7698b2f4", 941732),
+	DT_ENTRY1("if14_hill160", "140911", "8ffddc4bfd6328e7beeb54ca94f725a1", 1403136),
+	DT_ENTRY1("if14_arqon", "140922", "90a83d11148eda759b57f6062f4282c8", 7109254),
+
+	// IFComp 2015
+	DT_ENTRY1("if15_brainguzzlers", "150928", "620137264cd1e5b11074a50a58e8edb4", 3191138),
+	DT_ENTRY1("if15_brainguzzlers", "160123", "23d22c7e8d7dff3660c436ef4951f4ae", 3210594),
+	DT_ENTRY1("if15_map", "150926", "58aebee979792a1add62ce31315252f7", 2820830),
+	DT_ENTRY1("if15_midswordfight", "150925", "ee7303b0385d28453761eba212026028", 1477444),
+	DT_ENTRY1("if15_subrosa", "150928", "07db885f49a7c202fab2b7e882868958", 1386330),
+	DT_ENTRY1("if15_subrosa", "160324", "30e7ded8624c26c04e8361d235f42c67", 1481628),
+	DT_ENTRY1("if15_untriches", "150927", "543df15d2d7f67ae3e2452ac74004911", 2084218),
+	DT_ENTRY1("if15_ether", "150919", "ca6d14819d43be7075029fc4d724d03b", 1019436),
+	DT_ENTRY1("if15_thesueno", "150928", "4b30a5fac40aee1dc4486f4ce08f799f", 1292104),
+	DT_ENTRY1("if15_shireton", "150928", "1e40822fe1bec04477c7623a63d29fe5", 1162950),
+	DT_ENTRY1("if15_gotomomi", "150927", "242aaef8bfd5a1938063e326689e85d5", 1149914),
+	DT_ENTRY1("if15_probcompound", "150928", "5dca1e6de048865163fae9d23dd3da1b", 785086),
+	DT_ENTRY1("if15_laidoff", "150928", "2bb3c82ed6a8e7f8136fbb9b399edc34", 2479774),
+	DT_ENTRY1("if15_pilgrimage", "150923", "b3c929ff383972cd42820db0207129d7", 1114454),
+	DT_ENTRY1("if15_recorded", "150701", "ea4783302f6bd1a964b71e6a3e559f8a", 1933772),
+
+	// IFComp 2016
+	DT_ENTRY1("if16_colortruth", "160928", "3b0a4dc75b7a371d3d924d4064ad5fe8", 1371964),
+	DT_ENTRY1("if16_colortruth", "161001", "b9ea873d69fd82d1e0535d55b4b84cac", 1372266),
+	DT_ENTRY1("if16_pogomango", "160928", "c977694494e3339cd2996d5a7e4d354b", 1906710),
+	DT_ENTRY1("if16_fair", "160928", "7d1e2f710cae993dccca69ce9fe71b7c", 1085358),
+	DT_ENTRY1("if16_fair", "161116", "eca63537d9198a10dd6a84bf51b097b6", 1190090),
+	DT_ENTRY1("if16_rockpapsciss", "160927", "6152b6bb369e9f60346c5d2160f89c50", 788182),
+	DT_ENTRY1("if16_ariadne", "160928", "f17818ba3fea423d58dc6e91fd147b3e", 1218366),
+	DT_ENTRY1("if16_worldstourn", "160925", "ae9803db8f5f7e457cd8fdcaa2d50b7e", 907922),
+	DT_ENTRY1("if16_mirrorqueen", "160928", "005ea6a26a36ea4e51a83d5b34cd2fec", 1586550),
+	DT_ENTRY1("if16_take", "160928", "db68d5e2d5e6e5d09d19ecdcccfa698a", 671300),
+	DT_ENTRY1("if16_sigilreader", "160925", "be493d07c483c18a2faf0f41dfc47397", 767124),
+	DT_ENTRY1("if16_ventilator", "160827", "e0c91fa164ad3487209c565928d1899a", 850360),
+	DT_ENTRY1("if16_theatrepeople", "160922", "4b1eb7659590168aa22fbc75a01cb6bc", 1792644),
+	DT_ENTRY1("if16_steamsacr", "160923", "bd9e96f20f3268a99ab6ea930e25b06b", 2408760),
+
+	// IFComp 2017
+	DT_ENTRY1("if17_eatme", "170928", "31fb77978d94cd6884bf9dc85177b5a0", 2569302),
+	DT_ENTRY1("if17_eatme", "171013", "5e9c50e06ae1f954b9dd41abcfc0f09b", 2570070),
+	DT_ENTRY1("if17_absenceoflaw", "170102", "3243039ad9fa3f51afc86bda643c7d8d", 1294084),
+	DT_ENTRY1("if17_theabsenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
+	DT_ENTRY1("if17_owlconsults", "170819", "91815dbf6dd2876e9b446c8ac640eab9", 286976),
+	DT_ENTRY1("if17_owlconsults", "171124", "d1d4bd725f5e64a80f97cfc6e687a8e8", 287488),
+	DT_ENTRY1("if17_beautyaustere", "170927", "3d599cee33d1f9123557b7b5a0d75769", 2073986),
+	DT_ENTRY1("if17_beautyaustere", "180112", "7efa8da4a65c8e70f6783f30750f7a00", 2127234),
+	DT_ENTRY1("if17_beautyaustere", "180928", "41a6d2b620c211118e2b9586fd354ea7", 2127234),
+	DT_ENTRY1("if17_beautyaustere", "190516", "9176001159f15db15a3f674ddd5642f8", 2129538),
+	DT_ENTRY1("if17_beautyaustere", "220220", "456b687530dd14817ac2268ddde4fd3a", 2129538),
+	DT_ENTRY1("if17_1958dancing", "17????", "7267f7c66337a966ae1bb0d2add70619", 1695158),
+	DT_ENTRY1("if17_futurthreads", "170927", "9fc0d3146ffc357dee47e841f372084e", 2334752),
+	DT_ENTRY1("if17_thewand", "170927", "ccaf112e1bb075cf4ce15952d5c156a2", 829696),
+	DT_ENTRY1("if17_wordoftheday", "170910", "67c6ae8d7a92852857c30d600765cd28", 4506714),
+	DT_ENTRY1("if17_wordoftheday", "171129", "c45a9d68e80765ceff7654366fa47328", 4506970),
+	DT_ENTRY1("if17_wordoftheday", "230321", "29f4dd74be498351f6d9a673075468ad", 4740364),
+	DT_ENTRY1("if17_swigian", "170928", "6056cefcbb2e9e59408591108cf82c62", 785090),
+	DT_ENTRY1("if17_castlethread", "170928", "c86947230252a4129bb21e2f9a29a828", 1328210),
+	DT_ENTRY1("if17_rainbowbrdg", "170928", "9826f04663609f37f37c07613c532240", 626614),
+	DT_ENTRY1("if17_measureless", "170928", "ecbb8fca2c880c0b50d3727a4870dae0", 980960),
+	DT_ENTRY1("if17_uerifcity", "170928", "d27183094a1f4a594e4639ded7122595", 703956),
+	DT_ENTRY1("if17_8shoesshelves", "170928", "09b2531f363f1a2183526194c9f7a74d", 687812),
+	DT_ENTRY1("if17_escapeterra", "000001/gblorb", "7588dd6c1efdec6e94479b79c564adbc", 1350462),
+	DT_ENTRY1("if17_escapeterra", "000001/ulx", "038ee5c1b681738d3164a7ea8daee4c5", 1257728),
+	DT_ENTRY1("if17_hauntedp", "170928", "5912741275eaa5456bb6e4cdf7588dcb", 629774),
+
+	// IFComp 2018
+	DT_ENTRY1("if18_aliasmagpie", "180928", "3e5628127d58133a9d761068f68d878a", 1814004),
+	DT_ENTRY1("if18_arithmancer", "180829", "8e1b3192eacc54bc9a4fdf4e9484f1b7", 1340328),
+	DT_ENTRY1("if18_engarde", "180925/v1", "dba4583f613989b076991c5964586240", 2300176),
+	DT_ENTRY1("if18_rcm301303", "18???\?/v1", "7236afe82277236b83c2af72a927000c", 744610),
+	DT_ENTRY1("if18_rcm301303", "18???\?/v2", "d8a9da16c5f4001e6d0814ba7a2fbb01", 744866),
+	DT_ENTRY1("if18_madametime", "180928", "365cf54b53e3308e026b19b74b239556", 1132164),
+	DT_ENTRY1("if18_madametime", "190902", "b8c0d099b3da134b7163cb4b07a3268b", 1182340),
+	DT_ENTRY1("if18_templeshorgil", "180924", "c48ed311aafc454a5f40c98ac54b2700", 2028796),
+	DT_ENTRY1("if18_templeshorgil", "190807", "2b5e689ac5ef0a57acdda20aa4cef496", 2029052),
+	DT_ENTRY1("if18_charming", "180928", "328729a90428ea9a7a25fd73117ddfa6", 1450358),
+	DT_ENTRY1("if18_dynapowers", "180828", "686a7f9a6144bfcd18d9b06adcdeb14d", 1481064),
+	DT_ENTRY1("if18_redragon", "180927", "7076a5b53294a53a6332c30853e55172", 1542578),
+	DT_ENTRY1("if18_ailihphilia", "180928", "7f4111ca38b19cdcaeb6d4c97ab9b52c", 1187882),
+	DT_ENTRY1("if18_diddlebucker", "180924", "15d47933cb104772986fb031a7d3ef3b", 2083462),
+	DT_ENTRY1("if18_pegasus", "180719", "eb0a215e508e88cb652e47cf6b4480f3", 920476),
+	DT_ENTRY1("if18_bordereivers", "180926", "e79c69c2ca8a5b675b7472437bef487a", 1460214),
+	DT_ENTRY1("if18_bullhockey", "18???\?/v1", "91de9bbfb37af7245ec40ed4e7c3f460", 2256392),
+	DT_ENTRY1("if18_bullhockey", "18???\?/v2", "c1e050f3d29b1b8b0879e09e9e73a267", 2337732),
+	DT_ENTRY1("if18_bullhockey", "18???\?/v3", "546721b799eb6cf84cd7ea79b76269a5", 2565640),
+	DT_ENTRY1("if18_bullhockey", "181125", "8919f32151fdc862688fb3c27aa7c46d", 2036232),
+	DT_ENTRY1("if18_bullhockey", "181218", "8414393ff71519dc842cfe758ac2b0ad", 2066952),
+	DT_ENTRY1("if18_bullhockey", "181220", "a2ad2f228e37ea52062e4f4f110232d3", 2065672),
+	DT_ENTRY1("if18_bullhockey", "190103", "6cec5f7e1bfba0cbfa76bad81c197eba", 2065672),
+	DT_ENTRY1("if18_bullhockey", "190106", "877fd221c0f6e7f7393597a8c6a4e3ca", 2065672),
+	DT_ENTRY1("if18_eunice", "180928", "5f03d4d892795dfda55d72490a8d9d71", 1680256),
+	DT_ENTRY1("if18_birminghamiv", "180927", "3d9aced6920925cd71510b77609448fe", 2060354),
+
+	// IFComp 2019
+	DT_ENTRY1("if19_zozzled", "190927", "61c9c0fbc3e72d063cfa3b91dcb207cf", 1142750),
+	DT_ENTRY1("if19_sugarlawn", "190918", "05fedb469002274821dca9d34c1e0095", 1470216),
+	DT_ENTRY1("if19_skiesabove", "190924", "4e99ccb109785b3d56815379921dffc1", 1067264),
+	DT_ENTRY1("if19_skiesabove", "191120", "d2f2071d0432a657ddff53bd1a38370c", 1159352),
+	DT_ENTRY1("if19_remedialwitch", "190928", "8c1ee43eb62e0a5efc2014eda4617b02", 848446),
+	DT_ENTRY1("if19_frenemies", "190923", "8e2bcc981477b4a69a22f0e6c5392549", 932608),
+	DT_ENTRY1("if19_underthesea", "19????", "fe5f26d808443eb8c4555bafec419f34", 1366512),
+	DT_ENTRY1("if19_forthemoon", "190919", "6c3584620890d541aa5641be746ee8b4", 1428058),
+	DT_ENTRY1("if19_clusterflux", "190925", "5071361ee083050c0140a0177af2b0e1", 1554906),
+	DT_ENTRY1("if19_goneoutfor", "190923/v1", "1a5bf0292384322d6069ca6e0937edf8", 938958),
+	DT_ENTRY1("if19_goneoutfor", "190923/v2", "baccacc67fd2575f7458ddcf406a320a", 939214),
+	DT_ENTRY1("if19_4eccentrics", "190928", "bbcce2b1d753399575eef9e0a0e6a26e", 1607594),
+	DT_ENTRY1("if19_hardpuzzle4", "190924", "9a51ba1efe179caf2786599add9e2909", 995024),
+	DT_ENTRY1("if19_winterbreak", "190821", "da7a01866c5acecb1024aec9290fb59b", 1220128),
+	DT_ENTRY1("if19_mentertain", "190928", "6ab3dbf75c2898c4302e82542692e33d", 1157598),
+	DT_ENTRY1("if19_sycamorelane", "190928", "348e57968104a00e56946ed3f8585e6e", 1129550),
+	DT_ENTRY1("if19_jondoe", "190928", "38e0d7e9945c3652c97a2ecb99039b90", 906054),
+	DT_ENTRY1("if19_letsplay", "190916", "59a18a5e30c3dccdec37b67f6e5ef6db", 752074),
+	DT_ENTRY1("if19_citizennow", "190928", "f1cb5a986120f0101c4ba0c384b4b3da", 1216474),
+	DT_ENTRY1("if19_fatfair", "190928", "2e2929e471d0397576f3ad32ae2ddfea", 1374824),
+	DT_ENTRY1("if19_fatfair", "191118", "006e6b5b3edf2233e020a61edf4a59ad", 1383018),
+	DT_ENTRY1("if19_oceanbeach", "190927", "f3f0528c4bc862ec5df59450e77c5586", 2610492),
+	DT_ENTRY1("if19_randomescape", "190828", "8d1217f45de1f8d1958d0468fe2ad8ea", 746496),
+	DT_ENTRY1("if19_vegibalisle", "19????", "cb2ba74dd9cdbf7020d1a72ae0dd71b4", 700672),
+
+	// IFComp 2020
+	DT_ENTRY1("if20_vainempires", "200928", "4b28e67ecabbb8e6db40e5e99f5e8140", 3914438),
+	DT_ENTRY1("if20_vainempires", "210223", "adab9cfa61fbeb284fdeb6779f014028", 3920070),
+	DT_ENTRY1("if20_magpietrain", "200924", "19d8fc67b3dfbb7a1dc88fa02d26e6d4", 2315066),
+	DT_ENTRY1("if20_magpietrain", "201106", "a9203d02e6439bea926a73686bec0466", 2318650),
+	DT_ENTRY1("if20_eleusinian", "200926", "4ca599f36ae1559356bb224879213382", 2265116),
+	DT_ENTRY1("if20_aropeofchalk", "200926", "26dfd5161d72ec2a9e88b93c74e79e36", 1653800),
+	DT_ENTRY1("if20_aropeofchalk", "221202", "a90192092cb1616b22b6af769811c851", 1707862),
+	DT_ENTRY1("if20_stuffoflegend", "200926", "447ea6caf1c51226b3f6a54d857b76b6", 1536382),
+	DT_ENTRY1("if20_stuffoflegend", "201006", "9dbf623f1bd82be91dc728024600fe91", 1534576),
+	DT_ENTRY1("if20_flattenlondon", "200926", "f3fa437bc2e99ceb97b43c5617f0d4db", 1785910),
+	DT_ENTRY1("if20_vampireltd", "200926", "7d5d5a10930db0adfcadf79860f3223f", 829986),
+	DT_ENTRY1("if20_vampireltd", "210129", "8a879f2a2757822b03c3d91a3289a6d5", 889540),
+	DT_ENTRY1("if20_alone", "200927", "8ceba612963681d5c8a61cead9c8f1f0", 1078102),
+	DT_ENTRY1("if20_alone", "201006", "891fb305a00a9a8f957f01629f59bfe5", 1093464),
+	DT_ENTRY1("if20_sagesanctum", "200922", "bd21d0b625abb8bab93e83cc93fd35ee", 876800),
+	DT_ENTRY1("if20_shadowoper", "200929", "3bb8da82f1d81e35ee152d5ecd6ba3e4", 1140422),
+	DT_ENTRY1("if20_ascensionlimb", "200927", "30aa45bec407ff833a56e552b451ff95", 1160460),
+	DT_ENTRY1("if20_ferrymansgate", "200928", "276ff9f09734b59364199fc948f9e221", 2655820),
+	DT_ENTRY1("if20_ferrymansgate", "201006", "ed9aca691b1ce35f78c13fbd75077ec4", 2657868),
+	DT_ENTRY1("if20_academregular", "200928", "37f8d2484cf254f7836fd938b37584b6", 931046),
+	DT_ENTRY1("if20_seasonapocal", "200710", "5e951b117302169cdb77e832115937f0", 2207454),
+	DT_ENTRY1("if20_loveassistant", "200923", "16931f135f38efaee72dac89a7c9ae27", 1051098),
+	DT_ENTRY1("if20_turbochest", "200928", "420f40b233e4b221e6fff2bec050dc23", 2091802),
+	DT_ENTRY1("if20_foraplace", "200928", "0a27fe6717a60a99e7130ea54354eaf5", 1476540),
+	DT_ENTRY1("if20_foraplace", "201014", "f7196abf00de2d25c9d398756e5d92e5", 1477052),
+	DT_ENTRY1("if20_timmott", "200928", "8d720c498a6a7115628f70b61eb413c6", 2885100),
+	DT_ENTRY1("if20_timmott", "201024", "5952d3a8dcb659269791ceecef106d95", 2887404),
+	DT_ENTRY1("if20_desolation", "20???\?/v1", "6a9f300f70d246e52dafbc65430e6cad", 675208),
+	DT_ENTRY1("if20_desolation", "20???\?/v2", "cd2d1dda98cefc25b351f8330563996a", 702856),
+	DT_ENTRY1("if20_waywardstory", "200929", "4fe03ab93289d4d8d53b04983010f529", 929536),
+	DT_ENTRY1("if20_waywardstory", "201005", "fd731a09e32f85a38ea3ae61e153d0ed", 929792),
+	DT_ENTRY1("if20_underthey", "200928", "bd069d2e3e841cea7a7d2694681b548a", 1070370),
+	DT_ENTRY1("if20_standshoulder", "200925", "78cb38272e79595781f5e1be65171a75", 836802),
+	DT_ENTRY1("if20_lasthouse", "200928", "94ca1a21467c2b2f07e9cf6afeeb818a", 933328),
+	DT_ENTRY1("if20_lasthouse", "201013", "78cb28bc7b4a3c4d006fa4ccad759a58", 933584),
+
+	// IFComp 2021
+	DT_ENTRY1("if21_comehouse", "210813", "6e1c6b40d1ab32ffa2985ae457a8f291", 1526508),
+	DT_ENTRY1("if21_comehouse", "211213", "27662487116ce47c2b0112faebae1bb6", 1539308),
+	DT_ENTRY1("if21_drhorror", "21???\?/v1", "0332a2a9e94b296272d1333a8f4c008b", 2911894),
+	DT_ENTRY1("if21_drhorror", "21???\?/v2", "f36db5fb5f4249d413b268cb9e20074c", 2914710),
+	DT_ENTRY1("if21_songmockbird", "210821", "0f78c0017d367a5173bd3a912a272a0d", 1445526),
+	DT_ENTRY1("if21_ghostguessed", "210928", "8492b4552449ae1b9bf6be977032ba6d", 1367846),
+	DT_ENTRY1("if21_ghostguessed", "211117", "7b2920b6c3222e184037e2d1fdc166e8", 1368358),
+	DT_ENTRY1("if21_sting", "210902", "3c8b68e4d4e928ec6d33a954dff7c874", 1112124),
+	DT_ENTRY1("if21_sting", "211001", "38c227e4305d9e2c616956dc3c90da20", 1112124),
+	DT_ENTRY1("if21_sting", "211211", "8e17a75bfadf744e64a06534d1fe4d83", 1152828),
+	DT_ENTRY1("if21_findinglight", "210927", "7681b3aa69ac3d21b07c346e04fd2b30", 1618336),
+	DT_ENTRY1("if21_remarkegg", "210922", "fe7eb5e04ebd5a3d69f244939790892d", 661504),
+	DT_ENTRY1("if21_closure", "210928", "0b206eda8c05164d55fe496fbfd9aeab", 777182),
+	DT_ENTRY1("if21_aardvarkhype", "210928", "02458faaa0c25d84f7d3930d98192c98", 1252508),
+	DT_ENTRY1("if21_hercules", "210927", "ae27b0fff3f62cc9fcb6d63bff839164", 1395526),
+	DT_ENTRY1("if21_hercules", "211121", "8883c8f48d19165bf53d9a4216240f1e", 1426246),
+	DT_ENTRY1("if21_unfortunate", "210930", "dbbfa8f70df0aabbed0266b6c6e98ebc", 1276776),
+	DT_ENTRY1("if21_planewalker", "210814", "c959282d031379171859f92c2c079f3f", 827974),
+
+	// IFComp 2022
+	DT_ENTRY1("if22_sector471", "220923", "890e7379e7aab307a06ec6844f05e498", 723712),
+	DT_ENTRY1("if22_awalkaround", "220928", "4f1f15ba4754277db25dc11e309d5a26", 810416),
+	DT_ENTRY1("if22_arborea", "220922", "287dc941bbce7b554210fa2c7e9ca3ee", 2058812),
+	DT_ENTRY1("if22_crash", "220927", "82008663b8d3e7da04debed8b5380150", 1349544),
+	DT_ENTRY1("if22_crash", "221124", "405241206e6368228c33ab826dd87832", 1391784),
+	DT_ENTRY1("if22_amatter", "220927", "3d0db952acc0113e73076d332689f746", 5244484),
+	DT_ENTRY1("if22_amatter", "221218", "3a141c1fffed5dc6195f9a517fa1d628", 7509290),
+	DT_ENTRY1("if22_whoshotgum", "220928", "a83eda2d1f7f4c560e1bb78f728aac85", 703960),
+	DT_ENTRY1("if22_youmaynotesc", "220927", "cf53ee039af2602b753b4dc6319f79af", 1449774),
+	DT_ENTRY1("if22_lastchristmas", "220927", "cd356cee811ccf3e8582f2ed9e383fc9", 1484292),
+	DT_ENTRY1("if22_hiddentomb", "220917", "822c6b245c11a5c54aa11fb1b0f2f388", 710058),
+	DT_ENTRY1("if22_towerplargh", "220816", "95106d81bcf4e5ee15c2f9f5bfd4c1b4", 567358),
 
 
 	// French games
