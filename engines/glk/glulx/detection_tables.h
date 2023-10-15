@@ -344,19 +344,19 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "zorkglulx",          "Zork: A Computerized Fantasy Simulation Game" },
 
 	// Apollo 18+20: The IF Tribute Album
-	{ "apollo3",            "She's Actual Size" },
-	{ "apollo10",           "Narrow Your Eyes" },
-	{ "apollo12",           "Which Describes How You're Feeling" },
-	{ "apollo15",           "Turn Around" },
-	{ "apollo19",           "Fingertips - I Hear the Wind Blow" },
-	{ "apollo33",           "Fingertips - Mysterious Whispers" },
+	{ "apollo3",            "Apollo 18+20 #03: She's Actual Size" },
+	{ "apollo10",           "Apollo 18+20 #10: Narrow Your Eyes" },
+	{ "apollo12",           "Apollo 18+20 #12: Which Describes How You're Feeling" },
+	{ "apollo15",           "Apollo 18+20 #15: Turn Around" },
+	{ "apollo19",           "Apollo 18+20 #19: Fingertips - I Hear the Wind Blow" },
+	{ "apollo33",           "Apollo 18+20 #33: Fingertips - Mysterious Whispers" },
 
 	// IFComp 2001
-	{ "if01_bestof3",       "Best of three" },                                                          //    7th Place
+	{ "if01_bestof3",       "Best of Three" },                                                          //    7th Place
 	{ "if01_carma",         "Carma" },                                                                  //   16th Place
 	{ "if01_smtuc",         "Stiffy Makane: The Undiscovered Country" },                                //   31st Place
 	{ "if01_aafn",          "An Apple From Nowhere" },                                                  //   39th Place
-	{ "if01_sittm",         "Stick It To The Man" },                                                    //   41st Place
+	{ "if01_sittm",         "Stick It to the Man" },                                                    //   41st Place
 
 	// IFComp 2002
 	{ "if02_eas2",          "Earth and Sky: Episode 2 - Another Earth, Another Sky" },                  //    1st Place
@@ -369,7 +369,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if05_cheiron",       "Cheiron" },                                                                //   26th Place
 
 	// IFComp 2006
-	{ "if06_floatpoint",    "Float Point" },                                                            //    1st Place
+	{ "if06_floatpoint",    "Floatpoint" },                                                             //    1st Place
 
 	// IFComp 2007
 	{ "if07_chineseroom",   "The Chinese Room" },                                                       //    5th Place
@@ -378,9 +378,9 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 
 	// IFComp 2008
 	{ "if08_nightfall",     "Nightfall" },                                                              //    2nd Place
-	{ "if08_everybodydies", "Everybody Dies, an Interactive Fantasy" },                                 //    3rd Place
+	{ "if08_everybodydies", "Everybody Dies" },                                                         //    3rd Place
 	{ "if08_crywolf",       "Cry Wolf" },                                                               //   11th Place
-	{ "if08_recess",        "Recess At Last" },                                                         //   15th Place
+	{ "if08_recess",        "Recess at Last" },                                                         //   15th Place
 	{ "if08_chnlsurf",      "Channel Surfing" },                                                        //   21st Place
 	{ "if08_amo",           "A Martian Odyssey" },                                                      //   25th Place
 
@@ -396,11 +396,11 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if10_oneeyeopen",    "One Eye Open" },                                                           //    3rd Place
 	{ "if10_blindhouse",    "The Blind House" },                                                        //    4th Place
 	{ "if10_grisjaune",     "Gris et Jaune" },                                                          //    9th Place
-	{ "if10_divismortis",   "Divis Mortis: an interactive survival game" },                             //   11th Place
+	{ "if10_divismortis",   "Divis Mortis" },                                                           //   11th Place
 	{ "if10_oxygen",        "Oxygen" },                                                                 //   12th Place
 	{ "if10_gigantomania",  "Gigantomania" },                                                           //   15th Place
 	{ "if10_inerebus",      "Under, In Erebus" },                                                       //   16th Place
-	{ "if10_followingstar", "The Bible Retold: Following A Star" },                                     //   19th Place
+	{ "if10_followingstar", "The Bible Retold: Following a Star" },                                     //   19th Place
 
 	// IFComp 2011
 	{ "if11_tacofiction",   "Taco Fiction" },                                                           //    1st Place
@@ -410,7 +410,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if11_beet",          "Beet the Devil" },                                                         //    7th Place
 	{ "if11_kerkerkruip",   "Kerkerkruip" },                                                            //    8th Place
 	{ "if11_sentencing",    "Sentencing Mr. Liddell" },                                                 //   19th Place
-	{ "if11_calm",          "Calm, a Game of Postapocalyptic Relaxation" },                             //   20th Place
+	{ "if11_calm",          "Calm" },                                                                   //   20th Place
 	{ "if11_thehours",      "The Hours" },                                                              //   22nd Place
 	{ "if11_deathofschlig", "Death of Schlig" },                                                        //   26th Place
 	{ "if11_faninterfer",   "Fan Interference" },                                                       //   27th Place
