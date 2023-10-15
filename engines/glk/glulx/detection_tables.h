@@ -97,7 +97,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "cragne",             "Cragne Manor" },
 	{ "crashdisaster",      "Crash: An Interactive Disaster" },
 	{ "damesdeadites",      "Dames and Deadites" },
-	{ "dansenocturne",      "Danse Nocturne" },
 	{ "darkcarnival",       "Dark Carnival" },
 	{ "darknessglulx",      "Darkness" },
 	{ "deadcities",         "Dead Cities" },
@@ -225,7 +224,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "section1awakened",   "Section 1 - Awakened" },
 	{ "seedscafe",          "Seeds Cafe" },
 	{ "sensory",            "Sensory Jam" },
-	{ "sequitur",           "Sequitur" },
 	{ "shadowcathedral",    "The Shadow in the Cathedral" },
 	{ "shadowoperative",    "Shadow Operative" },
 	{ "shadowsdeep",        "Of Their Shadows Deep" },
@@ -695,6 +693,85 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ic20_foolrescue",    "Intro to a Fool’s Rescue" },                                              //  Hon. Mention
 	{ "ic20_theinterview",  "The Interview" },                                                         //  Hon. Mention
 
+	// IF Library Competition 2003
+	{ "lc_lazygods",        "Lazy Gods of Earth" },
+
+	// Metafilter IF Competition 2009
+	{ "me09_questionable",  "The Questionable Substitute" },
+
+	// 9th Annual New Year's Mincomp
+	{ "ny09_candleflames",  "Candle Flames in Windless Air" },
+	{ "ny09_trolleyprob",   "Her Majesty’s Trolley Problem" },
+	{ "ny09_stayingput",    "Staying Put" },
+	{ "ny09_mhairiesioux",  "Mhairie Sioux Escrivain and the Dracula of Hogwarts" },
+	{ "ny09_daytimestood",  "The Day Time Stood Still" },
+
+	// 10th Annual New Year's Mincomp
+	{ "ny10_anatidaephob",  "Anatidaephobia" },
+	{ "ny10_dayishootalex", "The Day I Shot Alex" },
+	{ "ny10_thehorste",     "The Horste" },
+	{ "ny10_yaminabe",      "Yami-Nabe!!" },
+
+	// 11th Annual New Year's Mincomp
+	{ "ny11_finishyourfoe", "Finish your Foe!" },
+	{ "ny11_quickfire",     "Quickfire" },
+	{ "ny11_red",           "Red" },
+	{ "ny11_thedaygotpet",  "The Day We Got a Pet" },
+
+	// One Room Game Competition 2006
+	{ "1r06_formamentis",   "Forma Mentis" },
+
+	// One Room Game Competition 2007
+	{ "1r07_notteprima",    "Notte Prima dell’Esame" },
+
+	// Shufflecomp Competition 2014
+	{ "sh14_1942",          "1942" },
+	{ "sh14_lightmyway",    "Light My Way Home" },
+	{ "sh14_8mileshigh",    "Eight Miles High" },
+	{ "sh14_fallshelter",   "Fallout Shelter" },
+	{ "sh14_groovebilly",   "Groove Billygoat" },
+	{ "sh14_invisiparties", "Invisible Parties" },
+	{ "sh14_sequitur",      "Sequiturs" },
+	{ "sh14_sparkle",       "Sparkle" },
+
+	// ShuffleComp: Disc 2 Competition
+	{ "shd_comrade",        "Comrade" },
+	{ "shd_bythelake",      "By the Lake" },
+	{ "shd_mollybutter",    "Molly and the Butter Thieves" },
+	{ "shd_landunderwater", "When the Land Goes Under the Water" },
+
+	// SpeedIF -1 Competition
+	{ "sif_newgrant",       "NewGrant" },
+
+	// SpeedIF 11th Anniversary Competition
+	{ "sif_marvex",         "Marvex the Super-Robot vs Bolo!" },
+
+	// SpeedIF 18th Anniversary Competition
+	{ "sif_interpizza",     "Interstellar Pizza Brigade" },
+
+	// SpeedIF New Year's Speed Competition 2011
+	{ "sif_dansenocturne",  "Danse Nocturne" },
+
+	// SpeedIF New Year's Speed Competition 2014
+	{ "sif_dayofthequeen",  "The Day of the Queen" },
+
+	// SpeedIF Potato Peeler Competition
+	{ "sif_deadmanhug",     "A Dead Man’s Hug" },
+	{ "sif_4dayssummer",    "Four Days of Summer" },
+	{ "sif_peelinglucky",   "Peeling Lucky" },
+
+	// SpeedIF Thanksgiving Competition
+	{ "sif_yoursisearth",   "Yours Is the Earth and Everything That’s in It" },
+
+	// SpeedIF XYZZY Competition
+	{ "sif_zigzy",          "Zig-Zy" },
+
+	// SpeedIF Bouchercomp Competition
+	{ "sif_lowellprison",   "Lowell Prison" },
+
+	// Toaster Competition
+	{ "toa_youretoast",     "(You’re) TOAST!" },
+
 
 	// French games
 	{ "ekphrasis",          "Ekphrasis, les Aventures de Gilbert Fontenelle" },
@@ -828,7 +905,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("crashdisaster", "r15/220917", "82008663b8d3e7da04debed8b5380150", 1349544),
 	DT_ENTRY1("crashdisaster", "r19/221124", "405241206e6368228c33ab826dd87832", 1391784),
 	DT_ENTRY1("damesdeadites", "150116", "c34b65232be2c25e558c31349e62b716", 812810),
-	DT_ENTRY0("dansenocturne", "9a60eadb746e34c7364cbe423b712e0c", 810990),
 	DT_ENTRY1("darkcarnival", "130924", "e5102c61fcb3b192c6455f214f6ca01d", 1733174),
 	DT_ENTRY1("darknessglulx", "130704", "5fd073140b9c9e0a312995e60e6761b9", 608574),
 	DT_ENTRY1("darknessglulx", "r5/201003", "0e95840879e88523117d72ab7861f184", 1217422),
@@ -977,7 +1053,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("seedscafe", "r1/210206", "3014cd94a6505def8f3e1754b73d22f2", 652732),
 	DT_ENTRY1("sensory", "000329", "7432f9e1d416034acf10e8a499368b9e", 202258),
 	DT_ENTRY1("sensory", "000329", "7c5a00524809e4402ddf0554394e81bc", 132608),
-	DT_ENTRY1("sequitur", "140813", "c7e384b1938915f17cc0b7d50f41d235", 1642480),
 	DT_ENTRY1("shadowcathedral", "150228 Deluxe", "8da968205614859105c89e95179d268c", 2723072),
 	DT_ENTRY1("shadowoperative", "200929", "3bb8da82f1d81e35ee152d5ecd6ba3e4", 1140422),
 	DT_ENTRY1("shadowoperative", "r2/201007", "b19676c374b7e88ceed9b4bfdfbd1c11", 2124718),
@@ -1555,6 +1630,89 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ic20_foreignsoil", "200801", "3e1000f0724582ff56ee54254fe2e817", 957330),
 	DT_ENTRY1("ic20_foolrescue", "20????", "c520f331e64f7f2a5a666d7c33655aeb", 985114),
 	DT_ENTRY1("ic20_theinterview", "200706", "2888fdbce5dc116284fc9e93343eeebc", 933494),
+
+	// IF Library Competition 2003
+	DT_ENTRY1("lc_lazygods", "020312", "31df98f26852782d4a23d319bb0d6f44", 187136),
+
+	// Metafilter IF Competition 2009
+	DT_ENTRY1("me09_questionable", "09????", "7fc1b036d75faf2961b67ec7bd86d157", 213104),
+
+	// 9th Annual New Year's Mincomp
+	DT_ENTRY1("ny09_candleflames", "160118", "0fa73dc37cdd6334f0bd4f335c462f67", 1921824),
+	DT_ENTRY1("ny09_trolleyprob", "160102", "16a9170628ca5832ef3f6c27016c15d0", 708312),
+	DT_ENTRY1("ny09_stayingput", "151231", "9da001fcc0e0b6f21e4b4a9b05bce1e8", 680946),
+	DT_ENTRY1("ny09_mhairiesioux", "160102", "47aeddc1af77820afe1b1a4a4836c210", 649062),
+	DT_ENTRY1("ny09_daytimestood", "16????", "ce87f48605caf12bac38428f3463f735", 678868),
+
+	// 10th Annual New Year's Mincomp
+	DT_ENTRY1("ny10_anatidaephob", "170108", "9ae9476879c988206356fd9fb623b99a", 773846),
+	DT_ENTRY1("ny10_dayishootalex", "170108", "8d8977c935387f825ac195374034d24b", 707278),
+	DT_ENTRY1("ny10_thehorste", "170101", "c7f4f55ebd395353ef960ae4e8b482f0", 635842),
+	DT_ENTRY1("ny10_yaminabe", "170102", "3e2a7cdb37ee2fe549ff0d112034786b", 612290),
+
+	// 11th Annual New Year's Mincomp
+	DT_ENTRY1("ny11_finishyourfoe", "180104", "52638708780503016f3f56209d3d49f9", 738212),
+	DT_ENTRY1("ny11_quickfire", "180111", "067cdba3f209386bbac3ab3dc371f1e1", 810696),
+	DT_ENTRY1("ny11_red", "180101", "74169c3bb55fafa74d67949759bd343c", 831422),
+	DT_ENTRY1("ny11_thedaygotpet", "180105", "d67483a690bcf57f04a0aa6089feb198", 664528),
+
+	// One Room Game Competition 2006
+	DT_ENTRYL1("1r06_formamentis", Common::IT_ITA, "060515", "73ae4e5e75165d763b7a5cee0a0f8c99", 294244),
+
+	// One Room Game Competition 2007
+	DT_ENTRYL1("1r07_notteprima", Common::IT_ITA, "071106", "ae2c22d0062660f2ad2c0b691a0ca09b", 1397352),
+
+	// Shufflecomp Competition 2014
+	DT_ENTRY1("sh14_1942", "140513", "1294db6a7cee749ac4dc193af33cb363", 794454),
+	DT_ENTRY1("sh14_lightmyway", "140512", "b594c283a4ddcb111d825781961fbdfa", 11436804),
+	DT_ENTRY1("sh14_8mileshigh", "140512", "ee38379f28afaeffa027e964e9d45c1f", 463942),
+	DT_ENTRY1("sh14_fallshelter", "140511", "f125292e2401c1e140e067b649a27719", 749956),
+	DT_ENTRY1("sh14_groovebilly", "140511/v1", "3ff5d7194bfafa9f0faf638e79f0d079", 853042),
+	DT_ENTRY1("sh14_groovebilly", "140511/v2", "bfe3b34019ab6d2df0b9a5b793414170", 853042),
+	DT_ENTRY1("sh14_invisiparties", "140513", "2ce7e978f20fd7355ece095b5cac975b", 582856),
+	DT_ENTRY1("sh14_sequitur", "140513", "5b922fc6307054bdc187b0d55a217af6", 1367324),
+	DT_ENTRY1("sh14_sequitur", "140813", "c7e384b1938915f17cc0b7d50f41d235", 1642480),
+	DT_ENTRY1("sh14_sparkle", "140512", "106fdc837247efab6a5ab685bd1182c5", 915946),
+
+	// ShuffleComp: Disc 2 Competition
+	DT_ENTRY1("shd_comrade", "150506", "9806e5d0e7bee858107cee249d5cce7c", 728512),
+	DT_ENTRY1("shd_bythelake", "150506", "8aefa40db437e93703240f6e8cc97497", 567808),
+	DT_ENTRY1("shd_mollybutter", "150507", "f3bf0027b9bd50c4735588ef365f6652", 1210952),
+	DT_ENTRY1("shd_landunderwater", "150505", "f04ff26834a981b8bcc67691b1b6fe04", 935306),
+
+	// SpeedIF -1 Competition
+	DT_ENTRY1("sif_newgrant", "011118", "4b2822f1e3313e6291dd10835e7a743c", 191744),
+
+	// SpeedIF 11th Anniversary Competition
+	DT_ENTRY1("sif_marvex", "090901", "658bb7a355cf36d4ef4dd7709a264fdf", 522676),
+
+	// SpeedIF 18th Anniversary Competition
+	DT_ENTRY1("sif_interpizza", "161016", "ed2618021a59ec33d964e62045b3cca1", 641494),
+
+	// SpeedIF New Year's Speed Competition 2011
+	DT_ENTRY1("sif_dansenocturne", "11???\?/v1", "d45cd4146c99974b1f5c6f2e9d403843", 476192),
+	DT_ENTRY1("sif_dansenocturne", "11???\?/v2", "9a60eadb746e34c7364cbe423b712e0c", 810990),
+
+	// SpeedIF New Year's Speed Competition 2014
+	DT_ENTRY1("sif_dayofthequeen", "150103", "bcfc846828da6ac07701a11ab6321878", 728576),
+
+	// SpeedIF Potato Peeler Competition
+	DT_ENTRY1("sif_deadmanhug", "170706", "1ccc2310b076781be2bf248b1c35f3f3", 632528),
+	DT_ENTRY1("sif_4dayssummer", "170707", "44b242842bb5ad7a334c0f3240bad5c7", 576886),
+	DT_ENTRY1("sif_peelinglucky", "170708/v1", "a07594765ba82779bf60fc363986ff6d", 620744),
+	DT_ENTRY1("sif_peelinglucky", "170708/v2", "12326b7fac754543b396a3f0acb4b70d", 621768),
+
+	// SpeedIF Thanksgiving Competition
+	DT_ENTRY1("sif_yoursisearth", "111127", "e92c6480d00c71a255b6b16db5538280", 605638),
+
+	// SpeedIF XYZZY Competition
+	DT_ENTRY1("sif_zigzy", "010311", "d46f2947830c74ae3518c8373aeb2e70", 135936),
+
+	// SpeedIF Bouchercomp Competition
+	DT_ENTRY1("sif_lowellprison", "080527", "6e4a01ed4e6eb4b83ac484335699c701", 459382),
+
+	// Toaster Competition
+	DT_ENTRY1("toa_youretoast", "000823", "26310e407b7e9a793c732f76ca472009", 142848),
 
 
 	// French games
