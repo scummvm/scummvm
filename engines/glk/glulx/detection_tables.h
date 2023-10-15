@@ -344,12 +344,12 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "zorkglulx",          "Zork: A Computerized Fantasy Simulation Game" },
 
 	// Apollo 18+20: The IF Tribute Album
-	{ "apollo3glulx",       "She's Actual Size" },
-	{ "apollo10glulx",      "Narrow Your Eyes" },
-	{ "apollo12glulx",      "Which Describes How You're Feeling" },
-	{ "apollo15glulx",      "Turn Around" },
-	{ "apollo19glulx",      "Fingertips - I Hear the Wind Blow" },
-	{ "apollo33glulx",      "Fingertips - Mysterious Whispers" },
+	{ "apollo3",            "She's Actual Size" },
+	{ "apollo10",           "Narrow Your Eyes" },
+	{ "apollo12",           "Which Describes How You're Feeling" },
+	{ "apollo15",           "Turn Around" },
+	{ "apollo19",           "Fingertips - I Hear the Wind Blow" },
+	{ "apollo33",           "Fingertips - Mysterious Whispers" },
 
 	// IFComp 2001
 	{ "if01_bestof3",       "Best of three" },
@@ -400,7 +400,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if10_oxygen",        "Oxygen" },
 	{ "if10_inerebus",      "Under, In Erebus" },
 	{ "if10_gigantomania",  "Gigantomania" },
-	{ "if10_followingastar", "The Bible Retold: Following A Star" },
+	{ "if10_followingstar", "The Bible Retold: Following A Star" },
 
 	// IFComp 2011
 	{ "if11_tacofiction",   "Taco Fiction" },
@@ -413,15 +413,15 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if11_calm",          "Calm, a Game of Postapocalyptic Relaxation" },
 	{ "if11_thehours",      "The Hours" },
 	{ "if11_deathofschlig", "Death of Schlig" },
-	{ "if11_faninterference", "Fan Interference" },
+	{ "if11_faninterfer",   "Fan Interference" },
 	{ "if11_playinggames",  "Playing Games" },
-	{ "if11_awakemightydread", "Awake the Mighty Dread" },
+	{ "if11_awamightdread", "Awake the Mighty Dread" },
 	{ "if11_luster",        "Luster" },
 
 	// IFComp 2012
 	{ "if12_andromedaapoc", "Andromeda Apocalypse" },
-	{ "if12_shufflingaround", "Shuffling Around" },
-	{ "if12_killerheadache", "A Killer Headache" },
+	{ "if12_shufflearound", "Shuffling Around" },
+	{ "if12_killerheadach", "A Killer Headache" },
 	{ "if12_imos",          "In a Manor of Speaking" },
 	{ "if12_jdal",          "J'dal" },
 	{ "if12_kicker",        "Kicker" },
@@ -430,8 +430,8 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if13_coloratura",    "Coloratura" },
 	{ "if13_robinorchid",   "Robin & Orchid" },
 	{ "if13_ooof",          "Ollie Ollie Oxen Free" },
-	{ "if13_captverdeterre", "Captain Verdeterre's Plunder" },
-	{ "if13_texbonaventure", "Tex Bonaventure and the Temple" },
+	{ "if13_captverdeterr", "Captain Verdeterre's Plunder" },
+	{ "if13_texbonavent",   "Tex Bonaventure and the Temple" },
 	{ "if13_rosewood",      "The House at the End of Rosewood Street" },
 	{ "if13_awbp",          "A Wind Blown from Paradise" },
 	{ "if13_mazredugin",    "Mazredugin" },
@@ -873,12 +873,12 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("zorkglulx", "r4/190920", "4e4d79be545166fdbf5117d7c025a960", 1076736),
 
 	// Apollo 18+20 IF Tribute Album
-	DT_ENTRY0("apollo3glulx", "33cf75f5bcc2a28af85d83e4e3f3b846", 482978),
-	DT_ENTRY0("apollo10glulx", "ac5fe600e5cf179738af4329f71304f8", 1897372),
-	DT_ENTRY0("apollo12glulx", "bfadac2b1ac0eab7187e4a5166a72798", 883926),
-	DT_ENTRY0("apollo15glulx", "c1e23a471ff61e3846b63cc21ff9edfa", 633818),
-	DT_ENTRY0("apollo19glulx", "66b599c4aecd63caa59b00bfd5101f43", 466244),
-	DT_ENTRY0("apollo33glulx", "74457b493e101e87463a0be645d2ab65", 411726),
+	DT_ENTRY0("apollo3", "33cf75f5bcc2a28af85d83e4e3f3b846", 482978),
+	DT_ENTRY0("apollo10", "ac5fe600e5cf179738af4329f71304f8", 1897372),
+	DT_ENTRY0("apollo12", "bfadac2b1ac0eab7187e4a5166a72798", 883926),
+	DT_ENTRY0("apollo15", "c1e23a471ff61e3846b63cc21ff9edfa", 633818),
+	DT_ENTRY0("apollo19", "66b599c4aecd63caa59b00bfd5101f43", 466244),
+	DT_ENTRY0("apollo33", "74457b493e101e87463a0be645d2ab65", 411726),
 
 	// IFComp 2001
 	DT_ENTRY1("if01_bestof3", "010928", "53d50b3573afc12376ae5fbb342230d9", 930694),
@@ -939,8 +939,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if10_oxygen", "150121", "31a6aaaf3bdfde86a93583e73d50b4fb", 927386),
 	DT_ENTRY1("if10_gigantomania", "100930", "4c89679dc1aa12f5d6b7e121d09e22f3", 1734624),
 	DT_ENTRY1("if10_inerebus", "100930", "acda27283090aa366ef4ce99766391f0", 1986882),
-	DT_ENTRY0("if10_followingastar", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
-	DT_ENTRY1("if10_followingastar", "034107", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
+	DT_ENTRY0("if10_followingstar", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
+	DT_ENTRY1("if10_followingstar", "034107", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
 
 	// IFComp 2011
 	DT_ENTRY1("if11_tacofiction", "111009", "c0338f36c652d48a77380c95b8eec508", 1944464),
@@ -957,16 +957,16 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if11_calm", "111201", "dba39ece18ebfbde9ebc93ccc5216fd8", 2012688),
 	DT_ENTRY0("if11_thehours", "2d94f14e3ce959173da1ed35502f1419", 1281774),
 	DT_ENTRY1("if11_deathofschlig", "111031", "0b9b3666a0c795185724ddbd1de171dc", 1483674),
-	DT_ENTRY1("if11_faninterference", "111014", "7d0362957c6666d4e569d32a03d0d854", 1509382),
+	DT_ENTRY1("if11_faninterfer", "111014", "7d0362957c6666d4e569d32a03d0d854", 1509382),
 	DT_ENTRY1("if11_playinggames", "111127", "3e907a5feabc7ef36d019c866ec084c0", 630242),
-	DT_ENTRY1("if11_awakemightydread", "111006", "48b3b409b565774a3cbf681225322080", 717456),
+	DT_ENTRY1("if11_awamightdread", "111006", "48b3b409b565774a3cbf681225322080", 717456),
 	DT_ENTRY1("if11_luster", "080126", "dc95b63ade63ddb122a3722adcfac573", 569202),
 
 	// IFComp 2012
 	DT_ENTRY0("if12_andromedaapoc", "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
-	DT_ENTRY0("if12_shufflingaround", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
-	DT_ENTRY1("if12_shufflingaround", "150328", "00b2a517ec539936b96e84fabb91e5db", 3208092),
-	DT_ENTRY1("if12_killerheadache", "121231", "ab18f553a035242a15f5a39f16f03173", 1382924),
+	DT_ENTRY0("if12_shufflearound", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
+	DT_ENTRY1("if12_shufflearound", "150328", "00b2a517ec539936b96e84fabb91e5db", 3208092),
+	DT_ENTRY1("if12_killerheadach", "121231", "ab18f553a035242a15f5a39f16f03173", 1382924),
 	DT_ENTRY1("if12_imos", "r3/121017", "c7f412b07c72ba8a6952e4ee74a37075", 716404),
 	DT_ENTRY1("if12_jdal", "120930", "193ea99f5067c64447dd2c74c7e3ab9d", 761022),
 	DT_ENTRY1("if12_kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
@@ -975,8 +975,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if13_coloratura", "080126", "db4b88094929abb89fcf19ab56204b05", 1403574),
 	DT_ENTRY1("if13_robinorchid", "r3/131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
 	DT_ENTRY1("if13_ooof", "130929", "5ee413df68e3e66fdf356a5df8289f85", 1391318),
-	DT_ENTRY1("if13_captverdeterre", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
-	DT_ENTRY1("if13_texbonaventure", "080126", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
+	DT_ENTRY1("if13_captverdeterr", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
+	DT_ENTRY1("if13_texbonavent", "080126", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
 	DT_ENTRY1("if13_rosewood", "131116", "c766929c3cc25a13b5a60f90b618d94e", 736304),
 	DT_ENTRY1("if13_awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
 	DT_ENTRY1("if13_mazredugin", "131024", "510431bad4f9463b5f667cf22d414b85", 563948),
