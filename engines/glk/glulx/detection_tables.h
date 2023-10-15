@@ -885,10 +885,10 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if01_carma", "010928", "cc5077c525b44748443a0e39cdc079c6", 11205418),
 	DT_ENTRY1("if01_smtuc", "010928", "c6e58925e082f20542bd25a2395dd00d", 1439558),
 	DT_ENTRY1("if01_smtuc", "010928", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
-	DT_ENTRY1("if01_aafn", "01???\?/NotWorking", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
-	DT_ENTRY1("if01_aafn", "01???\?/NotWorking", "07d590dc62f0be38f6f879763b6eb12c", 163072),
-	DT_ENTRY1("if01_sittm", "01???\?/NotWorking", "0c3d40b0340df7ff459ff7751015183a", 408576),
-	DT_ENTRY1("if01_sittm", "01???\?/NotWorking", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
+	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v2", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
+	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v1", "07d590dc62f0be38f6f879763b6eb12c", 163072),
+	DT_ENTRY1("if01_sittm", "01???\?/NotWorking/v1", "0c3d40b0340df7ff459ff7751015183a", 408576),
+	DT_ENTRY1("if01_sittm", "01???\?/NotWorking/v2", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
 
 	// IFComp 2002
 	DT_ENTRY1("if02_eas2", "020925", "914e969da891835c24b3decdc6fa34c1", 842272),
@@ -939,8 +939,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if10_oxygen", "150121", "31a6aaaf3bdfde86a93583e73d50b4fb", 927386),
 	DT_ENTRY1("if10_gigantomania", "100930", "4c89679dc1aa12f5d6b7e121d09e22f3", 1734624),
 	DT_ENTRY1("if10_inerebus", "100930", "acda27283090aa366ef4ce99766391f0", 1986882),
-	DT_ENTRY1("if10_followingstar", "034107", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
-	DT_ENTRY1("if10_followingstar", "034107", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
+	DT_ENTRY1("if10_followingstar", "034107/v1", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
+	DT_ENTRY1("if10_followingstar", "034107/v2", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
 
 	// IFComp 2011
 	DT_ENTRY1("if11_tacofiction", "111009", "c0338f36c652d48a77380c95b8eec508", 1944464),
@@ -955,7 +955,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if11_kerkerkruip", "140419", "879c34531bc7dbb66bad8fca651bc428", 22109534),
 	DT_ENTRY1("if11_sentencing", "111006", "4fdaaa41f63482e931296edd173f69bc", 1008888),
 	DT_ENTRY1("if11_calm", "111201", "dba39ece18ebfbde9ebc93ccc5216fd8", 2012688),
-	DT_ENTRY1("if11_thehours", "11???\?", "2d94f14e3ce959173da1ed35502f1419", 1281774),
+	DT_ENTRY1("if11_thehours", "11???\?/v2", "2d94f14e3ce959173da1ed35502f1419", 1281774),
 	DT_ENTRY1("if11_deathofschlig", "111031", "0b9b3666a0c795185724ddbd1de171dc", 1483674),
 	DT_ENTRY1("if11_faninterfer", "111014", "7d0362957c6666d4e569d32a03d0d854", 1509382),
 	DT_ENTRY1("if11_playinggames", "111127", "3e907a5feabc7ef36d019c866ec084c0", 630242),
@@ -972,11 +972,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if12_kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
 
 	// IFComp 2013
-	DT_ENTRY1("if13_coloratura", "080126", "db4b88094929abb89fcf19ab56204b05", 1403574),
+	DT_ENTRY1("if13_coloratura", "080126/v2", "db4b88094929abb89fcf19ab56204b05", 1403574),
 	DT_ENTRY1("if13_robinorchid", "r3/131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
 	DT_ENTRY1("if13_ooof", "130929", "5ee413df68e3e66fdf356a5df8289f85", 1391318),
 	DT_ENTRY1("if13_captverdeterr", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
-	DT_ENTRY1("if13_texbonavent", "080126", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
+	DT_ENTRY1("if13_texbonavent", "080126/v2", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
 	DT_ENTRY1("if13_rosewood", "131116", "c766929c3cc25a13b5a60f90b618d94e", 736304),
 	DT_ENTRY1("if13_awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
 	DT_ENTRY1("if13_mazredugin", "131024", "510431bad4f9463b5f667cf22d414b85", 563948),
