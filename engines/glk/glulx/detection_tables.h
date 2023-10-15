@@ -784,7 +784,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("stuffoflegend", "r2/201006", "9dbf623f1bd82be91dc728024600fe91", 1534576),
 	DT_ENTRY1("subrosa", "160324", "30e7ded8624c26c04e8361d235f42c67", 1481628),
 	DT_ENTRY1("superluminalvagranttwin", "160316", "7beb275a3e66b7b9840019caa3041723", 1162788),
-	DT_ENTRY1("tacofiction", "130422", "766be6495cb312d8270587c4d45d7e6a", 1928530),
 	DT_ENTRY1("tcom", "121103 (No Gfx)", "24feef55d07cc46bcc5479ce580cbe3e", 246272),
 	DT_ENTRY1("tcom", "121103", "67504ebc3d525f6a29fa800b6e12229d", 326226),
 	DT_ENTRY1("templeshorgil", "r2/190807", "2b5e689ac5ef0a57acdda20aa4cef496", 2029052),
@@ -899,7 +898,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if04_eas3", "040929", "8f118c9fa10ef24a5551448d5ab2408f", 1293054),
 
 	// IFComp 2005
-	DT_ENTRY1("if05_beyond_glulx", "20050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
+	DT_ENTRY1("if05_beyond_glulx", "050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
 	DT_ENTRY1("if05_cheiron", "050929", "bca1af6d8788c178ab42883f184e7955", 2434458),
 
 	// IFComp 2006
@@ -920,7 +919,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if08_recess", "080929", "7437538b52eb78c427eb4e54e2fa1665", 712784),
 	DT_ENTRY1("if08_chnlsurf", "080929", "c4b2ae121f5f0e1ae2c98c3bd4a6b3d3", 398848),
 	DT_ENTRY1("if08_chnlsurf", "081122", "131aac0607a2ed5f3ae8c333bc981cd6", 409856),
-	DT_ENTRY1("if08_amo", "r/2080929", "5ab3b7c8b1446334f0703c61e4512cc4", 52505634),
+	DT_ENTRY1("if08_amo", "080929", "5ab3b7c8b1446334f0703c61e4512cc4", 52505634),
 
 	// IFComp 2009
 	DT_ENTRY1("if09_rover", "091116", "88249e5938448be487267a4b609a45e7", 1741574),
@@ -944,11 +943,12 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if10_followingstar", "034107/v2", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
 
 	// IFComp 2011
+	DT_ENTRY1("if11_tacofiction", "130422", "766be6495cb312d8270587c4d45d7e6a", 1928530),
 	DT_ENTRY1("if11_tacofiction", "111009", "c0338f36c652d48a77380c95b8eec508", 1944464),
 	DT_ENTRY1("if11_six", "120805", "2705921eee09a568959584be1929b6b7", 8663464),
 	DT_ENTRY1("if11_six", "170723", "2d1fdfe386c08fdacd620b7497bcd88f", 8661160),
-	DT_ENTRY1("if11_six", "r6/200914", "e62655c358677fd4b17e0f2ed1587a86", 8661788),
-	DT_ENTRY1("if11_patanoir", "r3/111201", "e03b27c359d71d7794ef68efe1952a72", 813876),
+	DT_ENTRY1("if11_six", "200914", "e62655c358677fd4b17e0f2ed1587a86", 8661788),
+	DT_ENTRY1("if11_patanoir", "111201", "e03b27c359d71d7794ef68efe1952a72", 813876),
 	DT_ENTRY1("if11_patanoir", "131204", "b328b1edff8f94715898ff0a58e845f9", 877876),
 	DT_ENTRY1("if11_doctorm", "120219", "7fb0073619cb071dd5d1be97285e6454", 1293208),
 	DT_ENTRY1("if11_beet", "110930", "d2cecb0fff0e3234ffbfac2256c09227", 1894218),
@@ -964,24 +964,24 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if11_luster", "080126", "dc95b63ade63ddb122a3722adcfac573", 569202),
 
 	// IFComp 2012
-	DT_ENTRY1("if12_andromedaapoc", "12????",, "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
+	DT_ENTRY1("if12_andromedaapoc", "12????", "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
 	DT_ENTRY1("if12_shufflearound", "140914", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
 	DT_ENTRY1("if12_shufflearound", "150328", "00b2a517ec539936b96e84fabb91e5db", 3208092),
 	DT_ENTRY1("if12_killerheadach", "121231", "ab18f553a035242a15f5a39f16f03173", 1382924),
-	DT_ENTRY1("if12_imos", "r3/121017", "c7f412b07c72ba8a6952e4ee74a37075", 716404),
+	DT_ENTRY1("if12_imos", "121017", "c7f412b07c72ba8a6952e4ee74a37075", 716404),
 	DT_ENTRY1("if12_jdal", "120930", "193ea99f5067c64447dd2c74c7e3ab9d", 761022),
 	DT_ENTRY1("if12_kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
 
 	// IFComp 2013
-	DT_ENTRY1("if13_coloratura", "080126/v2", "db4b88094929abb89fcf19ab56204b05", 1403574),
-	DT_ENTRY1("if13_robinorchid", "r3/131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
+	DT_ENTRY1("if13_coloratura", "13???\?/v2", "db4b88094929abb89fcf19ab56204b05", 1403574),
+	DT_ENTRY1("if13_robinorchid", "131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
 	DT_ENTRY1("if13_ooof", "130929", "5ee413df68e3e66fdf356a5df8289f85", 1391318),
 	DT_ENTRY1("if13_captverdeterr", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
-	DT_ENTRY1("if13_texbonavent", "080126/v2", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
+	DT_ENTRY1("if13_texbonavent", "13???\?/v2", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
 	DT_ENTRY1("if13_rosewood", "131116", "c766929c3cc25a13b5a60f90b618d94e", 736304),
 	DT_ENTRY1("if13_awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
 	DT_ENTRY1("if13_mazredugin", "131024", "510431bad4f9463b5f667cf22d414b85", 563948),
-	DT_ENTRY1("if13_cardewhouse", "080126", "f99076e11ff40c0bbc9d566143d71ca9", 477126),
+	DT_ENTRY1("if13_cardewhouse", "13????", "f99076e11ff40c0bbc9d566143d71ca9", 477126),
 
 
 	// French games
