@@ -29,6 +29,8 @@
 namespace M4 {
 namespace Burger {
 
+#define PARSER_ITEM_END "Th-th-th-that's all folks..."
+
 struct WilburMatch {
 	const char *_word0;
 	const char *_word1;
