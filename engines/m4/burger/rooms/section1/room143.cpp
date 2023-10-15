@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_VERA_ANIMATION = 44
+};
+
 const char *Room143::SAID[][4] = {
 	{ "VERA",          "143W001", "999w011", "999w011" },
 	{ "BURL",          nullptr,   "999w011", "999w011" },
@@ -161,7 +165,7 @@ void Room143::init() {
 
 	_val1 = 8;
 	_val2 = 8;
-	kernel_trigger_dispatch_now(44);
+	kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 	_val3 = 0;
 	_val4 = 6;
 	kernel_trigger_dispatch_now(43);
@@ -256,7 +260,7 @@ void Room143::daemon() {
 	case 7:
 		digi_play("143e600", 1, 255, 1);
 		_val1 = 8;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		break;
 
 	case 8:
@@ -311,7 +315,7 @@ void Room143::daemon() {
 
 	case 15:
 		_val1 = 8;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		player_set_commands_allowed(true);
 		break;
 
@@ -324,7 +328,7 @@ void Room143::daemon() {
 
 	case 17:
 		_val1 = 13;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		digi_play("143e503", 1, 255, 18);
 		break;
 
@@ -368,7 +372,7 @@ void Room143::daemon() {
 		_digiTrigger = 25;
 		_val6 = 30;
 		_val1 = 21;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		break;
 
 	case 25:
@@ -385,7 +389,7 @@ void Room143::daemon() {
 		_digiTrigger = 7;
 		_val1 = 14;
 		_val6 = 31;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		break;
 
 	case 28:
@@ -457,7 +461,7 @@ void Room143::daemon() {
 		_digiMode = KT_DAEMON;
 		_digiTrigger = 42;
 		_val1 = 8;
-		kernel_trigger_dispatch_now(44);
+		kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 		break;
 
 	case 42:
@@ -481,50 +485,54 @@ void Room143::daemon() {
 		}
 		break;
 
-	case 44:
+	case kCHANGE_VERA_ANIMATION:
 		switch (_val2) {
 		case 8:
 			switch (_val1) {
 			case 8:
 				switch (imath_ranged_rand(1, 20)) {
 				case 1:
-					series_play_with_breaks(PLAY5, "143ve02", 0xf00, 44, 2);
+					series_play_with_breaks(PLAY5, "143ve02", 0xf00, kCHANGE_VERA_ANIMATION, 2);
 					break;
 
 				case 2:
 					_val2 = 10;
-					series_play("143ve03", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 3);
+					series_play("143ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 					break;
 
 				default:
-					series_play("143ve01", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 0);
+					series_play("143ve01", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 					break;
 				}
 				break;
 
 			case 11:
 				_val2 = 10;
-				series_play("143ve03", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 3);
+				series_play("143ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
+			case 13:
+			case 14:
 			case 15:
 				_val2 = 13;
-				Series::series_play("143ve14", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 8);
+				Series::series_play("143ve14", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 8);
 				break;
 
 			case 20:
 				_val1 = 8;
-				series_play_with_breaks(PLAY6, "143ve07", 0xf00, 44, 3);
+				series_play_with_breaks(PLAY6, "143ve07", 0xf00, kCHANGE_VERA_ANIMATION, 3);
 				break;
 
+			case 21:
 			case 22:
 				_val2 = 21;
-				Series::series_play("143ve08", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("143ve08", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
+			case 25:
 			case 26:
 				_val2 = 27;
-				series_play("143ve04", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 5);
+				series_play("143ve04", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 				break;
 
 			default:
@@ -536,13 +544,13 @@ void Room143::daemon() {
 			if (_val1 == 8) {
 				if (imath_ranged_rand(1, 20) == 1) {
 					_val2 = 21;
-					Series::series_play("143ve10", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 3);
+					Series::series_play("143ve10", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				} else {
-					Series::series_play("143ve10", 0xf00, 0, 44, 10, 0, 100, 0, 0, 3, 3);
+					Series::series_play("143ve10", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 3, 3);
 				}
 			} else {
 				_val2 = 21;
-				Series::series_play("143ve10", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 3);
+				Series::series_play("143ve10", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 			}
 			break;
 
@@ -551,20 +559,20 @@ void Room143::daemon() {
 			case 8:
 				if (imath_ranged_rand(1, 20) == 1) {
 					_val2 = 8;
-					series_play("143ve03", 0xf00, 2, 44, 10, 0, 100, 0, 0, 0, 3);
+					series_play("143ve03", 0xf00, 2, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				} else {
-					series_play("143ve03", 0xf00, 0, 44, 10, 0, 100, 0, 0, 3, 3);
+					series_play("143ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 3, 3);
 				}
 				break;
 
 			case 11:
 				_val2 = 11;
-				series_play("143ve03", 0xf00, 0, 44, 4, 0, 100, 0, 0, 3, 3);
+				series_play("143ve03", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, 3, 3);
 				break;
 
 			default:
 				_val2 = 8;
-				series_play("143ve03", 0xf00, 2, 44, 10, 0, 100, 0, 0, 0, 3);
+				series_play("143ve03", 0xf00, 2, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				break;
 			}
 			break;
@@ -576,45 +584,45 @@ void Room143::daemon() {
 			} else {
 				terminateMachineAndNull(_ve03);
 				_val2 = 10;
-				kernel_trigger_dispatch_now(44);
+				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			}
 			break;
 
 		case 13:
 			switch (_val1) {
 			case 13:
-				Series::series_play("143ve15", 0xf00, 0, 44, 10, 0, 100, 0, 0, 4, 4);
+				Series::series_play("143ve15", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 4, 4);
 				break;
 
 			case 14:
 				_val2 = 14;
-				Series::series_play("143ve17", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 2);
+				Series::series_play("143ve17", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
 				break;
 
 			case 15:
 				_val2 = (imath_ranged_rand(1, 2) == 1) ? 16 : 17;
-				Series::series_play("143ve18", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 0);
+				Series::series_play("143ve18", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 18:
 				_val1 = 19;
-				Series::series_play("143ve16", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 1);
+				Series::series_play("143ve16", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 1);
 				break;
 
 			case 19:
 				terminateMachineAndNull(_plate);
 				_val1 = 13;
-				Series::series_play("143ve16", 0xf00, 0, 44, 6, 0, 100, 0, 0, 2, 15);
+				Series::series_play("143ve16", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 15);
 				break;
 
 			case 21:
 				_val2 = 21;
-				Series::series_play("143ve15", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("143ve15", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			default:
 				_val2 = 10;
-				Series::series_play("143ve19", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, -1);
+				Series::series_play("143ve19", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, -1);
 				break;
 			}
 			break;
@@ -628,7 +636,7 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 13;
-				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 0);
+				Series::series_play("143ve18", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
@@ -641,7 +649,7 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 13;
-				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 2);
+				Series::series_play("143ve18", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 2);
 			}
 			break;
 
@@ -654,7 +662,7 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 13;
-				Series::series_play("143ve18", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 0);
+				Series::series_play("143ve18", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
@@ -663,31 +671,31 @@ void Room143::daemon() {
 			switch (_val1) {
 			case 15:
 				_val2 = 13;
-				Series::series_play("143ve15", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("143ve15", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 21:
 				if (imath_ranged_rand(1, 20) == 1) {
 					_val2 = 9;
-					Series::series_play("143ve10", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 3);
+					Series::series_play("143ve10", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				} else {
-					Series::series_play("143ve08", 0xf00, 0, 44, 10, 0, 100, 0, 0, 4, 4);
+					Series::series_play("143ve08", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 4, 4);
 				}
 				break;
 
 			case 22:
 				if (imath_ranged_rand(1, 2) == 1) {
 					_val2 = 23;
-					kernel_trigger_dispatch_now(44);
+					kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				} else {
 					_val2 = 24;
-					Series::series_play("143ve11", 0xf00, 0, 44, 6, 0, 100, 0, 0, 2, 4);
+					Series::series_play("143ve11", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 4);
 				}
 				break;
 
 			default:
 				_val2 = 8;
-				Series::series_play("143ve08", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("143ve08", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
@@ -701,7 +709,7 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 21;
-				kernel_trigger_dispatch_now(44);
+				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			}
 			break;
 
@@ -714,24 +722,24 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 21;
-				Series::series_play("143ve11", 0xf00, 2, 44, 6, 0, 100, 0, 0, 2, 4);
+				Series::series_play("143ve11", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 2, 4);
 			}
 			break;
 
 		case 25:
 			switch (_val1) {
 			case 25:
-				Series::series_play("143ve06", 0xf00, 0, 44, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("143ve06", 0xf00, 0, kCHANGE_VERA_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 26:
 				_val2 = 26;
-				Series::series_play("143ve06", 0xf00, 0, 44, 4, 0, 100, 0, 0, 0, 0);
+				Series::series_play("143ve06", 0xf00, 0, kCHANGE_VERA_ANIMATION, 4, 0, 100, 0, 0, 0, 0);
 				break;
 
 			default:
 				_val2 = 28;
-				Series::series_play("143ve05", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 4);
+				Series::series_play("143ve05", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
@@ -745,18 +753,18 @@ void Room143::daemon() {
 				terminateMachineAndNull(_ve03);
 				terminateMachineAndNull(_ve03S);
 				_val2 = 25;
-				kernel_trigger_dispatch_now(44);
+				kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			}
 			break;
 
 		case 27:
 			_val2 = 25;
-			Series::series_play("143ve05", 0xf00, 0, 44, 6, 0, 100, 0, 0, 0, 4);
+			Series::series_play("143ve05", 0xf00, 0, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 			break;
 
 		case 28:
 			_val2 = 8;
-			Series::series_play("143ve04", 0xf00, 2, 44, 6, 0, 100, 0, 0, 0, 5);
+			Series::series_play("143ve04", 0xf00, 2, kCHANGE_VERA_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 			break;
 
 		default:
@@ -1050,7 +1058,7 @@ void Room143::daemon() {
 
 		case 5:
 			_val1 = 8;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			player_set_commands_allowed(true);
 			break;
 
@@ -1138,7 +1146,7 @@ void Room143::daemon() {
 }
 
 void Room143::pre_parser() {
-	if (player_said("outside") && player_said_any("exit", "gear", "look", "look at"))
+	if (player_said("outside") && !player_said_any("exit", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(9, 0);
 }
 
@@ -1191,7 +1199,7 @@ void Room143::parser() {
 		case 1:
 			player_set_commands_allowed(false);
 			_val1 = 8;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			break;
 
 		default:
@@ -1212,7 +1220,7 @@ void Room143::parser() {
 
 		case 1:
 			_val1 = 8;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			digi_play("143e502", 1, 255, 1);
 			break;
 
@@ -1232,7 +1240,7 @@ void Room143::parser() {
 
 		case 1:
 			_val1 = 8;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			player_set_commands_allowed(true);
 			break;
 
@@ -1254,7 +1262,7 @@ void Room143::parser() {
 
 		case 1:
 			_val1 = 13;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			_G(kernel).trigger_mode = KT_PARSE;
 			digi_play("143e501", 1, 255, 2);
 			break;
@@ -1269,7 +1277,7 @@ void Room143::parser() {
 		case 3:
 			player_set_commands_allowed(true);
 			_val1 = 8;
-			kernel_trigger_dispatch_now(44);
+			kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 			break;
 
 		default:
@@ -1280,7 +1288,7 @@ void Room143::parser() {
 			wilbur_speech("143w004");
 		else
 			wilbur_speech("143w003");
-	} if (!_G(walker).wilbur_said(SAID)) {
+	} else if (!_G(walker).wilbur_said(SAID)) {
 		return;
 	}
 
@@ -1327,7 +1335,7 @@ void Room143::conv35() {
 				_val1 = 8;
 				if (_val2 != 13) {
 					_G(kernel).trigger = KT_DAEMON;
-					kernel_trigger_dispatch_now(44);
+					kernel_trigger_dispatch_now(kCHANGE_VERA_ANIMATION);
 				}
 			}
 
