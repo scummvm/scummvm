@@ -219,7 +219,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "sagebrushcactus",    "'Mid the sagebrush and the cactus" },
 	{ "sagesanctumscramble", "Sage Sanctum Scramble" },
 	{ "samfortunepi",       "Sam Fortune - Private Investigator" },
-	{ "scrollthief",        "Scroll Thief, an Interactive Heist" },
 	{ "seasonalapocalypse", "Seasonal Apocalypse Disorder" },
 	{ "secretletter",       "Jack Toresal and the Secret Letter" },
 	{ "section1awakened",   "Section 1 - Awakened" },
@@ -238,7 +237,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "songmockingbird",    "The Song of the Mockingbird" },
 	{ "spaceship",          "Spaceship!" },
 	{ "speedracer",         "Speed Racer" },
-	{ "spellbound",         "Spellbound" },
 	{ "spirI7wrak",         "SpirI7wrak" },
 	{ "standingshoulders",  "Standing on the Shoulders of Giants" },
 	{ "starlight",          "Starlight" },
@@ -621,6 +619,81 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ec22_oldhhouse",     "This Old Haunted House" },                                                 //   12th Place
 	{ "ec22_nowheresville", "Nowheresville" },                                                          //   14th Place
 
+	// HighlandComp
+	{ "hc_catchhaggid",     "Catch That Haggis" },
+
+	// Imaginary Games From Imaginary Universes Jam
+	{ "ig_dreamrevised",    "Dreamland Revised" },
+	{ "ig_gaiasweb",        "Gaia's Web" },
+	{ "ig_unrealcity",      "Unreal City" },
+
+	// IntroComp 2002
+	{ "ic02_jingo",         "Hey, Jingo!" },                                                            //       Winner
+	{ "ic02_genie",         "Genie" },                                                                  //      Entrant
+
+	// IntroComp 2004
+	{ "ic04_gauss",         "The Homework of Little Carl Gauss" },                                      //      Entrant
+
+	// IntroComp 2007
+	{ "ic07_3princes",      "Three Princes" },                                                          // Hon. Mention
+
+	// IntroComp 2008
+	{ "ic08_phoenixland",   "Phoenix's Landing: Destiny" },                                             //       Winner
+
+	// IntroComp 2010
+	{ "ic10_fangvsclaw",    "Fang vs Claw" },                                                           // Hon. Mention
+
+	// IntroComp 2011
+	{ "ic11_chunkyblues",   "Chunky Blues" },                                                           // Hon. Mention
+	{ "ic11_seasons",       "Seasons" },                                                                // Hon. Mention
+	{ "ic11_zmatter",       "The Z-Machine Matter" },                                                   // Hon. Mention
+
+	// IntroComp 2012
+	{ "ic12_compliance",    "Compliance" },                                                             //    2nd Place
+	{ "ic12_belief",        "Belief" },                                                                 //    3rd Place
+	{ "ic12_genesis",       "Genesis" },                                                                // Hon. Mention
+
+	// IntroComp 2013
+	{ "ic13_blplains",      "Best Laid Plans" },                                                        //    1st Place
+	{ "ic13_akkoteaque",    "Akkoteaque" },                                                             //    2nd Place
+	{ "ic13_vanishconjur",  "The Vanishing Conjurer" },                                                 //    3rd Place
+	{ "ic13_first",         "First" },                                                                  // Hon. Mention
+	{ "ic13_what1984",      "What Happened in 1984" },                                                  // Hon. Mention
+
+	// IntroComp 2014
+	{ "ic14_cuckoldsegg",   "The Cuckold’s Egg" },                                                      //    1st Place
+	{ "ic14_scrollthief",   "The Scroll Thief" },                                                       //    2nd Place
+	{ "ic14_terribledoubt", "The Terrible Doubt of Appearances" },                                      //    3rd Place
+	{ "ic14_hornetsnest",   "Hornets’ Nest" },                                                          // Hon. Mention
+
+	// IntroComp 2015
+	{ "ic15_beyondivision", "Beyond Division" },                                                        //    1st Place
+	{ "ic15_meld",          "Meld" },                                                                   //    3rd Place
+	{ "ic15_voltagecafe",   "Voltage Cafe" },                                                           // Hon. Mention
+
+	// IntroComp 2016
+	{ "ic16_spellbound",    "Spellbound" },                                                             //    1st Place
+	{ "ic16_somexceptions", "Some Exceptions for Reasons Unknown" },                                    //    2nd Place
+
+	// IntroComp 2017
+	{ "ic17_sherlockind",   "Sherlock Indomitable" },                                                   //    1st Place
+	{ "ic17_onnakabuki",    "Onna Kabuki" },                                                            //    2nd Place
+	{ "ic17_adameveprj",    "The Adam and Eve Project" },                                               //    3rd Place
+	{ "ic17_duckmans",      "Duckman" },                                                                // Hon. Mention
+	{ "ic17_prizon",        "Prizon" },                                                                 // Hon. Mention
+
+	// IntroComp 2018
+	{ "ic18_introimplarc",  "Intro to Implements of the Arcane" },                                      //    1st Place
+
+	// IntroComp 2019
+	{ "ic19_intodevilmus",  "Intro to The Devil's Music" },                                             //    1st Place
+	{ "ic19_imprisoned",    "Imprisoned" },                                                             // Hon. Mention
+
+	// IntroComp 2020
+	{ "ic20_foreignsoil",   "Foreign Soil" },                                                          //  Hon. Mention
+	{ "ic20_foolrescue",    "Intro to a Fool’s Rescue" },                                              //  Hon. Mention
+	{ "ic20_theinterview",  "The Interview" },                                                         //  Hon. Mention
+
 
 	// French games
 	{ "ekphrasis",          "Ekphrasis, les Aventures de Gilbert Fontenelle" },
@@ -897,7 +970,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("sagesanctumscramble", "r1/200922", "bd21d0b625abb8bab93e83cc93fd35ee", 876800),
 	DT_ENTRY1("sagesanctumscramble", "r2/201205", "15830904ce96b418e949f0e3b9318dec", 877568),
 	DT_ENTRY1("samfortunepi", "090510", "f177d973432b7a27302f1a79c8106f72", 706326),
-	DT_ENTRY1("scrollthief", "150729", "9c26a3dc0f4fb681bf79f681e63c0d76", 2367848),
 	DT_ENTRY0("seasonalapocalypse", "5e951b117302169cdb77e832115937f0", 2207454),
 	DT_ENTRY1("secretletter", "150107 Deluxe", "152f91e432a49c3f61a8ecd7bca1d6c4", 2274048),
 	DT_ENTRY1("section1awakened", "150812", "e05b999f193566771ff08679d5512143", 625112),
@@ -918,7 +990,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("songmockingbird", "r2/220422", "1f0fe56c7c8bb1f87723493b60fa84a6", 1447318),
 	DT_ENTRY1("spaceship", "090928", "e52390cba328a8c863150ce4651fa71f", 1429732),
 	DT_ENTRY1("speedracer", "190617", "10d61f0fa2c3cbe122112f32d05e03a0", 613834),
-	DT_ENTRY1("spellbound", "160728", "c37e0e19a2fe74edc2d1df90bc97e132", 1061586),
 	DT_ENTRY1("spirI7wrak", "141218", "d7e58b86d1c6e06ecdc83ebbb7b20242", 2631214),
 	DT_ENTRY1("standingshoulders", "200925", "78cb38272e79595781f5e1be65171a75", 836802),
 	DT_ENTRY1("starlight", "151119", "ee4d2ed91518392981bf3cfd0fcf644d", 885152),
@@ -1406,6 +1477,84 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ec22_apumpkin", "221103", "121643ae56df322d6c7f1d7ca53cdecb", 673554),
 	DT_ENTRY1("ec22_oldhhouse", "221030", "bec430e7aad958baac37ba72b5a81c82", 849262),
 	DT_ENTRY1("ec22_nowheresville", "221030", "86ecbe2738622a5a162a68704a4a3977", 1471426),
+
+	// HighlandComp
+	DT_ENTRY1("hc_catchhaggid", "010203", "f6bc94801f2a9c9c59644f21e33de610", 113664),
+
+	// Imaginary Games From Imaginary Universes Jam
+	DT_ENTRY1("ig_dreamrevised", "010203", "3e175099a1e80abef10bf72610feafe2", 1914090),
+	DT_ENTRY1("ig_gaiasweb", "160104", "cc4c71a9745c994f11c3c61c02107e17", 1416212),
+	DT_ENTRY1("ig_unrealcity", "160208", "00ed2d561cb3b4f1a737a9e1989ccba0", 759746),
+
+	// IntroComp 2002
+	DT_ENTRY1("ic02_jingo", "020319", "e5cbcd323604e8c567fb14005743b215", 124160),
+	DT_ENTRY1("ic02_genie", "020317", "49188c3f73495f2d7cf81e4ec00aa217", 103936),
+
+	// IntroComp 2004
+	DT_ENTRY1("ic04_gauss", "040718", "a88db0c1568fb173460dbad8b567cf14", 128256),
+
+	// IntroComp 2007
+	DT_ENTRY1("ic07_3princes", "070804", "f26a5b23a9d1001d1527209f88228dad", 318864),
+
+	// IntroComp 2008
+	DT_ENTRY1("ic08_phoenixland", "08????", "d0c50e5cff1098009fbb9f893e7dc75e", 890884),
+
+	// IntroComp 2010
+	DT_ENTRY1("ic10_fangvsclaw", "100703", "a62db6db8270b794eb3f5c75d5a31fc1", 604086),
+
+	// IntroComp 2011
+	DT_ENTRY1("ic11_chunkyblues", "110630", "9d0fc0586df10d7e85c4fcd2fcca0553", 1255154),
+	DT_ENTRY1("ic11_seasons", "110630", "4828e0affb26575eb5e5eda9f5025c37", 818432),
+	DT_ENTRY1("ic11_zmatter", "110629", "dec030a1dce71a43a46fd96c4fac2d7b", 1516978),
+
+	// IntroComp 2012
+	DT_ENTRY1("ic12_compliance", "120716", "44b10a0d7b8e38713df34a09ca7d5373", 27561388),
+	DT_ENTRY1("ic12_belief", "120716", "3c9b393c3df22cf321800a7b41938f06", 513364),
+	DT_ENTRY1("ic12_genesis", "120714", "f96244e1010f16d831caf0e3f34f0546", 2383766),
+
+	// IntroComp 2013
+	DT_ENTRY1("ic13_blplains", "130715", "c8d41234000af17815a01a370ccd177f", 404432),
+	DT_ENTRY1("ic13_akkoteaque", "13????", "6a4c45084a30f777453eb3a7b6fb82a7", 1444292),
+	DT_ENTRY1("ic13_vanishconjur", "130709", "f8d195d882b2394950aef07b7ec75814", 830048),
+	DT_ENTRY1("ic13_first", "130714", "195bff59343b0c03f5fdd91ec7d079f0", 352156),
+	DT_ENTRY1("ic13_what1984", "130614", "28d374899f30b44b2e911d4e0f0b5543", 441004),
+
+	// IntroComp 2014
+	DT_ENTRY1("ic14_cuckoldsegg", "140720", "0158803bd3a4f03ab83443eb5ef14944", 734886),
+	DT_ENTRY1("ic14_scrollthief", "140720", "cbaae8f12d3603e58f22fc67cd0a3a39", 1454668),
+	DT_ENTRY1("ic14_scrollthief", "150729", "9c26a3dc0f4fb681bf79f681e63c0d76", 2367848),
+	DT_ENTRY1("ic14_scrollthief", "160701", "4ba7874db08126bb177afd511ab16542", 2602042),
+	DT_ENTRY1("ic14_terribledoubt", "140720", "bd83d2992dcf3a85347126c154fd64c8", 1467868),
+	DT_ENTRY1("ic14_hornetsnest", "140720", "7a049c3232299b59f74c96418957eef1", 781682),
+
+	// IntroComp 2015
+	DT_ENTRY1("ic15_beyondivision", "15????", "fa3afc16485d3e6c24548931e24064d3", 895282),
+	DT_ENTRY1("ic15_meld", "150730", "4556d3f39e2ee0af6dc01725a5cad243", 535492),
+	DT_ENTRY1("ic15_voltagecafe", "150801", "c867d05bba89c06e5d2d64210fb79306", 610686),
+
+	// IntroComp 2016
+	DT_ENTRY1("ic16_spellbound", "160728", "c37e0e19a2fe74edc2d1df90bc97e132", 1061586),
+	DT_ENTRY1("ic16_somexceptions", "160730", "becbb4a01a863577dc2532016b5ff223", 311296),
+
+	// IntroComp 2017
+	DT_ENTRY1("ic17_duckmans", "170728", "0b4c1dd28c65965781503f0ad6ae45d8", 672962),
+	DT_ENTRY1("ic17_onnakabuki", "17????", "1a0de9433b3daf3cd0f97c782580bbb9", 816076),
+	DT_ENTRY1("ic17_prizon", "170705", "e7741df7fb02064b8549ec08115c654a", 561920),
+	DT_ENTRY1("ic17_sherlockind", "170731", "d4900a94a49582feaf144bed0ef3b80c", 816850),
+	DT_ENTRY1("ic17_adameveprj", "170731", "3c3476810dc8f8379e2124913cf99bf7", 709584),
+
+	// IntroComp 2018
+	DT_ENTRY1("ic18_introimplarc", "180721", "e4ff7ddde364943af01cc3789c753dea", 987828),
+
+	// IntroComp 2019
+	DT_ENTRY1("ic19_intodevilmus", "190801", "a71122e9ec48267d764bf4c3a66ff9db", 840916),
+	DT_ENTRY1("ic19_imprisoned", "190714", "e8973c8981920f0c4c650e8d3a95ef41", 1351324),
+
+	// IntroComp 2020
+	DT_ENTRY1("ic20_foreignsoil", "200801", "3e1000f0724582ff56ee54254fe2e817", 957330),
+	DT_ENTRY1("ic20_foolrescue", "20????", "c520f331e64f7f2a5a666d7c33655aeb", 985114),
+	DT_ENTRY1("ic20_theinterview", "200706", "2888fdbce5dc116284fc9e93343eeebc", 933494),
+
 
 	// French games
 	DT_ENTRYL1("ekphrasis", Common::FR_FRA, "050718", "009ca5994d9e8fe6cfb400a9da00b123", 64609308),
