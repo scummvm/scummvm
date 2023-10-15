@@ -72,7 +72,7 @@ public:
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
-	// it necessarily is. Active means that there are verbs on scren. From
+	// it necessarily is. Active means that there are verbs on screen. From
 	// the outside, only the latter is relevant.
 	//
 	// One case where this makes a difference is when boxing with the
