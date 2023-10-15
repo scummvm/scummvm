@@ -65,6 +65,10 @@ void gui_system_event_handler() {
 	// Allow pending events to be processed
 	g_events->process();
 
+	// WORKAROUND: Keep the player_info up to date, in case the game
+	// is saved directly via the GMM without moving the mouse
+	player_update_info();
+
 	// Deal with mouse events first..
 	_G(mouseX) = _G(MouseState).CursorColumn;
 	_G(mouseY) = _G(MouseState).CursorRow;
