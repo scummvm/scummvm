@@ -886,10 +886,10 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if01_carma", "010928", "cc5077c525b44748443a0e39cdc079c6", 11205418),
 	DT_ENTRY1("if01_smtuc", "010928", "c6e58925e082f20542bd25a2395dd00d", 1439558),
 	DT_ENTRY1("if01_smtuc", "010928", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
-	DT_ENTRY0("if01_aafn", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
-	DT_ENTRY1("if01_aafn", "Corrupt", "07d590dc62f0be38f6f879763b6eb12c", 163072),
-	DT_ENTRY0("if01_sittm", "0c3d40b0340df7ff459ff7751015183a", 408576),
-	DT_ENTRY0("if01_sittm", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
+	DT_ENTRY1("if01_aafn", "01???\?", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
+	DT_ENTRY1("if01_aafn", "01???\?\Corrupt", "07d590dc62f0be38f6f879763b6eb12c", 163072),
+	DT_ENTRY1("if01_sittm", "01???\?", "0c3d40b0340df7ff459ff7751015183a", 408576),
+	DT_ENTRY1("if01_sittm", "01???\?", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
 
 	// IFComp 2002
 	DT_ENTRY1("if02_eas2", "020925", "914e969da891835c24b3decdc6fa34c1", 842272),
@@ -908,11 +908,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// IFComp 2007
 	DT_ENTRY1("if07_chineseroom", "070930", "68e11adb8574ffc4b5698499f02686d6", 988416),
 	DT_ENTRY1("if07_varkana", "070930", "f92523a3a403d88aed1523de6fe12a33", 876932),
-	DT_ENTRY0("if07_ferrousring", "e3763b5e021f6ee2c6e383bae2b4bc8a", 450560),
+	DT_ENTRY1("if07_ferrousring", "070928", "e3763b5e021f6ee2c6e383bae2b4bc8a", 450560),
 	DT_ENTRY1("if07_ferrousring", "1007276", "af11f50b1ef9ba444bd176de4ee22002", 432128),
 
 	// IFComp 2008
-	DT_ENTRY0("if08_nightfall", "1a13bdae770563bdfa09f25e40d6ea57", 1242580),
+	DT_ENTRY1("if08_nightfall", "080909", "1a13bdae770563bdfa09f25e40d6ea57", 1242580),
 	DT_ENTRY1("if08_nightfall", "090425", "7784b0b91d27a0995cbf0f8b2ee669bf", 1339348),
 	DT_ENTRY1("if08_everybodydies", "080915", "58c45023b48266cba73c776418741313", 4091836),
 	DT_ENTRY1("if08_everybodydies", "081116", "2ec12958967c78e39c5ef3b9ef8fd584", 4091308),
@@ -924,23 +924,23 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// IFComp 2009
 	DT_ENTRY1("if09_rover", "091116", "88249e5938448be487267a4b609a45e7", 1741574),
-	DT_ENTRY0("if09_rover", "5a404fb92af606a86bdae9bbf91547c1", 1739014),
+	DT_ENTRY1("if09_rover", "090930", "5a404fb92af606a86bdae9bbf91547c1", 1739014),
 	DT_ENTRY1("if09_brokenlegs", "090930", "4ff634e4183763bc9a34a61fad3dfd23", 1048314),
 	DT_ENTRY1("if09_earlgrey", "090930", "73730db01a1bb32ffd6e2baa1877e11f", 266752),
 	DT_ENTRY1("if09_resonance", "090930", "d51f6c4e99b9d283e65d836caf2f1324", 912226),
 	DT_ENTRY1("if09_gis", "090929", "9370bf33a539114878b8ab95be49e38f", 667934),
 
 	// IFComp 2010
-	DT_ENTRY0("if10_aotearoa", "f62a91448362426220f811c6612f42ea", 1896012),
+	DT_ENTRY1("if10_aotearoa", "100928", "f62a91448362426220f811c6612f42ea", 1896012),
 	DT_ENTRY1("if10_oneeyeopen", "100929", "aeb6ffc0787d36f7105a91f5a3abe444", 1779174),
-	DT_ENTRY0("if10_blindhouse", "0d79dbb034056f655be3363a14d6986d", 2011166),
+	DT_ENTRY1("if10_blindhouse", "101001", "0d79dbb034056f655be3363a14d6986d", 2011166),
 	DT_ENTRY1("if10_grisjaune", "100930", "849519ec9197682259d78f545fb7094f", 637952),
 	DT_ENTRY1("if10_divismortis", "080126", "78e8e7f1b9350022c501eca735883d7e", 805644),
 	DT_ENTRY1("if10_oxygen", "100930", "743f21619656301039d9f5113b9af50e", 1013908),
 	DT_ENTRY1("if10_oxygen", "150121", "31a6aaaf3bdfde86a93583e73d50b4fb", 927386),
 	DT_ENTRY1("if10_gigantomania", "100930", "4c89679dc1aa12f5d6b7e121d09e22f3", 1734624),
 	DT_ENTRY1("if10_inerebus", "100930", "acda27283090aa366ef4ce99766391f0", 1986882),
-	DT_ENTRY0("if10_followingstar", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
+	DT_ENTRY1("if10_followingstar", "034107", "4f88888ed4c75099e64ef8e05bd177cc", 1170332),
 	DT_ENTRY1("if10_followingstar", "034107", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
 
 	// IFComp 2011
@@ -952,11 +952,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if11_patanoir", "131204", "b328b1edff8f94715898ff0a58e845f9", 877876),
 	DT_ENTRY1("if11_doctorm", "120219", "7fb0073619cb071dd5d1be97285e6454", 1293208),
 	DT_ENTRY1("if11_beet", "110930", "d2cecb0fff0e3234ffbfac2256c09227", 1894218),
-	DT_ENTRY0("if11_kerkerkruip", "b4db28a5653a63fa389e37b65b078b57", 1306720),
+	DT_ENTRY1("if11_kerkerkruip", "120501", "b4db28a5653a63fa389e37b65b078b57", 1306720),
 	DT_ENTRY1("if11_kerkerkruip", "140419", "879c34531bc7dbb66bad8fca651bc428", 22109534),
 	DT_ENTRY1("if11_sentencing", "111006", "4fdaaa41f63482e931296edd173f69bc", 1008888),
 	DT_ENTRY1("if11_calm", "111201", "dba39ece18ebfbde9ebc93ccc5216fd8", 2012688),
-	DT_ENTRY0("if11_thehours", "2d94f14e3ce959173da1ed35502f1419", 1281774),
+	DT_ENTRY1("if11_thehours", "11???\?", "2d94f14e3ce959173da1ed35502f1419", 1281774),
 	DT_ENTRY1("if11_deathofschlig", "111031", "0b9b3666a0c795185724ddbd1de171dc", 1483674),
 	DT_ENTRY1("if11_faninterfer", "111014", "7d0362957c6666d4e569d32a03d0d854", 1509382),
 	DT_ENTRY1("if11_playinggames", "111127", "3e907a5feabc7ef36d019c866ec084c0", 630242),
@@ -964,8 +964,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if11_luster", "080126", "dc95b63ade63ddb122a3722adcfac573", 569202),
 
 	// IFComp 2012
-	DT_ENTRY0("if12_andromedaapoc", "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
-	DT_ENTRY0("if12_shufflearound", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
+	DT_ENTRY1("if12_andromedaapoc", "12????",, "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
+	DT_ENTRY1("if12_shufflearound", "140914", "31ce78bff3833e5d2224abc4e63e6923", 3091868),
 	DT_ENTRY1("if12_shufflearound", "150328", "00b2a517ec539936b96e84fabb91e5db", 3208092),
 	DT_ENTRY1("if12_killerheadach", "121231", "ab18f553a035242a15f5a39f16f03173", 1382924),
 	DT_ENTRY1("if12_imos", "r3/121017", "c7f412b07c72ba8a6952e4ee74a37075", 716404),
