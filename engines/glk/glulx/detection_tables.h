@@ -365,7 +365,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if04_eas3",          "Earth and Sky: Episode 3 - Luminous Horizon" },                            //    1st Place
 
 	// IFComp 2005
-	{ "if05_beyondglulx",   "Beyond" },                                                                 //    2nd Place
+	{ "if05_beyond_glulx",  "Beyond" },                                                                 //    2nd Place
 	{ "if05_cheiron",       "Cheiron" },                                                                //   26th Place
 
 	// IFComp 2006
@@ -898,7 +898,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if04_eas3", "040929", "8f118c9fa10ef24a5551448d5ab2408f", 1293054),
 
 	// IFComp 2005
-	DT_ENTRY1("if05_beyondglulx", "20050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
+	DT_ENTRY1("if05_beyond_glulx", "20050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
 	DT_ENTRY1("if05_cheiron", "050929", "bca1af6d8788c178ab42883f184e7955", 2434458),
 
 	// IFComp 2006
