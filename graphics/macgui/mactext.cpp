@@ -718,7 +718,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	Common::U32String paragraph, tmp;
 
-	if (curLine == -1 || curLine >= _canvas._text.size())
+	if (curLine == -1 || curLine >= (int)_canvas._text.size())
 		curLine = _canvas._text.size() - 1;
 
 	int curChunk = _canvas._text[curLine].chunks.size() - 1;
