@@ -2456,11 +2456,11 @@ if test "$_debug_build" != no; then
 
 	echo "int main() { return 0; }" > $TMPC
 
-	# HACK: The default DWARF version "for most targets" is 5. However, that
-	#       causes a segfault on at least some Linux distributions. Related
-	#       to https://sourceware.org/bugzilla/show_bug.cgi?id=15447
-	#       perhaps? That bug report suggests using DWARF version 4, so
-	#       let's do that for now, because it seems to work.
+	# HACK: The default DWARF version "for most targets" is 5. However,
+	#       that version causes dwp to segfault. According to
+	#       https://sourceware.org/bugzilla/show_bug.cgi?id=26219 it just
+	#       isn't implemented, and there's no fix in sight. So we force
+	#       DWARF version 4 and hope that works for, well... "most targets".
 
 	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf -gdwarf-4 && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
 		append_var CXXFLAGS "-gsplit-dwarf -gdwarf-4"
