@@ -536,6 +536,10 @@ bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 		result.setInt(_currentTimestamp);
 		return true;
 	}
+	if (attrib == "timescale") {
+		result.setInt(_timeScale);
+		return true;
+	}
 
 	return VisualElement::readAttribute(thread, result, attrib);
 }
@@ -633,13 +637,21 @@ void MovieElement::activate() {
 		}
 
 		Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
-		qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
 		qtDecoder->setVolume(_volume * 255 / 100);
 
 		_videoDecoder.reset(qtDecoder);
 		_damagedFrames = movieAsset->getDamagedFrames();
 
-		Common::SafeSeekableSubReadStream *movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
+		Common::SafeSeekableSubReadStream *movieDataStream;
+
+		if (movieAsset->getMovieDataSize() > 0) {
+			qtDecoder->setChunkBeginOffset(movieAsset->getMoovAtomPos());
+			movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
+		} else {
+			// If no data size, the movie data is all over the file and the MOOV atom may be after it.
+			movieDataStream = new Common::SafeSeekableSubReadStream(stream, 0, stream->size(), DisposeAfterUse::NO);
+			movieDataStream->seek(movieAsset->getMoovAtomPos());
+		}
 
 		if (!_videoDecoder->loadStream(movieDataStream))
 			_videoDecoder.reset();

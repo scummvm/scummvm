@@ -666,6 +666,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_STTGS_DEMO_WIN,
 	},
 
+	{ // Unit: Rebooted (Music Videos)
+		{
+			"unit",
+			"",
+			{
+				// { "UNIT32.EXE", 0, "c23dccd2b7a525a9f7bb8505f7c7f2d4", 1085952 },
+				{ "DATA.MFX", 0, "9a3a0c2f11173c7af3f16d42a2b7c1b7", 194625739 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_UNIT,
+		0,
+		MTBOOT_UNIT_REBOOTED_WIN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 

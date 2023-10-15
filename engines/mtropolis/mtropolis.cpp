@@ -161,21 +161,22 @@ Common::Error MTropolisEngine::run() {
 			preferredHeight = 360;
 			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
 		}
-	}
-
-	if (_gameDescription->gameID == GID_MTI) {
+	} else if (_gameDescription->gameID == GID_MTI) {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode8Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		HackSuites::addMTIQuirks(*_gameDescription, _runtime->getHacks());
-	}
-
-	if (_gameDescription->gameID == GID_SPQR) {
+	} else if (_gameDescription->gameID == GID_SPQR) {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
+	} else if (_gameDescription->gameID == GID_UNIT) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode32Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 	}
 

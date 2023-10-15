@@ -2522,6 +2522,7 @@ private:
 	Common::Array<LabelTree> _labelTree;
 	Common::Array<LabelSuperGroup> _labelSuperGroups;
 	Data::ProjectFormat _projectFormat;
+	Data::ProjectEngineVersion _projectEngineVersion;
 	bool _isBigEndian;
 
 	Common::Array<AssetDesc *> _assetsByID;

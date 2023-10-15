@@ -1025,6 +1025,20 @@ const ManifestFile sttgsDemoWinFiles[] = {
 	{nullptr, MTFT_AUTO}
 };
 
+const ManifestFile unitWinFiles[] = {
+	{"UNIT32.EXE", MTFT_PLAYER},
+	{"DATA.MFX", MTFT_MAIN},
+	{"CURSORS.C32", MTFT_EXTENSION},
+	{"BASIC.X32", MTFT_SPECIAL},
+	{"EXTRAS.R32", MTFT_SPECIAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *unitWinDirectories[] = {
+	"MPLUGINS",
+	nullptr
+};
+
 const Game games[] = {
 	// Obsidian - Retail - Macintosh - English
 	{
@@ -1207,6 +1221,14 @@ const Game games[] = {
 		MTBOOT_STTGS_DEMO_WIN,
 		sttgsDemoWinFiles,
 		nullptr,
+		nullptr,
+		GameDataHandlerFactory<STTGSGameDataHandler>::create
+	},
+	// Unit: Rebooted
+	{
+		MTBOOT_UNIT_REBOOTED_WIN,
+		unitWinFiles,
+		unitWinDirectories,
 		nullptr,
 		GameDataHandlerFactory<STTGSGameDataHandler>::create
 	},
