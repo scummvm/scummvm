@@ -1111,13 +1111,19 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if12_kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
 
 	// IFComp 2013
+	DT_ENTRY1("if13_coloratura", "13???\?/v1", "d34ec90bdf152389d42e939a66bda0ce", 1386678)
 	DT_ENTRY1("if13_coloratura", "13???\?/v2", "db4b88094929abb89fcf19ab56204b05", 1403574),
+	DT_ENTRY1("if13_robinorchid", "130929", "a4574ded85c79e6e578b1a44fce302d2", 1163206),
 	DT_ENTRY1("if13_robinorchid", "131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
 	DT_ENTRY1("if13_ooof", "130929", "5ee413df68e3e66fdf356a5df8289f85", 1391318),
+	DT_ENTRY1("if13_captverdeterr", "130928", "a54ae3ab9fc03fc11294102c4281f0cf", 1549742),
 	DT_ENTRY1("if13_captverdeterr", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
+	DT_ENTRY1("if13_texbonavent", "13???\?/v1", "d2bbf5ba6083323924eaf6fc7894818a", 2420258),
 	DT_ENTRY1("if13_texbonavent", "13???\?/v2", "27b76acc9effd1dcf86110b74f31b61d", 2420514),
+	DT_ENTRY1("if13_rosewood", "130923", "902652af146197c30760a0419bdae78e", 733488),
 	DT_ENTRY1("if13_rosewood", "131116", "c766929c3cc25a13b5a60f90b618d94e", 736304),
 	DT_ENTRY1("if13_awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
+	DT_ENTRY1("if13_mazredugin", "130928", "0895297235681111a5fdb85bf9170613", 548588),
 	DT_ENTRY1("if13_mazredugin", "131024", "510431bad4f9463b5f667cf22d414b85", 563948),
 	DT_ENTRY1("if13_cardewhouse", "13????", "f99076e11ff40c0bbc9d566143d71ca9", 477126),
 
