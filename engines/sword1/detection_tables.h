@@ -450,6 +450,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Alternate version, from a DVD collection containing both BS1 and BS2
+		"sword1",
+		"Mediahauz",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "7a6e896064c8d2ee266e961549487204", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3198686,
+				   "smackshi/intro.smk",    "432215e04bb74ad823e033bc774f97d7", 14098520),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"Novy Disk",
