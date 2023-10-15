@@ -120,11 +120,11 @@ void M4Engine::m4_inflight() {
 }
 
 bool M4Engine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return g_vars && INTERFACE_VISIBLE;
+	return g_vars && INTERFACE_VISIBLE && player_commands_allowed();
 }
 
 bool M4Engine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return g_vars && INTERFACE_VISIBLE;
+	return g_vars && INTERFACE_VISIBLE && player_commands_allowed();
 }
 
 Common::Error M4Engine::loadGameState(int slot) {

@@ -407,7 +407,7 @@ void Room135::daemon() {
 
 			case 4:
 				_val6 = 1;
-				series_play_with_breaks(PLAY3, "1350d05", 0xa00, kCHANGE_ODIE_ANIMATION, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY3, "135od05", 0xa00, kCHANGE_ODIE_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 5:
@@ -869,7 +869,7 @@ void Room135::conv01() {
 				_flag1 = false;
 			}
 
-			if ((node == 7 && !entry) || (node == 2 && !entry)) {
+			if ((node == 7 && entry == 0) || (node == 2 && entry == 0)) {
 				_val6 = 8;
 			} else if (node == 2 && entry == 3) {
 				_val6 = 13;
@@ -916,19 +916,17 @@ void Room135::conv01() {
 					_name1 = conv_sound_to_play();
 				}
 			} else if (who == 1) {
-				if ((node == 2 && entry == 0) ||
-						(node == 4) ||
-						(node == 10) ||
-						(node == 6 && entry == 0) ||
-						(node == 7 && entry == 0)) {
+				if ((node == 2 && entry == 0) || (node == 4) || (node == 10) ||
+						(node == 6 && entry == 0) || (node == 7 && entry == 0)) {
 					_val6 = 11;
 					digi_play(conv_sound_to_play(), 1, 255, 35);
 				} else if ((node == 7 && entry == 1) || (node == 2 && entry == 1)) {
 					_val6 = 14;
 				} else {
 					sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
-					digi_play(conv_sound_to_play(), 1, 255, 35);
 				}
+
+				digi_play(conv_sound_to_play(), 1, 255, 35);
 			}
 		} else {
 			conv_resume();
