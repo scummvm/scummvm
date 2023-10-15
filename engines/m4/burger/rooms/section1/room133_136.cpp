@@ -123,6 +123,7 @@ void Room133_136::daemon() {
 	case 2:
 		_G(flags)[V298] = 1;
 		digi_play("136c001", 1, 255, 5, 136);
+		_val1 = 1;
 		kernel_trigger_dispatch_now(3);
 		break;
 
