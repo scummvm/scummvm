@@ -63,7 +63,7 @@ static const seriesPlayBreak PLAY3[] = {
 
 void Room175::init() {
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 171:

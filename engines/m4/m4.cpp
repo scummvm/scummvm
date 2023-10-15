@@ -82,7 +82,7 @@ Common::Error M4Engine::run() {
 		// Check for launcher savegame to load
 		if (ConfMan.hasKey("save_slot")) {
 			_G(kernel).restore_slot = ConfMan.getInt("save_slot");
-			_G(game).previous_room = RESTORING_GAME;
+			_G(game).previous_room = KERNEL_RESTORING_GAME;
 		}
 
 		// Run game here
@@ -100,7 +100,7 @@ void M4Engine::m4_inflight() {
 	_G(kernel).going = true;
 
 	while (KEEP_PLAYING) {
-		if (_G(game).previous_room == RESTORING_GAME) {
+		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			midi_stop();
 			kernel_load_game(_G(kernel).restore_slot);
 		}
@@ -131,9 +131,9 @@ Common::Error M4Engine::loadGameState(int slot) {
 	// Don't load savegame immediately, just set the slot for the engine's
 	// kernel to take care of in the outer game loop
 	_G(kernel).restore_slot = slot;
-	_G(game).new_room = RESTORING_GAME;
-	_G(game).new_section = RESTORING_GAME;
-	_G(game).previous_room = RESTORING_GAME;
+	_G(game).new_room = KERNEL_RESTORING_GAME;
+	_G(game).new_section = KERNEL_RESTORING_GAME;
+	_G(game).previous_room = KERNEL_RESTORING_GAME;
 
 	return Common::kNoError;
 }

@@ -136,7 +136,7 @@ void Room141::preload() {
 void Room141::init() {
 	digi_preload("144_001");
 
-	if (_G(game).previous_room != RESTORING_GAME)
+	if (_G(game).previous_room != KERNEL_RESTORING_GAME)
 		player_set_commands_allowed(false);
 
 	if (!_G(flags)[V112]) {
@@ -181,7 +181,7 @@ void Room141::init() {
 		kernel_trigger_dispatch_now(7);
 	}
 
-	if (_G(game).previous_room == RESTORING_GAME) {
+	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		_series2 = series_play("141wave", 0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 		_val3 = 9;
 		_val4 = 9;

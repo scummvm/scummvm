@@ -70,7 +70,7 @@ void Room170::init() {
 	series_show("170box", 0xa00);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		kernel_trigger_dispatch_now(1);
 		break;
 

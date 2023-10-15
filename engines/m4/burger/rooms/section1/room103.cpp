@@ -117,7 +117,7 @@ void Room103::init() {
 	_val3 = 0;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 101:

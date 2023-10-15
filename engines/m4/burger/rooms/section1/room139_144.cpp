@@ -113,7 +113,7 @@ void Room139_144::init() {
 		preloadDigi();
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 139:

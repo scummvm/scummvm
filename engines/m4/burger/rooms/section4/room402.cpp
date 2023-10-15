@@ -193,7 +193,7 @@ void Room402::init() {
 	digi_preload("400_001");
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 406:
@@ -213,7 +213,7 @@ void Room402::init() {
 		hotspot_set_active("elmo", false);
 		hotspot_set_active("stolie", false);
 
-		if (_G(game).previous_room != RESTORING_GAME) {
+		if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 			_G(wilbur_should) = 5;
 			kernel_timing_trigger(120, kCHANGE_WILBUR_ANIMATION);
 		}
@@ -232,7 +232,7 @@ void Room402::init() {
 		kernel_trigger_dispatch_now(3);
 
 		if (_G(player).been_here_before) {
-			if (_G(game).previous_room == RESTORING_GAME) {
+			if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 				_val2 = 15;
 			} else {
 				_G(wilbur_should) = 5;
@@ -242,7 +242,7 @@ void Room402::init() {
 		} else {
 			_val2 = 15;
 
-			if (_G(game).previous_room != RESTORING_GAME) {
+			if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 				digi_preload_stream_breaks(SERIES1);
 				digi_preload_stream_breaks(SERIES2);
 				series_load("402dr06");

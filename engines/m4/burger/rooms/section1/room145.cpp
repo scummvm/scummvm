@@ -213,7 +213,7 @@ void Room145::init() {
 	_state2 = 0;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 142:

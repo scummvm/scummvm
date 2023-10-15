@@ -97,7 +97,7 @@ void Room138::init() {
 		digi_preload(NAMES[i]);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V048])
 			_G(flags)[V048] = 1;
 		break;

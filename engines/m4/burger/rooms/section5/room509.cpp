@@ -115,7 +115,7 @@ void Room509::init() {
 	pal_cycle_init(109, 124, 6);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		if (inv_player_has("CHRISTMAS LIGHTS") || inv_player_has("CHRISTMAS LIGHTS ")) {
 			disable_player();
 			_G(wilbur_should) = 2;

@@ -121,7 +121,7 @@ void Room405::init() {
 	pal_cycle_init(122, 127, 6);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(false);
 		ws_demand_location(199, 253, 4);
 		player_set_commands_allowed(true);

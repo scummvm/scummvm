@@ -289,7 +289,7 @@ void Room171::init() {
 		series_show("171phone", 0x700);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 170:

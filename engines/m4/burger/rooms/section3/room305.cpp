@@ -83,7 +83,7 @@ void Room305::init() {
 	_series1 = series_show(_G(flags)[V134] ? "305genx" : "305gen", 0x200);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 		break;
 

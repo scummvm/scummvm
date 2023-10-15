@@ -172,7 +172,7 @@ void Room142::init() {
 	digi_play_loop("142_004", 3, 255, -1);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V059]) {
 			ws_hide_walker();
 			_G(wilbur_should) = 2;
