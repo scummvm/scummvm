@@ -701,7 +701,7 @@ void MacText::chopChunk(const Common::U32String &str, int *curLinePtr, int inden
 void MacText::splitString(const Common::U32String &str, int curLine) {
 	const Common::U32String::value_type *l = str.c_str();
 
-	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
+	D(9, "** splitString(\"%s\", %d)", toPrintable(str.encode()).c_str(), curLine);
 
 	if (_canvas._text.empty()) {
 		_canvas._text.resize(1);
@@ -718,7 +718,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	Common::U32String paragraph, tmp;
 
-	if (curLine == -1)
+	if (curLine == -1 || curLine >= _canvas._text.size())
 		curLine = _canvas._text.size() - 1;
 
 	int curChunk = _canvas._text[curLine].chunks.size() - 1;
