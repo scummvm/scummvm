@@ -352,90 +352,90 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "apollo33",           "Fingertips - Mysterious Whispers" },
 
 	// IFComp 2001
-	{ "if01_bestof3",       "Best of three" },
-	{ "if01_carma",         "Carma" },
-	{ "if01_smtuc",         "Stiffy Makane: The Undiscovered Country" },
-	{ "if01_aafn",          "An Apple From Nowhere" },
-	{ "if01_sittm",         "Stick It To The Man" },
+	{ "if01_bestof3",       "Best of three" },                                                          //    7th Place
+	{ "if01_carma",         "Carma" },                                                                  //   16th Place
+	{ "if01_smtuc",         "Stiffy Makane: The Undiscovered Country" },                                //   31st Place
+	{ "if01_aafn",          "An Apple From Nowhere" },                                                  //   39th Place
+	{ "if01_sittm",         "Stick It To The Man" },                                                    //   41st Place
 
 	// IFComp 2002
-	{ "if02_eas2",          "Earth and Sky: Episode 2 - Another Earth, Another Sky" },
+	{ "if02_eas2",          "Earth and Sky: Episode 2 - Another Earth, Another Sky" },                  //    1st Place
 
 	// IFComp 2004
-	{ "if04_eas3",          "Earth and Sky: Episode 3 - Luminous Horizon" },
+	{ "if04_eas3",          "Earth and Sky: Episode 3 - Luminous Horizon" },                            //    1st Place
 
 	// IFComp 2005
-	{ "if05_beyondglulx",   "Beyond" },
-	{ "if05_cheiron",       "Cheiron" },
+	{ "if05_beyondglulx",   "Beyond" },                                                                 //    2nd Place
+	{ "if05_cheiron",       "Cheiron" },                                                                //   26th Place
 
 	// IFComp 2006
-	{ "if06_floatpoint",    "Float Point" },
+	{ "if06_floatpoint",    "Float Point" },                                                            //    1st Place
 
 	// IFComp 2007
-	{ "if07_chineseroom",   "The Chinese Room" },
-	{ "if07_varkana",       "Varkana" },
-	{ "if07_ferrousring",   "Ferrous Ring" },
+	{ "if07_chineseroom",   "The Chinese Room" },                                                       //    5th Place
+	{ "if07_varkana",       "Varkana" },                                                                //    6th Place
+	{ "if07_ferrousring",   "Ferrous Ring" },                                                           //   13th Place
 
 	// IFComp 2008
-	{ "if08_nightfall",     "Nightfall" },
-	{ "if08_everybodydies", "Everybody Dies, an Interactive Fantasy" },
-	{ "if08_crywolf",       "Cry Wolf" },
-	{ "if08_recess",        "Recess At Last" },
-	{ "if08_chnlsurf",      "Channel Surfing" },
-	{ "if08_amo",           "A Martian Odyssey" },
+	{ "if08_nightfall",     "Nightfall" },                                                              //    2nd Place
+	{ "if08_everybodydies", "Everybody Dies, an Interactive Fantasy" },                                 //    3rd Place
+	{ "if08_crywolf",       "Cry Wolf" },                                                               //   11th Place
+	{ "if08_recess",        "Recess At Last" },                                                         //   15th Place
+	{ "if08_chnlsurf",      "Channel Surfing" },                                                        //   21st Place
+	{ "if08_amo",           "A Martian Odyssey" },                                                      //   25th Place
 
 	// IFComp 2009
-	{ "if09_rover",         "Rover's Day Out" },
-	{ "if09_brokenlegs",    "Broken Legs" },
-	{ "if09_earlgrey",      "Earl Grey" },
-	{ "if09_resonance",     "Resonance" },
-	{ "if09_gis",           "Grounded in Space" },
+	{ "if09_rover",         "Rover's Day Out" },                                                        //    1st Place
+	{ "if09_brokenlegs",    "Broken Legs" },                                                            //    2nd Place
+	{ "if09_earlgrey",      "Earl Grey" },                                                              //    5th Place
+	{ "if09_resonance",     "Resonance" },                                                              //    7th Place
+	{ "if09_gis",           "Grounded in Space" },                                                      //   10th Place
 
 	// IFComp 2010
-	{ "if10_aotearoa",      "Aotearoa" },
-	{ "if10_oneeyeopen",    "One Eye Open" },
-	{ "if10_blindhouse",    "The Blind House" },
-	{ "if10_grisjaune",     "Gris et Jaune" },
-	{ "if10_divismortis",   "Divis Mortis: an interactive survival game" },
-	{ "if10_oxygen",        "Oxygen" },
-	{ "if10_inerebus",      "Under, In Erebus" },
-	{ "if10_gigantomania",  "Gigantomania" },
-	{ "if10_followingstar", "The Bible Retold: Following A Star" },
+	{ "if10_aotearoa",      "Aotearoa" },                                                               //    1st Place
+	{ "if10_oneeyeopen",    "One Eye Open" },                                                           //    3rd Place
+	{ "if10_blindhouse",    "The Blind House" },                                                        //    4th Place
+	{ "if10_grisjaune",     "Gris et Jaune" },                                                          //    9th Place
+	{ "if10_divismortis",   "Divis Mortis: an interactive survival game" },                             //   11th Place
+	{ "if10_oxygen",        "Oxygen" },                                                                 //   12th Place
+	{ "if10_inerebus",      "Under, In Erebus" },                                                       //   15th Plac
+	{ "if10_gigantomania",  "Gigantomania" },                                                           //   16th Place
+	{ "if10_followingstar", "The Bible Retold: Following A Star" },                                     //   19th Place
 
 	// IFComp 2011
-	{ "if11_tacofiction",   "Taco Fiction" },
-	{ "if11_six",           "Six" },
-	{ "if11_patanoir",      "PataNoir" },
-	{ "if11_doctorm",       "The Life (and Deaths) of Doctor M" },
-	{ "if11_beet",          "Beet the Devil" },
-	{ "if11_kerkerkruip",   "Kerkerkruip" },
-	{ "if11_sentencing",    "Sentencing Mr. Liddell" },
-	{ "if11_calm",          "Calm, a Game of Postapocalyptic Relaxation" },
-	{ "if11_thehours",      "The Hours" },
-	{ "if11_deathofschlig", "Death of Schlig" },
-	{ "if11_faninterfer",   "Fan Interference" },
-	{ "if11_playinggames",  "Playing Games" },
-	{ "if11_awamightdread", "Awake the Mighty Dread" },
-	{ "if11_luster",        "Luster" },
+	{ "if11_tacofiction",   "Taco Fiction" },                                                           //    1st Place
+	{ "if11_six",           "Six" },                                                                    //    2nd Place
+	{ "if11_patanoir",      "PataNoir" },                                                               //    5th Place
+	{ "if11_doctorm",       "The Life (and Deaths) of Doctor M" },                                      //    6th Place
+	{ "if11_beet",          "Beet the Devil" },                                                         //    7th Place
+	{ "if11_kerkerkruip",   "Kerkerkruip" },                                                            //    8th Place
+	{ "if11_sentencing",    "Sentencing Mr. Liddell" },                                                 //   19th Place
+	{ "if11_calm",          "Calm, a Game of Postapocalyptic Relaxation" },                             //   20th Place
+	{ "if11_thehours",      "The Hours" },                                                              //   22nd Place
+	{ "if11_deathofschlig", "Death of Schlig" },                                                        //   26th Place
+	{ "if11_faninterfer",   "Fan Interference" },                                                       //   27th Place
+	{ "if11_playinggames",  "Playing Games" },                                                          //   28th Place
+	{ "if11_awamightdread", "Awake the Mighty Dread" },                                                 //   31st Place
+	{ "if11_luster",        "Luster" },                                                                 //   37th Place
 
 	// IFComp 2012
-	{ "if12_andromedaapoc", "Andromeda Apocalypse" },
-	{ "if12_shufflearound", "Shuffling Around" },
-	{ "if12_killerheadach", "A Killer Headache" },
-	{ "if12_imos",          "In a Manor of Speaking" },
-	{ "if12_jdal",          "J'dal" },
-	{ "if12_kicker",        "Kicker" },
+	{ "if12_andromedaapoc", "Andromeda Apocalypse" },                                                   //    1st Place
+	{ "if12_shufflearound", "Shuffling Around" },                                                       //    7th Place
+	{ "if12_killerheadach", "A Killer Headache" },                                                      //    8th Place
+	{ "if12_imos",          "In a Manor of Speaking" },                                                 //   10th Place
+	{ "if12_jdal",          "J'dal" },                                                                  //   16th Place
+	{ "if12_kicker",        "Kicker" },                                                                 //   20th Place
 
 	// IFComp 2013
-	{ "if13_coloratura",    "Coloratura" },
-	{ "if13_robinorchid",   "Robin & Orchid" },
-	{ "if13_ooof",          "Ollie Ollie Oxen Free" },
-	{ "if13_captverdeterr", "Captain Verdeterre's Plunder" },
-	{ "if13_texbonavent",   "Tex Bonaventure and the Temple" },
-	{ "if13_rosewood",      "The House at the End of Rosewood Street" },
-	{ "if13_awbp",          "A Wind Blown from Paradise" },
-	{ "if13_mazredugin",    "Mazredugin" },
-	{ "if13_cardewhouse",   "The Cardew House" },
+	{ "if13_coloratura",    "Coloratura" },                                                             //    1st Place
+	{ "if13_robinorchid",   "Robin & Orchid" },                                                         //    2nd Place
+	{ "if13_ooof",          "Ollie Ollie Oxen Free" },                                                  //    3rd Place
+	{ "if13_captverdeterr", "Captain Verdeterre's Plunder" },                                           //    4th Place
+	{ "if13_texbonavent",   "Tex Bonaventure and the Temple" },                                         //    5th Place
+	{ "if13_rosewood",      "The House at the End of Rosewood Street" },                                //   16th Place
+	{ "if13_awbp",          "A Wind Blown from Paradise" },                                             //   28th Place
+	{ "if13_mazredugin",    "Mazredugin" },                                                             //   28th Place
+	{ "if13_cardewhouse",   "The Cardew House" },                                                       //   32nd Place
 
 
 	// French games
