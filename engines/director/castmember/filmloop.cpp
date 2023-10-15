@@ -140,8 +140,9 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 			int order = stream.readByte() * 2 - 0x20;
 			frameSize -= 2;
 
-			int channel = (order / channelSize) - 1;
+			int channel = order / channelSize;
 			int channelOffset = order % channelSize;
+			int offset = order;
 
 			debugC(8, kDebugLoading, "loadFilmLoopDataD2: Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
@@ -162,12 +163,13 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 				sprite._puppet = 1;
 				sprite._stretch = 1;
 
-				uint16 needSize = MIN((uint16)(nextStart - channelOffset), segSize);
+				uint16 needSize = MIN((uint16)(nextStart - offset), segSize);
 				int startPosition = stream.pos() - channelOffset;
 				int finishPosition = stream.pos() + needSize;
 				readSpriteDataD2(stream, sprite, startPosition, finishPosition);
 				newFrame.sprites.setVal(channel, sprite);
 				segSize -= needSize;
+				offset += needSize;
 				channel += 1;
 				channelOffset = 0;
 				nextStart += kSprChannelSizeD2;
