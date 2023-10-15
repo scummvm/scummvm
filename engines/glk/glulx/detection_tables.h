@@ -359,7 +359,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "zeldata",            "The Legend of Zelda: A Text Adventure" },
 	{ "zorkglulx",          "Zork: A Computerized Fantasy Simulation Game" },
 
-	// Apollo 18+20 IF Tribute Album
+	// Apollo 18+20: The IF Tribute Album
 	{ "apollo3glulx",       "She's Actual Size" },
 	{ "apollo10glulx",      "Narrow Your Eyes" },
 	{ "apollo12glulx",      "Which Describes How You're Feeling" },
@@ -367,43 +367,43 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "apollo19glulx",      "Fingertips - I Hear the Wind Blow" },
 	{ "apollo33glulx",      "Fingertips - Mysterious Whispers" },
 
-	// Competition 2001
+	// IFComp 2001
 	{ "bestof3",            "Best of three" },
 	{ "carma",              "Carma" },
 	{ "smtuc",              "Stiffy Makane: The Undiscovered Country" },
 
-	// Competition 2002
+	// IFComp 2002
 	{ "eas2",               "Earth and Sky: Episode 2 - Another Earth, Another Sky" },
 
-	// Competition 2004
+	// IFComp 2004
 	{ "eas3",               "Earth and Sky: Episode 3 - Luminous Horizon" },
 
-	// Competition 2005
+	// IFComp 2005
 	{ "beyondglulx",        "Beyond" },
 	{ "cheiron",            "Cheiron" },
 
-	// Competition 2006
+	// IFComp 2006
 	{ "floatpoint",         "Float Point" },
 
-	// Competition 2007
+	// IFComp 2007
 	{ "chineseroom",        "The Chinese Room" },
 	{ "varkana",            "Varkana" },
 
-	// Competition 2008
+	// IFComp 2008
 	{ "amo",                "A Martian Odyssey" },
 	{ "chnlsurf",           "Channel Surfing" },
 	{ "crywolf",            "Cry Wolf" },
 	{ "everybodydies",      "Everybody Dies, an Interactive Fantasy" },
 	{ "recess",             "Recess At Last" },
 
-	// Competition 2009
+	// IFComp 2009
 	{ "brokenlegs",         "Broken Legs" },
 	{ "earlgrey",           "Earl Grey" },
 	{ "gis",                "Grounded in Space" },
 	{ "nightfall",          "Nightfall" },
 	{ "resonance",          "Resonance" },
 
-	// Competition 2010
+	// IFComp 2010
 	{ "aotearoa",           "Aotearoa" },
 	{ "divismortis",        "Divis Mortis: an interactive survival game" },
 	{ "gigantomania",       "Gigantomania" },
@@ -412,7 +412,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "oxygen",             "Oxygen" },
 	{ "inerebus",           "Under, In Erebus" },
 
-	// Competition 2011
+	// IFComp 2011
 	{ "awakemightydread",   "Awake the Mighty Dread" },
 	{ "beet",               "Beet the Devil" },
 	{ "deathofschlig",      "Death of Schlig" },
@@ -422,7 +422,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "sentencing",         "Sentencing Mr. Liddell" },
 	{ "tacofiction",        "Taco Fiction" },
 
-	// Competition 2012
+	// IFComp 2012
 	{ "andromedaapoc",      "Andromeda Apocalypse" },
 	{ "imos",               "In a Manor of Speaking" },
 	{ "jdal",               "J'dal" },
@@ -911,44 +911,44 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY0("apollo19glulx", "66b599c4aecd63caa59b00bfd5101f43", 466244),
 	DT_ENTRY0("apollo33glulx", "74457b493e101e87463a0be645d2ab65", 411726),
 
-	// Competition 2001
+	// IFComp 2001
 	DT_ENTRY1("bestof3", "010928", "53d50b3573afc12376ae5fbb342230d9", 930694),
 	DT_ENTRY1("carma", "010928", "cc5077c525b44748443a0e39cdc079c6", 11205418),
 	DT_ENTRY1("smtuc", "010928", "c6e58925e082f20542bd25a2395dd00d", 1439558),
 	DT_ENTRY1("smtuc", "010928", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
 
-	// Competition 2002
+	// IFComp 2002
 	DT_ENTRY1("eas2", "020925", "914e969da891835c24b3decdc6fa34c1", 842272),
 
-	// Competition 2004
+	// IFComp 2004
 	DT_ENTRY1("eas3", "040929", "8f118c9fa10ef24a5551448d5ab2408f", 1293054),
 
-	// Competition 2005
+	// IFComp 2005
 	DT_ENTRY1("beyondglulx", "20050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
 	DT_ENTRY1("cheiron", "050929", "bca1af6d8788c178ab42883f184e7955", 2434458),
 
-	// Competition 2006
+	// IFComp 2006
 	DT_ENTRY1("floatpoint", "060930", "1350e61da647efffc0e36f705dbc90f4", 1377946),
 
-	// Competition 2007
+	// IFComp 2007
 	DT_ENTRY1("chineseroom", "070930", "68e11adb8574ffc4b5698499f02686d6", 988416),
 	DT_ENTRY1("varkana", "070930", "f92523a3a403d88aed1523de6fe12a33", 876932),
 
-	// Competition 2008
+	// IFComp 2008
 	DT_ENTRY1("amo", "r/2080929", "5ab3b7c8b1446334f0703c61e4512cc4", 52505634),
 	DT_ENTRY1("chnlsurf", "080929", "c4b2ae121f5f0e1ae2c98c3bd4a6b3d3", 398848),
 	DT_ENTRY1("crywolf", "080929", "044a5209c2ecd4401ad2f7fa0cbed256", 911818),
 	DT_ENTRY1("everybodydies", "080915", "58c45023b48266cba73c776418741313", 4091836),
 	DT_ENTRY1("recess", "080929", "7437538b52eb78c427eb4e54e2fa1665", 712784),
 
-	// Competition 2009
+	// IFComp 2009
 	DT_ENTRY1("brokenlegs", "090930", "4ff634e4183763bc9a34a61fad3dfd23", 1048314),
 	DT_ENTRY1("earlgrey", "090930", "73730db01a1bb32ffd6e2baa1877e11f", 266752),
 	DT_ENTRY1("gis", "090929", "9370bf33a539114878b8ab95be49e38f", 667934),
 	DT_ENTRY0("nightfall", "1a13bdae770563bdfa09f25e40d6ea57", 1242580),
 	DT_ENTRY1("resonance", "090930", "d51f6c4e99b9d283e65d836caf2f1324", 912226),
 
-	// Competition 2010
+	// IFComp 2010
 	DT_ENTRY0("aotearoa", "f62a91448362426220f811c6612f42ea", 1896012),
 	DT_ENTRY1("divismortis", "080126", "78e8e7f1b9350022c501eca735883d7e", 805644),
 	DT_ENTRY1("gigantomania", "100930", "4c89679dc1aa12f5d6b7e121d09e22f3", 1734624),
@@ -957,7 +957,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("oxygen", "100930", "743f21619656301039d9f5113b9af50e", 1013908),
 	DT_ENTRY1("inerebus", "100930", "acda27283090aa366ef4ce99766391f0", 1986882),
 
-	// Competition 2011
+	// IFComp 2011
 	DT_ENTRY1("awakemightydread", "111006", "48b3b409b565774a3cbf681225322080", 717456),
 	DT_ENTRY1("beet", "110930", "d2cecb0fff0e3234ffbfac2256c09227", 1894218),
 	DT_ENTRY1("deathofschlig", "111031", "0b9b3666a0c795185724ddbd1de171dc", 1483674),
@@ -967,13 +967,13 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("sentencing", "111006", "4fdaaa41f63482e931296edd173f69bc", 1008888),
 	DT_ENTRY1("tacofiction", "111009", "c0338f36c652d48a77380c95b8eec508", 1944464),
 
-	// Competition 2012
+	// IFComp 2012
 	DT_ENTRY0("andromedaapoc", "8eb9d31ed63271fe36b9e18f979d8a87", 7116982),
 	DT_ENTRY1("imos", "r3/121017", "c7f412b07c72ba8a6952e4ee74a37075", 716404),
 	DT_ENTRY1("jdal", "120930", "193ea99f5067c64447dd2c74c7e3ab9d", 761022),
 	DT_ENTRY1("kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
 
-	// Competition 2013
+	// IFComp 2013
 	DT_ENTRY1("awbp", "130928", "e9256df20f20e02cb43112c60cc5034d", 499962),
 	DT_ENTRY1("captverdeterre", "131003", "56c78de876c57b0e02725e4d8752f139", 1549998),
 	DT_ENTRY1("coloratura", "080126", "db4b88094929abb89fcf19ab56204b05", 1403574),
