@@ -350,29 +350,41 @@ void Walker::speech_random(int count, int trigger,
 }
 
 bool Walker::wilbur_parser(const char **list) {
-	bool flag = true;
-
 	for (const char **curr = list; *curr; ++curr) {
 		if (player_said(*curr)) {
-			for (; *curr; ++curr) {
-				if (!player_said(*curr)) {
-					++curr;
-				} else {
-					if (!*++curr) {
-						flag = 0;
-					} else {
-						wilbur_speech(*curr);
+			// Found section for the item
+			bool useDefault = true;
+			++curr;
+			while (*curr) {
+				const char *action = *curr++;
+				const char *sound = *curr++;
+
+				if (player_said(action)) {
+					// Found the action on the item we want
+					if (sound) {
+						// Has a sound
+						wilbur_speech(sound);
 						return true;
+					} else {
+						// No sound for this
+						useDefault = false;
 					}
 				}
 			}
 
-			if (*++curr && flag) {
-				wilbur_speech(*curr);
+			// Check default fallback
+			const char *defaultSound = *++curr;
+			if (defaultSound && useDefault) {
+				wilbur_speech(defaultSound);
 				return true;
 			}
+
+			// Skip past the item end entry
+			++curr;
+
 		} else {
-			for (; !*curr || scumm_stricmp(*curr, "Th-th-th-that's all folks..."); ++curr) {
+			// Not the item we want, so skip the section
+			for (; !*curr || scumm_stricmp(*curr, PARSER_ITEM_END); ++curr) {
 			}
 		}
 	}
