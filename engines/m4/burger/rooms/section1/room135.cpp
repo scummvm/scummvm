@@ -27,6 +27,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_ODIE_ANIMATION = 32
+};
+
 static const char *SAID1[][4] = {
 	{ "OLD BRIDGE",       "134W001", "134W002", "134W002" },
 	{ "NEW BRIDGE",       "134W003", "134W002", "134W002" },
@@ -255,8 +259,8 @@ void Room135::daemon() {
 		break;
 
 	case 14:
-		_series5 = series_play("135od07", 2560, 0, -1, 600, -1, 100, 0, 0, 0, 0);
-		_series6 = series_play("135od07s", 2560, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_series5 = series_play("135od07", 0xa00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_series6 = series_play("135od07s", 0xa00, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 		ws_hide_walker();
 		series_play("135wi01", 1536, 0, 15, 6, 0, 100, 0, 0, 0, 14);
 		series_play("135wi01s", 1536, 0, -1, 6, 0, 100, 0, 0, 0, 14);
@@ -271,8 +275,8 @@ void Room135::daemon() {
 	case 16:
 		terminateMachineAndNull(_series5);
 		terminateMachineAndNull(_series6);
-		series_play("135od06", 2560, 0, 17, 6, 0, 100, 0, 0, 0, 4);
-		series_play("135od06s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+		series_play("135od06", 0xa00, 0, 17, 6, 0, 100, 0, 0, 0, 4);
+		series_play("135od06s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 4);
 		break;
 
 	case 17:
@@ -281,16 +285,16 @@ void Room135::daemon() {
 		_val6 = 1;
 		_val5 = 1;
 		_G(flags)[V001]--;
-		series_play("135od06", 2560, 0, 32, 6, 0, 100, 0, 0, 5, 13);
-		series_play("135od06s", 2560, 0, -1, 6, 0, 100, 0, 0, 5, 13);
+		series_play("135od06", 0xa00, 0, 32, 6, 0, 100, 0, 0, 5, 13);
+		series_play("135od06s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 5, 13);
 		series_play("135wi01", 1536, 0, 9, 6, 0, 100, 0, 0, 14, 15);
 		series_play("135wi01s", 1536, 0, -1, 6, 0, 100, 0, 0, 14, 15);
 		conv_resume();
 		break;
 
 	case 18:
-		series_play("135od17", 2560, 0, 19, 6, 0, 100, 0, 0, 0, 1);
-		series_play("135od17s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 1);
+		series_play("135od17", 0xa00, 0, 19, 6, 0, 100, 0, 0, 0, 1);
+		series_play("135od17s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 1);
 		break;
 
 	case 19:
@@ -307,8 +311,8 @@ void Room135::daemon() {
 		_val5 = 1;
 		_val6 = 1;
 		inv_give_to_player("broken puz dispenser");
-		series_play("135od17", 2560, 0, 32, 6, 0, 100, 0, 0, 2, 6);
-		series_play("135od17s", 2560, 0, -1, 6, 0, 100, 0, 0, 2, 6);
+		series_play("135od17", 0xa00, 0, 32, 6, 0, 100, 0, 0, 2, 6);
+		series_play("135od17s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 2, 6);
 		series_play("135wi01", 1536, 2, 10, 6, 0, 100, 0, 0, 0, 14);
 		series_play("135wi01s", 1536, 2, -1, 6, 0, 100, 0, 0, 0, 14);
 		break;
@@ -375,7 +379,7 @@ void Room135::daemon() {
 		_val9 = 33;
 		break;
 
-	case 32:
+	case kCHANGE_ODIE_ANIMATION:
 		switch (_val5) {
 		case 1:
 			switch (_val6) {
@@ -385,39 +389,39 @@ void Room135::daemon() {
 					_frame = imath_ranged_rand(0, 5);
 				}
 
-				series_play("135od01", 2560, 0, 32, 60, 0, 100, 0, 0, _frame, _frame);
-				series_play("135od01s", 2560, 0, -1, 60, 0, 100, 0, 0, _frame, _frame);
+				series_play("135od01", 0xa00, 0, kCHANGE_ODIE_ANIMATION, 60, 0, 100, 0, 0, _frame, _frame);
+				series_play("135od01s", 0xa00, 0, -1, 60, 0, 100, 0, 0, _frame, _frame);
 				break;
 
 			case 2:
 				frame = imath_ranged_rand(0, 8);
-				series_play("135od03", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od03s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od03", 0xa00, 0, kCHANGE_ODIE_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od03s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 				break;
 
 			case 3:
 				_val6 = 1;
-				series_play_with_breaks(PLAY2, "135od04", 2560, 32, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY2, "135od04", 0xa00, kCHANGE_ODIE_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 4:
 				_val6 = 1;
-				series_play_with_breaks(PLAY3, "1350d05", 2560, 32, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY3, "1350d05", 0xa00, kCHANGE_ODIE_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 5:
 			case 7:
 				_val5 = 5;
-				series_play("135od08", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 11);
-				series_play("135od08s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 11);
+				series_play("135od08", 0xa00, 0, kCHANGE_ODIE_ANIMATION, 6, 0, 100, 0, 0, 0, 11);
+				series_play("135od08s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 11);
 				break;
 
 			case 8:
 				_val6 = 11;
 				_val5 = 11;
-				series_play("135od06", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 11);
-				series_play("135od06s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 11);
+				series_play("135od06", 0xa00, 0, kCHANGE_ODIE_ANIMATION, 6, 0, 100, 0, 0, 0, 11);
+				series_play("135od06s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 11);
 				break;
 
 			case 9:
@@ -426,20 +430,21 @@ void Room135::daemon() {
 
 			case 10:
 				_val6 = 1;
-				series_play("135od22", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 6);
-				series_play("135od22s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 6);
+				series_play("135od22", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, 6);
+				series_play("135od22s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 6);
 				break;
 
+			case 11:
 			case 12:
 				_val5 = 11;
-				series_play("135od04", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 3);
-				series_play("135od04s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 3);
+				series_play("135od04", 0xa00, 0, kCHANGE_ODIE_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
+				series_play("135od04s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 22:
 				_val6 = 23;
-				series_play("134od23", 2560, 0, 32, 6, 0, 100, 0, 0, 0, -1);
-				series_play("134od23s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("134od23", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, -1);
+				series_play("134od23s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				break;
 
 			case 23:
@@ -449,22 +454,22 @@ void Room135::daemon() {
 
 			case 24:
 				_val6 = 25;
-				series_play("134od24", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 36);
-				series_play("134od24s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 36);
+				series_play("134od24", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, 36);
+				series_play("134od24s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 36);
 				break;
 
 			case 25:
 				terminateMachineAndNull(_play2);
 				_val6 = 26;
-				series_play("134od24", 2560, 0, 32, 6, 0, 100, 0, 0, 37, -1);
-				series_play("134od24s", 2560, 0, -1, 6, 0, 100, 0, 0, 37, -1);
+				series_play("134od24", 0xa00, 0, 32, 6, 0, 100, 0, 0, 37, -1);
+				series_play("134od24s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 37, -1);
 				break;
 
 			case 26:
 				_G(flags)[V039] = 1;
 				_val6 = 25;
-				series_play("134od25", 2560, 0, 12, 6, 0, 100, 0, 0, 0, -1);
-				series_play("134od25s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+				series_play("134od25", 0xa00, 0, 12, 6, 0, 100, 0, 0, 0, -1);
+				series_play("134od25s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, -1);
 				break;
 
 			default:
@@ -475,8 +480,8 @@ void Room135::daemon() {
 		case 2:
 			if (_val6 == 2) {
 				frame = imath_ranged_rand(0, 5);
-				series_play("135od05", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od05s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od05", 0xa00, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od05s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 			} else {
 				_val5 = 1;
@@ -487,56 +492,56 @@ void Room135::daemon() {
 		case 5:
 			switch (_val6) {
 			case 5:
-				series_play("135od09", 2560, 0, 32, 20, 0, 100, 0, 0, 0, 0);
-				series_play("135od09s", 2560, 0, -1, 20, 0, 100, 0, 0, 0, 0);
+				series_play("135od09", 0xa00, 0, 32, 20, 0, 100, 0, 0, 0, 0);
+				series_play("135od09s", 0xa00, 0, -1, 20, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 7:
 				frame = imath_ranged_rand(0, 5);
-				series_play("135od10", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od10s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od10", 0xa00, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od10s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 				break;
 
 			default:
 				_val5 = 6;
-				series_play("135od09", 2560, 0, 32, 10, 0, 100, 0, 0, 1, 3);
-				series_play("135od09s", 2560, 0, -1, 10, 0, 100, 0, 0, 1, 3);
+				series_play("135od09", 0xa00, 0, 32, 10, 0, 100, 0, 0, 1, 3);
+				series_play("135od09s", 0xa00, 0, -1, 10, 0, 100, 0, 0, 1, 3);
 				break;
 			}
 			break;
 
 		case 6:
 			_val5 = 1;
-			series_play("135od11", 2560, 0, 32, 10, 0, 100, 0, 0, 0, 18);
-			series_play("135od11s", 2560, 0, -1, 10, 0, 100, 0, 0, 0, 18);
+			series_play("135od11", 0xa00, 0, 32, 10, 0, 100, 0, 0, 0, 18);
+			series_play("135od11s", 0xa00, 0, -1, 10, 0, 100, 0, 0, 0, 18);
 			break;
 
 		case 11:
 			switch (_val6) {
 			case 11:
-				series_play("135od12", 2560, 0, 32, 20, 0, 100, 0, 0, 0, 0);
-				series_play("135od12s", 2560, 0, -1, 20, 0, 100, 0, 0, 0, 0);
+				series_play("135od12", 0xa00, 0, 32, 20, 0, 100, 0, 0, 0, 0);
+				series_play("135od12s", 0xa00, 0, -1, 20, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 12:
 				frame = imath_ranged_rand(0, 5);
-				series_play("135od12", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od12s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od12", 0xa00, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od12s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 				break;
 
 			case 14:
 				_val6 = 15;
-				series_play("135od07", 2560, 0, 32, 6, 0, 100, 0, 0, 2, 4);
-				series_play("135od07s", 2560, 0, -1, 6, 0, 100, 0, 0, 2, 4);
+				series_play("135od07", 0xa00, 0, 32, 6, 0, 100, 0, 0, 2, 4);
+				series_play("135od07s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 2, 4);
 				break;
 
 			case 15:
 				_val6 = 16;
 				_val5 = 16;
-				series_play("135od13", 2560, 0, 32, 6, 0, 100, 0, 0, 1, 3);
-				series_play("135od13s", 2560, 0, -1, 6, 0, 100, 0, 0, 1, 3);
+				series_play("135od13", 0xa00, 0, 32, 6, 0, 100, 0, 0, 1, 3);
+				series_play("135od13s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 1, 3);
 
 				if (_val11 == 0)
 					inv_move_object("puz dispenser", 135);
@@ -548,8 +553,8 @@ void Room135::daemon() {
 
 			default:
 				_val5 = 1;
-				series_play("135od04", 2560, 2, 32, 6, 0, 100, 0, 0, 0, 3);
-				series_play("135od04s", 2560, 2, -1, 6, 0, 100, 0, 0, 0, 3);
+				series_play("135od04", 0xa00, 2, 32, 6, 0, 100, 0, 0, 0, 3);
+				series_play("135od04s", 0xa00, 2, -1, 6, 0, 100, 0, 0, 0, 3);
 				break;
 			}
 			break;
@@ -557,11 +562,11 @@ void Room135::daemon() {
 		case 16:
 			if (_val6 == 16) {
 				if (_val11 == 0) {
-					series_play("135od18", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 14);
-					series_play("135od18s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 14);
+					series_play("135od18", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, 14);
+					series_play("135od18s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 14);
 				} else if (_val11 == 1) {
-					series_play("135od14", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 5);
-					series_play("135od14s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 5);
+					series_play("135od14", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, 5);
+					series_play("135od14s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 5);
 				}
 			} else {
 				_val5 = 17;
@@ -576,21 +581,21 @@ void Room135::daemon() {
 				break;
 
 			case 17:
-				series_play("135od20", 2560, 0, 32, 10, 0, 100, 0, 0, 0, 0);
-				series_play("135od20s", 2560, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				series_play("135od20", 0xa00, 0, 32, 10, 0, 100, 0, 0, 0, 0);
+				series_play("135od20s", 0xa00, 0, -1, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 18:
 				frame = imath_ranged_rand(0, 5);
-				series_play("135od20", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od20s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od20", 0xa00, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od20s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 				break;
 
 			default:
 				_val5 = 1;
-				series_play("135od21", 2560, 0, 32, 6, 0, 100, 0, 0, 0, 2);
-				series_play("135od21s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 2);
+				series_play("135od21", 0xa00, 0, 32, 6, 0, 100, 0, 0, 0, 2);
+				series_play("135od21s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 2);
 				break;
 			}
 			break;
@@ -598,14 +603,14 @@ void Room135::daemon() {
 		case 19:
 			switch (_val6) {
 			case 19:
-				series_play("135od16", 2560, 0, 32, 10, 0, 100, 0, 0, 0, 0);
-				series_play("135od16s", 2560, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				series_play("135od16", 0xa00, 0, 32, 10, 0, 100, 0, 0, 0, 0);
+				series_play("135od16s", 0xa00, 0, -1, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 20:
 				frame = imath_ranged_rand(0, 4);
-				series_play("135od16", 2560, 0, 32, 4, 0, 100, 0, 0, frame, frame);
-				series_play("135od16s", 2560, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od16", 0xa00, 0, 32, 4, 0, 100, 0, 0, frame, frame);
+				series_play("135od16s", 0xa00, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 				loadDigi();
 				break;
 
@@ -718,20 +723,20 @@ void Room135::daemon() {
 			switch (_val8) {
 			case 27:
 				if (imath_ranged_rand(1, 15) == 1) {
-					_series2 = series_play("135bb01", 2560, 0, 34, 6, 0, 100, 0, 0, 0, 11);
-					_series3 = series_play("135bb01s", 2560, 0, -1, 6, 0, 100, 0, 0, 0, 11);
+					_series2 = series_play("135bb01", 0xa00, 0, 34, 6, 0, 100, 0, 0, 0, 11);
+					_series3 = series_play("135bb01s", 0xa00, 0, -1, 6, 0, 100, 0, 0, 0, 11);
 
 					if (player_commands_allowed())
 						digi_play("135_004", 2, 205, -1);
 				} else {
-					_series2 = series_play("135bb01", 2560, 0, 34, 30, 0, 100, 0, 0, 0, 0);
-					_series3 = series_play("135bb01s", 2560, 0, -1, 30, 0, 100, 0, 0, 0, 0);
+					_series2 = series_play("135bb01", 0xa00, 0, 34, 30, 0, 100, 0, 0, 0, 0);
+					_series3 = series_play("135bb01s", 0xa00, 0, -1, 30, 0, 100, 0, 0, 0, 0);
 				}
 				break;
 
 			case 28:
-				_series2 = series_play("135bb01", 2560, 0, 34, 30, 0, 100, 0, 0, 0, 0);
-				_series3 = series_play("135bb01s", 2560, 0, -1, 30, 0, 100, 0, 0, 0, 0);
+				_series2 = series_play("135bb01", 0xa00, 0, 34, 30, 0, 100, 0, 0, 0, 0);
+				_series3 = series_play("135bb01s", 0xa00, 0, -1, 30, 0, 100, 0, 0, 0, 0);
 				break;
 
 			default:
@@ -819,11 +824,11 @@ void Room135::parser() {
 			_val10 = 30;
 			kernel_trigger_dispatch_now(33);
 		} else if (inv_player_has(_G(player).verb) && player_said_any("fork in the road", "main street")) {
-			_G(walker).wilbur_speech("135w002");
+			wilbur_speech("135w002");
 		} else if (lookFlag && player_said("baitbox")) {
-			_G(walker).wilbur_speech(_G(flags)[V038] ? "135w004" : "135w003");
+			wilbur_speech(_G(flags)[V038] ? "135w004" : "135w003");
 		} else if (lookFlag && player_said("wrecked truck")) {
-			_G(walker).wilbur_speech(_G(flags)[V038] ? "135w007" : "135w006");
+			wilbur_speech(_G(flags)[V038] ? "135w007" : "135w006");
 		} else if (player_said("take", "baitbox") || player_said("gear", "baitbox")) {
 			player_set_commands_allowed(false);
 			loadOdie();
@@ -876,14 +881,16 @@ void Room135::conv01() {
 					_val6 = 1;
 			}
 		} else if (who == 1) {
-			if (!(node == 2 && entry == 2) &&
-					!(node == 4 && node == 10) &&
-					!(node == 6 && entry == 0) &&
-					!(node == 2 && entry == 1) &&
-					!(node == 7 && node == 0)) {
+			if ((node == 2 && entry == 0) || (node == 4) || (node == 10) ||
+				(node == 6 && entry == 0) || (node == 2 && entry == 1) ||
+				(node == 7 && entry == 0)) {
+				// Do nothing
+			} else {
 				sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
 			}
 		}
+
+		conv_resume(conv_get_handle());
 		break;
 
 	default:
