@@ -617,7 +617,7 @@ void ScummEngine::checkExecVerbs() {
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
+		const byte code = (_game.version > 3) ? (_mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2) : 0;
 		if (_game.id == GID_SAMNMAX) {
 			// This has been simplified for SAMNMAX while DOTT still has the "normal" implementation
 			// (which makes sense, since it still has the "normal" verb interface). Anyway, we need this,
