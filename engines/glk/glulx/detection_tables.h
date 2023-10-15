@@ -884,8 +884,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// IFComp 2001
 	DT_ENTRY1("if01_bestof3", "010928", "53d50b3573afc12376ae5fbb342230d9", 930694),
 	DT_ENTRY1("if01_carma", "010928", "cc5077c525b44748443a0e39cdc079c6", 11205418),
-	DT_ENTRY1("if01_smtuc", "010928", "c6e58925e082f20542bd25a2395dd00d", 1439558),
-	DT_ENTRY1("if01_smtuc", "010928", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
+	DT_ENTRY1("if01_smtuc", "010928/blb", "c6e58925e082f20542bd25a2395dd00d", 1439558),
+	DT_ENTRY1("if01_smtuc", "010928/ulx", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
 	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v2", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
 	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v1", "07d590dc62f0be38f6f879763b6eb12c", 163072),
 	DT_ENTRY1("if01_sittm", "01???\?/NotWorking/v1", "0c3d40b0340df7ff459ff7751015183a", 408576),
