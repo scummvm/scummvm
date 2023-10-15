@@ -922,8 +922,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if08_amo", "080929", "5ab3b7c8b1446334f0703c61e4512cc4", 52505634),
 
 	// IFComp 2009
-	DT_ENTRY1("if09_rover", "091116", "88249e5938448be487267a4b609a45e7", 1741574),
 	DT_ENTRY1("if09_rover", "090930", "5a404fb92af606a86bdae9bbf91547c1", 1739014),
+	DT_ENTRY1("if09_rover", "091116", "88249e5938448be487267a4b609a45e7", 1741574),
 	DT_ENTRY1("if09_brokenlegs", "090930", "4ff634e4183763bc9a34a61fad3dfd23", 1048314),
 	DT_ENTRY1("if09_earlgrey", "090930", "73730db01a1bb32ffd6e2baa1877e11f", 266752),
 	DT_ENTRY1("if09_resonance", "090930", "d51f6c4e99b9d283e65d836caf2f1324", 912226),
@@ -943,8 +943,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if10_followingstar", "034107/v2", "fec0b3c288daa456c3feff5e10bced8a", 1172892),
 
 	// IFComp 2011
-	DT_ENTRY1("if11_tacofiction", "130422", "766be6495cb312d8270587c4d45d7e6a", 1928530),
 	DT_ENTRY1("if11_tacofiction", "111009", "c0338f36c652d48a77380c95b8eec508", 1944464),
+	DT_ENTRY1("if11_tacofiction", "130422", "766be6495cb312d8270587c4d45d7e6a", 1928530),
 	DT_ENTRY1("if11_six", "120805", "2705921eee09a568959584be1929b6b7", 8663464),
 	DT_ENTRY1("if11_six", "170723", "2d1fdfe386c08fdacd620b7497bcd88f", 8661160),
 	DT_ENTRY1("if11_six", "200914", "e62655c358677fd4b17e0f2ed1587a86", 8661788),
