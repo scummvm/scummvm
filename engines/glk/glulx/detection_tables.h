@@ -398,8 +398,8 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if10_grisjaune",     "Gris et Jaune" },                                                          //    9th Place
 	{ "if10_divismortis",   "Divis Mortis: an interactive survival game" },                             //   11th Place
 	{ "if10_oxygen",        "Oxygen" },                                                                 //   12th Place
-	{ "if10_inerebus",      "Under, In Erebus" },                                                       //   15th Plac
-	{ "if10_gigantomania",  "Gigantomania" },                                                           //   16th Place
+	{ "if10_gigantomania",  "Gigantomania" },                                                           //   15th Place
+	{ "if10_inerebus",      "Under, In Erebus" },                                                       //   16th Place
 	{ "if10_followingstar", "The Bible Retold: Following A Star" },                                     //   19th Place
 
 	// IFComp 2011
