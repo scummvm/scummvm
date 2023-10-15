@@ -1581,7 +1581,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 
 	mfm->loadFonts(fontFile);
 
-	Common::String fontFamily = (_vm->_game.id == GID_LOOM) ? "Loom" : "Indy";
+	const Common::String fontFamily = (_vm->_game.id == GID_LOOM) ? "Loom" : "Indy";
 	const Common::Array<Graphics::MacFontFamily *> &fontFamilies = mfm->getFontFamilies();
 	int fontId = 0;
 	for (uint i = 0; i < fontFamilies.size(); i++) {
