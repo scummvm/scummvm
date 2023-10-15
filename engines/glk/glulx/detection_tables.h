@@ -431,7 +431,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if16_sigilreader",   "Sigil Reader (Field)" },                                                   //   39th Place
 	{ "if16_ventilator",    "Ventilator" },                                                             //   42nd Place
 	{ "if16_theatrepeople", "Theatre People" },                                                         //   46th Place
-	{ "if16_steamsacr",     "Steam and Sacrilege" },                                                    //  47th Place
+	{ "if16_steamsacr",     "Steam and Sacrilege" },                                                    //   47th Place
 
 	// IFComp 2017
 	{ "if17_eatme",         "Eat Me" },                                                                 //    2nd Place
@@ -1182,7 +1182,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if12_kicker", "120929", "19d87058db3cf7503380f44929866ed5", 829156),
 
 	// IFComp 2013
-	DT_ENTRY1("if13_coloratura", "13???\?/v1", "d34ec90bdf152389d42e939a66bda0ce", 1386678)
+	DT_ENTRY1("if13_coloratura", "13???\?/v1", "d34ec90bdf152389d42e939a66bda0ce", 1386678),
 	DT_ENTRY1("if13_coloratura", "13???\?/v2", "db4b88094929abb89fcf19ab56204b05", 1403574),
 	DT_ENTRY1("if13_robinorchid", "130929", "a4574ded85c79e6e578b1a44fce302d2", 1163206),
 	DT_ENTRY1("if13_robinorchid", "131027", "c9eda35f6793f96e056b49b6b2ae41d1", 1184500),
@@ -1247,7 +1247,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if17_eatme", "170928", "31fb77978d94cd6884bf9dc85177b5a0", 2569302),
 	DT_ENTRY1("if17_eatme", "171013", "5e9c50e06ae1f954b9dd41abcfc0f09b", 2570070),
 	DT_ENTRY1("if17_absenceoflaw", "170102", "3243039ad9fa3f51afc86bda643c7d8d", 1294084),
-	DT_ENTRY1("if17_theabsenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
+	DT_ENTRY1("if17_absenceoflaw", "170102", "210e6dc1d5c0fc1f4340ae9ee5bdcf4e", 1332522),
 	DT_ENTRY1("if17_owlconsults", "170819", "91815dbf6dd2876e9b446c8ac640eab9", 286976),
 	DT_ENTRY1("if17_owlconsults", "171124", "d1d4bd725f5e64a80f97cfc6e687a8e8", 287488),
 	DT_ENTRY1("if17_beautyaustere", "170927", "3d599cee33d1f9123557b7b5a0d75769", 2073986),
@@ -1537,11 +1537,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ic16_somexceptions", "160730", "becbb4a01a863577dc2532016b5ff223", 311296),
 
 	// IntroComp 2017
-	DT_ENTRY1("ic17_duckmans", "170728", "0b4c1dd28c65965781503f0ad6ae45d8", 672962),
-	DT_ENTRY1("ic17_onnakabuki", "17????", "1a0de9433b3daf3cd0f97c782580bbb9", 816076),
-	DT_ENTRY1("ic17_prizon", "170705", "e7741df7fb02064b8549ec08115c654a", 561920),
 	DT_ENTRY1("ic17_sherlockind", "170731", "d4900a94a49582feaf144bed0ef3b80c", 816850),
+	DT_ENTRY1("ic17_onnakabuki", "17????", "1a0de9433b3daf3cd0f97c782580bbb9", 816076),
 	DT_ENTRY1("ic17_adameveprj", "170731", "3c3476810dc8f8379e2124913cf99bf7", 709584),
+	DT_ENTRY1("ic17_duckmans", "170728", "0b4c1dd28c65965781503f0ad6ae45d8", 672962),
+	DT_ENTRY1("ic17_prizon", "170705", "e7741df7fb02064b8549ec08115c654a", 561920),
 
 	// IntroComp 2018
 	DT_ENTRY1("ic18_introimplarc", "180721", "e4ff7ddde364943af01cc3789c753dea", 987828),
