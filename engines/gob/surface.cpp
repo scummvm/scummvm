@@ -850,6 +850,8 @@ bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
 		return loadBMP(stream);
 	case kImageTypeJPEG:
 		return loadJPEG(stream);
+	case kImageTypeIMG:
+		return loadIMG(stream);
 
 	default:
 		warning("Surface::loadImage(): Unknown image type: %d", (int)type);
@@ -930,6 +932,11 @@ bool Surface::loadBMP(Common::SeekableReadStream &stream) {
 
 bool Surface::loadJPEG(Common::SeekableReadStream &stream) {
 	warning("TODO: Surface::loadJPEG()");
+	return false;
+}
+
+bool Surface::loadIMG(Common::SeekableReadStream &stream) {
+	warning("TODO: Surface::loadIMG()");
 	return false;
 }
 

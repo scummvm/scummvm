@@ -38,6 +38,7 @@ enum ImageType {
 	kImageTypeTGA  =  0,
 	kImageTypeIFF,
 	kImageTypeBRC,
+	kImageTypeIMG,
 	kImageTypeBMP,
 	kImageTypeJPEG
 };
@@ -158,6 +159,7 @@ private:
 	bool loadTGA (Common::SeekableReadStream &stream);
 	bool loadIFF (Common::SeekableReadStream &stream);
 	bool loadBRC (Common::SeekableReadStream &stream);
+	bool loadIMG (Common::SeekableReadStream &stream);
 	bool loadBMP (Common::SeekableReadStream &stream);
 	bool loadJPEG(Common::SeekableReadStream &stream);
 };
