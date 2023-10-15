@@ -209,7 +209,7 @@ void Room604::init() {
 	kernel_trigger_dispatch_now(6014);
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 		break;
 

@@ -85,7 +85,7 @@ void Sections::game_daemon_code() {
 	if (_G(kernel).trigger == 32001) {
 		_G(game).room_id = -1;
 		_G(game).section_id = -1;
-		_G(game).previous_room = RESTORING_GAME;
+		_G(game).previous_room = KERNEL_RESTORING_GAME;
 	}
 }
 

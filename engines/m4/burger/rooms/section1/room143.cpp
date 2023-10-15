@@ -140,7 +140,7 @@ void Room143::init() {
 	_G(kernel).call_daemon_every_loop = true;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 142:
@@ -288,7 +288,7 @@ void Room143::daemon() {
 				_digiTrigger = 15;
 			}
 		} else {
-			wilbur_speech("143w506");
+			wilbur_speech("143w506", 16);
 		}
 		break;
 

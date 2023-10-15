@@ -287,7 +287,7 @@ void Room503::init() {
 		_array1[_val2] = _array2[_val2] = -1;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 		break;
 

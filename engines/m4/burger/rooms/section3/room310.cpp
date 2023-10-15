@@ -99,7 +99,7 @@ void Room310::init() {
 	}
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 		break;
 

@@ -81,7 +81,7 @@ void Room137::init() {
 	_flag3 = false;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V048])
 			_G(flags)[V048] = 1;
 		break;

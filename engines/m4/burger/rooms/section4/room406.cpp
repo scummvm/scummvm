@@ -433,7 +433,7 @@ void Room406::init() {
 	if (_G(flags)[V172] != 10026) {
 		loadSeries();
 
-		if (_G(game).previous_room == RESTORING_GAME) {
+		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			switch (_G(flags)[V172]) {
 			case 10023:
 				_val1 = 51;
@@ -463,7 +463,7 @@ void Room406::init() {
 	setHotspots1();
 	_val2 = 0;
 
-	if (_G(game).previous_room != RESTORING_GAME) {
+	if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 		if (player_been_here(406) || _G(flags)[V176]) {
 			if (_G(flags)[V172] != 10025 && _G(flags)[V172] != 10026) {
 				_val2 = 23;
@@ -503,7 +503,7 @@ void Room406::init() {
 	setupFish();
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		if (_G(flags)[V174] == 4003) {
 			ws_hide_walker();
 			_G(wilbur_should) = 7;

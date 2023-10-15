@@ -58,7 +58,7 @@ void Room404::init() {
 	}
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 406:

@@ -71,7 +71,7 @@ void Room133_136::init() {
 	_G(kernel).call_daemon_every_loop = true;
 
 	switch (_G(game).previous_room) {
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		break;
 
 	case 134:

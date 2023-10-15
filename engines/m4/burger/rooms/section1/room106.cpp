@@ -164,7 +164,7 @@ void Room106::init() {
 		digi_play("106_102", 1, 255, 4);
 		break;
 
-	case RESTORING_GAME:
+	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
 		break;
 

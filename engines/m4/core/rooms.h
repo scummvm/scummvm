@@ -28,10 +28,6 @@
 
 namespace M4 {
 
-enum {
-	RESTORING_GAME = -2
-};
-
 class Room {
 public:
 	Room() {}
