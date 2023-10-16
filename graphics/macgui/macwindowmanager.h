@@ -424,7 +424,7 @@ private:
 	void adjustDimensions(const Common::Rect &clip, const Common::Rect &dims, int &adjWidth, int &adjHeight);
 
 public:
-	TransparentSurface *_desktopBmp;
+	Surface *_desktopBmp;
 	ManagedSurface *_desktop;
 	PixelFormat _pixelformat;
 
