@@ -287,46 +287,49 @@ void wilbur_abduct(int trigger) {
 	digi_preload("999_004");
 
 	if (_G(my_walker) && _G(player).walker_in_this_scene && _G(player).walker_visible) {
-		player_update_info(_G(my_walker), &_G(player_info));
+		player_update_info();
 
 		switch (_G(player_info).facing) {
 		case 1:
 		case 2:
-			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
-			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
+			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 3:
 		case 4:
 		case 5:
-			series_play("999ab04", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
-			series_play("999ab04s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
+			series_play("999ab04", _G(player_info).depth, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("999ab04s", _G(player_info).depth + 1, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 7:
 		case 8:
 		case 9:
-			series_play("999ab08", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
-			series_play("999ab08s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
+			series_play("999ab08", _G(player_info).depth, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("999ab08s", _G(player_info).depth + 1, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10:
 		case 11:
-			series_play("999ab10", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
-			series_play("999ab10s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
+			series_play("999ab10", _G(player_info).depth, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("999ab10s", _G(player_info).depth + 1, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
+
 		default:
-			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
-			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0, _G(player_info).scale,
-				_G(player_info).x, _G(player_info).y);
+			series_play("999ab02", _G(player_info).depth, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
+			series_play("999ab02s", _G(player_info).depth + 1, 0, -1, 6, 0,
+				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		}
+
+		ws_hide_walker();
 	}
 
 	digi_play("999_004", 2, 255, -1);
@@ -335,6 +338,7 @@ void wilbur_abduct(int trigger) {
 	if (!_G(flags)[V154] || imath_rand_bool(5)) {
 		digi_preload("402w005z");
 		digi_play("402w005z", 1, 255, -1);
+		_G(flags)[V154] = 1;
 	}
 }
 
