@@ -24,6 +24,7 @@
 
 #include "sword1/sword1.h"
 #include "sword1/control.h"
+#include "sword1/logic.h"
 #include "sword1/obsolete.h"
 
 #include "common/savefile.h"
@@ -201,7 +202,7 @@ Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc, b
 }
 
 bool SwordEngine::canSaveGameStateCurrently() {
-	return (mouseIsActive() && !_control->isPanelShown());
+	return (mouseIsActive() && !_control->isPanelShown() && Logic::_scriptVars[SCREEN] != 91);
 }
 
 } // End of namespace Sword1

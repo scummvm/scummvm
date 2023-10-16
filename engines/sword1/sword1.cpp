@@ -227,7 +227,9 @@ void SwordEngine::checkKeys() {
 	switch (_keyPressed.keycode) {
 	case Common::KEYCODE_F5:
 	case Common::KEYCODE_ESCAPE:
-		if ((Logic::_scriptVars[MOUSE_STATUS] & 1) && (Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0)) {
+		if ((Logic::_scriptVars[MOUSE_STATUS] & 1) &&
+			(Logic::_scriptVars[GEORGE_HOLDING_PIECE] == 0) &&
+			(Logic::_scriptVars[SCREEN] != 91)) { // Disable the save screen on the phone envelope room!
 			_systemVars.saveGameFlag = SGF_SAVE;
 			_systemVars.snrStatus = SNR_MAINPANEL;
 		}
