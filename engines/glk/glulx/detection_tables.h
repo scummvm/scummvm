@@ -853,13 +853,31 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Spring Thing 2023 - Back Garden
 	{ "stc23_stygiandream", "Stygian Dreams" },                                                         //      Entrant
 
-
 	// French games
 	{ "ekphrasis",          "Ekphrasis, les Aventures de Gilbert Fontenelle" },
 	{ "lieuxcommunsglulx",  "Lieux communs" },
 	{ "sarvegneglulx",      "Sarvegne, une visite qui conduit loin" },
 	{ "scarabeekatana",     "Le Scarabee et le Katana" },
 	{ "templefeu",          "Le Temple de Feu" },
+
+	// French Comp 2007
+	{ "frc_souterraine",    "Souterraine" },                                                            //    4th Place
+	{ "frc_ilephare_glulx", "L'Ile du Phare Abandonné" },                                               //    5th Place
+
+	// French Comp 2008
+	{ "frc_survivre",       "Survivre" },                                                               //    3rd Place
+
+	// French Comp 2013
+	{ "frc_noirdencre",     "Noir d'Encre" },                                                           //    2nd Place
+
+	// French Comp 2015
+	{ "frc_sourire",        "Sourire de Bois" },                                                        //    2nd Place
+	{ "frc_comedie",        "Comédie" },                                                                //    3rd Place
+
+	// French Comp 2018
+	{ "frc_fauteservo",     "Faute de servo" },                                                         //    2nd Place
+	{ "frc_latempete",      "La Tempête" },                                                             //    4th Place
+
 
 	// German games
 	{ "dergarten",          "Der onirische Garten" },
@@ -1884,13 +1902,31 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	// Spring Thing 2023 - Back Garden
 	DT_ENTRY1("stc23_stygiandream", "230402", "1e4d4ee86084c116bb09732e6ab9d2fa", 1455946),
 
-
 	// French games
 	DT_ENTRYL1("ekphrasis", Common::FR_FRA, "050718", "009ca5994d9e8fe6cfb400a9da00b123", 64609308),
 	DT_ENTRYL0("lieuxcommunsglulx", Common::FR_FRA, "6e18273de25a0b882b0cf01770003146", 15659070),
 	DT_ENTRYL1("sarvegneglulx", Common::FR_FRA, "061101", "518ab27b773bb51f57c6526655f38e6f", 594306),
 	DT_ENTRYL1("scarabeekatana", Common::FR_FRA, "070906", "e2ca97ca5579b544765e744964c9624f", 651590),
 	DT_ENTRYL1("templefeu", Common::FR_FRA, "070731", "73c3a0486d41a41c454108298014fac0", 2576096),
+
+	// French Comp 2007
+	DT_ENTRYL1("frc_souterraine", Common::FR_FRA,"071227", "504942416635dd03d4d30ba88dd8f4e4", 2709508),
+	DT_ENTRYL1("frc_ilephare_glulx", Common::FR_FRA, "071220/blb", "3e25bff50b9e333474ecfb5d6a362656", 3395902),
+
+	// French Comp 2008
+	DT_ENTRYL1("frc_survivre", Common::FR_FRA, "081122", "2840c7831b55d88ca93ef40b83c8612b", 1006394),
+
+	// French Comp 2013
+	DT_ENTRYL1("frc_noirdencre", Common::FR_FRA, "140110", "bdaf2ed62da378fb178d95269b3a46e0", 3427824),
+
+	// French Comp 2015
+	DT_ENTRYL1("frc_sourire", Common::FR_FRA,"150201", "491aa8e98ac471c5e1b5713e135c5ecf", 783616),
+	DT_ENTRYL1("frc_comedie", Common::FR_FRA,"150201", "2f8089c76a46e1c6d74fcda950649680", 843520),
+
+	// French Comp 2018
+	DT_ENTRYL1("frc_fauteservo", Common::FR_FRA,"180107", "15caa46facfae8417c855c41e4dbfb45", 1101762),
+	DT_ENTRYL1("frc_latempete", Common::FR_FRA, "200813", "f983ef39032a8d932cf91e7fa25effbb", 1158808),
+
 
 	// German games
 	DT_ENTRYL1("dergarten", Common::DE_DEU, "180510", "b90eda22c098c5d70eb2a0cb5140dbe0", 2183442),
