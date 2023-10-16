@@ -239,7 +239,7 @@ private:
 	int32 _scroll = 0;
 	int32 _scrollCount = 0;
 
-	uint8 *_restoreBuf;
+	uint8 *_restoreBuf = nullptr;
 	uint32 _selectedSavegame = 0;
 	uint8 _numButtons = 0;
 	uint8 _selectedButton = 0;

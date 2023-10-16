@@ -82,7 +82,7 @@ private:
 	EventManager *_eventMan;
 	Menu *_menu;
 	uint32 _newScript; // <= ugly, but I can't avoid it.
-	uint8 _speechClickDelay;
+	uint8 _speechClickDelay = 0;
 	Common::RandomSource _rnd;
 	bool _psxFudgeRandom = false; // Used within fnIdle() and fnRandom() for the PSX version
 

@@ -79,6 +79,13 @@ Screen::Screen(OSystem *system, SwordEngine *vm, ResMan *pResMan, ObjectMan *pOb
 	_scrnSizeY = 0;
 	_gridSizeX = 0;
 	_gridSizeY = 0;
+
+	_paletteFadeInfo.fadeCount = 0;
+	_paletteFadeInfo.paletteCount = 0;
+	_paletteFadeInfo.paletteIndex = 0;
+	_paletteFadeInfo.paletteStatus = NO_FADE;
+	memset(_paletteFadeInfo.srcPalette, 0, sizeof(_paletteFadeInfo.srcPalette));
+	memset(_paletteFadeInfo.dstPalette, 0, sizeof(_paletteFadeInfo.dstPalette));
 }
 
 Screen::~Screen() {

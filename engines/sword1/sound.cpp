@@ -49,7 +49,8 @@ Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 	_mixer = mixer;
 	_resMan = pResMan;
 	_bigEndianSpeech = false;
-	_cowHeader = NULL;
+	_cowHeader = nullptr;
+	_cowMode = CowWave;
 	_endOfQueue = 0;
 	_currentCowFile = 0;
 
@@ -116,7 +117,7 @@ void Sound::checkSpeechFileEndianness() {
 	}
 
 	// Testing for endianness makes sense only if using the uncompressed files.
-	if (_cowHeader == NULL || (_cowMode != CowWave && _cowMode != CowDemo))
+	if (_cowHeader == nullptr || (_cowMode != CowWave && _cowMode != CowDemo))
 		return;
 
 	// I picked the sample to use randomly (I just made sure it is long enough so that there is
@@ -128,7 +129,7 @@ void Sound::checkSpeechFileEndianness() {
 	uint32 sampleSize = _cowHeader[locIndex + (localNo * 2)];
 	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
 	if (sampleSize) {
-		uint32 size;
+		uint32 size = 0;
 		bool leOk = false, beOk = false;
 		// Compute average of difference between two consecutive samples for both BE and LE
 
@@ -343,7 +344,7 @@ void Sound::newScreen(uint32 screen) {
 }
 
 void Sound::startSpeech(uint16 roomNo, uint16 localNo) {
-	if (_cowHeader == NULL) {
+	if (_cowHeader == nullptr) {
 		warning("Sound::startSpeech: COW file isn't open");
 		return;
 	}
@@ -674,7 +675,7 @@ void Sound::initCowSystem() {
 void Sound::closeCowSystem() {
 	_cowFile.close();
 	free(_cowHeader);
-	_cowHeader = NULL;
+	_cowHeader = nullptr;
 	_currentCowFile = 0;
 }
 
