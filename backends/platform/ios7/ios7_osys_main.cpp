@@ -90,7 +90,7 @@ public:
 OSystem_iOS7::OSystem_iOS7() :
 	_mixer(NULL), _queuedEventTime(0),
 	_screenOrientation(kScreenOrientationAuto),
-	_timeSuspended(0), _runningTasks(0) {
+	_runningTasks(0) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_currentTouchMode = kTouchModeTouchpad;
 
@@ -247,7 +247,6 @@ bool OSystem_iOS7::setGraphicsMode(int mode, uint flags) {
 
 void OSystem_iOS7::suspendLoop() {
 	bool done = false;
-	uint32 startTime = getMillis();
 
 	PauseToken pt;
 	if (g_engine)
@@ -269,8 +268,6 @@ void OSystem_iOS7::suspendLoop() {
 	}
 
 	startSoundsystem();
-
-	_timeSuspended += getMillis() - startTime;
 }
 
 void OSystem_iOS7::saveState() {
@@ -329,7 +326,7 @@ void OSystem_iOS7::clearState() {
 
 uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 	CFTimeInterval timeInSeconds = CACurrentMediaTime();
-	return (uint32) ((timeInSeconds - _startTime) * 1000.0) - _timeSuspended;
+	return (uint32) ((timeInSeconds - _startTime) * 1000.0);
 }
 
 void OSystem_iOS7::delayMillis(uint msecs) {
