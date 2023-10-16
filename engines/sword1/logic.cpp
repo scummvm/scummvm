@@ -95,6 +95,10 @@ void Logic::initialize() {
 	SwordEngine::_systemVars.speechFinished = true;
 }
 
+void Logic::setControlPanelObject(Control *control) {
+	_control = control;
+}
+
 void Logic::newScreen(uint32 screen) {
 	Object *compact = (Object *)_objMan->fetchObject(PLAYER);
 
@@ -984,21 +988,26 @@ int Logic::fnPlaySequence(Object *cpt, int32 id, int32 sequenceId, int32 d, int3
 	// meantime, we don't want any looping sound effects still playing.
 	_sound->clearAllFx();
 
-	MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _sound, _system);
-	if (player) {
-		_screen->clearScreen();
-		if (player->load(sequenceId))
-			player->play();
-		delete player;
+	if (SwordEngine::isPsx() && sequenceId == 19) {
+		_control->psxEndCredits();
+	} else {
+		MoviePlayer *player = makeMoviePlayer(sequenceId, _vm, _textMan, _resMan, _sound, _system);
+		if (player) {
+			_screen->clearScreen();
+			if (player->load(sequenceId))
+				player->play();
+			delete player;
 
-		// In some instances, when you start a video when the palette is still fading
-		// and the video is finished earlier, another palette fade(-out) is performed with the
-		// wrong palette. This happens when traveling to Spain or Ireland. It couldn't happen
-		// in the original, as it asked for the CD before loading the scene.
-		// Let's fix this by forcing a black fade palette on the next fade out. If a fade-in
-		// is then scheduled, we will clear the flag without doing anything different from the usual.
-		_screen->setNextFadeOutToBlack();
+			// In some instances, when you start a video when the palette is still fading
+			// and the video is finished earlier, another palette fade(-out) is performed with the
+			// wrong palette. This happens when traveling to Spain or Ireland. It couldn't happen
+			// in the original, as it asked for the CD before loading the scene.
+			// Let's fix this by forcing a black fade palette on the next fade out. If a fade-in
+			// is then scheduled, we will clear the flag without doing anything different from the usual.
+			_screen->setNextFadeOutToBlack();
+		}
 	}
+
 	return SCRIPT_CONT;
 }
 

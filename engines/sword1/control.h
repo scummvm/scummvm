@@ -105,6 +105,11 @@ class Logic;
 #define SP_OVERLAP   2
 #define TEXTBUTTONID 7
 
+#define PSX_CREDITS_SPACING (-3)
+#define PSX_CREDITS_MIDDLE  450
+#define PSX_CREDITS_OFFSET  150
+#define PSX_NUM_CREDITS     14
+
 struct Button {
 	int32 x1;
 	int32 y1;
@@ -126,6 +131,7 @@ public:
 	void checkForOldSaveGames();
 	bool isPanelShown();
 	const uint8 *getPauseString();
+	void psxEndCredits();
 
 	void setSaveDescription(int slot, const char *desc) {
 		Common::strcpy_s((char *)_fileDescriptions[slot], sizeof(_fileDescriptions[slot]), desc);
@@ -197,6 +203,12 @@ private:
 	bool loadCustomStrings(const char *filename);
 
 	int displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
+
+	// PSX Credits functions
+	int32 getCreditsFontHeight(uint8 *font);
+	int32 getCreditsStringLength(uint8 *str, uint8 *font);
+	void renderCreditsTextSprite(uint8 *data, uint8 *dst, int16 x, int16 y, int16 width, int16 height);
+	void createCreditsTextSprite(uint8 *data, int32 pitch, uint8 *str, uint8 *font);
 
 	Common::MemoryWriteStreamDynamic *_tempThumbnail;
 	static const uint8 _languageStrings[8 * 20][43];

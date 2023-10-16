@@ -47,6 +47,7 @@ class Menu;
 class Router;
 class Screen;
 class Mouse;
+class Control;
 
 class Logic;
 typedef int (Logic::*BSMcodeTable)(Object *, int32, int32, int32, int32, int32, int32, int32);
@@ -57,6 +58,7 @@ public:
 	Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
 	~Logic();
 	void initialize();
+	void setControlPanelObject(Control *control);
 	void newScreen(uint32 screen);
 	void engine();
 	void updateScreenParams();
@@ -81,6 +83,7 @@ private:
 	Text *_textMan;
 	EventManager *_eventMan;
 	Menu *_menu;
+	Control *_control;
 	uint32 _newScript; // <= ugly, but I can't avoid it.
 	uint8 _speechClickDelay = 0;
 	Common::RandomSource _rnd;

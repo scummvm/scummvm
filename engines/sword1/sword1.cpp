@@ -172,6 +172,7 @@ Common::Error SwordEngine::init() {
 	_objectMan->initialize();
 	_mouse->initialize();
 	_control = new Control(this, _saveFileMan, _resMan, _objectMan, _system, _mouse, _sound, _screen, _logic);
+	_logic->setControlPanelObject(_control);
 
 	return Common::kNoError;
 }
