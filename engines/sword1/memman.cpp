@@ -28,7 +28,7 @@ namespace Sword1 {
 
 MemMan::MemMan() {
 	_alloced = 0;
-	_memListFree = _memListFreeEnd = NULL;
+	_memListFree = _memListFreeEnd = nullptr;
 }
 
 MemMan::~MemMan() {
@@ -80,7 +80,7 @@ void MemMan::flush() {
 			break;
 		}
 		free(_memListFreeEnd->data);
-		_memListFreeEnd->data = NULL;
+		_memListFreeEnd->data = nullptr;
 		_memListFreeEnd->cond = MEM_FREED;
 		_alloced -= _memListFreeEnd->size;
 		removeFromFreeList(_memListFreeEnd);
@@ -97,7 +97,7 @@ void MemMan::checkMemoryUsage() {
 			break;
 		}
 		free(_memListFreeEnd->data);
-		_memListFreeEnd->data = NULL;
+		_memListFreeEnd->data = nullptr;
 		_memListFreeEnd->cond = MEM_FREED;
 		_alloced -= _memListFreeEnd->size;
 		removeFromFreeList(_memListFreeEnd);
@@ -109,7 +109,7 @@ void MemMan::addToFreeList(MemHandle *bsMem) {
 		warning("addToFreeList: mem block is already in freeList");
 		return;
 	}
-	bsMem->prev = NULL;
+	bsMem->prev = nullptr;
 	bsMem->next = _memListFree;
 	if (bsMem->next)
 		bsMem->next->prev = bsMem;
@@ -128,7 +128,7 @@ void MemMan::removeFromFreeList(MemHandle *bsMem) {
 		bsMem->next->prev = bsMem->prev;
 	if (bsMem->prev)
 		bsMem->prev->next = bsMem->next;
-	bsMem->next = bsMem->prev = NULL;
+	bsMem->next = bsMem->prev = nullptr;
 }
 
 void MemMan::initHandle(MemHandle *bsMem) {

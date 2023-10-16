@@ -39,7 +39,7 @@ Mouse::Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
-	_currentPtr = NULL;
+	_currentPtr = nullptr;
 }
 
 Mouse::~Mouse() {
@@ -157,7 +157,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		if (touchedId != (int)Logic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
 			Logic::_scriptVars[SPECIAL_ITEM] = touchedId;
 			if (_getOff) { // there was something else selected before, run its get-off script
-				_logic->runMouseScript(NULL, _getOff);
+				_logic->runMouseScript(nullptr, _getOff);
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
@@ -178,7 +178,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 					Logic::_scriptVars[GEORGE_WALKING] = 2;
 				}
 
-				_logic->runMouseScript(NULL, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
+				_logic->runMouseScript(nullptr, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
 			}
 
 			if (Logic::_scriptVars[MENU_LOOKING]) {
@@ -188,7 +188,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 					Logic::_scriptVars[GEORGE_WALKING] = 2;
 				}
 
-				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
+				_logic->cfnPresetScript(nullptr, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
 			}
 		}
 
@@ -208,11 +208,11 @@ uint16 Mouse::testEvent() {
 void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	if (_currentPtr) {
 		free(_currentPtr);
-		_currentPtr = NULL;
+		_currentPtr = nullptr;
 	}
 
 	if (ptrId) {
-		MousePtr *lugg = NULL;
+		MousePtr *lugg = nullptr;
 		MousePtr *ptr = (MousePtr *)_resMan->openFetchRes(ptrId);
 		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
 		uint16 ptrSizeX = _resMan->getLEUint16(ptr->sizeX);

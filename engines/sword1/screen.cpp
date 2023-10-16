@@ -49,12 +49,12 @@ Screen::Screen(OSystem *system, SwordEngine *vm, ResMan *pResMan, ObjectMan *pOb
 	_vm = vm;
 	_resMan = pResMan;
 	_objMan = pObjMan;
-	_screenBuf = _screenGrid = NULL;
+	_screenBuf = _screenGrid = nullptr;
 	_backLength = _foreLength = _sortLength = 0;
 	_currentScreen = 0xFFFF;
 	_updatePalette = false;
-	_psxCache.decodedBackground = NULL;
-	_psxCache.extPlxCache = NULL;
+	_psxCache.decodedBackground = nullptr;
+	_psxCache.extPlxCache = nullptr;
 	_oldScrollX = 0;
 	_oldScrollY = 0;
 
@@ -522,7 +522,7 @@ void Screen::newScreen(uint32 screen) {
 		_layerGrid[cnt] = (uint16 *)_resMan->openFetchRes(_roomDefTable[_currentScreen].grids[cnt]);
 		_layerGrid[cnt] += 14;
 	}
-	_parallax[0] = _parallax[1] = NULL;
+	_parallax[0] = _parallax[1] = nullptr;
 	if (_roomDefTable[_currentScreen].parallax[0])
 		_parallax[0] = (uint8 *)_resMan->openFetchRes(_roomDefTable[_currentScreen].parallax[0]);
 	if (_roomDefTable[_currentScreen].parallax[1])
@@ -674,8 +674,8 @@ void Screen::processImage(uint32 id) {
 		spriteY += (int16)_resMan->readUint16(&frameHead->offsetY);
 	}
 
-	uint8 *tonyBuf = NULL;
-	uint8 *hifBuf = NULL;
+	uint8 *tonyBuf = nullptr;
+	uint8 *hifBuf = nullptr;
 	if (SwordEngine::isPsx() && compact->o_type != TYPE_TEXT) { // PSX sprites are compressed with HIF
 		hifBuf = (uint8 *)malloc(_resMan->readUint16(&frameHead->width) * _resMan->readUint16(&frameHead->height) / 2);
 		memset(hifBuf, 0x00, (_resMan->readUint16(&frameHead->width) * _resMan->readUint16(&frameHead->height) / 2));
@@ -833,8 +833,8 @@ void Screen::renderParallax(uint8 *data) {
 	uint16 scrnScrlX, scrnScrlY;
 	uint16 scrnWidth, scrnHeight;
 	uint16 paraSizeX, paraSizeY;
-	ParallaxHeader *header = NULL;
-	uint32 *lineIndexes = NULL;
+	ParallaxHeader *header = nullptr;
+	uint32 *lineIndexes = nullptr;
 
 	if (SwordEngine::isPsx()) //Parallax headers are different in PSX version
 		fetchPsxParallaxSize(data, &paraSizeX, &paraSizeY);
@@ -1317,12 +1317,12 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 void Screen::flushPsxCache() {
 	if (_psxCache.decodedBackground) {
 		free(_psxCache.decodedBackground);
-		_psxCache.decodedBackground = NULL;
+		_psxCache.decodedBackground = nullptr;
 	}
 
 	if (_psxCache.extPlxCache) {
 		free(_psxCache.extPlxCache);
-		_psxCache.extPlxCache = NULL;
+		_psxCache.extPlxCache = nullptr;
 	}
 }
 

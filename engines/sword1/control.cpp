@@ -2957,7 +2957,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		displayMessage(0, "Can't read from file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		delete inf;
 		free(_restoreBuf);
-		_restoreBuf = NULL;
+		_restoreBuf = nullptr;
 		return false;
 	}
 	delete inf;
@@ -3011,7 +3011,7 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 		// Display a warning message and do nothing
 		warning("Unable to create file '%s'. (%s)", newFileName, _saveFileMan->popErrorDesc().c_str());
 		delete[] saveData;
-		saveData = NULL;
+		saveData = nullptr;
 		return false;
 	}
 
@@ -3042,7 +3042,7 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 
 	// Cleanup
 	delete[] saveData;
-	saveData = NULL;
+	saveData = nullptr;
 	return true;
 }
 

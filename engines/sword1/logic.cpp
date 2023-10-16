@@ -1761,16 +1761,16 @@ int Logic::fnBlack(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, in
 }
 
 void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3) {
-	Object *obj = NULL;
+	Object *obj = nullptr;
 	switch (fnId) {
 	case opcPlaySequence:
-		fnPlaySequence(NULL, 0, param1, 0, 0, 0, 0, 0);
+		fnPlaySequence(nullptr, 0, param1, 0, 0, 0, 0, 0);
 		break;
 	case opcAddObject:
-		fnAddObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+		fnAddObject(nullptr, 0, param1, 0, 0, 0, 0, 0);
 		break;
 	case opcRemoveObject:
-		fnRemoveObject(NULL, 0, param1, 0, 0, 0, 0, 0);
+		fnRemoveObject(nullptr, 0, param1, 0, 0, 0, 0, 0);
 		break;
 	case opcMegaSet:
 		obj = _objMan->fetchObject(param1);
@@ -1843,7 +1843,7 @@ void Logic::startPositions(uint32 pos) {
 		spainVisit2 = true;
 		pos -= 900;
 	}
-	if ((pos > 80) || (_startData[pos] == NULL))
+	if ((pos > 80) || (_startData[pos] == nullptr))
 		error("Starting in Section %d is not supported", pos);
 
 	Logic::_scriptVars[CHANGE_STANCE] = STAND;

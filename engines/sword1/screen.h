@@ -99,7 +99,7 @@ public:
 
 	bool showScrollFrame();
 	void updateScreen();
-	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = NULL, int8 fadeStatus = 0);
+	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = nullptr, int8 fadeStatus = 0);
 
 	void fnSetParallax(uint32 screen, uint32 resId);
 	void fnFlash(uint8 color);

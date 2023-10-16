@@ -44,7 +44,7 @@ void guiFatalError(char *msg) {
 #define MAX_PATH_LEN 260
 
 ResMan::ResMan(const char *fileName, bool isMacFile) {
-	_openCluStart = _openCluEnd = NULL;
+	_openCluStart = _openCluEnd = nullptr;
 	_openClus = 0;
 	_isBigEndian = isMacFile;
 	_memMan = new MemMan();
@@ -99,10 +99,10 @@ void ResMan::loadCluDescript(const char *fileName) {
 			Clu *cluster = _prj.clu + clusCnt;
 			file.read(cluster->label, MAX_LABEL_SIZE);
 
-			cluster->file = NULL;
+			cluster->file = nullptr;
 			cluster->noGrp = file.readUint32LE();
 			cluster->grp = new Grp[cluster->noGrp];
-			cluster->nextOpen = NULL;
+			cluster->nextOpen = nullptr;
 			memset(cluster->grp, 0, cluster->noGrp * sizeof(Grp));
 			cluster->refCount = 0;
 
@@ -147,7 +147,7 @@ void ResMan::freeCluDescript() {
 		Clu *cluster = _prj.clu + clusCnt;
 		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
 			Grp *group = cluster->grp + grpCnt;
-			if (group->resHandle != NULL) {
+			if (group->resHandle != nullptr) {
 				for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
 					_memMan->freeNow(group->resHandle + resCnt);
 
@@ -177,12 +177,12 @@ void ResMan::flush() {
 		if (cluster->file) {
 			cluster->file->close();
 			delete cluster->file;
-			cluster->file = NULL;
+			cluster->file = nullptr;
 			cluster->refCount = 0;
 		}
 	}
 	_openClus = 0;
-	_openCluStart = _openCluEnd = NULL;
+	_openCluStart = _openCluEnd = nullptr;
 	// the memory manager cached the blocks we asked it to free, so explicitly make it free them
 	_memMan->flush();
 }
@@ -192,7 +192,7 @@ void *ResMan::fetchRes(uint32 id) {
 
 	if (!memHandle) {
 		warning("fetchRes:: resource %d out of bounds", id);
-		return NULL;
+		return nullptr;
 	}
 	if (!memHandle->data)
 		error("fetchRes:: resource %d is not open", id);
@@ -245,7 +245,7 @@ void *ResMan::cptResOpen(uint32 id) {
 	openCptResourceLittleEndian(id);
 #endif
 	MemHandle *handle = resHandle(id);
-	return handle != NULL ? handle->data : NULL;
+	return handle != nullptr ? handle->data : nullptr;
 }
 
 void ResMan::resOpen(uint32 id) {  // load resource ID into memory
@@ -304,9 +304,9 @@ FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
 
 Common::File *ResMan::resFile(uint32 id) {
 	Clu *cluster = _prj.clu + ((id >> 24) - 1);
-	if (cluster->file == NULL) {
+	if (cluster->file == nullptr) {
 		_openClus++;
-		if (_openCluEnd == NULL) {
+		if (_openCluEnd == nullptr) {
 			_openCluStart = _openCluEnd = cluster;
 		} else {
 			_openCluEnd->nextOpen = cluster;
@@ -334,8 +334,8 @@ Common::File *ResMan::resFile(uint32 id) {
 			if (closeClu->file)
 				closeClu->file->close();
 			delete closeClu->file;
-			closeClu->file = NULL;
-			closeClu->nextOpen = NULL;
+			closeClu->file = nullptr;
+			closeClu->nextOpen = nullptr;
 
 			_openClus--;
 		}
@@ -353,7 +353,7 @@ MemHandle *ResMan::resHandle(uint32 id) {
 	// portuguese subtitles (cluster file 2, group 6) with a version that does not
 	// contain subtitles for this languages (i.e. has only 6 languages and not 7).
 	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
-		return NULL;
+		return nullptr;
 
 	return &(_prj.clu[cluster].grp[group].resHandle[id & 0xFFFF]);
 }
