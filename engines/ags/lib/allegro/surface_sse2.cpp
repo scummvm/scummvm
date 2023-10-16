@@ -518,7 +518,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	if (xCtrWidth % 4 != 0) {
+	if (!Scale && xCtrWidth % 4 != 0) {
 		--yCtrHeight;
 	}
 
@@ -688,7 +688,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	if (xCtrWidth % 8 != 0) {
+	if (!Scale && xCtrWidth % 8 != 0) {
 		--yCtrHeight;
 	}
 

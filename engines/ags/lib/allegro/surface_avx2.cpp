@@ -676,7 +676,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	if (xCtrWidth % 16 != 0) {
+	if (!Scale && xCtrWidth % 16 != 0) {
 		--yCtrHeight;
 	}
 
