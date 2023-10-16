@@ -838,33 +838,23 @@ void MacWindowManager::loadDesktop() {
 		return;
 
 	Image::BitmapDecoder bmpDecoder;
-	Graphics::Surface *source;
-	_desktopBmp = new Graphics::TransparentSurface();
-
 	bmpDecoder.loadStream(*file);
-	source = bmpDecoder.getSurface()->convertTo(_desktopBmp->getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-	_desktopBmp->copyFrom(*source);
+	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_desktopBmp = bmpDecoder.getSurface()->convertTo(requiredFormat_4byte, bmpDecoder.getPalette());
 
 	delete file;
-	source->free();
-	delete source;
 }
 
 void MacWindowManager::setDesktopColor(byte r, byte g, byte b) {
 	cleanupDesktopBmp();
-	_desktopBmp = new Graphics::TransparentSurface();
-	uint32 color = MS_RGB(r, g, b);
 
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	Graphics::ManagedSurface *source = new Graphics::ManagedSurface();
-	source->create(10, 10, requiredFormat_4byte);
-	Common::Rect area = source->getBounds();
-	source->fillRect(area, color);
+	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	uint32 color = requiredFormat_4byte.RGBToColor(r, g, b);
 
-	_desktopBmp->copyFrom(*source);
-	source->free();
-	delete source;
+	_desktopBmp = new Graphics::Surface();
+	_desktopBmp->create(10, 10, requiredFormat_4byte);
+	_desktopBmp->fillRect(Common::Rect(10, 10), color);
 }
 
 void MacWindowManager::drawDesktop() {
