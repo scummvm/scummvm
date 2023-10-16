@@ -1219,7 +1219,7 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		int textMargin = SwordEngine::_systemVars.isDemo ? 5 : 3; // distance kept from edges of screen
 
 		if (SwordEngine::isPsx())
-			textMargin = 33;
+			textMargin = 34;
 
 		int aboveHead = (SwordEngine::_systemVars.isDemo || SwordEngine::isPsx()) ? 10 : 20; // distance kept above talking sprite
 		uint16 textX, textY;
