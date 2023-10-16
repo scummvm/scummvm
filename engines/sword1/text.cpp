@@ -294,9 +294,13 @@ void Text::printDebugLine(uint8 *ascii, uint8 first, int x, int y) {
 
 		x += _resMan->getUint16(head->width);
 
-		// The very first executable version didn't use any overlap (verified on UK disasm)
-		if (SwordEngine::_systemVars.realLanguage != Common::EN_ANY)
-			x -= DEBUG_OVERLAP;
+		if (SwordEngine::isPsx()) {
+			x -= OVERLAP;
+		} else {
+			// The very first executable version didn't use any overlap (verified on UK disasm)
+			if (SwordEngine::_systemVars.realLanguage != Common::EN_ANY)
+				x -= DEBUG_OVERLAP;
+		}
 
 		ascii++;
 	} while (*ascii);

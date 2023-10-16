@@ -216,6 +216,7 @@ private:
 	static const uint8 _mediaHouseLanguageStrings[20][43];
 	uint8 _customStrings[20][43];
 	const uint8(*_lStrings)[43];
+	const uint8 _psxPauseStrings[3][7] = { "Paused", "Pause", "Pausa" };
 	SwordEngine *_vm;
 	Common::SaveFileManager *_saveFileMan;
 	ObjectMan *_objMan;

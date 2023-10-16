@@ -753,6 +753,11 @@ void SwordEngine::showDebugInfo() {
 	int32 pausedX = Logic::_scriptVars[SCROLL_OFFSET_X] + 400;
 	int32 pausedY = Logic::_scriptVars[SCROLL_OFFSET_Y] + 315;
 
+	if (SwordEngine::isPsx()) {
+		pausedX += 20;
+		pausedY -= 16;
+	}
+
 	uint8 buf[255];
 
 	if (_systemVars.gamePaused) {

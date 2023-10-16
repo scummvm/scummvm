@@ -3112,6 +3112,21 @@ bool Control::loadCustomStrings(const char *filename) {
 }
 
 const uint8 *Control::getPauseString() {
+	if (SwordEngine::isPsx()) {
+		switch (SwordEngine::_systemVars.language) {
+		case BS1_ENGLISH:
+			return _psxPauseStrings[0];
+		case BS1_GERMAN:
+		case BS1_FRENCH:
+			return _psxPauseStrings[1];
+		case BS1_ITALIAN:
+		case BS1_SPANISH:
+			return _psxPauseStrings[2];
+		default:
+			return _psxPauseStrings[0];
+		}
+	}
+
 	return _lStrings[STR_PAUSED];
 }
 
