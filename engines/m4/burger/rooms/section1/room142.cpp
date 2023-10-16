@@ -54,7 +54,7 @@ const WilburMatch Room142::MATCH[] = {
 	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
 	{ "GEAR", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
 	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
-	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &_G(flags)[V059], 0, &Vars::_wilbur_should, 1 },
+	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &_G(flags)[kIceBoxOpened], 0, &Vars::_wilbur_should, 1 },
 	{ "TAKE", "FANBELT", kCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
 	{ "GEAR", "BACK DOOR", 6, nullptr, 0, nullptr, 0 },
 	WILBUR_MATCH_END
@@ -173,7 +173,7 @@ void Room142::init() {
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
-		if (_G(flags)[V059]) {
+		if (_G(flags)[kIceBoxOpened]) {
 			ws_hide_walker();
 			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
@@ -239,7 +239,7 @@ void Room142::init() {
 		hotspot_set_active("TOUR BUS", true);
 	}
 
-	if (!_G(flags)[V059]) {
+	if (!_G(flags)[kIceBoxOpened]) {
 		_series5 = series_show("142icedr", 0xe00);
 		hotspot_set_active("ICE", false);
 	}
@@ -417,7 +417,7 @@ void Room142::daemon() {
 
 		case 2:
 			player_set_commands_allowed(true);
-			_G(flags)[V059] = 1;
+			_G(flags)[kIceBoxOpened] = 1;
 			hotspot_set_active("ICE", true);
 			_series6 = series_show("142wi04", 0xdff, 0, -1, -1, 3);
 			_series7 = series_show("142wi04s", 0xdfe, 0, -1, -1, 3);
@@ -437,7 +437,7 @@ void Room142::daemon() {
 			break;
 
 		case 4:
-			_G(flags)[V059] = 0;
+			_G(flags)[kIceBoxOpened] = 0;
 			hotspot_set_active("ICE", false);
 			_series5 = series_show("142icedr", 0xf00);
 			enable_player();
@@ -454,7 +454,7 @@ void Room142::daemon() {
 			break;
 
 		case 6:
-			_G(flags)[V059] = 0;
+			_G(flags)[kIceBoxOpened] = 0;
 			hotspot_set_active("ICE", false);
 			_series5 = series_show("142icedr", 0xe00);
 			enable_player();
@@ -470,7 +470,7 @@ void Room142::daemon() {
 			break;
 
 		case 8:
-			_G(flags)[V059] = 0;
+			_G(flags)[kIceBoxOpened] = 0;
 			hotspot_set_active("ICE", false);
 			_series5 = series_show("142icedr", 0xe00);
 			enable_player();
@@ -593,7 +593,7 @@ void Room142::daemon() {
 void Room142::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (_G(flags)[V059]) {
+	if (_G(flags)[kIceBoxOpened]) {
 		_G(player).ready_to_walk = false;
 		_G(player).need_to_walk = false;
 
@@ -613,6 +613,7 @@ void Room142::pre_parser() {
 				} else if (inv_player_has("BLOCK_OF_ICE")) {
 					wilbur_speech("142w009");
 				} else {
+					_G(wilbur_should) = 3;
 					kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 				}
 			} else if (player_said("GEAR")) {

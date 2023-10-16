@@ -164,7 +164,7 @@ void Flags::reset1() {
 
 	(*this)[V112] = 0;
 	(*this)[V058] = 0;
-	(*this)[V059] = 0;
+	(*this)[kIceBoxOpened] = 0;
 	(*this)[V245] = 10027;
 
 	inv_move_object("pantyhose", 142);
