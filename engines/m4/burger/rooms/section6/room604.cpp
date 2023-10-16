@@ -695,6 +695,8 @@ void Room604::pre_parser() {
 		}
 
 		return;
+	} else {
+		return;
 	}
 
 	_G(player).command_ready = false;
