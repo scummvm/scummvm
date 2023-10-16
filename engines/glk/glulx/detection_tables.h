@@ -68,11 +68,8 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "becauseyouremine",   "Because You're Mine" },
 	{ "beingthere",         "Being There" },
 	{ "blackknife",         "Black Knife London" },
-	{ "bluelacuna",         "Blue Lacuna" },
-	{ "bonehead",           "Bonehead, a Regrettable and Mostly True Tale" },
 	{ "briar",              "Briar, a Grimmly Perverted Fairy Tale" },
 	{ "btyt",               "Bigger Than You Think" },
-	{ "bullhockey2",        "Bullhockey 2 - The Return of the Leather Whip" },
 	{ "bureaucrocyglulx",   "Bureaucrocy, a boring tale about paperwork" },
 	{ "buygold",            "Buy Gold" },
 	{ "candlewindless",     "Candle flames in windless air" },
@@ -125,7 +122,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "enterpriseincidents", "The Enterprise Incidents: A Middle School Fantasy" },
 	{ "equivocalingredient", "The Equivocal Ingredient" },
 	{ "exigentseasons",     "The Exigent Seasons" },
-	{ "fairest",            "Fairest" },
 	{ "familiar",           "The Familiar" },
 	{ "farmquest",          "Farm Quest" },
 	{ "fatevanguard",       "Fate of the Vanguard" },
@@ -150,13 +146,11 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "haroldnight2003",    "Harold Night 2003" },
 	{ "herecomestreble",    "Here Comes Treble" },
 	{ "hismajesty",         "His Majesty's Royal Space Navy Service Handbook" },
-	{ "hlmarooned",         "Hinterlands: Marooned!" },
 	{ "hobbitglulx",        "The Hobbit - The True Story" },
 	{ "hobbitredux",        "The Hobbit - The True Story - Redux, Director's Cut" },
 	{ "houseofmemories",    "House of Memories" },
 	{ "houseofmystery",     "The House of Mystery" },
 	{ "hungerdaemon",       "Hunger Daemon" },
-	{ "illum",              "Illuminismo Iniziato, an Interactive Illumination" },
 	{ "illwind",            "Ill Wind, Yet Another Interactive Enigma" },
 	{ "immunesystem",       "Immune System" },
 	{ "improvorigins",      "Improv-Origins" },
@@ -239,7 +233,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "spirI7wrak",         "SpirI7wrak" },
 	{ "standingshoulders",  "Standing on the Shoulders of Giants" },
 	{ "starlight",          "Starlight" },
-	{ "stiffymakane",       "Stiffy Makane - Apocolocyntosis" },
 	{ "superluminalvagranttwin", "Superluminal Vagrant Twin" },
 	{ "tcom",               "The Colour of Magic" },
 	{ "terminatorchaser",   "Terminator Chaser" },
@@ -772,6 +765,94 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Toaster Competition
 	{ "toa_youretoast",     "(You’re) TOAST!" },
 
+	// Spring Thing 2008
+	{ "stc08_bluelacuna",   "Blue Lacuna" },                                                            //    3rd Place
+
+	// Spring Thing 2009
+	{ "stc09_flustereduck", "A Flustered Duck" },                                                       //    1st Place
+
+	// Spring Thing 2011
+	{ "stc11_lostislands",  "The Lost Islands of Alabaz" },                                             //    1st Place
+	{ "stc11_bonehead",     "Bonehead" },                                                               //    2nd Place
+	{ "stc11_wetlands",     "Wetlands" },                                                               //    3rd Place
+	{ "stc11_stiffymakane", "Mentula Macanus: Apocolocyntosis" },                                       //    4th Place
+	{ "stc11_promise",      "The Promise" },                                                            //    5th Place
+	{ "stc11_halloweve",    "Hallow Eve" },                                                             //    6th Place
+
+	// Spring Thing 2012
+	{ "stc12_eggnewbie",    "The Egg and the Newbie" },                                                 //    3rd Place
+
+	// Spring Thing 2013
+	{ "stc13_rollingorig",  "A Roiling Original" },                                                     //    2nd Place
+
+	// Spring Thing 2014
+	{ "stc14_bearcreek",    "Bear Creek" },                                                             //    5th Place
+	{ "stc14_bibliophile",  "The Bibliophile" },                                                        //      Entrant
+
+	// Spring Thing 2015 - Main Festival
+	{ "stc15_tobysnose",    "Toby’s Nose" },                                                            //       Winner
+
+	// Spring Thing 2016 - Back Garden
+	{ "stc16_deadmanshill", "Dead Man’s Hill" },                                                        //      Entrant
+	{ "stc16_foofoo",       "Foo Foo" },                                                                //      Entrant
+	{ "stc16_3cardtrick",   "Three-Card Trick" },                                                       //      Entrant
+
+	// Spring Thing 2017 - Main Festival
+	{ "stc17_bobbybonnie",  "Bobby and Bonnie" },                                                       //       Winner
+
+	// Spring Thing 2017 - Back Garden
+	{ "stc17_afotwoaae",    "A Fly on the Wall, or An Appositional Eye" },                              //      Entrant
+	{ "stc17_buckthepast",  "Buck the Past" },                                                          //      Entrant
+	{ "stc17_weightsoul",   "The Weight of a Soul" },                                                   //      Entrant
+
+	// Spring Thing 2018 - Main Festival
+	{ "stc18_illum",        "Illuminismo Iniziato" },                                                   //       Winner
+	{ "stc18_bunchkeys",    "A Bunch of Keys" },                                                        //      Entrant
+	{ "stc18_sherlockind",  "Sherlock Indomitable" },                                                   //      Entrant
+
+	// Spring Thing 2019 - Main Festival
+	{ "stc19_bullhockey2",  "Bullhockey 2 - The Return of the Leather Whip" },                          //      Entrant
+	{ "stc19_emptychamber", "The Empty Chamber" },                                                      //      Entrant
+	{ "stc19_foundermercy", "Founder’s Mercy" },                                                        //      Entrant
+
+	// Spring Thing 2020 - Main Festival
+	{ "stc20_gameneverend", "The Game That Never Ends" },                                               //      Entrant
+	{ "stc20_landlunch",    "The Land of Breakfast and Lunch" },                                        //      Entrant
+	{ "stc20_napierscache", "Napier’s Cache" },                                                         //      Entrant
+	{ "stc20_prongleman",   "The Prongleman Job" },                                                     //      Entrant
+
+	// Spring Thing 2020 - Back Garden
+	{ "stc20_77verbs",      "77 Verbs" },                                                               //      Entrant
+
+	// Spring Thing 2021 - Main Festival
+	{ "stc21_weightsoul",   "The Weight of a Soul" },                                                   // Best in Show
+	{ "stc21_baggage",      "Baggage" },                                                                //      Entrant
+	{ "stc21_meantucker",   "Mean Mother Trucker" },                                                    //      Entrant
+
+	// Spring Thing 2021 - Back Garden
+	{ "stc21_shorofcash",   "So I Was Short of Cash and Took on a Quest" },                             //      Entrant
+
+	// Spring Thing 2022  - Main Festival
+	{ "stc22_fairest",      "Fairest" },                                                                // Best in Show
+	{ "stc22_brightbball",  "The Bright Blue Ball" },                                                   //      Entrant
+	{ "stc22_digit",        "Digit" },                                                                  //      Entrant
+	{ "stc22_hlmarooned",   "Hinterlands: Marooned!" },                                                 //      Entrant
+	{ "stc22_leghorsegirl", "The Legend of Horse Girl" },                                               //      Entrant
+	{ "stc22_toursrtorus",  "Tours Roust Torus" },                                                      //      Entrant
+
+	// Spring Thing 2022 - Back Garden
+	{ "stc22_adrift",       "A D R I F T" },                                                            //      Entrant
+
+	// Spring Thing 2023  - Main Festival
+	{ "stc23_repeatending", "Repeat the Ending" },                                                      // Best in Show
+	{ "stc23_galaxyjones",  "Galaxy Jones" },                                                           //      Entrant
+	{ "stc23_nothingfurth", "Nothing Could Be Further From the Truth" },                                //      Entrant
+	{ "stc23_rdoorydoor",   "Red Door Yellow Door" },                                                   //      Entrant
+	{ "stc23_sacredshovel", "The Sacred Shovel of Athenia" },                                           //      Entrant
+
+	// Spring Thing 2023 - Back Garden
+	{ "stc23_stygiandream", "Stygian Dreams" },                                                         //      Entrant
+
 
 	// French games
 	{ "ekphrasis",          "Ekphrasis, les Aventures de Gilbert Fontenelle" },
@@ -866,13 +947,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY0("beingthere", "6a7f51d6c09acca156e3ceadce7edcb9", 6005766),
 	DT_ENTRY0("beyondglulx", "64a351bc6757a58080b801a14d878fc2", 1303364),
 	DT_ENTRY1("blackknife", "r1/210620", "077647a5bbec44dc32f663c2f793bf01", 691968),
-	DT_ENTRY1("bluelacuna", "Sneak Preview r1/080402", "11607d5bb97efa405162821cdbe66dbb", 2995596),
-	DT_ENTRY1("bluelacuna", "090304", "86c24b7fa879780038056d5e9a084a28", 5649260),
-	DT_ENTRY1("bluelacuna", "Full Version r4/100717", "8a2cd2e898f7375d39393b56ed64c5dd", 5673294),
-	DT_ENTRY1("bonehead", "120229", "34563c2af093239b5a908a64031eedac", 1804252),
 	DT_ENTRY1("briar", "130707", "fb40823ab510ca052c8736163332ea6d", 766272),
 	DT_ENTRY1("btyt", "130101", "97c6c3622d0d5a2f7a5e4f9ca521c13d", 412214),
-	DT_ENTRY0("bullhockey2", "e66411e7d47061243c7f47277727a2a8", 2892260),
 	DT_ENTRY1("bureaucrocyglulx", "140401", "530a9efefff27ce37d75e5dc8de8ad5d", 565522),
 	DT_ENTRY1("buygold", "160302", "7db70c24b2533800187a1884ca9eacf1", 897480),
 	DT_ENTRY1("candlewindless", "170828", "8decde9d474d5888d46684b8958c3a3d", 2281490),
@@ -936,7 +1012,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("equivocalingredient", "090509", "537279579b7c0dd2f5d8213a84209c7f", 1285236),
 	DT_ENTRY1("exigentseasons", "r1/210827", "959b453f617f5de41f5265226912236c", 1612108),
 	DT_ENTRY1("exigentseasons", "r2/220219", "7ee8c390fbddb20b72934a517e52a17e", 1616972),
-	DT_ENTRY1("fairest", "r1/220331", "b39cff09fc0dafe9fc2218224c76d405", 1766826),
 	DT_ENTRY1("familiar", "200702", "4e347fdc86a979e865fa790d94bbf30a", 2294330),
 	DT_ENTRY1("farmquest", "111028", "e49e02b73047fb16427c8882035a4be6", 415940),
 	DT_ENTRY1("fatevanguard", "r1/230209", "02ceac676b2aa8835e253e5a4b3ba346", 1104470),
@@ -964,7 +1039,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("haroldnight2003", "141007", "ac404358f94472c2e9c8bc07596995db", 949134),
 	DT_ENTRY1("herecomestreble", "160619", "573a53ce59a78c09bdfcf4f09b5cfd60", 666278),
 	DT_ENTRY1("hismajesty", "r1/230305", "615014064a099b45861feac57868d91a", 2701802),
-	DT_ENTRY1("hlmarooned", "r1/220611", "db487dd770829aa94447eadfe3f260c6", 860582),
 	DT_ENTRY1("hobbitglulx", "010911", "87212129f54fd80c1f31104eee222f2c", 183642),
 	DT_ENTRY1("hobbitredux", "r2/170425", "766d0af2efc767d387ba30eeb0db81d2", 622482),
 	DT_ENTRY1("hobbitredux", "r2/170425", "d0850bafc2ad394e37ee0a5d1d9c508e", 582656),
@@ -972,9 +1046,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("houseofmystery", "180608", "97e29a1a074ab5b46f5b7edf9914a957", 1252656),
 	DT_ENTRY1("houseofmystery", "180929", "4b34547babe73117e6575d559b71d1e5", 2486390),
 	DT_ENTRY1("hungerdaemon","141202", "9908fa1aad277bbc968587ea388d179f", 1496460),
-	DT_ENTRY1("illum", "180228", "f6babe0280f8334036751a2a943de1a9", 7233750),
-	DT_ENTRY1("illum", "181001", "c2b6e0ab32c4035a903926448332e3a9", 7241942),
-	DT_ENTRY1("illum", "190221", "5220fec6734d7320cbe989ae8f12c2e0", 7242454),
 	DT_ENTRY1("illwind", "130515", "3904b4080d16b1e5d56caa6df64d5887", 1057002),
 	DT_ENTRY1("immunesystem", "200330", "1080f88bd537e11557cc1efd43c5d4b4", 614052),
 	DT_ENTRY1("improvorigins", "r2/220810", "d734064ca6f678017db416820eee43dc", 1006110),
@@ -1069,7 +1140,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("spirI7wrak", "141218", "d7e58b86d1c6e06ecdc83ebbb7b20242", 2631214),
 	DT_ENTRY1("standingshoulders", "200925", "78cb38272e79595781f5e1be65171a75", 836802),
 	DT_ENTRY1("starlight", "151119", "ee4d2ed91518392981bf3cfd0fcf644d", 885152),
-	DT_ENTRY0("stiffymakane", "f978ca1dafb3e44f1b29bd26527f342c", 2486436),
 	DT_ENTRY1("superluminalvagranttwin", "160316", "7beb275a3e66b7b9840019caa3041723", 1162788),
 	DT_ENTRY1("tcom", "121103 (No Gfx)", "24feef55d07cc46bcc5479ce580cbe3e", 246272),
 	DT_ENTRY1("tcom", "121103", "67504ebc3d525f6a29fa800b6e12229d", 326226),
@@ -1713,6 +1783,106 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Toaster Competition
 	DT_ENTRY1("toa_youretoast", "000823", "26310e407b7e9a793c732f76ca472009", 142848),
+
+	// Spring Thing 2008
+	DT_ENTRY1("stc08_bluelacuna", "080402", "11607d5bb97efa405162821cdbe66dbb", 2995596),
+	DT_ENTRY1("stc08_bluelacuna", "090304", "86c24b7fa879780038056d5e9a084a28", 5649260),
+	DT_ENTRY1("stc08_bluelacuna", "100717", "8a2cd2e898f7375d39393b56ed64c5dd", 5673294),
+
+	// Spring Thing 2009
+	DT_ENTRY1("stc09_flustereduck", "090124", "3b317a684994410273446057595edf3c", 1075712),
+
+	// Spring Thing 2011
+	DT_ENTRY1("stc11_lostislands", "110403", "e9f66542a950e1d93343852ab523ce1b", 3659212),
+	DT_ENTRY1("stc11_bonehead", "110404", "e0f2d0e1421e5d082660a80c8922606d", 1789404),
+	DT_ENTRY1("stc11_bonehead", "120229", "34563c2af093239b5a908a64031eedac", 1804252),
+	DT_ENTRY1("stc11_wetlands", "110404", "7f8454117437a0c8520e771f3d03bd29", 1439694),
+	DT_ENTRY1("stc11_stiffymakane", "11????", "f978ca1dafb3e44f1b29bd26527f342c", 2486436),
+	DT_ENTRY1("stc11_promise", "11????", "1a5e93399abf732b9b05766f555b8547", 4318236),
+	DT_ENTRY1("stc11_halloweve", "110403", "7bd5ec4bf5bffe607af9a9ff517aa1e0", 940894),
+
+	// Spring Thing 2012
+	DT_ENTRY1("stc12_eggnewbie", "12????", "725f4d7c8083de053dd55e0569de9b0d", 979332),
+
+	// Spring Thing 2013
+	DT_ENTRY1("stc13_rollingorig", "130402", "73ddd7215f69a2385c6ed3f455ed8e53", 1572638),
+
+	// Spring Thing 2014
+	DT_ENTRY1("stc14_bearcreek", "14????", "a4abc8052666e8cbacb934e1448050fa", 1138076),
+	DT_ENTRY1("stc14_bibliophile", "140408", "c49f829c2e8c2f90391d7ff379c52845", 1511832),
+
+	// Spring Thing 2015n - Main Festival
+	DT_ENTRY1("stc15_tobysnose", "150503", "94630602381aca7adb029f6c409122cc", 1917434),
+
+	// Spring Thing 2016 - Back Garden
+	DT_ENTRY1("stc16_deadmanshill", "160401", "e09b0954d1ab075242e421397cca4945", 1076730),
+	DT_ENTRY1("stc16_foofoo", "16????", "5421140238ef2103a53ef155fe26c1a1", 1173976),
+	DT_ENTRY1("stc16_3cardtrick", "160507", "60f37f9215f1c1fe0fbc9d247e0ef55a", 1327966),
+
+	// Spring Thing 2017 - Main Festival
+	DT_ENTRY1("stc17_bobbybonnie", "170508", "7d4b62541c7a601c11ebf9cba173a376", 4585366),
+
+	// Spring Thing 2017 - Back Garden
+	DT_ENTRY1("stc17_afotwoaae", "170405", "b108df8afa6bad6717cdc248abd2a238", 4936626),
+	DT_ENTRY1("stc17_buckthepast", "170508", "6f150c9d8b64401d6686ab670c67ec26", 698826),
+	DT_ENTRY1("stc17_weightsoul", "170329", "017f58b757ac63c4129c445069c0d19b", 3987042),
+
+	// Spring Thing 2018 - Main Festival
+	DT_ENTRY1("stc18_illum", "180228", "f6babe0280f8334036751a2a943de1a9", 7233750),
+	DT_ENTRY1("stc18_illum", "181001", "c2b6e0ab32c4035a903926448332e3a9", 7241942),
+	DT_ENTRY1("stc18_illum", "190221", "5220fec6734d7320cbe989ae8f12c2e0", 7242454),
+	DT_ENTRY1("stc18_bunchkeys", "180412", "71f0e4edb9cc765d6265f7cd4ab49baa", 2739456),
+	DT_ENTRY1("stc18_sherlockind", "180324", "58e278728ddc16da04ff3d7cd4fadab9", 1216728),
+
+	// Spring Thing 2019 - Main Festival
+	DT_ENTRY1("stc19_bullhockey2", "19???\?/v1", "e66411e7d47061243c7f47277727a2a8", 2892260),
+	DT_ENTRY1("stc19_bullhockey2", "19???\?/v2", "51d4221a75bed1031e48cb69b5882a9d", 2985188),
+	DT_ENTRY1("stc19_emptychamber", "190511", "9df4fcfc59b039fada68bf683fdda2ef", 1460384),
+	DT_ENTRY1("stc19_foundermercy", "190330", "bf1fdee0be8d60ab88e01cb431aa62b6", 1780906),
+
+	// Spring Thing 2020 - Main Festival
+	DT_ENTRY1("stc20_gameneverend", "200426/gblorb", "6ac0dcbbcdd8635b925c3eadec00c0f0", 648526),
+	DT_ENTRY1("stc20_gameneverend", "200426/ulx", "a108f8b4a2fa948c87307d4c04175072", 623360),
+	DT_ENTRY1("stc20_landlunch", "200329", "5c33803710d13210137e167552b14a27", 1078414),
+	DT_ENTRY1("stc20_napierscache", "200328", "829e6251bdb83c34b84af4cf42e7f588", 1362882),
+	DT_ENTRY1("stc20_prongleman", "200326", "216d980e50525b000837e937dcfd23c1", 652288),
+
+	// Spring Thing 2020 - Back Garden
+	DT_ENTRY1("stc20_77verbs", "200328", "8af4034dea9ac13cd266d3daf2ce53cc", 1072018),
+
+	// Spring Thing 2021 - Main Festival
+	DT_ENTRY1("stc21_weightsoul", "210411", "8b185707d6f9d2717e2e174cf2b85bd4", 7355482),
+	DT_ENTRY1("stc21_baggage", "210420", "8a9ef5d1f024ad5da0511e9daa8c2718", 708860),
+	DT_ENTRY1("stc21_meantucker", "210319", "3347b37ec08d1d3a465904cd49c01302", 1041210),
+
+	// Spring Thing 2021 - Back Garden
+	DT_ENTRY1("stc21_shorofcash", "210328", "5e2b63af2799df4644413f8827eb4a4b", 721126),
+
+	// Spring Thing 2022 - Main Festival
+	DT_ENTRY1("stc22_fairest", "220331", "b39cff09fc0dafe9fc2218224c76d405", 1766826),
+	DT_ENTRY1("stc22_brightbball", "220330", "0a9655100af4c7d244e11221e8ee7d48", 754072),
+	DT_ENTRY1("stc22_digit", "220527", "2be254594d34dcaceb12d313af69ccf7", 828832),
+	DT_ENTRY1("stc22_hlmarooned", "220325", "1266ba591132fbfe62de6ef30294f48d", 860582),
+	DT_ENTRY1("stc22_hlmarooned", "220611", "db487dd770829aa94447eadfe3f260c6", 860582),
+	DT_ENTRY1("stc22_leghorsegirl", "220307", "f9935349855b7b4dba8cffbd38ecc69d", 2307200),
+	DT_ENTRY1("stc22_toursrtorus", "220524", "f4fc589f7d874eba028b3870d759815f", 2125196),
+
+	// Spring Thing 2022 - Back Garden
+	DT_ENTRY1("stc22_adrift", "229331", "7e1733b703de9d7fbf0de67e399e5c69", 2137226),
+
+	// Spring Thing 2023  - Main Festival
+	DT_ENTRY1("stc23_repeatending", "23???\?/v1", "827671713c35808fe11d29cf6595ed88", 8690112),
+	DT_ENTRY1("stc23_repeatending", "23???\?/v2", "8136f79f609e33f15fad2407368553c2", 8694330),
+	DT_ENTRY1("stc23_repeatending", "23???\?/v3", "e6d915734fd353de72860d64c2650575", 8694330),
+	DT_ENTRY1("stc23_repeatending", "23???\?/v4", "41012d54347a18aa662279faec0f6d47", 8699086),
+	DT_ENTRY1("stc23_galaxyjones", "230401", "f11053fe8974eb69e9bcbcd4d69781f8", 1727796),
+	DT_ENTRY1("stc23_nothingfurth", "230327", "9c438278b9b7c3f0fbbce65e3727a76a", 2834794),
+	DT_ENTRY1("stc23_rdoorydoor", "23???\?/v1", "c75410603b1acf9267d121c3f92eca75", 3028508),
+	DT_ENTRY1("stc23_rdoorydoor", "23???\?/v2", "9fb79c06c61dd4931ea6ebe79fcb296a", 3028508),
+	DT_ENTRY1("stc23_sacredshovel", "230327", "7d24886de35488c499e0afbe1f779884", 785670),
+
+	// Spring Thing 2023 - Back Garden
+	DT_ENTRY1("stc23_stygiandream", "230402", "1e4d4ee86084c116bb09732e6ab9d2fa", 1455946),
 
 
 	// French games
