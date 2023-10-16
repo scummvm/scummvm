@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-16 12:01+0000\n"
+"POT-Creation-Date: 2023-10-16 15:40+0000\n"
 "PO-Revision-Date: 2023-10-13 08:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -283,7 +283,7 @@ msgstr "Outro Armazenamento está ativo no momento. Deseja interrompê-lo?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3847
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Sim"
@@ -296,7 +296,7 @@ msgstr "Sim"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3847
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Não"
@@ -325,10 +325,9 @@ msgstr "O conteúdo do código JSON está incorreto."
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1164
-#: engines/scumm/scumm.cpp:1190 engines/scumm/scumm.cpp:1212
-#: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
-#: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1214
+#: engines/scumm/scumm.cpp:1567 engines/scumm/scumm.cpp:2042
+#: engines/scumm/scumm.cpp:2058 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5489,7 +5488,7 @@ msgstr "Restaurar"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Salvar ou carregar rapidamente não é suportado neste local"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2846
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2854
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5500,7 +5499,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2833
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2841
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5511,7 +5510,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2866
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2874
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8559,7 +8558,7 @@ msgid "Your Name:"
 msgstr "Seu Nome:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3853
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3861
 msgid "Host"
 msgstr "Hospedar"
 
@@ -8569,7 +8568,7 @@ msgid "Querying games..."
 msgstr "Consultando jogos..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3853
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3861
 msgid "Join"
 msgstr "Juntar-se"
 
@@ -9268,19 +9267,19 @@ msgstr "Voar para direita"
 msgid "Fly to lower right"
 msgstr "Voar para direita inferior"
 
-#: engines/scumm/input.cpp:1304
+#: engines/scumm/input.cpp:1309
 msgid "Snap scroll on"
 msgstr "Trava de rolagem ligada"
 
-#: engines/scumm/input.cpp:1306
+#: engines/scumm/input.cpp:1311
 msgid "Snap scroll off"
 msgstr "Trava de rolagem desligada"
 
-#: engines/scumm/input.cpp:1319
+#: engines/scumm/input.cpp:1324
 msgid "Music volume: "
 msgstr "Volume da música: "
 
-#: engines/scumm/input.cpp:1336
+#: engines/scumm/input.cpp:1341
 msgid "Subtitle speed: "
 msgstr "Vel. das legendas: "
 
@@ -9425,7 +9424,7 @@ msgstr "Trocar arma"
 msgid "Win the bike fight cheat"
 msgstr "Trapaça para vencer a briga de motos"
 
-#: engines/scumm/scumm.cpp:290
+#: engines/scumm/scumm.cpp:292
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -9438,25 +9437,16 @@ msgstr ""
 "A correção da proporção de aspecto pode ser obtida reduzindo a resolução "
 "para 320x200, na aba 'engine'."
 
-#: engines/scumm/scumm.cpp:1163
-msgid ""
-"Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
-"be disabled."
+#: engines/scumm/scumm.cpp:1169
+msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
-"Não foi possível encontrar o executável 'Indy' para Macintosh. Fontes de "
-"alta resolução\n"
-"serão desativadas."
 
-#: engines/scumm/scumm.cpp:1189
+#: engines/scumm/scumm.cpp:1193
 msgid ""
-"Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
-"versions of font and cursor will be disabled."
+"This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
-"Não foi possível encontrar o executável de 'Loom' para Macintosh. Música e "
-"versões\n"
-"de alta resolução da fonte e do cursor serão desativadas."
 
-#: engines/scumm/scumm.cpp:1211
+#: engines/scumm/scumm.cpp:1213
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9465,7 +9455,7 @@ msgstr ""
 "ler os\n"
 "instrumentos. A música será desabilitada."
 
-#: engines/scumm/scumm.cpp:1562
+#: engines/scumm/scumm.cpp:1564
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9477,7 +9467,7 @@ msgstr ""
 "desabilitado.\n"
 "Por favor, copie o jogo da mídia de origem sem a compactação."
 
-#: engines/scumm/scumm.cpp:2036
+#: engines/scumm/scumm.cpp:2040
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9487,7 +9477,7 @@ msgstr ""
 "LucasArts,\n"
 "mas %s está faltando. Utilizando AdLib ao invés."
 
-#: engines/scumm/scumm.cpp:2052
+#: engines/scumm/scumm.cpp:2056
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9497,7 +9487,7 @@ msgstr ""
 "recursos necessários para usar música MT-32. Será utilizado AdLib em seu "
 "lugar."
 
-#: engines/scumm/scumm.cpp:3742
+#: engines/scumm/scumm.cpp:3750
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9508,7 +9498,7 @@ msgstr ""
 "'Maniac' dentro do diretório do jogo Tentacle, e o jogo precisa ser "
 "adicionado ao ScummVM."
 
-#: engines/scumm/scumm.cpp:3853
+#: engines/scumm/scumm.cpp:3861
 msgid "Would you like to host or join a network play session?"
 msgstr "Gostaria de hospedar ou participar de uma sessão de jogo em rede?"
 
@@ -11059,6 +11049,24 @@ msgstr ""
 "do GNU. Você precisará de todas as fontes do pacote de fontes que você "
 "escolher, ex., LiberationMono, LiberationSans e LiberationSerif, ou "
 "FreeMono, FreeSans e FreeSerif respectivamente."
+
+#~ msgid ""
+#~ "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
+#~ "will\n"
+#~ "be disabled."
+#~ msgstr ""
+#~ "Não foi possível encontrar o executável 'Indy' para Macintosh. Fontes de "
+#~ "alta resolução\n"
+#~ "serão desativadas."
+
+#~ msgid ""
+#~ "Could not find the 'Loom' Macintosh executable. Music and high-"
+#~ "resolution\n"
+#~ "versions of font and cursor will be disabled."
+#~ msgstr ""
+#~ "Não foi possível encontrar o executável de 'Loom' para Macintosh. Música "
+#~ "e versões\n"
+#~ "de alta resolução da fonte e do cursor serão desativadas."
 
 #~ msgid ""
 #~ "## Keyboard shortcuts\n"

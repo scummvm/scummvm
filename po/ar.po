@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-16 12:01+0000\n"
+"POT-Creation-Date: 2023-10-16 15:40+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -288,7 +288,7 @@ msgstr "تخزين آخر يعمل الآن. هل تريد مقاطعته؟"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3847
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "نعم"
@@ -301,7 +301,7 @@ msgstr "نعم"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3847
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "لا"
@@ -331,10 +331,9 @@ msgstr ""
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1164
-#: engines/scumm/scumm.cpp:1190 engines/scumm/scumm.cpp:1212
-#: engines/scumm/scumm.cpp:1565 engines/scumm/scumm.cpp:2038
-#: engines/scumm/scumm.cpp:2054 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1214
+#: engines/scumm/scumm.cpp:1567 engines/scumm/scumm.cpp:2042
+#: engines/scumm/scumm.cpp:2058 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5266,7 +5265,7 @@ msgstr "استرجع"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "لا يتم دعم التحميل السريع أو حفظ اللعبة في هذا الموقع"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2846
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2854
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5277,7 +5276,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2833
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2841
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5288,7 +5287,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2866
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2874
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8302,7 +8301,7 @@ msgid "Your Name:"
 msgstr "الأسم:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3853
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3861
 msgid "Host"
 msgstr "يستضيف"
 
@@ -8312,7 +8311,7 @@ msgid "Querying games..."
 msgstr "جاري الاستعلام عن الألعاب ..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3853
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3861
 msgid "Join"
 msgstr "ينضم"
 
@@ -9010,19 +9009,19 @@ msgstr "انتقل إلى اليمين"
 msgid "Fly to lower right"
 msgstr "انتقل إلى أسفل اليمين"
 
-#: engines/scumm/input.cpp:1304
+#: engines/scumm/input.cpp:1309
 msgid "Snap scroll on"
 msgstr "التقط التمرير على"
 
-#: engines/scumm/input.cpp:1306
+#: engines/scumm/input.cpp:1311
 msgid "Snap scroll off"
 msgstr "التقط التمرير للخارج"
 
-#: engines/scumm/input.cpp:1319
+#: engines/scumm/input.cpp:1324
 msgid "Music volume: "
 msgstr "طبقة صوت الموسيقا: "
 
-#: engines/scumm/input.cpp:1336
+#: engines/scumm/input.cpp:1341
 msgid "Subtitle speed: "
 msgstr "سرعة الترجمة: "
 
@@ -9162,7 +9161,7 @@ msgstr "تبديل السلاح"
 msgid "Win the bike fight cheat"
 msgstr "كسب الغش في معركة الدراجة"
 
-#: engines/scumm/scumm.cpp:290
+#: engines/scumm/scumm.cpp:292
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -9175,23 +9174,16 @@ msgstr ""
 "يمكن تحقيق تصحيح نسبة العرض إلى الارتفاع عن طريق خفض الدقة إلى 200 ×300 ، "
 "تحت علامة تبويب \"المحرك\"."
 
-#: engines/scumm/scumm.cpp:1163
-msgid ""
-"Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
-"be disabled."
+#: engines/scumm/scumm.cpp:1169
+msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
-"تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية الدقة\n"
-"يتم تعطيل."
 
-#: engines/scumm/scumm.cpp:1189
+#: engines/scumm/scumm.cpp:1193
 msgid ""
-"Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
-"versions of font and cursor will be disabled."
+"This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
-"تعذر العثور على ملف Macintosh القابل للتنفيذ \"Loom\". موسيقى عالية الدقة\n"
-"سيتم تعطيل إصدارات الخط والمؤشر."
 
-#: engines/scumm/scumm.cpp:1211
+#: engines/scumm/scumm.cpp:1213
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9199,7 +9191,7 @@ msgstr ""
 "تعذر العثور على ملف Macintosh القابل للتنفيذ \"Monkey Island\" لقراءة ملف\n"
 "أدوات من. سيتم تعطيل الموسيقى."
 
-#: engines/scumm/scumm.cpp:1562
+#: engines/scumm/scumm.cpp:1564
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9209,7 +9201,7 @@ msgstr ""
 "لم يعد الضغط مدعومًا لهذه اللعبة ، وسيتم تعطيل الصوت.\n"
 "يرجى نسخ اللعبة من الوسائط الأصلية دون ضغط."
 
-#: engines/scumm/scumm.cpp:2036
+#: engines/scumm/scumm.cpp:2040
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9218,7 +9210,7 @@ msgstr ""
 "يتطلب دعم MIDI الأصلي ترقية Roland من LucasArts ،\n"
 "لكن%s مفقود. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:2052
+#: engines/scumm/scumm.cpp:2056
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9226,7 +9218,7 @@ msgstr ""
 "من المعروف أن هذه النسخة الخاصة من Monkey Island 1 تفتقد بعضًا منها\n"
 "الموارد المطلوبة ل MT-32. استخدام AdLib بدلاً من ذلك."
 
-#: engines/scumm/scumm.cpp:3742
+#: engines/scumm/scumm.cpp:3750
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9236,7 +9228,7 @@ msgstr ""
 "اللعبة الخاصة ب Maniac Mansion في دليل \"Maniac\" داخل دليل لعبة Tentacle ، "
 "ويجب إضافة اللعبة إلى ScummVM."
 
-#: engines/scumm/scumm.cpp:3853
+#: engines/scumm/scumm.cpp:3861
 msgid "Would you like to host or join a network play session?"
 msgstr "هل ترغب في استضافة أو الانضمام إلى جلسة لعب على الشبكة؟"
 
@@ -10782,6 +10774,24 @@ msgstr ""
 "أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
 "مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
 "و FreeSerif على التوالي."
+
+#~ msgid ""
+#~ "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
+#~ "will\n"
+#~ "be disabled."
+#~ msgstr ""
+#~ "تعذر العثور على \"Indy\" Macintosh القابل للتنفيذ. سوف الخطوط عالية "
+#~ "الدقة\n"
+#~ "يتم تعطيل."
+
+#~ msgid ""
+#~ "Could not find the 'Loom' Macintosh executable. Music and high-"
+#~ "resolution\n"
+#~ "versions of font and cursor will be disabled."
+#~ msgstr ""
+#~ "تعذر العثور على ملف Macintosh القابل للتنفيذ \"Loom\". موسيقى عالية "
+#~ "الدقة\n"
+#~ "سيتم تعطيل إصدارات الخط والمؤشر."
 
 #, fuzzy
 #~| msgid "Control"
