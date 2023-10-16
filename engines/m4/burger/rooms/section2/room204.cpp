@@ -67,8 +67,7 @@ void Room204::init() {
 void Room204::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		series_show("204as01", 0x100, 0, 2, 120, 0);
-		series_show("204as01s", 0x101, 0, 2, 120, 0);
+		Series::series_show("204as01", 0x100, 0, 2, 120, 0);
 		break;
 
 	case 2:
@@ -76,8 +75,7 @@ void Room204::daemon() {
 		break;
 
 	case 3:
-		series_show("204as01", 0x100, 0, 4, 60, 2);
-		series_show("204as01s", 0x101, 0, -1, 60, 2);
+		Series::series_show("204as01", 0x100, 0, 4, 60, 2);
 		break;
 
 	case 4:
@@ -85,8 +83,7 @@ void Room204::daemon() {
 		break;
 
 	case 5:
-		series_show("204as01", 0x100, 0, 6, 60, 14);
-		series_show("204as01s", 0x101, 0, -1, 60, 14);
+		Series::series_show("204as01", 0x100, 0, 6, 60, 14);
 		break;
 
 	case 6:
@@ -94,8 +91,7 @@ void Room204::daemon() {
 		break;
 
 	case 7:
-		series_show("204as01", 0x100, 0, 8, 15, 18);
-		series_show("204as01s", 0x101, 0, -1, 15, 18);
+		Series::series_show("204as01", 0x100, 0, 8, 15, 18);
 		break;
 
 	case 8:
