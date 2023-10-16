@@ -129,7 +129,11 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 	FilmLoopFrame newFrame;
 
 	while (stream.pos() < size) {
-		uint16 frameSize = stream.readUint16BE() - 2;
+		uint16 frameSize = stream.readUint16BE();
+		if (frameSize == 0) {
+			continue;
+		}
+		frameSize -= 2;
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "loadFilmLoopDataD2: Frame entry:");
 			stream.hexdump(frameSize);
@@ -236,7 +240,11 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 	FilmLoopFrame newFrame;
 
 	while (stream.pos() < size) {
-		uint16 frameSize = stream.readUint16BE() - 2;
+		uint16 frameSize = stream.readUint16BE();
+		if (frameSize == 0) {
+			continue;
+		}
+		frameSize -= 2;
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "loadFilmLoopDataD4: Frame entry:");
 			stream.hexdump(frameSize);
