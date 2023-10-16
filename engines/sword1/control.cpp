@@ -3362,6 +3362,7 @@ void Control::createCreditsTextSprite(uint8 *data, int32 pitch, uint8 *str, uint
 void Control::renderCreditsTextSprite(uint8 *data, uint8 *screenBuf, int16 x, int16 y, int16 width, int16 height) {
 	// Coordinates corrections from disasm
 	// (remember that the PSX framebuffer is bigger than our target 640x480 screen)
+	y = (y + 1) & 0xFFFE;
 	x -= 129;
 	y -= 72;
 

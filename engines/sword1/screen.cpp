@@ -1396,6 +1396,9 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 			gridBuf += _gridSizeX;
 		}
 	}
+
+	if (SwordEngine::isPsx())
+		*pSprY = (*pSprY + 1) & 0xFFFE;
 }
 
 void Screen::fnFlash(uint8 color) {
