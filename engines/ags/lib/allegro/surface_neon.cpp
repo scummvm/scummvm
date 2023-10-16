@@ -20,6 +20,10 @@
  */
 
 #include "ags/ags.h"
+
+// Without this ifdef the iOS backend breaks, please do not remove
+#ifdef SCUMMVM_NEON
+
 #include <arm_neon.h>
 #include "ags/globals.h"
 #include "ags/lib/allegro/color.h"
@@ -932,3 +936,5 @@ template void BITMAP::drawNEON<false>(DrawInnerArgs &);
 template void BITMAP::drawNEON<true>(DrawInnerArgs &);
 
 } // namespace AGS3
+
+#endif // SCUMMVM_NEON
