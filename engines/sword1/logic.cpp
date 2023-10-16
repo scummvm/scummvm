@@ -857,6 +857,16 @@ int Logic::fnMegaSet(Object *cpt, int32 id, int32 walk_data, int32 spr, int32 e,
 
 int Logic::fnAnim(Object *cpt, int32 id, int32 cdt, int32 spr, int32 e, int32 f, int32 z, int32 x) {
 	AnimSet *animTab;
+	// PATCH for an (almost) softlock in Marib: if we spam click the cat
+	// while it's on the table, we can accidentally activate the cat_ran_off
+	// script variable, because of a very short window of time in which the cat
+	// is jumping on the shelf and it's still clickable.
+	//
+	// This is part 1: we deactivate the cat hotspot as soon as the script
+	// run the "jump on the shelf" animation".
+	if (cdt == CAT3CDT && spr == CAT3) {
+		fnMouseOff(cpt, id, 0, 0, 0, 0, 0, 0);
+	}
 
 	if (cdt && (!spr)) {
 		animTab = (AnimSet *)((uint8 *)_resMan->openFetchRes(cdt) + sizeof(Header));
@@ -923,6 +933,17 @@ int Logic::fnFullAnim(Object *cpt, int32 id, int32 anim, int32 graphic, int32 e,
 }
 
 int Logic::fnFullSetFrame(Object *cpt, int32 id, int32 cdt, int32 spr, int32 frameNo, int32 f, int32 z, int32 x) {
+	// PATCH for an (almost) softlock in Marib: if we spam click the cat
+	// while it's on the table, we can accidentally activate the cat_ran_off
+	// script variable, because of a very short window of time in which the cat
+	// is jumping on the shelf and it's still clickable.
+	//
+	// This is part 2: we reactivate the cat hotspot as soon as the
+	// scripts call for the beginning the idling cycle.
+	if (cdt == CAT4CDT && spr == CAT4 && frameNo == 0) {
+		fnMouseOn(cpt, id, 0, 0, 0, 0, 0, 0);
+	}
+
 	uint8 *data = (uint8 *)_resMan->openFetchRes(cdt) + sizeof(Header);
 
 	if (frameNo == LAST_FRAME)
