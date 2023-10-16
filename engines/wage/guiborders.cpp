@@ -53,6 +53,8 @@ namespace Wage {
 // to print out similar pictures, use
 //   bmpDecoder.getSurface()->debugPrint(0, 0, 0, 0, 0, 1);
 // in MacWindowBorder::loadBorder()
+//
+// TODO: Store these as XPM files?
 
 static const char *wage_border_inact_title[] = {
 "......................................  ..  ..  ......................................",
@@ -230,6 +232,12 @@ static const char *wage_border_act[] = {
 "..                                    ..                                    ..",
 "..................................          .................................."};
 
+static const byte wage_border_palette[] = {
+	0,   0,   0,
+	255, 255, 255,
+	255, 0,   255
+};
+
 void Gui::loadBorders() {
 	_consoleWindow->enableScrollbar(true);
 	loadBorder(_sceneWindow, wage_border_inact_title, ARRAYSIZE(wage_border_inact_title), Graphics::kWindowBorderTitle, 22);
@@ -241,25 +249,26 @@ void Gui::loadBorders() {
 void Gui::loadBorder(Graphics::MacWindow *target, const char *border[], uint height, uint32 flags, int titlePos) {
 	uint width = strlen(border[0]) / 2;
 
-	Graphics::Surface source;
-
-	source.create(width, height, Graphics::TransparentSurface::getSupportedPixelFormat());
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	surface->setPalette(wage_border_palette, 0, 3);
+	surface->setTransparentColor(2);
 
 	for (uint y = 0; y < height; y++) {
-		uint32 *dst = (uint32 *)source.getBasePtr(0, y);
+		byte *dst = (byte *)surface->getBasePtr(0, y);
 
 		for (uint x = 0; x < width; x++) {
 			switch(border[y][x * 2]) {
 			case ' ':
-				*dst = MS_RGB(0, 0, 0);
+				*dst = 0;
 				break;
 
 			case '#':
-				*dst = MS_RGB(0xff, 0xff, 0xff);
+				*dst = 1;
 				break;
 
 			case '.':
-				*dst = MS_RGB(0xff, 0, 0xff);
+				*dst = 2;
 				break;
 
 			default:
@@ -269,10 +278,6 @@ void Gui::loadBorder(Graphics::MacWindow *target, const char *border[], uint hei
 			dst++;
 		}
 	}
-
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface(source, true);
-
-	source.free();
 
 	Graphics::BorderOffsets offsets;
 	offsets.left = 16;

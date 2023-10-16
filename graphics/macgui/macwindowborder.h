@@ -26,7 +26,6 @@
 #include "common/list.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/primitives.h"
 
 #include "image/bmp.h"
@@ -92,7 +91,7 @@ public:
 	 * @param The border type indicated by flag
 	 * @param The title position of bmp image
 	 */
-	void addBorder(TransparentSurface *source, uint32 flags, int titlePos = 0);
+	void addBorder(ManagedSurface *source, uint32 flags, int titlePos = 0);
 
 	/**
 	 * Accessor function for the custom offsets.
@@ -154,8 +153,8 @@ public:
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
 	void loadInternalBorder(uint32 flags);
 
-	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets);
+	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets);
 private:
 	int _scrollPos, _scrollSize;
 	Common::String _title;

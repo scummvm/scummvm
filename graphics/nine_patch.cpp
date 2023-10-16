@@ -63,7 +63,8 @@ NinePatchSide::~NinePatchSide() {
 }
 
 
-bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos, int *titleIndex) {
+bool NinePatchSide::init(Graphics::ManagedSurface *bmp, bool vertical, uint32 black, uint32 white, int titlePos, int *titleIndex) {
+	const uint32 key = bmp->getTransparentColor();
 	const uint len = vertical ? bmp->h : bmp->w;
 	uint i;
 	int s, t, z;
@@ -74,15 +75,13 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int t
 
 	for (i = 1, s = -1, t = 0, z = -1; i < len; ++i) {
 		int zz;
-		uint8 r, g, b, a;
-		uint32 *color = vertical ? (uint32 *)bmp->getBasePtr(0, i) : (uint32 *)bmp->getBasePtr(i, 0);
-		bmp->format.colorToARGB(*color, a, r, g, b);
+		uint32 color = vertical ? bmp->getPixel(0, i) : bmp->getPixel(i, 0);
 
 		if (i == len - 1) {
 			zz = -1;
-		} else if (r == 0 && g == 0 && b == 0 && a == 255) {
+		} else if (color == black) {
 			zz = 0;
-		} else if (a == 0 || r + g + b + a == 255 * 4) {
+		} else if (color == key || color == white) {
 			zz = 1;
 		} else {
 			warning("NinePatchSide::init(): Bad pixel at %d,%d", (vertical ? 0 : i), (vertical ? i : 0));
@@ -170,9 +169,8 @@ int NinePatchBitmap::getTitleOffset() {
 	return _h._m[_titleIndex]->dest_offset;
 }
 
-NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos) {
+NinePatchBitmap::NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap, int titlePos) {
 	int i;
-	uint8 r, g, b, a;
 
 	_bmp = bmp;
 	_destroy_bmp = owns_bitmap;
@@ -186,13 +184,43 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	_titleWidth = 0;
 	_titlePos = titlePos;
 
+	const uint32 key = bmp->getTransparentColor();
+	uint32 black, white;
+
+	if (bmp->format.isCLUT8()) {
+		byte palette[256 * 3];
+		bmp->grabPalette(palette, 0, 256);
+
+		black = -1;
+		white = -1;
+
+		for (int j = 0; j < 256; j++) {
+			byte r = palette[(j * 3) + 0];
+			byte g = palette[(j * 3) + 1];
+			byte b = palette[(j * 3) + 2];
+
+			if (black == uint32(-1) && r == 0 && g == 0 && b == 0)
+				black = j;
+			else if (white == uint32(-1) && r == 255 && g == 255 && b == 255)
+				white = j;
+		}
+
+		if (black == uint32(-1) || white == uint32(-1))
+			goto bad_bitmap;
+	} else {
+		black = bmp->format.RGBToColor(0, 0, 0);
+		white = bmp->format.RGBToColor(255, 255, 255);
+	}
+
 	if (_width <= 0 || _height <= 0)
+		goto bad_bitmap;
+
+	if (!bmp->hasTransparentColor())
 		goto bad_bitmap;
 
 	/* make sure all four corners are transparent */
 #define _check_pixel(x, y) \
-	bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(x, y), a, r, g, b); \
-	if (a != 0 && r + g + b + a != 4) goto bad_bitmap;
+	if (bmp->getPixel(x, y) != key) goto bad_bitmap;
 
 	_check_pixel(0, 0);
 	_check_pixel(bmp->w - 1, 0);
@@ -204,14 +232,14 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 
 	i = 1;
 	while (i < bmp->w) {
-		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(i, bmp->h - 1), a, r, g, b);
+		uint32 color = bmp->getPixel(i, bmp->h - 1);
 
-		if (r + g + b == 0 && a == 255) {
+		if (color == black) {
 			if (_padding.left == -1)
 				_padding.left = i - 1;
 			else if (_padding.right != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b == 0) {
+		} else if (color == key) {
 			if (_padding.left != -1 && _padding.right == -1)
 				_padding.right = bmp->w - i - 1;
 		}
@@ -220,21 +248,21 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 
 	i = 1;
 	while (i < bmp->h) {
-		bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(bmp->w - 1, i), a, r, g, b);
+		uint32 color = bmp->getPixel(bmp->w - 1, i);
 
-		if (r + g + b == 0 && a == 255) {
+		if (color == black) {
 			if (_padding.top == -1)
 				_padding.top = i - 1;
 			else if (_padding.bottom != -1)
 				goto bad_bitmap;
-		} else if (a == 0 || r + g + b == 0) {
+		} else if (color == key) {
 			if (_padding.top != -1 && _padding.bottom == -1)
 				_padding.bottom = bmp->h - i - 1;
 		}
 		++i;
 	}
 
-	if (!_h.init(bmp, false, titlePos, &_titleIndex) || !_v.init(bmp, true)) {
+	if (!_h.init(bmp, false, black, white, titlePos, &_titleIndex) || !_v.init(bmp, true, black, white)) {
 bad_bitmap:
 		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
 
@@ -249,20 +277,13 @@ void NinePatchBitmap::modifyTitleWidth(int titleWidth) {
 	_h.calcOffsets(_cached_dw, _titleIndex, _titleWidth);
 }
 
-void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors, MacWindowManager *wm, uint32 transColor) {
+void NinePatchBitmap::blit(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh, MacWindowManager *wm) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
 
 	if (dw < _h._fix + _titleWidth)
 		dw = _h._fix + _titleWidth;
-	/* if the bitmap is the same size as the origin, then draw it as-is */
-	if (dw == _width && dh == _height) {
-		Common::Rect r(1, 1, dw, dh);
-
-		_bmp->blit(target, dx, dy, Graphics::FLIP_NONE, &r);
-		return;
-	}
 
 	/* only recalculate the offsets if they have changed since the last draw */
 	if (_cached_dw != dw || _cached_dh != dh) {
@@ -275,35 +296,38 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 
 	/* Handle CLUT8 */
 	if (target.format.bytesPerPixel == 1) {
-		if (!palette && !wm)
+		if (!wm)
 			error("NinePatchBitmap::blit(): Trying to blit into a surface with 8bpp, you need a palette.");
 
-		Surface *srf = new Surface();
+		uint32 transColor = _bmp->getTransparentColor();
+		ManagedSurface *srf = new ManagedSurface();
 		srf->create(target.w, target.h, _bmp->format);
+		srf->fillRect(Common::Rect(srf->w, srf->h), transColor);
 
 		drawRegions(*srf, dx, dy, dw, dh);
 
-		//TODO: This can be further optimized by keeping the data between draws,
-		// and using a unique identifier for each palette, so that it only gets
-		// recalculated when the palette changes.
-		_cached_colors.clear();
+		if (srf->format.isCLUT8()) {
+			uint8 palette[256 * 3];
+			_bmp->grabPalette(palette, 0, 256);
 
-		if (palette) {
 			for (int i = 0; i < srf->w; ++i) {
 				for (int j = 0; j < srf->h; ++j) {
-					uint32 color = *(uint32*)srf->getBasePtr(i, j);
+					byte color = *(byte*)srf->getBasePtr(i, j);
 					if (color != transColor) {
-						*((byte *)target.getBasePtr(i, j)) = closestGrayscale(color, palette, numColors);
+						byte r = palette[(color * 3) + 0];
+						byte g = palette[(color * 3) + 1];
+						byte b = palette[(color * 3) + 2];
+						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
 					}
 				}
 			}
 		} else {
 			for (int i = 0; i < srf->w; ++i) {
 				for (int j = 0; j < srf->h; ++j) {
-					uint32 color = *(uint32*)srf->getBasePtr(i, j);
-					byte a, r, g, b;
-					_bmp->format.colorToARGB(color, a, r, g, b);
-					if (a > 0 && color != transColor) {
+					uint32 color = srf->getPixel(i, j);
+					if (color != transColor) {
+						byte a, r, g, b;
+						srf->format.colorToARGB(color, a, r, g, b);
 						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
 					}
 				}
@@ -313,6 +337,14 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 		srf->free();
 		delete srf;
 
+		return;
+	}
+
+	/* if the bitmap is the same size as the origin, then draw it as-is */
+	if (dw == _width && dh == _height) {
+		Common::Rect r(1, 1, dw, dh);
+
+		target.blitFrom(*_bmp, r, Common::Point(dx, dy));
 		return;
 	}
 
@@ -327,99 +359,20 @@ NinePatchBitmap::~NinePatchBitmap() {
 	}
 }
 
-void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh) {
+void NinePatchBitmap::drawRegions(Graphics::ManagedSurface &target, int dx, int dy, int dw, int dh) {
 	/* draw each region */
 	for (uint i = 0; i < _v._m.size(); ++i) {
 		for (uint j = 0; j < _h._m.size(); ++j) {
-			Common::Rect r(_h._m[j]->offset, _v._m[i]->offset,
-						_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
+			Common::Rect srcRect(_h._m[j]->offset, _v._m[i]->offset,
+						_h._m[j]->offset + _h._m[j]->length,
+						 _v._m[i]->offset + _v._m[i]->length);
+			Common::Rect dstRect(dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
+						dx + _h._m[j]->dest_offset + _h._m[j]->dest_length,
+						dy + _v._m[i]->dest_offset + _v._m[i]->dest_length);
 
-			_bmp->blit(target, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-					Graphics::FLIP_NONE, &r, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
-					_h._m[j]->dest_length, _v._m[i]->dest_length);
+			target.blitFrom(*_bmp, srcRect, dstRect);
 		}
 	}
-}
-
-void NinePatchBitmap::blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh) {
-	/* don't draw bitmaps that are smaller than the fixed area */
-	if (dw < _h._fix || dh < _v._fix)
-		return;
-
-	/* if the bitmap is the same size as the origin, then draw it as-is */
-	if (dw == _width && dh == _height) {
-		Common::Rect r(1, 1, dw, dh);
-
-		_bmp->blitClip(target, clip, dx, dy, Graphics::FLIP_NONE, &r);
-		return;
-	}
-
-	/* only recalculate the offsets if they have changed since the last draw */
-	if (_cached_dw != dw || _cached_dh != dh) {
-		_h.calcOffsets(dw);
-		_v.calcOffsets(dh);
-
-		_cached_dw = dw;
-		_cached_dh = dh;
-	}
-
-	/* draw each region */
-	for (uint i = 0; i < _v._m.size(); ++i) {
-		for (uint j = 0; j < _h._m.size(); ++j) {
-			Common::Rect r(_h._m[j]->offset, _v._m[i]->offset,
-				_h._m[j]->offset + _h._m[j]->length, _v._m[i]->offset + _v._m[i]->length);
-
-			_bmp->blitClip(target, clip, dx + _h._m[j]->dest_offset, dy + _v._m[i]->dest_offset,
-				Graphics::FLIP_NONE, &r, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255),
-				_h._m[j]->dest_length, _v._m[i]->dest_length);
-		}
-	}
-}
-
-byte NinePatchBitmap::getColorIndex(uint32 target, byte* palette) {
-	byte *pal = palette;
-	uint i = 0;
-	uint32 color = MS_RGB(pal[0], pal[1], pal[2]);
-	while (color != target) {
-		i += 3;
-		color = MS_RGB(pal[i], pal[i + 1], pal[i + 2]);
-	}
-	return (i / 3);
-}
-
-uint32 NinePatchBitmap::grayscale(uint32 color) {
-	byte r, g, b;
-	_bmp->format.colorToRGB(color, r, g, b);
-	return grayscale(r, g, b);
-}
-
-uint32 NinePatchBitmap::grayscale(byte r, byte g, byte b) {
-	return (0.29 * r + 0.58 * g + 0.11 * b) / 3;
-}
-
-static inline uint32 dist(uint32 a, uint32 b) {
-	if (a > b)
-		return (a - b);
-
-	return b - a;
-}
-
-byte NinePatchBitmap::closestGrayscale(uint32 color, byte* palette, int paletteLength) {
-	if (!_cached_colors.contains(color)) {
-		byte target = grayscale(color);
-		byte bestNdx = 0;
-		byte bestColor = grayscale(palette[0], palette[1], palette[2]);
-		for (int i = 1; i < paletteLength; ++i) {
-			byte current = grayscale(palette[i * 3], palette[(i * 3) + 1], palette[(i * 3) + 2]);
-			if (dist(target, bestColor) >= dist(target, current)) {
-				bestColor = current;
-				bestNdx = i;
-			}
-		}
-		_cached_colors[color] = bestNdx;
-	}
-
-	return _cached_colors[color];
 }
 
 } // end of namespace Graphics
