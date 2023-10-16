@@ -47,12 +47,12 @@ private:
 	const char *_conv1 = nullptr;
 	Series _series1;
 	machine *_general1 = nullptr;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _astralShould = 0;
+	int _astralMode = 0;
 
 	void handleConv();
-	int getVal() const;
-	int getShould() const;
+	int getAstralShould() const;
+	int getWilburShould() const;
 
 public:
 	Room207() : Room() {}

@@ -54,7 +54,6 @@ private:
 	bool saidofInterest() const;
 
 	void testDone();
-	void handleTestDone();
 	void testDone1();
 	void testDone2();
 	void testDone3();
@@ -82,6 +81,8 @@ public:
 	void global_daemon() override;
 	void global_pre_parser() override;
 	void global_parser() override;
+
+	void handleTestDone();
 };
 
 } // namespace Burger
