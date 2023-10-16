@@ -352,6 +352,7 @@ void ws_hide_walker(machine *myWalker) {
 		return;
 	}
 
+	_G(player).walker_visible = false;
 	sendWSMessage(PLAYER_HIDE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
@@ -361,6 +362,7 @@ void ws_unhide_walker(machine *myWalker) {
 		return;
 	}
 
+	_G(player).walker_visible = true;
 	sendWSMessage(PLAYER_UNHIDE << 16, 0, myWalker, 0, nullptr, 1);
 }
 
