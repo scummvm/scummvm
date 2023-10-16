@@ -54,6 +54,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Allow usage of the official Monkey Island 1 Roland MT-32 patch with any
      EGA version, not just the English release.
    - Completely rewritten sound code for all Humongous Entertainment games.
+   - Faithfully implemented Mac GUI for Indiana Jones and the Last Crusade.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
@@ -63,14 +64,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote the palette fading system and the game timers to match the
      original DOS version.
    - Rewrote all the menu code to make it match the original. This includes
-     the restoration of the Speed setting. 
+     the restoration of the Speed setting.
    - Restored the correct fonts and menu texts for all Russian versions of the game.
    - Rewrote the audio engine to match the original. Compressed files are
      still supported.
    - Tweaked the subtitles routine for the PSX version to match the original.
    - Restored George's idle animation.
    - Restored pause functionality: press "P"!
-   - Restored debug commands: CTRL-G for toggling on-screen walkable grids, 
+   - Restored debug commands: CTRL-G for toggling on-screen walkable grids,
      CTRL-T for displaying debug information, SHIFT-M for displaying crosshairs
      for the mouse cursor and George's position, and keys 1 and 4 to toggle
      respectively slow and fast frame pacing mode.
