@@ -1331,10 +1331,20 @@ void Screen::fnSetParallax(uint32 screen, uint32 resId) {
 }
 
 void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, uint16 *pSprHeight, uint16 *incr) {
-	int16 sprX = *pSprX - SCREEN_LEFT_EDGE;
-	int16 sprY = *pSprY - SCREEN_TOP_EDGE;
+	int16 sprX = *pSprX;
+	int16 sprY = *pSprY;
 	int16 sprW = *pSprWidth;
 	int16 sprH = *pSprHeight;
+
+	// The PSX code clips sprites a little bit differently
+	if (SwordEngine::isPsx()) {
+		sprX -= 129;
+		sprY = (sprY + 1) & 0xFFFE;
+	} else {
+		sprX -= SCREEN_LEFT_EDGE;
+	}
+
+	sprY -= SCREEN_TOP_EDGE;
 
 	if (sprY < 0) {
 		*incr = (uint16)((-sprY) * sprW);
@@ -1396,9 +1406,6 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 			gridBuf += _gridSizeX;
 		}
 	}
-
-	if (SwordEngine::isPsx())
-		*pSprY = (*pSprY + 1) & 0xFFFE;
 }
 
 void Screen::fnFlash(uint8 color) {
