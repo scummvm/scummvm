@@ -55,6 +55,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      EGA version, not just the English release.
    - Completely rewritten sound code for all Humongous Entertainment games.
    - Faithfully implemented Mac GUI for Indiana Jones and the Last Crusade.
+   - Implemented turning around animation when changing direction for Full
+     Throttle, The Dig and The Curse of Monkey Island.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
@@ -79,6 +81,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed other various small inaccuracies.
    - Overall the PC version of the game on ScummVM shouldn't differ
      from the original executable anymore.
+   - Implemented credits for the PSX version.
 
  Sword2:
    - Added support for Chinese translation.
