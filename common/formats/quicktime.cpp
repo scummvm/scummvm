@@ -181,6 +181,9 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 	a.offset = atom.offset;
 
+	if (_fd->eos() || _fd->err() || (_fd->pos() == _fd->size()))
+		return -1;
+
 	while(((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
 		a.size = atom.size;
 		a.type = 0;
@@ -231,6 +234,9 @@ int QuickTimeParser::readDefault(Atom atom) {
 		} else {
 			uint32 start_pos = _fd->pos();
 			err = (this->*_parseTable[i].func)(a);
+
+			if (!err && (_fd->eos() || _fd->err()))
+				err = -1;
 
 			uint32 left = a.size - _fd->pos() + start_pos;
 
