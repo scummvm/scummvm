@@ -695,6 +695,8 @@ void Lobby::getPlayersList(int start, int end) {
 bool Lobby::_checkPlayersLists(Common::JSONArray other) {
 	// Check if the two players lists are different.
 	// This exists because (_playersList != other) doesn't work.
+	debugC(DEBUG_NETWORK, "LOBBY: _playerList.size() = %d", _playersList.size());
+	debugC(DEBUG_NETWORK, "LOBBY: other.size() = %d", other.size());
 	if (_playersList.size() != other.size())
 		return true;
 	for (uint i = 0; i < _playersList.size(); i++) {
@@ -702,9 +704,11 @@ bool Lobby::_checkPlayersLists(Common::JSONArray other) {
 		Common::JSONArray otherInfo = other[i]->asArray();
 
 		// Check if names are different.
+		debugC(DEBUG_NETWORK, "LOBBY: %s != %s", playerInfo[0]->asString().c_str(), otherInfo[0]->asString().c_str());
 		if (playerInfo[0]->asString() != otherInfo[0]->asString())
 			return true;
 		for (uint o = 1; o < 7; o++) {
+			debugC(DEBUG_NETWORK, "LOBBY: %lld != %lld", playerInfo[o]->asIntegerNumber(), otherInfo[o]->asIntegerNumber());
 			if (playerInfo[o]->asIntegerNumber() != otherInfo[o]->asIntegerNumber())
 				return true;
 		}
