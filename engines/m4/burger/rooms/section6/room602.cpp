@@ -352,7 +352,7 @@ void Room602::init() {
 		hotspot_set_active("EXIT", false);
 	}
 
-	if (_G(flags)[V256] == 10028) {
+	if (_G(flags)[V245] == 10028) {
 		Section6::_state1 = 6002;
 		kernel_trigger_dispatch_now(6013);
 	}
@@ -742,6 +742,12 @@ void Room602::daemon() {
 			player_set_commands_allowed(false);
 			_val1 = 53;
 			kernel_trigger_dispatch_now(6008);
+			break;
+
+		case 6001:
+			Section6::_state3 = 6002;
+			_sectionMachine1 = series_play("602mg01", 0xc00, 0, 6011, 8, 0, 100, 0, 0, 0, 67);
+			_sectionMachine2 = series_play("602mg01s", 0xc01, 0, -1, 8, 0, 100, 0, 0, 0, 67);
 			break;
 
 
@@ -1227,12 +1233,6 @@ void Room602::daemon() {
 				series_play_with_breaks(_G(flags)[V261] ? PLAY14 : PLAY13,
 					"602wi09", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			}
-			break;
-
-		case 6001:
-			Section6::_state3 = 6002;
-			series_play("602mg01", 0xc00, 0, 6011, 8, 0, 100, 0, 0, 0, 67);
-			_sectionMachine2 = series_play("602mg01s", 0xc01, 0, -1, 8, 0, 100, 0, 0, 0, 67);
 			break;
 
 		case 10001:
