@@ -122,7 +122,6 @@ struct dbgChannelDesc {
 
 const char *const insaneKeymapId = "scumm-insane";
 
-
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	: Engine(syst),
 	  _game(dr.game),
@@ -477,7 +476,7 @@ ScummEngine::~ScummEngine() {
 		delete _macIndy3TextBox;
 	}
 
-	delete _macIndy3Gui;
+	delete _macGui;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
@@ -1169,7 +1168,7 @@ Common::Error ScummEngine::init() {
 
 					_macIndy3TextBox = new Graphics::Surface();
 					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
-					_macIndy3Gui = new MacIndy3Gui(_system, this);
+					_macGui = new MacIndy3Gui(_system, this, macResourceFile);
 					break;
 				}
 			}
@@ -1194,6 +1193,7 @@ Common::Error ScummEngine::init() {
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+					_macGui = new MacLoomGui(_system, this, macResourceFile);
 					break;
 				}
 			}
@@ -1697,9 +1697,10 @@ void ScummEngine::resetScumm() {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	}
 
-	if (_macIndy3Gui) {
-		_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
-		_macIndy3Gui->reset();
+	if (_macGui) {
+		if (_game.id == GID_INDY3)
+			_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
+		_macGui->reset();
 	}
 
 	if (_game.version == 0) {
@@ -2444,8 +2445,8 @@ Common::Error ScummEngine::go() {
 		// Run the main loop
 		scummLoop(delta);
 
-		if (_macIndy3Gui)
-			_macIndy3Gui->update(delta);
+		if (_macGui)
+			_macGui->update(delta);
 
 		if (_game.heversion >= 60) {
 			((SoundHE *)_sound)->feedMixer();
@@ -2484,6 +2485,9 @@ void ScummEngine::waitForTimer(int quarterFrames) {
 		uint32 screenUpdateTimerStart = _system->getMillis();
 		towns_updateGfx();
 #endif
+
+		if (_macGui)
+			_macGui->updateWindowManager();
 
 		_system->updateScreen();
 		cur = _system->getMillis();

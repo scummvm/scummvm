@@ -91,7 +91,7 @@ class BaseScummFile;
 class CharsetRenderer;
 class IMuse;
 class IMuseDigital;
-class MacIndy3Gui;
+class MacGui;
 class MusicEngine;
 class Player_Towns;
 class ScummEngine;
@@ -1569,7 +1569,7 @@ public:
 	Graphics::MacFontManager *_macFontManager = nullptr;
 	Graphics::Surface *_macScreen = nullptr;
 	Graphics::Surface *_macIndy3TextBox = nullptr;
-	MacIndy3Gui *_macIndy3Gui = nullptr;
+	MacGui *_macGui = nullptr;
 
 protected:
 	byte _charsetColor = 0;

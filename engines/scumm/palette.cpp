@@ -33,6 +33,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/util.h"
 #include "scumm/charset.h"
+#include "scumm/gfx_mac.h"
 
 namespace Scumm {
 
@@ -274,6 +275,9 @@ void ScummEngine::resetPalette() {
 		}
 		setDirtyColors(0, 255);
 	}
+
+	if (_macGui)
+		_macGui->setPalette(_currentPalette, 16);
 }
 
 void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) {

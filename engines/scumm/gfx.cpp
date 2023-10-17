@@ -1264,7 +1264,7 @@ void ScummEngine::restoreCharsetBg() {
 		_charset->_str.left = -1;
 		_charset->_left = -1;
 
-		if (_macIndy3Gui && _charset->_textScreenID == kTextVirtScreen) {
+		if (_macGui && _game.id == GID_INDY3 && _charset->_textScreenID == kTextVirtScreen) {
 			mac_undrawIndy3TextBox();
 			return;
 		}
