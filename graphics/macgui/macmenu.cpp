@@ -898,14 +898,18 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 		if (!item->text.empty()) {
 			Common::String text(item->text);
 			Common::String acceleratorText(getAcceleratorString(item, "  "));
+
+			const Font *font = getMenuFont(item->style);
+			int width = font->getStringWidth(text);
+
 			if (!acceleratorText.empty()) {
-				text += acceleratorText;
+				width += _font->getStringWidth(acceleratorText);
 			}
 
-			if (item->submenu != nullptr) // If we're drawing triangle
-				text += "  ";
+			if (item->submenu != nullptr) { // If we're drawing triangle
+				width += _font->getStringWidth("  ");
+			}
 
-			int width = _font->getStringWidth(text);
 			if (width > maxWidth) {
 				maxWidth = width;
 			}
