@@ -112,6 +112,7 @@ public:
 	virtual int getCharWidth(uint16 chr) const = 0;
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
+	virtual byte getColor() { return _color; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -284,11 +285,12 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	const Graphics::Font *_macFonts[2];
 	bool _useRealCharWidth;
 	bool _useCorrectFontSpacing;
 	bool _pad;
 	int _lastTop;
+
+	const Graphics::Font *getFont(int id) const;
 
 	int getDrawWidthIntern(uint16 chr) const;
 

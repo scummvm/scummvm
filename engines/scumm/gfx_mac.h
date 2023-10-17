@@ -36,7 +36,18 @@ class ScummEngine;
 
 class MacGui {
 protected:
-	Graphics::MacWindowManager *_windowManager;
+	ScummEngine *_vm = nullptr;
+	OSystem *_system = nullptr;
+
+	Graphics::MacWindowManager *_windowManager = nullptr;
+	Graphics::Surface *_surface = nullptr;
+	Common::String _resourceFile;
+
+	Common::HashMap<int, const Graphics::Font *> _fonts;
+	int _gameFontId = -1;
+
+	Common::Rect _bannerBounds;
+	Graphics::Surface *_backupSurface = nullptr;
 
 	enum Color {
 		kBlack = 0,
@@ -60,10 +71,29 @@ protected:
 	};
 
 public:
+	enum FontId {
+		kIndy3FontSmall,
+		kIndy3FontMedium,
+		kIndy3VerbFontRegular,
+		kIndy3VerbFontBold,
+		kIndy3VerbFontOutline,
+
+		kLoomFontSmall,
+		kLoomFontMedium,
+		kLoomFontLarge
+	};
+
 	MacGui(ScummEngine *vm, Common::String resourceFile);
 	virtual ~MacGui();
 
-	virtual const Common::String name() const { return ""; }
+	virtual const Common::String name() const = 0;
+
+	virtual void initialize();
+
+	const Graphics::Font *getFont(FontId fontId);
+	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
+	virtual void getFontParams(FontId fontId, int &id, int &size, int &slant) = 0;
+
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
 	virtual void resetAfterLoad() {}
@@ -75,35 +105,39 @@ public:
 	virtual bool handleEvent(Common::Event &event);
 
 	void setPalette(const byte *palette, uint size);
+
+	void drawBanner(byte *message);
+	void undrawBanner();
+	void drawBannerBorder(int x, int y, int w, int h, byte color);
 };
 
 class MacLoomGui : public MacGui {
 public:
-	MacLoomGui(OSystem *system, ScummEngine *vm, Common::String macResourceFile) : MacGui(vm, macResourceFile) {}
+	MacLoomGui(OSystem *system, ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {}
 	~MacLoomGui() {}
 
 	const Common::String name() const { return "Loom"; }
 
-	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) { warning("TODO"); }
+	const Graphics::Font *getFontByScummId(int32 id);
+	void getFontParams(FontId fontId, int &id, int &size, int &slant);
+
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 };
 
 class MacIndy3Gui : public MacGui {
 public:
-	enum FontId {
-		kRegular = 0,
-		kBold = 1,
-		kOutline = 2
-	};
-
 	enum ScrollDirection {
 		kScrollUp,
 		kScrollDown
 	};
 
-	MacIndy3Gui(OSystem *system, ScummEngine *vm, Common::String macResourceFile);
+	MacIndy3Gui(ScummEngine *vm, Common::String resourceFile);
 	~MacIndy3Gui();
 
 	const Common::String name() const { return "Indy"; }
+
+	const Graphics::Font *getFontByScummId(int32 id);
+	void getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
@@ -118,7 +152,6 @@ public:
 	// the verb area to clear the power meters and text.
 
 	bool isVerbGuiActive() const;
-	const Graphics::Font *getFont(FontId fontId);
 
 	void reset();
 	void resetAfterLoad();
@@ -129,11 +162,6 @@ public:
 	void setInventoryScrollOffset(int n) const;
 
 private:
-	OSystem *_system = nullptr;
-	ScummEngine *_vm = nullptr;
-	Graphics::Surface *_surface = nullptr;
-	const Graphics::Font *_fonts[3];
-
 	bool _visible = false;
 
 	bool _leftButtonIsPressed = false;

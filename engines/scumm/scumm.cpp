@@ -1168,7 +1168,7 @@ Common::Error ScummEngine::init() {
 
 					_macIndy3TextBox = new Graphics::Surface();
 					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
-					_macGui = new MacIndy3Gui(_system, this, macResourceFile);
+					_macGui = new MacIndy3Gui(this, macResourceFile);
 					break;
 				}
 			}
@@ -1226,9 +1226,11 @@ Common::Error ScummEngine::init() {
 			}
 		}
 
-		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW) {
+		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
-		}
+
+		if (_macGui)
+			_macGui->initialize();
 	}
 
 	// Initialize backend
@@ -2443,13 +2445,15 @@ Common::Error ScummEngine::go() {
 		waitForTimer(delta * 4);
 
 		// Run the main loop
-		scummLoop(delta);
+		if (!isPaused()) {
+			scummLoop(delta);
 
-		if (_macGui)
-			_macGui->update(delta);
+			if (_macGui)
+				_macGui->update(delta);
 
-		if (_game.heversion >= 60) {
-			((SoundHE *)_sound)->feedMixer();
+			if (_game.heversion >= 60) {
+				((SoundHE *)_sound)->feedMixer();
+			}
 		}
 
 		if (shouldQuit()) {

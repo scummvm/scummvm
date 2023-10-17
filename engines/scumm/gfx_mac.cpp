@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/macresman.h"
 
+#include "graphics/maccursor.h"
 #include "graphics/macega.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macfontmanager.h"
@@ -182,22 +183,21 @@ void ScummEngine::mac_createIndy3TextBox(Actor *a) {
 	_macIndy3TextBox->fillRect(Common::Rect(width, height), 0);
 
 	int nameWidth = 0;
+	byte color = _charset->getColor();
 
 	if (a) {
-		int oldID = _charset->getCurID();
-		_charset->setCurID(2 | 0x80);
+		const Graphics::Font *font = _macGui->getFont(MacGui::kIndy3FontSmall);
 
 		const char *name = (const char *)a->getActorName();
 		int charX = 25;
 
 		for (int i = 0; name[i] && nameWidth < width - 50; i++) {
-			_charset->drawChar(name[i], *_macIndy3TextBox, charX, 0);
-			nameWidth += _charset->getCharWidth(name[i]);
-			charX += _charset->getCharWidth(name[i]);
+			font->drawChar(_macIndy3TextBox, name[i], charX, 0, color);
+			nameWidth += font->getCharWidth(name[i]);
+			charX += font->getCharWidth(name[i]);
 		}
 
-		_charset->drawChar(':', *_macIndy3TextBox, charX, 0);
-		_charset->setCurID(oldID);
+		font->drawChar(_macIndy3TextBox, ':', charX, 0, color);
 	}
 
 	if (nameWidth) {
@@ -265,13 +265,15 @@ void ScummEngine::mac_drawBorder(int x, int y, int w, int h, byte color) {
 }
 
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
-	char bannerMsg[512];
+	byte bannerMsg[512];
 
 	_messageBannerActive = true;
 
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
+	_macGui->drawBanner(bannerMsg);
+#if 0
 	// Backup the surfaces...
 	int x = 70;
 	int y = 189;
@@ -286,6 +288,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 	backupTextSurface.copyRectToSurface(_textSurface, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
 	backupMacScreen.copyRectToSurface(*_macScreen, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
+#endif
 
 	// Pause shake effect
 	_shakeTempSavedState = _shakeEnabled;
@@ -294,30 +297,29 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-	// Backup the current charsetId...
-	int oldId = _charset->getCurID();
-	_charset->setCurID(1 | 0x80);
-	_charset->setColor(0);
-
+#if 0
 	_textSurface.fillRect(Common::Rect(x, y, x + w + 1, y + h), 0);
 	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h - 1), 15);
 	mac_drawBorder(x, y, w, h, 0);
 	mac_drawBorder(x + 2, y + 2, w - 4, h - 4, 0);
 
+	const Graphics::Font *font = _macGui->getFont(_game.id == GID_INDY3 ? MacGui::kIndy3FontMedium : MacGui::kLoomFontMedium);
+
 	int stringWidth = 0;
 
 	for (int i = 0; msg[i]; i++)
-		stringWidth += _charset->getCharWidth(msg[i]);
+		stringWidth += font->getCharWidth(msg[i]);
 
 	int stringX = 1 + x + (w - stringWidth) / 2;
 
 	for (int i = 0; msg[i]; i++) {
-		_charset->drawChar(msg[i], *_macScreen, stringX, y + 4);
-		stringX += _charset->getCharWidth(msg[i]);
+		font->drawChar(_macScreen, msg[i], stringX, y + 4, 0);
+		stringX += font->getCharWidth(msg[i]);
 	}
 
 	mac_markScreenAsDirty(x, y, w, h);
 	ScummEngine::drawDirtyScreenParts();
+#endif
 
 	Common::KeyState ks = Common::KEYCODE_INVALID;
 	bool leftBtnPressed = false, rightBtnPressed = false;
@@ -325,6 +327,8 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 	}
 
+	_macGui->undrawBanner();
+#if 0
 	// Restore the surfaces...
 	_textSurface.copyRectToSurface(backupTextSurface, x, y, Common::Rect(0, 0, w + 1, h));
 	_macScreen->copyRectToSurface(backupMacScreen, x, y, Common::Rect(0, 0, w + 1, h));
@@ -335,12 +339,11 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Notify the gfx system that we restored the surfaces...
 	mac_markScreenAsDirty(x, y, w + 1, h);
 	ScummEngine::drawDirtyScreenParts();
+#endif
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
 	clearClickedStatus();
-
-	_charset->setCurID(oldId);
 
 	_messageBannerActive = false;
 
@@ -352,29 +355,38 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Jones and the Last Crusade.
 // ===========================================================================
 
-MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) {
-	Common::MacResManager resource;
+MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
+	_fonts.clear();
+}
 
+MacGui::~MacGui() {
+	delete _windowManager;
+	delete _backupSurface;
+}
+
+void MacGui::initialize() {
 	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
-	_windowManager->setEngine(vm);
+	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, 400);
 	_windowManager->setMenuHotzone(Common::Rect(0, 0, 640, 23));
 	_windowManager->setMenuDelay(250000);
 
-	resource.open(resourceFile);
-
+	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
-
 	Graphics::MacMenu *menu = _windowManager->addMenu();
+
+	resource.open(_resourceFile);
+
+	// Add the Apple menu
 
 	const Graphics::MacMenuData menuSubItems[] = {
 		{ 0, NULL, 0, 0, false }
 	};
 
-	menu->addStaticMenus(menuSubItems);
+	Common::String aboutMenuDef = "About " + name() + "...<B";
 
-	Graphics::MacMenuSubMenu *about = menu->addSubMenu(nullptr, 0);
-	menu->addMenuItem(about, "About " + name() + "...", 0);
+	menu->addStaticMenus(menuSubItems);
+	menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
 
 	for (int i = 129; i <= 130; i++) {
 		res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
@@ -390,10 +402,41 @@ MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) {
 	}
 
 	resource.close();
+
+	// Register custom fonts. The font family just happens to match the
+	// printed name of the game.
+
+	const Common::String fontFamily = name();
+
+	const Common::Array<Graphics::MacFontFamily *> &fontFamilies = _windowManager->_fontMan->getFontFamilies();
+
+	_windowManager->_fontMan->loadFonts(_resourceFile);
+
+	for (uint i = 0; i < fontFamilies.size(); i++) {
+		if (fontFamilies[i]->getName() == fontFamily) {
+			_gameFontId = _windowManager->_fontMan->registerFontName(fontFamily, fontFamilies[i]->getFontFamilyId());
+debug("_gameFontId = %d", _gameFontId);
+			break;
+		}
+	}
 }
 
-MacGui::~MacGui() {
-	delete _windowManager;
+const Graphics::Font *MacGui::getFont(FontId fontId) {
+	const Graphics::Font *font = _fonts.getValOrDefault((int)fontId);
+
+	if (font)
+		return font;
+
+	int id;
+	int size;
+	int slant;
+
+	getFontParams(fontId, id, size, slant);
+
+	font = _windowManager->_fontMan->getFont(Graphics::MacFont(id, size, slant));
+	_fonts[(int)fontId] = font;
+
+	return font;
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
@@ -416,9 +459,122 @@ void MacGui::updateWindowManager() {
 	_windowManager->draw();
 }
 
+void MacGui::drawBanner(byte *message) {
+	_bannerBounds.left = 70;
+	_bannerBounds.top = 189;
+	_bannerBounds.setWidth(499);
+	_bannerBounds.setHeight(22);
+
+	if (!_backupSurface) {
+		_backupSurface = new Graphics::Surface();
+		_backupSurface->create(_bannerBounds.width(), _bannerBounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	_backupSurface->copyRectToSurface(*_surface, 0, 0, _bannerBounds);
+	_surface->fillRect(Common::Rect(_bannerBounds.left + 1, _bannerBounds.top + 1, _bannerBounds.right - 1, _bannerBounds.bottom - 1), kWhite);
+	drawBannerBorder(_bannerBounds.left, _bannerBounds.top, _bannerBounds.right - 1, _bannerBounds.bottom - 1, kBlack);
+	drawBannerBorder(_bannerBounds.left + 2, _bannerBounds.top + 2, _bannerBounds.right - 3, _bannerBounds.bottom - 3, kBlack);
+	_system->copyRectToScreen(_surface->getBasePtr(_bannerBounds.left, _bannerBounds.top), _surface->pitch, _bannerBounds.left, _bannerBounds.top, _bannerBounds.width(), _bannerBounds.height());
+}
+
+void MacGui::undrawBanner() {
+	if (!_backupSurface)
+		return;
+
+	_surface->copyRectToSurface(*_backupSurface, _bannerBounds.left, _bannerBounds.top, Common::Rect(0, 0, _bannerBounds.width(), _bannerBounds.height()));
+	_system->copyRectToScreen(_surface->getBasePtr(_bannerBounds.left, _bannerBounds.top), _surface->pitch, _bannerBounds.left, _bannerBounds.top, _bannerBounds.width(), _bannerBounds.height());
+
+	_backupSurface->free();
+	delete _backupSurface;
+	_backupSurface = nullptr;
+}
+
+void MacGui::drawBannerBorder(int x0, int y0, int x1, int y1, byte color) {
+	_surface->hLine(x0 + 2, y0, x1 - 2, color);
+	_surface->hLine(x0 + 2, y1 - 1, x1 - 2, color);
+	_surface->vLine(x0, y0 + 2, y1 - 3, color);
+	_surface->vLine(x1, y0 + 2, y1 - 3, color);
+	_surface->setPixel(x0 + 1, y0 + 1, color);
+	_surface->setPixel(x1 - 1, y0 + 1, color);
+	_surface->setPixel(x0 + 1, y1 - 2, color);
+	_surface->setPixel(x1 - 1, y1 - 2, color);
+}
+
 // ===========================================================================
-// The infamous verb GUI for the Macintosh version of Indiana Jones and the
-// Last Crusade.
+// The Mac Loom GUI. This one is pretty simple.
+// ===========================================================================
+
+const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
+	switch (id) {
+	case 0:
+		return getFont(kLoomFontLarge);
+	default:
+		error("MacLoomGui::getFontByScummId: Invalid font id %d", id);
+	}
+}
+
+void MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+	// Loom uses only font size 13 for in-game text, but size 12 is used
+	// for system messages, e.g. the original pause dialog.
+	//
+	// Special characters:
+	//
+	// 16-23 are the note names c through c'.
+	// 60 is an upside-down note, i.e. the one used for c'.
+	// 95 is a used for the rest of the notes.
+
+	switch (fontId) {
+	case FontId::kLoomFontSmall:
+		id = _gameFontId;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kLoomFontMedium:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kLoomFontLarge:
+		id = _gameFontId;
+		size = 13;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	default:
+		error("MacLoomGui: getFontParams: Unknown font id %d", (int)fontId);
+	}
+}
+
+void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
+		return;
+
+	Common::MacResManager resource;
+
+	resource.open(_resourceFile);
+
+	Common::MacResIDArray resArray = resource.getResIDArray(MKTAG('C', 'U', 'R', 'S'));
+	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), resArray[0]);
+	Graphics::MacCursor macCursor;
+
+	if (macCursor.readFromStream(*curs)) {
+		width = macCursor.getWidth();
+		height = macCursor.getHeight();
+		hotspotX = macCursor.getHotspotX();
+		hotspotY = macCursor.getHotspotY();
+		animate = 0;
+
+		_windowManager->pushCustomCursor(&macCursor);
+	}
+
+	delete curs;
+}
+
+// ===========================================================================
+// The Mac GUI for Indiana Jones and the Last Crusade, including the infamous
+// verb GUI.
 //
 // It's likely that the original interpreter used more hooks from the engine
 // into the GUI. In particular, the inventory script uses a variable that I
@@ -686,8 +842,8 @@ void MacIndy3Gui::Button::draw() {
 	// This gives us pixel perfect rendering for the English verbs.
 
 	if (!_text.empty()) {
-		const Graphics::Font *boldFont = _gui->getFont(kBold);
-		const Graphics::Font *outlineFont = _gui->getFont(kOutline);
+		const Graphics::Font *boldFont = _gui->getFont(kIndy3VerbFontBold);
+		const Graphics::Font *outlineFont = _gui->getFont(kIndy3VerbFontOutline);
 
 		int stringWidth = 0;
 		for (uint i = 0; i < _text.size(); i++)
@@ -1036,7 +1192,7 @@ void MacIndy3Gui::Inventory::Slot::draw() {
 	_surface->fillRect(_bounds, bg);
 
 	if (hasName()) {
-		const Graphics::Font *font = _gui->getFont(kRegular);
+		const Graphics::Font *font = _gui->getFont(kIndy3VerbFontRegular);
 
 		int y = _bounds.top - 1;
 		int x = _bounds.left + 4;
@@ -1271,8 +1427,8 @@ void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotsp
 	_windowManager->pushCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
 }
 
-MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm, Common::String macResourceFile) :
-	MacGui(vm, macResourceFile), _system(system), _vm(vm), _surface(vm->_macScreen), _visible(false) {
+MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
+	MacGui(vm, resourceFile), _visible(false) {
 
 	// There is one widget for every verb in the game. Verbs include the
 	// inventory widget and conversation options.
@@ -1280,9 +1436,6 @@ MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm, Common::String macRes
 	Widget::_vm = _vm;
 	Widget::_surface = _surface;
 	Widget::_gui = this;
-
-	for (int i = 0; i < ARRAYSIZE(_fonts); i++)
-		_fonts[i] = nullptr;
 
 	_widgets[  1] = new Button(137, 312,  68, 18); // Open
 	_widgets[  2] = new Button(137, 332,  68, 18); // Close
@@ -1325,6 +1478,56 @@ MacIndy3Gui::~MacIndy3Gui() {
 		delete it._value;
 }
 
+const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
+	switch (id) {
+	case 0:
+		return getFont(kIndy3FontMedium);
+	default:
+		error("MacIndy3Gui::getFontByScummId: Invalid font id %d", id);
+	}
+}
+
+void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
+	// used for the text boxes. The smaller font can be used for a
+	// headline. The rest of the Indy 3 verb GUI uses Geneva.
+
+	switch (fontId) {
+	case FontId::kIndy3FontSmall:
+		id = _gameFontId;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kIndy3FontMedium:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kIndy3VerbFontRegular:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kIndy3VerbFontBold:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontBold;
+		break;
+
+	case FontId::kIndy3VerbFontOutline:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
+		break;
+
+	default:
+		error("MacIndy3Gui: getFontParams: Unknown font id %d", (int)fontId);
+	}
+}
+
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
 // continue that tradition, just in case. If nothing else, it gives us an easy
 // way to still store it in savegames.
@@ -1353,34 +1556,6 @@ bool MacIndy3Gui::isVerbGuiActive() const {
 	// that the GUI is still allowed.
 
 	return _visible && isVerbGuiAllowed();
-}
-
-const Graphics::Font *MacIndy3Gui::getFont(FontId fontId) {
-	if (!_fonts[fontId]) {
-		int id = Graphics::kMacFontGeneva;
-		int size = 9;
-		int slant = Graphics::kMacFontRegular;
-
-		switch (fontId) {
-		case kRegular:
-			break;
-
-		case kBold:
-			slant = Graphics::kMacFontBold;
-			break;
-
-		case kOutline:
-			slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
-			break;
-
-		default:
-			error("MacIndy3Gui: getFont: Unknown font id %d", fontId);
-		}
-
-		_fonts[fontId] = _vm->_macFontManager->getFont(Graphics::MacFont(id, size, slant));
-	}
-
-	return _fonts[fontId];
 }
 
 void MacIndy3Gui::reset() {

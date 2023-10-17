@@ -23,7 +23,6 @@
 #include "common/macresman.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/maccursor.h"
 #ifdef ENABLE_HE
 #include "graphics/wincursor.h"
 #endif
@@ -974,31 +973,6 @@ void ScummEngine_v5::resetCursors() {
 }
 
 void ScummEngine_v5::setBuiltinCursor(int idx) {
-	if (!_macCursorFile.empty()) {
-		Common::MacResManager resource;
-		if (resource.open(_macCursorFile)) {
-#if 0
-			if (_macWindowManager->getCursorType() == Graphics::kMacCursorCustom)
-				return;
-#endif
-
-			Common::MacResIDArray resArray = resource.getResIDArray(MKTAG('C', 'U', 'R', 'S'));
-			Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), resArray[0]);
-			Graphics::MacCursor macCursor;
-			if (macCursor.readFromStream(*curs)) {
-				_cursor.animate = 0;
-				_cursor.width = macCursor.getWidth();
-				_cursor.height = macCursor.getHeight();
-				_cursor.hotspotX = macCursor.getHotspotX();
-				_cursor.hotspotY = macCursor.getHotspotY();
-				CursorMan.replaceCursor(&macCursor);
-				delete curs;
-				return;
-			}
-			delete curs;
-		}
-	}
-
 	if (_macGui) {
 		int width, height, hotspotX, hotspotY, animate;
 
