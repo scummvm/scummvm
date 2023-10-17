@@ -730,6 +730,9 @@ void Room602::daemon() {
 					term_message("Wilbur is safe");
 					Section6::_state3 = 51;
 				}
+
+				_G(kernel).continue_handling_trigger = true;
+				kernel_trigger_dispatch_now(6011);
 			}
 			break;
 

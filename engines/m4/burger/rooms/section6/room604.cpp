@@ -288,12 +288,12 @@ void Room604::daemon() {
 		kernel_trigger_dispatch_now(2);
 		break;
 
-	case 6:
-		_G(game).new_room = 603;
-		break;
-
 	case 7:
 		_G(game).new_room = 602;
+		break;
+
+	case 8:
+		_G(game).new_room = 603;
 		break;
 
 	case 9:
@@ -713,11 +713,12 @@ void Room604::parser() {
 
 		if (_G(flags)[V243] == 6000) {
 			_G(wilbur_should) = 9;
-			wilbur_speech(_G(flags)[V248] ? "604w013" : "604w011");
+			wilbur_speech(_G(flags)[V248] ? "604w013" : "604w011",
+				kCHANGE_WILBUR_ANIMATION);
 
 		} else {
 			_G(wilbur_should) = 13;
-			wilbur_speech("604w005");
+			wilbur_speech("604w005", kCHANGE_WILBUR_ANIMATION);
 		}
 	} else if (player_said("GEAR", "TUBE ") || player_said("CLIMB IN", "TUBE ")) {
 		_G(flags)[V246] = 1;
