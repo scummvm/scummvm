@@ -1107,7 +1107,7 @@ void ScummEngine::CHARSET_1() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
-	bool createTextBox = (_macIndy3Gui != nullptr);
+	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 
 	while (handleNextCharsetCode(a, &c)) {

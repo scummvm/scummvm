@@ -872,8 +872,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	clearTextSurface();
 
-	if (_macIndy3Gui)
-		_macIndy3Gui->resetAfterLoad();
+	if (_macGui)
+		_macGui->resetAfterLoad();
 
 	_lastCodePtr = nullptr;
 	_drawObjectQueNr = 0;
@@ -2076,7 +2076,7 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 	// invisible after loading.
 
 	if (s.isLoading() && _game.platform == Common::kPlatformMacintosh) {
-		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || _macIndy3Gui) {
+		if ((_game.id == GID_LOOM && !_macCursorFile.empty()) || _macGui) {
 			setBuiltinCursor(0);
 		}
 	}

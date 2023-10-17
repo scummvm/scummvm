@@ -20,10 +20,12 @@
  */
 
 #include "common/system.h"
+#include "common/macresman.h"
 
 #include "graphics/macega.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -56,7 +58,7 @@ void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
 	// The verb screen is completely replaced with a custom GUI. While
 	// it is active, all other drawing to that area is suspended.
-	if (_macIndy3Gui && vs->number == kVerbVirtScreen && _macIndy3Gui->isVerbGuiActive())
+	if (_macGui && vs->number == kVerbVirtScreen && _macGui->isVerbGuiActive())
 		return;
 
 	const byte *pixels = vs->getPixels(x, top);
@@ -343,6 +345,75 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	_messageBannerActive = false;
 
 	return ks;
+}
+
+// ===========================================================================
+// Macintosh user interface for the Macintosh versions of Loom and Indiana
+// Jones and the Last Crusade.
+// ===========================================================================
+
+MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) {
+	Common::MacResManager resource;
+
+	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
+	_windowManager->setEngine(vm);
+	_windowManager->setScreen(640, 400);
+	_windowManager->setMenuHotzone(Common::Rect(0, 0, 640, 23));
+	_windowManager->setMenuDelay(250000);
+
+	resource.open(resourceFile);
+
+	Common::SeekableReadStream *res;
+
+	Graphics::MacMenu *menu = _windowManager->addMenu();
+
+	const Graphics::MacMenuData menuSubItems[] = {
+		{ 0, NULL, 0, 0, false }
+	};
+
+	menu->addStaticMenus(menuSubItems);
+
+	Graphics::MacMenuSubMenu *about = menu->addSubMenu(nullptr, 0);
+	menu->addMenuItem(about, "About " + name() + "...", 0);
+
+	for (int i = 129; i <= 130; i++) {
+		res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
+
+		if (!res)
+			continue;
+
+		Common::StringArray *menuDef = Graphics::MacMenu::readMenuFromResource(res);
+		Common::String name = menuDef->operator[](0);
+		Common::String string = menuDef->operator[](1);
+		int id = menu->addMenuItem(nullptr, name);
+		menu->createSubMenuFromString(id, string.c_str(), 0);
+	}
+
+	resource.close();
+}
+
+MacGui::~MacGui() {
+	delete _windowManager;
+}
+
+bool MacGui::handleEvent(Common::Event &event) {
+	return _windowManager->processEvent(event);
+}
+
+void MacGui::setPalette(const byte *palette, uint size) {
+	_windowManager->passPalette(palette, size);
+}
+
+void MacGui::updateWindowManager() {
+	if (_windowManager->isMenuActive()) {
+		if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
+			_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
+	} else {
+		if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
+			_windowManager->popCursor();
+	}
+
+	_windowManager->draw();
 }
 
 // ===========================================================================
@@ -1171,8 +1242,37 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 // the work to the individual widgets.
 // ---------------------------------------------------------------------------
 
-MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm) :
-	_system(system), _vm(vm), _surface(vm->_macScreen), _visible(false) {
+void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
+		return;
+
+	const byte buf[15 * 15] = {
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 1, 1, 1, 0, 3, 0, 1, 1, 1, 1, 1, 1,
+		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3
+	};
+
+	width = height = 15;
+	hotspotX = hotspotY = 7;
+	animate = 0;
+
+	_windowManager->pushCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
+}
+
+MacIndy3Gui::MacIndy3Gui(OSystem *system, ScummEngine *vm, Common::String macResourceFile) :
+	MacGui(vm, macResourceFile), _system(system), _vm(vm), _surface(vm->_macScreen), _visible(false) {
 
 	// There is one widget for every verb in the game. Verbs include the
 	// inventory widget and conversation options.
@@ -1397,9 +1497,12 @@ void MacIndy3Gui::drawVerbs() {
 	}
 }
 
-void MacIndy3Gui::handleEvent(Common::Event &event) {
+bool MacIndy3Gui::handleEvent(Common::Event &event) {
+	if (MacGui::handleEvent(event))
+		return true;
+
 	if (!isVerbGuiActive() || _vm->_userPut <= 0)
-		return;
+		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		if (!_leftButtonIsPressed) {
@@ -1434,9 +1537,11 @@ void MacIndy3Gui::handleEvent(Common::Event &event) {
 				w->draw();
 				copyDirtyRectsToScreen();
 			}
-			break;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void MacIndy3Gui::show() {

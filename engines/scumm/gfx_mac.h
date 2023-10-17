@@ -27,14 +27,17 @@ class OSystem;
 namespace Graphics {
 struct Surface;
 class Font;
+class MacWindowManager;
 }
 
 namespace Scumm {
 
 class ScummEngine;
 
-class MacIndy3Gui {
-public:
+class MacGui {
+protected:
+	Graphics::MacWindowManager *_windowManager;
+
 	enum Color {
 		kBlack = 0,
 		kBlue = 1,
@@ -56,6 +59,36 @@ public:
 		kTransparency = 255
 	};
 
+public:
+	MacGui(ScummEngine *vm, Common::String resourceFile);
+	virtual ~MacGui();
+
+	virtual const Common::String name() const { return ""; }
+	virtual bool isVerbGuiActive() const { return false; }
+	virtual void reset() {}
+	virtual void resetAfterLoad() {}
+	virtual void update(int delta) {}
+
+	void updateWindowManager();
+
+	virtual void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) = 0;
+	virtual bool handleEvent(Common::Event &event);
+
+	void setPalette(const byte *palette, uint size);
+};
+
+class MacLoomGui : public MacGui {
+public:
+	MacLoomGui(OSystem *system, ScummEngine *vm, Common::String macResourceFile) : MacGui(vm, macResourceFile) {}
+	~MacLoomGui() {}
+
+	const Common::String name() const { return "Loom"; }
+
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) { warning("TODO"); }
+};
+
+class MacIndy3Gui : public MacGui {
+public:
 	enum FontId {
 		kRegular = 0,
 		kBold = 1,
@@ -67,8 +100,12 @@ public:
 		kScrollDown
 	};
 
-	MacIndy3Gui(OSystem *system, ScummEngine *vm);
+	MacIndy3Gui(OSystem *system, ScummEngine *vm, Common::String macResourceFile);
 	~MacIndy3Gui();
+
+	const Common::String name() const { return "Indy"; }
+
+	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
@@ -86,7 +123,7 @@ public:
 	void reset();
 	void resetAfterLoad();
 	void update(int delta);
-	void handleEvent(Common::Event &event);
+	bool handleEvent(Common::Event &event);
 
 	int getInventoryScrollOffset() const;
 	void setInventoryScrollOffset(int n) const;
