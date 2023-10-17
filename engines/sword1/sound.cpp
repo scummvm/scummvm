@@ -58,7 +58,7 @@ Sound::Sound(Audio::Mixer *mixer, SwordEngine *vm, ResMan *pResMan)
 	_musicOutputStream[1] = Audio::makeQueuingAudioStream(DEFAULT_SAMPLE_RATE, false);
 	getVolumes();
 
-	memset(_fxQueue, 0, sizeof(_fxQueue));
+	for (uint i = 0; i < ARRAYSIZE(_fxQueue); i++) _fxQueue[i].reset();
 }
 
 Sound::~Sound() {

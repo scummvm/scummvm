@@ -51,6 +51,11 @@ namespace Sword1 {
 struct QueueElement {
 	uint32 id, delay;
 	Audio::SoundHandle handle;
+
+	void reset() {
+		id = 0, delay = 0;
+		handle = Audio::SoundHandle();
+	}
 };
 
 struct RoomVol {
