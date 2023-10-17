@@ -4177,6 +4177,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
 
+	// Phantasmagoria 2 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS (GOG version)
+	{"phantasmagoria2", "", {
+		{"ressci.000", 0, "c54f26d9f43f908151263254b6d97053", 108134481},
+		{"resmap.000", 0, "de154a223a9ef4ea7358b76adc38ef5b", 2956},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_PHANTASMAGORIA2 },
+
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
 
@@ -5989,6 +5998,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Space Quest 5 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS
+	{"sq5", "", {
+		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
+		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
+		{"resource.msg", 0, "bb8ad78793c26bdb3f77498b1d6515a9", 125988},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16	},
+
 #define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
 							GUIO_LINKSPEECHTOSFX, \
 							GUIO_NOASPECT)
@@ -6077,6 +6096,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"Data12", 0, "5c715987024fbc666c1c3fea2bcdce42", 1868927},
 	AD_LISTEND },
 	Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_SQ6_MAC },
+
+	// Space Quest 6 - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// based on English DOS/Win3.11 CD
+	{"sq6", "", {
+		{"resource.map", 0, "6dddfa3a8f3a3a513ec9dfdfae955005", 10528},
+		{"resource.000", 0, "c4259ab7355aead07773397b1052827d", 41150806},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_SQ6 },
 
 #undef GUIO_SQ6_DEMO
 #undef GUIO_SQ6
