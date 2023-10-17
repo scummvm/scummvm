@@ -138,10 +138,10 @@ void SpecialEffect::afterSceneChange() {
 }
 
 bool SpecialEffect::isDone() const {
-	if (_type != kCrossDissolve) {
+	if (_type == kBlackout) {
 		return g_nancy->getTotalPlayTime() > _fadeToBlackEndTime;
 	} else {
-		bool canFinish = _type == kThroughBlack ? _throughBlackStarted2nd : true;
+		bool canFinish = (_type == kThroughBlack) ? _throughBlackStarted2nd : true;
 		return _totalTime ? ((g_nancy->getTotalPlayTime() > _startTime + _totalTime) && (_currentFrame != 0) && canFinish) : (_currentFrame >= (int)_numFrames);
 	}
 }

@@ -144,7 +144,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 	case 56:
 		if (g_nancy->getGameType() <= kGameTypeNancy6) {
 			return new ConversationVideo();
-		} else if (g_nancy->getGameType() >= kGameTypeNancy7) {
+		} else {
 			return new OverlayAnimTerse();
 		}
 		return nullptr;

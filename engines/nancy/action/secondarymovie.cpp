@@ -95,7 +95,7 @@ void PlaySecondaryMovie::init() {
 	if (!_decoder) {
 		if (_videoType == kVideoPlaytypeAVF) {
 			_decoder = new AVFDecoder();
-		} else if (_videoType == kVideoPlaytypeBink) {
+		} else {
 			_decoder = new Video::BinkDecoder();
 		}
 	}
