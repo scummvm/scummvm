@@ -19,11 +19,10 @@
  *
  */
 
-#include "graphics/fonts/macfont.h"
-#include "graphics/macgui/macfontmanager.h"
-
+#include "graphics/font.h"
 #include "scumm/charset.h"
 #include "scumm/file.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/util.h"
@@ -1619,58 +1618,15 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	_pad = false;
 	_glyphSurface = nullptr;
 
-	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
-	// used for the text boxes. The smaller font can be used for a
-	// headline. The rest of the Mac GUI seems to use a system font, but
-	// that is not implemented.
-
-	// As far as I can tell, Loom uses only font size 13 for in-game text,
-	// but size 12 is used for system messages, e.g. the original pause
-	// dialog. I have no idea what size 9 is used for. Possibly the
-	// original About dialog?
-	//
-	// As far as I can tell, the game does not use anything fancy, like
-	// different styles, and the font does not appear to have a kerning
-	// table.
-	//
-	// Special characters:
-	//
-	// 16-23 are the note names c through c'.
-	// 60 is an upside-down note, i.e. the one used for c'.
-	// 95 is a used for the rest of the notes.
-
-	Graphics::MacFontManager *mfm = _vm->_macFontManager;
-
-	mfm->loadFonts(fontFile);
-
-	const Common::String fontFamily = (_vm->_game.id == GID_LOOM) ? "Loom" : "Indy";
-	const Common::Array<Graphics::MacFontFamily *> &fontFamilies = mfm->getFontFamilies();
-	int fontId = 0;
-	for (uint i = 0; i < fontFamilies.size(); i++) {
-		if (fontFamilies[i]->getName() == fontFamily) {
-			fontId = mfm->registerFontName(fontFamilies[i]->getName(), fontFamilies[i]->getFontFamilyId());
-			break;
-		}
-	}
-
-	for (uint i = 0; i < ARRAYSIZE(_macFonts); i++)
-		_macFonts[i] = nullptr;
-
-	if (_vm->_game.id == GID_INDY3) {
-		_macFonts[0] = mfm->getFont(Graphics::MacFont(fontId, 12));
-		_macFonts[1] = mfm->getFont(Graphics::MacFont(fontId, 9));
-	} else {
-		_macFonts[0] = mfm->getFont(Graphics::MacFont(fontId, 13));
-		_macFonts[1] = mfm->getFont(Graphics::MacFont(fontId, 12));
-	}
-
 	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
 		int maxHeight = -1;
 		int maxWidth = -1;
 
-		for (int i = 0; i < ARRAYSIZE(_macFonts); i++) {
-			maxHeight = MAX(maxHeight, _macFonts[i]->getFontHeight());
-			maxWidth = MAX(maxWidth, _macFonts[i]->getMaxCharWidth());
+		for (int i = 0; i < 2; i++) {
+			const Graphics::Font *font = _vm->_macGui->getFontByScummId(i);
+
+			maxHeight = MAX(maxHeight, font->getFontHeight());
+			maxWidth = MAX(maxWidth, font->getMaxCharWidth());
 		}
 
 		_glyphSurface = new Graphics::Surface();
@@ -1705,7 +1661,7 @@ void CharsetRendererMac::setCurID(int32 id) {
 		}
 	}
 
-	if (id < 0 || id > ARRAYSIZE(_macFonts) || !_macFonts[id]) {
+	if (id < 0 || id > 1) {
 		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
@@ -1735,7 +1691,9 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
 }
 
 int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
-	return _macFonts[_curId]->getCharWidth(chr);
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+
+	return font->getCharWidth(chr);
 }
 
 // HACK: Usually, we want the approximate width and height in the unscaled
@@ -1743,7 +1701,8 @@ int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
 //       crusade we want the actual dimensions for drawing the text boxes.
 
 int CharsetRendererMac::getFontHeight() const {
-	int height = _macFonts[_curId]->getFontHeight();
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+	int height = font->getFontHeight();
 
         // If we ever need the height for font 1 in Last Crusade (we don't at
 	// the moment), we need the actual height.
@@ -1866,16 +1825,18 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	if (!_useCorrectFontSpacing && !drawToTextBox && (width & 1))
 		width++;
 
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+
 	if (enableShadow) {
 		left = macLeft / 2;
 		right = (macLeft + width + 3) / 2;
 		top = macTop / 2;
-		bottom = (macTop + _macFonts[_curId]->getFontHeight() + 3) / 2;
+		bottom = (macTop + font->getFontHeight() + 3) / 2;
 	} else {
 		left = (macLeft + 1) / 2;
 		right = (macLeft + width + 1) / 2;
 		top = (macTop + 1) / 2;
-		bottom = (macTop + _macFonts[_curId]->getFontHeight() + 1) / 2;
+		bottom = (macTop + font->getFontHeight() + 1) / 2;
 	}
 
 	if (_firstChar) {
@@ -1940,6 +1901,8 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 		y++;
 	}
 
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+
 	if (shadow) {
 		byte shadowColor = getTextShadowColor();
 
@@ -1950,32 +1913,32 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			// particularly good anyway). This seems to match the
 			// original look for normal text.
 
-			_macFonts[_curId]->drawChar(&_vm->_textSurface, chr, x + 1, y - 1, 0);
-			_macFonts[_curId]->drawChar(&_vm->_textSurface, chr, x - 1, y + 1, 0);
-			_macFonts[_curId]->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
+			font->drawChar(&_vm->_textSurface, chr, x + 1, y - 1, 0);
+			font->drawChar(&_vm->_textSurface, chr, x - 1, y + 1, 0);
+			font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
-				_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
-				_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+				font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
+				font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
+				font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
-			_macFonts[_curId]->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
-			_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
+			font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+			font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
 		}
 	}
 
-	_macFonts[_curId]->drawChar(&_vm->_textSurface, chr, x, y, 0);
+	font->drawChar(&_vm->_textSurface, chr, x, y, 0);
 
 	if (color != -1) {
 		color = getTextColor();
 
 		if (_vm->_renderMode == Common::kRenderMacintoshBW && color != 0 && color != 15) {
 			_glyphSurface->fillRect(Common::Rect(_glyphSurface->w, _glyphSurface->h), 0);
-			_macFonts[_curId]->drawChar(_glyphSurface, chr, 0, 0, 15);
+			font->drawChar(_glyphSurface, chr, 0, 0, 15);
 
 			byte *src = (byte *)_glyphSurface->getBasePtr(0, 0);
 			byte *dst = (byte *)_vm->_macScreen->getBasePtr(x, y);
@@ -1996,14 +1959,7 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 				dst += _vm->_macScreen->pitch;
 			}
 		} else {
-			_macFonts[_curId]->drawChar(_vm->_macScreen, chr, x, y, color);
-
-			// Outlined text in Indy 3 should be filled. We simulate
-			// that by drawing the text again in bold.
-			if (_vm->_game.id == GID_INDY3 && _curId == 4) {
-				_macFonts[3]->drawChar(&_vm->_textSurface, chr, x + 1, y, 0);
-				_macFonts[3]->drawChar(_vm->_macScreen, chr, x + 1, y, 15);
-			}
+			font->drawChar(_vm->_macScreen, chr, x, y, color);
 		}
 	}
 }
@@ -2024,7 +1980,9 @@ void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
 	if (y > 0)
 		y = 17;
 
-	_macFonts[_curId]->drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+
+	font->drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
@@ -2037,7 +1995,9 @@ void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	if (_vm->_renderMode == Common::kRenderMacintoshBW)
 		color = 15;
 
-	_macFonts[_curId]->drawChar(&s, chr, x, y, color);
+	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
+
+	font->drawChar(&s, chr, x, y, color);
 }
 
 void CharsetRendererMac::setColor(byte color) {
