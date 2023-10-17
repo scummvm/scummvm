@@ -2404,7 +2404,7 @@ void Control::initialiseControlPanel() {
 	if (SwordEngine::_systemVars.controlPanelMode != CP_DEATHSCREEN) { // NOT THE DEATH SCREEN ie. start game panel, normal control panel, or end of game
 		switch (SwordEngine::_systemVars.language) {
 		case BS1_ENGLISH:
-			if (SwordEngine::_systemVars.realLanguage == Common::EN_USA) {
+			if (!SwordEngine::isPsx() && SwordEngine::_systemVars.realLanguage == Common::EN_USA) {
 				srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_AMERICAN);
 			} else {
 				srPanel = (Sprite *)_resMan->openFetchRes(SR_PANEL_ENGLISH);
