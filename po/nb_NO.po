@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-16 15:40+0000\n"
+"POT-Creation-Date: 2023-10-17 16:03+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5594,8 +5594,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2526
 #: engines/mohawk/detection_tables.h:3628
 #: engines/mohawk/detection_tables.h:3643 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5283
-#: engines/sci/detection_tables.h:5291 engines/stark/detection.cpp:319
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5292
+#: engines/sci/detection_tables.h:5300 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
 #: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
@@ -8164,11 +8164,11 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:4519
+#: engines/sci/detection_tables.h:4528
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "Denne demoen bruker en uimplementert versjon av Robot-videoer."
 
-#: engines/sci/detection_tables.h:4574
+#: engines/sci/detection_tables.h:4583
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Ufullstendig spill oppdaget. Du må kopiere spilldata fra alle CD-ene til "
