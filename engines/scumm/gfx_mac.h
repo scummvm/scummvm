@@ -25,7 +25,7 @@
 class OSystem;
 
 namespace Graphics {
-class Surface;
+struct Surface;
 class Font;
 }
 
