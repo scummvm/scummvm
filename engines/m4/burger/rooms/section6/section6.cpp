@@ -63,11 +63,11 @@ Section6::Section6() : Rooms::Section() {
 
 void Section6::daemon() {
 	switch (_G(kernel).trigger) {
-
+	case 6003:
 	case 6004:
 	case 6005:
 	case 6006:
-		_G(game).new_room = _G(kernel).trigger - 6000;
+		_G(game).new_room = _G(kernel).trigger - 6000 + 600;
 		break;
 
 	case 6008:
@@ -283,7 +283,7 @@ void Section6::daemon() {
 			}
 
 			_G(wilbur_should) = 6001;
-			ws_walk(352, 276, 0, kCHANGE_WILBUR_ANIMATION, 9);
+			ws_walk(352, 276, nullptr, kCHANGE_WILBUR_ANIMATION, 9);
 			break;
 
 		case 6001:
