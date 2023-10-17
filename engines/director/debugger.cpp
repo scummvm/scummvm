@@ -502,7 +502,24 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 						}
 					}
 				}
-
+				debugPrintf("  Factories:\n");
+				if (cast->_lingoArchive->factoryContexts.empty()) {
+					debugPrintf("    [empty]\n");
+				} else {
+					for (auto it : cast->_lingoArchive->factoryContexts) {
+						debugPrintf("  %d:\n", it._key);
+						if (it._value->empty()) {
+							debugPrintf("    [empty]\n");
+						} else {
+							for (auto jt : *it._value) {
+								debugPrintf("    %s:\n", jt._key.c_str());
+								for (auto &kt : jt._value->_functionHandlers) {
+									debugPrintf("%s\n", g_lingo->formatFunctionBody(kt._value).c_str());
+								}
+							}
+						}
+					}
+				}
 			} else {
 				debugPrintf("  [empty]\n");
 			}
@@ -518,6 +535,24 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 					for (auto &it : sharedCast->_lingoArchive->scriptContexts[i]) {
 						for (auto &jt : it._value->_functionHandlers) {
 							debugPrintf("%s\n", g_lingo->formatFunctionBody(jt._value).c_str());
+						}
+					}
+				}
+				debugPrintf("  Factories:\n");
+				if (sharedCast->_lingoArchive->factoryContexts.empty()) {
+					debugPrintf("    [empty]\n");
+				} else {
+					for (auto it : sharedCast->_lingoArchive->factoryContexts) {
+						debugPrintf("  %d:\n", it._key);
+						if (it._value->empty()) {
+							debugPrintf("    [empty]\n");
+						} else {
+							for (auto jt : *it._value) {
+								debugPrintf("    %s:\n", jt._key.c_str());
+								for (auto &kt : jt._value->_functionHandlers) {
+									debugPrintf("%s\n", g_lingo->formatFunctionBody(kt._value).c_str());
+								}
+							}
 						}
 					}
 				}
