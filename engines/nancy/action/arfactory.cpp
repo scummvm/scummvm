@@ -30,6 +30,7 @@
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"
 
+#include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/leverpuzzle.h"
@@ -311,6 +312,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new MouseLightPuzzle();
 	case 220:
 		return new TwoDialPuzzle();
+	case 222:
+		return new AssemblyPuzzle();
 	case 224:
 		return new OrderingPuzzle(OrderingPuzzle::kKeypadTerse);
 	default:

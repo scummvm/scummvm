@@ -65,14 +65,11 @@ public:
 	Common::Rect convertToScreen(const Common::Rect &rect) const;
 
 	Common::Rect getBounds() const { return Common::Rect(_screenPosition.width(), _screenPosition.height()); }
+	uint16 getZOrder() const { return _z; }
 
 	Graphics::ManagedSurface _drawSurface;
 
 protected:
-	// Z order and blit type are extracted directly from the corresponding
-	// ZRenderStruct from the original engine
-	uint16 getZOrder() const { return _z; }
-
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
 
