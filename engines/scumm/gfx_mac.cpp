@@ -265,7 +265,7 @@ void ScummEngine::mac_drawBorder(int x, int y, int w, int h, byte color) {
 }
 
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
-	byte bannerMsg[512];
+	char bannerMsg[512];
 
 	_messageBannerActive = true;
 
@@ -273,22 +273,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
 	_macGui->drawBanner(bannerMsg);
-#if 0
-	// Backup the surfaces...
-	int x = 70;
-	int y = 189;
-	int w = 499;
-	int h = 22;
-
-	Graphics::Surface backupTextSurface;
-	Graphics::Surface backupMacScreen;
-
-	backupTextSurface.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
-	backupMacScreen.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
-
-	backupTextSurface.copyRectToSurface(_textSurface, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
-	backupMacScreen.copyRectToSurface(*_macScreen, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
-#endif
 
 	// Pause shake effect
 	_shakeTempSavedState = _shakeEnabled;
@@ -297,30 +281,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-#if 0
-	_textSurface.fillRect(Common::Rect(x, y, x + w + 1, y + h), 0);
-	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h - 1), 15);
-	mac_drawBorder(x, y, w, h, 0);
-	mac_drawBorder(x + 2, y + 2, w - 4, h - 4, 0);
-
-	const Graphics::Font *font = _macGui->getFont(_game.id == GID_INDY3 ? MacGui::kIndy3FontMedium : MacGui::kLoomFontMedium);
-
-	int stringWidth = 0;
-
-	for (int i = 0; msg[i]; i++)
-		stringWidth += font->getCharWidth(msg[i]);
-
-	int stringX = 1 + x + (w - stringWidth) / 2;
-
-	for (int i = 0; msg[i]; i++) {
-		font->drawChar(_macScreen, msg[i], stringX, y + 4, 0);
-		stringX += font->getCharWidth(msg[i]);
-	}
-
-	mac_markScreenAsDirty(x, y, w, h);
-	ScummEngine::drawDirtyScreenParts();
-#endif
-
 	Common::KeyState ks = Common::KEYCODE_INVALID;
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
@@ -328,18 +288,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	}
 
 	_macGui->undrawBanner();
-#if 0
-	// Restore the surfaces...
-	_textSurface.copyRectToSurface(backupTextSurface, x, y, Common::Rect(0, 0, w + 1, h));
-	_macScreen->copyRectToSurface(backupMacScreen, x, y, Common::Rect(0, 0, w + 1, h));
-
-	backupTextSurface.free();
-	backupMacScreen.free();
-
-	// Notify the gfx system that we restored the surfaces...
-	mac_markScreenAsDirty(x, y, w + 1, h);
-	ScummEngine::drawDirtyScreenParts();
-#endif
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
@@ -357,6 +305,11 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
+
+	_bannerBounds.left = 70;
+	_bannerBounds.top = 189;
+	_bannerBounds.setWidth(500);
+	_bannerBounds.setHeight(22);
 }
 
 MacGui::~MacGui() {
@@ -459,21 +412,36 @@ void MacGui::updateWindowManager() {
 	_windowManager->draw();
 }
 
-void MacGui::drawBanner(byte *message) {
-	_bannerBounds.left = 70;
-	_bannerBounds.top = 189;
-	_bannerBounds.setWidth(499);
-	_bannerBounds.setHeight(22);
-
+void MacGui::drawBanner(char *message) {
 	if (!_backupSurface) {
 		_backupSurface = new Graphics::Surface();
 		_backupSurface->create(_bannerBounds.width(), _bannerBounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	_backupSurface->copyRectToSurface(*_surface, 0, 0, _bannerBounds);
-	_surface->fillRect(Common::Rect(_bannerBounds.left + 1, _bannerBounds.top + 1, _bannerBounds.right - 1, _bannerBounds.bottom - 1), kWhite);
-	drawBannerBorder(_bannerBounds.left, _bannerBounds.top, _bannerBounds.right - 1, _bannerBounds.bottom - 1, kBlack);
-	drawBannerBorder(_bannerBounds.left + 2, _bannerBounds.top + 2, _bannerBounds.right - 3, _bannerBounds.bottom - 3, kBlack);
+
+	Common::Rect r = _bannerBounds;
+	r.grow(-1);
+	_surface->fillRect(r, kWhite);
+
+	r = _bannerBounds;
+
+	for (int i = 0; i < 2; i++) {
+		_surface->hLine(r.left + 2, r.top, r.right - 3, kBlack);
+		_surface->hLine(r.left + 2, r.bottom - 1, r.right - 3, kBlack);
+		_surface->vLine(r.left, r.top + 2, r.bottom - 3, kBlack);
+		_surface->vLine(r.right - 1, r.top + 2, r.bottom - 3, kBlack);
+		_surface->setPixel(r.left + 1, r.top + 1, kBlack);
+		_surface->setPixel(r.left + 1, r.bottom - 2, kBlack);
+		_surface->setPixel(r.right - 2, r.top + 1, kBlack);
+		_surface->setPixel(r.right - 2, r.bottom - 2, kBlack);
+		r.grow(-2);
+	}
+
+	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
+
+	font->drawString(_surface, (char *)message, _bannerBounds.left, _bannerBounds.top + 4, _bannerBounds.width(), kBlack, Graphics::kTextAlignCenter);
+
 	_system->copyRectToScreen(_surface->getBasePtr(_bannerBounds.left, _bannerBounds.top), _surface->pitch, _bannerBounds.left, _bannerBounds.top, _bannerBounds.width(), _bannerBounds.height());
 }
 
@@ -487,17 +455,6 @@ void MacGui::undrawBanner() {
 	_backupSurface->free();
 	delete _backupSurface;
 	_backupSurface = nullptr;
-}
-
-void MacGui::drawBannerBorder(int x0, int y0, int x1, int y1, byte color) {
-	_surface->hLine(x0 + 2, y0, x1 - 2, color);
-	_surface->hLine(x0 + 2, y1 - 1, x1 - 2, color);
-	_surface->vLine(x0, y0 + 2, y1 - 3, color);
-	_surface->vLine(x1, y0 + 2, y1 - 3, color);
-	_surface->setPixel(x0 + 1, y0 + 1, color);
-	_surface->setPixel(x1 - 1, y0 + 1, color);
-	_surface->setPixel(x0 + 1, y1 - 2, color);
-	_surface->setPixel(x1 - 1, y1 - 2, color);
 }
 
 // ===========================================================================

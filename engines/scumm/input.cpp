@@ -106,6 +106,10 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 
 void ScummEngine::parseEvent(Common::Event event) {
 	// Handle Macintosh events before scaling the mouse coordinates.
+	//
+	// TODO: Don't allow menu while message banner is active. Don't allow
+	// message banner while menu is active.
+
 	if (_macGui && _macGui->handleEvent(event))
 		return;
 

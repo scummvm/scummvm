@@ -106,9 +106,8 @@ public:
 
 	void setPalette(const byte *palette, uint size);
 
-	void drawBanner(byte *message);
+	void drawBanner(char *message);
 	void undrawBanner();
-	void drawBannerBorder(int x, int y, int w, int h, byte color);
 };
 
 class MacLoomGui : public MacGui {
