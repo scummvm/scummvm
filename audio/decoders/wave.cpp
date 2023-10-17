@@ -32,6 +32,8 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/g711.h"
 
+#define EXT_CHUNKS 8
+
 namespace Audio {
 
 bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_, int *samplesPerBlock_) {
@@ -39,6 +41,17 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	byte buf[4+1];
 
 	buf[4] = 0;
+
+	const char *extensionChunks[EXT_CHUNKS] = {
+		"JUNK",
+		"bext",
+		"iXML",
+		"qlty",
+		"mext",
+		"levl",
+		"link",
+		"axml"
+	};
 
 	stream.read(buf, 4);
 	if (memcmp(buf, "RIFF", 4) != 0) {
@@ -62,15 +75,22 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		stream.read(buf, 4);
 	}
 
-	if (memcmp(buf, "JUNK", 4) == 0) {
-		uint32 junksize = stream.readUint32LE();
-		// skip junk padding (add 1 byte if odd)
-		stream.skip(junksize + (junksize % 2));
-		stream.read(buf, 4);
+	while (1) { // skip junk/bext... chunks
+		int i;
+		for (i = 0; (i < EXT_CHUNKS) && (memcmp(buf, extensionChunks[i], 4) != 0); i++)
+			;
+		if (i != EXT_CHUNKS) { // found a known chunk
+			uint32 chunkSize = stream.readUint32LE();
+			// skip junk/ext chunk (add 1 byte if odd)
+			stream.skip(chunkSize + (chunkSize % 2));
+			stream.read(buf, 4);
+			debug(0, "Skipped %s chunk in wav file!", extensionChunks[i]);
+		} else // skipped all chunks, or found something unexpected
+			break;
 	}
 
 	if (memcmp(buf, "fmt ", 4) != 0) {
-		warning("getWavInfo: No 'fmt' header");
+		warning("getWavInfo: No 'fmt' header! Found %s", buf);
 		return false;
 	}
 
