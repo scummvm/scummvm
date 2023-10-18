@@ -46,8 +46,8 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("KINGDEMO.EXE", "2ce478fc13086d0ddb02a2867ba307dc", 167154),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING | ADGF_DEMO,
+		GUIO0()
 	},
 
 	// Kingdom PC DOS version v1.26 EN, provided by Strangerke
@@ -58,8 +58,8 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("KINGDOM.EXE", "64d3e03b963396ced402f3dc958765c0", 199693),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_TESTING,
+		GUIO0()
 	},
 
 	// Kingdom 3DO, provided by Strangerke
@@ -70,11 +70,21 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatform3DO,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 
-	AD_TABLE_END_MARKER
-};
+	// Kingdom PC Win version v1.0 EN, provided by Strangerke
+	{
+		"kingdom",
+		nullptr,
+		AD_ENTRY1s("REACHES.EXE", "37ba9463795c882e8ec7aef36a00152e", 207360),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
+	AD_TABLE_END_MARKER};
 
 } // End of namespace Kingdom
 
