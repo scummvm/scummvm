@@ -1562,18 +1562,10 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	_glyphSurface = nullptr;
 
 	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
-		int maxHeight = -1;
-		int maxWidth = -1;
-
-		for (int i = 0; i < 2; i++) {
-			const Graphics::Font *font = _vm->_macGui->getFontByScummId(i);
-
-			maxHeight = MAX(maxHeight, font->getFontHeight());
-			maxWidth = MAX(maxWidth, font->getMaxCharWidth());
-		}
+		const Graphics::Font *font = _vm->_macGui->getFontByScummId(0);
 
 		_glyphSurface = new Graphics::Surface();
-		_glyphSurface->create(maxWidth, maxHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_glyphSurface->create(font->getFontHeight(), font->getMaxCharWidth(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 }
 
