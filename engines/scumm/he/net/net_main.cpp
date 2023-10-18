@@ -47,6 +47,7 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 
 	_sessionServerPeer = -1;
 	_sessionServerHost = nullptr;
+	_gotSessions = false;
 	_isRelayingGame = false;
 
 	_numUsers = 0;

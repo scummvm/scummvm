@@ -35,6 +35,12 @@ Lobby::Lobby(ScummEngine_v90he *vm) : _vm(vm) {
 
 	_userId = 0;
 	_userName = "";
+	_playerId = 0;
+
+	_areaIdForPopulation = 0;
+
+	_inArea = false;
+	_gamesPlaying = 0;
 
 	_sessionId = 0;
 
