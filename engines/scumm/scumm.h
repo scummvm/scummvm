@@ -1407,7 +1407,6 @@ protected:
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
-	void mac_drawBorder(int x, int y, int w, int h, byte color);
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;

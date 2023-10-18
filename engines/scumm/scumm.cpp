@@ -1197,7 +1197,7 @@ Common::Error ScummEngine::init() {
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-					_macGui = new MacLoomGui(_system, this, macResourceFile);
+					_macGui = new MacLoomGui(this, macResourceFile);
 					break;
 				}
 			}
