@@ -390,6 +390,9 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 }
 
 Common::String TextCastMember::formatInfo() {
+	// need to pull the data from the STXT resource before the
+	// debug output will be visible
+	load();
 	Common::String format = formatStringForDump(_ptext.encode());
 
 	return Common::String::format(
