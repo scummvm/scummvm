@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/macresman.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
 #include "graphics/macega.h"
 #include "graphics/fonts/macfont.h"
@@ -253,17 +254,6 @@ void ScummEngine::mac_undrawIndy3CreditsText() {
 	restoreCharsetBg();
 }
 
-void ScummEngine::mac_drawBorder(int x, int y, int w, int h, byte color) {
-	_macScreen->hLine(x + 2, y, x + w - 2, 0);
-	_macScreen->hLine(x + 2, y + h - 1, x + w - 2, 0);
-	_macScreen->vLine(x, y + 2, y + h - 3, 0);
-	_macScreen->vLine(x + w, y + 2, y + h - 3, 0);
-	_macScreen->setPixel(x + 1, y + 1, 0);
-	_macScreen->setPixel(x + w - 1, y + 1, 0);
-	_macScreen->setPixel(x + 1, y + h - 2, 0);
-	_macScreen->setPixel(x + w - 1, y + h - 2, 0);
-}
-
 Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime) {
 	char bannerMsg[512];
 
@@ -272,7 +262,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
-	_macGui->drawBanner(bannerMsg);
+	MacGui::SimpleWindow *window = _macGui->drawBanner(bannerMsg);
 
 	// Pause shake effect
 	_shakeTempSavedState = _shakeEnabled;
@@ -287,7 +277,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 	}
 
-	_macGui->undrawBanner();
+	delete window;
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
@@ -296,6 +286,55 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	_messageBannerActive = false;
 
 	return ks;
+}
+
+// Very simple window class
+
+MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _system(system), _from(from), _bounds(bounds) {
+	_backup = new Graphics::Surface();
+	_backup->create(_bounds.width(), _bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+	_backup->copyRectToSurface(*_from, 0, 0, _bounds);
+	_surface = _from->getSubArea(bounds);
+
+	Graphics::Surface *s = surface();
+	Common::Rect r = Common::Rect(0, 0, s->w, s->h);
+
+	r.grow(-1);
+	s->fillRect(r, kWhite);
+
+	if (style == MacGui::kStyleNormal) {
+		int growths[] = { 1, -2, -1 };
+
+		for (int i = 0; i < ARRAYSIZE(growths); i++) {
+			r.grow(growths[i]);
+
+			s->hLine(r.left, r.top, r.right - 1, kBlack);
+			s->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
+			s->hLine(r.left, r.top + 1, r.bottom - 2, kBlack);
+			s->hLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
+		}
+	} else if (style == MacGui::kStyleRounded) {
+		r.grow(1);
+
+		for (int i = 0; i < 2; i++) {
+			s->hLine(r.left + 2, r.top, r.right - 3, kBlack);
+			s->hLine(r.left + 2, r.bottom - 1, r.right - 3, kBlack);
+			s->vLine(r.left, r.top + 2, r.bottom - 3, kBlack);
+			s->vLine(r.right - 1, r.top + 2, r.bottom - 3, kBlack);
+			s->setPixel(r.left + 1, r.top + 1, kBlack);
+			s->setPixel(r.left + 1, r.bottom - 2, kBlack);
+			s->setPixel(r.right - 2, r.top + 1, kBlack);
+			s->setPixel(r.right - 2, r.bottom - 2, kBlack);
+			r.grow(-2);
+		}
+	}
+}
+
+MacGui::SimpleWindow::~SimpleWindow() {
+	_from->copyRectToSurface(*_backup, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+	_backup->free();
+	delete _backup;
 }
 
 // ===========================================================================
@@ -309,20 +348,14 @@ static void menuCallback(int id, Common::String &name, void *data) {
 
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
-
-	_bannerBounds.left = 70;
-	_bannerBounds.top = 189;
-	_bannerBounds.setWidth(500);
-	_bannerBounds.setHeight(22);
 }
 
 MacGui::~MacGui() {
 	delete _windowManager;
-	delete _backupSurface;
 }
 
 void MacGui::initialize() {
-	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode);
+	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride);
 	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, 400);
 	_windowManager->setMenuHotzone(Common::Rect(0, 0, 640, 23));
@@ -420,7 +453,50 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	if (id == 0)
 		return true;
 
-	return false;
+	_windowManager->getMenu()->closeMenu();
+
+	Common::Rect bounds(100, 100, 350, 200);
+	SimpleWindow *window = drawWindow(bounds);
+
+	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
+
+	_system->copyRectToScreen(_surface->getBasePtr(100, 100), _surface->pitch, bounds.left, bounds.top, bounds.width(), bounds.height());
+	_system->updateScreen();
+
+	bool shouldQuit = false;
+	bool shouldQuitEngine = false;
+
+	while (!shouldQuit) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				shouldQuit = true;
+				shouldQuitEngine = true;
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				shouldQuit = true;
+				break;
+
+			default:
+				break;
+			}
+
+			_system->updateScreen();
+			_system->delayMillis(10);
+		}
+	}
+
+	_windowManager->popCursor();
+
+	delete window;
+
+	if (shouldQuitEngine)
+		debug("Quit everything");
+
+	return true;
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
@@ -432,60 +508,75 @@ void MacGui::setPalette(const byte *palette, uint size) {
 }
 
 void MacGui::updateWindowManager() {
-	if (_windowManager->isMenuActive()) {
-		if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
-			_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
+	// TODO: Originally, the left Alt button opens the menu. In ScummVM,
+	//       it triggers on mouse-over. Preferrably both should work (the
+	//       latter should work better for touch screens), but it's hard
+	//       to get them to coexist.
+
+	// We want the arrow cursor for menus. Note that the menu triggers even
+	// when the mouse is invisible, which may or may not be a bug. But the
+	// original did allow you to open the menu with Alt even when the
+	// cursor was visible, so for now it's a feature.
+
+	bool isActive = _windowManager->isMenuActive();
+
+	if (isActive) {
+		if (!_menuIsActive) {
+			_cursorWasVisible = CursorMan.showMouse(true);
+			_windowManager->pushCursor(Graphics::kMacCursorArrow);
+		}
 	} else {
-		if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
+		if (_menuIsActive) {
 			_windowManager->popCursor();
+			CursorMan.showMouse(_cursorWasVisible);
+		}
 	}
 
+	_menuIsActive = isActive;
 	_windowManager->draw();
 }
 
-void MacGui::drawBanner(char *message) {
-	if (!_backupSurface) {
-		_backupSurface = new Graphics::Surface();
-		_backupSurface->create(_bannerBounds.width(), _bannerBounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-	}
+MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
+	Common::Rect bounds(70, 189, 570, 211);
 
-	_backupSurface->copyRectToSurface(*_surface, 0, 0, _bannerBounds);
-
-	Common::Rect r = _bannerBounds;
-	r.grow(-1);
-	_surface->fillRect(r, kWhite);
-
-	r = _bannerBounds;
-
-	for (int i = 0; i < 2; i++) {
-		_surface->hLine(r.left + 2, r.top, r.right - 3, kBlack);
-		_surface->hLine(r.left + 2, r.bottom - 1, r.right - 3, kBlack);
-		_surface->vLine(r.left, r.top + 2, r.bottom - 3, kBlack);
-		_surface->vLine(r.right - 1, r.top + 2, r.bottom - 3, kBlack);
-		_surface->setPixel(r.left + 1, r.top + 1, kBlack);
-		_surface->setPixel(r.left + 1, r.bottom - 2, kBlack);
-		_surface->setPixel(r.right - 2, r.top + 1, kBlack);
-		_surface->setPixel(r.right - 2, r.bottom - 2, kBlack);
-		r.grow(-2);
-	}
+	MacGui::SimpleWindow *window = new SimpleWindow(_system, _surface, bounds, MacGui::kStyleRounded);
 
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
-	font->drawString(_surface, (char *)message, _bannerBounds.left, _bannerBounds.top + 4, _bannerBounds.width(), kBlack, Graphics::kTextAlignCenter);
+	font->drawString(_surface, (char *)message, bounds.left, bounds.top + 4, bounds.width(), kBlack, Graphics::kTextAlignCenter);
 
-	_system->copyRectToScreen(_surface->getBasePtr(_bannerBounds.left, _bannerBounds.top), _surface->pitch, _bannerBounds.left, _bannerBounds.top, _bannerBounds.width(), _bannerBounds.height());
+	_system->copyRectToScreen(_surface->getBasePtr(bounds.left, bounds.top), _surface->pitch, bounds.left, bounds.top, bounds.width(), bounds.height());
+
+	return window;
 }
 
-void MacGui::undrawBanner() {
-	if (!_backupSurface)
-		return;
+MacGui::SimpleWindow *MacGui::drawWindow(Common::Rect bounds) {
+	MacGui::SimpleWindow *window = new SimpleWindow(_system, _surface, bounds);
 
-	_surface->copyRectToSurface(*_backupSurface, _bannerBounds.left, _bannerBounds.top, Common::Rect(0, 0, _bannerBounds.width(), _bannerBounds.height()));
-	_system->copyRectToScreen(_surface->getBasePtr(_bannerBounds.left, _bannerBounds.top), _surface->pitch, _bannerBounds.left, _bannerBounds.top, _bannerBounds.width(), _bannerBounds.height());
+	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
+	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
+	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
+	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
 
-	_backupSurface->free();
-	delete _backupSurface;
-	_backupSurface = nullptr;
+	bounds.grow(-1);
+
+	_surface->fillRect(bounds, kWhite);
+
+	bounds.grow(-2);
+
+	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
+	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
+	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
+	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
+
+	bounds.grow(-1);
+
+	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
+	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
+	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
+	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
+
+	return window;
 }
 
 // ===========================================================================

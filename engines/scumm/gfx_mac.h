@@ -43,11 +43,11 @@ protected:
 	Graphics::Surface *_surface = nullptr;
 	Common::String _resourceFile;
 
+	bool _menuIsActive = false;
+	bool _cursorWasVisible = false;
+
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _gameFontId = -1;
-
-	Common::Rect _bannerBounds;
-	Graphics::Surface *_backupSurface = nullptr;
 
 	enum Color {
 		kBlack = 0,
@@ -71,6 +71,26 @@ protected:
 	};
 
 public:
+	enum SimpleWindowStyle {
+		kStyleNormal,
+		kStyleRounded
+	};
+
+	class SimpleWindow {
+	private:
+		OSystem *_system;
+		Common::Rect _bounds;
+		Graphics::Surface *_from = nullptr;
+		Graphics::Surface *_backup = nullptr;
+		Graphics::Surface _surface;
+
+	public:
+		Graphics::Surface *surface() { return &_surface; }
+		void close();
+		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle = kStyleNormal);
+		~SimpleWindow();
+	};
+
 	enum FontId {
 		kIndy3FontSmall,
 		kIndy3FontMedium,
@@ -108,13 +128,14 @@ public:
 
 	void setPalette(const byte *palette, uint size);
 
-	void drawBanner(char *message);
-	void undrawBanner();
+	SimpleWindow *drawBanner(char *message);
+
+	SimpleWindow *drawWindow(Common::Rect bounds);
 };
 
 class MacLoomGui : public MacGui {
 public:
-	MacLoomGui(OSystem *system, ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {}
+	MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {}
 	~MacLoomGui() {}
 
 	const Common::String name() const { return "Loom"; }
