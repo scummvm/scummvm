@@ -749,7 +749,7 @@ bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
 	bool caughtEvent = false;
 
 	if (event.type == Common::EVENT_KEYDOWN) {
-		if (!event.kbd.hasFlags(Common::KBD_NON_STICKY) && event.kbd.keycode == vs->key)
+		if (!(event.kbd.flags & Common::KBD_NON_STICKY) && event.kbd.keycode == vs->key)
 			caughtEvent = true;
 	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 		if (_bounds.contains(event.mouse))
