@@ -1236,7 +1236,7 @@ bool MacMenu::keyEvent(Common::Event &event) {
 
 	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 		if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
-			return processMenuShortCut(event.kbd.flags, event.kbd.ascii);
+			return processMenuShortCut(event.kbd.ascii);
 		}
 	}
 
@@ -1471,23 +1471,23 @@ bool MacMenu::mouseRelease(int x, int y) {
 	return true;
 }
 
-bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {
+bool MacMenu::processMenuShortCut(uint16 ascii) {
 	ascii = tolower(ascii);
 
-	if (flags & (Common::KBD_CTRL | Common::KBD_META)) {
-		for (uint i = 0; i < _items.size(); i++)
-			if (_items[i]->submenu != nullptr) {
-				for (uint j = 0; j < _items[i]->submenu->items.size(); j++)
-					if (_items[i]->submenu->items[j]->enabled && tolower(_items[i]->submenu->items[j]->shortcut) == ascii) {
-						if (_items[i]->submenu->items[j]->unicode) {
-							if (checkCallback(true))
-								(*_unicodeccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->unicodeText, _cdata);
-						} else {
-							if (checkCallback())
-								(*_ccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->text, _cdata);
-						}
-						return true;
+	for (uint i = 0; i < _items.size(); i++) {
+		if (_items[i]->submenu != nullptr) {
+			for (uint j = 0; j < _items[i]->submenu->items.size(); j++) {
+				if (_items[i]->submenu->items[j]->enabled && tolower(_items[i]->submenu->items[j]->shortcut) == ascii) {
+					if (_items[i]->submenu->items[j]->unicode) {
+						if (checkCallback(true))
+							(*_unicodeccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->unicodeText, _cdata);
+					} else {
+						if (checkCallback())
+							(*_ccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->text, _cdata);
 					}
+					return true;
+				}
+			}
 		}
 	}
 

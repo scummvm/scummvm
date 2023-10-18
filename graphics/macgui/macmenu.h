@@ -202,7 +202,7 @@ private:
 	bool mouseRelease(int x, int y);
 	bool mouseMove(int x, int y);
 
-	bool processMenuShortCut(byte flags, uint16 ascii);
+	bool processMenuShortCut(uint16 ascii);
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
 	bool contains(int x, int y);
