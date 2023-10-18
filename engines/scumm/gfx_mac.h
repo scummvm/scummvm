@@ -94,6 +94,8 @@ public:
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 	virtual void getFontParams(FontId fontId, int &id, int &size, int &slant) = 0;
 
+	virtual bool handleMenu(int id, Common::String &name);
+
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
 	virtual void resetAfterLoad() {}
@@ -121,6 +123,8 @@ public:
 	void getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+
+	bool handleMenu(int id, Common::String &name);
 };
 
 class MacIndy3Gui : public MacGui {
@@ -139,6 +143,8 @@ public:
 	void getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+
+	bool handleMenu(int id, Common::String &name);
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that

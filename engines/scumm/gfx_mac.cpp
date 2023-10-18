@@ -303,6 +303,10 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Jones and the Last Crusade.
 // ===========================================================================
 
+static void menuCallback(int id, Common::String &name, void *data) {
+	((MacGui *)data)->handleMenu(id, name);
+}
+
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
 
@@ -341,6 +345,8 @@ void MacGui::initialize() {
 	menu->addStaticMenus(menuSubItems);
 	menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
 
+	menu->setCommandsCallback(menuCallback, this);
+
 	for (int i = 129; i <= 130; i++) {
 		res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
 
@@ -356,6 +362,23 @@ void MacGui::initialize() {
 
 	resource.close();
 
+	// Assign sensible IDs to the menu items
+
+	int numberOfMenus = menu->numberOfMenus();
+
+	for (int i = 0; i < numberOfMenus; i++) {
+		Graphics::MacMenuItem *item = menu->getMenuItem(i);
+		int numberOfMenuItems = menu->numberOfMenuItems(item);
+		int id = 100 * (i + 1);
+		for (int j = 0; j < numberOfMenuItems; j++) {
+			Graphics::MacMenuItem *subItem = menu->getSubMenuItem(item, j);
+			Common::String name = menu->getName(subItem);
+
+			if (!name.empty())
+				menu->setAction(subItem, id++);
+		}
+	}
+
 	// Register custom fonts. The font family just happens to match the
 	// printed name of the game.
 
@@ -368,7 +391,6 @@ void MacGui::initialize() {
 	for (uint i = 0; i < fontFamilies.size(); i++) {
 		if (fontFamilies[i]->getName() == fontFamily) {
 			_gameFontId = _windowManager->_fontMan->registerFontName(fontFamily, fontFamilies[i]->getFontFamilyId());
-debug("_gameFontId = %d", _gameFontId);
 			break;
 		}
 	}
@@ -390,6 +412,15 @@ const Graphics::Font *MacGui::getFont(FontId fontId) {
 	_fonts[(int)fontId] = font;
 
 	return font;
+}
+
+bool MacGui::handleMenu(int id, Common::String &name) {
+	// This menu item (e.g. a menu separator) has no action, so it's
+	// handled trivially.
+	if (id == 0)
+		return true;
+
+	return false;
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
@@ -527,6 +558,12 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 	}
 
 	delete curs;
+}
+
+bool MacLoomGui::handleMenu(int id, Common::String &name) {
+	if (MacGui::handleMenu(id, name))
+		return true;
+	return false;
 }
 
 // ===========================================================================
@@ -1355,35 +1392,6 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 // the work to the individual widgets.
 // ---------------------------------------------------------------------------
 
-void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
-		return;
-
-	const byte buf[15 * 15] = {
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
-		1, 1, 1, 1, 1, 1, 0, 3, 0, 1, 1, 1, 1, 1, 1,
-		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
-		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3
-	};
-
-	width = height = 15;
-	hotspotX = hotspotY = 7;
-	animate = 0;
-
-	_windowManager->pushCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
-}
-
 MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
 	MacGui(vm, resourceFile), _visible(false) {
 
@@ -1435,6 +1443,35 @@ MacIndy3Gui::~MacIndy3Gui() {
 		delete it._value;
 }
 
+void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
+	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
+		return;
+
+	const byte buf[15 * 15] = {
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 1, 1, 1, 0, 3, 0, 1, 1, 1, 1, 1, 1,
+		0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
+		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3
+	};
+
+	width = height = 15;
+	hotspotX = hotspotY = 7;
+	animate = 0;
+
+	_windowManager->pushCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
+}
+
 const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
@@ -1483,6 +1520,12 @@ void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 	default:
 		error("MacIndy3Gui: getFontParams: Unknown font id %d", (int)fontId);
 	}
+}
+
+bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
+	if (MacGui::handleMenu(id, name))
+		return true;
+	return false;
 }
 
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
