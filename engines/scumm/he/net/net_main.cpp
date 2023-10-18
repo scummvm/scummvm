@@ -427,7 +427,7 @@ int Net::endSession() {
 		_isShuttingDown = true;
 		// Send out any remaining data from the queue before shutting down.
 		while (_hostDataQueue.size()) {
-			if (_hostDataQueue.size() != _hostDataQueue.size())
+			if (_hostDataQueue.size() != _peerIndexQueue.size())
 				warning("NETWORK: Sizes of data and peer index queues does not match!  Expect some wonky stuff");
 			Common::JSONValue *json = _hostDataQueue.pop();
 			int peerIndex = _peerIndexQueue.pop();
@@ -1265,7 +1265,7 @@ void Net::doNetworkOnceAFrame(int msecs) {
 		serviceBroadcast();
 
 	if (_isHost && _hostDataQueue.size()) {
-		if (_hostDataQueue.size() != _hostDataQueue.size())
+		if (_hostDataQueue.size() != _peerIndexQueue.size())
 			warning("NETWORK: Sizes of data and peer index queues does not match!  Expect some wonky stuff");
 		Common::JSONValue *json = _hostDataQueue.pop();
 		int peerIndex = _peerIndexQueue.pop();
