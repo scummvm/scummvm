@@ -1210,7 +1210,7 @@ void MacMenu::drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color) {
 }
 
 bool MacMenu::processEvent(Common::Event &event) {
-	if (!_isVisible)
+	if (!_isVisible && event.type != Common::EVENT_KEYDOWN)
 		return false;
 
 	switch (event.type) {
