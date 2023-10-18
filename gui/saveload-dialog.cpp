@@ -1191,7 +1191,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		// In save mode we disable the button, when it's write protected.
 		// TODO: Maybe we should not display it at all then?
 		// We also disable and description the button if slot is locked
-		isWriteProtected = desc.getWriteProtectedFlag() ||
+		bool isWriteProtected = desc.getWriteProtectedFlag() ||
 			_saveList[i].getWriteProtectedFlag();
 		if ((_saveMode && isWriteProtected) || desc.getLocked()) {
 			curButton.button->setEnabled(false);
