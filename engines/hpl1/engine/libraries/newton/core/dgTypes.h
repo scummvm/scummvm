@@ -99,27 +99,8 @@ class dgBigVector;
 #define dgNaked
 #endif
 
-/*
-#ifdef _WIN32
-    #ifdef _DEBUG
-        #define dgCheckFloat(x) _finite(x)
-    #else
-        #define dgCheckFloat(x) true
-    #endif
-#else
-    #define dgCheckFloat(x) true
-#endif
-*/
-
-#ifdef _DEBUG
-#ifdef _WIN32
-#define dgCheckFloat(x) (_finite(x) && !_isnan(x))
-#else
 #define dgCheckFloat(x) (isfinite(x) && !isnan(x))
-#endif
-#endif
-
-#define NEWTON_ASSERT(x)
+#define NEWTON_ASSERT(x) assert(x);
 
 DG_INLINE dgInt32 exp_2(dgInt32 x) {
 	dgInt32 exp;
