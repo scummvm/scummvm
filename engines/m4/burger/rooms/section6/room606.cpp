@@ -55,9 +55,9 @@ void Room606::daemon() {
 	case 1:
 		digi_preload("606x001", 606);
 		digi_preload("606w003a", 606);
-		digi_preload("606x003b", 606);
-		digi_preload("606x003c", 606);
-		digi_preload("606x003d", 606);
+		digi_preload("606w003b", 606);
+		digi_preload("606w003c", 606);
+		digi_preload("606w003d", 606);
 		_state1 = imath_ranged_rand(0, 3);
 		series_stream_with_breaks(SERIES1, "606laser", 8, 1, 6007);
 		break;

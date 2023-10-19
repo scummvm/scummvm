@@ -344,32 +344,32 @@ void Flags::conv_reset_all() {
 
 const char *Flags::getConvName() {
 	const char *conv = nullptr;
-	if (_G(flags)[V287] && !_G(flags)[V242])
+	if (_G(flags)[kFirstTestPassed] && !_G(flags)[V242])
 		conv = "conv51";
 
-	if (_G(flags)[V242] == 5 && _G(flags)[V241] == 0 && !player_been_here(612)) {
+	if (_G(flags)[V242] == 5 && _G(flags)[kSecondTestPassed] == 0 && !player_been_here(612)) {
 		if (_G(flags)[V248])
 			conv = "conv52";
 		else
 			--_G(flags)[V242];
 	}
 
-	if (_G(flags)[V241] && !_G(flags)[V100])
+	if (_G(flags)[kSecondTestPassed] && !_G(flags)[V100])
 		conv = "conv53";
 
-	if (_G(flags)[V100] == 5 && !_G(flags)[V099] && !player_been_here(310) &&
+	if (_G(flags)[V100] == 5 && !_G(flags)[kThirdTestPassed] && !player_been_here(310) &&
 		!player_been_here(311) && !player_been_here(312) && !player_been_here(313) &&
 		!player_been_here(314) && !player_been_here(315) && !player_been_here(316) &&
 		!player_been_here(317) && !player_been_here(318) && !player_been_here(319))
 		conv = "conv54";
 
-	if (_G(flags)[V099] && !_G(flags)[V185])
+	if (_G(flags)[kThirdTestPassed] && !_G(flags)[V185])
 		conv = "conv55";
 
-	if (_G(flags)[V185] == 5 && !_G(flags)[V184])
+	if (_G(flags)[V185] == 5 && !_G(flags)[kFourthTestPassed])
 		conv = "conv56";
 
-	if (_G(flags)[V184] && !_G(flags)[V153])
+	if (_G(flags)[kFourthTestPassed] && !_G(flags)[V153])
 		conv = "conv57";
 
 	if (_G(flags)[V153] == 5)

@@ -45,7 +45,7 @@ const seriesPlayBreak Room307::PLAY1[] = {
 
 
 void Room307::init() {
-	_G(flags)[V099] = 1;
+	_G(flags)[kThirdTestPassed] = 1;
 	ws_demand_location(418, 309, 9);
 	ws_hide_walker();
 	digi_preload("307_001");

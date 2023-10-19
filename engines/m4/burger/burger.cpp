@@ -532,19 +532,19 @@ void BurgerEngine::testDone() {
 }
 
 void BurgerEngine::handleTestDone() {
-	if (_G(flags)[V287]) {
+	if (_G(flags)[kFirstTestPassed]) {
 		testDone1();
 
-		if (_G(flags)[V241]) {
+		if (_G(flags)[kSecondTestPassed]) {
 			testDone2();
 
-			if (_G(flags)[V099]) {
+			if (_G(flags)[kThirdTestPassed]) {
 				testDone3();
 
-				if (_G(flags)[V184]) {
+				if (_G(flags)[kFourthTestPassed]) {
 					testDone4();
 
-					if (_G(flags)[V152]) {
+					if (_G(flags)[kFifthTestPassed]) {
 						testDone5();
 
 						_G(game).setRoom(701);
@@ -572,7 +572,7 @@ void BurgerEngine::handleTestDone() {
 }
 
 void BurgerEngine::testDone1() {
-	_G(flags)[V287] = 1;
+	_G(flags)[kFirstTestPassed] = 1;
 	if (!_G(flags)[kNEURO_TEST_COUNTER])
 		_G(flags)[kNEURO_TEST_COUNTER]++;
 }
@@ -581,7 +581,7 @@ void BurgerEngine::testDone2() {
 	if (!_G(flags)[V242])
 		_G(flags)[V242]++;
 
-	_G(flags)[V241] = 1;
+	_G(flags)[kSecondTestPassed] = 1;
 	_G(flags)[V243] = 6007;
 	_G(flags)[V244] = 6004;
 	_G(flags)[V245] = 10031;
@@ -625,7 +625,7 @@ void BurgerEngine::testDone3() {
 	inv_move_object("CARROT JUICE", NOWHERE);
 	inv_give_to_player("BOTTLE");
 
-	_G(flags)[V099] = 1;
+	_G(flags)[kThirdTestPassed] = 1;
 	_G(flags)[V101] = 1;
 	_G(flags)[V107] = 1;
 	_G(flags)[V108] = 1;
@@ -669,7 +669,7 @@ void BurgerEngine::testDone4() {
 	inv_move_object("GIZMO", NOWHERE);
 	inv_give_to_player("BOTTLE");
 
-	_G(flags)[V184] = 1;
+	_G(flags)[kFourthTestPassed] = 1;
 	_G(flags)[V186] = 0;
 	_G(flags)[V195] = 1;
 	_G(flags)[V196] = 0;
@@ -701,7 +701,7 @@ void BurgerEngine::testDone5() {
 	if (!_G(flags)[V153])
 		_G(flags)[V153]++;
 
-	_G(flags)[V152] = 1;
+	_G(flags)[kFifthTestPassed] = 1;
 	_G(flags)[V157] = 1;
 	_G(flags)[V158] = 1;
 	_G(flags)[V159] = 1;
@@ -762,19 +762,19 @@ void BurgerEngine::wilburTeleported() {
 	if (_G(executing) != WHOLE_GAME) {
 		_G(game).setRoom(604);
 	} else {
-		if (_G(flags)[V152]) {
+		if (_G(flags)[kFifthTestPassed]) {
 			testDone5();
 			kernel_trigger_dispatch_now(10033);
-		} else if (_G(flags)[V184] && !_G(flags)[V153]) {
+		} else if (_G(flags)[kFourthTestPassed] && !_G(flags)[V153]) {
 			testDone4();
 			_G(game).setRoom(207);
-		} else if (_G(flags)[V099] && !_G(flags)[V185]) {
+		} else if (_G(flags)[kThirdTestPassed] && !_G(flags)[V185]) {
 			testDone3();
 			_G(game).setRoom(207);
-		} else if (_G(flags)[V241] && !_G(flags)[V100]) {
+		} else if (_G(flags)[kSecondTestPassed] && !_G(flags)[V100]) {
 			testDone2();
 			_G(game).setRoom(207);
-		} else if (_G(flags)[V287] && !_G(flags)[V242]) {
+		} else if (_G(flags)[kFirstTestPassed] && !_G(flags)[V242]) {
 			testDone1();
 			_G(game).setRoom(204);
 		} else {
