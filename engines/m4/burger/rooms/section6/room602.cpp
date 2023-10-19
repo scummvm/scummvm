@@ -463,7 +463,7 @@ void Room602::daemon() {
 			if (_series1)
 				series_unload(_series1);
 
-			_series8 = series_play("612mot02", 0x600, 0, -1, 0);
+			_series8 = series_play("612mot02", 0x600, 0, -1, 0, -1);
 			hotspot_set_active("PAW", true);
 			hotspot_set_active("MOTOR", true);
 			hotspot_set_active("MOTOR ", false);
