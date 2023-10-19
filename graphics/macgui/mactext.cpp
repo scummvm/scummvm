@@ -712,6 +712,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	MacFontRun chunk = _text[curLine].chunks[curChunk];
 	int indentSize = 0;
 	int firstLineIndent = 0;
+	bool inTable = false;
 
 	while (*s) {
 		firstLineIndent = 0;
@@ -942,11 +943,14 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 					if (cmd == 'h') { // Header, beginning of the table
 						curTextLine->table = new Common::Array<MacTextTableRow>();
+						inTable = true;
 
 						D(9, "** splitString[table header]");
 					} else if (cmd == 'b') { // Body start
 						D(9, "** splitString[body start]");
 					} else if (cmd == 'B') { // Body end
+						inTable = false;
+
 						D(9, "** splitString[body end]");
 						processTable(curLine, _maxWidth);
 
@@ -1015,6 +1019,9 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			// Push new formatting
 			curTextLine->chunks.push_back(chunk);
 		}
+
+		if (inTable)
+			continue;
 
 		if (!*s) { // If this is end of the string, we're done here
 			break;
