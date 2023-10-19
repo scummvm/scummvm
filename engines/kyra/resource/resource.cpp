@@ -137,7 +137,7 @@ bool Resource::reset() {
 			gameDir.listMatchingMembers(files, "*.PAK");
 			gameDir.listMatchingMembers(files, "*.APK");
 
-			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh) {
+			if (_vm->gameFlags().platform == Common::Platform::kPlatformMacintosh && gameDir.getSubDirectory("runtime") != nullptr) {
 				gameDirRuntime.reset(gameDir.getSubDirectory("runtime"));
 				gameDirRuntime->listMatchingMembers(files, "*.PAK");
 				gameDirRuntime->listMatchingMembers(files, "*.APK");
