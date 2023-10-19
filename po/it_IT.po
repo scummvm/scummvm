@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-17 16:03+0000\n"
-"PO-Revision-Date: 2023-09-23 16:45+0000\n"
+"PO-Revision-Date: 2023-10-19 10:06+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4396,10 +4396,8 @@ msgstr "Vista Ingrandita disattivata"
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:327
-#, fuzzy
-#| msgid "Controls"
 msgid "Touch Controls"
-msgstr "Controlli"
+msgstr "Controlli Touch"
 
 #: backends/platform/android/android.cpp:1033
 #, fuzzy
@@ -4752,29 +4750,25 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Ridimensionamento software (di buona qualità, ma più lento)"
 
 #: backends/platform/ios7/ios7_options.mm:96
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Controlli in sovraimpressione (iOS 15 e successivi)"
+msgstr "Mostra Gamepad (iOS 15 e successivi)"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Emulazione gamepad"
+msgstr "Opacità Gamepad"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
-msgstr ""
+msgstr "Comando direzionale:"
 
 #: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
-msgstr ""
+msgstr "Stick analogico"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
-msgstr ""
+msgstr "Croce direzionale"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
@@ -5106,46 +5100,22 @@ msgstr ""
 "| `Ctrl+F5` -- Mostra Menù Globale\n"
 
 #: backends/platform/sdl/sdl.cpp:1025
-#, fuzzy
-#| msgid "| `Cmd+q`    -- Quit (macOS)\n"
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr "| `Cmd+q`    -- Esci (macOS)\n"
+msgstr "| `Cmd+q`    | Esci (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
-#, fuzzy
-#| msgid "| `Alt+F4`  -- Quit (Windows)\n"
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr "| `Alt+F4`  -- Esci (Windows)\n"
+msgstr "| `Alt+F4`  | Esci (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
-#, fuzzy
-#| msgid "| `Ctrl+q`  -- Quit (Linux/Unix)\n"
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr "| `Ctrl+q`  -- Esci (Linux/Unix)\n"
+msgstr "| `Ctrl+q`  | Esci (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1030
-#, fuzzy
-#| msgid "| `Ctrl+z`  -- Quit (other platforms)\n"
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr "| `Ctrl+z`  -- Esci (altre piattaforme)\n"
+msgstr "| `Ctrl+z`  | Esci (altre piattaforme)\n"
 
 #: backends/platform/sdl/sdl.cpp:1033
-#, fuzzy
-#| msgid ""
-#| "| `Ctrl+u`  -- Mutes all sounds\n"
-#| "| `Ctrl+m`  -- Toggles mouse capture\n"
-#| "| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics "
-#| "filters\n"
-#| "| `Ctrl+Alt` and `+` or `-` -- Increases/decreases the scale factor\n"
-#| "| `Ctrl+Alt+a` -- Toggles aspect ratio correction on/off\n"
-#| "| `Ctrl+Alt+f` -- Toggles between nearest neighbor and bilinear "
-#| "interpolation (graphics filtering on/off)\n"
-#| "| `Ctrl+Alt+s` -- Cycles through stretch modes\n"
-#| "| `Alt+Enter`   -- Toggles full screen/windowed mode\n"
-#| "| `Alt+s`          -- Takes a screenshot\n"
-#| "| `Ctrl+F7`       -- Opens virtual keyboard (if enabled). This can also "
-#| "be opened with a long press of the middle mouse button or wheel.\n"
-#| "| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -5162,20 +5132,20 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
-"| `Ctrl+u`  -- Audio Muto\n"
-"| `Ctrl+m`  -- Cattura mouse attiva/disattivata\n"
-"| `Ctrl+Alt` e `9` o `0` -- Itera tra i diversi filtri grafici\n"
-"| `Ctrl+Alt` e `+` o `-` -- Aumenta/riduci fattore di scala\n"
-"| `Ctrl+Alt+a` -- Correzione proporzioni attiva/disattivata\n"
-"| `Ctrl+Alt+f` -- Alterna tra nearest-neighbor e interpolazione bilineare "
-"(Filtro grafico attivo/disattivato)\n"
-"| `Ctrl+Alt+s` -- Itera tra le diverse modalità di ridimensionamento "
-"dell'immagine\n"
-"| `Alt+Enter`   -- Alterna tra visualizzazione finestra/schermo intero\n"
-"| `Alt+s`          -- Cattura uno screenshot\n"
-"| `Ctrl+F7`       -- Apre tastiera virtuale (se abilitata). È anche "
-"possibile tenere premuto il tasto centrale del mouse/rotellina.\n"
-"| `Ctrl+Alt+d` -- Apre debugger di ScummVM\n"
+"| `Ctrl+u`  | Audio Muto\n"
+"| `Ctrl+m`  | Cattura mouse attiva/disattivata\n"
+"| `Ctrl+Alt` e `9` o `0` | Itera tra i diversi filtri grafici\n"
+"| `Ctrl+Alt` e `+` o `-` | Aumenta/riduci fattore di scala\n"
+"| `Ctrl+Alt+a` | Correzione proporzioni attiva/disattivata\n"
+"| `Ctrl+Alt+f` | Alterna tra nearest-neighbor e interpolazione bilineare ("
+"Filtro grafico attivo/disattivato)\n"
+"| `Ctrl+Alt+s` | Itera tra le diverse modalità di ridimensionamento dell'"
+"immagine\n"
+"| `Alt+Enter`   | Alterna tra visualizzazione finestra/schermo intero\n"
+"| `Alt+s`          | Cattura uno screenshot\n"
+"| `Ctrl+F7`       | Apre tastiera virtuale (se abilitata). È anche possibile "
+"tenere premuto il tasto centrale del mouse/rotellina.\n"
+"| `Ctrl+Alt+d` | Apre debugger di ScummVM\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -9613,11 +9583,15 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1169
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
+"Questo gioco richiede l'eseguibile Macintosh 'Indy', per caricare i "
+"caratteri."
 
 #: engines/scumm/scumm.cpp:1193
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Questo gioco richiede l'eseguibile Macintosh 'Loom', per caricare la musica "
+"e caratteri."
 
 #: engines/scumm/scumm.cpp:1213
 msgid ""
