@@ -130,6 +130,7 @@ public:
 	int _interLinear = 0;
 	int _textShadow = 0;
 	MacWindowManager *_wm = nullptr;
+	uint32 _fgcolor = 0;
 	uint32 _bgcolor = 0;
 	bool _macFontMode = true;
 	MacText *_macText;
@@ -158,6 +159,14 @@ public:
 	 */
 	int getLineWidth(int line, bool enforce = false, int col = -1);
 	int getLineHeight(int line);
+	int getLineCharWidth(int line, bool enforce = false);
+
+	void splitString(const Common::U32String &str, int curLine, MacFontRun &defaultFormatting);
+	const Common::U32String::value_type *splitString(const Common::U32String::value_type *s, int curLine, MacFontRun &defaultFormatting);
+
+	void chopChunk(const Common::U32String &str, int *curLinePtr, int indent, int maxWidth);
+
+	void processTable(int line, int maxWidth);
 };
 
 struct MacTextTableRow {
@@ -310,7 +319,6 @@ public:
 	void clearText();
 	void removeLastLine();
 	int getLineCount() { return _canvas._text.size(); }
-	int getLineCharWidth(int line, bool enforce = false);
 	int getLastLineWidth();
 	int getTextHeight() { return _canvas._textMaxHeight; }
 	int getLineHeight(int line);
@@ -369,8 +377,6 @@ private:
 	 */
 	void reshuffleParagraph(int *row, int *col);
 
-	void chopChunk(const Common::U32String &str, int *curLine, int indent, int maxWidth);
-	void splitString(const Common::U32String &str, int curLine = -1);
 	void recalcDims();
 
 	void drawSelection(int xoff, int yoff);
@@ -378,8 +384,6 @@ private:
 
 	void startMarking(int x, int y);
 	void updateTextSelection(int x, int y);
-
-	void processTable(int line);
 
 public:
 	int _cursorX, _cursorY;
@@ -408,8 +412,6 @@ protected:
 
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
-
-	bool _inTable = false;
 
 private:
 	ManagedSurface *_cursorSurface;
