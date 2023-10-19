@@ -32,8 +32,6 @@
 	TextInputHandler *inputView;
 }
 
-@property BOOL hwKeyboardConnected;
-
 - (id)initWithFrame:(CGRect)frame;
 - (void)dealloc;
 - (UITextField *)inputView;

@@ -22,6 +22,9 @@
 #include "backends/platform/ios7/ios7_keyboard.h"
 #include "common/keyboard.h"
 #include "common/config-manager.h"
+#ifdef __IPHONE_14_0
+#include <GameController/GameController.h>
+#endif
 
 @interface UITextInputTraits
 - (void)setAutocorrectionType:(int)type;
@@ -405,8 +408,6 @@
 	BOOL _keyboardVisible;
 }
 
-@synthesize hwKeyboardConnected;
-
 #if TARGET_OS_IOS
 - (void)resizeParentFrame:(NSNotification*)notification keyboardDidShow:(BOOL)didShow
 {
@@ -416,11 +417,11 @@
 
 	// Base the new frame size on the current parent frame size
 	CGRect newFrame = self.superview.frame;
-	if ([self hwKeyboardConnected]) {
-		if (ConfMan.getBool("keyboard_fn_bar")) {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard != nil && ConfMan.getBool("keyboard_fn_bar")) {
 			newFrame.size.height += (inputView.inputAccessoryView.frame.size.height) * (didShow ? -1 : 1);
 		} else {
-			return;
+			newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
 		}
 	} else {
 		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
@@ -454,6 +455,20 @@
 	[self resizeParentFrame:notification keyboardDidShow:NO];
 	_keyboardVisible = NO;
 }
+
+- (void)keyboardDidConnect:(NSNotification*)notification
+{
+	[inputView becomeFirstResponder];
+}
+
+- (void)keyboardDidDisconnect:(NSNotification*)notification
+{
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard == nil) {
+			[inputView endEditing:YES];
+		}
+	}
+}
 #endif
 
 - (id)initWithFrame:(CGRect)frame {
@@ -470,6 +485,17 @@
 	 name:UIKeyboardDidHideNotification
 	 object:nil];
 #endif
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		 selector:@selector(keyboardDidConnect:)
+		 name:GCKeyboardDidConnectNotification
+	     object:nil];
+
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		 selector:@selector(keyboardDidDisconnect:)
+		 name:GCKeyboardDidDisconnectNotification
+	     object:nil];
+	}
 
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
@@ -478,6 +504,14 @@
 	inputView.keyboardType = UIKeyboardTypeDefault;
 	[inputView layoutIfNeeded];
 	_keyboardVisible = NO;
+
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		// If already connected to a HW keyboard, start
+		// monitoring key presses
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			[inputView becomeFirstResponder];
+		}
+	}
 	return self;
 }
 
@@ -522,6 +556,11 @@
 }
 
 - (void)hideKeyboard {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			return;
+		}
+	}
 	[inputView endEditing:YES];
 }
 
