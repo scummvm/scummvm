@@ -1020,6 +1020,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			curTextLine->chunks.push_back(chunk);
 		}
 
+		// We avoid adding new lines while in table. Recursive cell rendering
+		// has this flag as false (obviously)
 		if (inTable)
 			continue;
 
@@ -1135,14 +1137,20 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 			int xOffset = (_text[i].width - _text[i].charwidth) / 2;
 			Common::Rect bbox(xOffset, _text[i].y, xOffset + _text[i].charwidth, _text[i].y + _text[i].height);
 
-			if (image)
+			if (image) {
 				surface->blitFrom(image, Common::Rect(0, 0, image->w, image->h), bbox);
+
+				D(9, "MacTextCanvas::render: Image %d x %d bbox: %d, %d, %d, %d", image->w, image->h, bbox.left, bbox.top,
+						bbox.right, bbox.bottom);
+			}
 
 			continue;
 		}
 
 		if (_text[i].tableSurface) {
 			surface->blitFrom(*_text[i].tableSurface, Common::Point(0, _text[i].y));
+
+			D(9, "MacTextCanvas::render: Table %d x %d at: %d, %d", _text[i].tableSurface->w, _text[i].tableSurface->h, 0, _text[i].y);
 
 			continue;
 		}
