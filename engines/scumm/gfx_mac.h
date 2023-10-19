@@ -84,14 +84,17 @@ public:
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;
 
+		void copyToScreen(Graphics::Surface *s);
 	public:
 		Graphics::Surface *surface() { return &_surface; }
-		void close();
+		void show();
 		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle = kStyleNormal);
 		~SimpleWindow();
 	};
 
 	enum FontId {
+		kSystemFont,
+
 		kIndy3FontSmall,
 		kIndy3FontMedium,
 		kIndy3VerbFontRegular,
@@ -115,6 +118,8 @@ public:
 	virtual void getFontParams(FontId fontId, int &id, int &size, int &slant) = 0;
 
 	virtual bool handleMenu(int id, Common::String &name);
+
+	virtual void showAboutDialog() = 0;
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
@@ -146,6 +151,8 @@ public:
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
 	bool handleMenu(int id, Common::String &name);
+
+	void showAboutDialog();
 };
 
 class MacIndy3Gui : public MacGui {
@@ -166,6 +173,8 @@ public:
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
 	bool handleMenu(int id, Common::String &name);
+
+	void showAboutDialog();
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
@@ -262,7 +271,6 @@ private:
 		bool _kill = false;
 
 	public:
-
 		VerbWidget(int x, int y, int width, int height) : Widget(x, y, width, height) {}
 
 		void setVerbid(int n) { _verbid = n; }

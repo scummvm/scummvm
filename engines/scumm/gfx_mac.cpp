@@ -331,10 +331,18 @@ MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Com
 }
 
 MacGui::SimpleWindow::~SimpleWindow() {
-	_from->copyRectToSurface(*_backup, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
-	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+	copyToScreen(_backup);
 	_backup->free();
 	delete _backup;
+}
+
+void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) {
+	_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
+}
+
+void MacGui::SimpleWindow::show() {
+	copyToScreen(surface());
 }
 
 // ===========================================================================
@@ -439,7 +447,18 @@ const Graphics::Font *MacGui::getFont(FontId fontId) {
 	int size;
 	int slant;
 
-	getFontParams(fontId, id, size, slant);
+	switch (fontId) {
+	case kSystemFont:
+		id = Graphics::kMacFontChicago;
+		size = 12;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	default:
+		getFontParams(fontId, id, size, slant);
+		break;
+	}
+
 
 	font = _windowManager->_fontMan->getFont(Graphics::MacFont(id, size, slant));
 	_fonts[(int)fontId] = font;
@@ -455,46 +474,9 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	_windowManager->getMenu()->closeMenu();
 
-	Common::Rect bounds(100, 100, 350, 200);
-	SimpleWindow *window = drawWindow(bounds);
-
-	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
-
-	_system->copyRectToScreen(_surface->getBasePtr(100, 100), _surface->pitch, bounds.left, bounds.top, bounds.width(), bounds.height());
-	_system->updateScreen();
-
-	bool shouldQuit = false;
-	bool shouldQuitEngine = false;
-
-	while (!shouldQuit) {
-		Common::Event event;
-
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				shouldQuit = true;
-				shouldQuitEngine = true;
-				break;
-
-			case Common::EVENT_LBUTTONDOWN:
-				shouldQuit = true;
-				break;
-
-			default:
-				break;
-			}
-
-			_system->updateScreen();
-			_system->delayMillis(10);
-		}
+	if (id == 100) {
+		showAboutDialog();
 	}
-
-	_windowManager->popCursor();
-
-	delete window;
-
-	if (shouldQuitEngine)
-		debug("Quit everything");
 
 	return true;
 }
@@ -655,6 +637,9 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
 	return false;
+}
+
+void MacLoomGui::showAboutDialog() {
 }
 
 // ===========================================================================
@@ -1617,6 +1602,71 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
 	return false;
+}
+
+void MacIndy3Gui::showAboutDialog() {
+	// The About window is not a a dialog resource. Its size appears to be
+	// hard-coded (416x166), and it's drawn centered. The graphics are in
+	// PICT 2000.
+
+	int width = 416;
+	int height = 166;
+	int x = (640 - width) / 2;
+	int y = (400 - height) / 2;
+
+	Common::Rect bounds(x, y, x + width, y + height);
+
+	SimpleWindow *window = drawWindow(bounds);
+
+	Common::MacResManager resource;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), 2000);
+
+	resource.close();
+
+#if 0
+	const Graphics::Font *font = getFont(kSystemFont);
+	font->drawString(window->surface(), "Another mock-up? Seriously?", 0, 40, 250, kBlack, Graphics::kTextAlignCenter);
+#endif
+
+	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
+
+	window->show();
+
+	bool shouldQuit = false;
+	bool shouldQuitEngine = false;
+
+	while (!shouldQuit) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				shouldQuit = true;
+				shouldQuitEngine = true;
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				shouldQuit = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+
+	_windowManager->popCursor();
+
+	delete window;
+
+	if (shouldQuitEngine)
+		debug("Quit everything");
 }
 
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
