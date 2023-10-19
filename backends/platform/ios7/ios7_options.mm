@@ -529,6 +529,10 @@ void OSystem_iOS7::applyBackendSettings() {
 #if TARGET_OS_IOS
 	applyOrientationSettings();
 	updateTouchMode();
+	if (isKeyboardShown()) {
+		setShowKeyboard(false);
+		setShowKeyboard(true);
+	}
 #endif
 }
 
