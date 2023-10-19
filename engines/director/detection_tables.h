@@ -1488,6 +1488,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "3datlas97",			"3D Atlas 97" },
 	{ "3datlas98",			"3D Atlas 98" },
 	{ "adobedimensions",	"Professional Tips for Adobe Dimensions" },
+	{ "adisystem",			"Adi's Comprehensive Learning System" },
 	{ "agfa",				"AgfaType" },
 	{ "aol",				"America Online" },
 	{ "aquazone",			"Aquazone" },
@@ -3238,6 +3239,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("adamtis", "Demo",		  "Inside Story Demo",	   "ea646eccc9a53f44ce082459d4809a06", 481226,	404),
 	WINDEMO1t("adamtis", "Demo",	  "ADAMDEMO.EXE",		   "451a5ea3f5a47874dbad22d1715d2635", 7342649, 404),
 	WINDEMO1("adamtis", "Skull Demo", "PUZZLE.EXE",			   "d2dcc8b55382fc1807e357af5108f7ba", 1057997,	404),
+
+	// Rolling demo of Sierra/Coktel Adi educational games
+	// Actual games are not Director
+	WINDEMO2("adisystem", "Non-Interactive Demo", "ADIDEMO2.EXE", "t:48309ca0f1e61c2485315d68a15a784e", 684191,
+												  "ADI25.DXR",	  "d:353a7f4bb04ce565e39ee2b8d1b63a22", 11784138, 404),
 
 	// CD serial SYHB-002
 	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304458, 400),
