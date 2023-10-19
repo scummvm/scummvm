@@ -1822,13 +1822,13 @@ dgInt32 dgCollisionCompound::CalculateContactsToCollisionTree(
 				stackPool[stack].m_treeNode = other;
 				stackPool[stack].m_treeNodeIsLeaf = 1;
 				stack++;
-				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNodeBase *)));
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / (sizeof(dgNodeBase *))));
 
 				stackPool[stack].m_myNode = me->m_right;
 				stackPool[stack].m_treeNode = other;
 				stackPool[stack].m_treeNodeIsLeaf = 1;
 				stack++;
-				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(dgNodeBase *)));
+				NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / (sizeof(dgNodeBase *))));
 
 			} else if (nodeProxi.m_area > me->m_area) {
 				NEWTON_ASSERT(me->m_type == m_node);
