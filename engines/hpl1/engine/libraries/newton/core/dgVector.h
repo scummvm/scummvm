@@ -33,7 +33,7 @@
 template<class T>
 class dgTemplateVector {
 public:
-	dgTemplateVector() = default;
+	dgTemplateVector() : m_x(0), m_y(0), m_z(0), m_w(0) {}
 	dgTemplateVector(const T *ptr);
 	constexpr dgTemplateVector(T m_x, T m_y, T m_z, T m_w);
 	dgTemplateVector Scale(T s) const;
