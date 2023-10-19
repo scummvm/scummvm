@@ -337,12 +337,14 @@ MacGui::SimpleWindow::~SimpleWindow() {
 }
 
 void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) {
-	_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+	if (s) {
+		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+	}
 	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 }
 
 void MacGui::SimpleWindow::show() {
-	copyToScreen(surface());
+	copyToScreen();
 }
 
 // ===========================================================================
@@ -466,6 +468,128 @@ const Graphics::Font *MacGui::getFont(FontId fontId) {
 	return font;
 }
 
+const Graphics::Surface *MacGui::loadPICT(int id) {
+	Common::MacResManager resource;
+
+	resource.open(_resourceFile);
+
+	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
+
+	// The PICT decoder is mainly for v2 pictures, so at least for now we
+	// don't use it. The images we need to decode are simple bitmaps
+	// anyway.
+
+	uint16 size = res->readUint16BE();
+
+	uint16 top = res->readUint16BE();
+	uint16 left = res->readUint16BE();
+	uint16 bottom = res->readUint16BE();
+	uint16 right = res->readUint16BE();
+
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(right - left, bottom - top, Graphics::PixelFormat::createFormatCLUT8());
+	s->fillRect(Common::Rect(left, top, right, bottom), kWhite);
+
+	bool endOfPicture = false;
+
+	while (!endOfPicture) {
+		byte opcode = res->readByte();
+		byte value;
+		int x1, x2, y1, y2;
+		int rowBytes;
+		int mode;
+
+		int x = 0;
+		int y = 0;
+
+		switch (opcode) {
+		case 0x01: // clipRgn
+			// The clip region is not important
+			size = res->readUint16BE();
+			assert(size == 10);
+			res->skip(8);
+			break;
+
+		case 0x11: // picVersion
+			value = res->readByte();
+			assert(value == 1);
+			break;
+
+		case 0x99: // PackBitsRgn
+			rowBytes = res->readUint16BE();
+			y1 = res->readSint16BE();
+			x1 = res->readSint16BE();
+			y2 = res->readSint16BE();
+			x2 = res->readSint16BE();
+
+			// srcRect isn't interesting
+			res->skip(8);
+
+			// dstRect isn't interesting
+			res->skip(8);
+
+			mode = res->readUint16BE();
+
+			// maskRgn isn't interesting
+			size = res->readUint16BE();
+			assert(size == 10);
+			res->skip(size - 2);
+
+			for (y = y1; y < y2; y++) {
+				size = res->readByte();
+
+				x = x1;
+				int bytesRead = 0;
+
+				while (bytesRead < size) {
+					byte count = res->readByte();
+					bytesRead++;
+					if (count >= 128) {
+						count = 256 - count;
+						int b = res->readByte();
+						bytesRead++;
+						for (int j = 0; j <= count; j++) {
+							for (int k = 7; k >= 0; k--) {
+								if (b & (1 << k))
+									s->setPixel(x, y, kBlack);
+								x++;
+							}
+						}
+					} else {
+						for (int j = 0; j <= count; j++) {
+							int b = res->readByte();
+							bytesRead++;
+							for (int k = 7; k >= 0; k--) {
+								if (b & (1 << k))
+									s->setPixel(x, y, kBlack);
+								x++;
+							}
+						}
+					}
+				}
+			}
+
+			break;
+
+		case 0xA0: // shortComment
+			res->skip(2);
+			break;
+
+		case 0xFF: // EndOfPicture
+			endOfPicture = true;
+			break;
+
+		default:
+			debug("Unknown opcode: 0x%02x", opcode);
+			break;
+		}
+	}
+
+	resource.close();
+
+	return s;
+}
+
 bool MacGui::handleMenu(int id, Common::String &name) {
 	// This menu item (e.g. a menu separator) has no action, so it's
 	// handled trivially.
@@ -476,9 +600,10 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	if (id == 100) {
 		showAboutDialog();
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
@@ -1609,8 +1734,13 @@ void MacIndy3Gui::showAboutDialog() {
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 2000.
 
+#if 0
 	int width = 416;
 	int height = 166;
+#else
+	int width = 540;
+	int height = 105;
+#endif
 	int x = (640 - width) / 2;
 	int y = (400 - height) / 2;
 
@@ -1618,18 +1748,9 @@ void MacIndy3Gui::showAboutDialog() {
 
 	SimpleWindow *window = drawWindow(bounds);
 
-	Common::MacResManager resource;
+	const Graphics::Surface *pict = loadPICT(2000);
 
-	resource.open(_resourceFile);
-
-	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), 2000);
-
-	resource.close();
-
-#if 0
-	const Graphics::Font *font = getFont(kSystemFont);
-	font->drawString(window->surface(), "Another mock-up? Seriously?", 0, 40, 250, kBlack, Graphics::kTextAlignCenter);
-#endif
+	window->surface()->copyRectToSurface(*pict, 6, 6, Common::Rect(0, 0, 528, 93));
 
 	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
 

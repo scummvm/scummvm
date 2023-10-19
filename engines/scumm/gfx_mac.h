@@ -84,7 +84,7 @@ public:
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;
 
-		void copyToScreen(Graphics::Surface *s);
+		void copyToScreen(Graphics::Surface *s = nullptr);
 	public:
 		Graphics::Surface *surface() { return &_surface; }
 		void show();
@@ -116,6 +116,8 @@ public:
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
 	virtual void getFontParams(FontId fontId, int &id, int &size, int &slant) = 0;
+
+	const Graphics::Surface *loadPICT(int id);
 
 	virtual bool handleMenu(int id, Common::String &name);
 
