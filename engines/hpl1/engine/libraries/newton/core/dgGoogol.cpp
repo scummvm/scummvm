@@ -38,9 +38,6 @@ dgGoogol::dgGoogol(dgFloat64 value) :
 
 	memset(m_mantissa, 0, sizeof(m_mantissa));
 	m_mantissa[0] = (dgInt64(dgFloat64(dgUnsigned64(1) << 62) * mantissa));
-
-	// it looks like GCC have problems with this
-	NEWTON_ASSERT(m_mantissa[0] >= 0);
 }
 
 dgGoogol::~dgGoogol(void) {
