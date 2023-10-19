@@ -49,7 +49,7 @@ void Room513::preload() {
 }
 
 void Room513::init() {
-	_G(flags)[V184] = 1;
+	_G(flags)[kFourthTestPassed] = 1;
 	kernel_trigger_dispatch_now(1);
 }
 

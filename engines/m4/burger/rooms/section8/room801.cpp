@@ -511,7 +511,7 @@ void Room801::daemon() {
 		break;
 
 	case 36:
-		_G(flags)[V287] = 1;
+		_G(flags)[kFirstTestPassed] = 1;
 		adv_kill_digi_between_rooms(1);
 		kernel_trigger_dispatch_now(k10027);
 		break;

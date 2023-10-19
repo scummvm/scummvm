@@ -70,7 +70,7 @@ void Room610::preload() {
 }
 
 void Room610::init() {
-	_G(flags)[V241] = 1;
+	_G(flags)[kSecondTestPassed] = 1;
 	_G(kernel).suppress_fadeup = 1;
 	kernel_trigger_dispatch_now(1);
 }
