@@ -138,7 +138,7 @@
 	scrollView.showsHorizontalScrollIndicator = false;
 	toolbar.autoresizingMask = UIViewAutoresizingNone;
 	[scrollView addSubview:toolbar];
-	self.inputAccessoryView = scrollView;
+	self.inputAccessoryView = nil;
 
 #endif
 	return self;
@@ -249,24 +249,21 @@
 }
 
 - (void)attachAccessoryView {
-	self.inputAccessoryView.hidden = NO;
-	// Alternatively we could add/remove instead of show/hide the inpute accessory view
-//	self.inputAccessoryView = scrollView;
-//	[self reloadInputViews];
 	// We need at least a width of 1024 pt for the toolbar. If we add more buttons this may need to be increased.
 	toolbar.frame = CGRectMake(0, 0, MAX(CGFloat(1024), [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
 	toolbar.bounds = toolbar.frame;
 	toolbar.selectedItem = nil;
+	self.inputAccessoryView = toolbar;
 #if TARGET_OS_IOS
 	scrollView.contentSize = toolbar.frame.size;
+	self.inputAccessoryView = scrollView;
 #endif
+	[self reloadInputViews];
 }
 
 - (void)detachAccessoryView {
-	self.inputAccessoryView.hidden = YES;
-	// Alternatively we could add/remove instead of show/hide the inpute accessory view
-//	self.inputAccessoryView = nil;
-//	[self reloadInputViews];
+	self.inputAccessoryView = nil;
+	[self reloadInputViews];
 }
 
 - (void) setWantsPriority: (UIKeyCommand*) keyCommand {
@@ -406,6 +403,7 @@
 
 @implementation SoftKeyboard {
 	BOOL _keyboardVisible;
+	CGFloat _inputAccessoryHeight;
 }
 
 #if TARGET_OS_IOS
@@ -418,8 +416,15 @@
 	// Base the new frame size on the current parent frame size
 	CGRect newFrame = self.superview.frame;
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
-		if (GCKeyboard.coalescedKeyboard != nil && ConfMan.getBool("keyboard_fn_bar")) {
-			newFrame.size.height += (inputView.inputAccessoryView.frame.size.height) * (didShow ? -1 : 1);
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			if (didShow) {
+				// The inputAccessoryView is hidden by setting it to nil. Then when
+				// receving the UIKeyboardDidHideNotification the height will be 0.
+				// Remember the height of the inputAccessoryView when it's presented
+				// so the main frame can be resized back to the proper size.
+				_inputAccessoryHeight = inputView.inputAccessoryView.frame.size.height;
+			}
+			newFrame.size.height += (_inputAccessoryHeight) * (didShow ? -1 : 1);
 		} else {
 			newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
 		}
@@ -504,6 +509,7 @@
 	inputView.keyboardType = UIKeyboardTypeDefault;
 	[inputView layoutIfNeeded];
 	_keyboardVisible = NO;
+	_inputAccessoryHeight = 0.0f;
 
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
 		// If already connected to a HW keyboard, start
@@ -552,12 +558,25 @@
 }
 
 - (void)showKeyboard {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if ([inputView isFirstResponder] &&
+			GCKeyboard.coalescedKeyboard != nil) {
+			if (ConfMan.getBool("keyboard_fn_bar")) {
+				[inputView attachAccessoryView];
+			}
+			return;
+		}
+	}
 	[inputView becomeFirstResponder];
 }
 
 - (void)hideKeyboard {
 	if (@available(iOS 14.0, tvOS 14.0, *)) {
-		if (GCKeyboard.coalescedKeyboard != nil) {
+		if ([inputView isFirstResponder] &&
+			GCKeyboard.coalescedKeyboard != nil) {
+			if (!ConfMan.getBool("keyboard_fn_bar")) {
+				[inputView detachAccessoryView];
+			}
 			return;
 		}
 	}
