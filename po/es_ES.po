@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-17 16:03+0000\n"
-"PO-Revision-Date: 2023-10-12 13:54+0000\n"
+"PO-Revision-Date: 2023-10-20 16:10+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -9505,11 +9505,15 @@ msgstr ""
 #: engines/scumm/scumm.cpp:1169
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
+"Este juego necesita el ejecutable para Macintosh «Indy» para poder utilizar "
+"sus tipografías."
 
 #: engines/scumm/scumm.cpp:1193
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Este juego necesita el ejecutable para Macintosh «Loom» para poder utilizar "
+"su música y tipografías."
 
 #: engines/scumm/scumm.cpp:1213
 msgid ""
