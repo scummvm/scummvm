@@ -19,9 +19,12 @@
  *
  */
 
+#include "common/debug.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/lingo/lingo-codegen.h"
+#include "director/types.h"
 
 namespace Director {
 
@@ -65,6 +68,12 @@ static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::
 Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags) {
 	const Common::u32char_type_t *s = code.c_str();
 	Common::U32String res;
+	if (debugChannelSet(2, kDebugParse | kDebugPreprocess)) {
+		Common::String movie = g_director->getCurrentPath();
+		if (archive)
+			movie += archive->cast->getMacName();
+		debugC(2, kDebugParse | kDebugPreprocess, "LingoCompiler::codePreprocessor: \"%s\", %s, %d, %d", movie.c_str(),  scriptType2str(type), id.member, id.castLib);
+	}
 
 	// We start from processing the continuation symbols
 	// (The continuation symbol is \xC2 in Mac Roman, \xAC in Unicode.)
@@ -193,7 +202,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 				continuationCount++;
 			}
 		}
-		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.encode().c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "line %d: '%s'", linenumber, line.encode().c_str());
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
