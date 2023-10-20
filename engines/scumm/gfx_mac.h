@@ -139,6 +139,7 @@ public:
 
 	SimpleWindow *drawBanner(char *message);
 
+	bool delay(uint32 ms);
 	SimpleWindow *openWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 };
 
