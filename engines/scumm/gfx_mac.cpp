@@ -1737,7 +1737,7 @@ void MacIndy3Gui::showAboutDialog() {
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 2000.
 
-#if 0
+#if 1
 	int width = 416;
 	int height = 166;
 #else
@@ -1753,7 +1753,14 @@ void MacIndy3Gui::showAboutDialog() {
 
 	const Graphics::Surface *pict = loadPICT(2000);
 
-	window->surface()->copyRectToSurface(*pict, 6, 6, Common::Rect(0, 0, 528, 93));
+//	window->surface()->copyRectToSurface(*pict, 6, 6, Common::Rect(0, 0, 528, 93));
+
+	Graphics::Surface *s = window->innerSurface();
+
+	fillPattern(s, Common::Rect(2, 2, s->w - 2, 130), 0x8020);
+	fillPattern(s, Common::Rect(2, 130, s->w - 2, 133), 0xA5A5);
+	fillPattern(s, Common::Rect(2, 133, s->w - 2, 136), 0xFFFF);
+	fillPattern(s, Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
 
 	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
 
@@ -2049,6 +2056,15 @@ void MacIndy3Gui::copyDirtyRectsToScreen() {
 	}
 
 	_dirtyRects.clear();
+}
+
+void MacIndy3Gui::fillPattern(Graphics::Surface *s, Common::Rect r, uint16 pattern) {
+	for (int y = r.top; y < r.bottom; y++) {
+		for (int x = r.left; x < r.right; x++) {
+			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+			s->setPixel(x, y, (pattern & bit) ? kBlack : kWhite);
+		}
+	}
 }
 
 void MacIndy3Gui::fill(Common::Rect r) const {

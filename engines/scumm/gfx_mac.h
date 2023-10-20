@@ -398,6 +398,8 @@ private:
 	void show();
 	void hide();
 
+	void fillPattern(Graphics::Surface *s, Common::Rect r, uint16 pattern);
+
 	void fill(Common::Rect r) const;
 	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
