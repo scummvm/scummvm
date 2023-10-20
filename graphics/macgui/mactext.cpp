@@ -129,16 +129,6 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_fixedDims = fixedDims;
 	_wm = wm;
 
-	_canvas._maxWidth = maxWidth;
-	_canvas._textAlignment = textAlignment;
-	_canvas._textShadow = textShadow;
-	_canvas._interLinear = interlinear;
-	_canvas._wm = wm;
-	_canvas._tfgcolor = fgcolor;
-	_canvas._tbgcolor = bgcolor;
-	_canvas._macFontMode = true;
-	_canvas._macText = this;
-
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
@@ -149,7 +139,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, textShadow, true);
 }
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
@@ -162,16 +152,6 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_fixedDims = fixedDims;
 	_wm = wm;
 
-	_canvas._maxWidth = maxWidth;
-	_canvas._textAlignment = textAlignment;
-	_canvas._textShadow = 0;
-	_canvas._interLinear = interlinear;
-	_canvas._wm = wm;
-	_canvas._tfgcolor = fgcolor;
-	_canvas._tbgcolor = bgcolor;
-	_canvas._macFontMode = true;
-	_canvas._macText = this;
-
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
@@ -182,7 +162,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, 0, true);
 }
 
 // Working with plain Font
@@ -195,16 +175,6 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_fixedDims = fixedDims;
 	_wm = wm;
 
-	_canvas._maxWidth = maxWidth;
-	_canvas._textAlignment = textAlignment;
-	_canvas._textShadow = 0;
-	_canvas._interLinear = interlinear;
-	_canvas._wm = wm;
-	_canvas._tfgcolor = fgcolor;
-	_canvas._tbgcolor = bgcolor;
-	_canvas._macFontMode = false;
-	_canvas._macText = this;
-
 	if (font) {
 		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
 		_defaultFormatting.font = font;
@@ -212,12 +182,21 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 		_defaultFormatting.font = NULL;
 	}
 
-	init();
+	init(fgcolor, bgcolor, maxWidth, textAlignment, interlinear, 0, false);
 }
 
-void MacText::init() {
+void MacText::init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow, bool macFontMode) {
 	_fullRefresh = true;
 
+	_canvas._maxWidth = maxWidth;
+	_canvas._textAlignment = textAlignment;
+	_canvas._textShadow = textShadow;
+	_canvas._interLinear = interlinear;
+	_canvas._wm = _wm;
+	_canvas._tfgcolor = fgcolor;
+	_canvas._tbgcolor = bgcolor;
+	_canvas._macFontMode = macFontMode;
+	_canvas._macText = this;
 	_canvas._textMaxWidth = 0;
 	_canvas._textMaxHeight = 0;
 	_canvas._surface = nullptr;

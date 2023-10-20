@@ -367,7 +367,7 @@ public:
 	const Surface *getImageSurface(Common::String &fname);
 
 private:
-	void init();
+	void init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow, bool macFontMode);
 	bool isCutAllowed();
 
 	/**
