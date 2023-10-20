@@ -200,11 +200,13 @@ void Room304::daemon() {
 			_G(wilbur_should) = 10001;
 			_G(flags)[V129] = 1;
 			wilbur_speech("304w001");
+			break;
 
 		default:
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	default:
 		_G(kernel).continue_handling_trigger = true;

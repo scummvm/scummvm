@@ -97,6 +97,7 @@ void Room176::daemon() {
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	default:
 		_G(kernel).continue_handling_trigger = true;

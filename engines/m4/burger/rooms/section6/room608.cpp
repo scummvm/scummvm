@@ -93,7 +93,11 @@ void Room608::daemon() {
 			series_stream_with_breaks(SERIES2, "608burnt", 6, 1, 1);
 			break;
 
+		default:
+			_G(kernel).continue_handling_trigger = true;
+			break;
 		}
+		break;
 
 	default:
 		_G(kernel).continue_handling_trigger = true;
