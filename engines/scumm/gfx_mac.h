@@ -80,18 +80,30 @@ public:
 	private:
 		OSystem *_system;
 		Common::Rect _bounds;
+		int _margin;
+
 		Graphics::Surface *_from = nullptr;
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;
 		Graphics::Surface _innerSurface;
 
+		Common::Array<Common::Rect> _dirtyRects;
+
 		void copyToScreen(Graphics::Surface *s = nullptr);
 	public:
-		Graphics::Surface *surface() { return &_surface; }
-		Graphics::Surface *innerSurface() { return &_innerSurface; }
-		void show();
 		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
+
+		Graphics::Surface *surface() { return &_surface; }
+		Graphics::Surface *innerSurface() { return &_innerSurface; }
+
+		void show();
+
+		void markRectAsDirty(Common::Rect r);
+		void update();
+
+		void fillPattern(Common::Rect r, uint16 pattern);
+		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
 	};
 
 	enum FontId {
@@ -180,6 +192,7 @@ public:
 	bool handleMenu(int id, Common::String &name);
 
 	void showAboutDialog();
+	void clearAboutDialog(SimpleWindow *window);
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
@@ -397,8 +410,6 @@ private:
 
 	void show();
 	void hide();
-
-	void fillPattern(Graphics::Surface *s, Common::Rect r, uint16 pattern);
 
 	void fill(Common::Rect r) const;
 	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
