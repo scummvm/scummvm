@@ -533,6 +533,7 @@ void Room706::daemon() {
 		default:
 			break;
 		}
+		break;
 
 	default:
 		_G(kernel).continue_handling_trigger = true;

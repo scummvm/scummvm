@@ -35,7 +35,7 @@ void other_resurrect_player() {
 	KernelTriggerType old_mode;
 
 	if (!g_engine->autosaveExists())
-		error(FL, 'Burg', "Couldn't resume game");
+		error_show(FL, 'Burg', "Couldn't resume game");
 
 	_G(kernel).restore_slot = 0;
 	old_mode = _G(kernel).trigger_mode;

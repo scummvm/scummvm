@@ -647,8 +647,8 @@ void menu_DrawButton(void *theItem, void *theMenu, int32 x, int32 y, int32, int3
 	// If the button is a textbutton, write in the text
 	if ((myButton->buttonType == BTN_TYPE_SL_TEXT) && (myButton->prompt)) {
 		//write in the special tag
-		Common::sprintf_s(tempStr, 32, "%02ld", myItem->tag - 1000 + _GM(firstSlotIndex));
-		/* Common::sprintf_s(tempStr, "%02ld", myButton->specialTag); */
+		Common::sprintf_s(tempStr, 32, "%02d", myItem->tag - 1000 + _GM(firstSlotIndex));
+		/* Common::sprintf_s(tempStr, "%02d", myButton->specialTag); */
 		gr_font_set(_GM(menuFont));
 		gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
 		gr_font_write(myBuff, myButton->prompt, x + 26, y + 1, 0, -1);
@@ -1701,7 +1701,7 @@ void menu_DrawTextField(void *theItem, void *theMenu, int32 x, int32 y, int32, i
 
 	//write in the special tag
 	gr_font_set_color(TEXT_COLOR_NORM_FOREGROUND);
-	Common::sprintf_s(tempStr, 64, "%02ld", myText->specialTag);
+	Common::sprintf_s(tempStr, 64, "%02d", myText->specialTag);
 	gr_font_set(_GM(menuFont));
 	gr_font_write(myBuff, tempStr, x + 4, y + 1, 0, -1);
 

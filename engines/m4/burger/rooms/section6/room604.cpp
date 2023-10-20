@@ -635,6 +635,7 @@ void Room604::daemon() {
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	case kCALLED_EACH_LOOP:
 		player_update_info();

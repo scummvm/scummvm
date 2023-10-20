@@ -1249,6 +1249,7 @@ void Room602::daemon() {
 			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
+		break;
 
 	case kCALLED_EACH_LOOP:
 		if (_G(player).walker_in_this_scene) {

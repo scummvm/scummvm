@@ -497,6 +497,9 @@ void Room971::daemon() {
 			_G(game).new_room = 903;
 			player_set_commands_allowed(false);
 			break;
+
+		default:
+			break;
 		}
 		break;
 
