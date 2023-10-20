@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
 #include "graphics/macega.h"
+#include "graphics/primitives.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -288,6 +289,12 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
+static void plotPixel(int x, int y, int color, void *data) {
+	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	Graphics::Surface *s = window->innerSurface();
+	s->setPixel(x, y, color);
+}
+
 // Very simple window class
 
 MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _system(system), _from(from), _bounds(bounds) {
@@ -295,10 +302,13 @@ MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Com
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
 
-	_surface = _from->getSubArea(bounds);
+	_margin = (style == kStyleNormal) ? 6 : 4;
 
-	bounds.grow((style == kStyleNormal) ? -6 : -4);
+	_surface = _from->getSubArea(bounds);
+	bounds.grow(-_margin);
 	_innerSurface = _from->getSubArea(bounds);
+
+	_dirtyRects.clear();
 
 	Graphics::Surface *s = surface();
 	Common::Rect r = Common::Rect(0, 0, s->w, s->h);
@@ -349,6 +359,61 @@ void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) {
 
 void MacGui::SimpleWindow::show() {
 	copyToScreen();
+	_dirtyRects.clear();
+}
+
+void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
+	_dirtyRects.push_back(r);
+}
+
+void MacGui::SimpleWindow::update() {
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
+		_system->copyRectToScreen(
+			_innerSurface.getBasePtr(_dirtyRects[i].left, _dirtyRects[i].top),
+			_innerSurface.pitch,
+			_bounds.left + _margin + _dirtyRects[i].left, _bounds.top + _margin + _dirtyRects[i].top,
+			_dirtyRects[i].width(), _dirtyRects[i].height());
+	}
+
+	_dirtyRects.clear();
+}
+
+void MacGui::SimpleWindow::fillPattern(Common::Rect r, uint16 pattern) {
+	for (int y = r.top; y < r.bottom; y++) {
+		for (int x = r.left; x < r.right; x++) {
+			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+			_innerSurface.setPixel(x, y, (pattern & bit) ? kBlack : kWhite);
+		}
+	}
+
+	markRectAsDirty(r);
+}
+
+void MacGui::SimpleWindow::drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
+	Common::Rect subRect(0, 0, sprite->w, sprite->h);
+
+	if (x < clipRect.left) {
+		subRect.left += (clipRect.left - x);
+		x = clipRect.left;
+	}
+
+	if (y < clipRect.top) {
+		subRect.top += (clipRect.top - y);
+		y = clipRect.top;
+	}
+
+	if (x + sprite->w >= clipRect.right) {
+		subRect.right -= (x + sprite->w - clipRect.right);
+	}
+
+	if (y + sprite->h >= clipRect.bottom) {
+		subRect.bottom -= (y + sprite->h - clipRect.bottom);
+	}
+
+	if (subRect.width() > 0 && subRect.height() > 0) {
+		_innerSurface.copyRectToSurface(*sprite, x, y, subRect);
+		markRectAsDirty(Common::Rect(x, y, x + subRect.width(), y + subRect.height()));
+	}
 }
 
 // ===========================================================================
@@ -492,7 +557,6 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(right - left, bottom - top, Graphics::PixelFormat::createFormatCLUT8());
-	s->fillRect(Common::Rect(left, top, right, bottom), kWhite);
 
 	bool endOfPicture = false;
 
@@ -509,9 +573,7 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 		switch (opcode) {
 		case 0x01: // clipRgn
 			// The clip region is not important
-			size = res->readUint16BE();
-			assert(size == 10);
-			res->skip(8);
+			res->skip(res->readUint16BE() - 2);
 			break;
 
 		case 0x11: // picVersion
@@ -520,54 +582,49 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 			break;
 
 		case 0x99: // PackBitsRgn
-			rowBytes = res->readUint16BE();
+			res->skip(2);	// Skip rowBytes
+
 			y1 = res->readSint16BE();
 			x1 = res->readSint16BE();
 			y2 = res->readSint16BE();
 			x2 = res->readSint16BE();
 
-			// srcRect isn't interesting
-			res->skip(8);
-
-			// dstRect isn't interesting
-			res->skip(8);
-
-			mode = res->readUint16BE();
-
-			// maskRgn isn't interesting
-			size = res->readUint16BE();
-			assert(size == 10);
-			res->skip(size - 2);
+			res->skip(8);	// Skip srcRect
+			res->skip(8);	// Skip dstRect
+			res->skip(2);	// Skip mode
+			res->skip(res->readUint16BE() - 2);	// Skip maskRgn
 
 			for (y = y1; y < y2; y++) {
+				x = x1;
 				size = res->readByte();
 
-				x = x1;
-				int bytesRead = 0;
-
-				while (bytesRead < size) {
+				while (size > 0) {
 					byte count = res->readByte();
-					bytesRead++;
+					size--;
+
+					bool repeat;
+
 					if (count >= 128) {
+						// Repeat value
 						count = 256 - count;
-						int b = res->readByte();
-						bytesRead++;
-						for (int j = 0; j <= count; j++) {
-							for (int k = 7; k >= 0; k--) {
-								if (b & (1 << k))
-									s->setPixel(x, y, kBlack);
-								x++;
-							}
-						}
+						repeat = true;
+						value = res->readByte();
+						size--;
 					} else {
-						for (int j = 0; j <= count; j++) {
-							int b = res->readByte();
-							bytesRead++;
-							for (int k = 7; k >= 0; k--) {
-								if (b & (1 << k))
-									s->setPixel(x, y, kBlack);
-								x++;
-							}
+						// Copy values
+						repeat = false;
+					}
+
+					for (int j = 0; j <= count; j++) {
+						if (!repeat) {
+							value = res->readByte();
+							size--;
+						}
+						for (int k = 7; k >= 0 && x < x2; k--, x++) {
+							if (value & (1 << k))
+								s->setPixel(x, y, kBlack);
+							else
+								s->setPixel(x, y, kWhite);
 						}
 					}
 				}
@@ -668,17 +725,18 @@ bool MacGui::delay(uint32 ms) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_KEYDOWN:
 				return true;
 
 			default:
 				break;
 			}
+		}
 
-			uint32 delta = to - _system->getMillis();
+		uint32 delta = to - _system->getMillis();
 
-			if (delta > 0)
-				_system->delayMillis(MIN<uint32>(delta, 10));
+		if (delta > 0) {
+			_system->delayMillis(MIN<uint32>(delta, 10));
+			_system->updateScreen();
 		}
 	}
 
@@ -1737,34 +1795,96 @@ void MacIndy3Gui::showAboutDialog() {
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 2000.
 
-#if 1
 	int width = 416;
 	int height = 166;
-#else
-	int width = 540;
-	int height = 105;
-#endif
 	int x = (640 - width) / 2;
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-
 	SimpleWindow *window = openWindow(bounds);
-
 	const Graphics::Surface *pict = loadPICT(2000);
 
-//	window->surface()->copyRectToSurface(*pict, 6, 6, Common::Rect(0, 0, 528, 93));
+	Graphics::Surface train = pict->getSubArea(Common::Rect(0, 0, 241, 93));
+
+	Graphics::Surface trolley[3];
+
+	for (int i = 0; i < 3; i++)
+		trolley[i] = pict->getSubArea(Common::Rect(251 + 92 * i, 38, 335 + 92 * i, 93));
+
+	clearAboutDialog(window);
+	window->show();
+
+	bool skip = false;
 
 	Graphics::Surface *s = window->innerSurface();
+	Common::Rect clipRect(2, 2, s->w - 4, s->h - 4);
 
-	fillPattern(s, Common::Rect(2, 2, s->w - 2, 130), 0x8020);
-	fillPattern(s, Common::Rect(2, 130, s->w - 2, 133), 0xA5A5);
-	fillPattern(s, Common::Rect(2, 133, s->w - 2, 136), 0xFFFF);
-	fillPattern(s, Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
+	// For the background of the sprite to match the background of the
+	// window, we have to move it a multiple of 4 pixels each step. The
+	// original seems to move it by 12 pixels at a time. When recorded at
+	// 30 fps, the train moves every 3 frames.
+
+	// The trolley moves 4 pixels at a time every three frames, and the
+	// animation frame changes every time it moves. But the animation cycle
+	// seems semi-random to me. I think this is a case of not caring too
+	// deeply about pixel accuracy as long as everything stops and starts
+	// at the right time, moves at the right speed, and stops and starts
+	// on the correct animation frame.
+
+	for (x = 0; x < train.w; x += 4) {
+		window->drawSprite(&train, 2 - x, 40, clipRect);
+		window->update();
+
+		if (delay(33)) {
+			skip = true;
+			break;
+		}
+	}
+
+	if (skip) {
+		clearAboutDialog(window);
+		window->update();
+		skip = false;
+	}
+
+	Common::Rect r(20, 4, 380, 100);
+
+	Graphics::drawRoundRect(r, 8, kWhite, true, plotPixel, window);
+	Graphics::drawRoundRect(r, 8, kBlack, false, plotPixel, window);
+	window->markRectAsDirty(r);
+	window->update();
+
+	if (delay(2000))
+		skip = true;
+
+	clearAboutDialog(window);
+
+	int trolleyFrame = 0;
+	int trolleyFrameDelta = 1;
+
+	for (x = width + 1; !skip && x >= -85; x -= 4) {
+		window->drawSprite(&trolley[trolleyFrame], x, 78, clipRect);
+		window->update();
+
+		trolleyFrame += trolleyFrameDelta;
+		if (trolleyFrame < 0 || trolleyFrame > 2) {
+			trolleyFrame = 1;
+			trolleyFrameDelta = -trolleyFrameDelta;
+		}
+
+		if (delay(100)) {
+			skip = true;
+			break;
+		}
+	}
+
+	if (skip) {
+		clearAboutDialog(window);
+		window->update();
+		skip = false;
+	}
 
 	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
-
-	window->show();
 
 	bool shouldQuit = false;
 	bool shouldQuitEngine = false;
@@ -1798,6 +1918,15 @@ void MacIndy3Gui::showAboutDialog() {
 
 	if (shouldQuitEngine)
 		debug("Quit everything");
+}
+
+void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
+	Graphics::Surface *s = window->innerSurface();
+
+	window->fillPattern(Common::Rect(2, 2, s->w - 2, 132), 0x8020);
+	window->fillPattern(Common::Rect(2, 130, s->w - 2, 133), 0xA5A5);
+	window->fillPattern(Common::Rect(2, 133, s->w - 2, 136), 0xFFFF);
+	window->fillPattern(Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
 }
 
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
@@ -2056,15 +2185,6 @@ void MacIndy3Gui::copyDirtyRectsToScreen() {
 	}
 
 	_dirtyRects.clear();
-}
-
-void MacIndy3Gui::fillPattern(Graphics::Surface *s, Common::Rect r, uint16 pattern) {
-	for (int y = r.top; y < r.bottom; y++) {
-		for (int x = r.left; x < r.right; x++) {
-			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-			s->setPixel(x, y, (pattern & bit) ? kBlack : kWhite);
-		}
-	}
 }
 
 void MacIndy3Gui::fill(Common::Rect r) const {
