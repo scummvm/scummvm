@@ -130,8 +130,8 @@ public:
 	int _interLinear = 0;
 	int _textShadow = 0;
 	MacWindowManager *_wm = nullptr;
-	uint32 _fgcolor = 0;
-	uint32 _bgcolor = 0;
+	uint32 _tfgcolor = 0;
+	uint32 _tbgcolor = 0;
 	bool _macFontMode = true;
 	MacText *_macText;
 

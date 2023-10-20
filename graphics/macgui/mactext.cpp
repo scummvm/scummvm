@@ -134,8 +134,8 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_canvas._textShadow = textShadow;
 	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
-	_canvas._fgcolor = fgcolor;
-	_canvas._bgcolor = bgcolor;
+	_canvas._tfgcolor = fgcolor;
+	_canvas._tbgcolor = bgcolor;
 	_canvas._macFontMode = true;
 	_canvas._macText = this;
 
@@ -167,8 +167,8 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_canvas._textShadow = 0;
 	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
-	_canvas._fgcolor = fgcolor;
-	_canvas._bgcolor = bgcolor;
+	_canvas._tfgcolor = fgcolor;
+	_canvas._tbgcolor = bgcolor;
 	_canvas._macFontMode = true;
 	_canvas._macText = this;
 
@@ -200,8 +200,8 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_canvas._textShadow = 0;
 	_canvas._interLinear = interlinear;
 	_canvas._wm = wm;
-	_canvas._fgcolor = fgcolor;
-	_canvas._bgcolor = bgcolor;
+	_canvas._tfgcolor = fgcolor;
+	_canvas._tbgcolor = bgcolor;
 	_canvas._macFontMode = false;
 	_canvas._macText = this;
 
@@ -264,20 +264,20 @@ void MacText::init() {
 	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
 	MacFontRun colorFontRun = getFgColor();
 	if (!colorFontRun.text.empty()) {
-		_canvas._fgcolor = colorFontRun.fgcolor;
+		_canvas._tfgcolor = colorFontRun.fgcolor;
 		colorFontRun.text.clear();
-		debug(9, "Reading fg color though text, instead of the argument, read %d", _canvas._fgcolor);
+		debug(9, "Reading fg color though text, instead of the argument, read %d", _canvas._tfgcolor);
 		_defaultFormatting = colorFontRun;
 		_defaultFormatting.wm = _wm;
 	}
 
 	_currentFormatting = _defaultFormatting;
-	_composeSurface->clear(_bgcolor);
+	_composeSurface->clear(_canvas._tbgcolor);
 
 	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface->clear(_canvas._fgcolor);
+	_cursorSurface->clear(_canvas._tfgcolor);
 	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface2->clear(_canvas._bgcolor);
+	_cursorSurface2->clear(_canvas._tbgcolor);
 
 	_canvas.reallocSurface();
 	setAlignOffset(_canvas._textAlignment);
@@ -392,10 +392,10 @@ void MacText::setMaxWidth(int maxWidth) {
 }
 
 void MacText::setColors(uint32 fg, uint32 bg) {
-	_canvas._bgcolor = bg;
-	_canvas._fgcolor = fg;
+	_canvas._tbgcolor = bg;
+	_canvas._tfgcolor = fg;
 	// also set the cursor color
-	_cursorSurface->clear(_canvas._fgcolor);
+	_cursorSurface->clear(_canvas._tfgcolor);
 	for (uint i = 0; i < _canvas._text.size(); i++)
 		setTextColor(fg, i);
 
@@ -966,8 +966,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 						cellCanvas->_macText = _macText;
 						cellCanvas->_maxWidth = -1;
 						cellCanvas->_macFontMode = _macFontMode;
-						cellCanvas->_fgcolor = _fgcolor;
-						cellCanvas->_bgcolor = _bgcolor;
+						cellCanvas->_tfgcolor = _tfgcolor;
+						cellCanvas->_tbgcolor = _tbgcolor;
 
 						D(9, "** splitString[cell start]: align: %d", align);
 
@@ -1075,7 +1075,7 @@ void MacTextCanvas::reallocSurface() {
 	if (_surface->w < _maxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
 		ManagedSurface *n = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-		n->clear(_bgcolor);
+		n->clear(_tbgcolor);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
 		delete _surface;
@@ -1084,7 +1084,7 @@ void MacTextCanvas::reallocSurface() {
 		// same as shadow surface
 		if (_textShadow) {
 			ManagedSurface *newShadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
-			newShadowSurface->clear(_bgcolor);
+			newShadowSurface->clear(_tbgcolor);
 			newShadowSurface->blitFrom(*_shadowSurface, Common::Point(0, 0));
 
 			delete _shadowSurface;
@@ -1095,9 +1095,9 @@ void MacTextCanvas::reallocSurface() {
 
 void MacText::render() {
 	if (_fullRefresh) {
-		_canvas._surface->clear(_bgcolor);
+		_canvas._surface->clear(_canvas._tbgcolor);
 		if (_canvas._textShadow)
-			_canvas._shadowSurface->clear(_bgcolor);
+			_canvas._shadowSurface->clear(_canvas._tbgcolor);
 
 		_canvas.render(0, _canvas._text.size());
 
@@ -1170,7 +1170,7 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 		for (int j = start; j != end; j += delta) {
 			D(9, "MacTextCanvas::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x",
 				  i, j, _text[i].height, xOffset, _text[i].y, _text[i].chunks[j].text.encode().c_str(),
-				  _text[i].chunks[j].fontId, _text[i].chunks[j].fontSize, _surface->w, _surface->h, _text[i].chunks[j].fgcolor, _bgcolor);
+				  _text[i].chunks[j].fontId, _text[i].chunks[j].fontSize, _surface->w, _surface->h, _text[i].chunks[j].fgcolor, _tbgcolor);
 
 			if (_text[i].chunks[j].text.empty())
 				continue;
@@ -1205,7 +1205,7 @@ void MacTextCanvas::render(int from, int to) {
 	to = MIN<int>(to, _text.size() - 1);
 
 	// Clear the screen
-	_surface->fillRect(Common::Rect(0, _text[from].y, _surface->w, _text[to].y + getLineHeight(to)), _bgcolor);
+	_surface->fillRect(Common::Rect(0, _text[from].y, _surface->w, _text[to].y + getLineHeight(to)), _tbgcolor);
 
 	// render the shadow surface;
 	if (_textShadow)
@@ -1566,7 +1566,7 @@ void MacText::clearText() {
 	_str.clear();
 
 	if (_canvas._surface)
-		_canvas._surface->clear(_bgcolor);
+		_canvas._surface->clear(_canvas._tbgcolor);
 
 	recalcDims();
 
@@ -1580,7 +1580,7 @@ void MacText::removeLastLine() {
 
 	int h = getLineHeight(_canvas._text.size() - 1) + _canvas._interLinear;
 
-	_canvas._surface->fillRect(Common::Rect(0, _canvas._textMaxHeight - h, _canvas._surface->w, _canvas._textMaxHeight), _bgcolor);
+	_canvas._surface->fillRect(Common::Rect(0, _canvas._textMaxHeight - h, _canvas._surface->w, _canvas._textMaxHeight), _canvas._tbgcolor);
 
 	_canvas._text.pop_back();
 	_canvas._textMaxHeight -= h;
@@ -1593,13 +1593,13 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	render();
 
 	if (x + w < _canvas._surface->w || y + h < _canvas._surface->h)
-		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _bgcolor);
+		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _canvas._tbgcolor);
 
 	// blit shadow surface first
 	if (_canvas._textShadow)
 		g->blitFrom(*_canvas._shadowSurface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff + _canvas._textShadow, yoff + _canvas._textShadow));
 
-	uint32 bgcolor = _bgcolor < 0xff ? _bgcolor : 0;
+	uint32 bgcolor = _canvas._tbgcolor < 0xff ? _canvas._tbgcolor : 0;
 	g->transBlitFrom(*_canvas._surface, Common::Rect(MIN<int>(_canvas._surface->w, x), MIN<int>(_canvas._surface->h, y), MIN<int>(_canvas._surface->w, x + w), MIN<int>(_canvas._surface->h, y + h)), Common::Point(xoff, yoff), bgcolor);
 
 	_contentIsDirty = false;
@@ -1618,7 +1618,7 @@ bool MacText::draw(bool forceRedraw) {
 	// we need to find out a way to judge whether we need to clear the surface
 	// currently, we just use the _contentIsDirty
 	if (_contentIsDirty)
-		_composeSurface->clear(_bgcolor);
+		_composeSurface->clear(_canvas._tbgcolor);
 
 	// TODO: Clear surface fully when background colour changes.
 	_cursorDirty = false;
@@ -1810,10 +1810,10 @@ void MacText::drawSelection(int xoff, int yoff) {
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, maxSelectionHeight - 1));
 
 		for (int x = x1; x < x2; x++, ptr++)
-			if (*ptr == _canvas._fgcolor)
-				*ptr = _canvas._bgcolor;
+			if (*ptr == _canvas._tfgcolor)
+				*ptr = _canvas._tbgcolor;
 			else
-				*ptr = _canvas._fgcolor;
+				*ptr = _canvas._tfgcolor;
 	}
 }
 
@@ -3019,7 +3019,7 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 
 			cell.recalcDims();
 			cell.reallocSurface();
-			cell._surface->clear(_bgcolor);
+			cell._surface->clear(_tbgcolor);
 			cell.render(0, cell._text.size());
 
 			rowH[r] = MAX(rowH[r], cell._textMaxHeight);
@@ -3041,22 +3041,22 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 	_text[line].tableSurface = surf;
 	_text[line].height = tH;
 	_text[line].width = tW;
-	surf->clear(_bgcolor);
+	surf->clear(_tbgcolor);
 
-	surf->hLine(0, 0, tW, _fgcolor);
-	surf->vLine(0, 0, tH, _fgcolor);
+	surf->hLine(0, 0, tW, _tfgcolor);
+	surf->vLine(0, 0, tH, _tfgcolor);
 
 	int y = 1;
 	for (uint i = 0; i < table->size(); i++) {
 		y += gutter * 2 + rowH[i];
-		surf->hLine(0, y, tW, _fgcolor);
+		surf->hLine(0, y, tW, _tfgcolor);
 		y++;
 	}
 
 	int x = 1;
 	for (uint i = 0; i < table->front().cells.size(); i++) {
 		x += gutter * 2 + colW[i];
-		surf->vLine(x, 0, tH, _fgcolor);
+		surf->vLine(x, 0, tH, _tfgcolor);
 		x++;
 	}
 
