@@ -181,10 +181,10 @@ const seriesPlayBreak Room602::PLAY14[] = {
 
 const seriesPlayBreak Room602::PLAY15[] = {
 	{ 0,  6, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 1 },
-	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 2 },
-	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[V256], 3 },
-	{ 7, -1, "602_009", 2, 255, -1,    0, 0, &Flags::_flags[V256], 0 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[kGerbilCageDoor], 1 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[kGerbilCageDoor], 2 },
+	{ 7, -1, nullptr,   0,   0, -1,    0, 0, &Flags::_flags[kGerbilCageDoor], 3 },
+	{ 7, -1, "602_009", 2, 255, -1,    0, 0, &Flags::_flags[kGerbilCageDoor], 0 },
 	PLAY_BREAK_END
 };
 
@@ -257,7 +257,7 @@ Room602::Room602() : Section6Room() {
 
 void Room602::init() {
 	player_set_commands_allowed(false);
-	_G(flags)[V256] = 0;
+	_G(flags)[V246] = 0;
 	_series1 = 0;
 
 	if (_G(game).room_id == 612) {
@@ -321,29 +321,29 @@ void Room602::init() {
 		_G(kernel).call_daemon_every_loop = true;
 
 	if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1) {
-		_series2 = series_play("612wheel", 0x5ff);
+		_series2 = series_play("612wheel", 0x5ff, 0, -1, 0, -1);
 
 	} else if (_G(game).room_id == 502) {
-		_series2 = series_show("602wheel", 0x6ff);
+		_series2 = series_show("602wheel", 0x6ff, 0, -1, -1, 0);
 
 	} else {
-		_series2 = series_show("612wheel", 0x6ff);
+		_series2 = series_show("612wheel", 0x6ff, 0, -1, -1, 0);
 	}
 
 	_series3 = series_show("602door", 0xf00, 1, -1, -1, 0, 100,
 		_G(flags)[V257] / 21, _G(flags)[V257]);
 
-	if (_G(flags)[V256] == 1) {
+	if (_G(flags)[kGerbilCageDoor] == 1) {
 		_val3 = 63;
 		kernel_trigger_dispatch_now(2);
 	}
 
-	if (_G(flags)[V256] == 3) {
+	if (_G(flags)[kGerbilCageDoor] == 3) {
 		_val3 = 64;
 		kernel_trigger_dispatch_now(2);
 	}
 
-	if (_G(flags)[V256]) {
+	if (_G(flags)[kGerbilCageDoor]) {
 		hotspot_set_active("DOOR", false);
 		hotspot_set_active("EXIT", true);
 
@@ -484,7 +484,7 @@ void Room602::daemon() {
 
 		case 57:
 			_G(flags)[V279] = 2;
-			_series8 = series_play("612mot03", 0x600, 0, -1, 0);
+			_series8 = series_play("612mot03", 0x600, 0, -1, 0, -1);
 			inv_move_object("PANTYHOSE", NOWHERE);
 			_G(flags)[V278] = 0;
 
@@ -552,7 +552,7 @@ void Room602::daemon() {
 			break;
 
 		case 62:
-			_G(flags)[V256] = 1;
+			_G(flags)[kGerbilCageDoor] = 1;
 			_G(flags)[V258] = 55;
 			_G(flags)[V257] = 0;
 			_val3 = 63;
@@ -568,7 +568,7 @@ void Room602::daemon() {
 				_series3 = series_show("602door", 0xf00, 0, 2, 6, 0, 100,
 					-_G(flags)[V257] / 21, _G(flags)[V257]);
 				_G(flags)[V257] -= _G(flags)[V258] >> 5;
-				_G(flags)[V256] = 1;
+				_G(flags)[kGerbilCageDoor] = 1;
 
 				if (_G(flags)[V257] + 140 >= 20) {
 					_G(flags)[V258] += 3;
@@ -578,7 +578,7 @@ void Room602::daemon() {
 						_G(flags)[V258] = 0;
 				}
 			} else {
-				_G(flags)[V256] = 2;
+				_G(flags)[kGerbilCageDoor] = 2;
 				_val3 = 48;
 				terminateMachineAndNull(_series3);
 				_series3 = series_show("602door", 0xf00, 0, -1, -1, 0, 100,
@@ -592,7 +592,7 @@ void Room602::daemon() {
 		case 64:
 			if (_G(flags)[V257] > 0) {
 				digi_play("602_007", 2);
-				_G(flags)[V256] = 0;
+				_G(flags)[kGerbilCageDoor] = 0;
 				_G(flags)[V257] = 0;
 				_val3 = 48;
 
@@ -601,7 +601,7 @@ void Room602::daemon() {
 
 			} else {
 				_G(flags)[V257] -= _G(flags)[V258] >> 5;
-				_G(flags)[V256] = 3;
+				_G(flags)[kGerbilCageDoor] = 3;
 				_G(flags)[V258] -= 40;
 				terminateMachineAndNull(_series3);
 
@@ -620,13 +620,13 @@ void Room602::daemon() {
 
 	case 3:
 		_G(flags)[V258] = 40;
-		_G(flags)[V256] = 1;
+		_G(flags)[kGerbilCageDoor] = 1;
 		_val3 = 63;
 		kernel_trigger_dispatch_now(2);
 		terminateMachineAndNull(_series2);
 
 		_series2 = series_play(_G(game).room_id == 602 ? "602wheel" : "612wheel",
-			0x5ff, 0, -1, 0);
+			0x5ff, 0, -1, 0, -1);
 		hotspot_set_active("DOOR", false);
 		hotspot_set_active("EXIT", true);
 		break;
@@ -687,7 +687,7 @@ void Room602::daemon() {
 
 	case 11:
 		_val3 = 64;
-		_G(flags)[V256] = 3;
+		_G(flags)[kGerbilCageDoor] = 3;
 		kernel_timing_trigger(1, 2);
 		break;
 
@@ -1149,7 +1149,7 @@ void Room602::daemon() {
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(true);
 			ws_unhide_walker();
-			wilbur_speech("612w065");
+			wilbur_speech("612w065", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 35:
@@ -1160,8 +1160,8 @@ void Room602::daemon() {
 
 		case 37:
 			_G(wilbur_should) = 23;
-			player_set_commands_allowed(true);
-			wilbur_speech("612w064");
+			player_set_commands_allowed(false);
+			wilbur_speech("612w064", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 38:
@@ -1191,13 +1191,13 @@ void Room602::daemon() {
 			_G(wilbur_should) = 10001;
 			player_set_commands_allowed(true);
 			ws_unhide_walker();
-			wilbur_speech("612w057");
+			wilbur_speech("612w057", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 42:
 			player_set_commands_allowed(false);
 			ws_unhide_walker();
-			wilbur_speech("602w033");
+			wilbur_speech("602w033", 5);
 			break;
 
 		case 43:
@@ -1227,7 +1227,7 @@ void Room602::daemon() {
 			break;
 
 		case 47:
-			if (!_G(flags)[V256]) {
+			if (!_G(flags)[kGerbilCageDoor]) {
 				player_set_commands_allowed(false);
 				ws_demand_location(191, 277, 3);
 				ws_hide_walker();
@@ -1239,7 +1239,7 @@ void Room602::daemon() {
 			break;
 
 		case 10001:
-			if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1 && _G(flags)[V256] == 0)
+			if (_G(flags)[V277] == 6003 && _G(flags)[V278] == 1 && _G(flags)[kGerbilCageDoor] == 0)
 				kernel_trigger_dispatch_now(3);
 
 			_G(kernel).continue_handling_trigger = true;
@@ -1338,7 +1338,7 @@ void Room602::pre_parser() {
 			if (_G(flags)[V277] == 6002 || _G(flags)[V277] == 6003) {
 				if (_G(flags)[V255] == 1) {
 					_G(wilbur_should) = 39;
-					player_hotspot_walk_override(200, 21, 3, kCHANGE_WILBUR_ANIMATION);
+					player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
 				} else {
 					_G(wilbur_should) = 26;
 					player_hotspot_walk_override(200, 321, 3, kCHANGE_WILBUR_ANIMATION);
@@ -1348,8 +1348,8 @@ void Room602::pre_parser() {
 			_G(wilbur_should) = 26;
 			player_hotspot_walk_override(314, 319, 3, kCHANGE_WILBUR_ANIMATION);
 		}
-	} else if ((player_said("GEAR", "MOTOR ") || player_said("PANTYHOSE", "MOTOR ")) &&
-			_G(flags)[V277] != 6002) {
+	} else if ((player_said("PANTYHOSE", "MOTOR") || player_said("PANTYHOSE", "MOTOR ")) &&
+			_G(flags)[V277] == 6002) {
 		_G(wilbur_should) = 37;
 		if (_G(flags)[V278]) {
 			player_hotspot_walk_override(313, 319, 3, kCHANGE_WILBUR_ANIMATION);
@@ -1359,6 +1359,8 @@ void Room602::pre_parser() {
 	} else {
 		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 void Room602::parser() {
