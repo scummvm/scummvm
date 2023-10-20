@@ -592,7 +592,7 @@ void BurgerEngine::testDone2() {
 	_G(flags)[V250] = 1;
 	_G(flags)[V251] = 1;
 	_G(flags)[V255] = 1;
-	_G(flags)[V256] = 2;
+	_G(flags)[kGerbilCageDoor] = 2;
 	_G(flags)[V257] = -140;
 	_G(flags)[V258] = 0;
 	_G(flags)[V259] = 1;

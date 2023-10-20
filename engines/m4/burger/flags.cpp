@@ -205,7 +205,7 @@ void Flags::reset2() {
 	(*this)[V245] = 10027;
 	(*this)[V246] = 0;
 	(*this)[V255] = 0;
-	(*this)[V256] = 0;
+	(*this)[kGerbilCageDoor] = 0;
 	(*this)[V257] = 0;
 	(*this)[V258] = 0;
 	(*this)[V263] = 0;
