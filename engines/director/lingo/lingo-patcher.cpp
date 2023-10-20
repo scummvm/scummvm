@@ -205,6 +205,12 @@ struct ScriptPatch {
 	{"smile", "v1.1", kPlatformMacintosh, "SMILE! The Splattering", kScoreScript, 24, DEFAULT_CAST_LIB,
 			1, "go to frame \"Info b\"If you have not paid   ", "go to frame \"Info b\""},
 
+	// Hack to fix the undefined sprite collision behaviour relied on by the boar hunt
+	{"wrath", "", kPlatformWindows, "57AM1", kMovieScript, 1, DEFAULT_CAST_LIB,
+			385, "(StartV57a-6) <=  YesV57a", "    if sprite 5 intersects 3 and StartV57a <=  YesV57a + 16 then"},
+	{"wrath", "", kPlatformMacintosh, "Wrath:57AM1", kMovieScript, 1, DEFAULT_CAST_LIB,
+			382, "(StartV57a-6) <=  YesV57a", "    if sprite 5 intersects 3 and StartV57a <=  YesV57a + 16 then"},
+
 
 	{"amandastories", "", kPlatformWindows, "Shared Cast", kMovieScript, 512, DEFAULT_CAST_LIB,
 			55, "    set mytest1 = FileIO(mnew, \"read\" mymovie)", "    set mytest1 = FileIO(mnew, \"read\", mymovie)"},
