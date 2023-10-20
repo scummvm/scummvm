@@ -749,11 +749,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 				s++;
 			}
 
-			// If we reached end of paragraph, go to outer loop
-			if (endOfLine)
-				break;
-
-			if (*s)	// If it was \001, skip it
+			if (*s == '\001')	// If it was \001, skip it
 				s++;
 
 			if (*s == '\001') { // \001\001 -> \001
@@ -1018,16 +1014,16 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 			// Push new formatting
 			curTextLine->chunks.push_back(chunk);
+
+			// If we reached end of paragraph, go to outer loop
+			if (endOfLine)
+				break;
 		}
 
 		// We avoid adding new lines while in table. Recursive cell rendering
 		// has this flag as false (obviously)
 		if (inTable)
 			continue;
-
-		if (!*s) { // If this is end of the string, we're done here
-			break;
-		}
 
 		// Add new line
 		D(9, "** splitString: new line");
@@ -1172,10 +1168,9 @@ void MacTextCanvas::render(int from, int to, int shadow) {
 
 		// TODO: _canvas._textMaxWidth, when -1, was not rendering ANY text.
 		for (int j = start; j != end; j += delta) {
-			D(9, "MacTextCanvas::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x, font: %p",
+			D(9, "MacTextCanvas::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d fontsize: %d on %dx%d, fgcolor: %08x bgcolor: %08x",
 				  i, j, _text[i].height, xOffset, _text[i].y, _text[i].chunks[j].text.encode().c_str(),
-				  _text[i].chunks[j].fontId, _text[i].chunks[j].fontSize, _surface->w, _surface->h, _text[i].chunks[j].fgcolor, _bgcolor,
-				  (const void *)_text[i].chunks[j].getFont());
+				  _text[i].chunks[j].fontId, _text[i].chunks[j].fontSize, _surface->w, _surface->h, _text[i].chunks[j].fgcolor, _bgcolor);
 
 			if (_text[i].chunks[j].text.empty())
 				continue;
