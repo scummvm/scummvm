@@ -658,6 +658,33 @@ MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
 	return window;
 }
 
+bool MacGui::delay(uint32 ms) {
+	uint32 to = _system->getMillis() + ms;
+
+	while (_system->getMillis() < to) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_KEYDOWN:
+				return true;
+
+			default:
+				break;
+			}
+
+			uint32 delta = to - _system->getMillis();
+
+			if (delta > 0)
+				_system->delayMillis(MIN<uint32>(delta, 10));
+		}
+	}
+
+	return false;
+}
+
 MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle style) {
 	return new SimpleWindow(_system, _surface, bounds, style);
 }
