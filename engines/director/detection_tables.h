@@ -7549,8 +7549,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original file name is RealPool™
 	MACGAME1("realpool", "", "xn--RealPool-on5d", "269b100b24bda808238eb6feb183781f", 114791, 600),
 
-	MACGAME1_l("requiem", "", "Requiem", "996eca6a1e73c99493ea7e553f2e0db6", 1030510, Common::SE_SWE, 601),
-	WINGAME1t_l("requiem", "", "Requiem.exe", "bdd6110d880b41f29b8e98f9c4406eb6", 1515454, Common::SE_SWE, 601),
+	MACGAME1_l("requiem", "", "Requiem",	 "r:996eca6a1e73c99493ea7e553f2e0db6", 1030510, Common::SE_SWE, 601),
+	WINGAME2_l("requiem", "", "Requiem.exe", "t:bdd6110d880b41f29b8e98f9c4406eb6", 1515454,
+							  "shared.cxt",	 "d:ba83f08d73fff192b3e3affeb533cfaa", 9218580, Common::SE_SWE, 601),
 
 	// American Revolutionary War
 	MACGAME2("revwar", "", "BEGIN",		   "2806e0d1bac713be5677a62b425d3c98", 1030361,
