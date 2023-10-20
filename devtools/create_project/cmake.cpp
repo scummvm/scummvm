@@ -176,6 +176,9 @@ if (TARGET SDL2::SDL2)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS})
 
+# Explicitly support MacPorts (hopefully harmless on other platforms)
+link_directories(/opt/local/lib)
+
 )";
 
 	for (const Feature &feature : setup.features) {
