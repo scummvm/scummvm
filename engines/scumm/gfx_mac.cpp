@@ -292,9 +292,13 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _system(system), _from(from), _bounds(bounds) {
 	_backup = new Graphics::Surface();
-	_backup->create(_bounds.width(), _bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-	_backup->copyRectToSurface(*_from, 0, 0, _bounds);
+	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+	_backup->copyRectToSurface(*_from, 0, 0, bounds);
+
 	_surface = _from->getSubArea(bounds);
+
+	bounds.grow((style == kStyleNormal) ? -6 : -4);
+	_innerSurface = _from->getSubArea(bounds);
 
 	Graphics::Surface *s = surface();
 	Common::Rect r = Common::Rect(0, 0, s->w, s->h);
@@ -303,15 +307,15 @@ MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Com
 	s->fillRect(r, kWhite);
 
 	if (style == MacGui::kStyleNormal) {
-		int growths[] = { 1, -2, -1 };
+		int growths[] = { 1, -3, -1 };
 
 		for (int i = 0; i < ARRAYSIZE(growths); i++) {
 			r.grow(growths[i]);
 
 			s->hLine(r.left, r.top, r.right - 1, kBlack);
 			s->hLine(r.left, r.bottom - 1, r.right - 1, kBlack);
-			s->hLine(r.left, r.top + 1, r.bottom - 2, kBlack);
-			s->hLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
+			s->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
+			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
 		}
 	} else if (style == MacGui::kStyleRounded) {
 		r.grow(1);
@@ -644,46 +648,18 @@ void MacGui::updateWindowManager() {
 }
 
 MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
-	Common::Rect bounds(70, 189, 570, 211);
-
-	MacGui::SimpleWindow *window = new SimpleWindow(_system, _surface, bounds, MacGui::kStyleRounded);
-
+	MacGui::SimpleWindow *window = openWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
-	font->drawString(_surface, (char *)message, bounds.left, bounds.top + 4, bounds.width(), kBlack, Graphics::kTextAlignCenter);
+	Graphics::Surface *s = window->innerSurface();
+	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
 
-	_system->copyRectToScreen(_surface->getBasePtr(bounds.left, bounds.top), _surface->pitch, bounds.left, bounds.top, bounds.width(), bounds.height());
-
+	window->show();
 	return window;
 }
 
-MacGui::SimpleWindow *MacGui::drawWindow(Common::Rect bounds) {
-	MacGui::SimpleWindow *window = new SimpleWindow(_system, _surface, bounds);
-
-	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
-	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
-	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
-	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
-
-	bounds.grow(-1);
-
-	_surface->fillRect(bounds, kWhite);
-
-	bounds.grow(-2);
-
-	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
-	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
-	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
-	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
-
-	bounds.grow(-1);
-
-	_surface->hLine(bounds.left, bounds.top, bounds.right - 1, kBlack);
-	_surface->hLine(bounds.left, bounds.bottom - 1, bounds.right - 1, kBlack);
-	_surface->vLine(bounds.left, bounds.top, bounds.bottom - 1, kBlack);
-	_surface->vLine(bounds.right - 1, bounds.top, bounds.bottom - 1, kBlack);
-
-	return window;
+MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle style) {
+	return new SimpleWindow(_system, _surface, bounds, style);
 }
 
 // ===========================================================================
@@ -1746,7 +1722,7 @@ void MacIndy3Gui::showAboutDialog() {
 
 	Common::Rect bounds(x, y, x + width, y + height);
 
-	SimpleWindow *window = drawWindow(bounds);
+	SimpleWindow *window = openWindow(bounds);
 
 	const Graphics::Surface *pict = loadPICT(2000);
 

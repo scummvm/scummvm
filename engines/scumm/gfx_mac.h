@@ -83,12 +83,14 @@ public:
 		Graphics::Surface *_from = nullptr;
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;
+		Graphics::Surface _innerSurface;
 
 		void copyToScreen(Graphics::Surface *s = nullptr);
 	public:
 		Graphics::Surface *surface() { return &_surface; }
+		Graphics::Surface *innerSurface() { return &_innerSurface; }
 		void show();
-		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle = kStyleNormal);
+		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
 	};
 
@@ -137,7 +139,7 @@ public:
 
 	SimpleWindow *drawBanner(char *message);
 
-	SimpleWindow *drawWindow(Common::Rect bounds);
+	SimpleWindow *openWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 };
 
 class MacLoomGui : public MacGui {
