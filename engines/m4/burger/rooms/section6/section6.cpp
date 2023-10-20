@@ -129,9 +129,9 @@ void Section6::daemon() {
 
 		case 6002:
 			term_message("Ga-boingy boingy boingy boing!");
-			_series1 = series_play("602hop_1", 0xa80, 0, -1, 0);
-			_series2 = series_play("602hop_2", 0x780, 0, -1, 0);
-			_series3 = series_play("602hop_3", 0x400, 0, -1, 0);
+			_series1 = series_play("602hop_1", 0xa80, 0, -1, 0, -1);
+			_series2 = series_play("602hop_2", 0x780, 0, -1, 0, -1);
+			_series3 = series_play("602hop_3", 0x400, 0, -1, 0, -1);
 			break;
 
 		default:
