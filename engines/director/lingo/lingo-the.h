@@ -144,6 +144,7 @@ enum TheEntityType {
 	kTheTraceLoad,
 	kTheTraceLogFile,
 	kTheUpdateMovieEnabled,
+	kTheVideoForWindowsPresent,
 	kTheWindow,
 	kTheWindowList,
 	kTheWords,

@@ -157,6 +157,7 @@ TheEntity entities[] = {
 	{ kTheTraceLoad,		"traceLoad",		false, 400, false },	//			D4 p
 	{ kTheTraceLogFile,		"traceLogFile",		false, 400, false },	//			D4 p
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,400, false },//			D4 p
+	{ kTheVideoForWindowsPresent,	"videoForWindowsPresent",	false, 400, true },	//		D4 f
 	{ kTheWindow,			"window",			true,  400, false },	//			D4
 	{ kTheWindowList,		"windowList",		false, 400, false },	//			D4 p
 	{ kTheNOEntity, nullptr, false, 0, false }
@@ -746,7 +747,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = M_PI;
 		break;
 	case kTheQuickTimePresent:
-		// QuickTime is always present for scummvm
+		// QuickTime is always present for ScummVM
 		d = 1;
 		break;
 	case kTheRandomSeed:
@@ -889,6 +890,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheUpdateMovieEnabled:
 		d = g_lingo->_updateMovieEnabled;
+		break;
+	case kTheVideoForWindowsPresent:
+		// Video For Windows is always present for ScummVM
+		d = 1;
 		break;
 	case kTheWindow:
 		g_lingo->push(id);
