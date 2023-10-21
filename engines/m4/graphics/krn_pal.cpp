@@ -483,7 +483,7 @@ void krn_UpdateGreyArea(Buffer *greyOutThisBuffer, int32 scrnX, int32 scrnY, int
 
 void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 	int32 x, y, r, g, b, i;
-	uint8 *inverse_palette, pixel, *tempPtr;
+	uint8 *inverse_palette, *tempPtr;
 	frac16 fracPercent;
 	RGB8 *pal;
 	uint8 luminancePal[256];
@@ -527,7 +527,7 @@ void krn_ChangeBufferLuminance(Buffer *target, int32 percent) {
 		for (x = 0; x < target->stride; x++) {
 			*tempPtr = luminancePal[*tempPtr];
 			tempPtr++;
-			pixel = *tempPtr;
+			//pixel = *tempPtr;
 		}
 	}
 

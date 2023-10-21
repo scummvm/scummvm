@@ -196,7 +196,6 @@ GrBuff *load_codes(SysFile *code_file) {
 	if (!code_file)			
 		return nullptr;
 
-	int buffer_size;
 	int16 x_size, y_size;
 	char *bufferHandle;
 
@@ -208,7 +207,7 @@ GrBuff *load_codes(SysFile *code_file) {
 	x_size = convert_intel16(x_size);
 	y_size = convert_intel16(y_size);
 
-	buffer_size = (int)(x_size * y_size);
+	//int buffer_size = (int)(x_size * y_size);
 
 	GrBuff *temp = new GrBuff(x_size, y_size);
 	if (!temp) {

@@ -352,7 +352,7 @@ lnode_chunk *get_lnode(Conv *c, long cSize) {
 }
 
 static void swap_node(node_chunk *n) {
-	int i = 0, j = 0;
+	int i = 0;
 	long *L = nullptr;
 
 	n->tag = convert_intel32(n->tag);
@@ -360,13 +360,12 @@ static void swap_node(node_chunk *n) {
 	n->size = convert_intel32(n->size);
 	n->num_entries = convert_intel32(n->num_entries);
 
-	j = sizeof(long);
+	//int j = sizeof(long);
 	L = (long *)n; //was &n
-	L += 4; // *sizeof( long ); //was sizeof node_chunk
+	L += 4; // *sizeof( long );
 	for (i = 0; i < n->num_entries; i++) {
 		L[i] = convert_intel32(L[i]);
 	}
-	//
 }
 
 node_chunk *get_node(Conv *c, long cSize) {

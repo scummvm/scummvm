@@ -76,7 +76,7 @@ void gui_system_event_handler() {
 
 	newMouseEvent = mouse_get_event();
 
-	if (newMouseEvent != _MS_no_event) {		//We have a mouse event
+	if (newMouseEvent != _ME_no_event) {		//We have a mouse event
 		gui_mouse_refresh();
 		_G(oldX) = _G(mouseX);
 		_G(oldY) = _G(mouseY);
@@ -154,7 +154,7 @@ void gui_system_event_handler() {
 						_G(currScreen) = false;
 						Dialog_KeyMouseCollision();
 						if (myHotkey->callback) {
-							(myHotkey->callback)((void *)parm1, (void *)myScreen->scrnContent);
+							(myHotkey->callback)((void *)static_cast<intptr>(parm1), (void *)myScreen->scrnContent);
 						}
 					} else myHotkey = myHotkey->next;
 				}
@@ -172,7 +172,7 @@ void gui_system_event_handler() {
 					_G(currScreen) = false;
 					Dialog_KeyMouseCollision();
 					if (myHotkey->callback) {
-						(myHotkey->callback)((void *)parm1, nullptr);
+						(myHotkey->callback)((void *)static_cast<intptr>(parm1), nullptr);
 					}
 				} else myHotkey = myHotkey->next;
 			}

@@ -287,7 +287,7 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 }
 
 void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8) {
-	EOSreq *tempEOSreq, *prevEOSreq;
+	EOSreq *tempEOSreq;
 
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_RemoveAnim8FromCruncher()");
@@ -297,7 +297,6 @@ void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8) {
 
 	// In case we are crunching the current list of EOS requests, remove any for this machine
 	tempEOSreq = _GWS(EOSreqList);
-	prevEOSreq = nullptr;
 	while (tempEOSreq && (tempEOSreq->myAnim8 != myAnim8)) {
 		tempEOSreq = tempEOSreq->next;
 	}

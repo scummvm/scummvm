@@ -408,7 +408,7 @@ void f_stream_Close(strmRequest *myStream) {
 }
 
 void f_stream_Process(int32 numToProcess) {
-	strmRequest *myStream, *firstProcessStream;
+	strmRequest *myStream;
 	int32 buffEndBytesAvail = 0, buffStartBytesAvail = 0;
 	int32 bytesRead, bytesAvail, nextReadSize;
 	bool buffWrap, useBlockSizeArray;
@@ -420,7 +420,6 @@ void f_stream_Process(int32 numToProcess) {
 	}
 
 	// Loop through until either the end of the list of requests, or we've serviced the "numToProcess"
-	firstProcessStream = _G(firstStream);
 	myStream = _G(firstStream);
 	while (myStream && (numToProcess > 0)) {
 

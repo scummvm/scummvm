@@ -227,18 +227,17 @@ void SysFile::open_write() {
 }
 
 Common::String SysFile::get_last_string(const Common::String &src) {
-	int len, j, k, l;
+	int len, j, k;
 
 	len = src.size();
 	Common::String result;
 
 	for (j = len - 1; j >= 0; j--) {
-		if (src[j] == '\\' || src[j] == ':')	// back for DOS, colon for Mac
+		if (src[j] == '\\' || src[j] == ':')
 			break;
 	}
 
 	if (j >= 0) {
-		l = 0;
 		for (k = j + 1; k < len; k++)
 			result += src[k];
 		return result;

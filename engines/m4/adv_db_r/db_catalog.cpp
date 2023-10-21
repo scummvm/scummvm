@@ -110,13 +110,13 @@ static int32 count_catalog_items() {
 }
 
 static int compare_catalog_entries_for_sort(const void *n1, const void *n2) {
-	const char *entry1 = *(const char **)n1;
+	const char *entry1 = *(const char * const *)n1;
 	if (convert_intel16(*(const short *)&entry1[2]) == _T_ROOM)
 		entry1 = &entry1[6];
 	else
 		entry1 = &entry1[4];
 
-	const char *entry2 = *(const char **)n2;
+	const char *entry2 = *(const char * const *)n2;
 	if (convert_intel16(*(const short *)&entry2[2]) == _T_ROOM)
 		entry2 = &entry2[6];
 	else
@@ -259,7 +259,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 }
 
 static int compare_catalog_entries_for_search(const void *n1, const void *n2) {
-	const char *cat_entry = *(const char **)n2;
+	const char *cat_entry = *(const char * const *)n2;
 
 	if (convert_intel16(*(const short *)&cat_entry[2]) == _T_ROOM)
 		cat_entry = &cat_entry[6];
