@@ -22,7 +22,7 @@
 #define EMU_WAITING    (1 << 0)
 #define MAIN_WAITING   (1 << 1)
 #define EMU_EXITED     (1 << 2)
-static uint8_t status = EMU_WAITING | MAIN_WAITING;
+static uint8 status = EMU_WAITING | MAIN_WAITING;
 static int scummvm_res = -1;
 
 #ifdef USE_LIBCO

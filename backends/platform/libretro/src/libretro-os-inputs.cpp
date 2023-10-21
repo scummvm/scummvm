@@ -17,10 +17,11 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
 
+//#include "backends/platform/libretro/include/config.h"
 #include "backends/platform/libretro/include/libretro-defs.h"
-#include "backends/platform/libretro/include/libretro-core.h"
 #include "backends/platform/libretro/include/libretro-os.h"
 #include "backends/platform/libretro/include/libretro-mapper.h"
+#include "backends/platform/libretro/include/libretro-core.h"
 
 void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int doing_x) {
 	int *mouseXY;
@@ -58,10 +59,10 @@ void OSystem_libretro::updateMouseXY(float deltaAcc, float *cumulativeXYAcc, int
 	*relMouseXY = (int)deltaAcc;
 }
 
-void OSystem_libretro::getMouseXYFromAnalog(bool is_x, int16_t coor) {
+void OSystem_libretro::getMouseXYFromAnalog(bool is_x, int16 coor) {
 
-	int16_t sign = (coor > 0) - (coor < 0);
-	uint16_t abs_coor = abs(coor);
+	int16 sign = (coor > 0) - (coor < 0);
+	uint16 abs_coor = abs(coor);
 	float *mouseAcc;
 
 	if (abs_coor < retro_setting_get_analog_deadzone()) return;
@@ -83,7 +84,7 @@ void OSystem_libretro::getMouseXYFromAnalog(bool is_x, int16_t coor) {
 	updateMouseXY(sign * analog_amplitude * _adjusted_cursor_speed, mouseAcc, is_x);
 }
 
-void OSystem_libretro::getMouseXYFromButton(bool is_x, int16_t sign) {
+void OSystem_libretro::getMouseXYFromButton(bool is_x, int16 sign) {
 	float *dpadVel;
 	float *dpadAcc;
 
@@ -111,7 +112,7 @@ void OSystem_libretro::getMouseXYFromButton(bool is_x, int16_t sign) {
 }
 
 void OSystem_libretro::processInputs(void) {
-	int16_t x, y;
+	int16 x, y;
 	float analog_amplitude_x, analog_amplitude_y;
 	float deltaAcc;
 	bool down;
@@ -119,7 +120,7 @@ void OSystem_libretro::processInputs(void) {
 	int key_flags = 0;
 	int retropad_value = 0;
 
-	static const uint32_t retroButtons[2] = {RETRO_DEVICE_ID_MOUSE_LEFT, RETRO_DEVICE_ID_MOUSE_RIGHT};
+	static const uint32 retroButtons[2] = {RETRO_DEVICE_ID_MOUSE_LEFT, RETRO_DEVICE_ID_MOUSE_RIGHT};
 	static const Common::EventType eventID[2][2] = {{Common::EVENT_LBUTTONDOWN, Common::EVENT_LBUTTONUP}, {Common::EVENT_RBUTTONDOWN, Common::EVENT_RBUTTONUP}};
 
 	_cursorStatus = 0;
@@ -192,12 +193,12 @@ void OSystem_libretro::processInputs(void) {
 	}
 
 	// Handle keyboard buttons
-	for (uint8_t i = 0; i < sizeof(key_modifiers) / sizeof(key_modifiers[0]); i++) {
+	for (uint8 i = 0; i < sizeof(key_modifiers) / sizeof(key_modifiers[0]); i++) {
 		if (mapper_get_mapper_key_value(key_modifiers[i][0]))
 			key_flags |= key_modifiers[i][1];
 	}
 
-	for (uint8_t i = 0; i < RETRO_DEVICE_ID_JOYPAD_LAST; i++) {
+	for (uint8 i = 0; i < RETRO_DEVICE_ID_JOYPAD_LAST; i++) {
 		if (mapper_get_device_key_retro_id(i) <= 0)
 			continue;
 		retropad_value = mapper_get_device_key_status(i);
@@ -311,7 +312,7 @@ void OSystem_libretro::processInputs(void) {
 	}
 }
 
-void OSystem_libretro::processKeyEvent(bool down, unsigned keycode, uint32_t character, uint16_t key_modifiers) {
+void OSystem_libretro::processKeyEvent(bool down, unsigned keycode, uint32 character, uint16 key_modifiers) {
 	int _keyflags = 0;
 	_keyflags |= (key_modifiers & RETROKMOD_CTRL) ? Common::KBD_CTRL : 0;
 	_keyflags |= (key_modifiers & RETROKMOD_ALT) ? Common::KBD_ALT : 0;

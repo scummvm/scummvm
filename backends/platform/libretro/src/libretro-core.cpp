@@ -103,8 +103,8 @@ static uint16 sample_rate = 0;
 static uint16 samples_per_frame = 0;               // length in samples per frame
 static size_t samples_per_frame_buffer_size = 0;
 
-static int16_t *sound_buffer = NULL;               // pointer to output buffer
-static int16_t *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
+static int16 *sound_buffer = NULL;               // pointer to output buffer
+static int16 *sound_buffer_empty = NULL;         // pointer to zeroed output buffer, to regulate GUI FPS
 
 static bool input_bitmask_supported = false;
 static bool updating_variables = false;
@@ -123,10 +123,10 @@ static void log_scummvm_exit_code(void) {
 static void audio_buffer_init(uint16 sample_rate, uint16 frame_rate) {
 	samples_per_frame = sample_rate / frame_rate;
 
-	samples_per_frame_buffer_size = samples_per_frame << sizeof(int16_t);
+	samples_per_frame_buffer_size = samples_per_frame << sizeof(int16);
 
-	sound_buffer = sound_buffer ? (int16_t *)realloc(sound_buffer, samples_per_frame_buffer_size) : (int16_t *)malloc(samples_per_frame_buffer_size);
-	sound_buffer_empty = sound_buffer_empty ? (int16_t *)realloc(sound_buffer_empty, samples_per_frame_buffer_size) : (int16_t *)malloc(samples_per_frame_buffer_size);
+	sound_buffer = sound_buffer ? (int16 *)realloc(sound_buffer, samples_per_frame_buffer_size) : (int16 *)malloc(samples_per_frame_buffer_size);
+	sound_buffer_empty = sound_buffer_empty ? (int16 *)realloc(sound_buffer_empty, samples_per_frame_buffer_size) : (int16 *)malloc(samples_per_frame_buffer_size);
 
 	if (sound_buffer && sound_buffer_empty) {
 		memset(sound_buffer, 0, samples_per_frame_buffer_size);
@@ -1045,9 +1045,9 @@ void retro_run(void) {
 			}
 
 			if (audio_status & AUDIO_STATUS_MUTE)
-				audio_batch_cb((int16_t *) sound_buffer_empty, samples_per_frame_buffer_size >> sizeof(int16_t));
+				audio_batch_cb((int16 *) sound_buffer_empty, samples_per_frame_buffer_size >> sizeof(int16));
 			else
-				audio_batch_cb((int16_t *) sound_buffer, samples_count);
+				audio_batch_cb((int16 *) sound_buffer, samples_count);
 
 			current_frame++;
 

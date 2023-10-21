@@ -21,14 +21,14 @@
 
 struct retro_keymap mapper_keys[RETRO_DEVICE_ID_JOYPAD_LAST] = {0};
 
-static int16_t mapper_digital_buttons_status = 0;
-static uint32_t mapper_digital_buttons_prev_status = 0;
-static int16_t mapper_analog_stick_status [2][2] = {0};
+static int16 mapper_digital_buttons_status = 0;
+static uint32 mapper_digital_buttons_prev_status = 0;
+static int16 mapper_analog_stick_status [2][2] = {0};
 
 void mapper_poll_device(void) {
 	//Store previous on/off status
 	mapper_digital_buttons_prev_status = mapper_digital_buttons_status;
-	for (int8_t i = RETRO_DEVICE_ID_JOYPAD_ANALOG; i < RETRO_DEVICE_ID_JOYPAD_LAST; i++)
+	for (int8 i = RETRO_DEVICE_ID_JOYPAD_ANALOG; i < RETRO_DEVICE_ID_JOYPAD_LAST; i++)
 		mapper_digital_buttons_prev_status |= mapper_get_device_key_value(i) ? 1 << i : 0;
 
 	//Get current status
@@ -38,17 +38,17 @@ void mapper_poll_device(void) {
 	if (retro_get_input_bitmask_supported())
 		mapper_digital_buttons_status = retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
 	else
-		for (int8_t i = 0; i < RETRO_DEVICE_ID_JOYPAD_ANALOG; i++)
+		for (int8 i = 0; i < RETRO_DEVICE_ID_JOYPAD_ANALOG; i++)
 			mapper_digital_buttons_status |= (retro_input_cb(0, RETRO_DEVICE_JOYPAD, 0, i) << i);
 
 	//Store analog sticks (analog) status
-	for (int8_t i = 0; i < 2; i++)
-		for (int8_t j = 0; j < 2; j++)
+	for (int8 i = 0; i < 2; i++)
+		for (int8 j = 0; j < 2; j++)
 			mapper_analog_stick_status[i][j] = retro_input_cb(0, RETRO_DEVICE_ANALOG, i, j);
 }
 
-static int16_t mapper_get_retro_key_index(const char *retro_key_value) {
-	uint16_t i = 0;
+static int16 mapper_get_retro_key_index(const char *retro_key_value) {
+	uint16 i = 0;
 	while (retro_keys[i].retro_id != RETROK_LAST) {
 		if (strcmp(retro_keys[i].value, retro_key_value) == 0)
 			return i;
@@ -57,8 +57,8 @@ static int16_t mapper_get_retro_key_index(const char *retro_key_value) {
 	return -1;
 }
 
-int8_t mapper_get_mapper_key_index(int16_t key_retro_id, uint8_t start_index) {
-	uint8_t i = start_index;
+int8 mapper_get_mapper_key_index(int16 key_retro_id, uint8 start_index) {
+	uint8 i = start_index;
 	while (i < RETRO_DEVICE_ID_JOYPAD_LAST - 1) {
 		if (mapper_keys[i].retro_id == key_retro_id)
 			return i;
@@ -68,7 +68,7 @@ int8_t mapper_get_mapper_key_index(int16_t key_retro_id, uint8_t start_index) {
 }
 
 bool mapper_set_device_keys(unsigned int retro_device_id, const char *retro_key_value) {
-	int16_t retro_key_index = mapper_get_retro_key_index(retro_key_value);
+	int16 retro_key_index = mapper_get_retro_key_index(retro_key_value);
 	if (retro_key_index > -1 && retro_device_id < RETRO_DEVICE_ID_JOYPAD_LAST) {
 		mapper_keys[retro_device_id] = retro_keys[retro_key_index];
 		return true;
@@ -76,12 +76,12 @@ bool mapper_set_device_keys(unsigned int retro_device_id, const char *retro_key_
 	return false;
 }
 
-int16_t mapper_get_device_key_value(unsigned int retro_device_id) {
+int16 mapper_get_device_key_value(unsigned int retro_device_id) {
 	if (retro_device_id < RETRO_DEVICE_ID_JOYPAD_ANALOG) {
 		return (mapper_digital_buttons_status & (1 << retro_device_id)) > 0;
 	} else if (retro_device_id < RETRO_DEVICE_ID_JOYPAD_LAST) {
-		int16_t res;
-		int16_t sign;
+		int16 res;
+		int16 sign;
 		switch (retro_device_id) {
 		case RETRO_DEVICE_ID_JOYPAD_LU:
 			res =    mapper_analog_stick_status[RETRO_DEVICE_INDEX_ANALOG_LEFT][RETRO_DEVICE_ID_ANALOG_Y];
@@ -124,16 +124,16 @@ int16_t mapper_get_device_key_value(unsigned int retro_device_id) {
 	return 0;
 }
 
-uint8_t mapper_get_device_key_status(unsigned int retro_device_id) {
-	uint8_t status = mapper_get_device_key_value(retro_device_id) ? 1 << RETRO_DEVICE_KEY_STATUS : 0;
+uint8 mapper_get_device_key_status(unsigned int retro_device_id) {
+	uint8 status = mapper_get_device_key_value(retro_device_id) ? 1 << RETRO_DEVICE_KEY_STATUS : 0;
 	status |= (mapper_digital_buttons_prev_status & (1 << retro_device_id)) ? 1 << RETRO_DEVICE_KEY_PREV_STATUS : 0;
 	status |= ((status & (1 << RETRO_DEVICE_KEY_STATUS)) > 0) == ((status & (1 << RETRO_DEVICE_KEY_PREV_STATUS)) > 0) ? 0 : 1 << RETRO_DEVICE_KEY_CHANGED;
 	return status;
 }
 
-int16_t mapper_get_mapper_key_value(int16_t retro_key_retro_id) {
-	int16_t result = 0;
-	int8_t retro_key_index = 0;
+int16 mapper_get_mapper_key_value(int16 retro_key_retro_id) {
+	int16 result = 0;
+	int8 retro_key_index = 0;
 	while (retro_key_index > -1) {
 		retro_key_index = mapper_get_mapper_key_index(retro_key_retro_id, retro_key_index);
 		if (retro_key_index > -1) {
@@ -145,9 +145,9 @@ int16_t mapper_get_mapper_key_value(int16_t retro_key_retro_id) {
 	return result;
 }
 
-uint8_t mapper_get_mapper_key_status(int16_t retro_key_retro_id) {
-	uint8_t status = 0;
-	int8_t retro_key_index = 0;
+uint8 mapper_get_mapper_key_status(int16 retro_key_retro_id) {
+	uint8 status = 0;
+	int8 retro_key_index = 0;
 	while (retro_key_index > -1) {
 		retro_key_index = mapper_get_mapper_key_index(retro_key_retro_id, retro_key_index);
 		if (retro_key_index > -1) {
@@ -158,10 +158,10 @@ uint8_t mapper_get_mapper_key_status(int16_t retro_key_retro_id) {
 	return status;
 }
 
-int16_t mapper_get_device_key_retro_id(unsigned int retro_device_id) {
+int16 mapper_get_device_key_retro_id(unsigned int retro_device_id) {
 	return mapper_keys[retro_device_id].retro_id;
 }
 
-int16_t mapper_get_device_key_scummvm_id(unsigned int retro_device_id) {
+int16 mapper_get_device_key_scummvm_id(unsigned int retro_device_id) {
 	return mapper_keys[retro_device_id].scummvm_id;
 }

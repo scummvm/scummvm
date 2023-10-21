@@ -31,8 +31,8 @@ static INLINE void blit_uint8_uint16_fast(Graphics::Surface &aOut, const Graphic
 		if (i >= aOut.h)
 			continue;
 
-		uint8_t *const in = (uint8_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + (i * aOut.w);
+		uint8 *const in = (uint8 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + (i * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if (j >= aOut.w)
@@ -40,7 +40,7 @@ static INLINE void blit_uint8_uint16_fast(Graphics::Surface &aOut, const Graphic
 
 			uint8 r, g, b;
 
-			const uint8_t val = in[j];
+			const uint8 val = in[j];
 			// if(val != 0xFFFFFFFF)
 			{
 				if (aIn.format.bytesPerPixel == 1) {
@@ -62,8 +62,8 @@ static INLINE void blit_uint32_uint16(Graphics::Surface &aOut, const Graphics::S
 		if (i >= aOut.h)
 			continue;
 
-		uint32_t *const in = (uint32_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + (i * aOut.w);
+		uint32 *const in = (uint32 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + (i * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if (j >= aOut.w)
@@ -71,7 +71,7 @@ static INLINE void blit_uint32_uint16(Graphics::Surface &aOut, const Graphics::S
 
 			uint8 r, g, b;
 
-			// const uint32_t val = in[j];
+			// const uint32 val = in[j];
 			// if(val != 0xFFFFFFFF)
 			{
 				aIn.format.colorToRGB(in[j], r, g, b);
@@ -86,8 +86,8 @@ static INLINE void blit_uint16_uint16(Graphics::Surface &aOut, const Graphics::S
 		if (i >= aOut.h)
 			continue;
 
-		uint16_t *const in = (uint16_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + (i * aOut.w);
+		uint16 *const in = (uint16 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + (i * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if (j >= aOut.w)
@@ -95,7 +95,7 @@ static INLINE void blit_uint16_uint16(Graphics::Surface &aOut, const Graphics::S
 
 			uint8 r, g, b;
 
-			// const uint16_t val = in[j];
+			// const uint16 val = in[j];
 			// if(val != 0xFFFFFFFF)
 			{
 				aIn.format.colorToRGB(in[j], r, g, b);
@@ -110,8 +110,8 @@ static void blit_uint8_uint16(Graphics::Surface &aOut, const Graphics::Surface &
 		if ((i + aY) < 0 || (i + aY) >= aOut.h)
 			continue;
 
-		uint8_t *const in = (uint8_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + ((i + aY) * aOut.w);
+		uint8 *const in = (uint8 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + ((i + aY) * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if ((j + aX) < 0 || (j + aX) >= aOut.w)
@@ -119,7 +119,7 @@ static void blit_uint8_uint16(Graphics::Surface &aOut, const Graphics::Surface &
 
 			uint8 r, g, b;
 
-			const uint8_t val = in[j];
+			const uint8 val = in[j];
 			if (val != aKeyColor) {
 				unsigned char *col = aColors.getColor(val);
 				r = *col++;
@@ -136,8 +136,8 @@ static void blit_uint16_uint16(Graphics::Surface &aOut, const Graphics::Surface 
 		if ((i + aY) < 0 || (i + aY) >= aOut.h)
 			continue;
 
-		uint16_t *const in = (uint16_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + ((i + aY) * aOut.w);
+		uint16 *const in = (uint16 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + ((i + aY) * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if ((j + aX) < 0 || (j + aX) >= aOut.w)
@@ -145,7 +145,7 @@ static void blit_uint16_uint16(Graphics::Surface &aOut, const Graphics::Surface 
 
 			uint8 r, g, b;
 
-			const uint16_t val = in[j];
+			const uint16 val = in[j];
 			if (val != aKeyColor) {
 				aIn.format.colorToRGB(in[j], r, g, b);
 				out[j + aX] = aOut.format.RGBToColor(r, g, b);
@@ -159,8 +159,8 @@ static void blit_uint32_uint16(Graphics::Surface &aOut, const Graphics::Surface 
 		if ((i + aY) < 0 || (i + aY) >= aOut.h)
 			continue;
 
-		uint32_t *const in = (uint32_t *)aIn.getPixels() + (i * aIn.w);
-		uint16_t *const out = (uint16_t *)aOut.getPixels() + ((i + aY) * aOut.w);
+		uint32 *const in = (uint32 *)aIn.getPixels() + (i * aIn.w);
+		uint16 *const out = (uint16 *)aOut.getPixels() + ((i + aY) * aOut.w);
 
 		for (int j = 0; j < aIn.w; j++) {
 			if ((j + aX) < 0 || (j + aX) >= aOut.w)
@@ -168,9 +168,9 @@ static void blit_uint32_uint16(Graphics::Surface &aOut, const Graphics::Surface 
 
 			uint8 in_a, in_r, in_g, in_b;
 			uint8 out_r, out_g, out_b;
-			uint32_t blend_r, blend_g, blend_b;
+			uint32 blend_r, blend_g, blend_b;
 
-			const uint32_t val = in[j];
+			const uint32 val = in[j];
 			if (val != aKeyColor) {
 				aIn.format.colorToARGB(in[j], in_a, in_r, in_g, in_b);
 
@@ -188,8 +188,8 @@ static void blit_uint32_uint16(Graphics::Surface &aOut, const Graphics::Surface 
 	}
 }
 
-static INLINE void copyRectToSurface(uint8_t *pixels, int out_pitch, const uint8_t *src, int pitch, int x, int y, int w, int h, int out_bpp) {
-	uint8_t *dst = pixels + y * out_pitch + x * out_bpp;
+static INLINE void copyRectToSurface(uint8 *pixels, int out_pitch, const uint8 *src, int pitch, int x, int y, int w, int h, int out_bpp) {
+	uint8 *dst = pixels + y * out_pitch + x * out_bpp;
 
 	do {
 		memcpy(dst, src, w * out_bpp);
@@ -262,8 +262,8 @@ Graphics::PixelFormat OSystem_libretro::getScreenFormat() const {
 }
 
 void OSystem_libretro::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
-	const uint8_t *src = (const uint8_t *)buf;
-	uint8_t *pix = (uint8_t *)_gameScreen.getPixels();
+	const uint8 *src = (const uint8 *)buf;
+	uint8 *pix = (uint8 *)_gameScreen.getPixels();
 	copyRectToSurface(pix, _gameScreen.pitch, src, pitch, x, y, w, h, _gameScreen.format.bytesPerPixel);
 }
 
@@ -337,8 +337,8 @@ void OSystem_libretro::grabOverlay(Graphics::Surface &surface) {
 }
 
 void OSystem_libretro::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
-	const uint8_t *src = (const uint8_t *)buf;
-	uint8_t *pix = (uint8_t *)_overlay.getPixels();
+	const uint8 *src = (const uint8 *)buf;
+	uint8 *pix = (uint8 *)_overlay.getPixels();
 	copyRectToSurface(pix, _overlay.pitch, src, pitch, x, y, w, h, _overlay.format.bytesPerPixel);
 }
 
