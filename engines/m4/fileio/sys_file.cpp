@@ -551,7 +551,7 @@ bool SysFile::seek(uint32 pos) {
 			Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(curr_hag_record->hag_fp);
 			assert(rs);
 
-			if (rs->seek(curr_hash_record.offset + pos - curr_hag_record->hag_pos, SEEK_CUR))
+			if (!rs->seek(curr_hash_record.offset + pos - curr_hag_record->hag_pos, SEEK_CUR))
 				term_message("fail to fseek");
 			last_head_pos = rs->pos();
 
