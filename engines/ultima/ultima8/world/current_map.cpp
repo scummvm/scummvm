@@ -570,7 +570,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 		check->getFootpadWorld(xd, yd, zd);
 	}
 
-	const Rect searchrange(x - xd - range, y - yd - range, x + range, y + range);
+	const Box searchrange(x + range, y + range, 0, xd + range * 2, yd + range * 2, INT_MAX_VALUE);
 
 	int minx = ((x - xd - range) / _mapChunkSize) - 1;
 	int maxx = ((x + range) / _mapChunkSize) + 1;
@@ -598,30 +598,24 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;
 
-				// check if item is in range?
-				int32 ix, iy, iz;
-				item->getLocation(ix, iy, iz);
+				// check if item is in range
+				const Box ib = item->getWorldBox();
+				if (searchrange._x > ib._x - ib._xd && searchrange._x - searchrange._xd < ib._x &&
+					searchrange._y > ib._y - ib._yd && searchrange._y - searchrange._yd < ib._y) {
 
-				int32 ixd, iyd, izd;
-				item->getFootpadWorld(ixd, iyd, izd);
+					// check item against loopscript
+					if (item->checkLoopScript(loopscript, scriptsize)) {
+						assert(itemlist->getElementSize() == 2);
+						itemlist->appenduint16(item->getObjId());
+					}
 
-				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
-
-				if (!itemrect.intersects(searchrange))
-					continue;
-
-				// check item against loopscript
-				if (item->checkLoopScript(loopscript, scriptsize)) {
-					assert(itemlist->getElementSize() == 2);
-					itemlist->appenduint16(item->getObjId());
-				}
-
-				if (recurse) {
-					// recurse into child-containers
-					const Container *container = dynamic_cast<const Container *>(item);
-					if (container)
-						container->containerSearch(itemlist, loopscript,
-						                           scriptsize, recurse);
+					if (recurse) {
+						// recurse into child-containers
+						const Container *container = dynamic_cast<const Container *>(item);
+						if (container)
+							container->containerSearch(itemlist, loopscript,
+													   scriptsize, recurse);
+					}
 				}
 			}
 		}
@@ -643,8 +637,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 							   uint32 scriptsize, ObjId check,
 							   int32 origin[3], int32 dims[3],
 							   bool above, bool below, bool recurse) const {
-	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
-	                       origin[0], origin[1]);
+	const Box searchrange(origin[0], origin[1], origin[2], dims[0], dims[1], dims[2]);
 
 	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
 	int maxx = ((origin[0]) / _mapChunkSize) + 1;
@@ -666,39 +659,33 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 					continue;
 
 				// check if item is in range?
-				int32 ix, iy, iz;
-				item->getLocation(ix, iy, iz);
-				int32 ixd, iyd, izd;
-				item->getFootpadWorld(ixd, iyd, izd);
+				const Box ib = item->getWorldBox();
+				if (searchrange._x > ib._x - ib._xd && searchrange._x - searchrange._xd < ib._x &&
+					searchrange._y > ib._y - ib._yd && searchrange._y - searchrange._yd < ib._y) {
 
-				const Rect itemrect(ix - ixd, iy - iyd, ix, iy);
+					bool ok = false;
 
-				if (!itemrect.intersects(searchrange))
-					continue;
+					if (above && ib._z == (searchrange._z + searchrange._zd)) {
+						ok = true;
+						// Only recursive if tops aren't same (i.e. NOT flat)
+						if (recurse && (ib._zd + ib._z != searchrange._z + searchrange._zd))
+							surfaceSearch(itemlist, loopscript, scriptsize, item, true, false, true);
+					}
 
-				bool ok = false;
+					if (below && searchrange._z == (ib._z + ib._zd)) {
+						ok = true;
+						// Only recursive if bottoms aren't same (i.e. NOT flat)
+						if (recurse && (ib._z != searchrange._z))
+							surfaceSearch(itemlist, loopscript, scriptsize, item, false, true, true);
+					}
 
-				if (above && iz == (origin[2] + dims[2])) {
-					ok = true;
-					// Only recursive if tops aren't same (i.e. NOT flat)
-					if (recurse && (izd + iz != origin[2] + dims[2]))
-						surfaceSearch(itemlist, loopscript, scriptsize, item, true, false, true);
-				}
-
-				if (below && origin[2] == (iz + izd)) {
-					ok = true;
-					// Only recursive if bottoms aren't same (i.e. NOT flat)
-					if (recurse && (izd != dims[2]))
-						surfaceSearch(itemlist, loopscript, scriptsize, item, false, true, true);
-				}
-
-				if (!ok)
-					continue;
-
-				// check item against loopscript
-				if (item->checkLoopScript(loopscript, scriptsize)) {
-					assert(itemlist->getElementSize() == 2);
-					itemlist->appenduint16(item->getObjId());
+					if (ok) {
+						// check item against loopscript
+						if (item->checkLoopScript(loopscript, scriptsize)) {
+							assert(itemlist->getElementSize() == 2);
+							itemlist->appenduint16(item->getObjId());
+						}
+					}
 				}
 			}
 		}
