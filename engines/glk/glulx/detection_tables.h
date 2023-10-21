@@ -943,15 +943,89 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "george_glulx",       "George" },
 
 	// Spanish games
-	{ "alienlaaventura",    "ALIEN: La Aventura" },
 	{ "conrumbo_glulx",     "Con Rumbo" },
-	{ "hhorcus_glulx",      "Homo Homini Orcus" },
-	{ "kerulen_glulx",      "Ke Rulen los Petas" },
 	{ "lanochedelensayo",   "La Noche del Ensayo" },
 	{ "legado",             "El Legado" },
-	{ "regente",            "El Anillo Regente" },
-	{ "rur",                "Las Aventuras de Rudolphine Rur" },
 	{ "ultimohogar_glulx",  "Misterio en el Ultimo Hogar" },
+
+	// XComp 2008 (Spanish)
+	{ "xc08_damusix",       "Damusixa (Demo)" },
+
+	// Ectocomp 2019 - Le Grand Guignol (Spanish)
+	{ "ec19_lacama",        "La Cama" },                                                                //    7th Place
+
+	// Ectocomp 2021 - Le Grand Guignol (Spanish)
+	{ "ec21_transito",      "Tránsito" },                                                               //    2nd Place
+
+	// Ectocomp 2022 - Le Grand Guignol (Spanish)
+	{ "ec22_estadop_glulx",  "Estado Profundo" },                                                       //    2nd Place
+
+	// Premios Hispanos 2002
+	{ "ph02_demoespacio",   "La Gema Karssakis" },
+	{ "ph02_insomnio",      "Insomnio de una Noche de Verano" },
+	{ "ph02_legador",       "El Legado" },
+	{ "ph02_oder",          "Obituario" },
+	{ "ph02_regente_glulx", "El Anillo Regente" },
+	{ "ph02_salondwight",   "El Salón de Randolph Dwighto" },
+
+	// Premios Hispanos 2003
+	{ "ph03_dioszaglx",     "Dios en Zapatillas" },
+	{ "ph03_dwight_glulx",  "L'Extraño Caso de Randolph Dwight" },
+	{ "ph03_enterrado",     "Enterrado Vivo" },
+	{ "ph03_enterrado2",    "Enterrado Vivo 2" },
+	{ "ph03_quenoche",      "¡Qué noche!" },
+	{ "ph03_sinsentido",    "Sin sentido" },
+	{ "ph03_zerogrados",    "Zero Grados" },
+
+	// Premios Hispanos 2004
+	{ "ph04_orfeo2",        "Orfeo en los Infiernos" },
+	{ "ph04_primeranoche",  "Dracula - Episodio 1: La Primera Noche" },
+	{ "ph04_regente",       "El Anillo Regente" },
+	{ "ph04_remakorp04",    "Remakorp" },
+	{ "ph04_vhalen1",       "Los Extraordinarios Casos del Dr. Van Halen: Misterio en la Catedral" },
+
+	// Premios Hispanos 2005
+	{ "ph05_ahs",           "Los Alegres Hombres de Sherwood" },
+	{ "ph05_musa",          "La Musa" },
+	{ "ph05_rur",           "Las Aventuras de Rudolphine Rur" },
+	{ "ph05_sarimek",       "La Caja de Sarimek" },
+
+	// Premios Hispanos 2006
+	{ "ph06_007altosecret", "007 Alto Secreto" },
+	{ "ph06_laconferencia", "La Conferencia" },
+	{ "ph06_paee_glulx",    "Paee" },
+	{ "ph06_remakorp06",    "Remakorp" },
+	{ "ph06_wizlair",       "Bienvenido a Wiz Lair" },
+
+	// Premios Hispanos 2007
+	{ "ph07_diabloesnifan", "Como el Diablo Esnifando una Raya" },
+	{ "ph07_diana925",      "Diana v925" },
+	{ "ph07_edificio25",    "El Edificio 25" },
+	{ "ph07_elmuseo",       "El Museo de las Consciencias" },
+	{ "ph07_edc_glulx",     "Error de Copia" },
+	{ "ph07_htec_glulx",    "Hierba Tras el Cristal" },
+	{ "ph07_regresoaleden", "Regreso al Edén" },
+
+	// Premios Hispanos 2008
+	{ "ph08_alienlaventur", "ALIEN: La Aventura" },
+	{ "ph08_diana_glulx",   "Diana" },
+	{ "ph08_espiritusidra", "El Espiritu de la Sidra" },
+	{ "ph08_puj",           "Puj" },
+
+	// Premios Hispanos 2009
+	{ "ph09_anillo3",       "Anillo 3 - Original" },
+	{ "ph09_hhorcus_glulx", "Homo Homini Orcus" },
+	{ "ph09_kerulen_glulx", "Ke rulen los petas" },
+	{ "ph09_lae_glulx",     "La Aventura Espacial" },
+	{ "ph09_lobosaldeanos", "Recibidor de Lobos y Aldeanos" },
+	{ "ph09_reliquiatolti", "Las Reliquias de Tolti Aph" },
+
+	// Premios Hispanos 2010
+	{ "ph10_lpc_glulx",     "La Pequena Cerillera" },
+	{ "ph10_heroemazmorra", "Heroes de la Mazmorra" },
+	{ "ph10_piedrapt",      "Piedra, Papel, Tijeras" },
+	{ "ph10_saloon",        "Saloon" },
+	{ "ph10_transcorrupt",  "Transilvania Corruption: El Amanecer de los Vivos" },
 
 	// Swedish games
 	{ "drakmagi_glulx",     "Drakmagi (Dragon Magic)" },
@@ -2125,18 +2199,106 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("george_glulx", Common::IT_ITA, "191209", "99ab71b1be78930945dcb33c884e4e3e", 884736),
 
 	// Spanish games
-	DT_ENTRYL1("alienlaaventura", Common::ES_ESP, "081124", "e09c0e91e53a07c768eb473deae9619c", 6884846),
 	DT_ENTRYL1("conrumbo_glulx", Common::ES_ESP, "010527", "024946d9d10190694d90dedd34ab648e", 127744),
 	DT_ENTRYL1("dracula1_glulx", Common::ES_ESP, "071227", "a2266f816a8e6afa324ad98e8ddb707b", 467354),
 	DT_ENTRYL1("dracula2_glulx", Common::ES_ESP, "080819", "c9ff350c10f4ef88db667e58a3696938", 715450),
-	DT_ENTRYL1("hhorcus_glulx", Common::ES_ESP, "100818", "48e7d8f6cd53506778e035eeab6c545c", 4191072),
-	DT_ENTRYL1("kerulen_glulx", Common::ES_ESP, "090720", "0f4c8d5fb20666d5e66da025c3167285", 6842790),
 	DT_ENTRYL1("lanochedelensayo", Common::ES_ESP, "100122", "23845407e62d47b5d51267492137e05e", 2527892),
 	DT_ENTRYL0("legado", Common::ES_ESP, "3f5652cfb07d22c1cf668c33fc92a611", 513472),
-	DT_ENTRYL1("regente", Common::ES_ESP, "021129", "7c8608e214821c55bc9224ccfd5beb44", 273092),
-	DT_ENTRYL0("rur", Common::ES_ESP, "4d7dab1227494292f37107da1729392e", 3432966),
-	DT_ENTRYL0("rur", Common::ES_ESP, "de15e8cdd8523c774b66950a0232a0f9", 413184),
 	DT_ENTRYL1("ultimohogar_glulx", Common::ES_ESP, "021225", "08d4168a767dce4899640a000d2809d8", 663576),
+
+	// XComp 2008 (Spanish)
+	DT_ENTRYL1("xc08_damusix", Common::ES_ESP, "080716", "c654432ff20ff06421f7ef46192d6a0e", 2307978),
+
+	// Ectocomp 2019 - Le Grand Guignol (Spanish)
+	DT_ENTRYL1("ec19_lacama", Common::ES_ESP, "191031", "e8ff30dfe90fac147d62ff23d15c8f73", 687328),
+
+	// Ectocomp 2021 - Le Grand Guignol (Spanish)
+	DT_ENTRYL1("ec21_transito", Common::ES_ESP, "211129", "66baf98ee61ca950cba748ea55290299", 768450),
+
+	// Ectocomp 2022 - Le Grand Guignol (Spanish)
+	DT_ENTRYL1("ec22_estadop_glulx", Common::ES_ESP, "221027", "8bbf39eed65125accc5703be50ebbea4", 697134),
+
+	// Premios Hispanos 2002
+	DT_ENTRYL1("ph02_demoespacio", Common::ES_ESP, "020726", "6e915e11cf880dd56ac38f2cf3afa1af", 169472),
+	DT_ENTRYL1("ph02_insomnio", Common::ES_ESP, "020802", "2242057928285679d513ed01094c7503", 236372),
+	DT_ENTRYL1("ph02_legador", Common::ES_ESP, "021114", "40e4a7848e03e3671fb95debe64e42d3", 53504),
+	DT_ENTRYL1("ph02_oder", Common::ES_ESP, "Corrupt", "07e6993cb70fdf3d794fec0cc47e89fa", 1175810),
+	DT_ENTRYL1("ph02_regente_glulx", Common::ES_ESP, "021129", "7c8608e214821c55bc9224ccfd5beb44", 273092),
+	DT_ENTRYL1("ph02_salondwight", Common::ES_ESP, "021116", "04d1af01052792915ed8a420ffd61663", 171010),
+
+	// Premios Hispanos 2003
+	DT_ENTRYL1("ph03_dioszaglx", Common::ES_ESP, "040107", "7a88c6cf9bfb9a7ffbcee11d1a8331c3", 270560),
+	DT_ENTRYL1("ph03_enterrado", Common::ES_ESP, "030222", "59f098c568c7d6272d3fc05a2719929c", 243532),
+	DT_ENTRYL1("ph03_enterrado2", Common::ES_ESP, "030222/Corrupt", "b8c699cbde3633752f404cf565ee0bd9", 1884292),
+	DT_ENTRYL1("ph03_quenoche", Common::ES_ESP, "031015", "a25e309fdb703009c8555eb28204582e", 831748),
+	DT_ENTRYL1("ph03_sinsentido", Common::ES_ESP, "Corrupt", "d5bc98e9b81c886149de4cb62f399d75", 109568),
+	DT_ENTRYL1("ph03_zerogrados", Common::ES_ESP, "030319", "e4eb8c2faebee284c6e75efb63df9265", 1092752),
+	DT_ENTRYL1("ph03_dwight_glulx", Common::ES_ESP, "031115", "44aee922daacc3ae0a062e1e1a2c6fd2", 252930),
+
+	// Premios Hispanos 2004
+	DT_ENTRYL1("ph04_orfeo2", Common::ES_ESP, "040805", "66d2ceb53fcbea54c4743bd49f9fb46a", 805086),
+	DT_ENTRYL1("ph04_orfeo2", Common::ES_ESP, "051018", "617c18c7edc92cc3a5a2a621ab33e89c", 786910),
+	DT_ENTRYL1("ph04_primeranoche", Common::ES_ESP, "040731", "dd4d59714c464569696d0439ea5c359d", 473000),
+	DT_ENTRYL1("ph04_regente", Common::ES_ESP, "040830", "a8c731d15a03daa1ab66b83bd3683b1c", 364342),
+	DT_ENTRYL1("ph04_remakorp04", Common::ES_ESP, "040729", "85bacb79e85944a6dbfe9c8d9a47a0fb", 579046),
+	DT_ENTRYL1("ph04_vhalen1", Common::ES_ESP, "04???\?/Corrupt", "68234ccba90471707f53327efb2d7128", 710042),
+
+	// Premios Hispanos 2005
+	DT_ENTRYL1("ph05_ahs", Common::ES_ESP, "Corrupt", "45af7e13982b5605d8340e70208b8e51", 28142348),
+	DT_ENTRYL1("ph05_ahs", Common::ES_ESP, "05???\?/Corrupt", "62f06caf7ba03dc2594df46cbe3f1459", 19625058),
+	DT_ENTRYL1("ph05_musa", Common::ES_ESP, "050605", "b872295179826ff8b2bf20be45007dc0", 519830),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "?????\?/v1/Corrupt", "4d7dab1227494292f37107da1729392e", 3432966),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "?????\?/v2/Corrupt", "de15e8cdd8523c774b66950a0232a0f9", 413184),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106???\?/v1", "160413ab0c3b1fdd4346ee493c4b3e46", 3493080),
+	DT_ENTRYL1("ph05_rur", Common::ES_ESP, "1106???\?/v2", "b5238a903be352f491c46ce58b80cefd", 433920),
+	DT_ENTRYL1("ph05_sarimek", Common::ES_ESP, "Corrupt", "a20f085b591590ee351bfc464c3c41f4", 2018160),
+
+	// Premios Hispanos 2006
+	DT_ENTRYL1("ph06_007altosecret", Common::ES_ESP, "?????\?/Corrupt", "a788bffad0435ff5183fd6aba47af9ba", 12773890),
+	DT_ENTRYL1("ph06_laconferencia", Common::ES_ESP, "060108", "03152d0cdb6e633d3fdba957a609178b", 3672520),
+	DT_ENTRYL1("ph06_paee_glulx", Common::ES_ESP, "040729", "9967379e527801ddc12b5734253f3ac2", 3027412),
+	DT_ENTRYL1("ph06_remakorp06", Common::ES_ESP, "061020", "53cfa008cbdc3956097b399eba358d22", 680136),
+	DT_ENTRYL1("ph06_wizlair", Common::ES_ESP, "090726", "2e1d6621fb1301887f4e21bdb5949252", 8912740),
+	DT_ENTRYL1("ph06_wizlair", Common::ES_ESP, "061116", "0218e2e3ccac3acef7c54dc503e4b417", 1039800),
+
+	// Premios Hispanos 2007
+	DT_ENTRYL1("ph07_diabloesnifan", Common::ES_ESP, "080104", "8e3b5b634a49ea2cad06dadcc2f5ca38", 3640896),
+	DT_ENTRYL1("ph07_diana925", Common::ES_ESP, "070709", "e0aeb430f8c1588510e7017bed0ff798", 1084174),
+	DT_ENTRYL1("ph07_edificio25", Common::ES_ESP, "070830", "01a51bf002abee1aafb7e8ba2dae1847", 4197682),
+	DT_ENTRYL1("ph07_elmuseo", Common::ES_ESP, "071004", "0f33297f84f235d90872a236a8a608d4", 772418),
+	DT_ENTRYL1("ph07_edc_glulx", Common::ES_ESP, "070831", "1ef25e518189aede8375da09e2d35735", 2174384),
+	DT_ENTRYL1("ph07_htec_glulx", Common::ES_ESP, "160313", "824a8d7690acff631fb207e5af93f4d1", 2160114),
+	DT_ENTRYL1("ph07_regresoaleden", Common::ES_ESP, "03????", "0304187b411ef1211c73ff7415c23fe7", 6974410),
+	DT_ENTRYL1("ph07_regresoaleden", Common::ES_ESP, "070831", "4bf96ba47fd82da0f452e8cca8d58b04", 6613376),
+
+	// Premios Hispanos 2008
+	DT_ENTRYL1("ph08_alienlaventur", Common::ES_ESP, "081124", "e09c0e91e53a07c768eb473deae9619c", 6884846),
+	DT_ENTRYL1("ph08_alienlaventur", Common::ES_ESP, "180729", "0ae34bbdbcdb04fdda7aeab945d79549", 18044224),
+	DT_ENTRYL1("ph08_diana_glulx", Common::ES_ESP, "080722", "5962ec1f0f1e1a60753e4c4fa8c5c1c8", 240456),
+	DT_ENTRYL1("ph08_espiritusidra", Common::ES_ESP, "08????", "6735b842ebeb95991734a8fb02537e81", 10655248),
+	DT_ENTRYL1("ph08_puj", Common::ES_ESP, "080524", "2fb5a2d444972ca62a6124c9c1d6672a", 3392294),
+
+	// Premios Hispanos 2009
+	DT_ENTRYL1("ph09_anillo3", Common::ES_ESP, "090429", "baa43907bbb36b9be8dd6a4391b4c936", 12527130),
+	DT_ENTRYL1("ph09_anillo3", Common::ES_ESP, "15????", "4f373c2855fa7a0b826d27b7c426a50f", 46345462),
+	DT_ENTRYL1("ph09_hhorcus_glulx", Common::ES_ESP, "100818", "48e7d8f6cd53506778e035eeab6c545c", 4191072),
+	DT_ENTRYL1("ph09_kerulen_glulx", Common::ES_ESP, "090720", "0f4c8d5fb20666d5e66da025c3167285", 6842790),
+	DT_ENTRYL1("ph09_lae_glulx", Common::ES_ESP, "090721/gblorb/Corrupt", "39fbca9dd8f095430288eadbc545994f", 1809932),
+	DT_ENTRYL1("ph09_lae_glulx", Common::ES_ESP, "090721/blb/Corrupt", "4ff363a616d2a44c51c0d28b05bca51b", 1808662),
+	DT_ENTRYL1("ph09_lobosaldeanos", Common::ES_ESP, "090804", "50d44a5ee839f5c764965a0ef9f36d5b", 548806),
+	DT_ENTRYL1("ph09_reliquiatolti", Common::ES_ESP, "090318", "3ce83f626170af423fe9017d42b538aa", 939564),
+	DT_ENTRYL1("ph09_reliquiatolti", Common::ES_ESP, "090811", "80373c10f5cacce1ba486faf7192fe93", 947358),
+
+	// Premios Hispanos 2010
+	DT_ENTRYL1("ph10_lpc_glulx", Common::ES_ESP, "181013/Corrupt", "c29c9ffb0936cfd69ef4e0135556ec9a", 14311360),
+	DT_ENTRYL1("ph10_lpc_glulx", Common::ES_ESP, "181013", "338f5403c94cbadfe88ea0388eb65c60", 14301120 ),
+	DT_ENTRYL1("ph10_heroemazmorra", Common::ES_ESP, "10???\?/v1", "707aaa1f096db0786e693b501070593b", 8253216),
+	DT_ENTRYL1("ph10_heroemazmorra", Common::ES_ESP, "10???\?/v2", "b478fb6e542a29d7faf046abe5756762", 19525882),
+	DT_ENTRYL1("ph10_piedrapt", Common::ES_ESP, "101216", "504fb87228b3447b3e03add1ce13fa68", 103680),
+	DT_ENTRYL1("ph10_piedrapt", Common::ES_ESP, "111004", "cadf3e62dd5df55000e07d93526fc688", 104448),
+	DT_ENTRYL1("ph10_saloon", Common::ES_ESP, "101223", "13872ee1186e198c92eb3715382fd5ab", 16421472),
+	DT_ENTRYL1("ph10_transcorrupt", Common::ES_ESP, "110711/blb", "44f174a584eb6a0d265ff8ab47bf0174", 105971862),
+	DT_ENTRYL1("ph10_transcorrupt", Common::ES_ESP, "110711/ulx", "df157d801a60682fb8488c6d5ac4dfad", 1074688),
 
 	// Swedish games
 	DT_ENTRYL1("drakmagi_glulx", Common::SE_SWE, "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630),
