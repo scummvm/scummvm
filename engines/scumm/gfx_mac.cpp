@@ -721,7 +721,7 @@ MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
 	return window;
 }
 
-bool MacGui::delay(uint32 ms) {
+int MacGui::delay(uint32 ms) {
 	uint32 to = _system->getMillis() + ms;
 
 	while (_system->getMillis() < to) {
@@ -730,8 +730,10 @@ bool MacGui::delay(uint32 ms) {
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
+				return 2;
+
 			case Common::EVENT_LBUTTONDOWN:
-				return true;
+				return 1;
 
 			default:
 				break;
@@ -746,7 +748,7 @@ bool MacGui::delay(uint32 ms) {
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle style) {
@@ -1851,8 +1853,118 @@ void MacIndy3Gui::showAboutDialog() {
 	Common::Rect r1(22, 6, 382, 102);
 	Common::Rect r2(22, 6, 382, 70);
 
-	// Page 1 - The train
+	// Judging by recordings of Basilisk II, the internal frame rate is
+	// 10 fps.
 
+	int scene = 0;
+
+	int trainX = -2;
+	int trolleyX = width + 1;
+	int trolleyFrame = 1;
+	int trolleyFrameDelta = 1;
+	int trolleyWaitFrames = 50;
+	int textWaitFrames = 53;
+
+	// Header texts aren't rendered correctly. Apparently the original does
+	// its own shadowing by drawing the text twice, but that ends up
+	// looking even worse. Perhaps I have to draw the text three times
+	// once to fill it), or maybe our Mac text rendering just isn't as good
+	// as it needs to be yet.
+
+	const Graphics::Font *fontHeader = getFont(kIndy3AboutFontHeader);
+	const Graphics::Font *fontBold = getFont(kIndy3AboutFontBold);
+	const Graphics::Font *fontRegular = getFont(kIndy3AboutFontRegular);
+
+	bool changeScene = false;
+
+	while (true && !_vm->shouldQuit()) {
+		switch (scene) {
+		case 0:
+			window->drawSprite(&train, trainX, 40, clipRect);
+			trainX -= 12;
+
+			if (trainX < -train.w)
+				changeScene = true;
+
+			break;
+
+		case 1:
+			if (--textWaitFrames == 0)
+				changeScene = true;
+			break;
+
+		case 2:
+		case 3:
+			window->drawSprite(&trolley[trolleyFrame], trolleyX, 78, clipRect);
+
+			if (scene == 2 && trolleyX == 161 && trolleyWaitFrames > 0) {
+				trolleyWaitFrames--;
+			} else {
+				trolleyX -= 4;
+				trolleyFrame += trolleyFrameDelta;
+				if (trolleyFrame < 0 || trolleyFrame > 2) {
+					trolleyFrame = 1;
+					trolleyFrameDelta = -trolleyFrameDelta;
+				}
+
+				if (trolleyX < -85)
+					changeScene = true;
+			}
+
+			break;
+		}
+
+		window->update();
+
+		int status = delay(100);
+		if (status == 2)
+			break;
+
+		if (status == 1 || changeScene) {
+			changeScene = false;
+
+			scene++;
+
+			switch (scene) {
+			case 1:
+				clearAboutDialog(window);
+				window->drawTextBox(r1);
+
+				// These strings are part of the STRS resource,
+				// but I don't know how to safely read them
+				// from there.
+
+				fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r1.left - 2, 10, r1.width(), kBlack, Graphics::kTextAlignCenter);
+				fontBold->drawString(s, "The Graphic Adventure", r1.left, 28, r1.width(), kBlack, Graphics::kTextAlignCenter);
+				fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r1.left, 55, r1.width(), kBlack, Graphics::kTextAlignCenter);
+				fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r1.left + 1, 88, r1.width(), kBlack, Graphics::kTextAlignCenter);
+				break;
+
+			case 2:
+				clearAboutDialog(window);
+				window->drawTextBox(r2);
+				break;
+
+			case 3:
+				// Don't clear. The trolley is still on screen
+				// and only the text changes.
+				window->drawTextBox(r2);
+				break;
+
+			case 4:
+				clearAboutDialog(window);
+				window->drawTextBox(r1);
+				break;
+			}
+
+			window->update();
+
+			if (scene > 7)
+				break;
+		}
+	}
+
+#if 0
 	// The train seems to move at 12 pixels at a time. When recorded at
 	// 30 fps, it moves every 3 frames. I'm going to assume that's the
 	// intended frame rate.
@@ -1876,22 +1988,6 @@ void MacIndy3Gui::showAboutDialog() {
 	// Page 2 - First text box
 
 	window->drawTextBox(r1);
-
-	// These strings are part of the STRS resource, but I don't know how to
-	// safely read them from there.
-
-	const Graphics::Font *fontHeader = getFont(kIndy3AboutFontHeader);
-	const Graphics::Font *fontBold = getFont(kIndy3AboutFontBold);
-	const Graphics::Font *fontRegular = getFont(kIndy3AboutFontRegular);
-
-	// This isn't pixel perfect (though perhaps pixel good?). The header
-	// text in particular is rendered differently. It should stay on screen
-	// for 160 frames, or 5.33 seconds.
-
-	fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r1.left - 2, 10, r1.width(), kBlack, Graphics::kTextAlignCenter);
-	fontBold->drawString(s, "The Graphic Adventure", r1.left, 28, r1.width(), kBlack, Graphics::kTextAlignCenter);
-	fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r1.left, 55, r1.width(), kBlack, Graphics::kTextAlignCenter);
-	fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r1.left + 1, 88, r1.width(), kBlack, Graphics::kTextAlignCenter);
 
 	window->update();
 
@@ -1950,6 +2046,7 @@ void MacIndy3Gui::showAboutDialog() {
 		window->update();
 		skip = false;
 	}
+#endif
 
 	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
 
