@@ -47,51 +47,51 @@ namespace M4 {
 
 
 //from: prochunk.h
-#define	C_ASGN_CHUNK				((long) ('C' << 24) | ('A' << 16) | ('S' << 8) | 'N')
+#define	C_ASGN_CHUNK				((int32) ('C' << 24) | ('A' << 16) | ('S' << 8) | 'N')
 
-#define	ASGN_CHUNK					((long) ('A' << 24) | ('S' << 16) | ('G' << 8) | 'N')
+#define	ASGN_CHUNK					((int32) ('A' << 24) | ('S' << 16) | ('G' << 8) | 'N')
 
-#define	HIDE_CHUNK					((long) ('H' << 24) | ('I' << 16) | ('D' << 8) | 'E')
-#define	UHID_CHUNK					((long) ('U' << 24) | ('H' << 16) | ('I' << 8) | 'D')
-#define	DSTR_CHUNK					((long) ('D' << 24) | ('S' << 16) | ('T' << 8) | 'R')
-#define	CHDE_CHUNK					((long) ('C' << 24) | ('H' << 16) | ('D' << 8) | 'E')
-#define	CUHD_CHUNK					((long) ('C' << 24) | ('U' << 16) | ('H' << 8) | 'D')
-#define	CDST_CHUNK					((long) ('D' << 24) | ('D' << 16) | ('T' << 8) | 'S')
+#define	HIDE_CHUNK					((int32) ('H' << 24) | ('I' << 16) | ('D' << 8) | 'E')
+#define	UHID_CHUNK					((int32) ('U' << 24) | ('H' << 16) | ('I' << 8) | 'D')
+#define	DSTR_CHUNK					((int32) ('D' << 24) | ('S' << 16) | ('T' << 8) | 'R')
+#define	CHDE_CHUNK					((int32) ('C' << 24) | ('H' << 16) | ('D' << 8) | 'E')
+#define	CUHD_CHUNK					((int32) ('C' << 24) | ('U' << 16) | ('H' << 8) | 'D')
+#define	CDST_CHUNK					((int32) ('D' << 24) | ('D' << 16) | ('T' << 8) | 'S')
 
-#define	CONV_CHUNK					((long) ('C' << 24) | ('O' << 16) | ('N' << 8) | 'V')
-#define	DECL_CHUNK					((long) ('D' << 24) | ('E' << 16) | ('C' << 8) | 'L')
+#define	CONV_CHUNK					((int32) ('C' << 24) | ('O' << 16) | ('N' << 8) | 'V')
+#define	DECL_CHUNK					((int32) ('D' << 24) | ('E' << 16) | ('C' << 8) | 'L')
 
-#define	FALL_CHUNK					((long) ('F' << 24) | ('A' << 16) | ('L' << 8) | 'L')
-#define	LNODE_CHUNK					((long) ('L' << 24) | ('N' << 16) | ('O' << 8) | 'D')
-#define	NODE_CHUNK					((long) ('N' << 24) | ('O' << 16) | ('D' << 8) | 'E')
-#define	ENTRY_CHUNK					((long) ('E' << 24) | ('T' << 16) | ('R' << 8) | 'Y')
-#define	TEXT_CHUNK					((long) ('T' << 24) | ('E' << 16) | ('X' << 8) | 'T')
+#define	FALL_CHUNK					((int32) ('F' << 24) | ('A' << 16) | ('L' << 8) | 'L')
+#define	LNODE_CHUNK					((int32) ('L' << 24) | ('N' << 16) | ('O' << 8) | 'D')
+#define	NODE_CHUNK					((int32) ('N' << 24) | ('O' << 16) | ('D' << 8) | 'E')
+#define	ENTRY_CHUNK					((int32) ('E' << 24) | ('T' << 16) | ('R' << 8) | 'Y')
+#define	TEXT_CHUNK					((int32) ('T' << 24) | ('E' << 16) | ('X' << 8) | 'T')
 
 //reply
-#define	REPLY_CHUNK					((long) ('R' << 24) | ('P' << 16) | ('L' << 8) | 'Y')
-#define	WEIGHT_REPLY_CHUNK			((long) ('W' << 24) | ('R' << 16) | ('P' << 8) | 'L')
-#define	WEIGHT_PREPLY_CHUNK			((long) ('W' << 24) | ('P' << 16) | ('R' << 8) | 'L')
-#define	COND_REPLY_CHUNK			((long) ('C' << 24) | ('R' << 16) | ('P' << 8) | 'L')
+#define	REPLY_CHUNK					((int32) ('R' << 24) | ('P' << 16) | ('L' << 8) | 'Y')
+#define	WEIGHT_REPLY_CHUNK			((int32) ('W' << 24) | ('R' << 16) | ('P' << 8) | 'L')
+#define	WEIGHT_PREPLY_CHUNK			((int32) ('W' << 24) | ('P' << 16) | ('R' << 8) | 'L')
+#define	COND_REPLY_CHUNK			((int32) ('C' << 24) | ('R' << 16) | ('P' << 8) | 'L')
 
-#define	MESSAGE_CHUNK				((long) ('M' << 24) | ('E' << 16) | ('S' << 8) | 'G')
+#define	MESSAGE_CHUNK				((int32) ('M' << 24) | ('E' << 16) | ('S' << 8) | 'G')
 
 // goto
-#define	GOTO_CHUNK					((long) ('G' << 24) | ('O' << 16) | ('T' << 8) | 'O')
-#define	EXIT_GOTO_CHUNK				((long) ('E' << 24) | ('X' << 16) | ('I' << 8) | 'T')
-#define	COND_GOTO_CHUNK				((long) ('C' << 24) | ('C' << 16) | ('G' << 8) | 'O')
+#define	GOTO_CHUNK					((int32) ('G' << 24) | ('O' << 16) | ('T' << 8) | 'O')
+#define	EXIT_GOTO_CHUNK				((int32) ('E' << 24) | ('X' << 16) | ('I' << 8) | 'T')
+#define	COND_GOTO_CHUNK				((int32) ('C' << 24) | ('C' << 16) | ('G' << 8) | 'O')
 
-#define	COND_EXIT_GOTO_CHUNK		((long) ('C' << 24) | ('E' << 16) | ('G' << 8) | 'O')
+#define	COND_EXIT_GOTO_CHUNK		((int32) ('C' << 24) | ('E' << 16) | ('G' << 8) | 'O')
 
-// from: chunkhed.h
+
 struct Conv {
-	long chunkSize;
+	int32 chunkSize;
 	char *conv;
-	long myCNode;
-	long exit_now;
-	long node_hash;
+	int32 myCNode;
+	int32 exit_now;
+	int32 node_hash;
 
-	long mode;
-	long c_entry_num;
+	int32 mode;
+	int32 c_entry_num;
 };
 
 struct ConvDisplayData {
@@ -104,124 +104,128 @@ struct ConvDisplayData {
 	int	player_choice;
 };
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct conv_chunk {
-	long tag;
-	long size;
-};
+	int32 tag;
+	int32 size;
+} PACKED_STRUCT;
 
 struct decl_chunk {
-	long tag;
-	long val;
-	long flags;
-	long *addr;
-};
+	int32 tag;
+	int32 val;
+	int32 flags;
+	int32 *addr;
+} PACKED_STRUCT;
 
 struct fall_chunk {
-	long tag;
-	long val;
-	long index;
-};
+	int32 tag;
+	int32 val;
+	int32 index;
+} PACKED_STRUCT;
 
 struct node_chunk {
-	long tag;
-	long hash;
-	long size;
-	long num_entries;
-};
+	int32 tag;
+	int32 hash;
+	int32 size;
+	int32 num_entries;
+} PACKED_STRUCT;
 
 struct lnode_chunk {
-	long tag;
-	long hash;
-	long size;
-	long entry_num;
-	long num_entries;
-};
+	int32 tag;
+	int32 hash;
+	int32 size;
+	int32 entry_num;
+	int32 num_entries;
+} PACKED_STRUCT;
 
 struct entry_chunk {
-	long tag;
-	long size;
-	long status;
-};
+	int32 tag;
+	int32 size;
+	int32 status;
+} PACKED_STRUCT;
 
 struct text_chunk {
-	long tag;
-	long size;
-};
+	int32 tag;
+	int32 size;
+} PACKED_STRUCT;
 
 struct mesg_chunk {
-	long tag;
-	long size;
-};
+	int32 tag;
+	int32 size;
+} PACKED_STRUCT;
 
 struct reply_chunk {
-	long tag;
-	long index;		// Where the message is located.
-};
+	int32 tag;
+	int32 index;		// Where the message is located.
+} PACKED_STRUCT;
 
 struct c_reply_chunk {
-	long tag;
-	long op_l;
-	long op;
-	long op_r;
-	long index;		// Where the message is located.
-};
+	int32 tag;
+	int32 op_l;
+	int32 op;
+	int32 op_r;
+	int32 index;		// Where the message is located.
+} PACKED_STRUCT;
 
 struct w_reply_chunk {
-	long tag;
-	long num_replies;
-};
+	int32 tag;
+	int32 num_replies;
+} PACKED_STRUCT;
 
 struct w_entry_chunk {
-	long weight;
-	long index;		// Where the message is located.
-};
+	int32 weight;
+	int32 index;		// Where the message is located.
+} PACKED_STRUCT;
 
 struct goto_chunk {
-	long tag;
-	long index;		// Where the node is located.
-};
+	int32 tag;
+	int32 index;		// Where the node is located.
+} PACKED_STRUCT;
 
 struct c_goto_chunk {
-	long tag;
-	long opnd1;		// Where the decl is located.
-	long op;
-	long opnd2;		// Integer value.
-	long index;		// Where the node is located.
-};
+	int32 tag;
+	int32 opnd1;		// Where the decl is located.
+	int32 op;
+	int32 opnd2;		// Integer value.
+	int32 index;		// Where the node is located.
+} PACKED_STRUCT;
 
 struct misc_chunk {
-	long tag;
-	long index;		// Where the entry is located.
-};
+	int32 tag;
+	int32 index;		// Where the entry is located.
+} PACKED_STRUCT;
 
 struct c_misc_chunk {
-	long tag;
+	int32 tag;
 
-	long c_op_l;	// Where the decl is located.
-	long c_op;
-	long c_op_r;	// Integer value.
+	int32 c_op_l;	// Where the decl is located.
+	int32 c_op;
+	int32 c_op_r;	// Integer value.
 
-	long index;		// Where the entry is located.
-};
+	int32 index;		// Where the entry is located.
+} PACKED_STRUCT;
 
 struct assign_chunk {
-	long tag;
-	long index;		// Where the decl is located.
-	long op;
-	long opnd1;		// Integer value.
-};
+	int32 tag;
+	int32 index;		// Where the decl is located.
+	int32 op;
+	int32 opnd1;		// Integer value.
+} PACKED_STRUCT;
 
 struct c_assign_chunk {
-	long tag;
+	int32 tag;
 
-	long c_op_l;	// Where the decl is located.
-	long c_op;
-	long c_op_r;	// Integer value.
+	int32 c_op_l;	// Where the decl is located.
+	int32 c_op;
+	int32 c_op_r;	// Integer value.
 
-	long index;		// Where the decl is located.
-	long op;
-	long opnd1;		// Integer value.
-};
+	int32 index;		// Where the decl is located.
+	int32 op;
+	int32 opnd1;		// Integer value.
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 /**
   "xxxxxxxx"  means the size you have calculated a conversation box to be,

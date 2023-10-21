@@ -27,8 +27,8 @@
 
 namespace M4 {
 
-long conv_ops_text_strlen(char *s) {
-	long len = 0;
+int32 conv_ops_text_strlen(char *s) {
+	int32 len = 0;
 	len = strlen(s) + 1;	// Added +1 for null char.
 
 	if ((len % 4) == 0)
@@ -38,7 +38,7 @@ long conv_ops_text_strlen(char *s) {
 	return len;
 }
 
-void conv_ops_unknown_chunk(long tag, const char *s) {
+void conv_ops_unknown_chunk(int32 tag, const char *s) {
 	char *tag_name = nullptr;
 
 	tag_name = (char *)&tag;
@@ -49,9 +49,9 @@ void conv_ops_unknown_chunk(long tag, const char *s) {
 /*
  * Find an entry and auto-advance the pointer past it.
  */
-char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
-	long num_blocks = 0;
-	long j = 0, k = 0;
+char *conv_ops_get_entry(int32 i, int32 *next, int32 *tag, Conv *c) {
+	int32 num_blocks = 0;
+	int32 j = 0, k = 0;
 	lnode_chunk *L;
 	node_chunk *N;
 	text_chunk *T;
@@ -64,7 +64,7 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 	}
 
 	outChunk = &(c->conv[c->myCNode]);
-	*tag = *(long *)&outChunk[i];
+	*tag = *(int32 *)&outChunk[i];
 
 	if (_GC(swap))
 		*tag = convert_intel32(*tag);
@@ -104,10 +104,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		k = sizeof(lnode_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(L->num_entries) * sizeof(long);
+			j = convert_intel32(L->num_entries) * sizeof(int32);
 			j = convert_intel32(j);
 		} else {
-			j = L->num_entries * sizeof(long);
+			j = L->num_entries * sizeof(int32);
 		}
 		break;
 
@@ -118,10 +118,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		k = sizeof(node_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(N->num_entries) * sizeof(long);
+			j = convert_intel32(N->num_entries) * sizeof(int32);
 			j = convert_intel32(j);
 		} else {
-			j = N->num_entries * sizeof(long); //was +=
+			j = N->num_entries * sizeof(int32); //was +=
 		}
 		break;
 
@@ -157,10 +157,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		k = sizeof(w_reply_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(W->num_replies) * (2 * sizeof(long)); //was +=
+			j = convert_intel32(W->num_replies) * (2 * sizeof(int32)); //was +=
 			j = convert_intel32(j);
 		} else {
-			j = W->num_replies * (2 * sizeof(long)); //was +=
+			j = W->num_replies * (2 * sizeof(int32)); //was +=
 		}
 		break;
 
@@ -170,10 +170,10 @@ char *conv_ops_get_entry(long i, long *next, long *tag, Conv *c) {
 		k = sizeof(w_reply_chunk);
 
 		if (_GC(swap)) {
-			j = convert_intel32(W->num_replies) * (2 * sizeof(long)); //was +=
+			j = convert_intel32(W->num_replies) * (2 * sizeof(int32)); //was +=
 			j = convert_intel32(j);
 		} else {
-			j = W->num_replies * (2 * sizeof(long)); //was +=
+			j = W->num_replies * (2 * sizeof(int32)); //was +=
 		}
 		break;
 
@@ -237,7 +237,7 @@ static void swap_assign(assign_chunk *a) {
 	a->opnd1 = convert_intel32(a->opnd1);
 }
 
-assign_chunk *get_asgn(Conv *c, long cSize) {
+assign_chunk *get_asgn(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	assign_chunk *a = nullptr;
 
@@ -260,7 +260,7 @@ static void swap_c_asgn(c_assign_chunk *c) {
 	c->opnd1 = convert_intel32(c->opnd1);
 }
 
-c_assign_chunk *get_c_asgn(Conv *c, long cSize) {
+c_assign_chunk *get_c_asgn(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	c_assign_chunk *c_a = nullptr;
 
@@ -276,7 +276,7 @@ static void swap_conv(conv_chunk *c) {
 	c->size = convert_intel32(c->size);
 }
 
-conv_chunk *get_conv(Conv *c, long cSize) {
+conv_chunk *get_conv(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	conv_chunk *c_v = nullptr;
 
@@ -291,10 +291,10 @@ static void swap_decl(decl_chunk *d) {
 	d->tag = convert_intel32(d->tag);
 	d->val = convert_intel32(d->val);
 	d->flags = convert_intel32(d->flags);
-	//long = convert_intel32( *addr );
+	//int32 = convert_intel32( *addr );
 }
 
-decl_chunk *get_decl(Conv *c, long cSize) {
+decl_chunk *get_decl(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	decl_chunk *d = nullptr;
 
@@ -311,7 +311,7 @@ static void swap_fall(fall_chunk *l) {
 	l->index = convert_intel32(l->index);
 }
 
-fall_chunk *get_fall(Conv *c, long cSize) {
+fall_chunk *get_fall(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	fall_chunk *f = nullptr;
 
@@ -324,7 +324,7 @@ fall_chunk *get_fall(Conv *c, long cSize) {
 
 static void swap_lnode(lnode_chunk *l) {
 	int i = 0;
-	long *L = nullptr;
+	int32 *L = nullptr;
 
 	l->tag = convert_intel32(l->tag);
 	l->hash = convert_intel32(l->hash);
@@ -332,15 +332,15 @@ static void swap_lnode(lnode_chunk *l) {
 	l->entry_num = convert_intel32(l->entry_num);
 	l->num_entries = convert_intel32(l->num_entries);
 
-	L = (long *)l; //was &l
-	L += 5; // *sizeof( long );
+	L = (int32 *)l; //was &l
+	L += 5; // *sizeof( int32 );
 	for (i = 0; i < l->num_entries; i++) {
 		L[i] = convert_intel32(L[i]);
 	}
 	//
 }
 
-lnode_chunk *get_lnode(Conv *c, long cSize) {
+lnode_chunk *get_lnode(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	lnode_chunk *l = nullptr;
 
@@ -353,29 +353,27 @@ lnode_chunk *get_lnode(Conv *c, long cSize) {
 
 static void swap_node(node_chunk *n) {
 	int i = 0;
-	long *L = nullptr;
+	int32 *L = nullptr;
 
 	n->tag = convert_intel32(n->tag);
 	n->hash = convert_intel32(n->hash);
 	n->size = convert_intel32(n->size);
 	n->num_entries = convert_intel32(n->num_entries);
 
-	//int j = sizeof(long);
-	L = (long *)n; //was &n
-	L += 4; // *sizeof( long );
+	L = (int32 *)(n + 1);
+
 	for (i = 0; i < n->num_entries; i++) {
 		L[i] = convert_intel32(L[i]);
 	}
 }
 
-node_chunk *get_node(Conv *c, long cSize) {
+node_chunk *get_node(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	node_chunk *n = nullptr;
 
 	s = &(c->conv[c->myCNode]);
 	n = (node_chunk *)&s[cSize];
 
-	//swap_node( n );
 	return n;
 }
 
@@ -385,7 +383,7 @@ static void swap_entry(entry_chunk *e) {
 	e->status = convert_intel32(e->status);
 }
 
-entry_chunk *get_entry(Conv *c, long cSize) {
+entry_chunk *get_entry(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	entry_chunk *e = nullptr;
 
@@ -396,15 +394,7 @@ entry_chunk *get_entry(Conv *c, long cSize) {
 	return e;
 }
 
-#if 0
-static void swap_hash_entry(entry_chunk *e) {
-	e->tag = convert_intel32(e->tag);
-	e->size = convert_intel32(e->size);
-	e->status = convert_intel32(e->status);
-}
-#endif
-
-entry_chunk *get_hash_entry(Conv *c, long cSize) {
+entry_chunk *get_hash_entry(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	entry_chunk *e = nullptr;
 
@@ -420,7 +410,7 @@ static void swap_text(text_chunk *t) {
 	t->size = convert_intel32(t->size);
 }
 
-text_chunk *get_text(Conv *c, long cSize) {
+text_chunk *get_text(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	text_chunk *t = nullptr;
 
@@ -436,7 +426,7 @@ static void swap_mesg(mesg_chunk *m) {
 	m->size = convert_intel32(m->size);
 }
 
-mesg_chunk *get_mesg(Conv *c, long cSize) {
+mesg_chunk *get_mesg(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	mesg_chunk *m = nullptr;
 
@@ -452,7 +442,7 @@ static void swap_reply(reply_chunk *r) {
 	r->index = convert_intel32(r->index);
 }
 
-reply_chunk *get_reply(Conv *c, long cSize) {
+reply_chunk *get_reply(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	reply_chunk *r = nullptr;
 
@@ -471,7 +461,7 @@ static void swap_c_reply(c_reply_chunk *c) {
 	c->index = convert_intel32(c->index);
 }
 
-c_reply_chunk *get_c_reply(Conv *c, long cSize) {
+c_reply_chunk *get_c_reply(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	c_reply_chunk *c_r = nullptr;
 
@@ -487,14 +477,13 @@ static void swap_w_reply(w_reply_chunk *c) {
 	c->num_replies = convert_intel32(c->num_replies);
 }
 
-w_reply_chunk *get_w_reply(Conv *c, long cSize) {
+w_reply_chunk *get_w_reply(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	w_reply_chunk *w = nullptr;
 
 	s = &(c->conv[c->myCNode]);
 	w = (w_reply_chunk *)&s[cSize];
 
-	//swap_w_reply( w );
 	return w;
 }
 
@@ -503,7 +492,7 @@ static void swap_w_entry(w_entry_chunk *w) {
 	w->index = convert_intel32(w->index);
 }
 
-w_entry_chunk *get_w_entry(Conv *c, long cSize) {
+w_entry_chunk *get_w_entry(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	w_entry_chunk *w = nullptr;
 
@@ -519,7 +508,7 @@ static void swap_goto(goto_chunk *g) {
 	g->index = convert_intel32(g->index);
 }
 
-goto_chunk *get_goto(Conv *c, long cSize) {
+goto_chunk *get_goto(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	goto_chunk *g = nullptr;
 
@@ -538,7 +527,7 @@ static void swap_c_goto(c_goto_chunk *c) {
 	c->index = convert_intel32(c->index);
 }
 
-c_goto_chunk *get_c_goto(Conv *c, long cSize) {
+c_goto_chunk *get_c_goto(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	c_goto_chunk *cg = nullptr;
 
@@ -554,7 +543,7 @@ static void swap_misc(misc_chunk *m) {
 	m->index = convert_intel32(m->index);
 }
 
-misc_chunk *get_misc(Conv *c, long cSize) {
+misc_chunk *get_misc(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	misc_chunk *m = nullptr;
 
@@ -575,7 +564,7 @@ static void swap_c_misc(c_misc_chunk *c) {
 	c->index = convert_intel32(c->index);
 }
 
-c_misc_chunk *get_c_misc(Conv *c, long cSize) {
+c_misc_chunk *get_c_misc(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	c_misc_chunk *cm = nullptr;
 
@@ -587,23 +576,23 @@ c_misc_chunk *get_c_misc(Conv *c, long cSize) {
 }
 
 #if 0
-static void swap_long(long *l) {
+static void swap_long(int32 *l) {
 	*l = convert_intel32(*l);
 }
 #endif
 
-long get_long(Conv *c, long cSize) {
+int32 get_long(Conv *c, int32 cSize) {
 	char *s = nullptr;
-	long *l = nullptr;
+	int32 *l = nullptr;
 
 	s = &(c->conv[c->myCNode]);
-	l = (long *)&s[cSize];
+	l = (int32 *)&s[cSize];
 
 	//swap_long( l );
 	return *l;
 }
 
-char *get_string(Conv *c, long cSize) {
+char *get_string(Conv *c, int32 cSize) {
 	char *s = nullptr;
 	char *c_s = nullptr;
 
@@ -612,7 +601,7 @@ char *get_string(Conv *c, long cSize) {
 	return c_s;
 }
 
-int conv_ops_cond_successful(long l_op, long op, long r_op) {
+int conv_ops_cond_successful(int32 l_op, int32 op, int32 r_op) {
 	switch (op) {
 	case PERCENT:
 		return l_op % r_op;
@@ -645,7 +634,7 @@ int conv_ops_cond_successful(long l_op, long op, long r_op) {
 	return 0;
 }
 
-long conv_ops_process_asgn(long val, long oprtr, long opnd) {
+int32 conv_ops_process_asgn(int32 val, int32 oprtr, int32 opnd) {
 	switch (oprtr) {
 	case PPLUS:
 		val += opnd;
@@ -679,9 +668,9 @@ long conv_ops_process_asgn(long val, long oprtr, long opnd) {
 }
 
 void conv_swap_words(Conv *c) {
-	long ent = 0, tag = 0, next;
-	long ent_old = 0;
-	long tempEnt = 0;
+	int32 ent = 0, tag = 0, next;
+	int32 ent_old = 0;
+	int32 tempEnt = 0;
 	int x = 0;
 
 	conv_chunk *conv = nullptr;
