@@ -88,6 +88,14 @@ struct Box {
 		return true;
 	}
 
+	bool overlapsXY(const Box& o) const {
+		if (_x <= o._x - o._xd || o._x <= _x - _xd)
+			return false;
+		if (_y <= o._y - o._yd || o._y <= _y - _yd)
+			return false;
+		return true;
+	}
+
 	void extend(const Box &o) {
 		int32 x2 = MIN(_x - _xd, o._x - o._xd);
 		int32 y2 = MIN(_y - _yd, o._y - o._yd);

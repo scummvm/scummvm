@@ -600,9 +600,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check if item is in range
 				const Box ib = item->getWorldBox();
-				if (searchrange._x > ib._x - ib._xd && searchrange._x - searchrange._xd < ib._x &&
-					searchrange._y > ib._y - ib._yd && searchrange._y - searchrange._yd < ib._y) {
-
+				if (searchrange.overlapsXY(ib)) {
 					// check item against loopscript
 					if (item->checkLoopScript(loopscript, scriptsize)) {
 						assert(itemlist->getElementSize() == 2);
@@ -660,9 +658,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				// check if item is in range?
 				const Box ib = item->getWorldBox();
-				if (searchrange._x > ib._x - ib._xd && searchrange._x - searchrange._xd < ib._x &&
-					searchrange._y > ib._y - ib._yd && searchrange._y - searchrange._yd < ib._y) {
-
+				if (searchrange.overlapsXY(ib)) {
 					bool ok = false;
 
 					if (above && ib._z == (searchrange._z + searchrange._zd)) {
@@ -775,9 +771,7 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 					}
 				}
 
-				// check xy overlap
-				if (target._x > ib._x - ib._xd && target._x - target._xd < ib._x &&
-					target._y > ib._y - ib._yd && target._y - target._yd < ib._y) {
+				if (target.overlapsXY(ib)) {
 					// check support
 					if (si->_flags & supportmask && ib._z + ib._zd > supportz && ib._z + ib._zd <= target._z) {
 						supportz = ib._z + ib._zd;
