@@ -894,6 +894,75 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Russian games
 	{ "devours",            "All Things Devours" },
 
+	// ParserComp 2015
+	{ "pc15_chlorophyll",   "Chlorophyll" },                                                            //    1st Place
+	{ "pc15_oppositeopal",  "Oppositely Opal" },                                                        //    2nd Place
+	{ "pc15_delphinahouse", "Delphina's House" },                                                       //    3rd Place
+	{ "pc15_alongdrink",    "A Long Drink" },                                                           //      Entrant
+	{ "pc15_downserpent",   "Down, the Serpent and the Sun" },                                          //      Entrant
+	{ "pc15_endlesssands",  "Endless Sands" },                                                          //      Entrant
+	{ "pc15_lockdown",      "Lockdown" },                                                               //      Entrant
+	{ "pc15_terminator",    "Terminator" },                                                             //      Entrant
+	{ "pc15_terminatchase", "Terminator Chaser" },                                                      //      Entrant
+
+	// ParserComp 2021
+	{ "pc21_grooverland",   "Grooverland" },                                                            //    1st Place
+	{ "pc21_foreignsoil",   "Foreign Soil" },                                                           //    2nd Place
+	{ "pc21_blackknife",    "Black Knife Dungeon" },                                                    //    3rd Place
+	{ "pc21_timemachi21",   "The Time Machine" },                                                       //    6th Place
+	{ "pc21_returnstars",   "Return to the Stars" },                                                    //   11th Place
+	{ "pc21_daddybirthday", "Daddy's Birthday" },                                                       //   15th Place
+	{ "pc21_gameon",        "Loud House ’Game On’" },                                                   //   16th Place
+
+	// ParserComp 2022
+	{ "pc22_shadowsdeep",   "Of Their Shadows Deep" },                                                  //    2nd Place
+	{ "pc22_improvorigins", "Improv: Origins" },                                                        //    3rd Place
+	{ "pc22_midnightself",  "Midnight at Al’s Self Storage, Truck Rentals" },                           //    8th Place
+	{ "pc22_themuse",       "The Muse" },                                                               //   11th Place
+	{ "pc22_anitasgoodbye", "Anita's Goodbye" },                                                        //   14th Place
+
+	// ParserComp 2023
+	{ "pc23_playerppa",     "Player A - The Purple Pearl: A Two Player Adventure" },                    //    1st Place
+	{ "pc23_playerppb",     "Player B - The Purple Pearl: A Two Player Adventure" },                    //    1st Place
+	{ "pc23_jessecompass",  "Jesse Stavro's Compass" },                                                 //    2nd Place
+	{ "pc23_hinterlands",   "Hinterlands: Delivered!" },                                                //    5th Place
+
+	// Event One of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	{ "caduceus",           "Caduceus" },                                                               //    1st Place
+	{ "abandonedpools",     "Antique Panzitoum" },                                                      //    2nd Place
+	{ "scarletportrait",    "Scarlet Portrait Parlor" },                                                //    3rd Place
+	{ "gayscience",         "The Gay Science" },                                                        //    4th Place
+	{ "magnificientmuseum", "The Magnificent Museum of Masterly Masterworks" },                         //    5th Place
+	{ "whishperedream",     "A Whispered Dream" },                                                      //    6th Place
+	{ "upspookyhouseq2e1",  "Upon the Spooky House" },                                                  //    7th Place
+
+	// Event Two of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	{ "gaiazivajarilo",     "Gaia, Živa, Jarilo" },                                                     //    1st Place
+	{ "oldkingnebb",        "Old King Nebb" },                                                          //    2nd Place
+	{ "indistinguishable",  "Indistinguishable" },                                                      //    3rd Place
+
+	// Event Three of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	{ "85verbs",            "85 Verbs" },                                                               //    1st Place
+	{ "upspookyhouseq2e3",  "Upon the Spooky House" },                                                  //    3rd Place
+
+	// SeedComp! 2023
+	{ "aftertheaccident",   "After the Accident" },                                                     //    2nd Place
+	{ "hismajesty",         "His Majesty's Royal Space Navy Service Handbook" },                        //    2nd Place
+	{ "magicword",          "The Magic Word" },                                                         //      Entrant
+
+	// NarraScope 2020 Game Jam
+	{ "quicksketch",        "A Quick Sketch" },
+	{ "movingon",           "Moving (On)" },
+	{ "narcissi",           "Narcissi" },
+	{ "sohoekekalmoe",      "Sohoek Ekalmoe" },
+	{ "timeoutwasteland",   "Timeout in the Wasteland" },
+
+	// Single Choice Jam
+	{ "boing",              "Boing!" },
+	{ "chinesefamily",      "Chinese Family Dinner Moment" },
+	{ "ifyouhadoneshot",    "If You Had One Shot" },
+	{ "devours",            "All Things Devours" },
+
 	{ nullptr, nullptr }
 };
 
@@ -907,13 +976,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("adv350_glulx", "961209/v1", "cf232df2a3364a6f0821a8ef631c81a1", 167424),
 	DT_ENTRY1("adv350_glulx", "961209/v2", "e1939485dc2d4aab637144fc842b479d", 195406),
 	DT_ENTRY1("adventura", "171031", "4ca16a77854814124e1ab8df7270ed20", 659912),
-	DT_ENTRY1("aftertheaccident", "230228", "cccb23dd3a52e0f79f8371c72f45f2a0", 977430),
 	DT_ENTRY1("ailiphilia", "220228", "d52dd34d4e48692afd7ead53ee30a026", 1317440),
 	DT_ENTRY1("airport", "080204", "d3db494abc309a42b4dccfa53243a783", 234728),
 	DT_ENTRY1("alabaster", "090609", "7f664b6eef28485a2f85a1831b041246", 3132122),
 	DT_ENTRY1("alabaster", "090604", "3e7913a97275d57d4f2fcec7b014b167", 3374558),
 	DT_ENTRY1("aliasthemagpie", "190206", "a4281a03b797582ea53aa203b1eb7236", 1875956),
-	DT_ENTRY1("alongdrink", "150214", "8120604cd0cb566897fdb0f2786f4b43", 2164954),
 	DT_ENTRY1("anatidaephobia", "170121", "a651c03db50e624fc8da5679ac731b53", 786902),
 	DT_ENTRY1("anchorheaddemo", "070202", "f2e60c4c3aad4c6a2b18d4d20040ed76", 635974),
 	DT_ENTRY1("anchorhead", "??????", "8913be5c1feeca879111c356daf87291", 18634158),
@@ -939,7 +1006,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("beasttorrackmoor", "071014", "80d093ceb324b7288b6c5715f8391d3d", 579578),
 	DT_ENTRY1("beingthere", "10???\?/v1", "6a7f51d6c09acca156e3ceadce7edcb9", 6005766),
 	DT_ENTRY1("beyond_glulx", "100115", "64a351bc6757a58080b801a14d878fc2", 1303364),
-	DT_ENTRY1("blackknife", "210620", "077647a5bbec44dc32f663c2f793bf01", 691968),
 	DT_ENTRY1("briar", "130707", "fb40823ab510ca052c8736163332ea6d", 766272),
 	DT_ENTRY1("btyt", "130101", "97c6c3622d0d5a2f7a5e4f9ca521c13d", 412214),
 	DT_ENTRY1("bureaucrocy_glulx", "140401", "530a9efefff27ce37d75e5dc8de8ad5d", 565522),
@@ -954,7 +1020,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("cheesedoff_glulx", "160315", "27a5288bce1b9aed55c150cba9f2e930", 666448),
 	DT_ENTRY1("childrenloblolly", "220117", "1e2ebaa7bc46054d38eed6283ce71517", 824276),
 	DT_ENTRY1("chipmonk", "190725", "dfd2a54378d96e2e0de203b52879501e", 647590),
-	DT_ENTRY1("chlorophyll", "150212", "447eae9f3c961baec28cbef9432839e7", 1089226),
 	DT_ENTRY1("codetopia", "171103", "40f486f5a68fee9d99623167cf750874", 682480),
 	DT_ENTRY1("colderlight", "120312", "eed41f2779bdf940f84b4e0a33036e69", 1192960),
 	DT_ENTRY1("comp01tr", "012001", "1d51522ee3057a3f7206fa83c151a6de", 149760),
@@ -976,12 +1041,10 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("darkness_glulx", "201003", "0e95840879e88523117d72ab7861f184", 1217422),
 	DT_ENTRY1("deadcities", "081214", "0d276d62017b6b1b9e07b79e3fd98b5f", 1195136),
 	DT_ENTRY1("deathofftc", "130930", "8e48819a77855adf1a1879b2fb2e03ab", 1211826),
-	DT_ENTRY1("delphinashouse", "150214", "5c6e7d0f23ccc3fb17d64bcfdc14ae5e", 2199754),
 	DT_ENTRY1("diaperquest", "171224", "31d355119d0aa4c719cd8093457857b3", 417101284),
 	DT_ENTRY1("discovertheworld", "150731", "77b1b18260082d25f4de51318e885eaa", 17127846),
 	DT_ENTRY1("donotmeddle", "160223", "7f2864618567e6d8f587ea5dc9afe879", 800588),
 	DT_ENTRY1("douchebag", "150117", "20372d8a1cc2c6c8181f4ea7d6ec2a6c", 750454),
-	DT_ENTRY1("downtheserpent", "150214", "276a492ca99e76827265a70f84bcddd7", 1456140),
 	DT_ENTRY1("dptmb2aa", "200324", "8336c30f8b28a73583b9fdd7a753ae88", 565760),
 	DT_ENTRY1("dracula1_glulx", "071227", "5cb76c66a0087ac70d61e21d99cdf26a", 448324),
 	DT_ENTRY1("dracula2_glulx", "080819", "8b78b92771fc0f368ebc7fd0ff8e79bb", 696250),
@@ -995,7 +1058,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("dungeontext1", "130317", "1c69e410ff3fa7c7dcf83875a7f3a963", 746466),
 	DT_ENTRY1("dynapowers", "210627", "be66a1e09cb19cff49a2fa115ff4d097", 1836560),
 	DT_ENTRY1("elsegar1", "200917", "76925bff593a871c2668bedafe099058", 863114),
-	DT_ENTRY1("endlesssands", "150215", "2105d775eb759af04ab788e046d965e0", 982748),
 	DT_ENTRY1("endlesssands", "150712", "55b31591423b011bb99be2724a6bdbe9", 1005788),
 	DT_ENTRY1("endling", "090217", "52500f2301277154258d2a846d45aedb", 148908),
 	DT_ENTRY1("enterpriseincident", "020428", "ab2d1e4dd1ca079b502bc92b3ac4a1ac", 1067372),
@@ -1020,13 +1082,11 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("glkchess", "02????", "43a14ea7a35d7944504d3017f33fd40b", 252340),
 	DT_ENTRY1("glkebook", "040506/NotWorking", "1dc4d02840ee7cbf61dc359bc6a69c22", 61162),
 	DT_ENTRY1("greenmountains", "110116", "4049179c3a28703705de72be734e05bc", 337868),
-	DT_ENTRY1("grooverland", "210806", "d9438ba0fc0583a30f907b877f068710", 2180180),
 	DT_ENTRY1("hardpuzzle1", "151117", "ee0a36c15599629bfc4fef9d3d83f70f", 601068),
 	DT_ENTRY1("hardpuzzle2", "151209", "db2880a4bf6539b30b922c83d1f35877", 626752),
 	DT_ENTRY1("hardpuzzle3", "160107", "9dffb3f6fc8daf2bf4a27b4b43745b93", 796682),
 	DT_ENTRY1("haroldnight2003", "141007", "ac404358f94472c2e9c8bc07596995db", 949134),
 	DT_ENTRY1("herecomestreble", "160619", "573a53ce59a78c09bdfcf4f09b5cfd60", 666278),
-	DT_ENTRY1("hismajesty", "230305", "615014064a099b45861feac57868d91a", 2701802),
 	DT_ENTRY1("hobbit", "010911", "87212129f54fd80c1f31104eee222f2c", 183642),
 	DT_ENTRY1("hobbitredux_glulx", "170425/v1", "766d0af2efc767d387ba30eeb0db81d2", 622482),
 	DT_ENTRY1("hobbitredux_glulx", "170425/v2", "d0850bafc2ad394e37ee0a5d1d9c508e", 582656),
@@ -1036,7 +1096,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("hungerdaemon","141202", "9908fa1aad277bbc968587ea388d179f", 1496460),
 	DT_ENTRY1("illwind", "130515", "3904b4080d16b1e5d56caa6df64d5887", 1057002),
 	DT_ENTRY1("immunesystem", "200330", "1080f88bd537e11557cc1efd43c5d4b4", 614052),
-	DT_ENTRY1("improvorigins", "220810", "d734064ca6f678017db416820eee43dc", 1006110),
 	DT_ENTRY1("ingoodcompany", "161114", "8e7d4e242f7dff5d9e9be419e2da857b", 1628586),
 	DT_ENTRY1("jadeite", "201009", "1aad49311944d4e2e32b07a7d20120ab", 623962),
 	DT_ENTRY1("jasonandmedea", "110307", "ce392dbb2b0c76f2c9961925dfb9229a", 646362),
@@ -1047,14 +1106,12 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("limeergot", "151130", "1290543b3d72115bc31201ed244b5011", 1008590),
 	DT_ENTRY1("limen", "210814", "d196f9bb0ea07b178b6b3fb7b5eb8649", 683000),
 	DT_ENTRY1("lmstvg_glulx", "080404", "9dc7716acde7bc5bdc460f11f7ad51f9", 312920),
-	DT_ENTRY1("lockdown", "150112", "556ecd86ad03658d443e8deaba126601", 1338172),
 	DT_ENTRY1("lockeddoor10", "220202", "10002a1896d514b08416cffbf673f8c1", 989882),
 	DT_ENTRY1("lockeddoor11", "220214", "d96f42aec8da45f0c194a28ce3c1892e", 1019760),
 	DT_ENTRY1("lockkey", "1.12", "6f621089d571d2dada889e4367f4d20b", 269862),
 	DT_ENTRY1("lonelytroll", "220501", "05b1503fa7d757ec8417a777afa9a86e", 2334570),
 	DT_ENTRY1("lostislands", "110524", "9f439a77eccf4813aebebbe8093e8c57", 3145932),
 	DT_ENTRY1("loveassistant", "201011", "1c219d4b89551afde0545cdfbd3d6995", 1044186),
-	DT_ENTRY1("magicword", "230226", "d8a4512ef0d952eecc1dbfcf5feeb810", 935362),
 	DT_ENTRY1("makechange", "120107", "0ee70eea03ca810bf0de3dcecfd9c741", 6456118),
 	DT_ENTRY1("makingme", "220209", "96f4346cdf887a6ced4026e13ecc64ea", 2082406),
 	DT_ENTRY1("mgaeb", "110326", "9e79d4c25be31698254648579288e6dc", 676818),
@@ -1078,7 +1135,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("oldfogey", "160512", "bb1cc12fcc2c0d606d237cb8bed8ef7e", 612406),
 	DT_ENTRY1("oliviasorphanorium", "121118", "f0719bf95ca31e2bf964ebf11628b9ba", 1279388),
 	DT_ENTRY1("onefishtwofish", "211025", "121e6cd8d048525f9a67ad7b127fd3bc", 906032),
-	DT_ENTRY1("oppositelyopal", "150214", "e7bbe4bca68cf243c64528b464b99ebf", 1515910),
 	DT_ENTRY1("ottumwa_glulx", "021409", "1fc1da4f374493bee3a13c143beeba58", 537712),
 	DT_ENTRY1("phoenixfire", "190204", "1aab4fc41f54524f98988045aa6be1df", 767690),
 	DT_ENTRY1("photopia_glulx", "10274/v1", "eab3f6371531c78b2e80803e1636da7d", 627050),
@@ -1111,7 +1167,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("sensory", "000329/ulx", "7c5a00524809e4402ddf0554394e81bc", 132608),
 	DT_ENTRY1("shadowcathedral", "150228", "8da968205614859105c89e95179d268c", 2723072),
 	DT_ENTRY1("shadowoper", "201007", "b19676c374b7e88ceed9b4bfdfbd1c11", 2124718),
-	DT_ENTRY1("shadowsdeep", "220630", "4d0b65a40f50e1d04bfc5bdef31b5aa6", 1307402),
 	DT_ENTRY1("shapes", "000001", "a011827749eeef8afe6f6b8d5bfb78db", 1254912),
 	DT_ENTRY1("sheephere", "160416", "1de700b758ef6f975150a6bd8926880d", 621466),
 	DT_ENTRY1("signalerror", "111116", "739510541192f01467b319b70ed7bf1f", 2138394),
@@ -1127,7 +1182,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("tcom", "121103 (No Gfx)", "24feef55d07cc46bcc5479ce580cbe3e", 246272),
 	DT_ENTRY1("tcom", "121103", "67504ebc3d525f6a29fa800b6e12229d", 326226),
 	DT_ENTRY1("terminatorchaser", "150315", "ac10ba4e7d15ebe4262cb3b9d683ef12", 1698614),
-	DT_ENTRY1("terminator", "150214", "596b41d3ecc38bfb9a6aee085f333591", 1054550),
 	DT_ENTRY1("theabbey", "080626", "3abcc1b85a36efb73815e1cd37143210", 645274),
 	DT_ENTRY1("thebigfall", "210624", "4fcfb19c283e3860aa463dd9e3a77263", 1342530),
 	DT_ENTRY1("thebigfall", "210711", "dad981d1fde0f573fd7c4b4d2652ca69", 1389634),
@@ -1154,7 +1208,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("thespywhoatelunch", "120102", "4d6d33ff7c740020067d85cdcb46678e", 839742),
 	DT_ENTRY1("thestorm", "190107", "f0a0f037fec735bdfe770f1f171e03a8", 820842),
 	DT_ENTRY1("thethiefwovenwoods", "110513", "cf0cee73644411e8176c7320eb8b68d8", 388820),
-	DT_ENTRY1("timemachi21", "210627", "92409db44e62a5d91ee6a0f0767294c7", 1150004),
 	DT_ENTRY1("timemachi21", "210831", "cd93405a3c77a9351bab7ccae0a6a436", 1161268),
 	DT_ENTRY1("thetinyhouse", "091210", "5e86e6852c049ac973af5175d61b60e9", 823552),
 	DT_ENTRY1("thetinyhouse", "100425", "44d3e300ced2828af1509e5019271b26", 838656),
@@ -1933,6 +1986,82 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Russian games
 	DT_ENTRYL1("devours", Common::RU_RUS, "r2/220224", "65a51e53c1498823024dcec286971f19", 365312),
+
+	// ParserComp 2015
+	DT_ENTRY1("pc15_chlorophyll", "150212", "447eae9f3c961baec28cbef9432839e7", 1089226),
+	DT_ENTRY1("pc15_oppositeopal", "150214", "e7bbe4bca68cf243c64528b464b99ebf", 1515910),
+	DT_ENTRY1("pc15_delphinahouse", "150214", "5c6e7d0f23ccc3fb17d64bcfdc14ae5e", 2199754),
+	DT_ENTRY1("pc15_alongdrink", "150214", "8120604cd0cb566897fdb0f2786f4b43", 2164954),
+	DT_ENTRY1("pc15_downserpent", "150214", "276a492ca99e76827265a70f84bcddd7", 1456140),
+	DT_ENTRY1("pc15_endlesssands", "150215", "2105d775eb759af04ab788e046d965e0", 982748),
+	DT_ENTRY1("pc15_lockdown", "150112", "556ecd86ad03658d443e8deaba126601", 1338172),
+	DT_ENTRY1("pc15_terminator", "150214", "596b41d3ecc38bfb9a6aee085f333591", 1054550),
+	DT_ENTRY1("pc15_terminatchase", "150212", "60a5c3ba6f2a3c07aa2c40904c05abd4", 1702244),
+
+	// ParserComp 2021
+	DT_ENTRY1("pc21_grooverland", "21???\?/v1", "3c0a17a7bce7b7cf9a8ab9f0e6342b85", 2180180),
+	DT_ENTRY1("pc21_grooverland", "21???\?/v2", "d9438ba0fc0583a30f907b877f068710", 2180180),
+	DT_ENTRY1("pc21_grooverland", "21???\?/v3", "9525338240712090703a07acfa0fddb0", 2180436),
+	DT_ENTRY1("pc21_foreignsoil", "210806", "3e68ec0287ec8a6e94b29e57912e7ee7", 1172610),
+	DT_ENTRY1("pc21_blackknife", "210620", "077647a5bbec44dc32f663c2f793bf01", 691968),
+	DT_ENTRY1("pc21_timemachi21", "210627", "92409db44e62a5d91ee6a0f0767294c7", 1150004),
+	DT_ENTRY1("pc21_returnstars", "210630", "4949a959d70580e9c8b69b5dd4629395", 1144178),
+	DT_ENTRY1("pc21_daddybirthday", "210630", "c03d6ca441e5cef88b849ffc729bac38", 2345122),
+	DT_ENTRY1("pc21_gameon", "210629", "7bb02775b620727fcfbe31243a5a73df", 916302),
+
+	// ParserComp 2022
+	DT_ENTRY1("pc22_shadowsdeep", "220630", "4d0b65a40f50e1d04bfc5bdef31b5aa6", 1307402),
+	DT_ENTRY1("pc22_improvorigins", "220810", "d734064ca6f678017db416820eee43dc", 1006110),
+	DT_ENTRY1("pc22_midnightself", "220630", "c82a68d5c7d540076fba84c13439745d", 1700460),
+	DT_ENTRY1("pc22_themuse", "220509/v1", "b49ebc65deec4a2ef8342f208f8ccc8d", 3752436),
+	DT_ENTRY1("pc22_themuse", "220509/v2", "d2b3538da842da0b8fc962e2228ef5be", 12306774),
+	DT_ENTRY1("pc22_anitasgoodbye", "220703", "f38cc906507c1812591b70ac6f48e1c2", 691150),
+
+	// ParserComp 2023
+	DT_ENTRY1("pc23_playerppa", "230705", "27b44da04b48ae78de23c27258341191", 1043074),
+	DT_ENTRY1("pc23_playerppb", "230630", "f27087dcd2038023ffdbd46bf5a6a7c3", 1095758),
+	DT_ENTRY1("pc23_jessecompass", "230625", "7f212aeaf99b668967277cb004d71072", 1861500),
+	DT_ENTRY1("pc23_hinterlands", "230629", "e2a5503c2ec0f7a53dc7c6e226121279", 5491036),
+
+	// Event One of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	DT_ENTRY1("caduceus", "200203", "259a1d733d0f6c2abae2a484a0700d1f", 615580),
+	DT_ENTRY1("abandonedpools", "200203", "88cbebd3ab156775fe23b9bd645b7223", 683472),
+	DT_ENTRY1("scarletportrait", "200203", "4e08aceed147b98df25272a66e27e303", 611496),
+	DT_ENTRY1("gayscience", "200203", "3a0e6a116d4f5eecbeafc066459017f3", 625322),
+	DT_ENTRY1("magnificientmuseum", "200203", "ca14c780a0e116d1688c056432958cc3", 615366),
+	DT_ENTRY1("whishperedream", "200203", "acceef1437ebab55e9277d7832ed935b", 612008),
+	DT_ENTRY1("upspookyhouseq2e1", "200203", "2dbb1454df956239dceecce5622774bf", 637434),
+
+	// Event Two of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	DT_ENTRY1("gaiazivajarilo", "200221", "bb692481e7a261bf31ee04c889dcb50c", 944072),
+	DT_ENTRY1("oldkingnebb", "200221", "7376454ebf5c470d5fd9c4fb61b7f757", 714216),
+	DT_ENTRY1("indistinguishable", "200219", "b6ef0d6e638536490ea94c3fa8e41235", 628680),
+
+	// Event Three of the Second Quadrennial Ryan Veeder Exposition for Good Interactive Fiction
+	DT_ENTRY1("85verbs", "200229", "4a533c072eefba88764914fe04db5c89", 708798),
+	DT_ENTRY1("upspookyhouseq2e3", "200229", "d299e2f4eaa2828de49bbcd7a618c4db", 643616),
+
+	// SeedComp! 2023
+	DT_ENTRY1("aftertheaccident", "230228", "cccb23dd3a52e0f79f8371c72f45f2a0", 977430),
+	DT_ENTRY1("hismajesty", "230223", "c761ba668ff6107311b5c4e93a352b59", 2701290),
+	DT_ENTRY1("hismajesty", "230305", "615014064a099b45861feac57868d91a", 2701802),
+	DT_ENTRY1("magicword", "230226", "d8a4512ef0d952eecc1dbfcf5feeb810", 935362),
+
+	// NarraScope 2020 Game Jam
+	DT_ENTRY1("quicksketch", "200608", "51ddf89a462df94280c73b5914368fff", 1072392),
+	DT_ENTRY1("movingon", "200609", "5a98b48e375ec43ce0317d7444a7ec81", 722120),
+	DT_ENTRY1("narcissi", "200609", "67e7d31df1f20e211c93284721d04bfc", 661226),
+	DT_ENTRY1("sohoekekalmoe", "200605/v1", "5966d3ae2603ab40c28412c26bb275f4", 715006),
+	DT_ENTRY1("sohoekekalmoe", "200605/v2", "07c392a15a48c05ad22b4f6724db76ca", 715006),
+	DT_ENTRY1("timeoutwasteland", "200621", "1ee84d99bf616af49fc6815da02e054a", 725472),
+
+	// Single Choice Jam
+	DT_ENTRY1("boing", "230818", "cd87674e7fe8418256513e8f67f96df4", 630178),
+	DT_ENTRY1("chinesefamily", "230821", "8b746ac01eaea9ad679ec627664fa492", 609790),
+	DT_ENTRY1("ifyouhadoneshot","230731", "466d18369d99d8d961c57ca03c25d2c3", 674536),
+
+	DT_ENTRYL1("devours", Common::RU_RUS, "r2/220224", "65a51e53c1498823024dcec286971f19", 365312),
+
 	DT_END_MARKER
 };
 
