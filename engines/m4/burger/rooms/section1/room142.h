@@ -58,9 +58,9 @@ private:
 	noWalkRect *_noWalk = nullptr;
 	int _actionType = 0;
 	int _volume = 0;
-	static long _val1;
-	static long _val2;
-	static long _val3;
+	static int32 _val1;
+	static int32 _val2;
+	static int32 _val3;
 	int _val4 = 0;
 
 	void checkAction();

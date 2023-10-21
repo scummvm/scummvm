@@ -112,8 +112,8 @@ const seriesPlayBreak Room506::PLAY6[] = {
 };
 
 
-long Room506::_state1;
-long Room506::_state2;
+int32 Room506::_state1;
+int32 Room506::_state2;
 
 Room506::Room506() : Section5Room() {
 	_state1 = 0;

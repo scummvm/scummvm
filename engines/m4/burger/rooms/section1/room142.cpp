@@ -157,9 +157,9 @@ const seriesPlayBreak Room142::PLAY14[] = {
 };
 
 
-long Room142::_val1;
-long Room142::_val2;
-long Room142::_val3;
+int32 Room142::_val1;
+int32 Room142::_val2;
+int32 Room142::_val3;
 
 Room142::Room142() : Room() {
 	_val1 = 0;

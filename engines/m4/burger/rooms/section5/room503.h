@@ -55,12 +55,12 @@ private:
 	static const seriesPlayBreak PLAY22[];
 	static const seriesPlayBreak PLAY23[];
 	static const seriesPlayBreak PLAY24[];
-	static long _state1;
-	static long _state2;
-	static long _state3;
-	static long _state4;
-	static long _state5;
-	static long _state6;
+	static int32 _state1;
+	static int32 _state2;
+	static int32 _state3;
+	static int32 _state4;
+	static int32 _state5;
+	static int32 _state6;
 	int16 _array1[5];
 	int16 _array2[5];
 	int _val2 = 0;

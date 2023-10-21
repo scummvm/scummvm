@@ -570,7 +570,6 @@ static Conv *conv_restore_state(Conv *c) {
 	int32 myCNode;
 
 	char fname[9];
-	int dont_update_ents = 0;
 	int file_size = 0;
 	char *conv_save_buff = nullptr;
 
@@ -643,14 +642,14 @@ static Conv *conv_restore_state(Conv *c) {
 		switch (tag) {
 		case LNODE_CHUNK:
 			if (myCNode == ent) {
-				dont_update_ents = 1;
+				//dont_update_ents = 1;
 			} else {
-				dont_update_ents = 0;
+				//dont_update_ents = 0;
 			}
 			break;
 
 		case NODE_CHUNK:
-			dont_update_ents = 0;
+			//dont_update_ents = 0;
 			break;
 
 		case ENTRY_CHUNK:

@@ -197,9 +197,9 @@ const seriesPlayBreak Room145::PLAY23[] = {
 	PLAY_BREAK_END
 };
 
-long Room145::_state1;
-long Room145::_state2;
-long Room145::_state3;
+int32 Room145::_state1;
+int32 Room145::_state2;
+int32 Room145::_state3;
 
 Room145::Room145() : Room() {
 	_state1 = 0;

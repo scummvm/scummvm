@@ -34,7 +34,7 @@ class Room103 : public Room {
 	static const seriesStreamBreak SERIES3[];
 	static const seriesStreamBreak SERIES4[];
 private:
-	static long _val0;
+	static int32 _val0;
 	bool _flag1 = false;
 	int _val2 = 0;
 	int _val3 = 0;

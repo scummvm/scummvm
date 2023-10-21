@@ -34,8 +34,8 @@ class Resources {
 	struct Entry {
 		Common::String name;
 		MemHandle RHandle = nullptr;
-		size_t BufferSize = 0;
-		uint32 Size = 0;
+		int32 BufferSize = 0;
+		int32 Size = 0;
 		byte Flags = 0;
 	};
 private:

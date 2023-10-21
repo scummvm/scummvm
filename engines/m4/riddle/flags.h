@@ -553,7 +553,7 @@ enum {
 
 class Flags {
 public:
-	static long _flags[FLAGS_COUNT];
+	static int32 _flags[FLAGS_COUNT];
 
 public:
 	Flags();
@@ -566,7 +566,7 @@ public:
 	size_t size() const {
 		return FLAGS_COUNT;
 	}
-	long &operator[](uint idx) {
+	int32 &operator[](uint idx) {
 		assert(idx < FLAGS_COUNT);
 		return _flags[idx];
 	}

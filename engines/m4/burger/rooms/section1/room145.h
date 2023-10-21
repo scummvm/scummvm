@@ -56,9 +56,9 @@ private:
 	static const seriesPlayBreak PLAY21[];
 	static const seriesPlayBreak PLAY22[];
 	static const seriesPlayBreak PLAY23[];
-	static long _state1;
-	static long _state2;
-	static long _state3;
+	static int32 _state1;
+	static int32 _state2;
+	static int32 _state3;
 	noWalkRect *_walk1 = nullptr;
 	noWalkRect *_walk2 = nullptr;
 	noWalkRect *_walk3 = nullptr;

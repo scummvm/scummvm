@@ -85,7 +85,7 @@ protected:
 
 public:
 	// These are defined as statics because they're referenced in data arrays
-	static long _wilbur_should;
+	static int32 _wilbur_should;
 public:
 	Burger::Flags _flags;
 	GameMode _executing = WHOLE_GAME;

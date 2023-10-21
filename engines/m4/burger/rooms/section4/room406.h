@@ -70,10 +70,10 @@ private:
 	static const seriesPlayBreak PLAY34[];
 	static const seriesPlayBreak PLAY35[];
 	static const seriesPlayBreak PLAY36[];
-	static long _state1;
-	static long _state2;
-	static long _state3;
-	static long _state4;
+	static int32 _state1;
+	static int32 _state2;
+	static int32 _state3;
+	static int32 _state4;
 	Series _coll;
 	Series _gate;
 	Series _mg03;

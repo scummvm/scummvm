@@ -39,8 +39,8 @@ private:
 	static const seriesPlayBreak PLAY6[];
 	static const seriesPlayBreak PLAY7[];
 	static const seriesPlayBreak PLAY8[];
-	static long _state1;
-	static long _state2;
+	static int32 _state1;
+	static int32 _state2;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	int _val1 = 0;

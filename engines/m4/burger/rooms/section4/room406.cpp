@@ -411,10 +411,10 @@ const seriesPlayBreak Room406::PLAY36[] = {
 	{ 5, -1, nullptr,    0,   0, -1, 0, 0, nullptr,  0 },
 };
 
-long Room406::_state1;
-long Room406::_state2;
-long Room406::_state3;
-long Room406::_state4;
+int32 Room406::_state1;
+int32 Room406::_state2;
+int32 Room406::_state3;
+int32 Room406::_state4;
 
 
 Room406::Room406() : Section4Room() {

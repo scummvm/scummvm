@@ -32,7 +32,7 @@ class Room608 : public Section6Room {
 private:
 	static const seriesStreamBreak SERIES1[];
 	static const seriesStreamBreak SERIES2[];
-	static long _state1;
+	static int32 _state1;
 public:
 	Room608();
 	~Room608() override {}

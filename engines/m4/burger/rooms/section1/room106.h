@@ -40,9 +40,9 @@ class Room106 : public Room {
 	static const seriesPlayBreak PLAY7[];
 private:
 	const char *_digi1 = nullptr;
-	static long _val1;
+	static int32 _val1;
 	int _val2 = 0;
-	static long _val3;
+	static int32 _val3;
 
 	void setHotspots();
 	void loadSeries();

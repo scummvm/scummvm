@@ -49,11 +49,11 @@ private:
 	static const seriesPlayBreak PLAY16[];
 	static const seriesPlayBreak PLAY17[];
 	static const seriesPlayBreak PLAY18[];
-	static long _state1;
-	static long _state2;
-	static long _state3;
-	static long _state4;
-	static long _state5;
+	static int32 _state1;
+	static int32 _state2;
+	static int32 _state3;
+	static int32 _state4;
+	static int32 _state5;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;

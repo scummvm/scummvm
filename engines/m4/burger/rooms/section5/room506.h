@@ -38,8 +38,8 @@ private:
 	static const seriesPlayBreak PLAY4[];
 	static const seriesPlayBreak PLAY5[];
 	static const seriesPlayBreak PLAY6[];
-	static long _state1;
-	static long _state2;
+	static int32 _state1;
+	static int32 _state2;
 	noWalkRect *_walk1 = nullptr;
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;

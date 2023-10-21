@@ -31,7 +31,7 @@ namespace Rooms {
 class Room511 : public Section5Room {
 private:
 	static const seriesStreamBreak SERIES1[];
-	static long _state1;
+	static int32 _state1;
 	int _val1 = 0;
 
 public:

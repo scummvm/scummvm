@@ -55,7 +55,7 @@ static const BoonsvilleRec ARRAY[] = {
 	{ 0, 0, nullptr }
 };
 
-long Flags::_flags[FLAGS_COUNT];
+int32 Flags::_flags[FLAGS_COUNT];
 
 Flags::Flags() {
 	Common::fill(_flags, _flags + FLAGS_COUNT, 0);

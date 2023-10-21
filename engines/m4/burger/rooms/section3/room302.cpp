@@ -160,7 +160,7 @@ const seriesPlayBreak Room302::PLAY13[] = {
 	PLAY_BREAK_END
 };
 
-long Room302::_state1;
+int32 Room302::_state1;
 
 
 Room302::Room302() : Section3Room() {

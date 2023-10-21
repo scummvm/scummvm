@@ -35,10 +35,10 @@ namespace M4 {
 // Get next node pointer
 // Process declarations
 // Get message text
-static void conv_exec_entry(long offset, Conv *c) {
-	long i = offset, entry_count;
-	long l_op, r_op;
-	long tag, next;
+static void conv_exec_entry(int32 offset, Conv *c) {
+	int32 i = offset, entry_count;
+	int32 l_op, r_op;
+	int32 tag, next;
 
 	goto_chunk *go;
 	c_goto_chunk *c_goto;
@@ -252,12 +252,12 @@ static void conv_exec_entry(long offset, Conv *c) {
 	}
 }
 
-static int conv_get_mesg(long offset, long is_valid, Conv *c) {
-	long i = offset, entry_count;
-	long l_op, r_op;
-	long x, y, s_offset = 0, cSize;
-	long tag, next;
-	long text_len;
+static int conv_get_mesg(int32 offset, int32 is_valid, Conv *c) {
+	int32 i = offset, entry_count;
+	int32 l_op, r_op;
+	int32 x, y, s_offset = 0, cSize;
+	int32 tag, next;
+	int32 text_len;
 	int sum, result = 0;
 
 	entry_chunk *entry;
@@ -495,10 +495,10 @@ static void find_true_ent(int entry_num, Conv *c) {
 	lnode_chunk *lnode = nullptr;
 	entry_chunk *entry = nullptr;
 	fall_chunk *fall = nullptr;
-	long offset = 0, ent = 0, n = 0;
-	long next = 0, tag = 0, num_ents = 0;
+	int32 offset = 0, ent = 0, n = 0;
+	int32 next = 0, tag = 0, num_ents = 0;
 	int i = 0;
-	long sub_ent = 0;
+	int32 sub_ent = 0;
 	int result = 1;
 
 	for (;;) {
@@ -537,7 +537,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 			assert(fall);
 
 			//do this to skip the fall chunk and all will be fine.
-			ent += sizeof(long); //was get_long, sizeof( fall_chunk )
+			ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
 			n++; //don't increment i.
 			break;
 
@@ -569,7 +569,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 		//fprintf( conv_fp, "find_true_ent _GC(ent)++\n" );
 		_GC(ent)++;
 
-		ent += sizeof(long);
+		ent += sizeof(int32);
 	}
 }
 
@@ -581,7 +581,7 @@ static int conv_get_node_text(Conv *c) {
 	entry_chunk *entry = nullptr;
 	fall_chunk *fall = nullptr;
 
-	long ent = 0, offset = 0, tag, next, num_ents = 0;
+	int32 ent = 0, offset = 0, tag, next, num_ents = 0;
 	int i = 0, num_vis = 0, result = 0;
 
 	_G(cdd).num_txt_ents = 0;
@@ -623,10 +623,10 @@ static int conv_get_node_text(Conv *c) {
 			ent = get_long(c, offset);
 			entry = get_entry(c, offset + ent);
 
-			offset += sizeof(long);
+			offset += sizeof(int32);
 		}
 
-		offset -= sizeof(long);
+		offset -= sizeof(int32);
 
 		// Set sound file name instead.?
 		if ((entry->status != 0) && (num_ents != 0) && ok_status(entry)) {
@@ -670,7 +670,7 @@ static int conv_get_node_text(Conv *c) {
 				fall = get_fall(c, offset + ent);
 			}
 
-			offset += sizeof(long);
+			offset += sizeof(int32);
 		}
 
 		if (fall) {
@@ -700,7 +700,7 @@ void conv_shutdown(void) {
 
 // Simplify me.
 static void conv_start(Conv *c) {
-	long ok = 1, ent = 0, tag = 0, next;
+	int32 ok = 1, ent = 0, tag = 0, next;
 	decl_chunk *decl;
 
 	switch (c->exit_now) {
@@ -774,10 +774,10 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 	lnode_chunk *lnode = nullptr;
 	entry_chunk *entry = nullptr;
 	fall_chunk *fall = nullptr;
-	long offset = 0, ent = 0, is_valid = 0, n = 0;
-	long next = 0, tag = 0, num_ents = 0;
+	int32 offset = 0, ent = 0, is_valid = 0, n = 0;
+	int32 next = 0, tag = 0, num_ents = 0;
 	int i = 0;
-	long sub_ent = 0;
+	int32 sub_ent = 0;
 	int	result = 1;
 	//int changed = 0;
 
@@ -817,7 +817,7 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 			assert(fall);
 
 			//do this to skip the fall chunk and all will be fine.
-			ent += sizeof(long); //was get_long, sizeof( fall_chunk )
+			ent += sizeof(int32); //was get_long, sizeof( fall_chunk )
 			n++; //don't increment i.
 			break;
 
@@ -842,11 +842,11 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 			is_valid = 1;
 		}
 
-		ent += sizeof(long);
+		ent += sizeof(int32);
 		n++;
 	}
 
-	ent -= sizeof(long);
+	ent -= sizeof(int32);
 
 	if (is_valid) {
 		switch (mode) {
