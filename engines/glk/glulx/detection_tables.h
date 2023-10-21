@@ -873,6 +873,20 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "patanoirde",         "PataNoir - Ein Unvergleichlicher Kriminalfall" },
 	{ "spaterbesuch",       "Ein Später Besuch" },
 
+	// Textfire Grand Prix 2005
+	{ "tgp_bananerepublik", "Bananenrepublik" },                                                        //    2nd Place
+
+	// Textfire Grand Prix 2010
+	{ "tgp_ares",           "Ares" },                                                                   //    1st Place
+
+	// Textfire Grand Prix 2011
+	{ "tgp_roteblum",       "Die Rote Blume" },                                                         //    1st Place
+	{ "tgp_schiesbefehl",   "Schießbefehl" },                                                           //    3rd Place
+
+	// Textfire Grand Prix 2014
+	{ "tgp_treffen",         "Treffen am Nebelgrat" },                                                  //    1st Place
+	{ "tgp_dersigkeitenlad", "Der Süßigkeitenladen" },                                                  //    4th Place
+
 	// Italian games
 	{ "beyondita_glulx",    "Beyond" },
 	{ "pietraluna_glulx",   "La Pietra della Luna" },
@@ -1967,6 +1981,21 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170430", "85a966e56c4e0fc7d10df9bc3824da95", 727492),
 	DT_ENTRYL1("patanoirde", Common::DE_DEU, "131202", "9ed40b987510c7a8b7da4386ff8879b1", 969304),
 	DT_ENTRYL1("spaterbesuch", Common::DE_DEU, "191013", "24bd852ecb47a6f01cdaa9be80195f4a", 9608754),
+
+	// Textfire Grand Prix 2005
+	DT_ENTRYL1("tgp_bananerepublik", Common::DE_DEU, "050330", "dad950c45fb67d80fc37aa716e88d9bb", 368640),
+
+	// Textfire Grand Prix 2010
+	DT_ENTRYL1("tgp_ares", Common::DE_DEU, "110517", "4dfe7cfab60e04a9030ba56c97579c0a", 3313846),
+
+	// Textfire Grand Prix 2011
+	DT_ENTRYL1("tgp_roteblum", Common::DE_DEU, "110331", "8e752fdcaa3e9f051ff50535e2c8f18e", 1038772),
+	DT_ENTRYL1("tgp_schiesbefehl", Common::DE_DEU, "110311", "c9551891b01c10be5f1aa214be17a0ef", 236544),
+	DT_ENTRYL1("tgp_schiesbefehl", Common::DE_DEU, "131119", "200bc928fd7a028e755de4d962c2e054", 448458),
+
+	// Textfire Grand Prix 2014
+	DT_ENTRYL1("tgp_treffen", Common::DE_DEU, "140331", "e395219a697b34fbbcb90ed03bf35a5b", 1727130),
+	DT_ENTRYL1("tgp_dersigkeitenlad", Common::DE_DEU, "140401", "3dd57df785437293386076a062a7a415", 1619138),
 
 	// Italian games
 	DT_ENTRYL1("beyondita_glulx", Common::IT_ITA, "100115/gblorb", "a0cd0a410cc99aa7ff661129b8ec5de8", 1331582),
