@@ -1706,7 +1706,7 @@ bool ws_OpenSSstream(SysFile *sysFile, Anim8 *anim8) {
 	// Automatically set some of the sequence registers
 	celsPtr = myCCB->streamSSHeader;
 	numSprites = celsPtr[CELS_COUNT];
-	myRegs[IDX_CELS_INDEX] = (uint)-0x10000;
+	myRegs[IDX_CELS_INDEX] = -(1 << 16);	// First frame inc will make it 0
 	myRegs[IDX_CELS_COUNT] = numSprites << 16;
 	myRegs[IDX_CELS_FRAME_RATE] = celsPtr[CELS_FRAME_RATE] << 16;
 
