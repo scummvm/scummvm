@@ -98,36 +98,41 @@ struct AlphaBlend {
 template<bool doscale, bool rgbmod, bool alphamod>
 struct MultiplyBlend {
     static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-        __m128i ina;
-        if (alphamod)
+        __m128i ina, alphaMask;
+        if (alphamod) {
             ina = _mm_srli_epi32(_mm_mullo_epi16(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask)), _mm_set1_epi32(ca)), 8);
-        else
+			alphaMask = _mm_cmpeq_epi32(ina, _mm_setzero_si128());
+		} else {
             ina = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
-        __m128i alphaMask = _mm_cmpeq_epi32(ina, _mm_setzero_si128());
+			alphaMask = _mm_set1_epi32(BlendBlit::kAModMask);
+		}
 
-        if (rgbmod) {
-            __m128i srcb = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
-            __m128i srcg = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-            __m128i srcr = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
-            __m128i dstb = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
-            __m128i dstg = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-            __m128i dstr = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+		if (rgbmod) {
+			__m128i srcB = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m128i srcG = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			__m128i srcR = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+			__m128i dstB = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m128i dstG = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			__m128i dstR = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-            srcb = _mm_and_si128(_mm_srli_epi32(sse2_mul32(dstb, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcb, _mm_set1_epi32(cb)), ina), 16)), BlendBlit::kBModShift - 8), _mm_set1_epi32(BlendBlit::kBModMask));
-            srcg = _mm_and_si128(_mm_srli_epi32(sse2_mul32(dstg, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcg, _mm_set1_epi32(cg)), ina), 16)), BlendBlit::kGModShift - 8), _mm_set1_epi32(BlendBlit::kGModMask));
-            srcr = _mm_and_si128(_mm_srli_epi32(sse2_mul32(dstr, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcr, _mm_set1_epi32(cr)), ina), 16)), BlendBlit::kRModShift - 8), _mm_set1_epi32(BlendBlit::kRModMask));
+			srcB = _mm_and_si128(_mm_slli_epi32(_mm_mullo_epi16(dstB, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcB, _mm_set1_epi32(cb)), ina), 16)), BlendBlit::kBModShift - 8), _mm_set1_epi32(BlendBlit::kBModMask));
+			srcG = _mm_and_si128(_mm_slli_epi32(_mm_mullo_epi16(dstG, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcG, _mm_set1_epi32(cg)), ina), 16)), BlendBlit::kGModShift - 8), _mm_set1_epi32(BlendBlit::kGModMask));
+			srcR = _mm_and_si128(_mm_slli_epi32(_mm_mullo_epi16(dstR, _mm_srli_epi32(sse2_mul32(_mm_mullo_epi16(srcR, _mm_set1_epi32(cr)), ina), 16)), BlendBlit::kRModShift - 8), _mm_set1_epi32(BlendBlit::kRModMask));
 
+			src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
+			src = _mm_or_si128(src, _mm_or_si128(srcB, _mm_or_si128(srcG, srcR)));
+		} else {
+			constexpr uint32 rbMask = BlendBlit::kRModMask | BlendBlit::kBModMask;
+            __m128i srcG = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+            __m128i srcRB = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(rbMask)), BlendBlit::kBModShift);
+            __m128i dstG = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+            __m128i dstRB = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(rbMask)), BlendBlit::kBModShift);
+
+            srcG = _mm_and_si128(_mm_slli_epi32(_mm_mullo_epi16(dstG, _mm_srli_epi32(_mm_mullo_epi16(srcG, ina), 8)), 8), _mm_set1_epi32(BlendBlit::kGModMask));
+			srcRB = _mm_and_si128(_mm_mullo_epi16(dstRB, _mm_srli_epi32(_mm_and_si128(sse2_mul32(srcRB, ina), _mm_set1_epi32(rbMask)), 8)), _mm_set1_epi32(rbMask));
+			
             src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
-            src = _mm_or_si128(src, _mm_or_si128(srcb, _mm_or_si128(srcg, srcr)));
-        } else {
-            __m128i srcg = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kGModMask));
-            __m128i srcrb = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-            __m128i dstg = _mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kGModMask));
-            __m128i dstrb = _mm_srli_epi32(_mm_and_si128(dst, _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-            srcg = _mm_and_si128(_mm_srli_epi32(sse2_mul32(dstg, _mm_srli_epi32(sse2_mul32(srcg, ina), 8)), 8), _mm_set1_epi32(BlendBlit::kGModMask));
-            srcrb = _mm_and_si128(sse2_mul32(dstrb, _mm_srli_epi32(sse2_mul32(srcrb, ina), 8)), _mm_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
-            src = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
-            src = _mm_or_si128(src, _mm_or_si128(srcrb, srcg));
+            src = _mm_or_si128(src, _mm_or_si128(srcRB, srcG));
         }
 
         dst = _mm_and_si128(alphaMask, dst);
