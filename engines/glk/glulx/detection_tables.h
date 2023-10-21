@@ -835,10 +835,17 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "archcivesuliroya",   "Archives Culinaires Royales - Période d’Essai" },
 	{ "astressolitaires",   "Astres Solitaires" },
 	{ "ekphrasis",          "Ekphrasis" },
+	{ "fautedeservo",       "Faute de Servo" },
+	{ "heuresduvent",       "Les Heures du Vent" },
+	{ "latempete",          "La Tempête" },
+	{ "kebabhante",         "Le Kébab Hanté" },
 	{ "lieuxcommuns_glulx", "Lieux communs" },
+	{ "petitgnome_glulx",   "Petit Gnome" },
 	{ "sarvegne_glulx",     "Sarvegne" },
 	{ "scarabeekatana",     "Le Scarabee et le Katana" },
+	{ "tempetebermudes",    "Tempete sur les Bermudes" },
 	{ "templefeu",          "Le Temple de Feu" },
+	{ "tourorastre",        "La Tour d'Orastre" },
 
 	// French Comp 2007
 	{ "frc_souterraine",    "Souterraine" },                                                            //    4th Place
@@ -1912,11 +1919,23 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("stc23_stygiandream", "230402", "1e4d4ee86084c116bb09732e6ab9d2fa", 1455946),
 
 	// French games
+	DT_ENTRYL1("archcivesuliroya", Common::FR_FRA, "230207", "20e4606d807b74fd18c134bdad79e808", 1907590),
+	DT_ENTRYL1("astressolitaires", Common::FR_FRA, "210324", "20c40a53ee276ff877350f5e3e94e8f4", 2485834),
 	DT_ENTRYL1("ekphrasis", Common::FR_FRA, "050718/v1", "009ca5994d9e8fe6cfb400a9da00b123", 64609308),
+	DT_ENTRYL1("ekphrasis", Common::FR_FRA, "050718/v2", "edf22f51cb1ddb6775127f5c1f4d389a", 64609308),
+	DT_ENTRYL1("fautedeservo", Common::FR_FRA, "180106", "9746a5c59bc0f160b8553781479afb3e", 926096),
+	DT_ENTRYL1("kebabhante", Common::FR_FRA, "171022", "3e739bd3062390e6ce87022aa772de29", 219392),
+	DT_ENTRYL1("latempete", Common::FR_FRA, "230109", "42122cf49a8d6aee9e91ee949108c408", 1169304),
 	DT_ENTRYL0("lieuxcommuns_glulx", Common::FR_FRA, "6e18273de25a0b882b0cf01770003146", 15659070),
+	DT_ENTRYL1("lieuxcommuns_glulx", Common::FR_FRA, "090606", "df7add410161b8a2093b61e2efb7b68f", 14870456),
+	DT_ENTRYL1("petitgnome_glulx", Common::FR_FRA, "061101/gblorb", "a996d5c798c97965f5487ea0a14bea8c", 316422),
+	DT_ENTRYL1("sarvegne_glulx", Common::FR_FRA, "061022/blb", "3238e643504cdfa3acbeda7d99fa5d26", 591068),
 	DT_ENTRYL1("sarvegne_glulx", Common::FR_FRA, "061101/blb", "518ab27b773bb51f57c6526655f38e6f", 594306),
 	DT_ENTRYL1("scarabeekatana", Common::FR_FRA, "070906", "e2ca97ca5579b544765e744964c9624f", 651590),
+	DT_ENTRYL1("tempetebermudes", Common::FR_FRA, "190812", "3c86960d1a4c0df44857d082cedb284a", 892374),
+	DT_ENTRYL1("templefeu", Common::FR_FRA, "061031", "42f1af9bcca85af1ffa8391eaacba7b1", 1271170),
 	DT_ENTRYL1("templefeu", Common::FR_FRA, "070731", "73c3a0486d41a41c454108298014fac0", 2576096),
+	DT_ENTRYL1("tourorastre", Common::FR_FRA, "170802", "6c7c91ec162a1b2fd5e23d9d6fc79193", 1664626),
 
 	// French Comp 2007
 	DT_ENTRYL1("frc_souterraine", Common::FR_FRA,"071227", "504942416635dd03d4d30ba88dd8f4e4", 2709508),
