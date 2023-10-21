@@ -902,6 +902,19 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "snuff",              "Snuff Movie" },
 	{ "villamorgana_glulx", "Villa Morgana" },
 
+	// Marmellata d'Avventura 2018
+	{ "parcochuddy",        "Parco di Chuddy" },
+	{ "dejavu_glulx",       "Déjà Vu" },
+	{ "cosmicmatryoshka",   "Cosmic Matryoshka" },
+	{ "bouvet",             "Passaggio tra i Ghiacci" },
+	{ "baseantartica",      "Base Antartica Siegfried" },
+
+	// Marmellata d'Avventura 2019
+	{ "piccolopopolo",      "Il Piccolo Popolo in Sala Giochi" },
+	{ "fregatogettoni",     "Ti Hanno Fregato i Gettoni!" },
+	{ "iosonoaugust",       "Io Sono August" },
+	{ "george_glulx",       "George" },
+
 	// Spanish games
 	{ "alienlaaventura",    "ALIEN: La Aventura" },
 	{ "conrumbo_glulx",     "Con Rumbo" },
@@ -2023,6 +2036,24 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("snuff", Common::IT_ITA, "180827", "1005bf49b80982997ed3b0930c390d5d", 135168),
 	DT_ENTRYL1("snuff", Common::IT_ITA, "081125", "82724ff65cd9c839ee9621245326e8f6", 129884),
 	DT_ENTRYL1("villamorgana_glulx", Common::IT_ITA, "090404", "88feac9efb31e7e6bd832bda02ff0cfa", 1263196),
+
+	// Marmellata d'Avventura 2018
+	DT_ENTRYL1("parcochuddy", Common::IT_ITA, "180401", "c36099356e69e3e0eb9e99952e455946", 871778 ),
+	DT_ENTRYL1("dejavu_glulx", Common::IT_ITA, "1803311/ulx", "577c6f704ae5ae3dfbc0326600abd982", 161024),
+	DT_ENTRYL1("cosmicmatryoshka", Common::IT_ITA, "180401", "e490055615289f8e0aaf1da15dd5c8a9", 928886),
+	DT_ENTRYL1("bouvet", Common::IT_ITA, "180339/gblorb", "4ec91331afc9333c7b1ff1fa561f3849", 160274),
+	DT_ENTRYL1("bouvet", Common::IT_ITA, "180339/ulx", "6e02477498e057e846149365be2b7cc8", 98560),
+	DT_ENTRYL1("bouvet", Common::IT_ITA, "210810/gblorb", "a5432e62c742f5c2c436a2c4781664dc", 2378312),
+	DT_ENTRYL1("bouvet", Common::IT_ITA, "210810/ulx", "19b24981cd929f4cd3f995818053fd17", 129024),
+	DT_ENTRYL1("baseantartica", Common::IT_ITA, "180401", "e717639352a925c00e854f8b7be47e48", 1367494),
+
+	// Marmellata d'Avventura 2019
+	DT_ENTRYL1("piccolopopolo", Common::IT_ITA, "191208", "c89929157dfcccf2f75de717ad7b5c63", 3189740),
+	DT_ENTRYL1("fregatogettoni", Common::IT_ITA, "140721/v1", "aec497cc0bf37a6f1055837ce13d513a", 6763760),
+	DT_ENTRYL1("fregatogettoni", Common::IT_ITA, "140721/v2", "76de0882951804bc1c4daa9c2d90dc41", 1041518),
+	DT_ENTRYL1("fregatogettoni", Common::IT_ITA, "140721/v3", "e29b9529db8d864cf452cc3cb7d08fd6", 1066236),
+	DT_ENTRYL1("iosonoaugust", Common::IT_ITA, "191214", "ece46f2040f45d462dc8fd8ca615cafd", 20175746),
+	DT_ENTRYL1("george_glulx", Common::IT_ITA, "191209", "99ab71b1be78930945dcb33c884e4e3e", 884736),
 
 	// Spanish games
 	DT_ENTRYL1("alienlaaventura", Common::ES_ESP, "081124", "e09c0e91e53a07c768eb473deae9619c", 6884846),
