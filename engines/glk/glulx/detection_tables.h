@@ -865,13 +865,19 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "frc_latempete",      "La Tempête" },                                                             //    4th Place
 
 	// German games
+	{ "alleinkai",          "Allein mit Kai" },
 	{ "dergarten",          "Der Garten" },
 	{ "deronirischegarten", "Der Onirische Garten" },
+	{ "dickeswep1",         "Dickes W - Zwischen Tanke und Panke: Der Mietstreit" },
+	{ "dickeswep2",         "Dickes W - Zwischen Tanke und Panke: Weihnachtsterror" },
+	{ "drkongpoodle",       "Dr. Kong in: Exploding Poodle Inevitable" },
+	{ "homunculus",         "Homunculus" },
 	{ "jaeger",             "Jäger der Heiligen Steine" },
 	{ "kleinehalbling",     "Der Kleine Halbling" },
 	{ "matthiasclaudius",   "Der Unsägliche und Vermeidbare Tod des Matthias Claudius" },
 	{ "morgenwirdklausur",  "Morgen Wird Klausur Geschrieben" },
 	{ "patanoirde",         "PataNoir - Ein Unvergleichlicher Kriminalfall" },
+	{ "sonntagnachmittag",  "An Einem Sonntagnachmittag" },
 	{ "spaterbesuch",       "Ein Später Besuch" },
 
 	// Textfire Grand Prix 2005
@@ -1969,11 +1975,18 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("frc_latempete", Common::FR_FRA, "200813", "f983ef39032a8d932cf91e7fa25effbb", 1158808),
 
 	// German games
+	DT_ENTRYL1("alleinkai", Common::DE_DEU, "101219", "9a6064271fb8e3e6e934d2d2ccab41c3", 1235408),
 	DT_ENTRYL1("dergarten", Common::DE_DEU, "180510", "b90eda22c098c5d70eb2a0cb5140dbe0", 2183442),
 	DT_ENTRYL1("deronirischegarten", Common::DE_DEU, "180730", "eb41961e5772ca99c03ba49f6b4ceb62", 476352),
 	DT_ENTRYL1("deronirischegarten", Common::DE_DEU, "190626", "b201ade8eb29a64892cf1370de3c9131", 9562670),
+	DT_ENTRYL1("dickeswep1", Common::DE_DEU, "130404", "a08b08d8c54ea59b140f6a9fe22ec757", 1263356),
+	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "130504", "3102ddb8eed9fbbb9d53eea347ab69be", 1264944),
+	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "131220", "8d61af8aed9a0dc3c863432c15f4609f", 1294640),
+	DT_ENTRYL1("drkongpoodle", Common::DE_DEU, "111122", "131c5fb87a237b473b4d5b81b7c989d8", 1551344),
+	DT_ENTRYL1("homunculus", Common::DE_DEU, "111122", "98a35cd1506a68a485c250edef54553a", 1311816),
 	DT_ENTRYL1("jaeger", Common::DE_DEU, "210701", "4958d690aae92343b2cf4117fb65acd2", 1441682),
-	DT_ENTRYL1("jaeger", Common::DE_DEU, "211130", "9f2cc6f728749d74f535dff31421df4e", 1695248),
+	DT_ENTRYL1("jaeger", Common::DE_DEU, "211130", "9f2cc6f728749d74f535dff31421df4e", 1645584),
+	DT_ENTRYL1("jaeger", Common::DE_DEU, "220116", "392cc64126776d1cc9515ac66ed43b77", 1695248),
 	DT_ENTRYL1("kleinehalbling", Common::DE_DEU, "180019", "2250a4a81641a49874ed78fb3cd39533", 884946),
 	DT_ENTRYL1("matthiasclaudius", Common::DE_DEU, "170328", "514f28c468487b3239cb2fbc7c4a2dac", 1007368),
 	DT_ENTRYL1("matthiasclaudius", Common::DE_DEU, "171010", "437460fae6cd8b57d9e9599f5c29504f", 1010696),
@@ -1981,6 +1994,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170423", "b71391f995becb65992561d57ed80829", 724164),
 	DT_ENTRYL1("morgenwirdklausur", Common::DE_DEU, "170430", "85a966e56c4e0fc7d10df9bc3824da95", 727492),
 	DT_ENTRYL1("patanoirde", Common::DE_DEU, "131202", "9ed40b987510c7a8b7da4386ff8879b1", 969304),
+	DT_ENTRYL1("sonntagnachmittag", Common::DE_DEU, "141114", "762c003565858d952a21ac81904670e2", 712716),
 	DT_ENTRYL1("spaterbesuch", Common::DE_DEU, "191013", "24bd852ecb47a6f01cdaa9be80195f4a", 9608754),
 
 	// Textfire Grand Prix 2005
