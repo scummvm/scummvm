@@ -161,6 +161,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "magicword",          "The Magic Word" },
 	{ "makechange",         "Maybe make some change" },
 	{ "makingme",           "The Making of Me" },
+	{ "maryjaneoftomorrow", "The Mary Jane of Tomorrow" },
 	{ "mgaeb",              "My Girlfriend's an Evil Bitch" },
 	{ "midnightsnack",      "Midnight Snack" },
 	{ "mollybutterthieves", "Molly and the Butter Thieves" },
@@ -857,7 +858,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "frc_fauteservo",     "Faute de servo" },                                                         //    2nd Place
 	{ "frc_latempete",      "La Tempête" },                                                             //    4th Place
 
-
 	// German games
 	{ "dergarten",          "Der Onirische Garten" },
 	{ "deronirischegarten", "Der Garten" },
@@ -962,7 +962,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "boing",              "Boing!" },
 	{ "chinesefamily",      "Chinese Family Dinner Moment" },
 	{ "ifyouhadoneshot",    "If You Had One Shot" },
-	{ "devours",            "All Things Devours" },
 
 	{ nullptr, nullptr }
 };
@@ -1230,7 +1229,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("unscientificfict", "090803", "de1c4a2bf4024eb4c0e5fee0e0fd4746", 679608),
 	DT_ENTRY1("valleyofsteel", "140330", "88311986461cec17e776d82a5ac18416", 1853024),
 	DT_ENTRY1("walking", "200626", "0a8f6530e5a619ad9e0764a645e8404d", 822256),
-	DT_ENTRY1("awalkaround", "221124", "593e57ec12999ee4ce6c2a2309ffb32c", 841136),
 	DT_ENTRY1("wand", "171118", "b824638fc1d015b0837688322839ada0", 830208),
 	DT_ENTRY1("winterstormdraco", "150928/v1", "b4835af78525e56420f138c2e5f6806c", 812124),
 	DT_ENTRY1("wishertheurgist", "160708", "4bbe0b3a29d57d1428e6cd6cf7c97fce", 824204),
@@ -2006,6 +2004,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("pc21_foreignsoil", "210806", "3e68ec0287ec8a6e94b29e57912e7ee7", 1172610),
 	DT_ENTRY1("pc21_blackknife", "210620", "077647a5bbec44dc32f663c2f793bf01", 691968),
 	DT_ENTRY1("pc21_timemachi21", "210627", "92409db44e62a5d91ee6a0f0767294c7", 1150004),
+	DT_ENTRY1("pc21_timemachi21", "210831", "cd93405a3c77a9351bab7ccae0a6a436", 1161268),
 	DT_ENTRY1("pc21_returnstars", "210630", "4949a959d70580e9c8b69b5dd4629395", 1144178),
 	DT_ENTRY1("pc21_daddybirthday", "210630", "c03d6ca441e5cef88b849ffc729bac38", 2345122),
 	DT_ENTRY1("pc21_gameon", "210629", "7bb02775b620727fcfbe31243a5a73df", 916302),
