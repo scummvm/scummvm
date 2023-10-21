@@ -776,10 +776,10 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 					}
 				}
 
-				// check xy center
-				if (midx >= ib._x - ib._xd && midx <= ib._x && midy >= ib._y - ib._yd && midy <= ib._y) {
+				// check bottom center
+				if (ib.isBelow(midx, midy, target._z)) {
 					// check land
-					if (si->_flags & landmask && ib._z + ib._zd > landz && ib._z + ib._zd <= target._z) {
+					if (si->_flags & landmask && ib._z + ib._zd > landz) {
 						info.land = item;
 						landz = ib._z + ib._zd;
 					}
