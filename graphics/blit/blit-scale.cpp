@@ -74,7 +74,7 @@ bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstW, const uint dstH,
 			   const uint srcW, const uint srcH,
 			   const Graphics::PixelFormat &fmt,
-                           const byte flip) {
+						   const byte flip) {
 
 	int *scaleCacheX = new int[dstW];
 	for (uint x = 0; x < dstW; x++) {
