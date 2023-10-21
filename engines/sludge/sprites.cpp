@@ -297,6 +297,11 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 }
 
 void GraphicsManager::fontSprite(bool flip, int x, int y, Sprite &single, const SpritePalette &fontPal) {
+	if (!single.surface.w || !single.surface.h) {
+		// Skip surfaces with a 0 width/height (e.g. the space character on Out of Order) to avoid crashes in the blitting code.
+		return;
+	}
+
 	float x1 = (float)x - (float)single.xhot / _cameraZoom;
 	float y1 = (float)y - (float)single.yhot / _cameraZoom;
 
