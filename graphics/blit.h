@@ -231,7 +231,10 @@ private:
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);
 	static BlitFunc blitFunc;
 	friend class ::BlendBlitUnfilteredTestSuite;
-	friend class BlendBlitImpl;
+	friend class BlendBlitImpl_Default;
+	friend class BlendBlitImpl_NEON;
+	friend class BlendBlitImpl_SSE2;
+	friend class BlendBlitImpl_AVX2;
 
 public:
 	static const int SCALE_THRESHOLD = 0x100;

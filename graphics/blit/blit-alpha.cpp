@@ -238,7 +238,7 @@ void BlendBlit::blit(byte *dst, const byte *src,
 	blitFunc(args, blendMode, alphaType);
 }
 
-class BlendBlitImpl {
+class BlendBlitImpl_Default {
 public:
 /**
  * Optimized version of doBlit to be used with multiply blended blitting
@@ -543,121 +543,121 @@ static void doBlitBinaryBlendLogicGeneric(BlendBlit::Args &args) {
 	}
 }
 
-}; // end of class BlendBlitImpl
+}; // end of class BlendBlitImpl_Default
 
 void BlendBlit::blitGeneric(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) {
 	bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask);
 	bool alphamod = ((args.color & kAModMask)   != kAModMask);
 	if (args.scaleX == BlendBlit::SCALE_THRESHOLD && args.scaleY == BlendBlit::SCALE_THRESHOLD) {
 		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			BlendBlitImpl::doBlitOpaqueBlendLogicGeneric<false>(args);
+			BlendBlitImpl_Default::doBlitOpaqueBlendLogicGeneric<false>(args);
 		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			BlendBlitImpl::doBlitBinaryBlendLogicGeneric<false>(args);
+			BlendBlitImpl_Default::doBlitBinaryBlendLogicGeneric<false>(args);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<false, true, true>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<false, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<false, true, false>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<false, false, true>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<false, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<false, false, false>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<false, false, false>(args);
 					}
 				}
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				if (rgbmod) {
-					BlendBlitImpl::doBlitSubtractiveBlendLogicGeneric<false, true>(args);
+					BlendBlitImpl_Default::doBlitSubtractiveBlendLogicGeneric<false, true>(args);
 				} else {
-					BlendBlitImpl::doBlitSubtractiveBlendLogicGeneric<false, false>(args);
+					BlendBlitImpl_Default::doBlitSubtractiveBlendLogicGeneric<false, false>(args);
 				}
 			} else if (blendMode == BLEND_MULTIPLY) {
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<false, true, true>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<false, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<false, true, false>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<false, false, true>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<false, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<false, false, false>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<false, false, false>(args);
 					}
 				}
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<false, true, true>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<false, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<false, true, false>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<false, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<false, false, true>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<false, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<false, false, false>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<false, false, false>(args);
 					}
 				}
 			}
 		}
 	} else {
 		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			BlendBlitImpl::doBlitOpaqueBlendLogicGeneric<true>(args);
+			BlendBlitImpl_Default::doBlitOpaqueBlendLogicGeneric<true>(args);
 		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			BlendBlitImpl::doBlitBinaryBlendLogicGeneric<true>(args);
+			BlendBlitImpl_Default::doBlitBinaryBlendLogicGeneric<true>(args);
 		} else {
 			if (blendMode == BLEND_ADDITIVE) {
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<true, true, true>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<true, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<true, true, false>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<true, false, true>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<true, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAdditiveBlendLogicGeneric<true, false, false>(args);
+						BlendBlitImpl_Default::doBlitAdditiveBlendLogicGeneric<true, false, false>(args);
 					}
 				}
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				if (rgbmod) {
-					BlendBlitImpl::doBlitSubtractiveBlendLogicGeneric<true, true>(args);
+					BlendBlitImpl_Default::doBlitSubtractiveBlendLogicGeneric<true, true>(args);
 				} else {
-					BlendBlitImpl::doBlitSubtractiveBlendLogicGeneric<true, false>(args);
+					BlendBlitImpl_Default::doBlitSubtractiveBlendLogicGeneric<true, false>(args);
 				}
 			} else if (blendMode == BLEND_MULTIPLY) {
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<true, true, true>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<true, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<true, true, false>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<true, false, true>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<true, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitMultiplyBlendLogicGeneric<true, false, false>(args);
+						BlendBlitImpl_Default::doBlitMultiplyBlendLogicGeneric<true, false, false>(args);
 					}
 				}
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				if (rgbmod) {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<true, true, true>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<true, true, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<true, true, false>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<true, true, false>(args);
 					}
 				} else {
 					if (alphamod) {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<true, false, true>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<true, false, true>(args);
 					} else {
-						BlendBlitImpl::doBlitAlphaBlendLogicGeneric<true, false, false>(args);
+						BlendBlitImpl_Default::doBlitAlphaBlendLogicGeneric<true, false, false>(args);
 					}
 				}
 			}
