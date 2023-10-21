@@ -435,7 +435,7 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 	const bool top_clear = cytop >= sbot;
 	const bool bot_clear = cybot <= stop;
 
-	const bool clear = right_clear | left_clear | top_clear | bot_clear;
+	const bool clear = right_clear || left_clear || top_clear || bot_clear;
 
 	return !clear;
 }
