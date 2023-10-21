@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-17 16:03+0000\n"
-"PO-Revision-Date: 2023-10-21 12:03+0000\n"
+"PO-Revision-Date: 2023-10-21 18:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -23,23 +23,23 @@ msgstr ""
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr ""
+msgstr "(აგებულია %s-ზე %s-ით)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
-msgstr ""
+msgstr "ჩაშენებული თვისებები:"
 
 #: gui/about.cpp:119
 msgid "Available engines:"
-msgstr ""
+msgstr "ხელმისაწვდომი ძრავები:"
 
 #: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
 msgid "Show hidden files"
-msgstr ""
+msgstr "დამალული ფაილების ჩვენება"
 
 #: gui/browser.cpp:74
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "ფარული ფაილების ჩვენება"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
@@ -48,7 +48,7 @@ msgstr "მაღლა ასვლა"
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "საქაღალდის წინა დონეზე გადასვლა"
 
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
@@ -97,27 +97,27 @@ msgstr "აირჩიეთ"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "ღრუბელთან კავშირის მორგება"
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
-msgstr ""
+msgstr "სწრაფი რეჟიმი"
 
 #: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
-msgstr ""
+msgstr "ხელით მორგება"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "გთხოვთ, ლოკალური ვებსერვერი გაუშვათ"
 
 #: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
-msgstr ""
+msgstr "ითხოვს ლოკალური ვებსერვერის ფუნქციას"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "სწრაფი რეჟიმი: ნაბიჯი 1"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
@@ -135,23 +135,23 @@ msgstr "სერვერის გაშვება"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3699
 msgid "Stop local webserver"
-msgstr ""
+msgstr "ლოკალური ვებსერვერის გაჩერება"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2738
 msgid "Run local webserver"
-msgstr ""
+msgstr "ლოკალური ვებსერვერის გაშვება"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2739 gui/options.cpp:3706
 msgid "Not running"
-msgstr ""
+msgstr "გაშვებული არაა"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "სწრაფი რეჟიმი: ნაბიჯი 2"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "ახლა გახსენით ეს ბმული თქვენს ბრაუზერში:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -166,15 +166,15 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "ლოკალური ვებსერვერის მისამართი: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "სწრაფი რეჟიმი: წარმატება"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr ""
+msgstr "თქვენი ღრუბლოვანი საცავი ახლა დაკავშირებულია!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
@@ -182,11 +182,11 @@ msgstr "დასრულება"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "ხელით მორგების რეჟიმი: ნაბიჯი 1"
 
 #: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
-msgstr ""
+msgstr "გახსენით ეს ბმული თქვენს ბრაუზერში:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -197,7 +197,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "ხელით მორგების რეჟიმი: ნაბიჯი 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
@@ -209,7 +209,7 @@ msgstr "ჩასმა"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "კოდის ჩასმა ბუფერიდან"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:315
 #: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
@@ -222,15 +222,15 @@ msgstr "ჩატვირთვა"
 
 #: gui/cloudconnectionwizard.cpp:362
 msgid "Load code from file"
-msgstr ""
+msgstr "კოდის ჩატვირთვა ფაილიდან"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "ხელით მორგების რეჟიმი: რაღაც არასწორია"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
-msgstr ""
+msgstr "ღრუბლოვანი საცავი დაკავშირებული არაა."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
@@ -246,7 +246,7 @@ msgstr "შეცდომის შეტყობინება: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "ხელით მორგების რეჟიმი: წარმატება"
 
 #: gui/cloudconnectionwizard.cpp:428 engines/crab/input/input.cpp:175
 msgid "Back"
@@ -295,7 +295,7 @@ msgstr ""
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON კოდის შემცველობა დამახინჯებულია."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -325,7 +325,7 @@ msgstr "დიახ"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "არასწორი JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
@@ -346,15 +346,15 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
 msgid "Failed to load JSON file"
-msgstr ""
+msgstr "JSON დოკუმენტის ჩატვირთვა შეუძლებელია"
 
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე, სადაც თამაშის მონაცემებს გადმოვიწერ"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:312
 msgid "Select directory with game data"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე, სადაც თამაშის მონაცემებია"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:225
 msgid "From: "
@@ -416,7 +416,7 @@ msgstr ""
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "შეცდომა %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
@@ -655,16 +655,16 @@ msgstr "ბილიკები"
 
 #: gui/editgamedialog.cpp:308
 msgid "Game Path:"
-msgstr ""
+msgstr "თამაშის ბილიკი:"
 
 #: gui/editgamedialog.cpp:310
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "თამაშის ბილიკი:"
 
 #: gui/editgamedialog.cpp:315 gui/options.cpp:2465
 msgid "Extra Path:"
-msgstr ""
+msgstr "დამატებითი ბილიკი:"
 
 #: gui/editgamedialog.cpp:315 gui/editgamedialog.cpp:317
 #: gui/editgamedialog.cpp:318
@@ -674,11 +674,11 @@ msgstr ""
 #: gui/editgamedialog.cpp:317 gui/options.cpp:2467
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr ""
+msgstr "დამატებითი ბილიკი:"
 
 #: gui/editgamedialog.cpp:324 gui/options.cpp:2429
 msgid "Save Path:"
-msgstr ""
+msgstr "შენახვის ბილიკი:"
 
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
 #: gui/editgamedialog.cpp:327 gui/options.cpp:2429 gui/options.cpp:2431
@@ -688,11 +688,11 @@ msgstr ""
 #: gui/editgamedialog.cpp:326 gui/options.cpp:2431
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "შენახვის ბილიკი:"
 
 #: gui/editgamedialog.cpp:338 engines/dialogs.cpp:337
 msgid "Achievements"
-msgstr ""
+msgstr "მიღწევები"
 
 #: gui/editgamedialog.cpp:342 engines/dialogs.cpp:341
 msgid "Statistics"
@@ -1163,7 +1163,7 @@ msgstr ""
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:691
 msgid "Unknown variant"
-msgstr ""
+msgstr "უცნობი ვარიანტი"
 
 #: gui/launcher.cpp:697
 msgid "Pick the game:"
@@ -1214,13 +1214,13 @@ msgstr ""
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1188 gui/launcher.cpp:1371
 msgid "Unknown Engine"
-msgstr ""
+msgstr "უცნობი ძრავა"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1205 gui/launcher.cpp:1388
 msgid "Unknown Publisher"
-msgstr ""
+msgstr "უცნობი გამომცემელი"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
@@ -1494,7 +1494,7 @@ msgstr ""
 
 #: gui/options.cpp:1678
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "გვერდების ფარდობის შესწორება"
 
 #: gui/options.cpp:1678
 msgid "Correct aspect ratio for games"
@@ -1552,7 +1552,7 @@ msgstr ""
 
 #: gui/options.cpp:1774
 msgid "SoundFont:"
-msgstr ""
+msgstr "ხმის ფონტი:"
 
 #: gui/options.cpp:1774 gui/options.cpp:1776 gui/options.cpp:1777
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
@@ -1561,11 +1561,11 @@ msgstr ""
 #: gui/options.cpp:1776
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr ""
+msgstr "ხმის ფონტი:"
 
 #: gui/options.cpp:1782
 msgid "Mixed AdLib/MIDI mode"
-msgstr ""
+msgstr "შერეული AdLib/MIDI რეჟიმი"
 
 #: gui/options.cpp:1782
 msgid "Use both MIDI and AdLib sound generation"
@@ -1573,7 +1573,7 @@ msgstr ""
 
 #: gui/options.cpp:1785
 msgid "MIDI gain:"
-msgstr ""
+msgstr "MIDI-ის გაძლიერება:"
 
 #: gui/options.cpp:1795
 msgid "MT-32 Device:"
@@ -1661,12 +1661,12 @@ msgstr ""
 
 #: gui/options.cpp:1881
 msgid "Music volume:"
-msgstr ""
+msgstr "მუსიკის ხმა:"
 
 #: gui/options.cpp:1883
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr ""
+msgstr "მუსიკის ხმა:"
 
 #: gui/options.cpp:1892
 msgid "Mute all"
@@ -1674,7 +1674,7 @@ msgstr ""
 
 #: gui/options.cpp:1895
 msgid "SFX volume:"
-msgstr ""
+msgstr "SFX ხმა:"
 
 #: gui/options.cpp:1895 gui/options.cpp:1897 gui/options.cpp:1900
 msgid "Special sound effects volume"
@@ -1683,16 +1683,16 @@ msgstr ""
 #: gui/options.cpp:1897
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr ""
+msgstr "SFX ხმა:"
 
 #: gui/options.cpp:1907
 msgid "Speech volume:"
-msgstr ""
+msgstr "საუბრის ხმა:"
 
 #: gui/options.cpp:1909
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr ""
+msgstr "საუბრის ხმა:"
 
 #: gui/options.cpp:2190
 msgid "Control"
@@ -2578,7 +2578,7 @@ msgstr "ბილიკი არ არსებობს"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr ""
+msgstr "ბილიკი საქაღალდე არაა"
 
 #: common/error.cpp:57
 msgid "Path not a file"
@@ -2710,7 +2710,7 @@ msgstr ""
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "მონაცემების ფაილი"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -3160,12 +3160,12 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL შეიდერებით"
 
 #: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL შეიდერებით"
 
 #: audio/adlib.cpp:2303
 msgid "AdLib emulator"
@@ -3488,7 +3488,7 @@ msgstr ""
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
 msgid "Stretch mode"
-msgstr ""
+msgstr "გაწელვის რეჟიმი"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
