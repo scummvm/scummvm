@@ -168,7 +168,7 @@ const seriesPlayBreak Room603::PLAY15[] = {
 	PLAY_BREAK_END
 };
 
-long Room603::_state1;
+int32 Room603::_state1;
 
 Room603::Room603() : Section6Room() {
 	_gerbilTable = GERBIL;

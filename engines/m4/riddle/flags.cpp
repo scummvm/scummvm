@@ -28,7 +28,7 @@
 namespace M4 {
 namespace Riddle {
 
-long Flags::_flags[FLAGS_COUNT];
+int32 Flags::_flags[FLAGS_COUNT];
 
 Flags::Flags() {
 	reset();

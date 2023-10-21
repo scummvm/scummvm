@@ -109,7 +109,7 @@ static const seriesPlayBreak PLAY4[] = {
 	PLAY_BREAK_END
 };
 
-long Room103::_val0 = 0;
+int32 Room103::_val0 = 0;
 
 void Room103::init() {
 	_flag1 = false;

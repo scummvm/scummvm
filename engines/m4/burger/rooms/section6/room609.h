@@ -31,7 +31,7 @@ namespace Rooms {
 class Room609 : public Section6Room {
 private:
 	static const seriesStreamBreak SERIES1[];
-	static long _state1;
+	static int32 _state1;
 public:
 	Room609();
 	~Room609() override {}

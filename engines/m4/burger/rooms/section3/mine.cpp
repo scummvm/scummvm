@@ -428,7 +428,7 @@ int Mine::getTreasureDistance() const {
 }
 
 void Mine::mine_travel_link(int16 takeLink) {
-	long &mineRoomIndex = _G(flags)[kMineRoomIndex];
+	int32 &mineRoomIndex = _G(flags)[kMineRoomIndex];
 
 	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get this mine room info
 	_entranceDoor = _mineRoomInfo.door[takeLink];	// Get which door to enter from in new room

@@ -32,7 +32,7 @@ class Room102 : public Room {
 private:
 	int _val1 = 0;
 	int _val3 = -1;
-	long _val4 = 0;
+	int32 _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
 	int _val8 = 0;

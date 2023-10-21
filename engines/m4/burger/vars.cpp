@@ -38,7 +38,7 @@ namespace Burger {
 Vars *g_vars;
 
 const char *GAME_MODES[4] = { "WHOLE_GAME", "INTERACTIVE_DEMO", "MAGAZINE_DEMO", "WHOLE_GAME" };
-long Vars::_wilbur_should = 0;
+int32 Vars::_wilbur_should = 0;
 
 /**
  * Structure for accented character replacement

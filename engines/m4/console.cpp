@@ -56,7 +56,7 @@ bool Console::Cmd_flag(int argc, const char **argv) {
 		debugPrintf("Not Orion Burger\n");
 	} else if (argc == 2) {
 		int flagNum = atol(argv[1]);
-		debugPrintf("Flag %d = %ld\n", flagNum, Burger::g_vars->_flags[flagNum]);
+		debugPrintf("Flag %d = %d\n", flagNum, Burger::g_vars->_flags[flagNum]);
 	} else if (argc == 3) {
 		int flagNum = atol(argv[1]);
 		int flagVal = atol(argv[2]);

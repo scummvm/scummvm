@@ -40,7 +40,7 @@ const seriesStreamBreak Room512::SERIES1[] = {
 	STREAM_BREAK_END
 };
 
-long Room512::_state1;
+int32 Room512::_state1;
 
 
 Room512::Room512() : Section5Room() {

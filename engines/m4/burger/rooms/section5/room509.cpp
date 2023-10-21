@@ -101,8 +101,8 @@ const seriesPlayBreak Room509::PLAY8[] = {
 
 static const RGB8 PALETTE[1] = { { 0x6E, 0x46, 0x1E } };
 
-long Room509::_state1;
-long Room509::_state2;
+int32 Room509::_state1;
+int32 Room509::_state2;
 
 
 Room509::Room509() : Section5Room() {

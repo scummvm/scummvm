@@ -54,6 +54,8 @@ class Room602 : public Section6Room {
 	static const seriesPlayBreak PLAY22[];
 
 private:
+	static int32 _test1;
+	static int32 _test2;
 	noWalkRect *_walk1 = nullptr;
 	int _series1 = 0;
 	machine *_series2 = nullptr;
@@ -69,8 +71,6 @@ private:
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;
-	static long _test1;
-	static long _test2;
 
 public:
 	Room602();

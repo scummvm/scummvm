@@ -247,8 +247,8 @@ const seriesPlayBreak Room602::PLAY22[] = {
 	PLAY_BREAK_END
 };
 
-long Room602::_test1;
-long Room602::_test2;
+int32 Room602::_test1;
+int32 Room602::_test2;
 
 Room602::Room602() : Section6Room() {
 	_gerbilTable = GERBIL;

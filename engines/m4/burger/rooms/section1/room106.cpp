@@ -120,8 +120,8 @@ const seriesPlayBreak Room106::PLAY7[] = {
 	PLAY_BREAK_END
 };
 
-long Room106::_val1;
-long Room106::_val3;
+int32 Room106::_val1;
+int32 Room106::_val3;
 
 void Room106::preload() {
 	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&

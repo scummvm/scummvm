@@ -146,7 +146,7 @@ const seriesPlayBreak Room604::PLAY12[] = {
 	PLAY_BREAK_END
 };
 
-long Room604::_state1;
+int32 Room604::_state1;
 
 Room604::Room604() : Section6Room() {
 	_state1 = 0;

@@ -140,10 +140,10 @@ const seriesPlayBreak Room508::PLAY12[] = {
 	PLAY_BREAK_END
 };
 
-long Room508::_state1;
-long Room508::_state2;
-long Room508::_state3;
-long Room508::_state4;
+int32 Room508::_state1;
+int32 Room508::_state2;
+int32 Room508::_state3;
+int32 Room508::_state4;
 
 
 Room508::Room508() : Section5Room() {

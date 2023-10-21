@@ -74,7 +74,7 @@ const seriesPlayBreak Room310::PLAY6[] = {
 	{ 52, 56, "300_001", 2, 255, -1, 0, 0, nullptr, 0 },
 };
 
-long Room310::_state1;
+int32 Room310::_state1;
 
 
 Room310::Room310() : Mine() {

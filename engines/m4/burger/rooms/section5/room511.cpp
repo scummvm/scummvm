@@ -41,7 +41,7 @@ const seriesStreamBreak Room511::SERIES1[] = {
 	STREAM_BREAK_END
 };
 
-long Room511::_state1;
+int32 Room511::_state1;
 
 
 Room511::Room511() : Section5Room() {

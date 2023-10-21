@@ -35,9 +35,9 @@ struct WilburMatch {
 	const char *_word0;
 	const char *_word1;
 	int _trigger;
-	const long *_testVariable;
+	const int32 *_testVariable;
 	int _testValue;
-	long *_newVariable;
+	int32 *_newVariable;
 	int _newValue;
 };
 
