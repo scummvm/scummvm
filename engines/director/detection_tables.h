@@ -1973,6 +1973,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("timegal", "", "TimeGal", "f5277c53bacd27936158dd3867e587e2", 392230, Common::JA_JPN, 311),
 
+	MACGAME1("wrath", "", "Wrath of the Gods", "2ce360c9ea2da80a2c6d1040b0ad92dd", 413730, 300),
+	WINGAME2("wrath", "", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+						  "SHARDCST.MMM", "22af72fba773cc5313d99c91b2e5aea9", 3432948, 300),
+	WINGAME2("wrath", "", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+						  "SHARDCST.MMM", "35b0a9fa9cc4ed5088d665848c5258dc", 3432878, 300),
+	WINDEMO2("wrath", "Demo", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+							  "SHARDCST.MMM", "85d166abe18730d96e9d4137c66255a1", 3553330, 300),
+
 //////////////////////////////////////////////////
 //
 // Macromedia Director v4
@@ -3100,14 +3108,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("woodstock25", "Demo", "WDSTOCK.EXE",			  "dd8af0fd34231850dc0e0c88cb04aa66", 2474071, 310),
 
 	WINDEMO1("wpmainstreet", "", "WPMAINST.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 300),
-
-	MACGAME1("wrath", "", "Wrath of the Gods", "2ce360c9ea2da80a2c6d1040b0ad92dd", 413730, 300),
-	WINGAME2("wrath", "", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
-						  "SHARDCST.MMM", "22af72fba773cc5313d99c91b2e5aea9", 3432948, 300),
-	WINGAME2("wrath", "", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
-						  "SHARDCST.MMM", "35b0a9fa9cc4ed5088d665848c5258dc", 3432878, 300),
-	WINDEMO2("wrath", "Demo", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
-							  "SHARDCST.MMM", "85d166abe18730d96e9d4137c66255a1", 3553330, 300),
 
 	MACDEMO1("wriggle", "Demo", "'93 Wriggle Demo", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353737, 300),
 
