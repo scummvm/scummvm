@@ -1758,7 +1758,7 @@ void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 	case FontId::kIndy3AboutFontHeader:
 		id = _gameFontId;
 		size = 12;
-		slant = Graphics::kMacFontItalic | Graphics::kMacFontShadow;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontShadow | Graphics::kMacFontCondense;
 		break;
 
 	case FontId::kIndy3AboutFontBold:
@@ -1848,6 +1848,9 @@ void MacIndy3Gui::showAboutDialog() {
 	Graphics::Surface *s = window->innerSurface();
 	Common::Rect clipRect(2, 2, s->w - 4, s->h - 4);
 
+	Common::Rect r1(22, 6, 382, 102);
+	Common::Rect r2(22, 6, 382, 70);
+
 	// Page 1 - The train
 
 	// The train seems to move at 12 pixels at a time. When recorded at
@@ -1870,11 +1873,9 @@ void MacIndy3Gui::showAboutDialog() {
 		skip = false;
 	}
 
-	// Page 2 - Text box
+	// Page 2 - First text box
 
-	Common::Rect r(22, 6, 382, 102);
-
-	window->drawTextBox(r);
+	window->drawTextBox(r1);
 
 	// These strings are part of the STRS resource, but I don't know how to
 	// safely read them from there.
@@ -1883,19 +1884,23 @@ void MacIndy3Gui::showAboutDialog() {
 	const Graphics::Font *fontBold = getFont(kIndy3AboutFontBold);
 	const Graphics::Font *fontRegular = getFont(kIndy3AboutFontRegular);
 
-	fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r.left, 10, r.width(), kBlack, Graphics::kTextAlignCenter);
-	fontBold->drawString(s, "The Graphic Adventure", r.left, 28, r.width(), kBlack, Graphics::kTextAlignCenter);
-	fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r.left, 55, r.width(), kBlack, Graphics::kTextAlignCenter);
-	fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r.left, 88, r.width(), kBlack, Graphics::kTextAlignCenter);
+	// This isn't pixel perfect (though perhaps pixel good?). The header
+	// text in particular is rendered differently. It should stay on screen
+	// for 160 frames, or 5.33 seconds.
+
+	fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r1.left - 2, 10, r1.width(), kBlack, Graphics::kTextAlignCenter);
+	fontBold->drawString(s, "The Graphic Adventure", r1.left, 28, r1.width(), kBlack, Graphics::kTextAlignCenter);
+	fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r1.left, 55, r1.width(), kBlack, Graphics::kTextAlignCenter);
+	fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r1.left + 1, 88, r1.width(), kBlack, Graphics::kTextAlignCenter);
 
 	window->update();
 
-	if (delay(5000))
+	if (delay(5333))
 		skip = true;
 
 	clearAboutDialog(window);
 
-	// Page 3 - Trolley to the middle
+	// Page 3 - The trolley
 
 	// The trolley moves 4 pixels at a time every three frames, and the
 	// animation frame changes every time it moves. But the animation cycle
@@ -1904,12 +1909,23 @@ void MacIndy3Gui::showAboutDialog() {
 	// at the right time, moves at the right speed, and stops and starts
 	// on the correct animation frame.
 
-	int trolleyFrame = 0;
+	window->drawTextBox(r2);
+
+	int trolleyFrame = 1;
 	int trolleyFrameDelta = 1;
 
 	for (x = width + 1; !skip && x >= -85; x -= 4) {
 		window->drawSprite(&trolley[trolleyFrame], x, 78, clipRect);
 		window->update();
+
+		if (x == 161) {
+			if (delay(5000)) {
+				skip = true;
+				break;
+			}
+
+			window->drawTextBox(r2);
+		}
 
 		trolleyFrame += trolleyFrameDelta;
 		if (trolleyFrame < 0 || trolleyFrame > 2) {
@@ -1922,6 +1938,12 @@ void MacIndy3Gui::showAboutDialog() {
 			break;
 		}
 	}
+
+	if (delay(5333))
+		skip = true;
+
+	window->drawTextBox(r1);
+	window->update();
 
 	if (skip) {
 		clearAboutDialog(window);
