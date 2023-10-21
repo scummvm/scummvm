@@ -623,24 +623,16 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 							   uint32 scriptsize, const Item *check,
 							   bool above, bool below, bool recurse) const {
-	int32 origin[3];
-	int32 dims[3];
-	check->getLocationAbsolute(origin[0], origin[1], origin[2]);
-	check->getFootpadWorld(dims[0], dims[1], dims[2]);
-	surfaceSearch(itemlist, loopscript, scriptsize, check->getObjId(),
-	              origin, dims, above, below, recurse);
-}
+	int32 x, y, z;
+	int32 xd, yd, zd;
+	check->getLocationAbsolute(x, y, z);
+	check->getFootpadWorld(xd, yd, zd);
+	const Box searchrange(x, y, z, xd, yd, zd);
 
-void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-							   uint32 scriptsize, ObjId check,
-							   int32 origin[3], int32 dims[3],
-							   bool above, bool below, bool recurse) const {
-	const Box searchrange(origin[0], origin[1], origin[2], dims[0], dims[1], dims[2]);
-
-	int minx = ((origin[0] - dims[0]) / _mapChunkSize) - 1;
-	int maxx = ((origin[0]) / _mapChunkSize) + 1;
-	int miny = ((origin[1] - dims[1]) / _mapChunkSize) - 1;
-	int maxy = ((origin[1]) / _mapChunkSize) + 1;
+	int minx = ((x - xd) / _mapChunkSize) - 1;
+	int maxx = (x / _mapChunkSize) + 1;
+	int miny = ((y - yd) / _mapChunkSize) - 1;
+	int maxy = (y / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
 	for (int cy = miny; cy <= maxy; cy++) {
@@ -651,7 +643,7 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 
 				const Item *item = *iter;
 
-				if (item->getObjId() == check)
+				if (item->getObjId() == check->getObjId())
 					continue;
 				if (item->hasExtFlags(Item::EXT_SPRITE))
 					continue;

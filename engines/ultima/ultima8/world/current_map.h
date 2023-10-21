@@ -101,12 +101,6 @@ public:
 	                   uint32 scriptsize, const Item *item, bool above,
 					   bool below, bool recurse = false) const;
 
-	// Surface search: Search above and below an item.
-	void surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-	                   uint32 scriptsize, ObjId id,
-	                   int32 origin[3], int32 dims[2],
-	                   bool above, bool below, bool recurse = false) const;
-
 	// Collision detection. Returns position information with valid being true
 	// when the target box does not collide with any solid items.
 	// Ignores collisions when overlapping with the start box.
