@@ -102,8 +102,11 @@ public:
 		void markRectAsDirty(Common::Rect r);
 		void update();
 
+		static void plotPixel(int x, int y, int color, void *data);
+
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
+		void drawTextBox(Common::Rect r);
 	};
 
 	enum FontId {

@@ -289,12 +289,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
-static void plotPixel(int x, int y, int color, void *data) {
-	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
-	Graphics::Surface *s = window->innerSurface();
-	s->setPixel(x, y, color);
-}
-
 // Very simple window class
 
 MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _system(system), _from(from), _bounds(bounds) {
@@ -414,6 +408,18 @@ void MacGui::SimpleWindow::drawSprite(Graphics::Surface *sprite, int x, int y, C
 		_innerSurface.copyRectToSurface(*sprite, x, y, subRect);
 		markRectAsDirty(Common::Rect(x, y, x + subRect.width(), y + subRect.height()));
 	}
+}
+
+void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
+	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	Graphics::Surface *s = window->innerSurface();
+	s->setPixel(x, y, color);
+}
+
+void MacGui::SimpleWindow::drawTextBox(Common::Rect r) {
+	Graphics::drawRoundRect(r, 9, kWhite, true, plotPixel, this);
+	Graphics::drawRoundRect(r, 9, kBlack, false, plotPixel, this);
+	markRectAsDirty(r);
 }
 
 // ===========================================================================
@@ -1804,7 +1810,12 @@ void MacIndy3Gui::showAboutDialog() {
 	SimpleWindow *window = openWindow(bounds);
 	const Graphics::Surface *pict = loadPICT(2000);
 
-	Graphics::Surface train = pict->getSubArea(Common::Rect(0, 0, 241, 93));
+	// For the background of the sprites to match the background of the
+	// window, we have to move them at multiples of 4 pixels each step. We
+	// cut out enough of the background so that each time they are drawn,
+	// the visible remains of the previous frame is overdrawn.
+
+	Graphics::Surface train = pict->getSubArea(Common::Rect(0, 0, 249, 93));
 
 	Graphics::Surface trolley[3];
 
@@ -1819,23 +1830,17 @@ void MacIndy3Gui::showAboutDialog() {
 	Graphics::Surface *s = window->innerSurface();
 	Common::Rect clipRect(2, 2, s->w - 4, s->h - 4);
 
-	// For the background of the sprite to match the background of the
-	// window, we have to move it a multiple of 4 pixels each step. The
-	// original seems to move it by 12 pixels at a time. When recorded at
-	// 30 fps, the train moves every 3 frames.
+	// Page 1 - The train
 
-	// The trolley moves 4 pixels at a time every three frames, and the
-	// animation frame changes every time it moves. But the animation cycle
-	// seems semi-random to me. I think this is a case of not caring too
-	// deeply about pixel accuracy as long as everything stops and starts
-	// at the right time, moves at the right speed, and stops and starts
-	// on the correct animation frame.
+	// The train seems to move at 12 pixels at a time. When recorded at
+	// 30 fps, it moves every 3 frames. I'm going to assume that's the
+	// intended frame rate.
 
-	for (x = 0; x < train.w; x += 4) {
+	for (x = 0; x < train.w; x += 12) {
 		window->drawSprite(&train, 2 - x, 40, clipRect);
 		window->update();
 
-		if (delay(33)) {
+		if (delay(100)) {
 			skip = true;
 			break;
 		}
@@ -1847,17 +1852,24 @@ void MacIndy3Gui::showAboutDialog() {
 		skip = false;
 	}
 
-	Common::Rect r(20, 4, 380, 100);
+	// Page 2 - Text box
 
-	Graphics::drawRoundRect(r, 8, kWhite, true, plotPixel, window);
-	Graphics::drawRoundRect(r, 8, kBlack, false, plotPixel, window);
-	window->markRectAsDirty(r);
+	window->drawTextBox(Common::Rect(22, 6, 382, 102));
 	window->update();
 
-	if (delay(2000))
+	if (delay(5000))
 		skip = true;
 
 	clearAboutDialog(window);
+
+	// Page 3 - Trolley to the middle
+
+	// The trolley moves 4 pixels at a time every three frames, and the
+	// animation frame changes every time it moves. But the animation cycle
+	// seems semi-random to me. I think this is a case of not caring too
+	// deeply about pixel accuracy as long as everything stops and starts
+	// at the right time, moves at the right speed, and stops and starts
+	// on the correct animation frame.
 
 	int trolleyFrame = 0;
 	int trolleyFrameDelta = 1;
