@@ -112,6 +112,10 @@ public:
 	enum FontId {
 		kSystemFont,
 
+		kIndy3AboutFontRegular,
+		kIndy3AboutFontBold,
+		kIndy3AboutFontHeader,
+
 		kIndy3FontSmall,
 		kIndy3FontMedium,
 		kIndy3VerbFontRegular,
