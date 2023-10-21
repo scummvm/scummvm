@@ -313,7 +313,6 @@ void item_Destroy(void *theItem) {
 void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) {
 	menuItem *myItem = (menuItem *)theItem;
 	guiMenu *myMenu = (guiMenu *)theMenu;
-	menuItemMsg *myMsg = nullptr;
 	Buffer *myBuff = nullptr;
 	Buffer *backgroundBuff = nullptr;
 	Sprite *mySprite = nullptr;
@@ -335,7 +334,7 @@ void menu_DrawMsg(void *theItem, void *theMenu, int32 x, int32 y, int32, int32) 
 	}
 
 	// Get the button info and select the sprite
-	myMsg = (menuItemMsg *)myItem->itemInfo;
+	//myMsg = (menuItemMsg *)myItem->itemInfo;
 	switch (myItem->tag) {
 	case SL_TAG_SAVE_LABEL:
 		mySprite = _GM(menuSprites)[SL_SAVE_LABEL];

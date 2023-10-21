@@ -284,7 +284,6 @@ void ws_demand_location(machine *myWalker, int32 x, int32 y, int facing) {
 }
 
 static void ws_demand_location_and_facing(machine *myWalker, int32 x, int32 y, int32 facing) {
-	const int8 directions[13] = { 0, 0, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 9 };
 	frac16 s;
 
 	if ((!myWalker) || (!myWalker->myAnim8)) {
@@ -514,7 +513,6 @@ void adv_get_walker_destination(machine *my_walker, int32 *x, int32 *y, int32 *f
 void adv_hyperwalk_to_final_destination(void *, void *) {
 	int32 x, y;
 	int32 facing;
-	int8 directions[11] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 };
 
 	_G(i_just_hyperwalked) = true;
 

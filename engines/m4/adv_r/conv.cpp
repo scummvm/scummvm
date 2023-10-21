@@ -534,6 +534,7 @@ static void find_true_ent(int entry_num, Conv *c) {
 			//fprintf( conv_fp, "FALL_CHUNK 1.\n" );
 
 			fall = get_fall(c, sub_ent);
+			assert(fall);
 
 			//do this to skip the fall chunk and all will be fine.
 			ent += sizeof(long); //was get_long, sizeof( fall_chunk )
@@ -733,6 +734,7 @@ static void conv_start(Conv *c) {
 
 		case DECL_CHUNK:
 			decl = get_decl(c, ent);
+			assert(decl);
 			break;
 
 		default:
@@ -812,6 +814,7 @@ static int conv_process_entry(int entry_num, Conv *c, int mode) {
 			//or skip to the first offset.
 
 			fall = get_fall(c, sub_ent);
+			assert(fall);
 
 			//do this to skip the fall chunk and all will be fine.
 			ent += sizeof(long); //was get_long, sizeof( fall_chunk )

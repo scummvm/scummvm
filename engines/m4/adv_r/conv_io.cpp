@@ -333,6 +333,7 @@ void find_and_set_conv_name(Conv *c) {
 		switch (tag) {
 		case CONV_CHUNK:
 			conv = get_conv(c, ent);
+			assert(conv);
 			set_conv_name(get_string(c, c->myCNode + ent + sizeof(conv_chunk)));
 			break;
 
@@ -355,19 +356,19 @@ static void conv_save_state(Conv *c) {
 	long myCNode = c->myCNode;
 	char fname[9];
 
-	short num_decls = 0;
-	short num_entries = 0;
+	int32 num_decls = 0;
+	int32 num_entries = 0;
 
 	c->myCNode = 0;
 
-	while (ent < c->chunkSize)
-	{
-		conv_chunk *conv;	// declared here for the benefit of Watcom 10.0's initializers.
+	while (ent < c->chunkSize) {
+		conv_chunk *conv;
 		conv_ops_get_entry(ent, &next, &tag, c);
 
 		switch (tag) {
 		case CONV_CHUNK:
 			conv = get_conv(c, ent);
+			assert(conv);
 			cstrncpy(fname, get_string(c, c->myCNode + ent + sizeof(conv_chunk)), 8);
 			fname[8] = '\0';
 			break;
@@ -898,6 +899,7 @@ int conv_get_text(long offset, long size, Conv *c) {
 		case TEXT_CHUNK:
 			result = 1;
 			text = get_text(c, i);
+			assert(text);
 			text_len = conv_ops_text_strlen(get_string(c, c->myCNode + i + sizeof(text_chunk)));
 			_G(cdd).snd_files[_G(cdd).num_txt_ents] = get_string(c, c->myCNode + i + sizeof(text_chunk));
 			_G(cdd).text[_G(cdd).num_txt_ents] = get_string(c, c->myCNode + i + sizeof(text_chunk) + text_len);

@@ -59,7 +59,7 @@ Resources::Entry *Resources::findAndSetResEntry(const Common::String &resourceNa
 	while ((_resources[hash_val].Flags & FULLY_BUFFERED)
 			&& !resName.equalsIgnoreCase(_resources[hash_val].name)) {
 		// if we searched every entry to no avail:
-		if ((hash_val = ++hash_val & (HASHSIZE - 1)) == orig_hash_val)
+		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val)
 			goto test4;
 	}
 
@@ -69,7 +69,7 @@ test4:
 	hash_val = orig_hash_val;
 	while (!(_resources[hash_val].Flags & MARKED_PURGE))
 		// if we searched every entry to no avail:
-		if ((hash_val = ++hash_val & (HASHSIZE - 1)) == orig_hash_val) {
+		if ((hash_val = (hash_val + 1) & (HASHSIZE - 1)) == orig_hash_val) {
 			error("Out of resource space");
 		}
 
@@ -176,7 +176,7 @@ void Resources::rtoss(const Common::String &resourceName) {
 	/* check if resource is in resource table */
 	if (_resources[hash_val].Flags) {
 		while (_resources[hash_val].Flags && !lowerName.equals(_resources[hash_val].name))
-			hash_val = ++hash_val & (HASHSIZE - 1);
+			hash_val = (hash_val + 1) & (HASHSIZE - 1);
 		resEntry = &_resources[hash_val];
 	}
 

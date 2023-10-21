@@ -401,13 +401,10 @@ static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, in
 }
 
 static void CorrectItemWidthHeight(Item *item, int32 fontHeight) {
-	char		tempStr[2];
-	int32		tempWidth, tempHeight, minWidth, minHeight;
+	int32 tempWidth, tempHeight, minWidth, minHeight;
 
-	if (!item) return;
-
-	tempStr[0] = '~';
-	tempStr[1] = '\0';
+	if (!item)
+		return;
 
 	switch (item->type) {
 	case LISTBOX:
@@ -966,7 +963,8 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 					} else changed = false;
 				} else changed = false;
 			} else if ((yOffset >= (scrollUpHeight + _G(items).buttonHeight)) && (yOffset < myItem->thumbY)) {
-				if ((scrollType & PAGEABLE) && ((myItem->status & AREA_PRESSED) == 0) || (myItem->status & PU_PRESSED)) {
+				if ((scrollType & PAGEABLE) && (
+						(myItem->status & AREA_PRESSED) == 0 || (myItem->status & PU_PRESSED))) {
 					myItem->status = PU_PRESSED;
 					for (i = 0; i < myItem->listView - 1; i++) {
 						if (myItem->viewTop->prev) {
@@ -1395,7 +1393,7 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 	int32 x1, y1, x2, y2;
 	int32 listboxContentX2, fontHeight, viewCount, temp;
-	char myChar, *beginBlock, *endBlock, tempStr[2];
+	char myChar, *beginBlock, *endBlock;
 	ListItem *myList;
 	Buffer pictBuff;
 	const Buffer *tempBuff;
@@ -1406,14 +1404,12 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 	if (!i)
 		return false;
 
-
-	tempStr[0] = '~';
-	tempStr[1] = '\0';
 	x1 = i->x;
 	y1 = i->y;
 	x2 = x1 + i->w - 1;
 	y2 = y1 + i->h - 1;
-	if ((x1 < 0) || (y1 < 0) || (x2 >= scrBuf->w) || (y2 >= scrBuf->h)) return false;
+	if ((x1 < 0) || (y1 < 0) || (x2 >= scrBuf->w) || (y2 >= scrBuf->h))
+		return false;
 
 	currFont = gr_font_get();
 	if (i->myFont != currFont)
@@ -1581,9 +1577,14 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 			myList = myList->next;
 		}
 		break;
+
+	default:
+		break;
 	}
+
 	if (i->myFont != currFont)
 		gr_font_set(currFont);
+
 	return true;
 }
 

@@ -767,7 +767,6 @@ char *Dialog_GetListItemPrompt(Dialog *d, Item *i, int32 tag, int32 listTag) {
 }
 
 void Dialog_EmptyListBox(Dialog *d, Item *i, int32 tag) {
-	ScreenContext *myScreen;
 	int32 status;
 
 	if ((!i) && (!d))
@@ -778,7 +777,7 @@ void Dialog_EmptyListBox(Dialog *d, Item *i, int32 tag) {
 		return;
 
 	Item_empty_list(i);
-	myScreen = vmng_screen_find((void *)d, &status);
+	(void)vmng_screen_find((void *)d, &status);
 	Dialog_Refresh_Item(d, i, i->tag);
 }
 
