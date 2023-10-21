@@ -1755,6 +1755,24 @@ void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 	// headline. The rest of the Indy 3 verb GUI uses Geneva.
 
 	switch (fontId) {
+	case FontId::kIndy3AboutFontHeader:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontShadow;
+		break;
+
+	case FontId::kIndy3AboutFontBold:
+		id = _gameFontId;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		break;
+
+	case FontId::kIndy3AboutFontRegular:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		break;
+
 	case FontId::kIndy3FontSmall:
 		id = _gameFontId;
 		size = 9;
@@ -1854,7 +1872,22 @@ void MacIndy3Gui::showAboutDialog() {
 
 	// Page 2 - Text box
 
-	window->drawTextBox(Common::Rect(22, 6, 382, 102));
+	Common::Rect r(22, 6, 382, 102);
+
+	window->drawTextBox(r);
+
+	// These strings are part of the STRS resource, but I don't know how to
+	// safely read them from there.
+
+	const Graphics::Font *fontHeader = getFont(kIndy3AboutFontHeader);
+	const Graphics::Font *fontBold = getFont(kIndy3AboutFontBold);
+	const Graphics::Font *fontRegular = getFont(kIndy3AboutFontRegular);
+
+	fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r.left, 10, r.width(), kBlack, Graphics::kTextAlignCenter);
+	fontBold->drawString(s, "The Graphic Adventure", r.left, 28, r.width(), kBlack, Graphics::kTextAlignCenter);
+	fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r.left, 55, r.width(), kBlack, Graphics::kTextAlignCenter);
+	fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r.left, 88, r.width(), kBlack, Graphics::kTextAlignCenter);
+
 	window->update();
 
 	if (delay(5000))
