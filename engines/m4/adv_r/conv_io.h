@@ -59,7 +59,7 @@ struct Converstation_Globals {
 	char conv_name[16];
 	Conv *globConv = nullptr;
 	bool playerCommAllowed = false;
-	long myFinalTrigger = 0;
+	int32 myFinalTrigger = 0;
 	bool interface_was_visible = false;  // to remember to turn it back on
 	int restore_conv = 1;
 	int ent = 0;
@@ -117,12 +117,12 @@ extern const char *get_conv_name();
 extern const char *conv_sound_to_play();
 extern int32 conv_whos_talking();
 
-extern long conv_get_decl_val(decl_chunk *decl);
-extern void conv_set_decl_val(decl_chunk *decl, long val);
-extern void conv_export_value(Conv *c, long val, int index);
-extern void conv_export_value_curr(long val, int index);
-extern void conv_export_pointer(Conv *c, long *val, int index);
-extern void conv_export_pointer_curr(long *val, int index);
+extern int32 conv_get_decl_val(decl_chunk *decl);
+extern void conv_set_decl_val(decl_chunk *decl, int32 val);
+extern void conv_export_value(Conv *c, int32 val, int index);
+extern void conv_export_value_curr(int32 val, int index);
+extern void conv_export_pointer(Conv *c, int32 *val, int index);
+extern void conv_export_pointer_curr(int32 *val, int index);
 
 extern void conv_set_font_spacing(int32 h, int32 v);
 extern void conv_set_text_colour(int32 norm_colour, int32 hi_colour);
@@ -142,12 +142,12 @@ extern void conv_set_event(int e);
 extern int conv_is_event_ready();
 
 extern void conv_swap_words(Conv *c);
-extern long conv_current_node();
+extern int32 conv_current_node();
 extern int32 conv_current_entry();
 
 extern int conv_toggle_flags(entry_chunk *entry);
 extern int ok_status(entry_chunk *entry);
-extern int conv_get_text(long offset, long size, Conv *c);
+extern int conv_get_text(int32 offset, int32 size, Conv *c);
 extern void cdd_init();
 
 } // End of namespace M4

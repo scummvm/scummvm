@@ -126,7 +126,7 @@ void conv_play(Conv *c) {
 	conv_go(c);
 }
 
-long conv_current_node() {
+int32 conv_current_node() {
 	if (conv_get_handle())
 		return conv_get_handle()->node_hash;
 	return 0;
@@ -173,7 +173,7 @@ int conv_toggle_flags(entry_chunk *entry) {
 	return entry->status;
 }
 
-long conv_get_decl_val(decl_chunk *decl) {
+int32 conv_get_decl_val(decl_chunk *decl) {
 	switch (decl->flags) {
 	case DECL_POINTER:
 		return *decl->addr;
@@ -183,7 +183,7 @@ long conv_get_decl_val(decl_chunk *decl) {
 	}
 }
 
-void conv_set_decl_val(decl_chunk *decl, long val) {
+void conv_set_decl_val(decl_chunk *decl, int32 val) {
 	switch (decl->flags) {
 	case DECL_POINTER:
 		decl->val = val;
@@ -196,10 +196,10 @@ void conv_set_decl_val(decl_chunk *decl, long val) {
 	}
 }
 
-void conv_export_value(Conv *c, long val, int index) {
-	long ent = 0, tag = 0, next;
+void conv_export_value(Conv *c, int32 val, int index) {
+	int32 ent = 0, tag = 0, next;
 	decl_chunk *decl;
-	long ent_old = 0;
+	int32 ent_old = 0;
 	int i = 0;
 
 	if (!c)
@@ -229,14 +229,14 @@ void conv_export_value(Conv *c, long val, int index) {
 	c->myCNode = ent_old;
 }
 
-void conv_export_value_curr(long val, int index) {
+void conv_export_value_curr(int32 val, int index) {
 	conv_export_value(conv_get_handle(), val, index);
 }
 
-void conv_export_pointer(Conv *c, long *val, int index) {
-	long ent = 0, tag = 0, next;
+void conv_export_pointer(Conv *c, int32 *val, int index) {
+	int32 ent = 0, tag = 0, next;
 	decl_chunk *decl;
-	long ent_old = 0;
+	int32 ent_old = 0;
 	int	i = 0;
 
 	if (!c)
@@ -267,7 +267,7 @@ void conv_export_pointer(Conv *c, long *val, int index) {
 	c->myCNode = ent_old;
 }
 
-void conv_export_pointer_curr(long *val, int index) {
+void conv_export_pointer_curr(int32 *val, int index) {
 	conv_export_pointer(conv_get_handle(), val, index);
 }
 
@@ -289,9 +289,9 @@ void conv_init(Conv *c) {
 	}
 }
 
-static long find_state(char *s, char *c, int file_size) {
+static int32 find_state(char *s, char *c, int file_size) {
 	char name[9];
-	long size = 0, offset = 0;
+	int32 size = 0, offset = 0;
 
 	////fprintf( conv_fp, "find_state %s\n", s );
 	while (offset < file_size) {
@@ -322,7 +322,7 @@ handled:
 }
 
 void find_and_set_conv_name(Conv *c) {
-	long ent = 0, tag = 0, next = 0;
+	int32 ent = 0, tag = 0, next = 0;
 	conv_chunk *conv;
 
 	c->myCNode = 0;
@@ -350,10 +350,10 @@ static void conv_save_state(Conv *c) {
 	// the number of ENTRY_CHUNKs affects the amt_to_write
 	// also extract fname from the CONV_CHUNK
 
-	long amt_to_write = 3 * sizeof(int32);	// mystery padding
-	long ent = 0;
-	long next, tag;	// receive conv_ops_get_entry results
-	long myCNode = c->myCNode;
+	int32 amt_to_write = 3 * sizeof(int32);	// mystery padding
+	int32 ent = 0;
+	int32 next, tag;	// receive conv_ops_get_entry results
+	int32 myCNode = c->myCNode;
 	char fname[9];
 
 	int32 num_decls = 0;
@@ -395,9 +395,9 @@ static void conv_save_state(Conv *c) {
 	//-------------------------------------------------------------------------------
 	// if consave.dat exists, read it in
 
-	long file_size = 0;
-	long offset = -1;
-	long prev_size = 0;
+	int32 file_size = 0;
+	int32 offset = -1;
+	int32 prev_size = 0;
 	char *conv_save_buff = nullptr;
 	bool overwrite_file = false;
 
@@ -467,18 +467,18 @@ static void conv_save_state(Conv *c) {
 	memcpy(&conv_save_buff[offset], &num_entries, sizeof(int32));
 	offset += sizeof(int32);
 
-	long size = 3 * sizeof(int32);
+	int32 size = 3 * sizeof(int32);
 
 	// fill in all the entries themselves
 
-	long e_flags = 0;
+	int32 e_flags = 0;
 	short flag_index = 0;
 	//	short flag_num = 0;
 
 	ent = 0;
 	c->myCNode = 0;
 
-	long val = 0;
+	int32 val = 0;
 	entry_chunk *entry = nullptr;
 
 	while (ent < c->chunkSize)
@@ -557,17 +557,17 @@ static void conv_save_state(Conv *c) {
 }
 
 static Conv *conv_restore_state(Conv *c) {
-	long ent = 0;
-	long tag, next, offset;
+	int32 ent = 0;
+	int32 tag, next, offset;
 
 	entry_chunk *entry;
 	decl_chunk *decl;
 
-	long num_decls = 0, num_entries = 0;
+	int32 num_decls = 0, num_entries = 0;
 	short flag_num = 0, flag_index = 0;
-	long val;
-	long e_flags = 0;
-	long myCNode;
+	int32 val;
+	int32 e_flags = 0;
+	int32 myCNode;
 
 	char fname[9];
 	int dont_update_ents = 0;
@@ -741,7 +741,7 @@ static void conv_set_disp_default(void) {
 
 Conv *conv_load(const char *filename, int x1, int y1, int32 myTrigger, bool want_box) {
 	Conv *convers = nullptr;
-	long cSize = 0;
+	int32 cSize = 0;
 	char fullpathname[MAX_FILENAME_SIZE];
 	void *bufferHandle;
 
@@ -885,8 +885,8 @@ void conv_unload() {
 
 // only called if node is visible.
 // gets the TEXT chunks inside a node.
-int conv_get_text(long offset, long size, Conv *c) {
-	long i = offset, tag, next, text_len, text_width;
+int conv_get_text(int32 offset, int32 size, Conv *c) {
+	int32 i = offset, tag, next, text_len, text_width;
 	text_chunk *text;
 	int	result = 0;
 
