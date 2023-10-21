@@ -95,36 +95,41 @@ struct AlphaBlend {
 template<bool doscale, bool rgbmod, bool alphamod>
 struct MultiplyBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-		__m256i ina;
-		if (alphamod)
+		__m256i ina, alphaMask;
+		if (alphamod) {
 			ina = _mm256_srli_epi32(_mm256_mullo_epi16(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask)), _mm256_set1_epi32(ca)), 8);
-		else
+			alphaMask = _mm256_cmpeq_epi32(ina, _mm256_setzero_si256());
+		} else {
 			ina = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
-		__m256i alphaMask = _mm256_cmpeq_epi32(ina, _mm256_setzero_si256());
+			alphaMask = _mm256_set1_epi32(BlendBlit::kAModMask);
+		}
 
 		if (rgbmod) {
-			__m256i srcb = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			__m256i srcg = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-			__m256i srcr = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
-			__m256i dstb = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			__m256i dstg = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-			__m256i dstr = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+			__m256i srcB = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m256i srcG = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			__m256i srcR = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+			__m256i dstB = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m256i dstG = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			__m256i dstR = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-			srcb = _mm256_and_si256(_mm256_srli_epi32(_mm256_mullo_epi32(dstb, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcb, _mm256_set1_epi32(cb)), ina), 16)), BlendBlit::kBModShift - 8), _mm256_set1_epi32(BlendBlit::kBModMask));
-			srcg = _mm256_and_si256(_mm256_srli_epi32(_mm256_mullo_epi32(dstg, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcg, _mm256_set1_epi32(cg)), ina), 16)), BlendBlit::kGModShift - 8), _mm256_set1_epi32(BlendBlit::kGModMask));
-			srcr = _mm256_and_si256(_mm256_srli_epi32(_mm256_mullo_epi32(dstr, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcr, _mm256_set1_epi32(cr)), ina), 16)), BlendBlit::kRModShift - 8), _mm256_set1_epi32(BlendBlit::kRModMask));
+			srcB = _mm256_and_si256(_mm256_slli_epi32(_mm256_mullo_epi32(dstB, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcB, _mm256_set1_epi32(cb)), ina), 16)), BlendBlit::kBModShift - 8), _mm256_set1_epi32(BlendBlit::kBModMask));
+			srcG = _mm256_and_si256(_mm256_slli_epi32(_mm256_mullo_epi32(dstG, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcG, _mm256_set1_epi32(cg)), ina), 16)), BlendBlit::kGModShift - 8), _mm256_set1_epi32(BlendBlit::kGModMask));
+			srcR = _mm256_and_si256(_mm256_slli_epi32(_mm256_mullo_epi32(dstR, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi16(srcR, _mm256_set1_epi32(cr)), ina), 16)), BlendBlit::kRModShift - 8), _mm256_set1_epi32(BlendBlit::kRModMask));
 
 			src = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
-			src = _mm256_or_si256(src, _mm256_or_si256(srcb, _mm256_or_si256(srcg, srcr)));
+			src = _mm256_or_si256(src, _mm256_or_si256(srcB, _mm256_or_si256(srcG, srcR)));
 		} else {
-			__m256i srcg = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask));
-			__m256i srcrb = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			__m256i dstg = _mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kGModMask));
-			__m256i dstrb = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			srcg = _mm256_and_si256(_mm256_srli_epi32(_mm256_mullo_epi32(dstg, _mm256_srli_epi32(_mm256_mullo_epi32(srcg, ina), 8)), 8), _mm256_set1_epi32(BlendBlit::kGModMask));
-			srcrb = _mm256_and_si256(_mm256_mullo_epi32(dstrb, _mm256_srli_epi32(_mm256_mullo_epi32(srcrb, ina), 8)), _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask));
+			constexpr uint32 rbMask = BlendBlit::kRModMask | BlendBlit::kBModMask;
+			__m256i dstRB = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m256i srcRB = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			__m256i dstG = _mm256_srli_epi32(_mm256_and_si256(dst, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			__m256i srcG = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+
+			srcG = _mm256_and_si256(_mm256_slli_epi32(_mm256_mullo_epi16(dstG, _mm256_srli_epi32(_mm256_mullo_epi16(srcG, ina), 8)), 8), _mm256_set1_epi32(BlendBlit::kGModMask));
+			srcRB = _mm256_and_si256(_mm256_mullo_epi16(dstRB, _mm256_srli_epi32(_mm256_and_si256(_mm256_mullo_epi32(srcRB, ina), _mm256_set1_epi32(rbMask)), 8)), _mm256_set1_epi32(rbMask));
+			
 			src = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
-			src = _mm256_or_si256(src, _mm256_or_si256(srcrb, srcg));
+			src = _mm256_or_si256(src, _mm256_or_si256(srcRB, srcG));
 		}
 
 		dst = _mm256_and_si256(alphaMask, dst);
