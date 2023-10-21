@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-17 16:03+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2023-10-21 12:03+0000\n"
+"Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/ka/>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.4\n"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
@@ -40,7 +43,7 @@ msgstr ""
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr ""
+msgstr "მაღლა ასვლა"
 
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
@@ -50,7 +53,7 @@ msgstr ""
 #: gui/browser.cpp:80 gui/remotebrowser.cpp:58
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "მაღლა ასვლა"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
@@ -82,7 +85,7 @@ msgstr ""
 #: engines/scumm/dialog-sessionselector.cpp:67 engines/sword1/control.cpp:2797
 #: engines/wintermute/wintermute.cpp:182
 msgid "Cancel"
-msgstr ""
+msgstr "გაუქმება"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/filebrowser-dialog.cpp:69
 #: gui/remotebrowser.cpp:60 gui/shaderbrowser-dialog.cpp:82
@@ -90,7 +93,7 @@ msgstr ""
 #: backends/dialogs/macosx/macosx-dialogs.mm:144
 #: backends/dialogs/win32/win32-dialogs.cpp:136
 msgid "Choose"
-msgstr ""
+msgstr "აირჩიეთ"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
@@ -124,11 +127,11 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3698
 msgid "Stop server"
-msgstr ""
+msgstr "სერვერის გაჩერება"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2738
 msgid "Run server"
-msgstr ""
+msgstr "სერვერის გაშვება"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3699
 msgid "Stop local webserver"
@@ -153,7 +156,7 @@ msgstr ""
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
-msgstr ""
+msgstr "URL-ის გახსნა"
 
 #: gui/cloudconnectionwizard.cpp:270
 msgid ""
@@ -175,7 +178,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "დასრულება"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
@@ -202,7 +205,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste"
-msgstr ""
+msgstr "ჩასმა"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
@@ -215,7 +218,7 @@ msgstr ""
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load"
-msgstr ""
+msgstr "ჩატვირთვა"
 
 #: gui/cloudconnectionwizard.cpp:362
 msgid "Load code from file"
@@ -239,7 +242,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "შეცდომის შეტყობინება: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
@@ -247,12 +250,12 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:428 engines/crab/input/input.cpp:175
 msgid "Back"
-msgstr ""
+msgstr "უკან"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
 msgid "Next"
-msgstr ""
+msgstr "შემდეგი"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
@@ -270,7 +273,7 @@ msgstr ""
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
-msgstr ""
+msgstr "დიახ"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
@@ -283,7 +286,7 @@ msgstr ""
 #: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
 #: engines/toon/toon.cpp:1531
 msgid "No"
-msgstr ""
+msgstr "არა"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
@@ -318,7 +321,7 @@ msgstr ""
 #: engines/vcruise/vcruise.cpp:92 engines/vcruise/vcruise.cpp:102
 #: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
-msgstr ""
+msgstr "დიახ"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
@@ -327,7 +330,7 @@ msgstr ""
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
 msgid "Interrupted."
-msgstr ""
+msgstr "შეწყვეტილია."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3392
 msgid ""
@@ -355,27 +358,27 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:225
 msgid "From: "
-msgstr ""
+msgstr "ვისგან: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:226
 msgid "To: "
-msgstr ""
+msgstr "ვის: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
 #: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
 #: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
 msgid "Cancel download"
-msgstr ""
+msgstr "გადმოწერის გაუქმება"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "გადმოწერის გაუქმება"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
 #: gui/downloadpacksdialog.cpp:281
 msgid "Hide"
-msgstr ""
+msgstr "დამალვა"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
@@ -423,7 +426,7 @@ msgstr ""
 
 #: gui/downloadpacksdialog.cpp:203
 msgid "Clear Cache"
-msgstr ""
+msgstr "ქეშის გასუფთავება"
 
 #: gui/downloadpacksdialog.cpp:254
 #, c-format
@@ -437,7 +440,7 @@ msgstr ""
 
 #: gui/downloadpacksdialog.cpp:266
 msgid "Download"
-msgstr ""
+msgstr "გადმოწერა"
 
 #: gui/downloadpacksdialog.cpp:290
 #, c-format
@@ -452,7 +455,7 @@ msgstr ""
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:193
 #: engines/scumm/help.cpp:211
 msgid "Close"
-msgstr ""
+msgstr "დახურვა"
 
 #: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
 msgid "ERROR: No icons path set"
@@ -473,15 +476,15 @@ msgstr ""
 
 #: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "გაგრძელება"
 
 #: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
 msgid "Game"
-msgstr ""
+msgstr "თამაში"
 
 #: gui/editgamedialog.cpp:135
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:135 gui/editgamedialog.cpp:137
 #: gui/editgamedialog.cpp:138
@@ -493,11 +496,11 @@ msgstr ""
 #: gui/editgamedialog.cpp:137
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:142 gui/editrecorddialog.cpp:58
 msgid "Name:"
-msgstr ""
+msgstr "სახელი:"
 
 #: gui/editgamedialog.cpp:142 gui/editgamedialog.cpp:144
 #: gui/editgamedialog.cpp:145
@@ -507,12 +510,12 @@ msgstr ""
 #: gui/editgamedialog.cpp:144
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "სახელი:"
 
 #: gui/editgamedialog.cpp:151 engines/mohawk/dialogs.cpp:159
 #: engines/mohawk/dialogs.cpp:378
 msgid "Language:"
-msgstr ""
+msgstr "ენა:"
 
 #: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:152
 msgid ""
@@ -532,11 +535,11 @@ msgstr ""
 #: backends/platform/ios7/ios7_options.mm:131
 #: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
 msgid "<default>"
-msgstr ""
+msgstr "<ნაგულისხმევი>"
 
 #: gui/editgamedialog.cpp:164
 msgid "Platform:"
-msgstr ""
+msgstr "პლატფორმა:"
 
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
@@ -546,17 +549,17 @@ msgstr ""
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
 msgid "Platform:"
-msgstr ""
+msgstr "პლატფორმა:"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2004 gui/options.cpp:2178
 msgid "GFX"
-msgstr ""
+msgstr "GFX"
 
 #: gui/editgamedialog.cpp:191 gui/options.cpp:2004 gui/options.cpp:2178
 #: backends/graphics/atari/atari-graphics.cpp:953
 #: backends/graphics/sdl/sdl-graphics.cpp:426
 msgid "Graphics"
-msgstr ""
+msgstr "გრაფიკა"
 
 #: gui/editgamedialog.cpp:197
 msgid "Override global graphic settings"
@@ -573,7 +576,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:219 gui/options.cpp:2219 engines/dialogs.cpp:322
 msgid "Backend"
-msgstr ""
+msgstr "უკანაბოლო"
 
 #: gui/editgamedialog.cpp:222
 msgid "Override global backend settings"
@@ -586,7 +589,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2233 engines/dialogs.cpp:290
 msgid "Audio"
-msgstr ""
+msgstr "აუდიო"
 
 #: gui/editgamedialog.cpp:241
 msgid "Override global audio settings"
@@ -599,12 +602,12 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:252 gui/options.cpp:2238
 msgid "Volume"
-msgstr ""
+msgstr "ხმის სიმაღლე"
 
 #: gui/editgamedialog.cpp:254 gui/options.cpp:2240
 msgctxt "lowres"
 msgid "Volume"
-msgstr ""
+msgstr "ხმის სიმაღლე"
 
 #: gui/editgamedialog.cpp:257
 msgid "Override global volume settings"
@@ -617,7 +620,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:2248
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:273
 msgid "Override global MIDI settings"
@@ -630,7 +633,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:285 gui/options.cpp:2254
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:288
 msgid "Override global MT-32 settings"
@@ -643,12 +646,12 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:299 gui/options.cpp:2261
 msgid "Paths"
-msgstr ""
+msgstr "ბილიკები"
 
 #: gui/editgamedialog.cpp:301 gui/options.cpp:2263
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "ბილიკები"
 
 #: gui/editgamedialog.cpp:308
 msgid "Game Path:"
@@ -693,7 +696,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:342 engines/dialogs.cpp:341
 msgid "Statistics"
-msgstr ""
+msgstr "სტატისტიკა"
 
 #: gui/editgamedialog.cpp:366 gui/editgamedialog.cpp:468
 #: gui/editgamedialog.cpp:530 gui/editgamedialog.cpp:597 gui/options.cpp:1177
@@ -705,7 +708,7 @@ msgstr ""
 #: gui/options.cpp:3309
 msgctxt "path"
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #: gui/editgamedialog.cpp:371 gui/editgamedialog.cpp:474
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2353 gui/options.cpp:2355
@@ -713,11 +716,11 @@ msgstr ""
 #: gui/options.cpp:2909 gui/options.cpp:3258 gui/options.cpp:3262
 #: gui/options.cpp:3269 backends/platform/wii/options.cpp:55
 msgid "Default"
-msgstr ""
+msgstr "ნაგულისხმევი"
 
 #: gui/editgamedialog.cpp:523 gui/options.cpp:3303
 msgid "Select SoundFont"
-msgstr ""
+msgstr "აირჩიეთ ხმის ფონტი"
 
 #: gui/editgamedialog.cpp:562
 msgid "Select additional game directory"
@@ -743,11 +746,11 @@ msgstr ""
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
-msgstr ""
+msgstr "ავტორი:"
 
 #: gui/editrecorddialog.cpp:59
 msgid "Notes:"
-msgstr ""
+msgstr "შენიშვნები:"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
@@ -763,15 +766,15 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
-msgstr ""
+msgstr "ექო"
 
 #: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
 msgid "Active"
-msgstr ""
+msgstr "აქტიური"
 
 #: gui/fluidsynth-dialog.cpp:72
 msgid "Room:"
-msgstr ""
+msgstr "ოთახი:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
@@ -779,15 +782,15 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
-msgstr ""
+msgstr "სიგანე:"
 
 #: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
 msgid "Level:"
-msgstr ""
+msgstr "დონე:"
 
 #: gui/fluidsynth-dialog.cpp:100
 msgid "Chorus"
-msgstr ""
+msgstr "ქორი"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
@@ -795,32 +798,32 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:118
 msgid "Speed:"
-msgstr ""
+msgstr "სიჩქარე:"
 
 #: gui/fluidsynth-dialog.cpp:125
 msgid "Depth:"
-msgstr ""
+msgstr "სიღრმე:"
 
 #: gui/fluidsynth-dialog.cpp:132
 msgid "Type:"
-msgstr ""
+msgstr "ტიპი:"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Sine"
-msgstr ""
+msgstr "სინუსიოდი"
 
 #: gui/fluidsynth-dialog.cpp:136 backends/platform/sdl/ps3/ps3.cpp:43
 #: backends/platform/sdl/psp2/psp2.cpp:46 engines/dragons/metaengine.cpp:190
 msgid "Triangle"
-msgstr ""
+msgstr "სამკუთხედი"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2278
 msgid "Misc"
-msgstr ""
+msgstr "სხვანი"
 
 #: gui/fluidsynth-dialog.cpp:140
 msgid "Interpolation:"
-msgstr ""
+msgstr "ინტერპოლაცია:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
@@ -828,7 +831,7 @@ msgstr ""
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
-msgstr ""
+msgstr "ხაზოვანი"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
@@ -841,7 +844,7 @@ msgstr ""
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
 msgid "Reset"
-msgstr ""
+msgstr "განულება"
 
 #: gui/fluidsynth-dialog.cpp:150
 msgid "Reset all FluidSynth settings to their default values."
@@ -854,7 +857,7 @@ msgstr ""
 
 #: gui/gui-manager.cpp:155 gui/options.cpp:2269
 msgid "GUI"
-msgstr ""
+msgstr "ინტერფეისი"
 
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:159 engines/hpl1/metaengine.cpp:91
@@ -875,7 +878,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1920
 #: engines/wintermute/keymapper_tables.h:2154
 msgid "Up"
-msgstr ""
+msgstr "ჩართული"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:122
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
@@ -889,7 +892,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1926
 #: engines/wintermute/keymapper_tables.h:2160
 msgid "Down"
-msgstr ""
+msgstr "ქვემოთ"
 
 #: gui/gui-manager.cpp:182 engines/metaengine.cpp:128
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
@@ -904,7 +907,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:2018
 #: engines/wintermute/keymapper_tables.h:2142
 msgid "Left"
-msgstr ""
+msgstr "მარცხენა"
 
 #: gui/gui-manager.cpp:188 engines/metaengine.cpp:134
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
@@ -919,7 +922,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:2026
 #: engines/wintermute/keymapper_tables.h:2148
 msgid "Right"
-msgstr ""
+msgstr "მარჯვენა"
 
 #: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -944,30 +947,30 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1944
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
-msgstr ""
+msgstr "წინა"
 
 #: gui/imagealbum-dialog.cpp:127
 msgid "Save Image..."
-msgstr ""
+msgstr "გამოსახულების შენახვა..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u %u-დან"
 
 #: gui/imagealbum-dialog.cpp:377
 msgid "Save Image"
-msgstr ""
+msgstr "გამოსახულების შენახვა"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:106
 msgctxt "group"
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:108
@@ -978,37 +981,37 @@ msgstr ""
 #: gui/launcher.cpp:108
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "საწყისი"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:110
 msgctxt "group"
 msgid "Engine"
-msgstr ""
+msgstr "ძრავი"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:112
 msgctxt "group"
 msgid "Series"
-msgstr ""
+msgstr "სერიები"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:114
 msgctxt "group"
 msgid "Publisher"
-msgstr ""
+msgstr "გამომცემელი"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:116
 msgctxt "group"
 msgid "Language"
-msgstr ""
+msgstr "ენა"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:118
 msgctxt "group"
 msgid "Platform"
-msgstr ""
+msgstr "პლატფორმა"
 
 #: gui/launcher.cpp:228
 msgid "Select Group by"
@@ -1016,7 +1019,7 @@ msgstr ""
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:882
 msgid "Group:"
-msgstr ""
+msgstr "ჯგუფი:"
 
 #: gui/launcher.cpp:234
 msgid "Select a criteria to group the entries"
@@ -1029,7 +1032,7 @@ msgstr ""
 #: gui/launcher.cpp:261 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
-msgstr ""
+msgstr "დახმარება"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:265 engines/dialogs.cpp:95
@@ -1118,7 +1121,7 @@ msgstr ""
 #: gui/launcher.cpp:304 gui/launcher.cpp:873 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
-msgstr ""
+msgstr "ძებნა:"
 
 #: gui/launcher.cpp:315 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
@@ -1168,11 +1171,11 @@ msgstr ""
 
 #: gui/launcher.cpp:922 gui/saveload-dialog.cpp:381
 msgid "List view"
-msgstr ""
+msgstr "სიის ხედი"
 
 #: gui/launcher.cpp:923 gui/saveload-dialog.cpp:382
 msgid "Grid view"
-msgstr ""
+msgstr "ბადის ხედი"
 
 #: gui/launcher.cpp:1085
 msgid "~S~tart"
@@ -1239,7 +1242,7 @@ msgstr ""
 #. I18N: Group for All items
 #: gui/launcher.cpp:1444 gui/widgets/groupedlist.cpp:81
 msgid "All"
-msgstr ""
+msgstr "ყველა"
 
 #: gui/launcher.cpp:1593
 msgid "Icons per row:"
@@ -1270,7 +1273,7 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:95 gui/onscreendialog.cpp:97
 msgid "Stop"
-msgstr ""
+msgstr "გაჩერება"
 
 #: gui/onscreendialog.cpp:100
 msgid "Edit record description"
@@ -1286,7 +1289,7 @@ msgstr ""
 
 #: gui/options.cpp:149 common/updates.cpp:55
 msgid "Never"
-msgstr ""
+msgstr "არასდროს"
 
 #: gui/options.cpp:149
 msgid "Every 5 mins"
@@ -1307,22 +1310,22 @@ msgstr ""
 #. I18N: Very large GUI scale
 #: gui/options.cpp:154
 msgid "Very large"
-msgstr ""
+msgstr "ძალიან დიდი"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:156
 msgid "Large"
-msgstr ""
+msgstr "დიდი"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:158
 msgid "Medium"
-msgstr ""
+msgstr "საშუალო"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:160
 msgid "Small"
-msgstr ""
+msgstr "პატარა"
 
 #: gui/options.cpp:436 gui/options.cpp:751 gui/options.cpp:851
 #: gui/options.cpp:856 gui/options.cpp:879 gui/options.cpp:884
@@ -1452,7 +1455,7 @@ msgstr ""
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "სრული ეკრანის რეჟიმი"
 
 #: gui/options.cpp:1638
 msgid "V-Sync"
@@ -1479,7 +1482,7 @@ msgstr ""
 
 #: gui/options.cpp:1666 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
-msgstr ""
+msgstr "გამორთულია"
 
 #: gui/options.cpp:1674
 msgid "Filter graphics"
@@ -1615,15 +1618,15 @@ msgstr ""
 
 #: gui/options.cpp:1845 gui/options.cpp:1855
 msgid "Speech"
-msgstr ""
+msgstr "საუბარი"
 
 #: gui/options.cpp:1846 gui/options.cpp:1856
 msgid "Subtitles"
-msgstr ""
+msgstr "სუბტიტრები"
 
 #: gui/options.cpp:1847
 msgid "Both"
-msgstr ""
+msgstr "ორივე"
 
 #: gui/options.cpp:1849
 msgid "Subtitle speed:"
@@ -1645,7 +1648,7 @@ msgstr ""
 #: gui/options.cpp:1857
 msgctxt "lowres"
 msgid "Both"
-msgstr ""
+msgstr "ორივე"
 
 #: gui/options.cpp:1857
 msgid "Show subtitles and play speech"
@@ -1693,34 +1696,34 @@ msgstr ""
 
 #: gui/options.cpp:2190
 msgid "Control"
-msgstr ""
+msgstr "კონტროლი"
 
 #: gui/options.cpp:2290
 msgid "Cloud"
-msgstr ""
+msgstr "ღრუბელი"
 
 #: gui/options.cpp:2292
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "ღრუბელი"
 
 #: gui/options.cpp:2306
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2308
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "LAN"
 
 #: gui/options.cpp:2318
 msgid "Accessibility"
-msgstr ""
+msgstr "წვდომადობა"
 
 #: gui/options.cpp:2320
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "წვდომადობა"
 
 #: gui/options.cpp:2329
 msgid "Discard changes and close the dialog"
@@ -1803,7 +1806,7 @@ msgstr ""
 
 #: gui/options.cpp:2504
 msgid "View"
-msgstr ""
+msgstr "ნახვა"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2514 gui/options.cpp:3279
@@ -1812,7 +1815,7 @@ msgstr ""
 
 #: gui/options.cpp:2519
 msgid "Theme:"
-msgstr ""
+msgstr "თემა:"
 
 #: gui/options.cpp:2524
 msgid "GUI scale:"
@@ -1834,7 +1837,7 @@ msgstr ""
 
 #: gui/options.cpp:2552
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "გასვლისას დადასტურების მოთხოვნა"
 
 #: gui/options.cpp:2553
 msgid "Ask for permission when closing ScummVM or leaving a game."
@@ -1852,7 +1855,7 @@ msgstr ""
 
 #: gui/options.cpp:2566
 msgid "GUI language:"
-msgstr ""
+msgstr "ინტერფეისის ენა:"
 
 #: gui/options.cpp:2566
 msgid "Language of ScummVM GUI"
@@ -1889,16 +1892,16 @@ msgstr ""
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
-msgstr ""
+msgstr "ავტომატური შენახვა:"
 
 #: gui/options.cpp:2623
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr ""
+msgstr "ავტომატური შენახვა:"
 
 #: gui/options.cpp:2634
 msgid "Random seed:"
-msgstr ""
+msgstr "შემთხვევითი მარცვალი:"
 
 #: gui/options.cpp:2634
 msgid "Seed for initializing all random number generators"
@@ -1906,12 +1909,12 @@ msgstr ""
 
 #: gui/options.cpp:2642
 msgid "Debug level:"
-msgstr ""
+msgstr "გამართვის დონე:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2646 gui/options.cpp:2785
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2652
@@ -2010,7 +2013,7 @@ msgstr ""
 
 #: gui/options.cpp:2712
 msgid "Sync now"
-msgstr ""
+msgstr "სინქრონიზაცია ახლავე"
 
 #: gui/options.cpp:2712
 msgid "Start saved games sync"
@@ -2044,7 +2047,7 @@ msgstr ""
 
 #: gui/options.cpp:2724
 msgid "Disconnect"
-msgstr ""
+msgstr "გათიშვა"
 
 #: gui/options.cpp:2724
 msgid "Stop using this storage on this device"
@@ -2070,7 +2073,7 @@ msgstr ""
 #: gui/options.cpp:2743
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/root/ Path:"
 
 #: gui/options.cpp:2743 gui/options.cpp:2745 gui/options.cpp:2746
 msgid "Select which directory will be shown as /root/ in the Files Manager"
@@ -2078,7 +2081,7 @@ msgstr ""
 
 #: gui/options.cpp:2745
 msgid "/root/ Path:"
-msgstr ""
+msgstr "/root/ Path:"
 
 #: gui/options.cpp:2751
 msgid "Server's port:"
@@ -2116,7 +2119,7 @@ msgstr ""
 
 #: gui/options.cpp:2846
 msgid "Ignore"
-msgstr ""
+msgstr "იგნორი"
 
 #: gui/options.cpp:2847
 msgid "Disable autosave"
@@ -2139,7 +2142,7 @@ msgstr ""
 
 #: gui/options.cpp:2858 engines/engine.cpp:602
 msgid "Move"
-msgstr ""
+msgstr "გადატანა"
 
 #: gui/options.cpp:2871
 msgid "ERROR: Failed to move the following saved games:\n"
@@ -2230,7 +2233,7 @@ msgstr ""
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
-msgstr ""
+msgstr "შეიყვანეთ ტექსტი"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -2239,7 +2242,7 @@ msgstr ""
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
-msgstr ""
+msgstr "დამატება"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
@@ -2247,7 +2250,7 @@ msgstr ""
 
 #: gui/predictivedialog.cpp:111 gui/predictivedialog.cpp:186
 msgid "<"
-msgstr ""
+msgstr "<"
 
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
@@ -2272,37 +2275,37 @@ msgstr ""
 #: gui/saveload-dialog.cpp:459 gui/saveload-dialog.cpp:526
 #: dists/android.strings.xml.cpp:44 engines/engine.cpp:596
 msgid "Delete"
-msgstr ""
+msgstr "წაშლა"
 
 #: gui/recorderdialog.cpp:74
 msgid "Record"
-msgstr ""
+msgstr "ჩაწერა"
 
 #: gui/recorderdialog.cpp:75
 msgid "Playback"
-msgstr ""
+msgstr "დაკვრა"
 
 #: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:286
 msgid "Edit"
-msgstr ""
+msgstr "ჩასწორება"
 
 #: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
 #: gui/recorderdialog.cpp:308
 msgid "Author: "
-msgstr ""
+msgstr "ავტორი: "
 
 #: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
 #: gui/recorderdialog.cpp:309
 msgid "Notes: "
-msgstr ""
+msgstr "შენიშვნები: "
 
 #: gui/recorderdialog.cpp:211
 msgid "Do you really want to delete this record?"
-msgstr ""
+msgstr "დარწმუნებული ბრძანდებით, რომ გნებავთ ამ ჩანაწერის წაშლა?"
 
 #: gui/recorderdialog.cpp:228
 msgid "Unknown Author"
-msgstr ""
+msgstr "უცნობი ავტორი"
 
 #: gui/remotebrowser.cpp:128
 msgid "ScummVM could not access the directory!"
@@ -2314,7 +2317,7 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:65
 msgid "Run in background"
-msgstr ""
+msgstr "ფონურად გაშვება"
 
 #: gui/saveload-dialog.cpp:126
 #, c-format
@@ -2339,11 +2342,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1171
 msgid "Date: "
-msgstr ""
+msgstr "თარიღი: "
 
 #: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1177
 msgid "Time: "
-msgstr ""
+msgstr "დრო: "
 
 #: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1185
 msgid "Playtime: "
@@ -2355,7 +2358,7 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:1033
 msgid "New Save"
-msgstr ""
+msgstr "ახლის შენახვა"
 
 #: gui/saveload-dialog.cpp:1033
 msgid "Create a new saved game"
@@ -2363,7 +2366,7 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:1164
 msgid "Name: "
-msgstr ""
+msgstr "სახელი: "
 
 #: gui/saveload-dialog.cpp:1240
 #, c-format
@@ -2405,7 +2408,7 @@ msgstr ""
 
 #: gui/ThemeEngine.cpp:273 engines/scumm/dialogs.cpp:1016
 msgid "Standard"
-msgstr ""
+msgstr "სტანდარტული"
 
 #: gui/ThemeEngine.cpp:275
 msgid "Antialiased renderer"
@@ -2421,7 +2424,7 @@ msgstr ""
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "ბუფერში კოპირება"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
@@ -2465,7 +2468,7 @@ msgstr ""
 
 #: gui/widgets/grid.cpp:280
 msgid "Play"
-msgstr ""
+msgstr "დაკვრა"
 
 #: gui/widgets/grid.cpp:283
 msgid "Saves"
@@ -2503,7 +2506,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
 msgid "Ok"
-msgstr ""
+msgstr "კარგი"
 
 #. I18N: A button caption to dismiss amessage and read it later
 #. I18N: A button caption to dismiss a message and read it later
@@ -2543,7 +2546,7 @@ msgstr ""
 
 #: common/error.cpp:37
 msgid "No error"
-msgstr ""
+msgstr "შეცდომის გარეშე"
 
 #: common/error.cpp:39
 msgid "Game data not found"
@@ -2571,7 +2574,7 @@ msgstr ""
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr ""
+msgstr "ბილიკი არ არსებობს"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
@@ -2603,11 +2606,11 @@ msgstr ""
 
 #: common/error.cpp:72
 msgid "User canceled"
-msgstr ""
+msgstr "გააუქმა მომხმარებელმა"
 
 #: common/error.cpp:76
 msgid "Unknown error"
-msgstr ""
+msgstr "უცნობი შეცდომა"
 
 #. I18N: Hercules is a graphics card name, Green is color
 #: common/rendermode.cpp:34
@@ -2644,15 +2647,15 @@ msgstr ""
 
 #: common/updates.cpp:57
 msgid "Daily"
-msgstr ""
+msgstr "დღიურად"
 
 #: common/updates.cpp:59
 msgid "Weekly"
-msgstr ""
+msgstr "კვირაში ერთხელ"
 
 #: common/updates.cpp:61
 msgid "Monthly"
-msgstr ""
+msgstr "თვეში ერთხელ"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
@@ -2672,22 +2675,22 @@ msgstr ""
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
 msgid "KB"
-msgstr ""
+msgstr "კბ"
 
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
 msgid "MB"
-msgstr ""
+msgstr "მბ"
 
 #. I18N: Abbreviation for 'gigabytes' as data size
 #: common/util.cpp:200
 msgid "GB"
-msgstr ""
+msgstr "გბ"
 
 #. I18N: Abbreviation for 'terabytes' as data size
 #: common/util.cpp:206
 msgid "TB"
-msgstr ""
+msgstr "ტბ"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
@@ -2726,7 +2729,7 @@ msgstr ""
 #: engines/scumm/help.cpp:86 engines/zvision/metaengine.cpp:272
 #: engines/zvision/metaengine.cpp:290
 msgid "Quit"
-msgstr ""
+msgstr "გასვლა"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
@@ -2767,28 +2770,28 @@ msgstr ""
 #: engines/scumm/help.cpp:102 engines/scumm/help.cpp:103
 #: engines/scumm/help.cpp:104
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "დასრულდა"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "რეჟიმის შეცვლა"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
-msgstr ""
+msgstr "Shift"
 
 #: dists/android.strings.xml.cpp:48 engines/dragons/metaengine.cpp:154
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 msgid "Enter"
-msgstr ""
+msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
 msgid "Close popup"
-msgstr ""
+msgstr "მხტუნარას დახურვა"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
@@ -3013,7 +3016,7 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_main.cpp:291 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
-msgstr ""
+msgstr "ავტომატური შენახვა"
 
 #: engines/engine.cpp:644
 msgid "Error occurred making autosave"
@@ -3028,7 +3031,7 @@ msgstr ""
 
 #: engines/engine.cpp:743
 msgid "WARNING: "
-msgstr ""
+msgstr "გაფრთხილება: "
 
 #: engines/engine.cpp:743
 msgid " Shall we still run the game?"
@@ -3086,20 +3089,20 @@ msgstr ""
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
-msgstr ""
+msgstr "მარცხენა-წკაპი"
 
 #: engines/metaengine.cpp:67 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
-msgstr ""
+msgstr "შუა-წკაპი"
 
 #: engines/metaengine.cpp:72 backends/platform/maemo/maemo.cpp:169
 #: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
-msgstr ""
+msgstr "მარჯვენა-წკაპი"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:78 engines/crab/input/input.cpp:261
@@ -3108,11 +3111,11 @@ msgstr ""
 #: engines/mohawk/riven.cpp:867 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
-msgstr ""
+msgstr "შეჩერება"
 
 #: engines/metaengine.cpp:84 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
-msgstr ""
+msgstr "თამაშის მენიუ"
 
 #: engines/metaengine.cpp:91 engines/grim/grim.cpp:518
 #: engines/grim/grim.cpp:614 engines/mohawk/myst.cpp:567
@@ -3123,7 +3126,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1716
 #: engines/wintermute/keymapper_tables.h:2110
 msgid "Skip"
-msgstr ""
+msgstr "გამოტოვება"
 
 #: engines/metaengine.cpp:98 engines/sky/metaengine.cpp:120
 msgid "Skip line"
@@ -3141,7 +3144,7 @@ msgstr ""
 #: engines/grim/grim.cpp:620 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
-msgstr ""
+msgstr "დადასტურება"
 
 #: engines/metaengine.cpp:404
 msgid "Autosave on"
@@ -3153,7 +3156,7 @@ msgstr ""
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:178
 msgid "OpenGL"
-msgstr ""
+msgstr "OpenGL"
 
 #: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
@@ -3186,11 +3189,11 @@ msgstr ""
 
 #: audio/fmopl.cpp:96
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/fmopl.cpp:97
 msgid "OPL3LPT"
-msgstr ""
+msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:100
 msgid "RetroWave OPL3"
@@ -3335,7 +3338,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:332
 msgid "Global"
-msgstr ""
+msgstr "გლობალური"
 
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:350
@@ -3348,7 +3351,7 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:352
 msgid "Toggle mute"
-msgstr ""
+msgstr "დადუმების გადართვა"
 
 #: backends/events/default/default-events.cpp:380
 msgid "Open Debugger"
@@ -3404,7 +3407,7 @@ msgstr ""
 #: backends/fs/android/android-saf-fs.cpp:696
 #: backends/fs/android/android-saf-fs.cpp:700
 msgid "Add a new folder"
-msgstr ""
+msgstr "ახალი საქაღალდის დამატება"
 
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
@@ -3421,7 +3424,7 @@ msgstr ""
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
-msgstr ""
+msgstr "ცენტრი"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
@@ -3438,7 +3441,7 @@ msgstr ""
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
-msgstr ""
+msgstr "ფანჯარაში ჩატევა"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
@@ -3506,7 +3509,7 @@ msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "მთელ ეკრანზე გატანის ჩართ/გამორთ"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:101
 #: engines/wintermute/keymapper_tables.h:960
@@ -3524,7 +3527,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1862
 #: engines/wintermute/keymapper_tables.h:1895
 msgid "Save screenshot"
-msgstr ""
+msgstr "ეკრანის ანაბეჭდის შენახვა"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:455
 msgid "Toggle linear filtered scaling"
@@ -3552,7 +3555,7 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:244
 msgid "Left Mouse Button"
-msgstr ""
+msgstr "თაგუნას მარცხენა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Right Mouse Button"
@@ -3564,11 +3567,11 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "თაგუნას რგოლი მაღლა"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "თაგუნას რგოლი დაბლა"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "X1 Mouse Button"
@@ -3715,7 +3718,7 @@ msgstr ""
 #: backends/keymapper/remap-widget.cpp:295
 #: backends/keymapper/remap-widget.cpp:325
 msgid "Reset to defaults"
-msgstr ""
+msgstr "ნაგულისხმები პარამეტრების დაყენება"
 
 #: backends/keymapper/remap-widget.cpp:296
 msgid "Clear mapping"
@@ -3814,7 +3817,7 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
 msgid "Create directory"
-msgstr ""
+msgstr "საქაღალდის შექმნა"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
@@ -3940,12 +3943,12 @@ msgstr ""
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
 msgid "Bottom"
-msgstr ""
+msgstr "ქვედა"
 
 #: backends/platform/3ds/options-dialog.cpp:60
 msgctxt "3ds-screen"
 msgid "Both"
-msgstr ""
+msgstr "ორივე"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
@@ -3955,7 +3958,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:49
@@ -3965,7 +3968,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:50
@@ -3975,7 +3978,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #. I18N: Hardware key
 #. I18N: Return key
@@ -3988,7 +3991,7 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:47
 #: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
 msgid "Select"
-msgstr ""
+msgstr "არჩევა"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:52
@@ -3998,17 +4001,17 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:46 backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
-msgstr ""
+msgstr "გაშვება"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:56
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:55
@@ -4019,7 +4022,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
-msgstr ""
+msgstr "მარცხ"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:56
@@ -4030,7 +4033,7 @@ msgstr ""
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr ""
+msgstr "წითელი"
 
 #: backends/platform/3ds/osystem-events.cpp:65
 msgid "C-Pad X"
@@ -4043,7 +4046,7 @@ msgstr ""
 #: backends/platform/3ds/osystem-events.cpp:71
 #: backends/platform/ds/osystem_ds.cpp:185
 msgid "Touch"
-msgstr ""
+msgstr "შეხება"
 
 #: backends/platform/3ds/osystem-events.cpp:311
 msgid "Toggle Drag Mode"
@@ -4242,7 +4245,7 @@ msgstr ""
 #: backends/platform/ios7/ios7_options.mm:115
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "In menus"
-msgstr ""
+msgstr "მენიუებში"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
@@ -4290,21 +4293,21 @@ msgstr ""
 #: backends/platform/ios7/ios7_options.mm:144
 #: backends/platform/ios7/ios7_options.mm:159
 msgid "Automatic"
-msgstr ""
+msgstr "ავტომატური"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 #: backends/platform/ios7/ios7_options.mm:145
 #: backends/platform/ios7/ios7_options.mm:160
 msgid "Portrait"
-msgstr ""
+msgstr "პორტრეტი"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
 msgid "Landscape"
-msgstr ""
+msgstr "ლანდშაფტი"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:152
@@ -4318,7 +4321,7 @@ msgstr ""
 
 #: backends/platform/android/options.cpp:493
 msgid "Remove"
-msgstr ""
+msgstr "წაშლა"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
@@ -4498,7 +4501,7 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1010
 msgid "Keyboard"
-msgstr ""
+msgstr "კლავიატურა"
 
 #: backends/platform/sdl/sdl.cpp:1013
 msgid ""
@@ -4558,27 +4561,27 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "Hide Others"
-msgstr ""
+msgstr "სხვების დამალვა"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "Show All"
-msgstr ""
+msgstr "ყველას ჩვენება"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:255
 msgid "Window"
-msgstr ""
+msgstr "ფანჯარა"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:257
 msgid "Minimize"
-msgstr ""
+msgstr "ჩაკეცვა"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:267
 msgid "User Manual"
-msgstr ""
+msgstr "მომხმარებლის სახელმძღვანელო"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:269
 msgid "General Information"
-msgstr ""
+msgstr "ზოგადი ინფორმაცია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:270
 msgid "What's New in ScummVM"
@@ -4586,15 +4589,15 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:272
 msgid "Credits"
-msgstr ""
+msgstr "კრედიტები"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:273
 msgid "GPL License"
-msgstr ""
+msgstr "GPL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:274
 msgid "LGPL License"
-msgstr ""
+msgstr "LGPL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:275
 msgid "Freefont License"
@@ -4606,28 +4609,28 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:277
 msgid "BSD License"
-msgstr ""
+msgstr "BSD-ის ლიცენზია"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:79
 #: backends/platform/sdl/miyoo/miyoo.cpp:106
 #: backends/platform/sdl/ps3/ps3.cpp:59
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:81
 #: backends/platform/sdl/miyoo/miyoo.cpp:108
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:530
 #: engines/grim/grim.cpp:626 engines/hdb/metaengine.cpp:264
 msgid "Menu"
-msgstr ""
+msgstr "მენიუ"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:110
@@ -4635,54 +4638,54 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:47
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:112
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:202
 msgid "Cross"
-msgstr ""
+msgstr "ჯვარი"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:196
 msgid "Circle"
-msgstr ""
+msgstr "წრე"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:184
 msgid "Square"
-msgstr ""
+msgstr "კვადრატი"
 
 #: backends/platform/sdl/ps3/ps3.cpp:45
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "Minus"
-msgstr ""
+msgstr "მინუსი"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 #: backends/platform/sdl/switch/switch.cpp:43
 msgid "Plus"
-msgstr ""
+msgstr "პლუსი"
 
 #: backends/platform/wii/options.cpp:50
 msgid "Video"
-msgstr ""
+msgstr "ვიდეო"
 
 #: backends/platform/wii/options.cpp:53
 msgid "Current video mode:"
@@ -4702,7 +4705,7 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:70
 msgid "Input"
-msgstr ""
+msgstr "შეყვანა"
 
 #: backends/platform/wii/options.cpp:73
 msgid "GC Pad sensitivity:"
@@ -4714,15 +4717,15 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:85
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:88 backends/platform/wii/options.cpp:100
 msgid "Status:"
-msgstr ""
+msgstr "მდგომარეობა:"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Unknown"
-msgstr ""
+msgstr "უცნობი"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
@@ -4734,19 +4737,19 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:105
 msgid "Server:"
-msgstr ""
+msgstr "სერვერი:"
 
 #: backends/platform/wii/options.cpp:109
 msgid "Share:"
-msgstr ""
+msgstr "გაზიარება:"
 
 #: backends/platform/wii/options.cpp:117
 msgid "Password:"
-msgstr ""
+msgstr "პაროლი:"
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
@@ -4807,7 +4810,7 @@ msgstr ""
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr ""
+msgstr "გამშვები"
 
 #: backends/updates/macosx/macosx-updates.mm:73
 msgid "Check for Updates..."
@@ -4916,7 +4919,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:143
 msgid "Mouse support"
-msgstr ""
+msgstr "თაგუნას მხარდაჭერა"
 
 #: engines/agi/metaengine.cpp:144
 msgid ""
@@ -4986,7 +4989,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:267
 msgid "Restore"
-msgstr ""
+msgstr "აღდგენა"
 
 #: engines/agos/saveload.cpp:139
 msgid "Quick load or save game isn't supported in this location"
@@ -5115,7 +5118,7 @@ msgstr ""
 #: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
-msgstr ""
+msgstr "კადრი/წმ-ის ჩვენება"
 
 #: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
@@ -5135,7 +5138,7 @@ msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
-msgstr ""
+msgstr "ვერსიის ჩვენება"
 
 #: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
@@ -5201,7 +5204,7 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2754
 msgid "Continue"
-msgstr ""
+msgstr "გაგრძელება"
 
 #: engines/bladerunner/detection_tables.h:90
 #: engines/bladerunner/detection_tables.h:101
@@ -5363,7 +5366,7 @@ msgstr ""
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
 msgid "Game Options"
-msgstr ""
+msgstr "თამაშის მორგება"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -5383,12 +5386,12 @@ msgstr ""
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:296
 msgid "Scroll Up"
-msgstr ""
+msgstr "მაღლა აქაჩვა"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:303
 msgid "Scroll Down"
-msgstr ""
+msgstr "ქვემოთ ჩამოწევა"
 
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
@@ -5402,7 +5405,7 @@ msgstr ""
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/pegasus/pegasus.cpp:2824
 msgid "Save Game"
-msgstr ""
+msgstr "თამაშის შენახვა"
 
 #. I18N: This keymap opens KIA's LOAD GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -5410,7 +5413,7 @@ msgstr ""
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/pegasus/pegasus.cpp:2830
 msgid "Load Game"
-msgstr ""
+msgstr "თამაშის ჩატვირთვა"
 
 #. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -5442,11 +5445,11 @@ msgstr ""
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
-msgstr ""
+msgstr "თამაშიდან გასვლა"
 
 #: engines/buried/buried.cpp:590
 msgid "Are you sure you want to quit?"
-msgstr ""
+msgstr "დარწმუნებული ხართ, რომ გსურთ, გახვიდეთ?"
 
 #: engines/buried/buried.cpp:600
 msgid "Your game is now Paused.  Click OK to continue."
@@ -5553,20 +5556,20 @@ msgstr ""
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:822
 msgid "Attack"
-msgstr ""
+msgstr "შეტევა"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:130 engines/mm/mm1/metaengine.cpp:67
 msgid "Block"
-msgstr ""
+msgstr "დაბლოკვა"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:445
 msgid "Accept"
-msgstr ""
+msgstr "დასტური"
 
 #: engines/crab/input/input.cpp:186
 msgid "Previous"
-msgstr ""
+msgstr "წინა"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -5594,19 +5597,19 @@ msgstr ""
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
 msgid "Next Page"
-msgstr ""
+msgstr "შემდეგი გვერდი"
 
 #: engines/crab/input/input.cpp:226
 msgid "Previous Page"
-msgstr ""
+msgstr "წინა გვერდი"
 
 #: engines/crab/input/input.cpp:241
 msgid "Map"
-msgstr ""
+msgstr "რუკა"
 
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
-msgstr ""
+msgstr "ჟურნალი"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
@@ -5618,7 +5621,7 @@ msgstr ""
 #: engines/scumm/help.cpp:251 engines/twine/metaengine.cpp:418
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
-msgstr ""
+msgstr "ინვენტარი"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -5664,7 +5667,7 @@ msgstr ""
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
-msgstr ""
+msgstr "ქმედება"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
@@ -5840,7 +5843,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:681
 msgid "Saved.\n"
-msgstr ""
+msgstr "შენახულია.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -5889,12 +5892,12 @@ msgstr ""
 #: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
 #: engines/icb/icb.cpp:197
 msgid "Run"
-msgstr ""
+msgstr "გაშვება"
 
 #: engines/grim/grim.cpp:492 engines/hpl1/metaengine.cpp:90
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 msgid "Examine"
-msgstr ""
+msgstr "გამოცდა"
 
 #: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
 msgid "Use/Talk"
@@ -6050,7 +6053,7 @@ msgstr ""
 
 #: engines/groovie/saveload.cpp:52
 msgid "Reserved"
-msgstr ""
+msgstr "რეზერვირებული"
 
 #: engines/groovie/script.cpp:660
 msgid "Failed to save game"
@@ -6082,19 +6085,19 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
 msgid "Move up"
-msgstr ""
+msgstr "აწევა"
 
 #: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
 msgid "Move down"
-msgstr ""
+msgstr "ქვემოთ ჩამოწევა"
 
 #: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
 msgid "Move left"
-msgstr ""
+msgstr "მარცხნივ გაწევა"
 
 #: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
 msgid "Move right"
-msgstr ""
+msgstr "მარჯვნივ გაწევა"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
@@ -6113,7 +6116,7 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:270
 msgid "Debug"
-msgstr ""
+msgstr "გამართვა"
 
 #: engines/hopkins/metaengine.cpp:43 engines/hopkins/metaengine.cpp:55
 msgid "Gore Mode"
@@ -6125,11 +6128,11 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:76
 msgid "Forward"
-msgstr ""
+msgstr "გადაგზავნა"
 
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
-msgstr ""
+msgstr "უკან"
 
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 msgid "Strafe Left"
@@ -6149,7 +6152,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:83
 msgid "Jump"
-msgstr ""
+msgstr "გადასვლა"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
@@ -6171,7 +6174,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:95
 msgid "Notebook"
-msgstr ""
+msgstr "ნოუთბუქი"
 
 #: engines/hpl1/metaengine.cpp:96
 msgid "Personal Notes"
@@ -6179,7 +6182,7 @@ msgstr ""
 
 #: engines/hpl1/metaengine.cpp:97
 msgid "Flashlight"
-msgstr ""
+msgstr "ფანარი"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
@@ -6228,7 +6231,7 @@ msgstr ""
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "ცეცხლი"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -6371,7 +6374,7 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:504
 #: engines/twine/metaengine.cpp:380
 msgid "Move Forward"
-msgstr ""
+msgstr "წინ"
 
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:505
 msgid "Move Back"
@@ -6379,23 +6382,23 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Left"
-msgstr ""
+msgstr "მარცხნივ გაწევა"
 
 #: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Right"
-msgstr ""
+msgstr "მარჯვნივ გაწევა"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:508
 #: engines/mm/mm1/metaengine.cpp:97 engines/pegasus/pegasus.cpp:2739
 #: engines/twine/metaengine.cpp:401 engines/zvision/metaengine.cpp:209
 msgid "Turn Left"
-msgstr ""
+msgstr "მარცხნივ მობრუნება"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:509
 #: engines/mm/mm1/metaengine.cpp:98 engines/pegasus/pegasus.cpp:2746
 #: engines/twine/metaengine.cpp:394 engines/zvision/metaengine.cpp:215
 msgid "Turn Right"
-msgstr ""
+msgstr "მარჯვნივ მობრუნება"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Open/Close Inventory"
@@ -6439,15 +6442,15 @@ msgstr ""
 
 #: engines/kyra/engine/lol.cpp:500
 msgid "Attack 1"
-msgstr ""
+msgstr "შეტევა 1"
 
 #: engines/kyra/engine/lol.cpp:501
 msgid "Attack 2"
-msgstr ""
+msgstr "შეტევა 2"
 
 #: engines/kyra/engine/lol.cpp:502
 msgid "Attack 3"
-msgstr ""
+msgstr "შეტევა 3"
 
 #: engines/kyra/engine/lol.cpp:503 engines/mm/mm1/metaengine.cpp:103
 msgid "Show Map"
@@ -6464,7 +6467,7 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/kyra/engine/lol.cpp:510 engines/mm/mm1/metaengine.cpp:109
 msgid "Rest"
-msgstr ""
+msgstr "პაუზა"
 
 #: engines/kyra/engine/lol.cpp:511
 msgid "Options"
@@ -6623,7 +6626,7 @@ msgstr ""
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
 #: engines/twine/metaengine.cpp:432 engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
-msgstr ""
+msgstr "Escape"
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View Party Member 1"
@@ -6652,7 +6655,7 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
 msgid "Cast"
-msgstr ""
+msgstr "როლებში"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
@@ -6682,23 +6685,23 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
 msgid "Delay"
-msgstr ""
+msgstr "შეყოვნება"
 
 #. I18N: Combat command in Might & Magic 1
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:86 engines/mm/mm1/metaengine.cpp:107
 msgid "Protect"
-msgstr ""
+msgstr "დაცვა"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:94
 msgid "Forwards"
-msgstr ""
+msgstr "წინ"
 
 #. I18N: Party arrangement command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:96
 msgid "Backwards"
-msgstr ""
+msgstr "უკან"
 
 #: engines/mm/mm1/metaengine.cpp:104
 msgid "Toggle Minimap"
@@ -6716,12 +6719,12 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
 msgid "Bash"
-msgstr ""
+msgstr "Bash"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:148
 msgid "Unlock"
-msgstr ""
+msgstr "განბლოკვა"
 
 #: engines/mm/mm1/metaengine.cpp:122
 msgid "Goto location"
@@ -6876,15 +6879,15 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
-msgstr ""
+msgstr "უსწრაფესი"
 
 #: engines/mohawk/dialogs.cpp:367
 msgid "Normal"
-msgstr ""
+msgstr "ნორმალი"
 
 #: engines/mohawk/dialogs.cpp:368
 msgid "Best"
-msgstr ""
+msgstr "საუკეთესო"
 
 #: engines/mohawk/metaengine.cpp:292
 msgid "Myst ME support not compiled in"
@@ -6909,7 +6912,7 @@ msgstr ""
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
 #: engines/nancy/input.cpp:203
 msgid "Open main menu"
-msgstr ""
+msgstr "მთავარი მენიუს გახსნა"
 
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:850
 msgid "Load game state"
@@ -6934,7 +6937,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1764
 #: engines/wintermute/keymapper_tables.h:1797
 msgid "Show map"
-msgstr ""
+msgstr "რუკის ჩვენება"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -6948,7 +6951,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
 msgid "Load game"
-msgstr ""
+msgstr "თამაშის ჩატვირთვა"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
@@ -6959,7 +6962,7 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
-msgstr ""
+msgstr "ახალი თამაში"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -7013,14 +7016,14 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
-msgstr ""
+msgstr "მარცხნივ შეუხვიეთ"
 
 #: engines/mohawk/riven.cpp:898 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
-msgstr ""
+msgstr "მარჯვნივ შეუხვიეთ"
 
 #: engines/mohawk/riven.cpp:904
 msgid "Look up"
@@ -7155,7 +7158,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "სურათების გალერეა"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -7268,7 +7271,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:193
 msgid "Load file"
-msgstr ""
+msgstr "ფაილის ჩატვირთვა"
 
 #: engines/parallaction/saveload.cpp:200
 msgid "Loading game..."
@@ -7276,7 +7279,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:208
 msgid "Save file"
-msgstr ""
+msgstr "ფაილის შენახვა"
 
 #: engines/parallaction/saveload.cpp:215
 msgid "Saving game..."
@@ -7709,7 +7712,7 @@ msgstr ""
 #. I18N: Join online multiplayer game
 #: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3861
 msgid "Join"
-msgstr ""
+msgstr "შეერთება"
 
 #. I18N: Online multiplayer games were found
 #: engines/scumm/dialog-sessionselector.cpp:118
@@ -7758,7 +7761,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1018
 msgid "Expert"
-msgstr ""
+msgstr "ექსპერტი"
 
 #: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:658
 msgid "Enable game-specific enhancements"
@@ -7897,15 +7900,15 @@ msgstr ""
 
 #: engines/scumm/help.cpp:79
 msgid "Esc"
-msgstr ""
+msgstr "Esc"
 
 #: engines/scumm/help.cpp:80 engines/wintermute/keymapper_tables.h:2136
 msgid "Space"
-msgstr ""
+msgstr "სივრცე"
 
 #: engines/scumm/help.cpp:80 engines/vcruise/metaengine.cpp:149
 msgid "Pause game"
-msgstr ""
+msgstr "თამაშის შეჩერება"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
@@ -7937,7 +7940,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:92 engines/wintermute/keymapper_tables.h:2191
 msgid "Tab"
-msgstr ""
+msgstr "Tab"
 
 #: engines/scumm/help.cpp:92
 msgid "Simulate right mouse button"
@@ -8006,12 +8009,12 @@ msgstr ""
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163
 msgid "Push"
-msgstr ""
+msgstr "გადაცემა"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164
 msgid "Pull"
-msgstr ""
+msgstr "მიღება"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:199
@@ -8031,11 +8034,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:129
 msgid "Get"
-msgstr ""
+msgstr "მიღება"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:143
 msgid "Read"
-msgstr ""
+msgstr "წაკითხვა"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:149
 msgid "New kid"
@@ -8044,12 +8047,12 @@ msgstr ""
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173
 msgid "Turn on"
-msgstr ""
+msgstr "ჩართვა"
 
 #: engines/scumm/help.cpp:134 engines/scumm/help.cpp:156
 #: engines/scumm/help.cpp:174
 msgid "Turn off"
-msgstr ""
+msgstr "გამორთვა"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:196 engines/wintermute/keymapper_tables.h:1540
@@ -8077,23 +8080,23 @@ msgstr ""
 
 #: engines/scumm/help.cpp:158
 msgid "Fix"
-msgstr ""
+msgstr "გასწორება"
 
 #: engines/scumm/help.cpp:160
 msgid "Switch"
-msgstr ""
+msgstr "გადართვა"
 
 #: engines/scumm/help.cpp:168 engines/scumm/help.cpp:230
 msgid "Look"
-msgstr ""
+msgstr "გარეგნობა"
 
 #: engines/scumm/help.cpp:175 engines/scumm/help.cpp:225
 msgid "Talk"
-msgstr ""
+msgstr "საუბარი"
 
 #: engines/scumm/help.cpp:176
 msgid "Travel"
-msgstr ""
+msgstr "მოგზაურობა"
 
 #: engines/scumm/help.cpp:177
 msgid "To Henry / To Indy"
@@ -8178,7 +8181,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:224
 msgid "Walk"
-msgstr ""
+msgstr "გასეირნება"
 
 #: engines/scumm/help.cpp:228
 msgid "Object"
@@ -8198,11 +8201,11 @@ msgstr ""
 
 #: engines/scumm/help.cpp:237
 msgid "Punch"
-msgstr ""
+msgstr "გახვრეტა"
 
 #: engines/scumm/help.cpp:238
 msgid "Kick"
-msgstr ""
+msgstr "გაგდება"
 
 #: engines/scumm/help.cpp:242
 msgid "Regular cursor"
@@ -8451,7 +8454,7 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:640
 msgid "Enable smooth scrolling"
-msgstr ""
+msgstr "დარბილებული ჩაწევა/ამოწევის ჩართვა"
 
 #: engines/scumm/metaengine.cpp:641
 msgid "(instead of the normal 8-pixels steps scrolling)"
@@ -8905,7 +8908,7 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable debug mode"
-msgstr ""
+msgstr "გამართვის გამოტანის ჩართვა"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable the debug mode"
@@ -9053,7 +9056,7 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:387
 msgid "Move Backward"
-msgstr ""
+msgstr "უკან"
 
 #: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
@@ -9070,7 +9073,7 @@ msgstr ""
 #: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
 #: engines/twine/metaengine.cpp:521
 msgid "Abort"
-msgstr ""
+msgstr "შეწყვეტა"
 
 #: engines/twine/metaengine.cpp:558
 msgid "Previous location"
@@ -9103,7 +9106,7 @@ msgstr ""
 #: engines/twine/parser/text.cpp:38
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr ""
+msgstr "ენების ამორჩევა"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
@@ -9270,7 +9273,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
-msgstr ""
+msgstr "თამაშის შენახვა"
 
 #: engines/vcruise/metaengine.cpp:139
 msgid "Open sound settings"
@@ -9418,7 +9421,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1231
 #: engines/wintermute/keymapper_tables.h:1255
 msgid "Previous page"
-msgstr ""
+msgstr "წინა გვერდი"
 
 #: engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
@@ -9428,7 +9431,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1236
 #: engines/wintermute/keymapper_tables.h:1260
 msgid "Next page"
-msgstr ""
+msgstr "შემდეგი გვერდი"
 
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
@@ -9599,7 +9602,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1366
 #: engines/wintermute/keymapper_tables.h:1422
 msgid "Show help"
-msgstr ""
+msgstr "დახმარების ჩვენება"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -9613,7 +9616,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1969
 #: engines/wintermute/keymapper_tables.h:2171
 msgid "Scroll up"
-msgstr ""
+msgstr "მაღლა აწევა"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
@@ -9627,7 +9630,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1976
 #: engines/wintermute/keymapper_tables.h:2176
 msgid "Scroll down"
-msgstr ""
+msgstr "დაბლა ჩამოწევა"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
@@ -9656,7 +9659,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
-msgstr ""
+msgstr "გასვლა"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
@@ -9728,11 +9731,11 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
-msgstr ""
+msgstr "პირველი გვერდი"
 
 #: engines/wintermute/keymapper_tables.h:970
 msgid "Last page"
-msgstr ""
+msgstr "ბოლო გვერდი"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
@@ -9837,7 +9840,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr ""
+msgstr "სუბტიტრების გადართვა"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
@@ -9888,7 +9891,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
-msgstr ""
+msgstr "დაპატარავება"
 
 #: engines/wintermute/keymapper_tables.h:1738
 msgid "Zoom in"
@@ -9912,12 +9915,12 @@ msgstr ""
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:2009
 msgid "Rotate"
-msgstr ""
+msgstr "დატრიალება"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:2035
 msgid "Drop"
-msgstr ""
+msgstr "გადაგდება"
 
 #: engines/wintermute/keymapper_tables.h:2043
 msgid "Player 1: Up"
@@ -9958,7 +9961,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
@@ -10017,7 +10020,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:244
 msgid "Score"
-msgstr ""
+msgstr "ქულები"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
