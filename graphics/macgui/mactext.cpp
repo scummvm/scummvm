@@ -2247,12 +2247,28 @@ int MacText::getMouseWord(int x, int y) {
 	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
 
-	int index = 0;
+	int index = 1;
+	bool inWhitespace = true;
+	// getMouseWord:
+	// - starts from index 1
+	// - a word goes from the first leading whitespace character
+	//   up until the end of the word
+	// - trailing whitespace or empty space at the end of a line
+	//   counts as part of the word on the next line
+	// - empty space at the end of the text counts as a word
 	for (int i = 0; i < row; i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
-			index++;
+			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
+			for (auto it : data) {
+				if (it == ' ' && !inWhitespace) {
+					index++;
+					inWhitespace = true;
+				} else if (it != ' ' && inWhitespace) {
+					inWhitespace = false;
+				}
+			}
 		}
 	}
 
@@ -2260,16 +2276,23 @@ int MacText::getMouseWord(int x, int y) {
 	for (uint j = 0; j < _canvas._text[row].chunks.size(); j++) {
 		if (_canvas._text[row].chunks[j].text.empty())
 			continue;
-		cur += _canvas._text[row].chunks[j].text.size();
-		// Avoid overflowing the word index if we run out of line;
-		// it should count as part of the last chunk
-		if ((cur <= col) && (j < _canvas._text[row].chunks.size() - 1))
-			index++;
-		else
+		Common::String data = _canvas._text[row].chunks[j].getEncodedText();
+		for (auto it : data) {
+			cur++;
+			if (it == ' ' && !inWhitespace) {
+				index++;
+				inWhitespace = true;
+			} else if (it != ' ' && inWhitespace) {
+				inWhitespace = false;
+			}
+			if (cur > col)
+				break;
+		}
+		if (cur > col)
 			break;
 	}
 
-	return index + 1;
+	return index;
 }
 
 int MacText::getMouseItem(int x, int y) {
@@ -2281,13 +2304,28 @@ int MacText::getMouseItem(int x, int y) {
 	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
 
-	int index = 0;
+	// getMouseItem
+	// - starts from index 1
+	// - an item goes from the first non-comma character up until a comma
+	// - trailing whitespace or empty space at the end of a line
+	//   counts as part of the item on the next line
+	// - empty space at the end of the text counts as an item
+	int index = 1;
+	bool onComma = false;
 	for (int i = 0; i < row; i++) {
 		for (uint j = 0; j < _canvas._text[i].chunks.size(); j++) {
 			if (_canvas._text[i].chunks[j].text.empty())
 				continue;
-			if (_canvas._text[i].chunks[j].getEncodedText().contains(','))
-				index++;
+			Common::String data = _canvas._text[i].chunks[j].getEncodedText();
+			for (auto it : data) {
+				if (onComma) {
+					index += 1;
+					onComma = false;
+				}
+				if (it == ',') {
+					onComma = true;
+				}
+			}
 		}
 	}
 
@@ -2295,20 +2333,24 @@ int MacText::getMouseItem(int x, int y) {
 	for (uint i = 0; i < _canvas._text[row].chunks.size(); i++) {
 		if (_canvas._text[row].chunks[i].text.empty())
 			continue;
-
-		for (uint j = 0; j < _canvas._text[row].chunks[i].text.size(); j++) {
+		Common::String data = _canvas._text[row].chunks[i].getEncodedText();
+		for (auto it : data) {
+			if (onComma) {
+				index += 1;
+				onComma = false;
+			}
+			if (it == ',') {
+				onComma = true;
+			}
 			cur++;
 			if (cur > col)
 				break;
-			if (_canvas._text[row].chunks[i].text[j] == ',')
-				index++;
 		}
-
 		if (cur > col)
 			break;
 	}
 
-	return index + 1;
+	return index;
 }
 
 int MacText::getMouseLine(int x, int y) {
