@@ -37,7 +37,7 @@ class BlendBlitImpl_SSE2 : public BlendBlitImpl_Base {
 	friend class BlendBlit;
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend {
+struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m128i ina;
 		if (alphamod)
@@ -84,7 +84,7 @@ struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend {
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend {
+struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m128i ina, alphaMask;
 		if (alphamod) {
@@ -130,14 +130,14 @@ struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend {
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend {
+struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		return _mm_or_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
 	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend {
+struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m128i alphaMask = _mm_cmpeq_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask)), _mm_setzero_si128());
 		dst = _mm_and_si128(dst, alphaMask);
@@ -147,7 +147,7 @@ struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend {
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend {
+struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m128i ina;
 		if (alphamod)
@@ -201,7 +201,7 @@ struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend {
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend {
+struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend<doscale, rgbmod, alphamod> {
 	static inline __m128i simd(__m128i src, __m128i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m128i ina = _mm_and_si128(src, _mm_set1_epi32(BlendBlit::kAModMask));
 		__m128i srcb = _mm_srli_epi32(_mm_and_si128(src, _mm_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
