@@ -44,6 +44,20 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::Platform::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()},
+	// Penumbra: Overture (The Penumbra Collection)
+	{"penumbraoverture", nullptr,
+	 AD_ENTRY1s("Penumbra.exe", "202990aa064ae67a675e2b187384036a", 2736128),
+	 Common::Language::EN_ANY,
+	 Common::kPlatformWindows,
+	 ADGF_UNSTABLE,
+	 GUIO0()},
+	// Penumbra: Black Plague (GOG Galaxy version)
+	{"penumbrablackplague", nullptr,
+	 AD_ENTRY1s("Penumbra.exe", "a066f7284e063ac3e5d7409102b7a497", 2985984),
+	 Common::Language::EN_ANY,
+	 Common::kPlatformWindows,
+	 ADGF_UNSTABLE,
+	 GUIO0()},
 
 	AD_TABLE_END_MARKER};
 
