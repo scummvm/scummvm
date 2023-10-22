@@ -760,7 +760,12 @@ MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
 }
 
 int MacGui::delay(uint32 ms) {
-	uint32 to = _system->getMillis() + ms;
+	uint32 to;
+
+	if (ms == (uint32)-1)
+		to = 0xFFFFFFFF;
+	else
+		to = _system->getMillis() + ms;
 
 	while (_system->getMillis() < to) {
 		Common::Event event;
@@ -1889,8 +1894,6 @@ void MacIndy3Gui::showAboutDialog() {
 	clearAboutDialog(window);
 	window->show();
 
-	bool skip = false;
-
 	Graphics::Surface *s = window->innerSurface();
 	Common::Rect clipRect(2, 2, s->w - 4, s->h - 4);
 
@@ -1901,14 +1904,14 @@ void MacIndy3Gui::showAboutDialog() {
 	// 10 fps.
 
 	int scene = 0;
+	int status;
 
 	int trainX = -2;
 	int trolleyX = width + 1;
 	int trolleyFrame = 1;
 	int trolleyFrameDelta = 1;
 	int trolleyWaitFrames = 50;
-	int textWaitFrames = 53;
-
+	int waitFrames = 53;
 
 	// These strings are part of the STRS resource, but I don't know how to
 	// safely read them from there yet. So hard-coded it is for now.
@@ -1947,6 +1950,35 @@ void MacIndy3Gui::showAboutDialog() {
 		TEXT_END_MARKER
 	};
 
+	const TextLine page5[] = {
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "created by" },
+		{ 105, 36, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, "and" },
+		{ 130, 66, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page6[] = {
+		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Indy hint books are available!" },
+		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
+		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
+		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
+		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
+		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page7[] = {
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
+		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For hints or technical support call" },
+		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
+		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, "The charge is 75\xA2 per minute." },
+		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
+		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		TEXT_END_MARKER
+	};
+
 	#undef TEXT_END_MARKER
 
 	// Header texts aren't rendered correctly. Apparently the original does
@@ -1969,7 +2001,10 @@ void MacIndy3Gui::showAboutDialog() {
 			break;
 
 		case 1:
-			if (--textWaitFrames == 0)
+		case 4:
+		case 5:
+		case 6:
+			if (--waitFrames == 0)
 				changeScene = true;
 			break;
 
@@ -1995,15 +2030,15 @@ void MacIndy3Gui::showAboutDialog() {
 		}
 
 		window->update();
+		status = delay(100);
 
-		int status = delay(100);
 		if (status == 2)
 			break;
 
 		if (status == 1 || changeScene) {
 			changeScene = false;
-
 			scene++;
+			waitFrames = 53;
 
 			switch (scene) {
 			case 1:
@@ -2026,6 +2061,18 @@ void MacIndy3Gui::showAboutDialog() {
 				clearAboutDialog(window);
 				window->drawTextBox(r1, page4);
 				break;
+
+			case 5:
+				window->drawTextBox(r1, page5);
+				break;
+
+			case 6:
+				window->drawTextBox(r1, page6);
+				break;
+
+			case 7:
+				window->drawTextBox(r1, page7);
+				break;
 			}
 
 			window->update();
@@ -2035,123 +2082,15 @@ void MacIndy3Gui::showAboutDialog() {
 		}
 	}
 
-#if 0
-	// The train seems to move at 12 pixels at a time. When recorded at
-	// 30 fps, it moves every 3 frames. I'm going to assume that's the
-	// intended frame rate.
-
-	for (x = 0; x < train.w; x += 12) {
-		window->drawSprite(&train, 2 - x, 40, clipRect);
-		window->update();
-
-		if (delay(100)) {
-			skip = true;
-			break;
-		}
-	}
-
-	if (skip) {
-		clearAboutDialog(window);
-		window->update();
-		skip = false;
-	}
-
-	// Page 2 - First text box
-
-	window->drawTextBox(r1);
-
-	window->update();
-
-	if (delay(5333))
-		skip = true;
-
-	clearAboutDialog(window);
-
-	// Page 3 - The trolley
-
-	// The trolley moves 4 pixels at a time every three frames, and the
-	// animation frame changes every time it moves. But the animation cycle
-	// seems semi-random to me. I think this is a case of not caring too
-	// deeply about pixel accuracy as long as everything stops and starts
-	// at the right time, moves at the right speed, and stops and starts
-	// on the correct animation frame.
-
-	window->drawTextBox(r2);
-
-	int trolleyFrame = 1;
-	int trolleyFrameDelta = 1;
-
-	for (x = width + 1; !skip && x >= -85; x -= 4) {
-		window->drawSprite(&trolley[trolleyFrame], x, 78, clipRect);
-		window->update();
-
-		if (x == 161) {
-			if (delay(5000)) {
-				skip = true;
-				break;
-			}
-
-			window->drawTextBox(r2);
-		}
-
-		trolleyFrame += trolleyFrameDelta;
-		if (trolleyFrame < 0 || trolleyFrame > 2) {
-			trolleyFrame = 1;
-			trolleyFrameDelta = -trolleyFrameDelta;
-		}
-
-		if (delay(100)) {
-			skip = true;
-			break;
-		}
-	}
-
-	if (delay(5333))
-		skip = true;
-
-	window->drawTextBox(r1);
-	window->update();
-
-	if (skip) {
-		clearAboutDialog(window);
-		window->update();
-		skip = false;
-	}
-#endif
-
 	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
 
-	bool shouldQuit = false;
-	bool shouldQuitEngine = false;
-
-	while (!shouldQuit) {
-		Common::Event event;
-
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				shouldQuit = true;
-				shouldQuitEngine = true;
-				break;
-
-			case Common::EVENT_LBUTTONDOWN:
-				shouldQuit = true;
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		_system->updateScreen();
-		_system->delayMillis(10);
-	}
+	status = delay(-1);
 
 	_windowManager->popCursor();
 
 	delete window;
 
-	if (shouldQuitEngine)
+	if (status == 2)
 		debug("Quit everything");
 }
 
