@@ -263,7 +263,7 @@ private:
 
 	uint32 _randbuffer[RANDKK][2];
 	int _randp1, _randp2;
-	Graphics::TransparentSurface *_transitionTexture;
+	Graphics::ManagedSurface *_transitionTexture;
 
 	// Parallax
 	ParallaxLayers *_parallaxLayers;
