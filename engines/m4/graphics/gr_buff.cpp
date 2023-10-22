@@ -182,6 +182,11 @@ bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 	if ((w < 1) || (h < 1))
 		return true;
 
+	const byte *s1 = from->data;
+	const byte *s2 = from->data + from->stride * from->h;
+	const byte *d1 = to->data;
+	const byte *d2 = to->data + to->stride * to->h;
+
 	// initialize pointers
 	const byte *src = gr_buffer_pointer(from, sx, sy);
 	byte *dest = gr_buffer_pointer(to, dx, dy);
@@ -192,8 +197,12 @@ bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,
 
 	// copy one to d'other
 	int i;
-	for (i = 0; i < h; i++, dest += dIncr, src += sIncr)
+	for (i = 0; i < h; i++, dest += dIncr, src += sIncr) {
+		assert(src >= s1 && (src + w) <= s2);
+		assert(dest >= d1 && (dest + w) <= d2);
+
 		memmove(dest, src, w);
+	}
 
 	return true;
 }

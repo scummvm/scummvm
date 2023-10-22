@@ -23,13 +23,12 @@
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_buff.h"
 #include "m4/mem/memman.h"
-//include "m4/vars.h"
 
 namespace M4 {
 
-void tt_read_header(SysFile *ifp, long *file_x, long *file_y,
-	long *num_x_tiles, long *num_y_tiles, long *tile_x, long *tile_y, RGB8 *pal) {
-	long value;
+void tt_read_header(SysFile *ifp, int32 *file_x, int32 *file_y,
+	int32 *num_x_tiles, int32 *num_y_tiles, int32 *tile_x, int32 *tile_y, RGB8 *pal) {
+	int32 value;
 	uint8 buf[4];
 	int	i;
 	byte *byte_ptr;
@@ -103,8 +102,8 @@ void tt_read_header(SysFile *ifp, long *file_x, long *file_y,
 	}
 }
 
-Buffer *tt_read(SysFile *ifp, int index, long tile_x, long tile_y) {
-	long tile_size;
+Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
+	int32 tile_size;
 	int offset;
 	Buffer *out;
 	void *bufferHandle;
