@@ -55,7 +55,7 @@ SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(data, DisposeAfterUse::YES);
-		return new SoundClipWave<MUS_MP3>(audioStream, false);
+		return new SoundClipWave<MUS_MP3>(audioStream, loop);
 	} else {
 		return nullptr;
 	}
