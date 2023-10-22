@@ -122,7 +122,7 @@ public:
 
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
-		void drawTextBox(Common::Rect r, const TextLine *lines);
+		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
 	enum FontId {
