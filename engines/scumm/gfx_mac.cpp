@@ -416,7 +416,7 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 	s->setPixel(x, y, color);
 }
 
-void MacGui::SimpleWindow::drawTextBox(Common::Rect r, TextLine *lines) {
+void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines) {
 	Graphics::drawRoundRect(r, 9, kWhite, true, plotPixel, this);
 	Graphics::drawRoundRect(r, 9, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);
@@ -1913,13 +1913,41 @@ void MacIndy3Gui::showAboutDialog() {
 	// These strings are part of the STRS resource, but I don't know how to
 	// safely read them from there yet. So hard-coded it is for now.
 
-	TextLine page1[] = {
+	#define TEXT_END_MARKER { 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
+
+	const TextLine page1[] = {
 		{ 21, 4, kStyleHeader, Graphics::kTextAlignLeft, "Indiana Jones and the Last Crusade" },
 		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, "The Graphic Adventure" },
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Mac 1.7 8/17/90, Interpreter version 5.1.6" },
 		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
-		{ 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
+		TEXT_END_MARKER
 	};
+
+	const TextLine page2[] = {
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
+		{ 68, 21, kStyleHeader, Graphics::kTextAlignLeft, "Eric Johnston" },
+		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
+		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, "Dan Filner" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page3[] = {
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
+		{ 72, 21, kStyleHeader, Graphics::kTextAlignLeft, "Ron Baldwin" },
+		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
+		{ 211, 41, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page4[] = {
+		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Designed and scripted by" },
+		{ 75, 24, kStyleHeader, Graphics::kTextAlignLeft, "Noah Falstein" },
+		{ 132, 44, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		{ 165, 64, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		TEXT_END_MARKER
+	};
+
+	#undef TEXT_END_MARKER
 
 	// Header texts aren't rendered correctly. Apparently the original does
 	// its own shadowing by drawing the text twice, but that ends up
@@ -1985,18 +2013,18 @@ void MacIndy3Gui::showAboutDialog() {
 
 			case 2:
 				clearAboutDialog(window);
-				window->drawTextBox(r2, nullptr);
+				window->drawTextBox(r2, page2);
 				break;
 
 			case 3:
 				// Don't clear. The trolley is still on screen
 				// and only the text changes.
-				window->drawTextBox(r2, nullptr);
+				window->drawTextBox(r2, page3);
 				break;
 
 			case 4:
 				clearAboutDialog(window);
-				window->drawTextBox(r1, nullptr);
+				window->drawTextBox(r1, page4);
 				break;
 			}
 
