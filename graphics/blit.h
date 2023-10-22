@@ -226,6 +226,8 @@ private:
 	static void blitAVX2(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #endif
 	static void blitGeneric(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
+	template<class T>
+	static void blitT(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType);
 #undef LOGIC_FUNCS_EXT
 
 	typedef void(*BlitFunc)(Args &, const TSpriteBlendMode &, const AlphaType &);

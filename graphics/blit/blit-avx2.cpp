@@ -22,16 +22,16 @@
 #include "common/scummsys.h"
 #include <immintrin.h>
 
-#include "graphics/blit.h"
+#include "graphics/blit/blit-alpha.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
 
-class BlendBlitImpl_AVX2 {
+class BlendBlitImpl_AVX2 : public BlendBlitImpl_Base {
 	friend class BlendBlit;
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct AlphaBlend {
+struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m256i ina;
 		if (alphamod)
@@ -75,25 +75,10 @@ struct AlphaBlend {
 		src = _mm256_andnot_si256(alphaMask, src);
 		return _mm256_or_si256(dst, src);
 	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
-
-		if (ina != 0) {
-			uint outb = (out[BlendBlit::kBIndex] * (255 - ina) >> 8);
-			uint outg = (out[BlendBlit::kGIndex] * (255 - ina) >> 8);
-			uint outr = (out[BlendBlit::kRIndex] * (255 - ina) >> 8);
-
-			out[BlendBlit::kAIndex] = 255;
-			out[BlendBlit::kBIndex] = outb + (in[BlendBlit::kBIndex] * ina * cb >> 16);
-			out[BlendBlit::kGIndex] = outg + (in[BlendBlit::kGIndex] * ina * cg >> 16);
-			out[BlendBlit::kRIndex] = outr + (in[BlendBlit::kRIndex] * ina * cr >> 16);
-		}
-	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct MultiplyBlend {
+struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m256i ina, alphaMask;
 		if (alphamod) {
@@ -136,51 +121,27 @@ struct MultiplyBlend {
 		src = _mm256_andnot_si256(alphaMask, src);
 		return _mm256_or_si256(dst, src);
 	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
-
-		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] * ((in[BlendBlit::kBIndex] * cb * ina) >> 16) >> 8;
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] * ((in[BlendBlit::kGIndex] * cg * ina) >> 16) >> 8;
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] * ((in[BlendBlit::kRIndex] * cr * ina) >> 16) >> 8;
-		}
-	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct OpaqueBlend {
+struct OpaqueBlend : public BlendBlitImpl_Base::OpaqueBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		return _mm256_or_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
 	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		*(uint32 *)out = *(const uint32 *)in | BlendBlit::kAModMask;
-	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct BinaryBlend {
+struct BinaryBlend : public BlendBlitImpl_Base::BinaryBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m256i alphaMask = _mm256_cmpeq_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask)), _mm256_setzero_si256());
 		dst = _mm256_and_si256(dst, alphaMask);
 		src = _mm256_andnot_si256(alphaMask, _mm256_or_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask)));
 		return _mm256_or_si256(src, dst);
 	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 pix = *(const uint32 *)in;
-		int a = in[BlendBlit::kAIndex];
-
-		if (a != 0) {   // Full opacity (Any value not exactly 0 is Opaque here)
-			*(uint32 *)out = pix;
-			out[BlendBlit::kAIndex] = 0xFF;
-		}
-	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct AdditiveBlend {
+struct AdditiveBlend : public BlendBlitImpl_Base::AdditiveBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m256i ina;
 		if (alphamod)
@@ -231,20 +192,10 @@ struct AdditiveBlend {
 		src = _mm256_andnot_si256(alphaMask, src);
 		return _mm256_or_si256(dst, src);
 	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
-
-		if (ina != 0) {
-			out[BlendBlit::kBIndex] = out[BlendBlit::kBIndex] + ((in[BlendBlit::kBIndex] * cb * ina) >> 16);
-			out[BlendBlit::kGIndex] = out[BlendBlit::kGIndex] + ((in[BlendBlit::kGIndex] * cg * ina) >> 16);
-			out[BlendBlit::kRIndex] = out[BlendBlit::kRIndex] + ((in[BlendBlit::kRIndex] * cr * ina) >> 16);
-		}
-	}
 };
 
 template<bool doscale, bool rgbmod, bool alphamod>
-struct SubtractiveBlend {
+struct SubtractiveBlend : public BlendBlitImpl_Base::SubtractiveBlend {
 	static inline __m256i simd(__m256i src, __m256i dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
 		__m256i ina = _mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kAModMask));
 		__m256i srcb = _mm256_srli_epi32(_mm256_and_si256(src, _mm256_set1_epi32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
@@ -259,13 +210,6 @@ struct SubtractiveBlend {
 		srcr = _mm256_and_si256(_mm256_slli_epi32(_mm256_max_epi16(_mm256_sub_epi32(dstr, _mm256_srli_epi32(_mm256_mullo_epi32(_mm256_mullo_epi32(srcr, _mm256_set1_epi32(cr)), _mm256_mullo_epi32(dstr, ina)), 24)), _mm256_set1_epi32(0)), BlendBlit::kRModShift), _mm256_set1_epi32(BlendBlit::kRModMask));
 
 		return _mm256_or_si256(_mm256_set1_epi32(BlendBlit::kAModMask), _mm256_or_si256(srcb, _mm256_or_si256(srcg, srcr)));
-	}
-
-	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
-		out[BlendBlit::kAIndex] = 255;
-		out[BlendBlit::kBIndex] = MAX<int32>(out[BlendBlit::kBIndex] - ((in[BlendBlit::kBIndex] * cb  * (out[BlendBlit::kBIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kGIndex] = MAX<int32>(out[BlendBlit::kGIndex] - ((in[BlendBlit::kGIndex] * cg  * (out[BlendBlit::kGIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
-		out[BlendBlit::kRIndex] = MAX<int32>(out[BlendBlit::kRIndex] - ((in[BlendBlit::kRIndex] * cr *  (out[BlendBlit::kRIndex]) * in[BlendBlit::kAIndex]) >> 24), 0);
 	}
 };
 
@@ -352,123 +296,7 @@ static void blitInnerLoop(BlendBlit::Args &args) {
 }; // end of class BlendBlitImpl_AVX2
 
 void BlendBlit::blitAVX2(Args &args, const TSpriteBlendMode &blendMode, const AlphaType &alphaType) {
-	bool rgbmod   = ((args.color & kRGBModMask) != kRGBModMask);
-	bool alphamod = ((args.color & kAModMask)   != kAModMask);
-	if (args.scaleX == SCALE_THRESHOLD && args.scaleY == SCALE_THRESHOLD) {
-		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::OpaqueBlend, false, false, false, false, true>(args);
-		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::BinaryBlend, false, false, false, false, true>(args);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, false, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, false, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, false, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, false, false, false, false, true>(args);
-					}
-				}
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				if (rgbmod) {
-					BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::SubtractiveBlend, false, true, false, false, true>(args);
-				} else {
-					BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::SubtractiveBlend, false, false, false, false, true>(args);
-				}
-			} else if (blendMode == BLEND_MULTIPLY) {
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, false, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, false, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, false, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, false, false, false, false, true>(args);
-					}
-				}
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, false, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, false, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, false, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, false, false, false, false, true>(args);
-					}
-				}
-			}
-		}
-	} else {
-		if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_OPAQUE) {
-			BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::OpaqueBlend, true, false, false, false, true>(args);
-		} else if (args.color == 0xffffffff && blendMode == BLEND_NORMAL && alphaType == ALPHA_BINARY) {
-			BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::BinaryBlend, true, false, false, false, true>(args);
-		} else {
-			if (blendMode == BLEND_ADDITIVE) {
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, true, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, true, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, true, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AdditiveBlend, true, false, false, false, true>(args);
-					}
-				}
-			} else if (blendMode == BLEND_SUBTRACTIVE) {
-				if (rgbmod) {
-					BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::SubtractiveBlend, true, true, false, false, true>(args);
-				} else {
-					BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::SubtractiveBlend, true, false, false, false, true>(args);
-				}
-			} else if (blendMode == BLEND_MULTIPLY) {
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, true, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, true, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, true, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::MultiplyBlend, true, false, false, false, true>(args);
-					}
-				}
-			} else {
-				assert(blendMode == BLEND_NORMAL);
-				if (rgbmod) {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, true, true, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, true, true, false, false, true>(args);
-					}
-				} else {
-					if (alphamod) {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, true, false, true, false, true>(args);
-					} else {
-						BlendBlitImpl_AVX2::blitInnerLoop<BlendBlitImpl_AVX2::AlphaBlend, true, false, false, false, true>(args);
-					}
-				}
-			}
-		}
-	}
+	blitT<BlendBlitImpl_AVX2>(args, blendMode, alphaType);
 }
 
 } // End of namespace Graphics
