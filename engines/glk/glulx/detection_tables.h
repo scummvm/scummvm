@@ -316,7 +316,6 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "timeless",           "Timeless" },
 	{ "todayisthesame",     "Today is the Same as Any Other" },
 	{ "tohellinahamper",    "To Hell in a Hamper" },
-	{ "tomtrundle",         "The Incredibly Mild Misadventures of Tom Trundle" },                 //               TODO
 	{ "trialofthetnuop",    "Trial of the Inuop" },
 	{ "trollslayer",        "Trollslayer" },
 	{ "tryagain",           "Try Again" },
@@ -778,7 +777,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "sh14_fallshelter",   "Fallout Shelter" },
 	{ "sh14_groovebilly",   "Groove Billygoat" },
 	{ "sh14_invisiparties", "Invisible Parties" },
-	{ "sh14_sequitur",      "Sequiturs" },
+	{ "sh14_sequitur",      "Sequitur" },
 	{ "sh14_sparkle",       "Sparkle" },
 
 	// ShuffleComp: Disc 2 Competition
@@ -1141,11 +1140,12 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "ph10_transcorrupt",  "Transilvania Corruption: El Amanecer de los Vivos" },
 
 	// Swedish games
-	{ "drakmagi_glulx",     "Drakmagi (Dragon Magic)" },
+	{ "drakmagi_glulx",     "Drakmagi" },
 	{ "vanyar_glulx",       "Vanyar" },
 
 	// Russian games
-	{ "devours",            "All Things Devours" },
+	{ "devours_glulx",      "All Things Devours" },
+	{ "starrydepths",       "Secret of the Starry Depths" },
 
 	// ParserComp 2015
 	{ "pc15_chlorophyll",   "Chlorophyll" },                                                            //    1st Place
@@ -1642,6 +1642,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if04_eas3", "040929", "8f118c9fa10ef24a5551448d5ab2408f", 1293054),
 
 	// IFComp 2005
+	DT_ENTRY1("if05_beyond_glulx", "100115", "64a351bc6757a58080b801a14d878fc2", 1303364),
 	DT_ENTRY1("if05_beyond_glulx", "050930", "ad22a9d2a75f04f724ab18663399cca0", 1302846),
 	DT_ENTRY1("if05_cheiron", "050929", "bca1af6d8788c178ab42883f184e7955", 2434458),
 
@@ -2744,8 +2745,6 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("boing", "230818", "cd87674e7fe8418256513e8f67f96df4", 630178),
 	DT_ENTRY1("chinesefamily", "230821", "8b746ac01eaea9ad679ec627664fa492", 609790),
 	DT_ENTRY1("ifyouhadoneshot","230731", "466d18369d99d8d961c57ca03c25d2c3", 674536),
-
-	DT_ENTRYL1("devours", Common::RU_RUS, "r2/220224", "65a51e53c1498823024dcec286971f19", 365312),
 
 	DT_END_MARKER
 };
