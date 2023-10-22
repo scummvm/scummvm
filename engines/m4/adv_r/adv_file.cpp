@@ -253,7 +253,8 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 			if (out && (out->data)) {
 				x_end = imath_min(file_x, (1 + j) * tile_x);
 				y_end = imath_min(file_y, (1 + i) * tile_y);
-				gr_buffer_rect_copy_2(out, theBuff, 0, 0, j * tile_x, i * tile_y, x_end, y_end);
+				gr_buffer_rect_copy_2(out, theBuff, 0, 0, j * tile_x, i * tile_y,
+					x_end - (j * tile_x), y_end - (i * tile_y));
 				mem_free(out->data);
 			}
 
