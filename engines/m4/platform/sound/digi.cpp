@@ -51,7 +51,7 @@ void Digi::unload_sounds() {
 	_mixer->stopAll();
 
 	for (auto it = _sounds.begin(); it != _sounds.end(); ++it)
-		delete it->_value._data;
+		free(it->_value._data);
 
 	_sounds.clear();
 }
@@ -94,7 +94,7 @@ void Digi::unload(const Common::String &name) {
 		}
 
 		// Delete the sound entry
-		delete _sounds[name]._data;
+		free(_sounds[name]._data);
 		_sounds.erase(name);
 	}
 }
