@@ -113,10 +113,11 @@ void GraphicsManager::drawParallax() {
 
 		debugC(1, kSludgeDebugGraphics, "drawParallax(): camX: %d camY: %d dims: %d x %d sceneDims: %d x %d winDims: %d x %d surf: %d x %d", p->cameraX, p->cameraY, w, h, _sceneWidth, _sceneHeight, _winWidth, _winHeight, p->surface.w, p->surface.h);
 
-		Graphics::TransparentSurface tmp(p->surface, false);
+		Graphics::ManagedSurface tmp(&(p->surface), DisposeAfterUse::NO);
+
 		for (uint y = 0; y < _sceneHeight; y += p->surface.h) {
 			for (uint x = 0; x < _sceneWidth; x += p->surface.w) {
-				tmp.blit(_renderSurface, x - p->cameraX, y - p->cameraY);
+				tmp.blendBlitTo(_renderSurface, x - p->cameraX, y - p->cameraY);
 				debugC(3, kSludgeDebugGraphics, "drawParallax(): blit to: %d, %d", x - p->cameraX, y - p->cameraY);
 			}
 		}
@@ -322,8 +323,8 @@ void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
 }
 
 void GraphicsManager::darkScreen() {
-	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 0, 0, 0));
+	Graphics::ManagedSurface tmp(&_backdropSurface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 0, 0, 0));
 
 	// reset zBuffer
 	if (_zBuffer->originalNum >= 0) {
@@ -338,8 +339,8 @@ void GraphicsManager::drawBackDrop() {
 	if (!_backdropExists)
 		return;
 	// draw backdrop
-	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_renderSurface, -_cameraX, -_cameraY);
+	Graphics::ManagedSurface tmp(&_backdropSurface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_renderSurface, -_cameraX, -_cameraY);
 }
 
 bool GraphicsManager::loadLightMap(int v) {
@@ -351,16 +352,16 @@ bool GraphicsManager::loadLightMap(int v) {
 	_lightMapNumber = v;
 	_lightMap.create(_sceneWidth, _sceneWidth, *_vm->getScreenPixelFormat());
 
-	Graphics::TransparentSurface tmp;
+	Graphics::ManagedSurface tmp;
 
-	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), &tmp))
+	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), tmp.surfacePtr()))
 		return false;
 
 	if (tmp.w != (int16)_sceneWidth || tmp.h != (int16)_sceneHeight) {
 		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {
-			tmp.blit(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)_sceneWidth, (int)_sceneHeight);
+			tmp.blendBlitTo(_lightMap, 0, 0, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), (int)_sceneWidth, (int)_sceneHeight);
 		} else {
 			_lightMap.copyFrom(tmp);
 		}
@@ -434,8 +435,8 @@ bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x
 		_backdropSurface.fillRect(Common::Rect(x, y, x + tmp.w, y + tmp.h), _renderSurface.format.ARGBToColor(0, 0, 0, 0));
 
 	// copy surface loaded to backdrop
-	Graphics::TransparentSurface tmp_trans(tmp, false);
-	tmp_trans.blit(_backdropSurface, x, y);
+	Graphics::ManagedSurface tmp_trans(&tmp, DisposeAfterUse::NO);
+	tmp_trans.blendBlitTo(_backdropSurface, x, y);
 	tmp.free();
 
 	_origBackdropSurface.copyFrom(_backdropSurface);
@@ -460,8 +461,8 @@ bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x,
 	if (x < 0 || x + realPicWidth > _sceneWidth || y < 0 || y + realPicHeight > _sceneHeight)
 		return false;
 
-	Graphics::TransparentSurface tmp(mixSurface, false);
-	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 255, 255, 255));
+	Graphics::ManagedSurface tmp(&mixSurface, DisposeAfterUse::NO);
+	tmp.blendBlitTo(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, MS_ARGB(255 >> 1, 255, 255, 255));
 	mixSurface.free();
 
 	return true;

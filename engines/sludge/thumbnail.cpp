@@ -94,8 +94,8 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 		int fileWidth = fp->readUint32LE();
 		int fileHeight = fp->readUint32LE();
 
-		Graphics::TransparentSurface thumbnail;
-		if (!ImgLoader::loadPNGImage(fp, &thumbnail))
+		Graphics::ManagedSurface thumbnail;
+		if (!ImgLoader::loadPNGImage(fp, thumbnail.surfacePtr()))
 			return;
 
 		delete fp;
@@ -115,7 +115,7 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 		if (fileHeight + atY > (int)_sceneHeight)
 			fileHeight = _sceneHeight - atY;
 
-		thumbnail.blit(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), fileWidth, fileHeight);
+		thumbnail.blendBlitTo(_backdropSurface, atX, atY, Graphics::FLIP_NONE, nullptr, MS_ARGB((uint)255, (uint)255, (uint)255, (uint)255), fileWidth, fileHeight);
 		thumbnail.free();
 	}
 }
