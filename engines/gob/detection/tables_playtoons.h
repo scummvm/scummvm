@@ -344,7 +344,7 @@
 {
 	{
 		"playtoons4",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"b7f5afa2dc1b0f75970b7c07d175db1b", 24340406,
 				   "manda.stk",		"92529e0b927191d9898a34c2892e9a3a", 6485072),
 		FR_FRA,
@@ -392,7 +392,7 @@
 {
 	{
 		"playtoons5",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "wakan.stk",		"f493bf82851bc5ba74d57de6b7e88df8", 5520153),
 		FR_FRA,
