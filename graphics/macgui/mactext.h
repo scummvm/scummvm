@@ -115,6 +115,17 @@ struct MacFontRun {
 	Common::CodePage getEncoding();
 	bool plainByteMode();
 	Common::String getEncodedText();
+
+	bool equals(const MacFontRun *x, const MacFontRun *y) {
+		return (x->fontId    == y->fontId &&
+				x->textSlant == y->textSlant &&
+				x->fontSize  == y->fontSize &&
+				x->palinfo1  == y->palinfo1 &&
+				x->palinfo2  == y->palinfo2 &&
+				x->palinfo3  == y->palinfo3 &&
+				x->fgcolor   == y->fgcolor);
+	}
+
 };
 
 struct MacTextLine;
