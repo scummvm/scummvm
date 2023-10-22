@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	big5.o \
 	blit/blit.o \
 	blit/blit-alpha.o \
+	blit/blit-generic.o \
 	blit/blit-scale.o \
 	cursorman.o \
 	font.o \
