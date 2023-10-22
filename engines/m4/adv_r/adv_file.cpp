@@ -230,10 +230,10 @@ GrBuff *load_codes(SysFile *code_file) {
 }
 
 bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
-	Buffer *out;
+	int32 num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y, x_end, y_end;
 	int i, j;
-	int count = 0;
-	long num_x_tiles, num_y_tiles, tile_x, tile_y, file_x, file_y, x_end, y_end;
+	int32 count = 0;
+	Buffer *out;
 
 	tt_read_header(pic_file, &file_x, &file_y,
 		&num_x_tiles, &num_y_tiles, &tile_x, &tile_y, palette);
@@ -245,21 +245,22 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 
 	Buffer *theBuff = (**loadBuffer).get_buffer();
 
-	for (i = 0; i < num_y_tiles; i++)
-		for (j = 0; j < num_x_tiles; j++)
-		{
+	for (i = 0; i < num_y_tiles; i++) {
+		for (j = 0; j < num_x_tiles; j++) {
 			out = tt_read(pic_file, count, tile_x, tile_y);
 			count++;
-			if (out && (out->data))
-			{
+
+			if (out && (out->data)) {
 				x_end = imath_min(file_x, (1 + j) * tile_x);
 				y_end = imath_min(file_y, (1 + i) * tile_y);
 				gr_buffer_rect_copy_2(out, theBuff, 0, 0, j * tile_x, i * tile_y, x_end, y_end);
 				mem_free(out->data);
 			}
+
 			if (out)
 				mem_free(out);
 		}
+	}
 
 	(**loadBuffer).release();
 	return true;
