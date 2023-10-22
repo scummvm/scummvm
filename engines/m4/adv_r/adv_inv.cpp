@@ -33,6 +33,15 @@ namespace M4 {
 // TODO: Move more stuff into InventoryBase class
 static char *inv_get_name(const Common::String &itemName);
 
+InventoryBase::~InventoryBase() {
+	for (int i = 0; i < _tail; i++) {
+		mem_free(_objects[i]->name);
+		mem_free(_objects[i]->verbs);
+
+		mem_free_to_stash((void *)_objects[i], _G(inv_obj_mem_type));
+	}
+}
+
 void InventoryBase::syncGame(Common::Serializer &s) {
 	char invName[MAX_NAME_LENGTH];
 	uint32 inv_size, scene;
@@ -66,7 +75,6 @@ void InventoryBase::syncGame(Common::Serializer &s) {
 	}
 }
 
-
 bool inv_init(int32 num_objects) {
 	term_message("Fluffing up the backpack", nullptr);
 	int i;
@@ -84,14 +92,6 @@ bool inv_init(int32 num_objects) {
 
 	_G(inventory)->_tail = 0;
 	return true;
-}
-
-void inv_shutdown() {
-	int i;
-
-	for (i = 0; i < _G(inventory)->_tail; i++) {
-		mem_free_to_stash((void *)_G(inventory)->_objects[i], _G(inv_obj_mem_type));
-	}
 }
 
 bool inv_register_thing(const Common::String &itemName, const Common::String &itemVerbs,

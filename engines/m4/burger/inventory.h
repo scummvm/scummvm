@@ -44,6 +44,7 @@ public:
 	Common::Array<InventoryItem> _items;
 public:
 	void init();
+	virtual ~Inventory() {}
 
 	void add(const Common::String &name, const Common::String &verbs, int32 sprite, int32 cursor) override;
 	void set_scroll(int32 scroll) override;

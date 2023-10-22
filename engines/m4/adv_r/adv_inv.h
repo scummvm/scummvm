@@ -40,7 +40,7 @@ struct InventoryBase {
 	int32 _tail = 0;
 
 	InventoryBase() {}
-	virtual ~InventoryBase() {}
+	virtual ~InventoryBase();
 
 	void syncGame(Common::Serializer &s);
 
@@ -53,11 +53,6 @@ struct InventoryBase {
  * Init the system, preferably in game_systems_initialize
  */
 extern bool  inv_init(int32 num_objects);
-
-/**
- * Shutdown the system
- */
-extern void  inv_shutdown();
 
 /**
  * Register things during init of the game
