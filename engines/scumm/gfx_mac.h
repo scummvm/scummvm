@@ -22,11 +22,12 @@
 #ifndef SCUMM_GFX_MAC_H
 #define SCUMM_GFX_MAC_H
 
+#include "graphics/font.h"
+
 class OSystem;
 
 namespace Graphics {
 struct Surface;
-class Font;
 class MacWindowManager;
 }
 
@@ -71,6 +72,20 @@ protected:
 	};
 
 public:
+	enum TextStyle {
+		kStyleHeader,
+		kStyleBold,
+		kStyleRegular
+	};
+
+	struct TextLine {
+		int x;
+		int y;
+		TextStyle style;
+		Graphics::TextAlign align;
+		const char *str;
+	};
+
 	enum SimpleWindowStyle {
 		kStyleNormal,
 		kStyleRounded
@@ -78,6 +93,7 @@ public:
 
 	class SimpleWindow {
 	private:
+		MacGui *_gui;
 		OSystem *_system;
 		Common::Rect _bounds;
 		int _margin;
@@ -91,7 +107,7 @@ public:
 
 		void copyToScreen(Graphics::Surface *s = nullptr);
 	public:
-		SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
+		SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
 
 		Graphics::Surface *surface() { return &_surface; }
@@ -106,7 +122,7 @@ public:
 
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
-		void drawTextBox(Common::Rect r);
+		void drawTextBox(Common::Rect r, TextLine *lines);
 	};
 
 	enum FontId {
@@ -114,7 +130,8 @@ public:
 
 		kIndy3AboutFontRegular,
 		kIndy3AboutFontBold,
-		kIndy3AboutFontHeader,
+		kIndy3AboutFontHeaderInside,
+		kIndy3AboutFontHeaderOutside,
 
 		kIndy3FontSmall,
 		kIndy3FontMedium,
