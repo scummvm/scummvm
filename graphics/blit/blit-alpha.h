@@ -27,23 +27,33 @@ class BlendBlitImpl_Base {
 	friend class BlendBlit;
 protected:
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct AlphaBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
 
 		if (ina != 0) {
-			uint outb = (out[BlendBlit::kBIndex] * (255 - ina) >> 8);
-			uint outg = (out[BlendBlit::kGIndex] * (255 - ina) >> 8);
-			uint outr = (out[BlendBlit::kRIndex] * (255 - ina) >> 8);
+			if (rgbmod) {
+				const uint outb = (out[BlendBlit::kBIndex] * (255 - ina) >> 8);
+				const uint outg = (out[BlendBlit::kGIndex] * (255 - ina) >> 8);
+				const uint outr = (out[BlendBlit::kRIndex] * (255 - ina) >> 8);
 
-			out[BlendBlit::kAIndex] = 255;
-			out[BlendBlit::kBIndex] = outb + (in[BlendBlit::kBIndex] * ina * cb >> 16);
-			out[BlendBlit::kGIndex] = outg + (in[BlendBlit::kGIndex] * ina * cg >> 16);
-			out[BlendBlit::kRIndex] = outr + (in[BlendBlit::kRIndex] * ina * cr >> 16);
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = outb + (in[BlendBlit::kBIndex] * ina * cb >> 16);
+				out[BlendBlit::kGIndex] = outg + (in[BlendBlit::kGIndex] * ina * cg >> 16);
+				out[BlendBlit::kRIndex] = outr + (in[BlendBlit::kRIndex] * ina * cr >> 16);
+			} else {
+				out[BlendBlit::kAIndex] = 255;
+				out[BlendBlit::kBIndex] = (out[BlendBlit::kBIndex] * (255 - ina) + in[BlendBlit::kBIndex] * ina) >> 8;
+				out[BlendBlit::kGIndex] = (out[BlendBlit::kGIndex] * (255 - ina) + in[BlendBlit::kGIndex] * ina) >> 8;
+				out[BlendBlit::kRIndex] = (out[BlendBlit::kRIndex] * (255 - ina) + in[BlendBlit::kRIndex] * ina) >> 8;
+			}
 		}
+
 	}
 };
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct MultiplyBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
@@ -56,12 +66,14 @@ struct MultiplyBlend {
 	}
 };
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct OpaqueBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		*(uint32 *)out = *(const uint32 *)in | BlendBlit::kAModMask;
 	}
 };
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct BinaryBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32 pix = *(const uint32 *)in;
@@ -74,6 +86,7 @@ struct BinaryBlend {
 	}
 };
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct AdditiveBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		uint32 ina = in[BlendBlit::kAIndex] * ca >> 8;
@@ -86,6 +99,7 @@ struct AdditiveBlend {
 	}
 };
 
+template<bool doscale, bool rgbmod, bool alphamod>
 struct SubtractiveBlend {
 	static inline void normal(const byte *in, byte *out, const byte ca, const byte cr, const byte cg, const byte cb) {
 		out[BlendBlit::kAIndex] = 255;
