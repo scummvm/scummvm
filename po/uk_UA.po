@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-17 16:03+0000\n"
+"POT-Creation-Date: 2023-10-22 00:34+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3119,7 +3119,7 @@ msgstr "~П~овер.в головне меню"
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:854
 #: engines/groovie/script.cpp:2243 engines/groovie/script.cpp:2270
 #: engines/groovie/script.cpp:2311 engines/hugo/file.cpp:297
-#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:729
+#: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:733
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/pegasus/pegasus.cpp:406
@@ -3140,7 +3140,7 @@ msgstr "Зберегти гру:"
 #: engines/groovie/script.cpp:854 engines/groovie/script.cpp:2243
 #: engines/groovie/script.cpp:2270 engines/groovie/script.cpp:2311
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
-#: engines/kingdom/kingdom.cpp:729 engines/lab/savegame.cpp:237
+#: engines/kingdom/kingdom.cpp:733 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:133
@@ -5282,7 +5282,7 @@ msgstr "Додати меню швидкості гри (подібно до в�
 #: engines/groovie/script.cpp:866 engines/groovie/script.cpp:2230
 #: engines/groovie/script.cpp:2257 engines/groovie/script.cpp:2327
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
-#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:257
+#: engines/kingdom/kingdom.cpp:743 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:745
@@ -5301,7 +5301,7 @@ msgstr "Відновити гру:"
 #: engines/groovie/script.cpp:849 engines/groovie/script.cpp:866
 #: engines/groovie/script.cpp:2230 engines/groovie/script.cpp:2257
 #: engines/groovie/script.cpp:2327 engines/hugo/file.cpp:399
-#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:739
+#: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:743
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
