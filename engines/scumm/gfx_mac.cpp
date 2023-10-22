@@ -416,9 +416,9 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 	s->setPixel(x, y, color);
 }
 
-void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines) {
-	Graphics::drawRoundRect(r, 9, kWhite, true, plotPixel, this);
-	Graphics::drawRoundRect(r, 9, kBlack, false, plotPixel, this);
+void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
+	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
+	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);
 
 	Graphics::Surface *s = innerSurface();
@@ -1911,7 +1911,7 @@ void MacIndy3Gui::showAboutDialog() {
 	int trolleyFrame = 1;
 	int trolleyFrameDelta = 1;
 	int trolleyWaitFrames = 50;
-	int waitFrames = 53;
+	int waitFrames;
 
 	// These strings are part of the STRS resource, but I don't know how to
 	// safely read them from there yet. So hard-coded it is for now.
@@ -1979,6 +1979,11 @@ void MacIndy3Gui::showAboutDialog() {
 		TEXT_END_MARKER
 	};
 
+	const TextLine page8[] = {
+		{ 1, 1, kStyleBold, Graphics::kTextAlignCenter, "Click to continue" },
+		TEXT_END_MARKER
+	};
+
 	#undef TEXT_END_MARKER
 
 	// Header texts aren't rendered correctly. Apparently the original does
@@ -2004,6 +2009,7 @@ void MacIndy3Gui::showAboutDialog() {
 		case 4:
 		case 5:
 		case 6:
+		case 7:
 			if (--waitFrames == 0)
 				changeScene = true;
 			break;
@@ -2013,7 +2019,8 @@ void MacIndy3Gui::showAboutDialog() {
 			window->drawSprite(&trolley[trolleyFrame], trolleyX, 78, clipRect);
 
 			if (scene == 2 && trolleyX == 161 && trolleyWaitFrames > 0) {
-				trolleyWaitFrames--;
+				if (--trolleyWaitFrames == 0)
+					changeScene = true;
 			} else {
 				trolleyX -= 4;
 				trolleyFrame += trolleyFrameDelta;
@@ -2067,24 +2074,29 @@ void MacIndy3Gui::showAboutDialog() {
 				break;
 
 			case 6:
+				waitFrames = 106;
 				window->drawTextBox(r1, page6);
 				break;
 
 			case 7:
+				waitFrames = 33;
 				window->drawTextBox(r1, page7);
+				break;
+
+			case 8:
+				window->drawTextBox(Common::Rect(142, 106, 262, 119), page8, 3);
 				break;
 			}
 
 			window->update();
 
-			if (scene > 7)
+			if (scene >= 8)
 				break;
 		}
 	}
 
-	_windowManager->pushCursor(Graphics::kMacCursorArrow, nullptr);
-
-	status = delay(-1);
+	if (status != 2)
+		status = delay(-1);
 
 	_windowManager->popCursor();
 
