@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-17 16:03+0000\n"
-"PO-Revision-Date: 2023-10-21 18:41+0000\n"
+"PO-Revision-Date: 2023-10-22 14:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -406,12 +406,12 @@ msgstr ""
 #: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "გადმოწერილია %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
 #, c-format
 msgid "Download speed: %s %S/s"
-msgstr ""
+msgstr "გადმოწერის სიჩქარე: %s %S/s"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -422,7 +422,7 @@ msgstr "შეცდომა %d: %s"
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
 #, c-format
 msgid "Downloading %S list..."
-msgstr ""
+msgstr "%S სიის გადმოწერა..."
 
 #: gui/downloadpacksdialog.cpp:203
 msgid "Clear Cache"
@@ -431,7 +431,7 @@ msgstr "ქეშის გასუფთავება"
 #: gui/downloadpacksdialog.cpp:254
 #, c-format
 msgid "Downloading %S list... %d entries"
-msgstr ""
+msgstr "%S სიის გადმოწერა... %d ჩანაწერი"
 
 #: gui/downloadpacksdialog.cpp:264
 #, c-format
@@ -459,13 +459,13 @@ msgstr "დახურვა"
 
 #: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "შეცდომა: ხატულების ბილიკი დაყენებული არაა"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:429
 #, c-format
 msgid "No new %S available"
-msgstr ""
+msgstr "ახალი %S ხელმისაწვდომი არაა"
 
 #: gui/downloadpacksdialog.cpp:465
 #, c-format
@@ -505,7 +505,7 @@ msgstr "სახელი:"
 #: gui/editgamedialog.cpp:142 gui/editgamedialog.cpp:144
 #: gui/editgamedialog.cpp:145
 msgid "Full title of the game"
-msgstr ""
+msgstr "თამაშის სრული სახელი"
 
 #: gui/editgamedialog.cpp:144
 msgctxt "lowres"
@@ -724,11 +724,11 @@ msgstr "აირჩიეთ ხმის ფონტი"
 
 #: gui/editgamedialog.cpp:562
 msgid "Select additional game directory"
-msgstr ""
+msgstr "აირჩიეთ დამატებითი თამაშის საქაღალდე"
 
 #: gui/editgamedialog.cpp:575 gui/options.cpp:3148
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე შენახული თამაშებისთვის"
 
 #: gui/editgamedialog.cpp:582 gui/options.cpp:3155
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -742,7 +742,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:613
 msgid "This game ID is already taken. Please choose another one."
-msgstr ""
+msgstr "ეს თამაშის ID უკვე დაკავებულია. აირჩიეთ სხვა."
 
 #: gui/editrecorddialog.cpp:57
 msgid "Author:"
@@ -754,11 +754,11 @@ msgstr "შენიშვნები:"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Choose file for loading"
-msgstr ""
+msgstr "აირჩიეთ ჩასატვირთი ფაილი"
 
 #: gui/filebrowser-dialog.cpp:53
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "შეიყვანეთ შესანახი ფაილის სახელი"
 
 #: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
@@ -827,7 +827,7 @@ msgstr "ინტერპოლაცია:"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "None (fastest)"
-msgstr ""
+msgstr "არაფერი (უსწრაფესი)"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Linear"
@@ -976,7 +976,7 @@ msgstr "არაფერი"
 #: gui/launcher.cpp:108
 msgctxt "group"
 msgid "First letter"
-msgstr ""
+msgstr "პირველი სიმბოლო"
 
 #: gui/launcher.cpp:108
 msgctxt "group"
@@ -1037,20 +1037,20 @@ msgstr "დახმარება"
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:265 engines/dialogs.cpp:95
 msgid "~Q~uit"
-msgstr ""
+msgstr "~გ~ასვლა"
 
 #: gui/launcher.cpp:265 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "ScummVM-დან გასვლა"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 #: gui/launcher.cpp:269
 msgid "A~b~out"
-msgstr ""
+msgstr "შ~ე~სახებ"
 
 #: gui/launcher.cpp:269 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
-msgstr ""
+msgstr "ScummVM-ის შესახებ"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:271
@@ -1068,7 +1068,7 @@ msgstr ""
 
 #: gui/launcher.cpp:275
 msgid "Download Games"
-msgstr ""
+msgstr "გადმოწერეთ თამაშები"
 
 #: gui/launcher.cpp:275
 msgid "Download freeware games for ScummVM"
@@ -1105,18 +1105,18 @@ msgstr ""
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:289
 msgid "Mass Add..."
-msgstr ""
+msgstr "ერთზე მეტის დამატება..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
 #: gui/launcher.cpp:292
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr ""
+msgstr "ერთზე მეტის დამატება..."
 
 #: gui/launcher.cpp:300 gui/launcher.cpp:852 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
-msgstr ""
+msgstr "ძებნა თამაშების სიაში"
 
 #: gui/launcher.cpp:304 gui/launcher.cpp:873 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
@@ -1128,7 +1128,7 @@ msgstr "ძებნა:"
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
-msgstr ""
+msgstr "თამაშის ჩატვირთვა:"
 
 #: gui/launcher.cpp:414
 msgid "This directory cannot be used yet, it is being downloaded into!"
@@ -1167,7 +1167,7 @@ msgstr "უცნობი ვარიანტი"
 
 #: gui/launcher.cpp:697
 msgid "Pick the game:"
-msgstr ""
+msgstr "აირჩიეთ თამაში:"
 
 #: gui/launcher.cpp:922 gui/saveload-dialog.cpp:381
 msgid "List view"
@@ -1183,7 +1183,7 @@ msgstr ""
 
 #: gui/launcher.cpp:1085
 msgid "Start selected game"
-msgstr ""
+msgstr "მონიშნული თამაშის გაშვება"
 
 #: gui/launcher.cpp:1088
 msgid "~L~oad..."
@@ -1195,7 +1195,7 @@ msgstr ""
 
 #: gui/launcher.cpp:1090
 msgid "Record..."
-msgstr ""
+msgstr "ჩაწერა..."
 
 #: gui/launcher.cpp:1096
 msgid "~G~ame Options..."
@@ -1203,7 +1203,7 @@ msgstr ""
 
 #: gui/launcher.cpp:1096
 msgid "Change game options"
-msgstr ""
+msgstr "თამაშის პარამეტრების შეცვლა"
 
 #: gui/launcher.cpp:1096
 msgctxt "lowres"
@@ -1226,18 +1226,18 @@ msgstr "უცნობი გამომცემელი"
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1222 gui/launcher.cpp:1405
 msgid "No Series"
-msgstr ""
+msgstr "სერიების გარეშე"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1236 gui/launcher.cpp:1419
 msgid "Language not detected"
-msgstr ""
+msgstr "ენა ვერ ვიპოვე"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1250 gui/launcher.cpp:1433
 msgid "Platform not detected"
-msgstr ""
+msgstr "პლატფორმა ვერ ვიპოვე"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1444 gui/widgets/groupedlist.cpp:81
@@ -1246,15 +1246,15 @@ msgstr "ყველა"
 
 #: gui/launcher.cpp:1593
 msgid "Icons per row:"
-msgstr ""
+msgstr "ხატულა მწკრივში:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
-msgstr ""
+msgstr "... მიმდინარეობა ..."
 
 #: gui/massadd.cpp:258
 msgid "Scan complete!"
-msgstr ""
+msgstr "სკანირება დასრულდა!"
 
 #: gui/massadd.cpp:261
 #, c-format
@@ -1281,11 +1281,11 @@ msgstr ""
 
 #: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
-msgstr ""
+msgstr "თამაშზე გადართვა"
 
 #: gui/onscreendialog.cpp:104
 msgid "Fast replay"
-msgstr ""
+msgstr "სწრაფი გამეორება"
 
 #: gui/options.cpp:149 common/updates.cpp:55
 msgid "Never"
@@ -1293,19 +1293,19 @@ msgstr "არასდროს"
 
 #: gui/options.cpp:149
 msgid "Every 5 mins"
-msgstr ""
+msgstr "ყოველ 5 წუთში"
 
 #: gui/options.cpp:149
 msgid "Every 10 mins"
-msgstr ""
+msgstr "ყოველ 10 წუთში"
 
 #: gui/options.cpp:149
 msgid "Every 15 mins"
-msgstr ""
+msgstr "ყოველ 15 წუთში"
 
 #: gui/options.cpp:149
 msgid "Every 30 mins"
-msgstr ""
+msgstr "ყოველ 30 წუთში"
 
 #. I18N: Very large GUI scale
 #: gui/options.cpp:154
@@ -1332,13 +1332,13 @@ msgstr "პატარა"
 #: gui/options.cpp:1088 gui/options.cpp:1622
 msgctxt "shader"
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #: gui/options.cpp:482 gui/options.cpp:990 gui/options.cpp:1154
 #: gui/options.cpp:1310 gui/options.cpp:1777
 msgctxt "soundfont"
 msgid "None"
-msgstr ""
+msgstr "არაფერი"
 
 #: gui/options.cpp:798
 msgid "Failed to apply some of the graphic options changes:"
@@ -1378,7 +1378,7 @@ msgstr ""
 
 #: gui/options.cpp:1395
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "კურსორის სიჩქარე:"
 
 #: gui/options.cpp:1395 gui/options.cpp:1397 gui/options.cpp:1398
 msgid "Speed for keyboard/joystick mouse pointer control"
@@ -1387,7 +1387,7 @@ msgstr ""
 #: gui/options.cpp:1397
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "კურსორის სიჩქარე:"
 
 #: gui/options.cpp:1408
 msgid "Joy Deadzone:"
@@ -1414,11 +1414,11 @@ msgstr ""
 
 #: gui/options.cpp:1557
 msgid "Graphics mode:"
-msgstr ""
+msgstr "გრაფიკის რეჟიმი:"
 
 #: gui/options.cpp:1573
 msgid "Render mode:"
-msgstr ""
+msgstr "რენდერის რეჟიმი:"
 
 #: gui/options.cpp:1573 gui/options.cpp:1576
 msgid "Special dithering modes supported by some games"
@@ -1426,7 +1426,7 @@ msgstr ""
 
 #: gui/options.cpp:1589
 msgid "Stretch mode:"
-msgstr ""
+msgstr "გაწელვის რეჟიმი:"
 
 #: gui/options.cpp:1605
 msgid "Scaler:"
@@ -1443,7 +1443,7 @@ msgstr ""
 #: gui/options.cpp:1621
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr ""
+msgstr "შეიდერის ბილიკი:"
 
 #: gui/options.cpp:1628
 msgid "Update Shaders"
@@ -1459,7 +1459,7 @@ msgstr "სრული ეკრანის რეჟიმი"
 
 #: gui/options.cpp:1638
 msgid "V-Sync"
-msgstr ""
+msgstr "V-Sync"
 
 #: gui/options.cpp:1638
 msgid ""
@@ -1548,7 +1548,7 @@ msgstr ""
 
 #: gui/options.cpp:1762 gui/options.cpp:1824
 msgid "Use first available device"
-msgstr ""
+msgstr "პირველი ხელმისაწვდომი მოწყობილობის გამოყენება"
 
 #: gui/options.cpp:1774
 msgid "SoundFont:"
@@ -1577,7 +1577,7 @@ msgstr "MIDI-ის გაძლიერება:"
 
 #: gui/options.cpp:1795
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "MT-32 მოწყობილობა:"
 
 #: gui/options.cpp:1795
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -1614,7 +1614,7 @@ msgstr ""
 
 #: gui/options.cpp:1841
 msgid "Text and speech:"
-msgstr ""
+msgstr "ტექსტი და საუბარი:"
 
 #: gui/options.cpp:1845 gui/options.cpp:1855
 msgid "Speech"
@@ -1630,20 +1630,20 @@ msgstr "ორივე"
 
 #: gui/options.cpp:1849
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "სუბტიტრის სიჩქარე:"
 
 #: gui/options.cpp:1851
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr ""
+msgstr "ტექსტი და საუბარი:"
 
 #: gui/options.cpp:1855
 msgid "Spch"
-msgstr ""
+msgstr "სბრ"
 
 #: gui/options.cpp:1856
 msgid "Subs"
-msgstr ""
+msgstr "სუბტიტრ"
 
 #: gui/options.cpp:1857
 msgctxt "lowres"
@@ -1657,7 +1657,7 @@ msgstr ""
 #: gui/options.cpp:1859
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "სუბტიტრის სიჩქარე:"
 
 #: gui/options.cpp:1881
 msgid "Music volume:"
@@ -1670,7 +1670,7 @@ msgstr "მუსიკის ხმა:"
 
 #: gui/options.cpp:1892
 msgid "Mute all"
-msgstr ""
+msgstr "ყველას დადუმება"
 
 #: gui/options.cpp:1895
 msgid "SFX volume:"
@@ -1731,7 +1731,7 @@ msgstr ""
 
 #: gui/options.cpp:2330
 msgid "Apply"
-msgstr ""
+msgstr "გადატარება"
 
 #: gui/options.cpp:2330
 msgid "Apply changes without closing the dialog"
@@ -1753,35 +1753,35 @@ msgstr ""
 
 #: gui/options.cpp:2437
 msgid "Theme Path:"
-msgstr ""
+msgstr "თემის ბილიკი:"
 
 #: gui/options.cpp:2439
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr ""
+msgstr "თემის ბილიკი:"
 
 #: gui/options.cpp:2445
 msgid "Icon Path:"
-msgstr ""
+msgstr "ხატულის ბილიკი:"
 
 #: gui/options.cpp:2447
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr ""
+msgstr "ხატულის ბილიკი:"
 
 #: gui/options.cpp:2448 gui/options.cpp:2458
 msgctxt "path"
 msgid "Default"
-msgstr ""
+msgstr "ნაგულისხმევი"
 
 #: gui/options.cpp:2455
 msgid "DLC Path:"
-msgstr ""
+msgstr "DLC-ის ბილიკი:"
 
 #: gui/options.cpp:2457
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr ""
+msgstr "DLC-ის ბილიკი:"
 
 #: gui/options.cpp:2465 gui/options.cpp:2467 gui/options.cpp:2468
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1789,12 +1789,12 @@ msgstr ""
 
 #: gui/options.cpp:2474
 msgid "Plugins Path:"
-msgstr ""
+msgstr "დამატებების ბილიკი:"
 
 #: gui/options.cpp:2476
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr ""
+msgstr "დამატებების ბილიკი:"
 
 #: gui/options.cpp:2486
 msgid "ScummVM config path: "
@@ -1919,11 +1919,11 @@ msgstr "არაფერი"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2652
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (ყველა)"
 
 #: gui/options.cpp:2656
 msgid "Enable Discord integration"
-msgstr ""
+msgstr "Discord-ის ინტეგრაციის ჩართვა"
 
 #: gui/options.cpp:2657
 msgid ""
@@ -1933,7 +1933,7 @@ msgstr ""
 
 #: gui/options.cpp:2667 gui/updates-dialog.cpp:85
 msgid "Update check:"
-msgstr ""
+msgstr "განახლებების შემოწმება:"
 
 #: gui/options.cpp:2667
 msgid "How often to check ScummVM updates"
@@ -1941,11 +1941,11 @@ msgstr ""
 
 #: gui/options.cpp:2678
 msgid "Check now"
-msgstr ""
+msgstr "ახლა შემოწმება"
 
 #: gui/options.cpp:2686
 msgid "Active storage:"
-msgstr ""
+msgstr "აქტიური საცავი:"
 
 #: gui/options.cpp:2686
 msgid "Active cloud storage"
@@ -1964,7 +1964,7 @@ msgstr ""
 
 #: gui/options.cpp:2698
 msgid "Enable storage"
-msgstr ""
+msgstr "საცავის ჩართვა"
 
 #: gui/options.cpp:2698
 msgid "Confirm you want to use this account for this storage"
@@ -1972,7 +1972,7 @@ msgstr ""
 
 #: gui/options.cpp:2700 backends/platform/wii/options.cpp:113
 msgid "Username:"
-msgstr ""
+msgstr "მომხმარებელი:"
 
 #: gui/options.cpp:2700
 msgid "Username used by this storage"
@@ -1980,11 +1980,11 @@ msgstr ""
 
 #: gui/options.cpp:2701
 msgid "<none>"
-msgstr ""
+msgstr "<არცერთი>"
 
 #: gui/options.cpp:2703
 msgid "Used space:"
-msgstr ""
+msgstr "გამოყენებული ადგილი:"
 
 #: gui/options.cpp:2703
 msgid "Space used by ScummVM's saved games on this storage"
@@ -1992,7 +1992,7 @@ msgstr ""
 
 #: gui/options.cpp:2706
 msgid "Last sync:"
-msgstr ""
+msgstr "ბოლო სინქი:"
 
 #: gui/options.cpp:2706
 msgid "When was the last time saved games were synced with this storage"
@@ -2000,7 +2000,7 @@ msgstr ""
 
 #: gui/options.cpp:2707 gui/options.cpp:3615
 msgid "<never>"
-msgstr ""
+msgstr "<არასდროს>"
 
 #: gui/options.cpp:2709
 msgctxt "lowres"
@@ -2030,7 +2030,7 @@ msgstr ""
 
 #: gui/options.cpp:2718
 msgid "Download game files"
-msgstr ""
+msgstr "თამაშის ფაილების გადმოწერა"
 
 #: gui/options.cpp:2718
 msgid "Open downloads manager dialog"
@@ -2064,7 +2064,7 @@ msgstr ""
 
 #: gui/options.cpp:2730
 msgid "Connect"
-msgstr ""
+msgstr "დაკავშირება"
 
 #: gui/options.cpp:2730
 msgid "Connect your cloud storage account"
@@ -2085,7 +2085,7 @@ msgstr "/root/ Path:"
 
 #: gui/options.cpp:2751
 msgid "Server's port:"
-msgstr ""
+msgstr "სერვერის პორტი:"
 
 #: gui/options.cpp:2751
 msgid "Port for server to use"
@@ -2123,7 +2123,7 @@ msgstr "იგნორი"
 
 #: gui/options.cpp:2847
 msgid "Disable autosave"
-msgstr ""
+msgstr "ავტომატური შენახვის გამორთვა"
 
 #: gui/options.cpp:2848
 msgid ""
@@ -2238,7 +2238,7 @@ msgstr "შეიყვანეთ ტექსტი"
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
 msgid "#  next"
-msgstr ""
+msgstr "#  შემდეგი"
 
 #: gui/predictivedialog.cpp:102
 msgid "add"
@@ -2246,7 +2246,7 @@ msgstr "დამატება"
 
 #: gui/predictivedialog.cpp:107 gui/predictivedialog.cpp:183
 msgid "Delete char"
-msgstr ""
+msgstr "სიმბოლოს წაშლა"
 
 #: gui/predictivedialog.cpp:111 gui/predictivedialog.cpp:186
 msgid "<"
@@ -2255,17 +2255,17 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:113 gui/predictivedialog.cpp:597
 msgid "*  Pre"
-msgstr ""
+msgstr "*  წინ"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:600
 msgid "*  Num"
-msgstr ""
+msgstr "*  რიცხვ"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:603
 msgid "*  Abc"
-msgstr ""
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:67
 msgid "Recorder or Playback Gameplay"
@@ -2322,7 +2322,7 @@ msgstr "ფონურად გაშვება"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s ფაილი)"
 
 #: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
@@ -2464,7 +2464,7 @@ msgstr ""
 
 #: gui/widget.cpp:448 gui/widget.cpp:450 gui/widget.cpp:455 gui/widget.cpp:457
 msgid "Clear value"
-msgstr ""
+msgstr "მნიშვნელობის გასუფთავება"
 
 #: gui/widgets/grid.cpp:280
 msgid "Play"
@@ -2512,7 +2512,7 @@ msgstr "კარგი"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:672 base/main.cpp:697
 msgid "Read Later"
-msgstr ""
+msgstr "მოგვიანებით წაკითხვა"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
@@ -2538,7 +2538,7 @@ msgstr ""
 
 #: base/main.cpp:797
 msgid "Error running game:"
-msgstr ""
+msgstr "თამაშის გაშვების შეცდომა:"
 
 #: base/main.cpp:844
 msgid "Could not find any engine capable of running the selected game"
@@ -2550,27 +2550,27 @@ msgstr "შეცდომის გარეშე"
 
 #: common/error.cpp:39
 msgid "Game data not found"
-msgstr ""
+msgstr "თამაშის მონაცემები ვერ ვიპოვე"
 
 #: common/error.cpp:41
 msgid "Game id not supported"
-msgstr ""
+msgstr "თამაშის ID მხარდაჭერილი არაა"
 
 #: common/error.cpp:43
 msgid "Unsupported color mode"
-msgstr ""
+msgstr "მხარდაუჭერელი ფერის რეჟიმი"
 
 #: common/error.cpp:45
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "აუდიომოწყობილობის ინიციალიზაციის სეცდომა"
 
 #: common/error.cpp:48
 msgid "Read permission denied"
-msgstr ""
+msgstr "კითხვის წვდომა აკრძალულია"
 
 #: common/error.cpp:50
 msgid "Write permission denied"
-msgstr ""
+msgstr "ჩაწერის წვდომა აკრძალულია"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
@@ -2582,19 +2582,19 @@ msgstr "ბილიკი საქაღალდე არაა"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr ""
+msgstr "ბილიკი ფაილი არაა"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
-msgstr ""
+msgstr "ფაილის შექმნის შეცდომა"
 
 #: common/error.cpp:62
 msgid "Reading data failed"
-msgstr ""
+msgstr "მონაცემების კითხვის შეცდომა"
 
 #: common/error.cpp:64
 msgid "Writing data failed"
-msgstr ""
+msgstr "მონაცემების ჩაწერის შეცდომა"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
@@ -2615,20 +2615,20 @@ msgstr "უცნობი შეცდომა"
 #. I18N: Hercules is a graphics card name, Green is color
 #: common/rendermode.cpp:34
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules (მწვანე)"
 
 #. I18N: Hercules is a graphics card name, Amber is color
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules (ქარვისფერი)"
 
 #: common/rendermode.cpp:46
 msgid "PC-9821 (256 Colors)"
-msgstr ""
+msgstr "PC-9821 (256 ფერი)"
 
 #: common/rendermode.cpp:47
 msgid "PC-9801 (16 Colors)"
-msgstr ""
+msgstr "PC-9801 (16 ფერი)"
 
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
@@ -2638,12 +2638,12 @@ msgstr ""
 #: common/rendermode.cpp:88
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules (მწვანე)"
 
 #: common/rendermode.cpp:89
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules (ქარვისფერი)"
 
 #: common/updates.cpp:57
 msgid "Daily"
@@ -2733,7 +2733,7 @@ msgstr "გასვლა"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "კონფიგურაციის ფაილის სეცდომა"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
@@ -2741,7 +2741,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
-msgstr ""
+msgstr "ბილიკის შენახვის შეცდომა"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
@@ -2749,7 +2749,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:38
 msgid "Icons Path Error"
-msgstr ""
+msgstr "ხატულების ბილიკის შეცდომა"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
@@ -2894,7 +2894,7 @@ msgstr ""
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 msgid "Save game:"
-msgstr ""
+msgstr "თამაშის შენახვა:"
 
 #: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2917,7 +2917,7 @@ msgstr ""
 #: engines/wage/saveload.cpp:746 engines/zvision/file/save_manager.cpp:48
 #: engines/zvision/metaengine.cpp:262
 msgid "Save"
-msgstr ""
+msgstr "შენახვა"
 
 #: engines/dialogs.cpp:129
 msgid ""
@@ -2974,7 +2974,7 @@ msgstr ""
 
 #: engines/engine.cpp:483
 msgid "Error"
-msgstr ""
+msgstr "შეცდომა"
 
 #: engines/engine.cpp:546
 msgid ""
@@ -3130,7 +3130,7 @@ msgstr "გამოტოვება"
 
 #: engines/metaengine.cpp:98 engines/sky/metaengine.cpp:120
 msgid "Skip line"
-msgstr ""
+msgstr "ხაზის გამოტოვება"
 
 #: engines/metaengine.cpp:105
 msgid "Predictive input dialog"
@@ -3169,23 +3169,23 @@ msgstr "OpenGL შეიდერებით"
 
 #: audio/adlib.cpp:2303
 msgid "AdLib emulator"
-msgstr ""
+msgstr "AdLib-ის ემულატორი"
 
 #: audio/fmopl.cpp:85
 msgid "MAME OPL emulator"
-msgstr ""
+msgstr "MAME OPL-ის ემულატორი"
 
 #: audio/fmopl.cpp:87
 msgid "DOSBox OPL emulator"
-msgstr ""
+msgstr "DOSBox OPL-ის ემულატორი"
 
 #: audio/fmopl.cpp:90
 msgid "Nuked OPL emulator"
-msgstr ""
+msgstr "Nuked OPL-ის ემულატორი"
 
 #: audio/fmopl.cpp:93
 msgid "ALSA Direct FM"
-msgstr ""
+msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:96
 msgid "OPL2LPT"
@@ -3197,7 +3197,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:100
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -3242,7 +3242,7 @@ msgstr ""
 
 #: audio/null.cpp:27
 msgid "No music"
-msgstr ""
+msgstr "მუსიკის გარეშე"
 
 #: audio/softsynth/appleiigs.cpp:34
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
@@ -3265,15 +3265,15 @@ msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:31
 msgid "FM-Towns Audio"
-msgstr ""
+msgstr "FM-Towns Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:56
 msgid "PC-98 Audio"
-msgstr ""
+msgstr "PC-98 Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:81
 msgid "SegaCD Audio"
-msgstr ""
+msgstr "SegaCD Audio"
 
 #: audio/softsynth/mt32.cpp:169
 msgid "Initializing MT-32 Emulator"
@@ -3281,19 +3281,19 @@ msgstr ""
 
 #: audio/softsynth/mt32.cpp:436
 msgid "MT-32 emulator"
-msgstr ""
+msgstr "MT-32-ის ემულატორი"
 
 #: audio/softsynth/pcspk.cpp:204
 msgid "PC Speaker emulator"
-msgstr ""
+msgstr "კომპიუტერის დინამიკის ემულატორი"
 
 #: audio/softsynth/pcspk.cpp:223
 msgid "IBM PCjr emulator"
-msgstr ""
+msgstr "IBM PCjr-ის ემულატორი"
 
 #: audio/softsynth/sid.cpp:1435
 msgid "C64 Audio emulator"
-msgstr ""
+msgstr "C64 აუდიოემულატორი"
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
@@ -3318,11 +3318,11 @@ msgstr ""
 
 #: backends/cloud/storage.cpp:354
 msgid "Download complete."
-msgstr ""
+msgstr "გადმოწერა დასრულდა."
 
 #: backends/cloud/storage.cpp:364
 msgid "Download failed."
-msgstr ""
+msgstr "გადმოწერის შეცდომა."
 
 #: backends/events/default/default-events.cpp:193
 msgid ""
@@ -3343,11 +3343,11 @@ msgstr "გლობალური"
 #: backends/events/default/default-events.cpp:335
 #: engines/twine/metaengine.cpp:350
 msgid "Global Main Menu"
-msgstr ""
+msgstr "გლობალური მთავარი მენიუ"
 
 #: backends/events/default/default-events.cpp:345
 msgid "Display keyboard"
-msgstr ""
+msgstr "პროგრამული კლავიატურის ჩვენება"
 
 #: backends/events/default/default-events.cpp:352
 msgid "Toggle mute"
@@ -3355,7 +3355,7 @@ msgstr "დადუმების გადართვა"
 
 #: backends/events/default/default-events.cpp:380
 msgid "Open Debugger"
-msgstr ""
+msgstr "გამმართველის ჩვენება"
 
 #: backends/events/gph/gph-events.cpp:411
 #: backends/events/gph/gph-events.cpp:454
@@ -3377,27 +3377,27 @@ msgstr ""
 
 #: backends/events/gph/gph-events.cpp:435
 msgid "Maximum Volume"
-msgstr ""
+msgstr "მაქსიმალური ხმა"
 
 #: backends/events/gph/gph-events.cpp:437
 msgid "Increasing Volume"
-msgstr ""
+msgstr "ხმის აწევა"
 
 #: backends/events/gph/gph-events.cpp:443
 msgid "Minimal Volume"
-msgstr ""
+msgstr "მინიმალური ხმა"
 
 #: backends/events/gph/gph-events.cpp:445
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "ხმის დაწევა"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "დაწკაპუნება ჩართულია"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:100
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "დაწკაპუნება გამორთულია"
 
 #: backends/events/openpandora/op-events.cpp:162
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
@@ -3501,7 +3501,7 @@ msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:372
 msgid "Could not save screenshot"
-msgstr ""
+msgstr "ეკრანის ანაბეჭდის შენახვა შეუძლებელია"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
@@ -3559,11 +3559,11 @@ msgstr "თაგუნას მარცხენა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Right Mouse Button"
-msgstr ""
+msgstr "თაგუნის მარჯვენა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:246
 msgid "Middle Mouse Button"
-msgstr ""
+msgstr "თაგუნის შუა ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:247
 msgid "Mouse Wheel Up"
@@ -10032,7 +10032,7 @@ msgstr ""
 
 #: engines/zvision/metaengine.cpp:277
 msgid "Preferences"
-msgstr ""
+msgstr "მორგება"
 
 #: engines/zvision/zvision.cpp:309
 msgid ""
