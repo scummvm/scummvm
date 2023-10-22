@@ -338,7 +338,7 @@ void MacText::setMaxWidth(int maxWidth) {
 		return;
 	}
 
-	Common::U32String str = getTextChunk(0, 0, -1, -1, true, true);
+	Common::U32String str = _canvas.getTextChunk(0, 0, -1, -1, true, true);
 
 	// keep the cursor pos
 	int ppos = 0;
@@ -1807,7 +1807,7 @@ Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	return getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
+	return _canvas.getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, formatted, newlines);
 }
 
 void MacText::clearSelection() {
@@ -1909,7 +1909,7 @@ bool MacText::isCutAllowed() {
 }
 
 Common::U32String MacText::getEditedString() {
-	return getTextChunk(_editableRow, 0, -1, -1);
+	return _canvas.getTextChunk(_editableRow, 0, -1, -1);
 }
 
 Common::U32String MacText::getPlainText() {
@@ -1934,7 +1934,7 @@ Common::U32String MacText::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
+	Common::U32String selection = _canvas.getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
 
 	deleteSelection();
 	clearSelection();
@@ -2452,39 +2452,43 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col, int 
 		*chunk_ = (int)chunk;
 }
 
+Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
+	return _canvas.getTextChunk(startRow, startCol, endRow, endCol, formatted, newlines);
+}
+
 // If adjacent chunks have same format, then skip the format definition
 // This happens when a long paragraph is split into several lines
 #define ADDFORMATTING()                                                                      \
 	if (formatted) {                                                                         \
-		formatting = Common::U32String(_canvas._text[i].chunks[chunk].toString()); \
+		formatting = Common::U32String(_text[i].chunks[chunk].toString()); \
 		if (formatting != prevformatting) {                                                  \
 			res += formatting;                                                               \
 			prevformatting = formatting;                                                     \
 		}                                                                                    \
 	}
 
-Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
+Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
 	Common::U32String res("");
 
 	if (endRow == -1)
-		endRow = _canvas._text.size() - 1;
+		endRow = _text.size() - 1;
 
 	if (endCol == -1)
-		endCol = _canvas.getLineCharWidth(endRow);
-	if (_canvas._text.empty()) {
+		endCol = getLineCharWidth(endRow);
+	if (_text.empty()) {
 		return res;
 	}
 
-	startRow = CLIP(startRow, 0, (int)_canvas._text.size() - 1);
-	endRow = CLIP(endRow, 0, (int)_canvas._text.size() - 1);
+	startRow = CLIP(startRow, 0, (int)_text.size() - 1);
+	endRow = CLIP(endRow, 0, (int)_text.size() - 1);
 
 	Common::U32String formatting(""), prevformatting("");
 
 	for (int i = startRow; i <= endRow; i++) {
 		// We requested only part of one line
 		if (i == startRow && i == endRow) {
-			for (uint chunk = 0; chunk < _canvas._text[i].chunks.size(); chunk++) {
-				if (_canvas._text[i].chunks[chunk].text.empty()) {
+			for (uint chunk = 0; chunk < _text[i].chunks.size(); chunk++) {
+				if (_text[i].chunks[chunk].text.empty()) {
 					// skip empty chunks, but keep them formatted,
 					// a text input box needs to keep the formatting even when all text is removed.
 					ADDFORMATTING();
@@ -2494,68 +2498,68 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (startCol <= 0) {
 					ADDFORMATTING();
 
-					if (endCol >= (int)_canvas._text[i].chunks[chunk].text.size())
-						res += _canvas._text[i].chunks[chunk].text;
+					if (endCol >= (int)_text[i].chunks[chunk].text.size())
+						res += _text[i].chunks[chunk].text;
 					else
-						res += _canvas._text[i].chunks[chunk].text.substr(0, endCol);
-				} else if ((int)_canvas._text[i].chunks[chunk].text.size() > startCol) {
+						res += _text[i].chunks[chunk].text.substr(0, endCol);
+				} else if ((int)_text[i].chunks[chunk].text.size() > startCol) {
 					ADDFORMATTING();
-					res += _canvas._text[i].chunks[chunk].text.substr(startCol, endCol - startCol);
+					res += _text[i].chunks[chunk].text.substr(startCol, endCol - startCol);
 				}
 
-				startCol -= _canvas._text[i].chunks[chunk].text.size();
-				endCol -= _canvas._text[i].chunks[chunk].text.size();
+				startCol -= _text[i].chunks[chunk].text.size();
+				endCol -= _text[i].chunks[chunk].text.size();
 
 				if (endCol <= 0)
 					break;
 			}
 		// We are at the top line and it is not completely requested
 		} else if (i == startRow && startCol != 0) {
-			for (uint chunk = 0; chunk < _canvas._text[i].chunks.size(); chunk++) {
-				if (_canvas._text[i].chunks[chunk].text.empty()) // skip empty chunks
+			for (uint chunk = 0; chunk < _text[i].chunks.size(); chunk++) {
+				if (_text[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				if (startCol <= 0) {
 					ADDFORMATTING();
-					res += _canvas._text[i].chunks[chunk].text;
-				} else if ((int)_canvas._text[i].chunks[chunk].text.size() > startCol) {
+					res += _text[i].chunks[chunk].text;
+				} else if ((int)_text[i].chunks[chunk].text.size() > startCol) {
 					ADDFORMATTING();
-					res += _canvas._text[i].chunks[chunk].text.substr(startCol);
+					res += _text[i].chunks[chunk].text.substr(startCol);
 				}
 
-				startCol -= _canvas._text[i].chunks[chunk].text.size();
+				startCol -= _text[i].chunks[chunk].text.size();
 			}
-			if (newlines && _canvas._text[i].paragraphEnd)
+			if (newlines && _text[i].paragraphEnd)
 				res += '\n';
 		// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
-			for (uint chunk = 0; chunk < _canvas._text[i].chunks.size(); chunk++) {
-				if (_canvas._text[i].chunks[chunk].text.empty()) // skip empty chunks
+			for (uint chunk = 0; chunk < _text[i].chunks.size(); chunk++) {
+				if (_text[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				ADDFORMATTING();
 
-				if (endCol >= (int)_canvas._text[i].chunks[chunk].text.size())
-					res += _canvas._text[i].chunks[chunk].text;
+				if (endCol >= (int)_text[i].chunks[chunk].text.size())
+					res += _text[i].chunks[chunk].text;
 				else
-					res += _canvas._text[i].chunks[chunk].text.substr(0, endCol);
+					res += _text[i].chunks[chunk].text.substr(0, endCol);
 
-				endCol -= _canvas._text[i].chunks[chunk].text.size();
+				endCol -= _text[i].chunks[chunk].text.size();
 
 				if (endCol <= 0)
 					break;
 			}
 		// We are in the middle of requested range, pass whole line
 		} else {
-			for (uint chunk = 0; chunk < _canvas._text[i].chunks.size(); chunk++) {
-				if (_canvas._text[i].chunks[chunk].text.empty()) // skip empty chunks
+			for (uint chunk = 0; chunk < _text[i].chunks.size(); chunk++) {
+				if (_text[i].chunks[chunk].text.empty()) // skip empty chunks
 					continue;
 
 				ADDFORMATTING();
-				res += _canvas._text[i].chunks[chunk].text;
+				res += _text[i].chunks[chunk].text;
 			}
 
-			if (newlines && _canvas._text[i].paragraphEnd)
+			if (newlines && _text[i].paragraphEnd)
 				res += '\n';
 		}
 	}
@@ -2583,8 +2587,8 @@ void MacText::insertTextFromClipboard() {
 			ppos += _canvas.getLineCharWidth(i);
 		ppos += _cursorCol;
 
-		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
-		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, _canvas.getLineCharWidth(end, true), true, true);
+		Common::U32String pre_str = _canvas.getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
+		Common::U32String sub_str = _canvas.getTextChunk(_cursorRow, _cursorCol, end, _canvas.getLineCharWidth(end, true), true, true);
 
 		// Remove it from the text
 		for (int i = start; i <= end; i++) {
@@ -2655,7 +2659,7 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	(*col)++;
 
 	if (_canvas.getLineWidth(*row) - oldw + chunkw > _canvas._maxWidth) { // Needs reshuffle
-		reshuffleParagraph(row, col);
+		_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 		_fullRefresh = true;
 		recalcDims();
 		render();
@@ -2695,7 +2699,7 @@ void MacText::deleteSelection() {
 		deletePreviousCharInternal(&row, &col);
 	}
 
-	reshuffleParagraph(&row, &col);
+	_canvas.reshuffleParagraph(&row, &col, _defaultFormatting);
 
 	_fullRefresh = true;
 	recalcDims();
@@ -2755,7 +2759,7 @@ void MacText::deletePreviousChar(int *row, int *col) {
 	}
 	D(9, "**deleteChar cursor row %d col %d", _cursorRow, _cursorCol);
 
-	reshuffleParagraph(row, col);
+	_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 
 	_fullRefresh = true;
 	recalcDims();
@@ -2799,7 +2803,7 @@ void MacText::addNewLine(int *row, int *col) {
 	(*row)++;
 	*col = 0;
 
-	reshuffleParagraph(row, col);
+	_canvas.reshuffleParagraph(row, col, _defaultFormatting);
 
 	for (int i = 0; i < (int)_canvas._text.size(); i++) {
 		D(9, "** addNewLine line %d", i);
@@ -2814,42 +2818,42 @@ void MacText::addNewLine(int *row, int *col) {
 	render();
 }
 
-void MacText::reshuffleParagraph(int *row, int *col) {
+void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting) {
 	// First, we looking for the paragraph start and end
 	int start = *row, end = *row;
 
-	while (start && !_canvas._text[start - 1].paragraphEnd)
+	while (start && !_text[start - 1].paragraphEnd)
 		start--;
 
-	while (end < (int)_canvas._text.size() - 1 && !_canvas._text[end].paragraphEnd) // stop at last line
+	while (end < (int)_text.size() - 1 && !_text[end].paragraphEnd) // stop at last line
 		end++;
 
 	// Get character pos within paragraph
 	int ppos = 0;
 
 	for (int i = start; i < *row; i++)
-		ppos += _canvas.getLineCharWidth(i);
+		ppos += getLineCharWidth(i);
 
 	ppos += *col;
 
 	// Get whole paragraph
-	Common::U32String paragraph = getTextChunk(start, 0, end, _canvas.getLineCharWidth(end, true), true, true);
+	Common::U32String paragraph = getTextChunk(start, 0, end, getLineCharWidth(end, true), true, true);
 
 	// Remove it from the text
 	for (int i = start; i <= end; i++) {
-		_canvas._text.remove_at(start);
+		_text.remove_at(start);
 	}
 
 	// And now read it
 	D(9, "start %d end %d", start, end);
-	_canvas.splitString(paragraph, start, _defaultFormatting);
+	splitString(paragraph, start, defaultFormatting);
 
 	// Find new pos within paragraph after reshuffling
 	*row = start;
 
 	warning("FIXME, bad design");
-	while (ppos > _canvas.getLineCharWidth(*row, true)) {
-		ppos -= _canvas.getLineCharWidth(*row, true);
+	while (ppos > getLineCharWidth(*row, true)) {
+		ppos -= getLineCharWidth(*row, true);
 		(*row)++;
 	}
 	*col = ppos;

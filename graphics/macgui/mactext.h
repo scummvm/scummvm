@@ -176,6 +176,14 @@ public:
 	const Common::U32String::value_type *splitString(const Common::U32String::value_type *s, int curLine, MacFontRun &defaultFormatting);
 
 	void chopChunk(const Common::U32String &str, int *curLinePtr, int indent, int maxWidth);
+	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
+
+	/**
+	 * Rewraps paragraph containing given text row.
+	 * When text is modified, we redo whole thing again without touching
+	 * other paragraphs. Also, cursor position is returned in the arguments
+	 */
+	void reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting);
 
 	void processTable(int line, int maxWidth);
 };
@@ -380,13 +388,6 @@ public:
 private:
 	void init(uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 textShadow, bool macFontMode);
 	bool isCutAllowed();
-
-	/**
-	 * Rewraps paragraph containing given text row.
-	 * When text is modified, we redo whole thing again without touching
-	 * other paragraphs. Also, cursor position is returned in the arguments
-	 */
-	void reshuffleParagraph(int *row, int *col);
 
 	void recalcDims();
 
