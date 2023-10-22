@@ -291,7 +291,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 // Very simple window class
 
-MacGui::SimpleWindow::SimpleWindow(OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _system(system), _from(from), _bounds(bounds) {
+MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_backup = new Graphics::Surface();
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
@@ -416,10 +416,48 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 	s->setPixel(x, y, color);
 }
 
-void MacGui::SimpleWindow::drawTextBox(Common::Rect r) {
+void MacGui::SimpleWindow::drawTextBox(Common::Rect r, TextLine *lines) {
 	Graphics::drawRoundRect(r, 9, kWhite, true, plotPixel, this);
 	Graphics::drawRoundRect(r, 9, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);
+
+	Graphics::Surface *s = innerSurface();
+
+	if (!lines)
+		return;
+
+	for (int i = 0; lines[i].str; i++) {
+		const Graphics::Font *f1 = nullptr;
+		const Graphics::Font *f2 = nullptr;
+
+		switch (lines[i].style) {
+		case kStyleHeader:
+			f1 = _gui->getFont(kIndy3AboutFontHeaderOutside);
+			f2 = _gui->getFont(kIndy3AboutFontHeaderInside);
+			break;
+		case kStyleBold:
+			f1 = _gui->getFont(kIndy3AboutFontBold);
+			break;
+		case kStyleRegular:
+			f1 = _gui->getFont(kIndy3AboutFontRegular);
+			break;
+		}
+
+		const char *msg = lines[i].str;
+		int x = r.left + lines[i].x;
+		int y = r.top + lines[i].y;
+		Graphics::TextAlign align = lines[i].align;
+		int width = r.right - x;
+
+		if (lines[i].style == kStyleHeader) {
+			f1->drawString(s, msg, x + 1, y + 1, width - 1, kBlack, align);
+			f2->drawString(s, msg, x + 3, y + 1, width - 2, kBlack, align);
+			f1->drawString(s, msg, x, y, width, kBlack, align);
+			f2->drawString(s, msg, x + 2, y, width, kWhite, align);
+		} else {
+			f1->drawString(s, msg, x, y, width, kBlack, align);
+		}
+	}
 }
 
 // ===========================================================================
@@ -752,7 +790,7 @@ int MacGui::delay(uint32 ms) {
 }
 
 MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle style) {
-	return new SimpleWindow(_system, _surface, bounds, style);
+	return new SimpleWindow(this, _system, _surface, bounds, style);
 }
 
 // ===========================================================================
@@ -1757,10 +1795,16 @@ void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 	// headline. The rest of the Indy 3 verb GUI uses Geneva.
 
 	switch (fontId) {
-	case FontId::kIndy3AboutFontHeader:
+	case FontId::kIndy3AboutFontHeaderOutside:
 		id = _gameFontId;
 		size = 12;
-		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontShadow | Graphics::kMacFontCondense;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontOutline;
+		break;
+
+	case FontId::kIndy3AboutFontHeaderInside:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
 		break;
 
 	case FontId::kIndy3AboutFontBold:
@@ -1865,15 +1909,23 @@ void MacIndy3Gui::showAboutDialog() {
 	int trolleyWaitFrames = 50;
 	int textWaitFrames = 53;
 
+
+	// These strings are part of the STRS resource, but I don't know how to
+	// safely read them from there yet. So hard-coded it is for now.
+
+	TextLine page1[] = {
+		{ 21, 4, kStyleHeader, Graphics::kTextAlignLeft, "Indiana Jones and the Last Crusade" },
+		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, "The Graphic Adventure" },
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Mac 1.7 8/17/90, Interpreter version 5.1.6" },
+		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
+		{ 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
+	};
+
 	// Header texts aren't rendered correctly. Apparently the original does
 	// its own shadowing by drawing the text twice, but that ends up
 	// looking even worse. Perhaps I have to draw the text three times
 	// once to fill it), or maybe our Mac text rendering just isn't as good
 	// as it needs to be yet.
-
-	const Graphics::Font *fontHeader = getFont(kIndy3AboutFontHeader);
-	const Graphics::Font *fontBold = getFont(kIndy3AboutFontBold);
-	const Graphics::Font *fontRegular = getFont(kIndy3AboutFontRegular);
 
 	bool changeScene = false;
 
@@ -1928,32 +1980,23 @@ void MacIndy3Gui::showAboutDialog() {
 			switch (scene) {
 			case 1:
 				clearAboutDialog(window);
-				window->drawTextBox(r1);
-
-				// These strings are part of the STRS resource,
-				// but I don't know how to safely read them
-				// from there.
-
-				fontHeader->drawString(s, "Indiana Jones and the Last Crusade", r1.left - 2, 10, r1.width(), kBlack, Graphics::kTextAlignCenter);
-				fontBold->drawString(s, "The Graphic Adventure", r1.left, 28, r1.width(), kBlack, Graphics::kTextAlignCenter);
-				fontBold->drawString(s, "Mac 1.7 8/17/90, Interpreter version 5.1.6", r1.left, 55, r1.width(), kBlack, Graphics::kTextAlignCenter);
-				fontRegular->drawString(s, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved.", r1.left + 1, 88, r1.width(), kBlack, Graphics::kTextAlignCenter);
+				window->drawTextBox(r1, page1);
 				break;
 
 			case 2:
 				clearAboutDialog(window);
-				window->drawTextBox(r2);
+				window->drawTextBox(r2, nullptr);
 				break;
 
 			case 3:
 				// Don't clear. The trolley is still on screen
 				// and only the text changes.
-				window->drawTextBox(r2);
+				window->drawTextBox(r2, nullptr);
 				break;
 
 			case 4:
 				clearAboutDialog(window);
-				window->drawTextBox(r1);
+				window->drawTextBox(r1, nullptr);
 				break;
 			}
 
