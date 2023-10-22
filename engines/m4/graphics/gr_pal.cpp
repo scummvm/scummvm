@@ -172,11 +172,11 @@ void gr_pal_reset_ega_colors(RGB8 *pal) {
 }
 
 void gr_backup_palette() {
-	Common::copy(_G(master_palette), _G(master_palette) + 768, _G(backup_palette));
+	Common::copy(_G(master_palette), _G(master_palette) + 256, _G(backup_palette));
 }
 
 void gr_restore_palette() {
-	Common::copy(_G(backup_palette), _G(backup_palette) + 768, _G(master_palette));
+	Common::copy(_G(backup_palette), _G(backup_palette) + 256, _G(master_palette));
 }
 
 void pal_mirror_colours(int first_color, int last_color, RGB8 *pal) {
