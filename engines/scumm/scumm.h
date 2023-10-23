@@ -790,6 +790,7 @@ protected:
 	void restoreCursorPostMenu();
 	void saveSurfacesPreGUI();
 	void restoreSurfacesPostGUI();
+	void showDraftsInventory();
 
 public:
 	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);

@@ -1135,6 +1135,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
+		if (_enableEnhancements && _game.id == GID_LOOM &&
+			mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_d && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+			// Drafts menu
+			showDraftsInventory();
+		}
+
 		if (snapScrollKeyEnabled) {
 			if ((_game.version == 2 && lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) ||
 				(_game.version == 3 && lastKeyHit.keycode == Common::KEYCODE_i && lastKeyHit.hasFlags(Common::KBD_ALT)) ||
