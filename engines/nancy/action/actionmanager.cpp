@@ -595,6 +595,11 @@ void ActionManager::synchronize(Common::Serializer &ser) {
 	for (auto &rec : _records) {
 		ser.syncAsByte(rec->_isActive);
 		ser.syncAsByte(rec->_isDone);
+
+		// Forcefully re-activate Autotext records, since we need to regenerate the surface
+		if (ser.isLoading() && g_nancy->getGameType() >= kGameTypeNancy6 && rec->_type == 61) {
+			rec->_isDone = false;
+		}
 	}
 }
 
