@@ -98,6 +98,8 @@ public:
 		Common::Rect _bounds;
 		int _margin;
 
+		PauseToken _pauseToken;
+
 		Graphics::Surface *_from = nullptr;
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;

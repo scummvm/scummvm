@@ -292,6 +292,8 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Very simple window class
 
 MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+	_pauseToken = _gui->_vm->pauseEngine();
+
 	_backup = new Graphics::Surface();
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
@@ -342,6 +344,7 @@ MacGui::SimpleWindow::~SimpleWindow() {
 	copyToScreen(_backup);
 	_backup->free();
 	delete _backup;
+	_pauseToken.clear();
 }
 
 void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) {
@@ -496,7 +499,8 @@ void MacGui::initialize() {
 		{ 0, NULL, 0, 0, false }
 	};
 
-	Common::String aboutMenuDef = "About " + name() + "...<B";
+	// TODO: This can be found in the STRS resource
+	Common::String aboutMenuDef = "About " + name() + "...<B;(-";
 
 	menu->addStaticMenus(menuSubItems);
 	menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
@@ -739,7 +743,8 @@ void MacGui::updateWindowManager() {
 		}
 	} else {
 		if (_menuIsActive) {
-			_windowManager->popCursor();
+			if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
+				_windowManager->popCursor();
 			CursorMan.showMouse(_cursorWasVisible);
 		}
 	}
@@ -864,7 +869,7 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 		hotspotY = macCursor.getHotspotY();
 		animate = 0;
 
-		_windowManager->pushCustomCursor(&macCursor);
+		_windowManager->replaceCursor(Graphics::kMacCursorCustom, &macCursor);
 	}
 
 	delete curs;
@@ -1757,9 +1762,6 @@ MacIndy3Gui::~MacIndy3Gui() {
 }
 
 void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
-		return;
-
 	const byte buf[15 * 15] = {
 		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
 		3, 3, 3, 3, 3, 3, 0, 1, 0, 3, 3, 3, 3, 3, 3,
@@ -1782,7 +1784,7 @@ void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotsp
 	hotspotX = hotspotY = 7;
 	animate = 0;
 
-	_windowManager->pushCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
+	_windowManager->replaceCustomCursor(buf, width, height, hotspotX, hotspotY, 3);
 }
 
 const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
@@ -1913,8 +1915,8 @@ void MacIndy3Gui::showAboutDialog() {
 	int trolleyWaitFrames = 50;
 	int waitFrames;
 
-	// These strings are part of the STRS resource, but I don't know how to
-	// safely read them from there yet. So hard-coded it is for now.
+	// TODO: These strings are part of the STRS resource, but I don't know
+	// how to safely read them from there yet. So hard-coded it is for now.
 
 	#define TEXT_END_MARKER { 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
 
