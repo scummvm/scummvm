@@ -1672,14 +1672,14 @@ static const char *loomDraftsNames[6][17] = {
 };
 
 void ScummEngine::drawDraftsInventory() {
-	int base, xPos;
+	int base, xPos, textHeight, heightMultiplier, draft,textOffset, xOffset,
+		inactiveColor, unlockedColor, newDraftColor, titleColor, notesColor;
 	char notesBuf[6];
 	const char **names;
 	const char *notes = "cdefgabC";
 
 	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 	bool isLoomVGA = _game.version == 4 || _game.platform == Common::kPlatformFMTowns;
-	int textHeight = getGUIStringHeight("A") + 3;
 
 	// French&Hebrew labels are quite long, so throughout the following code
 	// there are slight adjustments to French&Hebrew text positioning...
@@ -1746,25 +1746,26 @@ void ScummEngine::drawDraftsInventory() {
 		base = 50;
 	}
 
-	int inactiveColor = 8;
-	int unlockedColor = isLoomVGA ? 1 : getBannerColor(18);
-	int newDraftColor = isLoomVGA ? 14 : getBannerColor(21);
+	inactiveColor = 8;
+	unlockedColor = isLoomVGA ? 1 : getBannerColor(18);
+	newDraftColor = isLoomVGA ? 14 : getBannerColor(21);
 
 	// This is used to offset text elements in the event that
 	// we are dealing with a language which has very long strings...
-	int xOffset = isLongLanguage ? 10 : 0;
+	xOffset = isLongLanguage ? 10 : 0;
 
 	for (int i = 0; i < 16; i++) {
-		int draft = _scummVars[base + i * 2];
+		draft = _scummVars[base + i * 2];
 
 		// In which row are we rendering our text?
-		int heightMultiplier = i < 8 ? i : (i % 8);
+		heightMultiplier = i < 8 ? i : (i % 8);
+		textHeight = getGUIStringHeight("A") + 3;
 
 		// Has the draft been unlocked by the player?
-		int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
+		titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
 
 		// Has the new draft been used at least once?
-		int notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
 
 		// Has the draft been unlocked? Great: put it in our text buffer
 		// otherwise just prepare to render the "????" string.
@@ -1794,7 +1795,8 @@ void ScummEngine::drawDraftsInventory() {
 			} else {
 				xPos = i < 8 ? 30 : 167;
 			}
-			int textOffset = xOffset;
+
+			textOffset = xOffset;
 
 			if (i >= 8) {
 				textOffset = 0;
@@ -1830,7 +1832,7 @@ void ScummEngine::drawDraftsInventory() {
 			// Left column or right column?
 			// (Objective: Leave three pixels to the left)
 			xPos = i >= 8 ? 30 : 167;
-			int textOffset = xOffset;
+			textOffset = xOffset;
 
 			if (i < 8) {
 				textOffset = 0;
