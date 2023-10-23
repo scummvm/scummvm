@@ -566,7 +566,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	if (slant & kMacFontOutline)
 		bitmapOffset += 2;
 	if (slant & kMacFontItalic)
-		bitmapOffset = (data._fRectHeight - 1) / SLANTDEEP;
+		bitmapOffset += (data._fRectHeight - 1) / SLANTDEEP;
 	if (slant & kMacFontShadow)
 		bitmapOffset++;
 
