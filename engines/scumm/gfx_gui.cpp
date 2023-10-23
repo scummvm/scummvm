@@ -1466,11 +1466,56 @@ void ScummEngine::showDraftsInventory() {
 	// Save the current cursor state...
 	saveCursorPreMenu();
 
-	// SETUP AND DRAW GUI! MOVE THIS ELSEWHERE!
-	int yConstant;
+	// Do the thing!
+	setUpDraftsInventory();
+	drawDraftsInventory();
+
+	// Notify that the menu is now active
+	_mainMenuIsActive = true;
+
+	// Clear keypresses and mouse presses
+	clearClickedStatus();
+
+	// Menu loop
+	while (!shouldQuit()) {
+		// Update the screen and the cursor while we're in the loop
+		waitForTimer(1);
+
+		// Wait for any mouse button presses...
+		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked, false);
+
+		if (leftMsClicked || rightMsClicked) {
+			break;
+		}
+	}
+
+	_mainMenuIsActive = false;
+
+	// Restore the old cursor state...
+	restoreCursorPostMenu();
+
+	// Restore surfaces...
+	if (_game.platform == Common::kPlatformFMTowns) {
+		// RESTORE FMTOWNS BUFFER
+	} else {
+		restoreSurfacesPostGUI();
+	}
+
+	// Restore shake effect...
+	setShake(_shakeTempSavedState);
+
+	// Resume the engine.
+	pt.clear();
+	clearClickedStatus();
+}
+
+void ScummEngine::setUpDraftsInventory() {
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 	bool isLoomVGA = (_game.version == 4) || _game.platform == Common::kPlatformFMTowns;
 
-	yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	// French labels are quite long, so throughout the following code
+	// there are slight adjustments to French text positioning...
+	int xOffset = _language == Common::FR_FRA ? 10 : 0;
 
 	if (isLoomVGA) {
 		setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
@@ -1513,9 +1558,9 @@ void ScummEngine::showDraftsInventory() {
 			getBannerColor(14),
 			getBannerColor(6),
 			getBannerColor(4),
-			20,
+			20 - xOffset,
 			yConstant - 60,
-			300,
+			300 + xOffset,
 			((yConstant + 60) < 0 ? -120 : yConstant + 60),
 			_emptyMsg, 1, 0);
 
@@ -1529,9 +1574,9 @@ void ScummEngine::showDraftsInventory() {
 			getBannerColor(13),
 			getBannerColor(6),
 			getBannerColor(7),
-			26,
+			26 - xOffset,
 			yConstant - 47,
-			300 - 6,
+			300 - 6 + xOffset,
 			yConstant - 47 + 102,
 			_emptyMsg, 1, 0);
 	}
@@ -1550,86 +1595,100 @@ void ScummEngine::showDraftsInventory() {
 		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, getBannerColor(4));
 		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, getBannerColor(13));
 	}
+}
 
+static const char *loomDraftsNames[6][17] = {
+	// ENGLISH
+	{
+		"Drafts",
+		"Opening:",       "Straw Into Gold:",  "Dyeing:",
+		"Night Vision:",  "Twisting:",         "Sleep:",
+		"Emptying:",      "Invisibility:",     "Terror:",
+		"Sharpening:",    "Reflection:",       "Healing:",
+		"Silence:",       "Shaping:",          "Unmaking:",
+		"Transcendence:"
+	},
+
+	// GERMAN
+	{
+		"Spr\x81\x63he",
+		"\x99\x66\x66nen:",  "Stroh in Gold:",   "F\x84rben:",
+		"Dunkelsicht:",      "Verdrehen:",       "Schlaf:",
+		"Entleeren:",        "Unsichtbarkeit:",  "Angst:",
+		"Sch\x84rfen:",      "Spiegelung:",      "Heilen:",
+		"Stille:",           "Formen:",          "Zerst\x94ren:",
+		"Transzendenz:"
+	},
+
+	// FRENCH
+	{
+		"Trames",
+		"Ouverture:",            "De la paille \x85 l'or:",  "Teinture:",
+		"Vision de nuit:",       "Trame tordue:",            "Sommeil:",
+		"Vidange:",              "Camouflage:",              "Terreur:",
+		"Trame \x85 aiguiser:",  "Reflet:",                  "Gu\x82rison:",
+		"Silence:",              "Formation:",               "Trame d\x82\x66\x61ite:",
+		"Transcendance:"
+	},
+
+	// SPANISH
+	{
+		"Hechizos",
+		"Apertura:",            "Oro a Paja:",     "Tinte:",
+		"Visi\xA2n Nocturna:",  "Retorcer:",       "Sue\xA4o:",
+		"Vacio:",               "Invisibilidad:",  "Terror:",
+		"Afilado:",             "Reflexion:",      "Curativo:",
+		"Silencio:",            "Moldear:",        "Deshacer:",
+		"Trascendencia:"
+	},
+
+	// JAPANESE
+	{
+		"\x82\xdc\x82\xb6\x82\xc8\x82\xa2",
+		"\x8a\x4a\x82\xaf\x82\xe9:",
+		"\x82\xed\x82\xe7\x82\xf0\x8b\xe0\x89\xdd\x82\xc9\x95\xcf\x82\xa6\x82\xe9:",
+		"\x90\xf5\x82\xdf\x82\xe9:",
+		"\x88\xc3\x88\xc5\x82\xc5\x95\xa8\x82\xf0\x8c\xa9\x82\xa6:",
+		"\x82\xcb\x82\xb6\x82\xe9:",
+		"\x96\xb0\x82\xe7\x82\xb9\x82\xe9:",
+		"\x83\x4a\x83\x89\x82\xc9\x82\xb7\x82\xe9:",
+		"\x8c\xa9\x82\xa6\x82\xc8\x82\xad\x82\xb7\x82\xe9:",
+		"\x95\x7c\x82\xaa\x82\xe7\x82\xb9\x82\xe9:",
+		"\x90\xeb\x82\xe7\x82\xb9\x82\xe9:",
+		"\x89\x66\x82\xb5\x8f\x6f\x82\xb7:",
+		"\x8e\xa1\x97\xc3\x82\xb7\x82\xe9:",
+		"\x90\xc3\x82\xa9\x82\xc9\x82\xb3\x82\xb9\x82\xe9:",
+		"\x8c\x60\x82\xf0\x95\xcf\x82\xa6\x82\xe9:",
+		"\x94\x6a\x89\xf3\x82\xb7\x82\xe9:",
+		"\x92\xb4\x89\x7a\x82\xb3\x82\xb9\x82\xe9:"
+	},
+
+	// HEBREW
+	{
+		"\x9a\x85\x90\x89\x82\x90\x8e",
+		"\x84\x87\x89\x9a\x94:",
+		"\x81\x84\x86\x8c \x99\x97 \x9a\x8b\x89\x94\x84:",
+		"\x84\x92\x89\x81\x96:",
+		"\x84\x8c\x89\x8c \x9a\x89\x89\x80\x98:",
+		"\x81\x85\x81\x89\x91:",
+		"\x84\x90\x89\x99:",
+		"\x84\x97\x98\x84:",
+		"\x84\x80\x98\x90 \x89\x9a\x8c\x81\x8c \x84\x8b\x89\x94\x84:",
+		"\x84\x83\x87\x94\x84:",
+		"\x84\x86\x87\x99\x84:",
+		"\x84\x89\x8e\x83\x84:",
+		"\x89\x85\x94\x89\x98:",
+		"\x84\x97\x9a\x99\x84:",
+		"\x84\x98\x85\x96 \x9a\x90\x89\x9a\x90:",
+		"\x84\x91\x89\x98\x84:",
+		"\x9a\x85\x81\x82\x99\x90:"
+	}
+};
+
+void ScummEngine::drawDraftsInventory() {
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+	bool isLoomVGA = _game.version == 4 || _game.platform == Common::kPlatformFMTowns;
 	int textHeight = getGUIStringHeight("A") + 3;
-
-	const char *translatedNames[6][17] = {
-		// ENGLISH
-		{
-			"Drafts",
-			"Opening:",       "Straw Into Gold:",  "Dyeing:",
-			"Night Vision:",  "Twisting:",         "Sleep:",
-			"Emptying:",      "Invisibility:",     "Terror:",
-			"Sharpening:",    "Reflection:",       "Healing:",
-			"Silence:",       "Shaping:",          "Unmaking:",
-			"Transcendence:"
-		},
-
-		// GERMAN
-		{
-			"Spr\x81\x63he",
-			"\x99\x66\x66nen:",  "Stroh in Gold:",   "F\x84rben:",
-			"Dunkelsicht:",      "Verdrehen:",       "Schlaf:",
-			"Entleeren:",        "Unsichtbarkeit:",  "Angst:",
-			"Sch\x84rfen:",      "Spiegelung:",      "Heilen:",
-			"Stille:",           "Formen:",          "Zerst\x94ren:",
-			"Transzendenz:"
-		},
-
-		// FRENCH
-		{
-			"Trames",
-			"Ouverture:",            "De la paille \x85 l'or:",  "Teinture:",
-			"Vision de nuit:",       "Trame tordue:",            "Sommeil:",
-			"Vidange:",              "Camouflage:",              "Terreur:",
-			"Trame \x85 aiguiser:",  "Reflet:",                  "Gu\x82rison:",
-			"Silence:",              "Formation:",               "Trame d\x82\x66\x61ite:",
-			"Transcendance:"
-		},
-
-		// SPANISH
-		{
-			"Hechizos",
-			"Apertura:",            "Oro a Paja:",     "Tinte:",
-			"Visi\xA2n Nocturna:",  "Retorcer:",       "Sue\xA4o:",
-			"Vacio:",               "Invisibilidad:",  "Terror:",
-			"Afilado:",             "Reflexion:",      "Curativo:",
-			"Silencio:",            "Moldear:",        "Deshacer:",
-			"Trascendencia:"
-		},
-
-		// JAPANESE
-		{
-			"\x82\xdc\x82\xb6\x82\xc8\x82\xa2",
-			"\x8a\x4a\x82\xaf\x82\xe9:",
-			"\x82\xed\x82\xe7\x82\xf0\x8b\xe0\x89\xdd\x82\xc9\x95\xcf\x82\xa6\x82\xe9:",
-			"\x90\xf5\x82\xdf\x82\xe9:",
-			"\x88\xc3\x88\xc5\x82\xc5\x95\xa8\x82\xf0\x8c\xa9\x82\xa6:",
-			"\x82\xcb\x82\xb6\x82\xe9:",
-			"\x96\xb0\x82\xe7\x82\xb9\x82\xe9:",
-			"\x83\x4a\x83\x89\x82\xc9\x82\xb7\x82\xe9:",
-			"\x8c\xa9\x82\xa6\x82\xc8\x82\xad\x82\xb7\x82\xe9:",
-			"\x95\x7c\x82\xaa\x82\xe7\x82\xb9\x82\xe9:",
-			"\x90\xeb\x82\xe7\x82\xb9\x82\xe9:",
-			"\x89\x66\x82\xb5\x8f\x6f\x82\xb7:",
-			"\x8e\xa1\x97\xc3\x82\xb7\x82\xe9:",
-			"\x90\xc3\x82\xa9\x82\xc9\x82\xb3\x82\xb9\x82\xe9:",
-			"\x8c\x60\x82\xf0\x95\xcf\x82\xa6\x82\xe9:",
-			"\x94\x6a\x89\xf3\x82\xb7\x82\xe9:",
-			"\x92\xb4\x89\x7a\x82\xb3\x82\xb9\x82\xe9:"
-		},
-
-		// HEBREW
-		{
-			"Drafts",
-			"Opening:",       "Straw Into Gold:",  "Dyeing:",
-			"Night Vision:",  "Twisting:",         "Sleep:",
-			"Emptying:",      "Invisibility:",     "Terror:",
-			"Sharpening:",    "Reflection:",       "Healing:",
-			"Silence:",       "Shaping:",          "Unmaking:",
-			"Transcendence:"
-		}
-	};
 
 	const char **names;
 
@@ -1637,25 +1696,25 @@ void ScummEngine::showDraftsInventory() {
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::EN_USA:
-		names = translatedNames[0];
+		names = loomDraftsNames[0];
 		break;
 	case Common::DE_DEU:
-		names = translatedNames[1];
+		names = loomDraftsNames[1];
 		break;
 	case Common::FR_FRA:
-		names = translatedNames[2];
+		names = loomDraftsNames[2];
 		break;
 	case Common::ES_ESP:
-		names = translatedNames[3];
+		names = loomDraftsNames[3];
 		break;
 	case Common::JA_JPN:
-		names = translatedNames[4];
+		names = loomDraftsNames[4];
 		break;
 	case Common::HE_ISR:
-		names = translatedNames[5];
+		names = loomDraftsNames[5];
 		break;
 	default:
-		names = translatedNames[0];
+		names = loomDraftsNames[0];
 	}
 
 	drawMainMenuTitle(names[0]);
@@ -1686,10 +1745,19 @@ void ScummEngine::showDraftsInventory() {
 	int unlockedColor = isLoomVGA ? 1 : getBannerColor(18);
 	int newDraftColor = isLoomVGA ? 14 : getBannerColor(21);
 
+	// French labels are quite long, so throughout the following code
+	// there are slight adjustments to French text positioning...
+	int xOffset = _language == Common::FR_FRA ? 10 : 0;
+
 	for (int i = 0; i < 16; i++) {
 		int draft = _scummVars[base + i * 2];
 
 		int xPos = i < 8 ? 30 : 167;
+		int textOffset = xOffset;
+
+		if (i >= 8) {
+			textOffset = 0;
+		}
 
 		int heightMultiplier = i < 8 ? i : (i % 8);
 
@@ -1707,55 +1775,23 @@ void ScummEngine::showDraftsInventory() {
 			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
 		}
 
-		drawGUIText(names[i + 1], nullptr, xPos, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+		drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
 		int notesWidth = getGUIStringWidth(notesBuf);
 
-		if (_game.version == 3 && i >= 8)
-			xPos -= 3;
+		if (_game.version == 3) {
+			if (i >= 8)
+				xPos -= _language == Common::FR_FRA ? -6 : 3;
+			else if (_language == Common::FR_FRA)
+				xPos -= xOffset;
+		}
 
-		drawGUIText(notesBuf, nullptr, xPos + 100, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+
+		drawGUIText(notesBuf, nullptr, xPos + 100 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
 	}
 
+	// Update the screen with all the new stuff!
 	ScummEngine::drawDirtyScreenParts();
 	_system->updateScreen();
-
-	// Notify that the menu is now active
-	_mainMenuIsActive = true;
-
-	// Clear keypresses and mouse presses
-	clearClickedStatus();
-
-	// Menu loop
-	while (!shouldQuit()) {
-		// Update the screen and the cursor while we're in the loop
-		waitForTimer(1);
-
-		// Wait for any mouse button presses...
-		waitForBannerInput(-1, ks, leftMsClicked, rightMsClicked, false);
-
-		if (leftMsClicked || rightMsClicked) {
-			break;
-		}
-	}
-
-	_mainMenuIsActive = false;
-
-	// Restore the old cursor state...
-	restoreCursorPostMenu();
-
-	// Restore surfaces...
-	if (_game.platform == Common::kPlatformFMTowns) {
-		// RESTORE FMTOWNS BUFFER
-	} else {
-		restoreSurfacesPostGUI();
-	}
-
-	// Restore shake effect...
-	setShake(_shakeTempSavedState);
-
-	// Resume the engine.
-	pt.clear();
-	clearClickedStatus();
 }
 
 void ScummEngine::toggleVoiceMode() {

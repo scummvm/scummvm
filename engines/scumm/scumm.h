@@ -791,6 +791,8 @@ protected:
 	void saveSurfacesPreGUI();
 	void restoreSurfacesPostGUI();
 	void showDraftsInventory();
+	void setUpDraftsInventory();
+	void drawDraftsInventory();
 
 public:
 	char displayMessage(const char *altButton, MSVC_PRINTF const char *message, ...) GCC_PRINTF(3, 4);
