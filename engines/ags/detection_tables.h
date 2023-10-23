@@ -641,6 +641,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "audioquest", "Audio Quest" },
 	{ "augustlonging", "The long August longing" },
 	{ "aunaturel", "Au Naturel" },
+	{ "authorsim", "Super Author Simulator 2023" },
 	{ "automation", "Automation" },
 	{ "averyspecialdog", "A very special dog" },
 	{ "awakener", "Awakener" },
@@ -1589,6 +1590,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "irentedaboat", "I Rented a Boat" },
 	{ "irishcoffee", "Irish Coffee" },
 	{ "isaacodyssey", "Isaac's Odyssey" },
+	{ "iskraigra", "Iskra Igra" },
 	{ "isnkill", "ISN: Kill!" },
 	{ "isometrichouse", "The Isometric House" },
 	{ "isoproject", "The Wambus 0: ISO Project" },
@@ -4197,6 +4199,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("ozorwell2", "OZ2.exe", "99a9a592b2ffe51a93b5f18b927441b0", 1028373987), // itch.io  Eng-Ita
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Win v1.0.2
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243795250),  // Win v2.0
+	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243797801),  // Win v2.0.1
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201066930),  // Mac
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
@@ -5234,6 +5237,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("audioquest", "Audio Quest.exe", "06a03fe35791b0578068ab1873455463", 1638472),
 	GAME_ENTRY_EN("augustlonging", "The long August longing.exe", "5db720fe7ddec76ff9829c5b21905201", 18038972),
 	GAME_ENTRY_EN("aunaturel", "au naturel.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8499426),
+	GAME_ENTRY_EN("authorsim", "AuthorSim2023.ags", "4f2894049816e5c03648bc01da6728a8", 3386519),
 	GAME_ENTRY_EN("automation", "automation.exe", "c16204dc8aa338e3199b2c62da0b33f4", 3943320),
 	GAME_ENTRY_EN_PLATFORM("automation", "automation.exe", "c16204dc8aa338e3199b2c62da0b33f4", 3942321, "OROW"),
 	GAME_ENTRY("averyspecialdog", "dog.exe", "465f972675db2da6040518221af5b0ba", 2120544),  // En-De
@@ -6396,6 +6400,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.exe", "69059264cbe5973082ddeec0aead82a9", 121845045),  // Windows
 	GAME_ENTRY_EN("irishcoffee", "Irish Coffee.exe", "6d012687b4944c2b9167dad450579527", 18381150),
 	GAME_ENTRY("isaacodyssey", "isaacsoddysee.exe", "615e73fc1874e92d60a1996c2330ea36", 5339324),  //v1.1 Eng-Esp
+	GAME_ENTRY_EN("iskraigra", "AlpaM.exe", "af1683f81365165be8ec727fe9e89300", 537920902),
 	GAME_ENTRY_EN("isnkill", "ISN.exe", "4d17844029d8910fbaae1bdc99e250f2", 7932669),
 	GAME_ENTRY_EN("isoproject", "ISO.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2443024),
 	GAME_ENTRY_EN("isos", "ISOS.exe", "06a03fe35791b0578068ab1873455463", 7362937),
