@@ -1578,24 +1578,24 @@ void ScummEngine::showDraftsInventory() {
 
 		// FRENCH
 		{
-			"Drafts",
-			"Opening:",       "Straw Into Gold:",  "Dyeing:",
-			"Night Vision:",  "Twisting:",         "Sleep:",
-			"Emptying:",      "Invisibility:",     "Terror:",
-			"Sharpening:",    "Reflection:",       "Healing:",
-			"Silence:",       "Shaping:",          "Unmaking:",
-			"Transcendence:"
+			"Trames",
+			"Ouverture:",            "De la paille \x85 l'or:",  "Teinture:",
+			"Vision de nuit:",       "Trame tordue:",            "Sommeil:",
+			"Vidange:",              "Camouflage:",              "Terreur:",
+			"Trame \x85 aiguiser:",  "Reflet:",                  "Gu\x82rison:",
+			"Silence:",              "Formation:",               "Trame d\x82\x66\x61ite:",
+			"Transcendance:"
 		},
 
 		// SPANISH
 		{
-			"Drafts",
-			"Opening:",       "Straw Into Gold:",  "Dyeing:",
-			"Night Vision:",  "Twisting:",         "Sleep:",
-			"Emptying:",      "Invisibility:",     "Terror:",
-			"Sharpening:",    "Reflection:",       "Healing:",
-			"Silence:",       "Shaping:",          "Unmaking:",
-			"Transcendence:"
+			"Hechizos",
+			"Apertura:",            "Oro a Paja:",     "Tinte:",
+			"Visi\xA2n Nocturna:",  "Retorcer:",       "Sue\xA4o:",
+			"Vacio:",               "Invisibilidad:",  "Terror:",
+			"Afilado:",             "Reflexion:",      "Curativo:",
+			"Silencio:",            "Moldear:",        "Deshacer:",
+			"Trascendencia:"
 		},
 
 		// JAPANESE
