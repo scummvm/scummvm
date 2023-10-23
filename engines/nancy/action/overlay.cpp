@@ -42,10 +42,12 @@ void Overlay::init() {
 		uint surfID = _imageName[12] - '1';
 		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
 		_fullSurface.create(surf, surf.getBounds());
+		_usesAutotext = true;
 	} else if (_imageName.hasPrefix("USE_AUTOJOURNAL")) {
 		uint surfID = _imageName.substr(15).asUint64() + 2;
 		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
 		_fullSurface.create(surf, surf.getBounds());
+		_usesAutotext = true;
 	} else {
 		// No autotext, load image source
 		g_nancy->_resource->loadImage(_imageName, _fullSurface);
@@ -342,24 +344,29 @@ void Overlay::setFrame(uint frame) {
 			// for every blit description (nancy4 scene 1300)
 			srcRect = _srcRects[0];
 		}
-
-		// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
-		// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
-		// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
-		// inside the blit description below were used for blitting from that intermediate surface to the screen.
-		// We can achieve the same results by doung the calculations below
-		Common::Rect staticSrc = _blitDescriptions[frame].src;
-		srcRect.translate(staticSrc.left, staticSrc.top);
-
-		if (srcRect.isEmpty()) {
-			srcRect.setWidth(staticSrc.width());
-			srcRect.setHeight(staticSrc.height());
-		} else {
-			// Grab whichever dimensions are smaller. Fixes the book in nancy5 scene 3000
-			srcRect.setWidth(MIN<int>(staticSrc.width(), srcRect.width()));
-			srcRect.setHeight(MIN<int>(staticSrc.height(), srcRect.height()));
-		}
 		
+		Common::Rect staticSrc = _blitDescriptions[frame].src;
+
+		if (_usesAutotext) {
+			// For autotext overlays, the srcRect is junk data
+			srcRect = staticSrc;
+		} else {
+			// Lastly, the general source rect we just got may also be completely empty (nancy5 scenes 2056, 2057),
+			// or have coordinates other than (0, 0) (nancy3 scene 3070, nancy5 scene 2000). Presumably,
+			// the general source rect was used for blitting to an (optional) intermediate surface, while the ones
+			// inside the blit description below were used for blitting from that intermediate surface to the screen.
+			// We can achieve the same results by doung the calculations below
+			srcRect.translate(staticSrc.left, staticSrc.top);
+
+			if (srcRect.isEmpty()) {
+				srcRect.setWidth(staticSrc.width());
+				srcRect.setHeight(staticSrc.height());
+			} else {
+				// Grab whichever dimensions are smaller. Fixes the book in nancy5 scene 3000
+				srcRect.setWidth(MIN<int>(staticSrc.width(), srcRect.width()));
+				srcRect.setHeight(MIN<int>(staticSrc.height(), srcRect.height()));
+			}
+		}	
 	}
 
 	_drawSurface.create(_fullSurface, srcRect);

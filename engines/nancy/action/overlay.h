@@ -43,7 +43,7 @@ namespace Action {
 // that was also when static mode got introduced.
 class Overlay : public RenderActionRecord {
 public:
-	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible) {}
+	Overlay(bool interruptible) : RenderActionRecord(7), _isInterruptible(interruptible), _usesAutotext(false) {}
 	virtual ~Overlay() { _fullSurface.free(); }
 
 	void init() override;
@@ -80,6 +80,7 @@ public:
 	int16 _currentViewportFrame = -1;
 	uint32 _nextFrameTime = 0;
 	bool _isInterruptible;
+	bool _usesAutotext;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
