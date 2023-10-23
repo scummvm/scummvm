@@ -130,7 +130,7 @@ bool AVFDecoder::atEnd() const {
 AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat, CacheHint cacheHint) {
 	assert(stream);
 	_fileStream = stream;
-	_curFrame = 0;
+	_curFrame = -1;
 	_reversed = false;
 	_dec = new Decompressor;
 
@@ -202,6 +202,14 @@ AVFDecoder::AVFVideoTrack::~AVFVideoTrack() {
 
 bool AVFDecoder::AVFVideoTrack::seek(const Audio::Timestamp &time) {
 	_curFrame = getFrameAtTime(time);
+
+	// Offset by 1 to ensure decodeNextFrame() actually decodes the frame we want
+	if (!_reversed) {
+		--_curFrame;
+	} else {
+		++_curFrame;
+	}
+
 	return true;
 }
 
@@ -360,7 +368,7 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 }
 
 const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeNextFrame() {
-	return decodeFrame(_reversed ? --_curFrame : _curFrame++);
+	return decodeFrame(_reversed ? --_curFrame : ++_curFrame);
 }
 
 } // End of namespace Nancy
