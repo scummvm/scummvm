@@ -1513,9 +1513,10 @@ void ScummEngine::setUpDraftsInventory() {
 	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 	bool isLoomVGA = (_game.version == 4) || _game.platform == Common::kPlatformFMTowns;
 
-	// French labels are quite long, so throughout the following code
-	// there are slight adjustments to French text positioning...
-	int xOffset = _language == Common::FR_FRA ? 10 : 0;
+	// French&Hebrew labels are quite long, so throughout the following code
+	// there are slight adjustments to French&Hebrew text positioning...
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR;
+	int xOffset = isLongLanguage ? 10 : 0;
 
 	if (isLoomVGA) {
 		setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
@@ -1579,21 +1580,6 @@ void ScummEngine::setUpDraftsInventory() {
 			300 - 6 + xOffset,
 			yConstant - 47 + 102,
 			_emptyMsg, 1, 0);
-	}
-
-	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
-	drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0);
-
-	if (isLoomVGA) {
-		drawLine(160,     yConstant - 47, 160,     yConstant + 55, 15);
-		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, 7);
-		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, 7);
-		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, 8);
-	} else {
-		drawLine(160,     yConstant - 47, 160,     yConstant + 55, getBannerColor(13));
-		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, getBannerColor(4));
-		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, getBannerColor(4));
-		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, getBannerColor(13));
 	}
 }
 
@@ -1666,31 +1652,38 @@ static const char *loomDraftsNames[6][17] = {
 	// HEBREW
 	{
 		"\x9a\x85\x90\x89\x82\x90\x8e",
-		"\x84\x87\x89\x9a\x94:",
-		"\x81\x84\x86\x8c \x99\x97 \x9a\x8b\x89\x94\x84:",
-		"\x84\x92\x89\x81\x96:",
-		"\x84\x8c\x89\x8c \x9a\x89\x89\x80\x98:",
-		"\x81\x85\x81\x89\x91:",
-		"\x84\x90\x89\x99:",
-		"\x84\x97\x98\x84:",
-		"\x84\x80\x98\x90 \x89\x9a\x8c\x81\x8c \x84\x8b\x89\x94\x84:",
-		"\x84\x83\x87\x94\x84:",
-		"\x84\x86\x87\x99\x84:",
-		"\x84\x89\x8e\x83\x84:",
-		"\x89\x85\x94\x89\x98:",
-		"\x84\x97\x9a\x99\x84:",
-		"\x84\x98\x85\x96 \x9a\x90\x89\x9a\x90:",
-		"\x84\x91\x89\x98\x84:",
-		"\x9a\x85\x81\x82\x99\x90:"
+		":\x84\x87\x89\x9a\x94",
+		":\x81\x84\x86\x8c \x99\x97 \x9a\x8b\x89\x94\x84",
+		":\x84\x92\x89\x81\x96",
+		":\x84\x8c\x89\x8c \x9a\x89\x89\x80\x98",
+		":\x81\x85\x81\x89\x91",
+		":\x84\x90\x89\x99",
+		":\x84\x97\x98\x84",
+		":\x84\x80\x98\x90 \x89\x9a\x8c\x81\x8c \x84\x8b\x89\x94\x84",
+		":\x84\x83\x87\x94\x84",
+		":\x84\x86\x87\x99\x84",
+		":\x84\x89\x8e\x83\x84",
+		":\x89\x85\x94\x89\x98",
+		":\x84\x97\x9a\x99\x84",
+		":\x84\x98\x85\x96 \x9a\x90\x89\x9a\x90",
+		":\x84\x91\x89\x98\x84",
+		":\x9a\x85\x81\x82\x99\x90"
 	}
 };
 
 void ScummEngine::drawDraftsInventory() {
+	int base, xPos;
+	char notesBuf[6];
+	const char **names;
+	const char *notes = "cdefgabC";
+
 	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
 	bool isLoomVGA = _game.version == 4 || _game.platform == Common::kPlatformFMTowns;
 	int textHeight = getGUIStringHeight("A") + 3;
 
-	const char **names;
+	// French&Hebrew labels are quite long, so throughout the following code
+	// there are slight adjustments to French&Hebrew text positioning...
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR;
 
 	switch (_language) {
 	case Common::EN_ANY:
@@ -1717,11 +1710,31 @@ void ScummEngine::drawDraftsInventory() {
 		names = loomDraftsNames[0];
 	}
 
-	drawMainMenuTitle(names[0]);
+	// ACT 1: Draw the widget graphics!
+	//
+	// Draw the inner and outer widgets...
+	drawInternalGUIControl(GUI_CTRL_OUTER_BOX, 0);
+	drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0);
 
-	char notesBuf[6];
-	int base = 0;
+	// Draw the cute bar delimiter in the middle of the widget to separate the two text columns...
+	if (isLoomVGA) {
+		drawLine(160,     yConstant - 47, 160,     yConstant + 55, 15);
+		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, 7);
+		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, 7);
+		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, 8);
+	} else {
+		drawLine(160,     yConstant - 47, 160,     yConstant + 55, getBannerColor(13));
+		drawLine(160 + 1, yConstant - 47, 160 + 1, yConstant + 55, getBannerColor(4));
+		drawLine(160 + 2, yConstant - 47, 160 + 2, yConstant + 55, getBannerColor(4));
+		drawLine(160 + 3, yConstant - 47, 160 + 3, yConstant + 55, getBannerColor(13));
+	}
 
+	drawMainMenuTitle(names[0]); // Write "Drafts" on top of the menu widget
+
+	// ACT 2: Draw the actual useful stuff, text! :-P
+	//
+	// Drafts are stored in SCUMM global variables; we choose the appropriate
+	// first entry in the variables at which these drafts start.
 	if (_game.version == 4 || _game.platform == Common::kPlatformPCEngine) {
 		// DOS CD version / PC-Engine version
 		base = 100;
@@ -1729,41 +1742,32 @@ void ScummEngine::drawDraftsInventory() {
 		// Macintosh version
 		base = 55;
 	} else {
-		// All (?) other versions
+		// Other versions
 		base = 50;
-	}
-
-	const char *notes = "cdefgabC";
-	int maxWidth = 0;
-	for (int i = 0; i < 16; i++) {
-		int tmpWidth = getGUIStringWidth(names[i + 1]);
-		if (tmpWidth >= maxWidth)
-			maxWidth = tmpWidth;
 	}
 
 	int inactiveColor = 8;
 	int unlockedColor = isLoomVGA ? 1 : getBannerColor(18);
 	int newDraftColor = isLoomVGA ? 14 : getBannerColor(21);
 
-	// French labels are quite long, so throughout the following code
-	// there are slight adjustments to French text positioning...
-	int xOffset = _language == Common::FR_FRA ? 10 : 0;
+	// This is used to offset text elements in the event that
+	// we are dealing with a language which has very long strings...
+	int xOffset = isLongLanguage ? 10 : 0;
 
 	for (int i = 0; i < 16; i++) {
 		int draft = _scummVars[base + i * 2];
 
-		int xPos = i < 8 ? 30 : 167;
-		int textOffset = xOffset;
-
-		if (i >= 8) {
-			textOffset = 0;
-		}
-
+		// In which row are we rendering our text?
 		int heightMultiplier = i < 8 ? i : (i % 8);
 
-		int notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+		// Has the draft been unlocked by the player?
 		int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
 
+		// Has the new draft been used at least once?
+		int notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+
+		// Has the draft been unlocked? Great: put it in our text buffer
+		// otherwise just prepare to render the "????" string.
 		if (draft & 0x2000) {
 			Common::sprintf_s(notesBuf, sizeof(notesBuf), "%c%c%c%c",
 							  notes[draft & 0x0007],
@@ -1775,18 +1779,78 @@ void ScummEngine::drawDraftsInventory() {
 			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
 		}
 
-		drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
-		int notesWidth = getGUIStringWidth(notesBuf);
+		// Hebrew rendering vs All-The-Other-LTR-Languages rendering:
+		//
+		// This is one case in which instead of doing all sorts of tricks
+		// to have as few lines as possible, I prefer to duplicate code
+		// for the sake of readability, so just so you know... this is
+		// done on purpose... :-)
+		if (_language != Common::HE_ISR) {
+			// Where are we positioning the text?
+			// Left column or right column?
+			// (Objective: Leave three pixels to the left)
+			if (isLoomVGA) {
+				xPos = i < 8 ? 31 : 167;
+			} else {
+				xPos = i < 8 ? 30 : 167;
+			}
+			int textOffset = xOffset;
 
-		if (_game.version == 3) {
-			if (i >= 8)
-				xPos -= _language == Common::FR_FRA ? -6 : 3;
-			else if (_language == Common::FR_FRA)
-				xPos -= xOffset;
+			if (i >= 8) {
+				textOffset = 0;
+			}
+
+			// Draw the titles of the drafts...
+			drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			int notesWidth = getGUIStringWidth(notesBuf);
+
+			// Text position adjustments for the notes...
+			// (Objective: Leave three pixels to the right)
+			if (!isLoomVGA) {
+				if (i >= 8)
+					xPos += isLongLanguage ? 8 : -2;
+				else if (isLongLanguage)
+					xPos -= xOffset - 1;
+				else
+					xPos += 1;
+			} else {
+				if (i >= 8)
+					xPos -= _game.platform == Common::kPlatformFMTowns ? 3 : 2;
+				else
+					xPos += _game.platform == Common::kPlatformFMTowns ? 0 : 1;
+			}
+
+			// Draw the notes of the draft... notice how we are subtracting
+			// notesWidth: we are forcing the text aligning on the left.
+			drawGUIText(notesBuf, nullptr, xPos - notesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+		} else {
+			// Hebrew language, let's swap the layout!
+
+			// Where are we positioning the text?
+			// Left column or right column?
+			// (Objective: Leave three pixels to the left)
+			xPos = i >= 8 ? 30 : 167;
+			int textOffset = xOffset;
+
+			if (i < 8) {
+				textOffset = 0;
+			}
+
+			// Draw the notes of the drafts...
+			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			int namesWidth = getGUIStringWidth(names[i + 1]);
+
+			// Text position adjustments for the titles...
+			// (Objective: Leave three pixels to the right)
+			if (i < 8)
+				xPos += 8;
+			else
+				xPos -= xOffset - 1;
+
+			// Draw the titles of the drafts... notice how we are subtracting
+			// namesWidth: we are forcing the text aligning on the left.
+			drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
 		}
-
-
-		drawGUIText(notesBuf, nullptr, xPos + 100 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
 	}
 
 	// Update the screen with all the new stuff!
