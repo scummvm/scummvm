@@ -23,10 +23,13 @@ namespace Hpl1 {
 
 const PlainGameDescriptor GAME_NAMES[] = {
 	{"penumbraoverture", "Penumbra: Overture"},
-	{0, 0}};
+	{"penumbrablackplague", "Penumbra: Black Plague"},
+	{0, 0}
+};
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
-	// Humble Indie Bundle #1 Release
+
+	// Penumbra: Overture (Humble Indie Bundle #1 Release)
 	{
 		"penumbraoverture",
 		nullptr,
@@ -34,8 +37,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO0()},
-	// GOG release
+		GUIO0()
+	},
+
+	// Penumbra: Overture (GOG v1.0)
 	{
 		"penumbraoverture",
 		nullptr,
@@ -43,22 +48,33 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		Common::Language::EN_ANY,
 		Common::Platform::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO0()},
-	// Penumbra: Overture (The Penumbra Collection)
-	{"penumbraoverture", nullptr,
-	 AD_ENTRY1s("Penumbra.exe", "202990aa064ae67a675e2b187384036a", 2736128),
-	 Common::Language::EN_ANY,
-	 Common::kPlatformWindows,
-	 ADGF_UNSTABLE,
-	 GUIO0()},
-	// Penumbra: Black Plague (GOG Galaxy version)
-	{"penumbrablackplague", nullptr,
-	 AD_ENTRY1s("Penumbra.exe", "a066f7284e063ac3e5d7409102b7a497", 2985984),
-	 Common::Language::EN_ANY,
-	 Common::kPlatformWindows,
-	 ADGF_UNSTABLE,
-	 GUIO0()},
+		GUIO0()
+	},
 
-	AD_TABLE_END_MARKER};
+	// Penumbra: Overture (The Penumbra Collection)
+	// TRAC #14674
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "202990aa064ae67a675e2b187384036a", 2736128),
+		Common::Language::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
+	// Penumbra: Black Plague (GOG v1.0)
+	{
+		"penumbrablackplague",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "a066f7284e063ac3e5d7409102b7a497", 2985984),
+		Common::Language::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
+	AD_TABLE_END_MARKER
+};
 
 } // namespace Hpl1
