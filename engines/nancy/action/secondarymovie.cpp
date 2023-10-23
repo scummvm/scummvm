@@ -52,7 +52,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	readFilename(ser, _paletteName, kGameTypeVampire, kGameTypeVampire);
 	readFilename(ser, _bitmapOverlayName);
 
-	ser.syncAsUint16LE(_videoType);
+	ser.syncAsUint16LE(_videoType, kGameTypeNancy7);
 	ser.skip(2); // videoPlaySource
 	ser.syncAsUint16LE(_videoFormat);
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire); // paletteStart, paletteSize
