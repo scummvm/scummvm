@@ -36,7 +36,6 @@ namespace Nancy {
 namespace Action {
 
 PlaySecondaryMovie::~PlaySecondaryMovie() {
-	_decoder->close();
 	delete _decoder;
 
 	if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
