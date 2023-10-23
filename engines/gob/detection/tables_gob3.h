@@ -520,7 +520,7 @@
 {
 	{
 		"gob3",
-		"Interactive Demo",
+		"Interactive Demo (v0.02)",
 		AD_ENTRY1s("intro.stk", "7aebd94e49c2c5c518c9e7b74f25de9d", 270737),
 		FR_FRA,
 		kPlatformDOS,

@@ -654,7 +654,7 @@
 {
 	{
 		"gob2",
-		"Interactive Demo",
+		"Interactive Demo (v1.02)",
 		AD_ENTRY1("intro.stk", "4b278c2678ea01383fd5ca114d947eea"),
 		UNK_LANG,
 		kPlatformAmiga,
