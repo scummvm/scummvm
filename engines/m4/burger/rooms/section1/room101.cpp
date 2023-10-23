@@ -30,34 +30,34 @@ namespace Burger {
 namespace Rooms {
 
 static const seriesStreamBreak STREAM_BREAKS1[] = {
-	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  16, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	{  0, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{  5, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 14, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 16, nullptr, 1, 255, 11, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 static const seriesStreamBreak STREAM_BREAKS2[] = {
-	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{   6, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  17, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  24, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  26, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	{  0, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{  6, nullptr, 2, 255,  5, 0, nullptr, 0 },
+	{ 17, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 24, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 26, nullptr, 1, 255, 14, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 static const seriesStreamBreak STREAM_BREAKS3[] = {
-	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{   5, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  14, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  16, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	{  0, 0, 2, 255,  4, 0, nullptr, 0 },
+	{  5, 0, 2, 255,  4, 0, nullptr, 0 },
+	{ 14, 0, 2, 255,  4, 0, nullptr, 0 },
+	{ 16, 0, 1, 255, 17, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 static const seriesStreamBreak STREAM_BREAKS4[] = {
-	{   0, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{   7, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  13, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	{   0, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{   7, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{  13, nullptr, 1, 255, 20, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -68,10 +68,10 @@ static const seriesStreamBreak STREAM_BREAKS5[] = {
 };
 
 static const seriesStreamBreak STREAM_BREAKS6[] = {
-	{   9, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  19, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  28, nullptr, 2, 255, -1, 0, nullptr, 0 },
-	{  32, nullptr, 1, 255, -1, 0, nullptr, 0 },
+	{  9, nullptr, 2, 255, 4, 0, nullptr, 0 },
+	{ 19, nullptr, 2, 255, 4, 0, nullptr, 0 },
+	{ 28, nullptr, 2, 255, 4, 0, nullptr, 0 },
+	{ 32, nullptr, 1, 255, 8, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -238,6 +238,7 @@ void Room101::daemon() {
 		break;
 
 	case 2:
+		// Finished gathering items from past tests
 		digi_stop(2);
 		unloadSounds();
 		player_set_commands_allowed(true);
@@ -354,8 +355,8 @@ void Room101::daemon() {
 		if (_G(flags)[kFifthTestPassed])
 			series_load("101wi11s", -1, nullptr);
 
-		_machine1 = series_play("101wi14s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAM_BREAKS6, "101wi14", 6, 256, 2);
+		_machine1 = series_play("101wi14s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS6, "101wi14", 6, 0x100, 2);
 		break;
 
 	case 8:
@@ -374,8 +375,8 @@ void Room101::daemon() {
 		break;
 
 	case 10:
-		_machine1 = series_play("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAM_BREAKS1, "101wi13", 6, 256, 2);
+		_machine1 = series_play("101wi13s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS1, "101wi13", 6, 0x100, 2);
 		break;
 
 	case 11:
@@ -396,8 +397,8 @@ void Room101::daemon() {
 		break;
 
 	case 13:
-		_machine1 = series_play("101wi12s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAM_BREAKS2, "101wi12", 6, 256, 2);
+		_machine1 = series_play("101wi12s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS2, "101wi12", 6, 0x100, 2);
 		break;
 
 	case 14:
@@ -415,8 +416,8 @@ void Room101::daemon() {
 		break;
 
 	case 16:
-		_machine1 = series_play("101wi13s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAM_BREAKS3, "101wi13", 6, 256, 2);
+		_machine1 = series_play("101wi13s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS3, "101wi13", 6, 0x100, 2);
 		break;
 
 	case 17:
@@ -436,8 +437,8 @@ void Room101::daemon() {
 		break;
 
 	case 19:
-		_machine1 = series_play("101wi11s", 257, 0, -1, 6, 0, 100, 0, 0, 0, -1);
-		_machine2 = series_stream_with_breaks(STREAM_BREAKS4, "101wi11", 6, 256, 2);
+		_machine1 = series_play("101wi11s", 0x101, 0, -1, 6, 0, 100, 0, 0, 0, -1);
+		_machine2 = series_stream_with_breaks(STREAM_BREAKS4, "101wi11", 6, 0x100, 2);
 		break;
 
 	case 20:
@@ -522,7 +523,7 @@ void Room101::daemon() {
 
 		case 6:
 			_G(wilbur_should) = 7;
-			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS1, "101wi05", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 7:
@@ -544,7 +545,7 @@ void Room101::daemon() {
 
 		case 10:
 			_G(wilbur_should) = 11;
-			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS3, "101wi02", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 11:
@@ -597,7 +598,7 @@ void Room101::daemon() {
 
 		case 20:
 			_G(wilbur_should) = 21;
-			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 256, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
+			series_play_with_breaks(PLAY_BREAKS4, "101wi04", 0x100, kCHANGE_WILBUR_ANIMATION, 3, 6, 100, 0, -53);
 			break;
 
 		case 21:
@@ -606,8 +607,8 @@ void Room101::daemon() {
 			break;
 
 		case 22:
-			series_play("101wi04", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
-			series_play("101wi04s", 256, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			series_play("101wi04", 0x100, 0, -1, 10, -1, 100, 0, -53, 16, 16);
+			series_play("101wi04s", 0x100, 0, -1, 10, -1, 100, 0, -53, 16, 16);
 			break;
 
 		default:

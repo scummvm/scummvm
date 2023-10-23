@@ -156,7 +156,7 @@ void Room301::daemon() {
 	case 5:
 		pal_fade_set_start(0);
 		pal_cycle_stop();
-		kernel_timing_trigger(6, 8);
+		kernel_timing_trigger(6, 6);
 		break;
 
 	case 6:
