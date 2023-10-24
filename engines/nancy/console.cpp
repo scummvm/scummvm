@@ -45,6 +45,7 @@ namespace Nancy {
 NancyConsole::NancyConsole() : GUI::Debugger() {
 	registerCmd("load_cal", WRAP_METHOD(NancyConsole, Cmd_loadCal));
 	registerCmd("cif_export", WRAP_METHOD(NancyConsole, Cmd_cifExport));
+	registerCmd("ciftree_export", WRAP_METHOD(NancyConsole, Cmd_ciftreeExport));
 	registerCmd("cif_list", WRAP_METHOD(NancyConsole, Cmd_cifList));
 	registerCmd("cif_info", WRAP_METHOD(NancyConsole, Cmd_cifInfo));
 	registerCmd("chunk_export", WRAP_METHOD(NancyConsole, Cmd_chunkExport));
@@ -162,7 +163,26 @@ bool NancyConsole::Cmd_cifExport(int argc, const char **argv) {
 	if (!g_nancy->_resource->exportCif((argc == 2 ? "" : argv[2]), argv[1]))
 		debugPrintf("Failed to export '%s'\n", argv[1]);
 
-	return true;
+	return cmdExit(0, nullptr);
+}
+
+bool NancyConsole::Cmd_ciftreeExport(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Exports the specified resources to a ciftree\n");
+		debugPrintf("Usage: %s <tree name> <files...>\n", argv[0]);
+		return true;
+	}
+
+	Common::StringArray files;
+
+	for (int i = 2; i < argc; ++i) {
+		files.push_back(argv[i]);
+	}
+
+	if (!g_nancy->_resource->exportCifTree(argv[1], files))
+		debugPrintf("Failed to export '%s'\n", argv[1]);
+
+	return cmdExit(0, nullptr);
 }
 
 bool NancyConsole::Cmd_cifList(int argc, const char **argv) {

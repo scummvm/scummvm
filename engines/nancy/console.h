@@ -43,6 +43,7 @@ public:
 private:
 	bool Cmd_loadCal(int argc, const char **argv);
 	bool Cmd_cifExport(int argc, const char **argv);
+	bool Cmd_ciftreeExport(int argc, const char **argv);
 	bool Cmd_cifList(int argc, const char **argv);
 	bool Cmd_cifInfo(int argc, const char **argv);
 	bool Cmd_chunkExport(int argc, const char **argv);
