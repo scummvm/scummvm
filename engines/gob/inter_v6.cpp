@@ -312,6 +312,19 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 		return;
 	}
 
+	// WORKAROUND: Make the "bird table" animation in the hollow tree skippable with right click
+	if (_vm->getGameType() == kGameTypeAdibou2 &&
+		loopCount == 1 &&
+		(dest == 19104 || dest == 19400 || dest == 19404) && // animation "frame" in different versions
+		_vm->_game->_script->pos() > 9036 &&
+		_vm->_game->_script->pos() < 9478 &&
+		_vm->isCurrentTot("atelier.tot") &&
+		VAR(4) == kMouseButtonsRight) {
+		WRITE_VAR_OFFSET(dest, 200);
+		_vm->_game->_script->skipExpr(99);
+		return;
+	}
+
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
