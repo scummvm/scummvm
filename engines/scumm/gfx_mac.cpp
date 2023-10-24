@@ -1058,7 +1058,6 @@ void MacLoomGui::showAboutDialog() {
 
 	bool changeScene = false;
 	bool fastForward = false;
-	bool holdScene = false;
 
 	while (!_vm->shouldQuit()) {
 		switch (scene) {
@@ -1123,33 +1122,28 @@ void MacLoomGui::showAboutDialog() {
 
 			switch (scene) {
 			case 1:
-				holdScene = true;
+				fastForward = false;
 				window->drawSprite(lucasFilm, 120, 65);
 				waitFrames = 50;
 				break;
 
 			case 2:
-				holdScene = false;
 				growth = -2;
 				break;
 
 			case 3:
-				holdScene = true;
+				fastForward = false;
 				waitFrames = 50;
 				break;
 
 			case 4:
-				holdScene = false;
 				growth = -2;
 				innerBounce -= 8;
 				targetTop -= 16;
 				break;
 			}
 
-			if (fastForward) {
-				fastForward = false;
-				window->update(true);
-			}
+			window->update(true);
 
 			if (scene >= 5)
 				break;
