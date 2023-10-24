@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-22 00:34+0000\n"
+"POT-Creation-Date: 2023-10-24 17:01+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -212,7 +212,8 @@ msgstr ""
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:361
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
+#: gui/gui-manager.cpp:273
 msgid "Paste"
 msgstr "Pegar"
 
@@ -966,7 +967,56 @@ msgstr "Esquerda"
 msgid "Right"
 msgstr "Dereita"
 
-#: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:194
+#, fuzzy
+#| msgid "New kid"
+msgid "New Line"
+msgstr "Rapaz"
+
+#: gui/gui-manager.cpp:201
+#, fuzzy
+#| msgid "Close"
+msgid "Close Dialog"
+msgstr "Pechar"
+
+#: gui/gui-manager.cpp:206
+#, fuzzy
+msgid "Backspace"
+msgstr "Mover cara atrás"
+
+#: gui/gui-manager.cpp:212
+#, fuzzy
+#| msgid "Delete char"
+msgid "Delete Character"
+msgstr "Eliminar carácter"
+
+#: gui/gui-manager.cpp:218
+msgid "Go to end of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:229
+#, fuzzy
+msgid "Move cursor left"
+msgstr "Mover cara diante"
+
+#: gui/gui-manager.cpp:235
+#, fuzzy
+msgid "Move cursor right"
+msgstr "Mover cara diante"
+
+#: gui/gui-manager.cpp:241
+msgid "Go to start of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+msgid "Cut"
+msgstr ""
+
+#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+msgid "Copy"
+msgstr ""
+
+#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381

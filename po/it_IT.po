@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-22 00:34+0000\n"
+"POT-Creation-Date: 2023-10-24 17:01+0000\n"
 "PO-Revision-Date: 2023-10-19 10:06+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -211,7 +211,8 @@ msgstr "Modalità Manuale: Passo 2"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copia qui il codice JSON dal browser e clicca Successivo:"
 
-#: gui/cloudconnectionwizard.cpp:361
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
+#: gui/gui-manager.cpp:273
 msgid "Paste"
 msgstr "Incolla"
 
@@ -952,7 +953,59 @@ msgstr "Sinistra"
 msgid "Right"
 msgstr "Destra"
 
-#: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:194
+#, fuzzy
+#| msgid "New kid"
+msgid "New Line"
+msgstr "Cambia personaggio"
+
+#: gui/gui-manager.cpp:201
+#, fuzzy
+#| msgid "Close popup"
+msgid "Close Dialog"
+msgstr "Chiudi popup"
+
+#: gui/gui-manager.cpp:206
+#, fuzzy
+#| msgid "Backend"
+msgid "Backspace"
+msgstr "Backend"
+
+#: gui/gui-manager.cpp:212
+#, fuzzy
+#| msgid "Delete char"
+msgid "Delete Character"
+msgstr "Elimina carattere"
+
+#: gui/gui-manager.cpp:218
+msgid "Go to end of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:229
+#, fuzzy
+#| msgid "Move forward left"
+msgid "Move cursor left"
+msgstr "Movimento avanti e a sinistra"
+
+#: gui/gui-manager.cpp:235
+#, fuzzy
+#| msgid "Move forward right"
+msgid "Move cursor right"
+msgstr "Movimento avanti e a destra"
+
+#: gui/gui-manager.cpp:241
+msgid "Go to start of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+msgid "Cut"
+msgstr ""
+
+#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+msgid "Copy"
+msgstr ""
+
+#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381

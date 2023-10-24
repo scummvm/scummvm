@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-22 00:34+0000\n"
+"POT-Creation-Date: 2023-10-24 17:01+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -206,7 +206,8 @@ msgstr ""
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:361
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
+#: gui/gui-manager.cpp:273
 msgid "Paste"
 msgstr ""
 
@@ -936,7 +937,51 @@ msgstr "向左"
 msgid "Right"
 msgstr "向右"
 
-#: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:194
+msgid "New Line"
+msgstr ""
+
+#: gui/gui-manager.cpp:201
+#, fuzzy
+#| msgid "Close"
+msgid "Close Dialog"
+msgstr "關閉"
+
+#: gui/gui-manager.cpp:206
+#, fuzzy
+#| msgid "Backend"
+msgid "Backspace"
+msgstr "后端"
+
+#: gui/gui-manager.cpp:212
+msgid "Delete Character"
+msgstr ""
+
+#: gui/gui-manager.cpp:218
+msgid "Go to end of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:229
+msgid "Move cursor left"
+msgstr ""
+
+#: gui/gui-manager.cpp:235
+msgid "Move cursor right"
+msgstr ""
+
+#: gui/gui-manager.cpp:241
+msgid "Go to start of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+msgid "Cut"
+msgstr ""
+
+#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+msgid "Copy"
+msgstr ""
+
+#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381

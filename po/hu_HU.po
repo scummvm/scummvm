@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-22 00:34+0000\n"
+"POT-Creation-Date: 2023-10-24 17:01+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -217,7 +217,8 @@ msgstr ""
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Másold ide a JSON kódot a böngészőből, és nyomd a Továbbot:"
 
-#: gui/cloudconnectionwizard.cpp:361
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
+#: gui/gui-manager.cpp:273
 msgid "Paste"
 msgstr "Beilleszt"
 
@@ -964,7 +965,59 @@ msgstr "Bal"
 msgid "Right"
 msgstr "Jobb"
 
-#: gui/gui-manager.cpp:194 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:194
+#, fuzzy
+#| msgid "New kid"
+msgid "New Line"
+msgstr "Új gyerek"
+
+#: gui/gui-manager.cpp:201
+#, fuzzy
+#| msgid "Close"
+msgid "Close Dialog"
+msgstr "Bezár"
+
+#: gui/gui-manager.cpp:206
+#, fuzzy
+#| msgid "Backend"
+msgid "Backspace"
+msgstr "Háttér"
+
+#: gui/gui-manager.cpp:212
+#, fuzzy
+#| msgid "Delete char"
+msgid "Delete Character"
+msgstr "Karakter törlés"
+
+#: gui/gui-manager.cpp:218
+msgid "Go to end of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:229
+#, fuzzy
+#| msgid "Move forward left"
+msgid "Move cursor left"
+msgstr "Menj balra"
+
+#: gui/gui-manager.cpp:235
+#, fuzzy
+#| msgid "Move forward right"
+msgid "Move cursor right"
+msgstr "Menj jobbra"
+
+#: gui/gui-manager.cpp:241
+msgid "Go to start of line"
+msgstr ""
+
+#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+msgid "Cut"
+msgstr ""
+
+#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+msgid "Copy"
+msgstr ""
+
+#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
