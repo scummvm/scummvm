@@ -41,7 +41,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //1
 		{
-			"gob1cd",
+			"gob1",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -69,7 +69,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //3
 		{
-			"gob2mac",
+			"gob2",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -83,7 +83,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //4
 		{
-			"gob2cd",
+			"gob2",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -125,7 +125,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //7
 		{
-			"gob3cd",
+			"gob3",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
