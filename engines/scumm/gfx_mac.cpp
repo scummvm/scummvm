@@ -419,6 +419,17 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 	s->setPixel(x, y, color);
 }
 
+void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
+	const uint16 patterns[] = {
+		0x0000, 0x8282, 0x5A5A, 0x7D7D, 0xFFFF
+	};
+
+	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	Graphics::Surface *s = window->innerSurface();
+	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+	s->setPixel(x, y, (patterns[pattern] & bit) ? kBlack : kWhite);
+}
+
 void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
 	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
 	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
@@ -882,6 +893,36 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 }
 
 void MacLoomGui::showAboutDialog() {
+	// The About window is not a a dialog resource. Its size appears to be
+	// hard-coded (416x166), and it's drawn centered. The graphics are in
+	// ...
+
+	int width = 416;
+	int height = 166;
+	int x = (640 - width) / 2;
+	int y = (400 - height) / 2;
+
+	Common::Rect bounds(x, y, x + width, y + height);
+	SimpleWindow *window = openWindow(bounds);
+
+	Common::Rect r(0, 0, 400, 150);
+
+	int pattern = 0;
+	int patternDelta = 1;
+
+	for (int i = 0; i <= 30; i++) {
+		Graphics::drawRoundRect(r, pattern, pattern, true, SimpleWindow::plotPattern, window);
+		pattern += patternDelta;
+		if (pattern >= 4 || pattern <= 0)
+			patternDelta = -patternDelta;
+		r.grow(-2);
+	}
+
+	Graphics::drawRoundRect(r, 9, 7, true, SimpleWindow::plotPattern, window);
+
+	window->show();
+
+	delay(-1);
 }
 
 // ===========================================================================
