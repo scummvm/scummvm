@@ -917,9 +917,6 @@ bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 }
 
 void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
-	if (_windowManager->getCursorType() == Graphics::kMacCursorCustom)
-		return;
-
 	Common::MacResManager resource;
 
 	resource.open(_resourceFile);
