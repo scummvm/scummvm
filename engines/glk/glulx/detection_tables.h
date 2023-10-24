@@ -92,7 +92,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "chickensexer",       "The Example of the Chicken Sexer" },
 	{ "childrenloblolly",   "The Children of Loblolly Lodge" },
 	{ "chipmonk",           "Chipmonk" },
-	{ "chunkyblues",        "Chunky Blues" }
+	{ "chunkyblues",        "Chunky Blues" },
 	{ "codetopia",          "Codetopia - A Code Adventure" },
 	{ "colderlight",        "The Colder Light" },
 	{ "comp01tr",           "Comp01ter Game: N0n C0mp0s Ment1s" },
