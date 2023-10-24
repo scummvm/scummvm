@@ -695,6 +695,7 @@ protected:
 	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
 	void o7_loadMultObject();
+	void o7_getFreeMem(OpFuncParams &params);
 	void o7_displayWarning();
 	void o7_logString();
 	void o7_moveGoblin();

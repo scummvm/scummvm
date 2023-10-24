@@ -96,6 +96,7 @@ void Inter_v7::setupOpcodesFunc() {
 	OPCODEFUNC(0x33, o7_fillRect);
 	OPCODEFUNC(0x34, o7_drawLine);
 	OPCODEFUNC(0x36, o7_invalidate);
+	OPCODEFUNC(0x3E, o7_getFreeMem);
 	OPCODEFUNC(0x3F, o7_checkData);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
@@ -1219,6 +1220,17 @@ void Inter_v7::o7_invalidate(OpFuncParams &params) {
 	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
 
 	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
+}
+
+void Inter_v7::o7_getFreeMem(OpFuncParams &params) {
+	uint16 freeVar = _vm->_game->_script->readVarIndex();
+	uint16 maxFreeVar = _vm->_game->_script->readVarIndex();
+
+	// HACK, with a higher value than o2_getFreeMem (16M vs 1M)
+	// This unlocks a nicer intro music in Adibou2
+	WRITE_VAR_OFFSET(freeVar   , 16000000);
+	WRITE_VAR_OFFSET(maxFreeVar, 16000000);
+	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
 }
 
 void Inter_v7::o7_checkData(OpFuncParams &params) {
