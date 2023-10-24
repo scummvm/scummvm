@@ -1452,6 +1452,14 @@ void ScummEngine::restoreSurfacesPostGUI() {
 void ScummEngine::showDraftsInventory() {
 	bool leftMsClicked = false, rightMsClicked = false;
 
+	// FM-Towns stuff...
+	int textSurfBannerMemSize = 0;
+	byte *textSurfBannerMem = nullptr;
+	int rowSize = _screenWidth;
+	int draftsWidgetHeight = _virtscr[kMainVirtScreen].h;
+	int screenMemSize = 0;
+	byte *screenMem = nullptr;
+
 	Common::KeyState ks;
 
 	// Pause the engine...
@@ -1461,7 +1469,35 @@ void ScummEngine::showDraftsInventory() {
 	setShake(0);
 
 	// Save surfaces...
-	saveSurfacesPreGUI();
+	if (_game.platform != Common::kPlatformFMTowns) {
+		saveSurfacesPreGUI();
+	} else {
+		// FM-Towns games draw GUI elements on the text surface, so let's save that
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		rowSize *= _textSurfaceMultiplier;
+		textSurfBannerMemSize = (draftsWidgetHeight) * rowSize * _textSurfaceMultiplier;
+		textSurfBannerMem = (byte *)malloc(textSurfBannerMemSize * sizeof(byte));
+		if (textSurfBannerMem) {
+			memcpy(
+				textSurfBannerMem,
+				((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier)),
+				textSurfBannerMemSize);
+		}
+
+		// We're going to use these same values for saving the
+		// virtual screen surface, so let's un-multiply them...
+		rowSize /= _textSurfaceMultiplier;
+#endif
+
+		screenMemSize = (draftsWidgetHeight) * (rowSize);
+		screenMem = (byte *)malloc(screenMemSize * sizeof(byte));
+		if (screenMem) {
+			memcpy(
+				screenMem,
+				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+				screenMemSize);
+		}
+	}
 
 	// Save the current cursor state...
 	saveCursorPreMenu();
@@ -1495,10 +1531,40 @@ void ScummEngine::showDraftsInventory() {
 	restoreCursorPostMenu();
 
 	// Restore surfaces...
-	if (_game.platform == Common::kPlatformFMTowns) {
-		// RESTORE FMTOWNS BUFFER
-	} else {
+	if (_game.platform != Common::kPlatformFMTowns) {
 		restoreSurfacesPostGUI();
+	} else {
+		// FM-Towns games draw GUI elements on the text surface, so restore both surfaces...
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && textSurfBannerMem) {
+			rowSize *= _textSurfaceMultiplier;
+			memcpy(
+				((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier)),
+				textSurfBannerMem,
+				textSurfBannerMemSize);
+
+			// We're going to use these same values for restoring the
+			// virtual screen surface, so let's un-multiply them...
+			rowSize /= _textSurfaceMultiplier;
+
+			free(textSurfBannerMem);
+			textSurfBannerMem = nullptr;
+		}
+#endif
+
+		if (screenMem) {
+			memcpy(
+				_virtscr[kMainVirtScreen].getPixels(0, _screenTop),
+				screenMem,
+				screenMemSize);
+
+			markRectAsDirty(_virtscr[kMainVirtScreen].number, 0, rowSize, _screenTop, _screenHeight + _screenTop);
+			ScummEngine::drawDirtyScreenParts();
+			_system->updateScreen();
+
+			free(screenMem);
+			screenMem = nullptr;
+		}
 	}
 
 	// Restore shake effect...
