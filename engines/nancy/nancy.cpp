@@ -29,6 +29,7 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
+#include "engines/nancy/cif.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
@@ -391,7 +392,8 @@ void NancyEngine::bootGameEngine() {
 	}
 
 	_resource = new ResourceManager();
-	_resource->initialize();
+	_resource->readCifTree("ciftree", "dat", 2);
+	_resource->readCifTree("promotree", "dat", 2);
 
 	// Read nancy.dat
 	readDatFile();
@@ -399,8 +401,8 @@ void NancyEngine::bootGameEngine() {
 	// Setup mixer
 	syncSoundSettings();
 
-	IFF *iff = new IFF("boot");
-	if (!iff->load())
+	IFF *iff = _resource->loadIFF("boot");
+	if (!iff)
 		error("Failed to load boot script");
 
 	// Load BOOT chunks data
@@ -459,8 +461,8 @@ void NancyEngine::bootGameEngine() {
 	// Load convo texts and autotext
 	auto *bsum = GetEngineData(BSUM);
 	if (bsum && bsum->conversationTextsFilename.size() && bsum->autotextFilename.size())  {
-		iff = new IFF(bsum->conversationTextsFilename);
-		if (!iff->load()) {
+		iff = _resource->loadIFF(bsum->conversationTextsFilename);
+		if (!iff) {
 			error("Could not load CONVO IFF");
 		}
 
@@ -471,8 +473,8 @@ void NancyEngine::bootGameEngine() {
 
 		delete iff;
 
-		iff = new IFF(bsum->autotextFilename);
-		if (!iff->load()) {
+		iff = _resource->loadIFF(bsum->autotextFilename);
+		if (!iff) {
 			error("Could not load AUTOTEXT IFF");
 		}
 
@@ -573,7 +575,7 @@ void NancyEngine::preloadCals() {
 	}
 
 	for (const Common::String &name : pcal->calNames) {
-		if (!_resource->loadCifTree(name, "cal")) {
+		if (!_resource->readCifTree(name, "cal", 2)) {
 			error("Failed to preload CAL '%s'", name.c_str());
 		}
 	}

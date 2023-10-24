@@ -22,8 +22,7 @@
 #ifndef NANCY_RESOURCE_H
 #define NANCY_RESOURCE_H
 
-#include "common/array.h"
-#include "common/rect.h"
+#include "engines/nancy/cif.h"
 
 namespace Graphics {
 struct Surface;
@@ -32,58 +31,43 @@ class ManagedSurface;
 
 namespace Nancy {
 
-class NancyEngine;
-class CifTree;
-class Decompressor;
+class IFF;
 
 class ResourceManager {
+	friend class NancyConsole;
+	friend class NancyEngine;
 public:
-	enum ResType {
-		kResTypeAny,
-		// Type 1 seems to be obsolete
-		kResTypeImage = 2,
-		kResTypeScript
-	};
-
-	enum ResCompression {
-		kResCompressionNone = 1,
-		kResCompression
-	};
-
-	struct CifInfo {
-		Common::String name;
-		byte type; // ResType
-		byte comp; // ResCompression
-		uint16 width, pitch, height;
-		byte depth; // Bit depth
-		uint32 compressedSize, size;
-		Common::Rect src, dest; // Used when drawing conversation cels
-	};
-
-	ResourceManager();
+	ResourceManager() {}
 	~ResourceManager();
 
-	void initialize();
-	bool loadCifTree(const Common::String &name, const Common::String &ext);
-	bool loadImage(const Common::String &name, Graphics::Surface &surf, const Common::String treeName = "", Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
+	// Load an image resource. Can be either external .bmp file, or raw image data embedded inside a ciftree
+	// Ciftree images may have additional data dictating how they need to be blitted on screen (see ConversationCel).
+	// This is accessed via the outSrc/outDest parameters.
 	bool loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName = "", Common::Rect *outSrc = nullptr, Common::Rect *outDest = nullptr);
-	byte *loadData(const Common::String &name, uint &size);
+	
+	// Loads a single IFF file. These can either be inside standalone .cif files, or embedded inside a ciftree
+	IFF *loadIFF(const Common::String &name);
 
-	// Debugger functions
-	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) const;
-	byte *loadCif(const Common::String &treeName, const Common::String &name, uint &size);
-	bool exportCif(const Common::String &treeName, const Common::String &name);
-	Common::String getCifDescription(const Common::String &treeName, const Common::String &name) const;
+	// Load a new ciftree
+	bool readCifTree(const Common::String &name, const Common::String &ext, int priority);
 
 private:
-	byte *getCifData(const Common::String &name, CifInfo &info, uint *size = nullptr) const;
-	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr) const;
-	bool getCifInfo(const Common::String &name, CifInfo &info) const;
-	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info) const;
-	const CifTree *findCifTree(const Common::String &name) const;
+	// Debug functions
 
-	Common::Array<const CifTree *> _cifTrees;
-	Decompressor *_dec;
+	// Return a human-readable description of a single CIF file.
+	Common::String getCifDescription(const Common::String &treeName, const Common::String &name) const;
+
+	// Return a list of all resources of a certain type (does not list external files)
+	void list(const Common::String &treeName, Common::StringArray &outList, CifInfo::ResType type) const;
+
+	// Exports a single resource as a standalone .cif file
+	bool exportCif(const Common::String &treeName, const Common::String &name);
+
+	// Exports a collection of resources as a ciftree
+	bool exportCifTree(const Common::String &treeName, const Common::StringArray &names);
+
+private:
+	Common::Array<Common::String> _cifTreeNames;
 };
 
 } // End of namespace Nancy

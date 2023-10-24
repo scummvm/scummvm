@@ -42,7 +42,6 @@ public:
 
 private:
 	bool Cmd_loadCal(int argc, const char **argv);
-	bool Cmd_cifHexDump(int argc, const char **argv);
 	bool Cmd_cifExport(int argc, const char **argv);
 	bool Cmd_cifList(int argc, const char **argv);
 	bool Cmd_cifInfo(int argc, const char **argv);

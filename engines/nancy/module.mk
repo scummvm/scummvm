@@ -60,6 +60,7 @@ MODULE_OBJS = \
   misc/lightning.o \
   misc/mousefollow.o \
   misc/specialeffect.o \
+  cif.o \
   commontypes.o \
   console.o \
   cursor.o \

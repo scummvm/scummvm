@@ -30,6 +30,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/resource.h"
 
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/map.h"
@@ -839,17 +840,17 @@ void Scene::load(bool fromSaveFile) {
 
 	// Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100
 	Common::String sceneName = Common::String::format("S%u", _sceneState.nextScene.sceneID);
-	IFF sceneIFF(sceneName);
+	IFF *sceneIFF = g_nancy->_resource->loadIFF(sceneName);
 
-	if (!sceneIFF.load()) {
+	if (!sceneIFF) {
 		error("Faled to load IFF %s", sceneName.c_str());
 	}
 
-	Common::SeekableReadStream *sceneSummaryChunk = sceneIFF.getChunkStream("SSUM");
+	Common::SeekableReadStream *sceneSummaryChunk = sceneIFF->getChunkStream("SSUM");
 	if (sceneSummaryChunk) {
 		_sceneState.summary.read(*sceneSummaryChunk);
 	} else {
-		sceneSummaryChunk = sceneIFF.getChunkStream("TSUM");
+		sceneSummaryChunk = sceneIFF->getChunkStream("TSUM");
 		if (sceneSummaryChunk) {
 			_sceneState.summary.readTerse(*sceneSummaryChunk);
 		}
@@ -880,7 +881,7 @@ void Scene::load(bool fromSaveFile) {
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
 
 	uint numRecords = 0;
-	while (actionRecordChunk = sceneIFF.getChunkStream("ACT", numRecords), actionRecordChunk != nullptr) {
+	while (actionRecordChunk = sceneIFF->getChunkStream("ACT", numRecords), actionRecordChunk != nullptr) {
 		_actionManager.addNewActionRecord(*actionRecordChunk);
 		delete actionRecordChunk;
 		++numRecords;
@@ -932,6 +933,7 @@ void Scene::load(bool fromSaveFile) {
 		_flags.sceneCounts.getOrCreateVal(_sceneState.currentScene.sceneID)++;
 	}
 
+	delete sceneIFF;
 	_state = kStartSound;
 }
 

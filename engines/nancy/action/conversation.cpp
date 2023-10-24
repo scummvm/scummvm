@@ -673,37 +673,31 @@ void ConversationCel::readData(Common::SeekableReadStream &stream) {
 	
 	readFilenameArray(stream, _treeNames, 4);
 
-	uint xsheetDataSize = 0;
-	byte *xsbuf = g_nancy->_resource->loadData(xsheetName, xsheetDataSize);
-	if (!xsbuf) {
-		return;
-	}
-
-	Common::MemoryReadStream xsheet(xsbuf, xsheetDataSize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *xsheet = SearchMan.createReadStreamForMember(xsheetName);
 
 	// Read the xsheet and load all images into the arrays
 	// Completely unoptimized, the original engine uses a buffer
-	xsheet.seek(0);
-	Common::String signature = xsheet.readString('\0', 18);
+	xsheet->seek(0);
+	Common::String signature = xsheet->readString('\0', 18);
 	if (signature != "XSHEET WayneSikes") {
 		warning("XSHEET signature doesn't match!");
 		return;
 	}
 
-	xsheet.seek(0x22);
-	uint numFrames = xsheet.readUint16LE();
-	xsheet.skip(2);
-	_frameTime = xsheet.readUint16LE();
-	xsheet.skip(2);
+	xsheet->seek(0x22);
+	uint numFrames = xsheet->readUint16LE();
+	xsheet->skip(2);
+	_frameTime = xsheet->readUint16LE();
+	xsheet->skip(2);
 
 	_celNames.resize(4, Common::Array<Common::String>(numFrames));
 	for (uint i = 0; i < numFrames; ++i) {
 		for (uint j = 0; j < _celNames.size(); ++j) {
-			readFilename(xsheet, _celNames[j][i]);
+			readFilename(*xsheet, _celNames[j][i]);
 		}
 
 		// 4 unknown values
-		xsheet.skip(8);
+		xsheet->skip(8);
 	}
 
 	// Continue reading the AR stream
