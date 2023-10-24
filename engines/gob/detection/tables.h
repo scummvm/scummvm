@@ -31,9 +31,7 @@ using namespace Common;
 // Game IDs and proper names
 static const PlainGameDescriptor gobGames[] = {
 	{"gob1", "Gobliiins"},
-	{"gob1cd", "Gobliiins CD"},
 	{"gob2", "Gobliins 2"},
-	{"gob2cd", "Gobliins 2 CD"},
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
 	{"babayaga", "Once Upon A Time: Baba Yaga"},
@@ -41,7 +39,6 @@ static const PlainGameDescriptor gobGames[] = {
 	{"littlered", "Once Upon A Time: Little Red Riding Hood"},
 	{"onceupon", "Once Upon A Time"},
 	{"gob3", "Goblins Quest 3"},
-	{"gob3cd", "Goblins Quest 3 CD"},
 	{"crousti", "Croustibat"},
 	{"lit1", "Lost in Time Part 1"},
 	{"lit2", "Lost in Time Part 2"},
