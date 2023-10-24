@@ -36,6 +36,8 @@
 #include "scumm/usage_bits.h"
 #include "scumm/verbs.h"
 
+#define TEXT_END_MARKER { 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
+
 namespace Scumm {
 
 void ScummEngine::mac_markScreenAsDirty(int x, int y, int w, int h) {
@@ -347,7 +349,7 @@ MacGui::SimpleWindow::~SimpleWindow() {
 	_pauseToken.clear();
 }
 
-void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) {
+void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) const {
 	if (s) {
 		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
 	}
@@ -363,7 +365,13 @@ void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
-void MacGui::SimpleWindow::update() {
+void MacGui::SimpleWindow::update(bool fullRedraw) {
+	if (fullRedraw) {
+debug("Full redraw");
+		_dirtyRects.clear();
+		markRectAsDirty(Common::Rect(0, 0, _innerSurface.w, _innerSurface.h));
+	}
+
 	for (uint i = 0; i < _dirtyRects.size(); i++) {
 		_system->copyRectToScreen(
 			_innerSurface.getBasePtr(_dirtyRects[i].left, _dirtyRects[i].top),
@@ -386,7 +394,12 @@ void MacGui::SimpleWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	markRectAsDirty(r);
 }
 
-void MacGui::SimpleWindow::drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
+void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
+	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
+	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
+}
+
+void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
 	Common::Rect subRect(0, 0, sprite->w, sprite->h);
 
 	if (x < clipRect.left) {
@@ -421,13 +434,17 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 
 void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
-		0x0000, 0x8282, 0x5A5A, 0x7D7D, 0xFFFF
+		0x0000, 0x2828, 0xA5A5, 0xD7D7,
+		0xFFFF,	0xD7D7, 0xA5A5, 0x2828
 	};
 
 	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
-	s->setPixel(x, y, (patterns[pattern] & bit) ? kBlack : kWhite);
+	if (patterns[pattern] & bit)
+		s->setPixel(x, y, kBlack);
+	else
+		s->setPixel(x, y, kWhite);
 }
 
 void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
@@ -446,14 +463,14 @@ void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, in
 
 		switch (lines[i].style) {
 		case kStyleHeader:
-			f1 = _gui->getFont(kIndy3AboutFontHeaderOutside);
-			f2 = _gui->getFont(kIndy3AboutFontHeaderInside);
+			f1 = _gui->getFont(kAboutFontHeaderOutside);
+			f2 = _gui->getFont(kAboutFontHeaderInside);
 			break;
 		case kStyleBold:
-			f1 = _gui->getFont(kIndy3AboutFontBold);
+			f1 = _gui->getFont(kAboutFontBold);
 			break;
 		case kStyleRegular:
-			f1 = _gui->getFont(kIndy3AboutFontRegular);
+			f1 = _gui->getFont(kAboutFontRegular);
 			break;
 		}
 
@@ -479,16 +496,16 @@ void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, in
 // Jones and the Last Crusade.
 // ===========================================================================
 
-static void menuCallback(int id, Common::String &name, void *data) {
-	((MacGui *)data)->handleMenu(id, name);
-}
-
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
 }
 
 MacGui::~MacGui() {
 	delete _windowManager;
+}
+
+void MacGui::menuCallback(int id, Common::String &name, void *data) {
+	((MacGui *)data)->handleMenu(id, name);
 }
 
 void MacGui::initialize() {
@@ -596,7 +613,38 @@ const Graphics::Font *MacGui::getFont(FontId fontId) {
 	return font;
 }
 
-const Graphics::Surface *MacGui::loadPICT(int id) {
+bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+	switch (fontId) {
+	case FontId::kAboutFontHeaderOutside:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontOutline;
+		return true;
+
+	case FontId::kAboutFontHeaderInside:
+		id = _gameFontId;
+		size = 12;
+		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
+		return true;
+
+	case FontId::kAboutFontBold:
+		id = _gameFontId;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		return true;
+
+	case FontId::kAboutFontRegular:
+		id = Graphics::kMacFontGeneva;
+		size = 9;
+		slant = Graphics::kMacFontRegular;
+		return true;
+
+	default:
+		return false;
+	}
+}
+
+Graphics::Surface *MacGui::loadPict(int id) {
 	Common::MacResManager resource;
 
 	resource.open(_resourceFile);
@@ -614,6 +662,9 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 	uint16 bottom = res->readUint16BE();
 	uint16 right = res->readUint16BE();
 
+	int width = right - left;
+	int height = bottom - top;
+
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(right - left, bottom - top, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -624,7 +675,6 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 		byte value;
 		int x1, x2, y1, y2;
 		int rowBytes;
-		int mode;
 
 		int x = 0;
 		int y = 0;
@@ -653,7 +703,7 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 			res->skip(2);	// Skip mode
 			res->skip(res->readUint16BE() - 2);	// Skip maskRgn
 
-			for (y = y1; y < y2; y++) {
+			for (y = y1; y < y2 && y < height; y++) {
 				x = x1;
 				size = res->readByte();
 
@@ -679,7 +729,7 @@ const Graphics::Surface *MacGui::loadPICT(int id) {
 							value = res->readByte();
 							size--;
 						}
-						for (int k = 7; k >= 0 && x < x2; k--, x++) {
+						for (int k = 7; k >= 0 && x < x2 && x < width; k--, x++) {
 							if (value & (1 << k))
 								s->setPixel(x, y, kBlack);
 							else
@@ -827,7 +877,10 @@ const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 	}
 }
 
-void MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+	if (MacGui::getFontParams(fontId, id, size, slant))
+		return true;
+
 	// Loom uses only font size 13 for in-game text, but size 12 is used
 	// for system messages, e.g. the original pause dialog.
 	//
@@ -842,23 +895,25 @@ void MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	case FontId::kLoomFontMedium:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	case FontId::kLoomFontLarge:
 		id = _gameFontId;
 		size = 13;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	default:
 		error("MacLoomGui: getFontParams: Unknown font id %d", (int)fontId);
 	}
+
+	return false;
 }
 
 void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -895,7 +950,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 void MacLoomGui::showAboutDialog() {
 	// The About window is not a a dialog resource. Its size appears to be
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
-	// ...
+	// PICT 5000 and 5001.
 
 	int width = 416;
 	int height = 166;
@@ -904,25 +959,198 @@ void MacLoomGui::showAboutDialog() {
 
 	Common::Rect bounds(x, y, x + width, y + height);
 	SimpleWindow *window = openWindow(bounds);
+	Graphics::Surface *lucasFilm = loadPict(5000);
+	Graphics::Surface *loom = loadPict(5001);
 
-	Common::Rect r(0, 0, 400, 150);
+	// TODO: These strings are part of the STRS resource, but I don't know
+	// how to safely read them from there yet. So hard-coded it is for now.
 
-	int pattern = 0;
-	int patternDelta = 1;
+	const TextLine page1[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "PRESENTS" },
+		TEXT_END_MARKER
+	};
 
-	for (int i = 0; i <= 30; i++) {
-		Graphics::drawRoundRect(r, pattern, pattern, true, SimpleWindow::plotPattern, window);
-		pattern += patternDelta;
-		if (pattern >= 4 || pattern <= 0)
-			patternDelta = -patternDelta;
-		r.grow(-2);
-	}
+	const TextLine page2[] = {
+		{ 0, 0, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
+		{ 0, 0, kStyleRegular, Graphics::kTextAlignCenter, "Release Version 1.2 25-JAN-91 Interpreter version 5.1.6" },
+		TEXT_END_MARKER
+	};
 
-	Graphics::drawRoundRect(r, 9, 7, true, SimpleWindow::plotPattern, window);
+	const TextLine page3[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page4[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page5[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page6[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "created by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "and" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page7[] = {
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "created by" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "and" },
+		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page8[] = {
+		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Loom hint books are available!" },
+		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
+		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
+		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
+		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
+		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		TEXT_END_MARKER
+	};
+
+	const TextLine page9[] = {
+		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
+		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For technical support call" },
+		{ 0, 0, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
+		{ 0, 0, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
+
+		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
+		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
+		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
+		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		TEXT_END_MARKER
+	};
+
+	// I've based the animation speed on what it looks like when Mini vMac
+	// emulates an old black-and-white Mac at normal speed. It looks a bit
+	// different in Basilisk II, but that's probably because it emulates a
+	// much faster Mac.
 
 	window->show();
 
-	delay(-1);
+	int scene = 0;
+	int status;
+
+	Common::Rect r(0, 0, 404, 154);
+	int growth = -2;
+	int growSteps = 37;
+	int pattern;
+	int waitFrames;
+
+	bool changeScene = false;
+	bool fastForward = false;
+
+	while (!_vm->shouldQuit()) {
+		switch (scene) {
+		case 0:
+		case 1:
+		case 3:
+			// This appears to be pixel perfect or at least nearly
+			// so for the outer layers, but breaks down slightly
+			// near the middle.
+
+			pattern = (r.top / 2) % 8;
+
+			Graphics::drawRoundRect(r, 7, pattern, true, SimpleWindow::plotPattern, window);
+
+			if (!fastForward)
+				window->markRectAsDirty(r);
+
+			r.grow(growth);
+
+			if (r.height() <= 6 || r.height() >= 154)
+				growth = -growth;
+
+			if (--growSteps == 0)
+				changeScene = true;
+
+			break;
+
+		case 2:
+			if (--waitFrames == 0)
+				changeScene = true;
+			break;
+		}
+
+		if (!fastForward) {
+			window->update();
+			status = delay(50);
+		}
+
+		// We can't actually skip to the end of a scene, because the
+		// animation has to be drawn.
+
+		if (status == 1)
+			fastForward = true;
+
+		if (status == 2)
+			break;
+
+		if (changeScene) {
+			changeScene = false;
+			scene++;
+
+			switch (scene) {
+			case 1:
+				r.grow(16);
+				growth = -2;
+				growSteps = 25;
+				break;
+
+			case 2:
+				window->drawSprite(lucasFilm, 120, 65);
+				waitFrames = 50;
+				break;
+
+			case 3:
+				growth = -2;
+				growSteps = 23;
+				break;
+			}
+
+			if (fastForward) {
+				fastForward = false;
+				window->update(true);
+			}
+
+			if (scene >= 4)
+				break;
+		}
+	}
+
+	if (status != 2)
+		status = delay(-1);
+
+	_windowManager->popCursor();
+
+	lucasFilm->free();
+	delete lucasFilm;
+
+	loom->free();
+	delete loom;
+
+	delete window;
+
+	if (status == 2)
+		debug("Quit everything");
 }
 
 // ===========================================================================
@@ -1837,69 +2065,50 @@ const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
 	}
 }
 
-void MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+	if (MacGui::getFontParams(fontId, id, size, slant))
+		return true;
+
 	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
 	// used for the text boxes. The smaller font can be used for a
 	// headline. The rest of the Indy 3 verb GUI uses Geneva.
 
 	switch (fontId) {
-	case FontId::kIndy3AboutFontHeaderOutside:
-		id = _gameFontId;
-		size = 12;
-		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontOutline;
-		break;
-
-	case FontId::kIndy3AboutFontHeaderInside:
-		id = _gameFontId;
-		size = 12;
-		slant = Graphics::kMacFontItalic | Graphics::kMacFontBold | Graphics::kMacFontExtend;
-		break;
-
-	case FontId::kIndy3AboutFontBold:
-		id = _gameFontId;
-		size = 9;
-		slant = Graphics::kMacFontRegular;
-		break;
-
-	case FontId::kIndy3AboutFontRegular:
-		id = Graphics::kMacFontGeneva;
-		size = 9;
-		slant = Graphics::kMacFontRegular;
-		break;
-
 	case FontId::kIndy3FontSmall:
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	case FontId::kIndy3FontMedium:
 		id = _gameFontId;
 		size = 12;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	case FontId::kIndy3VerbFontRegular:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
-		break;
+		return true;
 
 	case FontId::kIndy3VerbFontBold:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontBold;
-		break;
+		return true;
 
 	case FontId::kIndy3VerbFontOutline:
 		id = Graphics::kMacFontGeneva;
 		size = 9;
 		slant = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontCondense;
-		break;
+		return true;
 
 	default:
 		error("MacIndy3Gui: getFontParams: Unknown font id %d", (int)fontId);
 	}
+
+	return false;
 }
 
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
@@ -1920,7 +2129,7 @@ void MacIndy3Gui::showAboutDialog() {
 
 	Common::Rect bounds(x, y, x + width, y + height);
 	SimpleWindow *window = openWindow(bounds);
-	const Graphics::Surface *pict = loadPICT(2000);
+	Graphics::Surface *pict = loadPict(2000);
 
 	// For the background of the sprites to match the background of the
 	// window, we have to move them at multiples of 4 pixels each step. We
@@ -1958,8 +2167,6 @@ void MacIndy3Gui::showAboutDialog() {
 
 	// TODO: These strings are part of the STRS resource, but I don't know
 	// how to safely read them from there yet. So hard-coded it is for now.
-
-	#define TEXT_END_MARKER { 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
 
 	const TextLine page1[] = {
 		{ 21, 4, kStyleHeader, Graphics::kTextAlignLeft, "Indiana Jones and the Last Crusade" },
@@ -2027,8 +2234,6 @@ void MacIndy3Gui::showAboutDialog() {
 		TEXT_END_MARKER
 	};
 
-	#undef TEXT_END_MARKER
-
 	// Header texts aren't rendered correctly. Apparently the original does
 	// its own shadowing by drawing the text twice, but that ends up
 	// looking even worse. Perhaps I have to draw the text three times
@@ -2037,7 +2242,7 @@ void MacIndy3Gui::showAboutDialog() {
 
 	bool changeScene = false;
 
-	while (true && !_vm->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		switch (scene) {
 		case 0:
 			window->drawSprite(&train, trainX, 40, clipRect);
@@ -2143,6 +2348,8 @@ void MacIndy3Gui::showAboutDialog() {
 
 	_windowManager->popCursor();
 
+	pict->free();
+	delete pict;
 	delete window;
 
 	if (status == 2)

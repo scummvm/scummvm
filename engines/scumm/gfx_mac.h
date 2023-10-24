@@ -107,7 +107,7 @@ public:
 
 		Common::Array<Common::Rect> _dirtyRects;
 
-		void copyToScreen(Graphics::Surface *s = nullptr);
+		void copyToScreen(Graphics::Surface *s = nullptr) const;
 	public:
 		SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
@@ -118,23 +118,24 @@ public:
 		void show();
 
 		void markRectAsDirty(Common::Rect r);
-		void update();
+		void update(bool fullRedraw = false);
 
 		static void plotPixel(int x, int y, int color, void *data);
 		static void plotPattern(int x, int y, int pattern, void *data);
 
 		void fillPattern(Common::Rect r, uint16 pattern);
-		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
+		void drawSprite(const Graphics::Surface *sprite, int x, int y);
+		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
 		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
 	enum FontId {
 		kSystemFont,
 
-		kIndy3AboutFontRegular,
-		kIndy3AboutFontBold,
-		kIndy3AboutFontHeaderInside,
-		kIndy3AboutFontHeaderOutside,
+		kAboutFontRegular,
+		kAboutFontBold,
+		kAboutFontHeaderInside,
+		kAboutFontHeaderOutside,
 
 		kIndy3FontSmall,
 		kIndy3FontMedium,
@@ -152,13 +153,15 @@ public:
 
 	virtual const Common::String name() const = 0;
 
+	static void menuCallback(int id, Common::String &name, void *data);
+
 	virtual void initialize();
 
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
-	virtual void getFontParams(FontId fontId, int &id, int &size, int &slant) = 0;
+	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant);
 
-	const Graphics::Surface *loadPICT(int id);
+	Graphics::Surface *loadPict(int id);
 
 	virtual bool handleMenu(int id, Common::String &name);
 
@@ -190,7 +193,7 @@ public:
 	const Common::String name() const { return "Loom"; }
 
 	const Graphics::Font *getFontByScummId(int32 id);
-	void getFontParams(FontId fontId, int &id, int &size, int &slant);
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
@@ -212,7 +215,7 @@ public:
 	const Common::String name() const { return "Indy"; }
 
 	const Graphics::Font *getFontByScummId(int32 id);
-	void getFontParams(FontId fontId, int &id, int &size, int &slant);
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
