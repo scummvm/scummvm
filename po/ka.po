@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-22 00:34+0000\n"
-"PO-Revision-Date: 2023-10-22 14:41+0000\n"
+"PO-Revision-Date: 2023-10-24 14:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -201,7 +201,7 @@ msgstr "ხელით მორგების რეჟიმი: ნაბ�
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "დააკოპირეთ JSON კოდი ბრაუზერიდან აქ და დააწექით 'შემდეგი':"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste"
@@ -234,11 +234,11 @@ msgstr "ღრუბლოვანი საცავი დაკავში�
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "დარწმუნდით, რომ JSON კოდი სწორადაა დაკოპირებული და თავიდან სცადეთ."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "თუ ამან არ იმუშავა, დასაწყისიდან, თავიდან სცადეთ."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
@@ -259,7 +259,7 @@ msgstr "შემდეგი"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr ""
+msgstr "ახლა სხვა საცავი მუშაობს. გნებავთ მისი შეწყვეტა?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -290,7 +290,7 @@ msgstr "არა"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
-msgstr ""
+msgstr "მოითმინეთ, სანამ მიმდინარე საცავი დასრულდება და თავიდან სცადეთ."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
@@ -337,11 +337,13 @@ msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"ბმულის გახსნა ჩავარდა!\n"
+"გადადით ამ გვერდზე თვითონ."
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "აირჩიეთ JSON ფაილი, რომელიც საიტიდან scummvm.org მიიღეთ"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
@@ -385,10 +387,12 @@ msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"როგორც ჩანს, კავშირი შეზღუდულია. მართლა გნებავთ მისი გამოყენებით ფაილების "
+"გადმოწერა?"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:656
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM-მა მითითებული საქაღალდე ვერ გახსნა!"
 
 #: gui/downloaddialog.cpp:146
 msgid ""
@@ -544,7 +548,7 @@ msgstr "პლატფორმა:"
 #: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
 #: gui/editgamedialog.cpp:167
 msgid "Platform the game was originally designed for"
-msgstr ""
+msgstr "პლატფორმა, რომლისთვისაც თამაში თავიდან გამოვიდა"
 
 #: gui/editgamedialog.cpp:166
 msgctxt "lowres"
@@ -563,16 +567,16 @@ msgstr "გრაფიკა"
 
 #: gui/editgamedialog.cpp:197
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "გრაფიკის გლობალური პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:199
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "გრაფიკის გლობალური პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:212 gui/options.cpp:2212 engines/dialogs.cpp:315
 msgid "Keymaps"
-msgstr ""
+msgstr "ღილაკების ცხრილი"
 
 #: gui/editgamedialog.cpp:219 gui/options.cpp:2219 engines/dialogs.cpp:322
 msgid "Backend"
@@ -580,12 +584,12 @@ msgstr "უკანაბოლო"
 
 #: gui/editgamedialog.cpp:222
 msgid "Override global backend settings"
-msgstr ""
+msgstr "გლობალური უკანაბოლოს პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:224
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr ""
+msgstr "გლობალური უკანაბოლოს პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2233 engines/dialogs.cpp:290
 msgid "Audio"
@@ -593,12 +597,12 @@ msgstr "აუდიო"
 
 #: gui/editgamedialog.cpp:241
 msgid "Override global audio settings"
-msgstr ""
+msgstr "გლობალური აუდიოს პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:243
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr ""
+msgstr "გლობალური აუდიოს პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:252 gui/options.cpp:2238
 msgid "Volume"
@@ -611,12 +615,12 @@ msgstr "ხმის სიმაღლე"
 
 #: gui/editgamedialog.cpp:257
 msgid "Override global volume settings"
-msgstr ""
+msgstr "გლობალური ხმის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:259
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr ""
+msgstr "გლობალური ხმის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:2248
 msgid "MIDI"
@@ -624,12 +628,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:273
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "გლობალური MIDI-ის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:275
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "გლობალური MIDI-ის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:285 gui/options.cpp:2254
 msgid "MT-32"
@@ -637,12 +641,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:288
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "გლობალური MT-32-ის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:290
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "გლობალური MT-32-ის პარამეტრების გადაფარვა"
 
 #: gui/editgamedialog.cpp:299 gui/options.cpp:2261
 msgid "Paths"
@@ -669,7 +673,7 @@ msgstr "დამატებითი ბილიკი:"
 #: gui/editgamedialog.cpp:315 gui/editgamedialog.cpp:317
 #: gui/editgamedialog.cpp:318
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "მიუთითებს ბილიკს თამაშის დამატებით მონაცემებამდე"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:2467
 msgctxt "lowres"
@@ -683,7 +687,7 @@ msgstr "შენახვის ბილიკი:"
 #: gui/editgamedialog.cpp:324 gui/editgamedialog.cpp:326
 #: gui/editgamedialog.cpp:327 gui/options.cpp:2429 gui/options.cpp:2431
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "მიუთითებს, სად მოხდება თქვენი თამაშების შენახვა"
 
 #: gui/editgamedialog.cpp:326 gui/options.cpp:2431
 msgctxt "lowres"
@@ -732,7 +736,7 @@ msgstr "აირჩიეთ საქაღალდე შენახულ�
 
 #: gui/editgamedialog.cpp:582 gui/options.cpp:3155
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
+msgstr "არჩეულ საქაღალდეში ვერ ჩავწერე. აირჩიეთ სხვა."
 
 #: gui/editgamedialog.cpp:587
 msgid ""
@@ -762,7 +766,7 @@ msgstr "შეიყვანეთ შესანახი ფაილის 
 
 #: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "ფაილი უკვე არსებობს. გნებავთ გადააწეროთ?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -1434,7 +1438,7 @@ msgstr ""
 
 #: gui/options.cpp:1619
 msgid "Shader:"
-msgstr ""
+msgstr "შეიდერი:"
 
 #: gui/options.cpp:1619 gui/options.cpp:1621 gui/options.cpp:1622
 msgid "Specifies path to the shader used for scaling the game screen"
@@ -1447,7 +1451,7 @@ msgstr "შეიდერის ბილიკი:"
 
 #: gui/options.cpp:1628
 msgid "Update Shaders"
-msgstr ""
+msgstr "შეიდერების განახლება"
 
 #: gui/options.cpp:1628
 msgid "Check for updates of shader packs"
@@ -1469,16 +1473,16 @@ msgstr ""
 
 #: gui/options.cpp:1643
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "თამაშის 3D რენდერერი:"
 
 #: gui/options.cpp:1645
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "თამაშის 3D რენდერერი:"
 
 #: gui/options.cpp:1662
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "3D მომრგვალება:"
 
 #: gui/options.cpp:1666 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
@@ -1486,7 +1490,7 @@ msgstr "გამორთულია"
 
 #: gui/options.cpp:1674
 msgid "Filter graphics"
-msgstr ""
+msgstr "გრაფიკის გაფილტვრა"
 
 #: gui/options.cpp:1674
 msgid "Use linear filtering when scaling graphics"
@@ -1502,11 +1506,11 @@ msgstr ""
 
 #: gui/options.cpp:1695
 msgid "Preferred device:"
-msgstr ""
+msgstr "რჩეული მოწყობილობა:"
 
 #: gui/options.cpp:1695
 msgid "Music device:"
-msgstr ""
+msgstr "მუსიკის მოწყობილობა:"
 
 #: gui/options.cpp:1695 gui/options.cpp:1697
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1519,16 +1523,16 @@ msgstr ""
 #: gui/options.cpp:1697
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr ""
+msgstr "რჩეული მოწყ.:"
 
 #: gui/options.cpp:1697
 msgctxt "lowres"
 msgid "Music device:"
-msgstr ""
+msgstr "მუსიკის მოწყობილობა:"
 
 #: gui/options.cpp:1724
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "AdLib-ის ემულატორი:"
 
 #: gui/options.cpp:1724 gui/options.cpp:1727
 msgid "AdLib is used for music in many games"
@@ -1536,7 +1540,7 @@ msgstr ""
 
 #: gui/options.cpp:1740
 msgid "GM device:"
-msgstr ""
+msgstr "GM მოწყობილობა:"
 
 #: gui/options.cpp:1740
 msgid "Specifies default sound device for General MIDI output"
@@ -1610,7 +1614,7 @@ msgstr ""
 
 #: gui/options.cpp:1814
 msgid "Don't use Roland MT-32 music"
-msgstr ""
+msgstr "Roland MT-32-ის მუსიკა გამოყენებული არ იქნება"
 
 #: gui/options.cpp:1841
 msgid "Text and speech:"
@@ -1652,7 +1656,7 @@ msgstr "ორივე"
 
 #: gui/options.cpp:1857
 msgid "Show subtitles and play speech"
-msgstr ""
+msgstr "სუბტიტრები ჩვენება და საუბრის დაკვრა"
 
 #: gui/options.cpp:1859
 msgctxt "lowres"
@@ -1678,7 +1682,7 @@ msgstr "SFX ხმა:"
 
 #: gui/options.cpp:1895 gui/options.cpp:1897 gui/options.cpp:1900
 msgid "Special sound effects volume"
-msgstr ""
+msgstr "სპეციალური ხმის ეფექტების ხმის სიძლიერე"
 
 #: gui/options.cpp:1897
 msgctxt "lowres"
@@ -1727,7 +1731,7 @@ msgstr "წვდომადობა"
 
 #: gui/options.cpp:2329
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "ცვლილებების მოცილება და ფანჯრის დახურვა"
 
 #: gui/options.cpp:2330
 msgid "Apply"
@@ -1735,15 +1739,15 @@ msgstr "გადატარება"
 
 #: gui/options.cpp:2330
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "ცვლილებების გადატარება ფანჯრის დახურვის გარეშე"
 
 #: gui/options.cpp:2331
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "ცვლილებების გადატარება და ფანჯრის დახურვა"
 
 #: gui/options.cpp:2418
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth-ის მორგება"
 
 #: gui/options.cpp:2432
 msgid ""
@@ -1798,11 +1802,11 @@ msgstr "დამატებების ბილიკი:"
 
 #: gui/options.cpp:2486
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVM-ის კონფიგურაციის ბილიკი: "
 
 #: gui/options.cpp:2499
 msgid "ScummVM log path: "
-msgstr ""
+msgstr "ScummVM-ის ჟურნალის ბილიკი: "
 
 #: gui/options.cpp:2504
 msgid "View"
@@ -1811,7 +1815,7 @@ msgstr "ნახვა"
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2514 gui/options.cpp:3279
 msgid "Last browser path: "
-msgstr ""
+msgstr "ბოლო ბრაუზერის ბილიკი "
 
 #: gui/options.cpp:2519
 msgid "Theme:"
@@ -1819,15 +1823,15 @@ msgstr "თემა:"
 
 #: gui/options.cpp:2524
 msgid "GUI scale:"
-msgstr ""
+msgstr "GUI-ის მასშტაბი:"
 
 #: gui/options.cpp:2531
 msgid "GUI renderer:"
-msgstr ""
+msgstr "GUI-ის რენდერერი:"
 
 #: gui/options.cpp:2544
 msgid "Return to the launcher when leaving a game"
-msgstr ""
+msgstr "თამაშიდან გასვლისას გამშვებზე დაბრუნება"
 
 #: gui/options.cpp:2545
 msgid ""
@@ -1859,7 +1863,7 @@ msgstr "ინტერფეისის ენა:"
 
 #: gui/options.cpp:2566
 msgid "Language of ScummVM GUI"
-msgstr ""
+msgstr "ScummVM-ის ინტერფეისის ენა"
 
 #: gui/options.cpp:2592
 msgid "Switch the ScummVM GUI language to the game language"
@@ -1884,7 +1888,7 @@ msgstr ""
 
 #: gui/options.cpp:2614
 msgid "Update Icons"
-msgstr ""
+msgstr "ხატულების განახლება"
 
 #: gui/options.cpp:2614
 msgid "Check for updates of icon packs"
@@ -1949,7 +1953,7 @@ msgstr "აქტიური საცავი:"
 
 #: gui/options.cpp:2686
 msgid "Active cloud storage"
-msgstr ""
+msgstr "აქტიური ღრუბლოვანი საცავი"
 
 #: gui/options.cpp:2695
 msgctxt "lowres"
@@ -1976,7 +1980,7 @@ msgstr "მომხმარებელი:"
 
 #: gui/options.cpp:2700
 msgid "Username used by this storage"
-msgstr ""
+msgstr "ამ საცავის მიერ გამოყენებული მომხმარებლის სახელი"
 
 #: gui/options.cpp:2701
 msgid "<none>"
@@ -2034,7 +2038,7 @@ msgstr "თამაშის ფაილების გადმოწერ�
 
 #: gui/options.cpp:2718
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "გადმოწერების მმართველის დიალოგური ფანჯრის გახსნა"
 
 #: gui/options.cpp:2721
 msgctxt "lowres"
@@ -2056,11 +2060,11 @@ msgstr ""
 #: gui/options.cpp:2727
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr ""
+msgstr "ეს საცავი ჯერ მიერთებული არაა!"
 
 #: gui/options.cpp:2729
 msgid "This storage is not connected yet!"
-msgstr ""
+msgstr "ეს საცავი ჯერ მიერთებული არაა!"
 
 #: gui/options.cpp:2730
 msgid "Connect"
@@ -2139,6 +2143,8 @@ msgid ""
 "\n"
 "And more..."
 msgstr ""
+"\n"
+"და კიდევ..."
 
 #: gui/options.cpp:2858 engines/engine.cpp:602
 msgid "Move"
@@ -2146,11 +2152,11 @@ msgstr "გადატანა"
 
 #: gui/options.cpp:2871
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "შეცდომა: ჩავარდა შემდეგი შენახული თამაშების გადატანა:\n"
 
 #: gui/options.cpp:2966
 msgid "Failed to change cloud storage!"
-msgstr ""
+msgstr "ღრუბლოვანი საცავის შეცვლა ჩავარდა!"
 
 #: gui/options.cpp:2969
 msgid "Another cloud storage is already active."
@@ -2158,11 +2164,11 @@ msgstr ""
 
 #: gui/options.cpp:3086
 msgid "Theme does not support selected language!"
-msgstr ""
+msgstr "თემას არჩეული ენის მხარდაჭერა არ გააჩნია!"
 
 #: gui/options.cpp:3089
 msgid "Theme cannot be loaded!"
-msgstr ""
+msgstr "თემის ჩატვირთვა შეუძლებელია!"
 
 #: gui/options.cpp:3092
 msgid ""
@@ -2412,15 +2418,15 @@ msgstr "სტანდარტული"
 
 #: gui/ThemeEngine.cpp:275
 msgid "Antialiased renderer"
-msgstr ""
+msgstr "მომრგვალებული რენდერერი"
 
 #: gui/ThemeEngine.cpp:275
 msgid "Antialiased"
-msgstr ""
+msgstr "მომრგვალებული"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr ""
+msgstr "მაინც დამატება"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
@@ -2428,7 +2434,7 @@ msgstr "ბუფერში კოპირება"
 
 #: gui/unknown-game-dialog.cpp:63
 msgid "Report game"
-msgstr ""
+msgstr "თამაშის ანგარიშის გაგზავნა"
 
 #: gui/unknown-game-dialog.cpp:100
 msgid ""
@@ -2472,7 +2478,7 @@ msgstr "დაკვრა"
 
 #: gui/widgets/grid.cpp:283
 msgid "Saves"
-msgstr ""
+msgstr "შენახული თამაშები"
 
 #: base/main.cpp:603
 msgid "Bad config file format. overwrite?"
@@ -2714,7 +2720,7 @@ msgstr "მონაცემების ფაილი"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
-msgstr ""
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
@@ -3046,25 +3052,27 @@ msgstr ""
 
 #: engines/engine.cpp:747 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
-msgstr ""
+msgstr "მაინც გაჩვება"
 
 #: engines/engine.cpp:765
 msgid "This game is not supported."
-msgstr ""
+msgstr "ეს თამაში მხარდაჭერილი არაა."
 
 #: engines/engine.cpp:765
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
+"ეს თამაში მხარდაჭერილი არაა შემდეგი მიზეზით:\n"
+"\n"
 
 #: engines/engine.cpp:911
 msgid "Loading game is currently unavailable"
-msgstr ""
+msgstr "თამაშის ჩატვირთვა ამჟამად ხელმისაწვდომი არაა"
 
 #: engines/engine.cpp:940
 msgid "Saving game is currently unavailable"
-msgstr ""
+msgstr "თამაშის შენახვა ამჟამად ხელმისაწვდომი არაა"
 
 #: engines/game.cpp:200
 #, c-format
@@ -3148,11 +3156,11 @@ msgstr "დადასტურება"
 
 #: engines/metaengine.cpp:404
 msgid "Autosave on"
-msgstr ""
+msgstr "ავტოშენახვა ჩართ"
 
 #: engines/metaengine.cpp:404
 msgid "Autosave off"
-msgstr ""
+msgstr "ავტოშენახვა გამორთ"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:178
 msgid "OpenGL"
@@ -3412,7 +3420,7 @@ msgstr "ახალი საქაღალდის დამატება"
 #. I18N: This may be displayed in the Android UI used to add a Storage Attach Framework authorization
 #: backends/fs/android/android-saf-fs.cpp:812
 msgid "Choose a new folder"
-msgstr ""
+msgstr "აირჩიეთ ახალი საქაღალდე"
 
 #: backends/graphics/atari/atari-graphics.cpp:957
 #: backends/graphics/sdl/sdl-graphics.cpp:448
@@ -3458,12 +3466,12 @@ msgstr ""
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "გაფართოება: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
 msgid "Active graphics filter:"
-msgstr ""
+msgstr "აქტიური გრაფიკის ფილტრი:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
@@ -3492,7 +3500,7 @@ msgstr "გაწელვის რეჟიმი"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL ზედაპირი"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -3505,7 +3513,7 @@ msgstr "ეკრანის ანაბეჭდის შენახვა 
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419
 msgid "Windowed mode"
-msgstr ""
+msgstr "ფანჯრის რეჟიმი"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
@@ -3514,7 +3522,7 @@ msgstr "მთელ ეკრანზე გატანის ჩართ/�
 #: backends/graphics/sdl/sdl-graphics.cpp:437 engines/scumm/help.cpp:101
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
-msgstr ""
+msgstr "თაგუნას ჩაჭერის გადართვა"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:442
 #: engines/wintermute/keymapper_tables.h:646
@@ -3575,11 +3583,11 @@ msgstr "თაგუნას რგოლი დაბლა"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "X1 Mouse Button"
-msgstr ""
+msgstr "X1 თაგუნას ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:250
 msgid "X2 Mouse Button"
-msgstr ""
+msgstr "X2 თაგუნას ღილაკი"
 
 #: backends/keymapper/hardware-input.cpp:255
 msgid "Joy A"
@@ -3726,31 +3734,31 @@ msgstr ""
 
 #: backends/keymapper/virtual-mouse.cpp:156
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "ვირტუალური თაგუნა მაღლა"
 
 #: backends/keymapper/virtual-mouse.cpp:161
 msgid "Virtual mouse down"
-msgstr ""
+msgstr "ვირტუალური თაგუნა დაბლა"
 
 #: backends/keymapper/virtual-mouse.cpp:166
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "ვირტუალური თაგუნა მარცხნივ"
 
 #: backends/keymapper/virtual-mouse.cpp:171
 msgid "Virtual mouse right"
-msgstr ""
+msgstr "ვირტუალური თაგუნა მარჯვნივ"
 
 #: backends/keymapper/virtual-mouse.cpp:176
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "ვირტუალური თაგუნას შენელება"
 
 #: backends/midi/windows.cpp:168
 msgid "Windows MIDI"
-msgstr ""
+msgstr "Windows MIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:59
 msgid "Can't create directory here!"
-msgstr ""
+msgstr "აქ საქაღალდეს ვერ შევქმნი!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:65
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:72
@@ -3765,46 +3773,46 @@ msgstr ""
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:62
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:136
 msgid "Invalid path!"
-msgstr ""
+msgstr "არასწორი ბილიკი!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:83
 msgid "Parent directory doesn't exists!"
-msgstr ""
+msgstr "მშობელი საქაღალდე არ არსებობს!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:87
 msgid "Can't create a directory within a file!"
-msgstr ""
+msgstr "საქაღალდეს ფაილში ვერ შევქმნი!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:97
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:140
 msgid "There is a file with that name in the parent directory!"
-msgstr ""
+msgstr "მშობელ საქაღალდეში არსებობს ფაილი ამ სახელით!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:103
 msgid "Failed to create the directory!"
-msgstr ""
+msgstr "საქაღალდის შექმნა ჩავარდა!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:110
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:119
 msgid "Directory created successfully!"
-msgstr ""
+msgstr "საქაღალდე წარმატებით შეიქმნა!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:121
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:203
 msgid "Back to parent directory"
-msgstr ""
+msgstr "მშობელ საქაღალდეზე დაბრუნება"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:66
 msgid "The file doesn't exist!"
-msgstr ""
+msgstr "ფაილი არ არსებობს!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:70
 msgid "Can't download a directory!"
-msgstr ""
+msgstr "საქაღალდეს ვერ გადმოვიწერ!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:75
 msgid "Failed to read the file!"
-msgstr ""
+msgstr "ფაილის წაკითხვის შეცდომა!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:58
 msgid ""
@@ -3824,45 +3832,45 @@ msgstr "საქაღალდის შექმნა"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
 msgid "Upload files"
-msgstr ""
+msgstr "ფაილების ატვირთვა"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Type new directory name:"
-msgstr ""
+msgstr "შეიყვანეთ ახალი საქაღალდის სახელი:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Select a file to upload:"
-msgstr ""
+msgstr "აირჩიეთ ასატვირთი ფაილი:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Or select a directory (works in Chrome only):"
-msgstr ""
+msgstr "ან აირჩიეთ საქაღალდე (მუშაობს მხოლოდ Chrome-ში):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:73
 msgid "Index of "
-msgstr ""
+msgstr "ინდექსი ელემენტისთვის "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:75
 msgid "Error occurred"
-msgstr ""
+msgstr "შეცდომა"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:80
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:44
 msgid "File system root"
-msgstr ""
+msgstr "ფაილური სისტემის ძირითადი საქაღალდე"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "Saved games"
-msgstr ""
+msgstr "შენახული თამაშები"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
 msgid "Parent directory"
-msgstr ""
+msgstr "მშობელი საქაღალდე"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
 msgid "ScummVM couldn't list the directory you specified."
@@ -3870,7 +3878,7 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Index of"
-msgstr ""
+msgstr "ინდექსი ელემენტისთვის"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:41
 msgid "This is a local webserver index page."
@@ -3878,19 +3886,19 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "Open Files manager"
-msgstr ""
+msgstr "ფაილების მმართველის გახსნა"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:66
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "მშობელი საქაღალდე არ არსებობს!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
 msgid "Can't upload into a file!"
-msgstr ""
+msgstr "ფაილში ატვირთვა შეუძლებელია!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:204
 msgid "Back to the files manager"
-msgstr ""
+msgstr "ფაილების მმართველზე დაბრუნება"
 
 #: backends/networking/sdl_net/localwebserver.cpp:131
 msgid ""
@@ -3901,44 +3909,44 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:68
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:110
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "არასწორი მოთხოვნა: თავსართები ძალიან გრძელია!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:154
 msgid "Failed to upload the file!"
-msgstr ""
+msgstr "ფაილის ატვირთვის შეცდომა!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:183
 msgid "No file was passed!"
-msgstr ""
+msgstr "ფაილი გადმოცემული არაა!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:201
 msgid "Uploaded successfully!"
-msgstr ""
+msgstr "ფაილი წარმატებით აიტვირთა!"
 
 #: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:283
 msgid "~C~lose"
-msgstr ""
+msgstr "~დ~ახურვა"
 
 #: backends/platform/3ds/options-dialog.cpp:47
 msgid "Show mouse cursor"
-msgstr ""
+msgstr "თაგუნას კურსორის ჩვენება"
 
 #: backends/platform/3ds/options-dialog.cpp:50
 msgid "Snap to edges"
-msgstr ""
+msgstr "წიბოებზე მიმაგრება"
 
 #: backends/platform/3ds/options-dialog.cpp:53
 msgid "Stretch to fit"
-msgstr ""
+msgstr "გაწელვა ჩასატევად"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 msgid "Use Screen:"
-msgstr ""
+msgstr "გამოიყენება ეკრანი:"
 
 #: backends/platform/3ds/options-dialog.cpp:58
 msgctxt "3ds-screen"
 msgid "Top"
-msgstr ""
+msgstr "თავში"
 
 #: backends/platform/3ds/options-dialog.cpp:59
 msgctxt "3ds-screen"
@@ -4076,7 +4084,7 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:399
 msgid "Drag Mode"
-msgstr ""
+msgstr "გადათრევის რეჟიმი"
 
 #: backends/platform/3ds/osystem-events.cpp:401
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
@@ -4276,17 +4284,17 @@ msgstr ""
 #: backends/platform/android/options.cpp:144
 #: backends/platform/ios7/ios7_options.mm:124
 msgid "In 2D games"
-msgstr ""
+msgstr "2D თამაშებში"
 
 #: backends/platform/android/options.cpp:146
 #: backends/platform/ios7/ios7_options.mm:126
 msgid "In 3D games"
-msgstr ""
+msgstr "3D თამაშებში"
 
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:140
 msgid "Select the orientation:"
-msgstr ""
+msgstr "აირჩიეთ ორიენტაცია:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
@@ -4312,12 +4320,12 @@ msgstr "ლანდშაფტი"
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:152
 msgid "In games"
-msgstr ""
+msgstr "თამაშებში"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
 msgid "Remove folder authorizations..."
-msgstr ""
+msgstr "საქაღალდის ავტორიზაციის წაშლა..."
 
 #: backends/platform/android/options.cpp:493
 msgid "Remove"
@@ -4325,7 +4333,7 @@ msgstr "წაშლა"
 
 #: backends/platform/ds/ds-graphics.cpp:281
 msgid "Unscaled"
-msgstr ""
+msgstr "გაუდიდებელი"
 
 #: backends/platform/ds/ds-graphics.cpp:282
 msgid "Hardware scale (fast, but low quality)"
@@ -4557,7 +4565,7 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
-msgstr ""
+msgstr "ScummVM-ის დამალვა"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "Hide Others"
@@ -4585,7 +4593,7 @@ msgstr "ზოგადი ინფორმაცია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:270
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "ScummVM-ის სიახლეები"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:272
 msgid "Credits"
@@ -4601,11 +4609,11 @@ msgstr "LGPL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:275
 msgid "Freefont License"
-msgstr ""
+msgstr "Freefont ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:276
 msgid "OFL License"
-msgstr ""
+msgstr "OFL ლიცენზია"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:277
 msgid "BSD License"
@@ -4689,7 +4697,7 @@ msgstr "ვიდეო"
 
 #: backends/platform/wii/options.cpp:53
 msgid "Current video mode:"
-msgstr ""
+msgstr "მიმდინარე ვიდეორეჟიმი:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
@@ -4729,11 +4737,11 @@ msgstr "უცნობი"
 
 #: backends/platform/wii/options.cpp:92
 msgid "Mount DVD"
-msgstr ""
+msgstr "DVD-ის მიმაგრება"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Unmount DVD"
-msgstr ""
+msgstr "DVD-ის მოხსნა"
 
 #: backends/platform/wii/options.cpp:97
 msgid "SMB"
@@ -4753,60 +4761,60 @@ msgstr "პაროლი:"
 
 #: backends/platform/wii/options.cpp:120
 msgid "Init network"
-msgstr ""
+msgstr "ქსელის გაშვება"
 
 #: backends/platform/wii/options.cpp:122
 msgid "Mount SMB"
-msgstr ""
+msgstr "SMB-ის მიმაგრება"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Unmount SMB"
-msgstr ""
+msgstr "SMB-ის მოხსნა"
 
 #: backends/platform/wii/options.cpp:142
 msgid "DVD Mounted successfully"
-msgstr ""
+msgstr "DVD-ის მიმაგრება წარმატებულია"
 
 #: backends/platform/wii/options.cpp:145
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "DVD-ის მიმაგრების შეცდომა"
 
 #: backends/platform/wii/options.cpp:147
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVD მიმაგრებული არაა"
 
 #: backends/platform/wii/options.cpp:160
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "ქსელი გაშვებულია, გაზიარებული მიმაგრებული"
 
 #: backends/platform/wii/options.cpp:162
 msgid "Network up"
-msgstr ""
+msgstr "ქსელი გაშვებულია"
 
 #: backends/platform/wii/options.cpp:165
 msgid ", error while mounting the share"
-msgstr ""
+msgstr ", შეცდომა გაზიარებულის მიმაგრებისას"
 
 #: backends/platform/wii/options.cpp:167
 msgid ", share not mounted"
-msgstr ""
+msgstr ", გაზიარებული მიმაგრებული არაა"
 
 #: backends/platform/wii/options.cpp:173
 msgid "Network down"
-msgstr ""
+msgstr "ქსელი გათიშულია"
 
 #: backends/platform/wii/options.cpp:177
 msgid "Initializing network"
-msgstr ""
+msgstr "ქსელის ინიციალიზაცია"
 
 #: backends/platform/wii/options.cpp:181
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "ქსელის ინიციალიზაციის მოლოდინის ვადა ამოიწურა"
 
 #: backends/platform/wii/options.cpp:185
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "ქსელი ინიციალიზებული არაა (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
@@ -4814,7 +4822,7 @@ msgstr "გამშვები"
 
 #: backends/updates/macosx/macosx-updates.mm:73
 msgid "Check for Updates..."
-msgstr ""
+msgstr "განახლებების შემოწმება..."
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:940
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
@@ -4854,7 +4862,7 @@ msgstr ""
 
 #: engines/adl/metaengine.cpp:56 engines/adl/metaengine.cpp:68
 msgid "Color graphics"
-msgstr ""
+msgstr "ფერადი გრაფიკა"
 
 #: engines/adl/metaengine.cpp:57 engines/adl/metaengine.cpp:69
 msgid "Use color graphics instead of monochrome"
