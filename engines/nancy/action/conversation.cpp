@@ -243,19 +243,19 @@ void ConversationSound::execute() {
 		}
 		break;
 	case kActionTrigger:
-		// process flags structs
-		for (auto &flags : _flagsStructs) {
-			if (flags.conditions.isSatisfied()) {
-				flags.flagToSet.set();
-			}
-		}
-
-		if (_pickedResponse != -1) {
-			// Set response's event flag, if any
-			NancySceneState.setEventFlag(_responses[_pickedResponse].flagDesc);
-		}
-
 		if (!g_nancy->_sound->isSoundPlaying(_responseGenericSound)) {
+			// process flags structs
+			for (auto &flags : _flagsStructs) {
+				if (flags.conditions.isSatisfied()) {
+					flags.flagToSet.set();
+				}
+			}
+
+			if (_pickedResponse != -1) {
+				// Set response's event flag, if any
+				NancySceneState.setEventFlag(_responses[_pickedResponse].flagDesc);
+			}
+
 			g_nancy->_sound->stopSound(_responseGenericSound);
 
 			if (_pickedResponse != -1) {
