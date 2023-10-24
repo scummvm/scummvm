@@ -1905,7 +1905,7 @@ void ScummEngine::drawDraftsInventory() {
 			}
 
 			// Draw the notes of the drafts...
-			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
 			int namesWidth = getGUIStringWidth(names[i + 1]);
 
 			// Text position adjustments for the titles...
@@ -1917,7 +1917,7 @@ void ScummEngine::drawDraftsInventory() {
 
 			// Draw the titles of the drafts... notice how we are subtracting
 			// namesWidth: we are forcing the text aligning on the left.
-			drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
+			drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
 		}
 	}
 
