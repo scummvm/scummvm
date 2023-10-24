@@ -288,7 +288,7 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 // burnSpriteToBackDrop adds text in the colour specified by setBurnColour
 // using the differing brightness levels of the font to achieve an anti-aliasing effect.
 void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal) {
-	if (!single.surface.w || !single.surface.h) {
+	if (!single.burnSurface.w || !single.burnSurface.h) {
 		// Skip surfaces with a 0 width/height (e.g. the space character on Out of Order) to avoid crashes in the blitting code.
 		return;
 	}
@@ -303,7 +303,7 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 	x1 -= single.xhot;
 	y1 -= single.yhot - 1;
 
-	Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+	Graphics::ManagedSurface tmp(&single.burnSurface, DisposeAfterUse::NO);
 	tmp.blendBlitTo(_backdropSurface, x1, y1, Graphics::FLIP_NONE, nullptr,
 			MS_RGB(_currentBurnR, _currentBurnG, _currentBurnB));
 }
@@ -467,7 +467,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 
 	// Use Managed surface to scale and blit
 	if (!_zBuffer->numPanels) {
-		Graphics::ManagedSurface tmp(&single.surface, DisposeAfterUse::NO);
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
 		tmp.blendBlitTo(_renderSurface, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
 
 		if (ptr) {

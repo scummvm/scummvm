@@ -87,7 +87,7 @@ void GraphicsManager::resetRandW() {
 void GraphicsManager::reserveTransitionTexture() {
 	_transitionTexture = new Graphics::ManagedSurface;
 
-	_transitionTexture->create(256, 256);
+	_transitionTexture->create(256, 256, Graphics::BlendBlit::getSupportedPixelFormat());
 }
 
 void GraphicsManager::transitionDisolve() {
