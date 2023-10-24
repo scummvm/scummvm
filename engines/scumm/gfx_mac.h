@@ -121,6 +121,7 @@ public:
 		void update();
 
 		static void plotPixel(int x, int y, int color, void *data);
+		static void plotPattern(int x, int y, int pattern, void *data);
 
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
