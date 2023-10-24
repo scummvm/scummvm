@@ -82,14 +82,17 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+
+// -- DOS CD --
+
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		EN_USA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -99,11 +102,11 @@
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -113,11 +116,11 @@
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -127,11 +130,11 @@
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -141,11 +144,11 @@
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -155,11 +158,11 @@
 {
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "6263d09e996c1b4e84ef2d650b820e57", 4831170),
 		EN_GRB,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -169,11 +172,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		EN_USA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -183,11 +186,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -197,11 +200,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -211,11 +214,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -225,11 +228,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
@@ -239,11 +242,11 @@
 { // Supplied by SiRoCs in bug report #3943
 	{
 		"lit",
-		"v1.00",
+		"CD v1.00",
 		AD_ENTRY1s("intro.stk", "795be7011ec31bf5bb8ce4efdb9ee5d3", 4838904),
 		EN_GRB,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
