@@ -837,10 +837,18 @@ void LB::b_getLast(int nargs) {
 	Datum list = g_lingo->pop();
 	switch (list.type) {
 	case ARRAY:
-		g_lingo->push(list.u.farr->arr.back());
+		if (list.u.farr->arr.empty()) {
+			g_lingo->pushVoid();
+		} else {
+			g_lingo->push(list.u.farr->arr.back());
+		}
 		break;
 	case PARRAY:
-		g_lingo->push(list.u.parr->arr.back().v);
+		if (list.u.farr->arr.empty()) {
+			g_lingo->pushVoid();
+		} else {
+			g_lingo->push(list.u.parr->arr.back().v);
+		}
 		break;
 	default:
 		TYPECHECK(list, ARRAY);
