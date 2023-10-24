@@ -450,6 +450,34 @@
 	kFeaturesAdLib,
 	"demo.stk", "demo.tot", 0
 },
+{
+	{
+		"lit",
+		"Non-interactive Demo",
+		AD_ENTRY1s("demo.stk", "895359c918a145adc048f779b3cdacc3", 645068),
+		UNK_LANG,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeLostInTime,
+	kFeaturesAdLib,
+	"demo.stk", "demo.tot", 0
+},
+{
+	{
+		"lit",
+		"Non-interactive Demo",
+		AD_ENTRY1s("demo.stk", "895359c918a145adc048f779b3cdacc3", 645068),
+		UNK_LANG,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeLostInTime,
+	kFeaturesAdLib,
+	"demo.stk", "demo.tot", 0
+},
 
 // -- Pirated! Do not re-add nor un-tag! --
 
@@ -466,20 +494,6 @@
 	kGameTypeLostInTime,
 	kFeaturesAdLib,
 	0, 0, 0
-},
-{
-	{
-		"lit",
-		"Non-interactive Demo",
-		AD_ENTRY1s("demo.stk", "895359c918a145adc048f779b3cdacc3", 645068),
-		UNK_LANG,
-		kPlatformDOS,
-		ADGF_DEMO,
-		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
-	},
-	kGameTypeLostInTime,
-	kFeaturesAdLib,
-	"demo.stk", "demo.tot", 0
 },
 
 #endif // GOB_DETECTION_TABLES_LIT_H
