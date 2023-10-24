@@ -123,7 +123,7 @@
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kGameTypeFascination,
@@ -137,7 +137,7 @@
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kGameTypeFascination,
@@ -151,7 +151,7 @@
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kGameTypeFascination,
@@ -165,7 +165,7 @@
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kGameTypeFascination,
@@ -179,7 +179,7 @@
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
 	kGameTypeFascination,
