@@ -367,7 +367,6 @@ void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
 
 void MacGui::SimpleWindow::update(bool fullRedraw) {
 	if (fullRedraw) {
-debug("Full redraw");
 		_dirtyRects.clear();
 		markRectAsDirty(Common::Rect(0, 0, _innerSurface.w, _innerSurface.h));
 	}
@@ -1048,21 +1047,36 @@ void MacLoomGui::showAboutDialog() {
 
 	Common::Rect r(0, 0, 404, 154);
 	int growth = -2;
-	int growSteps = 37;
 	int pattern;
 	int waitFrames;
 
+	int innerBounce = 72;
+	int outerBounce = 0;
+
+	int targetTop = 48;
+	int targetGrowth = 2;
+
 	bool changeScene = false;
 	bool fastForward = false;
+	bool holdScene = false;
 
 	while (!_vm->shouldQuit()) {
 		switch (scene) {
 		case 0:
-		case 1:
-		case 3:
+		case 2:
+		case 4:
 			// This appears to be pixel perfect or at least nearly
 			// so for the outer layers, but breaks down slightly
 			// near the middle.
+			//
+			// It doesn't erase the text screens correctly, though.
+			//
+			// Also, the original does an inexplicable skip in the
+			// first animation that I haven't bothered to
+			// implement. I don't know if it was intentional or
+			// not, but I think it looks awkward. And I wasn't able
+			// to get it quite right, perhaps for the same reason
+			// as the aforementioned text erasure problem.
 
 			pattern = (r.top / 2) % 8;
 
@@ -1071,17 +1085,19 @@ void MacLoomGui::showAboutDialog() {
 			if (!fastForward)
 				window->markRectAsDirty(r);
 
+			if (r.top == targetTop && growth == targetGrowth) {
+				changeScene = true;
+				break;
+			}
+
 			r.grow(growth);
 
-			if (r.height() <= 6 || r.height() >= 154)
+			if ((growth < 0 && r.top >= innerBounce) || (growth > 0 && r.top <= outerBounce))
 				growth = -growth;
-
-			if (--growSteps == 0)
-				changeScene = true;
-
 			break;
 
-		case 2:
+		case 1:
+		case 3:
 			if (--waitFrames == 0)
 				changeScene = true;
 			break;
@@ -1107,19 +1123,26 @@ void MacLoomGui::showAboutDialog() {
 
 			switch (scene) {
 			case 1:
-				r.grow(16);
-				growth = -2;
-				growSteps = 25;
-				break;
-
-			case 2:
+				holdScene = true;
 				window->drawSprite(lucasFilm, 120, 65);
 				waitFrames = 50;
 				break;
 
-			case 3:
+			case 2:
+				holdScene = false;
 				growth = -2;
-				growSteps = 23;
+				break;
+
+			case 3:
+				holdScene = true;
+				waitFrames = 50;
+				break;
+
+			case 4:
+				holdScene = false;
+				growth = -2;
+				innerBounce -= 8;
+				targetTop -= 16;
 				break;
 			}
 
@@ -1128,7 +1151,7 @@ void MacLoomGui::showAboutDialog() {
 				window->update(true);
 			}
 
-			if (scene >= 4)
+			if (scene >= 5)
 				break;
 		}
 	}
