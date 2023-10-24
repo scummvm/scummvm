@@ -1649,7 +1649,7 @@ void ScummEngine::setUpDraftsInventory() {
 	}
 }
 
-static const char *loomDraftsNames[6][17] = {
+static const char *loomDraftsNames[6][18] = {
 	// ENGLISH
 	{
 		"Drafts",
@@ -1658,7 +1658,8 @@ static const char *loomDraftsNames[6][17] = {
 		"Emptying:",      "Invisibility:",     "Terror:",
 		"Sharpening:",    "Reflection:",       "Healing:",
 		"Silence:",       "Shaping:",          "Unmaking:",
-		"Transcendence:"
+		"Transcendence:",
+		"Unknown:"
 	},
 
 	// GERMAN
@@ -1669,7 +1670,8 @@ static const char *loomDraftsNames[6][17] = {
 		"Entleeren:",        "Unsichtbarkeit:",  "Angst:",
 		"Sch\x84rfen:",      "Spiegelung:",      "Heilen:",
 		"Stille:",           "Formen:",          "Zerst\x94ren:",
-		"Transzendenz:"
+		"Transzendenz:",
+		"Unbekannt:"
 	},
 
 	// FRENCH
@@ -1680,7 +1682,8 @@ static const char *loomDraftsNames[6][17] = {
 		"Vidange:",              "Camouflage:",              "Terreur:",
 		"Trame \x85 aiguiser:",  "Reflet:",                  "Gu\x82rison:",
 		"Silence:",              "Formation:",               "Trame d\x82\x66\x61ite:",
-		"Transcendance:"
+		"Transcendance:",
+		"Inconnu:"
 	},
 
 	// SPANISH
@@ -1691,7 +1694,8 @@ static const char *loomDraftsNames[6][17] = {
 		"Vacio:",               "Invisibilidad:",  "Terror:",
 		"Afilado:",             "Reflexion:",      "Curativo:",
 		"Silencio:",            "Moldear:",        "Deshacer:",
-		"Trascendencia:"
+		"Trascendencia:",
+		"Desconocido:"
 	},
 
 	// JAPANESE
@@ -1712,7 +1716,8 @@ static const char *loomDraftsNames[6][17] = {
 		"\x90\xc3\x82\xa9\x82\xc9\x82\xb3\x82\xb9\x82\xe9:",
 		"\x8c\x60\x82\xf0\x95\xcf\x82\xa6\x82\xe9:",
 		"\x94\x6a\x89\xf3\x82\xb7\x82\xe9:",
-		"\x92\xb4\x89\x7a\x82\xb3\x82\xb9\x82\xe9:"
+		"\x92\xb4\x89\x7a\x82\xb3\x82\xb9\x82\xe9:",
+		"\x96\xa2\x92\x6d:"
 	},
 
 	// HEBREW
@@ -1733,13 +1738,16 @@ static const char *loomDraftsNames[6][17] = {
 		":\x84\x97\x9a\x99\x84",
 		":\x84\x98\x85\x96 \x9a\x90\x89\x9a\x90",
 		":\x84\x91\x89\x98\x84",
-		":\x9a\x85\x81\x82\x99\x90"
+		":\x9a\x85\x81\x82\x99\x90",
+		":\x92\x85\x83\x89\x20\x80\x8c"
 	}
 };
 
 void ScummEngine::drawDraftsInventory() {
-	int base, xPos, textHeight, heightMultiplier, draft,textOffset, xOffset,
-		inactiveColor, unlockedColor, newDraftColor, titleColor, notesColor;
+	int base, xPos, textHeight, heightMultiplier, draft, textOffset, xOffset,
+		inactiveColor, unlockedColor, newDraftColor, titleColor, notesColor,
+		namesWidth, notesWidth;
+
 	char notesBuf[6];
 	const char **names;
 	const char *notes = "cdefgabC";
@@ -1869,8 +1877,14 @@ void ScummEngine::drawDraftsInventory() {
 			}
 
 			// Draw the titles of the drafts...
-			drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
-			int notesWidth = getGUIStringWidth(notesBuf);
+			if (draft & 0x2000) {
+				drawGUIText(names[i + 1], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			} else {
+				// Draw "Unknown:" as the title of the draft
+				drawGUIText(names[17], nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			}
+
+			notesWidth = getGUIStringWidth(notesBuf);
 
 			// Text position adjustments for the notes...
 			// (Objective: Leave three pixels to the right)
@@ -1906,7 +1920,7 @@ void ScummEngine::drawDraftsInventory() {
 
 			// Draw the notes of the drafts...
 			drawGUIText(notesBuf, nullptr, xPos - textOffset, yConstant - 40 + textHeight * heightMultiplier, notesColor, false);
-			int namesWidth = getGUIStringWidth(names[i + 1]);
+			namesWidth = getGUIStringWidth(names[i + 1]);
 
 			// Text position adjustments for the titles...
 			// (Objective: Leave three pixels to the right)
@@ -1917,7 +1931,14 @@ void ScummEngine::drawDraftsInventory() {
 
 			// Draw the titles of the drafts... notice how we are subtracting
 			// namesWidth: we are forcing the text aligning on the left.
-			drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			if (draft & 0x2000) {
+				namesWidth = getGUIStringWidth(names[i + 1]);
+				drawGUIText(names[i + 1], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			} else {
+				// Draw "Unknown:" as the title of the draft
+				namesWidth = getGUIStringWidth(names[17]);
+				drawGUIText(names[17], nullptr, xPos - namesWidth + 127 + textOffset, yConstant - 40 + textHeight * heightMultiplier, titleColor, false);
+			}
 		}
 	}
 
