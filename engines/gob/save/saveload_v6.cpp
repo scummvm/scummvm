@@ -29,7 +29,7 @@ namespace Gob {
 SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{    "cat.inf", kSaveModeSave,   nullptr, "savegame"   }, // Save file
 	{  "cata1.inf", kSaveModeSave,   nullptr, "autosave"   }, // Autosave file
-	{    "mdo.def", kSaveModeExists, nullptr, nullptr      },
+	{    "mdo.def", kSaveModeExists, nullptr, "systemconfig" }, // System configuration file
 	{  "no_cd.txt", kSaveModeExists, nullptr, nullptr      },
 	{   "vide.inf", kSaveModeIgnore, nullptr, nullptr      },
 	{"fenetre.txt", kSaveModeIgnore, nullptr, nullptr      },
