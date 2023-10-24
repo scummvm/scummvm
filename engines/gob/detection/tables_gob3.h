@@ -348,12 +348,12 @@
 
 {
 	{
-		"gob3cd",
-		"v1.000",
+		"gob3",
+		"CD v1.000",
 		AD_ENTRY1("intro.stk", "6f2c226c62dd7ab0ab6f850e89d3fc47"),
 		EN_USA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -362,12 +362,12 @@
 },
 { // Supplied by pykman in bug report #5365
 	{
-		"gob3cd",
-		"v1.02 Polish",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1s("intro.stk", "978afddcac81bb95a04757b61f78471c", 619825),
-		UNK_LANG,
+		PL_POL,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -376,12 +376,12 @@
 },
 { // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 		EN_ANY,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -390,12 +390,12 @@
 },
 { // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -404,12 +404,12 @@
 },
 { // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -418,12 +418,12 @@
 },
 { // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 		IT_ITA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -432,12 +432,12 @@
 },
 { // Supplied by paul66 and noizert in bug reports #3045 and #3137
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -446,12 +446,12 @@
 },
 { // Supplied by goodoldgeorg in bug report #4375
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
 		HU_HUN,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -460,12 +460,12 @@
 },
 { // Supplied by goodoldgeorg in bug report #4375
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
 		FR_FRA,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -474,12 +474,12 @@
 },
 { // Supplied by goodoldgeorg in bug report #4375
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
 		DE_DEU,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
@@ -488,12 +488,12 @@
 },
 { // Supplied by goodoldgeorg in bug report #4375
 	{
-		"gob3cd",
-		"v1.02",
+		"gob3",
+		"CD v1.02",
 		AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
 		ES_ESP,
 		kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_CD,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
