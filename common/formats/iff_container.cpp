@@ -25,7 +25,7 @@
 
 namespace Common {
 
-IFFParser::IFFParser(ReadStream *stream, bool disposeStream) : _stream(stream), _disposeStream(disposeStream) {
+IFFParser::IFFParser(ReadStream *stream, bool disposeStream, IFF_ID formHeaderID) : _stream(stream), _disposeStream(disposeStream), _formHeaderID(formHeaderID) {
 	setInputStream(stream);
 }
 
@@ -42,7 +42,7 @@ void IFFParser::setInputStream(ReadStream *stream) {
 	_chunk.setInputStream(stream);
 
 	_formChunk.readHeader();
-	if (_formChunk.id != ID_FORM) {
+	if (_formChunk.id != _formHeaderID) {
 		error("IFFParser input is not a FORM type IFF file");
 	}
 	_formSize = _formChunk.size;

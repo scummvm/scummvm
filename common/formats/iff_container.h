@@ -67,6 +67,8 @@ page 376) */
 /* Amiga Contiguous Bitmap (AmigaBasic) */
 #define ID_8SVX     MKTAG('8','S','V','X')
 /* Amiga 8 bits voice */
+#define ID_DATA     MKTAG('D','A','T','A')
+/* Replaces FORM in Nancy Drew IFFs */
 
 /* generic */
 
@@ -226,6 +228,7 @@ protected:
 
 	uint32 _formSize;
 	IFF_ID _formType;
+	IFF_ID _formHeaderID;
 
 	ReadStream *_stream;
 	bool _disposeStream;
@@ -233,7 +236,7 @@ protected:
 	void setInputStream(ReadStream *stream);
 
 public:
-	IFFParser(ReadStream *stream, bool disposeStream = false);
+	IFFParser(ReadStream *stream, bool disposeStream = false, IFF_ID formHeaderID = ID_FORM);
 	~IFFParser();
 
 	/**
