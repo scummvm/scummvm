@@ -77,6 +77,11 @@ void Autotext::execute() {
 		const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
 		assert(autotext);
 
+		bool isLIFO = (g_nancy->getGameType() == kGameTypeNancy7) && _surfaceID > 5; // This is nancy7-specific, later games implement LIFO in a different way
+		if (isLIFO) {
+			_surfaceID -= 3;
+		}
+
 		Common::String stringToPush;
 		auto &entriesForSurface = journalData->journalEntries[_surfaceID];
 		bool foundThisKey = false;
@@ -89,8 +94,15 @@ void Autotext::execute() {
 
 		if (!foundThisKey) {
 			// Key inside this Autotext instance wasn't found inside existing list, push it back and add it to string to draw
-			entriesForSurface.push_back(_textKey);
-			stringToPush += autotext->texts[_textKey];
+			if (!isLIFO) {
+				// Push at end
+				entriesForSurface.push_back(_textKey);
+				stringToPush += autotext->texts[_textKey];
+			} else {
+				// Insert at front
+				entriesForSurface.insert_at(0, _textKey);
+				stringToPush = autotext->texts[_textKey] + stringToPush;
+			}
 		}
 
 		addTextLine(stringToPush);
