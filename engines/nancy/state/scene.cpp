@@ -376,7 +376,7 @@ void Scene::installInventorySoundOverride(byte command, const SoundDescription &
 	}
 }
 
-void Scene::playItemCantSound(int16 itemID) {
+void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 	if (ConfMan.getBool("subtitles") && g_nancy->getGameType() >= kGameTypeNancy2) {
 		_textbox.clear();
 	}
@@ -415,13 +415,13 @@ void Scene::playItemCantSound(int16 itemID) {
 				// Play the default "I can't" sound
 				const INV::ItemDescription item = inventoryData->itemDescriptions[itemID];
 
-				if (item.generalCantSound.name.size()) {
+				if (notHoldingSound && item.cantSoundNotHolding.name.size()) {
 					// This field only exists in nancy2
-					g_nancy->_sound->loadSound(item.generalCantSound);
-					g_nancy->_sound->playSound(item.generalCantSound);
+					g_nancy->_sound->loadSound(item.cantSoundNotHolding);
+					g_nancy->_sound->playSound(item.cantSoundNotHolding);
 
 					if (ConfMan.getBool("subtitles")) {
-						_textbox.addTextLine(item.generalCantText, inventoryData->captionAutoClearTime);
+						_textbox.addTextLine(item.cantTextNotHolding, inventoryData->captionAutoClearTime);
 					}
 				} else if (inventoryData->cantSound.name.size()) {
 					g_nancy->_sound->loadSound(inventoryData->cantSound);
@@ -440,13 +440,13 @@ void Scene::playItemCantSound(int16 itemID) {
 		// No override installed
 		const INV::ItemDescription item = inventoryData->itemDescriptions[itemID];
 
-		if (item.specificCantSound.name.size()) {
+		if (item.cantSound.name.size()) {
 			// The inventory data contains a custom "can't" sound for this item
-			g_nancy->_sound->loadSound(item.specificCantSound);
-			g_nancy->_sound->playSound(item.specificCantSound);
+			g_nancy->_sound->loadSound(item.cantSound);
+			g_nancy->_sound->playSound(item.cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(item.specificCantText, inventoryData->captionAutoClearTime);
+				_textbox.addTextLine(item.cantText, inventoryData->captionAutoClearTime);
 			}
 		} else if (inventoryData->cantSound.name.size()) {
 			// No custom sound, play default "can't" inside inventory data. Should (?) be unreachable

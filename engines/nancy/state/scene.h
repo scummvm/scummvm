@@ -135,7 +135,7 @@ public:
 	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
 
 	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
-	void playItemCantSound(int16 itemID = -1);
+	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
 
 	void setEventFlag(int16 label, byte flag);
 	void setEventFlag(FlagDescription eventFlag);

@@ -111,10 +111,10 @@ struct INV : public EngineData {
 		Common::Rect sourceRect;
 		Common::Rect highlightedSourceRect;
 
-		Common::String specificCantText;
-		Common::String generalCantText;
-		SoundDescription specificCantSound;
-		SoundDescription generalCantSound;
+		Common::String cantText;
+		Common::String cantTextNotHolding; // nancy2 only
+		SoundDescription cantSound;
+		SoundDescription cantSoundNotHolding; // nancy2 only
 	};
 
 	INV(Common::SeekableReadStream *chunkStream);

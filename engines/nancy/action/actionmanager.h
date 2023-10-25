@@ -52,7 +52,7 @@ class ActionManager {
 public:
 	static const byte kCursInvHolding			= 0;
 	static const byte kCursInvNotHolding		= 1;
-	static const byte kCursInvNotHoldingOffset	= 100;
+	static const byte kCursStandard				= 254;
 
 	ActionManager() {}
 	virtual ~ActionManager() {}

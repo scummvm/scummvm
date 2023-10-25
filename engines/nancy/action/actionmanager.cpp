@@ -72,7 +72,9 @@ void ActionManager::handleInput(NancyInput &input) {
 
 				if (!rec->_dependencies.satisfied) {
 					if (rec->_cursorDependency != nullptr) {
-						NancySceneState.playItemCantSound(rec->_cursorDependency->label);
+						NancySceneState.playItemCantSound(
+							rec->_cursorDependency->label,
+							(g_nancy->getGameType() <= kGameTypeNancy2 && rec->_cursorDependency->condition == kCursInvNotHolding));
 					} else {
 						continue;
 					}
@@ -83,9 +85,6 @@ void ActionManager::handleInput(NancyInput &input) {
 
 					if (rec->_cursorDependency) {
 						int16 item = rec->_cursorDependency->label;
-						if (item > 100 && item <= (100 + g_nancy->getStaticData().numItems)) {
-							item -= 100;
-						}
 
 						// Re-add the object to the inventory unless it's marked as a one-time use
 						if (item == NancySceneState.getHeldItem() && item != -1) {
@@ -467,16 +466,19 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			} else {
 				bool isSatisfied = false;
 				int heldItem = NancySceneState.getHeldItem();
-				if (heldItem == -1 && dep.label == -2) {
+				if (heldItem == -1 && dep.label == kCursStandard) {
 					isSatisfied = true;
 				} else {
-					if (dep.label <= 100) {
+					if (g_nancy->getGameType() <= kGameTypeNancy2 && dep.condition == kCursInvNotHolding) {
+						// Activate if _not_ holding the specified item. Dropped in nancy3
+						if (heldItem != dep.label) {
+							isSatisfied = true;
+						}
+					} else {
+						// Activate if holding the specified item.
 						if (heldItem == dep.label) {
 							isSatisfied = true;
 						}
-					} else if (dep.label - 100 != heldItem) {
-						// IDs above 100 mean the record will activate when the object is _not_ the specified one
-						isSatisfied = true;
 					}
 				}
 
