@@ -22,6 +22,7 @@
 #include "common/compression/vise.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "director/director.h"
 
 namespace Director {
@@ -81,6 +82,16 @@ struct CachedFile {
 	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
+
+struct SaveFilePath {
+	const char *target;
+	Common::Platform platform;
+	const char *path;
+} const saveFilePaths[] = {
+	{ "darkeye", Common::kPlatformWindows, "SAVEDDKY/" },
+	{ nullptr, Common::kPlatformUnknown, nullptr },
+};
+
 
 static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
@@ -203,6 +214,24 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 
 				debugC(1, kDebugLoading, "Added file '%s' of size %d to the file cache", f->fileName, size);
 			}
+	}
+
+	for (auto f = saveFilePaths; f->target != nullptr; f++) {
+		if (f->platform == Common::kPlatformUnknown || f->platform == platform)
+			if (!strcmp(f->target, target)) {
+				// Inject files from the save game storage into the path
+				Common::SaveFileManager *saves = g_system->getSavefileManager();
+				// As save games are name-mangled by FileIO, demangle them here
+				Common::String prefix = g_director->getTargetName() + '-' + '*';
+				for (auto &it : saves->listSavefiles(prefix.c_str())) {
+					Common::String demangled = f->path + it.substr(prefix.size() - 1);
+					if (demangled.hasSuffixIgnoreCase(".txt")) {
+						demangled = demangled.substr(0, demangled.size() - 4);
+					}
+					list.push_back(CachedArchive::InputEntry(demangled, nullptr, 0));
+				}
+			}
+
 	}
 
 	if (!list.empty()) {
