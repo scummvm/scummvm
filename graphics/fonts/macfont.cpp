@@ -628,12 +628,6 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			}
 		}
 
-		if (slant & kMacFontOutline) {
-			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
-			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
-			srcSurf.copyFrom(tmpSurf);
-		}
-
 		if (slant & kMacFontItalic) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeItalic(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
@@ -642,6 +636,12 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 
 		if (slant & kMacFontUnderline)
 			makeUnderLine(&srcSurf, glyph, data._ascent);
+
+		if (slant & kMacFontOutline) {
+			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
+			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			srcSurf.copyFrom(tmpSurf);
+		}
 
 		if (slant & kMacFontShadow) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
@@ -772,8 +772,8 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
 	int dw = (height - 1) / SLANTDEEP;
 
-	for (uint16 y = 0; y < height; y++) {
-		int dx = dw - y / SLANTDEEP;
+	for (int16 y = height - 1; y >= 0; y--) {
+		int dx = (height - 1 - y) / SLANTDEEP;
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
 		byte *dstPtr = (byte *)dst->getBasePtr(dx, y);
 
