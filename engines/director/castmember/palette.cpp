@@ -61,7 +61,6 @@ void PaletteCastMember::load() {
 		warning("STUB: PaletteCastMember::load(): Palettes not yet supported for version %d", _cast->_version);
 	}
 	if (paletteId) {
-		//_palette = g_director->getPalette(paletteId);
 
 		uint32 tag = MKTAG('C', 'L', 'U', 'T');
 		Archive *arch = _cast->getArchive();
@@ -71,6 +70,7 @@ void PaletteCastMember::load() {
 			PaletteV4 palData = _cast->loadPalette(*pal, paletteId);
 			CastMemberID cid(_castId, _cast->_castLibID);
 			g_director->addPalette(cid, palData.palette, palData.length);
+			_palette = g_director->getPalette(cid);
 			delete pal;
 		} else {
 			warning("PaletteCastMember::load(): no CLUT palette %d for cast index %d found", paletteId, _castId);
