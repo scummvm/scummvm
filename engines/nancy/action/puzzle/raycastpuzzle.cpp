@@ -946,7 +946,6 @@ bool RaycastDeferredLoader::loadInner() {
 		break;
 	case kInitMap : {
 		_owner.drawMap();
-		// TODO: Add console command for setting debug features (map, player height, screen size, ghost mode, etc.)
 		_owner._map.setVisible(false);
 
 		_loadState = kInitTables1;
@@ -1130,6 +1129,10 @@ void RaycastPuzzle::execute() {
 void RaycastPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun) {
 		return;
+	}
+
+	if (input.input & NancyInput::kRaycastMap) {
+		_map.setVisible(!_map.isVisible());
 	}
 	
 	uint32 time = g_nancy->getTotalPlayTime();

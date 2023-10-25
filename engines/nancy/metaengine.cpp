@@ -91,7 +91,7 @@ public:
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
 	Common::KeymapArray keymaps;
-	Nancy::InputManager::initKeymaps(keymaps);
+	Nancy::InputManager::initKeymaps(keymaps, target);
 	return keymaps;
 }
 

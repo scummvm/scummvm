@@ -52,6 +52,7 @@ struct NancyInput {
 		kMoveRight				= 1 << 9,
 		kMoveFastModifier		= 1 << 10,
 		kOpenMainMenu			= 1 << 11,
+		kRaycastMap				= 1 << 12,
 
 		kLeftMouseButton		= kLeftMouseButtonDown | kLeftMouseButtonHeld | kLeftMouseButtonUp,
 		kRightMouseButton		= kRightMouseButtonDown | kRightMouseButtonHeld | kRightMouseButtonUp
@@ -77,7 +78,8 @@ enum NancyAction {
 	kNancyActionMoveFast,
 	kNancyActionLeftClick,
 	kNancyActionRightClick,
-	kNancyActionOpenMainMenu
+	kNancyActionOpenMainMenu,
+	kNancyActionShowRaycastMap
 };
 
 public:
@@ -92,7 +94,7 @@ public:
 	void forceCleanInput();
 	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
 
-	static void initKeymaps(Common::KeymapArray &keymaps);
+	static void initKeymaps(Common::KeymapArray &keymaps, const char *target);
 
 private:
 	uint16 _inputs;
