@@ -128,24 +128,15 @@ enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMove
 // Separate namespace to remove possible clashes
 namespace NancyState {
 enum NancyState {
-	kBoot,
-	kLogo,
-	kCredits,
-	kMap,
-	kMainMenu,
-	kLoadSave,
-	kSetup,
-	// unknown/invalid
-	kHelp,
-	kScene,
-	// CD change
-	// Cheat,
-	kQuit,
-	// regain focus
+	// Original engine states
+	kBoot, kLogo, kCredits, kMap,
+	kMainMenu, kLoadSave, kSetup,
+	kHelp, kScene, kSaveDialog,
+
+	// Not real states
 	kNone,
-	kSaveDialog,
+	kQuit,
 	kPause, // only used when the GMM is on screen
-	kReloadSave
 };
 }
 
@@ -272,7 +263,7 @@ struct SoundDescription {
 // Structs inside nancy.dat, which contains all the data that was
 // originally stored inside the executable
 
-enum class StaticDataConditionType : byte { kEvent = 0, kInventory = 1, kDifficulty = 2 };
+enum class StaticDataConditionType { kEvent = 0, kInventory = 1, kDifficulty = 2 };
 struct StaticDataFlag { byte type; int16 label; byte flag; };
 
 struct ConditionalDialogue {

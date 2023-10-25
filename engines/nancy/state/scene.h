@@ -75,16 +75,6 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::NancyEngine;
 
 public:
-	enum GameStateChange : byte {
-		kHelpMenu = 1 << 0,
-		kMainMenu = 1 << 1,
-		kSaveLoad = 1 << 2,
-		kReloadSave = 1 << 3,
-		kSetupMenu = 1 << 4,
-		kCredits = 1 << 5,
-		kMap = 1 << 6
-	};
-
 	struct SceneSummary {
 		// SSUM and TSUM
 		// Default values set to match those applied when loading from a TSUM chunk
