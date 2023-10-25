@@ -38,19 +38,7 @@ void PeepholePuzzle::init() {
 	_drawSurface.create(screenBounds.width(), screenBounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 	moveTo(screenBounds);
 
-	// Check for special autotext strings, and use the requested surface as source
-	if (_innerImageName.hasPrefix("USE_AUTOTEXT")) {
-		uint surfID = _innerImageName[12] - '1';
-		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
-		_innerImage.create(surf, surf.getBounds());
-	} else if (_innerImageName.hasPrefix("USE_AUTOJOURNAL")) {
-		uint surfID = _innerImageName.substr(15).asUint64() + 2;
-		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
-		_innerImage.create(surf, surf.getBounds());
-	} else {
-		// No autotext, load image source
-		g_nancy->_resource->loadImage(_innerImageName, _innerImage);
-	}
+	g_nancy->_resource->loadImage(_innerImageName, _innerImage);
 
 	if (!_buttonsImageName.size()) {
 		// Empty image name for buttons, use other image as source

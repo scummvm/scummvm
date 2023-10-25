@@ -37,21 +37,12 @@ namespace Nancy {
 namespace Action {
 
 void Overlay::init() {
-	// Check for special autotext strings, and use the requested surface as source
-	if (_imageName.hasPrefix("USE_AUTOTEXT")) {
-		uint surfID = _imageName[12] - '1';
-		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
-		_fullSurface.create(surf, surf.getBounds());
+	// Autotext overlays need special handling when blitting
+	if (_imageName.hasPrefix("USE_")) {
 		_usesAutotext = true;
-	} else if (_imageName.hasPrefix("USE_AUTOJOURNAL")) {
-		uint surfID = _imageName.substr(15).asUint64() + 2;
-		Graphics::ManagedSurface &surf = g_nancy->_graphicsManager->getAutotextSurface(surfID);
-		_fullSurface.create(surf, surf.getBounds());
-		_usesAutotext = true;
-	} else {
-		// No autotext, load image source
-		g_nancy->_resource->loadImage(_imageName, _fullSurface);
 	}
+	
+	g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
 	setFrame(_firstFrame);
 

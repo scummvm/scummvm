@@ -35,6 +35,24 @@ static char treePrefix[] = "_tree_";
 namespace Nancy {
 
 bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf, const Common::String treeName, Common::Rect *outSrc, Common::Rect *outDest) {
+	// Detect and load autotext surfaces
+	if (name.hasPrefixIgnoreCase("USE_")) {
+		int surfID = -1;
+
+		if (name.hasPrefixIgnoreCase("USE_AUTOTEXT")) {
+			surfID = name[12] - '1';
+		} else if (name.hasPrefixIgnoreCase("USE_AUTOJOURNAL")) { // nancy6/7
+			surfID = name.substr(15).asUint64() + 2;
+		} else if (name.hasPrefixIgnoreCase("USE_AUTOLIST")) { // nancy8
+			surfID = name.substr(12).asUint64() + 2;
+		}
+
+		if (surfID >= 0) {
+			surf.copyFrom(g_nancy->_graphicsManager->getAutotextSurface(surfID));
+			return true;
+		}
+	}
+	
 	CifInfo info;
 	bool external = false;
 
