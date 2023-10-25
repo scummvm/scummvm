@@ -97,14 +97,14 @@ struct MacFontRun {
 	bool plainByteMode();
 	Common::String getEncodedText();
 
-	bool equals(const MacFontRun *x, const MacFontRun *y) {
-		return (x->fontId    == y->fontId &&
-				x->textSlant == y->textSlant &&
-				x->fontSize  == y->fontSize &&
-				x->palinfo1  == y->palinfo1 &&
-				x->palinfo2  == y->palinfo2 &&
-				x->palinfo3  == y->palinfo3 &&
-				x->fgcolor   == y->fgcolor);
+	bool equals(const MacFontRun *y) {
+		return (fontId    == y->fontId &&
+				textSlant == y->textSlant &&
+				fontSize  == y->fontSize &&
+				palinfo1  == y->palinfo1 &&
+				palinfo2  == y->palinfo2 &&
+				palinfo3  == y->palinfo3 &&
+				fgcolor   == y->fgcolor);
 	}
 
 };

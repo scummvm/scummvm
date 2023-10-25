@@ -907,10 +907,12 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	// First, we looking for the paragraph start and end
 	int start = *row, end = *row;
 
-	while (start && !_text[start - 1].paragraphEnd)
+	// Since one previous line could be affected, compute it
+	if (start && !_text[start - 1].paragraphEnd)
 		start--;
 
-	while (end < (int)_text.size() - 1 && !_text[end].paragraphEnd) // stop at last line
+	// Find end of the paragraph
+	while (end < (int)_text.size() - 1 && !_text[end].paragraphEnd)
 		end++;
 
 	// Get character pos within paragraph
@@ -921,24 +923,53 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 
 	ppos += *col;
 
-	// Get whole paragraph
-	Common::U32String paragraph = getTextChunk(start, 0, end, getLineCharWidth(end, true), true, true);
+	// Assemble all chunks to chop, combining the matching ones
+	Common::Array<MacFontRun> chunks;
 
-	// Remove it from the text
+	for (int i = 0; i < end; i++) {
+		for (auto &ch : _text[i].chunks) {
+			if (!chunks.size()) {
+				chunks.push_back(ch);
+			} else {
+				if (chunks.back().equals(ch))
+					chunks.back().text += ch.text;
+				else
+					chunks.push_back(ch);
+			}
+		}
+	}
+
+	int curLine = start;
+	int indent = _text[curLine].indent;
+	int firstLineIndent = _text[curLine].firstLineIndent;
+
+	// Remove paragraph from the text
 	for (int i = start; i <= end; i++) {
 		_text.remove_at(start);
 	}
 
 	// And now read it
 	D(9, "start %d end %d", start, end);
-	splitString(paragraph, start, defaultFormatting);
+
+	_text.insert_at(curLine, MacTextLine());
+	_text[curLine].indent = indent;
+	_text[curLine].firstLineIndent = firstLineIndent;
+
+	for (auto &ch : chunks) {
+		_text[curLine].chunks.push_back(ch);
+		_text[curLine].chunks.back().text.clear(); // We wil add it later
+		chopChunk(ch.text, &curLine, indent, _maxWidth);
+	}
 
 	// Find new pos within paragraph after reshuffling
 	*row = start;
 
-	warning("FIXME, bad design");
 	while (ppos > getLineCharWidth(*row, true)) {
 		ppos -= getLineCharWidth(*row, true);
+
+		if (*row == _text.size() - 1)
+			break;
+
 		(*row)++;
 	}
 	*col = ppos;
