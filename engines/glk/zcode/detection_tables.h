@@ -767,6 +767,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "thewedding",         "The Wedding" },
 	{ "thorn",              "The Thorn" },
 	{ "threecows",          "Three Cows and Two Doors" },
+	{ "threediopolis",      "Threediopolis" },
 	{ "timedwarves",        "Time and Dwarves" },
 	{ "timefortea",         "Time For Tea: A Game of Tea, Cakes, and Deadly Secrets" },
 	{ "tirehoax",           "My Magic Tire Hoax" },
@@ -1333,7 +1334,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	// IFComp 2016
 	{ "if16_insidefacility", "Inside the Facility" },                                                   //   13th Place
 	{ "if16_darkiss2",      "Darkiss! Wrath of the Vampire - Chapter 2: Journey to Hell" },             //   17th Place
-	{ "if16_zigamus_zcode", "Zigamus: Zombies at Vigamus" },                                            //   31th Place
+	{ "if16_zigamus_zcode", "Zigamus: Zombies at Vigamus!" },                                            //   31th Place
 	{ "if16_slickercity",   "Slicker City" },                                                           //   39th Place
 	{ "if16_youarestand",   "You Are Standing in a Cave..." },                                          //   48th Place
 	{ "if16_toiletworld",   "Toiletworld" },                                                            //   58th Place
@@ -2517,6 +2518,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "flamel",             "Flamel" },
 	{ "fugacropoli_zcode",  "Fuga dall'Acropoli" },
 	{ "giardino_zcode",     "Il Giardino Incantato" },
+	{ "hellosword_ita",     "Hello Sword: Il Viaggio" },
 	{ "intrappola",         "In Trappola" },
 	{ "isolakiller",        "L'Isola del Killer" },
 	{ "jibbidu",            "Jibbidu" },
@@ -2553,7 +2555,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "volonta_zcode",      "La Volontà dei Morti" },
 	{ "zazie",              "Zazie, Una Lettura Interattiva" },
 	{ "zenfactorspa",       "ZenFactor Spa" },
-	{ "zigamusita_zcode",   "Zigamus: Zombi al Vigamus" },
+	{ "zigamusita_zcode",   "Zigamus: Zombi al Vigamus!" },
 	{ "zombie",             "Uno Zombie a Deadville" },
 	{ "zorkita",            "Zork I: Il Grande Impero Sotterraneo" },
 
@@ -6466,8 +6468,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("fugacropoli_zcode", "170417/z5", "69ab0e17ac70ec1020a031e596c1cc5c", 107520, Common::IT_ITA),
 	ENTRY1("giardino_zcode", "150614", "f3244aa61ce6b3a4dd860c315bd24aa7", 124416, Common::IT_ITA),
 	ENTRY1("giardino_zcode", "200415/z5", "2fb555596dbd4360a8ab8474330221ce", 123904, Common::IT_ITA),
-	ENTRY1("hellosword", "050929", "4ac3e9c0411d4ec87281d31ac7b3763d", 163840, Common::IT_ITA),
-	ENTRY1("hellosword", "060113", "a432a8286f9f76dae891699175332237", 166400, Common::IT_ITA),
+	ENTRY1("hellosword_ita", "050929", "4ac3e9c0411d4ec87281d31ac7b3763d", 163840, Common::IT_ITA),
+	ENTRY1("hellosword_ita", "060113", "a432a8286f9f76dae891699175332237", 166400, Common::IT_ITA),
 	ENTRY1("intrappola", "120710", "b6b6127d3555f549376f5b84928a0e2c", 110592, Common::IT_ITA),
 	ENTRY1("isolakiller", "070613", "e967c84cca2423e50c90120577886586", 94208, Common::IT_ITA),
 	ENTRY1("jibbidu", "081122", "a0b1a308bc73847219e1f2fc3f6b067c", 99328, Common::IT_ITA),

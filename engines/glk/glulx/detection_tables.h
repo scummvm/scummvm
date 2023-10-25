@@ -485,7 +485,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "if16_worldstourn",   "The Game of Worlds TOURNAMENT!" },                                         //   14th Place
 	{ "if16_mirrorqueen",   "Mirror and Queen" },                                                       //   22nd Place
 	{ "if16_take",          "Take" },                                                                   //   28th Place
-	{ "if16_zigamus_glulx", "Zigamus: Zombies at Vigamus" },                                            //   31th Place
+	{ "if16_zigamus_glulx", "Zigamus: Zombies at Vigamus!" },                                           //   31th Place
 	{ "if16_sigilreader",   "Sigil Reader (Field)" },                                                   //   39th Place
 	{ "if16_ventilator",    "Ventilator" },                                                             //   42nd Place
 	{ "if16_theatrepeople", "Theatre People" },                                                         //   46th Place
@@ -1017,7 +1017,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "villamorgana_glulx", "Villa Morgana" },
 	{ "vita_glulx",         "La Vita? Non Venitemi a Parlare della Vita" },
 	{ "volonta_glulx",      "La Volontà dei Morti" },
-	{ "zigamusita_glulx",   "Zigamus: Zombi al Vigamus" },
+	{ "zigamusita_glulx",   "Zigamus: Zombi al Vigamus!" },
 
 	// Marmellata d'Avventura 2018
 	{ "parcochuddy",        "Parco di Chuddy" },
