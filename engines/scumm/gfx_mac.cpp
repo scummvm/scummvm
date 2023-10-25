@@ -2249,7 +2249,7 @@ void MacIndy3Gui::showAboutDialog() {
 	int trolleyX = width + 1;
 	int trolleyFrame = 1;
 	int trolleyFrameDelta = 1;
-	int trolleyWaitFrames = 50;
+	int trolleyWaitFrames = 20;	// ~2 seconds
 	int waitFrames;
 
 	// TODO: These strings are part of the STRS resource, but I don't know
@@ -2321,19 +2321,13 @@ void MacIndy3Gui::showAboutDialog() {
 		TEXT_END_MARKER
 	};
 
-	// Header texts aren't rendered correctly. Apparently the original does
-	// its own shadowing by drawing the text twice, but that ends up
-	// looking even worse. Perhaps I have to draw the text three times
-	// once to fill it), or maybe our Mac text rendering just isn't as good
-	// as it needs to be yet.
-
 	bool changeScene = false;
 
 	while (!_vm->shouldQuit()) {
 		switch (scene) {
 		case 0:
 			window->drawSprite(&train, trainX, 40, clipRect);
-			trainX -= 12;
+			trainX -= 4;
 
 			if (trainX < -train.w)
 				changeScene = true;
@@ -2372,7 +2366,7 @@ void MacIndy3Gui::showAboutDialog() {
 		}
 
 		window->update();
-		status = delay(100);
+		status = delay((scene == 0) ? 33 : 100);
 
 		if (status == 2)
 			break;
@@ -2380,7 +2374,7 @@ void MacIndy3Gui::showAboutDialog() {
 		if (status == 1 || changeScene) {
 			changeScene = false;
 			scene++;
-			waitFrames = 53;
+			waitFrames = 50;	// ~5 seconds
 
 			switch (scene) {
 			case 1:
@@ -2409,12 +2403,12 @@ void MacIndy3Gui::showAboutDialog() {
 				break;
 
 			case 6:
-				waitFrames = 106;
+				waitFrames = 100;	// ~10 seconds
 				window->drawTextBox(r1, page6);
 				break;
 
 			case 7:
-				waitFrames = 33;
+				waitFrames = 30;	// ~3 seconds
 				window->drawTextBox(r1, page7);
 				break;
 
