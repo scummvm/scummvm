@@ -496,8 +496,8 @@ void MacGui::SimpleWindow::drawText(Common::Rect r, const TextLine *lines) {
 		int width = r.right - x;
 
 		if (lines[i].style == kStyleHeader) {
-			f1->drawString(s, msg, x + 1, y + 1, width - 1, kBlack, align);
-			f2->drawString(s, msg, x + 3, y + 1, width - 2, kBlack, align);
+			f1->drawString(s, msg, x + 1, y + 1, width, kBlack, align);
+			f2->drawString(s, msg, x + 3, y + 1, width, kBlack, align);
 			f1->drawString(s, msg, x, y, width, kBlack, align);
 			f2->drawString(s, msg, x + 2, y, width, kWhite, align);
 		} else {
@@ -1000,52 +1000,43 @@ void MacLoomGui::showAboutDialog() {
 	};
 
 	const TextLine page2[] = {
-		{ 0, 0, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
-		{ 0, 0, kStyleRegular, Graphics::kTextAlignCenter, "Release Version 1.2 25-JAN-91 Interpreter version 5.1.6" },
+		{ 1, 59, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
+		{ 0, 70, kStyleRegular, Graphics::kTextAlignCenter, "Release Version 1.2  25-JAN-91 Interpreter version 5.1.6" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
+		{ -2, 25, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
+		{ -1, 63, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
+		{ 0, 25, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
+		{ 0, 35, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
+		{ 0, 10, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
+		{ 0, 20, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
+		{ 0, 30, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
+		{ 0, 40, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "and" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
+		{ 0, 10, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
+		{ 0, 20, kStyleBold, Graphics::kTextAlignCenter, "created by" },
+		{ 0, 30, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
+		{ 0, 40, kStyleBold, Graphics::kTextAlignCenter, "and" },
+		{ 0, 50, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "and" },
-		{ 0, 0, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
-		TEXT_END_MARKER
-	};
-
-	const TextLine page8[] = {
 		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Loom hint books are available!" },
 		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
 		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
@@ -1055,16 +1046,16 @@ void MacLoomGui::showAboutDialog() {
 		TEXT_END_MARKER
 	};
 
-	const TextLine page9[] = {
+	const TextLine page8[] = {
 		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
 		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For technical support call" },
-		{ 0, 0, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
-		{ 0, 0, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
+		{ 0, 31, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
+		{ 0, 50, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
 
-		{ 215, 32, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
-		{ 1, 46, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
-		{ 1, 56, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
-		{ 1, 66, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		{ 215, 50, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
+		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
+		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
+		{ 1, 80, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
 		TEXT_END_MARKER
 	};
 
@@ -1092,10 +1083,7 @@ void MacLoomGui::showAboutDialog() {
 	bool fastForward = false;
 
 	while (!_vm->shouldQuit()) {
-		switch (scene) {
-		case 0:
-		case 2:
-		case 4:
+		if ((scene % 2) == 0) {
 			// This appears to be pixel perfect or at least nearly
 			// so for the outer layers, but breaks down slightly
 			// near the middle.
@@ -1121,20 +1109,15 @@ void MacLoomGui::showAboutDialog() {
 
 			if (r.top == targetTop && growth == targetGrowth) {
 				changeScene = true;
-				break;
+			} else {
+				r.grow(growth);
+
+				if (growth < 0 && r.top >= innerBounce)
+					growth = -growth;
 			}
-
-			r.grow(growth);
-
-			if (growth < 0 && r.top >= innerBounce)
-				growth = -growth;
-			break;
-
-		case 1:
-		case 3:
+		} else {
 			if (--waitFrames == 0)
 				changeScene = true;
-			break;
 		}
 
 		if (!fastForward) {
@@ -1158,19 +1141,26 @@ void MacLoomGui::showAboutDialog() {
 			switch (scene) {
 			case 1:
 				fastForward = false;
-				window->drawSprite(lucasFilm, 134, 61);
-				waitFrames = 67;
+				waitFrames = 60;	// ~3 seconds
 				darkenOnly = true;
+				window->drawSprite(lucasFilm, 134, 61);
 				break;
 
 			case 2:
+			case 6:
+			case 8:
+			case 10:
+			case 12:
+			case 14:
+			case 16:
 				growth = -2;
 				break;
 
 			case 3:
 				fastForward = false;
+				darkenOnly = true;
+				waitFrames = 40;	// ~2 seconds
 				window->drawText(r, page1);
-				waitFrames = 50;
 				break;
 
 			case 4:
@@ -1178,11 +1168,57 @@ void MacLoomGui::showAboutDialog() {
 				innerBounce -= 8;
 				targetTop -= 16;
 				break;
+
+			case 5:
+				fastForward = false;
+				waitFrames = 130;	// ~6.5 seconds
+				window->drawSprite(loom, 95, 38);
+				window->drawText(r, page2);
+				break;
+
+				growth = -2;
+				break;
+
+			case 7:
+				fastForward = false;
+				waitFrames = 80;	// ~4 seconds
+				window->drawText(r, page3);
+				break;
+
+			case 9:
+				fastForward = false;
+				waitFrames = 80;
+				window->drawText(r, page4);
+				break;
+
+			case 11:
+				fastForward = false;
+				waitFrames = 80;
+				window->drawText(r, page5);
+				break;
+
+			case 13:
+				fastForward = false;
+				waitFrames = 80;
+				window->drawText(r, page6);
+				break;
+
+			case 15:
+				fastForward = false;
+				waitFrames = 260;	// ~13 seconds
+				window->drawText(r, page7);
+				break;
+
+			case 17:
+				fastForward = false;
+				window->drawText(r, page8);
+				break;
 			}
+
 
 			window->update(true);
 
-			if (scene >= 5)
+			if (scene >= 17)
 				break;
 		}
 	}
