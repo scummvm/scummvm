@@ -75,6 +75,7 @@ public:
 	enum TextStyle {
 		kStyleHeader,
 		kStyleBold,
+		kStyleExtraBold,
 		kStyleRegular
 	};
 
@@ -122,10 +123,12 @@ public:
 
 		static void plotPixel(int x, int y, int color, void *data);
 		static void plotPattern(int x, int y, int pattern, void *data);
+		static void plotPatternDarkenOnly(int x, int y, int pattern, void *data);
 
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
+		void drawText(Common::Rect r, const TextLine *lines);
 		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
@@ -134,6 +137,7 @@ public:
 
 		kAboutFontRegular,
 		kAboutFontBold,
+		kAboutFontExtraBold,
 		kAboutFontHeaderInside,
 		kAboutFontHeaderOutside,
 
