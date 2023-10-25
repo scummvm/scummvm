@@ -496,10 +496,10 @@ void MacGui::SimpleWindow::drawText(Common::Rect r, const TextLine *lines) {
 		int width = r.right - x;
 
 		if (lines[i].style == kStyleHeader) {
-			f1->drawString(s, msg, x + 1, y + 1, width, kBlack, align);
-			f2->drawString(s, msg, x + 3, y + 1, width, kBlack, align);
-			f1->drawString(s, msg, x, y, width, kBlack, align);
-			f2->drawString(s, msg, x + 2, y, width, kWhite, align);
+			f1->drawString(s, msg, x - 1, y + 1, width, kBlack, align);
+			f2->drawString(s, msg, x + 1, y + 1, width, kBlack, align);
+			f1->drawString(s, msg, x - 2, y, width, kBlack, align);
+			f2->drawString(s, msg, x, y, width, kWhite, align);
 		} else {
 			f1->drawString(s, msg, x, y, width, kBlack, align);
 
@@ -1007,55 +1007,55 @@ void MacLoomGui::showAboutDialog() {
 
 	const TextLine page3[] = {
 		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ -2, 25, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
+		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, "Eric Johnston" },
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ -1, 63, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
+		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, "Ron Baldwin" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
-		{ 0, 25, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
-		{ 0, 35, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
+		{ 0, 26, kStyleBold, Graphics::kTextAlignCenter, "Original game created by" },
+		{ 1, 40, kStyleHeader, Graphics::kTextAlignCenter, "Brian Moriarty" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
-		{ 0, 10, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
-		{ 0, 20, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
-		{ 0, 30, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
-		{ 0, 40, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Produced by" },
+		{ 0, 25, kStyleHeader, Graphics::kTextAlignCenter, "Gregory D. Hammond" },
+		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Macintosh Version Produced by" },
+		{ 1, 63, kStyleHeader, Graphics::kTextAlignCenter, "David Fox" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page6[] = {
-		{ 0, 10, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story Stystem" },
-		{ 0, 20, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 0, 30, kStyleHeader, Graphics::kTextAlignCenter, "Ron Gilbert" },
-		{ 0, 40, kStyleBold, Graphics::kTextAlignCenter, "and" },
-		{ 0, 50, kStyleHeader, Graphics::kTextAlignCenter, "Aric Wilmunder" },
+		{ 1, 6, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
+		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, "created by" },
+		{ 97, 35, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 1, 51, kStyleBold, Graphics::kTextAlignCenter, "and" },
+		{ 122, 65, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page7[] = {
-		{ 1, 19, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Loom hint books are available!" },
-		{ 86, 36, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
-		{ 160, 37, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
-		{ 160, 46, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
-		{ 90, 66, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
-		{ 160, 67, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
+		{ 1, 16, kStyleBold, Graphics::kTextAlignCenter, "Stumped?  Loom hint books are available!" },
+		{ 76, 33, kStyleRegular, Graphics::kTextAlignLeft, "In the U.S. call" },
+		{ 150, 34, kStyleBold, Graphics::kTextAlignLeft, "1 (800) STAR-WARS" },
+		{ 150, 43, kStyleRegular, Graphics::kTextAlignLeft, "that\xD5s  1 (800) 782-7927" },
+		{ 80, 63, kStyleRegular, Graphics::kTextAlignLeft, "In Canada call" },
+		{ 150, 64, kStyleBold, Graphics::kTextAlignLeft, "1 (800) 828-7927" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page8[] = {
-		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
-		{ 53, 31, kStyleRegular, Graphics::kTextAlignLeft, "For technical support call" },
-		{ 0, 31, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
-		{ 0, 50, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
+		{ 1, 11, kStyleBold, Graphics::kTextAlignCenter, "Need a hint NOW?  Having problems?" },
+		{ 81, 25, kStyleRegular, Graphics::kTextAlignLeft, "For technical support call" },
+		{ 205, 26, kStyleBold, Graphics::kTextAlignLeft, "1 (415) 721-3333" },
+		{ 137, 35, kStyleRegular, Graphics::kTextAlignLeft, "For hints call" },
 
-		{ 215, 50, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
-		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
-		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
-		{ 1, 80, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
+		{ 205, 36, kStyleBold, Graphics::kTextAlignLeft, "1 (900) 740-JEDI" },
+		{ 1, 50, kStyleRegular, Graphics::kTextAlignCenter, "The charge for the hint line is 75\xA2 per minute." },
+		{ 1, 60, kStyleRegular, Graphics::kTextAlignCenter, "(You must have your parents\xD5 permission to" },
+		{ 1, 70, kStyleRegular, Graphics::kTextAlignCenter, "call this number if you are under 18.)" },
 		TEXT_END_MARKER
 	};
 
@@ -1088,14 +1088,11 @@ void MacLoomGui::showAboutDialog() {
 			// so for the outer layers, but breaks down slightly
 			// near the middle.
 			//
-			// It doesn't erase the text screens correctly, though.
-			//
 			// Also, the original does an inexplicable skip in the
 			// first animation that I haven't bothered to
 			// implement. I don't know if it was intentional or
 			// not, but I think it looks awkward. And I wasn't able
-			// to get it quite right, perhaps for the same reason
-			// as the aforementioned text erasure problem.
+			// to get it quite right anyway.
 
 			pattern = (r.top / 2) % 8;
 
@@ -1171,6 +1168,7 @@ void MacLoomGui::showAboutDialog() {
 
 			case 5:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 130;	// ~6.5 seconds
 				window->drawSprite(loom, 95, 38);
 				window->drawText(r, page2);
@@ -1181,30 +1179,35 @@ void MacLoomGui::showAboutDialog() {
 
 			case 7:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 80;	// ~4 seconds
 				window->drawText(r, page3);
 				break;
 
 			case 9:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 80;
 				window->drawText(r, page4);
 				break;
 
 			case 11:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 80;
 				window->drawText(r, page5);
 				break;
 
 			case 13:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 80;
 				window->drawText(r, page6);
 				break;
 
 			case 15:
 				fastForward = false;
+				darkenOnly = true;
 				waitFrames = 260;	// ~13 seconds
 				window->drawText(r, page7);
 				break;
@@ -1235,9 +1238,6 @@ void MacLoomGui::showAboutDialog() {
 	delete loom;
 
 	delete window;
-
-	if (status == 2)
-		debug("Quit everything");
 }
 
 // ===========================================================================
@@ -2256,7 +2256,7 @@ void MacIndy3Gui::showAboutDialog() {
 	// how to safely read them from there yet. So hard-coded it is for now.
 
 	const TextLine page1[] = {
-		{ 21, 4, kStyleHeader, Graphics::kTextAlignLeft, "Indiana Jones and the Last Crusade" },
+		{ 0, 4, kStyleHeader, Graphics::kTextAlignCenter, "Indiana Jones and the Last Crusade" },
 		{ 0, 22, kStyleBold, Graphics::kTextAlignCenter, "The Graphic Adventure" },
 		{ 0, 49, kStyleBold, Graphics::kTextAlignCenter, "Mac 1.7 8/17/90, Interpreter version 5.1.6" },
 		{ 1, 82, kStyleRegular, Graphics::kTextAlignCenter, "TM & \xA9 1990 LucasArts Entertainment Company.  All rights reserved." },
@@ -2265,34 +2265,34 @@ void MacIndy3Gui::showAboutDialog() {
 
 	const TextLine page2[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh version by" },
-		{ 68, 21, kStyleHeader, Graphics::kTextAlignLeft, "Eric Johnston" },
+		{ 70, 21, kStyleHeader, Graphics::kTextAlignLeft, "Eric Johnston" },
 		{ 194, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, "Dan Filner" },
+		{ 216, 41, kStyleHeader, Graphics::kTextAlignLeft, "Dan Filner" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page3[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Macintosh scripting by" },
-		{ 72, 21, kStyleHeader, Graphics::kTextAlignLeft, "Ron Baldwin" },
+		{ 75, 21, kStyleHeader, Graphics::kTextAlignLeft, "Ron Baldwin" },
 		{ 186, 32, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 211, 41, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		{ 214, 41, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page4[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "Designed and scripted by" },
-		{ 75, 24, kStyleHeader, Graphics::kTextAlignLeft, "Noah Falstein" },
-		{ 132, 44, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
-		{ 165, 64, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 77, 24, kStyleHeader, Graphics::kTextAlignLeft, "Noah Falstein" },
+		{ 134, 44, kStyleHeader, Graphics::kTextAlignLeft, "David Fox" },
+		{ 167, 64, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
 		TEXT_END_MARKER
 	};
 
 	const TextLine page5[] = {
 		{ 1, 7, kStyleBold, Graphics::kTextAlignCenter, "SCUMM Story System" },
 		{ 1, 17, kStyleBold, Graphics::kTextAlignCenter, "created by" },
-		{ 105, 36, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
+		{ 107, 36, kStyleHeader, Graphics::kTextAlignLeft, "Ron Gilbert" },
 		{ 170, 52, kStyleBold, Graphics::kTextAlignLeft, "and" },
-		{ 130, 66, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
+		{ 132, 66, kStyleHeader, Graphics::kTextAlignLeft, "Aric Wilmunder" },
 		TEXT_END_MARKER
 	};
 
@@ -2438,9 +2438,6 @@ void MacIndy3Gui::showAboutDialog() {
 	pict->free();
 	delete pict;
 	delete window;
-
-	if (status == 2)
-		debug("Quit everything");
 }
 
 void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
