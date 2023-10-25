@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/macresman.h"
@@ -147,6 +148,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
 
+	uint32 renderStartTime = g_system->getMillis();
+	debugC(7, kDebugImages, "Window::render(): Updating %d rects", _dirtyRects.size());
+
 	for (auto &i : _dirtyRects) {
 		const Common::Rect &r = i;
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
@@ -208,6 +212,7 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	_dirtyRects.clear();
 	_contentIsDirty = true;
+	debugC(7, kDebugImages, "Window::render(): Draw finished in %d ms",  g_system->getMillis() - renderStartTime);
 
 	return true;
 }
@@ -279,6 +284,13 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	pd.destRect = destRect;
 	pd.dst = blitTo;
 
+	uint32 renderStartTime = 0;
+	if (debugChannelSet(8, kDebugImages)) {
+		CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
+		debugC(8, kDebugImages, "Window::inkBlitFrom(): updating %dx%d @ %d,%d, type: %s, ink: %d", destRect.width(), destRect.height(), destRect.left, destRect.top, castType2str(castType), channel->_sprite->_ink);
+		renderStartTime = g_system->getMillis();
+	}
+
 	if (pd.ms) {
 		pd.inkBlitShape(srcRect);
 	} else if (pd.srf) {
@@ -286,10 +298,14 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 	} else {
 		if (debugChannelSet(kDebugImages, 4)) {
 			CastType castType = channel->_sprite->_cast ? channel->_sprite->_cast->_type : kCastTypeNull;
-			warning("Window::inkBlitFrom: No source surface: spriteType: %d (%s), castType: %d (%s), castId: %s",
+			warning("Window::inkBlitFrom(): No source surface: spriteType: %d (%s), castType: %d (%s), castId: %s",
 				channel->_sprite->_spriteType, spriteType2str(channel->_sprite->_spriteType), castType, castType2str(castType),
 				channel->_sprite->_castId.asString().c_str());
 		}
+	}
+
+	if (debugChannelSet(8, kDebugImages)) {
+		debugC(8, kDebugImages, "Window::inkBlitFrom(): Draw finished in %d ms",  g_system->getMillis() - renderStartTime);
 	}
 }
 
