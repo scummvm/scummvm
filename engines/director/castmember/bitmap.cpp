@@ -402,7 +402,7 @@ bool BitmapCastMember::isModified() {
 		if (currentPaletteId == castPaletteId) {
 			return !_ditheredTargetClut.isNull();
 		} else {
-			return _ditheredTargetClut != currentPaletteId;
+			return !_ditheredTargetClut.isNull() && _ditheredTargetClut != currentPaletteId;
 		}
 	}
 	return false;
