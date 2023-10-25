@@ -958,6 +958,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "deronirischegarten", "Der Onirische Garten" },
 	{ "dickeswep1",         "Dickes W - Zwischen Tanke und Panke: Der Mietstreit" },
 	{ "dickeswep2",         "Dickes W - Zwischen Tanke und Panke: Weihnachtsterror" },
+	{ "drakulasdiamanten",  "Drakulas Diamanten" },
 	{ "drkongpoodle",       "Dr. Kong in: Exploding Poodle Inevitable" },
 	{ "homunculus",         "Homunculus" },
 	{ "jaeger",             "Jäger der Heiligen Steine" },
@@ -1157,6 +1158,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 
 	// Russian games
 	{ "devours_glulx",      "All Things Devours" },
+	{ "labyrinth_rus",      "Labyrinth" },
 	{ "starrydepths",       "Secret of the Starry Depths" },
 
 	// ParserComp 2015
@@ -2429,6 +2431,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRYL1("dickeswep1", Common::DE_DEU, "130404", "a08b08d8c54ea59b140f6a9fe22ec757", 1263356),
 	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "130504", "3102ddb8eed9fbbb9d53eea347ab69be", 1264944),
 	DT_ENTRYL1("dickeswep2", Common::DE_DEU, "131220", "8d61af8aed9a0dc3c863432c15f4609f", 1294640),
+	DT_ENTRYL1("drakulasdiamanten", Common::DE_DEU, "230707", "f110dfe786b00cb0ee7e73f68f921f67", 1490450),
 	DT_ENTRYL1("drkongpoodle", Common::DE_DEU, "111122", "131c5fb87a237b473b4d5b81b7c989d8", 1551344),
 	DT_ENTRYL1("homunculus", Common::DE_DEU, "111122", "98a35cd1506a68a485c250edef54553a", 1311816),
 	DT_ENTRYL1("jaeger", Common::DE_DEU, "210701", "4958d690aae92343b2cf4117fb65acd2", 1441682),
@@ -2676,6 +2679,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Russian games
 	DT_ENTRYL1("devours_glulx", Common::RU_RUS, "220224", "65a51e53c1498823024dcec286971f19", 365312),
+	DT_ENTRYL1("labyrinth_rus", Common::RU_RUS, "190908", "50c7cd70d30f7f27f899e7619c53bdc9", 274910),
 	DT_ENTRYL1("starrydepths", Common::RU_RUS, "230313", "80630e7f015f529f260562e43853fdde", 172800),
 	DT_ENTRYL1("starrydepths", Common::RU_RUS, "230409", "4e00886a43520d99ae8f5b24a3314b9c", 172800),
 
