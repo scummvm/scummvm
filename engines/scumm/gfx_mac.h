@@ -34,6 +34,7 @@ class MacWindowManager;
 namespace Scumm {
 
 class ScummEngine;
+class Actor;
 
 class MacGui {
 protected:
@@ -218,10 +219,19 @@ public:
 
 	const Common::String name() const { return "Indy"; }
 
+	Graphics::Surface _textArea;
+
 	const Graphics::Font *getFontByScummId(int32 id);
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+
+	Graphics::Surface *textArea() { return &_textArea; }
+	void clearTextArea() {
+		_textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), 0);
+	}
+	void initTextAreaForActor(Actor *a, byte color);
+	void printCharToTextArea(int chr, int x, int y, int color);
 
 	bool handleMenu(int id, Common::String &name);
 

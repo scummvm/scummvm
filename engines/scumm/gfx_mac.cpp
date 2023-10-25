@@ -180,56 +180,23 @@ void ScummEngine::mac_drawLoomPracticeMode() {
 	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
 }
 
-void ScummEngine::mac_createIndy3TextBox(Actor *a) {
-	int width = _macIndy3TextBox->w;
-	int height = _macIndy3TextBox->h;
-
-	_macIndy3TextBox->fillRect(Common::Rect(width, height), 0);
-
-	int nameWidth = 0;
-	byte color = _charset->getColor();
-
-	if (a) {
-		const Graphics::Font *font = _macGui->getFont(MacGui::kIndy3FontSmall);
-
-		const char *name = (const char *)a->getActorName();
-		int charX = 25;
-
-		for (int i = 0; name[i] && nameWidth < width - 50; i++) {
-			font->drawChar(_macIndy3TextBox, name[i], charX, 0, color);
-			nameWidth += font->getCharWidth(name[i]);
-			charX += font->getCharWidth(name[i]);
-		}
-
-		font->drawChar(_macIndy3TextBox, ':', charX, 0, color);
-	}
-
-	if (nameWidth) {
-		_macIndy3TextBox->hLine(2, 3, 20, 15);
-		_macIndy3TextBox->hLine(32 + nameWidth, 3, width - 3, 15);
-	} else
-		_macIndy3TextBox->hLine(2, 3, width - 3, 15);
-
-	_macIndy3TextBox->vLine(1, 4, height - 3, 15);
-	_macIndy3TextBox->vLine(width - 2, 4, height - 3, 15);
-	_macIndy3TextBox->hLine(2, height - 2, width - 3, 15);
-}
-
 void ScummEngine::mac_drawIndy3TextBox() {
+	Graphics::Surface *s = ((MacIndy3Gui *)_macGui)->textArea();
+
 	// The first two rows of the text box are padding for font rendering.
 	// They are not drawn to the screen.
 
 	int x = 96;
 	int y = 32;
-	int w = _macIndy3TextBox->w;
-	int h = _macIndy3TextBox->h - 2;
+	int w = s->w;
+	int h = s->h - 2;
 
 	// The text box is drawn to the Mac screen and text surface, as if it
 	// had been one giant glyph. Note that it will be drawn on the main
 	// virtual screen, but we still pretend it's on the text one.
 
-	byte *ptr = (byte *)_macIndy3TextBox->getBasePtr(0, 2);
-	int pitch = _macIndy3TextBox->pitch;
+	byte *ptr = (byte *)s->getBasePtr(0, 2);
+	int pitch = s->pitch;
 
 	_macScreen->copyRectToSurface(ptr, pitch, x, y, w, h);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), 0);
@@ -238,10 +205,12 @@ void ScummEngine::mac_drawIndy3TextBox() {
 }
 
 void ScummEngine::mac_undrawIndy3TextBox() {
+	Graphics::Surface *s = ((MacIndy3Gui *)_macGui)->textArea();
+
 	int x = 96;
 	int y = 32;
-	int w = _macIndy3TextBox->w;
-	int h = _macIndy3TextBox->h - 2;
+	int w = s->w;
+	int h = s->h - 2;
 
 	_macScreen->fillRect(Common::Rect(x, y, x + w, y + h), 0);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), CHARSET_MASK_TRANSPARENCY);
@@ -2110,11 +2079,13 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
 		it._value->setVerbid(it._key);
 
 	_dirtyRects.clear();
+	_textArea.create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 MacIndy3Gui::~MacIndy3Gui() {
 	for (auto &it: _widgets)
 		delete it._value;
+	_textArea.free();
 }
 
 void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
@@ -2196,6 +2167,59 @@ bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 	}
 
 	return false;
+}
+
+void MacIndy3Gui::initTextAreaForActor(Actor *a, byte color) {
+	int width = _textArea.w;
+	int height = _textArea.h;
+
+	_textArea.fillRect(Common::Rect(width, height), kBlack);
+
+	int nameWidth = 0;
+//	byte color = _charset->getColor();
+
+	if (a) {
+		const Graphics::Font *font = getFont(kIndy3FontSmall);
+
+		const char *name = (const char *)a->getActorName();
+		int charX = 25;
+
+		for (int i = 0; name[i] && nameWidth < width - 50; i++) {
+			font->drawChar(&_textArea, name[i], charX, 0, color);
+			nameWidth += font->getCharWidth(name[i]);
+			charX += font->getCharWidth(name[i]);
+		}
+
+		font->drawChar(&_textArea, ':', charX, 0, color);
+	}
+
+	if (nameWidth) {
+		_textArea.hLine(2, 3, 20, 15);
+		_textArea.hLine(32 + nameWidth, 3, width - 3, 15);
+	} else
+		_textArea.hLine(2, 3, width - 3, 15);
+
+	_textArea.vLine(1, 4, height - 3, 15);
+	_textArea.vLine(width - 2, 4, height - 3, 15);
+	_textArea.hLine(2, height - 2, width - 3, 15);
+}
+
+void MacIndy3Gui::printCharToTextArea(int chr, int x, int y, int color) {
+	// In black and white mode, all text is white. Text is never disabled.
+	if (_vm->_renderMode == Common::kRenderMacintoshBW)
+		color = 15;
+
+	// Since we're working with unscaled coordinates most of the time, the
+	// lines of the text box weren't spaced quite as much as in the
+	// original. I thought no one would notice, but I was wrong. This is
+	// the best way I can think of to fix that.
+
+	if (y > 0)
+		y = 17;
+
+	const Graphics::Font *font = getFont(kIndy3FontMedium);
+
+	font->drawChar(&_textArea, chr, x + 5, y + 11, color);
 }
 
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {

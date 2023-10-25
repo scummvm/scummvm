@@ -1403,7 +1403,6 @@ protected:
 	void mac_markScreenAsDirty(int x, int y, int w, int h);
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
 	void mac_drawLoomPracticeMode();
-	void mac_createIndy3TextBox(Actor *a);
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
@@ -1575,7 +1574,6 @@ public:
 
 	Graphics::MacFontManager *_macFontManager = nullptr;
 	Graphics::Surface *_macScreen = nullptr;
-	Graphics::Surface *_macIndy3TextBox = nullptr;
 	MacGui *_macGui = nullptr;
 
 protected:

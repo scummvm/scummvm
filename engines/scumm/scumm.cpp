@@ -475,11 +475,6 @@ ScummEngine::~ScummEngine() {
 		delete _macScreen;
 	}
 
-	if (_macIndy3TextBox) {
-		_macIndy3TextBox->free();
-		delete _macIndy3TextBox;
-	}
-
 	delete _macGui;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1170,8 +1165,6 @@ Common::Error ScummEngine::init() {
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
-					_macIndy3TextBox = new Graphics::Surface();
-					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
 					_macGui = new MacIndy3Gui(this, macResourceFile);
 					break;
 				}
@@ -1707,7 +1700,7 @@ void ScummEngine::resetScumm() {
 
 	if (_macGui) {
 		if (_game.id == GID_INDY3)
-			_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
+			((MacIndy3Gui *)_macGui)->clearTextArea();
 		_macGui->reset();
 	}
 

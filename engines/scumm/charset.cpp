@@ -1777,7 +1777,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
 
 	if (drawToTextBox)
-		printCharToTextBox(chr, color, macLeft, macTop);
+		((MacIndy3Gui *)_vm->_macGui)->printCharToTextArea(chr, macLeft, macTop, color);
 	else
 		printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
@@ -1954,27 +1954,6 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			font->drawChar(_vm->_macScreen, chr, x, y, color);
 		}
 	}
-}
-
-void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
-	// This function handles printing most of the text in the text boxes
-	// in Indiana Jones and the last crusade. In black and white mode, all
-	// text is white. Text is never disabled.
-
-	if (_vm->_renderMode == Common::kRenderMacintoshBW)
-		color = 15;
-
-	// Since we're working with unscaled coordinates most of the time, the
-	// lines of the text box weren't spaced quite as much as in the
-	// original. I thought no one would notice, but I was wrong. This is
-	// the best way I can think of to fix that.
-
-	if (y > 0)
-		y = 17;
-
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-
-	font->drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {

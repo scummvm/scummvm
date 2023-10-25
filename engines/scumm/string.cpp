@@ -29,6 +29,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
@@ -1140,7 +1141,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (createTextBox) {
 			if (!_keepText)
-				mac_createIndy3TextBox(a);
+				((MacIndy3Gui *)_macGui)->initTextAreaForActor(a, _charset->getColor());
 			createTextBox = false;
 			drawTextBox = true;
 		}
