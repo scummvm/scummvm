@@ -431,6 +431,11 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 	s->setPixel(x, y, color);
 }
 
+// I don't know if the original actually used two different plot functions, one
+// to fill and one to darken (used to draw over the text screens). It's such a
+// subtle effect that I suspect it was just doing some different magic, maybe
+// with XOR, but I couldn't get that to work by eye only.
+
 void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
 		0x0000, 0x2828, 0xA5A5, 0xD7D7,
@@ -446,15 +451,23 @@ void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
 		s->setPixel(x, y, kWhite);
 }
 
-void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
-	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
-	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
-	markRectAsDirty(r);
+void MacGui::SimpleWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
+	const uint16 patterns[] = {
+		0x0000, 0x2828, 0xA5A5, 0xD7D7, 0xFFFF
+	};
 
-	Graphics::Surface *s = innerSurface();
+	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	Graphics::Surface *s = window->innerSurface();
+	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
+	if (patterns[pattern] & bit)
+		s->setPixel(x, y, kBlack);
+}
 
+void MacGui::SimpleWindow::drawText(Common::Rect r, const TextLine *lines) {
 	if (!lines)
 		return;
+
+	Graphics::Surface *s = innerSurface();
 
 	for (int i = 0; lines[i].str; i++) {
 		const Graphics::Font *f1 = nullptr;
@@ -467,6 +480,9 @@ void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, in
 			break;
 		case kStyleBold:
 			f1 = _gui->getFont(kAboutFontBold);
+			break;
+		case kStyleExtraBold:
+			f1 = _gui->getFont(kAboutFontExtraBold);
 			break;
 		case kStyleRegular:
 			f1 = _gui->getFont(kAboutFontRegular);
@@ -486,8 +502,19 @@ void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, in
 			f2->drawString(s, msg, x + 2, y, width, kWhite, align);
 		} else {
 			f1->drawString(s, msg, x, y, width, kBlack, align);
+
+			if (lines[i].style == kStyleExtraBold)
+				f1->drawString(s, msg, x + 1, y, width, kBlack, align);
 		}
 	}
+}
+
+void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
+	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
+	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
+	markRectAsDirty(r);
+
+	drawText(r, lines);
 }
 
 // ===========================================================================
@@ -630,6 +657,12 @@ bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 		id = _gameFontId;
 		size = 9;
 		slant = Graphics::kMacFontRegular;
+		return true;
+
+	case FontId::kAboutFontExtraBold:
+		id = _gameFontId;
+		size = 9;
+		slant = Graphics::kMacFontRegular | Graphics::kMacFontExtend;
 		return true;
 
 	case FontId::kAboutFontRegular:
@@ -962,7 +995,7 @@ void MacLoomGui::showAboutDialog() {
 	// how to safely read them from there yet. So hard-coded it is for now.
 
 	const TextLine page1[] = {
-		{ 0, 0, kStyleBold, Graphics::kTextAlignCenter, "PRESENTS" },
+		{ 0, 23, kStyleExtraBold, Graphics::kTextAlignCenter, "PRESENTS" },
 		TEXT_END_MARKER
 	};
 
@@ -1048,11 +1081,10 @@ void MacLoomGui::showAboutDialog() {
 	Common::Rect r(0, 0, 404, 154);
 	int growth = -2;
 	int pattern;
+	bool darkenOnly = false;
 	int waitFrames;
 
 	int innerBounce = 72;
-	int outerBounce = 0;
-
 	int targetTop = 48;
 	int targetGrowth = 2;
 
@@ -1079,7 +1111,10 @@ void MacLoomGui::showAboutDialog() {
 
 			pattern = (r.top / 2) % 8;
 
-			Graphics::drawRoundRect(r, 7, pattern, true, SimpleWindow::plotPattern, window);
+			if (pattern > 4)
+				darkenOnly = false;
+
+			Graphics::drawRoundRect(r, 7, pattern, true, darkenOnly ? SimpleWindow::plotPatternDarkenOnly : SimpleWindow::plotPattern, window);
 
 			if (!fastForward)
 				window->markRectAsDirty(r);
@@ -1091,7 +1126,7 @@ void MacLoomGui::showAboutDialog() {
 
 			r.grow(growth);
 
-			if ((growth < 0 && r.top >= innerBounce) || (growth > 0 && r.top <= outerBounce))
+			if (growth < 0 && r.top >= innerBounce)
 				growth = -growth;
 			break;
 
@@ -1123,8 +1158,9 @@ void MacLoomGui::showAboutDialog() {
 			switch (scene) {
 			case 1:
 				fastForward = false;
-				window->drawSprite(lucasFilm, 120, 65);
-				waitFrames = 50;
+				window->drawSprite(lucasFilm, 134, 61);
+				waitFrames = 67;
+				darkenOnly = true;
 				break;
 
 			case 2:
@@ -1133,6 +1169,7 @@ void MacLoomGui::showAboutDialog() {
 
 			case 3:
 				fastForward = false;
+				window->drawText(r, page1);
 				waitFrames = 50;
 				break;
 
