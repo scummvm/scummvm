@@ -295,7 +295,6 @@ protected:
 	int getDrawWidthIntern(uint16 chr) const;
 
 	void printCharInternal(int chr, int color, bool shadow, int x, int y);
-	void printCharToTextBox(int chr, int color, int x, int y);
 
 	byte getTextColor();
 	byte getTextShadowColor();
