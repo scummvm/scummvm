@@ -3670,8 +3670,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version has 68k, PowerPC, and a fat binary (default) as options in the installer
 	// Mac installer is a Stuffit installer
 	// Windows version in SETUP/DATA.Z
-	MACGAME1("darkeye", "", "The Dark Eye (Universal)", "67f572196550aedb1f9523d782022be0", 486078, 404),
-	WINGAME1t("darkeye", "", "DARKEYE.EXE", "67ba8428573dba0c8e12e7f02e4ef1bc", 742326, 404),
+	MACGAME1tf("darkeye", "", "The Dark Eye (Universal)", "67f572196550aedb1f9523d782022be0", 486078, 404, GF_32BPP),
+	WINGAME1tf("darkeye", "", "DARKEYE.EXE", "67ba8428573dba0c8e12e7f02e4ef1bc", 742326, 404, GF_32BPP),
 
 	// From the Police Quest Collection
 	WINGAME1t("darylfgates", "", "INTERVEW.EXE", "8262bbad22daa2cdd9cf13ebba1b84ea", 1059729, 400),
