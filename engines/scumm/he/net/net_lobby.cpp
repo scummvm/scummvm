@@ -568,10 +568,16 @@ void Lobby::setIcon(int icon) {
 	send(setIconRequest);
 }
 
-void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
+void Lobby::sendGameResults(int userId, int arrayIndex, int lastFlag) {
 	if (!_socket) {
 		return;
 	}
+
+	// Football does not use the lastFlag argument (seems to be implemented in a
+	// later patch?), so let's force set it to true.  This is safe because the game
+	// only calls it once after a game has finished.
+	if (_gameName == "football")
+		lastFlag = 1;
 
 	// Because the new netcode uses userIds 1 and 2 to determine between
 	// host and opponent, we need to replace it to represent the correct user.
@@ -595,6 +601,7 @@ void Lobby::sendGameResults(int userId, int arrayIndex, int unknown) {
 		arrayData.push_back(new Common::JSONValue((long long int)data));
 	}
 	setProfileRequest.setVal("fields", new Common::JSONValue(arrayData));
+	setProfileRequest.setVal("last", new Common::JSONValue((bool)lastFlag));
 	send(setProfileRequest);
 }
 

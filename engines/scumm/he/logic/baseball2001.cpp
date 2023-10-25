@@ -109,6 +109,10 @@ case OP_NET_INIT:
 		netRemoteStartScript(numArgs, args);
 		break;
 
+	case OP_NET_CLOSE_PROVIDER:
+		_vm->_net->closeProvider();
+		break;
+
 	case OP_NET_QUERY_SESSIONS:
 #ifdef USE_LIBCURL
 		if (_vm->_lobby->_sessionId) {
