@@ -873,6 +873,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ichsehewas",			"Ich sehe was..." },
 	{ "janoschpanama",		"JANOSCH: Oh, wie schön ist Panama" },
 	{ "janoschverkehr",		"JANOSCH: Tiger und Bär im Straßenverkehr" },
+	{ "kommissar1",			"Kommissar Kugelblitz: Vermisst am Mississippi" },
+	{ "kommissar2",			"Kommissar Kugelblitz: Geheimnis von Spooky Hill" },
 	{ "loewe1",				"Löwenzahn 1" },
 	{ "loewe2",				"Löwenzahn 2" },
 	{ "loewe3",				"Löwenzahn 3" },
@@ -8371,6 +8373,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Additional activities are offered for parents, teachers and management
 	MACGAME1_l("kjoeties", "", "Kjoeties",	   "3df301ad7614245a6ab1fb5d9ae6e474", 213295, Common::NL_NLD, 800),
 	WINGAME1_l("kjoeties", "", "Kjoeties.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2281118, Common::NL_NLD, 800),
+
+	MACGAME1_l("kommissar1", "", "Kommissar Kugelblitz",	   "r:4ea5fc09f79eee6dded94dc40f303779", 196015, Common::DE_DEU, 800),
+	WINGAME1_l("kommissar1", "", "Kommissar Kugelblitz 1.exe", "t:42c26431198fcba313e08d8b62c08094", 2921146, Common::DE_DEU, 800),
+
+	MACGAME2_l("kommissar2", "", "Start",				"r:90d18be50181ca3217e8c35a46585fff", 1227771,
+								 "kk2data/abspann.dxr", "d:d1816e1a326d36afb31c472fb128200d", 2956508, Common::DE_DEU, 800),
+	WINGAME1_l("kommissar2", "", "kk2pc.exe",			"t:5065e02c4c020f9d61f9cbdacc716ca6", 1852216, Common::DE_DEU, 800),
 
 	// Developed by CircumStance Design
 	MACGAME1("kothhoot", "v2.0", "Hoot", "90597a84a08b06e07af8bc5ab427676b", 5909, 800),
