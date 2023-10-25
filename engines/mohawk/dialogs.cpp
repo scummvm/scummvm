@@ -29,7 +29,6 @@
 #include "gui/widget.h"
 #include "gui/widgets/popup.h"
 
-#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/translation.h"
 

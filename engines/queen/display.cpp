@@ -25,7 +25,6 @@
 #include "common/events.h"
 #include "common/stream.h"
 #include "common/memstream.h"
-
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
