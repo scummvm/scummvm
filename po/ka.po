@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-25 20:05+0000\n"
-"PO-Revision-Date: 2023-10-24 14:41+0000\n"
+"PO-Revision-Date: 2023-10-26 08:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -799,7 +799,7 @@ msgstr "ქორი"
 
 #: gui/fluidsynth-dialog.cpp:104
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:118
 msgid "Speed:"
@@ -840,11 +840,11 @@ msgstr "ხაზოვანი"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr ""
+msgstr "მეოთხე-თანრიგი"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr ""
+msgstr "მეშვიდე-თანრიგი"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
@@ -869,7 +869,7 @@ msgstr "ინტერფეისი"
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:573
 #: engines/mohawk/riven.cpp:844
 msgid "Interact"
-msgstr ""
+msgstr "ურთიერთობა"
 
 #: gui/gui-manager.cpp:170 engines/metaengine.cpp:116
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
@@ -930,26 +930,18 @@ msgid "Right"
 msgstr "მარჯვენა"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "New Save"
 msgid "New Line"
-msgstr "ახლის შენახვა"
+msgstr "ახალი გაზი"
 
 #: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Dialog"
-msgstr "მხტუნარას დახურვა"
+msgstr "დიალოგის დახურვა"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "უკანაბოლო"
+msgstr "Backspace"
 
 #: gui/gui-manager.cpp:212
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "სიმბოლოს წაშლა"
 
@@ -958,16 +950,12 @@ msgid "Go to end of line"
 msgstr ""
 
 #: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move left"
 msgid "Move cursor left"
-msgstr "მარცხნივ გაწევა"
+msgstr "კურსორის მარცხნივ გაწევა"
 
 #: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move right"
 msgid "Move cursor right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "კურსორის მარჯვნივ გაწევა"
 
 #: gui/gui-manager.cpp:241
 msgid "Go to start of line"
@@ -1072,7 +1060,7 @@ msgstr "პლატფორმა"
 
 #: gui/launcher.cpp:228
 msgid "Select Group by"
-msgstr ""
+msgstr "ჯგუფის მონიშვნის პირობა"
 
 #: gui/launcher.cpp:232 gui/launcher.cpp:882
 msgid "Group:"
@@ -1112,16 +1100,16 @@ msgstr "ScummVM-ის შესახებ"
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 #: gui/launcher.cpp:271
 msgid "Global ~O~ptions..."
-msgstr ""
+msgstr "გლობალური ~პ~არამეტრები..."
 
 #: gui/launcher.cpp:271
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "ScummVM-ის გლობალური პარამეტრების შეცვლა"
 
 #: gui/launcher.cpp:271
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr ""
+msgstr "გლობალური ~პ~არამეტრები..."
 
 #: gui/launcher.cpp:275
 msgid "Download Games"
@@ -1134,21 +1122,21 @@ msgstr ""
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:282
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "თ~ა~მაშის დამატება..."
 
 #: gui/launcher.cpp:282
 msgid "Add games to the list"
-msgstr ""
+msgstr "თამაშების დამატება სიაში"
 
 #: gui/launcher.cpp:282
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "თ~ა~მაშის დამატება..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 #: gui/launcher.cpp:286
 msgid "~R~emove Game"
-msgstr ""
+msgstr "თ~ა~მაშის წაშლა"
 
 #: gui/launcher.cpp:286
 msgid "Remove game from the list. The game data files stay intact"
@@ -1157,7 +1145,7 @@ msgstr ""
 #: gui/launcher.cpp:286
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr ""
+msgstr "თ~ა~მაშის წაშლა"
 
 #. I18N: Button caption. Mass add games
 #: gui/launcher.cpp:289
@@ -1203,7 +1191,7 @@ msgstr ""
 
 #: gui/launcher.cpp:497
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "მართლა გნებავთ შენახული თამაშის ჩატვირთვა?"
 
 #: gui/launcher.cpp:554
 msgid "This game does not support loading games from the launcher."
@@ -1236,7 +1224,7 @@ msgstr "ბადის ხედი"
 
 #: gui/launcher.cpp:1085
 msgid "~S~tart"
-msgstr ""
+msgstr "~გ~აშვება"
 
 #: gui/launcher.cpp:1085
 msgid "Start selected game"
@@ -1244,11 +1232,11 @@ msgstr "მონიშნული თამაშის გაშვება"
 
 #: gui/launcher.cpp:1088
 msgid "~L~oad..."
-msgstr ""
+msgstr "ჩ~ა~ტვირთვა..."
 
 #: gui/launcher.cpp:1088
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "მონიშნული თამაშისთვის შენახული თამაშის ჩატვირთვა"
 
 #: gui/launcher.cpp:1090
 msgid "Record..."
@@ -1256,7 +1244,7 @@ msgstr "ჩაწერა..."
 
 #: gui/launcher.cpp:1096
 msgid "~G~ame Options..."
-msgstr ""
+msgstr "თ~ა~მაშის პარამეტრები..."
 
 #: gui/launcher.cpp:1096
 msgid "Change game options"
@@ -1265,7 +1253,7 @@ msgstr "თამაშის პარამეტრების შეცვ�
 #: gui/launcher.cpp:1096
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr ""
+msgstr "თ~ა~მაშის პარამეტრები..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1321,7 +1309,7 @@ msgstr ""
 #: gui/massadd.cpp:265
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr ""
+msgstr "სკანირებულია %d საქაღალდე..."
 
 #: gui/massadd.cpp:268
 #, c-format
@@ -1334,7 +1322,7 @@ msgstr "გაჩერება"
 
 #: gui/onscreendialog.cpp:100
 msgid "Edit record description"
-msgstr ""
+msgstr "ჩანაწერის აღწერის ჩასწორება"
 
 #: gui/onscreendialog.cpp:102
 msgid "Switch to Game"
@@ -1399,15 +1387,15 @@ msgstr "არაფერი"
 
 #: gui/options.cpp:798
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "შეცდომა ზოგიერთი გრაფიკის პარამეტრის შეცვლისას:"
 
 #: gui/options.cpp:810
 msgid "the video mode could not be changed"
-msgstr ""
+msgstr "ვიდეორეჟიმი ვერ შევცვალე"
 
 #: gui/options.cpp:823
 msgid "the stretch mode could not be changed"
-msgstr ""
+msgstr "გაწელვის რეჟიმი ვერ შევცვალე"
 
 #: gui/options.cpp:829
 msgid "the aspect ratio setting could not be changed"
@@ -1415,23 +1403,23 @@ msgstr ""
 
 #: gui/options.cpp:835
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "სრული ერანის პარამეტრი ვერ შევცვალე"
 
 #: gui/options.cpp:841
 msgid "the filtering setting could not be changed"
-msgstr ""
+msgstr "გაფილტვრის პარამეტრი ვერ შევცვალე"
 
 #: gui/options.cpp:847
 msgid "the vsync setting could not be changed"
-msgstr ""
+msgstr "vsync პარამეტრი ვერ შევცვალე"
 
 #: gui/options.cpp:864
 msgid "the shader could not be changed"
-msgstr ""
+msgstr "შეიდერის შეცვლა შეუძლებელია"
 
 #: gui/options.cpp:1390
 msgid "Touchpad mouse mode"
-msgstr ""
+msgstr "თაჩპედის თაგუნას რეჟიმი"
 
 #: gui/options.cpp:1395
 msgid "Pointer Speed:"
@@ -1868,7 +1856,7 @@ msgstr "ნახვა"
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2514 gui/options.cpp:3279
 msgid "Last browser path: "
-msgstr "ბოლო ბრაუზერის ბილიკი "
+msgstr "ბოლო ბრაუზერის ბილიკი: "
 
 #: gui/options.cpp:2519
 msgid "Theme:"
@@ -1945,7 +1933,7 @@ msgstr "ხატულების განახლება"
 
 #: gui/options.cpp:2614
 msgid "Check for updates of icon packs"
-msgstr ""
+msgstr "ხატულების განახლების შემოწმება"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -1962,7 +1950,7 @@ msgstr "შემთხვევითი მარცვალი:"
 
 #: gui/options.cpp:2634
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "მარცვალი ყველა შემთხვევითი რიცხვის გენერატორის ინიციალიზაციისთვის"
 
 #: gui/options.cpp:2642
 msgid "Debug level:"
@@ -1994,7 +1982,7 @@ msgstr "განახლებების შემოწმება:"
 
 #: gui/options.cpp:2667
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "ScummVM-ის განახლებების სიხშირე"
 
 #: gui/options.cpp:2678
 msgid "Check now"
@@ -2125,7 +2113,7 @@ msgstr "დაკავშირება"
 
 #: gui/options.cpp:2730
 msgid "Connect your cloud storage account"
-msgstr ""
+msgstr "დააკავშირეთ თქვენი ღრუბლოვანი საცავის ანგარიში"
 
 #: gui/options.cpp:2743
 msgctxt "lowres"
@@ -2146,7 +2134,7 @@ msgstr "სერვერის პორტი:"
 
 #: gui/options.cpp:2751
 msgid "Port for server to use"
-msgstr ""
+msgstr "სერვერის პორტი"
 
 #: gui/options.cpp:2756
 msgctxt "lowres"
@@ -2168,11 +2156,11 @@ msgstr ""
 
 #: gui/options.cpp:2772
 msgid "Use Text to speech"
-msgstr ""
+msgstr "ტექსტის-ხმამაღლა-წაკითხვის გამოყენება"
 
 #: gui/options.cpp:2772
 msgid "Will read text in gui on mouse over."
-msgstr ""
+msgstr "ტექსტის ხმამაღლა წაკითხვა მასზე თაგუნას გადატარებისას."
 
 #: gui/options.cpp:2846
 msgid "Ignore"
@@ -2213,7 +2201,7 @@ msgstr "ღრუბლოვანი საცავის შეცვლა 
 
 #: gui/options.cpp:2969
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "სხვა ღრუბლოვანი საცავი, უკვე, აქტიურია."
 
 #: gui/options.cpp:3086
 msgid "Theme does not support selected language!"
@@ -2228,26 +2216,28 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"აღდგება სხვა პარამეტრები."
 
 #: gui/options.cpp:3164
 msgid "Select directory for GUI themes"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე ინტერფეისის თემებისთვის"
 
 #: gui/options.cpp:3174
 msgid "Select directory for GUI launcher thumbnails"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე ინტერფეისის გამშვების მინიატურებისთვის"
 
 #: gui/options.cpp:3185
 msgid "Select directory for DLC downloads"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე DLC გადმოწერებისთვის"
 
 #: gui/options.cpp:3196
 msgid "Select directory for extra files"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე დამატებითი ფაილებისთვის"
 
 #: gui/options.cpp:3207
 msgid "Select directory for plugins"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე დამატებებისთვის"
 
 #: gui/options.cpp:3220
 msgid "Select directory for Files Manager /root/"
@@ -2255,11 +2245,11 @@ msgstr ""
 
 #: gui/options.cpp:3236
 msgid "icon packs"
-msgstr ""
+msgstr "ხატულის ნაკრებები"
 
 #: gui/options.cpp:3247
 msgid "shader packs"
-msgstr ""
+msgstr "შეიდერის ნაკრებები"
 
 #: gui/options.cpp:3401
 msgid "This Storage is working now. Do you want to interrupt it?"
@@ -2271,7 +2261,7 @@ msgstr ""
 
 #: gui/options.cpp:3613 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
-msgstr ""
+msgstr "<ახლავე>"
 
 #: gui/options.cpp:3756
 msgid ""
@@ -2385,19 +2375,19 @@ msgstr "%s (%s %S / %s %S, %s / %s ფაილი)"
 
 #: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
-msgstr ""
+msgstr "თარიღი არ შენახულა"
 
 #: gui/saveload-dialog.cpp:451 gui/saveload-dialog.cpp:631
 msgid "No time saved"
-msgstr ""
+msgstr "დრო არ შენახულა"
 
 #: gui/saveload-dialog.cpp:452 gui/saveload-dialog.cpp:632
 msgid "No playtime saved"
-msgstr ""
+msgstr "თამაშის დრო არ შენახულა"
 
 #: gui/saveload-dialog.cpp:525
 msgid "Do you really want to delete this saved game?"
-msgstr ""
+msgstr "მართლა გნებავთ ამ შენახული თამაშის წაშლა?"
 
 #: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1171
 msgid "Date: "
@@ -2409,11 +2399,11 @@ msgstr "დრო: "
 
 #: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1185
 msgid "Playtime: "
-msgstr ""
+msgstr "თამაშის დრო: "
 
 #: gui/saveload-dialog.cpp:680 gui/saveload-dialog.cpp:766
 msgid "Untitled saved game"
-msgstr ""
+msgstr "უსახელო შენახული თამაში"
 
 #: gui/saveload-dialog.cpp:1033
 msgid "New Save"
@@ -2421,7 +2411,7 @@ msgstr "ახლის შენახვა"
 
 #: gui/saveload-dialog.cpp:1033
 msgid "Create a new saved game"
-msgstr ""
+msgstr "ახალი შენახული თამაშის შექმნა"
 
 #: gui/saveload-dialog.cpp:1164
 msgid "Name: "
@@ -2430,7 +2420,7 @@ msgstr "სახელი: "
 #: gui/saveload-dialog.cpp:1240
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "შეიყვანეთ აღწერა სლოტისთვის %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
@@ -2446,15 +2436,15 @@ msgstr ""
 
 #: gui/shaderbrowser-dialog.cpp:137
 msgid "Select shader"
-msgstr ""
+msgstr "აირჩიეთ შეიდერი"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
-msgstr ""
+msgstr "აირჩიეთ თემა"
 
 #: gui/ThemeEngine.cpp:272
 msgid "Disabled GFX"
-msgstr ""
+msgstr "გრაფიკის გარეშე"
 
 #: gui/ThemeEngine.cpp:272
 msgctxt "lowres"
@@ -2692,7 +2682,7 @@ msgstr "PC-9801 (16 ფერი)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:52
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh შ/თ"
 
 #: common/rendermode.cpp:88
 msgctxt "lowres"
@@ -2718,7 +2708,7 @@ msgstr "თვეში ერთხელ"
 
 #: common/updates.cpp:63
 msgid "<Bad value>"
-msgstr ""
+msgstr "<არასწორი მნიშვნელობა>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
@@ -2729,7 +2719,7 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
-msgstr ""
+msgstr "ბ"
 
 #. I18N: Abbreviation for 'kilobytes' as data size
 #: common/util.cpp:189
@@ -2753,19 +2743,19 @@ msgstr "ტბ"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "ბიტური რუკის გამოსახულების ფაილი"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG გამოსახულების ფაილი"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG გამოსახულების ფაილი"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT გამოსახულების ფაილი"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
@@ -2904,36 +2894,36 @@ msgstr ""
 
 #: engines/dialogs.cpp:67
 msgid "~R~esume"
-msgstr ""
+msgstr "~გ~აგრძელება"
 
 #: engines/dialogs.cpp:69
 msgid "~L~oad"
-msgstr ""
+msgstr "ჩ~ა~ტვირთვა"
 
 #: engines/dialogs.cpp:73 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
-msgstr ""
+msgstr "შ~ე~ნახვა"
 
 #: engines/dialogs.cpp:77
 msgid "~O~ptions"
-msgstr ""
+msgstr "~მ~ორგება"
 
 #: engines/dialogs.cpp:82
 msgid "~H~elp"
-msgstr ""
+msgstr "~დ~ახმარება"
 
 #: engines/dialogs.cpp:86
 msgid "~A~bout"
-msgstr ""
+msgstr "შ~ე~სახებ"
 
 #: engines/dialogs.cpp:89 engines/dialogs.cpp:165
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~გ~ამშვებზე დაბრუნება"
 
 #: engines/dialogs.cpp:91 engines/dialogs.cpp:167
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr ""
+msgstr "~გ~ამშვებზე დაბრუნება"
 
 #: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
@@ -2994,11 +2984,11 @@ msgstr ""
 
 #: engines/dialogs.cpp:352
 msgid "~O~K"
-msgstr ""
+msgstr "~დ~იახ"
 
 #: engines/dialogs.cpp:353
 msgid "~C~ancel"
-msgstr ""
+msgstr "~გ~აუქმება"
 
 #: engines/engine.cpp:366
 #, c-format
@@ -3055,7 +3045,7 @@ msgstr ""
 
 #: engines/engine.cpp:597
 msgid "Skip autosave"
-msgstr ""
+msgstr "ავტოშენახვის გამოტოვება"
 
 #: engines/engine.cpp:599
 #, c-format
@@ -3079,7 +3069,7 @@ msgstr "ავტომატური შენახვა"
 
 #: engines/engine.cpp:644
 msgid "Error occurred making autosave"
-msgstr ""
+msgstr "შეცდომა ავტოშენახვისას"
 
 #: engines/engine.cpp:719
 #, c-format
@@ -3094,7 +3084,7 @@ msgstr "გაფრთხილება: "
 
 #: engines/engine.cpp:743
 msgid " Shall we still run the game?"
-msgstr ""
+msgstr " მაინც გავუშვა თამაში?"
 
 #: engines/engine.cpp:744
 msgid ""
@@ -3508,13 +3498,13 @@ msgstr "ფანჯარაში ჩატევა"
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
-msgstr ""
+msgstr "ფანჯრამდე გაწელვა"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
-msgstr ""
+msgstr "ფანჯარაში ჩატევა (4:3)"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
 #, c-format
@@ -4177,7 +4167,7 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:327
 msgid "Touch Controls"
-msgstr ""
+msgstr "სენსორის კონტროლები"
 
 #: backends/platform/android/android.cpp:1033
 msgid ""
@@ -4252,7 +4242,7 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_misc.mm:306
 #: backends/platform/ios7/ios7_osys_misc.mm:350
 msgid "Adding Games"
-msgstr ""
+msgstr "თამაშების დამატება"
 
 #: backends/platform/android/android.cpp:1092
 msgid ""
@@ -4316,7 +4306,7 @@ msgstr "მენიუებში"
 #: backends/platform/ios7/ios7_options.mm:135
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 msgid "Touchpad emulation"
-msgstr ""
+msgstr "თაჩპედის ემულაცია"
 
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
@@ -5007,7 +4997,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:179
 msgid "Add speed menu"
-msgstr ""
+msgstr "სიჩქარის მენიუს დამატება"
 
 #: engines/agi/metaengine.cpp:180
 msgid "Add game speed menu (similar to PC version)"
@@ -5030,7 +5020,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3895
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
-msgstr ""
+msgstr "თამაშის აღდგენა:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -5087,7 +5077,7 @@ msgstr ""
 
 #: engines/agos/metaengine.cpp:42
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3 რეჟიმი"
 
 #: engines/agos/metaengine.cpp:43
 msgid ""
@@ -5162,7 +5152,7 @@ msgstr ""
 
 #: engines/ags/dialogs.cpp:59
 msgid "Game language:"
-msgstr ""
+msgstr "თამაშის ენა:"
 
 #: engines/ags/dialogs.cpp:59
 msgid "Language to use for multilingual games"
@@ -5203,23 +5193,23 @@ msgstr "ვერსიის ჩვენება"
 
 #: engines/asylum/metaengine.cpp:120 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
-msgstr ""
+msgstr "სწრაფი ჩატვირთვა"
 
 #: engines/asylum/metaengine.cpp:125 engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
-msgstr ""
+msgstr "სწრაფი შენახვა"
 
 #: engines/asylum/metaengine.cpp:130
 msgid "Switch to Sarah"
-msgstr ""
+msgstr "სარაზე გადართვა"
 
 #: engines/asylum/metaengine.cpp:135
 msgid "Switch to Grimwall"
-msgstr ""
+msgstr "გრიმვოლზე გადართვა"
 
 #: engines/asylum/metaengine.cpp:140
 msgid "Switch to Olmec"
-msgstr ""
+msgstr "ოლმექზე გადართვა"
 
 #: engines/asylum/metaengine.cpp:145
 msgid "Bring up the In-Game Menu"
@@ -5239,7 +5229,7 @@ msgstr ""
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
-msgstr ""
+msgstr "მაინც ჩატვირთვა"
 
 #: engines/bladerunner/bladerunner.cpp:404
 msgid "Failed to initialize resources"
@@ -5634,27 +5624,27 @@ msgstr "წინა"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "პასუხი 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "პასუხი 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "პასუხი 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "პასუხი 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "პასუხი 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "პასუხი 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
 msgid "Next Page"
@@ -5690,11 +5680,11 @@ msgstr ""
 
 #: engines/crab/input/input.cpp:266
 msgid "Quick Save"
-msgstr ""
+msgstr "სწრაფი შენახვა"
 
 #: engines/crab/input/input.cpp:271
 msgid "Quick Load"
-msgstr ""
+msgstr "სწრაფი ჩატვირთვა"
 
 #: engines/cryomni3d/metaengine.cpp:145
 msgid "Versailles 1685 support is not compiled in"
@@ -5732,11 +5722,11 @@ msgstr "ქმედება"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
-msgstr ""
+msgstr "ბრძანების შეცვლა"
 
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
-msgstr ""
+msgstr "გრაფიკის გამართვა"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -5779,7 +5769,7 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:59
 msgid "Automatic drilling"
-msgstr ""
+msgstr "ავტომატური ბურღვა"
 
 #: engines/freescape/metaengine.cpp:60
 msgid "Allow to succefully drill in any part of the area in Driller"
@@ -5787,7 +5777,7 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:70
 msgid "Disable demo mode"
-msgstr ""
+msgstr "დემო რეჟიმის გამორთვა"
 
 #: engines/freescape/metaengine.cpp:71
 msgid "Never activate demo mode"
@@ -5795,7 +5785,7 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:81
 msgid "Disable sensors"
-msgstr ""
+msgstr "სენსორების გამორთვა"
 
 #: engines/freescape/metaengine.cpp:82
 msgid "Sensors will not shoot the player"
@@ -5803,7 +5793,7 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:92
 msgid "Disable falling"
-msgstr ""
+msgstr "ვარდნის გამორთვა"
 
 #: engines/freescape/metaengine.cpp:93
 msgid "Player cannot fall over edges"
@@ -6169,7 +6159,7 @@ msgstr "მარჯვნივ გაწევა"
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
-msgstr ""
+msgstr "გამოყენება"
 
 #: engines/hdb/metaengine.cpp:244
 msgid "Clear waypoints"
@@ -9733,7 +9723,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:756
 msgid "Run backward"
-msgstr ""
+msgstr "უკან გაშვება"
 
 #: engines/wintermute/keymapper_tables.h:761
 msgid "Turn left fast"
