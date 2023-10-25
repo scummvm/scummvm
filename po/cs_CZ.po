@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-24 17:01+0000\n"
+"POT-Creation-Date: 2023-10-24 21:35+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -6316,7 +6316,7 @@ msgstr ""
 msgid "Failed to load saved game from file."
 msgstr "Načteni hry ze souboru selhalo."
 
-#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1393
+#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1405
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Uložení hry do souboru selhalo."

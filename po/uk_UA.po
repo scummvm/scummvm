@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-24 17:01+0000\n"
+"POT-Creation-Date: 2023-10-24 21:35+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -6343,7 +6343,7 @@ msgstr "Збереження гри створене іншою версією."
 msgid "Failed to load saved game from file."
 msgstr "Не вдалося завантажити збережену гру з файлу."
 
-#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1393
+#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1405
 #: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Не вдалося зберегти гру у файл."
