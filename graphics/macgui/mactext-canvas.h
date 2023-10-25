@@ -107,6 +107,7 @@ struct MacFontRun {
 				fgcolor   == y->fgcolor);
 	}
 
+	void debugPrint();
 };
 
 struct MacTextLine;
@@ -167,6 +168,8 @@ public:
 	void reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting);
 
 	void processTable(int line, int maxWidth);
+
+	void debugPrint(const char *prefix = nullptr);
 };
 
 struct MacTextTableRow {

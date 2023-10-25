@@ -469,15 +469,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	}
 
 #if DEBUG
-	for (uint i = 0; i < _text.size(); i++) {
-		debugN(9, "** splitString: %2d ", i);
-
-		for (uint j = 0; j < _text[i].chunks.size(); j++)
-			debugN(9, "[%d] \"%s\"", _text[i].chunks[j].text.size(), Common::toPrintable(_text[i].chunks[j].text.encode()).c_str());
-
-		debugN(9, "\n");
-	}
-	debug(9, "** splitString: done");
+	debugPrint("** splitString");
 #endif
 
 	return s;
@@ -622,9 +614,9 @@ void MacTextCanvas::render(int from, int to) {
 		debugN(9, "MacTextCanvas::render: %2d (firstInd: %d indent: %d) ", i, _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
-			debugN(9, "[%d (%d)] \"%s\" ", _text[i].chunks[j].fontId, _text[i].chunks[j].textSlant, _text[i].chunks[j].text.encode().c_str());
+			_text[i].chunks[j].debugPrint();
 
-		debug(9, "%s", "");
+		debug(9, "");
 	}
 }
 
@@ -1127,6 +1119,27 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 		y += gutter * 2 + 1 + rowH[r];
 		r++;
 	}
+}
+
+void MacFontRun::debugPrint() {
+	debugN("{%d}[%d (%d)] \"%s\" ", fontId, textSlant, text.size(), Common::toPrintable(text.encode()).c_str());
+}
+
+void MacTextCanvas::debugPrint(const char *prefix) {
+	for (uint i = 0; i < _text.size(); i++) {
+		if (prefix)
+			debugN("%s: ", prefix);
+		debugN("%2d ", i);
+
+		for (uint j = 0; j < _text[i].chunks.size(); j++)
+			_text[i].chunks[j].debugPrint();
+
+		debugN("\n");
+	}
+
+	if (prefix)
+		debugN("%s: ", prefix);
+	debug("[done]");
 }
 
 } // End of namespace Graphics
