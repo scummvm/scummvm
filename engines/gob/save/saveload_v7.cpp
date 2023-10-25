@@ -831,7 +831,7 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{ "nouveau.dep", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.tmp", kSaveModeSave, nullptr, nullptr        },
 	{     "adi.inf", kSaveModeSave, nullptr, nullptr        },
-	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        }
+	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        },
 };
 
 SaveLoad_v7::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :

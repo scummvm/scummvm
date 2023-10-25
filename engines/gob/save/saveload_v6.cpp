@@ -216,7 +216,7 @@ SaveLoad_v6::SaveFile SaveLoad_v6::_saveFiles[] = {
 	{  "intro.056", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 56
 	{  "intro.057", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 57
 	{  "intro.058", kSaveModeSave,   nullptr, "temp sprite"}, // Slot 58
-	{  "intro.059", kSaveModeSave,   nullptr, "temp sprite"}  // Slot 59
+	{  "intro.059", kSaveModeSave,   nullptr, "temp sprite"},  // Slot 59
 };
 
 
