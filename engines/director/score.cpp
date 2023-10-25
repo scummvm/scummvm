@@ -1553,7 +1553,7 @@ Frame *Score::getFrameData(int frameNum){
 
 	// Backup variables
 	int tempFrameNumber = _curFrameNumber;
-	
+
 	bool isFrameRead = loadFrame(frameNum, false);
 	Frame *tempFrame = _currentFrame;
 
@@ -1575,7 +1575,7 @@ void Score::setSpriteCasts() {
 	for (uint16 j = 0; j < _currentFrame->_sprites.size(); j++) {
 		_currentFrame->_sprites[j]->setCast(_currentFrame->_sprites[j]->_castId);
 
-		debugC(5, kDebugImages, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
+		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,
 			spriteType2str(_currentFrame->_sprites[j]->_spriteType));
 	}
