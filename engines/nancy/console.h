@@ -38,7 +38,7 @@ public:
 	NancyConsole();
 	virtual ~NancyConsole(void);
 
-	void postEnter();
+	void postEnter() override;
 
 private:
 	bool Cmd_loadCal(int argc, const char **argv);
