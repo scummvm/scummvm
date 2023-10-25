@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/gui_options.h"
 #include "common/language.h"
 #include "engines/game.h"
 

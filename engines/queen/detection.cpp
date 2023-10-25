@@ -23,7 +23,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/gui_options.h"
 #include "common/file.h"
 
 #include "queen/defs.h"

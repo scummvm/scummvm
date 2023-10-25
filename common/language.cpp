@@ -20,7 +20,6 @@
  */
 
 #include "common/language.h"
-#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/algorithm.h"
 

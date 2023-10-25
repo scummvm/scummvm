@@ -24,7 +24,6 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
-#include "common/gui_options.h"
 #include "common/md5.h"
 
 #include "audio/mididrv.h"
