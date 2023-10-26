@@ -254,6 +254,7 @@ void ActionManager::processActionRecords() {
 			}
 			
 			record->execute();
+			_recordsWereExecuted = true;
 		}
 
 		if (g_nancy->getGameType() >= kGameTypeNancy4 && NancySceneState._state == State::Scene::kLoad) {
@@ -570,6 +571,15 @@ void ActionManager::processDependency(DependencyRecord &dep, ActionRecord &recor
 			}
 
 			break;
+		case DependencyType::kDefaultAR:
+			// Only execute if no other AR has executed yet
+			if (_recordsWereExecuted) {
+				dep.satisfied = false;
+			} else {
+				dep.satisfied = true;
+			}
+
+			break;
 		default:
 			warning("Unimplemented Dependency type %i", (int)dep.type);
 			break;
@@ -582,6 +592,7 @@ void ActionManager::clearActionRecords() {
 		delete r;
 	}
 	_records.clear();
+	_recordsWereExecuted = false;
 }
 
 void ActionManager::onPause(bool pause) {

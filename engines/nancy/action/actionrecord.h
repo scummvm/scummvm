@@ -60,7 +60,8 @@ enum struct DependencyType : int16 {
 	kSound							= 17,
 	kOpenParenthesis				= 18,
 	kCloseParenthesis				= 19,
-	kRandom							= 20
+	kRandom							= 20,
+	kDefaultAR						= 21
 };
 
 // Describes a condition that needs to be fulfilled before the

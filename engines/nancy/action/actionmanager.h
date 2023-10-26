@@ -80,6 +80,7 @@ protected:
 	void debugDrawHotspots();
 
 	Common::Array<ActionRecord *> _records;
+	bool _recordsWereExecuted = false; // Used for kDefaultAR dependency
 	Common::Array<ActionRecord *> _activatedRecordsThisFrame;
 };
 
