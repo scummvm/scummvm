@@ -525,7 +525,7 @@ def collect_forks(args: argparse.Namespace) -> int:
 
                 filepath = os.path.join(dirpath, filename)
                 if add_macbinary_ext:
-                        filepath = upath.with_name(filepath.name + ".bin")
+                    filepath = upath.with_name(filepath.name + ".bin")
                 resourcepath = os.path.join(dirpath, resource_filename)
 
                 file = machfs.File()
