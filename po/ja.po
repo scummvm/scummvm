@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-25 20:05+0000\n"
-"PO-Revision-Date: 2023-10-13 08:41+0000\n"
+"PO-Revision-Date: 2023-10-26 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -946,56 +946,44 @@ msgid "Right"
 msgstr "右"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "New kid"
 msgid "New Line"
-msgstr "新しい子供"
+msgstr "新しい線"
 
 #: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Dialog"
-msgstr "ポップアップを閉じる"
+msgstr "閉じる"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "バックエンド"
+msgstr "バックスペース"
 
 #: gui/gui-manager.cpp:212
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "一文字削除"
 
 #: gui/gui-manager.cpp:218
 msgid "Go to end of line"
-msgstr ""
+msgstr "行の終端へ"
 
 #: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "左に進む"
+msgstr "カーソルを左へ"
 
 #: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "右に進む"
+msgstr "カーソルを右へ"
 
 #: gui/gui-manager.cpp:241
 msgid "Go to start of line"
-msgstr ""
+msgstr "行の先頭へ"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "切り取り"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "コピー"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -9302,12 +9290,12 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:1169
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
-msgstr ""
+msgstr "このゲームのフォントにMacintoshの実行ファイル「Indy」が必要です。"
 
 #: engines/scumm/scumm.cpp:1193
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
-msgstr ""
+msgstr "このゲームのBGM・フォントにMacintoshの実行ファイル「Loom」が必要です。"
 
 #: engines/scumm/scumm.cpp:1213
 msgid ""
