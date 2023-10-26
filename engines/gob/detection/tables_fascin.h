@@ -119,7 +119,7 @@
 {
 	{
 		"fascination",
-		"CD Version (Censored)",
+		"CD (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		EN_ANY,
 		kPlatformDOS,
@@ -133,7 +133,7 @@
 {
 	{
 		"fascination",
-		"CD Version (Censored)",
+		"CD (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		FR_FRA,
 		kPlatformDOS,
@@ -147,7 +147,7 @@
 {
 	{
 		"fascination",
-		"CD Version (Censored)",
+		"CD (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		DE_DEU,
 		kPlatformDOS,
@@ -161,7 +161,7 @@
 {
 	{
 		"fascination",
-		"CD Version (Censored)",
+		"CD (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		IT_ITA,
 		kPlatformDOS,
@@ -175,7 +175,7 @@
 {
 	{
 		"fascination",
-		"CD Version (Censored)",
+		"CD (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		ES_ESP,
 		kPlatformDOS,
