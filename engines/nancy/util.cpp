@@ -257,7 +257,7 @@ bool DeferredLoader::load(uint32 endTime) {
 	uint32 loopStartTime = g_system->getMillis();
 	uint32 loopTime = 0; // Stores the loop that took the longest time to complete
 
-	while (loopTime + loopStartTime < endTime) {
+	do {
 		if (loadInner()) {
 			return true;
 		}
@@ -272,7 +272,7 @@ bool DeferredLoader::load(uint32 endTime) {
 		if (g_system->getMillis() < endTime) {
 			break;
 		}
-	}
+	} while (loopTime + loopStartTime < endTime);
 
 	return false;
 }
