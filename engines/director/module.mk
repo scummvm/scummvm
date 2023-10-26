@@ -5,8 +5,8 @@ MODULE_OBJS = \
 	cast.o \
 	channel.o \
 	cursor.o \
-	director.o \
 	debugger.o \
+	director.o \
 	events.o \
 	fonts.o \
 	frame.o \
@@ -44,9 +44,9 @@ MODULE_OBJS = \
 	lingo/lingo-codegen.o \
 	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
-	lingo/lingo-mci.o \
 	lingo/lingo-gr.o \
 	lingo/lingo-lex.o \
+	lingo/lingo-mci.o \
 	lingo/lingo-object.o \
 	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
