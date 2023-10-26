@@ -343,7 +343,7 @@ void TVDMap::MapGlobe::onTrigger() {
 		_gargoyleEyes.setVisible(true);
 		_owner->_viewport.setVisible(true);
 		_owner->_viewport.playVideo();
-		g_system->warpMouse(_owner->_mapData->cursorPosition.x, _owner->_mapData->cursorPosition.y);
+		g_nancy->_cursorManager->warpCursor(_owner->_mapData->cursorPosition);
 		g_nancy->setMouseEnabled(true);
 	} else {
 		_owner->_state = kExit;
@@ -406,7 +406,7 @@ void Nancy1Map::load() {
 
 	setLabel(-1);
 	g_nancy->_cursorManager->setCursorItemID(-1);
-	g_system->warpMouse(_mapData->cursorPosition.x, _mapData->cursorPosition.y);
+	g_nancy->_cursorManager->warpCursor(_mapData->cursorPosition);
 
 	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
 		g_nancy->_sound->loadSound(getSound());

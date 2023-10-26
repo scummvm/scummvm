@@ -64,6 +64,8 @@ public:
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
 
+	void warpCursor(const Common::Point &pos);
+
 	// Change the cursor graphic. Should be called right before drawing to screen
 	void applyCursor();
 
@@ -91,6 +93,7 @@ private:
 
 	Graphics::ManagedSurface _invCursorsSurface;
 
+	Common::Point _warpedMousePos;
 	CursorType _curCursorType;
 	int16 _curItemID;
 	uint _curCursorID;

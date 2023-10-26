@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/system.h"
 #include "common/random.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
@@ -148,7 +147,7 @@ void ConversationSound::execute() {
 		adjustedMousePos.x -= cursorHotspot.x;
 		adjustedMousePos.y -= cursorHotspot.y - 1;
 		if (g_nancy->_cursorManager->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
-			g_system->warpMouse(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y);
+			g_nancy->_cursorManager->warpCursor(Common::Point(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y));
 			g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		}
 

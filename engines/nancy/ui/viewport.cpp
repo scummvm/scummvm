@@ -70,7 +70,7 @@ void Viewport::handleInput(NancyInput &input) {
 	if (	g_nancy->getGameType() != kGameTypeVampire &&
 			input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton)
 			&& _stickyCursorPos.x > -1) {
-		g_system->warpMouse(_stickyCursorPos.x, _stickyCursorPos.y);
+		g_nancy->_cursorManager->warpCursor(_stickyCursorPos);
 		input.mousePos = _stickyCursorPos;
 	}
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "graphics/cursorman.h"
 
 #include "engines/nancy/nancy.h"
@@ -36,7 +37,8 @@ CursorManager::CursorManager()  :
 	_curCursorID(0),
 	_hasItem(false),
 	_numCursorTypes(0),
-	_puzzleExitCursor((g_nancy->getGameType() >= kGameTypeNancy4) ? kMoveBackward : kExit) {}
+	_puzzleExitCursor((g_nancy->getGameType() >= kGameTypeNancy4) ? kMoveBackward : kExit),
+	_warpedMousePos(-500, -500) {}
 
 void CursorManager::init(Common::SeekableReadStream *chunkStream) {
 	assert(chunkStream);
@@ -268,6 +270,10 @@ void CursorManager::setCursorItemID(int16 itemID) {
 	setCursor(_curCursorType, itemID);
 }
 
+void CursorManager::warpCursor(const Common::Point &pos) {
+	_warpedMousePos = pos;
+}
+
 void CursorManager::applyCursor() {
 	Graphics::ManagedSurface *surf;
 	Common::Rect bounds = _cursors[_curCursorID].bounds;
@@ -287,6 +293,12 @@ void CursorManager::applyCursor() {
 		byte palette[3 * 256];
 		surf->grabPalette(palette, 0, 256);
 		CursorMan.replaceCursorPalette(palette, 0, 256);
+	}
+
+	if (_warpedMousePos.x != -500 && _warpedMousePos.y != -500) {
+		g_system->warpMouse(_warpedMousePos.x, _warpedMousePos.y);
+		_warpedMousePos.x = -500;
+		_warpedMousePos.y = -500;
 	}
 }
 
