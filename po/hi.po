@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-26 16:51+0000\n"
+"POT-Creation-Date: 2023-10-26 23:16+0000\n"
 "PO-Revision-Date: 2023-04-23 06:53+0000\n"
 "Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Paste code from clipboard"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:315
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:314
 #: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
@@ -267,8 +267,8 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:498 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
+#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
 #: base/main.cpp:603 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -281,8 +281,8 @@ msgstr "हाँ"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:498 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
+#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -303,7 +303,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:554 gui/launcher.cpp:558
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:553 gui/launcher.cpp:557
 #: gui/massadd.cpp:90 gui/options.cpp:2331 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
@@ -358,7 +358,7 @@ msgstr "गेम सेव नहीं हो पाया"
 msgid "Select directory where to download game data"
 msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:312
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:311
 msgid "Select directory with game data"
 msgstr "उस फोल्डर को चुने जिसमे गेम डेटा है"
 
@@ -393,7 +393,7 @@ msgid ""
 msgstr ""
 "ऐसा लगता है की आपका कनेक्शन सीमित है। क्या आप इसके द्वारा ही डाउनलोड करना चाहते हैं?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:656
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:655
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM यह फोल्डर नहीं खोल पाया!"
 
@@ -522,8 +522,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "नाम:"
 
-#: gui/editgamedialog.cpp:151 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:151 engines/mohawk/dialogs.cpp:158
+#: engines/mohawk/dialogs.cpp:377
 msgid "Language:"
 msgstr "भाषा:"
 
@@ -873,16 +873,16 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:159 engines/hpl1/metaengine.cpp:91
-#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:573
-#: engines/mohawk/riven.cpp:844
+#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
+#: engines/mohawk/riven.cpp:843
 msgid "Interact"
 msgstr ""
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:116
+#: gui/gui-manager.cpp:170 engines/metaengine.cpp:115
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:809
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:808
 #: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -892,11 +892,11 @@ msgstr ""
 msgid "Up"
 msgstr "ऊपर"
 
-#: gui/gui-manager.cpp:176 engines/metaengine.cpp:122
+#: gui/gui-manager.cpp:176 engines/metaengine.cpp:121
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:776
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:775
 #: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -906,11 +906,11 @@ msgstr "ऊपर"
 msgid "Down"
 msgstr "नीचे"
 
-#: gui/gui-manager.cpp:182 engines/metaengine.cpp:128
+#: gui/gui-manager.cpp:182 engines/metaengine.cpp:127
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:789
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:788
 #: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -921,11 +921,11 @@ msgstr "नीचे"
 msgid "Left"
 msgstr "बाएँ"
 
-#: gui/gui-manager.cpp:188 engines/metaengine.cpp:134
+#: gui/gui-manager.cpp:188 engines/metaengine.cpp:133
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:796
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:795
 #: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -1030,61 +1030,61 @@ msgid "Save Image"
 msgstr "गेम सेव करें"
 
 #. I18N: Group name for the game list
-#: gui/launcher.cpp:106
+#: gui/launcher.cpp:105
 msgctxt "group"
 msgid "None"
 msgstr "कोई नहीं"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:107
 msgctxt "group"
 msgid "First letter"
 msgstr ""
 
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:107
 msgctxt "group"
 msgid "Initial"
 msgstr ""
 
 #. I18N: Group name for the game list, grouped by game engine
-#: gui/launcher.cpp:110
+#: gui/launcher.cpp:109
 msgctxt "group"
 msgid "Engine"
 msgstr "इंजन"
 
 #. I18N: Group name for the game list, grouped by game series
-#: gui/launcher.cpp:112
+#: gui/launcher.cpp:111
 msgctxt "group"
 msgid "Series"
 msgstr ""
 
 #. I18N: Group name for the game list, grouped by game publisher
-#: gui/launcher.cpp:114
+#: gui/launcher.cpp:113
 msgctxt "group"
 msgid "Publisher"
 msgstr ""
 
 #. I18N: Group name for the game list, grouped by language
-#: gui/launcher.cpp:116
+#: gui/launcher.cpp:115
 msgctxt "group"
 msgid "Language"
 msgstr "भाषा"
 
 #. I18N: Group name for the game list, grouped by game platform
-#: gui/launcher.cpp:118
+#: gui/launcher.cpp:117
 msgctxt "group"
 msgid "Platform"
 msgstr "प्लैटफॉर्म"
 
-#: gui/launcher.cpp:228
+#: gui/launcher.cpp:227
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:232 gui/launcher.cpp:882
+#: gui/launcher.cpp:231 gui/launcher.cpp:881
 msgid "Group:"
 msgstr ""
 
-#: gui/launcher.cpp:234
+#: gui/launcher.cpp:233
 msgid "Select a criteria to group the entries"
 msgstr ""
 
@@ -1092,224 +1092,224 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: gui/launcher.cpp:261 backends/platform/sdl/macosx/appmenu_osx.mm:262
+#: gui/launcher.cpp:260 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr ""
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:265 engines/dialogs.cpp:95
+#: gui/launcher.cpp:264 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "बंद करें (Q)"
 
-#: gui/launcher.cpp:265 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:264 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "ScummVM बंद करें"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:269
+#: gui/launcher.cpp:268
 msgid "A~b~out"
 msgstr "जानकारी(B)..."
 
-#: gui/launcher.cpp:269 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:268 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "ScummVM के बारे में जानकारी"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:271
+#: gui/launcher.cpp:270
 msgid "Global ~O~ptions..."
 msgstr "ग्लोबल विकल्प(O)..."
 
-#: gui/launcher.cpp:271
+#: gui/launcher.cpp:270
 msgid "Change global ScummVM options"
 msgstr "ScummVM के ग्लोबल विकल्प बदलें"
 
-#: gui/launcher.cpp:271
+#: gui/launcher.cpp:270
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "ग्लोबल विकल्प(O)..."
 
-#: gui/launcher.cpp:275
+#: gui/launcher.cpp:274
 #, fuzzy
 #| msgid "Download game files"
 msgid "Download Games"
 msgstr "गेम फाइल डाउनलोड करे"
 
-#: gui/launcher.cpp:275
+#: gui/launcher.cpp:274
 msgid "Download freeware games for ScummVM"
 msgstr ""
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:281
 msgid "~A~dd Game..."
 msgstr "नया गेम जोड़ें (A)..."
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:281
 msgid "Add games to the list"
 msgstr ""
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:281
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "गेम add करे..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:286
+#: gui/launcher.cpp:285
 msgid "~R~emove Game"
 msgstr "गेम हटाएँ (R)"
 
-#: gui/launcher.cpp:286
+#: gui/launcher.cpp:285
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "गेम सूचि से हटा दें। गेम की फाइलें नहीं हटेंगी"
 
-#: gui/launcher.cpp:286
+#: gui/launcher.cpp:285
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "गेम हटा डे (R)"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:288
 msgid "Mass Add..."
 msgstr "अनेक गेम जोड़ें..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:292
+#: gui/launcher.cpp:291
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "अनेक गेम add करे..."
 
-#: gui/launcher.cpp:300 gui/launcher.cpp:852 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:299 gui/launcher.cpp:851 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:304 gui/launcher.cpp:873 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:303 gui/launcher.cpp:872 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "तलाशें:"
 
-#: gui/launcher.cpp:315 engines/dialogs.cpp:98 engines/engine.cpp:915
+#: gui/launcher.cpp:314 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:414
+#: gui/launcher.cpp:413
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 
-#: gui/launcher.cpp:425
+#: gui/launcher.cpp:424
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:455
+#: gui/launcher.cpp:454
 msgid "Do you really want to remove this game configuration?"
 msgstr ""
 
-#: gui/launcher.cpp:497
+#: gui/launcher.cpp:496
 msgid "Do you want to load saved game?"
 msgstr ""
 
-#: gui/launcher.cpp:554
+#: gui/launcher.cpp:553
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:557
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:675
+#: gui/launcher.cpp:674
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM इस डायरेक्टरी में कोई गेम नहीं ढूंढ पाया!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:691
+#: gui/launcher.cpp:690
 msgid "Unknown variant"
 msgstr ""
 
-#: gui/launcher.cpp:697
+#: gui/launcher.cpp:696
 msgid "Pick the game:"
 msgstr ""
 
-#: gui/launcher.cpp:922 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:921 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr ""
 
-#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:922 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr ""
 
-#: gui/launcher.cpp:1085
+#: gui/launcher.cpp:1084
 msgid "~S~tart"
 msgstr "शुरू करें (S)"
 
-#: gui/launcher.cpp:1085
+#: gui/launcher.cpp:1084
 msgid "Start selected game"
 msgstr "चयनित गेम को शुरू करें"
 
-#: gui/launcher.cpp:1088
+#: gui/launcher.cpp:1087
 msgid "~L~oad..."
 msgstr ""
 
-#: gui/launcher.cpp:1088
+#: gui/launcher.cpp:1087
 msgid "Load saved game for selected game"
 msgstr "चयनित खेल के लिए गेम लोड करे"
 
-#: gui/launcher.cpp:1090
+#: gui/launcher.cpp:1089
 msgid "Record..."
 msgstr ""
 
-#: gui/launcher.cpp:1096
+#: gui/launcher.cpp:1095
 msgid "~G~ame Options..."
 msgstr "गेम विकल्प(O)..."
 
-#: gui/launcher.cpp:1096
+#: gui/launcher.cpp:1095
 msgid "Change game options"
 msgstr "गेम के विकल्प चुनें"
 
-#: gui/launcher.cpp:1096
+#: gui/launcher.cpp:1095
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "गेम विकल्प(O)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1188 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1187 gui/launcher.cpp:1370
 msgid "Unknown Engine"
 msgstr "अनजान इंजन"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1205 gui/launcher.cpp:1388
+#: gui/launcher.cpp:1204 gui/launcher.cpp:1387
 msgid "Unknown Publisher"
 msgstr ""
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1222 gui/launcher.cpp:1405
+#: gui/launcher.cpp:1221 gui/launcher.cpp:1404
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1236 gui/launcher.cpp:1419
+#: gui/launcher.cpp:1235 gui/launcher.cpp:1418
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1250 gui/launcher.cpp:1433
+#: gui/launcher.cpp:1249 gui/launcher.cpp:1432
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1444 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr ""
 
-#: gui/launcher.cpp:1593
+#: gui/launcher.cpp:1592
 msgid "Icons per row:"
 msgstr ""
 
@@ -1545,7 +1545,7 @@ msgstr ""
 msgid "3D Anti-aliasing:"
 msgstr ""
 
-#: gui/options.cpp:1666 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1666 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
 msgstr ""
 
@@ -3161,46 +3161,46 @@ msgstr ""
 msgid "Matched game IDs for the %s engine:"
 msgstr ""
 
-#: engines/metaengine.cpp:57
+#: engines/metaengine.cpp:56
 msgid "Default game keymap"
 msgstr ""
 
-#: engines/metaengine.cpp:61 backends/platform/maemo/maemo.cpp:161
+#: engines/metaengine.cpp:60 backends/platform/maemo/maemo.cpp:161
 #: engines/asylum/metaengine.cpp:158 engines/hdb/metaengine.cpp:207
 #: engines/parallaction/metaengine.cpp:114
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:183
 msgid "Left Click"
 msgstr ""
 
-#: engines/metaengine.cpp:67 backends/platform/maemo/maemo.cpp:165
+#: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
 #: engines/wintermute/keymapper_tables.h:2166
 msgid "Middle Click"
 msgstr ""
 
-#: engines/metaengine.cpp:72 backends/platform/maemo/maemo.cpp:169
+#: engines/metaengine.cpp:71 backends/platform/maemo/maemo.cpp:169
 #: engines/asylum/metaengine.cpp:164 engines/parallaction/metaengine.cpp:120
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:189
 msgid "Right Click"
 msgstr "दाहिना क्लिक"
 
 #. I18N: Action in In Cold Blood
-#: engines/metaengine.cpp:78 engines/crab/input/input.cpp:261
+#: engines/metaengine.cpp:77 engines/crab/input/input.cpp:261
 #: engines/grim/grim.cpp:535 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:596
-#: engines/mohawk/riven.cpp:867 engines/sky/metaengine.cpp:125
+#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/mohawk/riven.cpp:866 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr ""
 
-#: engines/metaengine.cpp:84 engines/parallaction/metaengine.cpp:139
+#: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
 msgstr "गेम मेनू"
 
-#: engines/metaengine.cpp:91 engines/grim/grim.cpp:518
-#: engines/grim/grim.cpp:614 engines/mohawk/myst.cpp:567
-#: engines/mohawk/riven.cpp:838 engines/wintermute/keymapper_tables.h:220
+#: engines/metaengine.cpp:90 engines/grim/grim.cpp:518
+#: engines/grim/grim.cpp:614 engines/mohawk/myst.cpp:566
+#: engines/mohawk/riven.cpp:837 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -3209,29 +3209,29 @@ msgstr "गेम मेनू"
 msgid "Skip"
 msgstr ""
 
-#: engines/metaengine.cpp:98 engines/sky/metaengine.cpp:120
+#: engines/metaengine.cpp:97 engines/sky/metaengine.cpp:120
 msgid "Skip line"
 msgstr ""
 
-#: engines/metaengine.cpp:105
+#: engines/metaengine.cpp:104
 msgid "Predictive input dialog"
 msgstr ""
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:110 engines/bladerunner/metaengine.cpp:273
+#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:273
 #: engines/griffon/metaengine.cpp:115 engines/grim/grim.cpp:524
 #: engines/grim/grim.cpp:620 engines/sky/metaengine.cpp:100
 #: engines/wintermute/keymapper_tables.h:54
 msgid "Confirm"
 msgstr ""
 
-#: engines/metaengine.cpp:404
+#: engines/metaengine.cpp:403
 msgid "Autosave on"
 msgstr ""
 
-#: engines/metaengine.cpp:404
+#: engines/metaengine.cpp:403
 msgid "Autosave off"
 msgstr ""
 
@@ -4977,7 +4977,7 @@ msgstr ""
 #: engines/agi/metaengine.cpp:119 engines/chewy/metaengine.cpp:36
 #: engines/cine/metaengine.cpp:42 engines/crab/metaengine.cpp:34
 #: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:36
-#: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:48
+#: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
 #: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
@@ -4987,7 +4987,7 @@ msgstr ""
 #: engines/agi/metaengine.cpp:120 engines/chewy/metaengine.cpp:37
 #: engines/cine/metaengine.cpp:43 engines/crab/metaengine.cpp:35
 #: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:37
-#: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:49
+#: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
 #: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
@@ -5435,7 +5435,7 @@ msgstr ""
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:835 engines/zvision/metaengine.cpp:284
+#: engines/scumm/metaengine.cpp:834 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr ""
 
@@ -5578,7 +5578,7 @@ msgstr ""
 
 #: engines/cge/metaengine.cpp:52 engines/glk/metaengine.cpp:243
 #: engines/griffon/metaengine.cpp:40 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:50
+#: engines/supernova/metaengine.cpp:49
 msgid "Enable Text to Speech"
 msgstr "Text से Speech इनेबल करें"
 
@@ -5593,7 +5593,7 @@ msgstr "Objects और Options के लिए text to speech इनेबल �
 #: engines/cge2/metaengine.cpp:56 engines/dreamweb/metaengine.cpp:62
 #: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:40
 #: engines/mads/metaengine.cpp:109 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:51
+#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:157
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
@@ -5643,7 +5643,7 @@ msgstr "राइट क्लिक इंटरैक्ट"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:822
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:821
 msgid "Attack"
 msgstr ""
 
@@ -6882,32 +6882,32 @@ msgid "Failed to autosave"
 msgstr ""
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:357
 msgid "~Z~ip Mode Activated"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:357
 msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:117
+#: engines/mohawk/dialogs.cpp:116
 msgid "~T~ransitions Enabled"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:118
+#: engines/mohawk/dialogs.cpp:117
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:121
+#: engines/mohawk/dialogs.cpp:120
 msgid "Play the Myst fly by movie"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:122
+#: engines/mohawk/dialogs.cpp:121
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
 
@@ -6918,70 +6918,70 @@ msgstr ""
 #. We change it to use fuzzy logic.
 #. By default the option is off.
 #.
-#: engines/mohawk/dialogs.cpp:134
+#: engines/mohawk/dialogs.cpp:133
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:135
+#: engines/mohawk/dialogs.cpp:134
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:138
+#: engines/mohawk/dialogs.cpp:137
 msgid "Simulate loading times of old CD drives"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:139
+#: engines/mohawk/dialogs.cpp:138
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:145
 msgid "~D~rop Page"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:149
 msgid "Show ~M~ap"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:154
 msgid "Main Men~u~"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:286
 msgid "The new language will be applied after restarting the game."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:358
 msgid "~W~ater Effect Enabled"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:358
 msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:360
 msgid "Transitions:"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:360
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:365
 msgid "Fastest"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:366
 msgid "Normal"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:367
 msgid "Best"
 msgstr ""
 
@@ -7005,28 +7005,28 @@ msgstr "CSTime सपोर्ट कम्पाइल नहीं है"
 msgid "The game is paused. Press any key to continue."
 msgstr ""
 
-#: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
+#: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:825
 #: engines/nancy/input.cpp:209
 msgid "Open main menu"
 msgstr ""
 
-#: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:850
+#: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:849
 msgid "Load game state"
 msgstr ""
 
-#: engines/mohawk/myst.cpp:584 engines/mohawk/riven.cpp:855
+#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:854
 msgid "Save game state"
 msgstr ""
 
-#: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:860
+#: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:859
 msgid "Show options menu"
 msgstr ""
 
-#: engines/mohawk/myst.cpp:601
+#: engines/mohawk/myst.cpp:600
 msgid "Drop page"
 msgstr ""
 
-#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1526
+#: engines/mohawk/myst.cpp:606 engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
 #: engines/wintermute/keymapper_tables.h:1722
 #: engines/wintermute/keymapper_tables.h:1745
@@ -7069,67 +7069,67 @@ msgstr ""
 msgid "You can't leave the library in the demo."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:156
+#: engines/mohawk/riven.cpp:155
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
 
-#: engines/mohawk/riven.cpp:157
+#: engines/mohawk/riven.cpp:156
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:169
+#: engines/mohawk/riven.cpp:168
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:510
+#: engines/mohawk/riven.cpp:509
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
-#: engines/mohawk/riven.cpp:872
+#: engines/mohawk/riven.cpp:871
 msgid "Move forward"
 msgstr "आगे बढ़ें"
 
-#: engines/mohawk/riven.cpp:878
+#: engines/mohawk/riven.cpp:877
 msgid "Move forward left"
 msgstr ""
 
-#: engines/mohawk/riven.cpp:882
+#: engines/mohawk/riven.cpp:881
 msgid "Move forward right"
 msgstr ""
 
-#: engines/mohawk/riven.cpp:886
+#: engines/mohawk/riven.cpp:885
 msgid "Move backwards"
 msgstr ""
 
-#: engines/mohawk/riven.cpp:892 engines/wintermute/keymapper_tables.h:161
+#: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
 msgstr "बांए मुड़िए"
 
-#: engines/mohawk/riven.cpp:898 engines/wintermute/keymapper_tables.h:167
+#: engines/mohawk/riven.cpp:897 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
 msgstr "दायें मुड़िए"
 
-#: engines/mohawk/riven.cpp:904
+#: engines/mohawk/riven.cpp:903
 msgid "Look up"
 msgstr "ऊपर देखें"
 
-#: engines/mohawk/riven.cpp:909
+#: engines/mohawk/riven.cpp:908
 msgid "Look down"
 msgstr "नीचे देखें"
 
-#: engines/mohawk/riven.cpp:915
+#: engines/mohawk/riven.cpp:914
 msgid "Play intro videos"
 msgstr ""
 
@@ -7331,36 +7331,36 @@ msgstr "चलें"
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:53
+#: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:54
+#: engines/neverhood/dialogs.cpp:53
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:58
+#: engines/neverhood/dialogs.cpp:57
 msgid "Scale the making of videos to full screen"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:59
+#: engines/neverhood/dialogs.cpp:58
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:63
+#: engines/neverhood/dialogs.cpp:62
 msgid "Repeat useful Willie's hint"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:64
+#: engines/neverhood/dialogs.cpp:63
 msgid "Repeat actual useful hint by Willie"
 msgstr ""
 
 #. I18N: NHC is a file extension
-#: engines/neverhood/dialogs.cpp:90
+#: engines/neverhood/dialogs.cpp:89
 msgid "NHC replacement:"
 msgstr ""
 
-#: engines/neverhood/dialogs.cpp:96
+#: engines/neverhood/dialogs.cpp:95
 msgid "<original>"
 msgstr ""
 
@@ -7879,17 +7879,17 @@ msgstr ""
 msgid "Expert"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:658
+#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:657
 msgid "Enable game-specific enhancements"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:659
+#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:658
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1055 engines/scumm/metaengine.cpp:676
+#: engines/scumm/dialogs.cpp:1055 engines/scumm/metaengine.cpp:675
 msgid "Enable the original GUI and Menu"
 msgstr "ओरिजिनल GUI और मेनू इनेबल करें"
 
@@ -7942,11 +7942,11 @@ msgid ""
 "you hear part of the previous music."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:667
+#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:666
 msgid "Load modded audio"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:668
+#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:667
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -8519,126 +8519,126 @@ msgstr ""
 msgid "Subtitle speed: "
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:363
+#: engines/scumm/metaengine.cpp:362
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:460
+#: engines/scumm/metaengine.cpp:459
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+ सपोर्ट नहीं कम्पाइल हुआ"
 
-#: engines/scumm/metaengine.cpp:484
+#: engines/scumm/metaengine.cpp:483
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 सपोर्ट नहीं कम्पाइल हुआ"
 
-#: engines/scumm/metaengine.cpp:604
+#: engines/scumm/metaengine.cpp:603
 msgid "Show Object Line"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:605
+#: engines/scumm/metaengine.cpp:604
 msgid "Show the names of objects at the bottom of the screen"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:613
+#: engines/scumm/metaengine.cpp:612
 msgid "Use NES Classic Palette"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:614
+#: engines/scumm/metaengine.cpp:613
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:622
+#: engines/scumm/metaengine.cpp:621
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:623
+#: engines/scumm/metaengine.cpp:622
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:631
+#: engines/scumm/metaengine.cpp:630
 msgid "Play simplified music"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:632
+#: engines/scumm/metaengine.cpp:631
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:640
+#: engines/scumm/metaengine.cpp:639
 msgid "Enable smooth scrolling"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:641
+#: engines/scumm/metaengine.cpp:640
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:649
+#: engines/scumm/metaengine.cpp:648
 msgid "Allow semi-smooth scrolling"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:650
+#: engines/scumm/metaengine.cpp:649
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:677
+#: engines/scumm/metaengine.cpp:676
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:685
 msgid "Enable low latency audio mode"
 msgstr "लो लेटेंसी ऑडियो मोड इनेबल करे"
 
-#: engines/scumm/metaengine.cpp:687
+#: engines/scumm/metaengine.cpp:686
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:696
+#: engines/scumm/metaengine.cpp:695
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:697
+#: engines/scumm/metaengine.cpp:696
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
 
-#: engines/scumm/metaengine.cpp:770
+#: engines/scumm/metaengine.cpp:769
 msgid "Down Left"
 msgstr "बांए मुड़िए"
 
-#: engines/scumm/metaengine.cpp:783
+#: engines/scumm/metaengine.cpp:782
 msgid "Down Right"
 msgstr "दायें मुड़िए"
 
-#: engines/scumm/metaengine.cpp:803
+#: engines/scumm/metaengine.cpp:802
 msgid "Up Left"
 msgstr "बाएँ"
 
-#: engines/scumm/metaengine.cpp:816
+#: engines/scumm/metaengine.cpp:815
 msgid "Up Right"
 msgstr "दाएँ"
 
-#: engines/scumm/metaengine.cpp:828
+#: engines/scumm/metaengine.cpp:827
 msgid "Switch weapon"
 msgstr ""
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:842
+#: engines/scumm/metaengine.cpp:841
 msgid "Win the bike fight cheat"
 msgstr ""
 
@@ -8873,11 +8873,11 @@ msgstr ""
 msgid "Failed to load temporary game state."
 msgstr ""
 
-#: engines/supernova/metaengine.cpp:38
+#: engines/supernova/metaengine.cpp:37
 msgid "Improved mode"
 msgstr ""
 
-#: engines/supernova/metaengine.cpp:39
+#: engines/supernova/metaengine.cpp:38
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
@@ -8932,11 +8932,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
 
-#: engines/sword2/metaengine.cpp:46
+#: engines/sword2/metaengine.cpp:45
 msgid "Show object labels"
 msgstr ""
 
-#: engines/sword2/metaengine.cpp:47
+#: engines/sword2/metaengine.cpp:46
 msgid "Show labels for objects on mouse hover"
 msgstr ""
 
@@ -8949,19 +8949,19 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
 
-#: engines/tetraedge/metaengine.cpp:33
+#: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
 msgstr ""
 
-#: engines/tetraedge/metaengine.cpp:34
+#: engines/tetraedge/metaengine.cpp:33
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
 
-#: engines/tetraedge/metaengine.cpp:44
+#: engines/tetraedge/metaengine.cpp:43
 msgid "Restore missing scenes"
 msgstr ""
 
-#: engines/tetraedge/metaengine.cpp:45
+#: engines/tetraedge/metaengine.cpp:44
 msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
 
