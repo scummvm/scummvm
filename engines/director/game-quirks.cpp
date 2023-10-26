@@ -131,7 +131,6 @@ static void quirkTrekGuideTNGWin() {
 
 
 static void quirkPipCatalog() {
-	// Pippin game that uses Unix path separators rather than Mac
 	g_director->_dirSeparator = '/';
 }
 
@@ -182,13 +181,19 @@ struct Quirk {
 	{ "wrath", Common::kPlatformWindows, &quirkLimit15FPS },
 
 	{ "hollywoodhigh", Common::kPlatformWindows, &quirkHollywoodHigh },
+
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
+
 	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhanWin },
 	{ "mcluhan", Common::kPlatformMacintosh, &quirkMcLuhanMac },
+
 	// Star Trek titles install fonts into the system
 	{ "trektech", Common::kPlatformWindows, &quirkTrekTechWin },
 	{ "trekguidetng", Common::kPlatformWindows, &quirkTrekGuideTNGWin },
+
+	// Pippin game that uses Unix path separators rather than Mac
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
+
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 
