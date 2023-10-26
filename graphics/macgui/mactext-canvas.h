@@ -38,8 +38,7 @@ struct MacFontRun {
 	uint16 palinfo2;
 	uint16 palinfo3;
 	uint32 fgcolor;
-	// to determine whether the next word is part of this one
-	bool wordContinuation;
+	bool wordContinuation = false; // FIXME: Removing this leads to illegal memory access
 	const Font *font;
 	MacWindowManager *wm;
 	Common::String link;  // Substitute to return when hover or click
@@ -50,7 +49,6 @@ struct MacFontRun {
 		palinfo1 = palinfo2 = palinfo3 = 0;
 		fgcolor = 0;
 		font = nullptr;
-		wordContinuation = false;
 	}
 
 	MacFontRun(MacWindowManager *wm_) {
@@ -59,20 +57,17 @@ struct MacFontRun {
 		palinfo1 = palinfo2 = palinfo3 = 0;
 		fgcolor = 0;
 		font = nullptr;
-		wordContinuation = false;
 	}
 
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
-		wordContinuation = false;
 	}
 
 	MacFontRun(MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 		font = font_;
-		wordContinuation = false;
 	}
 
 	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
@@ -184,6 +179,7 @@ struct MacTextLine {
 	int y = 0;
 	int charwidth = -1;
 	bool paragraphEnd = false;
+	bool wordContinuation = false;
 	int indent = 0; // in units
 	int firstLineIndent = 0; // in pixels
 	Common::String picfname;

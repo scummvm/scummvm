@@ -909,13 +909,14 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	ppos += *col;
 
 #if DEBUG
+	D(9, "MacTextCanvas::reshuffleParagraph: ppos: %d", ppos);
 	debugPrint("MacTextCanvas::reshuffleParagraph(1)");
 #endif
 
 	// Assemble all chunks to chop, combining the matching ones
 	Common::Array<MacFontRun> chunks;
 
-	for (int i = 0; i < end; i++) {
+	for (int i = start; i <= end; i++) {
 		for (auto &ch : _text[i].chunks) {
 			if (!chunks.size()) {
 				chunks.push_back(ch);
@@ -926,6 +927,9 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 					chunks.push_back(ch);
 			}
 		}
+
+		if (i != end && !_text[i].wordContinuation)
+			chunks.back().text += ' ';
 	}
 
 #if DEBUG
