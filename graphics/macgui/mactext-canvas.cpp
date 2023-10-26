@@ -610,14 +610,7 @@ void MacTextCanvas::render(int from, int to) {
 
 	render(from, to, 0);
 
-	for (uint i = 0; i < _text.size(); i++) {
-		debugN(9, "MacTextCanvas::render: %2d (firstInd: %d indent: %d) ", i, _text[i].firstLineIndent, _text[i].indent);
-
-		for (uint j = 0; j < _text[i].chunks.size(); j++)
-			_text[i].chunks[j].debugPrint();
-
-		debug(9, "");
-	}
+	debugPrint("MacTextCanvas::render");
 }
 
 int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
@@ -915,6 +908,10 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 
 	ppos += *col;
 
+#if DEBUG
+	debugPrint("MacTextCanvas::reshuffleParagraph(1)");
+#endif
+
 	// Assemble all chunks to chop, combining the matching ones
 	Common::Array<MacFontRun> chunks;
 
@@ -931,6 +928,14 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 		}
 	}
 
+#if DEBUG
+	debugN(9, "Chunks: ");
+	for (auto &ch : chunks)
+		ch.debugPrint();
+
+	debug(9, "");
+#endif
+
 	int curLine = start;
 	int indent = _text[curLine].indent;
 	int firstLineIndent = _text[curLine].firstLineIndent;
@@ -939,6 +944,10 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	for (int i = start; i <= end; i++) {
 		_text.remove_at(start);
 	}
+
+#if DEBUG
+	debugPrint("MacTextCanvas::reshuffleParagraph(2)");
+#endif
 
 	// And now read it
 	D(9, "start %d end %d", start, end);
@@ -952,6 +961,10 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 		_text[curLine].chunks.back().text.clear(); // We wil add it later
 		chopChunk(ch.text, &curLine, indent, _maxWidth);
 	}
+
+#if DEBUG
+	debugPrint("MacTextCanvas::reshuffleParagraph(3)");
+#endif
 
 	// Find new pos within paragraph after reshuffling
 	*row = start;
@@ -1122,14 +1135,14 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 }
 
 void MacFontRun::debugPrint() {
-	debugN("{%d}[%d (%d)] \"%s\" ", fontId, textSlant, text.size(), Common::toPrintable(text.encode()).c_str());
+	debugN("{%d}[%d (%d)] \"%s\" ", text.size(), fontId, textSlant, Common::toPrintable(text.encode()).c_str());
 }
 
 void MacTextCanvas::debugPrint(const char *prefix) {
 	for (uint i = 0; i < _text.size(); i++) {
 		if (prefix)
 			debugN("%s: ", prefix);
-		debugN("%2d ", i);
+		debugN("%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			_text[i].chunks[j].debugPrint();
