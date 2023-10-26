@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -6530,19 +6530,19 @@ msgstr "Далучыць рэжым махляваньня"
 msgid "Debug info and level selection becomes available"
 msgstr "Выбар роўню ды інфармацыя пра наладжваньне робяцца даступнымі"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 msgid "Move up"
 msgstr "Рухацца ўгару"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 msgid "Move down"
 msgstr "Рухацца ўніз"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 msgid "Move left"
 msgstr "Рухацца налева"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 msgid "Move right"
 msgstr "Рухацца направа"
 
@@ -7470,7 +7470,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Гульны перапынена. Націсьніце абы-якую клявішу для працягу."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 msgid "Open main menu"
 msgstr "Адкрыць галоўнае мэню"
 
@@ -7781,17 +7781,23 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Няпэўная назва файлу для захаваньня"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 msgid "Left Click Interact"
 msgstr "Інтэракцыя левым пстрыкам"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 msgid "Right Click Interact"
 msgstr "Інтэракцыя правым пстрыкам"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 msgid "Fast move modifier"
 msgstr "Вызначнік хуткага руху"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+#| msgid "Show map"
+msgid "Show/hide maze map"
+msgstr "Паказаць мапу"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"

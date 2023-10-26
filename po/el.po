@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2023-09-23 18:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7013,19 +7013,19 @@ msgstr "Ενεργοποίηση cheat"
 msgid "Debug info and level selection becomes available"
 msgstr "Γίνεται διαθέσιμη πληροφορία και επιλογή επιπέδου αποσφαλμάτωσης"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 msgid "Move up"
 msgstr "Κίνηση πάνω"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 msgid "Move down"
 msgstr "Κίνηση κάτω"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 msgid "Move left"
 msgstr "Κίνηση αριστερά"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
@@ -7944,7 +7944,7 @@ msgstr ""
 "Το παιχνίδι βρίσκεται σε παύση. Πατήστε οποιοδήποτε κουμπί για να συνεχίσετε."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 msgid "Open main menu"
 msgstr "Άνοιγμα κεντρικού μενού"
 
@@ -8275,17 +8275,23 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 msgid "Left Click Interact"
 msgstr "Αριστερό Κλικ για Αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 msgid "Right Click Interact"
 msgstr "Δεξί Κλικ για αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 msgid "Fast move modifier"
 msgstr "Ρύθμιση γρήγορης κίνησης"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+#| msgid "Show/hide keyboard"
+msgid "Show/hide maze map"
+msgstr "Προβολή/απόκρυψη πληκτρολογίου"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -12478,9 +12484,6 @@ msgstr ""
 
 #~ msgid "Show/hide debug console"
 #~ msgstr "Προβολή/απόκρυψη κονσόλας αποσφαλμάτωσης"
-
-#~ msgid "Show/hide keyboard"
-#~ msgstr "Προβολή/απόκρυψη πληκτρολογίου"
 
 #~ msgid "Scroll current touch screen view"
 #~ msgstr "Κύλιση τρέχουσας οθόνης επαφής"

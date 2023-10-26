@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -6528,22 +6528,22 @@ msgstr "Aktivera fuskläge"
 msgid "Debug info and level selection becomes available"
 msgstr "Felsökningsinformation och nivåval blir tilgängligt"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 #, fuzzy
 msgid "Move up"
 msgstr "Steg bakåt"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 #, fuzzy
 msgid "Move down"
 msgstr "Avbryt nedladdning"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 #, fuzzy
 msgid "Move left"
 msgstr "Flytta åt vänster"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 #, fuzzy
 msgid "Move right"
 msgstr "Flytta till höger"
@@ -7433,7 +7433,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 #, fuzzy
 msgid "Open main menu"
 msgstr "Åte~r~vänd till launcher"
@@ -7760,20 +7760,25 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Ogiltigt namn på sparfilen"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Vänsterklick"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Ett högerklick"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Snabbläge"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+msgid "Show/hide maze map"
+msgstr "Visa tangentbord"
 
 #: engines/nancy/metaengine.cpp:38
 #, fuzzy
@@ -11460,10 +11465,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Show/hide debug console"
 #~ msgstr "Visa / göm konsol"
-
-#, fuzzy
-#~ msgid "Show/hide keyboard"
-#~ msgstr "Visa tangentbord"
 
 #, fuzzy
 #~ msgid "Zoom in/out"

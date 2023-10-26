@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -6578,22 +6578,22 @@ msgstr "Activa o modo Helio."
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 #, fuzzy
 msgid "Move up"
 msgstr "Mover cara atrás"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 #, fuzzy
 msgid "Move down"
 msgstr "Cancelar descarga"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 #, fuzzy
 msgid "Move left"
 msgstr "Mover á esquerda"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 #, fuzzy
 msgid "Move right"
 msgstr "Mover á dereita"
@@ -7482,7 +7482,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 #, fuzzy
 msgid "Open main menu"
 msgstr "~V~olver ao Iniciador"
@@ -7807,20 +7807,25 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nome de ficheiro de gardado non válido"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 #, fuzzy
 msgid "Left Click Interact"
 msgstr "Botón primario"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "Botón secundario unha vez"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "Modo Rápido"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+msgid "Show/hide maze map"
+msgstr "Mostrar teclado"
 
 #: engines/nancy/metaengine.cpp:38
 #, fuzzy
@@ -11381,10 +11386,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Show/hide debug console"
 #~ msgstr "Mostrar/ocultar consola"
-
-#, fuzzy
-#~ msgid "Show/hide keyboard"
-#~ msgstr "Mostrar teclado"
 
 #, fuzzy
 #~ msgid "Zoom in/out"

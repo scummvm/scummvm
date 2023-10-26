@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6511,19 +6511,19 @@ msgstr "치트 모드 활성화"
 msgid "Debug info and level selection becomes available"
 msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 msgid "Move up"
 msgstr "위로 이동"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 msgid "Move down"
 msgstr "아래로 이동"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -7442,7 +7442,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "게임이 일시 중지되었습니다. 아무 키나 눌러 다시 시작합니다."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 msgid "Open main menu"
 msgstr "메인 메뉴 열기"
 
@@ -7751,17 +7751,23 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "잘못된 저장 파일 이름"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 msgid "Left Click Interact"
 msgstr "왼쪽 클릭 상호 작용"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 msgid "Right Click Interact"
 msgstr "오른쪽 클릭 상호 작용"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 msgid "Fast move modifier"
 msgstr "빠른 이동 변경"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+#| msgid "Show map"
+msgid "Show/hide maze map"
+msgstr "지도 보이기"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"

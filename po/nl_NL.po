@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-25 20:05+0000\n"
+"POT-Creation-Date: 2023-10-26 16:51+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6569,19 +6569,19 @@ msgstr "Valsspeel modus aangezet"
 msgid "Debug info and level selection becomes available"
 msgstr "Debug info en level selectie komen beschikbaar"
 
-#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:173
+#: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 msgid "Move up"
 msgstr "Beweeg omhoog"
 
-#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:179
+#: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:185
 msgid "Move down"
 msgstr "Beweeg omlaag"
 
-#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:225 engines/nancy/input.cpp:191
 msgid "Move left"
 msgstr "Beweeg naar links"
 
-#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:231 engines/nancy/input.cpp:197
 msgid "Move right"
 msgstr "Beweeg naar rechts"
 
@@ -7469,7 +7469,7 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:826
-#: engines/nancy/input.cpp:203
+#: engines/nancy/input.cpp:209
 msgid "Open main menu"
 msgstr "Open hoofd menu"
 
@@ -7776,17 +7776,23 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
-#: engines/nancy/input.cpp:159
+#: engines/nancy/input.cpp:165
 msgid "Left Click Interact"
 msgstr "Linker Klik Interactie"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:172
 msgid "Right Click Interact"
 msgstr "Rechter klik Interactie"
 
-#: engines/nancy/input.cpp:197
+#: engines/nancy/input.cpp:203
 msgid "Fast move modifier"
 msgstr "Snelle modus bewerker"
+
+#: engines/nancy/input.cpp:217
+#, fuzzy
+#| msgid "Show/hide keyboard"
+msgid "Show/hide maze map"
+msgstr "Toon/verberg toetsenbord"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -11543,9 +11549,6 @@ msgstr ""
 
 #~ msgid "Show/hide debug console"
 #~ msgstr "Toon/verberg debug console"
-
-#~ msgid "Show/hide keyboard"
-#~ msgstr "Toon/verberg toetsenbord"
 
 #~ msgid "Scroll current touch screen view"
 #~ msgstr "Scroll huidig touchscreen beeld"
