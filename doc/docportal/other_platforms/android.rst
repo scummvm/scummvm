@@ -62,13 +62,13 @@ Adding games
 
 1. Select **Add Game...** from the launcher.
 
-2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder which has the **<Add a new folder>** option. 
+2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder which has the **<Add a new folder>** option.
 
 .. figure:: ../images/android/browser-root.png
 
     Root folder with <Add a new folder> option
 
-3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder containing all your game folders. For example, **SD Card > ScummVMgames** 
+3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder containing all your game folders. For example, **SD Card > ScummVMgames**
 
 .. figure:: ../images/android/fs-root.png
 
@@ -77,8 +77,9 @@ Adding games
 .. figure:: ../images/android/fs-folder.png
 
     Android file browser selectable folder with **Use this folder** button
+
 4. Select **Use this folder**.
-5. Select **ALLOW** to give ScummVM permission to access the folder. 
+5. Select **ALLOW** to give ScummVM permission to access the folder.
 
 .. figure:: ../images/android/fs-permission.png
 
@@ -86,7 +87,7 @@ Adding games
 
 6. In the ScummVM file browser, double-tap to browse through your added folder. Add a game by selecting the sub-folder containing the game files, then tap **Choose**.
 
-To add more games, repeat Steps 1 and 6. 
+To add more games, repeat Steps 1 and 6.
 
 .. _addSAFpath:
 
@@ -98,7 +99,7 @@ To add more games, repeat Steps 1 and 6.
 Removing permissions
 ************************
 
-To remove any folder permissions granted to ScummVM, go to the **Global Options > Backend** tab. 
+To remove any folder permissions granted to ScummVM, go to the **Global Options > Backend** tab.
 
 .. figure:: ../images/android/gui-remove-permissions.png
 
@@ -108,7 +109,7 @@ To remove any folder permissions granted to ScummVM, go to the **Global Options 
 
     Dialog with list of permissions to remove
 
-If any permissions are removed in error, see :ref:`this note <addSAFpath>` for instructions to reinstate them. 
+If any permissions are removed in error, see :ref:`this note <addSAFpath>` for instructions to reinstate them.
 
 
 Controls
