@@ -59,7 +59,7 @@ private:
 	byte *_atariSampleBuffer = nullptr;
 	byte *_atariPhysicalSampleBuffer = nullptr;
 	byte *_atariLogicalSampleBuffer = nullptr;
-	size_t _atariSampleBufferSize;	// one buffer (logical/physical)
+	bool _downsample = false;
 
 	PlaybackState _playbackState = kPlaybackStopped;
 };

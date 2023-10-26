@@ -53,7 +53,6 @@
 #include "backends/graphics/atari/atari-graphics.h"
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
-#include "backends/mixer/null/null-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -314,14 +313,7 @@ void OSystem_Atari::initBackend() {
 	}
 #endif
 
-	long cookie;
-	if (Getcookie(C__SND, &cookie) == C_FOUND && (cookie & SND_16BIT)) {
-		_mixerManager = new AtariMixerManager();
-	} else {
-		warning("Mixer manager requires 16-bit stereo mode, disabling");
-		_mixerManager = new NullMixerManager();
-		_useNullMixer = true;
-	}
+	_mixerManager = new AtariMixerManager();
 	// Setup and start mixer
 	_mixerManager->init();
 
@@ -465,10 +457,7 @@ void OSystem_Atari::update() {
 		}
 	}
 
-	if (_useNullMixer)
-		((NullMixerManager *)_mixerManager)->update();
-	else
-		((AtariMixerManager *)_mixerManager)->update();
+	((AtariMixerManager *)_mixerManager)->update();
 }
 
 OSystem *OSystem_Atari_create() {

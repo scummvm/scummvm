@@ -53,7 +53,6 @@ private:
 
 	bool _videoInitialized = false;
 	bool _timerInitialized = false;
-	bool _useNullMixer = false;
 
 	int16 _vdi_handle;
 	int _vdi_width;

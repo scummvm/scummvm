@@ -249,12 +249,12 @@ stay black.
 Audio mixing
 ------------
 
-ScummVM works internally with 16-bit stereo samples. This mode is not available
-on the TT so a substitute solution must be used. This solution is called STFA
-by The Removers: http://removers.free.fr/softs/stfa.php. Install, activate STFA
-BIOS in the CPX, done. Now you have 16-bit DMA available, too but beware, it is
-also quite CPU demanding so very few games can actually make use of it (see the
-chapter about audio performance considerations below).
+ScummVM works internally with 16-bit stereo samples so on the TT a simple
+downsampling to 8-bit resolution is used. However there's still one piece
+missing - an XBIOS emulator (so ScummVM doesn't have to access hardware
+directly). There are two options (both available from
+https://mikrosk.github.io/xbios): STFA and X-SOUND, any of these will do. Or
+executing ScummVM in EmuTOS which contains the same routines as X-SOUND.
 
 
 Performance considerations/pitfalls
@@ -300,8 +300,8 @@ for MAME OPL only).
 
 On the TT, in most cases it makes sense to use ScummVM only if you own a
 native MIDI synthesizer (like mt32-pi: https://github.com/dwhinham/mt32-pi).
-MIDI emulation is out of question and STFA takes a good chunk of CPU time for
-downsampling to 8-bit resolution which could be utilized elsewhere.
+MIDI emulation is out of question and downsampling to 8-bit resolution takes
+a good chunk of CPU time which could be utilized elsewhere.
 
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

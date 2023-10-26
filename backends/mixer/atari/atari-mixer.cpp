@@ -78,14 +78,15 @@ void AtariMixerManager::init() {
 		error("Sound system is not available");
 	}
 
-	if (obtained.channels != 2 && obtained.format != AudioFormatSigned16MSB) {
-		error("Sound system currently supports only 16-bit signed stereo samples (big endian)");
+	if (obtained.channels != 2 ||
+		(obtained.format != AudioFormatSigned8 && obtained.format != AudioFormatSigned16MSB)) {
+		error("Sound system currently supports only 8/16-bit signed stereo samples");
 	}
 
 	_outputRate = obtained.frequency;
 
 	ConfMan.setInt("output_rate", _outputRate);
-	debug("setting %d Hz mixing frequency", _outputRate);
+	debug("setting %d Hz mixing frequency (%d-bit)", _outputRate, obtained.format == AudioFormatSigned8 ? 8 : 16);
 
 	_samples = 8192;
 	while (_samples * 16 > _outputRate * 2)
@@ -102,16 +103,20 @@ void AtariMixerManager::init() {
 
 	ConfMan.flushToDisk();
 
-	_atariSampleBufferSize = _samples * 4;
+	size_t atariSampleBufferSize = _samples * 4;
+	if (obtained.format == AudioFormatSigned8) {
+		atariSampleBufferSize /= 2;
+		_downsample = true;
+	}
 
-	_atariSampleBuffer = (byte*)Mxalloc(_atariSampleBufferSize * 2, MX_STRAM);
+	_atariSampleBuffer = (byte*)Mxalloc(atariSampleBufferSize * 2, MX_STRAM);
 	if (!_atariSampleBuffer)
 		error("Failed to allocate memory in ST RAM");
 
 	_atariPhysicalSampleBuffer = _atariSampleBuffer;
-	_atariLogicalSampleBuffer = _atariSampleBuffer + _atariSampleBufferSize;
+	_atariLogicalSampleBuffer = _atariSampleBuffer + atariSampleBufferSize;
 
-	Setbuffer(SR_PLAY, _atariSampleBuffer, _atariSampleBuffer + 2 * _atariSampleBufferSize);
+	Setbuffer(SR_PLAY, _atariSampleBuffer, _atariSampleBuffer + 2 * atariSampleBufferSize);
 
 	_samplesBuf = new uint8[_samples * 4];
 
@@ -178,8 +183,44 @@ void AtariMixerManager::update() {
 		processed = _mixer->mixCallback(_samplesBuf, _samples * 4);
 
 		if (processed > 0) {
-			memcpy(_atariPhysicalSampleBuffer, _samplesBuf, processed * 4);
-			memset(_atariPhysicalSampleBuffer + processed, 0, (_samples - processed) * 4);
+			if (!_downsample) {
+				memcpy(_atariPhysicalSampleBuffer, _samplesBuf, processed * 4);
+				memset(_atariPhysicalSampleBuffer + processed, 0, (_samples - processed) * 4);
+			} else {
+				// use the trick with move.b (a7)+,dx which skips two bytes at once
+				// basically supplying move.w (src)+,dx; asr.w #8,dx; move.b dx,(dst)+
+				__asm__ volatile(
+					"	move.l	%%a7,%%d0\n"
+					"	move.l	%0,%%a7\n"
+					"	moveq	#0x0f,%%d1\n"
+					"	and.l	%2,%%d1\n"
+					"	neg.l	%%d1\n"
+					"	lsr.l	#4,%2\n"
+					"	jmp		(2f,%%pc,%%d1.l*2)\n"
+					"1:	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"	move.b	(%%a7)+,(%1)+\n"
+					"2:	dbra	%2,1b\n"
+					"	move.l	%%d0,%%a7\n"
+					: // outputs
+					: "g"(_samplesBuf), "a"(_atariPhysicalSampleBuffer), "d"(processed * 4/2) // inputs
+					: "d0", "d1", "cc" AND_MEMORY
+				);
+				memset(_atariPhysicalSampleBuffer + processed, 0, (_samples - processed) * 4/2);
+			}
 			startPlayback(kPlayingFromPhysicalBuffer);
 		}
 	} else {
@@ -206,7 +247,44 @@ void AtariMixerManager::update() {
 		if (buf) {
 			processed = _mixer->mixCallback(_samplesBuf, _samples * 4);
 			if (processed > 0) {
-				memcpy(buf, _samplesBuf, processed * 4);
+				if (!_downsample) {
+					memcpy(buf, _samplesBuf, processed * 4);
+					memset(buf + processed, 0, (_samples - processed) * 4);
+				} else {
+					// use the trick with move.b (a7)+,dx which skips two bytes at once
+					// basically supplying move.w (src)+,dx; asr.w #8,dx; move.b dx,(dst)+
+					__asm__ volatile(
+						"	move.l	%%a7,%%d0\n"
+						"	move.l	%0,%%a7\n"
+						"	moveq	#0x0f,%%d1\n"
+						"	and.l	%2,%%d1\n"
+						"	neg.l	%%d1\n"
+						"	lsr.l	#4,%2\n"
+						"	jmp		(2f,%%pc,%%d1.l*2)\n"
+						"1:	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"	move.b	(%%a7)+,(%1)+\n"
+						"2:	dbra	%2,1b\n"
+						"	move.l	%%d0,%%a7\n"
+						: // outputs
+						: "g"(_samplesBuf), "a"(buf), "d"(processed * 4/2) // inputs
+						: "d0", "d1", "cc" AND_MEMORY
+					);
+					memset(buf + processed, 0, (_samples - processed) * 4/2);
+				}
 			} else {
 				stopPlayback(kPlaybackStopped);
 			}
