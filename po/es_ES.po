@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-25 20:05+0000\n"
-"PO-Revision-Date: 2023-10-20 16:10+0000\n"
+"PO-Revision-Date: 2023-10-26 09:07+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -952,56 +952,44 @@ msgid "Right"
 msgstr "Derecha"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "New kid"
 msgid "New Line"
-msgstr "Cambiar personaje"
+msgstr "Nueva línea"
 
 #: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Dialog"
 msgstr "Cerrar ventana"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Back-end"
+msgstr "Retroceso"
 
 #: gui/gui-manager.cpp:212
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
-msgstr "Borrar"
+msgstr "Borrar personaje"
 
 #: gui/gui-manager.cpp:218
 msgid "Go to end of line"
-msgstr ""
+msgstr "Ir al final de la línea"
 
 #: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Avanzar a la izquierda"
+msgstr "Mover cursor a la izquierda"
 
 #: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Avanzar a la derecha"
+msgstr "Mover cursor a la derecha"
 
 #: gui/gui-manager.cpp:241
 msgid "Go to start of line"
-msgstr ""
+msgstr "Ir al principio de la línea"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "Cortar"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
