@@ -168,7 +168,7 @@
 		AD_ENTRY1s("intro.stk", "80588ad3b5510bb44d3f40d6b07b81e7", 956328),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_NO_FLAGS,
+		GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
 		GUIO0()
 	},
 	kGameTypeAdibou2,
