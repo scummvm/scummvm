@@ -1145,8 +1145,8 @@ void MacFontRun::debugPrint() {
 void MacTextCanvas::debugPrint(const char *prefix) {
 	for (uint i = 0; i < _text.size(); i++) {
 		if (prefix)
-			debugN("%s: ", prefix);
-		debugN("%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
+			debugN(8, "%s: ", prefix);
+		debugN(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			_text[i].chunks[j].debugPrint();
@@ -1155,8 +1155,8 @@ void MacTextCanvas::debugPrint(const char *prefix) {
 	}
 
 	if (prefix)
-		debugN("%s: ", prefix);
-	debug("[done]");
+		debugN(8, "%s: ", prefix);
+	debug(8, "[done]");
 }
 
 } // End of namespace Graphics
