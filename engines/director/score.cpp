@@ -507,7 +507,7 @@ void Score::update() {
 
 	if (_vm->getVersion() >= 600) {
 		// _movie->processEvent(kEventBeginSprite);
-		// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
+		// TODO: Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
 		// _movie->processEvent(kEventPrepareFrame);
 		// TODO: Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
 	}
