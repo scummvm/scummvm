@@ -230,6 +230,12 @@ struct ScriptPatch {
 			21, "", "end repeat"},
 
 
+	{"cts", "Metric", kPlatformMacintosh, "CTS", kMovieScript, 0, DEFAULT_CAST_LIB,
+			307, "    alert(\"Sorry. No keyword was entered for this recipe.)", "    alert(\"Sorry. No keyword was entered for this recipe.\")"},
+	{"cts", "Imperial", kPlatformMacintosh, "CTS", kMovieScript, 0, DEFAULT_CAST_LIB,
+			307, "    alert(\"Sorry. No keyword was entered for this recipe.)", "    alert(\"Sorry. No keyword was entered for this recipe.\")"},
+
+
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };
 
