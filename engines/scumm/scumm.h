@@ -523,6 +523,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
 	friend class MacIndy3Gui;
+	friend class MacLoomGui;
 
 public:
 	/* Put often used variables at the top.
@@ -1402,7 +1403,6 @@ protected:
 
 	void mac_markScreenAsDirty(int x, int y, int w, int h);
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
-	void mac_drawLoomPracticeMode();
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();

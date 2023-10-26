@@ -174,8 +174,8 @@ public:
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
-	virtual void resetAfterLoad() {}
-	virtual void update(int delta) {}
+	virtual void resetAfterLoad() = 0;
+	virtual void update(int delta) = 0;
 
 	void updateWindowManager();
 
@@ -191,9 +191,15 @@ public:
 };
 
 class MacLoomGui : public MacGui {
+private:
+	Graphics::Surface *_practiceBox = nullptr;
+	int _practiceBoxX;
+	int _practiceBoxY;
+	int _practiceBoxNotes;
+
 public:
-	MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {}
-	~MacLoomGui() {}
+	MacLoomGui(ScummEngine *vm, Common::String resourceFile);
+	~MacLoomGui();
 
 	const Common::String name() const { return "Loom"; }
 
@@ -205,6 +211,10 @@ public:
 	bool handleMenu(int id, Common::String &name);
 
 	void showAboutDialog();
+
+	void resetAfterLoad();
+	void update(int delta);
+	bool handleEvent(Common::Event &event);
 };
 
 class MacIndy3Gui : public MacGui {

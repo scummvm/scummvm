@@ -2450,6 +2450,10 @@ Common::Error ScummEngine::go() {
 		if (!isPaused()) {
 			scummLoop(delta);
 
+			// The Mac GUI is updated after the engine has had a
+			// chance to update the screen. That way, it can draw
+			// things over the regular graphics, if needed.
+
 			if (_macGui)
 				_macGui->update(delta);
 

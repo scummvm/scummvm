@@ -126,60 +126,6 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
 
-void ScummEngine::mac_drawLoomPracticeMode() {
-	// In practice mode, the game shows the notes as they are being played.
-	// In the DOS version, this is drawn by script 27 but the Mac version
-	// just sets variables 50 and 54. The box is actually a verb, and it
-	// seems that setting variable 50 is pretty much equal to turning verb
-	// 53 on or off. I'm not sure what the purpose of variable 54 is.
-
-	int x = 216;
-	int y = 377;
-	int width = 62;
-	int height = 22;
-	int var = 50;
-
-	byte *ptr = (byte *)_macScreen->getBasePtr(x,  y);
-	int pitch = _macScreen->pitch;
-
-	int slot = getVerbSlot(53, 0);
-	VerbSlot *vs = &_verbs[slot];
-
-	vs->curmode = (VAR(var) != 0);
-	vs->curRect.left = x / 2;
-	vs->curRect.right = (x + width) / 2;
-	vs->curRect.top = y / 22;
-	vs->curRect.bottom = (y + height) / 2;
-
-	_macScreen->fillRect(Common::Rect(x, y, x + width, y + height), 0);
-
-	if (VAR(var)) {
-		for (int w = 1; w < width - 1; w++) {
-			ptr[w] = 7;
-			ptr[w + pitch * (height - 1)] = 7;
-		}
-
-		for (int h = 1; h < height - 1; h++) {
-			ptr[h * pitch] = 7;
-			ptr[h * pitch + width - 1] = 7;
-		}
-
-		// Draw the notes
-		int colors[] = { 4, 12, 14, 10, 11, 3, 9, 15 };
-
-		for (int i = 0; i < 4; i++) {
-			int note = (VAR(var) >> (4 * i)) & 0x0F;
-
-			if (note >= 2 && note <= 9) {
-				_charset->setColor(colors[note - 2]);
-				_charset->drawChar(14 + note, *_macScreen, i * 13 + x + 8, y + 4);
-			}
-		}
-	}
-
-	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
-}
-
 void ScummEngine::mac_drawIndy3TextBox() {
 	Graphics::Surface *s = ((MacIndy3Gui *)_macGui)->textArea();
 
@@ -869,6 +815,21 @@ MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle 
 // The Mac Loom GUI. This one is pretty simple.
 // ===========================================================================
 
+MacLoomGui::MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {
+	// The practice box can be moved, but this is its default position on
+	// a large screen, and it's not saved.
+
+	_practiceBoxX = 215;
+	_practiceBoxY = 376;
+}
+
+MacLoomGui::~MacLoomGui() {
+	if (_practiceBox) {
+		_practiceBox->free();
+		delete _practiceBox;
+	}
+}
+
 const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
@@ -1207,6 +1168,208 @@ void MacLoomGui::showAboutDialog() {
 	delete loom;
 
 	delete window;
+}
+
+void MacLoomGui::resetAfterLoad() {
+	reset();
+
+	// We used to use verb 53 for the Loom practice box, and while it's
+	// still the verb we pretend to use when clicking on it we no longer
+	// use the actual verb slot.
+	//
+	// Apparently the practice box isn't restored on saving, so it seems
+	// that savegame compatibility isn't broken. And if it is, it happened
+	// shortly after the savegame version was increased for other reasons,
+	// so the damage would be very limited.
+
+	for (int i = 0; i < _vm->_numVerbs; i++) {
+		if (_vm->_verbs[i].verbid == 53)
+			_vm->killVerb(i);
+	}
+}
+
+void MacLoomGui::update(int delta) {
+	// Unlike the PC version, the Macintosh version of Loom appears to
+	// hard-code the drawing of the practice mode box. This is handled by
+	// script 27 in both versions, but whereas the PC version draws the
+	// notes, the Mac version just sets variables 50 and 54.
+	//
+	// In this script, the variables are set to the same value but it
+	// appears that only variable 50 is cleared when the box is supposed to
+	// disappear. I don't know what the purpose of variable 54 is.
+	//
+	// Variable 128 is the game difficulty:
+	//
+	// 0 - Practice
+	// 1 - Standard
+	// 2 - Expert
+	//
+	// Note that the practice mode box is never inscribed on the "Mac
+	// screen" surface. It's drawn last on every update, so it floats
+	// above everything else.
+
+	int notes = _vm->VAR(50);
+
+	if (_vm->VAR(128) == 0) {
+		if (notes) {
+			int w = 64;
+			int h = 24;
+
+			if (!_practiceBox) {
+				debug(1, "MacLoomGui: Creating practice mode box");
+
+				_practiceBox = new Graphics::Surface();
+				_practiceBox->create(w, h, Graphics::PixelFormat
+::createFormatCLUT8());
+
+				_practiceBox->fillRect(Common::Rect(0, 0, 62, 22), kBlack);
+
+				_practiceBox->hLine(2, 1, w - 3, kLightGray);
+				_practiceBox->hLine(2, h - 2, w - 3, kLightGray);
+				_practiceBox->vLine(1, 2, h - 3, kLightGray);
+				_practiceBox->vLine(w - 2, 2, h - 3, kLightGray);
+				_practiceBoxNotes = 0;
+			}
+
+			if (notes != _practiceBoxNotes) {
+				debug(1, "MacLoomGui: Drawing practice mode notes");
+
+				_practiceBoxNotes = notes;
+
+				const Graphics::Font *font = getFont(kLoomFontLarge);
+				Color colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
+
+				for (int i = 0; i < 4; i++) {
+					int note = (notes >> (4 * i)) & 0x0F;
+
+					if (note >= 2 && note <= 9)
+						font->drawChar(_practiceBox, 14 + note, 9 + i * 13, 5, colors[note - 2]);
+				}
+			}
+
+			_system->copyRectToScreen(_practiceBox->getBasePtr(0, 0), _practiceBox->pitch, _practiceBoxX, _practiceBoxY, w, h);
+		} else {
+			if (_practiceBox) {
+				debug(1, "MacLoomGui: Deleting practice mode box");
+
+				int w = _practiceBox->w;
+				int h = _practiceBox->h;
+
+				_practiceBox->free();
+				delete _practiceBox;
+				_practiceBox = nullptr;
+
+				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxX, _practiceBoxY), _surface->pitch, _practiceBoxX, _practiceBoxY, w, h);
+			}
+		}
+	}
+}
+
+bool MacLoomGui::handleEvent(Common::Event &event) {
+	if (MacGui::handleEvent(event))
+		return true;
+
+	if (!_practiceBox || _vm->_userPut <= 0)
+		return false;
+
+	// Perhaps the silliest feature in Mac Loom, that literally only one
+	// person has ever asked for: You can drag the Loom practice box.
+	//
+	// The game will freeze while the button is held down, but that's how
+	// the original acted as well. Should sounds keep playing? I don't know
+	// if that situation can even occur. I think it's nicer to let them
+	// play if it does.
+
+	if (event.type != Common::EVENT_LBUTTONDOWN)
+		return false;
+
+	Common::Rect bounds;
+
+	bounds.left = _practiceBoxX;
+	bounds.top = _practiceBoxY;
+	bounds.right = _practiceBoxX + _practiceBox->w;
+	bounds.bottom = _practiceBoxY + _practiceBox->h;
+
+	if (!bounds.contains(event.mouse))
+		return false;
+
+	int clickX = event.mouse.x;
+	int clickY = event.mouse.y;
+	bool dragMode = false;
+
+	while (!_vm->shouldQuit()) {
+		bool dragging = false;
+		int dragX;
+		int dragY;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONUP:
+				if (!dragMode)
+					_vm->runInputScript(kVerbClickArea, 53, 1);
+				return true;
+
+			case Common::EVENT_MOUSEMOVE:
+				if (ABS(event.mouse.x - clickX) >= 3 || ABS(event.mouse.y - clickY) >= 3)
+					dragMode = true;
+
+				if (dragMode) {
+					dragging = true;
+					dragX = event.mouse.x;
+					dragY = event.mouse.y;
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (dragging) {
+			// How much has the mouse moved since the initial
+			// click? Calculate new position from that.
+
+			int newX = bounds.left + (dragX - clickX);
+			int newY = bounds.top + (dragY - clickY);
+
+			// The box has to stay completely inside the screen.
+			// Also, things get weird if you move the box into the
+			// menu hotzone, so don't allow that.
+
+			newX = CLIP(newX, 0, _surface->w - _practiceBox->w);
+			newY = CLIP(newY, 23, _surface->h - _practiceBox->h);
+
+			// For some reason, X coordinates can only change in
+			// increments of 16 pixels.
+
+			if (!_vm->_enableEnhancements)
+				newX &= ~0xF;
+
+			if (newX != _practiceBoxX || newY != _practiceBoxY) {
+				int w = _practiceBox->w;
+				int h = _practiceBox->h;
+
+				// The old and new rect will almost certainly
+				// overlap, so it's possible to optimize this.
+				// But increasing the delay in the event loop
+				// was a better optimization than removing one
+				// of the copyRectToScreen() calls completely,
+				// so I doubt it's worth it.
+
+				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxX, _practiceBoxY), _surface->pitch, _practiceBoxX, _practiceBoxY, w, h);
+				_system->copyRectToScreen(_practiceBox->getBasePtr(0, 0), _practiceBox->pitch, newX, newY, w, h);
+
+				_practiceBoxX = newX;
+				_practiceBoxY = newY;
+			}
+
+			_system->delayMillis(25);
+			_system->updateScreen();
+		}
+	}
+
+	return false;
 }
 
 // ===========================================================================
