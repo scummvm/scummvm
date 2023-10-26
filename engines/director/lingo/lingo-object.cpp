@@ -264,6 +264,10 @@ Common::String Lingo::normalizeXLibName(Common::String name) {
 	} else if (platform == Common::kPlatformWindows) {
 		if (name.hasSuffixIgnoreCase(".dll"))
 			name = name.substr(0, name.size() - 4);
+		if (name.hasSuffixIgnoreCase(".x16"))
+			name = name.substr(0, name.size() - 4);
+		if (name.hasSuffixIgnoreCase(".x32"))
+			name = name.substr(0, name.size() - 4);
 	}
 
 	name.trim();
