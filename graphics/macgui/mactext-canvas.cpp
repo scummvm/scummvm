@@ -908,6 +908,8 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 
 	ppos += *col;
 
+	bool paragraphEnd = _text[end].paragraphEnd;
+
 #if DEBUG
 	D(9, "MacTextCanvas::reshuffleParagraph: ppos: %d", ppos);
 	debugPrint("MacTextCanvas::reshuffleParagraph(1)");
@@ -969,6 +971,9 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 #if DEBUG
 	debugPrint("MacTextCanvas::reshuffleParagraph(3)");
 #endif
+
+	// Restore the paragraph marker
+	_text[curLine].paragraphEnd = paragraphEnd;
 
 	// Find new pos within paragraph after reshuffling
 	*row = start;
