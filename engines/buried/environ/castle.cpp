@@ -175,7 +175,7 @@ private:
 	bool _timerStarted;
 	//uint32 _startTime;
 	bool _walkthrough;
-}; 
+};
 
 ExplodingWallSafeDistance::ExplodingWallSafeDistance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
