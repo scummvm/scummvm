@@ -38,7 +38,6 @@ struct MacFontRun {
 	uint16 palinfo2;
 	uint16 palinfo3;
 	uint32 fgcolor;
-	bool wordContinuation = false; // FIXME: Removing this leads to illegal memory access
 	const Font *font;
 	MacWindowManager *wm;
 	Common::String link;  // Substitute to return when hover or click
