@@ -318,7 +318,6 @@ void MacText::setMaxWidth(int maxWidth) {
 
 	// restore the cursor pos
 	_cursorRow = 0;
-	warning("FIXME, bad design");
 	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
 		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
 		_cursorRow++;
@@ -1721,7 +1720,6 @@ void MacText::insertTextFromClipboard() {
 		_cursorRow = start;
 	}
 
-	warning("FIXME, bad design");
 	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
 		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
 		_cursorRow++;
