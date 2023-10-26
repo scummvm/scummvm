@@ -22,7 +22,8 @@
 /*************************************
  *
  * USED IN:
- * Chop Suey (win)
+ * Chop Suey (Win)
+ * Comedians (Mac)
  *
  *************************************/
 
@@ -110,7 +111,7 @@ void MemoryXObj::m_purge(int nargs) {
 }
 
 void MemoryXObj::m_getVM(int nargs) {
-	g_lingo->push(Datum(0)); // At least Chop Suey Win requires 0 bytes Virtual Memory for running
+	g_lingo->push(Datum(0)); // Chop Suey (Win) and Comedians (Mac) require Virtual Memory to be disabled
 }
 
 } // End of namespace Director
