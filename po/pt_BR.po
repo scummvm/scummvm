@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-26 23:16+0000\n"
-"PO-Revision-Date: 2023-10-19 03:41+0000\n"
+"PO-Revision-Date: 2023-10-28 00:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -957,56 +957,44 @@ msgid "Right"
 msgstr "Direita"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "New kid"
 msgid "New Line"
-msgstr "Novo personagem"
+msgstr "Nova Linha"
 
 #: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Dialog"
-msgstr "Fechar caixa de diálogo"
+msgstr "Fechar Diálogo"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Backend"
+msgstr "Retroceder"
 
 #: gui/gui-manager.cpp:212
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
-msgstr "Excluir caractere"
+msgstr "Apagar Caractere"
 
 #: gui/gui-manager.cpp:218
 msgid "Go to end of line"
-msgstr ""
+msgstr "Ir para o fim da linha"
 
 #: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Mover para esquerda"
+msgstr "Mover cursor para esquerda"
 
 #: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Mover para direita"
+msgstr "Mover cursor para direita"
 
 #: gui/gui-manager.cpp:241
 msgid "Go to start of line"
-msgstr ""
+msgstr "Ir para o início da linha"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "Recortar"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -8013,10 +8001,8 @@ msgid "Fast move modifier"
 msgstr "Modificador de movimento rápido"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Exibir/ocultar teclado"
+msgstr "Exibir/ocultar mapa do labirinto"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
