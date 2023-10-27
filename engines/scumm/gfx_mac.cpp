@@ -30,6 +30,8 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "image/pict.h"
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/gfx_mac.h"
@@ -593,15 +595,47 @@ bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 
 Graphics::Surface *MacGui::loadPict(int id) {
 	Common::MacResManager resource;
+	Graphics::Surface *s = nullptr;
 
 	resource.open(_resourceFile);
 
 	Common::SeekableReadStream *res = resource.getResource(MKTAG('P', 'I', 'C', 'T'), id);
 
-	// The PICT decoder is mainly for v2 pictures, so at least for now we
-	// don't use it. The images we need to decode are simple bitmaps
-	// anyway.
+	// IQ logos are PICT v2
+	if (id == 4000 || id == 4001) {
+		Image::PICTDecoder pict;
+		if (pict.loadStream(*res)) {
+			const Graphics::Surface *s1 = pict.getSurface();
+			const byte *palette = pict.getPalette();
 
+			s = new Graphics::Surface();
+			s->create(s1->w, s1->h, Graphics::PixelFormat::createFormatCLUT8());
+
+			// The palette doesn't match the game's palette at all, so remap
+			// the colors to the custom area of the palette. It's assumed that
+			// only one such picture will be loaded at a time.
+
+			if (palette) {
+				_system->getPaletteManager()->setPalette(palette, kCustomColor, pict.getPaletteColorCount());
+
+				for (int y = 0; y < s->h; y++) {
+					for (int x = 0; x < s->w; x++) {
+						s->setPixel(x, y, kCustomColor + s1->getPixel(x, y));
+					}
+				}
+			} else
+				s->copyFrom(*s1);
+
+		}
+	} else {
+		s = decodePictV1(res);
+	}
+
+	resource.close();
+	return s;
+}
+
+Graphics::Surface *MacGui::decodePictV1(Common::SeekableReadStream *res) {
 	uint16 size = res->readUint16BE();
 
 	uint16 top = res->readUint16BE();
@@ -621,10 +655,10 @@ Graphics::Surface *MacGui::loadPict(int id) {
 		byte opcode = res->readByte();
 		byte value;
 		int x1, x2, y1, y2;
-		int rowBytes;
 
 		int x = 0;
 		int y = 0;
+		bool compressed = false;
 
 		switch (opcode) {
 		case 0x01: // clipRgn
@@ -638,6 +672,10 @@ Graphics::Surface *MacGui::loadPict(int id) {
 			break;
 
 		case 0x99: // PackBitsRgn
+			compressed = true;
+			// Fall through
+
+		case 0x91: // BitsRgn
 			res->skip(2);	// Skip rowBytes
 
 			y1 = res->readSint16BE();
@@ -650,37 +688,58 @@ Graphics::Surface *MacGui::loadPict(int id) {
 			res->skip(2);	// Skip mode
 			res->skip(res->readUint16BE() - 2);	// Skip maskRgn
 
-			for (y = y1; y < y2 && y < height; y++) {
-				x = x1;
-				size = res->readByte();
+			if (!compressed) {
+				for (y = y1; y < y2 && y < height; y++) {
+					byte b = res->readByte();
+					byte bit = 0x80;
 
-				while (size > 0) {
-					byte count = res->readByte();
-					size--;
+					for (x = x1; x < x2 && x < width; x++) {
+						if (b & bit)
+							s->setPixel(x, y, kBlack);
+						else
+							s->setPixel(x, y, kWhite);
 
-					bool repeat;
+						bit >>= 1;
 
-					if (count >= 128) {
-						// Repeat value
-						count = 256 - count;
-						repeat = true;
-						value = res->readByte();
-						size--;
-					} else {
-						// Copy values
-						repeat = false;
+						if (bit == 0) {
+							b = res->readByte();
+							bit = 0x80;
+						}
 					}
+				}
+			} else {
+				for (y = y1; y < y2 && y < height; y++) {
+					x = x1;
+					size = res->readByte();
 
-					for (int j = 0; j <= count; j++) {
-						if (!repeat) {
+					while (size > 0) {
+						byte count = res->readByte();
+						size--;
+
+						bool repeat;
+
+						if (count >= 128) {
+							// Repeat value
+							count = 256 - count;
+							repeat = true;
 							value = res->readByte();
 							size--;
+						} else {
+							// Copy values
+							repeat = false;
 						}
-						for (int k = 7; k >= 0 && x < x2 && x < width; k--, x++) {
-							if (value & (1 << k))
-								s->setPixel(x, y, kBlack);
-							else
-								s->setPixel(x, y, kWhite);
+
+						for (int j = 0; j <= count; j++) {
+							if (!repeat) {
+								value = res->readByte();
+								size--;
+							}
+							for (int k = 7; k >= 0 && x < x2 && x < width; k--, x++) {
+								if (value & (1 << k))
+									s->setPixel(x, y, kBlack);
+								else
+									s->setPixel(x, y, kWhite);
+							}
 						}
 					}
 				}
@@ -697,12 +756,10 @@ Graphics::Surface *MacGui::loadPict(int id) {
 			break;
 
 		default:
-			debug("Unknown opcode: 0x%02x", opcode);
+			debug("decodePictV1: Unknown opcode: 0x%02x", opcode);
 			break;
 		}
 	}
-
-	resource.close();
 
 	return s;
 }
@@ -713,14 +770,192 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	if (id == 0)
 		return true;
 
+	// Originally, the menu bar would still be visible. I don't know how
+	// to replicate that effect.
+
 	_windowManager->getMenu()->closeMenu();
 
-	if (id == 100) {
+	switch (id) {
+	case 100:
 		showAboutDialog();
 		return true;
+
+	// If we ever need to handle the Edit menu, do it here.
 	}
 
 	return false;
+}
+
+// For now, this just draws the dialog. It doesn't create any widgets, and it
+// doesn't manipulate any data.
+
+Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len, Common::StringArray substitutions) {
+	Common::String str;
+
+	for (int i = 0; i < len; i++) {
+		byte s = res->readByte();
+
+		if (s == '^' && i < len - 1) {
+			i++;
+			uint nr = res->readByte() - '0';
+
+			if (nr < substitutions.size())
+				str += substitutions[nr];
+			else
+				str += "?";
+		} else
+			str += s;
+	}
+
+	return str;
+}
+
+void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int defaultButton) {
+	Common::MacResManager resource;
+	Common::SeekableReadStream *res;
+
+	resource.open(_resourceFile);
+
+	Common::Rect bounds;
+
+	res = resource.getResource(MKTAG('D', 'L', 'O', 'G'), dialogId);
+	if (res) {
+		bounds.top = res->readUint16BE();
+		bounds.left = res->readUint16BE();
+		bounds.bottom = res->readUint16BE();
+		bounds.right = res->readUint16BE();
+
+		// Grow the window to include the outer bounds
+		bounds.grow(8);
+
+		// Compensate for the original not drawing the game at the very top of
+		// the screen.
+		bounds.translate(0, -40);
+	} else {
+		bounds.top = 0;
+		bounds.left = 0;
+		bounds.bottom = 86;
+		bounds.right = 340;
+
+		bounds.translate(86, 88);
+	}
+
+	SimpleWindow *window = openWindow(bounds);
+	Graphics::Surface *s = window->innerSurface();
+
+	res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
+
+	if (res) {
+		int numItems = res->readUint16BE() + 1;
+
+		const Graphics::Font *font = getFont(kSystemFont);
+
+		for (int i = 0; i < numItems; i++) {
+			res->skip(4);	// Placeholder for handle or procedure pointer
+
+			Common::Rect r;
+			int x, y;
+
+			r.top = res->readUint16BE();
+			r.left = res->readUint16BE();
+			r.bottom = res->readUint16BE();
+			r.right = res->readUint16BE();
+
+			r.translate(2, 2);
+
+			int type = res->readByte();
+			int len = res->readByte();
+
+			Common::String str;
+			Graphics::Surface *pict;
+
+			switch (type & 0x7F) {
+			case 4:
+				// Button
+				str = getDialogString(res, len, substitutions);
+
+#if 0
+				// This would be how to draw a default button
+				r.grow(4);
+				Graphics::drawRoundRect(r, 7, kBlack, true, SimpleWindow::plotPixel, window);
+				r.grow(-3);
+				Graphics::drawRoundRect(r, 5, kWhite, true, SimpleWindow::plotPixel, window);
+				r.grow(-1);
+#endif
+
+				Graphics::drawRoundRect(r, 5, kBlack, false, SimpleWindow::plotPixel, window);
+				font->drawString(s, str, r.left, r.top + 2, r.width(), kBlack, Graphics::kTextAlignCenter);
+				break;
+
+			case 5:
+				// Checkbox
+				str = getDialogString(res, len, substitutions);
+
+				x = r.left + 2;
+				y = r.bottom - r.height() / 2 - 6;
+
+				s->hLine(x, y, x + 11, kBlack);
+				s->hLine(x, y + 11, x + 11, kBlack);
+				s->vLine(x, y + 1, y + 10, kBlack);
+				s->vLine(x + 11, y + 1, y + 10, kBlack);
+				s->drawLine(x + 1, y + 1, x + 10, y + 10, kBlack);
+				s->drawLine(x + 1, y + 10, x + 10, y + 1, kBlack);
+
+				font->drawString(s, str, x + 16, y - 2, r.width() - 16, kBlack);
+				break;
+
+			case 8:
+				// Static text
+				str = getDialogString(res, len, substitutions);
+				font->drawString(s, str, r.left + 1, r.top, r.width(), kBlack);
+				break;
+
+			case 64:
+				// Picture
+				pict = loadPict(res->readUint16BE());
+				if (pict) {
+					window->drawSprite(pict, r.left, r.top);
+					pict->free();
+					delete pict;
+				}
+				break;
+
+			default:
+				warning("Unknown item type %d", type);
+				res->skip(len);
+				break;
+			}
+
+			if (len & 1)
+				res->skip(1);
+		}
+	}
+
+	resource.close();
+
+	window->show();
+
+	bool done = false;
+
+	while (!done && !_vm->shouldQuit()) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				done = true;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(10);
+		_system->updateScreen();
+	}
+
+	delete window;
 }
 
 bool MacGui::handleEvent(Common::Event &event) {
@@ -880,12 +1115,11 @@ bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
 
 void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) {
 	Common::MacResManager resource;
+	Graphics::MacCursor macCursor;
 
 	resource.open(_resourceFile);
 
-	Common::MacResIDArray resArray = resource.getResIDArray(MKTAG('C', 'U', 'R', 'S'));
-	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), resArray[0]);
-	Graphics::MacCursor macCursor;
+	Common::SeekableReadStream *curs = resource.getResource(MKTAG('C', 'U', 'R', 'S'), 1000);
 
 	if (macCursor.readFromStream(*curs)) {
 		width = macCursor.getWidth();
@@ -897,12 +1131,61 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 		_windowManager->replaceCursor(Graphics::kMacCursorCustom, &macCursor);
 	}
 
+	resource.close();
 	delete curs;
 }
 
 bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
+
+	int dialogId = -1;
+	int defaultButton = -1;
+	Common::StringArray substitutions;
+
+	switch (id) {
+	case 200:
+		// Open. Uses standard Macintosh open file dialog
+		debug("MacLoomGui: Open");
+		break;
+
+	case 201:
+		// Save. Uses standard Macintosh save file dialog
+		debug("MacLoomGui: Save");
+		break;
+
+	case 202:
+		// Restart. Standard Ok/Cancel dialog.
+		dialogId = 502;
+		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
+		break;
+
+	case 203:
+		// Pause game
+		break;
+
+	case 204:
+		// Options
+		dialogId = 1000;
+		substitutions.push_back(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+		break;
+
+	case 205:
+		// Quit. Standard Ok/Cancel dialog.
+		dialogId = 502;
+		substitutions.push_back("Are you sure you want to quit?");
+		break;
+
+	default:
+		warning("Unknown menu command: %d", id);
+		break;
+	}
+
+	if (dialogId != -1) {
+		drawDialog(dialogId, substitutions, defaultButton);
+		return true;
+	}
+
 	return false;
 }
 
@@ -2388,6 +2671,63 @@ void MacIndy3Gui::printCharToTextArea(int chr, int x, int y, int color) {
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
+
+	int dialogId = -1;
+	int defaultButton = -1;
+	Common::StringArray substitutions;
+
+	switch (id) {
+	case 200:
+		// Open. Does not work, and might not make sense.
+		// dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001;
+		debug("MacIndy3Gui: Open");
+		break;
+
+	case 201:
+		// Save. Does not work, and might not make sense.
+		// dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001;
+		debug("MacIndy3Gui: Save");
+		break;
+
+	case 202:
+		// Restart. Standard Ok/Cancel dialog.
+		dialogId = 502;
+		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
+		break;
+
+	case 203:
+		// Pause game
+		break;
+
+	case 204:
+		// IQ Points
+		dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002;
+		substitutions.push_back(Common::String::format("%d", _vm->VAR(244)));
+		substitutions.push_back(Common::String::format("%d", _vm->VAR(245)));
+		break;
+
+	case 205:
+		// Options
+		dialogId = 1000;
+		substitutions.push_back(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+		break;
+
+	case 206:
+		// Quit. Standard Ok/Cancel dialog.
+		dialogId = 502;
+		substitutions.push_back("Are you sure you want to quit?");
+		break;
+
+	default:
+		debug("MacIndy3Gui::handleMenu: Unknown menu command: %d", id);
+		break;
+	}
+
+	if (dialogId != -1) {
+		drawDialog(dialogId, substitutions, defaultButton);
+		return true;
+	}
+
 	return false;
 }
 
