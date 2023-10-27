@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-26 23:16+0000\n"
-"PO-Revision-Date: 2023-10-26 09:07+0000\n"
+"PO-Revision-Date: 2023-10-27 09:45+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8056,10 +8056,8 @@ msgid "Fast move modifier"
 msgstr "Modificador de movimiento rápido"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Mostrar/ocultar teclado"
+msgstr "Mostrar/ocultar mapa del laberinto"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
