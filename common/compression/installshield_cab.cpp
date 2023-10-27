@@ -371,14 +371,17 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 		stream->read(src, entry.compressedSize);
 	}
 
-	bool result = inflateZlibInstallShield(dst, entry.uncompressedSize, src, entry.compressedSize);
-	free(src);
-
-	if (!result) {
-		warning("failed to inflate CAB file '%s'", name.c_str());
-		free(dst);
-		return nullptr;
+	// Entries with size 0 are valid, and do not need to be inflated
+	if (entry.compressedSize != 0) {
+		if (!inflateZlibInstallShield(dst, entry.uncompressedSize, src, entry.compressedSize)) {
+			warning("failed to inflate CAB file '%s'", name.c_str());
+			free(dst);
+			free(src);
+			return nullptr;
+		}
 	}
+
+	free(src);
 
 	return new MemoryReadStream(dst, entry.uncompressedSize, DisposeAfterUse::YES);
 }
