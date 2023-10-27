@@ -346,6 +346,14 @@ void Scene::setNoHeldItem() {
 	}
 }
 
+byte Scene::hasItem(int16 id) const {
+	if (getHeldItem() == id) {
+		return g_nancy->_true;
+	} else {
+		return _flags.items[id];
+	}
+}
+
 void Scene::installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID) {
 	InventorySoundOverride newOverride;
 

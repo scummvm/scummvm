@@ -130,7 +130,7 @@ public:
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
 	void setNoHeldItem();
-	byte hasItem(int16 id) const { return _flags.items[id] || getHeldItem() == id; }
+	byte hasItem(int16 id) const;
 	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
 	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
 
