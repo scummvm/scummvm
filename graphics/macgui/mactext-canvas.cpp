@@ -981,7 +981,7 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	while (ppos > getLineCharWidth(*row, true)) {
 		ppos -= getLineCharWidth(*row, true);
 
-		if (*row == _text.size() - 1)
+		if (*row == (int)_text.size() - 1)
 			break;
 
 		(*row)++;
