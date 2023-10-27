@@ -62,7 +62,11 @@ void Overlay::handleInput(NancyInput &input) {
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_state = kActionTrigger;
-				input.eatMouseInput(); // Make sure nothing else gets triggered
+				if (g_nancy->getGameType() >= kGameTypeNancy3) {
+					// Make sure nothing else gets triggered
+					// This is nancy3 and up, since we actually want to trigger other records in nancy2 (e.g. scene 2541)
+					input.eatMouseInput();
+				}
 			}
 		}
 	}
@@ -178,6 +182,7 @@ void Overlay::execute() {
 
 							if (_enableHotspot == kPlayOverlayWithHotspot) {
 								_hotspot = _screenPosition;
+								_hasHotspot = true;
 							}
 
 							break;
