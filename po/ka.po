@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-26 23:16+0000\n"
-"PO-Revision-Date: 2023-10-26 08:41+0000\n"
+"PO-Revision-Date: 2023-10-28 00:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -1475,7 +1475,7 @@ msgstr "გაწელვის რეჟიმი:"
 
 #: gui/options.cpp:1605
 msgid "Scaler:"
-msgstr ""
+msgstr "მასშტაბი:"
 
 #: gui/options.cpp:1619
 msgid "Shader:"
@@ -3348,7 +3348,7 @@ msgstr "C64 აუდიოემულატორი"
 
 #: backends/cloud/cloudmanager.cpp:156
 msgid "<syncing...>"
-msgstr ""
+msgstr "<სინქრონიზაცია...>"
 
 #: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
@@ -4744,7 +4744,7 @@ msgstr "მიმდინარე ვიდეორეჟიმი:"
 
 #: backends/platform/wii/options.cpp:55
 msgid "Double-strike"
-msgstr ""
+msgstr "ორმაგი"
 
 #: backends/platform/wii/options.cpp:59
 msgid "Horizontal underscan:"
@@ -5601,7 +5601,7 @@ msgstr ""
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk/Interact"
-msgstr ""
+msgstr "საუბარი/ურთიერთობა"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -5866,7 +5866,7 @@ msgstr ""
 
 #: engines/glk/comprehend/game.cpp:321
 msgid "Savegame"
-msgstr ""
+msgstr "თამაშის შენახვა"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
@@ -5952,7 +5952,7 @@ msgstr "გამოცდა"
 
 #: engines/grim/grim.cpp:497 engines/grim/grim.cpp:593
 msgid "Use/Talk"
-msgstr ""
+msgstr "გამოყენება/საუბარი"
 
 #: engines/grim/grim.cpp:502 engines/grim/grim.cpp:598
 msgid "Pick up/Put away"
@@ -5976,7 +5976,7 @@ msgstr ""
 
 #: engines/grim/grim.cpp:588
 msgid "Examine/Look"
-msgstr ""
+msgstr "შემოწმება/შეხედვა"
 
 #: engines/grim/grim.cpp:1364
 msgid "Error: the game could not be saved."
@@ -6209,7 +6209,7 @@ msgstr "გადასვლა"
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
 #: engines/icb/icb.cpp:185
 msgid "Crouch"
-msgstr ""
+msgstr "ხოხვა"
 
 #: engines/hpl1/metaengine.cpp:87
 msgid "Interact Mode"
@@ -7255,10 +7255,8 @@ msgid "Fast move modifier"
 msgstr ""
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show map"
 msgid "Show/hide maze map"
-msgstr "რუკის ჩვენება"
+msgstr "რუკის ჩვენება/დამალვა"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
