@@ -1145,6 +1145,8 @@ void SaveLoadChooserGrid::hideButtons() {
 void SaveLoadChooserGrid::updateSaves() {
 	hideButtons();
 
+	bool isWriteProtected = false;
+
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
@@ -1191,7 +1193,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		// In save mode we disable the button, when it's write protected.
 		// TODO: Maybe we should not display it at all then?
 		// We also disable and description the button if slot is locked
-		bool isWriteProtected = desc.getWriteProtectedFlag() ||
+		isWriteProtected = desc.getWriteProtectedFlag() ||
 			_saveList[i].getWriteProtectedFlag();
 		if ((_saveMode && isWriteProtected) || desc.getLocked()) {
 			curButton.button->setEnabled(false);
