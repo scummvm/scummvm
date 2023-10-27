@@ -68,9 +68,15 @@ protected:
 		kBrightMagenta = 13,
 		kBrightYellow = 14,
 		kWhite = 15,
+
+		// Reserved for custom colors, loaded from PICT resources.
+		kCustomColor = 100,
+
 		kBackground = 254,	// Gray or checkerboard
 		kTransparency = 255
 	};
+
+	Common::String getDialogString(Common::SeekableReadStream *res, int len, Common::StringArray substitutions);
 
 public:
 	enum TextStyle {
@@ -110,6 +116,7 @@ public:
 		Common::Array<Common::Rect> _dirtyRects;
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
+
 	public:
 		SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
@@ -167,10 +174,12 @@ public:
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant);
 
 	Graphics::Surface *loadPict(int id);
+	Graphics::Surface *decodePictV1(Common::SeekableReadStream *res);
 
 	virtual bool handleMenu(int id, Common::String &name);
 
 	virtual void showAboutDialog() = 0;
+	void drawDialog(int dialogId, Common::StringArray substitutions, int defaultButton);
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
