@@ -813,6 +813,7 @@ Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len,
 void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int defaultButton) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
+	int button = 0;
 
 	resource.open(_resourceFile);
 
@@ -874,17 +875,17 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 				// Button
 				str = getDialogString(res, len, substitutions);
 
-#if 0
-				// This would be how to draw a default button
-				r.grow(4);
-				Graphics::drawRoundRect(r, 7, kBlack, true, SimpleWindow::plotPixel, window);
-				r.grow(-3);
-				Graphics::drawRoundRect(r, 5, kWhite, true, SimpleWindow::plotPixel, window);
-				r.grow(-1);
-#endif
+				if (button == defaultButton) {
+					r.grow(4);
+					Graphics::drawRoundRect(r, 7, kBlack, true, SimpleWindow::plotPixel, window);
+					r.grow(-3);
+					Graphics::drawRoundRect(r, 5, kWhite, true, SimpleWindow::plotPixel, window);
+					r.grow(-1);
+				}
 
 				Graphics::drawRoundRect(r, 5, kBlack, false, SimpleWindow::plotPixel, window);
 				font->drawString(s, str, r.left, r.top + 2, r.width(), kBlack, Graphics::kTextAlignCenter);
+				button++;
 				break;
 
 			case 5:
@@ -1157,6 +1158,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	case 202:
 		// Restart. Standard Ok/Cancel dialog.
 		dialogId = 502;
+		defaultButton = 0;
 		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
 		break;
 
@@ -1173,6 +1175,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	case 205:
 		// Quit. Standard Ok/Cancel dialog.
 		dialogId = 502;
+		defaultButton = 0;
 		substitutions.push_back("Are you sure you want to quit?");
 		break;
 
@@ -2692,6 +2695,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	case 202:
 		// Restart. Standard Ok/Cancel dialog.
 		dialogId = 502;
+		defaultButton = 0;
 		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
 		break;
 
@@ -2715,6 +2719,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	case 206:
 		// Quit. Standard Ok/Cancel dialog.
 		dialogId = 502;
+		defaultButton = 0;
 		substitutions.push_back("Are you sure you want to quit?");
 		break;
 
