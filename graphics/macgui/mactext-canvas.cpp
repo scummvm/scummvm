@@ -935,11 +935,11 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	}
 
 #if DEBUG
-	debugN(9, "Chunks: ");
+	D(9, "Chunks: ");
 	for (auto &ch : chunks)
 		ch.debugPrint();
 
-	debug(9, "");
+	D(9, "");
 #endif
 
 	int curLine = start;
@@ -1144,24 +1144,24 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 }
 
 void MacFontRun::debugPrint() {
-	debugN("{%d}[%d (%d)] \"%s\" ", text.size(), fontId, textSlant, Common::toPrintable(text.encode()).c_str());
+	D(8, "{%d}[%d (%d)] \"%s\" ", text.size(), fontId, textSlant, Common::toPrintable(text.encode()).c_str());
 }
 
 void MacTextCanvas::debugPrint(const char *prefix) {
 	for (uint i = 0; i < _text.size(); i++) {
 		if (prefix)
-			debugN(8, "%s: ", prefix);
-		debugN(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
+			D(8, "%s: ", prefix);
+		D(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			_text[i].chunks[j].debugPrint();
 
-		debugN("\n");
+		D(8, "\n");
 	}
 
 	if (prefix)
-		debugN(8, "%s: ", prefix);
-	debug(8, "[done]");
+		D(8, "%s: ", prefix);
+	D(8, "[done]");
 }
 
 } // End of namespace Graphics
