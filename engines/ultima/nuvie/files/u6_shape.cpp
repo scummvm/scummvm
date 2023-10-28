@@ -393,7 +393,7 @@ bool U6Shape::blit(U6Shape *shp, uint16 x, uint16 y) {
 		return false;
 
 	unsigned char *src_data = shp->get_data();
-	uint16 src_w, src_h;
+	uint16 src_w = 0, src_h = 0;
 
 	shp->get_size(&src_w, &src_h);
 
