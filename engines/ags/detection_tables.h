@@ -299,6 +299,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "downfall2016", "Downfall (2016)" },
 	{ "dreamswitchhouse","Dreams in the Witch House" },
 	{ "dustbowl", "Dustbowl" },
+	{ "englishhaunting", "An English Haunting" },
 	{ "excavationhb", "The Excavation of Hob's Barrow" },
 	{ "falconcity", "Falcon City" },
 	{ "feriadarles", "Feria d'Arles" },
@@ -4200,6 +4201,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Win v1.0.2
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243795250),  // Win v2.0
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243797801),  // Win v2.0.1
+	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "ccae5c3eb855450efe79830f4fa2855f", 1243799719),  // Win v2.0.1 hotfix
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201066930),  // Mac
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
@@ -4547,6 +4549,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741431),
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741340),
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO v17.exe", "6f4d5442c166d215017764b119af9ffa", 235426199),  // Win v17
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo v18.exe", "38a49a28c0af599633006c09fe6c2f72", 131455545),  // Win v18
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 60147146),  // macOS
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 78610191),  // macOS
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 129741431),  // macOS
@@ -4583,6 +4586,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("endacopia", "Endacopia.exe", "67dcfaf952fcc9451cafd2c47cab159b", 89224364),  // Win
 	DEMO_ENTRY_EN("endacopia", "Endacopia.ags", "b80e86f0ec4d745d1e8503918b47dfe4", 86090392),
 	DEMO_ENTRY_EN("endacopia", "game.ags", "67dcfaf952fcc9451cafd2c47cab159b", 89224364),  // Mac
+	DEMO_ENTRY("englishhaunting", "An English Haunting DEMO.exe", "5528c91a1e289389553f97b50ef67bcd", 245477194),  // Eng-Esp
 	DEMO_ENTRY_EN("enterthestory", "Enter The Story.exe", "0514661a4ba6772cf0db0cf839fc7003", 19589742),
 	DEMO_ENTRY_EN("everlight", "Everlight.exe", "0500aacb6c176d47ac0f8158f055db83", 17597037),
 	DEMO_ENTRY_EN("everythingm", "TinyMika.exe", "66adc3431f0626a2c6e80f31a21f0981", 3529496),
