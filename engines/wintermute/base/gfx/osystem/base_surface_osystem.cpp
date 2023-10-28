@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
 
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
