@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 16:40+0000\n"
+"POT-Creation-Date: 2023-10-28 19:01+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -213,8 +213,8 @@ msgstr ""
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:239
-#: gui/gui-manager.cpp:254
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
+#: gui/gui-manager.cpp:267
 msgid "Paste"
 msgstr "Уставіць"
 
@@ -976,23 +976,35 @@ msgstr "Бэкэнд"
 msgid "Delete Character"
 msgstr "Выдаліць сымбаль"
 
-#: gui/gui-manager.cpp:208 gui/gui-manager.cpp:214
+#: gui/gui-manager.cpp:206
 msgid "Go to end of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:221 gui/gui-manager.cpp:227
+#: gui/gui-manager.cpp:216
+#, fuzzy
+#| msgid "Select SoundFont"
+msgid "Select to end of line"
+msgstr "Выбярыце SoundFont"
+
+#: gui/gui-manager.cpp:226
+#, fuzzy
+#| msgid "Select directory for plugins"
+msgid "Select to start of line"
+msgstr "Выбярыце тэчку для плаґінаў"
+
+#: gui/gui-manager.cpp:236
 msgid "Go to start of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:234 gui/gui-manager.cpp:249
+#: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
 msgstr ""
 
-#: gui/gui-manager.cpp:244 gui/gui-manager.cpp:259
+#: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
 msgstr ""
 
-#: gui/gui-manager.cpp:265 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
