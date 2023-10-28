@@ -211,9 +211,38 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Very simple window class and widgets. It is perhaps unfortunate that we have
 // two different sets of widget classes, but they behave quite differently.
 
-MacGui::MacWidget::MacWidget(SimpleWindow *window, Common::Rect bounds) : _window(window), _bounds(bounds) {}
+MacGui::MacWidget::MacWidget(SimpleWindow *window, Common::Rect bounds, Common::String text) : _window(window), _bounds(bounds), _text(text) {
+}
 
-MacGui::MacButton::MacButton(SimpleWindow *window, Common::Rect bounds, Common::String text, bool isDefault) : MacWidget(window, bounds), _text(text), _isDefault(isDefault) {}
+bool MacGui::MacWidget::findWidget(int x, int y) {
+	return _isEnabled && _bounds.contains(x, y);
+}
+
+int MacGui::MacWidget::drawText(Common::String &text, int x, int y, int w, Color color, Graphics::TextAlign align) {
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	Common::String line;
+	int lineWidth = 0;
+
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == '^') {
+			Common::String &subst = _window->getSubstitution(text[++i] - '0');
+			for (uint j = 0; j < subst.size(); j++) {
+				line += subst[j];
+				lineWidth += font->getCharWidth(subst[j]);
+			}
+		} else {
+			line += text[i];
+			lineWidth += font->getCharWidth(text[i]);
+		}
+	}
+
+	font->drawString(_window->innerSurface(), line, x, y, w, color, align);
+	return lineWidth;
+}
+
+MacGui::MacButton::MacButton(SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
+}
 
 void MacGui::MacButton::draw() {
 	Graphics::Surface *s = _window->innerSurface();
@@ -268,9 +297,7 @@ void MacGui::MacButton::draw() {
 		s->hLine(x2, y1, x3, kBlack);
 	}
 
-	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
-
-	font->drawString(_window->innerSurface(), _text, _bounds.left, _bounds.top + 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
+	drawText(_text, _bounds.left, _bounds.top + 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
 
 	if (_isDefault && _firstDraw) {
 		for (int i = 0; i < 3; i++) {
@@ -318,7 +345,8 @@ void MacGui::MacButton::draw() {
 	_window->markRectAsDirty(_bounds);
 }
 
-MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isChecked) : MacWidget(window, bounds), _text(text), _isChecked(isChecked) {}
+MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
+}
 
 void MacGui::MacCheckbox::draw() {
 	Graphics::Surface *s = _window->innerSurface();
@@ -334,14 +362,11 @@ void MacGui::MacCheckbox::draw() {
 	}
 
 	if (_firstDraw) {
-		const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
-		int stringWidth = font->getStringWidth(_text);
-
 		int x = _bounds.left + 18;
 		int y = _bounds.top;
 
+		int stringWidth = drawText(_text, x, y, _bounds.right - x, kBlack);
 		_bounds.right = x + stringWidth + 1;
-		font->drawString(_window->innerSurface(), _text, x, y, stringWidth, kBlack);
 		_firstDraw = false;
 	}
 
@@ -351,6 +376,14 @@ void MacGui::MacCheckbox::draw() {
 void MacGui::MacCheckbox::action() {
 	_isChecked = !_isChecked;
 	draw();
+}
+
+MacGui::MacText::MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
+	_isEnabled = false;
+}
+
+void MacGui::MacText::draw() {
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
 }
 
 MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
@@ -435,12 +468,16 @@ MacGui::MacWidget *MacGui::SimpleWindow::findWidget(int x, int y) {
 	return nullptr;
 }
 
-void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool isDefault) {
-	_widgets.push_back(new MacButton(this, bounds, text, isDefault));
+void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text) {
+	_widgets.push_back(new MacButton(this, bounds, text));
 }
 
-void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text, bool isChecked) {
-	_widgets.push_back(new MacCheckbox(this, bounds, text, isChecked));
+void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text) {
+	_widgets.push_back(new MacCheckbox(this, bounds, text));
+}
+
+void MacGui::SimpleWindow::addText(Common::Rect bounds, Common::String text) {
+	_widgets.push_back(new MacText(this, bounds, text));
 }
 
 void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
@@ -598,7 +635,7 @@ void MacGui::SimpleWindow::plotPatternDarkenOnly(int x, int y, int pattern, void
 		s->setPixel(x, y, kBlack);
 }
 
-void MacGui::SimpleWindow::drawText(Common::Rect r, const TextLine *lines) {
+void MacGui::SimpleWindow::drawTexts(Common::Rect r, const TextLine *lines) {
 	if (!lines)
 		return;
 
@@ -649,7 +686,7 @@ void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, in
 	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);
 
-	drawText(r, lines);
+	drawTexts(r, lines);
 }
 
 // ===========================================================================
@@ -995,7 +1032,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 100:
-		showAboutDialog();
+		runAboutDialog();
 		return true;
 
 	// If we ever need to handle the Edit menu, do it here.
@@ -1004,26 +1041,43 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
-// For now, this just draws the dialog. It doesn't create any widgets, and it
-// doesn't manipulate any data.
+bool MacGui::runQuitDialog() {
+	SimpleWindow *window = createDialog(502);
 
-Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len, Common::StringArray substitutions) {
+	window->setDefaultWidget(0);
+	window->addSubstitution("Are you sure you want to quit?");
+	window->runDialog();
+
+	delete window;
+	return true;
+}
+
+bool MacGui::runRestartDialog() {
+	SimpleWindow *window = createDialog(502);
+
+	window->setDefaultWidget(0);
+	window->addSubstitution("Are you sure you want to quit?");
+	window->runDialog();
+
+	delete window;
+	return true;
+}
+
+bool MacGui::runOptionsDialog() {
+	SimpleWindow *window = createDialog(1000);
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+	window->runDialog();
+
+	delete window;
+	return true;
+}
+
+Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len) {
 	Common::String str;
 
-	for (int i = 0; i < len; i++) {
-		byte s = res->readByte();
-
-		if (s == '^' && i < len - 1) {
-			i++;
-			uint nr = res->readByte() - '0';
-
-			if (nr < substitutions.size())
-				str += substitutions[nr];
-			else
-				str += "?";
-		} else
-			str += s;
-	}
+	for (int i = 0; i < len; i++)
+		str += res->readByte();
 
 	return str;
 }
@@ -1116,7 +1170,7 @@ MacGui::SimpleWindow *MacGui::createWindow(Common::Rect bounds, SimpleWindowStyl
 	return new SimpleWindow(this, _system, _surface, bounds, style);
 }
 
-MacGui::SimpleWindow *MacGui::createDialog(int dialogId, Common::StringArray substitutions, int defaultButton) {
+MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 	int button = 0;
@@ -1148,14 +1202,11 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId, Common::StringArray sub
 	}
 
 	SimpleWindow *window = createWindow(bounds);
-	Graphics::Surface *s = window->innerSurface();
 
 	res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
 
 	if (res) {
 		int numItems = res->readUint16BE() + 1;
-
-		const Graphics::Font *font = getFont(kSystemFont);
 
 		for (int i = 0; i < numItems; i++) {
 			res->skip(4);	// Placeholder for handle or procedure pointer
@@ -1178,14 +1229,14 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId, Common::StringArray sub
 			switch (type & 0x7F) {
 			case 4:
 				// Button
-				str = getDialogString(res, len, substitutions);
-				window->addButton(r, str, button == defaultButton);
+				str = getDialogString(res, len);
+				window->addButton(r, str);
 				button++;
 				break;
 
 			case 5:
 				// Checkbox
-				str = getDialogString(res, len, substitutions);
+				str = getDialogString(res, len);
 
 				// The DITL may define a larger than necessary
 				// area for the checkbox, so normalize the
@@ -1195,13 +1246,13 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId, Common::StringArray sub
 				r.top = r.bottom - r.height() / 2 - 8;
 				r.bottom = r.top + 16;
 
-				window->addCheckbox(r, str, true);
+				window->addCheckbox(r, str);
 				break;
 
 			case 8:
 				// Static text
-				str = getDialogString(res, len, substitutions);
-				font->drawString(s, str, r.left + 1, r.top, r.width(), kBlack);
+				str = getDialogString(res, len);
+				window->addText(r, str);
 				break;
 
 			case 64:
@@ -1322,10 +1373,6 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
 
-	int dialogId = -1;
-	int defaultButton = -1;
-	Common::StringArray substitutions;
-
 	switch (id) {
 	case 200:
 		// Open. Uses standard Macintosh open file dialog
@@ -1339,9 +1386,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	case 202:
 		// Restart. Standard Ok/Cancel dialog.
-		dialogId = 502;
-		defaultButton = 0;
-		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
+		runRestartDialog();
 		break;
 
 	case 203:
@@ -1350,15 +1395,12 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	case 204:
 		// Options
-		dialogId = 1000;
-		substitutions.push_back(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+		runOptionsDialog();
 		break;
 
 	case 205:
 		// Quit. Standard Ok/Cancel dialog.
-		dialogId = 502;
-		defaultButton = 0;
-		substitutions.push_back("Are you sure you want to quit?");
+		runQuitDialog();
 		break;
 
 	default:
@@ -1366,16 +1408,10 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 		break;
 	}
 
-	if (dialogId != -1) {
-		SimpleWindow *dialog = createDialog(dialogId, substitutions, defaultButton);
-		dialog->runDialog();
-		return true;
-	}
-
 	return false;
 }
 
-void MacLoomGui::showAboutDialog() {
+void MacLoomGui::runAboutDialog() {
 	// The About window is not a a dialog resource. Its size appears to be
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 5000 and 5001.
@@ -1556,7 +1592,7 @@ void MacLoomGui::showAboutDialog() {
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 40;	// ~2 seconds
-				window->drawText(r, page1);
+				window->drawTexts(r, page1);
 				break;
 
 			case 4:
@@ -1570,7 +1606,7 @@ void MacLoomGui::showAboutDialog() {
 				darkenOnly = true;
 				waitFrames = 130;	// ~6.5 seconds
 				window->drawSprite(loom, 95, 38);
-				window->drawText(r, page2);
+				window->drawTexts(r, page2);
 				break;
 
 				growth = -2;
@@ -1580,40 +1616,40 @@ void MacLoomGui::showAboutDialog() {
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 80;	// ~4 seconds
-				window->drawText(r, page3);
+				window->drawTexts(r, page3);
 				break;
 
 			case 9:
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 80;
-				window->drawText(r, page4);
+				window->drawTexts(r, page4);
 				break;
 
 			case 11:
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 80;
-				window->drawText(r, page5);
+				window->drawTexts(r, page5);
 				break;
 
 			case 13:
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 80;
-				window->drawText(r, page6);
+				window->drawTexts(r, page6);
 				break;
 
 			case 15:
 				fastForward = false;
 				darkenOnly = true;
 				waitFrames = 260;	// ~13 seconds
-				window->drawText(r, page7);
+				window->drawTexts(r, page7);
 				break;
 
 			case 17:
 				fastForward = false;
-				window->drawText(r, page8);
+				window->drawTexts(r, page8);
 				break;
 			}
 
@@ -2859,7 +2895,6 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	int dialogId = -1;
-	int defaultButton = -1;
 	Common::StringArray substitutions;
 
 	switch (id) {
@@ -2877,9 +2912,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 
 	case 202:
 		// Restart. Standard Ok/Cancel dialog.
-		dialogId = 502;
-		defaultButton = 0;
-		substitutions.push_back("Are you sure you want to restart this game from the beginning?");
+		runRestartDialog();
 		break;
 
 	case 203:
@@ -2888,22 +2921,17 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 
 	case 204:
 		// IQ Points
-		dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002;
-		substitutions.push_back(Common::String::format("%d", _vm->VAR(244)));
-		substitutions.push_back(Common::String::format("%d", _vm->VAR(245)));
+		runIqPointsDialog();
 		break;
 
 	case 205:
 		// Options
-		dialogId = 1000;
-		substitutions.push_back(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+		runOptionsDialog();
 		break;
 
 	case 206:
 		// Quit. Standard Ok/Cancel dialog.
-		dialogId = 502;
-		defaultButton = 0;
-		substitutions.push_back("Are you sure you want to quit?");
+		runQuitDialog();
 		break;
 
 	default:
@@ -2912,7 +2940,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	}
 
 	if (dialogId != -1) {
-		SimpleWindow *dialog = createDialog(dialogId, substitutions, defaultButton);
+		SimpleWindow *dialog = createDialog(dialogId);
 		dialog->runDialog();
 		return true;
 	}
@@ -2920,7 +2948,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
-void MacIndy3Gui::showAboutDialog() {
+void MacIndy3Gui::runAboutDialog() {
 	// The About window is not a a dialog resource. Its size appears to be
 	// hard-coded (416x166), and it's drawn centered. The graphics are in
 	// PICT 2000.
@@ -3157,6 +3185,17 @@ void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
 	window->fillPattern(Common::Rect(2, 130, s->w - 2, 133), 0xA5A5);
 	window->fillPattern(Common::Rect(2, 133, s->w - 2, 136), 0xFFFF);
 	window->fillPattern(Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
+}
+
+bool MacIndy3Gui::runIqPointsDialog() {
+	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
+	window->runDialog();
+
+	delete window;
+	return true;
 }
 
 // Before the GUI rewrite, the scroll offset was saved in variable 67. Let's
