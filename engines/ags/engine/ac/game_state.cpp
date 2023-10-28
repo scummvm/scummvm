@@ -57,7 +57,7 @@ GameState::GameState() {
 	Common::fill(&music_queue[0], &music_queue[MAX_QUEUED_MUSIC], 0);
 	Common::fill(&takeover_from[0], &takeover_from[50], 0);
 	Common::fill(&playmp3file_name[0], &playmp3file_name[PLAYMP3FILE_MAX_FILENAME_LEN], 0);
-	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS][0], 0);
+	Common::fill(&globalstrings[0][0], &globalstrings[MAXGLOBALSTRINGS - 1][MAX_MAXSTRLEN], 0);
 	Common::fill(&lastParserEntry[0], &lastParserEntry[MAX_MAXSTRLEN], 0);
 	Common::fill(&game_name[0], &game_name[100], 0);
 	Common::fill(&default_audio_type_volumes[0], &default_audio_type_volumes[MAX_AUDIO_TYPES], 0);
