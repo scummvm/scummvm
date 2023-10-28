@@ -167,7 +167,7 @@ void readRectArray16(Common::Serializer &stream, Common::Array<Common::Rect> &in
 }
 
 void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
-	char buf[33];
+	char buf[33] = "";
 
 	if (g_nancy->getGameType() <= kGameTypeNancy2) {
 		// Older games only support 8-character filenames, and stored them in a 10 char buffer
@@ -185,7 +185,7 @@ void readFilename(Common::SeekableReadStream &stream, Common::String &inString) 
 void readFilename(Common::Serializer &stream, Common::String &inString, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
-		char buf[33];
+		char buf[33] = "";
 
 		if (version <= kGameTypeNancy2) {
 			// Older games only support 8-character filenames, and stored them in a 10 char buffer
@@ -212,7 +212,7 @@ void readFilenameArray(Common::Serializer &stream, Common::Array<Common::String>
 	Common::Serializer::Version version = stream.getVersion();
 	if (version >= minVersion && version <= maxVersion) {
 		inArray.resize(num);
-		char buf[33];
+		char buf[33] = "";
 
 		for (Common::String &str : inArray) {
 			if (version <= kGameTypeNancy2) {
