@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 19:01+0000\n"
+"POT-Creation-Date: 2023-10-28 23:51+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4078,30 +4078,30 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
 msgid "Create directory"
 msgstr "יצירת תיקייה"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Upload files"
 msgstr "העלאת קבצים"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
 msgstr "יש להקליד שם עבור התיקיה החדשה:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Select a file to upload:"
 msgstr "יש לבחור קובץ להעלאה:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Or select a directory (works in Chrome only):"
 msgstr "או לבחור תיקיה (פועל ב- Chrome בלבד):"
 
@@ -4123,16 +4123,16 @@ msgstr "שורש מערכת הקבצים"
 msgid "Saved games"
 msgstr "משחקים שנשמרו"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
-#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 msgid "Parent directory"
 msgstr "תיקית אב"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM לא יכול היה לערוך רשימה של תוכן התיקיה שצוינה."
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
 msgstr "אינדקס של"
 

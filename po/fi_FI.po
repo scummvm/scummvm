@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 19:01+0000\n"
+"POT-Creation-Date: 2023-10-28 23:51+0000\n"
 "PO-Revision-Date: 2023-10-28 15:41+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4037,30 +4037,30 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
 msgid "Create directory"
 msgstr "Luo hakemisto"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 msgid "Upload files"
 msgstr "Lähetä tiedostoja"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 msgid "Type new directory name:"
 msgstr "Anna uusi hakemiston nimi:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 msgid "Select a file to upload:"
 msgstr "Valitse lähetettävä tiedosto:"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 msgid "Or select a directory (works in Chrome only):"
 msgstr "Tai valitse hakemisto (toimii vain Chromessa):"
 
@@ -4082,16 +4082,16 @@ msgstr "Tiedostojärjestelmän juurihakemisto"
 msgid "Saved games"
 msgstr "Tallennetut pelit"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
-#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 msgid "Parent directory"
 msgstr "Päähakemisto"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM ei voi avata kyseistä hakemistoa."
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
 msgstr "Hakemistolista"
 

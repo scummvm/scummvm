@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 19:01+0000\n"
+"POT-Creation-Date: 2023-10-28 23:51+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4104,34 +4104,34 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
 #, fuzzy
 msgid "Create directory"
 msgstr "Cesta není adresář"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 #, fuzzy
 msgid "Upload files"
 msgstr "Načíst soubor"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 #, fuzzy
 msgid "Type new directory name:"
 msgstr "Cesta není adresář"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 #, fuzzy
 msgid "Select a file to upload:"
 msgstr "Vyberte hru k NAČTENÍ"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 #, fuzzy
 msgid "Or select a directory (works in Chrome only):"
 msgstr "Vyberte adresář pro vhledy GUI"
@@ -4156,18 +4156,18 @@ msgstr ""
 msgid "Saved games"
 msgstr "Uložit hru:"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
-#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 #, fuzzy
 msgid "Parent directory"
 msgstr "Cesta není adresář"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 #, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM nemá k tomuto adresáři přístup!"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
 msgstr ""
 

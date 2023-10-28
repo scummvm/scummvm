@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 19:01+0000\n"
+"POT-Creation-Date: 2023-10-28 23:51+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4128,34 +4128,34 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:222
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:223
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:224
 #, fuzzy
 msgid "Create directory"
 msgstr "O camiño non é un directorio"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:69
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:226
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:227
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
 #, fuzzy
 msgid "Upload files"
 msgstr "Cargar ficheiro"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:70
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:228
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
 #, fuzzy
 msgid "Type new directory name:"
 msgstr "O camiño non é un directorio"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:71
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:229
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
 #, fuzzy
 msgid "Select a file to upload:"
 msgstr "Selecciona unha partida para cargala"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:72
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:230
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
 #, fuzzy
 msgid "Or select a directory (works in Chrome only):"
 msgstr "Seleccionar directorio para temas de interfaz"
@@ -4180,18 +4180,18 @@ msgstr ""
 msgid "Saved games"
 msgstr "Gardar partida:"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:118
-#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:83
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:119
+#: backends/networking/sdl_net/handlers/listajaxhandler.cpp:84
 #, fuzzy
 msgid "Parent directory"
 msgstr "O camiño non é un directorio"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:217
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
 #, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
 msgstr "ScummVM non foi quen de acceder ao directorio!"
 
-#: backends/networking/sdl_net/handlers/filespagehandler.cpp:231
+#: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
 msgstr ""
 
