@@ -618,26 +618,6 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 	return HRoomFileError::None();
 }
 
-// Reader for ExtractScripText
-static String *reader_script;
-RoomFileVersion reader_ver;
-
-HError ExtractScriptTextReader(Stream *in, int block_id,
-		const String &ext_id, soff_t block_len, bool &read_next) {
-	if (block_id == kRoomFblk_Script) {
-		read_next = false;
-		char *buf = nullptr;
-		HError err = ReadScriptBlock(buf, in, reader_ver);
-		if (err) {
-			*reader_script = buf;
-			delete[] buf;
-		}
-		return err;
-	}
-	in->Seek(block_len); // skip block
-	return HError::None();
-}
-
 HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver) {
 	RoomBlockReader reader(nullptr, data_ver, in);
 	HError err = reader.ReadRoomScript(script);
