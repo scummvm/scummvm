@@ -435,7 +435,7 @@ byte DecompressorState::g_matchVLCLengths[DecompressorState::kNumMatchVLCs] = {
 
 class DecompressingStream : public Common::SeekableReadStream {
 public:
-	DecompressingStream(Common::SeekableReadStream *baseStream, uint32 compressedSize, uint32 decompressedSize);
+	DecompressingStream(Common::SeekableReadStream *baseStream, uint32 decompressedSize);
 	~DecompressingStream();
 
 	int64 pos() const override;
@@ -455,14 +455,13 @@ private:
 	Common::SeekableReadStream *_baseStream;
 
 	uint32 _pos;
-	uint32 _compressedSize;
 	uint32 _decompressedSize;
 	bool _eosFlag;
 	bool _errFlag;
 };
 
-DecompressingStream::DecompressingStream(Common::SeekableReadStream *baseStream, uint32 compressedSize, uint32 decompressedSize)
-	: _baseStream(baseStream), _compressedSize(compressedSize), _decompressedSize(decompressedSize), _pos(0), _eosFlag(false), _errFlag(false), _decomp(baseStream) {
+DecompressingStream::DecompressingStream(Common::SeekableReadStream *baseStream, uint32 decompressedSize)
+	: _baseStream(baseStream), _decompressedSize(decompressedSize), _pos(0), _eosFlag(false), _errFlag(false), _decomp(baseStream) {
 }
 
 DecompressingStream::~DecompressingStream() {
@@ -619,7 +618,7 @@ Common::SeekableReadStream *ArchiveItem::createReadStream() const {
 	sliceSubstream = Common::wrapBufferedSeekableReadStream(sliceSubstream, 4096, DisposeAfterUse::YES);
 
 	if (_isCompressed)
-		return new DecompressingStream(sliceSubstream, _compressedSize, _decompressedSize);
+		return new DecompressingStream(sliceSubstream, _decompressedSize);
 	else
 		return sliceSubstream;
 }
