@@ -51,8 +51,6 @@
 #include "common/rect.h"
 
 #include "graphics/nine_patch.h"
-#include "graphics/transparent_surface.h"
-
 #include "graphics/macgui/macwindowmanager.h"
 
 namespace Wage {
