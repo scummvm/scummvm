@@ -76,7 +76,7 @@ protected:
 		kTransparency = 255
 	};
 
-	Common::String getDialogString(Common::SeekableReadStream *res, int len, Common::StringArray substitutions);
+	Common::String getDialogString(Common::SeekableReadStream *res, int len);
 
 public:
 	enum TextStyle {
@@ -105,10 +105,12 @@ public:
 	protected:
 		MacGui::SimpleWindow *_window;
 		Common::Rect _bounds;
+		Common::String _text;
+		bool _isEnabled = true;
 		bool _isPressed = false;
 
 	public:
-		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds);
+		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
 		virtual ~MacWidget() {};
 
 		void setPressed(bool pressed) {
@@ -116,9 +118,10 @@ public:
 			draw();
 		}
 
-		bool findWidget(int x, int y) {
-			return _bounds.contains(x, y);
-		}
+		virtual void makeDefaultWidget() {}
+		virtual bool findWidget(int x, int y);
+
+		int drawText(Common::String &text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 		virtual void draw() = 0;
 		virtual void action() {}
@@ -126,26 +129,32 @@ public:
 
 	class MacButton : public MacWidget {
 	private:
-		Common::String _text;
-		bool _isDefault;
+		bool _isDefault = false;
 		bool _firstDraw = true;
 
 	public:
-		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isDefault);
+		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
+
+		void makeDefautlWidget() { _isDefault = true; }
 
 		void draw();
 	};
 
 	class MacCheckbox : public MacWidget {
 	private:
-		Common::String _text;
-		bool _isChecked;
+		bool _isChecked = false;
 		bool _firstDraw = true;
 
 	public:
-		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isChecked);
+		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
 		void draw();
 		void action();
+	};
+
+	class MacText : public MacWidget {
+	public:
+		MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
+		void draw();
 	};
 
 	class SimpleWindow {
@@ -161,6 +170,10 @@ public:
 		Graphics::Surface *_backup = nullptr;
 		Graphics::Surface _surface;
 		Graphics::Surface _innerSurface;
+
+		Common::StringArray _substitutions;
+
+		int _defaultWidget = -1;
 
 		Common::Array<MacWidget *> _widgets;
 		Common::Array<Common::Rect> _dirtyRects;
@@ -179,10 +192,16 @@ public:
 		void show();
 		void runDialog();
 
+		void setDefaultWidget(int nr) { _defaultWidget = nr; }
 		MacWidget *findWidget(int x, int y);
 
-		void addButton(Common::Rect bounds, Common::String text, bool isDefault);
-		void addCheckbox(Common::Rect bounds, Common::String text, bool isChecked);
+		void addButton(Common::Rect bounds, Common::String text);
+		void addCheckbox(Common::Rect bounds, Common::String text);
+		void addText(Common::Rect bounds, Common::String text);
+
+		void clearSustitutions() { _substitutions.clear(); }
+		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
+		Common::String &getSubstitution(int n) { return _substitutions[n]; }
 
 		void markRectAsDirty(Common::Rect r);
 		void update(bool fullRedraw = false);
@@ -194,7 +213,7 @@ public:
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
-		void drawText(Common::Rect r, const TextLine *lines);
+		void drawTexts(Common::Rect r, const TextLine *lines);
 		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
@@ -236,7 +255,10 @@ public:
 
 	virtual bool handleMenu(int id, Common::String &name);
 
-	virtual void showAboutDialog() = 0;
+	virtual void runAboutDialog() = 0;
+	bool runQuitDialog();
+	bool runRestartDialog();
+	bool runOptionsDialog();
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
@@ -255,7 +277,7 @@ public:
 	int delay(uint32 ms);
 
 	SimpleWindow *createWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
-	SimpleWindow *createDialog(int dialogId, Common::StringArray substitutions, int defaultButton);
+	SimpleWindow *createDialog(int dialogId);
 };
 
 class MacLoomGui : public MacGui {
@@ -278,7 +300,7 @@ public:
 
 	bool handleMenu(int id, Common::String &name);
 
-	void showAboutDialog();
+	void runAboutDialog();
 
 	void resetAfterLoad();
 	void update(int delta);
@@ -305,16 +327,15 @@ public:
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
 	Graphics::Surface *textArea() { return &_textArea; }
-	void clearTextArea() {
-		_textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), 0);
-	}
+	void clearTextArea() { _textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), kBlack); }
 	void initTextAreaForActor(Actor *a, byte color);
 	void printCharToTextArea(int chr, int x, int y, int color);
 
 	bool handleMenu(int id, Common::String &name);
 
-	void showAboutDialog();
+	void runAboutDialog();
 	void clearAboutDialog(SimpleWindow *window);
+	bool runIqPointsDialog();
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
