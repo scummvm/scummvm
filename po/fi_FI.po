@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-26 23:16+0000\n"
-"PO-Revision-Date: 2023-09-23 08:58+0000\n"
+"PO-Revision-Date: 2023-10-28 15:41+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -950,56 +950,44 @@ msgid "Right"
 msgstr "Oikea"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "New kid"
 msgid "New Line"
-msgstr "Uusi lapsi"
+msgstr "Uusi rivi"
 
 #: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close Dialog"
-msgstr "Sulje ponnahdusikkuna"
+msgstr "Sulje dialogi"
 
 #: gui/gui-manager.cpp:206
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Taustajärjestelmä"
+msgstr "Askelpalautin"
 
 #: gui/gui-manager.cpp:212
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Poista merkki"
 
 #: gui/gui-manager.cpp:218
 msgid "Go to end of line"
-msgstr ""
+msgstr "Mene rivin loppuun"
 
 #: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move forward left"
 msgid "Move cursor left"
-msgstr "Liiku etuvasemmalle"
+msgstr "Siirrä kursoria vasemmalle"
 
 #: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move forward right"
 msgid "Move cursor right"
-msgstr "Liiku etuoikealle"
+msgstr "Siirrä kursoria oikealle"
 
 #: gui/gui-manager.cpp:241
 msgid "Go to start of line"
-msgstr ""
+msgstr "Mene rivin alkuun"
 
 #: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
 msgid "Cut"
-msgstr ""
+msgstr "Leikkaa"
 
 #: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
 msgid "Copy"
-msgstr ""
+msgstr "Kopioi"
 
 #: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -2618,28 +2606,6 @@ msgstr "Viallinen asetustiedosto. Ylikirjoitetaanko?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "If you find that your existing added games or custom paths no longer "
-#| "work, please edit those paths and this time use the SAF system to browse "
-#| "to the desired locations.\n"
-#| "To do that:\n"
-#| "\n"
-#| "  1. For each game whose data is not found, go to the \"Paths\" tab in "
-#| "the \"Game Options\" and change the \"Game path\"\n"
-#| "  2. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  3. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  4. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  5. Browse through this folder to your game data.\n"
-#| "\n"
-#| "Steps 2 and 3 need to be done only once for all of your games."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2664,21 +2630,20 @@ msgstr ""
 "tiedostokäsittelyä koskevia muutoksia jotta pystymme tukemaan Android-"
 "käyttöjärjestelmän uudempia versioita.\n"
 "Jos huomaat että vanhat lisäämäsi pelit tai tiedostopolut eivät enää toimi, "
-"ole hyvä ja muokkaa k.o. polkuja ja tällä kertaa käytä SAF-järjestelmää "
-"näiden löytämiseen.\n"
-"Seuraa näitä vaiheita:\n"
+"ole hyvä ja muokkaa k.o. polkuja:\n"
+"  1. Mene pelivalitsimesta **Pelin asetukset > Polut**. Valitse tilanteen "
+"mukaan **Pelin polku** tai **Lisäkansio**.\n"
+"  2. **Siirry ylös** ScummVM:n tiedostoselaimessa kunnes saavut "
+"juurikansioon josta löytyy **<Lisää uusi kansio>**.\n"
+"  3. Tuplanapauta **<Lisää uusi kansio>**. Navigoi tiedostoselaimessa "
+"kansioon joka sisältää peliesi kansiot (esim. ** SD-Kortti > ScummVMPelit**)."
 "\n"
-"  1. Jokaiselle pelille jonka dataa ei löydy, mene \"Polut\"-välilehteen "
-"\"Muuta pelin asetuksia\" alla ja muuta \"Pelin polku\":a\n"
-"  2. Paina \"Siirry ylös\" ScummVM-tiedostoselaimessa kunnes saavut "
-"juurikansioon jossa näet \"<Luo kansio>\" vaihtoehdon.\n"
-"  3. Valitse se, sitten selaa ja valitse pelikansioidesi yläkansio, e.g. "
-"\"SD Card > myGames\". Paina \"Käytä tätä kansiota\".\n"
-"  4. Uusi \"myGames\"-kansio ilmestyy ScummVM-tiedostoselaimen "
-"juurikansioon.\n"
-"  5. Etsi pelidatasi tämän kansion sisältä.\n"
+"  4. Valitse **Käytä tätä kansiota**.\n"
+"  5. Valitse **Salli** antaaksesi ScummVM:lle oikeudet kansioon.\n"
+"  6. ScummVM-tiedostoselaimessa tuplanapauta tiesi luotuun kansioon. Valitse "
+"pelin tiedostot sisältävä kansio ja napauta 'Valitse'.\n"
 "\n"
-"Vaiheet 2 ja 3 tätytyy suorittaa vain kerran kaikille peleillesi."
+"Toista vaiheet 1 ja 6 jokaiselle pelille."
 
 #: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1269
@@ -2695,21 +2660,6 @@ msgstr "Lue myöhemmin"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2732,15 +2682,19 @@ msgstr ""
 "Tähän uuteen ScummVM:n Android-versioon on tehty huomattavia "
 "tiedostokäsittelyä koskevia muutoksia jotta pystymme tukemaan Android-"
 "käyttöjärjestelmän uudempia versioita.\n"
-"Tästä johtuen joudut säätämään SAF:ia jotta voit lisätä pelejä.\n"
+"Lisätäksesi pelin:\n"
 "\n"
-"  1. Paina \"Siirry ylös\" ScummVM-tiedostoselaimessa kunnes saavut "
-"juurikansioon jossa näet \"<Luo kansio>\" option.\n"
-"  2. Valitse se, sitten selaa ja valitse pelikansioidesi yläkansio, e.g. "
-"\"SD Card > myGames\". Paina \"Käytä tätä kansiota\".\n"
-"  3. Uusi \"myGames\"-kansio ilmestyy ScummVM-tiedostoselaimen "
-"juurikansioon.\n"
-"  4. Etsi pelidatasi tämän kansion sisältä."
+"  1. Valitse **Lisää peli...** pelivalitsimesta.\n"
+"  2. **Siirry ylös** ScummVM:n tiedostoselaimessa kunnes saavut "
+"juurikansioon josta löytyy **<Lisää uusi kansio>**.\n"
+"  3. Tuplanapauta **<Lisää uusi kansio>**. Navigoi tiedostoselaimessa "
+"kansioon joka sisältää peliesi kansiot (esim. ** SD-Kortti > ScummVMPelit**)"
+". \n"
+"  4. Valitse **Käytä tätä kansiota**.\n"
+"  5. Valitse **Salli** antaaksesi ScummVM:lle oikeudet kansioon.\n"
+"  6. ScummVM-tiedostoselaimessa tuplanapauta tiesi luotuun kansioon. Valitse "
+"pelin tiedostot sisältävä kansio ja napauta 'Valitse'.\n"
+"Toista vaiheet 1 ja 6 jokaiselle pelille."
 
 #: base/main.cpp:797
 msgid "Error running game:"
@@ -4395,10 +4349,8 @@ msgstr "Suurennustila poissa"
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:327
-#, fuzzy
-#| msgid "Controls"
 msgid "Touch Controls"
-msgstr "Kontrollit"
+msgstr "Kosketuskontrollit"
 
 #: backends/platform/android/android.cpp:1033
 #, fuzzy
@@ -4636,6 +4588,38 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
+"## Pelien lisääminen \n"
+"\n"
+"1. Valitse **Lisää peli...** pelivalitsimesta.\n"
+"\n"
+"2. **Siirry ylös** ScummVM:n tiedostoselaimessa kunnes saavut juurikansioon "
+"josta löytyy **<Lisää uusi kansio>**.\n"
+"\n"
+"  ![ScummVM file browser root](browser-root.png \"ScummVM file browser root\""
+")\n"
+"\n"
+"3. Tuplanapauta **<Lisää uusi kansio>**. Navigoi tiedostoselaimessa kansioon "
+"joka sisältää peliesi kansiot (esim. ** SD-Kortti > ScummVMPelit**). \n"
+"\n"
+"4. Valitse **Käytä tätä kansiota**.\n"
+"\n"
+"  ![OS selectable folder](fs-folder.png \"OS selectable folder\")\n"
+"\n"
+"5. Valitse **SALLI** antaaksesi ScummVM:lle oikeudet kansioon.\n"
+"\n"
+"  ![OS access permission dialog](fs-permission.png \"OS access permission\")"
+"\n"
+"\n"
+"6. ScummVM-tiedostoselaimessa tuplanapauta tiesi luotuun kansioon. Valitse "
+"pelin tiedostot sisältävä kansio ja napauta 'Valitse'.\n"
+"\n"
+"  ![SAF folder added](browser-folder-in-list.png \"SAF folder added\")\n"
+"\n"
+"Vaiheet 2 ja 3 tarvitsee tehdä vain kerran. Toista vaiheet 1 ja 6 "
+"lisätäksesi uusia pelejä. \n"
+"\n"
+"Lue [Android-dokumentaatiomme](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html) jos haluat tietää lisää.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:163
@@ -4743,29 +4727,25 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Ohjelmistoskaalaus (hyvä laatu, mutta hitaampi)"
 
 #: backends/platform/ios7/ios7_options.mm:96
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Näytä virtuaalikontrollit (iOS 15 tai myöhempi)"
+msgstr "Näytä gamepad-kontrolleri (iOS 15 tai myöhempi)"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Gamepad-emulaatio"
+msgstr "Gamepadin läpinäkyvyys"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
-msgstr ""
+msgstr "Suuntapainike:"
 
 #: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
-msgstr ""
+msgstr "Peukkutikku"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
-msgstr ""
+msgstr "Dpad"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
@@ -4987,6 +4967,23 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## Pelien lisääminen \n"
+"\n"
+"1. Kopioi tarvitut pelitiedostot ScummVM-applikaatioon. Tähän on monta "
+"tapaa, lue [Pelitiedostojensiirtodokumentaatiomme](https://docs.scummvm.org/"
+"en/latest/other_platforms/ios.html#transferring-game-files) jos haluat "
+"tietää lisää.\n"
+"\n"
+"2. Valitse **Lisää peli...** pelivalitsimesta. \n"
+"\n"
+"3. Tuplanapauttele itsesi lisäämääsi kansioon ScummVM:n tiedostoselaimessa. "
+"Lisää peli valitsemalla alikansio joka sisältää pelin tiedostot ja napauta "
+"sitten **Valitse**. \n"
+"\n"
+"Toista vaiheet lisätäksesi enemmän pelejä. \n"
+"\n"
+"Lue [iOS-dokumentaatiomme](https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html) jos haluat tietää lisää.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:330
 msgid ""
@@ -5009,6 +5006,24 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## Kosketustoiminnot \n"
+"\n"
+"### Napauta kosketusaluetta \n"
+"\n"
+"Kosketusalueen napautus emuloi vasen hiirennapin painallusta\n"
+"### Play/Pause\n"
+"\n"
+"Play/Pause-napin painallus emuloi oikean hiirennapin painallusta\n"
+"\n"
+"### Globaali päävalikko\n"
+"\n"
+"Globaali päävalikko aukeaa painamalla Takaisin/Valikko-nappia.\n"
+"\n"
+"## Virtuaalinäppäimistö\n"
+"\n"
+"Paina ja pidä pohjassa Play/Pause-nappia avataksesi virtuaalinäppäimistön. "
+"Näppäimistö piiloutuu painamalla Takaisin/Valikko-nappia.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:353
 msgid ""
@@ -5030,6 +5045,23 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## Pelien lisääminen\n"
+"\n"
+"1. Kopioi tarvitut pelitiedostot ScummVM-applikaatioon. Tähän on monta "
+"tapaa, lue [Pelitiedostojensiirtodokumentaatiomme](https://docs.scummvm.org/"
+"en/latest/other_platforms/tvos.html#transferring-game-files) jos haluat "
+"tietää lisää.\n"
+"\n"
+"2. Valitse **Lisää peli...** pelivalitsimesta. \n"
+"\n"
+"3. Tuplanapauttele itsesi lisäämääsi kansioon ScummVM:n tiedostoselaimessa. "
+"Lisää peli valitsemalla alikansio joka sisältää pelin tiedostot ja napauta "
+"sitten **Valitse**. \n"
+"\n"
+"Toista vaiheet lisätäksesi enemmän pelejä. \n"
+"\n"
+"Lue [tvOS-dokumentaatiomme](https://docs.scummvm.org/en/latest/"
+"other_platforms/tvos.html) jos haluat tietää lisää.\n"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -5040,22 +5072,6 @@ msgid "Keyboard"
 msgstr "Näppäimistö"
 
 #: backends/platform/sdl/sdl.cpp:1013
-#, fuzzy
-#| msgid ""
-#| "## Keyboard shortcuts\n"
-#| "\n"
-#| "ScummVM supports various in-game keyboard and mouse shortcuts, and since "
-#| "version 2.2.0 these can be manually configured in the **Keymaps tab**, or "
-#| "in the **configuration file**.\n"
-#| "\n"
-#| "For game-specific controls, see the [wiki entry](https://wiki.scummvm.org/"
-#| "index.php?title=Category:Supported_Games) for the game you are playing.\n"
-#| "\n"
-#| "Default shortcuts are shown in the table.\n"
-#| "\n"
-#| "| Shortcut      | Description\n"
-#| "| --------------------------------\n"
-#| "| `Ctrl+F5` -- Displays the Global Main Menu\n"
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5083,51 +5099,27 @@ msgstr ""
 "\n"
 "Vakiokomennot ovat taulukossa.\n"
 "\n"
-"| Komento      | Kuvaus\n"
-"| --------------------------------\n"
-"| `Ctrl+F5` -- Avaa globaalin päävalikon\n"
+"| Komento      | Kuvaus      \n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | Avaa globaalin päävalikon\n"
 
 #: backends/platform/sdl/sdl.cpp:1025
-#, fuzzy
-#| msgid "| `Cmd+q`    -- Quit (macOS)\n"
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr "| `Cmd+q`    -- Lopeta (macOS)\n"
+msgstr "| `Cmd+q`    | Lopeta (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1027
-#, fuzzy
-#| msgid "| `Alt+F4`  -- Quit (Windows)\n"
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr "| `Alt+F4`  -- Lopeta (Windows)\n"
+msgstr "| `Alt+F4`  | Lopeta (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1029
-#, fuzzy
-#| msgid "| `Ctrl+q`  -- Quit (Linux/Unix)\n"
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr "| `Ctrl+q`  -- Lopeta (Linux/Unix)\n"
+msgstr "| `Ctrl+q`  | Lopeta (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1030
-#, fuzzy
-#| msgid "| `Ctrl+z`  -- Quit (other platforms)\n"
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr "| `Ctrl+z`  -- Lopeta (muut alustat)\n"
+msgstr "| `Ctrl+z`  | Lopeta (other platforms)\n"
 
 #: backends/platform/sdl/sdl.cpp:1033
-#, fuzzy
-#| msgid ""
-#| "| `Ctrl+u`  -- Mutes all sounds\n"
-#| "| `Ctrl+m`  -- Toggles mouse capture\n"
-#| "| `Ctrl+Alt` and `9` or `0` -- Cycles forwards/backwards between graphics "
-#| "filters\n"
-#| "| `Ctrl+Alt` and `+` or `-` -- Increases/decreases the scale factor\n"
-#| "| `Ctrl+Alt+a` -- Toggles aspect ratio correction on/off\n"
-#| "| `Ctrl+Alt+f` -- Toggles between nearest neighbor and bilinear "
-#| "interpolation (graphics filtering on/off)\n"
-#| "| `Ctrl+Alt+s` -- Cycles through stretch modes\n"
-#| "| `Alt+Enter`   -- Toggles full screen/windowed mode\n"
-#| "| `Alt+s`          -- Takes a screenshot\n"
-#| "| `Ctrl+F7`       -- Opens virtual keyboard (if enabled). This can also "
-#| "be opened with a long press of the middle mouse button or wheel.\n"
-#| "| `Ctrl+Alt+d` -- Opens the ScummVM debugger\n"
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -5144,19 +5136,19 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
-"| `Ctrl+u`  -- Hiljennä kaikki äänet\n"
-"| `Ctrl+m`  -- Hiiren kaappaus päälle/pois\n"
-"| `Ctrl+Alt` ja `9` or `0` -- Selaa eteen-/taaksepäin grafiikkafilttereitä\n"
-"| `Ctrl+Alt` ja `+` or `-` -- Kasvattaa/pienentää skaalausta\n"
-"| `Ctrl+Alt+a` -- Kuvasuhteen korjaus päälle/pois\n"
-"| `Ctrl+Alt+f` -- Lähin naapuri/bilineaarinen interpolaatio (grafiikan "
+"| `Ctrl+u`  | Hiljennä kaikki äänet\n"
+"| `Ctrl+m`  | Hiiren kaappaus päälle/pois\n"
+"| `Ctrl+Alt` ja `9` or `0` | Selaa eteen-/taaksepäin grafiikkafilttereitä\n"
+"| `Ctrl+Alt` ja `+` or `-` | Kasvattaa/pienentää skaalausta\n"
+"| `Ctrl+Alt+a` | Kuvasuhteen korjaus päälle/pois\n"
+"| `Ctrl+Alt+f` | Lähin naapuri/bilineaarinen interpolaatio (grafiikan "
 "filtteröinti päälle/pois)\n"
-"| `Ctrl+Alt+s` -- Selaa läpi venytystiloja\n"
-"| `Alt+Enter`   -- Kokoruutu-/ikkunatila\n"
-"| `Alt+s`          -- Ottaa kuvakaappauksen\n"
-"| `Ctrl+F7`       -- Avaa virtuaalinäppäimistön (jos päällä). Tämä voidaan "
+"| `Ctrl+Alt+s` | Selaa läpi venytystiloja\n"
+"| `Alt+Enter`   | Kokoruutu-/ikkunatila\n"
+"| `Alt+s`          | Ottaa kuvakaappauksen\n"
+"| `Ctrl+F7`       | Avaa virtuaalinäppäimistön (jos päällä). Tämä voidaan "
 "myös avata hiiren keskinapin tai rullan pitkällä painalluksella.\n"
-"| `Ctrl+Alt+d` -- Avaa ScummVM:n debuggerin\n"
+"| `Ctrl+Alt+d` | Avaa ScummVM:n debuggerin\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -8049,10 +8041,8 @@ msgid "Fast move modifier"
 msgstr "Nopea liike"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Näytä / piilota näppäimistö"
+msgstr "Näytä / piilota sokkelon kartta"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -9516,12 +9506,14 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:1169
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
-msgstr ""
+msgstr "Tämä peli tarvitsee 'Indy' Macintosh-ohjelmatiedoston fonteilleen."
 
 #: engines/scumm/scumm.cpp:1193
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Tämä peli tarvitsee 'Loom' Macintosh-ohjelmatiedoston musiikilleen ja "
+"fonteilleen."
 
 #: engines/scumm/scumm.cpp:1213
 msgid ""
