@@ -770,6 +770,23 @@ uint32 VideoPlayer::getFlags(int slot) const {
 
 	return video->decoder->getFlags();
 }
+
+uint32 VideoPlayer::getVideoBufferSize(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->getVideoBufferSize();
+}
+
+bool VideoPlayer::hasVideo(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->hasVideo();
+}
+
 const Common::List<Common::Rect> *VideoPlayer::getDirtyRects(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
