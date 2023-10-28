@@ -29,7 +29,7 @@
 #include "ngi/gameloader.h"
 
 #include "common/memstream.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace NGI {
 
@@ -712,7 +712,7 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_width = src._width;
 	_height = src._height;
 	_flipping = src._flipping;
-	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
+	_surface = new Graphics::ManagedSurface();
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	_surface->copyFrom(*src._surface);
 }
@@ -749,7 +749,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 }
 
 void Bitmap::decode(byte *pixels, const Palette &palette) {
-	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
+	_surface = new Graphics::ManagedSurface();
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
@@ -781,9 +781,9 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	if (y1 < 0)
 		y1 = 0;
 
-	int alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
+	uint32 alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
 
-	_surface->blit(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	_surface->blendBlitTo(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
