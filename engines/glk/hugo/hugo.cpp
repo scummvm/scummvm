@@ -90,15 +90,15 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
 
 	// hemedia
-	Common::fill(&resids[0][0], &resids[2][0], 0);
+	Common::fill(&resids[0][0], &resids[1][MAXRES], 0);
 	numres[0] = numres[1] = 0;
 
 	// hemisc
-	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][0], 0);
+	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS - 1][64], 0);
 	Common::fill(&id[0], &id[3], '\0');
 	Common::fill(&serial[0], &serial[9], '\0');
 	Common::fill(&pbuffer[0], &pbuffer[MAXBUFFER * 2 + 1], 0);
-	Common::fill(&undostack[0][0], &undostack[MAXUNDO][0], 0);
+	Common::fill(&undostack[0][0], &undostack[MAXUNDO - 1][5], 0);
 
 	// heparse
 	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
