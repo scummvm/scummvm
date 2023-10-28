@@ -38,8 +38,8 @@ enum {
 
 struct reg_t {
 	// Segment and offset. These should never be accessed directly
-	SegmentId _segment;
-	uint16 _offset;
+	SegmentId _segment = 0;
+	uint16 _offset = 0;
 
 	SegmentId getSegment() const;
 	void setSegment(SegmentId segment);

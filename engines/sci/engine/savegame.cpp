@@ -778,7 +778,7 @@ void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 
 void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
-	uint16 savedSize;
+	uint16 savedSize = 0;
 
 	if (s.isSaving()) {
 		savedSize = _size;
@@ -1078,7 +1078,7 @@ void Video32::saveLoadWithSerializer(Common::Serializer &s) {
 	bool robotExists = _robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
 	s.syncAsByte(robotExists);
 	if (robotExists) {
-		GuiResourceId robotId;
+		GuiResourceId robotId = 0;
 		reg_t planeId;
 		Common::Point position;
 		int16 priority, scale;
