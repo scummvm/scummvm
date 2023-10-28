@@ -105,42 +105,54 @@ public:
 	protected:
 		MacGui::SimpleWindow *_window;
 		Common::Rect _bounds;
+		bool _isPressed = false;
 
 	public:
 		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds);
 		virtual ~MacWidget() {};
 
+		void setPressed(bool pressed) {
+			_isPressed = pressed;
+			draw();
+		}
+
+		bool findWidget(int x, int y) {
+			return _bounds.contains(x, y);
+		}
+
 		virtual void draw() = 0;
+		virtual void action() {}
 	};
 
 	class MacButton : public MacWidget {
 	private:
 		Common::String _text;
-		bool _isPressed = false;
 		bool _isDefault;
 		bool _firstDraw = true;
 
 	public:
 		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isDefault);
+
 		void draw();
 	};
 
 	class MacCheckbox : public MacWidget {
 	private:
 		Common::String _text;
-		bool _isPressed = false;
 		bool _isChecked;
 		bool _firstDraw = true;
 
 	public:
 		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isChecked);
 		void draw();
+		void action();
 	};
 
 	class SimpleWindow {
 	private:
 		OSystem *_system;
 		Common::Rect _bounds;
+		Common::Rect _innerBounds;
 		int _margin;
 
 		PauseToken _pauseToken;
@@ -151,7 +163,6 @@ public:
 		Graphics::Surface _innerSurface;
 
 		Common::Array<MacWidget *> _widgets;
-
 		Common::Array<Common::Rect> _dirtyRects;
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
@@ -166,6 +177,9 @@ public:
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
 
 		void show();
+		void runDialog();
+
+		MacWidget *findWidget(int x, int y);
 
 		void addButton(Common::Rect bounds, Common::String text, bool isDefault);
 		void addCheckbox(Common::Rect bounds, Common::String text, bool isChecked);
@@ -223,7 +237,6 @@ public:
 	virtual bool handleMenu(int id, Common::String &name);
 
 	virtual void showAboutDialog() = 0;
-	void drawDialog(int dialogId, Common::StringArray substitutions, int defaultButton);
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
@@ -240,7 +253,9 @@ public:
 	SimpleWindow *drawBanner(char *message);
 
 	int delay(uint32 ms);
-	SimpleWindow *openWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
+
+	SimpleWindow *createWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
+	SimpleWindow *createDialog(int dialogId, Common::StringArray substitutions, int defaultButton);
 };
 
 class MacLoomGui : public MacGui {
