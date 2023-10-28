@@ -32,7 +32,6 @@
 
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 
 #include "common/algorithm.h"
 #include "common/endian.h"
@@ -42,7 +41,6 @@
 #include "common/textconsole.h"
 #include "graphics/blit.h"
 #include "graphics/primitives.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/transform_tools.h"
 
 #include "../null_osystem.h"
@@ -944,8 +942,6 @@ public:
 
 		OldTransparentSurface::OldTransparentSurface oldSurf(baseSurface, true);
 		OldTransparentSurface::OldTransparentSurface oldSurfDest(destSurface, true);
-		Graphics::TransparentSurface newSurf(baseSurface, true);
-		Graphics::TransparentSurface newSurfDest(destSurface, true);
 		Graphics::ManagedSurface managedSurf(&baseSurface, DisposeAfterUse::NO);
 		Graphics::ManagedSurface managedSurfDest(&destSurface, DisposeAfterUse::NO);
 		const char *blendModes[] = {
@@ -987,33 +983,17 @@ public:
 			oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
 			oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
 			Common::Rect ret1 = oldSurf.blit(oldSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
-			newSurfDest.fillRect(Common::Rect(0, 0, newSurfDest.w, newSurfDest.h), newSurfDest.format.ARGBToColor(ba, br, bg, bb));
-			newSurf.setAlphaMode((Graphics::AlphaType)alphaType);
-			Common::Rect ret2 = newSurf.blit(newSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
 			managedSurfDest.fillRect(Common::Rect(0, 0, managedSurfDest.w, managedSurfDest.h), managedSurfDest.format.ARGBToColor(ba, br, bg, bb));
 			Common::Rect ret3 = managedSurf.blendBlitTo(managedSurfDest, dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode, (Graphics::AlphaType)alphaType);
 
-			if (ret1 != ret2 || ret2 != ret3 || ret1 != ret3) {
+			if (ret1 != ret3) {
 				warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
 				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
 				warning("old: Rect(%d, %d, %d, %d)", ret1.left, ret1.top, ret1.width(), ret1.height());
-				warning("new: Rect(%d, %d, %d, %d)", ret2.left, ret2.top, ret2.width(), ret2.height());
 				warning("managed: Rect(%d, %d, %d, %d)", ret3.left, ret3.top, ret3.width(), ret3.height());
 				TS_FAIL("Return sizes are not equal!");
 			}
 
-			if (!areSurfacesEqual(&oldSurfDest, &newSurfDest)) {
-				warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
-				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
-#ifdef TEST_IMAGE_BLENDING_SAVE
-				save_bitmap("sourceSurf.bmp", &newSurf);
-				save_bitmap("oldSurfDest.bmp", &oldSurfDest);
-				save_bitmap("newSurfDest.bmp", &newSurfDest);
-				save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
-#endif
-				TS_FAIL("oldSurfDest and newSurfDest are not equal!");
-				return;
-			}
 			if (!areSurfacesEqual(&oldSurfDest, managedSurfDest.surfacePtr())) {
 				warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
 				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
@@ -1025,46 +1005,6 @@ public:
 #endif
 				TS_FAIL("oldSurfDest and managedSurfDest are not equal!");
 				return;
-			}
-			if (!areSurfacesEqual(&newSurfDest, managedSurfDest.surfacePtr())) {
-				warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
-				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
-#ifdef TEST_IMAGE_BLENDING_SAVE
-				save_bitmap("sourceSurf.bmp", &newSurf);
-				save_bitmap("oldSurfDest.bmp", &oldSurfDest);
-				save_bitmap("newSurfDest.bmp", &newSurfDest);
-				save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
-#endif
-				TS_FAIL("newSurfDest and managedSurfDest are not equal!");
-				return;
-			}
-
-			
-			oldSurfDest.fillRect(Common::Rect(0, 0, oldSurfDest.w, oldSurfDest.h), oldSurfDest.format.ARGBToColor(ba, br, bg, bb));
-			oldSurf._alphaMode = (Graphics::AlphaType)alphaType;
-			ret1 = oldSurf.blitClip(oldSurfDest, Common::Rect(2, 2, oldSurfDest.w - 2, oldSurfDest.h - 2), dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
-			newSurfDest.fillRect(Common::Rect(0, 0, newSurfDest.w, newSurfDest.h), newSurfDest.format.ARGBToColor(ba, br, bg, bb));
-			newSurf.setAlphaMode((Graphics::AlphaType)alphaType);
-			ret2 = newSurf.blitClip(newSurfDest, Common::Rect(2, 2, oldSurfDest.w - 2, oldSurfDest.h - 2), dsts[rect].left, dsts[rect].top, flipping, &srcs[rect], MS_ARGB(a, r, g, b), dsts[rect].width(), dsts[rect].height(), (Graphics::TSpriteBlendMode)blendMode);
-			if (!areSurfacesEqual(&oldSurfDest, &newSurfDest)) {
-				warning("BLIT_CLIP blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
-				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
-#ifdef TEST_IMAGE_BLENDING_SAVE
-				save_bitmap("sourceSurfBlipClip.bmp", &newSurf);
-				save_bitmap("oldSurfDestBlitClip.bmp", &oldSurfDest);
-				save_bitmap("newSurfDestBlitClip.bmp", &newSurfDest);
-				save_bitmap("managedSurfDest.bmp", managedSurfDest.surfacePtr());
-#endif
-				TS_FAIL("oldSurfDest and newSurfDest are not equal with blipClip!");
-				return;
-			}
-			if (ret1 != ret2) {
-				warning("blendMode: %s, alphaType: %s, a: %d, r: %d, g: %d, b: %d, flipping: %s, test rect id: %s",
-				        blendModes[blendMode], alphaTypes[alphaType], a, r, g, b, flipNames[flipping], rectNames[rect]);
-				warning("old: Rect(%d, %d, %d, %d)", ret1.left, ret1.top, ret1.width(), ret1.height());
-				warning("new: Rect(%d, %d, %d, %d)", ret2.left, ret2.top, ret2.width(), ret2.height());
-				warning("managed: Rect(%d, %d, %d, %d)", ret3.left, ret3.top, ret3.width(), ret3.height());
-				TS_FAIL("Return sizes are not equal for blitClip!");
 			}
 		} // rect
 		} // flipping
