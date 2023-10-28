@@ -297,12 +297,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
-		// Move caret to end
-		setCaretPos(caretVisualPos(_editString.size()));
-		if (state.hasFlags(Common::KBD_SHIFT))
-			setSelectionOffset(_editString.size() - _selCaretPos);
-		else
-			clearSelection();
+		moveCaretToEnd(state.hasFlags(Common::KBD_SHIFT));
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -347,12 +342,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
-		// Move caret to start
-		setCaretPos(caretVisualPos(0));
-		if (state.hasFlags(Common::KBD_SHIFT))
-			setSelectionOffset(0 - _selCaretPos);
-		else
-			clearSelection();
+		moveCaretToStart(state.hasFlags(Common::KBD_SHIFT));
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -398,6 +388,33 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 	}
 }
 
+void EditableWidget::moveCaretToStart(bool shiftPressed) {
+	if (shiftPressed) {
+		if (_selCaretPos < 0)
+			_selCaretPos = _caretPos;
+
+		setSelectionOffset(0 - _selCaretPos);
+	} else {
+		clearSelection();
+	}
+	// Move caret to start
+	setCaretPos(caretVisualPos(0));
+}
+
+void EditableWidget::moveCaretToEnd(bool shiftPressed) {
+	if (_shiftPressed) {
+		if (_selCaretPos < 0)
+			_selCaretPos = _caretPos;
+
+		setSelectionOffset(_editString.size() - _selCaretPos);
+	} else {
+		clearSelection();
+	}
+
+	// Move caret to end
+	setCaretPos(caretVisualPos(_editString.size()));
+}
+
 void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 	bool dirty = false;
 	bool forcecaret = false;
@@ -413,22 +430,22 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch (evt.customType) {
 		case kActionHome:
-			// Move caret to start
-			setCaretPos(caretVisualPos(0));
-			if (_shiftPressed)
-				setSelectionOffset(0 - _selCaretPos);
-			else
-				clearSelection();
+			moveCaretToStart(false);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionShiftHome:
+			moveCaretToStart(true);
 			forcecaret = true;
 			dirty = true;
 			break;
 		case kActionEnd:
-			// Move caret to end
-			setCaretPos(caretVisualPos(_editString.size()));
-			if (_shiftPressed)
-				setSelectionOffset(_editString.size() - _selCaretPos);
-			else
-				clearSelection();
+			moveCaretToEnd(false);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionShiftEnd:
+			moveCaretToEnd(true);
 			forcecaret = true;
 			dirty = true;
 			break;

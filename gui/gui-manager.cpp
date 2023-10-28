@@ -203,32 +203,45 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
-
+	act = new Action("END", _("Go to end of line"));
 #ifdef MACOSX
-	act = new Action("MAC_END", _("Go to end of line"));
 	act->setCustomEngineActionEvent(kActionEnd);
 	act->addDefaultInputMapping("C+e");
-	guiMap->addAction(act);
-#endif
-
-	act = new Action("END", _("Go to end of line"));
+#else
 	act->setKeyEvent(KEYCODE_END);
 	act->addDefaultInputMapping("END");
-	guiMap->addAction(act);
-
-
-#ifdef MACOSX
-	act = new Action("MAC_HOME", _("Go to start of line"));
-	act->setCustomEngineActionEvent(kActionHome);
-	act->addDefaultInputMapping("C+a");
-	guiMap->addAction(act);
 #endif
+	guiMap->addAction(act);
+
+	act = new Action("SHIFT_END", _("Select to end of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionShiftEnd);
+	act->addDefaultInputMapping("C+S+e");
+#else
+	act->setKeyEvent(KeyState(KEYCODE_END, (uint16)KEYCODE_END, KBD_SHIFT));
+	act->addDefaultInputMapping("S+END");
+#endif
+	guiMap->addAction(act);
+
+	act = new Action("SHIFT_HOME", _("Select to start of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionShiftHome);
+	act->addDefaultInputMapping("C+S+a");
+#else
+	act->setKeyEvent(KeyState(KEYCODE_HOME, (uint16)KEYCODE_HOME, KBD_SHIFT));
+	act->addDefaultInputMapping("S+HOME");
+#endif
+	guiMap->addAction(act);
 
 	act = new Action("HOME", _("Go to start of line"));
+#ifdef MACOSX
+	act->setCustomEngineActionEvent(kActionHome);
+	act->addDefaultInputMapping("C+a");
+#else
 	act->setKeyEvent(KEYCODE_HOME);
 	act->addDefaultInputMapping("HOME");
+#endif
 	guiMap->addAction(act);
-
 
 #ifdef MACOSX
 	act = new Action(kStandardActionCut, _("Cut"));

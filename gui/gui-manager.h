@@ -47,14 +47,10 @@ namespace Common {
 namespace GUI {
 
 enum {
-	kActionEnter,
-	kActionEscape,
-	kActionBackspace,
-	kActionDelete,
 	kActionEnd,
-	kActionLeft,
-	kActionRight,
+	kActionShiftEnd,
 	kActionHome,
+	kActionShiftHome,
 	kActionCopy,
 	kActionCut,
 	kActionPaste,
