@@ -21,8 +21,7 @@
 #ifndef SLUDGE_SPRITES_H
 #define SLUDGE_SPRITES_H
 
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Sludge {
 
