@@ -1056,7 +1056,7 @@ bool MacGui::runRestartDialog() {
 	SimpleWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
-	window->addSubstitution("Are you sure you want to quit?");
+	window->addSubstitution("Are you sure you want to restart this game from the beginning?");
 	window->runDialog();
 
 	delete window;
