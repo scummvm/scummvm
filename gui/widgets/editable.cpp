@@ -209,6 +209,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
+	int deleteIndex;
 
 	if (!isEnabled())
 		return false;
@@ -241,7 +242,124 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		state.keycode = remap[state.keycode - Common::KEYCODE_KP0];
 	}
 
-	defaultKeyDownHandler(state, dirty, forcecaret, handled);
+	switch (state.keycode) {
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		// confirm edit and exit editmode
+		endEditMode();
+		dirty = true;
+		break;
+
+	case Common::KEYCODE_ESCAPE:
+		abortEditMode();
+		dirty = true;
+		break;
+
+	case Common::KEYCODE_BACKSPACE:
+		deleteIndex = caretLogicalPos();
+		if (deleteIndex > 0 && _selOffset == 0) {
+			deleteIndex--;
+			_editString.deleteChar(deleteIndex);
+			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
+			dirty = true;
+
+			sendCommand(_cmd, 0);
+		} else if (deleteIndex >= 0 && _selOffset != 0) {
+			int selBegin = _selCaretPos;
+			int selEnd = _selCaretPos + _selOffset;
+			if (selBegin > selEnd)
+				SWAP(selBegin, selEnd);
+			_editString.erase(selBegin, selEnd - selBegin);
+			setCaretPos(caretVisualPos(selBegin));
+			_selCaretPos = -1;
+			_selOffset = 0;
+			dirty = true;
+
+			sendCommand(_cmd, 0);
+		}
+		forcecaret = true;
+		break;
+
+	case Common::KEYCODE_DELETE:
+		deleteIndex = caretLogicalPos();
+		if (deleteIndex < (int)_editString.size()) {
+			_editString.deleteChar(deleteIndex);
+			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
+			_selOffset = 0;
+			dirty = true;
+
+			sendCommand(_cmd, 0);
+		}
+		forcecaret = true;
+		break;
+
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_END:
+		// Move caret to end
+		setCaretPos(caretVisualPos(_editString.size()));
+		if (state.hasFlags(Common::KBD_SHIFT))
+			setSelectionOffset(_editString.size() - _selCaretPos);
+		else
+			clearSelection();
+		forcecaret = true;
+		dirty = true;
+		break;
+
+	case Common::KEYCODE_LEFT:
+		if (state.hasFlags(Common::KBD_SHIFT)) {
+			if (_disableSelection)
+				break;
+			if (_selCaretPos < 0)
+				_selCaretPos = _caretPos;
+			if (_caretPos > 0)
+				_selOffset--;
+		} else {
+			clearSelection();
+		}
+		// Move caret one left (if possible)
+		if (_caretPos > 0) {
+			dirty = setCaretPos(_caretPos - 1);
+		}
+		forcecaret = true;
+		dirty = true;
+		break;
+
+	case Common::KEYCODE_RIGHT:
+		if (state.hasFlags(Common::KBD_SHIFT)) {
+			if (_disableSelection)
+				break;
+			if (_selCaretPos < 0)
+				_selCaretPos = _caretPos;
+			if (_selOffset + _selCaretPos < (int)_editString.size())
+				_selOffset++;
+		} else {
+			clearSelection();
+		}
+		// Move caret one right (if possible)
+		if (_caretPos < (int)_editString.size()) {
+			dirty = setCaretPos(_caretPos + 1);
+		}
+		forcecaret = true;
+		dirty = true;
+		break;
+
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_HOME:
+		// Move caret to start
+		setCaretPos(caretVisualPos(0));
+		if (state.hasFlags(Common::KBD_SHIFT))
+			setSelectionOffset(0 - _selCaretPos);
+		else
+			clearSelection();
+		forcecaret = true;
+		dirty = true;
+		break;
+
+	default:
+		defaultKeyDownHandler(state, dirty, forcecaret, handled);
+	}
 
 	if (dirty)
 		markAsDirty();
@@ -283,7 +401,6 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 	bool dirty = false;
 	bool forcecaret = false;
-	int deleteIndex;
 
 	if (!isEnabled())
 		return;
@@ -295,135 +412,26 @@ void EditableWidget::handleOtherEvent(const Common::Event &evt) {
 	switch (evt.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch (evt.customType) {
-		case kActionEnter:
-			endEditMode();
-			dirty = true;
-			break;
-
-		case kActionEscape:
-			abortEditMode();
-			dirty = true;
-			break;
-
-		case kActionBackspace:
-			deleteIndex = caretLogicalPos();
-			if (deleteIndex > 0 && _selOffset == 0) {
-				deleteIndex--;
-				_editString.deleteChar(deleteIndex);
-				setCaretPos(caretVisualPos(deleteIndex));
-				_selCaretPos = -1;
-				dirty = true;
-
-				sendCommand(_cmd, 0);
-			} else if (deleteIndex >= 0 && _selOffset != 0) {
-				int selBegin = _selCaretPos;
-				int selEnd = _selCaretPos + _selOffset;
-				if (selBegin > selEnd)
-					SWAP(selBegin, selEnd);
-				_editString.erase(selBegin, selEnd - selBegin);
-				setCaretPos(caretVisualPos(selBegin));
-				_selCaretPos = -1;
-				_selOffset = 0;
-				dirty = true;
-
-				sendCommand(_cmd, 0);
-			}
-			forcecaret = true;
-			break;
-
-		case kActionDelete:
-			deleteIndex = caretLogicalPos();
-			if (deleteIndex >= 0 && _selOffset == 0) {
-				_editString.deleteChar(deleteIndex);
-				setCaretPos(caretVisualPos(deleteIndex));
-				_selCaretPos = -1;
-				dirty = true;
-
-				sendCommand(_cmd, 0);
-			} else if (deleteIndex >= 0 && _selOffset != 0) {
-				int selBegin = _selCaretPos;
-				int selEnd = _selCaretPos + _selOffset;
-				if (selBegin > selEnd)
-					SWAP(selBegin, selEnd);
-				_editString.erase(selBegin, selEnd - selBegin);
-				setCaretPos(caretVisualPos(selBegin));
-				_selCaretPos = -1;
-				_selOffset = 0;
-				dirty = true;
-			}
-			forcecaret = true;
-			break;
-
-		case kActionEnd:
-			if (_shiftPressed) {
-				if (_selCaretPos < 0)
-					_selCaretPos = _caretPos;
-
-				setSelectionOffset(_editString.size() - _selCaretPos);
-			} else {
-				clearSelection();
-			}
-
-			// Move caret to end
-			setCaretPos(caretVisualPos(_editString.size()));
-
-			forcecaret = true;
-			dirty = true;
-			break;
-
-		case kActionLeft:
-			if (_shiftPressed) {
-				if (_disableSelection)
-					break;
-				if (_selCaretPos < 0)
-					_selCaretPos = _caretPos;
-				if (_caretPos > 0)
-					_selOffset--;
-			} else {
-				clearSelection();
-			}
-			// Move caret one left (if possible)
-			if (_caretPos > 0) {
-				dirty = setCaretPos(_caretPos - 1);
-			}
-			forcecaret = true;
-			dirty = true;
-			break;
-
-		case kActionRight:
-			if (_shiftPressed) {
-				if (_disableSelection)
-					break;
-				if (_selCaretPos < 0)
-					_selCaretPos = _caretPos;
-				if (_selOffset + _selCaretPos < (int)_editString.size())
-					_selOffset++;
-			} else {
-				clearSelection();
-			}
-			// Move caret one right (if possible)
-			if (_caretPos < (int)_editString.size()) {
-				dirty = setCaretPos(_caretPos + 1);
-			}
-			forcecaret = true;
-			dirty = true;
-			break;
-
 		case kActionHome:
-			if (_shiftPressed) {
-				if (_selCaretPos < 0)
-					_selCaretPos = _caretPos;
-				setSelectionOffset(0 - _selCaretPos);
-			} else {
-				clearSelection();
-			}
 			// Move caret to start
 			setCaretPos(caretVisualPos(0));
-
+			if (_shiftPressed)
+				setSelectionOffset(0 - _selCaretPos);
+			else
+				clearSelection();
 			forcecaret = true;
 			dirty = true;
 			break;
-
+		case kActionEnd:
+			// Move caret to end
+			setCaretPos(caretVisualPos(_editString.size()));
+			if (_shiftPressed)
+				setSelectionOffset(_editString.size() - _selCaretPos);
+			else
+				clearSelection();
+			forcecaret = true;
+			dirty = true;
+			break;
 		case kActionCut:
 			if (!getEditString().empty() && _selOffset != 0) {
 				int selBegin = _selCaretPos;

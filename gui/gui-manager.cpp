@@ -191,63 +191,44 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
-	act = new Action("ENTER", _("New Line"));
-	act->setCustomEngineActionEvent(kActionEnter);
-	act->addDefaultInputMapping("RETURN");
-	act->addDefaultInputMapping("KP_ENTER");
-	act->allowKbdRepeats();
-	guiMap->addAction(act);
-
-	act = new Action("ESC", _("Close Dialog"));
-	act->setCustomEngineActionEvent(kActionEscape);
-	act->addDefaultInputMapping("ESCAPE");
-	guiMap->addAction(act);
-
 	act = new Action("BACKSPACE", _("Backspace"));
-	act->setCustomEngineActionEvent(kActionBackspace);
+	act->setKeyEvent(KEYCODE_BACKSPACE);
 	act->addDefaultInputMapping("BACKSPACE");
 	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
 	act = new Action("DEL", _("Delete Character"));
-	act->setCustomEngineActionEvent(kActionDelete);
+	act->setKeyEvent(KEYCODE_DELETE);
 	act->addDefaultInputMapping("DELETE");
 	act->allowKbdRepeats();
 	guiMap->addAction(act);
 
-	act = new Action("END", _("Go to end of line"));
-	act->setCustomEngineActionEvent(kActionEnd);
 
 #ifdef MACOSX
+	act = new Action("MAC_END", _("Go to end of line"));
+	act->setCustomEngineActionEvent(kActionEnd);
 	act->addDefaultInputMapping("C+e");
+	guiMap->addAction(act);
 #endif
 
-	act->addDefaultInputMapping("DOWN");
+	act = new Action("END", _("Go to end of line"));
+	act->setKeyEvent(KEYCODE_END);
 	act->addDefaultInputMapping("END");
 	guiMap->addAction(act);
 
-	act = new Action("CHAR_LEFT", _("Move cursor left"));
-	act->setCustomEngineActionEvent(kActionLeft);
-	act->addDefaultInputMapping("LEFT");
-	act->allowKbdRepeats();
-	guiMap->addAction(act);
-
-	act = new Action("CHAR_RIGHT", _("Move cursor right"));
-	act->setCustomEngineActionEvent(kActionRight);
-	act->addDefaultInputMapping("RIGHT");
-	act->allowKbdRepeats();
-	guiMap->addAction(act);
-
-	act = new Action("HOME", _("Go to start of line"));
-	act->setCustomEngineActionEvent(kActionHome);
 
 #ifdef MACOSX
+	act = new Action("MAC_HOME", _("Go to start of line"));
+	act->setCustomEngineActionEvent(kActionHome);
 	act->addDefaultInputMapping("C+a");
+	guiMap->addAction(act);
 #endif
 
-	act->addDefaultInputMapping("UP");
+	act = new Action("HOME", _("Go to start of line"));
+	act->setKeyEvent(KEYCODE_HOME);
 	act->addDefaultInputMapping("HOME");
 	guiMap->addAction(act);
+
 
 #ifdef MACOSX
 	act = new Action(kStandardActionCut, _("Cut"));
