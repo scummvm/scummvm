@@ -7101,7 +7101,7 @@ void Scene825::Button::setText(int textId) {
 	_lookLineNum = textId;
 
 	_sceneText.remove();
-	if (_buttonId != 0) {
+	if (textId != 0) {
 		Scene825 *scene = (Scene825 *)R2_GLOBALS._sceneManager._scene;
 		_sceneText.setup(scene->_autodocItems[textId - 1]);
 	}
