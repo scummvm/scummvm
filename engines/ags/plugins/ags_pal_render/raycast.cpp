@@ -174,9 +174,9 @@ void AGSPalRender::Ray_GetAmbientLight(ScriptMethodParams &params) {
 }
 double fsqrt(double y) {
 	double x, z, tempf;
+	tempf = y;
 	unsigned long *tfptr = ((unsigned long *)&tempf) + 1;
 
-	tempf = y;
 	*tfptr = (0xbfcdd90a - *tfptr) >> 1; /* estimate of 1/sqrt(y) */
 	x =  tempf;
 	z =  y * 0.5;                      /* hoist out the �/2�    */
