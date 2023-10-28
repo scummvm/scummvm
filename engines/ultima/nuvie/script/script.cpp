@@ -1270,8 +1270,8 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 			break;
 		}
 
-		uint16 num;
-		uint8 re;
+		uint16 num = 0;
+		uint8 re = 0;
 		char name[13];
 		char invocation[5];
 

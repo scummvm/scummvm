@@ -2403,8 +2403,8 @@ void MapWindow::drawAnims(bool top_anims) {
 void MapWindow::update_mouse_cursor(uint32 mx, uint32 my) {
 	Events *event = game->get_event();
 	int wx = 0, wy = 0;
-	sint16 rel_x, rel_y;
-	uint8 mptr; // mouse-pointer is set here in get_movement_direction()
+	sint16 rel_x = 0, rel_y = 0;
+	uint8 mptr = 0; // mouse-pointer is set here in get_movement_direction()
 
 	if (event->get_mode() != MOVE_MODE && event->get_mode() != INPUT_MODE)
 		return;
