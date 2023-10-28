@@ -25,7 +25,7 @@
 #define GUI_ANIMATION_DRAWABLE_H
 
 #include "common/ptr.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 #include "gui/animation/Animation.h"
 
@@ -64,8 +64,8 @@ public:
 	void setAlpha(float alpha) { _alpha = alpha; }
 	AnimationPtr getAnimation() const { return _animation; }
 	void setAnimation(AnimationPtr animation) { _animation = animation; }
-	Graphics::TransparentSurface *getBitmap() const { return _bitmap; }
-	void setBitmap(Graphics::TransparentSurface *bitmap) { _bitmap = bitmap; }
+	Graphics::ManagedSurface *getBitmap() const { return _bitmap; }
+	void setBitmap(Graphics::ManagedSurface *bitmap) { _bitmap = bitmap; }
 	float getPositionX() const { return _positionX; }
 	void setPositionX(float positionX) { _positionX = positionX; }
 	float getPositionY() const { return _positionY; }
@@ -74,8 +74,8 @@ public:
 	void setWidth(float width) { _width = width; }
 
 	virtual float getHeight() const {
-		if (_height == 0)
-			return getWidth() * _bitmap->getRatio() * _displayRatio;
+		if (_height == 0 && _bitmap && _bitmap->w && _bitmap->h)
+			return getWidth() * _displayRatio * _bitmap->h / _bitmap->w;
 
 		return _height;
 	}
@@ -89,7 +89,7 @@ protected:
 	bool _usingSnapshot;
 
 private:
-	Graphics::TransparentSurface *_bitmap;
+	Graphics::ManagedSurface *_bitmap;
 	float _positionX;
 	float _positionY;
 	float _width;
