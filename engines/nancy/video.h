@@ -88,8 +88,6 @@ private:
 
 		bool decode(byte *outBuf, uint32 frameSize, Common::ReadStream &inBuf) const;
 
-		const AVFDecoder *_owner;
-
 		Common::SeekableReadStream *_fileStream;
 		Graphics::PixelFormat _pixelFormat;
 		uint _width, _height, _depth, _frameSize;
