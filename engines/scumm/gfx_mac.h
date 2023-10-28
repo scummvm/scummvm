@@ -99,9 +99,46 @@ public:
 		kStyleRounded
 	};
 
+	class SimpleWindow;
+
+	class MacWidget {
+	protected:
+		MacGui::SimpleWindow *_window;
+		Common::Rect _bounds;
+
+	public:
+		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds);
+		virtual ~MacWidget() {};
+
+		virtual void draw() = 0;
+	};
+
+	class MacButton : public MacWidget {
+	private:
+		Common::String _text;
+		bool _isPressed = false;
+		bool _isDefault;
+		bool _firstDraw = true;
+
+	public:
+		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isDefault);
+		void draw();
+	};
+
+	class MacCheckbox : public MacWidget {
+	private:
+		Common::String _text;
+		bool _isPressed = false;
+		bool _isChecked;
+		bool _firstDraw = true;
+
+	public:
+		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isChecked);
+		void draw();
+	};
+
 	class SimpleWindow {
 	private:
-		MacGui *_gui;
 		OSystem *_system;
 		Common::Rect _bounds;
 		int _margin;
@@ -113,11 +150,15 @@ public:
 		Graphics::Surface _surface;
 		Graphics::Surface _innerSurface;
 
+		Common::Array<MacWidget *> _widgets;
+
 		Common::Array<Common::Rect> _dirtyRects;
 
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
 	public:
+		MacGui *_gui;
+
 		SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
 		~SimpleWindow();
 
@@ -125,6 +166,9 @@ public:
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
 
 		void show();
+
+		void addButton(Common::Rect bounds, Common::String text, bool isDefault);
+		void addCheckbox(Common::Rect bounds, Common::String text, bool isChecked);
 
 		void markRectAsDirty(Common::Rect r);
 		void update(bool fullRedraw = false);

@@ -208,7 +208,145 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
-// Very simple window class
+// Very simple window class and widgets. It is perhaps unfortunate that we have
+// two different sets of widget classes, but they behave quite differently.
+
+MacGui::MacWidget::MacWidget(SimpleWindow *window, Common::Rect bounds) : _window(window), _bounds(bounds) {}
+
+MacGui::MacButton::MacButton(SimpleWindow *window, Common::Rect bounds, Common::String text, bool isDefault) : MacWidget(window, bounds), _text(text), _isDefault(isDefault) {}
+
+void MacGui::MacButton::draw() {
+	Graphics::Surface *s = _window->innerSurface();
+	Color fg, bg;
+	int x0, x1, x2, x3;
+	int y0, y1;
+
+	x0 = _bounds.left + 3;
+	x1 = _bounds.right - 4;
+
+	y0 = _bounds.top + 3;
+	y1 = _bounds.bottom - 4;
+
+	s->hLine(x0, _bounds.top, x1, kBlack);
+	s->hLine(x0, _bounds.bottom - 1, x1, kBlack);
+	s->vLine(_bounds.left, y0, y1, kBlack);
+	s->vLine(_bounds.right - 1, y0, y1, kBlack);
+
+	if (_isPressed) {
+		fg = kWhite;
+		bg = kBlack;
+	} else {
+		fg = kBlack;
+		bg = kWhite;
+	}
+
+	// The way the corners are rounded, we can fill this entire rectangle
+	// in one go.
+
+	s->fillRect(Common::Rect(_bounds.left + 1, _bounds.top + 1, _bounds.right - 1, _bounds.bottom - 1), bg);
+
+	// ScummVM's rounded rectangles aren't a complete match for QuickDraw's
+	// rounded rectangles, so we draw the corners manually.
+
+	int innerCorner[][2] = {
+		{ 1, 2 },
+		{ 1, 1 }
+	};
+
+	for (int i = 0; i < ARRAYSIZE(innerCorner); i++) {
+		x0 = _bounds.left + innerCorner[i][0];
+		x1 = _bounds.left + innerCorner[i][1];
+		x2 = _bounds.right - innerCorner[i][1] - 1;
+		x3 = _bounds.right - innerCorner[i][0] - 1;
+
+		y0 = _bounds.top + i + 1;
+		y1 = _bounds.bottom - i - 2;
+
+		s->hLine(x0, y0, x1, kBlack);
+		s->hLine(x2, y0, x3, kBlack);
+		s->hLine(x0, y1, x1, kBlack);
+		s->hLine(x2, y1, x3, kBlack);
+	}
+
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	font->drawString(_window->innerSurface(), _text, _bounds.left, _bounds.top + 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
+
+	if (_isDefault && _firstDraw) {
+		for (int i = 0; i < 3; i++) {
+			x0 = _bounds.left + 1;
+			x1 = _bounds.right - 2;
+
+			y0 = _bounds.top + 2;
+			y1 = _bounds.bottom - 3;
+
+			s->hLine(x0, _bounds.top - 4 + i, x1, kBlack);
+			s->hLine(x0, _bounds.bottom + 3 - i, x1, kBlack);
+			s->vLine(_bounds.left - 4 + i, y0, y1, kBlack);
+			s->vLine(_bounds.right + 3 - i, y0, y1, kBlack);
+		}
+
+		int outerCorner[][2] = {
+			{ -1, 0 },
+			{ -2, 0 },
+			{ -3, 1 },
+			{ -3, -1 },
+			{ -4, -1 }
+		};
+
+		for (int i = 0; i < ARRAYSIZE(outerCorner); i++) {
+			x0 = _bounds.left + outerCorner[i][0];
+			x1 = _bounds.left + outerCorner[i][1];
+			x2 = _bounds.right - outerCorner[i][1] - 1;
+			x3 = _bounds.right - outerCorner[i][0] - 1;
+
+			y0 = _bounds.top - 3 + i;
+			y1 = _bounds.bottom + 2 - i;
+
+			s->hLine(x0, y0, x1, kBlack);
+			s->hLine(x2, y0, x3, kBlack);
+			s->hLine(x0, y1, x1, kBlack);
+			s->hLine(x2, y1, x3, kBlack);
+		}
+
+		_firstDraw = false;
+	}
+
+	// The first time, the whole window is redrawn so we don't have to
+	// mark the default button as any dirtier than a regular one.
+
+	_window->markRectAsDirty(_bounds);
+}
+
+MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool isChecked) : MacWidget(window, bounds), _text(text), _isChecked(isChecked) {}
+
+void MacGui::MacCheckbox::draw() {
+	Graphics::Surface *s = _window->innerSurface();
+	Common::Rect box(_bounds.left + 2, _bounds.top + 2, _bounds.left + 14, _bounds.top + 14);
+
+	s->fillRect(box, kBlack);
+	box.grow(_isPressed ? -2 : -1);
+	s->fillRect(box, kWhite);
+
+	if (_isChecked) {
+		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, kBlack);
+		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, kBlack);
+	}
+
+	if (_firstDraw) {
+		const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+		int stringWidth = font->getStringWidth(_text);
+
+		int x = _bounds.left + 18;
+		int y = _bounds.top;
+
+		_bounds.right = x + stringWidth + 1;
+		font->drawString(_window->innerSurface(), _text, x, y, stringWidth, kBlack);
+		_firstDraw = false;
+	}
+
+	_window->markRectAsDirty(_bounds);
+}
 
 MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
@@ -263,6 +401,11 @@ MacGui::SimpleWindow::~SimpleWindow() {
 	copyToScreen(_backup);
 	_backup->free();
 	delete _backup;
+
+	for (uint i = 0; i < _widgets.size(); i++)
+		delete _widgets[i];
+
+	_widgets.clear();
 	_pauseToken.clear();
 }
 
@@ -276,6 +419,20 @@ void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) const {
 void MacGui::SimpleWindow::show() {
 	copyToScreen();
 	_dirtyRects.clear();
+}
+
+void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool isDefault) {
+	MacButton *button = new MacButton(this, bounds, text, isDefault);
+
+	_widgets.push_back(button);
+	button->draw();
+}
+
+void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text, bool isChecked) {
+	MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, isChecked);
+
+	_widgets.push_back(checkbox);
+	checkbox->draw();
 }
 
 void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
@@ -855,7 +1012,6 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 			res->skip(4);	// Placeholder for handle or procedure pointer
 
 			Common::Rect r;
-			int x, y;
 
 			r.top = res->readUint16BE();
 			r.left = res->readUint16BE();
@@ -874,17 +1030,7 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 			case 4:
 				// Button
 				str = getDialogString(res, len, substitutions);
-
-				if (button == defaultButton) {
-					r.grow(4);
-					Graphics::drawRoundRect(r, 7, kBlack, true, SimpleWindow::plotPixel, window);
-					r.grow(-3);
-					Graphics::drawRoundRect(r, 5, kWhite, true, SimpleWindow::plotPixel, window);
-					r.grow(-1);
-				}
-
-				Graphics::drawRoundRect(r, 5, kBlack, false, SimpleWindow::plotPixel, window);
-				font->drawString(s, str, r.left, r.top + 2, r.width(), kBlack, Graphics::kTextAlignCenter);
+				window->addButton(r, str, button == defaultButton);
 				button++;
 				break;
 
@@ -892,17 +1038,15 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 				// Checkbox
 				str = getDialogString(res, len, substitutions);
 
-				x = r.left + 2;
-				y = r.bottom - r.height() / 2 - 6;
+				// The DITL may define a larger than necessary
+				// area for the checkbox, so normalize the
+				// height here. The width will be normalized
+				// when the checkbox is first drawn.
 
-				s->hLine(x, y, x + 11, kBlack);
-				s->hLine(x, y + 11, x + 11, kBlack);
-				s->vLine(x, y + 1, y + 10, kBlack);
-				s->vLine(x + 11, y + 1, y + 10, kBlack);
-				s->drawLine(x + 1, y + 1, x + 10, y + 10, kBlack);
-				s->drawLine(x + 1, y + 10, x + 10, y + 1, kBlack);
+				r.top = r.bottom - r.height() / 2 - 8;
+				r.bottom = r.top + 16;
 
-				font->drawString(s, str, x + 16, y - 2, r.width() - 16, kBlack);
+				window->addCheckbox(r, str, true);
 				break;
 
 			case 8:
