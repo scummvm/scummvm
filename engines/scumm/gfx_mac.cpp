@@ -348,6 +348,11 @@ void MacGui::MacCheckbox::draw() {
 	_window->markRectAsDirty(_bounds);
 }
 
+void MacGui::MacCheckbox::action() {
+	_isChecked = !_isChecked;
+	draw();
+}
+
 MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
 
@@ -421,18 +426,21 @@ void MacGui::SimpleWindow::show() {
 	_dirtyRects.clear();
 }
 
-void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool isDefault) {
-	MacButton *button = new MacButton(this, bounds, text, isDefault);
+MacGui::MacWidget *MacGui::SimpleWindow::findWidget(int x, int y) {
+	for (uint i = 0; i < _widgets.size(); i++) {
+		if (_widgets[i]->findWidget(x, y))
+			return _widgets[i];
+	}
 
-	_widgets.push_back(button);
-	button->draw();
+	return nullptr;
+}
+
+void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool isDefault) {
+	_widgets.push_back(new MacButton(this, bounds, text, isDefault));
 }
 
 void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text, bool isChecked) {
-	MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, isChecked);
-
-	_widgets.push_back(checkbox);
-	checkbox->draw();
+	_widgets.push_back(new MacCheckbox(this, bounds, text, isChecked));
 }
 
 void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
@@ -470,6 +478,59 @@ void MacGui::SimpleWindow::fillPattern(Common::Rect r, uint16 pattern) {
 void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
 	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
 	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
+}
+
+void MacGui::SimpleWindow::runDialog() {
+	for (uint i = 0; i < _widgets.size(); i++)
+		_widgets[i]->draw();
+
+	show();
+
+	bool done = false;
+	MacGui::MacWidget *pressedWidget = nullptr;
+
+	while (!done && !_gui->_vm->shouldQuit()) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (Common::isMouseEvent(event)) {
+				event.mouse.x -= (_bounds.left + _margin);
+				event.mouse.y -= (_bounds.top + _margin);
+			}
+
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+				pressedWidget = findWidget(event.mouse.x, event.mouse.y);
+				if (pressedWidget)
+					pressedWidget->setPressed(true);
+				break;
+
+			case Common::EVENT_LBUTTONUP:
+				if (pressedWidget) {
+					pressedWidget->setPressed(false);
+					pressedWidget->action();
+					pressedWidget = nullptr;
+				}
+				break;
+
+			case Common::EVENT_MOUSEMOVE:
+				if (pressedWidget) {
+					if (!pressedWidget->findWidget(event.mouse.x, event.mouse.y)) {
+						pressedWidget->setPressed(false);
+						pressedWidget = nullptr;
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(10);
+		update();
+		_system->updateScreen();
+	}
 }
 
 void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
@@ -967,7 +1028,95 @@ Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len,
 	return str;
 }
 
-void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int defaultButton) {
+bool MacGui::handleEvent(Common::Event &event) {
+	return _windowManager->processEvent(event);
+}
+
+void MacGui::setPalette(const byte *palette, uint size) {
+	_windowManager->passPalette(palette, size);
+}
+
+void MacGui::updateWindowManager() {
+	// TODO: Originally, the left Alt button opens the menu. In ScummVM,
+	//       it triggers on mouse-over. Preferrably both should work (the
+	//       latter should work better for touch screens), but it's hard
+	//       to get them to coexist.
+
+	// We want the arrow cursor for menus. Note that the menu triggers even
+	// when the mouse is invisible, which may or may not be a bug. But the
+	// original did allow you to open the menu with Alt even when the
+	// cursor was visible, so for now it's a feature.
+
+	bool isActive = _windowManager->isMenuActive();
+
+	if (isActive) {
+		if (!_menuIsActive) {
+			_cursorWasVisible = CursorMan.showMouse(true);
+			_windowManager->pushCursor(Graphics::kMacCursorArrow);
+		}
+	} else {
+		if (_menuIsActive) {
+			if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
+				_windowManager->popCursor();
+			CursorMan.showMouse(_cursorWasVisible);
+		}
+	}
+
+	_menuIsActive = isActive;
+	_windowManager->draw();
+}
+
+MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
+	MacGui::SimpleWindow *window = createWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
+	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
+
+	Graphics::Surface *s = window->innerSurface();
+	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
+
+	window->show();
+	return window;
+}
+
+int MacGui::delay(uint32 ms) {
+	uint32 to;
+
+	if (ms == (uint32)-1)
+		to = 0xFFFFFFFF;
+	else
+		to = _system->getMillis() + ms;
+
+	while (_system->getMillis() < to) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				return 2;
+
+			case Common::EVENT_LBUTTONDOWN:
+				return 1;
+
+			default:
+				break;
+			}
+		}
+
+		uint32 delta = to - _system->getMillis();
+
+		if (delta > 0) {
+			_system->delayMillis(MIN<uint32>(delta, 10));
+			_system->updateScreen();
+		}
+	}
+
+	return 0;
+}
+
+MacGui::SimpleWindow *MacGui::createWindow(Common::Rect bounds, SimpleWindowStyle style) {
+	return new SimpleWindow(this, _system, _surface, bounds, style);
+}
+
+MacGui::SimpleWindow *MacGui::createDialog(int dialogId, Common::StringArray substitutions, int defaultButton) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 	int button = 0;
@@ -998,7 +1147,7 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 		bounds.translate(86, 88);
 	}
 
-	SimpleWindow *window = openWindow(bounds);
+	SimpleWindow *window = createWindow(bounds);
 	Graphics::Surface *s = window->innerSurface();
 
 	res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
@@ -1077,118 +1226,7 @@ void MacGui::drawDialog(int dialogId, Common::StringArray substitutions, int def
 	}
 
 	resource.close();
-
-	window->show();
-
-	bool done = false;
-
-	while (!done && !_vm->shouldQuit()) {
-		Common::Event event;
-
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-				done = true;
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		_system->delayMillis(10);
-		_system->updateScreen();
-	}
-
-	delete window;
-}
-
-bool MacGui::handleEvent(Common::Event &event) {
-	return _windowManager->processEvent(event);
-}
-
-void MacGui::setPalette(const byte *palette, uint size) {
-	_windowManager->passPalette(palette, size);
-}
-
-void MacGui::updateWindowManager() {
-	// TODO: Originally, the left Alt button opens the menu. In ScummVM,
-	//       it triggers on mouse-over. Preferrably both should work (the
-	//       latter should work better for touch screens), but it's hard
-	//       to get them to coexist.
-
-	// We want the arrow cursor for menus. Note that the menu triggers even
-	// when the mouse is invisible, which may or may not be a bug. But the
-	// original did allow you to open the menu with Alt even when the
-	// cursor was visible, so for now it's a feature.
-
-	bool isActive = _windowManager->isMenuActive();
-
-	if (isActive) {
-		if (!_menuIsActive) {
-			_cursorWasVisible = CursorMan.showMouse(true);
-			_windowManager->pushCursor(Graphics::kMacCursorArrow);
-		}
-	} else {
-		if (_menuIsActive) {
-			if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
-				_windowManager->popCursor();
-			CursorMan.showMouse(_cursorWasVisible);
-		}
-	}
-
-	_menuIsActive = isActive;
-	_windowManager->draw();
-}
-
-MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
-	MacGui::SimpleWindow *window = openWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
-	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
-
-	Graphics::Surface *s = window->innerSurface();
-	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
-
-	window->show();
 	return window;
-}
-
-int MacGui::delay(uint32 ms) {
-	uint32 to;
-
-	if (ms == (uint32)-1)
-		to = 0xFFFFFFFF;
-	else
-		to = _system->getMillis() + ms;
-
-	while (_system->getMillis() < to) {
-		Common::Event event;
-
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				return 2;
-
-			case Common::EVENT_LBUTTONDOWN:
-				return 1;
-
-			default:
-				break;
-			}
-		}
-
-		uint32 delta = to - _system->getMillis();
-
-		if (delta > 0) {
-			_system->delayMillis(MIN<uint32>(delta, 10));
-			_system->updateScreen();
-		}
-	}
-
-	return 0;
-}
-
-MacGui::SimpleWindow *MacGui::openWindow(Common::Rect bounds, SimpleWindowStyle style) {
-	return new SimpleWindow(this, _system, _surface, bounds, style);
 }
 
 // ===========================================================================
@@ -1329,7 +1367,8 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 	}
 
 	if (dialogId != -1) {
-		drawDialog(dialogId, substitutions, defaultButton);
+		SimpleWindow *dialog = createDialog(dialogId, substitutions, defaultButton);
+		dialog->runDialog();
 		return true;
 	}
 
@@ -1347,7 +1386,7 @@ void MacLoomGui::showAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	SimpleWindow *window = openWindow(bounds);
+	SimpleWindow *window = createWindow(bounds);
 	Graphics::Surface *lucasFilm = loadPict(5000);
 	Graphics::Surface *loom = loadPict(5001);
 
@@ -2873,7 +2912,8 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	}
 
 	if (dialogId != -1) {
-		drawDialog(dialogId, substitutions, defaultButton);
+		SimpleWindow *dialog = createDialog(dialogId, substitutions, defaultButton);
+		dialog->runDialog();
 		return true;
 	}
 
@@ -2891,7 +2931,7 @@ void MacIndy3Gui::showAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	SimpleWindow *window = openWindow(bounds);
+	SimpleWindow *window = createWindow(bounds);
 	Graphics::Surface *pict = loadPict(2000);
 
 	// For the background of the sprites to match the background of the
