@@ -142,13 +142,15 @@ public:
 
 	Common::String getFileName(int slot = 0) const;
 
-	uint32 getFrameCount  (int slot = 0) const;
-	uint32 getCurrentFrame(int slot = 0) const;
-	uint16 getWidth       (int slot = 0) const;
-	uint16 getHeight      (int slot = 0) const;
-	uint16 getDefaultX    (int slot = 0) const;
-	uint16 getDefaultY    (int slot = 0) const;
-	uint32 getFlags       (int slot = 0) const;
+	uint32 getFrameCount     (int slot = 0) const;
+	uint32 getCurrentFrame   (int slot = 0) const;
+	uint16 getWidth          (int slot = 0) const;
+	uint16 getHeight         (int slot = 0) const;
+	uint16 getDefaultX       (int slot = 0) const;
+	uint16 getDefaultY       (int slot = 0) const;
+	uint32 getFlags          (int slot = 0) const;
+	uint32 getVideoBufferSize(int slot = 0) const;
+	bool   hasVideo          (int slot = 0) const;
 
 
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;

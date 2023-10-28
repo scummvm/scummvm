@@ -994,6 +994,10 @@ uint32 PreIMDDecoder::getFlags() const {
 	return 0;
 }
 
+uint32 PreIMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
+}
+
 Graphics::PixelFormat PreIMDDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
@@ -1674,6 +1678,10 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 
 uint32 IMDDecoder::getFlags() const {
 	return _flags;
+}
+
+uint32 IMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
 }
 
 Graphics::PixelFormat IMDDecoder::getPixelFormat() const {
@@ -2908,6 +2916,10 @@ Audio::AudioStream *VMDDecoder::create16bitADPCM(Common::SeekableReadStream *str
 
 uint32 VMDDecoder::getFlags() const {
 	return _flags;
+}
+
+uint32 VMDDecoder::getVideoBufferSize() const {
+	return _videoBufferSize;
 }
 
 Graphics::PixelFormat VMDDecoder::getPixelFormat() const {

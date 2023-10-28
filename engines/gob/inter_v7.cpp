@@ -686,18 +686,15 @@ void Inter_v7::o7_playVmdOrMusic() {
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
 
+		if (props.lastFrame <= -20)
+			props.noBlock    = true;
 		//if (!(props.flags & VideoPlayer::kFlagNoVideo))
 		//	props.loop = true;
 
 		props.slot = (-props.lastFrame) % 10;
 	}
 
-	// TODO: conditions below for unblocking videos have been found partly from asm, partly by trial and errors.
-	// Reality may be more complex...
-	if (props.startFrame == -2 ||
-		(props.startFrame == props.lastFrame &&
-		 props.lastFrame != -1 &&
-		 !(props.flags & VideoPlayer::kFlagOtherSurface))) {
+	if (props.startFrame == -2) {
 		props.startFrame = 0;
 		props.lastFrame  = -1;
 		props.noBlock    = true;
@@ -713,6 +710,12 @@ void Inter_v7::o7_playVmdOrMusic() {
 	if (!file.empty() && ((slot = _vm->_vidPlayer->openVideo(primary, file, props)) < 0)) {
 		WRITE_VAR(11, (uint32) -1);
 		return;
+	}
+
+	if (_vm->_vidPlayer->getVideoBufferSize(slot) == 0 || !_vm->_vidPlayer->hasVideo(slot)) {
+		props.startFrame = 0;
+		props.lastFrame  = -1;
+		props.noBlock = true;
 	}
 
 	if (props.hasSound)
