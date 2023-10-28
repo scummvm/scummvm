@@ -1378,18 +1378,12 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	bool flipX;
 	bool flipY;
 
-	// FIXME: It seems that at least in The Dig the original code does
-	// check _ignoreBoxes here. However, it breaks some animations in Loom,
+	// FIXME: It seems that checking _ignoreBoxes here breaks some animations in Loom,
 	// causing Bobbin to face towards the camera instead of away from it
 	// in some places: After the tree has been destroyed by lightning, and
 	// when entering the dark tunnels beyond the dragon's lair at the very
 	// least. Possibly other places as well.
-	//
-	// The Dig also checks if the actor is in the current room, but that's
-	// not necessary here because we never call the function unless the
-	// actor is in the current room anyway.
-
-	if (!_ignoreBoxes || _vm->_game.id == GID_LOOM) {
+	if ((!_ignoreBoxes && (_vm->_game.version < 7 || isInCurrentRoom())) || _vm->_game.id == GID_LOOM) {
 		if (_walkbox != kOldInvalidBox) {
 			assert(_walkbox < ARRAYSIZE(_vm->_extraBoxFlags));
 			specdir = _vm->_extraBoxFlags[_walkbox];
