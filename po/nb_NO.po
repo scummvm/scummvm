@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-26 23:16+0000\n"
+"POT-Creation-Date: 2023-10-28 16:40+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -215,8 +215,8 @@ msgstr "Manuell modus: Steg 2"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Kopier JSON-kode fra nettleser hit og trykk på Neste:"
 
-#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
-#: gui/gui-manager.cpp:273
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:239
+#: gui/gui-manager.cpp:254
 msgid "Paste"
 msgstr "Lim inn"
 
@@ -970,57 +970,33 @@ msgstr "Høyre"
 
 #: gui/gui-manager.cpp:194
 #, fuzzy
-#| msgid "New kid"
-msgid "New Line"
-msgstr "Bytt unge"
-
-#: gui/gui-manager.cpp:201
-#, fuzzy
-#| msgid "Close"
-msgid "Close Dialog"
-msgstr "Lukk"
-
-#: gui/gui-manager.cpp:206
-#, fuzzy
 #| msgid "Backend"
 msgid "Backspace"
 msgstr "Backend"
 
-#: gui/gui-manager.cpp:212
+#: gui/gui-manager.cpp:200
 #, fuzzy
 #| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Slett tegn"
 
-#: gui/gui-manager.cpp:218
+#: gui/gui-manager.cpp:208 gui/gui-manager.cpp:214
 msgid "Go to end of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:229
-#, fuzzy
-#| msgid "Move forward left"
-msgid "Move cursor left"
-msgstr "Gå på skrått til venstre"
-
-#: gui/gui-manager.cpp:235
-#, fuzzy
-#| msgid "Move forward right"
-msgid "Move cursor right"
-msgstr "Gå på skrått til høyre"
-
-#: gui/gui-manager.cpp:241
+#: gui/gui-manager.cpp:221 gui/gui-manager.cpp:227
 msgid "Go to start of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+#: gui/gui-manager.cpp:234 gui/gui-manager.cpp:249
 msgid "Cut"
 msgstr ""
 
-#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+#: gui/gui-manager.cpp:244 gui/gui-manager.cpp:259
 msgid "Copy"
 msgstr ""
 
-#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:265 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -10969,6 +10945,26 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#, fuzzy
+#~| msgid "New kid"
+#~ msgid "New Line"
+#~ msgstr "Bytt unge"
+
+#, fuzzy
+#~| msgid "Close"
+#~ msgid "Close Dialog"
+#~ msgstr "Lukk"
+
+#, fuzzy
+#~| msgid "Move forward left"
+#~ msgid "Move cursor left"
+#~ msgstr "Gå på skrått til venstre"
+
+#, fuzzy
+#~| msgid "Move forward right"
+#~ msgid "Move cursor right"
+#~ msgstr "Gå på skrått til høyre"
 
 #~ msgid ""
 #~ "Could not find the 'Indy' Macintosh executable. High-resolution fonts "

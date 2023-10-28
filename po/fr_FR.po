@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-26 23:16+0000\n"
+"POT-Creation-Date: 2023-10-28 16:40+0000\n"
 "PO-Revision-Date: 2023-10-27 08:45+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -211,8 +211,8 @@ msgstr "Mode manuel : Etape 2"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Copiez ici le code JSON depuis le navigateur et appuyez sur Suivant :"
 
-#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:258
-#: gui/gui-manager.cpp:273
+#: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:239
+#: gui/gui-manager.cpp:254
 msgid "Paste"
 msgstr "Coller"
 
@@ -959,46 +959,30 @@ msgid "Right"
 msgstr "Droite"
 
 #: gui/gui-manager.cpp:194
-msgid "New Line"
-msgstr "Nouvelle ligne"
-
-#: gui/gui-manager.cpp:201
-msgid "Close Dialog"
-msgstr "Fermer la fenêtre"
-
-#: gui/gui-manager.cpp:206
 msgid "Backspace"
 msgstr "Retour arrière"
 
-#: gui/gui-manager.cpp:212
+#: gui/gui-manager.cpp:200
 msgid "Delete Character"
 msgstr "Supprimer un caractère"
 
-#: gui/gui-manager.cpp:218
+#: gui/gui-manager.cpp:208 gui/gui-manager.cpp:214
 msgid "Go to end of line"
 msgstr "Aller en fin de ligne"
 
-#: gui/gui-manager.cpp:229
-msgid "Move cursor left"
-msgstr "Déplacer le curseur à gauche"
-
-#: gui/gui-manager.cpp:235
-msgid "Move cursor right"
-msgstr "Déplacer le curseur à droite"
-
-#: gui/gui-manager.cpp:241
+#: gui/gui-manager.cpp:221 gui/gui-manager.cpp:227
 msgid "Go to start of line"
 msgstr "Aller en début de ligne"
 
-#: gui/gui-manager.cpp:253 gui/gui-manager.cpp:268
+#: gui/gui-manager.cpp:234 gui/gui-manager.cpp:249
 msgid "Cut"
 msgstr "Couper"
 
-#: gui/gui-manager.cpp:263 gui/gui-manager.cpp:278
+#: gui/gui-manager.cpp:244 gui/gui-manager.cpp:259
 msgid "Copy"
 msgstr "Copier"
 
-#: gui/gui-manager.cpp:284 engines/pegasus/pegasus.cpp:2818
+#: gui/gui-manager.cpp:265 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -11219,6 +11203,18 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "New Line"
+#~ msgstr "Nouvelle ligne"
+
+#~ msgid "Close Dialog"
+#~ msgstr "Fermer la fenêtre"
+
+#~ msgid "Move cursor left"
+#~ msgstr "Déplacer le curseur à gauche"
+
+#~ msgid "Move cursor right"
+#~ msgstr "Déplacer le curseur à droite"
 
 #~ msgid ""
 #~ "Could not find the 'Indy' Macintosh executable. High-resolution fonts "
