@@ -57,6 +57,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Faithfully implemented Mac GUI for Indiana Jones and the Last Crusade.
    - Implemented turning around animation when changing direction for Full
      Throttle, The Dig and The Curse of Monkey Island.
+   - Added enhancement to Loom: Ctrl+D shows up list of drafts that has been
+     discovered.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
