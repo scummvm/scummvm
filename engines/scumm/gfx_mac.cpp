@@ -182,7 +182,7 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
-	MacGui::SimpleWindow *window = _macGui->drawBanner(bannerMsg);
+	MacGui::MacDialogWindow *window = _macGui->drawBanner(bannerMsg);
 
 	// Pause shake effect
 	_shakeTempSavedState = _shakeEnabled;
@@ -394,7 +394,7 @@ void MacGui::MacButton::draw(bool fullRedraw) {
 	_window->markRectAsDirty(_bounds);
 }
 
-MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
+MacGui::MacCheckbox::MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
 	// The DITL may define a larger than necessary area for the checkbox,
 	// so we need to calculate the hit bounds.
 
@@ -443,7 +443,7 @@ void MacGui::MacText::draw(bool fullRedraw) {
 	_window->markRectAsDirty(_bounds);
 }
 
-MacGui::MacPicture::MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
+MacGui::MacPicture::MacPicture(MacGui::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
 	_picture = _window->_gui->loadPict(id);
 }
 
@@ -458,7 +458,7 @@ void MacGui::MacPicture::draw(bool fullRedraw) {
 	_window->drawSprite(_picture, _bounds.left, _bounds.top);
 }
 
-MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
 
 	_backup = new Graphics::Surface();
@@ -507,7 +507,7 @@ MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surfa
 	}
 }
 
-MacGui::SimpleWindow::~SimpleWindow() {
+MacGui::MacDialogWindow::~MacDialogWindow() {
 	copyToScreen(_backup);
 	_backup->free();
 	delete _backup;
@@ -519,20 +519,20 @@ MacGui::SimpleWindow::~SimpleWindow() {
 	_pauseToken.clear();
 }
 
-void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) const {
+void MacGui::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
 	if (s) {
 		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
 	}
 	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 }
 
-void MacGui::SimpleWindow::show() {
+void MacGui::MacDialogWindow::show() {
 	_visible = true;
 	copyToScreen();
 	_dirtyRects.clear();
 }
 
-int MacGui::SimpleWindow::findWidget(int x, int y) {
+int MacGui::MacDialogWindow::findWidget(int x, int y) {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->findWidget(x, y))
 			return i;
@@ -541,27 +541,27 @@ int MacGui::SimpleWindow::findWidget(int x, int y) {
 	return -1;
 }
 
-void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
+void MacGui::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
 	_widgets.push_back(new MacButton(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
+void MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
 	_widgets.push_back(new MacCheckbox(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
+void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
 	_widgets.push_back(new MacText(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
+void MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
 	_widgets.push_back(new MacPicture(this, bounds, id, enabled));
 }
 
-void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
+void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
-void MacGui::SimpleWindow::update(bool fullRedraw) {
+void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	if (fullRedraw) {
 		_dirtyRects.clear();
 		markRectAsDirty(Common::Rect(0, 0, _innerSurface.w, _innerSurface.h));
@@ -578,7 +578,7 @@ void MacGui::SimpleWindow::update(bool fullRedraw) {
 	_dirtyRects.clear();
 }
 
-void MacGui::SimpleWindow::fillPattern(Common::Rect r, uint16 pattern) {
+void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
 			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
@@ -589,12 +589,12 @@ void MacGui::SimpleWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	markRectAsDirty(r);
 }
 
-void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
+void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
 	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
 	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
 }
 
-int MacGui::SimpleWindow::runDialog() {
+int MacGui::MacDialogWindow::runDialog() {
 	show();
 
 	for (uint i = 0; i < _widgets.size(); i++)
@@ -652,7 +652,7 @@ int MacGui::SimpleWindow::runDialog() {
 	return -1;
 }
 
-void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
+void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
 	Common::Rect subRect(0, 0, sprite->w, sprite->h);
 
 	if (x < clipRect.left) {
@@ -679,8 +679,8 @@ void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, in
 	}
 }
 
-void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
-	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+void MacGui::MacDialogWindow::plotPixel(int x, int y, int color, void *data) {
+	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	s->setPixel(x, y, color);
 }
@@ -690,13 +690,13 @@ void MacGui::SimpleWindow::plotPixel(int x, int y, int color, void *data) {
 // subtle effect that I suspect it was just doing some different magic, maybe
 // with XOR, but I couldn't get that to work by eye only.
 
-void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
+void MacGui::MacDialogWindow::plotPattern(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
 		0x0000, 0x2828, 0xA5A5, 0xD7D7,
 		0xFFFF,	0xD7D7, 0xA5A5, 0x2828
 	};
 
-	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
@@ -705,19 +705,19 @@ void MacGui::SimpleWindow::plotPattern(int x, int y, int pattern, void *data) {
 		s->setPixel(x, y, kWhite);
 }
 
-void MacGui::SimpleWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
+void MacGui::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
 		0x0000, 0x2828, 0xA5A5, 0xD7D7, 0xFFFF
 	};
 
-	MacGui::SimpleWindow *window = (MacGui::SimpleWindow *)data;
+	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
 		s->setPixel(x, y, kBlack);
 }
 
-void MacGui::SimpleWindow::drawTexts(Common::Rect r, const TextLine *lines) {
+void MacGui::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
 	if (!lines)
 		return;
 
@@ -763,7 +763,7 @@ void MacGui::SimpleWindow::drawTexts(Common::Rect r, const TextLine *lines) {
 	}
 }
 
-void MacGui::SimpleWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
+void MacGui::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
 	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
 	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);
@@ -1154,7 +1154,7 @@ bool MacGui::runQuitDialog() {
 	// 1 - Cancel button
 	// 2 - "^0" text
 
-	SimpleWindow *window = createDialog(502);
+	MacDialogWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution("Are you sure you want to quit?");
@@ -1185,7 +1185,7 @@ bool MacGui::runRestartDialog() {
 	// 1 - Cancel button
 	// 2 - "^0" text
 
-	SimpleWindow *window = createDialog(502);
+	MacDialogWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution("Are you sure you want to restart this game from the beginning?");
@@ -1256,8 +1256,8 @@ void MacGui::updateWindowManager() {
 	_windowManager->draw();
 }
 
-MacGui::SimpleWindow *MacGui::drawBanner(char *message) {
-	MacGui::SimpleWindow *window = createWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
+MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
+	MacGui::MacDialogWindow *window = createWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
 	Graphics::Surface *s = window->innerSurface();
@@ -1302,16 +1302,16 @@ int MacGui::delay(uint32 ms) {
 	return 0;
 }
 
-MacGui::SimpleWindow *MacGui::createWindow(Common::Rect bounds, SimpleWindowStyle style) {
+MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWindowStyle style) {
 	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
 		// This happens with the Last Crusade file dialogs.
 		bounds.moveTo((640 - bounds.width()) / 2, 27);
 	}
 
-	return new SimpleWindow(this, _system, _surface, bounds, style);
+	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
-MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
+MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
 	int button = 0;
@@ -1342,7 +1342,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 		bounds.translate(86, 88);
 	}
 
-	SimpleWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds);
 
 	res = resource.getResource(MKTAG('D', 'I', 'T', 'L'), dialogId);
 
@@ -1544,7 +1544,7 @@ void MacLoomGui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	SimpleWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds);
 	Graphics::Surface *lucasFilm = loadPict(5000);
 	Graphics::Surface *loom = loadPict(5001);
 
@@ -1656,7 +1656,7 @@ void MacLoomGui::runAboutDialog() {
 			if (pattern > 4)
 				darkenOnly = false;
 
-			Graphics::drawRoundRect(r, 7, pattern, true, darkenOnly ? SimpleWindow::plotPatternDarkenOnly : SimpleWindow::plotPattern, window);
+			Graphics::drawRoundRect(r, 7, pattern, true, darkenOnly ? MacDialogWindow::plotPatternDarkenOnly : MacDialogWindow::plotPattern, window);
 
 			if (!fastForward)
 				window->markRectAsDirty(r);
@@ -1832,7 +1832,7 @@ bool MacLoomGui::runOptionsDialog() {
 	int scrolling = 0;
 	int fullAnimation = 0;
 
-	SimpleWindow *window = createDialog(1000);
+	MacDialogWindow *window = createDialog(1000);
 
 	window->setWidgetValue(2, sound);
 	window->setWidgetValue(3, music);
@@ -3121,7 +3121,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	}
 
 	if (dialogId != -1) {
-		SimpleWindow *dialog = createDialog(dialogId);
+		MacDialogWindow *dialog = createDialog(dialogId);
 		dialog->runDialog();
 		return true;
 	}
@@ -3140,7 +3140,7 @@ void MacIndy3Gui::runAboutDialog() {
 	int y = (400 - height) / 2;
 
 	Common::Rect bounds(x, y, x + width, y + height);
-	SimpleWindow *window = createWindow(bounds);
+	MacDialogWindow *window = createWindow(bounds);
 	Graphics::Surface *pict = loadPict(2000);
 
 	// For the background of the sprites to match the background of the
@@ -3359,7 +3359,7 @@ void MacIndy3Gui::runAboutDialog() {
 	delete window;
 }
 
-void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
+void MacIndy3Gui::clearAboutDialog(MacDialogWindow *window) {
 	Graphics::Surface *s = window->innerSurface();
 
 	window->fillPattern(Common::Rect(2, 2, s->w - 2, 132), 0x8020);
@@ -3386,7 +3386,7 @@ bool MacIndy3Gui::runOpenDialog() {
 	// 12 - "Series: ^1" text
 	// 13 - "(Indy Quotient)" text
 
-	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
+	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
@@ -3427,7 +3427,7 @@ bool MacIndy3Gui::runSaveDialog() {
 	// 10 - "Series: ^1" text
 	// 11 - "(Indy Quotient)" text
 
-	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
+	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
@@ -3470,7 +3470,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 	int music = 0;
 	int scrolling = 0;
 
-	SimpleWindow *window = createDialog(1000);
+	MacDialogWindow *window = createDialog(1000);
 
 	window->setWidgetValue(2, sound);
 	window->setWidgetValue(3, music);
@@ -3520,7 +3520,7 @@ bool MacIndy3Gui::runIqPointsDialog() {
 	// 4 - "Series: ^1" text
 	// 5 - "IQ" picture
 
-	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
+	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));

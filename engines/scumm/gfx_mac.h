@@ -94,16 +94,16 @@ public:
 		const char *str;
 	};
 
-	enum SimpleWindowStyle {
+	enum MacDialogWindowStyle {
 		kStyleNormal,
 		kStyleRounded
 	};
 
-	class SimpleWindow;
+	class MacDialogWindow;
 
 	class MacWidget {
 	protected:
-		MacGui::SimpleWindow *_window;
+		MacGui::MacDialogWindow *_window;
 		Common::Rect _bounds;
 		Common::String _text;
 		bool _enabled = true;
@@ -111,7 +111,7 @@ public:
 		int _value = 0;
 
 	public:
-		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : _window(window), _bounds(bounds), _text(text), _enabled(enabled) {}
+		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : _window(window), _bounds(bounds), _text(text), _enabled(enabled) {}
 		virtual ~MacWidget() {};
 
 		bool isEnabled() { return _enabled; }
@@ -150,7 +150,7 @@ public:
 		bool _isDefault = false;
 
 	public:
-		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
+		MacButton(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
 		void makeDefaultWidget() { _isDefault = true; }
 
@@ -163,7 +163,7 @@ public:
 		bool _isChecked = false;
 
 	public:
-		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled);
+		MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 		void draw(bool fullRedraw = false);
 		void action();
 	};
@@ -174,7 +174,7 @@ public:
 
 	class MacText : public MacWidget {
 	public:
-		MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
+		MacText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 		bool findWidget(int x, int y) { return false; }
 		void draw(bool fullRedraw = false);
 	};
@@ -184,13 +184,13 @@ public:
 		Graphics::Surface *_picture = nullptr;
 
 	public:
-		MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id, bool enabled);
+		MacPicture(MacGui::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
 		~MacPicture();
 
 		void draw(bool fullRedraw = false);
 	};
 
-	class SimpleWindow {
+	class MacDialogWindow {
 	private:
 		OSystem *_system;
 		Common::Rect _bounds;
@@ -216,8 +216,8 @@ public:
 	public:
 		MacGui *_gui;
 
-		SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
-		~SimpleWindow();
+		MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
+		~MacDialogWindow();
 
 		Graphics::Surface *surface() { return &_surface; }
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
@@ -318,12 +318,12 @@ public:
 
 	void setPalette(const byte *palette, uint size);
 
-	SimpleWindow *drawBanner(char *message);
+	MacDialogWindow *drawBanner(char *message);
 
 	int delay(uint32 ms);
 
-	SimpleWindow *createWindow(Common::Rect bounds, SimpleWindowStyle style = kStyleNormal);
-	SimpleWindow *createDialog(int dialogId);
+	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
+	MacDialogWindow *createDialog(int dialogId);
 };
 
 class MacLoomGui : public MacGui {
@@ -383,7 +383,7 @@ public:
 	bool handleMenu(int id, Common::String &name);
 
 	void runAboutDialog();
-	void clearAboutDialog(SimpleWindow *window);
+	void clearAboutDialog(MacDialogWindow *window);
 	bool runOpenDialog();
 	bool runSaveDialog();
 	bool runOptionsDialog();
