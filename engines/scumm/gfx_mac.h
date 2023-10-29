@@ -76,9 +76,6 @@ protected:
 		kTransparency = 255
 	};
 
-	Common::String getDialogString(Common::SeekableReadStream *res, int len);
-
-public:
 	enum TextStyle {
 		kStyleHeader,
 		kStyleBold,
@@ -99,6 +96,9 @@ public:
 		kStyleRounded
 	};
 
+	Common::String getDialogString(Common::SeekableReadStream *res, int len);
+
+public:
 	class MacDialogWindow;
 
 	class MacWidget {
@@ -110,36 +110,22 @@ public:
 		bool _pressed = false;
 		int _value = 0;
 
+		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+
 	public:
 		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : _window(window), _bounds(bounds), _text(text), _enabled(enabled) {}
 		virtual ~MacWidget() {};
 
-		bool isEnabled() { return _enabled; }
+		bool isEnabled() const { return _enabled; }
+		void setEnabled(bool enabled);
 
-		void setEnabled(bool enabled) {
-			_enabled = enabled;
-			if (_window->isVisible())
-				draw(true);
-		}
+		void setPressed(bool pressed);
 
-		void setPressed(bool pressed) {
-			_pressed = pressed;
-			if (_window->isVisible())
-				draw();
-		}
-
-		void setValue(int value) {
-			_value = value;
-			if (_window->isVisible())
-				draw();
-		}
-
-		int getValue() { return _value; }
+		void setValue(int value);
+		int getValue() const { return _value; }
 
 		virtual void makeDefaultWidget() {}
-		virtual bool findWidget(int x, int y);
-
-		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+		virtual bool findWidget(int x, int y) const;
 
 		virtual void draw(bool fullRedraw = false) = 0;
 		virtual void action() {}
@@ -175,7 +161,7 @@ public:
 	class MacText : public MacWidget {
 	public:
 		MacText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
-		bool findWidget(int x, int y) { return false; }
+		bool findWidget(int x, int y) const { return false; }
 		void draw(bool fullRedraw = false);
 	};
 
@@ -222,17 +208,17 @@ public:
 		Graphics::Surface *surface() { return &_surface; }
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
 
-		bool isVisible() { return _visible; }
+		bool isVisible() const { return _visible; }
 
 		void show();
 		int runDialog();
 
 		void setDefaultWidget(int nr) { _widgets[nr]->makeDefaultWidget(); }
 		void setWidgetEnabled(int nr, bool enabled) { _widgets[nr]->setEnabled(enabled); }
-		bool isWidgetEnabled(int nr) { return _widgets[nr]->isEnabled(); }
-		int getWidgetValue(int nr) { return _widgets[nr]->getValue(); }
+		bool isWidgetEnabled(int nr) const { return _widgets[nr]->isEnabled(); }
+		int getWidgetValue(int nr) const { return _widgets[nr]->getValue(); }
 		void setWidgetValue(int nr, int value) { _widgets[nr]->setValue(value); }
-		int findWidget(int x, int y);
+		int findWidget(int x, int y) const;
 		void redrawWidget(int nr) { _widgets[nr]->draw(); }
 
 		void addButton(Common::Rect bounds, Common::String text, bool enabled);
@@ -243,7 +229,7 @@ public:
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
 
-		bool hasSubstitution(uint n) { return n < _substitutions.size(); }
+		bool hasSubstitution(uint n) const { return n < _substitutions.size(); }
 		Common::String &getSubstitution(uint n) { return _substitutions[n]; }
 
 		void markRectAsDirty(Common::Rect r);
@@ -291,7 +277,7 @@ public:
 
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
-	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant);
+	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	Graphics::Surface *loadPict(int id);
 	Graphics::Surface *decodePictV1(Common::SeekableReadStream *res);
@@ -340,7 +326,7 @@ public:
 	const Common::String name() const { return "Loom"; }
 
 	const Graphics::Font *getFontByScummId(int32 id);
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant);
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
@@ -371,7 +357,7 @@ public:
 	Graphics::Surface _textArea;
 
 	const Graphics::Font *getFontByScummId(int32 id);
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant);
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
