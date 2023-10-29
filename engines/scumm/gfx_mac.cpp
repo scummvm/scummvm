@@ -515,13 +515,13 @@ void MacGui::SimpleWindow::show() {
 	_dirtyRects.clear();
 }
 
-MacGui::MacWidget *MacGui::SimpleWindow::findWidget(int x, int y) {
+int MacGui::SimpleWindow::findWidget(int x, int y) {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->findWidget(x, y))
-			return _widgets[i];
+			return i;
 	}
 
-	return nullptr;
+	return -1;
 }
 
 void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text) {
@@ -577,16 +577,19 @@ void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, in
 	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
 }
 
-void MacGui::SimpleWindow::runDialog() {
+int MacGui::SimpleWindow::runDialog() {
 	for (uint i = 0; i < _widgets.size(); i++)
 		_widgets[i]->draw();
 
 	show();
 
-	bool done = false;
-	MacGui::MacWidget *pressedWidget = nullptr;
+	int pressedWidget = -1;
 
-	while (!done && !_gui->_vm->shouldQuit()) {
+	// Run the dialog until something happens to a widget. It's up to the
+	// caller to repeat the calls to runDialog() until the dialog is
+	// finished.
+
+	while (!_gui->_vm->shouldQuit()) {
 		Common::Event event;
 
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -598,23 +601,23 @@ void MacGui::SimpleWindow::runDialog() {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
 				pressedWidget = findWidget(event.mouse.x, event.mouse.y);
-				if (pressedWidget)
-					pressedWidget->setPressed(true);
+				if (pressedWidget != -1)
+					_widgets[pressedWidget]->setPressed(true);
 				break;
 
 			case Common::EVENT_LBUTTONUP:
-				if (pressedWidget) {
-					pressedWidget->setPressed(false);
-					pressedWidget->action();
-					pressedWidget = nullptr;
+				if (pressedWidget != -1) {
+					_widgets[pressedWidget]->setPressed(false);
+					_widgets[pressedWidget]->action();
+					return pressedWidget;
 				}
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				if (pressedWidget) {
-					if (!pressedWidget->findWidget(event.mouse.x, event.mouse.y)) {
-						pressedWidget->setPressed(false);
-						pressedWidget = nullptr;
+				if (pressedWidget != -1) {
+					if (!_widgets[pressedWidget]->findWidget(event.mouse.x, event.mouse.y)) {
+						_widgets[pressedWidget]->setPressed(false);
+						pressedWidget = -1;
 					}
 				}
 				break;
@@ -628,6 +631,8 @@ void MacGui::SimpleWindow::runDialog() {
 		update();
 		_system->updateScreen();
 	}
+
+	return -1;
 }
 
 void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
@@ -821,10 +826,8 @@ void MacGui::initialize() {
 			Common::String name = menu->getName(subItem);
 
 			if (!name.empty())
-{
-debug("%d: %s", id, name.c_str());
 				menu->setAction(subItem, id++);
-}
+
 		}
 	}
 
@@ -1099,15 +1102,18 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 200:	// Open
-		runOpenDialog();
+		if (runOpenDialog())
+			debug("Open a saved game");
 		return true;
 
 	case 201:	// Save
-		runSaveDialog();
+		if (runSaveDialog())
+			debug("Save a game");
 		return true;
 
 	case 202:	// Restart
-		runRestartDialog();
+		if (runRestartDialog())
+			debug("Game should restart now");
 		return true;
 
 	case 203:	// Pause
@@ -1135,10 +1141,24 @@ bool MacGui::runQuitDialog() {
 
 	window->setDefaultWidget(0);
 	window->addSubstitution("Are you sure you want to quit?");
-	window->runDialog();
+
+	// When quitting, the default action is to quit
+	bool ret = true;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0)
+			break;
+
+		if (clicked == 1) {
+			ret = false;
+			break;
+		}
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 bool MacGui::runRestartDialog() {
@@ -1152,10 +1172,24 @@ bool MacGui::runRestartDialog() {
 
 	window->setDefaultWidget(0);
 	window->addSubstitution("Are you sure you want to restart this game from the beginning?");
-	window->runDialog();
+
+	// When quitting, the default action is to not restart
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len) {
@@ -1319,7 +1353,6 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			switch (type & 0x7F) {
 			case 0:
 				// User item
-debug("User item: %d %d %d %d", r.left, r.top, r.right, r.bottom);
 				window->innerSurface()->frameRect(r, kRed);
 				res->skip(len);
 				break;
@@ -1327,7 +1360,6 @@ debug("User item: %d %d %d %d", r.left, r.top, r.right, r.bottom);
 			case 4:
 				// Button
 				str = getDialogString(res, len);
-debug("Button: %s (%d %d %d %d)", str.c_str(), r.left, r.top, r.right, r.bottom);
 				window->addButton(r, str);
 				button++;
 				break;
@@ -1335,7 +1367,6 @@ debug("Button: %s (%d %d %d %d)", str.c_str(), r.left, r.top, r.right, r.bottom)
 			case 5:
 				// Checkbox
 				str = getDialogString(res, len);
-debug("Checkbox: %s", str.c_str());
 
 				// The DITL may define a larger than necessary
 				// area for the checkbox, so normalize the
@@ -1351,21 +1382,18 @@ debug("Checkbox: %s", str.c_str());
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
-debug("Text: %s", str.c_str());
 				r.left++;
 				window->addText(r, str);
 				break;
 
 			case 16:
 				// Editable text
-debug("Editable");
 				window->innerSurface()->frameRect(r, kGreen);
 				res->skip(len);
 				break;
 
 			case 64:
 				// Picture
-debug("Picture");
 				window->addPicture(r, res->readUint16BE());
 				break;
 
@@ -1479,11 +1507,13 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 204:	// Options
-		runOptionsDialog();
+		if (runOptionsDialog())
+			debug("Options should be applied now");
 		break;
 
 	case 205:	// Quit
-		runQuitDialog();
+		if (runQuitDialog())
+			debug("Game should quit now");
 		break;
 
 	default:
@@ -1794,10 +1824,28 @@ bool MacLoomGui::runOptionsDialog() {
 	// or 0, and may be the "Full Animation" setting.
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
-	window->runDialog();
+
+	// When quitting, the default action is not to not apply options
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+
+		if (clicked == 2) {
+			debug("TODO: Unchecking sound should disable music");
+		}
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 void MacLoomGui::resetAfterLoad() {
@@ -3028,11 +3076,13 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 		break;
 
 	case 205:	// Options
-		runOptionsDialog();
+		if (runOptionsDialog())
+			debug("Options should be applied now");
 		break;
 
 	case 206:	// Quit
-		runQuitDialog();
+		if (runQuitDialog())
+			debug("Game should quit now");
 		break;
 
 	default:
@@ -3311,37 +3361,65 @@ bool MacIndy3Gui::runOpenDialog() {
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
-	window->runDialog();
+
+	// When quitting, the default action is not to open a saved game
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 2)
+			break;
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 bool MacIndy3Gui::runSaveDialog() {
 	// Widgets:
 	//
-	// 1 - Save button
-	// 2 - Cancel button
-	// 3 - "Save as:" text
-	// 4 - User item (disk label?)
-	// 5 - Eject button
-	// 6 - Drive button
-	// 7 - Editable text (save file name)
-	// 8 - User item (file list?)
-	// 9 - "IQ" picture
-	// 10 - "Episode: ^0" text
-	// 11 - "Series: ^1" text
-	// 12 - "(Indy Quotient)" text
+	// 0 - Save button
+	// 1 - Cancel button
+	// 2 - "Save as:" text
+	// 3 - User item (disk label?)
+	// 4 - Eject button
+	// 5 - Drive button
+	// 6 - Editable text (save file name)
+	// 7 - User item (file list?)
+	// 8 - "IQ" picture
+	// 9 - "Episode: ^0" text
+	// 10 - "Series: ^1" text
+	// 11 - "(Indy Quotient)" text
 
 	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
-	window->runDialog();
+
+	// When quitting, the default action is not to save a game
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 bool MacIndy3Gui::runOptionsDialog() {
@@ -3360,10 +3438,28 @@ bool MacIndy3Gui::runOptionsDialog() {
 	SimpleWindow *window = createDialog(1000);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
-	window->runDialog();
+
+	// When quitting, the default action is not to not apply options
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+
+		if (clicked == 2) {
+			debug("TODO: Unchecking sound should disable music");
+		}
+	}
 
 	delete window;
-	return true;
+	return ret;
 }
 
 bool MacIndy3Gui::runIqPointsDialog() {
@@ -3380,7 +3476,21 @@ bool MacIndy3Gui::runIqPointsDialog() {
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
-	window->runDialog();
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0)
+			break;
+
+		if (clicked == 1) {
+			window->replaceSubstitution(1, Common::String::format("%d", 0));
+
+			window->redrawWidget(4);
+
+			debug("TODO: Actually clear the series IQ score");
+		}
+	}
 
 	delete window;
 	return true;

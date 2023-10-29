@@ -199,18 +199,19 @@ public:
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
 
 		void show();
-		void runDialog();
+		int runDialog();
 
 		void setDefaultWidget(int nr) { _widgets[nr]->makeDefaultWidget(); }
-		MacWidget *findWidget(int x, int y);
+		int findWidget(int x, int y);
+		void redrawWidget(int nr) { _widgets[nr]->draw(); }
 
 		void addButton(Common::Rect bounds, Common::String text);
 		void addCheckbox(Common::Rect bounds, Common::String text);
 		void addText(Common::Rect bounds, Common::String text);
 		void addPicture(Common::Rect bounds, int id);
 
-		void clearSustitutions() { _substitutions.clear(); }
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
+		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
 
 		bool hasSubstitution(uint n) { return n < _substitutions.size(); }
 		Common::String &getSubstitution(uint n) { return _substitutions[n]; }
