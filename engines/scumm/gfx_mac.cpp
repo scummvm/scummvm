@@ -208,11 +208,39 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
-// Very simple window class and widgets. It is perhaps unfortunate that we have
-// two different sets of widget classes, but they behave quite differently.
+// ===========================================================================
+// Macintosh GUI
+// ===========================================================================
 
-bool MacGui::MacWidget::findWidget(int x, int y) {
+// ---------------------------------------------------------------------------
+// Simple window and widget classes. These are meant to emulate the look and
+// feel of an 80s Macintosh.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Base widget
+// ---------------------------------------------------------------------------
+
+bool MacGui::MacWidget::findWidget(int x, int y) const {
 	return _enabled && _bounds.contains(x, y);
+}
+
+void MacGui::MacWidget::setEnabled(bool enabled) {
+	_enabled = enabled;
+	if (_window->isVisible())
+		draw(true);
+}
+
+void MacGui::MacWidget::setPressed(bool pressed) {
+	_pressed = pressed;
+	if (_window->isVisible())
+		draw();
+}
+
+void MacGui::MacWidget::setValue(int value) {
+	_value = value;
+	if (_window->isVisible())
+		draw();
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
@@ -290,6 +318,10 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 
 	return lineWidth;
 }
+
+// ---------------------------------------------------------------------------
+// Button widget
+// ---------------------------------------------------------------------------
 
 void MacGui::MacButton::draw(bool fullRedraw) {
 	Graphics::Surface *s = _window->innerSurface();
@@ -394,6 +426,10 @@ void MacGui::MacButton::draw(bool fullRedraw) {
 	_window->markRectAsDirty(_bounds);
 }
 
+// ---------------------------------------------------------------------------
+// Checkbox widget
+// ---------------------------------------------------------------------------
+
 MacGui::MacCheckbox::MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
 	// The DITL may define a larger than necessary area for the checkbox,
 	// so we need to calculate the hit bounds.
@@ -437,11 +473,19 @@ void MacGui::MacCheckbox::action() {
 	draw();
 }
 
+// ---------------------------------------------------------------------------
+// Static text widget
+// ---------------------------------------------------------------------------
+
 void MacGui::MacText::draw(bool fullRedraw) {
 	_window->innerSurface()->fillRect(_bounds, kWhite);
 	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
 	_window->markRectAsDirty(_bounds);
 }
+
+// ---------------------------------------------------------------------------
+// Image widget
+// ---------------------------------------------------------------------------
 
 MacGui::MacPicture::MacPicture(MacGui::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
 	_picture = _window->_gui->loadPict(id);
@@ -457,6 +501,13 @@ MacGui::MacPicture::~MacPicture() {
 void MacGui::MacPicture::draw(bool fullRedraw) {
 	_window->drawSprite(_picture, _bounds.left, _bounds.top);
 }
+
+// ---------------------------------------------------------------------------
+// Dialog window
+//
+// This can either be used as a modal dialog (options, etc.), or as a framed
+// drawing area (about and pause). It can not be dragged.
+// ---------------------------------------------------------------------------
 
 MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
@@ -532,7 +583,7 @@ void MacGui::MacDialogWindow::show() {
 	_dirtyRects.clear();
 }
 
-int MacGui::MacDialogWindow::findWidget(int x, int y) {
+int MacGui::MacDialogWindow::findWidget(int x, int y) const {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->findWidget(x, y))
 			return i;
@@ -602,9 +653,9 @@ int MacGui::MacDialogWindow::runDialog() {
 
 	int pressedWidget = -1;
 
-	// Run the dialog until something happens to a widget. It's up to the
-	// caller to repeat the calls to runDialog() until the dialog is
-	// finished.
+	// Run the dialog until something interesting happens to a widget. It's
+	// up to the caller to repeat the calls to runDialog() until the dialog
+	// has ended.
 
 	while (!_gui->_vm->shouldQuit()) {
 		Common::Event event;
@@ -772,8 +823,8 @@ void MacGui::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines,
 }
 
 // ===========================================================================
-// Macintosh user interface for the Macintosh versions of Loom and Indiana
-// Jones and the Last Crusade.
+// Base class for Macintosh game user interface. Handles menus, fonts, image
+// loading, etc.
 // ===========================================================================
 
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
@@ -844,7 +895,6 @@ void MacGui::initialize() {
 
 			if (!name.empty())
 				menu->setAction(subItem, id++);
-
 		}
 	}
 
@@ -894,7 +944,7 @@ const Graphics::Font *MacGui::getFont(FontId fontId) {
 	return font;
 }
 
-bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	switch (fontId) {
 	case FontId::kAboutFontHeaderOutside:
 		id = _gameFontId;
@@ -1449,7 +1499,7 @@ const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 	}
 }
 
-bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	if (MacGui::getFontParams(fontId, id, size, slant))
 		return true;
 
@@ -2994,7 +3044,7 @@ const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
 	}
 }
 
-bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) {
+bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
 	if (MacGui::getFontParams(fontId, id, size, slant))
 		return true;
 
