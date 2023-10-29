@@ -218,26 +218,56 @@ bool MacGui::MacWidget::findWidget(int x, int y) {
 	return _isEnabled && _bounds.contains(x, y);
 }
 
-int MacGui::MacWidget::drawText(Common::String &text, int x, int y, int w, Color color, Graphics::TextAlign align) {
+int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
-	Common::String line;
-	int lineWidth = 0;
-
-	for (uint i = 0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size() - 1; i++) {
 		if (text[i] == '^') {
-			Common::String &subst = _window->getSubstitution(text[++i] - '0');
-			for (uint j = 0; j < subst.size(); j++) {
-				line += subst[j];
-				lineWidth += font->getCharWidth(subst[j]);
-			}
-		} else {
-			line += text[i];
-			lineWidth += font->getCharWidth(text[i]);
+			Common::String &subst = _window->getSubstitution(text[i + 1] - '0');
+			text.replace(i, 2, subst);
+
 		}
 	}
 
-	font->drawString(_window->innerSurface(), line, x, y, w, color, align);
+	Common::StringArray lines;
+	int start = 0;
+	int maxLineWidth = 0;
+	int lineWidth = 0;
+	int lastSpace = -1;
+
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == ' ')
+			lastSpace = i;
+
+		lineWidth += font->getCharWidth(text[i]);
+
+		if (lineWidth > w) {
+			if (lastSpace > start)
+				i = lastSpace;
+
+			if (lineWidth > maxLineWidth)
+				maxLineWidth = lineWidth;
+
+			lines.push_back(text.substr(start, i - start));
+			lineWidth = 0;
+
+			if (lastSpace > start)
+				start = i + 1;
+			else
+				start = i;
+		}
+	}
+
+	lines.push_back(text.substr(start));
+
+	if (lineWidth > maxLineWidth)
+		maxLineWidth = lineWidth;
+
+	for (uint i = 0; i < lines.size(); i++) {
+		font->drawString(_window->innerSurface(), lines[i], x, y, w, color, align);
+		y += font->getFontHeight();
+	}
+
 	return lineWidth;
 }
 
@@ -1252,6 +1282,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
+				r.left++;
 				window->addText(r, str);
 				break;
 
