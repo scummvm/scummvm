@@ -118,7 +118,6 @@ private:
 	struct DrawRegion {
 		Common::Rect rect;
 		byte *data;
-		uint8 skipColor;
 
 		DrawRegion() : data(nullptr) {}
 	};
