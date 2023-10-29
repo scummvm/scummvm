@@ -121,7 +121,7 @@ public:
 		virtual void makeDefaultWidget() {}
 		virtual bool findWidget(int x, int y);
 
-		int drawText(Common::String &text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 		virtual void draw() = 0;
 		virtual void action() {}
@@ -135,7 +135,7 @@ public:
 	public:
 		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
 
-		void makeDefautlWidget() { _isDefault = true; }
+		void makeDefaultWidget() { _isDefault = true; }
 
 		void draw();
 	};
@@ -173,8 +173,6 @@ public:
 
 		Common::StringArray _substitutions;
 
-		int _defaultWidget = -1;
-
 		Common::Array<MacWidget *> _widgets;
 		Common::Array<Common::Rect> _dirtyRects;
 
@@ -192,7 +190,7 @@ public:
 		void show();
 		void runDialog();
 
-		void setDefaultWidget(int nr) { _defaultWidget = nr; }
+		void setDefaultWidget(int nr) { _widgets[nr]->makeDefaultWidget(); }
 		MacWidget *findWidget(int x, int y);
 
 		void addButton(Common::Rect bounds, Common::String text);
