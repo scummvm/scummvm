@@ -1880,8 +1880,10 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
 		Common::File *file = new Common::File();
-		if (!file->open(map->getLocationName()))
+		if (!file->open(map->getLocationName())) {
+			delete file;
 			return SCI_ERROR_RESMAP_NOT_FOUND;
+		}
 		fileStream = file;
 	}
 
@@ -1956,8 +1958,10 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
 		Common::File *file = new Common::File();
-		if (!file->open(map->getLocationName()))
+		if (!file->open(map->getLocationName())) {
+			delete file;
 			return SCI_ERROR_RESMAP_NOT_FOUND;
+		}
 		fileStream = file;
 	}
 
