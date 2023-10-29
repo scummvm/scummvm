@@ -106,55 +106,77 @@ public:
 		MacGui::SimpleWindow *_window;
 		Common::Rect _bounds;
 		Common::String _text;
-		bool _isEnabled = true;
-		bool _isPressed = false;
+		bool _enabled = true;
+		bool _pressed = false;
+		int _value = 0;
 
 	public:
-		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
+		MacWidget(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : _window(window), _bounds(bounds), _text(text), _enabled(enabled) {}
 		virtual ~MacWidget() {};
 
-		void setPressed(bool pressed) {
-			_isPressed = pressed;
-			draw();
+		bool isEnabled() { return _enabled; }
+
+		void setEnabled(bool enabled) {
+			_enabled = enabled;
+			if (_window->isVisible())
+				draw(true);
 		}
+
+		void setPressed(bool pressed) {
+			_pressed = pressed;
+			if (_window->isVisible())
+				draw();
+		}
+
+		void setValue(int value) {
+			_value = value;
+			if (_window->isVisible())
+				draw();
+		}
+
+		int getValue() { return _value; }
 
 		virtual void makeDefaultWidget() {}
 		virtual bool findWidget(int x, int y);
 
 		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
-		virtual void draw() = 0;
+		virtual void draw(bool fullRedraw = false) = 0;
 		virtual void action() {}
 	};
 
 	class MacButton : public MacWidget {
 	private:
 		bool _isDefault = false;
-		bool _firstDraw = true;
 
 	public:
-		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
+		MacButton(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
 		void makeDefaultWidget() { _isDefault = true; }
 
-		void draw();
+		void draw(bool fullRedraw = false);
 	};
 
 	class MacCheckbox : public MacWidget {
 	private:
+		Common::Rect _hitBounds;
 		bool _isChecked = false;
-		bool _firstDraw = true;
 
 	public:
-		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
-		void draw();
+		MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled);
+		void draw(bool fullRedraw = false);
 		void action();
 	};
 
+	// The dialogs add texts as disabled, but we don't want it to be drawn
+	// as disabled so we enable it and make it "disabled" by giving it a
+	// custom findWidget().
+
 	class MacText : public MacWidget {
 	public:
-		MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text);
-		void draw();
+		MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
+		bool findWidget(int x, int y) { return false; }
+		void draw(bool fullRedraw = false);
 	};
 
 	class MacPicture : public MacWidget {
@@ -162,10 +184,10 @@ public:
 		Graphics::Surface *_picture = nullptr;
 
 	public:
-		MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id);
+		MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id, bool enabled);
 		~MacPicture();
 
-		void draw();
+		void draw(bool fullRedraw = false);
 	};
 
 	class SimpleWindow {
@@ -174,6 +196,8 @@ public:
 		Common::Rect _bounds;
 		Common::Rect _innerBounds;
 		int _margin;
+
+		bool _visible = false;
 
 		PauseToken _pauseToken;
 
@@ -198,17 +222,23 @@ public:
 		Graphics::Surface *surface() { return &_surface; }
 		Graphics::Surface *innerSurface() { return &_innerSurface; }
 
+		bool isVisible() { return _visible; }
+
 		void show();
 		int runDialog();
 
 		void setDefaultWidget(int nr) { _widgets[nr]->makeDefaultWidget(); }
+		void setWidgetEnabled(int nr, bool enabled) { _widgets[nr]->setEnabled(enabled); }
+		bool isWidgetEnabled(int nr) { return _widgets[nr]->isEnabled(); }
+		int getWidgetValue(int nr) { return _widgets[nr]->getValue(); }
+		void setWidgetValue(int nr, int value) { _widgets[nr]->setValue(value); }
 		int findWidget(int x, int y);
 		void redrawWidget(int nr) { _widgets[nr]->draw(); }
 
-		void addButton(Common::Rect bounds, Common::String text);
-		void addCheckbox(Common::Rect bounds, Common::String text);
-		void addText(Common::Rect bounds, Common::String text);
-		void addPicture(Common::Rect bounds, int id);
+		void addButton(Common::Rect bounds, Common::String text, bool enabled);
+		void addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
+		void addText(Common::Rect bounds, Common::String text, bool enabled);
+		void addPicture(Common::Rect bounds, int id, bool enabled);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
