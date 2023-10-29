@@ -1581,7 +1581,7 @@ void ScummEngine::setUpDraftsInventory() {
 
 	// French&Hebrew labels are quite long, so throughout the following code
 	// there are slight adjustments to French&Hebrew text positioning...
-	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR;
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR || _language == Common::RU_RUS;
 	int xOffset = isLongLanguage ? 10 : 0;
 
 	if (isLoomVGA) {
@@ -1746,7 +1746,7 @@ static const char *loomDraftsNames[7][18] = {
 	{
 		"\x93\xA7\xAE\xE0\xEB",
 		"\x8E\xE2\xAA\xE0\xEB\xA2\xA0\xAD\xA8\xA5:",
-		"\x91\xAE\xAB\xAE\xAC\xA0 \xA2 \xA7\xAE\xAB\xAE\xE2:",
+		"\x91\xAE\xAB\xAE\xAC\xA0 \xA2 \xA7\xAE\xAB\xAE\xE2\xAE:",
 		"\x8E\xAA\xE0\xA0\xE8\xA8\xA2\xA0\xAD\xA8\xA5:",
 		"\x8D\xAE\xE7\xAD\xAE\xA5 \xA7\xE0\xA5\xAD\xA8\xA5:",
 		"\x91\xAA\xE0\xE3\xE7\xA8\xA2\xA0\xAD\xA8\xA5:",
@@ -1758,7 +1758,7 @@ static const char *loomDraftsNames[7][18] = {
 		"\x8E\xE2\xE0\xA0\xA6\xA5\xAD\xA8\xA5:",
 		"\x88\xE1\xE6\xA5\xAB\xA5\xAD\xA8\xA5:",
 		"\x8C\xAE\xAB\xE7\xA0\xAD\xA8\xA5:",
-		"\x8F\xE0\xA8\xA4\xA0\xAD\xA8\xA5 \xE4\xAE\xE0\xAC:",
+		"\x8F\xE0\xA8\xA4\xA0\xAD\xA8\xA5 \xE4\xAE\xE0\xAC\xEB:",
 		"\x90\xA0\xA7\xA2\xAE\xAF\xAB\xAE\xE9\xA5\xAD\xA8\xA5:",
 		"\x8F\xE0\xA5\xAE\xA1\xE0\xA0\xA6\xA5\xAD\xA8\xA5:",
 		"\x8D\xA5\xA8\xA7\xA2\xA5\xE1\xE2\xAD\xEB\xA9:"
@@ -1780,7 +1780,7 @@ void ScummEngine::drawDraftsInventory() {
 
 	// French&Hebrew labels are quite long, so throughout the following code
 	// there are slight adjustments to French&Hebrew text positioning...
-	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR;
+	bool isLongLanguage = _language == Common::FR_FRA || _language == Common::HE_ISR || _language == Common::RU_RUS;
 
 	switch (_language) {
 	case Common::EN_ANY:
