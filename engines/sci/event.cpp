@@ -145,6 +145,7 @@ EventManager::EventManager(bool fontIsExtended) :
 	_fontIsExtended(fontIsExtended)
 #ifdef ENABLE_SCI32
 	, _hotRectanglesActive(false)
+	, _activeRectIndex(-1)
 #endif
 	{}
 
