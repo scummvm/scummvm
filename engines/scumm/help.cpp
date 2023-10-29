@@ -186,6 +186,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("y, a", _("play A on distaff"));
 			ADD_BIND("u, b", _("play B on distaff"));
 			ADD_BIND("i, C", _("play C major on distaff"));
+			// I18N: Drafts is set of notes in Loom to invoke spells
+			ADD_BIND(_("Ctrl") + U32String(" d"), _("Shows the drafts inventory"));
 			break;
 		case GID_MONKEY_EGA:
 		case GID_MONKEY_VGA:
