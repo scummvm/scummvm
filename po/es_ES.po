@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-28 23:51+0000\n"
-"PO-Revision-Date: 2023-10-27 09:45+0000\n"
+"PO-Revision-Date: 2023-10-29 10:28+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -964,16 +964,12 @@ msgid "Go to end of line"
 msgstr "Ir al final de la línea"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Select to end of line"
-msgstr "Ir al final de la línea"
+msgstr "Seleccionar hasta el final de la línea"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Select to start of line"
-msgstr "Ir al principio de la línea"
+msgstr "Seleccionar hasta el principio de la línea"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
