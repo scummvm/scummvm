@@ -26,12 +26,14 @@
 
 namespace Graphics {
 
-#define DEBUG 0
+#define DEBUG 1
 
 #if DEBUG
 #define D(...)  debug(__VA_ARGS__)
+#define DN(...)  debugN(__VA_ARGS__)
 #else
 #define D(...)  ;
+#define DN(...)  ;
 #endif
 
 // Adds the given string to the end of the last line/chunk
@@ -1144,23 +1146,23 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 }
 
 void MacFontRun::debugPrint() {
-	D(8, "{%d}[%d (%d)] \"%s\" ", text.size(), fontId, textSlant, Common::toPrintable(text.encode()).c_str());
+	DN(8, "{%d}[%d (%d)] \"%s\" ", text.size(), fontId, textSlant, Common::toPrintable(text.encode()).c_str());
 }
 
 void MacTextCanvas::debugPrint(const char *prefix) {
 	for (uint i = 0; i < _text.size(); i++) {
 		if (prefix)
-			D(8, "%s: ", prefix);
-		D(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
+			DN(8, "%s: ", prefix);
+		DN(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			_text[i].chunks[j].debugPrint();
 
-		D(8, "\n");
+		DN(8, "\n");
 	}
 
 	if (prefix)
-		D(8, "%s: ", prefix);
+		DN(8, "%s: ", prefix);
 	D(8, "[done]");
 }
 
