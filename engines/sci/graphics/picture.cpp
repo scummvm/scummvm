@@ -425,7 +425,6 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 	Palette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool icemanDrawFix = false;
-	bool ignoreBrokenPriority = false;
 
 	memset(&palette, 0, sizeof(palette));
 
@@ -476,8 +475,6 @@ void GfxPicture::drawVectorData(const SciSpan<const byte> &data) {
 			pic_priority = data[curPos++] & 0x0F;
 			if (isEGA)
 				pic_priority = EGApriority[pic_priority];
-			if (ignoreBrokenPriority)
-				pic_priority = 255;
 			break;
 		case PIC_OP_DISABLE_PRIORITY:
 			pic_priority = 255;

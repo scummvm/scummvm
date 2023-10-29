@@ -126,9 +126,7 @@ bool GameFeatures::autoDetectSoundType() {
 					_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
 					break;
 				}
-
-				if (_doSoundType != SCI_VERSION_NONE)
-					return true;
+				return true;
 			}
 		}
 	}

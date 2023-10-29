@@ -637,9 +637,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	_position._runningStatus = info.event;
 	switch (info.command()) {
 	case 0xC:
-		info.basic.param1 = *(_position._playPos++);
-		info.basic.param2 = 0;
-		break;
 	case 0xD:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = 0;

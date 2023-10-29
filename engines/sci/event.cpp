@@ -324,7 +324,7 @@ SciEvent EventManager::getScummVMEvent() {
 	if (input.character && input.character <= 0xFF) {
 		// Extended characters need to be converted to the old to DOS CP850/437
 		// character sets for multilingual games
-		if (input.character >= 0x80 && input.character <= 0xFF) {
+		if (input.character >= 0x80) {
 			// SSCI accepted all input scan codes, regardless of locale, and
 			// just didn't display any characters that were missing from fonts
 			// used by text input controls. We intentionally filter them out

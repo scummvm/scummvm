@@ -185,7 +185,7 @@ void SegManager::deallocate(SegmentId seg) {
 
 bool SegManager::isHeapObject(reg_t pos) const {
 	const Object *obj = getObject(pos);
-	if (obj == nullptr || (obj && obj->isFreed()))
+	if (obj == nullptr || obj->isFreed())
 		return false;
 	Script *scr = getScriptIfLoaded(pos.getSegment());
 	return !(scr && scr->isMarkedAsDeleted());
@@ -1143,7 +1143,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 
 	// Make a pass over the object in order to uninstantiate all superclasses
 
-	do {
+	while (true) {
 		reg.incOffset(objLength); // Step over the last checked object
 
 		objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset()));
@@ -1173,8 +1173,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 		} // if object or class
 
 		reg.incOffset(-4); // Step back on header
-
-	} while (objType != 0);
+	}
 }
 
 } // End of namespace Sci
