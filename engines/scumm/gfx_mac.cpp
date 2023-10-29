@@ -503,9 +503,19 @@ MacGui::MacPicture::~MacPicture() {
 		_picture->free();
 		delete _picture;
 	}
+
+	if (_background) {
+		_background->free();
+		delete _background;
+	}
 }
 
 void MacGui::MacPicture::draw(bool fullRedraw) {
+	if (_enabled && !_background) {
+		_background = new Graphics::Surface();
+		_background->create(_picture->w, _picture->h, Graphics::PixelFormat::createFormatCLUT8());
+		_background->copyRectToSurface(*(_window->innerSurface()), 0, 0, _bounds);
+	}
 	_window->drawSprite(_picture, _bounds.left, _bounds.top);
 }
 
