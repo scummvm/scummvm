@@ -130,7 +130,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "sq5",             "sq5",             GID_SQ5,              false, SCI_VERSION_NONE },
 	{ "sq6",             "sq6",             GID_SQ6,              true,  SCI_VERSION_NONE },
 	{ "torin",           "torin",           GID_TORIN,            true,  SCI_VERSION_NONE },
-	{ nullptr,           nullptr,           (SciGameId)-1,        false, SCI_VERSION_NONE }
+	{ nullptr,           nullptr,           GID_ALL,              false, SCI_VERSION_NONE }
 };
 
 struct DemoIdEntry {
