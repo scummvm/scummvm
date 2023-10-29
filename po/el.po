@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 23:51+0000\n"
+"POT-Creation-Date: 2023-10-29 00:02+0000\n"
 "PO-Revision-Date: 2023-10-29 17:55+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2563,28 +2563,28 @@ msgstr "Επιλέξτε σκιαστή"
 msgid "Select a Theme"
 msgstr "Επιλέξτε θέμα"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "Απενεργοποιημένα γραφικά"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Απενεργ. γραφικά"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "Κανονική απόδοση"
 
-#: gui/ThemeEngine.cpp:273 engines/scumm/dialogs.cpp:1016
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1016
 msgid "Standard"
 msgstr "Κανονικό"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "Εξομαλυμένη απόδοση"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "Εξομαλυμένη"
 
@@ -2685,23 +2685,23 @@ msgstr ""
 "Αν διαπιστώσετε πως τα παιχνίδια που είχατε ήδη προσθέσει ή οι φάκελοι που "
 "είχατε υποδείξει κατ' εξαίρεση (custom paths) δεν λειτουργούν πλέον, "
 "παρακαλούμε να τα επαναρυθμίσετε ακολουθώντας τις παρακάτω οδηγίες:\n"
-"  1. Από τον Πλοηγητή (Launcher), επιλέξτε **Ρυθμίσεις Παιχνιδιού > Φάκελοι**"
-". Εδώ θα χρειαστεί να αλλάξετε το **Φάκελο Παιχνιδιού** ή/και το φάκελο "
-"**Πρόσθετα**, ανάλογα με τις απαιτήσεις του κάθε τίτλου.\n"
+"  1. Από τον Πλοηγητή (Launcher), επιλέξτε **Ρυθμίσεις Παιχνιδιού > "
+"Φάκελοι**. Εδώ θα χρειαστεί να αλλάξετε το **Φάκελο Παιχνιδιού** ή/και το "
+"φάκελο **Πρόσθετα**, ανάλογα με τις απαιτήσεις του κάθε τίτλου.\n"
 "  2. Από την εξερεύνηση αρχείων του ScummVM, πατήστε στο **Μετάβαση πάνω** "
-"μέχρι να φτάσετε στον αρχικό φάκελο (**root**) όπου θα δείτε την επιλογή **"
-"<Προσθήκη νέου φακέλου>**.\n"
+"μέχρι να φτάσετε στον αρχικό φάκελο (**root**) όπου θα δείτε την επιλογή "
+"**<Προσθήκη νέου φακέλου>**.\n"
 "  3. Επιλέξτε **<Προσθήκη νέου φακέλου>** με διπλό χτύπο (double tap), και "
 "στη συνέχεια πλοηγηθείτε κι επιλέξτε τον γονικό φάκελο μέσα στον οποίο "
-"βρίσκονται οι υποφάκελοι με τα παιχνίδια σας, πχ. **SD Card > ScummVMgames**"
-". \n"
+"βρίσκονται οι υποφάκελοι με τα παιχνίδια σας, πχ. **SD Card > "
+"ScummVMgames**. \n"
 "  4. Επιλέξτε **Χρήση αυτού του φακέλου** (**Use this folder**).\n"
 "  5. Επιλέξτε **Να επιτρέπεται** (**Allow**) για να δώσετε στο ScummVM την "
 "άδεια για πρόσβαση σε αυτό το φάκελο.\n"
-"  6. Με διπλό χτύπο (double tap) πάνω στον νέο φάκελο (εδώ: **ScummVMgames**)"
-", που έχει προστεθεί στον αρχικό φάκελο (**root**) της εξερεύνησης αρχείων "
-"του ScummVM, μπορείτε να δείτε τα περιεχόμενά του και να υποδείξτε τον "
-"υποφάκελο με τα δεδομένα του παιχνιδιού σας.\n"
+"  6. Με διπλό χτύπο (double tap) πάνω στον νέο φάκελο (εδώ: "
+"**ScummVMgames**), που έχει προστεθεί στον αρχικό φάκελο (**root**) της "
+"εξερεύνησης αρχείων του ScummVM, μπορείτε να δείτε τα περιεχόμενά του και να "
+"υποδείξτε τον υποφάκελο με τα δεδομένα του παιχνιδιού σας.\n"
 "\n"
 "Επαναλάβετε τα βήματα 1 και 6 για κάθε ένα από τα παιχνίδια σας."
 
@@ -2746,19 +2746,20 @@ msgstr ""
 "\n"
 "  1. Επιλέξτε **Προσθήκη Παιχνιδιού...** από τον Πλοηγητή (launcher).\n"
 "  2. Από την εξερεύνηση αρχείων του ScummVM, πατήστε στο \"Μετάβαση πάνω\" "
-"μέχρι να φτάσετε στον αρχικό φάκελο (root) όπου θα δείτε την επιλογή **"
-"<Προσθήκη νέου φακέλου>**.\n"
+"μέχρι να φτάσετε στον αρχικό φάκελο (root) όπου θα δείτε την επιλογή "
+"**<Προσθήκη νέου φακέλου>**.\n"
 "  3. Επιλέξτε **<Προσθήκη νέου φακέλου>** με διπλό χτύπο (double tap), και "
 "στη συνέχεια πλοηγηθείτε κι επιλέξτε τον γονικό φάκελο μέσα στον οποίο "
-"βρίσκονται οι υποφάκελοι με τα παιχνίδια σας, πχ. **SD Card > ScummVMgames**."
-"\n"
+"βρίσκονται οι υποφάκελοι με τα παιχνίδια σας, πχ. **SD Card > "
+"ScummVMgames**.\n"
 "  4. Επιλέξτε **Χρήση αυτού του φακέλου** (**Use this folder**).\n"
 "  5. Επιλέξτε **Να επιτρέπεται** (**Allow**) για να δώσετε στο ScummVM την "
 "άδεια για πρόσβαση σε αυτό το φάκελο.\n"
-"  6. Με διπλό χτύπο (double tap) πάνω στον νέο φάκελο (εδώ: **ScummVMgames**)"
-", που έχει προστεθεί στον αρχικό φάκελο (**root**) της εξερεύνησης αρχείων "
-"του ScummVM, μπορείτε να δείτε τα περιεχόμενά του και να υποδείξτε τον "
-"υποφάκελο με τα δεδομένα του παιχνιδιού σας, και να πατήσετε **Επιλογή**.\n"
+"  6. Με διπλό χτύπο (double tap) πάνω στον νέο φάκελο (εδώ: "
+"**ScummVMgames**), που έχει προστεθεί στον αρχικό φάκελο (**root**) της "
+"εξερεύνησης αρχείων του ScummVM, μπορείτε να δείτε τα περιεχόμενά του και να "
+"υποδείξτε τον υποφάκελο με τα δεδομένα του παιχνιδιού σας, και να πατήσετε "
+"**Επιλογή**.\n"
 "Επαναλάβετε τα βήματα 1 και 6 για κάθε ένα από τα παιχνίδια σας."
 
 #: base/main.cpp:797
@@ -3294,7 +3295,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ΣΦΑΛΜΑ: Αδυναμία αντιγραφής του αποθηκευμένου παιχνιδιού σε νέα θυρίδα"
 
 #: engines/engine.cpp:636 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:288 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:289 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Αυτόματη αποθήκευση"
@@ -3449,7 +3450,7 @@ msgstr "Με αυτόματη αποθήκευση"
 msgid "Autosave off"
 msgstr "Χωρίς αυτόματη αποθήκευση"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:178
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3735,37 +3736,37 @@ msgstr "Επιλογή νέου φακέλου"
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
 msgstr "Στο κέντρο"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:258
+#: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "Κλιμάκωση απόλυτης-ακρίβειας-πίξελ"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:259
+#: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "Κλιμάκωση ζυγισμένης-ακρίβειας-πίξελ"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:260
+#: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "Προσαρμογή στο παράθυρο"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:261
+#: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "Επέκταση εικόνας για να γεμίσει το παράθυρο"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:262
+#: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
@@ -3777,32 +3778,32 @@ msgid "Resolution: %dx%d"
 msgstr "Ανάλυση: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr "Ενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr "Απενεργοποιήθηκε η διόρθωση αναλογίας διαστάσεων"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr "Ενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr "Απενεργοποίηση φιλτραρίσματος"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr "Λειτουργία επέκτασης εικόνας"
 
@@ -5150,9 +5151,9 @@ msgstr ""
 "ποντίκι, και από την έκδοση 2.2.0 αυτές μπορεί να ρυθμιστούν από την καρτέλα "
 "**Αντιστοιχίσεις πλήκτρων**, ή από το **αρχείο ρυθμίσεων**.\n"
 "\n"
-"Για συγκεκριμένες συντομεύσεις χειρισμού ανά παιχνίδι, συμβουλευτείτε την ["
-"σελίδα βίκι](https://wiki.scummvm.org/index."
-"php?title=Category:Supported_Games) του παιχνιδιού που παίζετε.\n"
+"Για συγκεκριμένες συντομεύσεις χειρισμού ανά παιχνίδι, συμβουλευτείτε την "
+"[σελίδα βίκι](https://wiki.scummvm.org/index.php?title=Category:"
+"Supported_Games) του παιχνιδιού που παίζετε.\n"
 "\n"
 "Οι προκαθορισμένες συντομεύσεις εμφανίζονται στον παρακάτω πίνακα.\n"
 "\n"

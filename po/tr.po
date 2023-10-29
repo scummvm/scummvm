@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 23:51+0000\n"
+"POT-Creation-Date: 2023-10-29 00:02+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -2585,28 +2585,28 @@ msgstr "Tema seç"
 msgid "Select a Theme"
 msgstr "Tema seç"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "Pasifleşmiş GFX"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Pasifleşmiş GFX"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "Standart çizici"
 
-#: gui/ThemeEngine.cpp:273 engines/scumm/dialogs.cpp:1016
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1016
 msgid "Standard"
 msgstr "Standart"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "Aynalama yokedici çizici"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "Anti merdiven"
 
@@ -3239,7 +3239,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 
 #: engines/engine.cpp:636 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:288 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:289 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "Otokayıt"
@@ -3387,7 +3387,7 @@ msgstr "Otokayıt"
 msgid "Autosave off"
 msgstr "Otokayıt"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:178
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 #, fuzzy
 msgid "OpenGL"
 msgstr "URL'yi aç"
@@ -3668,38 +3668,38 @@ msgstr "Yükleme için dosyayı seçin"
 msgid "Toggle aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:258
+#: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:259
+#: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:260
+#: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:261
+#: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 #, fuzzy
 msgid "Stretch to window"
 msgstr "Çekiştirme modu:"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:262
+#: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
@@ -3711,34 +3711,34 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Çekiştirme modu:"

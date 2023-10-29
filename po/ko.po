@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-28 23:51+0000\n"
+"POT-Creation-Date: 2023-10-29 00:02+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2553,28 +2553,28 @@ msgstr "테마 선택"
 msgid "Select a Theme"
 msgstr "테마 선택"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "GFX 비활성화"
 
-#: gui/ThemeEngine.cpp:272
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX 비활성화"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "표준 렌더러"
 
-#: gui/ThemeEngine.cpp:273 engines/scumm/dialogs.cpp:1016
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1016
 msgid "Standard"
 msgstr "표준"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "안티앨리어싱 렌더러"
 
-#: gui/ThemeEngine.cpp:275
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "안티앨리어싱"
 
@@ -3219,7 +3219,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "오류: 저장 데이터를 새로운 슬롯으로 복사하지 못했습니다"
 
 #: engines/engine.cpp:636 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:288 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:289 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:216
 msgid "Autosave"
 msgstr "자동 저장"
@@ -3373,7 +3373,7 @@ msgstr "자동 저장"
 msgid "Autosave off"
 msgstr "자동 저장"
 
-#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:178
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -3657,37 +3657,37 @@ msgstr "불러올 파일을 선택"
 msgid "Toggle aspect ratio correction"
 msgstr "화면 종횡비 보정 전환"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:257
+#: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
 msgstr "중앙"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:258
+#: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:259
+#: backends/graphics/opengl/opengl-graphics.cpp:260
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "균일 픽셀 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:260
+#: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "창 크기에 맞춤"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:261
+#: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "창에 맞게 늘림"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:262
+#: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
@@ -3699,32 +3699,32 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2629
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2663
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2669
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2685
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2714
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr "확대 모드"
 
