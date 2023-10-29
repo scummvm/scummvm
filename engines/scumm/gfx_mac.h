@@ -76,6 +76,26 @@ protected:
 		kTransparency = 255
 	};
 
+	enum FontId {
+		kSystemFont,
+
+		kAboutFontRegular,
+		kAboutFontBold,
+		kAboutFontExtraBold,
+		kAboutFontHeaderInside,
+		kAboutFontHeaderOutside,
+
+		kIndy3FontSmall,
+		kIndy3FontMedium,
+		kIndy3VerbFontRegular,
+		kIndy3VerbFontBold,
+		kIndy3VerbFontOutline,
+
+		kLoomFontSmall,
+		kLoomFontMedium,
+		kLoomFontLarge
+	};
+
 	enum TextStyle {
 		kStyleHeader,
 		kStyleBold,
@@ -96,7 +116,19 @@ protected:
 		kStyleRounded
 	};
 
+	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
+
 	Common::String getDialogString(Common::SeekableReadStream *res, int len);
+
+	virtual bool handleMenu(int id, Common::String &name);
+
+	virtual void runAboutDialog() = 0;
+	virtual bool runOpenDialog() = 0;
+	virtual bool runSaveDialog() = 0;
+	virtual bool runOptionsDialog() = 0;
+
+	bool runQuitDialog();
+	bool runRestartDialog();
 
 public:
 	class MacDialogWindow;
@@ -246,51 +278,21 @@ public:
 		void drawTextBox(Common::Rect r, const TextLine *lines, int arc = 9);
 	};
 
-	enum FontId {
-		kSystemFont,
-
-		kAboutFontRegular,
-		kAboutFontBold,
-		kAboutFontExtraBold,
-		kAboutFontHeaderInside,
-		kAboutFontHeaderOutside,
-
-		kIndy3FontSmall,
-		kIndy3FontMedium,
-		kIndy3VerbFontRegular,
-		kIndy3VerbFontBold,
-		kIndy3VerbFontOutline,
-
-		kLoomFontSmall,
-		kLoomFontMedium,
-		kLoomFontLarge
-	};
-
 	MacGui(ScummEngine *vm, Common::String resourceFile);
 	virtual ~MacGui();
 
 	virtual const Common::String name() const = 0;
 
+	virtual bool handleEvent(Common::Event &event);
 	static void menuCallback(int id, Common::String &name, void *data);
 
 	virtual void initialize();
 
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
-	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	Graphics::Surface *loadPict(int id);
 	Graphics::Surface *decodePictV1(Common::SeekableReadStream *res);
-
-	virtual bool handleMenu(int id, Common::String &name);
-
-	virtual void runAboutDialog() = 0;
-	virtual bool runOpenDialog() = 0;
-	virtual bool runSaveDialog() = 0;
-	virtual bool runOptionsDialog() = 0;
-
-	bool runQuitDialog();
-	bool runRestartDialog();
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
@@ -300,7 +302,6 @@ public:
 	void updateWindowManager();
 
 	virtual void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) = 0;
-	virtual bool handleEvent(Common::Event &event);
 
 	void setPalette(const byte *palette, uint size);
 
@@ -313,22 +314,23 @@ public:
 };
 
 class MacLoomGui : public MacGui {
-private:
-	Graphics::Surface *_practiceBox = nullptr;
-	int _practiceBoxX;
-	int _practiceBoxY;
-	int _practiceBoxNotes;
-
 public:
 	MacLoomGui(ScummEngine *vm, Common::String resourceFile);
 	~MacLoomGui();
 
 	const Common::String name() const { return "Loom"; }
 
+	bool handleEvent(Common::Event &event);
+
 	const Graphics::Font *getFontByScummId(int32 id);
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
+
+	void resetAfterLoad();
+	void update(int delta);
+
+protected:
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	bool handleMenu(int id, Common::String &name);
 
@@ -337,9 +339,11 @@ public:
 	bool runSaveDialog();
 	bool runOptionsDialog();
 
-	void resetAfterLoad();
-	void update(int delta);
-	bool handleEvent(Common::Event &event);
+private:
+	Graphics::Surface *_practiceBox = nullptr;
+	int _practiceBoxX;
+	int _practiceBoxY;
+	int _practiceBoxNotes;
 };
 
 class MacIndy3Gui : public MacGui {
@@ -357,7 +361,6 @@ public:
 	Graphics::Surface _textArea;
 
 	const Graphics::Font *getFontByScummId(int32 id);
-	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate);
 
@@ -365,15 +368,6 @@ public:
 	void clearTextArea() { _textArea.fillRect(Common::Rect(_textArea.w, _textArea.h), kBlack); }
 	void initTextAreaForActor(Actor *a, byte color);
 	void printCharToTextArea(int chr, int x, int y, int color);
-
-	bool handleMenu(int id, Common::String &name);
-
-	void runAboutDialog();
-	void clearAboutDialog(MacDialogWindow *window);
-	bool runOpenDialog();
-	bool runSaveDialog();
-	bool runOptionsDialog();
-	bool runIqPointsDialog();
 
 	// There is a distinction between the GUI being allowed and being
 	// active. Allowed means that it's allowed to draw verbs, but not that
@@ -392,8 +386,16 @@ public:
 	void update(int delta);
 	bool handleEvent(Common::Event &event);
 
-	int getInventoryScrollOffset() const;
-	void setInventoryScrollOffset(int n) const;
+protected:
+	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
+
+	bool handleMenu(int id, Common::String &name);
+
+	void runAboutDialog();
+	bool runOpenDialog();
+	bool runSaveDialog();
+	bool runOptionsDialog();
+	bool runIqPointsDialog();
 
 private:
 	bool _visible = false;
@@ -407,6 +409,11 @@ private:
 	bool updateVerbs(int delta);
 	void updateMouseHeldTimer(int delta);
 	void drawVerbs();
+
+	void clearAboutDialog(MacDialogWindow *window);
+
+	int getInventoryScrollOffset() const;
+	void setInventoryScrollOffset(int n) const;
 
 	class Widget {
 	private:
