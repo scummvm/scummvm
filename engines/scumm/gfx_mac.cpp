@@ -249,6 +249,8 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
+	// Apply text substitutions
+
 	for (uint i = 0; i < text.size() - 1; i++) {
 		if (text[i] == '^') {
 			uint nr = text[i + 1] - '0';
@@ -258,6 +260,8 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 			}
 		}
 	}
+
+	// Word-wrap text
 
 	Common::StringArray lines;
 	int start = 0;
@@ -293,14 +297,13 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	if (lineWidth > maxLineWidth)
 		maxLineWidth = lineWidth;
 
+	// Draw the text. Disabled text is implemented as a filter on top of
+	// the already drawn text.
+
 	int y0 = y;
 
 	for (uint i = 0; i < lines.size(); i++) {
 		font->drawString(_window->innerSurface(), lines[i], x, y0, w, color, align);
-
-		// Implementing drawing of disabled text is too much of a
-		// hassle. Simply draw a white checkerboard pattern on top
-		// of it.
 
 		if (!_enabled) {
 			Common::Rect textBox = font->getBoundingBox(lines[i], x, y0, w, align);
@@ -438,8 +441,12 @@ MacGui::MacCheckbox::MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect b
 
 	_hitBounds.left = _bounds.left;
 	_hitBounds.top = _bounds.bottom - _bounds.height() / 2 - 8;
-	_hitBounds.bottom = _bounds.top + 18;
+	_hitBounds.bottom = _hitBounds.top + 16;
 	_hitBounds.right = _bounds.left + 18 + font->getStringWidth(_text) + 2;
+}
+
+bool MacGui::MacCheckbox::findWidget(int x, int y) const {
+	return _enabled && _hitBounds.contains(x, y);
 }
 
 void MacGui::MacCheckbox::draw(bool fullRedraw) {

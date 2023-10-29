@@ -182,6 +182,8 @@ public:
 
 	public:
 		MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
+
+		bool findWidget(int x, int y) const;
 		void draw(bool fullRedraw = false);
 		void action();
 	};
