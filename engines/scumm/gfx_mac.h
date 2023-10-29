@@ -202,6 +202,7 @@ public:
 	class MacPicture : public MacWidget {
 	private:
 		Graphics::Surface *_picture = nullptr;
+		Graphics::Surface *_background = nullptr;
 
 	public:
 		MacPicture(MacGui::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled);
