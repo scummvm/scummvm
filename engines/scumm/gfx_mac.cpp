@@ -311,6 +311,8 @@ void MacGui::MacButton::draw() {
 
 	// ScummVM's rounded rectangles aren't a complete match for QuickDraw's
 	// rounded rectangles, so we draw the corners manually.
+	//
+	// Unfortunately, these hard-coded ones only work for most buttons.
 
 	int innerCorner[][2] = {
 		{ 1, 2 },
@@ -332,7 +334,9 @@ void MacGui::MacButton::draw() {
 		s->hLine(x2, y1, x3, kBlack);
 	}
 
-	drawText(_text, _bounds.left, _bounds.top + 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	drawText(_text, _bounds.left, _bounds.top + (_bounds.height() - font->getFontHeight()) / 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
 
 	if (_isDefault && _firstDraw) {
 		for (int i = 0; i < 3; i++) {
@@ -817,7 +821,10 @@ void MacGui::initialize() {
 			Common::String name = menu->getName(subItem);
 
 			if (!name.empty())
+{
+debug("%d: %s", id, name.c_str());
 				menu->setAction(subItem, id++);
+}
 		}
 	}
 
@@ -1087,17 +1094,43 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	_windowManager->getMenu()->closeMenu();
 
 	switch (id) {
-	case 100:
+	case 100:	// About
 		runAboutDialog();
 		return true;
 
-	// If we ever need to handle the Edit menu, do it here.
+	case 200:	// Open
+		runOpenDialog();
+		return true;
+
+	case 201:	// Save
+		runSaveDialog();
+		return true;
+
+	case 202:	// Restart
+		runRestartDialog();
+		return true;
+
+	case 203:	// Pause
+		return true;
+
+	case 300:	// Undo
+	case 301:	// Cut
+	case 302:	// Copy
+	case 303:	// Paste
+	case 304:	// Clear
+		return true;
 	}
 
 	return false;
 }
 
 bool MacGui::runQuitDialog() {
+	// Widgets:
+	//
+	// 0 - Okay button
+	// 1 - Cancel button
+	// 2 - "^0" text
+
 	SimpleWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
@@ -1109,20 +1142,16 @@ bool MacGui::runQuitDialog() {
 }
 
 bool MacGui::runRestartDialog() {
+	// Widgets:
+	//
+	// 0 - Okay button
+	// 1 - Cancel button
+	// 2 - "^0" text
+
 	SimpleWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution("Are you sure you want to restart this game from the beginning?");
-	window->runDialog();
-
-	delete window;
-	return true;
-}
-
-bool MacGui::runOptionsDialog() {
-	SimpleWindow *window = createDialog(1000);
-
-	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 	window->runDialog();
 
 	delete window;
@@ -1290,6 +1319,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			switch (type & 0x7F) {
 			case 0:
 				// User item
+debug("User item: %d %d %d %d", r.left, r.top, r.right, r.bottom);
 				window->innerSurface()->frameRect(r, kRed);
 				res->skip(len);
 				break;
@@ -1297,6 +1327,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			case 4:
 				// Button
 				str = getDialogString(res, len);
+debug("Button: %s (%d %d %d %d)", str.c_str(), r.left, r.top, r.right, r.bottom);
 				window->addButton(r, str);
 				button++;
 				break;
@@ -1304,6 +1335,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			case 5:
 				// Checkbox
 				str = getDialogString(res, len);
+debug("Checkbox: %s", str.c_str());
 
 				// The DITL may define a larger than necessary
 				// area for the checkbox, so normalize the
@@ -1319,18 +1351,21 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
+debug("Text: %s", str.c_str());
 				r.left++;
 				window->addText(r, str);
 				break;
 
 			case 16:
 				// Editable text
+debug("Editable");
 				window->innerSurface()->frameRect(r, kGreen);
 				res->skip(len);
 				break;
 
 			case 64:
 				// Picture
+debug("Picture");
 				window->addPicture(r, res->readUint16BE());
 				break;
 
@@ -1443,32 +1478,11 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	switch (id) {
-	case 200:
-		// Open
-		runOpenDialog();
-		break;
-
-	case 201:
-		// Save
-		runSaveDialog();
-		break;
-
-	case 202:
-		// Restart
-		runRestartDialog();
-		break;
-
-	case 203:
-		// Pause game
-		break;
-
-	case 204:
-		// Options
+	case 204:	// Options
 		runOptionsDialog();
 		break;
 
-	case 205:
-		// Quit
+	case 205:	// Quit
 		runQuitDialog();
 		break;
 
@@ -1755,6 +1769,34 @@ bool MacLoomGui::runSaveDialog() {
 	// Standard file picker dialog. We don't yet have one, and it might
 	// not make sense for ScummVM.
 	warning("MacLoomGui::runSaveDialog()");
+	return true;
+}
+
+bool MacLoomGui::runOptionsDialog() {
+	// Widgets:
+	//
+	// 0 - Okay button
+	// 1 - Cancel button
+	// 2 - Sound checkbox
+	// 3 - Music checkbox
+	// 4 - Picture
+	// 5 - Picture
+	// 6 - Scrolling checkbox
+	// 7 - Full Animation checkbox
+	// 8 - Picture
+	// 9 - Picture
+	// 10 - "Machine Speed:  ^0" text
+
+	SimpleWindow *window = createDialog(1000);
+
+	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
+	// appear to be VAR_MACHINE_SPEED, because I think that's only set to 1
+	// or 0, and may be the "Full Animation" setting.
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+	window->runDialog();
+
+	delete window;
 	return true;
 }
 
@@ -2981,37 +3023,15 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	Common::StringArray substitutions;
 
 	switch (id) {
-	case 200:
-		// Open
-		runOpenDialog();
-		break;
-
-	case 201:
-		// Save
-		runSaveDialog();
-		break;
-
-	case 202:
-		// Restart
-		runRestartDialog();
-		break;
-
-	case 203:
-		// Pause game
-		break;
-
-	case 204:
-		// IQ Points
+	case 204:	// IQ Points
 		runIqPointsDialog();
 		break;
 
-	case 205:
-		// Options
+	case 205:	// Options
 		runOptionsDialog();
 		break;
 
-	case 206:
-		// Quit
+	case 206:	// Quit
 		runQuitDialog();
 		break;
 
@@ -3269,8 +3289,26 @@ void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
 }
 
 bool MacIndy3Gui::runOpenDialog() {
+	// Widgets:
+	//
+	// 0 - Open button
+	// 1 - Weird button outside the dialog (folder dropdown?)
+	// 2 - Cancel button
+	// 3 - User item (disk label?)
+	// 4 - Eject button
+	// 5 - Drive button
+	// 6 - User item (file list?)
+	// 7 - User item (scrollbar?)
+	// 8 - User item (line between Desktop and Open buttons?)
+	// 9 - Empty text
+	// 10 - "IQ" picture
+	// 11 - "Episode: ^0" text
+	// 12 - "Series: ^1" text
+	// 13 - "(Indy Quotient)" text
+
 	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
+	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 	window->runDialog();
@@ -3280,8 +3318,24 @@ bool MacIndy3Gui::runOpenDialog() {
 }
 
 bool MacIndy3Gui::runSaveDialog() {
+	// Widgets:
+	//
+	// 1 - Save button
+	// 2 - Cancel button
+	// 3 - "Save as:" text
+	// 4 - User item (disk label?)
+	// 5 - Eject button
+	// 6 - Drive button
+	// 7 - Editable text (save file name)
+	// 8 - User item (file list?)
+	// 9 - "IQ" picture
+	// 10 - "Episode: ^0" text
+	// 11 - "Series: ^1" text
+	// 12 - "(Indy Quotient)" text
+
 	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
 
+	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 	window->runDialog();
@@ -3290,7 +3344,38 @@ bool MacIndy3Gui::runSaveDialog() {
 	return true;
 }
 
+bool MacIndy3Gui::runOptionsDialog() {
+	// Widgets:
+	//
+	// 0 - Okay button
+	// 1 - Cancel button
+	// 2 - Sound checkbox
+	// 3 - Music checkbox
+	// 4 - Picture
+	// 5 - Picture
+	// 6 - "Machine speed rating:" text
+	// 7 - "^0" text
+	// 8 - Scrolling checkbox
+
+	SimpleWindow *window = createDialog(1000);
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+	window->runDialog();
+
+	delete window;
+	return true;
+}
+
 bool MacIndy3Gui::runIqPointsDialog() {
+	// Widgets
+	//
+	// 0 - Done button
+	// 1 - Reset Series IQ button
+	// 2 - "(Indy Quotient)" text
+	// 3 - "Episode: ^0" text
+	// 4 - "Series: ^1" text
+	// 5 - "IQ" picture
+
 	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));

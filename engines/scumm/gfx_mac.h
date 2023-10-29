@@ -270,9 +270,10 @@ public:
 	virtual void runAboutDialog() = 0;
 	virtual bool runOpenDialog() = 0;
 	virtual bool runSaveDialog() = 0;
+	virtual bool runOptionsDialog() = 0;
+
 	bool runQuitDialog();
 	bool runRestartDialog();
-	bool runOptionsDialog();
 
 	virtual bool isVerbGuiActive() const { return false; }
 	virtual void reset() {}
@@ -317,6 +318,7 @@ public:
 	void runAboutDialog();
 	bool runOpenDialog();
 	bool runSaveDialog();
+	bool runOptionsDialog();
 
 	void resetAfterLoad();
 	void update(int delta);
@@ -353,6 +355,7 @@ public:
 	void clearAboutDialog(SimpleWindow *window);
 	bool runOpenDialog();
 	bool runSaveDialog();
+	bool runOptionsDialog();
 	bool runIqPointsDialog();
 
 	// There is a distinction between the GUI being allowed and being
