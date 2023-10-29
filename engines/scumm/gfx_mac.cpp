@@ -612,7 +612,7 @@ void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, 
 }
 
 void MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	_widgets.push_back(new MacPicture(this, bounds, id, enabled));
+	_widgets.push_back(new MacPicture(this, bounds, id, false));
 }
 
 void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
@@ -1898,6 +1898,10 @@ bool MacLoomGui::runOptionsDialog() {
 
 	if (!sound)
 		window->setWidgetEnabled(3, false);
+
+	// Enable the slider drag handles
+	window->setWidgetEnabled(5, true);
+	window->setWidgetEnabled(9, true);
 
 	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
 	// appear to be VAR_MACHINE_SPEED, because I think that's only set to 1
@@ -3535,6 +3539,9 @@ bool MacIndy3Gui::runOptionsDialog() {
 
 	if (!sound)
 		window->setWidgetEnabled(3, false);
+
+	// Enable the slider handle
+	window->setWidgetEnabled(5, true);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 
