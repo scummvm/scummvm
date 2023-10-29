@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-29 19:23+0000\n"
+"POT-Creation-Date: 2023-10-29 20:09+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -487,8 +487,8 @@ msgstr "Nedlasting fullført. Lastet ned %d pakker, %s %S"
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
-#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:193
-#: engines/scumm/help.cpp:211
+#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:195
+#: engines/scumm/help.cpp:213
 msgid "Close"
 msgstr "Lukk"
 
@@ -6052,9 +6052,9 @@ msgstr "Vis journal"
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:507
 #: engines/grim/grim.cpp:603 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:227
-#: engines/scumm/help.cpp:236 engines/scumm/help.cpp:243
-#: engines/scumm/help.cpp:251 engines/twine/metaengine.cpp:418
+#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:229
+#: engines/scumm/help.cpp:238 engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:253 engines/twine/metaengine.cpp:418
 #: engines/zvision/metaengine.cpp:232
 msgid "Inventory"
 msgstr "Utstyrsliste"
@@ -6368,7 +6368,7 @@ msgid "Run"
 msgstr "Kjør"
 
 #: engines/grim/grim.cpp:492 engines/hpl1/metaengine.cpp:90
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/scumm/help.cpp:243 engines/scumm/help.cpp:251
 msgid "Examine"
 msgstr "Undersøk"
 
@@ -6609,9 +6609,9 @@ msgstr "Gå til høyre"
 #. I18N: Combat command in Might & Magic 1
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:154
-#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:200
-#: engines/scumm/help.cpp:215 engines/scumm/help.cpp:226
-#: engines/scumm/help.cpp:252 engines/sky/metaengine.cpp:94
+#: engines/scumm/help.cpp:172 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:217 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:254 engines/sky/metaengine.cpp:94
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
@@ -8679,11 +8679,13 @@ msgstr "Space"
 msgid "Pause game"
 msgstr "Pause spill"
 
+#. I18N: Drafts is set of notes in Loom to invoke spells
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:86
 #: engines/scumm/help.cpp:97 engines/scumm/help.cpp:98
 #: engines/scumm/help.cpp:99 engines/scumm/help.cpp:100
 #: engines/scumm/help.cpp:101 engines/scumm/help.cpp:102
 #: engines/scumm/help.cpp:103 engines/scumm/help.cpp:104
+#: engines/scumm/help.cpp:190
 msgid "Ctrl"
 msgstr "Ctrl"
 
@@ -8786,14 +8788,14 @@ msgid "Pull"
 msgstr "Dra"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:209
+#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:201
+#: engines/scumm/help.cpp:211
 msgid "Give"
 msgstr "Gi"
 
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
-#: engines/scumm/help.cpp:210
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
+#: engines/scumm/help.cpp:212
 msgid "Open"
 msgstr "Åpne"
 
@@ -8824,13 +8826,13 @@ msgid "Turn off"
 msgstr "Slå av"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
-#: engines/scumm/help.cpp:196 engines/wintermute/keymapper_tables.h:1540
+#: engines/scumm/help.cpp:198 engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
 msgstr "Gå til"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
-#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:229 engines/wintermute/keymapper_tables.h:134
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:214
+#: engines/scumm/help.cpp:231 engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
 msgstr "Plukk opp"
@@ -8855,11 +8857,11 @@ msgstr "Fiks"
 msgid "Switch"
 msgstr "Bytt"
 
-#: engines/scumm/help.cpp:168 engines/scumm/help.cpp:230
+#: engines/scumm/help.cpp:168 engines/scumm/help.cpp:232
 msgid "Look"
 msgstr "Kikk"
 
-#: engines/scumm/help.cpp:175 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:175 engines/scumm/help.cpp:227
 msgid "Talk"
 msgstr "Snakk"
 
@@ -8904,253 +8906,259 @@ msgstr "spill H på distaffen"
 msgid "play C major on distaff"
 msgstr "spill C dur på distaffen"
 
-#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:190
+#, fuzzy
+#| msgid "Show inventory"
+msgid "Shows the drafts inventory"
+msgstr "Vis utstyrsliste"
+
+#: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
 msgstr "Dytt"
 
-#: engines/scumm/help.cpp:195 engines/scumm/help.cpp:217
+#: engines/scumm/help.cpp:197 engines/scumm/help.cpp:219
 msgid "pull (Yank)"
 msgstr "Dra"
 
-#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:214
-#: engines/scumm/help.cpp:250 engines/wintermute/keymapper_tables.h:128
+#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:252 engines/wintermute/keymapper_tables.h:128
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Talk to"
 msgstr "Snakk til"
 
-#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:203 engines/scumm/help.cpp:215
 #: engines/wintermute/keymapper_tables.h:122
 #: engines/wintermute/keymapper_tables.h:1534
 msgid "Look at"
 msgstr "Se på"
 
-#: engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:204
 msgid "turn oN"
 msgstr "Slå på"
 
-#: engines/scumm/help.cpp:203
+#: engines/scumm/help.cpp:205
 msgid "turn oFf"
 msgstr "Slå av"
 
-#: engines/scumm/help.cpp:219
+#: engines/scumm/help.cpp:221
 msgid "KeyUp"
 msgstr "Ned-tast"
 
-#: engines/scumm/help.cpp:219
+#: engines/scumm/help.cpp:221
 msgid "Highlight prev dialogue"
 msgstr "Merk forrige dialog"
 
-#: engines/scumm/help.cpp:220
+#: engines/scumm/help.cpp:222
 msgid "KeyDown"
 msgstr "Opp-tast"
 
-#: engines/scumm/help.cpp:220
+#: engines/scumm/help.cpp:222
 msgid "Highlight next dialogue"
 msgstr "Merk neste dialog"
 
-#: engines/scumm/help.cpp:224
+#: engines/scumm/help.cpp:226
 msgid "Walk"
 msgstr "Gå"
 
-#: engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:230
 msgid "Object"
 msgstr "Gjenstand"
 
-#: engines/scumm/help.cpp:231
+#: engines/scumm/help.cpp:233
 msgid "Black and White / Color"
 msgstr "Svart/Hvitt / Farger"
 
-#: engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:236
 msgid "Eyes"
 msgstr "Øyne"
 
-#: engines/scumm/help.cpp:235
+#: engines/scumm/help.cpp:237
 msgid "Tongue"
 msgstr "Tunge"
 
-#: engines/scumm/help.cpp:237
+#: engines/scumm/help.cpp:239
 msgid "Punch"
 msgstr "Slå"
 
-#: engines/scumm/help.cpp:238
+#: engines/scumm/help.cpp:240
 msgid "Kick"
 msgstr "Spark"
 
-#: engines/scumm/help.cpp:242
+#: engines/scumm/help.cpp:244
 msgid "Regular cursor"
 msgstr "Vanlig muspeker"
 
 #. I18N: Comm is a communication device
-#: engines/scumm/help.cpp:245
+#: engines/scumm/help.cpp:247
 msgid "Comm"
 msgstr "Comm"
 
-#: engines/scumm/help.cpp:248
+#: engines/scumm/help.cpp:250
 msgid "Save / Load / Options"
 msgstr "Lagre / Åpne / Valg"
 
-#: engines/scumm/help.cpp:259
+#: engines/scumm/help.cpp:261
 msgid "Other game controls:"
 msgstr "Andre spillkontroller:"
 
-#: engines/scumm/help.cpp:261 engines/scumm/help.cpp:271
+#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:273
 msgid "Inventory:"
 msgstr "Utstyrsliste:"
 
-#: engines/scumm/help.cpp:262 engines/scumm/help.cpp:278
+#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:280
 msgid "Scroll list up"
 msgstr "Bla liste opp"
 
-#: engines/scumm/help.cpp:263 engines/scumm/help.cpp:279
+#: engines/scumm/help.cpp:265 engines/scumm/help.cpp:281
 msgid "Scroll list down"
 msgstr "Bla liste ned"
 
-#: engines/scumm/help.cpp:264 engines/scumm/help.cpp:272
+#: engines/scumm/help.cpp:266 engines/scumm/help.cpp:274
 msgid "Upper left item"
 msgstr "Øvre venstre gjenstand"
 
-#: engines/scumm/help.cpp:265 engines/scumm/help.cpp:274
+#: engines/scumm/help.cpp:267 engines/scumm/help.cpp:276
 msgid "Lower left item"
 msgstr "Nedre venstre gjenstand"
 
-#: engines/scumm/help.cpp:266 engines/scumm/help.cpp:275
+#: engines/scumm/help.cpp:268 engines/scumm/help.cpp:277
 msgid "Upper right item"
 msgstr "Øvre høyre gjenstand"
 
-#: engines/scumm/help.cpp:267 engines/scumm/help.cpp:277
+#: engines/scumm/help.cpp:269 engines/scumm/help.cpp:279
 msgid "Lower right item"
 msgstr "Nedre høyre gjenstand"
 
-#: engines/scumm/help.cpp:273
+#: engines/scumm/help.cpp:275
 msgid "Middle left item"
 msgstr "Midtre venstre gjenstand"
 
-#: engines/scumm/help.cpp:276
+#: engines/scumm/help.cpp:278
 msgid "Middle right item"
 msgstr "Midtre høyre gjenstand"
 
-#: engines/scumm/help.cpp:283 engines/scumm/help.cpp:288
+#: engines/scumm/help.cpp:285 engines/scumm/help.cpp:290
 msgid "Switching characters:"
 msgstr "Bytte av karakterer:"
 
-#: engines/scumm/help.cpp:285
+#: engines/scumm/help.cpp:287
 msgid "Second kid"
 msgstr "Andre unge"
 
-#: engines/scumm/help.cpp:286
+#: engines/scumm/help.cpp:288
 msgid "Third kid"
 msgstr "Tredje unge"
 
-#: engines/scumm/help.cpp:295
+#: engines/scumm/help.cpp:297
 msgid "Toggle Inventory/IQ Points display"
 msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
 
-#: engines/scumm/help.cpp:296
+#: engines/scumm/help.cpp:298
 msgid "Toggle Keyboard/Mouse Fighting (*)"
 msgstr "Velg Tastatur/Mus-slåssing (*)"
 
-#: engines/scumm/help.cpp:298
+#: engines/scumm/help.cpp:300
 msgid "* Keyboard Fighting is always on,"
 msgstr "* Tastaturslåssing er alltid på,"
 
-#: engines/scumm/help.cpp:299
+#: engines/scumm/help.cpp:301
 msgid "  so despite the in-game message this"
 msgstr "  så til tross for beskjeden i spillet, vil"
 
-#: engines/scumm/help.cpp:300
+#: engines/scumm/help.cpp:302
 msgid "  actually toggles Mouse Fighting Off/On"
 msgstr "  dette faktisk slå musslåssing av/på"
 
-#: engines/scumm/help.cpp:307
+#: engines/scumm/help.cpp:309
 msgid "Fighting controls (numpad):"
 msgstr "Kampkontroller (talltastatur):"
 
-#: engines/scumm/help.cpp:308 engines/scumm/help.cpp:309
-#: engines/scumm/help.cpp:310
+#: engines/scumm/help.cpp:310 engines/scumm/help.cpp:311
+#: engines/scumm/help.cpp:312
 msgid "Step back"
 msgstr "Bakoversteg"
 
-#: engines/scumm/help.cpp:311
+#: engines/scumm/help.cpp:313
 msgid "Block high"
 msgstr "Høy blokk"
 
-#: engines/scumm/help.cpp:312
+#: engines/scumm/help.cpp:314
 msgid "Block middle"
 msgstr "Mid-blokk"
 
-#: engines/scumm/help.cpp:313
+#: engines/scumm/help.cpp:315
 msgid "Block low"
 msgstr "Lav blokk"
 
-#: engines/scumm/help.cpp:314
+#: engines/scumm/help.cpp:316
 msgid "Punch high"
 msgstr "Slå høyt"
 
-#: engines/scumm/help.cpp:315
+#: engines/scumm/help.cpp:317
 msgid "Punch middle"
 msgstr "Slå midje"
 
-#: engines/scumm/help.cpp:316
+#: engines/scumm/help.cpp:318
 msgid "Punch low"
 msgstr "Slå lavt"
 
-#: engines/scumm/help.cpp:318
+#: engines/scumm/help.cpp:320
 msgid "Sucker punch"
 msgstr "Slag"
 
-#: engines/scumm/help.cpp:321
+#: engines/scumm/help.cpp:323
 msgid "These are for Indy on left."
 msgstr "Gjelder når Indy er til venstre."
 
-#: engines/scumm/help.cpp:322
+#: engines/scumm/help.cpp:324
 msgid "When Indy is on the right,"
 msgstr "Når Indy er til høyre,"
 
-#: engines/scumm/help.cpp:323
+#: engines/scumm/help.cpp:325
 msgid "7, 4, and 1 are switched with"
 msgstr "Byttes 7, 4, og 1 med"
 
-#: engines/scumm/help.cpp:324
+#: engines/scumm/help.cpp:326
 msgid "9, 6, and 3, respectively."
 msgstr "henholdsvis 9, 6, og 3."
 
-#: engines/scumm/help.cpp:333
+#: engines/scumm/help.cpp:335
 msgid "Biplane controls (numpad):"
 msgstr "Flykontroller (talltastatur):"
 
-#: engines/scumm/help.cpp:334
+#: engines/scumm/help.cpp:336
 msgid "Fly to upper left"
 msgstr "Fly til øvre venstre"
 
-#: engines/scumm/help.cpp:335
+#: engines/scumm/help.cpp:337
 msgid "Fly to left"
 msgstr "Fly til venstre"
 
-#: engines/scumm/help.cpp:336
+#: engines/scumm/help.cpp:338
 msgid "Fly to lower left"
 msgstr "Fly til nedre venstre"
 
-#: engines/scumm/help.cpp:337
+#: engines/scumm/help.cpp:339
 msgid "Fly upwards"
 msgstr "Fly oppover"
 
-#: engines/scumm/help.cpp:338
+#: engines/scumm/help.cpp:340
 msgid "Fly straight"
 msgstr "Fly rett"
 
-#: engines/scumm/help.cpp:339
+#: engines/scumm/help.cpp:341
 msgid "Fly down"
 msgstr "Fly ned"
 
-#: engines/scumm/help.cpp:340
+#: engines/scumm/help.cpp:342
 msgid "Fly to upper right"
 msgstr "Fly til øvre høyre"
 
-#: engines/scumm/help.cpp:341
+#: engines/scumm/help.cpp:343
 msgid "Fly to right"
 msgstr "Fly til høyre"
 
-#: engines/scumm/help.cpp:342
+#: engines/scumm/help.cpp:344
 msgid "Fly to lower right"
 msgstr "Fly til nedre høyre"
 
