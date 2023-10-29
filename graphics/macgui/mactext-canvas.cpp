@@ -463,11 +463,13 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			curTextLine->chunks.push_back(defaultFormatting);
 		}
 
-		curLine++;
-		_text.insert_at(curLine, MacTextLine());
-		_text[curLine].chunks.push_back(chunk);
+		if (*s) {
+			curLine++;
+			_text.insert_at(curLine, MacTextLine());
+			_text[curLine].chunks.push_back(chunk);
 
-		curTextLine = &_text[curLine];
+			curTextLine = &_text[curLine];
+		}
 	}
 
 #if DEBUG
