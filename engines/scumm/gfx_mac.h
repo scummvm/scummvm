@@ -157,6 +157,17 @@ public:
 		void draw();
 	};
 
+	class MacPicture : public MacWidget {
+	private:
+		Graphics::Surface *_picture = nullptr;
+
+	public:
+		MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id);
+		~MacPicture();
+
+		void draw();
+	};
+
 	class SimpleWindow {
 	private:
 		OSystem *_system;
@@ -196,6 +207,7 @@ public:
 		void addButton(Common::Rect bounds, Common::String text);
 		void addCheckbox(Common::Rect bounds, Common::String text);
 		void addText(Common::Rect bounds, Common::String text);
+		void addPicture(Common::Rect bounds, int id);
 
 		void clearSustitutions() { _substitutions.clear(); }
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }

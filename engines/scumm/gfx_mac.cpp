@@ -413,7 +413,24 @@ MacGui::MacText::MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Comm
 }
 
 void MacGui::MacText::draw() {
+	_window->innerSurface()->fillRect(_bounds, kWhite);
 	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
+	_window->markRectAsDirty(_bounds);
+}
+
+MacGui::MacPicture::MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id) : MacWidget(window, bounds, "Picture") {
+	_picture = _window->_gui->loadPict(id);
+}
+
+MacGui::MacPicture::~MacPicture() {
+	if (_picture) {
+		_picture->free();
+		delete _picture;
+	}
+}
+
+void MacGui::MacPicture::draw() {
+	_window->drawSprite(_picture, _bounds.left, _bounds.top);
 }
 
 MacGui::SimpleWindow::SimpleWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, SimpleWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
@@ -508,6 +525,10 @@ void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text)
 
 void MacGui::SimpleWindow::addText(Common::Rect bounds, Common::String text) {
 	_widgets.push_back(new MacText(this, bounds, text));
+}
+
+void MacGui::SimpleWindow::addPicture(Common::Rect bounds, int id) {
+	_widgets.push_back(new MacPicture(this, bounds, id));
 }
 
 void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
@@ -1254,7 +1275,6 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			int len = res->readByte();
 
 			Common::String str;
-			Graphics::Surface *pict;
 
 			switch (type & 0x7F) {
 			case 4:
@@ -1288,12 +1308,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 
 			case 64:
 				// Picture
-				pict = loadPict(res->readUint16BE());
-				if (pict) {
-					window->drawSprite(pict, r.left, r.top);
-					pict->free();
-					delete pict;
-				}
+				window->addPicture(r, res->readUint16BE());
 				break;
 
 			default:
