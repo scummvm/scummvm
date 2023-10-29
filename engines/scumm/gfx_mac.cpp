@@ -211,11 +211,8 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Very simple window class and widgets. It is perhaps unfortunate that we have
 // two different sets of widget classes, but they behave quite differently.
 
-MacGui::MacWidget::MacWidget(SimpleWindow *window, Common::Rect bounds, Common::String text) : _window(window), _bounds(bounds), _text(text) {
-}
-
 bool MacGui::MacWidget::findWidget(int x, int y) {
-	return _isEnabled && _bounds.contains(x, y);
+	return _enabled && _bounds.contains(x, y);
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
@@ -268,18 +265,33 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	if (lineWidth > maxLineWidth)
 		maxLineWidth = lineWidth;
 
+	int y0 = y;
+
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(_window->innerSurface(), lines[i], x, y, w, color, align);
-		y += font->getFontHeight();
+		font->drawString(_window->innerSurface(), lines[i], x, y0, w, color, align);
+
+		// Implementing drawing of disabled text is too much of a
+		// hassle. Simply draw a white checkerboard pattern on top
+		// of it.
+
+		if (!_enabled) {
+			Common::Rect textBox = font->getBoundingBox(lines[i], x, y0, w, align);
+
+			for (int y1 = textBox.top; y1 < textBox.bottom; y1++) {
+				for (int x1 = textBox.left; x1 < textBox.right; x1++) {
+					if (((x1 + y1) % 2) == 0)
+						_window->innerSurface()->setPixel(x1, y1, kWhite);
+				}
+			}
+		}
+
+		y0 += font->getFontHeight();
 	}
 
 	return lineWidth;
 }
 
-MacGui::MacButton::MacButton(SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
-}
-
-void MacGui::MacButton::draw() {
+void MacGui::MacButton::draw(bool fullRedraw) {
 	Graphics::Surface *s = _window->innerSurface();
 	Color fg, bg;
 	int x0, x1, x2, x3;
@@ -296,7 +308,7 @@ void MacGui::MacButton::draw() {
 	s->vLine(_bounds.left, y0, y1, kBlack);
 	s->vLine(_bounds.right - 1, y0, y1, kBlack);
 
-	if (_isPressed) {
+	if (_pressed) {
 		fg = kWhite;
 		bg = kBlack;
 	} else {
@@ -338,7 +350,7 @@ void MacGui::MacButton::draw() {
 
 	drawText(_text, _bounds.left, _bounds.top + (_bounds.height() - font->getFontHeight()) / 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
 
-	if (_isDefault && _firstDraw) {
+	if (_isDefault && fullRedraw) {
 		for (int i = 0; i < 3; i++) {
 			x0 = _bounds.left + 1;
 			x1 = _bounds.right - 2;
@@ -374,8 +386,6 @@ void MacGui::MacButton::draw() {
 			s->hLine(x0, y1, x1, kBlack);
 			s->hLine(x2, y1, x3, kBlack);
 		}
-
-		_firstDraw = false;
 	}
 
 	// The first time, the whole window is redrawn so we don't have to
@@ -384,50 +394,56 @@ void MacGui::MacButton::draw() {
 	_window->markRectAsDirty(_bounds);
 }
 
-MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
+MacGui::MacCheckbox::MacCheckbox(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
+	// The DITL may define a larger than necessary area for the checkbox,
+	// so we need to calculate the hit bounds.
+
+	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
+
+	_hitBounds.left = _bounds.left;
+	_hitBounds.top = _bounds.bottom - _bounds.height() / 2 - 8;
+	_hitBounds.bottom = _bounds.top + 18;
+	_hitBounds.right = _bounds.left + 18 + font->getStringWidth(_text) + 2;
 }
 
-void MacGui::MacCheckbox::draw() {
+void MacGui::MacCheckbox::draw(bool fullRedraw) {
 	Graphics::Surface *s = _window->innerSurface();
-	Common::Rect box(_bounds.left + 2, _bounds.top + 2, _bounds.left + 14, _bounds.top + 14);
+	Common::Rect box(_hitBounds.left + 2, _hitBounds.top + 2, _hitBounds.left + 14, _hitBounds.top + 14);
+
+	if (fullRedraw) {
+		_window->innerSurface()->fillRect(_bounds, kWhite);
+
+		int x = _hitBounds.left + 18;
+		int y = _hitBounds.top;
+
+		drawText(_text, x, y, _hitBounds.right - x, kBlack);
+		_window->markRectAsDirty(_bounds);
+	} else {
+		_window->markRectAsDirty(box);
+	}
 
 	s->fillRect(box, kBlack);
-	box.grow(_isPressed ? -2 : -1);
+	box.grow(_pressed ? -2 : -1);
 	s->fillRect(box, kWhite);
 
-	if (_isChecked) {
+	if (_value && _enabled) {
 		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, kBlack);
 		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, kBlack);
 	}
-
-	if (_firstDraw) {
-		int x = _bounds.left + 18;
-		int y = _bounds.top;
-
-		int stringWidth = drawText(_text, x, y, _bounds.right - x, kBlack);
-		_bounds.right = x + stringWidth + 1;
-		_firstDraw = false;
-	}
-
-	_window->markRectAsDirty(_bounds);
 }
 
 void MacGui::MacCheckbox::action() {
-	_isChecked = !_isChecked;
+	_value = _value ? 0 : 1;
 	draw();
 }
 
-MacGui::MacText::MacText(MacGui::SimpleWindow *window, Common::Rect bounds, Common::String text) : MacWidget(window, bounds, text) {
-	_isEnabled = false;
-}
-
-void MacGui::MacText::draw() {
+void MacGui::MacText::draw(bool fullRedraw) {
 	_window->innerSurface()->fillRect(_bounds, kWhite);
 	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
 	_window->markRectAsDirty(_bounds);
 }
 
-MacGui::MacPicture::MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id) : MacWidget(window, bounds, "Picture") {
+MacGui::MacPicture::MacPicture(MacGui::SimpleWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
 	_picture = _window->_gui->loadPict(id);
 }
 
@@ -438,7 +454,7 @@ MacGui::MacPicture::~MacPicture() {
 	}
 }
 
-void MacGui::MacPicture::draw() {
+void MacGui::MacPicture::draw(bool fullRedraw) {
 	_window->drawSprite(_picture, _bounds.left, _bounds.top);
 }
 
@@ -511,6 +527,7 @@ void MacGui::SimpleWindow::copyToScreen(Graphics::Surface *s) const {
 }
 
 void MacGui::SimpleWindow::show() {
+	_visible = true;
 	copyToScreen();
 	_dirtyRects.clear();
 }
@@ -524,20 +541,20 @@ int MacGui::SimpleWindow::findWidget(int x, int y) {
 	return -1;
 }
 
-void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text) {
-	_widgets.push_back(new MacButton(this, bounds, text));
+void MacGui::SimpleWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
+	_widgets.push_back(new MacButton(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text) {
-	_widgets.push_back(new MacCheckbox(this, bounds, text));
+void MacGui::SimpleWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
+	_widgets.push_back(new MacCheckbox(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addText(Common::Rect bounds, Common::String text) {
-	_widgets.push_back(new MacText(this, bounds, text));
+void MacGui::SimpleWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
+	_widgets.push_back(new MacText(this, bounds, text, enabled));
 }
 
-void MacGui::SimpleWindow::addPicture(Common::Rect bounds, int id) {
-	_widgets.push_back(new MacPicture(this, bounds, id));
+void MacGui::SimpleWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
+	_widgets.push_back(new MacPicture(this, bounds, id, enabled));
 }
 
 void MacGui::SimpleWindow::markRectAsDirty(Common::Rect r) {
@@ -578,10 +595,10 @@ void MacGui::SimpleWindow::drawSprite(const Graphics::Surface *sprite, int x, in
 }
 
 int MacGui::SimpleWindow::runDialog() {
-	for (uint i = 0; i < _widgets.size(); i++)
-		_widgets[i]->draw();
-
 	show();
+
+	for (uint i = 0; i < _widgets.size(); i++)
+		_widgets[i]->draw(true);
 
 	int pressedWidget = -1;
 
@@ -1349,6 +1366,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			int len = res->readByte();
 
 			Common::String str;
+			bool enabled = ((type & 0x80) == 0);
 
 			switch (type & 0x7F) {
 			case 0:
@@ -1360,30 +1378,21 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			case 4:
 				// Button
 				str = getDialogString(res, len);
-				window->addButton(r, str);
+				window->addButton(r, str, enabled);
 				button++;
 				break;
 
 			case 5:
 				// Checkbox
 				str = getDialogString(res, len);
-
-				// The DITL may define a larger than necessary
-				// area for the checkbox, so normalize the
-				// height here. The width will be normalized
-				// when the checkbox is first drawn.
-
-				r.top = r.bottom - r.height() / 2 - 8;
-				r.bottom = r.top + 16;
-
-				window->addCheckbox(r, str);
+				window->addCheckbox(r, str, enabled);
 				break;
 
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
 				r.left++;
-				window->addText(r, str);
+				window->addText(r, str, enabled);
 				break;
 
 			case 16:
@@ -1394,7 +1403,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 
 			case 64:
 				// Picture
-				window->addPicture(r, res->readUint16BE());
+				window->addPicture(r, res->readUint16BE(), enabled);
 				break;
 
 			default:
@@ -1817,7 +1826,21 @@ bool MacLoomGui::runOptionsDialog() {
 	// 9 - Picture
 	// 10 - "Machine Speed:  ^0" text
 
+	// TODO: Get these from the SCUMM engine
+	int sound = 0;
+	int music = 0;
+	int scrolling = 0;
+	int fullAnimation = 0;
+
 	SimpleWindow *window = createDialog(1000);
+
+	window->setWidgetValue(2, sound);
+	window->setWidgetValue(3, music);
+	window->setWidgetValue(6, scrolling);
+	window->setWidgetValue(7, fullAnimation);
+
+	if (!sound)
+		window->setWidgetEnabled(3, false);
 
 	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
 	// appear to be VAR_MACHINE_SPEED, because I think that's only set to 1
@@ -1840,8 +1863,15 @@ bool MacLoomGui::runOptionsDialog() {
 			break;
 
 		if (clicked == 2) {
-			debug("TODO: Unchecking sound should disable music");
+			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
 		}
+	}
+
+	if (ret) {
+		debug("sound: %d", window->getWidgetValue(2));
+		debug("music: %d", window->getWidgetValue(3));
+		debug("scrolling: %d", window->getWidgetValue(6));
+		debug("full animation: %d", window->getWidgetValue(7));
 	}
 
 	delete window;
@@ -3435,7 +3465,19 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 7 - "^0" text
 	// 8 - Scrolling checkbox
 
+	// TODO: Get these from the SCUMM engine
+	int sound = 0;
+	int music = 0;
+	int scrolling = 0;
+
 	SimpleWindow *window = createDialog(1000);
+
+	window->setWidgetValue(2, sound);
+	window->setWidgetValue(3, music);
+	window->setWidgetValue(8, scrolling);
+
+	if (!sound)
+		window->setWidgetEnabled(3, false);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 
@@ -3454,8 +3496,14 @@ bool MacIndy3Gui::runOptionsDialog() {
 			break;
 
 		if (clicked == 2) {
-			debug("TODO: Unchecking sound should disable music");
+			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
 		}
+	}
+
+	if (ret) {
+		debug("sound: %d", window->getWidgetValue(2));
+		debug("music: %d", window->getWidgetValue(3));
+		debug("scrolling: %d", window->getWidgetValue(8));
 	}
 
 	delete window;
