@@ -1412,7 +1412,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("ghosteringtonnight", "150815", "29ee591bd93084b5a450f2324d47de3b", 1940030),
 	DT_ENTRY1("glass_glulx", "230725", "a4f83219c8f0790e21ccda51666417af", 786644),
 	DT_ENTRY1("glkchess", "02????", "43a14ea7a35d7944504d3017f33fd40b", 252340),
-	DT_ENTRY1("glkebook", "040506/NotWorking", "1dc4d02840ee7cbf61dc359bc6a69c22", 61162),
+	DT_ENTRY1("glkebook", "040506", "1dc4d02840ee7cbf61dc359bc6a69c22", 61162),
 	DT_ENTRY1("greenmountains", "110116", "4049179c3a28703705de72be734e05bc", 337868),
 	DT_ENTRY1("grutahorror", "150603/Demo", "6de4254acadf5f063dd6211ed3d5a47b", 149248),
 	DT_ENTRY1("hadeanlands_glulx", "141017", "01fa9a91b0f72d411ae065971f2c681b", 2487728),
@@ -1667,10 +1667,10 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 	DT_ENTRY1("if01_carma", "010928", "cc5077c525b44748443a0e39cdc079c6", 11205418),
 	DT_ENTRY1("if01_smtuc", "010928/blb", "c6e58925e082f20542bd25a2395dd00d", 1439558),
 	DT_ENTRY1("if01_smtuc", "010928/ulx", "b0d09a4fa36ae1b00cccc80e4a4248d0", 194048),
-	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v2", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
-	DT_ENTRY1("if01_aafn", "01???\?/NotWorking/v1", "07d590dc62f0be38f6f879763b6eb12c", 163072),
-	DT_ENTRY1("if01_sittm", "01???\?/NotWorking/v1", "0c3d40b0340df7ff459ff7751015183a", 408576),
-	DT_ENTRY1("if01_sittm", "01???\?/NotWorking/v2", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
+	DT_ENTRY1("if01_aafn", "01???\?/v1", "07d590dc62f0be38f6f879763b6eb12c", 163072),
+	DT_ENTRY1("if01_aafn", "01???\?/v2", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
+	DT_ENTRY1("if01_sittm", "01???\?/v1", "0c3d40b0340df7ff459ff7751015183a", 408576),
+	DT_ENTRY1("if01_sittm", "01???\?/v2", "4a2ba3c1b9574b6292cbe361fc49af40", 409344),
 
 	// IFComp 2002
 	DT_ENTRY1("if02_eas2", "020925", "914e969da891835c24b3decdc6fa34c1", 842272),
@@ -1797,7 +1797,7 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// IFComp 2014
 	DT_ENTRY1("if14_hungerdeamon", "140928", "fd95c400739c643d8118e8f751590c47", 1676510),
-	DT_ENTRY1("if14_transparent", "?????\?/NotWorking", "bce9f905654b16d332916bb33f23d8fb", 9267518),
+	DT_ENTRY1("if14_transparent", "??????", "bce9f905654b16d332916bb33f23d8fb", 9267518),
 	DT_ENTRY1("if14_transparent", "150401", "3f4e5effb8ed8f4d0c3f277bb47ba161", 11084272),
 	DT_ENTRY1("if14_transparent", "150626", "13dc495dc3ed802e663b193bd862b994", 2284454),
 	DT_ENTRY1("if14_uglyoafs", "140928", "cdd8fcdc5057dedabda23df19ff5de46", 604552),
