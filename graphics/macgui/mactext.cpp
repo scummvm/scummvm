@@ -320,6 +320,10 @@ void MacText::setMaxWidth(int maxWidth) {
 	_cursorRow = 0;
 	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
 		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
+
+		if (_cursorRow == (int)_canvas._text.size() - 1)
+			break;
+
 		_cursorRow++;
 	}
 	_cursorCol = ppos;
@@ -1722,6 +1726,10 @@ void MacText::insertTextFromClipboard() {
 
 	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
 		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
+
+		if (_cursorRow == (int)_canvas._text.size() - 1)
+			break;
+
 		_cursorRow++;
 	}
 	_cursorCol = ppos;
