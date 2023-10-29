@@ -273,7 +273,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 				} else {
 					// Copy double-byte character
 					curChar2 = *(textPtr++);
-					if (!curChar) {
+					if (!curChar2) {
 						error("SJIS character %02X is missing second byte", curChar);
 						break;
 					}
