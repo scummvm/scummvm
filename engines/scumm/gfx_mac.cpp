@@ -219,13 +219,18 @@ bool MacGui::MacWidget::findWidget(int x, int y) {
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
+	if (text.empty())
+		return 0;
+
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
 	for (uint i = 0; i < text.size() - 1; i++) {
 		if (text[i] == '^') {
-			Common::String &subst = _window->getSubstitution(text[i + 1] - '0');
-			text.replace(i, 2, subst);
-
+			uint nr = text[i + 1] - '0';
+			if (_window->hasSubstitution(nr)) {
+				Common::String &subst = _window->getSubstitution(nr);
+				text.replace(i, 2, subst);
+			}
 		}
 	}
 
@@ -1218,6 +1223,11 @@ int MacGui::delay(uint32 ms) {
 }
 
 MacGui::SimpleWindow *MacGui::createWindow(Common::Rect bounds, SimpleWindowStyle style) {
+	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
+		// This happens with the Last Crusade file dialogs.
+		bounds.moveTo((640 - bounds.width()) / 2, 27);
+	}
+
 	return new SimpleWindow(this, _system, _surface, bounds, style);
 }
 
@@ -1269,6 +1279,7 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			r.bottom = res->readUint16BE();
 			r.right = res->readUint16BE();
 
+			// Move to appropriate position on inner surface
 			r.translate(2, 2);
 
 			int type = res->readByte();
@@ -1277,6 +1288,12 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 			Common::String str;
 
 			switch (type & 0x7F) {
+			case 0:
+				// User item
+				window->innerSurface()->frameRect(r, kRed);
+				res->skip(len);
+				break;
+
 			case 4:
 				// Button
 				str = getDialogString(res, len);
@@ -1304,6 +1321,12 @@ MacGui::SimpleWindow *MacGui::createDialog(int dialogId) {
 				str = getDialogString(res, len);
 				r.left++;
 				window->addText(r, str);
+				break;
+
+			case 16:
+				// Editable text
+				window->innerSurface()->frameRect(r, kGreen);
+				res->skip(len);
 				break;
 
 			case 64:
@@ -1421,17 +1444,17 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 200:
-		// Open. Uses standard Macintosh open file dialog
-		debug("MacLoomGui: Open");
+		// Open
+		runOpenDialog();
 		break;
 
 	case 201:
-		// Save. Uses standard Macintosh save file dialog
-		debug("MacLoomGui: Save");
+		// Save
+		runSaveDialog();
 		break;
 
 	case 202:
-		// Restart. Standard Ok/Cancel dialog.
+		// Restart
 		runRestartDialog();
 		break;
 
@@ -1445,7 +1468,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 		break;
 
 	case 205:
-		// Quit. Standard Ok/Cancel dialog.
+		// Quit
 		runQuitDialog();
 		break;
 
@@ -1719,6 +1742,20 @@ void MacLoomGui::runAboutDialog() {
 	delete loom;
 
 	delete window;
+}
+
+bool MacLoomGui::runOpenDialog() {
+	// Standard file picker dialog. We don't yet have one, and it might
+	// not make sense for ScummVM.
+	warning("MacLoomGui::runOpenDialog()");
+	return true;
+}
+
+bool MacLoomGui::runSaveDialog() {
+	// Standard file picker dialog. We don't yet have one, and it might
+	// not make sense for ScummVM.
+	warning("MacLoomGui::runSaveDialog()");
+	return true;
 }
 
 void MacLoomGui::resetAfterLoad() {
@@ -2945,19 +2982,17 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 200:
-		// Open. Does not work, and might not make sense.
-		// dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001;
-		debug("MacIndy3Gui: Open");
+		// Open
+		runOpenDialog();
 		break;
 
 	case 201:
-		// Save. Does not work, and might not make sense.
-		// dialogId = (_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001;
-		debug("MacIndy3Gui: Save");
+		// Save
+		runSaveDialog();
 		break;
 
 	case 202:
-		// Restart. Standard Ok/Cancel dialog.
+		// Restart
 		runRestartDialog();
 		break;
 
@@ -2976,7 +3011,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 		break;
 
 	case 206:
-		// Quit. Standard Ok/Cancel dialog.
+		// Quit
 		runQuitDialog();
 		break;
 
@@ -3231,6 +3266,28 @@ void MacIndy3Gui::clearAboutDialog(SimpleWindow *window) {
 	window->fillPattern(Common::Rect(2, 130, s->w - 2, 133), 0xA5A5);
 	window->fillPattern(Common::Rect(2, 133, s->w - 2, 136), 0xFFFF);
 	window->fillPattern(Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
+}
+
+bool MacIndy3Gui::runOpenDialog() {
+	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
+	window->runDialog();
+
+	delete window;
+	return true;
+}
+
+bool MacIndy3Gui::runSaveDialog() {
+	SimpleWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
+
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
+	window->runDialog();
+
+	delete window;
+	return true;
 }
 
 bool MacIndy3Gui::runIqPointsDialog() {

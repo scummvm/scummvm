@@ -211,7 +211,9 @@ public:
 
 		void clearSustitutions() { _substitutions.clear(); }
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
-		Common::String &getSubstitution(int n) { return _substitutions[n]; }
+
+		bool hasSubstitution(uint n) { return n < _substitutions.size(); }
+		Common::String &getSubstitution(uint n) { return _substitutions[n]; }
 
 		void markRectAsDirty(Common::Rect r);
 		void update(bool fullRedraw = false);
@@ -266,6 +268,8 @@ public:
 	virtual bool handleMenu(int id, Common::String &name);
 
 	virtual void runAboutDialog() = 0;
+	virtual bool runOpenDialog() = 0;
+	virtual bool runSaveDialog() = 0;
 	bool runQuitDialog();
 	bool runRestartDialog();
 	bool runOptionsDialog();
@@ -311,6 +315,8 @@ public:
 	bool handleMenu(int id, Common::String &name);
 
 	void runAboutDialog();
+	bool runOpenDialog();
+	bool runSaveDialog();
 
 	void resetAfterLoad();
 	void update(int delta);
@@ -345,6 +351,8 @@ public:
 
 	void runAboutDialog();
 	void clearAboutDialog(SimpleWindow *window);
+	bool runOpenDialog();
+	bool runSaveDialog();
 	bool runIqPointsDialog();
 
 	// There is a distinction between the GUI being allowed and being
