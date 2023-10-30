@@ -309,17 +309,7 @@ void MacText::setMaxWidth(int maxWidth) {
 		ppos += _canvas.getLineCharWidth(i);
 	ppos += _cursorCol;
 
-	_canvas._maxWidth = maxWidth;
-
-	int row, col = 0;
-
-	for (uint i = 0; i < _canvas._text.size(); i++) {
-		row = i;
-		_canvas.reshuffleParagraph(&row, &col, _defaultFormatting);
-
-		while (i < _canvas._text.size() - 1 && !_canvas._text[i].paragraphEnd)
-			i++;
-	}
+	_canvas.setMaxWidth(maxWidth, _defaultFormatting);
 
 	// restore the cursor pos
 	_cursorRow = 0;

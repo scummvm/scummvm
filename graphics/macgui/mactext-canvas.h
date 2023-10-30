@@ -160,6 +160,7 @@ public:
 	 * other paragraphs. Also, cursor position is returned in the arguments
 	 */
 	void reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting);
+	void setMaxWidth(int maxWidth, MacFontRun &defaultFormatting);
 
 	void processTable(int line, int maxWidth);
 

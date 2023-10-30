@@ -993,6 +993,28 @@ void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFo
 	*col = ppos;
 }
 
+void MacTextCanvas::setMaxWidth(int maxWidth, MacFontRun &defaultFormatting) {
+	if (maxWidth == _maxWidth)
+		return;
+
+	if (maxWidth < 0) {
+		warning("MacTextCanvas::setMaxWidth(): trying to set maxWidth to %d", maxWidth);
+		return;
+	}
+
+	_maxWidth = maxWidth;
+
+	int row, col = 0;
+
+	for (uint i = 0; i < _text.size(); i++) {
+		row = i;
+		reshuffleParagraph(&row, &col, defaultFormatting);
+
+		while (i < _text.size() - 1 && !_text[i].paragraphEnd)
+			i++;
+	}
+}
+
 void MacTextCanvas::processTable(int line, int maxWidth) {
 	Common::Array<MacTextTableRow> *table = _text[line].table;
 	uint numCols = table->front().cells.size();
