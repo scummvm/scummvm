@@ -1135,7 +1135,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if (_enableEnhancements && _game.id == GID_LOOM &&
+		if (enhancementClassActive(kEnhUIUX) && _game.id == GID_LOOM &&
 			mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_d && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 			// Drafts menu
 			showDraftsInventory();

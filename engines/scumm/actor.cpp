@@ -242,7 +242,7 @@ void Actor_v7::initActor(int mode) {
 		_visible = false;
 
 	Actor::initActor(mode);
-	
+
 	_forceClip = 100;
 	_vm->_classData[_number] = _vm->_classData[0];
 }
@@ -417,7 +417,7 @@ void Actor_v3::setupActorScale() {
 	// in the German release (and then it'd probably be better to restore
 	// that safeguard instead, since the game clearly doesn't expect you
 	// to go back inside the castle), but I don't own this version.  -dwa
-	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->_enableEnhancements) {
+	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->enhancementClassActive(kEnhMinorBugFixes)) {
 		_scalex = 0x50;
 		_scaley = 0x50;
 	} else {
@@ -874,7 +874,7 @@ void Actor::startWalkAnim(int cmd, int angle) {
 		angle = _facing;
 
 	if (_vm->_game.version >= 7)
-		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle), false); 
+		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle), false);
 
 	if (_walkScript) {
 		int args[NUM_SCRIPT_LOCAL];
@@ -1614,7 +1614,7 @@ void Actor_v7::turnToDirection(int newdir) {
 	if (newdir == -1 || _ignoreTurns)
 		return;
 
-	newdir = remapDirection((newdir + 360) % 360, false); 
+	newdir = remapDirection((newdir + 360) % 360, false);
 	_moving &= ~MF_TURN;
 
 	if (newdir != _facing) {
@@ -1648,7 +1648,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	// WORKAROUND: The green transparency of the tank in the Hall of Oddities
 	// is positioned one pixel too far to the left. This appears to be a bug
 	// in the original game as well.
-	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && _vm->_enableEnhancements)
+	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && _vm->enhancementClassActive(kEnhMinorBugFixes))
 		dstX++;
 
 	_pos.x = dstX;

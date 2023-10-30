@@ -57,7 +57,7 @@ int ScummEngine_v4::readResTypeList(ResType type) {
 			Common::String md5 = Common::computeStreamMD5AsString(rolandPatchFile);
 			if (md5 == "64ab9552f71dd3344767718eb01e5fd5") {
 				uint32 patchOffsets[19] = {
-					28957,	23427,	35913,	49919,	51918, 
+					28957,	23427,	35913,	49919,	51918,
 					53643,	55368,	57093,	58818,	62502,
 					73,		66844,	71991,	83107,	91566,
 					95614,	98650,	105020,	112519
@@ -202,7 +202,7 @@ void ScummEngine_v4::loadCharset(int no) {
 	// does exist, but at the invalid \x86 position.  So we replace \x85 with
 	// \x86 (and then \x86 with \x87 so that the whole charset resource keeps
 	// the same size), but only when detecting the faulty 904.LFL file.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && no == 4 && size == 4857 && _language == Common::FR_FRA && _enableEnhancements) {
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && no == 4 && size == 4857 && _language == Common::FR_FRA && enhancementClassActive(kEnhTextLocFixes)) {
 		Common::MemoryReadStream stream(data, size);
 		Common::String md5 = Common::computeStreamMD5AsString(stream);
 

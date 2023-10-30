@@ -928,8 +928,7 @@ Common::Error ScummEngine::init() {
 	}
 
 	// Register original bug fixes as defaults...
-	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugs | kEnhGrp0);
-	_enableEnhancements = ConfMan.getInt("enhancements") != 0; // TODO
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp0);
 	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
@@ -1334,7 +1333,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	// types of them.
 	if (ConfMan.hasKey("enable_enhancements")) {
 		if (!ConfMan.hasKey("enhancements")) {
-			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugs | kEnhGrp0 : 0);
+			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugFixes | kEnhGrp0 : 0);
 		}
 		ConfMan.removeKey("enable_enhancements", ConfMan.getActiveDomainName());
 		ConfMan.flushToDisk();
@@ -1483,7 +1482,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	}
 
 	// Skip the sound pre-loading
-	if (_game.id == GID_SAMNMAX && _bootParam == 0 && _enableEnhancements) {
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && enhancementClassActive(kEnhUIUX)) {
 		_bootParam = -1;
 	}
 
@@ -2405,7 +2404,7 @@ Common::Error ScummEngine::go() {
 		// custom names for save states. We do this in order to avoid
 		// lag and/or lose keyboard inputs.
 
-		if (_enableEnhancements) {
+		if (enhancementClassActive(kEnhUIUX)) {
 			// INDY3:
 			if (_game.id == GID_INDY3 && _currentRoom == 14) {
 				delta = 3;

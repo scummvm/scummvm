@@ -887,7 +887,7 @@ void ScummEngine_v6::o6_startScript() {
 	// This also happens with the original interpreters and with the remaster.
 	if (_game.id == GID_TENTACLE && _roomResource == 13 &&
 		vm.slot[_currentScript].number == 21 && script == 106 &&
-		args[0] == 91 && _enableEnhancements) {
+		args[0] == 91 && enhancementClassActive(kEnhRestoredContent)) {
 		return;
 	}
 
@@ -905,7 +905,7 @@ void ScummEngine_v6::o6_startScript() {
 	// This fix checks for this situation happening (and only this one), and makes a call
 	// to a soundKludge operation like script 29 would have done.
 	if (_game.id == GID_CMI && _currentRoom == 19 &&
-		vm.slot[_currentScript].number == 168 && script == 118 && _enableEnhancements) {
+		vm.slot[_currentScript].number == 168 && script == 118 && enhancementClassActive(kEnhAudioChanges)) {
 		int list[16] = { 4096, 1278, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		_sound->soundKludge(list, 2);
 	}
@@ -915,7 +915,7 @@ void ScummEngine_v6::o6_startScript() {
 	// stopping and starting their speech. This was a script bug in the original
 	// game, which would also block the "That was informative" reaction from Sam.
 	if (_game.id == GID_SAMNMAX && _roomResource == 59 &&
-		vm.slot[_currentScript].number == 201 && script == 48 && _enableEnhancements) {
+		vm.slot[_currentScript].number == 201 && script == 48 && enhancementClassActive(kEnhRestoredContent)) {
 		o6_breakHere();
 	}
 
@@ -1300,7 +1300,7 @@ void ScummEngine_v6::o6_loadRoom() {
 	// WORKAROUND bug #13378: During Sam's reactions to Max beating up the
 	// scientist in the intro, we sometimes have to slow down animations
 	// artificially. This is where we speed them back up again.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && _enableEnhancements) {
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && enhancementClassActive(kEnhTimingChanges)) {
 		int actors[] = { 2, 3, 10 };
 
 		for (int i = 0; i < ARRAYSIZE(actors); i++) {
@@ -1426,7 +1426,7 @@ void ScummEngine_v6::o6_animateActor() {
 	int act = pop();
 
 	if (_game.id == GID_SAMNMAX && _roomResource == 35 && vm.slot[_currentScript].number == 202 &&
-		act == 4 && anim == 14 && _enableEnhancements) {
+		act == 4 && anim == 14 && enhancementClassActive(kEnhMinorBugFixes)) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
 		// Before starting animation 14 of the fisherman, make sure he isn't
 		// talking anymore, otherwise the fishing line may appear twice when Max
@@ -1438,7 +1438,7 @@ void ScummEngine_v6::o6_animateActor() {
 	}
 
 	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
-		act == 2 && anim == 249 && _enableEnhancements) {
+		act == 2 && anim == 249 && enhancementClassActive(kEnhMinorBugFixes)) {
 		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
 		// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
 		// properly removed from the scene by the script, but not the combined actor
@@ -1725,7 +1725,7 @@ void ScummEngine_v6::o6_beginOverride() {
 	//
 	// To amend this, we intercept this exact script override and we force the playback of sound 2277,
 	// which is the iMUSE sequence which would have been played after the dialogue.
-	if (_enableEnhancements && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
+	if (enhancementClassActive(kEnhAudioChanges) && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
 		_sound->isSoundRunning(2275) != 0 && (_scriptPointer - _scriptOrgPointer) == 0x1A) {
 		int list[16] = {0x1001, 2277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		_sound->soundKludge(list, 2);
@@ -2034,7 +2034,7 @@ void ScummEngine_v6::o6_actorOps() {
 		// chattering teeth, but yet when he comes back he's not wearing them
 		// during this cutscene.
 		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
-			a->_number == 8 && i == 53 && _enableEnhancements) {
+			a->_number == 8 && i == 53 && enhancementClassActive(kEnhVisualChanges)) {
 			i = 69;
 		}
 		a->setActorCostume(i);
@@ -2654,7 +2654,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// will feel off -- so we can't use the _forcedWaitForMessage trick.
 	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
 		&& getOwner(70) != 2 && !readVar(0x8000 + 67) && !readVar(0x8000 + 39) && readVar(0x8000 + 12) == 1
-		&& !getClass(126, 6) && _enableEnhancements) {
+		&& !getClass(126, 6) && enhancementClassActive(kEnhRestoredContent)) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
 			o6_breakHere();
@@ -2669,7 +2669,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// a talkActor opcode.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
 			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2
-			&& _enableEnhancements) {
+			&& enhancementClassActive(kEnhMinorBugFixes)) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		return;
 	}
@@ -2680,7 +2680,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// hasn't been properly replaced... Fixed in the 2017 remaster, though.
 	if (_game.id == GID_FT && _language == Common::FR_FRA
 		&& _roomResource == 7 && vm.slot[_currentScript].number == 77
-		&& _actorToPrintStrFor == 1 && _enableEnhancements) {
+		&& _actorToPrintStrFor == 1 && enhancementClassActive(kEnhTextLocFixes)) {
 		const int len = resStrLen(_scriptPointer) + 1;
 		if (len == 93 && memcmp(_scriptPointer + 16 + 18, "piano-low-kick", 14) == 0) {
 			byte *tmpBuf = new byte[len - 14 + 3];
@@ -2706,7 +2706,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// no stable offset for all the floppy, CD and translated versions, and
 	// no easy way to only target the impacted lines.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
-		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && _enableEnhancements) {
+		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && enhancementClassActive(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;
 
@@ -2724,7 +2724,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && _enableEnhancements) {
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && enhancementClassActive(kEnhRestoredContent)) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
@@ -2743,7 +2743,7 @@ void ScummEngine_v6::o6_talkActor() {
 	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
 		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
 		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
-		&& _scummVars[269] == 3 && getState(388) == 2 && _enableEnhancements) {
+		&& _scummVars[269] == 3 && getState(388) == 2 && enhancementClassActive(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;
 
