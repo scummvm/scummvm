@@ -226,10 +226,10 @@ public:
 	}
 
 	enum {
-		kEnhancementGroup0Cmd = 'ENH0',
 		kEnhancementGroup1Cmd = 'ENH1',
 		kEnhancementGroup2Cmd = 'ENH2',
-		kEnhancementGroup3Cmd = 'ENH3'
+		kEnhancementGroup3Cmd = 'ENH3',
+		kEnhancementGroup4Cmd = 'ENH4'
 	};
 
 	void load() override;

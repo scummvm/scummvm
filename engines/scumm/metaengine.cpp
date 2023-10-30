@@ -784,7 +784,7 @@ void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
 	for (uint i = 0; i < engineOptions.size(); i++) {
 		if (strcmp(engineOptions[i].configOption, "enhancements") == 0)
-			ConfMan.registerDefault(engineOptions[i].configOption, kEnhGameBreakingBugFixes | kEnhGrp0);
+			ConfMan.registerDefault(engineOptions[i].configOption, kEnhGameBreakingBugFixes | kEnhGrp1);
 		else
 			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
