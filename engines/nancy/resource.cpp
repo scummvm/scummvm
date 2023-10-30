@@ -119,7 +119,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			uint32 bufSize = info.pitch * info.height * (info.depth / 16);
 			byte *buf = new byte[bufSize];
 			stream->read(buf, bufSize);
-			GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
+
 			#ifdef SCUMM_BIG_ENDIAN
 			if (info.depth == 16) {
 				for (uint i = 0; i < bufSize / 2; ++i) {
@@ -127,6 +127,8 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 				}
 			}
 			#endif
+
+			GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
 		}
 	}
 	
