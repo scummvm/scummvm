@@ -135,6 +135,11 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 		}
 	}
 
+	// Clear the screen after playback
+	if (_G(gfxDriver)->UsesMemoryBackBuffer())
+		_G(gfxDriver)->GetMemoryBackBuffer()->Clear();
+	render_to_screen();
+
 	invalidate_screen();
 
 	return true;
