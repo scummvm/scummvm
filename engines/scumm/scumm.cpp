@@ -1693,8 +1693,7 @@ void ScummEngine::resetScumm() {
 	}
 
 	if (_macGui) {
-		if (_game.id == GID_INDY3)
-			((MacIndy3Gui *)_macGui)->clearTextArea();
+		_macGui->clearTextArea();
 		_macGui->reset();
 	}
 

@@ -1158,7 +1158,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (createTextBox) {
 			if (!_keepText)
-				((MacIndy3Gui *)_macGui)->initTextAreaForActor(a, _charset->getColor());
+				_macGui->initTextAreaForActor(a, _charset->getColor());
 			createTextBox = false;
 			drawTextBox = true;
 		}
