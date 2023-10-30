@@ -224,6 +224,7 @@ Common::File *Resource::openDataFile(const Common::String filename, uint32 fileH
 		// The DOS version is known to have some missing files
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
 			warning("Incomplete DOS version, skipping file %s", filename.c_str());
+			delete dataFile;
 			return nullptr;
 		} else
 			error("openDataFile: Couldn't open %s (%s)", translateFileName(filename).c_str(), filename.c_str());
