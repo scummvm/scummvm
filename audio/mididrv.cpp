@@ -523,19 +523,19 @@ void MidiDriver_BASE::midiDumpSysEx(const byte *msg, uint16 length) {
 
 
 void MidiDriver_BASE::midiDumpFinish() {
-	Common::DumpFile *midiDumpFile = new Common::DumpFile();
-	midiDumpFile->open("dump.mid");
-	midiDumpFile->write("MThd\0\0\0\x6\0\x1\0\x2", 12);		// standard MIDI file header, with two tracks
-	midiDumpFile->write("\x1\xf4", 2);						// division - 500 ticks per beat, i.e. a quarter note. Each tick is 1ms
-	midiDumpFile->write("MTrk", 4);							// start of first track - doesn't contain real data, it's just common practice to use two tracks
-	midiDumpFile->writeUint32BE(4);							// first track size
-	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
-	midiDumpFile->write("MTrk", 4);							// start of second track
-	midiDumpFile->writeUint32BE(_midiDumpCache.size() + 4);	// track size (+4 because of the 'end of track' event)
-	midiDumpFile->write(_midiDumpCache.data(), _midiDumpCache.size());
-	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
-	midiDumpFile->finalize();
-	midiDumpFile->close();
+	Common::DumpFile midiDumpFile;
+	midiDumpFile.open("dump.mid");
+	midiDumpFile.write("MThd\0\0\0\x6\0\x1\0\x2", 12);		// standard MIDI file header, with two tracks
+	midiDumpFile.write("\x1\xf4", 2);						// division - 500 ticks per beat, i.e. a quarter note. Each tick is 1ms
+	midiDumpFile.write("MTrk", 4);							// start of first track - doesn't contain real data, it's just common practice to use two tracks
+	midiDumpFile.writeUint32BE(4);							// first track size
+	midiDumpFile.write("\0\xff\x2f\0", 4);			    	// meta event - end of track
+	midiDumpFile.write("MTrk", 4);							// start of second track
+	midiDumpFile.writeUint32BE(_midiDumpCache.size() + 4);	// track size (+4 because of the 'end of track' event)
+	midiDumpFile.write(_midiDumpCache.data(), _midiDumpCache.size());
+	midiDumpFile.write("\0\xff\x2f\0", 4);			    	// meta event - end of track
+	midiDumpFile.finalize();
+	midiDumpFile.close();
 	const char msg[] = "Ending MIDI dump, created 'dump.mid'";
 	g_system->displayMessageOnOSD(_(msg));		//TODO: why it doesn't appear?
 	debug("%s", msg);
