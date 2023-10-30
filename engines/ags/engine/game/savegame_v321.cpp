@@ -71,6 +71,31 @@ using namespace AGS::Engine;
 
 static const uint32_t MAGICNUMBER = 0xbeefcafe;
 
+inline bool AssertGameContent(HSaveError &err, int game_val, int sav_val, const char *content_name, bool warn_only = false) {
+	if (game_val != sav_val) {
+		String msg = String::FromFormat("Mismatching number of %s (game: %d, save: %d).", content_name, game_val, sav_val);
+		if (warn_only)
+			Debug::Printf(kDbgMsg_Warn, "WARNING: restored save may be incompatible: %s", msg.GetCStr());
+		else
+			err = new SavegameError(kSvgErr_GameContentAssertion, msg);
+	}
+	return warn_only || (game_val == sav_val);
+}
+
+template<typename TObject>
+inline bool AssertAndCopyGameContent(const std::vector<TObject> &old_list, std::vector<TObject> &new_list,
+									 HSaveError &err, const char *content_name, bool warn_only = false) {
+	if (!AssertGameContent(err, old_list.size(), new_list.size(), content_name, warn_only))
+		return false;
+
+	if (new_list.size() < old_list.size()) {
+		size_t copy_at = new_list.size();
+		new_list.resize(old_list.size());
+		Common::copy(old_list.begin() + copy_at, old_list.end(), new_list.begin() + copy_at);
+	}
+	return true;
+}
+
 static HSaveError restore_game_head_dynamic_values(Stream *in, RestoredData &r_data) {
 	r_data.FPS = in->ReadInt32();
 	r_data.CursorMode = in->ReadInt32();
@@ -95,24 +120,24 @@ static void restore_game_spriteset(Stream *in) {
 }
 
 static HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, RestoredData &r_data) {
+	HSaveError err;
 	// read the global script data segment
 	size_t gdatasize = (uint32_t)in->ReadInt32();
-	if (pp.GlScDataSize != gdatasize) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching size of global script data.");
-	}
+	if (!AssertGameContent(err, pp.GlScDataSize, gdatasize, "global script data"))
+		return err;
 	r_data.GlobalScript.Len = gdatasize;
 	r_data.GlobalScript.Data.resize(gdatasize);
 	if (gdatasize > 0)
 		in->Read(&r_data.GlobalScript.Data.front(), gdatasize);
 
-	if ((uint32_t)in->ReadInt32() != _G(numScriptModules)) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of script modules.");
-	}
+	uint32_t num_modules = (uint32_t)in->ReadInt32();
+	if (!AssertGameContent(err, _G(numScriptModules), num_modules, "Script Modules"))
+		return err;
 	r_data.ScriptModules.resize(_G(numScriptModules));
 	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		size_t module_size = (uint32_t)in->ReadInt32();
 		if (pp.ScMdDataSize[i] != module_size) {
-			return new SavegameError(kSvgErr_GameContentAssertion, String::FromFormat("Mismatching size of script module data, module %d.", i));
+			return new SavegameError(kSvgErr_GameContentAssertion, String::FromFormat("Mismatching size of script module data, module %zu.", i));
 		}
 		r_data.ScriptModules[i].Len = module_size;
 		r_data.ScriptModules[i].Data.resize(module_size);
@@ -224,31 +249,6 @@ void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
 	}
 }
 
-inline bool AssertGameContent(HSaveError &err, int game_val, int sav_val, const char *content_name, bool warn_only = false) {
-	if (game_val != sav_val) {
-		String msg = String::FromFormat("Mismatching number of %s (game: %d, save: %d).", content_name, game_val, sav_val);
-		if (warn_only)
-			Debug::Printf(kDbgMsg_Warn, "WARNING: restored save may be incompatible: %s", msg.GetCStr());
-		else
-			err = new SavegameError(kSvgErr_GameContentAssertion, msg);
-	}
-	return warn_only || (game_val == sav_val);
-}
-
-template<typename TObject>
-inline bool AssertAndCopyGameContent(const std::vector<TObject> &old_list, std::vector<TObject> &new_list,
-									 HSaveError &err, const char *content_name, bool warn_only = false) {
-	if (!AssertGameContent(err, old_list.size(), new_list.size(), content_name, warn_only))
-		return false;
-
-	if (new_list.size() < old_list.size()) {
-		size_t copy_at = new_list.size();
-		new_list.resize(old_list.size());
-		Common::copy(old_list.begin() + copy_at, old_list.end(), new_list.begin() + copy_at);
-	}
-	return true;
-}
-
 static HSaveError restore_game_gui(Stream *in) {
 	// Legacy saves allowed to resize gui lists, and stored full gui data
 	// (could be unintentional side effect). Here we emulate this for
@@ -287,9 +287,9 @@ static HSaveError restore_game_gui(Stream *in) {
 }
 
 static HSaveError restore_game_audiocliptypes(Stream *in) {
-	if ((uint32_t)in->ReadInt32() != _GP(game).audioClipTypes.size()) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Audio Clip Types.");
-	}
+	HSaveError err;
+	if (!AssertGameContent(err, _GP(game).audioClipTypes.size(), (uint32_t)in->ReadInt32(), "Audio Clip Types"))
+		return err;
 
 	for (size_t i = 0; i < _GP(game).audioClipTypes.size(); ++i) {
 		_GP(game).audioClipTypes[i].ReadFromFile(in);
@@ -384,9 +384,9 @@ static void restore_game_displayed_room_status(Stream *in, GameDataVersion data_
 }
 
 static HSaveError restore_game_globalvars(Stream *in) {
-	if (in->ReadInt32() != _G(numGlobalVars)) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Restore game error: mismatching number of Global Variables.");
-	}
+	HSaveError err;
+	if (!AssertGameContent(err, _G(numGlobalVars), in->ReadInt32(), "Global Variables"))
+		return err;
 
 	for (int i = 0; i < _G(numGlobalVars); ++i) {
 		_G(globalvars)[i].Read(in);
@@ -395,9 +395,9 @@ static HSaveError restore_game_globalvars(Stream *in) {
 }
 
 static HSaveError restore_game_views(Stream *in) {
-	if (in->ReadInt32() != _GP(game).numviews) {
-		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Views.");
-	}
+	HSaveError err;
+	if (!AssertGameContent(err, _GP(game).numviews, in->ReadInt32(), "Views"))
+		return err;
 
 	for (int bb = 0; bb < _GP(game).numviews; bb++) {
 		for (int cc = 0; cc < _GP(views)[bb].numLoops; cc++) {
@@ -419,7 +419,9 @@ static HSaveError restore_game_audio_and_crossfade(Stream *in, GameDataVersion d
 		chan_info.ClipID = in->ReadInt32();
 		if (chan_info.ClipID >= 0) {
 			if ((size_t)chan_info.ClipID >= _GP(game).audioClips.size()) {
-				return new SavegameError(kSvgErr_GameObjectInitFailed, "Invalid audio clip index.");
+				return new SavegameError(kSvgErr_GameObjectInitFailed,
+										 String::FromFormat("Invalid audio clip index %zu (valid range is 0..%zu)",
+															(size_t)chan_info.ClipID, _GP(game).audioClips.size() - 1));
 			}
 
 			chan_info.Pos = in->ReadInt32();
