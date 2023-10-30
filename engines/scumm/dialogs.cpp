@@ -1044,41 +1044,114 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 // Game options widgets
 
 void ScummOptionsContainerWidget::load() {
-	if (_enhancementsPopUp)
-		_enhancementsPopUp->setSelectedTag(ConfMan.getInt("enhancements", _domain));
+	int32 enhancementsFlags = (int32)ConfMan.getInt("enhancements", _domain);
+
+	for (uint i = 0; i < _enhancementsCheckboxes.size(); i++) {
+		int32 targetFlags = 0;
+		enhancementsFlags &= ~kEnhGameBreakingBugs; // Always active, so don't worry about it!
+
+		if (_enhancementsCheckboxes[i]) {
+			switch (_enhancementsCheckboxes[i]->getCmd()) {
+			case kEnhancementGroup0Cmd:
+				targetFlags |= kEnhGrp0;
+				break;
+			case kEnhancementGroup1Cmd:
+				targetFlags |= kEnhGrp1;
+				break;
+			case kEnhancementGroup2Cmd:
+				targetFlags |= kEnhGrp2;
+				break;
+			case kEnhancementGroup3Cmd:
+				targetFlags |= kEnhGrp3;
+				break;
+			default:
+				break;
+			}
+
+			_enhancementsCheckboxes[i]->setState(enhancementsFlags & targetFlags);
+		}
+	}
 }
 
 bool ScummOptionsContainerWidget::save() {
-	if (_enhancementsPopUp)
-		ConfMan.setInt("enhancements", _enhancementsPopUp->getSelectedTag(), _domain);
+	int32 enhancementsFlags = kEnhGameBreakingBugs; // Always active!
+
+	for (uint i = 0; i < _enhancementsCheckboxes.size(); i++) {
+		if (_enhancementsCheckboxes[i]) {
+			switch (_enhancementsCheckboxes[i]->getCmd()) {
+			case kEnhancementGroup0Cmd:
+				if (_enhancementsCheckboxes[i]->getState()) {
+					enhancementsFlags |= kEnhGrp0;
+				} else {
+					enhancementsFlags &= ~kEnhGrp0;
+				}
+				break;
+
+			case kEnhancementGroup1Cmd:
+				if (_enhancementsCheckboxes[i]->getState()) {
+					enhancementsFlags |= kEnhGrp1;
+				} else {
+					enhancementsFlags &= ~kEnhGrp1;
+				}
+				break;
+
+			case kEnhancementGroup2Cmd:
+				if (_enhancementsCheckboxes[i]->getState()) {
+					enhancementsFlags |= kEnhGrp2;
+				} else {
+					enhancementsFlags &= ~kEnhGrp2;
+				}
+				break;
+
+			case kEnhancementGroup3Cmd:
+				if (_enhancementsCheckboxes[i]->getState()) {
+					enhancementsFlags |= kEnhGrp3;
+				} else {
+					enhancementsFlags &= ~kEnhGrp3;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	ConfMan.setInt("enhancements", enhancementsFlags, _domain);
+
 	return true;
 }
 
 void ScummOptionsContainerWidget::createEnhancementsWidget(GuiObject *boss, const Common::String &name) {
-	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(boss, name + ".EnhancementsLabel", _("Enhancements:"));
-	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(boss, name + ".enhancementsLabel", _("Enhancements:"));
+	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
-	_enhancementsPopUp = new GUI::PopUpWidget(boss, name + ".Enhancements", _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
+	// I18N: Game enhancements groups
+	GUI::CheckboxWidget *enh0 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup0",
+		_("Fix original bugs"), _("tooltip"), kEnhancementGroup0Cmd);
+	GUI::CheckboxWidget *enh1 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup1",
+		_("Audio-visual improvements"), _("tooltip"), kEnhancementGroup1Cmd);
+	GUI::CheckboxWidget *enh2 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup2",
+		_("Restored content"), _("tooltip"), kEnhancementGroup2Cmd);
+	GUI::CheckboxWidget *enh3 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup3",
+		_("Modern UI/UX adjustments"), _("tooltip"), kEnhancementGroup3Cmd);
 
-	// At least one user has expressed an interest in having bugfixes and
-	// content fixes, but not fixes for minor glitches. I don't expect that
-	// anyone wants enhancements but no bugfixes, though.
-
-	// I18N: Game enhancements pop-up list
-
-	_enhancementsPopUp->appendEntry(_("None"), 0);
-	_enhancementsPopUp->appendEntry(_("Fix bugs"), kEnhancementsBugs);
-	_enhancementsPopUp->appendEntry(_("Fix bugs and glitches"), kEnhancementsBugs | kEnhancementsGlitches);
-	_enhancementsPopUp->appendEntry(_("Fix bugs and content"), kEnhancementsBugs | kEnhancementsContent);
-	_enhancementsPopUp->appendEntry(_("Fix bugs, glitches, and content"), kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+	_enhancementsCheckboxes.push_back(enh0);
+	_enhancementsCheckboxes.push_back(enh1);
+	_enhancementsCheckboxes.push_back(enh2);
+	_enhancementsCheckboxes.push_back(enh3);
 }
 
 GUI::ThemeEval &ScummOptionsContainerWidget::addEnhancementsLayout(GUI::ThemeEval &layouts) const {
-	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
-		.addPadding(0, 0, 12, 0)
-		.addWidget("EnhancementsLabel", "OptionsLabel")
-		.addWidget("Enhancements", "PopUp")
-	.closeLayout();
+	// Do not open/close layout: this is handled outside!
+	layouts.addPadding(0, 0, 8, 8)
+		.addSpace(10)
+		.addWidget("enhancementsLabel", "OptionsLabel")
+		.addWidget("enhancementGroup0", "Checkbox")
+		.addWidget("enhancementGroup1", "Checkbox")
+		.addWidget("enhancementGroup2", "Checkbox")
+		.addWidget("enhancementGroup3", "Checkbox");
+
 	return layouts;
 }
 
@@ -1172,8 +1245,9 @@ void ScummGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 			hasEnhancements = true;
 	}
 
-	if (hasEnhancements)
+	if (hasEnhancements) {
 		addEnhancementsLayout(layouts);
+	}
 
 	layouts.closeLayout().closeDialog();
 }

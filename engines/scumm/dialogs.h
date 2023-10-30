@@ -222,9 +222,15 @@ private:
 class ScummOptionsContainerWidget : public GUI::OptionsContainerWidget {
 public:
 	ScummOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, dialogLayout, false, domain),
-		_enhancementsPopUp(nullptr) {
+		OptionsContainerWidget(boss, name, dialogLayout, false, domain) {
 	}
+
+	enum {
+		kEnhancementGroup0Cmd = 'ENH0',
+		kEnhancementGroup1Cmd = 'ENH1',
+		kEnhancementGroup2Cmd = 'ENH2',
+		kEnhancementGroup3Cmd = 'ENH3'
+	};
 
 	void load() override;
 	bool save() override;
@@ -235,8 +241,8 @@ protected:
 	GUI::CheckboxWidget *createOriginalGUICheckbox(GuiObject *boss, const Common::String &name);
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 
-private:
-	GUI::PopUpWidget *_enhancementsPopUp;
+	Common::Array<GUI::CheckboxWidget *> _enhancementsCheckboxes;
+
 };
 
 /**

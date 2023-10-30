@@ -38,9 +38,22 @@ namespace Scumm {
 
 /* Game enhancements */
 enum {
-	kEnhancementsBugs = 1 << 0,
-	kEnhancementsGlitches = 1 << 1,
-	kEnhancementsContent = 1 << 2
+	kEnhGameBreakingBugs    = 1 << 0, // Gamebreaking Bug Fixes
+	kEnhMinorBugFixes       = 1 << 1, // Minor Bug Fixes
+	kEnhTextLocFixes        = 1 << 2, // Text and Localization Fixes
+	kEnhVisualFixes         = 1 << 3, // Visual Corrections
+	kEnhAudioFixes          = 1 << 4, // Audio Corrections
+	kEnhTimingFixes         = 1 << 5, // Timing Adjustments
+	kEnhSubtitleFormatFixes = 1 << 6, // Subtitle Color/Format Corrections
+	kEnhRestoredContent     = 1 << 7, // Restored Cut Content
+	kEnhUIUX                = 1 << 8, // UI/UX Enhancements
+};
+
+enum {
+	kEnhGrp0 = (kEnhMinorBugFixes | kEnhTextLocFixes),
+	kEnhGrp1 = (kEnhVisualFixes | kEnhAudioFixes | kEnhTimingFixes | kEnhSubtitleFormatFixes),
+	kEnhGrp2 = (kEnhRestoredContent),
+	kEnhGrp3 = (kEnhUIUX)
 };
 
 /**
