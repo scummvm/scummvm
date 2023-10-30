@@ -1273,6 +1273,7 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 		if (in->err()) {
 			warning("ScummEngine::changeSavegameName(): Error in input file stream, aborting...");
 			delete in;
+			free(saveBuffer);
 			return false;
 		}
 	}
@@ -1280,18 +1281,21 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 	delete in;
 
 	Common::WriteStream *out = openSaveFileForWriting(slot, false, filename);
-	saveSaveGameHeader(out, hdr);
 
 	if (!out) {
 		warning("ScummEngine::changeSavegameName(): Couldn't open output file, aborting...");
+		free(saveBuffer);
 		return false;
 	}
+
+	saveSaveGameHeader(out, hdr);
 
 	for (uint i = 0; i < (uint)bufferSizeNoHdr; i++) {
 		out->writeByte(saveBuffer[i]);
 
 		if (out->err()) {
 			warning("ScummEngine::changeSavegameName(): Error in output file stream, aborting...");
+			free(saveBuffer);
 			delete out;
 			return false;
 		}
@@ -1301,10 +1305,12 @@ bool ScummEngine::changeSavegameName(int slot, char *newName) {
 
 	if (out->err()) {
 		warning("ScummEngine::changeSavegameName(): Error in output file stream after finalizing...");
+		free(saveBuffer);
 		delete out;
 		return false;
 	}
 
+	free(saveBuffer);
 	delete out;
 
 	return true;
