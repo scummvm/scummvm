@@ -116,10 +116,10 @@ void Window::testFontScaling() {
 	in.open(path);
 
 	if (in.isOpen()) {
-		Image::PICTDecoder *k = new Image::PICTDecoder();
-		k->loadStream(in);
+		Image::PICTDecoder k;
+		k.loadStream(in);
 
-		Graphics::Surface *res = k->getSurface()->convertTo(_wm->_pixelformat, k->getPalette(), k->getPaletteSize(), _wm->getPalette(), _wm->getPaletteSize(), Graphics::kDitherNaive);
+		Graphics::Surface *res = k.getSurface()->convertTo(_wm->_pixelformat, k.getPalette(), k.getPaletteSize(), _wm->getPalette(), _wm->getPaletteSize(), Graphics::kDitherNaive);
 
 		surface.blitFrom(res, Common::Point(400, 280));
 		in.close();
