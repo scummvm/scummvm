@@ -1437,7 +1437,7 @@ void Sound::startCDTimer() {
 	// LOOM Steam uses a fixed 240Hz rate. This was probably done to get rid of some
 	// audio glitches which are confirmed to be in the original. So let's activate this
 	// fix for the DOS version of LOOM as well, if enhancements are enabled.
-	if (_isLoomSteam || (_vm->_game.id == GID_LOOM && _vm->_enableEnhancements))
+	if (_isLoomSteam || (_vm->_game.id == GID_LOOM && _vm->enhancementClassActive(kEnhMinorBugFixes)))
 		interval = 1000000 / LOOM_STEAM_CDDA_RATE;
 
 	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
@@ -1671,7 +1671,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 				// Some of the Mac MI2 music only exists as Roland tracks. The
 				// original interpreter doesn't play them. I don't think there
 				// is any similarly missing FoA music.
-				if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && !_enableEnhancements) {
+				if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && !enhancementClassActive(kEnhAudioChanges)) {
 					pri = -1;
 					break;
 				}

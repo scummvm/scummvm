@@ -765,7 +765,7 @@ void ClassicCostumeLoader::loadCostume(int id) {
 	// WORKAROUND bug #13433: Guybrush can give the stick to two dogs: the one
 	// guarding the jail, and the one in front of the mansion. But the palette
 	// for this costume is invalid in the second case on Amiga, causing a glitch.
-	if (_vm->_game.id == GID_MONKEY2 && _vm->_game.platform == Common::kPlatformAmiga && _vm->_currentRoom == 53 && id == 55 && _numColors == 16 && _vm->_enableEnhancements) {
+	if (_vm->_game.id == GID_MONKEY2 && _vm->_game.platform == Common::kPlatformAmiga && _vm->_currentRoom == 53 && id == 55 && _numColors == 16 && _vm->enhancementClassActive(kEnhMinorBugFixes)) {
 		// Note: handmade, trying to match the colors between rooms 53 and 29,
 		// and based on (similar) costume 1.
 		_palette = amigaMonkey2Costume55Room53;
@@ -937,7 +937,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 			bool mirror = _mirror;
 
-			if (_vm->_game.id == GID_TENTACLE && _vm->_currentRoom == 61 && a->_number == 1 && _loaded._id == 324 && _vm->_enableEnhancements) {
+			if (_vm->_game.id == GID_TENTACLE && _vm->_currentRoom == 61 && a->_number == 1 && _loaded._id == 324 && _vm->enhancementClassActive(kEnhMinorBugFixes)) {
 				if (limb == 0) {
 					_mirror = true;
 					xmoveCur--;

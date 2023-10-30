@@ -550,8 +550,7 @@ public:
 	ResourceManager *_res = nullptr;
 	int _insideCreateResource = 0; // Counter for HE sound
 
-	bool _enableEnhancements = false;
-	int32 _activeEnhancements = 0;
+	int32 _activeEnhancements = kEnhGameBreakingBugFixes;
 	bool _useOriginalGUI = true;
 	bool _enableAudioOverride = false;
 	bool _enableCOMISong = false;

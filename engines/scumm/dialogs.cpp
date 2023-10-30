@@ -455,7 +455,7 @@ const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedSt
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
-			if (stringno >= 22 && stringno <= 27 && _vm->_game.id == GID_TENTACLE && _vm->_enableEnhancements && strcmp(_vm->_game.variant, "Floppy")) {
+			if (stringno >= 22 && stringno <= 27 && _vm->_game.id == GID_TENTACLE && _vm->enhancementClassActive(kEnhTextLocFixes) && strcmp(_vm->_game.variant, "Floppy")) {
 				result = getStaticResString(_vm->_language, stringno - 1).string;
 			} else {
 				result = string_map_table_v6[stringno - 1].string;
@@ -1048,7 +1048,7 @@ void ScummOptionsContainerWidget::load() {
 
 	for (uint i = 0; i < _enhancementsCheckboxes.size(); i++) {
 		int32 targetFlags = 0;
-		enhancementsFlags &= ~kEnhGameBreakingBugs; // Always active, so don't worry about it!
+		enhancementsFlags &= ~kEnhGameBreakingBugFixes; // Always active, so don't worry about it!
 
 		if (_enhancementsCheckboxes[i]) {
 			switch (_enhancementsCheckboxes[i]->getCmd()) {
@@ -1074,7 +1074,7 @@ void ScummOptionsContainerWidget::load() {
 }
 
 bool ScummOptionsContainerWidget::save() {
-	int32 enhancementsFlags = kEnhGameBreakingBugs; // Always active!
+	int32 enhancementsFlags = kEnhGameBreakingBugFixes; // Always active!
 
 	for (uint i = 0; i < _enhancementsCheckboxes.size(); i++) {
 		if (_enhancementsCheckboxes[i]) {
