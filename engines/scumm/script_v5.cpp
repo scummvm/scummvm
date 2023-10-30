@@ -3332,13 +3332,13 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// a typo...
 		printString(textSlot, (const byte *)"I am Chaos.");
 	} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
-			   vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && enhancementClassActive(kEnhSubtitleFormatChanges)) {
+			   vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && enhancementClassActive(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Mandible speaks with Goodmold, his second
 		// speech line is missing its color parameter.
 		_string[textSlot].color = 0x0A;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
-			   vm.slot[_currentScript].number == 201 && enhancementClassActive(kEnhSubtitleFormatChanges)) {
+			   vm.slot[_currentScript].number == 201 && enhancementClassActive(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Indy and his father escape the zeppelin
 		// with the biplane in the FM-TOWNS version, they share the
 		// same text color. Indeed, they're not given any explicit
@@ -3369,7 +3369,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		printString(textSlot, tmpBuf);
 	} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
 			vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
-			strcmp(_game.variant, "Floppy") != 0 && enhancementClassActive(kEnhSubtitleFormatChanges)) {
+			strcmp(_game.variant, "Floppy") != 0 && enhancementClassActive(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
 		// lines when he uses the phone booth in New York, but the text doesn't
 		// match the voice and it mentions the wrong person, in most releases.
@@ -3420,7 +3420,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			(_roomResource == 45 && vm.slot[_currentScript].number == 200 &&
 			isValidActor(10) && _actors[10]->isInCurrentRoom())) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color != 0x0F &&
-			enhancementClassActive(kEnhSubtitleFormatChanges)) {
+			enhancementClassActive(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: When Guybrush goes to the church at the end of Monkey1,
 		// the color for the ghost priest's lines is inconsistent in the v5
 		// releases (except for the SegaCD one with the smaller palette).
@@ -3432,7 +3432,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			_game.platform != Common::kPlatformSegaCD &&
 			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color == 0x06 &&
-			enhancementClassActive(kEnhSubtitleFormatChanges)) {
+			enhancementClassActive(kEnhSubFmtCntChanges)) {
 		// WORKAROUND: In MI1 CD, the colors when the navigator head speaks are
 		// not the intended ones (dark purple instead of brown), because the
 		// original `Color(6)` parameter was kept without adjusting it for the
