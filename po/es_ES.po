@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-29 20:09+0000\n"
-"PO-Revision-Date: 2023-10-29 10:28+0000\n"
+"PO-Revision-Date: 2023-10-30 10:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -9120,10 +9120,8 @@ msgid "play C major on distaff"
 msgstr "Tocar do mayor con el bastón"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Mostrar inventario"
+msgstr "Mostrar inventario de hechizos"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
