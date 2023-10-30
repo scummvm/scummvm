@@ -129,8 +129,10 @@ NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(const Common::String &fi
 	Common::File *stream = new Common::File();
 	stream->open(fileName);
 
-	if (!stream->isOpen())
+	if (!stream->isOpen()) {
+		delete stream;
 		return;
+	}
 
 	_curFrame = 0;
 	_frameCount = 10; // TODO: Anything > 1 to keep playing till the audio is done
