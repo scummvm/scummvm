@@ -303,8 +303,6 @@ void MacText::setMaxWidth(int maxWidth) {
 		return;
 	}
 
-	Common::U32String str = _canvas.getTextChunk(0, 0, -1, -1, true, true);
-
 	// keep the cursor pos
 	int ppos = 0;
 	for (int i = 0; i < _cursorRow; i++)
@@ -312,16 +310,23 @@ void MacText::setMaxWidth(int maxWidth) {
 	ppos += _cursorCol;
 
 	_canvas._maxWidth = maxWidth;
-	_canvas._text.clear();
 
-	_canvas.splitString(str, -1, _defaultFormatting);
+	int row, col = 0;
+
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		row = i;
+		_canvas.reshuffleParagraph(&row, &col, _defaultFormatting);
+
+		while (i < _canvas._text.size() - 1 && !_canvas._text[i].paragraphEnd)
+			i++;
+	}
 
 	// restore the cursor pos
 	_cursorRow = 0;
 	while (ppos > _canvas.getLineCharWidth(_cursorRow, true)) {
 		ppos -= _canvas.getLineCharWidth(_cursorRow, true);
 
-		if (_cursorRow == (int)_canvas._text.size() - 1)
+		if (_cursorRow >= (int)_canvas._text.size() - 1)
 			break;
 
 		_cursorRow++;
