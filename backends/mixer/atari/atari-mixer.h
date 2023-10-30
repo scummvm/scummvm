@@ -52,8 +52,9 @@ private:
 	void startPlayback(PlaybackState playbackState);
 	void stopPlayback(PlaybackState playbackState);
 
-	uint32 _outputRate;
-	uint32 _samples = 0;
+	int _outputRate = 0;
+	int _outputChannels = 0;
+	int _samples = 0;
 	uint8 *_samplesBuf = nullptr;
 
 	byte *_atariSampleBuffer = nullptr;
