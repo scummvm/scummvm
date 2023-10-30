@@ -129,7 +129,7 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 }
 
 void ScummEngine::mac_drawIndy3TextBox() {
-	Graphics::Surface *s = ((MacIndy3Gui *)_macGui)->textArea();
+	Graphics::Surface *s = _macGui->textArea();
 
 	// The first two rows of the text box are padding for font rendering.
 	// They are not drawn to the screen.
@@ -153,7 +153,7 @@ void ScummEngine::mac_drawIndy3TextBox() {
 }
 
 void ScummEngine::mac_undrawIndy3TextBox() {
-	Graphics::Surface *s = ((MacIndy3Gui *)_macGui)->textArea();
+	Graphics::Surface *s = _macGui->textArea();
 
 	int x = 96;
 	int y = 32;
@@ -222,25 +222,24 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // ---------------------------------------------------------------------------
 
 bool MacGui::MacWidget::findWidget(int x, int y) const {
-	return _enabled && _bounds.contains(x, y);
+	return _visible && _enabled && _bounds.contains(x, y);
+}
+
+void MacGui::MacWidget::setRedraw(bool fullRedraw) {
+	if (fullRedraw)
+		_fullRedraw = true;
+	else
+		_redraw = true;
 }
 
 void MacGui::MacWidget::setEnabled(bool enabled) {
 	_enabled = enabled;
-	if (_window->isVisible())
-		draw(true);
-}
-
-void MacGui::MacWidget::setPressed(bool pressed) {
-	_pressed = pressed;
-	if (_window->isVisible())
-		draw();
+	setRedraw(true);
 }
 
 void MacGui::MacWidget::setValue(int value) {
 	_value = value;
-	if (_window->isVisible())
-		draw();
+	setRedraw();
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
@@ -326,7 +325,15 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 // Button widget
 // ---------------------------------------------------------------------------
 
-void MacGui::MacButton::draw(bool fullRedraw) {
+void MacGui::MacButton::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacButton: Drawing button %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
 	Graphics::Surface *s = _window->innerSurface();
 	Color fg, bg;
 	int x0, x1, x2, x3;
@@ -343,7 +350,7 @@ void MacGui::MacButton::draw(bool fullRedraw) {
 	s->vLine(_bounds.left, y0, y1, kBlack);
 	s->vLine(_bounds.right - 1, y0, y1, kBlack);
 
-	if (_pressed) {
+	if (drawFocused || (_window->getFocusedWidget() == this && _bounds.contains(_window->getMousePos()))) {
 		fg = kWhite;
 		bg = kBlack;
 	} else {
@@ -385,7 +392,9 @@ void MacGui::MacButton::draw(bool fullRedraw) {
 
 	drawText(_text, _bounds.left, _bounds.top + (_bounds.height() - font->getFontHeight()) / 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
 
-	if (_isDefault && fullRedraw) {
+	Common::Rect bounds = _bounds;
+
+	if (_window->getDefaultWidget() == this && _fullRedraw) {
 		for (int i = 0; i < 3; i++) {
 			x0 = _bounds.left + 1;
 			x1 = _bounds.right - 2;
@@ -421,12 +430,13 @@ void MacGui::MacButton::draw(bool fullRedraw) {
 			s->hLine(x0, y1, x1, kBlack);
 			s->hLine(x2, y1, x3, kBlack);
 		}
+
+		bounds.grow(4);
 	}
 
-	// The first time, the whole window is redrawn so we don't have to
-	// mark the default button as any dirtier than a regular one.
-
-	_window->markRectAsDirty(_bounds);
+	_redraw = false;
+	_fullRedraw = false;
+	_window->markRectAsDirty(bounds);
 }
 
 // ---------------------------------------------------------------------------
@@ -446,14 +456,22 @@ MacGui::MacCheckbox::MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect b
 }
 
 bool MacGui::MacCheckbox::findWidget(int x, int y) const {
-	return _enabled && _hitBounds.contains(x, y);
+	return _visible && _enabled && _hitBounds.contains(x, y);
 }
 
-void MacGui::MacCheckbox::draw(bool fullRedraw) {
+void MacGui::MacCheckbox::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacCheckbox: Drawing checkbox %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
 	Graphics::Surface *s = _window->innerSurface();
 	Common::Rect box(_hitBounds.left + 2, _hitBounds.top + 2, _hitBounds.left + 14, _hitBounds.top + 14);
 
-	if (fullRedraw) {
+	if (_fullRedraw) {
 		_window->innerSurface()->fillRect(_bounds, kWhite);
 
 		int x = _hitBounds.left + 18;
@@ -461,33 +479,50 @@ void MacGui::MacCheckbox::draw(bool fullRedraw) {
 
 		drawText(_text, x, y, _hitBounds.right - x, kBlack);
 		_window->markRectAsDirty(_bounds);
-	} else {
+	} else
 		_window->markRectAsDirty(box);
-	}
 
 	s->fillRect(box, kBlack);
-	box.grow(_pressed ? -2 : -1);
+	if (drawFocused || (_window->getFocusedWidget() == this && _hitBounds.contains(_window->getMousePos()))) {
+		box.grow(-2);
+	} else {
+		box.grow(-1);
+	}
 	s->fillRect(box, kWhite);
 
 	if (_value && _enabled) {
 		s->drawLine(box.left, box.top, box.right - 1, box.bottom - 1, kBlack);
 		s->drawLine(box.left, box.bottom - 1, box.right - 1, box.top, kBlack);
 	}
+
+	_redraw = false;
+	_fullRedraw = false;
 }
 
-void MacGui::MacCheckbox::action() {
+void MacGui::MacCheckbox::handleMouseUp() {
 	_value = _value ? 0 : 1;
-	draw();
+	setRedraw();
 }
 
 // ---------------------------------------------------------------------------
 // Static text widget
 // ---------------------------------------------------------------------------
 
-void MacGui::MacText::draw(bool fullRedraw) {
+void MacGui::MacText::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
 	_window->innerSurface()->fillRect(_bounds, kWhite);
 	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
 	_window->markRectAsDirty(_bounds);
+
+	_redraw = false;
+	_fullRedraw = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -503,20 +538,105 @@ MacGui::MacPicture::~MacPicture() {
 		_picture->free();
 		delete _picture;
 	}
-
-	if (_background) {
-		_background->free();
-		delete _background;
-	}
 }
 
-void MacGui::MacPicture::draw(bool fullRedraw) {
-	if (_enabled && !_background) {
-		_background = new Graphics::Surface();
-		_background->create(_picture->w, _picture->h, Graphics::PixelFormat::createFormatCLUT8());
-		_background->copyRectToSurface(*(_window->innerSurface()), 0, 0, _bounds);
-	}
+void MacGui::MacPicture::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacPicture: Drawing picture %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
 	_window->drawSprite(_picture, _bounds.left, _bounds.top);
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
+// ---------------------------------------------------------------------------
+// Slider widget
+// ---------------------------------------------------------------------------
+
+bool MacGui::MacSlider::findWidget(int x, int y) const {
+	if (!_visible || !_enabled)
+		return false;
+
+	// Once we start dragging the handle, any mouse position is considered
+	// within the widget.
+
+	if (_window->getFocusedWidget() == this)
+		return true;
+
+	return _bounds.contains(x, y);
+}
+
+void MacGui::MacSlider::setValue(int value) {
+	MacWidget::setValue(CLIP(value, _minValue, _maxValue));
+
+	int valueRange = _maxValue - _minValue;
+	int valueOffset = _value - _minValue;
+
+	int posRange = (_maxX - _rightMargin) - (_minX + _leftMargin);
+	int posOffset = (valueRange / 2 + posRange * valueOffset) / valueRange;
+
+	_handleX = _minX + _leftMargin + posOffset;
+	setRedraw();
+}
+
+void MacGui::MacSlider::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacPicture: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
+	Graphics::Surface *bgSprite = _background->getPicture();
+	Graphics::Surface *hSprite = _handle->getPicture();
+
+	if (_fullRedraw)
+		_window->drawSprite(bgSprite, _bounds.left, _bounds.top);
+
+	int handleY = _handle->getBounds().top - _bounds.top;
+
+	if (_lastHandleX != -1 && !_fullRedraw) {
+		Graphics::Surface bg = bgSprite->getSubArea(Common::Rect(_lastHandleX, handleY, _lastHandleX + hSprite->w, handleY + hSprite->h));
+
+		_window->drawSprite(&bg, _bounds.left + _lastHandleX, _bounds.top + handleY);
+	}
+
+	_window->drawSprite(hSprite, _bounds.left + _handleX, _bounds.top + handleY);
+	_lastHandleX = _handleX;
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
+void MacGui::MacSlider::handleMouseDown() {
+	int mouseX = _window->getMousePos().x - _bounds.left;
+	int handleWidth = _handle->getBounds().width();
+
+	if (mouseX >= _handleX && mouseX < _handleX + handleWidth)
+		_grabOffset = _window->getMousePos().x - _bounds.left - _handleX;
+	else
+		_grabOffset = handleWidth / 2;
+
+	handleMouseMove();
+}
+
+void MacGui::MacSlider::handleMouseUp() {
+	int posRange = (_maxX - _rightMargin) - (_minX + _rightMargin);
+	int posOffset = _handleX - (_minX + _leftMargin);
+
+	int valueRange = _maxValue - _minValue;
+	int valueOffset = (posRange / 2 + valueRange * posOffset) / posRange;
+
+	setValue(_minValue + valueOffset);
+}
+
+void MacGui::MacSlider::handleMouseMove() {
+	_handleX = CLIP<int>(_window->getMousePos().x - _bounds.left - _grabOffset, _minX, _maxX);
+	setRedraw();
 }
 
 // ---------------------------------------------------------------------------
@@ -600,6 +720,26 @@ void MacGui::MacDialogWindow::show() {
 	_dirtyRects.clear();
 }
 
+void MacGui::MacDialogWindow::setFocusedWidget(int x, int y) {
+	int nr = findWidget(x, y);
+	if (nr >= 0) {
+		_focusedWidget = _widgets[nr];
+		_focusClick.x = x;
+		_focusClick.y = y;
+		_focusedWidget->setRedraw();
+	} else
+		clearFocusedWidget();
+}
+
+void MacGui::MacDialogWindow::clearFocusedWidget() {
+	if (_focusedWidget) {
+		_focusedWidget->setRedraw();
+		_focusedWidget = nullptr;
+		_focusClick.x = -1;
+		_focusClick.y = -1;
+	}
+}
+
 int MacGui::MacDialogWindow::findWidget(int x, int y) const {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->findWidget(x, y))
@@ -625,11 +765,24 @@ void MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabl
 	_widgets.push_back(new MacPicture(this, bounds, id, false));
 }
 
+void MacGui::MacDialogWindow::addSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
+	MacPicture *background = (MacPicture *)_widgets[backgroundId];
+	MacPicture *handle = (MacPicture *)_widgets[handleId];
+
+	background->setVisible(false);
+	handle->setVisible(false);
+
+	_widgets.push_back(new MacSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin));
+}
+
 void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
 void MacGui::MacDialogWindow::update(bool fullRedraw) {
+	for (uint i = 0; i < _widgets.size(); i++)
+		_widgets[i]->draw();
+
 	if (fullRedraw) {
 		_dirtyRects.clear();
 		markRectAsDirty(Common::Rect(0, 0, _innerSurface.w, _innerSurface.h));
@@ -657,18 +810,16 @@ void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	markRectAsDirty(r);
 }
 
-void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
-	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
-	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
-}
-
 int MacGui::MacDialogWindow::runDialog() {
-	show();
+	if (!_visible) {
+		show();
 
-	for (uint i = 0; i < _widgets.size(); i++)
-		_widgets[i]->draw(true);
-
-	int pressedWidget = -1;
+		for (uint i = 0; i < _widgets.size(); i++) {
+			_widgets[i]->setId(i);
+			_widgets[i]->setRedraw(true);
+			_widgets[i]->draw();
+		}
+	}
 
 	// Run the dialog until something interesting happens to a widget. It's
 	// up to the caller to repeat the calls to runDialog() until the dialog
@@ -676,33 +827,74 @@ int MacGui::MacDialogWindow::runDialog() {
 
 	while (!_gui->_vm->shouldQuit()) {
 		Common::Event event;
+		bool buttonPressed = false;
+		int widgetId = -1;
 
 		while (_system->getEventManager()->pollEvent(event)) {
 			if (Common::isMouseEvent(event)) {
 				event.mouse.x -= (_bounds.left + _margin);
 				event.mouse.y -= (_bounds.top + _margin);
+
+				_oldMousePos = _mousePos;
+
+				_mousePos.x = event.mouse.x;
+				_mousePos.y = event.mouse.y;
 			}
 
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
-				pressedWidget = findWidget(event.mouse.x, event.mouse.y);
-				if (pressedWidget != -1)
-					_widgets[pressedWidget]->setPressed(true);
+				buttonPressed = true;
+				setFocusedWidget(event.mouse.x, event.mouse.y);
+				if (_focusedWidget)
+					_focusedWidget->handleMouseDown();
 				break;
 
 			case Common::EVENT_LBUTTONUP:
-				if (pressedWidget != -1) {
-					_widgets[pressedWidget]->setPressed(false);
-					_widgets[pressedWidget]->action();
-					return pressedWidget;
+				buttonPressed = false;
+
+				if (_focusedWidget && _focusedWidget->findWidget(event.mouse.x, event.mouse.y)) {
+					widgetId = _focusedWidget->getId();
+					_focusedWidget->handleMouseUp();
+					clearFocusedWidget();
+					return widgetId;
 				}
+
+				clearFocusedWidget();
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				if (pressedWidget != -1) {
-					if (!_widgets[pressedWidget]->findWidget(event.mouse.x, event.mouse.y)) {
-						_widgets[pressedWidget]->setPressed(false);
-						pressedWidget = -1;
+				if (_focusedWidget) {
+					if (_focusedWidget->findWidget(_oldMousePos.x, _oldMousePos.y) != _focusedWidget->findWidget(_mousePos.x, _mousePos.y)) {
+						_focusedWidget->setRedraw();
+					}
+
+					_focusedWidget->handleMouseMove();
+				}
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (!buttonPressed && event.kbd.keycode == Common::KEYCODE_RETURN) {
+					MacWidget *widget = getDefaultWidget();
+					if (widget && widget->isEnabled()) {
+						widget->setRedraw();
+						widget->draw(true);
+						update();
+
+						for (int i = 0; i < 10; i++) {
+							_system->delayMillis(10);
+							_system->updateScreen();
+						}
+
+						widget->setRedraw();
+						widget->draw();
+						update();
+
+						for (int i = 0; i < 10; i++) {
+							_system->delayMillis(10);
+							_system->updateScreen();
+						}
+
+						return widget->getId();
 					}
 				}
 				break;
@@ -718,6 +910,11 @@ int MacGui::MacDialogWindow::runDialog() {
 	}
 
 	return -1;
+}
+
+void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
+	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
+	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
 }
 
 void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
@@ -1161,7 +1358,7 @@ Graphics::Surface *MacGui::decodePictV1(Common::SeekableReadStream *res) {
 			break;
 
 		default:
-			debug("decodePictV1: Unknown opcode: 0x%02x", opcode);
+			warning("decodePictV1: Unknown opcode: 0x%02x", opcode);
 			break;
 		}
 	}
@@ -1496,8 +1693,7 @@ MacLoomGui::MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm
 	// The practice box can be moved, but this is its default position on
 	// a large screen, and it's not saved.
 
-	_practiceBoxX = 215;
-	_practiceBoxY = 376;
+	_practiceBoxPos = Common::Point(215, 376);
 }
 
 MacLoomGui::~MacLoomGui() {
@@ -1885,19 +2081,23 @@ bool MacLoomGui::runOptionsDialog() {
 	// 1 - Cancel button
 	// 2 - Sound checkbox
 	// 3 - Music checkbox
-	// 4 - Picture
-	// 5 - Picture
+	// 4 - Picture (text speed background)
+	// 5 - Picture (text speed handle)
 	// 6 - Scrolling checkbox
 	// 7 - Full Animation checkbox
-	// 8 - Picture
-	// 9 - Picture
+	// 8 - Picture (music quality background)
+	// 9 - Picture (music quality handle)
 	// 10 - "Machine Speed:  ^0" text
+	// 11 - Text speed slider (manually created)
+	// 12 - Music quality slider (manually created)
 
 	// TODO: Get these from the SCUMM engine
 	int sound = 0;
 	int music = 0;
 	int scrolling = 0;
 	int fullAnimation = 0;
+	int textSpeed = 75;
+	int musicQuality = 2;
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -1909,9 +2109,12 @@ bool MacLoomGui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	// Enable the slider drag handles
-	window->setWidgetEnabled(5, true);
-	window->setWidgetEnabled(9, true);
+	// TODO: What is the range of the text speed setting?
+	window->addSlider(4, 5, true, 5, 105, 50, 100);
+	window->setWidgetValue(11, textSpeed);
+
+	window->addSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+	window->setWidgetValue(12, musicQuality);
 
 	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
 	// appear to be VAR_MACHINE_SPEED, because I think that's only set to 1
@@ -1933,9 +2136,8 @@ bool MacLoomGui::runOptionsDialog() {
 		if (clicked == 1)
 			break;
 
-		if (clicked == 2) {
+		if (clicked == 2)
 			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
-		}
 	}
 
 	if (ret) {
@@ -1943,6 +2145,8 @@ bool MacLoomGui::runOptionsDialog() {
 		debug("music: %d", window->getWidgetValue(3));
 		debug("scrolling: %d", window->getWidgetValue(6));
 		debug("full animation: %d", window->getWidgetValue(7));
+		debug("text speed: %d", window->getWidgetValue(11));
+		debug("music quality: %d", window->getWidgetValue(12));
 	}
 
 	delete window;
@@ -2026,7 +2230,7 @@ void MacLoomGui::update(int delta) {
 				}
 			}
 
-			_system->copyRectToScreen(_practiceBox->getBasePtr(0, 0), _practiceBox->pitch, _practiceBoxX, _practiceBoxY, w, h);
+			_system->copyRectToScreen(_practiceBox->getBasePtr(0, 0), _practiceBox->pitch, _practiceBoxPos.x, _practiceBoxPos.y, w, h);
 		} else {
 			if (_practiceBox) {
 				debug(1, "MacLoomGui: Deleting practice mode box");
@@ -2038,7 +2242,7 @@ void MacLoomGui::update(int delta) {
 				delete _practiceBox;
 				_practiceBox = nullptr;
 
-				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxX, _practiceBoxY), _surface->pitch, _practiceBoxX, _practiceBoxY, w, h);
+				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxPos.x, _practiceBoxPos.y), _surface->pitch, _practiceBoxPos.x, _practiceBoxPos.y, w, h);
 			}
 		}
 	}
@@ -2064,10 +2268,10 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 
 	Common::Rect bounds;
 
-	bounds.left = _practiceBoxX;
-	bounds.top = _practiceBoxY;
-	bounds.right = _practiceBoxX + _practiceBox->w;
-	bounds.bottom = _practiceBoxY + _practiceBox->h;
+	bounds.left = _practiceBoxPos.x;
+	bounds.top = _practiceBoxPos.y;
+	bounds.right = _practiceBoxPos.x + _practiceBox->w;
+	bounds.bottom = _practiceBoxPos.y + _practiceBox->h;
 
 	if (!bounds.contains(event.mouse))
 		return false;
@@ -2120,12 +2324,13 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 			newY = CLIP(newY, 23, _surface->h - _practiceBox->h);
 
 			// For some reason, X coordinates can only change in
-			// increments of 16 pixels.
+			// increments of 16 pixels. As an enhancement, we allow
+			// any X coordinate.
 
 			if (!_vm->_enableEnhancements)
 				newX &= ~0xF;
 
-			if (newX != _practiceBoxX || newY != _practiceBoxY) {
+			if (newX != _practiceBoxPos.x || newY != _practiceBoxPos.y) {
 				int w = _practiceBox->w;
 				int h = _practiceBox->h;
 
@@ -2136,14 +2341,13 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 				// of the copyRectToScreen() calls completely,
 				// so I doubt it's worth it.
 
-				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxX, _practiceBoxY), _surface->pitch, _practiceBoxX, _practiceBoxY, w, h);
+				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxPos.x, _practiceBoxPos.y), _surface->pitch, _practiceBoxPos.x, _practiceBoxPos.y, w, h);
 				_system->copyRectToScreen(_practiceBox->getBasePtr(0, 0), _practiceBox->pitch, newX, newY, w, h);
 
-				_practiceBoxX = newX;
-				_practiceBoxY = newY;
+				_practiceBoxPos = Common::Point(newX, newY);
 			}
 
-			_system->delayMillis(25);
+			_system->delayMillis(20);
 			_system->updateScreen();
 		}
 	}
@@ -3530,16 +3734,18 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 1 - Cancel button
 	// 2 - Sound checkbox
 	// 3 - Music checkbox
-	// 4 - Picture
-	// 5 - Picture
+	// 4 - Picture (text speed background)
+	// 5 - Picture (text speed handle)
 	// 6 - "Machine speed rating:" text
 	// 7 - "^0" text
 	// 8 - Scrolling checkbox
+	// 9 - Text speed slider (manually created)
 
 	// TODO: Get these from the SCUMM engine
 	int sound = 0;
 	int music = 0;
 	int scrolling = 0;
+	int textSpeed = 75;
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -3550,8 +3756,9 @@ bool MacIndy3Gui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	// Enable the slider handle
-	window->setWidgetEnabled(5, true);
+	// TODO: What is the range of the text speed setting?
+	window->addSlider(4, 5, true, 5, 105, 50, 100);
+	window->setWidgetValue(9, textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
 
@@ -3569,15 +3776,15 @@ bool MacIndy3Gui::runOptionsDialog() {
 		if (clicked == 1)
 			break;
 
-		if (clicked == 2) {
+		if (clicked == 2)
 			window->setWidgetEnabled(3, window->getWidgetValue(2) != 0);
-		}
 	}
 
 	if (ret) {
 		debug("sound: %d", window->getWidgetValue(2));
 		debug("music: %d", window->getWidgetValue(3));
 		debug("scrolling: %d", window->getWidgetValue(8));
+		debug("textSpeed: %d", window->getWidgetValue(9));
 	}
 
 	delete window;
