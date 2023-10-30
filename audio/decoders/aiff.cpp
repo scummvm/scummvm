@@ -149,6 +149,7 @@ AIFFHeader *AIFFHeader::readAIFFHeader(Common::SeekableReadStream *stream, Dispo
 				delete stream;
 
 			delete aiffHeader->_dataStream;
+			delete aiffHeader;
 			return nullptr;
 		default:
 			debug(1, "Skipping AIFF '%s' chunk", tag2str(tag));
