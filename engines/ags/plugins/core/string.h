@@ -52,7 +52,7 @@ public:
 	void StringToFloat(ScriptMethodParams &params);
 	void StringToInt(ScriptMethodParams &params);
 	void GetChars(ScriptMethodParams &params);
-	void strlen(ScriptMethodParams &params);
+	void GetLength(ScriptMethodParams &params);
 };
 
 } // namespace Core

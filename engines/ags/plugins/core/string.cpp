@@ -49,7 +49,7 @@ void String::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(String::get_AsFloat, String::StringToFloat);
 	SCRIPT_METHOD(String::get_AsInt, String::StringToInt);
 	SCRIPT_METHOD(String::geti_Chars, String::GetChars);
-	SCRIPT_METHOD(String::get_Length, String::strlen);
+	SCRIPT_METHOD(String::get_Length, String::GetLength);
 }
 
 void String::IsNullOrEmpty(ScriptMethodParams &params) {
@@ -142,7 +142,7 @@ void String::GetChars(ScriptMethodParams &params) {
 	params._result = AGS3::String_GetChars(texx, index);
 }
 
-void String::strlen(ScriptMethodParams &params) {
+void String::GetLength(ScriptMethodParams &params) {
 	PARAMS1(const char *, s);
 	params._result = ::strlen(s);
 }

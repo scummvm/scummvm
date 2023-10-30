@@ -208,10 +208,21 @@ const char *String_UpperCase(const char *thisString) {
 }
 
 int String_GetChars(const char *texx, int index) {
-	if ((index < 0) || (index >= ustrlen(texx)))
-		return 0;
-	return ugetat(texx, index);
+	if (get_uformat() == U_UTF8) {
+		if ((index < 0) || (index >= ustrlen(texx)))
+			return 0;
+		return ugetat(texx, index);
+	} else {
+		if ((index < 0) || (index >= (int)strlen(texx)))
+			return 0;
+		return texx[index];
+	}
 }
+
+int String_GetLength(const char *texx) {
+	return (get_uformat() == U_UTF8) ? ustrlen(texx) : strlen(texx);
+}
+
 int StringToInt(const char *stino) {
 	return atoi(stino);
 }
@@ -427,9 +438,8 @@ RuntimeScriptValue Sc_String_GetChars(void *self, const RuntimeScriptValue *para
 	API_OBJCALL_INT_PINT(const char, String_GetChars);
 }
 
-RuntimeScriptValue Sc_strlen(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_SELF(strlen);
-	return RuntimeScriptValue().SetInt32(strlen((const char *)self));
+RuntimeScriptValue Sc_String_GetLength(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(const char, String_GetLength);
 }
 
 //=============================================================================
@@ -458,7 +468,7 @@ void RegisterStringAPI() {
 	ccAddExternalObjectFunction("String::get_AsFloat", Sc_StringToFloat);
 	ccAddExternalObjectFunction("String::get_AsInt", Sc_StringToInt);
 	ccAddExternalObjectFunction("String::geti_Chars", Sc_String_GetChars);
-	ccAddExternalObjectFunction("String::get_Length", Sc_strlen);
+	ccAddExternalObjectFunction("String::get_Length", Sc_String_GetLength);
 }
 
 } // namespace AGS3
