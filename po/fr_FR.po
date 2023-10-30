@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-29 20:09+0000\n"
-"PO-Revision-Date: 2023-10-27 08:45+0000\n"
+"PO-Revision-Date: 2023-10-30 08:13+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -971,16 +971,12 @@ msgid "Go to end of line"
 msgstr "Aller en fin de ligne"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Select to end of line"
-msgstr "Aller en fin de ligne"
+msgstr "Sélectionner jusqu'en fin de ligne"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Select to start of line"
-msgstr "Aller en début de ligne"
+msgstr "Sélectionner jusqu'en début de ligne"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
@@ -9144,10 +9140,8 @@ msgid "play C major on distaff"
 msgstr "jouer Do Majeur sur la quenouille"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Afficher l'inventaire"
+msgstr "Affiche l'inventaire des trames"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
