@@ -38,8 +38,10 @@ ResourceMan::~ResourceMan() {
 
 void ResourceMan::addArchive(const Common::String &filename, bool isOptional) {
 	BlbArchive *archive = new BlbArchive();
-	if (!archive->open(filename, isOptional))
+	if (!archive->open(filename, isOptional)) {
+		delete archive;
 		return;
+	}
 	_archives.push_back(archive);
 	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
@@ -64,8 +66,10 @@ void ResourceMan::addArchive(const Common::String &filename, bool isOptional) {
 
 bool ResourceMan::addNhcArchive(const Common::String &filename) {
 	NhcArchive *archive = new NhcArchive();
-	if (!archive->open(filename, true))
+	if (!archive->open(filename, true)) {
+		delete archive;
 		return false;
+	}
 	_nhcArchives.push_back(archive);
 	debug(3, "ResourceMan::addArchive(%s) %d files", filename.c_str(), archive->getCount());
 	for (uint archiveEntryIndex = 0; archiveEntryIndex < archive->getCount(); archiveEntryIndex++) {
