@@ -414,6 +414,7 @@ bool NancyConsole::Cmd_playSound(int argc, const char **argv) {
 	Common::File *f = new Common::File;
 	if (!f->open(Common::String(argv[1]) + ".his")) {
 		debugPrintf("Failed to open '%s.his'\n", argv[1]);
+		delete f;
 		return true;
 	}
 
