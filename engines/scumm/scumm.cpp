@@ -929,6 +929,14 @@ Common::Error ScummEngine::init() {
 
 	// Register original bug fixes as defaults...
 	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp0);
+	if (!ConfMan.hasKey("enhancements", _targetName)) {
+		if (ConfMan.hasKey("enable_enhancements", _targetName) && ConfMan.getBool("enable_enhancements", _targetName)) {
+			// Was the "enable_enhancements" key previously set to true?
+			// Convert it to a full activation of the enhancement flags then!
+			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp0 | kEnhGrp1 | kEnhGrp2 | kEnhGrp3);
+		}
+	}
+
 	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
