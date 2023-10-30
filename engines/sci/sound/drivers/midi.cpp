@@ -230,7 +230,17 @@ private:
 	const char *_missingFiles;
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _mt32LCDSize(20), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true), _missingFiles(nullptr) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : 
+	MidiPlayer(version),
+	_playSwitch(true),
+	_masterVolume(15),
+	_mt32Type(kMt32TypeNone),
+	_mt32LCDSize(20),
+	_hasReverb(false),
+	_defaultReverb(-1),
+	_useMT32Track(true),
+	_missingFiles(nullptr) {
+
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
