@@ -114,6 +114,7 @@ Common::SeekableReadStream *BaseSound::getSoundStream(uint sound) const {
 	Common::File *file = new Common::File();
 	if (!file->open(_filename)) {
 		warning("BaseSound::getSoundStream: Could not open file \"%s\"", _filename.c_str());
+		delete file;
 		return nullptr;
 	}
 
@@ -239,6 +240,7 @@ Audio::RewindableAudioStream *RawSound::makeAudioStream(uint sound) {
 	Common::File *file = new Common::File();
 	if (!file->open(_filename)) {
 		warning("RawSound::makeAudioStream: Could not open file \"%s\"", _filename.c_str());
+		delete file;
 		return nullptr;
 	}
 
