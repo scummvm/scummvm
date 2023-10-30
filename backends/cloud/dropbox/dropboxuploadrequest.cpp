@@ -195,7 +195,7 @@ void DropboxUploadRequest::handle() {}
 
 void DropboxUploadRequest::restart() { start(); }
 
-void DropboxUploadRequest::finishUpload(StorageFile file) {
+void DropboxUploadRequest::finishUpload(const StorageFile &file) {
 	Request::finishSuccess();
 	if (_uploadCallback)
 		(*_uploadCallback)(Storage::UploadResponse(this, file));

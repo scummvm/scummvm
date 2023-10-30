@@ -334,7 +334,7 @@ void GoogleDriveUploadRequest::handle() {}
 
 void GoogleDriveUploadRequest::restart() { start(); }
 
-void GoogleDriveUploadRequest::finishUpload(StorageFile file) {
+void GoogleDriveUploadRequest::finishUpload(const StorageFile &file) {
 	Request::finishSuccess();
 	if (_uploadCallback)
 		(*_uploadCallback)(Storage::UploadResponse(this, file));

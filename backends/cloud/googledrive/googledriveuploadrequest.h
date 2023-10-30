@@ -53,7 +53,7 @@ class GoogleDriveUploadRequest: public Networking::Request {
 	void partUploadedCallback(const Networking::JsonResponse &response);
 	void partUploadedErrorCallback(const Networking::ErrorResponse &error);
 	bool handleHttp308(const Networking::NetworkReadStream *stream);
-	void finishUpload(StorageFile status);
+	void finishUpload(const StorageFile &status);
 
 public:
 	GoogleDriveUploadRequest(GoogleDriveStorage *storage, const Common::String &path, Common::SeekableReadStream *contents, Storage::UploadCallback callback, Networking::ErrorCallback ecb);
