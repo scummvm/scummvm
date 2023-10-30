@@ -162,9 +162,8 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 	Common::String indexName = "prologue/" + filename + ".3dx";
 
 	// Load the animation
-	Common::File *indexStream = new Common::File();
-
-	if (!indexStream->open(indexName)) {
+	Common::File indexStream;
+	if (!indexStream.open(indexName)) {
 		warning("unable to open %s\n", indexName.c_str());
 		return false;
 	}
@@ -185,7 +184,7 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 	bool skipped = false;
 	while (!_vm->shouldQuit()) {
 		// Get the next sprite to display
-		int imageFrame = indexStream->readSint16BE();
+		int imageFrame = indexStream.readSint16BE();
 
 		if (imageFrame == -2) {
 			// End of animation reached
@@ -194,8 +193,8 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 			// Read position from either animation stream or the sprite frame itself
 			if (imageFrame < 0) {
 				imageFrame += 32768;
-				pt.x = indexStream->readUint16BE();
-				pt.y = indexStream->readUint16BE();
+				pt.x = indexStream.readUint16BE();
+				pt.y = indexStream.readUint16BE();
 			} else {
 				pt = images[imageFrame]._offset;
 			}
@@ -261,7 +260,6 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 
 	events.clearEvents();
 	sound.stopSound();
-	delete indexStream;
 
 	return !skipped && !_vm->shouldQuit();
 }
