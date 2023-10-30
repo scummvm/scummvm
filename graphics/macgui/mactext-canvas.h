@@ -162,7 +162,7 @@ public:
 	void reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting);
 	void setMaxWidth(int maxWidth, MacFontRun &defaultFormatting);
 
-	void processTable(int line, int maxWidth);
+	void processTable(int line, int maxWidth, MacFontRun &defaultFormatting);
 
 	void debugPrint(const char *prefix = nullptr);
 };

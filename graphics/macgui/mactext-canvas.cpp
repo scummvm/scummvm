@@ -376,7 +376,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 						inTable = false;
 
 						D(9, "** splitString[body end]");
-						processTable(curLine, _maxWidth);
+						processTable(curLine, _maxWidth, defaultFormatting);
 
 						continue;
 					} else if (cmd == 'r') { // Row
@@ -1015,7 +1015,7 @@ void MacTextCanvas::setMaxWidth(int maxWidth, MacFontRun &defaultFormatting) {
 	}
 }
 
-void MacTextCanvas::processTable(int line, int maxWidth) {
+void MacTextCanvas::processTable(int line, int maxWidth, MacFontRun &defaultFormatting) {
 	Common::Array<MacTextTableRow> *table = _text[line].table;
 	uint numCols = table->front().cells.size();
 	uint numRows = table->size();
@@ -1109,7 +1109,7 @@ void MacTextCanvas::processTable(int line, int maxWidth) {
 		int c = 0;
 		rowH[r] = 0;
 		for (auto &cell : row.cells) {
-			cell._maxWidth = colW[c];
+			cell.setMaxWidth(colW[c], defaultFormatting);
 
 			cell.recalcDims();
 			cell.reallocSurface();
