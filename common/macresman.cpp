@@ -194,11 +194,10 @@ SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& 
 		stream = archive.createReadStreamForMember(newPath);
 
 		if (!stream) {
-			Common::FSNode *fsn = new Common::FSNode(newPath);
-			if (fsn && fsn->exists())
-				stream = fsn->createReadStream();
-			else
-				delete fsn;
+			Common::FSNode fsn(newPath);
+			if (fsn.exists()) {
+				stream = fsn.createReadStream();
+			}
 		}
 
 		if (stream) {
