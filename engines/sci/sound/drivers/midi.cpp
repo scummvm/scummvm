@@ -684,8 +684,8 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const SciSpan<const byte>
 
 void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	// MT-32 patch contents:
-	// - 0-19        after-SysEx message
-	// - 20-39       before-SysEx message
+	// - 0-19        after-SysEx message   (KQ4/LSL2: before)
+	// - 20-39       before-SysEx message  (KQ4/LSL2: after)
 	// - 40-59       goodbye SysEx message
 	// - 60-61       volume
 	// - 62          reverb
@@ -703,12 +703,28 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 
 	Common::MemoryReadStream stream(data.toStream());
 
+	// before-SysEx and after-SysEx texts swapped positions after KQ4 and LSL2.
+	uint beforeTextPos;
+	uint afterTextPos;
+	switch (g_sci->getGameId()) {
+	case GID_KQ4:
+	case GID_LSL2:
+		beforeTextPos = 0;
+		afterTextPos = _mt32LCDSize;
+		break;
+	default:
+		beforeTextPos = _mt32LCDSize;
+		afterTextPos = 0;
+		break;
+	}
+
 	// Send before-SysEx text
-	stream.seek(_mt32LCDSize);
+	stream.seek(beforeTextPos);
 	sendMt32SysEx(0x200000, stream, _mt32LCDSize);
 
 	// Save goodbye message
 	assert(sizeof(_goodbyeMsg) >= _mt32LCDSize);
+	stream.seek(_mt32LCDSize * 2);
 	stream.read(_goodbyeMsg, _mt32LCDSize);
 
 	const uint8 volume = MIN<uint16>(stream.readUint16LE(), 100);
@@ -755,7 +771,7 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	}
 
 	// Send after-SysEx text
-	stream.seek(0);
+	stream.seek(afterTextPos);
 	sendMt32SysEx(0x200000, stream, _mt32LCDSize);
 
 	if (_mt32Type != kMt32TypeD110) {
