@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-29 20:09+0000\n"
+"POT-Creation-Date: 2023-10-30 18:33+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgid "Go up"
 msgstr "向上"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:463
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2329 gui/predictivedialog.cpp:68
@@ -469,24 +469,24 @@ msgstr "下載完成, 已下載 %d 組件包, %s %S"
 msgid "Close"
 msgstr "關閉"
 
-#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
+#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
 msgid "ERROR: No icons path set"
 msgstr "錯誤:沒有設置圖標路徑"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:429
+#: gui/downloadpacksdialog.cpp:427
 #, fuzzy, c-format
 msgid "No new %S available"
 msgstr "目前沒有新的圖標包"
 
-#: gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:463
 #, fuzzy, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr "您正要刪除 %s %s 數據, 刪除所有之前下載的圖標數據包. 您要繼續嗎?"
 
-#: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "開始執行"
 

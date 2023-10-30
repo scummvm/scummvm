@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-29 20:09+0000\n"
+"POT-Creation-Date: 2023-10-30 18:33+0000\n"
 "PO-Revision-Date: 2023-10-21 06:47+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -58,7 +58,7 @@ msgid "Go up"
 msgstr "Pfad hoch"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:463
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2329 gui/predictivedialog.cpp:68
@@ -480,17 +480,17 @@ msgstr "Download abgeschlossen, %d Packs heruntergeladen, %s %S"
 msgid "Close"
 msgstr "Schließen"
 
-#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
+#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
 msgid "ERROR: No icons path set"
 msgstr "FEHLER: Kein Icon-Pfad gesetzt"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:429
+#: gui/downloadpacksdialog.cpp:427
 #, c-format
 msgid "No new %S available"
 msgstr "Kein neues Pack verfügbar"
 
-#: gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:463
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
@@ -499,7 +499,7 @@ msgstr ""
 "Das Löschen des Caches wird %s %S Daten entfernen. Dabei werden alle bisher "
 "heruntergeladenen %S gelöscht. Möchtest du fortfahren?"
 
-#: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Fortfahren"
 

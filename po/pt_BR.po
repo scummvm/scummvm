@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-29 20:09+0000\n"
+"POT-Creation-Date: 2023-10-30 18:33+0000\n"
 "PO-Revision-Date: 2023-10-28 00:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -60,7 +60,7 @@ msgid "Go up"
 msgstr "Para cima"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:463
 #: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:93 gui/options.cpp:2329 gui/predictivedialog.cpp:68
@@ -479,17 +479,17 @@ msgstr "Download concluído, foi(foram) baixado(s) %d pacote(s), %s %S"
 msgid "Close"
 msgstr "Fechar"
 
-#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:441
+#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
 msgid "ERROR: No icons path set"
 msgstr "ERRO: Diretório de ícones não foi definido"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:429
+#: gui/downloadpacksdialog.cpp:427
 #, c-format
 msgid "No new %S available"
 msgstr "Nenhum novo %S disponível"
 
-#: gui/downloadpacksdialog.cpp:465
+#: gui/downloadpacksdialog.cpp:463
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
@@ -498,7 +498,7 @@ msgstr ""
 "Você está prestes a remover %s %S de dados, excluindo todos os %S baixados "
 "anteriormente. Você deseja prosseguir?"
 
-#: gui/downloadpacksdialog.cpp:465 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Prosseguir"
 
