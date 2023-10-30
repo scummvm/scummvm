@@ -94,8 +94,7 @@ static void ProperExit() {
 
 static void game_loop_check_problems_at_start() {
 	if ((_G(in_enters_screen) != 0) & (_G(displayed_room) == _G(starting_room)))
-		quit("!A text script run in the Player Enters Screen event caused the\n"
-		     "screen to be updated. If you need to use Wait(), do so in After Fadein");
+		quit("!A text script run in the Player Enters Screen event caused the screen to be updated. If you need to use Wait(), do so in After Fadein");
 	if ((_G(in_enters_screen) != 0) && (_G(done_es_error) == 0)) {
 		debug_script_warn("Wait() was used in Player Enters Screen - use Enters Screen After Fadein instead");
 		_G(done_es_error) = 1;
