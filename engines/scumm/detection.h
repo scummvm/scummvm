@@ -38,19 +38,111 @@ namespace Scumm {
 
 /* Game enhancements */
 
+/* "How should I mark an enhancement?" - A practical guide for the developer:
+*
+*  Hi! If you're here it means that you are probably trying to make up
+*  your mind about how to correctly mark your brand new game enhancement:
+*  if that's the case... congratulations, you've come to the right place! :-)
+*
+*  Marking a piece of code as an enhancement is as simple as guarding it with
+*  a conditional check using the enhancementClassActive(<class>) function.
+*  For example:
+*
+*      if (enhancementClassActive(<kMyBeautifulEnhancementClass>)) {
+*          // Piece of code which makes Guybrush hair white
+*      }
+*
+*  That's it! :-)
+*
+*  You've probably noticed that the function above needs a class in order to work.
+*  Of course there is no one kind of enhancement: each of them might tackle
+*  different aspect of the game, from the graphics to the gameplay itself.
+*  So it all comes to identifying the correct class for your enhancement.
+*
+*  We identify nine different enhancement classes:
+*
+*  --- Gamebreaking Bug Fixes ---
+*
+*  This is a class of enhancements which is ALWAYS active; it encapsulates
+*  code changes which were not in the original game but which are absolutely
+*  necessary in order to avoid deadlocks or even crashes! Being able to differentiate
+*  between original code and these enhancements can be quite useful for future
+*  developers and their research (e.g. "why is this code different from the disassembly?",
+*  "why did they change it like that?").
+*
+*  --- Minor Bug Fixes ---
+*
+*  Did the original developers blit a green pixel on a blue tinted background
+*  and YOU'RE ABSOLUTELY SURE that they didn't do that on purpose? Is one of the
+*  voice files playing as garbled noise instead of sounding like normal speech?
+*  Is the game looking like there is something which is clearly wrong with it?
+*  This is the class you're looking for, then!
+*
+*  --- Text and Localization Fixes ---
+*
+*  If you spot any issues which pertain texts (accents not being rendered properly
+*  on localizations, placeholder lines forgotten by the developers, obvious typos), and
+*  which are NOT about the format of the subtitle (color, position) or the content,
+*  then this is the class you should be using.
+*  Do not use this class when changing an already grammatically correct line to another
+*  line for the purpose of matching the text to the speech line!
+*  Use "Subtitle Format/Content Changes" instead.
+*
+*  --- Visual Changes ---
+*
+*  Any graphical change which is not classifiable as a "fix" but is, as a matter of fact,
+*  a deliberate change which strays away from the original intentions, should be marked
+*  with this class. Some examples of this are enhancements which modify palettes and add
+*  or edit graphical elements in order to better match a particular "reference" version.
+*
+*  --- Audio Changes ---
+*
+*  Like above, but for anything sound related.
+*
+*  --- Timing Adjustments ---
+*
+*  Are you making a scene slower or faster for any reason? Are you changing the framerate
+*  of an in-game situation? Choose this class!
+*
+*  --- Subtitles Format/Content Changes ---
+*
+*  Any changes to the subtitles format should be classified under this class.
+*  This also includes changes to the subtitles content when not under the "fix" umbrella,
+*  for example when you are changing an already grammatically and graphically correct line
+*  to match it with the corresponding speech file.
+*
+*  --- Restored Cut Content ---
+*
+*  Have you found any line of dialog, a graphical element or even a piece of music which
+*  is in the game data but is not being used? Go nuts with this enhancement class then! :-)
+*
+*  --- UI/UX Enhancements ---
+*
+*  These old games are beautiful. But sometimes they can be so clunky... :-)
+*  If you make any changes in order to yield a slightly-less-clunky user experience
+*  you should classify them under this class. Here's a couple of real use cases:
+*  - SAMNMAX:     the CD version of the game begins with what seems to be a fake loading
+*                 screen for the sounds. We have an enhancement which just skips that :-)
+*  - Early games: some early titles use a save menu screen which is piloted by SCUMM scripts,
+*                 and therefore run at an in-game framerate. This causes lag and lost keypresses
+*                 from your keyboard when attempting to write the names of your savegames.
+*                 We remove the framerate cap so that writing is not painful anymore... :-P
+*
+*/
+
 enum {
 	kEnhGameBreakingBugFixes  = 1 << 0, // Gamebreaking Bug Fixes
 	kEnhMinorBugFixes         = 1 << 1, // Minor Bug Fixes
 	kEnhTextLocFixes          = 1 << 2, // Text and Localization Fixes
-	kEnhVisualChanges         = 1 << 3, // Visual Corrections
-	kEnhAudioChanges          = 1 << 4, // Audio Corrections
+	kEnhVisualChanges         = 1 << 3, // Visual Changes
+	kEnhAudioChanges          = 1 << 4, // Audio Changes
 	kEnhTimingChanges         = 1 << 5, // Timing Adjustments
-	kEnhSubtitleFormatChanges = 1 << 6, // Subtitle Color/Format Corrections
+	kEnhSubFmtCntChanges      = 1 << 6, // Subtitles Format/Content Changes
 	kEnhRestoredContent       = 1 << 7, // Restored Cut Content
 	kEnhUIUX                  = 1 << 8, // UI/UX Enhancements
 };
 
-/* How are the enhancements grouped? - A practical guide to follow if you're lost:
+/* "How are the enhancements grouped?" - A practical guide to follow if you're lost:
 *
 *  GROUP 1: Fix original bugs
 *
@@ -87,7 +179,7 @@ enum {
 
 enum {
 	kEnhGrp1 = (kEnhMinorBugFixes | kEnhTextLocFixes),
-	kEnhGrp2 = (kEnhVisualChanges | kEnhAudioChanges | kEnhTimingChanges | kEnhSubtitleFormatChanges),
+	kEnhGrp2 = (kEnhVisualChanges | kEnhAudioChanges | kEnhTimingChanges | kEnhSubFmtCntChanges),
 	kEnhGrp3 = (kEnhRestoredContent),
 	kEnhGrp4 = (kEnhUIUX)
 };
