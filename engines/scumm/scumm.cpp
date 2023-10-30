@@ -928,12 +928,12 @@ Common::Error ScummEngine::init() {
 	}
 
 	// Register original bug fixes as defaults...
-	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp0);
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
 	if (!ConfMan.hasKey("enhancements", _targetName)) {
 		if (ConfMan.hasKey("enable_enhancements", _targetName) && ConfMan.getBool("enable_enhancements", _targetName)) {
 			// Was the "enable_enhancements" key previously set to true?
 			// Convert it to a full activation of the enhancement flags then!
-			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp0 | kEnhGrp1 | kEnhGrp2 | kEnhGrp3);
+			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1 | kEnhGrp2 | kEnhGrp3 | kEnhGrp4);
 		}
 	}
 
@@ -1341,7 +1341,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	// types of them.
 	if (ConfMan.hasKey("enable_enhancements")) {
 		if (!ConfMan.hasKey("enhancements")) {
-			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugFixes | kEnhGrp0 : 0);
+			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugFixes | kEnhGrp1 : 0);
 		}
 		ConfMan.removeKey("enable_enhancements", ConfMan.getActiveDomainName());
 		ConfMan.flushToDisk();

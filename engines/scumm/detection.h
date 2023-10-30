@@ -77,7 +77,7 @@ enum {
 *  This category reintroduces content cut or unused which was not in the original. This
 *  can include content which was somehow masked by mistake by the scripts.
 *
-*  GROUP 4:
+*  GROUP 4: Modern UI/UX adjustments
 *
 *  This category pertains to all enhancements to the user interface and user experience:
 *  e.g. the artificial loading screen at the beginning of Sam&Max, speeding up the framerate
@@ -86,10 +86,10 @@ enum {
 */
 
 enum {
-	kEnhGrp0 = (kEnhMinorBugFixes | kEnhTextLocFixes),
-	kEnhGrp1 = (kEnhVisualChanges | kEnhAudioChanges | kEnhTimingChanges | kEnhSubtitleFormatChanges),
-	kEnhGrp2 = (kEnhRestoredContent),
-	kEnhGrp3 = (kEnhUIUX)
+	kEnhGrp1 = (kEnhMinorBugFixes | kEnhTextLocFixes),
+	kEnhGrp2 = (kEnhVisualChanges | kEnhAudioChanges | kEnhTimingChanges | kEnhSubtitleFormatChanges),
+	kEnhGrp3 = (kEnhRestoredContent),
+	kEnhGrp4 = (kEnhUIUX)
 };
 
 /**

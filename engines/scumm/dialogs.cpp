@@ -1052,9 +1052,6 @@ void ScummOptionsContainerWidget::load() {
 
 		if (_enhancementsCheckboxes[i]) {
 			switch (_enhancementsCheckboxes[i]->getCmd()) {
-			case kEnhancementGroup0Cmd:
-				targetFlags |= kEnhGrp0;
-				break;
 			case kEnhancementGroup1Cmd:
 				targetFlags |= kEnhGrp1;
 				break;
@@ -1063,6 +1060,9 @@ void ScummOptionsContainerWidget::load() {
 				break;
 			case kEnhancementGroup3Cmd:
 				targetFlags |= kEnhGrp3;
+				break;
+			case kEnhancementGroup4Cmd:
+				targetFlags |= kEnhGrp4;
 				break;
 			default:
 				break;
@@ -1079,14 +1079,6 @@ bool ScummOptionsContainerWidget::save() {
 	for (uint i = 0; i < _enhancementsCheckboxes.size(); i++) {
 		if (_enhancementsCheckboxes[i]) {
 			switch (_enhancementsCheckboxes[i]->getCmd()) {
-			case kEnhancementGroup0Cmd:
-				if (_enhancementsCheckboxes[i]->getState()) {
-					enhancementsFlags |= kEnhGrp0;
-				} else {
-					enhancementsFlags &= ~kEnhGrp0;
-				}
-				break;
-
 			case kEnhancementGroup1Cmd:
 				if (_enhancementsCheckboxes[i]->getState()) {
 					enhancementsFlags |= kEnhGrp1;
@@ -1111,6 +1103,14 @@ bool ScummOptionsContainerWidget::save() {
 				}
 				break;
 
+			case kEnhancementGroup4Cmd:
+				if (_enhancementsCheckboxes[i]->getState()) {
+					enhancementsFlags |= kEnhGrp4;
+				} else {
+					enhancementsFlags &= ~kEnhGrp4;
+				}
+				break;
+
 			default:
 				break;
 			}
@@ -1127,19 +1127,27 @@ void ScummOptionsContainerWidget::createEnhancementsWidget(GuiObject *boss, cons
 	text->setAlign(Graphics::TextAlign::kTextAlignStart);
 
 	// I18N: Game enhancements groups
-	GUI::CheckboxWidget *enh0 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup0",
-		_("Fix original bugs"), _("tooltip"), kEnhancementGroup0Cmd);
 	GUI::CheckboxWidget *enh1 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup1",
-		_("Audio-visual improvements"), _("tooltip"), kEnhancementGroup1Cmd);
+		_("Fix original bugs"),
+		_("Fixes bugs which were present in the original release, and noticeable graphical/audio glitches."),
+		kEnhancementGroup1Cmd);
 	GUI::CheckboxWidget *enh2 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup2",
-		_("Restored content"), _("tooltip"), kEnhancementGroup2Cmd);
+		_("Audio-visual improvements"),
+		_("Makes adjustments not related to bugs for certain audio and graphics elements (e.g. version consistency changes)."),
+		kEnhancementGroup2Cmd);
 	GUI::CheckboxWidget *enh3 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup3",
-		_("Modern UI/UX adjustments"), _("tooltip"), kEnhancementGroup3Cmd);
+		_("Restored content"),
+		_("Restores dialogs, graphics, and audio elements which were originally cut in the original release."),
+		kEnhancementGroup3Cmd);
+	GUI::CheckboxWidget *enh4 = new GUI::CheckboxWidget(boss, name + ".enhancementGroup4",
+		_("Modern UI/UX adjustments"),
+		_("Activates some modern comforts; e.g it removes the fake sound loading screen in Sam&Max, and makes early save menus snappier."),
+		kEnhancementGroup4Cmd);
 
-	_enhancementsCheckboxes.push_back(enh0);
 	_enhancementsCheckboxes.push_back(enh1);
 	_enhancementsCheckboxes.push_back(enh2);
 	_enhancementsCheckboxes.push_back(enh3);
+	_enhancementsCheckboxes.push_back(enh4);
 }
 
 GUI::ThemeEval &ScummOptionsContainerWidget::addEnhancementsLayout(GUI::ThemeEval &layouts) const {
@@ -1147,10 +1155,10 @@ GUI::ThemeEval &ScummOptionsContainerWidget::addEnhancementsLayout(GUI::ThemeEva
 	layouts.addPadding(0, 0, 8, 8)
 		.addSpace(10)
 		.addWidget("enhancementsLabel", "OptionsLabel")
-		.addWidget("enhancementGroup0", "Checkbox")
 		.addWidget("enhancementGroup1", "Checkbox")
 		.addWidget("enhancementGroup2", "Checkbox")
-		.addWidget("enhancementGroup3", "Checkbox");
+		.addWidget("enhancementGroup3", "Checkbox")
+		.addWidget("enhancementGroup4", "Checkbox");
 
 	return layouts;
 }
