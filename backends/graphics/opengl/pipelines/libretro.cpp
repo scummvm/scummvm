@@ -552,6 +552,7 @@ bool LibRetroPipeline::loadPasses(Common::SearchSet &archSet) {
 				 ARRAYSIZE(vertexSources), vertexSources,
 				 ARRAYSIZE(fragmentSources), fragmentSources,
 				 g_libretroShaderAttributes)) {
+			delete shader;
 			return false;
 		}
 
