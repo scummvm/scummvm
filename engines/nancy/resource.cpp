@@ -129,6 +129,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			#endif
 
 			GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
+			delete[] buf;
 		}
 	}
 	
