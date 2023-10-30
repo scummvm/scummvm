@@ -80,12 +80,16 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 		// First, get the correct tree
 		const CifTree *tree = nullptr;
 		if (treeName.size()) {
-			tree = (const CifTree *)SearchMan.getArchive(treePrefix + treeName);
+			Common::String upper = treeName;
+			upper.toUppercase();
+			tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 		} else {
 			for (uint i = 0; i < _cifTreeNames.size(); ++i) {
 				// No provided tree name, check inside every loaded tree
-				if (SearchMan.getArchive(treePrefix + _cifTreeNames[i])->hasFile(name)) {
-					tree = (const CifTree *)SearchMan.getArchive(treePrefix + _cifTreeNames[i]);
+				Common::String upper = _cifTreeNames[i];
+				upper.toUppercase();
+				if (SearchMan.getArchive(treePrefix + upper)->hasFile(name)) {
+					tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 					break;
 				}
 			}
@@ -168,8 +172,12 @@ bool ResourceManager::readCifTree(const Common::String &name, const Common::Stri
 		return false;
 	}
 
-	// Add a prefix to avoid clashes with the ciftree folder present in some games
-	SearchMan.add(treePrefix + name, tree, priority, true);
+	// Add a prefix to avoid clashes with the ciftree folder present in some games.
+	// Also, set the name itself to uppercase since SearchMan is case-sensitive.
+	// Final name to look up is _tree_TREENAME
+	Common::String upper = name;
+	upper.toUppercase();
+	SearchMan.add(treePrefix + upper, tree, priority, true);
 	_cifTreeNames.push_back(name);
 	return true;
 }
@@ -177,12 +185,16 @@ bool ResourceManager::readCifTree(const Common::String &name, const Common::Stri
 Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) const {
 	const CifTree *tree = nullptr;
 	if (treeName.size()) {
-		tree = (const CifTree *)SearchMan.getArchive(treePrefix + treeName);
+		Common::String upper = treeName;
+		upper.toUppercase();
+		tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 	} else {
 		for (uint i = 0; i < _cifTreeNames.size(); ++i) {
 			// No provided tree name, check inside every loaded tree
-			if (SearchMan.getArchive(treePrefix + _cifTreeNames[i])->hasFile(name)) {
-				tree = (const CifTree *)SearchMan.getArchive(treePrefix + _cifTreeNames[i]);
+			Common::String upper = _cifTreeNames[i];
+			upper.toUppercase();
+			if (SearchMan.getArchive(treePrefix + upper)->hasFile(name)) {
+				tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 				break;
 			}
 		}
@@ -210,7 +222,9 @@ Common::String ResourceManager::getCifDescription(const Common::String &treeName
 
 void ResourceManager::list(const Common::String &treeName, Common::StringArray &outList, CifInfo::ResType type) const {
 	if (treeName.size()) {
-		const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + treeName);
+		Common::String upper = treeName;
+		upper.toUppercase();
+		const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 		if (!tree) {
 			return;
 		}
@@ -222,7 +236,9 @@ void ResourceManager::list(const Common::String &treeName, Common::StringArray &
 	} else {
 		for (uint i = 0; i < _cifTreeNames.size(); ++i) {
 			// No provided tree name, check inside every loaded tree
-			const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + _cifTreeNames[i]);
+			Common::String upper = _cifTreeNames[i];
+			upper.toUppercase();
+			const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 			for (auto &it : tree->_fileMap) {
 				if (type == CifInfo::kResTypeAny || it._value.type == type) {
 					outList.push_back(it._key);
@@ -259,8 +275,10 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 			// Look inside ciftrees
 			const CifTree *tree = nullptr;
 			for (uint j = 0; j < _cifTreeNames.size(); ++j) {
-				if (SearchMan.getArchive(treePrefix + _cifTreeNames[j])->hasFile(name)) {
-					tree = (const CifTree *)SearchMan.getArchive(treePrefix + _cifTreeNames[j]);
+				Common::String upper = _cifTreeNames[j];
+				upper.toUppercase();
+				if (SearchMan.getArchive(treePrefix + upper)->hasFile(name)) {
+					tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 					break;
 				}
 			}
@@ -344,8 +362,10 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 				// Look inside ciftrees
 				const CifTree *tree = nullptr;
 				for (uint j = 0; j < _cifTreeNames.size(); ++j) {
-					if (SearchMan.getArchive(treePrefix + _cifTreeNames[j])->hasFile(names[i])) {
-						tree = (const CifTree *)SearchMan.getArchive(treePrefix + _cifTreeNames[j]);
+					Common::String upper = _cifTreeNames[j];
+					upper.toUppercase();
+					if (SearchMan.getArchive(treePrefix + upper)->hasFile(names[i])) {
+						tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
 						break;
 					}
 				}
