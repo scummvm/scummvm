@@ -64,7 +64,7 @@ static void syncCifInfo(Common::Serializer &ser, CifInfo &info, bool tree) {
 // Reads the data for ciftree cif files
 static void syncCiftreeInfo(Common::Serializer &ser, CifInfo &info) {
 	uint nameSize = g_nancy->getGameType() <= kGameTypeNancy2 ? 9 : 33;
-	byte name[33];
+	byte name[34];
 	if (ser.isSaving()) {
 		memcpy(name, info.name.c_str(), nameSize);
 		name[nameSize] = 0;
@@ -127,8 +127,8 @@ Common::SeekableReadStream *CifFile::createReadStream() const {
 	if (!success) {
 		warning("Failed to read data for CifFile '%s'", _info.name.c_str());
 		delete[] buf;
-		return nullptr;
 		_stream->clearErr();
+		return nullptr;
 	}
 	
 	return new Common::MemoryReadStream(buf, _info.size, DisposeAfterUse::YES);
@@ -237,8 +237,8 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 	if (!success) {
 		warning("Failed to read data for '%s' from CifTree '%s'", info.name.c_str(), _name.c_str());
 		delete[] buf;
-		return nullptr;
 		_stream->clearErr();
+		return nullptr;
 	}
 	
 	return new Common::MemoryReadStream(buf, info.size, DisposeAfterUse::YES);

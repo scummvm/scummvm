@@ -50,9 +50,9 @@ struct CifInfo {
 	Common::String name;
 	ResType type = kResTypeEmpty; // ResType
 	ResCompression comp = kResCompressionNone; // ResCompression
-	uint16 width, pitch, height = 0;
+	uint16 width = 0, pitch = 0, height = 0;
 	byte depth = 0; // Bit depth
-	uint32 compressedSize, size = 0;
+	uint32 compressedSize = 0, size = 0;
 	Common::Rect src, dest; // Used when drawing conversation cels
 
 	uint32 dataOffset;
