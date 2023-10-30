@@ -26,7 +26,7 @@
 
 namespace Graphics {
 
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG
 #define D(...)  debug(__VA_ARGS__)
@@ -1045,7 +1045,7 @@ void MacTextCanvas::processTable(int line, int maxWidth, MacFontRun &defaultForm
 	}
 
 	for (uint i = 0; i < numCols; i++) {
-		warning("%d: %d - %d", i, maxL[i], maxW[i]);
+		D(8, "cell #%d: width range: %d - %d", i, maxL[i], maxW[i]);
 
 		wrap[i] = (maxW[i] != maxL[i]);
 	}
@@ -1101,7 +1101,7 @@ void MacTextCanvas::processTable(int line, int maxWidth, MacFontRun &defaultForm
 	}
 
 	for (uint i = 0; i < numCols; i++) {
-		warning("%d: %d", i, colW[i]);
+		D(8, "Table cell #%d: width: %d", i, colW[i]);
 	}
 
 	int r = 0;
