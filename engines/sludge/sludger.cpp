@@ -176,8 +176,10 @@ bool initSludge(const Common::String &filename) {
 		numBIFNames = fp->readUint16BE();
 		debugC(2, kSludgeDebugDataLoad, "numBIFNames %i", numBIFNames);
 		allBIFNames = new Common::String[numBIFNames];
-		if (!checkNew(allBIFNames))
+		if (!checkNew(allBIFNames)) {
+			delete fp;
 			return false;
+		}
 
 		for (int fn = 0; fn < numBIFNames; fn++) {
 			allBIFNames[fn].clear();
@@ -186,8 +188,10 @@ bool initSludge(const Common::String &filename) {
 		numUserFunc = fp->readUint16BE();
 		debugC(2, kSludgeDebugDataLoad, "numUserFunc %i", numUserFunc);
 		allUserFunc = new Common::String[numUserFunc];
-		if (!checkNew(allUserFunc))
+		if (!checkNew(allUserFunc)) {
+			delete fp;
 			return false;
+		}
 
 		for (int fn = 0; fn < numUserFunc; fn++) {
 			allUserFunc[fn].clear();
@@ -244,9 +248,10 @@ bool initSludge(const Common::String &filename) {
 
 		// read game icon
 		Graphics::Surface gameIcon;
-		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false))
+		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false)) {
+			delete fp;
 			return false;
-
+		}
 	}
 
 	if (customIconLogo & 2) {
@@ -255,16 +260,20 @@ bool initSludge(const Common::String &filename) {
 
 		// read game logo
 		Graphics::Surface gameLogo;
-		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo))
+		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo)) {
+			delete fp;
 			return false;
+		}
 	}
 
 	numGlobals = fp->readUint16BE();
 	debugC(2, kSludgeDebugDataLoad, "numGlobals : %i", numGlobals);
 
 	globalVars = new Variable[numGlobals];
-	if (!checkNew(globalVars))
+	if (!checkNew(globalVars)) {
+		delete fp;
 		return false;
+	}
 
 	// Get language selected by user
 	g_sludge->_resMan->setData(fp);
