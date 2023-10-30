@@ -653,7 +653,7 @@ void ActionManager::synchronizeMovieWithSound() {
 		}
 	}
 
-	if (movie && sound) {
+	if (movie && sound && movie->_sound.name != "NO SOUND") {
 		// A movie and a sound both got activated this frame, check if their scene changes match
 		if (	movie->_videoSceneChange == PlaySecondaryMovie::kMovieSceneChange &&
 				movie->_sceneChange.sceneID == sound->_sceneChange.sceneID &&

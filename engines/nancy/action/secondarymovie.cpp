@@ -137,6 +137,13 @@ void PlaySecondaryMovie::execute() {
 		g_nancy->_sound->loadSound(_sound);
 		g_nancy->_sound->playSound(_sound);
 
+		if (_sound.name != "NO SOUND" && g_nancy->getGameType() <= kGameTypeNancy5) {
+			// Sync audio and video. This is mostly relevant for some nancy2 scenes, as the
+			// devs stopped using the built-in movie sound around nancy4. The 12 ms
+			// difference is roughly how long it takes for a single execution of the main game loop
+			((AVFDecoder *)_decoder)->addFrameTime(12);
+		}
+
 		if (_playerCursorAllowed == kNoPlayerCursorAllowed) {
 			g_nancy->setMouseEnabled(false);
 		}
