@@ -386,12 +386,14 @@ void Anim::load(uint16 animId, const ByteArray &resourceData) {
 	anim->magic = headerReadS.readUint16LE(); // cause ALWAYS LE
 	if (anim->magic != 0x0044) {
 		warning ("Anim::load animId=%d animation magic mismatch (0x%x vs 0x%x), skipping", animId, anim->magic, 0x0044);
+		delete anim;
 		return;
 	}
 	anim->screenWidth = headerReadS.readUint16();
 	anim->screenHeight = headerReadS.readUint16();
 	if (anim->screenHeight > 2000 || anim->screenWidth > 2000) {
 		warning ("Anim::load animId=%d Excessive dimensions %dx%d, skipping", animId, anim->screenWidth, anim->screenHeight);
+		delete anim;
 		return;
 	}
 
