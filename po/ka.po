@@ -3863,8 +3863,8 @@ msgid ""
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
 "ეს გვერდი რესურსების გარეშე ხელმისაწვდომი არაა. დარწმუნდით, რომ ფაილი "
-"wwwroot.zip, რომელიც ScummVM-ის დისტრიბუტივშია, ხელმისაწვდომია "
-"'themepath'-ში."
+"wwwroot.zip, რომელიც ScummVM-ის დისტრიბუტივშია, ხელმისაწვდომია 'themepath'-"
+"ში."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:66
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
