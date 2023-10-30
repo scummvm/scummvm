@@ -852,12 +852,12 @@ void MidiPlayer_Midi::readMt32DrvData() {
 		// Send before-SysEx text
 		sendMt32SysEx(0x200000, f, 20);
 
-		if (size != 2271) {
+		if (size != 2771) {
 			// Send after-SysEx text (SSCI sends this before every song).
 			// There aren't any SysEx calls in old drivers, so this can
 			// be sent right after the before-SysEx text.
 			sendMt32SysEx(0x200000, f, 20);
-		} else {
+		} else { // LSL2 early
 			// Skip the after-SysEx text in the newer patch version, we'll send
 			// it after the SysEx messages are sent.
 			f.skip(20);
