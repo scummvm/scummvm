@@ -398,11 +398,11 @@ void DownloadPacksDialog::calculateList() {
 
 	// Scan all files in iconspath and remove present and incomplete ones from the
 	// donwloaded files list
-	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+	Common::FSDirectory iconDir(iconsPath);
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, _packsglob);
+	iconDir.listMatchingMembers(iconFiles, _packsglob);
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
@@ -413,8 +413,6 @@ void DownloadPacksDialog::calculateList() {
 		if (g_state->fileHash.contains(fname) && size == g_state->fileHash[fname])
 			g_state->fileHash.erase(fname);
 	}
-
-	delete iconDir;
 
 	// Now calculate the size of the missing files
 	g_state->totalSize = 0;
@@ -443,11 +441,11 @@ void DownloadPacksDialog::clearCache() {
 		return;
 	}
 
-	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+	Common::FSDirectory iconDir(iconsPath);
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, _packsglob);
+	iconDir.listMatchingMembers(iconFiles, _packsglob);
 	int totalSize = 0;
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
