@@ -79,6 +79,7 @@ void Quicktime::m_playStage(int nargs) {
 
     Video::QuickTimeDecoder *video = new Video::QuickTimeDecoder();
     if (!video->loadFile(filePath)) {
+        delete video;
         g_lingo->push(Datum());
         return;
     }
