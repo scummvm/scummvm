@@ -37,6 +37,7 @@ namespace Scumm {
 #define GUIO_NETWORK                                   GUIO_GAMEOPTIONS6
 
 /* Game enhancements */
+
 enum {
 	kEnhGameBreakingBugFixes  = 1 << 0, // Gamebreaking Bug Fixes
 	kEnhMinorBugFixes         = 1 << 1, // Minor Bug Fixes
@@ -48,6 +49,41 @@ enum {
 	kEnhRestoredContent       = 1 << 7, // Restored Cut Content
 	kEnhUIUX                  = 1 << 8, // UI/UX Enhancements
 };
+
+/* How are the enhancements grouped? - A practical guide to follow if you're lost:
+*
+*  GROUP 1: Fix original bugs
+*
+*  This category includes both game-breaking bugs which cause the game to crash/deadlock and
+*  minor bug fixes (e.g. text and localization issues). Enhancements in this category should
+*  pertain stuff which is very clearly a bug (for example a badly shaped walkbox, a wrong accent
+*  in a word from the subtitles, a strip of pixels which is very clearly out of place/with the
+*  wrong palette, AND NOT include things like subtitles and boxes color changes, enhancements
+*  which make a version similar to another, etc.). Basically when this and only this is active,
+*  the game should not have deadlock situations and the immersiveness should not be broken by
+*  very evident graphical glitches, charset issues, etc.
+*
+*  GROUP 2: Audio-visual improvements
+*
+*  This category comprises visual and audio changes as well as timing adjustments. This is the
+*  category in which we can basically put everything which I said not to put in the previous
+*  category. This includes: changing the spacing of the font from the original, changing colors
+*  of subtitles for consistency, changes to the subtitles content in order to match the speech
+*  or to fix the localization, music changes (like the ones in COMI and FT), graphic changes
+*  which are not as essential as the ones from the previous category, etc.
+*
+*  GROUP 3: Restored content
+*
+*  This category reintroduces content cut or unused which was not in the original. This
+*  can include content which was somehow masked by mistake by the scripts.
+*
+*  GROUP 4:
+*
+*  This category pertains to all enhancements to the user interface and user experience:
+*  e.g. the artificial loading screen at the beginning of Sam&Max, speeding up the framerate
+*  in old original menus to have a decent keyboard polling rate.
+*
+*/
 
 enum {
 	kEnhGrp0 = (kEnhMinorBugFixes | kEnhTextLocFixes),
