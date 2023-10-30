@@ -249,6 +249,10 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
 }
 
+bool Scumm::ScummEngine::enhancementClassActive(int32 cls) {
+	return _activeEnhancements && cls;
+}
+
 
 /**
  * Create a ScummEngine instance, based on the given detector data.
@@ -780,7 +784,7 @@ void ScummMetaEngine::registerDefaultSettings(const Common::String &) const {
 	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
 	for (uint i = 0; i < engineOptions.size(); i++) {
 		if (strcmp(engineOptions[i].configOption, "enhancements") == 0)
-			ConfMan.registerDefault(engineOptions[i].configOption, kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+			ConfMan.registerDefault(engineOptions[i].configOption, kEnhGameBreakingBugs | kEnhGrp0);
 		else
 			ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}

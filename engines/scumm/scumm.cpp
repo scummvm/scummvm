@@ -926,8 +926,11 @@ Common::Error ScummEngine::init() {
 	if (ConfMan.hasKey("original_gui", _targetName)) {
 		_useOriginalGUI = ConfMan.getBool("original_gui");
 	}
-	ConfMan.registerDefault("enhancements", kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent);
+
+	// Register original bug fixes as defaults...
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugs | kEnhGrp0);
 	_enableEnhancements = ConfMan.getInt("enhancements") != 0; // TODO
+	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
@@ -1331,7 +1334,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	// types of them.
 	if (ConfMan.hasKey("enable_enhancements")) {
 		if (!ConfMan.hasKey("enhancements")) {
-			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhancementsBugs | kEnhancementsGlitches | kEnhancementsContent : 0);
+			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugs | kEnhGrp0 : 0);
 		}
 		ConfMan.removeKey("enable_enhancements", ConfMan.getActiveDomainName());
 		ConfMan.flushToDisk();
