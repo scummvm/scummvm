@@ -2386,11 +2386,7 @@ ScummEngine *MacIndy3Gui::Widget::_vm = nullptr;
 Graphics::Surface *MacIndy3Gui::Widget::_surface = nullptr;
 MacIndy3Gui *MacIndy3Gui::Widget::_gui = nullptr;
 
-MacIndy3Gui::Widget::Widget(int x, int y, int width, int height) {
-	_bounds.left = x;
-	_bounds.top = y;
-	_bounds.right = x + width;
-	_bounds.bottom = y + height;
+MacIndy3Gui::Widget::Widget(int x, int y, int width, int height) : MacGuiObject(Common::Rect(x, y, x + width, y + height), false) {
 }
 
 void MacIndy3Gui::Widget::reset() {
@@ -2875,8 +2871,8 @@ void MacIndy3Gui::Inventory::draw() {
 			ScrollButton *s = _scrollButtons[i];
 			const uint16 *arrow = (s->_direction == kScrollUp) ? upArrow : downArrow;
 
-			drawShadowFrame(s->_bounds, kWhite, kTransparency);
-			drawBitmap(s->_bounds, arrow, kBlack);
+			drawShadowFrame(s->getBounds(), kWhite, kTransparency);
+			drawBitmap(s->getBounds(), arrow, kBlack);
 			s->draw();
 		}
 	}
