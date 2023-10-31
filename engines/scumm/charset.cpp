@@ -1565,7 +1565,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 		const Graphics::Font *font = _vm->_macGui->getFontByScummId(0);
 
 		_glyphSurface = new Graphics::Surface();
-		_glyphSurface->create(font->getFontHeight(), font->getMaxCharWidth(), Graphics::PixelFormat::createFormatCLUT8());
+		_glyphSurface->create(font->getMaxCharWidth(), font->getFontHeight(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 }
 
@@ -1580,28 +1580,8 @@ void CharsetRendererMac::setCurID(int32 id) {
 	if  (id == -1)
 		return;
 
-	_useRealCharWidth = (id & 0x80) != 0;
-	id = id & 0x7F;
-
-	// Indiana Jones and the Last Crusade uses font id 1 in a number of
-	// places. In the DOS version, this is a bolder font than font 0, but
-	// by the looks of it the Mac version uses the same font for both
-	// cases. In ScummVM, we match id 0 and 1 to font 0 and id 2 (which is
-	// only used to print the text box caption) to font 1.
-	if (_vm->_game.id == GID_INDY3) {
-		if (id == 0 || id == 1) {
-			id = 0;
-		} else if (id == 2) {
-			id = 1;
-		}
-	}
-
-	if (id < 0 || id > 1) {
-		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
-		id = 0;
-	}
-
 	_curId = id;
+	_font = _vm->_macGui->getFontByScummId(_curId);
 }
 
 int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
@@ -1626,36 +1606,20 @@ int CharsetRendererMac::getStringWidth(int arg, const byte *text) {
 }
 
 int CharsetRendererMac::getDrawWidthIntern(uint16 chr) const {
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-
-	return font->getCharWidth(chr);
+	return _font->getCharWidth(chr);
 }
 
-// HACK: Usually, we want the approximate width and height in the unscaled
-//       graphics resolution. But for font 1 in Indiana Jones and the Last
-//       crusade we want the actual dimensions for drawing the text boxes.
-
 int CharsetRendererMac::getFontHeight() const {
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-	int height = font->getFontHeight();
-
-        // If we ever need the height for font 1 in Last Crusade (we don't at
-	// the moment), we need the actual height.
-	if (_curId == 0 || _vm->_game.id != GID_INDY3)
-		height /= 2;
-
-	return height;
+	return _font->getFontHeight() / 2;
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) const {
-	int width = getDrawWidthIntern(chr);
-	return _useRealCharWidth ? width : width / 2;
+	return _font->getCharWidth(chr) / 2;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// This function does most of the heavy lifting printing the game
-	// text. It's the only function that needs to be able to handle
-	// disabled text.
+	// text.
 
 	// If this is the beginning of a line, assume the position will be
 	// correct without any padding.
@@ -1704,17 +1668,17 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95) {
 			enableShadow = true;
 		}
-	}
 
-	// HACK: Apparently, note names are never drawn in light gray. Only
-	//       white for known notes, and dark gray for unknown ones. This
-	//       hack ensures that we won't be left with a mix of white and
-	//       light gray note names, because apparently the game never
-	//       changes them back to light gray once the draft is done?
+		// HACK: Apparently, note names are never drawn in light gray.
+		// Only white for known notes, and dark gray for unknown ones.
+		// This hack ensures that we won't be left with a mix of white
+		// and light gray note names, because apparently the game never
+		// changes them back to light gray once the draft is done?
 
-	if (_vm->_game.id == GID_LOOM) {
-		if (chr >= 16 && chr <= 23 && _color == 7)
-			color = 15;
+		if (_vm->_game.id == GID_LOOM) {
+			if (chr >= 16 && chr <= 23 && _color == 7)
+				color = 15;
+		}
 	}
 
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
@@ -1732,9 +1696,6 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       redrawn along with its name. It's enough to redraw it on the
 	//       text surface. We can assume the correct color is already on
 	//       screen.
-	//
-	//       Note that this will not affect the Practice Mode box, since
-	//       this note names are drawn by drawChar(), not printChar().
 
 	if (_vm->_game.id == GID_LOOM) {
 		if (chr >= 16 && chr <= 23) {
@@ -1760,18 +1721,16 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	if (!_useCorrectFontSpacing && !drawToTextBox && (width & 1))
 		width++;
 
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-
 	if (enableShadow) {
 		left = macLeft / 2;
 		right = (macLeft + width + 3) / 2;
 		top = macTop / 2;
-		bottom = (macTop + font->getFontHeight() + 3) / 2;
+		bottom = (macTop + _font->getFontHeight() + 3) / 2;
 	} else {
 		left = (macLeft + 1) / 2;
 		right = (macLeft + width + 1) / 2;
 		top = (macTop + 1) / 2;
-		bottom = (macTop + font->getFontHeight() + 1) / 2;
+		bottom = (macTop + _font->getFontHeight() + 1) / 2;
 	}
 
 	if (_firstChar) {
@@ -1836,8 +1795,6 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 		y++;
 	}
 
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-
 	if (shadow) {
 		byte shadowColor = getTextShadowColor();
 
@@ -1848,70 +1805,47 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			// particularly good anyway). This seems to match the
 			// original look for normal text.
 
-			font->drawChar(&_vm->_textSurface, chr, x + 1, y - 1, 0);
-			font->drawChar(&_vm->_textSurface, chr, x - 1, y + 1, 0);
-			font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
+			_font->drawChar(&_vm->_textSurface, chr, x + 1, y - 1, 0);
+			_font->drawChar(&_vm->_textSurface, chr, x - 1, y + 1, 0);
+			_font->drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 
 			if (color != -1) {
-				font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
-				font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
-				font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 1, y - 1, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x - 1, y + 1, shadowColor);
+				_font->drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
-			font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
-			font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
+			_font->drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+			_font->drawChar(_vm->_macScreen, chr, x + 1, y + 1, shadowColor);
 		}
 	}
 
-	font->drawChar(&_vm->_textSurface, chr, x, y, 0);
+	_font->drawChar(&_vm->_textSurface, chr, x, y, 0);
 
 	if (color != -1) {
 		color = getTextColor();
 
 		if (_vm->_renderMode == Common::kRenderMacintoshBW && color != 0 && color != 15) {
 			_glyphSurface->fillRect(Common::Rect(_glyphSurface->w, _glyphSurface->h), 0);
-			font->drawChar(_glyphSurface, chr, 0, 0, 15);
+			_font->drawChar(_glyphSurface, chr, 0, 0, 15);
 
-			byte *src = (byte *)_glyphSurface->getBasePtr(0, 0);
-			byte *dst = (byte *)_vm->_macScreen->getBasePtr(x, y);
+			for (int y0 = 0; y0 < _glyphSurface->h; y0++) {
+				for (int x0 = 0; x0 < _glyphSurface->w; x0++) {
+					if (_glyphSurface->getPixel(x0, y0)) {
+						int x1 = x + x0;
+						int y1 = y + y0;
 
-			for (int h = 0; h < _glyphSurface->h; h++) {
-				bool pixel = ((y + h + 1) & 1) == 0;
-
-				for (int w = 0; w < _glyphSurface->w; w++) {
-					if (src[w]) {
-						if (pixel)
-							dst[w] = 15;
-						else
-							dst[w] = 0;
+						_vm->_macScreen->setPixel(x1, y1, ((x1 + y1) & 1) ? 0 : 15);
 					}
-					pixel = !pixel;
 				}
-				src += _glyphSurface->pitch;
-				dst += _vm->_macScreen->pitch;
 			}
 		} else {
-			font->drawChar(_vm->_macScreen, chr, x, y, color);
+			_font->drawChar(_vm->_macScreen, chr, x, y, color);
 		}
 	}
-}
-
-void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
-	// This function is used for drawing most of the text outside of what
-	// the game scripts request. It's used for the text box captions in
-	// Indiana Jones and the Last Crusade, and for the practice mode box
-	// in Loom.
-	int color = _color;
-
-	if (_vm->_renderMode == Common::kRenderMacintoshBW)
-		color = 15;
-
-	const Graphics::Font *font = _vm->_macGui->getFontByScummId(_curId);
-
-	font->drawChar(&s, chr, x, y, color);
 }
 
 void CharsetRendererMac::setColor(byte color) {

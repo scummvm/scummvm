@@ -190,10 +190,10 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 	// Pause the engine
 	PauseToken pt = pauseEngine();
-
 	Common::KeyState ks = Common::KEYCODE_INVALID;
-	bool leftBtnPressed = false, rightBtnPressed = false;
+
 	if (waitTime) {
+		bool leftBtnPressed = false, rightBtnPressed = false;
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 	}
 
@@ -318,7 +318,7 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 		y0 += font->getFontHeight();
 	}
 
-	return lineWidth;
+	return maxLineWidth;
 }
 
 // ---------------------------------------------------------------------------
@@ -334,19 +334,16 @@ void MacGui::MacButton::draw(bool drawFocused) {
 
 	debug(1, "MacGui::MacButton: Drawing button %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
+	// ScummVM's rounded rectangles aren't a complete match for QuickDraw's
+	// rounded rectangles, and for arcs this small they don't look very
+	// good. So we draw the corners manually.
+
+	CornerLine buttonCorner[] = { { 0, 0 }, { 1, 2 }, { 1, 1 }, { 0, -1 } };
+	CornerLine smallButtonCorner[] = { { 0, 0 }, { 1, 2 }, { 1, 1 }, { 0, -1 } };
+	CornerLine frameCorner[] = { { 5, 1 }, { 3, 3 }, { 2, 4 }, { 1, 5 }, { 1, 3 }, { 0, 4 }, { 0, -1 } };
+
 	Graphics::Surface *s = _window->innerSurface();
 	Color fg, bg;
-
-	int x0 = _bounds.left;
-	int x1 = _bounds.right - 1;
-
-	int y0 = _bounds.top;
-	int y1 = _bounds.bottom - 1;
-
-	s->hLine(x0 + 3, y0, x1 - 3, kBlack);
-	s->hLine(x0 + 3, y1, x1 - 3, kBlack);
-	s->vLine(x0, y0 + 3, y1 - 3, kBlack);
-	s->vLine(x1, y0 + 3, y1 - 3, kBlack);
 
 	if (drawFocused || (_window->getFocusedWidget() == this && _bounds.contains(_window->getMousePos()))) {
 		fg = kWhite;
@@ -356,20 +353,36 @@ void MacGui::MacButton::draw(bool drawFocused) {
 		bg = kWhite;
 	}
 
+	int x0 = _bounds.left;
+	int x1 = _bounds.right - 1;
+
+	int y0 = _bounds.top;
+	int y1 = _bounds.bottom - 1;
+
+	CornerLine *corner;
+	int cornerSize;
+
+	if (_bounds.height() >= 20) {
+		corner = buttonCorner;
+		cornerSize = 3;
+	} else {
+		corner = smallButtonCorner;
+		cornerSize = 2;
+	}
+
+	s->hLine(x0 + cornerSize, y0, x1 - cornerSize, kBlack);
+	s->hLine(x0 + cornerSize, y1, x1 - cornerSize, kBlack);
+	s->vLine(x0, y0 + cornerSize, y1 - cornerSize, kBlack);
+	s->vLine(x1, y0 + cornerSize, y1 - cornerSize, kBlack);
+
 	// The way the corners are rounded, we can fill this entire rectangle
 	// in one go.
 
-	s->fillRect(Common::Rect(_bounds.left + 1, _bounds.top + 1, _bounds.right - 1, _bounds.bottom - 1), bg);
+	Common::Rect inside = _bounds;
+	inside.grow(-1);
+	s->fillRect(inside, bg);
 
-	// ScummVM's rounded rectangles aren't a complete match for QuickDraw's
-	// rounded rectangles, and for arcs this small they don't look very good.
-	// So we draw the corners manually.
-	//
-	// Unfortunately, these hard-coded ones only work for most buttons.
-
-	CornerLine innerCorner[] = { { 0, 0 }, { 1, 2 }, { 1, 1 }, { 0, -1 } };
-
-	drawCorners(_bounds, innerCorner);
+	drawCorners(_bounds, corner);
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
@@ -393,13 +406,12 @@ void MacGui::MacButton::draw(bool drawFocused) {
 			s->vLine(x1 - i, y0 + 6, y1 - 6, kBlack);
 		}
 
-		CornerLine outerCorner[] = { { 5, 1 }, { 3, 3 }, { 2, 4 }, { 1, 5 }, { 1, 3 }, { 0, 4 }, { 0, -1 } };
-
-		drawCorners(bounds, outerCorner);
+		drawCorners(bounds, frameCorner);
 	}
 
 	_redraw = false;
 	_fullRedraw = false;
+
 	_window->markRectAsDirty(bounds);
 }
 
@@ -648,7 +660,7 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 	_dirtyRects.clear();
 
 	Graphics::Surface *s = surface();
-	Common::Rect r = Common::Rect(0, 0, s->w, s->h);
+	Common::Rect r = Common::Rect(s->w, s->h);
 
 	r.grow(-1);
 	s->fillRect(r, kWhite);
@@ -695,7 +707,7 @@ MacGui::MacDialogWindow::~MacDialogWindow() {
 
 void MacGui::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
 	if (s) {
-		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(_bounds.width(), _bounds.height()));
 	}
 	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 }
@@ -771,7 +783,7 @@ void MacGui::MacDialogWindow::update(bool fullRedraw) {
 
 	if (fullRedraw) {
 		_dirtyRects.clear();
-		markRectAsDirty(Common::Rect(0, 0, _innerSurface.w, _innerSurface.h));
+		markRectAsDirty(Common::Rect(_innerSurface.w, _innerSurface.h));
 	}
 
 	for (uint i = 0; i < _dirtyRects.size(); i++) {
@@ -800,10 +812,20 @@ int MacGui::MacDialogWindow::runDialog() {
 	if (!_visible) {
 		show();
 
+		Common::Rect windowBounds(_innerSurface.w, _innerSurface.h);
+
 		for (uint i = 0; i < _widgets.size(); i++) {
 			_widgets[i]->setId(i);
-			_widgets[i]->setRedraw(true);
-			_widgets[i]->draw();
+
+			// We don't deal with off-window widgets. Not even
+			// partly off-window.
+
+			if (windowBounds.contains(_widgets[i]->getBounds())) {
+				_widgets[i]->setRedraw(true);
+				_widgets[i]->draw();
+			} else {
+				_widgets[i]->setVisible(false);
+			}
 		}
 	}
 
@@ -891,12 +913,12 @@ int MacGui::MacDialogWindow::runDialog() {
 }
 
 void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
-	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(0, 0, sprite->w, sprite->h));
+	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(sprite->w, sprite->h));
 	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
 }
 
 void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
-	Common::Rect subRect(0, 0, sprite->w, sprite->h);
+	Common::Rect subRect(sprite->w, sprite->h);
 
 	if (x < clipRect.left) {
 		subRect.left += (clipRect.left - x);
@@ -1035,11 +1057,10 @@ void MacGui::initialize() {
 	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride);
 	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, 400);
-	_windowManager->setMenuHotzone(Common::Rect(0, 0, 640, 23));
+	_windowManager->setMenuHotzone(Common::Rect(640, 23));
 	_windowManager->setMenuDelay(250000);
 
 	Common::MacResManager resource;
-	Common::SeekableReadStream *res;
 	Graphics::MacMenu *menu = _windowManager->addMenu();
 
 	resource.open(_resourceFile);
@@ -1059,7 +1080,7 @@ void MacGui::initialize() {
 	menu->setCommandsCallback(menuCallback, this);
 
 	for (int i = 129; i <= 130; i++) {
-		res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
+		Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
 
 		if (!res)
 			continue;
@@ -1069,6 +1090,9 @@ void MacGui::initialize() {
 		Common::String string = menuDef->operator[](1);
 		int id = menu->addMenuItem(nullptr, name);
 		menu->createSubMenuFromString(id, string.c_str(), 0);
+
+		delete menuDef;
+		delete res;
 	}
 
 	resource.close();
@@ -1211,7 +1235,9 @@ Graphics::Surface *MacGui::loadPict(int id) {
 		s = decodePictV1(res);
 	}
 
+	delete res;
 	resource.close();
+
 	return s;
 }
 
@@ -1556,7 +1582,6 @@ MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWind
 MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 	Common::MacResManager resource;
 	Common::SeekableReadStream *res;
-	int button = 0;
 
 	resource.open(_resourceFile);
 
@@ -1583,6 +1608,8 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 
 		bounds.translate(86, 88);
 	}
+
+	delete res;
 
 	MacDialogWindow *window = createWindow(bounds);
 
@@ -1621,7 +1648,6 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 				// Button
 				str = getDialogString(res, len);
 				window->addButton(r, str, enabled);
-				button++;
 				break;
 
 			case 5:
@@ -1659,7 +1685,9 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 		}
 	}
 
+	delete res;
 	resource.close();
+
 	return window;
 }
 
@@ -1685,6 +1713,7 @@ const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 	switch (id) {
 	case 0:
 		return getFont(kLoomFontLarge);
+
 	default:
 		error("MacLoomGui::getFontByScummId: Invalid font id %d", id);
 	}
@@ -1747,8 +1776,8 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 		_windowManager->replaceCursor(Graphics::kMacCursorCustom, &macCursor);
 	}
 
-	resource.close();
 	delete curs;
+	resource.close();
 }
 
 bool MacLoomGui::handleMenu(int id, Common::String &name) {
@@ -1865,7 +1894,7 @@ void MacLoomGui::runAboutDialog() {
 	window->show();
 
 	int scene = 0;
-	int status;
+	int status = 0;
 
 	Common::Rect r(0, 0, 404, 154);
 	int growth = -2;
@@ -2025,16 +2054,15 @@ void MacLoomGui::runAboutDialog() {
 	}
 
 	if (status != 2)
-		status = delay(-1);
+		delay(-1);
 
 	_windowManager->popCursor();
 
 	lucasFilm->free();
-	delete lucasFilm;
-
 	loom->free();
-	delete loom;
 
+	delete lucasFilm;
+	delete loom;
 	delete window;
 }
 
@@ -2175,6 +2203,8 @@ void MacLoomGui::update(int delta) {
 			int w = 64;
 			int h = 24;
 
+			bool bw = (_vm->_renderMode == Common::kRenderMacintoshBW);
+
 			if (!_practiceBox) {
 				debug(1, "MacLoomGui: Creating practice mode box");
 
@@ -2182,12 +2212,14 @@ void MacLoomGui::update(int delta) {
 				_practiceBox->create(w, h, Graphics::PixelFormat
 ::createFormatCLUT8());
 
-				_practiceBox->fillRect(Common::Rect(0, 0, 62, 22), kBlack);
+				_practiceBox->fillRect(Common::Rect(62, 22), kBlack);
 
-				_practiceBox->hLine(2, 1, w - 3, kLightGray);
-				_practiceBox->hLine(2, h - 2, w - 3, kLightGray);
-				_practiceBox->vLine(1, 2, h - 3, kLightGray);
-				_practiceBox->vLine(w - 2, 2, h - 3, kLightGray);
+				Color color = bw ? kWhite : kLightGray;
+
+				_practiceBox->hLine(2, 1, w - 3, color);
+				_practiceBox->hLine(2, h - 2, w - 3, color);
+				_practiceBox->vLine(1, 2, h - 3, color);
+				_practiceBox->vLine(w - 2, 2, h - 3, color);
 				_practiceBoxNotes = 0;
 			}
 
@@ -2202,8 +2234,9 @@ void MacLoomGui::update(int delta) {
 				for (int i = 0; i < 4; i++) {
 					int note = (notes >> (4 * i)) & 0x0F;
 
-					if (note >= 2 && note <= 9)
-						font->drawChar(_practiceBox, 14 + note, 9 + i * 13, 5, colors[note - 2]);
+					if (note >= 2 && note <= 9) {
+						font->drawChar(_practiceBox, 14 + note, 9 + i * 13, 5, bw ? kWhite : colors[note - 2]);
+					}
 				}
 			}
 
@@ -3248,9 +3281,16 @@ void MacIndy3Gui::setupCursor(int &width, int &height, int &hotspotX, int &hotsp
 }
 
 const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
+	// The game seems to use font 0 most of the time, but during the intro
+	// it switches to font 1 to print "BARNETT COLLEGE,", "NEW YORK," and
+	// "1938". By the look of it, these map to the same font.
+	//
+	// This is different from the DOS version, where font 1 is bolder.
 	switch (id) {
 	case 0:
+	case 1:
 		return getFont(kIndy3FontMedium);
+
 	default:
 		error("MacIndy3Gui::getFontByScummId: Invalid font id %d", id);
 	}
@@ -3309,7 +3349,6 @@ void MacIndy3Gui::initTextAreaForActor(Actor *a, byte color) {
 	_textArea.fillRect(Common::Rect(width, height), kBlack);
 
 	int nameWidth = 0;
-//	byte color = _charset->getColor();
 
 	if (a) {
 		const Graphics::Font *font = getFont(kIndy3FontSmall);
@@ -3410,7 +3449,7 @@ void MacIndy3Gui::runAboutDialog() {
 	// cut out enough of the background so that each time they are drawn,
 	// the visible remains of the previous frame is overdrawn.
 
-	Graphics::Surface train = pict->getSubArea(Common::Rect(0, 0, 249, 93));
+	Graphics::Surface train = pict->getSubArea(Common::Rect(249, 93));
 
 	Graphics::Surface trolley[3];
 
@@ -3430,7 +3469,7 @@ void MacIndy3Gui::runAboutDialog() {
 	// 10 fps.
 
 	int scene = 0;
-	int status;
+	int status = 0;
 
 	int trainX = -2;
 	int trolleyX = width + 1;
@@ -3612,7 +3651,7 @@ void MacIndy3Gui::runAboutDialog() {
 	}
 
 	if (status != 2)
-		status = delay(-1);
+		delay(-1);
 
 	_windowManager->popCursor();
 
