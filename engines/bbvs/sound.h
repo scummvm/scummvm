@@ -35,7 +35,7 @@ class Sound {
 public:
 	Sound();
 	~Sound();
-	void load(const Common::String &filename);
+	void load(const Common::Path &filename);
 	void play(bool loop);
 	void stop();
 	bool isPlaying();
@@ -43,13 +43,13 @@ protected:
 	Audio::RewindableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 	// Keep the filename for debugging purposes
-	Common::String _filename;
+	Common::Path _filename;
 };
 
 class SoundMan {
 public:
 	~SoundMan();
-	void loadSound(const Common::String &fileName);
+	void loadSound(const Common::Path &fileName);
 	void playSound(uint index, bool loop = false);
 	void stopSound(uint index);
 	bool isSoundPlaying(uint index);

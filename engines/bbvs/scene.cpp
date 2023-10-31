@@ -41,20 +41,20 @@ static const int kAfterVideoSceneNumDemo[] = {
 void BbvsEngine::loadScene(int sceneNum) {
 	debug(0, "BbvsEngine::loadScene() sceneNum: %d", sceneNum);
 
-	Common::String sprFilename = Common::String::format("vnm/vspr%04d.vnm", sceneNum);
-	Common::String gamFilename = Common::String::format("vnm/game%04d.vnm", sceneNum);
+	Common::Path sprFilename(Common::String::format("vnm/vspr%04d.vnm", sceneNum));
+	Common::Path gamFilename(Common::String::format("vnm/game%04d.vnm", sceneNum));
 
 	_screen->clear();
 
-	_spriteModule->load(sprFilename.c_str());
-	_gameModule->load(gamFilename.c_str());
+	_spriteModule->load(sprFilename);
+	_gameModule->load(gamFilename);
 
 	Palette palette = _spriteModule->getPalette();
 	_screen->setPalette(palette);
 
 	// Preload sounds
 	for (uint i = 0; i < _gameModule->getPreloadSoundsCount(); ++i) {
-		Common::String filename = Common::String::format("snd/snd%05d.aif", _gameModule->getPreloadSound(i));
+		Common::Path filename(Common::String::format("snd/snd%05d.aif", _gameModule->getPreloadSound(i)));
 		_sound->loadSound(filename);
 	}
 
