@@ -155,16 +155,16 @@ void DreamWebEngine::setMode() {
 }
 
 void DreamWebEngine::showPCX(const Common::String &suffix) {
-	Common::String name = getDatafilePrefix() + suffix;
+	Common::Path name(getDatafilePrefix() + suffix);
 	Common::File pcxFile;
 	if (!pcxFile.open(name)) {
-		warning("showpcx: Could not open '%s'", name.c_str());
+		warning("showpcx: Could not open '%s'", name.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
 	Image::PCXDecoder pcx;
 	if (!pcx.loadStream(pcxFile)) {
-		warning("showpcx: Could not process '%s'", name.c_str());
+		warning("showpcx: Could not process '%s'", name.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 
@@ -379,7 +379,7 @@ bool DreamWebEngine::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 void DreamWebEngine::loadPalFromIFF() {
 	Common::File palFile;
 	uint8* buf = new uint8[2000];
-	palFile.open(getDatafilePrefix() + "PAL");
+	palFile.open(Common::Path(getDatafilePrefix() + "PAL"));
 	palFile.read(buf, 2000);
 	palFile.close();
 

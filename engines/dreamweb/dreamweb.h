@@ -140,10 +140,10 @@ public:
 
 	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
-	Common::String modifyFileName(const char *);
+	Common::Path modifyFileName(const char *);
 
 	const Common::String& getDatafilePrefix() { return _datafilePrefix; }
-	const Common::String& getSpeechDirName() { return _speechDirName; }
+	const Common::Path& getSpeechDirName() { return _speechDirName; }
 
 private:
 	// Keyboard buffer. _bufferIn and _bufferOut are indexes
@@ -159,7 +159,7 @@ private:
 	Graphics::Surface				_thumbnail;
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
-	Common::String _speechDirName;
+	Common::Path _speechDirName;
 
 	uint _speed;
 	bool _turbo;
