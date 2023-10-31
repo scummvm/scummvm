@@ -824,11 +824,12 @@ static size_t char_autolink_url(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, 
 /* char_link • '[': parsing a link or an image */
 static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t offset, size_t size) {
 	int is_img = (offset && data[-1] == '!'), level;
-	size_t i = 1, txt_e, link_b = 0, link_e = 0, title_b = 0, title_e = 0;
+	size_t i = 1, txt_e, link_b = 0, link_e = 0, title_b = 0, title_e = 0, ext_b = 0, ext_e = 0;
 	SDDataBuffer *content = 0;
 	SDDataBuffer *link = 0;
 	SDDataBuffer *title = 0;
 	SDDataBuffer *u_link = 0;
+	SDDataBuffer *ext = 0;
 	size_t org_work_size = rndr->_work_bufs[BUFFER_SPAN].size;
 	int text_has_nl = 0, ret = 0;
 	int in_title = 0, qtype = 0;
@@ -925,7 +926,30 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		if (data[link_b] == '<') link_b++;
 		if (data[link_e - 1] == '>') link_e--;
 
-		/* building escaped link and title */
+		/* optional image extension */
+		if (is_img && i + 1 < size && data[i + 1] == '{') {
+			/* skipping initial whitespace and opening bracket */
+			i += 2;
+
+			while (i < size && _isspace(data[i]))
+				i++;
+
+			ext_b = i;
+
+			/* looking for extension end: '}" ) */
+			while (i < size && data[i] != '}')
+				i++;
+
+			if (i >= size) goto cleanup;
+
+			/* skipping whitespaces after extension */
+			ext_e = i - 1;
+			while (ext_e > ext_b && _isspace(data[ext_e]))
+				ext_e--;
+			ext_e++;
+		}
+
+		/* building escaped link, title and extension*/
 		if (link_e > link_b) {
 			link = rndr_newbuf(rndr, BUFFER_SPAN);
 			sd_bufput(link, data + link_b, link_e - link_b);
@@ -934,6 +958,11 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		if (title_e > title_b) {
 			title = rndr_newbuf(rndr, BUFFER_SPAN);
 			sd_bufput(title, data + title_b, title_e - title_b);
+		}
+
+		if (ext_e > ext_b) {
+			ext = rndr_newbuf(rndr, BUFFER_SPAN);
+			sd_bufput(ext, data + ext_b, ext_e - ext_b);
 		}
 
 		i++;
