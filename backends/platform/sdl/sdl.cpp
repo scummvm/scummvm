@@ -332,7 +332,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
-	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath().toString());
+	ConfMan.registerDefault("dlcspath", this->getDefaultDLCsPath());
 
 	_inited = true;
 

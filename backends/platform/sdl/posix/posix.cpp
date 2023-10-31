@@ -129,7 +129,7 @@ Common::Path OSystem_POSIX::getDefaultConfigFileName() {
 		if (configFile.size() < MAXPATHLEN) {
 			struct stat sb;
 			if (stat(configFile.c_str(), &sb) == 0) {
-				return configFile;
+				return Common::Path(configFile, '/');
 			}
 		}
 	}
@@ -164,7 +164,7 @@ Common::Path OSystem_POSIX::getDefaultConfigFileName() {
 		configFile = baseConfigName;
 	}
 
-	return configFile;
+	return Common::Path(configFile, '/');
 }
 
 Common::String OSystem_POSIX::getXdgUserDir(const char *name) {
@@ -182,7 +182,7 @@ Common::String OSystem_POSIX::getXdgUserDir(const char *name) {
 
 	// Find the requested directory line in the xdg-user-dirs configuration file
 	//   Example line value: XDG_PICTURES_DIR="$HOME/Pictures"
-	Common::FSNode userDirsFile(configHome + "/user-dirs.dirs");
+	Common::FSNode userDirsFile(Common::Path(configHome + "/user-dirs.dirs", '/'));
 	if (!userDirsFile.exists() || !userDirsFile.isReadable() || userDirsFile.isDirectory()) {
 		return "";
 	}
@@ -245,7 +245,7 @@ Common::Path OSystem_POSIX::getDefaultIconsPath() {
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");
 		if (prefix == nullptr) {
-			return Common::String();
+			return Common::Path();
 		}
 
 		iconsPath = ".cache/";
@@ -254,14 +254,14 @@ Common::Path OSystem_POSIX::getDefaultIconsPath() {
 	iconsPath += "scummvm/icons";
 
 	if (!Posix::assureDirectoryExists(iconsPath, prefix)) {
-		return Common::String();
+		return Common::Path();
 	}
 
 	return Common::Path(prefix).join(iconsPath);
 }
 
 Common::Path OSystem_POSIX::getDefaultDLCsPath() {
-	Common::Path dlcsPath;
+	Common::String dlcsPath;
 
 	// On POSIX systems we follow the XDG Base Directory Specification for
 	// where to store files. The version we based our code upon can be found
@@ -270,17 +270,19 @@ Common::Path OSystem_POSIX::getDefaultDLCsPath() {
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");
 		if (prefix == nullptr) {
-			return Common::String();
+			return Common::Path();
 		}
 
 		dlcsPath = ".cache/";
 	}
-	dlcsPath = dlcsPath.join(Common::Path("scummvm/dlcs"));
-	if (!Posix::assureDirectoryExists(dlcsPath.toString(), prefix)) {
+
+	dlcsPath += "scummvm/dlcs";
+
+	if (!Posix::assureDirectoryExists(dlcsPath, prefix)) {
 		return Common::Path();
 	}
 
-	return dlcsPath;
+	return Common::Path(prefix).join(dlcsPath);
 }
 
 Common::Path OSystem_POSIX::getScreenshotsPath() {
@@ -345,7 +347,7 @@ Common::Path OSystem_POSIX::getDefaultLogFileName() {
 	if (prefix == nullptr || !*prefix) {
 		prefix = getenv("HOME");
 		if (prefix == nullptr) {
-			return Common::String();
+			return Common::Path();
 		}
 
 		logFile = ".cache/";
@@ -354,7 +356,7 @@ Common::Path OSystem_POSIX::getDefaultLogFileName() {
 	logFile += "scummvm/logs";
 
 	if (!Posix::assureDirectoryExists(logFile, prefix)) {
-		return Common::String();
+		return Common::Path();
 	}
 
 	Common::Path logPath(prefix);

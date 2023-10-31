@@ -163,7 +163,7 @@ Common::DialogManager::DialogResult MacOSXDialogManager::showFileBrowser(const C
 	BrowserDialogPresenter* presenter = [[BrowserDialogPresenter alloc] init];
 	[presenter performSelectorOnMainThread:@selector(showOpenPanel:) withObject:panel waitUntilDone:YES];
 	if (presenter->_url) {
-		Common::String filename = [[presenter->_url path] UTF8String];
+		Common::Path filename([[presenter->_url path] UTF8String]);
 		choice = Common::FSNode(filename);
 		result = kDialogOk;
 	}
