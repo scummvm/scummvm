@@ -263,7 +263,6 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	uint32 len = resStream->size();
 
 	if (dataSize < len) {
-		free(data);
 		data = (byte *)malloc(resStream->size());
 		dataSize = resStream->size();
 	}
