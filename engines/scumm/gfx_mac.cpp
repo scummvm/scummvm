@@ -2718,7 +2718,21 @@ void MacIndy3Gui::Inventory::setRedraw(bool redraw) {
 }
 
 bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
-	if (!_enabled || !_verbid || event.type != Common::EVENT_LBUTTONDOWN)
+	if (!_enabled || !_verbid)
+		return false;
+
+	if (_vm->_enableEnhancements) {
+		if ((event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN) && _bounds.contains(event.mouse.x, event.mouse.y)) {
+			if (event.type == Common::EVENT_WHEELUP) {
+				_scrollBar->scroll(kScrollUp);
+			} else {
+				_scrollBar->scroll(kScrollDown);
+			}
+			return true;
+		}
+	}
+
+	if (event.type != Common::EVENT_LBUTTONDOWN)
 		return false;
 
 	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
@@ -3996,7 +4010,7 @@ bool MacIndy3Gui::handleEvent(Common::Event &event) {
 	}
 
 	// It probably doesn't make much of a difference, but if a widget
-	// responds to an event, and marks itself as wanting to be redraw,
+	// responds to an event, and marks itself as wanting to be redrawn,
 	// we do that redrawing immediately, not on the next update.
 
 	for (auto &it: _widgets) {
