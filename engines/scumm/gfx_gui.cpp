@@ -2297,10 +2297,7 @@ void ScummEngine::showMainMenu() {
 	// Run the passcode script without args to fetch the current
 	// value of the passcode, which is then stored in var 63.
 	if (_game.platform == Common::kPlatformSegaCD) {
-		int dummyArgs[16];
-		memset(dummyArgs, 0, sizeof(dummyArgs));
-
-		runScript(61, 0, 0, args);
+		runScript(61, 0, 0, nullptr);
 	}
 
 	// Generate the thumbnail, in case the game is saved
