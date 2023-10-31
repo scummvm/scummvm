@@ -686,6 +686,13 @@ void Inter_v7::o7_playVmdOrMusic() {
 	} else if (props.lastFrame <= -10) {
 		_vm->_vidPlayer->closeVideo();
 
+		if (props.lastFrame <= -100) {
+			// The original does an early return here if the video is not in the cache
+			// if (video not in cache)
+			//   return;
+
+			props.lastFrame += 100;
+		}
 		if (props.lastFrame <= -20)
 			props.noBlock    = true;
 		//if (!(props.flags & VideoPlayer::kFlagNoVideo))
