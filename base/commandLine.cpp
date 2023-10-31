@@ -1489,7 +1489,7 @@ static DetectedGames recListGames(const Common::FSNode &dir, const Common::Strin
 }
 
 /** Display all games in the given directory, return ID of first detected game */
-static Common::String detectGames(const Common::String &path, const Common::String &engineId, const Common::String &gameId, bool recursive) {
+static Common::String detectGames(const Common::Path &path, const Common::String &engineId, const Common::String &gameId, bool recursive) {
 	bool noPath = path.empty();
 	//Current directory
 	Common::FSNode dir(path);
@@ -1633,7 +1633,7 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	}
 }
 
-static bool addGames(const Common::String &path, const Common::String &engineId, const Common::String &gameId, bool recursive) {
+static bool addGames(const Common::Path &path, const Common::String &engineId, const Common::String &gameId, bool recursive) {
 	//Current directory
 	Common::FSNode dir(path);
 	int added = recAddGames(dir, engineId, gameId, recursive);
@@ -1971,17 +1971,20 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			// From an UX point of view, however, it might get confusing.
 			// Consider removing this if consensus says otherwise.
 		} else {
-			command = detectGames(settings["path"], gameOption.engineId, gameOption.gameId, resursive);
+			Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+			command = detectGames(path, gameOption.engineId, gameOption.gameId, resursive);
 			if (command.empty()) {
 				err = Common::kNoGameDataFoundError;
 				return cmdDoExit;
 			}
 		}
 	} else if (command == "detect") {
-		detectGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
+		Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+		detectGames(path, gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return cmdDoExit;
 	} else if (command == "add") {
-		addGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
+		Common::Path path(settings["path"], Common::Path::kNativeSeparator);
+		addGames(path, gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return cmdDoExit;
 	} else if (command == "md5" || command == "md5mac") {
 		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
