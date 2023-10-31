@@ -55,7 +55,7 @@ private:
 	uint32 decode(const byte *src, byte *dst, uint32 len, uint32 start);
 	byte readByte(const byte *data, uint32 offset);
 
-	void loadMusic(Common::String filename);
+	void loadMusic(const Common::Path &filename);
 	void playMusic(int var1);
 
 	void send(uint32 b) override;
