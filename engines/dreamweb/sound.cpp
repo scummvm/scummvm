@@ -189,7 +189,7 @@ bool DreamWebSound::loadSpeech(const Common::String &filename) {
 		return false;
 
 	Common::File file;
-	if (!file.open(_vm->getSpeechDirName() + "/" + filename))
+	if (!file.open(_vm->getSpeechDirName().appendComponent(filename)))
 		return false;
 
 	debug(1, "loadSpeech(%s)", filename.c_str());
@@ -243,11 +243,11 @@ void DreamWebSound::soundHandler() {
 }
 
 void DreamWebSound::loadSounds(uint bank, const Common::String &suffix) {
-	Common::String filename = _vm->getDatafilePrefix() + suffix;
-	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
+	Common::Path filename(_vm->getDatafilePrefix() + suffix);
+	debug(1, "loadSounds(%u, %s)", bank, filename.toString(Common::Path::kNativeSeparator).c_str());
 	Common::File file;
 	if (!file.open(filename)) {
-		warning("cannot open %s", filename.c_str());
+		warning("cannot open %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 

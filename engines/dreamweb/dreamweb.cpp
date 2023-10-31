@@ -434,7 +434,7 @@ Common::Error DreamWebEngine::run() {
 	setDebugger(new DreamWebConsole(this));
 	_sound = new DreamWebSound(this);
 
-	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_hasSpeech = Common::File::exists(_speechDirName.appendComponent("r01c0000.raw")) && !ConfMan.getBool("speech_mute");
 	_brightPalette = ConfMan.getBool("bright_palette");
 	_copyProtection = ConfMan.getBool("copy_protection");
 
@@ -609,17 +609,17 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	}
 }
 
-Common::String DreamWebEngine::modifyFileName(const char *name) {
+Common::Path DreamWebEngine::modifyFileName(const char *name) {
 	Common::String fileName(name);
 
 	// Sanity check
 	if (!fileName.hasPrefix("DREAMWEB."))
-		return fileName;
+		return Common::Path(fileName);
 
 	// Make sure we use the correct file name as it differs depending on the game variant
 	fileName = _datafilePrefix;
 	fileName += name + 9;
-	return fileName;
+	return Common::Path(fileName);
 }
 
 bool DreamWebEngine::hasSpeech() {
