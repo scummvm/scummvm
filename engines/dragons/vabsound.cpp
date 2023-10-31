@@ -97,7 +97,7 @@ void VabSound::loadHeader(Common::SeekableReadStream *vhData) {
 
 VabSound::~VabSound() {
 	delete _toneAttrs;
-	delete _vbData;
+	delete[] _vbData;
 }
 
 Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
