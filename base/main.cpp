@@ -467,13 +467,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 
 	// Load the config file (possibly overridden via command line):
-	Common::String initConfigFilename;
+	Common::Path initConfigFilename;
 	if (settings.contains("initial-cfg"))
-		initConfigFilename = settings["initial-cfg"];
+		initConfigFilename = Common::Path(settings["initial-cfg"], Common::Path::kNativeSeparator);
 
 	bool configLoadStatus;
 	if (settings.contains("config")) {
-		configLoadStatus = ConfMan.loadConfigFile(settings["config"], initConfigFilename);
+		configLoadStatus = ConfMan.loadConfigFile(
+			Common::Path(settings["config"], Common::Path::kNativeSeparator), initConfigFilename);
 	} else {
 		configLoadStatus = ConfMan.loadDefaultConfigFile(initConfigFilename);
 	}
