@@ -806,9 +806,9 @@ void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint
 
 		// now we need to compute ratio
 		if (w != 0)
-			ratio = w / 100 / (float)wOut;
+			ratio = w / (float)wOut;
 		else
-			ratio = h / 100 / (float)hOut;
+			ratio = h / (float)hOut;
 	} else {
 		error("MacTextCanvas: malformed image extension '%s", ext.encode().c_str());
 	}
