@@ -470,6 +470,9 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 			_text[curLine].chunks.push_back(chunk);
 
 			curTextLine = &_text[curLine];
+
+			curTextLine->indent = indentSize;
+			curTextLine->firstLineIndent = firstLineIndent;
 		}
 	}
 
