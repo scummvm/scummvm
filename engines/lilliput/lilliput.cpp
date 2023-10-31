@@ -2342,13 +2342,13 @@ void LilliputEngine::pollEvent() {
 	}
 }
 
-byte *LilliputEngine::loadVGA(Common::String filename, int expectedSize, bool loadPal) {
-	debugC(1, kDebugEngine, "loadVGA(%s, %d, %d)", filename.c_str(), expectedSize, (loadPal) ? 1 : 0);
+byte *LilliputEngine::loadVGA(const Common::Path &filename, int expectedSize, bool loadPal) {
+	debugC(1, kDebugEngine, "loadVGA(%s, %d, %d)", filename.toString().c_str(), expectedSize, (loadPal) ? 1 : 0);
 
 	Common::File f;
 
 	if (!f.open(filename))
-		error("Missing game file %s", filename.c_str());
+		error("Missing game file %s", filename.toString().c_str());
 
 	int remainingSize = f.size();
 	if (loadPal) {
@@ -2402,13 +2402,13 @@ byte *LilliputEngine::loadVGA(Common::String filename, int expectedSize, bool lo
 	return decodeBuffer;
 }
 
-byte *LilliputEngine::loadRaw(Common::String filename, int filesize) {
-	debugC(1, kDebugEngine, "loadRaw(%s)", filename.c_str());
+byte *LilliputEngine::loadRaw(const Common::Path &filename, int filesize) {
+	debugC(1, kDebugEngine, "loadRaw(%s)", filename.toString().c_str());
 
 	Common::File f;
 
 	if (!f.open(filename))
-		error("Missing game file %s", filename.c_str());
+		error("Missing game file %s", filename.toString().c_str());
 
 	byte *res = (byte *)malloc(sizeof(byte) * filesize);
 	for (int i = 0; i < filesize; ++i)
@@ -2431,7 +2431,7 @@ void LilliputEngine::loadRules() {
 	Common::File f;
 	uint16 curWord;
 
-	Common::String filename = "ERULES.PRG";
+	Common::Path filename("ERULES.PRG");
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 
 	switch (lang) {
@@ -2451,7 +2451,7 @@ void LilliputEngine::loadRules() {
 	}
 
 	if (!f.open(filename))
-		error("Missing game file %s", filename.c_str());
+		error("Missing game file %s", filename.toString().c_str());
 
 	_word10800_ERULES = f.readUint16LE();
 
@@ -2609,8 +2609,8 @@ void LilliputEngine::loadRules() {
 	f.close();
 }
 
-void LilliputEngine::displayVGAFile(Common::String fileName) {
-	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.c_str());
+void LilliputEngine::displayVGAFile(const Common::Path &fileName) {
+	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.toString().c_str());
 
 	byte *buffer = loadVGA(fileName, 64000, true);
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);

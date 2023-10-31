@@ -91,13 +91,13 @@ uint32 LilliputSound::decode(const byte *src, byte *dst, uint32 len, uint32 star
 	return i;
 }
 
-void LilliputSound::loadMusic(Common::String filename) {
-	debugC(1, kDebugSound, "loadMusic(%s)", filename.c_str());
+void LilliputSound::loadMusic(const Common::Path &filename) {
+	debugC(1, kDebugSound, "loadMusic(%s)", filename.toString().c_str());
 
 	Common::File f;
 
 	if (!f.open(filename))
-		error("Missing music file %s", filename.c_str());
+		error("Missing music file %s", filename.toString().c_str());
 
 	_fileNumb = f.readUint16LE();
 
