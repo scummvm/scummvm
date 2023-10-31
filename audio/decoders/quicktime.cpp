@@ -85,7 +85,7 @@ QuickTimeAudioDecoder::~QuickTimeAudioDecoder() {
 		delete _audioTracks[i];
 }
 
-bool QuickTimeAudioDecoder::loadAudioFile(const Common::String &filename) {
+bool QuickTimeAudioDecoder::loadAudioFile(const Common::Path &filename) {
 	if (!Common::QuickTimeParser::parseFile(filename))
 		return false;
 
@@ -657,7 +657,7 @@ public:
 	QuickTimeAudioStream() {}
 	~QuickTimeAudioStream() {}
 
-	bool openFromFile(const Common::String &filename) {
+	bool openFromFile(const Common::Path &filename) {
 		return QuickTimeAudioDecoder::loadAudioFile(filename) && !_audioTracks.empty();
 	}
 
@@ -687,7 +687,7 @@ public:
 	Timestamp getLength() const override { return _audioTracks[0]->getLength(); }
 };
 
-SeekableAudioStream *makeQuickTimeStream(const Common::String &filename) {
+SeekableAudioStream *makeQuickTimeStream(const Common::Path &filename) {
 	QuickTimeAudioStream *audioStream = new QuickTimeAudioStream();
 
 	if (!audioStream->openFromFile(filename)) {

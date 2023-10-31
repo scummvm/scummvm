@@ -1271,9 +1271,9 @@ void MidiDriver_Miles_AdLib::setRegisterStereo(uint8 reg, uint8 valueLeft, uint8
 	_opl->write(0x223, valueRight);
 }
 
-MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
+MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::Path &filenameAdLib, const Common::Path &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
-	Common::String              timbreFilename;
+	Common::Path                timbreFilename;
 	Common::SeekableReadStream *timbreStream = nullptr;
 
 	bool          preferOPL3 = false;
@@ -1374,12 +1374,12 @@ MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &file
 			// If none of them exists and also no stream was passed, we can't do anything about it
 			if (!filenameAdLib.empty()) {
 				if (!filenameOPL3.empty()) {
-					error("MILES-ADLIB: could not open timbre file (%s or %s)", filenameAdLib.c_str(), filenameOPL3.c_str());
+					error("MILES-ADLIB: could not open timbre file (%s or %s)", filenameAdLib.toString(Common::Path::kNativeSeparator).c_str(), filenameOPL3.toString(Common::Path::kNativeSeparator).c_str());
 				} else {
-					error("MILES-ADLIB: could not open timbre file (%s)", filenameAdLib.c_str());
+					error("MILES-ADLIB: could not open timbre file (%s)", filenameAdLib.toString(Common::Path::kNativeSeparator).c_str());
 				}
 			} else {
-				error("MILES-ADLIB: could not open timbre file (%s)", filenameOPL3.c_str());
+				error("MILES-ADLIB: could not open timbre file (%s)", filenameOPL3.toString(Common::Path::kNativeSeparator).c_str());
 			}
 		}
 	}
@@ -1389,14 +1389,14 @@ MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &file
 		// We prefer this situation
 
 		if (!fileStream->open(timbreFilename))
-			error("MILES-ADLIB: could not open timbre file (%s)", timbreFilename.c_str());
+			error("MILES-ADLIB: could not open timbre file (%s)", timbreFilename.toString(Common::Path::kNativeSeparator).c_str());
 
 		streamSize = fileStream->size();
 
 		streamDataPtr = new byte[streamSize];
 
 		if (fileStream->read(streamDataPtr, streamSize) != streamSize)
-			error("MILES-ADLIB: error while reading timbre file (%s)", timbreFilename.c_str());
+			error("MILES-ADLIB: error while reading timbre file (%s)", timbreFilename.toString(Common::Path::kNativeSeparator).c_str());
 		fileStream->close();
 
 	} else if (timbreStream) {

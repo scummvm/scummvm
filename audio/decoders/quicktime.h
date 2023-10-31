@@ -50,7 +50,7 @@ class SeekableAudioStream;
  * @param filename          the filename of the file from which to read the data
  * @return  a new SeekableAudioStream, or NULL, if an error occurred
  */
-SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
+SeekableAudioStream *makeQuickTimeStream(const Common::Path &filename);
 
 /**
  * Try to load a QuickTime sound file from the given seekable stream and create a SeekableAudioStream

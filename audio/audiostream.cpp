@@ -65,12 +65,12 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ "WAV",          ".wav",  makeWAVStream },
 };
 
-SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
+SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::Path &basename) {
 	SeekableAudioStream *stream = nullptr;
 	Common::File *fileHandle = new Common::File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS); ++i) {
-		Common::String filename = basename + STREAM_FILEFORMATS[i].fileExtension;
+		Common::Path filename = basename.append(STREAM_FILEFORMATS[i].fileExtension);
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
 			// Create the stream object
@@ -83,7 +83,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 	delete fileHandle;
 
 	if (stream == nullptr)
-		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
+		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.toString(Common::Path::kNativeSeparator).c_str());
 
 	return stream;
 }
