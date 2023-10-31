@@ -1630,11 +1630,11 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 				return true;
 			}
 
-			byte buffer[4096];
-			const int samplesToRead = ARRAYSIZE(buffer) / 2;
+			int16 buffer[2048];
+			const int samplesToRead = ARRAYSIZE(buffer);
 			uint bytesWritten = 0;
 			int samplesRead;
-			while ((samplesRead = audioStream->readBuffer((int16 *)buffer, samplesToRead))) {
+			while ((samplesRead = audioStream->readBuffer(buffer, samplesToRead))) {
 				uint bytesToWrite = samplesRead * bytesPerSample;
 				outFile.write(buffer, bytesToWrite);
 				bytesWritten += bytesToWrite;
