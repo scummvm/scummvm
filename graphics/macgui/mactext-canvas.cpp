@@ -211,6 +211,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 		D(9, "** splitString, continuing, %d lines", _text.size());
 	}
 
+	_defaultFormatting = defaultFormatting;
+
 	Common::U32String tmp;
 
 	if (curLine == -1 || curLine >= (int)_text.size())
@@ -327,7 +329,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 					s = readHex(&headSize, s, 1);
 					if (headSize == 0xf) // reset
-						chunk.fontSize = defaultFormatting.fontSize;
+						chunk.fontSize = _defaultFormatting.fontSize;
 
 					s = readHex(&indent, s, 1);
 
@@ -360,10 +362,10 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 				case ']': { // \016]  -- setting default color
 					s++;
 
-					chunk.palinfo1 = defaultFormatting.palinfo1;
-					chunk.palinfo2 = defaultFormatting.palinfo2;
-					chunk.palinfo3 = defaultFormatting.palinfo3;
-					chunk.fgcolor  = defaultFormatting.fgcolor;
+					chunk.palinfo1 = _defaultFormatting.palinfo1;
+					chunk.palinfo2 = _defaultFormatting.palinfo2;
+					chunk.palinfo3 = _defaultFormatting.palinfo3;
+					chunk.fgcolor  = _defaultFormatting.fgcolor;
 
 					D(9, "** splitString]: %08x", chunk.fgcolor);
 					break;
@@ -425,7 +427,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 					s = readHex(&fontId, s, 4);
 
-					chunk.fontId = fontId == 0xffff ? defaultFormatting.fontId : fontId;
+					chunk.fontId = fontId == 0xffff ? _defaultFormatting.fontId : fontId;
 
 					D(9, "** splitString[t]: fontId: %d", fontId);
 					break;
@@ -460,7 +462,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 						inTable = false;
 
 						D(9, "** splitString[body end]");
-						processTable(curLine, _maxWidth, defaultFormatting);
+						processTable(curLine, _maxWidth);
 
 						continue;
 					} else if (cmd == 'r') { // Row
@@ -485,7 +487,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 						D(9, "** splitString[RECURSION start]");
 
-						s = cellCanvas->splitString(s, curLine, defaultFormatting);
+						s = cellCanvas->splitString(s, curLine, _defaultFormatting);
 
 						D(9, "** splitString[RECURSION end]");
 					} else if (cmd == 'C') { // Cell end
@@ -515,7 +517,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 					// So far, we enforce single font here, though in the future, font size could be altered
 					if (!_macFontMode)
-						chunk.font = defaultFormatting.font;
+						chunk.font = _defaultFormatting.font;
 					}
 				}
 			}
@@ -542,7 +544,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 		// if the chunks is empty, which means the line will not be rendered properly
 		// so we add a empty string here
 		if (curTextLine->chunks.empty()) {
-			curTextLine->chunks.push_back(defaultFormatting);
+			curTextLine->chunks.push_back(_defaultFormatting);
 		}
 
 		if (*s) {
@@ -981,6 +983,8 @@ Common::U32String MacTextCanvas::getTextChunk(int startRow, int startCol, int en
 }
 
 void MacTextCanvas::reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting) {
+	_defaultFormatting = defaultFormatting;
+
 	// First, we looking for the paragraph start and end
 	int start = *row, end = *row;
 
@@ -1090,20 +1094,22 @@ void MacTextCanvas::setMaxWidth(int maxWidth, MacFontRun &defaultFormatting) {
 		return;
 	}
 
+	_defaultFormatting = defaultFormatting;
+
 	_maxWidth = maxWidth;
 
 	int row, col = 0;
 
 	for (uint i = 0; i < _text.size(); i++) {
 		row = i;
-		reshuffleParagraph(&row, &col, defaultFormatting);
+		reshuffleParagraph(&row, &col, _defaultFormatting);
 
 		while (i < _text.size() - 1 && !_text[i].paragraphEnd)
 			i++;
 	}
 }
 
-void MacTextCanvas::processTable(int line, int maxWidth, MacFontRun &defaultFormatting) {
+void MacTextCanvas::processTable(int line, int maxWidth) {
 	Common::Array<MacTextTableRow> *table = _text[line].table;
 	uint numCols = table->front().cells.size();
 	uint numRows = table->size();
@@ -1197,7 +1203,7 @@ void MacTextCanvas::processTable(int line, int maxWidth, MacFontRun &defaultForm
 		int c = 0;
 		rowH[r] = 0;
 		for (auto &cell : row.cells) {
-			cell.setMaxWidth(colW[c], defaultFormatting);
+			cell.setMaxWidth(colW[c], _defaultFormatting);
 
 			cell.recalcDims();
 			cell.reallocSurface();

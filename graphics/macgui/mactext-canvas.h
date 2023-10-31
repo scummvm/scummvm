@@ -121,6 +121,7 @@ public:
 	uint32 _tbgcolor = 0;
 	bool _macFontMode = true;
 	MacText *_macText;
+	MacFontRun _defaultFormatting;
 
 public:
 	~MacTextCanvas() {
@@ -162,9 +163,10 @@ public:
 	void reshuffleParagraph(int *row, int *col, MacFontRun &defaultFormatting);
 	void setMaxWidth(int maxWidth, MacFontRun &defaultFormatting);
 
-	void processTable(int line, int maxWidth, MacFontRun &defaultFormatting);
-
 	void debugPrint(const char *prefix = nullptr);
+
+private:
+	void processTable(int line, int maxWidth);
 };
 
 struct MacTextTableRow {
