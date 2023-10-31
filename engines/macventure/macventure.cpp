@@ -457,7 +457,7 @@ Common::String MacVentureEngine::getUserInput() {
 }
 
 
-Common::String MacVentureEngine::getStartGameFileName() {
+Common::Path MacVentureEngine::getStartGameFileName() {
 	Common::SeekableReadStream *res;
 	res = _resourceManager->getResource(MKTAG('S', 'T', 'R', ' '), kStartGameFilenameID);
 	if (!res)
@@ -474,7 +474,7 @@ Common::String MacVentureEngine::getStartGameFileName() {
 	delete[] fileName;
 	delete res;
 
-	return result;
+	return Common::Path(result);
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
@@ -956,11 +956,11 @@ Common::String MacVentureEngine::getCommandsPausedString() const {
 	return Common::String("Click to continue");
 }
 
-Common::String MacVentureEngine::getFilePath(FilePathID id) const {
+Common::Path MacVentureEngine::getFilePath(FilePathID id) const {
 	if (id <= 3) { // We don't want a file in the subdirectory
-		return _filenames->getString(id);
+		return Common::Path(_filenames->getString(id));
 	} else { // We want a game file
-		return _filenames->getString(3) + "/" + _filenames->getString(id);
+		return Common::Path(_filenames->getString(3) + "/" + _filenames->getString(id));
 	}
 }
 

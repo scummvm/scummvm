@@ -37,7 +37,7 @@
 
 namespace MacVenture {
 
-#define MACVENTURE_DATA_BUNDLE Common::String("macventure.dat")
+#define MACVENTURE_DATA_BUNDLE "macventure.dat"
 
 struct BorderName {
 	MVWindowType type;
@@ -75,15 +75,15 @@ Common::String windowTypeName(MVWindowType windowType) {
 void MacVentureEngine::loadDataBundle() {
 	_dataBundle = Common::makeZipArchive(MACVENTURE_DATA_BUNDLE);
 	if (!_dataBundle) {
-		error("ENGINE: Couldn't load data bundle '%s'.", MACVENTURE_DATA_BUNDLE.c_str());
+		error("ENGINE: Couldn't load data bundle '%s'.", MACVENTURE_DATA_BUNDLE);
 	}
 }
 
 Common::SeekableReadStream *MacVentureEngine::getBorderFile(MVWindowType windowType, bool isActive) {
-	Common::String filename = windowTypeName(windowType);
-	filename += (isActive ? "_act.bmp" : "_inac.bmp");
+	Common::Path filename(windowTypeName(windowType));
+	filename.appendInPlace(isActive ? "_act.bmp" : "_inac.bmp");
 	if (!_dataBundle->hasFile(filename)) {
-		warning("Missing border file '%s' in data bundle", filename.c_str());
+		warning("Missing border file '%s' in data bundle", filename.toString().c_str());
 		return nullptr;
 	}
 
