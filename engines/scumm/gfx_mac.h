@@ -36,19 +36,6 @@ namespace Scumm {
 class ScummEngine;
 class Actor;
 
-class MacGuiObject {
-protected:
-	bool _redraw = false;
-	bool _enabled = false;
-	Common::Rect _bounds;
-
-public:
-	MacGuiObject(Common::Rect bounds, bool enabled) : _bounds(bounds), _enabled(enabled) {}
-	virtual ~MacGuiObject() {}
-
-	Common::Rect getBounds() const { return _bounds; }
-};
-
 class MacGui {
 protected:
 	ScummEngine *_vm = nullptr;
@@ -145,6 +132,19 @@ protected:
 
 public:
 	class MacDialogWindow;
+
+	class MacGuiObject {
+	protected:
+		bool _redraw = false;
+		bool _enabled = false;
+		Common::Rect _bounds;
+
+	public:
+		MacGuiObject(Common::Rect bounds, bool enabled) : _bounds(bounds), _enabled(enabled) {}
+		virtual ~MacGuiObject() {}
+
+		Common::Rect getBounds() const { return _bounds; }
+	};
 
 	class MacWidget : public MacGuiObject {
 	protected:
