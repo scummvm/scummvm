@@ -794,11 +794,11 @@ void MidiDriver_Miles_Midi::writeToSystemArea(byte index, byte value) {
 	sysExMT32(sysExData, 1, targetAddress);
 }
 
-MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename) {
+MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::Path &instrumentDataFilename) {
 	return MidiDriver_Miles_MIDI_create(MT_MT32, instrumentDataFilename);
 }
 
-MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename) {
+MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::Path &instrumentDataFilename) {
 	assert(midiType == MT_MT32 || midiType == MT_GM || midiType == MT_GS);
 
 	MilesMT32InstrumentEntry *instrumentTablePtr = nullptr;
@@ -820,7 +820,7 @@ MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Co
 		uint16                    instrumentDataSize;
 
 		if (!fileStream->open(instrumentDataFilename))
-			error("MILES-MIDI: could not open instrument file '%s'", instrumentDataFilename.c_str());
+			error("MILES-MIDI: could not open instrument file '%s'", instrumentDataFilename.toString(Common::Path::kNativeSeparator).c_str());
 
 		fileSize = fileStream->size();
 

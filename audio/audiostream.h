@@ -24,12 +24,12 @@
 
 #include "common/ptr.h"
 #include "common/scummsys.h"
-#include "common/str.h"
 #include "common/types.h"
 
 #include "audio/timestamp.h"
 
 namespace Common {
+class Path;
 class SeekableReadStream;
 }
 
@@ -222,7 +222,7 @@ public:
 	 * @return  A SeekableAudioStream ready to use in case of success.
 	 *          NULL in case of an error (e.g. invalid/non-existing file).
 	 */
-	static SeekableAudioStream *openStreamFile(const Common::String &basename);
+	static SeekableAudioStream *openStreamFile(const Common::Path &basename);
 
 	/**
 	 * Seek to a given offset in the stream.

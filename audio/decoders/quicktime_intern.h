@@ -53,7 +53,7 @@ public:
 	 * Load a QuickTime audio file
 	 * @param filename	the filename to load
 	 */
-	bool loadAudioFile(const Common::String &filename);
+	bool loadAudioFile(const Common::Path &filename);
 
 	/**
 	 * Load a QuickTime audio file from a SeekableReadStream

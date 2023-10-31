@@ -95,7 +95,7 @@ bool MidiParser_QT::loadFromContainerStream(Common::SeekableReadStream *stream, 
 	return true;
 }
 
-bool MidiParser_QT::loadFromContainerFile(const Common::String &fileName) {
+bool MidiParser_QT::loadFromContainerFile(const Common::Path &fileName) {
 	unloadMusic();
 
 	if (!parseFile(fileName))
