@@ -36,6 +36,19 @@ namespace Scumm {
 class ScummEngine;
 class Actor;
 
+class MacGuiObject {
+protected:
+	bool _redraw = false;
+	bool _enabled = false;
+	Common::Rect _bounds;
+
+public:
+	MacGuiObject(Common::Rect bounds, bool enabled) : _bounds(bounds), _enabled(enabled) {}
+	virtual ~MacGuiObject() {}
+
+	Common::Rect getBounds() const { return _bounds; }
+};
+
 class MacGui {
 protected:
 	ScummEngine *_vm = nullptr;
@@ -133,16 +146,13 @@ protected:
 public:
 	class MacDialogWindow;
 
-	class MacWidget {
+	class MacWidget : public MacGuiObject {
 	protected:
 		MacGui::MacDialogWindow *_window;
 		int _id = -1;
 
-		Common::Rect _bounds;
 		bool _visible = true;
-		bool _redraw = false;
 		bool _fullRedraw = false;
-		bool _enabled = true;
 
 		Common::String _text;
 		int _value = 0;
@@ -150,7 +160,7 @@ public:
 		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 	public:
-		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : _window(window), _bounds(bounds), _text(text), _enabled(enabled) {}
+		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacGuiObject(bounds, enabled), _window(window), _text(text) {}
 		virtual ~MacWidget() {};
 
 		void setId(int id) { _id = id; }
@@ -160,8 +170,6 @@ public:
 		// not trigger a redraw.
 		void setVisible(bool visible) { _visible = visible; }
 		bool isVisible() const { return _visible; }
-
-		Common::Rect getBounds() const { return _bounds; }
 
 		void setRedraw(bool fullRedraw = false);
 
@@ -481,20 +489,14 @@ private:
 	int getInventoryScrollOffset() const;
 	void setInventoryScrollOffset(int n) const;
 
-	class Widget {
+	class Widget : public MacGuiObject {
 	private:
 		int _timer = 0;
-
-	protected:
-		bool _redraw = false;
-		bool _enabled = false;
 
 	public:
 		static ScummEngine *_vm;
 		static MacIndy3Gui *_gui;
 		static Graphics::Surface *_surface;
-
-		Common::Rect _bounds;
 
 		Widget(int x, int y, int width, int height);
 		virtual ~Widget() {}
