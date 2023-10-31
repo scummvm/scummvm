@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-30 18:33+0000\n"
-"PO-Revision-Date: 2023-10-28 00:41+0000\n"
+"PO-Revision-Date: 2023-10-31 08:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -969,16 +969,12 @@ msgid "Go to end of line"
 msgstr "Ir para o fim da linha"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Select to end of line"
-msgstr "Ir para o fim da linha"
+msgstr "Selecionar até o fim da linha"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Select to start of line"
-msgstr "Ir para o início da linha"
+msgstr "Selecionar até o início da linha"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
@@ -9061,10 +9057,8 @@ msgid "play C major on distaff"
 msgstr "tocar dó maior no fio"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Exibir inventário"
+msgstr "Exibir inventário de rascunhos"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
