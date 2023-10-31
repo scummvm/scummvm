@@ -28,7 +28,7 @@ const uint8 Chewy::Module_TMF::TMF_MOD_SONG_NAME[] = {
 	'S', 'C', 'U', 'M', 'M',
 	'V', 'M', ' ', 'M', 'O',
 	'D', 'U', 'L', 'E', '\0',
-	'\0', '\0', '\0', '\0', '\0', '\0;'
+	'\0', '\0', '\0', '\0', '\0', '\0'
 };
 const uint8 Chewy::Module_TMF::TMF_MOD_INSTRUMENT_NAME[] = {
 	'S', 'C', 'U', 'M', 'M',
