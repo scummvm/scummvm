@@ -89,7 +89,7 @@ struct SDCallbacks {
 	int (*codespan)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
 	int (*double_emphasis)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
 	int (*emphasis)(SDDataBuffer *ob, const SDDataBuffer *text, void *opaque);
-	int (*image)(SDDataBuffer *ob, const SDDataBuffer *link, const SDDataBuffer *title, const SDDataBuffer *alt, void *opaque);
+	int (*image)(SDDataBuffer *ob, const SDDataBuffer *link, const SDDataBuffer *title, const SDDataBuffer *alt, const SDDataBuffer *ext, void *opaque);
 	int (*linebreak)(SDDataBuffer *ob, void *opaque);
 	int (*link)(SDDataBuffer *ob, const SDDataBuffer *link, const SDDataBuffer *title, const SDDataBuffer *content, void *opaque);
 	int (*raw_html_tag)(SDDataBuffer *ob, const SDDataBuffer *tag, void *opaque);

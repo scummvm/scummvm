@@ -1075,7 +1075,7 @@ static size_t char_link(SDDataBuffer *ob, SDMarkdown *rndr, byte *data, size_t o
 		if (ob->size && ob->data[ob->size - 1] == '!')
 			ob->size -= 1;
 
-		ret = rndr->_cb.image(ob, u_link, title, content, rndr->_opaque);
+		ret = rndr->_cb.image(ob, u_link, title, content, ext, rndr->_opaque);
 	} else {
 		ret = rndr->_cb.link(ob, u_link, title, content, rndr->_opaque);
 	}

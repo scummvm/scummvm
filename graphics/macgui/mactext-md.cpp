@@ -226,7 +226,7 @@ int render_emphasis(Common::SDDataBuffer *ob, const Common::SDDataBuffer *text, 
 	return 1;
 }
 
-int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, const Common::SDDataBuffer *title, const Common::SDDataBuffer *alt, void *opaque) {
+int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, const Common::SDDataBuffer *title, const Common::SDDataBuffer *alt, const Common::SDDataBuffer *ext, void *opaque) {
 	if (!link)
 		return 0;
 
@@ -245,7 +245,7 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 
 	sd_bufput(ob, res.c_str(), res.size());
 
-	debug(1, "render_image(%s, %s, %s)", PR(link), PR(title), PR(alt));
+	debug(1, "render_image(%s, %s, %s, %s)", PR(link), PR(title), PR(alt), PR(ext));
 	return 1;
 }
 
