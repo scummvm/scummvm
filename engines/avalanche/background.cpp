@@ -277,7 +277,7 @@ void Background::update() {
 
 void Background::loadSprites(byte number) {
 	Common::File f;
-	_filename = _filename.format("chunk%d.avd", number);
+	_filename = Common::Path(Common::String::format("chunk%d.avd", number));
 	if (!f.open(_filename))
 		return; // We skip because some rooms don't have sprites in the background.
 

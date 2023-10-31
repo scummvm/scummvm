@@ -325,11 +325,10 @@ void AvalancheEngine::loadAlso(byte num) {
 			}
 		}
 	}
-	Common::String filename;
-	filename = Common::String::format("also%d.avd", num);
+	Common::Path filename(Common::String::format("also%d.avd", num));
 	Common::File file;
 	if (!file.open(filename))
-		error("AVALANCHE: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(128);
 
@@ -416,10 +415,10 @@ void AvalancheEngine::loadAlso(byte num) {
 }
 
 void AvalancheEngine::loadBackground(byte num) {
-	Common::String filename = Common::String::format("place%d.avd", num);
+	Common::Path filename(Common::String::format("place%d.avd", num));
 	Common::File file;
 	if (!file.open(filename))
-		error("AVALANCHE: File not found: %s", filename.c_str());
+		error("AVALANCHE: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(146);
 	if (!_roomnName.empty())
@@ -925,7 +924,7 @@ void AvalancheEngine::thinkAbout(byte object, bool type) {
 	_thinks = object;
 	object--;
 
-	Common::String filename;
+	Common::Path filename;
 	if (type == kThing) {
 		filename = "thinks.avd";
 	} else { // kPerson

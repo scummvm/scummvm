@@ -167,11 +167,11 @@ void GraphicManager::loadMouse(byte which) {
 	cursor.free();
 }
 
-void GraphicManager::drawThinkPic(Common::String filename, int id) {
+void GraphicManager::drawThinkPic(const Common::Path &filename, int id) {
 	static const int16 picSize = 966;
 	Common::File file;
 	if (!file.open(filename))
-		error("drawThinkPic(): File not found: %s", filename.c_str());
+		error("drawThinkPic(): File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(id * picSize + 65);
 	Graphics::Surface picture = loadPictureGraphic(file);
@@ -492,10 +492,10 @@ void GraphicManager::blackOutScreen() {
 
 void GraphicManager::nimLoad() {
 	Common::File file;
-	Common::String filename = "nim.avd";
+	Common::Path filename("nim.avd");
 
 	if (!file.open(filename))
-		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+		error("AVALANCHE: Scrolls: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	file.seek(41);
 
@@ -1111,10 +1111,10 @@ void GraphicManager::drawErrorLight(bool state) {
  */
 void GraphicManager::drawSign(Common::String fn, int16 xl, int16 yl, int16 y) {
 	Common::File file;
-	Common::String filename = Common::String::format("%s.avd", fn.c_str());
+	Common::Path filename(Common::String::format("%s.avd", fn.c_str()));
 
 	if (!file.open(filename))
-		error("AVALANCHE: Scrolls: File not found: %s", filename.c_str());
+		error("AVALANCHE: Scrolls: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	Graphics::Surface sign; // We make a Surface object for the picture itself.
 	sign = loadPictureSign(file, xl, yl);
