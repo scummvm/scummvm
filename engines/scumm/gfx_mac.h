@@ -273,7 +273,6 @@ public:
 	private:
 		OSystem *_system;
 		Common::Rect _bounds;
-		Common::Rect _innerBounds;
 		int _margin;
 
 		bool _visible = false;

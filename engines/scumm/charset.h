@@ -285,15 +285,12 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	bool _useRealCharWidth;
+	const Graphics::Font *_font;
 	bool _useCorrectFontSpacing;
 	bool _pad;
 	int _lastTop;
 
-	const Graphics::Font *getFont(int id) const;
-
 	int getDrawWidthIntern(uint16 chr) const;
-
 	void printCharInternal(int chr, int color, bool shadow, int x, int y);
 
 	byte getTextColor();
@@ -311,7 +308,6 @@ public:
 	int getFontHeight() const override;
 	int getCharWidth(uint16 chr) const override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
-	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 	void setColor(byte color) override;
 };
 
