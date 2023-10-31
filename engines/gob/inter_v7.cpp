@@ -693,6 +693,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 			props.lastFrame += 100;
 		}
+
 		if (props.lastFrame <= -20)
 			props.noBlock    = true;
 		//if (!(props.flags & VideoPlayer::kFlagNoVideo))
@@ -701,11 +702,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 		props.slot = (-props.lastFrame) % 10;
 	}
 
-	if (props.startFrame == -2) {
-		props.startFrame = 0;
-		props.lastFrame  = -1;
+	if (props.startFrame == -2)
 		props.noBlock    = true;
-	}
 
 	_vm->_vidPlayer->evaluateFlags(props);
 
@@ -720,9 +718,12 @@ void Inter_v7::o7_playVmdOrMusic() {
 	}
 
 	if (_vm->_vidPlayer->getVideoBufferSize(slot) == 0 || !_vm->_vidPlayer->hasVideo(slot)) {
-		props.startFrame = 0;
-		props.lastFrame  = -1;
 		props.noBlock = true;
+	}
+
+	if (props.startFrame == -2 || props.startFrame == -3) {
+		props.startFrame = 0;
+		props.lastFrame  = 0;
 	}
 
 	if (props.hasSound)
