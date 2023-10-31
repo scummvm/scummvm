@@ -167,6 +167,7 @@ public:
 
 private:
 	void processTable(int line, int maxWidth);
+	void parsePicExt(const Common::U32String &ext, uint16 &w, uint16 &h, int defpercent);
 };
 
 struct MacTextTableRow {

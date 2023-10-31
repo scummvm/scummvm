@@ -177,12 +177,13 @@ Common::String preprocessImageExt(const char *ptr) {
 			}
 
 			if (*ptr == 'e' || *ptr == '%' || *ptr == 'p') {
+				char unit = *ptr == 'e' ? 'm' : *ptr;
 				if (state == kStateW) {
 					w = num;
-					wu = *ptr;
+					wu = unit;
 				} else {
 					h = num;
-					hu = *ptr;
+					hu = unit;
 				}
 
 				while (*ptr && *ptr != ' ' && *ptr != '\t')
@@ -733,6 +734,91 @@ int getStringMaxWordWidth(MacFontRun &format, const Common::U32String &str) {
 	}
 }
 
+void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint16 &hOut, int defpercent) {
+	const Common::U32String::value_type *s = ext.c_str();
+
+	D(9, "P: %s", ext.encode().c_str());
+
+	// wwwwWhhhhH
+	// 0123456789
+
+	bool useDefault = false;
+
+	if (ext.size() == 10 && s[4] != ' ' && s[9] != ' ' && s[4] != s[9])  {
+		warning("MacTextCanvas: Non-matching dimension unitss in image extension: '%s'", ext.encode().c_str());
+
+		useDefault = true;
+	}
+
+	// if it is empty or without dimensions, use default width percrent
+	if (useDefault || ext.size() < 10 || (s[4] == ' ' && s[9] == ' ')) {
+		float ratio = _maxWidth * defpercent / 100.0 / (float)wOut;
+
+		wOut = wOut * ratio;
+		hOut = hOut * ratio;
+
+		return;
+	}
+
+	uint16 w, h;
+
+	(void)readHex(&w, s, 4);
+	(void)readHex(&h, &s[5], 4);
+
+	D(9, "w: %d%c h: %d%c", w, s[4], h, s[9]);
+
+	if (s[9] == '%') {
+		warning("MacTextCanvas: image height in %% is not supported");
+		h = 0;
+	}
+
+	float ratio;
+
+	// Percent of the total width
+	if (s[4] == '%') {
+		ratio = _maxWidth * w / 100.0 / (float)wOut;
+
+	// Size in em (font height) units
+	} else if (s[4] == 'm' || s[5] == 'm') {
+		int em = _defaultFormatting.fontSize;
+		D(9, "em: %d", em);
+		if (w != 0 && h != 0) {
+			wOut = em * w;
+			hOut = em * h;
+
+			return;
+		}
+
+		// now we need to compute ratio
+		if (w != 0)
+			ratio = em * w / (float)wOut;
+		else
+			ratio = em * h / (float)hOut;
+
+	// Size in pixels
+	} else if (s[4] == 'p' || s[5] == 'p') {
+		if (w != 0 && h != 0) {
+			wOut = w;
+			hOut = h;
+
+			return;
+		}
+
+		// now we need to compute ratio
+		if (w != 0)
+			ratio = w / 100 / (float)wOut;
+		else
+			ratio = h / 100 / (float)hOut;
+	} else {
+		error("MacTextCanvas: malformed image extension '%s", ext.encode().c_str());
+	}
+
+	D(9, "ratio is %f", ratio);
+
+	wOut = wOut * ratio;
+	hOut = hOut * ratio;
+}
+
 int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 	if ((uint)lineNum >= _text.size())
 		return 0;
@@ -746,10 +832,13 @@ int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {
 		const Surface *image = _macText->getImageSurface(line->picfname);
 
 		if (image) {
-			float ratio = _maxWidth * line->picpercent / 100.0 / (float)image->w;
 			line->width = _maxWidth;
-			line->height = image->h * ratio;
-			line->charwidth = image->w * ratio;
+
+			uint16 w = image->w, h = image->h;
+
+			parsePicExt(line->picext, w, h, line->picpercent);
+			line->charwidth = w;
+			line->height = h;
 		} else {
 			line->width = _maxWidth;
 			line->height = 1;
