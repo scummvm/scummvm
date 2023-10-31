@@ -1765,7 +1765,7 @@ void Song::stop() {
 
 void Song::playSong(SoundType song, bool fadeIn, int ramp) {
 
-	Common::String fileName = getFileName(song);
+	Common::Path fileName = getFileName(song);
 	Audio::AudioStream* musicStream = createStream(fileName);
 
 	if (musicStream == nullptr) return;
@@ -1797,7 +1797,7 @@ void Song::playSong(SoundType song, bool fadeIn, int ramp) {
 	);
 }
 
-Common::String Song::getFileName(SoundType song) {
+Common::Path Song::getFileName(SoundType song) {
 	Common::String fileName(soundList[song].name);
 
 	if (g_hdb->getPlatform() == Common::kPlatformLinux) {
@@ -1820,10 +1820,10 @@ Common::String Song::getFileName(SoundType song) {
 		}
 	}
 
-	return fileName;
+	return Common::Path(fileName);
 }
 
-Audio::AudioStream* Song::createStream(Common::String fileName) {
+Audio::AudioStream* Song::createStream(const Common::Path &fileName) {
 	Common::SeekableReadStream* stream = SearchMan.createReadStreamForMember(fileName);
 	if (stream == nullptr)
 		return nullptr;

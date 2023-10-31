@@ -40,9 +40,9 @@ FileMan::~FileMan() {
 		delete _dir[i];
 }
 
-void FileMan::openMPC(const Common::String &filename) {
+void FileMan::openMPC(const Common::Path &filename) {
 	if (!_mpcFile->open(filename))
-		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.c_str());
+		error("FileMan::openMPC(): Error reading the MSD/MPC file %s", filename.toString().c_str());
 
 	_dataHeader.id = _mpcFile->readUint32BE();
 
