@@ -876,24 +876,16 @@ int MacGui::MacDialogWindow::runDialog() {
 				if (!buttonPressed && event.kbd.keycode == Common::KEYCODE_RETURN) {
 					MacWidget *widget = getDefaultWidget();
 					if (widget && widget->isEnabled()) {
-						widget->setRedraw();
-						widget->draw(true);
-						update();
+						for (int i = 0; i < 2; i++) {
+							widget->setRedraw();
+							widget->draw(i == 0);
+							update();
 
-						for (int i = 0; i < 10; i++) {
-							_system->delayMillis(10);
-							_system->updateScreen();
+							for (int j = 0; j < 10; j++) {
+								_system->delayMillis(10);
+								_system->updateScreen();
+							}
 						}
-
-						widget->setRedraw();
-						widget->draw();
-						update();
-
-						for (int i = 0; i < 10; i++) {
-							_system->delayMillis(10);
-							_system->updateScreen();
-						}
-
 						return widget->getId();
 					}
 				}
