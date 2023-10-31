@@ -27,11 +27,11 @@
 
 namespace Freescape {
 
-Common::SeekableReadStream *DrillerEngine::decryptFileAtari(const Common::String filename) {
+Common::SeekableReadStream *DrillerEngine::decryptFileAtari(const Common::Path &filename) {
 	Common::File file;
 	file.open(filename);
 	if (!file.isOpen())
-		error("Failed to open %s", filename.c_str());
+		error("Failed to open %s", filename.toString().c_str());
 
 	int size = file.size();
 	byte *encryptedBuffer = (byte *)malloc(size);

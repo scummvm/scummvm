@@ -101,7 +101,7 @@ private:
 	uint32 getPixel8bitTitleImage(int index);
 	void renderPixels8bitTitleImage(Graphics::ManagedSurface *surface, int &i, int &j, int pixels);
 
-	Common::SeekableReadStream *decryptFileAtari(const Common::String filename);
+	Common::SeekableReadStream *decryptFileAtari(const Common::Path &filename);
 };
 
 enum DrillerReleaseFlags {

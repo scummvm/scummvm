@@ -111,11 +111,11 @@ void FreescapeEngine::loadAssetsC64FullGame() {
 void FreescapeEngine::loadDataBundle() {
 	_dataBundle = Common::makeZipArchive(FREESCAPE_DATA_BUNDLE);
 	if (!_dataBundle) {
-		error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
+		error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE);
 	}
-	Common::String versionFilename = "version";
+	Common::Path versionFilename("version");
 	if (!_dataBundle->hasFile(versionFilename))
-		error("No version number in %s", FREESCAPE_DATA_BUNDLE.c_str());
+		error("No version number in %s", FREESCAPE_DATA_BUNDLE);
 
 	Common::SeekableReadStream *versionFile = _dataBundle->createReadStreamForMember(versionFilename);
 	char *versionData = (char *)malloc((versionFile->size() + 1) * sizeof(char));
@@ -129,14 +129,14 @@ void FreescapeEngine::loadDataBundle() {
 
 Graphics::Surface *FreescapeEngine::loadBundledImage(const Common::String &name) {
 	Image::BitmapDecoder decoder;
-	Common::String bmpFilename = name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp";
-	debugC(1, kFreescapeDebugParser, "Loading %s from bundled archive", bmpFilename.c_str());
+	Common::Path bmpFilename(name + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp");
+	debugC(1, kFreescapeDebugParser, "Loading %s from bundled archive", bmpFilename.toString().c_str());
 	if (!_dataBundle->hasFile(bmpFilename))
-		error("Failed to open file %s from bundle", bmpFilename.c_str());
+		error("Failed to open file %s from bundle", bmpFilename.toString().c_str());
 
 	Common::SeekableReadStream *bmpFile = _dataBundle->createReadStreamForMember(bmpFilename);
 	if (!decoder.loadStream(*bmpFile))
-		error("Failed to decode bmp file %s from bundle", bmpFilename.c_str());
+		error("Failed to decode bmp file %s from bundle", bmpFilename.toString().c_str());
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
