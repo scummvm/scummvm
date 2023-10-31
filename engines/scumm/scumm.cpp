@@ -1332,7 +1332,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	if (_game.platform == Common::kPlatformMacintosh) {
 		if (_game.id == GID_INDY3) {
 			macFontFile = macResourceFile;
-		} if (_game.id == GID_LOOM) {
+		} else if (_game.id == GID_LOOM) {
 			macInstrumentFile = macResourceFile;
 			macFontFile = macResourceFile;
 			_macCursorFile = macResourceFile;
