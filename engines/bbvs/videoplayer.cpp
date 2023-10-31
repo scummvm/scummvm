@@ -28,16 +28,16 @@
 namespace Bbvs {
 
 void BbvsEngine::playVideo(int videoNum) {
-	Common::String videoFilename;
+	Common::Path videoFilename;
 
 	if (videoNum >= 100)
-		videoFilename = Common::String::format("snd/snd%05d.aif", videoNum + 1400);
+		videoFilename = Common::Path(Common::String::format("snd/snd%05d.aif", videoNum + 1400));
 	else
-		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
+		videoFilename = Common::Path(Common::String::format("vid/video%03d.avi", videoNum - 1));
 
 	Video::AVIDecoder videoDecoder;
 	if (!videoDecoder.loadFile(videoFilename)) {
-		warning("Unable to open video %s", videoFilename.c_str());
+		warning("Unable to open video %s", videoFilename.toString(Common::Path::kNativeSeparator).c_str());
 		return;
 	}
 

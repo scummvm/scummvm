@@ -36,7 +36,7 @@ GameModule::~GameModule() {
 	unload();
 }
 
-void GameModule::load(const char *filename) {
+void GameModule::load(const Common::Path &filename) {
 	debug(0, "GameModule::load()");
 
 	unload();
@@ -44,7 +44,7 @@ void GameModule::load(const char *filename) {
 	Common::File fd;
 
 	if (!fd.open(filename))
-		error("GameModule::load() Could not open %s", filename);
+		error("GameModule::load() Could not open %s", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	loadBgSprites(fd);
 	loadCameraInits(fd);
