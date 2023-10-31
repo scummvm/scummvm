@@ -132,7 +132,7 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 	OSystem_POSIX::addSysArchivesToSearchSet(s, priority);
 
 	// Get URL of the Resource directory of the .app bundle
-	Common::String bundlePath = getResourceAppBundlePathMacOSX();
+	Common::Path bundlePath(getResourceAppBundlePathMacOSX(), Common::Path::kNativeSeparator);
 	if (!bundlePath.empty()) {
 		// Success: search with a depth of 2 so the shaders are found
 		s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath, 2), priority);
@@ -265,7 +265,7 @@ Common::Path OSystem_MacOSX::getDefaultIconsPath() {
 Common::Path OSystem_MacOSX::getDefaultDLCsPath() {
 	const Common::Path defaultDLCsPath(getAppSupportPathMacOSX() + "/DLCs");
 
-	if (!Posix::assureDirectoryExists(defaultDLCsPath.toString())) {
+	if (!Posix::assureDirectoryExists(defaultDLCsPath.toString(Common::Path::kNativeSeparator))) {
 		return Common::Path();
 	}
 

@@ -39,7 +39,7 @@
 
 class AssetInputStream : public Common::SeekableReadStream {
 public:
-	AssetInputStream(AAssetManager *as, const Common::String &path);
+	AssetInputStream(AAssetManager *as, const Common::Path &path);
 	virtual ~AssetInputStream();
 
 	virtual bool eos() const { return _eos; }
@@ -63,9 +63,9 @@ private:
 	bool _eos;
 };
 
-AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path) :
+AssetInputStream::AssetInputStream(AAssetManager *as, const Common::Path &path) :
 	_eos(false), _pos(0) {
-	_asset = AAssetManager_open(as, path.c_str(), AASSET_MODE_RANDOM);
+	_asset = AAssetManager_open(as, path.toString(Common::Path::kNativeSeparator).c_str(), AASSET_MODE_RANDOM);
 	_len = AAsset_getLength64(_asset);
 }
 
@@ -115,7 +115,7 @@ AndroidAssetArchive::~AndroidAssetArchive() {
 }
 
 bool AndroidAssetArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
+	Common::String name = path.toString(Common::Path::kNativeSeparator);
 	AAsset *asset = AAssetManager_open(_am, name.c_str(), AASSET_MODE_RANDOM);
 	bool exists = false;
 	if (asset != NULL) {
@@ -132,14 +132,14 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 	}
 
 	int count = 0;
-	Common::List<Common::String> dirs;
+	Common::List<Common::Path> dirs;
 	dirs.push_back("");
 	for (const auto& currentDir : dirs) {
 		AAssetDir *dir = AAssetManager_openDir(_am, "");
 		const char *file = AAssetDir_getNextFileName(dir);
 
 		while (file) {
-			member_list.push_back(getMember(currentDir + Common::String(file)));
+			member_list.push_back(getMember(currentDir.appendComponent(file)));
 			++count;
 			file = AAssetDir_getNextFileName(dir);
 		}
@@ -160,7 +160,7 @@ Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const
 	if (!hasFile(path)) {
 		return nullptr;
 	}
-	return new AssetInputStream(_am, path.toString());
+	return new AssetInputStream(_am, path);
 }
 
 #endif

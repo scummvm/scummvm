@@ -438,7 +438,7 @@ public:
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 private:
-	typedef Common::List<Common::String> FilenameList;
+	typedef Common::List<Common::Path> FilenameList;
 
 	FilenameList _files;
 };
@@ -449,7 +449,8 @@ BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName
 
 	Win32ResourceArchive *arch = (Win32ResourceArchive *)lParam;
 	Common::String filename = Win32::tcharToString(lpszName);
-	arch->_files.push_back(filename);
+	// We use / as path separator in resources
+	arch->_files.push_back(Common::Path(filename, '/'));
 	return TRUE;
 }
 
@@ -458,9 +459,8 @@ Win32ResourceArchive::Win32ResourceArchive() {
 }
 
 bool Win32ResourceArchive::hasFile(const Common::Path &path) const {
-	Common::String name = path.toString();
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		if (i->equalsIgnoreCase(name))
+		if (i->equalsIgnoreCase(path))
 			return true;
 	}
 
@@ -481,7 +481,8 @@ const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Pat
 }
 
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
+	// We store paths in resources using / separator
+	Common::String name = path.toString('/');
 	TCHAR *tName = Win32::stringToTchar(name);
 	HRSRC resource = FindResource(nullptr, tName, MAKEINTRESOURCE(256));
 	free(tName);
