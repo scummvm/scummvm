@@ -225,7 +225,7 @@ Common::HardwareInputSet *OSystem_iOS7::getHardwareInputSet() {
 	}
 
 	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
-  
+
 	return inputSet;
 }
 
@@ -256,13 +256,13 @@ _s(
 "\n"
 "The touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).\n"
 "\n"
-"  ![Direct mouse mode](mouse.png \"Direct mouse mode\")\n"
+"  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
 "\n"
 "### Touchpad emulation \n"
 "\n"
 "The touch controls are indirect, like on a laptop touchpad.\n"
 "\n"
-"  ![Touchpad mode](touchpad.png \"Touchpad mode\")\n"
+"  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
 "\n"
 "To select the preferred touch mode for menus, 2D games, and 3D games, go to **Global Options > Backend > Choose the preferred touch mode**.\n"
 "\n"
@@ -292,14 +292,14 @@ _s(
 "\n"
 "To open the Global Main Menu, tap on the menu icon at the top right of the screen or by swiping two fingers downwards.\n"
 "\n"
-"  ![Menu icon](menu.png \"Menu icon\")\n"
+"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
 "\n"
 "## Virtual keyboard\n"
 "\n"
 "To open the virtual keyboard, long press on the controller icon at the top right of the screen, perform a pinch gesture (zoom out) or tap on any editable text field. To hide the virtual keyboard, tap the controller icon again, do an opposite pinch gesture (zoom in) or tap outside the text field.\n"
 "\n"
 "\n"
-"  ![Keybpard icon](keyboard.png \"Keyboard icon\")\n"
+"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 ),
 
