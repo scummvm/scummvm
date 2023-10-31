@@ -363,7 +363,7 @@ void dumpBundle(const char *fileName) {
 		debug(0, "%s", g_cine->_partBuffer[i].partName);
 
 		Common::DumpFile out;
-		if (out.open(Common::String("dumps/") + g_cine->_partBuffer[i].partName)) {
+		if (out.open(Common::Path("dumps/").appendInPlace(g_cine->_partBuffer[i].partName))) {
 			out.write(data, g_cine->_partBuffer[i].unpackedSize);
 			out.close();
 		}
