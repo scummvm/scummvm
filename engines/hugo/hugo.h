@@ -219,7 +219,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
-	Common::String _picDir;
+	Common::Path _picDir;
 
 	Command _statusLine;
 	Command _scoreLine;
