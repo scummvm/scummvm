@@ -327,10 +327,14 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 					_text[curLine].pictitle = Common::U32String(s, len);
 					s += len;
 
-					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'",
+					s = readHex(&len, s, 2);
+					_text[curLine].picext = Common::U32String(s, len);
+					s += len;
+
+					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'  ext: '%s'",
 						_text[curLine].picpercent,
 						_text[curLine].picfname.c_str(), _text[curLine].picalt.encode().c_str(),
-						_text[curLine].pictitle.encode().c_str());
+						_text[curLine].pictitle.encode().c_str(), _text[curLine].picext.encode().c_str());
 					break;
 					}
 

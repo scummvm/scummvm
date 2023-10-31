@@ -239,9 +239,16 @@ int render_image(Common::SDDataBuffer *ob, const Common::SDDataBuffer *link, con
 		res += "00";
 
 	if (title)
-		res += Common::String::format("%02x%s\n", (uint)title->size, Common::String((const char *)title->data, title->size).c_str());
+		res += Common::String::format("%02x%s", (uint)title->size, Common::String((const char *)title->data, title->size).c_str());
 	else
-		res += "00\n";
+		res += "00";
+
+	if (ext)
+		res += Common::String::format("%02x%s", (uint)ext->size, Common::String((const char *)ext->data, ext->size).c_str());
+	else
+		res += "00";
+
+	res += "\n";
 
 	sd_bufput(ob, res.c_str(), res.size());
 

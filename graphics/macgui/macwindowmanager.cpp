@@ -610,6 +610,7 @@ Common::U32String stripFormat(const Common::U32String &str) {
 					res += ']';
 
 					s = readHex(&len, s, 2); // title
+					s = readHex(&len, s, 2); // ext
 					s += len;
 				} else if (*s == 't') { // font
 					s += 5;

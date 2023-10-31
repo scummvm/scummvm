@@ -183,7 +183,7 @@ struct MacTextLine {
 	int indent = 0; // in units
 	int firstLineIndent = 0; // in pixels
 	Common::String picfname;
-	Common::U32String picalt, pictitle;
+	Common::U32String picalt, pictitle, picext;
 	uint16 picpercent = 50;
 	Common::Array<MacTextTableRow> *table = nullptr;
 	ManagedSurface *tableSurface = nullptr;
