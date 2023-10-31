@@ -30,7 +30,7 @@ namespace Draci {
 const char * const kFontSmall = "Small.fon";
 const char * const kFontBig = "Big.fon";
 
-Font::Font(const Common::String &filename) {
+Font::Font(const Common::Path &filename) {
 	_fontHeight = 0;
 	_maxCharWidth = 0;
 	_charWidths = nullptr;
@@ -61,7 +61,7 @@ Font::~Font() {
  *              [138 * fontHeight * maxWidth bytes] character data, stored row-wise
  */
 
-bool Font::loadFont(const Common::String &filename) {
+bool Font::loadFont(const Common::Path &filename) {
 	// Free previously loaded font (if any)
 	freeFont();
 
@@ -70,10 +70,10 @@ bool Font::loadFont(const Common::String &filename) {
 	f.open(filename);
 	if (f.isOpen()) {
 		debugC(6, kDraciGeneralDebugLevel, "Opened font file %s",
-			filename.c_str());
+			filename.toString(Common::Path::kNativeSeparator).c_str());
 	} else {
 		debugC(6, kDraciGeneralDebugLevel, "Error opening font file %s",
-			filename.c_str());
+			filename.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 
@@ -93,7 +93,7 @@ bool Font::loadFont(const Common::String &filename) {
 	_charData = new byte[fontDataSize];
 	f.read(_charData, fontDataSize);
 
-	debugC(5, kDraciGeneralDebugLevel, "Font %s loaded", filename.c_str());
+	debugC(5, kDraciGeneralDebugLevel, "Font %s loaded", filename.toString(Common::Path::kNativeSeparator).c_str());
 
 	return true;
 }

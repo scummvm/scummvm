@@ -258,7 +258,7 @@ SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
 	sample._frequency = freq ? freq : _defaultFreq;
 	sample._format = _format;
 	// Read in the file (without the file header)
-	Common::String filename = Common::String::format("%d.%s", i+1, _extension);
+	Common::Path filename(Common::String::format("%d.%s", i+1, _extension));
 	sample._stream = _archive->createReadStreamForMember(filename);
 	if (!sample._stream) {
 		debugC(2, kDraciArchiverDebugLevel, "Doesn't exist");
