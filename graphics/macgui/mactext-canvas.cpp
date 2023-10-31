@@ -122,6 +122,86 @@ void MacTextCanvas::splitString(const Common::U32String &str, int curLine, MacFo
 	(void)splitString(str.c_str(), curLine, defaultFormatting);
 }
 
+Common::String preprocessImageExt(const char *ptr) {
+	// w[idth]=WWWw  -- width in units 'w'
+	// h[eight]=HHHh -- height in units 'h'
+	//
+	// units:
+	//   % for percents of the text width  -> %
+	//   em for font height as a unit      -> e
+	//   px for actual pixels              -> p
+	//
+	// Translated into fixed format:
+	// WWWWwHHHHh -- 4 fixed hex numbers followed by units
+
+	int w = 0, h = 0;
+	char wu = ' ', hu = ' ';
+
+	enum {
+		kStateNone,
+		kStateW,
+		kStateH,
+	};
+
+	int state = kStateNone;
+
+	while (*ptr) {
+		if (*ptr == ' ' || *ptr == '\t') {
+			ptr++;
+			continue;
+		}
+
+		if (*ptr == 'w' || *ptr == 'h') {
+			state = *ptr == 'w' ? kStateW : kStateH;
+
+			while (*ptr && *ptr != '=')
+				ptr++;
+
+			if (*ptr != '=') {
+				warning("MacTextCanvas: Malformatted image extention: '=' expected at '%s'", ptr);
+				return "";
+			}
+		} else if (Common::isDigit(*ptr)) {
+			int num = 0;
+
+			if (state == kStateNone) {
+				warning("MacTextCanvas: Malformatted image extention: unexpected digit at '%s'", ptr);
+				return "";
+			}
+
+			while (*ptr && Common::isDigit(*ptr)) {
+				num *= 10;
+				num += *ptr - '0';
+
+				ptr++;
+			}
+
+			if (*ptr == 'e' || *ptr == '%' || *ptr == 'p') {
+				if (state == kStateW) {
+					w = num;
+					wu = *ptr;
+				} else {
+					h = num;
+					hu = *ptr;
+				}
+
+				while (*ptr && *ptr != ' ' && *ptr != '\t')
+					ptr++;
+			} else {
+				warning("MacTextCanvas: Malformatted image extention: %% or e[m] or p[x] expected at '%s'", ptr);
+				return "";
+			}
+		} else {
+			warning("MacTextCanvas: Malformatted image extention: w[idth] or h[eight] expected at '%s'", ptr);
+			return "";
+		}
+
+		ptr++;
+	}
+
+	return Common::String::format("%04x%c%04x%c", w, wu, h, hu);
+}
+
 const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U32String::value_type *s, int curLine, MacFontRun &defaultFormatting) {
 	if (_text.empty()) {
 		_text.resize(1);
@@ -328,7 +408,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 					s += len;
 
 					s = readHex(&len, s, 2);
-					_text[curLine].picext = Common::U32String(s, len);
+					_text[curLine].picext = preprocessImageExt(Common::U32String(s, len).encode().c_str());
 					s += len;
 
 					D(9, "** splitString[i]: %d%% fname: '%s'  alt: '%s'  title: '%s'  ext: '%s'",
