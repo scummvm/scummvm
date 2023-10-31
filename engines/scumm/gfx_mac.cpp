@@ -2096,7 +2096,7 @@ bool MacLoomGui::runOptionsDialog() {
 	int music = 0;
 	int scrolling = 0;
 	int fullAnimation = 0;
-	int textSpeed = 75;
+	int textSpeed = 5;
 	int musicQuality = 2;
 
 	MacDialogWindow *window = createDialog(1000);
@@ -2109,8 +2109,7 @@ bool MacLoomGui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	// TODO: What is the range of the text speed setting?
-	window->addSlider(4, 5, true, 5, 105, 50, 100);
+	window->addSlider(4, 5, true, 5, 105, 0, 9);
 	window->setWidgetValue(11, textSpeed);
 
 	window->addSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
@@ -3745,7 +3744,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 	int sound = 0;
 	int music = 0;
 	int scrolling = 0;
-	int textSpeed = 75;
+	int textSpeed = 5;
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -3756,8 +3755,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	// TODO: What is the range of the text speed setting?
-	window->addSlider(4, 5, true, 5, 105, 50, 100);
+	window->addSlider(4, 5, true, 5, 105, 0, 9);
 	window->setWidgetValue(9, textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
