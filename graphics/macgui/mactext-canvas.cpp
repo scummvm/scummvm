@@ -187,7 +187,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 					continue;
 			}
 
-			D(9, "** splitString, chunk: \"%s\"", Common::toPrintable(tmp.encode()).c_str());
+			D(9, "\n** splitString, chunk: \"%s\"", Common::toPrintable(tmp.encode()).c_str());
 
 			// Okay, now we are either at the end of the line, or in the next
 			// chunk definition. That means, that we have to store the previous chunk
@@ -436,6 +436,7 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 				}
 			}
 
+			D(9, "*** splitString: text[%d] indent: %d, fi: %d", curLine, indentSize, firstLineIndent);
 
 			curTextLine->indent = indentSize;
 			curTextLine->firstLineIndent = firstLineIndent;
@@ -453,9 +454,6 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 		if (inTable)
 			continue;
 
-		// Add new line
-		D(9, "** splitString: new line");
-
 		curTextLine->paragraphEnd = true;
 		// if the chunks is empty, which means the line will not be rendered properly
 		// so we add a empty string here
@@ -464,6 +462,9 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 		}
 
 		if (*s) {
+			// Add new line
+			D(9, "** splitString: new line");
+
 			curLine++;
 			_text.insert_at(curLine, MacTextLine());
 			_text[curLine].chunks.push_back(chunk);
