@@ -51,7 +51,7 @@ public:
 	~SRTParser();
 
 	void cleanup();
-	bool parseFile(const char *fname);
+	bool parseFile(const Common::Path &fname);
 	Common::String getSubtitle(uint32 timestamp) const;
 
 private:
@@ -63,7 +63,7 @@ public:
 	Subtitles();
 	~Subtitles();
 
-	void loadSRTFile(const char *fname);
+	void loadSRTFile(const Common::Path &fname);
 	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
 	void setFont(const char *fontname, int height = 18);
 	void setBBox(const Common::Rect bbox);
@@ -90,7 +90,7 @@ private:
 	mutable Common::Rect _realBBox;
 	mutable int16 _lastOverlayWidth, _lastOverlayHeight;
 
-	Common::String _fname;
+	Common::Path _fname;
 	mutable Common::String _subtitle;
 	uint32 _color;
 	uint32 _blackColor;

@@ -777,7 +777,7 @@ VideoDecoder::StreamFileAudioTrack::~StreamFileAudioTrack() {
 	delete _stream;
 }
 
-bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::String &baseName) {
+bool VideoDecoder::StreamFileAudioTrack::loadFromFile(const Common::Path &baseName) {
 	// TODO: Make sure the stream isn't being played
 	delete _stream;
 	_stream = Audio::SeekableAudioStream::openStreamFile(baseName);
@@ -832,7 +832,7 @@ bool VideoDecoder::addStreamTrack(Audio::SeekableAudioStream *stream) {
 	return true;
 }
 
-bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
+bool VideoDecoder::addStreamFileTrack(const Common::Path &baseName) {
 	// Only allow adding external tracks if a video is already loaded
 	if (!isVideoLoaded())
 		return false;

@@ -451,7 +451,7 @@ public:
 	 *
 	 * This calls SeekableAudioStream::openStreamFile() internally
 	 */
-	bool addStreamFileTrack(const Common::String &baseName);
+	bool addStreamFileTrack(const Common::Path &baseName);
 
 	/**
 	 * Set the internal audio track.
@@ -842,7 +842,7 @@ protected:
 		 *
 		 * @return true on success, false otherwise
 		 */
-		bool loadFromFile(const Common::String &baseName);
+		bool loadFromFile(const Common::Path &baseName);
 
 	protected:
 		Audio::SeekableAudioStream *_stream;
