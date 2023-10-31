@@ -64,10 +64,10 @@ void LowLevelResources::addVideoLoaders(cVideoManager *vm) {
 }
 
 void LowLevelResources::findFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
-	Common::String pattern = asDir + '/' + asMask;
+	Common::Path pattern(asDir + '/' + asMask);
 	Common::ArchiveMemberList ls;
 	if (SearchMan.listMatchingMembers(ls, pattern) == 0)
-		Hpl1::logWarning(Hpl1::kDebugFilePath, "no files matching pattern %s were found", pattern.c_str());
+		Hpl1::logWarning(Hpl1::kDebugFilePath, "no files matching pattern %s were found", pattern.toString().c_str());
 
 	for (auto &f : ls)
 		alstStrings.push_back(f->getName());

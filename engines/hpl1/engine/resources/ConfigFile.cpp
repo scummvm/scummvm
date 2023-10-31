@@ -61,7 +61,7 @@ cConfigFile::~cConfigFile() {
 
 bool cConfigFile::Load() {
 	Common::File cf;
-	if (!cf.open(Common::String(msFile))) {
+	if (!cf.open(Common::Path(Common::String(msFile)))) {
 		Hpl1::logWarning(Hpl1::kDebugFilePath, "file %S could not be opened", msFile.c_str());
 		return false;
 	}
