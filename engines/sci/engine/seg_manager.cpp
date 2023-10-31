@@ -455,14 +455,11 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	offset = table->allocEntry();
 
 	reg_t addr = make_reg(_hunksSegId, offset);
-	Hunk *h = &table->at(offset);
+	Hunk &h = table->at(offset);
 
-	if (!h)
-		return NULL_REG;
-
-	h->mem = malloc(size);
-	h->size = size;
-	h->type = hunk_type;
+	h.mem = malloc(size);
+	h.size = size;
+	h.type = hunk_type;
 
 	return addr;
 }

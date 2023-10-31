@@ -795,10 +795,10 @@ void SciEngine::exitGame() {
 // Invoked by debugger when a severe error occurs
 void SciEngine::severeError() {
 	if (_gamestate) {
-		ExecStack *xs = &(_gamestate->_executionStack.back());
-		if (xs) {
-			xs->addr.pc.setOffset(_debugState.old_pc_offset);
-			xs->sp = _debugState.old_sp;
+		if (!_gamestate->_executionStack.empty()) {
+			ExecStack &xs = _gamestate->_executionStack.back();
+			xs.addr.pc.setOffset(_debugState.old_pc_offset);
+			xs.sp = _debugState.old_sp;
 		}
 	}
 
