@@ -756,6 +756,8 @@ void MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String te
 }
 
 void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
+	// Adjust the text position slightly
+	bounds.left++;
 	_widgets.push_back(new MacText(this, bounds, text, enabled));
 }
 
@@ -816,16 +818,8 @@ int MacGui::MacDialogWindow::runDialog() {
 
 		for (uint i = 0; i < _widgets.size(); i++) {
 			_widgets[i]->setId(i);
-
-			// We don't deal with off-window widgets. Not even
-			// partly off-window.
-
-			if (windowBounds.contains(_widgets[i]->getBounds())) {
-				_widgets[i]->setRedraw(true);
-				_widgets[i]->draw();
-			} else {
-				_widgets[i]->setVisible(false);
-			}
+			_widgets[i]->setRedraw(true);
+			_widgets[i]->draw();
 		}
 	}
 
@@ -1659,7 +1653,6 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
-				r.left++;
 				window->addText(r, str, enabled);
 				break;
 
