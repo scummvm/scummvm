@@ -58,16 +58,17 @@ void FileManager_v1d::readOverlay(const int screenNum, ImagePtr image, const Ovl
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	const char *ovlExt[] = {".b", ".o", ".ob"};
-	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovlExt[overlayType]);
+	Common::Path buf(_vm->_text->getScreenNames(screenNum));
+	buf.appendInPlace(ovlExt[overlayType]);
 
 	if (!Common::File::exists(buf)) {
 		memset(image, 0, kOvlSize);
-		warning("File not found: %s", buf.c_str());
+		warning("File not found: %s", buf.toString().c_str());
 		return;
 	}
 
 	if (!_sceneryArchive1.open(buf))
-		error("File not found: %s", buf.c_str());
+		error("File not found: %s", buf.toString().c_str());
 
 	ImagePtr tmpImage = image;                      // temp ptr to overlay file
 
@@ -81,10 +82,10 @@ void FileManager_v1d::readOverlay(const int screenNum, ImagePtr image, const Ovl
 void FileManager_v1d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	Common::String buf;
-	buf = Common::String(_vm->_text->getScreenNames(screenIndex)) + ".ART";
+	Common::Path buf(_vm->_text->getScreenNames(screenIndex));
+	buf.appendInPlace(".ART");
 	if (!_sceneryArchive1.open(buf))
-		error("File not found: %s", buf.c_str());
+		error("File not found: %s", buf.toString().c_str());
 	// Read the image into dummy seq and static dib_a
 	Seq *dummySeq;                                // Image sequence structure for Read_pcx
 	dummySeq = readPCX(_sceneryArchive1, nullptr, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
