@@ -1473,8 +1473,8 @@ public:
 //	void update();
 
 private:
-	static Common::String getFileName(SoundType song);
-	Audio::AudioStream* createStream(Common::String fileName);
+	static Common::Path getFileName(SoundType song);
+	Audio::AudioStream* createStream(const Common::Path &fileName);
 
 	Audio::SoundHandle handle;
 

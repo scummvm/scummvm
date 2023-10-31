@@ -1998,7 +1998,7 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 bool LuaScript::executeFile(const Common::String &filename) {
 	Common::File *file = new Common::File;
 
-	if (!file->open(filename)) {
+	if (!file->open(Common::Path(filename))) {
 		error("Cannot find \"%s\"", filename.c_str());
 	}
 
