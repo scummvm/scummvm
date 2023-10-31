@@ -410,8 +410,8 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 							/*Maybe delete entity if no type found? */
 						}
 					} else {
-						hplDelete(pEntity);
 						Error("Couldn't load data for entity '%s'", pEntity->GetName().c_str());
+						hplDelete(pEntity);
 					}
 				} else {
 					error("No other Render mode for entity exist!!");
