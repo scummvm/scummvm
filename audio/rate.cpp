@@ -122,7 +122,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStr
 		outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
 		outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
 
-		if (outStereo) {
+		if (inStereo && outStereo) {
 			// Output left channel
 			clampedAdd(outBuffer[reverseStereo    ], outL);
 
@@ -132,9 +132,12 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStr
 			outBuffer += 2;
 		} else {
 			// Output mono channel
-			clampedAdd(outBuffer[0], (outL + outR) / 2);
+			st_sample_t val = clampedAdd(outBuffer[0], (outL + outR) / 2);
 
 			outBuffer += 1;
+
+			if (outStereo)
+				*outBuffer++ = val;
 		}
 	}
 
@@ -182,7 +185,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioS
 		outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
 		outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
 
-		if (outStereo) {
+		if (inStereo && outStereo) {
 			// output left channel
 			clampedAdd(outBuffer[reverseStereo    ], outL);
 
@@ -192,9 +195,12 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioS
 			outBuffer += 2;
 		} else {
 			// output mono channel
-			clampedAdd(outBuffer[0], (outL + outR) / 2);
+			st_sample_t val = clampedAdd(outBuffer[0], (outL + outR) / 2);
 
 			outBuffer += 1;
+
+			if (outStereo)
+				*outBuffer++ = val;
 		}
 	}
 	return (outBuffer - outStart) / (outStereo ? 2 : 1);
@@ -247,7 +253,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(A
 			outL = (inL * (int)volL) / Audio::Mixer::kMaxMixerVolume;
 			outR = (inR * (int)volR) / Audio::Mixer::kMaxMixerVolume;
 
-			if (outStereo) {
+			if (inStereo && outStereo) {
 				// Output left channel
 				clampedAdd(outBuffer[reverseStereo    ], outL);
 
@@ -257,9 +263,12 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(A
 				outBuffer += 2;
 			} else {
 				// Output mono channel
-				clampedAdd(outBuffer[0], (outL + outR) / 2);
+				st_sample_t val = clampedAdd(outBuffer[0], (outL + outR) / 2);
 
 				outBuffer += 1;
+
+				if (outStereo)
+					*outBuffer++ = val;
 			}
 
 			// Increment output position
