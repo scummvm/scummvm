@@ -31,11 +31,11 @@
 
 namespace MacVenture {
 
-Container::Container(Common::String filename) {
+Container::Container(const Common::Path &filename) {
 	_filename = filename;
 
 	if (!_file.open(_filename)) {
-		error("CONTAINER: Could not open %s", _filename.c_str());
+		error("CONTAINER: Could not open %s", _filename.toString().c_str());
 	}
 
 	_res = _file.readStream(_file.size());

@@ -242,12 +242,12 @@ public:
 	Common::String getUserInput();
 
 	// Data retrieval
-	Common::String getStartGameFileName();
+	Common::Path getStartGameFileName();
 	bool isPaused();
 	bool needsClickToContinue();
 	Common::String getCommandsPausedString() const;
 	const GlobalSettings &getGlobalSettings() const;
-	Common::String getFilePath(FilePathID id) const;
+	Common::Path getFilePath(FilePathID id) const;
 	bool isOldText() const;
 	const HuffmanLists *getDecodingHuffman() const;
 	uint32 randBetween(uint32 min, uint32 max);

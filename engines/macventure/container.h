@@ -48,7 +48,7 @@ typedef uint32 ContainerHeader;
 class Container {
 
 public:
-	Container(Common::String filename);
+	Container(const Common::Path &filename);
 	~Container();
 
 public:
@@ -75,7 +75,7 @@ protected:
 	Common::Array<uint8> _lens; // huffman lengths
 	Common::Array<ItemGroup> _groups;
 
-	Common::String _filename;
+	Common::Path _filename;
 	Common::File _file;
 	Common::SeekableReadStream *_res;
 
