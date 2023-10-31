@@ -188,10 +188,18 @@ public:
 	};
 
 	class MacButton : public MacWidget {
+	private:
+		struct CornerLine {
+			int start;
+			int length;
+		};
+
 	public:
 		MacButton(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
 		void draw(bool drawFocused = false);
+
+		void drawCorners(Common::Rect r, CornerLine *corner);
 	};
 
 	class MacCheckbox : public MacWidget {

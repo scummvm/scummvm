@@ -336,19 +336,17 @@ void MacGui::MacButton::draw(bool drawFocused) {
 
 	Graphics::Surface *s = _window->innerSurface();
 	Color fg, bg;
-	int x0, x1, x2, x3;
-	int y0, y1;
 
-	x0 = _bounds.left + 3;
-	x1 = _bounds.right - 4;
+	int x0 = _bounds.left;
+	int x1 = _bounds.right - 1;
 
-	y0 = _bounds.top + 3;
-	y1 = _bounds.bottom - 4;
+	int y0 = _bounds.top;
+	int y1 = _bounds.bottom - 1;
 
-	s->hLine(x0, _bounds.top, x1, kBlack);
-	s->hLine(x0, _bounds.bottom - 1, x1, kBlack);
-	s->vLine(_bounds.left, y0, y1, kBlack);
-	s->vLine(_bounds.right - 1, y0, y1, kBlack);
+	s->hLine(x0 + 3, y0, x1 - 3, kBlack);
+	s->hLine(x0 + 3, y1, x1 - 3, kBlack);
+	s->vLine(x0, y0 + 3, y1 - 3, kBlack);
+	s->vLine(x1, y0 + 3, y1 - 3, kBlack);
 
 	if (drawFocused || (_window->getFocusedWidget() == this && _bounds.contains(_window->getMousePos()))) {
 		fg = kWhite;
@@ -364,29 +362,14 @@ void MacGui::MacButton::draw(bool drawFocused) {
 	s->fillRect(Common::Rect(_bounds.left + 1, _bounds.top + 1, _bounds.right - 1, _bounds.bottom - 1), bg);
 
 	// ScummVM's rounded rectangles aren't a complete match for QuickDraw's
-	// rounded rectangles, so we draw the corners manually.
+	// rounded rectangles, and for arcs this small they don't look very good.
+	// So we draw the corners manually.
 	//
 	// Unfortunately, these hard-coded ones only work for most buttons.
 
-	int innerCorner[][2] = {
-		{ 1, 2 },
-		{ 1, 1 }
-	};
+	CornerLine innerCorner[] = { { 0, 0 }, { 1, 2 }, { 1, 1 }, { 0, -1 } };
 
-	for (int i = 0; i < ARRAYSIZE(innerCorner); i++) {
-		x0 = _bounds.left + innerCorner[i][0];
-		x1 = _bounds.left + innerCorner[i][1];
-		x2 = _bounds.right - innerCorner[i][1] - 1;
-		x3 = _bounds.right - innerCorner[i][0] - 1;
-
-		y0 = _bounds.top + i + 1;
-		y1 = _bounds.bottom - i - 2;
-
-		s->hLine(x0, y0, x1, kBlack);
-		s->hLine(x2, y0, x3, kBlack);
-		s->hLine(x0, y1, x1, kBlack);
-		s->hLine(x2, y1, x3, kBlack);
-	}
+	drawCorners(_bounds, innerCorner);
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
@@ -395,48 +378,51 @@ void MacGui::MacButton::draw(bool drawFocused) {
 	Common::Rect bounds = _bounds;
 
 	if (_window->getDefaultWidget() == this && _fullRedraw) {
-		for (int i = 0; i < 3; i++) {
-			x0 = _bounds.left + 1;
-			x1 = _bounds.right - 2;
-
-			y0 = _bounds.top + 2;
-			y1 = _bounds.bottom - 3;
-
-			s->hLine(x0, _bounds.top - 4 + i, x1, kBlack);
-			s->hLine(x0, _bounds.bottom + 3 - i, x1, kBlack);
-			s->vLine(_bounds.left - 4 + i, y0, y1, kBlack);
-			s->vLine(_bounds.right + 3 - i, y0, y1, kBlack);
-		}
-
-		int outerCorner[][2] = {
-			{ -1, 0 },
-			{ -2, 0 },
-			{ -3, 1 },
-			{ -3, -1 },
-			{ -4, -1 }
-		};
-
-		for (int i = 0; i < ARRAYSIZE(outerCorner); i++) {
-			x0 = _bounds.left + outerCorner[i][0];
-			x1 = _bounds.left + outerCorner[i][1];
-			x2 = _bounds.right - outerCorner[i][1] - 1;
-			x3 = _bounds.right - outerCorner[i][0] - 1;
-
-			y0 = _bounds.top - 3 + i;
-			y1 = _bounds.bottom + 2 - i;
-
-			s->hLine(x0, y0, x1, kBlack);
-			s->hLine(x2, y0, x3, kBlack);
-			s->hLine(x0, y1, x1, kBlack);
-			s->hLine(x2, y1, x3, kBlack);
-		}
-
 		bounds.grow(4);
+
+		x0 = bounds.left;
+		x1 = bounds.right - 1;
+
+		y0 = bounds.top;
+		y1 = bounds.bottom - 1;
+
+		for (int i = 0; i < 3; i++) {
+			s->hLine(x0 + 6, y0 + i, x1 - 6, kBlack);
+			s->hLine(x0 + 6, y1 - i, x1 - 6, kBlack);
+			s->vLine(x0 + i, y0 + 6, y1 - 6, kBlack);
+			s->vLine(x1 - i, y0 + 6, y1 - 6, kBlack);
+		}
+
+		CornerLine outerCorner[] = { { 5, 1 }, { 3, 3 }, { 2, 4 }, { 1, 5 }, { 1, 3 }, { 0, 4 }, { 0, -1 } };
+
+		drawCorners(bounds, outerCorner);
 	}
 
 	_redraw = false;
 	_fullRedraw = false;
 	_window->markRectAsDirty(bounds);
+}
+
+void MacGui::MacButton::drawCorners(Common::Rect r, CornerLine *corner) {
+	Graphics::Surface *s = _window->innerSurface();
+
+	for (int i = 0; corner[i].length >= 0; i++) {
+		if (corner[i].length == 0)
+			continue;
+
+		int x0 = r.left + corner[i].start;
+		int x1 = r.left + corner[i].start + corner[i].length - 1;
+		int x2 = r.right - 1 - corner[i].start;
+		int x3 = r.right - 1 - corner[i].start - corner[i].length + 1;
+
+		int y0 = r.top + i;
+		int y1 = r.bottom - i - 1;
+
+		s->hLine(x0, y0, x1, kBlack);
+		s->hLine(x2, y0, x3, kBlack);
+		s->hLine(x0, y1, x1, kBlack);
+		s->hLine(x2, y1, x3, kBlack);
+	}
 }
 
 // ---------------------------------------------------------------------------
