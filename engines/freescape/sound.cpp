@@ -221,7 +221,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	}
 	_syncSound = sync;
 }
-void FreescapeEngine::playWav(const Common::String filename) {
+void FreescapeEngine::playWav(const Common::Path &filename) {
 
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
 	assert(s);
@@ -229,7 +229,7 @@ void FreescapeEngine::playWav(const Common::String filename) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
 }
 
-void FreescapeEngine::playMusic(const Common::String filename) {
+void FreescapeEngine::playMusic(const Common::Path &filename) {
 	Audio::SeekableAudioStream *stream = nullptr;
 	stream = Audio::SeekableAudioStream::openStreamFile(filename);
 	if (stream) {

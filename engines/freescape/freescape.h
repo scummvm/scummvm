@@ -47,7 +47,7 @@ namespace Freescape {
 
 class Renderer;
 
-#define FREESCAPE_DATA_BUNDLE Common::String("freescape.dat")
+#define FREESCAPE_DATA_BUNDLE "freescape.dat"
 
 enum CameraMovement {
 	kForwardMovement,
@@ -343,8 +343,8 @@ public:
 	void stopAllSounds();
 	bool isPlayingSound();
 	void playSound(int index, bool sync);
-	void playWav(const Common::String filename);
-	void playMusic(const Common::String filename);
+	void playWav(const Common::Path &filename);
+	void playMusic(const Common::Path &filename);
 	void queueSoundConst(double hzFreq, int duration);
 	void playSilence(int duration, bool sync);
 	void playSoundConst(double hzFreq, int duration, bool sync);
@@ -462,7 +462,7 @@ public:
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
 private:
-	Common::SeekableReadStream *decryptFile(const Common::String filename);
+	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 };
 
 extern FreescapeEngine *g_freescape;

@@ -108,11 +108,11 @@ byte kFreescapeCastleFont[] = {
 	0x7f, 0x87, 0x0e, 0x1c, 0x38, 0x71, 0xfd, 0xe6,
 };
 
-Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filename) {
+Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filename) {
 	Common::File file;
 	file.open(filename);
 	if (!file.isOpen())
-		error("Failed to open %s", filename.c_str());
+		error("Failed to open %s", filename.toString().c_str());
 
 	int size = file.size();
 	byte *encryptedBuffer = (byte *)malloc(size);

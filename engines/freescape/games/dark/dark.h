@@ -96,7 +96,7 @@ private:
 	bool tryDestroyECD(int index);
 	bool tryDestroyECDFullGame(int index);
 	void addWalls(Area *area);
-	Common::SeekableReadStream *decryptFile(const Common::String filename);
+	Common::SeekableReadStream *decryptFile(const Common::Path &filename);
 	Common::HashMap<uint16, bool> _exploredAreas;
 };
 
