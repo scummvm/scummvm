@@ -459,9 +459,6 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 
 	const byte *src = _vm->get2byteCharPtr(chr);
 
-	if (width <= 0 || height <= 0)
-		return 0;
-
 	if (minY) {
 		src += ((minY * _vm->_2byteWidth) >> 3);
 		buffer += (minY * pitch);
