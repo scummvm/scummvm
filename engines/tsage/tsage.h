@@ -57,7 +57,7 @@ public:
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
-	Common::String getPrimaryFilename() const;
+	Common::Path getPrimaryFilename() const;
 
 	virtual Common::Error init();
 	Common::Error run() override;

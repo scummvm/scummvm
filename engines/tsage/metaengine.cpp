@@ -48,8 +48,8 @@ Common::Language TSageEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-Common::String TSageEngine::getPrimaryFilename() const {
-	return Common::String(_gameDescription->desc.filesDescriptions[0].fileName);
+Common::Path TSageEngine::getPrimaryFilename() const {
+	return Common::Path(_gameDescription->desc.filesDescriptions[0].fileName);
 }
 
 } // End of namespace TsAGE

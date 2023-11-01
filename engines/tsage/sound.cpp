@@ -2553,7 +2553,7 @@ PlayStream::~PlayStream() {
 	remove();
 }
 
-bool PlayStream::setFile(const Common::String &filename) {
+bool PlayStream::setFile(const Common::Path &filename) {
 	remove();
 
 	// Open the resource file for access
