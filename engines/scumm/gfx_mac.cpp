@@ -1064,60 +1064,63 @@ void MacGui::initialize() {
 	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride);
 	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, 400);
-	_windowManager->setMenuHotzone(Common::Rect(640, 23));
-	_windowManager->setMenuDelay(250000);
 
-	Common::MacResManager resource;
-	Graphics::MacMenu *menu = _windowManager->addMenu();
+	if (_vm->isUsingOriginalGUI()) {
+		_windowManager->setMenuHotzone(Common::Rect(640, 23));
+		_windowManager->setMenuDelay(250000);
 
-	resource.open(_resourceFile);
+		Common::MacResManager resource;
+		Graphics::MacMenu *menu = _windowManager->addMenu();
 
-	// Add the Apple menu
+		resource.open(_resourceFile);
 
-	const Graphics::MacMenuData menuSubItems[] = {
-		{ 0, NULL, 0, 0, false }
-	};
+		// Add the Apple menu
 
-	// TODO: This can be found in the STRS resource
-	Common::String aboutMenuDef = "About " + name() + "...<B;(-";
+		const Graphics::MacMenuData menuSubItems[] = {
+			{ 0, NULL, 0, 0, false }
+		};
 
-	menu->addStaticMenus(menuSubItems);
-	menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
+		// TODO: This can be found in the STRS resource
+		Common::String aboutMenuDef = "About " + name() + "...<B;(-";
 
-	menu->setCommandsCallback(menuCallback, this);
+		menu->addStaticMenus(menuSubItems);
+		menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
 
-	for (int i = 129; i <= 130; i++) {
-		Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
+		menu->setCommandsCallback(menuCallback, this);
 
-		if (!res)
-			continue;
+		for (int i = 129; i <= 130; i++) {
+			Common::SeekableReadStream *res = resource.getResource(MKTAG('M', 'E', 'N', 'U'), i);
 
-		Common::StringArray *menuDef = Graphics::MacMenu::readMenuFromResource(res);
-		Common::String name = menuDef->operator[](0);
-		Common::String string = menuDef->operator[](1);
-		int id = menu->addMenuItem(nullptr, name);
-		menu->createSubMenuFromString(id, string.c_str(), 0);
+			if (!res)
+				continue;
 
-		delete menuDef;
-		delete res;
-	}
+			Common::StringArray *menuDef = Graphics::MacMenu::readMenuFromResource(res);
+			Common::String name = menuDef->operator[](0);
+			Common::String string = menuDef->operator[](1);
+			int id = menu->addMenuItem(nullptr, name);
+			menu->createSubMenuFromString(id, string.c_str(), 0);
 
-	resource.close();
+			delete menuDef;
+			delete res;
+		}
 
-	// Assign sensible IDs to the menu items
+		resource.close();
 
-	int numberOfMenus = menu->numberOfMenus();
+		// Assign sensible IDs to the menu items
 
-	for (int i = 0; i < numberOfMenus; i++) {
-		Graphics::MacMenuItem *item = menu->getMenuItem(i);
-		int numberOfMenuItems = menu->numberOfMenuItems(item);
-		int id = 100 * (i + 1);
-		for (int j = 0; j < numberOfMenuItems; j++) {
-			Graphics::MacMenuItem *subItem = menu->getSubMenuItem(item, j);
-			Common::String name = menu->getName(subItem);
+		int numberOfMenus = menu->numberOfMenus();
 
-			if (!name.empty())
-				menu->setAction(subItem, id++);
+		for (int i = 0; i < numberOfMenus; i++) {
+			Graphics::MacMenuItem *item = menu->getMenuItem(i);
+			int numberOfMenuItems = menu->numberOfMenuItems(item);
+			int id = 100 * (i + 1);
+			for (int j = 0; j < numberOfMenuItems; j++) {
+				Graphics::MacMenuItem *subItem = menu->getSubMenuItem(item, j);
+				Common::String name = menu->getName(subItem);
+
+				if (!name.empty())
+					menu->setAction(subItem, id++);
+			}
 		}
 	}
 
@@ -2340,7 +2343,7 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 			// menu hotzone, so don't allow that.
 
 			newX = CLIP(newX, 0, _surface->w - _practiceBox->w);
-			newY = CLIP(newY, 23, _surface->h - _practiceBox->h);
+			newY = CLIP(newY, _vm->isUsingOriginalGUI() ? 23 : 0, _surface->h - _practiceBox->h);
 
 			// For some reason, X coordinates can only change in
 			// increments of 16 pixels. As an enhancement, we allow
