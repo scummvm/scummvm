@@ -157,7 +157,7 @@ public:
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0);
 
 	public:
 		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
