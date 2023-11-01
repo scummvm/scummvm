@@ -1637,6 +1637,16 @@ void CharsetRendererMac::setCurID(int32 id) {
 	if  (id == -1)
 		return;
 
+	// This should only happen, if it happens at all, with older savegames.
+	// Font 0 is the sensible default font for both Loom and Indy 3.
+
+	int numFonts = (_vm->_game.id == GID_LOOM) ? 1 : 2;
+
+	if (id >= numFonts) {
+		warning("CharsetRenderMac::setCurId: Invalid font id %d, using 0 instead", id);
+		id = 0;
+	}
+
 	_curId = id;
 	_font = _vm->_macGui->getFontByScummId(_curId);
 }
