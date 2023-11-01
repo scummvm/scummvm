@@ -1341,6 +1341,7 @@ Graphics::Surface *MacGui::decodePictV1(Common::SeekableReadStream *res) {
 						} else {
 							// Copy values
 							repeat = false;
+							value = 0;
 						}
 
 						for (int j = 0; j <= count; j++) {
@@ -1910,7 +1911,7 @@ void MacLoomGui::runAboutDialog() {
 	int growth = -2;
 	int pattern;
 	bool darkenOnly = false;
-	int waitFrames;
+	int waitFrames = 0;
 
 	int innerBounce = 72;
 	int targetTop = 48;
@@ -1950,7 +1951,7 @@ void MacLoomGui::runAboutDialog() {
 					growth = -growth;
 			}
 		} else {
-			if (--waitFrames == 0)
+			if (--waitFrames <= 0)
 				changeScene = true;
 		}
 
@@ -2302,8 +2303,8 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 
 	while (!_vm->shouldQuit()) {
 		bool dragging = false;
-		int dragX;
-		int dragY;
+		int dragX = 0;
+		int dragY = 0;
 
 		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -3486,7 +3487,7 @@ void MacIndy3Gui::runAboutDialog() {
 	int trolleyFrame = 1;
 	int trolleyFrameDelta = 1;
 	int trolleyWaitFrames = 20;	// ~2 seconds
-	int waitFrames;
+	int waitFrames = 0;
 
 	// TODO: These strings are part of the STRS resource, but I don't know
 	// how to safely read them from there yet. So hard-coded it is for now.
@@ -3575,7 +3576,7 @@ void MacIndy3Gui::runAboutDialog() {
 		case 5:
 		case 6:
 		case 7:
-			if (--waitFrames == 0)
+			if (--waitFrames <= 0)
 				changeScene = true;
 			break;
 
