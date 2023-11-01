@@ -79,7 +79,7 @@ SOUNDCLIP *AudioChans::SetChannel(int index, SOUNDCLIP *ch) {
 	}
 
 	// TODO: store clips in smart pointers
-	if (_GP(audioChannels)[index] == ch)
+	if (_GP(audioChannels)[index] != nullptr && _GP(audioChannels)[index] == ch)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - same clip assigned", index);
 	else if (_GP(audioChannels)[index] != nullptr && ch != nullptr)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - clip overwritten", index);
