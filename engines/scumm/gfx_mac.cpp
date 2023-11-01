@@ -221,6 +221,19 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 // Base widget
 // ---------------------------------------------------------------------------
 
+MacGui::MacWidget::MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacGuiObject(bounds, enabled), _window(window), _text(text) {
+	// Widgets are clipped to the inner surface of the dialog. If a widget
+	// is clipped out of existence, make it invisible to avoid crashes.
+
+	Graphics::Surface *s = _window->innerSurface();
+
+	_bounds.clip(Common::Rect(s->w, s->h));
+
+	if (_bounds.width() <= 0 || _bounds.height() <= 0)
+		_visible = false;
+}
+
+
 bool MacGui::MacWidget::findWidget(int x, int y) const {
 	return _visible && _enabled && _bounds.contains(x, y);
 }
@@ -1397,6 +1410,9 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	case 203:	// Pause
 		return true;
+
+	// In the original, the Edit menu is active during save dialogs, though
+	// only Cut, Copy and Paste.
 
 	case 300:	// Undo
 	case 301:	// Cut

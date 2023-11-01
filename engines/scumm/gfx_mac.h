@@ -160,7 +160,7 @@ public:
 		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 
 	public:
-		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacGuiObject(bounds, enabled), _window(window), _text(text) {}
+		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 		virtual ~MacWidget() {};
 
 		void setId(int id) { _id = id; }
