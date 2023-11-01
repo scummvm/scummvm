@@ -528,7 +528,7 @@ void VoyeurEngine::doOpening() {
 	_bVoy->freeBoltGroup(0x200);
 }
 
-void VoyeurEngine::playRL2Video(const Common::String &filename) {
+void VoyeurEngine::playRL2Video(const Common::Path &filename) {
 	RL2Decoder decoder;
 	decoder.loadRL2File(filename, false);
 	decoder.start();
@@ -625,7 +625,7 @@ void VoyeurEngine::playAudio(int audioId) {
 
 	_voy->_eventFlags &= ~EVTFLAG_TIME_DISABLED;
 	_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
-	Common::String filename = _soundManager->getVOCFileName(
+	Common::Path filename = _soundManager->getVOCFileName(
 		audioId + 159);
 	_soundManager->startVOCPlay(filename);
 	_voy->_eventFlags |= EVTFLAG_RECORDING;
@@ -726,7 +726,7 @@ void VoyeurEngine::showEndingNews() {
 		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2);
 		_bVoy->freeBoltMember(_playStampGroupId + (idx - 1) * 2 + 1);
 
-		Common::String fname = Common::String::format("news%d.voc", idx);
+		Common::Path fname(Common::String::format("news%d.voc", idx));
 		_soundManager->startVOCPlay(fname);
 
 		_eventsManager->getMouseInfo();
