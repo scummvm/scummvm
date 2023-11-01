@@ -405,18 +405,18 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 		Common::Point p = getMikeStart(i, num);
 		Common::Point sz = getMikeSize(num);
 		Common::File fileP;
-		Common::String nameP = Common::String::format("%s%dP.CEL", baseName.c_str(), i + 1);
+		Common::Path nameP(Common::String::format("%s%dP.CEL", baseName.c_str(), i + 1));
 		if (!fileP.open(nameP))
-			error("unable to load image %s", nameP.c_str());
+			error("unable to load image %s", nameP.toString().c_str());
 
 		_image->loadStream(fileP);
 		surf->copyRectToSurface(*_image->getSurface(), p.x, p.y,
 					Common::Rect(0, 0, sz.x, sz.y));
 
 		Common::File fileW;
-		Common::String nameW = Common::String::format("%s%dW.CEL", baseName.c_str(), i + 1);
+		Common::Path nameW(Common::String::format("%s%dW.CEL", baseName.c_str(), i + 1));
 		if (!fileW.open(nameW))
-			error("unable to load image %s", nameW.c_str());
+			error("unable to load image %s", nameW.toString().c_str());
 
 		_image->loadStream(fileW);
 		surf->copyRectToSurface(*_image->getSurface(), p.x + sz.x, p.y,
@@ -426,7 +426,7 @@ void PlumbersGame3DO::loadMikeDecision(const Common::String &dirname, const Comm
 	_compositeSurface = surf;
 
 	Common::File fileCtrl;
-	if (fileCtrl.open(dirname + "/CONTROLHELP.CEL"))
+	if (fileCtrl.open(Common::Path(dirname + "/CONTROLHELP.CEL")))
 		_ctrlHelpImage->loadStream(fileCtrl);
 }
 
@@ -434,7 +434,7 @@ void PlumbersGame3DO::postSceneBitmaps() {
 	if (_scenes[_curSceneIdx]._style == Scene::STYLE_VIDEO) {
 		_videoDecoder = new Video::ThreeDOMovieDecoder();
 		_curChoice = 0;
-		if (!_videoDecoder->loadFile(_scenes[_curSceneIdx]._sceneName)) {
+		if (!_videoDecoder->loadFile(Common::Path(_scenes[_curSceneIdx]._sceneName))) {
 			_actions.push(ChangeScene);
 			return;
 		}
