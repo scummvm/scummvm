@@ -118,7 +118,7 @@ void MusicBase::loadNewMusic() {
 		section = 4;
 		song = 4;
 	}
-	Common::String trackName = Common::String::format("music_%d%02d", section, song);
+	Common::Path trackName(Common::String::format("music_%d%02d", section, song));
 	Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
 	if (stream) {
 		// not all tracks should loop
