@@ -601,7 +601,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 	if (stream)
 		return stream;
 
-	Common::String fileName = Common::String::format("audio/%s", _audioFileNamesTable[index]);
+	Common::Path fileName(Common::String::format("audio/%s", _audioFileNamesTable[index]));
 	Common::File *f = new Common::File();
 	if (f->open(fileName)) {
 		int size = 0, rate = 0;
