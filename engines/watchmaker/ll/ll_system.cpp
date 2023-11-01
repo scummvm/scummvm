@@ -128,24 +128,24 @@ bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 	return checkFileExists(name);
 }
 
-Common::String adjustPath(const Common::String &path) {
-	Common::String adjustedPath;
+Common::Path adjustPath(const Common::String &path) {
+	Common::Path adjustedPath;
 	if (path.hasPrefix("./")) {
-		adjustedPath = path.substr(2, path.size());
+		adjustedPath = Common::Path(path.substr(2, path.size()));
 	} else {
-		adjustedPath = path;
+		adjustedPath = Common::Path(path);
 	}
 	return adjustedPath;
 }
 
 bool checkFileExists(const Common::String &filename) {
-	Common::String adjustedPath = adjustPath(filename);
+	Common::Path adjustedPath = adjustPath(filename);
 
 	return SearchMan.hasFile(adjustedPath);
 }
 
 Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &filename, int offset, int size) {
-	Common::String adjustedPath = adjustPath(filename);
+	Common::Path adjustedPath = adjustPath(filename);
 
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(adjustedPath);
 
