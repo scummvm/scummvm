@@ -68,15 +68,13 @@ static const Tile gump_empty_tile = {
 };
 
 
-ContainerWidgetGump::ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callback) : ContainerWidget(cfg, callback) {
-	cursor_tile = NULL;
+ContainerWidgetGump::ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callback)
+		: ContainerWidget(cfg, callback), cursor_tile(nullptr), check_x(0), check_y(0),
+		  cursor_x(0), cursor_y(0), show_cursor(true) {
 	empty_tile = &gump_empty_tile;
 	obj_font_color = 15;
 	bg_color = 0;
 	fill_bg = false;
-
-	cursor_x = cursor_y = 0;
-	show_cursor = true;
 }
 
 ContainerWidgetGump::~ContainerWidgetGump() {

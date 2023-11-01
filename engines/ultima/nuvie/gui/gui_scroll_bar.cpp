@@ -53,9 +53,9 @@ namespace Nuvie {
 
 
 GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
-	: GUI_Widget(NULL, x, y, SCROLLBAR_WIDTH, h) {
-	callback_object = callback;
-	drag = false;
+	: GUI_Widget(NULL, x, y, SCROLLBAR_WIDTH, h), callback_object(callback),
+	  drag(false), slider_highlight_c(0), slider_shadow_c(0), slider_base_c(0),
+	  track_border_c(0), track_base_c(0), slider_click_offset(0) {
 
 	loadButtons();
 

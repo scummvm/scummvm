@@ -97,11 +97,9 @@ void PCSpeaker::SetFrequency(uint16 freq, float offset) {
 
 }
 
-PCSpeaker::PCSpeaker(uint32 mixer_rate) {
-	rate = mixer_rate;
-	cur_vol = 0.0f;
-	want_vol = 0.0f; //SPKR_VOLUME;
-	frequency = 0;
+PCSpeaker::PCSpeaker(uint32 mixer_rate) : rate(mixer_rate), cur_vol(0.0f), want_vol(0.0f),
+		frequency(0), half_period(0.0f), time_left(0.0f), osc_length(0),
+		osc_samples(0), wav_length(0) {
 }
 
 

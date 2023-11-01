@@ -105,54 +105,34 @@ static const Tile grid_tile = {
 	}
 };
 
-MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(NULL, 0, 0, 0, 0) {
+MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg),
+		map(m), anim_manager(nullptr), cur_x(0), cur_y(0), mousecenter_x(0),
+		mousecenter_y(0), cur_x_add(0), cur_y_add(0), vel_x(0), vel_y(0),
+		last_boundary_fill_x(0), last_boundary_fill_y(0), cursor_x(0), cursor_y(0),
+		show_cursor(false), show_use_cursor(false), show_grid(false), x_ray_view(X_RAY_OFF),
+		freeze_blacking_location(false), enable_blacking(true), new_thumbnail(false),
+		thumbnail(nullptr), overlay(nullptr), overlay_level(MAP_OVERLAY_DEFAULT),
+		cur_level(0), tmp_map_buf(nullptr), selected_obj(nullptr), look_obj(nullptr),
+		look_actor(nullptr), walking(false), looking(false),
+		original_obj_loc(MapCoord(0, 0, 0)), roof_tiles(nullptr),
+		draw_brit_lens_anim(false), draw_garg_lens_anim(false), window_updated(true),
+		roof_display(ROOF_DISPLAY_NORMAL), lighting_update_required(true), game(nullptr),
+		custom_actor_tiles(false), tmp_map_width(0), tmp_map_height(0), tile_manager(nullptr),
+		obj_manager(nullptr), actor_manager(nullptr), map_center_xoff(0), cursor_tile(nullptr),
+		use_tile(nullptr), win_width(0), win_height(0), border_width(0), hackmove(false),
+		wizard_eye_info({nullptr, 0, 0, 0, nullptr}) {
 
-	config = cfg;
 	config->value("config/GameType", game_type);
 
 	uint16 x_off = Game::get_game()->get_game_x_offset();
 	uint16 y_off = Game::get_game()->get_game_y_offset();
 
-	GUI_Widget::Init(NULL, x_off, y_off, 0, 0);
+	GUI_Widget::Init(nullptr, x_off, y_off, 0, 0);
 
-	map = m;
+	screen = nullptr;
 
-	screen = NULL;
-//surface = NULL;
-	anim_manager = NULL;
-
-	cur_x = 0;
-	mousecenter_x = 0;
-	cur_y = 0;
-	mousecenter_y = 0;
-	cur_x_add = cur_y_add = 0;
-	vel_x = vel_y = 0;
-	last_boundary_fill_x = last_boundary_fill_y = 0;
-
-	cursor_x = 0;
-	cursor_y = 0;
-	show_cursor = false;
-	show_use_cursor = false;
-	show_grid = false;
-	x_ray_view = X_RAY_OFF;
-	freeze_blacking_location = false;
-	enable_blacking = true;
-
-	new_thumbnail = false;
-	thumbnail = NULL;
-	overlay = NULL;
-	overlay_level = MAP_OVERLAY_DEFAULT;
-
-	cur_level = 0;
 	map_width = map->get_width(cur_level);
 
-	tmp_map_buf = NULL;
-
-	selected_obj = NULL;
-	look_obj = NULL;
-	look_actor = NULL;
-	walking = false;
-	looking = false;
 	config->value(config_get_game_key(config) + "/map_tile_lighting", using_map_tile_lighting, game_type == NUVIE_GAME_MD ? false : true);
 	config->value("config/input/enable_doubleclick", enable_doubleclick, true);
 	config->value("config/input/look_on_left_click", look_on_left_click, true);
@@ -160,18 +140,8 @@ MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(NULL, 0, 0, 0, 0) {
 	config->value("config/input/walk_with_left_button", walk_with_left_button, true);
 	set_walk_button_mask();
 	config->value("config/cheats/min_brightness", min_brightness, 0);
-	original_obj_loc = MapCoord(0, 0, 0);
 
 	roof_mode = Game::get_game()->is_roof_mode();
-	roof_tiles = NULL;
-
-	draw_brit_lens_anim = false;
-	draw_garg_lens_anim = false;
-
-	window_updated = true;
-	roof_display = ROOF_DISPLAY_NORMAL;
-
-	lighting_update_required = true;
 
 	game_started = false;
 

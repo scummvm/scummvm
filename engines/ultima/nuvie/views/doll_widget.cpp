@@ -79,27 +79,14 @@ static const byte gump_empty_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
 };
 
-DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
-	config = cfg;
-	callback_object = callback;
-
-	actor = NULL;
-	tile_manager = NULL;
-	selected_obj = NULL;
-	obj_manager = NULL;
-	unready_obj = NULL;
-	empty_tile = NULL;
-	blocked_tile = NULL;
-
+DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback)
+		: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
+		actor(nullptr), tile_manager(nullptr), selected_obj(nullptr),
+		obj_manager(nullptr), unready_obj(nullptr), empty_tile(nullptr),
+		blocked_tile(nullptr), need_to_free_tiles(false), use_new_dolls(true),
+		old_use_new_dolls(true), actor_doll(nullptr), doll_bg(nullptr),
+		md_doll_shp(nullptr), is_in_portrait_view(false) {
 	bg_color = Game::get_game()->get_palette()->get_bg_color();
-	need_to_free_tiles = false;
-
-	use_new_dolls = true;
-	old_use_new_dolls = true;
-	actor_doll = NULL;
-	doll_bg = NULL;
-	md_doll_shp = NULL;
-
 	// Set up hit rects
 	item_hit_rects[0] = Common::Rect(24, 0,  24 + 16,  0 + 16); // ACTOR_HEAD
 	item_hit_rects[1] = Common::Rect(0, 8,   0 + 16,  8 + 16);  // ACTOR_NECK

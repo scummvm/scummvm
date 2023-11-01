@@ -48,7 +48,8 @@ NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr), _soundManager(nullptr) {
+		_screen(nullptr), _script(nullptr), _game(nullptr), _soundManager(nullptr),
+		_events(nullptr) {
 	g_engine = this;
 }
 
@@ -111,10 +112,8 @@ bool NuvieEngine::initialize() {
 	// Setup screen
 	_screen = new Screen(_config);
 
-	if (_screen->init() == false) {
-		DEBUG(0, LEVEL_ERROR, "Initializing screen!\n");
-		return false;
-	}
+	if (_screen->init() == false)
+		error("Error initializing screen!");
 
 	GUI *gui = new GUI(_config, _screen);
 

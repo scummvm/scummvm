@@ -42,19 +42,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-PortraitView::PortraitView(Configuration *cfg) : View(cfg) {
-	portrait_data = NULL;
-	portrait = NULL;
-	bg_data = NULL;
-	name_string = new string;
-	show_cursor = false;
-	doll_widget = NULL;
-	waiting = false;
-	display_doll = false;
-	cur_actor_num = 0;
+PortraitView::PortraitView(Configuration *cfg) : View(cfg),
+		portrait_data(nullptr), portrait(nullptr),	bg_data(nullptr),
+		name_string(new string), show_cursor(false), doll_widget(nullptr),
+		waiting(false), display_doll(false), cur_actor_num(0) {
 	gametype = get_game_type(cfg);
 
-//FIXME: Portraits in SE/MD are different size than in U6! 79x85 76x83
+	//FIXME: Portraits in SE/MD are different size than in U6! 79x85 76x83
 	switch (gametype) {
 	case NUVIE_GAME_U6:
 		portrait_width = 56;
@@ -68,6 +62,8 @@ PortraitView::PortraitView(Configuration *cfg) : View(cfg) {
 		portrait_width = 76;
 		portrait_height = 83;
 		break;
+	default:
+		error("Unsupported game type in PortraitView");
 	}
 }
 

@@ -131,77 +131,41 @@ private:
 	uint16 screen_x; //x offset to top left corner of MsgScroll
 	uint16 screen_y; //y offset to top left corner of MsgScroll
 
-
-
 	bool keyword_highlight;
-
-
-
 
 	MsgText prompt;
 	Std::list<MsgText *> holding_buffer;
 
-
 	bool show_cursor;
 	bool autobreak; // if true, a page break will be added when the scroll is full
-
-
-
-
-
 
 	bool scroll_updated;
 	uint8 cursor_char;
 	uint16 cursor_x, cursor_y;
 
-
-
-
 	uint16 line_count; // count the number of lines since last page break.
 
 	uint16 display_pos;
 
-
 	bool capitalise_next_letter;
-
-
-
 
 public:
 
 	MsgScroll(Configuration *cfg, Font *f);
-	MsgScroll() : GUI_Widget(NULL, 0, 0, 0, 0) {
-		config = NULL;
-		game_type = 0;
-		font = NULL;
-		scroll_height = 0;
-		scroll_width = 0;
-		callback_target = NULL;
-		callback_user_data = NULL;
-		input_mode = false;
-		permit_input = NULL;
-		page_break = false;
-		just_finished_page_break = false;
-		permit_inputescape = false;
-		cursor_wait = 0;
-		screen_x = 0;
-		screen_y = 0;
-		bg_color = 0;
-		keyword_highlight = true;
-		talking = false;
-		show_cursor = false;
-		autobreak = false;
-		scroll_updated = false;
-		cursor_char = 0;
-		cursor_x = 0;
-		cursor_y = 0;
-		line_count = 0;
-		display_pos = 0;
-		capitalise_next_letter = false;
-		just_displayed_prompt = false;
-		scrollback_height = MSGSCROLL_SCROLLBACK_HEIGHT;
-		discard_whitespace = false;
-		left_margin = 0;
+	MsgScroll() : GUI_Widget(nullptr, 0, 0, 0, 0),
+		config(nullptr), game_type(0), font(nullptr), scroll_height(0),
+		scroll_width(0), callback_target(nullptr), callback_user_data(nullptr),
+		input_mode(false), permit_input(nullptr), page_break(false),
+		just_finished_page_break(false), permit_inputescape(false),
+		cursor_wait(0), screen_x(0), screen_y(0), bg_color(0),
+		keyword_highlight(true), talking(false), show_cursor(false),
+		autobreak(false), scroll_updated(false), cursor_char(0),
+		cursor_x(0), cursor_y(0), line_count(0), display_pos(0),
+		capitalise_next_letter(false), just_displayed_prompt(false),
+		scrollback_height(MSGSCROLL_SCROLLBACK_HEIGHT), discard_whitespace(false),
+		left_margin(0), font_color(0), font_highlight_color(0), input_char(0),
+		yes_no_only(false), aye_nay_only(false), numbers_only(false),
+		using_target_cursor(false) {
 	}
 	~MsgScroll() override;
 

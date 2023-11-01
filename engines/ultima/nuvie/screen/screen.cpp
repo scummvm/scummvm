@@ -41,21 +41,12 @@ namespace Nuvie {
 static const sint32 globeradius[]   = { 36, 112, 148, 192, 448 };
 static const sint32 globeradius_2[] = { 18, 56, 74, 96, 224 };
 
-Screen::Screen(Configuration *cfg) {
-	config = cfg;
-
-	_rawSurface = NULL;
-	_renderSurface = NULL;
-	scaler = NULL;
-	shading_data = NULL;
-	scaler_index = 0;
-	scale_factor = 2;
-	doubleBuffer = false;
-	is_no_darkness = false;
-	non_square_pixels = false;
-	shading_ambient = 255;
-	width = 320;
-	height = 200;
+Screen::Screen(Configuration *cfg) : config(cfg), _rawSurface(nullptr),
+		_renderSurface(nullptr), scaler(nullptr), shading_data(nullptr),
+		scaler_index(0), scale_factor(2), doubleBuffer(false),
+		is_no_darkness(false), non_square_pixels(false), shading_ambient(255),
+		width(320), height(200) {
+	ARRAYCLEAR(shading_tile);
 
 	Std::string str_lighting_style;
 	config->value("config/general/lighting", str_lighting_style);

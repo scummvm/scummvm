@@ -73,7 +73,10 @@ void EventInput_s::set_loc(MapCoord c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Shared::EventsCallback *callback, Configuration *cfg) : Shared::EventsManager(callback), config(cfg) {
+Events::Events(Shared::EventsCallback *callback, Configuration *cfg)
+		: Shared::EventsManager(callback), config(cfg), converse(nullptr),
+		  keybinder(nullptr), showingQuitDialog(false), fps_counter_widget(nullptr),
+		  cursor_mode(false){
 	g_events = this;
 	clear();
 }
@@ -91,28 +94,28 @@ void Events::clear() {
 	alt_code_input_num = 0;
 
 	game = Game::get_game();
-	gui = NULL;
-	obj_manager = NULL;
-	map_window = NULL;
-	scroll = NULL;
-	clock = NULL;
-	player = NULL;
-	view_manager = NULL;
-	usecode = NULL;
-	magic = NULL;
-	drop_obj = NULL;
+	gui = nullptr;
+	obj_manager = nullptr;
+	map_window = nullptr;
+	scroll = nullptr;
+	clock = nullptr;
+	player = nullptr;
+	view_manager = nullptr;
+	usecode = nullptr;
+	magic = nullptr;
+	drop_obj = nullptr;
 	ts = 0;
 	drop_qty = 0;
 	drop_x = drop_y = -1;
 	rest_time = 0;
 	rest_guard = 0;
-	push_obj = NULL;
-	push_actor = NULL;
+	push_obj = nullptr;
+	push_actor = nullptr;
 	drop_from_key = false;
 	move_in_inventory = false;
-	time_queue = game_time_queue = NULL;
+	time_queue = game_time_queue = nullptr;
 	showingDialog = false;
-	gamemenu_dialog = NULL;
+	gamemenu_dialog = nullptr;
 	ignore_timeleft = false;
 	in_control_cheat = false;
 	looking_at_spellbook = false;
@@ -126,7 +129,7 @@ void Events::clear() {
 	fps_timestamp = 0;
 	fps_counter = 0;
 
-	scriptThread = NULL;
+	scriptThread = nullptr;
 }
 
 bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic *mg,

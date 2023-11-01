@@ -27,30 +27,14 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int aShape)
-	: GUI_Widget(NULL, x, y, w, h) {
-	R = r;
-	G = g;
-	B = b;
-	color = 0;
-	useFrame = 0;
-	shape = aShape;
-	frameThickness = 0;
+	: GUI_Widget(NULL, x, y, w, h), R(r), G(g), B(b), color(0), useFrame(0), shape(aShape),
+	  frameThickness(0), fB(0), fG(0), fR(0), frameColor(0) {
 }
 
 GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
 					uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
-	: GUI_Widget(NULL, x, y, w, h) {
-	R = r;
-	G = g;
-	B = b;
-	color = 0;
-	useFrame = 1;
-	fR = fr;
-	fG = fg;
-	fB = fb;
-	frameColor = 0;
-	frameThickness = fthick;
-	shape = aShape;
+	: GUI_Widget(NULL, x, y, w, h), R(r), G(g), B(b), color(0), useFrame(1),
+	  fR(fr), fG(fg), fB(fb), frameColor(0), frameThickness(fthick), shape(aShape) {
 }
 
 /* Map the color to the display */

@@ -41,21 +41,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
-	config = cfg;
-	callback_object = callback;
+InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback)
+	: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
+      container_obj(nullptr), tile_manager(nullptr), obj_manager(nullptr),
+	  selected_obj(nullptr), font(nullptr), actor(nullptr), target_obj(nullptr),
+	  target_cont(nullptr), empty_tile(nullptr), row_offset(0), icon_x(0),
+	  bg_color(0), objlist_offset_x(0), objlist_offset_y(0), obj_font_color(0) {
 
-	container_obj = NULL;
-	tile_manager = NULL;
-	obj_manager = NULL;
-	selected_obj = NULL;
-	font = NULL;
-	actor = NULL;
-	target_obj = NULL;
-	target_cont = NULL;
-	empty_tile = NULL;
-	ready_obj = NULL; // FIXME: this is unused but I might need it again -- SB-X
-	row_offset = 0;
+	ready_obj = nullptr; // FIXME: this is unused but I might need it again -- SB-X
 
 	config->value("config/GameType", game_type);
 

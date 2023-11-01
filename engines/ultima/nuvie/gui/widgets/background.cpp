@@ -33,19 +33,14 @@
 namespace Ultima {
 namespace Nuvie {
 
-Background::Background(Configuration *cfg) : GUI_Widget(NULL) {
-	config = cfg;
+Background::Background(Configuration *cfg) : GUI_Widget(nullptr), config(cfg),
+		bg_w(0), bg_h(0), border_width(0), background(nullptr), right_bg_x_off(0),
+		left_bg_x_off(0) {
 	config->value("config/GameType", game_type);
-
-	bg_w = 0;
-	bg_h = 0;
-	border_width = 0;
-	background = NULL;
 	x_off = Game::get_game()->get_game_x_offset();
 	y_off = Game::get_game()->get_game_y_offset();
 
-
-	Init(NULL, 0, 0, Game::get_game()->get_screen()->get_width(), Game::get_game()->get_screen()->get_height());
+	Init(nullptr, 0, 0, Game::get_game()->get_screen()->get_width(), Game::get_game()->get_screen()->get_height());
 }
 
 Background::~Background() {

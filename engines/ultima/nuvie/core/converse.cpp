@@ -44,34 +44,15 @@ namespace Nuvie {
 //#define CONVERSE_DEBUG
 
 
-Converse::Converse() {
-	config = NULL;
-	clock = NULL;
-	actors = NULL;
-	objects = NULL;
-	player = NULL;
-	views = NULL;
-	last_view = NULL;
-	scroll = NULL;
-
-	conv_i = NULL;
-	script = NULL;
-	npc = NULL;
-	npc_num = 0;
-	script_num = 0;
-	src = NULL;
-	src_num = 0;
-
-	allowed_input = NULL;
-
-	active = false;
-	variables = NULL;
-	party_all_the_time = false;
-	speech = NULL;
-	using_fmtowns = false;
-	need_input = false;
-	aname[15] = '\0';
-	gametype = NUVIE_GAME_NONE;
+Converse::Converse() : config(nullptr), actors(nullptr), objects(nullptr),
+		player(nullptr), views(nullptr), last_view(nullptr), scroll(nullptr),
+		conv_i(nullptr), script(nullptr), npc(nullptr), npc_num(0), script_num(0),
+		src(nullptr), src_num(0), allowed_input(nullptr), active(false),
+		variables(nullptr), party_all_the_time(false), speech(nullptr),
+		using_fmtowns(false), need_input(false), conversations_stop_music(false),
+		gametype(NUVIE_GAME_NONE) {
+	clock = nullptr;
+	ARRAYCLEAR(aname);
 }
 
 

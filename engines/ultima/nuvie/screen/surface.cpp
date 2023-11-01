@@ -82,8 +82,9 @@ RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) :
 
 // Constructor for opengl surface
 RenderSurface::RenderSurface(OpenGL *ogl) : buffer(0), zbuffer_priv(0), _rawSurface(NULL),
-		opengl(ogl), bytes_per_pixel(0), bits_per_pixel(0), format_type(0), pixels(0),
-		zbuffer(0), w(0), h(0), pitch(0), gl(0), gr(0), gt(0), gb(0), lock_count(0) {
+		_disposeSurface(DisposeAfterUse::NO), opengl(ogl), bytes_per_pixel(0),
+		bits_per_pixel(0), format_type(0), pixels(0), zbuffer(0), w(0), h(0), pitch(0),
+		gl(0), gr(0), gt(0), gb(0), lock_count(0) {
 }
 
 RenderSurface::~RenderSurface() {

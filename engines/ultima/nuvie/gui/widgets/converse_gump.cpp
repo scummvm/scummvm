@@ -113,6 +113,8 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 	cfg->value(config_get_game_key(config) + "/converse_bg_color", c, default_c);
 	if (c < 256)
 		converse_bg_color = (uint8)c;
+	else
+		converse_bg_color = 0;
 
 	cursor_position = 0;
 

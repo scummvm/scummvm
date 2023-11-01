@@ -1732,12 +1732,12 @@ void CSImage::setScale(uint16 percentage) {
 	return;
 }
 
-CSStarFieldImage::CSStarFieldImage(U6Shape *shape) : CSImage(shape) {
+CSStarFieldImage::CSStarFieldImage(U6Shape *shape) : CSImage(shape), w(0), h(0) {
 	shp->get_size(&w, &h);
 
 	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
 		stars[i].color = 2;
-		stars[i].line = NULL;
+		stars[i].line = nullptr;
 	}
 }
 
@@ -1747,7 +1747,7 @@ void CSStarFieldImage::updateEffect() {
 	memset(data, 0, w * h);
 
 	for (int i = 0; i < STAR_FIELD_NUM_STARS; i++) {
-		if (stars[i].line == NULL) {
+		if (stars[i].line == nullptr) {
 			switch (NUVIE_RAND() % 4) {
 			case 0 :
 				stars[i].line = new U6LineWalker(w / 2, h / 2, 0, NUVIE_RAND() % h);

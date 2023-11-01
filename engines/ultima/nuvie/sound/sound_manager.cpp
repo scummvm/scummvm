@@ -81,26 +81,15 @@ void musicFinished() {
 	SoundManager::g_MusicFinished = true;
 }
 
-SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
-	m_pCurrentSong = NULL;
+SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer),
+		m_pCurrentSong(nullptr), audio_enabled(false), music_enabled(false),
+		sfx_enabled(false), m_Config(nullptr), m_SfxManager(nullptr), opl(nullptr),
+		stop_music_on_group_change(true), speech_enabled(true), music_volume(0),
+		sfx_volume(0), game_type(NUVIE_GAME_NONE), _midiDriver(nullptr),
+		_mt32MidiDriver(nullptr), _midiParser(nullptr), _deviceType(MT_NULL),
+		_musicData(nullptr), _mt32InstrumentMapping(nullptr) {
 	m_CurrentGroup = "";
 	g_MusicFinished = true;
-
-	audio_enabled = false;
-	music_enabled = false;
-	sfx_enabled = false;
-
-	m_Config = NULL;
-	m_SfxManager = NULL;
-
-	opl = NULL;
-
-	_midiDriver = nullptr;
-	_mt32MidiDriver = nullptr;
-	_midiParser = nullptr;
-	_deviceType = MT_NULL;
-	_musicData = nullptr;
-	_mt32InstrumentMapping = nullptr;
 }
 
 SoundManager::~SoundManager() {

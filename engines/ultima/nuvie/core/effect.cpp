@@ -334,7 +334,9 @@ void TimedEffect::stop_timer() {
  * determines the speed of movement. An actor may be selected to keep the
  * MapWindow centered on after the Quake.
  */
-QuakeEffect::QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on) {
+QuakeEffect::QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on)
+		: strength(magnitude), orig_actor(keep_on), sx(0), sy(0),
+		  map_window(nullptr), stop_time(0) {
 	// single use only, so MapWindow doesn't keep moving away from center
 	// ...and do nothing if magnitude isn't usable
 	if (current_quake || magnitude == 0) {
@@ -345,14 +347,12 @@ QuakeEffect::QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on) {
 
 	map_window = game->get_map_window();
 	stop_time = game->get_clock()->get_ticks() + duration;
-	strength = magnitude;
 
 	// get random direction (always move left-right more than up-down)
 	init_directions();
 
 	map_window->get_pos(&orig.x, &orig.y);
 	map_window->get_level(&orig.z);
-	orig_actor = keep_on;
 	map_window->set_freeze_blacking_location(true);
 
 	start_timer(strength * 5);
@@ -505,7 +505,7 @@ uint16 TextEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 /*** ExplosiveEffect ***/
 ExplosiveEffect::ExplosiveEffect(uint16 x, uint16 y, uint32 size, uint16 dmg)
-	: start_at() {
+	: start_at(), anim(nullptr) {
 	start_at.x = x;
 	start_at.y = y;
 	radius = size;

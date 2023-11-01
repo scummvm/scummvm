@@ -48,7 +48,8 @@ namespace Nuvie {
 
 // ConverseGumpWOU Class
 
-ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
+ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s)
+		: found_break_char(false), frame_h(0), frame_w(0), min_w(0) {
 // uint16 x, y;
 
 	init(cfg, f);
@@ -65,7 +66,7 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 	uint16 y_off = game->get_game_y_offset();
 
 	if (game_type == NUVIE_GAME_U6) {
-		GUI_Widget::Init(NULL, x_off + 8, y_off + 8, 160, 160);
+		GUI_Widget::Init(nullptr, x_off + 8, y_off + 8, 160, 160);
 		bg_color = converse_bg_color = 0x31; //17;
 		if (game->get_game_width() >= 335) {
 			Std::string imagefile;
@@ -74,14 +75,13 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 			NuvieBmpFile bmp;
 			bg_image = bmp.getSdlSurface32(imagefile);
 		} else
-			bg_image = NULL;
+			bg_image = nullptr;
 	} else { //MD and SE
-		bg_image = NULL;
-		GUI_Widget::Init(NULL, x_off + 8, y_off + 16, 160, 144);
+		bg_image = nullptr;
+		GUI_Widget::Init(nullptr, x_off + 8, y_off + 16, 160, 144);
 		bg_color = converse_bg_color = Game::get_game()->get_palette()->get_bg_color();
 	}
 
-	found_break_char = false;
 	left_margin = 8;
 	add_new_line();
 //DEBUG(0, LEVEL_DEBUGGING, "\nMin w = %d\n", frame_w + 12 + 210);

@@ -1186,8 +1186,8 @@ bool WingAnim::update() {
 	return (true);
 }
 
-HailstormAnim::HailstormAnim(MapCoord t) {
-	target = t;
+HailstormAnim::HailstormAnim(MapCoord t) : target(t) {
+	ARRAYCLEAR(hailstones);
 	hailstone_tile = Game::get_game()->get_tile_manager()->get_tile(0x18e); //hailstone tile.
 
 	num_active = 0;

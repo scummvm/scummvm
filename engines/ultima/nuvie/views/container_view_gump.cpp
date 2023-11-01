@@ -40,18 +40,12 @@ namespace Nuvie {
 #define CONTAINER_WIDGET_OFFSET 29
 #define CHECK_X 0
 
-ContainerViewGump::ContainerViewGump(Configuration *cfg) : DraggableView(cfg) {
-	bg_image = NULL;
-	gump_button = NULL;
-	up_arrow_button = NULL;
-	down_arrow_button = NULL;
-	doll_button = NULL;
-	left_arrow_button = NULL;
-	right_arrow_button = NULL;
-	container_widget = NULL;
-	font = NULL;
-	actor = NULL;
-	container_obj = NULL;
+ContainerViewGump::ContainerViewGump(Configuration *cfg) : DraggableView(cfg),
+		gump_button(nullptr), up_arrow_button(nullptr), down_arrow_button(nullptr),
+		doll_button(nullptr), left_arrow_button(nullptr),
+		right_arrow_button(nullptr), container_widget(nullptr), font(nullptr),
+		actor(nullptr), container_obj(nullptr), container_widget_y_offset(0) {
+	bg_image = nullptr;
 }
 
 ContainerViewGump::~ContainerViewGump() {

@@ -31,12 +31,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-DraggableView::DraggableView(Configuration *cfg) : View(cfg) {
-	drag = false;
-	button_x = 0;
-	button_y = 0;
-	bg_image = NULL;
-	bg_color_key = 0;
+DraggableView::DraggableView(Configuration *cfg) : View(cfg),
+		drag(false), button_x(0), button_y(0), bg_image(nullptr),
+		bg_color_key(0), always_need_full_redraw_when_moved(false) {
 	Game *game = Game::get_game();
 	if (game->is_orig_style() || game->is_original_plus_cutoff_map()) {
 		need_full_redraw_when_moved = true;

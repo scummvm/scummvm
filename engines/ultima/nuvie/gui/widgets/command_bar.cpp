@@ -84,13 +84,14 @@ static Tile placeholder_tile = {
 	}
 };
 
-CommandBar::CommandBar() : GUI_Widget(NULL) {
-	selected_action = -1;
+CommandBar::CommandBar() : GUI_Widget(NULL), game(nullptr), event(nullptr),
+		background(nullptr), font(nullptr), selected_action(-1), offset(0),
+		combat_mode(false), bg_color(0), font_color(0) {
 }
 
-CommandBar::CommandBar(Game *g) : GUI_Widget(NULL) {
-	game = g;
-	background = NULL;
+CommandBar::CommandBar(Game *g) : GUI_Widget(NULL), game(g),
+		background(nullptr), combat_mode(false), bg_color(0),
+		font_color(0) {
 	Weather *weather;
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off =  game->get_game_y_offset();
@@ -151,7 +152,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL) {
 		offset = OBJLIST_OFFSET_SE_COMMAND_BAR;
 	}
 
-	event = NULL; // it's not set yet
+	event = nullptr; // it's not set yet
 	font = game->get_font_manager()->get_font(0);
 
 	weather = game->get_weather();

@@ -36,11 +36,9 @@ namespace Nuvie {
 #define TILES_W 5
 #define TILES_H 10
 
-MapEditorView::MapEditorView(Configuration *cfg) : View(cfg) {
-	roof_tiles = NULL;
-	map_window = NULL;
-	up_button = NULL;
-	down_button = NULL;
+MapEditorView::MapEditorView(Configuration *cfg) : View(cfg), roof_tiles(nullptr),
+		map_window(nullptr), up_button(nullptr), down_button(nullptr),
+		selectedTile(0), tile_offset(0) {
 }
 
 MapEditorView::~MapEditorView() {
