@@ -55,7 +55,7 @@ void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 	offset_x = x;
 	offset_y = y;
 	Show();
-	error = NULL;
+	errorptr = nullptr;
 	for (int n = 0; n < 3; ++n) {
 		pressed[n] = 0;
 	}

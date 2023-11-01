@@ -62,7 +62,7 @@ protected:
 	Std::list<GUI_Widget *>children;
 	GUI_Widget *parent;
 
-	char *error;
+	char *errorptr;
 	char  errbuf[BUFSIZ];
 
 	GUI_DragManager *gui_drag_manager;
@@ -193,7 +193,7 @@ public:
 
 	/* Returns NULL if everything is okay, or an error message if not */
 	char *Error(void) {
-		return (error);
+		return (errorptr);
 	}
 
 	/* yields click state: none, pressed, intermediate */
@@ -219,7 +219,7 @@ protected:
 		va_start(ap, fmt);
 		Common::vsprintf_s(errbuf, fmt, ap);
 		va_end(ap);
-		error = errbuf;
+		errorptr = errbuf;
 	}
 
 	// SB-X
