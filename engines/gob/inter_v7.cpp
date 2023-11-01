@@ -598,6 +598,11 @@ void Inter_v7::o7_playVmdOrMusic() {
 	props.palEnd     = _vm->_game->_script->readValExpr();
 	props.palCmd     = 1 << (props.flags & 0x3F);
 	props.forceSeek  = true;
+	int startFrameCopy = props.startFrame;
+
+	if (props.startFrame == -20 || props.startFrame == -200) {
+		props.startFrame = -2;
+	}
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
 			"paletteCmd %d (%d - %d), flags %X", file.c_str(),
@@ -696,14 +701,19 @@ void Inter_v7::o7_playVmdOrMusic() {
 
 		if (props.lastFrame <= -20)
 			props.noBlock    = true;
-		//if (!(props.flags & VideoPlayer::kFlagNoVideo))
-		//	props.loop = true;
 
 		props.slot = (-props.lastFrame) % 10;
 	}
 
 	if (props.startFrame == -2)
 		props.noBlock    = true;
+
+	if ((props.slot == 1 && !(props.flags & VideoPlayer::kFlagNoVideo)) ||
+		startFrameCopy == -20) {
+		props.loop = true;
+		// TODO: one more mode is missing if start frame == -200
+		// In that case, the video is not closed at the end, but does not loop either
+	}
 
 	_vm->_vidPlayer->evaluateFlags(props);
 
