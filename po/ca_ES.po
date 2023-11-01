@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-10-31 23:24+0000\n"
-"PO-Revision-Date: 2023-09-15 23:41+0000\n"
+"PO-Revision-Date: 2023-11-02 04:41+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -954,32 +954,24 @@ msgid "Right"
 msgstr "Dreta"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "de fondo"
+msgstr "Retrocés"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
-msgstr "Suprimeix personatge"
+msgstr "Suprimeix el personatge"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
 msgstr ""
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "Seleccioneu el fitxer SoundFont"
+msgstr "Selecciona fins al final de la línia"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Seleccioneu el directori dels connectors"
+msgstr "Selecciona fins al començament de la línia"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
@@ -4353,10 +4345,8 @@ msgstr "Mode d'ampliació desactivat"
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:327
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "Control"
+msgstr "Controls tàctils"
 
 #: backends/platform/android/android.cpp:1033
 msgid ""
@@ -4430,10 +4420,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1089
 #: backends/platform/ios7/ios7_osys_misc.mm:306
 #: backends/platform/ios7/ios7_osys_misc.mm:350
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "~A~fegeix Joc..."
+msgstr "Afegir jocs"
 
 #: backends/platform/android/android.cpp:1092
 msgid ""
@@ -4579,17 +4567,13 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Escalat per software (bona qualitat, però més lent)"
 
 #: backends/platform/ios7/ios7_options.mm:96
-#, fuzzy
-#| msgid "Show On-screen control (iOS 15 and later)"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Mostra el control en pantalla (iOS 15 i posteriors)"
+msgstr "Mostra el comandament de joc (iOS 15 i posteriors)"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Emulació del comandament de joc"
+msgstr "Opacitat del comandament de joc"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
@@ -7549,9 +7533,8 @@ msgid "Fast move modifier"
 msgstr "Modificador de moviment ràpid"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
 msgid "Show/hide maze map"
-msgstr "Mostra el teclat"
+msgstr "Mostra/oculta el mapa de laberint"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -7572,10 +7555,8 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "Desament automàtic"
+msgstr "Mou automàticament"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
@@ -8516,10 +8497,8 @@ msgid "play C major on distaff"
 msgstr "toca un Do major amb la filosa"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Mostra l'inventari"
+msgstr "Mostra l'inventari d'encanteris"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
