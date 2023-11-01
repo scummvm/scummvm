@@ -255,7 +255,7 @@ void MacGui::MacWidget::setValue(int value) {
 	setRedraw();
 }
 
-int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align) {
+int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align, int deltax) {
 	if (text.empty())
 		return 0;
 
@@ -315,7 +315,7 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	int y0 = y;
 
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(_window->innerSurface(), lines[i], x, y0, w, color, align);
+		font->drawString(_window->innerSurface(), lines[i], x, y0, w, color, align, deltax);
 
 		if (!_enabled) {
 			Common::Rect textBox = font->getBoundingBox(lines[i], x, y0, w, align);
@@ -529,7 +529,7 @@ void MacGui::MacText::draw(bool drawFocused) {
 	debug(1, "MacGui::MacText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	_window->innerSurface()->fillRect(_bounds, kWhite);
-	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack);
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack, Graphics::kTextAlignLeft, 1);
 	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
@@ -769,8 +769,6 @@ void MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String te
 }
 
 void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
-	// Adjust the text position slightly
-	bounds.left++;
 	_widgets.push_back(new MacText(this, bounds, text, enabled));
 }
 
