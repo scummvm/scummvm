@@ -77,7 +77,7 @@ bool SavegameManager::loadSavegame(const Common::String &filename) {
 
 	Common::File f;
 	if (stream == nullptr) {
-		if (!f.open(filename)) {
+		if (!f.open(Common::Path(filename))) {
 			warning("Unable to open save file '%s'", filename.c_str());
 			return false;
 		}
