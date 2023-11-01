@@ -626,8 +626,6 @@ static void update_cursor_over_gui() {
 	for (auto &gui : _GP(guis)) {
 		if (!gui.IsDisplayed())
 			continue; // not on screen
-		if (!gui.IsClickable())
-			continue; // don't update non-clickable
 		// Don't touch GUI if "GUIs Turn Off When Disabled"
 		if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
 			(_G(all_buttons_disabled) >= 0) &&
