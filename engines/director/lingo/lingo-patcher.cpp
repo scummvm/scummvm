@@ -193,9 +193,11 @@ struct ScriptPatch {
 	{"henachoco03", "Demo", kPlatformMacintosh, "Muzukashiihon", kMovieScript, 0, DEFAULT_CAST_LIB,
 			136, "locaobject(mRHizikaraHand (rhenka + 1),dotti)", "locaobject(mRHizikaraHand,(rhenka + 1),dotti)"},
 
+
 	// The same ambiguous syntax as above, in a different disc
 	{"journey2source", "", kPlatformMacintosh, "StartJourney", kScoreScript, 2, DEFAULT_CAST_LIB,
 			2, "set DiskChk = FileIO(mnew,\"read\"¬\"The Source:Put Contents on Hard Drive:Journey to the Source:YZ.DATA\")", "set DiskChk = FileIO(mnew,\"read\",¬\"The Source:Put Contents on Hard Drive:Journey to the Source:YZ.DATA\")"},
+
 
 	// C.H.A.O.S
 	{"chaos", "", kPlatformWindows, "Intro", kCastScript, 10, DEFAULT_CAST_LIB,
@@ -204,6 +206,7 @@ struct ScriptPatch {
 
 	{"smile", "v1.1", kPlatformMacintosh, "SMILE! The Splattering", kScoreScript, 24, DEFAULT_CAST_LIB,
 			1, "go to frame \"Info b\"If you have not paid   ", "go to frame \"Info b\""},
+
 
 	// Hack to fix the undefined sprite collision behaviour relied on by the boar hunt
 	{"wrath", "", kPlatformWindows, "57AM1", kMovieScript, 1, DEFAULT_CAST_LIB,
@@ -234,6 +237,11 @@ struct ScriptPatch {
 			307, "    alert(\"Sorry. No keyword was entered for this recipe.)", "    alert(\"Sorry. No keyword was entered for this recipe.\")"},
 	{"cts", "Imperial", kPlatformMacintosh, "CTS", kMovieScript, 0, DEFAULT_CAST_LIB,
 			307, "    alert(\"Sorry. No keyword was entered for this recipe.)", "    alert(\"Sorry. No keyword was entered for this recipe.\")"},
+
+
+	// garbage script
+	{"refixion2", "", kPlatformMacintosh, "data:Movie:ROgo", kScoreScript, 3, DEFAULT_CAST_LIB,
+			1, "Are you sure to cut off  KANJI Talk", ""},
 
 
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
