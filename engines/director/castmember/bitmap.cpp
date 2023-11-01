@@ -704,7 +704,12 @@ Datum BitmapCastMember::getField(int field) {
 		d.u.farr->arr.push_back(_regY);
 		break;
 	case kThePalette:
-		d = _clut;
+		// D5 and below return an integer for this field
+		if (_clut.castLib > 0) {
+			d = Datum(_clut.member + 0x20000 * (_clut.castLib - 1));
+		} else {
+			d = Datum(_clut.member);
+		}
 		break;
 	case kThePicture:
 		d.type = PICTUREREF;
@@ -736,14 +741,26 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 		return true;
 	case kThePalette:
 		{
-			// FIXME: not multicast safe
-			int id = d.asInt();
-			if (id > 0) {
-				_clut = CastMemberID(d.asInt(), DEFAULT_CAST_LIB);
-			} else if (id < 0) {
-				_clut = CastMemberID(d.asInt(), -1);
+			CastMemberID newClut;
+			if (d.isCastRef()) {
+				newClut = *d.u.cast;
 			} else {
-				_clut = CastMemberID(0, 0);
+				int id = d.asInt();
+				if (id > 0) {
+					// For palette IDs, D5 and above use multiples of 0x20000 to denote
+					// the castLib in the integer representation
+					newClut = CastMemberID(id % 0x20000, 1 + (id / 0x20000));
+				} else if (id < 0) {
+					// Negative integer refers to one of the builtin palettes
+					newClut = CastMemberID(id, -1);
+				} else {
+					// 0 indicates a fallback to the default palette settings
+					newClut = CastMemberID(0, 0);
+				}
+			}
+			if (newClut != _clut) {
+				_clut = newClut;
+				_modified = true;
 			}
 			return true;
 		}
