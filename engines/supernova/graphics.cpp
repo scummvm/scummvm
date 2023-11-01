@@ -71,7 +71,7 @@ bool MSNImage::init(int filenumber) {
 	Common::File file;
 	_filenumber = filenumber;
 	if (_vm->_MSPart == 1) {
-		if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
+		if (!file.open(Common::Path(Common::String::format("msn_data.%03d", filenumber)))) {
 			warning("Image data file msn_data.%03d could not be read!", filenumber);
 			return false;
 		}
@@ -79,7 +79,7 @@ bool MSNImage::init(int filenumber) {
 	}
 	else if (_vm->_MSPart == 2) {
 		if (!loadFromEngineDataFile()) {
-			if (!file.open(Common::String::format("ms2_data.%03d", filenumber))) {
+			if (!file.open(Common::Path(Common::String::format("ms2_data.%03d", filenumber)))) {
 				warning("Image data file ms2_data.%03d could not be read!", filenumber);
 				return false;
 			}

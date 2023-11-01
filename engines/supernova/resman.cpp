@@ -188,7 +188,7 @@ void ResourceManager::initImages2() {
 // Skip those in the buffer
 void ResourceManager::loadSound1(AudioId id) {
 	Common::File file;
-	if (!file.open(Common::String::format("msn_data.%03d", audioInfo1[id]._filenumber))) {
+	if (!file.open(Common::Path(Common::String::format("msn_data.%03d", audioInfo1[id]._filenumber)))) {
 		error("File %s could not be read!", file.getName());
 	}
 
@@ -213,7 +213,7 @@ void ResourceManager::loadSound1(AudioId id) {
 
 void ResourceManager::loadSound2(AudioId id) {
 	Common::File file;
-	if (!file.open(Common::String::format("ms2_data.%03d", audioInfo2[id]._filenumber))) {
+	if (!file.open(Common::Path(Common::String::format("ms2_data.%03d", audioInfo2[id]._filenumber)))) {
 		error("File %s could not be read!", file.getName());
 	}
 
