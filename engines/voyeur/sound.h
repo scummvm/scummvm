@@ -23,7 +23,7 @@
 #define VOYEUR_SOUND_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
+#include "common/path.h"
 #include "audio/mixer.h"
 
 namespace Voyeur {
@@ -40,8 +40,8 @@ public:
 	void stopVOCPlay();
 	void abortVOCMap();
 	void setVOCOffset(int offset);
-	Common::String getVOCFileName(int idx);
-	void startVOCPlay(const Common::String &filename);
+	Common::Path getVOCFileName(int idx);
+	void startVOCPlay(const Common::Path &filename);
 	void startVOCPlay(int soundId);
 	int getVOCStatus();
 	uint32 getVOCFrame();

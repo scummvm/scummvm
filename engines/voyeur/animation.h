@@ -173,7 +173,7 @@ public:
 	void close() override;
 
 	bool loadStream(Common::SeekableReadStream *stream) override;
-	bool loadRL2File(const Common::String &file, bool palFlag);
+	bool loadRL2File(const Common::Path &file, bool palFlag);
 	bool loadVideo(int videoId);
 	int getPaletteCount() const { return _header._colorCount; }
 

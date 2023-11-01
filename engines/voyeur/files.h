@@ -102,7 +102,7 @@ private:
 public:
 	Common::File _file;
 
-	BoltFile(const Common::String &filename, BoltFilesState &state);
+	BoltFile(const char *filename, BoltFilesState &state);
 	virtual ~BoltFile();
 
 	BoltGroup *getBoltGroup(uint16 id);
@@ -209,8 +209,8 @@ public:
 	FilesManager(VoyeurEngine *vm);
 	~FilesManager();
 
-	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
-	byte *fload(const Common::String &filename, int *size);
+	bool openBoltLib(const char *filename, BoltFile *&boltFile);
+	byte *fload(const char *filename, int *size);
 };
 
 class RectEntry: public Common::Rect {

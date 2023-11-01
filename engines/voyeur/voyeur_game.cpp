@@ -695,7 +695,7 @@ void VoyeurEngine::reviewTape() {
 
 			// Play sound for the given duration
 			_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
-			Common::String filename = _soundManager->getVOCFileName(
+			Common::Path filename = _soundManager->getVOCFileName(
 				_audioVideoId + 159);
 			_soundManager->startVOCPlay(filename);
 

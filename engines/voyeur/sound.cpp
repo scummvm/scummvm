@@ -54,15 +54,15 @@ void SoundManager::setVOCOffset(int offset) {
 	_vocOffset = offset;
 }
 
-Common::String SoundManager::getVOCFileName(int idx) {
+Common::Path SoundManager::getVOCFileName(int idx) {
 	assert(idx >= 0);
-	return Common::String::format("%s.voc", SZ_FILENAMES[idx]);
+	return Common::Path(Common::String::format("%s.voc", SZ_FILENAMES[idx]));
 }
 
-void SoundManager::startVOCPlay(const Common::String &filename) {
+void SoundManager::startVOCPlay(const Common::Path &filename) {
 	Common::File f;
 	if (!f.open(filename))
-		error("Could not find voc file - %s", filename.c_str());
+		error("Could not find voc file - %s", filename.toString().c_str());
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(f.readStream(f.size()),
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);

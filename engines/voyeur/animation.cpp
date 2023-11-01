@@ -47,12 +47,12 @@ RL2Decoder::~RL2Decoder() {
 }
 
 bool RL2Decoder::loadVideo(int videoId) {
-	Common::String filename = Common::String::format("%s.rl2",
-		::Voyeur::SZ_FILENAMES[videoId * 2]);
+	Common::Path filename(Common::String::format("%s.rl2",
+		::Voyeur::SZ_FILENAMES[videoId * 2]));
 	return loadRL2File(filename, false);
 }
 
-bool RL2Decoder::loadRL2File(const Common::String &file, bool palFlag) {
+bool RL2Decoder::loadRL2File(const Common::Path &file, bool palFlag) {
 	bool result = VideoDecoder::loadFile(file);
 	_paletteStart = palFlag ? 0 : 128;
 	return result;
