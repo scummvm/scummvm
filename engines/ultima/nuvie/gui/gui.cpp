@@ -36,7 +36,7 @@ const int GUI::mouseclick_delay = 300; /* SB-X */
 /* Number of widget elements to allocate at once */
 #define WIDGET_ARRAYCHUNK   32
 
-GUI *GUI::gui = NULL;
+GUI *GUI::gui = nullptr;
 
 GUI:: GUI(Configuration *c, Screen *s) {
 	Graphics::ManagedSurface *sdl_surface;
@@ -46,7 +46,7 @@ GUI:: GUI(Configuration *c, Screen *s) {
 	screen = s;
 	numwidgets = 0;
 	maxwidgets = 0;
-	widgets = NULL;
+	widgets = nullptr;
 	display = 1;
 	running = 0;
 
@@ -54,7 +54,7 @@ GUI:: GUI(Configuration *c, Screen *s) {
 
 	dragging = false;
 	full_redraw = true;
-	focused_widget = locked_widget = NULL;
+	focused_widget = locked_widget = nullptr;
 	block_input = false;
 
 	sdl_surface = screen->get_sdl_surface();
@@ -67,7 +67,7 @@ GUI:: GUI(Configuration *c, Screen *s) {
 }
 
 GUI:: ~GUI() {
-	if (widgets != NULL) {
+	if (widgets != nullptr) {
 		for (int i = 0; i < numwidgets; ++i) {
 			delete widgets[i];
 		}
@@ -102,7 +102,7 @@ GUI:: AddWidget(GUI_Widget *widget) {
 
 			maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
 			if ((newarray = (GUI_Widget **)realloc(widgets,
-			                                       maxarray * sizeof(*newarray))) == NULL) {
+			                                       maxarray * sizeof(*newarray))) == nullptr) {
 				return (-1);
 			}
 			widgets = newarray;
@@ -335,7 +335,7 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 	Common::Event event;
 
 	/* If there's nothing to do, return immediately */
-	if ((numwidgets == 0) && (idle == NULL)) {
+	if ((numwidgets == 0) && (idle == nullptr)) {
 		return;
 	}
 
@@ -353,7 +353,7 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 		}
 
 ///////////////////////////////////////////////////////////////// Polling is time consuming - instead:
-		if (multitaskfriendly && (idle == NULL)) {
+		if (multitaskfriendly && (idle == nullptr)) {
 			SDL_WaitEvent(&event);
 			HandleEvent(&event);
 		} else
@@ -365,7 +365,7 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 					HandleEvent(&event);
 				} while (SDL_PollEvent(&event));
 			} else {
-				if (idle != NULL) {
+				if (idle != nullptr) {
 					HandleStatus(idle());
 				}
 				for (i = numwidgets - 1; i >= 0; --i) {

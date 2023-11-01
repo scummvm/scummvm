@@ -33,7 +33,7 @@ struct Egg {
 	Obj *obj;
 	Egg() {
 		seen_egg = false;
-		obj = NULL;
+		obj = nullptr;
 	};
 };
 

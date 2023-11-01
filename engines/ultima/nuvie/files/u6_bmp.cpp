@@ -28,14 +28,14 @@ namespace Ultima {
 namespace Nuvie {
 
 U6Bmp::U6Bmp(): U6Shape() {
-	data = NULL;
+	data = nullptr;
 }
 
 U6Bmp::~U6Bmp() {
-	if (data != NULL)
+	if (data != nullptr)
 		free(data);
 
-	raw = NULL;
+	raw = nullptr;
 }
 
 
@@ -43,7 +43,7 @@ bool U6Bmp::load(Std::string filename) {
 	U6Lzw lzw;
 	uint32 data_size;
 
-	if (data != NULL)
+	if (data != nullptr)
 		return false;
 
 	if (filename.length() == 0)
@@ -51,7 +51,7 @@ bool U6Bmp::load(Std::string filename) {
 
 	data = lzw.decompress_file(filename, data_size);
 
-	if (data == NULL)
+	if (data == nullptr)
 		return false;
 
 	width = (data[0] + (data[1] << 8));

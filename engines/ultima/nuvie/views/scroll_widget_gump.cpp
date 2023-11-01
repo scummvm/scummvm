@@ -63,7 +63,7 @@ ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) :
 	show_up_arrow = false;
 	show_down_arrow = false;
 
-	GUI_Widget::Init(NULL, 0, 0, SCROLLWIDGETGUMP_W, SCROLLWIDGETGUMP_H);
+	GUI_Widget::Init(nullptr, 0, 0, SCROLLWIDGETGUMP_W, SCROLLWIDGETGUMP_H);
 
 	add_new_line(); //MsgScroll requires a line to start.
 
@@ -222,7 +222,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 	switch (event) {
 	case SCROLL_UP :
 		if (position > 0) {
-			//timer = new TimedCallback(this, NULL, 2000);
+			//timer = new TimedCallback(this, nullptr, 2000);
 			position--;
 			update_arrows();
 			//grab_focus();
@@ -230,7 +230,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 		return GUI_YUM;
 
 	case SCROLL_DOWN :
-		//timer = new TimedCallback(this, NULL, 2000);
+		//timer = new TimedCallback(this, nullptr, 2000);
 		if (page_break && position + scroll_height >= (int)msg_buf.size()) {
 			if (position + scroll_height == (int)msg_buf.size()) // break was just off the page so advance text
 				position++;
@@ -282,7 +282,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 		return GUI_YUM;
 	default :
 		//release_focus();
-		//new TimedCallback(this, NULL, 50);
+		//new TimedCallback(this, nullptr, 50);
 		break;
 	}
 

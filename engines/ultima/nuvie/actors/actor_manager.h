@@ -80,7 +80,7 @@ public:
 	ActorList *filter_party(ActorList *list);
 
 	Actor *get_actor(uint8 actor_num);
-	Actor *get_actor(uint16 x, uint16 y, uint8 z,  bool inc_surrounding_objs = true, Actor *excluded_actor = NULL);
+	Actor *get_actor(uint16 x, uint16 y, uint8 z,  bool inc_surrounding_objs = true, Actor *excluded_actor = nullptr);
 	Actor *get_actor_holding_obj(Obj *obj);
 
 	Actor *get_avatar();
@@ -109,7 +109,7 @@ public:
 
 	bool is_temp_actor(Actor *actor);
 	bool is_temp_actor(uint8 id_n);
-	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor = NULL);
+	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor = nullptr);
 	bool clone_actor(Actor *actor, Actor **new_actor, MapCoord new_location);
 	bool toss_actor(Actor *actor, uint16 xrange, uint16 yrange);
 	bool toss_actor_get_location(uint16 start_x, uint16 start_y, uint8 start_z, uint16 xrange, uint16 yrange, MapCoord *location);

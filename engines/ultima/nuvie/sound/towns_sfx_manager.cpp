@@ -110,7 +110,7 @@ void TownsSfxManager::loadSound1Dat() {
 }
 
 bool TownsSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
-	return playSfxLooping(sfx_id, NULL, volume);
+	return playSfxLooping(sfx_id, nullptr, volume);
 }
 
 
@@ -126,7 +126,7 @@ bool TownsSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handl
 }
 
 void TownsSfxManager::playSoundSample(uint8 sample_num, Audio::SoundHandle *looping_handle, uint8 volume) {
-	Audio::AudioStream *stream = NULL;
+	Audio::AudioStream *stream = nullptr;
 	Audio::SoundHandle handle;
 
 	if (sample_num > 5 && sample_num < 9) {

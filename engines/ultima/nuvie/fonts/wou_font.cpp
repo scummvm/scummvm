@@ -31,8 +31,8 @@ namespace Ultima {
 namespace Nuvie {
 
 WOUFont::WOUFont() {
-	font_data = NULL;
-	char_buf = NULL;
+	font_data = nullptr;
+	char_buf = nullptr;
 	num_chars = 0;
 	offset = 0;
 	height = 0;
@@ -42,10 +42,10 @@ WOUFont::WOUFont() {
 }
 
 WOUFont::~WOUFont() {
-	if (font_data != NULL)
+	if (font_data != nullptr)
 		free(font_data);
 
-	if (char_buf != NULL)
+	if (char_buf != nullptr)
 		free(char_buf);
 }
 
@@ -90,14 +90,14 @@ bool WOUFont::initCharBuf() {
 		}
 	}
 	char_buf = (unsigned char *)malloc(max_width * height);
-	if (char_buf == NULL)
+	if (char_buf == nullptr)
 		return false;
 
 	return true;
 }
 
 uint16 WOUFont::getCharWidth(uint8 c) {
-	if (font_data == NULL)
+	if (font_data == nullptr)
 		return 0;
 
 	return font_data[0x4 + get_char_num(c)];
@@ -109,7 +109,7 @@ uint16 WOUFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	unsigned char *pixels;
 	uint16 width;
 
-	if (font_data == NULL)
+	if (font_data == nullptr)
 		return false;
 
 	pixels = font_data + font_data[0x204 + char_num] * 256 + font_data[0x104 + char_num];
@@ -123,7 +123,7 @@ uint16 WOUFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 			char_buf[i] = color;
 	}
 
-	screen->blit(x, y, char_buf, 8, width, height, width, true, NULL);
+	screen->blit(x, y, char_buf, 8, width, height, width, true, nullptr);
 	return width;
 }
 
@@ -131,7 +131,7 @@ uint16 WOUFont::drawStringToShape(U6Shape *shp, const char *str, uint16 x, uint1
 	uint16 i;
 	uint16 string_len = strlen(str);
 
-	if (font_data == NULL)
+	if (font_data == nullptr)
 		return x;
 
 	for (i = 0; i < string_len; i++) {

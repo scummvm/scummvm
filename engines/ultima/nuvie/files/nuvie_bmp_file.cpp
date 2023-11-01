@@ -28,7 +28,7 @@ namespace Nuvie {
 #define NUVIEBMPFILE_MAGIC 0x4d42 // 'BM'
 
 NuvieBmpFile::NuvieBmpFile() {
-	data = NULL;
+	data = nullptr;
 	prev_width = 0;
 	prev_height = 0;
 	prev_bits = 0;
@@ -38,7 +38,7 @@ NuvieBmpFile::NuvieBmpFile() {
 }
 
 NuvieBmpFile::~NuvieBmpFile() {
-	if (data != NULL)
+	if (data != nullptr)
 		free(data);
 }
 
@@ -144,7 +144,7 @@ bool NuvieBmpFile::load(Std::string filename) {
 		bmp_line_width += (4 - (bmp_line_width % 4));
 	}
 
-	if (data == NULL || infoHeader.width != prev_width || infoHeader.height != prev_height || prev_bits != infoHeader.bits) {
+	if (data == nullptr || infoHeader.width != prev_width || infoHeader.height != prev_height || prev_bits != infoHeader.bits) {
 		if (data) {
 			free(data);
 		}
@@ -152,7 +152,7 @@ bool NuvieBmpFile::load(Std::string filename) {
 		prev_width = infoHeader.width;
 		prev_height = infoHeader.height;
 		prev_bits = infoHeader.bits;
-		if (data == NULL) {
+		if (data == nullptr) {
 			return handleError("allocating memory for image");
 		}
 	}
@@ -226,7 +226,7 @@ void NuvieBmpFile::write8BitData(NuvieIOFileWrite *file) {
 bool NuvieBmpFile::handleError(Std::string error) {
 	if (data) {
 		free(data);
-		data = NULL;
+		data = nullptr;
 	}
 
 	DEBUG(0, LEVEL_ERROR, error.c_str());
@@ -236,12 +236,12 @@ bool NuvieBmpFile::handleError(Std::string error) {
 
 Tile *NuvieBmpFile::getTile() {
 	if (infoHeader.width != 16 || infoHeader.height != 16 || infoHeader.bits != 8) {
-		return NULL;
+		return nullptr;
 	}
 
 	Tile *t = (Tile *)malloc(sizeof(Tile));
-	if (t == NULL) {
-		return NULL;
+	if (t == nullptr) {
+		return nullptr;
 	}
 	memset(t, 0, sizeof(Tile));
 	memcpy(t->data, data, 256);
@@ -251,20 +251,20 @@ Tile *NuvieBmpFile::getTile() {
 
 unsigned char *NuvieBmpFile::getRawIndexedData() {
 	if (infoHeader.bits != 8) {
-		return NULL;
+		return nullptr;
 	}
 
 	return data;
 }
 
 unsigned char *NuvieBmpFile::getRawIndexedDataCopy() {
-	if (data == NULL || infoHeader.bits != 8) {
-		return NULL;
+	if (data == nullptr || infoHeader.bits != 8) {
+		return nullptr;
 	}
 
 	unsigned char *copy = (unsigned char *)malloc(infoHeader.width * infoHeader.height);
-	if (copy == NULL) {
-		return NULL;
+	if (copy == nullptr) {
+		return nullptr;
 	}
 	memcpy(copy, data, infoHeader.width * infoHeader.height);
 	return copy;
@@ -276,8 +276,8 @@ Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32(Std::string filename) {
 }
 
 Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32() {
-	if (data == NULL) {
-		return NULL;
+	if (data == nullptr) {
+		return nullptr;
 	}
 
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(

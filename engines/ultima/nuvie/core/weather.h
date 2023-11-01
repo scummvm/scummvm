@@ -78,7 +78,7 @@ public:
 	bool is_eclipse();
 	bool is_moon_visible();
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 
 protected:
 

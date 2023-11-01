@@ -154,7 +154,7 @@ public:
 	void init(MapCoord *d, MapCoord *t, Obj *use_obj);
 	void timed(uint32 evtime) override;
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 
 protected:
 	bool move_party();
@@ -213,7 +213,7 @@ public:
 	~TimedCallback() override {  }
 	void timed(uint32 evtime) override;
 	void clear_target() {
-		set_target(NULL);
+		set_target(nullptr);
 	}
 };
 

@@ -130,10 +130,10 @@ bool find_path(Std::string path, Std::string &dir_str) {
 	struct dirent *item;
 
 	dir = opendir(path.c_str());
-	if (dir == NULL)
+	if (dir == nullptr)
 		return false;
 
-	for (item = readdir(dir); item != NULL; item = readdir(dir)) {
+	for (item = readdir(dir); item != nullptr; item = readdir(dir)) {
 		debug("trying %s, want %s", item->d_name, dir_str.c_str());
 		if (strlen(item->d_name) == dir_str.length() && Common::scumm_stricmp(item->d_name, dir_str.c_str()) == 0) {
 			dir_str = item->d_name;
@@ -196,7 +196,7 @@ int mkdir_recursive(Std::string path, int mode) {
 
 //return the uint8 game_type from a char string
 uint8 get_game_type(const char *string) {
-	if (string != NULL && strlen(string) >= 2) {
+	if (string != nullptr && strlen(string) >= 2) {
 		if (strcmp("md", string) == 0 || strcmp("martian", string) == 0)
 			return NUVIE_GAME_MD;
 		if (strcmp("se", string) == 0 || strcmp("savage", string) == 0)
@@ -726,7 +726,7 @@ void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth,
 	int IntPart = (SrcHeight / TgtHeight) * SrcWidth;
 	int FractPart = SrcHeight % TgtHeight;
 	int E = 0;
-	unsigned char *PrevSource = NULL;
+	unsigned char *PrevSource = nullptr;
 
 	while (NumPixels-- > 0) {
 		if (Source == PrevSource) {

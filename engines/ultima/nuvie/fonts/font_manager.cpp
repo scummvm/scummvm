@@ -39,10 +39,10 @@ FontManager::FontManager(Configuration *cfg) {
 	config = cfg;
 	num_fonts = 0;
 
-	conv_font = NULL;
-	conv_garg_font = NULL;
-	conv_font_data = NULL;
-	conv_font_widths = NULL;
+	conv_font = nullptr;
+	conv_garg_font = nullptr;
+	conv_font_data = nullptr;
+	conv_font_widths = nullptr;
 }
 
 FontManager::~FontManager() {
@@ -87,7 +87,7 @@ bool FontManager::initU6() {
 		return false;
 
 	font_data = u6_ch.readAll();
-	if (font_data == NULL)
+	if (font_data == nullptr)
 		return false;
 
 // english font
@@ -199,7 +199,7 @@ Font *FontManager::get_font(uint16 font_number) {
 	if (num_fonts > 0 && font_number < num_fonts)
 		return fonts[font_number]; //fonts.at(font_number);
 
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Nuvie

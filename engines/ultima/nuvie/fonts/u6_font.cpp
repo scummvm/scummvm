@@ -28,13 +28,13 @@ namespace Ultima {
 namespace Nuvie {
 
 U6Font::U6Font() {
-	font_data = NULL;
+	font_data = nullptr;
 	num_chars = 0;
 	offset = 0;
 }
 
 U6Font::~U6Font() {
-	if (font_data != NULL)
+	if (font_data != nullptr)
 		free(font_data);
 }
 
@@ -75,7 +75,7 @@ uint16 U6Font::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 		pixels += pitch;
 	}
 
-	screen->blit(x, y, buf, 8, 8, 8, 8, true, NULL);
+	screen->blit(x, y, buf, 8, 8, 8, 8, true, nullptr);
 	return 8;
 }
 

@@ -149,7 +149,7 @@ MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0
 }
 
 MapWindow::~MapWindow() {
-	set_overlay(NULL); // free
+	set_overlay(nullptr); // free
 	free(tmp_map_buf);
 	delete anim_manager;
 	if (roof_tiles) {
@@ -208,11 +208,11 @@ bool MapWindow::init(TileManager *tm, ObjManager *om, ActorManager *am) {
 // hide the window until game is fully loaded and does fade-in
 	get_overlay(); // this allocates `overlay`
 	overlay_level = MAP_OVERLAY_ONTOP;
-	assert(SDL_FillRect(overlay, NULL, game->get_palette()->get_bg_color()) == 0);
+	assert(SDL_FillRect(overlay, nullptr, game->get_palette()->get_bg_color()) == 0);
 
 	wizard_eye_info.eye_tile = tile_manager->get_tile(TILE_U6_WIZARD_EYE);
 	wizard_eye_info.moves_left = 0;
-	wizard_eye_info.caller = NULL;
+	wizard_eye_info.caller = nullptr;
 
 	if (roof_mode)
 		loadRoofTiles();
@@ -245,10 +245,10 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 	tmp_map_height = win_height + (TMP_MAP_BORDER * 2);// + 1;
 
 	tmp_map_buf = (uint16 *)nuvie_realloc(tmp_map_buf, tmp_map_width * tmp_map_height * sizeof(uint16));
-	if (tmp_map_buf == NULL)
+	if (tmp_map_buf == nullptr)
 		return false;
 
-// if(surface != NULL)
+// if(surface != nullptr)
 //   delete surface;
 // surface = new Surface;
 
@@ -509,7 +509,7 @@ const char *MapWindow::look(uint16 x, uint16 y, bool show_prefix) {
 
 	uint16 wrapped_x = WRAPPED_COORD(cur_x + x, cur_level);
 	actor = actor_manager->get_actor(wrapped_x, cur_y + y, cur_level);
-	if (actor != NULL && actor->is_visible())
+	if (actor != nullptr && actor->is_visible())
 		return actor_manager->look_actor(actor, show_prefix);
 
 	return map->look(wrapped_x, cur_y + y, cur_level);
@@ -523,11 +523,11 @@ Obj *MapWindow::get_objAtCursor(bool for_use /* = false */) {
 
 Obj *MapWindow::get_objAtCoord(MapCoord coord, bool top_obj, bool include_ignored_objects, bool for_use /* = false */) {
 	if (tile_is_black(coord.x, coord.y))
-		return NULL; // nothing to see here. ;)
+		return nullptr; // nothing to see here. ;)
 
 	Obj *obj = obj_manager->get_obj(coord.x, coord.y, coord.z, top_obj, include_ignored_objects);
 	// Savage Empire Create Object from Tile
-	if (for_use && game_type == NUVIE_GAME_SE && obj == NULL) {
+	if (for_use && game_type == NUVIE_GAME_SE && obj == nullptr) {
 		Script *script = game->get_script();
 		uint16 map_win_x = WRAP_VIEWP(cur_x, coord.x, map_width);
 		uint16 map_win_y = coord.y - cur_y;
@@ -550,7 +550,7 @@ Actor *MapWindow::get_actorAtCursor() {
 //Actor *actor;
 
 	if (tmp_map_buf[(cursor_y + TMP_MAP_BORDER) * tmp_map_width + (cursor_x + TMP_MAP_BORDER)] == 0) //black area
-		return NULL; // nothing to see here. ;)
+		return nullptr; // nothing to see here. ;)
 
 	return actor_manager->get_actor(WRAPPED_COORD(cur_x + cursor_x, cur_level), cur_y + cursor_y, cur_level);
 }
@@ -748,7 +748,7 @@ void MapWindow::updateLighting() {
 
 					U6LList *obj_list = obj_manager->get_obj_list(cur_x - TMP_MAP_BORDER + x, cur_y - TMP_MAP_BORDER + y, cur_level); //FIXME wrapped coords.
 					if (obj_list) {
-						for (U6Link *link = obj_list->start(); link != NULL; link = link->next) {
+						for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
 							Obj *obj = (Obj *)link->data;
 							tile = tile_manager->get_tile(obj_manager->get_obj_tile_num(obj) + obj->frame_n); //FIXME do we need to check the light for each tile in a multi-tile object.
 							if (GET_TILE_LIGHT_LEVEL(tile) > 0 && can_display_obj(x, y, obj))
@@ -1042,7 +1042,7 @@ void MapWindow::drawObjSuperBlock(bool draw_lowertiles, bool toptile) {
 		for (x = cur_x + win_width; x >= stop_x; x--) {
 			obj_list = obj_manager->get_obj_list(x, y, cur_level);
 			if (obj_list) {
-				for (link = obj_list->start(); link != NULL; link = link->next) {
+				for (link = obj_list->start(); link != nullptr; link = link->next) {
 					obj = (Obj *)link->data;
 					drawObj(obj, draw_lowertiles, toptile);
 				}
@@ -1682,7 +1682,7 @@ bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction) {
 //  return true;
 
 	tile = obj_manager->get_obj_tile(WRAPPED_COORD(cur_x - TMP_MAP_BORDER + x, cur_level), WRAPPED_COORD(cur_y - TMP_MAP_BORDER + y, cur_level), cur_level, false);
-	if (tile != NULL) {
+	if (tile != nullptr) {
 		if (tile->flags2 & TILEFLAG_BOUNDARY) {
 			if (tile->flags1 & mask)
 				return true;
@@ -1713,7 +1713,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	if (actor_manager->get_actor(x, y, actor_loc.z))
 		return MSG_NOT_POSSIBLE;
 
-	Obj *dest_obj = NULL;
+	Obj *dest_obj = nullptr;
 	if (game_type == NUVIE_GAME_U6) {
 		dest_obj = obj_manager->get_obj(x, y, actor_loc.z); //FIXME this might not be right. We might want to exclude obj.
 	} else {
@@ -2050,15 +2050,15 @@ GUI_status MapWindow::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	Events *event = game->get_event();
 	if (!looking || game->user_paused() || event->cursor_mode
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
-		look_obj = NULL;
-		look_actor = NULL;
+		look_obj = nullptr;
+		look_actor = nullptr;
 		return (GUI_PASS);
 	}
 	game->get_scroll()->display_string("Look-");
 	event->set_mode(LOOK_MODE);
 	event->lookAtCursor(true, original_obj_loc.x, original_obj_loc.y, original_obj_loc.z, look_obj, look_actor);
-	look_obj = NULL;
-	look_actor = NULL;
+	look_obj = nullptr;
+	look_actor = nullptr;
 
 	return (MouseUp(x, y, button)); // do MouseUp so selected_obj is cleared
 }
@@ -2183,7 +2183,7 @@ GUI_status MapWindow::MouseDown(int x, int y, Shared::MouseButton button) {
 GUI_status MapWindow::MouseUp(int x, int y, Shared::MouseButton button) {
 	// cancel dragging and movement no matter what button is released
 	if (selected_obj) {
-		selected_obj = NULL;
+		selected_obj = nullptr;
 	}
 	walking = false;
 	dragging = false;
@@ -2202,7 +2202,7 @@ GUI_status  MapWindow::MouseMotion(int x, int y, uint8 state) {
 //	if(selected_obj) // We don't want to walk if we are selecting an object to move.
 //		walking = false;
 	if (walking) { // No, we don't want to select an object to move if we are walking.
-		selected_obj = NULL;
+		selected_obj = nullptr;
 		dragging = false;
 	}
 
@@ -2244,14 +2244,14 @@ void    MapWindow::drag_drop_success(int x, int y, int message, void *data) {
 //	if (selected_obj)
 //		obj_manager->remove_obj (selected_obj);
 
-	selected_obj = NULL;
+	selected_obj = nullptr;
 	Redraw();
 }
 
 void    MapWindow::drag_drop_failed(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_drop_failed\n");
 	dragging = false;
-	selected_obj = NULL;
+	selected_obj = nullptr;
 }
 
 // this does nothing
@@ -2491,7 +2491,7 @@ GUI_status MapWindow::MouseLeave(uint8 state) {
 
 byte *MapWindow::make_thumbnail() {
 	if (thumbnail)
-		return NULL;
+		return nullptr;
 
 	new_thumbnail = true;
 
@@ -2517,7 +2517,7 @@ void MapWindow::create_thumbnail() {
 void MapWindow::free_thumbnail() {
 	if (thumbnail) {
 		delete[] thumbnail;
-		thumbnail = NULL;
+		thumbnail = nullptr;
 	}
 
 	return;
@@ -2530,7 +2530,7 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
 }
 
 Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
-	Graphics::ManagedSurface *new_surface = NULL;
+	Graphics::ManagedSurface *new_surface = nullptr;
 	byte *screen_area;
 	Common::Rect copy_area(area.left + x, area.top + y, area.left + x + w, area.top + y + h);
 
@@ -2603,7 +2603,7 @@ void MapWindow::wizard_eye_update() {
 	if (wizard_eye_info.moves_left == 0) {
 		set_x_ray_view(X_RAY_OFF);
 		moveMap(wizard_eye_info.prev_x, wizard_eye_info.prev_y, cur_level);
-		wizard_eye_info.caller->callback(EFFECT_CB_COMPLETE, (CallBack *)this, NULL);
+		wizard_eye_info.caller->callback(EFFECT_CB_COMPLETE, (CallBack *)this, nullptr);
 		release_focus();
 	}
 }
@@ -2618,7 +2618,7 @@ void MapWindow::set_roof_mode(bool roofs) {
 	} else {
 		if (roof_tiles) {
 			SDL_FreeSurface(roof_tiles);
-			roof_tiles = NULL;
+			roof_tiles = nullptr;
 		}
 	}
 }

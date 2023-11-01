@@ -89,7 +89,7 @@ bool PortraitU6::load(NuvieIO *objlist) {
 uint8 PortraitU6::get_portrait_num(Actor *actor) {
 	uint8 num;
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
 	num = actor->get_actor_num();
@@ -132,7 +132,7 @@ unsigned char *PortraitU6::get_portrait_data(Actor *actor) {
 	unsigned char *new_portrait;
 	uint8 num = get_portrait_num(actor);
 	if (num == NO_PORTRAIT_FOUND)
-		return NULL;
+		return nullptr;
 
 	if (actor->is_avatar()) { // avatar portrait
 		portrait = &portrait_z;
@@ -147,7 +147,7 @@ unsigned char *PortraitU6::get_portrait_data(Actor *actor) {
 
 	lzw_data = portrait->get_item(num);
 	if (!lzw_data)
-		return NULL;
+		return nullptr;
 	new_portrait = lzw.decompress_buffer(lzw_data, portrait->get_item_size(num), new_length);
 	free(lzw_data);
 	Game::get_game()->get_dither()->dither_bitmap(new_portrait, PORTRAIT_WIDTH, PORTRAIT_HEIGHT, true);

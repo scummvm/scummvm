@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Nuvie {
 
 ConverseSpeech::ConverseSpeech() {
-	config = NULL;
+	config = nullptr;
 }
 
 
@@ -113,12 +113,12 @@ NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_n
 
 	sam_file.open(filename, 4);
 
-	compressed_data = sam_file.get_item(sample_num, NULL);
+	compressed_data = sam_file.get_item(sample_num, nullptr);
 	raw_audio = lzw.decompress_buffer(compressed_data, sam_file.get_item_size(sample_num), decomp_size);
 
 	free(compressed_data);
 
-	if (raw_audio != NULL) {
+	if (raw_audio != nullptr) {
 		wav_buffer = new NuvieIOBuffer();
 		upsampled_size = decomp_size + (int)floor((decomp_size - 1) / 4) * (2 + 2 + 2 + 1);
 

@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height)
-	: GUI_Widget(NULL, x, y, w, h) {
+	: GUI_Widget(nullptr, x, y, w, h) {
 
 	R = r;
 	G = g;

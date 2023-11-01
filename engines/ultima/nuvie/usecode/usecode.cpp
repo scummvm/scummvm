@@ -35,16 +35,16 @@ namespace Nuvie {
 UseCode::UseCode(Game *g, Configuration *cfg) {
 	game = g;
 	config = cfg;
-	obj_manager = NULL;
-	map = NULL;
-	player = NULL;
-	scroll = NULL;
-	actor_manager = NULL;
-	obj_manager = NULL;
-	party = NULL;
-	script = NULL;
+	obj_manager = nullptr;
+	map = nullptr;
+	player = nullptr;
+	scroll = nullptr;
+	actor_manager = nullptr;
+	obj_manager = nullptr;
+	party = nullptr;
+	script = nullptr;
 
-	script_thread = NULL;
+	script_thread = nullptr;
 
 	clear_items();
 }
@@ -74,22 +74,22 @@ bool UseCode::init(ObjManager *om, Map *m, Player *p, MsgScroll *ms) {
  */
 void UseCode::clear_items() {
 	memset(&items, 0, sizeof(items));
-	/*    items.uint_ref = NULL;
-	    items.sint_ref = NULL;
-	    items.obj_ref = NULL;
-	    items.actor_ref = items.actor2_ref = NULL;
-	    items.mapcoord_ref = NULL;
-	    items.msg_ref = NULL;
-	    items.string_ref = NULL;
-	    items.ent_ref = NULL;
-	    items.data_ref = NULL; */
+	/*    items.uint_ref = nullptr;
+	    items.sint_ref = nullptr;
+	    items.obj_ref = nullptr;
+	    items.actor_ref = items.actor2_ref = nullptr;
+	    items.mapcoord_ref = nullptr;
+	    items.msg_ref = nullptr;
+	    items.string_ref = nullptr;
+	    items.ent_ref = nullptr;
+	    items.data_ref = nullptr; */
 }
 
 ScriptThread *UseCode::get_running_script() {
 	if (script_thread && script_thread->is_running())
 		return script_thread;
 
-	return NULL;
+	return nullptr;
 }
 
 bool UseCode::is_script_running() {
@@ -110,7 +110,7 @@ bool UseCode::has_usecode(Obj *obj, UseCodeEvent ev) {
 bool UseCode::use_obj(Obj *obj, Actor *actor) {
 	if (script_thread) {
 		delete script_thread;
-		script_thread = NULL;
+		script_thread = nullptr;
 	}
 
 	script_thread = script->call_use_obj(obj, actor);
@@ -119,7 +119,7 @@ bool UseCode::use_obj(Obj *obj, Actor *actor) {
 		script_thread->start();
 		if (script_thread->finished()) {
 			delete script_thread;
-			script_thread = NULL;
+			script_thread = nullptr;
 		}
 	}
 
@@ -132,7 +132,7 @@ bool UseCode::use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj) {
 
 	obj = obj_manager->get_obj(x, y, z, true);
 
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 
 	return use_obj(obj, src_obj);
@@ -162,10 +162,10 @@ bool UseCode::search_container(Obj *obj, bool show_string) {
 	U6Link *obj_link;
 
 	/* Test whether this object has items inside it. */
-	if ((obj->container != NULL) &&
-	        ((obj_link = obj->container->start()) != NULL)) {
+	if ((obj->container != nullptr) &&
+	        ((obj_link = obj->container->start()) != nullptr)) {
 		/* Add objects to obj_list. */
-		for (; obj_link != NULL;) {
+		for (; obj_link != nullptr;) {
 			temp_obj = (Obj *)obj_link->data;
 			obj_link = obj_link->next;
 			/*
@@ -200,7 +200,7 @@ Obj *UseCode::get_obj_from_container(Obj *obj) {
 		obj->container->remove(temp_obj); // a pop_back() may be more efficient
 		return (temp_obj);
 	}
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -255,7 +255,7 @@ void UseCode::dbg_print_event(UseCodeEvent event, Obj *obj) {
  * deleted.
  * Returns the original object if it still exists, because the count was smaller
  * than the object stack, or it could not be completely destroyed for whatever
- * reason. Returns NULL if the object was destroyed.
+ * reason. Returns nullptr if the object was destroyed.
  */
 Obj *UseCode::destroy_obj(Obj *obj, uint32 count, bool run_usecode) {
 	//ActorManager *actor_manager = Game::get_game()->get_actor_manager();
@@ -267,7 +267,7 @@ Obj *UseCode::destroy_obj(Obj *obj, uint32 count, bool run_usecode) {
 	else { // destroy
 		obj_manager->unlink_from_engine(obj, run_usecode);
 		delete_obj(obj);
-		obj = NULL;
+		obj = nullptr;
 	}
 
 	return (obj);

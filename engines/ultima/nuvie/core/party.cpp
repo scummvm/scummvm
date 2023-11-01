@@ -260,7 +260,7 @@ uint8 Party::get_party_size() {
 Actor *Party::get_leader_actor() {
 	sint8 leader = get_leader();
 	if (leader < 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	return get_actor(leader);
@@ -268,14 +268,14 @@ Actor *Party::get_leader_actor() {
 
 Actor *Party::get_actor(uint8 member_num) {
 	if (num_in_party <= member_num)
-		return NULL;
+		return nullptr;
 
 	return member[member_num].actor;
 }
 
 char *Party::get_actor_name(uint8 member_num) {
 	if (num_in_party <= member_num)
-		return NULL;
+		return nullptr;
 
 	return member[member_num].name;
 }
@@ -510,7 +510,7 @@ bool Party::has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual) {
 	uint16 i;
 
 	for (i = 0; i < num_in_party; i++) {
-		if (member[i].actor->inventory_get_object(obj_n, quality, match_zero_qual) != NULL) // we got a match
+		if (member[i].actor->inventory_get_object(obj_n, quality, match_zero_qual) != nullptr) // we got a match
 			return true;
 	}
 
@@ -524,7 +524,7 @@ bool Party::remove_obj(uint16 obj_n, uint8 quality) {
 
 	for (i = 0; i < num_in_party; i++) {
 		obj = member[i].actor->inventory_get_object(obj_n, quality);
-		if (obj != NULL) {
+		if (obj != nullptr) {
 			if (member[i].actor->inventory_remove_obj(obj)) {
 				delete_obj(obj);
 				return true;
@@ -539,10 +539,10 @@ bool Party::remove_obj(uint16 obj_n, uint8 quality) {
 Actor *Party::who_has_obj(uint16 obj_n, uint8 quality, bool match_qual_zero) {
 	uint16 i;
 	for (i = 0; i < num_in_party; i++) {
-		if (member[i].actor->inventory_get_object(obj_n, quality, match_qual_zero) != NULL)
+		if (member[i].actor->inventory_get_object(obj_n, quality, match_qual_zero) != nullptr)
 			return (member[i].actor);
 	}
-	return NULL;
+	return nullptr;
 }
 
 Obj *Party::get_obj(uint16 obj_n, uint8 quality, bool match_qual_zero, uint8 frame_n, bool match_frame_n) {
@@ -552,7 +552,7 @@ Obj *Party::get_obj(uint16 obj_n, uint8 quality, bool match_qual_zero, uint8 fra
 		if (obj)
 			return obj;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /* Is EVERYONE in the party at or near the coordinates?
@@ -608,7 +608,7 @@ void Party::set_in_combat_mode(bool value) {
 	}
 //  if(combat_changes_music)
 	update_music();
-	if (game->get_command_bar() != NULL) {
+	if (game->get_command_bar() != nullptr) {
 		game->get_command_bar()->set_combat_mode(in_combat_mode);
 	}
 }

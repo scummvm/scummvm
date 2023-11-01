@@ -63,7 +63,7 @@ protected:
 	const Tile *empty_tile;
 
 public:
-	ContainerWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
+	ContainerWidget(Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~ContainerWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
@@ -80,7 +80,7 @@ public:
 		Redraw();
 	}
 	bool is_showing_container() {
-		return (container_obj != NULL ? true : false);
+		return (container_obj != nullptr ? true : false);
 	}
 	void Display(bool full_redraw) override;
 

@@ -123,7 +123,7 @@ bool Screen::toggle_darkness_cheat() {
 
 
 bool Screen::set_palette(uint8 *p) {
-	if (_renderSurface == NULL || p == NULL)
+	if (_renderSurface == nullptr || p == nullptr)
 		return false;
 
 	for (int i = 0; i < 256; ++i) {
@@ -140,7 +140,7 @@ bool Screen::set_palette(uint8 *p) {
 }
 
 bool Screen::set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b) {
-	if (_renderSurface == NULL)
+	if (_renderSurface == nullptr)
 		return false;
 
 	uint32 c = ((((uint32)r) >> RenderSurface::Rloss) << RenderSurface::Rshift) | ((((uint32)g) >> RenderSurface::Gloss) << RenderSurface::Gshift) | ((((uint32)b) >> RenderSurface::Bloss) << RenderSurface::Bshift);
@@ -413,18 +413,18 @@ void Screen::put_pixel(uint8 colour_num, uint16 x, uint16 y) {
 }
 
 void *Screen::get_pixels() {
-//if(scaled_surface == NULL)
-//   return NULL;
+//if(scaled_surface == nullptr)
+//   return nullptr;
 
 //return scaled_surface->pixels;
-	return NULL;
+	return nullptr;
 }
 
 Graphics::ManagedSurface *Screen::get_sdl_surface() {
 	if (_renderSurface)
 		return _renderSurface->get_sdl_surface();
 
-	return NULL;
+	return nullptr;
 }
 
 bool Screen::blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp,
@@ -833,7 +833,7 @@ void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacit
 		break;
 	}
 
-	if (shading_data == NULL) {
+	if (shading_data == nullptr) {
 		shading_rect.left = x;
 		shading_rect.top = y;
 		if (lighting_style == LIGHTING_STYLE_ORIGINAL) {
@@ -844,7 +844,7 @@ void Screen::clearalphamap8(uint16 x, uint16 y, uint16 w, uint16 h, uint8 opacit
 			shading_rect.setHeight((h + (SHADING_BORDER * 2)) * 16 + 8);
 		}
 		shading_data = (byte *)malloc(sizeof(byte) * shading_rect.width() * shading_rect.height());
-		if (shading_data == NULL) {
+		if (shading_data == nullptr) {
 			/* We couldn't allocate memory for the opacity map, so just disable lighting */
 			shading_ambient = 0xFF;
 			return;
@@ -1260,7 +1260,7 @@ byte *Screen::copy_area(Common::Rect *area, uint16 down_scale) {
 byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 	Graphics::PixelFormat *fmt;
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
-	byte *dst_pixels = NULL;
+	byte *dst_pixels = nullptr;
 	byte *ptr;
 	const uint16 *src_pixels;
 	uint32 r, g, b;
@@ -1318,7 +1318,7 @@ byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 byte *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
 	Graphics::PixelFormat *fmt;
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
-	byte *dst_pixels = NULL;
+	byte *dst_pixels = nullptr;
 	byte *ptr;
 	const uint32 *src_pixels;
 	uint32 r, g, b;
@@ -1374,7 +1374,7 @@ byte *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
 }
 
 // _renderSurface -> byte *
-// (NULL area = entire screen)
+// (nullptr area = entire screen)
 byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 	Common::Rect screen_area(0, 0, _renderSurface->w, _renderSurface->h);
 	if (!area)
@@ -1388,7 +1388,7 @@ byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 
 // byte * -> _renderSurface
 // byte * -> target (src area still means location on screen, not relative to target)
-// (NULL area = entire screen)
+// (nullptr area = entire screen)
 void Screen::restore_area(byte *pixels, Common::Rect *area,
 						  byte *target, Common::Rect *target_area, bool free_src) {
 	Common::Rect screen_area(0, 0, _renderSurface->w, _renderSurface->h);
@@ -1404,7 +1404,7 @@ void Screen::restore_area(byte *pixels, Common::Rect *area,
 
 byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 	uint32 *copied = (uint32 *)buf;
-	if (buf == NULL) {
+	if (buf == nullptr) {
 		copied = (uint32 *)malloc(area->width() * area->height() * 4);
 	}
 	uint32 *dest = copied;
@@ -1469,7 +1469,7 @@ void Screen::restore_area32(byte *pixels, Common::Rect *area,
 
 byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 	uint16 *copied = (uint16 *)buf;
-	if (buf == NULL) {
+	if (buf == nullptr) {
 		copied = (uint16 *)malloc(area->width() * area->height() * 2);
 	}
 	uint16 *dest = copied;
@@ -1533,7 +1533,7 @@ void Screen::restore_area16(byte *pixels, Common::Rect *area,
 }
 
 void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
-	if (_renderSurface == NULL)
+	if (_renderSurface == nullptr)
 		return;
 
 	_renderSurface->draw_line(sx, sy, ex, ey, color);

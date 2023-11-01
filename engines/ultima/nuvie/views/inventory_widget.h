@@ -60,7 +60,7 @@ protected:
 	const Tile *empty_tile;
 
 public:
-	InventoryWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
+	InventoryWidget(Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~InventoryWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
@@ -79,7 +79,7 @@ public:
 	Obj *get_prev_container();
 	void set_prev_container();
 	bool is_showing_container() {
-		return (container_obj != NULL ? true : false);
+		return (container_obj != nullptr ? true : false);
 	}
 	void Display(bool full_redraw) override;
 

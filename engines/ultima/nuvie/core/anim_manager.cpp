@@ -115,7 +115,7 @@ NuvieAnim *AnimManager::get_anim(uint32 anim_id) {
 	AnimIterator i = get_anim_iterator(anim_id);
 	if (i != anim_list.end())
 		return (*i);
-	return (NULL);
+	return (nullptr);
 }
 
 
@@ -163,7 +163,7 @@ sint32 AnimManager::new_anim(NuvieAnim *new_anim) {
 		new_anim->start();
 		return ((uint32)new_anim->id_n);
 	}
-	DEBUG(0, LEVEL_ERROR, "Anim: tried to add NULL anim\n");
+	DEBUG(0, LEVEL_ERROR, "Anim: tried to add nullptr anim\n");
 	return (-1);
 }
 
@@ -224,7 +224,7 @@ void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
 
 /*** NuvieAnim ***/
 NuvieAnim::NuvieAnim() {
-	anim_manager = NULL;
+	anim_manager = nullptr;
 
 	id_n = 0;
 
@@ -412,7 +412,7 @@ void TileAnim::move_tile(PositionedTile *ptile, uint32 x, uint32 y) {
 /* Construct TimedEvent with effect duration as time.
  */
 HitAnim::HitAnim(MapCoord *loc) {
-	hit_actor = NULL;
+	hit_actor = nullptr;
 	add_tile(_mapWindow->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
 	         0, 0);
 	move(loc->x, loc->y);
@@ -655,7 +655,7 @@ void TossAnim::hit_target() {
 	assert(running == true);
 
 	stop();
-	message(MESG_ANIM_DONE, NULL);
+	message(MESG_ANIM_DONE, nullptr);
 }
 
 void TossAnim::hit_object(Obj *obj) {
@@ -811,7 +811,7 @@ void ExplosiveAnim::start() {
 
 		// rotate sprite
 		if (!(flame[t].direction.sx == 0 && flame[t].direction.sy == 0)) {
-			Tile *rot_tile = NULL;
+			Tile *rot_tile = nullptr;
 			rot_tile = tile_manager->get_rotated_tile(flame[t].tile->tile,
 			           get_relative_degrees(flame[t].direction.sx, flame[t].direction.sy));
 			flame[t].tile->tile = rot_tile;
@@ -1099,8 +1099,8 @@ bool ProjectileAnim::already_hit(MapEntity ent) {
 WingAnim::WingAnim(MapCoord t) {
 	TileManager *tile_manager = _mapWindow->get_tile_manager();
 
-	p_tile_top = NULL;
-	p_tile_bottom = NULL;
+	p_tile_top = nullptr;
+	p_tile_bottom = nullptr;
 	target = t;
 	y = target.y * 16;
 
@@ -1193,7 +1193,7 @@ HailstormAnim::HailstormAnim(MapCoord t) : target(t) {
 	num_active = 0;
 	for (int i = 0; i < HAILSTORM_ANIM_MAX_STONES; i++) {
 		hailstones[i].length_left = 0;
-		hailstones[i].p_tile = NULL;
+		hailstones[i].p_tile = nullptr;
 	}
 
 	num_hailstones_left = (NUVIE_RAND() % 20) + 10;
@@ -1239,7 +1239,7 @@ bool HailstormAnim::update() {
 			if (hailstones[i].length_left == 0) {
 				num_active--;
 				remove_tile(hailstones[i].p_tile);
-				hailstones[i].p_tile = NULL;
+				hailstones[i].p_tile = nullptr;
 
 				uint8 z = 0;
 				_mapWindow->get_level(&z);
@@ -1281,7 +1281,7 @@ sint8 HailstormAnim::find_free_hailstone() {
 TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
 	init(speed);
 
-	if (from != NULL) {
+	if (from != nullptr) {
 		anim_tile = new Tile(*from);
 	} else {
 		anim_tile = new Tile();
@@ -1290,7 +1290,7 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
 
 	anim_tile->transparent = true;
 
-	if (to == NULL) {
+	if (to == nullptr) {
 		to_tile = new Tile();
 		to_tile->transparent = true;
 		memset(to_tile->data, 0xff, TILE_DATA_SIZE);

@@ -174,14 +174,14 @@ void ActionDollGump(int const *params) {
 		if (party_member)
 			VIEW_MANAGER->open_doll_view(party_member);
 	} else
-		VIEW_MANAGER->open_doll_view(NULL);
+		VIEW_MANAGER->open_doll_view(nullptr);
 }
 
 void ActionShowStats(int const *params) {
 	if (EVENT->using_control_cheat())
 		return;
 	Actor *party_member = PARTY->get_actor(params[0] - 1);
-	if (party_member == NULL)
+	if (party_member == nullptr)
 		return;
 	if (!GAME->is_new_style()) {
 		ACTOR_VIEW->set_party_member(params[0] - 1);
@@ -403,7 +403,7 @@ void ActionToggleOriginalStyleCommandBar(int const *params) {
 	bool hide = cb->Status() == WIDGET_VISIBLE;
 	if (hide) {
 		cb->Hide();
-		GAME->get_screen()->clear(cb->X(), cb->Y(), cb->W(), cb->H(), NULL); // can be over null background so need to not leave corruption
+		GAME->get_screen()->clear(cb->X(), cb->Y(), cb->W(), cb->H(), nullptr); // can be over null background so need to not leave corruption
 		GAME->get_screen()->update(cb->X(), cb->Y(), cb->W(), cb->H());
 	} else {
 		cb->Show();

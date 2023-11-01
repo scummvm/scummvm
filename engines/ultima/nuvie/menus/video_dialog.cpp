@@ -51,7 +51,7 @@ VideoDialog::VideoDialog(GUI_CallBack *callback)
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - VD_HEIGHT) / 2,
 	             VD_WIDTH, VD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
 	callback_object = callback;
-	non_square_pixels_button = NULL;
+	non_square_pixels_button = nullptr;
 	init();
 	grab_focus();
 }
@@ -74,8 +74,8 @@ bool VideoDialog::init() {
 	const char *const yesno_text[] = { "no", "yes" };
 #define SCALER_AND_SCALE_CANNOT_BE_CHANGED 1 // FIXME need to be able to change these in game -- they also haven't been updated for keyboard controls and the size of the gump isn't right
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
-	only2x_button = NULL;
-	scale_button = scaler_button = scale_win_button = scaler_win_button = NULL;
+	only2x_button = nullptr;
+	scale_button = scaler_button = scale_win_button = scaler_win_button = nullptr;
 
 	no_fullscreen = false;
 
@@ -149,9 +149,9 @@ bool VideoDialog::init() {
 		}
 	}
 	if (no_fullscreen) {
-		scale_button = NULL;
+		scale_button = nullptr;
 		scaler_button->Delete();
-		scaler_button = NULL;
+		scaler_button = nullptr;
 	} else {
 		scale_button = new GUI_TextToggleButton(this, colX[4], buttonY[1], yesno_width, height, scale_text, num_scale, scale_selection, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(scale_button);
@@ -202,7 +202,7 @@ bool VideoDialog::init() {
 
 		first_index = false;
 	} else
-		fullscreen_button = NULL;
+		fullscreen_button = nullptr;
 #endif
 
 	Configuration *config = Game::get_game()->get_config();
@@ -215,7 +215,7 @@ bool VideoDialog::init() {
 	button_index[(last_index += first_index ? 0 : 1)] = roof_button;
 // use_new_dolls
 	if (game->is_new_style()) {
-		doll_button = NULL;
+		doll_button = nullptr;
 		old_use_new_dolls = true;
 	} else {
 		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new actor dolls:", gui->get_font());

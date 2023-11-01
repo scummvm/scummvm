@@ -123,7 +123,7 @@ static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ScriptObjRef *)item)->key;
 }
 
-static NuvieIO *g_objlist_file = NULL;
+static NuvieIO *g_objlist_file = nullptr;
 
 // used for garbage collection.
 //returns current object reference count. Or -1 on error.
@@ -160,27 +160,27 @@ static const luaL_Reg nscript_objlib_f[] = {
 	{ "removeFromEngine", nscript_obj_removefromengine },
 	{ "use", nscript_obj_use },
 
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 static const luaL_Reg nscript_objlib_m[] = {
 	{ "__index", nscript_obj_get },
 	{ "__newindex", nscript_obj_set },
 	{ "__gc", nscript_obj_gc },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static int nscript_u6link_gc(lua_State *L);
 
 static const struct luaL_Reg nscript_u6linklib_m[] = {
 	{ "__gc", nscript_u6link_gc },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static int nscript_u6link_recursive_gc(lua_State *L);
 
 static const struct luaL_Reg nscript_u6linkrecursivelib_m[] = {
 	{ "__gc", nscript_u6link_recursive_gc },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static int nscript_print(lua_State *L);
@@ -331,7 +331,7 @@ int nscript_init_u6link_iter(lua_State *L, U6LList *list, bool is_recursive);
 static int nscript_find_obj(lua_State *L);
 static int nscript_find_obj_from_area(lua_State *L);
 
-Script *Script::script = NULL;
+Script *Script::script = nullptr;
 
 static int lua_error_handler(lua_State *L) {
 	//lua_getfield(L, LUA_GLOBALSINDEX, "debug");
@@ -461,7 +461,7 @@ uint8 ScriptThread::resume_with_nil() {
 
 uint8 ScriptThread::resume(int narg) {
 	const char *s;
-	int ret = lua_resume(L, /*NULL,*/ narg);
+	int ret = lua_resume(L, /*nullptr,*/ narg);
 
 	state = NUVIE_SCRIPT_ERROR;
 
@@ -525,15 +525,15 @@ Script::Script(Configuration *cfg, GUI *gui, SoundManager *sm, nuvie_game_t type
 	luaL_openlibs(L);
 
 	luaL_newmetatable(L, "nuvie.U6Link");
-	luaL_register(L, NULL, nscript_u6linklib_m);
+	luaL_register(L, nullptr, nscript_u6linklib_m);
 
 	luaL_newmetatable(L, "nuvie.U6LinkRecursive");
-	luaL_register(L, NULL, nscript_u6linkrecursivelib_m);
+	luaL_register(L, nullptr, nscript_u6linkrecursivelib_m);
 
 	luaL_newmetatable(L, "nuvie.Obj");
 	//lua_pushvalue(L, -1); //duplicate metatable
 	//lua_setfield(L, -2, "__index"); // add __index to metatable
-	luaL_register(L, NULL, nscript_objlib_m);
+	luaL_register(L, nullptr, nscript_objlib_m);
 
 	luaL_register(L, "Obj", nscript_objlib_f);
 
@@ -1006,11 +1006,11 @@ bool Script::call_actor_attack(Actor *actor, MapCoord location, Obj *weapon, Act
 	lua_pushnumber(L, (lua_Number)location.x);
 	lua_pushnumber(L, (lua_Number)location.y);
 	lua_pushnumber(L, (lua_Number)location.z);
-	if (weapon == NULL)
+	if (weapon == nullptr)
 		nscript_new_actor_var(L, actor->get_actor_num());
 	else
 		nscript_obj_new(L, weapon);
-	if (foe == NULL)
+	if (foe == nullptr)
 		num_arg = 5;
 	else
 		nscript_new_actor_var(L, foe->get_actor_num());
@@ -1037,7 +1037,7 @@ bool Script::call_loadsave_game(const char *function, NuvieIO *objlist) {
 
 	bool result = call_function(function, 0, 0);
 
-	g_objlist_file = NULL;
+	g_objlist_file = nullptr;
 	return result;
 }
 
@@ -1200,7 +1200,7 @@ bool Script::call_has_usecode(Obj *obj, UseCodeEvent usecode_type) {
 }
 
 ScriptThread *Script::call_use_obj(Obj *obj, Actor *actor) {
-	ScriptThread *t = NULL;
+	ScriptThread *t = nullptr;
 	lua_State *s;
 
 	s = lua_newthread(L);
@@ -1280,7 +1280,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 		get_tbl_field_string(L, "name", name, 12);
 		get_tbl_field_string(L, "invocation", invocation, 4);
 
-		if (num < 256 && spell_list[num] == NULL) {
+		if (num < 256 && spell_list[num] == nullptr) {
 			spell_list[num] = new Spell((uint8)num, (const char *)name, (const char *)invocation, re);
 			::debug(1, "num = %d, reagents = %d, name = %s invocation = %s", num, re, name, invocation);
 		}
@@ -1312,7 +1312,7 @@ bool Script::call_can_get_obj_override(Obj *obj) {
 bool Script::call_out_of_ammo(Actor *attacker, Obj *weapon, bool print_message) {
 	lua_getglobal(L, "out_of_ammo");
 	nscript_new_actor_var(L, attacker->get_actor_num());
-	if (weapon == NULL)
+	if (weapon == nullptr)
 		nscript_new_actor_var(L, attacker->get_actor_num());
 	else
 		nscript_obj_new(L, weapon);
@@ -1367,7 +1367,7 @@ bool Script::call_function(const char *func_name, int num_args, int num_return, 
 }
 
 ScriptThread *Script::call_function_in_thread(const char *function_name) {
-	ScriptThread *t = NULL;
+	ScriptThread *t = nullptr;
 	lua_State *s;
 
 	s = lua_newthread(L);
@@ -1542,7 +1542,7 @@ bool Script::call_is_tile_object(uint16 obj_n) {
 }
 
 ScriptThread *Script::new_thread(const char *scriptfile) {
-	ScriptThread *t = NULL;
+	ScriptThread *t = nullptr;
 	lua_State *s;
 
 	s = lua_newthread(L);
@@ -1555,13 +1555,13 @@ ScriptThread *Script::new_thread(const char *scriptfile) {
 }
 
 ScriptThread *Script::new_thread_from_string(const char *scriptStr) {
-	ScriptThread *t = NULL;
+	ScriptThread *t = nullptr;
 	lua_State *s;
 
 	s = lua_newthread(L);
 
 	if (luaL_loadbuffer(s, scriptStr, strlen(scriptStr), "nuvie") != 0)
-		return NULL;
+		return nullptr;
 
 	t = new ScriptThread(s, 0);
 
@@ -1585,8 +1585,8 @@ bool nscript_get_location_from_args(lua_State *L, uint16 *x, uint16 *y, uint8 *z
 
 Obj *nscript_get_obj_from_args(lua_State *L, int lua_stack_offset) {
 	Obj **s_obj = (Obj **)luaL_checkudata(L, lua_stack_offset, "nuvie.Obj");
-	if (s_obj == NULL)
-		return NULL;
+	if (s_obj == nullptr)
+		return nullptr;
 
 	return *s_obj;
 }
@@ -1619,7 +1619,7 @@ This function can clone and existing object or create a new object from one or m
 @within Object
  */
 static int nscript_obj_newobj(lua_State *L) {
-	return nscript_obj_new(L, NULL);
+	return nscript_obj_new(L, nullptr);
 }
 
 int nscript_obj_new(lua_State *L, Obj *obj) {
@@ -1630,7 +1630,7 @@ int nscript_obj_new(lua_State *L, Obj *obj) {
 	luaL_getmetatable(L, "nuvie.Obj");
 	lua_setmetatable(L, -2);
 
-	if (obj == NULL) {
+	if (obj == nullptr) {
 		obj = new Obj();
 
 		if (lua_gettop(L) > 1) { // do we have arguments?
@@ -1657,7 +1657,7 @@ sint32 nscript_inc_obj_ref_count(Obj *obj) {
 	key._ptr = obj;
 
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
-	if (obj_ref == NULL) {
+	if (obj_ref == nullptr) {
 		obj->set_in_script(true); // mark as being used by script engine.
 		obj_ref =  new ScriptObjRef();
 		obj_ref->key._ptr = obj;
@@ -1675,7 +1675,7 @@ sint32 nscript_dec_obj_ref_count(Obj *obj) {
 	key._ptr = obj;
 
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
-	if (obj_ref == NULL)
+	if (obj_ref == nullptr)
 		return -1;
 
 
@@ -1693,11 +1693,11 @@ sint32 nscript_dec_obj_ref_count(Obj *obj) {
 
 inline bool nscript_obj_init_from_obj(lua_State *L, Obj *s_obj) {
 	Obj **tmp_obj = (Obj **)luaL_checkudata(L, 1, "nuvie.Obj");
-	if (tmp_obj == NULL)
+	if (tmp_obj == nullptr)
 		return false;
 
 	Obj *ptr = *tmp_obj;
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		return false;
 
 	s_obj->obj_n = ptr->obj_n;
@@ -1765,7 +1765,7 @@ static int nscript_obj_gc(lua_State *L) {
 	Obj **p_obj = (Obj **)lua_touserdata(L, 1);
 	Obj *obj;
 
-	if (p_obj == NULL)
+	if (p_obj == nullptr)
 		return false;
 
 	obj = *p_obj;
@@ -1790,7 +1790,7 @@ static int nscript_obj_gc(lua_State *L) {
 	  return &s_obj->script_obj;
    }
 
-   return NULL;
+   return nullptr;
    }
  */
 
@@ -1811,11 +1811,11 @@ static int nscript_obj_set(lua_State *L) {
 	const char *key;
 
 	s_obj = (Obj **)lua_touserdata(L, 1);
-	if (s_obj == NULL)
+	if (s_obj == nullptr)
 		return 0;
 
 	obj = *s_obj;
-	if (obj == NULL)
+	if (obj == nullptr)
 		return 0;
 
 	// ptr = nscript_get_obj_ptr(s_obj);
@@ -1886,11 +1886,11 @@ static int nscript_obj_get(lua_State *L) {
 	const char *key;
 
 	s_obj = (Obj **)lua_touserdata(L, 1);
-	if (s_obj == NULL)
+	if (s_obj == nullptr)
 		return 0;
 
 	obj = *s_obj;
-	if (obj == NULL)
+	if (obj == nullptr)
 		return 0;
 
 	//ptr = nscript_get_obj_ptr(s_obj);
@@ -1946,7 +1946,7 @@ static int nscript_obj_get(lua_State *L) {
 	   if(!strcmp(key, "container"))
 	   {
 	       U6LList *obj_list = obj->container;
-	       if(obj_list == NULL)
+	       if(obj_list == nullptr)
 	          return 0;
 
 	       U6Link *link = obj_list->start();
@@ -2128,7 +2128,7 @@ static int nscript_obj_movetoinv(lua_State *L) {
 
 	actor = actor_manager->get_actor(lua_tointeger(L, 2));
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return luaL_error(L, "Getting Actor (%d)", lua_tointeger(L, 2));
 
 	if (obj) {
@@ -2159,7 +2159,7 @@ static int nscript_obj_movetocont(lua_State *L) {
 
 	obj = *s_obj;
 
-	if (obj == NULL)
+	if (obj == nullptr)
 		return 0;
 
 	if (lua_gettop(L) < 2)
@@ -2193,12 +2193,12 @@ static int nscript_container_remove_obj(lua_State *L) {
 
 	obj = *s_obj;
 
-	if (obj == NULL)
+	if (obj == nullptr)
 		return luaL_error(L, "getting obj!");
 
 	cont_obj = obj->get_container_obj();
 
-	if (cont_obj == NULL)
+	if (cont_obj == nullptr)
 		return luaL_error(L, "obj not in a container!");
 
 	if (cont_obj->remove(obj) == false)
@@ -2258,7 +2258,7 @@ static int nscript_u6link_gc(lua_State *L) {
 	U6Link **s_link = (U6Link **)luaL_checkudata(L, 1, "nuvie.U6Link");
 	U6Link *link = *s_link;
 
-	if (link == NULL)
+	if (link == nullptr)
 		return 0;
 
 	releaseU6Link(link);
@@ -2276,7 +2276,7 @@ static int nscript_u6link_recursive_gc(lua_State *L) {
 		for (; !s->empty(); s->pop()) {
 			U6Link *link = s->top();
 
-			if (link != NULL)
+			if (link != nullptr)
 				releaseU6Link(link);
 		}
 	}
@@ -2755,7 +2755,7 @@ static int nscript_party_get_member(lua_State *L) {
 
 	Actor *actor = party->get_actor(member_num);
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return 0;
 
 	nscript_new_actor_var(L, actor->get_actor_num());
@@ -3076,7 +3076,7 @@ static int nscript_map_get_tile_num(lua_State *L) {
 	}
 
 	Tile *t = map->get_tile(x, y, z, original_tile);
-	if (t != NULL) {
+	if (t != nullptr) {
 		lua_pushinteger(L, t->tile_num);
 		return 1;
 	}
@@ -3105,7 +3105,7 @@ static int nscript_map_get_dmg_tile_num(lua_State *L) {
 		return 0;
 
 	Tile *t = map->get_dmg_tile(x, y, z);
-	if (t != NULL) {
+	if (t != nullptr) {
 		lua_pushinteger(L, t->tile_num);
 		return 1;
 	}
@@ -3168,7 +3168,7 @@ static int nscript_map_line_hit_check(lua_State *L) {
 	uint8 level = (uint8) luaL_checkinteger(L, 5);
 
 	//FIXME world wrapping for MD
-	if (map->lineTest(x, y, x1, y1, level, LT_HitMissileBoundary, result, 0, NULL, true)) {
+	if (map->lineTest(x, y, x1, y1, level, LT_HitMissileBoundary, result, 0, nullptr, true)) {
 		lua_pushinteger(L, result.hit_x);
 		lua_pushinteger(L, result.hit_y);
 	} else {
@@ -3244,7 +3244,7 @@ static int nscript_tile_get_flag(lua_State *L) {
 
 	Tile *tile = Game::get_game()->get_tile_manager()->get_original_tile(tile_num);
 
-	if (tile == NULL || flag_set < 1 || flag_set > 3 || bit > 7)
+	if (tile == nullptr || flag_set < 1 || flag_set > 3 || bit > 7)
 		return 0;
 
 	uint8 bit_flags = 0;
@@ -3596,8 +3596,8 @@ pixel fade from one tile to another. If to_tile is not supplied the fade to blan
  */
 static int nscript_fade_tile(lua_State *L) {
 	MapCoord loc;
-	Tile *tile_from =  NULL;
-	Tile *tile_to =  NULL;
+	Tile *tile_from =  nullptr;
+	Tile *tile_to =  nullptr;
 	TileManager *tm = Game::get_game()->get_tile_manager();
 
 	if (nscript_get_location_from_args(L, &loc.x, &loc.y, &loc.z) == false)
@@ -3631,7 +3631,7 @@ static int nscript_black_fade_obj(lua_State *L) {
 	uint8 fade_color = (uint8)lua_tointeger(L, 2);
 	uint16 fade_speed = (uint8)lua_tointeger(L, 3);
 
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		AsyncEffect *e = new AsyncEffect(new TileBlackFadeEffect(obj, fade_color, fade_speed));
 		e->run();
 	}
@@ -3696,7 +3696,7 @@ wing strike effect. A dragon flies across the screen. (U6)
 static int nscript_wing_strike_effect(lua_State *L) {
 	Actor *actor = nscript_get_actor_from_args(L, 1);
 
-	if (actor != NULL) {
+	if (actor != nullptr) {
 		AsyncEffect *e = new AsyncEffect(new WingStrikeEffect(actor));
 		e->run();
 	}
@@ -3781,7 +3781,7 @@ int nscript_u6llist_iter(lua_State *L) {
 	U6Link **s_link = (U6Link **)luaL_checkudata(L, 1, "nuvie.U6Link");
 	U6Link *link = *s_link;
 
-	if (link == NULL || link->data == NULL)
+	if (link == nullptr || link->data == nullptr)
 		return 0;
 
 	Obj *obj = (Obj *)link->data;
@@ -3799,7 +3799,7 @@ int nscript_u6llist_iter_recursive(lua_State *L) {
 	Common::Stack<U6Link *> **s_stack = (Common::Stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
 	Common::Stack<U6Link *> *s = *s_stack;
 
-	if (s->empty() || s->top() == NULL)
+	if (s->empty() || s->top() == nullptr)
 		return 0;
 
 	U6Link *link = s->top();
@@ -3808,7 +3808,7 @@ int nscript_u6llist_iter_recursive(lua_State *L) {
 	nscript_obj_new(L, obj);
 
 	s->pop();
-	if (link->next != NULL) {
+	if (link->next != nullptr) {
 		s->push(link->next);
 		retainU6Link(link->next);
 	}
@@ -3856,7 +3856,7 @@ static int nscript_party(lua_State *L) {
 }
 
 int nscript_find_obj_iter(lua_State *L) {
-	Obj *cur_obj = NULL;
+	Obj *cur_obj = nullptr;
 
 	if (!lua_isnil(L, lua_upvalueindex(1)))
 		cur_obj = nscript_get_obj_from_args(L, lua_upvalueindex(1));
@@ -3864,13 +3864,13 @@ int nscript_find_obj_iter(lua_State *L) {
 	bool match_frame_n = (bool)lua_toboolean(L, lua_upvalueindex(3));
 	bool match_quality = (bool)lua_toboolean(L, lua_upvalueindex(4));
 
-	if (cur_obj == NULL)
+	if (cur_obj == nullptr)
 		return 0;
 
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 	Obj *next_obj = obj_manager->find_next_obj(level, cur_obj, match_frame_n, match_quality);
 
-	if (next_obj == NULL) {
+	if (next_obj == nullptr) {
 		lua_pushnil(L);
 	} else {
 		nscript_new_obj_var(L, next_obj);
@@ -3892,7 +3892,7 @@ int nscript_find_obj_iter(lua_State *L) {
 }
 
 Obj *nscript_get_next_obj_from_area(U6Link **link, uint16 x, uint16 y, uint8 z, uint16 w, uint16 h, uint16 *xOffset, uint16 *yOffset) {
-	if (*link != NULL) {
+	if (*link != nullptr) {
 		Obj *obj = (Obj *)(*link)->data;
 		*link = (*link)->next;
 		return obj;
@@ -3918,11 +3918,11 @@ Obj *nscript_get_next_obj_from_area(U6Link **link, uint16 x, uint16 y, uint8 z, 
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int nscript_find_obj_from_area_iter(lua_State *L) {
-	Obj *cur_obj = NULL;
+	Obj *cur_obj = nullptr;
 
 	U6Link **s_link = (U6Link **)luaL_checkudata(L, lua_upvalueindex(1), "nuvie.U6Link");
 
@@ -3940,7 +3940,7 @@ int nscript_find_obj_from_area_iter(lua_State *L) {
 
 	retainU6Link(*s_link);
 
-	if (cur_obj == NULL)
+	if (cur_obj == nullptr)
 		return 0;
 
 	lua_pushinteger(L, xOffset);
@@ -3989,7 +3989,7 @@ static int nscript_find_obj(lua_State *L) {
 
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 	Obj *obj = obj_manager->find_obj(level, obj_n, quality, match_quality, frame_n, match_frame_n);
-	if (obj != NULL) {
+	if (obj != nullptr) {
 		nscript_new_obj_var(L, obj);
 	} else {
 		lua_pushnil(L);
@@ -4025,7 +4025,7 @@ static int nscript_find_obj_from_area(lua_State *L) {
 	uint16 height = (uint16)luaL_checkinteger(L, stackOffset);
 
 	U6Link **p_link = (U6Link **)lua_newuserdata(L, sizeof(U6Link *));
-	*p_link = NULL;
+	*p_link = nullptr;
 
 	luaL_getmetatable(L, "nuvie.U6Link");
 	lua_setmetatable(L, -2);
@@ -4105,7 +4105,7 @@ Get the current year
 static int nscript_clock_get_year(lua_State *L) {
 	GameClock *clock = Game::get_game()->get_clock();
 
-	if (clock == NULL)
+	if (clock == nullptr)
 		return 0;
 
 	lua_pushinteger(L, clock->get_year());
@@ -4122,7 +4122,7 @@ Get the current month
 static int nscript_clock_get_month(lua_State *L) {
 	GameClock *clock = Game::get_game()->get_clock();
 
-	if (clock == NULL)
+	if (clock == nullptr)
 		return 0;
 
 	lua_pushinteger(L, clock->get_month());
@@ -4139,7 +4139,7 @@ Get the current day
 static int nscript_clock_get_day(lua_State *L) {
 	GameClock *clock = Game::get_game()->get_clock();
 
-	if (clock == NULL)
+	if (clock == nullptr)
 		return 0;
 
 	lua_pushinteger(L, clock->get_day());
@@ -4225,7 +4225,7 @@ Get input from the keyboard
 @within io
  */
 static int nscript_input_select(lua_State *L) {
-	const char *allowed_chars = NULL;
+	const char *allowed_chars = nullptr;
 
 	if (!lua_isnil(L, 1))
 		allowed_chars = luaL_checkstring(L, 1);
@@ -4254,7 +4254,7 @@ C function strtol()
 @within io
  */
 static int nscript_input_select_integer(lua_State *L) {
-	const char *allowed_chars = NULL;
+	const char *allowed_chars = nullptr;
 
 	if (!lua_isnil(L, 1))
 		allowed_chars = luaL_checkstring(L, 1);
@@ -4267,7 +4267,7 @@ static int nscript_input_select_integer(lua_State *L) {
 
 	Std::string input = inputEffect->get_input();
 
-	int num = (int)strtol(input.c_str(), (char **)NULL, 10);
+	int num = (int)strtol(input.c_str(), (char **)nullptr, 10);
 	lua_pushinteger(L, num);
 
 	return 1;
@@ -4280,7 +4280,7 @@ Iterate through objects at a given map location
 @within Object
  */
 static int nscript_objs_at_loc(lua_State *L) {
-	U6Link *link = NULL;
+	U6Link *link = nullptr;
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	uint16 x, y;
@@ -4291,7 +4291,7 @@ static int nscript_objs_at_loc(lua_State *L) {
 
 	if (x < 1024 && y < 1024 && z <= 5) {
 		U6LList *obj_list = obj_manager->get_obj_list(x, y, z);
-		if (obj_list != NULL)
+		if (obj_list != nullptr)
 			link = obj_list->start();
 	} else {
 		DEBUG(0, LEVEL_ERROR, "objs_at_loc() Invalid coordinates (%d, %d, %d)\n", x, y, z);
@@ -4376,9 +4376,9 @@ static int nscript_container(lua_State *L) {
 }
 
 int nscript_init_u6link_iter(lua_State *L, U6LList *list, bool is_recursive) {
-	U6Link *link = NULL;
+	U6Link *link = nullptr;
 
-	if (list != NULL)
+	if (list != nullptr)
 		link = list->start();
 
 	retainU6Link(link);
@@ -4578,7 +4578,7 @@ Loads text from a given LZC file.
 @treturn string the extracted text
  */
 static int nscript_load_text_from_lzc(lua_State *L) {
-	unsigned char *buf = NULL;
+	unsigned char *buf = nullptr;
 	Std::string filename(lua_tostring(L, 1));
 	U6Lib_n lib_n;
 
@@ -4594,7 +4594,7 @@ static int nscript_load_text_from_lzc(lua_State *L) {
 		return 0;
 	}
 
-	buf = lib_n.get_item(idx, NULL);
+	buf = lib_n.get_item(idx, nullptr);
 	if (!buf) {
 		return 0;
 	}

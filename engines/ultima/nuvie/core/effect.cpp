@@ -52,8 +52,8 @@ namespace Nuvie {
 
 #define EXP_EFFECT_TILE_NUM 382
 
-QuakeEffect *QuakeEffect::current_quake = NULL;
-FadeEffect *FadeEffect::current_fade = NULL;
+QuakeEffect *QuakeEffect::current_quake = nullptr;
+FadeEffect *FadeEffect::current_fade = nullptr;
 
 
 /* Add self to effect list (for future deletion).
@@ -124,7 +124,7 @@ void CannonballEffect::start_anim() {
 /* Handle messages from animation. Hit actors & walls. */
 uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	bool stop_effect = false;
-	Actor *hit_actor = NULL;
+	Actor *hit_actor = nullptr;
 
 	switch (msg) {
 	case MESG_ANIM_HIT_WORLD: {
@@ -193,8 +193,8 @@ ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) {
 	start_loc = location;
 	finished_tiles = 0;
 	exp_tile_num = tileNum;
-	usecode = NULL;
-	obj = NULL;
+	usecode = nullptr;
+	obj = nullptr;
 
 	start_anim();
 }
@@ -317,14 +317,14 @@ uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 /*** TimedEffect ***/
 void TimedEffect::start_timer(uint32 delay) {
 	if (!timer)
-		timer = new TimedCallback(this, NULL, delay, true);
+		timer = new TimedCallback(this, nullptr, delay, true);
 }
 
 
 void TimedEffect::stop_timer() {
 	if (timer) {
 		timer->clear_target();
-		timer = NULL;
+		timer = nullptr;
 	}
 }
 
@@ -394,7 +394,7 @@ uint16 QuakeEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 /* Finish effect. Move map back to initial position.
  */
 void QuakeEffect::stop_quake() {
-	current_quake = NULL;
+	current_quake = nullptr;
 	map_window->set_freeze_blacking_location(false);
 	recenter_map();
 	delete_self();
@@ -576,9 +576,9 @@ bool UseCodeExplosiveEffect::hit_object(Obj *hit_obj) {
 		game->get_obj_manager()->remove_obj_from_map(hit_obj);
 		delete_obj(hit_obj);
 		if (obj) // pass our source obj on to next effect as original_obj
-			new UseCodeExplosiveEffect(NULL, x, y, 2, hit_damage, obj);
+			new UseCodeExplosiveEffect(nullptr, x, y, 2, hit_damage, obj);
 		else // pass original_obj on to next effect
-			new UseCodeExplosiveEffect(NULL, x, y, 2, hit_damage, original_obj);
+			new UseCodeExplosiveEffect(nullptr, x, y, 2, hit_damage, original_obj);
 	}
 	return (false);
 }
@@ -588,8 +588,8 @@ bool UseCodeExplosiveEffect::hit_object(Obj *hit_obj) {
 ThrowObjectEffect::ThrowObjectEffect() {
 	obj_manager = game->get_obj_manager();
 
-	anim = NULL;
-	throw_obj = NULL;
+	anim = nullptr;
+	throw_obj = nullptr;
 	throw_tile = 0;
 	throw_speed = 0;
 	degrees = 0;
@@ -623,7 +623,7 @@ void ThrowObjectEffect::hit_target() {
 
 
 /* The animation will travel from original object location to drop location if
- * NULL actor is specified.
+ * nullptr actor is specified.
  */
 DropEffect::DropEffect(Obj *obj, uint16 qty, Actor *actor, MapCoord *drop_loc) {
 	drop_from_actor = actor;
@@ -655,7 +655,7 @@ void DropEffect::get_obj(Obj *obj, uint16 qty) {
  * On ANIM_DONE: end
  */
 uint16 DropEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
-	// if throw_obj is NULL, object already hit target
+	// if throw_obj is nullptr, object already hit target
 	if (!throw_obj || (msg != MESG_ANIM_DONE && msg != MESG_ANIM_HIT_WORLD))
 		return (0);
 
@@ -687,7 +687,7 @@ void DropEffect::hit_target() {
 			// remove items from container if there is one
 			if (game->get_usecode()->is_container(throw_obj)) {
 				U6Link *link = throw_obj->container->start();
-				for (; link != NULL; link = throw_obj->container->start()) {
+				for (; link != nullptr; link = throw_obj->container->start()) {
 					Obj *obj = (Obj *)link->data;
 					obj_manager->moveto_map(obj, stop_at);
 				}
@@ -705,7 +705,7 @@ void DropEffect::hit_target() {
 		else
 			obj_manager->add_obj(throw_obj, OBJ_ADD_TOP);
 	}
-	throw_obj = NULL; // set as dropped
+	throw_obj = nullptr; // set as dropped
 
 	// not appropriate to do "Events::endAction(true)" from here to display
 	// prompt, as we MUST unpause_user() in ThrowObjectEffect::hit_target, and
@@ -838,7 +838,7 @@ void MissileEffect::hit_blocking() {
 /*** SleepEffect ***/
 /* The TimedAdvance is started after the fade-out completes. */
 SleepEffect::SleepEffect(Std::string until)
-	: timer(NULL),
+	: timer(nullptr),
 	  stop_hour(0),
 	  stop_minute(0),
 	  stop_time("") {
@@ -849,7 +849,7 @@ SleepEffect::SleepEffect(Std::string until)
 
 
 SleepEffect::SleepEffect(uint8 to_hour)
-	: timer(NULL),
+	: timer(nullptr),
 	  stop_hour(to_hour),
 	  stop_minute(0),
 	  stop_time("") {
@@ -868,7 +868,7 @@ SleepEffect::~SleepEffect() {
  */
 void SleepEffect::delete_self() {
 	//timer->clear_target(); // this will also stop/delete the TimedAdvance
-	//timer = NULL;
+	//timer = nullptr;
 	Effect::delete_self();
 }
 
@@ -882,7 +882,7 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 	// waited for FadeEffect
 	if (msg == MESG_EFFECT_COMPLETE) {
-		if (timer == NULL) { // starting
+		if (timer == nullptr) { // starting
 			if (stop_time != "") { // advance to start time
 				timer = new TimedAdvance(stop_time, 360); // 6 hours per second FIXME: it isnt going anywhere near that fast
 				timer->set_target(this);
@@ -925,7 +925,7 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 /*** FadeEffect ***/
 FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, uint32 color, uint32 speed) {
 	speed = speed ? speed : game->get_map_window()->get_win_area() * 2116; // was 256000
-	init(fade, dir, color, NULL, 0, 0, speed);
+	init(fade, dir, color, nullptr, 0, 0, speed);
 }
 
 /* Takes an image to fade from/to. */
@@ -960,7 +960,7 @@ void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, Graphics::
 	evtime = prev_evtime = 0;
 	fade_x = x;
 	fade_y = y;
-	fade_from = NULL;
+	fade_from = nullptr;
 	fade_iterations = 0;
 	if (capture) {
 		fade_from = new Graphics::ManagedSurface(capture->w, capture->h, capture->format);
@@ -983,11 +983,11 @@ void FadeEffect::delete_self() {
 	if (current_fade == this) { // these weren't init. if FadeEffect didn't start
 		delete viewport;
 		if (fade_dir == FADE_IN) // overlay should be empty now, so just delete it
-			map_window->set_overlay(NULL);
+			map_window->set_overlay(nullptr);
 		if (fade_from)
 			SDL_FreeSurface(fade_from);
 
-		current_fade = NULL;
+		current_fade = nullptr;
 	}
 
 	TimedEffect::delete_self();
@@ -997,23 +997,23 @@ void FadeEffect::delete_self() {
 void FadeEffect::init_pixelated_fade() {
 	int fillret = -1; // check error
 	overlay = map_window->get_overlay();
-	if (overlay != NULL) {
+	if (overlay != nullptr) {
 		pixel_count = fade_from ? (fade_from->w) * (fade_from->h)
 		              : (overlay->w - fade_x) * (overlay->h - fade_y);
 		// clear overlay to fill color or transparent
 		if (fade_dir == FADE_OUT) {
 			if (fade_from) { // fade from captured surface to transparent
 				// put surface on transparent background (not checked)
-				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
+				fillret = SDL_FillRect(overlay, nullptr, uint32(TRANSPARENT_COLOR));
 				Common::Rect overlay_rect(fade_x, fade_y, fade_x, fade_y);
-				fillret = SDL_BlitSurface(fade_from, NULL, overlay, &overlay_rect);
+				fillret = SDL_BlitSurface(fade_from, nullptr, overlay, &overlay_rect);
 			} else // fade from transparent to color
-				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
+				fillret = SDL_FillRect(overlay, nullptr, uint32(TRANSPARENT_COLOR));
 		} else {
 			if (fade_from) // fade from transparent to captured surface
-				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
+				fillret = SDL_FillRect(overlay, nullptr, uint32(TRANSPARENT_COLOR));
 			else // fade from color to transparent
-				fillret = SDL_FillRect(overlay, NULL, uint32(pixelated_color));
+				fillret = SDL_FillRect(overlay, nullptr, uint32(pixelated_color));
 		}
 	}
 	if (fillret == -1) {
@@ -1109,7 +1109,7 @@ inline uint32 FadeEffect::get_random_pixel(uint16 center_thresh) {
 bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 	Graphics::Surface s = overlay->getSubArea(Common::Rect(0, 0, overlay->w, overlay->h));
 	uint8 *pixels = (uint8 *)s.getPixels();
-	const uint8 *from_pixels = fade_from ? (const uint8 *)(fade_from->getPixels()) : NULL;
+	const uint8 *from_pixels = fade_from ? (const uint8 *)(fade_from->getPixels()) : nullptr;
 	uint32 p = 0; // scan counter
 	uint32 rnum = 0; // pixel index
 	uint32 colored = 0; // number of pixels that get colored
@@ -1117,7 +1117,7 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 	uint16 fade_height = fade_from ? fade_from->h : overlay->h - fade_y;
 	uint8 color = fade_to;
 
-	if (fade_to == -1 && fade_from == NULL) {
+	if (fade_to == -1 && fade_from == nullptr) {
 		return false;
 	}
 
@@ -1145,7 +1145,7 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 	// all but two lines colored
 	if (colored_total >= (pixel_count - fade_width * 2) || fade_iterations > FADE_EFFECT_MAX_ITERATIONS) { // fill the rest
 		if (fade_to >= 0)
-			SDL_FillRect(overlay, NULL, (uint32)fade_to);
+			SDL_FillRect(overlay, nullptr, (uint32)fade_to);
 		else { // Note: assert(fade_from) if(fade_to < 0)
 			Common::Rect fade_from_rect(fade_from->w, (int16)fade_from->h);
 			Common::Rect overlay_rect(fade_x, fade_y, fade_x + fade_from->w, fade_y + fade_from->h);
@@ -1295,10 +1295,10 @@ uint16 VanishEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 /* TileFadeEffect */
 TileFadeEffect::TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type, uint16 speed) {
-	anim = NULL;
-	to_tile = NULL;
-	anim_tile = NULL;
-	actor = NULL;
+	anim = nullptr;
+	to_tile = nullptr;
+	anim_tile = nullptr;
+	actor = nullptr;
 	color_from = color_to = 0;
 	inc_reverse = false;
 	spd = 0;
@@ -1309,9 +1309,9 @@ TileFadeEffect::TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type
 //Fade out actor.
 TileFadeEffect::TileFadeEffect(Actor *a, uint16 speed) {
 	inc_reverse = false;
-	anim = NULL;
-	to_tile = NULL;
-	anim_tile = NULL;
+	anim = nullptr;
+	to_tile = nullptr;
+	anim_tile = nullptr;
 	actor = a;
 	color_from = color_to = 0;
 	spd = speed;
@@ -1346,7 +1346,7 @@ void TileFadeEffect::add_obj_anim(Obj *obj) {
 }
 
 void TileFadeEffect::add_fade_anim(MapCoord loc, Tile *tile) {
-	add_anim(new TileFadeAnim(&loc, tile, NULL, spd));
+	add_anim(new TileFadeAnim(&loc, tile, nullptr, spd));
 	num_anim_running++;
 }
 
@@ -1419,8 +1419,8 @@ TileBlackFadeEffect::TileBlackFadeEffect(Obj *o, uint8 fade_color, uint16 speed)
 void TileBlackFadeEffect::init(uint8 fade_color, uint16 speed) {
 	fade_speed = speed;
 	color = fade_color;
-	actor = NULL;
-	obj = NULL;
+	actor = nullptr;
+	obj = nullptr;
 	reverse = false;
 
 	num_anim_running = 0;
@@ -1535,7 +1535,7 @@ uint16 XorEffect::callback(uint16 msg, CallBack *caller, void *data) {
 		stop_timer();
 		game->unpause_anims();
 		game->unpause_user();
-		map_window->set_overlay(NULL);
+		map_window->set_overlay(nullptr);
 		delete_self();
 	}
 	return 0;
@@ -1582,7 +1582,7 @@ uint16 U6WhitePotionEffect::callback(uint16 msg, CallBack *caller, void *data) {
 			start_timer(eff1_length);
 			state = 1;
 		} else if (state == 1) { // xor-effect
-			map_window->set_overlay(NULL);
+			map_window->set_overlay(nullptr);
 			start_timer(eff2_length);
 			state = 2;
 		} else if (state == 2) { // character outline
@@ -1696,13 +1696,13 @@ void PeerEffect::init_effect() {
 	map_window->set_overlay_level(MAP_OVERLAY_DEFAULT);
 	map_window->set_overlay(overlay);
 	assert(overlay->w % PEER_TILEW == 0); // overlay must be a multiple of tile size
-	SDL_FillRect(overlay, NULL, 0);
+	SDL_FillRect(overlay, nullptr, 0);
 
 	peer();
 }
 
 void PeerEffect::delete_self() {
-	map_window->set_overlay(NULL);
+	map_window->set_overlay(nullptr);
 	if (gem)
 		game->get_usecode()->message_obj(gem, MESG_EFFECT_COMPLETE, this);
 	else // FIXME: I don't want prompt display here, so it's also in UseCode,

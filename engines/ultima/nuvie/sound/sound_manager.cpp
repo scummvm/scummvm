@@ -312,15 +312,15 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 
 	sz = (char *)niof.readAll();
 
-	if (sz == NULL)
+	if (sz == nullptr)
 		return false;
 
 	token1 = strtok(sz, seps);
-	for (; (token1 != NULL) && ((token2 = strtok(NULL, seps)) != NULL) ; token1 = strtok(NULL, seps)) {
+	for (; (token1 != nullptr) && ((token2 = strtok(nullptr, seps)) != nullptr) ; token1 = strtok(nullptr, seps)) {
 		build_path(sound_dir, token2, filename);
 
 		song = (Song *)SongExists(token2);
-		if (song == NULL) {
+		if (song == nullptr) {
 			// Note: the base class Song does not have an implementation for
 			// Init, so loading custom songs does not work.
 			song = new Song;
@@ -358,7 +358,7 @@ bool SoundManager::loadSong(Song *song, const char *filename, const char *fileId
 }
 
 bool SoundManager::groupAddSong(const char *group, Song *song) {
-	if (song != NULL) {
+	if (song != nullptr) {
 		//we have a valid song
 		SoundCollection *psc;
 		Common::HashMap <Common::String, SoundCollection * >::iterator it;
@@ -397,13 +397,13 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
 
   token1 = strtok (sz, seps);
 
-  while ((token1 != NULL) && ((token2 = strtok (NULL, seps)) != NULL))
+  while ((token1 != nullptr) && ((token2 = strtok (nullptr, seps)) != nullptr))
 	{
 	  int id = atoi (token1);
 	  DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
 	  Sound *ps;
 	  ps = SampleExists (token2);
-	  if (ps == NULL)
+	  if (ps == nullptr)
 		{
 		  Sample *s;
 		  s = new Sample;
@@ -415,7 +415,7 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
 		  ps = s;
 		  m_Samples.push_back (ps);     //add it to our global list
 		}
-	  if (ps != NULL)
+	  if (ps != nullptr)
 		{                       //we have a valid sound
 		  SoundCollection *psc;
 		  Common::HashMap < int, SoundCollection * >::iterator it;
@@ -432,7 +432,7 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
 			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
 			}
 		}
-	  token1 = strtok (NULL, seps);
+	  token1 = strtok (nullptr, seps);
 	}
   return true;
 };
@@ -459,13 +459,13 @@ bool SoundManager::LoadTileSamples (string sound_dir)
 
   token1 = strtok (sz, seps);
 
-  while ((token1 != NULL) && ((token2 = strtok (NULL, seps)) != NULL))
+  while ((token1 != nullptr) && ((token2 = strtok (nullptr, seps)) != nullptr))
 	{
 	  int id = atoi (token1);
 	  DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
 	  Sound *ps;
 	  ps = SampleExists (token2);
-	  if (ps == NULL)
+	  if (ps == nullptr)
 		{
 		  Sample *s;
 		  s = new Sample;
@@ -477,7 +477,7 @@ bool SoundManager::LoadTileSamples (string sound_dir)
 		  ps = s;
 		  m_Samples.push_back (ps);     //add it to our global list
 		}
-	  if (ps != NULL)
+	  if (ps != nullptr)
 		{                       //we have a valid sound
 		  SoundCollection *psc;
 		  Common::HashMap < int, SoundCollection * >::iterator it;
@@ -494,13 +494,13 @@ bool SoundManager::LoadTileSamples (string sound_dir)
 			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
 			}
 		}
-	  token1 = strtok (NULL, seps);
+	  token1 = strtok (nullptr, seps);
 	}
   return true;
 };
 */
 bool SoundManager::LoadSfxManager(string sfx_style) {
-	if (m_SfxManager != NULL) {
+	if (m_SfxManager != nullptr) {
 		return false;
 	}
 
@@ -549,7 +549,7 @@ void SoundManager::musicPlayFrom(string group) {
 void SoundManager::musicPause() {
 	Common::StackLock lock(_musicMutex);
 
-	if (m_pCurrentSong != NULL && _midiParser->isPlaying()) {
+	if (m_pCurrentSong != nullptr && _midiParser->isPlaying()) {
 		_midiParser->stopPlaying();
 	}
 }
@@ -558,16 +558,16 @@ void SoundManager::musicPause() {
 void SoundManager::musicPlay() {
 	Common::StackLock lock(_musicMutex);
 
-	if (m_pCurrentSong != NULL && _midiParser->isPlaying()) {
+	if (m_pCurrentSong != nullptr && _midiParser->isPlaying()) {
 		// Already playing a song.
 		return;
 	}
 
 	// (SB-X) Get a new song if stopped.
-	if (m_pCurrentSong == NULL)
+	if (m_pCurrentSong == nullptr)
 		m_pCurrentSong = RequestSong(m_CurrentGroup);
 
-	if (m_pCurrentSong != NULL) {
+	if (m_pCurrentSong != nullptr) {
 		DEBUG(0, LEVEL_INFORMATIONAL, "assigning new song! '%s'\n", m_pCurrentSong->GetName().c_str());
 
 		// TODO Only Ultima 6 LZW format is supported.
@@ -621,7 +621,7 @@ void SoundManager::musicStop() {
 	Common::StackLock lock(_musicMutex);
 
 	musicPause();
-	m_pCurrentSong = NULL;
+	m_pCurrentSong = nullptr;
 	if (_musicData) {
 		delete _musicData;
 		_musicData = nullptr;
@@ -685,7 +685,7 @@ void SoundManager::update_map_sfx() {
 	for (i = 0; i < mw->m_ViewableTiles.size(); i++)
 	  {
 	    Sound *sp = RequestTileSound (mw->m_ViewableTiles[i].t->tile_num);        //does this object have an associated sound?
-	    if (sp != NULL)
+	    if (sp != nullptr)
 	      {
 	        //calculate the volume
 	        short ox = mw->m_ViewableTiles[i].x - 5;
@@ -769,7 +769,7 @@ Sound *SoundManager::SongExists(string name) {
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Sound *SoundManager::SampleExists(string name) {
@@ -779,7 +779,7 @@ Sound *SoundManager::SampleExists(string name) {
 			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Sound *SoundManager::RequestTileSound(int id) {
@@ -790,7 +790,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 		psc = (*it)._value;
 		return psc->Select();
 	}
-	return NULL;
+	return nullptr;
 }
 
 Sound *SoundManager::RequestObjectSound(int id) {
@@ -801,7 +801,7 @@ Sound *SoundManager::RequestObjectSound(int id) {
 		psc = (*it)._value;
 		return psc->Select();
 	}
-	return NULL;
+	return nullptr;
 }
 
 uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
@@ -823,7 +823,7 @@ Sound *SoundManager::RequestSong(string group) {
 		psc = (*it)._value;
 		return psc->Select();
 	}
-	return NULL;
+	return nullptr;
 }
 
 Audio::SoundHandle SoundManager::playTownsSound(Std::string filename, uint16 sample_num) {
@@ -839,7 +839,7 @@ bool SoundManager::isSoundPLaying(Audio::SoundHandle handle) {
 }
 
 bool SoundManager::playSfx(uint16 sfx_id, bool async) {
-	if (m_SfxManager == NULL || audio_enabled == false || sfx_enabled == false)
+	if (m_SfxManager == nullptr || audio_enabled == false || sfx_enabled == false)
 		return false;
 
 	if (async) {

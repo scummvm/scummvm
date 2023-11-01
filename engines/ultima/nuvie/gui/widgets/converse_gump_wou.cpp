@@ -142,7 +142,7 @@ void ConverseGumpWOU::display_bg() {
 			dst.top = y_off;
 			dst.setWidth(176);
 			dst.setHeight(176);
-			SDL_BlitSurface(bg_image, NULL, game->get_screen()->get_sdl_surface(), &dst);
+			SDL_BlitSurface(bg_image, nullptr, game->get_screen()->get_sdl_surface(), &dst);
 			screen->update(x_off, y_off, 176, 176);
 		} else {
 			screen->blit(x_off, y_off, ptr, 8, 171, 200, bg_w, true); // main bg

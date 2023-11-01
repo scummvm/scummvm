@@ -150,7 +150,7 @@ bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic
 	input.get_direction = false;
 	input.get_text = false;
 	cursor_mode = false;
-	input.target_init = NULL;
+	input.target_init = nullptr;
 
 	time_queue = new TimeQueue;
 	game_time_queue = new TimeQueue;
@@ -162,7 +162,7 @@ bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic
 	fps_counter_widget = new FpsCounter(game);
 	gui->AddWidget(fps_counter_widget);
 	fps_counter_widget->Hide();
-	scriptThread = NULL;
+	scriptThread = nullptr;
 
 	return true;
 }
@@ -476,7 +476,7 @@ void Events::request_input(CallBack *caller, void *user_data) {
 
 // typically this will be coming from inventory
 bool Events::select_obj(Obj *obj, Actor *actor) {
-	if (looking_at_spellbook && view_manager->get_spell_view() != NULL) {
+	if (looking_at_spellbook && view_manager->get_spell_view() != nullptr) {
 		view_manager->get_spell_view()->close_look();
 		return false;
 	}
@@ -827,8 +827,8 @@ bool Events::get_start() {
 bool Events::push_start() {
 	if (game->user_paused())
 		return false;
-	push_obj = NULL;
-	push_actor = NULL;
+	push_obj = nullptr;
+	push_actor = nullptr;
 	if (game->get_script()->call_is_ranged_select(MOVE))
 		get_target("Move-");
 	else
@@ -910,7 +910,7 @@ bool Events::get(MapCoord coord) {
 		got_object = perform_get(obj, view_manager->get_inventory_view()->get_inventory_widget()->get_container(),
 		                         player->get_actor());
 	else
-		got_object = perform_get(obj, NULL, player->get_actor());
+		got_object = perform_get(obj, nullptr, player->get_actor());
 	view_manager->update(); //redraw views to show new item.
 	endAction();
 
@@ -937,7 +937,7 @@ bool Events::use(Obj *obj) {
 		        && !map_window->tile_is_black(obj->x, obj->y, bottom_obj))
 			obj = bottom_obj;
 		else
-			obj = NULL;
+			obj = nullptr;
 	}
 	if (!obj) {
 		scroll->display_string("nothing\n");
@@ -968,7 +968,7 @@ bool Events::use(Obj *obj) {
 		player->subtract_movement_points(MOVE_COST_USE);
 	}
 
-	if (mode == USE_MODE && usecode->get_running_script() == NULL) // check mode because UseCode may have changed it
+	if (mode == USE_MODE && usecode->get_running_script() == nullptr) // check mode because UseCode may have changed it
 		endAction(display_prompt);
 	return true;
 }
@@ -1032,7 +1032,7 @@ bool Events::use(MapCoord coord) {
 			        && !map_window->tile_is_black(obj->x, obj->y, bottom_obj))
 				obj = bottom_obj;
 			else
-				obj = NULL;
+				obj = nullptr;
 		}
 		bool visible_actor = actor && actor->is_visible();
 
@@ -1158,7 +1158,7 @@ bool Events::lookAtCursor(bool delayed, uint16 x, uint16 y, uint8 z, Obj *obj, A
 		        && !map_window->tile_is_black(x, y, bottom_obj))
 			obj = bottom_obj;
 		else
-			obj = NULL;
+			obj = nullptr;
 	}
 	if (game->user_paused())
 		return false;
@@ -1386,7 +1386,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 			                         LT_HitActors | LT_HitUnpassable,
 			                         lt,
 			                         0,
-			                         game->get_game_type() == NUVIE_GAME_U6 ? NULL
+			                         game->get_game_type() == NUVIE_GAME_U6 ? nullptr
 			                         : push_obj)) { //FIXME should we exclude push_obj for U6 too?
 				if (lt.hitObj) {
 					if (obj_manager->can_store_obj(lt.hitObj, push_obj)) { //if we are moving onto a container.
@@ -1465,14 +1465,14 @@ bool Events::pushFrom(MapCoord target) {
 	}
 	if (push_obj
 	        && (obj_manager->get_obj_weight(push_obj, OBJ_WEIGHT_EXCLUDE_CONTAINER_ITEMS) == 0))
-		push_obj = NULL;
+		push_obj = nullptr;
 
 	if (push_actor && push_actor->is_visible()) {
 		scroll->display_string(push_actor->get_name());
-		push_obj = NULL;
+		push_obj = nullptr;
 	} else if (push_obj) {
 		scroll->display_string(obj_manager->look_obj(push_obj));
-		push_actor = NULL;
+		push_actor = nullptr;
 	} else {
 		scroll->display_string("nothing.\n");
 		endAction(true);
@@ -1508,7 +1508,7 @@ bool Events::actor_exists(Actor *a) {
 /* Send input to active alt-code. */
 void Events::alt_code_input(const char *in) {
 	ActorManager *am = game->get_actor_manager();
-	Actor *a = am->get_actor((uint8) strtol(in, NULL, 10));
+	Actor *a = am->get_actor((uint8) strtol(in, nullptr, 10));
 	static string teleport_string = "";
 	static Obj obj;
 	uint8 a_num = 0;
@@ -1523,13 +1523,13 @@ void Events::alt_code_input(const char *in) {
 		break;
 
 	case 301: // Show Midgame graphics
-		game->get_script()->call_play_midgame_sequence((uint16) strtol(in, NULL, 10));
+		game->get_script()->call_play_midgame_sequence((uint16) strtol(in, nullptr, 10));
 		scroll->display_string("\n");
 		active_alt_code = 0;
 		break;
 
 	case 400: // talk to NPC (FIXME: get portrait and inventory too)
-		a_num = (uint8) strtol(in, NULL, 10);
+		a_num = (uint8) strtol(in, nullptr, 10);
 		if (a_num == 0 || !game->get_converse()->start(a_num)) {
 			scroll->display_string("\n");
 			scroll->display_prompt();
@@ -1554,13 +1554,13 @@ void Events::alt_code_input(const char *in) {
 				scroll->display_string("\n<uai>: ");
 			else
 				scroll->display_string("\ny: ");
-			get_scroll_input(NULL, true, false, false);
+			get_scroll_input(nullptr, true, false, false);
 		} else if (alt_code_input_num == 2) {
 			if (game->get_game_type() == NUVIE_GAME_U6)
 				scroll->display_string("\n<zi>: ");
 			else
 				scroll->display_string("\nz: ");
-			get_scroll_input(NULL, true, false, false);
+			get_scroll_input(nullptr, true, false, false);
 		} else {
 			alt_code_teleport(teleport_string.c_str());
 			scroll->display_string("\n");
@@ -1572,9 +1572,9 @@ void Events::alt_code_input(const char *in) {
 		break;
 
 	case 314: // teleport player & party to selected location
-		if (strtol(in, NULL, 10) != 0)
-			alt_code_teleport_menu((uint32) strtol(in, NULL, 10));
-		if (strtol(in, NULL, 10) == 0 || alt_code_input_num > 2) {
+		if (strtol(in, nullptr, 10) != 0)
+			alt_code_teleport_menu((uint32) strtol(in, nullptr, 10));
+		if (strtol(in, nullptr, 10) == 0 || alt_code_input_num > 2) {
 			scroll->display_string("\n");
 			scroll->display_prompt();
 			alt_code_input_num = 0;
@@ -1584,7 +1584,7 @@ void Events::alt_code_input(const char *in) {
 
 	case 414: // teleport player & party to NPC location
 		if (actor_exists(a))
-			alt_code_teleport_to_person((uint32) strtol(in, NULL, 10));
+			alt_code_teleport_to_person((uint32) strtol(in, nullptr, 10));
 		scroll->display_string("\n\n");
 		scroll->display_prompt();
 		active_alt_code = 0;
@@ -1647,7 +1647,7 @@ void Events::alt_code_input(const char *in) {
 	}
 	case 456: // polymorph
 		if (alt_code_input_num == 0) {
-			obj.obj_n = strtol(in, NULL, 10);
+			obj.obj_n = strtol(in, nullptr, 10);
 			scroll->display_string("\nNpc number? ");
 			get_scroll_input();
 			++alt_code_input_num;
@@ -1665,7 +1665,7 @@ void Events::alt_code_input(const char *in) {
 /* Get an alt-code from `cs' and use it.
  */
 void Events::alt_code(const char *cs) {
-	uint16 c = (uint16) strtol(cs, NULL, 10);
+	uint16 c = (uint16) strtol(cs, nullptr, 10);
 	switch (c) {
 	case 300: // display portrait by number
 		scroll->display_string("Portrait? ");
@@ -1744,7 +1744,7 @@ void Events::alt_code(const char *cs) {
 				scroll->display_string("\n<gotu eks>: ");
 			else
 				scroll->display_string("\ngoto x: ");
-			get_scroll_input(NULL, true, false, false);
+			get_scroll_input(nullptr, true, false, false);
 			active_alt_code = c;
 		}
 		break;
@@ -2479,14 +2479,14 @@ uint16 Events::callback(uint16 msg, CallBack *caller, void *data) {
 		widget->Delete();
 
 		showingDialog = false;
-		if (gamemenu_dialog != NULL)
+		if (gamemenu_dialog != nullptr)
 			gui->lock_input(gamemenu_dialog);
 		else
 			game->get_gui()->unlock_input();
 		return GUI_YUM;
 	case GAMEMENUDIALOG_CB_DELETE :
 		showingDialog = false;
-		gamemenu_dialog = NULL;
+		gamemenu_dialog = nullptr;
 		keybinder->set_enable_joy_repeat(true);
 		return GUI_YUM;
 	}
@@ -2660,7 +2660,7 @@ bool Events::unready(Obj *obj) {
 bool Events::drop_start() {
 	if (game->user_paused())
 		return false;
-	drop_obj = NULL;
+	drop_obj = nullptr;
 	drop_qty = 0;
 	drop_x = drop_y = -1;
 
@@ -2724,7 +2724,7 @@ bool Events::perform_drop() {
 	if (game->user_paused())
 		return false;
 	if (drop_x == -1 || drop_y == -1) {
-		if (input.loc == NULL) {
+		if (input.loc == nullptr) {
 			scroll->display_string("Not possible\n");
 			endAction(true);
 			return false;
@@ -2897,8 +2897,8 @@ void Events::walk_to_mouse_cursor(uint32 mx, uint32 my) {
  */
 void Events::multiuse(uint16 wx, uint16 wy) {
 	ActorManager *actor_manager = game->get_actor_manager();
-	Obj *obj = NULL;
-	Actor *actor = NULL, *player_actor = player->get_actor();
+	Obj *obj = nullptr;
+	Actor *actor = nullptr, *player_actor = player->get_actor();
 	bool using_actor = false; //, talking = false;
 	MapCoord player_location(player_actor->get_location());
 	MapCoord target(player_actor->get_location()); // changes to target location
@@ -2964,7 +2964,7 @@ void Events::multiuse(uint16 wx, uint16 wy) {
 		} else {
 			if (game->is_new_style() && actor == actor_manager->get_player()) {
 				//open inventory here.
-				view_manager->open_doll_view(in_control_cheat ? actor : NULL);
+				view_manager->open_doll_view(in_control_cheat ? actor : nullptr);
 			} else if (target == player_location)
 				using_actor = false;
 			else {
@@ -3035,7 +3035,7 @@ void Events::doAction() {
 	}
 
 	if (mode == LOOK_MODE) {
-		if (looking_at_spellbook && view_manager->get_spell_view() != NULL) {
+		if (looking_at_spellbook && view_manager->get_spell_view() != nullptr) {
 			view_manager->get_spell_view()->close_look();
 			return;
 		}
@@ -3064,7 +3064,7 @@ void Events::doAction() {
 
 		if (usecode) {
 			ScriptThread *usecode_script = usecode->get_running_script();
-			if (usecode_script != NULL) {
+			if (usecode_script != nullptr) {
 				uint8 script_state = usecode_script->get_state();
 				switch (script_state) {
 				case NUVIE_SCRIPT_GET_DIRECTION :
@@ -3105,7 +3105,7 @@ void Events::doAction() {
 			}
 
 			usecode_script = usecode->get_running_script();
-			if (usecode_script != NULL) {
+			if (usecode_script != nullptr) {
 				uint8 script_state = usecode_script->get_state();
 				switch (script_state) {
 				case NUVIE_SCRIPT_GET_DIRECTION :
@@ -3117,7 +3117,7 @@ void Events::doAction() {
 				}
 			}
 
-			if (mode == USE_MODE && (usecode_script == NULL || usecode_script->is_running() == false)) {
+			if (mode == USE_MODE && (usecode_script == nullptr || usecode_script->is_running() == false)) {
 				endAction(true);
 			}
 		}
@@ -3178,7 +3178,7 @@ void Events::doAction() {
 				scroll->display_string(buf);
 				drop_count(drop_obj->qty);
 			} else
-				drop_count(strtol(input.str->c_str(), NULL, 10));
+				drop_count(strtol(input.str->c_str(), nullptr, 10));
 		} else
 			perform_drop();
 	} else if (mode == REST_MODE) {
@@ -3197,7 +3197,7 @@ void Events::doAction() {
 				scroll->display_string("0");
 			rest_input(0);
 		} else
-			rest_input(strtol(input.str->c_str(), NULL, 10));
+			rest_input(strtol(input.str->c_str(), nullptr, 10));
 	} else if (mode == CAST_MODE || mode == SPELL_MODE) {
 		if (input.type == EVENTINPUT_MAPCOORD) {
 			if (magic->is_waiting_for_location())
@@ -3251,7 +3251,7 @@ void Events::doAction() {
 			set_mode(MOVE_MODE);
 			multiuse(input.loc->sx, input.loc->sy);
 		} else { // tryed on views/gumps
-			Obj *obj = input.obj; // newAction(USE_MODE) will NULL input.obj
+			Obj *obj = input.obj; // newAction(USE_MODE) will nullptr input.obj
 			if (!obj) { // not sure if this is needed
 				set_mode(MOVE_MODE);
 				return;
@@ -3278,7 +3278,7 @@ void Events::doAction() {
 		map_window->moveCursor(cursor_x, cursor_y);
 		select_target(loc.x, loc.y, loc.z); // the returned location
 	} else if (mode == SCRIPT_MODE) {
-		if (scriptThread != NULL) {
+		if (scriptThread != nullptr) {
 			uint8 script_state = scriptThread->get_state();
 			switch (script_state) {
 			case NUVIE_SCRIPT_GET_DIRECTION :
@@ -3307,7 +3307,7 @@ void Events::doAction() {
 
 			case NUVIE_SCRIPT_FINISHED:
 				delete scriptThread;
-				scriptThread = NULL;
+				scriptThread = nullptr;
 				endAction(true);
 				return;
 
@@ -3323,10 +3323,10 @@ void Events::doAction() {
 void Events::cancelAction() {
 	if (game->user_paused())
 		return;
-	if (view_manager->gumps_are_active() && (magic == NULL || !magic->is_waiting_for_inventory_obj()))
+	if (view_manager->gumps_are_active() && (magic == nullptr || !magic->is_waiting_for_inventory_obj()))
 		return close_gumps();
 	if (mode == INPUT_MODE) { // cancel action of previous mode
-		if (magic != NULL && magic->is_waiting_for_inventory_obj()) {
+		if (magic != nullptr && magic->is_waiting_for_inventory_obj()) {
 			if (!game->is_new_style() && game->get_party()->get_leader() != -1) {
 				view_manager->get_inventory_view()->release_focus();
 				view_manager->get_inventory_view()->set_party_member(game->get_party()->get_leader());
@@ -3378,13 +3378,13 @@ void Events::cancelAction() {
 
 		if (callback_target) {
 			message(CB_INPUT_CANCELED, (char *) &input);
-			callback_target = NULL;
-			callback_user_data = NULL;
+			callback_target = nullptr;
+			callback_user_data = nullptr;
 		}
 	} else if (mode == EQUIP_MODE) {
 		endAction();
 		return;
-	} else if (looking_at_spellbook && view_manager->get_spell_view() != NULL) {
+	} else if (looking_at_spellbook && view_manager->get_spell_view() != nullptr) {
 		view_manager->get_spell_view()->close_look();
 		return;
 	} else {
@@ -3417,7 +3417,7 @@ bool Events::newAction(EventMode new_mode) {
 		doAction();
 		return (mode == ATTACK_MODE);
 	}
-	if (looking_at_spellbook && view_manager->get_spell_view() != NULL) { // pushed L while looking at spell book
+	if (looking_at_spellbook && view_manager->get_spell_view() != nullptr) { // pushed L while looking at spell book
 		view_manager->get_spell_view()->close_look();
 		return false;
 	}
@@ -3446,7 +3446,7 @@ bool Events::newAction(EventMode new_mode) {
 			mode = MOVE_MODE;
 			scroll->display_prompt();
 		} else
-			key_redirect((CallBack *) magic, NULL);
+			key_redirect((CallBack *) magic, nullptr);
 		break;
 	case SPELL_MODE:
 		break;
@@ -3529,11 +3529,11 @@ void Events::endAction(bool prompt) {
 	}
 
 	if (mode == PUSH_MODE) {
-		push_obj = NULL;
-		push_actor = NULL;
+		push_obj = nullptr;
+		push_actor = nullptr;
 		map_window->reset_mousecenter();
 	} else if (mode == DROP_MODE) {
-		drop_obj = NULL;
+		drop_obj = nullptr;
 		drop_qty = 0;
 		drop_from_key = false;
 	} else if (mode == REST_MODE) {
@@ -3765,10 +3765,10 @@ bool Events::select_view_obj(Obj *obj, Actor *actor) {
 	        && !magic->is_waiting_for_obj() && !magic->is_waiting_for_inventory_obj())
 		cancelAction();
 	else {
-		if (!obj || push_actor != NULL)
+		if (!obj || push_actor != nullptr)
 			return false;
-		if (usecode->cannot_unready(obj) && ((last_mode == DROP_MODE && drop_obj == NULL)
-		                                     || (last_mode == PUSH_MODE && push_obj == NULL))) {
+		if (usecode->cannot_unready(obj) && ((last_mode == DROP_MODE && drop_obj == nullptr)
+		                                     || (last_mode == PUSH_MODE && push_obj == nullptr))) {
 			scroll->display_string(obj_manager->look_obj(obj, false));
 			scroll->display_string("\n");
 			usecode->ready_obj(obj, obj->get_actor_holding_obj());

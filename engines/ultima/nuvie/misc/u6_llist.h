@@ -33,9 +33,9 @@ struct U6Link {
 	void *data;
 	uint8 ref_count;
 	U6Link() {
-		next = NULL;
-		prev = NULL;
-		data = NULL;
+		next = nullptr;
+		prev = nullptr;
+		data = nullptr;
 		ref_count = 1;
 	}
 };

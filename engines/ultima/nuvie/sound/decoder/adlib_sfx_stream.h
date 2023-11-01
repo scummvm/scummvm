@@ -38,7 +38,7 @@ using Std::string;
 class AdLibSfxStream : public Audio::RewindableAudioStream {
 public:
 	AdLibSfxStream() {
-		opl = NULL;
+		opl = nullptr;
 		duration = 0;
 	}
 

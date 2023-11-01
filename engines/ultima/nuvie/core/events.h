@@ -235,7 +235,7 @@ private:
 protected:
 	inline uint32 TimeLeft();
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 	bool handleSDL_KEYDOWN(const Common::Event *event);
 	const char *print_mode(EventMode mode);
 	void try_next_attack();
@@ -276,14 +276,14 @@ public:
 	void update_timers();
 	bool update();
 	bool handleEvent(const Common::Event *event);
-	void request_input(CallBack *caller, void *user_data = NULL);
+	void request_input(CallBack *caller, void *user_data = nullptr);
 	void target_spell();
 	void close_spellbook();
 // Prompt for input.
 // obsolete:
-// void useselect_mode(Obj *src, const char *prompt = NULL); // deprecated
-// void freeselect_mode(Obj *src, const char *prompt = NULL); // deprecated
-	void get_scroll_input(const char *allowed = NULL, bool can_escape = true, bool using_target_cursor = false, bool set_numbers_only_to_true = true);
+// void useselect_mode(Obj *src, const char *prompt = nullptr); // deprecated
+// void freeselect_mode(Obj *src, const char *prompt = nullptr); // deprecated
+	void get_scroll_input(const char *allowed = nullptr, bool can_escape = true, bool using_target_cursor = false, bool set_numbers_only_to_true = true);
 	void get_inventory_obj(Actor *actor, bool getting_target = true);
 	void get_spell_num(Actor *caster, Obj *spell_container);
 // void get_amount();
@@ -292,7 +292,7 @@ public:
 	void get_target(const char *prompt);
 	void get_target(const MapCoord &init, const char *prompt);
 // void get_obj_from_inventory(Actor *actor, const char *prompt);
-	void display_portrait(Actor *actor, const char *name = NULL);
+	void display_portrait(Actor *actor, const char *name = nullptr);
 // Start a new action, setting a new mode and prompting for input.
 	bool newAction(EventMode new_mode);
 // void doAction(sint16 rel_x = 0, sint16 rel_y = 0);
@@ -301,14 +301,14 @@ public:
 	void cancelAction();
 	void endAction(bool prompt = false);
 // Send input back to Events, performing an action for the current mode.
-	bool select_obj(Obj *obj, Actor *actor = NULL);
+	bool select_obj(Obj *obj, Actor *actor = nullptr);
 	bool select_view_obj(Obj *obj, Actor *actor);
 	bool select_actor(Actor *actor);
 	bool select_direction(sint16 rel_x, sint16 rel_y);
 	bool select_target(uint16 x, uint16 y, uint8 z = 0);
 	bool select_party_member(uint8 num);
 	bool select_spell_num(sint16 spell_num);
-// bool select_obj(Obj *obj = NULL, Actor *actor = NULL);
+// bool select_obj(Obj *obj = nullptr, Actor *actor = nullptr);
 // bool select_obj(sint16 rel_x, sint16 rel_y);
 // There is no "select_text", as Events polls MsgScroll for new input.
 // Similiarly, a "select_key" is unnecessary. The following method
@@ -328,10 +328,10 @@ public:
 	bool get_start();
 	bool get(MapCoord coord);
 	bool get(sint16 rel_x, sint16 rel_y);
-	bool perform_get(Obj *obj, Obj *container_obj = NULL, Actor *actor = NULL);
+	bool perform_get(Obj *obj, Obj *container_obj = nullptr, Actor *actor = nullptr);
 
 	bool look_start();
-	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y  = 0,  uint8 z = 0, Obj *obj = NULL, Actor *actor = NULL);
+	bool lookAtCursor(bool delayed = false, uint16 x = 0, uint16 y  = 0,  uint8 z = 0, Obj *obj = nullptr, Actor *actor = nullptr);
 	bool look(Obj *obj);
 	bool look(Actor *actor);
 	bool search(Obj *obj);
@@ -355,7 +355,7 @@ public:
 	bool party_mode();
 	bool toggle_combat();
 
-	bool ready(Obj *obj, Actor *actor = NULL);
+	bool ready(Obj *obj, Actor *actor = nullptr);
 	bool unready(Obj *obj);
 
 	bool drop_start();

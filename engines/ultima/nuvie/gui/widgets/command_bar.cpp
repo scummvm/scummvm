@@ -84,12 +84,12 @@ static Tile placeholder_tile = {
 	}
 };
 
-CommandBar::CommandBar() : GUI_Widget(NULL), game(nullptr), event(nullptr),
+CommandBar::CommandBar() : GUI_Widget(nullptr), game(nullptr), event(nullptr),
 		background(nullptr), font(nullptr), selected_action(-1), offset(0),
 		combat_mode(false), bg_color(0), font_color(0) {
 }
 
-CommandBar::CommandBar(Game *g) : GUI_Widget(NULL), game(g),
+CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
 		background(nullptr), combat_mode(false), bg_color(0),
 		font_color(0) {
 	Weather *weather;
@@ -117,12 +117,12 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL), game(g),
 			font_color = value;
 			y_off += game->get_game_height() - 29;
 			if (right_pos_cb && (game->get_game_height() > 228 || game->is_new_style())) // bottom right
-				Init(NULL, x_off + 159 + game->get_game_width() - 320, y_off, 0, 0);
+				Init(nullptr, x_off + 159 + game->get_game_width() - 320, y_off, 0, 0);
 			else // bottom left
-				Init(NULL, x_off, y_off, 0, 0);
+				Init(nullptr, x_off, y_off, 0, 0);
 		} else {
 			font_color = FONT_COLOR_U6_NORMAL;
-			Init(NULL, 8 + x_off, 168 + y_off, 0, 0);
+			Init(nullptr, 8 + x_off, 168 + y_off, 0, 0);
 		}
 		area.setWidth(16 * 10); // space for 10 icons
 		area.setHeight(24 + 1); // extra space for the underlined default action
@@ -132,11 +132,11 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL), game(g),
 			background->load_WoU_background(game->get_config(), game->get_game_type());
 			y_off += game->get_game_height() - 34;
 			if (right_pos_cb && (game->get_game_height() > 233 || game->is_new_style()))
-				Init(NULL, x_off + game->get_game_width() - 320 + 174, y_off, 146, 34);
+				Init(nullptr, x_off + game->get_game_width() - 320 + 174, y_off, 146, 34);
 			else
-				Init(NULL, 16 + x_off, y_off - 3, 146, 34);
+				Init(nullptr, 16 + x_off, y_off - 3, 146, 34);
 		} else
-			Init(NULL, 16 + x_off, 163 + y_off, 146, 34);
+			Init(nullptr, 16 + x_off, 163 + y_off, 146, 34);
 		offset = OBJLIST_OFFSET_MD_COMMAND_BAR;
 	} else { // SE
 		if (!game->is_orig_style()) {
@@ -144,11 +144,11 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL), game(g),
 			background->load_WoU_background(game->get_config(), game->get_game_type());
 			y_off += game->get_game_height() - 22;
 			if (right_pos_cb && (game->get_game_height() > 221 || game->is_new_style())) // bottom right
-				Init(NULL, x_off + 156 + game->get_game_width() - 320, y_off, 163, 19);
+				Init(nullptr, x_off + 156 + game->get_game_width() - 320, y_off, 163, 19);
 			else
-				Init(NULL, 8 + x_off, y_off, 1643, 19);
+				Init(nullptr, 8 + x_off, y_off, 1643, 19);
 		} else
-			Init(NULL, 8 + x_off, 178 + y_off, 163, 19);
+			Init(nullptr, 8 + x_off, 178 + y_off, 163, 19);
 		offset = OBJLIST_OFFSET_SE_COMMAND_BAR;
 	}
 
@@ -395,7 +395,7 @@ void CommandBar::Display(bool full_redraw) {
 			if (game->is_orig_style())
 				scr->fill(bg_color, area.left, area.top, area.width(), area.height());
 			else if (game->is_original_plus_cutoff_map() && area.left != game->get_game_x_offset()) // over null background so clear area where text is displayed
-				scr->clear(area.left + 2, area.top, area.width() - 2, area.height() - 16, NULL);
+				scr->clear(area.left + 2, area.top, area.width() - 2, area.height() - 16, nullptr);
 
 			display_information();
 			for (uint32 i = 0; i < 10; i++)

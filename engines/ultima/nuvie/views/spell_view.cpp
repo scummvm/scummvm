@@ -52,14 +52,14 @@ static const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OB
 #define NEWMAGIC_BMP_H 82
 
 SpellView::SpellView(Configuration *cfg) : DraggableView(cfg) {
-	spell_container = NULL;
-	background = NULL;
+	spell_container = nullptr;
+	background = nullptr;
 	level = 1;
 	all_spells_mode = false;
 	spell_num = 0;
 	event_mode = false;
 	num_spells_per_page = 8;
-	caster = NULL;
+	caster = nullptr;
 }
 
 SpellView::~SpellView() {
@@ -140,7 +140,7 @@ uint8 SpellView::fill_cur_spell_list() {
 	for (int i = 0; i < 16; i++) {
 		cur_spells[i] = -1;
 
-		if (m->get_spell((level - 1) * 16 + i) != NULL && (all_spells_mode || spell_container->find_in_container(OBJ_U6_SPELL, (level - 1) * 16 + i, OBJ_MATCH_QUALITY)))
+		if (m->get_spell((level - 1) * 16 + i) != nullptr && (all_spells_mode || spell_container->find_in_container(OBJ_U6_SPELL, (level - 1) * 16 + i, OBJ_MATCH_QUALITY)))
 			cur_spells[j++] = (level - 1) * 16 + i;
 	}
 

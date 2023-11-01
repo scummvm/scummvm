@@ -53,7 +53,7 @@ public:
 	ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s);
 	~ConverseGumpWOU() override;
 
-	void set_talking(bool state, Actor *actor = NULL) override;
+	void set_talking(bool state, Actor *actor = nullptr) override;
 	void set_font(uint8 font_type) override {}
 	void display_converse_prompt() override;
 

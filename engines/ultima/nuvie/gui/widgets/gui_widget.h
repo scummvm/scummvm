@@ -191,7 +191,7 @@ public:
 	 */
 	virtual GUI_status HandleEvent(const Common::Event *event);
 
-	/* Returns NULL if everything is okay, or an error message if not */
+	/* Returns nullptr if everything is okay, or an error message if not */
 	char *Error(void) {
 		return (errorptr);
 	}

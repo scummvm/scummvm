@@ -47,7 +47,7 @@ Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type) {
 	gametype = type;
 
 	wind_dir = NUVIE_DIR_NONE;
-	wind_timer = NULL;
+	wind_timer = nullptr;
 	string s;
 	config->value(config_get_game_key(config) + "/displayed_wind_dir", s, "from");
 	if (s == "to")
@@ -117,7 +117,7 @@ uint8 Weather::load_wind(NuvieIO *objlist) {
 void Weather::clear_wind() {
 	if (wind_timer) {
 		wind_timer->stop_timer();
-		wind_timer = NULL;
+		wind_timer = nullptr;
 	}
 
 
@@ -237,7 +237,7 @@ inline void Weather::set_wind_change_callback() {
 inline void Weather::send_wind_change_notification_callback() {
 	Std::list<CallBack *>::iterator cb_iter;
 	for (cb_iter = wind_change_notification_list.begin(); cb_iter != wind_change_notification_list.end(); cb_iter++)
-		(*cb_iter)->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, NULL);
+		(*cb_iter)->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, nullptr);
 }
 
 bool Weather::add_wind_change_notification_callback(CallBack *caller) {
@@ -252,7 +252,7 @@ uint16 Weather::callback(uint16 msg, CallBack *caller, void *data) {
 
 	switch (*cb_msgid) {
 	case WEATHER_CB_CHANGE_WIND_DIR :
-		wind_timer = NULL;
+		wind_timer = nullptr;
 		change_wind_dir();
 		break;
 	default :

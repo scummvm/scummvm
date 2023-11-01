@@ -64,14 +64,14 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<
 
 	token1 = strtok(sz, seps);
 
-	while ((token1 != NULL) && ((token2 = strtok(NULL, seps)) != NULL)) {
+	while ((token1 != nullptr) && ((token2 = strtok(nullptr, seps)) != nullptr)) {
 		SfxIdType sfx_id = (SfxIdType)atoi(token1);
 		int custom_wave_id = atoi(token2);
 
 		DEBUG(0, LEVEL_DEBUGGING, "%d : %d.wav\n", sfx_id, custom_wave_id);
 		(*m)[sfx_id] = custom_wave_id;
 
-		token1 = strtok(NULL, seps);
+		token1 = strtok(nullptr, seps);
 	}
 
 
@@ -79,7 +79,7 @@ bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Common::HashMap<
 }
 
 bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
-	return playSfxLooping(sfx_id, NULL, volume);
+	return playSfxLooping(sfx_id, nullptr, volume);
 }
 
 
@@ -96,7 +96,7 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 }
 
 void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume) {
-	Audio::AudioStream *stream = NULL;
+	Audio::AudioStream *stream = nullptr;
 	Audio::SoundHandle handle;
 	Std::string filename;
 	char wavefile[10]; // "nnnnn.wav\0"

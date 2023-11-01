@@ -144,7 +144,7 @@ public:
 	bool call_look_obj(Obj *obj);
 	int call_obj_get_readiable_location(Obj *obj);
 	uint8 actor_get_max_magic_points(Actor *actor);
-	bool call_actor_get_obj(Actor *actor, Obj *obj, Obj *container = NULL);
+	bool call_actor_get_obj(Actor *actor, Obj *obj, Obj *container = nullptr);
 	bool call_actor_subtract_movement_points(Actor *actor, uint8 points);
 	bool call_actor_resurrect(Actor *actor);
 	bool call_use_keg(Obj *obj); //we need this until we move all usecode into script.

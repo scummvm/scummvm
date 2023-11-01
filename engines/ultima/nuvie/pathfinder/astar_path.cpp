@@ -143,14 +143,14 @@ sint32 AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
 	for (n = closed_nodes.begin(); n != closed_nodes.end(); n++)
 		if ((*n)->loc == ncmp->loc)
 			return (*n);
-	return (NULL);
+	return (nullptr);
 }/* Return an item in the list of closed nodes whose location matches `ncmp'.
  */astar_node *AStarPath::find_open_node(astar_node *ncmp) {
 	Std::list<astar_node *>::iterator n;
 	for (n = open_nodes.begin(); n != open_nodes.end(); n++)
 		if ((*n)->loc == ncmp->loc)
 			return (*n);
-	return (NULL);
+	return (nullptr);
 }/* Add new node pointer to the list of open nodes (sorting by score).
  */void AStarPath::push_open_node(astar_node *node) {
 	Std::list<astar_node *>::iterator n, next;

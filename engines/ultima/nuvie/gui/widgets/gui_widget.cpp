@@ -47,10 +47,10 @@ GUI_Widget::~GUI_Widget() {
 
 void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 	focused = false;
-	gui_drag_manager = NULL; //set from placeOnScreen method
+	gui_drag_manager = nullptr; //set from placeOnScreen method
 	widget_data = data;
-	screen = NULL;
-	surface = NULL;
+	screen = nullptr;
+	surface = nullptr;
 	SetRect(0, 0, w, h);
 	offset_x = x;
 	offset_y = y;
@@ -59,7 +59,7 @@ void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 	for (int n = 0; n < 3; ++n) {
 		pressed[n] = 0;
 	}
-	parent = NULL;
+	parent = nullptr;
 
 	update_display = true;
 	set_accept_mouseclick(false); // initializes mouseclick time; SB-X
@@ -157,7 +157,7 @@ void GUI_Widget::moveToFront() {
 void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	Std::list<GUI_Widget *>::iterator child;
 
-	if (screen != NULL)
+	if (screen != nullptr)
 		return;
 
 	area.moveTo(x + offset_x, y + offset_y);
@@ -276,7 +276,7 @@ void GUI_Widget::Redraw(void) {
 
 	if (status == WIDGET_VISIBLE) {
 		update_display = true;
-		if (parent != NULL)
+		if (parent != nullptr)
 			parent->Redraw();
 		//Display();
 		//SDL_UpdateRects(screen,1,&area);
@@ -509,9 +509,9 @@ bool GUI_Widget::widget_has_focus() {
 
 	if (GUI::get_gui()->get_block_input())
 		return (false);
-	if (locked_widget != NULL && locked_widget != this)
+	if (locked_widget != nullptr && locked_widget != this)
 		return (false);
-	if (focused_widget != NULL && focused_widget != this)
+	if (focused_widget != nullptr && focused_widget != this)
 		return (false);
 	return (true);
 }

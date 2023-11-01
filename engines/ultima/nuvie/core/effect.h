@@ -180,10 +180,10 @@ protected:
 	TimedCallback *timer;
 public:
 	TimedEffect()                  {
-		timer = NULL;
+		timer = nullptr;
 	}
 	TimedEffect(uint32 delay)      {
-		timer = NULL;
+		timer = nullptr;
 		start_timer(delay);
 	}
 	~TimedEffect() override                 {
@@ -217,7 +217,7 @@ class QuakeEffect : public TimedEffect {
 	uint8 strength; // magnitude
 
 public:
-	QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on = NULL);
+	QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on = nullptr);
 	~QuakeEffect() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
@@ -278,11 +278,11 @@ public:
 /* Explosion that sends usecode event to an object on completion.
  */
 class UseCodeExplosiveEffect : public ExplosiveEffect {
-	Obj *obj; // explosion came from this object (can be NULL)
+	Obj *obj; // explosion came from this object (can be nullptr)
 	Obj *original_obj; // don't hit this object (chain-reaction avoidance hack)
 
 public:
-	UseCodeExplosiveEffect(Obj *src_obj, uint16 x, uint16 y, uint32 size, uint16 dmg = 0, Obj *dont_hit_me = NULL)
+	UseCodeExplosiveEffect(Obj *src_obj, uint16 x, uint16 y, uint32 size, uint16 dmg = 0, Obj *dont_hit_me = nullptr)
 		: ExplosiveEffect(x, y, size, dmg), obj(src_obj), original_obj(dont_hit_me) {
 	}
 	void delete_self() override;
@@ -426,7 +426,7 @@ protected:
 	FadeDirection fade_dir; // IN (removing color) or OUT (adding color)
 	uint32 fade_speed; // meaning of this depends on fade_type
 	uint8 pixelated_color; // color from palette that is being faded to/from
-	Graphics::ManagedSurface *fade_from; // image being faded from or to (or NULL if coloring)
+	Graphics::ManagedSurface *fade_from; // image being faded from or to (or nullptr if coloring)
 	uint16 fade_x, fade_y; // start fade from this point (to fade_from size)
 
 	uint32 evtime, prev_evtime; // time of last message to callback()
@@ -575,7 +575,7 @@ class U6WhitePotionEffect : public TimedEffect {
 
 public:
 	/* eff_ms=length of visual effect; delay_ms=length of x-ray effect */
-	U6WhitePotionEffect(uint32 eff_ms, uint32 delay_ms, Obj *callback_obj = NULL);
+	U6WhitePotionEffect(uint32 eff_ms, uint32 delay_ms, Obj *callback_obj = nullptr);
 	~U6WhitePotionEffect() override { }
 
 	/* Called by the timer between each effect stage. */

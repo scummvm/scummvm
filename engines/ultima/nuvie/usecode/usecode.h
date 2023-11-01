@@ -163,7 +163,7 @@ protected:
 	Party *party;
 	Script *script;
 
-// pass parameters to usecode functions via items (NULL itemref is unset)
+// pass parameters to usecode functions via items (nullptr itemref is unset)
 	struct {
 		uint32 *uint_ref;
 		sint32 *sint_ref;
@@ -184,8 +184,8 @@ public:
 
 	virtual bool init(ObjManager *om, Map *m, Player *p, MsgScroll *ms);
 
-	bool use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj = NULL);
-	bool use_obj(Obj *obj, Obj *src_obj = NULL) {
+	bool use_obj(uint16 x, uint16 y, uint8 z, Obj *src_obj = nullptr);
+	bool use_obj(Obj *obj, Obj *src_obj = nullptr) {
 		return (use_obj(obj, player->get_actor()));    // ??
 	}
 
@@ -278,7 +278,7 @@ public:
 	void set_itemref(Obj *val)   {
 		items.obj_ref = val;
 	}
-	void set_itemref(Actor *val, Actor *val2 = NULL) {
+	void set_itemref(Actor *val, Actor *val2 = nullptr) {
 		items.actor_ref = val;
 		items.actor2_ref = val2;
 	}

@@ -44,7 +44,7 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 	static const char *DebugLevelNames[] = { "!", "A", "C", "E", "W", "N", "I", "D" };
 	static DebugLevelType CurrentDebugLevel = LEVEL_DEBUGGING;
 
-	if (format == NULL) {
+	if (format == nullptr) {
 		CurrentDebugLevel = level;
 		return CurrentDebugLevel;
 	}
@@ -95,11 +95,11 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 /* test code / documentation.
 int main(char ** argv,int argc)
 {
-  DEBUG(0,LEVEL_EMERGENCY,NULL); // to set the debug cut-off rather high
+  DEBUG(0,LEVEL_EMERGENCY,nullptr); // to set the debug cut-off rather high
   DEBUG(0,LEVEL_EMERGENCY,"%d %c %s\n",1,'a',"aarrgghh..");
   DEBUG(1,LEVEL_EMERGENCY,"continuation of aarrgghh..");
   DEBUG(0,LEVEL_ALERT,"%d %c %s\n",1,'a',"RED"); // should be suppressed
-  DEBUG(0,LEVEL_DEBUGGING,NULL); // to allow all messages through.
+  DEBUG(0,LEVEL_DEBUGGING,nullptr); // to allow all messages through.
   DEBUG(0,LEVEL_DEBUGGING,"%d %c %s\n",1,'a',"debugging");
   return 1;
   }

@@ -66,7 +66,7 @@ uint32 Path::path_cost_est(MapCoord &s, MapCoord &g) {
 void Path::delete_path() {
 	if (path)
 		free(path);
-	path = NULL;
+	path = nullptr;
 	step_count = 0;
 	path_size = 0;
 }

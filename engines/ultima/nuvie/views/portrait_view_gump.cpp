@@ -36,12 +36,12 @@ namespace Ultima {
 namespace Nuvie {
 
 PortraitViewGump::PortraitViewGump(Configuration *cfg) : DraggableView(cfg) {
-	portrait = NULL;
-	font = NULL;
-	gump_button = NULL;
-	portrait_data = NULL;
-	actor = NULL;
-	cursor_tile = NULL;
+	portrait = nullptr;
+	font = nullptr;
+	gump_button = nullptr;
+	portrait_data = nullptr;
+	actor = nullptr;
+	cursor_tile = nullptr;
 	show_cursor = true;
 	cursor_pos = CURSOR_CHECK;
 	cursor_xoff = 1;
@@ -138,7 +138,7 @@ void PortraitViewGump::Display(bool full_redraw) {
 //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	DisplayChildren(full_redraw);
 	screen->blit(area.left + 25, area.top + 17, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);

@@ -35,7 +35,7 @@ class FMtownsDecoderStream : public Audio::RewindableAudioStream {
 public:
 	FMtownsDecoderStream() {
 		should_free_raw_data = false;
-		raw_audio_buf = NULL;
+		raw_audio_buf = nullptr;
 	}
 
 	FMtownsDecoderStream(unsigned char *buf, uint32 len);

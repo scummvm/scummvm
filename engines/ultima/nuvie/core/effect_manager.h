@@ -58,7 +58,7 @@ public:
 
 	bool has_effects();
 	void watch_effect(CallBack *callback_target, Effect *watch);
-	void unwatch_effect(CallBack *callback_target, Effect *watch = NULL);
+	void unwatch_effect(CallBack *callback_target, Effect *watch = nullptr);
 };
 
 } // End of namespace Nuvie

@@ -37,9 +37,9 @@ namespace Nuvie {
 
 SpellViewGump::SpellViewGump(Configuration *cfg) : SpellView(cfg) {
 	num_spells_per_page = 10;
-	bg_image = NULL;
-	gump_button = NULL;
-	font = NULL;
+	bg_image = nullptr;
+	gump_button = nullptr;
+	font = nullptr;
 	selected_spell = -1;
 }
 
@@ -68,7 +68,7 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	build_path(datadir, "gump_btn_down.bmp", imagefile);
 	image1 = SDL_LoadBMP(imagefile.c_str());
 
-	gump_button = new GUI_Button(NULL, 0, 9, image, image1, this);
+	gump_button = new GUI_Button(nullptr, 0, 9, image, image1, this);
 	this->AddWidget(gump_button);
 
 	build_path(datadir, "spellbook", path);
@@ -119,7 +119,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 
 	build_path(datadir, "spellbook_bg.bmp", imagefile);
 	bg_image = bmp.getSdlSurface32(imagefile);
-	if (bg_image == NULL) {
+	if (bg_image == nullptr) {
 		DEBUG(0, LEVEL_ERROR, "Failed to load spellbook_bg.bmp from '%s' directory\n", datadir.c_str());
 		return count;
 	}
@@ -130,7 +130,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 		Common::sprintf_s(filename, "spellbook_spell_%03d.bmp", cur_spells[i]);
 		build_path(datadir, filename, imagefile);
 		Graphics::ManagedSurface *spell_image = bmp.getSdlSurface32(imagefile);
-		if (spell_image == NULL) {
+		if (spell_image == nullptr) {
 			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
 		} else {
 			Common::Rect dst;
@@ -143,7 +143,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 			dst.setWidth(58);
 			dst.setHeight(13);
 
-			SDL_BlitSurface(spell_image, NULL, bg_image, &dst);
+			SDL_BlitSurface(spell_image, nullptr, bg_image, &dst);
 			SDL_FreeSurface(spell_image);
 			printSpellQty(cur_spells[i], dst.left + ((spell < 5) ? 50 : 48), dst.top);
 		}
@@ -162,10 +162,10 @@ void SpellViewGump::loadCircleString(Std::string datadir) {
 	build_path(datadir, filename, imagefile);
 
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
-	if (s != NULL) {
+	if (s != nullptr) {
 		Common::Rect dst;
 		dst = Common::Rect(70, 7, 74, 13);
-		SDL_BlitSurface(s, NULL, bg_image, &dst);
+		SDL_BlitSurface(s, nullptr, bg_image, &dst);
 	}
 
 	switch (level) {
@@ -188,10 +188,10 @@ void SpellViewGump::loadCircleSuffix(Std::string datadir, Std::string image) {
 
 	build_path(datadir, image, imagefile);
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
-	if (s != NULL) {
+	if (s != nullptr) {
 		Common::Rect dst;
 		dst = Common::Rect(75, 7, 82, 13);
-		SDL_BlitSurface(s, NULL, bg_image, &dst);
+		SDL_BlitSurface(s, nullptr, bg_image, &dst);
 	}
 }
 
@@ -216,7 +216,7 @@ void SpellViewGump::Display(bool full_redraw) {
 	dst = area;
 	dst.setWidth(162);
 	dst.setHeight(108);
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	DisplayChildren(full_redraw);
 

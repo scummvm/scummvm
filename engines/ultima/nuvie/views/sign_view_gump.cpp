@@ -51,7 +51,7 @@ SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg) {
 
 	((BMPFont *)font)->init(imagefile, true);
 
-	sign_text = NULL;
+	sign_text = nullptr;
 }
 
 SignViewGump::~SignViewGump() {
@@ -100,7 +100,7 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 void SignViewGump::Display(bool full_redraw) {
 	Common::Rect dst;
 	dst = area;
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	DisplayChildren(full_redraw);
 

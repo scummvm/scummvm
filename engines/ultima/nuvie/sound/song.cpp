@@ -26,15 +26,15 @@
 
 Song::Song() {
 	m_Filename="";
-	m_pMusic=NULL;
+	m_pMusic=nullptr;
 //  m_Paused=false;
 }
 
 Song::~Song() {
-	if (m_pMusic!=NULL) {
+	if (m_pMusic!=nullptr) {
 		Mix_HaltMusic();
 		Mix_FreeMusic(m_pMusic);
-		m_pMusic=NULL;
+		m_pMusic=nullptr;
 	}
 }
 */

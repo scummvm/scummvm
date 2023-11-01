@@ -53,10 +53,10 @@ public:
 		hit_x = 0;
 		hit_y = 0;
 		hit_level = 0;
-		hitActor = NULL;
-		hitObj = NULL;
-		hitLoc = NULL;
-		loc_to_hit = NULL;
+		hitActor = nullptr;
+		hitObj = nullptr;
+		hitLoc = nullptr;
+		loc_to_hit = nullptr;
 	}
 	void    init(int x, int y, uint8 level, Actor *actorHit, Obj *objHit) {
 		hit_x = x;
@@ -172,7 +172,7 @@ public:
 	bool is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects = false);
 	bool is_boundary(uint16 x, uint16 y, uint8 level);
-	bool is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj = NULL);
+	bool is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj = nullptr);
 	bool is_damaging(uint16 x, uint16 y, uint8 level, bool ignore_objects = false);
 	bool can_put_obj(uint16 x, uint16 y, uint8 level);
 	bool actor_at_location(uint16 x, uint16 y, uint8 level, bool inc_surrounding_objs = true);
@@ -187,9 +187,9 @@ public:
 	const char *look(uint16 x, uint16 y, uint8 level);
 
 	bool lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = NULL, bool want_screen_space = false); // excluded_obj only works for LT_HitUnpassable
+	              uint8 flags, LineTestResult &Result, uint32 skip = 0, Obj *excluded_obj = nullptr, bool want_screen_space = false); // excluded_obj only works for LT_HitUnpassable
 
-	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = NULL); // excluded_obj only works for LT_HitUnpassable
+	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = nullptr); // excluded_obj only works for LT_HitUnpassable
 
 	void saveRoofData();
 	Std::string getRoofTilesetFilename();

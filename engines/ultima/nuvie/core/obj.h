@@ -149,7 +149,7 @@ public:
 	}
 
 	bool has_container() {
-		return (container != NULL);
+		return (container != nullptr);
 	}
 	void make_container();
 	Obj *get_container_obj(bool recursive = false);
@@ -177,7 +177,7 @@ public:
 
 	bool remove(Obj *obj);
 
-	Obj *find_in_container(uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint8 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N, Obj **prev_obj = NULL);
+	Obj *find_in_container(uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint8 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N, Obj **prev_obj = nullptr);
 
 	uint32 get_total_qty(uint16 match_obj_n);
 

@@ -40,12 +40,12 @@ using Std::vector;
 Cursor::Cursor() {
 	cursor_id = 0;
 	cur_x = cur_y = -1;
-	cleanup = NULL;
+	cleanup = nullptr;
 	cleanup_area = Common::Rect();
 	update_area = Common::Rect();
 	hidden = false;
-	screen = NULL;
-	config = NULL;
+	screen = nullptr;
+	config = nullptr;
 	screen_w = screen_h = 0;
 }
 
@@ -118,7 +118,7 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	uint32 num_read = 0, num_total = pointer_list.get_num_items();
 	cursors.resize(num_total);
 	while (num_read < num_total) { // read each into a new MousePointer
-		MousePointer *ptr = NULL;
+		MousePointer *ptr = nullptr;
 		U6Shape *shape = new U6Shape;
 		unsigned char *data = pointer_list.get_item(num_read);
 		if (!shape->load(data)) {
@@ -198,7 +198,7 @@ bool Cursor::display(int px, int py) {
 void Cursor::clear() {
 	if (cleanup) {
 		screen->restore_area(cleanup, &cleanup_area);
-		cleanup = NULL;
+		cleanup = nullptr;
 //        screen->update(cleanup_area.left, cleanup_area.top, cleanup_area.w, cleanup_area.h);
 		add_update(cleanup_area.left, cleanup_area.top, cleanup_area.width(), cleanup_area.height());
 	}
@@ -228,7 +228,7 @@ inline void Cursor::fix_position(MousePointer *ptr, int &px, int &py) {
 void Cursor::save_backing(uint32 px, uint32 py, uint32 w, uint32 h) {
 	if (cleanup) {
 		free(cleanup);
-		cleanup = NULL;
+		cleanup = nullptr;
 	}
 
 	cleanup_area.left = px; // cursor must be drawn LAST for this to work

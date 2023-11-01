@@ -37,7 +37,7 @@ bool SongFilename::Init(const char *path, const char *fileId) {
 }
 
 bool SongFilename::Init(const char *filename, const char *fileId, uint16 song_num) {
-	if (filename == NULL)
+	if (filename == nullptr)
 		return false;
 
 	m_Filename = filename; // SB-X

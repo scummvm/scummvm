@@ -151,7 +151,7 @@ bool CmidPlayer::load(Std::string &filename, int song_index) {
 		subsongs = 1;
 	else {
 		delete [] data;
-		data = NULL;
+		data = nullptr;
 		return false;
 	}
 

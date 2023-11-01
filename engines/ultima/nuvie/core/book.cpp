@@ -51,7 +51,7 @@ bool Book::init() {
 
 char *Book::get_book_data(uint16 num) {
 	if (num >= books->get_num_items())
-		return NULL;
+		return nullptr;
 
 	return reinterpret_cast<char *>(books->get_item(num));
 }

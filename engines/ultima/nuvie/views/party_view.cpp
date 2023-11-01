@@ -47,11 +47,11 @@ extern GUI_status actorViewButtonCallback(void *data);
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
 PartyView::PartyView(Configuration *cfg) : View(cfg) {
-	player = NULL;
-	view_manager = NULL;
+	player = nullptr;
+	view_manager = nullptr;
 	party_view_targeting = false;
 	row_offset = 0;
-	sun_moon_widget = NULL;
+	sun_moon_widget = nullptr;
 }
 
 PartyView::~PartyView() {
@@ -191,13 +191,13 @@ Actor *PartyView::get_actor(int x, int y) {
 	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
 
 	if (y > party_size * rowH + y_offset) // clicked below actors
-		return NULL;
+		return nullptr;
 
 	if (x >= 8) {
 		return party->get_actor(((y - y_offset) / rowH) + row_offset);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool PartyView::drag_accept_drop(int x, int y, int message, void *data) {

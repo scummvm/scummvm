@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-static Console *g_console = NULL;
+static Console *g_console = nullptr;
 
 Console::Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h)
 	: GUI_Console(x, y, w, h) {
@@ -59,7 +59,7 @@ void Console::AddLine(Std::string line) {
 }
 
 void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h) {
-	assert(g_console == NULL);
+	assert(g_console == nullptr);
 
 	//uint16 x_off = config_get_video_x_offset(c);
 	//uint16 y_off = config_get_video_y_offset(c);
@@ -68,9 +68,9 @@ void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h) {
 }
 
 void ConsoleDelete() {
-	if (g_console != NULL) {
+	if (g_console != nullptr) {
 		g_console->Delete();
-		g_console = NULL;
+		g_console = nullptr;
 	}
 }
 
@@ -82,14 +82,14 @@ void ConsoleAddInfo(const char *format, ...) {
 	vsnprintf(buf, 1024, format, args);
 	va_end(args);
 
-	if (g_console != NULL) {
+	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_INFORMATIONAL, "%s\n", buf);
 		g_console->AddLine(buf);
 	}
 }
 
 void ConsoleAddError(Std::string s) {
-	if (g_console != NULL) {
+	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_ERROR, "%s\n", s.c_str());
 		g_console->Show();
 		g_console->AddLine("Error: " + s);
@@ -97,14 +97,14 @@ void ConsoleAddError(Std::string s) {
 }
 
 void ConsoleAddWarning(Std::string s) {
-	if (g_console != NULL) {
+	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_WARNING, "%s\n", s.c_str());
 		g_console->AddLine("Warning: " + s);
 	}
 }
 
 void ConsolePause() {
-	if (g_console == NULL)
+	if (g_console == nullptr)
 		return;
 
 	//pause here.

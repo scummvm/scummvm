@@ -46,12 +46,12 @@ Player::Player(Configuration *cfg) {
 	config = cfg;
 	config->value("config/GameType", game_type);
 
-	clock = NULL;
-	party = NULL;
-	actor = NULL;
-	actor_manager = NULL;
-	obj_manager = NULL;
-	map_window = NULL;
+	clock = nullptr;
+	party = nullptr;
+	actor = nullptr;
+	actor_manager = nullptr;
+	obj_manager = nullptr;
+	map_window = nullptr;
 	karma = 0;
 	gender = 0;
 	questf = 0;
@@ -78,7 +78,7 @@ bool Player::init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c,
 }
 
 void Player::init() {
-	actor = NULL;
+	actor = nullptr;
 
 	party_mode = true;
 	mapwindow_centered = true;
@@ -194,11 +194,11 @@ void Player::set_mapwindow_centered(bool state) {
 
 void Player::set_actor(Actor *new_actor) {
 	MsgScroll *scroll = Game::get_game()->get_scroll();
-	if (new_actor == NULL) {
+	if (new_actor == nullptr) {
 		return;
 	}
 
-	if (actor != NULL) {
+	if (actor != nullptr) {
 		if (party->contains_actor(actor))
 			actor->set_worktype(0x01); //WT_U6_IN_PARTY
 		else
@@ -616,7 +616,7 @@ void Player::attack_select_init(bool use_attack_text) {
 	map_window->centerCursor();
 
 	CombatTarget target = party->get_combat_target(actor->id_n == 0 ? 0 : party->get_member_num(actor));
-	Actor *target_actor = NULL;
+	Actor *target_actor = nullptr;
 
 	switch (target.type) {
 	case TARGET_ACTOR :

@@ -113,7 +113,7 @@ bool GameplayDialog::init() {
 		AddWidget(stealing_button);
 		button_index[last_index += 1] = stealing_button;
 	} else {
-		stealing_button = NULL;
+		stealing_button = nullptr;
 	}
 	if (!Game::get_game()->is_new_style()) {
 // Use text gump
@@ -130,19 +130,19 @@ bool GameplayDialog::init() {
 		old_converse_gump_type = game->get_converse_gump_type();
 		button_index[last_index += 1] = converse_gump_button;
 	} else {
-		text_gump_button = NULL;
-		converse_gump_button = NULL;
+		text_gump_button = nullptr;
+		converse_gump_button = nullptr;
 	}
 	if (!game->is_forcing_solid_converse_bg()) {
 // converse solid bg
 		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Converse gump has solid bg:", font);
 		AddWidget(widget);
-		config->value(key + "/converse_solid_bg", solid_bg, false); // need to check cfg since converse_gump may be NULL
+		config->value(key + "/converse_solid_bg", solid_bg, false); // need to check cfg since converse_gump may be nullptr
 		converse_solid_bg_button = new GUI_TextToggleButton(this, colX[2], buttonY += row_h, yesno_width, height, yesno_text, 2, solid_bg, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(converse_solid_bg_button);
 		button_index[last_index += 1] = converse_solid_bg_button;
 	} else
-		converse_solid_bg_button = NULL;
+		converse_solid_bg_button = nullptr;
 
 
 // following require restart

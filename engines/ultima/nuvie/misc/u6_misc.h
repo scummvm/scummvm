@@ -88,7 +88,7 @@ inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, Common::Rec
 /* Measure a timeslice for a single function-call. (last_time must be static)
  * Returns fraction of a second between this_time and last_time.
  */
-inline uint32 divide_time(uint32 this_time, uint32 &last_time, uint32 *passed_time = NULL) {
+inline uint32 divide_time(uint32 this_time, uint32 &last_time, uint32 *passed_time = nullptr) {
 	uint32 ms_passed = (this_time - last_time) > 0 ? (this_time - last_time) : 1;
 	uint32 fraction = 1000 / ms_passed; // % of second
 	last_time = this_time;

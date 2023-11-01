@@ -67,7 +67,7 @@ bool PortraitSE::load(NuvieIO *objlist) {
 uint8 PortraitSE::get_portrait_num(Actor *actor) {
 	uint8 num;
 
-	if (actor == NULL)
+	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
 	num = actor->get_actor_num();
@@ -156,13 +156,13 @@ uint8 PortraitSE::get_background_shape_num(Actor *actor) {
 unsigned char *PortraitSE::get_portrait_data(Actor *actor) {
 	uint8 num = get_portrait_num(actor);
 	if (num == NO_PORTRAIT_FOUND)
-		return NULL;
+		return nullptr;
 
 	U6Shape *bg_shp = get_background_shape(actor);
 
 	unsigned char *temp_buf = faces.get_item(num);
 	if (!temp_buf)
-		return NULL;
+		return nullptr;
 	U6Shape *p_shp = new U6Shape();
 	p_shp->load(temp_buf + 8);
 	free(temp_buf);

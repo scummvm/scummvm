@@ -35,14 +35,14 @@ SongAdPlug::SongAdPlug(Audio::Mixer *m, CEmuopl *o) {
 	mixer = m;
 	opl = o;
 	samples_left = 0;
-	stream = NULL;
+	stream = nullptr;
 }
 
 SongAdPlug::~SongAdPlug() {
 }
 
 bool SongAdPlug::Init(const char *filename, const char *fileId, uint16 song_num) {
-	if (filename == NULL)
+	if (filename == nullptr)
 		return false;
 
 	m_Filename = filename; // SB-X

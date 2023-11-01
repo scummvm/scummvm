@@ -93,7 +93,7 @@ bool ContainerWidgetGump::init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 R
 //objlist_offset_y = 0;
 
 //72 =  4 * 16 + 8
-	GUI_Widget::Init(NULL, x, y, cols * 16, rows * 16);
+	GUI_Widget::Init(nullptr, x, y, cols * 16, rows * 16);
 
 	set_actor(a);
 	set_accept_mouseclick(true, 0);//USE_BUTTON); // accept [double]clicks from button1 (even if double-click disabled we need clicks)
@@ -114,7 +114,7 @@ void ContainerWidgetGump::Display(bool full_redraw) {
 
 void ContainerWidgetGump::cursor_right() {
 	if (cursor_x < cols - 1) {
-		if (get_obj_at_location((cursor_x + 1) * 16, cursor_y * 16) != NULL) {
+		if (get_obj_at_location((cursor_x + 1) * 16, cursor_y * 16) != nullptr) {
 			cursor_x++;
 		}
 	}
@@ -135,7 +135,7 @@ void ContainerWidgetGump::cursor_up() {
 }
 
 void ContainerWidgetGump::cursor_down() {
-	if (get_obj_at_location(0, (cursor_y + 1) * 16) != NULL) { //check that we can move down one row.
+	if (get_obj_at_location(0, (cursor_y + 1) * 16) != nullptr) { //check that we can move down one row.
 		if (cursor_y < rows - 1) {
 			cursor_y++;
 		} else {
@@ -143,7 +143,7 @@ void ContainerWidgetGump::cursor_down() {
 		}
 
 		for (; cursor_x > 0; cursor_x--) {
-			if (get_obj_at_location(cursor_x * 16, cursor_y * 16) != NULL) {
+			if (get_obj_at_location(cursor_x * 16, cursor_y * 16) != nullptr) {
 				break;
 			}
 		}

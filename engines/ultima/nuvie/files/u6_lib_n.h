@@ -64,7 +64,7 @@ public:
 		return game_type;
 	}
 
-	unsigned char *get_item(uint32 item_number, unsigned char *buf = NULL); // read
+	unsigned char *get_item(uint32 item_number, unsigned char *buf = nullptr); // read
 	void set_item_data(uint32 item_number, unsigned char *src, uint32 src_len);
 
 	uint32 get_num_items();
@@ -73,7 +73,7 @@ public:
 	const char *get_item_name(uint32 item_number);
 	bool is_compressed(uint32 item_number);
 
-	void add_item(uint32 offset32, const char *name = NULL);
+	void add_item(uint32 offset32, const char *name = nullptr);
 	void write_item(uint32 item_number);
 	void write_items();
 

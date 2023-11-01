@@ -63,7 +63,7 @@ SaveGame::SaveGame(Configuration *cfg) {
 	config = cfg;
 
 	// We don't need ObjManager here as there will be nothing to clean at this stage
-	init(NULL);
+	init(nullptr);
 }
 
 SaveGame::~SaveGame() {

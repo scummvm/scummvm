@@ -162,7 +162,7 @@ bool AudioDialog::init() {
 		AddWidget(speech_b);
 		button_index[last_index += 1] = speech_b;
 	} else
-		speech_b = NULL;
+		speech_b = nullptr;
 	cancel_button = new GUI_Button(this, 80, AD_HEIGHT - 20, 54, height, "Cancel", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(cancel_button);
 	button_index[last_index += 1] = cancel_button;
@@ -233,7 +233,7 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		if (music_selection != 11) {
 			uint8 musicVol = music_selection * 25.5;
 			sm->set_music_volume(musicVol);
-			if (sm->get_m_pCurrentSong() != NULL)
+			if (sm->get_m_pCurrentSong() != nullptr)
 				sm->get_m_pCurrentSong()->SetVolume(musicVol);
 			config->set("config/music_volume", musicVol);
 		}

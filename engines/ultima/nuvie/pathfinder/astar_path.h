@@ -36,7 +36,7 @@ typedef struct astar_node_s {
 	uint32 len; // number of nodes before this one, regardless of score
 	struct astar_node_s *parent;
 	astar_node_s() : loc(0, 0, 0), to_start(0), to_goal(0), score(0), len(0),
-		parent(NULL) { }
+		parent(nullptr) { }
 } astar_node;
 /* Provides A* search and cost methods for PathFinder and subclasses.
  */class AStarPath: public Path {

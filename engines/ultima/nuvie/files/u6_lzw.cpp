@@ -58,7 +58,7 @@ unsigned char *U6Lzw::compress_buffer(unsigned char *src, uint32 src_len,
 	//         the uncompressed data
 	uint32 blocks = 0; //, block = 0, b = 0, d = 0, rshift = 0;
 	//uint16 val = 0;
-	//unsigned char *dest_pt = NULL;
+	//unsigned char *dest_pt = nullptr;
 	unsigned char *dest_buf = (unsigned char *)malloc(4);
 	// add 4 byte uncompressed length value
 	dest_len = 4;
@@ -162,7 +162,7 @@ unsigned char *U6Lzw::decompress_buffer(unsigned char *source, uint32 source_len
 
 	uncomp_size = this->get_uncompressed_buffer_size(source, source_length);
 	if (uncomp_size == -1)
-		return (NULL);
+		return (nullptr);
 	else
 		destination_length = uncomp_size;
 
@@ -170,7 +170,7 @@ unsigned char *U6Lzw::decompress_buffer(unsigned char *source, uint32 source_len
 
 	if (decompress_buffer(source, source_length, destination, destination_length) == false) {
 		free(destination);
-		return NULL;
+		return nullptr;
 	}
 
 	return destination;
@@ -275,7 +275,7 @@ unsigned char *U6Lzw::decompress_file(Std::string filename, uint32 &destination_
 
 	destination_length = 0;
 	if (input_file.open(filename) == false)
-		return NULL;
+		return nullptr;
 
 	if (this->is_valid_lzw_file(&input_file)) {
 		// determine the buffer sizes

@@ -27,11 +27,11 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
-	: GUI_Widget(NULL, x, y, 0, 0) {
+	: GUI_Widget(nullptr, x, y, 0, 0) {
 	R = r;
 	G = g;
 	B = b;
-	text = NULL;
+	text = nullptr;
 	max_width = line_length;
 
 	font = gui_font;

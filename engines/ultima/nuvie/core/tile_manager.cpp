@@ -89,15 +89,15 @@ static const Tile gump_cursor = {
 };
 
 TileManager::TileManager(Configuration *cfg)
-	: desc_buf(NULL) {
+	: desc_buf(nullptr) {
 	config = cfg;
-	look = NULL;
+	look = nullptr;
 	game_counter = rgame_counter = 0;
 	memset(tileindex, 0, sizeof(tileindex));
 	memset(tile, 0, sizeof(tile));
 	memset(&animdata, 0, sizeof animdata);
 
-	extendedTiles = NULL;
+	extendedTiles = nullptr;
 	numTiles = NUM_ORIGINAL_TILES;
 
 	config->value("config/GameType", game_type);
@@ -121,11 +121,11 @@ bool TileManager::loadTiles() {
 	U6Lzw *lzw;
 	uint32 tile_offset;
 
-	unsigned char *tile_data = NULL;
+	unsigned char *tile_data = nullptr;
 	uint32 maptiles_size = 0;
 	uint32 objtiles_size;
 
-	unsigned char *masktype = NULL;
+	unsigned char *masktype = nullptr;
 	uint32 masktype_size;
 	uint16 i;
 
@@ -142,13 +142,13 @@ bool TileManager::loadTiles() {
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
 		tile_data = lzw->decompress_file(maptiles_path, maptiles_size);
-		if (tile_data == NULL) {
+		if (tile_data == nullptr) {
 			ConsoleAddError("Decompressing " + maptiles_path);
 			return false;
 		}
 
 		masktype = lzw->decompress_file(masktype_path, masktype_size);
-		if (masktype == NULL) {
+		if (masktype == nullptr) {
 			ConsoleAddError("Decompressing " + masktype_path);
 			return false;
 		}
@@ -175,12 +175,12 @@ bool TileManager::loadTiles() {
 		break;
 	}
 
-	if (tile_data == NULL) {
+	if (tile_data == nullptr) {
 		ConsoleAddError("Loading maptiles.vga");
 		return false;
 	}
 
-	if (masktype == NULL) {
+	if (masktype == nullptr) {
 		ConsoleAddError("Loading masktype.vga");
 		return false;
 	}
@@ -244,7 +244,7 @@ bool TileManager::loadTiles() {
 	}
 
 	desc_buf = (char *)malloc(look->get_max_len() + 6); // add space for "%03d \n\0" or "the \n\0"
-	if (desc_buf == NULL) {
+	if (desc_buf == nullptr) {
 		ConsoleAddError("Allocating desc_buf");
 		return false;
 	}
@@ -572,7 +572,7 @@ bool TileManager::loadAnimMask() {
 
 	animmask = lzw.decompress_file(filename, animmask_size);
 
-	if (animmask == NULL)
+	if (animmask == nullptr)
 		return false;
 
 	for (i = 0; i < 32; i++) { // Make the 32 tiles from index 16 onwards transparent with data from animmask.vga
@@ -756,7 +756,7 @@ Tile *TileManager::get_rotated_tile(Tile *tile, float rotate) {
 #endif
 
 Tile *TileManager::get_cursor_tile() {
-	Tile *cursor_tile = NULL;
+	Tile *cursor_tile = nullptr;
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
 		cursor_tile = get_tile(365);
@@ -775,7 +775,7 @@ Tile *TileManager::get_cursor_tile() {
 }
 
 Tile *TileManager::get_use_tile() {
-	Tile *use_tile = NULL;
+	Tile *use_tile = nullptr;
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
 		use_tile = get_tile(364);
@@ -801,7 +801,7 @@ Tile *TileManager::loadCustomTiles(const Std::string filename, bool overwrite_ti
 	NuvieBmpFile bmp;
 
 	if (bmp.load(filename) == false) {
-		return NULL;
+		return nullptr;
 	}
 
 	unsigned char *tile_data = bmp.getRawIndexedData();
@@ -811,7 +811,7 @@ Tile *TileManager::loadCustomTiles(const Std::string filename, bool overwrite_ti
 	uint16 pitch = w;
 
 	if (w % 16 != 0 || h % 16 != 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	w = w / 16;
@@ -819,8 +819,8 @@ Tile *TileManager::loadCustomTiles(const Std::string filename, bool overwrite_ti
 
 	uint16 num_tiles = w * h;
 
-	Tile *newTilePtr = NULL;
-	Tile *origTile = NULL;
+	Tile *newTilePtr = nullptr;
+	Tile *origTile = nullptr;
 	if (overwrite_tiles) {
 		newTilePtr = get_original_tile(tile_num_start_offset);
 	} else {
@@ -873,7 +873,7 @@ void TileManager::copyTileMetaData(Tile *dest, Tile *src) {
 
 Tile *TileManager::addNewTiles(uint16 num_tiles) {
 	Tile *tileDataPtr = (Tile *)realloc(extendedTiles, sizeof(Tile) * (numTiles - NUM_ORIGINAL_TILES + num_tiles));
-	if (tileDataPtr != NULL) {
+	if (tileDataPtr != nullptr) {
 		extendedTiles = tileDataPtr;
 	}
 
@@ -892,7 +892,7 @@ Tile *TileManager::addNewTiles(uint16 num_tiles) {
 void TileManager::freeCustomTiles() {
 	if (extendedTiles) {
 		free(extendedTiles);
-		extendedTiles = NULL;
+		extendedTiles = nullptr;
 		numTiles = NUM_ORIGINAL_TILES;
 	}
 }

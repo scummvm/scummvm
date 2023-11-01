@@ -54,7 +54,7 @@ class DollWidget : public GUI_Widget {
 	Graphics::ManagedSurface *actor_doll, *doll_bg;
 
 public:
-	DollWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
+	DollWidget(Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~DollWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, bool in_portrat_view = false);

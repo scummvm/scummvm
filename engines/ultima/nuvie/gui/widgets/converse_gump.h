@@ -72,7 +72,7 @@ public:
 	bool parse_token(MsgText *token) override;
 	Std::string get_token_string_at_pos(uint16 x, uint16 y) override;
 	void display_string(Std::string s, Font *f, bool include_on_map_window) override;
-	void set_talking(bool state, Actor *actor = NULL) override;
+	void set_talking(bool state, Actor *actor = nullptr) override;
 	void set_font(uint8 font_type) override {}
 //bool get_solid_bg() { return solid_bg; }
 	void set_solid_bg(bool val) {

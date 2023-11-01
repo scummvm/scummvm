@@ -70,7 +70,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Game *Game::game = NULL;
+Game *Game::game = nullptr;
 
 Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm) {
 	game = this;
@@ -83,34 +83,34 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 	game_type = type;
 	sound_manager = sm;
 
-	script = NULL;
-	background = NULL;
-	cursor = NULL;
-	dither = NULL;
-	tile_manager = NULL;
-	obj_manager = NULL;
-	palette = NULL;
-	font_manager = NULL;
-	scroll = NULL;
-	game_map = NULL;
-	map_window = NULL;
-	actor_manager = NULL;
-	player = NULL;
-	converse = NULL;
-	conv_gump = NULL;
-	command_bar = NULL;
-	new_command_bar = NULL;
-	clock = NULL;
-	party = NULL;
-	portrait = NULL;
-	view_manager = NULL;
-	egg_manager = NULL;
-	usecode = NULL;
-	effect_manager = NULL;
-	weather = NULL;
-	magic = NULL;
-	book = NULL;
-	keybinder = NULL;
+	script = nullptr;
+	background = nullptr;
+	cursor = nullptr;
+	dither = nullptr;
+	tile_manager = nullptr;
+	obj_manager = nullptr;
+	palette = nullptr;
+	font_manager = nullptr;
+	scroll = nullptr;
+	game_map = nullptr;
+	map_window = nullptr;
+	actor_manager = nullptr;
+	player = nullptr;
+	converse = nullptr;
+	conv_gump = nullptr;
+	command_bar = nullptr;
+	new_command_bar = nullptr;
+	clock = nullptr;
+	party = nullptr;
+	portrait = nullptr;
+	view_manager = nullptr;
+	egg_manager = nullptr;
+	usecode = nullptr;
+	effect_manager = nullptr;
+	weather = nullptr;
+	magic = nullptr;
+	book = nullptr;
+	keybinder = nullptr;
 
 	_playing = true;
 	converse_gump_type = CONVERSE_GUMP_DEFAULT;
@@ -209,8 +209,8 @@ bool Game::loadGame(Script *s) {
 	dither = new Dither(config);
 
 	script = s;
-	//sound_manager->LoadSongs(NULL);
-	//sound_manager->LoadObjectSamples(NULL);
+	//sound_manager->LoadSongs(nullptr);
+	//sound_manager->LoadObjectSamples(nullptr);
 
 	palette = new GamePalette(screen, config);
 
@@ -451,14 +451,14 @@ bool Game::using_new_converse_gump() {
 }
 
 void Game::delete_new_command_bar() {
-	if (new_command_bar == NULL)
+	if (new_command_bar == nullptr)
 		return;
 	new_command_bar->Delete();
-	new_command_bar = NULL;
+	new_command_bar = nullptr;
 }
 
 void Game::init_new_command_bar() {
-	if (new_command_bar != NULL)
+	if (new_command_bar != nullptr)
 		return;
 	new_command_bar = new CommandBarNewUI(this);
 	new_command_bar->Hide();
@@ -473,7 +473,7 @@ void Game::init_cursor() {
 		SDL_ShowCursor(false); // won't need the system default
 	else {
 		delete cursor;
-		cursor = NULL; // no game cursor
+		cursor = nullptr; // no game cursor
 	}
 }
 

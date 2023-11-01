@@ -142,7 +142,7 @@ public:
 	uint32 load_conv(uint8 a);
 	void unload_conv() {
 		delete src;
-		src = NULL;
+		src = nullptr;
 	}
 	ConvScript *load_script(uint32 n);
 	ConverseInterpret *new_interpreter();
@@ -161,12 +161,12 @@ public:
 		return scroll->get_page_break();
 	}
 	void unwait();
-	void poll_input(const char *allowed = NULL, bool nonblock = true);
+	void poll_input(const char *allowed = nullptr, bool nonblock = true);
 	bool override_input();
 	void collect_input();
 
 	bool input();
-	void print(const char *s = NULL);
+	void print(const char *s = nullptr);
 	const Std::string &get_input()  {
 		return in_str;
 	}
@@ -264,7 +264,7 @@ public:
 		return (((pos() + ptadd) >= buf_len));
 	}
 	convscript_buffer get_buffer(uint32 ptadd = 0) {
-		return ((!ptadd || (ptadd < buf_len)) ? buf + ptadd : NULL);
+		return ((!ptadd || (ptadd < buf_len)) ? buf + ptadd : nullptr);
 	}
 };
 

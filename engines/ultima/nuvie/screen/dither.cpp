@@ -34,7 +34,7 @@ static const uint8 dither_cga_tbl[0x10] =   {0, 3, 3, 3, 13, 13, 13, 3, 3, 13, 1
 
 Dither::Dither(Configuration *cfg) {
 	config = cfg;
-	dither = NULL;
+	dither = nullptr;
 	mode = DITHER_NONE;
 
 	set_mode();
@@ -57,7 +57,7 @@ bool Dither::load_data() {
 		return false;//fixme better error handling
 
 	dither = (uint8 *)malloc(0x200);
-	if (dither == NULL)
+	if (dither == nullptr)
 		return false;
 
 	file.readToBuf(dither, 0x200);

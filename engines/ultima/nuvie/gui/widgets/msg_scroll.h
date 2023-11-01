@@ -211,16 +211,16 @@ public:
 		display_prompt();
 	}
 
-	bool set_prompt(const char *new_prompt, Font *f = NULL);
+	bool set_prompt(const char *new_prompt, Font *f = nullptr);
 	virtual void display_prompt();
 	virtual void display_converse_prompt();
 
 	void set_keyword_highlight(bool state);
 
-	void set_input_mode(bool state, const char *allowed = NULL,
+	void set_input_mode(bool state, const char *allowed = nullptr,
 	                    bool can_escape = true, bool use_target_cursor = false,
 	                    bool set_numbers_only_to_true = false);
-	virtual void set_talking(bool state,  Actor *actor = NULL) {
+	virtual void set_talking(bool state,  Actor *actor = nullptr) {
 		talking = state;
 		input_char = 0;
 	}
@@ -267,7 +267,7 @@ public:
 	const char *peek_at_input();
 	void request_input(CallBack *caller, void *user_data);
 	void cancel_input_request() {
-		request_input(NULL, NULL);
+		request_input(nullptr, nullptr);
 	}
 	void clear_scroll();
 

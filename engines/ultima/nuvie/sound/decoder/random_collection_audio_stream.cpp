@@ -64,7 +64,7 @@ public:
 		if (_streams.size() > 0)
 			_currentStream = _streams[NUVIE_RAND() % _streams.size()];
 		else
-			_currentStream = NULL;
+			_currentStream = nullptr;
 	}
 
 	~RandomCollectionAudioStreamImpl() override;

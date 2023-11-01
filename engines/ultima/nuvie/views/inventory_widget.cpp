@@ -80,13 +80,13 @@ bool InventoryWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjMan
 
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
 		empty_tile = tile_manager->get_tile(410);
-		GUI_Widget::Init(NULL, x, y, 72, 64); //72 =  4 * 16 + 8
+		GUI_Widget::Init(nullptr, x, y, 72, 64); //72 =  4 * 16 + 8
 	} else if (Game::get_game()->get_game_type() == NUVIE_GAME_MD) { // FIXME: different depending on npc
 		empty_tile = tile_manager->get_tile(273);
-		GUI_Widget::Init(NULL, x, y, 64, 82);
+		GUI_Widget::Init(nullptr, x, y, 64, 82);
 	} else { // SE
 		empty_tile = tile_manager->get_tile(392);
-		GUI_Widget::Init(NULL, x + 2, y, 64, 82);
+		GUI_Widget::Init(nullptr, x + 2, y, 64, 82);
 	}
 
 	set_actor(a);
@@ -97,7 +97,7 @@ bool InventoryWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjMan
 
 void InventoryWidget::set_actor(Actor *a) {
 	actor = a;
-	container_obj = NULL;
+	container_obj = nullptr;
 	Redraw();
 }
 
@@ -105,7 +105,7 @@ Obj *InventoryWidget::get_prev_container() {
 	if (container_obj && container_obj->get_engine_loc() == OBJ_LOC_CONT)
 		return (Obj *)container_obj->parent;
 
-	return NULL;
+	return nullptr;
 }
 
 void InventoryWidget::set_prev_container() {
@@ -115,7 +115,7 @@ void InventoryWidget::set_prev_container() {
 	if (container_obj->get_engine_loc() == OBJ_LOC_CONT)
 		set_container((Obj *)container_obj->parent);
 	else
-		set_container(NULL);
+		set_container(nullptr);
 
 	return;
 }
@@ -159,7 +159,7 @@ void InventoryWidget::display_inventory_list() {
 	const Tile *tile;
 	U6LList *inventory;
 	U6Link *link;
-	Obj *obj = NULL;
+	Obj *obj = nullptr;
 	uint16 i, j;
 	uint16 skip_num;
 	int max_rows = 4;
@@ -170,14 +170,14 @@ void InventoryWidget::display_inventory_list() {
 		inventory = container_obj->container;
 	else
 		inventory = actor->get_inventory_list();
-	if (inventory == NULL)
-		link = NULL;
+	if (inventory == nullptr)
+		link = nullptr;
 	else
 		link = inventory->start();
 
 //skip row_offset rows of objects.
 	skip_num = row_offset * 4;
-	for (i = 0; link != NULL && i < skip_num; link = link->next) {
+	for (i = 0; link != nullptr && i < skip_num; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj->is_readied() == false)
 			i++;
@@ -189,16 +189,16 @@ void InventoryWidget::display_inventory_list() {
 
 	for (i = 0; i < max_rows; i++) {
 		for (j = 0; j < 4; j++) {
-			if (link != NULL) {
+			if (link != nullptr) {
 				obj = (Obj *)link->data;
 				if (obj->is_readied()) { //skip any readied objects
-					for (; link != NULL && obj->is_readied(); link = link->next)
+					for (; link != nullptr && obj->is_readied(); link = link->next)
 						obj = (Obj *)link->data;
 				} else
 					link = link->next;
 
 				tile = tile_manager->get_tile(obj_manager->get_obj_tile_num(obj) + obj->frame_n);
-				if (link == NULL) {
+				if (link == nullptr) {
 					if (obj->is_readied()) //last object is readied so skip it.
 						tile = empty_tile;
 				}
@@ -320,7 +320,7 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 	uint8 location;
 	U6LList *inventory;
 	U6Link *link;
-	Obj *obj =  NULL;
+	Obj *obj =  nullptr;
 	uint16 i;
 
 	if (x >= objlist_offset_x && y >= objlist_offset_y) {
@@ -330,12 +330,12 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 			inventory = container_obj->container;
 		else
 			inventory = actor->get_inventory_list();
-		if (inventory == NULL)
-			link = NULL;
+		if (inventory == nullptr)
+			link = nullptr;
 		else
 			link = inventory->start();
 
-		for (i = 0; link != NULL && i <= location; link = link->next) {
+		for (i = 0; link != nullptr && i <= location; link = link->next) {
 			obj = (Obj *)link->data;
 			if (obj->is_readied() == false)
 				i++;
@@ -345,7 +345,7 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 			return obj;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
@@ -365,7 +365,7 @@ GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
 			down_arrow();
 		}
 
-		selected_obj = NULL;
+		selected_obj = nullptr;
 	}
 	return GUI_YUM;
 }
@@ -421,7 +421,7 @@ GUI_status InventoryWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 		}
 	}
 
-	selected_obj = NULL;
+	selected_obj = nullptr;
 
 	return GUI_YUM;
 }
@@ -474,20 +474,20 @@ void InventoryWidget::drag_drop_success(int x, int y, int message, void *data) {
 // else
 //   actor->inventory_remove_obj(selected_obj);
 
-	selected_obj = NULL;
+	selected_obj = nullptr;
 	Redraw();
 }
 
 void InventoryWidget::drag_drop_failed(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "InventoryWidget::drag_drop_failed()\n");
 	dragging = false;
-	selected_obj = NULL;
+	selected_obj = nullptr;
 }
 
 bool InventoryWidget::drag_set_target_obj(int x, int y) {
 	if (x >= 32 && x < 48 && y < 16) {
-		target_obj = NULL;
-		target_cont = get_prev_container(); //returns parent container or NULL if we're back at the inventory.
+		target_obj = nullptr;
+		target_cont = get_prev_container(); //returns parent container or nullptr if we're back at the inventory.
 	} else if (x >= objlist_offset_x && y >= objlist_offset_y) {
 		target_obj = get_obj_at_location(x, y);
 		target_cont = get_container();
@@ -505,7 +505,7 @@ bool InventoryWidget::drag_accept_drop(int x, int y, int message, void *data) {
 		Obj *obj = (Obj *)data;
 		x -= area.left;
 		y -= area.top;
-		if (target_obj == NULL) { //we need to check this so we don't screw up target_obj on subsequent calls
+		if (target_obj == nullptr) { //we need to check this so we don't screw up target_obj on subsequent calls
 			if (drag_set_target_obj(x, y) == false) {
 				DEBUG(0, LEVEL_WARNING, "InventoryWidget: Didn't hit any widget object targets!\n");
 				return false;
@@ -581,7 +581,7 @@ void InventoryWidget::drag_perform_drop(int /*x*/, int /*y*/, int message, void 
 	}
 
 	Game::get_game()->get_map_window()->updateBlacking();
-	target_obj = NULL;
+	target_obj = nullptr;
 
 	return;
 }
@@ -630,8 +630,8 @@ void InventoryWidget::try_click() {
 		event->ready(selected_obj, actor);
 		Redraw();
 	}
-	ready_obj = NULL;
-	selected_obj = NULL;
+	ready_obj = nullptr;
+	selected_obj = nullptr;
 }
 
 /* Use object. */
@@ -641,8 +641,8 @@ GUI_status InventoryWidget::MouseDouble(int x, int y, Shared::MouseButton button
 		return (GUI_PASS);
 	Obj *obj = selected_obj;
 
-	ready_obj = NULL;
-	selected_obj = NULL;
+	ready_obj = nullptr;
+	selected_obj = nullptr;
 
 	if (!actor)
 		return (GUI_YUM);

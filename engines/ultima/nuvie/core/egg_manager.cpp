@@ -52,8 +52,8 @@ EggManager::EggManager(Configuration *cfg, nuvie_game_t type, Map *m) {
 	config = cfg;
 	gametype = type;
 	map = m;
-	actor_manager = NULL;
-	obj_manager = NULL;
+	actor_manager = nullptr;
+	obj_manager = nullptr;
 	not_spawning_actors = false;
 }
 
@@ -80,7 +80,7 @@ void EggManager::clean(bool keep_obj) {
 void EggManager::add_egg(Obj *egg_obj) {
 	Egg *egg;
 
-	if (egg_obj == NULL)
+	if (egg_obj == nullptr)
 		return;
 
 	egg = new Egg();
@@ -175,13 +175,13 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 	if (period == EGG_HATCH_ALWAYS
 	        || (period == EGG_HATCH_DAY && hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR)
 	        || (period == EGG_HATCH_NIGHT && !(hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR))) {
-		if (egg->container == NULL) {
+		if (egg->container == nullptr) {
 			DEBUG(1, LEVEL_WARNING, " egg at (%x,%x,%x) does not contain any embryos!", egg->x, egg->y, egg->z);
 		}
 		// check random probability that the egg will hatch
 		if ((egg->qty == 100 || hatch_probability <= egg->qty) && egg->container) { // Hatch the egg.
 			assert(egg->container);
-			for (link = egg->container->start(); link != NULL; link = link->next) {
+			for (link = egg->container->start(); link != nullptr; link = link->next) {
 				obj = (Obj *)link->data;
 				qty = obj->qty;
 
@@ -198,7 +198,7 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 							break;
 						// group new actors randomly if egg space already occupied
 						Actor *prev_actor = actor_manager->get_actor(egg->x, egg->y, egg->z);
-						Actor *new_actor = NULL;
+						Actor *new_actor = nullptr;
 						MapCoord actor_loc = MapCoord(egg->x, egg->y, egg->z);
 						if (prev_actor) {
 							if (prev_actor->get_obj_n() != obj->obj_n

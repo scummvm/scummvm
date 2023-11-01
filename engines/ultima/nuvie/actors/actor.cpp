@@ -64,9 +64,9 @@ Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 
 Actor::~Actor() {
 // free sched array
-	if (sched != NULL) {
+	if (sched != nullptr) {
 		Schedule **cursched = sched;
-		while (*cursched != NULL)
+		while (*cursched != nullptr)
 			free(*cursched++);
 
 		free(sched);
@@ -75,7 +75,7 @@ Actor::~Actor() {
 		delete pathfinder;
 
 	for (uint8 location = 0; location < ACTOR_MAX_READIED_OBJECTS; location++) {
-		if (readied_objects[location] != NULL) {
+		if (readied_objects[location] != nullptr) {
 			delete readied_objects[location];
 		}
 	}
@@ -315,7 +315,7 @@ const char *Actor::get_name(bool force_real_name) {
 	Converse *converse = Game::get_game()->get_converse();
 	Party *party = Game::get_game()->get_party();
 	//Actor *player = Game::get_game()->get_player()->get_actor();
-	const char *talk_name = NULL; // name from conversation script
+	const char *talk_name = nullptr; // name from conversation script
 	bool statue = (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && id_n >= 189 && id_n <= 200);
 
 	if (is_alive() && is_in_party()) {
@@ -420,7 +420,6 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	bool ignore_danger = (bool)(flags & ACTOR_IGNORE_DANGER);
 // bool ignore_danger = true;
 	bool ignore_moves = (bool)(flags & ACTOR_IGNORE_MOVES);
-	Obj *obj = NULL;
 	MapCoord oldpos(x, y, z);
 
 	clear_error();
@@ -434,7 +433,7 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	}
 
 // blocking actors are checked for later
-	obj = obj_manager->get_obj(new_x, new_y, new_z, OBJ_SEARCH_TOP, OBJ_INCLUDE_IGNORED); //we include ignored objects here to pick up the sacred quest blocking object.
+	Obj *obj = obj_manager->get_obj(new_x, new_y, new_z, OBJ_SEARCH_TOP, OBJ_INCLUDE_IGNORED); //we include ignored objects here to pick up the sacred quest blocking object.
 	if (!force_move && !check_move(new_x, new_y, new_z, ACTOR_IGNORE_DANGER | ACTOR_IGNORE_OTHERS)) {
 		// open door
 		if (!(obj && usecode->is_unlocked_door(obj) && open_doors)
@@ -557,7 +556,7 @@ void Actor::pathfind_to(MapCoord &d) {
 
 // actor will take management of new_pf, and delete it when no longer needed
 void Actor::set_pathfinder(ActorPathFinder *new_pf, Path *path_type) {
-	if (pathfinder != NULL && pathfinder != new_pf)
+	if (pathfinder != nullptr && pathfinder != new_pf)
 		delete_pathfinder();
 	pathfinder = new_pf;
 	if (path_type != 0)
@@ -566,7 +565,7 @@ void Actor::set_pathfinder(ActorPathFinder *new_pf, Path *path_type) {
 
 void Actor::delete_pathfinder() {
 	delete pathfinder;
-	pathfinder = NULL;
+	pathfinder = nullptr;
 }
 
 void Actor::set_in_party(bool state) {
@@ -604,9 +603,9 @@ void Actor::set_in_party(bool state) {
 }*/
 
 Obj *Actor::get_weapon_obj(sint8 readied_obj_location) {
-	if (readied_obj_location != ACTOR_NO_READIABLE_LOCATION && readied_objects[readied_obj_location] && readied_objects[readied_obj_location]->obj != NULL)
+	if (readied_obj_location != ACTOR_NO_READIABLE_LOCATION && readied_objects[readied_obj_location] && readied_objects[readied_obj_location]->obj != nullptr)
 		return readied_objects[readied_obj_location]->obj;
-	return NULL;
+	return nullptr;
 }
 
 uint8 Actor::get_range(uint16 target_x, uint16 target_y) {
@@ -667,7 +666,7 @@ const CombatType *Actor::get_weapon(sint8 readied_obj_location) {
 	if (readied_objects[readied_obj_location])
 		return readied_objects[readied_obj_location]->combat_type;
 
-	return NULL;
+	return nullptr;
 }
 
 U6LList *Actor::get_inventory_list() {
@@ -690,7 +689,7 @@ uint32 Actor::inventory_count_objects(bool inc_readied_objects) {
 	if (inc_readied_objects) {
 		return inventory->count();
 	} else {
-		for (link = inventory->start(); link != NULL; link = link->next) {
+		for (link = inventory->start(); link != nullptr; link = link->next) {
 			obj = (Obj *)link->data;
 			if (!obj->is_readied())
 				count++;
@@ -710,7 +709,7 @@ uint32 Actor::inventory_count_object(uint16 objN) {
 	Obj *obj = 0;
 	U6LList *inv = get_inventory_list();
 
-	for (link = inv->start(); link != NULL; link = link->next) {
+	for (link = inv->start(); link != nullptr; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj)
 			qty += obj->get_total_qty(objN);
@@ -720,7 +719,7 @@ uint32 Actor::inventory_count_object(uint16 objN) {
 }
 
 
-/* Returns object descriptor of object in the actor's inventory, or NULL if no
+/* Returns object descriptor of object in the actor's inventory, or nullptr if no
  * matching object is found. */
 Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
 	U6LList *inventory;
@@ -728,7 +727,7 @@ Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, ui
 	Obj *obj;
 
 	inventory = get_inventory_list();
-	for (link = inventory->start(); link != NULL; link = link->next) {
+	for (link = inventory->start(); link != nullptr; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj->obj_n == objN && (match_quality == false || obj->quality == qual)
 				&& (match_frame_n == false || obj->frame_n == frameN)) //FIXME should qual = 0 be an all quality search!?
@@ -739,28 +738,28 @@ Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, ui
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool Actor::is_double_handed_obj_readied() {
-	if (readied_objects[ACTOR_ARM] != NULL && readied_objects[ACTOR_ARM]->double_handed == true)
+	if (readied_objects[ACTOR_ARM] != nullptr && readied_objects[ACTOR_ARM]->double_handed == true)
 		return true;
 
 	return false;
 }
 
 Obj *Actor::inventory_get_readied_object(uint8 location) {
-	if (readied_objects[location] != NULL)
+	if (readied_objects[location] != nullptr)
 		return readied_objects[location]->obj;
 
-	return NULL;
+	return nullptr;
 }
 
 const CombatType *Actor::inventory_get_readied_object_combat_type(uint8 location) {
-	if (readied_objects[location] != NULL)
+	if (readied_objects[location] != nullptr)
 		return readied_objects[location]->combat_type;
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -810,9 +809,9 @@ Obj *Actor::inventory_new_object(uint16 objN, uint32 qty, uint8 quality) {
 	obj->qty = obj_manager->is_stackable(obj) ? 1 : 0; // stackable objects must have a quantity
 	if (qty > 1) // this will combine with others, only if object is stackable
 		for (uint32 q = 1; q < qty; q++) {
-			inventory_add_object(obj_manager->copy_obj(obj), NULL);
+			inventory_add_object(obj_manager->copy_obj(obj), nullptr);
 		}
-	inventory_add_object(obj, NULL);
+	inventory_add_object(obj, nullptr);
 	return inventory_get_object(objN, quality);
 }
 
@@ -844,7 +843,7 @@ void Actor::inventory_del_all_objs() {
 		return;
 
 	U6Link *link = inventory->start();
-	for (; link != NULL;) {
+	for (; link != nullptr;) {
 		Obj *obj = (Obj *)link->data;
 		link = link->next;
 		inventory_remove_obj(obj);
@@ -855,7 +854,7 @@ void Actor::inventory_del_all_objs() {
 
 bool Actor::inventory_remove_obj(Obj *obj, bool run_usecode) {
 	U6LList *inventory;
-	Obj *container = NULL;
+	Obj *container = nullptr;
 
 	inventory = get_inventory_list();
 	if (obj->is_readied())
@@ -886,7 +885,7 @@ float Actor::get_inventory_weight() {
 
 	inventory = obj_manager->get_actor_inventory(id_n);
 
-	for (link = inventory->start(); link != NULL; link = link->next) {
+	for (link = inventory->start(); link != nullptr; link = link->next) {
 		obj = (Obj *)link->data;
 		weight += obj_manager->get_obj_weight(obj);
 	}
@@ -905,7 +904,7 @@ float Actor::get_inventory_equip_weight() {
 
 	inventory = obj_manager->get_actor_inventory(id_n);
 
-	for (link = inventory->start(); link != NULL; link = link->next) {
+	for (link = inventory->start(); link != nullptr; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj->is_readied()) //object readied
 			weight += obj_manager->get_obj_weight(obj);
@@ -961,7 +960,7 @@ void Actor::inventory_parse_readied_objects() {
 
 	inventory = obj_manager->get_actor_inventory(id_n);
 
-	for (link = inventory->start(); link != NULL;) {
+	for (link = inventory->start(); link != nullptr;) {
 		obj = (Obj *)link->data;
 		link = link->next;
 		obj->parent = (void *)this;
@@ -984,7 +983,7 @@ bool Actor::can_ready_obj(Obj *obj) {
 		return false;
 
 	case ACTOR_ARM :
-		if (readied_objects[ACTOR_ARM] != NULL) { //if full try other arm
+		if (readied_objects[ACTOR_ARM] != nullptr) { //if full try other arm
 			if (readied_objects[ACTOR_ARM]->double_handed)
 				return false;
 
@@ -993,18 +992,18 @@ bool Actor::can_ready_obj(Obj *obj) {
 		break;
 
 	case ACTOR_ARM_2 :
-		if (readied_objects[ACTOR_ARM] != NULL || readied_objects[ACTOR_ARM_2] != NULL)
+		if (readied_objects[ACTOR_ARM] != nullptr || readied_objects[ACTOR_ARM_2] != nullptr)
 			return false;
 		location = ACTOR_ARM;
 		break;
 
 	case ACTOR_HAND :
-		if (readied_objects[ACTOR_HAND] != NULL) // if full try other hand
+		if (readied_objects[ACTOR_HAND] != nullptr) // if full try other hand
 			location = ACTOR_HAND_2;
 		break;
 	}
 
-	if (readied_objects[location] != NULL)
+	if (readied_objects[location] != nullptr)
 		return false;
 
 	return true;
@@ -1022,7 +1021,7 @@ bool Actor::add_readied_object(Obj *obj) {
 		return false;
 
 	case ACTOR_ARM :
-		if (readied_objects[ACTOR_ARM] != NULL) { //if full try other arm
+		if (readied_objects[ACTOR_ARM] != nullptr) { //if full try other arm
 			if (readied_objects[ACTOR_ARM]->double_handed)
 				return false;
 
@@ -1031,19 +1030,19 @@ bool Actor::add_readied_object(Obj *obj) {
 		break;
 
 	case ACTOR_ARM_2 :
-		if (readied_objects[ACTOR_ARM] != NULL || readied_objects[ACTOR_ARM_2] != NULL)
+		if (readied_objects[ACTOR_ARM] != nullptr || readied_objects[ACTOR_ARM_2] != nullptr)
 			return false;
 		location = ACTOR_ARM;
 		double_handed = true;
 		break;
 
 	case ACTOR_HAND :
-		if (readied_objects[ACTOR_HAND] != NULL) // if full try other hand
+		if (readied_objects[ACTOR_HAND] != nullptr) // if full try other hand
 			location = ACTOR_HAND_2;
 		break;
 	}
 
-	if (readied_objects[location] != NULL)
+	if (readied_objects[location] != nullptr)
 		return false;
 
 	readied_objects[location] = new ReadiedObj;
@@ -1055,7 +1054,7 @@ bool Actor::add_readied_object(Obj *obj) {
 	readied_objects[location]->combat_type = get_object_combat_type(obj->obj_n);
 	readied_objects[location]->double_handed = double_handed;
 
-	if (readied_objects[location]->combat_type != NULL)
+	if (readied_objects[location]->combat_type != nullptr)
 		readied_armor_class += readied_objects[location]->combat_type->defence;
 
 	obj->readied(); //set object to readied status
@@ -1066,7 +1065,7 @@ void Actor::remove_readied_object(Obj *obj, bool run_usecode) {
 	uint8 location;
 
 	for (location = 0; location < ACTOR_MAX_READIED_OBJECTS; location++) {
-		if (readied_objects[location] != NULL && readied_objects[location]->obj == obj) {
+		if (readied_objects[location] != nullptr && readied_objects[location]->obj == obj) {
 			remove_readied_object(location, run_usecode);
 			break;
 		}
@@ -1086,19 +1085,19 @@ void Actor::remove_readied_object(uint8 location, bool run_usecode) {
 		if (obj_manager->get_usecode()->has_readycode(obj) && run_usecode)
 			obj_manager->get_usecode()->ready_obj(obj, this);
 		delete readied_objects[location];
-		readied_objects[location] = NULL;
+		readied_objects[location] = nullptr;
 		//ERIC obj->status ^= 0x18; // remove "readied" bit flag.
 		//ERIC obj->status |= OBJ_STATUS_IN_INVENTORY; // keep "in inventory"
 		obj->set_in_inventory();
 
-		if (location == ACTOR_ARM && readied_objects[ACTOR_ARM_2] != NULL) { //move contents of left hand to right hand.
+		if (location == ACTOR_ARM && readied_objects[ACTOR_ARM_2] != nullptr) { //move contents of left hand to right hand.
 			readied_objects[ACTOR_ARM] = readied_objects[ACTOR_ARM_2];
-			readied_objects[ACTOR_ARM_2] = NULL;
+			readied_objects[ACTOR_ARM_2] = nullptr;
 		}
 
-		if (location == ACTOR_HAND && readied_objects[ACTOR_HAND_2] != NULL) { //move contents of left hand to right hand.
+		if (location == ACTOR_HAND && readied_objects[ACTOR_HAND_2] != nullptr) { //move contents of left hand to right hand.
 			readied_objects[ACTOR_HAND] = readied_objects[ACTOR_HAND_2];
-			readied_objects[ACTOR_HAND_2] = NULL;
+			readied_objects[ACTOR_HAND_2] = nullptr;
 		}
 	}
 
@@ -1109,7 +1108,7 @@ void Actor::remove_all_readied_objects() {
 	uint8 location;
 
 	for (location = 0; location < ACTOR_MAX_READIED_OBJECTS; location++) {
-		if (readied_objects[location] != NULL)
+		if (readied_objects[location] != nullptr)
 			remove_readied_object(location);
 	}
 
@@ -1121,7 +1120,7 @@ bool Actor::has_readied_objects() {
 	uint8 location;
 
 	for (location = 0; location < ACTOR_MAX_READIED_OBJECTS; location++) {
-		if (readied_objects[location] != NULL)
+		if (readied_objects[location] != nullptr)
 			return true;
 	}
 
@@ -1130,8 +1129,8 @@ bool Actor::has_readied_objects() {
 }
 
 void Actor::inventory_drop_all() {
-	U6LList *inv = NULL;
-	Obj *obj = NULL;
+	U6LList *inv = nullptr;
+	Obj *obj = nullptr;
 
 	while (inventory_count_objects(true)) {
 		inv = get_inventory_list();
@@ -1165,7 +1164,7 @@ void Actor::all_items_to_container(Obj *container_obj, bool stack) {
 	if (!inventory)
 		return;
 
-	for (link = inventory->start(); link != NULL;) {
+	for (link = inventory->start(); link != nullptr;) {
 		obj = (Obj *)link->data;
 		link = link->next;
 
@@ -1212,7 +1211,7 @@ void Actor::loadSchedule(unsigned char *sched_data, uint16 num) {
 #endif
 	}
 
-	sched[i] = NULL;
+	sched[i] = nullptr;
 
 	return;
 }
@@ -1238,7 +1237,7 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 
 	sched_pos = new_pos;
 
-	if (sched[sched_pos] == NULL)
+	if (sched[sched_pos] == nullptr)
 		return false;
 
 // U6: temp. fix for walking statues; they shouldn't have schedules
@@ -1257,12 +1256,12 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 uint16 Actor::getSchedulePos(uint8 hour) {
 	uint16 i;
 
-	for (i = 0; sched[i] != NULL; i++) {
+	for (i = 0; sched[i] != nullptr; i++) {
 		if (sched[i]->hour > hour) {
 			if (i != 0)
 				return i - 1;
 			else // i == 0 this means we are in the last schedule entry
-				for (; sched[i + 1] != NULL;)
+				for (; sched[i + 1] != nullptr;)
 					i++;
 		}
 	}
@@ -1283,7 +1282,7 @@ uint16 Actor::getSchedulePos(uint8 hour, uint8 day_of_week)
 
  i = getSchedulePos(hour);
 
- for(j=i;sched[j] != NULL && sched[j]->hour == sched[i]->hour;j++)
+ for(j=i;sched[j] != nullptr && sched[j]->hour == sched[i]->hour;j++)
   {
    if(sched[j]->day_of_week > day_of_week)
 	 {
@@ -1291,7 +1290,7 @@ uint16 Actor::getSchedulePos(uint8 hour, uint8 day_of_week)
 		return j-1;
 	  else // hour is in the last schedule entry.
 		{
-		 for(;sched[j+1] != NULL && sched[j+1]->hour == sched[i]->hour;) // move to the last schedule entry.
+		 for(;sched[j+1] != nullptr && sched[j+1]->hour == sched[i]->hour;) // move to the last schedule entry.
 		  j++;
 		}
 	 }
@@ -1308,7 +1307,7 @@ inline uint16 Actor::getSchedulePos(uint8 hour)
  uint16 i;
  uint8 cur_hour;
 
- for(i=0;sched[i] != NULL;i++)
+ for(i=0;sched[i] != nullptr;i++)
   {
    if(sched[i]->hour > hour)
 	 {
@@ -1316,7 +1315,7 @@ inline uint16 Actor::getSchedulePos(uint8 hour)
 		return i-1;
 	  else // hour is in the last schedule entry.
 		{
-		 for(;sched[i+1] != NULL;) // move to the last schedule entry.
+		 for(;sched[i+1] != nullptr;) // move to the last schedule entry.
 		  i++;
 
 		 if(sched[i]->day_of_week > 0) //rewind to the start of the hour set.
@@ -1328,11 +1327,11 @@ inline uint16 Actor::getSchedulePos(uint8 hour)
 		}
 	 }
    else
-	  for(;sched[i+1] != NULL && sched[i+1]->hour == sched[i]->hour;) //skip to next hour set.
+	  for(;sched[i+1] != nullptr && sched[i+1]->hour == sched[i]->hour;) //skip to next hour set.
 		i++;
   }
 
- if(sched[i] != NULL && sched[i]->day_of_week > 0) //rewind to the start of the hour set.
+ if(sched[i] != nullptr && sched[i]->day_of_week > 0) //rewind to the start of the hour set.
    {
 	cur_hour = sched[i]->hour;
 	for(;i >= 1 && sched[i-1]->hour == cur_hour;)
@@ -1529,9 +1528,9 @@ void Actor::resurrect(MapCoord new_position, Obj *body_obj) {
 	U6Link *link;
 	bool remove_obj = false;
 
-	if (body_obj == NULL) {
+	if (body_obj == nullptr) {
 		body_obj = find_body();
-		if (body_obj != NULL)
+		if (body_obj != nullptr)
 			remove_obj = true;
 	}
 
@@ -1558,10 +1557,10 @@ void Actor::resurrect(MapCoord new_position, Obj *body_obj) {
 	if (is_in_party()) //actor in party
 		Game::get_game()->get_party()->add_actor(this);
 
-	if (body_obj != NULL) {
+	if (body_obj != nullptr) {
 		//add body container objects back into actor's inventory.
 		if (body_obj->has_container()) {
-			for (link = body_obj->container->start(); link != NULL;) {
+			for (link = body_obj->container->start(); link != nullptr;) {
 				Obj *inv_obj = (Obj *)link->data;
 				link = link->next;
 				inventory_add_object(inv_obj);
@@ -1692,8 +1691,8 @@ void Actor::set_error(ActorErrorCode err) {
 
 void Actor::clear_error() {
 	error_struct.err = ACTOR_NO_ERROR;
-	error_struct.blocking_obj = NULL;
-	error_struct.blocking_actor = NULL;
+	error_struct.blocking_obj = nullptr;
+	error_struct.blocking_actor = nullptr;
 }
 
 ActorError *Actor::get_error() {
@@ -1764,7 +1763,7 @@ void Actor::print() {
 	if (inv) {
 		DEBUG(1, LEVEL_INFORMATIONAL, "Inventory (+readied): %d objects\n", inv);
 		U6LList *inv_list = actor->get_inventory_list();
-		for (U6Link *link = inv_list->start(); link != NULL; link = link->next) {
+		for (U6Link *link = inv_list->start(); link != nullptr; link = link->next) {
 			Obj *obj = (Obj *)link->data;
 			DEBUG(1, LEVEL_INFORMATIONAL, " %24s (%03d:%d) status=%d qual=%d qty=%d    (weighs %f)\n",
 			      obj_manager->look_obj(obj), obj->obj_n, obj->frame_n, obj->status, obj->quality,
@@ -1865,7 +1864,7 @@ ActorList *Actor::find_enemies() {
 		else ++a;
 	if (actors->empty()) {
 		delete actors;
-		return NULL; // no enemies in range
+		return nullptr; // no enemies in range
 	}
 	return actors;
 }
@@ -1873,7 +1872,7 @@ ActorList *Actor::find_enemies() {
 Obj *Actor::find_body() {
 	Party *party;
 	Actor *actor;
-	Obj *body_obj = NULL;
+	Obj *body_obj = nullptr;
 	uint8 lvl;
 
 	party = Game::get_game()->get_party();
@@ -1883,7 +1882,7 @@ Obj *Actor::find_body() {
 		return actor->inventory_get_object(339, id_n, OBJ_MATCH_QUALITY);
 
 	// try to find on map.
-	for (lvl = 0; lvl < 5 && body_obj == NULL; lvl++)
+	for (lvl = 0; lvl < 5 && body_obj == nullptr; lvl++)
 		body_obj = obj_manager->find_obj(lvl, 339, id_n);
 
 	return body_obj;
@@ -1903,7 +1902,7 @@ bool Actor::morph(uint16 objN) {
 }
 
 bool Actor::get_schedule_location(MapCoord *loc) {
-	if (sched[sched_pos] == NULL)
+	if (sched[sched_pos] == nullptr)
 		return false;
 
 	loc->x = sched[sched_pos]->x;
@@ -1913,7 +1912,7 @@ bool Actor::get_schedule_location(MapCoord *loc) {
 }
 
 bool Actor::is_at_scheduled_location() {
-	if (sched[sched_pos] != NULL && x == sched[sched_pos]->x && y == sched[sched_pos]->y && z == sched[sched_pos]->z)
+	if (sched[sched_pos] != nullptr && x == sched[sched_pos]->x && y == sched[sched_pos]->y && z == sched[sched_pos]->z)
 		return true;
 
 	return false;
@@ -1921,7 +1920,7 @@ bool Actor::is_at_scheduled_location() {
 
 Schedule *Actor::get_schedule(uint8 index) {
 	if (index >= num_schedules)
-		return NULL;
+		return nullptr;
 
 	return sched[index];
 }
@@ -1936,7 +1935,7 @@ void Actor::cure() {
 }
 
 void Actor::set_custom_tile_num(uint16 obj_num, uint16 tile_num) {
-	if (custom_tile_tbl == NULL) {
+	if (custom_tile_tbl == nullptr) {
 		custom_tile_tbl = new Common::HashMap<uint16, uint16>();
 	}
 

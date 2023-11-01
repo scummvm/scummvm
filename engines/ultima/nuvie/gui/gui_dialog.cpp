@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable)
-	: GUI_Widget(NULL, x, y, w, h) {
+	: GUI_Widget(nullptr, x, y, w, h) {
 
 	R = r;
 	G = g;
@@ -39,7 +39,7 @@ GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bo
 	can_drag = is_moveable;
 	button_x = button_y = 0;
 	old_x = old_y = -1;
-	backingstore = NULL;
+	backingstore = nullptr;
 	backingstore_rect.setWidth(w);
 	backingstore_rect.setHeight(h);
 	loadBorderImages();
@@ -63,7 +63,7 @@ void GUI_Dialog::loadBorderImages() {
 		Common::sprintf_s(filename, "Border%s_%d.bmp", "U6", i + 1);
 		build_path(datadir, filename, imagefile);
 		border[i] = SDL_LoadBMP(imagefile.c_str());
-		if (border[i] == NULL) {
+		if (border[i] == nullptr) {
 			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
 		}
 	}
@@ -84,7 +84,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 
 	if (old_x != area.left || old_y != area.top) {
 		if (backingstore) {
-			screen->restore_area(backingstore, &backingstore_rect, NULL, NULL, false);
+			screen->restore_area(backingstore, &backingstore_rect, nullptr, nullptr, false);
 			screen->update(backingstore_rect.left, backingstore_rect.top,
 				backingstore_rect.width(), backingstore_rect.height());
 		}
@@ -105,25 +105,25 @@ GUI_Dialog:: Display(bool full_redraw) {
 	dst = area;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[0], NULL, surface, &dst);
+	SDL_BlitSurface(border[0], nullptr, surface, &dst);
 
 	dst.left = area.left + area.width() - 8;
 	dst.top = area.top;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[2], NULL, surface, &dst);
+	SDL_BlitSurface(border[2], nullptr, surface, &dst);
 
 	dst.left = area.left + area.width() - 8;
 	dst.top = area.top + area.height() - 8;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[4], NULL, surface, &dst);
+	SDL_BlitSurface(border[4], nullptr, surface, &dst);
 
 	dst.left = area.left;
 	dst.top = area.top + area.height() - 8;
 	dst.setWidth(8);
 	dst.setHeight(8);
-	SDL_BlitSurface(border[6], NULL, surface, &dst);
+	SDL_BlitSurface(border[6], nullptr, surface, &dst);
 
 // Draw top and bottom border lines
 
@@ -132,13 +132,13 @@ GUI_Dialog:: Display(bool full_redraw) {
 		dst.top = area.top;
 		dst.setWidth(16);
 		dst.setHeight(8);
-		SDL_BlitSurface(border[1], NULL, surface, &dst);
+		SDL_BlitSurface(border[1], nullptr, surface, &dst);
 
 		dst.left = i;
 		dst.top = area.top + area.height() - 8;
 		dst.setWidth(16);
 		dst.setHeight(8);
-		SDL_BlitSurface(border[5], NULL, surface, &dst);
+		SDL_BlitSurface(border[5], nullptr, surface, &dst);
 	}
 
 	if (i < area.left + area.width() - 8) { // draw partial border images
@@ -168,13 +168,13 @@ GUI_Dialog:: Display(bool full_redraw) {
 		dst.top = i;
 		dst.setWidth(8);
 		dst.setHeight(16);
-		SDL_BlitSurface(border[7], NULL, surface, &dst);
+		SDL_BlitSurface(border[7], nullptr, surface, &dst);
 
 		dst.left = area.left + area.width() - 8;
 		dst.top = i;
 		dst.setWidth(8);
 		dst.setHeight(16);
-		SDL_BlitSurface(border[3], NULL, surface, &dst);
+		SDL_BlitSurface(border[3], nullptr, surface, &dst);
 	}
 
 	if (i < area.top + area.height() - 8) { // draw partial border images

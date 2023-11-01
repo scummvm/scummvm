@@ -33,8 +33,8 @@ GUI_DragManager::GUI_DragManager(Screen *s) {
 	screen = s;
 
 	message = 0;
-	data = NULL;
-	drag_source = NULL;
+	data = nullptr;
+	drag_source = nullptr;
 	is_out_of_range = false;
 }
 
@@ -69,7 +69,7 @@ void GUI_DragManager::drop(GUI_DragArea *drag_target, int x, int y) {
 		drag_source->drag_drop_failed(x, y, message, data);
 
 
-	drag_source = NULL;
+	drag_source = nullptr;
 
 	return;
 }

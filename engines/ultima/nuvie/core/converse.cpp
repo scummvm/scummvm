@@ -100,19 +100,19 @@ Converse::~Converse() {
  */
 void Converse::reset() {
 	delete conv_i;
-	conv_i = NULL;
+	conv_i = nullptr;
 	set_input("");	// delete
 	set_output("");	// clear output
 	_name = "";		// clear name
 
 	if (script) {
 		delete script;
-		script = NULL;
+		script = nullptr;
 	}
 
 	if (allowed_input) {
 		free(allowed_input);
-		allowed_input = NULL;
+		allowed_input = nullptr;
 	}
 
 	player->set_quest_flag((uint8)get_var(U6TALK_VAR_QUESTF));
@@ -221,7 +221,7 @@ ConvScript *Converse::load_script(uint32 n) {
 	ConvScript *loaded = new ConvScript(src, n);
 	if (!loaded->loaded()) {
 		delete loaded;
-		loaded = NULL;
+		loaded = nullptr;
 	} else
 		DEBUG(0, LEVEL_INFORMATIONAL, "Read %s npc script (%s:%d)\n",
 		      loaded->compressed ? "encoded" : "unencoded", src_name(), (unsigned int)n);
@@ -238,7 +238,7 @@ void Converse::init_variables() {
 	variables = new converse_variables_s[U6TALK_VAR__LAST_ + 1];
 	for (uint32 v = 0; v <= U6TALK_VAR__LAST_; v++) {
 		variables[v].cv = 0;
-		variables[v].sv = NULL;
+		variables[v].sv = nullptr;
 	}
 	set_var(U6TALK_VAR_SEX, player->get_gender());
 	set_var(U6TALK_VAR_KARMA, player->get_karma());
@@ -261,7 +261,7 @@ void Converse::delete_variables() {
 		if (variables[v].sv)
 			free(variables[v].sv);
 	delete [] variables;
-	variables = NULL;
+	variables = nullptr;
 }
 
 
@@ -269,7 +269,7 @@ void Converse::delete_variables() {
  * Returns pointer to object which is derived from ConverseInterpret.
  */
 ConverseInterpret *Converse::new_interpreter() {
-	ConverseInterpret *ci = NULL;
+	ConverseInterpret *ci = nullptr;
 	switch (gametype) {
 	case NUVIE_GAME_U6:
 		ci = (ConverseInterpret *)new U6ConverseInterpret(this);
@@ -495,7 +495,7 @@ const char *Converse::npc_name(uint8 num) {
 		temp_script = new ConvScript(src, num);
 		s_pt = temp_script->get_buffer();
 		if (!s_pt)
-			return (NULL);
+			return (nullptr);
 
 		// read name up to LOOK section, convert "_" to "."
 		uint32 c;
@@ -515,8 +515,8 @@ const char *Converse::npc_name(uint8 num) {
 void Converse::poll_input(const char *allowed, bool nonblock) {
 	if (allowed_input)
 		free(allowed_input);
-	allowed_input = NULL;
-	allowed_input = (allowed && strlen(allowed)) ? scumm_strdup(allowed) : NULL;
+	allowed_input = nullptr;
+	allowed_input = (allowed && strlen(allowed)) ? scumm_strdup(allowed) : nullptr;
 
 	scroll->set_input_mode(true, allowed_input, nonblock);
 	need_input = true;
@@ -611,13 +611,13 @@ void Converse::continue_script() {
 /* Init. and read data from U6Lib.
  */
 ConvScript::ConvScript(U6Lib_n *s, uint32 idx) {
-	buf = NULL;
+	buf = nullptr;
 	buf_len = 0;
 	src = s;
 	src_index = idx;
 
 	ref = 0;
-	cpy = NULL;
+	cpy = nullptr;
 
 	read_script();
 
@@ -628,8 +628,8 @@ ConvScript::ConvScript(U6Lib_n *s, uint32 idx) {
 /* Init. and use data from another ConvScript.
  */
 ConvScript::ConvScript(ConvScript *orig) {
-	src = NULL;
-	buf = NULL;
+	src = nullptr;
+	buf = nullptr;
 	buf_len = 0;
 	src_index = 0;
 	compressed = false;

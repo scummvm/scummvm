@@ -72,7 +72,7 @@ public:
 	}
 
 	bool is_actor_container() {
-		return (container_obj == NULL);
+		return (container_obj == nullptr);
 	}
 
 	GUI_status KeyDown(const Common::KeyState &key) override;

@@ -48,7 +48,7 @@ public:
 
 	CSImage(U6Shape *shape) {
 		orig_shp = shape;
-		scaled_shp = NULL;
+		scaled_shp = nullptr;
 		shp = shape;
 		scale = 100;
 		refcount = 0;
@@ -95,7 +95,7 @@ struct CSSprite {
 		x = 0;
 		y = 0;
 		opacity = 255;
-		image = NULL;
+		image = nullptr;
 		visible = false;
 		clip_rect = Common::Rect();
 		text = "";

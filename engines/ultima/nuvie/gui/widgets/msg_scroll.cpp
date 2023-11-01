@@ -38,7 +38,7 @@ namespace Nuvie {
 
 // MsgText Class
 MsgText::MsgText() {
-	font = NULL;
+	font = nullptr;
 	color = 0;
 }
 
@@ -81,7 +81,7 @@ MsgLine::~MsgLine() {
 }
 
 void MsgLine::append(MsgText *new_text) {
-	MsgText *msg_text = NULL;
+	MsgText *msg_text = nullptr;
 
 	if (text.size() > 0)
 		msg_text = text.back();
@@ -129,7 +129,7 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 	Std::list<MsgText *>::iterator iter;
 
 	if (pos > total_length)
-		return NULL;
+		return nullptr;
 
 	for (i = 0, iter = text.begin(); iter != text.end(); iter++) {
 		if (i + (*iter)->s.length() >= pos)
@@ -138,7 +138,7 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 		i += (*iter)->s.length();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 MsgLine::get_display_width() {
@@ -173,8 +173,8 @@ void MsgScroll::init(Configuration *cfg, Font *f) {
 	just_finished_page_break = false;
 	using_target_cursor = false;
 
-	callback_target = NULL;
-	callback_user_data = NULL;
+	callback_target = nullptr;
+	callback_user_data = nullptr;
 
 	scrollback_height = MSGSCROLL_SCROLLBACK_HEIGHT;
 	capitalise_next_letter = false;
@@ -187,7 +187,7 @@ void MsgScroll::init(Configuration *cfg, Font *f) {
 	}
 }
 
-MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(NULL, 0, 0, 0, 0),
+MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(nullptr, 0, 0, 0, 0),
 		input_mode(false), permit_input(nullptr), just_displayed_prompt(false),
 		permit_inputescape(false), screen_x(0), screen_y(0), keyword_highlight(false) {
 	uint16 x, y;
@@ -223,7 +223,7 @@ MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(NULL, 0, 0, 0, 0)
 	uint16 x_off = Game::get_game()->get_game_x_offset();
 	uint16 y_off = Game::get_game()->get_game_y_offset();
 
-	GUI_Widget::Init(NULL, x + x_off, y + y_off, scroll_width * 8, scroll_height * 8);
+	GUI_Widget::Init(nullptr, x + x_off, y + y_off, scroll_width * 8, scroll_height * 8);
 
 	cursor_char = 0;
 	cursor_x = 0;
@@ -297,7 +297,7 @@ int MsgScroll::print_internal(const Std::string *format, ...) {
 	static char *buffer = (char *) malloc(bufsize); // static so we don't have to reallocate all the time.
 
 	while (1) {
-		if (buffer == NULL) {
+		if (buffer == nullptr) {
 			DEBUG(0, LEVEL_ALERT, "MsgScroll::printf: Couldn't allocate %d bytes for buffer\n", bufsize);
 			/* try to shrink the buffer to at least have a change next time,
 			 * but if we're low on memory probably have worse issues...
@@ -373,7 +373,7 @@ void MsgScroll::display_string(Std::string s, Font *f, uint8 color, bool include
 	if (s.empty())
 		return;
 
-	if (f == NULL)
+	if (f == nullptr)
 		f = font;
 
 	msg_text = new MsgText(s, f);
@@ -394,7 +394,7 @@ void MsgScroll::process_holding_buffer() {
 	if (!page_break) {
 		token = holding_buffer_get_token();
 
-		for (; token != NULL && !page_break;) {
+		for (; token != nullptr && !page_break;) {
 			parse_token(token);
 			delete token;
 			scroll_updated = true;
@@ -410,15 +410,15 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 	int i;
 
 	if (holding_buffer.empty())
-		return NULL;
+		return nullptr;
 
 	input = holding_buffer.front();
 
-	if (input->font == NULL) {
+	if (input->font == nullptr) {
 		line_count = 0;
 		holding_buffer.pop_front();
 		delete input;
-		return NULL;
+		return nullptr;
 	}
 
 	i = input->s.findFirstOf(" \t\n*<>`", 0);
@@ -438,7 +438,7 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 		return token;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool MsgScroll::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) {
@@ -450,7 +450,7 @@ bool MsgScroll::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) {
 }
 
 bool MsgScroll::parse_token(MsgText *token) {
-	MsgLine *msg_line = NULL;
+	MsgLine *msg_line = nullptr;
 
 	if (!(token && token->s.length()))
 		return true;
@@ -504,7 +504,7 @@ bool MsgScroll::parse_token(MsgText *token) {
 				capitalise_next_letter = false;
 			}
 
-			if (msg_line == NULL) {
+			if (msg_line == nullptr) {
 				msg_line = add_new_line();
 			}
 
@@ -627,7 +627,7 @@ void MsgScroll::set_permitted_input(const char *allowed) {
 }
 
 void MsgScroll::clear_permitted_input() {
-	permit_input = NULL;
+	permit_input = nullptr;
 	yes_no_only = false;
 	numbers_only = false;
 	aye_nay_only = false;
@@ -657,7 +657,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		if (callback_target)
 			do_callback = true; // **DELAY until end-of-method so callback can set_input_mode() again**
 	}
-	Game::get_game()->get_gui()->lock_input((input_mode && !using_target_cursor) ? this : NULL);
+	Game::get_game()->get_gui()->lock_input((input_mode && !using_target_cursor) ? this : nullptr);
 
 // send whatever input was collected to target that requested it
 	if (do_callback) {
@@ -793,7 +793,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_ESCAPE:
 		if (permit_inputescape) {
 			// reset input buffer
-			permit_input = NULL;
+			permit_input = nullptr;
 			if (input_mode)
 				set_input_mode(false);
 		}
@@ -808,7 +808,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 		}
 		return (GUI_YUM);
 	case Common::KEYCODE_RIGHT:
-		if (input_char != 0 && permit_input == NULL)
+		if (input_char != 0 && permit_input == nullptr)
 			input_buf_add_char(get_char_from_input_char());
 		break;
 	case Common::KEYCODE_DOWN:
@@ -832,7 +832,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 		return (GUI_YUM);
 	default: // alphanumeric characters
 		if (input_mode && is_printable) {
-			if (permit_input == NULL) {
+			if (permit_input == nullptr) {
 				if (!numbers_only || Common::isDigit(ascii)) {
 					if (input_char != 0)
 						input_buf_add_char(get_char_from_input_char());
@@ -886,7 +886,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
-			if (permit_input != NULL && token_str.length()) {
+			if (permit_input != nullptr && token_str.length()) {
 				if (strchr(permit_input, token_str[0])
 				        || strchr(permit_input, tolower(token_str[0]))) {
 					input_buf_add_char(token_str[0]);
@@ -917,7 +917,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 i;
 	sint32 buf_x, buf_y;
-	MsgText *token = NULL;
+	MsgText *token = nullptr;
 	Std::list<MsgLine *>::iterator iter;
 
 	buf_x = (x - area.left) / 8;
@@ -953,7 +953,7 @@ Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 void MsgScroll::Display(bool full_redraw) {
 	uint16 i;
 	Std::list<MsgLine *>::iterator iter;
-	MsgLine *msg_line = NULL;
+	MsgLine *msg_line = nullptr;
 
 
 
@@ -1045,7 +1045,7 @@ void MsgScroll::set_page_break() {
 bool MsgScroll::input_buf_add_char(char c) {
 	MsgText token;
 	input_char = 0;
-	if (permit_input != NULL)
+	if (permit_input != nullptr)
 		input_buf_remove_char();
 	input_buf.push_back(c);
 	scroll_updated = true;
@@ -1093,7 +1093,7 @@ Std::string MsgScroll::get_input() {
 }
 
 void MsgScroll::clear_page_break() {
-	MsgText *msg_text = new MsgText("", NULL);
+	MsgText *msg_text = new MsgText("", nullptr);
 	holding_buffer.push_back(msg_text);
 
 	process_holding_buffer();
@@ -1108,7 +1108,7 @@ void MsgScroll::request_input(CallBack *caller, void *user_data) {
 
 // 0 is no char, 1 - 26 is alpha, 27 is space, 28 - 37 is numbers
 void MsgScroll::increase_input_char() {
-	if (permit_input != NULL && strcmp(permit_input, "\n") == 0) // blame hacky PauseEffect
+	if (permit_input != nullptr && strcmp(permit_input, "\n") == 0) // blame hacky PauseEffect
 		return;
 	if (yes_no_only)
 		input_char = input_char == 25 ? 14 : 25;
@@ -1118,12 +1118,12 @@ void MsgScroll::increase_input_char() {
 		input_char = (input_char == 0 || input_char == 37) ? 28 : input_char + 1;
 	else
 		input_char = (input_char + 1) % 38;
-	if (permit_input != NULL && !strchr(permit_input, get_char_from_input_char())) // might only be needed for the teleport cheat menu
+	if (permit_input != nullptr && !strchr(permit_input, get_char_from_input_char())) // might only be needed for the teleport cheat menu
 		increase_input_char();
 }
 
 void MsgScroll::decrease_input_char() {
-	if (permit_input != NULL && strcmp(permit_input, "\n") == 0) // blame hacky PauseEffect
+	if (permit_input != nullptr && strcmp(permit_input, "\n") == 0) // blame hacky PauseEffect
 		return;
 	if (yes_no_only)
 		input_char = input_char == 25 ? 14 : 25;
@@ -1133,7 +1133,7 @@ void MsgScroll::decrease_input_char() {
 		input_char = input_char == 1 ? 14 : 1;
 	else
 		input_char = input_char == 0 ? 37 : input_char - 1;
-	if (permit_input != NULL && !strchr(permit_input, get_char_from_input_char())) // might only be needed for the teleport cheat menu
+	if (permit_input != nullptr && !strchr(permit_input, get_char_from_input_char())) // might only be needed for the teleport cheat menu
 		decrease_input_char();
 }
 

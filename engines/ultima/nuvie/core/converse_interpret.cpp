@@ -40,7 +40,7 @@ namespace Nuvie {
 
 ConverseInterpret::ConverseInterpret(Converse *owner) {
 	converse = owner;
-	b_frame = NULL;
+	b_frame = nullptr;
 	decl_v = decl_t = 0x00;
 	in_start = 0;
 
@@ -182,11 +182,11 @@ void ConverseInterpret::leave() {
 		DEBUG(1, LEVEL_DEBUGGING, "Converse: ...leave %02x...\n", fp->start_c);
 #endif
 		delete fp;
-		fp = NULL;
+		fp = nullptr;
 		b_frame->pop();
 		if (b_frame->empty()) {
 			delete b_frame;
-			b_frame = NULL;
+			b_frame = nullptr;
 		}
 	}
 }
@@ -290,10 +290,10 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 				output.append(converse->get_svar(U6TALK_VAR_INPUT));
 			else if (symbol[0] == '$' // value of a string variable
 			         && Common::isDigit(symbol[1]))
-				output.append(converse->get_svar(strtol(&symbol[1], NULL, 10)));
+				output.append(converse->get_svar(strtol(&symbol[1], nullptr, 10)));
 			else if (symbol[0] == '#' // value of a variable
 			         && Common::isDigit(symbol[1])) {
-				last_value = converse->get_var(strtol(&symbol[1], NULL, 10));
+				last_value = converse->get_var(strtol(&symbol[1], nullptr, 10));
 				snprintf(intval, 16, "%u", last_value);
 
 				output.append((char *)intval);
@@ -312,7 +312,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			if (i + 3 <= len) {
 				i++;
 				if (c_str[i] == 'P')
-					converse->get_speech()->play_speech(converse->script_num, (int)strtol(&c_str[i + 1], NULL, 10));
+					converse->get_speech()->play_speech(converse->script_num, (int)strtol(&c_str[i + 1], nullptr, 10));
 
 				for (i++; Common::isDigit(c_str[i]) && i < len;)
 					i++;
@@ -483,7 +483,7 @@ bool MDTalkInterpret::op(Common::Stack<converse_value> &i) {
 
 bool ConverseInterpret::op_create_new(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4];
-	Actor *cnpc = NULL;
+	Actor *cnpc = nullptr;
 
 	v[0] = pop_arg(i); // npc
 	v[1] = pop_arg(i); // obj
@@ -504,7 +504,7 @@ bool ConverseInterpret::op_create_new(Common::Stack<converse_typed_value> &i) {
 
 bool WOUConverseInterpret::op_create_new(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4];
-	Actor *cnpc = NULL;
+	Actor *cnpc = nullptr;
 
 	v[0] = pop_arg(i); // npc
 	v[1] = pop_arg(i); // obj
@@ -531,8 +531,8 @@ bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4] = { 0, 0, 0, 0 }; // args
 	converse_value inVal;
 	ConvScript *cs = converse->script;
-	Actor *cnpc = NULL;
-	Obj *cnpc_obj = NULL;
+	Actor *cnpc = nullptr;
+	Obj *cnpc_obj = nullptr;
 	Player *player = converse->player;
 //    converse_db_s *cdb;
 
@@ -708,7 +708,7 @@ bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 				cnpc = converse->player->get_party()->who_has_obj(OBJ_U6_MOUSE, 0, false);
 			cnpc_obj = cnpc->inventory_get_object(OBJ_U6_MOUSE, 0, false);
 		}
-		if (cnpc_obj != NULL) {
+		if (cnpc_obj != nullptr) {
 			if (converse->actors->resurrect_actor(cnpc_obj, converse->player->get_actor()->get_location())) {
 				converse->objects->unlink_from_engine(cnpc_obj);
 				delete_obj(cnpc_obj);
@@ -818,8 +818,8 @@ bool ConverseInterpret::evop(Common::Stack<converse_typed_value> &i) {
 	converse_value v[4]; // input
 	converse_typed_value inVal;
 	converse_typed_value out;
-	Actor *cnpc = NULL;
-	Obj *cnpc_obj = NULL;
+	Actor *cnpc = nullptr;
+	Obj *cnpc_obj = nullptr;
 //    converse_db_s *cdb;
 	Player *player = converse->player;
 
@@ -1189,8 +1189,8 @@ uint8 ConverseInterpret::npc_num(uint32 n) {
  * asterisk (matching any input).
  */
 bool ConverseInterpret::check_keywords(string keystr, string instr) {
-	const char *strt_s = NULL;
-	char *tok_s = NULL, *cmp_s = NULL;
+	const char *strt_s = nullptr;
+	char *tok_s = nullptr, *cmp_s = nullptr;
 	if (keystr == "*")
 		return (true);
 	// check each comma-separated keyword
@@ -1227,7 +1227,7 @@ void ConverseInterpret::assign_input() {
 	// FIXME: Nuvie treats 0xF9-INPUTSTR & 0xFB-INPUT as identical, but in U6
 	//        0xFB-INPUT could not input strings.
 	if (decl_t == 0xb2)
-		converse->set_var(decl_v, strtol(converse->get_input().c_str(), NULL, 10));
+		converse->set_var(decl_v, strtol(converse->get_input().c_str(), nullptr, 10));
 	if (decl_t == 0xb3)
 		converse->set_svar(decl_v, converse->get_input().c_str());
 }
@@ -1241,15 +1241,15 @@ void ConverseInterpret::assign_input() {
 struct ConverseInterpret::converse_db_s *
 ConverseInterpret::get_db(uint32 loc, uint32 i) {
 	convscript_buffer db = converse->script->get_buffer(loc);
-	struct converse_db_s *item = NULL;
+	struct converse_db_s *item = nullptr;
 	uint32 d = 0, dbuf_len = 0, p = 0, e = 0;
 	if (!db)
-		return (NULL);
+		return (nullptr);
 
 //    item = (struct converse_db_s *)malloc(sizeof(struct converse_db_s));
 	item = new struct converse_db_s;
 	item->type = 0;
-	item->s = NULL;
+	item->s = nullptr;
 	item->i = 0;
 	while (e++ <= i) {
 		if (is_print(db[p]) && is_print(db[p + 1])) {
@@ -1276,20 +1276,20 @@ ConverseInterpret::get_db(uint32 loc, uint32 i) {
 
 
 /* Collect data from section at `loc', index `i', as a string.
- * Returns pointer to NEW data, or NULL if only integer data is found.
+ * Returns pointer to NEW data, or nullptr if only integer data is found.
  */
 char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 	convscript_buffer db = converse->script->get_buffer(loc);
-	char *item = NULL;
+	char *item = nullptr;
 	uint32 d = 0, dbuf_len = 0, /* string pointer & length */
 	       p = 0; /* pointer into db */
 	if (!db)
-		return (NULL);
+		return (nullptr);
 	/* skip to index */
 	uint32 e = 0;
 	while (e++ < i) {
 		if (db[p] == U6OP_ENDDATA)
-			return (NULL);
+			return (nullptr);
 		while (is_print(db[p++]));
 	}
 
@@ -1354,7 +1354,7 @@ void ConverseInterpret::set_db_integer(uint32 loc, uint32 i, converse_value val)
  */
 converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring) {
 	convscript_buffer db = converse->script->get_buffer(loc);
-	char *item = NULL; /* item being checked */
+	char *item = nullptr; /* item being checked */
 	uint32 d = 0, dbuf_len = 0, /* string pointer & length */
 	       p = 0, /* pointer into db */
 	       i = 0; /* item index */
@@ -1363,7 +1363,7 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 #endif
 	while ((converse_value)(db[p]) != U6OP_ENDDATA) {
 		if (is_print(db[p])) {
-			item = NULL;
+			item = nullptr;
 			d = 0;
 			dbuf_len = 0;
 			do {

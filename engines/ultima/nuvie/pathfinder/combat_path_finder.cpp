@@ -29,7 +29,7 @@ CombatPathFinder::CombatPathFinder(Actor *a)
 	: ActorPathFinder(a, a->get_location()) {
 	target_mode = PATHFINDER_NONE;
 	max_dist = 0;
-	target = NULL;
+	target = nullptr;
 }
 
 /* Without a mode set, CombatPathFinder is identical to ActorPathFinder. */

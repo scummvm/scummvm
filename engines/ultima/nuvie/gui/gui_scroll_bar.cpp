@@ -53,7 +53,7 @@ namespace Nuvie {
 
 
 GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
-	: GUI_Widget(NULL, x, y, SCROLLBAR_WIDTH, h), callback_object(callback),
+	: GUI_Widget(nullptr, x, y, SCROLLBAR_WIDTH, h), callback_object(callback),
 	  drag(false), slider_highlight_c(0), slider_shadow_c(0), slider_base_c(0),
 	  track_border_c(0), track_base_c(0), slider_click_offset(0) {
 
@@ -76,7 +76,7 @@ void GUI_ScrollBar::loadButtons() {
 	build_path(datadir, "ScrollBarUp_2.bmp", imagefile);
 	image1 = SDL_LoadBMP(imagefile.c_str());
 
-	up_button = new GUI_Button(NULL, 0, 0, image, image1, this);
+	up_button = new GUI_Button(nullptr, 0, 0, image, image1, this);
 	this->AddWidget(up_button);
 
 	build_path(datadir, "ScrollBarDown_1.bmp", imagefile);
@@ -86,7 +86,7 @@ void GUI_ScrollBar::loadButtons() {
 
 	button_height = image->h;
 
-	down_button = new GUI_Button(NULL, 0, area.height() - button_height, image, image1, this);
+	down_button = new GUI_Button(nullptr, 0, area.height() - button_height, image, image1, this);
 	this->AddWidget(down_button);
 
 	return;
@@ -233,9 +233,9 @@ GUI_status GUI_ScrollBar::MouseDown(int x, int y, Shared::MouseButton button) {
 		slider_click_offset = y - area.top - button_height - slider_y;
 		grab_focus();
 	} else if (y < area.top + button_height + slider_y)
-		callback_object->callback(SCROLLBAR_CB_PAGE_UP, this, NULL);
+		callback_object->callback(SCROLLBAR_CB_PAGE_UP, this, nullptr);
 	else
-		callback_object->callback(SCROLLBAR_CB_PAGE_DOWN, this, NULL);
+		callback_object->callback(SCROLLBAR_CB_PAGE_DOWN, this, nullptr);
 
 	return GUI_YUM;
 }
@@ -291,11 +291,11 @@ void GUI_ScrollBar::send_slider_moved_msg() {
 }
 
 void GUI_ScrollBar::send_up_button_msg() {
-	callback_object->callback(SCROLLBAR_CB_UP_BUTTON, this, NULL);
+	callback_object->callback(SCROLLBAR_CB_UP_BUTTON, this, nullptr);
 }
 
 void GUI_ScrollBar::send_down_button_msg() {
-	callback_object->callback(SCROLLBAR_CB_DOWN_BUTTON, this, NULL);
+	callback_object->callback(SCROLLBAR_CB_DOWN_BUTTON, this, nullptr);
 }
 
 GUI_status GUI_ScrollBar::callback(uint16 msg, GUI_CallBack *caller, void *data) {

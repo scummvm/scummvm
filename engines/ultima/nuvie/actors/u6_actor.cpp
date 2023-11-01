@@ -46,8 +46,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c), actor_type(NULL),
-	base_actor_type(NULL) {
+U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c), actor_type(nullptr),
+	base_actor_type(nullptr) {
 	walk_frame_inc = 1;
 	current_movetype = MOVETYPE_U6_NONE;
 }
@@ -149,12 +149,12 @@ bool U6Actor::init_ship() {
 	}
 
 	obj = obj_manager->get_obj(obj1_x, obj1_y, z);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 	add_surrounding_obj(obj);
 
 	obj = obj_manager->get_obj(obj2_x, obj2_y, z);
-	if (obj == NULL)
+	if (obj == nullptr)
 		return false;
 	add_surrounding_obj(obj);
 
@@ -281,7 +281,7 @@ bool U6Actor::init_silver_serpent() {
 
 	obj = obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, 1, id_n, sx, sy, sz);
 
-	if (obj != NULL) //old snake
+	if (obj != nullptr) //old snake
 		gather_snake_objs_from_map(obj, x, y, z);
 	else { //new snake
 		//FIXME we need to make long, randomly layed out snakes here!
@@ -418,7 +418,7 @@ bool U6Actor::updateSchedule(uint8 hour, bool teleport) {
 	handle_lightsource(hour);
 
 	if ((ret = Actor::updateSchedule(hour, teleport)) == true) { //walk to next schedule location if required.
-		if (sched[sched_pos] != NULL && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z
+		if (sched[sched_pos] != nullptr && (sched[sched_pos]->x != x || sched[sched_pos]->y != y || sched[sched_pos]->z != z
 		                                 || worktype == WORKTYPE_U6_SLEEP)) { // needed to go underneath bed if teleporting
 			set_worktype(WORKTYPE_U6_WALK_TO_LOCATION);
 			MapCoord loc(sched[sched_pos]->x, sched[sched_pos]->y, sched[sched_pos]->z);
@@ -607,12 +607,12 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 	default :
 		if (map->is_passable(new_x, new_y, new_z) == false) {
 			if (obj_n == OBJ_U6_MOUSE // try to go through mousehole
-			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != NULL
-			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != NULL))
+			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != nullptr
+			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != nullptr
+			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != nullptr))
 				return (true);
 			if (obj_n == OBJ_U6_SILVER_SERPENT //silver serpents can crossover themselves
-			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != NULL)
+			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != nullptr)
 				return (true);
 
 			return false;
@@ -680,7 +680,7 @@ const CombatType *U6Actor::get_object_combat_type(uint16 objN) {
 			return &u6combat_objects[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const CombatType *U6Actor::get_hand_combat_type() {
@@ -892,7 +892,7 @@ void U6Actor::pathfind_to(MapCoord &d) {
 }
 
 void U6Actor::setup_walk_to_location() {
-	if (sched[sched_pos] != NULL) {
+	if (sched[sched_pos] != nullptr) {
 		if (x == sched[sched_pos]->x && y == sched[sched_pos]->y
 		        && z == sched[sched_pos]->z) {
 			set_worktype(sched[sched_pos]->worktype);
@@ -932,7 +932,7 @@ void U6Actor::setup_walk_to_location() {
 	   case NUVIE_DIR_W : rel_x = -1; break;
 	  }
 
-	if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == NULL)
+	if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == nullptr)
 		{
 		 if(moveRelative(rel_x,rel_y))
 			set_direction(new_direction);
@@ -1424,10 +1424,10 @@ inline void U6Actor::init_surrounding_obj(uint16 x_, uint16 y_, uint8 z_, uint16
 	Obj *obj;
 
 	obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, id_n, -1, x_, y_, z_);
-	if (obj == NULL)
+	if (obj == nullptr)
 		obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, 0, -1, x_, y_, z_);
 
-	if (obj == NULL) {
+	if (obj == nullptr) {
 		obj = new Obj();
 		obj->x = x_;
 		obj->y = y_;
@@ -1530,9 +1530,9 @@ void U6Actor::print() {
 // might print U6Actor members here
 }
 
-/* Returns name of NPC worktype/activity (game specific) or NULL. */
+/* Returns name of NPC worktype/activity (game specific) or nullptr. */
 const char *U6Actor::get_worktype_string(uint32 wt) {
-	const char *wt_string = NULL;
+	const char *wt_string = nullptr;
 	if (wt == WORKTYPE_U6_MOTIONLESS) wt_string = "Motionless";
 	else if (wt == WORKTYPE_U6_PLAYER) wt_string = "Player";
 	else if (wt == WORKTYPE_U6_IN_PARTY) wt_string = "In Party";
@@ -1576,7 +1576,7 @@ Obj *U6Actor::inventory_get_food(Obj *container) {
 	U6LList *inv = container ? container->container : get_inventory_list();
 	U6Link *link = 0;
 	Obj *obj = 0;
-	for (link = inv->start(); link != NULL; link = link->next) {
+	for (link = inv->start(); link != nullptr; link = link->next) {
 		obj = (Obj *)link->data;
 		if (uc->is_food(obj))
 			return obj;
@@ -1598,7 +1598,7 @@ void U6Actor::inventory_make_all_objs_ok_to_take() {
 	if (!inventory)
 		return;
 
-	for (link = inventory->start(); link != NULL;) {
+	for (link = inventory->start(); link != nullptr;) {
 		obj = (Obj *)link->data;
 		link = link->next;
 
@@ -1632,10 +1632,10 @@ bool U6Actor::will_not_talk() {
 void U6Actor::handle_lightsource(uint8 hour) {
 	Obj *torch = inventory_get_readied_object(ACTOR_ARM);
 	if (torch && torch->obj_n != OBJ_U6_TORCH)
-		torch = NULL;
+		torch = nullptr;
 	Obj *torch2 = inventory_get_readied_object(ACTOR_ARM_2);
 	if (torch2 && torch2->obj_n != OBJ_U6_TORCH)
-		torch2 = NULL;
+		torch2 = nullptr;
 	if (torch || torch2) {
 		U6UseCode *useCode = (U6UseCode *)Game::get_game()->get_usecode();
 		if ((hour < 6 || hour > 18 || (z != 0 && z != 5)

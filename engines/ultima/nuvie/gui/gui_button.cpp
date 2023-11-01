@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Nuvie {
 
 /* the check marks bitmap */
-Graphics::ManagedSurface *checkmarks = NULL;
+Graphics::ManagedSurface *checkmarks = nullptr;
 
 
 GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
@@ -42,7 +42,7 @@ GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *imag
 		pressed[i] = 0;
 	}
 	enabled = 1;
-	buttonFont = NULL;
+	buttonFont = nullptr;
 	freefont = 0;
 	flatbutton = 0;
 	is_checkable = 0;
@@ -55,14 +55,14 @@ GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
-	button = NULL;
-	button2 = NULL;
+	button = nullptr;
+	button2 = nullptr;
 	freebutton = 0;
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
 	enabled = 1;
-	buttonFont = NULL;
+	buttonFont = nullptr;
 	freefont = 0;
 	flatbutton = 0;
 	is_checkable = 0;
@@ -76,7 +76,7 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
-	if (font != NULL) {
+	if (font != nullptr) {
 		buttonFont = font;
 		freefont = 0;
 	} else {
@@ -85,14 +85,14 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 	}
 	flatbutton = flat;
 	freebutton = 1;
-	button = NULL;
-	button2 = NULL;
+	button = nullptr;
+	button2 = nullptr;
 
 	is_checkable = is_checkbutton;
 	checked = 0;
 	is_highlighted = false;
 	/*
-	  if (is_checkable &&(checkmarks==NULL))
+	  if (is_checkable &&(checkmarks==nullptr))
 	  {
 	    checkmarks=GUI_LoadImage(checker_w,checker_h,checker_pal,checker_data);
 	    SDL_SetColorKey(checkmarks,SDL_SRCCOLORKEY,0);
@@ -150,10 +150,10 @@ void GUI_Button:: Display(bool full_redraw) {
 	Common::Rect src, dest = area;
 
 	if (button) {
-		if ((button2 != NULL) && ((pressed[0]) == 1 || is_highlighted))
-			SDL_BlitSurface(button2, NULL, surface, &dest);
+		if ((button2 != nullptr) && ((pressed[0]) == 1 || is_highlighted))
+			SDL_BlitSurface(button2, nullptr, surface, &dest);
 		else
-			SDL_BlitSurface(button, NULL, surface, &dest);
+			SDL_BlitSurface(button, nullptr, surface, &dest);
 	}
 	if (is_checkable) {
 		src.left = 8 - (checked * 8);
@@ -270,8 +270,8 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	Graphics::ManagedSurface *img = new Graphics::ManagedSurface(area.width(), area.height(),
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	if (img == NULL)
-		return NULL;
+	if (img == nullptr)
+		return nullptr;
 
 	uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
 	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);

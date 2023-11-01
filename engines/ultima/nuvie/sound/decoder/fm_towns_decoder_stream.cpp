@@ -43,7 +43,7 @@ FMtownsDecoderStream::FMtownsDecoderStream(Std::string filename, uint16 sample_n
 
 	sam_file.open(filename, 4);
 
-	item_data = sam_file.get_item(sample_num, NULL);
+	item_data = sam_file.get_item(sample_num, nullptr);
 
 	if (isCompressed) {
 		raw_audio_buf = lzw.decompress_buffer(item_data, sam_file.get_item_size(sample_num), decomp_size);

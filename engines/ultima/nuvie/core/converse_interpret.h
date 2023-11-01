@@ -182,7 +182,7 @@ protected:
 		while (b_frame && !b_frame->empty()) leave();
 	}
 	struct convi_frame_s *top_frame() {
-		return ((b_frame && !b_frame->empty()) ? b_frame->top() : NULL);
+		return ((b_frame && !b_frame->empty()) ? b_frame->top() : nullptr);
 	}
 	void do_frame(converse_value c);
 

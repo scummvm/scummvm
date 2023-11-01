@@ -33,14 +33,14 @@ namespace Nuvie {
 
 using Std::string;
 
-FpsCounter::FpsCounter(Game *g) : GUI_Widget(NULL) {
+FpsCounter::FpsCounter(Game *g) : GUI_Widget(nullptr) {
 	game = g;
 	font = game->get_font_manager()->get_conv_font();
 
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
 
-	Init(NULL, x_off + 280, y_off, 40, 10);
+	Init(nullptr, x_off + 280, y_off, 40, 10);
 
 	Common::strcpy_s(fps_string, "000.00");
 }

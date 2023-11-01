@@ -69,13 +69,13 @@ const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OBJ_U6_BL
 
 
 Magic::Magic() {
-	event = NULL;
-	target_object = NULL;
-	magic_script = NULL;
-	spellbook_obj = NULL;
+	event = nullptr;
+	target_object = nullptr;
+	magic_script = nullptr;
+	spellbook_obj = nullptr;
 	state = 0;
 
-	for (uint16 index = 0; index < 256; index++) spell[index] = NULL;
+	for (uint16 index = 0; index < 256; index++) spell[index] = nullptr;
 	clear_cast_buffer();
 }
 
@@ -94,7 +94,7 @@ bool Magic::read_spell_list() {
 
 Obj *Magic::book_equipped() {
 	// book(s) equipped? Maybe should check all locations?
-	Obj *obj = NULL;
+	Obj *obj = nullptr;
 	Actor *caster = event->player->get_actor();
 
 	obj = caster->inventory_get_readied_object(ACTOR_ARM);
@@ -106,7 +106,7 @@ Obj *Magic::book_equipped() {
 	if (obj && obj->obj_n == OBJ_U6_SPELLBOOK)
 		return obj;
 
-	return NULL;
+	return nullptr;
 }
 
 bool Magic::start_new_spell() {
@@ -114,7 +114,7 @@ bool Magic::start_new_spell() {
 
 	if (Game::get_game()->get_clock()->get_timer(GAMECLOCK_TIMER_U6_STORM) > 0 && !Game::get_game()->has_unlimited_casting()) {
 		event->scroll->display_string("No magic at this time!\n\n");
-	} else if (spellbook_obj != NULL) {
+	} else if (spellbook_obj != nullptr) {
 		state = MAGIC_STATE_SELECT_SPELL;
 		clear_cast_buffer();
 		event->close_gumps();
@@ -129,7 +129,7 @@ bool Magic::start_new_spell() {
 }
 
 bool Magic::cast() {
-	if (magic_script != NULL)
+	if (magic_script != nullptr)
 		return false;
 
 	Game::get_game()->get_view_manager()->close_spell_mode();
@@ -144,7 +144,7 @@ bool Magic::cast() {
 
 	if (cast_buffer_len != 0) {
 		for (index = 0; index < 256; index++) {
-			if (spell[index] == NULL) {
+			if (spell[index] == nullptr) {
 				continue;
 			}
 			if (!strcmp(spell[index]->invocation, cast_buffer_str)) {
@@ -164,7 +164,7 @@ bool Magic::cast() {
 		event->scroll->display_string("\nThat spell is not in thy spellbook!\n");
 		return false;
 	}
-//20110701 Pieter Luteijn: add an assert(spell[index]) to be sure it's not NULL?
+//20110701 Pieter Luteijn: add an assert(spell[index]) to be sure it's not nullptr?
 	if (cast_buffer_len != 0) {
 		event->scroll->display_string("\n(");
 		event->scroll->display_string(spell[index]->name);
@@ -205,19 +205,19 @@ bool Magic::cast() {
 	Obj *right = caster->inventory_get_readied_object(ACTOR_ARM);
 	Obj *left = caster->inventory_get_readied_object(ACTOR_ARM_2);
 	uint8 books = 0;
-	if (right != NULL && right->obj_n == OBJ_U6_SPELLBOOK) {
+	if (right != nullptr && right->obj_n == OBJ_U6_SPELLBOOK) {
 		books += 1;
 	};
-	if (left != NULL && left->obj_n == OBJ_U6_SPELLBOOK) {
+	if (left != nullptr && left->obj_n == OBJ_U6_SPELLBOOK) {
 		books += 2;
 	};
 
 	if (right && right->obj_n != OBJ_U6_SPELLBOOK)
-		right = NULL;
+		right = nullptr;
 	if (left && left->obj_n !=  OBJ_U6_SPELLBOOK)
-		left = NULL;
+		left = nullptr;
 
-	if (right == NULL && left == NULL) {
+	if (right == nullptr && left == nullptr) {
 		event->scroll->display_string("\nNo spellbook is readied.\n");
 		return false;
 	}
@@ -278,7 +278,7 @@ bool Magic::cast() {
 	for (uint8 shift = 0; shift < 8; shift++) {
 		if (1 << shift & spell[index]->reagents) {
 			// FIXME Although we just checked, maybe something is messed up, so we
-			// should probably check that we're not passing NULL to delete_obj
+			// should probably check that we're not passing nullptr to delete_obj
 			caster->inventory_del_object(obj_n_reagent[shift], 1, 0);
 		}
 	}
@@ -393,7 +393,7 @@ bool Magic::process_script_return(uint8 ret) {
 	Game::get_game()->get_view_manager()->close_all_gumps();
 	if (ret == NUVIE_SCRIPT_ERROR) {
 		delete magic_script;
-		magic_script = NULL;
+		magic_script = nullptr;
 		return false;
 	}
 
@@ -402,7 +402,7 @@ bool Magic::process_script_return(uint8 ret) {
 	switch (ret) {
 	case NUVIE_SCRIPT_FINISHED :
 		delete magic_script;
-		magic_script = NULL;
+		magic_script = nullptr;
 		state = MAGIC_STATE_READY;
 		break;
 	case NUVIE_SCRIPT_GET_TARGET :
@@ -445,7 +445,7 @@ Actor *Magic::get_actor_from_script() {
 	if (magic_script && (state == MAGIC_STATE_ACQUIRE_INV_OBJ || state == MAGIC_STATE_TALK_TO_ACTOR))
 		return Game::get_game()->get_actor_manager()->get_actor((uint8)magic_script->get_data());
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {

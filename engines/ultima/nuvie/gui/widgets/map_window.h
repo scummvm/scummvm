@@ -242,7 +242,7 @@ public:
 		return look_on_left_click;
 	}
 	bool is_on_screen(uint16 x, uint16 y, uint8 z);
-	bool tile_is_black(uint16 x, uint16 y, Obj *obj = NULL); // subtracts cur_x and cur_y
+	bool tile_is_black(uint16 x, uint16 y, Obj *obj = nullptr); // subtracts cur_x and cur_y
 	const char *look(uint16 x, uint16 y, bool show_prefix = true);
 	const char *lookAtCursor(bool show_prefix = true) {
 		return (look(cursor_x, cursor_y, show_prefix));
@@ -256,7 +256,7 @@ public:
 	void teleport_to_cursor();
 	void select_target(int x, int y);
 	void mouseToWorldCoords(int mx, int my, int &wx, int &wy);
-	void get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint16 &rel_y, uint8 *mptr = NULL);
+	void get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint16 &rel_y, uint8 *mptr = nullptr);
 
 	TileManager *get_tile_manager() {
 		return tile_manager;
@@ -270,7 +270,7 @@ public:
 	Graphics::ManagedSurface *get_overlay();
 
 	void get_level(uint8 *level);
-	void get_pos(uint16 *x, uint16 *y, uint8 *px = NULL, uint8 *py = NULL);
+	void get_pos(uint16 *x, uint16 *y, uint8 *px = nullptr, uint8 *py = nullptr);
 	void get_velocity(sint16 *vx, sint16 *vy) {
 		*vx = vel_x;
 		*vy = vel_y;

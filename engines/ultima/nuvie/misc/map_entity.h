@@ -52,7 +52,7 @@ typedef struct MapEntity_s {
 	};
 	MapEntity_s()             {
 		entity_type = ENT_NOTHING;
-		data = NULL;
+		data = nullptr;
 	}
 	MapEntity_s(Actor *a)     {
 		entity_type = ENT_ACTOR;

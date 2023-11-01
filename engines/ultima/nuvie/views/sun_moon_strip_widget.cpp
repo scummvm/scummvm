@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-SunMoonStripWidget::SunMoonStripWidget(Player *p, TileManager *tm): GUI_Widget(NULL, 0, 0, 0, 0) {
+SunMoonStripWidget::SunMoonStripWidget(Player *p, TileManager *tm): GUI_Widget(nullptr, 0, 0, 0, 0) {
 	player = p;
 	tile_manager = tm;
 }
@@ -39,7 +39,7 @@ SunMoonStripWidget::~SunMoonStripWidget() {
 
 
 void SunMoonStripWidget::init(sint16 x, sint16 y) {
-	GUI_Widget::Init(NULL, x, y, 100, 20);
+	GUI_Widget::Init(nullptr, x, y, 100, 20);
 }
 
 void SunMoonStripWidget::Display(bool full_redraw) {

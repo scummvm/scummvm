@@ -106,7 +106,7 @@ public:
 	bool cast();
 	void cast_spell_directly(uint8 spell_num);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 	bool process_script_return(uint8 ret);
 	bool resume(MapCoord location);
 	bool resume(uint8 dir);

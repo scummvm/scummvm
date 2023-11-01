@@ -65,7 +65,7 @@ bool PortraitMD::load(NuvieIO *objlist) {
 }
 
 uint8 PortraitMD::get_portrait_num(Actor *actor) {
-	if (actor == NULL)
+	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
 	uint8 num = Game::get_game()->get_script()->call_get_portrait_number(actor);
@@ -77,13 +77,13 @@ uint8 PortraitMD::get_portrait_num(Actor *actor) {
 unsigned char *PortraitMD::get_portrait_data(Actor *actor) {
 	uint8 num = get_portrait_num(actor);
 	if (num == NO_PORTRAIT_FOUND)
-		return NULL;
+		return nullptr;
 
 	U6Shape *bg_shp = get_background_shape(num);
 
 	unsigned char *temp_buf = faces.get_item(num);
 	if (!temp_buf)
-		return NULL;
+		return nullptr;
 	U6Shape *p_shp = new U6Shape();
 	p_shp->load(temp_buf + 8);
 	free(temp_buf);

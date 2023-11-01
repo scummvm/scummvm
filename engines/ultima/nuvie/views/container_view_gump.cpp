@@ -54,7 +54,7 @@ ContainerViewGump::~ContainerViewGump() {
 bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om, Obj *container_obj_type) {
 	View::init(x, y, f, p, tm, om);
 
-	//actor = p->get_actor(p->get_leader()); don't have party leader as default, get owner of container obj or leave NULL (moved to init_container_type)
+	//actor = p->get_actor(p->get_leader()); don't have party leader as default, get owner of container obj or leave nullptr (moved to init_container_type)
 
 	Std::string datadir = GUI::get_gui()->get_data_dir();
 	Std::string imagefile;
@@ -79,7 +79,7 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) {
 
 
-	if (obj_type != NULL) {
+	if (obj_type != nullptr) {
 		if (obj_type->is_in_inventory())
 			actor = obj_type->get_actor_holding_obj();
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
@@ -233,7 +233,7 @@ void ContainerViewGump::init_corpse(Std::string datadir, Std::string bg_filename
 }
 void ContainerViewGump::set_actor(Actor *a) {
 	actor = a;
-	container_obj = NULL;
+	container_obj = nullptr;
 	container_widget->set_actor(a);
 	if (doll_button)
 		doll_button->Show();
@@ -266,7 +266,7 @@ void ContainerViewGump::Display(bool full_redraw) {
 //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	DisplayChildren(full_redraw);
 

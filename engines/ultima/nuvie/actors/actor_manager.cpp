@@ -59,7 +59,7 @@ ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManag
 	clock = c;
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
-		actors[i] = NULL;
+		actors[i] = nullptr;
 	temp_actor_offset = 224;
 	init();
 }
@@ -91,7 +91,7 @@ void ActorManager::clean() {
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		if (actors[i]) {
 			delete actors[i];
-			actors[i] = NULL;
+			actors[i] = nullptr;
 		}
 	}
 
@@ -551,7 +551,7 @@ Actor *ActorManager::get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding
 		return get_multi_tile_actor(x, y, z);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Actor *ActorManager::get_multi_tile_actor(uint16 x, uint16 y, uint8 z) {
@@ -577,7 +577,7 @@ Actor *ActorManager::get_multi_tile_actor(uint16 x, uint16 y, uint8 z) {
 	}
 
 
-	return NULL;
+	return nullptr;
 }
 
 Actor *ActorManager::get_avatar() {
@@ -824,7 +824,7 @@ bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, u
 		DEBUG(0, LEVEL_NOTIFICATION, "***All Temp Actor Slots Full***\n");
 
 	if (new_actor)
-		*new_actor = NULL;
+		*new_actor = nullptr;
 	return false;
 }
 
@@ -836,7 +836,7 @@ inline Actor *ActorManager::find_free_temp_actor() {
 			return actors[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //FIX? should this be in Player??
@@ -909,7 +909,7 @@ inline void ActorManager::clean_temp_actor(Actor *actor) {
 }
 
 bool ActorManager::clone_actor(Actor *actor, Actor **new_actor, MapCoord new_location) {
-	if (actor == NULL)
+	if (actor == nullptr)
 		return false;
 
 	if (create_temp_actor(actor->obj_n, NO_OBJ_STATUS, new_location.x, new_location.y, new_location.z, actor->alignment, actor->worktype, new_actor) == false)
@@ -1060,7 +1060,7 @@ bool ActorManager::can_put_actor(MapCoord location) {
 	if (!map->is_passable(location.x, location.y, location.z))
 		return false;
 
-	if (get_actor(location.x, location.y, location.z) != NULL)
+	if (get_actor(location.x, location.y, location.z) != nullptr)
 		return false;
 
 	return true;
@@ -1137,11 +1137,11 @@ void ActorManager::loadAvatarTiles(Std::string datadir) {
 			continue;
 		}
 		Std::string num_str = filename.substr(7, 3);
-		uint8 portrait_num = (uint8)strtol(num_str.c_str(), NULL, 10);
+		uint8 portrait_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		if (portrait_num == avatar_portrait) {
 			num_str = filename.substr(11, 4);
-			uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
+			uint16 obj_n = (uint16)strtol(num_str.c_str(), nullptr, 10);
 
 			Std::string path;
 			build_path(datadir, filename, path);
@@ -1166,10 +1166,10 @@ void ActorManager::loadNPCTiles(Std::string datadir) {
 			continue;
 		}
 		Std::string num_str = filename.substr(6, 3);
-		uint8 actor_num = (uint8)strtol(num_str.c_str(), NULL, 10);
+		uint8 actor_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		num_str = filename.substr(10, 4);
-		uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
+		uint16 obj_n = (uint16)strtol(num_str.c_str(), nullptr, 10);
 
 		Std::string path;
 		build_path(datadir, filename, path);

@@ -563,7 +563,7 @@ public:
 	ActorError *get_error();
 
 	list<Obj *> *get_surrounding_obj_list() {
-		return surrounding_objects.empty() ? NULL : &surrounding_objects;
+		return surrounding_objects.empty() ? nullptr : &surrounding_objects;
 	}
 	void add_surrounding_obj(Obj *obj);
 	void unlink_surrounding_objects(bool make_objects_temporary = false);
@@ -592,7 +592,7 @@ public:
 // combat methods
 //void attack(MapCoord pos); // attack at a given map location
 	Obj *get_weapon_obj(sint8 readied_obj_location);
-	void attack(sint8 readied_obj_location, MapCoord target, Actor *foe = NULL);
+	void attack(sint8 readied_obj_location, MapCoord target, Actor *foe = nullptr);
 	const CombatType *get_weapon(sint8 readied_obj_location);
 	void attract_to(Actor *target);
 	void repel_from(Actor *target);
@@ -600,7 +600,7 @@ public:
 	void hit(uint8 dmg, bool force_hit = false);
 	void reduce_hp(uint8 amount);
 	virtual void die(bool create_body = true);
-	void resurrect(MapCoord new_position, Obj *body_obj = NULL);
+	void resurrect(MapCoord new_position, Obj *body_obj = nullptr);
 	uint8 get_range(uint16 target_x, uint16 target_y);
 	bool weapon_can_hit(const CombatType *weapon, uint16 target_x, uint16 target_y);
 	virtual bool weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hit_x, uint16 *hit_y) {
@@ -619,7 +619,7 @@ public:
 	bool is_double_handed_obj_readied();
 	Obj *inventory_get_readied_object(uint8 location);
 	sint16 inventory_get_readied_obj_n(uint8 location) {
-		return (inventory_get_readied_object(location) == NULL ? -1 : inventory_get_readied_object(location)->obj_n);
+		return (inventory_get_readied_object(location) == nullptr ? -1 : inventory_get_readied_object(location)->obj_n);
 	}
 	virtual Obj *inventory_get_food(Obj *container = 0) {
 		return 0;
@@ -647,7 +647,7 @@ public:
 
 	virtual uint8 get_object_readiable_location(Obj *obj);
 	virtual const CombatType *get_object_combat_type(uint16 objN) {
-		return NULL;
+		return nullptr;
 	}
 
 	bool can_ready_obj(Obj *obj);
@@ -692,7 +692,7 @@ protected:
 	void inventory_parse_readied_objects(); //this is used to initialise the readied_objects array on load.
 
 	virtual const CombatType *get_hand_combat_type() {
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void set_ethereal(bool val) {
@@ -703,7 +703,7 @@ protected:
 		return;
 	}
 	virtual const char *get_worktype_string(uint32 wt) {
-		return NULL;
+		return nullptr;
 	}
 
 	Obj *find_body();

@@ -101,7 +101,7 @@ void EffectManager::unwatch_effect(CallBack *callback_target, Effect *watch) {
 		WatchIterator i = watched.begin();
 		while (i != watched.end())
 			if ((*i).watcher == callback_target
-			        && ((*i).effect == watch || watch == NULL)) {
+			        && ((*i).effect == watch || watch == nullptr)) {
 				i = watched.erase(i); // resume from next element
 			} else ++i;
 	}
@@ -113,12 +113,12 @@ void EffectManager::signal_watch(Effect *effect) {
 	EffectWatch *watch = find_effect_watch(effect);
 	if (watch) {
 		if (watch->watcher)
-			watch->watcher->callback(EFFECT_CB_COMPLETE, NULL, effect);
+			watch->watcher->callback(EFFECT_CB_COMPLETE, nullptr, effect);
 		unwatch_effect(watch->watcher, effect);
 	}
 }
 
-/* Returns watch for an effect. (or NULL)
+/* Returns watch for an effect. (or nullptr)
  */
 EffectManager::EffectWatch *EffectManager::find_effect_watch(Effect *effect) {
 	if (!watched.empty()) {
@@ -128,7 +128,7 @@ EffectManager::EffectWatch *EffectManager::find_effect_watch(Effect *effect) {
 				return (&(*i));
 			else ++i;
 	}
-	return (NULL);
+	return (nullptr);
 }
 
 } // End of namespace Nuvie

@@ -137,7 +137,7 @@ public:
 	}
 
 //U6LList *get_obj_superchunk(uint16 x, uint16 y, uint8 level);
-	bool is_boundary(uint16 x, uint16 y, uint8 level, uint8 boundary_type = TILEFLAG_BOUNDARY, Obj *excluded_obj = NULL);
+	bool is_boundary(uint16 x, uint16 y, uint8 level, uint8 boundary_type = TILEFLAG_BOUNDARY, Obj *excluded_obj = nullptr);
 //bool is_door(Obj * obj);
 	bool is_damaging(uint16 x, uint16 y, uint8 level);
 	uint8 is_passable(uint16 x, uint16 y, uint8 level);
@@ -151,7 +151,7 @@ public:
 		return has_reduced_weight(obj->obj_n);
 	}
 	bool has_toptile(Obj *obj);
-	bool obj_is_damaging(Obj *obj, Actor *actor = NULL); // if actor, it will damage and display text
+	bool obj_is_damaging(Obj *obj, Actor *actor = nullptr); // if actor, it will damage and display text
 	bool is_door(uint16 x, uint16 y, uint8 level);
 
 	U6LList *get_obj_list(uint16 x, uint16 y, uint8 level);
@@ -159,12 +159,12 @@ public:
 	Tile *get_obj_tile(uint16 obj_n, uint8 frame_n);
 	Tile *get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj = true);
 	Tile *get_obj_dmg_tile(uint16 x, uint16 y, uint8 level);
-	Obj *get_obj(uint16 x, uint16 y, uint8 level, bool top_obj = OBJ_SEARCH_TOP, bool include_ignored_objects = OBJ_EXCLUDE_IGNORED, Obj *excluded_obj = NULL);
+	Obj *get_obj(uint16 x, uint16 y, uint8 level, bool top_obj = OBJ_SEARCH_TOP, bool include_ignored_objects = OBJ_EXCLUDE_IGNORED, Obj *excluded_obj = nullptr);
 	Obj *get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, uint16 x, uint16 y, uint8 z);
 	Obj *get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, sint16 quality, sint32 qty, uint16 x, uint16 y, uint8 z);
 	Obj *get_obj_of_type_from_location(uint16 obj_n, uint16 x, uint16 y, uint8 z);
 	Obj *get_obj_of_type_from_location(uint16 obj_n, sint16 quality, sint32 qty, uint16 x, uint16 y, uint8 z);
-	Obj *get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, bool include_ignored_objects = true, Obj *excluded_obj = NULL);
+	Obj *get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, bool include_ignored_objects = true, Obj *excluded_obj = nullptr);
 	Obj *get_tile_obj(uint16 obj_n);
 
 	uint16 get_obj_tile_num(uint16 obj_num);
@@ -176,7 +176,7 @@ public:
 	bool actor_has_inventory(uint16 actor_num);
 
 	Obj *find_next_obj(uint8 level, Obj *prev_obj, bool match_frame_n = OBJ_NOMATCH_FRAME_N, bool match_quality = OBJ_MATCH_QUALITY);
-	Obj *find_obj(uint8 level, uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint16 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N,  Obj **prev_obj = NULL);
+	Obj *find_obj(uint8 level, uint16 obj_n, uint8 quality, bool match_quality = OBJ_MATCH_QUALITY, uint16 frame_n = 0, bool match_frame_n = OBJ_NOMATCH_FRAME_N,  Obj **prev_obj = nullptr);
 
 	bool move(Obj *obj, uint16 x, uint16 y, uint8 level);
 	bool add_obj(Obj *obj, bool addOnTop = false);

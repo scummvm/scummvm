@@ -80,7 +80,7 @@ Std::string *NuvieFileList::next() {
 		return filename;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Std::string *NuvieFileList::get_latest() {
@@ -94,7 +94,7 @@ Std::string *NuvieFileList::get_latest() {
 		return filename;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint32 NuvieFileList::get_num_files() {

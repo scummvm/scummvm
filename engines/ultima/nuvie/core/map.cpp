@@ -39,12 +39,12 @@ namespace Nuvie {
 Map::Map(Configuration *cfg) {
 	config = cfg;
 
-	tile_manager = NULL;
-	obj_manager = NULL;
-	actor_manager = NULL;
-	surface = NULL;
-	roof_surface = NULL;
-	dungeons[4] = NULL;
+	tile_manager = nullptr;
+	obj_manager = nullptr;
+	actor_manager = nullptr;
+	surface = nullptr;
+	roof_surface = nullptr;
+	dungeons[4] = nullptr;
 
 	config->value(config_get_game_key(config) + "/roof_mode", roof_mode, false);
 }
@@ -52,7 +52,7 @@ Map::Map(Configuration *cfg) {
 Map::~Map() {
 	uint8 i;
 
-	if (surface == NULL)
+	if (surface == nullptr)
 		return;
 
 	free(surface);
@@ -70,7 +70,7 @@ unsigned char *Map::get_map_data(uint8 level) {
 		return surface;
 
 	if (level > 5)
-		return NULL;
+		return nullptr;
 
 	return dungeons[level - 1];
 }
@@ -79,7 +79,7 @@ uint16 *Map::get_roof_data(uint8 level) {
 	if (level == 0)
 		return roof_surface;
 
-	return NULL;
+	return nullptr;
 }
 
 Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
@@ -87,7 +87,7 @@ Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
 	uint8 *ptr;
 
 	if (level > 5)
-		return NULL;
+		return nullptr;
 
 	ptr = get_map_data(level);
 
@@ -247,7 +247,7 @@ bool Map::is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects) {
 
 	if (!ignore_objects) {
 		obj = obj_manager->get_obj(x, y, level);
-		if (obj != NULL)
+		if (obj != nullptr)
 			return false;
 	}
 
@@ -312,9 +312,9 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	if (!ignore_objects) {
 		U6LList *obj_list = obj_manager->get_obj_list(x, y, level);
 		if (obj_list) {
-			for (U6Link *link = obj_list->start(); link != NULL; link = link->next) {
+			for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
 				Obj *obj = (Obj *)link->data;
-				if (obj != NULL) {
+				if (obj != nullptr) {
 					uint8 tile_flag = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n)->flags1;
 					if ((tile_flag & TILEFLAG_BLOCKING) == 0) {
 						impedance += (tile_flag & TILEFLAG_IMPEDANCE) >> TILEFLAG_IMPEDANCE_SHIFT;
@@ -343,7 +343,7 @@ bool Map::actor_at_location(uint16 x, uint16 y, uint8 level, bool inc_surroundin
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 	//check for blocking Actor at location.
-	if (actor_manager->get_actor(x, y, level, inc_surrounding_objs) != NULL)
+	if (actor_manager->get_actor(x, y, level, inc_surrounding_objs) != nullptr)
 		return true;
 
 	return false;
@@ -372,7 +372,7 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 	obj = obj_manager->get_obj(x, y, level);
-	if (obj != NULL && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
+	if (obj != nullptr && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
 	        && !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)) {
 		//      tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n)+obj->frame_n);
 		//      tile_num = tile->tile_num;
@@ -406,17 +406,17 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 		return false;
 
 	map_data = map_file.readAll();
-	if (map_data == NULL)
+	if (map_data == nullptr)
 		return false;
 
 	chunk_data = chunks_file.readAll();
-	if (chunk_data == NULL)
+	if (chunk_data == nullptr)
 		return false;
 
 	map_ptr = map_data;
 
 	surface = (unsigned char *)malloc(1024 * 1024);
-	if (surface == NULL)
+	if (surface == nullptr)
 		return false;
 
 	for (i = 0; i < 64; i++) {
@@ -426,7 +426,7 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 
 	for (i = 0; i < 5; i++) {
 		dungeons[i] = (unsigned char *)malloc(256 * 256);
-		if (dungeons[i] == NULL)
+		if (dungeons[i] == nullptr)
 			return false;
 
 		insertDungeonSuperChunk(map_ptr, chunk_data, i);
@@ -516,7 +516,7 @@ void Map::set_roof_mode(bool roofs) {
 	} else {
 		if (roof_surface) {
 			free(roof_surface);
-			roof_surface = NULL;
+			roof_surface = nullptr;
 		}
 	}
 }
@@ -541,7 +541,7 @@ void Map::loadRoofData() {
 	} else {
 		if (roof_surface) {
 			free(roof_surface);
-			roof_surface = NULL;
+			roof_surface = nullptr;
 		}
 		roof_mode = false;
 	}
@@ -688,14 +688,14 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 #if 0
 	if (flags & LT_HitUnpassable) {
 		if (!is_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitForcedPassable) {
 		if (obj_manager->is_forced_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
@@ -710,7 +710,7 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 		if (!is_passable(x, y, level)) {
 			Obj *obj_hit = obj_manager->get_obj(x, y, level);
 			if (!obj_hit  || !excluded_obj || obj_hit  != excluded_obj) {
-				Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+				Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 				return  true;
 			}
 		}
@@ -718,28 +718,28 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 	if (flags & LT_HitMissileBoundary) {
 		if (is_missile_boundary(x, y, level, excluded_obj)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitForcedPassable) {
 		if (obj_manager->is_forced_passable(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}
 
 	if (flags & LT_HitActors) {
 		if (actor_manager->get_actor(x, y, level)) {
-			Result.init(x, y, level, actor_manager->get_actor(x, y, level), NULL);
+			Result.init(x, y, level, actor_manager->get_actor(x, y, level), nullptr);
 			return  true;
 		}
 	}
 
 	if ((flags & LT_HitLocation) && Result.loc_to_hit) {
 		if (x == Result.loc_to_hit->x && y == Result.loc_to_hit->y) {
-			Result.init(x, y, level, NULL, NULL);
+			Result.init(x, y, level, nullptr, nullptr);
 			Result.loc_to_hit->z = level;
 			Result.hitLoc = Result.loc_to_hit;
 			return  true;
@@ -748,7 +748,7 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 
 	if (flags & LT_HitObjects) {
 		if (obj_manager->get_obj(x, y, level)) {
-			Result.init(x, y, level, NULL, obj_manager->get_obj(x, y, level, true));
+			Result.init(x, y, level, nullptr, obj_manager->get_obj(x, y, level, true));
 			return  true;
 		}
 	}

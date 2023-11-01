@@ -33,18 +33,18 @@
 namespace Ultima {
 namespace Nuvie {
 
-View::View(Configuration *cfg) : GUI_Widget(NULL, 0, 0, 0, 0) {
+View::View(Configuration *cfg) : GUI_Widget(nullptr, 0, 0, 0, 0) {
 	config = cfg;
 	new_ui_mode = false;
-	left_button = NULL;
-	font = NULL;
-	tile_manager = NULL;
-	right_button = NULL;
-	obj_manager = NULL;
-	party = NULL;
-	party_button = NULL;
-	inventory_button = NULL;
-	actor_button = NULL;
+	left_button = nullptr;
+	font = nullptr;
+	tile_manager = nullptr;
+	right_button = nullptr;
+	obj_manager = nullptr;
+	party = nullptr;
+	party_button = nullptr;
+	inventory_button = nullptr;
+	actor_button = nullptr;
 	bg_color = 0;
 	cur_party_member = 0;
 }
@@ -54,11 +54,11 @@ View::~View() {
 
 bool View::init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
-		GUI_Widget::Init(NULL, x, y, 136, 96);
+		GUI_Widget::Init(nullptr, x, y, 136, 96);
 	else if (Game::get_game()->get_game_type() == NUVIE_GAME_SE)
-		GUI_Widget::Init(NULL, x + 7, y - 2, 132, 113);
+		GUI_Widget::Init(nullptr, x + 7, y - 2, 132, 113);
 	else
-		GUI_Widget::Init(NULL, x + 8, y - 4, 128, 118);
+		GUI_Widget::Init(nullptr, x + 8, y - 4, 128, 118);
 	Hide();
 	font = f;
 	party = p;
@@ -212,7 +212,7 @@ GUI_Button *View::loadButton(Std::string dir, Std::string name, uint16 x, uint16
 	build_path(dir, name + "_btn_down.bmp", imagefile);
 	image1 = SDL_LoadBMP(imagefile.c_str());
 
-	button = new GUI_Button(NULL, x, y, image, image1, this);
+	button = new GUI_Button(nullptr, x, y, image, image1, this);
 	this->AddWidget(button);
 	return button;
 }

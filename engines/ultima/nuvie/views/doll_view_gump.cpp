@@ -36,10 +36,10 @@ namespace Ultima {
 namespace Nuvie {
 
 DollViewGump::DollViewGump(Configuration *cfg) : DraggableView(cfg),
-	gump_button(NULL), combat_button(NULL), heart_button(NULL), party_button(NULL), inventory_button(NULL),
-	doll_widget(NULL), font(NULL), actor(NULL), cursor_tile(NULL) {
-	bg_image = NULL;
-	actor_doll = NULL;
+	gump_button(nullptr), combat_button(nullptr), heart_button(nullptr), party_button(nullptr), inventory_button(nullptr),
+	doll_widget(nullptr), font(nullptr), actor(nullptr), cursor_tile(nullptr) {
+	bg_image = nullptr;
+	actor_doll = nullptr;
 	is_avatar = false;
 	show_cursor = true;
 	cursor_pos = CURSOR_HEAD;
@@ -107,7 +107,7 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	build_path(datadir, "combat_btn_down.bmp", imagefile);
 	image1 = SDL_LoadBMP(imagefile.c_str());
 
-	combat_button = new GUI_Button(NULL, 23, 92, image, image1, this);
+	combat_button = new GUI_Button(nullptr, 23, 92, image, image1, this);
 	this->AddWidget(combat_button);
 
 	heart_button = loadButton(datadir, "heart", 23, 108);
@@ -236,11 +236,11 @@ void DollViewGump::Display(bool full_redraw) {
 	dst = area;
 	dst.setWidth(108);
 	dst.setHeight(136);
-	SDL_BlitSurface(bg_image, NULL, surface, &dst);
+	SDL_BlitSurface(bg_image, nullptr, surface, &dst);
 
 	if (actor_doll) {
 		dst.translate(45, 32);
-		SDL_BlitSurface(actor_doll, NULL, surface, &dst);
+		SDL_BlitSurface(actor_doll, nullptr, surface, &dst);
 	}
 
 	uint8 w = font->getCenter(actor->get_name(), 58);

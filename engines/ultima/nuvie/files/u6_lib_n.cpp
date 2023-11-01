@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Lib_n::U6Lib_n() : num_offsets(0), items(NULL), data(NULL),
+U6Lib_n::U6Lib_n() : num_offsets(0), items(nullptr), data(nullptr),
 	del_data(false), filesize(0), game_type(NUVIE_GAME_U6), lib_size(0) {
 }
 
@@ -71,15 +71,15 @@ void U6Lib_n::close() {
 			delete items[i].name;
 		free(items);
 	}
-	items = NULL;
+	items = nullptr;
 
 	if (del_data) {
-		if (data != NULL)
+		if (data != nullptr)
 			data->close();
 		delete data;
 	}
 
-	data = NULL;
+	data = nullptr;
 	del_data = false;
 
 	num_offsets = 0;
@@ -130,14 +130,14 @@ unsigned char *U6Lib_n::get_item(uint32 item_number, unsigned char *ret_buf) {
 	unsigned char *buf, *lzw_buf;
 
 	if (item_number >= num_offsets)
-		return NULL;
+		return nullptr;
 
 	item = &items[item_number];
 
 	if (item->size == 0 || item->offset == 0)
-		return NULL;
+		return nullptr;
 
-	if (ret_buf == NULL)
+	if (ret_buf == nullptr)
 		buf = (unsigned char *)malloc(item->uncomp_size);
 	else
 		buf = ret_buf;
@@ -267,7 +267,7 @@ uint32 U6Lib_n::calculate_item_uncomp_size(U6LibItem *item) {
 	return uncomp_size;
 }
 
-// we need to handle NULL offsets at the start of the offset table in the converse.a file
+// we need to handle nullptr offsets at the start of the offset table in the converse.a file
 uint32 U6Lib_n::calculate_num_offsets(bool skip4) { //skip4 bytes of header.
 	uint32 i;
 	uint32 offset = 0;
@@ -327,7 +327,7 @@ void U6Lib_n::load_index(Common::ReadStream *index_f) {
 			name[oc++] = input[c];
 		name[oc] = '\0';
 		if (strlen(offset_str)) { // if line is not empty (!= zero entry)
-			uint32 offset32 = strtol(offset_str, NULL, 16);
+			uint32 offset32 = strtol(offset_str, nullptr, 16);
 			add_item(offset32, name);
 			++entry_count;
 		}
@@ -351,7 +351,7 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
 	item->size = 0;
 	item->uncomp_size = 0;
 	item->flag = 0; // uncompressed
-	item->data = NULL;
+	item->data = nullptr;
 	++num_offsets;
 }
 
@@ -360,8 +360,8 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
  */
 const char *U6Lib_n::get_item_name(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (NULL);
-	return (items[item_number].name ? items[item_number].name->c_str() : NULL);
+		return (nullptr);
+	return (items[item_number].name ? items[item_number].name->c_str() : nullptr);
 }
 
 

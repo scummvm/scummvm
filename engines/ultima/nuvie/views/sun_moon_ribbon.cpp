@@ -38,7 +38,7 @@ namespace Nuvie {
 #define SUNMOON_RIBBON_TOTAL_WIDTH (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH)
 
 SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm): SunMoonStripWidget(p, tm) {
-	bg_data = NULL;
+	bg_data = nullptr;
 	weather = w;
 	retracted = true;
 	current_time = 0;
@@ -50,7 +50,7 @@ SunMoonRibbon::~SunMoonRibbon() {
 
 
 void SunMoonRibbon::init(Screen *) {
-	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset()
+	GUI_Widget::Init(nullptr, Game::get_game()->get_game_x_offset()
 		+ Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH,
 		Game::get_game()->get_game_y_offset(),
 		SUNMOON_RIBBON_TOTAL_WIDTH,SUNMOON_RIBBON_HEIGHT);
@@ -109,7 +109,7 @@ void SunMoonRibbon::update_hour(uint16 time) {
 
 	time = time / 6;
 
-	if (current_time != time || bg_data == NULL) {
+	if (current_time != time || bg_data == nullptr) {
 		current_time = time;
 		uint8 bg_num = 8; //night
 		if (current_time >= 50 && current_time < 60) {

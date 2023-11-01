@@ -91,10 +91,10 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 		}
 	}
 
-	GUI_Widget::Init(NULL, x_off, y_off, game->get_converse_gump_width(), (uint16)gump_h);
-	npc_portrait = NULL;
-	avatar_portrait = NULL;
-	keyword_list = NULL;
+	GUI_Widget::Init(nullptr, x_off, y_off, game->get_converse_gump_width(), (uint16)gump_h);
+	npc_portrait = nullptr;
+	avatar_portrait = nullptr;
+	keyword_list = nullptr;
 
 	font = game->get_font_manager()->get_conv_font();
 
@@ -167,7 +167,7 @@ void ConverseGump::set_talking(bool state, Actor *actor) {
 
 		if (avatar_portrait) {
 			free(avatar_portrait);
-			avatar_portrait = NULL;
+			avatar_portrait = nullptr;
 		}
 
 		cursor_position = 0;
@@ -185,9 +185,9 @@ void ConverseGump::set_actor_portrait(Actor *a) {
 	if (Game::get_game()->get_portrait()->has_portrait(a))
 		npc_portrait = get_portrait_data(a);
 	else
-		npc_portrait = NULL;
+		npc_portrait = nullptr;
 
-	if (avatar_portrait == NULL) {
+	if (avatar_portrait == nullptr) {
 		Actor *p = Game::get_game()->get_player()->get_actor();
 		Actor *p1 = Game::get_game()->get_actor_manager()->get_actor(1);
 		avatar_portrait = get_portrait_data(p->get_actor_num() != 0 ? p : p1); // don't use portrait 0 when in a vehicle
@@ -397,7 +397,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 		char c = token->s[i];
 		if (i < len && Common::isDigit(c)) {
 			const char *c_str = token->s.c_str();
-			uint16 actor_num = (int)strtol(&c_str[i], NULL, 10);
+			uint16 actor_num = (int)strtol(&c_str[i], nullptr, 10);
 			if (actor_num < 256) {
 				Actor *actor = Game::get_game()->get_actor_manager()->get_actor(actor_num);
 				if (actor) {
@@ -495,7 +495,7 @@ Std::string ConverseGump::get_token_at_cursor() {
 
 bool ConverseGump::input_buf_add_char(char c) {
 	input_char = 0;
-	if (permit_input != NULL)
+	if (permit_input != nullptr)
 		input_buf_remove_char();
 	input_buf.push_back(c);
 	return true;
@@ -642,7 +642,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 		}
 		break;
 	case Common::KEYCODE_RIGHT:
-		if (cursor_at_input_section() && input_char != 0 && permit_input == NULL)
+		if (cursor_at_input_section() && input_char != 0 && permit_input == nullptr)
 			input_buf_add_char(get_char_from_input_char());
 		else
 			cursor_position = (cursor_position + 1) % (keyword_list->size() + 1);
@@ -658,7 +658,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_ESCAPE:
 		if (permit_inputescape) {
 			// reset input buffer
-			permit_input = NULL;
+			permit_input = nullptr;
 			if (input_mode)
 				set_input_mode(false);
 		}
@@ -688,7 +688,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	default: // alphanumeric characters
 		if (input_mode && Common::isPrint(ascii)) {
 			cursor_move_to_input();
-			if (permit_input == NULL) {
+			if (permit_input == nullptr) {
 				if (!numbers_only || Common::isDigit(ascii))
 					if (input_char != 0)
 						input_buf_add_char(get_char_from_input_char());

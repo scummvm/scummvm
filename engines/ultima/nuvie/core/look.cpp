@@ -31,10 +31,10 @@ namespace Ultima {
 namespace Nuvie {
 
 Look::Look(Configuration *cfg)
-	: look_data(NULL), desc_buf(NULL) {
+	: look_data(nullptr), desc_buf(nullptr) {
 	config = cfg;
 
-	look_tbl[2047] = NULL;
+	look_tbl[2047] = nullptr;
 	max_len = 0;
 }
 
@@ -60,7 +60,7 @@ bool Look::init() {
 	case NUVIE_GAME_U6 :
 		config_get_path(config, "look.lzd", filename);
 		look_data = lzw.decompress_file(filename, decomp_size);
-		if (look_data == NULL)
+		if (look_data == nullptr)
 			return false;
 		break;
 	case NUVIE_GAME_MD :
@@ -104,7 +104,7 @@ bool Look::init() {
 
 // allocate space for description buffer
 	desc_buf = (char *)malloc(max_len + 1);
-	if (desc_buf == NULL)
+	if (desc_buf == nullptr)
 		return false;
 
 	return true;
@@ -118,7 +118,7 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	bool has_plural = false;
 
 	if (tile_num >= 2048)
-		return NULL;
+		return nullptr;
 
 	desc = look_tbl[tile_num];
 
@@ -157,7 +157,7 @@ bool Look::has_plural(uint16 tile_num) {
 
 	desc = look_tbl[tile_num];
 
-	if (desc == NULL)
+	if (desc == nullptr)
 		return false;
 
 	for (; *desc != '\0'; desc++) {

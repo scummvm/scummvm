@@ -38,8 +38,8 @@ using Std::string;
 class U6AdPlugDecoderStream : public Audio::RewindableAudioStream {
 public:
 	U6AdPlugDecoderStream() {
-		opl = NULL;
-		player = NULL;
+		opl = nullptr;
+		player = nullptr;
 		player_refresh_count = 0;
 	}
 

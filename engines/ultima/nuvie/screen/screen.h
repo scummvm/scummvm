@@ -82,7 +82,7 @@ public:
 	bool set_palette(uint8 *palette);
 	bool set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b);
 	bool rotate_palette(uint8 pos, uint8 length);
-	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = NULL);
+	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = nullptr);
 	void *get_pixels();
 	const byte *get_surface_pixels() {
 		return (_renderSurface->get_pixels());
@@ -110,7 +110,7 @@ public:
 	void stipple_8bit(uint8 color_num, uint16 x, uint16 y, uint16 w, uint16 h);
 	void put_pixel(uint8 colour_num, uint16 x, uint16 y);
 
-	bool blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, Common::Rect *clip_rect = NULL, uint8 opacity = 255);
+	bool blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, Common::Rect *clip_rect = nullptr, uint8 opacity = 255);
 	void blitbitmap(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
 	void buildalphamap8();
@@ -141,10 +141,10 @@ public:
 
 	bool initScaler();
 
-	byte *copy_area(Common::Rect *area = NULL, byte *buf = NULL);
+	byte *copy_area(Common::Rect *area = nullptr, byte *buf = nullptr);
 	byte *copy_area(Common::Rect *area, uint16 down_scale);
 
-	void restore_area(byte *pixels, Common::Rect *area = NULL, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
+	void restore_area(byte *pixels, Common::Rect *area = nullptr, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
 
 	void draw_line(int sx, int sy, int ex, int ey, uint8 color);
 
@@ -179,8 +179,8 @@ protected:
 
 	byte *copy_area16(Common::Rect *area, byte *buf);
 	byte *copy_area32(Common::Rect *area, byte *buf);
-	void restore_area16(byte *pixels, Common::Rect *area, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
-	void restore_area32(byte *pixels, Common::Rect *area, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
+	void restore_area16(byte *pixels, Common::Rect *area, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
+	void restore_area32(byte *pixels, Common::Rect *area, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
 
 	void set_screen_mode();
 

@@ -130,10 +130,10 @@ public:
 	void open_doll_view(Actor *actor);
 
 	void open_container_view(Obj *obj) {
-		open_container_view(NULL, obj);
+		open_container_view(nullptr, obj);
 	}
 	void open_container_view(Actor *actor) {
-		open_container_view(actor, NULL);
+		open_container_view(actor, nullptr);
 	}
 
 	void close_container_view(Actor *actor);

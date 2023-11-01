@@ -49,7 +49,7 @@ DraggableView::DraggableView(Configuration *cfg) : View(cfg),
 DraggableView::~DraggableView() {
 	if (bg_image) {
 		SDL_FreeSurface(bg_image);
-		bg_image = NULL;
+		bg_image = nullptr;
 	}
 }
 

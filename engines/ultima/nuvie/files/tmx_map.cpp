@@ -32,7 +32,7 @@ TMXMap::TMXMap(TileManager *tm, Map *m, ObjManager *om) {
 	tile_manager = tm;
 	map = m;
 	obj_manager = om;
-	mapdata = NULL;
+	mapdata = nullptr;
 	game_type = NUVIE_GAME_NONE;
 }
 
@@ -59,7 +59,7 @@ bool TMXMap::exportTmxMapFiles(Std::string dir, nuvie_game_t type) {
 }
 
 void TMXMap::writeRoofTileset(uint8 level) {
-	if (map->get_roof_data(level) == NULL) {
+	if (map->get_roof_data(level) == nullptr) {
 		return;
 	}
 
@@ -153,7 +153,7 @@ void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, b
 		for (uint16 x = 0; x < width; x++) {
 			U6LList *list = obj_manager->get_obj_list(x, y, level);
 			if (list) {
-				for (U6Link *link = list->start(); link != NULL; link = link->next) {
+				for (U6Link *link = list->start(); link != nullptr; link = link->next) {
 					Obj *obj = (Obj *)link->data;
 					Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 					Std::string s;
@@ -210,7 +210,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	          + "_tileset.bmp\" trans=\"00dffc\" width=\"512\" height=\"1024\"/>\n";
 	header += " </tileset>\n";
 
-	if (map->get_roof_data(level) != NULL) {
+	if (map->get_roof_data(level) != nullptr) {
 		header +=
 		    " <tileset firstgid=\"2048\" name=\"roof_tileset\" tilewidth=\"16\" tileheight=\"16\">\n";
 		header += "  <image source=\"" + savename + "_roof_tileset.bmp\" trans=\"0070fc\" width=\"80\" height=\"3264\"/>\n";
@@ -223,7 +223,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 
 	writeObjectLayer(&tmx, level);
 
-	if (map->get_roof_data(level) != NULL) {
+	if (map->get_roof_data(level) != nullptr) {
 		writeLayer(&tmx, width, "RoofLayer", 2047, 16, (const unsigned char *)map->get_roof_data(level));
 	}
 

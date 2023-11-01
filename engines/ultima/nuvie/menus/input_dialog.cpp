@@ -139,13 +139,13 @@ bool InputDialog::init() {
 		AddWidget(balloon_button);
 		button_index[last_index += 1] = balloon_button;
 	} else
-		balloon_button = NULL;
+		balloon_button = nullptr;
 	if (!Game::get_game()->is_new_style()) {
 		open_container_button = new GUI_TextToggleButton(this, colX[1], buttonY += row_h, yesno_width, height, yesno_text, 2, game->doubleclick_opens_containers(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(open_container_button);
 		button_index[last_index += 1] = open_container_button;
 	}
-	command_button = new GUI_TextToggleButton(this, colX[1], buttonY += row_h, yesno_width, height, yesno_text, 2, game->get_new_command_bar() != NULL, font, BUTTON_TEXTALIGN_CENTER, this, 0);
+	command_button = new GUI_TextToggleButton(this, colX[1], buttonY += row_h, yesno_width, height, yesno_text, 2, game->get_new_command_bar() != nullptr, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(command_button);
 	button_index[last_index += 1] = command_button;
 
@@ -156,7 +156,7 @@ bool InputDialog::init() {
 		AddWidget(party_targeting_button);
 		button_index[last_index += 1] = party_targeting_button;
 	} else
-		open_container_button = party_targeting_button = NULL;
+		open_container_button = party_targeting_button = nullptr;
 	cancel_button = new GUI_Button(this, 83, ID_HEIGHT - 20, 54, height, "Cancel", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(cancel_button);
 	button_index[last_index += 1] = cancel_button;

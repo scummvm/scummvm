@@ -32,7 +32,7 @@ namespace Nuvie {
 GUI_Font::GUI_Font(uint8 fontType) {
 	Graphics::ManagedSurface *temp;
 
-	_wData = NULL;
+	_wData = nullptr;
 
 	if (fontType == GUI_FONT_6X8)
 		temp = GUI_Font6x8();
@@ -53,7 +53,7 @@ GUI_Font::GUI_Font(uint8 fontType) {
 /* open named BMP file */
 GUI_Font::GUI_Font(char *name) {
 	_fontStore = SDL_LoadBMP(name);
-	if (_fontStore != NULL) {
+	if (_fontStore != nullptr) {
 		_charH = _fontStore->h / 16;
 		_charW = _fontStore->w / 16;
 		_disposeFont = DisposeAfterUse::YES;
@@ -62,12 +62,12 @@ GUI_Font::GUI_Font(char *name) {
 	}
 
 	setTransparency(true);
-	_wData = NULL;
+	_wData = nullptr;
 }
 
 /* use given YxY surface */
 GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
-	if (bitmap == NULL)
+	if (bitmap == nullptr)
 		_fontStore = GUI_DefaultFont();
 	else
 		_fontStore = bitmap;
@@ -75,7 +75,7 @@ GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::NO;
 	setTransparency(true);
-	_wData = NULL;
+	_wData = nullptr;
 }
 
 /* copy constructor */
@@ -86,7 +86,7 @@ GUI_Font::GUI_Font(GUI_Font &font) {
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::YES;
 	setTransparency(true);
-	_wData = NULL;
+	_wData = nullptr;
 }
 
 GUI_Font::~GUI_Font() {

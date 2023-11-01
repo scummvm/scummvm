@@ -95,10 +95,10 @@ void TimeQueue::remove_timer(TimedEvent *tevent) {
 }
 
 
-/* Remove and return timed event at front of queue, or NULL if empty.
+/* Remove and return timed event at front of queue, or nullptr if empty.
  */
 TimedEvent *TimeQueue::pop_timer() {
-	TimedEvent *first = NULL;
+	TimedEvent *first = nullptr;
 	if (!empty()) {
 		first = tq.front();
 		tq.pop_front(); // remove it
@@ -162,7 +162,7 @@ bool TimeQueue::delete_timer(TimedEvent *tevent) {
 TimedEvent::TimedEvent(uint32 reltime, bool immediate, bool realtime)
 	: delay(reltime), repeat_count(0), ignore_pause(false),
 	  real_time(realtime), tq_can_delete(true), defunct(false) {
-	tq = NULL;
+	tq = nullptr;
 
 	if (immediate) // start now (useful if repeat is true)
 		time = 0;
@@ -175,7 +175,7 @@ TimedEvent::TimedEvent(uint32 reltime, bool immediate, bool realtime)
  */
 void TimedEvent::queue() {
 	Events *event = Game::get_game()->get_event();
-	if (tq == NULL) {
+	if (tq == nullptr) {
 		if (real_time)
 			tq = event->get_time_queue();
 		else
@@ -190,7 +190,7 @@ void TimedEvent::queue() {
 void TimedEvent::dequeue() {
 	if (tq) {
 		tq->remove_timer(this);
-		tq = NULL;
+		tq = nullptr;
 	}
 }
 
@@ -212,7 +212,7 @@ void TimedEvent::set_time() {
  */
 TimedPartyMove::TimedPartyMove(MapCoord *d, MapCoord *t, uint32 step_delay)
 	: TimedEvent(step_delay, true) {
-	init(d, t, NULL);
+	init(d, t, nullptr);
 }
 
 /* Movement through temporary moongate.
@@ -224,12 +224,12 @@ TimedPartyMove::TimedPartyMove(MapCoord *d, MapCoord *t, Obj *use_obj, uint32 st
 
 TimedPartyMove::TimedPartyMove(uint32 step_delay)
 	: TimedEvent(step_delay, true) {
-	map_window = NULL;
-	party = NULL;
-	dest = NULL;
-	target = NULL;
-	moongate = NULL;
-	actor_to_hide = NULL;
+	map_window = nullptr;
+	party = nullptr;
+	dest = nullptr;
+	target = nullptr;
+	moongate = nullptr;
+	actor_to_hide = nullptr;
 	moves_left = 0;
 	wait_for_effect = 0;
 	falling_in = false;
@@ -245,10 +245,10 @@ TimedPartyMove::~TimedPartyMove() {
 void TimedPartyMove::init(MapCoord *d, MapCoord *t, Obj *use_obj) {
 	map_window = Game::get_game()->get_map_window();
 	party = Game::get_game()->get_party();
-	target = NULL;
+	target = nullptr;
 	moves_left = party->get_party_size() * 2; // step timeout
 	wait_for_effect = 0;
-	actor_to_hide = NULL;
+	actor_to_hide = nullptr;
 	falling_in = false;
 
 	dest = new MapCoord(*d);
@@ -325,13 +325,13 @@ uint16 TimedPartyMove::callback(uint16 msg, CallBack *caller, void *data) {
  */
 bool TimedPartyMove::move_party() {
 	bool moving = false; // moving or waiting
-	Actor *used_gate = NULL; // someone just stepped into the gate (for effect)
+	Actor *used_gate = nullptr; // someone just stepped into the gate (for effect)
 
 	if (actor_to_hide) {
 		hide_actor(actor_to_hide);
 		moving = true; // allow at least one more tick so we see last actor hide
 	}
-	actor_to_hide = NULL;
+	actor_to_hide = nullptr;
 
 	for (uint32 a = 0; a < party->get_party_size(); a++) {
 		Actor *person = party->get_actor(a);
@@ -388,9 +388,9 @@ void TimedPartyMove::hide_actor(Actor *person) {
  */
 void TimedPartyMove::change_location() {
 	EffectManager *effect_mgr = Game::get_game()->get_effect_manager();
-	Graphics::ManagedSurface *mapwindow_capture = NULL;
+	Graphics::ManagedSurface *mapwindow_capture = nullptr;
 	if (wait_for_effect != 1) {
-		bool is_moongate = moongate != NULL;
+		bool is_moongate = moongate != nullptr;
 		if (moongate && moongate->obj_n == OBJ_U6_RED_GATE) { // leave blue moongates
 			// get image before deleting moongate
 			mapwindow_capture = map_window->get_sdl_surface();
@@ -445,7 +445,7 @@ bool TimedPartyMove::fall_in() {
  */
 TimedPartyMoveToVehicle::TimedPartyMoveToVehicle(MapCoord *d, Obj *obj,
 		uint32 step_delay)
-	: TimedPartyMove(d, NULL, step_delay) {
+	: TimedPartyMove(d, nullptr, step_delay) {
 	ship_obj = obj;
 }
 
@@ -491,7 +491,7 @@ TimedContainerSearch::TimedContainerSearch(Obj *obj) : TimedEvent(500, TIMER_DEL
 	om = game->get_obj_manager();
 
 	container_obj = obj;
-	prev_obj = NULL;
+	prev_obj = nullptr;
 
 	//game->set_pause_flags((GamePauseState)(game->get_pause_flags() | PAUSE_USER));
 	game->pause_user();
@@ -548,7 +548,7 @@ GameTimedCallback::GameTimedCallback(CallBack *t, void *d, uint32 wait_time, boo
 /*** TimedAdvance: Advance game time by rate until hours has passed. **/
 #define TIMEADVANCE_PER_SECOND 1000 /* frequency of timer calls */
 TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
-	: TimedCallback(NULL, NULL, 1000 / TIMEADVANCE_PER_SECOND, true),
+	: TimedCallback(nullptr, nullptr, 1000 / TIMEADVANCE_PER_SECOND, true),
 	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
 	init(hours * 60, r);
@@ -558,7 +558,7 @@ TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
 /* Advance to time indicated by timestring, of the format "HH:MM".
  */
 TimedAdvance::TimedAdvance(Std::string timestring, uint16 r)
-	: TimedCallback(NULL, NULL, 1000 / TIMEADVANCE_PER_SECOND, true),
+	: TimedCallback(nullptr, nullptr, 1000 / TIMEADVANCE_PER_SECOND, true),
 	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
 	uint8 hour = 0, minute = 0;
@@ -638,7 +638,7 @@ bool TimedAdvance::time_passed() {
 /* Set hour and minute from "HH:MM" string.
  */
 void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring) {
-	char *hour_s = NULL, *minute_s = NULL;
+	char *hour_s = nullptr, *minute_s = nullptr;
 	hour_s = scumm_strdup(timestring.c_str());
 	for (uint32 c = 0; c < strlen(hour_s); c++)
 		if (hour_s[c] == ':') { // get minutes
@@ -648,11 +648,11 @@ void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Std::string 
 		}
 
 	if (hour_s) {
-		hour = strtol(hour_s, NULL, 10);
+		hour = strtol(hour_s, nullptr, 10);
 		free(hour_s);
 	}
 	if (minute_s) {
-		minute = strtol(minute_s, NULL, 10);
+		minute = strtol(minute_s, nullptr, 10);
 		free(minute_s);
 	}
 }
@@ -696,7 +696,7 @@ void TimedRestGather::check_campfire() {
 				for (int y = 0; y < 3; y++) {
 					if (x == 1 && y == 1)
 						continue;
-					if (actor_manager->get_actor(dest->x + x - 1, dest->y + y - 1, loc.z) == NULL) {
+					if (actor_manager->get_actor(dest->x + x - 1, dest->y + y - 1, loc.z) == nullptr) {
 						actor->move(dest->x + x - 1, dest->y + y - 1, loc.z);
 
 					}

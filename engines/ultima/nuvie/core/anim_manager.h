@@ -65,7 +65,7 @@ class AnimManager {
 	AnimIterator get_anim_iterator(uint32 anim_id);
 
 public:
-	AnimManager(sint16 x, sint16 y, Screen *screen = NULL, Common::Rect *clipto = NULL);
+	AnimManager(sint16 x, sint16 y, Screen *screen = nullptr, Common::Rect *clipto = nullptr);
 	~AnimManager() {
 		destroy_all();
 	}
@@ -168,7 +168,7 @@ public:
 		updated = running = false;
 	}
 	virtual void start()                    { }
-	uint16 message(uint16 msg, void *msg_data = NULL, void *my_data = NULL) {
+	uint16 message(uint16 msg, void *msg_data = nullptr, void *my_data = nullptr) {
 		if (callback_target) return (CallBack::message(msg, msg_data, my_data));
 		else return (0);
 	}
@@ -246,18 +246,18 @@ protected:
 	TimedCallback *timer;
 public:
 	TimedAnim()  {
-		timer = NULL;
+		timer = nullptr;
 	}
 	~TimedAnim() override {
 		stop_timer();
 	}
 	void start_timer(uint32 delay) {
-		if (!timer) timer = new TimedCallback(this, NULL, delay, true);
+		if (!timer) timer = new TimedCallback(this, nullptr, delay, true);
 	}
 	void stop_timer()              {
 		if (timer) {
 			timer->clear_target();
-			timer = NULL;
+			timer = nullptr;
 		}
 	}
 

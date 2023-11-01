@@ -53,21 +53,21 @@ namespace Nuvie {
 ViewManager::ViewManager(Configuration *cfg) {
 	config = cfg;
 	config->value("config/GameType", game_type);
-	current_view = NULL;
-	gui = NULL;
-	font = NULL;
-	tile_manager = NULL;
-	obj_manager = NULL;
-	party = NULL;
-	portrait = NULL;
-	actor_view = NULL;
-	inventory_view = NULL;
-	portrait_view = NULL;
-	party_view = NULL;
-	spell_view = NULL;
+	current_view = nullptr;
+	gui = nullptr;
+	font = nullptr;
+	tile_manager = nullptr;
+	obj_manager = nullptr;
+	party = nullptr;
+	portrait = nullptr;
+	actor_view = nullptr;
+	inventory_view = nullptr;
+	portrait_view = nullptr;
+	party_view = nullptr;
+	spell_view = nullptr;
 	doll_next_party_member = 0;
-	ribbon = NULL;
-	mdSkyWidget = NULL;
+	ribbon = nullptr;
+	mdSkyWidget = nullptr;
 }
 
 ViewManager::~ViewManager() {
@@ -160,13 +160,13 @@ bool ViewManager::set_current_view(View *view) {
 	uint8 cur_party_member;
 
 //actor_view->set_party_member(cur_party_member);
-	if (view == NULL) // || game_type != NUVIE_GAME_U6) //HACK! remove this when views support MD and SE
+	if (view == nullptr) // || game_type != NUVIE_GAME_U6) //HACK! remove this when views support MD and SE
 		return false;
 
 	if (current_view == view) // nothing to do if view is already the current_view.
 		return false;
 
-	if (current_view != NULL) {
+	if (current_view != nullptr) {
 		gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
 
 		cur_party_member = current_view->get_party_member_num();
@@ -197,11 +197,11 @@ bool ViewManager::set_current_view(View *view) {
 }
 
 void ViewManager::close_current_view() {
-	if (current_view == NULL)
+	if (current_view == nullptr)
 		return;
 
 	gui->removeWidget((GUI_Widget *)current_view);//remove current widget from gui
-	current_view = NULL;
+	current_view = nullptr;
 }
 
 void ViewManager::update() {
@@ -257,7 +257,7 @@ void ViewManager::set_actor_mode() {
 }
 
 void ViewManager::set_spell_mode(Actor *caster, Obj *spell_container, bool eventMode) {
-	if (spell_view != NULL) {
+	if (spell_view != nullptr) {
 		spell_view->set_spell_caster(caster, spell_container, eventMode);
 		set_current_view((View *)spell_view);
 	}
@@ -279,11 +279,11 @@ void ViewManager::open_doll_view(Actor *actor) {
 	Screen *screen = Game::get_game()->get_screen();
 
 	if (Game::get_game()->is_new_style()) {
-		if (actor == NULL) {
+		if (actor == nullptr) {
 			actor = doll_view_get_next_party_member();
 		}
 		DollViewGump *doll = get_doll_view(actor);
-		if (doll == NULL) {
+		if (doll == nullptr) {
 			uint16 x_off = Game::get_game()->get_game_x_offset();
 			uint16 y_off = Game::get_game()->get_game_y_offset();
 			uint8 num_doll_gumps = doll_gumps.size();
@@ -324,7 +324,7 @@ DollViewGump *ViewManager::get_doll_view(Actor *actor) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
@@ -342,13 +342,13 @@ ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void ViewManager::open_container_view(Actor *actor, Obj *obj) {
 	ContainerViewGump *view = get_container_view(actor, obj);
 
-	if (view == NULL) {
+	if (view == nullptr) {
 		uint16 x_off = Game::get_game()->get_game_x_offset();
 		uint16 y_off = Game::get_game()->get_game_y_offset();
 		uint16 container_x, container_y;
@@ -376,7 +376,7 @@ void ViewManager::open_container_view(Actor *actor, Obj *obj) {
 }
 
 void ViewManager::close_container_view(Actor *actor) {
-	ContainerViewGump *view = get_container_view(actor, NULL);
+	ContainerViewGump *view = get_container_view(actor, nullptr);
 
 	if (view) {
 		close_gump(view);
@@ -454,7 +454,7 @@ void ViewManager::close_gump(DraggableView *gump) {
 	gump->Delete();
 	//gui->removeWidget((GUI_Widget *)gump);
 
-	if (gumps.empty() && ribbon != NULL) {
+	if (gumps.empty() && ribbon != nullptr) {
 		ribbon->retract();
 	}
 }
@@ -554,11 +554,11 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 	} else {
 		build_path(getDollDataDirString(), filename, imagefile);
 	}
-	if (avatar_doll != NULL)
+	if (avatar_doll != nullptr)
 		SDL_FreeSurface(avatar_doll);
 	NuvieBmpFile bmp;
 	avatar_doll = bmp.getSdlSurface32(imagefile);
-	if (avatar_doll == NULL)
+	if (avatar_doll == nullptr)
 		avatar_doll = loadGenericDollImage(orig);
 	return avatar_doll;
 }
@@ -567,7 +567,7 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 	char filename[17]; //actor_nn_nnn.bmp\0
 	Std::string imagefile;
 
-	if (actor_doll != NULL)
+	if (actor_doll != nullptr)
 		SDL_FreeSurface(actor_doll);
 
 	Common::sprintf_s(filename, "actor_%s_%03d.bmp", get_game_tag(Game::get_game()->get_game_type()), actor_num);
@@ -580,7 +580,7 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 	NuvieBmpFile bmp;
 	actor_doll = bmp.getSdlSurface32(imagefile);
 
-	if (actor_doll == NULL)
+	if (actor_doll == nullptr)
 		actor_doll = loadGenericDollImage(orig);
 	return actor_doll;
 }

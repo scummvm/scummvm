@@ -112,7 +112,7 @@ static FILE *sample[1];
 
 /* #define LOG_CYM_FILE */
 #ifdef LOG_CYM_FILE
-	FILE * cymfile = NULL;
+	FILE * cymfile = nullptr;
 #endif
 
 
@@ -561,7 +561,7 @@ static const int8 lfo_pm_table[8*8*2] = {
 static int num_lock = 0;
 
 /* work table */
-static void *cur_chip = NULL;	/* current chip point */
+static void *cur_chip = nullptr;	/* current chip point */
 OPL_SLOT *SLOT7_1,*SLOT7_2,*SLOT8_1,*SLOT8_2;
 
 static signed int phase_modulation;		/* phase modulation input (SLOT 2) */
@@ -1672,7 +1672,7 @@ static int OPL_LockTable(void)
 
 	/* first time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	/* allocate total level table (128kb space) */
 	if( !init_tables() )
 	{
@@ -1698,12 +1698,12 @@ static void OPL_UnLockTable(void)
 
 	/* last time */
 
-	cur_chip = NULL;
+	cur_chip = nullptr;
 	OPLCloseTable();
 
 #ifdef LOG_CYM_FILE
 	fclose (cymfile);
-	cymfile = NULL;
+	cymfile = nullptr;
 #endif
 
 }
@@ -1762,7 +1762,7 @@ static FM_OPL *OPLCreate(int type, int clock, int rate)
 	FM_OPL *OPL;
 	int state_size;
 
-	if (OPL_LockTable() ==-1) return NULL;
+	if (OPL_LockTable() ==-1) return nullptr;
 
 	/* calculate OPL state size */
 	state_size  = sizeof(FM_OPL);
@@ -1774,8 +1774,8 @@ static FM_OPL *OPLCreate(int type, int clock, int rate)
 	/* allocate memory block */
 	ptr = (char *)malloc(state_size);
 
-	if (ptr==NULL)
-		return NULL;
+	if (ptr==nullptr)
+		return nullptr;
 
 	/* clear */
 	memset(ptr,0,state_size);
@@ -1942,7 +1942,7 @@ int YM3812Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_YM3812[i] = OPLCreate(OPL_TYPE_YM3812,clock,rate);
-		if(OPL_YM3812[i] == NULL)
+		if(OPL_YM3812[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			YM3812NumChips = 0;
@@ -1961,7 +1961,7 @@ void YM3812Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_YM3812[i]);
-		OPL_YM3812[i] = NULL;
+		OPL_YM3812[i] = nullptr;
 	}
 	YM3812NumChips = 0;
 }
@@ -2088,7 +2088,7 @@ int YM3526Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_YM3526[i] = OPLCreate(OPL_TYPE_YM3526,clock,rate);
-		if(OPL_YM3526[i] == NULL)
+		if(OPL_YM3526[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			YM3526NumChips = 0;
@@ -2107,7 +2107,7 @@ void YM3526Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_YM3526[i]);
-		OPL_YM3526[i] = NULL;
+		OPL_YM3526[i] = nullptr;
 	}
 	YM3526NumChips = 0;
 }
@@ -2234,7 +2234,7 @@ int Y8950Init(int num, int clock, int rate)
 	{
 		/* emulator create */
 		OPL_Y8950[i] = OPLCreate(OPL_TYPE_Y8950,clock,rate);
-		if(OPL_Y8950[i] == NULL)
+		if(OPL_Y8950[i] == nullptr)
 		{
 			/* it's really bad - we run out of memeory */
 			Y8950NumChips = 0;
@@ -2253,7 +2253,7 @@ void Y8950Shutdown(void)
 	{
 		/* emulator shutdown */
 		OPLDestroy(OPL_Y8950[i]);
-		OPL_Y8950[i] = NULL;
+		OPL_Y8950[i] = nullptr;
 	}
 	Y8950NumChips = 0;
 }
