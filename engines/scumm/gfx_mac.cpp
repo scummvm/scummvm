@@ -510,7 +510,7 @@ void MacGui::MacCheckbox::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGui::MacCheckbox::handleMouseUp() {
+void MacGui::MacCheckbox::handleMouseUp(Common::Event &event) {
 	_value = _value ? 0 : 1;
 	setRedraw();
 }
@@ -534,6 +534,274 @@ void MacGui::MacText::draw(bool drawFocused) {
 
 	_redraw = false;
 	_fullRedraw = false;
+}
+
+// ---------------------------------------------------------------------------
+// Editable text widget
+//
+// The current edit position is stored in _caretPos. This holds the character
+// the caret is placed right after, so 0 is the first character.
+//
+// The length of the current selection is stored in _selectionLen. Selections
+// can extend left or right of the _caretPos. This simplifies mouse selection
+// enormously.
+// ---------------------------------------------------------------------------
+
+MacGui::MacEditText::MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
+	_font = _window->_gui->getFont(kSystemFont);
+
+	// This widget gets its own text surface, to ensure that the text is
+	// properly clipped to the widget's bounds. Technically, the other
+	// widgets that draw text could use this too, but there we assume that
+	// the texts are chosen to fit without clipping.
+
+	_textSurface = _window->innerSurface()->getSubArea(_bounds);
+}
+
+bool MacGui::MacEditText::findWidget(int x, int y) const {
+	if (!_visible || !_enabled)
+		return false;
+
+	// Once we start dragging the handle, any mouse position is considered
+	// within the widget.
+
+	if (_window->getFocusedWidget() == this)
+		return true;
+
+	return _bounds.contains(x, y);
+}
+
+int MacGui::MacEditText::getTextPosFromMouse(int x) {
+	int clickPos = -1;
+
+	x -= _bounds.left;
+	int textX = _textPos;
+
+	for (uint i = 0; i < _text.size(); i++) {
+		int charWidth = _font->getCharWidth(_text[i]);
+
+		if (x >= textX && x < textX + charWidth) {
+			clickPos = i;
+			break;
+		}
+
+		textX += charWidth;
+	}
+
+	return clickPos;
+}
+
+void MacGui::MacEditText::deleteSelection() {
+	_text.erase(_caretPos, _selectLen);
+	_selectLen = 0;
+}
+
+void MacGui::MacEditText::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	Graphics::Surface *s = _window->innerSurface();
+	Common::Rect bounds = _bounds;
+
+	bounds.grow(1);
+
+	s->fillRect(_bounds, kWhite);
+	s->frameRect(bounds, kRed);
+
+	int caretX;
+
+	if (_selectLen == 0) {
+		// Make sure the caret is visible
+
+		caretX = _textPos;
+
+		for (int i = 0; i < _caretPos; i++)
+			caretX += _font->getCharWidth(_text[i]);
+
+		int delta = 0;
+
+		if (caretX < 0)
+			delta = caretX;
+		else if (caretX >= _textSurface.w)
+			delta = caretX - _textSurface.w + 1;
+
+		if (delta) {
+			_textPos -= delta;
+			caretX -= delta;
+		}
+	}
+
+	int x = _textPos;
+	int y = 0;
+
+	for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
+		Color color = kBlack;
+		int charWidth = _font->getCharWidth(_text[i]);
+
+		int selectStart, selectEnd;
+
+		if (_selectLen != 0) {
+			if (_selectLen < 0) {
+				selectStart = _caretPos + _selectLen;
+				selectEnd = _caretPos - 1;
+			} else {
+				selectStart = _caretPos;
+				selectEnd = _caretPos + _selectLen - 1;
+			}
+		}
+
+		if (x + charWidth >= 0) {
+			if (_selectLen != 0 && i >= selectStart && i <= selectEnd) {
+				_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
+				color = kWhite;
+			}
+
+			_font->drawChar(&_textSurface, _text[i], x, y, color);
+		}
+
+		x += charWidth;
+	}
+
+	if (_selectLen == 0) {
+		_textSurface.vLine(caretX, 0, _textSurface.h - 1, kRed);
+	}
+
+	_window->markRectAsDirty(bounds);
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
+void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
+	uint32 now = _window->_system->getMillis();
+	int x = event.mouse.x - _bounds.left;
+
+	_caretPos = getTextPosFromMouse(event.mouse.x);
+	_selectLen = 0;
+
+	if (now - _lastClickTime < 500 && ABS(x - _lastClickX) < 5) {
+		_selectLen = 0;
+
+		if (!_text.empty()) {
+			int startPos = _caretPos;
+			int endPos = _caretPos;
+
+			if (_text[_caretPos] == ' ') {
+				while (startPos >= 0) {
+					if (_text[startPos] != ' ') {
+						startPos++;
+						break;
+					}
+					startPos--;
+				}
+
+				while (endPos < (int)_text.size()) {
+					if (_text[endPos] != ' ') {
+						endPos--;
+						break;
+					}
+					endPos++;
+				}
+			} else {
+				while (startPos >= 0) {
+					if (_text[startPos] == ' ') {
+						startPos++;
+						break;
+					}
+					startPos--;
+				}
+
+				while (endPos < (int)_text.size()) {
+					if (_text[endPos] == ' ') {
+						endPos--;
+						break;
+					}
+					endPos++;
+				}
+			}
+
+			_caretPos = startPos;
+			_selectLen = endPos - startPos + 1;
+		}
+
+		_lastClickTime = 0;
+		_lastClickX = 0;
+	} else {
+		_lastClickTime = now;
+		_lastClickX = x;
+		_selectLen = 0;
+	}
+
+	_redraw = true;
+}
+
+bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
+	if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
+		return false;
+
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_LEFT:
+		if (_caretPos > 0) {
+			_caretPos--;
+		}
+		_selectLen = 0;
+		return true;
+
+	case Common::KEYCODE_RIGHT:
+		if (_caretPos < (int)_text.size()) {
+			if (_selectLen > 0)
+				_caretPos += _selectLen;
+			_caretPos++;
+		}
+		return true;
+
+	case Common::KEYCODE_BACKSPACE:
+		if (_selectLen != 0) {
+			deleteSelection();
+		} else if (_caretPos > 0) {
+			_caretPos--;
+			_text.deleteChar(_caretPos);
+		}
+		return true;
+
+	case Common::KEYCODE_DELETE:
+		if (_selectLen != 0) {
+			deleteSelection();
+		} else if (_caretPos < (int)_text.size()) {
+			_text.deleteChar(_caretPos);
+		}
+		return true;
+
+	default:
+		break;
+	}
+
+	int c = event.kbd.ascii;
+
+	if (c >= 32 && c <= 127) {
+		if (_selectLen != 0)
+			deleteSelection();
+		_text.insertChar(event.kbd.ascii, _caretPos);
+		_caretPos++;
+		return true;
+	}
+
+	return false;
+}
+
+void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
+	int oldSelectLen = _selectLen;
+
+	int pos = getTextPosFromMouse(event.mouse.x);
+
+	_selectLen = pos - _caretPos;
+
+	if (_selectLen != oldSelectLen) {
+		setRedraw();
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -623,19 +891,19 @@ void MacGui::MacSlider::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGui::MacSlider::handleMouseDown() {
-	int mouseX = _window->getMousePos().x - _bounds.left;
+void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
+	int mouseX = event.mouse.x;
 	int handleWidth = _handle->getBounds().width();
 
 	if (mouseX >= _handleX && mouseX < _handleX + handleWidth)
-		_grabOffset = _window->getMousePos().x - _bounds.left - _handleX;
+		_grabOffset = event.mouse.x - _bounds.left - _handleX;
 	else
 		_grabOffset = handleWidth / 2;
 
-	handleMouseMove();
+	handleMouseMove(event);
 }
 
-void MacGui::MacSlider::handleMouseUp() {
+void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 	int posRange = (_maxX - _rightMargin) - (_minX + _rightMargin);
 	int posOffset = _handleX - (_minX + _leftMargin);
 
@@ -645,8 +913,8 @@ void MacGui::MacSlider::handleMouseUp() {
 	setValue(_minValue + valueOffset);
 }
 
-void MacGui::MacSlider::handleMouseMove() {
-	_handleX = CLIP<int>(_window->getMousePos().x - _bounds.left - _grabOffset, _minX, _maxX);
+void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
+	_handleX = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
 	setRedraw();
 }
 
@@ -772,6 +1040,10 @@ void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, 
 	_widgets.push_back(new MacText(this, bounds, text, enabled));
 }
 
+void MacGui::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
+	_widgets.push_back(new MacEditText(this, bounds, text, enabled));
+}
+
 void MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
 	_widgets.push_back(new MacPicture(this, bounds, id, false));
 }
@@ -859,7 +1131,7 @@ int MacGui::MacDialogWindow::runDialog() {
 				buttonPressed = true;
 				setFocusedWidget(event.mouse.x, event.mouse.y);
 				if (_focusedWidget)
-					_focusedWidget->handleMouseDown();
+					_focusedWidget->handleMouseDown(event);
 				break;
 
 			case Common::EVENT_LBUTTONUP:
@@ -867,7 +1139,7 @@ int MacGui::MacDialogWindow::runDialog() {
 
 				if (_focusedWidget && _focusedWidget->findWidget(event.mouse.x, event.mouse.y)) {
 					widgetId = _focusedWidget->getId();
-					_focusedWidget->handleMouseUp();
+					_focusedWidget->handleMouseUp(event);
 					clearFocusedWidget();
 					return widgetId;
 				}
@@ -881,12 +1153,17 @@ int MacGui::MacDialogWindow::runDialog() {
 						_focusedWidget->setRedraw();
 					}
 
-					_focusedWidget->handleMouseMove();
+					_focusedWidget->handleMouseMove(event);
 				}
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				if (!buttonPressed && event.kbd.keycode == Common::KEYCODE_RETURN) {
+				// Ignore keyboard while mouse is pressed
+				if (buttonPressed)
+					break;
+
+				// Handle default button
+				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 					MacWidget *widget = getDefaultWidget();
 					if (widget && widget->isEnabled()) {
 						for (int i = 0; i < 2; i++) {
@@ -899,9 +1176,20 @@ int MacGui::MacDialogWindow::runDialog() {
 								_system->updateScreen();
 							}
 						}
+
 						return widget->getId();
 					}
 				}
+
+				// Otherwise, give widgets a chance to react
+				// to key presses.
+				for (uint i = 0; i < _widgets.size(); i++) {
+					if (_widgets[i]->handleKeyDown(event)) {
+						_widgets[i]->setRedraw();
+						break;
+					}
+				}
+
 				break;
 
 			default:
@@ -1676,7 +1964,7 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 
 			case 16:
 				// Editable text
-				window->innerSurface()->frameRect(r, kGreen);
+				window->addEditText(r, "Lorem ipsum dolor sit amet, consectetur adipisicing elit", enabled);
 				res->skip(len);
 				break;
 
@@ -2555,7 +2843,7 @@ bool MacIndy3Gui::Button::handleEvent(Common::Event &event) {
 	bool caughtEvent = false;
 
 	if (event.type == Common::EVENT_KEYDOWN) {
-		if (!(event.kbd.flags & Common::KBD_NON_STICKY) && event.kbd.keycode == vs->key)
+		if (!(event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META)) && event.kbd.keycode == vs->key)
 			caughtEvent = true;
 	} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 		if (_bounds.contains(event.mouse))
@@ -3912,6 +4200,10 @@ void MacIndy3Gui::resetAfterLoad() {
 		if (_vm->_verbs[i].verbid >= 102 && _vm->_verbs[i].verbid <= 108)
 			_vm->killVerb(i);
 	}
+
+	int charsetId = _vm->_charset->getCurID();
+	if (charsetId < 0 || charsetId > 1)
+		_vm->_charset->setCurID(0);
 }
 
 void MacIndy3Gui::update(int delta) {

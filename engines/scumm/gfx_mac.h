@@ -182,9 +182,11 @@ public:
 		virtual bool findWidget(int x, int y) const;
 
 		virtual void draw(bool drawFocused = false) = 0;
-		virtual void handleMouseDown() {}
-		virtual void handleMouseUp() {}
-		virtual void handleMouseMove() {}
+
+		virtual void handleMouseDown(Common::Event &event) {}
+		virtual void handleMouseUp(Common::Event &event) {}
+		virtual void handleMouseMove(Common::Event &event) {}
+		virtual bool handleKeyDown(Common::Event &event) { return false; }
 	};
 
 	class MacButton : public MacWidget {
@@ -212,7 +214,7 @@ public:
 
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocused = false);
-		void handleMouseUp();
+		void handleMouseUp(Common::Event &event);
 	};
 
 	// The dialogs add texts as disabled, but we don't want it to be drawn
@@ -224,6 +226,36 @@ public:
 		MacText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 		bool findWidget(int x, int y) const { return false; }
 		void draw(bool drawFocused = false);
+	};
+
+	class MacEditText : public MacWidget {
+	private:
+		int _textPos = 0;
+		int _selectLen = 0;
+		int _caretPos = 0;
+
+		uint32 _lastClickTime = 0;
+		uint32 _lastClickX = 0;
+
+		uint32 _lastBlinkTime = 0;
+		bool _caretVisible = false;
+
+		const Graphics::Font *_font;
+		Graphics::Surface _textSurface;
+
+		int getTextPosFromMouse(int x);
+		void deleteSelection();
+
+	public:
+		MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
+
+		bool findWidget(int x, int y) const;
+
+		void draw(bool drawFocused = false);
+
+		void handleMouseDown(Common::Event &event);
+		bool handleKeyDown(Common::Event &event);
+		void handleMouseMove(Common::Event &event);
 	};
 
 	class MacPicture : public MacWidget {
@@ -264,14 +296,13 @@ public:
 		void setValue(int value);
 		void draw(bool drawFocused = false);
 
-		void handleMouseDown();
-		void handleMouseUp();
-		void handleMouseMove();
+		void handleMouseDown(Common::Event &event);
+		void handleMouseUp(Common::Event &event);
+		void handleMouseMove(Common::Event &event);
 	};
 
 	class MacDialogWindow {
 	private:
-		OSystem *_system;
 		Common::Rect _bounds;
 		int _margin;
 
@@ -299,6 +330,7 @@ public:
 		void copyToScreen(Graphics::Surface *s = nullptr) const;
 
 	public:
+		OSystem *_system;
 		MacGui *_gui;
 
 		MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
@@ -332,6 +364,7 @@ public:
 		void addButton(Common::Rect bounds, Common::String text, bool enabled);
 		void addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
 		void addText(Common::Rect bounds, Common::String text, bool enabled);
+		void addEditText(Common::Rect bounds, Common::String text, bool enabled);
 		void addPicture(Common::Rect bounds, int id, bool enabled);
 		void addSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 
