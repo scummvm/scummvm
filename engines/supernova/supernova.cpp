@@ -519,14 +519,14 @@ Common::Error SupernovaEngine::showTextReader(const char *extension) {
 	blockName.toUppercase();
 	if ((stream = getBlockFromDatFile(blockName)) == nullptr) {
 		Common::File file;
-		Common::String filename;
+		Common::Path filename;
 		if (_MSPart == 1)
-			filename = Common::String::format("msn.%s", extension);
+			filename = Common::Path(Common::String::format("msn.%s", extension));
 		if (_MSPart == 2)
-			filename = Common::String::format("ms2.%s", extension);
+			filename = Common::Path(Common::String::format("ms2.%s", extension));
 
 		if (!file.open(filename)) {
-			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename.c_str());
+			GUIErrorMessageFormat(_("Unable to find '%s' in game folder or the engine data file."), filename.toString().c_str());
 			return Common::kReadingFailed;
 		}
 		stream = file.readStream(file.size());
