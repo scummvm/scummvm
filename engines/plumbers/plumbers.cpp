@@ -213,7 +213,7 @@ Common::Error PlumbersGame::run() {
 void PlumbersGame::loadImage(const Common::String &name) {
 	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File file;
-	if (!file.open(name))
+	if (!file.open(Common::Path(name)))
 		error("unable to load image %s", name.c_str());
 
 	_image->loadStream(file);
@@ -275,7 +275,7 @@ void PlumbersGame::drawScreen() {
 void PlumbersGame::playSound(const Common::String &name) {
 	debugC(3, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
 	Common::File *file = new Common::File();
-	if (!file->open(name))
+	if (!file->open(Common::Path(name)))
 		error("unable to load sound %s", name.c_str());
 
 	Audio::AudioStream *stream;
