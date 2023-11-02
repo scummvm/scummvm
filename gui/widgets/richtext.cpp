@@ -85,11 +85,43 @@ void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	_verticalScroll->handleMouseWheel(x, y, direction);
 }
 
+void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	_mouseDownY = _mouseDownStartY = y;
+}
+
 void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	// Allow some tiny finger slipping
+	if (ABS(_mouseDownY - _mouseDownStartY) > 5) {
+		_mouseDownY = _mouseDownStartY = 0;
+
+		return;
+	}
+
+	_mouseDownY = _mouseDownStartY = 0;
+
 	Common::String link = _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY).encode();
 
 	if (link.hasPrefixIgnoreCase("http"))
 		g_system->openUrl(link);
+}
+
+void RichTextWidget::handleMouseMoved(int x, int y, int button) {
+	if (_mouseDownStartY == 0 || _mouseDownY == y)
+		return;
+
+	int h = _txtWnd->getTextHeight();
+	int prevScrolledY = _scrolledY;
+
+	_scrolledY = CLIP(_scrolledY - (y - _mouseDownY), 0, h);
+
+	_mouseDownY = y;
+
+	if (_scrolledY == prevScrolledY)
+		return;
+
+	recalc();
+	_verticalScroll->recalc();
+	markAsDirty();
 }
 
 void RichTextWidget::handleTooltipUpdate(int x, int y) {
@@ -117,7 +149,7 @@ void RichTextWidget::recalc() {
 	int h = _txtWnd->getTextHeight();
 
 	if (h <= _limitH) _scrolledY = 0;
-	if (_scrolledY > h - _limitH) _scrolledY = 0;
+	if (_scrolledY > h - _limitH) _scrolledY = MAX(0, h - _limitH);
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
