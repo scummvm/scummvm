@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-31 23:24+0000\n"
+"POT-Creation-Date: 2023-11-02 17:20+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -3089,7 +3089,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Prestasjon låst opp!"
 
-#: engines/advancedDetector.cpp:237
+#: engines/advancedDetector.cpp:239
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Ugyldig spillkopi oppdaget. Vi kan dermed ikke tilby støtte i slike "
@@ -3347,7 +3347,7 @@ msgstr "Innlasting av lagrede spill er for øyeblikket ikke tilgjengelig"
 msgid "Saving game is currently unavailable"
 msgstr "Lagring av spill er for øyeblikket ikke tilgjengelig"
 
-#: engines/game.cpp:200
+#: engines/game.cpp:203
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3361,7 +3361,7 @@ msgstr ""
 "du prøvde å legge til, hvilken versjon av spillet det er, hvilket språk det "
 "er på, osv.:"
 
-#: engines/game.cpp:204
+#: engines/game.cpp:207
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Matchende spill-ID-er for spillmotoren %s:"

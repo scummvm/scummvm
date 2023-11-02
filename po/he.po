@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-31 23:24+0000\n"
+"POT-Creation-Date: 2023-11-02 17:20+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3058,7 +3058,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "נפתח הישג!"
 
-#: engines/advancedDetector.cpp:237
+#: engines/advancedDetector.cpp:239
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "נתגלה עותק בלתי-חוקי של משחק. אנו לא מספקים תמיכה במקרים שכאלה"
 
@@ -3310,7 +3310,7 @@ msgstr "טעינת המשחק אינה זמינה כרגע"
 msgid "Saving game is currently unavailable"
 msgstr "שמירת משחק אינה זמינה כרגע"
 
-#: engines/game.cpp:200
+#: engines/game.cpp:203
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3323,7 +3323,7 @@ msgstr ""
 "נא לדווח על הנתונים הבאים לצוות ScummVM ב-%s יחד עם שם המשחק אותו ניסיתם "
 "להוסיף והגרסה שלו, השפה וכו ':"
 
-#: engines/game.cpp:204
+#: engines/game.cpp:207
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "מזהי משחק תואמים למנוע %s:"

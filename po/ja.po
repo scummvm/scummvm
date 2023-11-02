@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-31 23:24+0000\n"
+"POT-Creation-Date: 2023-11-02 17:20+0000\n"
 "PO-Revision-Date: 2023-10-26 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2987,7 +2987,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "実績がアンロックされました!"
 
-#: engines/advancedDetector.cpp:237
+#: engines/advancedDetector.cpp:239
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "違法コピーの痕跡が検出されました。このソフトはサポートできません"
 
@@ -3233,7 +3233,7 @@ msgstr "ロードされたゲームは現在使用できません"
 msgid "Saving game is currently unavailable"
 msgstr "セーブされているゲームは現在使用できません"
 
-#: engines/game.cpp:200
+#: engines/game.cpp:203
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3245,7 +3245,7 @@ msgstr ""
 "\n"
 "ゲーム名(%s)、バージョン、言語等の情報をScummVMチームまでお寄せください。"
 
-#: engines/game.cpp:204
+#: engines/game.cpp:207
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "エンジン%sにマッチしたゲームID："

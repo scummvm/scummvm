@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-10-31 23:24+0000\n"
+"POT-Creation-Date: 2023-11-02 17:20+0000\n"
 "PO-Revision-Date: 2023-10-28 15:41+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -3010,7 +3010,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Saavutus avattu!"
 
-#: engines/advancedDetector.cpp:237
+#: engines/advancedDetector.cpp:239
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Laiton pelikopio tunnistettu. Emme tarjoa tukea tällaisissa tapauksissa"
@@ -3265,7 +3265,7 @@ msgstr "Pelin lataaminen ei ole tällä hetkellä mahdollista"
 msgid "Saving game is currently unavailable"
 msgstr "Pelin tallentaminen ei ole tällä hetkellä mahdollista"
 
-#: engines/game.cpp:200
+#: engines/game.cpp:203
 #, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
@@ -3278,7 +3278,7 @@ msgstr ""
 "pelin nimen,\n"
 "version, kielen, yms. kera:"
 
-#: engines/game.cpp:204
+#: engines/game.cpp:207
 #, c-format
 msgid "Matched game IDs for the %s engine:"
 msgstr "Täsmäävät tunnisteet pelimoottorille %s:"
