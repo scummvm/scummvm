@@ -2576,7 +2576,7 @@ bool ScummEngine::executeMainMenuOperationSegaCD(int op, int mouseX, int mouseY,
 			// This will let us know whether we have successfully loaded a game or not.
 
 			// First time...
-			int args[16];
+			int args[NUM_SCRIPT_LOCAL];
 			memset(args, 0, sizeof(args));
 			args[0] = _bootParam;
 
