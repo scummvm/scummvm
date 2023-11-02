@@ -633,11 +633,9 @@ void LC::cb_thepush() {
 
 		warning("cb_thepush: me object has no property '%s', type: %d", name.c_str(), g_lingo->_state->me.type);
 	} else {
-		warning("cb_thepush: no me object");
+		g_lingo->lingoError("cb_thepush: no me object");
 	}
-	Datum result;
-	result.type = VOID;
-	g_lingo->push(result);
+	g_lingo->pushVoid();
 }
 
 void LC::cb_thepush2() {
