@@ -235,6 +235,8 @@ public:
 		int _caretPos = 0;
 
 		uint32 _lastClickTime = 0;
+		uint32 _lastScrollTime = 0;
+
 		int _lastClickX = 0;
 
 		uint32 _lastBlinkTime = 0;
@@ -243,7 +245,7 @@ public:
 		const Graphics::Font *_font;
 		Graphics::Surface _textSurface;
 
-		int getTextPosFromMouse(int x);
+		int getTextPosFromMouse(int x, int y);
 		void deleteSelection();
 
 	public:

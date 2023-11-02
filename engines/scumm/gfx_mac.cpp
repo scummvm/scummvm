@@ -571,8 +571,14 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-int MacGui::MacEditText::getTextPosFromMouse(int x) {
-	int clickPos = -1;
+int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
+	if (y < _bounds.top)
+		return 0;
+
+	if (y >= _bounds.bottom)
+		return _text.size();
+
+	int textPos = _text.size();
 
 	x -= _bounds.left;
 	int textX = _textPos;
@@ -581,18 +587,30 @@ int MacGui::MacEditText::getTextPosFromMouse(int x) {
 		int charWidth = _font->getCharWidth(_text[i]);
 
 		if (x >= textX && x < textX + charWidth) {
-			clickPos = i;
+			textPos = i;
 			break;
 		}
 
 		textX += charWidth;
 	}
 
-	return clickPos;
+	return textPos;
 }
 
 void MacGui::MacEditText::deleteSelection() {
-	_text.erase(_caretPos, _selectLen);
+	int startPos;
+	int len;
+
+	if (_selectLen < 0) {
+		startPos = _caretPos + _selectLen;
+		len = -_selectLen;
+	} else {
+		startPos = _caretPos;
+		len = _selectLen;
+	}
+
+	_text.erase(startPos, len);
+	_caretPos = startPos;
 	_selectLen = 0;
 }
 
@@ -606,17 +624,17 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 	Graphics::Surface *s = _window->innerSurface();
 	Common::Rect bounds = _bounds;
 
-	bounds.grow(1);
+	bounds.grow(3);
 
 	s->fillRect(_bounds, kWhite);
-	s->frameRect(bounds, kRed);
+	s->frameRect(bounds, kBlack);
 
 	int caretX = 0;
 
 	if (_selectLen == 0) {
 		// Make sure the caret is visible
 
-		caretX = _textPos;
+		caretX = _textPos - 1;
 
 		for (int i = 0; i < _caretPos; i++)
 			caretX += _font->getCharWidth(_text[i]);
@@ -680,7 +698,7 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 	uint32 now = _window->_system->getMillis();
 	int x = event.mouse.x - _bounds.left;
 
-	_caretPos = getTextPosFromMouse(event.mouse.x);
+	_caretPos = getTextPosFromMouse(event.mouse.x, event.mouse.y);
 	_selectLen = 0;
 
 	if (now - _lastClickTime < 500 && ABS(x - _lastClickX) < 5) {
@@ -745,18 +763,27 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_LEFT:
-		if (_caretPos > 0) {
-			_caretPos--;
+		if (_selectLen < 0) {
+			_caretPos = _caretPos + _selectLen;
+			_selectLen = -_selectLen;
 		}
+
+		if (_caretPos > 0)
+			_caretPos--;
+
 		_selectLen = 0;
 		return true;
 
 	case Common::KEYCODE_RIGHT:
-		if (_caretPos < (int)_text.size()) {
-			if (_selectLen > 0)
-				_caretPos += _selectLen;
-			_caretPos++;
+		if (_selectLen > 0) {
+			_caretPos += _selectLen;
+			_selectLen = -_selectLen;
 		}
+
+		if (_caretPos < (int)_text.size())
+			_caretPos++;
+
+		_selectLen = 0;
 		return true;
 
 	case Common::KEYCODE_BACKSPACE:
@@ -796,7 +823,7 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
 	int oldSelectLen = _selectLen;
 
-	int pos = getTextPosFromMouse(event.mouse.x);
+	int pos = getTextPosFromMouse(event.mouse.x, event.mouse.y);
 
 	_selectLen = pos - _caretPos;
 
