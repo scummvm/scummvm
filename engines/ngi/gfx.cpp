@@ -577,7 +577,9 @@ void Picture::draw(int x, int y, int style, int angle) {
 	case 1: {
 		//flip
 		const Dims dims = getDimensions();
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
+		Bitmap *flipped = _bitmap->flipVertical();
+		flipped->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
+		delete flipped;
 		break;
 	}
 	case 2:
