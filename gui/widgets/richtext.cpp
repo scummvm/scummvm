@@ -85,7 +85,7 @@ void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
 	_verticalScroll->handleMouseWheel(x, y, direction);
 }
 
-void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	Common::String link = _txtWnd->getMouseLink(x + _x + _scrolledX, y + _y + _scrolledY).encode();
 
 	if (link.hasPrefixIgnoreCase("http"))

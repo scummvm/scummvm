@@ -61,7 +61,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseWheel(int x, int y, int direction) override;
-	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleTooltipUpdate(int x, int y) override;
 
 	void markAsDirty() override;
