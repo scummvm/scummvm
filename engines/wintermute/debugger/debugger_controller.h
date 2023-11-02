@@ -96,7 +96,7 @@ public:
 	/**
 	 * @brief read value for a variable accessible from within the current scope.
 	 */
-	Common::String readValue(const Common::String &name, Error *error);
+	Common::String readValue(const Common::String &name, Error **error);
 	/**
 	 * @brief set value for a variable accessible from within the current scope.
 	 */

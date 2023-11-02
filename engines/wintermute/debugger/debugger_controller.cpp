@@ -190,10 +190,9 @@ void DebuggerController::clear() {
 	_lastLine = 0xFFFFFFFF; // Invalid
 }
 
-Common::String DebuggerController::readValue(const Common::String &name, Error *error) {
+Common::String DebuggerController::readValue(const Common::String &name, Error **error) {
 	if (!_lastScript) {
-		delete error;
-		error = new Error(ERROR, NOT_ALLOWED);
+		*error = new Error(ERROR, NOT_ALLOWED);
 		return Common::String();
 	}
 	char cstr[256]; // TODO not pretty
