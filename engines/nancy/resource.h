@@ -50,6 +50,7 @@ public:
 
 	// Load a new ciftree
 	bool readCifTree(const Common::String &name, const Common::String &ext, int priority);
+	PatchTree *readPatchTree(Common::SeekableReadStream *stream, const Common::String &name, int priority);
 
 private:
 	// Debug functions

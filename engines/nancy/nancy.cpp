@@ -392,8 +392,8 @@ void NancyEngine::bootGameEngine() {
 	}
 
 	_resource = new ResourceManager();
-	_resource->readCifTree("ciftree", "dat", 2);
-	_resource->readCifTree("promotree", "dat", 2);
+	_resource->readCifTree("ciftree", "dat", 1);
+	_resource->readCifTree("promotree", "dat", 1);
 
 	// Read nancy.dat
 	readDatFile();

@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 #include "common/serializer.h"
+#include "common/config-manager.h"
 
 namespace Nancy {
 
@@ -325,6 +326,23 @@ bool CifTree::sync(Common::Serializer &ser) {
 	}
 
 	return true;
+}
+
+bool PatchTree::hasFile(const Common::Path &path) const {
+	if (CifTree::hasFile(path)) {
+		for (auto &assoc : _associations) {
+			for (const Common::String &s : assoc._value) {
+				if (s == path.toString()) {
+					return ConfMan.getBool(assoc._key, ConfMan.getActiveDomainName());
+				}
+			}
+		}
+
+		// Files without an associated ConfMan ID are always marked as present
+		return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Nancy

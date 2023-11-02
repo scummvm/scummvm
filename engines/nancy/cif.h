@@ -79,10 +79,11 @@ private:
 
 // Container type comprising of multiple CIF files. Contrary to its name it contains no tree structure.
 class CifTree : public Common::Archive {
+protected:
 friend class ResourceManager;
 	CifTree() : _stream(nullptr) {}
 	CifTree(Common::SeekableReadStream *stream, const Common::String &name);
-	~CifTree();
+	virtual ~CifTree();
 
 public:
 	// Used for extracting additional image data for conversation cels (nancy2 and up)
@@ -109,6 +110,16 @@ private:
 	Common::Array<CifInfo> _writeFileMap;
 };
 
+// Ciftree that only provides a file if a certain ConfMan flag is true. Used for handling game patches
+class PatchTree : public CifTree {
+public:
+	PatchTree(Common::SeekableReadStream *stream, const Common::String &name) : CifTree(stream, name) {}
+	virtual ~PatchTree() {}
+
+	bool hasFile(const Common::Path &path) const override;
+
+	Common::HashMap<Common::String, Common::Array<Common::String>> _associations;
+};
 
 } // End of namespace Nancy
 

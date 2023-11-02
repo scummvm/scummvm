@@ -182,6 +182,26 @@ bool ResourceManager::readCifTree(const Common::String &name, const Common::Stri
 	return true;
 }
 
+PatchTree *ResourceManager::readPatchTree(Common::SeekableReadStream *stream, const Common::String &name, int priority) {
+	if (!stream) {
+		return nullptr;
+	}
+
+	PatchTree *tree = new PatchTree(stream, name);
+	Common::Serializer ser(stream, nullptr);
+
+	if (!tree->sync(ser)) {
+		delete tree;
+		return nullptr;
+	}
+
+	Common::String upper = name;
+	upper.toUppercase();
+	SearchMan.add(treePrefix + upper, tree, priority, true);
+	_cifTreeNames.push_back(name);
+	return tree;
+}
+
 Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) const {
 	const CifTree *tree = nullptr;
 	if (treeName.size()) {

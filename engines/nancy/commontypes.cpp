@@ -22,8 +22,11 @@
 #include "engines/nancy/commontypes.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
-
+#include "engines/nancy/cif.h"
+#include "engines/nancy/resource.h"
 #include "engines/nancy/state/scene.h"
+
+#include "common/memstream.h"
 
 namespace Nancy {
 
@@ -350,6 +353,12 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 	uint16 num = 0;
 	int languageID = -1;
 
+	// Used for patch file reading
+	byte *patchBuf = nullptr;
+	uint32 patchBufSize = 0;
+	Common::Array<Common::String> confManIDs;
+	Common::Array<Common::Array<Common::String>> fileIDs;
+
 	while (stream.pos() < endPos) {
 		uint32 nextSectionOffset = stream.readUint32LE();
 
@@ -532,32 +541,44 @@ void StaticData::readData(Common::SeekableReadStream &stream, Common::Language l
 			}
 
 			break;
+		case MKTAG('P', 'A', 'T', 'C') :
+			// Patch file
+			patchBufSize = nextSectionOffset - stream.pos();
+			patchBuf = new byte[patchBufSize];
+			stream.read(patchBuf, patchBufSize);
+			break;
+		case MKTAG('P', 'A', 'S', 'S') :
+			// Patch file <-> ConfMan entries associations
+			num = stream.readUint16LE();
+			confManIDs.resize(num);
+			fileIDs.resize(num);
+			for (uint i = 0; i < num; ++i) {
+				confManIDs[i] = stream.readString();
+
+				uint16 num2 = stream.readUint16LE();
+				fileIDs[i].resize(num2);
+				for (uint j = 0; j < num2; ++j) {
+					fileIDs[i][j] = stream.readString();
+				}
+			}
+
+			break;
 		default:
 			stream.seek(nextSectionOffset);
 		}
 	}
-	
 
-	
+	if (patchBuf) {
+		// Load the patch tree into the ResourceManager
+		Common::MemoryReadStream *patchStream = new Common::MemoryReadStream(patchBuf, patchBufSize, DisposeAfterUse::YES);
+		PatchTree *tree = g_nancy->_resource->readPatchTree(patchStream, "patchtree", 2);
+		assert(tree);
 
-	// Read the strings logic
-	
-
-	
-
-	
-
-	// Read the in-game strings, making sure to pick the correct language
-
-
-	
-
-	
-
-	
-
-	// Read debug strings
-	
+		// Write the ConfMan associations
+		for (uint i = 0; i < confManIDs.size(); ++i) {
+			tree->_associations.setVal(confManIDs[i], fileIDs[i]);
+		}
+	}
 }
 
 } // End of namespace Nancy
