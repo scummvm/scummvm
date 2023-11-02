@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/debug.h"
 #include "common/punycode.h"
 #include "common/textconsole.h"
 #include "backends/fs/abstract-fs.h"
@@ -379,6 +380,9 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) con
 	FSNode *node = lookupCache(_fileCache, path);
 	if (!node)
 		return nullptr;
+
+	debug(5, "FSDirectory::createReadStreamForMember('%s') -> '%s'", path.toString().c_str(), node->getPath().c_str());
+
 	SeekableReadStream *stream = node->createReadStream();
 	if (!stream)
 		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", Common::toPrintable(path.toString()).c_str());
