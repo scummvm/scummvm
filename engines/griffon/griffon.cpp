@@ -137,7 +137,8 @@ Common::Error GriffonEngine::run() {
 		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 	}
 
-	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	Graphics::PixelFormat pixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(320, 240, &pixelFormat);
 
 	_mixer = g_system->getMixer();
 
