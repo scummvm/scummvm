@@ -90,4 +90,9 @@ struct SoundChannelInfo {
 	Common::Array<byte> sfxChannels; // 2
 };
 
+struct PatchAssociation {
+	const char *confManID;
+	Common::Array<const char *> fileIDs;
+};
+
 #endif // CREATE_NANCY_TYPES_H

@@ -94,6 +94,8 @@ template<>
 void writeToFile(File &file, const Goodbye &obj);
 template<>
 void writeToFile(File &file, const Hint &obj);
+template<>
+void writeToFile(File &file, const PatchAssociation &obj);
 
 void writeMultilangArray(File &file, const Common::Array<Common::Array<const char *>> &array);
 

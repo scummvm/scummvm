@@ -155,6 +155,27 @@ void writeEventFlagNames(File &output, const Common::Array<const char *> &eventF
 	writeToFile(output, eventFlagNames);
 }
 
+void writePatchFile(File &output, const char *filename) {
+	File file;
+	if (!file.open(filename, AccessMode::kFileReadMode)) {
+		return;
+	}
+	
+	byte *buf = new byte[file.size()];
+	file.read(buf, file.size());
+
+	output.writeUint32(MKTAG('P', 'A', 'T', 'C'));
+	output.write(buf, file.size());
+
+	file.close();
+	delete[] buf;
+}
+
+void writePatchAssociations(File &output, const Common::Array<PatchAssociation> &patchAssociations) {
+	output.writeUint32(MKTAG('P', 'A', 'S', 'S'));
+	writeToFile(output, patchAssociations);
+}
+
 int main(int argc, char *argv[]) {
 	File output;
 	if (!output.open("nancy.dat", kFileWriteMode)) {
@@ -209,6 +230,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy2TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy2EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy2EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, "files/nancy2_patchtree.dat"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy2PatchAssociations))
 	
 	// Nancy Drew: Message in a Haunted Mansion data
 	gameOffsets.push_back(output.pos());

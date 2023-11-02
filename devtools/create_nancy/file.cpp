@@ -217,6 +217,12 @@ void writeToFile(File &file, const Hint &obj) {
 	writeToFile(file, obj.conditions);
 }
 
+template<>
+void writeToFile(File &file, const PatchAssociation &obj) {
+	file.writeString(obj.confManID);
+	writeToFile(file, obj.fileIDs);
+}
+
 void writeMultilangArray(File &file, const Common::Array<Common::Array<const char *>> &array) {
 	Common::Array<uint32> offsets;
 	uint32 offsetsOffset = file.pos();
