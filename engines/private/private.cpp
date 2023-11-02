@@ -1488,7 +1488,8 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 			Common::String s =
 				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
-			loadMask(s, rect.left + 120, rect.top + offset, true);
+			Graphics::Surface *surface = loadMask(s, rect.left + 120, rect.top + offset, true);
+			delete surface;
 		}
 	}
 }
@@ -1497,7 +1498,8 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 	int16 offset = 0;
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		offset = offset + 22;
-		loadMask(*it, r1.left, r1.top + offset, true);
+		Graphics::Surface *surface = loadMask(*it, r1.left, r1.top + offset, true);
+		delete surface;
 	}
 }
 
