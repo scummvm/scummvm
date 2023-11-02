@@ -1936,6 +1936,7 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 
 	Surface *s = Surface::newDialog(INFO_DIALOG_WIDTH, buffer);
 	s->copyToScreen(INFO_DIALOG_X, (FULL_SCREEN_HEIGHT-s->height())/2);
+	delete s;
 
 	Events::getReference().waitForPress();
 	screen.update();
