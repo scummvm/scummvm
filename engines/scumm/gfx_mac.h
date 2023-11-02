@@ -127,6 +127,7 @@ protected:
 	virtual bool runSaveDialog() = 0;
 	virtual bool runOptionsDialog() = 0;
 
+	bool runOkCancelDialog(Common::String text);
 	bool runQuitDialog();
 	bool runRestartDialog();
 
@@ -186,6 +187,7 @@ public:
 		virtual void handleMouseDown(Common::Event &event) {}
 		virtual void handleMouseUp(Common::Event &event) {}
 		virtual void handleMouseMove(Common::Event &event) {}
+		virtual void handleMouseHeld() {}
 		virtual bool handleKeyDown(Common::Event &event) { return false; }
 	};
 
