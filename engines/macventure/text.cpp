@@ -108,6 +108,7 @@ void TextAsset::decodeOld() {
 	str[strLen] = '\0';
 	debugC(3, kMVDebugText, "Decoded string [%d] (old encoding): %s", _id, str);
 	_decoded = Common::String(str);
+	delete[] str;
 }
 
 void TextAsset::decodeHuffman() {
