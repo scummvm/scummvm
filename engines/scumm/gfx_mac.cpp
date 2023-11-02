@@ -555,7 +555,10 @@ MacGui::MacEditText::MacEditText(MacGui::MacDialogWindow *window, Common::Rect b
 	// widgets that draw text could use this too, but there we assume that
 	// the texts are chosen to fit without clipping.
 
-	_textSurface = _window->innerSurface()->getSubArea(_bounds);
+	Common::Rect textBounds = _bounds;
+	textBounds.left++;
+
+	_textSurface = _window->innerSurface()->getSubArea(textBounds);
 }
 
 bool MacGui::MacEditText::findWidget(int x, int y) const {
@@ -572,15 +575,15 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
-	if (y < _bounds.top)
+	if (_text.empty() || y < _bounds.top || x < _bounds.left)
 		return 0;
 
-	if (y >= _bounds.bottom)
+	if (x >= _bounds.right || y >= _bounds.bottom)
 		return _text.size();
 
-	int textPos = _text.size();
-
 	x -= _bounds.left;
+
+	int textPos = 0;
 	int textX = _textPos;
 
 	for (uint i = 0; i < _text.size(); i++) {
@@ -622,12 +625,8 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 		return;
 
 	Graphics::Surface *s = _window->innerSurface();
-	Common::Rect bounds = _bounds;
-
-	bounds.grow(3);
 
 	s->fillRect(_bounds, kWhite);
-	s->frameRect(bounds, kBlack);
 
 	int caretX = 0;
 
@@ -652,43 +651,59 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 		}
 	}
 
+	int selectStart = -1;
+	int selectEnd = -1;
+
+	if (_selectLen != 0) {
+		if (_selectLen < 0) {
+			selectStart = _caretPos + _selectLen;
+			selectEnd = _caretPos - 1;
+		} else {
+			selectStart = _caretPos;
+			selectEnd = _caretPos + _selectLen - 1;
+		}
+	}
+
 	int x = _textPos;
 	int y = 0;
+
+	bool firstChar = true;
+	bool firstCharSelected = false;
+	bool lastCharSelected = false;
 
 	for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
 		Color color = kBlack;
 		int charWidth = _font->getCharWidth(_text[i]);
 
-		int selectStart = -1;
-		int selectEnd = -1;
-
-		if (_selectLen != 0) {
-			if (_selectLen < 0) {
-				selectStart = _caretPos + _selectLen;
-				selectEnd = _caretPos - 1;
-			} else {
-				selectStart = _caretPos;
-				selectEnd = _caretPos + _selectLen - 1;
-			}
-		}
-
 		if (x + charWidth >= 0) {
 			if (_selectLen != 0 && i >= selectStart && i <= selectEnd) {
+				if (firstChar)
+					firstCharSelected = true;
+				lastCharSelected = true;
+
 				_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
 				color = kWhite;
-			}
+			} else
+				lastCharSelected = false;
 
 			_font->drawChar(&_textSurface, _text[i], x, y, color);
+			firstChar = false;
 		}
 
 		x += charWidth;
 	}
 
+	if (firstCharSelected)
+		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kGreen);
+
+	if (lastCharSelected)
+		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kGreen);
+
 	if (_selectLen == 0) {
 		_textSurface.vLine(caretX, 0, _textSurface.h - 1, kRed);
 	}
 
-	_window->markRectAsDirty(bounds);
+	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -1138,9 +1153,11 @@ int MacGui::MacDialogWindow::runDialog() {
 	// up to the caller to repeat the calls to runDialog() until the dialog
 	// has ended.
 
+	bool buttonPressed = false;
+	uint32 nextMouseRepeat = 0;
+
 	while (!_gui->_vm->shouldQuit()) {
 		Common::Event event;
-		bool buttonPressed = false;
 		int widgetId = -1;
 
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -1157,6 +1174,7 @@ int MacGui::MacDialogWindow::runDialog() {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
 				buttonPressed = true;
+				nextMouseRepeat = _system->getMillis() + 100;
 				setFocusedWidget(event.mouse.x, event.mouse.y);
 				if (_focusedWidget)
 					_focusedWidget->handleMouseDown(event);
@@ -1223,6 +1241,11 @@ int MacGui::MacDialogWindow::runDialog() {
 			default:
 				break;
 			}
+		}
+
+		if (_focusedWidget && _system->getMillis() > nextMouseRepeat) {
+			nextMouseRepeat = _system->getMillis() + 100;
+			_focusedWidget->handleMouseHeld();
 		}
 
 		_system->delayMillis(10);
@@ -1743,7 +1766,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	return false;
 }
 
-bool MacGui::runQuitDialog() {
+bool MacGui::runOkCancelDialog(Common::String text) {
 	// Widgets:
 	//
 	// 0 - Okay button
@@ -1753,7 +1776,7 @@ bool MacGui::runQuitDialog() {
 	MacDialogWindow *window = createDialog(502);
 
 	window->setDefaultWidget(0);
-	window->addSubstitution("Are you sure you want to quit?");
+	window->addSubstitution(text);
 
 	// When quitting, the default action is to quit
 	bool ret = true;
@@ -1774,35 +1797,12 @@ bool MacGui::runQuitDialog() {
 	return ret;
 }
 
+bool MacGui::runQuitDialog() {
+	return runOkCancelDialog("Are you sure you want to quit?");
+}
+
 bool MacGui::runRestartDialog() {
-	// Widgets:
-	//
-	// 0 - Okay button
-	// 1 - Cancel button
-	// 2 - "^0" text
-
-	MacDialogWindow *window = createDialog(502);
-
-	window->setDefaultWidget(0);
-	window->addSubstitution("Are you sure you want to restart this game from the beginning?");
-
-	// When quitting, the default action is to not restart
-	bool ret = false;
-
-	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
-
-		if (clicked == 0) {
-			ret = true;
-			break;
-		}
-
-		if (clicked == 1)
-			break;
-	}
-
-	delete window;
-	return ret;
+	return runOkCancelDialog("Are you sure you want to restart this game from the beginning?");
 }
 
 Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len) {
@@ -2390,18 +2390,90 @@ void MacLoomGui::runAboutDialog() {
 	delete window;
 }
 
+// A standard file picker dialog doesn't really make sense in ScummVM, so we
+// make something that just looks similar to one.
+
 bool MacLoomGui::runOpenDialog() {
-	// Standard file picker dialog. We don't yet have one, and it might
-	// not make sense for ScummVM.
-	warning("MacLoomGui::runOpenDialog()");
-	return true;
+	Common::Rect bounds(88, 28, 448, 208);
+
+	MacDialogWindow *window = createWindow(bounds);
+
+	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
+	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
+	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	s->frameRect(Common::Rect(14, 13, 217, 159), kBlack);
+	s->frameRect(Common::Rect(216, 13, 232, 159), kBlack);
+	s->hLine(253, 91, 334, kBlack);
+
+	window->setDefaultWidget(0);
+
+	// When quitting, the default action is to not open a saved game
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+	}
+
+	delete window;
+	return ret;
 }
 
 bool MacLoomGui::runSaveDialog() {
-	// Standard file picker dialog. We don't yet have one, and it might
-	// not make sense for ScummVM.
-	warning("MacLoomGui::runSaveDialog()");
-	return true;
+	Common::Rect bounds(110, 27, 470, 231);
+
+	MacDialogWindow *window = createWindow(bounds);
+
+	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
+	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
+	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
+
+	window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
+
+	Graphics::Surface *s = window->innerSurface();
+	const Graphics::Font *font = getFont(kSystemFont);
+
+	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
+	s->frameRect(Common::Rect(14, 9, 217, 137), kBlack);
+	s->frameRect(Common::Rect(216, 9, 232, 137), kBlack);
+
+	s->hLine(253, 115, 334, kBlack);
+
+	font->drawString(s, "Save Game File as...", 14, 143, 218, kBlack, Graphics::kTextAlignLeft, 4);
+
+	window->setDefaultWidget(0);
+
+	// When quitting, the default action is to not open a saved game
+	bool ret = false;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0) {
+			ret = true;
+			break;
+		}
+
+		if (clicked == 1)
+			break;
+
+		if (clicked == 2) {
+			runOkCancelDialog("Are you sure you want to delete the saved game?");
+		}
+	}
+
+	delete window;
+	return ret;
 }
 
 bool MacLoomGui::runOptionsDialog() {
@@ -3722,7 +3794,6 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	if (MacGui::handleMenu(id, name))
 		return true;
 
-	int dialogId = -1;
 	Common::StringArray substitutions;
 
 	switch (id) {
@@ -3743,12 +3814,6 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 	default:
 		debug("MacIndy3Gui::handleMenu: Unknown menu command: %d", id);
 		break;
-	}
-
-	if (dialogId != -1) {
-		MacDialogWindow *dialog = createDialog(dialogId);
-		dialog->runDialog();
-		return true;
 	}
 
 	return false;
@@ -4017,7 +4082,7 @@ bool MacIndy3Gui::runOpenDialog() {
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
-	// When quitting, the default action is not to open a saved game
+	// When quitting, the default action is to not open a saved game
 	bool ret = false;
 
 	while (!_vm->shouldQuit()) {
