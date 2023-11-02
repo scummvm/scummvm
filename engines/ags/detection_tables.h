@@ -1914,6 +1914,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "meteorheadns3", "Meteorhead - The New Series - Episode III: Die unverträgliche Dreistigkeit des Schweins" },
 	{ "meteorheadns4", "Meteorhead - The New Series - Episode IV: Die Qual des Wals" },
 	{ "meteortale", "Meteor: A Tale About Earth's End" },
+	{ "metrocity", "METRO CITY: Night Shift" },
 	{ "mi", "Mi" },
 	{ "mi0daementia", "Monkey Island 0 - Daementia" },
 	{ "mi0navidad", "Monkey Island 0 - Navidad" },
@@ -3239,6 +3240,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ultimalatinvii", "Ultima Latin VII" },
 	{ "unbound", "Unbound" },
 	{ "uncontrollable", "UNCONTROLLABLE" },
+	{ "underthebed", "The Weird Thing Under The Bed" },
 	{ "underwateradv", "Underwater Adventures" },
 	{ "underworld", "The Underworld" },
 	{ "undyep1", "Hey Der, Undy! Episode I: De King of Pong" },
@@ -4556,6 +4558,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo.exe", "69414fa4aa2cc5414a38cc166d44338b", 129741340),
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond DEMO v17.exe", "6f4d5442c166d215017764b119af9ffa", 235426199),  // Win v17
 	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo v18.exe", "38a49a28c0af599633006c09fe6c2f72", 131455545),  // Win v18
+	DEMO_ENTRY_EN("crimsondiamond", "The Crimson Diamond Demo v19.exe", "38a49a28c0af599633006c09fe6c2f72", 131456250),  // Win v19
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 60147146),  // macOS
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 78610191),  // macOS
 	DEMO_ENTRY_EN("crimsondiamond", "ac2game.dat", "69414fa4aa2cc5414a38cc166d44338b", 129741431),  // macOS
@@ -6270,6 +6273,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 7014402),  // v1.2.6   Multilang
 	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.exe", "fa5b449d9d93a9055e0ab6caf0aee77c", 7020827),  // v1.2.7-8
 	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.ags", "5a61e3d27494f480ba0e8af34cd872ac", 77680620),  // v1.2.9  Win/Linux
+	GAME_ENTRY_STEAM("heroinesquest", "heroine's quest.ags", "dc29cf98484fe8fc532a175e758a1930", 77788201),  // v1.2.9 patched Win/Linux
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "0b19953a0a879b5027c98b0cdd8142f1", 6825340),
 	GAME_ENTRY("heroinesquest", "heroine's quest.exe", "35b93e905a5aeba8fafd0e5b0f4cb9b6", 6952250),
 	GAME_ENTRY_LANG("heroquestbeuk", "HeroQuestbeuk.exe", "06a03fe35791b0578068ab1873455463", 45021220, Common::FR_FRA),
@@ -6811,6 +6815,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("meteorhead14", "thebrandnewmeteorhead14.exe", "8f2d3fbc7f428bea31f1021cb8c2ff5a", 20634898, Common::DE_DEU),
 	GAME_ENTRY_LANG("meteorheadns3", "newseriesIII.exe", "3c888514e33c5c1862ab7aba121b9dd4", 22787731, Common::DE_DEU),
 	GAME_ENTRY_LANG("meteorheadns4", "Meteorhead Last Chapter.exe", "f18f785cade71cf3969b4c6f229454a2", 29499534, Common::DE_DEU),
+	GAME_ENTRY_EN("metrocity", "Metro City Night Shift.exe", "e89db844661ed4f434e94795c62f871c", 789734564),
 	GAME_ENTRY_EN("mi", "Mi.exe", "615e73fc1874e92d60a1996c2330ea36", 6988459),
 	GAME_ENTRY("micarnivalofthedamned", "MI-COD.exe", "90413e9ae57e222f8913b09d2bc847bc", 5114086),  // Eng-Esp
 	GAME_ENTRY("mickeymauserpart1", "MM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12076323),  // En-It
@@ -8381,6 +8386,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("ulitsadimitrova", "ulitsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 291828379),
 	GAME_ENTRY_EN("unbound", "Unbound.exe", "900b277d7e1601c65b42868cd7fae662", 10448702),
 	GAME_ENTRY_EN("uncontrollable", "OROW2015.exe", "615e73fc1874e92d60a1996c2330ea36", 3012777),
+	GAME_ENTRY_EN("underthebed", "The Weird Thing Under The Bed.exe", "9982a80801abee56c9c8977d5e7424d7", 43104879),
+	GAME_ENTRY_EN("underthebed", "The Weird Thing Under The Bed.ags", "630e945a0e4b88bafd5e20761d724c0f", 39995995),
 	GAME_ENTRY_EN("underwateradv", "fishres.exe", "3128b9f90e2f954ba704414ae854d10b", 3970713),
 	GAME_ENTRY_EN("underworld", "Underworld.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5147661),
 	GAME_ENTRY_EN("undyep1", "heyderundy.exe", "39fe9b76597c2d8c14922b8369a4a4db", 9842962),  // v1.2
