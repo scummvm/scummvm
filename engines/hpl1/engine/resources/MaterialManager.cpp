@@ -195,6 +195,7 @@ tString cMaterialManager::GetPhysicsMaterialName(const tString &asName) {
 	if (pMaterial == NULL && sPath != "") {
 		TiXmlDocument *pDoc = hplNew(TiXmlDocument, (sPath.c_str()));
 		if (!pDoc->LoadFile()) {
+			hplDelete(pDoc);
 			return "";
 		}
 
