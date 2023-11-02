@@ -190,8 +190,10 @@ void ComposerEngine::sync<Pipe *>(Common::Serializer &ser, Pipe *&data, Common::
 			ser.syncAsUint32LE(tmp);
 			for (uint32 k = tmp; k > 0; k--) {
 				ser.syncAsUint16LE(id);
-				if (data->hasResource(tag, id))
-					data->getResource(tag, id, true);
+				if (data->hasResource(tag, id)) {
+					Common::SeekableReadStream *s = data->getResource(tag, id, true);
+					delete s;
+				}
 			}
 		}
 	} else {
