@@ -235,7 +235,7 @@ public:
 		int _caretPos = 0;
 
 		uint32 _lastClickTime = 0;
-		uint32 _lastClickX = 0;
+		int _lastClickX = 0;
 
 		uint32 _lastBlinkTime = 0;
 		bool _caretVisible = false;
@@ -422,7 +422,7 @@ public:
 
 	MacDialogWindow *drawBanner(char *message);
 
-	int delay(uint32 ms);
+	int delay(uint32 ms = 0);
 
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
