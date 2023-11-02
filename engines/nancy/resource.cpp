@@ -389,14 +389,17 @@ bool ResourceManager::exportCifTree(const Common::String &treeName, const Common
 				}
 			}
 		}
-		
-		info.dataOffset = headerSize + file._fileMap.size() * infoSize; // Initial offset after header/infos
-		for (uint j = 0; j < resStreams.size(); ++j) {
-			info.dataOffset += resStreams[j]->size(); // Final offset, following raw data of previous files
-		}
 
 		resStreams.push_back(stream);
 		file._writeFileMap.push_back(info);
+	}
+
+	uint16 dataOffset = headerSize + file._writeFileMap.size() * infoSize; // Initial offset after header/infos
+	for (uint i = 0; i < file._writeFileMap.size(); ++i) {
+		file._writeFileMap[i].dataOffset = dataOffset;
+		for (uint j = 0; j < i; ++j) {
+			file._writeFileMap[i].dataOffset += resStreams[j]->size(); // Final offset, following raw data of previous files
+		}
 	}
 
 	Common::DumpFile dump;
