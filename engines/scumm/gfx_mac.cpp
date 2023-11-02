@@ -611,7 +611,7 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 	s->fillRect(_bounds, kWhite);
 	s->frameRect(bounds, kRed);
 
-	int caretX;
+	int caretX = 0;
 
 	if (_selectLen == 0) {
 		// Make sure the caret is visible
@@ -641,7 +641,8 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 		Color color = kBlack;
 		int charWidth = _font->getCharWidth(_text[i]);
 
-		int selectStart, selectEnd;
+		int selectStart = -1;
+		int selectEnd = -1;
 
 		if (_selectLen != 0) {
 			if (_selectLen < 0) {
@@ -1838,12 +1839,9 @@ MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 int MacGui::delay(uint32 ms) {
 	uint32 to;
 
-	if (ms == (uint32)-1)
-		to = 0xFFFFFFFF;
-	else
-		to = _system->getMillis() + ms;
+	to = _system->getMillis() + ms;
 
-	while (_system->getMillis() < to) {
+	while (ms == 0 || _system->getMillis() < to) {
 		Common::Event event;
 
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -2353,7 +2351,7 @@ void MacLoomGui::runAboutDialog() {
 	}
 
 	if (status != 2)
-		delay(-1);
+		delay();
 
 	_windowManager->popCursor();
 
@@ -3950,7 +3948,7 @@ void MacIndy3Gui::runAboutDialog() {
 	}
 
 	if (status != 2)
-		delay(-1);
+		delay();
 
 	_windowManager->popCursor();
 
