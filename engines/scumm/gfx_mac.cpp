@@ -233,7 +233,6 @@ MacGui::MacWidget::MacWidget(MacGui::MacDialogWindow *window, Common::Rect bound
 		_visible = false;
 }
 
-
 bool MacGui::MacWidget::findWidget(int x, int y) const {
 	return _visible && _enabled && _bounds.contains(x, y);
 }
@@ -543,8 +542,9 @@ void MacGui::MacText::draw(bool drawFocused) {
 // the caret is placed right after, so 0 is the first character.
 //
 // The length of the current selection is stored in _selectionLen. Selections
-// can extend left or right of the _caretPos. This simplifies mouse selection
-// enormously.
+// can extend left or right of the _caretPos. This makes it slightly more
+// tricky to handle selections after they've been made, but simplifies the
+// actual selection by mouse enormously.
 // ---------------------------------------------------------------------------
 
 MacGui::MacEditText::MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {
@@ -561,6 +561,16 @@ MacGui::MacEditText::MacEditText(MacGui::MacDialogWindow *window, Common::Rect b
 	_textSurface = _window->innerSurface()->getSubArea(textBounds);
 }
 
+Graphics::MacGUIConstants::MacCursorType MacGui::MacEditText::getCursorType() const {
+	// If the widget is found, that implies that it's active.
+
+	// Note: The text widget in the Indy 3 save dialog does not change the
+	// cursor in the original. But since we're not going to emulate it
+	// that closely, I don't think we need to mark this as an enhancement.
+
+	return Graphics::MacGUIConstants::kMacCursorBeam;
+}
+
 bool MacGui::MacEditText::findWidget(int x, int y) const {
 	if (!_visible || !_enabled)
 		return false;
@@ -575,15 +585,15 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
-	if (_text.empty() || y < _bounds.top || x < _bounds.left)
+	if (_text.empty() || y < _bounds.top || x < _bounds.left + 1)
 		return 0;
 
 	if (x >= _bounds.right || y >= _bounds.bottom)
-		return _text.size();
+		return _text.size() - 1;
 
 	x -= _bounds.left;
 
-	int textPos = 0;
+	int textPos = _text.size() - 1;
 	int textX = _textPos;
 
 	for (uint i = 0; i < _text.size(); i++) {
@@ -1018,6 +1028,9 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 }
 
 MacGui::MacDialogWindow::~MacDialogWindow() {
+	if (_gui->_windowManager->getCursorType() != Graphics::MacGUIConstants::kMacCursorArrow)
+		_gui->_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+
 	copyToScreen(_backup);
 	_backup->free();
 	delete _backup;
@@ -1200,7 +1213,14 @@ int MacGui::MacDialogWindow::runDialog() {
 					}
 
 					_focusedWidget->handleMouseMove(event);
+				} else {
+					int mouseOverWidget = findWidget(_mousePos.x, _mousePos.y);
+					Graphics::MacGUIConstants::MacCursorType cursorType = (mouseOverWidget >= 0) ? _widgets[mouseOverWidget]->getCursorType() : Graphics::MacGUIConstants::kMacCursorArrow;
+
+					if (_gui->_windowManager->getCursorType() != cursorType)
+						_gui->_windowManager->replaceCursor(cursorType);
 				}
+
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -1838,11 +1858,11 @@ void MacGui::updateWindowManager() {
 	if (isActive) {
 		if (!_menuIsActive) {
 			_cursorWasVisible = CursorMan.showMouse(true);
-			_windowManager->pushCursor(Graphics::kMacCursorArrow);
+			_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 		}
 	} else {
 		if (_menuIsActive) {
-			if (_windowManager->getCursorType() == Graphics::kMacCursorArrow)
+			if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
 				_windowManager->popCursor();
 			CursorMan.showMouse(_cursorWasVisible);
 		}
@@ -2097,7 +2117,7 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 		hotspotY = macCursor.getHotspotY();
 		animate = 0;
 
-		_windowManager->replaceCursor(Graphics::kMacCursorCustom, &macCursor);
+		_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, &macCursor);
 	}
 
 	delete curs;
