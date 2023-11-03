@@ -23,6 +23,7 @@
 #define SCUMM_GFX_MAC_H
 
 #include "graphics/font.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 class OSystem;
 
@@ -180,6 +181,7 @@ public:
 		virtual void setValue(int value);
 		int getValue() const { return _value; }
 
+		virtual Graphics::MacGUIConstants::MacCursorType getCursorType() const { return Graphics::MacGUIConstants::kMacCursorArrow; }
 		virtual bool findWidget(int x, int y) const;
 
 		virtual void draw(bool drawFocused = false) = 0;
@@ -226,7 +228,9 @@ public:
 	class MacText : public MacWidget {
 	public:
 		MacText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
+
 		bool findWidget(int x, int y) const { return false; }
+
 		void draw(bool drawFocused = false);
 	};
 
@@ -253,6 +257,7 @@ public:
 	public:
 		MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 
+		Graphics::MacGUIConstants::MacCursorType getCursorType() const;
 		bool findWidget(int x, int y) const;
 
 		void draw(bool drawFocused = false);
@@ -323,6 +328,7 @@ public:
 
 		MacWidget *_defaultWidget = nullptr;
 
+		int _mouseOverWidget = -1;
 		MacWidget *_focusedWidget = nullptr;
 		Common::Point _focusClick;
 		Common::Point _oldMousePos;
