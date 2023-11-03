@@ -1171,7 +1171,7 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 				break;
 			}
 
-			if (fileDesc.md5 && fileDesc.md5[0] == 'A' && fileDesc.md5[1] == ':') {
+			if (gameFileToMD5Props(&fileDesc, ((const ADGameDescription *)descPtr)->flags) & kMD5Archive) {
 				Common::StringTokenizer tok(fileDesc.fileName, ":");
 				uint numTokens = 0;
 
