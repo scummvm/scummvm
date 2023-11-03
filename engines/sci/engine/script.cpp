@@ -1039,15 +1039,13 @@ void Script::initializeClasses(SegManager *segMan) {
 	if (!seeker)
 		return;
 
-	uint16 marker;
 	bool isClass = false;
-	uint32 classpos;
 	int16 species = 0;
 
 	for (;;) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
-		marker = seeker.getUint16SEAt(0);
-		classpos = seeker - *_buf;
+		uint16 marker = seeker.getUint16SEAt(0);
+		uint32 classpos = seeker - *_buf;
 
 		if (getSciVersion() <= SCI_VERSION_1_LATE && !marker)
 			break;

@@ -103,15 +103,6 @@ void GfxCursor::purgeCache() {
 }
 
 void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
-	Resource *resource;
-	Common::Point hotspot = Common::Point(0, 0);
-	byte colorMapping[4];
-	int16 x, y;
-	byte color;
-	uint16 maskA, maskB;
-	byte *pOut;
-	int16 heightWidth;
-
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
 		kernelHide();
@@ -119,12 +110,13 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	}
 
 	// Load cursor resource...
-	resource = _resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
 	if (!resource)
 		error("cursor resource %d not found", resourceId);
 	if (resource->size() != SCI_CURSOR_SCI0_RESOURCESIZE)
 		error("cursor resource %d has invalid size", resourceId);
 
+	Common::Point hotspot;
 	if (getSciVersion() <= SCI_VERSION_01) {
 		// SCI0 cursors contain hotspot flags, not actual hotspot coordinates.
 		// If bit 0 of resourceData[3] is set, the hotspot should be centered,
@@ -137,6 +129,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	}
 
 	// Now find out what colors we are supposed to use
+	byte colorMapping[4];
 	colorMapping[0] = 0; // Black is hardcoded
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
@@ -152,18 +145,18 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	Common::SpanOwner<SciSpan<byte> > rawBitmap;
 	rawBitmap->allocate(SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH, resource->name() + " copy");
 
-	pOut = rawBitmap->getUnsafeDataAt(0, SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH);
-	for (y = 0; y < SCI_CURSOR_SCI0_HEIGHTWIDTH; y++) {
-		maskA = resource->getUint16LEAt(4 + (y << 1));
-		maskB = resource->getUint16LEAt(4 + 32 + (y << 1));
+	byte *pOut = rawBitmap->getUnsafeDataAt(0, SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH);
+	for (int16 y = 0; y < SCI_CURSOR_SCI0_HEIGHTWIDTH; y++) {
+		uint16 maskA = resource->getUint16LEAt(4 + (y << 1));
+		uint16 maskB = resource->getUint16LEAt(4 + 32 + (y << 1));
 
-		for (x = 0; x < SCI_CURSOR_SCI0_HEIGHTWIDTH; x++) {
-			color = (((maskA << x) & 0x8000) | (((maskB << x) >> 1) & 0x4000)) >> 14;
+		for (int16 x = 0; x < SCI_CURSOR_SCI0_HEIGHTWIDTH; x++) {
+			byte color = (((maskA << x) & 0x8000) | (((maskB << x) >> 1) & 0x4000)) >> 14;
 			*pOut++ = colorMapping[color];
 		}
 	}
 
-	heightWidth = SCI_CURSOR_SCI0_HEIGHTWIDTH;
+	int16 heightWidth = SCI_CURSOR_SCI0_HEIGHTWIDTH;
 
 	if (_upscaledHires != GFX_SCREEN_UPSCALED_DISABLED && _upscaledHires != GFX_SCREEN_UPSCALED_480x300) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better

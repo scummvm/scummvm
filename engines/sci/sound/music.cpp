@@ -424,7 +424,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		}
 	}
 
-	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
 	// If MIDI device is selected but there is no digital track in sound
@@ -493,7 +492,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pauseCounter = 0;
 
 			// Find out what channels to filter for SCI0
-			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
+			int channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 
 			for (int i = 0; i < 16; ++i) {
 				pSnd->_usedChannels[i] = 0xFF;

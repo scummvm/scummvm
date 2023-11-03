@@ -1287,15 +1287,14 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 
 	debugPrintf("%d SCI1.1-SCI3 scripts found, performing sanity checks...\n", resources.size());
 
-	Resource *script, *heap;
 	Common::List<ResourceId>::iterator itr;
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
-		script = _engine->getResMan()->findResource(*itr, false);
+		Resource *script = _engine->getResMan()->findResource(*itr, false);
 		if (!script)
 			debugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
 		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
-			heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
+			Resource *heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
 			if (!heap)
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
@@ -3671,14 +3670,12 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
-	int callk_index;
-	char *endptr;
-
 	if (argc == 2) {
 		/* Try to convert the parameter to a number. If the conversion stops
 		   before end of string, assume that the parameter is a function name
 		   and scan the function table to find out the index. */
-		callk_index = strtoul(argv[1], &endptr, 0);
+		char *endptr;
+		int callk_index = strtoul(argv[1], &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
 			for (uint i = 0; i < _engine->getKernel()->getKernelNamesSize(); i++)
@@ -3864,12 +3861,11 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 				uint32 offset = fptr.getOffset();
 				int16 opparams[4];
 				byte extOpcode;
-				byte opcode;
 				uint16 maxJmpOffset = 0;
 
 				for (;;) {
 					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
-					opcode = extOpcode >> 1;
+					byte opcode = extOpcode >> 1;
 
 					if (opcode == op_callk) {
 						uint16 kFuncNum = opparams[0];
@@ -5041,12 +5037,11 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				if (*endptr)
 					return 1;
 			} else {
-				int val = 0;
 				dest->setSegment(0);
 
 				if (charsCountNumber == charsCount) {
 					// Only numbers in input, assume decimal value
-					val = strtol(str, &endptr, 10);
+					int val = strtol(str, &endptr, 10);
 					if (*endptr)
 						return 1; // strtol failed?
 					dest->setOffset(val);
@@ -5054,7 +5049,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				} else {
 					// We also got letters, check if there were only hexadecimal letters and '0x' at the start or 'h' at the end
 					if ((charsForceHex) && (!charsCountObject)) {
-						val = strtol(str, &endptr, 16);
+						int val = strtol(str, &endptr, 16);
 						if ((*endptr != 'h') && (*endptr != 0))
 							return 1;
 						dest->setOffset(val);

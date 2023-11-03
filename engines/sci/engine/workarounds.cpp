@@ -1111,7 +1111,6 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 
 	if (workaroundList) {
 		// Search if there is a workaround for this one
-		const SciWorkaroundEntry *workaround;
 		int16 inheritanceLevel = 0;
 		Common::String searchObjectName = g_sci->getSciLanguageString(curObjectName, K_LANG_ENGLISH);
 		reg_t searchObject = lastCall->sendp;
@@ -1120,7 +1119,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		bool matched = false;
 
 		do {
-			workaround = workaroundList;
+			const SciWorkaroundEntry *workaround = workaroundList;
 			while (workaround->methodName) {
 				bool objectNameMatches = (workaround->objectName == nullptr) ||
 										 (workaround->objectName == searchObjectName);

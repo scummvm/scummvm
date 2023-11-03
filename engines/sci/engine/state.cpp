@@ -250,7 +250,6 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 			// Japanese including Kanji, displayed with system font
 			// Convert half-width characters to full-width equivalents
 			Common::String fullWidth;
-			uint16 mappedChar;
 
 			textPtr += 2; // skip over language splitter
 
@@ -266,7 +265,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 
 				textPtr++;
 
-				mappedChar = s_halfWidthSJISMap[curChar];
+				uint16 mappedChar = s_halfWidthSJISMap[curChar];
 				if (mappedChar) {
 					fullWidth += mappedChar >> 8;
 					fullWidth += mappedChar & 0xFF;

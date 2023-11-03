@@ -135,11 +135,9 @@ void GfxAnimate::disposeLastCast() {
 bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
-	reg_t curObject;
-	uint16 signal;
 
 	while (curNode) {
-		curObject = curNode->value;
+		reg_t curObject = curNode->value;
 
 		if (_fastCastEnabled) {
 			// Check if the game has a fastCast object set
@@ -152,7 +150,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			}
 		}
 
-		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
+		uint16 signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);

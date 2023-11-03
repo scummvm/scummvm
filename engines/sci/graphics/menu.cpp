@@ -74,33 +74,30 @@ void GfxMenu::reset() {
 }
 
 void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr) {
-	GuiMenuEntry *menuEntry;
 	uint16 itemCount = 0;
-	GuiMenuItemEntry *itemEntry;
-	int contentSize = content.size();
-	int separatorCount;
-	int curPos, beginPos, endPos, tempPos;
-	int tagPos, rightAlignedPos, functionPos, altPos, controlPos;
-	const char *tempPtr;
+	const int contentSize = content.size();
 
 	// Sierra SCI starts with id 1, so we do so as well
-	menuEntry = new GuiMenuEntry(_list.size() + 1);
+	GuiMenuEntry *menuEntry = new GuiMenuEntry(_list.size() + 1);
 	menuEntry->text = title;
 	_list.push_back(menuEntry);
 
-	curPos = 0;
-	uint16 listSize = _list.size();
+	int curPos = 0;
+	const uint16 listSize = _list.size();
 
 	do {
 		itemCount++;
-		itemEntry = new GuiMenuItemEntry(listSize, itemCount);
+		GuiMenuItemEntry *itemEntry = new GuiMenuItemEntry(listSize, itemCount);
 
-		beginPos = curPos;
+		int beginPos = curPos;
 
 		// Now go through the content till we find end-marker and collect data about it.
 		// ':' is an end-marker for each item.
-		tagPos = 0; rightAlignedPos = 0;
-		controlPos = 0; altPos = 0; functionPos = 0;
+		int tagPos = 0;
+		int rightAlignedPos = 0;
+		int controlPos = 0;
+		int altPos = 0;
+		int functionPos = 0;
 		while ((curPos < contentSize) && (content[curPos] != ':')) {
 			switch (content[curPos]) {
 			case '=': // Set tag
@@ -142,13 +139,13 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			}
 			curPos++;
 		}
-		endPos = curPos;
+		int endPos = curPos;
 
 		// Control/Alt/Function key mapping...
 		if (controlPos) {
 			content.setChar(SCI_MENU_REPLACE_ONCONTROL, controlPos);
 			itemEntry->keyModifier = kSciKeyModCtrl;
-			tempPos = controlPos + 1;
+			int tempPos = controlPos + 1;
 			if (tempPos >= contentSize)
 				error("control marker at end of item");
 			itemEntry->keyPress = tolower(content[tempPos]);
@@ -157,7 +154,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		if (altPos) {
 			content.setChar(SCI_MENU_REPLACE_ONALT, altPos);
 			itemEntry->keyModifier = kSciKeyModAlt;
-			tempPos = altPos + 1;
+			int tempPos = altPos + 1;
 			if (tempPos >= contentSize)
 				error("alt marker at end of item");
 			itemEntry->keyPress = tolower(content[tempPos]);
@@ -165,7 +162,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		}
 		if (functionPos) {
 			content.setChar(SCI_MENU_REPLACE_ONFUNCTION, functionPos);
-			tempPos = functionPos + 1;
+			int tempPos = functionPos + 1;
 			if (tempPos >= contentSize)
 				error("function marker at end of item");
 			itemEntry->keyPress = content[tempPos];
@@ -186,14 +183,14 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		}
 
 		// Now get all strings
-		tempPos = endPos;
+		int tempPos = endPos;
 		if (rightAlignedPos) {
 			tempPos = rightAlignedPos;
 		} else if (tagPos) {
 			tempPos = tagPos;
 		}
 		curPos = beginPos;
-		separatorCount = 0;
+		int separatorCount = 0;
 		while (curPos < tempPos) {
 			switch (content[curPos]) {
 			case '!':
@@ -221,7 +218,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 
 			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
-			tempPtr = itemEntry->text.c_str();
+			const char *tempPtr = itemEntry->text.c_str();
 			tempPtr = strstr(tempPtr, "Ctrl-");
 			if (tempPtr) {
 				itemEntry->keyModifier = kSciKeyModCtrl;
@@ -270,11 +267,10 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 	GuiMenuItemList::iterator listIterator;
 	GuiMenuItemList::iterator listEnd = _itemList.end();
-	GuiMenuItemEntry *listEntry;
 
 	listIterator = _itemList.begin();
 	while (listIterator != listEnd) {
-		listEntry = *listIterator;
+		GuiMenuItemEntry *listEntry = *listIterator;
 		if ((listEntry->menuId == menuId) && (listEntry->id == itemId))
 			return listEntry;
 
@@ -346,7 +342,6 @@ reg_t GfxMenu::kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attribute
 }
 
 void GfxMenu::drawBar() {
-	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
 
@@ -361,10 +356,10 @@ void GfxMenu::drawBar() {
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		int16 textWidth;
-		int16 textHeight;
+		GuiMenuEntry *listEntry = *listIterator;
 		if (g_sci->isLanguageRTL()) {
+			int16 textWidth;
+			int16 textHeight;
 			_text16->StringWidth(listEntry->textSplit.c_str(), _text16->GetFontId(), textWidth, textHeight);
 			_ports->_curPort->curLeft -= textWidth;
 		}
@@ -381,12 +376,11 @@ void GfxMenu::drawBar() {
 void GfxMenu::calculateMenuWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
-	GuiMenuEntry *menuEntry;
 	int16 dummyHeight;
 
 	menuIterator = _list.begin();
 	while (menuIterator != menuEnd) {
-		menuEntry = *menuIterator;
+		GuiMenuEntry *menuEntry = *menuIterator;
 		menuEntry->textSplit = g_sci->strSplit(menuEntry->text.c_str(), nullptr);
 		_text16->StringWidth(menuEntry->textSplit.c_str(), 0, menuEntry->textWidth, dummyHeight);
 
@@ -398,14 +392,13 @@ void GfxMenu::calculateMenuWidth() {
 void GfxMenu::calculateMenuAndItemWidth() {
 	GuiMenuItemList::iterator itemIterator;
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
-	GuiMenuItemEntry *itemEntry;
 	int16 dummyHeight;
 
 	calculateMenuWidth();
 
 	itemIterator = _itemList.begin();
 	while (itemIterator != itemEnd) {
-		itemEntry = *itemIterator;
+		GuiMenuItemEntry *itemEntry = *itemIterator;
 		// Split the text now for multilingual SCI01 games
 		itemEntry->textSplit = g_sci->strSplit(itemEntry->text.c_str(), nullptr);
 		_text16->StringWidth(itemEntry->textSplit.c_str(), 0, itemEntry->textWidth, dummyHeight);
@@ -569,7 +562,6 @@ GuiMenuItemEntry *GfxMenu::interactiveGetItem(uint16 menuId, uint16 itemId, bool
 }
 
 void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
-	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
 	GuiMenuItemEntry *listItemEntry;
@@ -601,7 +593,7 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		menuTextRect.left = menuTextRect.right = _ports->_menuBarRect.right - 7;
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
-		listEntry = *listIterator;
+		GuiMenuEntry *listEntry = *listIterator;
 		listNr++;
 		if (!g_sci->isLanguageRTL()) {
 			menuTextRect.left = menuTextRect.right;
@@ -748,7 +740,6 @@ void GfxMenu::interactiveEnd(bool pauseSound) {
 }
 
 uint16 GfxMenu::mouseFindMenuSelection(Common::Point mousePosition) {
-	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
 	uint16 curXstart;
@@ -759,7 +750,7 @@ uint16 GfxMenu::mouseFindMenuSelection(Common::Point mousePosition) {
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
-		listEntry = *listIterator;
+		GuiMenuEntry *listEntry = *listIterator;
 		if (!g_sci->isLanguageRTL()) {
 			if (mousePosition.x >= curXstart && mousePosition.x < curXstart + listEntry->textWidth) {
 				return listEntry->id;

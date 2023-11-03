@@ -59,13 +59,12 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 	uint16 pitch = videoDecoder.getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
-	uint32 numPixels;
 
 	if (screenWidth == 640 && width <= 320 && height <= 240) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
-		numPixels = width * height * bytesPerPixel;
+		uint32 numPixels = width * height * bytesPerPixel;
 		scaleBuffer->allocate(numPixels, "video scale buffer");
 	}
 

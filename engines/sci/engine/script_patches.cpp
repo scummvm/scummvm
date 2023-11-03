@@ -25199,22 +25199,18 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, cons
 // Attention: Magic DWord is returned using platform specific byte order. This is done on purpose for performance.
 void ScriptPatcher::calculateMagicDWordAndVerify(const char *signatureDescription, const uint16 *signatureData, bool magicDWordIncluded, uint32 &calculatedMagicDWord, int &calculatedMagicDWordOffset) {
 	Selector curSelector = -1;
-	int magicOffset;
+	int magicOffset = 0;
 	byte magicDWord[4];
 	int magicDWordLeft = 0;
-	uint16 curWord;
-	uint16 curCommand;
-	uint32 curValue;
 	byte byte1 = 0;
 	byte byte2 = 0;
 
 	memset(magicDWord, 0, sizeof(magicDWord));
 
-	curWord = *signatureData;
-	magicOffset = 0;
+	uint16 curWord = *signatureData;
 	while (curWord != SIG_END) {
-		curCommand = curWord & SIG_COMMANDMASK;
-		curValue   = curWord & SIG_VALUEMASK;
+		uint16 curCommand = curWord & SIG_COMMANDMASK;
+		uint32 curValue   = curWord & SIG_VALUEMASK;
 		switch (curCommand) {
 		case SIG_MAGICDWORD: {
 			if (magicDWordIncluded) {

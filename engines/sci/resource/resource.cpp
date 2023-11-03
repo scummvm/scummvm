@@ -1346,16 +1346,13 @@ ResVersion ResourceManager::detectMapVersion() {
 
 	// SCI1 and SCI1.1 maps consist of a fixed 3-byte header, a directory list (3-bytes each) that has one entry
 	// of id FFh and points to EOF. The actual entries have 6-bytes on SCI1 and 5-bytes on SCI1.1
-	byte directoryType = 0;
-	uint16 directoryOffset = 0;
 	uint16 lastDirectoryOffset = 0;
-	uint16 directorySize = 0;
 	ResVersion mapDetected = kResVersionUnknown;
 	fileStream->seek(0, SEEK_SET);
 
 	while (!fileStream->eos()) {
-		directoryType = fileStream->readByte();
-		directoryOffset = fileStream->readUint16LE();
+		byte directoryType = fileStream->readByte();
+		uint16 directoryOffset = fileStream->readUint16LE();
 
 		// Only SCI32 has directory type < 0x80
 		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci2))
@@ -1368,7 +1365,7 @@ ResVersion ResourceManager::detectMapVersion() {
 			break;
 
 		if (lastDirectoryOffset && mapDetected == kResVersionUnknown) {
-			directorySize = directoryOffset - lastDirectoryOffset;
+			uint16 directorySize = directoryOffset - lastDirectoryOffset;
 			if ((directorySize % 5) && (directorySize % 6 == 0))
 				mapDetected = kResVersionSci1Late;
 			if ((directorySize % 5 == 0) && (directorySize % 6))
@@ -1431,8 +1428,6 @@ ResVersion ResourceManager::detectVolVersion() {
 	// SCI32 volume format:   {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
-	uint16 wCompression;
-	uint32 dwPacked, dwUnpacked;
 	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
 	bool sci11Align = false;
@@ -1442,15 +1437,15 @@ ResVersion ResourceManager::detectVolVersion() {
 		if (curVersion > kResVersionSci0Sci1Early)
 			fileStream->readByte();
 		fileStream->skip(2);	// resId
-		dwPacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
-		dwUnpacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		uint32 dwPacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		uint32 dwUnpacked = (curVersion < kResVersionSci2) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 
 		// The compression field is present, but bogus when
 		// loading SCI3 volumes, the format is otherwise
 		// identical to SCI2. We therefore get the compression
 		// indicator here, but disregard it in the following
 		// code.
-		wCompression = fileStream->readUint16LE();
+		uint16 wCompression = fileStream->readUint16LE();
 
 		if (fileStream->eos()) {
 			delete fileStream;
@@ -1871,8 +1866,6 @@ void ResourceManager::readResourcePatches() {
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = nullptr;
 	ResourceType type = kResourceTypeInvalid;	// to silence a false positive in MSVC
-	uint16 number, id;
-	uint32 offset;
 
 	if (map->_resourceFile) {
 		fileStream = map->_resourceFile->createReadStream();
@@ -1898,8 +1891,8 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		if (_mapVersion == kResVersionKQ5FMT)
 			type = convertResType(fileStream->readByte());
 
-		id = fileStream->readUint16LE();
-		offset = fileStream->readUint32LE();
+		uint16 id = fileStream->readUint16LE();
+		uint32 offset = fileStream->readUint32LE();
 
 		if (fileStream->eos() || fileStream->err()) {
 			delete fileStream;
@@ -1910,6 +1903,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		if (offset == 0xFFFFFFFF)
 			break;
 
+		uint16 number;
 		if (_mapVersion == kResVersionKQ5FMT) {
 			number = id;
 		} else {

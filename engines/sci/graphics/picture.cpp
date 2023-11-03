@@ -142,37 +142,31 @@ extern void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &ce
 void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA) {
 	const SciSpan<const byte> headerPtr = inbuffer.subspan(headerPos);
 	const SciSpan<const byte> rlePtr = inbuffer.subspan(rlePos);
-	// displaceX, displaceY fields are ignored, and may contain garbage
-	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #6388)
-	//int16 displaceX, displaceY;
-	byte priority = _priority;
-	byte clearColor;
-	byte curByte;
-	int16 y, lastY, x, leftX, rightX;
-	int pixelCount;
-	uint16 width, height;
 
 	// if the picture is not an overlay and we are also not in EGA mode, use priority 0
-	if (!isEGA && !_addToFlag)
-		priority = 0;
+	const byte priority = (!isEGA && !_addToFlag) ? 0 : _priority;
 
 	// Width/height here are always LE, even in Mac versions
-	width = headerPtr.getUint16LEAt(0);
-	height = headerPtr.getUint16LEAt(2);
-	//displaceX = (signed char)headerPtr[4];
-	//displaceY = (unsigned char)headerPtr[5];
+	uint16 width = headerPtr.getUint16LEAt(0);
+	uint16 height = headerPtr.getUint16LEAt(2);
+
+	// displaceX, displaceY fields are ignored, and may contain garbage
+	// (e.g. pic 261 in Dr. Brain 1 Spanish - bug #6388)
+	//int16 displaceX = (signed char)headerPtr[4];
+	//int16 displaceY = (unsigned char)headerPtr[5];
+	//if (displaceX || displaceY)
+	//	error("unsupported embedded cel-data in picture");
+
+	byte clearColor;
 	if (_resourceType == SCI_PICTURE_TYPE_SCI11)
 		// SCI1.1 uses hardcoded clearcolor for pictures, even if cel header specifies otherwise
 		clearColor = _screen->getColorWhite();
 	else
 		clearColor = headerPtr[6];
 
-	//if (displaceX || displaceY)
-	//	error("unsupported embedded cel-data in picture");
-
 	// We will unpack cel-data into a temporary buffer and then plot it to screen
 	//  That needs to be done cause a mirrored picture may be requested
-	pixelCount = width * height;
+	int pixelCount = width * height;
 	Common::SpanOwner<SciSpan<byte> > celBitmap;
 	celBitmap->allocate(pixelCount, _resource->name());
 	unpackCelData(inbuffer, *celBitmap, clearColor, rlePos, literalPos, _resMan->getViewType(), width, false);
@@ -207,10 +201,10 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 	}
 
 	if (displayWidth > 0 && displayHeight > 0) {
-		y = displayArea.top + drawY;
-		lastY = MIN<int16>(height + y, displayArea.bottom);
-		leftX = displayArea.left + drawX;
-		rightX = MIN<int16>(displayWidth + leftX, displayArea.right);
+		int16 y = displayArea.top + drawY;
+		int16 lastY = MIN<int16>(height + y, displayArea.bottom);
+		int16 leftX = displayArea.left + drawX;
+		int16 rightX = MIN<int16>(displayWidth + leftX, displayArea.right);
 
 		uint16 sourcePixelSkipPerRow = 0;
 		if (width > rightX - leftX)
@@ -233,9 +227,9 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 			// VGA + EGA, EGA only checks priority, when given priority is below 16
 			if (!_mirroredFlag) {
 				// Draw bitmap to screen
-				x = leftX;
+				int16 x = leftX;
 				while (y < lastY) {
-					curByte = *ptr++;
+					byte curByte = *ptr++;
 					if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
 						_screen->putPixel(x, y, drawMask, curByte, priority, 0);
 
@@ -249,9 +243,9 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 				}
 			} else {
 				// Draw bitmap to screen (mirrored)
-				x = rightX - 1;
+				int16 x = rightX - 1;
 				while (y < lastY) {
-					curByte = *ptr++;
+					byte curByte = *ptr++;
 					if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
 						_screen->putPixel(x, y, drawMask, curByte, priority, 0);
 
@@ -270,9 +264,9 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 			//  fixes picture 48 of kq5 (island overview). Bug #5182
 			if (!_mirroredFlag) {
 				// EGA+priority>15: Draw bitmap to screen
-				x = leftX;
+				int16 x = leftX;
 				while (y < lastY) {
-					curByte = *ptr++;
+					byte curByte = *ptr++;
 					if (curByte != clearColor)
 						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curByte, 0, 0);
 
@@ -286,9 +280,9 @@ void GfxPicture::drawCelData(const SciSpan<const byte> &inbuffer, int headerPos,
 				}
 			} else {
 				// EGA+priority>15: Draw bitmap to screen (mirrored)
-				x = rightX - 1;
+				int16 x = rightX - 1;
 				while (y < lastY) {
-					curByte = *ptr++;
+					byte curByte = *ptr++;
 					if (curByte != clearColor)
 						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curByte, 0, 0);
 

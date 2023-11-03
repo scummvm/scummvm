@@ -41,14 +41,12 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 	uint16 menuId = argv[0].toUint16() >> 8;
 	uint16 itemId = argv[0].toUint16() & 0xFF;
-	uint16 attributeId;
 	int argPos = 1;
-	reg_t value;
 
 	while (argPos < argc) {
-		attributeId = argv[argPos].toUint16();
+		uint16 attributeId = argv[argPos].toUint16();
 		// Happens in the fanmade game Cascade Quest when loading - bug #5118
-		value = (argPos + 1 < argc) ? argv[argPos + 1] : NULL_REG;
+		reg_t value = (argPos + 1 < argc) ? argv[argPos + 1] : NULL_REG;
 		g_sci->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, value);
 		argPos += 2;
 	}

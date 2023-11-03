@@ -98,14 +98,13 @@ void MidiDriver_PCJr::send(uint32 b) {
 	byte command = b & 0xff;
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
-	int i;
 	int mapped_chan = -1;
 	int chan_nr = command & 0xf;
 
 	// First, test for channel having been assigned already
 	if (_channels_assigned & (1 << chan_nr)) {
 		// Already assigned this channel number:
-		for (i = 0; i < _channels_nr; i++)
+		for (int i = 0; i < _channels_nr; i++)
 			if (_chan_nrs[i] == chan_nr) {
 				mapped_chan = i;
 				break;

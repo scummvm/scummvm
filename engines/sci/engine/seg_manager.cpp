@@ -1136,14 +1136,14 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 	SegmentId segmentId = getScriptSegment(script_nr);
 	Script *scr = getScript(segmentId);
 	reg_t reg = make_reg(segmentId, oldScriptHeader ? 2 : 0);
-	int objType, objLength = 0;
+	int objLength = 0;
 
 	// Make a pass over the object in order to uninstantiate all superclasses
 
 	while (true) {
 		reg.incOffset(objLength); // Step over the last checked object
 
-		objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset()));
+		int objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset()));
 		if (!objType)
 			break;
 		objLength = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset() + 2));

@@ -691,10 +691,9 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 
 void GfxPorts::priorityBandsInit(const SciSpan<const byte> &data) {
 	int i = 0, inx;
-	byte priority = 0;
 
 	for (inx = 0; inx < 14; inx++) {
-		priority = data[inx];
+		byte priority = data[inx];
 		while (i < priority && i < 200)
 			_priorityBands[i++] = inx;
 	}
@@ -742,9 +741,8 @@ byte GfxPorts::kernelCoordinateToPriority(int16 y) {
 }
 
 int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
-	int16 y;
 	if (priority <= _priorityBandCount) {
-		for (y = 0; y <= _priorityBottom; y++)
+		for (int16 y = 0; y <= _priorityBottom; y++)
 			if (_priorityBands[y] == priority)
 				return y;
 	}

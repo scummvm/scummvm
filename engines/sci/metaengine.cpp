@@ -339,10 +339,9 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	bool hasAutosave = false;
-	int slotNr = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		slotNr = atoi(file->c_str() + file->size() - 3);
+		int slotNr = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNr >= 0 && slotNr <= 99) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);

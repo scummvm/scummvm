@@ -859,7 +859,7 @@ void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 
 void GfxScreen::dither(bool addToFlag) {
 	int y, x;
-	byte color, ditheredColor;
+	byte color;
 	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 	byte *paletteMapPtr = _paletteMapScreen;
@@ -901,6 +901,7 @@ void GfxScreen::dither(bool addToFlag) {
 					_ditheredPicColors[color]++;
 					// if decoded color wants do dither with black on left side, we turn it around
 					//  otherwise the normal ega color would get used for display
+					byte ditheredColor;
 					if (color & 0xF0) {
 						ditheredColor = color;
 					}	else {

@@ -163,13 +163,11 @@ const GfxTransitionTranslateEntry *GfxTransitions::translateNumber (int16 number
 }
 
 void GfxTransitions::doit(Common::Rect picRect) {
-	const GfxTransitionTranslateEntry *translationEntry = _translationTable;
-
 	_picRect = picRect;
 
 	if (_translationTable) {
 		// We need to translate the ID
-		translationEntry = translateNumber(_number, _translationTable);
+		const GfxTransitionTranslateEntry *translationEntry = translateNumber(_number, _translationTable);
 		if (translationEntry) {
 			_number = translationEntry->newId;
 			_blackoutFlag = translationEntry->blackoutFlag;
@@ -183,7 +181,7 @@ void GfxTransitions::doit(Common::Rect picRect) {
 	if (_blackoutFlag) {
 		// We need to find out what transition we are supposed to use for
 		// blackout
-		translationEntry = translateNumber(_number, blackoutTransitionIDs);
+		const GfxTransitionTranslateEntry *translationEntry = translateNumber(_number, blackoutTransitionIDs);
 		if (translationEntry) {
 			doTransition(translationEntry->newId, true);
 		} else {
