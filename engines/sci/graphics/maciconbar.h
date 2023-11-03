@@ -68,7 +68,6 @@ private:
 	void freeIcons();
 	void addIcon(reg_t obj);
 	void drawIcon(uint16 index, bool selected);
-	void drawSelectedImage(uint16 index);
 	bool isIconEnabled(uint16 index) const;
 	void drawDisabledPattern(Graphics::Surface &surface, const Common::Rect &rect);
 	void drawImage(Graphics::Surface *surface, const Common::Rect &rect, bool enabled);

@@ -1005,12 +1005,6 @@ void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int1
 	}
 }
 
-struct UpScaledAdjust {
-	GfxScreenUpscaledMode gameHiresMode;
-	int numerator;
-	int denominator;
-};
-
 void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 	x = _upscaledWidthMapping[x];
 	y = _upscaledHeightMapping[y];

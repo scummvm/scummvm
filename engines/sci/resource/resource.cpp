@@ -1147,23 +1147,6 @@ void ResourceManager::addToLRU(Resource *res) {
 	res->_status = kResStatusEnqueued;
 }
 
-void ResourceManager::printLRU() {
-	int mem = 0;
-	int entries = 0;
-	Common::List<Resource *>::iterator it = _LRU.begin();
-	Resource *res;
-
-	while (it != _LRU.end()) {
-		res = *it;
-		debug("\t%s: %u bytes", res->_id.toString().c_str(), res->size());
-		mem += res->size();
-		++entries;
-		++it;
-	}
-
-	debug("Total: %d entries, %d bytes (mgr says %d)", entries, mem, _memoryLRU);
-}
-
 void ResourceManager::freeOldResources() {
 	while (_maxMemoryLRU < _memoryLRU) {
 		assert(!_LRU.empty());

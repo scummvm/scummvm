@@ -77,6 +77,7 @@ void GfxText16::SetFont(GuiResourceId fontId) {
 	_ports->_curPort->fontHeight = _font->getHeight();
 }
 
+#if 0
 void GfxText16::ClearChar(int16 chr) {
 	if (_ports->_curPort->penMode != 1)
 		return;
@@ -87,6 +88,7 @@ void GfxText16::ClearChar(int16 chr) {
 	rect.right = rect.left + GetFont()->getCharWidth(chr);
 	_paint16->eraseRect(rect);
 }
+#endif
 
 // This internal function gets called as soon as a '|' is found in a text. It
 // will process the encountered code and set new font/set color.
@@ -433,9 +435,12 @@ void GfxText16::StringWidth(const Common::String &str, GuiResourceId orgFontId, 
 	Width(str.c_str(), 0, str.size(), orgFontId, textWidth, textHeight, true);
 }
 
+#if 0
 void GfxText16::ShowString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Show(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
+#endif
+
 void GfxText16::DrawString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Draw(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }

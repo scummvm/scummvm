@@ -211,10 +211,6 @@ void GfxMacIconBar::drawImage(Graphics::Surface *surface, const Common::Rect &re
 	}
 }
 
-void GfxMacIconBar::drawSelectedImage(uint16 iconIndex) {
-	drawImage(_iconBarItems[iconIndex].selectedImage, _iconBarItems[iconIndex].rect, true);
-}
-
 bool GfxMacIconBar::isIconEnabled(uint16 iconIndex) const {
 	if (iconIndex >= _iconBarItems.size())
 		return false;

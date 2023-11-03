@@ -392,11 +392,13 @@ private:
 	 */
 	bool processIrisIn(PlaneShowStyle &showStyle);
 
+#if 0
 	/**
 	 * Performs a transition that renders between rooms using a block dissolve
 	 * effect.
 	 */
 	void processDissolveNoMorph(PlaneShowStyle &showStyle);
+#endif
 
 	/**
 	 * Performs a transition that renders between rooms with a pixel dissolve

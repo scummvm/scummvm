@@ -734,9 +734,11 @@ bool GfxTransitions32::processIrisIn(PlaneShowStyle &showStyle) {
 	return processWipe(1, showStyle);
 }
 
+#if 0
 void GfxTransitions32::processDissolveNoMorph(PlaneShowStyle &showStyle) {
 	error("DissolveNoMorph is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 }
+#endif
 
 inline int bitWidth(int number) {
 	int width = 0;

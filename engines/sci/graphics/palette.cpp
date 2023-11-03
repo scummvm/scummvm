@@ -489,11 +489,6 @@ uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue, bo
 	return bestColorNr;
 }
 
-void GfxPalette::getSys(Palette *pal) {
-	if (pal != &_sysPalette)
-		memcpy(pal, &_sysPalette,sizeof(Palette));
-}
-
 void GfxPalette::setOnScreen(bool update) {
 	copySysPaletteToScreen(update);
 }

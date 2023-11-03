@@ -80,6 +80,7 @@ void GfxPicture::draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	}
 }
 
+#if 0
 void GfxPicture::reset() {
 	int16 startY = _ports->getPort()->top;
 	int16 startX = 0;
@@ -91,6 +92,7 @@ void GfxPicture::reset() {
 		}
 	}
 }
+#endif
 
 void GfxPicture::drawSci11Vga() {
 	SciSpan<const byte> inbuffer(*_resource);
