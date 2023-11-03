@@ -786,6 +786,8 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 	if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
 		return false;
 
+	CursorMan.showMouse(false);
+
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_LEFT:
 		if (_selectLen < 0) {
@@ -1028,6 +1030,9 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 }
 
 MacGui::MacDialogWindow::~MacDialogWindow() {
+	if (!CursorMan.isVisible())
+		CursorMan.showMouse(true);
+
 	if (_gui->_windowManager->getCursorType() != Graphics::MacGUIConstants::kMacCursorArrow)
 		_gui->_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 
@@ -1207,6 +1212,9 @@ int MacGui::MacDialogWindow::runDialog() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
+				if (!CursorMan.isVisible())
+					CursorMan.showMouse(true);
+
 				if (_focusedWidget) {
 					if (_focusedWidget->findWidget(_oldMousePos.x, _oldMousePos.y) != _focusedWidget->findWidget(_mousePos.x, _mousePos.y)) {
 						_focusedWidget->setRedraw();
