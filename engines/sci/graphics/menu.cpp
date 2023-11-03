@@ -73,7 +73,7 @@ void GfxMenu::reset() {
 	_curItemId = 1;
 }
 
-void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr) {
+void GfxMenu::kernelAddEntry(const Common::String &title, Common::String content, reg_t contentVmPtr) {
 	uint16 itemCount = 0;
 	const int contentSize = content.size();
 

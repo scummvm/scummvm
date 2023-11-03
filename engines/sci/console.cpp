@@ -4172,7 +4172,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	return true;
 }
 
-static bool stringToBreakpointAction(Common::String str, BreakpointAction &action) {
+static bool stringToBreakpointAction(const Common::String &str, BreakpointAction &action) {
 	if (str == "break")
 		action = BREAK_BREAK;
 	else if (str == "log")

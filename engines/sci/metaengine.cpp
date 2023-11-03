@@ -154,7 +154,7 @@ static const DemoIdEntry s_demoIdTable[] = {
 	{ nullptr,      nullptr }
 };
 
-static bool isSierraDemo(Common::String &sierraId, uint32 resourceCount) {
+static bool isSierraDemo(const Common::String &sierraId, uint32 resourceCount) {
 	// If the game has less than the expected scripts, it's a demo
 	uint32 demoThreshold = 100;
 	// ...but there are some exceptions
@@ -591,7 +591,7 @@ bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
 	return false;
 }
 
-void constructFallbackDetectionEntry(Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
+void constructFallbackDetectionEntry(const Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
 	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
 
 	s_fallbackDesc.extra = "";

@@ -309,7 +309,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	}
 }
 
-int MessageState::getMessage(int module, MessageTuple &t, reg_t buf) {
+int MessageState::getMessage(int module, const MessageTuple &t, reg_t buf) {
 	_cursorStack.init(module, t);
 	return nextMessage(buf);
 }

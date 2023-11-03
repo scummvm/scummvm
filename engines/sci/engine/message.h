@@ -68,7 +68,7 @@ typedef Common::Stack<CursorStack> CursorStackStack;
 class MessageState {
 public:
 	MessageState(SegManager *segMan) : _segMan(segMan), _lastReturnedModule(0) { }
-	int getMessage(int module, MessageTuple &t, reg_t buf);
+	int getMessage(int module, const MessageTuple &t, reg_t buf);
 	int nextMessage(reg_t buf);
 	int messageSize(int module, MessageTuple &t);
 	bool messageRef(int module, const MessageTuple &t, MessageTuple &ref);
