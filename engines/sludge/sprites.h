@@ -97,13 +97,6 @@ struct SpriteDisplay {
 	}
 };
 
-// All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
-typedef Common::List<SpriteDisplay *> SpriteLayer;
-struct SpriteLayers {
-	int numLayers;
-	SpriteLayer layer[16];
-};
-
 } // End of namespace Sludge
 
 #endif

@@ -293,7 +293,6 @@ void displayBase() {
 	g_sludge->_gfxMan->drawBackDrop();// Draw Backdrop
 	g_sludge->_gfxMan->drawZBuffer(g_sludge->_gfxMan->getCamX(), g_sludge->_gfxMan->getCamY(), false);
 	g_sludge->_peopleMan->drawPeople();// Then add any moving characters...
-	g_sludge->_gfxMan->displaySpriteLayers();
 }
 
 void sludgeDisplay() {
