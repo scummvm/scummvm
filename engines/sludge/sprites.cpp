@@ -271,7 +271,7 @@ void GraphicsManager::pasteSpriteToBackDrop(int x1, int y1, Sprite &single, cons
 	}
 
 	// kill zBuffer
-	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+	if (_zBuffer->originalNum >= 0 && _zBuffer->tex) {
 		int num = _zBuffer->originalNum;
 		killZBuffer();
 		_zBuffer->originalNum = num;
@@ -294,7 +294,7 @@ void GraphicsManager::burnSpriteToBackDrop(int x1, int y1, Sprite &single, const
 	}
 
 	// kill zBuffer
-	if (_zBuffer->originalNum >= 0 && _zBuffer->sprites) {
+	if (_zBuffer->originalNum >= 0 && _zBuffer->tex) {
 		int num = _zBuffer->originalNum;
 		killZBuffer();
 		_zBuffer->originalNum = num;
@@ -462,6 +462,21 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		y2 = y1 + diffY;
 	}
 
+	float z;
+
+	if (useZB && _zBuffer->numPanels) {
+		int i;
+		for (i = 1; i < _zBuffer->numPanels; i++) {
+			if (_zBuffer->panel[i] >= y + _cameraY) {
+				i--;
+				break;
+			}
+		}
+		z = 0.999 - (double)i * (1.0 / 128.0);
+	} else {
+		z = -0.5;
+	}
+
 	Graphics::Surface *blitted = &single.surface;
 	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
 
@@ -476,8 +491,14 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 			ptr = nullptr;
 		}
 	} else {
-		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
-		addSpriteDepth(blitted, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, ptr, 255 - thisPerson->transparency);
+
+		// TODO: you dont need to copy the whole render surface, just the part to which the sprite may be drawn
+		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
+
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+
+		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
 	}
 
 	// Are we pointing at the sprite?
@@ -498,61 +519,6 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	return false;
 }
 
-void GraphicsManager::resetSpriteLayers(ZBufferData *pz, int x, int y, bool upsidedown) {
-	if (_spriteLayers->numLayers > 0)
-		killSpriteLayers();
-	_spriteLayers->numLayers = pz->numPanels;
-	debugC(3, kSludgeDebugZBuffer, "%i zBuffer layers", _spriteLayers->numLayers);
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		SpriteDisplay *node = new SpriteDisplay(x, y, (upsidedown ? Graphics::FLIP_V : Graphics::FLIP_NONE), &pz->sprites[i], pz->sprites[i].w, pz->sprites[i].h);
-		_spriteLayers->layer[i].push_back(node);
-		debugC(3, kSludgeDebugZBuffer, "Layer %i is of depth %i", i, pz->panel[i]);
-	}
-}
-
-void GraphicsManager::addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width, int height, bool freeAfterUse, byte trans) {
-	int i;
-	for (i = 1; i < _zBuffer->numPanels; ++i) {
-		if (_zBuffer->panel[i] >= depth) {
-			break;
-		}
-	}
-	--i;
-	debugC(3, kSludgeDebugZBuffer, "Add sprite of Y-value : %i in layer %i trans: %02x", depth, i, trans);
-
-	SpriteDisplay *node = new SpriteDisplay(x, y, flip, ptr, width, height, freeAfterUse, trans);
-	_spriteLayers->layer[i].push_back(node);
-}
-
-void GraphicsManager::displaySpriteLayers() {
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		debugC(3, kSludgeDebugGraphics, "Display layer %i with %i sprites", i, _spriteLayers->layer[i].size());
-		SpriteLayer::iterator it;
-		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
-			Graphics::ManagedSurface tmp((*it)->surface, DisposeAfterUse::NO);
-			tmp.blendBlitTo(_renderSurface, (*it)->x, (*it)->y, (*it)->flip, nullptr, MS_ARGB((*it)->transparency, 255, 255, 255), (*it)->width, (*it)->height);
-		}
-	}
-	killSpriteLayers();
-}
-
-void GraphicsManager::killSpriteLayers() {
-	for (int i = 0; i < _spriteLayers->numLayers; ++i) {
-		SpriteLayer::iterator it;
-		for (it = _spriteLayers->layer[i].begin(); it != _spriteLayers->layer[i].end(); ++it) {
-			if ((*it)->freeAfterUse) {
-				(*it)->surface->free();
-				delete (*it)->surface;
-				(*it)->surface = nullptr;
-			}
-			delete (*it);
-			(*it) = nullptr;
-		}
-		_spriteLayers->layer[i].clear();
-	}
-	_spriteLayers->numLayers = 0;
-}
-
 // Paste a scaled sprite onto the backdrop
 void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpritePalette &fontPal, OnScreenPerson *thisPerson, int camX, int camY, bool mirror) {
 
@@ -570,6 +536,21 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 	else
 		x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale);
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
+
+	float z;
+
+	if (useZB && _zBuffer->numPanels) {
+		int i;
+		for (i = 1; i < _zBuffer->numPanels; i++) {
+			if (_zBuffer->panel[i] >= y + _cameraY) {
+				i--;
+				break;
+			}
+		}
+		z = 0.999 - (double)i * (1.0 / 128.0);
+	} else {
+		z = -0.5;
+	}
 
 	Graphics::Surface *blitted = &single.surface;
 	Graphics::Surface *ptr = applyLightmapToSprite(blitted, thisPerson, mirror, x, y, x1, y1, diffX, diffY);
@@ -593,12 +574,14 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 			ptr = nullptr;
 		}
 	} else {
-		int d = useZB ? y + _cameraY : (y + _cameraY > _sceneHeight * 0.6 ? _sceneHeight + 1 : 0);
-		addSpriteDepth(&single.surface, d, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), diffX, diffY, ptr, 255 - thisPerson->transparency);
-	}
+		Graphics::ManagedSurface scaled(&_renderSurface, DisposeAfterUse::NO);
 
-	// draw all
-	displaySpriteLayers();
+		Graphics::ManagedSurface tmp(blitted, DisposeAfterUse::NO);
+		tmp.blendBlitTo(scaled, x1, y1, (mirror ? Graphics::FLIP_H : Graphics::FLIP_NONE), nullptr, MS_ARGB(255 - thisPerson->transparency, 255, 255, 255), diffX, diffY);
+
+		drawSpriteToZBuffer(0, 0, z, scaled.rawSurface());
+
+	}
 
 	// copy screen to backdrop
 	_backdropSurface.copyFrom(_renderSurface);
