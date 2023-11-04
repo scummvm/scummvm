@@ -1197,9 +1197,13 @@ void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	_dirtyRects.clear();
 
 	if (_beamCursor) {
-		undrawBeamCursor();
+		if (_beamCursorVisible)
+			undrawBeamCursor();
+
 		_beamCursorPos = _realMousePos;
-		drawBeamCursor();
+
+		if (_beamCursorVisible)
+			drawBeamCursor();
 	}
 }
 
@@ -1334,8 +1338,10 @@ int MacGui::MacDialogWindow::runDialog() {
 				// to key presses.
 				for (uint i = 0; i < _widgets.size(); i++) {
 					if (_widgets[i]->handleKeyDown(event)) {
-						if (_beamCursor)
-							_beamCursorVisible = true;
+						if (_beamCursor) {
+							_beamCursorVisible = false;
+							undrawBeamCursor();
+						}
 						_widgets[i]->setRedraw();
 						break;
 					}
