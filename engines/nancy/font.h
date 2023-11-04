@@ -83,6 +83,11 @@ private:
 	uint16 _semicolonOffset			= 0;
 	uint16 _slashOffset				= 0;
 
+	// Specific offsets for Cyrillic characters. Introduced in nancy5, only used in Russian variants
+	// The original data references the letters one by one, out of order. We only keep the two offsets below
+	int16 _cyrillicUppercaseOffset			= -1;
+	int16 _cyrillicLowercaseOffset			= -1;
+
 	// More specific offsets for extended ASCII characters. Introduced in nancy6
 	int16 _aWithGraveOffset					= -1;
 	int16 _cWithCedillaOffset				= -1;

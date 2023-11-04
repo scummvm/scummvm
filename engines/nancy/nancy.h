@@ -93,6 +93,7 @@ public:
 	uint32 getGameFlags() const;
 	const char *getGameId() const;
 	GameType getGameType() const;
+	Common::Language getGameLanguage() const;
 	Common::Platform getPlatform() const;
 
 	const StaticData &getStaticData() const;

@@ -183,6 +183,10 @@ GameType NancyEngine::getGameType() const {
 	return _gameDescription->gameType;
 }
 
+Common::Language NancyEngine::getGameLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 Common::Platform NancyEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
