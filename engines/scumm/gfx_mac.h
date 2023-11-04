@@ -258,6 +258,7 @@ public:
 
 		bool useBeamCursor() { return true; }
 		bool findWidget(int x, int y) const;
+		void updateSelection(int x, int y);
 
 		void draw(bool drawFocused = false);
 
