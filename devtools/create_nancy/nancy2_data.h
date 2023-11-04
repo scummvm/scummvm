@@ -68,7 +68,7 @@ const Common::Array<Common::Array<ConditionalDialogue>> _nancy2ConditionalDialog
 	{	8, 729, "NRD29",
 		{ { kEv, 115, kFalse }, { kEv, 68, kTrue } } },
 	{	8, 729, "NRD29",
-		{ { kEv, 15, kFalse }, { kEv, 64, kTrue } } },
+		{ { kEv, 115, kFalse }, { kEv, 64, kTrue } } },
 	{	9, 728, "NRD28",
 		{ { kEv, 50, kTrue }, { kEv, 114, kFalse } } },
 	{	10, 717, "NRD18",
