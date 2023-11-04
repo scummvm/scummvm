@@ -1268,15 +1268,21 @@ int MacGui::MacDialogWindow::runDialog() {
 
 			case Common::EVENT_LBUTTONUP:
 				buttonPressed = false;
+				updateCursor();
 
-				if (_focusedWidget && _focusedWidget->findWidget(event.mouse.x, event.mouse.y)) {
-					widgetId = _focusedWidget->getId();
-					_focusedWidget->handleMouseUp(event);
+				if (_focusedWidget) {
+					MacWidget *widget = _focusedWidget;
+
 					clearFocusedWidget();
-					return widgetId;
+					updateCursor();
+
+					if (widget->findWidget(event.mouse.x, event.mouse.y)) {
+						widgetId = widget->getId();
+						widget->handleMouseUp(event);
+						return widgetId;
+					}
 				}
 
-				clearFocusedWidget();
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -1290,25 +1296,9 @@ int MacGui::MacDialogWindow::runDialog() {
 
 					_focusedWidget->handleMouseMove(event);
 				} else {
-					int mouseOverWidget = findWidget(_mousePos.x, _mousePos.y);
-
-					bool useBeamCursor = (mouseOverWidget >= 0 && _widgets[mouseOverWidget]->useBeamCursor());
-
-					if (useBeamCursor && !_beamCursor) {
-						CursorMan.showMouse(false);
-						_beamCursor = new Graphics::Surface();
-						_beamCursor->create(7, 16, Graphics::PixelFormat::createFormatCLUT8());
-						_beamCursorVisible = true;
-						_beamCursorPos = _realMousePos;
-					} else if (!useBeamCursor && _beamCursor) {
-						CursorMan.showMouse(true);
-						undrawBeamCursor();
-						_beamCursor->free();
-						delete _beamCursor;
-						_beamCursor = nullptr;
-						_beamCursorVisible = false;
-					}
+					updateCursor();
 				}
+
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -1366,6 +1356,27 @@ int MacGui::MacDialogWindow::runDialog() {
 	}
 
 	return -1;
+}
+
+void MacGui::MacDialogWindow::updateCursor() {
+	int mouseOverWidget = findWidget(_mousePos.x, _mousePos.y);
+	bool useBeamCursor = (mouseOverWidget >= 0 && _widgets[mouseOverWidget]->useBeamCursor());
+
+	if (useBeamCursor && !_beamCursor) {
+		CursorMan.showMouse(false);
+		_beamCursor = new Graphics::Surface();
+		_beamCursor->create(7, 16, Graphics::PixelFormat::createFormatCLUT8());
+		_beamCursorVisible = true;
+		_beamCursorPos = _realMousePos;
+	} else if (!useBeamCursor && _beamCursor) {
+		CursorMan.showMouse(true);
+
+		undrawBeamCursor();
+		_beamCursor->free();
+		delete _beamCursor;
+		_beamCursor = nullptr;
+		_beamCursorVisible = false;
+	}
 }
 
 void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {

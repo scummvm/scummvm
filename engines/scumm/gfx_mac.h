@@ -362,6 +362,7 @@ public:
 
 		void show();
 		int runDialog();
+		void updateCursor();
 
 		void setDefaultWidget(int nr) { _defaultWidget = _widgets[nr]; }
 		MacWidget *getDefaultWidget() const { return _defaultWidget; }
