@@ -23,7 +23,6 @@
 #define SCUMM_GFX_MAC_H
 
 #include "graphics/font.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 class OSystem;
 
@@ -181,7 +180,7 @@ public:
 		virtual void setValue(int value);
 		int getValue() const { return _value; }
 
-		virtual Graphics::MacGUIConstants::MacCursorType getCursorType() const { return Graphics::MacGUIConstants::kMacCursorArrow; }
+		virtual bool useBeamCursor() { return false; }
 		virtual bool findWidget(int x, int y) const;
 
 		virtual void draw(bool drawFocused = false) = 0;
@@ -257,7 +256,7 @@ public:
 	public:
 		MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 
-		Graphics::MacGUIConstants::MacCursorType getCursorType() const;
+		bool useBeamCursor() { return true; }
 		bool findWidget(int x, int y) const;
 
 		void draw(bool drawFocused = false);
@@ -317,6 +316,15 @@ public:
 
 		bool _visible = false;
 
+		Graphics::Surface *_beamCursor = nullptr;
+		Common::Point _beamCursorPos;
+		bool _beamCursorVisible = false;
+		int _beamCursorHotspotX = 3;
+		int _beamCursorHotspotY = 4;
+
+		void drawBeamCursor();
+		void undrawBeamCursor();
+
 		PauseToken _pauseToken;
 
 		Graphics::Surface *_from = nullptr;
@@ -333,6 +341,7 @@ public:
 		Common::Point _focusClick;
 		Common::Point _oldMousePos;
 		Common::Point _mousePos;
+		Common::Point _realMousePos;
 
 		Common::StringArray _substitutions;
 		Common::Array<Common::Rect> _dirtyRects;
@@ -400,6 +409,8 @@ public:
 
 	MacGui(ScummEngine *vm, Common::String resourceFile);
 	virtual ~MacGui();
+
+	Graphics::Surface *surface() { return _surface; }
 
 	virtual const Common::String name() const = 0;
 

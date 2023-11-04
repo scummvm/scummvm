@@ -561,16 +561,6 @@ MacGui::MacEditText::MacEditText(MacGui::MacDialogWindow *window, Common::Rect b
 	_textSurface = _window->innerSurface()->getSubArea(textBounds);
 }
 
-Graphics::MacGUIConstants::MacCursorType MacGui::MacEditText::getCursorType() const {
-	// If the widget is found, that implies that it's active.
-
-	// Note: The text widget in the Indy 3 save dialog does not change the
-	// cursor in the original. But since we're not going to emulate it
-	// that closely, I don't think we need to mark this as an enhancement.
-
-	return Graphics::MacGUIConstants::kMacCursorBeam;
-}
-
 bool MacGui::MacEditText::findWidget(int x, int y) const {
 	if (!_visible || !_enabled)
 		return false;
@@ -785,8 +775,6 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 	if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
 		return false;
-
-	CursorMan.showMouse(false);
 
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_LEFT:
@@ -1033,8 +1021,8 @@ MacGui::MacDialogWindow::~MacDialogWindow() {
 	if (!CursorMan.isVisible())
 		CursorMan.showMouse(true);
 
-	if (_gui->_windowManager->getCursorType() != Graphics::MacGUIConstants::kMacCursorArrow)
-		_gui->_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	CursorMan.showMouse(true);
+	_gui->_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 
 	copyToScreen(_backup);
 	_backup->free();
@@ -1123,6 +1111,72 @@ void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
+void MacGui::MacDialogWindow::drawBeamCursor() {
+	int x0 = _beamCursorPos.x - _beamCursorHotspotX;
+	int y0 = _beamCursorPos.y - _beamCursorHotspotY;
+	int x1 = x0 + _beamCursor->w;
+	int y1 = y0 + _beamCursor->h;
+
+	_beamCursor->copyRectToSurface(*(_gui->surface()), 0, 0, Common::Rect(x0, y0, x1, y1));
+
+	const Common::Point beam[] = {
+		Common::Point(0, 0), Common::Point(1, 0), Common::Point(5, 0),
+		Common::Point(6, 0), Common::Point(2, 1), Common::Point(4, 1),
+		Common::Point(3, 2), Common::Point(3, 3), Common::Point(3, 4),
+		Common::Point(3, 5), Common::Point(3, 6), Common::Point(3, 7),
+		Common::Point(3, 8), Common::Point(3, 9), Common::Point(3, 10),
+		Common::Point(3, 11), Common::Point(3, 12), Common::Point(3, 13),
+		Common::Point(2, 14), Common::Point(4, 14), Common::Point(0, 15),
+		Common::Point(1, 15), Common::Point(5, 15), Common::Point(6, 15)
+	};
+
+	for (int i = 0; i < ARRAYSIZE(beam); i++) {
+		uint32 color = _beamCursor->getPixel(beam[i].x, beam[i].y);
+
+		if (color == kBlack)
+			color = kWhite;
+		else
+			color = kBlack;
+
+		_beamCursor->setPixel(beam[i].x, beam[i].y, color);
+	}
+
+	int srcX = 0;
+	int srcY = 0;
+
+	if (x0 < 0) {
+		srcX = -x0;
+		x0 = 0;
+	}
+
+	x1 = MIN(x1, 640);
+
+	if (y0 < 0) {
+		srcY = -y0;
+		y0 = 0;
+	}
+
+	y1 = MIN(y1, 400);
+
+	_system->copyRectToScreen(_beamCursor->getBasePtr(srcX, srcY), _beamCursor->pitch, x0, y0, x1 - x0, y1 - y0);
+}
+
+void MacGui::MacDialogWindow::undrawBeamCursor() {
+		int x0 = _beamCursorPos.x - _beamCursorHotspotX;
+		int y0 = _beamCursorPos.y - _beamCursorHotspotY;
+		int x1 = x0 + _beamCursor->w;
+		int y1 = y0 + _beamCursor->h;
+
+		x0 = MAX(x0, 0);
+		x1 = MIN(x1, 640);
+		y0 = MAX(y0, 0);
+		y1 = MIN(y1, 400);
+
+		Graphics::Surface *screen = _gui->surface();
+
+		_system->copyRectToScreen(screen->getBasePtr(x0, y0), screen->pitch, x0, y0, x1 - x0, y1 - y0);
+}
+
 void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	for (uint i = 0; i < _widgets.size(); i++)
 		_widgets[i]->draw();
@@ -1141,6 +1195,12 @@ void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	}
 
 	_dirtyRects.clear();
+
+	if (_beamCursor) {
+		undrawBeamCursor();
+		_beamCursorPos = _realMousePos;
+		drawBeamCursor();
+	}
 }
 
 void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
@@ -1180,6 +1240,9 @@ int MacGui::MacDialogWindow::runDialog() {
 
 		while (_system->getEventManager()->pollEvent(event)) {
 			if (Common::isMouseEvent(event)) {
+				_realMousePos.x = event.mouse.x;
+				_realMousePos.y = event.mouse.y;
+
 				event.mouse.x -= (_bounds.left + _margin);
 				event.mouse.y -= (_bounds.top + _margin);
 
@@ -1212,8 +1275,8 @@ int MacGui::MacDialogWindow::runDialog() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				if (!CursorMan.isVisible())
-					CursorMan.showMouse(true);
+				if (_beamCursor && !_beamCursorVisible)
+					_beamCursorVisible = true;
 
 				if (_focusedWidget) {
 					if (_focusedWidget->findWidget(_oldMousePos.x, _oldMousePos.y) != _focusedWidget->findWidget(_mousePos.x, _mousePos.y)) {
@@ -1223,12 +1286,24 @@ int MacGui::MacDialogWindow::runDialog() {
 					_focusedWidget->handleMouseMove(event);
 				} else {
 					int mouseOverWidget = findWidget(_mousePos.x, _mousePos.y);
-					Graphics::MacGUIConstants::MacCursorType cursorType = (mouseOverWidget >= 0) ? _widgets[mouseOverWidget]->getCursorType() : Graphics::MacGUIConstants::kMacCursorArrow;
 
-					if (_gui->_windowManager->getCursorType() != cursorType)
-						_gui->_windowManager->replaceCursor(cursorType);
+					bool useBeamCursor = (mouseOverWidget >= 0 && _widgets[mouseOverWidget]->useBeamCursor());
+
+					if (useBeamCursor && !_beamCursor) {
+						CursorMan.showMouse(false);
+						_beamCursor = new Graphics::Surface();
+						_beamCursor->create(7, 16, Graphics::PixelFormat::createFormatCLUT8());
+						_beamCursorVisible = true;
+						_beamCursorPos = _realMousePos;
+					} else if (!useBeamCursor && _beamCursor) {
+						CursorMan.showMouse(true);
+						undrawBeamCursor();
+						_beamCursor->free();
+						delete _beamCursor;
+						_beamCursor = nullptr;
+						_beamCursorVisible = false;
+					}
 				}
-
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -1259,6 +1334,8 @@ int MacGui::MacDialogWindow::runDialog() {
 				// to key presses.
 				for (uint i = 0; i < _widgets.size(); i++) {
 					if (_widgets[i]->handleKeyDown(event)) {
+						if (_beamCursor)
+							_beamCursorVisible = true;
 						_widgets[i]->setRedraw();
 						break;
 					}
@@ -1593,13 +1670,39 @@ Graphics::Surface *MacGui::loadPict(int id) {
 			// The palette doesn't match the game's palette at all, so remap
 			// the colors to the custom area of the palette. It's assumed that
 			// only one such picture will be loaded at a time.
+			//
+			// But we still match black and white to 0 and 15 to make sure they
+			// mach exactly.
+
+			int black = -1;
+			int white = -1;
+
+			for (int i = 0; i < pict.getPaletteColorCount(); i++) {
+				int r = palette[3 * i];
+				int g = palette[3 * i + 1];
+				int b = palette[3 * i + 2];
+
+				if (r == 0 && g == 0 && b == 0)
+					black = i;
+				else if (r == 255 && g == 255 && b == 255)
+					white = i;
+			}
 
 			if (palette) {
 				_system->getPaletteManager()->setPalette(palette, kCustomColor, pict.getPaletteColorCount());
 
 				for (int y = 0; y < s->h; y++) {
 					for (int x = 0; x < s->w; x++) {
-						s->setPixel(x, y, kCustomColor + s1->getPixel(x, y));
+						int color = s1->getPixel(x, y);
+
+						if (color == black)
+							color = kBlack;
+						else if (color == white)
+							color = kWhite;
+						else
+							color = kCustomColor + color;
+
+						s->setPixel(x, y, color);
 					}
 				}
 			} else
