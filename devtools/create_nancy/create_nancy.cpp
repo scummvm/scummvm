@@ -20,6 +20,7 @@
  */
 
 #include "file.h"
+#include "cif.h"
 #include "tvd_data.h"
 #include "nancy1_data.h"
 #include "nancy2_data.h"
@@ -155,20 +156,17 @@ void writeEventFlagNames(File &output, const Common::Array<const char *> &eventF
 	writeToFile(output, eventFlagNames);
 }
 
-void writePatchFile(File &output, const char *filename) {
-	File file;
-	if (!file.open(filename, AccessMode::kFileReadMode)) {
+void writePatchFile(File &output, uint gameVersion, Common::Array<const char *> filenames, const char *folderName) {
+	uint32 size;
+	byte *b = createCifTree(gameVersion, filenames, folderName, size);
+	if (!b) {
 		return;
 	}
-	
-	byte *buf = new byte[file.size()];
-	file.read(buf, file.size());
 
 	output.writeUint32(MKTAG('P', 'A', 'T', 'C'));
-	output.write(buf, file.size());
+	output.write(b, size);
 
-	file.close();
-	delete[] buf;
+	delete[] b;
 }
 
 void writePatchAssociations(File &output, const Common::Array<PatchAssociation> &patchAssociations) {
@@ -230,7 +228,7 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy2TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy2EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy2EventFlagNames))
-	WRAPWITHOFFSET(writePatchFile(output, "files/nancy2_patchtree.dat"))
+	WRAPWITHOFFSET(writePatchFile(output, 3, nancy2PatchSrcFiles, "files/nancy2"))
 	WRAPWITHOFFSET(writePatchAssociations(output, nancy2PatchAssociations))
 	
 	// Nancy Drew: Message in a Haunted Mansion data

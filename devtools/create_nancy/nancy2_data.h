@@ -617,6 +617,13 @@ const Common::Array<const char *> _nancy2EventFlagNames = {
 	"empty"
 };
 
+const Common::Array<const char *> nancy2PatchSrcFiles {
+	"S1160.cif",
+	"S1563.cif",
+	"S1564.cif",
+	"S1565.cif"
+};
+
 // Patch notes:
 // - The patch that extends the final timer was originally distributed by HeR.
 // - The softlock fix is custom, and works by adding a second inventory dependency
