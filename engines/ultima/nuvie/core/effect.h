@@ -137,14 +137,9 @@ protected:
 	virtual void start_anim();
 
 public:
-	ProjectileEffect() {
-		tile_num = 0;
-		anim_speed = 0;
-		trail = false;
-		initial_tile_rotation = 0;
-		rotation_amount = 0;
-		src_tile_y_offset = 0;
-		finished_tiles = 0;
+	ProjectileEffect() : tile_num(0), anim_speed(0), trail(false),
+			initial_tile_rotation(0), rotation_amount(0), src_tile_y_offset(0),
+			finished_tiles(0) {
 	}
 	ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 	ProjectileEffect(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation);

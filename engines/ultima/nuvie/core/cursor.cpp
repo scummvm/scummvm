@@ -37,16 +37,8 @@ using Std::string;
 using Std::vector;
 
 
-Cursor::Cursor() {
-	cursor_id = 0;
-	cur_x = cur_y = -1;
-	cleanup = nullptr;
-	cleanup_area = Common::Rect();
-	update_area = Common::Rect();
-	hidden = false;
-	screen = nullptr;
-	config = nullptr;
-	screen_w = screen_h = 0;
+Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
+		hidden(false), screen(nullptr), config(nullptr), screen_w(0), screen_h(0) {
 }
 
 

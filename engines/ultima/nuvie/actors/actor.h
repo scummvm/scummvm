@@ -231,7 +231,7 @@ protected:
 
 	Map *map;
 	ObjManager *obj_manager;
-	GameClock *clock;
+	GameClock *_clock;
 	UseCode *usecode;
 	ActorPathFinder *pathfinder;
 

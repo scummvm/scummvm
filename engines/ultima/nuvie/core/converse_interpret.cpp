@@ -38,18 +38,11 @@ namespace Nuvie {
 
 //#define CONVERSE_DEBUG
 
-ConverseInterpret::ConverseInterpret(Converse *owner) {
-	converse = owner;
-	b_frame = nullptr;
-	decl_v = decl_t = 0x00;
-	in_start = 0;
-
+ConverseInterpret::ConverseInterpret(Converse *owner)
+		: converse(owner), b_frame(nullptr), decl_v(0), decl_t(0), in_start(0),
+		  answer_mode(ANSWER_NO), stopped(false), db_lvar(false), db_loc(0),
+		  db_offset(0) {
 	unwait();
-	answer_mode = ANSWER_NO;
-	stopped = false;
-	db_lvar = false;
-	db_loc = 0;
-	db_offset = 0;
 }
 
 
@@ -283,7 +276,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			else if (!strcmp(symbol, "$P")) // player name
 				output.append(converse->player->get_name());
 			else if (!strcmp(symbol, "$T")) // time of day
-				output.append(converse->clock->get_time_of_day_string());
+				output.append(converse->_clock->get_time_of_day_string());
 			else if (!strcmp(symbol, "$Y")) // Y-string
 				output.append(get_ystr());
 			else if (!strcmp(symbol, "$Z")) // previous input

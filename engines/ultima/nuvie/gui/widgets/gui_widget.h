@@ -108,7 +108,7 @@ public:
 	void moveToFront();
 	virtual void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
 
-	virtual int  Status(void);  /* Reports status to GUI */
+	virtual int  Status(void) const;  /* Reports status to GUI */
 
 	/* Set the bounds of the widget.
 	   If 'w' or 'h' is -1, that parameter will not be changed.

@@ -54,7 +54,7 @@ class ActorManager {
 	Actor *actors[ACTORMANAGER_MAX_ACTORS];
 	uint8 player_actor;
 	uint8 temp_actor_offset;
-	GameClock *clock;
+	GameClock *_clock;
 
 	uint16 last_obj_blk_x, last_obj_blk_y;
 	uint8 last_obj_blk_z;

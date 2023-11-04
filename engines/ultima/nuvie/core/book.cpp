@@ -29,9 +29,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Book::Book(Configuration *cfg) {
-	config = cfg;
-	books = new U6Lib_n;
+Book::Book(Configuration *cfg) : config(cfg), books(new U6Lib_n) {
 }
 
 Book::~Book() {

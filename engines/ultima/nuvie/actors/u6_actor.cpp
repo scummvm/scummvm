@@ -46,10 +46,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c), actor_type(nullptr),
-	base_actor_type(nullptr) {
-	walk_frame_inc = 1;
-	current_movetype = MOVETYPE_U6_NONE;
+U6Actor::U6Actor(Map *m, ObjManager *om, GameClock *c): Actor(m, om, c),
+		actor_type(nullptr), walk_frame_inc(1), base_actor_type(nullptr),
+		current_movetype(MOVETYPE_U6_NONE) {
 }
 
 U6Actor::~U6Actor() {

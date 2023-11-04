@@ -56,8 +56,7 @@ Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 	  talk_flags(0), obj_flags(0), body_armor_class(0), readied_armor_class(0),
 	  custom_tile_tbl(nullptr), id_n(0), x(0), y(0), z(0), obj_n(0), frame_n(0),
 	  base_obj_n(0), old_frame_n(0), movement_flags(0), strength(0), dex(0),
-	  intelligence(0), hp(0), level(0), magic(0), combat_mode(0) {
-	clock = c;
+	  intelligence(0), hp(0), level(0), magic(0), combat_mode(0), _clock(c) {
 	memset(readied_objects, 0, sizeof(readied_objects));
 	clear_error();
 }
@@ -494,7 +493,7 @@ bool Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) 
 	if (id_n == game->get_player()->get_actor()->id_n && game->get_player()->is_mapwindow_centered())
 		game->get_map_window()->centerMapOnActor(this);
 // allows a delay to be set on actor movement, in lieu of using animations
-	move_time = clock->get_ticks();
+	move_time = _clock->get_ticks();
 	return true;
 }
 

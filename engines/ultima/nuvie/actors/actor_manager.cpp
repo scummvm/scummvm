@@ -49,18 +49,10 @@ namespace Nuvie {
 #define ACTOR_TEMP_INIT 255
 #define SCHEDULE_SIZE 5
 
-ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c) {
-	uint16 i;
-
-	config = cfg;
-	map = m;
-	tile_manager = tm;
-	obj_manager = om;
-	clock = c;
-
-	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
-		actors[i] = nullptr;
-	temp_actor_offset = 224;
+ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c)
+		: config(cfg), map(m), tile_manager(tm), obj_manager(om), _clock(c),
+		  temp_actor_offset(224) {
+	ARRAYCLEAR(actors);
 	init();
 }
 
@@ -118,13 +110,13 @@ bool ActorManager::load(NuvieIO *objlist) {
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		switch (game_type) {
 		case NUVIE_GAME_U6 :
-			actors[i] = new U6Actor(map, obj_manager, clock);
+			actors[i] = new U6Actor(map, obj_manager, _clock);
 			break;
 		case NUVIE_GAME_MD :
-			actors[i] = new MDActor(map, obj_manager, clock);
+			actors[i] = new MDActor(map, obj_manager, _clock);
 			break;
 		case NUVIE_GAME_SE :
-			actors[i] = new SEActor(map, obj_manager, clock);
+			actors[i] = new SEActor(map, obj_manager, _clock);
 			break;
 		}
 
@@ -647,7 +639,7 @@ void ActorManager::startActors() {
 }
 
 void ActorManager::updateSchedules(bool teleport) {
-	uint8 cur_hour = clock->get_hour();
+	uint8 cur_hour = _clock->get_hour();
 
 	for (int i = 0; i < ACTORMANAGER_MAX_ACTORS; i++)
 		if (!actors[i]->is_in_party()) // don't do scheduled activities while partying
@@ -818,7 +810,7 @@ bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, u
 
 		if (new_actor)
 			*new_actor = actor;
-		actor->handle_lightsource(clock->get_hour());
+		actor->handle_lightsource(_clock->get_hour());
 		return true;
 	} else
 		DEBUG(0, LEVEL_NOTIFICATION, "***All Temp Actor Slots Full***\n");

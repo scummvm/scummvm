@@ -58,8 +58,7 @@ FadeEffect *FadeEffect::current_fade = nullptr;
 
 /* Add self to effect list (for future deletion).
  */
-Effect::Effect() : defunct(false) {
-	retain_count = 0;
+Effect::Effect() : defunct(false), retain_count(0) {
 	game = Game::get_game();
 	effect_manager = game->get_effect_manager();
 	effect_manager->add_effect(this);
@@ -84,11 +83,9 @@ void Effect::add_anim(NuvieAnim *anim) {
  *                                 -1=use cannon frame
  */
 CannonballEffect::CannonballEffect(Obj *src_obj, sint8 direction)
-	: target_loc() {
+	: obj(src_obj) {
 	usecode = game->get_usecode();
-	obj = src_obj;
-	MapCoord obj_loc(obj->x, obj->y, obj->z);
-	target_loc = obj_loc;
+	target_loc = MapCoord(obj->x, obj->y, obj->z);
 
 	if (direction == -1)
 		direction = obj->frame_n;
@@ -189,13 +186,9 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 #define EXP_EFFECT_SPEED 3
 
 
-ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) {
+ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) : ProjectileEffect(),
+		exp_tile_num(tileNum), usecode(nullptr), obj(nullptr) {
 	start_loc = location;
-	finished_tiles = 0;
-	exp_tile_num = tileNum;
-	usecode = nullptr;
-	obj = nullptr;
-
 	start_anim();
 }
 
@@ -477,7 +470,7 @@ uint16 HitEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 }
 
 TextEffect::TextEffect(Std::string text) { // default somewhat centered on player for cheat messages
-	MapWindow *map_window = game->get_map_window();
+	const MapWindow *map_window = game->get_map_window();
 	if (!map_window || map_window->Status() != WIDGET_VISIBLE) // scripted sequence like intro and intro menu
 		return;
 	MapCoord loc = game->get_player()->get_actor()->get_location();

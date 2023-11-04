@@ -50,8 +50,7 @@ Converse::Converse() : config(nullptr), actors(nullptr), objects(nullptr),
 		src(nullptr), src_num(0), allowed_input(nullptr), active(false),
 		variables(nullptr), party_all_the_time(false), speech(nullptr),
 		using_fmtowns(false), need_input(false), conversations_stop_music(false),
-		gametype(NUVIE_GAME_NONE) {
-	clock = nullptr;
+		gametype(NUVIE_GAME_NONE), _clock(nullptr) {
 	ARRAYCLEAR(aname);
 }
 
@@ -66,7 +65,7 @@ Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a
 	config = cfg;
 	scroll = s;
 	actors = a;
-	clock = c;
+	_clock = c;
 	player = p;
 	views = v;
 	objects = o;

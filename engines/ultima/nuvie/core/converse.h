@@ -92,7 +92,7 @@ class Converse {
 
 	// game system objects from nuvie
 	Configuration *config;
-	GameClock *clock;
+	GameClock *_clock;
 	ActorManager *actors;
 	ObjManager *objects;
 	Player *player;

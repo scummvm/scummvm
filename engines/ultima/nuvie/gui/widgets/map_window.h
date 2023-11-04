@@ -156,10 +156,10 @@ public:
 
 	bool init(TileManager *tm, ObjManager *om, ActorManager *am);
 
-	sint16 get_cur_x() {
+	sint16 get_cur_x() const {
 		return cur_x;
 	}
-	sint16 get_cur_y() {
+	sint16 get_cur_y() const {
 		return cur_y;
 	}
 	bool set_windowSize(uint16 width, uint16 height);

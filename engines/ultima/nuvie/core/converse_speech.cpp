@@ -31,8 +31,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-ConverseSpeech::ConverseSpeech() {
-	config = nullptr;
+ConverseSpeech::ConverseSpeech() : config(nullptr) {
 }
 
 

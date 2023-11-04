@@ -83,16 +83,12 @@ static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up) {
 
 
 AnimManager::AnimManager(sint16 x, sint16 y, Screen *screen, Common::Rect *clipto)
-	: next_id(0) {
+		: next_id(0), tile_pitch(16), viewsurf(screen), mapwindow_x_offset(x),
+		  mapwindow_y_offset(y) {
 	map_window = Game::get_game()->get_map_window();
-	tile_pitch = 16;
 
-	viewsurf = screen;
 	if (clipto)
 		viewport = *clipto;
-
-	mapwindow_x_offset = x;
-	mapwindow_y_offset = y;
 }
 
 

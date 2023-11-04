@@ -158,10 +158,10 @@ protected:
 	converse_value db_offset;
 
 
-	const char *get_rstr(uint32 sn) {
+	const char *get_rstr(uint32 sn) const {
 		return ((sn < rstrings.size()) ? rstrings[sn].c_str() : "");
 	}
-	const char *get_ystr()          {
+	const char *get_ystr() const {
 		return (ystring.c_str());
 	}
 	void set_ystr(const char *s);
@@ -181,7 +181,7 @@ protected:
 	void leave_all() {
 		while (b_frame && !b_frame->empty()) leave();
 	}
-	struct convi_frame_s *top_frame() {
+	struct convi_frame_s *top_frame() const {
 		return ((b_frame && !b_frame->empty()) ? b_frame->top() : nullptr);
 	}
 	void do_frame(converse_value c);
@@ -189,7 +189,7 @@ protected:
 	void set_break(converse_value c) {
 		if (top_frame()) top_frame()->break_c = c;
 	}
-	converse_value get_break()       {
+	converse_value get_break() const {
 		return (top_frame() ? top_frame()->break_c : 0x00);
 	}
 	void clear_break()               {
@@ -198,7 +198,7 @@ protected:
 	void set_run(bool r) {
 		if (top_frame()) top_frame()->run = r;
 	}
-	bool get_run()       {
+	bool get_run() const {
 		return (top_frame() ? top_frame()->run : true);
 	}
 
@@ -235,14 +235,14 @@ protected:
 	void add_text(unsigned char c = 0);
 
 	/* manipulating collected input */
-	uint32 val_count()     {
+	uint32 val_count() const {
 		return (in.size());
 	}
 	converse_value get_val(uint32 vi);
 	uint8 get_val_size(uint32 vi);
 	converse_value pop_val();
 	uint8 pop_val_size();
-	const Std::string &get_text() {
+	const Std::string &get_text() const {
 		return text;
 	}
 	void flush() {
@@ -268,7 +268,7 @@ protected:
 public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
 	bool check_keywords(Std::string keystr, Std::string instr);
-	bool var_input() {
+	bool var_input() const {
 		return (decl_t != 0x00);
 	}
 	void assign_input(); // set declared variable to Converse input
