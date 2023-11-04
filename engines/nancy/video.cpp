@@ -279,8 +279,8 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 	}
 
 	if (frameNr >= _chunkInfo.size()) {
-		warning("Frame %d doesn't exist", frameNr);
-		return nullptr;
+		debugC(kDebugVideo, "Frame %d doesn't exist, returning last frame %d", frameNr, _chunkInfo.size() - 1);
+		return decodeFrame(_chunkInfo.size() - 1);
 	}
 
 	const ChunkInfo &info = _chunkInfo[frameNr];

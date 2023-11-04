@@ -54,7 +54,8 @@ enum NancyDebugChannels {
 	kDebugEngine		= 1 << 0,
 	kDebugActionRecord	= 1 << 1,
 	kDebugScene			= 1 << 2,
-	kDebugSound			= 1 << 3
+	kDebugSound			= 1 << 3,
+	kDebugVideo			= 1 << 4
 };
 
 #define GAMEOPTION_PLAYER_SPEECH GUIO_GAMEOPTIONS1
