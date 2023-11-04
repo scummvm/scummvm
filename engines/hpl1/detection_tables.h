@@ -74,6 +74,17 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
+	// Penumbra: Black Plague (CD)
+	{
+		"penumbrablackplague",
+		nullptr,
+		AD_ENTRY1s("Penumbra.exe", "be48f62ecd16975e31083989129eafd3", 8159232),
+		Common::Language::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+
 	AD_TABLE_END_MARKER
 };
 
