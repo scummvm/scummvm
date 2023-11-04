@@ -579,25 +579,22 @@ int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 		return 0;
 
 	if (x >= _bounds.right || y >= _bounds.bottom)
-		return _text.size() - 1;
+		return _text.size();
 
 	x -= _bounds.left;
 
-	int textPos = _text.size() - 1;
 	int textX = _textPos;
 
 	for (uint i = 0; i < _text.size(); i++) {
 		int charWidth = _font->getCharWidth(_text[i]);
 
-		if (x >= textX && x < textX + charWidth) {
-			textPos = i;
-			break;
-		}
+		if (x >= textX && x < textX + charWidth)
+			return i;
 
 		textX += charWidth;
 	}
 
-	return textPos;
+	return _text.size();
 }
 
 void MacGui::MacEditText::deleteSelection() {
@@ -694,10 +691,10 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 	}
 
 	if (firstCharSelected)
-		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kGreen);
+		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
 
 	if (lastCharSelected)
-		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kGreen);
+		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
 
 	if (_selectLen == 0) {
 		_textSurface.vLine(caretX, 0, _textSurface.h - 1, kRed);
