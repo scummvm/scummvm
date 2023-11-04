@@ -73,15 +73,15 @@ public:
 
 	bool parse_token(MsgText *token) override;
 
-	bool can_display_prompt() override {
+	bool can_display_prompt() const override {
 		return false;
 	}
 
 	void Display(bool full_redraw) override;
 
 	void display_prompt() override {}
-	void display_string(Std::string s);
-	void display_string(Std::string s, Font *f, bool include_on_map_window) override {
+	void display_string(const Std::string &s);
+	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 

@@ -44,7 +44,7 @@ public:
 	void Display(bool full_redraw) override;
 
 protected:
-	virtual void display_sun_moon(Tile *tile, uint8 pos);
+	virtual void display_sun_moon(const Tile *tile, uint8 pos);
 	void display_sun(uint8 hour, uint8 minute, bool eclipse);
 	void display_moons(uint8 day, uint8 hour, uint8 minute = 0);
 

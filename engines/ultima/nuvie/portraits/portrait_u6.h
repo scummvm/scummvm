@@ -48,7 +48,7 @@ public:
 
 private:
 
-	uint8 get_portrait_num(Actor *actor) override;
+	uint8 get_portrait_num(Actor *actor) const override;
 
 };
 

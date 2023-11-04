@@ -114,7 +114,7 @@ void Actor::init_from_obj(Obj *obj, bool change_base_obj) {
 
 /* Returns true if another NPC `n' is in proximity to location `where'.
  */
-bool Actor::is_nearby(MapCoord &where, uint8 thresh) {
+bool Actor::is_nearby(const MapCoord &where, uint8 thresh) const {
 	MapCoord here(x, y, z);
 	if (here.xdistance(where) <= thresh && here.ydistance(where) <= thresh && z == where.z)
 		return (true);
@@ -122,53 +122,51 @@ bool Actor::is_nearby(MapCoord &where, uint8 thresh) {
 }
 
 
-bool Actor::is_nearby(Actor *other) {
+bool Actor::is_nearby(const Actor *other) const {
 	MapCoord there(other->get_location());
 	return (is_nearby(there));
 }
 
 
-bool Actor::is_nearby(uint8 actor_num) {
+bool Actor::is_nearby(uint8 actor_num) const {
 	return (is_nearby(Game::get_game()->get_actor_manager()->get_actor(actor_num)));
 }
 
-bool Actor::is_at_position(Obj *obj) {
+bool Actor::is_at_position(const Obj *obj) const {
 	if (obj->x == x && obj->y == y && obj->z == z)
 		return true;
 
 	return false;
 }
 
-bool Actor::is_passable() {
+bool Actor::is_passable() const {
 	if (ethereal)
 		return true;
-	Tile *tile;
-
-	tile = obj_manager->get_obj_tile(obj_n, frame_n);
+	const Tile *tile = obj_manager->get_obj_tile(obj_n, frame_n);
 
 	return tile->passable;
 }
 
-bool Actor::is_in_vehicle() {
+bool Actor::is_in_vehicle() const {
 	if (is_in_party() == false)
 		return false;
 
 	return Game::get_game()->get_party()->is_in_vehicle();
 }
 
-void Actor::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) {
+void Actor::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) const {
 	if (ret_x) *ret_x = x;
 	if (ret_y) *ret_y = y;
 	if (ret_level) *ret_level = z;
 }
 
 
-MapCoord Actor::get_location() {
+MapCoord Actor::get_location() const {
 	return (MapCoord(x, y, z));
 }
 
 
-uint16 Actor::get_tile_num() {
+uint16 Actor::get_tile_num() const {
 	if (custom_tile_tbl) {
 		return get_custom_tile_num(obj_n);
 	}
@@ -176,7 +174,7 @@ uint16 Actor::get_tile_num() {
 	return obj_manager->get_obj_tile_num(obj_n);
 }
 
-uint16 Actor::get_tile_num(uint16 obj_num) {
+uint16 Actor::get_tile_num(uint16 obj_num) const {
 	if (custom_tile_tbl) {
 		return get_custom_tile_num(obj_num);
 	}
@@ -184,7 +182,7 @@ uint16 Actor::get_tile_num(uint16 obj_num) {
 	return obj_manager->get_obj_tile_num(obj_num);
 }
 
-uint16 Actor::get_custom_tile_num(uint16 obj_num) {
+uint16 Actor::get_custom_tile_num(uint16 obj_num) const {
 	if (custom_tile_tbl) {
 		Common::HashMap<uint16, uint16>::iterator it;
 		it = custom_tile_tbl->find(obj_num);
@@ -196,7 +194,7 @@ uint16 Actor::get_custom_tile_num(uint16 obj_num) {
 	return obj_manager->get_obj_tile_num(obj_num);
 }
 
-Tile *Actor::get_tile() {
+Tile *Actor::get_tile() const {
 	return Game::get_game()->get_tile_manager()->get_tile(get_tile_num() + frame_n);
 }
 
@@ -211,7 +209,7 @@ uint8 Actor::get_sched_worktype() {
 	return 0; //no worktype
 }
 
-uint16 Actor::get_downward_facing_tile_num() {
+uint16 Actor::get_downward_facing_tile_num() const {
 	return obj_manager->get_obj_tile_num(obj_n) + frame_n;
 }
 
@@ -396,7 +394,7 @@ bool Actor::can_be_moved() {
 	return can_move;
 }
 
-bool Actor::can_be_passed(Actor *other) {
+bool Actor::can_be_passed(const Actor *other) const {
 	// ethereal actors can always pass us
 	return (other->ethereal || is_passable());
 }
@@ -545,7 +543,7 @@ void Actor::pathfind_to(uint16 gx, uint16 gy, uint8 gz) {
 	pathfind_to(d);
 }
 
-void Actor::pathfind_to(MapCoord &d) {
+void Actor::pathfind_to(const MapCoord &d) {
 	if (pathfinder) {
 		pathfinder->set_actor(this);
 		pathfinder->set_goal(d);
@@ -673,6 +671,9 @@ U6LList *Actor::get_inventory_list() {
 	return obj_manager->get_actor_inventory(id_n);
 }
 
+const U6LList *Actor::get_inventory_list() const {
+	return obj_manager->get_actor_inventory(id_n);
+}
 
 bool Actor::inventory_has_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
 	if (inventory_get_object(objN, qual, match_quality, frameN, match_frame_n))
@@ -680,17 +681,15 @@ bool Actor::inventory_has_object(uint16 objN, uint8 qual, bool match_quality, ui
 	return (false);
 }
 
-uint32 Actor::inventory_count_objects(bool inc_readied_objects) {
-	Obj *obj;
+uint32 Actor::inventory_count_objects(bool inc_readied_objects) const {
 	uint32 count = 0;
-	U6Link *link;
-	U6LList *inventory = get_inventory_list();
+	const U6LList *inventory = get_inventory_list();
 
 	if (inc_readied_objects) {
 		return inventory->count();
 	} else {
-		for (link = inventory->start(); link != nullptr; link = link->next) {
-			obj = (Obj *)link->data;
+		for (const U6Link *link = inventory->start(); link != nullptr; link = link->next) {
+			const Obj *obj = (const Obj *)link->data;
 			if (!obj->is_readied())
 				count++;
 		}
@@ -874,7 +873,7 @@ bool Actor::inventory_remove_obj(Obj *obj, bool run_usecode) {
 	return inventory->remove(obj);
 }
 
-float Actor::get_inventory_weight() {
+float Actor::get_inventory_weight() const {
 	U6LList *inventory;
 	U6Link *link;
 	Obj *obj;
@@ -916,7 +915,7 @@ float Actor::get_inventory_equip_weight() {
 
 /* Can the actor carry a new object of this type?
  */
-bool Actor::can_carry_object(uint16 objN, uint32 qty) {
+bool Actor::can_carry_object(uint16 objN, uint32 qty) const {
 	if (Game::get_game()->using_hackmove())
 		return true;
 	float obj_weight = obj_manager->get_obj_weight(objN);
@@ -924,7 +923,7 @@ bool Actor::can_carry_object(uint16 objN, uint32 qty) {
 	return (can_carry_weight(obj_weight));
 }
 
-bool Actor::can_carry_object(Obj *obj) {
+bool Actor::can_carry_object(Obj *obj) const {
 	if (Game::get_game()->using_hackmove())
 		return true;
 	if (obj_manager->can_get_obj(obj) == false)
@@ -933,14 +932,14 @@ bool Actor::can_carry_object(Obj *obj) {
 	return can_carry_weight(obj);
 }
 
-bool Actor::can_carry_weight(Obj *obj) {
+bool Actor::can_carry_weight(Obj *obj) const {
 	return (can_carry_weight(obj_manager->get_obj_weight(obj, OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DO_SCALE)));
 }
 
 /* Can the actor carry new object(s) of this weight?
  * (return from get_obj_weight())
  */
-bool Actor::can_carry_weight(float obj_weight) {
+bool Actor::can_carry_weight(float obj_weight) const {
 	if (Game::get_game()->using_hackmove())
 		return true;
 	// obj_weight /= 10;
@@ -1138,7 +1137,7 @@ void Actor::inventory_drop_all() {
 		if (!inventory_remove_obj(obj))
 			break;
 
-		Tile *obj_tile = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n);
+		const Tile *obj_tile = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n);
 		if (obj_tile && (obj_tile->flags3 & TILEFLAG_IGNORE)) { //Don't drop charges.
 			delete_obj(obj);
 		} else {
@@ -1155,30 +1154,25 @@ void Actor::inventory_drop_all() {
 
 // Moves inventory and all readied items into a container object.
 void Actor::all_items_to_container(Obj *container_obj, bool stack) {
-	U6LList *inventory;
-	U6Link *link;
-	Obj *obj;
-
-	inventory = get_inventory_list();
+	U6LList *inventory = get_inventory_list();
 
 	if (!inventory)
 		return;
 
-	for (link = inventory->start(); link != nullptr;) {
-		obj = (Obj *)link->data;
+	for (U6Link *link = inventory->start(); link != nullptr;) {
+		Obj *obj = (Obj *)link->data;
 		link = link->next;
 
 		if (temp_actor)
 			obj->status |= OBJ_STATUS_TEMPORARY;
 
-		Tile *obj_tile = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n);
+		const Tile *obj_tile = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n);
 		if (obj_tile && obj_tile->flags3 & TILEFLAG_IGNORE) {
 			inventory_remove_obj(obj);
 			delete_obj(obj);
 		} else
 			obj_manager->moveto_container(obj, container_obj, stack);
 	}
-
 
 	return;
 }
@@ -1700,7 +1694,7 @@ ActorError *Actor::get_error() {
 }
 
 // frozen by worktype or status
-bool Actor::is_immobile() {
+bool Actor::is_immobile() const {
 	return (false);
 }
 

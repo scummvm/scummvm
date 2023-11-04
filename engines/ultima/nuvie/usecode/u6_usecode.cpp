@@ -202,23 +202,23 @@ U6UseCode::~U6UseCode() {
 
 
 /* Is the object a food (or drink) item? */
-bool U6UseCode::is_food(Obj *obj) {
+bool U6UseCode::is_food(const Obj *obj) const {
 	const U6ObjectType *type = get_object_type(obj->obj_n, obj->frame_n);
 	return (type && (type->flags & OBJTYPE_FOOD));
 }
 
 
-bool U6UseCode::is_container(Obj *obj) {
+bool U6UseCode::is_container(const Obj *obj) const {
 	const U6ObjectType *type = get_object_type(obj->obj_n, obj->frame_n);
 	return (type && (type->flags & OBJTYPE_CONTAINER));
 }
 
-bool U6UseCode::is_container(uint16 obj_n, uint8 frame_n) {
+bool U6UseCode::is_container(uint16 obj_n, uint8 frame_n) const {
 	const U6ObjectType *type = get_object_type(obj_n, frame_n);
 	return (type && (type->flags & OBJTYPE_CONTAINER));
 }
 
-bool U6UseCode::is_readable(Obj *obj) {
+bool U6UseCode::is_readable(const Obj *obj) const {
 	const U6ObjectType *type = get_object_type(obj->obj_n, obj->frame_n);
 	return ((type && (type->flags & OBJTYPE_BOOK)) || obj->obj_n == OBJ_U6_CLOCK
 	        || obj->obj_n == OBJ_U6_SUNDIAL);
@@ -380,7 +380,7 @@ bool U6UseCode::drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty)
 
 
 /* Return pointer to object-type in list for object N:F, or nullptr if none. */
-inline const U6ObjectType *U6UseCode::get_object_type(uint16 n, uint8 f, UseCodeEvent ev) {
+inline const U6ObjectType *U6UseCode::get_object_type(uint16 n, uint8 f, UseCodeEvent ev) const {
 	const U6ObjectType *type = U6ObjectTypes;
 	while (type->obj_n != OBJ_U6_NOTHING) {
 		if (type->obj_n == n && (type->frame_n == 0xFF || type->frame_n == f)
@@ -1030,7 +1030,7 @@ bool U6UseCode::use_moonstone(Obj *obj, UseCodeEvent ev) {
 	} else if (ev == USE_EVENT_USE) {
 		Weather *weather = game->get_weather();
 		MapCoord loc = Game::get_game()->get_player()->get_actor()->get_location();
-		Tile *map_tile = map->get_tile(loc.x, loc.y, loc.z);
+		const Tile *map_tile = map->get_tile(loc.x, loc.y, loc.z);
 
 		if ((map_tile->tile_num < 1 || map_tile->tile_num > 7) && (map_tile->tile_num < 0x10 || map_tile->tile_num > 0x6f)) {
 			scroll->display_string("Cannot be buried here!\n");
@@ -1320,7 +1320,7 @@ bool U6UseCode::use_shovel(Obj *obj, UseCodeEvent ev) {
 			dug_up_obj = new_obj(OBJ_U6_HOLE, 0, dig_at.x, dig_at.y, dig_at.z); //found a connecting ladder, dig a hole
 		}
 	}
-	Tile *tile = map->get_tile(dig_at.x, dig_at.y, dig_at.z, true);
+	const Tile *tile = map->get_tile(dig_at.x, dig_at.y, dig_at.z, true);
 // uncomment first check if the coord conversion gets added back
 	if (/*(!dug_up_obj && dig_at.z == 0) ||*/ !tile // original might have checked for earth desc and no wall mask
 	        || !((tile->tile_num <= 111 && tile->tile_num >= 108) || tile->tile_num == 540)) {
@@ -2988,7 +2988,7 @@ bool U6UseCode::holy_flame(Obj *obj, UseCodeEvent ev) {
 	return false;
 }
 
-bool U6UseCode::cannot_unready(Obj *obj) {
+bool U6UseCode::cannot_unready(const Obj *obj) const {
 	if (!obj->is_readied())
 		return false;
 	if (obj->obj_n == OBJ_U6_AMULET_OF_SUBMISSION

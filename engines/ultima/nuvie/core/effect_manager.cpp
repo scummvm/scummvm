@@ -74,9 +74,9 @@ void EffectManager::update_effects() {
 
 /* Returns true if there are any effects still active.
  */
-bool EffectManager::has_effects() {
+bool EffectManager::has_effects() const {
 	if (!effects.empty()) {
-		EffectIterator i = effects.begin();
+		ConstEffectIterator i = effects.begin();
 		while (i != effects.end())
 			if (!(*i)->is_defunct()) // effect is still active
 				return (true);

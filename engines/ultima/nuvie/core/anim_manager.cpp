@@ -202,7 +202,7 @@ bool AnimManager::destroy_anim(NuvieAnim *anim_pt) {
 
 /* Draw tile on viewsurf at x,y.
  */
-void AnimManager::drawTile(Tile *tile, uint16 x, uint16 y) {
+void AnimManager::drawTile(const Tile *tile, uint16 x, uint16 y) {
 	viewsurf->blit(mapwindow_x_offset + x, mapwindow_y_offset + y, tile->data, 8, tile_pitch, tile_pitch, 16,
 	               tile->transparent, &viewport);
 }
@@ -213,7 +213,7 @@ void AnimManager::drawText(Font *font, const char *text, uint16 x, uint16 y) {
 
 /* Draw tile on viewsurf at map location wx,wy (offset by add_x,add_y).
  */
-void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
+void AnimManager::drawTileAtWorldCoords(const Tile *tile, uint16 wx, uint16 wy,
 										uint16 add_x, uint16 add_y) {
 	sint16 cur_x = map_window->cur_x;
 	sint16 cur_y = map_window->cur_y;
@@ -479,7 +479,7 @@ uint16 TextAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 }
 
 /*** TossAnim ***/
-TossAnim::TossAnim(Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
+TossAnim::TossAnim(const Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
 	tile_center = 0;
 	actor_manager = Game::get_game()->get_actor_manager();
 	obj_manager = Game::get_game()->get_obj_manager();
@@ -508,7 +508,7 @@ TossAnim::~TossAnim() {
 	delete toss_tile;
 }
 
-void TossAnim::init(Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
+void TossAnim::init(const Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags) {
 	src = new MapCoord(start);
 	target = new MapCoord(stop);
 	blocking = stop_flags;

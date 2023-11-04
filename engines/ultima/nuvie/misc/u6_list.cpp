@@ -53,7 +53,6 @@ inline void deleteU6Link(U6Link *link) {
 U6LList::U6LList() {
 	head = nullptr;
 	tail = nullptr;
-	cur = nullptr;
 }
 
 U6LList::~U6LList() {
@@ -200,14 +199,13 @@ bool U6LList::removeAll() {
 
 	head = nullptr;
 	tail = nullptr;
-	cur = nullptr;
 
 	return true;
 }
 
 
 
-uint32 U6LList::count() {
+uint32 U6LList::count() const {
 	uint32 i;
 	U6Link *link;
 
@@ -219,33 +217,19 @@ uint32 U6LList::count() {
 }
 
 U6Link *U6LList::start() {
-	cur = head;
-
-	return cur;
+	return head;
 }
 
 U6Link *U6LList::end() {
-	cur = tail;
-
-	return cur;
+	return tail;
 }
 
-U6Link *U6LList::next() {
-	if (cur == tail)
-		return nullptr;
-
-	cur = cur->next;
-
-	return cur;
+const U6Link *U6LList::start() const {
+	return head;
 }
 
-U6Link *U6LList::prev() {
-	if (cur == head)
-		return nullptr;
-
-	cur = cur->prev;
-
-	return cur;
+const U6Link *U6LList::end() const {
+	return tail;
 }
 
 U6Link *U6LList::gotoPos(uint32 pos) {

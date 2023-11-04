@@ -65,7 +65,7 @@ Map::~Map() {
 }
 
 
-unsigned char *Map::get_map_data(uint8 level) {
+byte *Map::get_map_data(uint8 level) {
 	if (level == 0)
 		return surface;
 
@@ -82,18 +82,15 @@ uint16 *Map::get_roof_data(uint8 level) {
 	return nullptr;
 }
 
-Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
-	Tile *map_tile;
-	uint8 *ptr;
-
+const Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
 	if (level > 5)
 		return nullptr;
-
-	ptr = get_map_data(level);
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile;
 	if (original_tile)
 		map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 	else
@@ -102,7 +99,7 @@ Tile *Map::get_tile(uint16 x, uint16 y, uint8 level, bool original_tile) {
 	return map_tile;
 }
 
-uint16 Map::get_width(uint8 level) {
+uint16 Map::get_width(uint8 level) const {
 	if (level == 0)
 		return 1024; // surface
 
@@ -110,9 +107,6 @@ uint16 Map::get_width(uint8 level) {
 }
 
 bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
@@ -125,8 +119,8 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	return map_tile->passable;
 }
@@ -148,9 +142,6 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level, uint8 dir) {
 }
 
 bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
@@ -163,8 +154,8 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 	if (obj_status != OBJ_NO_OBJ && obj_manager->is_forced_passable(x, y, level))
 		return true;
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (!map_tile->passable && !(map_tile->flags1 & TILEFLAG_WALL)) {
 		switch (dir) {
@@ -238,21 +229,17 @@ bool Map::is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj
 }
 
 bool Map::is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects) {
-	uint8 *ptr;
-	Tile *map_tile;
-	Obj *obj;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
 	if (!ignore_objects) {
-		obj = obj_manager->get_obj(x, y, level);
+		const Obj *obj = obj_manager->get_obj(x, y, level);
 		if (obj != nullptr)
 			return false;
 	}
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const uint8 *ptr = get_map_data(level);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->water)
 		return true;
@@ -261,12 +248,12 @@ bool Map::is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects) {
 }
 
 bool Map::is_damaging(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
-	uint8 *ptr = get_map_data(level);
+	const uint8 *ptr = get_map_data(level);
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->damages)
 		return true;
@@ -306,7 +293,7 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	uint8 *ptr = get_map_data(level);
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
-	Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
+	const Tile *map_tile = tile_manager->get_original_tile(ptr[y * get_width(level) + x]);
 	uint8 impedance = 0;
 
 	if (!ignore_objects) {
@@ -330,8 +317,8 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	return impedance;
 }
 
-Tile *Map::get_dmg_tile(uint16 x, uint16 y, uint8 level) {
-	Tile *tile = get_tile(x, y, level);
+const Tile *Map::get_dmg_tile(uint16 x, uint16 y, uint8 level) {
+	const Tile *tile = get_tile(x, y, level);
 
 	if (tile->damages)
 		return tile;
@@ -658,7 +645,7 @@ void Map::insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 lev
 
 /* Get absolute coordinates for relative destination from MapCoord.
  */
-MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
+MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) const {
 //    uint16 pitch = Map::get_width(z); cannot call function without object
 	uint16 pitch = (z == 0) ? 1024 : 256;
 	dx += x;
@@ -678,7 +665,7 @@ MapCoord MapCoord::abs_coords(sint16 dx, sint16 dy) {
 
 /* Returns true if this map coordinate is visible in the game window.
  */
-bool MapCoord::is_visible() {
+bool MapCoord::is_visible() const {
 	return (Game::get_game()->get_map_window()->in_window(x, y, z));
 }
 

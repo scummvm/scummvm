@@ -154,7 +154,7 @@ public:
 	void continue_script();
 	void stop();
 
-	bool running()    {
+	bool running() const {
 		return (active);
 	}
 	bool is_waiting_for_scroll() {
@@ -167,10 +167,10 @@ public:
 
 	bool input();
 	void print(const char *s = nullptr);
-	const Std::string &get_input()  {
+	const Std::string &get_input() const {
 		return in_str;
 	}
-	const Std::string &get_output() {
+	const Std::string &get_output() const {
 		return out_str;
 	}
 	void set_input(Std::string s) {
@@ -185,7 +185,7 @@ public:
 	}
 	const char *npc_name(uint8 num);
 	void show_portrait(uint8 n);
-	converse_value get_var(uint8 varnum) {
+	converse_value get_var(uint8 varnum) const {
 		return (varnum <= U6TALK_VAR__LAST_ ? variables[varnum].cv : 0x00);
 	}
 	const char *get_svar(uint8 varnum);

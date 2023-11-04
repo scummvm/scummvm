@@ -267,9 +267,6 @@ void PartyView::Display(bool full_redraw) {
 	if (full_redraw || update_display || MD || Game::get_game()->is_original_plus_full_map()) {
 		uint8 i;
 		uint8 hp_text_color;
-		Actor *actor;
-		Tile *actor_tile;
-		char *actor_name;
 		char hp_string[4];
 		uint8 party_size = party->get_party_size();
 		int rowH = 16;
@@ -292,8 +289,8 @@ void PartyView::Display(bool full_redraw) {
 			end_offset = party_size;
 
 		for (i = row_offset; i < end_offset; i++) {
-			actor = party->get_actor(i);
-			actor_tile = tile_manager->get_tile(actor->get_downward_facing_tile_num());
+			Actor *actor = party->get_actor(i);
+			Tile *actor_tile = tile_manager->get_tile(actor->get_downward_facing_tile_num());
 
 			int x_offset = 8;
 			int y_offset = 18;
@@ -322,7 +319,7 @@ void PartyView::Display(bool full_redraw) {
 			}
 
 			screen->blit(area.left + x_offset, area.top + y_offset + (i - row_offset)*rowH, actor_tile->data, 8, 16, 16, 16, true);
-			actor_name = party->get_actor_name(i);
+			const char *actor_name = party->get_actor_name(i);
 
 			if (SE) {
 				x_offset = 4;

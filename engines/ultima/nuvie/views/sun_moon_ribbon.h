@@ -53,7 +53,7 @@ public:
 	}
 
 protected:
-	void display_sun_moon(Tile *tile, uint8 pos) override;
+	void display_sun_moon(const Tile *tile, uint8 pos) override;
 
 private:
 	void loadBgImage(uint8 num);

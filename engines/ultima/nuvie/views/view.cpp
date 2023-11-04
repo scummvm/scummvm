@@ -148,7 +148,7 @@ void View::set_combat_mode(Actor *actor) {
 	actor->set_combat_mode(combat_mode);
 }
 
-uint8 View::get_combat_mode_index(Actor *actor) {
+uint8 View::get_combat_mode_index(const Actor *actor) const {
 	uint8 combat_mode = actor->get_combat_mode();
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
 		return (combat_mode - 2);

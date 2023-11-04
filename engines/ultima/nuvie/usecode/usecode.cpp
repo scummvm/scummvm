@@ -99,7 +99,7 @@ bool UseCode::is_script_running() {
 	return false;
 }
 
-bool UseCode::is_container(Obj *obj) {
+bool UseCode::is_container(const Obj *obj) const {
 	return script->call_is_container_obj(obj->obj_n);
 }
 

@@ -331,7 +331,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 			} else if (actor->obj_n == OBJ_U6_RAFT) {
 				uint8 dir = 0;
 				can_change_rel_dir = false;
-				Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
+				const Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
 				if (t->flags1 & TILEFLAG_BLOCKING) { //deep water tiles are blocking. Shore tiles should allow player movement.
 					//deep water, so take control away from player.
 					if (t->tile_num >= 8 && t->tile_num < 16) {
@@ -429,7 +429,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 			if (nuvie_dir != NUVIE_DIR_NONE) {
 				sint8 dir = get_original_dir_code(nuvie_dir);
 				sint8 water_dir = dir;
-				Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
+				const Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
 				if (t->tile_num >= 8 && t->tile_num < 16) {
 					dir = t->tile_num - 8;
 				}

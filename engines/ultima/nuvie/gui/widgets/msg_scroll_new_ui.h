@@ -67,7 +67,7 @@ public:
 		return GUI_PASS;
 	}
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
-	bool can_display_prompt() override {
+	bool can_display_prompt() const override {
 		return false;
 	}
 
@@ -77,7 +77,7 @@ public:
 
 	void display_prompt() override {}
 
-	void display_string(Std::string s, Font *f, bool include_on_map_window) override;
+	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override;
 
 	void set_font(uint8 font_type) override;
 	bool is_garg_font() override;

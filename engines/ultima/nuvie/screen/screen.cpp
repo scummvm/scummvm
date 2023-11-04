@@ -164,14 +164,14 @@ bool Screen::rotate_palette(uint8 pos, uint8 length) {
 	return true;
 }
 
-uint16 Screen::get_translated_x(uint16 x) {
+uint16 Screen::get_translated_x(uint16 x) const {
 	if (scale_factor != 1)
 		x /= scale_factor;
 
 	return x;
 }
 
-uint16 Screen::get_translated_y(uint16 y) {
+uint16 Screen::get_translated_y(uint16 y) const {
 	if (scale_factor != 1)
 		y /= scale_factor;
 
@@ -1542,7 +1542,7 @@ void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
 }
 
 
-void Screen::get_mouse_location(int *x, int *y) {
+void Screen::get_mouse_location(int *x, int *y) const {
 	Common::Point pt = Events::get()->getMousePos();
 	*x = pt.x;
 	*y = pt.y;

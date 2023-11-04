@@ -90,7 +90,7 @@ public:
 		hidden = false;
 	}
 
-	void get_hotspot(uint16 &x, uint16 &y) {
+	void get_hotspot(uint16 &x, uint16 &y) const {
 		x = cursors[cursor_id]->point_x;
 		y = cursors[cursor_id]->point_y;
 	}
@@ -101,7 +101,7 @@ public:
 	void clear();
 	void update();
 
-	bool is_visible() {
+	bool is_visible() const {
 		return !hidden;
 	}
 };

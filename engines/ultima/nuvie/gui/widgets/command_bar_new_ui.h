@@ -57,7 +57,7 @@ public:
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
 
 private:
-	const char *get_command_name(sint8 command_num);
+	const char *get_command_name(sint8 command_num) const;
 };
 
 } // End of namespace Nuvie

@@ -102,7 +102,7 @@ bool ScrollWidgetGump::parse_token(MsgText *token) {
 	return MsgScroll::parse_token(token);
 }
 
-void ScrollWidgetGump::display_string(Std::string s) {
+void ScrollWidgetGump::display_string(const Std::string &s) {
 	MsgScroll::display_string(s);
 	update_arrows();
 }

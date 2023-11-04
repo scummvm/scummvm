@@ -68,7 +68,7 @@ public:
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
 	virtual void set_actor(Actor *a);
-	Actor *get_actor() {
+	const Actor *get_actor() const {
 		return (actor);
 	}
 	Obj *get_container() {
@@ -79,7 +79,7 @@ public:
 		row_offset = 0;
 		Redraw();
 	}
-	bool is_showing_container() {
+	bool is_showing_container() const {
 		return (container_obj != nullptr ? true : false);
 	}
 	void Display(bool full_redraw) override;

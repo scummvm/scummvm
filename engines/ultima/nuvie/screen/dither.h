@@ -45,7 +45,7 @@ public:
 
 	Dither(Configuration *cfg);
 	~Dither();
-	uint8 get_mode() {
+	uint8 get_mode() const {
 		return mode;
 	}
 	bool dither_bitmap(unsigned char *src_buf, uint16 src_w, uint16 src_h, bool has_transparency);

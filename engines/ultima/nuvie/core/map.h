@@ -103,39 +103,39 @@ public:
 	}
 	MapCoord() : x(0), y(0), z(0) { }
 
-	uint32 xdistance(MapCoord &c2) {
+	uint32 xdistance(const MapCoord &c2) const {
 		uint32 dist = abs(c2.x - x);
 		if (dist > 512)
 			dist = 1024 - dist;
 
 		return dist;
 	}
-	uint32 ydistance(MapCoord &c2) {
+	uint32 ydistance(const MapCoord &c2) const {
 		return (abs(c2.y - y));
 	}
 	// greatest 2D distance X or Y (estimate of shortest)
-	uint32 distance(MapCoord &c2) {
+	uint32 distance(const MapCoord &c2) const {
 		uint16 dx = xdistance(c2), dy = ydistance(c2);
 		return (dx >= dy ? dx : dy);
 	}
 	// get absolute coordinates for relative destination (dx,dy)
-	MapCoord abs_coords(sint16 dx, sint16 dy);
+	MapCoord abs_coords(sint16 dx, sint16 dy) const;
 	// location is on screen?
-	bool is_visible();
-	void print_d(DebugLevelType level) {
+	bool is_visible() const;
+	void print_d(DebugLevelType level) const {
 		DEBUG(1, level, "%d, %d, %d", x, y, z);
 	}
-	void print_h(DebugLevelType level) {
+	void print_h(DebugLevelType level) const {
 		DEBUG(1, level, "%x, %x, %x", x, y, z);
 	}
-	void print_s(DebugLevelType level) {
+	void print_s(DebugLevelType level) const {
 		DEBUG(1, level, "%d, %d", sx, sy);
 	}
 
-	bool operator==(MapCoord &c2) {
+	bool operator==(const MapCoord &c2) const {
 		return (x == c2.x && y == c2.y && z == c2.z);
 	}
-	bool operator!=(MapCoord &c2) {
+	bool operator!=(const MapCoord &c2) const {
 		return (!(*this == c2));
 	}
 //    MapCoord operator+(MapCoord &c2) { return(abs_coords(c2)); }
@@ -165,10 +165,10 @@ public:
 	Actor *get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs = true);
 
 	bool loadMap(TileManager *tm, ObjManager *om);
-	unsigned char *get_map_data(uint8 level);
+	byte *get_map_data(uint8 level);
 	uint16 *get_roof_data(uint8 level);
-	Tile *get_tile(uint16 x, uint16 y, uint8 level, bool original_tile = false);
-	uint16 get_width(uint8 level);
+	const Tile *get_tile(uint16 x, uint16 y, uint8 level, bool original_tile = false);
+	uint16 get_width(uint8 level) const;
 	bool is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_water(uint16 x, uint16 y, uint16 level, bool ignore_objects = false);
 	bool is_boundary(uint16 x, uint16 y, uint8 level);
@@ -177,7 +177,7 @@ public:
 	bool can_put_obj(uint16 x, uint16 y, uint8 level);
 	bool actor_at_location(uint16 x, uint16 y, uint8 level, bool inc_surrounding_objs = true);
 	uint8 get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects = false);
-	Tile *get_dmg_tile(uint16 x, uint16 y, uint8 level);
+	const Tile *get_dmg_tile(uint16 x, uint16 y, uint8 level);
 	bool is_passable(uint16 x, uint16 y, uint8 level, uint8 dir);
 	bool is_passable(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint8 level);
 	bool is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir);

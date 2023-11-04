@@ -41,7 +41,7 @@ public:
 	GamePalette(Screen *s, Configuration *cfg);
 	~GamePalette();
 	void rotatePalette();
-	uint8 get_bg_color() {
+	uint8 get_bg_color() const {
 		return bg_color;
 	}
 	void set_palette();

@@ -263,7 +263,7 @@ void CommandBarNewUI::Display(bool full_redraw) {
 	//  }
 }
 
-const char *CommandBarNewUI::get_command_name(sint8 command_num) {
+const char *CommandBarNewUI::get_command_name(sint8 command_num) const {
 	if (command_num < 0 || command_num >= num_icons)
 		return "";
 

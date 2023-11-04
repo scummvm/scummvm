@@ -257,10 +257,10 @@ public:
 	TimeQueue *get_game_time_queue() {
 		return (game_time_queue);
 	}
-	EventMode get_mode() {
+	EventMode get_mode() const {
 		return (mode);
 	}
-	EventMode get_last_mode() {
+	EventMode get_last_mode() const {
 		return (last_mode);
 	}
 	void set_mode(EventMode new_mode);

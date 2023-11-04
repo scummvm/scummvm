@@ -102,7 +102,7 @@ bool ActorPathFinder::search_towards_target(const MapCoord &g, MapCoord &rel_ste
 }
 
 // check rotated dir, and copy results to rel_step if neighbor is passable
-bool ActorPathFinder::check_dir_and_distance(MapCoord mapLoc, MapCoord g, MapCoord &rel_step, sint8 rotate) {
+bool ActorPathFinder::check_dir_and_distance(const MapCoord &mapLoc, const MapCoord &g, MapCoord &rel_step, sint8 rotate) {
 	MapCoord rel_step_2 = rel_step;
 	if (check_dir(mapLoc, rel_step_2, rotate)) {
 		MapCoord neighbor = mapLoc.abs_coords(rel_step_2.sx, rel_step_2.sy);

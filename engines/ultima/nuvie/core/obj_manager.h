@@ -157,8 +157,8 @@ public:
 	U6LList *get_obj_list(uint16 x, uint16 y, uint8 level);
 
 	Tile *get_obj_tile(uint16 obj_n, uint8 frame_n);
-	Tile *get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj = true);
-	Tile *get_obj_dmg_tile(uint16 x, uint16 y, uint8 level);
+	const Tile *get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj = true);
+	const Tile *get_obj_dmg_tile(uint16 x, uint16 y, uint8 level);
 	Obj *get_obj(uint16 x, uint16 y, uint8 level, bool top_obj = OBJ_SEARCH_TOP, bool include_ignored_objects = OBJ_EXCLUDE_IGNORED, Obj *excluded_obj = nullptr);
 	Obj *get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, uint16 x, uint16 y, uint8 z);
 	Obj *get_obj_of_type_from_location_inc_multi_tile(uint16 obj_n, sint16 quality, sint32 qty, uint16 x, uint16 y, uint8 z);

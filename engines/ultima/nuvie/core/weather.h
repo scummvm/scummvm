@@ -62,11 +62,11 @@ public:
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 
-	Std::string get_wind_dir_str();
-	uint8 get_wind_dir() {
+	Std::string get_wind_dir_str() const;
+	uint8 get_wind_dir() const {
 		return wind_dir;
 	}
-	bool is_displaying_from_wind_dir() {
+	bool is_displaying_from_wind_dir() const {
 		return display_from_wind_dir;
 	}
 	bool set_wind_dir(uint8 new_wind_dir);
@@ -75,8 +75,8 @@ public:
 	MapCoord get_moonstone(uint8 moonstone);
 	void update_moongates();
 
-	bool is_eclipse();
-	bool is_moon_visible();
+	bool is_eclipse() const;
+	bool is_moon_visible() const;
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 

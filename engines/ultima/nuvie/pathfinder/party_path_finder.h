@@ -65,7 +65,7 @@ public:
 	bool is_seeking(uint32 member_num) {
 		return (get_member(member_num).actor->get_pathfinder() != 0);
 	}
-	bool is_contiguous(uint32 member_num, MapCoord from);
+	bool is_contiguous(uint32 member_num, const MapCoord &from);
 	bool is_contiguous(uint32 member_num);
 	bool is_behind_target(uint32 member_num);
 	bool is_at_target(uint32 p);

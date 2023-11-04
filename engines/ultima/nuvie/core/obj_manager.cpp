@@ -1040,20 +1040,16 @@ U6LList *ObjManager::get_obj_list(uint16 x, uint16 y, uint8 level) {
 }
 
 Tile *ObjManager::get_obj_tile(uint16 obj_n, uint8 frame_n) {
-	return  tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
+	return tile_manager->get_tile(get_obj_tile_num(obj_n) + frame_n);
 }
 
-Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
-	Obj *obj;
-	Tile *tile;
-	uint16 tile_num;
-
-	obj = get_obj(x, y, level, top_obj);
+const Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
+	const Obj *obj = get_obj(x, y, level, top_obj);
 	if (obj == nullptr)
 		return nullptr;
 
-	tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
-	tile = tile_manager->get_tile(tile_num);
+	uint16 tile_num = get_obj_tile_num(obj->obj_n) + obj->frame_n;
+	const Tile *tile = tile_manager->get_tile(tile_num);
 
 	if (tile->dbl_width && obj->x == x + 1 && obj->y == y)
 		tile_num--;
@@ -1065,18 +1061,13 @@ Tile *ObjManager::get_obj_tile(uint16 x, uint16 y, uint8 level, bool top_obj) {
 	return tile_manager->get_original_tile(tile_num);
 }
 
-Tile *ObjManager::get_obj_dmg_tile(uint16 x, uint16 y, uint8 level) {
-	Tile *tile;
-	U6LList *obj_list;
-	U6Link *link;
-	Obj *obj = nullptr;
-
-	obj_list = get_obj_list(x, y, level);
+const Tile *ObjManager::get_obj_dmg_tile(uint16 x, uint16 y, uint8 level) {
+	const U6LList *obj_list = get_obj_list(x, y, level);
 
 	if (obj_list != nullptr) {
-		for (link = obj_list->end(); link != nullptr; link = link->prev) {
-			obj = (Obj *)link->data;
-			tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
+		for (const U6Link *link = obj_list->end(); link != nullptr; link = link->prev) {
+			const Obj *obj = (const Obj *)link->data;
+			const Tile *tile = tile_manager->get_original_tile(get_obj_tile_num(obj->obj_n) + obj->frame_n);
 
 			if (tile->damages == true)
 				return tile;
@@ -1227,7 +1218,7 @@ Obj *ObjManager::get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, b
 				if (include_ignored_objects)
 					return obj;
 
-				Tile *tile = get_obj_tile(obj->obj_n, obj->frame_n);
+				const Tile *tile = get_obj_tile(obj->obj_n, obj->frame_n);
 				if ((tile->flags3 & TILEFLAG_IGNORE) != TILEFLAG_IGNORE)
 					return obj;
 			}

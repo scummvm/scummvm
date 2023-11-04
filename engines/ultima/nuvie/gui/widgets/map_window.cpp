@@ -1341,15 +1341,12 @@ void MapWindow::drawGrid() {
 }
 
 void MapWindow::generateTmpMap() {
-	byte *map_ptr;
-	uint16 pitch;
 	uint16 x, y;
-	Tile *tile;
 
 	m_ViewableMapTiles.clear();
 
-	map_ptr = map->get_map_data(cur_level);
-	pitch = map->get_width(cur_level);
+	const byte *map_ptr = map->get_map_data(cur_level);
+	uint16 pitch = map->get_width(cur_level);
 
 	if (enable_blacking == false) {
 		uint16 *ptr = tmp_map_buf;
@@ -1388,7 +1385,7 @@ void MapWindow::generateTmpMap() {
 //fills correctly. We move east for vertical wall tiles and south for
 //horizontal wall tiles.
 	if (game_type == NUVIE_GAME_U6 && obj_manager->is_boundary(x, y, cur_level)) {
-		tile = obj_manager->get_obj_tile(x, y, cur_level, false);
+		const Tile *tile = obj_manager->get_obj_tile(x, y, cur_level, false);
 		if ((tile->flags1 & TILEFLAG_WALL_MASK) == (TILEFLAG_WALL_NORTH | TILEFLAG_WALL_SOUTH))
 			x = WRAPPED_COORD(x + 1, cur_level);
 		else
@@ -1404,7 +1401,7 @@ void MapWindow::generateTmpMap() {
 		roof_display = ROOF_DISPLAY_OFF; // hide roof if a building's floor is showing.
 }
 
-void MapWindow::boundaryFill(byte *map_ptr, uint16 pitch, uint16 x, uint16 y) {
+void MapWindow::boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16 y) {
 	unsigned char current;
 	uint16 *ptr;
 	uint16 pos;
@@ -1489,7 +1486,7 @@ bool MapWindow::floorTilesVisible() {
 	for (; cY != eY;) {
 		for (; cX != eX;) {
 			if (map->has_roof(cX, cY, cur_level) && !map->is_boundary(cX, cY, cur_level)) {
-				Tile *t = obj_manager->get_obj_tile(cX, cY, cur_level, false);
+				const Tile *t = obj_manager->get_obj_tile(cX, cY, cur_level, false);
 				if (t && (t->flags1 & TILEFLAG_WALL))
 					return true;
 			}
@@ -1647,15 +1644,13 @@ bool MapWindow::tmpBufTileIsBoundary(uint16 x, uint16 y) {
 }
 
 bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction) {
-	uint16 tile_num;
-	Tile *tile;
-	uint8 mask = 0;
 
-	tile_num = tmp_map_buf[y * tmp_map_width + x];
+	uint16 tile_num = tmp_map_buf[y * tmp_map_width + x];
 
 	if (tile_num == 0)
 		return false;
 
+	uint8 mask = 0;
 	switch (direction) {
 	case NUVIE_DIR_N :
 		mask = TILEFLAG_WALL_SOUTH;
@@ -1671,7 +1666,7 @@ bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction) {
 		break;
 	}
 
-	tile = tile_manager->get_tile(tile_num);
+	const Tile *tile = tile_manager->get_tile(tile_num);
 
 	if (tile->flags1 & TILEFLAG_WALL) {
 		if (tile->flags1 & mask)
@@ -1771,7 +1766,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 			return MSG_BLOCKED;
 		}
 	}
-	Tile *tile;
+	const Tile *tile;
 	if (dest_obj)
 		tile = obj_manager->get_obj_tile(dest_obj->obj_n, dest_obj->frame_n);
 	else
@@ -1834,7 +1829,7 @@ bool MapWindow::can_get_obj(Actor *actor, Obj *obj) {
 bool MapWindow::blocked_by_wall(Actor *actor, Obj *obj) {
 	if (game_type == NUVIE_GAME_U6 && obj->x == 282 && obj->y == 438 && cur_level == 0) // HACK for buggy location
 		return false;
-	Tile *tile = map->get_tile(obj->x, obj->y, cur_level);
+	const Tile *tile = map->get_tile(obj->x, obj->y, cur_level);
 	if (((tile->flags1 & TILEFLAG_WALL) && !game->get_usecode()->is_door(obj))
 	        && (((tile->flags1 & TILEFLAG_WALL_MASK) == 208 && actor->get_y() < obj->y) // can't get items that are south
 	            || ((tile->flags1 & TILEFLAG_WALL_MASK) == 176 && actor->get_x() < obj->x) // can't get items that are east

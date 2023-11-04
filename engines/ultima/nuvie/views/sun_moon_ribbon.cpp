@@ -123,7 +123,7 @@ void SunMoonRibbon::update_hour(uint16 time) {
 	}
 }
 
-void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
+void SunMoonRibbon::display_sun_moon(const Tile *tile, uint8 pos) {
 	struct {
 		sint16 x, y;
 	} skypos[15] = { // sky positions relative to area

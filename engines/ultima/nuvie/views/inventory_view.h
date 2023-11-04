@@ -85,7 +85,7 @@ public:
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) override;
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	void simulate_CB_callback();
-	bool is_picking_pocket() {
+	bool is_picking_pocket() const {
 		return picking_pocket;
 	}
 	void lock_to_actor(bool value) {

@@ -56,7 +56,6 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 
 	//sort list by time last modified in decending order.
 	Common::sort(file_list.begin(), file_list.end(), NuvieFileDesc());
-	list_ptr = file_list.begin();
 
 	return true;
 }
@@ -71,33 +70,19 @@ bool NuvieFileList::add_filename(const Common::FSNode &file) {
 	return true;
 }
 
-Std::string *NuvieFileList::next() {
-	if (list_ptr != file_list.end()) {
-
-		Std::string *filename = &((*list_ptr).filename);
-		list_ptr++;
-
-		return filename;
-	}
-
-	return nullptr;
-}
-
-Std::string *NuvieFileList::get_latest() {
-	Std::list<NuvieFileDesc>::iterator iter;
+const Std::string *NuvieFileList::get_latest() const {
+	Std::list<NuvieFileDesc>::const_iterator iter;
 
 	iter = file_list.begin();
 
 	if (iter != file_list.end()) {
-		Std::string *filename = &((*iter).filename);
-
-		return filename;
+		return &((*iter).filename);
 	}
 
 	return nullptr;
 }
 
-uint32 NuvieFileList::get_num_files() {
+uint32 NuvieFileList::get_num_files() const {
 	return (uint32)file_list.size();
 }
 
@@ -105,9 +90,9 @@ void NuvieFileList::close() {
 	return;
 }
 
-Std::set<Std::string> NuvieFileList::get_filenames() {
+Std::set<Std::string> NuvieFileList::get_filenames() const {
 	Std::set<Std::string> filenames;
-	Std::list<NuvieFileDesc>::iterator iter = file_list.begin();
+	Std::list<NuvieFileDesc>::const_iterator iter = file_list.begin();
 
 	while (iter != file_list.end()) {
 		filenames.insert((*iter).filename);

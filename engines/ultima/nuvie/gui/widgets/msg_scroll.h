@@ -183,10 +183,10 @@ public:
 	void process_holding_buffer();
 
 	MsgText *holding_buffer_get_token();
-	bool is_holding_buffer_empty() {
+	bool is_holding_buffer_empty() const {
 		return holding_buffer.empty();
 	}
-	virtual bool can_display_prompt() {
+	virtual bool can_display_prompt() const {
 		return (!just_displayed_prompt);
 	}
 
@@ -200,11 +200,11 @@ public:
 	template<class... TParam>
 	int print(const Std::string &format, TParam... param);
 
-	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
-	void display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window);
-	void display_string(Std::string s, uint16 length, uint8 lang_num);
-	void display_string(Std::string s, bool include_on_map_window = true);
-	void display_string(Std::string s, uint8 color, bool include_on_map_window);
+	virtual void display_string(const Std::string &s, Font *f, bool include_on_map_window);
+	void display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window);
+	void display_string(const Std::string &s, uint16 length, uint8 lang_num);
+	void display_string(const Std::string &s, bool include_on_map_window = true);
+	void display_string(const Std::string &s, uint8 color, bool include_on_map_window);
 	void display_fmt_string(const char *format, ...);
 	void message(const char *string) {
 		display_string(string);
@@ -224,7 +224,7 @@ public:
 		talking = state;
 		input_char = 0;
 	}
-	bool is_talking() {
+	bool is_talking() const {
 		return talking;
 	}
 	void set_show_cursor(bool state) {
@@ -238,7 +238,7 @@ public:
 		discard_whitespace = discard;
 	}
 
-	bool get_page_break() {
+	bool get_page_break() const {
 		return (page_break);
 	}
 
@@ -285,7 +285,7 @@ protected:
 	void increase_input_char();
 	void decrease_input_char();
 	uint8 get_char_from_input_char();
-	virtual uint8 get_input_font_color() {
+	virtual uint8 get_input_font_color() const {
 		return font_color;
 	}
 

@@ -206,7 +206,7 @@ public:
 	ConverseInterpret(Converse *owner);
 	virtual ~ConverseInterpret();
 
-	bool waiting() {
+	bool waiting() const {
 		return (is_waiting);
 	}
 	void wait()    {
@@ -279,16 +279,16 @@ public:
 	converse_value find_db_string(uint32 loc, const char *dstring);
 
 	/* value tests */
-	virtual bool is_print(converse_value check) {
+	virtual bool is_print(converse_value check) const {
 		return (((check == 0x0a) || (check >= 0x20 && check <= 0x7a) || (check == 0x7e) || (check == 0x7b)));    //added '~' 0x7e, '{' 0x7b  for fm towns.
 	}
-	virtual bool is_ctrl(converse_value code) {
+	virtual bool is_ctrl(converse_value code) const {
 		return (((code >= 0xa1 || code == 0x9c || code == 0x9e) && !is_valop(code) && !is_datasize(code)));
 	}
-	virtual bool is_datasize(converse_value check) {
+	virtual bool is_datasize(converse_value check) const {
 		return ((check == 0xd3 || check == 0xd2 || check == 0xd4));
 	}
-	virtual bool is_valop(converse_value check) {
+	virtual bool is_valop(converse_value check) const {
 		return (((check == 0x81) || (check == 0x82) || (check == 0x83)
 		         || (check == 0x84) || (check == 0x85) || (check == 0x86)
 		         || (check == 0x90) || (check == 0x91) || (check == 0x92)

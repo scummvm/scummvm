@@ -154,7 +154,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	return count;
 }
 
-void SpellViewGump::loadCircleString(Std::string datadir) {
+void SpellViewGump::loadCircleString(const Std::string &datadir) {
 	Std::string imagefile;
 	char filename[7]; // n.bmp\0
 
@@ -183,7 +183,7 @@ void SpellViewGump::loadCircleString(Std::string datadir) {
 	}
 }
 
-void SpellViewGump::loadCircleSuffix(Std::string datadir, Std::string image) {
+void SpellViewGump::loadCircleSuffix(const Std::string &datadir, const Std::string &image) {
 	Std::string imagefile;
 
 	build_path(datadir, image, imagefile);
@@ -257,7 +257,7 @@ void SpellViewGump::close_spellbook() {
 	Game::get_game()->get_event()->close_spellbook();
 }
 
-sint16 SpellViewGump::getSpell(int x, int y) {
+sint16 SpellViewGump::getSpell(int x, int y) const {
 	int localy = y - area.top;
 	int localx = x - area.left;
 

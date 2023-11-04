@@ -155,7 +155,7 @@ void Obj::set_actor_obj(bool flag) {
 
 /* Returns true if an object is in an actor inventory, including containers and readied items. */
 
-bool Obj::is_in_inventory(bool check_parent) {
+bool Obj::is_in_inventory(bool check_parent) const {
 	switch (get_engine_loc()) {
 	case OBJ_LOC_INV :
 	case OBJ_LOC_READIED :
@@ -171,7 +171,7 @@ bool Obj::is_in_inventory(bool check_parent) {
 	return false;
 }
 
-uint8 Obj::get_engine_loc() {
+uint8 Obj::get_engine_loc() const {
 	return (nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET);
 }
 

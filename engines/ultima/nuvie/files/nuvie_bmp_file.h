@@ -72,10 +72,10 @@ public:
 	bool load(Std::string filename);
 	bool save(Std::string filename);
 
-	uint16 getWidth() {
+	uint16 getWidth() const {
 		return (uint16)infoHeader.width;
 	}
-	uint16 getHeight() {
+	uint16 getHeight() const {
 		return (uint16)infoHeader.height;
 	}
 

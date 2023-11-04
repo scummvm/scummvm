@@ -153,14 +153,14 @@ bool Weather::save_wind(NuvieIO *objlist) {
 	return true;
 }
 
-bool Weather::is_eclipse() {
+bool Weather::is_eclipse() const {
 	if (gametype != NUVIE_GAME_U6 || clock->get_timer(GAMECLOCK_TIMER_U6_ECLIPSE) == 0)
 		return false;
 
 	return true;
 }
 
-bool Weather::is_moon_visible() {
+bool Weather::is_moon_visible() const {
 	//FIXME this is duplicated logic. Maybe we should look at how the original works out moon locations
 
 	uint8 day = clock->get_day();
@@ -184,17 +184,14 @@ bool Weather::is_moon_visible() {
 	return false;
 }
 
-string Weather::get_wind_dir_str() {
-	string s;
+string Weather::get_wind_dir_str() const {
 	if (display_from_wind_dir) {
 		const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
-		s = from_names[wind_dir];
+		return from_names[wind_dir];
 	} else {
 		const char to_names[9][3] = {"S", "W", "N", "E", "SW", "NW", "NE", "SE", "C"};
-		s = to_names[wind_dir];
+		return to_names[wind_dir];
 	}
-
-	return s;
 }
 
 void Weather::change_wind_dir() {

@@ -68,7 +68,7 @@ bool AStarPath::compare_neighbors(astar_node *nnode, astar_node *neighbor,
 	}
 	return true;
 }/* Check all neighbors of a node (location) and save them to the "seen" list. */
-bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
+bool AStarPath::search_node_neighbors(astar_node *nnode, const MapCoord &goal,
 									  const uint32 max_score) {
 	for (uint32 dir = 1; dir < 8; dir += 2) {
 		astar_node *neighbor = new astar_node;
@@ -94,12 +94,15 @@ bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
 			push_open_node(neighbor);
 	}
 	return true;
-}/* Do A* search of tiles to create a path from `start' to `goal'.
+}
+
+/* Do A* search of tiles to create a path from `start' to `goal'.
  * Don't search past nodes with a score over the max. score.
  * Create a partial path to low-score nodes with a distance-to-start over the
  * max_steps count, defined here. Actor may perform another search when needed.
  * Returns true if a path is created
- */bool AStarPath::path_search(MapCoord &start, MapCoord &goal) {
+ */
+bool AStarPath::path_search(const MapCoord &start, const MapCoord &goal) {
 	//DEBUG(0,LEVEL_DEBUGGING,"SEARCH: %d: %d,%d -> %d,%d\n",actor->get_actor_num(),start.x,start.y,goal.x,goal.y);
 	astar_node *start_node = new astar_node;
 	start_node->loc = start;
@@ -132,7 +135,7 @@ bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
 }/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
  * isn't very helpful, so subclasses should provide their own function.
  * Returns -1 if c2 is blocked. */
-sint32 AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
+sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 	if (!pf->check_loc(c2.x, c2.y, c2.z)
 	        || c2.distance(c1) > 1)
 		return (-1);

@@ -32,7 +32,7 @@ namespace Nuvie {
  * Blocking objects are checked for, and doors may be passable
  * Returns -1 if c2 is blocked.
  */
-sint32 U6AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
+sint32 U6AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 	Game *game = Game::get_game();
 	sint32 c = 1; // final cost is not necessarily the actual move cost
 
@@ -59,7 +59,7 @@ sint32 U6AStarPath::step_cost(MapCoord &c1, MapCoord &c2) {
 }
 
 // Possible step cost is 1 to 16.
-uint32 U6AStarPath::path_cost_est(MapCoord &s, MapCoord &g) {
+uint32 U6AStarPath::path_cost_est(const MapCoord &s, const MapCoord &g) {
 	return (Path::path_cost_est(s, g));
 }
 

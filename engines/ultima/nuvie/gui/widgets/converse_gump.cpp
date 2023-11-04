@@ -328,7 +328,7 @@ void ConverseGump::add_token(MsgText *token)
 }
 */
 
-void ConverseGump::display_string(Std::string s, Font *f,  bool include_on_map_window) {
+void ConverseGump::display_string(const Std::string &s, Font *f,  bool include_on_map_window) {
 	if (s.empty())
 		return;
 
@@ -433,8 +433,8 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	return;
 }
 
-void ConverseGump::add_keyword(Std::string keyword) {
-	keyword = " *" + keyword;
+void ConverseGump::add_keyword(const Std::string keyword_) {
+	string keyword = " *" + keyword_;
 
 	Std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
@@ -750,7 +750,7 @@ void ConverseGump::input_add_string(Std::string token_str) {
 	}
 }
 
-bool ConverseGump::is_permanent_keyword(Std::string keyword) {
+bool ConverseGump::is_permanent_keyword(const Std::string &keyword) {
 	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell")
 	        || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells")
 	        || string_i_compare(keyword, " *reagents"));

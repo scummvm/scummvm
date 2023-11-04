@@ -168,10 +168,10 @@ public:
 		return sound_manager;
 	}
 
-	uint16 get_x_off() {
+	uint16 get_x_off() const {
 		return x_off;
 	}
-	uint16 get_y_off() {
+	uint16 get_y_off() const {
 		return y_off;
 	}
 

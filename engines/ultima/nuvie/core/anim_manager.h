@@ -85,7 +85,7 @@ public:
 	void set_tile_pitch(uint8 p)     {
 		tile_pitch = p;
 	}
-	uint8 get_tile_pitch()           {
+	uint8 get_tile_pitch() const {
 		return (tile_pitch);
 	}
 
@@ -97,8 +97,8 @@ public:
 
 	NuvieAnim *get_anim(uint32 anim_id);
 
-	void drawTile(Tile *tile, uint16 x, uint16 y);
-	void drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy, uint16 add_x = 0, uint16 add_y = 0);
+	void drawTile(const Tile *tile, uint16 x, uint16 y);
+	void drawTileAtWorldCoords(const Tile *tile, uint16 wx, uint16 wy, uint16 add_x = 0, uint16 add_y = 0);
 	void drawText(Font *font, const char *text, uint16 x, uint16 y);
 };
 
@@ -144,14 +144,14 @@ public:
 	void unpause() {
 		paused = false;
 	}
-	bool is_paused() {
+	bool is_paused() const {
 		return paused;
 	}
 
 	virtual MapCoord get_location() {
 		return (MapCoord(px, py, 0));
 	}
-	uint32 get_id()                 {
+	uint32 get_id() const {
 		return (id_n);
 	}
 
@@ -216,7 +216,7 @@ public:
 	MapCoord get_location() override {
 		return (MapCoord(_tx, _ty, 0));
 	}
-	void get_offset(uint32 &x_add, uint32 &y_add) {
+	void get_offset(uint32 &x_add, uint32 &y_add) const {
 		x_add = _px;
 		y_add = _py;
 	}
@@ -302,11 +302,11 @@ protected:
 	void display() override;
 
 public:
-	TossAnim(Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
+	TossAnim(const Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
 	TossAnim(Obj *obj, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
 	~TossAnim() override;
 
-	void init(Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags);
+	void init(const Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags);
 	void start() override;
 	void stop() override;
 	uint32 update_position(uint32 max_move = 0);

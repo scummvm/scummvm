@@ -63,15 +63,15 @@ public:
 	void Display(bool full_redraw) override;
 
 	void set_actor(Actor *a);
-	Actor *get_actor() {
+	const Actor *get_actor() const {
 		return actor;
 	}
 	void set_container_obj(Obj *o);
-	Obj *get_container_obj() {
+	const Obj *get_container_obj() const {
 		return container_obj;
 	}
 
-	bool is_actor_container() {
+	bool is_actor_container() const {
 		return (container_obj == nullptr);
 	}
 

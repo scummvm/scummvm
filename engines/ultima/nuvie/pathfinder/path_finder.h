@@ -41,7 +41,7 @@ protected:
 
 public:
 	PathFinder();
-	PathFinder(MapCoord s, MapCoord g);
+	PathFinder(const MapCoord &s, const MapCoord &g);
 	virtual ~PathFinder();
 	void set_search(Path *new_path) {
 		new_search(new_path);

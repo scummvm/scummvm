@@ -73,7 +73,7 @@ public:
 	Std::list<Egg *> *get_egg_list() {
 		return &egg_list;
 	};
-	bool is_spawning_actors() {
+	bool is_spawning_actors() const {
 		return !not_spawning_actors;
 	}
 	void set_spawning_actors(bool spawning) {

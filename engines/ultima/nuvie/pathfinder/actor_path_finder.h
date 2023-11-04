@@ -51,7 +51,7 @@ public:
 protected:
 	bool search_towards_target(const MapCoord &g, MapCoord &rel_step);
 	bool check_dir(const MapCoord &loc, MapCoord &rel, sint8 rot = 0) override;
-	bool check_dir_and_distance(MapCoord loc, MapCoord g, MapCoord &rel_step, sint8 rotate);
+	bool check_dir_and_distance(const MapCoord &loc, const MapCoord &g, MapCoord &rel_step, sint8 rotate);
 };
 
 } // End of namespace Nuvie

@@ -96,7 +96,7 @@ protected:
 
 	void input_add_string(Std::string token_str);
 	void process_page_break() override;
-	uint8 get_input_font_color() override {
+	uint8 get_input_font_color() const override {
 		return FONT_COLOR_WOU_CONVERSE_INPUT;
 	}
 	void display_bg();

@@ -1103,7 +1103,7 @@ int Script::call_obj_get_readiable_location(Obj *obj) {
 	return lua_tointeger(L, -1);
 }
 
-uint8 Script::actor_get_max_magic_points(Actor *actor) {
+uint8 Script::actor_get_max_magic_points(const Actor *actor) {
 	lua_getglobal(L, "actor_get_max_magic_points");
 	nscript_new_actor_var(L, actor->get_actor_num());
 
@@ -3075,7 +3075,7 @@ static int nscript_map_get_tile_num(lua_State *L) {
 			original_tile = (bool) lua_toboolean(L, 4);
 	}
 
-	Tile *t = map->get_tile(x, y, z, original_tile);
+	const Tile *t = map->get_tile(x, y, z, original_tile);
 	if (t != nullptr) {
 		lua_pushinteger(L, t->tile_num);
 		return 1;
@@ -3104,7 +3104,7 @@ static int nscript_map_get_dmg_tile_num(lua_State *L) {
 	if (nscript_get_location_from_args(L, &x, &y, &z, 1) == false)
 		return 0;
 
-	Tile *t = map->get_dmg_tile(x, y, z);
+	const Tile *t = map->get_dmg_tile(x, y, z);
 	if (t != nullptr) {
 		lua_pushinteger(L, t->tile_num);
 		return 1;

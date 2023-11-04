@@ -351,23 +351,23 @@ void MsgScroll::display_fmt_string(const char *format, ...) {
 	display_string(buf);
 }
 
-void MsgScroll::display_string(Std::string s, uint16 length, uint8 lang_num) {
+void MsgScroll::display_string(const Std::string &s, uint16 length, uint8 lang_num) {
 
 }
 
-void MsgScroll::display_string(Std::string s, bool include_on_map_window) {
+void MsgScroll::display_string(const Std::string &s, bool include_on_map_window) {
 	display_string(s, font, include_on_map_window);
 }
 
-void MsgScroll::display_string(Std::string s, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Std::string &s, uint8 color, bool include_on_map_window) {
 	display_string(s, font, color, include_on_map_window);
 }
 
-void MsgScroll::display_string(Std::string s, Font *f, bool include_on_map_window) {
+void MsgScroll::display_string(const Std::string &s, Font *f, bool include_on_map_window) {
 	display_string(s, f, font_color, include_on_map_window);
 }
 
-void MsgScroll::display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window) {
 	MsgText *msg_text;
 
 	if (s.empty())

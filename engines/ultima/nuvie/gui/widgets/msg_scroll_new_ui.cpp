@@ -99,11 +99,11 @@ bool MsgScrollNewUI::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token)
 	return true;
 }
 
-void MsgScrollNewUI::display_string(Std::string s, Font *f, bool include_on_map_window) {
-	if (s.empty())
+void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool include_on_map_window) {
+	if (str.empty())
 		return;
 	bool has_trailing_whitespace = (!trailing_whitespace.empty());
-	s = trailing_whitespace + s;
+	string s = trailing_whitespace + str;
 	trailing_whitespace.clear();
 
 	Std::string::reverse_iterator iter;

@@ -99,7 +99,7 @@ sint8 DirFinder::get_turn_towards_dir(sint16 oxdir, sint16 oydir, sint8 txdir, s
 }
 
 // xdir,ydir = normal direction from->to (simple method)
-void DirFinder::get_normalized_dir(MapCoord from, MapCoord to, sint8 &xdir, sint8 &ydir) {
+void DirFinder::get_normalized_dir(const MapCoord &from, const MapCoord &to, sint8 &xdir, sint8 &ydir) {
 	xdir = clamp(to.x - from.x, -1, 1);
 	ydir = clamp(to.y - from.y, -1, 1);
 

@@ -650,14 +650,14 @@ void TileManager::set_anim_first_frame(uint16 anim_number, uint16 new_start_tile
  * **Fixed-point rotate function taken from the SDL Graphics Extension library
  * (SGE) (c)1999-2003 Anders Lindstr�m, licensed under LGPL v2+.**
  */
-Tile *TileManager::get_rotated_tile(Tile *tileP, float rotate, uint8 src_y_offset) {
+Tile *TileManager::get_rotated_tile(const Tile *tileP, float rotate, uint8 src_y_offset) {
 	Tile *new_tile = new Tile(*tileP); // retain properties of original tileP
 	get_rotated_tile(tileP, new_tile, rotate, src_y_offset);
 
 	return new_tile;
 }
 
-void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, uint8 src_y_offset) {
+void TileManager::get_rotated_tile(const Tile *tileP, Tile *dest_tile, float rotate, uint8 src_y_offset) {
 	unsigned char tile_data[256];
 
 	memset(&dest_tile->data, 255, 256); // fill output with transparent color

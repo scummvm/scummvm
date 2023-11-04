@@ -86,7 +86,7 @@ bool PortraitU6::load(NuvieIO *objlist) {
 	return true;
 }
 
-uint8 PortraitU6::get_portrait_num(Actor *actor) {
+uint8 PortraitU6::get_portrait_num(Actor *actor) const {
 	uint8 num;
 
 	if (actor == nullptr)

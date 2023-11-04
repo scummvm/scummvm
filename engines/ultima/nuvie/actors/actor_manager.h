@@ -93,7 +93,7 @@ public:
 	void set_update(bool u) {
 		update = u;
 	}
-	bool get_update()       {
+	bool get_update() const {
 		return (update);
 	}
 	void set_combat_movement(bool c);

@@ -64,9 +64,9 @@ bool PartyPathFinder::is_at_target(uint32 p) {
 /* Is anyone in front of `member_num' adjacent to `from'?
  * (is_contiguous(member, member_loc) == "is member adjacent to another member
  * whose following position is lower-numbered?") */
-bool PartyPathFinder::is_contiguous(uint32 member_num, MapCoord from) {
+bool PartyPathFinder::is_contiguous(uint32 member_num, const MapCoord &from) {
 	for (uint32 q = 0; q < member_num; q++) { // check lower-numbered members
-		Actor *actor = get_member(q).actor;
+		const Actor *actor = get_member(q).actor;
 		if (actor && actor->is_immobile() == true) continue;
 
 		MapCoord loc = party->get_location(q);

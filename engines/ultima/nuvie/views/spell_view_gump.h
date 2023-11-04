@@ -67,11 +67,11 @@ public:
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 protected:
 
-	sint16 getSpell(int x, int y);
+	sint16 getSpell(int x, int y) const;
 
 	uint8 fill_cur_spell_list() override;
-	void loadCircleString(Std::string datadir);
-	void loadCircleSuffix(Std::string datadir, Std::string image);
+	void loadCircleString(const Std::string &datadir);
+	void loadCircleSuffix(const Std::string &datadir, const Std::string &image);
 	void printSpellQty(uint8 spell_num, uint16 x, uint16 y);
 
 	void close_spellbook();

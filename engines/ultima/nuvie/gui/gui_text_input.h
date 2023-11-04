@@ -57,7 +57,7 @@ public:
 	void add_char(char c);
 	void remove_char();
 	void set_text(const char *new_text);
-	char *get_text() {
+	const char *get_text() {
 		return text;
 	}
 	void SetDisplay(Screen *s) override;

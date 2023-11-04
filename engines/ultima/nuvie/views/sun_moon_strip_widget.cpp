@@ -98,7 +98,7 @@ void SunMoonStripWidget::display_dungeon_strip() {
 	return;
 }
 // <SB-X>
-void SunMoonStripWidget::display_sun_moon(Tile *tile, uint8 pos) {
+void SunMoonStripWidget::display_sun_moon(const Tile *tile, uint8 pos) {
 	struct {
 		sint16 x, y;
 	} skypos[15] = { // sky positions relative to area

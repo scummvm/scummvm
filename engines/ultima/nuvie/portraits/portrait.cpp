@@ -69,7 +69,7 @@ Portrait::Portrait(Configuration *cfg) {
 	height = 0;
 }
 
-uint8 Portrait::get_avatar_portrait_num() {
+uint8 Portrait::get_avatar_portrait_num() const {
 	return get_portrait_num(Game::get_game()->get_actor_manager()->get_avatar());
 }
 

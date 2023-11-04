@@ -82,7 +82,7 @@ public:
 	void release() {
 		if (retain_count > 0) retain_count--;
 	}
-	bool is_retained() {
+	bool is_retained() const {
 		return retain_count == 0 ? false : true;
 	}
 
@@ -91,7 +91,7 @@ public:
 	}
 	void add_anim(NuvieAnim *anim);
 
-	bool is_defunct()  {
+	bool is_defunct() const {
 		return (defunct);
 	}
 	uint16 callback(uint16, CallBack *, void *) override {
@@ -304,7 +304,7 @@ protected:
 //  *sfx;
 	MapCoord start_at, stop_at; // start_at -> stop_at
 	Obj *throw_obj; // object being thrown
-	Tile *throw_tile; // graphic to use (default is object's tile)
+	const Tile *throw_tile; // graphic to use (default is object's tile)
 	uint16 throw_speed; // used in animation
 	uint16 degrees; // rotation of tile
 	uint8 stop_flags; // TossAnim blocking flags

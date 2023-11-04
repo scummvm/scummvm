@@ -91,18 +91,18 @@ public:
 	Graphics::ManagedSurface *create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
 	Graphics::ManagedSurface *create_sdl_surface_8(byte *src_buf, uint16 src_w, uint16 src_h);
 	uint16 get_bpp();
-	int get_scale_factor() {
+	int get_scale_factor() const {
 		return scale_factor;
 	}
 	Graphics::ManagedSurface *get_sdl_surface();
-	uint16 get_width() {
+	uint16 get_width() const {
 		return width;
 	}
-	uint16 get_height() {
+	uint16 get_height() const {
 		return height;
 	}
-	uint16 get_translated_x(uint16 x);
-	uint16 get_translated_y(uint16 y);
+	uint16 get_translated_x(uint16 x) const;
+	uint16 get_translated_y(uint16 y) const;
 
 	bool fill(uint8 colour_num, uint16 x, uint16 y, sint16 w, sint16 h);
 	void fade(uint16 dest_x, uint16 dest_y, uint16 src_w, uint16 src_h, uint8 opacity, uint8 fade_bg_color = 0);
@@ -118,15 +118,15 @@ public:
 	void drawalphamap8globe(sint16 x, sint16 y, uint16 radius);
 	void blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect);
 
-	int get_lighting_style() {
+	int get_lighting_style() const {
 		return lighting_style;
 	}
-	int get_old_lighting_style() {
+	int get_old_lighting_style() const {
 		return old_lighting_style;    // return the lighting_style before cheats applied
 	}
 	void set_lighting_style(int lighting);
 
-	uint8 get_ambient() {
+	uint8 get_ambient() const {
 		return shading_ambient;
 	}
 	void set_ambient(uint8 ambient) {
@@ -148,7 +148,7 @@ public:
 
 	void draw_line(int sx, int sy, int ex, int ey, uint8 color);
 
-	void get_mouse_location(int *x, int *y);
+	void get_mouse_location(int *x, int *y) const;
 
 	void set_non_square_pixels(bool value);
 

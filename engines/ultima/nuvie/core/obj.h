@@ -103,59 +103,59 @@ public:
 	Obj();
 	Obj(Obj *sobj);
 
-	bool is_script_obj()    {
+	bool is_script_obj() const {
 		return (nuvie_status & NUVIE_OBJ_STATUS_SCRIPTING);
 	}
-	bool is_actor_obj()     {
+	bool is_actor_obj() const {
 		return (nuvie_status & NUVIE_OBJ_STATUS_ACTOR_OBJ);
 	}
 
 	bool is_ok_to_take();
-	bool is_invisible()     {
+	bool is_invisible() const {
 		return (status & OBJ_STATUS_INVISIBLE);
 	}
-	bool is_charmed()     {
+	bool is_charmed() const {
 		return (status & OBJ_STATUS_CHARMED);
 	}
-	bool is_temporary()    {
+	bool is_temporary() const {
 		return (status & OBJ_STATUS_TEMPORARY);
 	}
-	bool is_egg_active()   {
+	bool is_egg_active() const {
 		return (status & OBJ_STATUS_EGG_ACTIVE);
 	}
-	bool is_broken()       {
+	bool is_broken() const {
 		return (status & OBJ_STATUS_BROKEN);
 	}
-	bool is_mutant()       {
+	bool is_mutant() const {
 		return (status & OBJ_STATUS_MUTANT);
 	}
-	bool is_cursed()       {
+	bool is_cursed() const {
 		return (status & OBJ_STATUS_CURSED);
 	}
-	bool is_lit()          {
+	bool is_lit() const {
 		return (status & OBJ_STATUS_LIT);
 	}
 
-	bool is_on_map()       {
+	bool is_on_map() const {
 		return ((nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET) == OBJ_LOC_MAP);
 	}
-	bool is_in_container() {
+	bool is_in_container() const {
 		return ((nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET) == OBJ_LOC_CONT);
 	}
-	bool is_in_inventory(bool check_parent = true);
+	bool is_in_inventory(bool check_parent = true) const;
 
-	bool is_readied()      {
+	bool is_readied() const {
 		return ((nuvie_status & NUVIE_OBJ_STATUS_LOC_MASK_GET) == OBJ_LOC_READIED);
 	}
 
-	bool has_container() {
+	bool has_container() const {
 		return (container != nullptr);
 	}
 	void make_container();
 	Obj *get_container_obj(bool recursive = false);
 	uint32 container_count_objects();
 
-	uint8 get_engine_loc();
+	uint8 get_engine_loc() const;
 	Actor *get_actor_holding_obj();
 
 	void set_on_map(U6LList *map_list);

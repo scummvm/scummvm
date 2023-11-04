@@ -62,14 +62,14 @@ public:
 	bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
 	virtual bool set_party_member(uint8 party_member);
-	uint8 get_party_member_num() {
+	uint8 get_party_member_num() const {
 		return cur_party_member;
 	}
 	bool next_party_member();
 	bool prev_party_member();
 	void fill_md_background(uint8 color, const Common::Rect &r);
 	void set_combat_mode(Actor *actor);
-	uint8 get_combat_mode_index(Actor *actor);
+	uint8 get_combat_mode_index(const Actor *actor) const;
 
 	virtual void close_view() {}
 

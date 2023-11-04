@@ -85,7 +85,7 @@ public:
 		update_display = true;
 	}
 	bool try_selected_action(sint8 command_num = -1);
-	sint8 get_selected_action() {
+	sint8 get_selected_action() const {
 		return selected_action;
 	}
 

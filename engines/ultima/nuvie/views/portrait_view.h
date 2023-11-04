@@ -72,7 +72,7 @@ public:
 		show_cursor = state;
 	}
 	void set_waiting(bool state);
-	bool get_waiting()     {
+	bool get_waiting() const {
 		return (waiting);
 	}
 

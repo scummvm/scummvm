@@ -98,7 +98,7 @@ public:
 
 	void drag_draw(int x, int y, int message, void *data) override;
 
-	uint8 get_num_rows() {
+	uint8 get_num_rows() const {
 		return game_type == NUVIE_GAME_U6 ? 3 : 4;
 	}
 

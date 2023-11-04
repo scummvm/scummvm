@@ -64,7 +64,7 @@ bool PortraitSE::load(NuvieIO *objlist) {
 	return true;
 }
 
-uint8 PortraitSE::get_portrait_num(Actor *actor) {
+uint8 PortraitSE::get_portrait_num(Actor *actor) const {
 	uint8 num;
 
 	if (actor == nullptr)
@@ -88,7 +88,7 @@ U6Shape *PortraitSE::get_background_shape(Actor *actor) {
 	return bg;
 }
 
-uint8 PortraitSE::get_background_shape_num(Actor *actor) {
+uint8 PortraitSE::get_background_shape_num(Actor *actor) const {
 	const struct {
 		uint16 x;
 		uint16 y;

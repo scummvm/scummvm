@@ -64,7 +64,7 @@ bool PortraitMD::load(NuvieIO *objlist) {
 	return true;
 }
 
-uint8 PortraitMD::get_portrait_num(Actor *actor) {
+uint8 PortraitMD::get_portrait_num(Actor *actor) const {
 	if (actor == nullptr)
 		return NO_PORTRAIT_FOUND;
 
@@ -120,7 +120,7 @@ U6Shape *PortraitMD::get_background_shape(uint8 actor_num) {
 	return bg;
 }
 
-uint8 PortraitMD::get_background_shape_num(uint8 actor_num) {
+uint8 PortraitMD::get_background_shape_num(uint8 actor_num) const {
 	const uint8 bg_tbl[] = {
 		0x22, 0x17, 0x50, 0x0, 0x0, 0x0, 0x0, 0x0, 0x56, 0x27, 0x0, 0x0, 0x55, 0x45,
 		0x70, 0x0, 0x53, 0x25, 0x45, 0x15, 0x17, 0x37, 0x45, 0x32, 0x24,

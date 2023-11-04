@@ -46,7 +46,7 @@ protected:
 	/* Forms a usable path from results of a search. */
 	void create_path();
 	/* Search routine. */
-	bool search_node_neighbors(astar_node *nnode, MapCoord &goal, const uint32 max_score);
+	bool search_node_neighbors(astar_node *nnode, const MapCoord &goal, const uint32 max_score);
 	bool compare_neighbors(astar_node *nnode, astar_node *neighbor,
 	                       sint32 nnode_to_neighbor, astar_node *in_open,
 	                       astar_node *in_closed);
@@ -55,17 +55,17 @@ protected:
 public:
 	AStarPath();
 	~AStarPath() override { }
-	bool path_search(MapCoord &start, MapCoord &goal) override;
-	uint32 path_cost_est(MapCoord &s, MapCoord &g) override  {
+	bool path_search(const MapCoord &start, const MapCoord &goal) override;
+	uint32 path_cost_est(const MapCoord &s, const MapCoord &g) override  {
 		return (Path::path_cost_est(s, g));
 	}
 	uint32 get_max_score(uint32 cost) override {
 		return (Path::get_max_score(cost));
 	}
-	uint32 path_cost_est(astar_node &n1, astar_node &n2) {
+	uint32 path_cost_est(const astar_node &n1, const astar_node &n2) {
 		return (Path::path_cost_est(n1.loc, n2.loc));
 	}
-	sint32 step_cost(MapCoord &c1, MapCoord &c2) override;
+	sint32 step_cost(const MapCoord &c1, const MapCoord &c2) override;
 protected:
 	/* FIXME: These node functions can be replaced with a priority_queue and a list. */
 	astar_node *find_open_node(astar_node *ncmp);

@@ -44,7 +44,7 @@ public:
 	~Background() override;
 
 	bool init();
-	uint16 get_border_width() {
+	uint16 get_border_width() const {
 		return border_width;
 	}
 	void Display(bool full_redraw) override;
@@ -53,7 +53,7 @@ public:
 	U6Shape *get_bg_shape() {
 		return background;
 	}
-	uint16 get_bg_w() {
+	uint16 get_bg_w() const {
 		return bg_w;
 	}
 };

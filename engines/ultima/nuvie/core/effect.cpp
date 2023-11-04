@@ -129,8 +129,8 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 	switch (msg) {
 	case MESG_ANIM_HIT_WORLD: {
 		MapCoord *hit_loc = static_cast<MapCoord *>(msg_data);
-		Tile *obj_tile = game->get_obj_manager()->get_obj_tile(hit_loc->x, hit_loc->y, hit_loc->z);
-		Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
+		const Tile *obj_tile = game->get_obj_manager()->get_obj_tile(hit_loc->x, hit_loc->y, hit_loc->z);
+		const Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
 		             hit_loc->z);
 
 		if ((tile->flags2 & TILEFLAG_MISSILE_BOUNDARY)
@@ -277,7 +277,7 @@ uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 	switch (msg) {
 	case MESG_ANIM_HIT_WORLD: {
 		MapCoord *hit_loc = static_cast<MapCoord *>(msg_data);
-		Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
+		const Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
 		             hit_loc->z);
 		if (tile->flags1 & TILEFLAG_WALL) {
 			//new ExplosiveEffect(hit_loc->x, hit_loc->y, 2);
@@ -590,7 +590,7 @@ ThrowObjectEffect::ThrowObjectEffect() {
 
 	anim = nullptr;
 	throw_obj = nullptr;
-	throw_tile = 0;
+	throw_tile = nullptr;
 	throw_speed = 0;
 	degrees = 0;
 	stop_flags = 0;

@@ -215,7 +215,7 @@ public:
 	}
 
 	virtual bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE);
-	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE)  {
+	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) {
 		return (false);
 	}
 	virtual bool has_lookcode(Obj *obj) {
@@ -233,7 +233,7 @@ public:
 	virtual bool has_readycode(Obj *obj) {
 		return (has_usecode(obj, USE_EVENT_READY));
 	}
-	virtual bool cannot_unready(Obj *obj) {
+	virtual bool cannot_unready(const Obj *obj) const {
 		return false;
 	}
 	virtual bool has_getcode(Obj *obj)  {
@@ -243,32 +243,32 @@ public:
 		return (has_usecode(obj, USE_EVENT_DROP));
 	}
 
-	bool is_door(Obj *obj) {
+	bool is_door(const Obj *obj) const {
 		return (is_locked_door(obj) || is_unlocked_door(obj));
 	}
-	virtual bool is_locked_door(Obj *obj)   {
+	virtual bool is_locked_door(const Obj *obj) const {
 		return (false);
 	}
-	virtual bool is_unlocked_door(Obj *obj) {
+	virtual bool is_unlocked_door(const Obj *obj) const {
 		return (false);
 	}
-	virtual bool is_closed_door(Obj *obj)   {
+	virtual bool is_closed_door(const Obj *obj) const {
 		return (false);
 	}
 	virtual bool process_effects(Obj *container_obj, Actor *actor) {
 		return (false);
 	}
-	virtual bool is_food(Obj *obj)          {
+	virtual bool is_food(const Obj *obj) const {
 		return (false);
 	}
-	virtual bool is_container(Obj *obj);
-	virtual bool is_container(uint16 obj_n, uint8 frame_n) {
+	virtual bool is_container(const Obj *obj) const;
+	virtual bool is_container(uint16 obj_n, uint8 frame_n) const {
 		return (false);
 	}
-	virtual bool is_readable(Obj *obj)      {
+	virtual bool is_readable(const Obj *obj) const {
 		return (false);
 	}
-	virtual bool is_chest(Obj *obj)         {
+	virtual bool is_chest(const Obj *obj) const {
 		return (false);
 	}
 

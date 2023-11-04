@@ -404,7 +404,7 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 
 }
 
-uint16 U6Actor::get_downward_facing_tile_num() {
+uint16 U6Actor::get_downward_facing_tile_num() const {
 	uint8 shift = 0;
 
 	if (base_actor_type->frames_per_direction > 1) //we want the second frame for most actor types.
@@ -560,7 +560,7 @@ bool U6Actor::move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags
 
 bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags) {
 // bool ignore_actors = flags & ACTOR_IGNORE_OTHERS;
-	Tile *map_tile;
+	const Tile *map_tile;
 
 	if (Actor::check_move(new_x, new_y, new_z, flags) == false)
 		return false;
@@ -683,7 +683,7 @@ const CombatType *U6Actor::get_object_combat_type(uint16 objN) {
 	return nullptr;
 }
 
-const CombatType *U6Actor::get_hand_combat_type() {
+const CombatType *U6Actor::get_hand_combat_type() const {
 	if (obj_n == OBJ_U6_SHIP)
 		return &u6combat_ship_cannon;
 
@@ -881,7 +881,7 @@ void U6Actor::set_worktype(uint8 new_worktype, bool init) {
 }
 
 
-void U6Actor::pathfind_to(MapCoord &d) {
+void U6Actor::pathfind_to(const MapCoord &d) {
 	if (pathfinder) {
 		pathfinder->set_actor(this);
 		pathfinder->set_goal(d);
@@ -1500,7 +1500,7 @@ void U6Actor::die(bool create_body) {
 }
 
 // frozen by worktype or status
-bool U6Actor::is_immobile() {
+bool U6Actor::is_immobile() const {
 	return (((worktype == WORKTYPE_U6_MOTIONLESS
 	          || worktype == WORKTYPE_U6_IMMOBILE) && !is_in_party())
 	        || get_corpser_flag() == true
@@ -1518,8 +1518,8 @@ bool U6Actor::can_twitch() {
 	        && is_paralyzed() == false);
 }
 
-bool U6Actor::can_be_passed(Actor *other) {
-	U6Actor *other_ = static_cast<U6Actor *>(other);
+bool U6Actor::can_be_passed(const Actor *other) const {
+	const U6Actor *other_ = static_cast<const U6Actor *>(other);
 	// Sherry the mouse can pass others if they are in a party with her.
 	bool is_sherry = is_in_party() && other_->is_in_party() && other_->obj_n == OBJ_U6_MOUSE;
 	return (Actor::can_be_passed(other_) || other_->current_movetype != current_movetype || is_sherry);
@@ -1531,7 +1531,7 @@ void U6Actor::print() {
 }
 
 /* Returns name of NPC worktype/activity (game specific) or nullptr. */
-const char *U6Actor::get_worktype_string(uint32 wt) {
+const char *U6Actor::get_worktype_string(uint32 wt) const {
 	const char *wt_string = nullptr;
 	if (wt == WORKTYPE_U6_MOTIONLESS) wt_string = "Motionless";
 	else if (wt == WORKTYPE_U6_PLAYER) wt_string = "Player";
@@ -1617,11 +1617,11 @@ void U6Actor::revert_worktype() {
 }
 
 /* Maximum magic points is derived from Intelligence and base_obj_n. */
-uint8 U6Actor::get_maxmagic() {
+uint8 U6Actor::get_maxmagic() const {
 	return Game::get_game()->get_script()->actor_get_max_magic_points(this);
 }
 
-bool U6Actor::will_not_talk() {
+bool U6Actor::will_not_talk() const {
 	if (worktype == WORKTYPE_U6_COMBAT_RETREAT || worktype == 0x12 // guard arrest player
 	        || Game::get_game()->is_armageddon()
 	        || worktype == WORKTYPE_U6_ATTACK_PARTY || worktype == 0x13) // repel undead and retreat
@@ -1659,7 +1659,7 @@ void U6Actor::handle_lightsource(uint8 hour) {
 	}
 }
 
-uint8 U6Actor::get_hp_text_color() {
+uint8 U6Actor::get_hp_text_color() const {
 	uint8 hp_text_color = 0x48; //standard text color)
 
 	if (is_poisoned()) //actor is poisoned, display their hp in green

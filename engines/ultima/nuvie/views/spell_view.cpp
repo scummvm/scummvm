@@ -147,7 +147,7 @@ uint8 SpellView::fill_cur_spell_list() {
 	return j;
 }
 
-sint8 SpellView::get_selected_index() {
+sint8 SpellView::get_selected_index() const {
 	for (uint8 i = 0; i < 16; i++) {
 		if (cur_spells[i] == spell_container->quality) {
 			return (sint8)i;
@@ -301,7 +301,7 @@ void SpellView::display_spell_text(Spell *spell, uint16 line_num, uint8 selected
 		font->drawChar(screen, 26, area.left + 8, area.top + (line_num * 8));
 }
 
-uint16 SpellView::get_available_spell_count(Spell *s) {
+uint16 SpellView::get_available_spell_count(const Spell *s) const {
 	if (s->reagents == 0) // Help and Armageddon
 		return 1;
 	if (Game::get_game()->has_unlimited_casting())
