@@ -20,6 +20,7 @@
  */
 
 #include "common/memstream.h"
+#include "common/config-manager.h"
 
 #include "image/bmp.h"
 
@@ -54,36 +55,59 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	}
 	
 	CifInfo info;
-	bool external = false;
+	Common::SeekableReadStream *stream = nullptr;
 
-	// First, check for external bitmap
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name + ".bmp");
-	if (stream) {
-		// Found external image
-		Image::BitmapDecoder bmpDec;
-		bmpDec.loadStream(*stream);
-		surf.copyFrom(*bmpDec.getSurface());
-		surf.setPalette(bmpDec.getPalette(), bmpDec.getPaletteStartIndex(), MIN<uint>(256, bmpDec.getPaletteColorCount())); // LOGO.BMP reports 257 colors
-		external = true;
-	} else {
-		// Then, search inside the ciftrees
-		stream = SearchMan.createReadStreamForMember(name);
-
-		if (!stream) {
-			warning("Couldn't open image file %s", name.c_str());
-			return false;
+	// First, check for external .bmp (TVD only; can also be enabled via a hidden ConfMan option)
+	if (g_nancy->getGameType() == kGameTypeVampire || ConfMan.getBool("external_bmp", ConfMan.getActiveDomainName())) {
+		stream = SearchMan.createReadStreamForMember(name + ".bmp");
+		if (stream) {
+			// Found external image
+			Image::BitmapDecoder bmpDec;
+			bmpDec.loadStream(*stream);
+			surf.copyFrom(*bmpDec.getSurface());
+			surf.setPalette(bmpDec.getPalette(), bmpDec.getPaletteStartIndex(), MIN<uint>(256, bmpDec.getPaletteColorCount())); // LOGO.BMP reports 257 colors
 		}
 	}
 
-	// Search for associated CifInfo struct
-	if (!external || outSrc || outDest) {
-		// First, get the correct tree
-		const CifTree *tree = nullptr;
-		if (treeName.size()) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		// .cifs/ciftrees were introduced with nancy1. We also don't need to flip endianness, since the BMP decoder should handle that by itself
+		return false;
+	}
+	
+	// Check for loose .cif images. This bypasses tree search even with a provided treeName
+	if (!stream) {
+		stream = SearchMan.createReadStreamForMember(name + ".cif");
+		if (stream) {
+			// .cifs are compressed, so we need to extract
+			CifFile cifFile(stream, name); // cifFile takes ownership of the current stream
+			stream = cifFile.createReadStream();
+			info = cifFile._info;
+		}
+	}
+
+	// Search inside the ciftrees
+	if (!stream) {
+		if (!treeName.empty()) {
+			// Tree name was provided, bypass SearchMan
 			Common::String upper = treeName;
 			upper.toUppercase();
-			tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
-		} else {
+			const CifTree *tree = (const CifTree *)SearchMan.getArchive(treePrefix + upper);
+
+			stream = tree->createReadStreamForMember(name);
+			info = tree->getCifInfo(name);
+		}
+
+		if (!stream) {
+			// Tree name was not provided, or lookup failed. Use SearchMan
+			stream = SearchMan.createReadStreamForMember(name);
+
+			if (!stream) {
+				warning("Couldn't open image file %s", name.c_str());
+				return false;
+			}
+
+			// Search for the info struct in all ciftrees
+			const CifTree *tree = nullptr;
 			for (uint i = 0; i < _cifTreeNames.size(); ++i) {
 				// No provided tree name, check inside every loaded tree
 				Common::String upper = _cifTreeNames[i];
@@ -93,50 +117,50 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 					break;
 				}
 			}
-		}
 
-		if (!tree) {
-			error("Couldn't find CifInfo struct inside loaded CifTrees");
-		}
-
-		// Now, get the info struct and read the data we need from it
-		info = tree->getCifInfo(name);
-		if (info.type != CifInfo::kResTypeImage) {
-			warning("Resource '%s' is not an image", name.c_str());
-			return false;
-		}
-
-		if (info.depth != 16) {
-			warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
-			return false;
-		}
-
-		if (outSrc) {
-			*outSrc = info.src;
-		}
-
-		if (outDest) {
-			*outDest = info.dest;
-		}
-
-		if (!external) {
-			uint32 bufSize = info.pitch * info.height * (info.depth / 16);
-			byte *buf = new byte[bufSize];
-			stream->read(buf, bufSize);
-
-			#ifdef SCUMM_BIG_ENDIAN
-			if (info.depth == 16) {
-				for (uint i = 0; i < bufSize / 2; ++i) {
-					((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
-				}
+			if (tree) {
+				info = tree->getCifInfo(name);
+			} else {
+				// Image was found inside ciftree, but its CifInfo wasn't. This _should_ be unreachable
+				error("Couldn't find CifInfo struct inside loaded CifTrees");
 			}
-			#endif
-
-			GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
-			delete[] buf;
 		}
 	}
-	
+
+	// Sanity checks
+	if (info.type != CifInfo::kResTypeImage) {
+		warning("Resource '%s' is not an image", name.c_str());
+		return false;
+	}
+
+	if (info.depth != 16) {
+		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+		return false;
+	}
+
+	// Load the src/dest rects when requested
+	if (outSrc) {
+		*outSrc = info.src;
+	}
+
+	if (outDest) {
+		*outDest = info.dest;
+	}
+
+	// Finally, copy the data into the surface
+	uint32 bufSize = info.pitch * info.height * (info.depth / 16);
+	byte *buf = new byte[bufSize];
+	stream->read(buf, bufSize);
+
+	#ifdef SCUMM_BIG_ENDIAN
+	// Flip endianness on BE machines
+	for (uint i = 0; i < bufSize / 2; ++i) {
+		((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
+	}
+	#endif
+
+	GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
+	delete[] buf;
 	return true;
 }
 
