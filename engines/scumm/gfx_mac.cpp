@@ -720,7 +720,11 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 			int startPos = _caretPos;
 			int endPos = _caretPos;
 
-			if (_text[_caretPos] == ' ') {
+			// Check if used clicked past the end of the text
+			if (_caretPos >= (int)_text.size())
+				startPos = endPos = _text.size() - 1;
+
+			if (_text[startPos] == ' ') {
 				while (startPos >= 0) {
 					if (_text[startPos] != ' ') {
 						startPos++;
