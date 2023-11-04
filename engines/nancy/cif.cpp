@@ -330,10 +330,25 @@ bool CifTree::sync(Common::Serializer &ser) {
 
 bool PatchTree::hasFile(const Common::Path &path) const {
 	if (CifTree::hasFile(path)) {
+		// An association is just a Pair of two StringArrays
+		// The first member is an array of Pairs of Strings: a ConfMan property name, and the required value for that ConfMan property
+		// The second member is an array with the names of the files to be enabled if all the ConfMan property requirements are satisfied
 		for (auto &assoc : _associations) {
-			for (const Common::String &s : assoc._value) {
+			auto &confManProps = assoc.first;
+			auto &filenames = assoc.second;
+			for (const Common::String &s : filenames) {
 				if (s == path.toString()) {
-					return ConfMan.getBool(assoc._key, ConfMan.getActiveDomainName());
+					bool satisfied = true;
+
+					for (uint i = 0; i < confManProps.size(); ++i) {
+						// Check all 
+						if (ConfMan.get(confManProps[i].first, ConfMan.getActiveDomainName()) != confManProps[i].second) {
+							satisfied = false;
+							break;
+						}
+					}
+
+					return satisfied;
 				}
 			}
 		}

@@ -118,7 +118,7 @@ public:
 
 	bool hasFile(const Common::Path &path) const override;
 
-	Common::HashMap<Common::String, Common::Array<Common::String>> _associations;
+	Common::Array<Common::Pair<Common::Array<Common::Pair<Common::String, Common::String>>, Common::StringArray>> _associations;
 };
 
 } // End of namespace Nancy
