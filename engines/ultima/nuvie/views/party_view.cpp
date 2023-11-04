@@ -351,18 +351,18 @@ void PartyView::Display(bool full_redraw) {
 bool PartyView::up_arrow() {
 	if (row_offset > 0) {
 		row_offset--;
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
 bool PartyView::down_arrow() {
 	if ((row_offset + (SE ? 7 : 5)) < party->get_party_size()) {
 		row_offset++;
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 

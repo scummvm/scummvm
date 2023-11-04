@@ -104,22 +104,22 @@ public:
 	void close_spell_mode();
 
 	View *get_current_view() {
-		return (current_view);
+		return current_view;
 	}
 	ActorView *get_actor_view() {
-		return (actor_view);
+		return actor_view;
 	}
 	InventoryView *get_inventory_view() {
-		return (inventory_view);
+		return inventory_view;
 	}
 	PortraitView *get_portrait_view() {
-		return (portrait_view);
+		return portrait_view;
 	}
 	PartyView *get_party_view() {
-		return (party_view);
+		return party_view;
 	}
 	SpellView *get_spell_view() {
-		return (spell_view);
+		return spell_view;
 	}
 	MDSkyStripWidget *get_mdSkyWidget() {
 		return mdSkyWidget;

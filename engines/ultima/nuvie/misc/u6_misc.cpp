@@ -316,39 +316,39 @@ bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_r
 		x2 = rect2_x2 <= rect1_x2 ? rect2_x2 : rect1_x2;
 		y2 = rect2_y2 <= rect1_y2 ? rect2_y2 : rect1_y2;
 	} else
-		return (false);
+		return false;
 	if (sub_rect) { // you can perform test without returning a subtraction
 		sub_rect->left = x1;
 		sub_rect->top = y1;
 		sub_rect->setWidth(x2 - x1);
 		sub_rect->setHeight(y2 - y1);
 	}
-	return (true);
+	return true;
 }
 
 const char *get_direction_name(uint8 dir) {
 	switch (dir) {
 	case NUVIE_DIR_N:
-		return ("north");
+		return "north";
 	case NUVIE_DIR_NE:
-		return ("Northeast");
+		return "Northeast";
 	case NUVIE_DIR_E:
-		return ("East");
+		return "East";
 	case NUVIE_DIR_SE:
-		return ("Southeast");
+		return "Southeast";
 	case NUVIE_DIR_S:
-		return ("South");
+		return "South";
 	case NUVIE_DIR_SW:
-		return ("Southwest");
+		return "Southwest";
 	case NUVIE_DIR_W:
-		return ("West");
+		return "West";
 	case NUVIE_DIR_NW:
-		return ("Northwest");
+		return "Northwest";
 	default:
 		break;
 	}
 
-	return ("nowhere");
+	return "nowhere";
 }
 
 /* Returns name of relative direction. 0,0 prints "nowhere".

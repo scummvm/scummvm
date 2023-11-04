@@ -161,8 +161,8 @@ protected:
 	const char *get_rstr(uint32 sn) const {
 		return ((sn < rstrings.size()) ? rstrings[sn].c_str() : "");
 	}
-	const char *get_ystr() const {
-		return (ystring.c_str());
+	const string &get_ystr() const {
+		return ystring;
 	}
 	void set_ystr(const char *s);
 	void set_rstr(uint32 sn, const char *s);
@@ -207,7 +207,7 @@ public:
 	virtual ~ConverseInterpret();
 
 	bool waiting() const {
-		return (is_waiting);
+		return is_waiting;
 	}
 	void wait()    {
 		is_waiting = true;
@@ -220,7 +220,7 @@ public:
 		wait();
 	}
 	bool end()     {
-		return (stopped);
+		return stopped;
 	}
 
 	void step();
@@ -236,7 +236,7 @@ protected:
 
 	/* manipulating collected input */
 	uint32 val_count() const {
-		return (in.size());
+		return in.size();
 	}
 	converse_value get_val(uint32 vi);
 	uint8 get_val_size(uint32 vi);
@@ -269,7 +269,7 @@ public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
 	bool check_keywords(Std::string keystr, Std::string instr);
 	bool var_input() const {
-		return (decl_t != 0x00);
+		return decl_t != 0x00;
 	}
 	void assign_input(); // set declared variable to Converse input
 	struct converse_db_s *get_db(uint32 loc, uint32 i);

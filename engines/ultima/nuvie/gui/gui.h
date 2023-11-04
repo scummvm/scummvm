@@ -108,7 +108,7 @@ public:
 	   function requested a quit.
 	 */
 	int Running(void) {
-		return (running);
+		return running;
 	}
 
 	/* Run the GUI.

@@ -261,7 +261,7 @@ GUI_status GUI_ScrollBar::MouseMotion(int x, int y, uint8 state) {
 	}
 // Redraw();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 inline bool GUI_ScrollBar::move_slider(int new_slider_y) {

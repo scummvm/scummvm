@@ -318,7 +318,7 @@ void InventoryView::display_combat_mode() {
  */
 GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
-		return (GUI_PASS);
+		return GUI_PASS;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -365,7 +365,7 @@ GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 //            set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 
@@ -491,7 +491,7 @@ void InventoryView::moveCursorRelative(sint8 new_x, sint8 new_y) {
 /* Update on-screen location (px,py) of cursor.
  */
 void InventoryView::update_cursor() {
-	Common::Rect *ready_loc;
+	const Common::Rect *ready_loc;
 	nuvie_game_t gametype = Game::get_game()->get_game_type();
 	switch (cursor_pos.area) {
 	case INVAREA_LIST:
@@ -557,7 +557,7 @@ Obj *InventoryView::get_objAtCursor() {
 	else if (cursor_pos.area == INVAREA_DOLL)
 		return (inventory_widget->get_actor()->inventory_get_readied_object(cursor_pos.x));
 
-	return (nullptr);
+	return nullptr;
 }
 
 

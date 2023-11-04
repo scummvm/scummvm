@@ -92,10 +92,10 @@ public:
 	void add_anim(NuvieAnim *anim);
 
 	bool is_defunct() const {
-		return (defunct);
+		return defunct;
 	}
 	uint16 callback(uint16, CallBack *, void *) override {
-		return (0);
+		return 0;
 	}
 };
 
@@ -195,7 +195,7 @@ public:
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override {
 		if (msg == MESG_TIMED) delete_self();    //= 0;
-		return (0);
+		return 0;
 	}
 };
 
@@ -264,7 +264,7 @@ public:
 		Effect::delete_self();
 	}
 	virtual bool hit_object(Obj *obj) {
-		return (false);    // explosion hit something
+		return false;    // explosion hit something
 	}
 	// true return=end effect
 };

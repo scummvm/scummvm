@@ -389,7 +389,7 @@ GUI_status SpellView::KeyDown(const Common::KeyState &key) {
 	default:
 		return GUI_PASS;
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status SpellView::cancel_spell() {

@@ -64,7 +64,7 @@ public:
 	 * converting data or stop.
 	 */
 	bool endOfData() const override {
-		return (buf_pos >= buf_len);
+		return buf_pos >= buf_len;
 	}
 
 	bool rewind() override {

@@ -168,7 +168,7 @@ public:
 	Tile *get_original_tile(uint16 tile_num);
 	void set_tile_index(uint16 tile_index, uint16 tile_num);
 	uint16 get_tile_index(uint16 tile_index) {
-		return (tileindex[tile_index]);
+		return tileindex[tile_index];
 	}
 	void set_anim_loop(uint16 tile_num, sint8 loopc, uint8 loop = 0);
 

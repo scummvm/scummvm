@@ -165,7 +165,7 @@ Actor *Player::find_actor() {
 	for (uint32 p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
 		Actor *theActor = actor_manager->get_actor(p);
 		if (theActor->get_worktype() == 0x02 && theActor->is_immobile() == false) // WT_U6_PLAYER
-			return (theActor);
+			return theActor;
 	}
 
 	sint8 party_leader = party->get_leader();
@@ -173,7 +173,7 @@ Actor *Player::find_actor() {
 	if (party_leader != -1)
 		return party->get_actor(party_leader);
 
-	return (actor_manager->get_avatar());
+	return actor_manager->get_avatar();
 }
 
 
@@ -230,11 +230,15 @@ Actor *Player::get_actor() {
 	return actor;
 }
 
-void Player::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) {
+const Actor *Player::get_actor() const {
+	return actor;
+}
+
+void Player::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) const {
 	actor->get_location(ret_x, ret_y, ret_level);
 }
 
-uint8 Player::get_location_level() {
+uint8 Player::get_location_level() const {
 	return actor->z;
 }
 
@@ -260,7 +264,7 @@ void Player::subtract_movement_points(uint8 points) {
 	Game::get_game()->get_script()->call_actor_subtract_movement_points(get_actor(), points);
 }
 
-const char *Player::get_gender_title() {
+const char *Player::get_gender_title() const {
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
 		if (gender == 0)
@@ -535,9 +539,9 @@ bool Player::set_party_mode(Actor *new_actor) {
 	if (party->contains_actor(new_actor) || party->is_in_vehicle()) {
 		party_mode = true;
 		set_actor(new_actor);
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
@@ -551,30 +555,30 @@ bool Player::set_solo_mode(Actor *new_actor) {
 		}
 		party_mode = false;
 		set_actor(new_actor);
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
 /* Returns the delay in continuous movement for the actor type we control.
  */
-uint32 Player::get_walk_delay() {
+uint32 Player::get_walk_delay() const {
 	if (game_type != NUVIE_GAME_U6)
-		return (125); // normal movement about 8 spaces per second
+		return 125; // normal movement about 8 spaces per second
 
 	if (actor->obj_n == OBJ_U6_BALLOON_BASKET)
-		return (10); // 10x normal (wow!)
+		return 10; // 10x normal (wow!)
 	else if (actor->obj_n == OBJ_U6_SHIP)
-		return (20); // 5x normal
+		return 20; // 5x normal
 	else if (actor->obj_n == OBJ_U6_SKIFF)
-		return (50); // 2x normal
+		return 50; // 2x normal
 	else if (actor->obj_n == OBJ_U6_RAFT)
-		return (100); // normal
+		return 100; // normal
 	else if (actor->obj_n == OBJ_U6_HORSE_WITH_RIDER && party->is_everyone_horsed())
-		return (50); // 2x normal
+		return 50; // 2x normal
 	else
-		return (125); // normal movement about 8 spaces per second
+		return 125; // normal movement about 8 spaces per second
 }
 
 
@@ -595,9 +599,9 @@ bool Player::check_walk_delay() {
 	last_time = this_time; // set each call to get time_passed
 	if (walk_delay == 0) {
 		walk_delay = get_walk_delay(); // reset
-		return (true);
+		return true;
 	}
-	return (false); // not time yet
+	return false; // not time yet
 }
 
 bool Player::weapon_can_hit(uint16 x, uint16 y) {

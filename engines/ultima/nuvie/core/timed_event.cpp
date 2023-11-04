@@ -103,7 +103,7 @@ TimedEvent *TimeQueue::pop_timer() {
 		first = tq.front();
 		tq.pop_front(); // remove it
 	}
-	return (first);
+	return first;
 }
 
 
@@ -112,15 +112,15 @@ TimedEvent *TimeQueue::pop_timer() {
  */
 bool TimeQueue::call_timer(uint32 now) {
 	if (empty())
-		return (false);
+		return false;
 	TimedEvent *tevent = tq.front();
 	if (tevent->defunct) {
 		assert(pop_timer() == tevent);
 		delete_timer(tevent);
-		return (false);
+		return false;
 	}
 	if (tevent->time > now)
-		return (false);
+		return false;
 
 	//dequeue event here
 	pop_timer(); // remove timer in case we have recursion in the timed() call.
@@ -140,7 +140,7 @@ bool TimeQueue::call_timer(uint32 now) {
 	} else
 		delete_timer(tevent); // if not repeated, safe to delete
 
-	return (true);
+	return true;
 }
 
 
@@ -318,7 +318,7 @@ uint16 TimedPartyMove::callback(uint16 msg, CallBack *caller, void *data) {
 		Game::get_game()->unpause_anims();
 //        move_party();
 	}
-	return (0);
+	return 0;
 }
 
 /* Returns true if people are still walking.
@@ -365,7 +365,7 @@ bool TimedPartyMove::move_party() {
 
 	if (used_gate) // wait until now (instead of in loop) so others can catch up before effect
 		hide_actor(used_gate);
-	return (moving);
+	return moving;
 }
 
 /* Start a visual effect and hide the party member.
@@ -434,7 +434,7 @@ bool TimedPartyMove::fall_in() {
 		if (at != desired)
 			not_in_position = true;
 	}
-	return (not_in_position);
+	return not_in_position;
 }
 
 
@@ -630,8 +630,8 @@ void TimedAdvance::timed(uint32 evtime) {
 
 /* Returns true when the requested amount of time has passed.
  */
-bool TimedAdvance::time_passed() {
-	return (minutes >= advance);
+bool TimedAdvance::time_passed() const {
+	return minutes >= advance;
 }
 
 

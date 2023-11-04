@@ -596,7 +596,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			clear_scroll();
 			process_holding_buffer(); // Process any text in the holding buffer.
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
 
 	if (!input_mode || !Common::isPrint(ascii)) {
@@ -662,7 +662,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			if (input_mode)
 				set_input_mode(false);
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_KP_ENTER:
 	case Common::KEYCODE_RETURN:
 		if (permit_inputescape || !cursor_at_input_section()
@@ -680,7 +680,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 			cursor_reset();
 		}
 
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_BACKSPACE :
 		if (input_mode)
 			input_buf_remove_char();
@@ -718,7 +718,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 			clear_scroll();
 			process_holding_buffer(); // Process any text in the holding buffer.
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	} else if (button == 1) { // left click == select word
 		if (input_mode) {
 			token_str = get_token_string_at_pos(x, y);
@@ -738,7 +738,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	        return(GUI_YUM);
 	    }
 	 */
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void ConverseGump::input_add_string(Std::string token_str) {

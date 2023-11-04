@@ -2047,7 +2047,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
 		look_obj = nullptr;
 		look_actor = nullptr;
-		return (GUI_PASS);
+		return GUI_PASS;
 	}
 	game->get_scroll()->display_string("Look-");
 	event->set_mode(LOOK_MODE);
@@ -2063,7 +2063,7 @@ GUI_status MapWindow::MouseHeld(int x, int y, Shared::MouseButton button) {
 	looking = false;
 	if (walk_with_left_button)
 		set_walking(true);
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // double-click
@@ -2481,7 +2481,7 @@ GUI_status MapWindow::MouseLeave(uint8 state) {
 	dragging = false;
 	// NOTE: Don't clear selected_obj here! It's used to remove the object after
 	// dragging.
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 byte *MapWindow::make_thumbnail() {
@@ -2537,7 +2537,7 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 
 //                                               copy_area.w, copy_area.h,
 //                                               copy_area.w);
 	free(screen_area);
-	return (new_surface);
+	return new_surface;
 }
 
 /* Returns the overlay surface. A new 8bit overlay is created if necessary. */
@@ -2546,7 +2546,7 @@ Graphics::ManagedSurface *MapWindow::get_overlay() {
 		overlay = new Graphics::ManagedSurface(area.width(), area.height(),
 			Graphics::PixelFormat::createFormatCLUT8());
 
-	return (overlay);
+	return overlay;
 }
 
 /* Set the overlay surface. The current overlay is deleted if necessary. */

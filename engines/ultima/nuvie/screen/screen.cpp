@@ -1123,7 +1123,7 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_8(byte *src_buf, uint16 src
 					break;
 				}
 	}
-	return (new_surface);
+	return new_surface;
 }
 
 
@@ -1252,9 +1252,9 @@ bool Screen::set_fullscreen(bool value) {
 //Note! assumes area divides evenly by down_scale factor
 byte *Screen::copy_area(Common::Rect *area, uint16 down_scale) {
 	if (_renderSurface->bits_per_pixel == 16)
-		return (copy_area16(area, down_scale));
+		return copy_area16(area, down_scale);
 
-	return (copy_area32(area, down_scale));
+	return copy_area32(area, down_scale);
 }
 
 byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
@@ -1381,8 +1381,8 @@ byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 		area = &screen_area;
 
 	if (_renderSurface->bits_per_pixel == 16)
-		return (copy_area16(area, buf));
-	return (copy_area32(area, buf));
+		return copy_area16(area, buf);
+	return copy_area32(area, buf);
 }
 
 

@@ -116,19 +116,19 @@ void Actor::init_from_obj(Obj *obj, bool change_base_obj) {
 bool Actor::is_nearby(const MapCoord &where, uint8 thresh) const {
 	MapCoord here(x, y, z);
 	if (here.xdistance(where) <= thresh && here.ydistance(where) <= thresh && z == where.z)
-		return (true);
-	return (false);
+		return true;
+	return false;
 }
 
 
 bool Actor::is_nearby(const Actor *other) const {
 	MapCoord there(other->get_location());
-	return (is_nearby(there));
+	return is_nearby(there);
 }
 
 
 bool Actor::is_nearby(uint8 actor_num) const {
-	return (is_nearby(Game::get_game()->get_actor_manager()->get_actor(actor_num)));
+	return is_nearby(Game::get_game()->get_actor_manager()->get_actor(actor_num));
 }
 
 bool Actor::is_at_position(const Obj *obj) const {
@@ -161,7 +161,7 @@ void Actor::get_location(uint16 *ret_x, uint16 *ret_y, uint8 *ret_level) const {
 
 
 MapCoord Actor::get_location() const {
-	return (MapCoord(x, y, z));
+	return MapCoord(x, y, z);
 }
 
 
@@ -325,7 +325,7 @@ const char *Actor::get_name(bool force_real_name) {
 		name = talk_name;
 	else
 		name = actor_manager->look_actor(this, false);
-	return (name.c_str());
+	return name.c_str();
 }
 
 void Actor::add_surrounding_obj(Obj *obj) {
@@ -381,7 +381,7 @@ bool Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags f
 		if (map->is_damaging(new_x, new_y, new_z))
 			return false;
 
-	return (true);
+	return true;
 }
 
 bool Actor::check_moveRelative(sint16 rel_x, sint16 rel_y, ActorMoveFlags flags) {
@@ -395,7 +395,7 @@ bool Actor::can_be_moved() {
 
 bool Actor::can_be_passed(const Actor *other) const {
 	// ethereal actors can always pass us
-	return (other->ethereal || is_passable());
+	return other->ethereal || is_passable();
 }
 
 uint8 Actor::get_object_readiable_location(Obj *obj) {
@@ -676,8 +676,8 @@ const U6LList *Actor::get_inventory_list() const {
 
 bool Actor::inventory_has_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
 	if (inventory_get_object(objN, qual, match_quality, frameN, match_frame_n))
-		return (true);
-	return (false);
+		return true;
+	return false;
 }
 
 uint32 Actor::inventory_count_objects(bool inc_readied_objects) const {
@@ -713,7 +713,7 @@ uint32 Actor::inventory_count_object(uint16 objN) {
 			qty += obj->get_total_qty(objN);
 	}
 
-	return (qty);
+	return qty;
 }
 
 
@@ -729,10 +729,10 @@ Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, ui
 		obj = (Obj *)link->data;
 		if (obj->obj_n == objN && (match_quality == false || obj->quality == qual)
 				&& (match_frame_n == false || obj->frame_n == frameN)) //FIXME should qual = 0 be an all quality search!?
-			return (obj);
+			return obj;
 		else if (obj->has_container()) {
 			if ((obj = obj->find_in_container(objN, qual, match_quality)))
-				return (obj);
+				return obj;
 		}
 	}
 
@@ -832,7 +832,7 @@ uint32 Actor::inventory_del_object(uint16 objN, uint32 qty, uint8 quality) {
 			deleted += (qty - deleted);
 		}
 	}
-	return (deleted);
+	return deleted;
 }
 
 void Actor::inventory_del_all_objs() {
@@ -888,7 +888,7 @@ float Actor::get_inventory_weight() const {
 		weight += obj_manager->get_obj_weight(obj);
 	}
 
-	return (weight);
+	return weight;
 }
 
 float Actor::get_inventory_equip_weight() {
@@ -908,7 +908,7 @@ float Actor::get_inventory_equip_weight() {
 			weight += obj_manager->get_obj_weight(obj);
 	}
 
-	return (weight);
+	return weight;
 }
 
 
@@ -919,7 +919,7 @@ bool Actor::can_carry_object(uint16 objN, uint32 qty) const {
 		return true;
 	float obj_weight = obj_manager->get_obj_weight(objN);
 	if (qty) obj_weight *= qty;
-	return (can_carry_weight(obj_weight));
+	return can_carry_weight(obj_weight);
 }
 
 bool Actor::can_carry_object(Obj *obj) const {
@@ -932,7 +932,7 @@ bool Actor::can_carry_object(Obj *obj) const {
 }
 
 bool Actor::can_carry_weight(Obj *obj) const {
-	return (can_carry_weight(obj_manager->get_obj_weight(obj, OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DO_SCALE)));
+	return can_carry_weight(obj_manager->get_obj_weight(obj, OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, OBJ_WEIGHT_DO_SCALE));
 }
 
 /* Can the actor carry new object(s) of this weight?
@@ -944,7 +944,7 @@ bool Actor::can_carry_weight(float obj_weight) const {
 	// obj_weight /= 10;
 	float inv_weight = get_inventory_weight() + obj_weight;
 	float max_weight = inventory_get_max_weight();
-	return (inv_weight <= max_weight);
+	return inv_weight <= max_weight;
 }
 
 
@@ -1236,7 +1236,7 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 // U6: temp. fix for walking statues; they shouldn't have schedules
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && id_n >= 188 && id_n <= 200) {
 		DEBUG(0, LEVEL_WARNING, "tried to update schedule for non-movable actor %d\n", id_n);
-		return (false);
+		return false;
 	}
 
 	set_worktype(sched[sched_pos]->worktype);
@@ -1430,33 +1430,33 @@ bool Actor::push(Actor *pusher, uint8 where) {
 	if (where == ACTOR_PUSH_HERE) { // move to pusher's square and use up moves
 		MapCoord to(pusher->x, pusher->y, pusher->z), from(get_location());
 		if (to.distance(from) > 1 || z != to.z)
-			return (false);
+			return false;
 		face_location(to.x, to.y);
 		move(to.x, to.y, to.z, ACTOR_FORCE_MOVE); // can even move onto blocked squares
 		if (moves > 0)
 			set_moves_left(0); // we use up our moves exchanging positions
-		return (true);
+		return true;
 	} else if (where == ACTOR_PUSH_ANYWHERE) { // go to any neighboring direction
 		MapCoord from(get_location());
 		const uint16 square = 1;
 		if (this->push(pusher, ACTOR_PUSH_FORWARD))
-			return (true); // prefer forward push
+			return true; // prefer forward push
 		for (uint16 xp = (from.x - square); xp <= (from.x + square); xp += square)
 			for (uint16 yp = (from.y - square); yp <= (from.y + square); yp += square)
 				if (xp != from.x && yp != from.y && move(xp, yp, from.z))
-					return (true);
+					return true;
 	} else if (where == ACTOR_PUSH_FORWARD) { // move away from pusher
 		MapCoord from(get_location());
 		MapCoord pusher_loc(pusher->x, pusher->y, pusher->z);
 		if (pusher_loc.distance(from) > 1 || z != pusher->z)
-			return (false);
+			return false;
 		sint8 rel_x = -(pusher_loc.x - from.x), rel_y = -(pusher_loc.y - from.y);
 		if (moveRelative(rel_x, rel_y)) {
 			set_direction(rel_x, rel_y);
-			return (true);
+			return true;
 		}
 	}
-	return (false);
+	return false;
 }
 
 /* Subtract amount from hp. May die if hp is too low. */
@@ -1689,12 +1689,12 @@ void Actor::clear_error() {
 }
 
 ActorError *Actor::get_error() {
-	return (&error_struct);
+	return &error_struct;
 }
 
 // frozen by worktype or status
 bool Actor::is_immobile() const {
-	return (false);
+	return false;
 }
 
 void Actor::print() {
@@ -1894,7 +1894,7 @@ bool Actor::morph(uint16 objN) {
 	return true;
 }
 
-bool Actor::get_schedule_location(MapCoord *loc) {
+bool Actor::get_schedule_location(MapCoord *loc) const {
 	if (sched[sched_pos] == nullptr)
 		return false;
 
@@ -1904,7 +1904,7 @@ bool Actor::get_schedule_location(MapCoord *loc) {
 	return true;
 }
 
-bool Actor::is_at_scheduled_location() {
+bool Actor::is_at_scheduled_location() const {
 	if (sched[sched_pos] != nullptr && x == sched[sched_pos]->x && y == sched[sched_pos]->y && z == sched[sched_pos]->z)
 		return true;
 

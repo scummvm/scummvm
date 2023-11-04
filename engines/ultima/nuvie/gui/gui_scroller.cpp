@@ -134,7 +134,7 @@ GUI_status GUI_Scroller::MouseMotion(int x, int y, uint8 state) {
 //GUI::get_gui()->moveWidget(this,dx,dy);
 // Redraw();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status GUI_Scroller::MouseWheel(sint32 x, sint32 y) {
@@ -143,7 +143,7 @@ GUI_status GUI_Scroller::MouseWheel(sint32 x, sint32 y) {
 	else if (y < 0)
 		move_down();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void GUI_Scroller::move_up() {

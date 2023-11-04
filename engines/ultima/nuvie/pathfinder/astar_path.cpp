@@ -122,7 +122,7 @@ bool AStarPath::path_search(const MapCoord &start, const MapCoord &goal) {
 			final_node = nnode;
 			create_path();
 			delete_nodes();
-			return (true); // reached goal - success
+			return true; // reached goal - success
 		}
 		// check cardinal neighbors (starting at top going clockwise)
 		search_node_neighbors(nnode, goal, max_score);
@@ -131,29 +131,29 @@ bool AStarPath::path_search(const MapCoord &start, const MapCoord &goal) {
 	}
 //DEBUG(0,LEVEL_DEBUGGING,"FAIL\n");
 	delete_nodes();
-	return (false); // out of open nodes - failure
+	return false; // out of open nodes - failure
 }/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
  * isn't very helpful, so subclasses should provide their own function.
  * Returns -1 if c2 is blocked. */
 sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 	if (!pf->check_loc(c2.x, c2.y, c2.z)
 	        || c2.distance(c1) > 1)
-		return (-1);
-	return (1);
+		return -1;
+	return 1;
 }/* Return an item in the list of closed nodes whose location matches `ncmp'.
  */astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
 	Std::list<astar_node *>::iterator n;
 	for (n = closed_nodes.begin(); n != closed_nodes.end(); n++)
 		if ((*n)->loc == ncmp->loc)
-			return (*n);
-	return (nullptr);
+			return *n;
+	return nullptr;
 }/* Return an item in the list of closed nodes whose location matches `ncmp'.
  */astar_node *AStarPath::find_open_node(astar_node *ncmp) {
 	Std::list<astar_node *>::iterator n;
 	for (n = open_nodes.begin(); n != open_nodes.end(); n++)
 		if ((*n)->loc == ncmp->loc)
-			return (*n);
-	return (nullptr);
+			return *n;
+	return nullptr;
 }/* Add new node pointer to the list of open nodes (sorting by score).
  */void AStarPath::push_open_node(astar_node *node) {
 	Std::list<astar_node *>::iterator n, next;
@@ -170,7 +170,7 @@ sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
  */astar_node *AStarPath::pop_open_node() {
 	astar_node *best = open_nodes.front();
 	open_nodes.pop_front(); // remove it
-	return (best);
+	return best;
 }
 
 /* Find item in the list of closed nodes whose location matched `ncmp', and

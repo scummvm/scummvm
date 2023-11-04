@@ -180,7 +180,7 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 		usecode->message_obj(obj, MESG_EFFECT_COMPLETE, this);
 		delete_self();
 	}
-	return (0);
+	return 0;
 }
 
 #define EXP_EFFECT_SPEED 3
@@ -303,7 +303,7 @@ uint16 ProjectileEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 		delete_self();
 		// }
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -361,10 +361,10 @@ QuakeEffect::~QuakeEffect() {
 uint16 QuakeEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	//  uint8 twice_strength = strength * 2;
 	if (msg != MESG_TIMED)
-		return (0);
+		return 0;
 	if (game->get_clock()->get_ticks() >= stop_time) {
 		stop_quake();
-		return (0);
+		return 0;
 	}
 	recenter_map();
 	map_window->shiftMapRelative(sx, sy);
@@ -380,7 +380,7 @@ uint16 QuakeEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 	if (sx == 0 && sy == 0)
 		init_directions();
-	return (0);
+	return 0;
 }
 
 
@@ -466,7 +466,7 @@ uint16 HitEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		game->unpause_user();
 		delete_self();
 	}
-	return (0);
+	return 0;
 }
 
 TextEffect::TextEffect(Std::string text) { // default somewhat centered on player for cheat messages
@@ -493,7 +493,7 @@ uint16 TextEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	if (msg == MESG_ANIM_DONE) {
 		delete_self();
 	}
-	return (0);
+	return 0;
 }
 
 /*** ExplosiveEffect ***/
@@ -545,7 +545,7 @@ uint16 ExplosiveEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		game->unpause_user();
 		delete_self();
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -573,7 +573,7 @@ bool UseCodeExplosiveEffect::hit_object(Obj *hit_obj) {
 		else // pass original_obj on to next effect
 			new UseCodeExplosiveEffect(nullptr, x, y, 2, hit_damage, original_obj);
 	}
-	return (false);
+	return false;
 }
 
 
@@ -650,14 +650,14 @@ void DropEffect::get_obj(Obj *obj, uint16 qty) {
 uint16 DropEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	// if throw_obj is nullptr, object already hit target
 	if (!throw_obj || (msg != MESG_ANIM_DONE && msg != MESG_ANIM_HIT_WORLD))
-		return (0);
+		return 0;
 
 	if (msg == MESG_ANIM_HIT_WORLD && stop_at == *(MapCoord *)msg_data
 	        && anim)
 		anim->stop();
 
 	hit_target();
-	return (0);
+	return 0;
 }
 
 
@@ -905,13 +905,13 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 			game->unpause_user();
 			delete_self();
 		}
-		return (0);
+		return 0;
 	}
 	// assume msg == MESG_TIMED; will stop after effect completes
 	if (hour == stop_hour && minute >= stop_minute)
 		effect_manager->watch_effect(this, new FadeEffect(FADE_PIXELATED, FADE_IN));
 
-	return (0);
+	return 0;
 }
 
 
@@ -1048,9 +1048,9 @@ uint16 FadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	// done
 	if (fade_complete == true) {
 		delete_self();
-		return (1);
+		return 1;
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -1067,14 +1067,14 @@ inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixelCount) {
 	for (uint32 p = rnum; p < pixelCount; p++) // check all pixels after rnum
 		if (pixels[p] == scan_color) {
 			rnum = p;
-			return (true);
+			return true;
 		}
 	for (uint32 q = 0; q < rnum; q++) // check all pixels before rnum
 		if (pixels[q] == scan_color) {
 			rnum = q;
-			return (true);
+			return true;
 		}
-	return (false);
+	return false;
 }
 
 
@@ -1144,8 +1144,8 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 			Common::Rect overlay_rect(fade_x, fade_y, fade_x + fade_from->w, fade_y + fade_from->h);
 			SDL_BlitSurface(fade_from, &fade_from_rect, overlay, &overlay_rect);
 		}
-		return (true);
-	} else return (false);
+		return true;
+	} else return false;
 }
 
 
@@ -1179,7 +1179,7 @@ uint32 FadeEffect::pixels_to_check() {
 	uint32 pixels_per_fraction = fade_speed / (fraction > 0 ? fraction : 1);
 	prev_evtime = evtime;
 	fade_iterations++;
-	return (pixels_per_fraction);
+	return pixels_per_fraction;
 }
 
 
@@ -1188,7 +1188,7 @@ uint32 FadeEffect::pixels_to_check() {
  */
 bool FadeEffect::circle_fade_out() {
 // FIXME
-	return (false);
+	return false;
 }
 
 
@@ -1197,7 +1197,7 @@ bool FadeEffect::circle_fade_out() {
  */
 bool FadeEffect::circle_fade_in() {
 // FIXME
-	return (false);
+	return false;
 }
 
 
@@ -1219,7 +1219,7 @@ uint16 GameFadeInEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	// done
 	if (FadeEffect::callback(msg, caller, data) != 0)
 		game->unpause_user();
-	return (0);
+	return 0;
 }
 
 
@@ -1252,7 +1252,7 @@ FadeObjectEffect::~FadeObjectEffect() {
 /* Assume FadeEffect is complete. */
 uint16 FadeObjectEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	delete_self();
-	return (0);
+	return 0;
 }
 
 
@@ -1282,7 +1282,7 @@ VanishEffect::~VanishEffect() {
 /* Assume FadeEffect is complete. */
 uint16 VanishEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	delete_self();
-	return (0);
+	return 0;
 }
 
 

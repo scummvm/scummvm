@@ -69,10 +69,10 @@ public:
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
 	virtual void set_actor(Actor *a);
 	const Actor *get_actor() const {
-		return (actor);
+		return actor;
 	}
 	Obj *get_container() {
-		return (container_obj);
+		return container_obj;
 	}
 	void set_container(Obj *obj) {
 		container_obj = obj;

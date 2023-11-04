@@ -49,13 +49,13 @@ Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg) {
 	// Correct portrait class for each game
 	switch (gametype) {
 	case NUVIE_GAME_U6 :
-		return (Portrait *) new PortraitU6(cfg);
+		return new PortraitU6(cfg);
 		break;
 	case NUVIE_GAME_MD :
-		return (Portrait *) new PortraitMD(cfg);
+		return new PortraitMD(cfg);
 		break;
 	case NUVIE_GAME_SE :
-		return (Portrait *) new PortraitSE(cfg);
+		return new PortraitSE(cfg);
 		break;
 	}
 	return nullptr;
@@ -89,7 +89,7 @@ unsigned char *Portrait::get_wou_portrait_data(U6Lib_n *lib, uint8 num) {
 
 	if (shp_buf.get_size() == 0) { // no portrait at that index
 		free(shp_data);
-		return (nullptr);
+		return nullptr;
 	}
 	shp = new U6Shape();
 	shp_lib.open(&shp_buf, 4, NUVIE_GAME_SE);

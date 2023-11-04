@@ -103,7 +103,7 @@ GUI:: AddWidget(GUI_Widget *widget) {
 			maxarray = maxwidgets + WIDGET_ARRAYCHUNK;
 			if ((newarray = (GUI_Widget **)realloc(widgets,
 			                                       maxarray * sizeof(*newarray))) == nullptr) {
-				return (-1);
+				return -1;
 			}
 			widgets = newarray;
 			maxwidgets = maxarray;
@@ -113,7 +113,7 @@ GUI:: AddWidget(GUI_Widget *widget) {
 	widgets[i] = widget;
 	widget->PlaceOnScreen(screen, gui_drag_manager, 0, 0);
 
-	return (0);
+	return 0;
 }
 
 /* remove widget from gui system but don't delete it */

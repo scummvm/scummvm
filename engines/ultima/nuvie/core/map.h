@@ -111,7 +111,7 @@ public:
 		return dist;
 	}
 	uint32 ydistance(const MapCoord &c2) const {
-		return (abs(c2.y - y));
+		return abs(c2.y - y);
 	}
 	// greatest 2D distance X or Y (estimate of shortest)
 	uint32 distance(const MapCoord &c2) const {

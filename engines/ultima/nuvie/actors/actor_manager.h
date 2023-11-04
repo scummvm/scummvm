@@ -94,7 +94,7 @@ public:
 		update = u;
 	}
 	bool get_update() const {
-		return (update);
+		return update;
 	}
 	void set_combat_movement(bool c);
 

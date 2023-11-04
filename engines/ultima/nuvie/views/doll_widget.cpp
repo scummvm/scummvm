@@ -232,10 +232,10 @@ void DollWidget::load_md_doll_shp() {
 	}
 }
 
-Common::Rect *DollWidget::get_item_hit_rect(uint8 location) {
+const Common::Rect *DollWidget::get_item_hit_rect(uint8 location) const {
 	if (location < 8)
-		return (&item_hit_rects[location]);
-	return (nullptr);
+		return &item_hit_rects[location];
+	return nullptr;
 }
 
 
@@ -398,7 +398,7 @@ GUI_status DollWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 }
 
 GUI_status DollWidget::MouseClick(int x, int y, Shared::MouseButton button) {
-	return (MouseUp(x, y, button));
+	return MouseUp(x, y, button);
 }
 
 GUI_status DollWidget::MouseMotion(int x, int y, uint8 state) {
@@ -527,7 +527,7 @@ void DollWidget::drag_draw(int x, int y, int message, void *data) {
 GUI_status DollWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
-		return (GUI_PASS);
+		return GUI_PASS;
 	Events *event = Game::get_game()->get_event();
 	Obj *obj = selected_obj;
 
@@ -535,11 +535,11 @@ GUI_status DollWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	selected_obj = nullptr;
 
 	if (!(actor && obj))
-		return (GUI_YUM);
+		return GUI_YUM;
 
 	if (event->newAction(USE_MODE))
 		event->select_obj(obj);
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 // change container, ready/unready object, activate arrows

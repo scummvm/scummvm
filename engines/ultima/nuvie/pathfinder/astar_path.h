@@ -57,13 +57,13 @@ public:
 	~AStarPath() override { }
 	bool path_search(const MapCoord &start, const MapCoord &goal) override;
 	uint32 path_cost_est(const MapCoord &s, const MapCoord &g) override  {
-		return (Path::path_cost_est(s, g));
+		return Path::path_cost_est(s, g);
 	}
 	uint32 get_max_score(uint32 cost) override {
-		return (Path::get_max_score(cost));
+		return Path::get_max_score(cost);
 	}
 	uint32 path_cost_est(const astar_node &n1, const astar_node &n2) {
-		return (Path::path_cost_est(n1.loc, n2.loc));
+		return Path::path_cost_est(n1.loc, n2.loc);
 	}
 	sint32 step_cost(const MapCoord &c1, const MapCoord &c2) override;
 protected:

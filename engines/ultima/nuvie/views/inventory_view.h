@@ -78,7 +78,7 @@ public:
 	void select_objAtCursor();
 	Obj *get_objAtCursor();
 	InventoryWidget *get_inventory_widget() {
-		return (inventory_widget);
+		return inventory_widget;
 	};
 
 	void Display(bool full_redraw) override;

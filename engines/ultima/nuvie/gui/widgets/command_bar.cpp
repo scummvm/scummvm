@@ -209,7 +209,7 @@ bool CommandBar::init_buttons() {
 		icon[10] = &placeholder_tile; // quick save
 		icon[11] = &placeholder_tile; // quick load
 	}
-	return (true);
+	return true;
 }
 
 bool CommandBar::load(NuvieIO *objlist) {
@@ -268,13 +268,13 @@ GUI_status CommandBar::MouseDown(int x, int y, Shared::MouseButton button) {
 				activate = 7;
 		}
 		if (button == COMMANDBAR_USE_BUTTON)
-			return (hit(activate));
+			return hit(activate);
 		else if (button == COMMANDBAR_ACTION_BUTTON) {
 			select_action(activate);
 		}
 	} else if (!game->is_orig_style())
 		return GUI_PASS;
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status CommandBar::hit(uint8 num) {
@@ -285,7 +285,7 @@ GUI_status CommandBar::hit(uint8 num) {
 
 	try_selected_action(num);
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 static const EventMode U6_mode_tbl[] = { ATTACK_MODE, CAST_MODE, TALK_MODE, LOOK_MODE, GET_MODE,

@@ -114,11 +114,11 @@ public:
 	bool init();
 
 	/* Return instance of self */
-	static Script *get_script()           {
-		return (script);
+	static Script *get_script() {
+		return script;
 	}
 	Configuration *get_config() {
-		return (config);
+		return config;
 	}
 	SoundManager *get_sound_manager() {
 		return soundManager;

@@ -79,9 +79,9 @@ bool EffectManager::has_effects() const {
 		ConstEffectIterator i = effects.begin();
 		while (i != effects.end())
 			if (!(*i)->is_defunct()) // effect is still active
-				return (true);
+				return true;
 	}
-	return (false); // no effects, or all effects are complete
+	return false; // no effects, or all effects are complete
 }
 
 /* Add a watched effect. This will send effect completion message to the
@@ -128,7 +128,7 @@ EffectManager::EffectWatch *EffectManager::find_effect_watch(Effect *effect) {
 				return (&(*i));
 			else ++i;
 	}
-	return (nullptr);
+	return nullptr;
 }
 
 } // End of namespace Nuvie

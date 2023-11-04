@@ -68,7 +68,7 @@ GUI_status GUI_TextInput::MouseUp(int x, int y, Shared::MouseButton button) {
 		}
 	}
 
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
@@ -217,7 +217,7 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
 		break;
 	}
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void GUI_TextInput::add_char(char c) {

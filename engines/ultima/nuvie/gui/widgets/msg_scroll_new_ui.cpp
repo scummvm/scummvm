@@ -274,7 +274,7 @@ GUI_status MsgScrollNewUI::scroll_movement_event(MsgScrollEventType event) {
 		timer = new TimedCallback(this, nullptr, 2000);
 		if (position < msg_buf.size())
 			position++;
-		return (GUI_YUM);
+		return GUI_YUM;
 
 	default :
 		release_focus();

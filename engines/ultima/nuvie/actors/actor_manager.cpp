@@ -933,15 +933,15 @@ bool ActorManager::toss_actor(Actor *actor, uint16 xrange, uint16 yrange) {
 		       y = (actor->y - yrange) + (NUVIE_RAND() % ((actor->y + yrange) - (actor->y - yrange) + 1));
 		if (!map->lineTest(actor->x, actor->y, x, y, actor->z, LT_HitUnpassable, lt))
 			if (!get_actor(x, y, actor->z))
-				return (actor->move(x, y, actor->z));
+				return actor->move(x, y, actor->z);
 	}
 	// TRY ANY LOCATION
 	for (int y = actor->y - yrange; y < actor->y + yrange; y++)
 		for (int x = actor->x - xrange; x < actor->x + xrange; x++)
 			if (!map->lineTest(actor->x, actor->y, x, y, actor->z, LT_HitUnpassable, lt))
 				if (!get_actor(x, y, actor->z))
-					return (actor->move(x, y, actor->z));
-	return (false);
+					return actor->move(x, y, actor->z);
+	return false;
 }
 
 /* Find a location to put actor within range.
@@ -979,7 +979,7 @@ bool ActorManager::toss_actor_get_location(uint16 start_x, uint16 start_y, uint8
 				}
 			}
 
-	return (false);
+	return false;
 }
 
 

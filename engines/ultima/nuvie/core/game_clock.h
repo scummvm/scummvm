@@ -114,14 +114,14 @@ public:
 	}
 
 	uint32 get_ticks() const {
-		return (SDL_GetTicks());    // milliseconds since start
+		return SDL_GetTicks();    // milliseconds since start
 	}
 	uint32 get_game_ticks() const {
-		return (time_counter/**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/);
+		return time_counter/**GAMECLOCK_TICKS_PER_MINUTE+tick_counter*/;
 	}
 // uint32 get_time()  { return(time_counter); } // get_game_ticks() is preferred
 	uint32 get_turn() const {
-		return (move_counter);
+		return move_counter;
 	}
 
 	void set_timer(uint8 timer_num, uint8 val);

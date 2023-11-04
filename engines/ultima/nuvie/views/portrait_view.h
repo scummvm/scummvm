@@ -73,7 +73,7 @@ public:
 	}
 	void set_waiting(bool state);
 	bool get_waiting() const {
-		return (waiting);
+		return waiting;
 	}
 
 protected:

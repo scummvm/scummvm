@@ -191,85 +191,85 @@ public:
 
 	virtual bool use_obj(Obj *obj, Actor *actor);
 	virtual bool look_obj(Obj *obj, Actor *actor)   {
-		return (false);
+		return false;
 	}
 	virtual bool pass_obj(Obj *obj, Actor *actor, uint16 x, uint16 y) {
-		return (false);
+		return false;
 	}
 	virtual bool search_obj(Obj *obj, Actor *actor) {
-		return (false);
+		return false;
 	}
 	virtual bool move_obj(Obj *obj, sint16 rel_x, sint16 rel_y);
 	virtual bool load_obj(Obj *obj)                 {
-		return (false);
+		return false;
 	}
 	virtual bool message_obj(Obj *obj, CallbackMessage msg, void *msg_data) {
-		return (false);
+		return false;
 	}
 	virtual bool ready_obj(Obj *obj, Actor *actor);
 	virtual bool get_obj(Obj *obj, Actor *actor)    {
-		return (false);
+		return false;
 	}
 	virtual bool drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty = 0) {
-		return (false);
+		return false;
 	}
 
 	virtual bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE);
 	virtual bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) {
-		return (false);
+		return false;
 	}
 	virtual bool has_lookcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_LOOK));
+		return has_usecode(obj, USE_EVENT_LOOK);
 	}
 	virtual bool has_passcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_PASS));
+		return has_usecode(obj, USE_EVENT_PASS);
 	}
 	virtual bool has_movecode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_MOVE));
+		return has_usecode(obj, USE_EVENT_MOVE);
 	}
 	virtual bool has_loadcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_LOAD));
+		return has_usecode(obj, USE_EVENT_LOAD);
 	}
 	virtual bool has_readycode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_READY));
+		return has_usecode(obj, USE_EVENT_READY);
 	}
 	virtual bool cannot_unready(const Obj *obj) const {
 		return false;
 	}
 	virtual bool has_getcode(Obj *obj)  {
-		return (has_usecode(obj, USE_EVENT_GET));
+		return has_usecode(obj, USE_EVENT_GET);
 	}
 	virtual bool has_dropcode(Obj *obj) {
-		return (has_usecode(obj, USE_EVENT_DROP));
+		return has_usecode(obj, USE_EVENT_DROP);
 	}
 
 	bool is_door(const Obj *obj) const {
 		return (is_locked_door(obj) || is_unlocked_door(obj));
 	}
 	virtual bool is_locked_door(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 	virtual bool is_unlocked_door(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 	virtual bool is_closed_door(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 	virtual bool process_effects(Obj *container_obj, Actor *actor) {
-		return (false);
+		return false;
 	}
 	virtual bool is_food(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 	virtual bool is_container(const Obj *obj) const;
 	virtual bool is_container(uint16 obj_n, uint8 frame_n) const {
-		return (false);
+		return false;
 	}
 	virtual bool is_readable(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 	virtual bool is_chest(const Obj *obj) const {
-		return (false);
+		return false;
 	}
 
 	void set_itemref(sint32 *val) {

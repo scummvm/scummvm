@@ -92,14 +92,14 @@ unsigned char *U6Lzw::compress_buffer(unsigned char *src, uint32 src_len,
 bool U6Lzw::is_valid_lzw_file(NuvieIOFileRead *input_file) {
 	// file must contain 4-byte size header and space for the 9-bit value 0x100
 	if (input_file->get_size() < 6) {
-		return (false);
+		return false;
 	}
 
 	// the last byte of the size header must be 0 (U6's files aren't *that* big)
 	input_file->seek(3);
 	unsigned char byte3 = input_file->read1();
 	if (byte3 != 0) {
-		return (false);
+		return false;
 	}
 	// the 9 bits after the size header must be 0x100
 	input_file->seek(4);
@@ -107,10 +107,10 @@ bool U6Lzw::is_valid_lzw_file(NuvieIOFileRead *input_file) {
 	unsigned char b1 = input_file->read1();
 	input_file->seekStart();
 	if ((b0 != 0) || ((b1 & 1) != 1)) {
-		return (false);
+		return false;
 	}
 
-	return (true);
+	return true;
 }
 
 bool U6Lzw::is_valid_lzw_buffer(unsigned char *buf, uint32 length) {
@@ -146,7 +146,7 @@ long U6Lzw::get_uncompressed_buffer_size(unsigned char *buf, uint32 length) {
 	if (is_valid_lzw_buffer(buf, length)) {
 		return (buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24));
 	} else {
-		return (-1);
+		return -1;
 	}
 }
 
@@ -162,7 +162,7 @@ unsigned char *U6Lzw::decompress_buffer(unsigned char *source, uint32 source_len
 
 	uncomp_size = this->get_uncompressed_buffer_size(source, source_length);
 	if (uncomp_size == -1)
-		return (nullptr);
+		return nullptr;
 	else
 		destination_length = uncomp_size;
 
@@ -242,7 +242,7 @@ bool U6Lzw::decompress_buffer(unsigned char *source, uint32 source_length, unsig
 				// if it doesn't, something is wrong with the lzw-compressed data.
 				if (cW != next_free_codeword) {
 					DEBUG(0, LEVEL_ERROR, "cW != next_free_codeword!\n");
-					return (false);
+					return false;
 				}
 				// add pW+C to the dictionary
 				dict->add(C, pW);
@@ -349,7 +349,7 @@ int U6Lzw::get_next_codeword(long *bits_read, unsigned char *source, int codewor
 	}
 	*bits_read += codeword_size;
 
-	return (codeword);
+	return codeword;
 }
 
 void U6Lzw::output_root(unsigned char root, unsigned char *destination, long *position) {
@@ -413,7 +413,7 @@ unsigned char U6LzwStack::pop(void) {
 	} else {
 		element = 0;
 	}
-	return (element);
+	return element;
 }
 
 unsigned char U6LzwStack::gettop(void) {
@@ -445,12 +445,12 @@ void U6LzwDict::add(unsigned char root, int codeword) {
 	contains++;
 }
 
-unsigned char U6LzwDict::get_root(int codeword) {
-	return (dict[codeword].root);
+unsigned char U6LzwDict::get_root(int codeword) const {
+	return dict[codeword].root;
 }
 
-int U6LzwDict::get_codeword(int codeword) {
-	return (dict[codeword].codeword);
+int U6LzwDict::get_codeword(int codeword) const {
+	return dict[codeword].codeword;
 }
 
 } // End of namespace Nuvie

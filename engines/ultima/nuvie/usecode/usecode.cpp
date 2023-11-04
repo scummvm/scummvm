@@ -198,9 +198,9 @@ Obj *UseCode::get_obj_from_container(Obj *obj) {
 	if (obj->container && obj->container->end()) {
 		temp_obj = (Obj *)obj->container->end()->data;
 		obj->container->remove(temp_obj); // a pop_back() may be more efficient
-		return (temp_obj);
+		return temp_obj;
 	}
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -270,7 +270,7 @@ Obj *UseCode::destroy_obj(Obj *obj, uint32 count, bool run_usecode) {
 		obj = nullptr;
 	}
 
-	return (obj);
+	return obj;
 }
 
 /*

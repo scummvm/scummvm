@@ -193,7 +193,7 @@ public:
 
 	/* Returns nullptr if everything is okay, or an error message if not */
 	char *Error(void) {
-		return (errorptr);
+		return errorptr;
 	}
 
 	/* yields click state: none, pressed, intermediate */
@@ -228,11 +228,11 @@ protected:
 	void set_mousedown(int set, int button = 0);
 	int get_mouseup(int button) const {
 		if (button > 0 && button < 4) return (mouseup[button - 1]);
-		else return (0);
+		else return 0;
 	}
 	int get_mousedown(int button) const {
 		if (button > 0 && button < 4) return (mousedown[button - 1]);
-		else return (0);
+		else return 0;
 	}
 	void wait_for_mouseclick(int button) {
 		if (button >= Shared::BUTTON_NONE && button < Shared::BUTTON_MIDDLE)

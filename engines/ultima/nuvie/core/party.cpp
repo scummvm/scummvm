@@ -286,9 +286,9 @@ const char *Party::get_actor_name(uint8 member_num) const {
 sint8 Party::get_member_num(const Actor *actor) const {
 	for (int i = 0; i < num_in_party; i++) {
 		if (member[i].actor->id_n == actor->id_n)
-			return (i);
+			return i;
 	}
-	return (-1);
+	return -1;
 }
 
 sint8 Party::get_member_num(uint8 a) const {
@@ -417,7 +417,7 @@ MapCoord Party::get_leader_location() const {
 	MapCoord loc;
 	if (m >= 0)
 		loc = member[m].actor->get_location();
-	return (loc);
+	return loc;
 }
 
 /* Returns absolute location where party member `m' SHOULD be (based on party
@@ -428,7 +428,7 @@ MapCoord Party::get_formation_coords(uint8 m) const {
 	MapCoord l = get_leader_location(); // leader location
 	sint8 leader = get_leader();
 	if (leader < 0)
-		return (a);
+		return a;
 	uint8 ldir = member[leader].actor->get_direction(); // leader direction
 	// intended location
 	uint16 x = (ldir == NUVIE_DIR_N) ? l.x + member[m].form_x : // X
@@ -540,7 +540,7 @@ Actor *Party::who_has_obj(uint16 obj_n, uint8 quality, bool match_qual_zero) {
 	uint16 i;
 	for (i = 0; i < num_in_party; i++) {
 		if (member[i].actor->inventory_get_object(obj_n, quality, match_qual_zero) != nullptr)
-			return (member[i].actor);
+			return member[i].actor;
 	}
 	return nullptr;
 }
@@ -561,13 +561,13 @@ bool Party::is_at(uint16 x, uint16 y, uint8 z, uint32 threshold) const {
 	for (uint32 p = 0; p < num_in_party; p++) {
 		MapCoord loc(x, y, z);
 		if (!member[p].actor->is_nearby(loc, threshold))
-			return (false);
+			return false;
 	}
-	return (true);
+	return true;
 }
 
-bool Party::is_at(MapCoord &xyz, uint32 threshold) const {
-	return (is_at(xyz.x, xyz.y, xyz.z, threshold));
+bool Party::is_at(const MapCoord &xyz, uint32 threshold) const {
+	return is_at(xyz.x, xyz.y, xyz.z, threshold);
 }
 
 /* Is ANYONE in the party at or near the coordinates? */
@@ -575,20 +575,20 @@ bool Party::is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold) const {
 	for (uint32 p = 0; p < num_in_party; p++) {
 		MapCoord loc(x, y, z);
 		if (member[p].actor->is_nearby(loc, threshold))
-			return (true);
+			return true;
 	}
-	return (false);
+	return false;
 }
 
-bool Party::is_anyone_at(MapCoord &xyz, uint32 threshold) const {
-	return (is_anyone_at(xyz.x, xyz.y, xyz.z, threshold));
+bool Party::is_anyone_at(const MapCoord &xyz, uint32 threshold) const {
+	return is_anyone_at(xyz.x, xyz.y, xyz.z, threshold);
 }
 
 bool Party::contains_actor(const Actor *actor) const {
 	if (get_member_num(actor) >= 0)
-		return (true);
+		return true;
 
-	return (false);
+	return false;
 }
 
 bool Party::contains_actor(uint8 actor_num) const {
@@ -690,8 +690,8 @@ void Party::hide() {
 bool Party::move(uint16 dx, uint16 dy, uint8 dz) {
 	for (sint32 m = 0; m < num_in_party; m++)
 		if (!member[m].actor->move(dx, dy, dz, ACTOR_FORCE_MOVE))
-			return (false);
-	return (true);
+			return false;
+	return true;
 }
 
 

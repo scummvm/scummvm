@@ -201,15 +201,15 @@ uint32 Converse::load_conv(uint8 a) {
  */
 const char *Converse::src_name() {
 	if (src_num == 0)
-		return ("");
+		return "";
 	if (gametype == NUVIE_GAME_U6)
 		return ((src_num == 1) ? "converse.a" : "converse.b");
 	if (gametype == NUVIE_GAME_MD)
-		return ("talk.lzc");
+		return "talk.lzc";
 	if (gametype == NUVIE_GAME_SE)
-		return ("talk.lzc");
+		return "talk.lzc";
 
-	return ("");
+	return "";
 }
 
 
@@ -224,7 +224,7 @@ ConvScript *Converse::load_script(uint32 n) {
 	} else
 		DEBUG(0, LEVEL_INFORMATIONAL, "Read %s npc script (%s:%d)\n",
 		      loaded->compressed ? "encoded" : "unencoded", src_name(), (unsigned int)n);
-	return (loaded);
+	return loaded;
 }
 
 
@@ -280,7 +280,7 @@ ConverseInterpret *Converse::new_interpreter() {
 		ci = (ConverseInterpret *)new SETalkInterpret(this);
 		break;
 	}
-	return (ci);
+	return ci;
 }
 
 
@@ -295,12 +295,12 @@ bool Converse::start(uint8 n) {
 	if (running())
 		stop();
 	if (!(npc = actors->get_actor(n)))
-		return (false);
+		return false;
 	// get script num for npc number (and open file)
 	script_num = get_script_num(n);
 	real_script_num = load_conv(script_num);
 	if (!src)
-		return (false);
+		return false;
 
 	script = load_script(real_script_num);
 
@@ -310,7 +310,7 @@ bool Converse::start(uint8 n) {
 		last_view = views->get_current_view();
 		if (!(conv_i = new_interpreter())) {
 			DEBUG(0, LEVEL_CRITICAL, "Can't talk: Unimplemented or unknown game type\n");
-			return (false);
+			return false;
 		}
 		views->close_all_gumps();
 		// set current NPC and start conversation
@@ -338,11 +338,11 @@ bool Converse::start(uint8 n) {
 		show_portrait(npc_num);
 		unwait();
 		DEBUG(0, LEVEL_INFORMATIONAL, "Begin conversation with \"%s\" (npc %d)\n", npc_name(n), n);
-		return (true);
+		return true;
 	}
 	DEBUG(0, LEVEL_ERROR, "Failed to load npc %d from %s:%d\n",
 	      n, src_name(), script_num);
-	return (false);
+	return false;
 }
 
 
@@ -403,9 +403,9 @@ bool Converse::input() {
 #ifdef CONVERSE_DEBUG
 		DEBUG(0, LEVEL_DEBUGGING, "Converse: INPUT \"%s\"\n\n", get_input().c_str());
 #endif
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 
@@ -429,8 +429,8 @@ void Converse::print_prompt() {
  */
 const char *Converse::get_svar(uint8 varnum) {
 	if (varnum <= U6TALK_VAR__LAST_ && variables[varnum].sv)
-		return ((const char *)variables[varnum].sv);
-	return ("");
+		return (const char *)variables[varnum].sv;
+	return "";
 }
 
 
@@ -494,7 +494,7 @@ const char *Converse::npc_name(uint8 num) {
 		temp_script = new ConvScript(src, num);
 		s_pt = temp_script->get_buffer();
 		if (!s_pt)
-			return (nullptr);
+			return nullptr;
 
 		// read name up to LOOK section, convert "_" to "."
 		uint32 c;
@@ -504,7 +504,7 @@ const char *Converse::npc_name(uint8 num) {
 		aname[c] = '\0';
 		delete temp_script;
 	}
-	return (aname);
+	return aname;
 }
 
 
@@ -554,14 +554,14 @@ bool Converse::override_input() {
 		if (!player->get_party()->contains_actor(npc))
 			player->get_party()->add_actor(npc);
 		print("\"Friends of Nuvie? Sure, I'll come along!\"\n*");
-		return (false);
+		return false;
 	} else if (overide_cheat && in_str == "leave") {
 		if (player->get_party()->contains_actor(npc))
 			player->get_party()->remove_actor(npc);
 		print("\"For Nuvie!\"\n*");
-		return (false);
+		return false;
 	}
-	return (true);
+	return true;
 }
 
 void Converse::collect_input() {
@@ -699,7 +699,7 @@ converse_value ConvScript::read(uint32 advance) {
 		val = *buf_pt;
 		++buf_pt;
 	}
-	return (val);
+	return val;
 }
 
 
@@ -709,7 +709,7 @@ converse_value ConvScript::read2() {
 	uint16 val = 0;
 	val = *(buf_pt++);
 	val += *(buf_pt++) << 8;
-	return (val);
+	return val;
 }
 
 
@@ -721,7 +721,7 @@ converse_value ConvScript::read4() {
 	val += *(buf_pt++) << 8;
 	val += *(buf_pt++) << 16;
 	val += *(buf_pt++) << 24;
-	return (val);
+	return val;
 }
 
 void ConvScript::write2(converse_value val) {

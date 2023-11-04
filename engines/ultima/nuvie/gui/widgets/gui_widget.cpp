@@ -174,7 +174,7 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 
 /* Report status to GUI */
 int GUI_Widget:: Status(void) const {
-	return (status);
+	return status;
 }
 
 /* Set the bounds of the widget.
@@ -219,7 +219,7 @@ void GUI_Widget:: SetRect(Common::Rect **bounds) {
 /* Check to see if a point intersects the bounds of the widget.
  */
 int GUI_Widget::HitRect(int x, int y) {
-	return (HitRect(x, y, area));
+	return HitRect(x, y, area);
 }
 
 int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
@@ -230,7 +230,7 @@ int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
 	        (y < rect.top) || (y >= rect.bottom)) {
 		hit = 0;
 	}
-	return (hit);
+	return hit;
 }
 
 /* Set the display surface for this widget */
@@ -292,12 +292,12 @@ GUI_status GUI_Widget::Idle(void) {
 		for (child = children.begin(); child != children.end(); child++) {
 			GUI_status idleStatus = (*child)->Idle();
 			if (idleStatus != GUI_PASS)
-				return (idleStatus);
+				return idleStatus;
 		}
 	}
 	if (delayed_button != 0 || held_button != 0)
-		return (try_mouse_delayed());
-	return (GUI_PASS);
+		return try_mouse_delayed();
+	return GUI_PASS;
 }
 
 /* Widget event handlers.
@@ -306,28 +306,28 @@ GUI_status GUI_Widget::Idle(void) {
    These are called by the default HandleEvent function.
 */
 GUI_status GUI_Widget::KeyDown(const Common::KeyState &key) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::KeyUp(Common::KeyState key) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseDown(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseUp(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 
 GUI_status GUI_Widget::MouseMotion(int x, int y, uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status GUI_Widget::MouseWheel(sint32 x, sint32 y) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Main event handler function.
@@ -357,10 +357,10 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 
 	switch (event->type) {
 	case Common::EVENT_KEYDOWN:
-		return (KeyDown(event->kbd.keycode));
+		return KeyDown(event->kbd.keycode);
 		break;
 	case Common::EVENT_KEYUP:
-		return (KeyUp(event->kbd.keycode));
+		return KeyUp(event->kbd.keycode);
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
@@ -392,16 +392,16 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 			if (do_mouseclick && accept_mouseclick[button - 1] && (rel_time - last_rel_time < GUI::mouseclick_delay)) {
 				// before a Double or Delayed click, mouseup_time is reset so another click isn't possible
 				set_mouseup(0, button);
-				return (MouseDouble(x, y, button));
+				return MouseDouble(x, y, button);
 			} else if (do_mouseclick && accept_mouseclick[button - 1])
-				return (MouseClick(x, y, button));
+				return MouseClick(x, y, button);
 			else
-				return (MouseUp(x, y, button));
+				return MouseUp(x, y, button);
 		}
 		/* if widget was clicked before we must let it deactivate itself*/
 		else if (ClickState(1)) {
 			set_mouseup(0, button);
-			return (MouseUp(-1, -1, button));
+			return MouseUp(-1, -1, button);
 		}
 		break;
 	}
@@ -419,14 +419,15 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 				mouse_over = true;
 				MouseEnter(state);
 			}
-			return (MouseMotion(x, y, state));
+			return MouseMotion(x, y, state);
 		} else {
 			if (mouse_over) {
 				mouse_over = false;
 				MouseLeave(state);
 			}
 			/* if widget was clicked before we must let it react*/
-			if (ClickState(1)) return (MouseMotion(-1, -1, state));
+			if (ClickState(1))
+				return MouseMotion(-1, -1, state);
 		}
 	}
 	break;
@@ -442,7 +443,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 	}
 	break;
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // iterate through children if present to hit the correct drag area.
@@ -480,25 +481,25 @@ void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 /* Mouse button was pressed and released over the widget.
  */
 GUI_status GUI_Widget::MouseClick(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse button was clicked twice over the widget, within a certain time period.
  */
 GUI_status GUI_Widget::MouseDouble(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse cursor passed out of the widget area.
  */
 GUI_status GUI_Widget::MouseEnter(uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Mouse cursor passed into the widget area.
  */
 GUI_status GUI_Widget::MouseLeave(uint8 state) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 /* Returns false if any widget but this one is focused or locked.
@@ -508,12 +509,12 @@ bool GUI_Widget::widget_has_focus() {
 	GUI_Widget *locked_widget = GUI::get_gui()->get_locked_widget();
 
 	if (GUI::get_gui()->get_block_input())
-		return (false);
+		return false;
 	if (locked_widget != nullptr && locked_widget != this)
-		return (false);
+		return false;
 	if (focused_widget != nullptr && focused_widget != this)
-		return (false);
-	return (true);
+		return false;
+	return true;
 }
 
 // button 0 = all
@@ -575,19 +576,19 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 		set_mouseup(0, button);
 		return (MouseDelayed(x, y, button));
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // like a MouseClick but called only after waiting for MouseDouble, if
 // wait_for_mouseclick(button) was called
 GUI_status GUI_Widget::MouseDelayed(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 // like a MouseDown but called only after waiting for MouseUp, if
 // wait_for_mousedown(button) was called
 GUI_status GUI_Widget::MouseHeld(int x, int y, Shared::MouseButton button) {
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 } // End of namespace Nuvie

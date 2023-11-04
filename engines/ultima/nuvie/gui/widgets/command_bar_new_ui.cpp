@@ -154,7 +154,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) 
 		}
 	}
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
@@ -171,7 +171,7 @@ GUI_status CommandBarNewUI::MouseUp(int x, int y, Shared::MouseButton button) {
 	        }
 	    }
 	*/
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status CommandBarNewUI::KeyDown(const Common::KeyState &key) {

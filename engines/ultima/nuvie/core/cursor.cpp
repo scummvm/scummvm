@@ -74,8 +74,8 @@ bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
 
 	if (filename != "")
 		if (load_all(filename, game_type) > 0)
-			return (true);
-	return (false);
+			return true;
+	return false;
 }
 
 
@@ -98,13 +98,13 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	}
 
 	if (slib32_len == 0)
-		return (0);
+		return 0;
 	// FIXME: u6lib_n assumes u6 libs have no filesize header
 	iobuf.open(slib32_data, slib32_len);
 	free(slib32_data);
 
 	if (!pointer_list.open(&iobuf, 4, NUVIE_GAME_MD))
-		return (0);
+		return 0;
 
 
 	uint32 num_read = 0, num_total = pointer_list.get_num_items();
@@ -130,7 +130,7 @@ uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	}
 	pointer_list.close();
 	iobuf.close();
-	return (num_read);
+	return num_read;
 }
 
 
@@ -151,10 +151,10 @@ void Cursor::unload_all() {
  */
 bool Cursor::set_pointer(uint8 ptr_num) {
 	if (ptr_num >= cursors.size() || !cursors[ptr_num])
-		return (false);
+		return false;
 
 	cursor_id = ptr_num;
-	return (true);
+	return true;
 }
 
 
@@ -163,9 +163,9 @@ bool Cursor::set_pointer(uint8 ptr_num) {
  */
 bool Cursor::display(int px, int py) {
 	if (cursors.empty() || !cursors[cursor_id])
-		return (false);
+		return false;
 	if (hidden)
-		return (true);
+		return true;
 	if (px == -1 || py == -1) {
 		screen->get_mouse_location(&px, &py);
 //        DEBUG(0,LEVEL_DEBUGGING,"mouse pos: %d,%d", px, py);
@@ -180,7 +180,7 @@ bool Cursor::display(int px, int py) {
 //    screen->update(px, py, ptr->w, ptr->h);
 	add_update(px, py, ptr->w, ptr->h);
 	update();
-	return (true);
+	return true;
 }
 
 

@@ -307,10 +307,10 @@ public:
 	void init_from_obj(Obj *obj, bool change_base_obj = false);
 
 	bool is_avatar() const {
-		return (id_n == ACTOR_AVATAR_ID_N);
+		return id_n == ACTOR_AVATAR_ID_N;
 	}
 	bool is_onscreen() const {
-		return (MapCoord(x, y, z).is_visible());
+		return MapCoord(x, y, z).is_visible();
 	}
 	bool is_in_party() const {
 		return ((status_flags & ACTOR_STATUS_IN_PARTY) == ACTOR_STATUS_IN_PARTY);
@@ -333,35 +333,35 @@ public:
 
 //for lack of a better name:
 	bool is_met() const {
-		return (talk_flags & 0x01);
+		return talk_flags & 0x01;
 	}
 	bool is_poisoned() const {
-		return (status_flags & ACTOR_STATUS_POISONED);
+		return status_flags & ACTOR_STATUS_POISONED;
 	}
 	bool is_invisible() const {
-		return (obj_flags & OBJ_STATUS_INVISIBLE);
+		return obj_flags & OBJ_STATUS_INVISIBLE;
 	}
 	virtual bool is_immobile() const; // frozen by worktype or status
 	virtual bool is_sleeping() const {
-		return (status_flags & ACTOR_STATUS_ASLEEP);
+		return status_flags & ACTOR_STATUS_ASLEEP;
 	}
 	virtual bool is_paralyzed() const {
-		return (status_flags & ACTOR_STATUS_PARALYZED);
+		return status_flags & ACTOR_STATUS_PARALYZED;
 	}
 	virtual bool is_protected() const {
-		return (status_flags & ACTOR_STATUS_PROTECTED);
+		return status_flags & ACTOR_STATUS_PROTECTED;
 	}
 	virtual bool is_charmed() const {
-		return (obj_flags & OBJ_STATUS_CHARMED);
+		return obj_flags & OBJ_STATUS_CHARMED;
 	}
 	virtual bool is_cursed() const {
-		return (obj_flags & OBJ_STATUS_CURSED);
+		return obj_flags & OBJ_STATUS_CURSED;
 	}
 	virtual bool get_corpser_flag() const {
 		return false;
 	}
 	bool is_hit() const {
-		return (movement_flags & ACTOR_MOVEMENT_HIT_FLAG);
+		return movement_flags & ACTOR_MOVEMENT_HIT_FLAG;
 	}
 
 	void set_name(const char *actor_name) {
@@ -376,42 +376,42 @@ public:
 	Tile *get_tile() const;
 	virtual uint16 get_downward_facing_tile_num() const;
 	uint8 get_actor_num() const {
-		return (id_n);
+		return id_n;
 	}
 	uint8 get_talk_flags() const {
-		return (talk_flags);
+		return talk_flags;
 	}
 	virtual ActorTileType get_tile_type() const {
-		return (ACTOR_ST);
+		return ACTOR_ST;
 	}
 
 	uint16 get_frame_n() const {
-		return (frame_n);
+		return frame_n;
 	}
 	uint16 get_old_frame_n() const {
-		return (old_frame_n);
+		return old_frame_n;
 	}
 	uint16 get_x() const {
-		return (x);
+		return x;
 	}
 	uint16 get_y() const {
-		return (y);
+		return y;
 	}
 	uint8  get_z() const {
-		return (z);
+		return z;
 	}
 
 	uint8 get_strength() const {
-		return (strength);
+		return strength;
 	}
 	uint8 get_dexterity() const {
-		return (dex);
+		return dex;
 	}
 	uint8 get_intelligence() const {
-		return (intelligence);
+		return intelligence;
 	}
 	uint8 get_hp() const {
-		return (hp);
+		return hp;
 	}
 	virtual uint8 get_hp_text_color() const {
 		return 0;
@@ -424,22 +424,22 @@ public:
 	}
 
 	uint8 get_level() const {
-		return (level);
+		return level;
 	}
 	uint16 get_exp() const {
-		return (exp);
+		return exp;
 	}
 	uint8 get_magic() const {
-		return (magic);
+		return magic;
 	}
 	uint8 get_alignment() const {
-		return (alignment);
+		return alignment;
 	}
 	uint8 get_old_alignment() const {
 		return ((movement_flags & ACTOR_MOVEMENT_FLAGS_OLD_ALIGNMENT_MASK) >> 5) + 1;
 	}
 	sint8 get_moves_left() const {
-		return (moves);
+		return moves;
 	}
 	virtual uint8 get_maxhp() const {
 		return 0;
@@ -542,7 +542,7 @@ public:
 	virtual void revert_worktype() { }
 
 	uint8 get_direction() const {
-		return (direction);
+		return direction;
 	}
 	void set_direction(sint16 rel_x, sint16 rel_y);
 	virtual void set_direction(uint8 d);
@@ -579,7 +579,7 @@ public:
 	void set_in_party(bool state);
 	void set_pathfinder(ActorPathFinder *new_pf, Path *path_type = 0);
 	ActorPathFinder *get_pathfinder() {
-		return (pathfinder);
+		return pathfinder;
 	}
 	void delete_pathfinder();
 	virtual void pathfind_to(const MapCoord &d);
@@ -635,7 +635,7 @@ public:
 	Obj *inventory_new_object(uint16 obj_n, uint32 qty, uint8 quality = 0);
 	uint32 inventory_del_object(uint16 obj_n, uint32 qty, uint8 quality);
 	float inventory_get_max_weight() const {
-		return ((strength * 2));
+		return strength * 2;
 	}
 	float get_inventory_weight() const;
 	float get_inventory_equip_weight();
@@ -667,14 +667,14 @@ public:
 
 	Obj *make_obj();
 	uint16 get_obj_n() const {
-		return (obj_n);
+		return obj_n;
 	}
 	virtual void clear();
 	virtual bool morph(uint16 obj_n); // change actor type
 
-	bool get_schedule_location(MapCoord *loc);
-	bool is_at_scheduled_location();
-	int get_number_of_schedules() {
+	bool get_schedule_location(MapCoord *loc) const;
+	bool is_at_scheduled_location() const;
+	int get_number_of_schedules() const {
 		return num_schedules;
 	}
 	Schedule *get_schedule(uint8 index);

@@ -103,7 +103,7 @@ uint8 PortraitU6::get_portrait_num(Actor *actor) const {
 		if (num == (188 - 1))
 			num = PORTRAIT_U6_EXODUS - 1; // Exodus
 		else if (num >= (192 - 1) && num <= (200 - 1)) // Shrines, Temple of Singularity
-			return (NO_PORTRAIT_FOUND);
+			return NO_PORTRAIT_FOUND;
 		else if (num > 194) { // there are 194 npc portraits
 			switch (actor->get_obj_n()) { //check for temporary actors with portraits. eg guards and wisps
 			case OBJ_U6_GUARD :

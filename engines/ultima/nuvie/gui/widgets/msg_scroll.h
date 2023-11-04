@@ -187,7 +187,7 @@ public:
 		return holding_buffer.empty();
 	}
 	virtual bool can_display_prompt() const {
-		return (!just_displayed_prompt);
+		return !just_displayed_prompt;
 	}
 
 	virtual bool parse_token(MsgText *token);
@@ -239,7 +239,7 @@ public:
 	}
 
 	bool get_page_break() const {
-		return (page_break);
+		return page_break;
 	}
 
 	GUI_status KeyDown(const Common::KeyState &key) override;

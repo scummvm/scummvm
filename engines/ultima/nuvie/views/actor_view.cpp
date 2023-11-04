@@ -282,7 +282,7 @@ GUI_status ActorView::MouseDown(int x, int y, Shared::MouseButton button) {
  */
 GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
-		return (GUI_PASS);
+		return GUI_PASS;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -307,7 +307,7 @@ GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 //			set_show_cursor(false); // newAction() can move cursor here
 		return GUI_PASS;
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 /* Put cursor over one of the command icons. */

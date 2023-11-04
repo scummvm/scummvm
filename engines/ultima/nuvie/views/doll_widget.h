@@ -78,7 +78,7 @@ public:
 
 	void drag_draw(int x, int y, int message, void *data) override;
 
-	Common::Rect *get_item_hit_rect(uint8 location);
+	const Common::Rect *get_item_hit_rect(uint8 location) const;
 
 protected:
 

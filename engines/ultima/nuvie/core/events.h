@@ -252,16 +252,16 @@ public:
 		return gamemenu_dialog;
 	}
 	TimeQueue *get_time_queue() {
-		return (time_queue);
+		return time_queue;
 	}
 	TimeQueue *get_game_time_queue() {
-		return (game_time_queue);
+		return game_time_queue;
 	}
 	EventMode get_mode() const {
-		return (mode);
+		return mode;
 	}
 	EventMode get_last_mode() const {
-		return (last_mode);
+		return last_mode;
 	}
 	void set_mode(EventMode new_mode);
 

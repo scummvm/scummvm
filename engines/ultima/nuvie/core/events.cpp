@@ -671,14 +671,14 @@ bool Events::perform_talk(Actor *actor) {
 		pc->face_actor(actor);
 		if (!actor->is_immobile())
 			actor->face_actor(pc);
-		return (true);
+		return true;
 	} else {  // some actor that has no script
 		// always display look-string on failure
 		scroll->display_string(actor_manager->look_actor(actor));
 		scroll->display_string("\n");
 		scroll->display_string("Funny, no response.\n");
 	}
-	return (false);
+	return false;
 }
 
 /* Talk to `actor'. Return to the prompt if no conversation starts.
@@ -687,7 +687,7 @@ bool Events::perform_talk(Actor *actor) {
 bool Events::talk(Actor *actor) {
 	bool talking = true;
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	endAction();
 
@@ -702,7 +702,7 @@ bool Events::talk(Actor *actor) {
 //        scroll->display_prompt();
 		endAction(true);
 	}
-	return (talking);
+	return talking;
 }
 
 bool Events::talk_cursor() {
@@ -714,7 +714,7 @@ bool Events::talk_cursor() {
 
 bool Events::talk_start() {
 	if (game->user_paused())
-		return (false);
+		return false;
 	close_gumps();
 	get_target("Talk-");
 	return true;
@@ -744,7 +744,7 @@ bool Events::talk(Obj *obj) {
 	endAction();
 	scroll->display_string("\n");
 	scroll->display_prompt();
-	return (false);
+	return false;
 }
 
 void Events::try_next_attack() {
@@ -842,7 +842,7 @@ bool Events::perform_get(Obj *obj, Obj *container_obj, Actor *actor) {
 	bool can_perform_get = false;
 	//float weight;
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	if (obj) {
 		if (!actor)
@@ -882,7 +882,7 @@ bool Events::perform_get(Obj *obj, Obj *container_obj, Actor *actor) {
 			scroll->display_string("\n");
 			scroll->display_prompt();
 			map_window->updateBlacking();
-			return (false); // ???
+			return false; // ???
 		}
 
 		got_object = game->get_script()->call_actor_get_obj(actor, obj, container_obj);
@@ -891,7 +891,7 @@ bool Events::perform_get(Obj *obj, Obj *container_obj, Actor *actor) {
 	scroll->display_string("\n\n");
 	scroll->display_prompt();
 	map_window->updateBlacking();
-	return (got_object);
+	return got_object;
 }
 
 /* Get object at selected position, and end action. */
@@ -1009,7 +1009,7 @@ bool Events::use(Actor *actor, uint16 x, uint16 y) {
 	delete_obj(obj); // we were using an actor so free the temp Obj
 	if (mode == USE_MODE) // check mode because UseCode may have changed it
 		endAction(display_prompt);
-	return (true);
+	return true;
 }
 
 bool Events::use(sint16 rel_x, sint16 rel_y) {
@@ -1037,9 +1037,9 @@ bool Events::use(MapCoord coord) {
 		bool visible_actor = actor && actor->is_visible();
 
 		if (obj && (!visible_actor || !usecode->has_usecode(actor)))
-			return (use(obj));
+			return use(obj);
 		if (visible_actor) {
-			return (use(actor, coord.x, coord.y));
+			return use(actor, coord.x, coord.y);
 		}
 	}
 
@@ -1050,7 +1050,7 @@ bool Events::use(MapCoord coord) {
 
 bool Events::look_start() {
 	if (game->user_paused())
-		return (false);
+		return false;
 	get_target("Look-");
 	return true;
 }
@@ -1059,7 +1059,7 @@ bool Events::look_start() {
  */
 bool Events::look(Obj *obj) {
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	if (obj) {
 		if (game->get_game_type() == NUVIE_GAME_U6) {
@@ -1102,7 +1102,7 @@ bool Events::look(Actor *actor) {
 	bool had_portrait = false;
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	if (actor->get_actor_num() != 0) {
 		display_portrait(actor);
@@ -1117,7 +1117,7 @@ bool Events::look(Actor *actor) {
 	else
 		scroll->display_string(actor_manager->look_actor(actor, true));
 	scroll->display_string("\n");
-	return (had_portrait);
+	return had_portrait;
 }
 
 bool Events::search(Obj *obj) {
@@ -1125,7 +1125,7 @@ bool Events::search(Obj *obj) {
 	         target_loc = map_window->get_cursorCoord();
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	if (obj->get_engine_loc() == OBJ_LOC_MAP && player_loc.distance(target_loc) <= 1) {
 		scroll->display_string("\nSearching here, you find ");
@@ -1135,9 +1135,9 @@ bool Events::search(Obj *obj) {
 			scroll->display_string(".\n");
 			map_window->updateBlacking(); // secret doors
 		}
-		return (true);
+		return true;
 	}
-	return (false);
+	return false;
 }
 
 // looks at the whatever is at MapWindow cursor location
@@ -1200,7 +1200,7 @@ bool Events::pushTo(Obj *obj, Actor *actor) {
 					obj_manager->moveto_container(push_obj, obj);
 				scroll->message("\n\n");
 				endAction();
-				return (true);
+				return true;
 			}
 			ok = obj_manager->moveto_container(push_obj, obj);
 		}
@@ -1216,7 +1216,7 @@ bool Events::pushTo(Obj *obj, Actor *actor) {
 				obj_manager->moveto_inventory(push_obj, actor);
 			scroll->message("\n\n");
 			endAction();
-			return (true);
+			return true;
 		} else {
 			scroll->message("nobody.\n\n");
 			endAction();
@@ -1251,7 +1251,7 @@ bool Events::pushTo(Obj *obj, Actor *actor) {
 
 	scroll->display_prompt();
 	endAction();
-	return (true);
+	return true;
 }
 
 /* Move selected object in direction relative to object.
@@ -1268,13 +1268,13 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 	Script *script = game->get_script();
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	if (!push_actor && !push_obj) {
 		scroll->display_string("what?\n\n");
 		scroll->display_prompt();
 		endAction();
-		return (false);
+		return false;
 	}
 
 	if (push_actor) {
@@ -1303,7 +1303,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 			}
 			scroll->message("\n\n");
 			endAction();
-			return (true);
+			return true;
 		}
 	}
 
@@ -1424,7 +1424,7 @@ bool Events::pushTo(sint16 rel_x, sint16 rel_y, bool push_from) {
 	}
 	scroll->display_prompt();
 	endAction();
-	return (true);
+	return true;
 }
 
 bool Events::pushFrom(Obj *obj) {
@@ -1451,7 +1451,7 @@ bool Events::pushFrom(MapCoord target) {
 	MapCoord from = player->get_actor()->get_location();
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	map_window->set_show_use_cursor(false);
 	if (from.x != target.x || from.y != target.y) {
@@ -1857,7 +1857,7 @@ bool Events::alt_code_teleport_to_person(uint32 npc) {
 	player->move(actor_location.x, actor_location.y, actor_location.z, true);
 	if (!actor_manager->toss_actor(player->get_actor(), 2, 2))
 		actor_manager->toss_actor(player->get_actor(), 4, 4);
-	return (true);
+	return true;
 }
 
 /* Display teleport destinations, get input. */
@@ -2408,11 +2408,11 @@ inline uint32 Events::TimeLeft() {
 
 	if (next_time <= now) {
 		next_time = now + NUVIE_INTERVAL;
-		return (0);
+		return 0;
 	}
 	uint32 delay = next_time - now;
 	next_time += NUVIE_INTERVAL;
-	return (delay);
+	return delay;
 }
 
 void Events::toggleFpsDisplay() {
@@ -2601,7 +2601,7 @@ bool Events::ready(Obj *obj, Actor *actor) {
 	bool readied = false;
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	scroll->display_fmt_string("Ready-%s\n", obj_manager->look_obj(obj, false));
 	float obj_weight = obj_manager->get_obj_weight(obj, OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS,
@@ -2631,7 +2631,7 @@ bool Events::ready(Obj *obj, Actor *actor) {
 	}
 	scroll->display_string("\n");
 	scroll->display_prompt();
-	return (readied);
+	return readied;
 }
 
 /* Make actor hold an object they are wearing. */
@@ -2639,7 +2639,7 @@ bool Events::unready(Obj *obj) {
 	Actor *actor = game->get_actor_manager()->get_actor(obj->x);
 
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	scroll->display_fmt_string("Unready-%s\n", obj_manager->look_obj(obj, false));
 
@@ -2654,7 +2654,7 @@ bool Events::unready(Obj *obj) {
 
 	scroll->display_string("\n");
 	scroll->display_prompt();
-	return (true);
+	return true;
 }
 
 bool Events::drop_start() {
@@ -2699,7 +2699,7 @@ bool Events::drop_select(Obj *obj, uint16 qty) {
 /* Select quantity of `drop_obj' to be dropped. (qty 0 = drop nothing) */
 bool Events::drop_count(uint16 qty) {
 	if (game->user_paused())
-		return (false);
+		return false;
 
 	drop_qty = qty;
 	scroll->display_string("\n");
@@ -3409,7 +3409,7 @@ bool Events::newAction(EventMode new_mode) {
 	map_window->set_walking(false);
 
 	if (game->user_paused())
-		return (false);
+		return false;
 	cursor_mode = false;
 // FIXME: make ATTACK_MODE use INPUT_MODE
 	if (mode == ATTACK_MODE && new_mode == ATTACK_MODE) {
@@ -3431,7 +3431,7 @@ bool Events::newAction(EventMode new_mode) {
 		return (!(mode == MOVE_MODE));
 	} else if (mode != MOVE_MODE && mode != EQUIP_MODE) { // already in another mode; exit
 		cancelAction();
-		return (false);
+		return false;
 	}
 	move_in_inventory = false;
 
@@ -3514,9 +3514,9 @@ bool Events::newAction(EventMode new_mode) {
 		break;
 	default:
 		cancelAction(); // "what?"
-		return (false);
+		return false;
 	}
-	return (true); // ready for object/direction
+	return true; // ready for object/direction
 }
 
 /* Revert to default MOVE_MODE. (walking)

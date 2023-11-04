@@ -157,7 +157,7 @@ public:
 		return script != nullptr;
 	}
 	GamePauseState get_pause_flags() const {
-		return (pause_flags);
+		return pause_flags;
 	}
 	void set_pause_flags(GamePauseState state);
 	void unpause_all();
@@ -169,19 +169,19 @@ public:
 	void pause_anims();
 	void pause_world();
 
-	bool paused()       {
-		return (pause_flags);
+	bool paused() const {
+		return pause_flags;
 	}
-	bool all_paused()   {
+	bool all_paused() const {
 		return (pause_flags & PAUSE_ALL);
 	}
-	bool user_paused()  {
+	bool user_paused() const {
 		return (pause_flags & PAUSE_USER);
 	}
-	bool anims_paused() {
+	bool anims_paused() const {
 		return (pause_flags & PAUSE_ANIMS);
 	}
-	bool world_paused() {
+	bool world_paused() const{
 		return (pause_flags & PAUSE_WORLD);
 	}
 
@@ -310,108 +310,108 @@ public:
 
 	/* Return instances of Game classes */
 	static Game *get_game()          {
-		return (game);
+		return game;
 	}
 	Configuration *get_config()       {
-		return (config);
+		return config;
 	}
 	Script *get_script()              {
-		return (script);
+		return script;
 	}
 	Screen *get_screen()              {
-		return (screen);
+		return screen;
 	}
 	Background *get_background()      {
-		return (background);
+		return background;
 	}
 	GamePalette *get_palette()        {
-		return (palette);
+		return palette;
 	}
 	Dither *get_dither()                  {
-		return (dither);
+		return dither;
 	}
 	FontManager *get_font_manager()   {
-		return (font_manager);
+		return font_manager;
 	}
 	TileManager *get_tile_manager()   {
-		return (tile_manager);
+		return tile_manager;
 	}
 	ObjManager *get_obj_manager()     {
-		return (obj_manager);
+		return obj_manager;
 	}
 	ActorManager *get_actor_manager() {
-		return (actor_manager);
+		return actor_manager;
 	}
 	EggManager *get_egg_manager()     {
-		return (egg_manager);
+		return egg_manager;
 	}
 	Magic *get_magic()                {
-		return (magic);
+		return magic;
 	}
 	Map *get_game_map()               {
-		return (game_map);
+		return game_map;
 	}
 	MapWindow *get_map_window()       {
-		return (map_window);
+		return map_window;
 	}
 	MsgScroll *get_scroll()           {
-		return (scroll);
+		return scroll;
 	}
 	Player *get_player()              {
-		return (player);
+		return player;
 	}
 	Party *get_party()                {
-		return (party);
+		return party;
 	}
 	Converse *get_converse()          {
-		return (converse);
+		return converse;
 	}
 	ConverseGump *get_converse_gump() {
-		return (conv_gump);
+		return conv_gump;
 	}
 	ViewManager *get_view_manager()   {
-		return (view_manager);
+		return view_manager;
 	}
 	GameClock *get_clock()            {
-		return (clock);
+		return clock;
 	}
 	Portrait *get_portrait()          {
-		return (portrait);
+		return portrait;
 	}
 	UseCode *get_usecode()            {
-		return (usecode);
+		return usecode;
 	}
 	Events *get_event()                {
-		return (event);
+		return event;
 	}
 	GUI *get_gui()                    {
-		return (gui);
+		return gui;
 	}
 	SoundManager *get_sound_manager() {
-		return (sound_manager);
+		return sound_manager;
 	}
 
 	Cursor *get_cursor()              {
-		return (cursor);
+		return cursor;
 	}
 	EffectManager *get_effect_manager() {
-		return (effect_manager);
+		return effect_manager;
 	}
 	CommandBar *get_command_bar()     {
-		return (command_bar);
+		return command_bar;
 	}
 	CommandBar *get_new_command_bar() {
-		return (new_command_bar);
+		return new_command_bar;
 	}
 	Weather *get_weather()            {
-		return (weather);
+		return weather;
 	}
 
 	Book *get_book()                  {
-		return (book);
+		return book;
 	}
 	KeyBinder *get_keybinder()        {
-		return (keybinder);
+		return keybinder;
 	}
 protected:
 	void init_converse();

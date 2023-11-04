@@ -106,7 +106,7 @@ GUI_status GUI_Console::MouseMotion(int x, int y, uint8 state) {
 //GUI::get_gui()->moveWidget(this,dx,dy);
 // Redraw();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 } // End of namespace Nuvie

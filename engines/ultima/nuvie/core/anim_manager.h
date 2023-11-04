@@ -74,7 +74,7 @@ public:
 	void display(bool top_anims = false);
 
 	Screen *get_surface()            {
-		return (viewsurf);
+		return viewsurf;
 	}
 	void set_surface(Screen *screen) {
 		viewsurf = screen;
@@ -86,7 +86,7 @@ public:
 		tile_pitch = p;
 	}
 	uint8 get_tile_pitch() const {
-		return (tile_pitch);
+		return tile_pitch;
 	}
 
 //new_anim(new ExplosiveAnim(speed));
@@ -128,7 +128,7 @@ protected:
 
 	// return false if animation doesn't need redraw
 	virtual bool update() {
-		return (true);
+		return true;
 	}
 	virtual void display() = 0;
 
@@ -149,10 +149,10 @@ public:
 	}
 
 	virtual MapCoord get_location() {
-		return (MapCoord(px, py, 0));
+		return MapCoord(px, py, 0);
 	}
 	uint32 get_id() const {
-		return (id_n);
+		return id_n;
 	}
 
 	void set_safe_to_delete(bool val)       {
@@ -170,7 +170,7 @@ public:
 	virtual void start()                    { }
 	uint16 message(uint16 msg, void *msg_data = nullptr, void *my_data = nullptr) {
 		if (callback_target) return (CallBack::message(msg, msg_data, my_data));
-		else return (0);
+		else return 0;
 	}
 
 	virtual void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0)    {
@@ -214,7 +214,7 @@ public:
 	~TileAnim() override;
 
 	MapCoord get_location() override {
-		return (MapCoord(_tx, _ty, 0));
+		return MapCoord(_tx, _ty, 0);
 	}
 	void get_offset(uint32 &x_add, uint32 &y_add) const {
 		x_add = _px;

@@ -130,10 +130,10 @@ public:
 		usecode = uc;
 	}
 	UseCode *get_usecode()        {
-		return (usecode);
+		return usecode;
 	}
 	EggManager *get_egg_manager() {
-		return (egg_manager);
+		return egg_manager;
 	}
 
 //U6LList *get_obj_superchunk(uint16 x, uint16 y, uint8 level);
@@ -196,7 +196,7 @@ public:
 
 	float get_obj_weight(Obj *obj, bool include_container_items = OBJ_WEIGHT_INCLUDE_CONTAINER_ITEMS, bool scale = true, bool include_qty = true);
 	uint8 get_obj_weight_unscaled(uint16 obj_n) {
-		return (obj_weight[obj_n]);
+		return obj_weight[obj_n];
 	}
 	float get_obj_weight(uint16 obj_n);
 

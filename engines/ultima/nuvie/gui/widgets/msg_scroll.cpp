@@ -719,7 +719,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break == false && input_mode == false)
-		return (GUI_PASS);
+		return GUI_PASS;
 
 	bool is_printable = Common::isPrint(ascii);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -764,29 +764,29 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 	case Common::KEYCODE_UP :
 		if (input_mode) break; //will select printable ascii
 		move_scroll_up();
-		return (GUI_YUM);
+		return GUI_YUM;
 
 	case Common::KEYCODE_DOWN:
 		if (input_mode) break; //will select printable ascii
 		move_scroll_down();
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_PAGEUP:
 		if (Game::get_game()->is_new_style())
 			move_scroll_up();
 		else page_up();
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_PAGEDOWN:
 		if (Game::get_game()->is_new_style())
 			move_scroll_down();
 		else page_down();
-		return (GUI_YUM);
+		return GUI_YUM;
 	default :
 		break;
 	}
 
 	if (page_break) {
 		process_page_break();
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
 
 	switch (key.keycode) {
@@ -797,7 +797,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 			if (input_mode)
 				set_input_mode(false);
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_KP_ENTER:
 	case Common::KEYCODE_RETURN:
 		if (permit_inputescape || input_char != 0) { // input_char should only be permit_input
@@ -806,7 +806,7 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 			if (input_mode)
 				set_input_mode(false);
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_RIGHT:
 		if (input_char != 0 && permit_input == nullptr)
 			input_buf_add_char(get_char_from_input_char());
@@ -827,9 +827,9 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 		}
 		break;
 	case Common::KEYCODE_LSHIFT :
-		return (GUI_YUM);
+		return GUI_YUM;
 	case Common::KEYCODE_RSHIFT :
-		return (GUI_YUM);
+		return GUI_YUM;
 	default: // alphanumeric characters
 		if (input_mode && is_printable) {
 			if (permit_input == nullptr) {
@@ -846,14 +846,14 @@ GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
 		break;
 	}
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 
 GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 	if (page_break) { // any click == scroll-to-end
 		process_page_break();
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
 
 	Game *game = Game::get_game();
@@ -880,7 +880,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 
 	if (page_break) { // any click == scroll-to-end
 		process_page_break();
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
 
 	if (button == 1) { // left click == select word
@@ -892,7 +892,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 					input_buf_add_char(token_str[0]);
 					set_input_mode(false);
 				}
-				return (GUI_YUM);
+				return GUI_YUM;
 			}
 
 			for (i = 0; i < token_str.length(); i++) {
@@ -906,12 +906,12 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 		if (input_mode) {
 			if (permit_inputescape) {
 				set_input_mode(false);
-				return (GUI_YUM);
+				return GUI_YUM;
 			}
 		} else if (!Game::get_game()->is_new_style())
 			Game::get_game()->get_event()->cancelAction();
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {

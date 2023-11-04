@@ -609,17 +609,17 @@ bool U6Actor::check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags
 			        && (obj_manager->get_obj_of_type_from_location(OBJ_U6_MOUSEHOLE, new_x, new_y, new_z) != nullptr
 			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_BARS, new_x, new_y, new_z) != nullptr
 			            || obj_manager->get_obj_of_type_from_location(OBJ_U6_PORTCULLIS, new_x, new_y, new_z) != nullptr))
-				return (true);
+				return true;
 			if (obj_n == OBJ_U6_SILVER_SERPENT //silver serpents can crossover themselves
 			        && obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, new_x, new_y, new_z) != nullptr)
-				return (true);
+				return true;
 
 			return false;
 		}
 
 	}
 
-	return (true);
+	return true;
 }
 
 bool U6Actor::check_move_silver_serpent(uint16 new_x, uint16 new_y) {
@@ -1048,23 +1048,15 @@ inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) 
 }
 
 inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y) {
-	Std::list<Obj *>::iterator obj;
-	uint8 objFrameN;
-	uint8 tmp_frame_n;
-	uint16 old_x, old_y;
-	uint16 tmp_x, tmp_y;
-	sint8 new_pos;
-	sint8 old_pos;
-
-	const uint8 new_frame_n_tbl[5][5] = {
-		{ 8, 10, 0, 13, 0},
-		{12, 9, 0, 0, 13},
-		{ 0, 0, 0, 0, 0},
-		{11, 0, 0, 9, 10},
-		{ 0, 11, 0, 12, 8}
+	static const uint8 new_frame_n_tbl[5][5] = {
+		{ 8, 10, 0, 13,  0},
+		{12,  9, 0,  0, 13},
+		{ 0,  0, 0,  0,  0},
+		{11,  0, 0,  9, 10},
+		{ 0, 11, 0, 12,  8}
 	};
 
-	const uint8 new_tail_frame_n_tbl[8][6] = {
+	static const uint8 new_tail_frame_n_tbl[8][6] = {
 		{0, 0, 0, 0, 0, 0},
 		{1, 0, 0, 3, 7, 0},
 		{0, 0, 0, 0, 0, 0},
@@ -1078,25 +1070,25 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 	if (surrounding_objects.empty())
 		return;
 
-	obj = surrounding_objects.begin();
+	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 
-	new_pos = 2 + rel_x + (rel_y * 2);
+	sint8 new_pos = 2 + rel_x + (rel_y * 2);
 
-	old_x = (*obj)->x;
-	old_y = (*obj)->y;
+	uint16 old_x = (*obj)->x;
+	uint16 old_y = (*obj)->y;
 
 	(*obj)->x = x - rel_x; // old actor x
 	(*obj)->y = y - rel_y; // old actor y
 
-	old_pos = 2 + ((*obj)->x - old_x) + (((*obj)->y - old_y) * 2);
+	sint8 old_pos = 2 + ((*obj)->x - old_x) + (((*obj)->y - old_y) * 2);
 
-	objFrameN = (*obj)->frame_n;
+	uint8 objFrameN = (*obj)->frame_n;
 	(*obj)->frame_n = new_frame_n_tbl[new_pos][old_pos];
 	obj++;
 	for (; obj != surrounding_objects.end(); obj++) {
-		tmp_x = (*obj)->x;
-		tmp_y = (*obj)->y;
-		tmp_frame_n = (*obj)->frame_n;
+		uint16 tmp_x = (*obj)->x;
+		uint16 tmp_y = (*obj)->y;
+		uint8 tmp_frame_n = (*obj)->frame_n;
 
 		(*obj)->x = old_x;
 		(*obj)->y = old_y;
@@ -1143,12 +1135,11 @@ inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
 }
 
 inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction) {
-	Std::list<Obj *>::iterator obj;
-	uint16 pitch = map->get_width(z);
-
-	obj = surrounding_objects.begin();
+	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
+
+	uint16 pitch = map->get_width(z);
 
 	(*obj)->x = x;
 	(*obj)->y = y;
@@ -1225,13 +1216,11 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 }
 
 inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_direction) {
-	Obj *obj;
-	uint16 pitch = map->get_width(z);
-
 	if (surrounding_objects.empty())
 		return;
 
-	obj = surrounding_objects.back();
+	uint16 pitch = map->get_width(z);
+	Obj *obj = surrounding_objects.back();
 
 	if (obj->frame_n < 8)
 		obj->frame_n = (get_reverse_direction(new_direction) * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1); //mutant actor
@@ -1455,7 +1444,6 @@ void U6Actor::die(bool create_body) {
 	if (has_surrounding_objs())
 		clear_surrounding_objs_list(true);
 
-
 	set_dead_flag(true); // needed sooner for unready usecode of torches
 	if (game->is_armageddon())
 		inventory_drop_all();
@@ -1502,19 +1490,17 @@ void U6Actor::die(bool create_body) {
 bool U6Actor::is_immobile() const {
 	return (((worktype == WORKTYPE_U6_MOTIONLESS
 	          || worktype == WORKTYPE_U6_IMMOBILE) && !is_in_party())
-	        || get_corpser_flag() == true
-	        || is_sleeping() == true
-	        || is_paralyzed() == true
+	        || get_corpser_flag() || is_sleeping() || is_paralyzed()
 	        /*|| can_move == false*/); // can_move really means can_twitch/animate
 }
 
 bool U6Actor::can_twitch() {
-	return ((can_move == true || obj_n == OBJ_U6_MUSICIAN_PLAYING)
-	        && visible_flag == true
+	return ((can_move || obj_n == OBJ_U6_MUSICIAN_PLAYING)
+	        && visible_flag
 	        && actor_type->twitch_rand != 0
-	        && get_corpser_flag() == false
-	        && is_sleeping() == false
-	        && is_paralyzed() == false);
+	        && !get_corpser_flag()
+	        && !is_sleeping()
+	        && !is_paralyzed());
 }
 
 bool U6Actor::can_be_passed(const Actor *other) const {
@@ -1566,7 +1552,7 @@ const char *U6Actor::get_worktype_string(uint32 wt) const {
 	else if (wt == 0x99) wt_string = "Brawl";
 	else if (wt == 0x9a) wt_string = "Mousing";
 	else if (wt == 0x9b) wt_string = "Attack Party";
-	return (wt_string);
+	return wt_string;
 }
 
 /* Return the first food or drink object in inventory. */
@@ -1588,17 +1574,13 @@ Obj *U6Actor::inventory_get_food(Obj *container) {
 }
 
 void U6Actor::inventory_make_all_objs_ok_to_take() {
-	U6LList *inventory;
-	U6Link *link;
-	Obj *obj;
-
-	inventory = get_inventory_list();
+	U6LList *inventory = get_inventory_list();
 
 	if (!inventory)
 		return;
 
-	for (link = inventory->start(); link != nullptr;) {
-		obj = (Obj *)link->data;
+	for (U6Link *link = inventory->start(); link != nullptr;) {
+		Obj *obj = (Obj *)link->data;
 		link = link->next;
 
 		obj->set_ok_to_take(true, true);
@@ -1608,7 +1590,7 @@ void U6Actor::inventory_make_all_objs_ok_to_take() {
 }
 /* Set worktype to normal non-combat activity. */
 void U6Actor::revert_worktype() {
-	Party *party = Game::get_game()->get_party();
+	const Party *party = Game::get_game()->get_party();
 	if (is_in_party())
 		set_worktype(WORKTYPE_U6_IN_PARTY);
 	if (party->get_leader_actor() == this)
@@ -1659,11 +1641,11 @@ void U6Actor::handle_lightsource(uint8 hour) {
 }
 
 uint8 U6Actor::get_hp_text_color() const {
-	uint8 hp_text_color = 0x48; //standard text color)
+	uint8 hp_text_color = 0x48; // standard text color
 
-	if (is_poisoned()) //actor is poisoned, display their hp in green
+	if (is_poisoned()) // actor is poisoned, display their hp in green
 		hp_text_color = 0xa;
-	else if (get_hp() < 10) //actor is critical, display their hp in red.
+	else if (get_hp() < 10) // actor is critical, display their hp in red.
 		hp_text_color = 0x0c;
 
 	return hp_text_color;

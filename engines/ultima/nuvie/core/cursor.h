@@ -95,7 +95,7 @@ public:
 		y = cursors[cursor_id]->point_y;
 	}
 	bool display()                         {
-		return (display(cur_x, cur_y));
+		return display(cur_x, cur_y);
 	}
 	bool display(int px, int py);
 	void clear();

@@ -236,7 +236,7 @@ GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
 	GUI::get_gui()->moveWidget(this, dx, dy);
 // Redraw();
 
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 void GUI_Dialog::MoveRelative(int dx, int dy) {

@@ -94,12 +94,12 @@ bool U6Lib_n::create(Std::string &filename, uint8 size, uint8 type) {
 	if (!file->open(filename)) {
 		DEBUG(0, LEVEL_ERROR, "U6Lib: Error creating %s\n", filename.c_str());
 		delete file;
-		return (false);
+		return false;
 	}
 	game_type = type;
 	lib_size = size;
 	data = (NuvieIO *)file;
-	return (true);
+	return true;
 }
 
 
@@ -112,13 +112,13 @@ uint32 U6Lib_n::get_num_items(void) {
  */
 uint32 U6Lib_n::get_item_offset(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (0);
+		return 0;
 	return (items[item_number].offset);
 }
 
 uint32 U6Lib_n::get_item_size(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (0);
+		return 0;
 
 	return (items[item_number].uncomp_size);
 }
@@ -360,7 +360,7 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
  */
 const char *U6Lib_n::get_item_name(uint32 item_number) {
 	if (item_number >= num_offsets)
-		return (nullptr);
+		return nullptr;
 	return (items[item_number].name ? items[item_number].name->c_str() : nullptr);
 }
 

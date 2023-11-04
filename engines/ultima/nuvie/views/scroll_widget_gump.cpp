@@ -240,7 +240,7 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 			position++;
 			update_arrows();
 		}
-		return (GUI_YUM);
+		return GUI_YUM;
 	case SCROLL_PAGE_UP:
 		if (position > 0) {
 			position = position > scroll_height ? position - scroll_height : 0;

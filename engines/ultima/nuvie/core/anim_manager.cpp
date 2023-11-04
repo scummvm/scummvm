@@ -78,7 +78,7 @@ static float get_relative_degrees(sint16 sx, sint16 sy, float angle_up) {
 	angle += angle_up;
 	if (angle >= 360)
 		angle -= 360;
-	return (angle);
+	return angle;
 }
 
 
@@ -98,10 +98,10 @@ AnimIterator AnimManager::get_anim_iterator(uint32 anim_id) {
 	AnimIterator i = anim_list.begin();
 	while (i != anim_list.end()) {
 		if ((*i)->id_n == anim_id)
-			return (i);
+			return i;
 		++i;
 	}
-	return (anim_list.end());
+	return anim_list.end();
 }
 
 
@@ -110,8 +110,8 @@ AnimIterator AnimManager::get_anim_iterator(uint32 anim_id) {
 NuvieAnim *AnimManager::get_anim(uint32 anim_id) {
 	AnimIterator i = get_anim_iterator(anim_id);
 	if (i != anim_list.end())
-		return (*i);
-	return (nullptr);
+		return *i;
+	return nullptr;
 }
 
 
@@ -160,7 +160,7 @@ sint32 AnimManager::new_anim(NuvieAnim *new_anim) {
 		return ((uint32)new_anim->id_n);
 	}
 	DEBUG(0, LEVEL_ERROR, "Anim: tried to add nullptr anim\n");
-	return (-1);
+	return -1;
 }
 
 
@@ -176,7 +176,7 @@ void AnimManager::destroy_all() {
 /* Delete an animation.
  */
 bool AnimManager::destroy_anim(uint32 anim_id) {
-	return (destroy_anim(get_anim(anim_id)));
+	return destroy_anim(get_anim(anim_id));
 }
 
 
@@ -189,10 +189,10 @@ bool AnimManager::destroy_anim(NuvieAnim *anim_pt) {
 		if ((*i)->safe_to_delete)
 			delete *i;
 		anim_list.erase(i);
-		return (true);
+		return true;
 	}
 	DEBUG(0, LEVEL_ERROR, "Anim: error deleting %d\n", anim_pt->id_n);
-	return (false);
+	return false;
 }
 
 
@@ -304,8 +304,8 @@ sint32 TileAnim::get_tile_id(PositionedTile *find_tile) {
 	uint32 tile_count = _tiles.size();
 	for (uint32 t = 0; t < tile_count; t++)
 		if (find_tile == _tiles[t])
-			return (t);
-	return (-1);
+			return t;
+	return -1;
 }
 
 
@@ -331,7 +331,7 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 	new_tile->px = add_x;
 	new_tile->py = add_y;
 	_tiles.insert(_tiles.begin(), new_tile);
-	return (new_tile);
+	return new_tile;
 }
 
 
@@ -430,7 +430,7 @@ bool HitAnim::update() {
 		MapCoord loc = hit_actor->get_location();
 		move(loc.x, loc.y);
 	}
-	return (true);
+	return true;
 }
 
 uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
@@ -439,7 +439,7 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		stop();
 	}
 
-	return (0);
+	return 0;
 }
 
 
@@ -471,7 +471,7 @@ uint16 TextAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		stop();
 	}
 
-	return (0);
+	return 0;
 }
 
 /*** TossAnim ***/
@@ -588,7 +588,7 @@ MapCoord TossAnim::get_location() {
 	if (src->y > target->y) { // moving up
 		if (_px > 0) loc.y += 1;
 	}
-	return (loc);
+	return loc;
 }
 
 
@@ -637,7 +637,7 @@ bool TossAnim::update() {
 			}
 		}
 	} while (running && moves_left > 0);
-	return (true);
+	return true;
 }
 
 void TossAnim::display() {
@@ -702,7 +702,7 @@ uint32 TossAnim::update_position(uint32 max_move) {
 //DEBUG(0,LEVEL_DEBUGGING,"(%d) moves:%f x_move:%d y_move:%d x_left:%f y_left:%f\n",ms_passed,moves,x_move,y_move,x_left,y_left);
 	// too slow for movement, just return
 	if (x_move == 0 && y_move == 0)
-		return (moves_left);
+		return moves_left;
 
 	if (x_move != 0) {
 		if (x_dist >= y_dist) { // Y=X*tangent
@@ -720,7 +720,7 @@ uint32 TossAnim::update_position(uint32 max_move) {
 		}
 	} else // only moving along Y
 		shift(0, y_move); // **MOVE**
-	return (moves_left);
+	return moves_left;
 }
 
 
@@ -833,7 +833,7 @@ uint16 ExplosiveAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	uint32 flame_size = flame.size();
 
 	if (msg != MESG_TIMED)
-		return (0);
+		return 0;
 
 	for (uint32 t = 0; t < flame_size; t++) { // update each line of fire
 		uint32 r = radius;
@@ -853,7 +853,7 @@ uint16 ExplosiveAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 		message(MESG_ANIM_DONE); // FIXME: in the future make all Anims send when deleted
 		stop();
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -899,7 +899,7 @@ bool ExplosiveAnim::update() {
 //            flame[t].direction.sx = flame[t].direction.sy = 0;
 	}
 
-	return (true);
+	return true;
 }
 
 
@@ -910,8 +910,8 @@ bool ExplosiveAnim::already_hit(MapEntity ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
-				return (true);
-	return (false);
+				return true;
+	return false;
 }
 
 
@@ -1069,7 +1069,7 @@ bool ProjectileAnim::update() {
 		stop();
 	}
 
-	return (true);
+	return true;
 }
 
 /* Also adds actor/object to hit_items list for already_hit() to check. */
@@ -1087,8 +1087,8 @@ bool ProjectileAnim::already_hit(MapEntity ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
-				return (true);
-	return (false);
+				return true;
+	return false;
 }
 
 /*** WingAnim ***/
@@ -1179,7 +1179,7 @@ bool WingAnim::update() {
 		}
 	}
 
-	return (true);
+	return true;
 }
 
 HailstormAnim::HailstormAnim(MapCoord t) : target(t) {

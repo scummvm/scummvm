@@ -232,7 +232,7 @@ GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 		keybinder->handle_always_available_keys(a);
 		break; // was GUI_PASS pefore action_type change
 	}
-	return (GUI_YUM);
+	return GUI_YUM;
 }
 
 GUI_status MapEditorView::MouseDown(int x, int y, Shared::MouseButton button) {

@@ -2123,13 +2123,13 @@ inline void ObjManager::start_obj_usecode(iAVLTree *obj_tree) {
  */
 Obj *ObjManager::get_obj_from_stack(Obj *obj, uint32 count) {
 	if (count == 0 || obj->qty <= count || !is_stackable(obj))
-		return (obj);
+		return obj;
 	// requested is over 0, original quantity is greater than requested, object
 	//  is stackable
 	Obj *new_obj = copy_obj(obj);
 	new_obj->qty = count;
 	obj->qty -= count; // remove requested from original
-	return (new_obj);
+	return new_obj;
 }
 
 void clean_obj_tree_node(void *node) {

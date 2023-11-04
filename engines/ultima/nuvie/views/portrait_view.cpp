@@ -220,9 +220,9 @@ GUI_status PortraitView::HandleEvent(const Common::Event *event) {
 		// Game::get_game()->get_scroll()->set_input_mode(false);
 		Game::get_game()->get_scroll()->message("\n");
 		set_waiting(false);
-		return (GUI_YUM);
+		return GUI_YUM;
 	}
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 

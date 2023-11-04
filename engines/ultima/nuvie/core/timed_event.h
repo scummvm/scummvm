@@ -51,7 +51,7 @@ public:
 	}
 
 	bool empty() const {
-		return (tq.empty());
+		return tq.empty();
 	}
 	void clear();
 	void add_timer(TimedEvent *tevent);
@@ -245,7 +245,7 @@ public:
 	void init(uint16 min, uint16 r); // start time advance
 
 	void timed(uint32 evtime) override;
-	bool time_passed(); // returns true if stop time has passed
+	bool time_passed() const; // returns true if stop time has passed
 	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
 };
 

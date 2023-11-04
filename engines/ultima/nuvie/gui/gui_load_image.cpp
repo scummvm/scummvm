@@ -60,21 +60,21 @@ Graphics::ManagedSurface *GUI_DefaultFont(void) {
 	if (the_font == nullptr) {
 		the_font = GUI_LoadImage(font_w, font_h, font_pal, font_data);
 	}
-	return (the_font);
+	return the_font;
 }
 
 Graphics::ManagedSurface *GUI_Font6x8(void) {
 	if (the_font_6x8 == nullptr) {
 		the_font_6x8 = GUI_LoadImage(font_6x8_w, font_6x8_h, font_pal, font_6x8_data);
 	}
-	return (the_font_6x8);
+	return the_font_6x8;
 }
 
 Graphics::ManagedSurface *GUI_FontGump(void) {
 	if (the_font_gump == nullptr) {
 		the_font_gump = GUI_LoadImage(font_gump_w, font_gump_h, font_pal, font_gump_data);
 	}
-	return (the_font_gump);
+	return the_font_gump;
 }
 
 uint8 *GUI_FontGumpWData(void) {

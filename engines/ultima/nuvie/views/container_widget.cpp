@@ -520,7 +520,7 @@ void ContainerWidget::try_click() {
 GUI_status ContainerWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
-		return (GUI_PASS);
+		return GUI_PASS;
 	Obj *obj = selected_obj;
 
 	ready_obj = nullptr;
@@ -529,13 +529,13 @@ GUI_status ContainerWidget::MouseDouble(int x, int y, Shared::MouseButton button
 //    if(!actor)
 //        return(GUI_YUM);
 	if (!obj)
-		return (MouseUp(x, y, button)); // probably hit an arrow
+		return MouseUp(x, y, button); // probably hit an arrow
 	Game::get_game()->get_view_manager()->double_click_obj(obj);
-	return (GUI_PASS);
+	return GUI_PASS;
 }
 
 GUI_status ContainerWidget::MouseClick(int x, int y, Shared::MouseButton button) {
-	return (MouseUp(x, y, button));
+	return MouseUp(x, y, button);
 }
 
 // change container, ready/unready object, activate arrows

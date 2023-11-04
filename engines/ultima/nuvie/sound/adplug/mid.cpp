@@ -72,8 +72,8 @@ CmidPlayer::~CmidPlayer() {
 }
 
 unsigned char CmidPlayer::datalook(long pos_) {
-	if (pos_ < 0 || pos_ >= flen) return (0);
-	return (data[pos_]);
+	if (pos_ < 0 || pos_ >= flen) return 0;
+	return data[pos_];
 }
 
 unsigned long CmidPlayer::getnexti(unsigned long num) {
@@ -84,7 +84,7 @@ unsigned long CmidPlayer::getnexti(unsigned long num) {
 		v += (datalook(pos) << (8 * i));
 		pos++;
 	}
-	return (v);
+	return v;
 }
 
 unsigned long CmidPlayer::getnext(unsigned long num) {
@@ -96,7 +96,7 @@ unsigned long CmidPlayer::getnext(unsigned long num) {
 		v += datalook(pos);
 		pos++;
 	}
-	return (v);
+	return v;
 }
 
 unsigned long CmidPlayer::getval() {
@@ -109,7 +109,7 @@ unsigned long CmidPlayer::getval() {
 		b = (unsigned char)getnext(1);
 		v = (v << 7) + (b & 0x7F);
 	}
-	return (v);
+	return v;
 }
 
 bool CmidPlayer::load(const Std::string &filename) {

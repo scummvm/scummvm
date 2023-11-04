@@ -149,7 +149,7 @@ public:
 // Properties
 	uint8 get_party_size();
 	virtual uint8 get_party_max() {
-		return (8);    // U6
+		return 8;    // U6
 	}
 	sint8 get_leader() const; // returns -1 if party has no leader and can't move
 	MapCoord get_leader_location() const;
@@ -180,9 +180,9 @@ public:
 
 // Check entire party
 	bool is_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0) const;
-	bool is_at(MapCoord &xyz, uint32 threshold = 0) const;
+	bool is_at(const MapCoord &xyz, uint32 threshold = 0) const;
 	bool is_anyone_at(uint16 x, uint16 y, uint8 z, uint32 threshold = 0) const;
-	bool is_anyone_at(MapCoord &xyz, uint32 threshold = 0) const;
+	bool is_anyone_at(const MapCoord &xyz, uint32 threshold = 0) const;
 	bool has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual = true) const;
 	bool remove_obj(uint16 obj_n, uint8 quality);
 	Actor *who_has_obj(uint16 obj_n, uint8 quality, bool match_zero_qual = true);
@@ -200,8 +200,8 @@ public:
 	void enter_vehicle(Obj *ship_obj, uint32 step_delay = 0);
 	void exit_vehicle(uint16 x, uint16 y, uint16 z);
 	void stop_walking(bool force_music_change);
-	bool get_autowalk() {
-		return (autowalk);
+	bool get_autowalk() const {
+		return autowalk;
 	}
 	void rest_gather();
 	void rest_sleep(uint8 hours, sint16 guard);

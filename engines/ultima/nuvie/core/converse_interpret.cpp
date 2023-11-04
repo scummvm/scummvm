@@ -69,7 +69,7 @@ struct ConverseInterpret::in_val_s ConverseInterpret::read_value() {
 	struct in_val_s ival;
 	ival.v = nval;
 	ival.d = dtype;
-	return (ival);
+	return ival;
 }
 
 
@@ -381,7 +381,7 @@ converse_value ConverseInterpret::pop_val() {
 		ret = get_val(val_count() - 1);
 		in.resize(val_count() - 1);
 	}
-	return (ret);
+	return ret;
 }
 
 
@@ -394,7 +394,7 @@ uint8 ConverseInterpret::pop_val_size() {
 		ret = get_val_size(val_count() - 1);
 		in.resize(val_count() - 1);
 	}
-	return (ret);
+	return ret;
 }
 
 
@@ -402,8 +402,8 @@ uint8 ConverseInterpret::pop_val_size() {
  */
 converse_value ConverseInterpret::get_val(uint32 vi) {
 	if (vi < in.size())
-		return (in[vi].v);
-	return (0);
+		return in[vi].v;
+	return 0;
 }
 
 
@@ -412,8 +412,8 @@ converse_value ConverseInterpret::get_val(uint32 vi) {
  */
 uint8 ConverseInterpret::get_val_size(uint32 vi) {
 	if (vi < in.size())
-		return (in[vi].d);
-	return (0);
+		return in[vi].d;
+	return 0;
 }
 
 void ConverseInterpret::set_ystr(const char *s) {
@@ -435,7 +435,7 @@ void ConverseInterpret::set_rstr(uint32 sn, const char *s) {
  */
 converse_value ConverseInterpret::add_rstr(const char *s) {
 	rstrings.push_back(s ? s : "");
-	return (rstrings.size() - 1);
+	return rstrings.size() - 1;
 }
 
 
@@ -448,7 +448,7 @@ converse_value ConverseInterpret::pop_arg(Common::Stack<converse_typed_value> &v
 		ret = val.val;
 		vs.pop();
 	}
-	return (ret);
+	return ret;
 }
 
 converse_typed_value ConverseInterpret::pop_typed_arg(Common::Stack<converse_typed_value> &vs) {
@@ -457,7 +457,7 @@ converse_typed_value ConverseInterpret::pop_typed_arg(Common::Stack<converse_typ
 		ret = vs.top();
 		vs.pop();
 	}
-	return (ret);
+	return ret;
 }
 
 #if 0
@@ -470,7 +470,7 @@ bool MDTalkInterpret::op(Common::Stack<converse_value> &i) {
 		i.push(in);
 		success = ConverseInterpret::op(i);
 	}
-	return (success);
+	return success;
 }
 #endif
 
@@ -799,7 +799,7 @@ bool ConverseInterpret::op(Common::Stack<converse_typed_value> &i) {
 		DEBUG(0, LEVEL_ERROR, "Converse: UNK OP=%02x\n", inVal);
 		success = false;
 	}
-	return (success);
+	return success;
 }
 
 
@@ -1108,7 +1108,7 @@ bool ConverseInterpret::evop(Common::Stack<converse_typed_value> &i) {
 		success = false;
 	}
 	i.push(out);
-	return (success);
+	return success;
 }
 
 converse_value ConverseInterpret::evop_eq(Common::Stack<converse_typed_value> &vs) {
@@ -1185,7 +1185,7 @@ bool ConverseInterpret::check_keywords(string keystr, string instr) {
 	const char *strt_s = nullptr;
 	char *tok_s = nullptr, *cmp_s = nullptr;
 	if (keystr == "*")
-		return (true);
+		return true;
 	// check each comma-separated keyword
 	strt_s = keystr.c_str();
 	for (uint32 c = 0; c < strlen(strt_s); c++) {
@@ -1204,13 +1204,13 @@ bool ConverseInterpret::check_keywords(string keystr, string instr) {
 			if (!scumm_stricmp(tok_s, cmp_s)) {
 				free(cmp_s);
 				free(tok_s);
-				return (true);
+				return true;
 			}
 			free(cmp_s);
 			free(tok_s);
 		}
 	}
-	return (false);
+	return false;
 }
 
 
@@ -1237,7 +1237,7 @@ ConverseInterpret::get_db(uint32 loc, uint32 i) {
 	struct converse_db_s *item = nullptr;
 	uint32 d = 0, dbuf_len = 0, p = 0, e = 0;
 	if (!db)
-		return (nullptr);
+		return nullptr;
 
 //    item = (struct converse_db_s *)malloc(sizeof(struct converse_db_s));
 	item = new struct converse_db_s;
@@ -1264,7 +1264,7 @@ ConverseInterpret::get_db(uint32 loc, uint32 i) {
 		}
 		++p; // skip 0
 	}
-	return (item);
+	return item;
 }
 
 
@@ -1277,12 +1277,12 @@ char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 	uint32 d = 0, dbuf_len = 0, /* string pointer & length */
 	       p = 0; /* pointer into db */
 	if (!db)
-		return (nullptr);
+		return nullptr;
 	/* skip to index */
 	uint32 e = 0;
 	while (e++ < i) {
 		if (db[p] == U6OP_ENDDATA)
-			return (nullptr);
+			return nullptr;
 		while (is_print(db[p++]));
 	}
 
@@ -1295,7 +1295,7 @@ char *ConverseInterpret::get_db_string(uint32 loc, uint32 i) {
 		item[d++] = (char)(db[p]); // copy
 		item[d] = '\0';
 	} while (is_print(db[++p]));
-	return (item);
+	return item;
 }
 
 
@@ -1318,7 +1318,7 @@ converse_value ConverseInterpret::get_db_integer(uint32 loc, uint32 i) {
 		item = converse->script->read2();
 	converse->script->seek(old_pos);
 
-	return ((converse_value)item);
+	return (converse_value)item;
 }
 
 void ConverseInterpret::set_db_integer(uint32 loc, uint32 i, converse_value val) {
@@ -1375,7 +1375,7 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 				if (item_str.size() > 4)
 					item_str.resize(4);
 				if (check_keywords(item_str, find_str))
-					return (i);
+					return i;
 			}
 		} else ++p;
 		++i;
@@ -1383,7 +1383,7 @@ converse_value ConverseInterpret::find_db_string(uint32 loc, const char *dstring
 #ifdef CONVERSE_DEBUG
 	DEBUG(0, LEVEL_DEBUGGING, "\nConverse: find_db_string: not found; returning %d\n", i);
 #endif
-	return (i);
+	return i;
 }
 
 const char *ConverseInterpret::evop_str(converse_value op) {

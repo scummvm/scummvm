@@ -751,7 +751,7 @@ Tile *TileManager::get_rotated_tile(Tile *tile, float rotate) {
 
 	Tile *new_tile = new Tile(*tile); // retain properties of original tile
 	memcpy(&new_tile->data, &tile_data, 256); // replace data
-	return (new_tile);
+	return new_tile;
 }
 #endif
 

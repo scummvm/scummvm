@@ -148,14 +148,14 @@ public:
 	ConverseInterpret *new_interpreter();
 
 	bool start(Actor *a) {
-		return (start(a->get_actor_num()));
+		return start(a->get_actor_num());
 	}
 	bool start(uint8 n);
 	void continue_script();
 	void stop();
 
 	bool running() const {
-		return (active);
+		return active;
 	}
 	bool is_waiting_for_scroll() {
 		return scroll->get_page_break();
@@ -258,7 +258,7 @@ public:
 	}
 
 	uint32 pos()                    {
-		return (buf_pt - buf);
+		return buf_pt - buf;
 	}
 	bool overflow(uint32 ptadd = 0) {
 		return (((pos() + ptadd) >= buf_len));

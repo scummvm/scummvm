@@ -424,7 +424,7 @@ bool PartyPathFinder::move_member(uint32 member_num, sint16 relx, sint16 rely, b
 			return true;
 		}
 		if (actor->get_error()->err == ACTOR_BLOCKED_BY_ACTOR) {
-			Actor *blocking_actor = actor->get_error()->blocking_actor;
+			const Actor *blocking_actor = actor->get_error()->blocking_actor;
 			sint8 blocking_member_num = -1;
 			if (blocking_actor)
 				blocking_member_num = party->get_member_num(blocking_actor);

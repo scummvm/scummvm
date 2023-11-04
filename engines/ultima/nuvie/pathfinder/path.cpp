@@ -48,7 +48,7 @@ uint32 Path::get_max_score(uint32 cost) {
 	//                           low of a maximum score to move around walls)
 	if (max_score < 8 * 2 * 3)
 		max_score = 8 * 2 * 3;
-	return (max_score);
+	return max_score;
 }
 
 /* Return a weighted estimate of the highest cost from location `s' to `g'.
@@ -72,11 +72,11 @@ void Path::delete_path() {
 }
 
 const MapCoord &Path::get_first_step() {
-	return (Path::get_step(0));
+	return Path::get_step(0);
 }
 
 const MapCoord &Path::get_last_step() {
-	return (Path::get_step(step_count - 1));
+	return Path::get_step(step_count - 1);
 }
 
 const MapCoord &Path::get_step(uint32 step_index) {
