@@ -1236,9 +1236,7 @@ void DuckPlayer::play(const int lastFrameNo) {
 		return;
 	}
 
-	if (_status != kDuckPlaying) {
-		_status = kDuckPlaying;
-	}
+	_status = kDuckPlaying;
 
 	if (lastFrameNo != -1) {
 		_decoder->setEndFrame(lastFrameNo);
