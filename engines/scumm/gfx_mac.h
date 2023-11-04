@@ -264,6 +264,7 @@ public:
 		void handleMouseDown(Common::Event &event);
 		bool handleKeyDown(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
+		void handleMouseHeld();
 	};
 
 	class MacPicture : public MacWidget {
