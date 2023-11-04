@@ -575,17 +575,18 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
-	if (_text.empty() || y < _bounds.top || x < _bounds.left + 1)
+	if (_text.empty() || y < _bounds.top)
 		return 0;
 
-	if (x >= _bounds.right || y >= _bounds.bottom)
+	if (y >= _bounds.bottom)
 		return _text.size();
 
 	x -= _bounds.left;
 
 	int textX = _textPos;
+	uint i;
 
-	for (uint i = 0; i < _text.size(); i++) {
+	for (i = 0; i < _text.size() && textX <= _bounds.width(); i++) {
 		int charWidth = _font->getCharWidth(_text[i]);
 
 		if (x >= textX && x < textX + charWidth)
@@ -594,7 +595,7 @@ int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 		textX += charWidth;
 	}
 
-	return _text.size();
+	return i;
 }
 
 void MacGui::MacEditText::deleteSelection() {
@@ -693,7 +694,7 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 	if (firstCharSelected)
 		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
 
-	if (lastCharSelected)
+	if (lastCharSelected && _bounds.left + x + 1 < _bounds.right)
 		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
 
 	if (_selectLen == 0) {
