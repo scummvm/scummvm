@@ -574,6 +574,18 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
+void MacGui::MacEditText::updateSelection(int x, int y) {
+	int oldSelectLen = _selectLen;
+
+	int pos = getTextPosFromMouse(x, y);
+
+	_selectLen = pos - _caretPos;
+
+	if (_selectLen != oldSelectLen) {
+		setRedraw();
+	}
+}
+
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 	if (_text.empty() || y < _bounds.top)
 		return 0;
@@ -837,18 +849,6 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 	return false;
 }
 
-void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
-	int oldSelectLen = _selectLen;
-
-	int pos = getTextPosFromMouse(event.mouse.x, event.mouse.y);
-
-	_selectLen = pos - _caretPos;
-
-	if (_selectLen != oldSelectLen) {
-		setRedraw();
-	}
-}
-
 void MacGui::MacEditText::handleMouseHeld() {
 	if (_text.empty())
 		return;
@@ -863,11 +863,10 @@ void MacGui::MacEditText::handleMouseHeld() {
 		// Scroll the text to show any partially displayed character
 		// or, if it's entirely shown, the character before that.
 
-		setRedraw();
-
 		for (uint i = 0; i < _text.size(); i++) {
 			if (x == 0) {
 				_textPos += _font->getCharWidth(_text[i - 1]);
+				updateSelection(mousePos.x, mousePos.y);
 				return;
 			}
 
@@ -875,6 +874,7 @@ void MacGui::MacEditText::handleMouseHeld() {
 
 			if (x < 0 && x + charWidth > 0) {
 				_textPos += (charWidth + x);
+				updateSelection(mousePos.x, mousePos.y);
 				return;
 			}
 
@@ -886,13 +886,17 @@ void MacGui::MacEditText::handleMouseHeld() {
 
 			if (x > _textSurface.w + 1) {
 				_textPos -= (x - _textSurface.w + 1);
-				setRedraw();
+				updateSelection(mousePos.x, mousePos.y);
 				return;
 			}
 
 			x += charWidth;
 		}
 	}
+}
+
+void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
+	updateSelection(event.mouse.x, event.mouse.y);
 }
 
 // ---------------------------------------------------------------------------
