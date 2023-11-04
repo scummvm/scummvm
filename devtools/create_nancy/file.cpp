@@ -219,7 +219,7 @@ void writeToFile(File &file, const Hint &obj) {
 
 template<>
 void writeToFile(File &file, const PatchAssociation &obj) {
-	file.writeString(obj.confManID);
+	writeToFile(file, obj.confManProps);
 	writeToFile(file, obj.fileIDs);
 }
 

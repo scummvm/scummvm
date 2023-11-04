@@ -630,8 +630,8 @@ const Common::Array<const char *> nancy2PatchSrcFiles {
 // to the last two ARs in scene S1160. This allows the player to re-enter the
 // prop room when they've collected the door knob, but not the wire clippers.
 const Common::Array<PatchAssociation> nancy2PatchAssociations {
-	{ "softlocks_fix", { "S1160" } },
-	{ "final_timer", { "S1563", "S1564", "S1565" } }
+	{ { "softlocks_fix", "true" }, { "S1160" } },
+	{ { "final_timer", "true" }, { "S1563", "S1564", "S1565" } }
 };
 
 #endif // NANCY2DATA

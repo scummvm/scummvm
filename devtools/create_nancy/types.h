@@ -91,7 +91,7 @@ struct SoundChannelInfo {
 };
 
 struct PatchAssociation {
-	const char *confManID;
+	Common::Array<const char *> confManProps;
 	Common::Array<const char *> fileIDs;
 };
 

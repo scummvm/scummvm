@@ -853,4 +853,14 @@ const Common::Array<const char *> _nancy3EventFlagNames = {
 	"empty",
 };
 
+const Common::Array<const char *> nancy3PatchSrcFiles {
+	"han92b.his"
+};
+
+// Patch notes:
+// - The missing sound file is a patch from the original devs. Should only be enabled in the English version
+const Common::Array<PatchAssociation> nancy3PatchAssociations {
+	{ { "language", "en" }, { "han92b.his" } }
+};
+
 #endif // NANCY3DATA_H

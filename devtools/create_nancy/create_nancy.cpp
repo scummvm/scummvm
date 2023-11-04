@@ -241,6 +241,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy3TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy3EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy3EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, 4, nancy3PatchSrcFiles, "files/nancy3"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy3PatchAssociations))
 	
 	// Nancy Drew: Treasure in the Royal Tower data
 	gameOffsets.push_back(output.pos());
