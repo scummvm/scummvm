@@ -40,6 +40,7 @@ public:
 	bool isModified() override;
 	void createMatte(Common::Rect &bbox);
 	Graphics::Surface *getMatte(Common::Rect &bbox);
+	Graphics::Surface *getDitherImg();
 	void copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal = 0);
 
 	bool hasField(int field) override;
