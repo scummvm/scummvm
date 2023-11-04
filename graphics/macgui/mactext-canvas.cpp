@@ -513,8 +513,8 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 
 					chunk.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, fg: %04x",
-							fontId, textSlant, fontSize, chunk.fgcolor);
+					D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, fg: %04x (from %04x %04x %04x)",
+							fontId, textSlant, fontSize, chunk.fgcolor, palinfo1, palinfo2, palinfo3);
 
 					// So far, we enforce single font here, though in the future, font size could be altered
 					if (!_macFontMode)
