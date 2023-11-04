@@ -31,6 +31,8 @@
 #include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
+#include "gui/browser.h"
+#include "gui/downloaddialog.h"
 
 #include "image/png.h"
 
@@ -84,6 +86,25 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	g_system->grabOverlay(surf);
 	saveGUISnapshot(surf, "about-" + filename);
 	aboutDialog.close();
+
+	// BrowserDialog
+	GUI::BrowserDialog browserDialog(_("Select directory with game data"), true);
+	browserDialog.open(); //For rendering
+	browserDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "browser-" + filename);
+	browserDialog.close();
+
+	//DownloadDialog
+	LauncherDialog *_launcher;
+	GUI::DownloadDialog downloadDialog(1,_launcher);
+	downloadDialog.open(); //For rendering
+	downloadDialog.reflowLayout(); //For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "download-" + filename);
+	downloadDialog.close();
 
 	// LauncherDialog
 #if 0
