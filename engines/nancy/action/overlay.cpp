@@ -197,7 +197,7 @@ void Overlay::execute() {
 					_nextFrameTime = _currentFrameTime + _frameTime;
 				} else {
 					uint32 timeDiff = _currentFrameTime - _nextFrameTime;
-					frameDiff = timeDiff / _frameTime;
+					frameDiff = timeDiff / MAX<uint32>(_frameTime, 1); // Fix for nancy2 scene 1090, where _frameTime is 0
 					_nextFrameTime += _frameTime * frameDiff;
 				}
 
