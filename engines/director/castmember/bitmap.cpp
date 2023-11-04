@@ -213,6 +213,8 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	}
 
 	if (dstBpp == 1) {
+		// ScummVM using 8-bit video
+
 		if (srcBpp > 1
 		// At least early directors were not remapping 8bpp images. But in case it is
 		// needed, here is the code
@@ -222,100 +224,32 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 #endif
 			) {
 
-			_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, _picture->_palette, _picture->_paletteColors, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+			_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
 			pal = g_director->_wm->getPalette();
-		} else {
-			// Convert indexed image to indexed palette
-			Movie *movie = g_director->getCurrentMovie();
-			Cast *cast = movie->getCast();
-			Score *score = movie->getScore();
-			// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
-			CastMemberID currentPaletteId = score->getCurrentPalette();
-			if (currentPaletteId.isNull())
-				currentPaletteId = cast->_defaultPalette;
-			PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
-			if (!currentPalette) {
-				currentPaletteId = CastMemberID(kClutSystemMac, -1);
-				currentPalette = g_director->getPalette(currentPaletteId);
-			}
-			CastMemberID castPaletteId = _clut;
-			// It is possible for Director to have saved an invalid ID in _clut;
-			// if this is the case, do no dithering.
-			if (castPaletteId.isNull())
-				castPaletteId = currentPaletteId;
-
-			// Check if the palette is in the middle of a color fade event
-			bool isColorCycling = score->isPaletteColorCycling();
-
-			// First, check if the palettes are different
-			switch (_bitsPerPixel) {
-			// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
-			case 1:
-				break;
-			// 2bpp - convert to nearest using the standard 2-bit palette.
-			case 2:
-				{
-					const PaletteV4 &srcPal = g_director->getLoaded4Palette();
-					_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
-				}
-				break;
-			// 4bpp - if using a builtin palette, use one of the corresponding 4-bit ones.
-			case 4:
-				{
-					const auto pals = g_director->getLoaded16Palettes();
-					// in D4 you aren't allowed to use custom palettes for 4-bit images, so uh...
-					// I guess default to the mac palette?
-					CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
-					const PaletteV4 &srcPal = pals.getVal(palIndex);
-					_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
-				}
-				break;
-			// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
-			case 8:
-				// Only redither 8-bit images if we have the flag set, or it is external
-				if (!movie->_remapPalettesWhenNeeded && !_external)
-					break;
-				if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
-					const auto pals = g_director->getLoadedPalettes();
-					CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
-					const PaletteV4 &srcPal = pals.getVal(palIndex);
-
-					// If it is an external image, use the included palette.
-					// For BMP images especially, they'll often have the right colors
-					// but in the wrong palette order.
-					const byte *palPtr = _external ? pal : srcPal.palette;
-					int palLength = _external ? _picture->getPaletteSize() : srcPal.length;
-					_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palLength, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
-				}
-				break;
-			default:
-				break;
-			}
-
-			if (_ditheredImg) {
-				debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Dithering image from source palette %s to target palette %s", _clut.asString().c_str(), score->getCurrentPalette().asString().c_str());
-				// Save the palette ID so we can check if a redraw is required
-				_ditheredTargetClut = currentPaletteId;
-
-				if (!_external) {
-					// Finally, the first and last colours in the palette are special. No matter what the palette remap
-					// does, we need to scrub those to be the same.
-					const Graphics::Surface *src = &_picture->_surface;
-					for (int y = 0; y < src->h; y++) {
-						for (int x = 0; x < src->w; x++) {
-							const int test = *(const byte *)src->getBasePtr(x, y);
-							if (test == 0 || test == (1 << _bitsPerPixel) - 1) {
-								*(byte *)_ditheredImg->getBasePtr(x, y) = test == 0 ? 0x00 : 0xff;
-							}
-						}
-					}
-				}
-			} else if (previouslyDithered) {
-				debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Removed dithered image, score palette %s matches cast member", score->getCurrentPalette().asString().c_str());
-			}
-
+		} else if (srcBpp == 1) {
+			_ditheredImg = getDitherImg();
 		}
+	} else {
+		// ScummVM using 32-bit video
+		//if (srcBpp > 1 && srcBpp != 4) {
+			// non-indexed surface, convert to 32-bit
+		//	_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+
+		//} else
+		if (srcBpp == 1) {
+			_ditheredImg = getDitherImg();
+		}
+	}
+
+	Movie *movie = g_director->getCurrentMovie();
+	Score *score = movie->getScore();
+
+	if (_ditheredImg) {
+		debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Dithering image from source palette %s to target palette %s", _clut.asString().c_str(), score->getCurrentPalette().asString().c_str());
+	} else if (previouslyDithered) {
+		debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Removed dithered image, score palette %s matches cast member", score->getCurrentPalette().asString().c_str());
+
 	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
@@ -324,6 +258,98 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	copyStretchImg(widget->getSurface()->surfacePtr(), bbox, pal);
 
 	return widget;
+}
+
+Graphics::Surface *BitmapCastMember::getDitherImg() {
+	Graphics::Surface *dither = nullptr;
+
+	// Convert indexed image to indexed palette
+	Movie *movie = g_director->getCurrentMovie();
+	Cast *cast = movie->getCast();
+	Score *score = movie->getScore();
+	// Get the current score palette. Note that this is the ID of the palette in the list, not the cast member!
+	CastMemberID currentPaletteId = score->getCurrentPalette();
+	if (currentPaletteId.isNull())
+		currentPaletteId = cast->_defaultPalette;
+	PaletteV4 *currentPalette = g_director->getPalette(currentPaletteId);
+	if (!currentPalette) {
+		currentPaletteId = CastMemberID(kClutSystemMac, -1);
+		currentPalette = g_director->getPalette(currentPaletteId);
+	}
+	CastMemberID castPaletteId = _clut;
+	// It is possible for Director to have saved an invalid ID in _clut;
+	// if this is the case, do no dithering.
+	if (castPaletteId.isNull())
+		castPaletteId = currentPaletteId;
+
+	// Check if the palette is in the middle of a color fade event
+	bool isColorCycling = score->isPaletteColorCycling();
+
+	// First, check if the palettes are different
+	switch (_bitsPerPixel) {
+	// 1bpp - this is preconverted to 0x00 and 0xff, change nothing.
+	case 1:
+		break;
+	// 2bpp - convert to nearest using the standard 2-bit palette.
+	case 2:
+		{
+			const PaletteV4 &srcPal = g_director->getLoaded4Palette();
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+		}
+		break;
+	// 4bpp - if using a builtin palette, use one of the corresponding 4-bit ones.
+	case 4:
+		{
+			const auto pals = g_director->getLoaded16Palettes();
+			// in D4 you aren't allowed to use custom palettes for 4-bit images, so uh...
+			// I guess default to the mac palette?
+			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
+			const PaletteV4 &srcPal = pals.getVal(palIndex);
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, srcPal.palette, srcPal.length, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+		}
+		break;
+	// 8bpp - if using a different palette, and we're not doing a color cycling operation, convert using nearest colour matching
+	case 8:
+		// Only redither 8-bit images if we have the flag set, or it is external
+		if (!movie->_remapPalettesWhenNeeded && !_external)
+			break;
+		if (_external || (castPaletteId != currentPaletteId && !isColorCycling)) {
+			const auto pals = g_director->getLoadedPalettes();
+			CastMemberID palIndex = pals.contains(castPaletteId) ? castPaletteId : CastMemberID(kClutSystemMac, -1);
+			const PaletteV4 &srcPal = pals.getVal(palIndex);
+
+			// If it is an external image, use the included palette.
+			// For BMP images especially, they'll often have the right colors
+			// but in the wrong palette order.
+			const byte *palPtr = _external ? _picture->_palette : srcPal.palette;
+			int palLength = _external ? _picture->getPaletteSize() : srcPal.length;
+			dither = _picture->_surface.convertTo(g_director->_wm->_pixelformat, palPtr, palLength, currentPalette->palette, currentPalette->length, Graphics::kDitherNaive);
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (dither) {
+		// Save the palette ID so we can check if a redraw is required
+		_ditheredTargetClut = currentPaletteId;
+
+		if (!_external) {
+			// Finally, the first and last colours in the palette are special. No matter what the palette remap
+			// does, we need to scrub those to be the same.
+			const Graphics::Surface *src = &_picture->_surface;
+			for (int y = 0; y < src->h; y++) {
+				for (int x = 0; x < src->w; x++) {
+					const int test = *(const byte *)src->getBasePtr(x, y);
+					if (test == 0 || test == (1 << _bitsPerPixel) - 1) {
+						*(byte *)dither->getBasePtr(x, y) = test == 0 ? 0x00 : 0xff;
+					}
+				}
+			}
+		}
+	}
+	return dither;
+
 }
 
 void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal) {
@@ -368,8 +394,12 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 				}
 			}
 		}
-	} else {
+	} else if (srcSurf->format.bytesPerPixel == g_director->_wm->_pixelformat.bytesPerPixel) {
 		surface->copyFrom(*srcSurf);
+	} else {
+		Graphics::Surface *temp = srcSurf->convertTo(g_director->_wm->_pixelformat, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+		surface->copyFrom(*temp);
+		delete temp;
 	}
 }
 

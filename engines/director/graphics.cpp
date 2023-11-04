@@ -633,6 +633,10 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	Common::Rect srfClip = srf->getBounds();
 	bool failedBoundsCheck = false;
 
+	// For blit efficiency, surfaces passed here need to be the same
+	// format as the window manager. Most of the time this is
+	// the job of BitmapCastMember::createWidget.
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
