@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-02 17:20+0000\n"
+"POT-Creation-Date: 2023-11-03 22:13+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -8236,7 +8236,7 @@ msgstr ""
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
-#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:370
+#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
 msgstr "(Автозбереження)"
 

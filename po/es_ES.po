@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-02 17:20+0000\n"
+"POT-Creation-Date: 2023-11-03 22:13+0000\n"
 "PO-Revision-Date: 2023-11-01 10:09+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -8431,7 +8431,7 @@ msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Se ha detectado un juego incompleto. Faltan datos por copiar de todos los CD."
 
-#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:370
+#: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
 msgstr "(Autoguardado)"
 
