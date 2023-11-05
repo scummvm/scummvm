@@ -65,6 +65,39 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_FIX_SOFTLOCKS,
+		{
+			_s("Fix softlocks"),
+			_s("Fix instances where missing something earlier in the game blocks you from progressing any further."),
+			"softlocks_fix",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FIX_ANNOYANCES,
+		{
+			_s("Fix annoyances"),
+			_s("Fix various minor annoyances."),
+			"annoyances_fix",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_NANCY2_TIMER,
+		{
+			_s("Extend endgame timer"),
+			_s("Get a little more time before failing the final puzzle. This is an official patch by HeR Interactive."),
+			"final_timer",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
