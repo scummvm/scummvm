@@ -1159,26 +1159,28 @@ void MacGui::MacDialogWindow::drawBeamCursor() {
 
 	_beamCursor->copyRectToSurface(*(_gui->surface()), 0, 0, Common::Rect(x0, y0, x1, y1));
 
-	const Common::Point beam[] = {
-		Common::Point(0, 0), Common::Point(1, 0), Common::Point(5, 0),
-		Common::Point(6, 0), Common::Point(2, 1), Common::Point(4, 1),
-		Common::Point(3, 2), Common::Point(3, 3), Common::Point(3, 4),
-		Common::Point(3, 5), Common::Point(3, 6), Common::Point(3, 7),
-		Common::Point(3, 8), Common::Point(3, 9), Common::Point(3, 10),
-		Common::Point(3, 11), Common::Point(3, 12), Common::Point(3, 13),
-		Common::Point(2, 14), Common::Point(4, 14), Common::Point(0, 15),
-		Common::Point(1, 15), Common::Point(5, 15), Common::Point(6, 15)
+	const byte beam[] = {
+		0,  0,  1,  0,  5,  0,  6,  0,  2,  1,  4,  1,  3,  2,  3,  3,
+		3,  4,  3,  5,  3,  6,  3,  7,  3,  8,  3,  9,  3, 10,  3, 11,
+		3, 12,  3, 13,  2, 14,  4, 14,  0, 15,  1, 15,  5, 15,  6, 15
 	};
 
-	for (int i = 0; i < ARRAYSIZE(beam); i++) {
-		uint32 color = _beamCursor->getPixel(beam[i].x, beam[i].y);
+	for (int i = 0; i < ARRAYSIZE(beam); i += 2) {
+		uint32 color = _beamCursor->getPixel(beam[i], beam[i + 1]);
 
-		if (color == kBlack)
-			color = kWhite;
+		// From looking at a couple of colors, it seems this is how
+		// the colors are inverted for 0-15. I'm just going to assume
+		// that the same method will work reasonably well for the
+		// custom colors. If there's anything else, just make it black.
+
+		if (color <= 15)
+			color = 15 - color;
+		else if (color > kCustomColor && color <= kCustomColor + 15)
+			color = kCustomColor + 15 - color;
 		else
 			color = kBlack;
 
-		_beamCursor->setPixel(beam[i].x, beam[i].y, color);
+		_beamCursor->setPixel(beam[i], beam[i + 1], color);
 	}
 
 	int srcX = 0;
