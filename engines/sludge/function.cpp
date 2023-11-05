@@ -74,6 +74,16 @@ void printStack(VariableStack *ptr) {
 	debug("");
 }
 
+void printLocals(Variable *localVars, int count) {
+	if (count == 0)
+		debugN("<none>");
+
+	for (int i = 0; i < count; i++)
+		localVars[i].debugPrint();
+
+	debug("");
+}
+
 void restartFunction(LoadedFunction *fun) {
 	fun->next = allRunningFunctions;
 	allRunningFunctions = fun;
@@ -208,8 +218,14 @@ bool continueFunction(LoadedFunction *fun) {
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
 
-		debugN("Stack before: ");
+		debugN("  Stack before: ");
 		printStack(fun->stack);
+
+		debugN("  Reg before: ");
+		debug("");
+
+		debugN(" Locals before: ");
+		printLocals(fun->localVars, fun->numLocals);
 
 		debugC(1, kSludgeDebugStackMachine, "Executing command line %i: %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
@@ -637,8 +653,14 @@ bool continueFunction(LoadedFunction *fun) {
 			return fatal(ERROR_UNKNOWN_CODE);
 		}
 
-		debugN("Stack after: ");
+		debugN("  Stack after: ");
 		printStack(fun->stack);
+
+		debugN("  Reg after: ");
+		debug("");
+
+		debugN(" Locals after: ");
+		printLocals(fun->localVars, fun->numLocals);
 
 		if (advanceNow)
 			fun->runThisLine++;
