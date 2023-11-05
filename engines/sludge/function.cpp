@@ -218,15 +218,17 @@ bool continueFunction(LoadedFunction *fun) {
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
 
-		debugN("  Stack before: ");
-		printStack(fun->stack);
+		if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+			debugN("  Stack before: ");
+			printStack(fun->stack);
 
-		debugN("  Reg before: ");
-		fun->reg.debugPrint();
-		debug("%s", "");
+			debugN("  Reg before: ");
+			fun->reg.debugPrint();
+			debug("%s", "");
 
-		debugN(" Locals before: ");
-		printLocals(fun->localVars, fun->numLocals);
+			debugN(" Locals before: ");
+			printLocals(fun->localVars, fun->numLocals);
+		}
 
 		debugC(1, kSludgeDebugStackMachine, "Executing command line %i: %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
@@ -655,16 +657,18 @@ bool continueFunction(LoadedFunction *fun) {
 		}
 
 		if (advanceNow) {
-			debugN("  Stack after: ");
+			if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+				debugN("  Stack after: ");
 
-			printStack(fun->stack);
+				printStack(fun->stack);
 
-			debugN("  Reg after: ");
-			fun->reg.debugPrint();
-			debug("%s", "");
+				debugN("  Reg after: ");
+				fun->reg.debugPrint();
+				debug("%s", "");
 
-			debugN(" Locals after: ");
-			printLocals(fun->localVars, fun->numLocals);
+				debugN(" Locals after: ");
+				printLocals(fun->localVars, fun->numLocals);
+			}
 
 			fun->runThisLine++;
 		}
