@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-05 09:45+0000\n"
+"POT-Creation-Date: 2023-11-05 21:10+0000\n"
 "PO-Revision-Date: 2023-11-02 04:41+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -64,7 +64,7 @@ msgstr "Amunt"
 #: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
 #: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
-#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1220
+#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1224
 #: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
 #: gui/unknown-game-dialog.cpp:53 base/main.cpp:603
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
@@ -309,7 +309,7 @@ msgstr "El contingut del codi JSON està mal format."
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
 #: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:553 gui/launcher.cpp:557
 #: gui/massadd.cpp:90 gui/options.cpp:2331 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1221 dists/android.strings.xml.cpp:32
+#: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
@@ -2469,15 +2469,15 @@ msgstr "No hi ha temps de joc desat"
 msgid "Do you really want to delete this saved game?"
 msgstr "Realment voleu suprimir aquesta partida?"
 
-#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1171
+#: gui/saveload-dialog.cpp:657 gui/saveload-dialog.cpp:1173
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1177
+#: gui/saveload-dialog.cpp:661 gui/saveload-dialog.cpp:1179
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:667 gui/saveload-dialog.cpp:1187
 msgid "Playtime: "
 msgstr "Temps de joc: "
 
@@ -2493,11 +2493,11 @@ msgstr "Nova partida desada"
 msgid "Create a new saved game"
 msgstr "Crea una nova partida desada"
 
-#: gui/saveload-dialog.cpp:1164
+#: gui/saveload-dialog.cpp:1166
 msgid "Name: "
 msgstr "Nom: "
 
-#: gui/saveload-dialog.cpp:1240
+#: gui/saveload-dialog.cpp:1244
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Entreu la descripció per l'espai %d:"
