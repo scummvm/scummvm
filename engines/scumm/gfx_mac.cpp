@@ -587,7 +587,10 @@ void MacGui::MacEditText::updateSelection(int x, int y) {
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
-	if (_text.empty() || y < _bounds.top || (_textPos == 0 && x < _bounds.left))
+	if (_text.empty())
+		return 0;
+
+	if (y < _bounds.top)
 		return 0;
 
 	if (y >= _bounds.bottom)
@@ -601,11 +604,17 @@ int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 	for (i = 0; i < _text.size() && textX <= _bounds.width(); i++) {
 		int charWidth = _font->getCharWidth(_text[i]);
 
-		if (x >= textX && x < textX + charWidth)
+		if (x >= textX && x < textX + charWidth) {
+			if (x > textX + charWidth / 2)
+				return i + 1;
 			return i;
+		}
 
 		textX += charWidth;
 	}
+
+	if (x <= _bounds.left)
+		return 0;
 
 	return i;
 }
@@ -860,11 +869,11 @@ void MacGui::MacEditText::handleMouseHeld() {
 	int minTextPos = MIN(_bounds.width() - _font->getStringWidth(_text), 0);
 
 	if (mousePos.x < _bounds.left + 1 && mousePos.y < _bounds.bottom && _textPos < 0) {
-		_textPos += 4;
+		_textPos += 5;
 		if (_textPos > 0)
 			_textPos = 0;
 	} else if (mousePos.x >= _bounds.right) {
-		_textPos -= 4;
+		_textPos -= 5;
 		if (_textPos < minTextPos)
 			_textPos = minTextPos;
 	}
