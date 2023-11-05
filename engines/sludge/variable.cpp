@@ -146,7 +146,7 @@ void Variable::debugPrint() {
 		debugN("SVT_STRING(\"%s\") ", Common::toPrintable(varData.theString).c_str());
 		break;
 	case SVT_BUILT:
-		debugN("SVT_BUILT(\"%s\") ", varData.theString);
+		debugN("SVT_BUILT(%d) ", varData.intValue);
 		break;
 	case SVT_STACK:
 		debugN("SVT_STACK(");

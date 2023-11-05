@@ -222,6 +222,7 @@ bool continueFunction(LoadedFunction *fun) {
 		printStack(fun->stack);
 
 		debugN("  Reg before: ");
+		fun->reg.debugPrint();
 		debug("");
 
 		debugN(" Locals before: ");
@@ -657,6 +658,7 @@ bool continueFunction(LoadedFunction *fun) {
 		printStack(fun->stack);
 
 		debugN("  Reg after: ");
+		fun->reg.debugPrint();
 		debug("");
 
 		debugN(" Locals after: ");
