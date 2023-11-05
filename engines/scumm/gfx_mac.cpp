@@ -581,9 +581,8 @@ void MacGui::MacEditText::updateSelection(int x, int y) {
 
 	_selectLen = pos - _caretPos;
 
-	if (_selectLen != oldSelectLen) {
+	if (_selectLen != oldSelectLen)
 		setRedraw();
-	}
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
@@ -869,17 +868,19 @@ void MacGui::MacEditText::handleMouseHeld() {
 	int minTextPos = MIN(_bounds.width() - _font->getStringWidth(_text), 0);
 
 	if (mousePos.x < _bounds.left + 1 && mousePos.y < _bounds.bottom && _textPos < 0) {
-		_textPos += 5;
+		_textPos += 8;
 		if (_textPos > 0)
 			_textPos = 0;
 	} else if (mousePos.x >= _bounds.right) {
-		_textPos -= 5;
+		_textPos -= 8;
 		if (_textPos < minTextPos)
 			_textPos = minTextPos;
 	}
 
-	if (_textPos != oldTextPos)
+	if (_textPos != oldTextPos) {
 		updateSelection(mousePos.x, mousePos.y);
+		setRedraw();
+	}
 }
 
 void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
