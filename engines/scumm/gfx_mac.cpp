@@ -865,12 +865,12 @@ void MacGui::MacEditText::handleMouseHeld() {
 
 	int oldTextPos = _textPos;
 
-	int minTextPos = MIN(_bounds.width() - _font->getStringWidth(_text), 0);
+	int minTextPos = MIN(_bounds.width() - _font->getStringWidth(_text) - 1, 1);
 
-	if (mousePos.x < _bounds.left + 1 && mousePos.y < _bounds.bottom && _textPos < 0) {
+	if (mousePos.x < _bounds.left + 1 && mousePos.y < _bounds.bottom && _textPos < 1) {
 		_textPos += 8;
-		if (_textPos > 0)
-			_textPos = 0;
+		if (_textPos > 1)
+			_textPos = 1;
 	} else if (mousePos.x >= _bounds.right) {
 		_textPos -= 8;
 		if (_textPos < minTextPos)
