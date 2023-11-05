@@ -71,7 +71,7 @@ void printStack(VariableStack *ptr) {
 		ptr = ptr->next;
 	}
 
-	debug("");
+	debug("%s", "");
 }
 
 void printLocals(Variable *localVars, int count) {
@@ -81,7 +81,7 @@ void printLocals(Variable *localVars, int count) {
 	for (int i = 0; i < count; i++)
 		localVars[i].debugPrint();
 
-	debug("");
+	debug("%s", "");
 }
 
 void restartFunction(LoadedFunction *fun) {
@@ -223,7 +223,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		debugN("  Reg before: ");
 		fun->reg.debugPrint();
-		debug("");
+		debug("%s", "");
 
 		debugN(" Locals before: ");
 		printLocals(fun->localVars, fun->numLocals);
@@ -659,7 +659,7 @@ bool continueFunction(LoadedFunction *fun) {
 
 		debugN("  Reg after: ");
 		fun->reg.debugPrint();
-		debug("");
+		debug("%s", "");
 
 		debugN(" Locals after: ");
 		printLocals(fun->localVars, fun->numLocals);
