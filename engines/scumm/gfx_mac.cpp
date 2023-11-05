@@ -587,7 +587,7 @@ void MacGui::MacEditText::updateSelection(int x, int y) {
 }
 
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
-	if (_text.empty() || y < _bounds.top)
+	if (_text.empty() || y < _bounds.top || (_textPos == 0 && x < _bounds.left))
 		return 0;
 
 	if (y >= _bounds.bottom)
@@ -854,45 +854,23 @@ void MacGui::MacEditText::handleMouseHeld() {
 		return;
 
 	Common::Point mousePos = _window->getMousePos();
-	int x = _textPos;
 
-	if (mousePos.x < _bounds.left + 1) {
-		if (_textPos == 0)
-			return;
+	int oldTextPos = _textPos;
 
-		// Scroll the text to show any partially displayed character
-		// or, if it's entirely shown, the character before that.
+	int minTextPos = MIN(_bounds.width() - _font->getStringWidth(_text), 0);
 
-		for (uint i = 0; i < _text.size(); i++) {
-			if (x == 0) {
-				_textPos += _font->getCharWidth(_text[i - 1]);
-				updateSelection(mousePos.x, mousePos.y);
-				return;
-			}
-
-			int charWidth = _font->getCharWidth(_text[i]);
-
-			if (x < 0 && x + charWidth > 0) {
-				_textPos += (charWidth + x);
-				updateSelection(mousePos.x, mousePos.y);
-				return;
-			}
-
-			x += charWidth;
-		}
-	} else if (mousePos.x > _bounds.right) {
-		for (uint i = 0; i < _text.size(); i++) {
-			int charWidth = _font->getCharWidth(_text[i]);
-
-			if (x > _textSurface.w + 1) {
-				_textPos -= (x - _textSurface.w + 1);
-				updateSelection(mousePos.x, mousePos.y);
-				return;
-			}
-
-			x += charWidth;
-		}
+	if (mousePos.x < _bounds.left + 1 && mousePos.y < _bounds.bottom && _textPos < 0) {
+		_textPos += 4;
+		if (_textPos > 0)
+			_textPos = 0;
+	} else if (mousePos.x >= _bounds.right) {
+		_textPos -= 4;
+		if (_textPos < minTextPos)
+			_textPos = minTextPos;
 	}
+
+	if (_textPos != oldTextPos)
+		updateSelection(mousePos.x, mousePos.y);
 }
 
 void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
@@ -1311,7 +1289,7 @@ int MacGui::MacDialogWindow::runDialog() {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
 				buttonPressed = true;
-				nextMouseRepeat = _system->getMillis() + 25;
+				nextMouseRepeat = _system->getMillis() + 40;
 				setFocusedWidget(event.mouse.x, event.mouse.y);
 				if (_focusedWidget)
 					_focusedWidget->handleMouseDown(event);
@@ -1397,7 +1375,7 @@ int MacGui::MacDialogWindow::runDialog() {
 		}
 
 		if (_focusedWidget && _system->getMillis() > nextMouseRepeat) {
-			nextMouseRepeat = _system->getMillis() + 25;
+			nextMouseRepeat = _system->getMillis() + 40;
 			_focusedWidget->handleMouseHeld();
 		}
 
