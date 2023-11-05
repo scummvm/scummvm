@@ -34,7 +34,7 @@ enum Animation {
 	kAnimFlyNearWithoutBundle = 10,
 	kAnimFlyFarWithoutBundle  = 13,
 	kAnimBundleNear           = 11,
-	kAnimBundleFar            = 14
+	kAnimBundleFar            = 14,
 };
 
 namespace Gob {

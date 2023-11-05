@@ -29,7 +29,7 @@ enum Animation {
 	kAnimWalkRight =  1,
 	kAnimJumpLeft  =  2,
 	kAnimJumpRight =  3,
-	kAnimTapFoot   = 14
+	kAnimTapFoot   = 14,
 };
 
 namespace Gob {

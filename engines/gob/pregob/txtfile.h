@@ -43,7 +43,7 @@ public:
 		kFormatString,
 		kFormatStringPosition,
 		kFormatStringPositionColor,
-		kFormatStringPositionColorFont
+		kFormatStringPositionColorFont,
 	};
 
 	struct Line {

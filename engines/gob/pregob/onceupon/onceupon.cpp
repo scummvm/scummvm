@@ -75,7 +75,7 @@ static const char *kCopyProtectionWrongStrings[Gob::OnceUpon::OnceUpon::kLanguag
 	"Schade, du hast dich geirrt."  , // German
 	"You are wrong, what a pity!"   , // English
 	"Te equivocas, l\240stima..."   , // Spanish
-	"Sei Sbagliato, peccato..."       // Italian
+	"Sei Sbagliato, peccato..."     ,  // Italian
 };
 
 static const uint kCopyProtectionShapeCount = 5;
@@ -85,13 +85,13 @@ static const int16 kCopyProtectionShapeCoords[kCopyProtectionShapeCount][6] = {
 	{ 28,  51,  58,  81,  96, 151},
 	{ 60,  51,  94,  79, 136, 152},
 	{ 96,  51, 136,  71, 180, 155},
-	{140,  51, 170,  77, 228, 153}
+	{140,  51, 170,  77, 228, 153},
 };
 
 enum ClownAnimation {
 	kClownAnimationClownCheer = 0,
 	kClownAnimationClownStand = 1,
-	kClownAnimationClownCry   = 6
+	kClownAnimationClownCry   = 6,
 };
 
 // 12 seconds delay for one area full of GCT text
@@ -111,13 +111,13 @@ const OnceUpon::MenuButton OnceUpon::kSectionButtons[] = {
 	{false,  27, 121,  91, 179,   0, 0,   0,  0,   0,   0,  0},
 	{ true,  95, 121, 159, 179,   4, 1,  56, 49, 100, 126,  2},
 	{ true, 163, 121, 227, 179,  64, 1, 120, 49, 168, 126,  6},
-	{ true, 231, 121, 295, 179, 128, 1, 184, 49, 236, 126, 10}
+	{ true, 231, 121, 295, 179, 128, 1, 184, 49, 236, 126, 10},
 };
 
 const OnceUpon::MenuButton OnceUpon::kIngameButtons[] = {
 	{true, 108, 83, 139, 116,   0,   0,  31,  34, 108,  83, 0},
 	{true, 144, 83, 175, 116,  36,   0,  67,  34, 144,  83, 1},
-	{true, 180, 83, 211, 116,  72,   0, 103,  34, 180,  83, 2}
+	{true, 180, 83, 211, 116,  72,   0, 103,  34, 180,  83, 2},
 };
 
 const OnceUpon::MenuButton OnceUpon::kAnimalNamesBack = {
@@ -130,7 +130,7 @@ const OnceUpon::MenuButton OnceUpon::kLanguageButtons[] = {
 	{true, 234,  80, 284, 115, 106, 55, 156, 90, 234,  80, 2},
 	{true,  43, 138,  93, 173, 159, 55, 209, 90,  43, 138, 3},
 	{true, 132, 138, 182, 173, 212, 55, 262, 90, 132, 138, 4},
-	{true, 234, 138, 284, 173, 265, 55, 315, 90, 234, 138, 2}
+	{true, 234, 138, 284, 173, 265, 55, 315, 90, 234, 138, 2},
 };
 
 const char *OnceUpon::kSound[kSoundCount] = {
@@ -154,7 +154,7 @@ const OnceUpon::SectionFunc OnceUpon::kSectionFuncs[kSectionCount] = {
 	&OnceUpon::sectionChapter6,
 	&OnceUpon::sectionForest2,
 	&OnceUpon::sectionChapter7,
-	&OnceUpon::sectionEnd
+	&OnceUpon::sectionEnd,
 };
 
 
@@ -387,13 +387,13 @@ Common::String OnceUpon::fixString(const Common::String &str) const {
 enum ClownAnimation {
 	kClownAnimationStand = 0,
 	kClownAnimationCheer = 1,
-	kClownAnimationCry   = 2
+	kClownAnimationCry   = 2,
 };
 
 const PreGob::AnimProperties OnceUpon::kClownAnimations[] = {
 	{ 1, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 	{ 0, 0, ANIObject::kModeOnce      , true, false, false, 0, 0},
-	{ 6, 0, ANIObject::kModeOnce      , true, false, false, 0, 0}
+	{ 6, 0, ANIObject::kModeOnce      , true, false, false, 0, 0},
 };
 
 enum CopyProtectionState {
@@ -1243,7 +1243,7 @@ const PreGob::AnimProperties OnceUpon::kSectionStorkAnimations[] = {
 	{ 8, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 	{17, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 	{16, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
-	{15, 0, ANIObject::kModeContinuous, true, false, false, 0, 0}
+	{15, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 };
 
 enum StorkState {
@@ -1376,36 +1376,36 @@ const OnceUpon::MenuButton OnceUpon::kCharGenHeadButtons[] = {
 	{true, 106, 146, 152, 180,   0,  0,  47, 34, 106, 146, 0},
 	{true, 155, 146, 201, 180,  49,  0,  96, 34, 155, 146, 1},
 	{true, 204, 146, 250, 180,  98,  0, 145, 34, 204, 146, 2},
-	{true, 253, 146, 299, 180, 147,  0, 194, 34, 253, 146, 3}
+	{true, 253, 146, 299, 180, 147,  0, 194, 34, 253, 146, 3},
 };
 
 const OnceUpon::MenuButton OnceUpon::kCharGenHeads[] = {
 	{true,   0,   0,   0,   0,  29,  4,  68, 31,  40,  51, 0},
 	{true,   0,   0,   0,   0,  83,  4, 113, 31,  45,  51, 1},
 	{true,   0,   0,   0,   0, 132,  4, 162, 31,  45,  51, 2},
-	{true,   0,   0,   0,   0, 182,  4, 211, 31,  45,  51, 3}
+	{true,   0,   0,   0,   0, 182,  4, 211, 31,  45,  51, 3},
 };
 
 const OnceUpon::MenuButton OnceUpon::kCharGenHairButtons[] = {
 	{true, 105,  55, 124,  70, 271,  1, 289, 15, 105,  55, 0x04},
-	{true, 105,  74, 124,  89, 271, 20, 289, 34, 105,  74, 0x07}
+	{true, 105,  74, 124,  89, 271, 20, 289, 34, 105,  74, 0x07},
 };
 
 const OnceUpon::MenuButton OnceUpon::kCharGenJacketButtons[] = {
 	{true, 105,  90, 124, 105, 271, 39, 289, 53, 105,  90, 0x06},
-	{true, 105, 109, 124, 124, 271, 58, 289, 72, 105, 109, 0x02}
+	{true, 105, 109, 124, 124, 271, 58, 289, 72, 105, 109, 0x02},
 };
 
 const OnceUpon::MenuButton OnceUpon::kCharGenTrousersButtons[] = {
 	{true, 105, 140, 124, 155, 271, 77, 289,  91, 105, 140, 0x01},
-	{true, 105, 159, 124, 174, 271, 96, 289, 110, 105, 159, 0x03}
+	{true, 105, 159, 124, 174, 271, 96, 289, 110, 105, 159, 0x03},
 };
 
 const OnceUpon::MenuButton OnceUpon::kCharGenNameEntry[] = {
 	{true, 0, 0, 0, 0,   0,  38,  54,  48, 140, 145, 0},
 	{true, 0, 0, 0, 0, 106,  38, 159,  48, 195, 145, 0},
 	{true, 0, 0, 0, 0,   0, 105,  54, 121, 140, 156, 0},
-	{true, 0, 0, 0, 0, 106, 105, 159, 121, 195, 156, 0}
+	{true, 0, 0, 0, 0, 106, 105, 159, 121, 195, 156, 0},
 };
 
 enum CharGenState {
@@ -1416,7 +1416,7 @@ enum CharGenState {
 	kCharGenStateName        , // Choose name
 	kCharGenStateSure        , // "Are you sure?"
 	kCharGenStateStoryName   , // "We're going to tell the story of $NAME"
-	kCharGenStateFinish        // Finished
+	kCharGenStateFinish      , // Finished
 };
 
 void OnceUpon::charGenSetup(uint stage) {
@@ -1818,7 +1818,7 @@ const PreGob::AnimProperties OnceUpon::kSectionEndAnimations[] = {
 	{ 0, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 	{ 6, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 	{ 9, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
-	{11, 0, ANIObject::kModeContinuous, true, false, false, 0, 0}
+	{11, 0, ANIObject::kModeContinuous, true, false, false, 0, 0},
 };
 
 bool OnceUpon::sectionEnd() {

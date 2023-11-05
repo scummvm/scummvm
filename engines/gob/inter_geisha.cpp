@@ -120,7 +120,7 @@ static const TOTTransition kTOTTransitions[] = {
 	{"bonsai.tot" , "porte.tot"  ,  2858},
 	{"lit.tot"    , "napa.tot"   ,  3380},
 	{"oko.tot"    , "chambre.tot", 14146},
-	{"chambre.tot", "oko.tot"    ,  2334}
+	{"chambre.tot", "oko.tot"    ,  2334},
 };
 
 void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {

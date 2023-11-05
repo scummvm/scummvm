@@ -36,7 +36,7 @@ static const uint8 kCopyProtectionShapes[7 * 20] = {
 	1, 0, 2, 3, 4, 2, 3, 2, 2, 0, 0, 0, 4, 2, 3, 4, 4, 0, 4, 1,
 	4, 2, 1, 1, 1, 1, 4, 3, 4, 2, 3, 0, 0, 3, 0, 2, 3, 0, 2, 4,
 	4, 2, 4, 3, 0, 4, 0, 2, 3, 1, 4, 1, 3, 1, 0, 0, 2, 1, 3, 2,
-	3, 1, 0, 3, 1, 3, 4, 2, 4, 4, 3, 2, 0, 2, 0, 1, 2, 0, 1, 4
+	3, 1, 0, 3, 1, 3, 4, 2, 4, 4, 3, 2, 0, 2, 0, 1, 2, 0, 1, 4,
 };
 
 static const uint8 kCopyProtectionObfuscate[4] = {
@@ -61,7 +61,7 @@ const OnceUpon::MenuButton Abracadabra::kAnimalButtons[] = {
 	{false, 113, 151, 171, 176, 113, 151, 171, 176, 131, 25, 6},
 	{false, 114, 122, 151, 150, 114, 122, 151, 150, 141, 25, 7},
 	{false,  36, 136,  94, 176,  36, 136,  94, 176, 131, 25, 8},
-	{false, 243, 123, 295, 155, 243, 123, 295, 155, 136, 25, 9}
+	{false, 243, 123, 295, 155, 243, 123, 295, 155, 136, 25, 9},
 };
 
 const char *Abracadabra::kAnimalNames[] = {
@@ -74,7 +74,7 @@ const char *Abracadabra::kAnimalNames[] = {
 	"saut",
 	"guep",
 	"rhin",
-	"scor"
+	"scor",
 };
 
 // The houses where the stork can drop a bundle
@@ -90,7 +90,7 @@ const Stork::BundleDrop Abracadabra::kStorkBundleDrops[] = {
 	{ 14,  65, 127,  true },
 	{ 14,  76, 152,  true },
 	{ 14, 204, 137,  true },
-	{ 11, 275, 179, false }
+	{ 11, 275, 179, false },
 };
 
 // Parameters for the stork section.
