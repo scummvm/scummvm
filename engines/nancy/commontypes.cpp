@@ -97,8 +97,8 @@ void FrameBlitDescription::readData(Common::SeekableReadStream &stream, bool lon
 	frameID = stream.readUint16LE();
 	
 	if (longFormat) {
-		// Related to static mode, seems to be a frame ID? However, it is always set to zero so we skip it.
-		stream.skip(2);
+		// In static mode Overlays, this is the id of the _srcRect to be used
+		staticRectID = stream.readUint16LE();
 	}
 
 	if (g_nancy->getGameType() >= kGameTypeNancy3 && longFormat) {

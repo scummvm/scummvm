@@ -180,6 +180,7 @@ struct HotspotDescription {
 // Describes a blit operation, dependent on a background frame
 struct FrameBlitDescription {
 	uint16 frameID = 0; // Frame ID of the Scene background
+	uint16 staticRectID = 0; // Used in Overlay
 	uint hasHotspot = kPlayOverlayNoHotspot;
 	Common::Rect src;
 	Common::Rect dest;
