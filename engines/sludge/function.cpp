@@ -654,18 +654,20 @@ bool continueFunction(LoadedFunction *fun) {
 			return fatal(ERROR_UNKNOWN_CODE);
 		}
 
-		debugN("  Stack after: ");
-		printStack(fun->stack);
+		if (advanceNow) {
+			debugN("  Stack after: ");
 
-		debugN("  Reg after: ");
-		fun->reg.debugPrint();
-		debug("%s", "");
+			printStack(fun->stack);
 
-		debugN(" Locals after: ");
-		printLocals(fun->localVars, fun->numLocals);
+			debugN("  Reg after: ");
+			fun->reg.debugPrint();
+			debug("%s", "");
 
-		if (advanceNow)
+			debugN(" Locals after: ");
+			printLocals(fun->localVars, fun->numLocals);
+
 			fun->runThisLine++;
+		}
 
 	}
 	return true;
