@@ -586,27 +586,22 @@ void Character::rest() {
 		return;
 	}
 
+	// Fun fact: in the original if any of the attributes reach zero,
+	// then it jumps to an instruction that jumps to itself, freezing the game.
+	// For ScummVM, I just limit the minimum to 1 instead
 	if (_age >= 60) {
-		// Fun fact: in the original if any of the attributes
-		// reach zero, then it jumps to an instruction that
-		// jumps to itself, freezing the game.
-		if (--_might._current == 0 ||
-			--_endurance._current == 0 ||
-			--_speed._current == 0)
-			error("Attributes bottomed out during rest");
+		_might._current = MAX(_might._current - 1, 1);
+		_endurance._current = MAX(_endurance._current - 1, 1);
+		_speed._current = MAX(_speed._current - 1, 1);
+	}
+	if (_age >= 70) {
+		_might._current = MAX(_might._current - 1, 1);
+		_endurance._current = MAX(_endurance._current - 1, 1);
+		_speed._current = MAX(_speed._current - 1, 1);
+	}
 
-		if (_age >= 70) {
-			if (--_might._current == 0 ||
-				--_endurance._current == 0 ||
-				--_speed._current == 0)
-				error("Attributes bottomed out during rest");
-		}
-
-		if (_age >= 80) {
-			if (_might._current <= 2)
-				error("Attributes bottomed out during rest");
-			_might._current -= 2;
-		}
+	if (_age >= 80) {
+		_might._current = MAX((int)_might._current - 2, 1);
 	}
 
 	if (_food > 0) {
