@@ -62,6 +62,18 @@ void pauseFunction(LoadedFunction *fun) {
 	}
 }
 
+void printStack(VariableStack *ptr) {
+	if (ptr == NULL)
+		debugN("<empty stack>");
+
+	while (ptr != NULL) {
+		ptr->thisVar.debugPrint();
+		ptr = ptr->next;
+	}
+
+	debug("");
+}
+
 void restartFunction(LoadedFunction *fun) {
 	fun->next = allRunningFunctions;
 	allRunningFunctions = fun;
@@ -195,7 +207,11 @@ bool continueFunction(LoadedFunction *fun) {
 		advanceNow = true;
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
-		debugC(1, kSludgeDebugStackMachine, "Executing command line %i : %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
+
+		debugN("Stack before: ");
+		printStack(fun->stack);
+
+		debugC(1, kSludgeDebugStackMachine, "Executing command line %i: %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
 		if (numBIFNames) {
 			setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function", (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
@@ -620,6 +636,9 @@ bool continueFunction(LoadedFunction *fun) {
 		default:
 			return fatal(ERROR_UNKNOWN_CODE);
 		}
+
+		debugN("Stack after: ");
+		printStack(fun->stack);
 
 		if (advanceNow)
 			fun->runThisLine++;
