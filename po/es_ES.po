@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-05 21:10+0000\n"
+"POT-Creation-Date: 2023-11-05 21:16+0000\n"
 "PO-Revision-Date: 2023-11-01 10:09+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -8084,6 +8084,36 @@ msgstr "Movimiento automático"
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
 msgstr ""
 "Gira automáticamente cuando el ratón se acerque a un borde de la ventana."
+
+#: engines/nancy/metaengine.cpp:71
+msgid "Fix softlocks"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:72
+msgid ""
+"Fix instances where missing something earlier in the game blocks you from "
+"progressing any further."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:82
+msgid "Fix annoyances"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:83
+msgid "Fix various minor annoyances."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:93
+#, fuzzy
+#| msgid "Extended timer"
+msgid "Extend endgame timer"
+msgstr "Ampliar tiempo"
+
+#: engines/nancy/metaengine.cpp:94
+msgid ""
+"Get a little more time before failing the final puzzle. This is an official "
+"patch by HeR Interactive."
+msgstr ""
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"

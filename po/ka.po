@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-05 21:10+0000\n"
+"POT-Creation-Date: 2023-11-05 21:16+0000\n"
 "PO-Revision-Date: 2023-10-30 10:26+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -7292,6 +7292,34 @@ msgstr "ავტომატური გადასვლა"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:71
+msgid "Fix softlocks"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:72
+msgid ""
+"Fix instances where missing something earlier in the game blocks you from "
+"progressing any further."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:82
+msgid "Fix annoyances"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:83
+msgid "Fix various minor annoyances."
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:93
+msgid "Extend endgame timer"
+msgstr ""
+
+#: engines/nancy/metaengine.cpp:94
+msgid ""
+"Get a little more time before failing the final puzzle. This is an official "
+"patch by HeR Interactive."
 msgstr ""
 
 #: engines/neverhood/dialogs.cpp:52
