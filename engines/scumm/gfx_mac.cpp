@@ -1545,6 +1545,57 @@ MacGui::~MacGui() {
 	delete _windowManager;
 }
 
+void MacGui::setPalette(const byte *palette, uint size) {
+	_windowManager->passPalette(palette, size);
+}
+
+bool MacGui::handleEvent(Common::Event &event) {
+	return _windowManager->processEvent(event);
+}
+
+int MacGui::delay(uint32 ms) {
+	uint32 to;
+
+	to = _system->getMillis() + ms;
+
+	while (ms == 0 || _system->getMillis() < to) {
+		Common::Event event;
+
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				return 2;
+
+			case Common::EVENT_LBUTTONDOWN:
+				return 1;
+
+			default:
+				break;
+			}
+		}
+
+		uint32 delta = to - _system->getMillis();
+
+		if (delta > 0) {
+			_system->delayMillis(MIN<uint32>(delta, 10));
+			_system->updateScreen();
+		}
+	}
+
+	return 0;
+}
+
+// --------------------------------------------------------------------------
+// Menu handling
+//
+// In the original, the menu was activated by pressing the "Command key".
+// This does not seem very friendly to touch devices, so we instead use the
+// "mouse over" method in the Mac Window Manager class.
+//
+// TODO: Ideally we should handle both, but I don't know if there's a way for
+//       them to coexist.
+// --------------------------------------------------------------------------
+
 void MacGui::menuCallback(int id, Common::String &name, void *data) {
 	((MacGui *)data)->handleMenu(id, name);
 }
@@ -1630,6 +1681,83 @@ void MacGui::initialize() {
 	}
 }
 
+bool MacGui::handleMenu(int id, Common::String &name) {
+	// This menu item (e.g. a menu separator) has no action, so it's
+	// handled trivially.
+	if (id == 0)
+		return true;
+
+	// Originally, the menu bar would still be visible. I don't know how
+	// to replicate that effect.
+
+	_windowManager->getMenu()->closeMenu();
+
+	switch (id) {
+	case 100:	// About
+		runAboutDialog();
+		return true;
+
+	case 200:	// Open
+		if (runOpenDialog())
+			debug("Open a saved game");
+		return true;
+
+	case 201:	// Save
+		if (runSaveDialog())
+			debug("Save a game");
+		return true;
+
+	case 202:	// Restart
+		if (runRestartDialog())
+			debug("Game should restart now");
+		return true;
+
+	case 203:	// Pause
+		return true;
+
+	// In the original, the Edit menu is active during save dialogs, though
+	// only Cut, Copy and Paste.
+
+	case 300:	// Undo
+	case 301:	// Cut
+	case 302:	// Copy
+	case 303:	// Paste
+	case 304:	// Clear
+		return true;
+	}
+
+	return false;
+}
+
+void MacGui::updateWindowManager() {
+	// We want the arrow cursor for menus. Note that the menu triggers even
+	// when the mouse is invisible, which may or may not be a bug. But the
+	// original did allow you to open the menu with Alt even when the
+	// cursor was visible, so for now it's a feature.
+
+	bool isActive = _windowManager->isMenuActive();
+
+	if (isActive) {
+		if (!_menuIsActive) {
+			_cursorWasVisible = CursorMan.showMouse(true);
+			_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+		}
+	} else {
+		if (_menuIsActive) {
+			if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
+				_windowManager->popCursor();
+			CursorMan.showMouse(_cursorWasVisible);
+		}
+	}
+
+	_menuIsActive = isActive;
+	_windowManager->draw();
+}
+
+// ---------------------------------------------------------------------------
+// Font handling
+// ---------------------------------------------------------------------------
+
 const Graphics::Font *MacGui::getFont(FontId fontId) {
 	const Graphics::Font *font = _fonts.getValOrDefault((int)fontId);
 
@@ -1695,6 +1823,16 @@ bool MacGui::getFontParams(FontId fontId, int &id, int &size, int &slant) const 
 		return false;
 	}
 }
+
+// ---------------------------------------------------------------------------
+// PICT loader
+//
+// ScummVM already has a PICT v2 loader, and we use that when necessary. But
+// for PICT v1 we have our own for now.
+//
+// TODO: Investigate if PICT v1 and v2 can be handled by the standard PICT
+//       loader.
+// ---------------------------------------------------------------------------
 
 Graphics::Surface *MacGui::loadPict(int id) {
 	Common::MacResManager resource;
@@ -1896,91 +2034,17 @@ Graphics::Surface *MacGui::decodePictV1(Common::SeekableReadStream *res) {
 	return s;
 }
 
-bool MacGui::handleMenu(int id, Common::String &name) {
-	// This menu item (e.g. a menu separator) has no action, so it's
-	// handled trivially.
-	if (id == 0)
-		return true;
+// ---------------------------------------------------------------------------
+// Window handling
+// ---------------------------------------------------------------------------
 
-	// Originally, the menu bar would still be visible. I don't know how
-	// to replicate that effect.
-
-	_windowManager->getMenu()->closeMenu();
-
-	switch (id) {
-	case 100:	// About
-		runAboutDialog();
-		return true;
-
-	case 200:	// Open
-		if (runOpenDialog())
-			debug("Open a saved game");
-		return true;
-
-	case 201:	// Save
-		if (runSaveDialog())
-			debug("Save a game");
-		return true;
-
-	case 202:	// Restart
-		if (runRestartDialog())
-			debug("Game should restart now");
-		return true;
-
-	case 203:	// Pause
-		return true;
-
-	// In the original, the Edit menu is active during save dialogs, though
-	// only Cut, Copy and Paste.
-
-	case 300:	// Undo
-	case 301:	// Cut
-	case 302:	// Copy
-	case 303:	// Paste
-	case 304:	// Clear
-		return true;
+MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWindowStyle style) {
+	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
+		// This happens with the Last Crusade file dialogs.
+		bounds.moveTo((640 - bounds.width()) / 2, 27);
 	}
 
-	return false;
-}
-
-bool MacGui::runOkCancelDialog(Common::String text) {
-	// Widgets:
-	//
-	// 0 - Okay button
-	// 1 - Cancel button
-	// 2 - "^0" text
-
-	MacDialogWindow *window = createDialog(502);
-
-	window->setDefaultWidget(0);
-	window->addSubstitution(text);
-
-	// When quitting, the default action is to quit
-	bool ret = true;
-
-	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
-
-		if (clicked == 0)
-			break;
-
-		if (clicked == 1) {
-			ret = false;
-			break;
-		}
-	}
-
-	delete window;
-	return ret;
-}
-
-bool MacGui::runQuitDialog() {
-	return runOkCancelDialog("Are you sure you want to quit?");
-}
-
-bool MacGui::runRestartDialog() {
-	return runOkCancelDialog("Are you sure you want to restart this game from the beginning?");
+	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
 Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len) {
@@ -1990,96 +2054,6 @@ Common::String MacGui::getDialogString(Common::SeekableReadStream *res, int len)
 		str += res->readByte();
 
 	return str;
-}
-
-bool MacGui::handleEvent(Common::Event &event) {
-	return _windowManager->processEvent(event);
-}
-
-void MacGui::setPalette(const byte *palette, uint size) {
-	_windowManager->passPalette(palette, size);
-}
-
-void MacGui::updateWindowManager() {
-	// TODO: Originally, the left Alt button opens the menu. In ScummVM,
-	//       it triggers on mouse-over. Preferrably both should work (the
-	//       latter should work better for touch screens), but it's hard
-	//       to get them to coexist.
-
-	// We want the arrow cursor for menus. Note that the menu triggers even
-	// when the mouse is invisible, which may or may not be a bug. But the
-	// original did allow you to open the menu with Alt even when the
-	// cursor was visible, so for now it's a feature.
-
-	bool isActive = _windowManager->isMenuActive();
-
-	if (isActive) {
-		if (!_menuIsActive) {
-			_cursorWasVisible = CursorMan.showMouse(true);
-			_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
-		}
-	} else {
-		if (_menuIsActive) {
-			if (_windowManager->getCursorType() == Graphics::MacGUIConstants::kMacCursorArrow)
-				_windowManager->popCursor();
-			CursorMan.showMouse(_cursorWasVisible);
-		}
-	}
-
-	_menuIsActive = isActive;
-	_windowManager->draw();
-}
-
-MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
-	MacGui::MacDialogWindow *window = createWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
-	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
-
-	Graphics::Surface *s = window->innerSurface();
-	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
-
-	window->show();
-	return window;
-}
-
-int MacGui::delay(uint32 ms) {
-	uint32 to;
-
-	to = _system->getMillis() + ms;
-
-	while (ms == 0 || _system->getMillis() < to) {
-		Common::Event event;
-
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				return 2;
-
-			case Common::EVENT_LBUTTONDOWN:
-				return 1;
-
-			default:
-				break;
-			}
-		}
-
-		uint32 delta = to - _system->getMillis();
-
-		if (delta > 0) {
-			_system->delayMillis(MIN<uint32>(delta, 10));
-			_system->updateScreen();
-		}
-	}
-
-	return 0;
-}
-
-MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWindowStyle style) {
-	if (bounds.left < 0 || bounds.top < 0 || bounds.right >= 640 || bounds.bottom >= 400) {
-		// This happens with the Last Crusade file dialogs.
-		bounds.moveTo((640 - bounds.width()) / 2, 27);
-	}
-
-	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
 MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
@@ -2190,6 +2164,60 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 	delete res;
 	resource.close();
 
+	return window;
+}
+
+// ---------------------------------------------------------------------------
+// Standard dialogs
+// ---------------------------------------------------------------------------
+
+bool MacGui::runOkCancelDialog(Common::String text) {
+	// Widgets:
+	//
+	// 0 - Okay button
+	// 1 - Cancel button
+	// 2 - "^0" text
+
+	MacDialogWindow *window = createDialog(502);
+
+	window->setDefaultWidget(0);
+	window->addSubstitution(text);
+
+	// When quitting, the default action is to quit
+	bool ret = true;
+
+	while (!_vm->shouldQuit()) {
+		int clicked = window->runDialog();
+
+		if (clicked == 0)
+			break;
+
+		if (clicked == 1) {
+			ret = false;
+			break;
+		}
+	}
+
+	delete window;
+	return ret;
+}
+
+bool MacGui::runQuitDialog() {
+	return runOkCancelDialog("Are you sure you want to quit?");
+}
+
+bool MacGui::runRestartDialog() {
+	return runOkCancelDialog("Are you sure you want to restart this game from the beginning?");
+}
+
+MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
+	MacGui::MacDialogWindow *window = createWindow(Common::Rect(70, 189, 570, 211), kStyleRounded);
+	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
+
+	Graphics::Surface *s = window->innerSurface();
+	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
+
+	window->show();
 	return window;
 }
 

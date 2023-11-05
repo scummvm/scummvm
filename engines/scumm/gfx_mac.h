@@ -116,6 +116,8 @@ protected:
 		kStyleRounded
 	};
 
+	int delay(uint32 ms = 0);
+
 	virtual bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
 
 	Common::String getDialogString(Common::SeekableReadStream *res, int len);
@@ -417,10 +419,12 @@ public:
 
 	virtual const Common::String name() const = 0;
 
+	void setPalette(const byte *palette, uint size);
 	virtual bool handleEvent(Common::Event &event);
+  
 	static void menuCallback(int id, Common::String &name, void *data);
-
 	virtual void initialize();
+	void updateWindowManager();
 
 	const Graphics::Font *getFont(FontId fontId);
 	virtual const Graphics::Font *getFontByScummId(int32 id) = 0;
@@ -433,8 +437,6 @@ public:
 	virtual void resetAfterLoad() = 0;
 	virtual void update(int delta) = 0;
 
-	void updateWindowManager();
-
 	virtual void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) = 0;
 
 	virtual Graphics::Surface *textArea() { return nullptr; }
@@ -442,14 +444,9 @@ public:
 	virtual void initTextAreaForActor(Actor *a, byte color) {}
 	virtual void printCharToTextArea(int chr, int x, int y, int color) {}
 
-	void setPalette(const byte *palette, uint size);
-
-	MacDialogWindow *drawBanner(char *message);
-
-	int delay(uint32 ms = 0);
-
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
+	MacDialogWindow *drawBanner(char *message);
 };
 
 class MacLoomGui : public MacGui {
