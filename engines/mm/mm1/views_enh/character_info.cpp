@@ -259,7 +259,7 @@ void CharacterInfo::drawStats() {
 		c._might._current, c._intelligence._current,
 		c._personality._current, c._endurance._current,
 		c._speed._current, c._accuracy._current,
-		c._luck._current, c._age._base, c._level._current,
+		c._luck._current, c._age, c._level._current,
 		c._ac._current, c._hp, c._sp._current, 0,
 		c._exp, c._gold, c._gems
 	};
@@ -267,7 +267,7 @@ void CharacterInfo::drawStats() {
 		c._might._base, c._intelligence._base,
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
-		c._luck._base, c._age._base, c._level._base,
+		c._luck._base, c._age, c._level._base,
 		c._ac._current, c._hp, c._sp._base, 0,
 		c._exp, c._gold, c._gems
 	};
@@ -376,14 +376,14 @@ void CharacterInfo::showAttribute(int attrNum) {
 		c._might._current, c._intelligence._current,
 		c._personality._current, c._endurance._current,
 		c._speed._current, c._accuracy._current,
-		c._luck._current, c._age._base, c._level._current,
+		c._luck._current, c._age, c._level._current,
 		c._ac._current, c._hp, c._sp._current
 	};
 	const uint BASE[12] = {
 		c._might._base, c._intelligence._base,
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
-		c._luck._base, c._age._base, c._level._base,
+		c._luck._base, c._age, c._level._base,
 		c._ac._current, c._hp, c._sp._base
 	};
 	const char *TITLES[12] = {

@@ -129,7 +129,7 @@ void UseItem::applyItemBonus(int id, int value){
 		case 32: c._accuracy._current += value; break;
 		case 34: c._luck._current += value; break;
 		case 36: c._level._current += value; break;
-		case 37: c._age._current += value; break;
+		case 37: c._age += value; break;
 		case 43: c._sp._current += value; break;
 		case 48: c._spellLevel._current += value; break;
 		case 49: c._gems += value; break;

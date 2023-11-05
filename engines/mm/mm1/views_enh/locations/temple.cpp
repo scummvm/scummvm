@@ -164,7 +164,7 @@ void Temple::restoreHealth() {
 		c._hpCurrent = c._hp;
 
 		if (_isEradicated) {
-			c._age._current += 10;
+			c._age += 10;
 			--c._endurance;
 		}
 

@@ -239,7 +239,7 @@ void EquipRemove::applyEquipBonus(int id, int value){
 		case 29: c._speed._base += value; break;
 		case 31: c._accuracy._base += value; break;
 		case 33: c._luck._base += value; break;
-		case 37: c._age._current += value; break;
+		case 37: c._age += value; break;
 		case 60: c._ac._base += value; break;
 		case 88: c._resistances._s._magic._base += value; break; 
 		case 90: c._resistances._s._fire._base += value; break;

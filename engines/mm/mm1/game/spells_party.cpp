@@ -512,12 +512,12 @@ SpellResult SpellsParty::cleric62_raiseDead() {
 
 SpellResult SpellsParty::cleric63_rejuvinate() {
 	if (g_engine->getRandomNumber(100) < 75) {
-		_destChar->_age._base = MIN(_destChar->_age._base - g_engine->getRandomNumber(10),
+		_destChar->_age = MIN(_destChar->_age - g_engine->getRandomNumber(10),
 			200);
 		return SR_FAILED;
 	} else {
 		// Failed, increase the user's age
-		_destChar->_age._base = MIN(_destChar->_age._base + 10, 200);
+		_destChar->_age = MIN(_destChar->_age + 10, 200);
 		return SR_FAILED;
 	}
 }
@@ -602,8 +602,8 @@ SpellResult SpellsParty::cleric74_resurrection() {
 	if (_destChar->_condition == ERADICATED)
 		return SR_FAILED;
 
-	if (_destChar->_age._base < 10 || _destChar->_age._base > 200)
-		_destChar->_age._base = 200;
+	if (_destChar->_age < 10 || _destChar->_age > 200)
+		_destChar->_age = 200;
 
 	if (g_engine->getRandomNumber(100) > 75)
 		return SR_FAILED;
