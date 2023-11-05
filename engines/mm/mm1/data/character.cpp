@@ -613,7 +613,7 @@ void Character::rest() {
 			_hpMax = _hp;
 		}
 
-		if (_condition & DISEASED) {
+		if (!(_condition & DISEASED)) {
 			_hpCurrent = _hpMax;
 			_sp._current = _sp._base;
 		}
