@@ -820,11 +820,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				}
 			END_OPTION
 
+#ifdef SDL_BACKEND
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-audio")
 			END_OPTION
+#endif
 
 			DO_LONG_OPTION_BOOL("multi-midi")
 			END_OPTION
