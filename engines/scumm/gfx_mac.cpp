@@ -518,14 +518,14 @@ void MacGui::MacCheckbox::handleMouseUp(Common::Event &event) {
 // Static text widget
 // ---------------------------------------------------------------------------
 
-void MacGui::MacText::draw(bool drawFocused) {
+void MacGui::MacStaticText::draw(bool drawFocused) {
 	if (!_visible)
 		return;
 
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGui::MacText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGui::MacStaticText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	_window->innerSurface()->fillRect(_bounds, kWhite);
 	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack, Graphics::kTextAlignLeft, 1);
@@ -574,17 +574,6 @@ bool MacGui::MacEditText::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGui::MacEditText::updateSelection(int x, int y) {
-	int oldSelectLen = _selectLen;
-
-	int pos = getTextPosFromMouse(x, y);
-
-	_selectLen = pos - _caretPos;
-
-	if (_selectLen != oldSelectLen)
-		setRedraw();
-}
-
 int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 	if (_text.empty())
 		return 0;
@@ -618,6 +607,17 @@ int MacGui::MacEditText::getTextPosFromMouse(int x, int y) {
 	return i;
 }
 
+void MacGui::MacEditText::updateSelection(int x, int y) {
+	int oldSelectLen = _selectLen;
+
+	int pos = getTextPosFromMouse(x, y);
+
+	_selectLen = pos - _caretPos;
+
+	if (_selectLen != oldSelectLen)
+		setRedraw();
+}
+
 void MacGui::MacEditText::deleteSelection() {
 	int startPos;
 	int len;
@@ -633,24 +633,26 @@ void MacGui::MacEditText::deleteSelection() {
 	_text.erase(startPos, len);
 	_caretPos = startPos;
 	_selectLen = 0;
+	setRedraw();
+}
+
+void MacGui::MacEditText::selectAll() {
+	_caretPos = 0;
+	_selectLen = _text.size();
+	setRedraw();
 }
 
 void MacGui::MacEditText::draw(bool drawFocused) {
 	if (!_visible)
 		return;
 
-	if (!_redraw && !_fullRedraw)
-		return;
-
-	Graphics::Surface *s = _window->innerSurface();
-
-	s->fillRect(_bounds, kWhite);
-
 	int caretX = 0;
 
-	if (_selectLen == 0) {
-		// Make sure the caret is visible
+	// Calculate the caret position, and make sure that it will be placed
+	// inside the visible area of the widget. This may require scrolling
+	// the text, which will trigger a redraw.
 
+	if (_selectLen == 0) {
 		caretX = _textPos - 1;
 
 		for (int i = 0; i < _caretPos; i++)
@@ -665,69 +667,111 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 
 		if (delta) {
 			_textPos -= delta;
+			_caretX -= delta;
 			caretX -= delta;
+			setRedraw();
 		}
 	}
 
-	int selectStart = -1;
-	int selectEnd = -1;
+	// Redraw the contents of the widget. This redraws the entire text,
+	// which is a bit wasteful.
 
-	if (_selectLen != 0) {
-		if (_selectLen < 0) {
-			selectStart = _caretPos + _selectLen;
-			selectEnd = _caretPos - 1;
-		} else {
-			selectStart = _caretPos;
-			selectEnd = _caretPos + _selectLen - 1;
-		}
-	}
+	if (_redraw || _fullRedraw) {
+		Graphics::Surface *s = _window->innerSurface();
 
-	int x = _textPos;
-	int y = 0;
+		s->fillRect(_bounds, kWhite);
 
-	bool firstChar = true;
-	bool firstCharSelected = false;
-	bool lastCharSelected = false;
+		int selectStart = -1;
+		int selectEnd = -1;
 
-	for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
-		Color color = kBlack;
-		int charWidth = _font->getCharWidth(_text[i]);
-
-		if (x + charWidth >= 0) {
-			if (_selectLen != 0 && i >= selectStart && i <= selectEnd) {
-				if (firstChar)
-					firstCharSelected = true;
-				lastCharSelected = true;
-
-				_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
-				color = kWhite;
-			} else
-				lastCharSelected = false;
-
-			_font->drawChar(&_textSurface, _text[i], x, y, color);
-			firstChar = false;
+		if (_selectLen != 0) {
+			if (_selectLen < 0) {
+				selectStart = _caretPos + _selectLen;
+				selectEnd = _caretPos - 1;
+			} else {
+				selectStart = _caretPos;
+				selectEnd = _caretPos + _selectLen - 1;
+			}
 		}
 
-		x += charWidth;
+		int x = _textPos;
+		int y = 0;
+
+		bool firstChar = true;
+		bool firstCharSelected = false;
+		bool lastCharSelected = false;
+
+		for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
+			Color color = kBlack;
+			int charWidth = _font->getCharWidth(_text[i]);
+
+			if (x + charWidth >= 0) {
+				if (_selectLen != 0 && i >= selectStart && i <= selectEnd) {
+					if (firstChar)
+						firstCharSelected = true;
+					lastCharSelected = true;
+
+					_textSurface.fillRect(Common::Rect(x, 0, x + charWidth, _textSurface.h), kBlack);
+					color = kWhite;
+				} else
+					lastCharSelected = false;
+
+				_font->drawChar(&_textSurface, _text[i], x, y, color);
+				firstChar = false;
+			}
+
+			x += charWidth;
+		}
+
+		if (firstCharSelected)
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
+
+		if (lastCharSelected && _bounds.left + x + 1 < _bounds.right)
+			_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
+
+		_window->markRectAsDirty(_bounds);
 	}
 
-	if (firstCharSelected)
-		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + 1, _bounds.top, _bounds.left + 2, _bounds.bottom), kBlack);
-
-	if (lastCharSelected && _bounds.left + x + 1 < _bounds.right)
-		_window->innerSurface()->fillRect(Common::Rect(_bounds.left + x + 1, _bounds.top, _bounds.right, _bounds.bottom), kBlack);
+	// Redraw the caret, if it has changed since the last time.
 
 	if (_selectLen == 0) {
-		_textSurface.vLine(caretX, 0, _textSurface.h - 1, kRed);
-	}
+		uint32 now = _window->_system->getMillis();
+		bool caretVisible = _caretVisible;
 
-	_window->markRectAsDirty(_bounds);
+		if (now >= _nextCaretBlink) {
+			_caretVisible = !_caretVisible;
+			_nextCaretBlink = now + 500;
+		}
+
+		if (caretX != _caretX || caretVisible != _caretVisible) {
+			if (caretX != _caretX && !_redraw && !_fullRedraw) {
+				// Erase the old caret. Not needed if the whole
+				// widget was just redrawn.
+
+				_textSurface.vLine(_caretX, 0, _bounds.bottom - 1, kWhite);
+				if (!_redraw && !_fullRedraw)
+					_window->markRectAsDirty(Common::Rect(_bounds.left + _caretX + 1, _bounds.top, _bounds.left + _caretX + 2, _bounds.bottom));
+			}
+
+			// Draw the new caret
+
+			_textSurface.vLine(caretX, 0, _bounds.bottom - 1, _caretVisible ? kBlack : kWhite);
+
+			if (!_redraw && !_fullRedraw)
+				_window->markRectAsDirty(Common::Rect(_bounds.left + caretX + 1, _bounds.top, _bounds.left + caretX + 2, _bounds.bottom));
+
+			_caretX = caretX;
+		}
+	}
 
 	_redraw = false;
 	_fullRedraw = false;
 }
 
 void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
+	int oldSelectLen = _selectLen;
+	int oldCaretPos = _caretPos;
+
 	uint32 now = _window->_system->getMillis();
 	int x = event.mouse.x - _bounds.left;
 
@@ -779,6 +823,12 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 				}
 			}
 
+			if (startPos < 0)
+				startPos = 0;
+
+			if (endPos >= (int)_text.size())
+				endPos = _text.size() - 1;
+
 			_caretPos = startPos;
 			_selectLen = endPos - startPos + 1;
 		}
@@ -791,36 +841,50 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 		_selectLen = 0;
 	}
 
-	_redraw = true;
+	if (_selectLen != oldSelectLen || _caretPos != oldCaretPos)
+		setRedraw();
 }
 
 bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 	if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
 		return false;
 
+	// Stop caret blinking while typing. We do this by making the caret
+	// visible, but force the next blink to happen immediately. Otherwise,
+	// it may not register that the blink state has changed.
+
+	_caretVisible = false;
+	_nextCaretBlink = _window->_system->getMillis();
+
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_LEFT:
-		if (_selectLen < 0) {
+		if (_selectLen < 0)
 			_caretPos = _caretPos + _selectLen;
-			_selectLen = -_selectLen;
+
+		_caretPos--;
+
+		if (_caretPos < 0)
+			_caretPos = 0;
+
+		if (_selectLen != 0) {
+			_selectLen = 0;
+			setRedraw();
 		}
-
-		if (_caretPos > 0)
-			_caretPos--;
-
-		_selectLen = 0;
 		return true;
 
 	case Common::KEYCODE_RIGHT:
-		if (_selectLen > 0) {
+		if (_selectLen > 0)
 			_caretPos += _selectLen;
-			_selectLen = -_selectLen;
+
+		_caretPos++;
+
+		if (_caretPos > (int)_text.size())
+			_caretPos = _text.size();
+
+		if (_selectLen != 0) {
+			_selectLen = 0;
+			setRedraw();
 		}
-
-		if (_caretPos < (int)_text.size())
-			_caretPos++;
-
-		_selectLen = 0;
 		return true;
 
 	case Common::KEYCODE_BACKSPACE:
@@ -829,6 +893,7 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 		} else if (_caretPos > 0) {
 			_caretPos--;
 			_text.deleteChar(_caretPos);
+			setRedraw();
 		}
 		return true;
 
@@ -837,6 +902,7 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 			deleteSelection();
 		} else if (_caretPos < (int)_text.size()) {
 			_text.deleteChar(_caretPos);
+			setRedraw();
 		}
 		return true;
 
@@ -851,6 +917,7 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 			deleteSelection();
 		_text.insertChar(event.kbd.ascii, _caretPos);
 		_caretPos++;
+		setRedraw();
 		return true;
 	}
 
@@ -888,7 +955,7 @@ void MacGui::MacEditText::handleMouseMove(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
-// Image widget
+// Picture widget
 // ---------------------------------------------------------------------------
 
 MacGui::MacPicture::MacPicture(MacGui::MacDialogWindow *window, Common::Rect bounds, int id, bool enabled) : MacWidget(window, bounds, "Picture", enabled) {
@@ -918,10 +985,12 @@ void MacGui::MacPicture::draw(bool drawFocused) {
 }
 
 // ---------------------------------------------------------------------------
-// Slider widget
+// Picture slider widget. This is the custom slider widget used for the Loom
+// and Indy 3 options dialogs. It consists of a background image and a slider
+// drag handle.
 // ---------------------------------------------------------------------------
 
-bool MacGui::MacSlider::findWidget(int x, int y) const {
+bool MacGui::MacPictureSlider::findWidget(int x, int y) const {
 	if (!_visible || !_enabled)
 		return false;
 
@@ -934,7 +1003,7 @@ bool MacGui::MacSlider::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGui::MacSlider::setValue(int value) {
+void MacGui::MacPictureSlider::setValue(int value) {
 	MacWidget::setValue(CLIP(value, _minValue, _maxValue));
 
 	int valueRange = _maxValue - _minValue;
@@ -947,7 +1016,7 @@ void MacGui::MacSlider::setValue(int value) {
 	setRedraw();
 }
 
-void MacGui::MacSlider::draw(bool drawFocused) {
+void MacGui::MacPictureSlider::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
@@ -974,7 +1043,7 @@ void MacGui::MacSlider::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
+void MacGui::MacPictureSlider::handleMouseDown(Common::Event &event) {
 	int mouseX = event.mouse.x;
 	int handleWidth = _handle->getBounds().width();
 
@@ -986,7 +1055,7 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 	handleMouseMove(event);
 }
 
-void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
+void MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	int posRange = (_maxX - _rightMargin) - (_minX + _rightMargin);
 	int posOffset = _handleX - (_minX + _leftMargin);
 
@@ -996,7 +1065,7 @@ void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 	setValue(_minValue + valueOffset);
 }
 
-void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
+void MacGui::MacPictureSlider::handleMouseMove(Common::Event &event) {
 	_handleX = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
 	setRedraw();
 }
@@ -1094,14 +1163,14 @@ void MacGui::MacDialogWindow::setFocusedWidget(int x, int y) {
 		_focusedWidget = _widgets[nr];
 		_focusClick.x = x;
 		_focusClick.y = y;
-		_focusedWidget->setRedraw();
+		_focusedWidget->getFocus();
 	} else
 		clearFocusedWidget();
 }
 
 void MacGui::MacDialogWindow::clearFocusedWidget() {
 	if (_focusedWidget) {
-		_focusedWidget->setRedraw();
+		_focusedWidget->loseFocus();
 		_focusedWidget = nullptr;
 		_focusClick.x = -1;
 		_focusClick.y = -1;
@@ -1117,34 +1186,46 @@ int MacGui::MacDialogWindow::findWidget(int x, int y) const {
 	return -1;
 }
 
-void MacGui::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
-	_widgets.push_back(new MacButton(this, bounds, text, enabled));
+MacGui::MacButton *MacGui::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGui::MacButton *button = new MacButton(this, bounds, text, enabled);
+	_widgets.push_back(button);
+	return button;
 }
 
-void MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
-	_widgets.push_back(new MacCheckbox(this, bounds, text, enabled));
+MacGui::MacCheckbox *MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGui::MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, enabled);
+	_widgets.push_back(checkbox);
+	return checkbox;
 }
 
-void MacGui::MacDialogWindow::addText(Common::Rect bounds, Common::String text, bool enabled) {
-	_widgets.push_back(new MacText(this, bounds, text, enabled));
+MacGui::MacStaticText *MacGui::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGui::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled);
+	_widgets.push_back(staticText);
+	return staticText;
 }
 
-void MacGui::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
-	_widgets.push_back(new MacEditText(this, bounds, text, enabled));
+MacGui::MacEditText *MacGui::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGui::MacEditText *editText = new MacEditText(this, bounds, text, enabled);
+	_widgets.push_back(editText);
+	return editText;
 }
 
-void MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	_widgets.push_back(new MacPicture(this, bounds, id, false));
+MacGui::MacPicture *MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
+	MacGui::MacPicture *picture = new MacPicture(this, bounds, id, false);
+	_widgets.push_back(picture);
+	return picture;
 }
 
-void MacGui::MacDialogWindow::addSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
+MacGui::MacPictureSlider *MacGui::MacDialogWindow::addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
 	MacPicture *background = (MacPicture *)_widgets[backgroundId];
 	MacPicture *handle = (MacPicture *)_widgets[handleId];
 
 	background->setVisible(false);
 	handle->setVisible(false);
 
-	_widgets.push_back(new MacSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin));
+	MacGui::MacPictureSlider *slider = new MacPictureSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
+	_widgets.push_back(slider);
+	return slider;
 }
 
 void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
@@ -1374,7 +1455,6 @@ int MacGui::MacDialogWindow::runDialog() {
 							_beamCursorVisible = false;
 							undrawBeamCursor();
 						}
-						_widgets[i]->setRedraw();
 						break;
 					}
 				}
@@ -2148,7 +2228,7 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
-				window->addText(r, str, enabled);
+				window->addStaticText(r, str, enabled);
 				break;
 
 			case 16:
@@ -2656,7 +2736,7 @@ bool MacLoomGui::runSaveDialog() {
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
 	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
 
-	window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
+	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
 	Graphics::Surface *s = window->innerSurface();
 	const Graphics::Font *font = getFont(kSystemFont);
@@ -2670,6 +2750,7 @@ bool MacLoomGui::runSaveDialog() {
 	font->drawString(s, "Save Game File as...", 14, 143, 218, kBlack, Graphics::kTextAlignLeft, 4);
 
 	window->setDefaultWidget(0);
+	editText->selectAll();
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -2729,10 +2810,10 @@ bool MacLoomGui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	window->addSlider(4, 5, true, 5, 105, 0, 9);
+	window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
 	window->setWidgetValue(11, textSpeed);
 
-	window->addSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
+	window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
 	window->setWidgetValue(12, musicQuality);
 
 	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
@@ -4389,7 +4470,7 @@ bool MacIndy3Gui::runOptionsDialog() {
 	if (!sound)
 		window->setWidgetEnabled(3, false);
 
-	window->addSlider(4, 5, true, 5, 105, 0, 9);
+	window->addPictureSlider(4, 5, true, 5, 105, 0, 9);
 	window->setWidgetValue(9, textSpeed);
 
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
