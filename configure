@@ -2580,7 +2580,7 @@ elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; th
 	_endian=little
 fi
 echo $_endian;
-cc_check_clean tmp_endianness_check.cpp tmp_endianness_check.dwo
+cc_check_clean tmp_endianness_check.cpp $TMPO-tmp_endianness_check.dwo
 
 case $_endian in
 	big)
