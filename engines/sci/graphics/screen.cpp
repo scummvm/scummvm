@@ -891,16 +891,12 @@ void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int1
 	} else if (bytesPerPixel == 2) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
-				const byte color = *srcPtr++;
-				const byte color2 = *srcPtr++;
-				dstPtr[0] = color;
-				dstPtr[1] = color2;
-				dstPtr[2] = color;
-				dstPtr[3] = color2;
-				dstPtr[pitch] = color;
-				dstPtr[pitch + 1] = color2;
-				dstPtr[pitch + 2] = color;
-				dstPtr[pitch + 3] = color2;
+				const uint16 color = *(const uint16 *)srcPtr;
+				*(uint16 *)(dstPtr + 0) = color;
+				*(uint16 *)(dstPtr + 2) = color;
+				*(uint16 *)(dstPtr + pitch + 0) = color;
+				*(uint16 *)(dstPtr + pitch + 2) = color;
+				srcPtr += 2;
 				dstPtr += 4;
 			}
 			dstPtr += pitch;
@@ -930,26 +926,12 @@ void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int1
 	} else if (bytesPerPixel == 4) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
-				const byte color = *srcPtr++;
-				const byte color2 = *srcPtr++;
-				const byte color3 = *srcPtr++;
-				const byte color4 = *srcPtr++;
-				dstPtr[0] = color;
-				dstPtr[1] = color2;
-				dstPtr[2] = color3;
-				dstPtr[3] = color4;
-				dstPtr[4] = color;
-				dstPtr[5] = color2;
-				dstPtr[6] = color3;
-				dstPtr[7] = color4;
-				dstPtr[pitch] = color;
-				dstPtr[pitch + 1] = color2;
-				dstPtr[pitch + 2] = color3;
-				dstPtr[pitch + 3] = color4;
-				dstPtr[pitch + 4] = color;
-				dstPtr[pitch + 5] = color2;
-				dstPtr[pitch + 6] = color3;
-				dstPtr[pitch + 7] = color4;
+				const uint32 color = *(const uint32 *)srcPtr;
+				*(uint32 *)(dstPtr + 0) = color;
+				*(uint32 *)(dstPtr + 4) = color;
+				*(uint32 *)(dstPtr + pitch + 0) = color;
+				*(uint32 *)(dstPtr + pitch + 4) = color;
+				srcPtr += 4;
 				dstPtr += 8;
 			}
 			dstPtr += pitch;
