@@ -293,6 +293,23 @@ public:
 		void draw(bool drawFocused = false);
 	};
 
+	class MacSlider : public MacWidget {
+	private:
+		int _minValue;
+		int _maxValue;
+		int _pageSize;
+
+	public:
+		MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled)
+			: MacWidget(window, bounds, "Slider", enabled),
+			_minValue(minValue), _maxValue(maxValue), _pageSize(pageSize) {}
+
+		void draw(bool drawFocued = false);
+
+		void handleMouseDown(Common::Event &event);
+		void handleMouseMove(Common::Event &event);
+	};
+
 	class MacPictureSlider : public MacWidget {
 	private:
 		MacPicture *_background;
@@ -400,6 +417,7 @@ public:
 		MacGui::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled);
 		MacGui::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
 		MacGui::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
+		MacGui::MacSlider *addSlider(Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGui::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }

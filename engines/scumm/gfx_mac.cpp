@@ -985,6 +985,35 @@ void MacGui::MacPicture::draw(bool drawFocused) {
 }
 
 // ---------------------------------------------------------------------------
+// Standard slider widget
+// ---------------------------------------------------------------------------
+
+void MacGui::MacSlider::draw(bool drawFocused) {
+	if (!_visible)
+		return;
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacSlider: Drawing slider (_fullRedraw = %d, drawFocused = %d, _value = %d)", _fullRedraw, drawFocused, _value);
+
+	Graphics::Surface *s = _window->innerSurface();
+
+	s->frameRect(_bounds, kBlack);
+
+	_redraw = false;
+	_fullRedraw = false;
+
+	_window->markRectAsDirty(_bounds);
+}
+
+void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
+}
+
+void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
+}
+
+// ---------------------------------------------------------------------------
 // Picture slider widget. This is the custom slider widget used for the Loom
 // and Indy 3 options dialogs. It consists of a background image and a slider
 // drag handle.
@@ -1020,7 +1049,7 @@ void MacGui::MacPictureSlider::draw(bool drawFocused) {
 	if (!_redraw && !_fullRedraw)
 		return;
 
-	debug(1, "MacGui::MacPicture: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+	debug(1, "MacGui::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	Graphics::Surface *bgSprite = _background->getPicture();
 	Graphics::Surface *hSprite = _handle->getPicture();
@@ -1214,6 +1243,12 @@ MacGui::MacPicture *MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int
 	MacGui::MacPicture *picture = new MacPicture(this, bounds, id, false);
 	_widgets.push_back(picture);
 	return picture;
+}
+
+MacGui::MacSlider *MacGui::MacDialogWindow::addSlider(Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled) {
+	MacGui::MacSlider *slider = new MacSlider(this, bounds, minValue, maxValue, pageSize, enabled);
+	_widgets.push_back(slider);
+	return slider;
 }
 
 MacGui::MacPictureSlider *MacGui::MacDialogWindow::addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
@@ -2699,11 +2734,11 @@ bool MacLoomGui::runOpenDialog() {
 	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
+	window->addSlider(Common::Rect(216, 13, 232, 159), 0, 50, 7, true);
 
 	Graphics::Surface *s = window->innerSurface();
 
 	s->frameRect(Common::Rect(14, 13, 217, 159), kBlack);
-	s->frameRect(Common::Rect(216, 13, 232, 159), kBlack);
 	s->hLine(253, 91, 334, kBlack);
 
 	window->setDefaultWidget(0);
@@ -2735,6 +2770,7 @@ bool MacLoomGui::runSaveDialog() {
 	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
 	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
+	window->addSlider(Common::Rect(216, 9, 232, 137), 0, 50, 7, true);
 
 	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
@@ -2743,7 +2779,6 @@ bool MacLoomGui::runSaveDialog() {
 
 	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
 	s->frameRect(Common::Rect(14, 9, 217, 137), kBlack);
-	s->frameRect(Common::Rect(216, 9, 232, 137), kBlack);
 
 	s->hLine(253, 115, 334, kBlack);
 
