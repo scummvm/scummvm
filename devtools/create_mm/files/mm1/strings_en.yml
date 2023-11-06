@@ -881,6 +881,7 @@ spells:
 		46: "Prismatic Light"
 monster_spells:
 	casts: "casts "
+	takes: "takes "
 	fails_to_cast: "fails to cast a spell"
 	not_affected: "is not affected!"
 	breathes: "breathes"
@@ -915,6 +916,7 @@ monster_spells:
 	energy: "energy"
 	swarm: "swarm"
 	breathes: "breathes "
+	points: "points"
 monster_actions:
 	and: "!and "
 	causes_aging: "causes rapid aging"
