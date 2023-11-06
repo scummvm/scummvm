@@ -39,11 +39,13 @@
  *
  * Games using this engine:
  * - Adi 2
- * - Adi 4
- * - Adi 5
+ * - Adi 4 (DEV6)
+ * - Adi 5 (DEV7)
  * - Adibou 1
- * - Adibou 2
- * - Adibou 3
+ * - Adibou 2 (DEV6)
+ * - Adibou 3 (DEV7)
+ * - Adibou presente series (DEV7)
+ * - Adiboud'chou series (DEV7)
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
@@ -52,8 +54,9 @@
  * - Lost in Time
  * - The Bizarre Adventures of Woodruff and the Schnibble
  * - Fascination
- * - Urban Runner
- * - Bambou le sauveur de la jungle
+ * - Urban Runner (DEV6)
+ * - Playtoons (DEV6)
+ * - Bambou le sauveur de la jungle (DEV6)
  * - Geisha
  * - Once Upon A Time: Little Red Riding Hood
  * - Croustibat
