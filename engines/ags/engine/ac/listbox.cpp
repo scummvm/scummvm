@@ -146,6 +146,15 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 	for (const auto &item : saveList) {
 		int slot = item.getSaveSlot();
 		Common::String desc = item.getDescription();
+		if (strcmp(_GP(game).guid, "{623a837d-9007-4174-b8be-af23192c3d73}" /* Blackwell Epiphany */) == 0 ||
+			strcmp(_GP(game).guid, "{139fc4b0-c680-4e03-984e-bda22af424e9}" /* Gemini Rue */) == 0 ||
+			strcmp(_GP(game).guid, "{db1e693d-3c6a-4565-ae08-45fe4c536498}" /* Old Skies */) == 0 ||
+			strcmp(_GP(game).guid, "{a0488eca-2275-47c8-860a-3b755fd51a59}" /* The Shivah: Kosher Edition */) == 0 ||
+			strcmp(_GP(game).guid, "{ea2bf7d0-7eca-4127-9970-031ee8f37eba}" /* Unavowed */) == 0)
+			if (slot == 101) {
+				debug(0, "Skipping game-managed autosave slot entry in savelist");
+				continue;
+			}
 
 		listbox->AddItem(desc);
 		listbox->SavedGameIndex[listbox->ItemCount - 1] = slot;
