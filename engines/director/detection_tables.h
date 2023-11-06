@@ -975,6 +975,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gate1",				"the GATE I 王国「MU」への扉" },
 	{ "gate2",				"the GATE II 王国「MU」への扉" },
 	{ "gate3",				"the GATE III 王国「MU」への扉" },					// Gateway to the Kingdom of MU
+	{ "geininkaido",		"芸人街道膝栗毛。" },
 	{ "geraldmccoy",		"Detective Gerald McCoy" },
 	{ "gocoo",				"GO-COO" },
 	{ "granmarmalade",		"グラン・マーマレード・マジカル・ビレッジ" },
@@ -8387,6 +8388,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac OS X and Windows versions are D9
 	MACGAME1_l("garygadget5", "Classic OS", "Miel5 OS9", "789536da81694518f494945bb161ace9", 234210, Common::NL_NLD, 851),
+
+	// Original filename is 芸人街道膝栗毛。.exe
+	WINGAME1_l("geininkaido", "", "xn--.exe-pw3ct82pvdybmkgi26c2kck8w2sw", "d5069f2a24854aa78f8fbd01462ba37c", 4366672, Common::JA_JPN, 851),
 
 	// Mac version on CD02 is D10
 	WINGAME1("girlsaloudbox", "CD02 No Good Advice",		"Clickme.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2911148, 800),
