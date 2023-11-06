@@ -130,11 +130,13 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	// Sanity checks
 	if (info.type != CifInfo::kResTypeImage) {
 		warning("Resource '%s' is not an image", name.c_str());
+		delete stream;
 		return false;
 	}
 
 	if (info.depth != 16) {
 		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+		delete stream;
 		return false;
 	}
 
