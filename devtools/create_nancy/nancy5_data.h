@@ -824,4 +824,26 @@ const Common::Array<const char *> _nancy5EventFlagNames = {
 	"EV_TBD"
 };
 
+// Patch notes:
+// Both of the softlock patch files are described on HeR Interactive's website,
+// but not actually present in the file they distribute. Thus, the fixes are ours.
+// - S3503.cif blocks the transition between day 2 and 3 until the player obtains both the flash paper
+// 	 and the safe key. This is not the most graceful way to handle the endgame softlocks, as both items
+//   would technically be obtainable on day 3 as well; however, it is the least intrusive one. Moreover,
+//   it seems to be what the original devs were planning to do; there is a check for the flash paper in
+//   the exact scene that we patch. However, failing that check simply locks you in the room forever,
+//   because they seem to have forgotten to finish the softlock fix.
+// - S3503 removes the check for close captioning which would result in the player being unable to
+//   close Simone's purse without having subtitles on. Technically not a softlock but just a plain bug,
+//   so it is not hidden behind a setting, and is always enabled.
+
+const Common::Array<const char *> nancy5PatchSrcFiles {
+	"S3503.cif",
+	"S3218.cif"
+};
+
+const Common::Array<PatchAssociation> nancy5PatchAssociations {
+	{ { "softlocks_fix", "true" }, { "S3218" } }
+};
+
 #endif // NANCY5DATA_H

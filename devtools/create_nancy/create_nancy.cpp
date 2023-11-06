@@ -265,6 +265,8 @@ int main(int argc, char *argv[]) {
 	WRAPWITHOFFSET(writeRingingTexts(output, _nancy5TelephoneRinging))
 	WRAPWITHOFFSET(writeEmptySaveTexts(output, _nancy5EmptySaveStrings))
 	WRAPWITHOFFSET(writeEventFlagNames(output, _nancy5EventFlagNames))
+	WRAPWITHOFFSET(writePatchFile(output, 6, nancy5PatchSrcFiles, "files/nancy5"))
+	WRAPWITHOFFSET(writePatchAssociations(output, nancy5PatchAssociations))
 
 	// Nancy Drew: Secret of the Scarlet Hand
 	gameOffsets.push_back(output.pos());
