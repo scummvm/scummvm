@@ -174,6 +174,9 @@ public:
 		void setVisible(bool visible) { _visible = visible; }
 		bool isVisible() const { return _visible; }
 
+		virtual void getFocus() { setRedraw(); }
+		virtual void loseFocus() { setRedraw(); }
+
 		void setRedraw(bool fullRedraw = false);
 
 		bool isEnabled() const { return _enabled; }
@@ -226,9 +229,9 @@ public:
 	// as disabled so we enable it and make it "disabled" by giving it a
 	// custom findWidget().
 
-	class MacText : public MacWidget {
+	class MacStaticText : public MacWidget {
 	public:
-		MacText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
+		MacStaticText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 
 		bool findWidget(int x, int y) const { return false; }
 
@@ -237,30 +240,37 @@ public:
 
 	class MacEditText : public MacWidget {
 	private:
-		int _textPos = 0;
+		int _textPos = 1;
 		int _selectLen = 0;
 		int _caretPos = 0;
+		int _caretX = -1;
 
 		uint32 _lastClickTime = 0;
 		uint32 _lastScrollTime = 0;
 
 		int _lastClickX = 0;
 
-		uint32 _lastBlinkTime = 0;
-		bool _caretVisible = false;
+		uint32 _nextCaretBlink = 0;
+		bool _caretVisible = true;
 
 		const Graphics::Font *_font;
 		Graphics::Surface _textSurface;
 
 		int getTextPosFromMouse(int x, int y);
+
+		void updateSelection(int x, int y);
 		void deleteSelection();
 
 	public:
 		MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 
+		void getFocus() {}
+		void loseFocus() {}
+
+		void selectAll();
+
 		bool useBeamCursor() { return true; }
 		bool findWidget(int x, int y) const;
-		void updateSelection(int x, int y);
 
 		void draw(bool drawFocused = false);
 
@@ -283,7 +293,7 @@ public:
 		void draw(bool drawFocused = false);
 	};
 
-	class MacSlider : public MacWidget {
+	class MacPictureSlider : public MacWidget {
 	private:
 		MacPicture *_background;
 		MacPicture *_handle;
@@ -298,7 +308,7 @@ public:
 		int _rightMargin;
 
 	public:
-		 MacSlider(MacGui::MacDialogWindow *window, MacPicture *background, MacPicture *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
+		 MacPictureSlider(MacGui::MacDialogWindow *window, MacPicture *background, MacPicture *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
 			: MacWidget(window, background->getBounds(), "Slider", enabled),
 			_background(background), _handle(handle), _minX(minX),
 			_maxX(maxX), _minValue(minValue), _maxValue(maxValue),
@@ -385,12 +395,12 @@ public:
 		int findWidget(int x, int y) const;
 		void redrawWidget(int nr) { _widgets[nr]->setRedraw(true); }
 
-		void addButton(Common::Rect bounds, Common::String text, bool enabled);
-		void addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
-		void addText(Common::Rect bounds, Common::String text, bool enabled);
-		void addEditText(Common::Rect bounds, Common::String text, bool enabled);
-		void addPicture(Common::Rect bounds, int id, bool enabled);
-		void addSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
+		MacGui::MacButton *addButton(Common::Rect bounds, Common::String text, bool enabled);
+		MacGui::MacCheckbox *addCheckbox(Common::Rect bounds, Common::String text, bool enabled);
+		MacGui::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled);
+		MacGui::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
+		MacGui::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
+		MacGui::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
