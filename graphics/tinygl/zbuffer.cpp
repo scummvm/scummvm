@@ -89,7 +89,7 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 			memset(_zbuf, zc[0], sizeof(uint) * _pbufWidth * _pbufHeight);
 		} else {
 			// Cannot use memset, use a variant working on integers (possibly slower)
-			Common::memset4((uint32 *)_zbuf, z, _pbufWidth * _pbufHeight);
+			Common::memset32((uint32 *)_zbuf, z, _pbufWidth * _pbufHeight);
 		}
 	}
 	if (clearColor) {
@@ -105,10 +105,10 @@ void FrameBuffer::clear(int clearZ, int z, int clearColor, int r, int g, int b,
 			// Cannot use memset, use a variant working on shorts/ints (possibly slower)
 			switch(_pbufBpp) {
 			case 2:
-				Common::memset2((uint16 *)pp, color, _pbufWidth * _pbufHeight);
+				Common::memset16((uint16 *)pp, color, _pbufWidth * _pbufHeight);
 				break;
 			case 4:
-				Common::memset4((uint32 *)pp, color, _pbufWidth * _pbufHeight);
+				Common::memset32((uint32 *)pp, color, _pbufWidth * _pbufHeight);
 				break;
 			default:
 				error("Unsupported pixel size %i", _pbufBpp);
@@ -137,7 +137,7 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 		} else {
 			// Cannot use memset, use a variant working on integers (possibly slower)
 			while (height--) {
-				Common::memset4((uint32 *)zbuf, z, w);
+				Common::memset32((uint32 *)zbuf, z, w);
 				zbuf += _pbufWidth;
 			}
 		}
@@ -160,10 +160,10 @@ void FrameBuffer::clearRegion(int x, int y, int w, int h, bool clearZ, int z,
 			while (height--) {
 				switch(_pbufBpp) {
 				case 2:
-					Common::memset2((uint16 *)pp, color, w);
+					Common::memset16((uint16 *)pp, color, w);
 					break;
 				case 4:
-					Common::memset4((uint32 *)pp, color, w);
+					Common::memset32((uint32 *)pp, color, w);
 					break;
 				default:
 					error("Unsupported pixel size %i", _pbufBpp);

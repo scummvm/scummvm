@@ -225,10 +225,10 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 		memset(ptr, (byte)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
-		Common::memset2(ptr, (uint16)color, x2 - x + 1);
+		Common::memset16(ptr, (uint16)color, x2 - x + 1);
 	} else if (format.bytesPerPixel == 4) {
 		uint32 *ptr = (uint32 *)getBasePtr(x, y);
-		Common::memset4(ptr, (uint32)color, x2 - x + 1);
+		Common::memset32(ptr, (uint32)color, x2 - x + 1);
 	} else {
 		error("Surface::hLine: bytesPerPixel must be 1, 2, or 4");
 	}
@@ -303,12 +303,12 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 	} else {
 		if (format.bytesPerPixel == 2) {
 			while (height--) {
-				Common::memset2((uint16 *)ptr, (uint16)color, width);
+				Common::memset16((uint16 *)ptr, (uint16)color, width);
 				ptr += pitch;
 			}
 		} else {
 			while (height--) {
-				Common::memset4((uint32 *)ptr, (uint32)color, width);
+				Common::memset32((uint32 *)ptr, (uint32)color, width);
 				ptr += pitch;
 			}
 		}

@@ -438,9 +438,9 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 	if (sizeof(PixelType) == 1)
 		memset((uint8 *)first, color, count);
 	else if (sizeof(PixelType) == 2)
-		Common::memset2((uint16 *)first, color, count);
+		Common::memset16((uint16 *)first, color, count);
 	else
-		Common::memset4((uint32 *)first, color, count);
+		Common::memset32((uint32 *)first, color, count);
 }
 
 template<typename PixelType>
@@ -470,9 +470,9 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 	if (sizeof(PixelType) == 1)
 		memset((uint8 *)first, color, count);
 	else if (sizeof(PixelType) == 2)
-		Common::memset2((uint16 *)first, color, count);
+		Common::memset16((uint16 *)first, color, count);
 	else
-		Common::memset4((uint32 *)first, color, count);
+		Common::memset32((uint32 *)first, color, count);
 }
 
 /**
