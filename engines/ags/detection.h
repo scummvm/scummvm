@@ -58,6 +58,8 @@ enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
 enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
 #define GAMEOPTION_NO_SAVE_THUMBNAIL GUIO_GAMEOPTIONS1
+#define GAMEOPTION_NO_AUTOSAVE		 GUIO_GAMEOPTIONS2
+#define GAMEOPTION_NO_SAVELOAD		 GUIO_GAMEOPTIONS3
 
 } // namespace AGS
 

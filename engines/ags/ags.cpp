@@ -169,6 +169,8 @@ Common::Error AGSEngine::run() {
 		_G(display_fps) = ConfMan.getBool("display_fps") ? AGS3::kFPS_Forced : AGS3::kFPS_Hide;
 
 	_G(saveThumbnail) = !(Common::checkGameGUIOption(GAMEOPTION_NO_SAVE_THUMBNAIL, ConfMan.get("guioptions")));
+	_G(noScummAutosave) = (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions")));
+	_G(noScummSaveLoad) = (Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions")));
 
 	AGS3::ConfigTree startup_opts;
 	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
@@ -290,12 +292,14 @@ Common::FSNode AGSEngine::getGameFolder() {
 
 bool AGSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
+		   !_G(noScummSaveLoad);
 }
 
 bool AGSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
+		   !_G(noScummSaveLoad);
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {

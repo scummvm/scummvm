@@ -1100,9 +1100,11 @@ public:
 	std::set<String> _tellInfoKeys;
 	int _loadSaveGameOnStartup = -1;
 
-	// ScummVM GUIO-controlled flag to save a screenshot
-	// when saving (used for saves thumbnails)
-	bool _saveThumbnail = true;
+	// ScummVM GUIO-controlled flags
+	bool _saveThumbnail = true;     // capture a screenshot when saving (used for saves thumbnails)
+	bool _noScummAutosave = false;  // disable ScummVM autosaves
+	bool _noScummSaveLoad = false;  // disable ScummVM GMM save/load
+
 #if 0
 	//! AGS_PLATFORM_DEFINES_PSP_VARS
 	int _psp_rotation = 0;
