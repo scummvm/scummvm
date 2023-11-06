@@ -184,7 +184,7 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 	else if (amount >= 13)
 		level = 1;
 
-	re._sp = level + 3;
+	re._sp._base = re._sp._current = level + 3;
 	re._spellLevel = 1;
 }
 
