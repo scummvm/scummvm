@@ -24,7 +24,7 @@
 
 namespace Common {
 
-void memset8(uint64 *dst, uint64 val, size_t count) {
+void memset64(uint64 *dst, uint64 val, size_t count) {
 	if (!count)
 		return;
 
@@ -44,26 +44,26 @@ void memset8(uint64 *dst, uint64 val, size_t count) {
 	}
 }
 
-void memset4(uint32 *dst, uint32 val, size_t count) {
+void memset32(uint32 *dst, uint32 val, size_t count) {
 	if (!IS_ALIGNED(dst, 8) && count) {
 		*dst++ = val;
 		count -= 1;
 	}
 
-	memset8((uint64 *)dst, val | ((uint64)val << 32), count >> 1);
+	memset64((uint64 *)dst, val | ((uint64)val << 32), count >> 1);
 
 	if (count & 1) {
 		dst[count & ~1] = val;
 	}
 }
 
-void memset2(uint16 *dst, uint16 val, size_t count) {
+void memset16(uint16 *dst, uint16 val, size_t count) {
 	if (!IS_ALIGNED(dst, 4) && count) {
 		*dst++ = val;
 		count -= 1;
 	}
 
-	memset4((uint32 *)dst, val | ((uint32)val << 16), count >> 1);
+	memset32((uint32 *)dst, val | ((uint32)val << 16), count >> 1);
 
 	if (count & 1) {
 		dst[count & ~1] = val;

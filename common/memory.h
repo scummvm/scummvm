@@ -46,9 +46,9 @@ namespace Common {
  *
  * Note that pointers passed to these functions must be aligned correctly.
  */
-void memset2(uint16 *dst, uint16 val, size_t count);
-void memset4(uint32 *dst, uint32 val, size_t count);
-void memset8(uint64 *dst, uint64 val, size_t count);
+void memset16(uint16 *dst, uint16 val, size_t count);
+void memset32(uint32 *dst, uint32 val, size_t count);
+void memset64(uint64 *dst, uint64 val, size_t count);
 
 /**
  * Copies data from the range [first, last) to [dst, dst + (last - first)).
