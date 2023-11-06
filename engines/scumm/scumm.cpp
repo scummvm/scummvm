@@ -1490,7 +1490,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	}
 
 	// Skip the sound pre-loading
-	if (_game.id == GID_SAMNMAX && _bootParam == 0 && enhancementClassActive(kEnhUIUX)) {
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && enhancementEnabled(kEnhUIUX)) {
 		_bootParam = -1;
 	}
 
@@ -2412,7 +2412,7 @@ Common::Error ScummEngine::go() {
 		// custom names for save states. We do this in order to avoid
 		// lag and/or lose keyboard inputs.
 
-		if (enhancementClassActive(kEnhUIUX)) {
+		if (enhancementEnabled(kEnhUIUX)) {
 			// INDY3:
 			if (_game.id == GID_INDY3 && _currentRoom == 14) {
 				delta = 3;

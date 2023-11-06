@@ -2030,7 +2030,7 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 		// WORKAROUND: In the german version of LOOM FM-Towns, the string in the game data is stored with a '\r'
 		// character at the end. This means that the string being displayed on screen will end with "(J oder N)J",
 		// and localizedYesKey will be assigned to '\r'. Let's fix this by truncating the relevant string.
-		if (enhancementClassActive(kEnhMinorBugFixes) && _game.id == GID_LOOM &&
+		if (enhancementEnabled(kEnhMinorBugFixes) && _game.id == GID_LOOM &&
 			_game.platform == Common::kPlatformFMTowns &&
 			strstr(msgLabelPtr, "(J oder N)J\r")) {
 			msgLabelPtr[Common::strnlen(msgLabelPtr, sizeof(msgLabelPtr)) - 1] = '\0';

@@ -202,7 +202,7 @@ void ScummEngine_v4::loadCharset(int no) {
 	// does exist, but at the invalid \x86 position.  So we replace \x85 with
 	// \x86 (and then \x86 with \x87 so that the whole charset resource keeps
 	// the same size), but only when detecting the faulty 904.LFL file.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && no == 4 && size == 4857 && _language == Common::FR_FRA && enhancementClassActive(kEnhTextLocFixes)) {
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) && no == 4 && size == 4857 && _language == Common::FR_FRA && enhancementEnabled(kEnhTextLocFixes)) {
 		Common::MemoryReadStream stream(data, size);
 		Common::String md5 = Common::computeStreamMD5AsString(stream);
 

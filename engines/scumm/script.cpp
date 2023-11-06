@@ -713,7 +713,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// Any modifications here depend on knowing if the script will
 		// set the timer value back to something sensible afterwards.
 
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementClassActive(kEnhTimingChanges)) {
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
 			if (value == 1 && _language == Common::DE_DEU)
 				value = 4;
@@ -733,7 +733,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// throughout the intro. This does not apply to the VGA talkie
 		// version, because there the fire isn't animated.
 
-		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && enhancementClassActive(kEnhTimingChanges)) {
+		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a = derefActorSafe(4, "writeVar");
 			if (a) {
 				a->setAnimSpeed((value == 0) ? 6 : 0);
@@ -993,7 +993,7 @@ void ScummEngine::runExitScript() {
 	//
 	// The same sound effect is also used in the underwater cavern (room
 	// 33), so we do the same fade out as in that room's exit script.
-	if (_game.id == GID_DIG && _currentRoom == 44 && enhancementClassActive(kEnhAudioChanges)) {
+	if (_game.id == GID_DIG && _currentRoom == 44 && enhancementEnabled(kEnhAudioChanges)) {
 		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
 		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
 	}

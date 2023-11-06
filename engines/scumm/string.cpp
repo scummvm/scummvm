@@ -70,7 +70,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 			vm.slot[_currentScript].number == 203 &&
 			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
 			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG) &&
-			enhancementClassActive(kEnhMinorBugFixes)) {
+			enhancementEnabled(kEnhMinorBugFixes)) {
 			return;
 		}
 
@@ -82,7 +82,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// In the italian CD version, the whole scene is sped up to
 		// keep up with Sam's speech. We compensate for this by slowing
 		// down the other animations.
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && enhancementClassActive(kEnhTimingChanges)) {
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a;
 
 			if (_language == Common::DE_DEU && strcmp(_game.variant, "Floppy") != 0) {
@@ -214,7 +214,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			// one or more embedded "wait" codes. Rather than
 			// relying on the calculated talk delay, hard-code
 			// better ones.
-			if (_game.id == GID_SAMNMAX && enhancementClassActive(kEnhTimingChanges) && isScriptRunning(65)) {
+			if (_game.id == GID_SAMNMAX && enhancementEnabled(kEnhTimingChanges) && isScriptRunning(65)) {
 				typedef struct {
 					const char *str;
 					const int16 talkDelay;
@@ -1479,7 +1479,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// uses `startAnim(7)` for this.
 					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
 						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
-						dst[-2] == 8 && enhancementClassActive(kEnhMinorBugFixes)) {
+						dst[-2] == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
 						dst[-2] = 7;
 					}
 
@@ -1510,7 +1510,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German versions of SAMNMAX
 	// Adding the missing startAnim(14) animation escape sequence while copying the text fixes it.
 	if (_game.id == GID_SAMNMAX && _currentRoom == 56 && vm.slot[_currentScript].number == 200 &&
-		_language == Common::DE_DEU && enhancementClassActive(kEnhMinorBugFixes)) {
+		_language == Common::DE_DEU && enhancementEnabled(kEnhMinorBugFixes)) {
 		// 0xE5E6 is the CD version, 0xE373 is for the floppy version
 		if (vm.slot[_currentScript].offs == 0xE5E6 || vm.slot[_currentScript].offs == 0xE373) {
 			*dst++ = 0xFF;
