@@ -55,6 +55,7 @@ static const PlainGameDescriptor nancyGames[] = {
 };
 
 #define NANCY2_GUIOPTIONS GUIO4(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH, GAMEOPTION_FIX_SOFTLOCKS, GAMEOPTION_NANCY2_TIMER)
+#define NANCY5_GUIOPTIONS GUIO3(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH, GAMEOPTION_FIX_SOFTLOCKS)
 
 static const Nancy::NancyGameDescription gameDescriptions[] = {
 
@@ -341,7 +342,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},
@@ -358,7 +359,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},
@@ -375,7 +376,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},
@@ -392,7 +393,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},*/
@@ -403,7 +404,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},
@@ -421,7 +422,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DROPPLATFORM | Nancy::GF_COMPRESSED,
-			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
+			NANCY5_GUIOPTIONS
 		},
 		Nancy::kGameTypeNancy5
 	},
