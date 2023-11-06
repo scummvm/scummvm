@@ -546,7 +546,7 @@ public:
 	}
 	void set_direction(sint16 rel_x, sint16 rel_y);
 	virtual void set_direction(uint8 d);
-	void face_location(MapCoord &loc);
+	void face_location(const MapCoord &loc);
 	virtual void face_location(uint16 lx, uint16 ly);
 	void face_actor(Actor *a);
 
@@ -590,7 +590,7 @@ public:
 	}
 
 // combat methods
-//void attack(MapCoord pos); // attack at a given map location
+	//void attack(const MapCoord &pos); // attack at a given map location
 	Obj *get_weapon_obj(sint8 readied_obj_location);
 	void attack(sint8 readied_obj_location, MapCoord target, Actor *foe = nullptr);
 	const CombatType *get_weapon(sint8 readied_obj_location);
@@ -600,7 +600,7 @@ public:
 	void hit(uint8 dmg, bool force_hit = false);
 	void reduce_hp(uint8 amount);
 	virtual void die(bool create_body = true);
-	void resurrect(MapCoord new_position, Obj *body_obj = nullptr);
+	void resurrect(const MapCoord &new_position, Obj *body_obj = nullptr);
 	uint8 get_range(uint16 target_x, uint16 target_y);
 	bool weapon_can_hit(const CombatType *weapon, uint16 target_x, uint16 target_y);
 	virtual bool weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hit_x, uint16 *hit_y) {
@@ -684,7 +684,7 @@ public:
 	uint16 get_custom_tile_num(uint16 obj_num) const;
 protected:
 
-	void loadSchedule(unsigned char *schedule_data, uint16 num);
+	void loadSchedule(const unsigned char *schedule_data, uint16 num);
 	virtual bool updateSchedule(uint8 hour, bool teleport = false);
 	uint16 getSchedulePos(uint8 hour);
 // uint16 getSchedulePos(uint8 hour, uint8 day_of_week);

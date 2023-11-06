@@ -81,7 +81,7 @@ public:
 	~Configuration();
 
 	// read config file. Multiple files may be read. Order is important.
-	bool readConfigFile(Std::string fname, Std::string root, bool readonly = true);
+	bool readConfigFile(const Std::string &fname, const Std::string &root, bool readonly = true);
 
 	// Returns true if default settings for game have previously been set
 	bool isDefaultsSet() const;
@@ -104,7 +104,7 @@ public:
 	void value(const Std::string &key, int &ret, int defaultvalue = 0);
 	void value(const Std::string &key, bool &ret, bool defaultvalue = false);
 
-	void pathFromValue(const Std::string &key, Std::string file, Std::string &full_path);
+	void pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path);
 
 	// set value
 	bool set(const Std::string &key, const Std::string &value);
@@ -121,7 +121,7 @@ public:
 	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
+	void getSubkeys(KeyTypeList &ktl, const Std::string &basekey);
 };
 
 } // End of namespace Nuvie

@@ -559,11 +559,11 @@ MapCoord MapWindow::get_cursorCoord() {
 	return (MapCoord(WRAPPED_COORD(cur_x + cursor_x, cur_level), cur_y + cursor_y, cur_level));
 }
 
-void MapWindow::get_level(uint8 *level) {
+void MapWindow::get_level(uint8 *level) const {
 	*level = cur_level;
 }
 
-void MapWindow::get_pos(uint16 *x, uint16 *y, uint8 *px, uint8 *py) {
+void MapWindow::get_pos(uint16 *x, uint16 *y, uint8 *px, uint8 *py) const {
 	*x = cur_x;
 	*y = cur_y;
 	if (px)
@@ -572,14 +572,14 @@ void MapWindow::get_pos(uint16 *x, uint16 *y, uint8 *px, uint8 *py) {
 		*py = cur_y_add;
 }
 
-void MapWindow::get_windowSize(uint16 *width, uint16 *height) {
+void MapWindow::get_windowSize(uint16 *width, uint16 *height) const {
 	*width = win_width;
 	*height = win_height;
 }
 
 /* Returns true if the location at the coordinates is visible on the map window.
  */
-bool MapWindow::in_window(uint16 x, uint16 y, uint8 z) {
+bool MapWindow::in_window(uint16 x, uint16 y, uint8 z) const {
 	return ((z == cur_level && WRAP_VIEWP(cur_x, x, map_width) < win_width
 	         && y >= cur_y && y <= (cur_y + win_height)));
 }
@@ -2557,10 +2557,10 @@ void MapWindow::set_overlay(Graphics::ManagedSurface *surfpt) {
 }
 
 /* Returns true if town tiles are within 5 tiles of the player */
-bool MapWindow::in_town() {
-	MapCoord player_loc = actor_manager->get_player()->get_location();
+bool MapWindow::in_town() const {
+	const MapCoord player_loc = actor_manager->get_player()->get_location();
 
-	for (Std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
+	for (Std::vector<TileInfo>::const_iterator ti = m_ViewableMapTiles.begin();
 	        ti != m_ViewableMapTiles.end(); ti++)
 		if (MapCoord((*ti).x + cur_x, (*ti).y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
 		        ((*ti).t->flags1 & TILEFLAG_WALL) && ((*ti).t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
@@ -2569,7 +2569,7 @@ bool MapWindow::in_town() {
 	return false;
 }
 
-void MapWindow::wizard_eye_start(MapCoord location, uint16 duration, CallBack *caller) {
+void MapWindow::wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller) {
 	wizard_eye_info.moves_left = duration;
 	wizard_eye_info.caller = caller;
 
@@ -2619,14 +2619,14 @@ void MapWindow::set_roof_mode(bool roofs) {
 }
 
 void MapWindow::loadRoofTiles() {
-	Std::string imagefile = map->getRoofTilesetFilename();
+	const Std::string imagefile = map->getRoofTilesetFilename();
 	roof_tiles = SDL_LoadBMP(imagefile.c_str());
 	if (roof_tiles) {
 		SDL_SetColorKey(roof_tiles, SDL_TRUE, SDL_MapRGB(roof_tiles->format, 0, 0x70, 0xfc));
 	}
 }
 
-bool MapWindow::in_dungeon_level() {
+bool MapWindow::in_dungeon_level() const {
 	if (game_type == NUVIE_GAME_MD) {
 		return (cur_level == 1 || cur_level > 3); //FIXME this should probably be moved into script.
 	}

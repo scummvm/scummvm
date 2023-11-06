@@ -50,7 +50,7 @@ Configuration::~Configuration() {
 		ConfMan.flushToDisk();
 }
 
-bool Configuration::readConfigFile(Std::string fname, Std::string root,
+bool Configuration::readConfigFile(const Std::string &fname, const Std::string &root,
 								   bool readonly) {
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
@@ -167,7 +167,7 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const Std::string &key, Std::string file, Std::string &full_path) {
+void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) {
 	value(key, full_path);
 
 	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
@@ -282,7 +282,7 @@ Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longf
 	return keys;
 }
 
-void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
+void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
 	for (Std::vector<Shared::XMLTree *>::iterator tree = _trees.begin();
 	        tree != _trees.end(); ++tree) {
 		Shared::XMLTree::KeyTypeList l;

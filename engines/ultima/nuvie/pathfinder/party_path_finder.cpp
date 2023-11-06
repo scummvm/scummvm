@@ -334,7 +334,7 @@ bool PartyPathFinder::try_all_directions(uint32 p, MapCoord target_loc) {
  * distance to 'target'. (near to far)
  */
 vector<MapCoord>
-PartyPathFinder::get_neighbor_tiles(MapCoord &center, MapCoord &target) {
+PartyPathFinder::get_neighbor_tiles(const MapCoord &center, const MapCoord &target) {
 	sint8 rel_x = get_wrapped_rel_dir(target.x, center.x, target.z);
 	sint8 rel_y = get_wrapped_rel_dir(target.y, center.y, target.z);
 	vector<MapCoord> neighbors;

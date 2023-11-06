@@ -407,11 +407,11 @@ void TileAnim::move_tile(PositionedTile *ptile, uint32 x, uint32 y) {
 
 /* Construct TimedEvent with effect duration as time.
  */
-HitAnim::HitAnim(MapCoord *loc) {
+HitAnim::HitAnim(const MapCoord &loc) {
 	hit_actor = nullptr;
 	add_tile(_mapWindow->get_tile_manager()->get_tile(257), // U6 HIT_EFFECT
 	         0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
 
@@ -670,11 +670,13 @@ void TossAnim::hit_actor(Actor *actor) {
 		message(MESG_ANIM_HIT, &actor_ent);
 }
 
-void TossAnim::hit_blocking(MapCoord obj_loc) {
+void TossAnim::hit_blocking(const MapCoord &obj_loc) {
 	assert(running == true);
 
-	if (blocking & TOSS_TO_BLOCKING)
-		message(MESG_ANIM_HIT_WORLD, &obj_loc);
+	if (blocking & TOSS_TO_BLOCKING) {
+		MapCoord loc = obj_loc;
+		message(MESG_ANIM_HIT_WORLD, &loc);
+	}
 }
 
 
@@ -743,10 +745,10 @@ void TossAnim::accumulate_moves(float moves, sint32 &x_move, sint32 &y_move, sin
 
 
 /*** ExplosiveAnim ***/
-ExplosiveAnim::ExplosiveAnim(MapCoord *start, uint32 size) {
+ExplosiveAnim::ExplosiveAnim(const MapCoord &start, uint32 size) {
 	exploding_tile_num = 393; // U6 FIREBALL_EFFECT
 
-	center = *start;
+	center = start;
 	radius = size;
 }
 
@@ -906,7 +908,7 @@ bool ExplosiveAnim::update() {
 /* Returns true if the explosion has already the particular thing this MapEntity
  * points to. (and shouldn't hit it again)
  */
-bool ExplosiveAnim::already_hit(MapEntity ent) {
+bool ExplosiveAnim::already_hit(const MapEntity &ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
@@ -1083,7 +1085,7 @@ void ProjectileAnim::hit_entity(MapEntity entity) {
 /* Returns true if the explosion has already the particular thing this MapEntity
  * points to. (and shouldn't hit it again)
  */
-bool ProjectileAnim::already_hit(MapEntity ent) {
+bool ProjectileAnim::already_hit(const MapEntity &ent) {
 	for (uint32 e = 0; e < hit_items.size(); e++)
 		if (hit_items[e].entity_type == ent.entity_type)
 			if (hit_items[e].data == ent.data)
@@ -1092,7 +1094,7 @@ bool ProjectileAnim::already_hit(MapEntity ent) {
 }
 
 /*** WingAnim ***/
-WingAnim::WingAnim(MapCoord t) {
+WingAnim::WingAnim(const MapCoord &t) {
 	TileManager *tile_manager = _mapWindow->get_tile_manager();
 
 	p_tile_top = nullptr;
@@ -1182,7 +1184,7 @@ bool WingAnim::update() {
 	return true;
 }
 
-HailstormAnim::HailstormAnim(MapCoord t) : target(t) {
+HailstormAnim::HailstormAnim(const MapCoord &t) : target(t) {
 	ARRAYCLEAR(hailstones);
 	hailstone_tile = Game::get_game()->get_tile_manager()->get_tile(0x18e); //hailstone tile.
 
@@ -1274,7 +1276,7 @@ sint8 HailstormAnim::find_free_hailstone() {
 	return -1;
 }
 
-TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
+TileFadeAnim::TileFadeAnim(const MapCoord &loc, Tile *from, Tile *to, uint16 speed) {
 	init(speed);
 
 	if (from != nullptr) {
@@ -1296,10 +1298,10 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed) {
 	}
 
 	add_tile(anim_tile, 0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
-TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed) {
+TileFadeAnim::TileFadeAnim(const MapCoord &loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed) {
 	init(speed);
 
 	if (reverse) {
@@ -1321,7 +1323,7 @@ TileFadeAnim::TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 co
 	}
 
 	add_tile(anim_tile, 0, 0);
-	move(loc->x, loc->y);
+	move(loc.x, loc.y);
 }
 
 TileFadeAnim::~TileFadeAnim() {

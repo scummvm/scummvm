@@ -186,10 +186,10 @@ bool Weather::is_moon_visible() const {
 
 string Weather::get_wind_dir_str() const {
 	if (display_from_wind_dir) {
-		const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
+		static const char from_names[9][3] = {"N", "E", "S", "W", "NE", "SE", "SW", "NW", "C"};
 		return from_names[wind_dir];
 	} else {
-		const char to_names[9][3] = {"S", "W", "N", "E", "SW", "NW", "NE", "SE", "C"};
+		static const char to_names[9][3] = {"S", "W", "N", "E", "SW", "NW", "NE", "SE", "C"};
 		return to_names[wind_dir];
 	}
 }

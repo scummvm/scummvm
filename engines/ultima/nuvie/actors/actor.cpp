@@ -255,7 +255,7 @@ void Actor::set_direction(sint16 rel_x, sint16 rel_y) {
 	set_direction(new_direction);
 }
 
-void Actor::face_location(MapCoord &loc) {
+void Actor::face_location(const MapCoord &loc) {
 	face_location(loc.x, loc.y);
 }
 
@@ -594,7 +594,7 @@ void Actor::set_in_party(bool state) {
 	}
 }
 
-/*void Actor::attack(MapCoord pos)
+/*void Actor::attack(const MapCoord &pos)
 {
  return;
 }*/
@@ -1176,14 +1176,13 @@ void Actor::all_items_to_container(Obj *container_obj, bool stack) {
 	return;
 }
 
-void Actor::loadSchedule(unsigned char *sched_data, uint16 num) {
-	uint16 i;
-	unsigned char *sched_data_ptr;
+void Actor::loadSchedule(const unsigned char *sched_data, uint16 num) {
 
 	sched = (Schedule **)malloc(sizeof(Schedule *) * (num + 1));
 	num_schedules = num;
-	sched_data_ptr = sched_data;
+	const unsigned char *sched_data_ptr = sched_data;
 
+	uint16 i;
 	for (i = 0; i < num; i++) {
 		sched[i] = (Schedule *)malloc(sizeof(Schedule));
 
@@ -1517,7 +1516,7 @@ void Actor::die(bool create_body) {
 		game->get_actor_manager()->clear_actor(this);
 }
 
-void Actor::resurrect(MapCoord new_position, Obj *body_obj) {
+void Actor::resurrect(const MapCoord &new_position, Obj *body_obj) {
 	U6Link *link;
 	bool remove_obj = false;
 

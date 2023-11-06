@@ -328,7 +328,7 @@ uint32 Obj::container_count_objects() {
 	return count;
 }
 
-bool Obj::is_ok_to_take() {
+bool Obj::is_ok_to_take() const {
 	return ((status & OBJ_STATUS_OK_TO_TAKE) || Game::get_game()->using_hackmove());
 }
 

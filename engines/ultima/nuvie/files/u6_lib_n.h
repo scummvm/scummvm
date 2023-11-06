@@ -56,10 +56,10 @@ public:
 	U6Lib_n();
 	~U6Lib_n();
 
-	bool open(Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
+	bool open(const Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
 	bool open(NuvieIO *new_data, uint8 size, uint8 type = NUVIE_GAME_U6);
 	void close();
-	bool create(Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
+	bool create(const Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
 	uint8 get_game_type() {
 		return game_type;
 	}

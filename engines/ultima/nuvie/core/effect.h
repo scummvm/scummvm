@@ -163,7 +163,7 @@ class ExpEffect : public ProjectileEffect {
 protected:
 	void start_anim() override;
 public:
-	ExpEffect(uint16 tileNum, MapCoord location);
+	ExpEffect(uint16 tileNum, const MapCoord &location);
 
 };
 
@@ -227,7 +227,7 @@ public:
 class HitEffect : public Effect {
 public:
 	HitEffect(Actor *target, uint32 duration = 300);
-	HitEffect(MapCoord location);
+	HitEffect(const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -237,7 +237,7 @@ class TextEffect : public Effect {
 
 public:
 	TextEffect(Std::string text);
-	TextEffect(Std::string text, MapCoord location);
+	TextEffect(Std::string text, const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -502,7 +502,7 @@ class TileFadeEffect : public TimedEffect {
 
 	uint16 num_anim_running;
 public:
-	TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type, uint16 speed);
+	TileFadeEffect(const MapCoord &loc, Tile *from, Tile *to, FadeType type, uint16 speed);
 	//TileFadeEffect(MapCoord loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
 	TileFadeEffect(Actor *a, uint16 speed);
 	~TileFadeEffect() override;
@@ -510,8 +510,8 @@ public:
 
 protected:
 	void add_actor_anim();
-	void add_fade_anim(MapCoord loc, Tile *tile);
-	void add_tile_anim(MapCoord loc, Tile *tile);
+	void add_fade_anim(const MapCoord &loc, Tile *tile);
+	void add_tile_anim(const MapCoord &loc, Tile *tile);
 	void add_obj_anim(Obj *obj);
 };
 
@@ -532,7 +532,7 @@ protected:
 	void init(uint8 fade_color, uint16 speed);
 	void add_actor_anim();
 	void add_obj_anim(Obj *o);
-	void add_tile_anim(MapCoord loc, Tile *tile);
+	void add_tile_anim(const MapCoord &loc, Tile *tile);
 };
 
 /* Briefly modify the mapwindow colors, disable map-blacking and player
@@ -622,7 +622,7 @@ public:
 	virtual void delete_self() {
 		Effect::delete_self();
 	}
-	WizardEyeEffect(MapCoord location, uint16 duration);
+	WizardEyeEffect(const MapCoord &location, uint16 duration);
 	~WizardEyeEffect() override { }
 };
 
@@ -682,7 +682,7 @@ class HailStormEffect : public Effect {
 protected:
 
 public:
-	HailStormEffect(MapCoord target);
+	HailStormEffect(const MapCoord &target);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };

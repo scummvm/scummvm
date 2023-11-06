@@ -76,7 +76,7 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(Configuration *config, Std::string filename, Std::string &path) {
+void config_get_path(Configuration *config, const Std::string &filename, Std::string &path) {
 	Std::string key, game_name, game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
@@ -92,7 +92,7 @@ void config_get_path(Configuration *config, Std::string filename, Std::string &p
 	path = tmp_path;
 }
 
-bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path) {
+bool find_casesensitive_path(const Std::string &path, const Std::string &filename, Std::string &new_path) {
 	vector<string> directories;
 	string tmp_path = path;
 
@@ -122,7 +122,7 @@ bool find_casesensitive_path(Std::string path, Std::string filename, Std::string
 	return true;
 }
 
-bool find_path(Std::string path, Std::string &dir_str) {
+static bool find_path(const Std::string &path, Std::string &dir_str) {
 	dir_str = path;
 	return true;
 #if 0
@@ -302,7 +302,7 @@ void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
 /* Where rect1 and rect2 merge, subtract and copy that rect to sub_rect.
  * Returns false if the rectangles don't intersect.
  */
-bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_rect) {
+bool subtract_rect(const Common::Rect *rect1, const Common::Rect *rect2, Common::Rect *sub_rect) {
 	uint16 rect1_x2 = rect1->right, rect1_y2 = rect1->bottom;
 	uint16 rect2_x2 = rect2->right, rect2_y2 = rect2->bottom;
 	uint16 x1, x2, y1, y2;
@@ -674,10 +674,10 @@ void *nuvie_realloc(void *ptr, size_t size) {
 }
 
 
-uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
+uint32 sdl_getpixel(const Graphics::ManagedSurface *surface, int x, int y) {
 	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	byte *p = (byte *)surface->getBasePtr(x, y);
+	const byte *p = (const byte *)surface->getBasePtr(x, y);
 
 	switch (bpp) {
 	case 1:
@@ -685,7 +685,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 		break;
 
 	case 2:
-		return *(uint16 *)p;
+		return *(const uint16 *)p;
 		break;
 
 	case 3:
@@ -693,7 +693,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 		break;
 
 	case 4:
-		return *(uint32 *)p;
+		return *(const uint32 *)p;
 		break;
 
 	default:
@@ -702,7 +702,7 @@ uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
 }
 
 
-void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, int TgtWidth) {
+static void scaleLine8Bit(unsigned char *Target, const unsigned char *Source, int SrcWidth, int TgtWidth) {
 	int NumPixels = TgtWidth;
 	int IntPart = SrcWidth / TgtWidth;
 	int FractPart = SrcWidth % TgtWidth;
@@ -720,13 +720,13 @@ void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, i
 }
 
 // Coarse 2D scaling from https://web.archive.org/web/20111011173251/http://www.compuphase.com/graphic/scale.htm
-void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight,
+void scale_rect_8bit(const unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight,
 					 int TgtWidth, int TgtHeight) {
 	int NumPixels = TgtHeight;
 	int IntPart = (SrcHeight / TgtHeight) * SrcWidth;
 	int FractPart = SrcHeight % TgtHeight;
 	int E = 0;
-	unsigned char *PrevSource = nullptr;
+	const unsigned char *PrevSource = nullptr;
 
 	while (NumPixels-- > 0) {
 		if (Source == PrevSource) {

@@ -316,7 +316,7 @@ public:
 	virtual void hit_target();
 	virtual void hit_object(Obj *obj);
 	virtual void hit_actor(Actor *actor);
-	virtual void hit_blocking(MapCoord obj_loc);
+	virtual void hit_blocking(const MapCoord &obj_loc);
 };
 
 // This is for off-center tiles. The tile will be moved down by the
@@ -344,12 +344,12 @@ class ExplosiveAnim : public TimedAnim {
 	vector<MapEntity> hit_items; // things the explosion has hit
 
 public:
-	ExplosiveAnim(MapCoord *start, uint32 size);
+	ExplosiveAnim(const MapCoord &start, uint32 size);
 	~ExplosiveAnim() override;
 	void start() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool update() override;
-	bool already_hit(MapEntity ent);
+	bool already_hit(const MapEntity &ent);
 	void hit_object(Obj *obj);
 	void hit_actor(Actor *actor);
 	void get_shifted_location(uint16 &x, uint16 &y, uint16 &px, uint16 &py,
@@ -386,7 +386,7 @@ public:
 
 protected:
 	void hit_entity(MapEntity entity);
-	bool already_hit(MapEntity ent);
+	bool already_hit(const MapEntity &ent);
 
 };
 
@@ -401,7 +401,7 @@ class WingAnim : public TileAnim {
 	PositionedTile *p_tile_bottom;
 
 public:
-	WingAnim(MapCoord target);
+	WingAnim(const MapCoord &target);
 	~WingAnim() override;
 	void start() override;
 	bool update() override;
@@ -425,7 +425,7 @@ class HailstormAnim : public TileAnim {
 	uint8 num_active;
 
 public:
-	HailstormAnim(MapCoord t);
+	HailstormAnim(const MapCoord &t);
 	~HailstormAnim() override;
 	void start() override;
 	bool update() override;
@@ -443,7 +443,7 @@ class HitAnim : public TimedAnim {
 	bool update() override;
 
 public:
-	HitAnim(MapCoord *loc);
+	HitAnim(const MapCoord &loc);
 	HitAnim(Actor *actor);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
@@ -478,8 +478,8 @@ class TileFadeAnim : public TileAnim {
 
 public:
 	TileFadeAnim();
-	TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed);
-	TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
+	TileFadeAnim(const MapCoord &loc, Tile *from, Tile *to, uint16 speed);
+	TileFadeAnim(const MapCoord &loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
 	~TileFadeAnim() override;
 
 	bool update() override;

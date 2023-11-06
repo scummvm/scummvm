@@ -1048,7 +1048,7 @@ void ActorManager::print_actor(Actor *actor) {
 	actor->print();
 }
 
-bool ActorManager::can_put_actor(MapCoord location) {
+bool ActorManager::can_put_actor(const MapCoord &location) {
 	if (!map->is_passable(location.x, location.y, location.z))
 		return false;
 
@@ -1108,7 +1108,7 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 	return true;
 }
 
-void ActorManager::loadCustomBaseTiles(Std::string datadir) {
+void ActorManager::loadCustomBaseTiles(const Std::string &datadir) {
 	Std::string imagefile;
 	build_path(datadir, "custom_tiles.bmp", imagefile);
 
@@ -1116,7 +1116,7 @@ void ActorManager::loadCustomBaseTiles(Std::string datadir) {
 	tile_manager->loadCustomTiles(Game::get_game()->get_data_file_path(imagefile), true, true, 0);
 }
 
-void ActorManager::loadAvatarTiles(Std::string datadir) {
+void ActorManager::loadAvatarTiles(const Std::string &datadir) {
 	Std::string imagefile;
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
@@ -1147,7 +1147,7 @@ void ActorManager::loadAvatarTiles(Std::string datadir) {
 	return;
 }
 
-void ActorManager::loadNPCTiles(Std::string datadir) {
+void ActorManager::loadNPCTiles(const Std::string &datadir) {
 	Std::string imagefile;
 
 	Std::set<Std::string> files = getCustomTileFilenames(datadir, "actor_");
@@ -1174,7 +1174,7 @@ void ActorManager::loadNPCTiles(Std::string datadir) {
 	return;
 }
 
-Std::set<Std::string> ActorManager::getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix) {
+Std::set<Std::string> ActorManager::getCustomTileFilenames(const Std::string &datadir, const Std::string &filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
 	Std::string path;

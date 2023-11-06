@@ -68,7 +68,7 @@ EventInput_s::~EventInput_s() {
 	if (loc) delete loc;
 }
 
-void EventInput_s::set_loc(MapCoord c) {
+void EventInput_s::set_loc(const MapCoord &c) {
 	if ((type == EVENTINPUT_MAPCOORD || type == EVENTINPUT_MAPCOORD_DIR) && loc != 0) delete loc;
 	loc = new MapCoord(c);
 }
@@ -903,7 +903,7 @@ bool Events::get(sint16 rel_x, sint16 rel_y) {
 	return get(MapCoord((uint16)(x + rel_x), (uint16)(y + rel_y), level));
 }
 
-bool Events::get(MapCoord coord) {
+bool Events::get(const MapCoord &coord) {
 	Obj *obj = obj_manager->get_obj(coord.x, coord.y, coord.z, OBJ_SEARCH_TOP, OBJ_EXCLUDE_IGNORED);
 	bool got_object;
 	if (!game->is_new_style())
@@ -1018,7 +1018,7 @@ bool Events::use(sint16 rel_x, sint16 rel_y) {
 	return use(map_window->get_cursorCoord());
 }
 
-bool Events::use(MapCoord coord) {
+bool Events::use(const MapCoord &coord) {
 	if (game->user_paused())
 		return false;
 
@@ -1445,7 +1445,7 @@ bool Events::pushFrom(sint16 rel_x, sint16 rel_y) {
 }
 
 /* Select object to move. */
-bool Events::pushFrom(MapCoord target) {
+bool Events::pushFrom(const MapCoord &target) {
 	ActorManager *actor_manager = game->get_actor_manager();
 	Script *script = game->get_script();
 	MapCoord from = player->get_actor()->get_location();

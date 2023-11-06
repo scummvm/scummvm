@@ -297,10 +297,10 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 	uint8 impedance = 0;
 
 	if (!ignore_objects) {
-		U6LList *obj_list = obj_manager->get_obj_list(x, y, level);
+		const U6LList *obj_list = obj_manager->get_obj_list(x, y, level);
 		if (obj_list) {
-			for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
-				Obj *obj = (Obj *)link->data;
+			for (const U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+				const Obj *obj = (Obj *)link->data;
 				if (obj != nullptr) {
 					uint8 tile_flag = obj_manager->get_obj_tile(obj->obj_n, obj->frame_n)->flags1;
 					if ((tile_flag & TILEFLAG_BLOCKING) == 0) {
@@ -456,7 +456,7 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	return true;
 }
 
-bool Map::has_roof(uint16 x, uint16 y, uint8 level) {
+bool Map::has_roof(uint16 x, uint16 y, uint8 level) const {
 	if (!roof_mode || level != 0)
 		return false;
 

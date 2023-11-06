@@ -110,7 +110,7 @@ public:
 	void stipple_8bit(uint8 color_num, uint16 x, uint16 y, uint16 w, uint16 h);
 	void put_pixel(uint8 colour_num, uint16 x, uint16 y);
 
-	bool blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, Common::Rect *clip_rect = nullptr, uint8 opacity = 255);
+	bool blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans = false, const Common::Rect *clip_rect = nullptr, uint8 opacity = 255);
 	void blitbitmap(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
 	void buildalphamap8();

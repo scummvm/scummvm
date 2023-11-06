@@ -48,7 +48,7 @@ typedef enum {
 
 Std::string config_get_game_key(Configuration *config);
 const char *get_game_tag(int game_type);
-void config_get_path(Configuration *config, Std::string filename, Std::string &path);
+void config_get_path(Configuration *config, const Std::string &filename, Std::string &path);
 uint8 get_game_type(const char *string);
 nuvie_game_t get_game_type(Configuration *config);
 void build_path(Std::string path, Std::string filename, Std::string &full_path);
@@ -59,7 +59,7 @@ void print_b16(DebugLevelType level, uint16 num);
 void print_indent(DebugLevelType level, uint8 indent);
 void print_bool(DebugLevelType level, bool state, const char *yes = "true", const char *no = "false");
 void print_flags(DebugLevelType level, uint8 num, const char *f[8]);
-bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_rect);
+bool subtract_rect(const Common::Rect *rect1, const Common::Rect *rect2, Common::Rect *sub_rect);
 uint8 get_nuvie_dir_code(uint8 original_dir_code);
 sint8 get_original_dir_code(uint8 nuvie_dir_code);
 uint8 get_direction_code(sint16 rel_x, sint16 rel_y);
@@ -78,7 +78,7 @@ inline bool point_in_rect(uint16 x, uint16 y, Common::Rect *rect) {
 
 /* Does line xy->x2y2 cross rect, to any extent?
  */
-inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, Common::Rect *rect) {
+inline bool line_in_rect(uint16 x1, uint16 y1, uint16 x2, uint16 y2, const Common::Rect *rect) {
 	uint16 rx2 = rect->right, ry2 = rect->bottom;
 	return (((y1 >= rect->top && y1 <= ry2 && x1 <= rx2 && x2 >= rect->left)
 	         || (x1 >= rect->left && x1 <= rx2 && y1 <= ry2 && y2 >= rect->top)));
@@ -105,9 +105,9 @@ bool string_i_compare(const Std::string &s1, const Std::string &s2);
 
 void *nuvie_realloc(void *ptr, size_t size);
 
-uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y);
+uint32 sdl_getpixel(const Graphics::ManagedSurface *surface, int x, int y);
 
-void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight, int TgtWidth, int TgtHeight);
+void scale_rect_8bit(const unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight, int TgtWidth, int TgtHeight);
 
 bool has_file_extension(const char *filename, const char *extension);
 

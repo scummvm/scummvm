@@ -167,7 +167,7 @@ public:
 	Tile *get_anim_base_tile(uint16 tile_num);
 	Tile *get_original_tile(uint16 tile_num);
 	void set_tile_index(uint16 tile_index, uint16 tile_num);
-	uint16 get_tile_index(uint16 tile_index) {
+	uint16 get_tile_index(uint16 tile_index) const {
 		return tileindex[tile_index];
 	}
 	void set_anim_loop(uint16 tile_num, sint8 loopc, uint8 loop = 0);
@@ -177,13 +177,13 @@ public:
 	void update();
 	void update_timed_tiles(uint8 hour);
 
-	uint8 get_number_of_animations() {
+	uint8 get_number_of_animations() const {
 		return animdata.number_of_tiles_to_animate;
 	}
-	uint16 get_anim_tile(uint8 anim_index) {
+	uint16 get_anim_tile(uint8 anim_index) const {
 		return anim_index < animdata.number_of_tiles_to_animate ? animdata.tile_to_animate[anim_index] : 0;
 	}
-	uint16 get_anim_first_frame(uint8 anim_index) {
+	uint16 get_anim_first_frame(uint8 anim_index) const {
 		return anim_index < animdata.number_of_tiles_to_animate ? animdata.first_anim_frame[anim_index] : 0;
 	}
 	void set_anim_first_frame(uint16 anim_index, uint16 new_start_tile_num);

@@ -125,7 +125,7 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 
 	switch (msg) {
 	case MESG_ANIM_HIT_WORLD: {
-		MapCoord *hit_loc = static_cast<MapCoord *>(msg_data);
+		const MapCoord *hit_loc = static_cast<const MapCoord *>(msg_data);
 		const Tile *obj_tile = game->get_obj_manager()->get_obj_tile(hit_loc->x, hit_loc->y, hit_loc->z);
 		const Tile *tile = game->get_game_map()->get_tile(hit_loc->x, hit_loc->y,
 		             hit_loc->z);
@@ -133,7 +133,7 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 		if ((tile->flags2 & TILEFLAG_MISSILE_BOUNDARY)
 		        || (obj_tile && (obj_tile->flags2 & TILEFLAG_MISSILE_BOUNDARY))) {
 			//new ExplosiveEffect(hit_loc->x, hit_loc->y, 2);
-			new ExpEffect(EXP_EFFECT_TILE_NUM, MapCoord(hit_loc->x, hit_loc->y, hit_loc->z));
+			new ExpEffect(EXP_EFFECT_TILE_NUM, *hit_loc);
 			stop_effect = true;
 		}
 		break;
@@ -186,7 +186,7 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 #define EXP_EFFECT_SPEED 3
 
 
-ExpEffect::ExpEffect(uint16 tileNum, MapCoord location) : ProjectileEffect(),
+ExpEffect::ExpEffect(uint16 tileNum, const MapCoord &location) : ProjectileEffect(),
 		exp_tile_num(tileNum), usecode(nullptr), obj(nullptr) {
 	start_loc = location;
 	start_anim();
@@ -453,9 +453,9 @@ HitEffect::HitEffect(Actor *target, uint32 duration) {
 	Game::get_game()->get_sound_manager()->playSfx(NUVIE_SFX_HIT); //FIXME use NUVIE_SFX_SAMPLE defines here.
 }
 
-HitEffect::HitEffect(MapCoord location) {
+HitEffect::HitEffect(const MapCoord &location) {
 	game->pause_user();
-	add_anim(new HitAnim(&location));
+	add_anim(new HitAnim(location));
 	Game::get_game()->get_sound_manager()->playSfx(NUVIE_SFX_HIT); //FIXME use NUVIE_SFX_SAMPLE defines here.
 }
 
@@ -483,7 +483,7 @@ TextEffect::TextEffect(Std::string text) { // default somewhat centered on playe
 /*** TextEffect ***/
 /* Print Text to MapWindow for duration
  */
-TextEffect::TextEffect(Std::string text, MapCoord location) {
+TextEffect::TextEffect(Std::string text, const MapCoord &location) {
 	add_anim(new TextAnim(text, location, 1500));
 }
 
@@ -513,7 +513,7 @@ ExplosiveEffect::ExplosiveEffect(uint16 x, uint16 y, uint32 size, uint16 dmg)
 void ExplosiveEffect::start_anim() {
 	game->pause_world();
 	game->pause_user();
-	add_anim(new ExplosiveAnim(&start_at, radius));
+	add_anim(new ExplosiveAnim(start_at, radius));
 }
 
 
@@ -1287,28 +1287,18 @@ uint16 VanishEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 
 /* TileFadeEffect */
-TileFadeEffect::TileFadeEffect(MapCoord loc, Tile *from, Tile *to, FadeType type, uint16 speed) {
-	anim = nullptr;
-	to_tile = nullptr;
-	anim_tile = nullptr;
-	actor = nullptr;
-	color_from = color_to = 0;
-	inc_reverse = false;
-	spd = 0;
-	add_anim(new TileFadeAnim(&loc, from, to, speed));
+TileFadeEffect::TileFadeEffect(const MapCoord &loc, Tile *from, Tile *to, FadeType type, uint16 speed)
+		: anim(nullptr), to_tile(nullptr), anim_tile(nullptr), actor(nullptr),
+		  color_from(0), color_to(0), inc_reverse(false), spd(0) {
+	add_anim(new TileFadeAnim(loc, from, to, speed));
 	num_anim_running = 1;
 }
 
 //Fade out actor.
-TileFadeEffect::TileFadeEffect(Actor *a, uint16 speed) {
-	inc_reverse = false;
-	anim = nullptr;
-	to_tile = nullptr;
-	anim_tile = nullptr;
-	actor = a;
-	color_from = color_to = 0;
-	spd = speed;
-	num_anim_running = 0;
+TileFadeEffect::TileFadeEffect(Actor *a, uint16 speed)
+		: anim(nullptr), to_tile(nullptr), anim_tile(nullptr), actor(a),
+		  color_from(0), color_to(0), inc_reverse(false), spd(speed),
+		  num_anim_running(0) {
 	add_actor_anim();
 	actor->hide();
 }
@@ -1338,12 +1328,13 @@ void TileFadeEffect::add_obj_anim(Obj *obj) {
 	add_tile_anim(loc, obj_manager->get_obj_tile(obj->obj_n, obj->frame_n));
 }
 
-void TileFadeEffect::add_fade_anim(MapCoord loc, Tile *tile) {
-	add_anim(new TileFadeAnim(&loc, tile, nullptr, spd));
+void TileFadeEffect::add_fade_anim(const MapCoord &loc, Tile *tile) {
+	add_anim(new TileFadeAnim(loc, tile, nullptr, spd));
 	num_anim_running++;
 }
 
-void TileFadeEffect::add_tile_anim(MapCoord loc, Tile *tile) {
+void TileFadeEffect::add_tile_anim(const MapCoord &loc_, Tile *tile) {
+	MapCoord loc = loc_;
 	TileManager *tile_manager = Game::get_game()->get_tile_manager();
 	uint16 tile_num = tile->tile_num;
 
@@ -1443,17 +1434,18 @@ void TileBlackFadeEffect::add_obj_anim(Obj *o) {
 	add_tile_anim(loc, from);
 }
 
-void TileBlackFadeEffect::add_tile_anim(MapCoord loc, Tile *tile) {
+void TileBlackFadeEffect::add_tile_anim(const MapCoord &loc_, Tile *tile) {
 	TileManager *tile_manager = Game::get_game()->get_tile_manager();
 	uint16 tile_num = tile->tile_num;
 
-	add_anim(new TileFadeAnim(&loc, tile, 0, color, reverse, fade_speed));
+	add_anim(new TileFadeAnim(loc_, tile, 0, color, reverse, fade_speed));
 	num_anim_running++;
 
+	MapCoord loc = loc_;
 	if (tile->dbl_width) {
 		tile_num--;
 		loc.x -= 1;
-		add_anim(new TileFadeAnim(&loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
+		add_anim(new TileFadeAnim(loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
 		num_anim_running++;
 		loc.x += 1;
 	}
@@ -1461,7 +1453,7 @@ void TileBlackFadeEffect::add_tile_anim(MapCoord loc, Tile *tile) {
 	if (tile->dbl_height) {
 		tile_num--;
 		loc.y -= 1;
-		add_anim(new TileFadeAnim(&loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
+		add_anim(new TileFadeAnim(loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
 		num_anim_running++;
 		loc.y += 1;
 	}
@@ -1470,7 +1462,7 @@ void TileBlackFadeEffect::add_tile_anim(MapCoord loc, Tile *tile) {
 		tile_num--;
 		loc.x -= 1;
 		loc.y -= 1;
-		add_anim(new TileFadeAnim(&loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
+		add_anim(new TileFadeAnim(loc, tile_manager->get_tile(tile_num), 0, color, reverse, fade_speed));
 		num_anim_running++;
 		loc.x += 1;
 		loc.y += 1;
@@ -1642,7 +1634,7 @@ uint16 PauseEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return 0;
 }
 
-WizardEyeEffect::WizardEyeEffect(MapCoord location, uint16 duration) {
+WizardEyeEffect::WizardEyeEffect(const MapCoord &location, uint16 duration) {
 	game->get_map_window()->wizard_eye_start(location, duration, this);
 }
 
@@ -1821,7 +1813,7 @@ uint16 WingStrikeEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	return 0;
 }
 
-HailStormEffect::HailStormEffect(MapCoord target) {
+HailStormEffect::HailStormEffect(const MapCoord &target) {
 	add_anim(new HailstormAnim(target));
 }
 

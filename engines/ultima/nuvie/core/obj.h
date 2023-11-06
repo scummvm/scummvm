@@ -110,7 +110,7 @@ public:
 		return (nuvie_status & NUVIE_OBJ_STATUS_ACTOR_OBJ);
 	}
 
-	bool is_ok_to_take();
+	bool is_ok_to_take() const;
 	bool is_invisible() const {
 		return (status & OBJ_STATUS_INVISIBLE);
 	}

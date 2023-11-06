@@ -230,7 +230,7 @@ public:
 	~ConvScript();
 
 	void read_script();
-	bool loaded() {
+	bool loaded() const {
 		return ((buf && buf_len));    // script is loaded?
 	}
 
@@ -257,10 +257,10 @@ public:
 		skip(offset);
 	}
 
-	uint32 pos()                    {
+	uint32 pos() const {
 		return buf_pt - buf;
 	}
-	bool overflow(uint32 ptadd = 0) {
+	bool overflow(uint32 ptadd = 0) const {
 		return (((pos() + ptadd) >= buf_len));
 	}
 	convscript_buffer get_buffer(uint32 ptadd = 0) {

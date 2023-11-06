@@ -142,16 +142,16 @@ public:
 	bool is_damaging(uint16 x, uint16 y, uint8 level);
 	uint8 is_passable(uint16 x, uint16 y, uint8 level);
 	bool is_forced_passable(uint16 x, uint16 y, uint8 level);
-	bool is_stackable(Obj *obj);
-	bool is_breakable(Obj *obj);
+	bool is_stackable(const Obj *obj);
+	bool is_breakable(const Obj *obj);
 	bool can_store_obj(Obj *target, Obj *src); // Bag, open chest, spellbook.
 	bool can_get_obj(Obj *obj);
 	bool has_reduced_weight(uint16 obj_n);
-	bool has_reduced_weight(Obj *obj) {
+	bool has_reduced_weight(const Obj *obj) {
 		return has_reduced_weight(obj->obj_n);
 	}
-	bool has_toptile(Obj *obj);
-	bool obj_is_damaging(Obj *obj, Actor *actor = nullptr); // if actor, it will damage and display text
+	bool has_toptile(const Obj *obj);
+	bool obj_is_damaging(const Obj *obj, Actor *actor = nullptr); // if actor, it will damage and display text
 	bool is_door(uint16 x, uint16 y, uint8 level);
 
 	U6LList *get_obj_list(uint16 x, uint16 y, uint8 level);
@@ -168,8 +168,8 @@ public:
 	Obj *get_tile_obj(uint16 obj_n);
 
 	uint16 get_obj_tile_num(uint16 obj_num);
-	inline bool is_corpse(Obj *obj);
-	uint16 get_obj_tile_num(Obj *obj);
+	inline bool is_corpse(const Obj *obj);
+	uint16 get_obj_tile_num(const Obj *obj);
 	void set_obj_tile_num(uint16 obj_num, uint16 tile_num);
 
 	U6LList *get_actor_inventory(uint16 actor_num);
@@ -184,7 +184,7 @@ public:
 	bool remove_obj_type_from_location(uint16 obj_n, uint16 x, uint16 y, uint8 z);
 
 
-	Obj *copy_obj(Obj *obj);
+	Obj *copy_obj(const Obj *obj);
 	const char *look_obj(Obj *obj, bool show_prefix = false);
 	Obj *get_obj_from_stack(Obj *obj, uint32 count);
 
@@ -242,7 +242,7 @@ protected:
 public:
 	void print_object_list();
 	void print_egg_list();
-	void print_obj(Obj *obj, bool in_container, uint8 indent = 0);
+	void print_obj(const Obj *obj, bool in_container, uint8 indent = 0);
 };
 
 } // End of namespace Nuvie

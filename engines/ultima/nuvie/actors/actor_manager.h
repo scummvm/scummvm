@@ -114,7 +114,7 @@ public:
 	bool toss_actor(Actor *actor, uint16 xrange, uint16 yrange);
 	bool toss_actor_get_location(uint16 start_x, uint16 start_y, uint8 start_z, uint16 xrange, uint16 yrange, MapCoord *location);
 	void print_actor(Actor *actor);
-	bool can_put_actor(MapCoord location);
+	bool can_put_actor(const MapCoord &location);
 	void enable_temp_actor_cleaning(bool value) {
 		should_clean_temp_actors = value;
 	}
@@ -136,10 +136,10 @@ protected:
 private:
 
 	bool loadCustomTiles(nuvie_game_t game_type);
-	void loadNPCTiles(Std::string datadir);
-	void loadAvatarTiles(Std::string datadir);
-	void loadCustomBaseTiles(Std::string datadir);
-	Std::set<Std::string> getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix);
+	void loadNPCTiles(const Std::string &datadir);
+	void loadAvatarTiles(const Std::string &datadir);
+	void loadCustomBaseTiles(const Std::string &datadir);
+	Std::set<Std::string> getCustomTileFilenames(const Std::string &datadir, const Std::string &filenamePrefix);
 };
 
 } // End of namespace Nuvie

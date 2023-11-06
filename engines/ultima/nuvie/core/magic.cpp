@@ -337,7 +337,7 @@ void Magic::cast_spell_directly(uint8 spell_num) {
 		process_script_return(magic_script->start());
 }
 
-bool Magic::resume(MapCoord location) {
+bool Magic::resume(const MapCoord &location) {
 	if (magic_script) {
 		process_script_return(magic_script->resume_with_location(location));
 	}

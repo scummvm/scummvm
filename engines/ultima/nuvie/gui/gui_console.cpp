@@ -67,7 +67,7 @@ void GUI_Console:: Display(bool full_redraw) {
 	return;
 }
 
-void GUI_Console::AddLine(Std::string line) {
+void GUI_Console::AddLine(const Std::string &line) {
 	uint16 len = line.length();
 	uint16 i;
 

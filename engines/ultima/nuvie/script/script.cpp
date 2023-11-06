@@ -417,7 +417,7 @@ static bool get_tbl_field_string(lua_State *L, const char *index, char *field, u
 	return true;
 }
 
-uint8 ScriptThread::resume_with_location(MapCoord loc) {
+uint8 ScriptThread::resume_with_location(const MapCoord &loc) {
 	lua_newtable(L);
 	lua_pushstring(L, "x");
 	lua_pushinteger(L, loc.x);

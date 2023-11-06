@@ -49,7 +49,7 @@ Console::~Console() {
 
 }
 
-void Console::AddLine(Std::string line) {
+void Console::AddLine(const Std::string &line) {
 	GUI_Console::AddLine(line);
 
 	if (status == WIDGET_VISIBLE) {
@@ -88,7 +88,7 @@ void ConsoleAddInfo(const char *format, ...) {
 	}
 }
 
-void ConsoleAddError(Std::string s) {
+void ConsoleAddError(const Std::string &s) {
 	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_ERROR, "%s\n", s.c_str());
 		g_console->Show();
@@ -96,7 +96,7 @@ void ConsoleAddError(Std::string s) {
 	}
 }
 
-void ConsoleAddWarning(Std::string s) {
+void ConsoleAddWarning(const Std::string &s) {
 	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_WARNING, "%s\n", s.c_str());
 		g_console->AddLine("Warning: " + s);

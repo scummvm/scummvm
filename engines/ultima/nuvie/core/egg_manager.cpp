@@ -234,7 +234,7 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 	return false;
 }
 
-uint8 EggManager::get_worktype(Obj *embryo) {
+uint8 EggManager::get_worktype(const Obj *embryo) {
 	if (gametype == NUVIE_GAME_U6
 	        && (embryo->obj_n == OBJ_U6_WINGED_GARGOYLE || embryo->obj_n == OBJ_U6_GARGOYLE)
 	        && (Game::get_game()->get_party()->has_obj(OBJ_U6_AMULET_OF_SUBMISSION, 0, false)

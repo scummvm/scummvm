@@ -162,7 +162,7 @@ struct EventInput_s {
 	MapCoord *loc; // target location, or direction if relative ???
 	Std::string *str; // ???
 //    };
-	void set_loc(MapCoord c);
+	void set_loc(const MapCoord &c);
 	EventInput_s() : loc(0), str(0), obj(0), actor(0), get_direction(false), get_text(false),
 		target_init(0), select_from_inventory(false), select_range(0), key(Common::KEYCODE_INVALID),
 		action_key_type(ActionKeyType::CANCEL_ACTION_KEY), spell_num(0), type(0) {
@@ -265,7 +265,7 @@ public:
 	}
 	void set_mode(EventMode new_mode);
 
-	bool is_direction_selecting_targets() {
+	bool is_direction_selecting_targets() const {
 		return direction_selects_target;
 	}
 	void set_direction_selects_target(bool val) {
@@ -321,12 +321,12 @@ public:
 
 	bool use_start();
 	bool use(sint16 rel_x, sint16 rel_y);
-	bool use(MapCoord coord);
+	bool use(const MapCoord &coord);
 	bool use(Obj *obj);
 	bool use(Actor *actor, uint16 x, uint16 y);
 
 	bool get_start();
-	bool get(MapCoord coord);
+	bool get(const MapCoord &coord);
 	bool get(sint16 rel_x, sint16 rel_y);
 	bool perform_get(Obj *obj, Obj *container_obj = nullptr, Actor *actor = nullptr);
 
@@ -347,7 +347,7 @@ public:
 	bool push_start();
 	bool pushFrom(Obj *obj);
 	bool pushFrom(sint16 rel_x, sint16 rel_y);
-	bool pushFrom(MapCoord target);
+	bool pushFrom(const MapCoord &target);
 	bool pushTo(Obj *obj, Actor *actor);
 	bool pushTo(sint16 rel_x, sint16 rel_y, bool push_from = PUSH_FROM_PLAYER);
 

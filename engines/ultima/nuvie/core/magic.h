@@ -108,7 +108,7 @@ public:
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data = nullptr) override;
 	bool process_script_return(uint8 ret);
-	bool resume(MapCoord location);
+	bool resume(const MapCoord &location);
 	bool resume(uint8 dir);
 	bool resume_with_spell_num(uint8 spell_num);
 	bool resume(Obj *obj);

@@ -82,7 +82,7 @@ public:
 
 protected:
 
-	uint8 get_worktype(Obj *embryo);
+	uint8 get_worktype(const Obj *embryo);
 	bool not_spawning_actors;
 };
 

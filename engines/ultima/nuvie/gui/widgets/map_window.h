@@ -264,22 +264,22 @@ public:
 	AnimManager *get_anim_manager() {
 		return anim_manager;
 	}
-	Common::Rect *get_clip_rect()       {
+	const Common::Rect *get_clip_rect() const {
 		return &clip_rect;
 	}
 	Graphics::ManagedSurface *get_overlay();
 
-	void get_level(uint8 *level);
-	void get_pos(uint16 *x, uint16 *y, uint8 *px = nullptr, uint8 *py = nullptr);
-	void get_velocity(sint16 *vx, sint16 *vy) {
+	void get_level(uint8 *level) const;
+	void get_pos(uint16 *x, uint16 *y, uint8 *px = nullptr, uint8 *py = nullptr) const;
+	void get_velocity(sint16 *vx, sint16 *vy) const {
 		*vx = vel_x;
 		*vy = vel_y;
 	}
-	void get_windowSize(uint16 *width, uint16 *height);
+	void get_windowSize(uint16 *width, uint16 *height) const;
 
-	bool in_window(uint16 x, uint16 y, uint8 z);
-	bool in_dungeon_level();
-	bool in_town();
+	bool in_window(uint16 x, uint16 y, uint8 z) const;
+	bool in_dungeon_level() const;
+	bool in_town() const;
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
 	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
@@ -329,7 +329,7 @@ public:
 
 	Std::vector<Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
-	void wizard_eye_start(MapCoord location, uint16 duration, CallBack *caller);
+	void wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller);
 
 	bool using_map_tile_lighting;
 

@@ -634,7 +634,7 @@ bool ObjManager::is_damaging(uint16 x, uint16 y, uint8 level) {
 	return false;
 }
 
-bool ObjManager::is_stackable(Obj *obj) {
+bool ObjManager::is_stackable(const Obj *obj) {
 // Tile *tile;
 
 	if (obj == nullptr)
@@ -769,7 +769,7 @@ bool ObjManager::is_stackable(Obj *obj) {
 	return (bool)obj_stackable[obj->obj_n];
 }
 
-bool ObjManager::is_breakable(Obj *obj) {
+bool ObjManager::is_breakable(const Obj *obj) {
 	if (game_type == NUVIE_GAME_U6) {
 		switch (obj->obj_n) {
 		case OBJ_U6_FLASK_OF_OIL:
@@ -993,7 +993,7 @@ bool ObjManager::has_reduced_weight(uint16 obj_n) {
 	return false;
 }
 
-bool ObjManager::has_toptile(Obj *obj) {
+bool ObjManager::has_toptile(const Obj *obj) {
 	Tile *tile;
 	uint8 i = 1;
 
@@ -1077,7 +1077,7 @@ const Tile *ObjManager::get_obj_dmg_tile(uint16 x, uint16 y, uint8 level) {
 	return nullptr;
 }
 
-bool ObjManager::obj_is_damaging(Obj *obj, Actor *actor) {
+bool ObjManager::obj_is_damaging(const Obj *obj, Actor *actor) {
 	if (!obj)
 		return false;
 
@@ -1311,7 +1311,7 @@ bool ObjManager::remove_obj_type_from_location(uint16 obj_n, uint16 x, uint16 y,
 	return objects_deleted;
 }
 
-Obj *ObjManager::copy_obj(Obj *obj) {
+Obj *ObjManager::copy_obj(const Obj *obj) {
 	Obj *new_obj;
 
 	if (obj == nullptr)
@@ -1419,7 +1419,7 @@ uint16 ObjManager::get_obj_tile_num(uint16 obj_num) { //assume obj_num is < 1024
 	return obj_to_tile[obj_num];
 }
 
-inline bool ObjManager::is_corpse(Obj *obj) {
+inline bool ObjManager::is_corpse(const Obj *obj) {
 	if (game_type == NUVIE_GAME_U6) {
 		switch (obj->obj_n) {
 		case OBJ_U6_DEAD_BODY:
@@ -1450,7 +1450,7 @@ inline bool ObjManager::is_corpse(Obj *obj) {
 	return false;
 }
 
-uint16 ObjManager::get_obj_tile_num(Obj *obj) { //assume obj_num is < 1024 :)
+uint16 ObjManager::get_obj_tile_num(const Obj *obj) { //assume obj_num is < 1024 :)
 	if (custom_actor_tiles && is_corpse(obj)) {
 		return Game::get_game()->get_actor_manager()->get_actor(obj->quality)->get_custom_tile_num(obj->obj_n);
 	}
@@ -1864,7 +1864,7 @@ inline void ObjManager::print_egg_tree(iAVLTree *obj_tree) {
 	return;
 }
 
-void ObjManager::print_obj(Obj *obj, bool in_container, uint8 indent) {
+void ObjManager::print_obj(const Obj *obj, bool in_container, uint8 indent) {
 	U6Link *link;
 	Obj *container_obj;
 	const CombatType *c_type = nullptr;
