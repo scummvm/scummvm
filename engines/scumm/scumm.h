@@ -581,7 +581,7 @@ public:
 
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
-	bool enhancementClassActive(int32 cls);
+	bool enhancementEnabled(int32 cls);
 	void syncSoundSettings() override;
 
 	Common::Error loadGameState(int slot) override;

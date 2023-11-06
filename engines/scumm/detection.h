@@ -45,10 +45,10 @@ namespace Scumm {
 *  if that's the case... congratulations, you've come to the right place! :-)
 *
 *  Marking a piece of code as an enhancement is as simple as guarding it with
-*  a conditional check using the enhancementClassActive(<class>) function.
+*  a conditional check using the enhancementEnabled(<class>) function.
 *  For example:
 *
-*      if (enhancementClassActive(<kMyBeautifulEnhancementClass>)) {
+*      if (enhancementEnabled(<kMyBeautifulEnhancementClass>)) {
 *          // Piece of code which makes Guybrush hair white
 *      }
 *

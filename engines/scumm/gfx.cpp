@@ -2223,7 +2223,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// FM-TOWNS release.  We take care not to apply this palette change to the
 	// text or inventory, as they still require the original colors.
 	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
-		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->enhancementClassActive(kEnhMinorBugFixes)) {
+		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 		if (_roomPalette[11] == 11 && _roomPalette[86] == 86)
 			_roomPalette[11] = 86;
 		if (_roomPalette[13] == 13 && _roomPalette[80] == 80)
@@ -2246,7 +2246,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_vm->_currentRoom == 36 &&
 			vs->number == kMainVirtScreen &&
 			y == 8 && x >= 7 && x <= 30 && height == 88 &&
-			_vm->enhancementClassActive(kEnhVisualChanges)) {
+			_vm->enhancementEnabled(kEnhVisualChanges)) {
 		_roomPalette[47] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
@@ -2267,7 +2267,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_vm->_currentRoom == 11 &&
 			vs->number == kMainVirtScreen &&
 			y == 24 && x >= 28 && x <= 52 && height == 56 &&
-			_vm->enhancementClassActive(kEnhVisualChanges)) {
+			_vm->enhancementEnabled(kEnhVisualChanges)) {
 		_roomPalette[1] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);

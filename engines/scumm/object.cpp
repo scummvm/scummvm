@@ -705,7 +705,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 	// copyright reasons, so we just patch the impacted bytes from a fixed OI
 	// (made with BMRP.EXE).
 	if (_game.id == GID_INDY3 && (_game.features & GF_OLD256) && _currentRoom == 135
-	    && od.obj_nr == 324 && numstrip == od.width / 8 && enhancementClassActive(kEnhVisualChanges)) {
+	    && od.obj_nr == 324 && numstrip == od.width / 8 && enhancementEnabled(kEnhVisualChanges)) {
 		// Extra safety: make sure that the OI has the expected length. Indy3
 		// should always be GF_SMALL_HEADER, but that's implicit, so do an
 		// explicit check, since we're doing some low-level byte tricks.

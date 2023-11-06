@@ -455,7 +455,7 @@ const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedSt
 		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
 
 		if (!result) {
-			if (stringno >= 22 && stringno <= 27 && _vm->_game.id == GID_TENTACLE && _vm->enhancementClassActive(kEnhTextLocFixes) && strcmp(_vm->_game.variant, "Floppy")) {
+			if (stringno >= 22 && stringno <= 27 && _vm->_game.id == GID_TENTACLE && _vm->enhancementEnabled(kEnhTextLocFixes) && strcmp(_vm->_game.variant, "Floppy")) {
 				result = getStaticResString(_vm->_language, stringno - 1).string;
 			} else {
 				result = string_map_table_v6[stringno - 1].string;

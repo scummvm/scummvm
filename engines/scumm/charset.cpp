@@ -1553,7 +1553,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// (At the time of writing, there are still cases, at least in Loom,
 	// where text isn't correctly positioned.)
 
-	_useCorrectFontSpacing = _vm->_game.id == GID_LOOM || _vm->enhancementClassActive(kEnhSubFmtCntChanges);
+	_useCorrectFontSpacing = _vm->_game.id == GID_LOOM || _vm->enhancementEnabled(kEnhSubFmtCntChanges);
 	_pad = false;
 	_glyphSurface = nullptr;
 

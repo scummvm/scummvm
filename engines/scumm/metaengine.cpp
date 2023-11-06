@@ -249,7 +249,7 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsQuitDialogOverride && (_useOriginalGUI || !ChainedGamesMan.empty()));
 }
 
-bool Scumm::ScummEngine::enhancementClassActive(int32 cls) {
+bool Scumm::ScummEngine::enhancementEnabled(int32 cls) {
 	return _activeEnhancements & cls;
 }
 

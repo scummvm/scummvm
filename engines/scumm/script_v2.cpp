@@ -420,7 +420,7 @@ void ScummEngine_v2::decodeParseString() {
 	else if (_game.id == GID_MANIAC && _game.version == 1
 		&& _game.platform == Common::kPlatformDOS
 		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY
-		&& vm.slot[_currentScript].number == 260 && enhancementClassActive(kEnhTextLocFixes)
+		&& vm.slot[_currentScript].number == 260 && enhancementEnabled(kEnhTextLocFixes)
 		&& strncmp((char *)buffer + 26, " tring ", 7) == 0) {
 		for (byte *p = ptr; p >= buffer + 29; p--)
 			*(p + 1) = *p;
@@ -480,7 +480,7 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 			&& _game.platform != Common::kPlatformNES
 			&& vm.slot[_currentScript].number == 4
 			&& VAR(VAR_CLICK_AREA) == kSentenceClickArea
-			&& var == 34 && value == 0 && enhancementClassActive(kEnhRestoredContent)) {
+			&& var == 34 && value == 0 && enhancementEnabled(kEnhRestoredContent)) {
 		value = 1;
 	}
 
@@ -887,7 +887,7 @@ void ScummEngine_v2::o2_verbOps() {
 		// erroneously set one of the verbs' ("Unlock") y coordinate to 1600 instead of
 		// 168 via scripts. We apply the fix and mark it as an enhancement.
 		if (_game.id == GID_MANIAC && _game.version == 2 && _language == Common::IT_ITA &&
-			slot == 15 && y == 1600 && enhancementClassActive(kEnhTextLocFixes)) {
+			slot == 15 && y == 1600 && enhancementEnabled(kEnhTextLocFixes)) {
 			vs->curRect.top = 168;
 		} else {
 			vs->curRect.top = y;

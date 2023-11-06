@@ -417,7 +417,7 @@ void Actor_v3::setupActorScale() {
 	// in the German release (and then it'd probably be better to restore
 	// that safeguard instead, since the game clearly doesn't expect you
 	// to go back inside the castle), but I don't own this version.  -dwa
-	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->enhancementClassActive(kEnhMinorBugFixes)) {
+	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 		_scalex = 0x50;
 		_scaley = 0x50;
 	} else {
@@ -1648,7 +1648,7 @@ void Actor::putActor(int dstX, int dstY, int newRoom) {
 	// WORKAROUND: The green transparency of the tank in the Hall of Oddities
 	// is positioned one pixel too far to the left. This appears to be a bug
 	// in the original game as well.
-	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && _vm->enhancementClassActive(kEnhMinorBugFixes))
+	if (_vm->_game.id == GID_SAMNMAX && newRoom == 16 && _number == 5 && dstX == 235 && dstY == 236 && _vm->enhancementEnabled(kEnhMinorBugFixes))
 		dstX++;
 
 	_pos.x = dstX;
