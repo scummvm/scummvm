@@ -251,7 +251,11 @@ bool InstallShieldCabinet::open(const String *baseName, const FSNode *node) {
 			// Then let's get the string
 			file->seek(headerHeader.cabDescriptorOffset + fileTableOffset + nameOffset);
 			String fileName = file->readString();
-			_map[fileName] = entry;
+
+			// Entries can appear in multiple volumes (sometimes erroneously).
+			// We keep the one with the lowest volume ID
+			if (!_map.contains(fileName) || _map[fileName].volume > entry.volume)
+				_map[fileName] = entry;
 		}
 	} else {
 		file->seek(headerHeader.cabDescriptorOffset + fileTableOffset);
@@ -309,7 +313,10 @@ bool InstallShieldCabinet::open(const String *baseName, const FSNode *node) {
 
 			++fileIndex;
 
-			_map[fileName] = entry;
+			// Entries can appear in multiple volumes (sometimes erroneously).
+			// We keep the one with the lowest volume ID
+			if (!_map.contains(fileName) || _map[fileName].volume > entry.volume)
+				_map[fileName] = entry;
 		}
 	}
 
