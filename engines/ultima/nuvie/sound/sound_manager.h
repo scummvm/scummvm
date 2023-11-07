@@ -30,13 +30,20 @@
 //-make samples fade in & out according to distance
 //-try and use original .m files
 
+#include "mididrv_m_adlib.h"
+#include "mididrv_m_mt32.h"
+#include "midiparser_m.h"
+
 #include "ultima/nuvie/sound/sound.h"
 #include "ultima/nuvie/sound/song.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/sound/sfx.h"
+
 #include "audio/mixer.h"
+#include "audio/mididrv.h"
+#include "common/mutex.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -53,6 +60,15 @@ struct SoundManagerSfx {
 } ;
 
 class SoundManager {
+private:
+	struct SongMT32InstrumentMapping {
+		char midiDatId;
+		const char *filename;
+		MInstrumentAssignment instrumentMapping[16];
+	};
+
+	const static SongMT32InstrumentMapping DEFAULT_MT32_INSTRUMENT_MAPPING[12];
+
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
@@ -73,6 +89,9 @@ public:
 	bool isSoundPLaying(Audio::SoundHandle handle);
 
 	bool playSfx(uint16 sfx_id, bool async = false);
+
+	void syncSoundSettings();
+
 	bool is_audio_enabled() {
 		return audio_enabled;
 	}
@@ -112,8 +131,8 @@ public:
 private:
 	bool LoadCustomSongs(string scriptname);
 	bool LoadNativeU6Songs();
-	bool loadSong(Song *song, const char *filename);
-	bool loadSong(Song *song, const char *filename, const char *title);
+	bool loadSong(Song *song, const char *filename, const char *fileId);
+	bool loadSong(Song *song, const char *filename, const char *fileId, const char *title);
 	bool groupAddSong(const char *group, Song *song);
 
 	//bool LoadObjectSamples(string sound_dir);
@@ -155,6 +174,14 @@ private:
 	SfxManager *m_SfxManager;
 
 	CEmuopl *opl;
+
+	MidiDriver_Multisource *_midiDriver;
+	MidiDriver_M_MT32 *_mt32MidiDriver;
+	MidiParser_M *_midiParser;
+	MusicType _deviceType;
+	byte *_musicData;
+	const SongMT32InstrumentMapping *_mt32InstrumentMapping;
+	Common::Mutex _musicMutex;
 
 	int game_type; //FIXME there's a nuvie_game_t, but almost everything uses int game_type (or gametype)
 

@@ -280,6 +280,26 @@ public:
 	};
 
 	/**
+	 * The available modes for writing the instrument definition to a channel.
+	 */
+	enum InstrumentWriteMode {
+		/**
+		 * Will write the instrument definition before each note on event.
+		 * Works with both dynamic and static channel allocation modes, but
+		 * is less efficient and resets all parameters of the instrument when
+		 * a note is played.
+		 */
+		INSTRUMENT_WRITE_MODE_NOTE_ON,
+		/**
+		 * Will write the instrument definition after a program change event.
+		 * This will only work with a static channel allocation mode. It will
+		 * write the instrument only once for many notes and allows parameters
+		 * of the instrument to be changed for the following notes.
+		 */
+		INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE
+	};
+
+	/**
 	 * The available modes for the OPL note select setting.
 	 */
 	enum NoteSelectMode {
@@ -1074,7 +1094,7 @@ protected:
 	 * calculated and written. Use type undefined to calculate volume for a
 	 * melodic instrument.
 	 */
-	void writeVolume(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
+	virtual void writeVolume(uint8 oplChannel, uint8 operatorNum, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 	/**
 	 * Calculates the panning for the specified OPL channel or rhythm type
 	 * (@see calculatePanning) and writes the new value to the OPL registers.
@@ -1126,6 +1146,8 @@ protected:
 	AccuracyMode _accuracyMode;
 	// Controls the OPL channel allocation behavior.
 	ChannelAllocationMode _allocationMode;
+	// Controls when the instrument definitions are written.
+	InstrumentWriteMode _instrumentWriteMode;
 	// Controls response to rhythm note off events when rhythm mode is active.
 	bool _rhythmModeIgnoreNoteOffs;
 

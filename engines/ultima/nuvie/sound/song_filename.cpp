@@ -19,53 +19,48 @@
  *
  */
 
-#ifndef NUVIE_SOUND_SOUND_H
-#define NUVIE_SOUND_SOUND_H
-
-#include "ultima/nuvie/core/game.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/shared/std/containers.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/sound/adplug/emu_opl.h"
+#include "ultima/nuvie/sound/adplug/u6m.h"
+#include "ultima/nuvie/sound/song_filename.h"
+#include "ultima/nuvie/sound/sound_manager.h"
+#include "ultima/nuvie/nuvie.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-using Std::list;
-using Std::vector;
+SongFilename::~SongFilename() {
+}
 
-class Sound {
-public:
-	virtual ~Sound() {};
-	virtual bool Play(bool looping = false) = 0;
-	virtual bool Stop() = 0;
-	virtual bool FadeOut(float seconds) = 0;
-	virtual bool SetVolume(uint8 volume) = 0; //range 0..255
-	string GetName() {
-		return m_Filename;
-	}
-	string GetTitle() {
-		return m_Title;
-	}
-	string GetId() {
-		return m_FileId;
-	}
-protected:
-	string m_Filename;
-	string m_Title;
-	string m_FileId;
-	//	static SoundManager *gpSM;
-};
+bool SongFilename::Init(const char *path, const char *fileId) {
+	return Init(path, fileId, 0);
+}
 
-class SoundCollection {
-public:
-	Sound *Select() {
-		int i = NUVIE_RAND()  % m_Sounds.size();
-		return m_Sounds[i];
-	}; //randomly select one from the list
-	vector<Sound *> m_Sounds;
-};
+bool SongFilename::Init(const char *filename, const char *fileId, uint16 song_num) {
+	if (filename == NULL)
+		return false;
+
+	m_Filename = filename; // SB-X
+	m_FileId = fileId;
+
+	return true;
+}
+
+bool SongFilename::Play(bool looping) {
+	return true;
+}
+
+bool SongFilename::Stop() {
+	return true;
+}
+
+bool SongFilename::SetVolume(uint8 volume) {
+	return true;
+}
+
+bool SongFilename::FadeOut(float seconds) {
+	return false;
+}
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
-
-#endif
