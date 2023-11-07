@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-05 21:16+0000\n"
+"POT-Creation-Date: 2023-11-07 01:46+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5037,11 +5037,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Λειτουργία Κλικ"
 
-#: backends/platform/sdl/sdl.cpp:1010
+#: backends/platform/sdl/sdl.cpp:1018
 msgid "Keyboard"
 msgstr "Πληκτρολόγιο"
 
-#: backends/platform/sdl/sdl.cpp:1013
+#: backends/platform/sdl/sdl.cpp:1021
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5074,23 +5074,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Εμφανίζει το Καθολικό Κυρίως Μενού\n"
 
-#: backends/platform/sdl/sdl.cpp:1025
+#: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | Έξοδος (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1027
+#: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | Έξοδος (Windows)\n"
 
-#: backends/platform/sdl/sdl.cpp:1029
+#: backends/platform/sdl/sdl.cpp:1037
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | Έξοδος (Linux/Unix)\n"
 
-#: backends/platform/sdl/sdl.cpp:1030
+#: backends/platform/sdl/sdl.cpp:1038
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | Έξοδος (άλλες πλατφόρμες)\n"
 
-#: backends/platform/sdl/sdl.cpp:1033
+#: backends/platform/sdl/sdl.cpp:1041
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"

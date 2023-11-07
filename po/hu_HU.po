@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-05 21:16+0000\n"
+"POT-Creation-Date: 2023-11-07 01:46+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4866,11 +4866,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Kattintás Mód"
 
-#: backends/platform/sdl/sdl.cpp:1010
+#: backends/platform/sdl/sdl.cpp:1018
 msgid "Keyboard"
 msgstr "Billentyûzet"
 
-#: backends/platform/sdl/sdl.cpp:1013
+#: backends/platform/sdl/sdl.cpp:1021
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -4888,23 +4888,23 @@ msgid ""
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1025
+#: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1027
+#: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1029
+#: backends/platform/sdl/sdl.cpp:1037
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1030
+#: backends/platform/sdl/sdl.cpp:1038
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1033
+#: backends/platform/sdl/sdl.cpp:1041
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
