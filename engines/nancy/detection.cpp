@@ -188,7 +188,6 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy3
 	},
-	/* Temporarily disabled; needs ciftree.dat
 	{ // MD5 by waltervn
 		{
 			"nancy3", nullptr,
@@ -196,6 +195,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 				{ "data1.hdr", 0, "44906f3d2242f73f16feb8eb6a5161cb", 207327 },
 				{ "data1.cab", 0, "e258cc871e5de5ae004d03c4e31431c7", 1555916 },
 				{ "data2.cab", 0, "364dfd25677026da505f1fa6edd5571f", 137373135 },
+				{ "is:data1.cab:ciftree.dat", 0, "A:ee5f8832226567c3610556497c451b09", 16256355 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -204,7 +204,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
 		},
 		Nancy::kGameTypeNancy3
-	},*/
+	},
 	{ // MD5 by fracturehill
 		{
 			"nancy3", nullptr,
@@ -289,7 +289,6 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy4
 	},
-	/* Temporarily disabled: needs ciftree.dat
 	{ // MD5 by eriktorbjorn
 		{
 			"nancy4", nullptr,
@@ -297,6 +296,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 				{ "data1.hdr", 0, "9febd79adc61148088b464140a124172", 263445 },
 				{ "data1.cab", 0, "af5e06e381473fdc3ff6f7cac5619e32", 1569396 },
 				{ "data2.cab", 0, "ed0ca7ba3cc315f705e48fe604d53523", 140562769 },
+				{ "is:data1.cab:ciftree.dat", 0, "A:3ad55cd8f9a3b010a19de44ff4ce7edf", 8786300 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -305,7 +305,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_PLAYER_SPEECH, GAMEOPTION_CHARACTER_SPEECH)
 		},
 		Nancy::kGameTypeNancy4
-	},*/
+	},
 	{ // MD5 by fracturehill
 		{
 			"nancy4", nullptr,
@@ -437,7 +437,6 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 		},
 		Nancy::kGameTypeNancy6
 	},
-	/* Temporarily disabled; needs ciftree.dat
 	{ // MD5 by eriktorbjorn
 		{
 			"nancy6", nullptr,
@@ -445,6 +444,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 				{ "data1.hdr", 0, "6a45cdf632301ae1b55fd7474bec3650", 298551 },
 				{ "data1.cab", 0, "399b83b188bfc05077d81cc1eadd456c", 4470086 },
 				{ "data2.cab", 0, "30ca94b596f6b5971a22c111b24d6764", 206382511 },
+				{ "is:data1.cab:ciftree.dat", 0, "A:a97b848651fdcf38f5cad7092d98e4a1", 28888006 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -453,7 +453,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			GUIO1(GAMEOPTION_AUTO_MOVE)
 		},
 		Nancy::kGameTypeNancy6
-	},*/
+	},
 	{ // MD5 by fracturehill
 		{
 			"nancy6", nullptr,
