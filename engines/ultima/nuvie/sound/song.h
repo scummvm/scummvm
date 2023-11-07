@@ -33,9 +33,6 @@ public:
 	virtual bool Init(const char *filename) {
 		return false;
 	}
-	virtual bool Init(const char *path, const char *fileId) {
-		return false;
-	}
 	bool Play(bool looping = false) override {
 		return false;
 	}
@@ -49,8 +46,8 @@ public:
 		return false;
 	}
 
-	void SetTitle(const char *title) {
-		if (title) m_Title = title;    // SB-X
+	void SetName(const char *name) {
+		if (name) m_Filename = name;    // SB-X
 	}
 private:
 

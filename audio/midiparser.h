@@ -446,7 +446,7 @@ public:
 	virtual void setMidiDriver(MidiDriver_BASE *driver) { _driver = driver; }
 	void setTimerRate(uint32 rate) { _timerRate = rate; }
 	virtual void setTempo(uint32 tempo);
-	virtual void onTimer();
+	void onTimer();
 
 	bool isPlaying() const { return (_position._playPos != 0 && _doParse); }
 	/**

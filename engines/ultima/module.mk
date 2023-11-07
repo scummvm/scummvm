@@ -334,14 +334,10 @@ MODULE_OBJS := \
 	nuvie/script/script_cutscene.o \
 	nuvie/sound/adlib_sfx_manager.o \
 	nuvie/sound/custom_sfx_manager.o \
-	nuvie/sound/mididrv_m_adlib.o \
-	nuvie/sound/mididrv_m_mt32.o \
-	nuvie/sound/midiparser_m.o \
 	nuvie/sound/origin_fx_adib_driver.o \
 	nuvie/sound/pc_speaker_sfx_manager.o \
 	nuvie/sound/song.o \
 	nuvie/sound/song_adplug.o \
-	nuvie/sound/song_filename.o \
 	nuvie/sound/sound_manager.o \
 	nuvie/sound/towns_sfx_manager.o \
 	nuvie/sound/adplug/adplug_player.o \

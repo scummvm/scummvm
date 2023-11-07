@@ -43,17 +43,9 @@ public:
 	string GetName() {
 		return m_Filename;
 	}
-	string GetTitle() {
-		return m_Title;
-	}
-	string GetId() {
-		return m_FileId;
-	}
 protected:
 	string m_Filename;
-	string m_Title;
-	string m_FileId;
-	//	static SoundManager *gpSM;
+//	static SoundManager *gpSM;
 };
 
 class SoundCollection {
