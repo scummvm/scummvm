@@ -140,6 +140,7 @@ public:
 	protected:
 		bool _redraw = false;
 		bool _enabled = false;
+		bool _visible = true;
 		Common::Rect _bounds;
 
 	public:
@@ -147,6 +148,8 @@ public:
 		virtual ~MacGuiObject() {}
 
 		Common::Rect getBounds() const { return _bounds; }
+		bool isEnabled() const { return _enabled; }
+		bool isVisible() const { return _visible; }
 	};
 
 	class MacWidget : public MacGuiObject {
@@ -154,13 +157,13 @@ public:
 		MacGui::MacDialogWindow *_window;
 		int _id = -1;
 
-		bool _visible = true;
 		bool _fullRedraw = false;
 
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0);
+		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0) const;
+		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
 	public:
 		MacWidget(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
@@ -172,14 +175,12 @@ public:
 		// Visibility never changes after initialization, so it does
 		// not trigger a redraw.
 		void setVisible(bool visible) { _visible = visible; }
-		bool isVisible() const { return _visible; }
 
 		virtual void getFocus() { setRedraw(); }
 		virtual void loseFocus() { setRedraw(); }
 
 		void setRedraw(bool fullRedraw = false);
 
-		bool isEnabled() const { return _enabled; }
 		void setEnabled(bool enabled);
 
 		virtual void setValue(int value);
@@ -295,19 +296,41 @@ public:
 
 	class MacSlider : public MacWidget {
 	private:
+		Common::Point _clickPos;
+		uint32 _nextRepeat;
+
 		int _minValue;
 		int _maxValue;
 		int _pageSize;
+		int _paging;
+
+		bool _upArrowPressed = false;
+		bool _downArrowPressed = false;
+		int _dragOffset = -1;
+
+		bool _redrawUpArrow = false;
+		bool _redrawDownArrow = false;
+		bool _redrawBody = false;
+
+		Common::Rect _boundsButtonUp;
+		Common::Rect _boundsButtonDown;
+		Common::Rect _boundsBody;
+
+		Common::Rect getHandleRect(int value);
+
+		void fill(Common::Rect r);
+		void drawHandle(Common::Rect r);
 
 	public:
-		MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled)
-			: MacWidget(window, bounds, "Slider", enabled),
-			_minValue(minValue), _maxValue(maxValue), _pageSize(pageSize) {}
+		MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled);
 
+		bool findWidget(int x, int y) const;
 		void draw(bool drawFocued = false);
 
 		void handleMouseDown(Common::Event &event);
+		void handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
+		void handleMouseHeld();
 	};
 
 	class MacPictureSlider : public MacWidget {
@@ -475,6 +498,9 @@ public:
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
 	MacDialogWindow *drawBanner(char *message);
+
+	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
+	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
 };
 
 class MacLoomGui : public MacGui {
@@ -628,7 +654,6 @@ private:
 
 	class VerbWidget : public Widget {
 	protected:
-		bool _visible = false;
 		int _verbid = 0;
 		int _verbslot = -1;
 		bool _kill = false;
@@ -638,7 +663,6 @@ private:
 
 		void setVerbid(int n) { _verbid = n; }
 		bool hasVerb() const { return _verbslot != -1; }
-		bool isVisible() const { return _visible; }
 		void threaten() { _kill = true; }
 		bool isDying() const { return _kill; }
 
@@ -757,7 +781,6 @@ private:
 	void hide();
 
 	void fill(Common::Rect r) const;
-	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
 	void markScreenAsDirty(Common::Rect r);
 	void copyDirtyRectsToScreen();
