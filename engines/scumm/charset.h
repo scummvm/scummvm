@@ -169,7 +169,7 @@ protected:
 public:
 	CharsetRendererClassic(ScummEngine *vm, int cjkSpacing) : CharsetRendererPC(vm), _cjkSpacing(cjkSpacing) {}
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererClassic(vm, vm->_game.id == GID_INDY4 &&
-									 vm->_game.platform == Common::kPlatformMacintosh &&
+									 (vm->_game.platform == Common::kPlatformMacintosh || vm->_game.platform == Common::kPlatformDOS) &&
 									 vm->_language == Common::JA_JPN ? -3 : 0) {}
 
 	void printChar(int chr, bool ignoreCharsetMask) override;

@@ -93,7 +93,9 @@ void ScummEngine::loadCJKFont() {
 		_useCJKMode = true;
 #endif
 	} else if ((_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN)
-		   || (_game.id == GID_INDY4 && _game.platform == Common::kPlatformMacintosh && _language == Common::JA_JPN)) {
+		   || (_game.id == GID_INDY4 &&
+			   (_game.platform == Common::kPlatformMacintosh || _game.platform == Common::kPlatformDOS) &&
+			   _language == Common::JA_JPN)) {
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		_useCJKMode = true;
@@ -248,7 +250,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 		break;
 	case Common::JA_JPN:
 		if ((_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-		    || (_game.id == GID_INDY4 && _game.platform == Common::kPlatformMacintosh)) {
+		    || (_game.id == GID_INDY4 && (_game.platform == Common::kPlatformMacintosh || _game.platform == Common::kPlatformDOS))) {
 			// init pointer to charset resource
 			if (_2byteFontPtr[0] == 0xFF) {
 				int charsetId = 5;
@@ -440,8 +442,11 @@ void CharsetRendererV3::setCurID(int32 id) {
 
 int CharsetRendererCommon::getFontHeight() const {
 	bool isSegaCD = _vm->_game.platform == Common::kPlatformSegaCD;
+	bool isIndyDOSJap = (_vm->_game.id == GID_INDY4 &&
+						 _vm->_game.platform == Common::kPlatformDOS &&
+						 _vm->_language == Common::JA_JPN);
 
-	if (isSegaCD && _vm->_segaForce2ByteCharHeight) {
+	if (isIndyDOSJap || (isSegaCD && _vm->_segaForce2ByteCharHeight)) {
 		return MAX(_vm->_2byteHeight, _fontHeight);
 	} else if (_vm->_useCJKMode && !isSegaCD) {
 		return MAX(_vm->_2byteHeight + 1, _fontHeight);
