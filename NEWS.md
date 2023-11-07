@@ -5,7 +5,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for macOS versions of Syberia and Syberia II.
-   - Added support for The Vampire Diaries and Nancy Drew: Secrets Can Kill.
+   - Added support for The Vampire Diaries, Nancy Drew: Secrets Can Kill,
+     Nancy Drew: Stay Tuned for Danger, Nancy Drew: Message in a Haunted Mansion,
+	 Nancy Drew: Treasure in the Royal Tower and Nancy Drew: The Final Scene.
    - Added support for Reah: Face the Unknown and Schizm: Mysterious Journey.
    - Added support for Might and Magic Book One.
    - Added support for Muppet Treasure Island.
