@@ -417,7 +417,7 @@ public:
 		MacGui::MacStaticText *addStaticText(Common::Rect bounds, Common::String text, bool enabled);
 		MacGui::MacEditText *addEditText(Common::Rect bounds, Common::String text, bool enabled);
 		MacGui::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
-		MacGui::MacSlider *addSlider(Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled);
+		MacGui::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGui::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }

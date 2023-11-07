@@ -1245,8 +1245,8 @@ MacGui::MacPicture *MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int
 	return picture;
 }
 
-MacGui::MacSlider *MacGui::MacDialogWindow::addSlider(Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled) {
-	MacGui::MacSlider *slider = new MacSlider(this, bounds, minValue, maxValue, pageSize, enabled);
+MacGui::MacSlider *MacGui::MacDialogWindow::addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled) {
+	MacGui::MacSlider *slider = new MacSlider(this, Common::Rect(x, y, x + 16, y + h), minValue, maxValue, pageSize, enabled);
 	_widgets.push_back(slider);
 	return slider;
 }
@@ -2734,7 +2734,7 @@ bool MacLoomGui::runOpenDialog() {
 	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
-	window->addSlider(Common::Rect(216, 13, 232, 159), 0, 50, 7, true);
+	window->addSlider(216, 13, 146, 0, 50, 7, true);
 
 	Graphics::Surface *s = window->innerSurface();
 
@@ -2770,7 +2770,7 @@ bool MacLoomGui::runSaveDialog() {
 	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
 	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
-	window->addSlider(Common::Rect(216, 9, 232, 137), 0, 50, 7, true);
+	window->addSlider(216, 9, 128, 0, 50, 7, true);
 
 	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
