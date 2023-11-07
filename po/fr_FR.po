@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-05 21:16+0000\n"
-"PO-Revision-Date: 2023-11-01 09:59+0000\n"
+"PO-Revision-Date: 2023-11-07 07:20+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8103,33 +8103,35 @@ msgstr "Tourne automatiquement la vue lorsque la souris atteint un bord."
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Corriger les softlocks"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Corrige les situations où le fait d'avoir manqué quelque chose au début du "
+"jeu vous empêche de poursuivre votre progression."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Corriger les désagréments"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Corrige divers désagréments mineurs."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Minuteur rallongé"
+msgstr "Prolonger le minuteur en fin de jeu"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Accorde un peu plus de temps avant d'échouer au puzzle final. Il s'agit d'un "
+"patch officiel de HeR Interactive."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
