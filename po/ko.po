@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-07 20:00+0000\n"
+"POT-Creation-Date: 2023-11-07 21:07+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -9952,12 +9952,12 @@ msgstr "연중 언제든지 크리스마스 음악을 활성화하십시오."
 msgid "Could not find correct ultima.dat datafile"
 msgstr "올바른 ultima.dat 데이터 파일을 찾지 못 했습니다"
 
-#: engines/ultima/nuvie/nuvie.cpp:375
+#: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "loading quick save %d"
 msgstr "빠른 저장 %d번을 불러옵니다"
 
-#: engines/ultima/nuvie/nuvie.cpp:380
+#: engines/ultima/nuvie/nuvie.cpp:392
 #, c-format
 msgid "saving quick save %d"
 msgstr "빠른 저장 %d번을 저장합니다"

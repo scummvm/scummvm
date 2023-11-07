@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-07 20:00+0000\n"
+"POT-Creation-Date: 2023-11-07 21:07+0000\n"
 "PO-Revision-Date: 2023-11-07 07:20+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -10362,12 +10362,12 @@ msgstr "Active la musique de Noël à tout moment de l'année."
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Le fichier de données ultima.dat correct n'a pas été trouvé"
 
-#: engines/ultima/nuvie/nuvie.cpp:375
+#: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "loading quick save %d"
 msgstr "chargement de la sauvegarde rapide %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:380
+#: engines/ultima/nuvie/nuvie.cpp:392
 #, c-format
 msgid "saving quick save %d"
 msgstr "sauvegarde rapide %d en cours"
