@@ -998,7 +998,7 @@ Common::Rect MacGui::MacSlider::getHandleRect(int value) {
 	return handleRect;
 }
 
-void MacGui::MacSlider::fill(Common::Rect r) {
+void MacGui::MacSlider::fill(Common::Rect r, bool inverted) {
 	Color pattern[2][4] = {
 		{ kBlack, kWhite, kWhite, kWhite },
 		{ kWhite, kWhite, kBlack, kWhite }
@@ -1008,7 +1008,19 @@ void MacGui::MacSlider::fill(Common::Rect r) {
 
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
-			s->setPixel(x, y, pattern[y % 2][x % 4]);
+			if (inverted) {
+				// The inverted style is used for drawing the "ghost" of the
+				// slider handle while dragging. I think this matches the
+				// original behavior, though I'm not quite sure.
+
+				bool srcPixel = s->getPixel(x, y) == kBlack;
+				bool dstPixel = pattern[y % 2][x % 4] == kWhite;
+
+				Color color = (srcPixel ^ dstPixel) ? kBlack : kWhite;
+
+				s->setPixel(x, y, color);
+			} else
+				s->setPixel(x, y, pattern[y % 2][x % 4]);
 		}
 	}
 }
@@ -1126,6 +1138,7 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 	_clickPos.y = y;
 	_paging = 0;
 	_dragOffset = -1;
+	_dragPos = -1;
 
 	int oldValue = _value;
 
@@ -1154,6 +1167,7 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 			_value = MIN(_maxValue, _value + (_pageSize - 1));
 		} else {
 			_dragOffset = y - handleRect.top;
+			_dragPos = handleRect.top;
 		}
 	}
 
@@ -1179,6 +1193,7 @@ void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 
 	_paging = 0;
 	_dragOffset = -1;
+	_dragPos = -1;
 	_clickPos.x = -1;
 	_clickPos.y = -1;
 }
@@ -1204,8 +1219,39 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	}
 
 	if (_dragOffset >= 0) {
-		_redrawBody = true;
-		setRedraw();
+		Common::Rect r;
+
+		r.left = _boundsBody.left + 1;
+		r.top = _dragPos;
+		r.right = _boundsBody.right - 1;
+		r.bottom = _dragPos + 16;
+
+		fill(r);
+		_window->markRectAsDirty(r);
+
+		Common::Rect handleRect = getHandleRect(_value);
+
+		if (r.intersects(handleRect)) {
+			drawHandle(handleRect);
+			_window->markRectAsDirty(handleRect);
+		}
+
+		int dragPos = CLIP<int>(y - _dragOffset, _boundsBody.top, _boundsBody.bottom - 16);
+		_dragPos = dragPos;
+
+		r.moveTo(_boundsBody.left + 1, dragPos);
+
+		// Drawing a solid rectangle would be easier, and probably look better.
+		// But it seems the orginal Mac widget would draw the frame as an
+		// inverted slider background, even when drawing it on top of the
+		// slider handle.
+
+		fill(Common::Rect(r.left, r.top, r.right, r.top + 1), true);
+		fill(Common::Rect(r.left, r.bottom - 1, r.right, r.bottom), true);
+		fill(Common::Rect(r.left, r.top + 1, r.left + 1, r.bottom - 1), true);
+		fill(Common::Rect(r.right - 1, r.top + 1, r.right, r.bottom - 1), true);
+
+		_window->markRectAsDirty(r);
 	} else {
 		if (!_boundsButtonUp.contains(x, y)) {
 			if (_upArrowPressed) {

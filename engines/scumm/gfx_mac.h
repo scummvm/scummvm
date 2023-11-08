@@ -307,6 +307,7 @@ public:
 		bool _upArrowPressed = false;
 		bool _downArrowPressed = false;
 		int _dragOffset = -1;
+		int _dragPos = -1;
 
 		bool _redrawUpArrow = false;
 		bool _redrawDownArrow = false;
@@ -318,7 +319,7 @@ public:
 
 		Common::Rect getHandleRect(int value);
 
-		void fill(Common::Rect r);
+		void fill(Common::Rect r, bool inverted = false);
 		void drawHandle(Common::Rect r);
 
 	public:
