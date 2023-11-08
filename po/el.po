@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-08 08:28+0000\n"
+"POT-Creation-Date: 2023-11-08 10:46+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -282,7 +282,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Ναι"
@@ -295,7 +295,7 @@ msgstr "Ναι"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Όχι"
@@ -323,9 +323,9 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1214
-#: engines/scumm/scumm.cpp:1567 engines/scumm/scumm.cpp:2042
-#: engines/scumm/scumm.cpp:2058 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1224
+#: engines/scumm/scumm.cpp:1588 engines/scumm/scumm.cpp:2063
+#: engines/scumm/scumm.cpp:2079 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -909,7 +909,7 @@ msgstr "Αλληλεπίδραση"
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:808
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:843
 #: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -923,7 +923,7 @@ msgstr "Πάνω"
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:775
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:810
 #: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -937,7 +937,7 @@ msgstr "Κάτω"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:788
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:823
 #: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -952,7 +952,7 @@ msgstr "Αριστερά"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:795
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:830
 #: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -2576,7 +2576,7 @@ msgstr "Απενεργ. γραφικά"
 msgid "Standard renderer"
 msgstr "Κανονική απόδοση"
 
-#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1016
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1017
 msgid "Standard"
 msgstr "Κανονικό"
 
@@ -4238,7 +4238,7 @@ msgstr "Δεν προσδιορίστηκε αρχείο!"
 msgid "Uploaded successfully!"
 msgstr "Επιτυχία μεταφοράς!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:283
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:284
 msgid "~C~lose"
 msgstr "~Κ~λείσιμο"
 
@@ -5583,7 +5583,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2854
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2875
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5594,7 +5594,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2841
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2862
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5605,7 +5605,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2874
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2895
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6003,7 +6003,7 @@ msgstr "Εναλλαγή Ετοιμότητας για Μάχη"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:834 engines/zvision/metaengine.cpp:284
+#: engines/scumm/metaengine.cpp:869 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Παράλειψη ταινίας"
 
@@ -6228,7 +6228,7 @@ msgstr "Μίλα/Αλληλεπίδρασε"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:821
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:856
 msgid "Attack"
 msgstr "Επίθεση"
 
@@ -8765,7 +8765,7 @@ msgid "Your Name:"
 msgstr "Το Όνομά σας:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3861
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3882
 msgid "Host"
 msgstr "Φιλοξενία"
 
@@ -8775,7 +8775,7 @@ msgid "Querying games..."
 msgstr "Αναζήτηση παιχνιδιών..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3861
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3882
 msgid "Join"
 msgstr "Συμμετοχή"
 
@@ -8786,65 +8786,101 @@ msgid "Found %d available games."
 msgstr "Βρέθηκαν %d διαθέσιμα παιχνίδια."
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:280
+#: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
 msgstr "~Π~ροηγούμενο"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:282
+#: engines/scumm/dialogs.cpp:283
 msgid "~N~ext"
 msgstr "~Ε~πόμενο"
 
-#: engines/scumm/dialogs.cpp:955
+#: engines/scumm/dialogs.cpp:956
 msgid "Speech Only"
 msgstr "Μόνο Ομιλία"
 
-#: engines/scumm/dialogs.cpp:956
+#: engines/scumm/dialogs.cpp:957
 msgid "Speech and Subtitles"
 msgstr "Ομιλία και Υπότιτλοι"
 
-#: engines/scumm/dialogs.cpp:957
+#: engines/scumm/dialogs.cpp:958
 msgid "Subtitles Only"
 msgstr "Μόνο Υπότιτλοι"
 
-#: engines/scumm/dialogs.cpp:965
+#: engines/scumm/dialogs.cpp:966
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Ομιλία & Υπότ"
 
-#: engines/scumm/dialogs.cpp:1011
+#: engines/scumm/dialogs.cpp:1012
 msgid "Select a Proficiency Level."
 msgstr "Επιλέξτε Επίπεδο Ικανότητας."
 
-#: engines/scumm/dialogs.cpp:1013
+#: engines/scumm/dialogs.cpp:1014
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Ανατρέξτε στο εγχειρίδιο Loom(TM) σας για βοήθεια."
 
-#: engines/scumm/dialogs.cpp:1017
+#: engines/scumm/dialogs.cpp:1018
 msgid "Practice"
 msgstr "Εξάσκηση"
 
-#: engines/scumm/dialogs.cpp:1018
+#: engines/scumm/dialogs.cpp:1019
 msgid "Expert"
 msgstr "Ειδικός"
 
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:657
-msgid "Enable game-specific enhancements"
-msgstr "Εφαρμογή βελτιώσεων για το παιχνίδι"
-
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:658
-msgid ""
-"Allow ScummVM to make small enhancements to the game, usually based on other "
-"versions of the same game."
+#: engines/scumm/dialogs.cpp:1126
+msgid "Enhancements:"
 msgstr ""
-"Επιτρέπει στο ScummVM να εφαρμόσει μικρές βελτιώσεις στο παιχνίδι, παρμένες "
-"συνήθως από άλλες εκδόσεις του ίδιου παιχνιδιού."
 
-#: engines/scumm/dialogs.cpp:1055 engines/scumm/metaengine.cpp:675
+#: engines/scumm/dialogs.cpp:1131
+#, fuzzy
+#| msgid "Use original menus"
+msgid "Fix original bugs"
+msgstr "Χρήση αρχικών μενού"
+
+#: engines/scumm/dialogs.cpp:1132
+msgid ""
+"Fixes bugs which were present in the original release, and noticeable "
+"graphical/audio glitches."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1135
+msgid "Audio-visual improvements"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1136
+msgid ""
+"Makes adjustments not related to bugs for certain audio and graphics "
+"elements (e.g. version consistency changes)."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1139
+#, fuzzy
+#| msgid "Enable restored content"
+msgid "Restored content"
+msgstr "Αποκατεστημένο περιεχόμενο"
+
+#: engines/scumm/dialogs.cpp:1140
+msgid ""
+"Restores dialogs, graphics, and audio elements which were originally cut in "
+"the original release."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1143
+msgid "Modern UI/UX adjustments"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1144
+msgid ""
+"Activates some modern comforts; e.g it removes the fake sound loading screen "
+"in Sam&Max, and makes early save menus snappier."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
 msgstr "Χρήση αρχικού Μενού και Γραφικής Διεπαφής Χρήστη (GUI)"
 
-#: engines/scumm/dialogs.cpp:1056
+#: engines/scumm/dialogs.cpp:1169
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -8855,11 +8891,11 @@ msgstr ""
 "επιλογή \"Να ζητείται επιβεβαίωση κατά την έξοδο\" προσφέρει μια πιο "
 "ολοκληρωμένη εμπειρία."
 
-#: engines/scumm/dialogs.cpp:1078
+#: engines/scumm/dialogs.cpp:1280
 msgid "Overture Timing:"
 msgstr "Διάρκεια Ουβερτούρας:"
 
-#: engines/scumm/dialogs.cpp:1082
+#: engines/scumm/dialogs.cpp:1284
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -8868,11 +8904,11 @@ msgstr ""
 "αυτή καθορίζει τη χρονική στιγμή που η Οβερτούρα (Overture) αλλάζει στη "
 "σκηνή με τα λογότυπα της Lucasfilm και του Loom."
 
-#: engines/scumm/dialogs.cpp:1165
+#: engines/scumm/dialogs.cpp:1369
 msgid "Playback Adjust:"
 msgstr "Ρύθμιση Αναπαραγωγής:"
 
-#: engines/scumm/dialogs.cpp:1169
+#: engines/scumm/dialogs.cpp:1373
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -8881,11 +8917,11 @@ msgstr ""
 "στιγμή έναρξης του ήχου κατά αυτή την τιμή. Χρησιμοποιήστε αυτή τη ρύθμιση "
 "αν ακούτε συχνά αποσπάσματα από τον λάθος ήχο."
 
-#: engines/scumm/dialogs.cpp:1248
+#: engines/scumm/dialogs.cpp:1453
 msgid "Intro Adjust:"
 msgstr "Προσαρμογή Εισαγωγής:"
 
-#: engines/scumm/dialogs.cpp:1252
+#: engines/scumm/dialogs.cpp:1457
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -8896,11 +8932,11 @@ msgstr ""
 "απότομα και νωρίτερα από ό,τι θα έπρεπε, ή αν δεν ειστε ικανοποιημένοι με το "
 "πώς η μουσική συγχρονίζεται με την εισαγωγή του παιχνιδιού."
 
-#: engines/scumm/dialogs.cpp:1261
+#: engines/scumm/dialogs.cpp:1466
 msgid "Outlook Adjust:"
 msgstr "Προσαρμογή Θέας:"
 
-#: engines/scumm/dialogs.cpp:1265
+#: engines/scumm/dialogs.cpp:1470
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -8911,11 +8947,11 @@ msgstr ""
 "Χρησιμοποιήστε το αν η μουσική κόβεται, ή αν ακούτε μέρος της προηγούμενης "
 "μουσικής."
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1572 engines/scumm/metaengine.cpp:691
 msgid "Load modded audio"
 msgstr "Φόρτωση τροποποιημένου ήχου"
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:667
+#: engines/scumm/dialogs.cpp:1572 engines/scumm/metaengine.cpp:692
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -8923,15 +8959,15 @@ msgstr ""
 "Αντικατάσταση μουσικής, ηχητικών εφέ, και ομιλιών με τροποποιημένα αρχεία "
 "ήχου, εφόσον είναι διαθέσιμα."
 
-#: engines/scumm/dialogs.cpp:1367
+#: engines/scumm/dialogs.cpp:1574
 msgid "Multiplayer Server:"
 msgstr "Διακομιστής Multiplayer:"
 
-#: engines/scumm/dialogs.cpp:1373
+#: engines/scumm/dialogs.cpp:1580
 msgid "Online Server:"
 msgstr "Online Διακομιστής:"
 
-#: engines/scumm/dialogs.cpp:1374
+#: engines/scumm/dialogs.cpp:1581
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -8939,21 +8975,21 @@ msgstr ""
 "Η διεύθυνση του διακομιστή όπου θα συνδεθείτε για δικτυακό παιχνίδι.  Πρέπει "
 "να ξεκινάει με πρόθεμα \"https://\" ή \"http://\"."
 
-#: engines/scumm/dialogs.cpp:1376
+#: engines/scumm/dialogs.cpp:1583
 msgid "Enable online competitive mods"
 msgstr "Χρήση mods ανταγωνιστικού online"
 
-#: engines/scumm/dialogs.cpp:1376
+#: engines/scumm/dialogs.cpp:1583
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
 "Ενεργοποιεί ειδικές τροποποιήσεις (mods) που υποστηρίζουν ανταγωνιστικό "
 "online παιχνίδι."
 
-#: engines/scumm/dialogs.cpp:1380
+#: engines/scumm/dialogs.cpp:1587
 msgid "Enable connection to Multiplayer Server"
 msgstr "Σύνδεση στον Διακομιστή Multiplayer"
 
-#: engines/scumm/dialogs.cpp:1380
+#: engines/scumm/dialogs.cpp:1587
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -8961,17 +8997,17 @@ msgstr ""
 "Εναλλαγή σύνδεσης στον διακομιστή που επιτρέπει φιλοξενία και συμμετοχή σε "
 "online mulitplayer παιχνίδια στο Διαδίκτυο."
 
-#: engines/scumm/dialogs.cpp:1381
+#: engines/scumm/dialogs.cpp:1588
 msgid "Host games over LAN"
 msgstr "Φιλοξενία παιχνιδιών σε LAN"
 
-#: engines/scumm/dialogs.cpp:1381
+#: engines/scumm/dialogs.cpp:1588
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
 "Επιτρέπει να βρείτε διαθέσιμες συνεδρίες παιχνιδιών στο τοπικό σας δίκτυο "
 "(LAN)."
 
-#: engines/scumm/dialogs.cpp:1383
+#: engines/scumm/dialogs.cpp:1590
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -9504,7 +9540,7 @@ msgstr "Ένταση μουσικής: "
 msgid "Subtitle speed: "
 msgstr "Ταχύτητα υποτίτλων: "
 
-#: engines/scumm/metaengine.cpp:362
+#: engines/scumm/metaengine.cpp:366
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -9514,37 +9550,37 @@ msgstr ""
 "αποφυγή πειρατείας.\n"
 "Η πλήρης έκδοση είναι διαθέσιμη για αγορά από το Κατάστημα iTunes."
 
-#: engines/scumm/metaengine.cpp:459
+#: engines/scumm/metaengine.cpp:463
 msgid "HE v71+ support is not compiled in"
 msgstr "Η υποστήριξη του HE v71+ δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/metaengine.cpp:483
+#: engines/scumm/metaengine.cpp:487
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Η υποστήριξη για SCUMM v7-8 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/metaengine.cpp:603
+#: engines/scumm/metaengine.cpp:628
 msgid "Show Object Line"
 msgstr "Προβολή Γραμμής Αντικειμένων"
 
-#: engines/scumm/metaengine.cpp:604
+#: engines/scumm/metaengine.cpp:629
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Παρουσίαση των ονομάτων των αντικειμένων στο κάτω μέρος της οθόνης"
 
-#: engines/scumm/metaengine.cpp:612
+#: engines/scumm/metaengine.cpp:637
 msgid "Use NES Classic Palette"
 msgstr "Χρήση NES Classic Παλέτας"
 
-#: engines/scumm/metaengine.cpp:613
+#: engines/scumm/metaengine.cpp:638
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Χρήσης μια παλέτας πιο ουδέτερων χρωμάτων που προσομοιώνει καλύτερα το NES "
 "Classic"
 
-#: engines/scumm/metaengine.cpp:621
+#: engines/scumm/metaengine.cpp:646
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Περικοπή παιχνιδιών FM-TOWNS σε ύψος 200 πίξελ"
 
-#: engines/scumm/metaengine.cpp:622
+#: engines/scumm/metaengine.cpp:647
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -9553,11 +9589,11 @@ msgstr ""
 "ακολουθεί το πρότυπο των 200 πίξελ, επιτρέποντας τη χρήση της 'διόρθωσης "
 "αναλογίας διαστάσεων'"
 
-#: engines/scumm/metaengine.cpp:630
+#: engines/scumm/metaengine.cpp:655
 msgid "Play simplified music"
 msgstr "Αναπαραγωγή απλοποιημένης μουσικής"
 
-#: engines/scumm/metaengine.cpp:631
+#: engines/scumm/metaengine.cpp:656
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
@@ -9565,19 +9601,19 @@ msgstr ""
 "Αυτή η μουσική φαίνεται πως προοριζόταν για Macs χαμηλών δυνατοτήτων, και "
 "χρησιμοποιεί μόνο ένα κανάλι ήχου."
 
-#: engines/scumm/metaengine.cpp:639
+#: engines/scumm/metaengine.cpp:664
 msgid "Enable smooth scrolling"
 msgstr "Ενεργοποίηση ομαλής κύλισης"
 
-#: engines/scumm/metaengine.cpp:640
+#: engines/scumm/metaengine.cpp:665
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(αντί της κανονικής κύλισης σε βήματα των 8-πίξελ)"
 
-#: engines/scumm/metaengine.cpp:648
+#: engines/scumm/metaengine.cpp:673
 msgid "Allow semi-smooth scrolling"
 msgstr "Να επιτρέπεται ημι-ομαλή κύλιση"
 
-#: engines/scumm/metaengine.cpp:649
+#: engines/scumm/metaengine.cpp:674
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
@@ -9585,7 +9621,7 @@ msgstr ""
 "Επιτρέπει την χρήση λιγότερο ομαλής κύλισης κατά τη διάρκεια της γρήγορης "
 "κάμερας στην εισαγωγή."
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:701
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
@@ -9596,11 +9632,11 @@ msgstr ""
 "επιλογή \"Να ζητείται επιβεβαίωση κατά την έξοδο\" προσφέρει μια πιο "
 "ολοκληρωμένη εμπειρία."
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:710
 msgid "Enable low latency audio mode"
 msgstr "Ενεργοποίηση γρήγορης απόκρισης ήχου"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:711
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -9611,11 +9647,11 @@ msgstr ""
 "ενεργοποιήσετε αυτή τη δυνατότητα μόνο αν αντιμετωπίζετε θέματα καθυστέρησης "
 "του ήχου όσο παίζετε το κυρίως παιχνίδι."
 
-#: engines/scumm/metaengine.cpp:695
+#: engines/scumm/metaengine.cpp:720
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Χρήση του τραγουδιού \"A Pirate I Was Meant To Be\""
 
-#: engines/scumm/metaengine.cpp:696
+#: engines/scumm/metaengine.cpp:721
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -9625,28 +9661,28 @@ msgstr ""
 "Pirate I Was Meant To Be\", \t\tπου είχε αφαιρεθεί από τις διεθνείς "
 "εκδόσεις. Προσοχή: οι υπότιτλοι μπορεί να μην είναι πλήρως μεταφρασμένοι."
 
-#: engines/scumm/metaengine.cpp:769
+#: engines/scumm/metaengine.cpp:804
 msgid "Down Left"
 msgstr "Κάτω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:782
+#: engines/scumm/metaengine.cpp:817
 msgid "Down Right"
 msgstr "Κάτω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:802
+#: engines/scumm/metaengine.cpp:837
 msgid "Up Left"
 msgstr "Πάνω Αριστερά"
 
-#: engines/scumm/metaengine.cpp:815
+#: engines/scumm/metaengine.cpp:850
 msgid "Up Right"
 msgstr "Πάνω Δεξιά"
 
-#: engines/scumm/metaengine.cpp:827
+#: engines/scumm/metaengine.cpp:862
 msgid "Switch weapon"
 msgstr "Αλλαγή όπλου"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:841
+#: engines/scumm/metaengine.cpp:876
 msgid "Win the bike fight cheat"
 msgstr "Κόλπο για νίκη στη μάχη με τις μηχανές"
 
@@ -9663,20 +9699,20 @@ msgstr ""
 "Η διόρθωση αναλογίας διαστάσεων μπορεί να επιτευχθεί αν επιλέξετε την "
 "περικοπή της ανάλυσης σε 320x200 από την καρτέλα 'μηχανή'."
 
-#: engines/scumm/scumm.cpp:1169
+#: engines/scumm/scumm.cpp:1179
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
 "Αυτό το παιχνίδι απαιτεί το εκτελέσιμο 'Indy' για Macintosh για τις "
 "γραμματοσειρές του."
 
-#: engines/scumm/scumm.cpp:1193
+#: engines/scumm/scumm.cpp:1203
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 "Αυτό το παιχνίδι απαιτεί το εκτελέσιμο 'Loom' για Macintosh για τη μουσική "
 "και τις γραμματοσειρές του."
 
-#: engines/scumm/scumm.cpp:1213
+#: engines/scumm/scumm.cpp:1223
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9684,7 +9720,7 @@ msgstr ""
 "Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
 "το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
 
-#: engines/scumm/scumm.cpp:1564
+#: engines/scumm/scumm.cpp:1585
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9697,7 +9733,7 @@ msgstr ""
 "Παρακαλούμε να αντιγράψετε τα αυθεντικά (original) ασυμπίεστα αρχεία ήχου "
 "του παιχνιδιού."
 
-#: engines/scumm/scumm.cpp:2040
+#: engines/scumm/scumm.cpp:2061
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9706,7 +9742,7 @@ msgstr ""
 "Η υποστήριξη εγγενούς MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
 "αλλά το %s λείπει. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:2056
+#: engines/scumm/scumm.cpp:2077
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9715,7 +9751,7 @@ msgstr ""
 "απαραίτητα\n"
 "δεδομένα για την υποστήριξη του MT-32. Αντ' αυτού θα γίνει χρήση AdLib."
 
-#: engines/scumm/scumm.cpp:3750
+#: engines/scumm/scumm.cpp:3771
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9726,7 +9762,7 @@ msgstr ""
 "φάκελο 'Maniac' μέσα στο φάκελο παιχνιδιού του Tentacle, και το παιχνίδι "
 "πρέπει να προστεθεί στο ScummVM."
 
-#: engines/scumm/scumm.cpp:3861
+#: engines/scumm/scumm.cpp:3882
 msgid "Would you like to host or join a network play session?"
 msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετε σε online συνεδρία παιχνιδιού;"
 
@@ -11314,6 +11350,16 @@ msgstr ""
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
 
+#~ msgid "Enable game-specific enhancements"
+#~ msgstr "Εφαρμογή βελτιώσεων για το παιχνίδι"
+
+#~ msgid ""
+#~ "Allow ScummVM to make small enhancements to the game, usually based on "
+#~ "other versions of the same game."
+#~ msgstr ""
+#~ "Επιτρέπει στο ScummVM να εφαρμόσει μικρές βελτιώσεις στο παιχνίδι, "
+#~ "παρμένες συνήθως από άλλες εκδόσεις του ίδιου παιχνιδιού."
+
 #, fuzzy
 #~| msgid "New kid"
 #~ msgid "New Line"
@@ -11755,9 +11801,6 @@ msgstr ""
 
 #~ msgid "Go to map screen"
 #~ msgstr "Άνοιγμα οθόνης χάρτη"
-
-#~ msgid "Use original menus"
-#~ msgstr "Χρήση αρχικών μενού"
 
 #~ msgid ""
 #~ "Use the original engine's main, save/load, and setup menus. ScummVM's "

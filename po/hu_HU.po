@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-08 08:28+0000\n"
+"POT-Creation-Date: 2023-11-08 10:46+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -292,7 +292,7 @@ msgstr "Egy másik tároló jelenleg már mûködik. Meg akarod szakítani?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Igen"
@@ -305,7 +305,7 @@ msgstr "Igen"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3855
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Nem"
@@ -333,9 +333,9 @@ msgstr "A JSON kód tartalma hibás."
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1214
-#: engines/scumm/scumm.cpp:1567 engines/scumm/scumm.cpp:2042
-#: engines/scumm/scumm.cpp:2058 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1224
+#: engines/scumm/scumm.cpp:1588 engines/scumm/scumm.cpp:2063
+#: engines/scumm/scumm.cpp:2079 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -911,7 +911,7 @@ msgstr "Interakció"
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:808
+#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:843
 #: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
@@ -925,7 +925,7 @@ msgstr "Fel"
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:775
+#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:810
 #: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
@@ -939,7 +939,7 @@ msgstr "Le"
 #: engines/crab/input/input.cpp:107 engines/crab/input/input.cpp:157
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:558 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:788
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:823
 #: engines/twine/metaengine.cpp:483 engines/twine/metaengine.cpp:551
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
@@ -954,7 +954,7 @@ msgstr "Bal"
 #: engines/crab/input/input.cpp:113 engines/crab/input/input.cpp:163
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:563 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:795
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:830
 #: engines/twine/metaengine.cpp:475 engines/twine/metaengine.cpp:544
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
@@ -2565,7 +2565,7 @@ msgstr "GFX letiltva"
 msgid "Standard renderer"
 msgstr "Szabványos renderelõ"
 
-#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1016
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:1017
 msgid "Standard"
 msgstr "Átlagos"
 
@@ -4233,7 +4233,7 @@ msgstr "Nincs fájl átadva!"
 msgid "Uploaded successfully!"
 msgstr "Sikeresen feltöltötte!"
 
-#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:283
+#: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:284
 msgid "~C~lose"
 msgstr "~B~ezár"
 
@@ -5375,7 +5375,7 @@ msgstr "Visszaállítás"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "A játék gyors töltése vagy mentése nem támogatott ezen a helyen"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2854
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2875
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5386,7 +5386,7 @@ msgstr ""
 "\n"
 "%s fájlból"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2841
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2862
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5397,7 +5397,7 @@ msgstr ""
 "\n"
 "%s fájlba"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2874
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2895
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -5792,7 +5792,7 @@ msgstr "Harc Váltása"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:834 engines/zvision/metaengine.cpp:284
+#: engines/scumm/metaengine.cpp:869 engines/zvision/metaengine.cpp:284
 msgid "Skip cutscene"
 msgstr "Bevezetõ átugrása"
 
@@ -6013,7 +6013,7 @@ msgstr "Interakció"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:821
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:856
 msgid "Attack"
 msgstr "Támadás"
 
@@ -8486,7 +8486,7 @@ msgid "Your Name:"
 msgstr "A Neved:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3861
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3882
 msgid "Host"
 msgstr "Gazda"
 
@@ -8496,7 +8496,7 @@ msgid "Querying games..."
 msgstr "Játékok lekérdezése..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3861
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3882
 msgid "Join"
 msgstr "Csatlakozás"
 
@@ -8507,65 +8507,101 @@ msgid "Found %d available games."
 msgstr "%d elérhető játék található."
 
 #. I18N: Previous page button
-#: engines/scumm/dialogs.cpp:280
+#: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
 msgstr "~E~lõzõ"
 
 #. I18N: Next page button
-#: engines/scumm/dialogs.cpp:282
+#: engines/scumm/dialogs.cpp:283
 msgid "~N~ext"
 msgstr "Következõ"
 
-#: engines/scumm/dialogs.cpp:955
+#: engines/scumm/dialogs.cpp:956
 msgid "Speech Only"
 msgstr "Csak beszéd"
 
-#: engines/scumm/dialogs.cpp:956
+#: engines/scumm/dialogs.cpp:957
 msgid "Speech and Subtitles"
 msgstr "Beszéd és felirat"
 
-#: engines/scumm/dialogs.cpp:957
+#: engines/scumm/dialogs.cpp:958
 msgid "Subtitles Only"
 msgstr "Csak felirat"
 
-#: engines/scumm/dialogs.cpp:965
+#: engines/scumm/dialogs.cpp:966
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Beszéd & Felir"
 
-#: engines/scumm/dialogs.cpp:1011
+#: engines/scumm/dialogs.cpp:1012
 msgid "Select a Proficiency Level."
 msgstr "Válassz hozzáértés szintet."
 
-#: engines/scumm/dialogs.cpp:1013
+#: engines/scumm/dialogs.cpp:1014
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Segítségért nézd meg a Loom(TM) kézikönyvedet."
 
-#: engines/scumm/dialogs.cpp:1017
+#: engines/scumm/dialogs.cpp:1018
 msgid "Practice"
 msgstr "Gyakorlás"
 
-#: engines/scumm/dialogs.cpp:1018
+#: engines/scumm/dialogs.cpp:1019
 msgid "Expert"
 msgstr "Szakértõ"
 
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:657
-msgid "Enable game-specific enhancements"
-msgstr "Engedélyezd a játékspecifikus fejlesztéseket"
-
-#: engines/scumm/dialogs.cpp:1050 engines/scumm/metaengine.cpp:658
-msgid ""
-"Allow ScummVM to make small enhancements to the game, usually based on other "
-"versions of the same game."
+#: engines/scumm/dialogs.cpp:1126
+msgid "Enhancements:"
 msgstr ""
-"Engedélyezi a ScummVM-nek, hogy apró fejlesztéseket hajtson végre a játékon, "
-"általában ugyanazon játék más verziói alapján."
 
-#: engines/scumm/dialogs.cpp:1055 engines/scumm/metaengine.cpp:675
+#: engines/scumm/dialogs.cpp:1131
+#, fuzzy
+#| msgid "Use original menus"
+msgid "Fix original bugs"
+msgstr "Eredeti menük használata"
+
+#: engines/scumm/dialogs.cpp:1132
+msgid ""
+"Fixes bugs which were present in the original release, and noticeable "
+"graphical/audio glitches."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1135
+msgid "Audio-visual improvements"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1136
+msgid ""
+"Makes adjustments not related to bugs for certain audio and graphics "
+"elements (e.g. version consistency changes)."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1139
+#, fuzzy
+#| msgid "Enable restored content"
+msgid "Restored content"
+msgstr "Visszaállított tartalom engedélyezése"
+
+#: engines/scumm/dialogs.cpp:1140
+msgid ""
+"Restores dialogs, graphics, and audio elements which were originally cut in "
+"the original release."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1143
+msgid "Modern UI/UX adjustments"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1144
+msgid ""
+"Activates some modern comforts; e.g it removes the fake sound loading screen "
+"in Sam&Max, and makes early save menus snappier."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
 msgstr "Eredeti GUI és Menü engedélyezése"
 
-#: engines/scumm/dialogs.cpp:1056
+#: engines/scumm/dialogs.cpp:1169
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. Use it together with the \"Ask for confirmation on exit\" "
@@ -8575,11 +8611,11 @@ msgstr ""
 "menü használatát. A teljesebb élmény érdekében használd a „Kérj "
 "visszaigazolást kilépéskor” funkcióval együtt."
 
-#: engines/scumm/dialogs.cpp:1078
+#: engines/scumm/dialogs.cpp:1280
 msgid "Overture Timing:"
 msgstr "Nyitány időzítése:"
 
-#: engines/scumm/dialogs.cpp:1082
+#: engines/scumm/dialogs.cpp:1284
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -8587,11 +8623,11 @@ msgstr ""
 "Cserezene használatakor ez beállítja azt az időt, amit a nyitány a Lucasfilm "
 "és a Loom emblémák között tölt."
 
-#: engines/scumm/dialogs.cpp:1165
+#: engines/scumm/dialogs.cpp:1369
 msgid "Playback Adjust:"
 msgstr "Lejátszás beállítása:"
 
-#: engines/scumm/dialogs.cpp:1169
+#: engines/scumm/dialogs.cpp:1373
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -8599,11 +8635,11 @@ msgstr ""
 "Ha hangot játszik le a CD hangsávjáról, állítsa be ennyivel a hang "
 "kezdőpozícióját. Használja ezt, ha gyakran nem megfelelő hangot hall."
 
-#: engines/scumm/dialogs.cpp:1248
+#: engines/scumm/dialogs.cpp:1453
 msgid "Intro Adjust:"
 msgstr "Bevezető beállítás:"
 
-#: engines/scumm/dialogs.cpp:1252
+#: engines/scumm/dialogs.cpp:1457
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -8613,11 +8649,11 @@ msgstr ""
 "zene idő előtt megszakad, vagy ha elégedetlen azzal, ahogyan a zene "
 "szinkronizálódik a bevezetővel."
 
-#: engines/scumm/dialogs.cpp:1261
+#: engines/scumm/dialogs.cpp:1466
 msgid "Outlook Adjust:"
 msgstr "Az Outlook beállítása:"
 
-#: engines/scumm/dialogs.cpp:1265
+#: engines/scumm/dialogs.cpp:1470
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -8627,11 +8663,11 @@ msgstr ""
 "a lejátszás elkezdődik. Használja ezt, ha a zene le van vágva, vagy ha az "
 "előző zene egy részét hallja."
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:666
+#: engines/scumm/dialogs.cpp:1572 engines/scumm/metaengine.cpp:691
 msgid "Load modded audio"
 msgstr "Módosított audió betöltése"
 
-#: engines/scumm/dialogs.cpp:1365 engines/scumm/metaengine.cpp:667
+#: engines/scumm/dialogs.cpp:1572 engines/scumm/metaengine.cpp:692
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -8639,15 +8675,15 @@ msgstr ""
 "Cserélje ki a zenét, az effektusokat és a beszédklipeket módosított "
 "hangfájlokra, ha rendelkezésre állnak."
 
-#: engines/scumm/dialogs.cpp:1367
+#: engines/scumm/dialogs.cpp:1574
 msgid "Multiplayer Server:"
 msgstr "Többjátékos Szerver:"
 
-#: engines/scumm/dialogs.cpp:1373
+#: engines/scumm/dialogs.cpp:1580
 msgid "Online Server:"
 msgstr "Online Szerver:"
 
-#: engines/scumm/dialogs.cpp:1374
+#: engines/scumm/dialogs.cpp:1581
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -8655,20 +8691,20 @@ msgstr ""
 "Annak a szervernek a címe, amelyhez online játékhoz csatlakozni kell. "
 "„https://” vagy „http://” sémával kell kezdődnie."
 
-#: engines/scumm/dialogs.cpp:1376
+#: engines/scumm/dialogs.cpp:1583
 msgid "Enable online competitive mods"
 msgstr "Online kompetitív modok engedélyezése"
 
-#: engines/scumm/dialogs.cpp:1376
+#: engines/scumm/dialogs.cpp:1583
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
 "Lehetővé teszi az egyedi módosításokat az online versenyszerű játékhoz."
 
-#: engines/scumm/dialogs.cpp:1380
+#: engines/scumm/dialogs.cpp:1587
 msgid "Enable connection to Multiplayer Server"
 msgstr "Kapcsolódás engedélyezése a többjátékos szerverhez"
 
-#: engines/scumm/dialogs.cpp:1380
+#: engines/scumm/dialogs.cpp:1587
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -8676,16 +8712,16 @@ msgstr ""
 "Bekapcsolja a kapcsolatot a szerverrel, amely lehetővé teszi az online "
 "többjátékos játékok fogadását és csatlakozását az interneten keresztül."
 
-#: engines/scumm/dialogs.cpp:1381
+#: engines/scumm/dialogs.cpp:1588
 msgid "Host games over LAN"
 msgstr "Játékok tárolása LAN-on keresztül"
 
-#: engines/scumm/dialogs.cpp:1381
+#: engines/scumm/dialogs.cpp:1588
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
 "Lehetővé teszi a játékmenetek felfedezését a helyi hálózaton keresztül."
 
-#: engines/scumm/dialogs.cpp:1383
+#: engines/scumm/dialogs.cpp:1590
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -9222,7 +9258,7 @@ msgstr "Zene hangereje: "
 msgid "Subtitle speed: "
 msgstr "Felirat sebesség: "
 
-#: engines/scumm/metaengine.cpp:362
+#: engines/scumm/metaengine.cpp:366
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -9231,35 +9267,35 @@ msgstr ""
 "A Putt-Putt Saves the Zoo iOS Lite verziója nem támogatott.\n"
 "A teljes változat elérhetõ az iTunes Áruházban."
 
-#: engines/scumm/metaengine.cpp:459
+#: engines/scumm/metaengine.cpp:463
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+ támogatás nincs lefordítva"
 
-#: engines/scumm/metaengine.cpp:483
+#: engines/scumm/metaengine.cpp:487
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 támogatás nincs lefordítva"
 
-#: engines/scumm/metaengine.cpp:603
+#: engines/scumm/metaengine.cpp:628
 msgid "Show Object Line"
 msgstr "Tárgynév sor látható"
 
-#: engines/scumm/metaengine.cpp:604
+#: engines/scumm/metaengine.cpp:629
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Tárgyak neveinek megjelenítése a képernyõ alján"
 
-#: engines/scumm/metaengine.cpp:612
+#: engines/scumm/metaengine.cpp:637
 msgid "Use NES Classic Palette"
 msgstr "NES klasszikus paletta használata"
 
-#: engines/scumm/metaengine.cpp:613
+#: engines/scumm/metaengine.cpp:638
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Semlegesebb színpaletta használata, amely utánozza a NES Classic-ot"
 
-#: engines/scumm/metaengine.cpp:621
+#: engines/scumm/metaengine.cpp:646
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "FM-TOWNS játékok vágása 200 pixel magasságig"
 
-#: engines/scumm/metaengine.cpp:622
+#: engines/scumm/metaengine.cpp:647
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -9267,11 +9303,11 @@ msgstr ""
 "Levágja az extra 40 képpontot a képernyő alján, hogy 200 pixel magasságú "
 "legyen, lehetővé téve a 'képarány korrekció' használatát"
 
-#: engines/scumm/metaengine.cpp:630
+#: engines/scumm/metaengine.cpp:655
 msgid "Play simplified music"
 msgstr "Egyszerűsített zene lejátszás"
 
-#: engines/scumm/metaengine.cpp:631
+#: engines/scumm/metaengine.cpp:656
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
@@ -9279,19 +9315,19 @@ msgstr ""
 "Ezt a zenét feltehetően alacsony kategóriájú Mac-eknek szánták, és csak egy "
 "csatornát használ."
 
-#: engines/scumm/metaengine.cpp:639
+#: engines/scumm/metaengine.cpp:664
 msgid "Enable smooth scrolling"
 msgstr "Finom görgetés engedélyezése"
 
-#: engines/scumm/metaengine.cpp:640
+#: engines/scumm/metaengine.cpp:665
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(a normál 8 képpontos lépés görgetés helyett)"
 
-#: engines/scumm/metaengine.cpp:648
+#: engines/scumm/metaengine.cpp:673
 msgid "Allow semi-smooth scrolling"
 msgstr "Félsima görgetés engedélyezése"
 
-#: engines/scumm/metaengine.cpp:649
+#: engines/scumm/metaengine.cpp:674
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
@@ -9299,7 +9335,7 @@ msgstr ""
 "A görgetés kevésbé lesz zökkenőmentes a gyors kameramozgás során a "
 "bevezetőben."
 
-#: engines/scumm/metaengine.cpp:676
+#: engines/scumm/metaengine.cpp:701
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
@@ -9309,11 +9345,11 @@ msgstr ""
 "menü használatát. A teljesebb élmény érdekében használd a „Kérj "
 "visszaigazolást kilépéskor” funkcióval együtt."
 
-#: engines/scumm/metaengine.cpp:685
+#: engines/scumm/metaengine.cpp:710
 msgid "Enable low latency audio mode"
 msgstr "Engedélyezd az alacsony késleltetésű hangmódot"
 
-#: engines/scumm/metaengine.cpp:686
+#: engines/scumm/metaengine.cpp:711
 msgid ""
 "Allows the game to use low latency audio, at the cost of sound accuracy. \t"
 "\tIt is recommended to enable this feature only if you incur in audio "
@@ -9323,11 +9359,11 @@ msgstr ""
 "a hangpontosság árán. \t\tJavasoljuk, hogy ezt a funkciót csak akkor "
 "engedélyezd, ha normál játék közben hang késleltetési problémáid vannak."
 
-#: engines/scumm/metaengine.cpp:695
+#: engines/scumm/metaengine.cpp:720
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
 msgstr "Engedélyezi a „A Pirate I Was Menant To Be” dalt"
 
-#: engines/scumm/metaengine.cpp:696
+#: engines/scumm/metaengine.cpp:721
 msgid ""
 "Enable the song at the beginning of Part 3 of the game, \"A Pirate I Was "
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
@@ -9337,28 +9373,28 @@ msgstr ""
 "\" címen, amelyet nemzetközi kiadásokban vágtak ki. Vigyázat: előfordulhat, "
 "hogy a feliratokat nem fordítják le teljesen."
 
-#: engines/scumm/metaengine.cpp:769
+#: engines/scumm/metaengine.cpp:804
 msgid "Down Left"
 msgstr "Le Balra"
 
-#: engines/scumm/metaengine.cpp:782
+#: engines/scumm/metaengine.cpp:817
 msgid "Down Right"
 msgstr "Le Jobbra"
 
-#: engines/scumm/metaengine.cpp:802
+#: engines/scumm/metaengine.cpp:837
 msgid "Up Left"
 msgstr "Fel Balra"
 
-#: engines/scumm/metaengine.cpp:815
+#: engines/scumm/metaengine.cpp:850
 msgid "Up Right"
 msgstr "Fel Jobbra"
 
-#: engines/scumm/metaengine.cpp:827
+#: engines/scumm/metaengine.cpp:862
 msgid "Switch weapon"
 msgstr "Fegyver váltása"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:841
+#: engines/scumm/metaengine.cpp:876
 msgid "Win the bike fight cheat"
 msgstr "Nyerd meg a kerékpáros harci csalást"
 
@@ -9374,16 +9410,16 @@ msgstr ""
 "A képarány korrekciója úgy érhető el, hogy a 'motor' fül alatt a felbontást "
 "320x200-ra vágja."
 
-#: engines/scumm/scumm.cpp:1169
+#: engines/scumm/scumm.cpp:1179
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1193
+#: engines/scumm/scumm.cpp:1203
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1213
+#: engines/scumm/scumm.cpp:1223
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9391,7 +9427,7 @@ msgstr ""
 "Nem található a 'Monkey Island' Macintosh futtató állomány, hogy \n"
 "beolvassa a hangszereket. Zene le lessz tiltva."
 
-#: engines/scumm/scumm.cpp:1564
+#: engines/scumm/scumm.cpp:1585
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9401,7 +9437,7 @@ msgstr ""
 "a tömörítés már nem támogatott ebben a játékban, a hang le lesz tiltva.\n"
 "Kérlek, másold a játékot tömörítés nélkül az eredeti adathordozóról."
 
-#: engines/scumm/scumm.cpp:2040
+#: engines/scumm/scumm.cpp:2061
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9410,7 +9446,7 @@ msgstr ""
 "Native MIDI támogatáshoz kell a Roland Upgrade a LucasArts-tól,\n"
 "a %s hiányzik. AdLib-ot használok helyette."
 
-#: engines/scumm/scumm.cpp:2056
+#: engines/scumm/scumm.cpp:2077
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9418,7 +9454,7 @@ msgstr ""
 "A Monkey Island 1 e bizonyos verziójáról ismert, hogy hiányzik néhány\n"
 "szükséges erőforrás az MT-32-höz. AdLib használata helyette."
 
-#: engines/scumm/scumm.cpp:3750
+#: engines/scumm/scumm.cpp:3771
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9428,7 +9464,7 @@ msgstr ""
 "fájljainak, a 'Maniac' mappában kell lenni a Tentacle játékmappáján belül, "
 "és a játékot így adja hozzá a ScummVM a listához."
 
-#: engines/scumm/scumm.cpp:3861
+#: engines/scumm/scumm.cpp:3882
 msgid "Would you like to host or join a network play session?"
 msgstr "Szeretnél hálózati játékmenetet szervezni vagy csatlakozni?"
 
@@ -10990,6 +11026,16 @@ msgstr ""
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
 
+#~ msgid "Enable game-specific enhancements"
+#~ msgstr "Engedélyezd a játékspecifikus fejlesztéseket"
+
+#~ msgid ""
+#~ "Allow ScummVM to make small enhancements to the game, usually based on "
+#~ "other versions of the same game."
+#~ msgstr ""
+#~ "Engedélyezi a ScummVM-nek, hogy apró fejlesztéseket hajtson végre a "
+#~ "játékon, általában ugyanazon játék más verziói alapján."
+
 #, fuzzy
 #~| msgid "New kid"
 #~ msgid "New Line"
@@ -11183,9 +11229,6 @@ msgstr ""
 
 #~ msgid "Go to map screen"
 #~ msgstr "Ugrás a térkép képernyőre"
-
-#~ msgid "Use original menus"
-#~ msgstr "Eredeti menük használata"
 
 #~ msgid ""
 #~ "Use the original engine's main, save/load, and setup menus. ScummVM's "
