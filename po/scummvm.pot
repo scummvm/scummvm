@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-08 03:48+0000\n"
+"POT-Creation-Date: 2023-11-08 08:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7623,16 +7623,16 @@ msgid ""
 "randomly"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1467
+#: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1469
+#: engines/sci/engine/savegame.cpp:1457
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1481
+#: engines/sci/engine/savegame.cpp:1469
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -7706,7 +7706,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:927
+#: engines/sci/sci.cpp:929
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
