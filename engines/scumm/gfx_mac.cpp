@@ -1261,13 +1261,16 @@ void MacGui::MacSlider::handleMouseHeld() {
 	if (_paging) {
 		Common::Rect r = getHandleRect(_value);
 
+		// Keep paging until at least half the scroll handle has gone past the
+		// mouse cursor. This may have to be tuned.
+
 		if (_paging == -1) {
-			if (p.y < r.top) {
+			if (p.y < r.top + r.height() / 2 && _value > _minValue) {
 				_nextRepeat = now + 100;
 				_value = MAX(_minValue, _value - (_pageSize - 1));
 			}
 		} else if (_paging == 1) {
-			if (p.y >= r.bottom) {
+			if (p.y >= r.bottom - r.height() / 2 && _value < _maxValue) {
 				_nextRepeat = now + 100;
 				_value = MIN(_maxValue, _value + (_pageSize - 1));
 			}
