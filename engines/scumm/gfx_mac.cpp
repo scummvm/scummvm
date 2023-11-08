@@ -971,18 +971,64 @@ void MacGui::MacPicture::draw(bool drawFocused) {
 }
 
 // ---------------------------------------------------------------------------
+// Slider base class
+// ---------------------------------------------------------------------------
+
+void MacGui::MacSliderBase::setValue(int value) {
+	_value = CLIP(value, _minValue, _maxValue);
+	_handlePos = calculatePosFromValue();
+}
+
+int MacGui::MacSliderBase::calculateValueFromPos() const {
+	int posRange = _maxPos - _minPos;
+	int posOffset = _handlePos - _minPos;
+
+	int valueRange = _maxValue - _minValue;
+	int valueOffset = (posRange / 2 + valueRange * posOffset) / posRange;
+
+	return _minValue + valueOffset;
+}
+
+int MacGui::MacSliderBase::calculatePosFromValue() const {
+	int valueRange = _maxValue - _minValue;
+	int valueOffset = _value - _minValue;
+
+	int posRange = _maxPos - _minPos;
+	int posOffset = (valueRange / 2 + posRange * valueOffset) / valueRange;
+
+	return _minPos + posOffset;
+}
+
+// ---------------------------------------------------------------------------
 // Standard slider widget
 // ---------------------------------------------------------------------------
 
 MacGui::MacSlider::MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled)
-	: MacWidget(window, bounds, "Slider", enabled),
-	_minValue(minValue), _maxValue(maxValue), _pageSize(pageSize) {
+	: MacSliderBase(window, bounds, minValue, maxValue, 0, 0, enabled),
+	_pageSize(pageSize) {
 	_boundsButtonUp = Common::Rect(_bounds.left, _bounds.top, _bounds.right, _bounds.top + 16);
 	_boundsButtonDown = Common::Rect(_bounds.left, _bounds.bottom - 16, _bounds.right, _bounds.bottom);
 	_boundsBody = Common::Rect(_bounds.left, _bounds.top + 16, _bounds.right, _bounds.bottom - 16);
 
+	_minPos = _boundsBody.top;
+	_maxPos = _boundsBody.bottom - 16;
+
 	_clickPos.x = -1;
 	_clickPos.y = -1;
+}
+
+bool MacGui::MacSlider::findWidget(int x, int y) const {
+	if (_maxValue - _minValue <= _pageSize)
+		return false;
+
+	Common::Rect bounds = _bounds;
+
+	if (_grabOffset >= 0) {
+		bounds.left -= 25;
+		bounds.right += 25;
+	}
+
+	return bounds.contains(x, y);
 }
 
 Common::Rect MacGui::MacSlider::getHandleRect(int value) {
@@ -1025,7 +1071,94 @@ void MacGui::MacSlider::fill(Common::Rect r, bool inverted) {
 	}
 }
 
+void MacGui::MacSlider::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	// There are several things that will trigger a redraw, but unlike
+	// other widgets this one only handles full redraws. Everything else
+	// is handled outside of draw().
+
+	if (_fullRedraw) {
+		debug(1, "MacGui::MacSlider: Drawing slider (_fullRedraw = %d, drawFocused = %d, _value = %d)", _fullRedraw, drawFocused, _value);
+
+		Graphics::Surface *s = _window->innerSurface();
+
+		s->frameRect(_bounds, kBlack);
+		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, kBlack);
+		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, kBlack);
+
+		drawUpArrow(false);
+		drawDownArrow(false);
+
+		Common::Rect fillRect(_boundsBody.left + 1, _boundsBody.top, _boundsBody.right - 1, _boundsBody.bottom);
+
+		if (_maxValue - _minValue > _pageSize) {
+			fill(fillRect);
+
+			Common::Rect handleRect = getHandleRect(_value);
+			drawHandle(handleRect);
+		} else
+			s->fillRect(fillRect, kWhite);
+
+		_window->markRectAsDirty(_bounds);
+	}
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
+// There is a narrower version of these arrows, but I'm speculating that
+// they're intended for a 9" Mac screen. We go with the slightly wider version
+// here to make them easier to hit.
+
+void MacGui::MacSlider::drawUpArrow(bool markAsDirty) {
+	debug(1, "MacGui::MacSlider: Drawing up arrow (_upArrowPressed = %d, markAsDirty = %d)", _upArrowPressed, markAsDirty);
+
+	const uint16 upArrow[] = {
+		0x0600, 0x0900, 0x1080, 0x2040, 0x4020,
+		0xF0F0, 0x1080, 0x1080, 0x1080, 0x1F80
+	};
+
+	const uint16 upArrowFilled[] = {
+		0x0600, 0x0F00, 0x1F80, 0x3FC0, 0x7FE0,
+		0xFFF0, 0x1F80, 0x1F80, 0x1F80, 0x1F80
+	};
+
+	drawArrow(_boundsButtonUp, (_upArrowPressed ? upArrowFilled : upArrow), markAsDirty);
+}
+
+void MacGui::MacSlider::drawDownArrow(bool markAsDirty) {
+	debug(1, "MacGui::MacSlider: Drawing down arrow (_downArrowPressed = %d, markAsDirty = %d)", _downArrowPressed, markAsDirty);
+
+	const uint16 downArrow[] = {
+		0x1F80,	0x1080,	0x1080,	0x1080,	0xF0F0,
+		0x4020,	0x2040,	0x1080,	0x0900,	0x0600
+	};
+
+	const uint16 downArrowFilled[] = {
+		0x1F80, 0x1F80, 0x1F80, 0x1F80, 0xFFF0,
+		0x7FE0, 0x3FC0, 0x1F80, 0x0F00, 0x0600
+	};
+
+	drawArrow(_boundsButtonDown, (_downArrowPressed ? downArrowFilled : downArrow), markAsDirty);
+}
+
+void MacGui::MacSlider::drawArrow(Common::Rect r, const uint16 *bitmap, bool markAsDirty) {
+	Graphics::Surface *s = _window->innerSurface();
+
+	r.grow(-1);
+
+	s->fillRect(r, kWhite);
+	drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), bitmap, kBlack);
+
+	if (markAsDirty)
+		_window->markRectAsDirty(r);
+}
+
 void MacGui::MacSlider::drawHandle(Common::Rect r) {
+	debug(2, "MacGui::MacSlider::drawHandle(%d)", r.top);
+
 	Graphics::Surface *s = _window->innerSurface();
 
 	s->frameRect(r, kBlack);
@@ -1033,101 +1166,15 @@ void MacGui::MacSlider::drawHandle(Common::Rect r) {
 	s->fillRect(r, kWhite);
 }
 
-bool MacGui::MacSlider::findWidget(int x, int y) const {
-	if (_maxValue - _minValue <= _pageSize)
-		return false;
+void MacGui::MacSlider::redrawHandle(int oldValue, int newValue) {
+	Common::Rect r = getHandleRect(oldValue);
 
-	Common::Rect bounds = _bounds;
+	fill(r);
+	_window->markRectAsDirty(r);
 
-	if (_dragOffset >= 0) {
-		bounds.left -= 25;
-		bounds.right += 25;
-	}
-
-	return bounds.contains(x, y);
-}
-
-void MacGui::MacSlider::draw(bool drawFocused) {
-	if (!_redraw && !_fullRedraw)
-		return;
-
-	debug(1, "MacGui::MacSlider: Drawing slider (_fullRedraw = %d, drawFocused = %d, _value = %d)", _fullRedraw, drawFocused, _value);
-
-	Graphics::Surface *s = _window->innerSurface();
-
-	if (_fullRedraw) {
-		s->frameRect(_bounds, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.top + 15, _bounds.right - 2, kBlack);
-		s->hLine(_bounds.left + 1, _bounds.bottom - 16, _bounds.right - 2, kBlack);
-	}
-
-	if (_fullRedraw || _redrawBody) {
-		Common::Rect fillRect(_boundsBody.left + 1, _boundsBody.top, _boundsBody.right - 1, _boundsBody.bottom);
-
-		if (_maxValue - _minValue > _pageSize)
-			fill(fillRect);
-		else
-			s->fillRect(fillRect, kWhite);
-
-		Common::Rect handleRect = getHandleRect(_value);
-		drawHandle(handleRect);
-
-		if (!_fullRedraw)
-			_window->markRectAsDirty(_boundsBody);
-	}
-
-	// There is a narrower version of these arrows, but I'm speculating
-	// that they're intended for a 9" Mac screen.
-
-	if (_fullRedraw || _redrawUpArrow) {
-		const uint16 upArrow[] = {
-			0x0600, 0x0900, 0x1080, 0x2040, 0x4020,
-			0xF0F0, 0x1080, 0x1080, 0x1080, 0x1F80
-		};
-
-		const uint16 upArrowFilled[] = {
-			0x0600, 0x0F00, 0x1F80, 0x3FC0, 0x7FE0,
-			0xFFF0, 0x1F80, 0x1F80, 0x1F80, 0x1F80
-		};
-
-		Common::Rect r = _boundsButtonUp;
-		r.grow(-1);
-
-		s->fillRect(r, kWhite);
-		drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), _upArrowPressed ? upArrowFilled : upArrow, kBlack);
-		_redrawUpArrow = false;
-
-		if (!_fullRedraw)
-			_window->markRectAsDirty(r);
-	}
-
-	if (_fullRedraw || _redrawDownArrow) {
-		const uint16 downArrow[] = {
-			0x1F80,	0x1080,	0x1080,	0x1080,	0xF0F0,
-			0x4020,	0x2040,	0x1080,	0x0900,	0x0600
-		};
-
-		const uint16 downArrowFilled[] = {
-			0x1F80, 0x1F80, 0x1F80, 0x1F80, 0xFFF0,
-			0x7FE0, 0x3FC0, 0x1F80, 0x0F00, 0x0600
-		};
-
-		Common::Rect r = _boundsButtonDown;
-		r.grow(-1);
-
-		s->fillRect(r, kWhite);
-		drawBitmap(Common::Rect(r.left + 1, r.top + 2, r.right - 1, r.top + 12), _downArrowPressed ? downArrowFilled : downArrow, kBlack);
-		_redrawDownArrow = false;
-
-		if (!_fullRedraw)
-			_window->markRectAsDirty(r);
-	}
-
-	if (_fullRedraw)
-		_window->markRectAsDirty(_bounds);
-
-	_redraw = false;
-	_fullRedraw = false;
+	r = getHandleRect(newValue);
+	drawHandle(r);
+	_window->markRectAsDirty(r);
 }
 
 void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
@@ -1137,23 +1184,21 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 	_clickPos.x = x;
 	_clickPos.y = y;
 	_paging = 0;
-	_dragOffset = -1;
-	_dragPos = -1;
+	_grabOffset = -1;
+	_handlePos = -1;
 
 	int oldValue = _value;
 
 	if (_boundsButtonUp.contains(x, y)) {
 		_nextRepeat = _window->_system->getMillis() + 200;
 		_upArrowPressed = true;
-		_redrawUpArrow = true;
 		_value = MAX(_minValue, _value - 1);
-		setRedraw();
+		drawUpArrow(true);
 	} else if (_boundsButtonDown.contains(x, y)) {
 		_nextRepeat = _window->_system->getMillis() + 200;
 		_downArrowPressed = true;
-		_redrawDownArrow = true;
 		_value = MIN(_maxValue, _value + 1);
-		setRedraw();
+		drawDownArrow(true);
 	} else {
 		Common::Rect handleRect = getHandleRect(_value);
 
@@ -1166,34 +1211,39 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 			_paging = 1;
 			_value = MIN(_maxValue, _value + (_pageSize - 1));
 		} else {
-			_dragOffset = y - handleRect.top;
-			_dragPos = handleRect.top;
+			_grabOffset = y - handleRect.top;
+			_handlePos = handleRect.top;
 		}
 	}
 
-	if (_value != oldValue) {
-		_redrawBody = true;
-		setRedraw();
-	}
+	if (_value != oldValue)
+		redrawHandle(oldValue, _value);
 }
 
 void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 	if (_upArrowPressed) {
 		_upArrowPressed = false;
-		_redrawUpArrow = true;
-		setRedraw();
+		drawUpArrow(true);
 	} else if (_downArrowPressed) {
 		_downArrowPressed = false;
-		_redrawDownArrow = true;
-		setRedraw();
-	} else if (_dragOffset >= 0) {
-		_redrawBody = true;
-		setRedraw();
+		drawDownArrow(true);
+	} else if (_grabOffset >= 0) {
+		// Erase the drag rect, since the handle might not end up in
+		// the exact same spot.
+		Common::Rect r(_boundsBody.left + 1, _handlePos, _boundsBody.right - 1, _handlePos + 16);
+		fill(r);
+		_window->markRectAsDirty(r);
+
+		// Calculate new value and move the handle there
+		int newValue = calculateValueFromPos();
+
+		redrawHandle(_value, newValue);
+		_value = newValue;
 	}
 
 	_paging = 0;
-	_dragOffset = -1;
-	_dragPos = -1;
+	_grabOffset = -1;
+	_handlePos = -1;
 	_clickPos.x = -1;
 	_clickPos.y = -1;
 }
@@ -1205,26 +1255,24 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	if (!findWidget(x, y)) {
 		if (_upArrowPressed) {
 			_upArrowPressed = false;
-			_redrawUpArrow = true;
-			setRedraw();
+			drawUpArrow(true);
 		}
 
 		if (_downArrowPressed) {
 			_downArrowPressed = false;
-			_redrawDownArrow = true;
-			setRedraw();
+			drawDownArrow(true);
 		}
 
 		return;
 	}
 
-	if (_dragOffset >= 0) {
+	if (_grabOffset >= 0) {
 		Common::Rect r;
 
 		r.left = _boundsBody.left + 1;
-		r.top = _dragPos;
+		r.top = _handlePos;
 		r.right = _boundsBody.right - 1;
-		r.bottom = _dragPos + 16;
+		r.bottom = _handlePos + 16;
 
 		fill(r);
 		_window->markRectAsDirty(r);
@@ -1236,15 +1284,14 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 			_window->markRectAsDirty(handleRect);
 		}
 
-		int dragPos = CLIP<int>(y - _dragOffset, _boundsBody.top, _boundsBody.bottom - 16);
-		_dragPos = dragPos;
+		_handlePos = CLIP<int>(y - _grabOffset, _boundsBody.top, _boundsBody.bottom - 16);
 
-		r.moveTo(_boundsBody.left + 1, dragPos);
+		r.moveTo(_boundsBody.left + 1, _handlePos);
 
-		// Drawing a solid rectangle would be easier, and probably look better.
-		// But it seems the orginal Mac widget would draw the frame as an
-		// inverted slider background, even when drawing it on top of the
-		// slider handle.
+		// Drawing a solid rectangle would be easier, and probably look
+		// better. But it seems the orginal Mac widget would draw the
+		// frame as an inverted slider background, even when drawing it
+		// on top of the slider handle.
 
 		fill(Common::Rect(r.left, r.top, r.right, r.top + 1), true);
 		fill(Common::Rect(r.left, r.bottom - 1, r.right, r.bottom), true);
@@ -1256,30 +1303,26 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 		if (!_boundsButtonUp.contains(x, y)) {
 			if (_upArrowPressed) {
 				_upArrowPressed = false;
-				_redrawUpArrow = true;
-				setRedraw();
+				drawUpArrow(true);
 			}
 		} else {
 			if (_boundsButtonUp.contains(_clickPos) && !_upArrowPressed) {
 				_nextRepeat = _window->_system->getMillis() + 200;
 				_upArrowPressed = true;
-				_redrawUpArrow = true;
-				setRedraw();
+				drawUpArrow(true);
 			}
 		}
 
 		if (!_boundsButtonDown.contains(x, y)) {
 			if (_downArrowPressed) {
 				_downArrowPressed = false;
-				_redrawDownArrow = true;
-				setRedraw();
+				drawDownArrow(true);
 			}
 		} else {
 			if (_boundsButtonDown.contains(_clickPos) && !_downArrowPressed) {
 				_nextRepeat = _window->_system->getMillis() + 200;
 				_downArrowPressed = true;
-				_redrawDownArrow = true;
-				setRedraw();
+				drawDownArrow(true);
 			}
 		}
 	}
@@ -1323,15 +1366,26 @@ void MacGui::MacSlider::handleMouseHeld() {
 		}
 	}
 
-	if (_value != oldValue) {
-		Common::Rect r = getHandleRect(oldValue);
-		fill(r);
-		_window->markRectAsDirty(r);
+	if (_value != oldValue)
+		redrawHandle(oldValue, _value);
+}
 
-		r = getHandleRect(_value);
-		drawHandle(r);
-		_window->markRectAsDirty(r);
-	}
+void MacGui::MacSlider::handleWheelUp() {
+	int oldValue = _value;
+
+	_value = MAX(_minValue, _value - (_pageSize - 1));
+
+	if (_value != oldValue)
+		redrawHandle(oldValue, _value);
+}
+
+void MacGui::MacSlider::handleWheelDown() {
+	int oldValue = _value;
+
+	_value = MIN(_maxValue, _value + (_pageSize - 1));
+
+	if (_value != oldValue)
+		redrawHandle(oldValue, _value);
 }
 
 // ---------------------------------------------------------------------------
@@ -1350,17 +1404,22 @@ bool MacGui::MacPictureSlider::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
-void MacGui::MacPictureSlider::setValue(int value) {
-	MacWidget::setValue(CLIP(value, _minValue, _maxValue));
+void MacGui::MacPictureSlider::eraseHandle() {
+	Common::Rect r = _handle->getBounds();
+	int y = r.top - _bounds.top;
+	int w = r.width();
+	int h = r.height();
 
-	int valueRange = _maxValue - _minValue;
-	int valueOffset = _value - _minValue;
+	Graphics::Surface *background = _background->getPicture();
+	Graphics::Surface sprite = background->getSubArea(Common::Rect(_handlePos, y, _handlePos + w, y + h));
+	_window->drawSprite(&sprite, _bounds.left + _handlePos, r.top);
+}
 
-	int posRange = (_maxX - _rightMargin) - (_minX + _leftMargin);
-	int posOffset = (valueRange / 2 + posRange * valueOffset) / valueRange;
+void MacGui::MacPictureSlider::drawHandle() {
+	Graphics::Surface *sprite = _handle->getPicture();
+	Common::Rect r = _handle->getBounds();
 
-	_handleX = _minX + _leftMargin + posOffset;
-	setRedraw();
+	_window->drawSprite(sprite, _bounds.left + _handlePos, r.top);
 }
 
 void MacGui::MacPictureSlider::draw(bool drawFocused) {
@@ -1369,22 +1428,10 @@ void MacGui::MacPictureSlider::draw(bool drawFocused) {
 
 	debug(1, "MacGui::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	Graphics::Surface *bgSprite = _background->getPicture();
-	Graphics::Surface *hSprite = _handle->getPicture();
-
-	if (_fullRedraw)
-		_window->drawSprite(bgSprite, _bounds.left, _bounds.top);
-
-	int handleY = _handle->getBounds().top - _bounds.top;
-
-	if (_lastHandleX != -1 && !_fullRedraw) {
-		Graphics::Surface bg = bgSprite->getSubArea(Common::Rect(_lastHandleX, handleY, _lastHandleX + hSprite->w, handleY + hSprite->h));
-
-		_window->drawSprite(&bg, _bounds.left + _lastHandleX, _bounds.top + handleY);
+	if (_fullRedraw) {
+		_window->drawSprite(_background->getPicture(), _bounds.left, _bounds.top);
+		drawHandle();
 	}
-
-	_window->drawSprite(hSprite, _bounds.left + _handleX, _bounds.top + handleY);
-	_lastHandleX = _handleX;
 
 	_redraw = false;
 	_fullRedraw = false;
@@ -1394,8 +1441,8 @@ void MacGui::MacPictureSlider::handleMouseDown(Common::Event &event) {
 	int mouseX = event.mouse.x;
 	int handleWidth = _handle->getBounds().width();
 
-	if (mouseX >= _handleX && mouseX < _handleX + handleWidth)
-		_grabOffset = event.mouse.x - _bounds.left - _handleX;
+	if (mouseX >= _handlePos && mouseX < _handlePos + handleWidth)
+		_grabOffset = event.mouse.x - _bounds.left - _handlePos;
 	else
 		_grabOffset = handleWidth / 2;
 
@@ -1403,18 +1450,45 @@ void MacGui::MacPictureSlider::handleMouseDown(Common::Event &event) {
 }
 
 void MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
-	int posRange = (_maxX - _rightMargin) - (_minX + _rightMargin);
-	int posOffset = _handleX - (_minX + _leftMargin);
+	// Erase the drag rect, since the handle might not end up in
+	// the exact same spot.
+	int newValue = calculateValueFromPos();
 
-	int valueRange = _maxValue - _minValue;
-	int valueOffset = (posRange / 2 + valueRange * posOffset) / posRange;
-
-	setValue(_minValue + valueOffset);
+	if (newValue != _value) {
+		eraseHandle();
+		setValue(newValue);
+		drawHandle();
+	}
 }
 
 void MacGui::MacPictureSlider::handleMouseMove(Common::Event &event) {
-	_handleX = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
-	setRedraw();
+	int newPos = CLIP<int>(event.mouse.x - _bounds.left - _grabOffset, _minX, _maxX);
+
+	if (newPos != _handlePos) {
+		eraseHandle();
+		_handlePos = newPos;
+		drawHandle();
+	}
+}
+
+void MacGui::MacPictureSlider::handleWheelUp() {
+	int newValue = MAX(_minValue, _value + 1);
+
+	if (_value != newValue) {
+		eraseHandle();
+		setValue(newValue);
+		drawHandle();
+	}
+}
+
+void MacGui::MacPictureSlider::handleWheelDown() {
+	int newValue = MIN(_maxValue, _value - 1);
+
+	if (_value != newValue) {
+		eraseHandle();
+		setValue(newValue);
+		drawHandle();
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1742,6 +1816,8 @@ int MacGui::MacDialogWindow::runDialog() {
 				_mousePos.y = event.mouse.y;
 			}
 
+			int w;
+
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
 				// When a widget is clicked, it becomes the
@@ -1811,14 +1887,35 @@ int MacGui::MacDialogWindow::runDialog() {
 					if (wasActive != isActive)
 						_focusedWidget->setRedraw();
 
-					// The widget gets mouse events while it's active, but also
-					// one last one when it becomes inactive.
+					// The widget gets mouse events while
+					// it's active, but also one last one
+					// when it becomes inactive.
 
 					if (isActive || wasActive)
 						_focusedWidget->handleMouseMove(event);
 				} else {
 					updateCursor();
 				}
+
+				break;
+
+			case Common::EVENT_WHEELUP:
+				if (!_gui->_vm->_enableEnhancements || _focusedWidget)
+					break;
+
+				w = findWidget(event.mouse.x, event.mouse.y);
+				if (w >= 0)
+					_widgets[w]->handleWheelUp();
+
+				break;
+
+			case Common::EVENT_WHEELDOWN:
+				if (!_gui->_vm->_enableEnhancements || _focusedWidget)
+					break;
+
+				w = findWidget(event.mouse.x, event.mouse.y);
+				if (w >= 0)
+					_widgets[w]->handleWheelDown();
 
 				break;
 
