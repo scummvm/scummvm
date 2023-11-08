@@ -66,8 +66,9 @@ static const uint16 s_halfWidthSJISMap[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-EngineState::EngineState(SegManager *segMan)
-: _segMan(segMan),
+EngineState::EngineState(SegManager *segMan) :
+	_segMan(segMan),
+	_msgState(nullptr),
 	_dirseeker() {
 
 	reset(false);
