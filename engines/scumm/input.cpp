@@ -186,14 +186,16 @@ void ScummEngine::parseEvent(Common::Event event) {
 		// remap keypad keys to always have a corresponding ASCII value.
 		// Normally, keypad keys would only have an ASCII value when
 		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
+
+		_keyPressed = event.kbd;
 		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
 			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
 		}
 
-		if (event.kbd.ascii >= 512) {
+		if (_keyPressed.ascii >= 512) {
 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 		} else {
-			_keyDownMap[event.kbd.ascii] = false;
+			_keyDownMap[_keyPressed.ascii] = false;
 
 			// Due to some weird bug with capslock key pressed
 			// generated keydown event is for lower letter but
