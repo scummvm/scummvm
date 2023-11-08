@@ -85,10 +85,7 @@ namespace Nuvie {
  *
  * Just intializes all structures to 0.
  */
-U6Shape::U6Shape() {
-	raw = nullptr;
-	hotx = hoty = 0;
-	width = height = 0;
+U6Shape::U6Shape() : raw(nullptr), hotx(0), hoty(0), width(0), height(0) {
 }
 
 /*

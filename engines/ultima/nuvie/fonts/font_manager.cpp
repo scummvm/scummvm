@@ -35,14 +35,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-FontManager::FontManager(Configuration *cfg) {
-	config = cfg;
-	num_fonts = 0;
-
-	conv_font = nullptr;
-	conv_garg_font = nullptr;
-	conv_font_data = nullptr;
-	conv_font_widths = nullptr;
+FontManager::FontManager(Configuration *cfg) : config(cfg), num_fonts(0),
+		conv_font(nullptr), conv_garg_font(nullptr), conv_font_data(nullptr),
+		conv_font_widths(nullptr) {
 }
 
 FontManager::~FontManager() {

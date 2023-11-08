@@ -161,9 +161,7 @@ bool TimeQueue::delete_timer(TimedEvent *tevent) {
  */
 TimedEvent::TimedEvent(uint32 reltime, bool immediate, bool realtime)
 	: delay(reltime), repeat_count(0), ignore_pause(false),
-	  real_time(realtime), tq_can_delete(true), defunct(false) {
-	tq = nullptr;
-
+	  real_time(realtime), tq_can_delete(true), defunct(false), tq(nullptr) {
 	if (immediate) // start now (useful if repeat is true)
 		time = 0;
 	else
@@ -223,16 +221,9 @@ TimedPartyMove::TimedPartyMove(MapCoord *d, MapCoord *t, Obj *use_obj, uint32 st
 }
 
 TimedPartyMove::TimedPartyMove(uint32 step_delay)
-	: TimedEvent(step_delay, true) {
-	map_window = nullptr;
-	party = nullptr;
-	dest = nullptr;
-	target = nullptr;
-	moongate = nullptr;
-	actor_to_hide = nullptr;
-	moves_left = 0;
-	wait_for_effect = 0;
-	falling_in = false;
+	: TimedEvent(step_delay, true), map_window(nullptr), party(nullptr),
+	  dest(nullptr), target(nullptr), moongate(nullptr), actor_to_hide(nullptr),
+	  moves_left(0), wait_for_effect(0), falling_in(false) {
 }
 
 TimedPartyMove::~TimedPartyMove() {
@@ -744,10 +735,8 @@ bool TimedRestGather::move_party() {
 TimedRest::TimedRest(uint8 hours, Actor *who_will_guard, Obj *campfire_obj)
 	: TimedAdvance(hours, 80), party(Game::get_game()->get_party()),
 	  scroll(Game::get_game()->get_scroll()), sleeping(0),
-	  print_message(0) {
-	lookout = who_will_guard;
-	campfire = campfire_obj;
-	number_that_had_food = 0;
+	  print_message(0), lookout(who_will_guard), campfire(campfire_obj),
+	  number_that_had_food(0) {
 }
 
 /* This is the only place we know that the TimedAdvance has completed. */

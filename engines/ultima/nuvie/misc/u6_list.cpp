@@ -50,9 +50,7 @@ inline void deleteU6Link(U6Link *link) {
 	}
 }
 
-U6LList::U6LList() {
-	head = nullptr;
-	tail = nullptr;
+U6LList::U6LList() : head(nullptr), tail(nullptr) {
 }
 
 U6LList::~U6LList() {

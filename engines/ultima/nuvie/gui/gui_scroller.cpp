@@ -31,16 +31,9 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height)
-	: GUI_Widget(nullptr, x, y, w, h) {
-
-	R = r;
-	G = g;
-	B = b;
-	bg_color = 0;
-	row_height = r_height;
+	: GUI_Widget(nullptr, x, y, w, h), R(r), G(g), B(b), bg_color(0),
+	  row_height(r_height), num_rows(0), disp_offset(0) {
 	rows_per_page = h / row_height;
-	num_rows = 0;
-	disp_offset = 0;
 	scroll_bar = new GUI_ScrollBar(area.width() - SCROLLBAR_WIDTH, 0, area.height(), this);
 
 	GUI_Widget::AddWidget(scroll_bar); // we call the GUI_Widget::AddWidget method our method is for scroller container items.

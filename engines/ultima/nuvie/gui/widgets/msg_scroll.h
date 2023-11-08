@@ -59,10 +59,10 @@ public:
 	uint8 color;
 
 	MsgText();
-	MsgText(Std::string new_string, Font *f);
+	MsgText(const Std::string &new_string, Font *f);
 	~MsgText();
 
-	void append(Std::string new_string);
+	void append(const Std::string &new_string);
 	void copy(MsgText *msg_text);
 	uint32 length();
 

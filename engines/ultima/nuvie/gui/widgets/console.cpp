@@ -31,12 +31,7 @@ namespace Nuvie {
 static Console *g_console = nullptr;
 
 Console::Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h)
-	: GUI_Console(x, y, w, h) {
-	config = c;
-	screen = s;
-	gui = g;
-	displayConsole = true;
-
+	: GUI_Console(x, y, w, h), config(c), screen(s), gui(g), displayConsole(true) {
 	config->value("config/general/show_console", displayConsole, true);
 
 	if (displayConsole == false)

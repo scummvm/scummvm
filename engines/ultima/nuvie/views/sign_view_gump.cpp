@@ -33,7 +33,7 @@ namespace Nuvie {
 #define SIGN_BG_W 246
 #define SIGN_BG_H 101
 
-SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg) {
+SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg), sign_text(nullptr) {
 	font = new BMPFont();
 
 	Std::string datadir = GUI::get_gui()->get_data_dir();
@@ -50,8 +50,6 @@ SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg) {
 	build_path(datadir, "sign_font", imagefile);
 
 	((BMPFont *)font)->init(imagefile, true);
-
-	sign_text = nullptr;
 }
 
 SignViewGump::~SignViewGump() {

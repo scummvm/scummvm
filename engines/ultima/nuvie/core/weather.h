@@ -46,7 +46,7 @@ using Std::string;
 
 class Weather: public CallBack {
 	Configuration *config;
-	GameClock *clock;
+	GameClock *_clock;
 	nuvie_game_t gametype; // what game is being played?
 
 	uint8 wind_dir;

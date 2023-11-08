@@ -101,7 +101,7 @@ private:
 	SoundManager *sound_manager;
 	EggManager *egg_manager;
 
-	GameClock *clock;
+	GameClock *_clock;
 	Portrait *portrait;
 	UseCode *usecode;
 
@@ -373,7 +373,7 @@ public:
 		return view_manager;
 	}
 	GameClock *get_clock()            {
-		return clock;
+		return _clock;
 	}
 	Portrait *get_portrait()          {
 		return portrait;

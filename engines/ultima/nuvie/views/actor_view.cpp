@@ -41,14 +41,11 @@ extern GUI_status partyViewButtonCallback(void *data);
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
 
-ActorView::ActorView(Configuration *cfg) : View(cfg) {
-	portrait = nullptr;
-	portrait_data = nullptr;
-	in_party = false;
+ActorView::ActorView(Configuration *cfg) : View(cfg), portrait(nullptr),
+		portrait_data(nullptr), in_party(false), cursor_tile(nullptr),
+		show_cursor(false) {
 	cursor_pos.x = 2;
 	cursor_pos.px = cursor_pos.py = 0;
-	cursor_tile = nullptr;
-	show_cursor = false;
 }
 
 ActorView::~ActorView() {

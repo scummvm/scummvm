@@ -48,13 +48,9 @@ typedef enum {
 	: (EQ < 30) ? EGG_HATCH_NIGHT : EGG_HATCH_ALWAYS;
 
 
-EggManager::EggManager(Configuration *cfg, nuvie_game_t type, Map *m) {
-	config = cfg;
-	gametype = type;
-	map = m;
-	actor_manager = nullptr;
-	obj_manager = nullptr;
-	not_spawning_actors = false;
+EggManager::EggManager(Configuration *cfg, nuvie_game_t type, Map *m)
+		: config(cfg), gametype(type), map(m), actor_manager(nullptr),
+		  obj_manager(nullptr), not_spawning_actors(false) {
 }
 
 EggManager::~EggManager() {

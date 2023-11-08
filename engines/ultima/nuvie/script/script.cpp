@@ -3214,7 +3214,7 @@ static int nscript_tileset_export(lua_State *L) {
 	build_path(path, get_game_tag(game->get_game_type()), path);
 
 	if (!directory_exists(path.c_str())) {
-		mkdir_recursive(path.c_str(), 0700);
+		mkdir_recursive(path, 0700);
 	}
 
 	build_path(path, "custom_tiles.bmp", path);

@@ -68,14 +68,9 @@ const char *reagent[8] = {"mandrake root", "nightshade", "black pearl", "blood m
 const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OBJ_U6_BLACK_PEARL, OBJ_U6_BLOOD_MOSS, OBJ_U6_SPIDER_SILK, OBJ_U6_GARLIC, OBJ_U6_GINSENG, OBJ_U6_SULFUROUS_ASH};
 
 
-Magic::Magic() {
-	event = nullptr;
-	target_object = nullptr;
-	magic_script = nullptr;
-	spellbook_obj = nullptr;
-	state = 0;
-
-	for (uint16 index = 0; index < 256; index++) spell[index] = nullptr;
+Magic::Magic() : event(nullptr), target_object(nullptr), magic_script(nullptr),
+		spellbook_obj(nullptr), state(0) {
+	ARRAYCLEAR(spell);
 	clear_cast_buffer();
 }
 

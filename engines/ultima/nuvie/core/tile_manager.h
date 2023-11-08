@@ -205,7 +205,7 @@ protected:
 
 	bool loadAnimData();
 	bool loadTileFlag();
-	void decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num);
+	void decodePixelBlockTile(const unsigned char *tile_data, uint16 tile_num);
 
 	bool loadAnimMask();
 
@@ -215,7 +215,7 @@ private:
 	void copyTileMetaData(Tile *dest, Tile *src);
 	Tile *addNewTiles(uint16 num_tiles);
 
-	void writeBmpTileData(unsigned char *data, Tile *t, bool transparent);
+	void writeBmpTileData(unsigned char *data, const Tile *t, bool transparent);
 };
 
 } // End of namespace Nuvie

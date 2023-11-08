@@ -32,15 +32,10 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define NEWMAGIC_BMP_W 144
-#define NEWMAGIC_BMP_H 82
-
-SpellViewGump::SpellViewGump(Configuration *cfg) : SpellView(cfg) {
+SpellViewGump::SpellViewGump(Configuration *cfg) : SpellView(cfg),
+		gump_button(nullptr), font(nullptr), selected_spell(-1) {
 	num_spells_per_page = 10;
 	bg_image = nullptr;
-	gump_button = nullptr;
-	font = nullptr;
-	selected_spell = -1;
 }
 
 SpellViewGump::~SpellViewGump() {

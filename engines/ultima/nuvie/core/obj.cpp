@@ -27,18 +27,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-Obj::Obj() {
-	obj_n = 0;
-	status = 0;
-	nuvie_status = 0;
-	frame_n = 0;
-	qty = 0;
-	quality = 0;
-	parent = nullptr;
-	container = nullptr;
-	x = 0;
-	y = 0;
-	z = 0;
+Obj::Obj() : obj_n(0), status(0), nuvie_status(0), frame_n(0), qty(0),
+		quality(0), parent(nullptr), container(nullptr), x(0), y(0), z(0) {
 }
 
 Obj::Obj(Obj *sobj) {

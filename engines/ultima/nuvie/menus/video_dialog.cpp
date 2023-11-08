@@ -49,9 +49,8 @@ namespace Nuvie {
 VideoDialog::VideoDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - VD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - VD_HEIGHT) / 2,
-	             VD_WIDTH, VD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
-	callback_object = callback;
-	non_square_pixels_button = nullptr;
+	             VD_WIDTH, VD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE), callback_object(callback),
+	             non_square_pixels_button(nullptr) {
 	init();
 	grab_focus();
 }

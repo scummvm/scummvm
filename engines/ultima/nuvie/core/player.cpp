@@ -42,29 +42,16 @@ namespace Nuvie {
 
 #define PLAYER_BASE_MOVEMENT_COST 5
 
-Player::Player(Configuration *cfg) {
-	config = cfg;
+Player::Player(Configuration *cfg) : config(cfg), _clock(nullptr),
+		party(nullptr), actor(nullptr), actor_manager(nullptr), obj_manager(nullptr),
+		map_window(nullptr), karma(0), gender(0), questf(0), gargishf(0), alcohol(0),
+		current_weapon(0), party_mode(false), mapwindow_centered(false) {
 	config->value("config/GameType", game_type);
-
-	clock = nullptr;
-	party = nullptr;
-	actor = nullptr;
-	actor_manager = nullptr;
-	obj_manager = nullptr;
-	map_window = nullptr;
-	karma = 0;
-	gender = 0;
-	questf = 0;
-	gargishf = 0;
-	alcohol = 0;
-	current_weapon = 0;
-	party_mode = false;
-	mapwindow_centered = false;
 }
 
 bool Player::init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c, Party *p) {
 
-	clock = c;
+	_clock = c;
 	actor_manager = am;
 	obj_manager = om;
 	map_window = mw;
@@ -455,7 +442,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 	// update world around player
 	actor_manager->updateActors(x, y, z);
 	obj_manager->update(x, y, z); // remove temporary objs, hatch eggs
-	clock->inc_move_counter(); // doesn't update time
+	_clock->inc_move_counter(); // doesn't update time
 	actor_manager->startActors(); // end player turn
 }
 
@@ -525,7 +512,7 @@ void Player::pass() {
 	if (party_mode && party->is_leader(actor)) // lead party
 		party->follow(0, 0);
 // actor_manager->updateActors(x, y, z); // not needed because position is unchanged
-	clock->inc_move_counter_by_a_minute(); // doesn't update time
+	_clock->inc_move_counter_by_a_minute(); // doesn't update time
 	actor_manager->startActors(); // end player turn
 //actor_manager->moveActors();
 	Game::get_game()->time_changed();
@@ -587,8 +574,8 @@ uint32 Player::get_walk_delay() const {
  */
 bool Player::check_walk_delay() {
 	static uint32 walk_delay = 0, // start with no delay
-	              last_time = clock->get_ticks();
-	uint32 this_time = clock->get_ticks();
+	              last_time = _clock->get_ticks();
+	uint32 this_time = _clock->get_ticks();
 	uint32 time_passed = this_time - last_time;
 
 	// subtract time_passed until delay is 0

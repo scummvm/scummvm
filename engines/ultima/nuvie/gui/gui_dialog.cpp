@@ -29,17 +29,9 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable)
-	: GUI_Widget(nullptr, x, y, w, h) {
-
-	R = r;
-	G = g;
-	B = b;
-	bg_color = 0;
-	drag = false;
-	can_drag = is_moveable;
-	button_x = button_y = 0;
-	old_x = old_y = -1;
-	backingstore = nullptr;
+	: GUI_Widget(nullptr, x, y, w, h), R(r), G(g), B(b), bg_color(0), drag(false),
+	  can_drag(is_moveable), button_x(0), button_y(0), old_x(-1), old_y(-1),
+	  backingstore(nullptr) {
 	backingstore_rect.setWidth(w);
 	backingstore_rect.setHeight(h);
 	loadBorderImages();

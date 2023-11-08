@@ -25,9 +25,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-NuvieIO::NuvieIO() {
-	size = 0;
-	pos = 0;
+NuvieIO::NuvieIO() : size(0), pos(0) {
 }
 
 NuvieIO::~NuvieIO() {

@@ -157,7 +157,7 @@ void stringToLower(Std::string &str) {
 	}
 }
 
-int mkdir_recursive(Std::string path, int mode) {
+int mkdir_recursive(const Std::string &path, int mode) {
 #ifdef TODO
 	vector<string> directories;
 	string tmp_path;
@@ -215,7 +215,7 @@ nuvie_game_t get_game_type(Configuration *config) {
 	return (nuvie_game_t)game_type;
 }
 
-void build_path(Std::string path, Std::string filename, Std::string &full_path) {
+void build_path(const Std::string &path, const Std::string &filename, Std::string &full_path) {
 	full_path = path;
 
 	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)

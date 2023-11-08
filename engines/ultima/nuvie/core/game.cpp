@@ -72,59 +72,25 @@ namespace Nuvie {
 
 Game *Game::game = nullptr;
 
-Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm) {
+Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm)
+		: config(cfg), event(evt), gui(g), screen(scr), game_type(type),
+		  sound_manager(sm), script(nullptr), background(nullptr),
+		  cursor(nullptr), dither(nullptr), tile_manager(nullptr),
+		  obj_manager(nullptr), palette(nullptr), font_manager(nullptr),
+		  scroll(nullptr), game_map(nullptr), map_window(nullptr),
+		  actor_manager(nullptr), player(nullptr), converse(nullptr),
+		  conv_gump(nullptr), command_bar(nullptr), new_command_bar(nullptr),
+		  _clock(nullptr), party(nullptr), portrait(nullptr),
+		  view_manager(nullptr), egg_manager(nullptr), usecode(nullptr),
+		  effect_manager(nullptr), weather(nullptr), magic(nullptr),
+		  book(nullptr), keybinder(nullptr), _playing(true),
+		  converse_gump_type(CONVERSE_GUMP_DEFAULT),
+		  pause_flags(PAUSE_UNPAUSED), pause_user_count(0),
+		  ignore_event_delay(0), unlimited_casting(false),
+		  god_mode_enabled(false), armageddon(false), ethereal(false),
+		  free_balloon_movement(false), converse_gump_width(0),
+		  min_converse_gump_width(0), force_solid_converse_bg(false) {
 	game = this;
-	config = cfg;
-	event = evt;
-
-	gui = g;
-
-	screen = scr;
-	game_type = type;
-	sound_manager = sm;
-
-	script = nullptr;
-	background = nullptr;
-	cursor = nullptr;
-	dither = nullptr;
-	tile_manager = nullptr;
-	obj_manager = nullptr;
-	palette = nullptr;
-	font_manager = nullptr;
-	scroll = nullptr;
-	game_map = nullptr;
-	map_window = nullptr;
-	actor_manager = nullptr;
-	player = nullptr;
-	converse = nullptr;
-	conv_gump = nullptr;
-	command_bar = nullptr;
-	new_command_bar = nullptr;
-	clock = nullptr;
-	party = nullptr;
-	portrait = nullptr;
-	view_manager = nullptr;
-	egg_manager = nullptr;
-	usecode = nullptr;
-	effect_manager = nullptr;
-	weather = nullptr;
-	magic = nullptr;
-	book = nullptr;
-	keybinder = nullptr;
-
-	_playing = true;
-	converse_gump_type = CONVERSE_GUMP_DEFAULT;
-	pause_flags = PAUSE_UNPAUSED;
-	pause_user_count = 0;
-	ignore_event_delay = 0;
-	unlimited_casting = false;
-	god_mode_enabled = false;
-	armageddon = false;
-	ethereal = false;
-	free_balloon_movement = false;
-	converse_gump_width = 0;
-	min_converse_gump_width = 0;
-	force_solid_converse_bg = false;
 
 	config->value("config/cheats/enabled", cheats_enabled, false);
 	config->value("config/cheats/enable_hackmove", is_using_hackmove, false);
@@ -185,7 +151,7 @@ Game::~Game() {
 	if (player) delete player;
 	//delete background;
 	if (converse) delete converse;
-	if (clock) delete clock;
+	if (_clock) delete _clock;
 	if (party) delete party;
 	if (portrait) delete portrait;
 	if (view_manager) delete view_manager;
@@ -214,8 +180,7 @@ bool Game::loadGame(Script *s) {
 
 	palette = new GamePalette(screen, config);
 
-	clock = new GameClock(config, game_type);
-
+	_clock = new GameClock(config, game_type);
 
 	background = new Background(config);
 	background->init();
@@ -270,7 +235,7 @@ bool Game::loadGame(Script *s) {
 	egg_manager->set_obj_manager(obj_manager);
 
 	ConsoleAddInfo("Loading actor data.");
-	actor_manager = new ActorManager(config, game_map, tile_manager, obj_manager, clock);
+	actor_manager = new ActorManager(config, game_map, tile_manager, obj_manager, _clock);
 
 	game_map->set_actor_manager(actor_manager);
 	egg_manager->set_actor_manager(actor_manager);
@@ -282,7 +247,7 @@ bool Game::loadGame(Script *s) {
 	if (is_original_plus_full_map()) // need to render after map window
 		gui->AddWidget(background);
 
-	weather = new Weather(config, clock, game_type);
+	weather = new Weather(config, _clock, game_type);
 
 //   if(!is_new_style()) // Everyone always uses original style command bar now.
 	{
@@ -301,7 +266,7 @@ bool Game::loadGame(Script *s) {
 
 	player = new Player(config);
 	party = new Party(config);
-	player->init(obj_manager, actor_manager, map_window, clock, party);
+	player->init(obj_manager, actor_manager, map_window, _clock, party);
 	party->init(this, actor_manager);
 
 	portrait = newPortrait(game_type, config);
@@ -327,7 +292,7 @@ bool Game::loadGame(Script *s) {
 		magic = new Magic();
 	}
 
-	event->init(obj_manager, map_window, scroll, player, magic, clock, view_manager, usecode, gui, keybinder);
+	event->init(obj_manager, map_window, scroll, player, magic, _clock, view_manager, usecode, gui, keybinder);
 	if (game_type == NUVIE_GAME_U6) {
 		magic->init(event);
 	}
@@ -427,14 +392,14 @@ void Game::init_converse() {
 		conv_gump->Hide();
 		gui->AddWidget(conv_gump);
 
-		converse->init(config, game_type, conv_gump, actor_manager, clock, player, view_manager, obj_manager);
+		converse->init(config, game_type, conv_gump, actor_manager, _clock, player, view_manager, obj_manager);
 	} else if (game_type == NUVIE_GAME_U6 && converse_gump_type == CONVERSE_GUMP_DEFAULT) {
-		converse->init(config, game_type, scroll, actor_manager, clock, player, view_manager, obj_manager);
+		converse->init(config, game_type, scroll, actor_manager, _clock, player, view_manager, obj_manager);
 	} else {
 		ConverseGumpWOU *gump = new ConverseGumpWOU(config, font_manager->get_font(0), screen);
 		gump->Hide();
 		gui->AddWidget(gump);
-		converse->init(config, game_type, gump, actor_manager, clock, player, view_manager, obj_manager);
+		converse->init(config, game_type, gump, actor_manager, _clock, player, view_manager, obj_manager);
 	}
 
 }
@@ -638,7 +603,7 @@ void Game::play() {
 		if (cursor) cursor->clear(); // restore cursor area before GUI events
 
 		event->update();
-		if (clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {
+		if (_clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {
 			palette->rotatePalette();
 			tile_manager->update();
 			actor_manager->twitchActors();
@@ -682,7 +647,7 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 			gui->HandleEvent(&evt);
 	}
 
-	if (clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {
+	if (_clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {
 		palette->rotatePalette();
 		tile_manager->update();
 		actor_manager->twitchActors();

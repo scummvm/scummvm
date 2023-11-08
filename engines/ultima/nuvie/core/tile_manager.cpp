@@ -88,17 +88,12 @@ static const Tile gump_cursor = {
 	}
 };
 
-TileManager::TileManager(Configuration *cfg)
-	: desc_buf(nullptr) {
-	config = cfg;
-	look = nullptr;
-	game_counter = rgame_counter = 0;
+TileManager::TileManager(Configuration *cfg) : desc_buf(nullptr), config(cfg),
+		look(nullptr), game_counter(0), rgame_counter(0), extendedTiles(nullptr),
+		numTiles(NUM_ORIGINAL_TILES) {
 	memset(tileindex, 0, sizeof(tileindex));
 	memset(tile, 0, sizeof(tile));
 	memset(&animdata, 0, sizeof animdata);
-
-	extendedTiles = nullptr;
-	numTiles = NUM_ORIGINAL_TILES;
 
 	config->value("config/GameType", game_type);
 }
@@ -513,11 +508,11 @@ bool TileManager::loadAnimData() {
 	return true;
 }
 
-void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num) {
+void TileManager::decodePixelBlockTile(const unsigned char *tile_data, uint16 tile_num) {
 	uint8 len;
 	uint16 disp;
 	uint8 x;
-	unsigned char *ptr;
+	const unsigned char *ptr;
 	unsigned char *data_ptr;
 
 // num_blocks = tile_data[0];
@@ -926,7 +921,7 @@ void TileManager::exportTilesetToBmpFile(Std::string filename, bool fixupU6Shore
 	bmp.save(filename);
 }
 
-void TileManager::writeBmpTileData(unsigned char *data, Tile *t, bool transparent) {
+void TileManager::writeBmpTileData(unsigned char *data, const Tile *t, bool transparent) {
 	for (uint8 y = 0; y < 16; y++) {
 		for (uint8 x = 0; x < 16; x++) {
 			if (!transparent || t->data[y * 16 + x] != 255) {

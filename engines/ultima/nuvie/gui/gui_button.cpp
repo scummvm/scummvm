@@ -32,59 +32,39 @@ Graphics::ManagedSurface *checkmarks = nullptr;
 
 GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
 						Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
-	: GUI_Widget(data, x, y, image->w, image->h) {
-	callback_object = callback;
-
-	button = image;
-	button2 = image2;
-	freebutton = free_surfaces;
+	: GUI_Widget(data, x, y, image->w, image->h), callback_object(callback), button(image),
+	  button2(image2), freebutton(free_surfaces), enabled(true), buttonFont(nullptr),
+	  freefont(false), flatbutton(false), is_checkable(false), checked(0), is_highlighted(false) {
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
-	buttonFont = nullptr;
-	freefont = 0;
-	flatbutton = 0;
-	is_checkable = 0;
-	checked = 0;
-	is_highlighted = false;
 }
 
-GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
+GUI_Button::GUI_Button(void *data, int x, int y, int w, int h,
 						GUI_CallBack *callback)
-	: GUI_Widget(data, x, y, w, h) {
-	callback_object = callback;
-
-	button = nullptr;
-	button2 = nullptr;
-	freebutton = 0;
+	: GUI_Widget(data, x, y, w, h), callback_object(callback), button(nullptr),
+	  button2(nullptr), freebutton(false), enabled(true), buttonFont(nullptr),
+	  freefont(false), flatbutton(false), is_checkable(false), checked(0), is_highlighted(false) {
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
-	buttonFont = nullptr;
-	freefont = 0;
-	flatbutton = 0;
-	is_checkable = 0;
-	checked = 0;
-	is_highlighted = false;
 }
 
 GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-					   GUI_Font *font, int alignment, int is_checkbutton,
-					   GUI_CallBack *callback, int flat)
+					   GUI_Font *font, int alignment, bool is_checkbutton,
+					   GUI_CallBack *callback, bool flat)
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
 	if (font != nullptr) {
 		buttonFont = font;
-		freefont = 0;
+		freefont = false;
 	} else {
 		buttonFont = new GUI_Font();
-		freefont = 1;
+		freefont = true;
 	}
 	flatbutton = flat;
-	freebutton = 1;
+	freebutton = true;
 	button = nullptr;
 	button2 = nullptr;
 
@@ -103,7 +83,7 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 	for (int i = 0; i < 3; ++i) {
 		pressed[i] = 0;
 	}
-	enabled = 1;
+	enabled = true;
 }
 
 GUI_Button::~GUI_Button() {
@@ -252,11 +232,11 @@ GUI_status GUI_Button::MouseMotion(int x, int y, uint8 state) {
 }
 
 void GUI_Button::Disable() {
-	enabled = 0;
+	enabled = false;
 	Redraw();
 }
 
-void GUI_Button::Enable(int flag) {
+void GUI_Button::Enable(bool flag) {
 	enabled = flag;
 	Redraw();
 }
@@ -282,8 +262,9 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	buttonFont->setColoring(0, 0, 0);
 	buttonFont->setTransparency(true);
 	buttonFont->textExtent(text, &tw, &th);
-	if (tw > (area.width() - (4 + is_checkable * 16))) {
-		int n = (area.width() - (4 + is_checkable * 16)) / buttonFont->charWidth();
+	int checkable = (is_checkable ? 1 : 0);
+	if (tw > (area.width() - (4 + checkable * 16))) {
+		int n = (area.width() - (4 + checkable * 16)) / buttonFont->charWidth();
 		duptext = new char[n + 1];
 		strncpy(duptext, text, n);
 		duptext[n] = 0;
@@ -295,7 +276,7 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	}
 	switch (alignment) {
 	case BUTTON_TEXTALIGN_LEFT:
-		tx = 4 + (is_checkable * 16);
+		tx = 4 + (checkable * 16);
 		break;
 	case BUTTON_TEXTALIGN_CENTER:
 		tx = (area.width() - tw) >> 1;

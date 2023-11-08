@@ -27,8 +27,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Bmp::U6Bmp(): U6Shape() {
-	data = nullptr;
+U6Bmp::U6Bmp(): U6Shape(), data(nullptr) {
 }
 
 U6Bmp::~U6Bmp() {

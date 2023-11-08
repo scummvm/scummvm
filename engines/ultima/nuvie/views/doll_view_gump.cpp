@@ -35,16 +35,12 @@
 namespace Ultima {
 namespace Nuvie {
 
-DollViewGump::DollViewGump(Configuration *cfg) : DraggableView(cfg),
-	gump_button(nullptr), combat_button(nullptr), heart_button(nullptr), party_button(nullptr), inventory_button(nullptr),
-	doll_widget(nullptr), font(nullptr), actor(nullptr), cursor_tile(nullptr) {
-	bg_image = nullptr;
-	actor_doll = nullptr;
-	is_avatar = false;
-	show_cursor = true;
-	cursor_pos = CURSOR_HEAD;
-	cursor_xoff = 50;
-	cursor_yoff = 16;
+DollViewGump::DollViewGump(Configuration *cfg)
+    : DraggableView(cfg), gump_button(nullptr), combat_button(nullptr),
+      heart_button(nullptr), party_button(nullptr), inventory_button(nullptr),
+	  doll_widget(nullptr), actor_doll(nullptr), font(nullptr), actor(nullptr),
+	  cursor_tile(nullptr), is_avatar(false), show_cursor(true),
+	  cursor_pos(CURSOR_HEAD), cursor_xoff(50), cursor_yoff(16) {
 }
 
 DollViewGump::~DollViewGump() {

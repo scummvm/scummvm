@@ -37,11 +37,9 @@ namespace Nuvie {
 #define SUNMOON_RIBBON_DIR_WIDTH 14
 #define SUNMOON_RIBBON_TOTAL_WIDTH (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH)
 
-SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm): SunMoonStripWidget(p, tm) {
-	bg_data = nullptr;
-	weather = w;
-	retracted = true;
-	current_time = 0;
+SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm)
+	: SunMoonStripWidget(p, tm), bg_data(nullptr), weather(w), retracted(true),
+	  current_time(0) {
 }
 
 SunMoonRibbon::~SunMoonRibbon() {
@@ -104,8 +102,8 @@ void SunMoonRibbon::Display(bool full_redraw) {
 }
 
 void SunMoonRibbon::update_hour(uint16 time) {
-	uint8 dawn_tbl[] = {8, 7, 7, 6, 5, 4, 3, 2, 1, 0};
-	uint8 dusk_tbl[] = {1, 2, 3, 4, 5, 6, 7, 7, 7, 8};
+	static const uint8 dawn_tbl[] = {8, 7, 7, 6, 5, 4, 3, 2, 1, 0};
+	static const uint8 dusk_tbl[] = {1, 2, 3, 4, 5, 6, 7, 7, 7, 8};
 
 	time = time / 6;
 
@@ -124,7 +122,7 @@ void SunMoonRibbon::update_hour(uint16 time) {
 }
 
 void SunMoonRibbon::display_sun_moon(const Tile *tile, uint8 pos) {
-	struct {
+	static const struct {
 		sint16 x, y;
 	} skypos[15] = { // sky positions relative to area
 		{ SUNMOON_RIBBON_WIDTH - 0 * 3, 7 },
@@ -150,12 +148,8 @@ void SunMoonRibbon::display_sun_moon(const Tile *tile, uint8 pos) {
 }
 
 void SunMoonRibbon::display_surface_strip() {
-	Common::Rect src;
-	Common::Rect dest;
-
-	src = Common::Rect(SUNMOON_RIBBON_WIDTH, SUNMOON_RIBBON_HEIGHT);
-
-	dest = area;
+	Common::Rect src = Common::Rect(SUNMOON_RIBBON_WIDTH, SUNMOON_RIBBON_HEIGHT);
+	Common::Rect dest = area;
 	dest.setWidth(SUNMOON_RIBBON_WIDTH);
 	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 

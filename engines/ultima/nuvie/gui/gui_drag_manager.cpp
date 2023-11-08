@@ -29,13 +29,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-GUI_DragManager::GUI_DragManager(Screen *s) {
-	screen = s;
-
-	message = 0;
-	data = nullptr;
-	drag_source = nullptr;
-	is_out_of_range = false;
+GUI_DragManager::GUI_DragManager(Screen *s): screen(s), message(0),
+		data(nullptr), drag_source(nullptr), is_out_of_range(false) {
 }
 
 GUI_status GUI_DragManager::start_drag(GUI_DragArea *src, int msg, void *d, unsigned char *icon_buf, uint16 w, uint16 h, uint8 bpp, bool out_of_range) {

@@ -30,15 +30,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-WOUFont::WOUFont() {
-	font_data = nullptr;
-	char_buf = nullptr;
-	num_chars = 0;
-	offset = 0;
-	height = 0;
-	pixel_char = 0;
-	default_color = FONT_COLOR_U6_NORMAL;
-	default_highlight_color = FONT_COLOR_U6_HIGHLIGHT;
+WOUFont::WOUFont() : font_data(nullptr), char_buf(nullptr), height(0),
+		pixel_char(0) {
 }
 
 WOUFont::~WOUFont() {

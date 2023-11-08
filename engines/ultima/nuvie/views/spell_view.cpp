@@ -48,18 +48,12 @@ namespace Nuvie {
 static const char circle_num_tbl[][8] = {"1ST", "2ND", "3RD", "4TH", "5TH", "6TH", "7TH", "8TH"};
 static const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OBJ_U6_BLACK_PEARL, OBJ_U6_BLOOD_MOSS, OBJ_U6_SPIDER_SILK, OBJ_U6_GARLIC, OBJ_U6_GINSENG, OBJ_U6_SULFUROUS_ASH};
 
-#define NEWMAGIC_BMP_W 144
-#define NEWMAGIC_BMP_H 82
+static const int NEWMAGIC_BMP_W = 144;
+static const int NEWMAGIC_BMP_H = 82;
 
-SpellView::SpellView(Configuration *cfg) : DraggableView(cfg) {
-	spell_container = nullptr;
-	background = nullptr;
-	level = 1;
-	all_spells_mode = false;
-	spell_num = 0;
-	event_mode = false;
-	num_spells_per_page = 8;
-	caster = nullptr;
+SpellView::SpellView(Configuration *cfg) : DraggableView(cfg), spell_container(nullptr),
+		background(nullptr), level(1), all_spells_mode(false), spell_num(0),
+		event_mode(false), num_spells_per_page(8), caster(nullptr) {
 }
 
 SpellView::~SpellView() {

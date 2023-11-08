@@ -32,9 +32,8 @@ namespace Nuvie {
 
 using Std::vector;
 
-PartyPathFinder::PartyPathFinder(Party *p) {
+PartyPathFinder::PartyPathFinder(Party *p) : party(p) {
 	assert(p);
-	party = p;
 }
 
 PartyPathFinder::~PartyPathFinder() {

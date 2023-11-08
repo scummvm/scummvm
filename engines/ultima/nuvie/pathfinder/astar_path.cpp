@@ -28,7 +28,9 @@ namespace Ultima {
 namespace Nuvie {
 
 AStarPath::AStarPath() : final_node(0) {
-} void AStarPath::create_path() {
+}
+
+void AStarPath::create_path() {
 	astar_node *i = final_node; // iterator through steps, from back
 	delete_path();
 	Std::vector<astar_node *> reverse_list;

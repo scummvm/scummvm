@@ -36,15 +36,10 @@
 namespace Ultima {
 namespace Nuvie {
 
-Map::Map(Configuration *cfg) {
-	config = cfg;
-
-	tile_manager = nullptr;
-	obj_manager = nullptr;
-	actor_manager = nullptr;
-	surface = nullptr;
-	roof_surface = nullptr;
-	dungeons[4] = nullptr;
+Map::Map(Configuration *cfg) : config(cfg), tile_manager(nullptr),
+		obj_manager(nullptr), actor_manager(nullptr), surface(nullptr),
+		roof_surface(nullptr) {
+	ARRAYCLEAR(dungeons);
 
 	config->value(config_get_game_key(config) + "/roof_mode", roof_mode, false);
 }
@@ -573,7 +568,7 @@ void Map::saveRoofData() {
 	}
 }
 
-void Map::insertSurfaceSuperChunk(unsigned char *schunk, unsigned char *chunk_data, uint8 schunk_num) {
+void Map::insertSurfaceSuperChunk(const unsigned char *schunk, const unsigned char *chunk_data, uint8 schunk_num) {
 	uint16 world_x, world_y;
 	uint16 c1, c2;
 	uint8 i, j;
@@ -597,7 +592,7 @@ void Map::insertSurfaceSuperChunk(unsigned char *schunk, unsigned char *chunk_da
 	}
 }
 
-void Map::insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y) {
+void Map::insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y) {
 	unsigned char *map_ptr;
 	uint8 i;
 
@@ -611,7 +606,7 @@ void Map::insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y) {
 
 }
 
-void Map::insertDungeonSuperChunk(unsigned char *schunk, unsigned char *chunk_data, uint8 level) {
+void Map::insertDungeonSuperChunk(const unsigned char *schunk, const unsigned char *chunk_data, uint8 level) {
 	uint16 c1, c2;
 	uint8 i, j;
 
@@ -628,7 +623,7 @@ void Map::insertDungeonSuperChunk(unsigned char *schunk, unsigned char *chunk_da
 	}
 }
 
-void Map::insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 level) {
+void Map::insertDungeonChunk(const unsigned char *chunk, uint16 x, uint16 y, uint8 level) {
 	unsigned char *map_ptr;
 	uint8 i;
 

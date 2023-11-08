@@ -51,7 +51,7 @@ const char *get_game_tag(int game_type);
 void config_get_path(Configuration *config, const Std::string &filename, Std::string &path);
 uint8 get_game_type(const char *string);
 nuvie_game_t get_game_type(Configuration *config);
-void build_path(Std::string path, Std::string filename, Std::string &full_path);
+void build_path(const Std::string &path, const Std::string &filename, Std::string &full_path);
 bool directory_exists(const char *directory);
 bool file_exists(const char *path);
 void print_b(DebugLevelType level, uint8 num);
@@ -97,7 +97,7 @@ inline uint32 divide_time(uint32 this_time, uint32 &last_time, uint32 *passed_ti
 	return (fraction);
 }
 
-int mkdir_recursive(Std::string path, int mode);
+int mkdir_recursive(const Std::string &path, int mode);
 
 void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, uint16 w, uint16 h);
 

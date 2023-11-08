@@ -50,24 +50,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-ViewManager::ViewManager(Configuration *cfg) {
-	config = cfg;
+ViewManager::ViewManager(Configuration *cfg) : config(cfg),
+		current_view(nullptr), gui(nullptr), font(nullptr), tile_manager(nullptr),
+		obj_manager(nullptr), party(nullptr), portrait(nullptr), actor_view(nullptr),
+		inventory_view(nullptr), portrait_view(nullptr), party_view(nullptr),
+		spell_view(nullptr), doll_next_party_member(0), ribbon(nullptr),
+		mdSkyWidget(nullptr) {
 	config->value("config/GameType", game_type);
-	current_view = nullptr;
-	gui = nullptr;
-	font = nullptr;
-	tile_manager = nullptr;
-	obj_manager = nullptr;
-	party = nullptr;
-	portrait = nullptr;
-	actor_view = nullptr;
-	inventory_view = nullptr;
-	portrait_view = nullptr;
-	party_view = nullptr;
-	spell_view = nullptr;
-	doll_next_party_member = 0;
-	ribbon = nullptr;
-	mdSkyWidget = nullptr;
 }
 
 ViewManager::~ViewManager() {

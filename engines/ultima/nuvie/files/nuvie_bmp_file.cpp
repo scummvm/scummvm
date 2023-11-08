@@ -27,14 +27,11 @@ namespace Nuvie {
 
 #define NUVIEBMPFILE_MAGIC 0x4d42 // 'BM'
 
-NuvieBmpFile::NuvieBmpFile() {
-	data = nullptr;
-	prev_width = 0;
-	prev_height = 0;
-	prev_bits = 0;
-	bmp_line_width = 0;
+NuvieBmpFile::NuvieBmpFile() : data(nullptr), prev_width(0), prev_height(0),
+		prev_bits(0), bmp_line_width(0) {
 	memset(&header, 0, sizeof(header));
 	memset(&infoHeader, 0, sizeof(infoHeader));
+	ARRAYCLEAR(palette);
 }
 
 NuvieBmpFile::~NuvieBmpFile() {

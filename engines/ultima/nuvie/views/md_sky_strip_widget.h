@@ -36,7 +36,7 @@ class MDSkyStripWidget : public GUI_Widget {
 
 protected:
 	Configuration *config;
-	GameClock *clock;
+	GameClock *_clock;
 	U6Shape strip1, strip2;
 	Player *player;
 

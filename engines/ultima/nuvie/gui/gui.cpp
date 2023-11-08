@@ -38,24 +38,14 @@ const int GUI::mouseclick_delay = 300; /* SB-X */
 
 GUI *GUI::gui = nullptr;
 
-GUI:: GUI(Configuration *c, Screen *s) {
+GUI::GUI(Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0),
+		maxwidgets(0), widgets(nullptr), display(1), running(0), dragging(false),
+		full_redraw(true), focused_widget(nullptr), locked_widget(nullptr),
+		block_input(false) {
 	Graphics::ManagedSurface *sdl_surface;
 
 	gui = this;
-	config = c;
-	screen = s;
-	numwidgets = 0;
-	maxwidgets = 0;
-	widgets = nullptr;
-	display = 1;
-	running = 0;
-
 	screen_scale_factor = screen->get_scale_factor();
-
-	dragging = false;
-	full_redraw = true;
-	focused_widget = locked_widget = nullptr;
-	block_input = false;
 
 	sdl_surface = screen->get_sdl_surface();
 
@@ -66,7 +56,7 @@ GUI:: GUI(Configuration *c, Screen *s) {
 	gui_drag_manager = new GUI_DragManager(screen);
 }
 
-GUI:: ~GUI() {
+GUI::~GUI() {
 	if (widgets != nullptr) {
 		for (int i = 0; i < numwidgets; ++i) {
 			delete widgets[i];
@@ -83,8 +73,7 @@ GUI:: ~GUI() {
 /* Add a widget to the GUI.
    The widget will be automatically deleted when the GUI is deleted.
  */
-int
-GUI:: AddWidget(GUI_Widget *widget) {
+int GUI::AddWidget(GUI_Widget *widget) {
 	int i;
 
 	/* Look for deleted widgets */
@@ -205,7 +194,7 @@ void GUI::Display() {
 
 /* Function to handle a GUI status */
 void
-GUI:: HandleStatus(GUI_status status) {
+GUI::HandleStatus(GUI_status status) {
 	switch (status) {
 	case GUI_QUIT:
 		running = 0;
@@ -222,7 +211,7 @@ GUI:: HandleStatus(GUI_status status) {
 }
 
 /* Handle an event, passing it to widgets until they return a status */
-GUI_status GUI:: HandleEvent(Common::Event *event) {
+GUI_status GUI::HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;

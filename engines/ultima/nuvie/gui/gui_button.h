@@ -80,8 +80,8 @@ public:
 	   an alignment (one of the constants above), if it should be a checkbutton (1/0),
 	   the callback and a flag if it should be 2D (1) or 3D (0) */
 	GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-	           GUI_Font *font, int alignment, int is_checkbutton,
-	           GUI_CallBack *callback, int flat = 0);
+	           GUI_Font *font, int alignment, bool is_checkbutton,
+	           GUI_CallBack *callback, bool flat = false);
 
 	~GUI_Button() override;
 
@@ -98,15 +98,15 @@ public:
 
 	/* Clickable or not ... */
 	virtual void Disable();
-	virtual void Enable(int flag = 1);
+	virtual void Enable(bool flag = true);
 
 	/* yields current state */
-	virtual int Enabled() {
+	virtual bool Enabled() {
 		return enabled;
 	}
 
 	/* yields flag if button is a checkbutton */
-	virtual int IsCheckButton() {
+	virtual bool IsCheckButton() {
 		return is_checkable;
 	}
 	virtual void set_highlighted(bool val) {
@@ -128,12 +128,13 @@ protected:
 	GUI_CallBack *callback_object;
 
 	/* remember me! - flags */
-	int enabled;
-	int flatbutton;
-	int freebutton, freefont;
+	bool enabled;
+	bool flatbutton;
+	bool freebutton;
+	bool freefont;
 
 	/* Checkbutton flags */
-	int is_checkable;
+	bool is_checkable;
 	int checked;
 	bool is_highlighted;
 };

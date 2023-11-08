@@ -27,10 +27,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Font::U6Font() {
-	font_data = nullptr;
-	num_chars = 0;
-	offset = 0;
+U6Font::U6Font() : font_data(nullptr) {
 }
 
 U6Font::~U6Font() {

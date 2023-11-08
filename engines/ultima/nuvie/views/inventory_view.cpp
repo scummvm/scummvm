@@ -43,17 +43,14 @@ static const char combat_mode_tbl_se[][6] = {"CMND", "RANGE", "FLEE", "CLOSE"};
 static const char combat_mode_tbl_md[][6] = {"CMND", "RANGE", "FLEE", "ATTK"};
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-InventoryView::InventoryView(Configuration *cfg) : View(cfg),
-	doll_widget(nullptr), inventory_widget(nullptr), combat_button(nullptr) {
+InventoryView::InventoryView(Configuration *cfg)
+	: View(cfg), doll_widget(nullptr), inventory_widget(nullptr),
+	  combat_button(nullptr), cursor_tile(nullptr), show_cursor(false),
+	  is_party_member(false), picking_pocket(false), outside_actor(nullptr),
+	  lock_actor(false) {
 	cursor_pos.area = INVAREA_LIST;
 	cursor_pos.x = cursor_pos.y = 0;
 	cursor_pos.px = cursor_pos.py = 0;
-	cursor_tile = nullptr;
-	show_cursor = false;
-	is_party_member = false;
-	picking_pocket = false;
-	outside_actor = nullptr;
-	lock_actor = false;
 }
 
 InventoryView::~InventoryView() {

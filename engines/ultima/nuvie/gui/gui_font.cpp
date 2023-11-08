@@ -29,10 +29,8 @@ namespace Ultima {
 namespace Nuvie {
 
 /* use default 8x8 font */
-GUI_Font::GUI_Font(uint8 fontType) {
+GUI_Font::GUI_Font(uint8 fontType) : _wData(nullptr) {
 	Graphics::ManagedSurface *temp;
-
-	_wData = nullptr;
 
 	if (fontType == GUI_FONT_6X8)
 		temp = GUI_Font6x8();
@@ -41,7 +39,6 @@ GUI_Font::GUI_Font(uint8 fontType) {
 		_wData = GUI_FontGumpWData();
 	} else
 		temp = GUI_DefaultFont();
-
 
 	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
 	_charH = _fontStore->h / 16;

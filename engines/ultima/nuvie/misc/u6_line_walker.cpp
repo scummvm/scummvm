@@ -24,16 +24,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6LineWalker::U6LineWalker(uint32 sx, uint32 sy, uint32 ex, uint32 ey) {
-
-	start_x = sx;
-	start_y = sy;
-	end_x = ex;
-	end_y = ey;
-
-	cur_x = start_x;
-	cur_y = start_y;
-
+U6LineWalker::U6LineWalker(uint32 sx, uint32 sy, uint32 ex, uint32 ey)
+	: start_x(sx), start_y(sy), end_x(ex), end_y(ey), cur_x(sx), cur_y(sy), cur_step(0) {
 	sint32 delta_x = end_x - start_x;
 	sint32 delta_y = end_y - start_y;
 
@@ -68,8 +60,6 @@ U6LineWalker::U6LineWalker(uint32 sx, uint32 sy, uint32 ex, uint32 ey) {
 	line_counter = delta_y + delta_y - delta_x;
 	line_inc[0] = delta_y + delta_y;
 	line_inc[1] = (delta_y - delta_x) * 2;
-
-	cur_step = 0;
 }
 
 U6LineWalker::~U6LineWalker() {

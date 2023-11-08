@@ -37,15 +37,11 @@ namespace Ultima {
 namespace Nuvie {
 
 // MsgText Class
-MsgText::MsgText() {
-	font = nullptr;
-	color = 0;
+MsgText::MsgText() : font(nullptr), color(0) {
 }
 
-MsgText::MsgText(Std::string new_string, Font *f) {
+MsgText::MsgText(const Std::string &new_string, Font *f) : font(f), color(0) {
 	s.assign(new_string);
-	font = f;
-	color = 0;
 	if (font) {
 		color = font->getDefaultColor();
 	}
@@ -54,7 +50,7 @@ MsgText::MsgText(Std::string new_string, Font *f) {
 MsgText::~MsgText() {
 }
 
-void MsgText::append(Std::string new_string) {
+void MsgText::append(const Std::string &new_string) {
 	s.append(new_string);
 }
 

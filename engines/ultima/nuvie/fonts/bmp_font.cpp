@@ -29,15 +29,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-BMPFont::BMPFont() {
-	num_chars = 0;
-	offset = 0;
-	char_w = 0;
-	char_h = 0;
-	font_width_data = nullptr;
-	sdl_font_data = nullptr;
-	rune_mode = false;
-	dual_font_mode = false;
+BMPFont::BMPFont() : char_w(0), char_h(0), font_width_data(nullptr),
+		sdl_font_data(nullptr), rune_mode(false), dual_font_mode(false) {
 }
 
 BMPFont::~BMPFont() {

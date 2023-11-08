@@ -49,26 +49,19 @@ static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ObjTreeNode *)item)->key;
 }
 
-ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
-	uint8 i;
-	Std::string show_eggs_key;
-
-	config = cfg;
-	tile_manager = tm;
-	egg_manager = em;
-	usecode = nullptr;
-	obj_save_count = 0;
-
+ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em)
+	: config(cfg), tile_manager(tm), egg_manager(em), usecode(nullptr),
+	  obj_save_count(0) {
 	load_basetile();
 	load_weight_table();
 
 	memset(actor_inventories, 0, sizeof(actor_inventories));
 
-	for (i = 0; i < 64; i++) {
+	for (uint8 i = 0; i < 64; i++) {
 		surface[i] = iAVLAllocTree(get_iAVLKey);
 	}
 
-	for (i = 0; i < 5; i++) {
+	for (uint8 i = 0; i < 5; i++) {
 		dungeon[i] = iAVLAllocTree(get_iAVLKey);
 	}
 
@@ -81,7 +74,7 @@ ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 //save the egg tile_num incase we want to switch egg display on again.
 	egg_tile_num = get_obj_tile_num(obj_egg_table[game_type]);
 
-	show_eggs_key = config_get_game_key(config);
+	Std::string show_eggs_key = config_get_game_key(config);
 	show_eggs_key.append("/show_eggs");
 
 	config->value(show_eggs_key, show_eggs);

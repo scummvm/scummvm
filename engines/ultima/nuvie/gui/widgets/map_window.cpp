@@ -120,7 +120,7 @@ MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0
 		custom_actor_tiles(false), tmp_map_width(0), tmp_map_height(0), tile_manager(nullptr),
 		obj_manager(nullptr), actor_manager(nullptr), map_center_xoff(0), cursor_tile(nullptr),
 		use_tile(nullptr), win_width(0), win_height(0), border_width(0), hackmove(false),
-		wizard_eye_info({nullptr, 0, 0, 0, nullptr}) {
+		game_started(false), wizard_eye_info({nullptr, 0, 0, 0, nullptr}) {
 
 	config->value("config/GameType", game_type);
 
@@ -142,8 +142,6 @@ MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0
 	config->value("config/cheats/min_brightness", min_brightness, 0);
 
 	roof_mode = Game::get_game()->is_roof_mode();
-
-	game_started = false;
 
 	set_interface();
 }

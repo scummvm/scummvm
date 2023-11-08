@@ -30,18 +30,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-GamePalette::GamePalette(Screen *s, Configuration *cfg) {
-	screen = s;
-	config = cfg;
-
+GamePalette::GamePalette(Screen *s, Configuration *cfg) : screen(s), config(cfg), counter(0) {
 	palette = (uint8 *)malloc(768);
 	memset(palette, 0, 768);
 
-	this->loadPalette();
+	loadPalette();
 
 	set_palette();
-
-	counter = 0;
 }
 
 GamePalette::~GamePalette() {

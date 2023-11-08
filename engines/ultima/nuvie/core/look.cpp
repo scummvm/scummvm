@@ -31,11 +31,8 @@ namespace Ultima {
 namespace Nuvie {
 
 Look::Look(Configuration *cfg)
-	: look_data(nullptr), desc_buf(nullptr) {
-	config = cfg;
-
+	: look_data(nullptr), desc_buf(nullptr), config(cfg), max_len(0) {
 	look_tbl[2047] = nullptr;
-	max_len = 0;
 }
 
 Look::~Look() {

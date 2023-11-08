@@ -62,11 +62,7 @@ Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg) {
 }
 
 
-Portrait::Portrait(Configuration *cfg) {
-	config = cfg;
-	avatar_portrait_num = 0;
-	width = 0;
-	height = 0;
+Portrait::Portrait(Configuration *cfg) : config(cfg), avatar_portrait_num(0), width(0), height(0) {
 }
 
 uint8 Portrait::get_avatar_portrait_num() const {

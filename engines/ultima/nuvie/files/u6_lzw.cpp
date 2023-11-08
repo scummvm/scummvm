@@ -37,10 +37,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-U6Lzw::U6Lzw() {
-	dict = new U6LzwDict;
-	stack = new U6LzwStack;
-	errstr = "unknown error";
+U6Lzw::U6Lzw() : dict(new U6LzwDict), stack(new U6LzwStack), errstr("unknown error") {
 }
 
 U6Lzw::~U6Lzw() {

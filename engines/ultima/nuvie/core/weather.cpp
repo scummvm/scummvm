@@ -41,13 +41,9 @@ namespace Nuvie {
 //the longest we will go before having a change in wind direction
 #define WEATHER_MAX_WIND 30
 
-Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type) {
-	config = cfg;
-	clock = c;
-	gametype = type;
-
-	wind_dir = NUVIE_DIR_NONE;
-	wind_timer = nullptr;
+Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type)
+		: config(cfg), _clock(c), gametype(type), wind_dir(NUVIE_DIR_NONE),
+		  wind_timer(nullptr) {
 	string s;
 	config->value(config_get_game_key(config) + "/displayed_wind_dir", s, "from");
 	if (s == "to")
@@ -154,7 +150,7 @@ bool Weather::save_wind(NuvieIO *objlist) {
 }
 
 bool Weather::is_eclipse() const {
-	if (gametype != NUVIE_GAME_U6 || clock->get_timer(GAMECLOCK_TIMER_U6_ECLIPSE) == 0)
+	if (gametype != NUVIE_GAME_U6 || _clock->get_timer(GAMECLOCK_TIMER_U6_ECLIPSE) == 0)
 		return false;
 
 	return true;
@@ -163,8 +159,8 @@ bool Weather::is_eclipse() const {
 bool Weather::is_moon_visible() const {
 	//FIXME this is duplicated logic. Maybe we should look at how the original works out moon locations
 
-	uint8 day = clock->get_day();
-	uint8 hour = clock->get_hour();
+	uint8 day = _clock->get_day();
+	uint8 hour = _clock->get_hour();
 	uint8 phase = 0;
 	// trammel (starts 1 hour ahead of sun)
 	phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;

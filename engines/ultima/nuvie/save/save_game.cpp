@@ -59,9 +59,7 @@ namespace Nuvie {
 #define GAME_ID(GT) ((GT == GAME_SAVAGE_EMPIRE) ? MKTAG16('S', 'E') : \
 	((GT == GAME_MARTIAN_DREAMS) ? MKTAG16('M', 'D') : MKTAG16('U', '6')))
 
-SaveGame::SaveGame(Configuration *cfg) {
-	config = cfg;
-
+SaveGame::SaveGame(Configuration *cfg) : config(cfg) {
 	// We don't need ObjManager here as there will be nothing to clean at this stage
 	init(nullptr);
 }

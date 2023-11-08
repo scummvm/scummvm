@@ -45,7 +45,6 @@ ContainerViewGump::ContainerViewGump(Configuration *cfg) : DraggableView(cfg),
 		doll_button(nullptr), left_arrow_button(nullptr),
 		right_arrow_button(nullptr), container_widget(nullptr), font(nullptr),
 		actor(nullptr), container_obj(nullptr), container_widget_y_offset(0) {
-	bg_image = nullptr;
 }
 
 ContainerViewGump::~ContainerViewGump() {

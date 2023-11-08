@@ -196,11 +196,11 @@ public:
 
 protected:
 	Std::string getRoofDataFilename();
-	void insertSurfaceSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 schunk_num);
-	void insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y);
+	void insertSurfaceSuperChunk(const unsigned char *schunk_ptr, const unsigned char *chunk_data, uint8 schunk_num);
+	void insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y);
 
-	void insertDungeonSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 level);
-	void insertDungeonChunk(unsigned char *chunk, uint16 x, uint16 y, uint8 level);
+	void insertDungeonSuperChunk(const unsigned char *schunk_ptr, const unsigned char *chunk_data, uint8 level);
+	void insertDungeonChunk(const unsigned char *chunk, uint16 x, uint16 y, uint8 level);
 
 
 	void loadRoofData();

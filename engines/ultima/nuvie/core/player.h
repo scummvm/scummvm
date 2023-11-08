@@ -41,7 +41,7 @@ class NuvieIO;
 class Player {
 	Configuration *config;
 	int game_type;
-	GameClock *clock;
+	GameClock *_clock;
 	Party *party;
 	bool party_mode;
 	bool mapwindow_centered;

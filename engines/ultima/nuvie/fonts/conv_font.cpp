@@ -27,12 +27,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-ConvFont::ConvFont() {
-	data_offset = 0;
-	num_chars = 0;
-	offset = 0;
-	f_data = nullptr;
-	f_w_data = nullptr;
+ConvFont::ConvFont() : data_offset(0), f_data(nullptr), f_w_data(nullptr) {
 }
 
 ConvFont::~ConvFont() {
