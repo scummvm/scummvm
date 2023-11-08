@@ -718,7 +718,17 @@ void SciEngine::runGame() {
 // When the SCI engine enters an error state, this block will add additional VM engine context for error reporting
 void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
 	EngineState *s = _gamestate;
-	Script *activeScript = (s && s->_segMan) ? s->_segMan->getScriptIfLoaded(s->xs->addr.pc.getSegment()) : nullptr;
+	Script *activeScript = nullptr;
+	if (s != nullptr) {
+		// EngineState::xs is only valid if it points to an item in the execution stack.
+		Common::List<ExecStack>::const_iterator it;
+		for (it = s->_executionStack.begin(); it != s->_executionStack.end(); ++it) {
+			if (&(*it) == s->xs) {
+				activeScript = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.getSegment());
+				break;
+			}
+		}
+	}
 	Kernel *kernel = g_sci ? g_sci->getKernel() : nullptr;
 
 	// If a script is actively loaded at the time of error.
