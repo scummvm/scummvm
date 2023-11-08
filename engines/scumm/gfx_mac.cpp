@@ -1027,7 +1027,7 @@ bool MacGui::MacSlider::findWidget(int x, int y) const {
 
 	Common::Rect bounds = _bounds;
 
-	if (_dragOffset) {
+	if (_dragOffset >= 0) {
 		bounds.left -= 25;
 		bounds.right += 25;
 	}
@@ -1187,10 +1187,23 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	int x = event.mouse.x;
 	int y = event.mouse.y;
 
-	if (!findWidget(x, y))
-		return;
+	if (!findWidget(x, y)) {
+		if (_upArrowPressed) {
+			_upArrowPressed = false;
+			_redrawUpArrow = true;
+			setRedraw();
+		}
 
-	if (_dragOffset) {
+		if (_downArrowPressed) {
+			_downArrowPressed = false;
+			_redrawDownArrow = true;
+			setRedraw();
+		}
+
+		return;
+	}
+
+	if (_dragOffset >= 0) {
 		_redrawBody = true;
 		setRedraw();
 	} else {
@@ -1749,7 +1762,10 @@ int MacGui::MacDialogWindow::runDialog() {
 					if (wasActive != isActive)
 						_focusedWidget->setRedraw();
 
-					if (isActive)
+					// The widget gets mouse events while it's active, but also
+					// one last one when it becomes inactive.
+
+					if (isActive || wasActive)
 						_focusedWidget->handleMouseMove(event);
 				} else {
 					updateCursor();
