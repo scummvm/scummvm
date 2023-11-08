@@ -211,7 +211,6 @@ public:
 		MacButton(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
 		void draw(bool drawFocused = false);
-
 		void drawCorners(Common::Rect r, CornerLine *corner);
 	};
 
@@ -237,7 +236,6 @@ public:
 		MacStaticText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 
 		bool findWidget(int x, int y) const { return false; }
-
 		void draw(bool drawFocused = false);
 	};
 
@@ -314,6 +312,9 @@ public:
 			_minValue(minValue), _maxValue(maxValue),
 			_minPos(minPos), _maxPos(maxPos) {}
 
+		void getFocus() {}
+		void loseFocus() {}
+
 		void setValue(int value);
 	};
 
@@ -340,6 +341,7 @@ public:
 		void drawDownArrow(bool markAsDirty);
 		void drawArrow(Common::Rect r, const uint16 *bitmap, bool markAsDirty);
 
+		void eraseDragHandle();
 		void drawHandle(Common::Rect r);
 		void redrawHandle(int oldValue, int newValue);
 
