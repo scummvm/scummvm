@@ -230,7 +230,7 @@ bool continueFunction(LoadedFunction *fun) {
 			printLocals(fun->localVars, fun->numLocals);
 		}
 
-		debugC(1, kSludgeDebugStackMachine, "Executing command line %i: %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
+		debugC(1, kSludgeDebugStackMachine, "Executing command function %d line %i: %s(%s)", fun->originalNumber, fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
 		if (numBIFNames) {
 			setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function", (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
