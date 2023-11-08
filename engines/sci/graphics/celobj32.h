@@ -130,11 +130,8 @@ struct CelInfo32 {
 		case kCelTypeMem:
 			return Common::String::format("mem %04x:%04x", PRINT_REG(bitmap));
 		default:
-			assert(!"Should never happen");
+			return Common::String::format("unknown cel type: %d", type);
 		}
-		// This code should not be reached but the compiler expects to see a legal
-		// return from a non-void function.
-		return Common::String("here be dragons");
 	}
 };
 
