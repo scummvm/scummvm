@@ -85,7 +85,7 @@ void UnityTaskbarManager::setProgressState(TaskbarProgressState state) {
 }
 
 void UnityTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
-	warning("[UnityTaskbarManager::addRecent] Not implemented");
+	//warning("[UnityTaskbarManager::addRecent] Not implemented");
 }
 
 void UnityTaskbarManager::setCount(int count) {
