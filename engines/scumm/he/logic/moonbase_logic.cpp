@@ -361,22 +361,22 @@ void LogicHEmoonbase::op_ai_test_kludge(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEmoonbase::op_ai_master_control_program(int op, int numArgs, int32 *args) {
-	warning("op_ai_master_control_program()");
+	debugC(DEBUG_MOONBASE_AI, "op_ai_master_control_program()");
 	return _vm1->_moonbase->_ai->masterControlProgram(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_reset(int op, int numArgs, int32 *args) {
-	warning("op_ai_reset())");
+	debugC(DEBUG_MOONBASE_AI, "op_ai_reset())");
 	_vm1->_moonbase->_ai->resetAI();
 }
 
 void LogicHEmoonbase::op_ai_set_type(int op, int numArgs, int32 *args) {
-	warning("op_ai_set_type()");
+	debugC(DEBUG_MOONBASE_AI, "op_ai_set_type()");
 	_vm1->_moonbase->_ai->setAIType(numArgs, args);
 }
 
 void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
-	warning("op_ai_clean_up()");
+	debugC(DEBUG_MOONBASE_AI, "op_ai_clean_up()");
 	_vm1->_moonbase->_ai->cleanUpAI();
 }
 
