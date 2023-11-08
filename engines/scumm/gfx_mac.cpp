@@ -1023,11 +1023,14 @@ bool MacGui::MacSlider::findWidget(int x, int y) const {
 
 	Common::Rect bounds = _bounds;
 
-	// While dragging the handle, you'r allowed to go outside the slider.
+	// While dragging the handle, you're allowed to go outside the slider.
+	// I don't know by how much, though.
 
 	if (_grabOffset >= 0) {
 		bounds.left -= 25;
 		bounds.right += 25;
+		bounds.top -= 50;
+		bounds.bottom += 50;
 	}
 
 	return bounds.contains(x, y);
@@ -1158,6 +1161,12 @@ void MacGui::MacSlider::drawArrow(Common::Rect r, const uint16 *bitmap, bool mar
 		_window->markRectAsDirty(r);
 }
 
+void MacGui::MacSlider::eraseDragHandle() {
+	Common::Rect r(_boundsBody.left + 1, _handlePos, _boundsBody.right - 1, _handlePos + 16);
+	fill(r);
+	_window->markRectAsDirty(r);
+}
+
 void MacGui::MacSlider::drawHandle(Common::Rect r) {
 	debug(2, "MacGui::MacSlider::drawHandle(%d)", r.top);
 
@@ -1230,11 +1239,9 @@ void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 		_downArrowPressed = false;
 		drawDownArrow(true);
 	} else if (_grabOffset >= 0) {
-		// Erase the drag rect, since the handle might not end up in
+		// Erase the drag handle, since the handle might not end up in
 		// the exact same spot.
-		Common::Rect r(_boundsBody.left + 1, _handlePos, _boundsBody.right - 1, _handlePos + 16);
-		fill(r);
-		_window->markRectAsDirty(r);
+		eraseDragHandle();
 
 		// Calculate new value and move the handle there
 		int newValue = calculateValueFromPos();
@@ -1255,38 +1262,46 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	int y = event.mouse.y;
 
 	if (_grabOffset >= 0) {
-		Common::Rect r;
+		if (!findWidget(x, y)) {
+			eraseDragHandle();
+			drawHandle(getHandleRect(_value));
+			return;
+		}
 
-		r.left = _boundsBody.left + 1;
-		r.top = _handlePos;
-		r.right = _boundsBody.right - 1;
-		r.bottom = _handlePos + 16;
+		int newHandlePos = CLIP<int>(y - _grabOffset, _boundsBody.top, _boundsBody.bottom - 16);
 
-		fill(r);
-		_window->markRectAsDirty(r);
+		// Theoretically, we could end here if the handle position has
+		// not changed. However, we currently don't keep track of if
+		// the handle is hidden because the mouse has moved out of the
+		// widget's control.
+
+		eraseDragHandle();
+
+		_handlePos = newHandlePos;
 
 		Common::Rect handleRect = getHandleRect(_value);
 
-		if (r.intersects(handleRect)) {
+		if (ABS(_handlePos - handleRect.top) <= handleRect.height()) {
 			drawHandle(handleRect);
 			_window->markRectAsDirty(handleRect);
 		}
 
-		_handlePos = CLIP<int>(y - _grabOffset, _boundsBody.top, _boundsBody.bottom - 16);
-
-		r.moveTo(_boundsBody.left + 1, _handlePos);
+		int x0 = _boundsBody.left + 1;
+		int x1 = _boundsBody.right - 1;
+		int y0 = _handlePos;
+		int y1 = _handlePos + 16;
 
 		// Drawing a solid rectangle would be easier, and probably look
 		// better. But it seems the orginal Mac widget would draw the
 		// frame as an inverted slider background, even when drawing it
 		// on top of the slider handle.
 
-		fill(Common::Rect(r.left, r.top, r.right, r.top + 1), true);
-		fill(Common::Rect(r.left, r.bottom - 1, r.right, r.bottom), true);
-		fill(Common::Rect(r.left, r.top + 1, r.left + 1, r.bottom - 1), true);
-		fill(Common::Rect(r.right - 1, r.top + 1, r.right, r.bottom - 1), true);
+		fill(Common::Rect(x0, y0, x1, y0 + 1), true);
+		fill(Common::Rect(x0, y1 - 1, x1, y1), true);
+		fill(Common::Rect(x0, y0 + 1, x0 + 1, y1 - 1), true);
+		fill(Common::Rect(x1 - 1, y0 + 1, x1, y1 - 1), true);
 
-		_window->markRectAsDirty(r);
+		_window->markRectAsDirty(Common::Rect(x0, y0, x1, y1));
 	} else {
 		if (!_boundsButtonUp.contains(x, y)) {
 			if (_upArrowPressed) {
@@ -1338,8 +1353,8 @@ void MacGui::MacSlider::handleMouseHeld() {
 	if (_paging) {
 		Common::Rect r = getHandleRect(_value);
 
-		// Keep paging until at least half the scroll handle has gone past the
-		// mouse cursor. This may have to be tuned.
+		// Keep paging until at least half the scroll handle has gone
+		// past the mouse cursor. This may have to be tuned.
 
 		if (_paging == -1) {
 			if (p.y < r.top + r.height() / 2 && _value > _minValue) {
