@@ -400,6 +400,9 @@ SciCallOrigin EngineState::getCurrentCallOrigin() const {
 	Common::String curObjectName = _segMan->getObjectName(xs->sendp);
 	Common::String curMethodName;
 	const Script *localScript = _segMan->getScriptIfLoaded(xs->local_segment);
+	if (localScript == nullptr) {
+		error("current script not found at: %04x", xs->local_segment);
+	}
 	int curScriptNr = localScript->getScriptNumber();
 
 	Selector debugSelector = xs->debugSelector;
