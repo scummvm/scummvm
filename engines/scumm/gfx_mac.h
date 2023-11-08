@@ -195,6 +195,8 @@ public:
 		virtual void handleMouseUp(Common::Event &event) {}
 		virtual void handleMouseMove(Common::Event &event) {}
 		virtual void handleMouseHeld() {}
+		virtual void handleWheelUp() {}
+		virtual void handleWheelDown() {}
 		virtual bool handleKeyDown(Common::Event &event) { return false; }
 	};
 
@@ -294,24 +296,37 @@ public:
 		void draw(bool drawFocused = false);
 	};
 
-	class MacSlider : public MacWidget {
+	class MacSliderBase : public MacWidget {
+	protected:
+		int _minValue;
+		int _maxValue;
+		int _minPos;
+		int _maxPos;
+		int _handlePos = -1;
+		int _grabOffset = -1;
+
+		int calculateValueFromPos() const;
+		int calculatePosFromValue() const;
+
+	public:
+		MacSliderBase(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int minPos, int maxPos, bool enabled)
+			: MacWidget(window, bounds, "SliderBase", enabled),
+			_minValue(minValue), _maxValue(maxValue),
+			_minPos(minPos), _maxPos(maxPos) {}
+
+		void setValue(int value);
+	};
+
+	class MacSlider : public MacSliderBase {
 	private:
 		Common::Point _clickPos;
 		uint32 _nextRepeat;
 
-		int _minValue;
-		int _maxValue;
 		int _pageSize;
 		int _paging;
 
 		bool _upArrowPressed = false;
 		bool _downArrowPressed = false;
-		int _dragOffset = -1;
-		int _dragPos = -1;
-
-		bool _redrawUpArrow = false;
-		bool _redrawDownArrow = false;
-		bool _redrawBody = false;
 
 		Common::Rect _boundsButtonUp;
 		Common::Rect _boundsButtonDown;
@@ -320,7 +335,13 @@ public:
 		Common::Rect getHandleRect(int value);
 
 		void fill(Common::Rect r, bool inverted = false);
+
+		void drawUpArrow(bool markAsDirty);
+		void drawDownArrow(bool markAsDirty);
+		void drawArrow(Common::Rect r, const uint16 *bitmap, bool markAsDirty);
+
 		void drawHandle(Common::Rect r);
+		void redrawHandle(int oldValue, int newValue);
 
 	public:
 		MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled);
@@ -332,36 +353,36 @@ public:
 		void handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
 		void handleMouseHeld();
+		void handleWheelUp();
+		void handleWheelDown();
 	};
 
-	class MacPictureSlider : public MacWidget {
+	class MacPictureSlider : public MacSliderBase {
 	private:
 		MacPicture *_background;
 		MacPicture *_handle;
 		int _minX;
 		int _maxX;
-		int _handleX;
-		int _grabOffset;
-		int _lastHandleX = -1;
-		int _minValue;
-		int _maxValue;
 		int _leftMargin;
 		int _rightMargin;
 
+		void eraseHandle();
+		void drawHandle();
+
 	public:
 		 MacPictureSlider(MacGui::MacDialogWindow *window, MacPicture *background, MacPicture *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
-			: MacWidget(window, background->getBounds(), "Slider", enabled),
+			: MacSliderBase(window, background->getBounds(), minValue, maxValue, minX + leftMargin, maxX - rightMargin, enabled),
 			_background(background), _handle(handle), _minX(minX),
-			_maxX(maxX), _minValue(minValue), _maxValue(maxValue),
-			_leftMargin(leftMargin), _rightMargin(rightMargin) {}
+			_maxX(maxX), _leftMargin(leftMargin), _rightMargin(rightMargin) {}
 
 		bool findWidget(int x, int y) const;
-		void setValue(int value);
 		void draw(bool drawFocused = false);
 
 		void handleMouseDown(Common::Event &event);
 		void handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
+		void handleWheelUp();
+		void handleWheelDown();
 	};
 
 	class MacDialogWindow {
