@@ -304,7 +304,7 @@ public:
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
-	bool autoDetectLofsType(Common::String gameSuperClassName, int methodNum);
+	bool autoDetectLofsType(const Common::String& gameSuperClassName, int methodNum);
 	bool autoDetectGfxFunctionsType(int methodNum = -1);
 	bool autoDetectSoundType();
 	bool autoDetectMoveCountType();

@@ -231,7 +231,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 	return _setCursorType;
 }
 
-bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int methodNum) {
+bool GameFeatures::autoDetectLofsType(const Common::String &gameSuperClassName, int methodNum) {
 	// Look up the script address
 	reg_t addr = getDetectionAddr(gameSuperClassName.c_str(), -1, methodNum);
 
