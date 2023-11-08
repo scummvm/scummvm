@@ -737,8 +737,10 @@ void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_out
 		const ExecStack *call = &(s->_executionStack.back());
 
 		// Note: if we are too early in the initialization process, this may not be populated yet.
-		const reg_t regVersion = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
-		const Common::String version = (regVersion.getOffset() > 0) ? ", Version: " + s->_segMan->getString(regVersion) : "";
+		Common::String version = s->getGameVersionFromGlobal();
+		if (!version.empty()) {
+			version.insertString("Version: ", 0);
+		}
 
 		const char *objname = s->_segMan->getObjectName(call->sendp);
 		Common::String callType;

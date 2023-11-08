@@ -453,4 +453,23 @@ bool EngineState::callInStack(const reg_t object, const Selector selector) const
 	return false;
 }
 
+Common::String EngineState::getGameVersionFromGlobal() const {
+	// The version global was originally 28 but then became 27.
+	// When it was 28, 27 was a volume level, so differentiate by type.
+	reg_t versionRef = variables[VAR_GLOBAL][kGlobalVarVersionNew];
+	if (versionRef.isNumber()) {
+		versionRef = variables[VAR_GLOBAL][kGlobalVarVersionOld];
+	}
+#ifdef ENABLE_SCI32
+	// LSL7 and Phant2 store the version string as an object instead of a reference
+	if (_segMan->isObject(versionRef)) {
+		versionRef = readSelector(_segMan, versionRef, SELECTOR(data));
+	}
+#endif
+	if (versionRef.isPointer()) {
+		return _segMan->getString(versionRef);
+	}
+	return Common::String();
+}
+
 } // End of namespace Sci

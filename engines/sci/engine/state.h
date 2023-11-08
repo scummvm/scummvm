@@ -98,13 +98,11 @@ struct SciCallOrigin {
 };
 
 struct EngineState : public Common::Serializable {
-public:
 	EngineState(SegManager *segMan);
 	~EngineState() override;
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
-public:
 	SegManager *_segMan; /**< The segment manager */
 
 	/* Non-VM information */
@@ -144,7 +142,6 @@ public:
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
 
-public:
 	/* VM Information */
 
 	Common::List<ExecStack> _executionStack; /**< The execution stack */
@@ -216,6 +213,13 @@ public:
 	 * Determines whether the given object method is in the current stack.
 	 */
 	bool callInStack(const reg_t object, const Selector selector) const;
+
+	/**
+	 * Returns the game's version string from its global variable.
+	 * Most games initialize this to a string embedded in a script resource,
+	 * or the contents of the VERSION file in the game directory.
+	 */
+	Common::String getGameVersionFromGlobal() const;
 };
 
 } // End of namespace Sci
