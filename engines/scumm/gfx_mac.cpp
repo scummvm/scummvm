@@ -1264,7 +1264,14 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	if (_grabOffset >= 0) {
 		if (!findWidget(x, y)) {
 			eraseDragHandle();
-			drawHandle(getHandleRect(_value));
+
+			Common::Rect handleRect = getHandleRect(_value);
+
+			if (ABS(_handlePos - handleRect.top) <= handleRect.height()) {
+				drawHandle(handleRect);
+				_window->markRectAsDirty(handleRect);
+			}
+
 			return;
 		}
 
@@ -1277,14 +1284,14 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 
 		eraseDragHandle();
 
-		_handlePos = newHandlePos;
-
 		Common::Rect handleRect = getHandleRect(_value);
 
 		if (ABS(_handlePos - handleRect.top) <= handleRect.height()) {
 			drawHandle(handleRect);
 			_window->markRectAsDirty(handleRect);
 		}
+
+		_handlePos = newHandlePos;
 
 		int x0 = _boundsBody.left + 1;
 		int x1 = _boundsBody.right - 1;
