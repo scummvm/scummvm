@@ -3441,8 +3441,6 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptObjects(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all objects inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3451,6 +3449,7 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3463,8 +3462,6 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptStrings(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all strings inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3473,6 +3470,7 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3485,8 +3483,6 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptSaid(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all said-strings inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3495,6 +3491,7 @@ bool Console::cmdScriptSaid(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
