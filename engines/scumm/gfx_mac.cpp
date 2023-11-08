@@ -1023,6 +1023,8 @@ bool MacGui::MacSlider::findWidget(int x, int y) const {
 
 	Common::Rect bounds = _bounds;
 
+	// While dragging the handle, you'r allowed to go outside the slider.
+
 	if (_grabOffset >= 0) {
 		bounds.left -= 25;
 		bounds.right += 25;
@@ -1252,20 +1254,6 @@ void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
 	int x = event.mouse.x;
 	int y = event.mouse.y;
 
-	if (!findWidget(x, y)) {
-		if (_upArrowPressed) {
-			_upArrowPressed = false;
-			drawUpArrow(true);
-		}
-
-		if (_downArrowPressed) {
-			_downArrowPressed = false;
-			drawDownArrow(true);
-		}
-
-		return;
-	}
-
 	if (_grabOffset >= 0) {
 		Common::Rect r;
 
@@ -1404,6 +1392,21 @@ bool MacGui::MacPictureSlider::findWidget(int x, int y) const {
 	return _bounds.contains(x, y);
 }
 
+void MacGui::MacPictureSlider::draw(bool drawFocused) {
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
+
+	if (_fullRedraw) {
+		_window->drawSprite(_background->getPicture(), _bounds.left, _bounds.top);
+		drawHandle();
+	}
+
+	_redraw = false;
+	_fullRedraw = false;
+}
+
 void MacGui::MacPictureSlider::eraseHandle() {
 	Common::Rect r = _handle->getBounds();
 	int y = r.top - _bounds.top;
@@ -1420,21 +1423,6 @@ void MacGui::MacPictureSlider::drawHandle() {
 	Common::Rect r = _handle->getBounds();
 
 	_window->drawSprite(sprite, _bounds.left + _handlePos, r.top);
-}
-
-void MacGui::MacPictureSlider::draw(bool drawFocused) {
-	if (!_redraw && !_fullRedraw)
-		return;
-
-	debug(1, "MacGui::MacPictureSlider: Drawing slider %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
-
-	if (_fullRedraw) {
-		_window->drawSprite(_background->getPicture(), _bounds.left, _bounds.top);
-		drawHandle();
-	}
-
-	_redraw = false;
-	_fullRedraw = false;
 }
 
 void MacGui::MacPictureSlider::handleMouseDown(Common::Event &event) {
