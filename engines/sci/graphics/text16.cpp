@@ -94,19 +94,18 @@ void GfxText16::ClearChar(int16 chr) {
 // will process the encountered code and set new font/set color.
 // Returns textcode character count.
 int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing) {
-	const char *textCode = text;
-	int16 textCodeSize = 0;
-	char curCode;
-	signed char curCodeParm;
-
 	// Find the end of the textcode
-	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
+	const char *textCode = text;
+	int16 textCodeSize = 1;
+	while ((*text != 0) && (*text++ != 0x7C)) {
+		textCodeSize++;
+	}
 
 	// possible TextCodes:
 	//  c -> sets textColor to current port pen color
 	//  cX -> sets textColor to _textColors[X-1]
-	curCode = textCode[0];
-	curCodeParm = strtol(textCode+1, nullptr, 10);
+	char curCode = textCode[0];
+	signed char curCodeParm = strtol(textCode+1, nullptr, 10);
 	if (!Common::isDigit(textCode[1])) {
 		curCodeParm = -1;
 	}
