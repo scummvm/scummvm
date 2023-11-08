@@ -68,30 +68,30 @@ bool InputDialog::init() {
 	Game *game = Game::get_game();
 	MapWindow *map_window = game->get_map_window();
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Interface:", font);
+	widget = new GUI_Text(colX[0], textY, 0, 0, 0, "Interface:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Dragging enabled:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Dragging enabled:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Direction selects target:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Direction selects target:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look on left_click:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Look on left_click:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Walk with left button:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Walk with left button:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Enable doubleclick:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Enable doubleclick:", font);
 	AddWidget(widget);
 	if (game->get_game_type() == NUVIE_GAME_U6) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Allow free balloon movement:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Allow free balloon movement:", font);
 		AddWidget(widget);
 	}
 	if (!game->is_new_style()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Doubleclick opens containers:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Doubleclick opens containers:", font);
 		AddWidget(widget);
 	}
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new command bar:", font);
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new command bar:", font);
 	AddWidget(widget);
 	if (!game->is_new_style()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Party view targeting:", font);
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Party view targeting:", font);
 		AddWidget(widget);
 	}
 

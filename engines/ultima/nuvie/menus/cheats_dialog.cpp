@@ -62,15 +62,15 @@ bool CheatsDialog::init() {
 	GUI_Widget *widget;
 	GUI *gui = GUI::get_gui();
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[0], 0, 0, 0, "Cheats:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[1], 0, 0, 0, "Show eggs:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[2], 0, 0, 0, "Enable hackmove:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[3], 0, 0, 0, "Anyone will join:", gui->get_font());
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[4], 0, 0, 0, "Minimum brightness:", gui->get_font());
 	AddWidget(widget);
 
 	bool party_all_the_time;

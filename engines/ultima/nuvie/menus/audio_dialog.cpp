@@ -65,27 +65,27 @@ bool AudioDialog::init() {
 	GUI_Widget *widget;
 	GUI_Font *font = GUI::get_gui()->get_font();
 
-	widget = (GUI_Widget *) new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
+	widget = new GUI_Text(textX[0], textY, 0, 0, 0, "Audio:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
+	widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Music volume:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Combat changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Vehicle changes music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Conversations stop music:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Stop music on group change:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
+	widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable sfx:", font);
 	AddWidget(widget);
-	widget = (GUI_Widget *) new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
+	widget = new GUI_Text(textX[2], textY += row_h, 0, 0, 0, "Sfx volume:", font);
 	AddWidget(widget);
 	bool use_speech_b = (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && has_fmtowns_support(Game::get_game()->get_config()));
 	if (use_speech_b) {
-		widget = (GUI_Widget *) new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
+		widget = new GUI_Text(textX[1], textY += row_h, 0, 0, 0, "Enable speech:", font);
 		AddWidget(widget);
 	}
 	char musicBuff[5], sfxBuff[5];

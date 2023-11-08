@@ -47,7 +47,7 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 	AddWidget(no_button);
 	button_index[1] = no_button;
 
-	widget = (GUI_Widget *) new GUI_Text(10, 25, 0, 0, 0, msg, gui->get_font());
+	widget = new GUI_Text(10, 25, 0, 0, 0, msg, gui->get_font());
 	AddWidget(widget);
 }
 

@@ -2437,7 +2437,7 @@ void Events::quitDialog() {
 
 		x_off += (game->get_game_width() - 170) / 2;
 		y_off += (game->get_game_height() - 80) / 2;
-		quit_dialog = (GUI_Widget *) new GUI_YesNoDialog(gui,
+		quit_dialog = new GUI_YesNoDialog(gui,
 		              x_off,
 		              y_off,
 		              170,

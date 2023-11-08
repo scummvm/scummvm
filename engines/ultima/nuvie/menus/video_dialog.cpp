@@ -91,7 +91,7 @@ bool VideoDialog::init() {
 	for (int i = 0; i <= num_scalers; i++)
 		scaler_text[i] = scr->get_scaler_reg()->GetNameForIndex(i);
 
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Scaler:", font);
+	widget = new GUI_Text(colX[0], textY[0], 0, 0, 0, "Scaler:", font);
 	AddWidget(widget);
 // scaler(fullscreen)
 	int num_scalers_fullscreen, fullscreen_scaler_selection;
@@ -109,7 +109,7 @@ bool VideoDialog::init() {
 	scaler_win_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers, scr->get_scaler_index(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scaler_win_button);
 // scale
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Scale:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY[1], 0, 0, 0, "Scale:", gui->get_font());
 	AddWidget(widget);
 	const char *scale_win_text[10];
 	scale_win_text[0] = "1";
@@ -177,7 +177,7 @@ bool VideoDialog::init() {
 	if (no_fullscreen && !scr->is_fullscreen()) {
 		fullscreen_button->Hide();
 	} else {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Fullscreen:", gui->get_font());
+		widget = new GUI_Text(colX[0], textY[2], 0, 0, 0, "Fullscreen:", gui->get_font());
 		AddWidget(widget);
 	}
 #endif /* !SCALER_AND_SCALE_CANNOT_BE_CHANGED */
@@ -186,14 +186,14 @@ bool VideoDialog::init() {
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
 // fullscreen_toggle
 	if (!no_fullscreen || scr->is_fullscreen()) {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Fullscreen:", gui->get_font());
+		widget = new GUI_Text(colX[0], textY, 0, 0, 0, "Fullscreen:", gui->get_font());
 		AddWidget(widget);
 
 		fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY, yesno_width, height, yesno_text, 2, scr->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(fullscreen_button);
 		button_index[last_index] = fullscreen_button;
 
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Non-square pixels:", gui->get_font());
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Non-square pixels:", gui->get_font());
 		AddWidget(widget);
 		non_square_pixels_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, scr->is_non_square_pixels(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(non_square_pixels_button);
@@ -207,7 +207,7 @@ bool VideoDialog::init() {
 	Configuration *config = Game::get_game()->get_config();
 
 // show roofs
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += first_index ? 0 : row_h, 0, 0, 0, "Show roofs:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY += first_index ? 0 : row_h, 0, 0, 0, "Show roofs:", gui->get_font());
 	AddWidget(widget);
 	roof_button = new GUI_TextToggleButton(this, colX[4], buttonY += first_index ? 0 : row_h, yesno_width, height, yesno_text, 2, game->is_roof_mode(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(roof_button);
@@ -217,7 +217,7 @@ bool VideoDialog::init() {
 		doll_button = nullptr;
 		old_use_new_dolls = true;
 	} else {
-		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new actor dolls:", gui->get_font());
+		widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use new actor dolls:", gui->get_font());
 		AddWidget(widget);
 		bool use_new_dolls;
 		config->value(config_get_game_key(config) + "/use_new_dolls", use_new_dolls, false);
@@ -227,24 +227,24 @@ bool VideoDialog::init() {
 		button_index[last_index += 1] = doll_button;
 	}
 // tile_lighting_b
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use lighting data from map tiles:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Use lighting data from map tiles:", gui->get_font());
 	AddWidget(widget);
 	old_use_tile_lighting = game->get_map_window()->using_map_tile_lighting;
 	tile_lighting_b = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, old_use_tile_lighting, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(tile_lighting_b);
 	button_index[last_index += 1] = tile_lighting_b;
 // needs restart text
-	widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", gui->get_font());
+	widget = new GUI_Text(colX[0], textY += row_h * 2, 0, 0, 0, "The following require a restart:", gui->get_font());
 	AddWidget(widget);
 // lighting (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Lighting mode:", gui->get_font());
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Lighting mode:", gui->get_font());
 	AddWidget(widget);
 	const char *const lighting_text[] = { "none", "smooth", "original" };
 	lighting_button = new GUI_TextToggleButton(this, colX[3], buttonY += row_h * 3, 70, height, lighting_text, 3, scr->get_old_lighting_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(lighting_button);
 	button_index[last_index += 1] = lighting_button;
 // sprites (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use custom actor tiles:", gui->get_font());
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use custom actor tiles:", gui->get_font());
 	AddWidget(widget);
 	const char *const sprite_text[] = { "no", "yes", "default" };
 	Std::string custom_tile_str;
@@ -263,13 +263,13 @@ bool VideoDialog::init() {
 	game_style_text[1] = "new style";
 	game_style_text[2] = "original+";
 	game_style_text[3] = "original+ full map";
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Game style:", gui->get_font());
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Game style:", gui->get_font());
 	AddWidget(widget);
 	game_style_button = new GUI_TextToggleButton(this, colX[3] - 84, buttonY += row_h, 154, height, game_style_text, 4, game->get_game_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(game_style_button);
 	button_index[last_index += 1] = game_style_button;
 // dithering (needs reset)
-	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Old video graphics:", gui->get_font());
+	widget = new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Old video graphics:", gui->get_font());
 	AddWidget(widget);
 	const char *const dither_text[] = { "no", "CGA", "EGA" };
 	dither_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, dither_text, 3, game->get_dither()->get_mode(), font, BUTTON_TEXTALIGN_CENTER, this, 0);

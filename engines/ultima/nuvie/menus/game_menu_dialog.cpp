@@ -151,27 +151,27 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		close_dialog();
 	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
-		video_dialog = (GUI_Widget *) new VideoDialog(this);
+		video_dialog = new VideoDialog(this);
 		GUI::get_gui()->AddWidget(video_dialog);
 		gui->lock_input(video_dialog);
 	} else if (caller == audio_button) {
 		GUI_Widget *audio_dialog;
-		audio_dialog = (GUI_Widget *) new AudioDialog(this);
+		audio_dialog = new AudioDialog(this);
 		GUI::get_gui()->AddWidget(audio_dialog);
 		gui->lock_input(audio_dialog);
 	} else if (caller == input_button) {
 		GUI_Widget *input_dialog;
-		input_dialog = (GUI_Widget *) new InputDialog(this);
+		input_dialog = new InputDialog(this);
 		GUI::get_gui()->AddWidget(input_dialog);
 		gui->lock_input(input_dialog);
 	} else if (caller == gameplay_button) {
 		GUI_Widget *gameplay_dialog;
-		gameplay_dialog = (GUI_Widget *) new GameplayDialog(this);
+		gameplay_dialog = new GameplayDialog(this);
 		GUI::get_gui()->AddWidget(gameplay_dialog);
 		gui->lock_input(gameplay_dialog);
 	} else if (caller == cheats_button) {
 		GUI_Widget *cheats_dialog;
-		cheats_dialog = (GUI_Widget *) new CheatsDialog(this);
+		cheats_dialog = new CheatsDialog(this);
 		GUI::get_gui()->AddWidget(cheats_dialog);
 		gui->lock_input(cheats_dialog);
 	} else if (caller == continue_button) {
