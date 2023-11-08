@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-08 10:46+0000\n"
-"PO-Revision-Date: 2023-04-23 06:53+0000\n"
-"Last-Translator: barryspacezero <barryspace01@gmail.com>\n"
+"PO-Revision-Date: 2023-11-08 23:41+0000\n"
+"Last-Translator: illusion01 <prathamesh.jakkula.01042005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -102,11 +102,11 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:183
 msgid "Quick mode"
-msgstr ""
+msgstr "त्वरित मोड"
 
 #: gui/cloudconnectionwizard.cpp:184
 msgid "Manual mode"
-msgstr ""
+msgstr "मैन्युअल मोड"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
