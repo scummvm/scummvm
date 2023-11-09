@@ -49,8 +49,8 @@ typedef enum {
 	SCROLL_TO_END
 } ScrollEventType;
 
-#define SCROLLWIDGETGUMP_W 200
-#define SCROLLWIDGETGUMP_H 100
+static const int SCROLLWIDGETGUMP_W = 200;
+static const int SCROLLWIDGETGUMP_H = 100;
 
 class ScrollWidgetGump: public MsgScroll {
 

@@ -36,7 +36,7 @@ class Actor;
 class Font;
 class DollWidget;
 
-#define DOLLVIEWGUMP_HEIGHT 136
+static const int DOLLVIEWGUMP_HEIGHT = 136;
 
 class DollViewGump : public DraggableView {
 

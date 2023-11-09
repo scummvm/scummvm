@@ -31,8 +31,6 @@ namespace Nuvie {
 class Configuration;
 class Actor;
 
-#define NO_PORTRAIT_FOUND 255
-
 class PortraitSE : public Portrait {
 	U6Lib_n faces;
 

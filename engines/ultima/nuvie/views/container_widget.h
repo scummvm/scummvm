@@ -29,8 +29,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CONTAINER_WIDGET_ROWS 3
-#define CONTAINER_WIDGET_COLS 4
+static const int CONTAINER_WIDGET_ROWS = 3;
+static const int CONTAINER_WIDGET_COLS = 4;
 
 class Configuration;
 class TileManager;

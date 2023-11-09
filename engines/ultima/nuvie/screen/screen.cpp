@@ -36,8 +36,8 @@ namespace Nuvie {
 #define sqr(a) ((a)*(a))
 
 //Ultima 6 light globe sizes.
-#define NUM_GLOBES 5
-#define SHADING_BORDER 2 // should be the same as MapWindow's TMP_MAP_BORDER
+static const int NUM_GLOBES = 5;
+static const int SHADING_BORDER = 2; // should be the same as MapWindow's TMP_MAP_BORDER
 static const sint32 globeradius[]   = { 36, 112, 148, 192, 448 };
 static const sint32 globeradius_2[] = { 18, 56, 74, 96, 224 };
 

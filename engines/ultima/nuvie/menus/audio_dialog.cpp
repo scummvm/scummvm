@@ -41,8 +41,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define AD_WIDTH 292
-#define AD_HEIGHT 166
+static const int AD_WIDTH = 292;
+static const int AD_HEIGHT = 166;
 
 AudioDialog::AudioDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - AD_WIDTH) / 2,

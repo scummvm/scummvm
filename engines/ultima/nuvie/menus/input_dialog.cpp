@@ -42,8 +42,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define ID_WIDTH 280
-#define ID_HEIGHT 166
+static const int ID_WIDTH = 280;
+static const int ID_HEIGHT = 166;
 
 InputDialog::InputDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - ID_WIDTH) / 2,

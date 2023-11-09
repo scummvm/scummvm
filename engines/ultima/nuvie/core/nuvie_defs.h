@@ -127,8 +127,6 @@ extern void u6debug(bool no_header, const DebugLevelType level, const char *form
 #define NUVIE_RAND_MAX 0x7fffffff // POSIX: 2^(31)-1
 #define NUVIE_RAND() getRandom(NUVIE_RAND_MAX)
 
-#define MAXPATHLEN 256
-
 #define nuprint Game::get_game()->get_scroll()->print
 
 } // End of namespace Nuvie

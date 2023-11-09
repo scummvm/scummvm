@@ -40,7 +40,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define PLAYER_BASE_MOVEMENT_COST 5
+static const int PLAYER_BASE_MOVEMENT_COST = 5;
 
 Player::Player(Configuration *cfg) : config(cfg), _clock(nullptr),
 		party(nullptr), actor(nullptr), actor_manager(nullptr), obj_manager(nullptr),

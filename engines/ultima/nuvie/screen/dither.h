@@ -31,15 +31,17 @@ class Configuration;
 
 // Dither modes..
 
-#define DITHER_NONE 0
-#define DITHER_CGA  1
-#define DITHER_EGA  2
-#define DITHER_HRC  3 //FIXME add this mode.
+enum DitherMode {
+	DITHER_NONE = 0,
+	DITHER_CGA = 1,
+	DITHER_EGA = 2,
+	DITHER_HRC = 3 //FIXME add this mode.
+};
 
 class Dither {
 	Configuration *config;
 	uint8 *dither;
-	uint8 mode;
+	DitherMode mode;
 
 public:
 

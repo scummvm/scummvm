@@ -37,7 +37,7 @@ class Font;
 class U6Bmp;
 class Spell;
 
-#define SPELLVIEWGUMP_WIDTH 162
+static const int SPELLVIEWGUMP_WIDTH = 162;
 
 class SpellViewGump : public SpellView {
 

@@ -31,8 +31,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define SIGN_BG_W (SCROLLWIDGETGUMP_W + 16)
-#define SIGN_BG_H (SCROLLWIDGETGUMP_H + 16)
+static const int SIGN_BG_W = (SCROLLWIDGETGUMP_W + 16);
+static const int SIGN_BG_H = (SCROLLWIDGETGUMP_H + 16);
 
 ScrollViewGump::ScrollViewGump(Configuration *cfg) : DraggableView(cfg), scroll_widget(nullptr) {
 }

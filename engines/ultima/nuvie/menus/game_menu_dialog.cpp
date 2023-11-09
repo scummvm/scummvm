@@ -39,8 +39,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define GMD_WIDTH 150
-#define GMD_HEIGHT 135
+static const int GMD_WIDTH = 150;
+static const int GMD_HEIGHT = 135;
 
 GameMenuDialog::GameMenuDialog(CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,

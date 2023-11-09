@@ -37,7 +37,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CONTAINER_WIDGET_OFFSET 29
+static const int CONTAINER_WIDGET_OFFSET = 29;
 #define CHECK_X 0
 
 ContainerViewGump::ContainerViewGump(Configuration *cfg) : DraggableView(cfg),

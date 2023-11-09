@@ -31,11 +31,11 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define SUNMOON_RIBBON_END_WIDTH 5
-#define SUNMOON_RIBBON_WIDTH 48
-#define SUNMOON_RIBBON_HEIGHT 14
-#define SUNMOON_RIBBON_DIR_WIDTH 14
-#define SUNMOON_RIBBON_TOTAL_WIDTH (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH)
+static const int SUNMOON_RIBBON_END_WIDTH = 5;
+static const int SUNMOON_RIBBON_WIDTH = 48;
+static const int SUNMOON_RIBBON_HEIGHT = 14;
+static const int SUNMOON_RIBBON_DIR_WIDTH = 14;
+static const int SUNMOON_RIBBON_TOTAL_WIDTH = (SUNMOON_RIBBON_WIDTH + SUNMOON_RIBBON_DIR_WIDTH);
 
 SunMoonRibbon::SunMoonRibbon(Player *p, Weather *w, TileManager *tm)
 	: SunMoonStripWidget(p, tm), bg_data(nullptr), weather(w), retracted(true),

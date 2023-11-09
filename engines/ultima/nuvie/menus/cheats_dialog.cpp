@@ -41,8 +41,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CD_WIDTH 212
-#define CD_HEIGHT 101
+static const int CD_WIDTH = 212;
+static const int CD_HEIGHT = 101;
 
 CheatsDialog::CheatsDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - CD_WIDTH) / 2,

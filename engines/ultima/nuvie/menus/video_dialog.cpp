@@ -43,8 +43,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define VD_WIDTH 311
-#define VD_HEIGHT 171 // add or subtract 13 if you add/remove a row
+static const int VD_WIDTH = 311;
+static const int VD_HEIGHT = 171; // add or subtract 13 if you add/remove a row
 
 VideoDialog::VideoDialog(GUI_CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - VD_WIDTH) / 2,
