@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-08 10:46+0000\n"
-"PO-Revision-Date: 2023-11-07 13:41+0000\n"
+"PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -8513,51 +8513,47 @@ msgstr "エキスパート"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "強化："
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "オリジナルのメニューを使用"
+msgstr "オリジナルのバグを修正"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
-msgstr ""
+msgstr "オリジナル版のバグ、およびグラフィック/サウンドの問題を修正します。"
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "オーディオ・ビジュアル改善"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
-msgstr ""
+msgstr "特定のオーディオ/グラフィックについて、バグと無関係な調整を行います(バージョン間の整合性など)。"
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "復元されたコンテンツを有効にする"
+msgstr "復元されたコンテンツ"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
-msgstr ""
+msgstr "オリジナル版でカットされたダイアログ、グラフィック、オーディオを復元します。"
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "モダンUI/UXの調整"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
-msgstr ""
+msgstr "快適性の向上：例えばSam&Maxの偽サウンドローディング画面を削除し、初期のセーブメニューをスマートにします。"
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
