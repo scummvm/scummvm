@@ -33,6 +33,15 @@
 #include "gui/message.h"
 #include "gui/browser.h"
 #include "gui/downloaddialog.h"
+#include "gui/remotebrowser.h"
+#include "gui/chooser.h"
+#include "gui/cloudconnectionwizard.h"
+#include "gui/dialog.h"
+#include "gui/downloaddialog.h"
+#include "gui/downloadpacksdialog.h"
+#include "gui/fluidsynth-dialog.h"
+#include "gui/themebrowser.h"
+#include "widgets/popup.h"
 
 #include "image/png.h"
 
@@ -69,6 +78,8 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 
 	Common::String filename = Common::String::format("%d-%s.png", res, lang.c_str());
 
+	//Skipping Tooltips as not required
+
 	// MessageDialog
 	GUI::MessageDialog messageDialog(message);
 	messageDialog.open();     // For rendering
@@ -96,15 +107,69 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	saveGUISnapshot(surf, "browser-" + filename);
 	browserDialog.close();
 
-	//DownloadDialog
-	LauncherDialog *_launcher;
-	GUI::DownloadDialog downloadDialog(1,_launcher);
-	downloadDialog.open(); //For rendering
-	downloadDialog.reflowLayout(); //For updating surface
+	// RemoteBrowserDialog
+	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
+	remoteBrowserDialog.open(); //For rendering
+	remoteBrowserDialog.reflowLayout(); //For updating surface
 	g_gui.redrawFull();
 	g_system->grabOverlay(surf);
-	saveGUISnapshot(surf, "download-" + filename);
-	downloadDialog.close();
+	saveGUISnapshot(surf, "remoteBrowser-" + filename);
+	remoteBrowserDialog.close();
+
+	// ChooserDialog
+	GUI::ChooserDialog chooserDialog(_("Pick the game:"));
+	chooserDialog.open();         // For rendering
+	chooserDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "chooserDialog-" + filename);
+	chooserDialog.close();
+
+	//CloudConnectingWizard
+	GUI::CloudConnectionWizard cloudConnectingWizard;
+	cloudConnectingWizard.open();         // For rendering
+	cloudConnectingWizard.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "cloudConnectingWizard-" + filename);
+	cloudConnectingWizard.close();
+
+	//DownloadIconPacksDialog
+	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
+	downloadIconPacksDialog.open();         // For rendering
+	downloadIconPacksDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "downloadIconPacksDialog-" + filename);
+	downloadIconPacksDialog.close();
+
+	//DownloadShaderPacksDialog
+	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
+	downloadShaderPacksDialog.open();         // For rendering
+	downloadShaderPacksDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "downloadShaderPacksDialog-" + filename);
+	downloadShaderPacksDialog.close();
+
+	// FluidSynthSettingsDialog
+	GUI::FluidSynthSettingsDialog fluidSynthSettingsDialog;
+	fluidSynthSettingsDialog.open();         // For rendering
+	fluidSynthSettingsDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "fluidSynthSettingsDialog-" + filename);
+	fluidSynthSettingsDialog.close();
+
+	//ThemeBrowserDialog
+	GUI::ThemeBrowser themeBrowser;
+	themeBrowser.open();         // For rendering
+	themeBrowser.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "themeBrowser-" + filename);
+	themeBrowser.close();
+
 
 	// LauncherDialog
 #if 0
