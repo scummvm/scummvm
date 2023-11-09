@@ -1561,8 +1561,8 @@ MacGui::MacDialogWindow::~MacDialogWindow() {
 	if (!CursorMan.isVisible())
 		CursorMan.showMouse(true);
 
-	CursorMan.showMouse(true);
-	_gui->_windowManager->replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	CursorMan.showMouse(_cursorWasVisible);
+	_gui->_windowManager->popCursor();
 
 	copyToScreen(_backup);
 	_backup->free();
@@ -1586,6 +1586,8 @@ void MacGui::MacDialogWindow::show() {
 	_visible = true;
 	copyToScreen();
 	_dirtyRects.clear();
+	_gui->_windowManager->pushCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	_cursorWasVisible = CursorMan.showMouse(true);
 }
 
 void MacGui::MacDialogWindow::setFocusedWidget(int x, int y) {
