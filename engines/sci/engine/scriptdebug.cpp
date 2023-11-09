@@ -1128,7 +1128,7 @@ void logBacktrace() {
 		int paramc, totalparamc;
 
 		switch (call.type) {
-		case EXEC_STACK_TYPE_CALL: // Normal function
+		case EXEC_STACK_TYPE_CALL: // Script function
 			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
 
 			if (call.debugSelector != -1) {

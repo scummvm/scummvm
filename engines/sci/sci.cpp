@@ -715,69 +715,88 @@ void SciEngine::runGame() {
 	} while (true);
 }
 
-// When the SCI engine enters an error state, this block will add additional VM engine context for error reporting
+// When `error` is called, this function adds additional SCI engine context to the message
+// to help with bug reporting. It is critical that this function not crash, or else the
+// original error message will be lost and the debugger will be unavailable. This function
+// must not cause a second `error` call, or else it will infinitely recurse and crash with
+// stack overflow. This function must be cautious about the state it inspects, because it
+// can be called at any time during the engine lifecycle.
 void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	// Detailed context can only be included if VM execution has begun.
 	EngineState *s = _gamestate;
-	Script *activeScript = nullptr;
-	if (s != nullptr) {
-		// EngineState::xs is only valid if it points to an item in the execution stack.
-		Common::List<ExecStack>::const_iterator it;
-		for (it = s->_executionStack.begin(); it != s->_executionStack.end(); ++it) {
-			if (&(*it) == s->xs) {
-				activeScript = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.getSegment());
-				break;
-			}
-		}
-	}
 	Kernel *kernel = g_sci ? g_sci->getKernel() : nullptr;
-
-	// If a script is actively loaded at the time of error.
-	if (activeScript && kernel) {
+	if (s != nullptr && !s->_executionStack.empty() && kernel != nullptr) {
+		// Determine the name of the current function and the pc
+		Common::String function;
 		// Query the top-most stack frame even if it's not committed yet within the VM cycle.
-		const ExecStack *call = &(s->_executionStack.back());
-
-		// Note: if we are too early in the initialization process, this may not be populated yet.
-		Common::String version = s->getGameVersionFromGlobal();
-		if (!version.empty()) {
-			version.insertString("Version: ", 0);
-		}
-
-		const char *objname = s->_segMan->getObjectName(call->sendp);
-		Common::String callType;
-		Common::String callingFunc;
-		Common::String pcStr;
-
-		switch (call->type) {
-		case EXEC_STACK_TYPE_CALL: // Normal function
-			callType = "selector";
-			callingFunc += Common::String::format("%s::%s", objname, kernel->getSelectorName(call->debugSelector).c_str());
-			pcStr = Common::String::format("%04x:%04x", PRINT_REG(call->addr.pc));
-			break;
-		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			if (call->debugKernelSubFunction == -1){
-				callType = "kernel";
-				callingFunc += Common::String::format("k%s(", kernel->getKernelName(call->debugKernelFunction).c_str());
-			} else {
-				callType = "subkernel";
-				callingFunc += Common::String::format("k%s(", kernel->getKernelName(call->debugKernelFunction, call->debugKernelSubFunction).c_str());
+		const ExecStack &call = s->_executionStack.back();
+		reg_t pc = call.addr.pc;
+		switch (call.type) {
+		case EXEC_STACK_TYPE_CALL: { // Script function
+			if (call.debugSelector != -1) {
+				const char *objectName = s->_segMan->getObjectName(call.sendp);
+				function = Common::String::format("%s::%s", objectName, kernel->getSelectorName(call.debugSelector).c_str());
+			} else if (call.debugExportId != -1) {
+				function = Common::String::format("export %d", call.debugExportId);
+			} else if (call.debugLocalCallOffset != -1) {
+				function = Common::String::format("call %x", call.debugLocalCallOffset);
 			}
-			pcStr = "none";
 			break;
+		}
+		case EXEC_STACK_TYPE_KERNEL: { // Kernel function
+			if (call.debugKernelSubFunction == -1) {
+				function = Common::String::format("k%s", kernel->getKernelName(call.debugKernelFunction).c_str());
+			} else {
+				function = Common::String::format("k%s", kernel->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
+			}
+			// Kernel calls do not have a pc. walk the stack back to the most recent for script number.
+			Common::List<ExecStack>::const_iterator it;
+			for (it = s->_executionStack.reverse_begin(); it != s->_executionStack.end(); --it) {
+				if (it->type != EXEC_STACK_TYPE_KERNEL) {
+					pc = it->addr.pc;
+					break;
+				}
+			}
+			break;
+		}
 		default:
 			break;
 		}
 
-		// TODO: When a stack frame utilizes parameters, include those in the output.
-		Common::String errorStr = Common::String::format("Game: %s-%s%s\nRoom: %03d, Script: %03d, %s: %s() @ pc=%s",
-			_gameDescription->gameId, _gameDescription->extra, version.c_str(),
-			s->currentRoomNumber(), s->_segMan->getScript(call->addr.pc.getSegment())->getScriptNumber(), 
-			callType.c_str(), callingFunc.c_str(),
-			pcStr.c_str());
+		// Get game version string from globals. Could also read from VERSION file
+		// as a fallback, but I/O seems risky for this error handler.
+		// Version global may not be set yet if the error occurs early in script init.
+		Common::String version = s->getGameVersionFromGlobal();
+		if (!version.empty()) {
+			version.insertChar('-', 0);
+		}
 
-		snprintf(buf_output, buf_output_size, "%s\n%s", buf_input, errorStr.c_str());
+		// There are two script numbers we care about: the current room and the
+		// the script that was executing when the error occurred. These are often
+		// the same, so to save space, only include both when they are different.
+		uint16 roomNumber = s->currentRoomNumber();
+		Common::String scriptStr = Common::String::format("%d", roomNumber);
+		Script *script = s->_segMan->getScriptIfLoaded(pc.getSegment());
+		if (script != nullptr) {
+			uint16 scriptNumber = script->getScriptNumber();
+			if (roomNumber != scriptNumber) {
+				scriptStr += Common::String::format("/%d", scriptNumber);
+			}
+		}
+
+		// The error string is a deliberately terse single-line header, because
+		// the goal is for bug reports to automatically include useful context
+		// even when users only provide the single error message.
+		// Target name is used because this identifies the game and includes
+		// useful information about variants such as language.
+		// Note that only the pc offset is included, because that's all that's
+		// needed to identify the current instruction when the script is known.
+		snprintf(buf_output, buf_output_size, "[%s%s %s %s @ %04x]: %s",
+			_targetName.c_str(), version.c_str(), scriptStr.c_str(),
+			function.c_str(), pc.getOffset(), buf_input);
 	} else {
-		// VM not initialized yet, so just copy over the initial error.
-		Common::strlcpy(buf_output, buf_input, buf_output_size);
+		// VM not initialized yet, so just copy over the target name and error message.
+		snprintf(buf_output, buf_output_size, "[%s]: %s", _targetName.c_str(), buf_input);
 	}
 }
 
