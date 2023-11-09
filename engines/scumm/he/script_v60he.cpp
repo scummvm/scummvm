@@ -34,6 +34,9 @@
 #include "scumm/util.h"
 #include "scumm/verbs.h"
 
+#include "scumm/he/moonbase/moonbase.h"
+#include "scumm/he/moonbase/map_main.h"
+
 namespace Scumm {
 
 struct vsUnpackCtx {
@@ -185,6 +188,11 @@ Common::String ScummEngine_v60he::convertSavePathOld(const byte *src) {
 }
 
 Common::SeekableReadStream *ScummEngine_v60he::openFileForReading(const byte *fileName) {
+	if (_moonbase) {
+		Common::SeekableReadStream *substitutedFile = _moonbase->_map->substituteFile(fileName);
+		if (substitutedFile)
+			return substitutedFile;
+	}
 	Common::SeekableReadStream *saveFile = openSaveFileForReading(fileName);
 
 	if (saveFile)

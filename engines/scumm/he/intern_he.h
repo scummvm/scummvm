@@ -42,9 +42,12 @@ class LogicHE;
 class MoviePlayer;
 class Sprite;
 class CUP_Player;
+
+class Moonbase;
 #endif
 
 class ScummEngine_v60he : public ScummEngine_v6 {
+	friend class Moonbase;
 protected:
 	enum SubOpType {
 		SO_ACTOR_DEFAULT_CLIPPED = 30,
@@ -73,6 +76,9 @@ public:
 	int getHETimer(int timer);
 	void setHETimer(int timer);
 	void pauseHETimers(bool pause);
+
+public:
+	Moonbase *_moonbase;
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
@@ -263,11 +269,9 @@ class Net;
 class Lobby;
 #endif
 #endif
-class Moonbase;
 
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
-	friend class Moonbase;
 	friend class Gdi;
 
 protected:
@@ -815,7 +819,6 @@ protected:
 class ScummEngine_v100he : public ScummEngine_v99he {
 friend class AI;
 friend class Moonbase;
-friend class Net;
 
 // The following engine versions use sub opcodes from this version
 friend class ScummEngine_v71he;
@@ -1032,9 +1035,6 @@ protected:
 		SO_WAIT_FOR_MESSAGE = 130,
 		SO_WAIT_FOR_SENTENCE = 131,
 	};
-
-public:
-	Moonbase *_moonbase;
 
 public:
 	ScummEngine_v100he(OSystem *syst, const DetectorResult &dr);
