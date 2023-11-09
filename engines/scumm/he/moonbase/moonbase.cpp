@@ -24,6 +24,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"
+#include "scumm/he/moonbase/map_main.h"
 
 namespace Scumm {
 
@@ -33,11 +34,13 @@ Moonbase::Moonbase(ScummEngine_v100he *vm) : _vm(vm) {
 	initFOW();
 
 	_ai = new AI(_vm);
+	_map = new Map(_vm);
 }
 
 Moonbase::~Moonbase() {
 	delete _exe;
 	delete _ai;
+	delete _map;
 }
 
 int Moonbase::readFromArray(int array, int y, int x) {

@@ -2160,6 +2160,13 @@ void ScummEngine_v100he::o100_startScript() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = fetchScriptByte();
+
+	if (_game.id == GID_MOONBASE && _roomResource == 5 &&
+		((!strcmp(_game.variant, "1.1") && script == 2178) || script == 2177)) {
+		// TODO: Add a dialog for random map generation.
+		debug(1, "this is setup-gamesetup");
+	}
+
 	runScript(script, (flags == SO_BAK || flags == SO_BAKREC), (flags == SO_REC || flags == SO_BAKREC), args);
 }
 
