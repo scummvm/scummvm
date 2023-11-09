@@ -8533,7 +8533,9 @@ msgstr "オーディオ・ビジュアル改善"
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
-msgstr "特定のオーディオ/グラフィックについて、バグと無関係な調整を行います(バージョン間の整合性など)。"
+msgstr ""
+"特定のオーディオ/グラフィックについて、バグと無関係な調整を行います(バージョ"
+"ン間の整合性など)。"
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Restored content"
@@ -8543,7 +8545,8 @@ msgstr "復元されたコンテンツ"
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
-msgstr "オリジナル版でカットされたダイアログ、グラフィック、オーディオを復元します。"
+msgstr ""
+"オリジナル版でカットされたダイアログ、グラフィック、オーディオを復元します。"
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
@@ -8553,7 +8556,9 @@ msgstr "モダンUI/UXの調整"
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
-msgstr "快適性の向上：例えばSam&Maxの偽サウンドローディング画面を削除し、初期のセーブメニューをスマートにします。"
+msgstr ""
+"快適性の向上：例えばSam&Maxの偽サウンドローディング画面を削除し、初期のセーブ"
+"メニューをスマートにします。"
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
