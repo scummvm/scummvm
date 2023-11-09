@@ -127,7 +127,7 @@ void MidiDriver_M_MT32::send(int8 source, uint32 b) {
 		// event is encountered on an M channel, the MIDI output channel of
 		// that M channel is changed to the MIDI channel assigned to the new M
 		// instrument.
-		uint8 newOutputChannel;
+		int8 newOutputChannel;
 		assert(data < 16);
 		newOutputChannel = _mInstrumentMidiChannels[data];
 		if (newOutputChannel < 0) {
