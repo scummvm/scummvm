@@ -398,8 +398,8 @@ public:
 		Common::Point _beamCursorPos;
 		bool _cursorWasVisible = false;
 		bool _beamCursorVisible = false;
-		int _beamCursorHotspotX = 3;
-		int _beamCursorHotspotY = 4;
+		const int _beamCursorHotspotX = 3;
+		const int _beamCursorHotspotY = 4;
 
 		void drawBeamCursor();
 		void undrawBeamCursor();
