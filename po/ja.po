@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-08 10:46+0000\n"
+"POT-Creation-Date: 2023-11-09 17:19+0000\n"
 "PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -10067,12 +10067,12 @@ msgstr "Christmas musicを通年で有効化します。"
 msgid "Could not find correct ultima.dat datafile"
 msgstr "正しいデータファイルultima.datが見つかりません"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
 msgid "loading quick save %d"
 msgstr "クイックセーブ%dをロードしています"
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:380
 #, c-format
 msgid "saving quick save %d"
 msgstr "%dにクイックセーブしています"

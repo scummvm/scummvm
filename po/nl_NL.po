@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-08 10:46+0000\n"
+"POT-Creation-Date: 2023-11-09 17:19+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -10073,12 +10073,12 @@ msgstr "Gebruik de kerstmuziek het gehele jaar."
 msgid "Could not find correct ultima.dat datafile"
 msgstr "Kon niet de juiste ultima.dat spelbestand vinden"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:375
 #, c-format
 msgid "loading quick save %d"
 msgstr "Laden snel opslaan %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:392
+#: engines/ultima/nuvie/nuvie.cpp:380
 #, c-format
 msgid "saving quick save %d"
 msgstr "snel opslaan spel %d opgeslagen"
