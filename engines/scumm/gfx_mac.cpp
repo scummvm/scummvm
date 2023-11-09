@@ -3443,7 +3443,7 @@ void MacLoomGui::update(int delta) {
 				_practiceBox->create(w, h, Graphics::PixelFormat
 ::createFormatCLUT8());
 
-				_practiceBox->fillRect(Common::Rect(62, 22), kBlack);
+				_practiceBox->fillRect(Common::Rect(w, h), kBlack);
 
 				Color color = bw ? kWhite : kLightGray;
 
@@ -3458,6 +3458,8 @@ void MacLoomGui::update(int delta) {
 				debug(1, "MacLoomGui: Drawing practice mode notes");
 
 				_practiceBoxNotes = notes;
+
+				_practiceBox->fillRect(Common::Rect(2, 2, w - 2, h - 2), kBlack);
 
 				const Graphics::Font *font = getFont(kLoomFontLarge);
 				Color colors[] = { kRed, kBrightRed, kBrightYellow, kBrightGreen, kBrightCyan, kCyan, kBrightBlue, kWhite };
