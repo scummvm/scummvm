@@ -1910,7 +1910,7 @@ int MacGui::MacDialogWindow::runDialog() {
 				break;
 
 			case Common::EVENT_WHEELUP:
-				if (!_gui->_vm->_enableEnhancements || _focusedWidget)
+				if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
 					break;
 
 				w = findWidget(event.mouse.x, event.mouse.y);
@@ -1920,7 +1920,7 @@ int MacGui::MacDialogWindow::runDialog() {
 				break;
 
 			case Common::EVENT_WHEELDOWN:
-				if (!_gui->_vm->_enableEnhancements || _focusedWidget)
+				if (!_gui->_vm->enhancementEnabled(kEnhUIUX) || _focusedWidget)
 					break;
 
 				w = findWidget(event.mouse.x, event.mouse.y);
@@ -3566,7 +3566,7 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 			// increments of 16 pixels. As an enhancement, we allow
 			// any X coordinate.
 
-			if (!_vm->_enableEnhancements)
+			if (!_vm->enhancementEnabled(kEnhUIUX))
 				newX &= ~0xF;
 
 			if (newX != _practiceBoxPos.x || newY != _practiceBoxPos.y) {
@@ -3957,7 +3957,7 @@ bool MacIndy3Gui::Inventory::handleEvent(Common::Event &event) {
 	if (!_enabled || !_verbid)
 		return false;
 
-	if (_vm->_enableEnhancements) {
+	if (_vm->enhancementEnabled(kEnhUIUX)) {
 		if ((event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN) && _bounds.contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_WHEELUP) {
 				_scrollBar->scroll(kScrollUp);
