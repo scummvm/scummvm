@@ -109,10 +109,67 @@ bool keyBlit(byte *dst, const byte *src,
 
 namespace {
 
-template<typename SrcColor, int SrcSize, typename DstColor, int DstSize, bool backward, bool hasKey>
-inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
+template<typename Color, int Size>
+inline void maskBlitLogic(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
+						 const uint srcDelta, const uint dstDelta, const uint maskDelta) {
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			if (*mask) {
+				if (Size == sizeof(Color)) {
+					*(Color *)dst = *(const Color *)src;
+				} else {
+					memcpy(dst, src, Size);
+				}
+			}
+
+			src  += Size;
+			dst  += Size;
+			mask += 1;
+		}
+
+		src  += srcDelta;
+		dst  += dstDelta;
+		mask += maskDelta;
+	}
+}
+
+} // End of anonymous namespace
+
+// Function to blit a rect with a transparent color mask
+bool maskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel) {
+	if (dst == src)
+		return true;
+
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta  = (srcPitch  - w * bytesPerPixel);
+	const uint dstDelta  = (dstPitch  - w * bytesPerPixel);
+	const uint maskDelta = (maskPitch - w);
+
+	if (bytesPerPixel == 1) {
+		maskBlitLogic<uint8, 1>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta);
+	} else if (bytesPerPixel == 2) {
+		maskBlitLogic<uint16, 2>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta);
+	} else if (bytesPerPixel == 3) {
+		maskBlitLogic<uint8, 3>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta);
+	} else if (bytesPerPixel == 4) {
+		maskBlitLogic<uint32, 4>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+namespace {
+
+template<typename SrcColor, int SrcSize, typename DstColor, int DstSize, bool backward, bool hasKey, bool hasMask>
+inline void crossBlitLogic(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
 						   const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-						   const uint srcDelta, const uint dstDelta, const uint32 key) {
+						   const uint srcDelta, const uint dstDelta, const uint maskDelta,
+						   const uint32 key) {
 	uint32 color;
 	byte a, r, g, b;
 	uint8 *col = (uint8 *)&color;
@@ -128,7 +185,7 @@ inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint 
 			else
 				memcpy(col, src, SrcSize);
 
-			if (!hasKey || color != key) {
+			if ((!hasKey || color != key) && (!hasMask || *mask != 0)) {
 				srcFmt.colorToARGB(color, a, r, g, b);
 				color = dstFmt.ARGBToColor(a, r, g, b);
 
@@ -141,29 +198,37 @@ inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint 
 			if (backward) {
 				src -= SrcSize;
 				dst -= DstSize;
+				if (hasMask)
+					mask -= 1;
 			} else {
 				src += SrcSize;
 				dst += DstSize;
+				if (hasMask)
+					mask += 1;
 			}
 		}
 
 		if (backward) {
 			src -= srcDelta;
 			dst -= dstDelta;
+			if (hasMask)
+				mask -= maskDelta;
 		} else {
 			src += srcDelta;
 			dst += dstDelta;
+			if (hasMask)
+				mask += maskDelta;
 		}
 	}
 }
 
-template<typename DstColor, int DstSize, bool backward, bool hasKey>
-inline void crossBlitLogic1BppSource(byte *dst, const byte *src, const uint w, const uint h,
-									 const uint srcDelta, const uint dstDelta, const uint32 *map, const uint32 key) {
+template<typename DstColor, int DstSize, bool backward, bool hasKey, bool hasMask>
+inline void crossBlitLogic1BppSource(byte *dst, const byte *src, const byte *mask, const uint w, const uint h,
+									 const uint srcDelta, const uint dstDelta, const uint maskDelta, const uint32 *map, const uint32 key) {
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			const byte color = *src;
-			if (!hasKey || color != key) {
+			if ((!hasKey || color != key) && (!hasMask || *mask != 0)) {
 				if (DstSize == sizeof(DstColor)) {
 					*(DstColor *)dst = map[color];
 				} else {
@@ -174,18 +239,26 @@ inline void crossBlitLogic1BppSource(byte *dst, const byte *src, const uint w, c
 			if (backward) {
 				src -= 1;
 				dst -= DstSize;
+				if (hasMask)
+					mask -= 1;
 			} else {
 				src += 1;
 				dst += DstSize;
+				if (hasMask)
+					mask += 1;
 			}
 		}
 
 		if (backward) {
 			src -= srcDelta;
 			dst -= dstDelta;
+			if (hasMask)
+				mask -= maskDelta;
 		} else {
 			src += srcDelta;
 			dst += dstDelta;
+			if (hasMask)
+				mask += maskDelta;
 		}
 	}
 }
@@ -215,11 +288,11 @@ bool crossBlit(byte *dst, const byte *src,
 	// TODO: optimized cases for dstDelta of 0
 	if (dstFmt.bytesPerPixel == 2) {
 		if (srcFmt.bytesPerPixel == 2) {
-			crossBlitLogic<uint16, 2, uint16, 2, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint16, 2, uint16, 2, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic<uint8, 3, uint16, 2, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint8, 3, uint16, 2, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else {
-			crossBlitLogic<uint32, 4, uint16, 2, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint32, 4, uint16, 2, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		}
 	} else if (dstFmt.bytesPerPixel == 3) {
 		if (srcFmt.bytesPerPixel == 2) {
@@ -230,11 +303,11 @@ bool crossBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint16, 2, uint8, 3, true, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint16, 2, uint8, 3, true, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic<uint8, 3, uint8, 3, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint8, 3, uint8, 3, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else {
-			crossBlitLogic<uint32, 4, uint8, 3, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint32, 4, uint8, 3, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		}
 	} else if (dstFmt.bytesPerPixel == 4) {
 		if (srcFmt.bytesPerPixel == 2) {
@@ -245,7 +318,7 @@ bool crossBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint16, 2, uint32, 4, true, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint16, 2, uint32, 4, true, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else if (srcFmt.bytesPerPixel == 3) {
 			// We need to blit the surface from bottom right to top left here.
 			// This is neeeded, because when we convert to the same memory
@@ -254,9 +327,9 @@ bool crossBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint8, 3, uint32, 4, true, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint8, 3, uint32, 4, true, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		} else {
-			crossBlitLogic<uint32, 4, uint32, 4, false, false>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0);
+			crossBlitLogic<uint32, 4, uint32, 4, false, false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, 0);
 		}
 	} else {
 		return false;
@@ -287,11 +360,11 @@ bool crossKeyBlit(byte *dst, const byte *src,
 	// TODO: optimized cases for dstDelta of 0
 	if (dstFmt.bytesPerPixel == 2) {
 		if (srcFmt.bytesPerPixel == 2) {
-			crossBlitLogic<uint16, 2, uint16, 2, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint16, 2, uint16, 2, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic<uint8, 3, uint16, 2, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint8, 3, uint16, 2, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else {
-			crossBlitLogic<uint32, 4, uint16, 2, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint32, 4, uint16, 2, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		}
 	} else if (dstFmt.bytesPerPixel == 3) {
 		if (srcFmt.bytesPerPixel == 2) {
@@ -302,11 +375,11 @@ bool crossKeyBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint16, 2, uint8, 3, true, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint16, 2, uint8, 3, true, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else if (srcFmt.bytesPerPixel == 3) {
-			crossBlitLogic<uint8, 3, uint8, 3, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint8, 3, uint8, 3, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else {
-			crossBlitLogic<uint32, 4, uint8, 3, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint32, 4, uint8, 3, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		}
 	} else if (dstFmt.bytesPerPixel == 4) {
 		if (srcFmt.bytesPerPixel == 2) {
@@ -317,7 +390,7 @@ bool crossKeyBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint16, 2, uint32, 4, true, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint16, 2, uint32, 4, true, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else if (srcFmt.bytesPerPixel == 3) {
 			// We need to blit the surface from bottom right to top left here.
 			// This is neeeded, because when we convert to the same memory
@@ -326,9 +399,82 @@ bool crossKeyBlit(byte *dst, const byte *src,
 			// color than per source color.
 			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
 			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
-			crossBlitLogic<uint8, 3, uint32, 4, true, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint8, 3, uint32, 4, true, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
 		} else {
-			crossBlitLogic<uint32, 4, uint32, 4, false, true>(dst, src, w, h, srcFmt, dstFmt, srcDelta, dstDelta, key);
+			crossBlitLogic<uint32, 4, uint32, 4, false, true, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcDelta, dstDelta, 0, key);
+		}
+	} else {
+		return false;
+	}
+	return true;
+}
+
+// Function to blit a rect from one color format to another with a transparent color mask
+bool crossMaskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
+	// Error out if conversion is impossible
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
+			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel))
+		return false;
+
+	// Don't perform unnecessary conversion
+	if (srcFmt == dstFmt) {
+		maskBlit(dst, src, mask, dstPitch, srcPitch, maskPitch, w, h, dstFmt.bytesPerPixel);
+		return true;
+	}
+
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta  = (srcPitch  - w * srcFmt.bytesPerPixel);
+	const uint dstDelta  = (dstPitch  - w * dstFmt.bytesPerPixel);
+	const uint maskDelta = (maskPitch - w);
+
+	// TODO: optimized cases for dstDelta of 0
+	if (dstFmt.bytesPerPixel == 2) {
+		if (srcFmt.bytesPerPixel == 2) {
+			crossBlitLogic<uint16, 2, uint16, 2, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else if (srcFmt.bytesPerPixel == 3) {
+			crossBlitLogic<uint8, 3, uint16, 2, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else {
+			crossBlitLogic<uint32, 4, uint16, 2, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		}
+	} else if (dstFmt.bytesPerPixel == 3) {
+		if (srcFmt.bytesPerPixel == 2) {
+			// We need to blit the surface from bottom right to top left here.
+			// This is needed, because when we convert to the same memory
+			// buffer copying the surface from top left to bottom right would
+			// overwrite the source, since we have more bits per destination
+			// color than per source color.
+			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
+			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
+			crossBlitLogic<uint16, 2, uint8, 3, true, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else if (srcFmt.bytesPerPixel == 3) {
+			crossBlitLogic<uint8, 3, uint8, 3, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else {
+			crossBlitLogic<uint32, 4, uint8, 3, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		}
+	} else if (dstFmt.bytesPerPixel == 4) {
+		if (srcFmt.bytesPerPixel == 2) {
+			// We need to blit the surface from bottom right to top left here.
+			// This is neeeded, because when we convert to the same memory
+			// buffer copying the surface from top left to bottom right would
+			// overwrite the source, since we have more bits per destination
+			// color than per source color.
+			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
+			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
+			crossBlitLogic<uint16, 2, uint32, 4, true, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else if (srcFmt.bytesPerPixel == 3) {
+			// We need to blit the surface from bottom right to top left here.
+			// This is neeeded, because when we convert to the same memory
+			// buffer copying the surface from top left to bottom right would
+			// overwrite the source, since we have more bits per destination
+			// color than per source color.
+			dst += h * dstPitch - dstDelta - dstFmt.bytesPerPixel;
+			src += h * srcPitch - srcDelta - srcFmt.bytesPerPixel;
+			crossBlitLogic<uint8, 3, uint32, 4, true, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
+		} else {
+			crossBlitLogic<uint32, 4, uint32, 4, false, false, true>(dst, src, mask, w, h, srcFmt, dstFmt, srcDelta, dstDelta, maskDelta, 0);
 		}
 	} else {
 		return false;
@@ -350,7 +496,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 	const uint dstDelta = (dstPitch - w * bytesPerPixel);
 
 	if (bytesPerPixel == 1) {
-		crossBlitLogic1BppSource<uint8, 1, false, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
+		crossBlitLogic1BppSource<uint8, 1, false, false, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, 0);
 	} else if (bytesPerPixel == 2) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is neeeded, because when we convert to the same memory
@@ -359,7 +505,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint16, 2, true, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
+		crossBlitLogic1BppSource<uint16, 2, true, false, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, 0);
 	} else if (bytesPerPixel == 3) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is needed, because when we convert to the same memory
@@ -368,7 +514,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint8, 3, true, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
+		crossBlitLogic1BppSource<uint8, 3, true, false, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, 0);
 	} else if (bytesPerPixel == 4) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is needed, because when we convert to the same memory
@@ -377,7 +523,7 @@ bool crossBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint32, 4, true, false>(dst, src, w, h, srcDelta, dstDelta, map, 0);
+		crossBlitLogic1BppSource<uint32, 4, true, false, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, 0);
 	} else {
 		return false;
 	}
@@ -398,7 +544,7 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 	const uint dstDelta = (dstPitch - w * bytesPerPixel);
 
 	if (bytesPerPixel == 1) {
-		crossBlitLogic1BppSource<uint8, 1, false, true>(dst, src, w, h, srcDelta, dstDelta, map, key);
+		crossBlitLogic1BppSource<uint8, 1, false, true, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, key);
 	} else if (bytesPerPixel == 2) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is neeeded, because when we convert to the same memory
@@ -407,7 +553,7 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint16, 2, true, true>(dst, src, w, h, srcDelta, dstDelta, map, key);
+		crossBlitLogic1BppSource<uint16, 2, true, true, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, key);
 	} else if (bytesPerPixel == 3) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is needed, because when we convert to the same memory
@@ -416,7 +562,7 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint8, 3, true, true>(dst, src, w, h, srcDelta, dstDelta, map, key);
+		crossBlitLogic1BppSource<uint8, 3, true, true, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, key);
 	} else if (bytesPerPixel == 4) {
 		// We need to blit the surface from bottom right to top left here.
 		// This is neeeded, because when we convert to the same memory
@@ -425,7 +571,56 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 		// color than per source color.
 		dst += h * dstPitch - dstDelta - bytesPerPixel;
 		src += h * srcPitch - srcDelta - 1;
-		crossBlitLogic1BppSource<uint32, 4, true, true>(dst, src, w, h, srcDelta, dstDelta, map, key);
+		crossBlitLogic1BppSource<uint32, 4, true, true, false>(dst, src, nullptr, w, h, srcDelta, dstDelta, 0, map, key);
+	} else {
+		return false;
+	}
+	return true;
+}
+
+// Function to blit a rect from one color format to another using a map with a transparent color mask
+bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 *map) {
+	// Error out if conversion is impossible
+	if (!bytesPerPixel)
+		return false;
+
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta  = (srcPitch  - w);
+	const uint dstDelta  = (dstPitch  - w * bytesPerPixel);
+	const uint maskDelta = (maskPitch - w);
+
+	if (bytesPerPixel == 1) {
+		crossBlitLogic1BppSource<uint8, 1, false, false, true>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta, map, 0);
+	} else if (bytesPerPixel == 2) {
+		// We need to blit the surface from bottom right to top left here.
+		// This is neeeded, because when we convert to the same memory
+		// buffer copying the surface from top left to bottom right would
+		// overwrite the source, since we have more bits per destination
+		// color than per source color.
+		dst += h * dstPitch - dstDelta - bytesPerPixel;
+		src += h * srcPitch - srcDelta - 1;
+		crossBlitLogic1BppSource<uint16, 2, true, false, true>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta, map, 0);
+	} else if (bytesPerPixel == 3) {
+		// We need to blit the surface from bottom right to top left here.
+		// This is needed, because when we convert to the same memory
+		// buffer copying the surface from top left to bottom right would
+		// overwrite the source, since we have more bits per destination
+		// color than per source color.
+		dst += h * dstPitch - dstDelta - bytesPerPixel;
+		src += h * srcPitch - srcDelta - 1;
+		crossBlitLogic1BppSource<uint8, 3, true, false, true>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta, map, 0);
+	} else if (bytesPerPixel == 4) {
+		// We need to blit the surface from bottom right to top left here.
+		// This is needed, because when we convert to the same memory
+		// buffer copying the surface from top left to bottom right would
+		// overwrite the source, since we have more bits per destination
+		// color than per source color.
+		dst += h * dstPitch - dstDelta - bytesPerPixel;
+		src += h * srcPitch - srcDelta - 1;
+		crossBlitLogic1BppSource<uint32, 4, true, false, true>(dst, src, mask, w, h, srcDelta, dstDelta, maskDelta, map, 0);
 	} else {
 		return false;
 	}
