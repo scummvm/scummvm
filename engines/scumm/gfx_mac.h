@@ -396,6 +396,7 @@ public:
 
 		Graphics::Surface *_beamCursor = nullptr;
 		Common::Point _beamCursorPos;
+		bool _cursorWasVisible = false;
 		bool _beamCursorVisible = false;
 		int _beamCursorHotspotX = 3;
 		int _beamCursorHotspotY = 4;
