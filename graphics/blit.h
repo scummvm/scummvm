@@ -86,6 +86,28 @@ bool keyBlit(byte *dst, const byte *src,
 			   const uint bytesPerPixel, const uint32 key);
 
 /**
+ * Blits a rectangle with a transparent color mask.
+ *
+ * A mask is a separate CLUT8 surface where for each pixel in the mask,
+ * 0 means the corresponding pixel in the source is transparent, while
+ * a non-zero value means that the corresponding pixel is opaque.
+ *
+ * @param dst			the buffer which will receive the converted graphics data
+ * @param src			the buffer containing the original graphics data
+ * @param mask			the buffer containing the mask
+ * @param dstPitch		width in bytes of one full line of the dest buffer
+ * @param srcPitch		width in bytes of one full line of the source buffer
+ * @param maskPitch		width in bytes of one full line of the mask buffer
+ * @param w				the width of the graphics data
+ * @param h				the height of the graphics data
+ * @param bytesPerPixel	the number of bytes per pixel
+ */
+bool maskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel);
+
+/**
  * Blits a rectangle from one graphical format to another.
  *
  * @param dst		the buffer which will receive the converted graphics data
@@ -138,6 +160,38 @@ bool crossKeyBlit(byte *dst, const byte *src,
 			   const uint w, const uint h,
 			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt, const uint32 key);
 
+/**
+ * Blits a rectangle from one graphical format to another with a transparent color mask.
+ *
+ * A mask is a separate CLUT8 surface where for each pixel in the mask,
+ * 0 means the corresponding pixel in the source is transparent, while
+ * a non-zero value means that the corresponding pixel is opaque.
+ *
+ * @param dst		the buffer which will receive the converted graphics data
+ * @param src		the buffer containing the original graphics data
+ * @param mask		the buffer containing the mask
+ * @param dstPitch	width in bytes of one full line of the dest buffer
+ * @param srcPitch	width in bytes of one full line of the source buffer
+ * @param maskPitch	width in bytes of one full line of the mask buffer
+ * @param w			the width of the graphics data
+ * @param h			the height of the graphics data
+ * @param dstFmt	the desired pixel format
+ * @param srcFmt	the original pixel format
+ * @return			true if conversion completes successfully,
+ *					false if there is an error.
+ *
+ * @note This can convert a surface in place, regardless of the
+ *       source and destination format, as long as there is enough
+ *       space for the destination. The dstPitch / srcPitch ratio
+ *       must at least equal the dstBpp / srcBpp ratio for
+ *       dstPitch >= srcPitch and at most dstBpp / srcBpp for
+ *       dstPitch < srcPitch though.
+ */
+bool crossMaskBlit(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+
 bool crossBlitMap(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint w, const uint h,
@@ -147,6 +201,11 @@ bool crossKeyBlitMap(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 *map, const uint32 key);
+
+bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
+			   const uint dstPitch, const uint srcPitch, const uint maskPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 *map);
 
 bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
