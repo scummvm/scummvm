@@ -165,7 +165,7 @@ void OpenGLShaderRenderer::positionCamera(const Math::Vector3d &pos, const Math:
 void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d target, const Common::Rect viewArea) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
-	glColor3ub(255, 255, 255);
+	useColor(255, 255, 255);
 
 	glLineWidth(20);
 	copyToVertexArray(0, sensor);
