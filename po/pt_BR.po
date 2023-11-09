@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-08 10:46+0000\n"
-"PO-Revision-Date: 2023-11-06 06:41+0000\n"
+"PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -8694,51 +8694,55 @@ msgstr "Especialista"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Aprimoramentos:"
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Utilizar menus originais"
+msgstr "Corrigir bugs originais"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Corrige bugs que estavam presentes na versão original e falhas gráficas/de "
+"áudio perceptíveis."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Aprimoramentos audiovisuais"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Realiza ajustes não relacionados a bugs em determinados elementos de áudio e "
+"gráficos (por exemplo, alterações na consistência da versão)."
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Habilitar conteúdo restaurado"
+msgstr "Conteúdo restaurado"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Restaura diálogos, gráficos e elementos de áudio que foram originalmente "
+"cortados na versão original."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Ajustes modernos de interface"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Ativa alguns confortos modernos; por exemplo, remove a tela falsa de "
+"carregamento de som no Sam&Max e acelera a aparição dos menus de salvamento."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
