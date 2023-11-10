@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 15:34+0000\n"
+"POT-Creation-Date: 2023-11-10 22:51+0000\n"
 "PO-Revision-Date: 2023-11-08 23:41+0000\n"
 "Last-Translator: illusion01 <prathamesh.jakkula.01042005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Paste code from clipboard"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:314
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
 #: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
@@ -267,8 +267,8 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
-#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
+#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
 #: base/main.cpp:603 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -281,8 +281,8 @@ msgstr "हाँ"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
-#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
+#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -303,7 +303,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:553 gui/launcher.cpp:557
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:555 gui/launcher.cpp:559
 #: gui/massadd.cpp:90 gui/options.cpp:2331 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
@@ -358,7 +358,7 @@ msgstr "गेम सेव नहीं हो पाया"
 msgid "Select directory where to download game data"
 msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:311
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "उस फोल्डर को चुने जिसमे गेम डेटा है"
 
@@ -393,7 +393,7 @@ msgid ""
 msgstr ""
 "ऐसा लगता है की आपका कनेक्शन सीमित है। क्या आप इसके द्वारा ही डाउनलोड करना चाहते हैं?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:655
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:657
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM यह फोल्डर नहीं खोल पाया!"
 
@@ -1067,15 +1067,21 @@ msgctxt "group"
 msgid "Platform"
 msgstr "प्लैटफॉर्म"
 
-#: gui/launcher.cpp:227
+#. I18N: Group name for the game list, grouped by year
+#: gui/launcher.cpp:119
+msgctxt "year"
+msgid "Year"
+msgstr ""
+
+#: gui/launcher.cpp:229
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:231 gui/launcher.cpp:881
+#: gui/launcher.cpp:233 gui/launcher.cpp:883
 msgid "Group:"
 msgstr ""
 
-#: gui/launcher.cpp:233
+#: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
 msgstr ""
 
@@ -1083,224 +1089,231 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: gui/launcher.cpp:260 backends/platform/sdl/macosx/appmenu_osx.mm:262
+#: gui/launcher.cpp:262 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr ""
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:264 engines/dialogs.cpp:95
+#: gui/launcher.cpp:266 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "बंद करें (Q)"
 
-#: gui/launcher.cpp:264 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:266 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "ScummVM बंद करें"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:268
+#: gui/launcher.cpp:270
 msgid "A~b~out"
 msgstr "जानकारी(B)..."
 
-#: gui/launcher.cpp:268 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:270 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "ScummVM के बारे में जानकारी"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgid "Global ~O~ptions..."
 msgstr "ग्लोबल विकल्प(O)..."
 
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgid "Change global ScummVM options"
 msgstr "ScummVM के ग्लोबल विकल्प बदलें"
 
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "ग्लोबल विकल्प(O)..."
 
-#: gui/launcher.cpp:274
+#: gui/launcher.cpp:276
 #, fuzzy
 #| msgid "Download game files"
 msgid "Download Games"
 msgstr "गेम फाइल डाउनलोड करे"
 
-#: gui/launcher.cpp:274
+#: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
 msgstr ""
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgid "~A~dd Game..."
 msgstr "नया गेम जोड़ें (A)..."
 
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgid "Add games to the list"
 msgstr ""
 
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "गेम add करे..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgid "~R~emove Game"
 msgstr "गेम हटाएँ (R)"
 
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "गेम सूचि से हटा दें। गेम की फाइलें नहीं हटेंगी"
 
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "गेम हटा डे (R)"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:288
+#: gui/launcher.cpp:290
 msgid "Mass Add..."
 msgstr "अनेक गेम जोड़ें..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:291
+#: gui/launcher.cpp:293
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "अनेक गेम add करे..."
 
-#: gui/launcher.cpp:299 gui/launcher.cpp:851 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:301 gui/launcher.cpp:853 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:303 gui/launcher.cpp:872 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:305 gui/launcher.cpp:874 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "तलाशें:"
 
-#: gui/launcher.cpp:314 engines/dialogs.cpp:98 engines/engine.cpp:915
+#: gui/launcher.cpp:316 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:413
+#: gui/launcher.cpp:415
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 
-#: gui/launcher.cpp:424
+#: gui/launcher.cpp:426
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:454
+#: gui/launcher.cpp:456
 msgid "Do you really want to remove this game configuration?"
 msgstr ""
 
-#: gui/launcher.cpp:496
+#: gui/launcher.cpp:498
 msgid "Do you want to load saved game?"
 msgstr ""
 
-#: gui/launcher.cpp:553
+#: gui/launcher.cpp:555
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 
-#: gui/launcher.cpp:557
+#: gui/launcher.cpp:559
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:674
+#: gui/launcher.cpp:676
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM इस डायरेक्टरी में कोई गेम नहीं ढूंढ पाया!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:690
+#: gui/launcher.cpp:692
 msgid "Unknown variant"
 msgstr ""
 
-#: gui/launcher.cpp:696
+#: gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr ""
 
-#: gui/launcher.cpp:921 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr ""
 
-#: gui/launcher.cpp:922 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:924 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr ""
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1086
 msgid "~S~tart"
 msgstr "शुरू करें (S)"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1086
 msgid "Start selected game"
 msgstr "चयनित गेम को शुरू करें"
 
-#: gui/launcher.cpp:1087
+#: gui/launcher.cpp:1089
 msgid "~L~oad..."
 msgstr ""
 
-#: gui/launcher.cpp:1087
+#: gui/launcher.cpp:1089
 msgid "Load saved game for selected game"
 msgstr "चयनित खेल के लिए गेम लोड करे"
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1091
 msgid "Record..."
 msgstr ""
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgid "~G~ame Options..."
 msgstr "गेम विकल्प(O)..."
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgid "Change game options"
 msgstr "गेम के विकल्प चुनें"
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "गेम विकल्प(O)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1187 gui/launcher.cpp:1370
+#: gui/launcher.cpp:1189 gui/launcher.cpp:1385
 msgid "Unknown Engine"
 msgstr "अनजान इंजन"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1204 gui/launcher.cpp:1387
+#: gui/launcher.cpp:1206 gui/launcher.cpp:1402
 msgid "Unknown Publisher"
 msgstr ""
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1221 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1223 gui/launcher.cpp:1419
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1235 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1237 gui/launcher.cpp:1433
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1249 gui/launcher.cpp:1432
+#: gui/launcher.cpp:1251 gui/launcher.cpp:1447
 msgid "Platform not detected"
 msgstr ""
 
+#. I18N: List group when no year is specified
+#: gui/launcher.cpp:1268 gui/launcher.cpp:1464
+#, fuzzy
+#| msgid "Unknown Engine"
+msgid "Unknown Year"
+msgstr "अनजान इंजन"
+
 #. I18N: Group for All items
-#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr ""
 
-#: gui/launcher.cpp:1592
+#: gui/launcher.cpp:1620
 msgid "Icons per row:"
 msgstr ""
 

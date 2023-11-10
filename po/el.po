@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 15:34+0000\n"
+"POT-Creation-Date: 2023-11-10 22:51+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -220,7 +220,7 @@ msgstr "Επικόλληση"
 msgid "Paste code from clipboard"
 msgstr "Επικόλληση κωδικού από το πρόχειρο"
 
-#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:314
+#: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
 #: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
@@ -275,8 +275,8 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
-#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
+#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
 #: base/main.cpp:603 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
@@ -289,8 +289,8 @@ msgstr "Ναι"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:425 gui/launcher.cpp:454
-#: gui/launcher.cpp:497 gui/options.cpp:3401 gui/options.cpp:3782
+#: gui/fluidsynth-dialog.cpp:209 gui/launcher.cpp:427 gui/launcher.cpp:456
+#: gui/launcher.cpp:499 gui/options.cpp:3401 gui/options.cpp:3782
 #: engines/buried/buried.cpp:590 engines/director/events.cpp:89
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
@@ -311,7 +311,7 @@ msgstr "Τα περιεχόμενα του κώδικα JSON δεν έχουν �
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
-#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:553 gui/launcher.cpp:557
+#: gui/fluidsynth-dialog.cpp:153 gui/launcher.cpp:555 gui/launcher.cpp:559
 #: gui/massadd.cpp:90 gui/options.cpp:2331 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1225 dists/android.strings.xml.cpp:32
 #: engines/engine.cpp:550 engines/engine.cpp:573
@@ -367,7 +367,7 @@ msgstr "Αποτυχία φόρτωσης του αρχείου JSON"
 msgid "Select directory where to download game data"
 msgstr "Επιλέξτε φάκελο για να μεταφορτώσετε τα δεδομένα παιχνιδιού"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:311
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "Επιλέξτε φάκελο με δεδομένα παιχνιδιού"
 
@@ -403,7 +403,7 @@ msgstr ""
 "Η σύνδεσή σας δείχνει να είναι περιορισμένη. Θέλετε σίγουρα να μεταφορτώσετε "
 "αρχεία με αυτή;"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:655
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:657
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "Το ScummVM δε μπόρεσε να ανοίξει το καθορισμένο φάκελο!"
 
@@ -1084,15 +1084,21 @@ msgctxt "group"
 msgid "Platform"
 msgstr "Πλατφόρμα"
 
-#: gui/launcher.cpp:227
+#. I18N: Group name for the game list, grouped by year
+#: gui/launcher.cpp:119
+msgctxt "year"
+msgid "Year"
+msgstr ""
+
+#: gui/launcher.cpp:229
 msgid "Select Group by"
 msgstr "Επιλογή ομαδοποίησης"
 
-#: gui/launcher.cpp:231 gui/launcher.cpp:881
+#: gui/launcher.cpp:233 gui/launcher.cpp:883
 msgid "Group:"
 msgstr "Ομάδα:"
 
-#: gui/launcher.cpp:233
+#: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
 msgstr "Επιλέξτε ένα κριτήριο για την ομαδοποίηση των καταχωρήσεων"
 
@@ -1100,117 +1106,117 @@ msgstr "Επιλέξτε ένα κριτήριο για την ομαδοποί�
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: gui/launcher.cpp:260 backends/platform/sdl/macosx/appmenu_osx.mm:262
+#: gui/launcher.cpp:262 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
 msgstr "Βοήθεια"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:264 engines/dialogs.cpp:95
+#: gui/launcher.cpp:266 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "Έ~ξ~οδος"
 
-#: gui/launcher.cpp:264 backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: gui/launcher.cpp:266 backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Quit ScummVM"
 msgstr "Έξοδος από το ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:268
+#: gui/launcher.cpp:270
 msgid "A~b~out"
 msgstr "Περ~ί~"
 
-#: gui/launcher.cpp:268 backends/platform/sdl/macosx/appmenu_osx.mm:246
+#: gui/launcher.cpp:270 backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "About ScummVM"
 msgstr "Περί του ScummVM"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgid "Global ~O~ptions..."
 msgstr "~Κ~αθολικές Επιλογές..."
 
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgid "Change global ScummVM options"
 msgstr "Αλλαγή καθολικών επιλογών του ScummVM"
 
-#: gui/launcher.cpp:270
+#: gui/launcher.cpp:272
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~Κ~αθολ Επιλ..."
 
-#: gui/launcher.cpp:274
+#: gui/launcher.cpp:276
 msgid "Download Games"
 msgstr "Λήψη Παιχνιδιών"
 
-#: gui/launcher.cpp:274
+#: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
 msgstr ""
 "Μεταφόρτωση δωρεάν (freeware) παιχνιδιών για ελεύθερη χρήση με το ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgid "~A~dd Game..."
 msgstr "~Π~ροσθήκη Παιχνιδιού..."
 
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgid "Add games to the list"
 msgstr "Προσθήκη παιχνιδιών στη λίστα"
 
-#: gui/launcher.cpp:281
+#: gui/launcher.cpp:283
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Π~ροσθ. Παιχν..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgid "~R~emove Game"
 msgstr "~Α~φαίρεση Παιχνιδιού"
 
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
 "Αφαίρεση παιχνιδιού από τη λίστα. Τα αρχεία δεδομένων του παιχνιδιού μένουν "
 "ανέπαφα"
 
-#: gui/launcher.cpp:285
+#: gui/launcher.cpp:287
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~Α~φαίρ. Παιχν."
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:288
+#: gui/launcher.cpp:290
 msgid "Mass Add..."
 msgstr "Μαζική Προσθήκη..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:291
+#: gui/launcher.cpp:293
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Μαζική Προσθήκη..."
 
-#: gui/launcher.cpp:299 gui/launcher.cpp:851 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:301 gui/launcher.cpp:853 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 
-#: gui/launcher.cpp:303 gui/launcher.cpp:872 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:305 gui/launcher.cpp:874 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: gui/launcher.cpp:314 engines/dialogs.cpp:98 engines/engine.cpp:915
+#: gui/launcher.cpp:316 engines/dialogs.cpp:98 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
-#: gui/launcher.cpp:413
+#: gui/launcher.cpp:415
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Αυτός ο φάκελος δε μπορεί να χρησιμοποιηθεί ακόμη, γίνεται μεταφόρτωση σε "
 "αυτόν!"
 
-#: gui/launcher.cpp:424
+#: gui/launcher.cpp:426
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1218,114 +1224,121 @@ msgstr ""
 "Θέλετε σίγουρα να τρέξετε τον μαζικό ανιχνευτή παιχνιδιών; Αυτό ενδέχεται να "
 "προσθέσει ένα τεράστιο αριθμό παιχνιδιών."
 
-#: gui/launcher.cpp:454
+#: gui/launcher.cpp:456
 msgid "Do you really want to remove this game configuration?"
 msgstr "Θέλετε σίγουρα να σβήσετε τη ρύθμιση για αυτό το παιχνίδι;"
 
-#: gui/launcher.cpp:496
+#: gui/launcher.cpp:498
 msgid "Do you want to load saved game?"
 msgstr "Θέλετε να φορτώσετε το αποθηκευμένο παιχνίδι;"
 
-#: gui/launcher.cpp:553
+#: gui/launcher.cpp:555
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από τον Πλοηγητή "
 "(launcher)."
 
-#: gui/launcher.cpp:557
+#: gui/launcher.cpp:559
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "Το ScummVM δεν βρήκε κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο παιχνίδι!"
 
-#: gui/launcher.cpp:674
+#: gui/launcher.cpp:676
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "Το ScummVM δεν βρήκε κάποιο παιχνίδι στον συγκεκριμένο φάκελο!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:690
+#: gui/launcher.cpp:692
 msgid "Unknown variant"
 msgstr "Άγνωστη εκδοχή παιχνιδιού"
 
-#: gui/launcher.cpp:696
+#: gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr "Διαλέξτε το παιχνίδι:"
 
-#: gui/launcher.cpp:921 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Προβολή ως λίστα"
 
-#: gui/launcher.cpp:922 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:924 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Προβολή ως πλέγμα"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1086
 msgid "~S~tart"
 msgstr "~Ε~κκίνηση"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1086
 msgid "Start selected game"
 msgstr "Εκκίνηση επιλεγμένου παιχνιδιού"
 
-#: gui/launcher.cpp:1087
+#: gui/launcher.cpp:1089
 msgid "~L~oad..."
 msgstr "~Φ~όρτωση..."
 
-#: gui/launcher.cpp:1087
+#: gui/launcher.cpp:1089
 msgid "Load saved game for selected game"
 msgstr "Φόρτωση αποθηκευμένου παιχνιδιού για το επιλεγμένο παιχνίδι"
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1091
 msgid "Record..."
 msgstr "Εγγραφή..."
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgid "~G~ame Options..."
 msgstr "~Ρ~υθμίσεις Παιχνιδιού..."
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgid "Change game options"
 msgstr "Αλλαγή επιλογών παιχνιδιού"
 
-#: gui/launcher.cpp:1095
+#: gui/launcher.cpp:1097
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~Ρ~υθμ Παιχν..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1187 gui/launcher.cpp:1370
+#: gui/launcher.cpp:1189 gui/launcher.cpp:1385
 msgid "Unknown Engine"
 msgstr "Άγνωστη Μηχανή"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1204 gui/launcher.cpp:1387
+#: gui/launcher.cpp:1206 gui/launcher.cpp:1402
 msgid "Unknown Publisher"
 msgstr "Άγνωστος Εκδότης"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1221 gui/launcher.cpp:1404
+#: gui/launcher.cpp:1223 gui/launcher.cpp:1419
 msgid "No Series"
 msgstr "Δεν ανήκουν σε σειρά"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1235 gui/launcher.cpp:1418
+#: gui/launcher.cpp:1237 gui/launcher.cpp:1433
 msgid "Language not detected"
 msgstr "Δεν ανιχνεύτηκε η γλώσσα"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1249 gui/launcher.cpp:1432
+#: gui/launcher.cpp:1251 gui/launcher.cpp:1447
 msgid "Platform not detected"
 msgstr "Δεν ανιχνεύτηκε η πλατφόρμα"
 
+#. I18N: List group when no year is specified
+#: gui/launcher.cpp:1268 gui/launcher.cpp:1464
+#, fuzzy
+#| msgid "Unknown error"
+msgid "Unknown Year"
+msgstr "Άγνωστο σφάλμα"
+
 #. I18N: Group for All items
-#: gui/launcher.cpp:1443 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Όλα"
 
-#: gui/launcher.cpp:1592
+#: gui/launcher.cpp:1620
 msgid "Icons per row:"
 msgstr "Εικονίδια ανά σειρά:"
 
