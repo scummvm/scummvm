@@ -38,7 +38,7 @@ public:
 	NullMixerManager();
 	virtual ~NullMixerManager();
 
-	void init();
+	void init() override;
 	void update(uint8 callbackPeriod = 10);
 
 	void suspendAudio() override;
