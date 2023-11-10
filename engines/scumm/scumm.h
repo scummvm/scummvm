@@ -660,6 +660,7 @@ public:
 	void pauseGame();
 	void restart();
 	bool isUsingOriginalGUI();
+	bool isMessageBannerActive(); // For Indy4 Jap character shadows
 
 protected:
 	Dialog *_pauseDialog = nullptr;

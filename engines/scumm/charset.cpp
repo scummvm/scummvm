@@ -739,16 +739,33 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
 	byte *dst2 = dst + dest.pitch;
 
+	bool isIndy4Jap = _vm->_game.id == GID_INDY4 && _vm->_language == Common::JA_JPN &&
+		(_vm->_game.platform == Common::kPlatformDOS || _vm->_game.platform == Common::kPlatformMacintosh);
+
+	if (isIndy4Jap) {
+		// Characters allow shadows only if this is the main virtual screen, and we are not drawing
+		// a message on a GUI banner. The main menu is fine though, and allows shadows as well.
+		bool canDrawShadow = _vm->findVirtScreen(_top)->number == kMainVirtScreen && !_vm->isMessageBannerActive();
+		enableShadow(canDrawShadow);
+	}
+
 	for (y = 0; y < height && y + drawTop < dest.h; y++) {
 		for (x = 0; x < width; x++) {
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
 				if (_enableShadow) {
-					if (_shadowType == kNormalShadowType)
-						dst[1] = dst2[0] = dst2[1] = _shadowColor;
-					else if (_shadowType == kHorizontalShadowType)
+					if (_shadowType == kNormalShadowType) {
+						dst[1] = dst2[1] = _shadowColor;
+
+						// Mac and DOS/V versions of Japanese INDY4 don't
+						// draw a shadow pixel below the first pixel.
+						// Verified from disasm.
+						if (!isIndy4Jap)
+							dst2[0] = _shadowColor;
+					} else if (_shadowType == kHorizontalShadowType) {
 						dst[1] = _shadowColor;
+					}
 				}
 				dst[0] = col;
 			} else if (!(bits & revBitMask(x % 8)) && (y < height - 1) &&

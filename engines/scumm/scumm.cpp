@@ -3682,6 +3682,10 @@ bool ScummEngine::isUsingOriginalGUI() {
 	return _useOriginalGUI;
 }
 
+bool ScummEngine::isMessageBannerActive() {
+	return _messageBannerActive;
+}
+
 void ScummEngine::runBootscript() {
 	int args[NUM_SCRIPT_LOCAL];
 	memset(args, 0, sizeof(args));
