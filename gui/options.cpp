@@ -1625,7 +1625,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
-	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Update Shaders"), _("Check for updates of shader packs"), kUpdateShadersCmd);
+	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
 #endif
 #endif
 
@@ -2611,7 +2611,7 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
-	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Update Icons"),  _("Check for updates of icon packs"), kUpdateIconsCmd);
+	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"),  _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
 #endif
 #endif
 }
