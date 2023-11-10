@@ -50,7 +50,8 @@ enum GroupingMethod {
 	kGroupBySeries,
 	kGroupByCompany,
 	kGroupByLanguage,
-	kGroupByPlatform
+	kGroupByPlatform,
+	kGroupByYear,
 };
 
 struct GroupingMode {

@@ -115,6 +115,8 @@ const GroupingMode groupingModes[] = {
 	{"language", _sc("Language", "group"),     nullptr,                 kGroupByLanguage},
 	// I18N: Group name for the game list, grouped by game platform
 	{"platform", _sc("Platform", "group"),     nullptr,                 kGroupByPlatform},
+	// I18N: Group name for the game list, grouped by year
+	{"year", _sc("Year", "year"),              nullptr,                 kGroupByYear},
 	{nullptr, nullptr, nullptr, kGroupByNone}
 };
 
@@ -1253,6 +1255,19 @@ void LauncherSimple::groupEntries(const Common::Array<LauncherEntry> &metadata) 
 		}
 		break;
 	}
+	case kGroupByYear: {
+		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+			attrs.push_back(year);
+
+			if (!metadataNames.contains(year))
+				metadataNames[year] = year;
+		}
+		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
+		// I18N: List group when no year is specified
+		metadataNames[""] = _("Unknown Year");
+		break;
+	}
 	case kGroupByNone:	// Fall-through intentional
 	default:
 		_list->setGroupsVisibility(false);
@@ -1434,6 +1449,19 @@ void LauncherGrid::groupEntries(const Common::Array<LauncherEntry> &metadata) {
 		for (; p->code; ++p) {
 			metadataNames[p->code] = p->description;
 		}
+		break;
+	}
+	case kGroupByYear: {
+		for (Common::Array<LauncherEntry>::const_iterator iter = metadata.begin(); iter != metadata.end(); ++iter) {
+			Common::U32String year = _metadataParser._gameInfo[buildQualifiedGameName(iter->engineid, iter->gameid)].year;
+			attrs.push_back(year);
+
+			if (!metadataNames.contains(year))
+				metadataNames[year] = year;
+		}
+		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
+		// I18N: List group when no year is specified
+		metadataNames[""] = _("Unknown Year");
 		break;
 	}
 	case kGroupByNone:	// Fall-through intentional
