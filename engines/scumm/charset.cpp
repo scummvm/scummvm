@@ -1119,6 +1119,24 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4)
 		_drawScreen = vs->number;
 
+	// The following kerning corrections are taken from disasm. Originally they were
+	// used as character widths (e.g. 13, 15, 16), but we adapt them to small negative
+	// numbers using the formula:_cjkSpacing = japWidthCorrection - 16; where 16 is the
+	// full width of a Japanese character in this version.
+	if (_vm->_game.id == GID_INDY4 && _vm->_language == Common::JA_JPN &&
+		(_vm->_game.platform == Common::kPlatformDOS || _vm->_game.platform == Common::kPlatformMacintosh)) {
+		int japWidthCorrection = (_left == 161) ? 13 : 14;
+		//int japHeightCorrection = 15;
+		if (_vm->findVirtScreen(_top)->number == kMainVirtScreen && !_vm->isMessageBannerActive()) {
+			japWidthCorrection = 15;
+			//japHeightCorrection = 16;
+		} else if (_vm->isMessageBannerActive()) {
+			japWidthCorrection = 13;
+		}
+
+		_cjkSpacing = japWidthCorrection - 16;
+	}
+
 	printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask);
 
 	// Original keeps glyph width and character dimensions separately

@@ -159,7 +159,7 @@ protected:
 	virtual bool prepareDraw(uint16 chr);
 
 	int _width, _height, _origWidth, _origHeight;
-	const int _cjkSpacing;
+	int _cjkSpacing;
 	int _offsX, _offsY;
 	const byte *_charPtr;
 
