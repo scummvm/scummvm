@@ -95,7 +95,7 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 }
 
 uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
-	if (len <= _paletteSize && memcmp(_palette, srcPalette, len) == 0)
+	if (len <= _paletteSize && memcmp(_palette, srcPalette, len * 3) == 0)
 		return nullptr;
 
 	uint32 *map = new uint32[len];
