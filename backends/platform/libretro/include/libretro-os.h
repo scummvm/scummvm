@@ -49,12 +49,14 @@ public:
 
 class LibretroPalette {
 public:
+	const byte *_prevColorsSource;
 	unsigned char _colors[256 * 3];
 	LibretroPalette(void);
 	~LibretroPalette(void) {};
 	void set(const byte *colors, uint start, uint num);
 	void get(byte *colors, uint start, uint num) const;
 	unsigned char *getColor(uint aIndex) const;
+	void reset(void) { _prevColorsSource = NULL; }
 };
 
 class OSystem_libretro : public EventsBaseBackend, public PaletteManager {

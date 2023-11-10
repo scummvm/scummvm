@@ -123,6 +123,8 @@ void OSystem_libretro::engineInit() {
 		ConfMan.setBool("original_gui", false);
 		retro_log_cb(RETRO_LOG_INFO, "\"original_gui\" setting forced to false\n");
 	}
+	_mousePalette.reset();
+	_gamePalette.reset();
 }
 
 void OSystem_libretro::engineDone() {

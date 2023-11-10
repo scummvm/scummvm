@@ -198,12 +198,26 @@ static INLINE void copyRectToSurface(uint8 *pixels, int out_pitch, const uint8 *
 	} while (--h);
 }
 
-LibretroPalette::LibretroPalette() {
+LibretroPalette::LibretroPalette() : _prevColorsSource(NULL){
 	memset(_colors, 0, sizeof(_colors));
 }
 
 void LibretroPalette::set(const byte *colors, uint start, uint num) {
-	memcpy(_colors + start * 3, colors, num * 3);
+	/* TODO: This check is a workaround to handle a SEGFAULT in iOS due to the call from SmushPlayer::play in scumm engine,
+	caused by the corruption of start argument (and consequently colors ptr). Root cause to be investigated. */
+	if (start > 255) {
+		start = 0;
+		colors=_prevColorsSource;
+	}else
+		_prevColorsSource = colors;
+
+	if (num>256)
+		num=256;
+
+	if (colors)
+		memcpy(_colors + start * 3, colors, num * 3);
+	else
+		LIBRETRO_G_SYSTEM->logMessage(LogMessageType::kError,"LibretroPalette colors ptr is NULL\n");
 }
 
 void LibretroPalette::get(byte *colors, uint start, uint num) const {
