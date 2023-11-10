@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-09 22:59+0000\n"
+"POT-Creation-Date: 2023-11-10 15:34+0000\n"
 "PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -279,7 +279,7 @@ msgstr "すでに別のストレージが使用されています。切断しま
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3880
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "はい"
@@ -292,7 +292,7 @@ msgstr "はい"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3876
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3880
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "いいえ"
@@ -8448,7 +8448,7 @@ msgid "Your Name:"
 msgstr "ユーザー名："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3882
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3886
 msgid "Host"
 msgstr "ホスト"
 
@@ -8458,7 +8458,7 @@ msgid "Querying games..."
 msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3882
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3886
 msgid "Join"
 msgstr "参加"
 
@@ -9403,7 +9403,7 @@ msgstr ""
 "このMonkey Island 1の特定のバージョンは、MT-32に必要な\n"
 "リソースが欠落しています。AdLibを代用します。"
 
-#: engines/scumm/scumm.cpp:3771
+#: engines/scumm/scumm.cpp:3775
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9413,7 +9413,7 @@ msgstr ""
 "ディレクトリーの「Maniac」フォルダー内にゲームファイルを配置し、ゲームが"
 "ScummVMに追加されていなければなりません。"
 
-#: engines/scumm/scumm.cpp:3882
+#: engines/scumm/scumm.cpp:3886
 msgid "Would you like to host or join a network play session?"
 msgstr "セッションを開催、または参加しますか?"
 
