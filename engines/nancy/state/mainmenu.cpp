@@ -215,7 +215,8 @@ void MainMenu::stop() {
 				case 1 :
 					// "No" quits the game
 					g_nancy->quitGame();
-					break;
+					
+					// fall through
 				case 2 :
 					// "Cancel" keeps us in the main menu
 					_selected = -1;
@@ -231,6 +232,15 @@ void MainMenu::stop() {
 		} else {
 			// Earlier games had no "Do you want to save before quitting" dialog, directly quit
 			g_nancy->quitGame();
+
+			// Fallback for when the ScummVM "Ask for confirmation on exit" option is enabled, and
+			// the player clicks cancel
+			_selected = -1;
+			for (uint i = 0; i < _buttons.size(); ++i) {
+				_buttons[i]->_isClicked = false;
+			}
+			_state = kRun;
+			break;
 		}
 		
 		break;
