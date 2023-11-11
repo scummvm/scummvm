@@ -1495,8 +1495,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			}
 		} else {
 			if ((chr != '@') || (_game.version >= 7 && is2ByteCharacter(_language, lastChr)) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
-				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
+				(_language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
 			lastChr = chr;
