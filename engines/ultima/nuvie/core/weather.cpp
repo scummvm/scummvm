@@ -87,8 +87,8 @@ void Weather::update_moongates() {
 	Game::get_game()->get_script()->call_update_moongates(is_moon_visible());
 }
 
-uint8 Weather::load_wind(NuvieIO *objlist) {
-	const uint8 wind_tbl[8] = {
+NuvieDir Weather::load_wind(NuvieIO *objlist) {
+	const NuvieDir wind_tbl[8] = {
 		NUVIE_DIR_N,
 		NUVIE_DIR_NE,
 		NUVIE_DIR_E,
@@ -191,16 +191,14 @@ string Weather::get_wind_dir_str() const {
 }
 
 void Weather::change_wind_dir() {
-	uint8 new_wind_dir;
-
-	new_wind_dir = NUVIE_RAND() % 9;
+	NuvieDir new_wind_dir = static_cast<NuvieDir>(NUVIE_RAND() % 9);
 
 	set_wind_dir(new_wind_dir);
 	return;
 }
 
-bool Weather::set_wind_dir(uint8 new_wind_dir) {
-	uint8 old_wind_dir = wind_dir;
+bool Weather::set_wind_dir(NuvieDir new_wind_dir) {
+	NuvieDir old_wind_dir = wind_dir;
 
 	if (new_wind_dir >= 9)
 		return false;

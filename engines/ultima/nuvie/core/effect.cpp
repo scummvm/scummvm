@@ -397,11 +397,12 @@ void QuakeEffect::stop_quake() {
 /* Set sx,sy to a random direction. (always move left-right more than up-down)
  */
 void QuakeEffect::init_directions() {
-	uint8 dir = NUVIE_RAND() % 8;
+	NuvieDir dir = static_cast<NuvieDir>(NUVIE_RAND() % 8);
 	sx = 0;
 	sy = 0;
 
 	switch (dir) {
+	default: // can't happen, but make the analyzer happy.
 	case NUVIE_DIR_N :
 		sy = -(strength * 2);
 		break;

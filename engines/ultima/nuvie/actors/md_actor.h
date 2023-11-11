@@ -47,7 +47,7 @@ public:
 
 	bool check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
 	uint16 get_downward_facing_tile_num() const override;
-	void set_direction(uint8 d) override;
+	void set_direction(NuvieDir d) override;
 	bool is_passable() const override;
 
 };

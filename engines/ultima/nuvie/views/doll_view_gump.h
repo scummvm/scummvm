@@ -96,7 +96,7 @@ private:
 	void activate_combat_button();
 	void setColorKey(Graphics::ManagedSurface *image);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
-	GUI_status moveCursorRelative(uint8 direction);
+	GUI_status moveCursorRelative(NuvieDir direction);
 	GUI_status KeyDown(const Common::KeyState &key) override;
 
 };

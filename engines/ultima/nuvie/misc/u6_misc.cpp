@@ -326,7 +326,7 @@ bool subtract_rect(const Common::Rect *rect1, const Common::Rect *rect2, Common:
 	return true;
 }
 
-const char *get_direction_name(uint8 dir) {
+const char *get_direction_name(NuvieDir dir) {
 	switch (dir) {
 	case NUVIE_DIR_N:
 		return "north";
@@ -358,8 +358,8 @@ const char *get_direction_name(sint16 rel_x, sint16 rel_y) {
 }
 
 /* Gets the nuvie direction code from the original u6 direction code. */
-uint8 get_nuvie_dir_code(uint8 original_dir_code) {
-	uint8 dir = NUVIE_DIR_NONE;
+NuvieDir get_nuvie_dir_code(uint8 original_dir_code) {
+	NuvieDir dir = NUVIE_DIR_NONE;
 	//convert original direction into nuvie direction.
 	//original
 	// 701
@@ -402,7 +402,7 @@ uint8 get_nuvie_dir_code(uint8 original_dir_code) {
 	return dir;
 }
 
-sint8 get_original_dir_code(uint8 nuvie_dir_code) {
+sint8 get_original_dir_code(NuvieDir nuvie_dir_code) {
 	sint8 dir = -1;
 	//convert nuvie direction into original direction.
 	switch (nuvie_dir_code) {
@@ -438,7 +438,7 @@ sint8 get_original_dir_code(uint8 nuvie_dir_code) {
 }
 /* Returns direction code of relative direction.
  */
-uint8 get_direction_code(sint16 rel_x, sint16 rel_y) {
+NuvieDir get_direction_code(sint16 rel_x, sint16 rel_y) {
 	if (rel_x == 0 && rel_y < 0)
 		return NUVIE_DIR_N;
 	else if (rel_x > 0 && rel_y < 0)
@@ -459,7 +459,7 @@ uint8 get_direction_code(sint16 rel_x, sint16 rel_y) {
 	return NUVIE_DIR_NONE;
 }
 
-uint8 get_reverse_direction(uint8 dir) {
+NuvieDir get_reverse_direction(NuvieDir dir) {
 	switch (dir) {
 	case  NUVIE_DIR_N :
 		return NUVIE_DIR_S;
@@ -487,7 +487,7 @@ uint8 get_reverse_direction(uint8 dir) {
 	return NUVIE_DIR_NONE;
 }
 
-void get_relative_dir(uint8 dir, sint16 *rel_x, sint16 *rel_y) {
+void get_relative_dir(NuvieDir dir, sint16 *rel_x, sint16 *rel_y) {
 	switch (dir) {
 	case  NUVIE_DIR_N :
 		*rel_x = 0;

@@ -284,7 +284,7 @@ bool Player::check_moveRelative(sint16 rel_x, sint16 rel_y) {
 
 // walk to adjacent square
 void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
-	const uint8 raft_movement_tbl[] = {
+	const NuvieDir raft_movement_tbl[] = {
 		NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_N, NUVIE_DIR_NW, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_NW, NUVIE_DIR_N,
 		NUVIE_DIR_NE, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_N, NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_NE, NUVIE_DIR_N,
 		NUVIE_DIR_NE, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_E, NUVIE_DIR_SE, NUVIE_DIR_NE,
@@ -299,7 +299,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 
 	MovementStatus movementStatus = CAN_MOVE;
 	bool can_change_rel_dir = true;
-	uint8 wind_dir = Game::get_game()->get_weather()->get_wind_dir();
+	NuvieDir wind_dir = Game::get_game()->get_weather()->get_wind_dir();
 	uint16 x, y;
 	uint8 z;
 	actor->get_location(&x, &y, &z);
@@ -309,7 +309,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 			if (actor->obj_n == OBJ_U6_INFLATED_BALLOON &&
 			        (!Game::get_game()->has_free_balloon_movement() || !party->has_obj(OBJ_U6_FAN, 0, false))) {
 				can_change_rel_dir = false;
-				uint8 dir = get_reverse_direction(Game::get_game()->get_weather()->get_wind_dir());
+				NuvieDir dir = get_reverse_direction(Game::get_game()->get_weather()->get_wind_dir());
 				if (dir == NUVIE_DIR_NONE) {
 					Game::get_game()->get_scroll()->display_string("Thou canst not move without wind!\n\n");
 					Game::get_game()->get_scroll()->display_prompt();
@@ -320,13 +320,13 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 					get_relative_dir(dir, &rel_x, &rel_y);
 				}
 			} else if (actor->obj_n == OBJ_U6_RAFT) {
-				uint8 dir = 0;
+				NuvieDir dir = NUVIE_DIR_N;
 				can_change_rel_dir = false;
 				const Tile *t = Game::get_game()->get_game_map()->get_tile(x, y, z, true);
 				if (t->flags1 & TILEFLAG_BLOCKING) { //deep water tiles are blocking. Shore tiles should allow player movement.
 					//deep water, so take control away from player.
 					if (t->tile_num >= 8 && t->tile_num < 16) {
-						dir = t->tile_num - 8;
+						dir = static_cast<NuvieDir>(t->tile_num - 8);
 					}
 					if (wind_dir != NUVIE_DIR_NONE) {
 						dir = raft_movement_tbl[dir * 8 + get_reverse_direction(wind_dir)];
@@ -408,7 +408,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 		if (game_type == NUVIE_GAME_U6 && (actor->obj_n == OBJ_U6_INFLATED_BALLOON || actor->obj_n == OBJ_U6_RAFT)) {
 			actor->set_moves_left(actor->get_moves_left() - PLAYER_BASE_MOVEMENT_COST);
 		} else if (game_type == NUVIE_GAME_U6 && actor->obj_n == OBJ_U6_SHIP && wind_dir != WEATHER_WIND_CALM) {
-			uint8 nuvie_dir = get_direction_code(rel_x, rel_y);
+			NuvieDir nuvie_dir = get_direction_code(rel_x, rel_y);
 			if (nuvie_dir != NUVIE_DIR_NONE) {
 				sint8 dir = get_original_dir_code(nuvie_dir);
 
@@ -416,7 +416,7 @@ void Player::moveRelative(sint16 rel_x, sint16 rel_y, bool mouse_movement) {
 				//DEBUG(0, LEVEL_DEBUGGING, "Ship movement cost = %d\n", ship_cost[abs(dir-wind_dir)]);
 			}
 		} else if (game_type == NUVIE_GAME_U6 && actor->obj_n == OBJ_U6_SKIFF) {
-			uint8 nuvie_dir = get_direction_code(rel_x, rel_y);
+			NuvieDir nuvie_dir = get_direction_code(rel_x, rel_y);
 			if (nuvie_dir != NUVIE_DIR_NONE) {
 				sint8 dir = get_original_dir_code(nuvie_dir);
 				sint8 water_dir = dir;

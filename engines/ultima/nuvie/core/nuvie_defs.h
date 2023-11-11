@@ -85,17 +85,19 @@ const uint16 map_pitch[2] = { 1024, 256 }; // width of 0:surface plane, and 1:al
 #define WRAP_COORD(c,level) ((c)&=(map_pitch[(level==0)?0:1]-1)) // modifies C
 */
 
-#define NUVIE_DIR_N    0
-#define NUVIE_DIR_E    1
-#define NUVIE_DIR_S    2
-#define NUVIE_DIR_W    3
+enum NuvieDir {
+	NUVIE_DIR_N = 0,
+	NUVIE_DIR_E = 1,
+	NUVIE_DIR_S = 2,
+	NUVIE_DIR_W = 3,
 
-#define NUVIE_DIR_NE   4
-#define NUVIE_DIR_SE   5
-#define NUVIE_DIR_SW   6
-#define NUVIE_DIR_NW   7
+	NUVIE_DIR_NE = 4,
+	NUVIE_DIR_SE = 5,
+	NUVIE_DIR_SW = 6,
+	NUVIE_DIR_NW = 7,
 
-#define NUVIE_DIR_NONE 8
+	NUVIE_DIR_NONE = 8,
+};
 
 #define TRAMMEL_PHASE 1.75
 #define FELUCCA_PHASE 1.1666666666666667

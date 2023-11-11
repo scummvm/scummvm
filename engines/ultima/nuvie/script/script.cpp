@@ -434,7 +434,7 @@ uint8 ScriptThread::resume_with_location(const MapCoord &loc) {
 	return resume(1);
 }
 
-uint8 ScriptThread::resume_with_direction(uint8 dir) {
+uint8 ScriptThread::resume_with_direction(NuvieDir dir) {
 	lua_pushinteger(L, dir);
 
 	return resume(1);
@@ -4198,7 +4198,7 @@ Set the current wind direction (U6).
  */
 static int nscript_wind_set(lua_State *L) {
 	Weather *weather = Game::get_game()->get_weather();
-	uint8 wind_dir = (uint8)luaL_checkinteger(L, 1);
+	NuvieDir wind_dir = (NuvieDir)luaL_checkinteger(L, 1);
 
 	weather->set_wind_dir(wind_dir);
 

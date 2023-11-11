@@ -2299,18 +2299,20 @@ bool U6UseCode::use_horse(Obj *obj, UseCodeEvent ev) {
 }
 
 bool U6UseCode::use_fan(Obj *obj, UseCodeEvent ev) {
-	uint8 wind_tbl[] = {4, 5, 6, 7, 1, 2, 3, 0};
-	uint8 wind_dir;
+	// Directions rotated clockwise by 45 deg.
+	NuvieDir next_wind_dir_tbl[] = {
+		NUVIE_DIR_NE, NUVIE_DIR_SE, NUVIE_DIR_SW, NUVIE_DIR_NW,
+		NUVIE_DIR_E, NUVIE_DIR_S, NUVIE_DIR_W, NUVIE_DIR_N};
 	Weather *weather = game->get_weather();
 	scroll->display_string("\nYou feel a breeze.\n");
 
-	wind_dir = weather->get_wind_dir();
+	NuvieDir wind_dir = weather->get_wind_dir();
 
 	if (wind_dir == NUVIE_DIR_NONE)
 		wind_dir = NUVIE_DIR_NW;
 
 	//cycle through the wind directions.
-	weather->set_wind_dir(wind_tbl[wind_dir]);
+	weather->set_wind_dir(next_wind_dir_tbl[wind_dir]);
 
 	return true;
 }

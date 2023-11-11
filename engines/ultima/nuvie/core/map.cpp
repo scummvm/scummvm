@@ -124,7 +124,7 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level) {
  * Can we enter this map location by traveling in a given direction?
  * Used by MD
  */
-bool Map::is_passable(uint16 x, uint16 y, uint8 level, uint8 dir) {
+bool Map::is_passable(uint16 x, uint16 y, uint8 level, NuvieDir dir) {
 	if (is_passable_from_dir(x, y, level, get_reverse_direction(dir))) {
 		sint16 rel_x, rel_y;
 		uint16 tx, ty;
@@ -136,7 +136,7 @@ bool Map::is_passable(uint16 x, uint16 y, uint8 level, uint8 dir) {
 	return false;
 }
 
-bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
+bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, NuvieDir dir) {
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
@@ -170,6 +170,8 @@ bool Map::is_passable_from_dir(uint16 x, uint16 y, uint8 level, uint8 dir) {
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_EAST));
 		case NUVIE_DIR_SW :
 			return !(!(map_tile->flags1 & TILEFLAG_WALL_SOUTH) || !(map_tile->flags1 & TILEFLAG_WALL_WEST));
+		default:
+			error("Invalid direction in Map::is_passable_from_dir");
 		}
 	}
 

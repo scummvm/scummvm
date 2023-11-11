@@ -49,7 +49,7 @@ class ActorManager;
 
 Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 	: sched(nullptr), obj_inventory(nullptr), map(m), obj_manager(om),
-	  usecode(nullptr), pathfinder(nullptr), direction(0), walk_frame(0),
+	  usecode(nullptr), pathfinder(nullptr), direction(NUVIE_DIR_N), walk_frame(0),
 	  ethereal(false), can_move(true), temp_actor(false), visible_flag(true),
 	  met_player(false), worktype(0), sched_pos(0), move_time(0), num_schedules(0),
 	  alignment(ACTOR_ALIGNMENT_NEUTRAL), moves(0), light(0), status_flags(0),
@@ -213,7 +213,7 @@ uint16 Actor::get_downward_facing_tile_num() const {
 }
 
 /* Set direction faced by actor and change walk frame. */
-void Actor::set_direction(uint8 d) {
+void Actor::set_direction(NuvieDir d) {
 	if (is_alive() == false || is_immobile())
 		return;
 
@@ -228,30 +228,30 @@ void Actor::set_direction(uint8 d) {
 
 /* Set direction as if moving in relative direction rel_x,rel_y. */
 void Actor::set_direction(sint16 rel_x, sint16 rel_y) {
-	uint8 new_direction = direction;
+	NuvieDir new_direction = direction;
 	if (rel_x == 0 && rel_y == 0) // nowhere (just update frame)
 		new_direction = direction;
 	else if (rel_x == 0) // up or down
 		new_direction = (rel_y < 0) ? NUVIE_DIR_N : NUVIE_DIR_S;
 	else if (rel_y == 0) // left or right
 		new_direction = (rel_x < 0) ? NUVIE_DIR_W : NUVIE_DIR_E;
-// Add 2 to current direction if it is opposite the new direction
+	// Add 2 to current direction if it is opposite the new direction
 	else if (rel_x < 0 && rel_y < 0) { // up-left
 		if (direction != NUVIE_DIR_N && direction != NUVIE_DIR_W)
-			new_direction = direction + 2;
+			new_direction = static_cast<NuvieDir>(direction + 2);
 	} else if (rel_x > 0 && rel_y < 0) { // up-right
 		if (direction != NUVIE_DIR_N && direction != NUVIE_DIR_E)
-			new_direction = direction + 2;
+			new_direction = static_cast<NuvieDir>(direction + 2);
 	} else if (rel_x < 0 && rel_y > 0) { // down-left
 		if (direction != NUVIE_DIR_S && direction != NUVIE_DIR_W)
-			new_direction = direction + 2;
+			new_direction = static_cast<NuvieDir>(direction + 2);
 	} else if (rel_x > 0 && rel_y > 0) { // down-right
 		if (direction != NUVIE_DIR_S && direction != NUVIE_DIR_E)
-			new_direction = direction + 2;
+			new_direction = static_cast<NuvieDir>(direction + 2);
 	}
 	// wrap
 	if (new_direction >= 4)
-		new_direction -= 4;
+		new_direction = static_cast<NuvieDir>(new_direction - 4);
 	set_direction(new_direction);
 }
 
@@ -269,16 +269,16 @@ void Actor::face_location(uint16 lx, uint16 ly) {
 void Actor::face_location(uint16 lx, uint16 ly) {
 	uint16 xdiff = abs(x - lx), ydiff = abs(y - ly);
 	if (ydiff) {
-		if (y < ly && direction != 2)
-			set_direction(2); // down
-		else if (y > ly && direction != 0)
-			set_direction(0); // up
+		if (y < ly && direction != NUVIE_DIR_S)
+			set_direction(NUVIE_DIR_S); // down
+		else if (y > ly && direction != NUVIE_DIR_N)
+			set_direction(NUVIE_DIR_N); // up
 	}
 	if (xdiff) {
-		if (x < lx && direction != 1)
-			set_direction(1); // right
-		else if (x > lx && direction != 3)
-			set_direction(3); // left
+		if (x < lx && direction != NUVIE_DIR_E)
+			set_direction(NUVIE_DIR_E); // right
+		else if (x > lx && direction != NUVIE_DIR_W)
+			set_direction(NUVIE_DIR_W); // left
 	}
 }
 #endif
@@ -1705,7 +1705,7 @@ void Actor::print() {
 	DEBUG(1, LEVEL_INFORMATIONAL, "obj_n: %03d    frame_n: %d\n", actor->obj_n, actor->frame_n);
 	DEBUG(1, LEVEL_INFORMATIONAL, "base_obj_n: %03d    old_frame_n: %d\n", actor->base_obj_n, actor->old_frame_n);
 
-	uint8 dir = actor->direction;
+	NuvieDir dir = actor->direction;
 	DEBUG(1, LEVEL_INFORMATIONAL, "direction: %d (%s)\n", dir, (dir == NUVIE_DIR_N) ? "north" :
 	      (dir == NUVIE_DIR_E) ? "east" :
 	      (dir == NUVIE_DIR_S) ? "south" :
@@ -1882,7 +1882,7 @@ Obj *Actor::find_body() {
 
 /* Change actor type. */
 bool Actor::morph(uint16 objN) {
-	uint8 old_dir = get_direction(); // FIXME: this should get saved through init_from_obj()
+	NuvieDir old_dir = get_direction(); // FIXME: this should get saved through init_from_obj()
 
 	Obj *actor_obj = make_obj();
 	actor_obj->obj_n = objN;

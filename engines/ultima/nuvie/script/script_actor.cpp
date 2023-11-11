@@ -701,7 +701,7 @@ static int nscript_actor_set_dexterity(Actor *actor, lua_State *L) {
 }
 
 static int nscript_actor_set_direction(Actor *actor, lua_State *L) {
-	actor->set_direction((uint8)lua_tointeger(L, 3));
+	actor->set_direction((NuvieDir)lua_tointeger(L, 3));
 	return 0;
 }
 

@@ -329,7 +329,7 @@ GUI_status DollViewGump::callback(uint16 msg, GUI_CallBack *caller, void *data) 
 	return GUI_PASS;
 }
 
-GUI_status DollViewGump::moveCursorRelative(uint8 direction) {
+GUI_status DollViewGump::moveCursorRelative(NuvieDir direction) {
 	gumpCursorPos cursor_left = actor->is_in_party() ? CURSOR_LEFT : CURSOR_HEAD; // don't allow pickpocket or control cheat into arrow area
 	gumpCursorPos cursor_right = actor->is_in_party() ? CURSOR_RIGHT : CURSOR_HEAD;
 	gumpCursorPos cursor_party; // no party button yet so skip it

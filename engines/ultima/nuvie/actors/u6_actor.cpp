@@ -145,6 +145,8 @@ bool U6Actor::init_ship() {
 		obj1_x = x - 1;
 		obj2_x = x + 1;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_ship");
 	}
 
 	obj = obj_manager->get_obj(obj1_x, obj1_y, z);
@@ -179,6 +181,8 @@ bool U6Actor::init_splitactor(uint8 obj_status) {
 	case NUVIE_DIR_W :
 		obj_x = WRAPPED_COORD(x + 1, z);
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_splitactor");
 	}
 
 // init back object
@@ -225,6 +229,8 @@ bool U6Actor::init_dragon() {
 		wing1_y = y + 1;
 		wing2_y = y - 1;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_dragon");
 	}
 
 	init_surrounding_obj(head_x, head_y, z, obj_n, frame_n + 8);
@@ -276,6 +282,8 @@ bool U6Actor::init_silver_serpent() {
 		sx++;
 		tmp_frame_n = 7;
 		break;
+	default:
+		error("Invalid direction in U6Actor::init_silver_serpent");
 	}
 
 	obj = obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, 1, id_n, sx, sy, sz);
@@ -431,7 +439,7 @@ bool U6Actor::updateSchedule(uint8 hour, bool teleport) {
 // workout our direction based on actor_type and frame_n
 inline void U6Actor::discover_direction() {
 	if (actor_type->frames_per_direction != 0)
-		direction = (frame_n - actor_type->tile_start_offset) / actor_type->tiles_per_direction;
+		direction = static_cast<NuvieDir>((frame_n - actor_type->tile_start_offset) / actor_type->tiles_per_direction);
 	else
 		direction = NUVIE_DIR_S;
 }
@@ -442,13 +450,14 @@ void U6Actor::change_base_obj_n(uint16 val) {
 	init();
 }
 
-void U6Actor::set_direction(uint8 d) {
+void U6Actor::set_direction(NuvieDir d) {
 	if (is_alive() == false || is_immobile())
 		return;
 
 	uint8 frames_per_dir = (actor_type->frames_per_direction != 0)
 	                       ? actor_type->frames_per_direction : 4;
-	if (d >= 4)
+
+	if (d >= 4) // ignore diagonals
 		return;
 
 	if (walk_frame == 0)
@@ -643,7 +652,7 @@ bool U6Actor::sit_on_chair(Obj *obj) {
 				frame_n = (obj->frame_n * 2);
 			else
 				frame_n = (obj->frame_n * 4) + 3;
-			direction = obj->frame_n;
+			direction = static_cast<NuvieDir>(obj->frame_n);
 			can_move = false;
 			return true;
 		}
@@ -1107,7 +1116,7 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 }
 
 
-inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_objs(NuvieDir new_direction) {
 	remove_surrounding_objs_from_map();
 
 	switch (obj_n) {
@@ -1134,7 +1143,7 @@ inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
 	return;
 }
 
-inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_ship_objs(NuvieDir new_direction) {
 	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 	if (obj == surrounding_objects.end())
 		return;
@@ -1173,6 +1182,9 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 		else
 			(*obj)->x = x - 1;
 		break;
+
+	default:
+		error("Invalid dir for U6Actor::set_direction_of_surrounding_ship_objs");
 	}
 
 	obj++;
@@ -1211,11 +1223,14 @@ inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction)
 		else
 			(*obj)->x = x + 1;
 		break;
+
+	default:
+		error("Invalid dir for U6Actor::set_direction_of_surrounding_ship_objs");
 	}
 
 }
 
-inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_splitactor_objs(NuvieDir new_direction) {
 	if (surrounding_objects.empty())
 		return;
 
@@ -1258,11 +1273,14 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_dire
 		else
 			obj->x = x + 1;
 		break;
+
+	default:
+		error("Invalid direction in U6Actor::set_direction_of_surrounding_splitactor_objs");
 	}
 
 }
 
-inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_direction) {
+inline void U6Actor::set_direction_of_surrounding_dragon_objs(NuvieDir new_direction) {
 	Std::list<Obj *>::iterator obj;
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
@@ -1329,6 +1347,10 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 		wing1->y = y + 1;
 		wing2->y = y - 1;
 		break;
+
+	default:
+		error("Invalid direction in U6Actor::set_direction_of_surrounding_dragon_objs");
+
 	}
 
 }

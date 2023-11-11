@@ -360,7 +360,7 @@ protected:
 	void reshapeBoundary();
 	inline bool tmpBufTileIsBlack(uint16 x, uint16 y);
 	bool tmpBufTileIsBoundary(uint16 x, uint16 y);
-	bool tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction);
+	bool tmpBufTileIsWall(uint16 x, uint16 y, NuvieDir direction);
 
 	void wizard_eye_stop();
 	void wizard_eye_update();

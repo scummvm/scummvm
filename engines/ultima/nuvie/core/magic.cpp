@@ -340,7 +340,7 @@ bool Magic::resume(const MapCoord &location) {
 	return true;
 }
 
-bool Magic::resume(uint8 dir) {
+bool Magic::resume(NuvieDir dir) {
 	if (magic_script) {
 		process_script_return(magic_script->resume_with_direction(dir));
 	}

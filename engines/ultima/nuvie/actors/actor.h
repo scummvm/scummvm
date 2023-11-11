@@ -248,7 +248,7 @@ protected:
 	uint16 base_obj_n;
 	uint16 old_frame_n;
 
-	uint8 direction;
+	NuvieDir direction;
 	uint8 walk_frame;
 
 	uint8 obj_flags;
@@ -541,11 +541,11 @@ public:
 	void set_combat_mode(uint8 new_mode);
 	virtual void revert_worktype() { }
 
-	uint8 get_direction() const {
+	NuvieDir get_direction() const {
 		return direction;
 	}
 	void set_direction(sint16 rel_x, sint16 rel_y);
-	virtual void set_direction(uint8 d);
+	virtual void set_direction(NuvieDir d);
 	void face_location(const MapCoord &loc);
 	virtual void face_location(uint16 lx, uint16 ly);
 	void face_actor(Actor *a);

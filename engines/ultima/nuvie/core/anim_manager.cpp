@@ -776,8 +776,9 @@ void ExplosiveAnim::start() {
 		flame[t].travelled = 0;
 		flame[t].tile = add_tile(tile_manager->get_tile(exploding_tile_num), 0, 0);
 
-		uint8 dir = (t < 8) ? t : NUVIE_RAND() % 8;
+		NuvieDir dir = static_cast<NuvieDir>((t < 8) ? t : NUVIE_RAND() % 8);
 		switch (dir) {
+		default: // can't happen, but make the analyzer happy.
 		case NUVIE_DIR_N:
 			flame[t].direction = MapCoord(0, -s);
 			break;

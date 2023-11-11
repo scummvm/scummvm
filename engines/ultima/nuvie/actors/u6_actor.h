@@ -28,13 +28,15 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define MOVETYPE_U6_NONE       0
-#define MOVETYPE_U6_LAND       1
-#define MOVETYPE_U6_WATER_LOW  2 // skiffs, rafts
-#define MOVETYPE_U6_WATER_HIGH 3 // ships
-#define MOVETYPE_U6_AIR_LOW    4 // balloon, birds... this movetype cannot cross mountain tops.
-#define MOVETYPE_U6_AIR_HIGH   5 // dragons
-#define MOVETYPE_U6_ETHEREAL   6
+enum ActorMovetype {
+	MOVETYPE_U6_NONE = 0,
+	MOVETYPE_U6_LAND = 1,
+	MOVETYPE_U6_WATER_LOW = 2, 	// skiffs, rafts
+	MOVETYPE_U6_WATER_HIGH = 3, // ships
+	MOVETYPE_U6_AIR_LOW = 4, 	// balloon, birds... this movetype cannot cross mountain tops.
+	MOVETYPE_U6_AIR_HIGH = 5, 	// dragons
+	MOVETYPE_U6_ETHEREAL = 6,
+};
 
 #define REMOVE_SURROUNDING_OBJS true
 
@@ -51,7 +53,7 @@ typedef struct {
 	bool can_laydown;
 	bool can_sit;
 	ActorTileType tile_type;
-	uint8 movetype;
+	ActorMovetype movetype;
 	uint16 twitch_rand; //used to control how frequently an actor twitches, lower numbers twitch more
 	uint8 body_armor_class;
 } U6ActorType;
@@ -61,7 +63,7 @@ protected:
 
 	const U6ActorType *actor_type;
 	const U6ActorType *base_actor_type;
-	uint8 current_movetype;
+	ActorMovetype current_movetype;
 
 	sint8 walk_frame_inc; // added to walk_frame each step
 
@@ -76,7 +78,7 @@ public:
 	void set_worktype(uint8 new_worktype, bool init = false) override;
 	void revert_worktype() override;
 	void change_base_obj_n(uint16 val) override;
-	void set_direction(uint8 d) override;
+	void set_direction(NuvieDir d) override;
 	void face_location(uint16 lx, uint16 ly) override;
 	void clear() override;
 	bool move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
@@ -152,10 +154,10 @@ protected:
 	inline void add_surrounding_objs_to_map();
 	inline void move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y);
 	inline void move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y);
-	inline void set_direction_of_surrounding_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_ship_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_splitactor_objs(uint8 new_direction);
-	inline void set_direction_of_surrounding_dragon_objs(uint8 new_direction);
+	inline void set_direction_of_surrounding_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_ship_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_splitactor_objs(NuvieDir new_direction);
+	inline void set_direction_of_surrounding_dragon_objs(NuvieDir new_direction);
 
 	inline void twitch_surrounding_objs();
 	inline void twitch_surrounding_dragon_objs();

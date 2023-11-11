@@ -1641,7 +1641,7 @@ bool MapWindow::tmpBufTileIsBoundary(uint16 x, uint16 y) {
 	return false;
 }
 
-bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction) {
+bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, NuvieDir direction) {
 
 	uint16 tile_num = tmp_map_buf[y * tmp_map_width + x];
 
@@ -1662,6 +1662,8 @@ bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, uint8 direction) {
 	case NUVIE_DIR_W :
 		mask = TILEFLAG_WALL_EAST;
 		break;
+	default:
+		error("invalid direction in MapWindow::tmpBufferIsWall");
 	}
 
 	const Tile *tile = tile_manager->get_tile(tile_num);

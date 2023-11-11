@@ -98,7 +98,7 @@ void PartyPathFinder::get_forward_dir(sint8 &vec_x, sint8 &vec_y) {
 //    get_last_move(vec_x, vec_y);
 	vec_x = 0;
 	vec_y = 0;
-	uint8 dir = (get_leader() >= 0) ? get_member(get_leader()).actor->get_direction() : NUVIE_DIR_N;
+	NuvieDir dir = (get_leader() >= 0) ? get_member(get_leader()).actor->get_direction() : NUVIE_DIR_N;
 	if (dir == NUVIE_DIR_N)      {
 		vec_x = 0;
 		vec_y = -1;

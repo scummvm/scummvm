@@ -78,7 +78,7 @@ public:
 		return resume(start_nargs);
 	}
 	uint8 resume_with_location(const MapCoord &loc);
-	uint8 resume_with_direction(uint8 dir);
+	uint8 resume_with_direction(NuvieDir dir);
 	uint8 resume_with_spell_num(uint8 spell_num);
 	uint8 resume_with_obj(Obj *obj);
 	uint8 resume_with_nil();

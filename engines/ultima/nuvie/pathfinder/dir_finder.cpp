@@ -52,8 +52,8 @@ void DirFinder::get_adjacent_dir(sint8 &xdir, sint8 &ydir, sint8 rotate) {
 		}
 }
 
-uint8 DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
-	uint8 direction = NUVIE_DIR_N; // default
+NuvieDir DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
+	NuvieDir direction = NUVIE_DIR_N; // default
 
 	if (xrel == 0 && yrel == 0) // nowhere
 		return direction;
@@ -72,7 +72,7 @@ uint8 DirFinder::get_nuvie_dir(sint16 xrel, sint16 yrel) {
 	return direction;
 }
 
-uint8 DirFinder::get_nuvie_dir(uint16 sx, uint16 sy, uint16 tx, uint16 ty, uint8 z) {
+NuvieDir DirFinder::get_nuvie_dir(uint16 sx, uint16 sy, uint16 tx, uint16 ty, uint8 z) {
 	return DirFinder::get_nuvie_dir(get_wrapped_rel_dir(tx, sx, z), get_wrapped_rel_dir(ty, sy, z));
 }
 

@@ -769,7 +769,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 	if (yaxis != 255 && _joyAxisPositions[yaxis] != 0)
 		yoff = _joyAxisPositions[yaxis] < 0 ? -1 : 1;
 
-	uint8 dir = get_direction_code(xoff, yoff);
+	NuvieDir dir = get_direction_code(xoff, yoff);
 	if (axes_pair == AXES_PAIR1) {
 		if (dir == NUVIE_DIR_NONE) {
 			next_axes_pair_update = 0; // centered so okay to reset
