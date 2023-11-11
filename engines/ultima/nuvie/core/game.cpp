@@ -435,7 +435,7 @@ void Game::init_cursor() {
 		cursor = new Cursor();
 
 	if (cursor->init(config, screen, game_type))
-		SDL_ShowCursor(false); // won't need the system default
+		g_system->showMouse(false); // won't need the system default
 	else {
 		delete cursor;
 		cursor = nullptr; // no game cursor

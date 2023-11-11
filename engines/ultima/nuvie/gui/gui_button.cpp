@@ -151,38 +151,35 @@ void GUI_Button:: Display(bool full_redraw) {
 		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);
 		uint8 bytepp = surface->format.bytesPerPixel;
 
-		if (!SDL_LockSurface(surface)) {
-			for (int y = 0; y < area.height(); y += 2) {
-				pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
-				for (int x = 0; x<area.width() >> 1; x++) {
-					switch (bytepp) {
-					case 1:
-						*((uint8 *)(pointer)) = (uint8)pixel;
-						pointer += 2;
-						break;
-					case 2:
-						*((uint16 *)(pointer)) = (uint16)pixel;
-						pointer += 4;
-						break;
-					case 3:  /* Format/endian independent */
-						uint8 r, g, b;
+		for (int y = 0; y < area.height(); y += 2) {
+			pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
+			for (int x = 0; x<area.width() >> 1; x++) {
+				switch (bytepp) {
+				case 1:
+					*((uint8 *)(pointer)) = (uint8)pixel;
+					pointer += 2;
+					break;
+				case 2:
+					*((uint16 *)(pointer)) = (uint16)pixel;
+					pointer += 4;
+					break;
+				case 3:  /* Format/endian independent */
+					uint8 r, g, b;
 
-						r = (pixel >> surface->format.rShift) & 0xFF;
-						g = (pixel >> surface->format.gShift) & 0xFF;
-						b = (pixel >> surface->format.bShift) & 0xFF;
-						*((pointer) + surface->format.rShift / 8) = r;
-						*((pointer) + surface->format.gShift / 8) = g;
-						*((pointer) + surface->format.bShift / 8) = b;
-						pointer += 6;
-						break;
-					case 4:
-						*((uint32 *)(pointer)) = (uint32)pixel;
-						pointer += 8;
-						break;
-					}
+					r = (pixel >> surface->format.rShift) & 0xFF;
+					g = (pixel >> surface->format.gShift) & 0xFF;
+					b = (pixel >> surface->format.bShift) & 0xFF;
+					*((pointer) + surface->format.rShift / 8) = r;
+					*((pointer) + surface->format.gShift / 8) = g;
+					*((pointer) + surface->format.bShift / 8) = b;
+					pointer += 6;
+					break;
+				case 4:
+					*((uint32 *)(pointer)) = (uint32)pixel;
+					pointer += 8;
+					break;
 				}
 			}
-			SDL_UnlockSurface(surface);
 		}
 	}
 

@@ -41,10 +41,6 @@ void SDL_FreeSurface(Graphics::ManagedSurface *&s) {
 	s = nullptr;
 }
 
-void SDL_ShowCursor(bool show) {
-	g_system->showMouse(show);
-}
-
 uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b) {
 	return format.RGBToColor(r, g, b);
 }
@@ -67,20 +63,6 @@ int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *src
 int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color) {
 	surf->fillRect(rect ? *rect : Common::Rect(0, 0, surf->w, surf->h), color);
 	return 0;
-}
-
-void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h) {
-	Common::Rect r(x, y, x + w, y + h);
-	if (r.isEmpty())
-		r = Common::Rect(0, 0, surf->w, surf->h);
-
-	g_system->copyRectToScreen(surf->getPixels(), surf->pitch, r.left, r.top, r.width(), r.height());
-}
-
-void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects) {
-	while (count-- > 0)
-		g_system->copyRectToScreen(surf->getPixels(), surf->pitch, rects->left, rects->top,
-			rects->width(), rects->height());
 }
 
 Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
@@ -120,14 +102,6 @@ int SDL_WaitEvent(Common::Event *event) {
 
 int SDL_PollEvent(Common::Event *event) {
 	return Events::get()->pollEvent(*event);
-}
-
-int SDL_LockSurface(Graphics::ManagedSurface *surface) {
-	return 0;
-}
-
-int SDL_UnlockSurface(Graphics::ManagedSurface *surface) {
-	return 0;
 }
 
 Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
