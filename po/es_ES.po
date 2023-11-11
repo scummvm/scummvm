@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-10 23:00+0000\n"
-"PO-Revision-Date: 2023-11-08 11:45+0000\n"
+"PO-Revision-Date: 2023-11-11 10:36+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1076,7 +1076,7 @@ msgstr "Plataforma"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Año"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1310,10 +1310,8 @@ msgstr "Plataforma no detectada"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Error desconocido"
+msgstr "Año desconocido"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1527,16 +1525,13 @@ msgid "Shader Path:"
 msgstr "Shaders:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Descargar juegos"
+msgstr "Descargar shaders"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Buscar actualizaciones de paquetes de shaders"
+msgstr ""
+"Ve a la página scummvm.org para buscar actualizaciones de paquetes de shaders"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1993,16 +1988,13 @@ msgstr ""
 "para seleccionar un archivo o directorio."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Descargar"
+msgstr "Descargar iconos"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Buscar actualizaciones de paquetes de iconos"
+msgstr ""
+"Ve a la página scummvm.org para buscar actualizaciones de paquetes de iconos"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
