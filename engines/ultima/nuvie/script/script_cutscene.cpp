@@ -1261,7 +1261,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 			Std::vector<CSImage *> v1;
 			for (uint32 idx1 = 0; idx1 < lib1.get_num_items(); idx1++) {
 				U6Shape *shp = new U6Shape();
-				if (shp->load(&lib1, (uint32)idx1)) {
+				if (shp->load(&lib1, idx1)) {
 					image = new CSImage(shp);
 					v1.push_back(image);
 				}
@@ -1283,7 +1283,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
 			Std::vector<CSImage *> v1;
 			U6Shape *shp = new U6Shape();
-			if (shp->load(&lib_n, (uint32)idx)) {
+			if (shp->load(&lib_n, idx)) {
 				image = new CSImage(shp);
 				v1.push_back(image);
 				v.push_back(v1);
