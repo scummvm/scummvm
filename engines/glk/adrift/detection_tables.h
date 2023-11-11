@@ -240,7 +240,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "farfromhome",        "Far From Home" },
 	{ "faucets",            "Running Water" },
 	{ "findandy1",          "Find Andy: Part 1" },
-	{ "finedayforreaping",  "A Fine Day for Reaping" },
+	{ "fineday4reap",       "A Fine Day for Reaping" },
 	{ "firstarise",         "The First to Arise" },
 	{ "firstdayadrift",     "First Day" },
 	{ "first",              "The Book of Fistandantalus" },
@@ -606,7 +606,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "vandk",              "Villains and Kings" },
 	{ "vendetta",           "Vendetta" },
 	{ "veteranknowledge",   "Veteran Knowledge" },
-	{ "videotapedecay",     "Video.Tape / Decay" },
+	{ "videotapedec",       "Video.Tape / Decay" },
 	{ "viewhome",           "A View to a Home" },
 	{ "viewisbetter",       "The View Is Better Here" },
 	{ "volant",             "Starship Volant: Stowaway" },
@@ -649,289 +649,290 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "a5icheadcase",       "Head Case" },
 	{ "a5icaxeofkolt",      "The Axe of Kolt" },
 
-	// ADRIFT Hourglass Comp 2006
-	{ "ahc3minutes",        "3 Minutes to Live" },
-	{ "ahcovertheedge",     "Over the Edge" },
-	{ "ahcboiledeggs",      "Boiled Eggs" },
-	{ "ahclongbarrow",      "The Long Barrow" },
-	{ "ahcpilfers",         "Pilfers" },
-	{ "ahcchooseyourown",   "Choose Your Own..." },
-	{ "ahcskydiver",        "The Skydiver" },
-	{ "ahcquestforfood",    "Quest for Food" },
-	{ "ahcdancing",         "Dancing Even Him?" },
-	{ "ahcrollingdough",    "Rolling the Dough" },
-	{ "ahcsmote",           "Smote" },
-	{ "ahcroadnowhere",     "The Road Leads to Nowhere" },
-	{ "ahcherrdoktor",      "Herr Doktor von Nördlingendinkelsbühlhündchen-am-Rhein" },
+	// 1st One Hour Comp 2002
+	{ "1h_endgame",         "The Game To End All Games" },                                              //    1st Place
+	{ "1h_frog",            "The Green Princess" },                                                     //    2nd Place
+	{ "1h_hauntedhouse",    "The Haunted House of Hideous Horror" },                                    //    3rd Place
+	{ "1h_jasonvssalm",     "Jason vs. Salm" },                                                         //    4th Place
+	{ "1h_1hrgame",         "A Masochist's Heaven" },                                                   //    5th Place
+	{ "1h_microbewillie",   "Microbe Willie vs. The Rat" },                                             //    6th Place
+	{ "1h_amonkeytoomany",  "A Monkey too many" },                                                      //    7th Place
+	{ "1h_princess1",       "The Princess in the Tower" },                                              //    8th Place
+	{ "1h_chicken",         "The Evil Chicken of Doom!" },                                              //    9th Place
 
-	// ADRIFT Intro Comp 2005
-	{ "aicmurdermansion",   "Murder Mansion" },
-	{ "aicoutline",         "Outline" },
-	{ "aicsrs",             "Silk Road Secrets: Samarkand to Lop Nor" },
-	{ "aicescape",          "Must Escape!" },
-	{ "aicfinalquestion",   "The Final Question" },
-	{ "aicrift",            "Rift" },
-	{ "aicp2p",             "Point 2 Point" },
-	{ "aiczacksmackfoot",   "Zack Smackfoot" },
+	// 2nd One Hour Comp 2003
+	{ "1h_forum",           "Forum" },                                                                  //    1st Place
+	{ "1h_dfu",             "Dance Fever USA" },                                                        //    2nd Place
+	{ "1h_percy",           "The Saga of Percy the Viking" },                                           //    3rd Place
 
-	// ADRIFT Intro Comp 2009
-	{ "aicexistence",       "Existence" },
-	{ "aicapokalupsis",     "Apokalupsis" },
-	{ "aicdbaa",            "Dung Beetles Are Aliens" },
-	{ "aicteaw",            "To End All Wars" },
-	{ "aicmerlinbirdprey",  "The Merlin Bird of Prey" },
-	{ "aicdeadrace",        "Dead Race" },
-	{ "aicdishduty",        "Dish Duty" },
-	{ "aicyoncastle",       "Ye Intro for Yon Astounding Castle! of Some Sort" },
-	{ "aicthroughtime",     "Through Time" },
-	{ "aicdonuts",          "Donuts" },
+	// 3rd One Hour Comp 2003
+	{ "1h_demonhunter",     "Apprentice of the Demonhunter" },                                          //    1st Place
+	{ "1h_shore",           "The Farthest Shore" },                                                     //    2nd Place
+	{ "1h_imagination",     "Just My Imagination-Musings of a Child" },                                 //    3rd Place
+	{ "1h_ticktick",        "Doom Cat!!!" },                                                            //    4th Place
+	{ "1h_forum2",          "Forum 2" },                                                                //    5th Place
+	{ "1h_saffire",         "Saffire" },                                                                //    6th Place
+	{ "1h_cbn1",            "The Revenge of Clueless Bob Newbie!" },                                    //    7th Place
+	{ "1h_cbn2",            "The Revenge of Clueless Bob Newbie Part 2: This Time it's Personal" },     //    8th Place
+	{ "1h_ecod2",           "The Curse of the Ghost of the Evil Chicken of Doom... Returns!" },         //    9th Place
+	{ "1h_asdfa",           "A Short Damn Fantasy Adventure" },                                         //   10th Place
+	{ "1h_crm",             "That Crazy Radioactive Monkey!" },                                         //   11th Place
+	{ "1h_pyramid",         "The Pyramid of Hamaratum" },                                               //   12th Place
+	{ "1h_questi",          "Quest for Flesh" },                                                        //   13th Place
 
-	// ADRIFT Mini-Competition Summer 2003
-	{ "amcthorn",           "The Thorn" },
-	{ "amcneighbours",      "Neighbours From Hell" },
-	{ "amcmonsters",        "Monsters" },
-	{ "amcdiarystrip",      "Diary of a Stripper" },
+	// 4th One Hour Comp 2004
+	{ "1h_vagabond",        "Vagabond" },                                                               //    1st Place
+	{ "1h_arghgreatescape", "Argh's Great Escape" },                                                    //    2nd Place
+	{ "1h_topaz",           "Topaz" },                                                                  //    3rd Place
+	{ "1h_goblinhunt",      "Goblin Hunt" },                                                            //    4th Place
+	{ "1h_wreckage",        "SE: Wreckage" },                                                           //    5th Place
+	{ "1h_ecod3",           "An Evening with the Evil Chicken of Doom" },                               //    6th Place
+	{ "1h_trabula",         "Get Treasure for Trabula" },                                               //    7th Place
+	{ "1h_agent4f",         "Agent 4-F from Mars" },                                                    //    8th Place
+	{ "1h_cah",             "Cruel and Hilarious Punishment!" },                                        //    9th Place
+	{ "1h_thecatinthetree", "The Cat in the Tree" },                                                    //   10th Place
+	{ "1h_adriftmaze",      "The Adrift Maze" },                                                        //   11th Place
+	{ "1h_undefined",       "Undefined" },                                                              //   12th Place
+	{ "1h_woof",            "Woof" },                                                                   //   13th Place
+	{ "1h_icecream",        "Ice Cream" },                                                              //   14th Place
+	{ "1h_shreddem",        "Shred 'em" },                                                              //   15th Place
+	{ "1h_spam",            "SPAM" },                                                                   //   16th Place
 
-	// ADRIFT One-Hour Game Competition 1
-	{ "1hgprincess1",       "The Princess in the Tower" },
-	{ "1hg1hrgame",         "A Masochist's Heaven" },
-	{ "1hgendgame",         "The Game To End All Games" },
-	{ "1hgchicken",         "The Evil Chicken of Doom!" },
-	{ "1hghauntedhouse",    "The Haunted House of Hideous Horror" },
-	{ "1hgfrog",            "The Green Princess" },
-	{ "1hgmicrobewillie",   "Microbe Willie vs. The Rat" },
-	{ "1hgjasonvssalm",     "Jason vs. Salm" },
-	{ "1hgamonkeytoomany",  "A Monkey too many" },
+	// 1st Three Hour Comp 2004
+	{ "3h_briefcase",       "Briefcase" },                                                              //    1st Place
+	{ "3h_jailbreakbob",    "Jailbreak Bob" },                                                          //    2nd Place
+	{ "3h_zombiecow",       "Zombie Cow" },                                                             //    3rd Place
+	{ "3h_lostsouls",       "Lost Souls" },                                                             //    4th Place
+	{ "3h_theamulet",       "The Amulet" },                                                             //    5th Place
+	{ "3h_shadricktravels", "Shadrick's Travels" },                                                     //    6th Place
+	{ "3h_annihilofthink",  "Annihilation of Think.com" },                                              //    7th Place
 
-	// ADRIFT One-Hour Game Competition 2
-	{ "1hgpercy",           "The Saga of Percy the Viking" },
-	{ "1hgforum",           "Forum" },
-	{ "1hgdfu",             "Dance Fever USA" },
+	// 2nd Three Hour Comp 2004
+	{ "3h_buriedalive",     "Buried Alive" },                                                           //    1st Place
+	{ "3h_veteran",         "Veteran Experience" },                                                     //    2nd Place
+	{ "3h_togetyou",        "We are coming to get you!" },                                              //    3rd Place
+	{ "3h_confession",      "The Murder of Jack Morely" },                                              //    4th Place
+	{ "3h_sandl",           "Snakes and Ladders" },                                                     //    5th Place
+	{ "3h_zac",             "Zombies Are Cool, But Not So Cool When They're Eating Your Head" },        //    6th Place
 
-	// ADRIFT One-Hour Game Competition 3
-	{ "1hgforum2",          "Forum 2" },
-	{ "1hgcrm",             "That Crazy Radioactive Monkey!" },
-	{ "1hgasdfa",           "A Short Damn Fantasy Adventure" },
-	{ "1hgdemonhunter",     "Apprentice of the Demonhunter" },
-	{ "1hgcbn1",            "The Revenge of Clueless Bob Newbie!" },
-	{ "1hgcbn2",            "The Revenge of Clueless Bob Newbie Part 2: This Time it's Personal" },
-	{ "1hgticktick",        "Doom Cat!!!" },
-	{ "1hgpyramid",         "The Pyramid of Hamaratum" },
-	{ "1hgquesti",          "Quest for Flesh" },
-	{ "1hgshore",           "The Farthest Shore" },
-	{ "1hgsaffire",         "Saffire" },
-	{ "1hgecod2",           "The Curse of the Revenge of the Ghost of the Evil Chicken of Doom... Returns!" },
-	{ "1hgimagination",     "Just My Imagination-Musings of a Child" },
-
-	// ADRIFT One-Hour Game Competition 4
-	{ "1hgcah",             "Cruel and Hilarious Punishment!" },
-	{ "1hgarghgreatescape", "Argh's Great Escape" },
-	{ "1hgshreddem",        "Shred 'em" },
-	{ "1hgagent4f",         "Agent 4-F from Mars" },
-	{ "1hgecod3",           "An Evening with the Evil Chicken of Doom" },
-	{ "1hgtrabula",         "Get Treasure for Trabula" },
-	{ "1hgwoof",            "Woof" },
-	{ "1hgundefined",       "Undefined" },
-	{ "1hgadriftmaze",      "The Adrift Maze" },
-	{ "1hgicecream",        "Ice Cream" },
-	{ "1hgwreckage",        "SE: Wreckage" },
-	{ "1hgspam",            "SPAM" },
-	{ "1hgvagabond",        "Vagabond" },
-	{ "1hgthecatinthetree", "The Cat in the Tree" },
-	{ "1hgtopaz",           "Topaz" },
-	{ "1hggoblinhunt",      "Goblin Hunt" },
+	// Anyone in the mood for a comp?
+	{ "moo_algernon",       "Algernon's Conundrum" },                                                   //    1st Place
+	{ "moo_beagle",         "Beagle" },                                                                 //    2nd Place
 
 	// Ectocomp 2007
-	{ "ectcvideotapedecay", "Video.Tape / Decay" },
-	{ "ectcforesthouse",    "Forest House" },
-	{ "ectcstowie",         "The Stowaway" },
-	{ "ectcwitness",        "Witness: Demon vs Vampire" },
+	{ "ec07_videotapedec",  "Video.Tape / Decay" },                                                     //    1st Place
+	{ "ec07_witness",       "Witness: Demon vs Vampire" },                                              //    2nd Place
+	{ "ec07_stowie",        "The Stowaway" },                                                           //    3rd Place
+	{ "ec07_foresthouse",   "Forest House" },                                                           //    4th Place
 
 	// Ectocomp 2008
-	{ "ectcforesthouse3",   "For3st House: Sacrifice" },
-	{ "ectcdrinks",         "Drinks with Lord Hansom" },
-	{ "ectchiker",          "Conversation with a Hitchhiker" },
-	{ "ectcsalutations",    "Salutations" },
-	{ "ectcblast",          "Blast" },
-	{ "ectcr2dc",           "Return to Dracula's Castle II: Revenge of Dracula's Castle" },
-	{ "ectcdelsol",         "DeL SoL MADNESS" },
+	{ "ec08_drinks",        "Drinks with Lord Hansom" },
+	{ "ec08_r2dc",          "Return to Dracula's Castle II: Revenge of Dracula's Castle" },             //    1st Place
+	{ "ec08_foresthouse3",  "For3st House: Sacrifice" },                                                //    2nd Place
+	{ "ec08_salutations",   "Salutations" },                                                            //    3rd Place
+	{ "ec08_hiker",         "Conversation with a Hitchhiker" },                                         //    4th Place
+	{ "ec08_blast",         "Blast" },                                                                  //    5th Place
+	{ "ec08_delsol",        "DeL SoL MADNESS" },                                                        //    6th Place
 
 	// Ectocomp 2009
-	{ "ectcdrivingatnight", "The Dangers of Driving at Night" },
-	{ "ectcpatient7",       "Patient 7" },
-	{ "ectcwayout",         "Way Out" },
+	{ "ec09_drivingnight",  "The Dangers of Driving at Night" },                                        //    1st Place
+	{ "ec09_patient7",      "Patient 7" },                                                              //    2nd Place
+	{ "ec09_wayout",        "Way Out" },                                                                //    3rd Place
 
 	// Ectocomp 2010
-	{ "ectcpetespunkin",    "Pete's Punkin Junkinator" },
-	{ "ectcrenegadebw",     "Renegade Brainwave" },
-	{ "ectchelsing",        "Steve Van Helsing: Process Server" },
-	{ "ectciwasteenage",    "I Was a Teenage Headless Experiment" },
-	{ "ectcthevault",       "The Vault" },
-	{ "ectcflyhuman",       "The Fly Human" },
-	{ "ectcallhallows",     "All Hallows Eve" },
-	{ "ectctenebraesemper", "Tenebrae Semper" },
+	{ "ec10_petespunkin",   "Pete's Punkin Junkinator" },                                               //    1st Place
+	{ "ec10_renegadebw",    "Renegade Brainwave" },                                                     //    2nd Place
+	{ "ec10_helsing",       "Steve Van Helsing: Process Server" },                                      //    3rd Place
+	{ "ec10_iwasteenage",   "I Was a Teenage Headless Experiment" },                                    //    4th Place
+	{ "ec10_thevault",      "The Vault" },                                                              //    5th Place
+	{ "ec10_flyhuman",      "The Fly Human" },                                                          //    6th Place
+	{ "ec10_allhallows",    "All Hallows Eve" },                                                        //    7th Place
+	{ "ec10_tenebrasemper", "Tenebrae Semper" },                                                        //    8th Place
 
 	// Ectocomp 2011
-	{ "ectcattacklobster",  "Attack of Doc Lobster's Mutant Menagerie of Horror" },
-	{ "ectcdeathshack",     "Death Shack" },
-	{ "ectcignisfatuus",    "Ignis Fatuus" },
-	{ "ectcthehouse",       "The House" },
-	{ "ectcstuckpiggy",     "Stuck Piggy" },
+	{ "ec11_attacklobster", "Attack of Doc Lobster's Mutant Menagerie of Horror" },                     //    2nd Place
+	{ "ec11_deathshack",    "Death Shack" },                                                            //    3rd Place
+	{ "ec11_ignisfatuus",   "Ignis Fatuus" },                                                           //    4th Place
+	{ "ec11_thehouse",      "The House" },                                                              //    6th Place
+	{ "ec11_stuckpiggy",    "Stuck Piggy" },                                                            //    7th Place
 
-	// Game of the Year Competition: December 2004
-	{ "goyshardsofmemory",  "Shards of Memory" },
-	{ "goypaint",           "Paint!!!" },
-	{ "goydragonshrine",    "The Curse of DragonShrine" },
-	{ "goydarkness",        "Darkness" },
-	{ "goywaxworx",         "Wax Worx" },
+	// Even Comp 2009
+	{ "ec_attmutaydid",     "Attack of the Mutaydid Meat Monsters" },                                   //    1st Place
+	{ "ec_rain",            "Bringing the Rain" },                                                      //    2nd Place
+	{ "ec_perspectives",    "Perspectives" },                                                           //    3rd Place
 
-	// Game of the Year Competition 2007
-	{ "goymarika",          "Marika the Offering" },
-	{ "goyrking",           "The Reluctant Resurrectee" },
-	{ "goyvideotapedecay",  "Video.Tape / Decay" },
-	{ "goyterrified",       "Terrified" },
-	{ "goyfineday4reaping", "A Fine Day for Reaping" },
-	{ "goypuzzlebox",       "The Puzzle Box" },
+	// Finish the Game Comp 2005
+	{ "ftg_pathwayadrift",  "Pathway to Destruction" },                                                 //    1st Place
+	{ "ftg_takeone",        "Take One" },                                                               //    2nd Place
+	{ "ftg_demonhunter",    "The Demon Hunter" },                                                       //    3rd Place
+	{ "ftg_hunter",         "The Hunter" },                                                             //    4th Place
+	{ "ftg_shadow",         "Shadow of the Past" },                                                     //    5th Place
+	{ "ftg_shadowjack",     "Jack of Shadows" },                                                        //    6th Place
 
-	// InsideADRIFT Spring Competition 2004
-	{ "iadcshardsofmemory", "Shards of Memory" },
-	{ "iadcdragonshrine",   "The Curse of DragonShrine" },
-	{ "iadcwaxworx",        "Wax Worx" },
-	{ "iadcsommeril",       "A Day at the Seaside" },
+	// Hourglass Comp 2006
+	{ "hc_longbarrow",      "The Long Barrow" },                                                        //    1st Place
+	{ "hc_questforfood",    "Quest for Food" },                                                         //    2nd Place
+	{ "hc_herrdoktor",      "Herr Doktor von Nördlingendinkelsbühlhündchen-am-Rhein" },                 //    3rd Place
+	{ "hc_3minutes",        "3 Minutes to Live" },                                                      //    4th Place
+	{ "hc_smote",           "Smote" },                                                                  //    5th Place
+	{ "hc_dancing",         "Dancing Even Him?" },                                                      //    6th Place
+	{ "hc_boiledeggs",      "Boiled Eggs" },                                                            //    7th Place
+	{ "hc_chooseyourown",   "Choose Your Own..." },                                                     //    8th Place
+	{ "hc_rollingdough",    "Rolling the Dough" },                                                      //    9th Place
+	{ "hc_roadnowhere",     "The Road Leads to Nowhere" },                                              //   10th Place
+	{ "hc_overtheedge",     "Over the Edge" },                                                          //   11th Place
+	{ "hc_skydiver",        "The Skydiver" },                                                           //   12th Place
+	{ "hc_pilfers",         "Pilfers" },                                                                //   13th Place
 
-	// InsideADRIFT Summer Competition 2004
-	{ "iadcchooseyourown",  "Choose Your Own..." },
-	{ "iadcdarkhavenmyst",  "The Mystery of the Darkhaven Caves" },
-	{ "iadcshadrickundgrd", "Shadrack's Underground Adventure" },
-	{ "iadcticket2nowhere", "Ticket to No Where" },
-	{ "iadctearstoughman",  "Tears of a Tough Man" },
-	{ "iadcadriftproject",  "The ADRIFT Project" },
+	// InsideADRIFT Game of the Year Comp 2004
+	{ "goy_paint",          "Paint!!!" },                                                               //    1st Place
+	{ "goy_shardsmemory",   "Shards of Memory" },                                                       //    2nd Place
+	{ "goy_waxworx",        "Wax Worx" },                                                               //    3rd Place
+	{ "goy_shadrikundgrd",  "Shadrack's Underground Adventure" },                                       //    4th Place
+	{ "goy_dragonshrine",   "The Curse of DragonShrine" },                                              //    5th Place
+	{ "goy_darkness",       "Darkness" },                                                               //    6th Place
 
-	// InsideADRIFT Spring Competition 2005
-	{ "iadcseaside",        "A Day at the Seaside" },
-	{ "iadcfrustrated",     "Frustrated Interviewee" },
-	{ "iadchub",            "The House Husband" },
-	{ "iadcprivateeye",     "Private Eye" },
-	{ "iadcblood",          "Fire in the Blood" },
+	// InsideADRIFT Game of the Year Comp 2007
+	{ "goy_fineday4reap",   "A Fine Day for Reaping" },                                                 //    1st Place
+	{ "goy_rking",          "The Reluctant Resurrectee" },                                              //    2nd Place
+	{ "goy_marika",         "Marika the Offering" },                                                    //    3rd Place
+	{ "goy_puzzlebox",      "The Puzzle Box" },                                                         //    4th Place
+	{ "goy_videotapedec",   "Video.Tape / Decay" },                                                     //    5th Place
+	{ "goy_terrified",      "Terrified" },                                                              //    6th Place
 
-	// InsideADRIFT Summer Competition 2005
-	{ "iadccibass",         "Can It Be All So Simple?" },
-	{ "iadcmustescape",     "Must Escape!" },
-	{ "iadclca",            "Lights, Camera, Action!" },
-	{ "iadcregrets",        "Regrets" },
-	{ "iadctarget",         "Target" },
+	// InsideADRIFT Spring Comp 2004
+	{ "sp04_shardsmemory",  "Shards of Memory" },                                                       //    1st Place
+	{ "sp04_dragonshrine",  "The Curse of DragonShrine" },                                              //    2nd Place
+	{ "sp04_waxworx",       "Wax Worx" },                                                               //    3rd Place
+	{ "sp04_sommeril",      "A Day at the Seaside" },                                                   //    4th Place
 
-	// InsideADRIFT Summer Competition 2006
-	{ "iadcpestilence",     "Pestilence" },
-	{ "iadcreluctantvampire", "The Reluctant Vampire" },
-	{ "iadcspooked",        "Spooked!: The Wonders of Science" },
+	// InsideADRIFT Summer Comp 2004
+	{ "su04_chooseyourown", "Choose Your Own..." },                                                     //    1st Place
+	{ "su04_shadrikundgrd", "Shadrack's Underground Adventure" },                                       //    2nd Place
+	{ "su04_darkhavenmyst", "The Mystery of the Darkhaven Caves" },                                     //    3rd Place
+	{ "su04_adriftproject", "The ADRIFT Project" },                                                     //    4th Place
+	{ "su04_tick2nowhere",  "Ticket to No Where" },                                                     //    5th Place
+	{ "su04_tearstoughman", "Tears of a Tough Man" },                                                   //    6th Place
 
-	// InsideAdrift Summer Competition 2008
-	{ "iadcdoor",           "Door" },
-	{ "iadcwolvesdoor",     "Wolves at the Door" },
-	{ "iadchappyvalley",    "Happy Valley" },
-	{ "iadcmarlin",         "The Marlin Affair: Prologue" },
-	{ "iadchuntung",        "Hunting Ground" },
+	// InsideADRIFT Spring Comp 2005
+	{ "sp05_blood",         "Fire in the Blood" },                                                      //    1st Place
+	{ "sp05_frustrated",    "Frustrated Interviewee" },                                                 //    2nd Place
+	{ "sp05_privateeye",    "Private Eye" },                                                            //    3rd Place
+	{ "sp05_seaside",       "A Day at the Seaside" },                                                   //    4th Place
+	{ "sp05_hub",           "The House Husband" },                                                      //    5th Place
 
-	// InsideADRIFT Summer Competition 2010
-	{ "iadcaegis",          "Aegis" },
-	{ "iadcbaroo",          "Ba'Roo!" },
-	{ "iadccamelot",        "Camelot" },
-	{ "iadclightup",        "Light Up" },
-	{ "iadcmotion",         "Motion" },
-	{ "iadcplunder",        "Pirate's Plunder!" },
+	// InsideADRIFT Summer Comp 2005
+	{ "su05_target",        "Target" },                                                                 //    1st Place
+	{ "su05_lca",           "Lights, Camera, Action!" },                                                //    2nd Place
+	{ "su05_cibass",        "Can It Be All So Simple?" },                                               //    3rd Place
+	{ "su05_mustescape",    "Must Escape!" },                                                           //    4th Place
+	{ "su05_regrets",       "Regrets" },                                                                //    5th Place
+
+	// InsideADRIFT Summer Comp 2006
+	{ "su06_reluctvampire", "The Reluctant Vampire" },                                                  //    1st Place
+	{ "su06_pestilence",    "Pestilence" },                                                             //    2nd Place
+	{ "su06_spooked",       "Spooked!: The Wonders of Science" },                                       //    3rd Place
+
+	// InsideAdrift Summer Comp 2008
+	{ "su08_happyvalley",   "Happy Valley" },                                                           //    1st Place
+	{ "su08_marlin",        "The Marlin Affair: Prologue" },                                            //    2nd Place
+	{ "su08_wolvesdoor",    "Wolves at the Door" },                                                     //    3rd Place
+	{ "su08_huntung",       "Hunting Ground" },                                                         //    4th Place
+	{ "su08_door",          "Door" },                                                                   //    5th Place
+
+	// InsideADRIFT Summer Comp 2010
+	{ "su10_aegis",         "Aegis" },                                                                  //    1st Place
+	{ "su10_camelot",       "Camelot" },                                                                //    2nd Place
+	{ "su10_plunder",       "Pirate's Plunder!" },                                                      //    3rd Place
+	{ "su10_baroo",         "Ba'Roo!" },                                                                //    4th Place
+	{ "su10_lightup",       "Light Up" },                                                               //    5th Place
+	{ "su10_motion",        "Motion" },                                                                 //    6th Place
+
+	// Intro Comp 2005
+	{ "ic05_srs",           "Silk Road Secrets: Samarkand to Lop Nor" },                                //    1st Place
+	{ "ic05_finalquestion", "The Final Question" },                                                     //    2nd Place
+	{ "ic05_murdermansion", "Murder Mansion" },                                                         //    3rd Place
+	{ "ic05_zacksmackfoot", "Zack Smackfoot" },                                                         //    4th Place
+	{ "ic05_outline",       "Outline" },                                                                //    5th Place
+	{ "ic05_escape",        "Must Escape!" },                                                           //    6th Place
+	{ "ic05_rift",          "Rift" },                                                                   //    7th Place
+	{ "ic05_p2p",           "Point 2 Point" },                                                          //    8th Place
+
+	// Intro Comp 2009
+	{ "ic09_apokalupsis",   "Apokalupsis" },                                                            //    1st Place
+	{ "ic09_dbaa",          "Dung Beetles Are Aliens" },                                                //    2nd Place
+	{ "ic09_throughtime",   "Through Time" },                                                           //    4th Place
+	{ "ic09_existence",     "Existence" },                                                              //    5th Place
+	{ "ic09_teaw",          "To End All Wars" },                                                        //    5th Place
+	{ "ic09_donuts",        "Donuts" },                                                                 //    7th Place
+	{ "ic09_yoncastle",     "Ye Intro for Yon Astounding Castle! of Some Sort" },                       //    8th Place
+	{ "ic09_dishduty",      "Dish Duty" },                                                              //    9th Place
+	{ "ic09_deadrace",      "Dead Race" },                                                              //   10th Place
+	{ "ic09_merlinbrdprey", "The Merlin Bird of Prey" },                                                //   11th Place
+
+	// Mini-Comp 2003
+	{ "mc03_neighbours",    "Neighbours From Hell" },                                                   //    1st Place
+	{ "mc03_thorn",         "The Thorn" },                                                              //    2nd Place
+	{ "mc03_diarystrip",    "Diary of a Stripper" },                                                    //    3rd Place
+	{ "mc03_monsters",      "Monsters" },                                                               //    4th Place
 
 	// No Name Competition
-	{ "noncpiecesofeden",   "Pieces of Eden" },
-	{ "noncbeanstalk",      "Beanstalk the and Jack" },
-	{ "noncperfectspy",     "The Perfect Spy" },
+	{ "non_beanstalk",      "Beanstalk the and Jack" },                                                 //       Winner
+	{ "non_piecesofeden",   "Pieces of Eden" },                                                         //      Entrant
+	{ "non_perfectspy",     "The Perfect Spy" },                                                        //      Entrant
 
-	// P⁄o Prune's Finish the Game Comp 2005
-	{ "ftgcshadowjack",     "Jack of Shadows" },
-	{ "ftgctakeone",        "Take One" },
-	{ "ftgcdemonhunter",    "The Demon Hunter" },
-	{ "ftgcpathwayadrift",  "Pathway to Destruction" },
-	{ "ftgcshadow",         "Shadow of the Past" },
-	{ "ftgchunter",         "The Hunter" },
+	// One Room Comp 2003
+	{ "1r_deadman",         "The Dead Man" },                                                           //    1st Place
+	{ "1r_dayattheoffice",  "A Day at the Office" },                                                    //    2nd Place
+	{ "1r_msmobius",        "Montahue Scott and the Mobius Belt" },                                     //    3rd Place
+	{ "1r_insanity",        "Escape from Insanity" },                                                   //    4th Place
+	{ "1r_everything",      "Everything Emanuelle" },                                                   //    5th Place
+	{ "1r_iadrift",         "I" },                                                                      //    6th Place
+	{ "1r_trappedgirl",     "Trapped with a Girl" },                                                    //    7th Place
+	{ "1r_dreamland",       "Dreamland" },                                                              //    8th Place
 
-	// P/o Prune's Mini Comp 2021
-	{ "prmcdiffipuzzle",    "A Difficult Puzzle" },
-	{ "prmcillumina",       "Illumina" },
-	{ "prmcquestgiver",     "Quest Giver" },
-	{ "prmcthegardenparty", "The Garden Party" },
+	// P/o Prune's Mini Comp
+	{ "mc_diffipuzzle",     "A Difficult Puzzle" },                                                     //    1st Place
+	{ "mc_gardenparty",     "The Garden Party" },                                                       //    2nd Place
+	{ "mc_illumina",        "Illumina" },                                                               //    3rd Place
+	{ "mc_questgiver",      "Quest Giver" },                                                            //    4th Place
 
-	// P/o Prune's Spring Ting 2009
-	{ "prsthomelesslarry",  "Homeless Harry" },
-	{ "prstmrfluffy",       "Mr. Fluffykin’s Most Harrowing Misadventure" },
-	{ "prstreactor",        "ESS Chance: Reactor 1" },
-	{ "prstsandy",          "Sandy’s Lost Doll" },
+	// Spring Ting 2009
+	{ "st09_reactor",       "ESS Chance: Reactor 1" },                                                  //    1st Place
+	{ "st09_mrfluffy",      "Mr. Fluffykin’s Most Harrowing Misadventure" },                            //    2nd Place
+	{ "st09_sandy",         "Sandy’s Lost Doll" },                                                      //    3rd Place
+	{ "st09_homelesslarry", "Homeless Harry" },                                                         //    4th Place
 
-	// P/o Prune's Spring Ting 2010
-	{ "prstwghn",           "Wes Garden's Halting Nightmare" },
-	{ "prstegghunt",        "Easter Egg Hunt" },
+	// Spring Ting 2010
+	{ "st10_wghn",          "Wes Garden's Halting Nightmare" },                                         //    1st Place
+	{ "st10_egghunt",       "Easter Egg Hunt" },                                                        //    2nd Place
 
-	// P/o Prune's Twin Competition
-	{ "prtcmelancholy",     "Melancholy Blood: Act 1" },
-	{ "prtccrashland",      "Crashland" },
+	// The Challenge Comp 2011
+	{ "chg_mangiasour",     "Mangiasaur" },                                                             //    1st Place
+	{ "chg_suburban",       "Surburban Prodigy" },                                                      //    2nd Place
+	{ "chg_whitterscap",    "Whitterscap's Key" },                                                      //    3rd Place
 
-	// Poodle's One Room Competition
-	{ "porcdeadman",        "The Dead Man" },
-	{ "porcdreamland",      "Dreamland" },
-	{ "porceverything",     "Everything Emanuelle" },
-	{ "porciadrift",        "I" },
-	{ "porcinsanity",       "Escape from Insanity" },
-	{ "porcmsmobius",       "Montahue Scott and the Mobius Belt" },
-	{ "porcdayattheoffice", "A Day at the Office" },
-	{ "porctrappedgirl",    "Trapped with a Girl" },
+	// The Odd Competition 2008
+	{ "odd_witchtale",      "A Witch Tale" },                                                           //    1st Place
+	{ "odd_iamlaw",         "I Am the Law" },                                                           //    2nd Place
+	{ "odd_yakshaving",     "Yak Shaving for Kicks and Giggles!" },                                     //    3rd Place
+	{ "odd_retforesthouse", "Return to the Forest House" },                                             //    4th Place
+	{ "odd_maincourse",     "Main Course" },                                                            //    5th Place
+	{ "odd_businessusual",  "Business as Usual" },                                                      //    6th Place
+	{ "odd_gorxungula",     "Gorxungula’s Curse" },                                                     //    7th Place
+	{ "odd_human",          "Oh, Human" },                                                              //    8th Place
+	{ "odd_astaftermath",   "Asteroid Aftermath" },                                                     //    9th Place
+	{ "odd_seance",         "Seance" },                                                                 //   10th Place
 
-	// The 'Anyone in the mood for a comp?' Comp
-	{ "tamcalgernon",       "Algernon's Conundrum" },
-	{ "tamcbeagle",         "Beagle" },
+	// Twin Comp 2009
+	{ "tc_crashland",       "Crashland" },                                                              //    1st Place
+	{ "tc_melancholy",      "Melancholy Blood: Act 1" },                                                //    2nd Place
 
-	// The Challenge
-	{ "tchgmangiasour",     "Mangiasaur" },
-	{ "tchgsuburban",       "Surburban Prodigy" },
-	{ "tchgwhitterscap",    "Whitterscap's Key" },
-
-	// The Even Competition
-	{ "tevcattmutaydid",    "Attack of the Mutaydid Meat Monsters" },
-	{ "tevcrain",           "Bringing the Rain" },
-	{ "tevcperspectives",   "Perspectives" },
-
-	// The Odd Competition
-	{ "todcastaftermath",   "Asteroid Aftermath" },
-	{ "todcbusinessusual",  "Business as Usual" },
-	{ "todcgorxungula",     "Gorxungula’s Curse" },
-	{ "todciamlaw",         "I Am the Law" },
-	{ "todcmaincourse",     "Main Course" },
-	{ "todchuman",          "Oh, Human" },
-	{ "todcretforesthouse", "Return to the Forest House" },
-	{ "todcseance",         "Seance" },
-	{ "todcwitchtale",      "A Witch Tale" },
-	{ "todcyakshaving",     "Yak Shaving for Kicks and Giggles!" },
-
-	// The Writing Challenges Comp
-	{ "twccmanoverboard",   "Man Overboard!!!" },
-	{ "twccglumfiddle",     "Glum Fiddle" },
-	{ "twccjgrim",          "Jonathan Grim Space Tourist: Ren" },
-	{ "twcctoomuchexer",    "Too Much Exercise" },
-
-	// Three Hour Games Competition: July 2004
-	{ "3hgjailbreakbob",    "Jailbreak Bob" },
-	{ "3hgbriefcase",       "Briefcase" },
-	{ "3hgannihilofthink",  "Annihilation of Think.com" },
-	{ "3hgshadricktravels", "Shadrick's Travels" },
-	{ "3hglostsouls",       "Lost Souls" },
-	{ "3hgtheamulet",       "The Amulet" },
-	{ "3hgzombiecow",       "Zombie Cow" },
-
-	// Three Hour Games Competition: November 2004
-	{ "3hgsandl",           "Snakes and Ladders" },
-	{ "3hgconfession",      "The Murder of Jack Morely" },
-	{ "3hgveteran",         "Veteran Experience" },
-	{ "3hgburiedalive",     "Buried Alive" },
-	{ "3hgzac",             "Zombies Are Cool, But Not So Cool When They're Eating Your Head" },
-	{ "3hgtogetyou",        "We are coming to get you!" },
+	// Writing Challenges Comp 2006
+	{ "wri_jgrim",          "Jonathan Grim Space Tourist: Ren" },                                       //    1st Place
+	{ "wri_toomuchexer",    "Too Much Exercise" },                                                      //    2nd Place
+	{ "wri_glumfiddle",     "Glum Fiddle" },                                                            //    3rd Place
+	{ "wri_manoverboard",   "Man Overboard!!!" },                                                       //    4th Place
 
 	{ nullptr, nullptr }
 };
@@ -1167,7 +1168,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("cyber1", "b53f7a302edad4d9e2a3310dc1c66e72", 1786),
 	DT_ENTRY0("cyber2", "535c161818ee238e112b1d00bd082b26", 3384),
 	DT_ENTRY0("cybercow", "1ee59ffd44378be75b4b099c06e386a9", 108209),
-	DT_ENTRY1("darkness", "v1.0", "6047363499d5eb666c341139d0eb532a", 24847),
 	DT_ENTRY1("darkness", "v1.2", "cdf8d81b96e1778c810b28be4341918f", 25248),
 	DT_ENTRY1("darkness", "v1.21", "f02a5be2f9a2fd59ef10f3d16157ee27", 25238),
 	DT_ENTRY0("darktower", "6f544f097ce212ab8b33ecfa1cac0ccb", 39485),
@@ -1240,8 +1240,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("faucets", "Demo", "3f2ae204587b9dd7ae97d33c00c72022", 763),
 	DT_ENTRY1("findandy1", "Release 1", "ca1aeba91f2d17dff959f73da8b48f03", 27512645),
 	DT_ENTRY1("findandy1", "Release 2", "5210c86752b788c9bc512cceed3bdab7", 28236489),
-	DT_ENTRY1("finedayforreaping", "v1.0", "9733d9cd4f000b409c171ecb507f1c6b", 96741),
-	DT_ENTRY1("finedayforreaping", "v1.2", "3eb40409db8034e4d2d4ff77e406caba", 96819),
+	DT_ENTRY1("fineday4reap", "v1.0", "9733d9cd4f000b409c171ecb507f1c6b", 96741),
+	DT_ENTRY1("fineday4reap", "v1.2", "3eb40409db8034e4d2d4ff77e406caba", 96819),
 	DT_ENTRY0("first", "a44aac0441648f68a85e1cbaef4c5e53", 12213),
 	DT_ENTRY0("firstarise", "d9d205cb6bcedbd159c826287b71a4e6", 13390),
 	DT_ENTRY0("firstdayadrift", "00e1d28a1357484d3baf7a7e5de0bf9d", 13892),
@@ -1642,7 +1642,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("veteranknowledge", "Release 1", "409d3d59cb767dc8b812e16db78b2e47", 52248),
 	DT_ENTRY1("veteranknowledge", "Release 2", "c2b2b3d07b399f7ef1daf7453de8d704", 197649),
 	DT_ENTRY1("veteranknowledge", "Release 3", "1a1c58aef367f40c8539e74bd3c990ff", 52290),
-	DT_ENTRY0("videotapedecay", "469463ccacba1b7db3a0f95f3c895b1e", 9423),
+	DT_ENTRY0("videotapedec", "469463ccacba1b7db3a0f95f3c895b1e", 9423),
 	DT_ENTRY0("viewhome", "ac6d123e7133c8fb2dd9f60474bd9d61", 9237),
 	DT_ENTRY0("viewisbetter", "9334adc4ccd03ceb1684ee56fdb07ab9", 7720),
 	DT_ENTRY0("volant", "ed8e93c25a77e4f331799dc4647e1e54", 64718),
@@ -1837,11 +1837,11 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("ttp", "059940072c256539fb4ae20340ce6cc2", 72902),
 	DT_ENTRY0("wwiiee", "f16636dee08e361339c724ac6d9b2611", 102152),
 
-	// P/o Prune's Mini Comp 2021
-	DT_ENTRY1("prmcdiffipuzzle", "Competition Release", "315033c146b17ea767ef6d76529065d6", 54700),
-	DT_ENTRY1("prmcillumina", "Competition Release", "3db679c32f240f7dcda0cefe1bd2e7a0", 44262),
-	DT_ENTRY0("prmcquestgiver", "98758b4ba735cf1503a32ad5fad95cce", 1555684),
-	DT_ENTRY1("prmcthegardenparty", "Competition Release", "7176bb8c7b174166ae1c22c6411c6a93", 51770),
+	// P/o Prune's Mini Comp
+	DT_ENTRY1("mc_diffipuzzle", "Competition Release", "315033c146b17ea767ef6d76529065d6", 54700),
+	DT_ENTRY1("mc_gardenparty", "Competition Release", "7176bb8c7b174166ae1c22c6411c6a93", 51770),
+	DT_ENTRY1("mc_illumina", "Competition Release", "3db679c32f240f7dcda0cefe1bd2e7a0", 44262),
+	DT_ENTRY0("mc_questgiver", "98758b4ba735cf1503a32ad5fad95cce", 1555684),
 #endif
 
 	// ADRIFT 5 Intro Comp 2012
@@ -1852,283 +1852,284 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("a5icheadcase", "81cdf1d83cd6f88aafb8ac4d77585fb7", 45980),
 	DT_ENTRY1("a5icaxeofkolt", "Intro", "85bfd8637e8758c36ffd0659448f8087", 71534),
 
-	// ADRIFT Hourglass Comp 2006
-	DT_ENTRY0("ahc3minutes", "0313370bb74005525ec96580f146d286", 13232),
-	DT_ENTRY1("ahcovertheedge", "Competition Release", "d3fcc9f5fd301731610e0b3cd8c9ddd1", 8128),
-	DT_ENTRY0("ahcboiledeggs", "b4cb135ba16c5177c58c7a3f146437e8", 6423),
-	DT_ENTRY0("ahclongbarrow", "b74d914a61421dbc322f3dbc7656eb97", 6211),
-	DT_ENTRY0("ahcpilfers", "fad35bf79453844ef82f0a9b11d5d6e2", 3727),
-	DT_ENTRY1("ahcchooseyourown", "Competition Release 1", "fb9c940b6997e9fe961db910cd7e882c", 10332),
-	DT_ENTRY0("ahcskydiver", "57f0c54ab6e8c87904ebfde9d255d6f9", 7631),
-	DT_ENTRY0("ahcquestforfood", "0618e06900fd5f15b3b18594d98a8090", 4534),
-	DT_ENTRY0("ahcdancing", "eee9f9d60bc1f642fae83f59117a8780", 4578),
-	DT_ENTRY0("ahcrollingdough", "f36ab00d8f64b55569ddd2227f20c6e3", 3919),
-	DT_ENTRY0("ahcsmote", "ef386edce4af4e55152596759cbc8e8c", 1987),
-	DT_ENTRY0("ahcroadnowhere", "4bdc52566f67189ea1239e73c8734435", 7903),
-	DT_ENTRY0("ahcherrdoktor", "7c71715d076ce00cf39043b1c60d3bd4", 4422),
+	// 1st One Hour Comp 2002
+	DT_ENTRY0("1h_endgame", "6036e5654786f841ca59f8f7e95276be", 4063),
+	DT_ENTRY0("1h_frog", "3a8f3a0a6b4efd4787e6d338e4b31cea", 2089),
+	DT_ENTRY0("1h_hauntedhouse", "cff22c2f2af619ac56e075e95385e600", 6541),
+	DT_ENTRY0("1h_jasonvssalm", "70d60774dc777918645d7f3359f534cf", 2947),
+	DT_ENTRY0("1h_1hrgame", "63e9594bf2b4e7cf5bf75dd9cc1353dc", 2978),
+	DT_ENTRY0("1h_microbewillie", "14fe6ac0db4943fc9951610f5d0e0428", 3538),
+	DT_ENTRY0("1h_amonkeytoomany", "c9d719261d0f760f95685899aa80bbf5", 5016),
+	DT_ENTRY0("1h_princess1", "d745a3f2c4dc40fb10f25d1539a2a1e7", 7181),
+	DT_ENTRY0("1h_chicken", "40f0f52f2eeb029516bca3e01e6ceac0", 5249),
 
-	// ADRIFT Intro Comp 2005
-	DT_ENTRY0("aicmurdermansion", "07367e1f546f80e64b44923f474f5906", 6793),
-	DT_ENTRY0("aicoutline", "b86de4feca73e0ea49c324a2181b8b8f", 5724),
-	DT_ENTRY0("aicsrs", "f1243c19976246c2c319fba5be6f9d13", 157833),
-	DT_ENTRY1("aicescape", "Competition Release 1", "c5a13fa9059ebc2904eea95e1c6b790a", 3964),
-	DT_ENTRY0("aicfinalquestion", "1f1ede210336b6b8bd8e28eda2d00e0c", 15555),
-	DT_ENTRY0("aicrift", "b4dc3233be12767837bd596789379473", 2606),
-	DT_ENTRY0("aicp2p", "3b3386f5f0f844c3a9eb47ba2596135a", 6491),
-	DT_ENTRY0("aiczacksmackfoot", "a8d2d303c6e5f698d40714c3d5e241e2", 6374),
+	// 2nd One Hour Comp 2003
+	DT_ENTRY0("1h_forum", "4df8a13d8823aca26207fb459e98dd8b", 9005),
+	DT_ENTRY0("1h_dfu", "e70e0bdfd9ffa0f20c2bc682eeb2f1ab", 16443),
+	DT_ENTRY0("1h_percy", "e995d3a23005914eb92836f141ebe1c4", 5965),
 
-	// ADRIFT Intro Comp 2009
-	DT_ENTRY1("aicexistence", "Intro", "041e134a39146830a389d8dc62206563", 6370),
-	DT_ENTRY1("aicapokalupsis", "Intro", "c3e90bfb8cea957cebbf306add17cd3e", 19822),
-	DT_ENTRY1("aicdbaa", "Competition Release", "e827961c66e95bbc2a0d4645f63f6ec4", 37521),
-	DT_ENTRY1("aicteaw", "Intro", "132d0803e31d70729194a292be93be64", 1235834),
-	DT_ENTRY1("aicmerlinbirdprey", "Intro", "2e64695a67e1b4ffc0fc379d3f5a4e4d", 3842),
-	DT_ENTRY1("aicdeadrace", "Intro", "b62ec01f511e761d65ab637de7dda0f2", 5311),
-	DT_ENTRY1("aicdishduty", "Intro", "263db72fe0be3fb494aa2566fd7e38b5", 5753),
-	DT_ENTRY1("aicyoncastle", "Intro", "6dd95cdc736ffab10a08e39cd9069356", 9814),
-	DT_ENTRY1("aicthroughtime", "Intro", "181706abbfc03745d1ddc9b788638b9a", 42109),
-	DT_ENTRY1("aicdonuts", "Intro", "55d52c6cd6a42dcb424ff3888e7aa88b", 5201),
+	// 3rd One Hour Comp 2003
+	DT_ENTRY1("1h_demonhunter", "Competition Release", "ca37aaf35fb15a40a7f5f8caa1475112", 4169),
+	DT_ENTRY0("1h_shore", "ef0b6074e47f55b7dff868e5dbd0c0cf", 4354),
+	DT_ENTRY0("1h_imagination", "91923aeec3b7a8c55a15bc6dd240f7fb", 3257),
+	DT_ENTRY0("1h_ticktick", "5b952d75e3e46a71334419c78dc6ff51", 2055),
+	DT_ENTRY0("1h_forum2", "5a534ac4e39a319022d145094c46930a", 11185),
+	DT_ENTRY0("1h_saffire", "d3eb89cf10d11a42df2df8f7bdb1505a", 7489),
+	DT_ENTRY0("1h_cbn1", "9e27ab68a1f37f5f7591b362c4888526", 7577),
+	DT_ENTRY0("1h_cbn2", "983eacedabebf7bbd8fed72ed399bba4", 6137),
+	DT_ENTRY0("1h_ecod2", "ff55438090db248964fd8944f3a2da9f", 17584),
+	DT_ENTRY1("1h_asdfa", "Competition Release", "fccb2fb890d554263d5f55bc02220ab8", 6440),
+	DT_ENTRY1("1h_crm", "Competition Release", "d97d1ff8f01a61fb477b76df65c77795", 15432),
+	DT_ENTRY0("1h_pyramid", "a198f4ca146fed3094bf5fd70d2eefdd", 1953),
+	DT_ENTRY0("1h_questi", "c7d6058e8172ff5d4a974fe159aa9cb7", 2544),
 
-	// ADRIFT Mini-Competition Summer 2003
-	DT_ENTRY0("amcthorn", "0d02030e9ac6563cda759a20ae1fc06b", 13887),
-	DT_ENTRY1("amcneighbours", "Competition Release", "afdf85651706a4568762565b2c24aa8d", 13333),
-	DT_ENTRY1("amcmonsters", "Competition Release", "02a042f7277dfc9789bd6ffee1e8db08", 9628),
-	DT_ENTRY0("amcdiarystrip", "0e04238a2b49220c284ce9c8723abd77", 43334),
+	// 4th One Hour Comp 2004
+	DT_ENTRY1("1h_vagabond", "Competition Release", "ae8545f6506fe3a49e27c96721196dce", 4762),
+	DT_ENTRY0("1h_arghgreatescape", "0de27ef52495de415637d78e393c612f", 3608),
+	DT_ENTRY0("1h_topaz", "7d4beb159bf3876f761bbac911395d05", 4839),
+	DT_ENTRY0("1h_goblinhunt", "5e36c63feebf77cfba30757042a9fafa", 10891),
+	DT_ENTRY0("1h_wreckage", "822b988245ff40c6f490edc046921fcf", 4487),
+	DT_ENTRY0("1h_ecod3", "bd783057274a626868b052915bad2a2c", 10870),
+	DT_ENTRY1("1h_trabula", "Competition Release", "54fd39f8d86b4e1726970073342057da", 2224),
+	DT_ENTRY1("1h_agent4f", "Competition Release", "407cc79b128aefdae4fdabb4d7a661e4", 3703),
+	DT_ENTRY0("1h_cah", "1945c5584b775b22c9b329915629eb44", 9808),
+	DT_ENTRY0("1h_thecatinthetree", "f67640c2ed3b621272ebbea06a5fd467", 6174),
+	DT_ENTRY1("1h_adriftmaze", "Competition Release", "017d681d45402c2d75ae70c28d2b467f", 2224),
+	DT_ENTRY0("1h_undefined", "cf5172b53c8e3ef3a8739a31b78cccc2", 2920),
+	DT_ENTRY1("1h_woof", "Competition Release", "f66cbdcf9f7c6a3b30b0c7ca95bdea46", 1712),
+	DT_ENTRY1("1h_icecream", "Competition Release", "f68b7ec0959459cd1ee3c741660010c6", 5039),
+	DT_ENTRY1("1h_shreddem", "Competition Release", "426885b0a8a9aade134307fad1693512", 1209),
+	DT_ENTRY0("1h_spam", "2ffc74d57936add0cdc06d83924f0f15", 2807),
 
-	// ADRIFT One-Hour Game Competition 1
-	DT_ENTRY0("1hgprincess1", "d745a3f2c4dc40fb10f25d1539a2a1e7", 7181),
-	DT_ENTRY0("1hg1hrgame", "63e9594bf2b4e7cf5bf75dd9cc1353dc", 2978),
-	DT_ENTRY0("1hgendgame", "6036e5654786f841ca59f8f7e95276be", 4063),
-	DT_ENTRY0("1hgchicken", "40f0f52f2eeb029516bca3e01e6ceac0", 5249),
-	DT_ENTRY0("1hghauntedhouse", "cff22c2f2af619ac56e075e95385e600", 6541),
-	DT_ENTRY0("1hgfrog", "3a8f3a0a6b4efd4787e6d338e4b31cea", 2089),
-	DT_ENTRY0("1hgmicrobewillie", "14fe6ac0db4943fc9951610f5d0e0428", 3538),
-	DT_ENTRY0("1hgjasonvssalm", "70d60774dc777918645d7f3359f534cf", 2947),
-	DT_ENTRY0("1hgamonkeytoomany", "c9d719261d0f760f95685899aa80bbf5", 5016),
+	// 1st Three Hour Comp 2004
+	DT_ENTRY0("3h_briefcase", "f1c899773faf027d9cbb50078a6667c3", 10872),
+	DT_ENTRY0("3h_jailbreakbob", "c2e909cf2ddda863d2eb613c8273ee37", 31064),
+	DT_ENTRY0("3h_zombiecow", "f0fe890f9679b158f9a22ed9f78179e6", 5193),
+	DT_ENTRY0("3h_lostsouls", "3083e21a3bd6766ea5fdf3166e8bd4d8", 16695),
+	DT_ENTRY0("3h_theamulet", "7c08e1f03763ad757dc39f5df37a28b7", 5585),
+	DT_ENTRY0("3h_shadricktravels", "33036e2b4c11a36d28e6532051e9f05b", 7456),
+	DT_ENTRY0("3h_annihilofthink", "22743eceafe94bf60ab5a3e43241883e", 6303),
 
-	// ADRIFT One-Hour Game Competition 2
-	DT_ENTRY0("1hgpercy", "e995d3a23005914eb92836f141ebe1c4", 5965),
-	DT_ENTRY0("1hgforum", "4df8a13d8823aca26207fb459e98dd8b", 9005),
-	DT_ENTRY0("1hgdfu", "e70e0bdfd9ffa0f20c2bc682eeb2f1ab", 16443),
+	// 2nd Three Hour Comp 2004
+	DT_ENTRY0("3h_buriedalive", "9e9a71babf3012461205dc7aa2cd2a3f", 11808),
+	DT_ENTRY0("3h_veteran", "65d5fc95b59f24e0e4997f62bf592ba3", 12043),
+	DT_ENTRY0("3h_togetyou", "388b5596945067ed3b92e6282e670825", 4496),
+	DT_ENTRY1("3h_confession", "Competition Release", "718faa6f6e72fcd4b95ebcb1601be7bd", 203757),
+	DT_ENTRY0("3h_sandl", "73a1e0b4451690e76d306136ec30754b", 27995),
+	DT_ENTRY1("3h_zac", "Competition Release", "85d95b8a6a962222d15724d42740f378", 13692),
 
-	// ADRIFT One-Hour Game Competition 3
-	DT_ENTRY0("1hgforum2", "5a534ac4e39a319022d145094c46930a", 11185),
-	DT_ENTRY1("1hgcrm", "Competition Release", "d97d1ff8f01a61fb477b76df65c77795", 15432),
-	DT_ENTRY1("1hgasdfa", "Competition Release", "fccb2fb890d554263d5f55bc02220ab8", 6440),
-	DT_ENTRY1("1hgdemonhunter", "Competition Release", "ca37aaf35fb15a40a7f5f8caa1475112", 4169),
-	DT_ENTRY0("1hgcbn1", "9e27ab68a1f37f5f7591b362c4888526", 7577),
-	DT_ENTRY0("1hgcbn2", "983eacedabebf7bbd8fed72ed399bba4", 6137),
-	DT_ENTRY0("1hgticktick", "5b952d75e3e46a71334419c78dc6ff51", 2055),
-	DT_ENTRY0("1hgpyramid", "a198f4ca146fed3094bf5fd70d2eefdd", 1953),
-	DT_ENTRY0("1hgquesti", "c7d6058e8172ff5d4a974fe159aa9cb7", 2544),
-	DT_ENTRY0("1hgshore", "ef0b6074e47f55b7dff868e5dbd0c0cf", 4354),
-	DT_ENTRY0("1hgsaffire", "d3eb89cf10d11a42df2df8f7bdb1505a", 7489),
-	DT_ENTRY0("1hgecod2", "ff55438090db248964fd8944f3a2da9f", 17584),
-	DT_ENTRY0("1hgimagination", "91923aeec3b7a8c55a15bc6dd240f7fb", 3257),
-
-	// ADRIFT One-Hour Game Competition 4
-	DT_ENTRY0("1hgcah", "1945c5584b775b22c9b329915629eb44", 9808),
-	DT_ENTRY0("1hgarghgreatescape", "0de27ef52495de415637d78e393c612f", 3608),
-	DT_ENTRY1("1hgshreddem", "Competition Release", "426885b0a8a9aade134307fad1693512", 1209),
-	DT_ENTRY1("1hgagent4f", "Competition Release", "407cc79b128aefdae4fdabb4d7a661e4", 3703),
-	DT_ENTRY0("1hgecod3", "bd783057274a626868b052915bad2a2c", 10870),
-	DT_ENTRY1("1hgtrabula", "Competition Release", "54fd39f8d86b4e1726970073342057da", 2224),
-	DT_ENTRY1("1hgwoof", "Competition Release", "f66cbdcf9f7c6a3b30b0c7ca95bdea46", 1712),
-	DT_ENTRY0("1hgundefined", "cf5172b53c8e3ef3a8739a31b78cccc2", 2920),
-	DT_ENTRY1("1hgadriftmaze", "Competition Release", "017d681d45402c2d75ae70c28d2b467f", 2224),
-	DT_ENTRY1("1hgicecream", "Competition Release", "f68b7ec0959459cd1ee3c741660010c6", 5039),
-	DT_ENTRY0("1hgwreckage", "822b988245ff40c6f490edc046921fcf", 4487),
-	DT_ENTRY0("1hgspam", "2ffc74d57936add0cdc06d83924f0f15", 2807),
-	DT_ENTRY1("1hgvagabond", "Competition Release", "ae8545f6506fe3a49e27c96721196dce", 4762),
-	DT_ENTRY0("1hgthecatinthetree", "f67640c2ed3b621272ebbea06a5fd467", 6174),
-	DT_ENTRY0("1hgtopaz", "7d4beb159bf3876f761bbac911395d05", 4839),
-	DT_ENTRY0("1hggoblinhunt", "5e36c63feebf77cfba30757042a9fafa", 10891),
+	// Anyone in the mood for a comp?
+	DT_ENTRY0("moo_algernon", "7dcf06245873bb65bf56bfca08086ff0", 31280),
+	DT_ENTRY1("moo_beagle", "Competition Release", "6d5235a68aba891442a9da5ffb4f96a3", 25368),
 
 	// Ectocomp 2007
-	DT_ENTRY1("ectcvideotapedecay", "Competition Release", "658e9dbe38364219b6a530332f2ed183", 10173),
-	DT_ENTRY1("ectcforesthouse", "Competition Release", "423fede762b0bfc1cb1547edce5d4aed", 8965),
-	DT_ENTRY0("ectcstowie", "73322467bf8e29c9ea7745a095c9091e", 3785),
-	DT_ENTRY0("ectcwitness", "fce8f16deac176ee958cdcf0c5964df6", 3849),
+	DT_ENTRY1("ec07_videotapedec", "Competition Release", "658e9dbe38364219b6a530332f2ed183", 10173),
+	DT_ENTRY0("ec07_witness", "fce8f16deac176ee958cdcf0c5964df6", 3849),
+	DT_ENTRY0("ec07_stowie", "73322467bf8e29c9ea7745a095c9091e", 3785),
+	DT_ENTRY1("ec07_foresthouse", "Competition Release", "423fede762b0bfc1cb1547edce5d4aed", 8965),
 
 	// Ectocomp 2008
-	DT_ENTRY0("ectcforesthouse3", "a4992f8debcd083c3d5489e2243d6929", 13492),
-	DT_ENTRY0("ectcdrinks", "855589bf11df411d6943bcdd0718ef4b", 8458),
-	DT_ENTRY0("ectchiker", "55b1ebfd0d37dc855fe4180cf45de0c4", 4401),
-	DT_ENTRY0("ectcsalutations", "c7d16f4fa626346256e08a0ac6617b4d", 5591),
-	DT_ENTRY0("ectcblast", "ff101cb5b9a29701e1c9b0e8e42dfb85", 3447),
-	DT_ENTRY0("ectcr2dc", "647af322abede732259866d91dd5ad4c", 8861),
-	DT_ENTRY0("ectcdelsol", "ab2a1d114782f8bc2b4da5d1b56f8de7", 6552),
+	DT_ENTRY0("ec08_drinks", "855589bf11df411d6943bcdd0718ef4b", 8458),
+	DT_ENTRY0("ec08_r2dc", "647af322abede732259866d91dd5ad4c", 8861),
+	DT_ENTRY0("ec08_foresthouse3", "a4992f8debcd083c3d5489e2243d6929", 13492),
+	DT_ENTRY0("ec08_salutations", "c7d16f4fa626346256e08a0ac6617b4d", 5591),
+	DT_ENTRY0("ec08_hiker", "55b1ebfd0d37dc855fe4180cf45de0c4", 4401),
+	DT_ENTRY0("ec08_blast", "ff101cb5b9a29701e1c9b0e8e42dfb85", 3447),
+	DT_ENTRY0("ec08_delsol", "ab2a1d114782f8bc2b4da5d1b56f8de7", 6552),
 
 	// Ectocomp 2009
-	DT_ENTRY1("ectcdrivingatnight", "Competition Release", "a66f03afba88b6ece716201319bda621", 7505),
-	DT_ENTRY0("ectcpatient7", "a9417623fdeb4370f25f7849968bdeb3", 15502),
-	DT_ENTRY0("ectcwayout", "75c96f7fdf26104992db0a5b754637f1", 4598),
+	DT_ENTRY1("ec09_drivingnight", "Competition Release", "a66f03afba88b6ece716201319bda621", 7505),
+	DT_ENTRY0("ec09_patient7", "a9417623fdeb4370f25f7849968bdeb3", 15502),
+	DT_ENTRY0("ec09_wayout", "75c96f7fdf26104992db0a5b754637f1", 4598),
 
 	// Ectocomp 2010
-	DT_ENTRY0("ectcpetespunkin", "98dbc751d01eb51b0a3fda3562c6960d", 8512),
-	DT_ENTRY0("ectcrenegadebw", "6ba674cb8f8c531d66c9b22c446bea2d", 8346),
-	DT_ENTRY0("ectchelsing", "9c06145372e7128bc8ce9ca6f2ef97da", 9776),
-	DT_ENTRY0("ectciwasteenage", "d5890b294eb82890e3fdfa979cd8aa7b", 6521),
-	DT_ENTRY0("ectcthevault", "8cd76c2b9278f37b98666317a823c44d", 4258),
-	DT_ENTRY0("ectcflyhuman", "06e4371bf939531f0bb91dcaaa08c88a", 4743),
-	DT_ENTRY0("ectcallhallows", "941fb55e949f3272a089ea69a6ddba8d", 6707),
-	DT_ENTRY0("ectctenebraesemper", "f0db9c56ba0c50fad1b1baaedf156771", 9757),
+	DT_ENTRY0("ec10_petespunkin", "98dbc751d01eb51b0a3fda3562c6960d", 8512),
+	DT_ENTRY0("ec10_renegadebw", "6ba674cb8f8c531d66c9b22c446bea2d", 8346),
+	DT_ENTRY0("ec10_helsing", "9c06145372e7128bc8ce9ca6f2ef97da", 9776),
+	DT_ENTRY0("ec10_iwasteenage", "d5890b294eb82890e3fdfa979cd8aa7b", 6521),
+	DT_ENTRY0("ec10_thevault", "8cd76c2b9278f37b98666317a823c44d", 4258),
+	DT_ENTRY0("ec10_flyhuman", "06e4371bf939531f0bb91dcaaa08c88a", 4743),
+	DT_ENTRY0("ec10_allhallows", "941fb55e949f3272a089ea69a6ddba8d", 6707),
+	DT_ENTRY0("ec10_tenebrasemper", "f0db9c56ba0c50fad1b1baaedf156771", 9757),
 
 	// Ectocomp 2011
-	DT_ENTRY0("ectcattacklobster", "e4fdf252cfa05e672ffaeb806e9d6c0c", 7186),
-	DT_ENTRY0("ectcdeathshack", "b7073278da4b3980b7ccc01a4f865f82", 17858),
-	DT_ENTRY0("ectcignisfatuus", "0414d55fc3984c158804575044809c48", 20575),
-	DT_ENTRY0("ectcthehouse", "338d24e1cabc2c398927599dc89dd986", 21925),
-	DT_ENTRY0("ectcstuckpiggy", "bf6d5cd1b5a3865ff610110459d3104f", 18506),
+	DT_ENTRY0("ec11_attacklobster", "e4fdf252cfa05e672ffaeb806e9d6c0c", 7186),
+	DT_ENTRY0("ec11_deathshack", "b7073278da4b3980b7ccc01a4f865f82", 17858),
+	DT_ENTRY0("ec11_ignisfatuus", "0414d55fc3984c158804575044809c48", 20575),
+	DT_ENTRY0("ec11_thehouse", "338d24e1cabc2c398927599dc89dd986", 21925),
+	DT_ENTRY0("ec11_stuckpiggy", "bf6d5cd1b5a3865ff610110459d3104f", 18506),
 
-	// Game of the Year Competition: December 2004
-	DT_ENTRY1("goyshardsofmemory", "Competition Release 1", "7e9cb5002fa22a25000b3478c826413d", 118610),
-	DT_ENTRY1("goypaint", "Competition Release", "1183921d034d3614ec277e18d9112b69", 76493),
-	DT_ENTRY0("goydragonshrine", "604250027cfd8cfd1fb0d231085e40e5", 636932),
-	DT_ENTRY0("goydarkness", "6047363499d5eb666c341139d0eb532a", 24847),
-	DT_ENTRY1("goywaxworx", "Competition Release 1", "94aaf6625541238867b079bfe475f146", 38471),
+	// Even Comp 2009
+	DT_ENTRY0("ec_attmutaydid", "23c47fd2ff2a06e05e7ae7ba028ce090", 513587),
+	DT_ENTRY0("ec_rain", "9f19f6c2637867be0bfce484b2daee8f", 10512),
+	DT_ENTRY0("ec_perspectives", "c1fdcd8c811a892186c7d7ca6e070f44", 8043),
 
-	// Game of the Year Competition 2007
-	DT_ENTRY1("goymarika", "Competition Release", "d7694ac50de852126fadc7cc73dffd76", 29625),
-	DT_ENTRY1("goyrking", "Competition Release", "2c9ede2cb9a50f7274bed28c9d9bc5f7", 186477),
-	DT_ENTRY1("goyvideotapedecay", "Competition Release", "658e9dbe38364219b6a530332f2ed183", 10173),
-	DT_ENTRY0("goyterrified", "38697e087d267c4ea0d6c607ce463847", 10488),
-	DT_ENTRY1("goyfineday4reaping", "Competition Release", "ff47d5fa749d52e18c1d488b83d1d45e", 96834),
-	DT_ENTRY1("goypuzzlebox", "Competition Release", "0adbb7f9a7c37819e1a695468001acaa", 19540),
+	// Finish the Game Comp 2005
+	DT_ENTRY1("ftg_pathwayadrift", "Competition Release", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
+	DT_ENTRY0("ftg_takeone", "114caad9308b7adf9e15267a11f12632", 9547),
+	DT_ENTRY1("ftg_demonhunter", "Competition Release", "2af5b32810e6960881122732f48d3ccf", 18644),
+	DT_ENTRY0("ftg_hunter", "d7af67a0753910bf32ec233e538ad659", 23531),
+	DT_ENTRY0("ftg_shadow", "f4d0a427ebec3a4c3b7029adaa3e401f", 272030),
+	DT_ENTRY0("ftg_shadowjack", "25f33d23e126ea0a86ed55833dbba8ef", 11606),
 
-	// InsideADRIFT Spring Competition 2004
-	DT_ENTRY1("iadcshardsofmemory", "Competition Release 2", "9b75834354aed4b148d4ec2b8cdd66ae", 118604),
-	DT_ENTRY0("iadcdragonshrine", "604250027cfd8cfd1fb0d231085e40e5", 636932),
-	DT_ENTRY1("iadcwaxworx", "Competition Release 2", "4fa14c7944506f4e0142cb865738d0b0", 37542),
-	DT_ENTRY1("iadcsommeril", "Competition Release", "9e8ee4cbd4ecab3ab51c702f4e0277e1", 400940),
+	// Hourglass Comp 2006
+	DT_ENTRY0("hc_longbarrow", "b74d914a61421dbc322f3dbc7656eb97", 6211),
+	DT_ENTRY0("hc_questforfood", "0618e06900fd5f15b3b18594d98a8090", 4534),
+	DT_ENTRY0("hc_herrdoktor", "7c71715d076ce00cf39043b1c60d3bd4", 4422),
+	DT_ENTRY0("hc_3minutes", "0313370bb74005525ec96580f146d286", 13232),
+	DT_ENTRY0("hc_smote", "ef386edce4af4e55152596759cbc8e8c", 1987),
+	DT_ENTRY0("hc_dancing", "eee9f9d60bc1f642fae83f59117a8780", 4578),
+	DT_ENTRY0("hc_boiledeggs", "b4cb135ba16c5177c58c7a3f146437e8", 6423),
+	DT_ENTRY1("hc_chooseyourown", "Competition Release 1", "fb9c940b6997e9fe961db910cd7e882c", 10332),
+	DT_ENTRY0("hc_rollingdough", "f36ab00d8f64b55569ddd2227f20c6e3", 3919),
+	DT_ENTRY0("hc_roadnowhere", "4bdc52566f67189ea1239e73c8734435", 7903),
+	DT_ENTRY1("hc_overtheedge", "Competition Release", "d3fcc9f5fd301731610e0b3cd8c9ddd1", 8128),
+	DT_ENTRY0("hc_skydiver", "57f0c54ab6e8c87904ebfde9d255d6f9", 7631),
+	DT_ENTRY0("hc_pilfers", "fad35bf79453844ef82f0a9b11d5d6e2", 3727),
 
-	// InsideADRIFT Summer Competition 2004
-	DT_ENTRY1("iadcchooseyourown", "Competition Release 2", "774ae5ba4fea61da0898069df4ed1c81", 54869),
-	DT_ENTRY0("iadcdarkhavenmyst", "1027e9e3dba08e0fd2796e0e934be855", 27826),
-	DT_ENTRY0("iadcshadrickundgrd", "a9e1e59b37976c6c0fcc6aee69978afe", 113385),
-	DT_ENTRY1("iadcticket2nowhere", "Competition Release", "a69b0fa1b33d8e0ab6504d37615e6a3c", 65083),
-	DT_ENTRY1("iadctearstoughman", "Competition Release", "b440d0b4b18a93537803750f31e838b7", 9436),
-	DT_ENTRY0("iadcadriftproject", "18a4db8af27fd98751504ee3e45089e3", 231594),
+	// InsideADRIFT Game of the Year Comp 2004
+	DT_ENTRY1("goy_paint", "Competition Release", "1183921d034d3614ec277e18d9112b69", 76493),
+	DT_ENTRY1("goy_shardsmemory", "Competition Release 1", "7e9cb5002fa22a25000b3478c826413d", 118610),
+	DT_ENTRY1("goy_waxworx", "Competition Release 1", "94aaf6625541238867b079bfe475f146", 38471),
+	DT_ENTRY0("goy_shadrikundgrd", "a9e1e59b37976c6c0fcc6aee69978afe", 113385),
+	DT_ENTRY0("goy_dragonshrine", "604250027cfd8cfd1fb0d231085e40e5", 636932),
+	DT_ENTRY0("goy_darkness", "6047363499d5eb666c341139d0eb532a", 24847),
 
-	// InsideADRIFT Spring Competition 2005
-	DT_ENTRY0("iadcseaside", "271c64455f4abb3dee35c3902e5cdfc1", 279480),
-	DT_ENTRY1("iadcfrustrated", "Competition Release", "1c218d4fcbbfa11271fb4d0003df7a6a", 210267),
-	DT_ENTRY0("iadchub", "c3224b3d6c55997056ea195ba4ebb60a", 24610),
-	DT_ENTRY0("iadcprivateeye", "3076b9f11acf2b1e377a31cd1a11c323", 236323),
-	DT_ENTRY1("iadcblood", "Competition Release", "775404faa0d7973c1df537bd423a45d3", 100201),
+	// InsideADRIFT Game of the Year Comp 2007
+	DT_ENTRY1("goy_fineday4reap", "Competition Release", "ff47d5fa749d52e18c1d488b83d1d45e", 96834),
+	DT_ENTRY1("goy_rking", "Competition Release", "2c9ede2cb9a50f7274bed28c9d9bc5f7", 186477),
+	DT_ENTRY1("goy_marika", "Competition Release", "d7694ac50de852126fadc7cc73dffd76", 29625),
+	DT_ENTRY1("goy_puzzlebox", "Competition Release", "0adbb7f9a7c37819e1a695468001acaa", 19540),
+	DT_ENTRY1("goy_videotapedec", "Competition Release", "658e9dbe38364219b6a530332f2ed183", 10173),
+	DT_ENTRY0("goy_terrified", "38697e087d267c4ea0d6c607ce463847", 10488),
 
-	// InsideADRIFT Summer Competition 2005
-	DT_ENTRY0("iadccibass", "7c2e95feb2e2debbbb0c343c1a920f6f", 21705),
-	DT_ENTRY1("iadcmustescape", "Competition Release 2", "3de7c345c6f1dc26712b4ce6fa365830", 17472),
-	DT_ENTRY1("iadclca", "Competition Release", "cebe4af96402a18915f15205e52c7415", 124774),
-	DT_ENTRY0("iadcregrets", "5b1a5763226b0f489e1d0760be59ccf4", 10448),
-	DT_ENTRY1("iadctarget", "Competition Release", "ea12656119b5522156539dd1da23866b", 42999),
+	// InsideADRIFT Spring Comp 2004
+	DT_ENTRY1("sp04_shardsmemory", "Competition Release 2", "9b75834354aed4b148d4ec2b8cdd66ae", 118604),
+	DT_ENTRY0("sp04_dragonshrine", "604250027cfd8cfd1fb0d231085e40e5", 636932),
+	DT_ENTRY1("sp04_waxworx", "Competition Release 2", "4fa14c7944506f4e0142cb865738d0b0", 37542),
+	DT_ENTRY1("sp04_sommeril", "Competition Release", "9e8ee4cbd4ecab3ab51c702f4e0277e1", 400940),
 
-	// InsideADRIFT Summer Competition 2006
-	DT_ENTRY0("iadcpestilence", "2d5ff3fe2d866150689749087d5cee3d", 29021),
-	DT_ENTRY0("iadcreluctantvampire", "619d031556cdff0805e599d6a82caa1d", 199575),
-	DT_ENTRY1("iadcspooked", "Competition Release", "642ff47378f398ca97e9238dddea3914", 9908),
+	// InsideADRIFT Summer Comp 2004
+	DT_ENTRY1("su04_chooseyourown", "Competition Release 2", "774ae5ba4fea61da0898069df4ed1c81", 54869),
+	DT_ENTRY0("su04_shadrikundgrd", "a9e1e59b37976c6c0fcc6aee69978afe", 113385),
+	DT_ENTRY0("su04_darkhavenmyst", "1027e9e3dba08e0fd2796e0e934be855", 27826),
+	DT_ENTRY0("su04_adriftproject", "18a4db8af27fd98751504ee3e45089e3", 231594),
+	DT_ENTRY1("su04_tick2nowhere", "Competition Release", "a69b0fa1b33d8e0ab6504d37615e6a3c", 65083),
+	DT_ENTRY1("su04_tearstoughman", "Competition Release", "b440d0b4b18a93537803750f31e838b7", 9436),
 
-	// InsideAdrift Summer Competition 2008
-	DT_ENTRY0("iadcdoor", "696b2c0579a2c66afc5be808e54e4847", 6363),
-	DT_ENTRY0("iadcwolvesdoor", "2341592c42f93f12033f8a309fc11386", 19126),
-	DT_ENTRY0("iadchappyvalley", "375b217ae661e4ce192b0ea3756a01b6", 24938),
-	DT_ENTRY0("iadcmarlin", "15627cddf3b2a30393397d4faf2f6df8", 13192),
-	DT_ENTRY1("iadchuntung", "Competition Release", "e3fe91ea00f762fbc78f5297e240f59f", 42578),
+	// InsideADRIFT Spring Comp 2005
+	DT_ENTRY1("sp05_blood", "Competition Release", "775404faa0d7973c1df537bd423a45d3", 100201),
+	DT_ENTRY1("sp05_frustrated", "Competition Release", "1c218d4fcbbfa11271fb4d0003df7a6a", 210267),
+	DT_ENTRY0("sp05_privateeye", "3076b9f11acf2b1e377a31cd1a11c323", 236323),
+	DT_ENTRY0("sp05_seaside", "271c64455f4abb3dee35c3902e5cdfc1", 279480),
+	DT_ENTRY0("sp05_hub", "c3224b3d6c55997056ea195ba4ebb60a", 24610),
 
-	// InsideADRIFT Summer Competition 2010
-	DT_ENTRY0("iadcaegis", "8726e90b50bdc92967f944a582daff2c", 45755),
-	DT_ENTRY0("iadcbaroo", "d6919d2e21beafb46c5b4712703bea73", 46299),
-	DT_ENTRY1("iadccamelot", "Competition Release", "ad0856d169448c6a43d2f2441aa13780", 53528),
-	DT_ENTRY0("iadclightup", "2805a4f680c1b8343b940e3c89fc867b", 28347),
-	DT_ENTRY0("iadcmotion", "25382d94db738588da78078cc34f83cc", 11579),
-	DT_ENTRY1("iadcplunder", "Competition Release", "e4f28c23cb4faf4387a8859eb8221f59", 16696),
+	// InsideADRIFT Summer Comp 2005
+	DT_ENTRY1("su05_target", "Competition Release", "ea12656119b5522156539dd1da23866b", 42999),
+	DT_ENTRY1("su05_lca", "Competition Release", "cebe4af96402a18915f15205e52c7415", 124774),
+	DT_ENTRY0("su05_cibass", "7c2e95feb2e2debbbb0c343c1a920f6f", 21705),
+	DT_ENTRY1("su05_mustescape", "Competition Release 2", "3de7c345c6f1dc26712b4ce6fa365830", 17472),
+	DT_ENTRY0("su05_regrets", "5b1a5763226b0f489e1d0760be59ccf4", 10448),
+
+	// InsideADRIFT Summer Comp 2006
+	DT_ENTRY0("su06_reluctvampire", "619d031556cdff0805e599d6a82caa1d", 199575),
+	DT_ENTRY0("su06_pestilence", "2d5ff3fe2d866150689749087d5cee3d", 29021),
+	DT_ENTRY1("su06_spooked", "Competition Release", "642ff47378f398ca97e9238dddea3914", 9908),
+
+	// InsideAdrift Summer Comp 2008
+	DT_ENTRY0("su08_happyvalley", "375b217ae661e4ce192b0ea3756a01b6", 24938),
+	DT_ENTRY0("su08_marlin", "15627cddf3b2a30393397d4faf2f6df8", 13192),
+	DT_ENTRY0("su08_wolvesdoor", "2341592c42f93f12033f8a309fc11386", 19126),
+	DT_ENTRY1("su08_huntung", "Competition Release", "e3fe91ea00f762fbc78f5297e240f59f", 42578),
+	DT_ENTRY0("su08_door", "696b2c0579a2c66afc5be808e54e4847", 6363),
+
+	// InsideADRIFT Summer Comp 2010
+	DT_ENTRY0("su10_aegis", "8726e90b50bdc92967f944a582daff2c", 45755),
+	DT_ENTRY1("su10_camelot", "Competition Release", "ad0856d169448c6a43d2f2441aa13780", 53528),
+	DT_ENTRY1("su10_plunder", "Competition Release", "e4f28c23cb4faf4387a8859eb8221f59", 16696),
+	DT_ENTRY0("su10_baroo", "d6919d2e21beafb46c5b4712703bea73", 46299),
+	DT_ENTRY0("su10_lightup", "2805a4f680c1b8343b940e3c89fc867b", 28347),
+	DT_ENTRY0("su10_motion", "25382d94db738588da78078cc34f83cc", 11579),
+
+	// Intro Comp 2005
+	DT_ENTRY0("ic05_srs", "f1243c19976246c2c319fba5be6f9d13", 157833),
+	DT_ENTRY0("ic05_finalquestion", "1f1ede210336b6b8bd8e28eda2d00e0c", 15555),
+	DT_ENTRY0("ic05_murdermansion", "07367e1f546f80e64b44923f474f5906", 6793),
+	DT_ENTRY0("ic05_zacksmackfoot", "a8d2d303c6e5f698d40714c3d5e241e2", 6374),
+	DT_ENTRY0("ic05_outline", "b86de4feca73e0ea49c324a2181b8b8f", 5724),
+	DT_ENTRY1("ic05_escape", "Competition Release 1", "c5a13fa9059ebc2904eea95e1c6b790a", 3964),
+	DT_ENTRY0("ic05_rift", "b4dc3233be12767837bd596789379473", 2606),
+	DT_ENTRY0("ic05_p2p", "3b3386f5f0f844c3a9eb47ba2596135a", 6491),
+
+	// Intro Comp 2009
+	DT_ENTRY1("ic09_apokalupsis", "Intro", "c3e90bfb8cea957cebbf306add17cd3e", 19822),
+	DT_ENTRY1("ic09_dbaa", "Competition Release", "e827961c66e95bbc2a0d4645f63f6ec4", 37521),
+	DT_ENTRY1("ic09_throughtime", "Intro", "181706abbfc03745d1ddc9b788638b9a", 42109),
+	DT_ENTRY1("ic09_existence", "Intro", "041e134a39146830a389d8dc62206563", 6370),
+	DT_ENTRY1("ic09_teaw", "Intro", "132d0803e31d70729194a292be93be64", 1235834),
+	DT_ENTRY1("ic09_donuts", "Intro", "55d52c6cd6a42dcb424ff3888e7aa88b", 5201),
+	DT_ENTRY1("ic09_yoncastle", "Intro", "6dd95cdc736ffab10a08e39cd9069356", 9814),
+	DT_ENTRY1("ic09_dishduty", "Intro", "263db72fe0be3fb494aa2566fd7e38b5", 5753),
+	DT_ENTRY1("ic09_deadrace", "Intro", "b62ec01f511e761d65ab637de7dda0f2", 5311),
+	DT_ENTRY1("ic09_merlinbrdprey", "Intro", "2e64695a67e1b4ffc0fc379d3f5a4e4d", 3842),
+
+	// Mini-Comp 2003
+	DT_ENTRY1("mc03_neighbours", "Competition Release", "afdf85651706a4568762565b2c24aa8d", 13333),
+	DT_ENTRY0("mc03_thorn", "0d02030e9ac6563cda759a20ae1fc06b", 13887),
+	DT_ENTRY0("mc03_diarystrip", "0e04238a2b49220c284ce9c8723abd77", 43334),
+	DT_ENTRY1("mc03_monsters", "Competition Release", "02a042f7277dfc9789bd6ffee1e8db08", 9628),
 
 	// No Name Competition
-	DT_ENTRY0("noncpiecesofeden", "378dce8e7d36433a188cb0f2d69f2570", 5741),
-	DT_ENTRY0("noncbeanstalk", "fc9c17c355894948dc2e72c66e8d9963", 9837),
-	DT_ENTRY0("noncperfectspy", "4248dee44c099804ee2932b7b8cbea9d", 7988),
+	DT_ENTRY0("non_piecesofeden", "378dce8e7d36433a188cb0f2d69f2570", 5741),
+	DT_ENTRY0("non_beanstalk", "fc9c17c355894948dc2e72c66e8d9963", 9837),
+	DT_ENTRY0("non_perfectspy", "4248dee44c099804ee2932b7b8cbea9d", 7988),
 
-	// P⁄o Prune's Finish the Game Comp 2005
-	DT_ENTRY0("ftgcshadowjack", "25f33d23e126ea0a86ed55833dbba8ef", 11606),
-	DT_ENTRY0("ftgctakeone", "114caad9308b7adf9e15267a11f12632", 9547),
-	DT_ENTRY1("ftgcdemonhunter", "Competition Release", "2af5b32810e6960881122732f48d3ccf", 18644),
-	DT_ENTRY1("ftgcpathwayadrift", "Competition Release", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
-	DT_ENTRY0("ftgcshadow", "f4d0a427ebec3a4c3b7029adaa3e401f", 272030),
-	DT_ENTRY0("ftgchunter", "d7af67a0753910bf32ec233e538ad659", 23531),
+	// One Room Comp 2003
+	DT_ENTRY1("1r_deadman", "Competition Release", "480da7306b482ac2df44527931523ccc", 14092),
+	DT_ENTRY1("1r_dayattheoffice", "Competition Release", "2d908b5448c6fd2dbc98a7f9d2dda9df", 13824),
+	DT_ENTRY0("1r_msmobius", "81cfc7e042294e71c60a264a2fbb3f2d", 23225),
+	DT_ENTRY0("1r_insanity", "c57c140cc9331a60695a3f90fba8fb9a", 12660),
+	DT_ENTRY0("1r_everything", "44a5b102675bcbc48c04c269301d0cd3", 20065),
+	DT_ENTRY0("1r_iadrift", "4e7e5beab23931f6f574c13cbde8c535", 5164),
+	DT_ENTRY0("1r_trappedgirl", "61e1c14dddef8d3b6804c47b2072d9c4", 17235),
+	DT_ENTRY1("1r_dreamland", "Competition Release", "684cd1932e909105b7898953792c4065", 2422),
 
 	// P/o Prune's Spring Ting 2009
-	DT_ENTRY0("prsthomelesslarry", "1508b4cb0cd4be5d7d8365abe4660c36", 21880),
-	DT_ENTRY0("prstmrfluffy", "c04ffec6475a2ac3d79290613edeecd6", 14541),
-	DT_ENTRY0("prstreactor", "a5a0005b4c6668dfe27e1658f85d0713", 11380),
-	DT_ENTRY0("prstsandy", "a6953f57c4632dc9847ef5dfe494283a", 1286),
+	DT_ENTRY0("st09_reactor", "a5a0005b4c6668dfe27e1658f85d0713", 11380),
+	DT_ENTRY0("st09_mrfluffy", "c04ffec6475a2ac3d79290613edeecd6", 14541),
+	DT_ENTRY0("st09_sandy", "a6953f57c4632dc9847ef5dfe494283a", 1286),
+	DT_ENTRY0("st09_homelesslarry", "1508b4cb0cd4be5d7d8365abe4660c36", 21880),
 
 	// P⁄o Prune's Spring Ting 2010
-	DT_ENTRY0("prstwghn", "ae6a590cf043c14b10e9567d6f6661f3", 3559268),
-	DT_ENTRY0("prstegghunt", "ade16e3ac57d32a6be3c95438a651683", 7575026),
+	DT_ENTRY0("st10_wghn", "ae6a590cf043c14b10e9567d6f6661f3", 3559268),
+	DT_ENTRY0("st10_egghunt", "ade16e3ac57d32a6be3c95438a651683", 7575026),
 
-	// P/o Prune's Twin Competition
-	DT_ENTRY0("prtcmelancholy", "355aa8cbe66388627edb4cf2742cb22c", 43845),
-	DT_ENTRY0("prtccrashland", "3626601b910e0beb7be717eb5381e6bf", 8106),
-
-	// Poodle's One Room Competition
-	DT_ENTRY1("porcdeadman", "Competition Release", "480da7306b482ac2df44527931523ccc", 14092),
-	DT_ENTRY1("porcdreamland", "Competition Release", "684cd1932e909105b7898953792c4065", 2422),
-	DT_ENTRY0("porceverything", "44a5b102675bcbc48c04c269301d0cd3", 20065),
-	DT_ENTRY0("porciadrift", "4e7e5beab23931f6f574c13cbde8c535", 5164),
-	DT_ENTRY0("porcinsanity", "c57c140cc9331a60695a3f90fba8fb9a", 12660),
-	DT_ENTRY0("porcmsmobius", "81cfc7e042294e71c60a264a2fbb3f2d", 23225),
-	DT_ENTRY1("porcdayattheoffice", "Competition Release", "2d908b5448c6fd2dbc98a7f9d2dda9df", 13824),
-	DT_ENTRY0("porctrappedgirl", "61e1c14dddef8d3b6804c47b2072d9c4", 17235),
-
-	// The 'Anyone in the mood for a comp?' Comp
-	DT_ENTRY0("tamcalgernon", "7dcf06245873bb65bf56bfca08086ff0", 31280),
-	DT_ENTRY1("tamcbeagle", "Competition Release", "6d5235a68aba891442a9da5ffb4f96a3", 25368),
-
-	// The Challenge
-	DT_ENTRY0("tchgmangiasour", "699e454caf6b2134acdfa8284b84721c", 28676),
-	DT_ENTRY0("tchgsuburban", "2bb9e69e373d35e6426185473decb5d0", 2427725),
-	DT_ENTRY0("tchgwhitterscap", "0456c1308fe97af89ccb097cc97b0f10", 7604),
-
-	// The Even Competition
-	DT_ENTRY0("tevcattmutaydid", "23c47fd2ff2a06e05e7ae7ba028ce090", 513587),
-	DT_ENTRY0("tevcrain", "9f19f6c2637867be0bfce484b2daee8f", 10512),
-	DT_ENTRY0("tevcperspectives", "c1fdcd8c811a892186c7d7ca6e070f44", 8043),
+	// The Challenge Comp 2011
+	DT_ENTRY0("chg_mangiasour", "699e454caf6b2134acdfa8284b84721c", 28676),
+	DT_ENTRY0("chg_suburban", "2bb9e69e373d35e6426185473decb5d0", 2427725),
+	DT_ENTRY0("chg_whitterscap", "0456c1308fe97af89ccb097cc97b0f10", 7604),
 
 	// The Odd Competition
-	DT_ENTRY0("todcastaftermath", "d555b913fd85319b745a83efeb9a0601", 5792),
-	DT_ENTRY1("todcbusinessusual", "Competition Release", "cbde699c47f946ef3936b8866affc5a7", 7234),
-	DT_ENTRY0("todcgorxungula", "b04e511c4a47adbf7b2d6392ed6d5f70", 6777),
-	DT_ENTRY0("todciamlaw", "9835c286df225e0357ae99a47775a78b", 30185),
-	DT_ENTRY0("todcmaincourse", "f9c5a5041de7b2fc74f007339deb93de", 7389),
-	DT_ENTRY1("todchuman", "Competition Release", "eff595bd11066585b41275e92b461f11", 7427),
-	DT_ENTRY0("todcretforesthouse", "47a4a95da7babb06066825d048d20056", 8019),
-	DT_ENTRY0("todcseance", "619599e36090917ea6ef4d02cd62c484", 10934),
-	DT_ENTRY0("todcwitchtale", "2c69ada0c304413364739e98f3e8e8c1", 15252),
-	DT_ENTRY0("todcyakshaving", "3cfab2021cb4711229bdc380b6a19058", 9716),
+	DT_ENTRY0("odd_witchtale", "2c69ada0c304413364739e98f3e8e8c1", 15252),
+	DT_ENTRY0("odd_iamlaw", "9835c286df225e0357ae99a47775a78b", 30185),
+	DT_ENTRY0("odd_yakshaving", "3cfab2021cb4711229bdc380b6a19058", 9716),
+	DT_ENTRY0("odd_retforesthouse", "47a4a95da7babb06066825d048d20056", 8019),
+	DT_ENTRY0("odd_maincourse", "f9c5a5041de7b2fc74f007339deb93de", 7389),
+	DT_ENTRY1("odd_businessusual", "Competition Release", "cbde699c47f946ef3936b8866affc5a7", 7234),
+	DT_ENTRY0("odd_gorxungula", "b04e511c4a47adbf7b2d6392ed6d5f70", 6777),
+	DT_ENTRY1("odd_human", "Competition Release", "eff595bd11066585b41275e92b461f11", 7427),
+	DT_ENTRY0("odd_astaftermath", "d555b913fd85319b745a83efeb9a0601", 5792),
+	DT_ENTRY0("odd_seance", "619599e36090917ea6ef4d02cd62c484", 10934),
 
-	// The Writing Challenges Comp
-	DT_ENTRY0("twccmanoverboard", "c14ac9285a265451aec669d76ca5d4d1", 14141),
-	DT_ENTRY0("twccglumfiddle", "f4ea370e93b2fad4d873f82332b113cb", 23074),
-	DT_ENTRY0("twccjgrim", "0df0ded3147cd8bfd59787ab57ba00d7", 42994),
-	DT_ENTRY0("twcctoomuchexer", "aebb58d94f632c4232bee72b9a1b5e25", 6248),
+	// Twin Comp 2009
+	DT_ENTRY0("tc_crashland", "3626601b910e0beb7be717eb5381e6bf", 8106),
+	DT_ENTRY0("tc_melancholy", "355aa8cbe66388627edb4cf2742cb22c", 43845),
 
-	// Three Hour Games Competition: July 2004
-	DT_ENTRY0("3hgjailbreakbob", "c2e909cf2ddda863d2eb613c8273ee37", 31064),
-	DT_ENTRY0("3hgbriefcase", "f1c899773faf027d9cbb50078a6667c3", 10872),
-	DT_ENTRY0("3hgtheannihilationofthink", "22743eceafe94bf60ab5a3e43241883e", 6303),
-	DT_ENTRY0("3hgshadricktravels", "33036e2b4c11a36d28e6532051e9f05b", 7456),
-	DT_ENTRY0("3hglostsouls", "3083e21a3bd6766ea5fdf3166e8bd4d8", 16695),
-	DT_ENTRY0("3hgtheamulet", "7c08e1f03763ad757dc39f5df37a28b7", 5585),
-	DT_ENTRY0("3hgzombiecow", "f0fe890f9679b158f9a22ed9f78179e6", 5193),
-
-	// Three Hour Games Competition: November 2004
-	DT_ENTRY0("3hgsandl", "73a1e0b4451690e76d306136ec30754b", 27995),
-	DT_ENTRY1("3hgconfession", "Competition Release", "718faa6f6e72fcd4b95ebcb1601be7bd", 203757),
-	DT_ENTRY0("3hgveteran", "65d5fc95b59f24e0e4997f62bf592ba3", 12043),
-	DT_ENTRY0("3hgburiedalive", "9e9a71babf3012461205dc7aa2cd2a3f", 11808),
-	DT_ENTRY1("3hgzac", "Competition Release", "85d95b8a6a962222d15724d42740f378", 13692),
-	DT_ENTRY0("3hgtogetyou", "388b5596945067ed3b92e6282e670825", 4496),
+	// Writing Challenges Comp 2006
+	DT_ENTRY0("wri_jgrim", "0df0ded3147cd8bfd59787ab57ba00d7", 42994),
+	DT_ENTRY0("wri_toomuchexer", "aebb58d94f632c4232bee72b9a1b5e25", 6248),
+	DT_ENTRY0("wri_glumfiddle", "f4ea370e93b2fad4d873f82332b113cb", 23074),
+	DT_ENTRY0("wri_manoverboard", "c14ac9285a265451aec669d76ca5d4d1", 14141),
 
 	DT_END_MARKER
 };
