@@ -163,6 +163,7 @@ bool NuvieEngine::initialize() {
 
 	if (_game->loadGame(_script) == false) {
 		delete _game;
+		_game = nullptr;
 		return false;
 	}
 
