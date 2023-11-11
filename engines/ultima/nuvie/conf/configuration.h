@@ -83,9 +83,6 @@ public:
 	// read config file. Multiple files may be read. Order is important.
 	bool readConfigFile(const Std::string &fname, const Std::string &root, bool readonly = true);
 
-	// Returns true if default settings for game have previously been set
-	bool isDefaultsSet() const;
-
 	// Loads up the configuration settings
 	void load(GameId gameId, bool isEnhanced);
 
@@ -94,10 +91,6 @@ public:
 
 	// clear everything
 	void clear();
-
-	Std::string filename() const {
-		return _configFilename;
-	}
 
 	// get value
 	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "");

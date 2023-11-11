@@ -307,10 +307,6 @@ void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
 	}
 }
 
-bool Configuration::isDefaultsSet() const {
-	return ConfMan.hasKey("config/video/screen_width");
-}
-
 void Configuration::load(GameId gameId, bool isEnhanced) {
 	// Load basic defaults for enhanced vs unehanced
 	if (isEnhanced)
