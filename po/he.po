@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-02-12 19:51+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1541,11 +1541,15 @@ msgid "Shader Path:"
 msgstr "נתיב סוכך:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "עדכון סוככים"
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "הורדת קבצי משחק"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "בדיקת עדכונים של חבילות סוככים"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1992,11 +1996,15 @@ msgstr ""
 "תיקיה."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "עדכון צלמיות"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "הורדה"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "בדיקת עדכונים עבור חבילות צלמיות"
 
 #: gui/options.cpp:2621
@@ -10887,6 +10895,12 @@ msgstr ""
 "New ו-Arial. לחלופין,ניתן להוריד את חבילת GNU FreeFont או גופני Liberation. "
 "יש להעתיק את כל הגופנים מהחבילה שנבחרה, לדוגמה, FreeMono, FreeSans ו-"
 "FreeSerif או LiberationMono, LiberationSans ו-LiberationSerif בהתאמה."
+
+#~ msgid "Update Shaders"
+#~ msgstr "עדכון סוככים"
+
+#~ msgid "Update Icons"
+#~ msgstr "עדכון צלמיות"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "הפעלת שיפורים תלויי-משחק"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -1567,12 +1567,13 @@ msgid "Shader Path:"
 msgstr "Partida gordeak:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr ""
+#, fuzzy
+msgid "Download Shaders"
+msgstr "Kargatu fitxategia:"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Eguneraketak bilatzen..."
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2041,12 +2042,13 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr ""
+#, fuzzy
+msgid "Download Icons"
+msgstr "Behera"
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Eguneraketak bilatzen..."
 
 #: gui/options.cpp:2621

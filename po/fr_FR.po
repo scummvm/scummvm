@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-11-11 04:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -1532,11 +1532,15 @@ msgid "Shader Path:"
 msgstr "Shader - Chemin :"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "Mettre à jour les shaders"
+#, fuzzy
+#| msgid "Download Games"
+msgid "Download Shaders"
+msgstr "Télécharger des jeux"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Recherche de mises à jour des packs de shaders"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1998,11 +2002,15 @@ msgstr ""
 "pour sélectionner des fichiers ou répertoires."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "Rech. icônes"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Télécharger"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Recherche de mises à jour des packs d'icônes"
 
 #: gui/options.cpp:2621
@@ -11305,6 +11313,12 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Update Shaders"
+#~ msgstr "Mettre à jour les shaders"
+
+#~ msgid "Update Icons"
+#~ msgstr "Rech. icônes"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "Activer les améliorations spécifiques au jeu"

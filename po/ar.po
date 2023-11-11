@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -1545,11 +1545,15 @@ msgid "Shader Path:"
 msgstr "مسار التظليل:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "تحديث التظليل"
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "تحميل ملفات اللعبة"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "تحقق من وجود تحديثات لحزمة للتظليل"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1999,11 +2003,15 @@ msgstr ""
 "استخدم متصفح ملفات النظام الأصلي بدلاً من متصفح ScummVM لتحديد ملف أو مجلد."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "تحديث الرموز"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "تحميل"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "تحقق من وجود تحديثات لحزم الرموز"
 
 #: gui/options.cpp:2621
@@ -10934,6 +10942,12 @@ msgstr ""
 "أو حزمة GNU FreeFont. ستحتاج إلى جميع الخطوط من حزمة الخطوط التي تختارها ، "
 "مثل LiberationMono و LiberationSans و LiberationSerif أو FreeMono و FreeSans "
 "و FreeSerif على التوالي."
+
+#~ msgid "Update Shaders"
+#~ msgstr "تحديث التظليل"
+
+#~ msgid "Update Icons"
+#~ msgstr "تحديث الرموز"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "تفعيل التحسينات الخاصة باللعبة"

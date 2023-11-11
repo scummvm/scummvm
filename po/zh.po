@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -1524,11 +1524,12 @@ msgstr "保存路径："
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Update Shaders"
-msgstr "檢查更新:"
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "下載遊戲數據"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr ""
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1972,11 +1973,13 @@ msgid ""
 msgstr "使用系統預設的文件瀏覽器而不是使用ScummVM內建的來選擇文件或資料夾."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "更新圖標"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "下載"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr ""
 
 #: gui/options.cpp:2621
@@ -10317,6 +10320,13 @@ msgstr ""
 "载 Liberation Fonts 或 GNU FreeFont 这两套字体包，并二选一。你会需要用到其中"
 "任意一套中的全部字体，也就是：LiberationMono，LiberationSans 和"
 "LiberationSerif ，或者 FreeMono，FreeSans 和 FreeSerif。"
+
+#, fuzzy
+#~ msgid "Update Shaders"
+#~ msgstr "檢查更新:"
+
+#~ msgid "Update Icons"
+#~ msgstr "更新圖標"
 
 #, fuzzy
 #~| msgid "Close"

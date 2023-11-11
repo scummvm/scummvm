@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -1576,12 +1576,13 @@ msgstr "Gemmesti:"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Update Shaders"
-msgstr "Opdateringssøgning:"
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Download spilfiler"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Søg efter opdateringer ..."
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2039,12 +2040,12 @@ msgstr ""
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Update Icons"
-msgstr "Opdateringssøgning:"
+msgid "Download Icons"
+msgstr "Download"
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Søg efter opdateringer ..."
 
 #: gui/options.cpp:2621
@@ -11043,6 +11044,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Update Shaders"
+#~ msgstr "Opdateringssøgning:"
+
+#, fuzzy
+#~ msgid "Update Icons"
+#~ msgstr "Opdateringssøgning:"
 
 #, fuzzy
 #~ msgid "Enable game-specific enhancements"

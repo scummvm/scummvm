@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1554,11 +1554,15 @@ msgid "Shader Path:"
 msgstr "Шлях до шейдеру:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "Поновити шейдери"
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Завантажити файли гри"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Перевірити оновлення пакетів шейдерів"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2018,11 +2022,15 @@ msgstr ""
 "Використовувати переглядач файлів від системи замість того, що в ScummVM."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "Поновити іконки"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Завантажити"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Перевірити оновлення пакетів іконок"
 
 #: gui/options.cpp:2621
@@ -11043,6 +11051,12 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Update Shaders"
+#~ msgstr "Поновити шейдери"
+
+#~ msgid "Update Icons"
+#~ msgstr "Поновити іконки"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "Ввімкнути покращення для окремих ігор"

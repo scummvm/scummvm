@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1550,11 +1550,15 @@ msgid "Shader Path:"
 msgstr "Shader Mappa:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "Shader-ek Frissítése"
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Játék fájlok letöltése"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Ellenőrizd a shader csomagok frissítését"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2009,11 +2013,15 @@ msgstr ""
 "fájl vagy könyvtár kiválasztásához."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "Ikonok frissítése"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Letöltés"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Ellenőrizd az ikon csomagok frissítését"
 
 #: gui/options.cpp:2621
@@ -11038,6 +11046,12 @@ msgstr ""
 "FreeFont csomagot. Szükséged lesz az összes betűtípusra a választott "
 "betűkészletből, azaz, LiberationMono, LiberationSans és LiberationSerif, "
 "vagy FreeMono, FreeSans és FreeSerif választhatóan."
+
+#~ msgid "Update Shaders"
+#~ msgstr "Shader-ek Frissítése"
+
+#~ msgid "Update Icons"
+#~ msgstr "Ikonok frissítése"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "Engedélyezd a játékspecifikus fejlesztéseket"

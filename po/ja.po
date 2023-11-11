@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -1516,11 +1516,15 @@ msgid "Shader Path:"
 msgstr "パス："
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "シェーダーの更新"
+#, fuzzy
+#| msgid "Download Games"
+msgid "Download Shaders"
+msgstr "ゲームをダウンロード"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "シェーダーパックの更新を確認"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1968,11 +1972,15 @@ msgstr ""
 "ファイルブラウザを使う。"
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "アップデートアイコン"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "ダウンロード"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "アイコンパックの更新を確認"
 
 #: gui/options.cpp:2621
@@ -10947,6 +10955,12 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Update Shaders"
+#~ msgstr "シェーダーの更新"
+
+#~ msgid "Update Icons"
+#~ msgstr "アップデートアイコン"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "ゲーム固有の拡張機能を有効化"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1571,12 +1571,13 @@ msgstr "Cesta pro uložení:"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Update Shaders"
-msgstr "Ověření aktualizací:"
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Stáhnout soubory hry"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Zkontrolovat Aktualizace..."
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2034,12 +2035,13 @@ msgstr ""
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Update Icons"
-msgstr "Ověření aktualizací:"
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Stáhnout"
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Zkontrolovat Aktualizace..."
 
 #: gui/options.cpp:2621
@@ -10968,6 +10970,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Update Shaders"
+#~ msgstr "Ověření aktualizací:"
+
+#, fuzzy
+#~ msgid "Update Icons"
+#~ msgstr "Ověření aktualizací:"
 
 #, fuzzy
 #~ msgid "Enable game-specific enhancements"

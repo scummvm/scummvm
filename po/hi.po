@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-11-08 23:41+0000\n"
 "Last-Translator: illusion01 <prathamesh.jakkula.01042005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -1515,11 +1515,13 @@ msgid "Shader Path:"
 msgstr "शेडर पथ:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr ""
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "गेम फाइल डाउनलोड करे"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr ""
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -1958,11 +1960,13 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr ""
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "डाउनलोड"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr ""
 
 #: gui/options.cpp:2621

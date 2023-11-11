@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1555,11 +1555,15 @@ msgid "Shader Path:"
 msgstr "Shaderbane:"
 
 #: gui/options.cpp:1628
-msgid "Update Shaders"
-msgstr "Oppdater shadere"
+#, fuzzy
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Last ned spillfiler"
 
 #: gui/options.cpp:1628
-msgid "Check for updates of shader packs"
+#, fuzzy
+#| msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Sjekk for oppdateringer av shaderpakker"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2015,11 +2019,15 @@ msgstr ""
 "velge en fil eller mappe."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "Oppdater ikoner"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Last ned"
 
 #: gui/options.cpp:2614
-msgid "Check for updates of icon packs"
+#, fuzzy
+#| msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Sjekk for ikonpakke-oppdateringer"
 
 #: gui/options.cpp:2621
@@ -11073,6 +11081,12 @@ msgstr ""
 "Liberation Fonts-pakken eller GNU FreeFont-pakken. Du trenger alle fontene "
 "fra fontpakken du velger å bruke, dvs. enten LiberationMono, LiberationSans "
 "og LiberationSerif eller FreeMono, FreeSans og FreeSerif."
+
+#~ msgid "Update Shaders"
+#~ msgstr "Oppdater shadere"
+
+#~ msgid "Update Icons"
+#~ msgstr "Oppdater ikoner"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "Aktiver spillspesifikke forbedringer"

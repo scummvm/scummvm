@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-10 22:51+0000\n"
+"POT-Creation-Date: 2023-11-10 23:00+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -1559,12 +1559,13 @@ msgstr "Шлях заховаў:"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Update Shaders"
-msgstr "Правяраць абновы:"
+#| msgid "Download game files"
+msgid "Download Shaders"
+msgstr "Заладаваць гульнёвыя файлы"
 
 #: gui/options.cpp:1628
 #, fuzzy
-msgid "Check for updates of shader packs"
+msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr "Праверыць абновы..."
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
@@ -2019,12 +2020,14 @@ msgstr ""
 "аглядача ScummVM."
 
 #: gui/options.cpp:2614
-msgid "Update Icons"
-msgstr "Абнавіць значкі"
+#, fuzzy
+#| msgid "Download"
+msgid "Download Icons"
+msgstr "Заладаваць"
 
 #: gui/options.cpp:2614
 #, fuzzy
-msgid "Check for updates of icon packs"
+msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr "Праверыць абновы..."
 
 #: gui/options.cpp:2621
@@ -10943,6 +10946,13 @@ msgstr ""
 "ці пак GNU FreeFont. Вам спатрэбяцца ўсе шрыфты выбранага паку, а менавіта: "
 "LiberationMono, LiberationSans and LiberationSerif, or FreeMono, FreeSans і "
 "FreeSerif адпаведна."
+
+#, fuzzy
+#~ msgid "Update Shaders"
+#~ msgstr "Правяраць абновы:"
+
+#~ msgid "Update Icons"
+#~ msgstr "Абнавіць значкі"
 
 #~ msgid "Enable game-specific enhancements"
 #~ msgstr "Далучыць паляпшэньні для пэўных гульняў"
