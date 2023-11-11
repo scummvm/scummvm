@@ -106,6 +106,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix Ultima VI crash using look action on walls.
    - Fix several other miscellaneous crashes.
    - Fix spawners and projectiles to more closely match the original.
+   - Improved Ultima VI AdLib support and added Roland MT-32 support.
    - Fix multiple Ultima VIII render order issues.
    - Add support for Ultima VIII Spanish fan translation.
    - Support Pentagram save game files.
