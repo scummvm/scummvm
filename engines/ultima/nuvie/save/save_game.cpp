@@ -83,19 +83,19 @@ bool SaveGame::load_new() {
 	Std::string filename;
 	U6Lzw lzw;
 	NuvieIOBuffer buf;
-	unsigned char *data;
 	uint32 decomp_size;
-	ObjManager *obj_manager;
 	uint8 i;
 	uint32 pos;
 
-	obj_manager = Game::get_game()->get_obj_manager();
+	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	init(obj_manager);
 
 	// Load surface chunks
 	config_get_path(config, "lzobjblk", filename);
-	data = lzw.decompress_file(filename, decomp_size);
+	unsigned char *data = lzw.decompress_file(filename, decomp_size);
+	if (!data)
+		return false;
 
 	buf.open(data, decomp_size, NUVIE_BUF_NOCOPY);
 
@@ -108,6 +108,8 @@ bool SaveGame::load_new() {
 	// Load dungeon chunks
 	config_get_path(config, "lzdngblk", filename);
 	data = lzw.decompress_file(filename, decomp_size);
+	if (!data)
+		return false;
 
 	buf.open(data, decomp_size, NUVIE_BUF_NOCOPY);
 
@@ -138,13 +140,10 @@ bool SaveGame::load_original() {
 	char x, y;
 	uint16 len;
 	uint8 i;
-	NuvieIOFileRead *objblk_file;
 	NuvieIOFileRead objlist_file;
-	ObjManager *obj_manager;
 
-	objblk_file = new NuvieIOFileRead();
-
-	obj_manager = Game::get_game()->get_obj_manager();
+	NuvieIOFileRead *objblk_file = new NuvieIOFileRead();
+	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	init(obj_manager);
 

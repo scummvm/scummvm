@@ -82,7 +82,7 @@ bool FontManager::initU6() {
 		return false;
 
 	font_data = u6_ch.readAll();
-	if (font_data == nullptr)
+	if (font_data == nullptr || u6_ch.get_size() < 256 * 8)
 		return false;
 
 // english font

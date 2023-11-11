@@ -40,12 +40,12 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define DELUXE_PAINT_MAGIC 0x4d524f46 // "FORM"
+static const uint32 DELUXE_PAINT_MAGIC = 0x4d524f46; // "FORM"
 
-#define INPUT_KEY_RIGHT 79 | (1<<30)
-#define INPUT_KEY_LEFT 80 | (1<<30)
-#define INPUT_KEY_DOWN  81 | (1<<30)
-#define INPUT_KEY_UP  82 | (1<<30)
+static const int INPUT_KEY_RIGHT = 79 | (1<<30);
+static const int INPUT_KEY_LEFT  = 80 | (1<<30);
+static const int INPUT_KEY_DOWN  = 81 | (1<<30);
+static const int INPUT_KEY_UP    = 82 | (1<<30);
 
 static ScriptCutscene *cutScene = nullptr;
 ScriptCutscene *get_cutscene() {
@@ -1273,9 +1273,11 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 	} else {
 		uint32 decomp_size;
 		buf = lzw.decompress_file(path.c_str(), decomp_size);
+		if (!buf) // failed to open or decompress
+			return v;
 		NuvieIOBuffer io;
-		io.open(buf, decomp_size, false);
-		if (!lib_n.open(&io, 4, NUVIE_GAME_MD)) {
+		if (!buf || !io.open(buf, decomp_size, false) ||
+		    !lib_n.open(&io, 4, NUVIE_GAME_MD)) {
 			free(buf);
 			return v;
 		}

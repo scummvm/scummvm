@@ -73,7 +73,7 @@ bool GamePalette::loadPalette() {
 
 	pal_ptr = palette;
 
-	for (i = 0, j = 0; i < 256; i++, j += 3) {
+	for (i = 0, j = 0; i < MIN(256, file.get_size() / 3); i++, j += 3) {
 		pal_ptr[0] = buf[j] << 2;
 		pal_ptr[1] = buf[j + 1] << 2;
 		pal_ptr[2] = buf[j + 2] << 2;
