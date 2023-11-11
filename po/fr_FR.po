@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-10 22:51+0000\n"
-"PO-Revision-Date: 2023-11-08 13:53+0000\n"
+"PO-Revision-Date: 2023-11-11 04:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1083,7 +1083,7 @@ msgstr "Plateforme"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Année"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1318,10 +1318,8 @@ msgstr "Plateforme non détectée"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Erreur inconnue"
+msgstr "Année inconnue"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
