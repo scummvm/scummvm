@@ -32,12 +32,6 @@ from typing import Any
 
 import machfs
 
-if sys.platform == "darwin":
-    try:
-        import xattr
-    except ImportError:
-        logging.error("xattr is required for the 'mac' mode to work\n")
-
 
 # fmt: off
 decode_map = {
@@ -298,13 +292,7 @@ def encode_string(args: argparse.Namespace) -> int:
 def extract_volume(args: argparse.Namespace) -> int:
     """Extract an HFS volume"""
     source_volume: Path = args.src
-    destination_dir: Path = args.dir
-    japanese: bool = args.japanese
-    dryrun: bool = args.dryrun
-    dopunycode: bool = not args.nopunycode
     loglevel: str = args.log
-    force_macbinary: bool = args.forcemacbinary
-    add_macbinary_ext: bool = args.addmacbinaryext
 
     numeric_level = getattr(logging, loglevel.upper(), None)
     if not isinstance(numeric_level, int):
@@ -313,29 +301,52 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     logging.info(f"Loading {source_volume} ...")
     vol = machfs.Volume()
+    partitions = []
     with source_volume.open(mode="rb") as f:
         f.seek(0x200)
-        if f.read(4) == b"PM\x00\x00":
-            partition_num = 1
-            partition_type = ""
-            while partition_type != "Apple_HFS":
+        partition_num = 1
+
+        while True:
+            data = f.read(4)
+            if data == b"PM\x00\x00":
                 num_partitions, partition_start, partition_size = unpack(
                     ">III", f.read(12)
                 )
-                f.seek(32, 1)
-                partition_type = f.read(32).decode("ascii").split("\x00")[0]
-                if partition_num <= num_partitions and partition_type != "Apple_HFS":
+                f.seek(0x20, 1)
+                partition_type = f.read(0x20).decode("ascii").split("\x00")[0]
+                if partition_type == "Apple_HFS" and partition_size > 0:
+                    # Found an HFS partition, log it
+                    partitions.append((partition_start * 0x200, partition_size * 0x200))
+                if partition_num <= num_partitions:
                     # Move onto the next partition
                     partition_num += 1
-                    f.seek(partition_num * 0x200 + 4)
+                    f.seek(partition_num * 0x200)
                 else:
-                    # We found the one we want or there's none
+                    # Finished parsing the partition map
                     break
-            f.seek(partition_start * 0x200)
-            vol.read(f.read(partition_size * 0x200))
+            else:
+                # Didn't find the Apple Partition Map, break so we can just
+                # load the entire image
+                break
+
+        if partitions:
+            for partition_start, partition_size in partitions:
+                f.seek(partition_start)
+                vol.read(f.read(partition_size))
+                extract_partition(args, vol)
         else:
             f.seek(0)
             vol.read(f.read())
+            extract_partition(args, vol)
+
+
+def extract_partition(args: argparse.Namespace, vol) -> int:
+    destination_dir: Path = args.dir
+    japanese: bool = args.japanese
+    dryrun: bool = args.dryrun
+    dopunycode: bool = not args.nopunycode
+    force_macbinary: bool = args.forcemacbinary
+    add_macbinary_ext: bool = args.addmacbinaryext
 
     if not dryrun:
         destination_dir.mkdir(parents=True, exist_ok=True)
@@ -508,6 +519,12 @@ def collect_forks(args: argparse.Namespace) -> int:
     - combine them with the data fork when it's available
     - punyencode the filename when requested
     """
+    try:
+        import xattr
+    except ImportError:
+        logging.error("xattr is required for the 'mac' mode to work\n")
+        exit(1)
+
     directory: bytes = bytes(args.dir)
     punify: bool = args.punycode
     force_macbinary: bool = args.forcemacbinary
@@ -525,7 +542,7 @@ def collect_forks(args: argparse.Namespace) -> int:
 
                 filepath = os.path.join(dirpath, filename)
                 if add_macbinary_ext:
-                    filepath = upath.with_name(filepath.name + ".bin")
+                    filepath = filepath.with_name(filepath.name + ".bin")
                 resourcepath = os.path.join(dirpath, resource_filename)
 
                 file = machfs.File()
@@ -662,7 +679,7 @@ def create_macfonts(args: argparse.Namespace) -> int:
     datafork.seek(-0x200, 2)
     alt_mdb_loc = datafork.tell()
     datafork.seek(-(0x200 - 0x12), 2)
-    num_allocation_blocks, allocation_block_size, first_allocation_block = unpack(
+    _, allocation_block_size, first_allocation_block = unpack(
         ">HI4xH", datafork.read(12)
     )
     compressed_data_start = first_allocation_block * allocation_block_size
