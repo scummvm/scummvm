@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Nuvie {
 
 TMXMap::TMXMap(TileManager *tm, Map *m, ObjManager *om) : tile_manager(tm),
-		map(m), obj_manager(om), mapdata(nullptr), game_type(NUVIE_GAME_NONE) {
+		map(m), obj_manager(om), mapdata(nullptr) {
 }
 
 TMXMap::~TMXMap() {

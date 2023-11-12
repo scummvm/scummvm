@@ -189,7 +189,7 @@ uint16 CannonballEffect::callback(uint16 msg, CallBack *caller, void *msg_data) 
 
 
 ExpEffect::ExpEffect(uint16 tileNum, const MapCoord &location) : ProjectileEffect(),
-		exp_tile_num(tileNum), usecode(nullptr), obj(nullptr) {
+		exp_tile_num(tileNum) {
 	start_loc = location;
 	start_anim();
 }
@@ -1293,17 +1293,14 @@ uint16 VanishEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 /* TileFadeEffect */
 TileFadeEffect::TileFadeEffect(const MapCoord &loc, Tile *from, Tile *to, FadeType type, uint16 speed)
-		: anim(nullptr), to_tile(nullptr), anim_tile(nullptr), actor(nullptr),
-		  color_from(0), color_to(0), inc_reverse(false), spd(0) {
+		: actor(nullptr), inc_reverse(false), spd(0) {
 	add_anim(new TileFadeAnim(loc, from, to, speed));
 	num_anim_running = 1;
 }
 
 //Fade out actor.
 TileFadeEffect::TileFadeEffect(Actor *a, uint16 speed)
-		: anim(nullptr), to_tile(nullptr), anim_tile(nullptr), actor(a),
-		  color_from(0), color_to(0), inc_reverse(false), spd(speed),
-		  num_anim_running(0) {
+		: actor(a), inc_reverse(false), spd(speed), num_anim_running(0) {
 	add_actor_anim();
 	actor->hide();
 }

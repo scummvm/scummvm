@@ -153,10 +153,10 @@ public:
 };
 
 class ExpEffect : public ProjectileEffect {
-	UseCode *usecode;
+	//UseCode *usecode;
 	NuvieAnim *anim;
 
-	Obj *obj;
+	//Obj *obj;
 	uint16 exp_tile_num;
 
 protected:
@@ -489,11 +489,11 @@ public:
 };
 
 class TileFadeEffect : public TimedEffect {
-	TileAnim *anim;
-	Tile *to_tile;
-	Tile *anim_tile;
+	//TileAnim *anim;
+	//Tile *to_tile;
+	//Tile *anim_tile;
 	Actor *actor;
-	uint8 color_from, color_to;
+	//uint8 color_from, color_to;
 	bool inc_reverse;
 	uint16 spd;
 

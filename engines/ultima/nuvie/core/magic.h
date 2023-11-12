@@ -82,8 +82,6 @@ private:
 	char cast_buffer_str[26]; // buffer for spell syllables typed.
 	uint8 cast_buffer_len; // how many characters typed in the spell buffer.
 	Events *event;
-	//Actor *target_actor;
-	Obj *target_object;
 	uint8 state;
 
 	ScriptThread *magic_script;

@@ -182,7 +182,7 @@ bool Game::loadGame(Script *s) {
 
 	palette = new GamePalette(screen, config);
 
-	_clock = new GameClock(config, game_type);
+	_clock = new GameClock(game_type);
 
 	background = new Background(config);
 	background->init();
@@ -200,7 +200,7 @@ bool Game::loadGame(Script *s) {
 	}
 	game_map = new Map(config);
 
-	egg_manager = new EggManager(config, game_type, game_map);
+	egg_manager = new EggManager(game_type);
 
 	tile_manager = new TileManager(config);
 	if (tile_manager->loadTiles() == false)

@@ -43,8 +43,6 @@ class Actor;
 class Map;
 
 class EggManager {
-	Configuration *config;
-	Map *map;
 	ActorManager *actor_manager;
 	ObjManager *obj_manager;
 	nuvie_game_t gametype; // what game is being played?
@@ -53,7 +51,7 @@ class EggManager {
 
 public:
 
-	EggManager(Configuration *cfg, nuvie_game_t type, Map *m);
+	EggManager(nuvie_game_t type);
 	~EggManager();
 
 	void set_actor_manager(ActorManager *am) {

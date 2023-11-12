@@ -679,7 +679,7 @@ void TileManager::get_rotated_tile(const Tile *tileP, Tile *dest_tile, float rot
 
 	int32 const src_pitch = 16;
 	int32 const dst_pitch = 16;
-	uint8 const *src_row = (uint8 *)&tileP->data;
+	uint8 const *src_row = (uint8 const *)&tileP->data;
 	uint8 *dst_pixels = (uint8 *)&dest_tile->data;
 	uint8 *dst_row;
 

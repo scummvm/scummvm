@@ -42,7 +42,7 @@ private:
 	ObjManager *obj_manager;
 	Std::string savedir;
 	Std::string savename;
-	nuvie_game_t game_type;
+	//nuvie_game_t game_type;
 
 public:
 	TMXMap(TileManager *tm, Map *m, ObjManager *om);

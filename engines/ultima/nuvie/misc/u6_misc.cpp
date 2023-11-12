@@ -33,9 +33,6 @@ namespace Nuvie {
 
 using namespace Std;
 
-bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path);
-bool find_path(Std::string path, Std::string &dir_str);
-
 void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char delimiter = ' ') {
 	Std::string delimiters(delimiter);
 
@@ -90,59 +87,6 @@ void config_get_path(Configuration *config, const Std::string &filename, Std::st
 	tmp_path = game_dir + filename;
 
 	path = tmp_path;
-}
-
-bool find_casesensitive_path(const Std::string &path, const Std::string &filename, Std::string &new_path) {
-	vector<string> directories;
-	string tmp_path = path;
-
-	Tokenise(filename, directories, U6PATH_DELIMITER);
-
-	Std::vector<string>::iterator dir_iter;
-
-	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
-		string dir = *dir_iter;
-
-		::debug(1, "%s, ", dir.c_str());
-
-		if (find_path(tmp_path, dir) == false)
-			return false;
-
-		dir_iter++;
-
-		if (dir_iter != directories.end())
-			dir += U6PATH_DELIMITER;
-
-		tmp_path += dir;
-	}
-
-	new_path = tmp_path;
-
-	::debug(1, "\nproper path = %s", new_path.c_str());
-	return true;
-}
-
-static bool find_path(const Std::string &path, Std::string &dir_str) {
-	dir_str = path;
-	return true;
-#if 0
-	DIR *dir;
-	struct dirent *item;
-
-	dir = opendir(path.c_str());
-	if (dir == nullptr)
-		return false;
-
-	for (item = readdir(dir); item != nullptr; item = readdir(dir)) {
-		debug("trying %s, want %s", item->d_name, dir_str.c_str());
-		if (strlen(item->d_name) == dir_str.length() && Common::scumm_stricmp(item->d_name, dir_str.c_str()) == 0) {
-			dir_str = item->d_name;
-			return true;
-		}
-	}
-
-	return false;
-#endif
 }
 
 void stringToUpper(Std::string &str) {
