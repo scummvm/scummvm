@@ -170,9 +170,14 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// Take all the necessary measurements for the box which
 	// will contain the string...
 	bool isCOMIDemo = (_game.id == GID_CMI && (_game.features & GF_DEMO) != 0);
+
 	bannerMsgHeight = ((_game.id == GID_DIG || isCOMIDemo) ? getGUIStringHeight("ABC \x80\x78 \xb0\x78") : getGUIStringHeight(bannerMsg)) + 5;
 
 	bannerMsgWidth = getGUIStringWidth(bannerMsg);
+
+	if (_isIndy4Jap)
+		bannerMsgWidth += 32;
+
 	if (bannerMsgWidth < 100)
 		bannerMsgWidth = 100;
 
@@ -187,6 +192,11 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		xPos = _screenWidth / 2 + roundedWidth + 3;
 		yPos = 1 - bannerMsgHeight;
 		_bannerSaveYStart = startingPointY;
+	} else if (_isIndy4Jap) {
+		startingPointX = 156 - bannerMsgWidth / 2;
+		startingPointY = 80;
+		xPos = bannerMsgWidth / 2 + 164;
+		yPos = -18;
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
@@ -659,6 +669,8 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 	bool centerFlag;
 	char buttonString[512];
 
+	bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
+
 	ctrl = &_internalGUIControls[id];
 	relCentX = ctrl->relativeCenterX;
 	if (ctrl->relativeCenterX != -1) {
@@ -766,6 +778,16 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			for (const int8 *s = drwOffsets[id - GUI_CTRL_ARROW_UP_BUTTON]; *s != -1; s += 4)
 				drawLine(textXPos + s[0], relCentY + s[1], textXPos + s[2], relCentY + s[3], textColor);
 
+		} else if (_isIndy4Jap) {
+			Common::Rect indyClipRect(relCentX, relCentY, x, y);
+			textYPos = (y - relCentY) / 2 + relCentY;
+			if ((id < GUI_CTRL_FIRST_SG) || (id > GUI_CTRL_LAST_SG && id != GUI_CTRL_PATH_BUTTON)) {
+				textYPos -= 7;
+			} else {
+				textYPos -= 3;
+			}
+
+			drawGUIText(buttonString, isSaveSlot ? &indyClipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
 		} else {
 			int tmpRight = _string[5].right;
 			bool nudgeJapYPos = _language == Common::JA_JPN;
@@ -786,7 +808,6 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 			// The original CJK DIG interpreter limits the clipping to the save slots. Other elements
 			// seem to (theoretically) be allowed to draw text wherever they want...
-			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG) && _game.platform != Common::kPlatformSegaCD;
 			Common::Rect clipRect(relCentX, relCentY, x, y);
 			drawGUIText(buttonString, isSaveSlot ? &clipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
 

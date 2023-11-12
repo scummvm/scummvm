@@ -398,6 +398,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	assert(!_mainMenuDialog);
 	_mainMenuDialog = new ScummMenuDialog(this);
 #endif
+
+	_isIndy4Jap = _game.id == GID_INDY4 &&
+				  (_game.platform == Common::kPlatformMacintosh || _game.platform == Common::kPlatformDOS) &&
+				  _language == Common::JA_JPN;
 }
 
 

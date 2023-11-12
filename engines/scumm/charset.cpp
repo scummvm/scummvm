@@ -542,6 +542,14 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					// This strange character conversion is the exact way the original does it here.
 					// This is the only way to get an accurate text formatting in the MI1 intro.
 					chr = (int8)text[pos++] | (chr << 8);
+			} else if (_vm->_isIndy4Jap) {
+				if (checkSJISCode(chr)) {
+					chr = text[pos++] | (chr << 8);
+					if (chr >= 256) {
+						width += 15;
+						continue;
+					}
+				}
 			} else if (chr & 0x80) {
 				if (_vm->_game.platform == Common::kPlatformSegaCD) {
 					// Special character: this one has to be rendered as a space (0x20)
@@ -741,10 +749,7 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
 	byte *dst2 = dst + dest.pitch;
 
-	bool isIndy4Jap = _vm->_game.id == GID_INDY4 && _vm->_language == Common::JA_JPN &&
-		(_vm->_game.platform == Common::kPlatformDOS || _vm->_game.platform == Common::kPlatformMacintosh);
-
-	if (isIndy4Jap) {
+	if (_vm->_isIndy4Jap) {
 		// Characters allow shadows only if this is the main virtual screen, and we are not drawing
 		// a message on a GUI banner. The main menu is fine though, and allows shadows as well.
 		bool canDrawShadow = _vm->findVirtScreen(_top)->number == kMainVirtScreen && !_vm->isMessageBannerActive();
@@ -763,7 +768,7 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 						// Mac and DOS/V versions of Japanese INDY4 don't
 						// draw a shadow pixel below the first pixel.
 						// Verified from disasm.
-						if (!isIndy4Jap)
+						if (!_vm->_isIndy4Jap)
 							dst2[0] = _shadowColor;
 					} else if (_shadowType == kHorizontalShadowType) {
 						dst[1] = _shadowColor;
@@ -1125,17 +1130,18 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	// used as character widths (e.g. 13, 15, 16), but we adapt them to small negative
 	// numbers using the formula:_cjkSpacing = japWidthCorrection - 16; where 16 is the
 	// full width of a Japanese character in this version.
-	if (_vm->_game.id == GID_INDY4 && _vm->_language == Common::JA_JPN &&
-		(_vm->_game.platform == Common::kPlatformDOS || _vm->_game.platform == Common::kPlatformMacintosh)) {
-		int japWidthCorrection = (_left == 161) ? 13 : 14;
-		//int japHeightCorrection = 15;
+	if (_vm->_isIndy4Jap) {
+		int japWidthCorrection = (_top == 161) ? 13 : 14;
+		int japHeightCorrection = 15;
 		if (_vm->findVirtScreen(_top)->number == kMainVirtScreen && !_vm->isMessageBannerActive()) {
 			japWidthCorrection = 15;
-			//japHeightCorrection = 16;
+			japHeightCorrection = 16;
 		} else if (_vm->isMessageBannerActive()) {
 			japWidthCorrection = 13;
 		}
 
+		if (is2byte)
+			_height = _origHeight = japHeightCorrection;
 		_cjkSpacing = japWidthCorrection - 16;
 	}
 

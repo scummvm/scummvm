@@ -662,6 +662,8 @@ public:
 	bool isUsingOriginalGUI();
 	bool isMessageBannerActive(); // For Indy4 Jap character shadows
 
+	bool _isIndy4Jap = false;
+
 protected:
 	Dialog *_pauseDialog = nullptr;
 	Dialog *_messageDialog = nullptr;
