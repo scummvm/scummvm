@@ -61,6 +61,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      Throttle, The Dig and The Curse of Monkey Island.
    - Added enhancement to Loom: Ctrl+D shows up list of drafts that has been
      discovered.
+   - Fixed kanji characters rendering issue in Japanese SegaCD version of Monkey
+     Island 1. Text rendering for this game is now pixel perfect.
+   - Implemented complete support for the Macintosh and DOS/V Japanese versions
+     of Indiana Jones and the Fate of Atlantis distributed by MicroMouse.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
