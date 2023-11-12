@@ -833,7 +833,7 @@ const Common::Array<const char *> _nancy5EventFlagNames = {
 //   it seems to be what the original devs were planning to do; there is a check for the flash paper in
 //   the exact scene that we patch. However, failing that check simply locks you in the room forever,
 //   because they seem to have forgotten to finish the softlock fix.
-// - S3503 removes the check for close captioning which would result in the player being unable to
+// - S3218 removes the check for close captioning which would result in the player being unable to
 //   close Simone's purse without having subtitles on. Technically not a softlock but just a plain bug,
 //   so it is not hidden behind a setting, and is always enabled.
 
@@ -843,7 +843,7 @@ const Common::Array<const char *> nancy5PatchSrcFiles {
 };
 
 const Common::Array<PatchAssociation> nancy5PatchAssociations {
-	{ { "softlocks_fix", "true" }, { "S3218" } }
+	{ { "softlocks_fix", "true" }, { "S3503" } }
 };
 
 #endif // NANCY5DATA_H
