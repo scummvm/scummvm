@@ -28,6 +28,7 @@
 namespace Gob {
 
 GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(nullptr) {
+	registerCmd("continue",     WRAP_METHOD(GobConsole, cmdExit));
 	registerCmd("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
 	registerCmd("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
 	registerCmd("var8",         WRAP_METHOD(GobConsole, cmd_var8));
