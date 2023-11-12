@@ -1330,6 +1330,8 @@ Common::Error ScummEngine::init() {
 	if (!ConfMan.hasKey("talkspeed", _targetName))
 		setTalkSpeed(_defaultTextSpeed);
 
+	_setupIsComplete = true;
+
 	syncSoundSettings();
 
 	return Common::kNoError;
@@ -2259,6 +2261,9 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 }
 
 void ScummEngine::syncSoundSettings() {
+	if (!_setupIsComplete)
+		return;
+
 	if (isUsingOriginalGUI() && _game.version > 6) {
 		int guiTextStatus = 0;
 		if (ConfMan.getBool("speech_mute")) {

@@ -892,6 +892,8 @@ protected:
 
 	int _mouseWheelFlag = 0; // For original save/load dialog only
 
+	bool _setupIsComplete = false;
+
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
 	 * This is currently only used for Indy3 mac to detect "double clicks".

@@ -79,6 +79,9 @@ Common::Error ScummEngine::loadGameState(int slot) {
 }
 
 bool ScummEngine::canLoadGameStateCurrently() {
+	if (!_setupIsComplete)
+		return false;
+
 	// FIXME: For now always allow loading in V0-V3 games
 	// FIXME: Actually, we might wish to support loading in more places.
 	// As long as we are sure it won't cause any problems... Are we
@@ -139,6 +142,9 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 }
 
 bool ScummEngine::canSaveGameStateCurrently() {
+	if (!_setupIsComplete)
+		return false;
+
 	// Disallow saving in v0-v3 games when a 'prequel' to a cutscene is shown.
 	// This is a blank screen with text, and while this is shown, saving should
 	// be disabled, as no room is set.
