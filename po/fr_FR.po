@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-12 13:40+0000\n"
-"PO-Revision-Date: 2023-11-11 04:30+0000\n"
+"PO-Revision-Date: 2023-11-12 16:35+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1532,16 +1532,12 @@ msgid "Shader Path:"
 msgstr "Shader - Chemin :"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Télécharger des jeux"
+msgstr "Télécharger des shaders"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Recherche de mises à jour des packs de shaders"
+msgstr "Recherche de mises à jour des packs de shaders sur le site scummvm.org"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2002,16 +1998,12 @@ msgstr ""
 "pour sélectionner des fichiers ou répertoires."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Télécharger"
+msgstr "Télécharger des icônes"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Recherche de mises à jour des packs d'icônes"
+msgstr "Recherche de mises à jour des packs d'icônes sur le site scummvm.org"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
