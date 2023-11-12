@@ -3478,11 +3478,11 @@ void MacLoomGui::update(int delta) {
 			if (_practiceBox) {
 				debug(1, "MacLoomGui: Deleting practice mode box");
 
+				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxPos.x, _practiceBoxPos.y), _surface->pitch, _practiceBoxPos.x, _practiceBoxPos.y, _practiceBox->w, _practiceBox->h);
+
 				_practiceBox->free();
 				delete _practiceBox;
 				_practiceBox = nullptr;
-
-				_system->copyRectToScreen(_surface->getBasePtr(_practiceBoxPos.x, _practiceBoxPos.y), _surface->pitch, _practiceBoxPos.x, _practiceBoxPos.y, _practiceBox->w, _practiceBox->h);
 			}
 		}
 	}
