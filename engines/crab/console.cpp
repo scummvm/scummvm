@@ -21,20 +21,26 @@
 
 #include "crab/crab.h"
 #include "crab/console.h"
+#include "crab/input/input.h"
+
 
 namespace Crab {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("draw", WRAP_METHOD(Console, cmdDraw));
+	registerCmd("what", WRAP_METHOD(Console, cmdWrite));
 }
 
 Console::~Console() {
 }
 
+
 bool Console::cmdDraw(int argc, const char **argv) {
+	
 	if (argc > 1) {
 		for (int i = 1; i < argc; i++) {
-			if (!scumm_stricmp(argv[i], "OFF"))
+			
+		     if (!scumm_stricmp(argv[i], "OFF"))
 				g_engine->_debugDraw = 0;
 			else if (!scumm_stricmp(argv[i], "TMX"))
 				g_engine->_debugDraw |= DRAW_TMX;
@@ -53,4 +59,31 @@ bool Console::cmdDraw(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdWrite(int argc, const char **argv) {
+	using namespace Crab::pyrodactyl::input;
+
+	if (argc > 1) {
+		for (int i = 1; i < argc; i++) {
+			if (!scumm_stricmp(argv[i], "keymap")) {
+
+			switch (g_engine->_inputManager->getKeyBindingMode()) {
+				case KBM_NONE:
+					debugPrintf("KBM_NONE\n");
+					break;
+				case KBM_GAME:
+					debugPrintf("KBM_GAME\n");
+					break;
+				case KBM_UI:
+					debugPrintf("KBM_UI\n");
+					break;
+				default:
+					debugPrintf("Unknown KBM\n");
+					break;
+				}
+			} else
+				debugPrintf("Valid parameters are 'keymap'\n");
+			return true;
+		}
+	}
+}
 } // End of namespace Crab
