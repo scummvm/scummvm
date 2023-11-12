@@ -126,7 +126,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	saveGUISnapshot(surf, "chooserDialog-" + filename);
 	chooserDialog.close();
 
-	//CloudConnectingWizard
+	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	cloudConnectingWizard.open();         // For rendering
 	cloudConnectingWizard.reflowLayout(); // For updating surface
@@ -135,7 +135,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	saveGUISnapshot(surf, "cloudConnectingWizard-" + filename);
 	cloudConnectingWizard.close();
 
-	//DownloadIconPacksDialog
+	// DownloadIconPacksDialog
 	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
 	downloadIconPacksDialog.open();         // For rendering
 	downloadIconPacksDialog.reflowLayout(); // For updating surface
@@ -144,7 +144,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	saveGUISnapshot(surf, "downloadIconPacksDialog-" + filename);
 	downloadIconPacksDialog.close();
 
-	//DownloadShaderPacksDialog
+	// DownloadShaderPacksDialog
 	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
 	downloadShaderPacksDialog.open();         // For rendering
 	downloadShaderPacksDialog.reflowLayout(); // For updating surface
@@ -162,7 +162,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	saveGUISnapshot(surf, "fluidSynthSettingsDialog-" + filename);
 	fluidSynthSettingsDialog.close();
 
-	//ThemeBrowserDialog
+	// ThemeBrowserDialog
 	GUI::ThemeBrowser themeBrowser;
 	themeBrowser.open();         // For rendering
 	themeBrowser.reflowLayout(); // For updating surface
@@ -172,7 +172,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	themeBrowser.close();
 
 
-	//MassAddDialog
+	// MassAddDialog
 	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
 	massAddDialog.open();         // For rendering
 	massAddDialog.reflowLayout(); // For updating surface
@@ -222,7 +222,7 @@ void dumpAllDialogs(const Common::String &message) {
 	ConfMan.setInt("last_window_height", original_window_height, Common::ConfigManager::kApplicationDomain);
 
 	g_system->beginGFXTransaction();
-	g_system->initSize(original_window_width, original_window_height);
+		g_system->initSize(original_window_width, original_window_height);
 	g_system->endGFXTransaction();
 }
 
