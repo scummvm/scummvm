@@ -1050,6 +1050,15 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
+	// This is an actual check from disasm:
+	// it appears that a certain Japanese glyph was previously being drawn with the '_' character.
+	// The executable now disables any attempt to draw this character. Removing this check draws
+	// an additional '_' character where it should be drawn.
+	// This, of course, disables the text cursor when writing a savegame name, but that's in the
+	// original as well.
+	if (_vm->_isIndy4Jap && chr == '_')
+		return;
+
 	translateColor();
 
 	_vm->_charsetColorMap[1] = _color;
