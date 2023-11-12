@@ -148,9 +148,11 @@ Game::~Game() {
 	if (game_map) delete game_map;
 	if (actor_manager) delete actor_manager;
 	//delete map_window;
+	// If conversation active, must be deleted before player as it resets
+	// player flags.
+	if (converse) delete converse;
 	if (player) delete player;
 	//delete background;
-	if (converse) delete converse;
 	if (_clock) delete _clock;
 	if (party) delete party;
 	if (portrait) delete portrait;
