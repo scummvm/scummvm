@@ -171,7 +171,13 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	// will contain the string...
 	bool isCOMIDemo = (_game.id == GID_CMI && (_game.features & GF_DEMO) != 0);
 
+	if (_isIndy4Jap)
+		_force2ByteCharHeight = true;
+
 	bannerMsgHeight = ((_game.id == GID_DIG || isCOMIDemo) ? getGUIStringHeight("ABC \x80\x78 \xb0\x78") : getGUIStringHeight(bannerMsg)) + 5;
+
+	if (_isIndy4Jap)
+		_force2ByteCharHeight = false;
 
 	bannerMsgWidth = getGUIStringWidth(bannerMsg);
 
@@ -197,6 +203,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		startingPointY = 80;
 		xPos = bannerMsgWidth / 2 + 164;
 		yPos = -18;
+		_bannerSaveYStart = startingPointY - 2;
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
@@ -2921,6 +2928,8 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		break;
 	case GUI_CTRL_PATH_BUTTON:
 		// This apparently should't do anything
+		updateMainMenuControls();
+		ScummEngine::drawDirtyScreenParts();
 		break;
 	case GUI_CTRL_MUSIC_SLIDER:
 		setMusicVolume(((mouseX - (_game.version == 7 ? 111 : 105)) << 7) / 87);
@@ -3126,6 +3135,9 @@ void ScummEngine::setUpMainMenuControls() {
 	if (_game.platform == Common::kPlatformSegaCD) {
 		setUpMainMenuControlsSegaCD();
 		return;
+	} else if (_isIndy4Jap) {
+		setUpMainMenuControlsIndy4Jap();
+		return;
 	}
 
 	int yConstant;
@@ -3318,6 +3330,214 @@ void ScummEngine::setUpMainMenuControls() {
 				28,
 				yConstant - 45 + j,
 				210 - (isLoomVGA ? 10 : 0),
+				-9,
+				_savegameNames[i - 1].c_str(), 0, 0);
+		}
+	}
+}
+
+void ScummEngine::setUpMainMenuControlsIndy4Jap() {
+	int yConstant = _virtscr[kMainVirtScreen].topline + (_virtscr[kMainVirtScreen].h / 2);
+
+	for (int i = 0; i < ARRAYSIZE(_internalGUIControls); i++) {
+		_internalGUIControls[i].relativeCenterX = -1;
+	}
+
+	// Outer box
+	setUpInternalGUIControl(GUI_CTRL_OUTER_BOX,
+		getBannerColor(4),
+		getBannerColor(2),
+		getBannerColor(13),
+		getBannerColor(14),
+		getBannerColor(15),
+		getBannerColor(16),
+		getBannerColor(6),
+		getBannerColor(4),
+		20,
+		yConstant - 64,
+		300,
+		yConstant + 64,
+		_emptyMsg, 1, 1);
+
+	// Inner box
+	setUpInternalGUIControl(GUI_CTRL_INNER_BOX,
+		getBannerColor(4),
+		getBannerColor(5),
+		getBannerColor(18),
+		getBannerColor(17),
+		getBannerColor(20),
+		getBannerColor(19),
+		getBannerColor(6),
+		getBannerColor(7),
+		26,
+		yConstant - 43,
+		-176,
+		-102,
+		_emptyMsg, 1, 1);
+
+	if (_menuPage == GUI_PAGE_MAIN) {
+		// Save button
+		setUpInternalGUIControl(GUI_CTRL_SAVE_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 39,
+			-60,
+			-18,
+			getGUIString(gsSave), 1, 1);
+
+		// Load button
+		setUpInternalGUIControl(GUI_CTRL_LOAD_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 18,
+			-60,
+			-18,
+			getGUIString(gsLoad), 1, 1);
+
+		// Play button
+		setUpInternalGUIControl(GUI_CTRL_PLAY_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant + 3,
+			-60,
+			-18,
+			getGUIString(gsPlay), 1, 1);
+
+		// Quit button
+		setUpInternalGUIControl(GUI_CTRL_QUIT_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant + 24,
+			-60,
+			-18,
+			getGUIString(gsQuit), 1, 1);
+	}
+
+	// Arrow up button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		206,
+		yConstant - 39,
+		-16,
+		-47,
+		_arrowUp, 1, 1);
+
+	// Arrow down button
+	setUpInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON,
+		getBannerColor(9),
+		getBannerColor(10),
+		getBannerColor(17),
+		getBannerColor(18),
+		getBannerColor(19),
+		getBannerColor(20),
+		getBannerColor(11),
+		getBannerColor(12),
+		206,
+		yConstant + 11,
+		-16,
+		-45,
+		_arrowDown, 1, 1);
+
+	if (_menuPage == GUI_PAGE_SAVE || _menuPage == GUI_PAGE_LOAD) {
+		// Path button
+		setUpInternalGUIControl(GUI_CTRL_PATH_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			yConstant - 39,
+			-60,
+			-18,
+			"C:/FATE", 1, 1);
+
+		if (_menuPage == GUI_PAGE_SAVE) {
+			// OK button
+			setUpInternalGUIControl(GUI_CTRL_OK_BUTTON,
+				getBannerColor(4),
+				getBannerColor(5),
+				getBannerColor(17),
+				getBannerColor(18),
+				getBannerColor(19),
+				getBannerColor(20),
+				getBannerColor(6),
+				getBannerColor(7),
+				232,
+				yConstant - 18,
+				-60,
+				-18,
+				getGUIString(gsOK), 1, 1);
+		}
+
+		// Cancel button
+		setUpInternalGUIControl(GUI_CTRL_CANCEL_BUTTON,
+			getBannerColor(4),
+			getBannerColor(5),
+			getBannerColor(17),
+			getBannerColor(18),
+			getBannerColor(19),
+			getBannerColor(20),
+			getBannerColor(6),
+			getBannerColor(7),
+			232,
+			(_menuPage == GUI_PAGE_LOAD ? yConstant - 8 : yConstant + 3),
+			-60,
+			-18,
+			getGUIString(gsCancel), 1, 1);
+
+		// Savegame names
+		for (int i = GUI_CTRL_FIRST_SG, j = 0; i <= GUI_CTRL_LAST_SG; i++, j += 11) {
+			setUpInternalGUIControl(i,
+				getBannerColor(9),
+				getBannerColor(10),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(4),
+				getBannerColor(11),
+				getBannerColor(12),
+				28,
+				yConstant - 41 + j,
+				-172,
 				-9,
 				_savegameNames[i - 1].c_str(), 0, 0);
 		}
@@ -4278,6 +4498,9 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 			drawBox(21, yConstantV6 - 55, 299, yConstantV6 - 47, boxColor);
 			drawGUIText(title, nullptr, 160, yConstantV6 - 55, stringColor, true);
 		}
+	} else if (_isIndy4Jap) {
+		drawBox(22, yConstantV6 - 60, 298, yConstantV6 - 44, boxColor);
+		drawGUIText(title, nullptr, 160, yConstantV6 - 60, stringColor, true);
 	} else {
 		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
 		drawGUIText(title, nullptr, 160, yConstantV6 - 56, stringColor, true);

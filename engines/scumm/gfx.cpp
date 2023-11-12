@@ -1666,7 +1666,8 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
-	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
+	int factor = _isIndy4Jap ? 0 : 8;
+	if (x >= 0 && y >= 0 && _screenWidth + factor > x && _screenHeight > y) {
 		if (useBackbuffer)
 			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
 		else

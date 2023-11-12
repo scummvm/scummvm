@@ -779,6 +779,7 @@ protected:
 	void showMainMenu();
 	virtual void setUpMainMenuControls();
 	void setUpMainMenuControlsSegaCD();
+	void setUpMainMenuControlsIndy4Jap();
 	void drawMainMenuControls();
 	void drawMainMenuControlsSegaCD();
 	void updateMainMenuControls();
