@@ -245,7 +245,7 @@ struct SoundEffectDescription {
 
 // Descrbes a single sound. Combines four different structs found in the data in one
 struct SoundDescription {
-	Common::String name;
+	Common::String name = "NO SOUND";
 	uint16 channelID = 0;
 	uint16 playCommands = 1;
 	uint16 numLoops = 0;
