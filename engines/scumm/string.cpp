@@ -573,24 +573,7 @@ bool ScummEngine::newLine() {
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 		_nextTop += _string[0].height;
 	} else {
-		if (_game.platform == Common::kPlatformSegaCD && _useCJKMode) {
-			// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
-			// the font height, but instead relies on the actual string height.
-			// If the string contains at least a 2 byte character, then we signal it with
-			// a flag, so that getFontHeight() can yield the correct result.
-			for (int i = 0; _charsetBuffer[i]; i++) {
-				// Handle the special 0xFAFD character, which actually is a 0x20 space char.
-				if (_charsetBuffer[i] == 0xFD && _charsetBuffer[i + 1] == 0xFA) {
-					i++;
-					continue;
-				}
-
-				if (is2ByteCharacter(_language, _charsetBuffer[i])) {
-					_segaForce2ByteCharHeight = true;
-					break;
-				}
-			}
-
+		if ((_game.platform == Common::kPlatformSegaCD || _isIndy4Jap) && _useCJKMode) {
 			_nextTop += _charset->getFontHeight();
 		} else {
 			bool useCJK = _useCJKMode;
@@ -605,8 +588,6 @@ bool ScummEngine::newLine() {
 		// FIXME: is this really needed?
 		_charset->_disableOffsX = true;
 	}
-
-	_segaForce2ByteCharHeight = false;
 
 	return true;
 }
@@ -849,6 +830,8 @@ void ScummEngine::CHARSET_1() {
 
 	if (!_haveMsg)
 		return;
+
+	_force2ByteCharHeight = false;
 
 	if (_game.version >= 4 && _game.version <= 6) {
 		// Do nothing while the camera is moving
@@ -1167,6 +1150,19 @@ void ScummEngine::CHARSET_1() {
 				byte *buffer = _charsetBuffer + _charsetBufPos;
 				c += *buffer++ * 256; //LE
 				_charsetBufPos = buffer - _charsetBuffer;
+
+				// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
+				// the font height, but instead relies on the actual string height.
+				// If the string contains at least a 2 byte character, then we signal it with
+				// a flag, so that getFontHeight() can yield the correct result.
+				// It has been verified on the disasm for Indy4 Japanese DOS/V and Mac that
+				// this is the correct behavior for the latter game as well.
+				// Monkey Island 1 seems to have an exception for the 0xFAFD character, which
+				// is a space character with a two byte character height and width, but those
+				// dimensions apparently are never used, and the 0x20 character is used instead.
+				if (_game.platform != Common::kPlatformSegaCD || c != 0xFAFD) {
+					_force2ByteCharHeight = true;
+				}
 			}
 		}
 		if (_game.version <= 3) {
