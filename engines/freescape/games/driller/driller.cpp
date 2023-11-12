@@ -320,7 +320,12 @@ void DrillerEngine::drawInfoMenu() {
 				_gfx->computeScreenViewport();
 				// TODO: properly refresh screen
 				break;
-
+			case Common::EVENT_RBUTTONDOWN:
+			// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					cont = false;
+				break;
 			default:
 				break;
 			}

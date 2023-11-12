@@ -671,7 +671,12 @@ void DarkEngine::drawFullscreenMessageAndWait(Common::String message) {
 			case Common::EVENT_SCREEN_CHANGED:
 				_gfx->computeScreenViewport();
 				break;
-
+			case Common::EVENT_RBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					cont = false;
+				break;
 			default:
 				break;
 			}
