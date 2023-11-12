@@ -28,7 +28,7 @@ namespace Nuvie {
 class Configuration;
 
 class Look {
-	Configuration *config;
+	const Configuration *config;
 	const char *look_tbl[2048];
 	uint16 max_len;
 	unsigned char *look_data;
@@ -36,7 +36,7 @@ class Look {
 
 public:
 
-	Look(Configuration *cfg);
+	Look(const Configuration *cfg);
 	~Look();
 
 	bool init();

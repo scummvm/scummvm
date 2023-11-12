@@ -183,7 +183,7 @@ typedef struct EventInput_s EventInput;
 class Events : public Ultima::Shared::EventsManager, public CallBack {
 	friend class Magic; // FIXME
 private:
-	Configuration *config;
+	const Configuration *config;
 	GUI *gui;
 	Game *game;
 	ObjManager *obj_manager;
@@ -241,7 +241,7 @@ protected:
 	void try_next_attack();
 
 public:
-	Events(Shared::EventsCallback *callback, Configuration *cfg);
+	Events(Shared::EventsCallback *callback, const Configuration *cfg);
 	~Events() override;
 
 	void clear();

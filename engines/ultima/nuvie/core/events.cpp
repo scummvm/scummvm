@@ -73,7 +73,7 @@ void EventInput_s::set_loc(const MapCoord &c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Shared::EventsCallback *callback, Configuration *cfg)
+Events::Events(Shared::EventsCallback *callback, const Configuration *cfg)
 		: Shared::EventsManager(callback), config(cfg), converse(nullptr),
 		  keybinder(nullptr), showingQuitDialog(false), fps_counter_widget(nullptr),
 		  cursor_mode(false){

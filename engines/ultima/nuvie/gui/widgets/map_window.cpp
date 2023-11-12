@@ -105,7 +105,7 @@ static const Tile grid_tile = {
 	}
 };
 
-MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg),
+MapWindow::MapWindow(const Configuration *cfg, Map *m): GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg),
 		map(m), anim_manager(nullptr), cur_x(0), cur_y(0), mousecenter_x(0),
 		mousecenter_y(0), cur_x_add(0), cur_y_add(0), vel_x(0), vel_y(0),
 		last_boundary_fill_x(0), last_boundary_fill_y(0), cursor_x(0), cursor_y(0),

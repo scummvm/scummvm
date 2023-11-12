@@ -59,7 +59,7 @@ static const TownsSfxLookup sfx_lookup_tbl[] = {
 	{NUVIE_SFX_ATTACK_SWING, 2}
 };
 
-TownsSfxManager::TownsSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m),
+TownsSfxManager::TownsSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m),
 		fireStream(nullptr) {
 	config->pathFromValue("config/townsdir", "sounds2.dat", sounds2dat_filepath);
 	loadSound1Dat();

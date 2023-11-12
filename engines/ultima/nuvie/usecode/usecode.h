@@ -154,7 +154,7 @@ private:
 
 protected:
 	Game *game;
-	Configuration *config;
+	const Configuration *config;
 	ObjManager *obj_manager;
 	Map *map;
 	Player *player;
@@ -179,7 +179,7 @@ protected:
 
 public:
 
-	UseCode(Game *g, Configuration *cfg);
+	UseCode(Game *g, const Configuration *cfg);
 	virtual ~UseCode();
 
 	virtual bool init(ObjManager *om, Map *m, Player *p, MsgScroll *ms);

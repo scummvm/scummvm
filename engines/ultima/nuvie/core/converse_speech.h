@@ -43,14 +43,14 @@ typedef struct TownsSound {
 
 class ConverseSpeech {
 	// game system objects from nuvie
-	Configuration *config;
+	const Configuration *config;
 	Audio::SoundHandle handle;
 	Std::list<TownsSound> list;
 
 public:
 	ConverseSpeech();
 	~ConverseSpeech();
-	void init(Configuration *cfg);
+	void init(const Configuration *cfg);
 	void update();
 	void play_speech(uint16 actor_num, uint16 sample_num);
 

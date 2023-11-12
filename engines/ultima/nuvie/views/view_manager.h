@@ -57,7 +57,7 @@ typedef enum { CURSOR_HEAD, CURSOR_NECK, CURSOR_CHEST, CURSOR_RIGHT_HAND, CURSOR
 class ViewManager {
 protected:
 
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	GUI *gui;
 	Font *font;
@@ -87,7 +87,7 @@ protected:
 
 public:
 
-	ViewManager(Configuration *cfg);
+	ViewManager(const Configuration *cfg);
 	virtual ~ViewManager();
 
 	bool init(GUI *g, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *por);

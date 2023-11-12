@@ -34,7 +34,7 @@ class Font;
 #define NUVIE_FONT_GARG   1
 
 class FontManager {
-	Configuration *config;
+	const Configuration *config;
 
 	Std::vector<Font *> fonts;
 	uint16 num_fonts;
@@ -44,7 +44,7 @@ class FontManager {
 	uint8 *conv_font_widths;
 public:
 
-	FontManager(Configuration *cfg);
+	FontManager(const Configuration *cfg);
 	~FontManager();
 
 	bool init(nuvie_game_t game_type);

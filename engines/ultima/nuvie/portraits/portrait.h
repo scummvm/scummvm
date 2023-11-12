@@ -35,18 +35,18 @@ class NuvieIO;
 
 #define NO_PORTRAIT_FOUND 255
 
-Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg);
+Portrait *newPortrait(nuvie_game_t gametype, const Configuration *cfg);
 
 class Portrait {
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	uint8 avatar_portrait_num;
 	uint8 width;
 	uint8 height;
 public:
 
-	Portrait(Configuration *cfg);
+	Portrait(const Configuration *cfg);
 	virtual ~Portrait() {};
 
 	virtual bool init() = 0;

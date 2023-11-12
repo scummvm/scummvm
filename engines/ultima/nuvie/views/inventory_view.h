@@ -62,7 +62,7 @@ class InventoryView : public View {
 	bool show_cursor;
 
 public:
-	InventoryView(Configuration *cfg);
+	InventoryView(const Configuration *cfg);
 	~InventoryView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);

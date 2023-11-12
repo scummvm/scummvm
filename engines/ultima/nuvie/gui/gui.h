@@ -44,7 +44,7 @@ class GUI {
 protected:
 
 	static GUI *gui;
-	Configuration *config;
+	const Configuration *config;
 
 	/* The display surface */
 	Screen *screen;
@@ -83,7 +83,7 @@ protected:
 public:
 	static const int mouseclick_delay; /* SB-X */
 
-	GUI(Configuration *c, Screen *s);
+	GUI(const Configuration *c, Screen *s);
 	~GUI();
 
 	/* Add a widget to the GUI.
@@ -166,12 +166,12 @@ public:
 	void unblock() {
 		block_input = false;
 	}
-	Std::string get_data_dir();
+	Std::string get_data_dir() const ;
 
-	uint16 get_width() {
+	uint16 get_width() const {
 		return screen->get_width();
 	}
-	uint16 get_height() {
+	uint16 get_height() const {
 		return screen->get_height();
 	}
 protected:

@@ -41,7 +41,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback)
+InventoryWidget::InventoryWidget(const Configuration *cfg, GUI_CallBack *callback)
 	: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
       container_obj(nullptr), tile_manager(nullptr), obj_manager(nullptr),
 	  selected_obj(nullptr), font(nullptr), actor(nullptr), target_obj(nullptr),

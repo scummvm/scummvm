@@ -43,7 +43,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Party::Party(Configuration *cfg) : config(cfg), game(nullptr),
+Party::Party(const Configuration *cfg) : config(cfg), game(nullptr),
 		actor_manager(nullptr), map(nullptr), pathfinder(nullptr),
 		rest_campfire(nullptr), formation(PARTY_FORM_STANDARD),
 		num_in_party(0), prev_leader_x(0), prev_leader_y(0),

@@ -73,7 +73,7 @@ void delete_obj(Obj *obj);
 void clean_obj_tree_node(void *node);
 
 class ObjManager {
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	EggManager *egg_manager;
 	TileManager *tile_manager;
@@ -102,7 +102,7 @@ class ObjManager {
 
 public:
 
-	ObjManager(Configuration *cfg, TileManager *tm, EggManager *em);
+	ObjManager(const Configuration *cfg, TileManager *tm, EggManager *em);
 	~ObjManager();
 
 	bool use_custom_actor_tiles() {

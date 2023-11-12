@@ -46,11 +46,11 @@ typedef enum {
 	FORCE_MOVE
 } MovementStatus;
 
-Std::string config_get_game_key(Configuration *config);
+Std::string config_get_game_key(const Configuration *config);
 const char *get_game_tag(int game_type);
-void config_get_path(Configuration *config, const Std::string &filename, Std::string &path);
+void config_get_path(const Configuration *config, const Std::string &filename, Std::string &path);
 uint8 get_game_type(const char *string);
-nuvie_game_t get_game_type(Configuration *config);
+nuvie_game_t get_game_type(const Configuration *config);
 void build_path(const Std::string &path, const Std::string &filename, Std::string &full_path);
 bool directory_exists(const char *directory);
 bool file_exists(const char *path);
@@ -69,12 +69,6 @@ const char *get_direction_name(NuvieDir dir);
 const char *get_direction_name(sint16 rel_x, sint16 rel_y);
 int str_bsearch(const char *str[], int max, const char *value);
 void stringToLower(Std::string &str);
-/* Is point x,y within rect?
- */
-inline bool point_in_rect(uint16 x, uint16 y, Common::Rect *rect) {
-	return rect->contains(x, y);
-}
-
 
 /* Does line xy->x2y2 cross rect, to any extent?
  */
@@ -111,7 +105,7 @@ void scale_rect_8bit(const unsigned char *Source, unsigned char *Target, int Src
 
 bool has_file_extension(const char *filename, const char *extension);
 
-bool has_fmtowns_support(Configuration *config);
+bool has_fmtowns_support(const Configuration *config);
 
 uint16 wrap_signed_coord(sint16 coord, uint8 level);
 sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level);

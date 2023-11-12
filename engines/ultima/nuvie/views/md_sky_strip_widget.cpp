@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-MDSkyStripWidget::MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p)
+MDSkyStripWidget::MDSkyStripWidget(const Configuration *cfg, GameClock *c, Player *p)
 	: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), player(p), _clock(c) {
 }
 

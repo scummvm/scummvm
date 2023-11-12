@@ -32,7 +32,7 @@ namespace Nuvie {
 static const uint8 dither_cga_tbl[0x10] =   {0, 3, 3, 3, 13, 13, 13, 3, 3, 13, 15, 3, 13, 13, 15, 15};
 //static const uint8 dither_cga_tbl[0x10] = {0,1,1,1,2 ,2 ,2 ,1,1,2 ,3 ,1,2 ,2 ,3, 3};
 
-Dither::Dither(Configuration *cfg) : config(cfg), dither(nullptr), mode(DITHER_NONE) {
+Dither::Dither(const Configuration *cfg) : config(cfg), dither(nullptr), mode(DITHER_NONE) {
 	set_mode();
 
 	if (mode != DITHER_NONE)

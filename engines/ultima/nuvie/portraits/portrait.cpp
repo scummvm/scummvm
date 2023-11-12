@@ -45,7 +45,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg) {
+Portrait *newPortrait(nuvie_game_t gametype, const Configuration *cfg) {
 	// Correct portrait class for each game
 	switch (gametype) {
 	case NUVIE_GAME_U6 :
@@ -62,7 +62,7 @@ Portrait *newPortrait(nuvie_game_t gametype, Configuration *cfg) {
 }
 
 
-Portrait::Portrait(Configuration *cfg) : config(cfg), avatar_portrait_num(0), width(0), height(0) {
+Portrait::Portrait(const Configuration *cfg) : config(cfg), avatar_portrait_num(0), width(0), height(0) {
 }
 
 uint8 Portrait::get_avatar_portrait_num() const {

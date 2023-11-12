@@ -51,7 +51,7 @@ class PortraitViewGump : public DraggableView {
 	uint8 cursor_xoff, cursor_yoff;
 
 public:
-	PortraitViewGump(Configuration *cfg);
+	PortraitViewGump(const Configuration *cfg);
 	~PortraitViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om, Portrait *por, Actor *a);

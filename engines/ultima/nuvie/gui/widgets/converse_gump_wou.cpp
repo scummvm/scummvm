@@ -48,7 +48,7 @@ namespace Nuvie {
 
 // ConverseGumpWOU Class
 
-ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s)
+ConverseGumpWOU::ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s)
 		: found_break_char(false), frame_h(0), frame_w(0), min_w(0) {
 // uint16 x, y;
 

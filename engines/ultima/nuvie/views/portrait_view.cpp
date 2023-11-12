@@ -42,7 +42,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-PortraitView::PortraitView(Configuration *cfg) : View(cfg),
+PortraitView::PortraitView(const Configuration *cfg) : View(cfg),
 		portrait_data(nullptr), portrait(nullptr),	bg_data(nullptr),
 		name_string(new string), show_cursor(false), doll_widget(nullptr),
 		waiting(false), display_doll(false), cur_actor_num(0) {

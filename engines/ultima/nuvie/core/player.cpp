@@ -42,7 +42,7 @@ namespace Nuvie {
 
 static const int PLAYER_BASE_MOVEMENT_COST = 5;
 
-Player::Player(Configuration *cfg) : config(cfg), _clock(nullptr),
+Player::Player(const Configuration *cfg) : config(cfg), _clock(nullptr),
 		party(nullptr), actor(nullptr), actor_manager(nullptr), obj_manager(nullptr),
 		map_window(nullptr), karma(0), gender(0), questf(0), gargishf(0), alcohol(0),
 		current_weapon(0), party_mode(false), mapwindow_centered(false) {

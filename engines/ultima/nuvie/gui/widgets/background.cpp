@@ -33,7 +33,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Background::Background(Configuration *cfg) : GUI_Widget(nullptr), config(cfg),
+Background::Background(const Configuration *cfg) : GUI_Widget(nullptr), config(cfg),
 		bg_w(0), bg_h(0), border_width(0), background(nullptr), right_bg_x_off(0),
 		left_bg_x_off(0) {
 	config->value("config/GameType", game_type);

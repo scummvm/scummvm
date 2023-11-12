@@ -60,8 +60,8 @@ public:
 	virtual bool load(Std::string filename);
 	bool load(U6Lib_n *file, uint32 index);
 	virtual bool load(unsigned char *buf);
-	bool load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx);
-	bool load_WoU_background(Configuration *config, nuvie_game_t game_type);
+	bool load_from_lzc(const Std::string &filename, uint32 idx, uint32 sub_idx);
+	bool load_WoU_background(const Configuration *config, nuvie_game_t game_type);
 
 	unsigned char *get_data();
 	Graphics::ManagedSurface *get_shape_surface();

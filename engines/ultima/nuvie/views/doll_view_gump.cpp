@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-DollViewGump::DollViewGump(Configuration *cfg)
+DollViewGump::DollViewGump(const Configuration *cfg)
     : DraggableView(cfg), gump_button(nullptr), combat_button(nullptr),
       heart_button(nullptr), party_button(nullptr), inventory_button(nullptr),
 	  doll_widget(nullptr), actor_doll(nullptr), font(nullptr), actor(nullptr),

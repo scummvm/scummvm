@@ -143,7 +143,7 @@ public:
 
 
 class Map {
-	Configuration *config;
+	const Configuration *config;
 	TileManager *tile_manager;
 	ObjManager *obj_manager;
 	ActorManager *actor_manager;
@@ -156,7 +156,7 @@ class Map {
 
 public:
 
-	Map(Configuration *cfg);
+	Map(const Configuration *cfg);
 	~Map();
 
 	void set_actor_manager(ActorManager *am) {
@@ -192,10 +192,10 @@ public:
 	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = nullptr); // excluded_obj only works for LT_HitUnpassable
 
 	void saveRoofData();
-	Std::string getRoofTilesetFilename();
+	Std::string getRoofTilesetFilename() const;
 
 protected:
-	Std::string getRoofDataFilename();
+	Std::string getRoofDataFilename() const;
 	void insertSurfaceSuperChunk(const unsigned char *schunk_ptr, const unsigned char *chunk_data, uint8 schunk_num);
 	void insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y);
 

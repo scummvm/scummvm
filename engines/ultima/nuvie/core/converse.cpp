@@ -58,7 +58,7 @@ Converse::Converse() : config(nullptr), actors(nullptr), objects(nullptr),
 /* Initialize global classes from the game.
  */
 void
-Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
+Converse::init(const Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
 			   GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
 	Std::string townsdir;
 
@@ -731,7 +731,7 @@ void ConvScript::write2(converse_value val) {
 }
 
 
-ConverseGumpType get_converse_gump_type_from_config(Configuration *config) {
+ConverseGumpType get_converse_gump_type_from_config(const Configuration *config) {
 	Std::string configvalue;
 	config->value("config/general/converse_gump", configvalue, "default");
 

@@ -40,7 +40,7 @@ namespace Nuvie {
 static const int CONTAINER_WIDGET_OFFSET = 29;
 #define CHECK_X 0
 
-ContainerViewGump::ContainerViewGump(Configuration *cfg) : DraggableView(cfg),
+ContainerViewGump::ContainerViewGump(const Configuration *cfg) : DraggableView(cfg),
 		gump_button(nullptr), up_arrow_button(nullptr), down_arrow_button(nullptr),
 		doll_button(nullptr), left_arrow_button(nullptr),
 		right_arrow_button(nullptr), container_widget(nullptr), font(nullptr),

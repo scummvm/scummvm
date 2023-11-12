@@ -36,7 +36,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-Map::Map(Configuration *cfg) : config(cfg), tile_manager(nullptr),
+Map::Map(const Configuration *cfg) : config(cfg), tile_manager(nullptr),
 		obj_manager(nullptr), actor_manager(nullptr), surface(nullptr),
 		roof_surface(nullptr) {
 	ARRAYCLEAR(dungeons);
@@ -463,7 +463,7 @@ bool Map::has_roof(uint16 x, uint16 y, uint8 level) const {
 	return false;
 }
 
-Std::string Map::getRoofDataFilename() {
+Std::string Map::getRoofDataFilename() const {
 	Std::string game_type, datadir, path, mapfile;
 
 	config->value("config/datadir", datadir, "");
@@ -478,7 +478,7 @@ Std::string Map::getRoofDataFilename() {
 	return mapfile;
 }
 
-Std::string Map::getRoofTilesetFilename() {
+Std::string Map::getRoofTilesetFilename() const {
 	Std::string datadir;
 	Std::string imagefile;
 	Std::string path;

@@ -41,7 +41,7 @@ typedef struct {
 
 class TownsSfxManager : public SfxManager {
 public:
-	TownsSfxManager(Configuration *cfg, Audio::Mixer *m);
+	TownsSfxManager(const Configuration *cfg, Audio::Mixer *m);
 	~TownsSfxManager() override;
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume) override;

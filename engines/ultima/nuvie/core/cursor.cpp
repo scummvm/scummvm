@@ -44,7 +44,7 @@ Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
 
 /* Returns true if mouse pointers file was loaded.
  */
-bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
+bool Cursor::init(const Configuration *c, Screen *s, nuvie_game_t game_type) {
 	Std::string file, filename;
 	bool enable_cursors;
 

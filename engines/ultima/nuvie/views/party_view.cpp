@@ -46,7 +46,7 @@ extern GUI_status actorViewButtonCallback(void *data);
 #define SE Game::get_game()->get_game_type()==NUVIE_GAME_SE
 #define MD Game::get_game()->get_game_type()==NUVIE_GAME_MD
 
-PartyView::PartyView(Configuration *cfg) : View(cfg), player(nullptr),
+PartyView::PartyView(const Configuration *cfg) : View(cfg), player(nullptr),
 		view_manager(nullptr), party_view_targeting(false), row_offset(0),
 		sun_moon_widget(nullptr) {
 }

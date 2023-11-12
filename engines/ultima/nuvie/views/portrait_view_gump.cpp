@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-PortraitViewGump::PortraitViewGump(Configuration *cfg) : DraggableView(cfg),
+PortraitViewGump::PortraitViewGump(const Configuration *cfg) : DraggableView(cfg),
 		portrait(nullptr), font(nullptr), gump_button(nullptr), portrait_data(nullptr),
 		actor(nullptr), cursor_tile(nullptr), show_cursor(true),
 		cursor_pos(CURSOR_CHECK), cursor_xoff(1), cursor_yoff(67) {

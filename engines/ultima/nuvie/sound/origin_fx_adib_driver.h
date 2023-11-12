@@ -33,12 +33,12 @@ class Configuration;
 
 class OriginFXAdLibDriver {
 public:
-	OriginFXAdLibDriver(Configuration *cfg, Copl *newopl);
+	OriginFXAdLibDriver(const Configuration *cfg, Copl *newopl);
 	~OriginFXAdLibDriver();
 
 private:
 
-	Configuration *config;
+	const Configuration *config;
 	Copl *opl;
 
 	unsigned char num_tim_records;

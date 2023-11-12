@@ -96,7 +96,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off =  game->get_game_y_offset();
 	bool right_pos_cb = false;
-	Configuration *cfg = nullptr;
+	const Configuration *cfg = nullptr;
 
 	if (!game->is_orig_style()) {
 		cfg = game->get_config();

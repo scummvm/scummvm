@@ -36,7 +36,7 @@ class PortraitMD : public Portrait {
 	U6Lib_n faces;
 
 public:
-	PortraitMD(Configuration *cfg): Portrait(cfg) {};
+	PortraitMD(const Configuration *cfg): Portrait(cfg) {};
 
 	bool init() override;
 	bool load(NuvieIO *objlist) override;

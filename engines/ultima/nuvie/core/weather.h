@@ -45,7 +45,7 @@ using Std::string;
 #define WEATHER_WIND_CALM 8
 
 class Weather: public CallBack {
-	Configuration *config;
+	const Configuration *config;
 	GameClock *_clock;
 	nuvie_game_t gametype; // what game is being played?
 
@@ -56,7 +56,7 @@ class Weather: public CallBack {
 
 public:
 
-	Weather(Configuration *cfg, GameClock *c, nuvie_game_t type);
+	Weather(const Configuration *cfg, GameClock *c, nuvie_game_t type);
 	~Weather() override;
 
 	bool load(NuvieIO *objlist);

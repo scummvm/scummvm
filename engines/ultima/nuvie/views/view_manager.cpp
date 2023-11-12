@@ -50,7 +50,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-ViewManager::ViewManager(Configuration *cfg) : config(cfg),
+ViewManager::ViewManager(const Configuration *cfg) : config(cfg),
 		current_view(nullptr), gui(nullptr), font(nullptr), tile_manager(nullptr),
 		obj_manager(nullptr), party(nullptr), portrait(nullptr), actor_view(nullptr),
 		inventory_view(nullptr), portrait_view(nullptr), party_view(nullptr),

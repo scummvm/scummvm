@@ -37,7 +37,7 @@ ConverseSpeech::ConverseSpeech() : config(nullptr) {
 
 /* Initialize global classes from the game.
  */
-void ConverseSpeech::init(Configuration *cfg) {
+void ConverseSpeech::init(const Configuration *cfg) {
 	config = cfg;
 }
 

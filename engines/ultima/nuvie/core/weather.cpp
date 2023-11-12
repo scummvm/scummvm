@@ -41,7 +41,7 @@ namespace Nuvie {
 //the longest we will go before having a change in wind direction
 #define WEATHER_MAX_WIND 30
 
-Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type)
+Weather::Weather(const Configuration *cfg, GameClock *c, nuvie_game_t type)
 		: config(cfg), _clock(c), gametype(type), wind_dir(NUVIE_DIR_NONE),
 		  wind_timer(nullptr) {
 	string s;

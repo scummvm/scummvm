@@ -39,7 +39,7 @@ class PortraitU6 : public Portrait {
 
 public:
 
-	PortraitU6(Configuration *cfg) : Portrait(cfg) {};
+	PortraitU6(const Configuration *cfg) : Portrait(cfg) {};
 	~PortraitU6() override {};
 
 	bool init() override;

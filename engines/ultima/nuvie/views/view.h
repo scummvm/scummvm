@@ -41,7 +41,7 @@ class Actor;
 
 class View: public GUI_Widget {
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	GUI_Button *left_button, *right_button, *actor_button, *party_button, *inventory_button;
 
@@ -56,7 +56,7 @@ protected:
 
 public:
 
-	View(Configuration *cfg);
+	View(const Configuration *cfg);
 	~View() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);

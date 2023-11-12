@@ -40,7 +40,7 @@ class MapCoord;
 #define ACTORMANAGER_MAX_ACTORS 256
 
 class ActorManager {
-	Configuration *config;
+	const Configuration *config;
 	TileManager *tile_manager;
 	ObjManager *obj_manager;
 
@@ -63,7 +63,7 @@ class ActorManager {
 
 public:
 
-	ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c);
+	ActorManager(const Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c);
 	~ActorManager();
 
 	void init();

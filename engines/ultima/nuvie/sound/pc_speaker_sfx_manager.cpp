@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-PCSpeakerSfxManager::PCSpeakerSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
+PCSpeakerSfxManager::PCSpeakerSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 
 }
 

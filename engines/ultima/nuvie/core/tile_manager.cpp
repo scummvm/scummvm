@@ -88,7 +88,7 @@ static const Tile gump_cursor = {
 	}
 };
 
-TileManager::TileManager(Configuration *cfg) : desc_buf(nullptr), config(cfg),
+TileManager::TileManager(const Configuration *cfg) : desc_buf(nullptr), config(cfg),
 		look(nullptr), game_counter(0), rgame_counter(0), extendedTiles(nullptr),
 		numTiles(NUM_ORIGINAL_TILES) {
 	memset(tileindex, 0, sizeof(tileindex));

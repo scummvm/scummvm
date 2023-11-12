@@ -32,7 +32,7 @@ namespace Nuvie {
 const uint8 adlib_BD_cmd_tbl[] = { 0, 1, 0, 1, 0, 1, 16, 8, 4, 2, 1 };
 
 
-OriginFXAdLibDriver::OriginFXAdLibDriver(Configuration *cfg, Copl *newopl) {
+OriginFXAdLibDriver::OriginFXAdLibDriver(const Configuration *cfg, Copl *newopl) {
 
 	const uint8 byte_73_init[] = {1, 2, 3, 4, 5, 6, 7, 8, 0xB, 0xFF, 0xFF, 0, 0xC};
 

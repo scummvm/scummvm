@@ -39,7 +39,7 @@ class Party;
 class NuvieIO;
 
 class Player {
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	GameClock *_clock;
 	Party *party;
@@ -63,7 +63,7 @@ class Player {
 
 public:
 
-	Player(Configuration *cfg);
+	Player(const Configuration *cfg);
 
 	bool init(ObjManager *om, ActorManager *am, MapWindow *mw, GameClock *c, Party *p);
 	void init();

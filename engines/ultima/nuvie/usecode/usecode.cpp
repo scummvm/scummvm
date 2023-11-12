@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-UseCode::UseCode(Game *g, Configuration *cfg) : game(g), config(cfg),
+UseCode::UseCode(Game *g, const Configuration *cfg) : game(g), config(cfg),
 		obj_manager(nullptr), map(nullptr), player(nullptr), scroll(nullptr),
 		actor_manager(nullptr), party(nullptr), script(nullptr), script_thread(nullptr) {
 	clear_items();

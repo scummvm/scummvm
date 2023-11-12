@@ -38,7 +38,7 @@ class InventoryWidget : public GUI_Widget {
 private:
 	Common::Rect arrow_rects[2];
 protected:
-	Configuration *config;
+	const Configuration *config;
 
 	int game_type;
 
@@ -60,7 +60,7 @@ protected:
 	const Tile *empty_tile;
 
 public:
-	InventoryWidget(Configuration *cfg, GUI_CallBack *callback = nullptr);
+	InventoryWidget(const Configuration *cfg, GUI_CallBack *callback = nullptr);
 	~InventoryWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);

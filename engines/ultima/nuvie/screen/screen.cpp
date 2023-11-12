@@ -41,7 +41,7 @@ static const int SHADING_BORDER = 2; // should be the same as MapWindow's TMP_MA
 static const sint32 globeradius[]   = { 36, 112, 148, 192, 448 };
 static const sint32 globeradius_2[] = { 18, 56, 74, 96, 224 };
 
-Screen::Screen(Configuration *cfg) : config(cfg), _rawSurface(nullptr),
+Screen::Screen(const Configuration *cfg) : config(cfg), _rawSurface(nullptr),
 		_renderSurface(nullptr), scaler(nullptr), shading_data(nullptr),
 		scaler_index(0), scale_factor(2), doubleBuffer(false),
 		is_no_darkness(false), non_square_pixels(false), shading_ambient(255),

@@ -41,7 +41,7 @@ private:
 	int button_x, button_y;
 
 public:
-	DraggableView(Configuration *config);
+	DraggableView(const Configuration *config);
 	~DraggableView() override;
 
 	/* events, used for dragging the area. */

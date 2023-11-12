@@ -60,7 +60,7 @@ class PortraitView : public View {
 	bool display_doll;
 
 public:
-	PortraitView(Configuration *cfg);
+	PortraitView(const Configuration *cfg);
 	~PortraitView() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *port);

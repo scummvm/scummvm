@@ -45,7 +45,7 @@ class PartyView : public View {
 	SunMoonStripWidget *sun_moon_widget;
 
 public:
-	PartyView(Configuration *cfg);
+	PartyView(const Configuration *cfg);
 	~PartyView() override;
 
 	bool init(void *vm, uint16 x, uint16 y, Font *f, Party *p, Player *pl, TileManager *tm, ObjManager *om);

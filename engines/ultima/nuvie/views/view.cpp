@@ -33,7 +33,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-View::View(Configuration *cfg) : GUI_Widget(nullptr, 0, 0, 0, 0),
+View::View(const Configuration *cfg) : GUI_Widget(nullptr, 0, 0, 0, 0),
 		config(cfg), new_ui_mode(false), left_button(nullptr), font(nullptr),
 		tile_manager(nullptr), right_button(nullptr), obj_manager(nullptr),
 		party(nullptr), party_button(nullptr), inventory_button(nullptr),

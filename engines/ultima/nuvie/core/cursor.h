@@ -46,7 +46,7 @@ typedef struct {
 class Cursor {
 	friend class Screen;
 	Screen *screen;
-	Configuration *config;
+	const Configuration *config;
 	sint32 cur_x, cur_y; // location on screen, unused normally
 	Std::vector<MousePointer *> cursors; // pointer list
 	uint8 cursor_id; // which pointer is active
@@ -68,7 +68,7 @@ public:
 	~Cursor()                              {
 		unload_all();
 	}
-	bool init(Configuration *c, Screen *s, nuvie_game_t game_type);
+	bool init(const Configuration *c, Screen *s, nuvie_game_t game_type);
 	uint32 load_all(Std::string filename, nuvie_game_t game_type);
 	void unload_all();
 	bool set_pointer(uint8 ptr_num);

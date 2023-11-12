@@ -42,7 +42,7 @@ static const int CURSOR_COLOR = 248;
 
 // ConverseGump Class
 
-ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
+ConverseGump::ConverseGump(const Configuration *cfg, Font *f, Screen *s) {
 // uint16 x, y;
 
 	init(cfg, f);

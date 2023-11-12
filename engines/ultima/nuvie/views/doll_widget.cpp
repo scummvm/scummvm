@@ -79,7 +79,7 @@ static const byte gump_empty_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
 };
 
-DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback)
+DollWidget::DollWidget(const Configuration *cfg, GUI_CallBack *callback)
 		: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
 		actor(nullptr), tile_manager(nullptr), selected_obj(nullptr),
 		obj_manager(nullptr), unready_obj(nullptr), empty_tile(nullptr),

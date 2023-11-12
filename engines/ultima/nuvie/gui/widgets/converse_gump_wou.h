@@ -50,7 +50,7 @@ class ConverseGumpWOU: public MsgScroll {
 	bool found_break_char;
 public:
 
-	ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s);
+	ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s);
 	~ConverseGumpWOU() override;
 
 	void set_talking(bool state, Actor *actor = nullptr) override;

@@ -81,9 +81,9 @@ void Configuration::clear() {
 }
 
 void Configuration::value(const Std::string &key, Std::string &ret,
-						  const char *defaultvalue) {
+						  const char *defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -109,9 +109,9 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
+void Configuration::value(const Std::string &key, int &ret, int defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -137,9 +137,9 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) {
+void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) const {
 	// Check for a .cfg file value in the trees
-	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<Shared::XMLTree *>::const_reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -167,7 +167,7 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) {
+void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) const {
 	value(key, full_path);
 
 	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
@@ -269,12 +269,12 @@ ConfigNode *Configuration::getNode(const Std::string &key) {
 	return new ConfigNode(*this, key);
 }
 
-Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) {
+Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) const {
 	Std::set<Std::string> keys;
-	for (Common::Array<Shared::XMLTree *>::iterator i = _trees.begin();
+	for (Common::Array<Shared::XMLTree *>::const_iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		Common::Array<Common::String> k = (*i)->listKeys(key, longformat);
-		for (Common::Array<Common::String>::iterator iter = k.begin();
+		for (Common::Array<Common::String>::const_iterator iter = k.begin();
 		        iter != k.end(); ++iter) {
 			keys.insert(*iter);
 		}

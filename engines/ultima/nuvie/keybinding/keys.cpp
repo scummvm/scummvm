@@ -254,7 +254,7 @@ const KeycodeString StringTable[] = {
 
 const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY };
 
-KeyBinder::KeyBinder(Configuration *config) : enable_joystick(false) {
+KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	FillParseMaps();
 
 	Std::string keyfilename, dir;

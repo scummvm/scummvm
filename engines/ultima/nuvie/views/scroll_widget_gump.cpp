@@ -41,7 +41,7 @@ namespace Nuvie {
 
 // ScrollWidgetGump Class
 
-ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) :
+ScrollWidgetGump::ScrollWidgetGump(const Configuration *cfg, Screen *s) :
 		arrow_up_rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1,
 			SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5),
 		arrow_down_rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3,

@@ -134,7 +134,7 @@ SoundManager::~SoundManager() {
 	delete m_SfxManager;
 }
 
-bool SoundManager::nuvieStartup(Configuration *config) {
+bool SoundManager::nuvieStartup(const Configuration *config) {
 	Std::string config_key;
 	Std::string music_style;
 	Std::string music_cfg_file; //full path and filename to music.cfg

@@ -150,7 +150,7 @@ class TileManager {
 	Look *look;
 
 	char *desc_buf; // for look
-	Configuration *config;
+	const Configuration *config;
 
 	int game_type;
 
@@ -159,7 +159,7 @@ class TileManager {
 
 public:
 
-	TileManager(Configuration *cfg);
+	TileManager(const Configuration *cfg);
 	~TileManager();
 
 	bool loadTiles();

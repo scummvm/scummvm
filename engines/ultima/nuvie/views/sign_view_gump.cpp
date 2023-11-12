@@ -33,7 +33,7 @@ namespace Nuvie {
 static const int SIGN_BG_W = 246;
 static const int SIGN_BG_H = 101;
 
-SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg), sign_text(nullptr) {
+SignViewGump::SignViewGump(const Configuration *cfg) : DraggableView(cfg), sign_text(nullptr) {
 	font = new BMPFont();
 
 	Std::string datadir = GUI::get_gui()->get_data_dir();

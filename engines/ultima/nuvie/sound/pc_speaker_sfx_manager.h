@@ -33,7 +33,7 @@ namespace Nuvie {
 
 class PCSpeakerSfxManager : public SfxManager {
 public:
-	PCSpeakerSfxManager(Configuration *cfg, Audio::Mixer *m);
+	PCSpeakerSfxManager(const Configuration *cfg, Audio::Mixer *m);
 	~PCSpeakerSfxManager() override;
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume) override;

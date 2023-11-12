@@ -41,7 +41,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-ContainerWidget::ContainerWidget(Configuration *cfg, GUI_CallBack *callback)
+ContainerWidget::ContainerWidget(const Configuration *cfg, GUI_CallBack *callback)
 		: GUI_Widget(nullptr, 0, 0, 0, 0), config(cfg), callback_object(callback),
 		container_obj(nullptr), tile_manager(nullptr), obj_manager(nullptr),
 		selected_obj(nullptr), target_cont(nullptr), actor(nullptr),

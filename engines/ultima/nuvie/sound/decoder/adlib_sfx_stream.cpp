@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-AdLibSfxStream::AdLibSfxStream(Configuration *cfg, int rate, uint8 channel, sint8 note, uint8 velocity, uint8 program_number, uint32 d) {
+AdLibSfxStream::AdLibSfxStream(const Configuration *cfg, int rate, uint8 channel, sint8 note, uint8 velocity, uint8 program_number, uint32 d) {
 	interrupt_samples_left = 0;
 	opl = new OplClass(rate, true, true); // 16bit stereo
 	driver = new OriginFXAdLibDriver(cfg, opl);

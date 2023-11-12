@@ -77,7 +77,7 @@ private:
 
 	void LoadFromFileInternal(const char *filename);
 public:
-	KeyBinder(Configuration *config);
+	KeyBinder(const Configuration *config);
 	~KeyBinder();
 	/* Add keybinding */
 	void AddKeyBinding(Common::KeyCode sym, byte mod, const Action *action,

@@ -93,7 +93,7 @@ class Party {
 protected:
 	friend class PartyPathFinder;
 	Game *game; // get pointers here to avoid construct order issues in loadGame()
-	Configuration *config;
+	const Configuration *config;
 	ActorManager *actor_manager;
 	Map *map;
 	PartyPathFinder *pathfinder;
@@ -115,7 +115,7 @@ protected:
 
 public:
 
-	Party(Configuration *cfg);
+	Party(const Configuration *cfg);
 	virtual ~Party();
 
 	virtual bool init(Game *g, ActorManager *am);

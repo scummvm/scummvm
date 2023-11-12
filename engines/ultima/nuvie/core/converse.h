@@ -49,7 +49,7 @@ class ConvScript;
 
 using Std::string;
 
-ConverseGumpType get_converse_gump_type_from_config(Configuration *config);
+ConverseGumpType get_converse_gump_type_from_config(const Configuration *config);
 
 typedef uint32 converse_value; // any single value read from a script
 typedef unsigned char *convscript_buffer;
@@ -86,7 +86,7 @@ class Converse {
 	friend class U6ConverseInterpret;
 
 	// game system objects from nuvie
-	Configuration *config;
+	const Configuration *config;
 	GameClock *_clock;
 	ActorManager *actors;
 	ObjManager *objects;
@@ -129,7 +129,7 @@ class Converse {
 public:
 	Converse();
 	~Converse();
-	void init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
+	void init(const Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
 	          GameClock *c, Player *p, ViewManager *v, ObjManager *o);
 
 	uint32 get_script_num(uint8 a);

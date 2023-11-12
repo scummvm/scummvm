@@ -136,7 +136,7 @@ bool U6Shape::load(U6Lib_n *file, uint32 index) {
 	return false;
 }
 
-bool U6Shape::load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx) {
+bool U6Shape::load_from_lzc(const Std::string &filename, uint32 idx, uint32 sub_idx) {
 	U6Lib_n lib_n;
 	unsigned char *buf = nullptr;
 
@@ -288,7 +288,7 @@ bool U6Shape::load(unsigned char *buf) {
 }
 
 // TODO - allow for failure
-bool U6Shape::load_WoU_background(Configuration *config, nuvie_game_t game_type) {
+bool U6Shape::load_WoU_background(const Configuration *config, nuvie_game_t game_type) {
 	U6Lib_n file;
 	unsigned char *temp_buf;
 	Std::string filename;

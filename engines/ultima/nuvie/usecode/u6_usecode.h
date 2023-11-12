@@ -67,7 +67,7 @@ typedef enum {
 class U6UseCode: public UseCode, public CallBack {
 public:
 
-	U6UseCode(Game *g, Configuration *cfg);
+	U6UseCode(Game *g, const Configuration *cfg);
 	~U6UseCode() override;
 
 	bool use_obj(Obj *obj, Actor *actor) override;

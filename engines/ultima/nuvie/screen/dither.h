@@ -39,13 +39,13 @@ enum DitherMode {
 };
 
 class Dither {
-	Configuration *config;
+	const Configuration *config;
 	uint8 *dither;
 	DitherMode mode;
 
 public:
 
-	Dither(Configuration *cfg);
+	Dither(const Configuration *cfg);
 	~Dither();
 	uint8 get_mode() const {
 		return mode;

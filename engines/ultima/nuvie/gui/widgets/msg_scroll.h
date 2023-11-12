@@ -92,7 +92,7 @@ public:
 
 class MsgScroll: public GUI_Widget, public CallBack {
 protected:
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	Font *font;
 	uint8 font_color;
@@ -151,7 +151,7 @@ private:
 
 public:
 
-	MsgScroll(Configuration *cfg, Font *f);
+	MsgScroll(const Configuration *cfg, Font *f);
 	MsgScroll() : GUI_Widget(nullptr, 0, 0, 0, 0),
 		config(nullptr), game_type(0), font(nullptr), scroll_height(0),
 		scroll_width(0), callback_target(nullptr), callback_user_data(nullptr),
@@ -169,7 +169,7 @@ public:
 	}
 	~MsgScroll() override;
 
-	void init(Configuration *cfg, Font *f);
+	void init(const Configuration *cfg, Font *f);
 
 	bool init(const char *player_name);
 	void page_up();

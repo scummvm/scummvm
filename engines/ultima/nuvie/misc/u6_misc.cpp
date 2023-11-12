@@ -49,7 +49,7 @@ void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char del
 	}
 }
 
-Std::string config_get_game_key(Configuration *config) {
+Std::string config_get_game_key(const Configuration *config) {
 	Std::string game_key, game_name;
 
 	config->value("config/GameName", game_name);
@@ -73,7 +73,7 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(Configuration *config, const Std::string &filename, Std::string &path) {
+void config_get_path(const Configuration *config, const Std::string &filename, Std::string &path) {
 	Std::string key, game_name, game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
@@ -152,7 +152,7 @@ uint8 get_game_type(const char *string) {
 	return NUVIE_GAME_NONE;
 }
 
-nuvie_game_t get_game_type(Configuration *config) {
+nuvie_game_t get_game_type(const Configuration *config) {
 	int game_type;
 	config->value("config/GameType", game_type);
 
@@ -170,7 +170,7 @@ void build_path(const Std::string &path, const Std::string &filename, Std::strin
 	return;
 }
 
-bool has_fmtowns_support(Configuration *config) {
+bool has_fmtowns_support(const Configuration *config) {
 	Std::string townsdir;
 	config->value("config/townsdir", townsdir, "");
 	if (townsdir != "" && directory_exists(townsdir.c_str()))

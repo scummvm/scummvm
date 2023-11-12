@@ -49,7 +49,7 @@ namespace Nuvie {
 static const int ACTOR_TEMP_INIT = 255;
 static const int SCHEDULE_SIZE = 5;
 
-ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c)
+ActorManager::ActorManager(const Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c)
 		: config(cfg), map(m), tile_manager(tm), obj_manager(om), _clock(c),
 		  temp_actor_offset(224) {
 	ARRAYCLEAR(actors);

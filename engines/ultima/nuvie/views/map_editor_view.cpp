@@ -36,7 +36,7 @@ namespace Nuvie {
 static const int TILES_W = 5;
 static const int TILES_H = 10;
 
-MapEditorView::MapEditorView(Configuration *cfg) : View(cfg), roof_tiles(nullptr),
+MapEditorView::MapEditorView(const Configuration *cfg) : View(cfg), roof_tiles(nullptr),
 		map_window(nullptr), up_button(nullptr), down_button(nullptr),
 		selectedTile(0), tile_offset(0) {
 }

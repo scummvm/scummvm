@@ -73,7 +73,7 @@ public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 
-	bool nuvieStartup(Configuration *config);
+	bool nuvieStartup(const Configuration *config);
 	bool initAudio();
 	void update_map_sfx(); //updates the active sounds
 	void update(); // at the moment this just changes songs if required
@@ -156,7 +156,7 @@ private:
 	StringCollectionMap m_MusicMap;
 	list<Sound *> m_Songs;
 	list<Sound *> m_Samples;
-	Configuration *m_Config;
+	const Configuration *m_Config;
 
 	//state info:
 	string m_CurrentGroup;

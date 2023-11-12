@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-CustomSfxManager::CustomSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
+CustomSfxManager::CustomSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 	Std::string cfg_filename;
 
 	sfx_map = new Common::HashMap<uint16, uint16>();

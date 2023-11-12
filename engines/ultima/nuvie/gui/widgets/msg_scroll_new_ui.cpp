@@ -40,7 +40,7 @@ namespace Nuvie {
 
 // MsgScrollNewUI Class
 
-MsgScrollNewUI::MsgScrollNewUI(Configuration *cfg, Screen *s) {
+MsgScrollNewUI::MsgScrollNewUI(const Configuration *cfg, Screen *s) {
 	drop_target = false; //we don't participate in drag and drop.
 
 	font_normal = Game::get_game()->get_font_manager()->get_conv_font();

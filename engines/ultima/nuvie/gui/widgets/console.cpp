@@ -30,7 +30,7 @@ namespace Nuvie {
 
 static Console *g_console = nullptr;
 
-Console::Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h)
+Console::Console(const Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h)
 	: GUI_Console(x, y, w, h), config(c), screen(s), gui(g), displayConsole(true) {
 	config->value("config/general/show_console", displayConsole, true);
 
@@ -53,7 +53,7 @@ void Console::AddLine(const Std::string &line) {
 	}
 }
 
-void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h) {
+void ConsoleInit(const Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h) {
 	assert(g_console == nullptr);
 
 	//uint16 x_off = config_get_video_x_offset(c);

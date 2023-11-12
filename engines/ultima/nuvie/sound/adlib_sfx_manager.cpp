@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-AdLibSfxManager::AdLibSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
+AdLibSfxManager::AdLibSfxManager(const Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
 
 }
 

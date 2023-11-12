@@ -150,7 +150,7 @@ uint16 MsgLine::get_display_width() {
 
 // MsgScroll Class
 
-void MsgScroll::init(Configuration *cfg, Font *f) {
+void MsgScroll::init(const Configuration *cfg, Font *f) {
 	font = f;
 
 	config = cfg;
@@ -183,7 +183,7 @@ void MsgScroll::init(Configuration *cfg, Font *f) {
 	}
 }
 
-MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(nullptr, 0, 0, 0, 0),
+MsgScroll::MsgScroll(const Configuration *cfg, Font *f) : GUI_Widget(nullptr, 0, 0, 0, 0),
 		input_mode(false), permit_input(nullptr), just_displayed_prompt(false),
 		permit_inputescape(false), screen_x(0), screen_y(0), keyword_highlight(false) {
 	uint16 x, y;

@@ -51,7 +51,7 @@ static const int obj_n_reagent[8] = {OBJ_U6_MANDRAKE_ROOT, OBJ_U6_NIGHTSHADE, OB
 static const int NEWMAGIC_BMP_W = 144;
 static const int NEWMAGIC_BMP_H = 82;
 
-SpellView::SpellView(Configuration *cfg) : DraggableView(cfg), spell_container(nullptr),
+SpellView::SpellView(const Configuration *cfg) : DraggableView(cfg), spell_container(nullptr),
 		background(nullptr), level(1), all_spells_mode(false), spell_num(0),
 		event_mode(false), num_spells_per_page(8), caster(nullptr) {
 }

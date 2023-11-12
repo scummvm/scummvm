@@ -49,7 +49,7 @@ static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ObjTreeNode *)item)->key;
 }
 
-ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em)
+ObjManager::ObjManager(const Configuration *cfg, TileManager *tm, EggManager *em)
 	: config(cfg), tile_manager(tm), egg_manager(em), usecode(nullptr),
 	  obj_save_count(0) {
 	load_basetile();

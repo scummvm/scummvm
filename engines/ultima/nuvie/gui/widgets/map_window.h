@@ -74,7 +74,7 @@ class MapWindow: public GUI_Widget {
 	friend class AnimManager;
 	friend class ConverseGumpWOU;
 	Game *game;
-	Configuration *config;
+	const Configuration *config;
 	int game_type;
 	bool enable_doubleclick;
 	bool walk_with_left_button;
@@ -151,7 +151,7 @@ class MapWindow: public GUI_Widget {
 
 public:
 
-	MapWindow(Configuration *cfg, Map *m);
+	MapWindow(const Configuration *cfg, Map *m);
 	~MapWindow() override;
 
 	bool init(TileManager *tm, ObjManager *om, ActorManager *am);

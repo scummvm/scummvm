@@ -38,7 +38,7 @@ const int GUI::mouseclick_delay = 300; /* SB-X */
 
 GUI *GUI::gui = nullptr;
 
-GUI::GUI(Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0),
+GUI::GUI(const Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0),
 		maxwidgets(0), widgets(nullptr), display(1), running(0), dragging(false),
 		full_redraw(true), focused_widget(nullptr), locked_widget(nullptr),
 		block_input(false) {
@@ -403,7 +403,7 @@ void GUI::lock_input(GUI_Widget *widget) {
 			locked_widget = widget;
 }
 
-Std::string GUI::get_data_dir() {
+Std::string GUI::get_data_dir() const {
 	Std::string datadir;
 
 	config->value("config/datadir", datadir, "");

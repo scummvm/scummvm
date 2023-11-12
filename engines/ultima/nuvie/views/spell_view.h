@@ -57,7 +57,7 @@ protected:
 	uint8 num_spells_per_page;
 
 public:
-	SpellView(Configuration *cfg);
+	SpellView(const Configuration *cfg);
 	~SpellView() override;
 
 	virtual bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);

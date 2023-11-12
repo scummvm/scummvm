@@ -93,11 +93,11 @@ public:
 	void clear();
 
 	// get value
-	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "");
-	void value(const Std::string &key, int &ret, int defaultvalue = 0);
-	void value(const Std::string &key, bool &ret, bool defaultvalue = false);
+	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "") const;
+	void value(const Std::string &key, int &ret, int defaultvalue = 0) const;
+	void value(const Std::string &key, bool &ret, bool defaultvalue = false) const;
 
-	void pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path);
+	void pathFromValue(const Std::string &key, const Std::string &file, Std::string &full_path) const;
 
 	// set value
 	bool set(const Std::string &key, const Std::string &value);
@@ -109,7 +109,7 @@ public:
 	ConfigNode *getNode(const Std::string &key);
 
 	// list all subkeys of a key. (no guaranteed order in result)
-	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false);
+	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false) const;
 
 	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;

@@ -39,7 +39,7 @@ class Configuration;
 
 class Screen {
 private:
-	Configuration *config;
+	const Configuration *config;
 	Graphics::Screen *_rawSurface;
 	RenderSurface *_renderSurface;
 	ScalerRegistry     scaler_reg;     // Scaler Registry
@@ -61,7 +61,7 @@ private:
 	uint8 *shading_tile[4];
 
 public:
-	Screen(Configuration *cfg);
+	Screen(const Configuration *cfg);
 	~Screen();
 
 	bool init();

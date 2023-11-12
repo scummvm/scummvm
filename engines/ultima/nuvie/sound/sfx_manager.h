@@ -32,7 +32,7 @@ namespace Nuvie {
 
 class SfxManager {
 public:
-	SfxManager(Configuration *cfg, Audio::Mixer *m) : config(cfg), mixer(m) {
+	SfxManager(const Configuration *cfg, Audio::Mixer *m) : config(cfg), mixer(m) {
 		sfx_duration = 0;
 	};
 	virtual ~SfxManager() {};
@@ -46,7 +46,7 @@ public:
 	}
 
 protected:
-	Configuration *config;
+	const Configuration *config;
 	Audio::Mixer *mixer;
 	uint32 sfx_duration; //duration of the last sfx played in milliseconds.
 };
