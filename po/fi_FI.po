@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-12 00:33+0000\n"
+"POT-Creation-Date: 2023-11-12 13:40+0000\n"
 "PO-Revision-Date: 2023-11-03 23:02+0000\n"
 "Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -279,7 +279,7 @@ msgstr "Toinen tallennustila on aktiivinen. Haluatko keskeyttää sen?"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3885
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3889
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Kyllä"
@@ -292,7 +292,7 @@ msgstr "Kyllä"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3885
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3889
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Ei"
@@ -320,9 +320,9 @@ msgstr "JSON-koodin sisältö on epämuodostunutta."
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1224
-#: engines/scumm/scumm.cpp:1590 engines/scumm/scumm.cpp:2065
-#: engines/scumm/scumm.cpp:2081 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1228
+#: engines/scumm/scumm.cpp:1594 engines/scumm/scumm.cpp:2069
+#: engines/scumm/scumm.cpp:2085 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -5518,7 +5518,7 @@ msgstr "Lataa tallenne"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Pelin pikalataus tai tallennus ei ole tuettu tässä sijainnissa"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2880
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2884
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5529,7 +5529,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2867
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2871
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5540,7 +5540,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2900
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2904
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8573,7 +8573,7 @@ msgid "Your Name:"
 msgstr "Sinun nimesi:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3891
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3895
 msgid "Host"
 msgstr "Isännöi"
 
@@ -8583,7 +8583,7 @@ msgid "Querying games..."
 msgstr "Etsitään pelejä..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3891
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3895
 msgid "Join"
 msgstr "Liity"
 
@@ -9492,18 +9492,18 @@ msgstr ""
 "Kuvasuhteen korjaus saadaan mahdolliseksi trimmaamalla resoluution 320x200:"
 "aan 'Pelimoottori'-välilehdellä."
 
-#: engines/scumm/scumm.cpp:1179
+#: engines/scumm/scumm.cpp:1183
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr "Tämä peli tarvitsee 'Indy' Macintosh-ohjelmatiedoston fonteilleen."
 
-#: engines/scumm/scumm.cpp:1203
+#: engines/scumm/scumm.cpp:1207
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 "Tämä peli tarvitsee 'Loom' Macintosh-ohjelmatiedoston musiikilleen ja "
 "fonteilleen."
 
-#: engines/scumm/scumm.cpp:1223
+#: engines/scumm/scumm.cpp:1227
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9511,7 +9511,7 @@ msgstr ""
 "\"Monkey Island\":in Macintosh ohjelmatiedostoa ei löydetty\n"
 "instrumenttien lukemiseksi. Emme soita musiikkia."
 
-#: engines/scumm/scumm.cpp:1587
+#: engines/scumm/scumm.cpp:1591
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9521,7 +9521,7 @@ msgstr ""
 "pakkaukset eivät enää ole tuettuja tässä pelissä, joten äänet eivät kuulu.\n"
 "Ole hyvä ja asenna peli uudelleen sopivien äänitiedostojen kera."
 
-#: engines/scumm/scumm.cpp:2063
+#: engines/scumm/scumm.cpp:2067
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9530,7 +9530,7 @@ msgstr ""
 "Suora MIDI tuki vaatii Roland päivityksen LucasArtsilta, mutta\n"
 "%s puuttuu. Käytetään AdLibia sen sijaan."
 
-#: engines/scumm/scumm.cpp:2079
+#: engines/scumm/scumm.cpp:2083
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -9539,7 +9539,7 @@ msgstr ""
 "vaadittuja käytön mahdollistavia osasia MT-32:lle. Otetaan sen sijasta "
 "käyttöön AdLib."
 
-#: engines/scumm/scumm.cpp:3780
+#: engines/scumm/scumm.cpp:3784
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9549,7 +9549,7 @@ msgstr ""
 "Maniac Mansionin pelitiedostojen pitää löytyä \"Maniac\"-kansiosta Tentacle-"
 "pelikansion sisältä, ja sen pitää myös olla lisätty pelinä ScummVM:ään."
 
-#: engines/scumm/scumm.cpp:3891
+#: engines/scumm/scumm.cpp:3895
 msgid "Would you like to host or join a network play session?"
 msgstr "Haluatko isännöidä vai liittyä verkkopeliin?"
 
