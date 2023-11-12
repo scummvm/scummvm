@@ -285,13 +285,13 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 	if (game->is_orig_style()) {
 		clip_rect.left = area.left + 8;
 		clip_rect.setWidth((win_width - 1) * 16);
-		clip_rect.setHeight((win_height - 1) * 16);
 
-		if (game_type == NUVIE_GAME_U6)
+		if (game_type == NUVIE_GAME_U6) {
 			clip_rect.top = area.top + 8;
-		else {
+			clip_rect.setHeight((win_height - 1) * 16);
+		} else {
 			clip_rect.top = area.top + 16;
-			clip_rect.bottom -= 16;
+			clip_rect.setHeight((win_height - 2) * 16);
 		}
 	} else {
 		clip_rect.left = game->get_game_x_offset();
