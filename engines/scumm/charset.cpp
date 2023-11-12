@@ -446,8 +446,10 @@ int CharsetRendererCommon::getFontHeight() const {
 						 _vm->_game.platform == Common::kPlatformDOS &&
 						 _vm->_language == Common::JA_JPN);
 
-	if (isIndyDOSJap || (isSegaCD && _vm->_segaForce2ByteCharHeight)) {
+	if (isSegaCD && _vm->_segaForce2ByteCharHeight) {
 		return MAX(_vm->_2byteHeight, _fontHeight);
+	} else if (isIndyDOSJap) {
+		return _curId == 5 ? 14 : _fontHeight;
 	} else if (_vm->_useCJKMode && !isSegaCD) {
 		return MAX(_vm->_2byteHeight + 1, _fontHeight);
 	} else {
