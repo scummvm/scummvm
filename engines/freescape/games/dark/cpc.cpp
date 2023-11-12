@@ -76,7 +76,7 @@ void DarkEngine::loadAssetsCPCFullGame() {
 	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
 	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
