@@ -82,8 +82,8 @@ bool Console::cmdWrite(int argc, const char **argv) {
 				}
 			} else
 				debugPrintf("Valid parameters are 'keymap'\n");
-			return true;
 		}
 	}
+     return true;
 }
 } // End of namespace Crab
