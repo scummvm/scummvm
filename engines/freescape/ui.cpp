@@ -50,6 +50,12 @@ void FreescapeEngine::titleScreen() {
 					break;
 				}
 			break;
+			case Common::EVENT_RBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					i = maxWait;
+				break;
 			default:
 				break;
 			}
@@ -164,6 +170,13 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 				default:
 					break;
 				}
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				// fallthrough
+			case Common::EVENT_LBUTTONDOWN:
+				if (g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					i = maxWait;
+				break;
 			default:
 				break;
 			}
