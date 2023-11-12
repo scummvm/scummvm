@@ -587,7 +587,7 @@ void ActorManager::set_player(Actor *a) {
 /* Returns an actor's "look-string," a general description of their occupation
  * or appearance. (the tile description)
  */
-const char *ActorManager::look_actor(Actor *a, bool show_prefix) {
+const char *ActorManager::look_actor(const Actor *a, bool show_prefix) {
 	uint16 tile_num = obj_manager->get_obj_tile_num(a->base_obj_n);
 	if (tile_num == 0) {
 		uint8 actor_num = a->id_n;

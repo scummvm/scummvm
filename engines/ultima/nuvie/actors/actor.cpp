@@ -1629,8 +1629,8 @@ void Actor::repel_from(Actor *target) {
 	((CombatPathFinder *)pathfinder)->set_distance(2);
 }
 
-uint8 Actor::get_light_level() {
-	Tile *tile = get_tile();
+uint8 Actor::get_light_level() const {
+	const Tile *tile = get_tile();
 	return MAX(light, GET_TILE_LIGHT_LEVEL(tile));
 }
 

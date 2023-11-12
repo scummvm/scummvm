@@ -496,7 +496,7 @@ public:
 			movement_flags |= (a - 1) << 5;
 		}
 	}
-	uint8 get_light_level();
+	uint8 get_light_level() const;
 	void add_light(uint8 val);
 	void subtract_light(uint8 val);
 	void heal() {

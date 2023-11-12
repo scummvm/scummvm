@@ -75,7 +75,7 @@ public:
 		return 0;
 	};
 
-	uint32 get_size() {
+	uint32 get_size() const {
 		return size;
 	};
 
@@ -88,13 +88,13 @@ public:
 	};
 	virtual void seek(uint32 new_pos) = 0;
 
-	inline bool is_end() {
+	inline bool is_end() const {
 		return (pos == size - 1);
 	};
-	inline bool is_eof() {
+	inline bool is_eof() const {
 		return (size == 0 || pos >= size);
 	};
-	uint32 position() {
+	uint32 position() const {
 		return pos;
 	};
 };

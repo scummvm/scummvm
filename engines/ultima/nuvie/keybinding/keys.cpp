@@ -458,7 +458,7 @@ void KeyBinder::ParseLine(char *line) {
 	k.keycode = Common::KEYCODE_INVALID;
 	k.flags = 0;
 	string s = line, u;
-	string d, desc, keycode;
+	string d, keycode;
 	bool show;
 
 	skipspace(s);
@@ -567,7 +567,7 @@ void KeyBinder::ParseLine(char *line) {
 	}
 
 	if (show) {
-		desc = "";
+		string desc;
 		if (k.flags & Common::KBD_CTRL)
 			desc += "Ctrl-";
 #if defined(MACOS) || defined(MACOSX)
@@ -625,7 +625,7 @@ void KeyBinder::LoadFromFile(const char *filename) {
 void KeyBinder::LoadGameSpecificKeys() {
 	string key_path_str;
 	string default_key_path;
-	Configuration *config = Game::get_game()->get_config();
+	const Configuration *config = Game::get_game()->get_config();
 	config->value("config/datadir", default_key_path, "./data");
 	nuvie_game_t game_type = get_game_type(config);
 
@@ -651,7 +651,7 @@ void KeyBinder::LoadGameSpecificKeys() {
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific
 	string PATCH_KEYS;
-	Configuration *config = Game::get_game()->get_config();
+	const Configuration *config = Game::get_game()->get_config();
 
 	config->value(config_get_game_key(config) + "/patch_keys", PATCH_KEYS, "./patchkeys.txt");
 	if (fileExists(PATCH_KEYS.c_str())) {
@@ -669,7 +669,7 @@ void KeyBinder::FillParseMaps() {
 		_actions[NuvieActions[i].s] = &(NuvieActions[i]);
 }
 
-uint8 KeyBinder::get_axis(uint8 index) {
+uint8 KeyBinder::get_axis(uint8 index) const {
 	switch (index) {
 	case 0:
 		return x_axis;
@@ -721,7 +721,7 @@ void KeyBinder::set_axis(uint8 index, uint8 value) {
 	}
 }
 
-joy_axes_pairs KeyBinder::get_axes_pair(int axis) {
+joy_axes_pairs KeyBinder::get_axes_pair(int axis) const {
 	if (axis == x_axis || axis == y_axis)
 		return AXES_PAIR1;
 	else if (axis == x_axis2 || axis == y_axis2)

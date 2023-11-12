@@ -376,14 +376,14 @@ public:
 	bool can_move_obj_between_actors(Obj *obj, Actor *src_actor, Actor *target_actor, bool display_name = false);
 	void display_not_aboard_vehicle(bool show_prompt = true);
 	void display_move_text(Actor *target_actor, Obj *obj);
-	bool can_get_to_actor(Actor *actor, uint16 x, uint16 y);
-	bool using_control_cheat() {
+	bool can_get_to_actor(const Actor *actor, uint16 x, uint16 y);
+	bool using_control_cheat() const {
 		return in_control_cheat;
 	}
 	void set_control_cheat(bool control_cheat) {
 		in_control_cheat = control_cheat;
 	}
-	bool is_looking_at_spellbook() {
+	bool is_looking_at_spellbook() const {
 		return looking_at_spellbook;
 	}
 	void set_looking_at_spellbook(bool looking) {
@@ -427,11 +427,11 @@ public:
 	void toggleFpsDisplay();
 	void close_gumps();
 	bool do_not_show_target_cursor;
-	bool dont_show_target_cursor();
-	bool input_really_needs_directon();
+	bool dont_show_target_cursor() const;
+	bool input_really_needs_directon() const;
 	void quitDialog();
 	void gameMenuDialog();
-	bool actor_exists(Actor *a);
+	bool actor_exists(const Actor *a) const;
 
 	/* FIXME: Some of the above (action) functions can be removed from public, so
 	   that we don't need to check for WAIT mode in all of them. */

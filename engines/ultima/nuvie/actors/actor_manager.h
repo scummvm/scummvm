@@ -87,7 +87,7 @@ public:
 	Actor *get_player();
 	void set_player(Actor *a);
 
-	const char *look_actor(Actor *a, bool show_prefix = true);
+	const char *look_actor(const Actor *a, bool show_prefix = true);
 
 	void set_update(bool u) {
 		update = u;

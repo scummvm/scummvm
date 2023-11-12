@@ -758,20 +758,17 @@ void MapWindow::updateLighting() {
 			}
 		}
 
-		for (Std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
-		        ti != m_ViewableMapTiles.end(); ti++) {
-			if (GET_TILE_LIGHT_LEVEL((*ti).t) > 0)
-				screen->drawalphamap8globe((*ti).x, (*ti).y, GET_TILE_LIGHT_LEVEL((*ti).t));
+		for (const TileInfo &ti : m_ViewableMapTiles) {
+			if (GET_TILE_LIGHT_LEVEL(ti.t) > 0)
+				screen->drawalphamap8globe(ti.x, ti.y, GET_TILE_LIGHT_LEVEL(ti.t));
 		}
 	}
 
 	/* draw light coming from the actor
 	   Wisps can change the light level depending on their current tile so we can't use actor->light for an actor's innate lighting.
 	*/
-	Actor *actor;
-
 	for (uint16 i = 0; i < 256; i++) {
-		actor = actor_manager->get_actor(i);
+		const Actor *actor = actor_manager->get_actor(i);
 
 		if (actor->z == cur_level) {
 			if (actor->x >= cur_x - TMP_MAP_BORDER && actor->x < cur_x + win_width + TMP_MAP_BORDER) {
@@ -1180,8 +1177,8 @@ inline void MapWindow::drawTopTile(Tile *tile, uint16 x, uint16 y, bool toptile)
 }
 
 void MapWindow::drawBorder() {
-	Tile *tile;
-	Tile *tile1;
+	const Tile *tile;
+	const Tile *tile1;
 	uint16 i;
 
 	if (game_type != NUVIE_GAME_U6)
@@ -2560,10 +2557,9 @@ void MapWindow::set_overlay(Graphics::ManagedSurface *surfpt) {
 bool MapWindow::in_town() const {
 	const MapCoord player_loc = actor_manager->get_player()->get_location();
 
-	for (Std::vector<TileInfo>::const_iterator ti = m_ViewableMapTiles.begin();
-	        ti != m_ViewableMapTiles.end(); ti++)
-		if (MapCoord((*ti).x + cur_x, (*ti).y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
-		        ((*ti).t->flags1 & TILEFLAG_WALL) && ((*ti).t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
+	for (const TileInfo &ti : m_ViewableMapTiles)
+		if (MapCoord(ti.x + cur_x, ti.y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
+		        (ti.t->flags1 & TILEFLAG_WALL) && (ti.t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
 			return true;
 		}
 	return false;

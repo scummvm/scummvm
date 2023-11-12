@@ -106,33 +106,33 @@ public:
 
 	void ShowKeys() const;
 
-	uint8 get_axis(uint8 index);
+	uint8 get_axis(uint8 index) const;
 	void set_axis(uint8 index, uint8 value);
 	Common::KeyCode get_key_from_joy_walk_axes() {
 		return get_key_from_joy_axis_motion(x_axis, true);
 	}
 	Common::KeyCode get_key_from_joy_axis_motion(int axis, bool repeating);
-	Common::KeyCode get_key_from_joy_hat_button(uint8 hat_button);
+	Common::KeyCode get_key_from_joy_hat_button(uint8 hat_button) const;
 	Common::KeyCode get_key_from_joy_events(Common::Event *event);
 	void init_joystick(sint8 joy_num);
 //	SDL_Joystick *get_joystick() { return joystick; }
-	uint32 get_next_joy_repeat_time() {
+	uint32 get_next_joy_repeat_time() const {
 		return next_joy_repeat_time;
 	}
 	void set_enable_joy_repeat(bool val) {
 		if (joy_repeat_delay == 10000) return;
 		joy_repeat_enabled = val;
 	}
-	bool is_joy_repeat_enabled() {
+	bool is_joy_repeat_enabled() const {
 		return joy_repeat_enabled;
 	}
-	bool is_hat_repeating() {
+	bool is_hat_repeating() const {
 		return repeat_hat;
 	}
 	void set_hat_repeating(bool val) {
 		repeat_hat = val;
 	}
-	sint8 get_enable_joystick() {
+	sint8 get_enable_joystick() const {
 		return enable_joystick;
 	}
 	void set_enable_joystick(bool val) {
@@ -144,7 +144,7 @@ private:
 	void ParseLine(char *line);
 	void FillParseMaps();
 
-	joy_axes_pairs get_axes_pair(int axis);
+	joy_axes_pairs get_axes_pair(int axis) const;
 	Common::KeyCode get_key_from_joy_button(uint8 button);
 };
 

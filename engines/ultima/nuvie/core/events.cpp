@@ -1494,7 +1494,7 @@ bool Events::pushFrom(const MapCoord &target) {
 	return true;
 }
 
-bool Events::actor_exists(Actor *a) {
+bool Events::actor_exists(const Actor *a) const {
 	if (a->get_z() > 5 || a->get_actor_num() == 0
 	        || ((a->is_temp() || a->get_strength() == 0) && a->get_x() == 0 && a->get_y() == 0
 	            && a->get_z() == 0) // temp actor that has been cleaned up or invalid normal npc
@@ -2887,7 +2887,7 @@ void Events::walk_to_mouse_cursor(uint32 mx, uint32 my) {
 
 	// Mouse->World->RelativeDirection
 //    map_window->mouseToWorldCoords((int)mx, (int)my, wx, wy);
-	map_window->get_movement_direction((uint16) mx, (uint16) my, rx, ry);
+	map_window->get_movement_direction((uint16)mx, (uint16)my, rx, ry);
 	player->moveRelative(rx, ry, true);
 	game->time_changed();
 }
@@ -3743,7 +3743,7 @@ void Events::display_move_text(Actor *target_actor, Obj *obj) {
 	scroll->display_string(".");
 }
 
-bool Events::can_get_to_actor(Actor *actor, uint16 x, uint16 y) { // need the exact tile
+bool Events::can_get_to_actor(const Actor *actor, uint16 x, uint16 y) { // need the exact tile
 	if (map_window->get_interface() == INTERFACE_IGNORE_BLOCK
 	        || player->get_actor() == actor)
 		return true;
@@ -3781,20 +3781,17 @@ bool Events::select_view_obj(Obj *obj, Actor *actor) {
 }
 
 void Events::close_gumps() {
-//	if(game->is_new_style())
-	{
-		view_manager->close_all_gumps();
-	}
+	view_manager->close_all_gumps();
 }
 
-bool Events::dont_show_target_cursor() {
+bool Events::dont_show_target_cursor() const {
 	if (do_not_show_target_cursor || push_actor)
 		return true;
 	else
 		return false;
 }
 
-bool Events::input_really_needs_directon() {
+bool Events::input_really_needs_directon() const {
 	if ((input.get_direction && (map_window->get_interface() == INTERFACE_NORMAL || last_mode == CAST_MODE)) ||
 	        dont_show_target_cursor())
 		return true;

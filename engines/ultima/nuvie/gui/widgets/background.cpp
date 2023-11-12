@@ -112,7 +112,7 @@ void Background::Display(bool full_redraw) {
 					screen->clear(area.left, game_height, area.width(), area.height() - game_height, nullptr); // bottom
 				}
 			}
-			unsigned char *ptr = background->get_data();
+			const unsigned char *ptr = background->get_data();
 			if (game_type == NUVIE_GAME_U6) {
 				ptr += (bg_w - 152);
 				screen->blit(right_bg_x_off, y_off, ptr, 8, 152, bg_h, bg_w, true);
