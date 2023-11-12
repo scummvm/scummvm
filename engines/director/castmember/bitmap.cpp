@@ -534,11 +534,14 @@ void BitmapCastMember::load() {
 	Common::SeekableReadStream *pic = nullptr;
 
 	if (_cast->_version >= kFileVer400) {
-		if (_children.size() > 0) {
-			imgId = _children[0].index;
-			tag = _children[0].tag;
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('B', 'I', 'T', 'D')) {
+				imgId = it.index;
+				tag = it.tag;
 
-			pic = _cast->getResource(tag, imgId);
+				pic = _cast->getResource(tag, imgId);
+				break;
+			}
 		}
 
 		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);

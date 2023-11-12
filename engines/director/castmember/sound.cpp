@@ -55,11 +55,15 @@ void SoundCastMember::load() {
 		tag = MKTAG('S', 'N', 'D', ' ');
 		sndId = (uint16)(_castId + _cast->_castIDoffset);
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
-		if (_children.size() > 0) {
-			sndId = _children[0].index;
-			tag = _children[0].tag;
-		} else {
-			warning("SoundCastMember::load(): could not find child reference, falling back to D3");
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('s', 'n', 'd', ' ') || it.tag == MKTAG('S', 'N', 'D', ' ')) {
+				sndId = it.index;
+				tag = it.tag;
+				break;
+			}
+		}
+		if (!sndId) {
+			warning("SoundCastMember::load(): No snd resource found in %d children, falling back to D3", _children.size());
 			tag = MKTAG('S', 'N', 'D', ' ');
 			sndId = (uint16)(_castId + _cast->_castIDoffset);
 		}
