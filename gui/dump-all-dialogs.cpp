@@ -41,7 +41,8 @@
 #include "gui/downloadpacksdialog.h"
 #include "gui/fluidsynth-dialog.h"
 #include "gui/themebrowser.h"
-#include "widgets/popup.h"
+#include "gui/massadd.h"
+#include "gui/options.h"
 
 #include "image/png.h"
 
@@ -70,7 +71,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	ConfMan.setInt("last_window_width", res, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("last_window_height", 600, Common::ConfigManager::kApplicationDomain);
 	g_system->beginGFXTransaction();
-		g_system->initSize(res, 600);
+	g_system->initSize(res, 600);
 	g_system->endGFXTransaction();
 
 	Graphics::Surface surf;
@@ -171,6 +172,18 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	themeBrowser.close();
 
 
+	//MassAddDialog
+	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
+	massAddDialog.open();         // For rendering
+	massAddDialog.reflowLayout(); // For updating surface
+	g_gui.redrawFull();
+	g_system->grabOverlay(surf);
+	saveGUISnapshot(surf, "massAddDialog-" + filename);
+	massAddDialog.close();
+
+
+
+
 	// LauncherDialog
 #if 0
 	GUI::LauncherChooser chooser;
@@ -209,7 +222,7 @@ void dumpAllDialogs(const Common::String &message) {
 	ConfMan.setInt("last_window_height", original_window_height, Common::ConfigManager::kApplicationDomain);
 
 	g_system->beginGFXTransaction();
-		g_system->initSize(original_window_width, original_window_height);
+	g_system->initSize(original_window_width, original_window_height);
 	g_system->endGFXTransaction();
 }
 
