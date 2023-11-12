@@ -71,7 +71,7 @@ void DarkEngine::loadAssetsZXFullGame() {
 	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
 	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DarkEngine::loadAssetsZXDemo() {
@@ -113,7 +113,7 @@ void DarkEngine::loadAssetsZXDemo() {
 	_indicators.push_back(loadBundledImage("dark_jet_indicator"));
 
 	for (auto &it : _indicators)
-		it->convertToInPlace(_gfx->_texturePixelFormat, nullptr);
+		it->convertToInPlace(_gfx->_texturePixelFormat);
 }
 
 void DarkEngine::drawZXUI(Graphics::Surface *surface) {

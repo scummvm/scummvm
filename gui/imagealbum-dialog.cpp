@@ -251,7 +251,7 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 			_imageSupplier->releaseImageSlot(slot);
 
 			if (rescaledGraphic.format.bytesPerPixel == 1)
-				rescaledGraphic.convertToInPlace(Graphics::createPixelFormat<888>(), palette);
+				rescaledGraphic.convertToInPlace(Graphics::createPixelFormat<888>(), palette, 0, 256);
 
 			int32 xCoord = (static_cast<int32>(_imageContainer->getWidth()) - static_cast<int32>(scaledWidth)) / 2u;
 			int32 yCoord = (static_cast<int32>(_imageContainer->getHeight()) - static_cast<int32>(scaledHeight)) / 2u;

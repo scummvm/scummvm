@@ -689,10 +689,25 @@ public:
 	 * (that means it might realloc the pixel data).
 	 *
 	 * @param dstFormat  The desired format.
-	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = nullptr) {
-		_innerSurface.convertToInPlace(dstFormat, palette);
+	void convertToInPlace(const PixelFormat &dstFormat) {
+		_innerSurface.convertToInPlace(dstFormat);
+	}
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it does not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * @param dstFormat  The desired format.
+	 * @param palette    The palette (in RGB888), if the source format has one.
+	 * @param paletteStart  The starting index of the palette.
+	 * @param paletteCount  The number of colors in the palette.
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount) {
+		_innerSurface.convertToInPlace(dstFormat, palette, paletteStart, paletteCount);
 	}
 
 	/**

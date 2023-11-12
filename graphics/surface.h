@@ -354,9 +354,27 @@ public:
 	 * @ref create. Otherwise, this function has undefined behavior.
 	 *
 	 * @param dstFormat  The desired format.
-	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0);
+	inline void convertToInPlace(const PixelFormat &dstFormat) {
+		convertToInPlace(dstFormat, nullptr, 0, 0);
+	}
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it does not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * @b Important: Only use this if you created the surface data using
+	 * @ref create. Otherwise, this function has undefined behavior.
+	 *
+	 * @param dstFormat  The desired format.
+	 * @param palette    The palette (in RGB888), if the source format has one.
+	 * @param paletteStart	The starting index of the palette.
+	 * @param paletteCount	The number of colors in the palette.
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette, byte paletteStart, uint16 paletteCount);
 
 	/**
 	 * Convert the data to another pixel format.
