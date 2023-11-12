@@ -1361,6 +1361,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_nextTop = _charset->_top;
 	}
 
+	// From disasm: this is used to let a yellow bar appear
+	// in the bottom of the screen during dialog choices which
+	// are longer than the screen width.
+	if (_isIndy4Jap)
+		_scummVars[78] = _charset->_left;
+
 	_string[a].xpos = _charset->_str.right;
 
 	if (_game.heversion >= 60) {
