@@ -731,7 +731,7 @@ void ConvScript::write2(converse_value val) {
 }
 
 
-uint8 get_converse_gump_type_from_config(Configuration *config) {
+ConverseGumpType get_converse_gump_type_from_config(Configuration *config) {
 	Std::string configvalue;
 	config->value("config/general/converse_gump", configvalue, "default");
 

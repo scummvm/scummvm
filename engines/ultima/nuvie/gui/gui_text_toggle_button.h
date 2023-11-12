@@ -39,7 +39,7 @@ public:
 	   The captions are copied into the class. */
 	GUI_TextToggleButton(void *data, int x, int y, int w, int h,
 	                     const char *const *texts, int count, int selection,
-	                     GUI_Font *font, int alignment,
+	                     GUI_Font *font, ButtonTextAlign alignment,
 	                     GUI_CallBack *callback, int flat = 0);
 
 	~GUI_TextToggleButton() override;
@@ -53,7 +53,7 @@ protected:
 	int selection;
 	char **texts;
 	int count;
-	int alignment;
+	ButtonTextAlign alignment;
 };
 
 } // End of namespace Nuvie

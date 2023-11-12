@@ -25,17 +25,16 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/misc/actor_list.h"
+#include "ultima/nuvie/actors/actor.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 class Configuration;
-class Actor;
 class Map;
 class TileManager;
 class GameClock;
 class MapCoord;
-
 
 
 #define ACTORMANAGER_MAX_ACTORS 256
@@ -76,7 +75,7 @@ public:
 	ActorList *get_actor_list(); // *returns a NEW list*
 	ActorList *sort_nearest(ActorList *list, uint16 x, uint16 y, uint8 z); // ascending distance
 	ActorList *filter_distance(ActorList *list, uint16 x, uint16 y, uint8 z, uint16 dist);
-	ActorList *filter_alignment(ActorList *list, uint8 align);
+	ActorList *filter_alignment(ActorList *list, ActorAlignment align);
 	ActorList *filter_party(ActorList *list);
 
 	Actor *get_actor(uint8 actor_num);
@@ -109,7 +108,7 @@ public:
 
 	bool is_temp_actor(Actor *actor);
 	bool is_temp_actor(uint8 id_n);
-	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor = nullptr);
+	bool create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, ActorAlignment alignment, uint8 worktype, Actor **new_actor = nullptr);
 	bool clone_actor(Actor *actor, Actor **new_actor, MapCoord new_location);
 	bool toss_actor(Actor *actor, uint16 xrange, uint16 yrange);
 	bool toss_actor_get_location(uint16 start_x, uint16 start_y, uint8 start_z, uint16 xrange, uint16 yrange, MapCoord *location);

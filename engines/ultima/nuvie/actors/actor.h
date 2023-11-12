@@ -47,11 +47,13 @@ using Std::vector;
 #define ACTOR_NOT_READIABLE 8
 
 // actor alignment
-#define ACTOR_ALIGNMENT_DEFAULT 0
-#define ACTOR_ALIGNMENT_NEUTRAL 1
-#define ACTOR_ALIGNMENT_EVIL    2
-#define ACTOR_ALIGNMENT_GOOD    3
-#define ACTOR_ALIGNMENT_CHAOTIC 4
+enum ActorAlignment {
+	ACTOR_ALIGNMENT_DEFAULT = 0,
+	ACTOR_ALIGNMENT_NEUTRAL = 1,
+	ACTOR_ALIGNMENT_EVIL    = 2,
+	ACTOR_ALIGNMENT_GOOD    = 3,
+	ACTOR_ALIGNMENT_CHAOTIC = 4,
+};
 
 // move-flags
 #define ACTOR_FORCE_MOVE    1
@@ -278,7 +280,7 @@ protected:
 	uint16 exp;
 	uint8 magic;
 	uint8 combat_mode;
-	uint8 alignment;
+	ActorAlignment alignment;
 
 	uint8 body_armor_class;
 	uint8 readied_armor_class;
@@ -432,7 +434,7 @@ public:
 	uint8 get_magic() const {
 		return magic;
 	}
-	uint8 get_alignment() const {
+	ActorAlignment get_alignment() const {
 		return alignment;
 	}
 	uint8 get_old_alignment() const {
@@ -486,10 +488,10 @@ public:
 	void set_magic(uint8 val) {
 		magic = val;
 	}
-	void set_alignment(uint8 a) {
+	void set_alignment(ActorAlignment a) {
 		alignment = a;
 	}
-	void set_old_alignment(uint8 a) {
+	void set_old_alignment(ActorAlignment a) {
 		if (a > 0 && a < 5) {
 			movement_flags |= (a - 1) << 5;
 		}
@@ -717,7 +719,7 @@ private:
 
 };
 
-const char *get_actor_alignment_str(uint8 alignment);
+const char *get_actor_alignment_str(ActorAlignment alignment);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

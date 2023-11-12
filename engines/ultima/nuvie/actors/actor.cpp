@@ -1786,7 +1786,7 @@ void Actor::print() {
 }
 
 
-const char *get_actor_alignment_str(uint8 alignment) {
+const char *get_actor_alignment_str(ActorAlignment alignment) {
 	switch (alignment) {
 	case ACTOR_ALIGNMENT_DEFAULT :
 		return "default";

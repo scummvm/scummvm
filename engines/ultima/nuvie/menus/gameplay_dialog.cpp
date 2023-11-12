@@ -268,7 +268,7 @@ GUI_status GameplayDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		if (!Game::get_game()->is_new_style()) {
 			game->set_using_text_gumps(text_gump_button->GetSelection());
 			config->set("config/general/use_text_gumps", text_gump_button->GetSelection() ? "yes" : "no");
-			uint8 converse_gump_type = converse_gump_button->GetSelection();
+			ConverseGumpType converse_gump_type = static_cast<ConverseGumpType>(converse_gump_button->GetSelection());
 			if (converse_gump_type != old_converse_gump_type) {
 				config->set("config/general/converse_gump", get_converse_gump_config_string(converse_gump_type));
 				game->set_converse_gump_type(converse_gump_type);

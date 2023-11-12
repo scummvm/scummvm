@@ -46,8 +46,8 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define ACTOR_TEMP_INIT 255
-#define SCHEDULE_SIZE 5
+static const int ACTOR_TEMP_INIT = 255;
+static const int SCHEDULE_SIZE = 5;
 
 ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c)
 		: config(cfg), map(m), tile_manager(tm), obj_manager(om), _clock(c),
@@ -167,7 +167,7 @@ bool ActorManager::load(NuvieIO *objlist) {
 
 	for (i = 0; i < ACTORMANAGER_MAX_ACTORS; i++) {
 		actors[i]->status_flags = objlist->read1();
-		actors[i]->alignment = ((actors[i]->status_flags & ACTOR_STATUS_ALIGNMENT_MASK) >> 5) + 1;
+		actors[i]->alignment = static_cast<ActorAlignment>(((actors[i]->status_flags & ACTOR_STATUS_ALIGNMENT_MASK) >> 5) + 1);
 	}
 
 //old obj_n & frame_n values
@@ -771,7 +771,7 @@ bool ActorManager::is_temp_actor(uint8 id_n) {
 	return false;
 }
 
-bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, uint8 alignment, uint8 worktype, Actor **new_actor) {
+bool ActorManager::create_temp_actor(uint16 obj_n, uint8 obj_status, uint16 x, uint16 y, uint8 z, ActorAlignment alignment, uint8 worktype, Actor **new_actor) {
 	Actor *actor;
 	actor = find_free_temp_actor();
 
@@ -1059,7 +1059,7 @@ bool ActorManager::can_put_actor(const MapCoord &location) {
 }
 
 // Remove actors with a certain alignment from the list. Returns the same list.
-ActorList *ActorManager::filter_alignment(ActorList *list, uint8 align) {
+ActorList *ActorManager::filter_alignment(ActorList *list, ActorAlignment align) {
 	ActorIterator i = list->begin();
 	while (i != list->end()) {
 		Actor *actor = *i;

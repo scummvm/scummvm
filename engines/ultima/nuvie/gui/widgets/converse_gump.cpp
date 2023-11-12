@@ -38,7 +38,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define CURSOR_COLOR 248
+static const int CURSOR_COLOR = 248;
 
 // ConverseGump Class
 

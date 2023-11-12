@@ -404,7 +404,7 @@ void Game::init_converse() {
 
 }
 
-void Game::set_converse_gump_type(uint8 new_type) {
+void Game::set_converse_gump_type(ConverseGumpType new_type) {
 	if (converse)
 		delete converse;
 	converse_gump_type = new_type;

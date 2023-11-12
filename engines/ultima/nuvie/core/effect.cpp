@@ -50,7 +50,7 @@ namespace Nuvie {
 
 #define TRANSPARENT_COLOR 0xFF /* transparent pixel color */
 
-#define EXP_EFFECT_TILE_NUM 382
+static const int EXP_EFFECT_TILE_NUM = 382;
 
 QuakeEffect *QuakeEffect::current_quake = nullptr;
 FadeEffect *FadeEffect::current_fade = nullptr;
@@ -78,6 +78,8 @@ void Effect::add_anim(NuvieAnim *anim) {
 	game->get_map_window()->get_anim_manager()->new_anim(anim);
 }
 
+
+static const int CANNON_SPEED = 320;
 
 /* Fire from a cannon in direction: 0=north, 1=east, 2=south, 3=west,
  *                                 -1=use cannon frame
@@ -917,6 +919,8 @@ uint16 SleepEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 
 /*** FadeEffect ***/
+static const int FADE_EFFECT_MAX_ITERATIONS = 20;
+
 FadeEffect::FadeEffect(FadeType fade, FadeDirection dir, uint32 color, uint32 speed) {
 	speed = speed ? speed : game->get_map_window()->get_win_area() * 2116; // was 256000
 	init(fade, dir, color, nullptr, 0, 0, speed);

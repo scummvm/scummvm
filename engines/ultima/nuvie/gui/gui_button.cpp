@@ -51,7 +51,7 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h,
 }
 
 GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-					   GUI_Font *font, int alignment, bool is_checkbutton,
+					   GUI_Font *font, ButtonTextAlign alignment, bool is_checkbutton,
 					   GUI_CallBack *callback, bool flat)
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
@@ -98,7 +98,7 @@ GUI_Button::~GUI_Button() {
 }
 
 /* Resize/reposition/change text */
-void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment) {
+void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, ButtonTextAlign alignment) {
 	if (x != -1 || y != -1) {
 		assert(x >= 0 && y >= 0);
 		area.moveTo(x, y);
@@ -238,7 +238,7 @@ void GUI_Button::Enable(bool flag) {
 	Redraw();
 }
 
-Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const char *text, int alignment) {
+Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const char *text, ButtonTextAlign alignment) {
 	Common::Rect fillrect;
 	int th, tw;
 	int tx = 0, ty = 0;

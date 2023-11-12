@@ -133,7 +133,7 @@ public:
 	bool call_player_post_move_action(bool didMove);
 	bool call_player_pass();
 	bool call_actor_update_all();
-	bool call_actor_init(Actor *actor, uint8 alignment);
+	bool call_actor_init(Actor *actor, ActorAlignment alignment);
 	bool call_actor_attack(Actor *actor, MapCoord location, Obj *weapon, Actor *foe);
 	bool call_actor_map_dmg(Actor *actor, MapCoord location);
 	bool call_actor_tile_dmg(Actor *actor, uint16 tile_num);

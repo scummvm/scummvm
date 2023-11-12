@@ -121,14 +121,14 @@ static const struct {
 	{0x29b, 0x43,  0x0}
 };
 
-#define USE_U6_POTION_BLUE   0x0
-#define USE_U6_POTION_RED    0x1
-#define USE_U6_POTION_YELLOW 0x2
-#define USE_U6_POTION_GREEN  0x3
-#define USE_U6_POTION_ORANGE 0x4
-#define USE_U6_POTION_PURPLE 0x5
-#define USE_U6_POTION_BLACK  0x6
-#define USE_U6_POTION_WHITE  0x7
+static const uint8 USE_U6_POTION_BLUE   = 0;
+static const uint8 USE_U6_POTION_RED    = 1;
+static const uint8 USE_U6_POTION_YELLOW = 2;
+static const uint8 USE_U6_POTION_GREEN  = 3;
+static const uint8 USE_U6_POTION_ORANGE = 4;
+static const uint8 USE_U6_POTION_PURPLE = 5;
+static const uint8 USE_U6_POTION_BLACK  = 6;
+static const uint8 USE_U6_POTION_WHITE  = 7;
 
 // numbered by potion object frame number
 static const char *u6_potions[8] = {

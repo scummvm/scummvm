@@ -99,7 +99,6 @@ public:
 	}
 };
 
-#define CANNON_SPEED 320
 /* Toss a cannon ball from one actor to another, or from an object towards
  * a numbered direction.
  */
@@ -401,8 +400,6 @@ public:
 
 typedef enum { FADE_PIXELATED, FADE_CIRCLE, FADE_PIXELATED_ONTOP } FadeType;
 typedef enum { FADE_IN, FADE_OUT } FadeDirection;
-
-#define FADE_EFFECT_MAX_ITERATIONS 20
 
 /* Manipulate the MapWindow for two types of fades. One is a stippled-like fade
  * that draws pixels to random locations on the screen until completely flooded

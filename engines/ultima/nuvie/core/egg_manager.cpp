@@ -41,12 +41,15 @@ namespace Nuvie {
 typedef enum {
 	EGG_HATCH_ALWAYS, EGG_HATCH_DAY, EGG_HATCH_NIGHT
 } egg_hatch_time;
-#define EGG_DAY_HOUR   06 /* first hour of the day */
-#define EGG_NIGHT_HOUR 19 /* first hour of night */
-#define EGG_HATCH_TIME(EQ) (EQ < 10) ? EGG_HATCH_ALWAYS \
-	: (EQ < 20) ? EGG_HATCH_DAY \
-	: (EQ < 30) ? EGG_HATCH_NIGHT : EGG_HATCH_ALWAYS;
 
+static const int EGG_DAY_HOUR = 06;   /* first hour of the day */
+static const int EGG_NIGHT_HOUR = 19; /* first hour of night */
+
+static inline egg_hatch_time get_egg_hatch_time(uint8 EQ)  {
+	return (EQ < 10) ? EGG_HATCH_ALWAYS
+			: (EQ < 20) ? EGG_HATCH_DAY
+			: (EQ < 30) ? EGG_HATCH_NIGHT : EGG_HATCH_ALWAYS;
+}
 
 EggManager::EggManager(Configuration *cfg, nuvie_game_t type, Map *m)
 		: config(cfg), gametype(type), map(m), actor_manager(nullptr),
@@ -140,7 +143,7 @@ void EggManager::spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport) {
 				hatch_probability = (NUVIE_RAND() % 100) + 1;
 				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z, hatch_probability, (*egg)->obj->qty);
 
-				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(quality % 10));
+				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(static_cast<ActorAlignment>(quality % 10)));
 
 				if (quality < 10)      DEBUG(1, LEVEL_DEBUGGING, " (always)"); // 0-9
 				else if (quality < 20) DEBUG(1, LEVEL_DEBUGGING, " (day)");    // 10-19
@@ -164,10 +167,10 @@ bool EggManager::spawn_egg(Obj *egg, uint8 hatch_probability) {
 	Obj *obj, *spawned_obj;
 	uint16 qty;
 	uint8 hour = Game::get_game()->get_clock()->get_hour();
-	uint8 alignment = egg->quality % 10;
+	ActorAlignment alignment = static_cast<ActorAlignment>(egg->quality % 10);
 
 	// check time that the egg will hach
-	egg_hatch_time period = EGG_HATCH_TIME(egg->quality);
+	egg_hatch_time period = get_egg_hatch_time(egg->quality);
 	if (period == EGG_HATCH_ALWAYS
 	        || (period == EGG_HATCH_DAY && hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR)
 	        || (period == EGG_HATCH_NIGHT && !(hour >= EGG_DAY_HOUR && hour < EGG_NIGHT_HOUR))) {

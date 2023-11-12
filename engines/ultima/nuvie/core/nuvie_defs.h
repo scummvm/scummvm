@@ -113,6 +113,12 @@ enum DebugLevelType {
 	LEVEL_DEBUGGING
 };
 
+enum ConverseGumpType {
+	CONVERSE_GUMP_DEFAULT = 0,
+	CONVERSE_GUMP_U7_STYLE = 1,
+	CONVERSE_GUMP_WOU_STYLE = 2,
+};
+
 #ifdef WITHOUT_DEBUG
 inline void u6debug(bool no_header, const DebugLevelType level, const char *format, ...) {}
 #else

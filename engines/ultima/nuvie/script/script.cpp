@@ -990,7 +990,7 @@ bool Script::call_actor_update_all() {
 	return call_function("actor_update_all", 0, 0);
 }
 
-bool Script::call_actor_init(Actor *actor, uint8 alignment) {
+bool Script::call_actor_init(Actor *actor, ActorAlignment alignment) {
 	lua_getglobal(L, "actor_init");
 	nscript_new_actor_var(L, actor->get_actor_num());
 	lua_pushinteger(L, alignment);

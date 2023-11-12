@@ -509,7 +509,7 @@ static int nscript_actor_new(lua_State *L) {
 	uint16 x = 0;
 	uint16 y = 0;
 	uint8 z = 0;
-	uint8 alignment = ACTOR_ALIGNMENT_NEUTRAL;
+	ActorAlignment alignment = ACTOR_ALIGNMENT_NEUTRAL;
 	uint8 worktype = ACTOR_WT_ASSAULT; //FIXME this may be U6 specific.
 
 	int nargs = lua_gettop(L);
@@ -543,7 +543,7 @@ static int nscript_actor_new(lua_State *L) {
 
 		if (i) {
 			if (!lua_isnil(L, 5))
-				alignment = (uint8)lua_tointeger(L, 5);
+				alignment = (ActorAlignment)lua_tointeger(L, 5);
 			i--;
 		}
 
@@ -661,7 +661,7 @@ static int nscript_actor_set(lua_State *L) {
 }
 
 static int nscript_actor_set_align(Actor *actor, lua_State *L) {
-	actor->set_alignment((uint8)lua_tointeger(L, 3));
+	actor->set_alignment((ActorAlignment)lua_tointeger(L, 3));
 	return 0;
 }
 
@@ -766,7 +766,7 @@ static int nscript_actor_set_obj_n(Actor *actor, lua_State *L) {
 }
 
 static int nscript_actor_set_old_align(Actor *actor, lua_State *L) {
-	actor->set_old_alignment((sint8)lua_tointeger(L, 3));
+	actor->set_old_alignment((ActorAlignment)lua_tointeger(L, 3));
 	return 0;
 }
 

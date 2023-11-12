@@ -134,7 +134,7 @@ private:
 	bool ethereal;
 	bool using_text_gumps;
 	bool open_containers; //doubleclick
-	uint8 converse_gump_type;
+	ConverseGumpType converse_gump_type;
 	bool roof_mode;
 	bool free_balloon_movement;
 	bool force_solid_converse_bg;
@@ -274,10 +274,10 @@ public:
 	void set_ethereal(bool val) {
 		ethereal = val;
 	}
-	uint8 get_converse_gump_type() const {
+	ConverseGumpType get_converse_gump_type() const {
 		return converse_gump_type;
 	}
-	void set_converse_gump_type(uint8 new_type);
+	void set_converse_gump_type(ConverseGumpType new_type);
 	bool using_new_converse_gump();
 	void set_free_balloon_movement(bool val) {
 		free_balloon_movement = val;
