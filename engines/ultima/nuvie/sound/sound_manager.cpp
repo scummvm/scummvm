@@ -768,7 +768,7 @@ void SoundManager::update() {
 	if (music_enabled && audio_enabled && g_MusicFinished) {
 		Common::StackLock lock(_musicMutex);
 
-		musicPause();
+		musicStop();
 		musicPlay();
 	}
 }
