@@ -310,8 +310,7 @@ void Actor::set_poisoned(bool poisoned) {
 const char *Actor::get_name(bool force_real_name) {
 	ActorManager *actor_manager = Game::get_game()->get_actor_manager();
 	Converse *converse = Game::get_game()->get_converse();
-	Party *party = Game::get_game()->get_party();
-	//Actor *player = Game::get_game()->get_player()->get_actor();
+	const Party *party = Game::get_game()->get_party();
 	const char *talk_name = nullptr; // name from conversation script
 	bool statue = (Game::get_game()->get_game_type() == NUVIE_GAME_U6 && id_n >= 189 && id_n <= 200);
 
@@ -336,12 +335,10 @@ void Actor::add_surrounding_obj(Obj *obj) {
 void Actor::unlink_surrounding_objects(bool make_objects_temporary) {
 //	if(make_objects_temporary)
 	{
-		Std::list<Obj *>::iterator obj;
-
-		for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
+		for (Obj *obj : surrounding_objects) {
 			if (make_objects_temporary)
-				(*obj)->set_temporary();
-			(*obj)->set_actor_obj(false);
+				obj->set_temporary();
+			obj->set_actor_obj(false);
 		}
 	}
 	surrounding_objects.clear();
@@ -1408,9 +1405,8 @@ void Actor::clear() {
 void Actor::show() {
 	visible_flag = true;
 
-	Std::list<Obj *>::iterator obj_iter;
-	for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
-		(*obj_iter)->set_invisible(false);
+	for (Obj *obj : surrounding_objects) {
+		obj->set_invisible(false);
 	}
 
 }
@@ -1418,9 +1414,8 @@ void Actor::show() {
 void Actor::hide() {
 	visible_flag = false;
 
-	Std::list<Obj *>::iterator obj_iter;
-	for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
-		(*obj_iter)->set_invisible(true);
+	for (Obj *obj : surrounding_objects) {
+		obj->set_invisible(true);
 	}
 }
 
@@ -1650,12 +1645,12 @@ void Actor::subtract_light(uint8 val) {
 //        light -= val;
 //    else
 //        light = 0;
-	vector<uint8>::iterator l = light_source.begin();
-	for (; l != light_source.end(); l++)
+	for (vector<uint8>::iterator l = light_source.begin(); l != light_source.end(); l++) {
 		if (*l == val) {
 			light_source.erase(l);
 			break;
 		}
+	}
 	light = 0; // change to next highest light source
 	for (unsigned int lCtr = 0; lCtr < light_source.size(); lCtr++)
 		if (light_source[lCtr] > light)

@@ -41,9 +41,8 @@ Configuration::Configuration() : _configChanged(false) {
 }
 
 Configuration::~Configuration() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	for (Shared::XMLTree *t : _trees) {
+		delete(t);
 	}
 
 	if (_configChanged)
@@ -65,17 +64,15 @@ bool Configuration::readConfigFile(const Std::string &fname, const Std::string &
 }
 
 void Configuration::write() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		if (!(*i)->isReadonly())
-			(*i)->write();
+	for (Shared::XMLTree *t : _trees) {
+		if (!t->isReadonly())
+			t->write();
 	}
 }
 
 void Configuration::clear() {
-	for (Std::vector<Shared::XMLTree *>::iterator i = _trees.begin();
-	        i != _trees.end(); ++i) {
-		delete(*i);
+	for (Shared::XMLTree *t : _trees) {
+		delete(t);
 	}
 	_trees.clear();
 }
@@ -283,10 +280,9 @@ Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longf
 }
 
 void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
-	for (Std::vector<Shared::XMLTree *>::iterator tree = _trees.begin();
-	        tree != _trees.end(); ++tree) {
+	for (Shared::XMLTree *tree : _trees) {
 		Shared::XMLTree::KeyTypeList l;
-		(*tree)->getSubkeys(l, basekey);
+		tree->getSubkeys(l, basekey);
 
 		for (Shared::XMLTree::KeyTypeList::iterator i = l.begin();
 		        i != l.end(); ++i) {

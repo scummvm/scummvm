@@ -139,13 +139,13 @@ private:
 	//bool LoadTileSamples(string sound_dir);
 	bool LoadSfxManager(string sfx_style);
 
-	Sound *SongExists(string name); //have we loaded this sound before?
-	Sound *SampleExists(string name); //have we loaded this sound before?
+	Sound *SongExists(const string &name); //have we loaded this sound before?
+	Sound *SampleExists(const string &name); //have we loaded this sound before?
 
 
 	Sound *RequestTileSound(int id);
 	Sound *RequestObjectSound(int id);
-	Sound *RequestSong(string group); //request a song from this group
+	Sound *RequestSong(const string &group); //request a song from this group
 
 	uint16 RequestObjectSfxId(uint16 obj_n);
 

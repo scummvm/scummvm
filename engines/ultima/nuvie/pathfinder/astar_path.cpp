@@ -134,7 +134,9 @@ bool AStarPath::path_search(const MapCoord &start, const MapCoord &goal) {
 //DEBUG(0,LEVEL_DEBUGGING,"FAIL\n");
 	delete_nodes();
 	return false; // out of open nodes - failure
-}/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
+}
+
+/* Return the cost of moving one step from `c1' to `c2', which is always 1. This
  * isn't very helpful, so subclasses should provide their own function.
  * Returns -1 if c2 is blocked. */
 sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
@@ -142,34 +144,44 @@ sint32 AStarPath::step_cost(const MapCoord &c1, const MapCoord &c2) {
 	        || c2.distance(c1) > 1)
 		return -1;
 	return 1;
-}/* Return an item in the list of closed nodes whose location matches `ncmp'.
- */astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
-	Std::list<astar_node *>::iterator n;
-	for (n = closed_nodes.begin(); n != closed_nodes.end(); n++)
-		if ((*n)->loc == ncmp->loc)
-			return *n;
+}
+
+/* Return an item in the list of closed nodes whose location matches `ncmp'.
+ */
+astar_node *AStarPath::find_closed_node(astar_node *ncmp) {
+	for (astar_node *n : open_nodes)
+		if (n->loc == ncmp->loc)
+			return n;
 	return nullptr;
-}/* Return an item in the list of closed nodes whose location matches `ncmp'.
- */astar_node *AStarPath::find_open_node(astar_node *ncmp) {
-	Std::list<astar_node *>::iterator n;
-	for (n = open_nodes.begin(); n != open_nodes.end(); n++)
-		if ((*n)->loc == ncmp->loc)
-			return *n;
+}
+
+/* Return an item in the list of closed nodes whose location matches `ncmp'.
+ */
+astar_node *AStarPath::find_open_node(astar_node *ncmp) {
+	for (astar_node *n : open_nodes)
+		if (n->loc == ncmp->loc)
+			return n;
 	return nullptr;
-}/* Add new node pointer to the list of open nodes (sorting by score).
- */void AStarPath::push_open_node(astar_node *node) {
-	Std::list<astar_node *>::iterator n, next;
+}
+
+/* Add new node pointer to the list of open nodes (sorting by score).
+ */
+void AStarPath::push_open_node(astar_node *node) {
 	if (open_nodes.empty()) {
 		open_nodes.push_front(node);
 		return;
 	}
-	n = open_nodes.begin();
+
+	Std::list<astar_node *>::iterator n = open_nodes.begin();
 	// get to end of list or to a node with equal or greater score
 	while (n != open_nodes.end() && (*n++)->score < node->score);
 	open_nodes.insert(n, node); // and add before that location
-}/* Return pointer to the highest priority node from the list of open nodes, and
+}
+
+/* Return pointer to the highest priority node from the list of open nodes, and
  * remove it.
- */astar_node *AStarPath::pop_open_node() {
+ */
+astar_node *AStarPath::pop_open_node() {
 	astar_node *best = open_nodes.front();
 	open_nodes.pop_front(); // remove it
 	return best;

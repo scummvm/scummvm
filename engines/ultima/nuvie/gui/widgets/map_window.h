@@ -283,9 +283,8 @@ public:
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
 	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
-	bool can_get_obj(Actor *actor, Obj *obj);
-	bool blocked_by_wall(Actor *actor, Obj *obj);
-	void display_move_text(Actor *target_actor, Obj *obj);
+	bool can_get_obj(const Actor *actor, Obj *obj);
+	bool blocked_by_wall(const Actor *actor, const Obj *obj);
 	MapCoord original_obj_loc;
 
 	void updateBlacking();
@@ -327,7 +326,7 @@ public:
 		return roof_tiles;
 	}
 
-	Std::vector<Obj *> m_ViewableObjects; //^^ dodgy public buffer
+	Std::vector<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
 	void wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller);
 
@@ -340,12 +339,12 @@ protected:
 	void drawAnims(bool top_anims);
 	void drawObjs();
 	void drawObjSuperBlock(bool draw_lowertiles, bool toptile);
-	inline void drawObj(Obj *obj, bool draw_lowertiles, bool toptile);
-	inline void drawTile(Tile *tile, uint16 x, uint16 y, bool toptile, bool use_tile_data = false);
-	inline void drawNewTile(Tile *tile, uint16 x, uint16 y, bool toptile);
+	inline void drawObj(const Obj *obj, bool draw_lowertiles, bool toptile);
+	inline void drawTile(const Tile *tile, uint16 x, uint16 y, bool toptile, bool use_tile_data = false);
+	inline void drawNewTile(const Tile *tile, uint16 x, uint16 y, bool toptile);
 	void drawBorder();
-	inline void drawTopTile(Tile *tile, uint16 x, uint16 y, bool toptile);
-	inline void drawActor(Actor *actor);
+	inline void drawTopTile(const Tile *tile, uint16 x, uint16 y, bool toptile);
+	inline void drawActor(const Actor *actor);
 	void drawRoofs();
 	void drawGrid();
 	void drawRain();

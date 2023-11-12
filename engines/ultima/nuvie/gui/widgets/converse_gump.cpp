@@ -436,9 +436,8 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 void ConverseGump::add_keyword(const Std::string keyword_) {
 	string keyword = " *" + keyword_;
 
-	Std::list<MsgText>::iterator iter;
-	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
-		if (string_i_compare((*iter).s, keyword)) {
+	for (const MsgText &txt : *keyword_list) {
+		if (string_i_compare(txt.s, keyword)) {
 			return;
 		}
 	}
@@ -511,8 +510,6 @@ bool ConverseGump::input_buf_remove_char() {
 }
 
 void ConverseGump::Display(bool full_redraw) {
-	MsgText *token;
-	//Std::list<MsgText>::iterator iter;
 	uint16 total_length = 0;
 	uint16 y = area.top + portrait_height + 8 + 3;
 
@@ -531,10 +528,8 @@ void ConverseGump::Display(bool full_redraw) {
 
 	if (!page_break && input_mode && avatar_portrait && is_talking()) {
 		screen->blit(area.left + portrait_width / 2 + 4, y, avatar_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
-		Std::list<MsgText>::iterator iter;
 		sint16 i = 0;
-		for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
-			MsgText t = *iter;
+		for (const MsgText &t : *keyword_list) {
 			uint16 token_len = font->getStringWidth(t.s.c_str());
 //			 if(token_len + total_length >= (26 * 8))
 			if (portrait_width / 2 + portrait_width + token_len + total_length + 8 >= min_w - 4) {
@@ -559,14 +554,8 @@ void ConverseGump::Display(bool full_redraw) {
 
 	y = area.top + 4;
 	total_length = 0;
-	Std::list<MsgLine *>::iterator iter;
-	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
-		MsgLine *msg_line = *iter;
-		Std::list<MsgText *>::iterator iter1;
-
-		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end() ; iter1++) {
-			token = *iter1;
-
+	for (const MsgLine *line : msg_buf) {
+		for (const MsgText *token : line->text) {
 			total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + frame_w + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 
 			//token->s.length();

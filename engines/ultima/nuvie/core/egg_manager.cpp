@@ -112,36 +112,30 @@ void EggManager::remove_egg(Obj *egg_obj, bool keep_obj) {
 }
 
 void EggManager::set_egg_visibility(bool show_eggs) {
-	Std::list<Egg *>::iterator egg_iter;
-
-	for (egg_iter = egg_list.begin(); egg_iter != egg_list.end(); egg_iter++)
-		(*egg_iter)->obj->set_invisible(!show_eggs);
+	for (Egg *egg : egg_list)
+		egg->obj->set_invisible(!show_eggs);
 }
 
 void EggManager::spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport) {
-	Std::list<Egg *>::iterator egg;
-	sint16 dist_x, dist_y;
-	uint8 hatch_probability;
-
-	for (egg = egg_list.begin(); egg != egg_list.end();) {
-		uint8 quality = (*egg)->obj->quality;
-		dist_x = abs((sint16)(*egg)->obj->x - x);
-		dist_y = abs((sint16)(*egg)->obj->y - y);
+	for (Egg *egg : egg_list) {
+		uint8 quality = egg->obj->quality;
+		sint16 dist_x = abs((sint16)egg->obj->x - x);
+		sint16 dist_y = abs((sint16)egg->obj->y - y);
 
 		//Deactivate eggs that are more than 20 tiles from player.
-		if (((*egg)->obj->status & OBJ_STATUS_EGG_ACTIVE) && ((*egg)->obj->z != z || (dist_x >= 20 || dist_y >= 20))) {
-			(*egg)->obj->status &= (0xff ^ OBJ_STATUS_EGG_ACTIVE);
-			DEBUG(0, LEVEL_DEBUGGING, "Reactivate egg at (%x,%x,%d)\n", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z);
+		if ((egg->obj->status & OBJ_STATUS_EGG_ACTIVE) && (egg->obj->z != z || (dist_x >= 20 || dist_y >= 20))) {
+			egg->obj->status &= (0xff ^ OBJ_STATUS_EGG_ACTIVE);
+			DEBUG(0, LEVEL_DEBUGGING, "Reactivate egg at (%x,%x,%d)\n", egg->obj->x, egg->obj->y, egg->obj->z);
 		}
 
-		if (dist_x < 20 && dist_y < 20 && (*egg)->obj->z == z
+		if (dist_x < 20 && dist_y < 20 && egg->obj->z == z
 		        && (dist_x > 8 || dist_y > 8 || !Game::get_game()->is_orig_style() || teleport)) {
 
-			if (((*egg)->obj->status & OBJ_STATUS_EGG_ACTIVE) == 0) {
-				(*egg)->obj->status |= OBJ_STATUS_EGG_ACTIVE;
+			if ((egg->obj->status & OBJ_STATUS_EGG_ACTIVE) == 0) {
+				egg->obj->status |= OBJ_STATUS_EGG_ACTIVE;
 
-				hatch_probability = (NUVIE_RAND() % 100) + 1;
-				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", (*egg)->obj->x, (*egg)->obj->y, (*egg)->obj->z, hatch_probability, (*egg)->obj->qty);
+				uint8 hatch_probability = (NUVIE_RAND() % 100) + 1;
+				DEBUG(0, LEVEL_DEBUGGING, "Checking Egg (%x,%x,%x). Rand: %d Probability: %d%%", egg->obj->x, egg->obj->y, egg->obj->z, hatch_probability, egg->obj->qty);
 
 				DEBUG(1, LEVEL_DEBUGGING, " Align: %s", get_actor_alignment_str(static_cast<ActorAlignment>(quality % 10)));
 
@@ -150,11 +144,9 @@ void EggManager::spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport) {
 				else if (quality < 30) DEBUG(1, LEVEL_DEBUGGING, " (night)");  // 20-29
 				else if (quality < 40) DEBUG(1, LEVEL_DEBUGGING, " (day+night)"); // 30-39
 				DEBUG(1, LEVEL_DEBUGGING, "\n");
-				spawn_egg((*egg)->obj, hatch_probability);
+				spawn_egg(egg->obj, hatch_probability);
 			}
 		}
-
-		egg++;
 	}
 
 	return;

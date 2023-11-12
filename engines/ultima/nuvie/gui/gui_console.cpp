@@ -58,8 +58,8 @@ void GUI_Console:: Display(bool full_redraw) {
 	SDL_FillRect(surface, &framerect, bg_color->sdl_color);
 
 	uint16 i = 0;
-	for (Std::list<Std::string>::iterator it = data.begin(); it != data.end(); it++) {
-		font->textOut(surface, area.left, area.top + i * font->charHeight(), (*it).c_str(), false);
+	for (const Std::string &s : data) {
+		font->textOut(surface, area.left, area.top + i * font->charHeight(), s.c_str(), false);
 		i++;
 	}
 	screen->update(area.left, area.top, area.width(), area.height());

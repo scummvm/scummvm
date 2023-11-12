@@ -76,8 +76,7 @@ void GUI_Scroller::update_viewport(bool update_slider) {
 		scroll_bar->set_slider_position(s_pos);
 	}
 
-	Std::list<GUI_Widget *>::iterator child;
-	child = children.begin();
+	Std::list<GUI_Widget *>::iterator child = children.begin();
 	child++; // skip the scroll_bar widget. This is a bit evil.
 
 	for (i = 0; child != children.end(); child++, i++) {

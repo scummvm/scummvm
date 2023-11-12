@@ -305,9 +305,8 @@ Actor *ViewManager::doll_view_get_next_party_member() {
 }
 
 DollViewGump *ViewManager::get_doll_view(Actor *actor) {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = doll_gumps.begin(); iter != doll_gumps.end(); iter++) {
-		DollViewGump *view = (DollViewGump *)*iter;
+	for (DraggableView *draggable : doll_gumps) {
+		DollViewGump *view = (DollViewGump *)draggable;
 		if (view->get_actor() == actor) {
 			return view;
 		}
@@ -317,9 +316,8 @@ DollViewGump *ViewManager::get_doll_view(Actor *actor) {
 }
 
 ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = container_gumps.begin(); iter != container_gumps.end(); iter++) {
-		ContainerViewGump *view = (ContainerViewGump *)*iter;
+	for (DraggableView *draggable : container_gumps) {
+		ContainerViewGump *view = (ContainerViewGump *)draggable;
 		if (actor) {
 			if (view->is_actor_container() && view->get_actor() == actor) {
 				return view;
@@ -449,13 +447,8 @@ void ViewManager::close_gump(DraggableView *gump) {
 }
 
 void ViewManager::close_all_gumps() {
-	Std::list<DraggableView *>::iterator iter;
-	for (iter = gumps.begin(); iter != gumps.end();) {
-		DraggableView *gump = *iter;
-		iter++;
-
-		close_gump(gump);
-	}
+	while (!gumps.empty())
+		close_gump(gumps.front());
 	//TODO make sure all gump objects have been deleted by GUI.
 }
 

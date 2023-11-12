@@ -705,17 +705,12 @@ bool U6Actor::weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hi
 		return true;
 	}
 
-	Std::list<Obj *> *surrounding_objs = target->get_surrounding_obj_list();
-
-	if (surrounding_objs) {
-		Std::list<Obj *>::iterator obj_iter;
-		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
-			Obj *obj = *obj_iter;
-			if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
-				*hit_x = obj->x;
-				*hit_y = obj->y;
-				return true;
-			}
+	const Std::list<Obj *> &surrounding_objs = target->get_surrounding_obj_list();
+	for (Obj *obj : surrounding_objs) {
+		if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
+			*hit_x = obj->x;
+			*hit_y = obj->y;
+			return true;
 		}
 	}
 
@@ -1022,32 +1017,24 @@ inline bool U6Actor::has_surrounding_objs() {
 }
 
 inline void U6Actor::remove_surrounding_objs_from_map() {
-	Std::list<Obj *>::iterator obj;
-
-	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++)
-		obj_manager->remove_obj_from_map((*obj));
+	for (Obj *obj : surrounding_objects)
+		obj_manager->remove_obj_from_map(obj);
 
 	return;
 }
 
 inline void U6Actor::add_surrounding_objs_to_map() {
-	Std::list<Obj *>::reverse_iterator obj;
-
-	for (obj = surrounding_objects.rbegin(); obj != surrounding_objects.rend(); ++obj)
-		obj_manager->add_obj((*obj), OBJ_ADD_TOP);
+	for (Obj *obj : surrounding_objects)
+		obj_manager->add_obj(obj, OBJ_ADD_TOP);
 
 	return;
 }
 
 inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) {
-	Std::list<Obj *>::iterator obj_iter;
-	Obj *obj;
-
 	if (obj_n == OBJ_U6_SILVER_SERPENT) {
 		move_silver_serpent_objs_relative(rel_x, rel_y);
 	} else {
-		for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
-			obj = *obj_iter;
+		for (Obj *obj : surrounding_objects) {
 			obj->x = WRAPPED_COORD(obj->x + rel_x, z);
 			obj->y = WRAPPED_COORD(obj->y + rel_y, z);
 		}
@@ -1356,12 +1343,8 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(NuvieDir new_direc
 }
 
 inline void U6Actor::twitch_surrounding_objs() {
-	Std::list<Obj *>::iterator obj;
-
-	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
-		twitch_obj(*obj);
-	}
-
+	for (Obj *obj : surrounding_objects)
+		twitch_obj(obj);
 }
 
 inline void U6Actor::twitch_surrounding_dragon_objs() {
@@ -1409,8 +1392,6 @@ inline void U6Actor::twitch_obj(Obj *obj) {
 }
 
 inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
-	Std::list<Obj *>::iterator obj;
-
 	if (surrounding_objects.empty())
 		return;
 
@@ -1419,7 +1400,7 @@ inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
 		return;
 	}
 
-	obj = surrounding_objects.begin();
+	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
 
 	for (; !surrounding_objects.empty();) {
 		obj_manager->remove_obj_from_map(*obj);

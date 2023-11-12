@@ -27,8 +27,8 @@ namespace Nuvie {
 
 void MetaEngine::listSaves(SaveStateList &saveList) {
 	// Check whether there's an entry for the original save slot
-	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
-		if (it->getSaveSlot() == ORIGINAL_SAVE_SLOT)
+	for (const SaveStateDescriptor &state : saveList) {
+		if (state.getSaveSlot() == ORIGINAL_SAVE_SLOT)
 			return;
 	}
 

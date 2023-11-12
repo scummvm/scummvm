@@ -1408,13 +1408,12 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 
 		if (len + token_len + space_width > width) {
 			//FIXME render line here.
-			list<Std::string>::iterator it;
 			int new_space = 0;
 			if (tokens.size() > 1)
 				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
 
-			for (it = tokens.begin() ; it != tokens.end() ; it++) {
-				*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
+			for (const Std::string &s : tokens) {
+				*x = ((WOUFont *)font)->drawStringToShape(image->shp, s.c_str(), *x, *y, color);
 				*x += new_space;
 			}
 			*y += 8;
@@ -1431,10 +1430,8 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		found = str.findFirstOf(" ", start);
 	}
 
-	list<Std::string>::iterator it;
-
-	for (it = tokens.begin() ; it != tokens.end() ; it++) {
-		*x = ((WOUFont *)font)->drawStringToShape(image->shp, (*it).c_str(), *x, *y, color);
+	for (const Std::string &s : tokens) {
+		*x = ((WOUFont *)font)->drawStringToShape(image->shp, s.c_str(), *x, *y, color);
 		*x += space_width;
 	}
 
@@ -1525,8 +1522,7 @@ void ScriptCutscene::set_screen_opacity(uint8 new_opacity) {
 }
 
 void ScriptCutscene::hide_sprites() {
-	for (Std::list<CSSprite *>::iterator it = sprite_list.begin(); it != sprite_list.end(); it++) {
-		CSSprite *s = *it;
+	for (CSSprite *s : sprite_list) {
 		if (s->visible)
 			s->visible = false;
 	}
@@ -1575,8 +1571,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 	}
 
 	if (screen_opacity > 0) {
-		for (Std::list<CSSprite *>::iterator it = sprite_list.begin(); it != sprite_list.end(); it++) {
-			CSSprite *s = *it;
+		for (CSSprite *s : sprite_list) {
 			if (s->visible) {
 				if (s->image) {
 					uint16 w, h;

@@ -156,8 +156,6 @@ MapWindow::~MapWindow() {
 }
 
 bool MapWindow::init(TileManager *tm, ObjManager *om, ActorManager *am) {
-// int game_type; Why is this local, and retrieved again here? --SB-X
-
 	game = Game::get_game();
 
 	tile_manager = tm;
@@ -392,7 +390,7 @@ void MapWindow::moveMapRelative(sint16 rel_x, sint16 rel_y) {
 /* Move map by relative pixel amount.
  */
 void MapWindow::shiftMapRelative(sint16 rel_x, sint16 rel_y) {
-	uint8 tile_pitch = 16;
+	const uint8 tile_pitch = 16;
 	uint32 total_px = (cur_x * tile_pitch) + cur_x_add,
 	       total_py = (cur_y * tile_pitch) + cur_y_add;
 	total_px += rel_x;
@@ -490,7 +488,7 @@ bool MapWindow::tile_is_black(uint16 x, uint16 y, Obj *obj) {
 	if (tmpBufTileIsBlack(wrapped_x + TMP_MAP_BORDER, y - cur_y + TMP_MAP_BORDER))
 		return true;
 	else if (obj) {
-		Tile *tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
+		const Tile *tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 		if (!tile || (tmpBufTileIsBlack(wrapped_x + TMP_MAP_BORDER + 1, y - cur_y + TMP_MAP_BORDER)  && !(tile->flags1 & TILEFLAG_WALL))
 		        || (tmpBufTileIsBlack(wrapped_x + TMP_MAP_BORDER, y - cur_y + TMP_MAP_BORDER + 1) && !(tile->flags1 & TILEFLAG_WALL)))
 			return true;
@@ -500,13 +498,11 @@ bool MapWindow::tile_is_black(uint16 x, uint16 y, Obj *obj) {
 }
 
 const char *MapWindow::look(uint16 x, uint16 y, bool show_prefix) {
-	Actor *actor;
-
 	if (tmp_map_buf[(y + TMP_MAP_BORDER) * tmp_map_width + (x + TMP_MAP_BORDER)] == 0) //black area
 		return "darkness."; // nothing to see here. ;)
 
 	uint16 wrapped_x = WRAPPED_COORD(cur_x + x, cur_level);
-	actor = actor_manager->get_actor(wrapped_x, cur_y + y, cur_level);
+	const Actor *actor = actor_manager->get_actor(wrapped_x, cur_y + y, cur_level);
 	if (actor != nullptr && actor->is_visible())
 		return actor_manager->look_actor(actor, show_prefix);
 
@@ -545,8 +541,6 @@ Obj *MapWindow::get_objAtCoord(MapCoord coord, bool top_obj, bool include_ignore
 }
 
 Actor *MapWindow::get_actorAtCursor() {
-//Actor *actor;
-
 	if (tmp_map_buf[(cursor_y + TMP_MAP_BORDER) * tmp_map_width + (cursor_x + TMP_MAP_BORDER)] == 0) //black area
 		return nullptr; // nothing to see here. ;)
 
@@ -593,7 +587,6 @@ void MapWindow::update() {
 
 	// do fade-in on the first update (game has loaded now)
 	if (game_started == false) {
-//        new FadeEffect(FADE_PIXELATED_ONTOP, FADE_IN, 0x31);
 		new GameFadeInEffect(game->get_palette()->get_bg_color());
 		game_started = true;
 	}
@@ -668,7 +661,7 @@ void MapWindow::createLightOverlay() {
 
 	if (!screen)
 		return;
-	bool dawn_or_dusk = false;
+
 	uint8 cur_min_brightness;
 	if (game->are_cheats_enabled())
 		cur_min_brightness = min_brightness;
@@ -678,6 +671,7 @@ void MapWindow::createLightOverlay() {
 	GameClock *clock = game->get_clock();
 	Weather *weather = game->get_weather();
 
+	bool dawn_or_dusk = false;
 	int h = clock->get_hour();
 	int a;
 	if (x_ray_view >= X_RAY_ON)
@@ -711,6 +705,7 @@ void MapWindow::createLightOverlay() {
 
 	if (a > 255)
 		a = 255;
+
 	bool party_light_source;
 	// smooth seems to need an enormous range in order to have smooth transitions
 	if (a < (screen->get_lighting_style() == LIGHTING_STYLE_SMOOTH ? 248 : 81) &&
@@ -734,11 +729,10 @@ void MapWindow::createLightOverlay() {
 }
 
 void MapWindow::updateLighting() {
-	uint16 x, y;
 	if (using_map_tile_lighting) {
 		uint16 *ptr = tmp_map_buf;
-		for (y = 0; y < tmp_map_height; y++) {
-			for (x = 0; x < tmp_map_width; x++) {
+		for (uint16 y = 0; y < tmp_map_height; y++) {
+			for (uint16 x = 0; x < tmp_map_width; x++) {
 				if (tmp_map_buf[x + y * tmp_map_width] != 0) {
 					Tile *tile = tile_manager->get_tile(*ptr);
 					if (GET_TILE_LIGHT_LEVEL(tile) > 0)
@@ -800,40 +794,31 @@ void MapWindow::updateBlacking() {
 }
 
 void MapWindow::Display(bool full_redraw) {
-	uint16 i, j;
-	uint16 *map_ptr;
-// uint16 map_width;
-	Tile *tile;
-//byte *ptr;
-
 	if (lighting_update_required) {
 		createLightOverlay();
 	}
 
-//map_ptr = map->get_map_data(cur_level);
-// map_width = map->get_width(cur_level);
-
-//map_ptr += cur_y * map_width + cur_x;
-	map_ptr = tmp_map_buf;
+	uint16 *map_ptr = tmp_map_buf;
 	map_ptr += (TMP_MAP_BORDER * tmp_map_width + TMP_MAP_BORDER);// * sizeof(uint16); //remember our tmp map is TMP_MAP_BORDER bigger all around.
 
-	for (i = 0; i < win_height; i++) {
-		for (j = 0; j < win_width; j++) {
+	for (uint16 i = 0; i < win_height; i++) {
+		for (uint16 j = 0; j < win_width; j++) {
 			sint16 draw_x = area.left + (j * 16), draw_y = area.top + (i * 16);
 			//draw_x -= (cur_x_add <= draw_x) ? cur_x_add : draw_x;
 			//draw_y -= (cur_y_add <= draw_y) ? cur_y_add : draw_y;
 			draw_x -= cur_x_add;
 			draw_y -= cur_y_add;
-			if (map_ptr[j] == 0)
+			if (map_ptr[j] == 0) {
 				screen->clear(draw_x, draw_y, 16, 16, &clip_rect); //blackout tile.
-			else {
+			} else {
+				const Tile *tile;
 				if (map_ptr[j] >= 16 && map_ptr[j] < 48) { //lay down the base tile for shoreline tiles
 					tile = tile_manager->get_anim_base_tile(map_ptr[j]);
-					screen->blit(draw_x, draw_y, (byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+					screen->blit(draw_x, draw_y, (const byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 				}
 
 				tile = tile_manager->get_tile(map_ptr[j]);
-				screen->blit(draw_x, draw_y, (byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+				screen->blit(draw_x, draw_y, (const byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 
 			}
 
@@ -913,11 +898,8 @@ void MapWindow::Display(bool full_redraw) {
 }
 
 void MapWindow::drawActors() {
-	uint16 i;
-	Actor *actor;
-
-	for (i = 0; i < 256; i++) {
-		actor = actor_manager->get_actor(i);
+	for (uint16 i = 0; i < 256; i++) {
+		Actor *actor = actor_manager->get_actor(i);
 
 		if (actor->z == cur_level) {
 			uint8 x = WRAP_VIEWP(cur_x, actor->x, map_width);
@@ -933,7 +915,7 @@ void MapWindow::drawActors() {
 }
 
 //FIX need a function for multi-tile actors.
-inline void MapWindow::drawActor(Actor *actor) {
+inline void MapWindow::drawActor(const Actor *actor) {
 	if (actor->is_visible() /* && actor->obj_n != 0*/
 	        && (!(actor->obj_flags & OBJ_STATUS_INVISIBLE) || actor->is_in_party() || actor == actor_manager->get_player())
 	        && actor->get_corpser_flag() == false) {
@@ -967,17 +949,12 @@ inline void MapWindow::drawActor(Actor *actor) {
 			drawTile(tile, wrapped_x, actor->y - cur_y, false);
 			drawTile(tile, wrapped_x, actor->y - cur_y, true);
 			if (game->get_clock()->get_timer(GAMECLOCK_TIMER_U6_INFRAVISION) != 0) {
-				Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
-
-				if (surrounding_objs) {
-					Std::list<Obj *>::iterator obj_iter;
-					for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
-						Obj *obj = *obj_iter;
-						Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
-						uint16 wrapped_obj_x = WRAP_VIEWP(cur_x, obj->x, map_width);
-						drawTile(t, wrapped_obj_x, obj->y - cur_y, false);
-						drawTile(t, wrapped_obj_x, obj->y - cur_y, true); // doesn't seem needed but will do it anyway (for now)
-					}
+				const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+				for (Obj *obj : surrounding_objs) {
+					const Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
+					uint16 wrapped_obj_x = WRAP_VIEWP(cur_x, obj->x, map_width);
+					drawTile(t, wrapped_obj_x, obj->y - cur_y, false);
+					drawTile(t, wrapped_obj_x, obj->y - cur_y, true); // doesn't seem needed but will do it anyway (for now)
 				}
 			}
 		}
@@ -1017,10 +994,6 @@ inline void MapWindow::drawLensAnim() {
 }
 
 void MapWindow::drawObjSuperBlock(bool draw_lowertiles, bool toptile) {
-	U6Link *link;
-	U6LList *obj_list;
-	Obj *obj;
-	sint16 x, y;
 	uint16 stop_x, stop_y;
 
 	if (cur_x < 0)
@@ -1033,12 +1006,12 @@ void MapWindow::drawObjSuperBlock(bool draw_lowertiles, bool toptile) {
 	else
 		stop_y = cur_y;
 
-	for (y = cur_y + win_height; y >= stop_y; y--) {
-		for (x = cur_x + win_width; x >= stop_x; x--) {
-			obj_list = obj_manager->get_obj_list(x, y, cur_level);
+	for (sint16 y = cur_y + win_height; y >= stop_y; y--) {
+		for (sint16 x = cur_x + win_width; x >= stop_x; x--) {
+			U6LList *obj_list = obj_manager->get_obj_list(x, y, cur_level);
 			if (obj_list) {
-				for (link = obj_list->start(); link != nullptr; link = link->next) {
-					obj = (Obj *)link->data;
+				for (U6Link *link = obj_list->start(); link != nullptr; link = link->next) {
+					Obj *obj = (Obj *)link->data;
 					drawObj(obj, draw_lowertiles, toptile);
 				}
 			}
@@ -1047,12 +1020,9 @@ void MapWindow::drawObjSuperBlock(bool draw_lowertiles, bool toptile) {
 
 }
 
-inline void MapWindow::drawObj(Obj *obj, bool draw_lowertiles, bool toptile) {
-	sint16 x, y;
-	Tile *tile;
-
-	y = obj->y - cur_y;
-	x = WRAP_VIEWP(cur_x, obj->x, map_width);
+inline void MapWindow::drawObj(const Obj *obj, bool draw_lowertiles, bool toptile) {
+	sint16 y = obj->y - cur_y;
+	sint16 x = WRAP_VIEWP(cur_x, obj->x, map_width);
 
 	if (x < 0 || y < 0)
 		return;
@@ -1069,11 +1039,11 @@ inline void MapWindow::drawObj(Obj *obj, bool draw_lowertiles, bool toptile) {
 		}
 	}
 
-//don't show invisible objects.
+	//don't show invisible objects.
 	if (obj->status & OBJ_STATUS_INVISIBLE)
 		return;
 
-	tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj) + obj->frame_n);
+	Tile *tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj) + obj->frame_n);
 
 	if (draw_lowertiles == false && (tile->flags3 & 0x4) && toptile == false) //don't display force lower tiles.
 		return;
@@ -1099,12 +1069,9 @@ inline void MapWindow::drawObj(Obj *obj, bool draw_lowertiles, bool toptile) {
  * true, otherwise the current tile is derived from tile_num. This can't be
  * used with animated tiles. It only applies to the base tile in multi-tiles.
  */
-inline void MapWindow::drawTile(Tile *tile, uint16 x, uint16 y, bool toptile,
+inline void MapWindow::drawTile(const Tile *tile, uint16 x, uint16 y, bool toptile,
 								bool use_tile_data) {
-	bool dbl_width, dbl_height;
-	uint16 tile_num;
-
-	tile_num = tile->tile_num;
+	uint16 tile_num = tile->tile_num;
 
 	//don't show special marker tiles in MD unless "show eggs" is turned on.
 	if (game_type == NUVIE_GAME_MD
@@ -1122,8 +1089,8 @@ inline void MapWindow::drawTile(Tile *tile, uint16 x, uint16 y, bool toptile,
 	    m_ViewableObjTiles.push_back(ti);
 	   }
 	*/
-	dbl_width = tile->dbl_width;
-	dbl_height = tile->dbl_height;
+	bool dbl_width = tile->dbl_width;
+	bool dbl_height = tile->dbl_height;
 
 	if (x < win_width && y < win_height)
 		drawTopTile(use_tile_data ? tile : tile_manager->get_tile(tile_num), x, y, toptile);
@@ -1152,11 +1119,11 @@ inline void MapWindow::drawTile(Tile *tile, uint16 x, uint16 y, bool toptile,
 
 }
 
-inline void MapWindow::drawNewTile(Tile *tile, uint16 x, uint16 y, bool toptile) {
+inline void MapWindow::drawNewTile(const Tile *tile, uint16 x, uint16 y, bool toptile) {
 	drawTile(tile, x, y, toptile, true);
 }
 
-inline void MapWindow::drawTopTile(Tile *tile, uint16 x, uint16 y, bool toptile) {
+inline void MapWindow::drawTopTile(const Tile *tile, uint16 x, uint16 y, bool toptile) {
 
 
 
@@ -1183,8 +1150,9 @@ void MapWindow::drawBorder() {
 
 	if (game_type != NUVIE_GAME_U6)
 		return;
-	uint16 orig_win_w = 11;
-	uint16 orig_win_h = 11;
+
+	const uint16 orig_win_w = 11;
+	const uint16 orig_win_h = 11;
 	uint16 x_off = Game::get_game()->get_game_x_offset();
 	uint16 y_off = Game::get_game()->get_game_y_offset();
 
@@ -1397,14 +1365,11 @@ void MapWindow::generateTmpMap() {
 }
 
 void MapWindow::boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16 y) {
-	unsigned char current;
-	uint16 *ptr;
 	uint16 pos;
 	uint16 tmp_x, tmp_y;
-	uint16 p_cur_x, p_cur_y; //wrapped cur_x - 1 and wrapped cur_y - 1
 
-	p_cur_x = WRAPPED_COORD(cur_x - TMP_MAP_BORDER, cur_level);
-	p_cur_y = WRAPPED_COORD(cur_y - TMP_MAP_BORDER, cur_level);
+	uint16 p_cur_x = WRAPPED_COORD(cur_x - TMP_MAP_BORDER, cur_level);
+	uint16 p_cur_y = WRAPPED_COORD(cur_y - TMP_MAP_BORDER, cur_level);
 
 	if (x == WRAPPED_COORD(p_cur_x - 1, cur_level) || x == WRAPPED_COORD(p_cur_x + tmp_map_width, cur_level))
 		return;
@@ -1426,12 +1391,12 @@ void MapWindow::boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16
 
 	pos += tmp_x;
 
-	ptr = &tmp_map_buf[pos];
+	uint16 *ptr = &tmp_map_buf[pos];
 
 	if (*ptr != 0)
 		return;
 
-	current = map_ptr[y * pitch + x];
+	byte current = map_ptr[y * pitch + x];
 
 	*ptr = (uint16)current;
 
@@ -1444,15 +1409,11 @@ void MapWindow::boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16
 			roof_display = ROOF_DISPLAY_OFF; //hide roof tiles if player is looking through window.
 	}
 
+	uint16 xp1 = WRAPPED_COORD(x + 1, cur_level);
+	uint16 xm1 = WRAPPED_COORD(x - 1, cur_level);
 
-	uint16 xp1, xm1;
-	uint16 yp1, ym1;
-
-	xp1 = WRAPPED_COORD(x + 1, cur_level);
-	xm1 = WRAPPED_COORD(x - 1, cur_level);
-
-	yp1 = WRAPPED_COORD(y + 1, cur_level);
-	ym1 = WRAPPED_COORD(y - 1, cur_level);
+	uint16 yp1 = WRAPPED_COORD(y + 1, cur_level);
+	uint16 ym1 = WRAPPED_COORD(y - 1, cur_level);
 
 	boundaryFill(map_ptr, pitch, xp1,   y);
 	boundaryFill(map_ptr, pitch,   x, yp1);
@@ -1463,18 +1424,18 @@ void MapWindow::boundaryFill(const byte *map_ptr, uint16 pitch, uint16 x, uint16
 	boundaryFill(map_ptr, pitch, xp1, ym1);
 	boundaryFill(map_ptr, pitch, xm1, yp1);
 
-
 	return;
 }
 
 bool MapWindow::floorTilesVisible() {
-	Actor *actor;
-	uint16 a_x, a_y;
-	uint8 a_z;
-	actor = actor_manager->get_player();
+	Actor *actor = actor_manager->get_player();
 	if (!actor)
 		return false;
+
+	uint16 a_x, a_y;
+	uint8 a_z;
 	actor->get_location(&a_x, &a_y, &a_z);
+
 	uint16 cX = WRAPPED_COORD(a_x - 1, cur_level), eX = WRAPPED_COORD(a_x + 2, cur_level);
 	uint16 cY = WRAPPED_COORD(a_y - 1, cur_level), eY = WRAPPED_COORD(a_y + 2, cur_level);
 
@@ -1495,15 +1456,9 @@ bool MapWindow::floorTilesVisible() {
 }
 
 bool MapWindow::boundaryLookThroughWindow(uint16 tile_num, uint16 x, uint16 y) {
-	Tile *tile;
-	Actor *actor;
-	uint16 a_x, a_y;
-	uint8 a_z;
-	Obj  *obj;
-
-	tile = tile_manager->get_tile(tile_num);
+	Tile *tile = tile_manager->get_tile(tile_num);
 	if (!(tile->flags2 & TILEFLAG_WINDOW)) {
-		obj = obj_manager->get_objBasedAt(x, y, cur_level, true);
+		Obj *obj = obj_manager->get_objBasedAt(x, y, cur_level, true);
 		if (obj) { //check for a windowed object.
 			tile = tile_manager->get_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 			if (!(tile->flags2 & TILEFLAG_WINDOW))
@@ -1512,7 +1467,10 @@ bool MapWindow::boundaryLookThroughWindow(uint16 tile_num, uint16 x, uint16 y) {
 			return false;
 	}
 
-	actor = actor_manager->get_player();
+	Actor *actor = actor_manager->get_player();
+
+	uint16 a_x, a_y;
+	uint8 a_z;
 	actor->get_location(&a_x, &a_y, &a_z);
 
 	if (a_x == x) {
@@ -1531,15 +1489,12 @@ bool MapWindow::boundaryLookThroughWindow(uint16 tile_num, uint16 x, uint16 y) {
 //reshape walls based on new blacked out areas.
 
 void MapWindow::reshapeBoundary() {
-	uint16 x, y;
-	uint8 flag, original_flag;
-	Tile *tile;
-
-	for (y = 1; y < tmp_map_height - 1; y++) {
-		for (x = 1; x < tmp_map_width - 1; x++) {
+	for (uint16 y = 1; y < tmp_map_height - 1; y++) {
+		for (uint16 x = 1; x < tmp_map_width - 1; x++) {
 			if (tmpBufTileIsBoundary(x, y)) {
-				tile = tile_manager->get_tile(tmp_map_buf[y * tmp_map_width + x]);
+				const Tile *tile = tile_manager->get_tile(tmp_map_buf[y * tmp_map_width + x]);
 
+				uint8 flag, original_flag;
 				if ((tile->tile_num >= 140 && tile->tile_num <= 187)) { //main U6 wall tiles FIX for WOU games
 					flag = 0;
 					original_flag = tile->flags1 & TILEFLAG_WALL_MASK;
@@ -1619,15 +1574,12 @@ inline bool MapWindow::tmpBufTileIsBlack(uint16 x, uint16 y) {
 }
 
 bool MapWindow::tmpBufTileIsBoundary(uint16 x, uint16 y) {
-	uint16 tile_num;
-	Tile *tile;
-
-	tile_num = tmp_map_buf[y * tmp_map_width + x];
+	uint16 tile_num = tmp_map_buf[y * tmp_map_width + x];
 
 	if (tile_num == 0)
 		return false;
 
-	tile = tile_manager->get_tile(tile_num);
+	const Tile *tile = tile_manager->get_tile(tile_num);
 
 	if (tile->boundary)
 		return true;
@@ -1639,7 +1591,6 @@ bool MapWindow::tmpBufTileIsBoundary(uint16 x, uint16 y) {
 }
 
 bool MapWindow::tmpBufTileIsWall(uint16 x, uint16 y, NuvieDir direction) {
-
 	uint16 tile_num = tmp_map_buf[y * tmp_map_width + x];
 
 	if (tile_num == 0)
@@ -1701,6 +1652,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 		else
 			return MSG_BLOCKED;
 	}
+
 	MapCoord actor_loc = actor->get_location();
 	if (actor_manager->get_actor(x, y, actor_loc.z))
 		return MSG_NOT_POSSIBLE;
@@ -1731,8 +1683,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 	if (actor_loc.distance(target_loc) > 5 && get_interface() == INTERFACE_NORMAL)
 		return MSG_OUT_OF_RANGE;
 
-	uint8 lt_flags;
-	lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
+	uint8 lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
 	if (map->lineTest(actor_loc.x, actor_loc.y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
 		MapCoord hit_loc = MapCoord(lt.hit_x, lt.hit_y, lt.hit_level);
 		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1) {
@@ -1763,6 +1714,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 			return MSG_BLOCKED;
 		}
 	}
+
 	const Tile *tile;
 	if (dest_obj)
 		tile = obj_manager->get_obj_tile(dest_obj->obj_n, dest_obj->frame_n);
@@ -1792,7 +1744,7 @@ void MapWindow::display_can_drop_or_move_msg(CanDropOrMoveMsg msg, string msg_te
 	game->get_scroll()->display_string(msg_text);
 }
 
-bool MapWindow::can_get_obj(Actor *actor, Obj *obj) {
+bool MapWindow::can_get_obj(const Actor *actor, Obj *obj) {
 	if (!obj)
 		return false;
 	if (get_interface() == INTERFACE_IGNORE_BLOCK)
@@ -1823,7 +1775,7 @@ bool MapWindow::can_get_obj(Actor *actor, Obj *obj) {
  * Check to make sure the obj isn't on the other side of a wall or trying to push through it.
  * The original engine didn't bother to check.
  */
-bool MapWindow::blocked_by_wall(Actor *actor, Obj *obj) {
+bool MapWindow::blocked_by_wall(const Actor *actor, const Obj *obj) {
 	if (game_type == NUVIE_GAME_U6 && obj->x == 282 && obj->y == 438 && cur_level == 0) // HACK for buggy location
 		return false;
 	const Tile *tile = map->get_tile(obj->x, obj->y, cur_level);
@@ -1839,7 +1791,6 @@ bool MapWindow::blocked_by_wall(Actor *actor, Obj *obj) {
 
 bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_accept_drop()\n");
-	uint16 mapWidth;
 
 	x -= area.left;
 	y -= area.top;
@@ -1854,7 +1805,7 @@ bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 			game->get_event()->display_not_aboard_vehicle();
 			return false;
 		}
-		mapWidth = map->get_width(cur_level);
+		uint16 mapWidth = map->get_width(cur_level);
 		x = (cur_x + x) % mapWidth;
 		y = (cur_y + y) % mapWidth;
 

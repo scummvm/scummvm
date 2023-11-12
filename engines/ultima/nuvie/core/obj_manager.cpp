@@ -250,22 +250,19 @@ bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_of
 }
 
 bool ObjManager::save_eggs(NuvieIO *save_buf) {
-	uint32 start_pos;
 	uint32 finish_pos;
-	Std::list<Egg *> *egg_list;
-	Std::list<Egg *>::iterator egg;
 
-	start_pos = save_buf->position();
+	uint32 start_pos = save_buf->position();
 
 //skip number of objects we will fill that in at the end.
 	save_buf->write2(0);
 
-	egg_list = egg_manager->get_egg_list();
+	Std::list<Egg *> *egg_list = egg_manager->get_egg_list();
 
 	obj_save_count = 0;
 
-	for (egg = egg_list->begin(); egg != egg_list->end(); egg++)
-		save_obj(save_buf, (*egg)->obj, obj_save_count);
+	for (Egg *egg : *egg_list)
+		save_obj(save_buf, egg->obj, obj_save_count);
 
 	finish_pos = save_buf->position();
 	save_buf->seek(start_pos);
@@ -398,9 +395,8 @@ void ObjManager::clean() {
 // remove the temporary object list. The objects were deleted from the surface and dungeon trees.
 	temp_obj_list.clear();
 
-	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
-		delete *it;
-	}
+	for (Obj *obj : tile_obj_list)
+		delete obj;
 	tile_obj_list.clear();
 
 	return;
@@ -1229,10 +1225,9 @@ Obj *ObjManager::get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, b
 // ObjManager keeps one instance of tile_obj per object.
 // SE has 3 tile objects (Trees, Yucca Plants, and Oven Fires)
 Obj *ObjManager::get_tile_obj(uint16 obj_n) {
-	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
-		if ((*it)->obj_n == obj_n) {
-			return *it;
-		}
+	for (Obj *o : tile_obj_list) {
+		if (o->obj_n == obj_n)
+			return o;
 	}
 	Obj *obj = new Obj();
 	obj->obj_n = obj_n;

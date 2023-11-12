@@ -69,10 +69,8 @@ uint16 MsgText::getDisplayWidth() {
 }
 
 MsgLine::~MsgLine() {
-	Std::list<MsgText *>::iterator iter;
-
-	for (iter = text.begin(); iter != text.end(); iter++) {
-		delete *iter;
+	for (MsgText *token : text) {
+		delete token;
 	}
 }
 
@@ -139,10 +137,7 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 
 uint16 MsgLine::get_display_width() {
 	uint16 len = 0;
-	Std::list<MsgText *>::iterator iter;
-	for (iter = text.begin(); iter != text.end() ; iter++) {
-		MsgText *token = *iter;
-
+	for (MsgText *token : text) {
 		len += token->font->getStringWidth(token->s.c_str());
 	}
 	return len;
@@ -240,17 +235,13 @@ MsgScroll::MsgScroll(const Configuration *cfg, Font *f) : GUI_Widget(nullptr, 0,
 }
 
 MsgScroll::~MsgScroll() {
-	Std::list<MsgLine *>::iterator msg_line;
-	Std::list<MsgText *>::iterator msg_text;
+	// delete the scroll buffer
+	for (MsgLine *line : msg_buf)
+		delete line;
 
-// delete the scroll buffer
-	for (msg_line = msg_buf.begin(); msg_line != msg_buf.end(); msg_line++)
-		delete *msg_line;
-
-// delete the holding buffer
-	for (msg_text = holding_buffer.begin(); msg_text != holding_buffer.end(); msg_text++)
-		delete *msg_text;
-
+	// delete the holding buffer
+	for (MsgText *token : holding_buffer)
+		delete token;
 }
 
 bool MsgScroll::init(const char *player_name) {
@@ -548,10 +539,7 @@ bool MsgScroll::is_garg_font() {
 }
 
 void MsgScroll::clear_scroll() {
-	Std::list<MsgLine *>::iterator iter;
-
-	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
-		MsgLine *line = *iter;
+	for (MsgLine *line : msg_buf) {
 		delete line;
 	}
 
@@ -989,12 +977,9 @@ void MsgScroll::Display(bool full_redraw) {
 }
 
 inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 line_y) {
-	MsgText *token;
-	Std::list<MsgText *>::iterator iter;
 	uint16 total_length = 0;
 
-	for (iter = msg_line->text.begin(); iter != msg_line->text.end() ; iter++) {
-		token = *iter;
+	for (MsgText *token : msg_line->text) {
 		token->font->drawString(theScreen, token->s.c_str(), area.left + left_margin + total_length * 8, area.top + line_y * 8, token->color, font_highlight_color); //FIX for hardcoded font height
 		total_length += token->s.length();
 	}

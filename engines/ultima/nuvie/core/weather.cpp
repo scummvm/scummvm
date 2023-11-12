@@ -226,9 +226,8 @@ inline void Weather::set_wind_change_callback() {
 }
 
 inline void Weather::send_wind_change_notification_callback() {
-	Std::list<CallBack *>::iterator cb_iter;
-	for (cb_iter = wind_change_notification_list.begin(); cb_iter != wind_change_notification_list.end(); cb_iter++)
-		(*cb_iter)->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, nullptr);
+	for (CallBack *cb : wind_change_notification_list)
+		cb->callback(WEATHER_CB_CHANGE_WIND_DIR, (CallBack *)this, nullptr);
 }
 
 bool Weather::add_wind_change_notification_callback(CallBack *caller) {

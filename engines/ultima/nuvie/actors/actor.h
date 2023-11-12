@@ -564,8 +564,8 @@ public:
 	void clear_error();
 	ActorError *get_error();
 
-	list<Obj *> *get_surrounding_obj_list() {
-		return surrounding_objects.empty() ? nullptr : &surrounding_objects;
+	const list<Obj *> &get_surrounding_obj_list() const {
+		return surrounding_objects;
 	}
 	void add_surrounding_obj(Obj *obj);
 	void unlink_surrounding_objects(bool make_objects_temporary = false);

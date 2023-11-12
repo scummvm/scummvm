@@ -1314,14 +1314,9 @@ void TileFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
-
-	if (surrounding_objs) {
-		Std::list<Obj *>::iterator obj_iter;
-		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
-			add_obj_anim(*obj_iter);
-		}
-	}
+	const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+	for (Obj *obj : surrounding_objs)
+		add_obj_anim(obj);
 }
 
 void TileFadeEffect::add_obj_anim(Obj *obj) {
@@ -1420,14 +1415,9 @@ void TileBlackFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
-
-	if (surrounding_objs) {
-		Std::list<Obj *>::iterator obj_iter;
-		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
-			add_obj_anim(*obj_iter);
-		}
-	}
+	const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+	for (Obj *o : surrounding_objs)
+		add_obj_anim(o);
 }
 
 void TileBlackFadeEffect::add_obj_anim(Obj *o) {

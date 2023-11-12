@@ -133,11 +133,9 @@ void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool includ
 	}
 }
 
-uint16 MsgScrollNewUI::count_empty_lines(Std::string s) {
-	Std::string::iterator iter;
+uint16 MsgScrollNewUI::count_empty_lines(const Std::string &s) {
 	uint16 count = 0;
-	for (iter = s.begin(); iter != s.end(); iter++) {
-		char c = *iter;
+	for (char c : s) {
 		if (c != ' ' && c != '\t' && c != '\n')
 			break;
 

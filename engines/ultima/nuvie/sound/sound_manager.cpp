@@ -656,13 +656,13 @@ void SoundManager::update_map_sfx() {
 	//m_ViewableTiles
 
 	//get a list of all the sounds
-	for (i = 0; i < mw->m_ViewableObjects.size(); i++) {
-		//DEBUG(0,LEVEL_DEBUGGING,"%d %s",mw->m_ViewableObjects[i]->obj_n,Game::get_game()->get_obj_manager()->get_obj_name(mw->m_ViewableObjects[i]));
-		SfxIdType sfx_id = RequestObjectSfxId(mw->m_ViewableObjects[i]->obj_n); //does this object have an associated sound?
+	for (const Obj *obj : mw->m_ViewableObjects) {
+		//DEBUG(0,LEVEL_DEBUGGING,"%d %s",obj->obj_n,Game::get_game()->get_obj_manager()->get_obj_name(obj));
+		SfxIdType sfx_id = RequestObjectSfxId(obj->obj_n); //does this object have an associated sound?
 		if (sfx_id != NUVIE_SFX_NONE) {
 			//calculate the volume
-			uint16 ox = mw->m_ViewableObjects[i]->x;
-			uint16 oy = mw->m_ViewableObjects[i]->y;
+			uint16 ox = obj->x;
+			uint16 oy = obj->y;
 			float dist = sqrtf((float)(x - ox) * (x - ox) + (float)(y - oy) * (y - oy));
 			float vol = (8.0f - dist) / 8.0f;
 			if (vol < 0)
@@ -762,21 +762,19 @@ void SoundManager::update() {
 	}
 }
 
-Sound *SoundManager::SongExists(string name) {
-	Std::list < Sound * >::iterator it;
-	for (it = m_Songs.begin(); it != m_Songs.end(); ++it) {
-		if ((*it)->GetName() == name)
-			return *it;
+Sound *SoundManager::SongExists(const string &name) {
+	for (Sound *song : m_Songs) {
+		if (song->GetName() == name)
+			return song;
 	}
 
 	return nullptr;
 }
 
-Sound *SoundManager::SampleExists(string name) {
-	Std::list < Sound * >::iterator it;
-	for (it = m_Samples.begin(); it != m_Samples.end(); ++it) {
-		if ((*it)->GetName() == name)
-			return *it;
+Sound *SoundManager::SampleExists(const string &name) {
+	for (Sound *sample : m_Samples) {
+		if (sample->GetName() == name)
+			return sample;
 	}
 
 	return nullptr;
@@ -815,7 +813,7 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 	return NUVIE_SFX_NONE;
 }
 
-Sound *SoundManager::RequestSong(string group) {
+Sound *SoundManager::RequestSong(const string &group) {
 	Common::HashMap<Common::String, SoundCollection * >::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {

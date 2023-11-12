@@ -765,24 +765,19 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 }
 
 void U6UseCode::remove_gargoyle_egg(uint16 x, uint16 y, uint8 z) {
-	Std::list<Egg *> *egg_list;
+	Std::list<Egg *> *egg_list = game->get_egg_manager()->get_egg_list();
 	Std::list<Egg *>::iterator egg_itr;
-
-	egg_list = game->get_egg_manager()->get_egg_list();
 
 	for (egg_itr = egg_list->begin(); egg_itr != egg_list->end();) {
 		Egg *egg = *egg_itr;
-		egg_itr++;
-
 		Obj *egg_obj = egg->obj;
-
+		egg_itr++;  // increment here, it might get removed from the list below.
 		if (abs(x - egg_obj->x) < 20 && abs(y - egg_obj->y) < 20 && z == egg_obj->z) {
 			if (egg_obj->find_in_container(OBJ_U6_GARGOYLE, 0, false, 0, false) || egg_obj->find_in_container(OBJ_U6_WINGED_GARGOYLE, 0, false, 0, false)) {
 				DEBUG(0, LEVEL_DEBUGGING, "Removed egg at (%x,%x,%x)", egg_obj->x, egg_obj->y, egg_obj->z);
 				game->get_egg_manager()->remove_egg(egg_obj, false);
 				obj_manager->unlink_from_engine(egg_obj);
 				delete_obj(egg_obj);
-
 			}
 		}
 	}

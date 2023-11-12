@@ -51,8 +51,8 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 		ConsoleAddWarning(Std::string("Failed to get children of ") + directory);
 		return false;
 	};
-	for (Common::FSList::iterator it = list.begin(); it != list.end(); ++it)
-		add_filename(*it);
+	for (const Common::FSNode &node : list)
+		add_filename(node);
 
 	//sort list by time last modified in decending order.
 	Common::sort(file_list.begin(), file_list.end(), NuvieFileDesc());
