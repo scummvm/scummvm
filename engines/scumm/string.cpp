@@ -1236,7 +1236,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	fontHeight = _charset->getFontHeight();
 
-	if (_game.version >= 4) {
+	// Disabled in HE games starting from Freddi1 because
+	// of issues when writing a savegame name containing spaces...
+	if (_game.version >= 4 && _game.heversion < 70) {
 		// trim from the right
 		byte *tmp = buf;
 		space = nullptr;
