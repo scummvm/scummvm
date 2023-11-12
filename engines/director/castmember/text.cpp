@@ -413,11 +413,20 @@ void TextCastMember::load() {
 	if (!_cast->_loadedStxts)
 		return;
 
-	uint stxtid;
-	if (_cast->_version >= kFileVer400 && _children.size() > 0)
-		stxtid = _children[0].index;
-	else
+	uint stxtid = 0;
+	if (_cast->_version >= kFileVer400) {
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('S', 'T', 'X', 'T')) {
+				stxtid = it.index;
+				break;
+			}
+		}
+		if (!stxtid) {
+			warning("TextCastMember::load(): No STXT resource found in %d children", _children.size());
+		}
+	} else {
 		stxtid = _castId;
+	}
 
 	if (_cast->_loadedStxts->contains(stxtid)) {
 		const Stxt *stxt = _cast->_loadedStxts->getVal(stxtid);

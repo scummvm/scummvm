@@ -557,6 +557,7 @@ void Cast::loadCast() {
 
 		for (auto &iterator : cast) {
 			Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), iterator);
+			debugC(2, kDebugLoading, "CASt: resource %d, castId %d, libId %d", iterator, res.castId, res.libId);
 			// Only load cast members which belong to the requested library ID.
 			// External casts only have one library ID, so instead
 			// we use the movie's mapping.
@@ -606,7 +607,7 @@ void Cast::loadCast() {
 	for (auto &iterator : stxt) {
 		_loadedStxts->setVal(iterator - _castIDoffset,
 				 new Stxt(this, *(r = _castArchive->getResource(MKTAG('S','T','X','T'), iterator))));
-
+		debugC(3, kDebugText, "STXT: id %d", iterator - _castIDoffset);
 		delete r;
 
 		// Try to load movie script, it starts with a comment
@@ -633,8 +634,13 @@ Common::String Cast::getVideoPath(int castId) {
 	uint16 videoId = (uint16)(castId + _castIDoffset);
 
 	if (_version >= kFileVer400 && digitalVideoCast->_children.size() > 0) {
-		videoId = digitalVideoCast->_children[0].index;
-		tag = digitalVideoCast->_children[0].tag;
+		for (auto &it : digitalVideoCast->_children) {
+			if (it.tag == MKTAG('M', 'o', 'o', 'V')) {
+				videoId = it.index;
+				tag = it.tag;
+				break;
+			}
+		}
 	}
 
 	Common::SeekableReadStreamEndian *videoData = nullptr;

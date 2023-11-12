@@ -52,10 +52,14 @@ void PaletteCastMember::load() {
 		// For D3 and below, palette IDs are stored in the CLUT resource as cast ID + 1024
 		paletteId = _castId + _cast->_castIDoffset;
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
-		if (_children.size() == 1) {
-			paletteId = _children[0].index;
-		} else {
-			warning("PaletteCastMember::load(): Expected 1 child for palette cast, got %d", _children.size());
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('C', 'L', 'U', 'T')) {
+				paletteId = it.index;
+				break;
+			}
+		}
+		if (!paletteId) {
+			warning("PaletteCastMember::load(): No CLUT resource found in %d children", _children.size());
 		}
 	} else {
 		warning("STUB: PaletteCastMember::load(): Palettes not yet supported for version %d", _cast->_version);
