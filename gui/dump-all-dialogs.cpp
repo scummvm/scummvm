@@ -71,7 +71,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	ConfMan.setInt("last_window_width", res, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("last_window_height", 600, Common::ConfigManager::kApplicationDomain);
 	g_system->beginGFXTransaction();
-	g_system->initSize(res, 600);
+		g_system->initSize(res, 600);
 	g_system->endGFXTransaction();
 
 	Graphics::Surface surf;
@@ -79,7 +79,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 
 	Common::String filename = Common::String::format("%d-%s.png", res, lang.c_str());
 
-	//Skipping Tooltips as not required
+	// Skipping Tooltips as not required
 
 	// MessageDialog
 	GUI::MessageDialog messageDialog(message);
