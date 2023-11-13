@@ -534,6 +534,30 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
+void ConsoleDialog::handleOtherEvent(const Common::Event &evt) {
+	if (evt.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+		switch (evt.customType) {
+			case kActionCopy:
+				{
+					Common::String userInput = getUserInput();
+					if (!userInput.empty())
+						g_system->setTextInClipboard(userInput);
+				}
+				break;
+			case kActionPaste:
+				if (g_system->hasTextInClipboard()) {
+					Common::U32String text = g_system->getTextFromClipboard();
+					insertIntoPrompt(text.encode().c_str());
+					scrollToCurrent();
+					drawLine(pos2line(_currentPos));
+				}
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 	switch (keycode) {
 	case Common::KEYCODE_a:
@@ -557,21 +581,6 @@ void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 	case Common::KEYCODE_w:
 		killLastWord();
 		g_gui.scheduleTopDialogRedraw();
-		break;
-	case Common::KEYCODE_v:
-		if (g_system->hasTextInClipboard()) {
-			Common::U32String text = g_system->getTextFromClipboard();
-			insertIntoPrompt(text.encode().c_str());
-			scrollToCurrent();
-			drawLine(pos2line(_currentPos));
-		}
-		break;
-	case Common::KEYCODE_c:
-		{
-			Common::String userInput = getUserInput();
-			if (!userInput.empty())
-				g_system->setTextInClipboard(userInput);
-		}
 		break;
 	default:
 		break;
