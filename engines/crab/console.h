@@ -29,6 +29,7 @@ namespace Crab {
 class Console : public GUI::Debugger {
 private:
 	bool cmdDraw(int argc, const char **argv);
+	bool cmdWhat(int argc, const char **argv);
 
 public:
 	Console();
