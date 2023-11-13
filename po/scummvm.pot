@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-12 13:40+0000\n"
+"POT-Creation-Date: 2023-11-13 11:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8500,19 +8500,19 @@ msgstr ""
 msgid "Fly to lower right"
 msgstr ""
 
-#: engines/scumm/input.cpp:1315
+#: engines/scumm/input.cpp:1317
 msgid "Snap scroll on"
 msgstr ""
 
-#: engines/scumm/input.cpp:1317
+#: engines/scumm/input.cpp:1319
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:1330
+#: engines/scumm/input.cpp:1332
 msgid "Music volume: "
 msgstr ""
 
-#: engines/scumm/input.cpp:1347
+#: engines/scumm/input.cpp:1349
 msgid "Subtitle speed: "
 msgstr ""
 
