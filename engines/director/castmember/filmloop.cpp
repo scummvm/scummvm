@@ -271,7 +271,12 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 				Sprite sprite(nullptr);
 				sprite._movie = g_director->getCurrentMovie();
 				if (newFrame.sprites.contains(channel)) {
-					sprite = newFrame.sprites.getVal(channel);
+					// In some cases, particularly in Total Distortion, there could be sprites of type kInactiveSprite.
+					// We need to skip processing them to avoid issues.
+					
+					if (newFrame.sprites.getVal(channel)._spriteType == kBitmapSprite) {
+						sprite = newFrame.sprites.getVal(channel);
+					}
 				}
 
 				sprite._puppet = 1;
