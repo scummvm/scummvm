@@ -82,36 +82,41 @@ struct AlphaBlend : public BlendBlitImpl_Base::AlphaBlend<doscale, rgbmod, alpha
 template<bool doscale, bool rgbmod, bool alphamod>
 struct MultiplyBlend : public BlendBlitImpl_Base::MultiplyBlend<doscale, rgbmod, alphamod> {
 	static inline uint32x4_t simd(uint32x4_t src, uint32x4_t dst, const bool flip, const byte ca, const byte cr, const byte cg, const byte cb) {
-		uint32x4_t ina;
-		if (alphamod)
+		uint32x4_t ina, alphaMask;
+		if (alphamod) {
 			ina = vshrq_n_u32(vmulq_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask)), vdupq_n_u32(ca)), 8);
-		else
+			alphaMask = vceqq_u32(ina, vmovq_n_u32(0));
+		} else {
 			ina = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
-		uint32x4_t alphaMask = vceqq_u32(ina, vmovq_n_u32(0));
+			alphaMask = vdupq_n_u32(BlendBlit::kAModMask);
+		}
 
 		if (rgbmod) {
-			uint32x4_t srcb = vandq_u32(src, vmovq_n_u32(BlendBlit::kBModMask));
-			uint32x4_t srcg = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-			uint32x4_t srcr = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
-			uint32x4_t dstb = vandq_u32(dst, vmovq_n_u32(BlendBlit::kBModMask));
-			uint32x4_t dstg = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
-			uint32x4_t dstr = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+			uint32x4_t srcB = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			uint32x4_t srcG = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			uint32x4_t srcR = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
+			uint32x4_t dstB = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kBModMask)), BlendBlit::kBModShift);
+			uint32x4_t dstG = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			uint32x4_t dstR = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask)), BlendBlit::kRModShift);
 
-			srcb = vandq_u32(vshrq_n_u32(vmulq_u32(dstb, vshrq_n_u32(vmulq_u32(vmulq_u32(srcb, vmovq_n_u32(cb)), ina), 16)), 8), vmovq_n_u32(BlendBlit::kBModMask));
-			srcg = vandq_u32(vshlq_n_u32(vmulq_u32(dstg, vshrq_n_u32(vmulq_u32(vmulq_u32(srcg, vmovq_n_u32(cg)), ina), 16)), BlendBlit::kGModShift - 8), vmovq_n_u32(BlendBlit::kGModMask));
-			srcr = vandq_u32(vshlq_n_u32(vmulq_u32(dstr, vshrq_n_u32(vmulq_u32(vmulq_u32(srcr, vmovq_n_u32(cr)), ina), 16)), BlendBlit::kRModShift - 8), vmovq_n_u32(BlendBlit::kRModMask));
+			srcB = vandq_u32(vshlq_n_u32(vmulq_u32(dstB, vshrq_n_u32(vmulq_u32(vmulq_u32(srcB, vmovq_n_u32(cb)), ina), 16)), BlendBlit::kBModShift - 8), vmovq_n_u32(BlendBlit::kBModMask));
+			srcG = vandq_u32(vshlq_n_u32(vmulq_u32(dstG, vshrq_n_u32(vmulq_u32(vmulq_u32(srcG, vmovq_n_u32(cg)), ina), 16)), BlendBlit::kGModShift - 8), vmovq_n_u32(BlendBlit::kGModMask));
+			srcR = vandq_u32(vshlq_n_u32(vmulq_u32(dstR, vshrq_n_u32(vmulq_u32(vmulq_u32(srcR, vmovq_n_u32(cr)), ina), 16)), BlendBlit::kRModShift - 8), vmovq_n_u32(BlendBlit::kRModMask));
 
 			src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
-			src = vorrq_u32(src, vorrq_u32(srcb, vorrq_u32(srcg, srcr)));
+			src = vorrq_u32(src, vorrq_u32(srcB, vorrq_u32(srcG, srcR)));
 		} else {
-			uint32x4_t srcg = vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask));
-			uint32x4_t srcrb = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			uint32x4_t dstg = vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask));
-			uint32x4_t dstrb = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask)), BlendBlit::kBModShift);
-			srcg = vandq_u32(vshrq_n_u32(vmulq_u32(dstg, vshrq_n_u32(vmulq_u32(srcg, ina), 8)), 8), vmovq_n_u32(BlendBlit::kGModMask));
-			srcrb = vandq_u32(vmulq_u32(dstrb, vshrq_n_u32(vmulq_u32(srcrb, ina), 8)), vmovq_n_u32(BlendBlit::kRModMask | BlendBlit::kBModMask));
+			constexpr uint32 rbMask = BlendBlit::kRModMask | BlendBlit::kBModMask;
+			uint32x4_t srcG = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			uint32x4_t srcRB = vshrq_n_u32(vandq_u32(src, vmovq_n_u32(rbMask)), BlendBlit::kBModShift);
+			uint32x4_t dstG = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(BlendBlit::kGModMask)), BlendBlit::kGModShift);
+			uint32x4_t dstRB = vshrq_n_u32(vandq_u32(dst, vmovq_n_u32(rbMask)), BlendBlit::kBModShift);
+
+			srcG = vandq_u32(vshlq_n_u32(vmulq_u32(dstG, vshrq_n_u32(vmulq_u32(srcG, ina), 8)), 8), vmovq_n_u32(BlendBlit::kGModMask));
+			srcRB = vandq_u32(vreinterpretq_u32_u16(vmulq_u16(vreinterpretq_u16_u32(dstRB), vreinterpretq_u16_u32(vshrq_n_u32(vandq_u32(vmulq_u32(srcRB, ina), vmovq_n_u32(rbMask)), 8)))), vmovq_n_u32(rbMask));
+
 			src = vandq_u32(src, vmovq_n_u32(BlendBlit::kAModMask));
-			src = vorrq_u32(src, vorrq_u32(srcrb, srcg));
+			src = vorrq_u32(src, vorrq_u32(srcRB, srcG));
 		}
 
 		dst = vandq_u32(alphaMask, dst);
