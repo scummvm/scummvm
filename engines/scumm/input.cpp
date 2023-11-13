@@ -187,8 +187,8 @@ void ScummEngine::parseEvent(Common::Event event) {
 		// Normally, keypad keys would only have an ASCII value when
 		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
 
-		_keyPressed = event.kbd;
-		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+		if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed = event.kbd;
 			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
 		}
 
