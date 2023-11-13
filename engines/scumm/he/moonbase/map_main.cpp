@@ -28,23 +28,144 @@
 
 #include "scumm/he/moonbase/map_data.h"
 #include "scumm/he/moonbase/map_main.h"
+#include "scumm/he/moonbase/map_spiff.h"
 
 namespace Scumm {
 
 Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
+	_mapGenerated = false;
+
+	_energy = 0;
+	_terrain = 0;
+	_water = 0;
 }
 
 Map::~Map() {
 }
 
-Common::SeekableReadStream *Map::substituteFile(const byte *fileName) {
-	if (!strcmp((const char *)fileName, "map\\moon001.thm")) {
-		// Load thumbnail data
-		Common::MemoryReadStream *thumbnail = new Common::MemoryReadStream(Template_thm, ARRAYSIZE(Template_thm));
-		Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(thumbnail);
-		return stream;
+bool Map::generateNewMap() {
+
+	// TODO: Show a dialog allowing the user to customize options.
+
+	// Don't randomly pick nonstandard map sizes.
+	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
+
+	int tileSet = _rnd.getRandomNumberRngSigned(1, 7);
+
+	// Only use [2, 3, 4] of the legal [0, 1, 2, 3, 4, 5, 6]
+	int energy = _rnd.getRandomNumberRngSigned(2, 4);
+	int terrain = _rnd.getRandomNumberRngSigned(2, 4);
+	int water = _rnd.getRandomNumberRngSigned(2, 4);
+
+	_randSeed = _rnd.generateNewSeed();
+
+	return generateMapWithInfo(SPIFF_GEN, _randSeed, mapSize, tileSet, energy, terrain, water);
+}
+
+bool Map::generateMapWithInfo(uint8 generator, uint32 seed, int mapSize, int tileset, int energy, int terrain, int water) {
+	_rnd.setSeed(seed);
+
+	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, seed, mapSize, tileset, energy, terrain, water);
+	switch (generator) {
+	case SPIFF_GEN:
+	{
+		SpiffGenerator spiff = SpiffGenerator(&_rnd);
+		spiff.generateMap(water, mapSize, energy, terrain);
+		// TODO: Actually create the map file.
+		break;
+	}
+	default:
+		error("Map: Got unknown generator: %d", generator);
+		return false;
 	}
 
+	// Store these for wiz generation.
+	_energy = energy;
+	_terrain = terrain;
+	_water = water;
+
+	_mapGenerated = true;
+	return true;
+}
+
+Common::SeekableReadStream *Map::makeWiz() {
+	unsigned short wiz [139][139];
+	int i, j;
+
+	Common::MemoryReadStream *wizTemplate = new Common::MemoryReadStream(Template_wiz, ARRAYSIZE(Template_wiz));
+	Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(wizTemplate);
+
+	stream->seek(0x0448);
+	for (j = 0; j < 139; ++j) {
+		for (i = 0; i < 139; ++i) {
+			uint16 data = stream->readUint16BE();
+			wiz[i][j] = data;
+		}
+	}
+	delete stream;
+
+	for (j = 0; j < _energy * 9; j++) {
+		for (i = 30; i < 51; i++) {
+			wiz[i][91 - j] = ((255) / 8 ) + ((int) (130 - (j * 100 / (_energy * 9)))) / 8 * 32 + ((int) (80 + j * 80 / (_energy * 9)) / 8 * 1024);
+		}
+	}
+
+	for (j = 0; j < _terrain * 9; j++) {
+		for (i = 61; i < 82; i++) {
+			wiz[i][91 - j] = ((255) / 8 ) + ((int) (130 - (j * 100 / (_terrain*9))))/8 * 32 + ((int) (80 + j * 80 / (_terrain * 9)) / 8 * 1024);
+		}
+	}
+
+	for (j = 0; j < _water * 9; j++) {
+		for (i = 92; i < 113; i++) {
+			wiz[i][91 - j] = ((255) / 8 ) + ((int) (130 - (j * 100 / (_water * 9)))) / 8 * 32 + ((int) (80 + j * 80 / (_water*9)) / 8 * 1024);
+		}
+	}
+
+	// Re-read the template (to avoid compressed stream seeking):
+	wizTemplate = new Common::MemoryReadStream(Template_wiz, ARRAYSIZE(Template_wiz));
+	stream = Common::wrapCompressedReadStream(wizTemplate);
+	byte *pwiz = (byte *)malloc(TEMPLATE_WIZ_SIZE);
+	stream->read(pwiz, TEMPLATE_WIZ_SIZE);
+	delete stream;
+
+	Common::SeekableMemoryWriteStream ws = Common::SeekableMemoryWriteStream(pwiz, TEMPLATE_WIZ_SIZE);
+	ws.seek(0x0448);
+	for (j = 0; j < 139; j++) {
+		for (i = 0; i < 139; i++) {
+			ws.writeUint16BE(wiz[i][j]);
+		}
+	}
+
+	return new Common::MemoryReadStream(pwiz, TEMPLATE_WIZ_SIZE, DisposeAfterUse::YES);
+}
+
+Common::SeekableReadStream *Map::substituteFile(const byte *fileName) {
+	if (_mapGenerated) {
+		// Worth noting here that the game opens these files more than once.
+		// The exact scenario for the .thm and .wiz files is that the game
+		// opens it first to make sure that it exists and readable, closes it,
+		// and calls processWizImage to open the file again to actually read
+		// the data inside.
+		if (!strcmp((const char *)fileName, "map\\moon001.thm")) {
+			// Load compressed thumbnail data from header.
+			Common::MemoryReadStream *templateThm = new Common::MemoryReadStream(Template_thm, ARRAYSIZE(Template_thm));
+			Common::SeekableReadStream *stream = Common::wrapCompressedReadStream(templateThm);
+
+			// Read the uncompressed data into memory
+			// (This is done to avoid compressed stream seeking)
+			byte *thumbnail = (byte *)malloc(TEMPLATE_THM_SIZE);
+			stream->read(thumbnail, TEMPLATE_THM_SIZE);
+			delete stream;
+
+			// And return a new ReadStream for it.
+			return new Common::MemoryReadStream(thumbnail, TEMPLATE_THM_SIZE, DisposeAfterUse::YES);
+		}
+
+		if (!strcmp((const char *)fileName, "map\\moon001.wiz")) {
+			return makeWiz();
+		}
+	}
 	return nullptr;
 }
 
