@@ -347,6 +347,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "perfidiouspetrolstation", "The Perfidious Petrol Station" },
 	{ "personalrocket", "Personal Rocket" },
 	{ "phantomfellows", "The Phantom Fellows" },
+	{ "piratethemepark", "Pirate Theme Park: A Short Adventure" },
 	{ "primordia", "Primordia" },
 	{ "projectorface", "Projector Face" },
 	{ "puzzlebots", "Puzzle Bots" },
@@ -2192,6 +2193,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "muuyeeb", "MuuYeeb the Ghost" },
 	{ "mwhour", "Matt Wilson's Hour Game" },
 	{ "myburdentokeep", "My Burden to Keep" },
+	{ "mycroftsim", "Mycroft Holmes Simulator 1895" },
 	{ "myfathersecret", "My Father's Secret" },
 	{ "myfirstbigadv", "My First Big Adventure" },
 	{ "myfirstquest", "My First Quest" },
@@ -3410,6 +3412,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "zombiefish", "Night of the Zombie Fish!" },
 	{ "zombienation", "Zombie Nation" },
 	{ "zombietown", "Zombie Town" },
+	{ "zombietrainep2", "Zombie Train Beyond Earth: Episode 2" },
 	{ "zooreal", "ZooReal" },
 	{ "zugzwang", "Zugzwang" },
 
@@ -4214,6 +4217,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
 	GAME_ENTRY_EN_STEAM("personalrocket", "PersonalRocket.exe", "7db052bc30700d1f30f5330f5814f519", 76071166),
+	GAME_ENTRY_EN("piratethemepark", "Pirate Theme Park.exe", "f7308b375ff8aebe23e909add49dbd4d", 31368047),  // itch.io
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973511911),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890), // En-Fr-De-Es
@@ -4269,6 +4273,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura - GOG v1.0
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37722884),
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37725830),
+	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37729146),
 	GAME_ENTRY_EN_STEAM("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573),
 	GAME_ENTRY_GOG("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1 - GOG
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),  // En-Fr-De-Es-It
@@ -7110,6 +7115,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mutagen", "mutagen.exe", "06a03fe35791b0578068ab1873455463", 7667151),  // En-Fr
 	GAME_ENTRY_EN("muuyeeb", "ghost.exe", "71ca0d6c1c699595f28a2125948d4a84", 1531958),
 	GAME_ENTRY_EN("myburdentokeep", "MBTK.exe", "52b5831250acb676c3c76b8e47af4b2c", 35230042),
+	GAME_ENTRY_EN("mycroftsim", "MycroftSimulator.exe", "1d1deb6497d935c825b0398806e8306e", 8564800),  // Win (older)
+	GAME_ENTRY_EN("mycroftsim", "MycroftSim2.exe", "1d1deb6497d935c825b0398806e8306e", 8564801),  // Win
+	GAME_ENTRY_EN("mycroftsim", "MycroftSim2.ags", "497c9d258b73b887de38952c36864b8c", 5452333),  // Linux
+	GAME_ENTRY_EN("mycroftsim", "ac2game.dat", "1d1deb6497d935c825b0398806e8306e", 8564801),  // Mac
+	GAME_ENTRY_EN_PLATFORM("mycroftsim", "MycroftSim2.exe", "1177e20f6a84ded5fad2a5d79fff8cb5", 36486321, "Expanded Edition"),  // Win
+	GAME_ENTRY_EN_PLATFORM("mycroftsim", "MycroftSim2.ags", "7c38ebc456869852c67dff549d320e88", 33317533, "Expanded Edition"),  // Linux
 	GAME_ENTRY_EN("myfathersecret", "MyFathersSecret.exe", "981e60a9be515bb56c634856462abbc7", 406855726),
 	GAME_ENTRY_EN("myfirstbigadv", "MY FIRST BIG ADVENTURE.exe", "82da2565c456dcfb265ded6fe3189c0b", 20143503),
 	GAME_ENTRY_EN("myfirstquest", "test.exe", "0500aacb6c176d47ac0f8158f055db83", 837473),
@@ -7711,6 +7722,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "4b94f022e290af3ddc181263001d71ee", 76895827),  // Win v1.0
 	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "26e733a242fec82194e1f6d0f0f3d0e8", 76895828),  // Linux v1.0 fixed
 	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "921652f83e899467f974cbee74427cf9", 76897579),  // Win/Mac/Linux v1.1
+	GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "2883486157a3bac3ae1f399878c4acb9", 78996529),  // Win/Mac/Linux v1.2
 	GAME_ENTRY_EN("sharethis", "shareme.exe", "208aac8aaca15de5482efa5b429f6718", 3837255),
 	GAME_ENTRY_EN("sharkysthree", "Sharky's 3.exe", "25976a689b0f4d73eac69b1728377ecb", 9249262),
 	GAME_ENTRY_EN("shawshank", "Shawshank.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2968469),
@@ -8590,6 +8602,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46111952),
 	GAME_ENTRY_EN("zombienation", "zomnat v1.1.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 46065287),
 	GAME_ENTRY_EN("zombietown", "phychocar1.exe", "0500aacb6c176d47ac0f8158f055db83", 818731),
+	GAME_ENTRY_EN("zombietrainep2", "datacompletegame.exe", "7a3096ac0237cb6aa8e1718e28caf039", 28086203),
 	GAME_ENTRY_EN("zooreal", "zoo_real.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 24184795),
 	GAME_ENTRY_EN_PLATFORM("zugzwang", "Zugzwang.exe", "28f82e420b82d07651b68114f90223c8", 13758471, "MAGS"),  //1.0
 	GAME_ENTRY_EN("zugzwang", "Zugzwang.exe", "28f82e420b82d07651b68114f90223c8", 13870211),  //1.01
