@@ -714,6 +714,38 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	GUI::dumpAllDialogs();
 #endif
 
+// Print out CPU extension info
+// Separate block to keep the stack clean
+	{
+		Common::String extensionSupportString[3] = { "not supported", "disabled", "enabled" };
+
+		byte sse2Support = 0;
+		byte avx2Support = 0;
+		byte neonSupport = 0;
+
+#ifdef SCUMMVM_SSE2
+		++sse2Support;
+		if (g_system->hasFeature(OSystem::kFeatureCpuSSE2))
+			++sse2Support;
+#endif
+#ifdef SCUMMVM_AVX2
+		++avx2Support;
+		if (g_system->hasFeature(OSystem::kFeatureCpuAVX2))
+			++avx2Support;
+#endif
+#ifdef SCUMMVM_NEON
+		++neonSupport;
+		if (g_system->hasFeature(OSystem::kFeatureCpuNEON))
+			++neonSupport;
+#endif
+
+		debug(0, "CPU extensions:");
+		debug(0, "SSE2(%s) AVX2(%s) NEON(%s)",
+			extensionSupportString[sse2Support].c_str(),
+			extensionSupportString[avx2Support].c_str(),
+			extensionSupportString[neonSupport].c_str());
+	}
+
 	// Unless a game was specified, show the launcher dialog
 	if (nullptr == ConfMan.getActiveDomain())
 		launcherDialog();
