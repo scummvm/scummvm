@@ -27,6 +27,9 @@
 #include "common/stream.h"
 #include "common/random.h"
 
+#define SPIFF_GEN  1
+#define KATTON_GEN 2
+
 namespace Scumm {
 
 class Map {
@@ -34,7 +37,13 @@ public:
 	Map(ScummEngine_v100he *vm);
 	~Map();
 
+	bool generateNewMap();
+	bool generateMapWithInfo(uint8 generator, uint32 seed, int mapSize, int tileset, int energy, int terrain, int water);
 	Common::SeekableReadStream *substituteFile(const byte *fileName);
+
+	uint32 getSeed() const {
+		return _randSeed;
+	}
 
 private:
 	ScummEngine_v100he *_vm;
@@ -43,6 +52,15 @@ private:
 	// so we can send and set seeds from online players to ensure
 	// they're playing on the same generated map.
 	Common::RandomSource _rnd;
+	uint32 _randSeed;
+
+	bool _mapGenerated;
+
+	// Data for makeWiz:
+	int _energy;
+	int _terrain;
+	int _water;
+	Common::SeekableReadStream *makeWiz();
 };
 
 } // End of namespace Scumm
