@@ -12346,6 +12346,44 @@ static const uint16 phant1DragonPassagePatch[] = {
 	PATCH_END
 };
 
+// In chapter 3 when Harriet is stuck in the barn, leaving the barn before
+//  helping her can crash the game by sending a selector to a non-object.
+//
+// Each barn room has a copy of the same script named sHarrietWhines. It sets
+//  itself as the script to run when the global script takeLastStep completes.
+//  These scripts expect handsOff mode, but the room with the exit door (24610)
+//  calls handsOn immediately after handsOff. If the player clicks the door
+//  before takeLastStep completes then it doesn't dispose itself. The next room
+//  outside the barn (28300) runs takeLastStep again, and when it completes, the
+//  previous room's sHarrietWhines script runs in the wrong room and crashes.
+//  sHarrietWhines is programmed to detect this and defend against it, but it
+//  does so incorrectly. It disposes of itself outside the barn, but then it
+//  calls self:cue and continues running anyway.
+//
+// We fix this by adding a return statement after sHarrietWhines:dispose so that
+//  the script doesn't continue after disposing of itself. The final room number
+//  test in this script is redundant and can be overwritten.
+//
+// Applies to: All versions
+// Responsible method: sHarrietWhines:changeState(1)
+static const uint16 phant1HarrietWhinesSignature[] = {
+	SIG_MAGICDWORD,
+	0x3c,                               // dup
+	0x34, SIG_UINT16(0x6e8c),           // ldi 06ec
+	0x1a,                               // eq? [ room == 28300 ]
+	0x31, 0x07,                         // bnt 07
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 0004 [ self dispose: ]
+	SIG_END
+};
+
+static const uint16 phant1HarrietWhinesPatch[] = {
+	PATCH_GETORIGINALBYTES(+7, 7),      // [ self dispose: ]
+	0x48,                               // ret [ return after disposing ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,     0, "mac: set high video quality",                 1, phant1MacVideoQualitySignature,  phant1MacVideoQualityPatch },
@@ -12360,6 +12398,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true, 20100, "fix basement fast-forward",                   1, phant1BasementFastForwardSignature, phant1BasementFastForwardPatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
+	{  true, 24610, "fix harriet whines",                          1, phant1HarrietWhinesSignature,    phant1HarrietWhinesPatch },
 	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
 	{  true, 45950, "reset stab don flag",                         1, phant1ResetStabDonFlagSignature, phant1ResetStabDonFlagPatch },
 	{  true, 45951, "copy chase file instead of rename",           1, phant1CopyChaseFileSignature,    phant1CopyChaseFilePatch },
