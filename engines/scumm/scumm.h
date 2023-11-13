@@ -519,6 +519,7 @@ extern const char *const insaneKeymapId;
 class ScummEngine : public Engine, public Common::Serializable {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
+	friend class CharsetRendererClassic;
 	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
 	friend class MacIndy3Gui;

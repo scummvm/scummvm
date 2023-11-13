@@ -1050,7 +1050,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 
 		// Compute the text rect
 		vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
-		
+
 		const int maxWidth = _screenWidth - vs->curRect.left;
 		int finalWidth = maxWidth;
 
@@ -1073,7 +1073,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			enqueueText(tmpBuf, xpos, ypos, color, vs->charset_nr, flags);
 			enqueueText(&msg[len + 1], xpos, ypos + _verbLineSpacing, color, vs->charset_nr, flags);
 			vs->curRect.right = vs->curRect.left + finalWidth;
-			vs->curRect.bottom += _verbLineSpacing;			
+			vs->curRect.bottom += _verbLineSpacing;
 		} else {
 			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags);
 		}
@@ -1158,6 +1158,14 @@ void ScummEngine::restoreVerbBG(int verb) {
 		vs->bkcolor;
 
 	if (vs->oldRect.left != -1) {
+		// Clip the dialog choices to a rectangle starting 35 pixels from the left
+		// for Japanese Monkey Island 1 SegaCD. _scummVars[451] is set by script 187,
+		// responsible for handling the dialog horizontal scrolling.
+		bool isSegaCDDialogChoice = _game.platform == Common::kPlatformSegaCD &&
+									_language == Common::JA_JPN &&  _scummVars[451] == 1;
+		if (isSegaCDDialogChoice && vs->oldRect.left < 35)
+			vs->oldRect.left = 35;
+
 		restoreBackground(vs->oldRect, col);
 		vs->oldRect.left = -1;
 	}

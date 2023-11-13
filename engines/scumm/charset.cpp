@@ -1056,7 +1056,8 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	// an additional '_' character where it should be drawn.
 	// This, of course, disables the text cursor when writing a savegame name, but that's in the
 	// original as well.
-	if (_vm->_isIndy4Jap && chr == '_')
+	if ((_vm->_isIndy4Jap || (_vm->_game.platform == Common::kPlatformSegaCD && _vm->_language == Common::JA_JPN)) &&
+		chr == '_')
 		return;
 
 	translateColor();
@@ -1112,7 +1113,18 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 
 	int drawTop = _top - vs->topline;
 
-	_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
+	// Clip the dialog choices to a rectangle starting 35 pixels from the left
+	// for Japanese Monkey Island 1 SegaCD. _scummVars[451] is set by script 187,
+	// responsible for handling the dialog horizontal scrolling.
+	bool isSegaCDDialogChoice = _vm->_game.platform == Common::kPlatformSegaCD &&
+		_vm->_language == Common::JA_JPN && vs->number == kVerbVirtScreen && _vm->_scummVars[451] == 1;
+	if (isSegaCDDialogChoice && _left < 35) {
+		_left += _origWidth;
+		return;
+	} else {
+		_vm->markRectAsDirty(vs->number, _left, _left + _width, drawTop, drawTop + _height);
+	}
+
 
 	// This check for kPlatformFMTowns and kMainVirtScreen is at least required for the chat with
 	// the navigator's head in front of the ghost ship in Monkey Island 1
