@@ -83,7 +83,18 @@ void GameDialogBox::draw(pyrodactyl::event::Info &info, Common::String &message)
 // Purpose: Handle input
 //------------------------------------------------------------------------
 bool GameDialogBox::handleEvents(const Common::Event &event) {
-	return (_button.handleEvents(event) == BUAC_LCLICK);
+	// Switch to KBM_UI
+	if (g_engine->_inputManager->getKeyBindingMode() != KBM_UI)
+		g_engine->_inputManager->setKeyBindingMode(KBM_UI);
+
+	bool isLeftClick = (_button.handleEvents(event) == BUAC_LCLICK);
+
+	if (isLeftClick) {
+		// Switch to KBM_GAME
+		g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
+	}
+
+	return isLeftClick;
 }
 
 void GameDialogBox::setUI() {
