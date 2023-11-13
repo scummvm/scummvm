@@ -2129,8 +2129,36 @@ void ScummEngine::queryRestart() {
 			if (_game.version < 5)
 				restoreCharsetBg();
 
-			if (_game.id == GID_SAMNMAX)
-				fadeOut(134);
+			int fadeOutType;
+			switch (_game.id) {
+			case GID_MANIAC:
+			case GID_ZAK:
+			case GID_INDY3:
+				fadeOutType = 1;
+				break;
+			case GID_LOOM:
+				fadeOutType = _game.version == 4 ? 134 : -1;
+				break;
+			case GID_MONKEY:
+			case GID_MONKEY2:
+			case GID_INDY4:
+			case GID_TENTACLE:
+			case GID_SAMNMAX:
+				fadeOutType = 134;
+				break;
+			case GID_FT:
+			case GID_DIG:
+				fadeOutType = -1;
+				break;
+			case GID_MONKEY_EGA:
+				fadeOutType = 128;
+				break;
+			default:
+				fadeOutType = 129;
+			}
+
+			if (fadeOutType != -1)
+				fadeOut(fadeOutType);
 
 			restart();
 		}
