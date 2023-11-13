@@ -97,13 +97,29 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	GUI::AboutDialog aboutDialog;
 	handleSimpleDialog(aboutDialog, "aboutDialog-", surf);
 
+#if USE_CLOUD && USE_LIBCURL
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard-", surf);
 
+	// RemoteBrowserDialog
+	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
+	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog-", surf);
+
+	// DownloadIconPacksDialog
+	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
+	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog-", surf);
+
+	// DownloadShaderPacksDialog
+	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
+	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog-", surf);
+#endif
+
+#if USE_FLUIDSYNTH
 	// FluidSynthSettingsDialog
 	GUI::FluidSynthSettingsDialog fluidSynthSettingsDialog;
 	handleSimpleDialog(fluidSynthSettingsDialog, "fluidSynthSettings-", surf);
+#endif
 
 	// ThemeBrowserDialog
 	GUI::ThemeBrowser themeBrowser;
@@ -113,22 +129,9 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	GUI::BrowserDialog browserDialog(_("Select directory with game data"), true);
 	handleSimpleDialog(browserDialog, "browserDialog-", surf);
 
-	// RemoteBrowserDialog
-	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
-	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog-", surf);
-
 	// ChooserDialog
 	GUI::ChooserDialog chooserDialog(_("Pick the game:"));
 	handleSimpleDialog(chooserDialog, "chooserDialog-", surf);
-
-	// DownloadIconPacksDialog
-	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
-	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog-", surf);
-
-	// DownloadShaderPacksDialog
-	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
-	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog-", surf);
-
 
 	// MassAddDialog
 	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
