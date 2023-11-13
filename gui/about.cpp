@@ -330,7 +330,7 @@ void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 
 	int newScrollPos = _scrollPos + stepping;
 
-	if (_scrollPos < 0) {
+	if (newScrollPos < 0) {
 		_scrollPos = 0;
 	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
 		_scrollPos = newScrollPos;
