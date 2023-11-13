@@ -21,11 +21,15 @@
 
 #include "crab/crab.h"
 #include "crab/console.h"
+#include "crab/input/input.h"
 
 namespace Crab {
 
+using namespace pyrodactyl::input;
+
 Console::Console() : GUI::Debugger() {
 	registerCmd("draw", WRAP_METHOD(Console, cmdDraw));
+	registerCmd("what", WRAP_METHOD(Console, cmdWhat));
 }
 
 Console::~Console() {
@@ -48,6 +52,34 @@ bool Console::cmdDraw(int argc, const char **argv) {
 				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS | DRAW_SPRITE_BOUNDS | DRAW_PATHING;
 			else
 				debugPrintf("Valid parameters are 'TMX', 'PROPS', 'SPRITE', 'PATHING', 'ALL' or 'OFF'\n");
+		}
+	}
+	return true;
+}
+
+bool Console::cmdWhat(int argc, const char **argv) {
+	if (argc > 1) {
+		for (int i = 1; i < argc; i++) {
+			if (!scumm_stricmp(argv[i], "keymap")) {
+				switch (g_engine->_inputManager->getKeyBindingMode()) {
+				case KBM_NONE:
+					debugPrintf("KBM_NONE\n");
+					break;
+
+				case KBM_GAME:
+					debugPrintf("KBM_GAME\n");
+					break;
+
+				case KBM_UI:
+					debugPrintf("KBM_UI\n");
+					break;
+
+				default:
+					debugPrintf("Unknown KBM\n");
+					break;
+				}
+			} else
+				debugPrintf("Valid parameters are 'keymap'\n");
 		}
 	}
 	return true;
