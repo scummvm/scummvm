@@ -2035,6 +2035,7 @@ void ScummEngine_v5::o5_systemOps() {
 		pauseGame();
 		break;
 	case 3:		// SO_QUIT
+		_quitFromScriptCmd = true;
 		quitGame();
 		break;
 	default:

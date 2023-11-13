@@ -2553,6 +2553,7 @@ void ScummEngine_v6::o6_systemOps() {
 		pauseGame();
 		break;
 	case SO_QUIT:
+		_quitFromScriptCmd = true;
 		quitGame();
 		break;
 	default:

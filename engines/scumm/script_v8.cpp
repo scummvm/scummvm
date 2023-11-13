@@ -1054,6 +1054,7 @@ void ScummEngine_v8::o8_systemOps() {
 		restart();
 		break;
 	case SO_QUIT:		// Quit game
+		_quitFromScriptCmd = true;
 		quitGame();
 		break;
 	default:
@@ -1200,6 +1201,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			// Create an artificial CTRL-C keyPress
 			_keyPressed = Common::KEYCODE_c;
 			_keyPressed.flags |= Common::KBD_CTRL;
+			_quitFromScriptCmd = true;
 		} else {
 			if (ConfMan.getBool("confirm_exit"))
 				confirmExitDialog();

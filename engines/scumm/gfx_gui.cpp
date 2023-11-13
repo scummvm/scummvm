@@ -846,8 +846,21 @@ int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 	if (isUsingOriginalGUI()) {
+		if (_quitFromScriptCmd) {
+			_quitByGUIPrompt = true;
+			if (returnToLauncher) {
+				Common::Event event;
+				event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+				getEventManager()->pushEvent(event);
+			} else {
+				quitGame();
+			}
+
+			_quitFromScriptCmd = false;
+		}
+
 		if (_game.version == 8 && !(_game.features & GF_DEMO) &&
-			(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit"))) {
+			((ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) || (_currentRoom == 92 && _quitFromScriptCmd))) {
 
 			int boxWidth, strWidth;
 			int ctrlId;
@@ -1005,7 +1018,7 @@ void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 					getEventManager()->pushEvent(event);
 				} else {
 					quitGame();
-				};
+				}
 			}
 
 			// Restore the previous cursor...
@@ -2051,6 +2064,19 @@ int ScummEngine::getSFXVolume() {
 void ScummEngine::queryQuit(bool returnToLauncher) {
 	char msgLabelPtr[512];
 	char localizedYesKey;
+
+	if (_quitFromScriptCmd) {
+		_quitByGUIPrompt = true;
+		if (returnToLauncher) {
+			Common::Event event;
+			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+			getEventManager()->pushEvent(event);
+		} else {
+			quitGame();
+		}
+
+		_quitFromScriptCmd = false;
+	}
 
 	convertMessageToString((const byte *)getGUIString(gsQuitPrompt), (byte *)msgLabelPtr, sizeof(msgLabelPtr));
 	if (msgLabelPtr[0] != '\0') {

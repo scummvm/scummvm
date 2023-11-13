@@ -556,6 +556,7 @@ public:
 	bool _enableAudioOverride = false;
 	bool _enableCOMISong = false;
 	bool _isAmigaPALSystem = false;
+	bool _quitFromScriptCmd = false;
 
 	Common::Keymap *_insaneKeymap;
 
