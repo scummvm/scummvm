@@ -97,7 +97,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	GUI::AboutDialog aboutDialog;
 	handleSimpleDialog(aboutDialog, "aboutDialog-", surf);
 
-#if USE_CLOUD && USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard-", surf);
@@ -115,7 +115,7 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog-", surf);
 #endif
 
-#if USE_FLUIDSYNTH
+#ifdef USE_FLUIDSYNTH
 	// FluidSynthSettingsDialog
 	GUI::FluidSynthSettingsDialog fluidSynthSettingsDialog;
 	handleSimpleDialog(fluidSynthSettingsDialog, "fluidSynthSettings-", surf);
