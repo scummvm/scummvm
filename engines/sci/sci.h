@@ -40,8 +40,7 @@ struct ADGameDescription;
  * Games using this engine:
  * - Newer Sierra adventure games (based on FreeSCI)
  *
- * @todo give a concrete list of supported games. Could also
- * list future games, with status for each.
+ * See detection.h for the full list of games.
  */
 namespace Sci {
 
@@ -90,7 +89,7 @@ class GfxTransitions32;
 class GfxCursor32;
 #endif
 
-// our engine debug levels
+/** Engine debug levels */
 enum kDebugLevels {
 	kDebugLevelError         = 1 << 0,
 	kDebugLevelNodes         = 1 << 1,
@@ -185,13 +184,24 @@ public:
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
 	Common::Language getLanguage() const;
-	bool isLanguageRTL() const;		// true if language's direction is from Right To Left
+	
+	/**
+	 * Returns true if the game's language direction is Right To Left.
+	 * RTL support did not exist in the original SCI engine.
+	 * This is a ScummVM feature to support modern fan translations.
+	 */
+	bool isLanguageRTL() const;
+	
+	/** Returns the original platform of the game. */
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool isCD() const;
 	bool forceHiresGraphics() const;
 
-	/** Returns true if the game's original platform is big-endian. */
+	/** 
+	 * Returns true if the game's original platform is Macintosh or Amiga.
+	 * Note that this is not necessarily the endianness of the game's resources.
+	 */
 	bool isBE() const;
 
 	bool hasParser() const;
@@ -222,6 +232,7 @@ public:
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
 
+	/** Returns 'TARGET-' prefix for filenames in the save directory. */
 	Common::String getFilePrefix() const;
 
 	/** Prepend 'TARGET-' to the given filename. */
@@ -230,17 +241,23 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
-	const char *getGameObjectName(); // Gets the name of the game object (should only be used for identifying fanmade games)
+	/** Returns the name of the game object. Currently used for identifying specific fan made games. */
+	const char *getGameObjectName();
 
 	/**
-	 * Checks if we are in a QfG import screen, where special handling
+	 * Tests if we are in a QfG import screen, where special handling
 	 * of file-listings is performed.
+	 * @return	2 if in QFG2 import, 3 if in QFG3 import, 4 if in QFG4 import, else 0.
 	 */
 	int inQfGImportRoom() const;
 
-	/* Shows a ScummVM message box explaining how to import Qfg saved character files */
+	/** Shows a ScummVM message box explaining how to import Qfg saved character files. */
 	void showQfgImportMessageBox() const;
 
+	/**
+	 * Sleep for the given number of milliseconds, while polling for input to
+	 * keep the screen updated and responsive.
+	 */
 	void sleep(uint32 msecs);
 
 	void scriptDebug();
@@ -254,10 +271,13 @@ public:
 	/**
 	 * Processes a multilanguage string based on the current language settings and
 	 * returns a string that is ready to be displayed.
-	 * @param str		the multilanguage string
-	 * @param sep		optional separator between main language and subtitle language,
-	 *					if NULL is passed no subtitle will be added to the returned string
-	 * @return processed string
+	 * @param str			The multilanguage string.
+	 * @param splitLanguage	The two-character language delimiter detected by strSplitLanguage.
+	 *						If a delimiter is found, then it is written to this address
+	 *						as a 16-bit integer. For example: %j becomes 0x6A25.
+	 * @param sep			Optional separator to place between the main language and subtitle language.
+	 *						If nullptr is passed then no subtitle will be added to the returned string.
+	 * @return				The processed string.
 	 */
 	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep = "\r----------\r");
 	Common::String strSplit(const char *str, const char *sep = "\r----------\r") {
@@ -285,14 +305,14 @@ public:
 	GfxCache *_gfxCache;
 	GfxCompare *_gfxCompare;
 	GfxControls16 *_gfxControls16; // Controls for 16-bit gfx
-	GfxCoordAdjuster16 *_gfxCoordAdjuster;
-	GfxCursor *_gfxCursor;
+	GfxCoordAdjuster16 *_gfxCoordAdjuster; // Coordinate adjuster for 16-bit gfx
+	GfxCursor *_gfxCursor; // 16-bit cursor
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette16;
 	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPorts *_gfxPorts; // Port management for 16-bit gfx
-	GfxScreen *_gfxScreen;
+	GfxScreen *_gfxScreen; // Screen class for 16-bit
 	GfxText16 *_gfxText16;
 	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
@@ -328,29 +348,42 @@ public:
 
 private:
 	/**
-	 * Initializes a SCI game
-	 * This function must be run before script_run() is executed. Graphics data
-	 * is initialized iff s->gfx_state != NULL.
-	 * @param[in] s	The state to operate on
-	 * @return		true on success, false if an error occurred.
+	 * Initializes a SCI game.
+	 * This is called once before runGame and then again by runGame
+	 * when re-initializing due to restarting via kRestartGame16.
+	 * Although it initializes many things, it depends on run having already
+	 * initialized others, and runGame having re-initialized a subset of that.
+	 * @return		True on success, false if an error occurred.
 	 */
 	bool initGame();
 
 	/**
-	 * Runs a SCI game
-	 * This is the main function for SCI games. It takes a valid state, loads
-	 * script 0 to it, finds the game object, allocates a stack, and runs the
-	 * init method of the game object. In layman's terms, this runs a SCI game.
-	 * @param[in] s	Pointer to the pointer of the state to operate on
-	  */
+	 * Runs an initialized SCI game.
+	 * This is called once by run when the engine is fully initialized.
+	 * It registers the game object's play method for execution and then calls
+	 * run_vm in a loop until the game exits. Restarting via kRestartGame16
+	 * or restoring a game re-initializes certain states and continues the loop.
+	 */
 	void runGame();
 
 	/**
-	 * Uninitializes an initialized SCI game
-	 * This function should be run after each script_run() call.
-	 * @param[in] s	The state to operate on
+	 * "Uninitializes an initialized SCI game" was the original description.
+	 * This is only called by runGame immediately after calling run_vm.
+	 * It uninitalizes some engine state depending on the abort flag, but it also
+	 * has old TODO comments and doesn't uninitialize the heap. runGame does
+	 * just as much uninitialization after calling this, so maybe exitGame's
+	 * code should just be moved into runGame instead of splitting up the
+	 * re-initialization steps.
 	 */
 	void exitGame();
+	
+	/**
+	 * Initializes the stack to call a method in the game object once the VM starts.
+	 * When starting a game or restarting via kRestartGame16, the play method is called.
+	 * When restoring, the replay method is called. This function does not directly
+	 * execute the method; that happens once the VM is run.
+	 */
+	void initStackBaseWithSelector(Selector selector);
 
 	/**
 	 * Loads the Mac executable for SCI1/1.1 games.
@@ -369,8 +402,6 @@ private:
 	 */
 	void loadMacFonts();
 
-	void initStackBaseWithSelector(Selector selector);
-
 	/**
 	 * Returns true if a known fan made patch file is in the game's directory.
 	 * We used to always display a message when these files were detected,
@@ -381,6 +412,11 @@ private:
 	 * we handle those with our own script patches just like any other script.
 	 */
 	bool gameHasFanMadePatch();
+	
+	/**
+	 * For multilingual games, this function sets the game object's printLang
+	 * and parseLang properties based on the ScummVM "language" config value.
+	 */
 	void setLauncherLanguage();
 
 	const ADGameDescription *_gameDescription;
@@ -398,7 +434,6 @@ private:
 	Common::MacResManager _macExecutable;
 	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
 };
-
 
 /**
  * Global instance of the SciEngine class, similar to g_engine.
