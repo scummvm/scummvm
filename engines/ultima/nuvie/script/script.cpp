@@ -887,7 +887,7 @@ bool Script::init() {
 	dir = path;
 
 	Std::string game_tag = get_game_tag(gametype);
-	stringToLower(game_tag);
+	game_tag.toLowercase();
 
 	build_path(dir, game_tag, path);
 

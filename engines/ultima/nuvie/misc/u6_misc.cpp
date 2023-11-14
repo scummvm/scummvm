@@ -89,18 +89,6 @@ void config_get_path(const Configuration *config, const Std::string &filename, S
 	path = tmp_path;
 }
 
-void stringToUpper(Std::string &str) {
-	for (size_t i = 0; i < str.length(); ++i) {
-		str[i] = toupper(str[i]);
-	}
-}
-
-void stringToLower(Std::string &str) {
-	for (size_t i = 0; i < str.length(); ++i) {
-		str[i] = tolower(str[i]);
-	}
-}
-
 int mkdir_recursive(const Std::string &path, int mode) {
 #ifdef TODO
 	vector<string> directories;
