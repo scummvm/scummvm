@@ -438,11 +438,7 @@ Common::Error SciEngine::run() {
 	}
 
 	if (gameHasFanMadePatch()) {
-		showScummVMDialog(_("Your game is patched with a fan made script patch. Such patches have "
-		                  "been reported to cause issues, as they modify game scripts extensively. "
-		                  "The issues that these patches fix do not occur in ScummVM, so you are "
-		                  "advised to remove this patch from your game folder in order to avoid "
-		                  "having unexpected errors and/or issues later on."));
+		warning("Fan made script patch detected");
 	}
 
 	if (getGameId() == GID_GK2 && ConfMan.getBool("subtitles") && !_resMan->testResource(ResourceId(kResourceTypeSync, 10))) {
@@ -478,21 +474,19 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_LSL5,       994,   4810,   1342,  0x78 },	// English
 		{ GID_LSL5,       994,   4942,   1392,  0x76 },	// German
 		// GOG includes PQ1 patches. Incompatibilities are resolved by our script patches
-		//{ GID_PQ1,        994,   4332,   1473,  0x78 },
+		{ GID_PQ1,        994,   4332,   1473,  0x78 },
 		{ GID_PQ2,        200,  10614,      0,  0x00 },
 		// GOG includes PQ3 patches. Incompatibilities are resolved by our script patches
-		//{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
-		//{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
+		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
+		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
 		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
 		{ GID_QFG3,       994,   4714,      2,  0x48 },
 		// GOG includes QFG4 patches. Incompatibilities are resolved by our script patches
-		//{ GID_QFG4,       710,  11477,      0,  0x00 },
+		{ GID_QFG4,       710,  11433,      0,  0x00 },
 		{ GID_SQ1,        994,   4740,      0,  0x00 },
 		{ GID_SQ5,        994,   4142,   1496,  0x78 },	// English/German/French
-		// TODO: Disabled, till we can test the Italian version
 		//{ GID_SQ5,        994,   4148,      0,  0x00 },	// Italian - patched file is the same size as the original
-		// TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
-		//{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
+		{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
 		//{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
 	};
 

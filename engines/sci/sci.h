@@ -371,6 +371,15 @@ private:
 
 	void initStackBaseWithSelector(Selector selector);
 
+	/**
+	 * Returns true if a known fan made patch file is in the game's directory.
+	 * We used to always display a message when these files were detected,
+	 * due to concerns about incompatibilities. Now we just log a warning.
+	 * We can now inspect patch contents with script decompilers. This reveals
+	 * that the patches don't change much. GOG includes patches with some games,
+	 * making them practically official versions. A few patches do have bugs, but
+	 * we handle those with our own script patches just like any other script.
+	 */
 	bool gameHasFanMadePatch();
 	void setLauncherLanguage();
 
