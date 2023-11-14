@@ -48,10 +48,12 @@ bool Console::cmdDraw(int argc, const char **argv) {
 				g_engine->_debugDraw |= DRAW_SPRITE_BOUNDS;
 			else if (!scumm_stricmp(argv[i], "PATHING"))
 				g_engine->_debugDraw |= DRAW_PATHING;
+			else if (!scumm_stricmp(argv[i], "FPS"))
+				g_engine->_debugDraw |= DRAW_FPS;
 			else if (!scumm_stricmp(argv[i], "ALL"))
-				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS | DRAW_SPRITE_BOUNDS | DRAW_PATHING;
+				g_engine->_debugDraw = DRAW_TMX | DRAW_PROP_BOUNDS | DRAW_SPRITE_BOUNDS | DRAW_PATHING | DRAW_FPS;
 			else
-				debugPrintf("Valid parameters are 'TMX', 'PROPS', 'SPRITE', 'PATHING', 'ALL' or 'OFF'\n");
+				debugPrintf("Valid parameters are 'TMX', 'PROPS', 'SPRITE', 'PATHING', 'FPS', 'ALL' or 'OFF'\n");
 		}
 	}
 	return true;

@@ -150,8 +150,8 @@ void App::run() {
 			} else
 				++fpscount;
 
-			if (currentStateId >= 0)
-				g_engine->_textManager->draw(0, 0, numberToString(fpsval).c_str(), 0);
+		if ((g_engine->_debugDraw & DRAW_FPS) && currentStateId >= 0)
+			g_engine->_textManager->draw(0, 0, numberToString(fpsval).c_str(), 0);
 
 		g_engine->_screen->update();
 

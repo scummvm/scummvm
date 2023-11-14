@@ -83,7 +83,8 @@ enum DebugDraw {
 	DRAW_TMX = 1 << 0,
 	DRAW_PROP_BOUNDS = 1 << 1,
 	DRAW_SPRITE_BOUNDS = 1 << 2,
-	DRAW_PATHING = 1 << 3
+	DRAW_PATHING = 1 << 3,
+	DRAW_FPS = 1 << 4
 };
 
 class CrabEngine : public Engine {
