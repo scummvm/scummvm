@@ -22,11 +22,22 @@
 #ifndef DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
 #define DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
 
+namespace Common {
+	class CueSheet;
+}
+
 namespace Director {
 
 class AppleCDXObject : public Object<AppleCDXObject> {
 public:
 	AppleCDXObject(ObjectType objType);
+	int _inpoint;
+	int _outpoint;
+	// Instead of immediately returning values, methods which return
+	// a value store it internally and return it via a subsequent
+	// call to mGetValue.
+	int _returnValue;
+	Common::CueSheet *_cue;
 };
 
 namespace AppleCDXObj {
@@ -38,8 +49,15 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
+void m_still(int nargs);
 void m_service(int nargs);
 void m_readStatus(int nargs);
+void m_getValue(int nargs);
+void m_setInPoint(int nargs);
+void m_setOutPoint(int nargs);
+void m_playCue(int nargs);
+void m_playSegment(int nargs);
+void m_readPos(int nargs);
 void m_eject(int nargs);
 
 } // End of namespace AppleCDXObj
