@@ -249,13 +249,17 @@ void CueSheet::parseFilesContext(const char *line) {
 		int trackNum = atoi(nexttok(s, &s).c_str());
 		String trackType = nexttok(s, &s);
 
-		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 1 != trackNum)) {
+		// We have to add + 2 here because _currentTrack is a counter
+		// for the array, which is 0-indexed, while the disc's track
+		// numbers are 1-indexed. The next track, in disc numbering,
+		// will be two greater than _currentTrack.
+		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 2 != trackNum)) {
 			warning("CueSheet: Incorrect track number. Expected %d but got %d at line %d", _currentTrack + 1, trackNum, _lineNum);
 		} else {
-			for (int i = (int)_tracks.size(); i <= trackNum; i++)
-				_tracks.push_back(CueTrack());
+			_tracks.push_back(CueTrack());
 
-			_currentTrack = trackNum;
+			// Array is 0-indexed, track numbers are 1-indexed
+			_currentTrack = trackNum - 1;
 			_tracks[_currentTrack].number = trackNum;
 			_tracks[_currentTrack].type = (TrackType)lookupInTable(trackTypes, trackType.c_str());
 			_tracks[_currentTrack].size = lookupInTable(trackTypesSectorSizes, trackType.c_str());
@@ -348,10 +352,6 @@ CueSheet::CueTrack *CueSheet::getTrack(int tracknum) {
 
 CueSheet::CueTrack *CueSheet::getTrackAtFrame(int frame) {
 	for (uint i = 0; i < _tracks.size(); i++) {
-		if (_tracks[i].indices.size() == 0) {
-			continue;
-		}
-
 		// Inside pregap
 		if (frame >= _tracks[i].indices[0] && frame < _tracks[i].indices.back()) {
 			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (pregap)", i);
