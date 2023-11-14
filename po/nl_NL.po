@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-13 11:12+0000\n"
+"POT-Creation-Date: 2023-11-14 06:54+0000\n"
 "PO-Revision-Date: 2023-07-04 16:50+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6344,13 +6344,13 @@ msgstr "Ongeldig rs bestand."
 msgid "Save file created by different version."
 msgstr "Opgeslagen spel gecreëerd door andere versie."
 
-#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1506
-#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:590
+#: engines/gob/inter_geisha.cpp:231 engines/gob/inter_playtoons.cpp:259
+#: engines/gob/inter_v2.cpp:1506 engines/tinsel/saveload.cpp:590
 msgid "Failed to load saved game from file."
 msgstr "Laden van opgeslagen spel mislukt."
 
-#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1405
-#: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_geisha.cpp:262 engines/gob/inter_v2.cpp:1576
+#: engines/gob/inter_v7.cpp:1405 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Opslaan van spel in bestand is mislukt."
 

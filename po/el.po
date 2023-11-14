@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-13 11:12+0000\n"
+"POT-Creation-Date: 2023-11-14 06:54+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6575,13 +6575,13 @@ msgstr "Εσφαλμένο αρχείο rs."
 msgid "Save file created by different version."
 msgstr "Το αρχείο αποθήκευσης δημιουργήθηκε από διαφορετική έκδοση."
 
-#: engines/gob/inter_playtoons.cpp:259 engines/gob/inter_v2.cpp:1506
-#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:590
+#: engines/gob/inter_geisha.cpp:231 engines/gob/inter_playtoons.cpp:259
+#: engines/gob/inter_v2.cpp:1506 engines/tinsel/saveload.cpp:590
 msgid "Failed to load saved game from file."
 msgstr "Η ανάγνωση αποθηκευμένου παιχνιδιού από αρχείο απέτυχε."
 
-#: engines/gob/inter_v2.cpp:1576 engines/gob/inter_v7.cpp:1405
-#: engines/gob/inter_geisha.cpp:262 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_geisha.cpp:262 engines/gob/inter_v2.cpp:1576
+#: engines/gob/inter_v7.cpp:1405 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε αρχείο απέτυχε."
 
