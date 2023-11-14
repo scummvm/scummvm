@@ -5093,6 +5093,13 @@ bool MacIndy3Gui::isVerbGuiAllowed() const {
 	if (vs->topline != 144 || vs->h != 56)
 		return false;
 
+	// HACK: Don't allow the GUI during fist fights. Usually this is not a
+	//       problem, in my experience, but I've had it happening when
+	//       offering an item to a guard led directly to one.
+
+	if (_vm->VAR(_vm->VAR_VERB_SCRIPT) == 19)
+		return false;
+
 	return true;
 }
 
