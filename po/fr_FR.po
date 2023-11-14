@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-14 10:06+0000\n"
-"PO-Revision-Date: 2023-11-12 16:35+0000\n"
+"PO-Revision-Date: 2023-11-14 16:20+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -31,27 +31,21 @@ msgid "Features compiled in:"
 msgstr "Options incluses :"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "ID de jeu non supporté"
+msgstr "non pris en charge"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Désactivé"
+msgstr "désactivé"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Désactivé"
+msgstr "activé"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Prise en charge des extensions CPU :"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
