@@ -41,6 +41,8 @@ public:
 	virtual void close();
 	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	virtual bool playAbsolute(int startFrame, int numLoops, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType, const char *cuesheet = "disc.cue");
 	virtual void stop();
 	virtual bool isPlaying() const;
 	virtual void setVolume(byte volume);
