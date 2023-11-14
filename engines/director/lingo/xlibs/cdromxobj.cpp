@@ -23,6 +23,7 @@
  *
  * USED IN:
  * The Apartment 2.0
+ * Cellofania
  *
  *************************************/
 
@@ -294,12 +295,17 @@ void CDROMXObj::m_playName(int nargs) {
 }
 
 void CDROMXObj::m_playAbsTime(int nargs) {
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
+
 	Datum min = g_lingo->pop();
 	Datum sec = g_lingo->pop();
 	Datum frac = g_lingo->pop();
-	// Can't implement this without implementing a full CD TOC, since
-	// it doesn't interact with songs at the "track" level.
-	debug(5, "STUB: CDROMXObj::m_playAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
+
+	int startFrame = (min.asInt() * 60 * 75) + (sec.asInt() * 75) + frac.asInt();
+	debug(5, "CDROMXObj::m_playAbsTime: playing at frame %i", startFrame);
+	g_director->_system->getAudioCDManager()->playAbsolute(startFrame, -1, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+
 	g_lingo->push(Datum());
 }
 
