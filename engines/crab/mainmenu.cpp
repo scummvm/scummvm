@@ -232,14 +232,12 @@ void MainMenu::handleEvents(Common::Event &event, bool &shouldChangeState, GameS
 		break;
 
 	case STATE_LOAD:
-		if (!g_engine->loadGameDialog())
-			changeState(STATE_NORMAL);
-		else {
+		if (g_engine->loadGameDialog()) {
 			shouldChangeState = true;
 			newStateId = GAMESTATE_LOAD_GAME;
-			return;
 		}
-		break;
+		changeState(STATE_NORMAL);
+		return;
 
 	case STATE_DIFF: {
 		int choice = _diff._menu.handleEvents(event);
