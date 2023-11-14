@@ -67,8 +67,14 @@ public:
 		kTrackFlagSCMS = 1 << 3, // Serial copy management system
 	};
 
+	struct CueFile {
+		String name;
+		FileType type = kFileTypeBinary;
+	};
+
 	struct CueTrack {
 		int number = 0;
+		CueFile file;
 		TrackType type;
 		String title;
 		String performer;
@@ -76,12 +82,6 @@ public:
 		int pregap = 0;
 		uint32 flags;
 		int size = 2352;
-	};
-
-	struct CueFile {
-		String name;
-		FileType type = kFileTypeBinary;
-		Array<CueTrack> tracks;
 	};
 
 	struct CueMetadata {
@@ -93,6 +93,11 @@ public:
 	};
 
 	struct LookupTable;
+
+	Array<CueFile> files();
+	Array<CueTrack> tracks();
+	CueTrack *getTrack(int tracknum);
+	CueTrack *getTrackAtFrame(int frame);
 
 private:
 	void parse(const char *sheet);
@@ -111,6 +116,7 @@ private:
 	int _currentTrack = -1;
 
 	Array<CueFile> _files;
+	Array<CueTrack> _tracks;
 	CueMetadata _metadata;
 
 };
