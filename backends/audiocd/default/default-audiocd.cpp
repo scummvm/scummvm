@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/formats/cue.h"
 
 DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.playing = false;
@@ -132,6 +133,27 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 	}
 
 	return false;
+}
+
+bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType, const char *cuesheet) {
+
+	Common::File *cuefile = new Common::File();
+	if (!cuefile->open(cuesheet)) {
+		return false;
+	}
+	Common::String cuestring = cuefile->readString(0, cuefile->size());
+	Common::CueSheet cue(cuestring.c_str());
+
+	Common::CueSheet::CueTrack *track = cue.getTrackAtFrame(startFrame);
+	if (track == nullptr) {
+		warning("Unable to locate track for frame %i", startFrame);
+		return false;
+	} else {
+		warning("Playing from frame %i", startFrame);
+	}
+
+	return play(track->number, numLoops, startFrame - track->indices[0], duration, onlyEmulate);
 }
 
 void DefaultAudioCDManager::stop() {
