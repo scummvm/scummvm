@@ -252,14 +252,16 @@ void CueSheet::parseFilesContext(const char *line) {
 		if (trackNum < 0 || (_currentTrack > 0 && _currentTrack + 1 != trackNum)) {
 			warning("CueSheet: Incorrect track number. Expected %d but got %d at line %d", _currentTrack + 1, trackNum, _lineNum);
 		} else {
-			for (int i = (int)_files[_currentFile].tracks.size(); i <= trackNum; i++)
-				_files[_currentFile].tracks.push_back(CueTrack());
+			for (int i = (int)_tracks.size(); i <= trackNum; i++)
+				_tracks.push_back(CueTrack());
 
 			_currentTrack = trackNum;
-			_files[_currentFile].tracks[_currentTrack].type = (TrackType)lookupInTable(trackTypes, trackType.c_str());
-			_files[_currentFile].tracks[_currentTrack].size = lookupInTable(trackTypesSectorSizes, trackType.c_str());
+			_tracks[_currentTrack].number = trackNum;
+			_tracks[_currentTrack].type = (TrackType)lookupInTable(trackTypes, trackType.c_str());
+			_tracks[_currentTrack].size = lookupInTable(trackTypesSectorSizes, trackType.c_str());
+			_tracks[_currentTrack].file = _files[_currentFile];
 
-			debug(5, "Track: %d type: %s (%d)", trackNum, trackType.c_str(), _files[_currentFile].tracks[_currentTrack].type);
+			debug(5, "Track: %d type: %s (%d)", trackNum, trackType.c_str(), _tracks[_currentTrack].type);
 		}
 
 		_context = kContextTracks;
@@ -285,23 +287,23 @@ void CueSheet::parseTracksContext(const char *line) {
 	if (command == "TRACK") {
 		parseFilesContext(line);
 	} else if (command == "TITLE") {
-		_files[_currentFile].tracks[_currentTrack].title = nexttok(s, &s);
+		_tracks[_currentTrack].title = nexttok(s, &s);
 
-		debug(5, "Track title: %s", _files[_currentFile].tracks[_currentTrack].title.c_str());
+		debug(5, "Track title: %s", _tracks[_currentTrack].title.c_str());
 	} else if (command == "INDEX") {
 		int indexNum = atoi(nexttok(s, &s).c_str());
 		int frames = parseMSF(nexttok(s, &s).c_str());
 
-		for (int i = (int)_files[_currentFile].tracks[_currentTrack].indices.size(); i <= indexNum; i++)
-			_files[_currentFile].tracks[_currentTrack].indices.push_back(0);
+		for (int i = (int)_tracks[_currentTrack].indices.size(); i <= indexNum; i++)
+			_tracks[_currentTrack].indices.push_back(0);
 
-		_files[_currentFile].tracks[_currentTrack].indices[indexNum] = frames;
+		_tracks[_currentTrack].indices[indexNum] = frames;
 
 		debug(5, "Index: %d, frames: %d", indexNum, frames);
 	} else if (command == "PREGAP") {
-		_files[_currentFile].tracks[_currentTrack].pregap = parseMSF(nexttok(s, &s).c_str());
+		_tracks[_currentTrack].pregap = parseMSF(nexttok(s, &s).c_str());
 
-		debug(5, "Track pregap: %d", _files[_currentFile].tracks[_currentTrack].pregap);
+		debug(5, "Track pregap: %d", _tracks[_currentTrack].pregap);
 	} else if (command == "FLAGS") {
 		String flag;
 		uint32 flags = 0;
@@ -312,18 +314,73 @@ void CueSheet::parseTracksContext(const char *line) {
 			flags |= lookupInTable(trackFlags, flag.c_str());
 		}
 
-		_files[_currentFile].tracks[_currentTrack].flags = flags;
+		_tracks[_currentTrack].flags = flags;
 
-		debug(5, "Track flags: %d", _files[_currentFile].tracks[_currentTrack].flags);
+		debug(5, "Track flags: %d", _tracks[_currentTrack].flags);
 	} else if (command == "FILE") {
 		parseHeaderContext(line);
 	} else if (command == "PERFORMER") {
-		_files[_currentFile].tracks[_currentTrack].performer = nexttok(s, &s);
+		_tracks[_currentTrack].performer = nexttok(s, &s);
 
-		debug(5, "Track performer: %s", _files[_currentFile].tracks[_currentTrack].performer.c_str());
+		debug(5, "Track performer: %s", _tracks[_currentTrack].performer.c_str());
 	} else {
 		warning("CueSheet: Unprocessed track command %s at line %d", command.c_str(), _lineNum);
 	}
+}
+
+Array<CueSheet::CueFile> CueSheet::files() {
+	return _files;
+}
+
+Array<CueSheet::CueTrack> CueSheet::tracks() {
+	return _tracks;
+}
+
+CueSheet::CueTrack *CueSheet::getTrack(int tracknum) {
+	for (uint i = 0; i < _tracks.size(); i++) {
+		if (_tracks[i].number == tracknum) {
+			return &_tracks[i];
+		}
+	}
+
+	return nullptr;
+}
+
+CueSheet::CueTrack *CueSheet::getTrackAtFrame(int frame) {
+	for (uint i = 0; i < _tracks.size(); i++) {
+		if (_tracks[i].indices.size() == 0) {
+			continue;
+		}
+
+		// Inside pregap
+		if (frame >= _tracks[i].indices[0] && frame < _tracks[i].indices.back()) {
+			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (pregap)", i);
+			return &_tracks[i];
+		}
+
+		// Between index 1 and the start of the subsequent track
+		if (i < _tracks.size() && frame > _tracks[i].indices.back() && frame < _tracks[i+1].indices[0]) {
+			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (inside content)", i);
+			return &_tracks[i];
+		}
+	}
+
+	// Not found within any tracks, but could be in the final track.
+	// Note: this looks weird, but is correct (or correct-ish).
+	// The cuesheet tracks the *starting* index of a song, but not
+	// the *duration* of a track. Without having access to the raw
+	// disc data, we don't actually know how long this track is.
+	// As a result, if we see any frame that comes after the
+	// start of the final track, we need to assume it's
+	// a part of that track.
+	if (frame > _tracks.back().indices.back()) {
+		debug(5, "CueSheet::getTrackAtFrame: Returning final track");
+		return &_tracks.back();
+	}
+
+	// Still not found; could indicate a gap between indices
+	warning("CueSheet::getTrackAtFrame: Not returning a track; does the cuesheet have a gap between indices?");
+	return nullptr;
 }
 
 } // End of namespace Common
