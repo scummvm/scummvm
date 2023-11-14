@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 06:54+0000\n"
+"POT-Creation-Date: 2023-11-14 10:06+0000\n"
 "PO-Revision-Date: 2023-11-09 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -30,7 +30,30 @@ msgstr "(%s %sでビルド)"
 msgid "Features compiled in:"
 msgstr "コンパイルされた機能："
 
-#: gui/about.cpp:119
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Game id not supported"
+msgid "not supported"
+msgstr "未対応のゲームID"
+
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Disabled"
+msgid "disabled"
+msgstr "無効"
+
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Disabled"
+msgid "enabled"
+msgstr "無効"
+
+#. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
+#: gui/about.cpp:142
+msgid "CPU extensions support:"
+msgstr ""
+
+#: gui/about.cpp:155
 msgid "Available engines:"
 msgstr "利用可能なエンジン："
 
@@ -2685,11 +2708,11 @@ msgstr ""
 "ゲームデータを含むフォルダーを選択し「選択」をタップ。\n"
 "ゲーム毎に上記を繰り返します。"
 
-#: base/main.cpp:797
+#: base/main.cpp:829
 msgid "Error running game:"
 msgstr "ゲームを実行のエラー："
 
-#: base/main.cpp:844
+#: base/main.cpp:876
 msgid "Could not find any engine capable of running the selected game"
 msgstr "選択されたゲームに対応するエンジンが見つかりません"
 

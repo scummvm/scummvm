@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 06:54+0000\n"
+"POT-Creation-Date: 2023-11-14 10:06+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -31,7 +31,28 @@ msgstr "(bygd den %s)"
 msgid "Features compiled in:"
 msgstr "Funksjonar innkompilert:"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Game id not supported"
+msgid "not supported"
+msgstr "Spel ID ikkje støtta"
+
+#: gui/about.cpp:118
+#, fuzzy
+msgid "disabled"
+msgstr "Deaktivert GFX"
+
+#: gui/about.cpp:118
+#, fuzzy
+msgid "enabled"
+msgstr "Deaktivert GFX"
+
+#. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
+#: gui/about.cpp:142
+msgid "CPU extensions support:"
+msgstr ""
+
+#: gui/about.cpp:155
 msgid "Available engines:"
 msgstr "Tilgjengelege motorar:"
 
@@ -2720,11 +2741,11 @@ msgid ""
 "Repeat steps 1 and 6 for each game."
 msgstr ""
 
-#: base/main.cpp:797
+#: base/main.cpp:829
 msgid "Error running game:"
 msgstr "Feil under køyring av spel:"
 
-#: base/main.cpp:844
+#: base/main.cpp:876
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 06:54+0000\n"
+"POT-Creation-Date: 2023-11-14 10:06+0000\n"
 "PO-Revision-Date: 2023-10-30 10:26+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -29,7 +29,30 @@ msgstr "(აგებულია %s-ზე %s-ით)"
 msgid "Features compiled in:"
 msgstr "ჩაშენებული თვისებები:"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Game id not supported"
+msgid "not supported"
+msgstr "თამაშის ID მხარდაჭერილი არაა"
+
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Disabled"
+msgid "disabled"
+msgstr "გამორთულია"
+
+#: gui/about.cpp:118
+#, fuzzy
+#| msgid "Disabled"
+msgid "enabled"
+msgstr "გამორთულია"
+
+#. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
+#: gui/about.cpp:142
+msgid "CPU extensions support:"
+msgstr ""
+
+#: gui/about.cpp:155
 msgid "Available engines:"
 msgstr "ხელმისაწვდომი ძრავები:"
 
@@ -2596,11 +2619,11 @@ msgid ""
 "Repeat steps 1 and 6 for each game."
 msgstr ""
 
-#: base/main.cpp:797
+#: base/main.cpp:829
 msgid "Error running game:"
 msgstr "თამაშის გაშვების შეცდომა:"
 
-#: base/main.cpp:844
+#: base/main.cpp:876
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
