@@ -804,6 +804,11 @@ void Game::toggleState(const State &s) {
 	else
 		_state = STATE_GAME;
 
+	// If we are in game state switch to KBM_GAME
+	if (_state == STATE_GAME && g_engine->_inputManager->getKeyBindingMode() != KBM_GAME) {
+		g_engine->_inputManager->setKeyBindingMode(KBM_GAME);
+	}
+
 	// This is because game is the first state, the rest are in order
 	_hud.State(_state - 1);
 	_hud._pause.reset();
