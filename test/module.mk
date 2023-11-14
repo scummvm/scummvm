@@ -5,7 +5,7 @@
 #
 ######################################################################
 
-TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h $(srcdir)/test/image/*.h
+TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/common/formats/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h $(srcdir)/test/image/*.h
 TEST_LIBS    :=
 
 ifdef POSIX
