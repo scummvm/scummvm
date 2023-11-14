@@ -230,7 +230,7 @@ else ifeq ($(platform), miyoo)
    AR = /opt/miyoo/usr/bin/arm-linux-ar cru
    RANLIB = /opt/miyoo/usr/bin/arm-linux-ranlib
    DEFINES += -DDINGUX -fomit-frame-pointer -ffast-math -march=armv5te -mtune=arm926ej-s -fPIC
-   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
@@ -249,7 +249,7 @@ else ifeq ($(platform), miyoomini)
    AR = /usr/bin/arm-linux-gnueabihf-ar cru
    RANLIB = /usr/bin/arm-linux-gnueabihf-ranlib
    DEFINES += -fomit-frame-pointer -ffast-math -marm -march=armv7ve+simd -mtune=cortex-a7 -fPIC
-   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER
+   DEFINES += -ffunction-sections -fdata-sections -DDEFAULT_PERF_TUNER -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS
    LDFLAGS += -shared -Wl,--gc-sections -Wl,--version-script=$(ROOT_PATH)/link.T -fPIC
    USE_VORBIS = 0
    USE_THEORADEC = 0
