@@ -1,0 +1,4 @@
+engines/ultima8/metaengine.cpp
+engines/ultima8/ultima8.cpp
+engines/ultima8/games/cru_game.cpp
+engines/ultima8/gumps/u8_save_gump.cpp

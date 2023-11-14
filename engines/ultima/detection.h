@@ -38,28 +38,11 @@ enum GameId {
 	GAME_MARTIAN_DREAMS,
 	GAME_ULTIMA_UNDERWORLD1,
 	GAME_ULTIMA_UNDERWORLD2,
-	GAME_ULTIMA7,
-	GAME_ULTIMA8,
-	GAME_CRUSADER_REG,
-	GAME_CRUSADER_REM
-	// There is no ultima game after Ultima 8. Nope.. none at all.
+	GAME_ULTIMA7
 };
 
 enum UltimaGameFeatures {
 	GF_VGA_ENHANCED = 1 << 0
-};
-
-// Custom game detector flags used by Ultima engines
-enum UltimaGameFlags {
-	// Usecode variants (used by Crusader games)
-	ADGF_USECODE_MASK = (0xF | ADGF_DEMO),	// Mask of flags data used for usecode variants
-	ADGF_USECODE_DEFAULT = 0,	// Default usecode tables (latest/gog editions of game)
-	ADGF_USECODE_DEMO = ADGF_DEMO, // Demo versions of each game (re-use demo flag)
-	ADGF_USECODE_ORIG = 1, 		// Original (eg, 1.01) CD version
-	ADGF_USECODE_ES = 2,		// Spanish version of game
-	ADGF_USECODE_DE = 3, 		// German version of game
-	ADGF_USECODE_FR = 4,		// French version of game
-	ADGF_USECODE_JA = 5			// Japanese version of game
 };
 
 struct UltimaGameDescription {
@@ -67,18 +50,6 @@ struct UltimaGameDescription {
 	GameId gameId;
 	uint32 features;
 };
-
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
-#define GAMEOPTION_FRAME_SKIPPING    GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FRAME_LIMITING    GUIO_GAMEOPTIONS3
-#define GAMEOPTION_CHEATS            GUIO_GAMEOPTIONS4
-#define GAMEOPTION_HIGH_RESOLUTION   GUIO_GAMEOPTIONS5
-#define GAMEOPTION_FOOTSTEP_SOUNDS   GUIO_GAMEOPTIONS6
-#define GAMEOPTION_JUMP_TO_MOUSE     GUIO_GAMEOPTIONS7
-#define GAMEOPTION_FONT_REPLACEMENT  GUIO_GAMEOPTIONS8
-#define GAMEOPTION_FONT_ANTIALIASING GUIO_GAMEOPTIONS9
-#define GAMEOPTION_CAMERA_WITH_SILENCER GUIO_GAMEOPTIONS10
-#define GAMEOPTION_ALWAYS_CHRISTMAS     GUIO_GAMEOPTIONS11
 
 } // End of namespace Ultima
 
