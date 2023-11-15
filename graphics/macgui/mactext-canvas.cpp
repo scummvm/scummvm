@@ -219,6 +219,9 @@ const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U3
 	if (curLine == -1 || curLine >= (int)_text.size())
 		curLine = _text.size() - 1;
 
+	if (_text[curLine].chunks.empty())
+		_text[curLine].chunks.push_back(_defaultFormatting);
+
 	int curChunk = _text[curLine].chunks.size() - 1;
 	MacFontRun chunk = _text[curLine].chunks[curChunk];
 	int indentSize = 0;
