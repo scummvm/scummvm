@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 10:06+0000\n"
+"POT-Creation-Date: 2023-11-14 23:40+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -8673,28 +8673,11 @@ msgstr ""
 "(patch) η μουσική με General MIDI για αυτό το παιχνίδι θα ακούγεται πολύ "
 "παραμορφωμένη."
 
-#: engines/sci/sci.cpp:441
-msgid ""
-"Your game is patched with a fan made script patch. Such patches have been "
-"reported to cause issues, as they modify game scripts extensively. The "
-"issues that these patches fix do not occur in ScummVM, so you are advised to "
-"remove this patch from your game folder in order to avoid having unexpected "
-"errors and/or issues later on."
-msgstr ""
-"Το παιχνίδι σας έχει εφαρμοσμένη διόρθωση (patch) η οποία είναι fan made "
-"(δημιουργία θαυμαστών του παιχνιδιού). Έχει αναφερθεί πως τέτοιες διορθώσεις "
-"μπορεί να δημιουργούν προβλήματα καθώς τροποποιούν σημαντικά τις δέσμες "
-"ενέργειας του παιχνιδιού. Τα προβλήματα τα οποιά αυτές οι διορθώσεις "
-"(patches) επιλύνουν, δεν υφίστανται στο ScummVM. Για αυτό το λόγο σας "
-"προτείνουμε να αφαιρέσετε αυτή τη διόρθωση (patch) από τον φάκελο των "
-"αρχείων του παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα σφάλματα στην "
-"συνέχεια."
-
-#: engines/sci/sci.cpp:520
+#: engines/sci/sci.cpp:514
 msgid "Download patch"
 msgstr "Λήψη patch"
 
-#: engines/sci/sci.cpp:521
+#: engines/sci/sci.cpp:515
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -8702,7 +8685,7 @@ msgstr ""
 "(ή κάνετε κλικ στο κουμπί 'Λήψη patch'. Προσέξτε ότι έτσι θα γίνει μόνο λήψη "
 "και θα χρειαστεί να κάνετε τα υπόλοιπα εσείς)\n"
 
-#: engines/sci/sci.cpp:528
+#: engines/sci/sci.cpp:522
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -8718,7 +8701,7 @@ msgstr ""
 "- Κάνετε λήψη του http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:948
+#: engines/sci/sci.cpp:942
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -11393,6 +11376,22 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid ""
+#~ "Your game is patched with a fan made script patch. Such patches have been "
+#~ "reported to cause issues, as they modify game scripts extensively. The "
+#~ "issues that these patches fix do not occur in ScummVM, so you are advised "
+#~ "to remove this patch from your game folder in order to avoid having "
+#~ "unexpected errors and/or issues later on."
+#~ msgstr ""
+#~ "Το παιχνίδι σας έχει εφαρμοσμένη διόρθωση (patch) η οποία είναι fan made "
+#~ "(δημιουργία θαυμαστών του παιχνιδιού). Έχει αναφερθεί πως τέτοιες "
+#~ "διορθώσεις μπορεί να δημιουργούν προβλήματα καθώς τροποποιούν σημαντικά "
+#~ "τις δέσμες ενέργειας του παιχνιδιού. Τα προβλήματα τα οποιά αυτές οι "
+#~ "διορθώσεις (patches) επιλύνουν, δεν υφίστανται στο ScummVM. Για αυτό το "
+#~ "λόγο σας προτείνουμε να αφαιρέσετε αυτή τη διόρθωση (patch) από τον "
+#~ "φάκελο των αρχείων του παιχνιδιου ώστε να μην αντιμετωπίσετε απρόβλεπτα "
+#~ "σφάλματα στην συνέχεια."
 
 #~ msgid "Update Shaders"
 #~ msgstr "Ενημέρωση Σκιαστών"

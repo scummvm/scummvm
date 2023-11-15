@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 10:06+0000\n"
+"POT-Creation-Date: 2023-11-14 23:40+0000\n"
 "PO-Revision-Date: 2023-05-17 15:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -8403,25 +8403,11 @@ msgstr ""
 "Без цього виправлення музика General MIDI для цієї гри буде звучати погано "
 "спотворено."
 
-#: engines/sci/sci.cpp:441
-msgid ""
-"Your game is patched with a fan made script patch. Such patches have been "
-"reported to cause issues, as they modify game scripts extensively. The "
-"issues that these patches fix do not occur in ScummVM, so you are advised to "
-"remove this patch from your game folder in order to avoid having unexpected "
-"errors and/or issues later on."
-msgstr ""
-"Ваша гра зафіксована виправленими скриптами виправленими вентиляторами. "
-"Повідомлялося, що подібні патчі викликають проблеми, оскільки вони значно "
-"змінюють сценарії гри. Проблеми, які виправляють ці виправлення, не "
-"виникають у ScummVM, тому вам рекомендується видалити цей патч із папки "
-"ігор, щоб уникнути виникнення несподіваних помилок та / або проблем пізніше."
-
-#: engines/sci/sci.cpp:520
+#: engines/sci/sci.cpp:514
 msgid "Download patch"
 msgstr "Завантажити патч"
 
-#: engines/sci/sci.cpp:521
+#: engines/sci/sci.cpp:515
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -8429,7 +8415,7 @@ msgstr ""
 "(або натисніть кнопку \"Завантажити патч\". Але зауважте - вона просто "
 "завантажить, вам буде потрібно продовжити самостійно)\n"
 
-#: engines/sci/sci.cpp:528
+#: engines/sci/sci.cpp:522
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -8444,7 +8430,7 @@ msgstr ""
 "- завантажте http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:948
+#: engines/sci/sci.cpp:942
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -11074,6 +11060,20 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid ""
+#~ "Your game is patched with a fan made script patch. Such patches have been "
+#~ "reported to cause issues, as they modify game scripts extensively. The "
+#~ "issues that these patches fix do not occur in ScummVM, so you are advised "
+#~ "to remove this patch from your game folder in order to avoid having "
+#~ "unexpected errors and/or issues later on."
+#~ msgstr ""
+#~ "Ваша гра зафіксована виправленими скриптами виправленими вентиляторами. "
+#~ "Повідомлялося, що подібні патчі викликають проблеми, оскільки вони значно "
+#~ "змінюють сценарії гри. Проблеми, які виправляють ці виправлення, не "
+#~ "виникають у ScummVM, тому вам рекомендується видалити цей патч із папки "
+#~ "ігор, щоб уникнути виникнення несподіваних помилок та / або проблем "
+#~ "пізніше."
 
 #~ msgid "Update Shaders"
 #~ msgstr "Поновити шейдери"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 10:06+0000\n"
+"POT-Creation-Date: 2023-11-14 23:40+0000\n"
 "PO-Revision-Date: 2023-11-14 20:30+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -8576,26 +8576,11 @@ msgstr ""
 "in 4.PAT e metterlo nella cartella del gioco. Senza questa patch, la musica "
 "in MIDI risulterà pesantemente distorta."
 
-#: engines/sci/sci.cpp:441
-msgid ""
-"Your game is patched with a fan made script patch. Such patches have been "
-"reported to cause issues, as they modify game scripts extensively. The "
-"issues that these patches fix do not occur in ScummVM, so you are advised to "
-"remove this patch from your game folder in order to avoid having unexpected "
-"errors and/or issues later on."
-msgstr ""
-"E' stata applicata al gioco una patch dello script realizzata dai fan. E' "
-"stato segnalato che tali patch causano problemi, poiché modificano in "
-"maniera strutturale gli script del gioco. I problemi indirizzati da queste "
-"patch nell'interprete originale non si presentano con l'utilizzo di ScummVM. "
-"E' pertanto consigliabile rimuoverle dalla cartella del gioco per evitare "
-"errori inaspettati in seguito."
-
-#: engines/sci/sci.cpp:520
+#: engines/sci/sci.cpp:514
 msgid "Download patch"
 msgstr "Scarica patch"
 
-#: engines/sci/sci.cpp:521
+#: engines/sci/sci.cpp:515
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -8603,7 +8588,7 @@ msgstr ""
 "(oppure clicca sul tasto «Scarica patch» per eseguire il download. Dovrai "
 "però completare i passaggi successivi autonomamente)\n"
 
-#: engines/sci/sci.cpp:528
+#: engines/sci/sci.cpp:522
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -8619,7 +8604,7 @@ msgstr ""
 "- Scarica http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
 "zip\n"
 
-#: engines/sci/sci.cpp:948
+#: engines/sci/sci.cpp:942
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -11274,6 +11259,20 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#~ msgid ""
+#~ "Your game is patched with a fan made script patch. Such patches have been "
+#~ "reported to cause issues, as they modify game scripts extensively. The "
+#~ "issues that these patches fix do not occur in ScummVM, so you are advised "
+#~ "to remove this patch from your game folder in order to avoid having "
+#~ "unexpected errors and/or issues later on."
+#~ msgstr ""
+#~ "E' stata applicata al gioco una patch dello script realizzata dai fan. E' "
+#~ "stato segnalato che tali patch causano problemi, poiché modificano in "
+#~ "maniera strutturale gli script del gioco. I problemi indirizzati da "
+#~ "queste patch nell'interprete originale non si presentano con l'utilizzo "
+#~ "di ScummVM. E' pertanto consigliabile rimuoverle dalla cartella del gioco "
+#~ "per evitare errori inaspettati in seguito."
 
 #~ msgid "Update Shaders"
 #~ msgstr "Aggiorna shaders"

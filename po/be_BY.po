@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 10:06+0000\n"
+"POT-Creation-Date: 2023-11-14 23:40+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -8307,24 +8307,11 @@ msgstr ""
 "гульнёй, пераназваўшы яго 4.PAT. Без гэтага патча музыка General MIDI будзе "
 "моцна перакручана."
 
-#: engines/sci/sci.cpp:441
-msgid ""
-"Your game is patched with a fan made script patch. Such patches have been "
-"reported to cause issues, as they modify game scripts extensively. The "
-"issues that these patches fix do not occur in ScummVM, so you are advised to "
-"remove this patch from your game folder in order to avoid having unexpected "
-"errors and/or issues later on."
-msgstr ""
-"Гульня мае прапатчаныя фанатамі гульнявыя скрыпты. Гэтыя патчы могуць "
-"выклікаць праблемы, бо моцна закранаюць скрыпты. Выпраўляемыя гэтымі патчамі "
-"памылкі ў ScummVM не ўзнікаюць, таму рэкамендуецца выдаліць іх з тэчкі з "
-"гульнёй, каб вымінуць неспадзяваныя праблемы надалей."
-
-#: engines/sci/sci.cpp:520
+#: engines/sci/sci.cpp:514
 msgid "Download patch"
 msgstr "Спампаваць патч"
 
-#: engines/sci/sci.cpp:521
+#: engines/sci/sci.cpp:515
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -8332,7 +8319,7 @@ msgstr ""
 "(або націсніце кнопку \"Спампаваць патч\". Але заўважце: гэта толькі спампуе "
 "яго, вам трэба будзе працягнуць самастойна)\n"
 
-#: engines/sci/sci.cpp:528
+#: engines/sci/sci.cpp:522
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -8347,7 +8334,7 @@ msgstr ""
 "- спампуйце http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:948
+#: engines/sci/sci.cpp:942
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -10959,6 +10946,18 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid ""
+#~ "Your game is patched with a fan made script patch. Such patches have been "
+#~ "reported to cause issues, as they modify game scripts extensively. The "
+#~ "issues that these patches fix do not occur in ScummVM, so you are advised "
+#~ "to remove this patch from your game folder in order to avoid having "
+#~ "unexpected errors and/or issues later on."
+#~ msgstr ""
+#~ "Гульня мае прапатчаныя фанатамі гульнявыя скрыпты. Гэтыя патчы могуць "
+#~ "выклікаць праблемы, бо моцна закранаюць скрыпты. Выпраўляемыя гэтымі "
+#~ "патчамі памылкі ў ScummVM не ўзнікаюць, таму рэкамендуецца выдаліць іх з "
+#~ "тэчкі з гульнёй, каб вымінуць неспадзяваныя праблемы надалей."
 
 #, fuzzy
 #~ msgid "Update Shaders"
