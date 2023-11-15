@@ -745,7 +745,7 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	int sizeX = 8;
 	int sizeY = isCastle() ? 8 : 6;
 	int sep = isCastle() ? 9 : 8;
-	int additional = isCastle() ? 0 : 1;
+	int additional = isCastle() || isEclipse() ? 0 : 1;
 
 	if (isDOS() || isSpectrum() || isCPC() || isC64()) {
 		for (uint32 c = 0; c < ustr.size(); c++) {
