@@ -570,7 +570,13 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 		check->getFootpadWorld(xd, yd, zd);
 	}
 
-	const Box searchrange(x + range, y + range, 0, xd + range * 2, yd + range * 2, INT_MAX_VALUE);
+	//
+	// Original games consider items at <= range to match. Add a pixel
+	// to range to match that behavior (eg, KEYPAD in Crusader : No Remorse
+	// Mission 12 (map 19) at (17118,34878) uses range 6400 and a VALBOX
+	// exactly 6400 from the KEYPAD.
+	//
+	const Box searchrange(x + range, y + range, 0, xd + range * 2 + 1, yd + range * 2 + 1, INT_MAX_VALUE);
 
 	int minx = ((x - xd - range) / _mapChunkSize) - 1;
 	int maxx = ((x + range) / _mapChunkSize) + 1;
