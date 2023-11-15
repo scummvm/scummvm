@@ -817,6 +817,7 @@ private:
 	RobotDecoder _robotPlayer;
 	DuckPlayer _duckPlayer;
 };
+
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_VIDEO32_H

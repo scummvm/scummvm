@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_ENGINE_SEGMAN_H
-#define SCI_ENGINE_SEGMAN_H
+#ifndef SCI_ENGINE_SEG_MANAGER_H
+#define SCI_ENGINE_SEG_MANAGER_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -509,4 +509,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_SEGMAN_H
+#endif // SCI_ENGINE_SEG_MANAGER_H

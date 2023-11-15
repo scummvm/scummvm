@@ -340,4 +340,5 @@ public:
 };
 
 } // End of namespace Sci
-#endif
+
+#endif // SCI_GRAPHICS_LISTS32_H

@@ -600,6 +600,7 @@ public:
 	CelObjColor *duplicate() const override;
 	const SciSpan<const byte> getResPointer() const override;
 };
+
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_CELOBJ32_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_HELPERS_DETECTION_ENUMS_H
-#define SCI_HELPERS_DETECTION_ENUMS_H
+#ifndef SCI_GRAPHICS_HELPERS_DETECTION_ENUMS_H
+#define SCI_GRAPHICS_HELPERS_DETECTION_ENUMS_H
 
 namespace Sci {
 // Game view types, sorted by the number of colors
@@ -35,4 +35,4 @@ enum ViewType {
 
 } // End of namespace Sci
 
-#endif // SCI_HELPERS_DETECTION_ENUMS_H
+#endif // SCI_GRAPHICS_HELPERS_DETECTION_ENUMS_H

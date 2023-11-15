@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_SOUND_DECODERS_ROBOT_H
-#define SCI_SOUND_DECODERS_ROBOT_H
+#ifndef SCI_VIDEO_DECODERS_ROBOT_H
+#define SCI_VIDEO_DECODERS_ROBOT_H
 
 #include "audio/audiostream.h"           // for AudioStream
 #include "audio/rate.h"                  // for st_sample_t
@@ -1367,5 +1367,7 @@ private:
 	 */
 	uint8 _verticalScaleFactor;
 };
+
 } // end of namespace Sci
-#endif
+
+#endif // SCI_VIDEO_DECODERS_ROBOT_H

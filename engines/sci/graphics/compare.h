@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_GFX_H
-#define SCI_GRAPHICS_GFX_H
+#ifndef SCI_GRAPHICS_COMPARE_H
+#define SCI_GRAPHICS_COMPARE_H
 
 #include "common/hashmap.h"
 
@@ -63,4 +63,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_COMPARE_H

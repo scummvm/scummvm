@@ -133,4 +133,4 @@ protected:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_PALETTE_H

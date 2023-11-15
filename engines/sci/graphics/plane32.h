@@ -514,4 +514,4 @@ public:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_PLANE32_H

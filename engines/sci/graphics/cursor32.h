@@ -223,4 +223,5 @@ public:
 };
 
 } // End of namespace Sci
-#endif
+
+#endif // SCI_GRAPHICS_CURSOR32_H

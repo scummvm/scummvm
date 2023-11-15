@@ -446,4 +446,4 @@ public:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_FRAMEOUT_H

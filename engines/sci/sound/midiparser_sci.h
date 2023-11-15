@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_MIDIPARSER_H
-#define SCI_MIDIPARSER_H
+#ifndef SCI_SOUND_MIDIPARSER_H
+#define SCI_SOUND_MIDIPARSER_H
 
 #include "sci/resource/resource.h"
 #include "sci/sound/music.h"
@@ -132,4 +132,4 @@ protected:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_SOUND_MIDIPARSER_H

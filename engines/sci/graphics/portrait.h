@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PORTRAITS_H
-#define SCI_GRAPHICS_PORTRAITS_H
+#ifndef SCI_GRAPHICS_PORTRAIT_H
+#define SCI_GRAPHICS_PORTRAIT_H
 
 #include "sci/util.h"
 
@@ -83,4 +83,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_PORTRAIT_H

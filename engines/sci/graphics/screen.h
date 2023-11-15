@@ -475,4 +475,4 @@ public:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_SCREEN_H

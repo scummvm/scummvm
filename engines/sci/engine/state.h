@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_INCLUDE_ENGINE_H
-#define SCI_INCLUDE_ENGINE_H
+#ifndef SCI_ENGINE_STATE_H
+#define SCI_ENGINE_STATE_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -224,4 +224,4 @@ struct EngineState : public Common::Serializable {
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_ENGINE_H
+#endif // SCI_ENGINE_STATE_H
