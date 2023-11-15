@@ -149,7 +149,7 @@ bool GraphicsManager::initGfx() {
 	initGraphics(_winWidth, _winHeight, _vm->getScreenPixelFormat());
 	_renderSurface.create(_winWidth, _winHeight, *_vm->getScreenPixelFormat());
 
-	_zBufferSurface = new double[_winWidth * _winHeight];
+	_zBufferSurface = new uint8[_winWidth * _winHeight];
 
 	if (!killResizeBackdrop(_winWidth, _winHeight))
 		return fatal("Couldn't allocate memory for backdrop");

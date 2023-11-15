@@ -462,7 +462,7 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 		y2 = y1 + diffY;
 	}
 
-	float z;
+	uint8 z;
 
 	if (useZB && _zBuffer->numPanels) {
 		int i;
@@ -472,9 +472,9 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 				break;
 			}
 		}
-		z = 0.999 - (double)i * (1.0 / 128.0);
+		z = ((i + 1) * 2) + 1;
 	} else {
-		z = -0.5;
+		z = 0xFF;
 	}
 
 	Graphics::Surface *blitted = &single.surface;
@@ -537,7 +537,7 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 		x1 = x - (int)((mirror ? (float)(single.surface.w - (single.xhot + 1)) : (float)single.xhot) * scale);
 	int y1 = y - (int)((single.yhot - thisPerson->floaty) * scale);
 
-	float z;
+	uint8 z;
 
 	if (useZB && _zBuffer->numPanels) {
 		int i;
@@ -547,9 +547,9 @@ void GraphicsManager::fixScaleSprite(int x, int y, Sprite &single, const SpriteP
 				break;
 			}
 		}
-		z = 0.999 - (double)i * (1.0 / 128.0);
+		z = ((i + 1) * 2) + 1;
 	} else {
-		z = -0.5;
+		z = 0xFF;
 	}
 
 	Graphics::Surface *blitted = &single.surface;

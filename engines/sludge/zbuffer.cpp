@@ -157,15 +157,11 @@ bool GraphicsManager::setZBuffer(int num) {
 	return true;
 }
 
-void GraphicsManager::fillZBuffer(double d) {
-	for (uint y = 0; y < _winHeight; y++) {
-		for (uint x = 0; x < _winWidth; x++) {
-			_zBufferSurface[y*_winWidth + x] = d;
-		}
-	}
+void GraphicsManager::fillZBuffer(uint8 d) {
+	memset(_zBufferSurface, d, _winHeight * _winWidth);
 }
 
-void GraphicsManager::drawSpriteToZBuffer(int x, int y, double depth, const Graphics::Surface &surface) {
+void GraphicsManager::drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::Surface &surface) {
 
 	for (uint y1 = 0; y1 < (uint)surface.h; y1++) {
 		for (uint x1 = 0; x1 < (uint)surface.w; x1++) {
@@ -176,7 +172,7 @@ void GraphicsManager::drawSpriteToZBuffer(int x, int y, double depth, const Grap
 			byte *target = (byte *)_renderSurface.getBasePtr(x1 + x, y1 + y);
 			const byte *source = (const byte *)surface.getBasePtr(x1, y1);
 
-			if (depth <= _zBufferSurface[(y1 + y) * _sceneWidth + (x1 + x)]) {
+			if (depth > _zBufferSurface[(y1 + y) * _sceneWidth + (x1 + x)]) {
 
 				if (source[0] == 0xff) {
 					// Completely opaque, so copy RGB values over
@@ -195,23 +191,22 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 	if (!_zBuffer->numPanels || !_zBuffer->tex)
 		return;
 
-	fillZBuffer(1.0);
-	int i;
+	fillZBuffer(0);
 
 	for (uint y1 = y; y1 < _zBuffer->height + y; y1++) {
 		for (uint x1 = x; x1 < _zBuffer->width + x; x1++) {
 
-			double z = 1.0f;
+			uint8 z = 0;
 
 			if (upsidedown) {
-				z = 1.0 - (double)_zBuffer->tex[(_zBuffer->height - y1) * _zBuffer->width + x1] * (1.0 / 128.0);
+				z = (_zBuffer->tex[(_zBuffer->height - y1) * _zBuffer->width + x1] + 1) * 2;
 			} else {
-				z = 1.0 - (double)_zBuffer->tex[y1 * _zBuffer->width + x1] * (1.0 / 128.0);
+				z = (_zBuffer->tex[y1 * _zBuffer->width + x1] + 1) * 2;
 			}
 
-			if ( z < _zBufferSurface[y1 * _winWidth + x1]) {
+
+			if ( z > _zBufferSurface[y1 * _winWidth + x1])
 				_zBufferSurface[y1 * _winWidth + x1] = z;
-			}
 
 		}
 	}
