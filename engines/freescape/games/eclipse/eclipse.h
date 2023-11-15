@@ -34,6 +34,7 @@ public:
 	void initDOS();
 	void initCPC();
 	void loadAssetsCPCDemo() override;
+	void executePrint(FCLInstruction &instruction) override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;

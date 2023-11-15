@@ -125,6 +125,17 @@ void EclipseEngine::borderScreen() {
 	}
 }
 
+void EclipseEngine::executePrint(FCLInstruction &instruction) {
+	uint16 index = instruction._source - 1;
+	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
+	if (index > 127) {
+		index = _messagesList.size() - (index - 254) - 2;
+		drawFullscreenMessageAndWait(_messagesList[index]);
+		return;
+	}
+	insertTemporaryMessage(_messagesList[index], _countdown - 2);
+}
+
 Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
 	return Common::kNoError;
 }

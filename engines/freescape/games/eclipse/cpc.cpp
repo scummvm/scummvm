@@ -55,7 +55,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 
 	loadFonts(&file, 0x63ce);
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
-	loadMessagesFixedSize(&file, 0x570b, 264, 3);
+	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);
 	for (auto &it : _areaMap) {
 		it._value->_name = "  NOW TRAINING  ";
