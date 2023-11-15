@@ -158,8 +158,8 @@ public:
 	void saveZBuffer(Common::WriteStream *stream);
 	bool loadZBuffer(Common::SeekableReadStream *stream);
 
-	void drawSpriteToZBuffer(int x, int y, double depth, const Graphics::Surface &surface);
-	void fillZBuffer(double d);
+	void drawSpriteToZBuffer(int x, int y, uint8 depth, const Graphics::Surface &surface);
+	void fillZBuffer(uint8 d);
 
 	// Colors
 	void setBlankColor(int r, int g, int b) { _currentBlankColour = _renderSurface.format.RGBToColor(r & 255, g & 255, b & 255);};
@@ -209,7 +209,7 @@ private:
 	Graphics::Surface _renderSurface;
 
 	// Z Buffer Surface
-	double *_zBufferSurface = nullptr;
+	uint8 *_zBufferSurface = nullptr;
 
 	// Snapshot
 	Graphics::Surface _snapshotSurface;
