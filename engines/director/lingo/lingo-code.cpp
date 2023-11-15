@@ -1531,6 +1531,25 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		}
 	}
 
+	// Fallback for the edge case where a local factory method is called,
+	// but with an invalid first argument.
+	// If there is a current me object, and it has a function handler
+	// with a matching name, then the first argument will be replaced with the me object.
+	// If there are no arguments at all, one will be added.
+	if (g_lingo->_state->me.type == OBJECT) {
+		AbstractObject *target = g_lingo->_state->me.u.obj;
+		funcSym = target->getMethod(name);
+		if (funcSym.type != VOIDSYM) {
+			if (nargs == 0) {
+				g_lingo->_stack.push_back(Datum());
+				nargs = 1;
+			}
+			g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
+			call(funcSym, nargs, allowRetVal);
+			return;
+		}
+	}
+
 	// Handler
 	funcSym = g_lingo->getHandler(name);
 
