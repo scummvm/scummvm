@@ -90,6 +90,7 @@ bool INIFile::loadFromSaveFile(const String &filename) {
 }
 
 bool INIFile::loadFromStream(SeekableReadStream &stream) {
+	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 	Section section;
 	KeyValue kv;
 	String comment;
@@ -104,6 +105,11 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 
 		// Read a line
 		String line = stream.readLine();
+
+		// Skip UTF-8 byte-order mark if added by a text editor.
+		if (lineno == 1 && memcmp(line.c_str(), UTF8_BOM, 3) == 0) {
+			line.erase(0, 3);
+		}
 
 		line.trim();
 
