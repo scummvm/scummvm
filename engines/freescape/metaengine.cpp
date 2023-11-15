@@ -26,6 +26,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/games/dark/dark.h"
+#include "freescape/games/driller/driller.h"
 #include "freescape/games/eclipse/eclipse.h"
 #include "freescape/detection.h"
 
