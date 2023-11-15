@@ -264,7 +264,7 @@ void GameData::loadU8Data() {
 	config->readConfigFile("u8weapons.ini", "weapons");
 	config->readConfigFile("u8armour.ini", "armour");
 	config->readConfigFile("u8monsters.ini", "monsters");
-	config->readConfigFile("u8.ini", "game");
+	config->readConfigFile("u8game.ini", "game");
 
 	// Load typeflags
 	Common::SeekableReadStream *tfs = filesystem->ReadFile("static/typeflag.dat");
@@ -542,7 +542,7 @@ void GameData::loadRemorseData() {
 	else
 		config->readConfigFile("regretweapons.ini", "weapons");
 
-	config->readConfigFile("remorse.ini", "game");
+	config->readConfigFile("remorsegame.ini", "game");
 
 	// Load typeflags
 	Common::SeekableReadStream *tfs = filesystem->ReadFile("static/typeflag.dat");
