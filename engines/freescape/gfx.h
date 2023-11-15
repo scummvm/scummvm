@@ -33,7 +33,7 @@
 
 namespace Freescape {
 
-#define kVertexArraySize 20
+#define kVertexArraySize 128
 #define kCoordsArraySize 4
 
 typedef Common::Array<byte *> ColorMap;
@@ -83,7 +83,9 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 
 	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewPort) = 0;
-	virtual void renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewPort) = 0;
+	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) = 0;
+	virtual void renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewPort) = 0;
+
 	virtual void renderCrossair(const Common::Point crossairPosition) = 0;
 
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);

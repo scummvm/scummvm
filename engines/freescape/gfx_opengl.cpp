@@ -234,7 +234,7 @@ void OpenGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 	glDepthMask(GL_TRUE);
 }
 
-void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
+void OpenGLRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
 	uint8 r, g, b;
 
 	glMatrixMode(GL_PROJECTION);
@@ -277,6 +277,54 @@ void OpenGLRenderer::renderPlayerShoot(byte color, const Common::Point position,
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
+
+void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {
+	uint8 r, g, b;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenW, _screenH, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderZX) {
+		r = g = b = 255;
+	} else {
+		r = g = b = 255;
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+	}
+
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glColor3ub(r, g, b);
+	int triangleAmount = 20;
+	float twicePi = 2.0f * 3.1416;
+	float coef = (9 - frame) / 9.0;
+	float radius = (1 - coef) * 4.0;
+
+	Common::Point initial_position(viewArea.left + viewArea.width() / 2 + 2, viewArea.height() + viewArea.top);
+	Common::Point ball_position = coef * position + (1 - coef) * initial_position;
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(ball_position.x, ball_position.y, 0));
+
+	for(int i = 0; i <= triangleAmount; i++) {
+		copyToVertexArray(i + 1,
+			Math::Vector3d(ball_position.x + (radius * cos(i *  twicePi / triangleAmount)),
+						ball_position.y + (radius * sin(i * twicePi / triangleAmount)), 0)
+		);
+	}
+
+	glVertexPointer(3, GL_FLOAT, 0, _verts);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, triangleAmount + 2);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+}
+
 
 void OpenGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	assert(vertices.size() >= 2);

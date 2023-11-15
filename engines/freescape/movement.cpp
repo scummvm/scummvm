@@ -183,7 +183,7 @@ void FreescapeEngine::activate() {
 void FreescapeEngine::shoot() {
 	playSound(1, false);
 	g_system->delayMillis(2);
-	_shootingFrames = 4;
+	_shootingFrames = 10;
 
 	Common::Point center(_viewArea.left + _viewArea.width() / 2, _viewArea.top + _viewArea.height() / 2);
 	float xoffset = _crossairPosition.x - center.x;

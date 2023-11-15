@@ -326,7 +326,11 @@ void FreescapeEngine::drawFrame() {
 
 	if (_shootingFrames > 0) {
 		_gfx->setViewport(_fullscreenViewArea);
-		_gfx->renderPlayerShoot(0, _crossairPosition, _viewArea);
+		if (isDriller() || isDark())
+			_gfx->renderPlayerShootRay(0, _crossairPosition, _viewArea);
+		else
+			_gfx->renderPlayerShootBall(0, _crossairPosition, _shootingFrames, _viewArea);
+
 		_gfx->setViewport(_viewArea);
 		_shootingFrames--;
 	}

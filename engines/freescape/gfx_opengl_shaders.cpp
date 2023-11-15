@@ -189,7 +189,9 @@ float remap(float f, float s) {
 	return 2. * f / s - 1;
 }
 
-void OpenGLShaderRenderer::renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewArea) {
+void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewArea) {}
+
+void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewArea) {
 	uint8 r, g, b;
 
 	Math::Matrix4 identity;
