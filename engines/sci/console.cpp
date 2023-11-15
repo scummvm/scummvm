@@ -96,7 +96,6 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	// General
 	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
 	// Kernel
-//	registerCmd("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	registerCmd("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	registerCmd("selector",			WRAP_METHOD(Console, cmdSelector));
 	registerCmd("selectors",			WRAP_METHOD(Console, cmdSelectors));
