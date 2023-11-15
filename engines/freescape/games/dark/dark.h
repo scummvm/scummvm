@@ -79,8 +79,6 @@ public:
 
 
 	void drawInfoMenu() override;
-	void drawFullscreenMessageAndWait(Common::String message);
-	void drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface);
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;

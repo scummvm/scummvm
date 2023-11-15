@@ -381,6 +381,8 @@ public:
 
 	void loadMessagesFixedSize(Common::SeekableReadStream *file, int offset, int size, int number);
 	virtual void loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number);
+	void drawFullscreenMessageAndWait(Common::String message);
+	void drawFullscreenMessage(Common::String message, uint32 front, Graphics::Surface *surface);
 
 	void loadFonts(Common::SeekableReadStream *file, int offset);
 	void loadFonts(byte *font, int charNumber);

@@ -27,6 +27,8 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
+	void borderScreen() override;
+
 	void loadAssetsDOSFullGame() override;
 
 	void initDOS();

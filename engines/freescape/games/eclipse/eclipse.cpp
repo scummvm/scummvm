@@ -64,12 +64,14 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_stepUpDistance = 32;
 
 	const char **messagePtr = rawMessagesTable;
-	debugC(1, kFreescapeDebugParser, "String table:");
-	while (*messagePtr) {
-		Common::String message(*messagePtr);
-		_messagesList.push_back(message);
-		debugC(1, kFreescapeDebugParser, "%s", message.c_str());
-		messagePtr++;
+	if (isDOS()) {
+		debugC(1, kFreescapeDebugParser, "String table:");
+		while (*messagePtr) {
+			Common::String message(*messagePtr);
+			_messagesList.push_back(message);
+			debugC(1, kFreescapeDebugParser, "%s", message.c_str());
+			messagePtr++;
+		}
 	}
 
 	_playerStepIndex = 2;
@@ -108,6 +110,19 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->_usualBackgroundColor = isCPC() ? 1 : 0;
 
 	resetInput();
+}
+
+void EclipseEngine::borderScreen() {
+	if (_border) {
+		drawBorder();
+		if (isDemo()) {
+			drawFullscreenMessageAndWait(_messagesList[23]);
+			drawFullscreenMessageAndWait(_messagesList[24]);
+			drawFullscreenMessageAndWait(_messagesList[25]);
+		} else {
+			FreescapeEngine::borderScreen();
+		}
+	}
 }
 
 Common::Error EclipseEngine::saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave) {
