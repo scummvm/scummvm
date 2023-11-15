@@ -800,8 +800,9 @@ void ConsoleDialog::printCharIntern(int c) {
 	else {
 		buffer(_currentPos) = (char)c;
 		_currentPos++;
-		if ((_scrollLine + 1) * kCharsPerLine == _currentPos) {
-			_scrollLine++;
+		if (_currentPos % kCharsPerLine == _pageWidth) {
+			warning("NEXT");
+			nextLine();
 			updateScrollBuffer();
 		}
 	}
