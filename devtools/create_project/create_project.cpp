@@ -303,6 +303,8 @@ int main(int argc, char *argv[]) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
 			setup.useWindowsUnicode = false;
+		} else if (!std::strcmp(argv[i], "--use-windows-subsystem")) {
+			setup.useWindowsSubsystem = true;
 		} else if (!std::strcmp(argv[i], "--use-xcframework")) {
 			setup.useXCFramework = true;
 		} else if (!std::strcmp(argv[i], "--vcpkg")) {
@@ -753,6 +755,7 @@ void displayHelp(const char *exe) {
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
+	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
 	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
 			"                            " LIBS_DEFINE " environment variable\n "
 	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"

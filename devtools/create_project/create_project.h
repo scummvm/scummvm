@@ -248,6 +248,7 @@ struct BuildSetup {
 	bool useSDL2;              ///< Whether to use SDL2 or not.
 	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
 	bool useWindowsUnicode;    ///< Whether to use Windows Unicode APIs or ANSI APIs.
+	bool useWindowsSubsystem;  ///< Whether to use Windows subsystem or Console subsystem (default: Console)
 	bool useXCFramework;       ///< Whether to use Apple XCFrameworks instead of static libraries
 	bool useVcpkg;             ///< Whether to load libraries from vcpkg or SCUMMVM_LIBS
 
@@ -259,6 +260,7 @@ struct BuildSetup {
 		useSDL2 = true;
 		useStaticDetection = true;
 		useWindowsUnicode = true;
+		useWindowsSubsystem = false;
 		useXCFramework = false;
 		useVcpkg = false;
 	}

@@ -416,10 +416,11 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
 	           << "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
-	if (!setup.featureEnabled("text-console") && !setup.devTools && !setup.tests) {
-		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
-	} else {
+	// console subsystem is required for text-console, tools, and tests
+	if (!setup.useWindowsSubsystem || setup.featureEnabled("text-console") || setup.devTools || setup.tests) {
 		properties << "\t\t\t<SubSystem>Console</SubSystem>\n";
+	} else {
+		properties << "\t\t\t<SubSystem>Windows</SubSystem>\n";
 	}
 
 	if (!setup.devTools && !setup.tests)
