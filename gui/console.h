@@ -68,8 +68,8 @@ public:
 
 protected:
 	enum {
-		kBufferSize   = 32768,
 		kCharsPerLine = 128,
+		kBufferSize   = kCharsPerLine * 1024,
 
 		kHistorySize  = 20
 	};
