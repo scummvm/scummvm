@@ -279,7 +279,6 @@ void SKFPlayer::run() {
 	_curFrame++;
 
 	PaletteManager *palman = PaletteManager::get_instance();
-	Common::SeekableReadStream *object;
 
 	uint16 objecttype = 0;
 	do {
@@ -290,35 +289,35 @@ void SKFPlayer::run() {
 		}
 
 		// read object
-		object = _skf->get_datasource(_curObject);
-		if (!object || object->size() < 2)
+		Common::SeekableReadStream * object = _skf->get_datasource(_curObject);
+		if (!object)
 			continue;
 
-		objecttype = object->readUint16LE();
+		objecttype = object->size() > 2 ? object->readUint16LE() : 0;
 
 		debugC(kDebugVideo, "Object %u/%u, type = %u", _curObject, _skf->getCount(),  objecttype);
 
-		if (objecttype == 1) {
+		switch (objecttype) {
+		case 1:
 			palman->load(PaletteManager::Pal_Movie, *object);
+			break;
+		case 2: {
+			object->seek(0);
+			Shape *shape = new Shape(object, &U8SKFShapeFormat);
+			Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
+			shape->setPalette(pal);
+			_buffer->BeginPainting();
+			_buffer->Paint(shape, 0, 0, 0);
+			_buffer->EndPainting();
+			delete shape;
+			break;
+		}
+		default:
+			break;
 		}
 
-		if (objecttype != 2)
-			delete object;
-
-	} while (objecttype != 2);
-
-	if (objecttype == 2) {
-		object->seek(0);
-		Shape *shape = new Shape(object, &U8SKFShapeFormat);
-		Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
-		shape->setPalette(pal);
-		_buffer->BeginPainting();
-		_buffer->Paint(shape, 0, 0, 0);
-		_buffer->EndPainting();
-		delete shape;
-
 		delete object;
-	}
+	} while (objecttype != 2);
 
 	_timer = 1; // HACK! timing is rather broken currently...
 }
