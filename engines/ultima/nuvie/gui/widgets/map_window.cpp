@@ -306,6 +306,10 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 	}
 	anim_manager->set_area(clip_rect);
 
+	Screen *const gameScreen = Game::get_game()->get_screen();
+	assert(gameScreen);
+	_mapWinSubSurf.create(*gameScreen->get_sdl_surface(), clip_rect);
+
 	reset_mousecenter();
 
 	updateBlacking();
@@ -1303,9 +1307,9 @@ void MapWindow::drawRoofs() {
 						}
 						SDL_BlitSurface(roof_tiles, &src, surface, &dst);
 					} else {
-						byte *ptr = (byte *)roof_tiles->getPixels();
-						ptr += src.left + src.top * 80;
-						screen->blit(dst.left, dst.top, ptr, 8, 16, 16, 80, true, &clip_rect);
+						src.setWidth(16);
+						src.setHeight(16);
+						_mapWinSubSurf.blitFrom(*roof_tiles, src, Common::Point(dst.left, dst.top));
 					}
 				}
 			}
@@ -2652,7 +2656,7 @@ void MapWindow::set_roof_mode(bool roofs) {
 void MapWindow::loadRoofTiles() {
 	Std::string imagefile = map->getRoofTilesetFilename();
 	roof_tiles = SDL_LoadBMP(imagefile.c_str());
-	if (roof_tiles && game->is_orig_style()) {
+	if (roof_tiles) {
 		SDL_SetColorKey(roof_tiles, SDL_TRUE, SDL_MapRGB(roof_tiles->format, 0, 0x70, 0xfc));
 	}
 }
