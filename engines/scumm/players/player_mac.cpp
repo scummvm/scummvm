@@ -315,6 +315,7 @@ int Player_Mac::noteToPitchModifier(byte note, Instrument *instrument) {
 }
 
 void Player_Mac::overrideChannelMask(int newMask) {
+	Common::StackLock lock(_mutex);
 	_channelMask = newMask;
 }
 
