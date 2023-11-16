@@ -1302,6 +1302,13 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "kontyngent99",		"Katalog Samochodów Kontyngent '99" },
 
 	// Portuguese titles
+	{ "activamulti1",		"Activa Multimédia - 1. Expedição através das Grandes Civilizações" },
+	{ "activamulti2",		"Activa Multimédia - 2. Expedição através do Espaço" },
+	{ "activamulti3",		"Activa Multimédia - 3. Expedição através da Natureza" },
+	{ "activamulti4",		"Activa Multimédia - 4. Expedição através do Mundo" },
+	{ "activamulti5",		"Activa Multimédia - 5. Expedição através da Geografia e História de Portugal" },
+	{ "activamulti6",		"Activa Multimédia - 6. Expedição através da Cultura Inglesa e Americana" },
+	{ "activamulti7",		"Activa Multimédia - 7. Expedição através da Informática" },
 	{ "almabril98",			"Almanaque Abril 1998" },
 	{ "bigmax",				"Revista BigMax" },
 	{ "bpapao",				"A Turma do Bicho-Papão" },
@@ -3221,6 +3228,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Menu to demos of "Action Packs 1, 2 & 3", "Commodore 64 15 Pack", "Earthworm Jim", "MechWarrior 2",
 	// "Pitfall: The Mayan Adventure" and "Shanghai: Great Moments"
 	WINDEMO1("actvfest", "Spring 1996", "ACTVDEMO.EXE", "t:b8c1516451471394eb1c45839f9f15df", 699305, 404),
+
+	// Issues 3-4 are D5, issues 6-7 are D6
+	MACGAME2_l("activamulti1", "", "ACTIVA PM",   "r:71287376e445ab9c98f0d150bb0ed175", 59188,
+								   "ACTIVA1.DXR", "d:7d41d4801335e691d67f7613e32f69c0", 370180, Common::PT_PRT, 404),
+	WINGAME2_l("activamulti1", "", "ACTIVA.EXE",  "t:bfefe0fadb6736580e2834c52dc9b1a6", 696813,
+								   "ACTIVA1.DXR", "d:7d41d4801335e691d67f7613e32f69c0", 370180, Common::PT_PRT, 404),
+
+	MACGAME2_l("activamulti2", "", "ACTIVA PM",   "r:71287376e445ab9c98f0d150bb0ed175", 60068,
+								   "ACTIVA1.DXR", "d:cd4c33a068c7bb69829eb5138ed6b99d", 364778, Common::PT_PRT, 404),
+	WINGAME2_l("activamulti2", "", "ACTIVA.EXE",  "t:bfefe0fadb6736580e2834c52dc9b1a6", 696813,
+								   "ACTIVA1.DXR", "d:ddd997524fc6df8c341d0260fcf7db6b", 364838, Common::PT_PRT, 404),
+
+	MACGAME1_l("activamulti5", "", "ACTIVA",	 "r:1c2e5371b835680e7c1ca8bcea008bef", 481226, Common::PT_PRT, 404),
+	WINGAME2_l("activamulti5", "", "ACTIVA.EXE", "t:16fd819ad458c1049520a4ef1c4564ec", 2166137,
+								   "AD.DXR",	 "d:5d5140dab9482bfd4801b7d729751ec3", 8783232, Common::PT_PRT, 404),
 
 	// Found on A.D.A.M. v1.1 for Mac
 	MACGAME1("adamcatalog", "", "A.D.A.M. Catalog", "99312ebd2a530b9e88f536f754c6b335", 302321, 400),
@@ -5753,6 +5775,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t_l("acneattack", "", "Acne.exe", "9ec3d648c42e41cc2263d3c643d7ad1e", 1905311, Common::SE_SWE, 501),
 
+	MACGAME1_l("activamulti3", "", "Activa PowerPC", "r:fd575975c95541073f86481fa82ccacb", 107835, Common::PT_PRT, 500),
+	WINGAME1_l("activamulti3", "", "ACTIVA95.EXE",	 "t:11169628bb31f04c362957a6c5486694", 1410367, Common::PT_PRT, 500),
+
+	MACGAME1_l("activamulti4", "", "Activa 4 Power Mac", "r:72d87204bf9e79d55563911ff3f59ca2", 94045, Common::PT_PRT, 500),
+	WINGAME1_l("activamulti4", "", "ACTIVA95.EXE",		 "t:65d1666993d75ef90be3148adad3f65f", 1393845, Common::PT_PRT, 500),
+
 	// Installers for both platforms also use Director
 	MACGAME1("alcohol101", "", "Let's Party", "2d2ac01320f4c2dce8e156cda5c73fe8", 719289, 501),
 	WINGAME2("alcohol101", "", "START95.EXE",  "1a7acbba10a7246ba58c1d53fc7203f5", 1411661,
@@ -7007,6 +7035,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// TODO: unconfirmed version (TRAC #13302)
 	WINGAME1("acadia", "", "Acadia.exe", "t:947fda59fdcd99aa8bd97291a6562526", 1516555, 600),
+
+	// Windows version requires installation
+	MACGAME1_l("activamulti6", "", "Activa",	 "r:1e8ee2145d02b5184d52f37343cf97b9", 1028909, Common::PT_PRT, 600),
+	WINGAME2_l("activamulti6", "", "Activa.exe", "t:6b59353dc2aad51dacc7e8793b86a095", 6216128,
+								   "BOT.CXT",	 "d:4a33170be6952fb900a7c25dae986115", 128221, Common::PT_PRT, 600),
+
+	MACGAME1_l("activamulti7", "", "Activa 7",	   "r:47b8dc414c507a479aea5b93d041cb49", 1031466, Common::PT_PRT, 602),
+	WINGAME1_l("activamulti7", "", "ACTIVA95.EXE", "t:b544bab0592182c206dfa577c6c01b0e", 1962000, Common::PT_PRT, 602),
 
 	MACGAME1("afiles", "", "The A-Files",	"63e8b9f6744efefbb8a004a2b76e2b1d", 118530, 602),
 	WINGAME2("afiles", "", "Projector.exe", "4c850adf7c36a9a3dea64c880eaf25c0", 1515545,
