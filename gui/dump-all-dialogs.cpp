@@ -70,23 +70,16 @@ void handleSimpleDialog(GUI::Dialog &dialog, const Common::String &filename,Grap
 	dialog.close();
 }
 
-void dumpDialogs(const Common::String &message, int res, const Common::String &lang) {
+void dumpDialogs(const Common::String &message, int width, int height, const Common::String &lang) {
 #ifdef USE_TRANSLATION
 	// Update GUI language
 	TransMan.setLanguage(lang);
 #endif
 
-	// Update resolution
-	ConfMan.setInt("last_window_width", res, Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("last_window_height", 600, Common::ConfigManager::kApplicationDomain);
-	g_system->beginGFXTransaction();
-		g_system->initSize(res, 600);
-	g_system->endGFXTransaction();
-
 	Graphics::Surface surf;
 	surf.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
 
-	Common::String filename = Common::String::format("%d-%s.png", res, lang.c_str());
+	Common::String filename = Common::String::format("%d-%d-%s.png", width, height, lang.c_str());
 
 	// Skipping Tooltips as not required
 
@@ -155,17 +148,37 @@ void dumpAllDialogs(const Common::String &message) {
 	int original_window_width = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 	int original_window_height = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
 	Common::List<Common::String> list = Common::getLanguageList();
+	const int res[] = {320, 200,
+					   320, 240,
+					   640, 400,
+					   640, 480,
+					   800, 600,
+					   0};
 
+	ConfMan.setBool("force_resize", true, Common::ConfigManager::kApplicationDomain);
 	Common::FSNode dumpDir("snapshots");
+
 	if (!dumpDir.isDirectory())
 		dumpDir.createDirectory();
 
-	// Iterate through all languages available
-	for (Common::String lang : list) {
-		// Iterating through the resolutions doesn't work so you have to manually change it here.
-		// TODO: Find a way to iterate through the resolutions using code.
-		Common::Array<int> res_to_test = {800, 640, 320};
-		dumpDialogs(message, res_to_test[0], lang);
+	// Iterate through all resolutions available
+	for (const int *r = res; *r; r += 2) {
+		int w = r[0];
+		int h = r[1];
+
+		// Update resolution
+		ConfMan.setInt("last_window_width", w, Common::ConfigManager::kApplicationDomain);
+		ConfMan.setInt("last_window_height", h, Common::ConfigManager::kApplicationDomain);
+		g_system->beginGFXTransaction();
+			g_system->initSize(w, h);
+		g_system->endGFXTransaction();
+
+		// Iterate through all langauges
+		for (Common::String lang : list) {
+
+			dumpDialogs(message, w, h, lang);
+		}
+
 	}
 
 #ifdef USE_TRANSLATION
@@ -177,6 +190,7 @@ void dumpAllDialogs(const Common::String &message) {
 	g_system->beginGFXTransaction();
 		g_system->initSize(original_window_width, original_window_height);
 	g_system->endGFXTransaction();
+	ConfMan.removeKey("force_resize", Common::ConfigManager::kApplicationDomain);
 }
 
 } // End of namespace GUI
