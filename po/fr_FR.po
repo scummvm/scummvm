@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-16 01:06+0000\n"
-"PO-Revision-Date: 2023-11-14 16:20+0000\n"
+"PO-Revision-Date: 2023-11-16 12:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -380,20 +380,16 @@ msgid "Failed to load JSON file"
 msgstr "Le chargement du fichier JSON a échoué"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "Télécharge des jeux gratuits pour ScummVM"
+msgstr "Téléchargement de jeux gratuits et de démos"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Récupération des DLC..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Télécharger"
+msgstr "Tous les téléchargements"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -473,16 +469,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Vitesse de téléchargement : %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Télécharger des jeux"
+msgstr "Jeux en cours de téléchargement"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Télécharger"
+msgstr "Téléchargements en attente"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1100,6 +1092,25 @@ msgid ""
 "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
 "links.\n"
 msgstr ""
+"## Où se procurer les jeux\n"
+"\n"
+"Visitez [notre Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) pour consulter une liste de jeux et savoir "
+"où les acheter.\n"
+"\n"
+"Vous pouvez également télécharger une sélection de [jeux "
+"gratuits](https://scummvm.org/games) et de [démos](https://www.scummvm.org/"
+"demos/) depuis notre site web. \n"
+"\n"
+"Pour d'autres jeux (épuisés), essayez Amazon, eBay, Game Trading Zone ou "
+"d'autres sites de vente aux enchères. Attention aux jeux défectueux et aux "
+"copies illégales.\n"
+"\n"
+"L'équipe de ScummVM ne recommande aucun fournisseur de jeux en particulier, "
+"mais le projet reçoit une participation pour chaque achat sur [GOG."
+"com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) et "
+"[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) par le biais de liens de parrainage affiliés.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
