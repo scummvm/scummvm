@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-16 01:06+0000\n"
-"PO-Revision-Date: 2023-11-16 12:44+0000\n"
+"PO-Revision-Date: 2023-11-16 13:08+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3866,7 +3866,7 @@ msgstr "SDL Surface"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (mode 8bpp forcé)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -6552,37 +6552,27 @@ msgstr "Tirer"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Monter/Voler vers le haut"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Voler vers le bas"
+msgstr "Descendre/Voler vers le bas"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Changer de commande"
+msgstr "Changer de mode"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Esquive Gauche"
+msgstr "Tourner à Gauche"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Esquive Droite"
+msgstr "Tourner à Droite"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menu"
+msgstr "Menu d'information"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9850,6 +9840,9 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Chemin de code de développement non implémenté rencontré dans le moteur "
+"sonore,\n"
+"merci de créer un ticket à l'adresse suivante : https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
