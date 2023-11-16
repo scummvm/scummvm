@@ -242,6 +242,8 @@ void MacWindowManager::cleanupDesktopBmp() {
 }
 
 MacWindowManager::~MacWindowManager() {
+	Common::StackLock lock(_mutex);
+
 	for (Common::HashMap<uint, BaseMacWindow *>::iterator it = _windows.begin(); it != _windows.end(); it++)
 		delete it->_value;
 
@@ -271,6 +273,8 @@ void MacWindowManager::setDesktopMode(uint32 mode) {
 }
 
 void MacWindowManager::setScreen(ManagedSurface *screen) {
+	Common::StackLock lock(_mutex);
+
 	_screen = screen;
 	delete _screenCopy;
 	_screenCopy = nullptr;
@@ -304,6 +308,8 @@ int MacWindowManager::getHeight() {
 }
 
 void MacWindowManager::resizeScreen(int w, int h) {
+	Common::StackLock lock(_mutex);
+
 	if (!_screen)
 		error("MacWindowManager::resizeScreen(): Trying to creating surface on non-existing screen");
 	_screenDims = Common::Rect(w, h);
@@ -447,6 +453,8 @@ void MacWindowManager::activateMenu() {
 }
 
 void MacWindowManager::activateScreenCopy() {
+	Common::StackLock lock(_mutex);
+
 	if (_screen) {
 		if (!_screenCopy)
 			_screenCopy = new ManagedSurface(*_screen);	// Create a copy
@@ -467,6 +475,8 @@ void MacWindowManager::activateScreenCopy() {
 }
 
 void MacWindowManager::disableScreenCopy() {
+	Common::StackLock lock(_mutex);
+
 	if (_screenCopyPauseToken) {
 		_screenCopyPauseToken->clear();
 		delete _screenCopyPauseToken;
@@ -884,6 +894,8 @@ void MacWindowManager::drawDesktop() {
 }
 
 void MacWindowManager::draw() {
+	Common::StackLock lock(_mutex);
+
 	removeMarked();
 
 	Common::Rect bounds = getScreenBounds();
@@ -1153,6 +1165,8 @@ void MacWindowManager::addZoomBox(ZoomBox *box) {
 }
 
 void MacWindowManager::renderZoomBox(bool redraw) {
+	Common::StackLock lock(_mutex);
+
 	if (!_zoomBoxes.size())
 		return;
 

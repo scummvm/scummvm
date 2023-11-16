@@ -24,6 +24,7 @@
 
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/mutex.h"
 #include "common/stack.h"
 #include "common/events.h"
 
@@ -434,6 +435,7 @@ public:
 	Common::Rect _screenDims;
 
 private:
+	Common::Mutex _mutex;
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::HashMap<uint, BaseMacWindow *> _windows;
 
