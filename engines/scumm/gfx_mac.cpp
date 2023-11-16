@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/macresman.h"
+#include "common/config-manager.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
@@ -35,6 +36,8 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/gfx_mac.h"
+#include "scumm/scumm.h"
+#include "scumm/sound.h"
 #include "scumm/usage_bits.h"
 #include "scumm/verbs.h"
 
@@ -3328,13 +3331,18 @@ bool MacLoomGui::runOptionsDialog() {
 	// 11 - Text speed slider (manually created)
 	// 12 - Music quality slider (manually created)
 
-	// TODO: Get these from the SCUMM engine
-	int sound = 0;
-	int music = 0;
-	int scrolling = 0;
-	int fullAnimation = 0;
-	int textSpeed = 5;
-	int musicQuality = 2;
+	int sound = 1;
+	int music = 1;
+	if (_vm->VAR(167) == 2) {
+		sound = music = 0;
+	} else if (_vm->VAR(167) == 1) {
+		music = 0;
+	}
+
+	int scrolling = _vm->_snapScroll == 0;
+	int fullAnimation = _vm->VAR(_vm->VAR_MACHINE_SPEED) == 1 ? 0 : 1;
+	int textSpeed = _vm->_defaultTextSpeed;
+	int musicQuality = _vm->VAR(_vm->VAR_SOUNDCARD) == 10 ? 0 : 2;
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -3352,11 +3360,8 @@ bool MacLoomGui::runOptionsDialog() {
 	window->addPictureSlider(8, 9, true, 5, 69, 0, 2, 6, 4);
 	window->setWidgetValue(12, musicQuality);
 
-	// TODO: I don't know where it gets the "Machine Speed" from. It doesn't
-	// appear to be VAR_MACHINE_SPEED, because I think that's only set to 1
-	// or 0, and may be the "Full Animation" setting.
-
-	window->addSubstitution(Common::String::format("%d", _vm->VAR(_vm->VAR_MACHINE_SPEED)));
+	// Machine rating
+	window->addSubstitution(Common::String::format("%d", _vm->VAR(53)));
 
 	// When quitting, the default action is not to not apply options
 	bool ret = false;
@@ -3377,12 +3382,58 @@ bool MacLoomGui::runOptionsDialog() {
 	}
 
 	if (ret) {
-		debug("sound: %d", window->getWidgetValue(2));
-		debug("music: %d", window->getWidgetValue(3));
-		debug("scrolling: %d", window->getWidgetValue(6));
-		debug("full animation: %d", window->getWidgetValue(7));
-		debug("text speed: %d", window->getWidgetValue(11));
-		debug("music quality: %d", window->getWidgetValue(12));
+		// Update settings
+
+		// TEXT SPEED
+		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(11), 0, 9);
+		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+
+		// SOUND&MUSIC ACTIVATION
+		// 0 - Sound&Music on
+		// 1 - Sound on, music off
+		// 2 - Sound&Music off
+		int musicVariableValue = 0;
+
+		if (window->getWidgetValue(2) == 0) {
+			musicVariableValue = 2;
+		} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
+			musicVariableValue = 1;
+		}
+
+		_vm->VAR(167) = musicVariableValue;
+
+		if (musicVariableValue != 0) {
+			if (_vm->VAR(169) != 0) {
+				_vm->_sound->stopSound(_vm->VAR(169));
+				_vm->VAR(169) = 0;
+			}
+		}
+
+		// SCROLLING ACTIVATION
+		_vm->_snapScroll = window->getWidgetValue(6) == 0;
+
+		if (_vm->VAR_CAMERA_FAST_X != 0xFF)
+			_vm->VAR(_vm->VAR_CAMERA_FAST_X) = _vm->_snapScroll;
+
+		// FULL ANIMATION ACTIVATION
+		_vm->VAR(_vm->VAR_MACHINE_SPEED) = window->getWidgetValue(7) == 1 ? 0 : 1;
+
+		// MUSIC QUALITY SELECTOR
+		//
+		// (selections 1 and 2 appear to be the same music
+		// files but rendered at a different bitrate, while
+		// selection 0 activates a completely different set
+		// of files)
+		//
+		// This is currently unimplemented. Let's just set the proper
+		// value for VAR_SOUNDCARD...
+		_vm->VAR(_vm->VAR_SOUNDCARD) = window->getWidgetValue(12) == 0 ? 10 : 11;
+		debug(6, "MacLoomGui::runOptionsDialog(): music quality: %d - unimplemented!", window->getWidgetValue(12));
+
+
+		_vm->syncSoundSettings();
+		ConfMan.flushToDisk();
 	}
 
 	delete window;
