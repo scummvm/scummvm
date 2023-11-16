@@ -2216,7 +2216,13 @@ void MacGui::menuCallback(int id, Common::String &name, void *data) {
 }
 
 void MacGui::initialize() {
-	_windowManager = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride);
+	uint32 menuMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu | Graphics::kWMModalMenuMode | Graphics::kWMModeNoCursorOverride;
+
+	// Allow a more modern UX: the menu doesn't close if the mouse accidentally goes outside the menu area
+	if (_vm->enhancementEnabled(kEnhUIUX))
+		menuMode |= Graphics::kWMModeWin95 | Graphics::kWMModeForceMacFontsInWin95 | Graphics::kWMModeForceMacBorder;
+
+	_windowManager = new Graphics::MacWindowManager(menuMode);
 	_windowManager->setEngine(_vm);
 	_windowManager->setScreen(640, 400);
 
