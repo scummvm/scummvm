@@ -98,7 +98,7 @@ Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 	Graphics::ManagedSurface *const screenSurface = screen->get_sdl_surface();
 	assert (screenSurface);
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, screenSurface->format);
-	dest->blitFrom(*src);
+	dest->blitFrom(*src, decoder.getPalette());
 
 	return dest;
 }
