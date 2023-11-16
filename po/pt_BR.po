@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-16 10:45+0000\n"
-"PO-Revision-Date: 2023-11-09 08:41+0000\n"
+"PO-Revision-Date: 2023-11-16 23:41+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -34,27 +34,21 @@ msgid "Features compiled in:"
 msgstr "Recursos compilados em:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "ID de jogo não suportado"
+msgstr "não compatível"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Desabilitado"
+msgstr "desabilitado"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Desabilitado"
+msgstr "habilitado"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Suporte a extensões de CPU:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -390,20 +384,16 @@ msgid "Failed to load JSON file"
 msgstr "Falha ao carregar arquivo JSON"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "Baixa jogos freeware (gratuitos) para o ScummVM"
+msgstr "Baixar Jogos Freeware e Demonstrações"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Buscando DLCs..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Baixar"
+msgstr "Todos os Downloads"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -482,16 +472,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Velocidade de download: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Baixar Jogos"
+msgstr "Download de Jogos em Andamento"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Baixar"
+msgstr "Downloads Pendentes"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1104,6 +1090,24 @@ msgid ""
 "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
 "links.\n"
 msgstr ""
+"## Onde conseguir os jogos\n"
+"\n"
+"Visite [nosso Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) para obter uma lista de jogos e onde "
+"comprá-los.\n"
+"\n"
+"Como alternativa, baixe uma seleção de [jogos freeware](https://scummvm.org/"
+"games) e [demonstrações](https://www.scummvm.org/demos/) em nosso site\n"
+"\n"
+"Para outros jogos (não mais disponíveis), experimente Amazon, eBay, Game "
+"Trading Zone ou outros sites de leilão. Cuidado com jogos defeituosos e "
+"cópias ilegais de jogos.\n"
+"\n"
+"A equipe ScummVM não recomenda nenhum fornecedor individual de jogos, no "
+"entanto, o projeto recebe uma comissão por cada compra no [GOG."
+"com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) e na ["
+"Plataforma ZOOM](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) por meio de links de referência de afiliados.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1173,7 +1177,7 @@ msgstr "Plataforma"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Ano"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1403,10 +1407,8 @@ msgstr "Plataforma não detectada"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Erro desconhecido"
+msgstr "Ano Desconhecido"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1619,16 +1621,12 @@ msgid "Shader Path:"
 msgstr "Sombreamentos:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Baixar Jogos"
+msgstr "Baixar Shaders"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Procura atualizações para pacotes de shaders"
+msgstr "Verifique no site scummvm.org atualizações de pacotes de shaders"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2081,16 +2079,12 @@ msgstr ""
 "selecionar um arquivo ou diretório."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Baixar"
+msgstr "Baixar Ícones"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Procura atualizações para pacotes ícones"
+msgstr "Verifique no site scummvm.org atualizações de pacotes de ícones"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -3850,7 +3844,7 @@ msgstr "Superfície SDL"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "Superfície SDL (modo 8bpp forçado)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -6521,37 +6515,27 @@ msgstr "Atirar"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Ascender/Voar para cima"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Voar para baixo"
+msgstr "Descender/Voar para baixo"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Alterar Comando"
+msgstr "Alterar modo"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Deslocar para Esquerda"
+msgstr "Girar para Esquerda"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Deslocar para Direita"
+msgstr "Girar para Direita"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menu"
+msgstr "Menu de Informação"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9773,6 +9757,9 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Caminho de código de desenvolvimento não implementado encontrado na engine "
+"de som,\n"
+"por favor, registre um chamado em https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
