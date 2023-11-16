@@ -895,12 +895,19 @@ void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const
 	if (!domain->contains("engineid")) {
 		upgradeTargetForEngineId(target);
 	} else {
-		if (domain->getVal("engineid").equals("fullpipe")) {
+		Common::String engineId = domain->getVal("engineid");
+
+		if (engineId.equals("fullpipe")) {
 			domain->setVal("engineid", "ngi");
 
 			debug("Upgrading engineid from 'fullpipe' to 'ngi'");
 
 			ConfMan.flushToDisk();
+
+		} else if (engineId.equals("xeen")) {
+			domain->setVal("engineid", "mm");
+
+			debug("Upgrading engineid from 'xeen' to 'mm'");
 		}
 	}
 }
