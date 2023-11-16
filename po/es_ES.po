@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-16 01:06+0000\n"
-"PO-Revision-Date: 2023-11-14 15:52+0000\n"
+"PO-Revision-Date: 2023-11-16 12:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -378,20 +378,16 @@ msgid "Failed to load JSON file"
 msgstr "Fallo al cargar el archivo JSON"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "Descargar juegos «freeware» para ScummVM"
+msgstr "Descargar juegos «freeware» y demos"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Obteniendo DLC..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Descargar"
+msgstr "Todas las descargas"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -471,16 +467,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Velocidad de descarga: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Descargar juegos"
+msgstr "Descargas en curso"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Descargar"
+msgstr "Descargas pendientes"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1093,6 +1085,27 @@ msgid ""
 "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
 "links.\n"
 msgstr ""
+"## Cómo obtener juegos\n"
+"\n"
+"Visita [nuestra wiki (en inglés)](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) para ver una lista de juegos y lugares "
+"donde comprarlos.\n"
+"\n"
+"También puedes descargar una selección de [juegos «freeware»](https://scummvm"
+".org/games) y [demos](https://www.scummvm.org/demos/) en nuestra página web. "
+"\n"
+"\n"
+"Para otros juegos (descatalogados), busca en Amazon, eBay, Game Trading "
+"Zone, Todocolección, MercadoLibre u otras páginas de subastas. Mucho cuidado "
+"con los juegos en mal estado y las copias ilegales.\n"
+"\n"
+"El equipo de ScummVM no recomienda a ningún proveedor de juegos en concreto, "
+"no obstante, el proyecto se lleva un pequeño porcentaje de todas las compras "
+"hechas en [GOG.com](https://www.gog.com/"
+"?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) y en [ZOOM-"
+"Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) si se utilizan los enlaces de referencia de "
+"afiliados.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -3848,7 +3861,7 @@ msgstr "SDL Surface"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (modo a 8bpp forzado)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -6542,37 +6555,27 @@ msgstr "Disparar"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Ascender/Volar arriba"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Volar abajo"
+msgstr "Descender/Volar abajo"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Cambiar orden"
+msgstr "Cambiar modo"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Desplazarse a la izquierda"
+msgstr "Rotar a la izquierda"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Desplazarse a la derecha"
+msgstr "Rotar a la derecha"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menú"
+msgstr "Menú de información"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -9816,6 +9819,9 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Se ha encontrado una ruta de acceso a código de desarrollo no implementada\n"
+"en el motor de sonido, rogamos que envíes un informe de fallos\n"
+"a https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
