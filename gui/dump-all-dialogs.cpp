@@ -92,50 +92,50 @@ void dumpDialogs(const Common::String &message, int res, const Common::String &l
 
 	// MessageDialog
 	GUI::MessageDialog messageDialog(message);
-	handleSimpleDialog(messageDialog, "messageDialog-", surf);
+	handleSimpleDialog(messageDialog, "messageDialog-" + filename, surf);
 	// AboutDialog
 	GUI::AboutDialog aboutDialog;
-	handleSimpleDialog(aboutDialog, "aboutDialog-", surf);
+	handleSimpleDialog(aboutDialog, "aboutDialog-" + filename, surf);
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
-	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard-", surf);
+	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard-" + filename, surf);
 
 	// RemoteBrowserDialog
 	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
-	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog-", surf);
+	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog-" + filename, surf);
 
 	// DownloadIconPacksDialog
 	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
-	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog-", surf);
+	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog-" + filename, surf);
 
 	// DownloadShaderPacksDialog
 	GUI::DownloadPacksDialog downloadShaderPacksDialog(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
-	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog-", surf);
+	handleSimpleDialog(downloadShaderPacksDialog, "downloadShaderPacksDialog-" + filename, surf);
 #endif
 
 #ifdef USE_FLUIDSYNTH
 	// FluidSynthSettingsDialog
 	GUI::FluidSynthSettingsDialog fluidSynthSettingsDialog;
-	handleSimpleDialog(fluidSynthSettingsDialog, "fluidSynthSettings-", surf);
+	handleSimpleDialog(fluidSynthSettingsDialog, "fluidSynthSettings-" + filename, surf);
 #endif
 
 	// ThemeBrowserDialog
 	GUI::ThemeBrowser themeBrowser;
-	handleSimpleDialog(themeBrowser, "themeBrowser-", surf);
+	handleSimpleDialog(themeBrowser, "themeBrowser-" + filename, surf);
 
 	// BrowserDialog
 	GUI::BrowserDialog browserDialog(_("Select directory with game data"), true);
-	handleSimpleDialog(browserDialog, "browserDialog-", surf);
+	handleSimpleDialog(browserDialog, "browserDialog-" + filename, surf);
 
 	// ChooserDialog
 	GUI::ChooserDialog chooserDialog(_("Pick the game:"));
-	handleSimpleDialog(chooserDialog, "chooserDialog-", surf);
+	handleSimpleDialog(chooserDialog, "chooserDialog-" + filename, surf);
 
 	// MassAddDialog
 	GUI::MassAddDialog massAddDialog(Common::FSNode("."));
-	handleSimpleDialog(massAddDialog, "massAddDialog-", surf);
+	handleSimpleDialog(massAddDialog, "massAddDialog-" + filename, surf);
 
 	// LauncherDialog
 #if 0
