@@ -3281,7 +3281,7 @@ bool MacLoomGui::runSaveDialog() {
 	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
 	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
-	window->addSlider(216, 9, 128, 0, 50, 7, true);
+	window->addSlider(216, 9, 128, 0, 100, 9, true);
 
 	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
@@ -3301,9 +3301,17 @@ bool MacLoomGui::runSaveDialog() {
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
 
+	_vm->_firstSaveStateOfList = window->getWidgetValue(3);
+	_vm->fillSavegameLabels();
+
+	MacGui::MacStaticText *savegameNames[8];
+	for (int i = 0; i < 8; i++) {
+		savegameNames[i] = window->addStaticText(Common::Rect(16, 10 + i * 16, 200, 30 + i * 15), _vm->_savegameNames[i], true);
+	}
+
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog();
-
+		debug("clicked %d", clicked);
 		if (clicked == 0) {
 			ret = true;
 			break;
@@ -3314,6 +3322,16 @@ bool MacLoomGui::runSaveDialog() {
 
 		if (clicked == 2) {
 			runOkCancelDialog("Are you sure you want to delete the saved game?");
+		}
+
+		if (clicked == 3) {
+			_vm->_firstSaveStateOfList = window->getWidgetValue(3);
+			_vm->fillSavegameLabels();
+			for (int i = 0; i < 8; i++) {
+				savegameNames[i]->setText(_vm->_savegameNames[i]);
+				savegameNames[i]->setRedraw();
+				savegameNames[i]->draw();
+			}
 		}
 	}
 
@@ -5050,11 +5068,16 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 8 - Scrolling checkbox
 	// 9 - Text speed slider (manually created)
 
-	// TODO: Get these from the SCUMM engine
-	int sound = 0;
-	int music = 0;
-	int scrolling = 0;
-	int textSpeed = 5;
+	int sound = 1;
+	int music = 1;
+	if (_vm->VAR(167) == 2) {
+		sound = music = 0;
+	} else if (_vm->VAR(167) == 1) {
+		music = 0;
+	}
+
+	int scrolling = _vm->_snapScroll == 0;
+	int textSpeed = _vm->_defaultTextSpeed;
 
 	MacDialogWindow *window = createDialog(1000);
 
@@ -5089,10 +5112,39 @@ bool MacIndy3Gui::runOptionsDialog() {
 	}
 
 	if (ret) {
-		debug("sound: %d", window->getWidgetValue(2));
-		debug("music: %d", window->getWidgetValue(3));
-		debug("scrolling: %d", window->getWidgetValue(8));
-		debug("textSpeed: %d", window->getWidgetValue(9));
+		// Update settings
+
+		// TEXT SPEED
+		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
+		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
+		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+
+		// SOUND&MUSIC ACTIVATION
+		// 0 - Sound&Music on
+		// 1 - Sound on, music off
+		// 2 - Sound&Music off
+		//int musicVariableValue = 0;
+		//
+		//if (window->getWidgetValue(2) == 0) {
+		//	musicVariableValue = 2;
+		//} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
+		//	musicVariableValue = 1;
+		//}
+		//
+		//_vm->VAR(167) = musicVariableValue;
+
+		if (musicVariableValue != 0) {
+			if (_vm->VAR(169) != 0) {
+				_vm->_sound->stopSound(_vm->VAR(169));
+				_vm->VAR(169) = 0;
+			}
+		}
+
+		// SCROLLING ACTIVATION
+		_vm->_snapScroll = window->getWidgetValue(8) == 0;
+
+		_vm->syncSoundSettings();
+		ConfMan.flushToDisk();
 	}
 
 	delete window;
