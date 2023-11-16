@@ -3424,8 +3424,8 @@ bool MacLoomGui::runOptionsDialog() {
 		//
 		// (selections 1 and 2 appear to be the same music
 		// files but rendered at a different bitrate, while
-		// selection 0 activates a completely different set
-		// of files)
+		// selection 0 activates the low quality channel in
+		// the sequence files and mutes everything else)
 		//
 		// This is currently incomplete. Let's just set the proper
 		// value for VAR_SOUNDCARD...
