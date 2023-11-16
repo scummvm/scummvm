@@ -236,6 +236,7 @@ public:
 		MacStaticText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 
 		bool findWidget(int x, int y) const { return false; }
+		void setText(Common::String text) { this->_text = text; }
 		void draw(bool drawFocused = false);
 	};
 
@@ -497,7 +498,7 @@ public:
 
 	void setPalette(const byte *palette, uint size);
 	virtual bool handleEvent(Common::Event &event);
-  
+
 	static void menuCallback(int id, Common::String &name, void *data);
 	virtual void initialize();
 	void updateWindowManager();
