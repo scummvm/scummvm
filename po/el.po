@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 23:40+0000\n"
+"POT-Creation-Date: 2023-11-16 01:06+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -79,16 +79,16 @@ msgid "Go up"
 msgstr "Μετάβαση πάνω"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:463
-#: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
-#: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
-#: gui/massadd.cpp:93 gui/options.cpp:2329 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
-#: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
-#: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
-#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1224
-#: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:603
+#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:270
+#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2329
+#: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
+#: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
+#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:455
+#: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:828
+#: gui/saveload-dialog.cpp:1224 gui/shaderbrowser-dialog.cpp:81
+#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:603
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -281,7 +281,8 @@ msgstr "Μήνυμα σφάλματος: "
 msgid "Manual Mode: Success"
 msgstr "Χειροκίνητη Ρύθμιση: Επιτυχία"
 
-#: gui/cloudconnectionwizard.cpp:428 engines/crab/input/input.cpp:175
+#: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
+#: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
 msgid "Back"
 msgstr "Πίσω"
 
@@ -386,11 +387,33 @@ msgstr ""
 msgid "Failed to load JSON file"
 msgstr "Αποτυχία φόρτωσης του αρχείου JSON"
 
+#: gui/dlcsdialog.cpp:41
+#, fuzzy
+#| msgid "Download freeware games for ScummVM"
+msgid "Download Freeware Games and Demos"
+msgstr ""
+"Μεταφόρτωση δωρεάν (freeware) παιχνιδιών για ελεύθερη χρήση με το ScummVM"
+
+#: gui/dlcsdialog.cpp:52
+msgid "Fetching DLCs..."
+msgstr ""
+
+#: gui/dlcsdialog.cpp:60
+#, fuzzy
+#| msgid "Download"
+msgid "All Downloads"
+msgstr "Λήψη"
+
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
+msgid "Download"
+msgstr "Λήψη"
+
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
 msgstr "Επιλέξτε φάκελο για να μεταφορτώσετε τα δεδομένα παιχνιδιού"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
+#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "Επιλέξτε φάκελο με δεδομένα παιχνιδιού"
 
@@ -447,7 +470,8 @@ msgstr ""
 "Το \"%s\" υπάρχει ήδη στον καθορισμένο φάκελο.\n"
 "Θέλετε σίγουρα να κάνετε λήψη αρχείων σε εκείνο το φάκελο;"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:367
+#: gui/downloaddialog.cpp:214 gui/downloaddlcsdialog.cpp:70
+#: gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Λήφθηκαν %s %S / %s %S"
@@ -456,6 +480,18 @@ msgstr "Λήφθηκαν %s %S / %s %S"
 #, c-format
 msgid "Download speed: %s %S/s"
 msgstr "Ταχύτητα λήψης: %s %S/s"
+
+#: gui/downloaddlcsdialog.cpp:41
+#, fuzzy
+#| msgid "Download Games"
+msgid "Currently Downloading Games"
+msgstr "Λήψη Παιχνιδιών"
+
+#: gui/downloaddlcsdialog.cpp:55
+#, fuzzy
+#| msgid "Download"
+msgid "Pending Downloads"
+msgstr "Λήψη"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -481,10 +517,6 @@ msgstr "Λήψη λίστας %S... %d καταχωρήσεις"
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "Εντοπίστηκαν %d νέα πακέτα, %s %S"
-
-#: gui/downloadpacksdialog.cpp:266
-msgid "Download"
-msgstr "Λήψη"
 
 #: gui/downloadpacksdialog.cpp:290
 #, c-format
@@ -523,6 +555,18 @@ msgstr ""
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Προχώρα"
+
+#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+msgid "icon packs"
+msgstr "πακέτα εικονιδίων"
+
+#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+msgid "shader packs"
+msgstr "πακέτα σκιαστών"
+
+#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+msgid "Pick the game:"
+msgstr "Διαλέξτε το παιχνίδι:"
 
 #: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
 msgid "Game"
@@ -930,11 +974,11 @@ msgstr "Αλληλεπίδραση"
 
 #: gui/gui-manager.cpp:170 engines/metaengine.cpp:115
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
-#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:843
-#: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
-#: engines/wintermute/keymapper_tables.h:1290
+#: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:36
+#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:467
+#: engines/grim/grim.cpp:548 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
+#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:461
+#: engines/twine/metaengine.cpp:528 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -944,11 +988,11 @@ msgstr "Πάνω"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:121
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
-#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:810
-#: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
-#: engines/wintermute/keymapper_tables.h:1296
+#: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:42
+#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:472
+#: engines/grim/grim.cpp:553 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
+#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:468
+#: engines/twine/metaengine.cpp:536 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -1042,6 +1086,32 @@ msgstr "Αντιγραφή"
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
 msgstr "???"
+
+#: gui/helpdialog.cpp:53
+msgid "General"
+msgstr "Γενικά"
+
+#: gui/helpdialog.cpp:55
+msgid ""
+"## Where to get the games\n"
+"\n"
+"Visit [our Wiki](https://wiki.scummvm.org/index.php?"
+"title=Where_to_get_the_games) for a list of games and where to purchase "
+"them.\n"
+"\n"
+"Alternatively, download a selection of [freeware games](https://scummvm.org/"
+"games) and [demos](https://www.scummvm.org/demos/) from our website \n"
+"\n"
+"For other (out of print) games, try Amazon, eBay, Game Trading Zone or other "
+"auction sites. Beware of faulty games and illegal game copies.\n"
+"\n"
+"The ScummVM team does not recommend any individual supplier of games,however "
+"the project does get a cut from every purchase on [GOG.com](https://www.gog."
+"com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and [ZOOM-Platform]"
+"(https://www.zoom-platform.com/?"
+"affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
+"links.\n"
+msgstr ""
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1274,10 +1344,6 @@ msgstr "Το ScummVM δεν βρήκε κάποιο παιχνίδι στον σ
 #: gui/launcher.cpp:692
 msgid "Unknown variant"
 msgstr "Άγνωστη εκδοχή παιχνιδιού"
-
-#: gui/launcher.cpp:698
-msgid "Pick the game:"
-msgstr "Διαλέξτε το παιχνίδι:"
 
 #: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
 msgid "List view"
@@ -2400,14 +2466,6 @@ msgstr "Επιλέξτε φάκελο για πρόσθετα"
 #: gui/options.cpp:3220
 msgid "Select directory for Files Manager /root/"
 msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
-
-#: gui/options.cpp:3236
-msgid "icon packs"
-msgstr "πακέτα εικονιδίων"
-
-#: gui/options.cpp:3247
-msgid "shader packs"
-msgstr "πακέτα σκιαστών"
 
 #: gui/options.cpp:3401
 msgid "This Storage is working now. Do you want to interrupt it?"
@@ -3851,9 +3909,14 @@ msgstr "Απενεργοποίηση φιλτραρίσματος"
 msgid "Stretch mode"
 msgstr "Λειτουργία επέκτασης εικόνας"
 
+#: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
 msgstr "Επιφάνεια SDL"
+
+#: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
+msgid "SDL Surface (forced 8bpp mode)"
+msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -5900,6 +5963,19 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
+#: engines/gob/detection/tables_adi5.h:33
+#: engines/gob/detection/tables_adi5.h:51
+#: engines/gob/detection/tables_adibou3.h:32
+#: engines/gob/detection/tables_adibou3.h:47
+#: engines/gob/detection/tables_adibou3.h:65
+#: engines/gob/detection/tables_adibou3.h:81
+#: engines/gob/detection/tables_adibou3.h:97
+#: engines/gob/detection/tables_adibou3.h:113
+#: engines/gob/detection/tables_adiboupresente.h:32
+#: engines/gob/detection/tables_adiboudchou.h:34
+#: engines/gob/detection/tables_adiboudchou.h:50
+#: engines/gob/detection/tables_adiboudchou.h:64
+#: engines/gob/detection/tables_adiboudchou.h:78
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
 #: engines/mohawk/detection_tables.h:798 engines/mohawk/detection_tables.h:812
@@ -6497,6 +6573,55 @@ msgstr "Αντιστροφή άξονα-Y στο ποντίκι"
 msgid "Use alternative camera controls"
 msgstr "Εναλλακτικός χειρισμός κάμερας"
 
+#: engines/freescape/movement.cpp:48 engines/hpl1/metaengine.cpp:78
+#: engines/mm/mm1/metaengine.cpp:99
+msgid "Strafe Left"
+msgstr "Πλάγια στα Αριστερά"
+
+#: engines/freescape/movement.cpp:54 engines/hpl1/metaengine.cpp:79
+#: engines/mm/mm1/metaengine.cpp:100
+msgid "Strafe Right"
+msgstr "Πλάγια στα Δεξιά"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/freescape/movement.cpp:60 engines/mm/mm1/metaengine.cpp:79
+msgid "Shoot"
+msgstr "Πυροβόλησε"
+
+#: engines/freescape/movement.cpp:67
+msgid "Rise/Fly up"
+msgstr ""
+
+#: engines/freescape/movement.cpp:72
+#, fuzzy
+#| msgid "Fly down"
+msgid "Lower/Fly down"
+msgstr "Πέταξε κάτω"
+
+#: engines/freescape/movement.cpp:76
+#, fuzzy
+#| msgid "Change Command"
+msgid "Change mode"
+msgstr "Αλλαγή Εντολής"
+
+#: engines/freescape/movement.cpp:81
+#, fuzzy
+#| msgid "Strafe Left"
+msgid "Rotate Left"
+msgstr "Πλάγια στα Αριστερά"
+
+#: engines/freescape/movement.cpp:85
+#, fuzzy
+#| msgid "Strafe Right"
+msgid "Rotate Right"
+msgstr "Πλάγια στα Δεξιά"
+
+#: engines/freescape/movement.cpp:89
+#, fuzzy
+#| msgid "Menu"
+msgid "Info Menu"
+msgstr "Μενού"
+
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
 msgstr "[ πατήστε κάποιο πλήκτρο για έξοδο ]"
@@ -6925,14 +7050,6 @@ msgstr "Προς τα εμπρός"
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
 msgstr "Προς τα πίσω"
-
-#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-msgid "Strafe Left"
-msgstr "Πλάγια στα Αριστερά"
-
-#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-msgid "Strafe Right"
-msgstr "Πλάγια στα Δεξιά"
 
 #: engines/hpl1/metaengine.cpp:80
 msgid "Lean Left"
@@ -7541,11 +7658,6 @@ msgstr "Γρήγορη Αναφορά"
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
 msgstr "Οπισθοχώρηση"
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:79
-msgid "Shoot"
-msgstr "Πυροβόλησε"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:84
@@ -9793,6 +9905,12 @@ msgstr ""
 msgid "Would you like to host or join a network play session?"
 msgstr "Θέλετε να φιλοξενήσετε ή να συμμετέχετε σε online συνεδρία παιχνιδιού;"
 
+#: engines/scumm/he/sound_he.cpp:1550
+msgid ""
+"Unimplemented development codepath encountered within the sound engine,\n"
+"please file a ticket at https://bugs.scummvm.org."
+msgstr ""
+
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
@@ -11885,9 +12003,6 @@ msgstr ""
 
 #~ msgid "Open event flags cheat menu"
 #~ msgstr "Άνοιγμα μενού cheat συμβάντων"
-
-#~ msgid "General"
-#~ msgstr "Γενικά"
 
 #~ msgid "Scene Data"
 #~ msgstr "Δεδομένα Σκηνής"

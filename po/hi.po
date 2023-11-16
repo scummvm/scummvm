@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-14 23:40+0000\n"
+"POT-Creation-Date: 2023-11-16 01:06+0000\n"
 "PO-Revision-Date: 2023-11-08 23:41+0000\n"
 "Last-Translator: illusion01 <prathamesh.jakkula.01042005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -74,16 +74,16 @@ msgid "Go up"
 msgstr "ऊपर जाएँ"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloadpacksdialog.cpp:270 gui/downloadpacksdialog.cpp:463
-#: gui/editgamedialog.cpp:352 gui/editrecorddialog.cpp:66
-#: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
-#: gui/massadd.cpp:93 gui/options.cpp:2329 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
-#: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
-#: gui/saveload-dialog.cpp:455 gui/saveload-dialog.cpp:526
-#: gui/saveload-dialog.cpp:828 gui/saveload-dialog.cpp:1224
-#: gui/shaderbrowser-dialog.cpp:81 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:603
+#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:270
+#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2329
+#: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
+#: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
+#: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:455
+#: gui/saveload-dialog.cpp:526 gui/saveload-dialog.cpp:828
+#: gui/saveload-dialog.cpp:1224 gui/shaderbrowser-dialog.cpp:81
+#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:603
 #: dists/android.strings.xml.cpp:43 engines/engine.cpp:747
 #: backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -267,7 +267,8 @@ msgstr ""
 msgid "Manual Mode: Success"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:428 engines/crab/input/input.cpp:175
+#: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
+#: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
 #, fuzzy
 #| msgid "Backend"
 msgid "Back"
@@ -371,11 +372,30 @@ msgstr ""
 msgid "Failed to load JSON file"
 msgstr "गेम सेव नहीं हो पाया"
 
+#: gui/dlcsdialog.cpp:41
+msgid "Download Freeware Games and Demos"
+msgstr ""
+
+#: gui/dlcsdialog.cpp:52
+msgid "Fetching DLCs..."
+msgstr ""
+
+#: gui/dlcsdialog.cpp:60
+#, fuzzy
+#| msgid "Download"
+msgid "All Downloads"
+msgstr "डाउनलोड"
+
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
+msgid "Download"
+msgstr "डाउनलोड"
+
 #: gui/downloaddialog.cpp:48
 msgid "Select directory where to download game data"
 msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
+#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "उस फोल्डर को चुने जिसमे गेम डेटा है"
 
@@ -430,7 +450,8 @@ msgstr ""
 "इस फोल्डर में \"%s\" पहले से मौजूद है।\n"
 "क्या आप इस फोल्डर में ही फाइलें डाउनलोड करना चाहते हैं?"
 
-#: gui/downloaddialog.cpp:214 gui/downloadpacksdialog.cpp:367
+#: gui/downloaddialog.cpp:214 gui/downloaddlcsdialog.cpp:70
+#: gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %S डाउनलोड कर लिया"
@@ -439,6 +460,18 @@ msgstr "%s %S / %s %S डाउनलोड कर लिया"
 #, c-format
 msgid "Download speed: %s %S/s"
 msgstr "डाउनलोड की गति: %s %S"
+
+#: gui/downloaddlcsdialog.cpp:41
+#, fuzzy
+#| msgid "Download game files"
+msgid "Currently Downloading Games"
+msgstr "गेम फाइल डाउनलोड करे"
+
+#: gui/downloaddlcsdialog.cpp:55
+#, fuzzy
+#| msgid "Download"
+msgid "Pending Downloads"
+msgstr "डाउनलोड"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -464,10 +497,6 @@ msgstr "%S लिस्ट डाउनलोड हो रही है %d ए�
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "%d नए पैक डिटेक्ट हुए, %s.%S"
-
-#: gui/downloadpacksdialog.cpp:266
-msgid "Download"
-msgstr "डाउनलोड"
 
 #: gui/downloadpacksdialog.cpp:290
 #, c-format
@@ -504,6 +533,18 @@ msgstr "आप %s.%S डाटा हटाने वाले हैं, %S ड
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "आगे बढ़ें"
+
+#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+msgid "icon packs"
+msgstr ""
+
+#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+msgid "shader packs"
+msgstr ""
+
+#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+msgid "Pick the game:"
+msgstr ""
 
 #: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
 msgid "Game"
@@ -897,11 +938,11 @@ msgstr ""
 
 #: gui/gui-manager.cpp:170 engines/metaengine.cpp:115
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
-#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:121
-#: engines/grim/grim.cpp:467 engines/grim/grim.cpp:548 engines/icb/icb.cpp:68
-#: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:843
-#: engines/twine/metaengine.cpp:461 engines/twine/metaengine.cpp:528
-#: engines/wintermute/keymapper_tables.h:1290
+#: engines/dragons/metaengine.cpp:160 engines/freescape/movement.cpp:36
+#: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:467
+#: engines/grim/grim.cpp:548 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
+#: engines/scumm/metaengine.cpp:843 engines/twine/metaengine.cpp:461
+#: engines/twine/metaengine.cpp:528 engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1920
@@ -911,11 +952,11 @@ msgstr "ऊपर"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:121
 #: engines/crab/input/input.cpp:101 engines/crab/input/input.cpp:151
-#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:127
-#: engines/grim/grim.cpp:472 engines/grim/grim.cpp:553 engines/icb/icb.cpp:73
-#: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:810
-#: engines/twine/metaengine.cpp:468 engines/twine/metaengine.cpp:536
-#: engines/wintermute/keymapper_tables.h:1296
+#: engines/dragons/metaengine.cpp:166 engines/freescape/movement.cpp:42
+#: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:472
+#: engines/grim/grim.cpp:553 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
+#: engines/scumm/metaengine.cpp:810 engines/twine/metaengine.cpp:468
+#: engines/twine/metaengine.cpp:536 engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
 #: engines/wintermute/keymapper_tables.h:1926
@@ -1014,6 +1055,32 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1944
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "???"
+msgstr ""
+
+#: gui/helpdialog.cpp:53
+msgid "General"
+msgstr ""
+
+#: gui/helpdialog.cpp:55
+msgid ""
+"## Where to get the games\n"
+"\n"
+"Visit [our Wiki](https://wiki.scummvm.org/index.php?"
+"title=Where_to_get_the_games) for a list of games and where to purchase "
+"them.\n"
+"\n"
+"Alternatively, download a selection of [freeware games](https://scummvm.org/"
+"games) and [demos](https://www.scummvm.org/demos/) from our website \n"
+"\n"
+"For other (out of print) games, try Amazon, eBay, Game Trading Zone or other "
+"auction sites. Beware of faulty games and illegal game copies.\n"
+"\n"
+"The ScummVM team does not recommend any individual supplier of games,however "
+"the project does get a cut from every purchase on [GOG.com](https://www.gog."
+"com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and [ZOOM-Platform]"
+"(https://www.zoom-platform.com/?"
+"affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
+"links.\n"
 msgstr ""
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
@@ -1242,10 +1309,6 @@ msgstr "ScummVM इस डायरेक्टरी में कोई गे
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:692
 msgid "Unknown variant"
-msgstr ""
-
-#: gui/launcher.cpp:698
-msgid "Pick the game:"
 msgstr ""
 
 #: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
@@ -2293,14 +2356,6 @@ msgstr "उस फोल्डर को चुने जिसमे गेम 
 #: gui/options.cpp:3220
 msgid "Select directory for Files Manager /root/"
 msgstr "फाइल्स मैनेजर के लिए डायरेक्टरी चुने"
-
-#: gui/options.cpp:3236
-msgid "icon packs"
-msgstr ""
-
-#: gui/options.cpp:3247
-msgid "shader packs"
-msgstr ""
 
 #: gui/options.cpp:3401
 msgid "This Storage is working now. Do you want to interrupt it?"
@@ -3596,8 +3651,13 @@ msgstr ""
 msgid "Stretch mode"
 msgstr ""
 
+#: backends/graphics/riscossdl/riscossdl-graphics.cpp:30
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
+msgstr ""
+
+#: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
+msgid "SDL Surface (forced 8bpp mode)"
 msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
@@ -5331,6 +5391,19 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
+#: engines/gob/detection/tables_adi5.h:33
+#: engines/gob/detection/tables_adi5.h:51
+#: engines/gob/detection/tables_adibou3.h:32
+#: engines/gob/detection/tables_adibou3.h:47
+#: engines/gob/detection/tables_adibou3.h:65
+#: engines/gob/detection/tables_adibou3.h:81
+#: engines/gob/detection/tables_adibou3.h:97
+#: engines/gob/detection/tables_adibou3.h:113
+#: engines/gob/detection/tables_adiboupresente.h:32
+#: engines/gob/detection/tables_adiboudchou.h:34
+#: engines/gob/detection/tables_adiboudchou.h:50
+#: engines/gob/detection/tables_adiboudchou.h:64
+#: engines/gob/detection/tables_adiboudchou.h:78
 #: engines/groovie/detection.cpp:100 engines/lure/detection.cpp:229
 #: engines/mohawk/detection_tables.h:768 engines/mohawk/detection_tables.h:783
 #: engines/mohawk/detection_tables.h:798 engines/mohawk/detection_tables.h:812
@@ -5876,6 +5949,53 @@ msgstr ""
 msgid "Use alternative camera controls"
 msgstr "दूसरे खेल के कंट्रोल चुनें:"
 
+#: engines/freescape/movement.cpp:48 engines/hpl1/metaengine.cpp:78
+#: engines/mm/mm1/metaengine.cpp:99
+msgid "Strafe Left"
+msgstr "बाएं Strafe करें"
+
+#: engines/freescape/movement.cpp:54 engines/hpl1/metaengine.cpp:79
+#: engines/mm/mm1/metaengine.cpp:100
+msgid "Strafe Right"
+msgstr "दाहिने strafe करें"
+
+#. I18N: Combat command in Might & Magic 1
+#: engines/freescape/movement.cpp:60 engines/mm/mm1/metaengine.cpp:79
+msgid "Shoot"
+msgstr ""
+
+#: engines/freescape/movement.cpp:67
+msgid "Rise/Fly up"
+msgstr ""
+
+#: engines/freescape/movement.cpp:72
+#, fuzzy
+#| msgid "Move down"
+msgid "Lower/Fly down"
+msgstr "नीचे को चलें"
+
+#: engines/freescape/movement.cpp:76
+#, fuzzy
+#| msgid "Manual mode"
+msgid "Change mode"
+msgstr "मैन्युअल मोड"
+
+#: engines/freescape/movement.cpp:81
+#, fuzzy
+#| msgid "Strafe Left"
+msgid "Rotate Left"
+msgstr "बाएं Strafe करें"
+
+#: engines/freescape/movement.cpp:85
+#, fuzzy
+#| msgid "Strafe Right"
+msgid "Rotate Right"
+msgstr "दाहिने strafe करें"
+
+#: engines/freescape/movement.cpp:89
+msgid "Info Menu"
+msgstr ""
+
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
 msgstr ""
@@ -6254,14 +6374,6 @@ msgstr "आगे"
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
 msgstr ""
-
-#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-msgid "Strafe Left"
-msgstr "बाएं Strafe करें"
-
-#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-msgid "Strafe Right"
-msgstr "दाहिने strafe करें"
 
 #: engines/hpl1/metaengine.cpp:80
 msgid "Lean Left"
@@ -6797,11 +6909,6 @@ msgstr ""
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
 msgid "Retreat"
-msgstr ""
-
-#. I18N: Combat command in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:79
-msgid "Shoot"
 msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
@@ -8781,6 +8888,12 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:3895
 msgid "Would you like to host or join a network play session?"
+msgstr ""
+
+#: engines/scumm/he/sound_he.cpp:1550
+msgid ""
+"Unimplemented development codepath encountered within the sound engine,\n"
+"please file a ticket at https://bugs.scummvm.org."
 msgstr ""
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
