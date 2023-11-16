@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-16 01:06+0000\n"
+"POT-Creation-Date: 2023-11-16 10:45+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3840,6 +3840,7 @@ msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσε�
 
 #: backends/graphics/opengl/opengl-graphics.cpp:258
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
+#: backends/graphics3d/ios/ios-graphics3d.cpp:353
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:241
 #: engines/twine/metaengine.cpp:360
 msgid "Center"
@@ -3847,29 +3848,34 @@ msgstr "Στο κέντρο"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:259
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics3d/ios/ios-graphics3d.cpp:354
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:242
 msgid "Pixel-perfect scaling"
 msgstr "Κλιμάκωση απόλυτης-ακρίβειας-πίξελ"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:260
+#: backends/graphics3d/ios/ios-graphics3d.cpp:355
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:243
 msgid "Even pixels scaling"
 msgstr "Κλιμάκωση ζυγισμένης-ακρίβειας-πίξελ"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:261
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics3d/ios/ios-graphics3d.cpp:356
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:244
 msgid "Fit to window"
 msgstr "Προσαρμογή στο παράθυρο"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:262
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics3d/ios/ios-graphics3d.cpp:357
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:245
 msgid "Stretch to window"
 msgstr "Επέκταση εικόνας για να γεμίσει το παράθυρο"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:263
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics3d/ios/ios-graphics3d.cpp:358
 #: backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp:246
 msgid "Fit to window (4:3)"
 msgstr "Προσαρμογή στο παράθυρο (4:3)"
