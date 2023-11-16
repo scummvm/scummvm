@@ -279,13 +279,19 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
+	{
 		// Some backends send a key stroke event and the quit
 		// event which was triggered by the keystroke. Clear the key.
 		clearClickedStatus();
 
+		bool usesMacMenu = isUsingOriginalGUI() &&
+						   _game.platform == Common::kPlatformMacintosh &&
+						   _game.version < 4;
+
 		if (isUsingOriginalGUI() &&
 			_game.platform != Common::kPlatformSegaCD &&
-			_game.platform != Common::kPlatformNES) {
+			_game.platform != Common::kPlatformNES &&
+			!usesMacMenu) {
 			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
 				bool exitType = (event.type == Common::EVENT_RETURN_TO_LAUNCHER);
 				// If another message banner is currently on the screen, close it
@@ -298,12 +304,13 @@ void ScummEngine::parseEvent(Common::Event event) {
 				} else {
 					_closeBannerAndQueryQuitFlag = true;
 				}
-			} else if (_quitByGUIPrompt) {
+			} else if (_quitByGUIPrompt || usesMacMenu) {
 				if (!getEventManager()->shouldReturnToLauncher())
 					quitGame();
 			}
 		}
 		break;
+	}
 	default:
 		break;
 	}

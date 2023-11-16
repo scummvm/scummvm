@@ -2330,7 +2330,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 
 	case 202:	// Restart
 		if (runRestartDialog())
-			debug("Game should restart now");
+			_vm->restart();
 		return true;
 
 	case 203:	// Pause
@@ -2960,7 +2960,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	case 205:	// Quit
 		if (runQuitDialog())
-			debug("Game should quit now");
+			_vm->quitGame();
 		break;
 
 	default:
