@@ -5133,12 +5133,12 @@ bool MacIndy3Gui::runOptionsDialog() {
 		//
 		//_vm->VAR(167) = musicVariableValue;
 
-		if (musicVariableValue != 0) {
-			if (_vm->VAR(169) != 0) {
-				_vm->_sound->stopSound(_vm->VAR(169));
-				_vm->VAR(169) = 0;
-			}
-		}
+		//if (musicVariableValue != 0) {
+		//	if (_vm->VAR(169) != 0) {
+		//		_vm->_sound->stopSound(_vm->VAR(169));
+		//		_vm->VAR(169) = 0;
+		//	}
+		//}
 
 		// SCROLLING ACTIVATION
 		_vm->_snapScroll = window->getWidgetValue(8) == 0;
