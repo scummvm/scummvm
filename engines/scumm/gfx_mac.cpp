@@ -36,6 +36,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/gfx_mac.h"
+#include "scumm/players/player_v3m.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/usage_bits.h"
@@ -3426,9 +3427,11 @@ bool MacLoomGui::runOptionsDialog() {
 		// selection 0 activates a completely different set
 		// of files)
 		//
-		// This is currently unimplemented. Let's just set the proper
+		// This is currently incomplete. Let's just set the proper
 		// value for VAR_SOUNDCARD...
 		_vm->VAR(_vm->VAR_SOUNDCARD) = window->getWidgetValue(12) == 0 ? 10 : 11;
+		((Player_V3M *)_vm->_musicEngine)->overrideQuality(_vm->VAR(_vm->VAR_SOUNDCARD) == 10);
+
 		debug(6, "MacLoomGui::runOptionsDialog(): music quality: %d - unimplemented!", window->getWidgetValue(12));
 
 

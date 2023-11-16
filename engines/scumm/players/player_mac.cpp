@@ -314,6 +314,10 @@ int Player_Mac::noteToPitchModifier(byte note, Instrument *instrument) {
 	}
 }
 
+void Player_Mac::overrideChannelMask(int newMask) {
+	_channelMask = newMask;
+}
+
 int Player_Mac::readBuffer(int16 *data, const int numSamples) {
 	Common::StackLock lock(_mutex);
 
