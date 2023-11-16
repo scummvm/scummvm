@@ -116,6 +116,8 @@ public:
 	uint32 _backColor;
 	uint32 _foreColor;
 
+	byte _blend;
+	
 	byte _volume;
 	byte _stretch;
 };
