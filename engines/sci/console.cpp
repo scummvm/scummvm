@@ -87,10 +87,6 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerVar("gc_interval",		&engine->_gamestate->scriptGCInterval);
 	registerVar("simulated_key",		&g_debug_simulated_key);
 	registerVar("track_mouse_clicks",	&g_debug_track_mouse_clicks);
-	// FIXME: This actually passes an enum type instead of an integer but no
-	// precaution is taken to assure that all assigned values are in the range
-	// of the enum type. We should handle this more carefully...
-	registerVar("script_abort_flag",	(int *)&_engine->_gamestate->abortScriptProcessing);
 	registerCmd("speed_throttle",   WRAP_METHOD(Console, cmdSpeedThrottle));
 
 	// General
@@ -325,7 +321,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("gc_interval: Number of kernel calls in between garbage collections\n");
 	debugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	debugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
-	debugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
 	debugPrintf("speed_throttle: Displays or changes kGameIsRestarting maximum delay\n");
 	debugPrintf("\n");
 	debugPrintf("Debug flags\n");
@@ -1733,6 +1728,12 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("This SCI version does not support this command\n");
+		return true;
+	}
+#endif
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return cmdExit(0, nullptr);
