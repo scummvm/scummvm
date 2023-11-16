@@ -113,7 +113,7 @@ Channel::~Channel() {
 }
 
 DirectorPlotData Channel::getPlotData() {
-	DirectorPlotData pd(g_director, _sprite->_spriteType, _sprite->_ink, _sprite->_blendAmount, _sprite->getBackColor(), _sprite->getForeColor());
+	DirectorPlotData pd(g_director, _sprite->_spriteType, _sprite->_ink, _sprite->_blend, _sprite->getBackColor(), _sprite->getForeColor());
 	pd.colorWhite = 0;
 	pd.colorBlack = 255;
 	pd.dst = nullptr;
@@ -160,7 +160,8 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeLight ||
 		_sprite->_ink == kInkTypeSub ||
 		_sprite->_ink == kInkTypeDark ||
-		_sprite->_blendAmount > 0;
+		_sprite->_blendAmount > 0 ||
+		_sprite->_blend > 0;
 
 	Common::Rect bbox(getBbox());
 
