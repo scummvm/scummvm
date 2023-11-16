@@ -119,6 +119,7 @@ class MapWindow: public GUI_Widget {
 	sint32 vel_x, vel_y; // velocity of automatic map movement (pixels per second)
 
 	Common::Rect clip_rect;
+	Graphics::ManagedSurface _mapWinSubSurf; // sub surface of the screen clipped to MapWindow's clip_rect
 
 	Obj *selected_obj;
 	Actor *look_actor;
