@@ -795,8 +795,10 @@ PositionInfo CurrentMap::getPositionInfo(const Box &target, const Box &start, ui
 	}
 
 	info.valid = info.blocker == nullptr;
-	// Partial support allowed if land is close
-	if (supportz == target._z && landz + 8 >= target._z)
+	// Partial support allowed if land is close. Allow up to 9 to match
+	// the position adjustments in scanForValidPosition for stepping on
+	// to Crusader elevators.
+	if (supportz == target._z && landz + 9 >= target._z)
 		info.supported = true;
 
 	// Mark supported at minimum z
