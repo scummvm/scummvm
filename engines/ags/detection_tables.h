@@ -3906,6 +3906,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("paintedhills", "Painted Hills.ags", "95becb7b83df4e176aa307223d0b7181", 32864460),
 
 	// Commercial games
+	GAME_ENTRY_EN_STEAM("abscission", "Abscission.exe", "7633f0919378749cebf6dacba61ca0e1", 350299379),
 	GAME_ENTRY_EN_STEAM("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178),
 	GAME_ENTRY_EN("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
 	GAME_ENTRY_EN("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
@@ -4075,6 +4076,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484837277),  // v1.06
 	GAME_ENTRY_EN_GOG("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484844189),  // v1.07
 	GAME_ENTRY_EN_STEAM("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484795038),  // v1.05
+	GAME_ENTRY_EN_STEAM("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484843981),  // v1.07
 	GAME_ENTRY_EN_STEAM("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026),
 	GAME_ENTRY_EN("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOLAUNCHLOAD("excavationhb", "ac2game.dat", "e5553f7c45d26d5fbc8b376a859bb87c", 563281442, AGSSPRITEFONT_CLIFFTOP), // Mac
