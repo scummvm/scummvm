@@ -3257,6 +3257,15 @@ bool MacLoomGui::runOpenDialog() {
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
 
+	_vm->_firstSaveStateOfList = window->getWidgetValue(3);
+	_vm->fillSavegameLabels();
+
+	MacGui::MacStaticText *savegameNames[8];
+	for (int i = 0; i < 8; i++) {
+		savegameNames[i] = window->addStaticText(Common::Rect(16, 15 + i * 16, 200, 35 + i * 15), _vm->_savegameNames[i], true);
+	}
+
+
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog();
 
@@ -3267,6 +3276,16 @@ bool MacLoomGui::runOpenDialog() {
 
 		if (clicked == 1)
 			break;
+
+		if (clicked == 3) {
+			_vm->_firstSaveStateOfList = window->getWidgetValue(3);
+			_vm->fillSavegameLabels();
+			for (int i = 0; i < 8; i++) {
+				savegameNames[i]->setText(_vm->_savegameNames[i]);
+				savegameNames[i]->setRedraw();
+				savegameNames[i]->draw();
+			}
+		}
 	}
 
 	delete window;
