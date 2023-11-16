@@ -30,7 +30,6 @@
 #include "graphics/opengl/context.h"
 #include "backends/graphics3d/opengl/texture.h"
 #include "graphics/blit.h"
-#include "common/translation.h"
 
 #include "engines/engine.h"
 
