@@ -1494,6 +1494,11 @@ void SoundHE::playVoice(uint32 offset, uint32 length) {
 	byte *ptr;
 	int talkieChannel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
 
+	if (offset == 0 || length == 0) {
+		debug(5, "SoundHE::playVoice(): Attempted playing 0 offset/length talkie from scripts, bailing out...");
+		return;
+	}
+
 	if (ConfMan.getBool("speech_mute"))
 		return;
 
