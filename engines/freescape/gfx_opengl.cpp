@@ -299,7 +299,7 @@ void OpenGLRenderer::renderPlayerShootBall(byte color, const Common::Point posit
 
 	glColor3ub(r, g, b);
 	int triangleAmount = 20;
-	float twicePi = 2 * 3.1416;
+	float twicePi = 2.f * 3.1416f;
 	float coef = (9 - frame) / 9.0;
 	float radius = (1 - coef) * 4.0;
 
