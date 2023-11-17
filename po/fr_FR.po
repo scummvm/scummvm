@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 09:07+0000\n"
+"POT-Creation-Date: 2023-11-17 11:58+0000\n"
 "PO-Revision-Date: 2023-11-16 13:08+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6483,62 +6483,62 @@ msgstr ""
 "Activer la synthèse vocale pour les objets, les options et la citation de la "
 "Bible"
 
-#: engines/freescape/metaengine.cpp:37
+#: engines/freescape/metaengine.cpp:38
 msgid "Prerecorded sounds"
 msgstr "Sons préenregistrés"
 
-#: engines/freescape/metaengine.cpp:38
+#: engines/freescape/metaengine.cpp:39
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Utilise des sons préenregistrés de haute qualité à la place de l'émulation "
 "du PC Speaker"
 
-#: engines/freescape/metaengine.cpp:48
+#: engines/freescape/metaengine.cpp:49
 msgid "Extended timer"
 msgstr "Minuteur rallongé"
 
-#: engines/freescape/metaengine.cpp:49
+#: engines/freescape/metaengine.cpp:50
 msgid "Start the game timer at 99:59:59"
 msgstr "Démarre le minuteur du jeu à 99:59:59"
 
-#: engines/freescape/metaengine.cpp:59
+#: engines/freescape/metaengine.cpp:60
 msgid "Automatic drilling"
 msgstr "Forage automatique"
 
-#: engines/freescape/metaengine.cpp:60
+#: engines/freescape/metaengine.cpp:61
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr ""
 "Dans Driller, permet de forer avec succès à n'importe quel endroit de la zone"
 
-#: engines/freescape/metaengine.cpp:70
+#: engines/freescape/metaengine.cpp:71
 msgid "Disable demo mode"
 msgstr "Désactiver le mode démo"
 
-#: engines/freescape/metaengine.cpp:71
+#: engines/freescape/metaengine.cpp:72
 msgid "Never activate demo mode"
 msgstr "N'active jamais le mode démo"
 
-#: engines/freescape/metaengine.cpp:81
+#: engines/freescape/metaengine.cpp:82
 msgid "Disable sensors"
 msgstr "Désactiver les détecteurs"
 
-#: engines/freescape/metaengine.cpp:82
+#: engines/freescape/metaengine.cpp:83
 msgid "Sensors will not shoot the player"
 msgstr "Les détecteurs ne tireront pas sur le joueur"
 
-#: engines/freescape/metaengine.cpp:92
+#: engines/freescape/metaengine.cpp:93
 msgid "Disable falling"
 msgstr "Désactiver les chutes"
 
-#: engines/freescape/metaengine.cpp:93
+#: engines/freescape/metaengine.cpp:94
 msgid "Player cannot fall over edges"
 msgstr "Le joueur ne peut plus chuter par dessus les bords"
 
-#: engines/freescape/metaengine.cpp:103
+#: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
 msgstr "Inverser l'axe Y de la souris"
 
-#: engines/freescape/metaengine.cpp:104
+#: engines/freescape/metaengine.cpp:105
 msgid "Use alternative camera controls"
 msgstr "Utilise des contrôles de caméra alternatifs"
 

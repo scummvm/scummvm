@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 09:07+0000\n"
+"POT-Creation-Date: 2023-11-17 11:58+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6317,61 +6317,61 @@ msgstr "Vis grafikk med spillets lyse palett"
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Aktiver tekst til tale for gjenstander, innstillinger og bibelsitat"
 
-#: engines/freescape/metaengine.cpp:37
+#: engines/freescape/metaengine.cpp:38
 msgid "Prerecorded sounds"
 msgstr "Forhåndsgjorte lydopptak"
 
-#: engines/freescape/metaengine.cpp:38
+#: engines/freescape/metaengine.cpp:39
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Bruk forhåndsgjorte lydopptak av høy kvalitet, fremfor emulering av PC-"
 "speakeren"
 
-#: engines/freescape/metaengine.cpp:48
+#: engines/freescape/metaengine.cpp:49
 msgid "Extended timer"
 msgstr "Utvidet telleverk"
 
-#: engines/freescape/metaengine.cpp:49
+#: engines/freescape/metaengine.cpp:50
 msgid "Start the game timer at 99:59:59"
 msgstr "Start spillets telleverk på 99.59.59"
 
-#: engines/freescape/metaengine.cpp:59
+#: engines/freescape/metaengine.cpp:60
 msgid "Automatic drilling"
 msgstr "Automatisk drilling"
 
-#: engines/freescape/metaengine.cpp:60
+#: engines/freescape/metaengine.cpp:61
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Lar deg utføre vellykket drilling i hvilket som helst område i Driller"
 
-#: engines/freescape/metaengine.cpp:70
+#: engines/freescape/metaengine.cpp:71
 msgid "Disable demo mode"
 msgstr "Skru av demomodus"
 
-#: engines/freescape/metaengine.cpp:71
+#: engines/freescape/metaengine.cpp:72
 msgid "Never activate demo mode"
 msgstr "Aldri aktiver demomodus"
 
-#: engines/freescape/metaengine.cpp:81
+#: engines/freescape/metaengine.cpp:82
 msgid "Disable sensors"
 msgstr "Skru av sensorer"
 
-#: engines/freescape/metaengine.cpp:82
+#: engines/freescape/metaengine.cpp:83
 msgid "Sensors will not shoot the player"
 msgstr "Sensorer skyter ikke spilleren"
 
-#: engines/freescape/metaengine.cpp:92
+#: engines/freescape/metaengine.cpp:93
 msgid "Disable falling"
 msgstr "Skru av fall"
 
-#: engines/freescape/metaengine.cpp:93
+#: engines/freescape/metaengine.cpp:94
 msgid "Player cannot fall over edges"
 msgstr "Spilleren kan ikke falle over kanter"
 
-#: engines/freescape/metaengine.cpp:103
+#: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:104
+#: engines/freescape/metaengine.cpp:105
 #, fuzzy
 #| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"

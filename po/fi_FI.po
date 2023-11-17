@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 09:07+0000\n"
+"POT-Creation-Date: 2023-11-17 11:58+0000\n"
 "PO-Revision-Date: 2023-11-03 23:02+0000\n"
 "Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -6409,60 +6409,60 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
-#: engines/freescape/metaengine.cpp:37
+#: engines/freescape/metaengine.cpp:38
 msgid "Prerecorded sounds"
 msgstr "Esiäänitetyt äänet"
 
-#: engines/freescape/metaengine.cpp:38
+#: engines/freescape/metaengine.cpp:39
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Käytä korkealaatuisia esiäänitettyjä ääniä pc speaker-emulaation sijaan"
 
-#: engines/freescape/metaengine.cpp:48
+#: engines/freescape/metaengine.cpp:49
 msgid "Extended timer"
 msgstr "Pidennetty ajastin"
 
-#: engines/freescape/metaengine.cpp:49
+#: engines/freescape/metaengine.cpp:50
 msgid "Start the game timer at 99:59:59"
 msgstr "Aloita peliajastin ajasta 99:59:59"
 
-#: engines/freescape/metaengine.cpp:59
+#: engines/freescape/metaengine.cpp:60
 msgid "Automatic drilling"
 msgstr "Automaattinen poraus"
 
-#: engines/freescape/metaengine.cpp:60
+#: engines/freescape/metaengine.cpp:61
 msgid "Allow to succefully drill in any part of the area in Driller"
 msgstr "Salli onnistunut poraus missä tahansa alueella Driller:issä"
 
-#: engines/freescape/metaengine.cpp:70
+#: engines/freescape/metaengine.cpp:71
 msgid "Disable demo mode"
 msgstr "Ei demotilaa"
 
-#: engines/freescape/metaengine.cpp:71
+#: engines/freescape/metaengine.cpp:72
 msgid "Never activate demo mode"
 msgstr "Älä koskaan aktivoi demotilaa"
 
-#: engines/freescape/metaengine.cpp:81
+#: engines/freescape/metaengine.cpp:82
 msgid "Disable sensors"
 msgstr "Sensorit pois päältä"
 
-#: engines/freescape/metaengine.cpp:82
+#: engines/freescape/metaengine.cpp:83
 msgid "Sensors will not shoot the player"
 msgstr "Sensorit eivät ammu pelaajaa"
 
-#: engines/freescape/metaengine.cpp:92
+#: engines/freescape/metaengine.cpp:93
 msgid "Disable falling"
 msgstr "Estä putoaminen"
 
-#: engines/freescape/metaengine.cpp:93
+#: engines/freescape/metaengine.cpp:94
 msgid "Player cannot fall over edges"
 msgstr "Pelaaja ei voi pudota kielekkeiltä"
 
-#: engines/freescape/metaengine.cpp:103
+#: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
 msgstr "Käännä hiiren Y-akseli"
 
-#: engines/freescape/metaengine.cpp:104
+#: engines/freescape/metaengine.cpp:105
 msgid "Use alternative camera controls"
 msgstr "Käytä vaihtoehtoisia kamerakontrolleja"
 
