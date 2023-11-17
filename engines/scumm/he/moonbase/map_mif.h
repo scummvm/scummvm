@@ -24,7 +24,7 @@
 
 #ifdef ENABLE_HE
 
-#include "config.h"
+#include "scumm/he/intern_he.h"
 
 namespace Scumm {
 
