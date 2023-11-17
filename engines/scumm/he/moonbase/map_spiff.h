@@ -26,6 +26,8 @@
 
 #include "common/random.h"
 
+#include "engines/scumm/he/moonbase/map_mif.h"
+
 #define MAXELEVVAL 4 // for array size
 #define HIGH 3 // elevations
 #define MEDIUM 2
@@ -54,7 +56,7 @@ public:
 	SpiffGenerator(Common::RandomSource *rnd);
 	~SpiffGenerator();
 
-	void generateMap(int water, int mapSize, int energy, int terrain);
+	MapFile *generateMap(int water, int mapSize, int energy, int terrain);
 
 private:
 	Common::RandomSource *_rnd;
