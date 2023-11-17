@@ -22,6 +22,7 @@
 #include "freescape/freescape.h"
 #include "freescape/detection.h"
 
+#include "freescape/games/driller/driller.h"
 #include "freescape/games/eclipse/eclipse.h"
 
 namespace Freescape {

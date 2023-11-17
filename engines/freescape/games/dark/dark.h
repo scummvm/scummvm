@@ -32,6 +32,11 @@ enum {
 	kDarkEndingECDsDestroyed = 2,
 };
 
+struct ECD {
+	uint16 _area;
+	int _id;
+};
+
 class DarkEngine : public FreescapeEngine {
 public:
 	DarkEngine(OSystem *syst, const ADGameDescription *gd);
