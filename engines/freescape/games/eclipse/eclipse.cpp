@@ -122,7 +122,13 @@ void EclipseEngine::borderScreen() {
 			drawFullscreenMessageAndWait(_messagesList[24]);
 			drawFullscreenMessageAndWait(_messagesList[25]);
 		} else if (isDemo() && isSpectrum()) {
-			drawFullscreenMessageAndWait(_messagesList[23]);
+			if (_variant & GF_ZX_DEMO_MICROHOBBY) {
+				drawFullscreenMessageAndWait(_messagesList[23]);
+			} else if (_variant & GF_ZX_DEMO_CRASH) {
+				drawFullscreenMessageAndWait(_messagesList[9]);
+				drawFullscreenMessageAndWait(_messagesList[10]);
+				drawFullscreenMessageAndWait(_messagesList[11]);
+			}
 		} else {
 			FreescapeEngine::borderScreen();
 		}

@@ -22,6 +22,8 @@
 #include "freescape/freescape.h"
 #include "freescape/detection.h"
 
+#include "freescape/games/eclipse/eclipse.h"
+
 namespace Freescape {
 
 static const PlainGameDescriptor freescapeGames[] = {
@@ -465,7 +467,21 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_UNSTABLE | ADGF_DEMO,
+		ADGF_UNSTABLE | ADGF_DEMO | GF_ZX_DEMO_MICROHOBBY,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
+		"Demo",
+		{
+			{"totaleclipse.zx.border", 0, "4df153a0c8986d1581b2aa58222c0eb8", 6912},
+			{"totaleclipse.zx.data", 0, "13cd96820a65c84e63ca57c86f25881a", 29692},
+			{"totaleclipse.zx.title", 0, "b25897736ffcafee174f525cd1f14b42", 6912},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE | ADGF_DEMO | GF_ZX_DEMO_CRASH,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{

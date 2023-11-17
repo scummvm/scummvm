@@ -54,20 +54,25 @@ void EclipseEngine::loadAssetsZXDemo() {
 	if (!file.isOpen())
 		error("Failed to open totaleclipse.zx.data");
 
-	loadMessagesFixedSize(&file, 0x2ac, 16, 23);
-	loadMessagesFixedSize(&file, 0x56e6, 264, 1);
+	if (_variant & GF_ZX_DEMO_MICROHOBBY) {
+		loadMessagesFixedSize(&file, 0x2ac, 16, 23);
+		loadMessagesFixedSize(&file, 0x56e6, 264, 1);
+		loadFonts(&file, 0x5f7b);
+		load8bitBinary(&file, 0x6173, 4);
+	} else if (_variant & GF_ZX_DEMO_CRASH) {
+		loadMessagesFixedSize(&file, 0x364, 16, 9);
+		loadMessagesFixedSize(&file, 0x5901, 264, 5);
+		loadFonts(&file, 0x6589);
+		load8bitBinary(&file, 0x6781, 4);
+	} else
+		error("Unknown ZX Spectrum demo variant");
 
-	//loadFonts(&file, 0x5fc2);
-	loadFonts(&file, 0x5f7b);
-	load8bitBinary(&file, 0x6173, 4);
 	for (auto &it : _areaMap) {
 		it._value->_name = "  NOW TRAINING  ";
 		it._value->addStructure(_areaMap[255]);
 		for (int16 id = 183; id < 207; id++)
 			it._value->addObjectFromArea(id, _areaMap[255]);
 	}
-	//loadColorPalette();
-	//swapPalette(1);
 
 	/*_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
@@ -96,9 +101,9 @@ void EclipseEngine::drawZXUI(Graphics::Surface *surface) {
 	color = _currentArea->_inkColor;
 
 	_gfx->readFromPalette(color, r, g, b);
-	uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
+	//uint32 other = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
-	int score = _gameStateVars[k8bitVariableScore];
+	//int score = _gameStateVars[k8bitVariableScore];
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 141, back, front, surface);

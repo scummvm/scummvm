@@ -21,6 +21,11 @@
 
 namespace Freescape {
 
+enum EclipseReleaseFlags {
+	GF_ZX_DEMO_CRASH = (1 << 0),
+	GF_ZX_DEMO_MICROHOBBY = (1 << 1),
+};
+
 class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
