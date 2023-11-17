@@ -766,6 +766,10 @@ bool Gump::mustSave(bool toplevel) const {
 	if (_flags & FLAG_DONT_SAVE)
 		return false;
 
+	// don't save when ready for deletion
+	if (_flags & FLAG_CLOSE_AND_DEL)
+		return false;
+
 	if (toplevel) {
 		// don't save gumps with parents, unless parent is a core gump
 		if (_parent && !(_parent->_flags & FLAG_CORE_GUMP))
