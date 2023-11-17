@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-16 10:45+0000\n"
-"PO-Revision-Date: 2023-05-17 15:40+0000\n"
+"PO-Revision-Date: 2023-11-17 01:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -33,27 +33,21 @@ msgid "Features compiled in:"
 msgstr "Включені в білд опції:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Game id не підтримується"
+msgstr "не підтримується"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Вимкнено"
+msgstr "вимкнено"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Вимкнено"
+msgstr "Умкнено"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Підтримка розширень CPU:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -203,24 +197,20 @@ msgid "Quick Mode: Success"
 msgstr "Швидкий режим: Успіх"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Залучитись до вашого облікового запису на хмарному середовищі"
+msgstr "Ваше хмарне середовище було залучено!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Закінчити"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Ручний режим: Крок 1"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Відкрийте це посилання:"
+msgstr "Відкрийте це посилання у переглядачі:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
