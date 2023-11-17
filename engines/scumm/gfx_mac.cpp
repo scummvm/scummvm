@@ -526,8 +526,8 @@ void MacGui::MacStaticText::draw(bool drawFocused) {
 
 	debug(1, "MacGui::MacStaticText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
-	_window->innerSurface()->fillRect(_bounds, kWhite);
-	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), kBlack, Graphics::kTextAlignLeft, 1);
+	_window->innerSurface()->fillRect(_bounds, _bg);
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, Graphics::kTextAlignLeft, 1);
 	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
@@ -1506,6 +1506,183 @@ void MacGui::MacPictureSlider::handleWheelDown() {
 }
 
 // ---------------------------------------------------------------------------
+// List box widget
+// ---------------------------------------------------------------------------
+
+MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, "ListBox", enabled), _texts(texts) {
+	int pageSize = _bounds.height() / 16;
+
+	int numSlots = MIN<int>(pageSize, texts.size());
+
+	for (int i = 0; i < numSlots; i++) {
+		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 17, _bounds.top + 1 + 16 * (i + 1));
+		_textWidgets.push_back(new MacStaticText(window, r, texts[i], enabled));
+	}
+
+	_slider = new MacSlider(window, Common::Rect(_bounds.right - 16, _bounds.top, _bounds.right, _bounds.bottom), 0, texts.size() - pageSize, pageSize, enabled);
+
+	// The widget value indicates the selected element
+	_value = 0;
+	updateTexts();
+}
+
+MacGui::MacListBox::~MacListBox() {
+	_texts.clear();
+	delete _slider;
+
+	for (uint i = 0; i < _textWidgets.size(); i++)
+		delete _textWidgets[i];
+}
+
+bool MacGui::MacListBox::findWidget(int x, int y) const {
+	return MacWidget::findWidget(x, y) || _slider->findWidget(x, y);
+}
+
+void MacGui::MacListBox::setRedraw(bool fullRedraw) {
+	MacWidget::setRedraw(fullRedraw);
+	_slider->setRedraw(fullRedraw);
+
+	for (uint i = 0; i < _textWidgets.size(); i++)
+		_textWidgets[i]->setRedraw(fullRedraw);
+}
+
+void MacGui::MacListBox::updateTexts() {
+	int offset = _slider->getValue();
+
+	for (uint i = 0; i < _textWidgets.size(); i++) {
+		_textWidgets[i]->setText(_texts[i + offset]);
+
+		if ((int)(i + offset) == _value)
+			_textWidgets[i]->setColor(kWhite, kBlack);
+		else
+			_textWidgets[i]->setColor(kBlack, kWhite);
+	}
+}
+
+void MacGui::MacListBox::draw(bool drawFocused) {
+	for (uint i = 0; i < _textWidgets.size(); i++)
+		_textWidgets[i]->draw(drawFocused);
+
+	_slider->draw(drawFocused);
+
+	if (!_redraw && !_fullRedraw)
+		return;
+
+	debug(1, "MacGui::MacListBox: Drawing list box (_fullRedraw = %d, drawFocused = %d)", _fullRedraw, drawFocused);
+
+	Graphics::Surface *s = _window->innerSurface();
+
+	s->hLine(_bounds.left, _bounds.top, _bounds.right - 17, kBlack);
+	s->hLine(_bounds.left, _bounds.bottom - 1, _bounds.right - 17, kBlack);
+	s->vLine(_bounds.left, _bounds.top + 1, _bounds.bottom - 2, kBlack);
+
+	_redraw = false;
+	_fullRedraw = false;
+
+	_window->markRectAsDirty(_bounds);
+}
+
+void MacGui::MacListBox::handleMouseDown(Common::Event &event) {
+	Common::Point mousePos = _window->getMousePos();
+
+	if (_slider->findWidget(mousePos.x, mousePos.y)) {
+		int oldValue = _slider->getValue();
+
+		_sliderFocused = true;
+		_slider->handleMouseDown(event);
+
+		if (_slider->getValue() != oldValue)
+			updateTexts();
+
+		return;
+	}
+
+	int offset = _slider->getValue();
+
+	for (uint i = 0; i < _textWidgets.size(); i++) {
+		if (_textWidgets[i]->findWidget(mousePos.x, mousePos.y)) {
+			setValue(i + offset);
+			break;
+		}
+	}
+}
+
+void MacGui::MacListBox::handleMouseUp(Common::Event &event) {
+	if (_sliderFocused) {
+		int oldValue = _slider->getValue();
+
+		_sliderFocused = false;
+		_slider->handleMouseUp(event);
+
+		if (_slider->getValue() != oldValue)
+			updateTexts();
+	}
+}
+
+void MacGui::MacListBox::handleMouseMove(Common::Event &event) {
+	if (_sliderFocused) {
+		int oldValue = _slider->getValue();
+
+		_slider->handleMouseMove(event);
+
+		if (_slider->getValue() != oldValue)
+			updateTexts();
+	}
+}
+
+void MacGui::MacListBox::handleMouseHeld() {
+	if (_sliderFocused) {
+		int oldValue = _slider->getValue();
+
+		_slider->handleMouseHeld();
+
+		if (_slider->getValue() != oldValue)
+			updateTexts();
+	}
+}
+
+void MacGui::MacListBox::handleWheelUp() {
+	Common::Point mousePos = _window->getMousePos();
+
+	if (_slider->findWidget(mousePos.x, mousePos.y)) {
+		_slider->handleWheelUp();
+		updateTexts();
+		return;
+	}
+
+	int oldValue = _slider->getValue();
+
+	_slider->setValue(oldValue - 1);
+
+	// FIXME: This is not the most efficient way of redrawing the slider
+
+	if (_slider->getValue() != oldValue) {
+		_slider->setRedraw(true);
+		updateTexts();
+	}
+}
+
+void MacGui::MacListBox::handleWheelDown() {
+	Common::Point mousePos = _window->getMousePos();
+
+	if (_slider->findWidget(mousePos.x, mousePos.y)) {
+		_slider->handleWheelDown();
+		return;
+	}
+
+	int oldValue = _slider->getValue();
+
+	_slider->setValue(oldValue + 1);
+
+	// FIXME: This is not the most efficient way of redrawing the slider
+
+	if (_slider->getValue() != oldValue) {
+		_slider->setRedraw(true);
+		updateTexts();
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Dialog window
 //
 // This can either be used as a modal dialog (options, etc.), or as a framed
@@ -1673,6 +1850,12 @@ MacGui::MacPictureSlider *MacGui::MacDialogWindow::addPictureSlider(int backgrou
 
 void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
+}
+
+MacGui::MacListBox *MacGui::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled) {
+	MacGui::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled);
+	_widgets.push_back(listBox);
+	return listBox;
 }
 
 void MacGui::MacDialogWindow::drawBeamCursor() {
@@ -2334,6 +2517,8 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 203:	// Pause
+		if (!_vm->_messageBannerActive)
+			_vm->mac_showOldStyleBannerAndPause(_vm->getGUIString(gsPause), -1);
 		return true;
 
 	// In the original, the Edit menu is active during save dialogs, though
@@ -3245,26 +3430,39 @@ bool MacLoomGui::runOpenDialog() {
 	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
-	window->addSlider(216, 13, 146, 0, 50, 7, true);
 
-	Graphics::Surface *s = window->innerSurface();
+	bool availSaves[100];
+	int saveIds[100];
+	int saveCounter = 0;
 
-	s->frameRect(Common::Rect(14, 13, 217, 159), kBlack);
-	s->hLine(253, 91, 334, kBlack);
+	for (int i = 0; i < ARRAYSIZE(saveIds); i++) {
+		saveIds[i] = -1;
+	}
+
+	Common::String name;
+	Common::StringArray savegameNames;
+	_vm->listSavegames(availSaves, ARRAYSIZE(availSaves));
+
+	for (int i = 0; i < ARRAYSIZE(availSaves); i++) {
+		if (availSaves[i]) {
+			// Save the slot ids for slots which actually contain savegames...
+			saveIds[saveCounter] = i;
+			saveCounter++;
+			if (_vm->getSavegameName(i, name)) {
+				savegameNames.push_back(Common::String::format("%s", name.c_str()));
+			} else {
+				// The original printed "WARNING... old savegame", but we do support old savegames :-)
+				savegameNames.push_back(Common::String::format("%s", "WARNING: wrong save version"));
+			}
+		}
+	}
+
+	window->addListBox(Common::Rect(14, 13, 217, 159), savegameNames, true);
 
 	window->setDefaultWidget(0);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
-
-	_vm->_firstSaveStateOfList = window->getWidgetValue(3);
-	_vm->fillSavegameLabels();
-
-	MacGui::MacStaticText *savegameNames[8];
-	for (int i = 0; i < 8; i++) {
-		savegameNames[i] = window->addStaticText(Common::Rect(16, 15 + i * 16, 200, 35 + i * 15), _vm->_savegameNames[i], true);
-	}
-
 
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog();
@@ -3276,16 +3474,6 @@ bool MacLoomGui::runOpenDialog() {
 
 		if (clicked == 1)
 			break;
-
-		if (clicked == 3) {
-			_vm->_firstSaveStateOfList = window->getWidgetValue(3);
-			_vm->fillSavegameLabels();
-			for (int i = 0; i < 8; i++) {
-				savegameNames[i]->setText(_vm->_savegameNames[i]);
-				savegameNames[i]->setRedraw();
-				savegameNames[i]->draw();
-			}
-		}
 	}
 
 	delete window;
@@ -5346,7 +5534,10 @@ bool MacIndy3Gui::handleEvent(Common::Event &event) {
 	if (MacGui::handleEvent(event))
 		return true;
 
-	if (!isVerbGuiActive() || _vm->_userPut <= 0)
+	bool isPauseEvent = event.type == Common::EVENT_KEYDOWN &&
+		event.kbd == Common::KEYCODE_SPACE;
+
+	if (!isPauseEvent && (!isVerbGuiActive() || _vm->_userPut <= 0))
 		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {

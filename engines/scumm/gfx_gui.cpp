@@ -2206,13 +2206,11 @@ void ScummEngine::fillSavegameLabels() {
 	Common::String name;
 	int curSaveSlot;
 	bool isLoomVga = (_game.id == GID_LOOM && _game.version == 4);
-	bool usesMacMenu = _game.platform == Common::kPlatformMacintosh &&
-					   _game.version < 4;
 
 	_savegameNames.clear();
 
 	for (int i = 0; i < 9; i++) {
-		curSaveSlot = i + ((isLoomVga || usesMacMenu) ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
+		curSaveSlot = i + (isLoomVga ? _firstSaveStateOfList : _curDisplayedSaveSlotPage * 9);
 		if (_game.version > 4 || (_game.version == 4 && _game.id == GID_LOOM)) {
 			if (availSaves[curSaveSlot]) {
 				if (getSavegameName(curSaveSlot, name)) {
