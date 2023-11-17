@@ -331,7 +331,20 @@ void ScummEngine_v4::updateIQPoints() {
 }
 
 void ScummEngine_v4::clearSeriesIQPoints() {
-	// Stub
+	Common::OutSaveFile *file;
+	Common::String filename = _targetName + ".iq";
+
+	file = _saveFileMan->openForSaving(filename);
+	if (file != nullptr) {
+		int size = getResourceSize(rtString, STRINGID_IQ_EPISODE);
+
+		for (int i = 0; i < size; i++)
+			file->writeByte(0);
+
+		_scummVars[245] = 0;
+
+		delete file;
+	}
 }
 
 void ScummEngine_v4::saveIQPoints() {

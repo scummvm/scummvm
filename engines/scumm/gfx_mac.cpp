@@ -2503,6 +2503,8 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 		if (runOpenDialog(saveSlotToHandle)) {
 			if (saveSlotToHandle > -1) {
 				_vm->loadGameState(saveSlotToHandle);
+				if (_vm->_game.id == GID_INDY3)
+					((ScummEngine_v4 *)_vm)->updateIQPoints();
 			}
 		}
 
@@ -5419,6 +5421,7 @@ bool MacIndy3Gui::runIqPointsDialog() {
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 1001 : 1002);
 
+	((ScummEngine_v4 *)_vm)->updateIQPoints();
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
