@@ -179,7 +179,7 @@ public:
 		virtual void getFocus() { setRedraw(); }
 		virtual void loseFocus() { setRedraw(); }
 
-		void setRedraw(bool fullRedraw = false);
+		virtual void setRedraw(bool fullRedraw = false);
 
 		void setEnabled(bool enabled);
 
@@ -232,11 +232,31 @@ public:
 	// custom findWidget().
 
 	class MacStaticText : public MacWidget {
+	private:
+		Color _fg = kBlack;
+		Color _bg = kWhite;
+
 	public:
 		MacStaticText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 
-		bool findWidget(int x, int y) const { return false; }
-		void setText(Common::String text) { this->_text = text; }
+		void getFocus() {}
+		void loseFocus() {}
+
+		void setText(Common::String text) {
+			if (text != _text) {
+				_text = text;
+				setRedraw();
+			}
+		}
+
+		void setColor(Color fg, Color bg) {
+			if (fg != _fg || bg != _bg) {
+				_fg = fg;
+				_bg = bg;
+				setRedraw();
+			}
+		}
+
 		void draw(bool drawFocused = false);
 	};
 
@@ -388,6 +408,45 @@ public:
 		void handleWheelDown();
 	};
 
+	class MacListBox : public MacWidget {
+	private:
+		Common::StringArray _texts;
+		Common::Array<MacStaticText *> _textWidgets;
+		MacSlider *_slider;
+		bool _sliderFocused = false;
+
+		void updateTexts();
+
+	public:
+		MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled);
+		~MacListBox();
+
+		void getFocus() {}
+		void loseFocus() {}
+
+		void setValue(int value) {
+			if (value != _value) {
+				_value = value;
+				updateTexts();
+			}
+		}
+
+		int getValue() {
+			return _value;
+		}
+
+		bool findWidget(int x, int y) const;
+		void setRedraw(bool fullRedraw = false);
+		void draw(bool drawFocused = false);
+
+		void handleMouseDown(Common::Event &event);
+		void handleMouseUp(Common::Event &event);
+		void handleMouseMove(Common::Event &event);
+		void handleMouseHeld();
+		void handleWheelUp();
+		void handleWheelDown();
+	};
+
 	class MacDialogWindow {
 	private:
 		Common::Rect _bounds;
@@ -468,6 +527,7 @@ public:
 		MacGui::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
 		MacGui::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGui::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
+		MacGui::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
