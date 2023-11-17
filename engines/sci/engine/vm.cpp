@@ -601,9 +601,6 @@ void run_vm(EngineState *s) {
 			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
 
-		if (s->abortScriptProcessing != kAbortNone)
-			return; // Stop processing
-
 		g_sci->checkAddressBreakpoint(s->xs->addr.pc);
 
 		// Debug if this has been requested:
