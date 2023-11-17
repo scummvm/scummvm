@@ -330,6 +330,10 @@ void ScummEngine_v4::updateIQPoints() {
 	saveIQPoints();
 }
 
+void ScummEngine_v4::clearSeriesIQPoints() {
+	// Stub
+}
+
 void ScummEngine_v4::saveIQPoints() {
 	// save Indy3 IQ-points
 	Common::OutSaveFile *file;
