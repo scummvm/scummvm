@@ -2527,7 +2527,7 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 				_vm->saveGameState(saveSlotToHandle, savegameName);
 			}
 		}
-			debug("Save a game");
+
 		return true;
 
 	case 202:	// Restart
@@ -3183,8 +3183,7 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 
 	switch (id) {
 	case 204:	// Options
-		if (runOptionsDialog())
-			debug("Options should be applied now");
+		runOptionsDialog();
 		break;
 
 	case 205:	// Quit
@@ -3498,6 +3497,11 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 		if (clicked == 1)
 			break;
 
+		if (clicked == 2) {
+			if (runOkCancelDialog("Are you sure you want to delete the saved game?"))
+				runOkCancelDialog("Deleting savegames is currently unsupported in ScummVM.");
+		}
+
 		if (clicked == 3) {
 			saveSlotToHandle =
 				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
@@ -3516,11 +3520,13 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
-	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
+	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", false);
+
 	bool busySlots[100];
 	int slotIds[100];
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+
 	int firstAvailableSlot = -1;
 	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
 		if (!busySlots[i]) {
@@ -3550,7 +3556,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog();
-		debug("clicked %d", clicked);
+
 		if (clicked == 0) {
 			ret = true;
 			name = editText->getText();
@@ -3560,10 +3566,6 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 		if (clicked == 1)
 			break;
-
-		if (clicked == 2) {
-			runOkCancelDialog("Are you sure you want to delete the saved game?");
-		}
 	}
 
 	delete window;
