@@ -3547,7 +3547,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 		}
 	}
 
-	window->addListBox(Common::Rect(14, 9, 217, 137), savegameNames, true, true);
+	window->addListBox(Common::Rect(14, 9, 217, 139), savegameNames, true, true);
 
 	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
