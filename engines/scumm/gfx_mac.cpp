@@ -4739,7 +4739,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 
 	case 206:	// Quit
 		if (runQuitDialog())
-			debug("Game should quit now");
+			_vm->quitGame();
 		break;
 
 	default:
