@@ -38,6 +38,7 @@
 #include "scumm/gfx_mac.h"
 #include "scumm/players/player_v3m.h"
 #include "scumm/scumm.h"
+#include "scumm/scumm_v4.h"
 #include "scumm/sound.h"
 #include "scumm/usage_bits.h"
 #include "scumm/verbs.h"
@@ -2876,6 +2877,9 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 
 	Common::Rect bounds;
 
+	bool isOpenDialog = dialogId == 4000 || dialogId == 4001;
+	bool isSaveDialog = dialogId == 3998 || dialogId == 3999;
+
 	res = resource.getResource(MKTAG('D', 'L', 'O', 'G'), dialogId);
 	if (res) {
 		bounds.top = res->readUint16BE();
@@ -2928,14 +2932,23 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 
 			switch (type & 0x7F) {
 			case 0:
+			{
 				// User item
-				window->innerSurface()->frameRect(r, kRed);
-				res->skip(len);
-				break;
+				debug("user item %d, rect %d %d %d %d", i, r.left, r.top, r.right, r.bottom);
 
+				// Skip drive label box and listbox
+				bool doNotDraw = (isOpenDialog && (i == 6 || i == 7)) || ((isOpenDialog || isSaveDialog) && i == 3);
+				if (!doNotDraw)
+					window->innerSurface()->frameRect(r, kBlack);
+
+				break;
+			}
 			case 4:
 				// Button
 				str = getDialogString(res, len);
+				if ((isOpenDialog || isSaveDialog) && (i == 4 || i == 5)) // "Eject" and "Drive"
+					enabled = false;
+
 				window->addButton(r, str, enabled);
 				break;
 
@@ -2948,15 +2961,22 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 			case 8:
 				// Static text
 				str = getDialogString(res, len);
+				if (isSaveDialog && i == 2)
+					str = "Save Game File as...";
+
 				window->addStaticText(r, str, enabled);
+				debug("string \"%s\" item %d", str.c_str(), i);
 				break;
 
 			case 16:
+			{
 				// Editable text
-				window->addEditText(r, "Lorem ipsum dolor sit amet, consectetur adipisicing elit", enabled);
+				MacGui::MacEditText *editText = window->addEditText(r, "Game file", enabled);
+				editText->selectAll();
+				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), kBlack);
 				res->skip(len);
 				break;
-
+			}
 			case 64:
 				// Picture
 				window->addPicture(r, res->readUint16BE(), enabled);
@@ -4937,8 +4957,7 @@ bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
 		break;
 
 	case 205:	// Options
-		if (runOptionsDialog())
-			debug("Options should be applied now");
+		runOptionsDialog();
 		break;
 
 	case 206:	// Quit
@@ -5217,6 +5236,13 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
+	bool availSlots[100];
+	int slotIds[100];
+	Common::StringArray savegameNames;
+	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
+
+	window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
+
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
 
@@ -5252,11 +5278,18 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	// 10 - "Series: ^1" text
 	// 11 - "(Indy Quotient)" text
 
-	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998: 3999);
+	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
+
+	bool availSlots[100];
+	int slotIds[100];
+	Common::StringArray savegameNames;
+	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
+
+	window->addListBox(Common::Rect(16, 31, 199, 129), savegameNames, true, true);
 
 	// When quitting, the default action is not to save a game
 	bool ret = false;
@@ -5383,7 +5416,7 @@ bool MacIndy3Gui::runIqPointsDialog() {
 
 			window->redrawWidget(4);
 
-			debug("TODO: Actually clear the series IQ score");
+			((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
 		}
 	}
 
