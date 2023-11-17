@@ -27,6 +27,8 @@
 #include "common/stream.h"
 #include "common/random.h"
 
+#include "engines/scumm/he/moonbase/map_mif.h"
+
 #define SPIFF_GEN  1
 #define KATTON_GEN 2
 
@@ -42,7 +44,7 @@ public:
 	Common::SeekableReadStream *substituteFile(const byte *fileName);
 
 	uint32 getSeed() const {
-		return _randSeed;
+		return _rnd.getSeed();
 	}
 
 private:
@@ -52,9 +54,9 @@ private:
 	// so we can send and set seeds from online players to ensure
 	// they're playing on the same generated map.
 	Common::RandomSource _rnd;
-	uint32 _randSeed;
 
 	bool _mapGenerated;
+	MapFile *_generatedMap;
 
 	// Data for makeWiz:
 	int _energy;

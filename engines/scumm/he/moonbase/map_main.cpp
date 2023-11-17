@@ -34,6 +34,7 @@ namespace Scumm {
 
 Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 	_mapGenerated = false;
+	_generatedMap = nullptr;
 
 	_energy = 0;
 	_terrain = 0;
@@ -41,14 +42,23 @@ Map::Map(ScummEngine_v100he *vm) : _vm(vm), _rnd("moonbase") {
 }
 
 Map::~Map() {
+	if (_generatedMap) {
+		delete _generatedMap;
+	}
 }
 
 bool Map::generateNewMap() {
 
 	// TODO: Show a dialog allowing the user to customize options.
 
+	// Create a new seed just for the below values.  This is to
+	// ensure these are truely random after generating a previous
+	// map (or to debug with a prefixed seed).
+	_rnd.generateNewSeed();
+
 	// Don't randomly pick nonstandard map sizes.
 	int mapSize = _rnd.getRandomNumberRngSigned(4, 8) * 8;
+	mapSize = 4 * 8;
 
 	int tileSet = _rnd.getRandomNumberRngSigned(1, 7);
 
@@ -57,21 +67,27 @@ bool Map::generateNewMap() {
 	int terrain = _rnd.getRandomNumberRngSigned(2, 4);
 	int water = _rnd.getRandomNumberRngSigned(2, 4);
 
-	_randSeed = _rnd.generateNewSeed();
-
-	return generateMapWithInfo(SPIFF_GEN, _randSeed, mapSize, tileSet, energy, terrain, water);
+	return generateMapWithInfo(SPIFF_GEN, 0, mapSize, tileSet, energy, terrain, water);
 }
 
 bool Map::generateMapWithInfo(uint8 generator, uint32 seed, int mapSize, int tileset, int energy, int terrain, int water) {
-	_rnd.setSeed(seed);
+	if (_generatedMap) {
+		// Delete old map.
+		delete _generatedMap;
+	}
 
-	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, seed, mapSize, tileset, energy, terrain, water);
+	if (seed) {
+		_rnd.setSeed(seed);
+	} else {
+		_rnd.generateNewSeed();
+	}
+
+	debug(1, "Map: Generating new map with info: generator = %d, seed = %d, mapSize = %d, tileset = %d , energy = %d, terrain = %d, water = %d.", generator, getSeed(), mapSize, tileset, energy, terrain, water);
 	switch (generator) {
 	case SPIFF_GEN:
 	{
 		SpiffGenerator spiff = SpiffGenerator(&_rnd);
-		spiff.generateMap(water, mapSize, energy, terrain);
-		// TODO: Actually create the map file.
+		_generatedMap = spiff.generateMap(water, mapSize, energy, terrain);
 		break;
 	}
 	default:
@@ -98,7 +114,7 @@ Common::SeekableReadStream *Map::makeWiz() {
 	stream->seek(0x0448);
 	for (j = 0; j < 139; ++j) {
 		for (i = 0; i < 139; ++i) {
-			uint16 data = stream->readUint16BE();
+			uint16 data = stream->readUint16LE();
 			wiz[i][j] = data;
 		}
 	}
@@ -133,7 +149,7 @@ Common::SeekableReadStream *Map::makeWiz() {
 	ws.seek(0x0448);
 	for (j = 0; j < 139; j++) {
 		for (i = 0; i < 139; i++) {
-			ws.writeUint16BE(wiz[i][j]);
+			ws.writeUint16LE(wiz[i][j]);
 		}
 	}
 
@@ -164,6 +180,12 @@ Common::SeekableReadStream *Map::substituteFile(const byte *fileName) {
 
 		if (!strcmp((const char *)fileName, "map\\moon001.wiz")) {
 			return makeWiz();
+		}
+
+		if (!strcmp((const char *)fileName, "map\\moon001.map")) {
+			// Return new ReadStream but do not dispose it.  We'll handle
+			// that ourselves.
+			return new Common::MemoryReadStream((byte *)_generatedMap, sizeof(MapFile));
 		}
 	}
 	return nullptr;
