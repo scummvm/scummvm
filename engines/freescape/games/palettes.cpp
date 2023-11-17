@@ -174,6 +174,9 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 		_gfx->_paperColor = _areaMap[levelID]->_paperColor;
 		_gfx->_underFireBackgroundColor = _areaMap[levelID]->_underFireBackgroundColor;
 
+		if (isSpectrum() && _gfx->_paperColor >= 9)
+			_gfx->_paperColor = 1;
+
 		if (!_border)
 			return;
 

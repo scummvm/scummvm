@@ -53,6 +53,8 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 		initDOS();
 	else if (isCPC())
 		initCPC();
+	else if (isSpectrum())
+		initZX();
 
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -115,10 +117,12 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 void EclipseEngine::borderScreen() {
 	if (_border) {
 		drawBorder();
-		if (isDemo()) {
+		if (isDemo() && isCPC()) {
 			drawFullscreenMessageAndWait(_messagesList[23]);
 			drawFullscreenMessageAndWait(_messagesList[24]);
 			drawFullscreenMessageAndWait(_messagesList[25]);
+		} else if (isDemo() && isSpectrum()) {
+			drawFullscreenMessageAndWait(_messagesList[23]);
 		} else {
 			FreescapeEngine::borderScreen();
 		}

@@ -456,6 +456,20 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"totaleclipse",
+		"Demo",
+		{
+			{"totaleclipse.zx.border", 0, "4df153a0c8986d1581b2aa58222c0eb8", 6912},
+			{"totaleclipse.zx.data", 0, "af0b6408fb63082ce2b6cd5985908be1", 28142},
+			{"totaleclipse.zx.title", 0, "1c1ab8a9994c1936e684b2980dba431b", 6912},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformZX,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"totaleclipse",
 		"",
 		{
 			{"TOTAL.EXE", 0, "959703c1cd37b0d9744c492240a8178b", 13327},

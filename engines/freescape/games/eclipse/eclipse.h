@@ -33,11 +33,15 @@ public:
 
 	void initDOS();
 	void initCPC();
+	void initZX();
 	void loadAssetsCPCDemo() override;
+	void loadAssetsZXDemo() override;
 	void executePrint(FCLInstruction &instruction) override;
 
 	void drawDOSUI(Graphics::Surface *surface) override;
 	void drawCPCUI(Graphics::Surface *surface) override;
+	void drawZXUI(Graphics::Surface *surface) override;
+
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;

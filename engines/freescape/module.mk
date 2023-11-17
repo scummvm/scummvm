@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	games/eclipse/dos.o \
 	games/eclipse/eclipse.o \
 	games/eclipse/cpc.o \
+	games/eclipse/zx.o \
 	games/palettes.o \
 	gfx.o \
 	loaders/8bitImage.o \
