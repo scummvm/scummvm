@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 02:46+0000\n"
+"POT-Creation-Date: 2023-11-17 09:07+0000\n"
 "PO-Revision-Date: 2022-11-29 23:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -9456,7 +9456,7 @@ msgstr ""
 msgid "Would you like to host or join a network play session?"
 msgstr "Vill du ladda eller spara spelet?"
 
-#: engines/scumm/he/sound_he.cpp:1550
+#: engines/scumm/he/sound_he.cpp:1555
 msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."

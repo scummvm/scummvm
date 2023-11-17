@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 02:46+0000\n"
+"POT-Creation-Date: 2023-11-17 09:07+0000\n"
 "PO-Revision-Date: 2023-10-21 06:47+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -9627,7 +9627,7 @@ msgid "Would you like to host or join a network play session?"
 msgstr ""
 "Möchtest Du ein Spiel über das Netzwerk hosten oder einem Spiel beitreten?"
 
-#: engines/scumm/he/sound_he.cpp:1550
+#: engines/scumm/he/sound_he.cpp:1555
 msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
