@@ -5087,13 +5087,8 @@ bool MacIndy3Gui::runOptionsDialog() {
 	// 8 - Scrolling checkbox
 	// 9 - Text speed slider (manually created)
 
-	int sound = 1;
-	int music = 1;
-	if (_vm->VAR(167) == 2) {
-		sound = music = 0;
-	} else if (_vm->VAR(167) == 1) {
-		music = 0;
-	}
+	int sound = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kSFXSoundType) ? 0 : 1;
+	int music = _vm->_mixer->isSoundTypeMuted(Audio::Mixer::SoundType::kPlainSoundType) ? 0 : 1;
 
 	int scrolling = _vm->_snapScroll == 0;
 	int textSpeed = _vm->_defaultTextSpeed;
@@ -5137,32 +5132,20 @@ bool MacIndy3Gui::runOptionsDialog() {
 		_vm->_defaultTextSpeed = CLIP<int>(window->getWidgetValue(9), 0, 9);
 		ConfMan.setInt("original_gui_text_speed", _vm->_defaultTextSpeed);
 		_vm->setTalkSpeed(_vm->_defaultTextSpeed);
+		_vm->syncSoundSettings();
 
 		// SOUND&MUSIC ACTIVATION
 		// 0 - Sound&Music on
 		// 1 - Sound on, music off
 		// 2 - Sound&Music off
-		//int musicVariableValue = 0;
-		//
-		//if (window->getWidgetValue(2) == 0) {
-		//	musicVariableValue = 2;
-		//} else if (window->getWidgetValue(2) == 1 && window->getWidgetValue(3) == 0) {
-		//	musicVariableValue = 1;
-		//}
-		//
-		//_vm->VAR(167) = musicVariableValue;
-
-		//if (musicVariableValue != 0) {
-		//	if (_vm->VAR(169) != 0) {
-		//		_vm->_sound->stopSound(_vm->VAR(169));
-		//		_vm->VAR(169) = 0;
-		//	}
-		//}
+		bool disableSound = window->getWidgetValue(2) == 0;
+		bool disableMusic = window->getWidgetValue(3) == 0;
+		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kSFXSoundType, disableSound);
+		_vm->_mixer->muteSoundType(Audio::Mixer::SoundType::kPlainSoundType, disableMusic || disableSound);
 
 		// SCROLLING ACTIVATION
 		_vm->_snapScroll = window->getWidgetValue(8) == 0;
 
-		_vm->syncSoundSettings();
 		ConfMan.flushToDisk();
 	}
 
