@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 11:58+0000\n"
+"POT-Creation-Date: 2023-11-17 19:28+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -424,8 +424,8 @@ msgstr "다운로드"
 msgid "Select directory where to download game data"
 msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
-#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "게임 데이터가 있는 디렉토리를 선택"
 
@@ -567,15 +567,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "진행"
 
-#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3236
 msgid "icon packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3247
 msgid "shader packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
@@ -3793,37 +3793,37 @@ msgstr "창에 맞게 늘림"
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:797
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:810
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:812
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:838
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr "확대 모드"

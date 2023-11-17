@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 11:58+0000\n"
+"POT-Creation-Date: 2023-11-17 19:28+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -402,8 +402,8 @@ msgstr "下載"
 msgid "Select directory where to download game data"
 msgstr "选择下载保存游戏数据的目录"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
-#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "选择包含游戏数据的目录"
 
@@ -540,15 +540,15 @@ msgstr "您正要刪除 %s %s 數據, 刪除所有之前下載的圖標數據包
 msgid "Proceed"
 msgstr "開始執行"
 
-#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3236
 msgid "icon packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3247
 msgid "shader packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr "选择游戏："
 
@@ -3659,37 +3659,37 @@ msgstr ""
 msgid "Fit to window (4:3)"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:797
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:810
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:812
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:838
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr ""

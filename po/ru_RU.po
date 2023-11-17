@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 11:58+0000\n"
+"POT-Creation-Date: 2023-11-17 19:28+0000\n"
 "PO-Revision-Date: 2023-04-05 10:46+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -424,8 +424,8 @@ msgstr "Скачать"
 msgid "Select directory where to download game data"
 msgstr "Выберите каталог для скачивания данных игры"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
-#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "Выберите каталог с файлами игры"
 
@@ -568,15 +568,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Продолжить"
 
-#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3236
 msgid "icon packs"
 msgstr "пакетов иконок"
 
-#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3247
 msgid "shader packs"
 msgstr "пакетов шейдеров"
 
-#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr "Выберите игру:"
 
@@ -3890,37 +3890,37 @@ msgstr "Растянуть до размеров окна"
 msgid "Fit to window (4:3)"
 msgstr "Подходит к окну (4: 3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Разрешение: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:797
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:810
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr "Фильтрация включена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:812
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr "Фильтрация выключена"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:838
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr "Режим растягивания"

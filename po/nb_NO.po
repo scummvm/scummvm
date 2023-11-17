@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 11:58+0000\n"
+"POT-Creation-Date: 2023-11-17 19:28+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -423,8 +423,8 @@ msgstr "Last ned"
 msgid "Select directory where to download game data"
 msgstr "Velg mappe for nedlasting av spilldata"
 
-#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:106
-#: gui/dump-all-dialogs.cpp:129 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
+#: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
+#: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
 msgid "Select directory with game data"
 msgstr "Velg mappe med spilldata"
 
@@ -567,15 +567,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Fortsett"
 
-#: gui/dump-all-dialogs.cpp:110 gui/options.cpp:3236
+#: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3236
 msgid "icon packs"
 msgstr "ikonpakker"
 
-#: gui/dump-all-dialogs.cpp:114 gui/options.cpp:3247
+#: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3247
 msgid "shader packs"
 msgstr "shaderpakker"
 
-#: gui/dump-all-dialogs.cpp:133 gui/launcher.cpp:698
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:698
 msgid "Pick the game:"
 msgstr "Velg spill:"
 
@@ -3865,37 +3865,37 @@ msgstr "Strekk til vinduet"
 msgid "Fit to window (4:3)"
 msgstr "Tilpass vinduet (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:730
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Oppløsning: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:774
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2652
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikkfilter:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:781
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:795
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2686
 msgid "Enabled aspect ratio correction"
 msgstr "Bildeformatskorrigering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:783
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:797
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2692
 msgid "Disabled aspect ratio correction"
 msgstr "Bildeformatskorrigering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:796
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:810
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2708
 msgid "Filtering enabled"
 msgstr "Filtrering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:798
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:812
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2710
 msgid "Filtering disabled"
 msgstr "Filtrering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:824
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:838
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2737
 msgid "Stretch mode"
 msgstr "Strekkmodus"
