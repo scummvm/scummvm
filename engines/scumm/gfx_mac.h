@@ -125,9 +125,10 @@ protected:
 	virtual bool handleMenu(int id, Common::String &name);
 
 	virtual void runAboutDialog() = 0;
-	virtual bool runOpenDialog() = 0;
-	virtual bool runSaveDialog() = 0;
+	virtual bool runOpenDialog(int &saveSlotToHandle) = 0;
+	virtual bool runSaveDialog(int &saveSlotToHandle, Common::String &name) = 0;
 	virtual bool runOptionsDialog() = 0;
+	void prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size);
 
 	bool runOkCancelDialog(Common::String text);
 	bool runQuitDialog();
@@ -289,6 +290,8 @@ public:
 		void getFocus() {}
 		void loseFocus() {}
 
+		Common::String getText() { return _text; }
+
 		void selectAll();
 
 		bool useBeamCursor() { return true; }
@@ -414,11 +417,12 @@ public:
 		Common::Array<MacStaticText *> _textWidgets;
 		MacSlider *_slider;
 		bool _sliderFocused = false;
+		bool _untouchableText = false;
 
 		void updateTexts();
 
 	public:
-		MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled);
+		MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = true);
 		~MacListBox();
 
 		void getFocus() {}
@@ -527,7 +531,7 @@ public:
 		MacGui::MacPicture *addPicture(Common::Rect bounds, int id, bool enabled);
 		MacGui::MacSlider *addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled);
 		MacGui::MacPictureSlider *addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin = 0, int rightMargin = 0);
-		MacGui::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled);
+		MacGui::MacListBox *addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = false);
 
 		void addSubstitution(Common::String text) { _substitutions.push_back(text); }
 		void replaceSubstitution(int nr, Common::String text) { _substitutions[nr] = text; }
@@ -611,8 +615,8 @@ protected:
 	bool handleMenu(int id, Common::String &name);
 
 	void runAboutDialog();
-	bool runOpenDialog();
-	bool runSaveDialog();
+	bool runOpenDialog(int &saveSlotToHandle);
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
 	bool runOptionsDialog();
 
 private:
@@ -667,8 +671,8 @@ protected:
 	bool handleMenu(int id, Common::String &name);
 
 	void runAboutDialog();
-	bool runOpenDialog();
-	bool runSaveDialog();
+	bool runOpenDialog(int &saveSlotToHandle);
+	bool runSaveDialog(int &saveSlotToHandle, Common::String &name);
 	bool runOptionsDialog();
 	bool runIqPointsDialog();
 
