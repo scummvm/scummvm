@@ -443,9 +443,9 @@ Common::Error SciEngine::loadGameState(int slot) {
 
 Common::Error SciEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	const char *version = "";
-	g_sci->_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
+	_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)
 	const bool res = gamestate_save(_gamestate, slot, desc, version);
-	g_sci->_soundCmd->pauseAll(true); // pause music
+	_soundCmd->pauseAll(true); // pause music
 	return res ? Common::kNoError : Common::kWritingFailed;
 }
 

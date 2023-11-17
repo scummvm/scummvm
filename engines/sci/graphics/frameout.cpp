@@ -328,7 +328,7 @@ void GfxFrameout::kernelDeletePlane(const reg_t object) {
 		_planes.erase(plane);
 	} else {
 		plane->_created = 0;
-		plane->_deleted = g_sci->_gfxFrameout->getScreenCount();
+		plane->_deleted = getScreenCount();
 	}
 }
 

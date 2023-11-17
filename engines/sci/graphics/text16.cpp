@@ -908,7 +908,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
 
 	if (_macFontManager->usesSystemFonts() && 
-		g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
+		_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		// QFG1VGA and LSL6 make this adjustment when the large font is used.
 		*textHeight -= (lineCount + 1);
 	}
@@ -927,7 +927,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 	// Use the large font in hires mode, otherwise use the small font
 	const Graphics::Font *font;
 	uint16 scale;
-	if (g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
+	if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		font = _macFontManager->getLargeFont(sciFontId);
 		scale = 2;
 	} else {
@@ -936,7 +936,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 	}
 
 	if (color == -1) {
-		color = g_sci->_gfxPorts->_curPort->penClr;
+		color = _ports->_curPort->penClr;
 	}
 
 	rect.left *= scale;
@@ -946,7 +946,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 
 	// Draw each line of text
 	int16 maxWidth = rect.width();
-	int16 y = (g_sci->_gfxPorts->_curPort->top * scale) + rect.top;
+	int16 y = (_ports->_curPort->top * scale) + rect.top;
 	for (uint i = 0; i < text.size(); ++i) {
 		int16 lineWidth;
 		int16 lineCharCount = macGetLongest(text, i, font, maxWidth, &lineWidth);
@@ -962,10 +962,10 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 		}
 
 		// Draw each character in the line
-		int16 x = (g_sci->_gfxPorts->_curPort->left * scale) + rect.left + offset;
+		int16 x = (_ports->_curPort->left * scale) + rect.left + offset;
 		for (int16 j = 0; j < lineCharCount; ++j) {
 			char ch = text[i + j];
-			g_sci->_gfxScreen->putMacChar(font, x, y, ch, color);
+			_screen->putMacChar(font, x, y, ch, color);
 			x += font->getCharWidth(ch);
 		}
 

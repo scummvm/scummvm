@@ -178,7 +178,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	CursorMan.replaceCursor(rawBitmap->getUnsafeDataAt(0, heightWidth * heightWidth), heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		byte buf[3*256];
-		g_sci->_gfxScreen->grabPalette(buf, 0, 256);
+		_screen->grabPalette(buf, 0, 256);
 		CursorMan.replaceCursorPalette(buf, 0, 256);
 	}
 
@@ -255,7 +255,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	}
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		byte buf[3*256];
-		g_sci->_gfxScreen->grabPalette(buf, 0, 256);
+		_screen->grabPalette(buf, 0, 256);
 		CursorMan.replaceCursorPalette(buf, 0, 256);
 	}
 
@@ -412,7 +412,7 @@ void GfxCursor::refreshPosition() {
 		CursorMan.replaceCursor(_cursorSurface->getUnsafeDataAt(0, cursorCelInfo->width * cursorCelInfo->height), cursorCelInfo->width, cursorCelInfo->height, cursorHotspot.x, cursorHotspot.y, cursorCelInfo->clearKey);
 		if (g_system->getScreenFormat().bytesPerPixel != 1) {
 			byte buf[3*256];
-			g_sci->_gfxScreen->grabPalette(buf, 0, 256);
+			_screen->grabPalette(buf, 0, 256);
 			CursorMan.replaceCursorPalette(buf, 0, 256);
 		}
 	}

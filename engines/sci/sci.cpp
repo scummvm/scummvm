@@ -587,9 +587,6 @@ bool SciEngine::initGame() {
 }
 
 void SciEngine::initGraphics() {
-	if (hasMacIconBar())
-		_gfxMacIconBar = new GfxMacIconBar();
-
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gfxPalette32 = new GfxPalette32(_resMan);
@@ -630,7 +627,7 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette16);
 		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette16, _gfxTransitions, _audio);
-		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
+		_gfxAnimate = new GfxAnimate(_gamestate, _scriptPatcher, _gfxCache, _gfxCompare, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette16, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxMacFontManager);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
@@ -640,6 +637,9 @@ void SciEngine::initGraphics() {
 		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
 		_gfxPaint16->init(_gfxAnimate, _gfxText16);
 
+		if (hasMacIconBar()) {
+			_gfxMacIconBar = new GfxMacIconBar(_resMan, _eventMan, _gamestate->_segMan, _gfxScreen, _gfxPalette16);
+		}
 #ifdef ENABLE_SCI32
 	}
 #endif
@@ -718,8 +718,7 @@ void SciEngine::runGame() {
 void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
 	// Detailed context can only be included if VM execution has begun.
 	EngineState *s = _gamestate;
-	Kernel *kernel = g_sci ? g_sci->getKernel() : nullptr;
-	if (s != nullptr && !s->_executionStack.empty() && kernel != nullptr) {
+	if (s != nullptr && !s->_executionStack.empty() && _kernel != nullptr) {
 		// Determine the name of the current function and the pc
 		Common::String function;
 		// Query the top-most stack frame even if it's not committed yet within the VM cycle.
@@ -729,7 +728,7 @@ void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_out
 		case EXEC_STACK_TYPE_CALL: { // Script function
 			if (call.debugSelector != -1) {
 				const char *objectName = s->_segMan->getObjectName(call.sendp);
-				function = Common::String::format("%s::%s", objectName, kernel->getSelectorName(call.debugSelector).c_str());
+				function = Common::String::format("%s::%s", objectName, _kernel->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {
 				function = Common::String::format("export %d", call.debugExportId);
 			} else if (call.debugLocalCallOffset != -1) {
@@ -739,9 +738,9 @@ void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_out
 		}
 		case EXEC_STACK_TYPE_KERNEL: { // Kernel function
 			if (call.debugKernelSubFunction == -1) {
-				function = Common::String::format("k%s", kernel->getKernelName(call.debugKernelFunction).c_str());
+				function = Common::String::format("k%s", _kernel->getKernelName(call.debugKernelFunction).c_str());
 			} else {
-				function = Common::String::format("k%s", kernel->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
+				function = Common::String::format("k%s", _kernel->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
 			}
 			// Kernel calls do not have a pc. walk the stack back to the most recent for script number.
 			Common::List<ExecStack>::const_iterator it;
@@ -1055,7 +1054,7 @@ void SciEngine::loadMacFonts() {
 	// If we're unable to load Mac fonts, then fall back to using SCI fonts.
 	// Mac font support was added after these games were supported, so it's
 	// important to not require that fonts be present.
-	switch (g_sci->getGameId()) {
+	switch (getGameId()) {
 	case GID_CASTLEBRAIN:
 	case GID_FREDDYPHARKAS:
 	// case GID_KQ5: // not supported yet

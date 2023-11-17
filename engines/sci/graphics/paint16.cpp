@@ -630,12 +630,12 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 }
 
 reg_t GfxPaint16::kernelPortraitLoad(const Common::String &resourceName) {
-	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
+	//Portrait *myPortrait = new Portrait(_resMan, _screen, _palette, resourceName);
 	return NULL_REG;
 }
 
 void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), _screen, _palette, _audio, resourceName);
+	Portrait *myPortrait = new Portrait(_resMan, g_sci->getEventManager(), _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)

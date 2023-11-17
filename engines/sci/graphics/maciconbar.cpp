@@ -34,7 +34,8 @@
 
 namespace Sci {
 
-GfxMacIconBar::GfxMacIconBar() {
+GfxMacIconBar::GfxMacIconBar(ResourceManager *resMan, EventManager *eventMan, SegManager *segMan, GfxScreen *screen, GfxPalette *palette) :
+	_resMan(resMan), _eventMan(eventMan), _segMan(segMan), _screen(screen), _palette(palette)  {
 	if (g_sci->getGameId() == GID_FREDDYPHARKAS)
 		_inventoryIndex = 5;
 	else
@@ -43,7 +44,7 @@ GfxMacIconBar::GfxMacIconBar() {
 	_inventoryIcon = nullptr;
 	_allDisabled = true;
 	
-	_isUpscaled = (g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400);
+	_isUpscaled = (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400);
 }
 
 GfxMacIconBar::~GfxMacIconBar() {
@@ -83,7 +84,7 @@ void GfxMacIconBar::freeIcons() {
 
 void GfxMacIconBar::addIcon(reg_t obj) {
 	IconBarItem item;
-	uint32 iconIndex = readSelectorValue(g_sci->getEngineState()->_segMan, obj, SELECTOR(iconIndex));
+	uint32 iconIndex = readSelectorValue(_segMan, obj, SELECTOR(iconIndex));
 
 	item.object = obj;
 	item.nonSelectedImage = createImage(iconIndex, false);
@@ -99,7 +100,7 @@ void GfxMacIconBar::addIcon(reg_t obj) {
 	uint16 x = _iconBarItems.empty() ? 0 : _iconBarItems.back().rect.right;
 
 	// Start below the main viewing window and add a two pixel buffer
-	uint16 y = g_sci->_gfxScreen->getHeight() + 2;
+	uint16 y = _screen->getHeight() + 2;
 
 	if (item.nonSelectedImage)
 		item.rect = Common::Rect(x, y, MIN<uint32>(x + item.nonSelectedImage->w, 320), y + item.nonSelectedImage->h);
@@ -249,7 +250,7 @@ void GfxMacIconBar::setInventoryIcon(int16 icon) {
 }
 
 Graphics::Surface *GfxMacIconBar::loadPict(ResourceId id) {
-	Resource *res = g_sci->getResMan()->findResource(id, false);
+	Resource *res = _resMan->findResource(id, false);
 
 	if (!res || res->size() == 0)
 		return nullptr;
@@ -282,7 +283,7 @@ void GfxMacIconBar::remapColors(Graphics::Surface *surf, const byte *palette) {
 		byte g = palette[color * 3 + 1];
 		byte b = palette[color * 3 + 2];
 
-		*pixels++ = g_sci->_gfxPalette16->findMacIconBarColor(r, g, b);
+		*pixels++ = _palette->findMacIconBarColor(r, g, b);
 	}
 }
 
@@ -291,7 +292,6 @@ bool GfxMacIconBar::pointOnIcon(uint32 iconIndex, Common::Point point) {
 }
 
 bool GfxMacIconBar::handleEvents(SciEvent evt, reg_t &iconObj) {
-	EventManager *evtMgr = g_sci->getEventManager();
 	iconObj = NULL_REG;
 
 	// Not a mouse press
@@ -299,7 +299,7 @@ bool GfxMacIconBar::handleEvents(SciEvent evt, reg_t &iconObj) {
 		return false;
 
 	// If the mouse is not over the icon bar, return
-	if (evt.mousePos.y < g_sci->_gfxScreen->getHeight())
+	if (evt.mousePos.y < _screen->getHeight())
 		return false;
 
 	// Mouse press on the icon bar, check the icon rectangles
@@ -325,7 +325,7 @@ bool GfxMacIconBar::handleEvents(SciEvent evt, reg_t &iconObj) {
 			drawIcon(iconNr, isSelected);
 		}
 
-		evt = evtMgr->getSciEvent(kSciEventMouseRelease);
+		evt = _eventMan->getSciEvent(kSciEventMouseRelease);
 		g_system->delayMillis(10);
 	}
 
