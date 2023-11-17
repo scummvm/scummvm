@@ -2934,7 +2934,6 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 			case 0:
 			{
 				// User item
-				debug("user item %d, rect %d %d %d %d", i, r.left, r.top, r.right, r.bottom);
 
 				// Skip drive label box and listbox
 				bool doNotDraw = (isOpenDialog && (i == 6 || i == 7)) || ((isOpenDialog || isSaveDialog) && i == 3);
@@ -2965,7 +2964,6 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 					str = "Save Game File as...";
 
 				window->addStaticText(r, str, enabled);
-				debug("string \"%s\" item %d", str.c_str(), i);
 				break;
 
 			case 16:
@@ -2973,6 +2971,10 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 				// Editable text
 				MacGui::MacEditText *editText = window->addEditText(r, "Game file", enabled);
 				editText->selectAll();
+
+				// Ugly, UGLY hack!
+				((MacIndy3Gui *)(this))->_saveGameEditText = editText;
+
 				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), kBlack);
 				res->skip(len);
 				break;
@@ -2983,7 +2985,7 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 				break;
 
 			default:
-				warning("Unknown item type %d", type);
+				warning("MacGui::createDialog(): Unknown item type %d", type);
 				res->skip(len);
 				break;
 			}
@@ -5241,7 +5243,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
+	MacGui::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -5256,6 +5258,11 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 		if (clicked == 2)
 			break;
+
+		if (clicked == 10) {
+			saveSlotToHandle =
+				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
+		}
 	}
 
 	delete window;
@@ -5278,16 +5285,25 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	// 10 - "Series: ^1" text
 	// 11 - "(Indy Quotient)" text
 
+	_saveGameEditText = nullptr;
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
-	bool availSlots[100];
+	bool busySlots[100];
 	int slotIds[100];
 	Common::StringArray savegameNames;
-	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
+	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+
+	int firstAvailableSlot = -1;
+	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
+		if (!busySlots[i]) {
+			firstAvailableSlot = i;
+			break;
+		}
+	}
 
 	window->addListBox(Common::Rect(16, 31, 199, 129), savegameNames, true, true);
 
@@ -5299,6 +5315,8 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 		if (clicked == 0) {
 			ret = true;
+			name = _saveGameEditText->getText();
+			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 

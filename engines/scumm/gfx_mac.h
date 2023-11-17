@@ -642,6 +642,7 @@ public:
 	const Common::String name() const { return "Indy"; }
 
 	Graphics::Surface _textArea;
+	MacGui::MacEditText *_saveGameEditText = nullptr;
 
 	const Graphics::Font *getFontByScummId(int32 id);
 
