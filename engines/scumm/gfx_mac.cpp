@@ -1554,18 +1554,17 @@ void MacGui::MacListBox::setRedraw(bool fullRedraw) {
 }
 
 void MacGui::MacListBox::updateTexts() {
-	if (_untouchableText)
-		return;
+	Color textColor = _untouchableText ? kLightGray : kBlack;
 
 	int offset = _slider->getValue();
 
 	for (uint i = 0; i < _textWidgets.size(); i++) {
 		_textWidgets[i]->setText(_texts[i + offset]);
 
-		if ((int)(i + offset) == _value)
+		if ((int)(i + offset) == _value && !_untouchableText)
 			_textWidgets[i]->setColor(kWhite, kBlack);
 		else
-			_textWidgets[i]->setColor(kBlack, kWhite);
+			_textWidgets[i]->setColor(textColor, kWhite);
 	}
 }
 
