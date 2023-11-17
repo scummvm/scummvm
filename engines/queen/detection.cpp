@@ -528,6 +528,8 @@ ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles,
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "CD";
 					desc.guiOptions = GAMEOPTION_ALT_INTRO;
+					if (desc.language == Common::HE_ISR)
+						desc.guiOptions = GUIO2(GAMEOPTION_ALT_INTRO, GAMEOPTION_ALT_FONT);
 				}
 
 				return ADDetectedGame(&desc);
