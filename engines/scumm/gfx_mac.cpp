@@ -1509,14 +1509,20 @@ void MacGui::MacPictureSlider::handleWheelDown() {
 // List box widget
 // ---------------------------------------------------------------------------
 
-MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled) : MacWidget(window, bounds, "ListBox", enabled), _texts(texts) {
+MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable) : MacWidget(window, bounds, "ListBox", enabled), _texts(texts) {
 	int pageSize = _bounds.height() / 16;
 
 	int numSlots = MIN<int>(pageSize, texts.size());
 
+	_untouchableText = contentUntouchable;
+	MacStaticText *tmp;
 	for (int i = 0; i < numSlots; i++) {
 		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 17, _bounds.top + 1 + 16 * (i + 1));
-		_textWidgets.push_back(new MacStaticText(window, r, texts[i], enabled));
+		tmp = new MacStaticText(window, r, texts[i], enabled);
+		if (contentUntouchable)
+			tmp->setColor(kLightGray, kWhite);
+
+		_textWidgets.push_back(tmp);
 	}
 
 	_slider = new MacSlider(window, Common::Rect(_bounds.right - 16, _bounds.top, _bounds.right, _bounds.bottom), 0, texts.size() - pageSize, pageSize, enabled);
@@ -1547,6 +1553,9 @@ void MacGui::MacListBox::setRedraw(bool fullRedraw) {
 }
 
 void MacGui::MacListBox::updateTexts() {
+	if (_untouchableText)
+		return;
+
 	int offset = _slider->getValue();
 
 	for (uint i = 0; i < _textWidgets.size(); i++) {
@@ -1852,8 +1861,8 @@ void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
-MacGui::MacListBox *MacGui::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled) {
-	MacGui::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled);
+MacGui::MacListBox *MacGui::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable) {
+	MacGui::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled, contentUntouchable);
 	_widgets.push_back(listBox);
 	return listBox;
 }
@@ -2495,6 +2504,8 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	// to replicate that effect.
 
 	_windowManager->getMenu()->closeMenu();
+	int saveSlotToHandle = -1;
+	Common::String savegameName;
 
 	switch (id) {
 	case 100:	// About
@@ -2502,12 +2513,20 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 200:	// Open
-		if (runOpenDialog())
-			debug("Open a saved game");
+		if (runOpenDialog(saveSlotToHandle)) {
+			if (saveSlotToHandle > -1) {
+				_vm->loadGameState(saveSlotToHandle);
+			}
+		}
+
 		return true;
 
 	case 201:	// Save
-		if (runSaveDialog())
+		if (runSaveDialog(saveSlotToHandle, savegameName)) {
+			if (saveSlotToHandle > -1) {
+				_vm->saveGameState(saveSlotToHandle, savegameName);
+			}
+		}
 			debug("Save a game");
 		return true;
 
@@ -2977,6 +2996,31 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 // Standard dialogs
 // ---------------------------------------------------------------------------
 
+void MacGui::prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size) {
+	int saveCounter = 0;
+
+	for (int i = 0; i < size; i++) {
+		slotIds[i] = -1;
+	}
+
+	Common::String name;
+	_vm->listSavegames(availSlots, size);
+
+	for (int i = 0; i < size; i++) {
+		if (availSlots[i]) {
+			// Save the slot ids for slots which actually contain savegames...
+			slotIds[saveCounter] = i;
+			saveCounter++;
+			if (_vm->getSavegameName(i, name)) {
+				savegameNames.push_back(Common::String::format("%s", name.c_str()));
+			} else {
+				// The original printed "WARNING... old savegame", but we do support old savegames :-)
+				savegameNames.push_back(Common::String::format("%s", "WARNING: wrong save version"));
+			}
+		}
+	}
+}
+
 bool MacGui::runOkCancelDialog(Common::String text) {
 	// Widgets:
 	//
@@ -3422,7 +3466,7 @@ void MacLoomGui::runAboutDialog() {
 // A standard file picker dialog doesn't really make sense in ScummVM, so we
 // make something that just looks similar to one.
 
-bool MacLoomGui::runOpenDialog() {
+bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 	Common::Rect bounds(88, 28, 448, 208);
 
 	MacDialogWindow *window = createWindow(bounds);
@@ -3431,31 +3475,10 @@ bool MacLoomGui::runOpenDialog() {
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
 
-	bool availSaves[100];
-	int saveIds[100];
-	int saveCounter = 0;
-
-	for (int i = 0; i < ARRAYSIZE(saveIds); i++) {
-		saveIds[i] = -1;
-	}
-
-	Common::String name;
+	bool availSlots[100];
+	int slotIds[100];
 	Common::StringArray savegameNames;
-	_vm->listSavegames(availSaves, ARRAYSIZE(availSaves));
-
-	for (int i = 0; i < ARRAYSIZE(availSaves); i++) {
-		if (availSaves[i]) {
-			// Save the slot ids for slots which actually contain savegames...
-			saveIds[saveCounter] = i;
-			saveCounter++;
-			if (_vm->getSavegameName(i, name)) {
-				savegameNames.push_back(Common::String::format("%s", name.c_str()));
-			} else {
-				// The original printed "WARNING... old savegame", but we do support old savegames :-)
-				savegameNames.push_back(Common::String::format("%s", "WARNING: wrong save version"));
-			}
-		}
-	}
+	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
 	window->addListBox(Common::Rect(14, 13, 217, 159), savegameNames, true);
 
@@ -3474,13 +3497,19 @@ bool MacLoomGui::runOpenDialog() {
 
 		if (clicked == 1)
 			break;
+
+		if (clicked == 3) {
+			saveSlotToHandle =
+				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
+				slotIds[window->getWidgetValue(3)] : -1;
+		}
 	}
 
 	delete window;
 	return ret;
 }
 
-bool MacLoomGui::runSaveDialog() {
+bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	Common::Rect bounds(110, 27, 470, 231);
 
 	MacDialogWindow *window = createWindow(bounds);
@@ -3488,7 +3517,19 @@ bool MacLoomGui::runSaveDialog() {
 	window->addButton(Common::Rect(254, 159, 334, 179), "Save", true);
 	window->addButton(Common::Rect(254, 128, 334, 148), "Cancel", true);
 	window->addButton(Common::Rect(254, 83, 334, 103), "Delete", true);
-	window->addSlider(216, 9, 128, 0, 100, 9, true);
+	bool busySlots[100];
+	int slotIds[100];
+	Common::StringArray savegameNames;
+	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
+	int firstAvailableSlot = -1;
+	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
+		if (!busySlots[i]) {
+			firstAvailableSlot = i;
+			break;
+		}
+	}
+
+	window->addListBox(Common::Rect(14, 9, 217, 137), savegameNames, true, true);
 
 	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
@@ -3496,7 +3537,6 @@ bool MacLoomGui::runSaveDialog() {
 	const Graphics::Font *font = getFont(kSystemFont);
 
 	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
-	s->frameRect(Common::Rect(14, 9, 217, 137), kBlack);
 
 	s->hLine(253, 115, 334, kBlack);
 
@@ -3508,19 +3548,13 @@ bool MacLoomGui::runSaveDialog() {
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
 
-	_vm->_firstSaveStateOfList = window->getWidgetValue(3);
-	_vm->fillSavegameLabels();
-
-	MacGui::MacStaticText *savegameNames[8];
-	for (int i = 0; i < 8; i++) {
-		savegameNames[i] = window->addStaticText(Common::Rect(16, 10 + i * 16, 200, 30 + i * 15), _vm->_savegameNames[i], true);
-	}
-
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog();
 		debug("clicked %d", clicked);
 		if (clicked == 0) {
 			ret = true;
+			name = editText->getText();
+			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 
@@ -3529,16 +3563,6 @@ bool MacLoomGui::runSaveDialog() {
 
 		if (clicked == 2) {
 			runOkCancelDialog("Are you sure you want to delete the saved game?");
-		}
-
-		if (clicked == 3) {
-			_vm->_firstSaveStateOfList = window->getWidgetValue(3);
-			_vm->fillSavegameLabels();
-			for (int i = 0; i < 8; i++) {
-				savegameNames[i]->setText(_vm->_savegameNames[i]);
-				savegameNames[i]->setRedraw();
-				savegameNames[i]->draw();
-			}
 		}
 	}
 
@@ -5177,7 +5201,7 @@ void MacIndy3Gui::clearAboutDialog(MacDialogWindow *window) {
 	window->fillPattern(Common::Rect(2, 136, s->w - 2, s->h - 4), 0xA5A5);
 }
 
-bool MacIndy3Gui::runOpenDialog() {
+bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	// Widgets:
 	//
 	// 0 - Open button
@@ -5220,7 +5244,7 @@ bool MacIndy3Gui::runOpenDialog() {
 	return ret;
 }
 
-bool MacIndy3Gui::runSaveDialog() {
+bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	// Widgets:
 	//
 	// 0 - Save button
