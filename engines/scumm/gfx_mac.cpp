@@ -1022,7 +1022,7 @@ MacGui::MacSlider::MacSlider(MacGui::MacDialogWindow *window, Common::Rect bound
 }
 
 bool MacGui::MacSlider::findWidget(int x, int y) const {
-	if (_maxValue - _minValue <= _pageSize)
+	if (!isScrollable())
 		return false;
 
 	Common::Rect bounds = _bounds;
@@ -1102,7 +1102,7 @@ void MacGui::MacSlider::draw(bool drawFocused) {
 
 		Common::Rect fillRect(_boundsBody.left + 1, _boundsBody.top, _boundsBody.right - 1, _boundsBody.bottom);
 
-		if (_maxValue - _minValue > _pageSize) {
+		if (isScrollable()) {
 			fill(fillRect);
 
 			Common::Rect handleRect = getHandleRect(_value);
@@ -1517,7 +1517,7 @@ MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bou
 	_untouchableText = contentUntouchable;
 	MacStaticText *tmp;
 	for (int i = 0; i < numSlots; i++) {
-		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 17, _bounds.top + 1 + 16 * (i + 1));
+		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 16, _bounds.top + 1 + 16 * (i + 1));
 		tmp = new MacStaticText(window, r, texts[i], enabled);
 		if (contentUntouchable)
 			tmp->setColor(kLightGray, kWhite);
@@ -1651,43 +1651,30 @@ void MacGui::MacListBox::handleMouseHeld() {
 }
 
 void MacGui::MacListBox::handleWheelUp() {
-	Common::Point mousePos = _window->getMousePos();
-
-	if (_slider->findWidget(mousePos.x, mousePos.y)) {
-		_slider->handleWheelUp();
-		updateTexts();
-		return;
-	}
-
-	int oldValue = _slider->getValue();
-
-	_slider->setValue(oldValue - 1);
-
-	// FIXME: This is not the most efficient way of redrawing the slider
-
-	if (_slider->getValue() != oldValue) {
-		_slider->setRedraw(true);
-		updateTexts();
-	}
+	handleWheel(-1);
 }
 
 void MacGui::MacListBox::handleWheelDown() {
-	Common::Point mousePos = _window->getMousePos();
+	handleWheel(1);
+}
 
-	if (_slider->findWidget(mousePos.x, mousePos.y)) {
-		_slider->handleWheelDown();
+void MacGui::MacListBox::handleWheel(int distance) {
+	if (!_slider->isScrollable())
 		return;
-	}
 
+	Common::Point mousePos = _window->getMousePos();
 	int oldValue = _slider->getValue();
 
-	_slider->setValue(oldValue + 1);
+	if (_slider->findWidget(mousePos.x, mousePos.y))
+		distance *= _slider->getPageSize();
 
-	// FIXME: This is not the most efficient way of redrawing the slider
+	_slider->setValue(oldValue + distance);
 
-	if (_slider->getValue() != oldValue) {
-		_slider->setRedraw(true);
+	int newValue = _slider->getValue();
+
+	if (newValue != oldValue) {
 		updateTexts();
+		_slider->redrawHandle(oldValue, newValue);
 	}
 }
 
@@ -3473,6 +3460,9 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 	window->addButton(Common::Rect(254, 135, 334, 155), "Open", true);
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
+
+	Graphics::Surface *s = window->innerSurface();
+	s->hLine(253, 91, 334, kBlack);
 
 	bool availSlots[100];
 	int slotIds[100];
