@@ -367,13 +367,16 @@ public:
 
 		void eraseDragHandle();
 		void drawHandle(Common::Rect r);
-		void redrawHandle(int oldValue, int newValue);
 
 	public:
 		MacSlider(MacGui::MacDialogWindow *window, Common::Rect bounds, int minValue, int maxValue, int pageSize, bool enabled);
 
+		bool isScrollable() const { return (_maxValue - _minValue) > 0; }
+		int getPageSize() const { return _pageSize; }
+
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocued = false);
+		void redrawHandle(int oldValue, int newValue);
 
 		void handleMouseDown(Common::Event &event);
 		void handleMouseUp(Common::Event &event);
@@ -420,6 +423,7 @@ public:
 		bool _untouchableText = false;
 
 		void updateTexts();
+		void handleWheel(int distance);
 
 	public:
 		MacListBox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable = true);
