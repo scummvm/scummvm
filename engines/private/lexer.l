@@ -21,6 +21,7 @@
 
 %option noyywrap
 %option noinput
+%option nounput
 %option never-interactive
 
 %option outfile="engines/private/lexer.cpp"
@@ -57,6 +58,9 @@ using namespace Settings;
 debug				    return DEBUGTOK;
 define				    return DEFINETOK;
 setting				    return SETTINGTOK;
+EmitCodeOff				return EMITCODEOFFTOK;
+EmitCodeOn				return EMITCODEONTOK;
+ResetIDCounter			return RESETIDTOK;
 if					    return IFTOK;
 else				    return ELSETOK;
 goto					return GOTOTOK;

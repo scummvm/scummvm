@@ -179,6 +179,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"private-eye",  // JP release
+		nullptr,
+		AD_ENTRY2s("pvteye.z", "f5fb6e89e98294a09ff21e72282b58dc", 239066,
+		   "intro.smk", "b8d15a522f896ccbe4539394b6b8ec8a", 7202836),
+		Common::JA_JPN,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"private-eye", // MacOS release (US)
 		nullptr,
 		AD_ENTRY2s("game.mac", "d:33553cc04813d3f658bbe9d548377878", 81894,

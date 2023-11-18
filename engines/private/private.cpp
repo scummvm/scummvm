@@ -49,8 +49,8 @@ extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr), 
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), 
+	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -233,7 +233,7 @@ Common::Error PrivateEngine::run() {
 	// Load the game frame once
 	byte *palette;
 	_frameImage = decodeImage(_framePath, nullptr);
-	_mframeImage = decodeImage(_framePath, &palette); 
+	_mframeImage = decodeImage(_framePath, &palette);
 
 	_framePalette = (byte *) malloc(3*256);
 	memcpy(_framePalette, palette, 3*256);
@@ -557,7 +557,7 @@ Common::String PrivateEngine::getPauseMovieSetting() {
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR) && _platform != Common::kPlatformMacintosh)
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS || _language == Common::KO_KOR || _language == Common::JA_JPN) && _platform != Common::kPlatformMacintosh)
 		return "kGoIntro";
 
 	return "k1";
@@ -1400,9 +1400,9 @@ void PrivateEngine::drawScreen() {
 				drawScreenFrame(videoPalette);
 			}
 		}
-		
+
 		// No use of _compositeSurface, we write the frame directly to the screen in the expected position
-		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);	
+		g_system->copyRectToScreen(frame->getPixels(), frame->pitch, center.x, center.y, frame->w, frame->h);
 	} else {
 		byte newPalette[256 * 3];
 		_compositeSurface->grabPalette(newPalette, 0, 256);

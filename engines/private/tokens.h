@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.2.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -77,9 +77,12 @@ extern int PRIVATE_debug;
     RECT = 270,                    /* RECT  */
     GOTOTOK = 271,                 /* GOTOTOK  */
     DEBUGTOK = 272,                /* DEBUGTOK  */
-    DEFINETOK = 273,               /* DEFINETOK  */
-    SETTINGTOK = 274,              /* SETTINGTOK  */
-    RANDOMTOK = 275                /* RANDOMTOK  */
+    EMITCODEONTOK = 273,           /* EMITCODEONTOK  */
+    EMITCODEOFFTOK = 274,          /* EMITCODEOFFTOK  */
+    RESETIDTOK = 275,              /* RESETIDTOK  */
+    DEFINETOK = 276,               /* DEFINETOK  */
+    SETTINGTOK = 277,              /* SETTINGTOK  */
+    RANDOMTOK = 278                /* RANDOMTOK  */
   };
   typedef enum PRIVATE_tokentype PRIVATE_token_kind_t;
 #endif
@@ -88,15 +91,15 @@ extern int PRIVATE_debug;
 #if ! defined PRIVATE_STYPE && ! defined PRIVATE_STYPE_IS_DECLARED
 union PRIVATE_STYPE
 {
-#line 80 "engines/private/grammar.y"
+#line 79 "engines/private/grammar.y"
 
-        Private::Symbol *sym; /* symbol table pointer */
-        int (**inst)();       /* machine instruction */
-        char *s;              /* string value */
-        int *i;               /* integer value */
-        int narg;             /* auxiliary value to count function arguments */
+	Private::Symbol *sym; /* symbol table pointer */
+	int (**inst)();       /* machine instruction */
+	char *s;	      /* string value */
+	int *i;	       /* integer value */
+	int narg;	     /* auxiliary value to count function arguments */
 
-#line 100 "engines/private/tokens.h"
+#line 103 "engines/private/tokens.h"
 
 };
 typedef union PRIVATE_STYPE PRIVATE_STYPE;
@@ -107,6 +110,8 @@ typedef union PRIVATE_STYPE PRIVATE_STYPE;
 
 extern PRIVATE_STYPE PRIVATE_lval;
 
+
 int PRIVATE_parse (void);
+
 
 #endif /* !YY_PRIVATE_ENGINES_PRIVATE_TOKENS_H_INCLUDED  */
