@@ -172,7 +172,7 @@ void GraphicsManager::drawSpriteToZBuffer(int x, int y, uint8 depth, const Graph
 			byte *target = (byte *)_renderSurface.getBasePtr(x1 + x, y1 + y);
 			const byte *source = (const byte *)surface.getBasePtr(x1, y1);
 
-			if (depth > _zBufferSurface[(y1 + y) * _sceneWidth + (x1 + x)]) {
+			if (depth > _zBufferSurface[(y1 + y) * _winWidth + (x1 + x)]) {
 
 				if (source[0] == 0xff) {
 					// Completely opaque, so copy RGB values over
@@ -193,8 +193,8 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 
 	fillZBuffer(0);
 
-	for (uint y1 = y; y1 < _zBuffer->height + y; y1++) {
-		for (uint x1 = x; x1 < _zBuffer->width + x; x1++) {
+	for (uint y1 = y; y1 < _winHeight + y; y1++) {
+		for (uint x1 = x; x1 < _winWidth + x; x1++) {
 
 			uint8 z = 0;
 
@@ -205,8 +205,8 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 			}
 
 
-			if ( z > _zBufferSurface[y1 * _winWidth + x1])
-				_zBufferSurface[y1 * _winWidth + x1] = z;
+			if ( z > _zBufferSurface[(y1 - y) * _winWidth + (x1 - x)])
+				_zBufferSurface[(y1 - y) * _winWidth + (x1 - x)] = z;
 
 		}
 	}
