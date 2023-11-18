@@ -163,7 +163,7 @@ public:
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0) const;
+		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
 	public:
@@ -420,7 +420,6 @@ public:
 		Common::Array<MacStaticText *> _textWidgets;
 		MacSlider *_slider;
 		bool _sliderFocused = false;
-		bool _untouchableText = false;
 
 		void updateTexts();
 		void handleWheel(int distance);
