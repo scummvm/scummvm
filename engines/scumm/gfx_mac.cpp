@@ -287,37 +287,7 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	int maxLineWidth = 0;
 
 	if (wordWrap) {
-		int start = 0;
-		int lineWidth = 0;
-		int lastSpace = -1;
-
-		for (uint i = 0; i < text.size(); i++) {
-			if (text[i] == ' ')
-				lastSpace = i;
-
-			lineWidth += font->getCharWidth(text[i]);
-
-			if (lineWidth > w) {
-				if (lastSpace > start)
-					i = lastSpace;
-
-				if (lineWidth > maxLineWidth)
-					maxLineWidth = lineWidth;
-
-				lines.push_back(text.substr(start, i - start));
-				lineWidth = 0;
-
-				if (lastSpace > start)
-					start = i + 1;
-				else
-					start = i;
-			}
-		}
-
-		lines.push_back(text.substr(start));
-
-		if (lineWidth > maxLineWidth)
-			maxLineWidth = lineWidth;
+		maxLineWidth = font->wordWrapText(text, w, lines);
 	} else {
 		lines.push_back(text);
 		maxLineWidth = font->getStringWidth(text);
