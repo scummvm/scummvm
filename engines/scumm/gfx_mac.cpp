@@ -239,7 +239,7 @@ MacGui::MacWidget::MacWidget(MacGui::MacDialogWindow *window, Common::Rect bound
 }
 
 bool MacGui::MacWidget::findWidget(int x, int y) const {
-	return _bounds.contains(x, y);
+	return _enabled && _bounds.contains(x, y);
 }
 
 void MacGui::MacWidget::setRedraw(bool fullRedraw) {
@@ -263,7 +263,7 @@ void MacGui::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color c
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
 }
 
-int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color color, Graphics::TextAlign align, int deltax) const {
+int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, int deltax) const {
 	if (text.empty())
 		return 0;
 
@@ -323,7 +323,7 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	int y0 = y;
 
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(_window->innerSurface(), lines[i], x, y0, w, color, align, deltax);
+		font->drawString(_window->innerSurface(), lines[i], x, y0, w, fg, align, deltax);
 
 		if (!_enabled) {
 			Common::Rect textBox = font->getBoundingBox(lines[i], x, y0, w, align);
@@ -331,7 +331,7 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 			for (int y1 = textBox.top; y1 < textBox.bottom; y1++) {
 				for (int x1 = textBox.left; x1 < textBox.right; x1++) {
 					if (((x1 + y1) % 2) == 0)
-						_window->innerSurface()->setPixel(x1, y1, kWhite);
+						_window->innerSurface()->setPixel(x1, y1, bg);
 				}
 			}
 		}
@@ -404,7 +404,7 @@ void MacGui::MacButton::draw(bool drawFocused) {
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
-	drawText(_text, _bounds.left, _bounds.top + (_bounds.height() - font->getFontHeight()) / 2, _bounds.width(), fg, Graphics::kTextAlignCenter);
+	drawText(_text, _bounds.left, _bounds.top + (_bounds.height() - font->getFontHeight()) / 2, _bounds.width(), fg, bg, Graphics::kTextAlignCenter);
 
 	Common::Rect bounds = _bounds;
 
@@ -490,7 +490,7 @@ void MacGui::MacCheckbox::draw(bool drawFocused) {
 		int x = _hitBounds.left + 18;
 		int y = _hitBounds.top;
 
-		drawText(_text, x, y, _hitBounds.right - x, kBlack);
+		drawText(_text, x, y, _hitBounds.right - x);
 		_window->markRectAsDirty(_bounds);
 	} else
 		_window->markRectAsDirty(box);
@@ -528,7 +528,7 @@ void MacGui::MacStaticText::draw(bool drawFocused) {
 	debug(1, "MacGui::MacStaticText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	_window->innerSurface()->fillRect(_bounds, _bg);
-	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, Graphics::kTextAlignLeft, 1);
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, _bg, Graphics::kTextAlignLeft, 1);
 	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
@@ -1515,14 +1515,12 @@ MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bou
 
 	int numSlots = MIN<int>(pageSize, texts.size());
 
-	_untouchableText = contentUntouchable;
 	MacStaticText *tmp;
 	for (int i = 0; i < numSlots; i++) {
 		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 16, _bounds.top + 1 + 16 * (i + 1));
 		tmp = new MacStaticText(window, r, texts[i], enabled);
 		if (contentUntouchable)
-			tmp->setColor(kLightGray, kWhite);
-
+			tmp->setEnabled(false);
 		_textWidgets.push_back(tmp);
 	}
 
@@ -1554,17 +1552,15 @@ void MacGui::MacListBox::setRedraw(bool fullRedraw) {
 }
 
 void MacGui::MacListBox::updateTexts() {
-	Color textColor = _untouchableText ? kLightGray : kBlack;
-
 	int offset = _slider->getValue();
 
 	for (uint i = 0; i < _textWidgets.size(); i++) {
 		_textWidgets[i]->setText(_texts[i + offset]);
 
-		if ((int)(i + offset) == _value && !_untouchableText)
+		if (_textWidgets[i]->isEnabled() && (int)i + offset == _value)
 			_textWidgets[i]->setColor(kWhite, kBlack);
 		else
-			_textWidgets[i]->setColor(textColor, kWhite);
+			_textWidgets[i]->setColor(kBlack, kWhite);
 	}
 }
 
