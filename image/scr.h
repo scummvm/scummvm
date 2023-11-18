@@ -19,21 +19,29 @@
  *
  */
 
-#ifndef FREESCAPE_SCR_H
-#define FREESCAPE_SCR_H
+#ifndef IMAGE_SCR_H
+#define IMAGE_SCR_H
 
 #include "image/image_decoder.h"
 
-/*
-ZX-Spectrum SCREEN$ decoder based on:
-https://gist.github.com/alexanderk23/f459c76847d9412548f7
-*/
+/**
+ * @defgroup image_scr SCR decoder
+ * @ingroup image
+ *
+ * @brief Decoder for ZX-Spectrum SCREEN$ based on:
+ * https://gist.github.com/alexanderk23/f459c76847d9412548f7
+ *
+ *
+ * Used in engines:
+ * - Freescape
+ * @{
+ */
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Freescape {
+namespace Image {
 
 class ScrDecoder : public Image::ImageDecoder {
 public:
@@ -49,6 +57,6 @@ private:
 	uint32 getPixelAddress(int x, int y);
 	uint32 getAttributeAddress(int x, int y);
 };
-} // End of namespace Freescape
+} // End of namespace Image
 
-#endif // FREESCAPE_SCR_H
+#endif // IMAGE_SCR_H

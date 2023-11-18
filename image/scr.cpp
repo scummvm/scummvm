@@ -24,9 +24,9 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-#include "freescape/scr.h"
+#include "image/scr.h"
 
-namespace Freescape {
+namespace Image {
 
 ScrDecoder::ScrDecoder() {
 	_surface = nullptr;
@@ -102,4 +102,4 @@ bool ScrDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-} // End of namespace Freescape
+} // End of namespace Image
