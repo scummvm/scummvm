@@ -51,6 +51,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese EOB2.
    - Added support for the PC-98 version of EOB2.
 
+ Private:
+   - Added support for the Japanese Windows release.
+
  SCUMM:
    - Added support for unpacked RuSCUMM patches for Russian localizations.
    - Allow usage of the official Monkey Island 1 Roland MT-32 patch with any
