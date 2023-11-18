@@ -5432,11 +5432,9 @@ bool MacIndy3Gui::runIqPointsDialog() {
 			break;
 
 		if (clicked == 1) {
-			window->replaceSubstitution(1, Common::String::format("%d", 0));
-
-			window->redrawWidget(4);
-
 			((ScummEngine_v4 *)_vm)->clearSeriesIQPoints();
+			window->replaceSubstitution(1, Common::String::format("%d", _vm->VAR(245)));
+			window->redrawWidget(4);
 		}
 	}
 
