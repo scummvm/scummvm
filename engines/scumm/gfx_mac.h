@@ -131,8 +131,6 @@ protected:
 	void prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlots, int *slotIds, int size);
 
 	bool runOkCancelDialog(Common::String text);
-	bool runQuitDialog();
-	bool runRestartDialog();
 
 public:
 	class MacDialogWindow;
@@ -586,6 +584,9 @@ public:
 	virtual void reset() {}
 	virtual void resetAfterLoad() = 0;
 	virtual void update(int delta) = 0;
+
+	bool runQuitDialog();
+	bool runRestartDialog();
 
 	virtual void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) = 0;
 
