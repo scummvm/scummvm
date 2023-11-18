@@ -474,11 +474,29 @@ struct PeopleYComperator {
 	}
 };
 
+template<typename T, class StrictWeakOrdering>
+void bubble_sort(T first, T last, StrictWeakOrdering comp) {
+    bool swapped;
+    do {
+        swapped = false;
+        for (T i = first; i != last; ++i) {
+            T j = i;
+            ++j;
+            if (j != last && comp(*j, *i)) {
+                SWAP(*i, *j);
+                swapped = true;
+            }
+        }
+    } while (swapped);
+}
+
 void PeopleManager::shufflePeople() {
 	if (_allPeople->empty())
 		return;
 
-	Common::sort(_allPeople->begin(), _allPeople->end(), PeopleYComperator());
+	// Use a stable sorting algorithm to sort people to avoid
+	// equal elements moving around and causing flickering issues
+	bubble_sort(_allPeople->begin(), _allPeople->end(), PeopleYComperator());
 }
 
 void PeopleManager::drawPeople() {
