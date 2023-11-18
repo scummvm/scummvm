@@ -225,13 +225,21 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	// No lerping for this move
 	if (no_lerping) _extendedFlags |= EXT_LERP_NOPREV;
 
+	//
 	// If the destination is not in the fast area, and we are in
 	// the fast area, we need to call leaveFastArea, as long as we aren't
-	// being followed by the camera. We also disable lerping in such a case
+	// being followed by the camera. We also disable lerping in such a case.
+	//
+	// In Crusader, the camera does not directly track the avatar (instead
+	// it uses SnapProcess), so manually move the camera here when moving
+	// the controlled actor.
+	//
 	if (!dest_fast && (_flags & Item::FLG_FASTAREA)) {
 		_extendedFlags |= EXT_LERP_NOPREV;
 		if (_extendedFlags & EXT_CAMERA)
 			CameraProcess::GetCameraProcess()->itemMoved();
+		else if (GAME_IS_CRUSADER && this == getControlledActor() && (X || Y))
+			CameraProcess::GetCameraProcess()->moveToLocation(X, Y, Z);
 		else
 			leaveFastArea();
 
