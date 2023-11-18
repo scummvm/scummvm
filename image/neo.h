@@ -19,20 +19,28 @@
  *
  */
 
-#ifndef FREESCAPE_NEO_H
-#define FREESCAPE_NEO_H
+#ifndef IMAGE_NEO_H
+#define IMAGE_NEO_H
 
 #include "image/image_decoder.h"
 
-/*
-Atari-ST Neochrome decoder based on NEOLoad by Jason "Joefish" Railton
-*/
+/**
+ * @defgroup image_neo Neochrome decoder
+ * @ingroup image
+ *
+ * @brief Atari-ST Neochrome decoder based on NEOLoad by Jason "Joefish" Railton
+ *
+ *
+ * Used in engines:
+ * - Freescape
+ * @{
+ */
 
 namespace Common {
 class SeekableReadStream;
 }
 
-namespace Freescape {
+namespace Image {
 
 class NeoDecoder : public Image::ImageDecoder {
 public:
@@ -52,6 +60,6 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
-} // End of namespace Freescape
+} // End of namespace Image
 
-#endif // FREESCAPE_NEO_H
+#endif // IMAGE_NEO_H

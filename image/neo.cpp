@@ -24,9 +24,9 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-#include "freescape/neo.h"
+#include "image/neo.h"
 
-namespace Freescape {
+namespace Image {
 
 NeoDecoder::NeoDecoder(byte *palette) {
 	_surface = nullptr;
@@ -119,4 +119,4 @@ bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-} // End of namespace Freescape
+} // End of namespace Image

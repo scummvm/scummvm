@@ -25,11 +25,11 @@
 #include "common/random.h"
 #include "common/timer.h"
 #include "graphics/cursorman.h"
+#include "image/neo.h"
+#include "image/scr.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
-#include "freescape/neo.h"
-#include "image/scr.h"
 #include "freescape/objects/sensor.h"
 
 namespace Freescape {
@@ -877,7 +877,7 @@ void FreescapeEngine::clearTemporalMessages() {
 
 byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset) {
 	stream->seek(offset);
-	NeoDecoder decoder;
+	Image::NeoDecoder decoder;
 	decoder.loadStream(*stream);
 	byte *palette = (byte *)malloc(16 * 3 * sizeof(byte));
 	memcpy(palette, decoder.getPalette(), 16 * 3 * sizeof(byte));
@@ -886,7 +886,7 @@ byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream
 
 Graphics::ManagedSurface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette) {
 	stream->seek(offset);
-	NeoDecoder decoder(palette);
+	Image::NeoDecoder decoder(palette);
 	decoder.loadStream(*stream);
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
 	surface->copyFrom(*decoder.getSurface());

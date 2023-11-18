@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	language/instruction.o \
 	metaengine.o \
 	movement.o \
-	neo.o \
 	objects/geometricobject.o \
 	objects/group.o \
 	objects/sensor.o \
