@@ -76,6 +76,8 @@ namespace Groovie {
  * +-----------+--------+-----------------------------------------+
  */
 
+const int kPieceCount = 21;
+
 class GalleryGame {
 public:
 	GalleryGame(bool easierAi) {
@@ -95,7 +97,7 @@ private:
 
 	void test();
 	void ensureSamanthaWins(int seed);
-	void testsWriteMove(int move, byte pieceStatus[]);
+	void testsWriteMove(int move, byte pieceStatus[kPieceCount]);
 };
 
 } // End of Groovie namespace
