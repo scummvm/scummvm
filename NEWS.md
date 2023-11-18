@@ -40,6 +40,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Dragons:
    - Implemented localizations for the copyright screen and main menu.
 
+ Freescape:
+   - Improved collision and projectile detection using sweepAABB
+
  GrimE:
    - Added support for Chinese Grim Fandango.
    - Added support for Russian Grim Fandango translations from Fargus,
