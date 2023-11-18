@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-18 17:47+0000\n"
+"POT-Creation-Date: 2023-11-18 17:56+0000\n"
 "PO-Revision-Date: 2023-11-17 01:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5761,7 +5761,8 @@ msgstr "Автор перекладу проти того, щоб його пе�
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
 #: engines/gob/detection/tables_adi5.h:33
-#: engines/gob/detection/tables_adi5.h:51
+#: engines/gob/detection/tables_adi5.h:49
+#: engines/gob/detection/tables_adi5.h:67
 #: engines/gob/detection/tables_adibou3.h:32
 #: engines/gob/detection/tables_adibou3.h:47
 #: engines/gob/detection/tables_adibou3.h:65

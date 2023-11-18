@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-18 17:47+0000\n"
+"POT-Creation-Date: 2023-11-18 17:56+0000\n"
 "PO-Revision-Date: 2023-11-02 04:41+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5611,7 +5611,8 @@ msgstr "El traductor fan no vol que la seva traducció s'incorpori a ScummVM."
 #: engines/bladerunner/detection_tables.h:123 engines/cge/detection.cpp:54
 #: engines/cge/detection.cpp:60 engines/cge/detection.cpp:66
 #: engines/gob/detection/tables_adi5.h:33
-#: engines/gob/detection/tables_adi5.h:51
+#: engines/gob/detection/tables_adi5.h:49
+#: engines/gob/detection/tables_adi5.h:67
 #: engines/gob/detection/tables_adibou3.h:32
 #: engines/gob/detection/tables_adibou3.h:47
 #: engines/gob/detection/tables_adibou3.h:65
