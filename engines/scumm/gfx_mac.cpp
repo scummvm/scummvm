@@ -1967,9 +1967,11 @@ void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	markRectAsDirty(r);
 }
 
-int MacGui::MacDialogWindow::runDialog() {
+int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 	// The first time the function is called, show the dialog and redraw
 	// all widgets completely.
+
+	deferredActionIds.clear();
 
 	if (!_visible) {
 		show();
@@ -2154,9 +2156,16 @@ int MacGui::MacDialogWindow::runDialog() {
 							_beamCursorVisible = false;
 							undrawBeamCursor();
 						}
+
+						if (_widgets[i]->shouldDeferAction())
+							deferredActionIds.push_back(_widgets[i]->getId());
+
 						break;
 					}
 				}
+
+				if (!deferredActionIds.empty())
+					return -2;
 
 				break;
 
@@ -2975,9 +2984,6 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 				MacGui::MacEditText *editText = window->addEditText(r, "Game file", enabled);
 				editText->selectAll();
 
-				// Ugly, UGLY hack!
-				((MacIndy3Gui *)(this))->_saveGameEditText = editText;
-
 				window->innerSurface()->frameRect(Common::Rect(r.left - 2, r.top - 3, r.right + 3, r.bottom + 3), kBlack);
 				res->skip(len);
 				break;
@@ -3051,8 +3057,10 @@ bool MacGui::runOkCancelDialog(Common::String text) {
 	// When quitting, the default action is to quit
 	bool ret = true;
 
+	Common::Array<int> deferredActionsIds;
+
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0)
 			break;
@@ -3503,9 +3511,10 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
@@ -3571,9 +3580,10 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
@@ -3584,6 +3594,19 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 		if (clicked == 1)
 			break;
+
+		if (clicked == -2) {
+			// Cycle through deferred actions
+			for (uint i = 0; i < deferredActionsIds.size(); i++) {
+				// Edit text widget
+				if (deferredActionsIds[i] == 4) {
+					MacGui::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
+
+					// Disable "Save" button when text is empty
+					window->getWidget(0)->setEnabled(!wid->getText().empty());
+				}
+			}
+		}
 	}
 
 	delete window;
@@ -3641,9 +3664,10 @@ bool MacLoomGui::runOptionsDialog() {
 
 	// When quitting, the default action is not to not apply options
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
@@ -5253,9 +5277,10 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
@@ -5291,7 +5316,6 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	// 10 - "Series: ^1" text
 	// 11 - "(Indy Quotient)" text
 
-	_saveGameEditText = nullptr;
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
 	window->setDefaultWidget(0);
@@ -5315,19 +5339,33 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	// When quitting, the default action is not to save a game
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
-			name = _saveGameEditText->getText();
+			name = window->getWidget(5)->getText(); // Edit text widget
 			saveSlotToHandle = firstAvailableSlot;
 			break;
 		}
 
 		if (clicked == 1)
 			break;
+
+		if (clicked == -2) {
+			// Cycle through deferred actions
+			for (uint i = 0; i < deferredActionsIds.size(); i++) {
+				// Edit text widget
+				if (deferredActionsIds[i] == 5) {
+					MacGui::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
+
+					// Disable "Save" button when text is empty
+					window->getWidget(0)->setEnabled(!wid->getText().empty());
+				}
+			}
+		}
 	}
 
 	delete window;
@@ -5370,9 +5408,10 @@ bool MacIndy3Gui::runOptionsDialog() {
 
 	// When quitting, the default action is not to not apply options
 	bool ret = false;
+	Common::Array<int> deferredActionsIds;
 
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
 			ret = true;
@@ -5430,8 +5469,10 @@ bool MacIndy3Gui::runIqPointsDialog() {
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(244)));
 	window->addSubstitution(Common::String::format("%d", _vm->VAR(245)));
 
+	Common::Array<int> deferredActionsIds;
+
 	while (!_vm->shouldQuit()) {
-		int clicked = window->runDialog();
+		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0)
 			break;
