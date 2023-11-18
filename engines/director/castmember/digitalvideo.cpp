@@ -28,6 +28,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
+#include "director/images.h"
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
@@ -228,7 +229,12 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		}
 	}
 	if (_lastFrame)
-		widget->getSurface()->blitFrom(*_lastFrame);
+		copyStretchImg(
+			_lastFrame,
+			widget->getSurface()->surfacePtr(),
+			Common::Rect((int16)_video->getWidth(), (int16)_video->getHeight()),
+			bbox
+		);
 
 	if (_getFirstFrame) {
 		_video->stop();

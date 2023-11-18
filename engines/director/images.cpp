@@ -319,4 +319,30 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
+void copyStretchImg(Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal) {
+	if (!(srcSurface) || !(targetSurface))
+		return;
+
+	Graphics::Surface *temp1 = nullptr;
+	Graphics::Surface *temp2 = nullptr;
+	// Convert source surface to target colourspace (if required)
+	if (srcSurface->format.bytesPerPixel != g_director->_wm->_pixelformat.bytesPerPixel) {
+		temp1 = srcSurface->convertTo(g_director->_wm->_pixelformat, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+	}
+	// Nearest-neighbour scale source surface to target dimensions (if required)
+	if (targetRect.width() != srcRect.width() || targetRect.height() != srcRect.height()) {
+		temp2 = (temp1 ? temp1 : srcSurface)->scale(targetRect.width(), targetRect.height(), false);
+	}
+	targetSurface->copyFrom(*(temp2 ? temp2 : (temp1 ? temp1 : srcSurface)));
+	if (temp1) {
+		temp1->free();
+		delete temp1;
+	}
+	if (temp2) {
+		temp2->free();
+		delete temp2;
+	}
+}
+
+
 } // End of namespace Director

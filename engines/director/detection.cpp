@@ -72,6 +72,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugSound, "sound", "Sound playback"},
 	{Director::kDebugText, "text", "Text rendering"},
 	{Director::kDebugXObj, "xobj", "XObjects"},
+	{Director::kDebugLingoThe, "lingothe", "Lingo \"the\" entities"},
 	DEBUG_CHANNEL_END
 };
 
