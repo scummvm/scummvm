@@ -84,6 +84,7 @@ enum {
 	kDebugSound			= 1 << 19,
 	kDebugConsole		= 1 << 20,
 	kDebugXObj			= 1 << 21,
+	kDebugLingoThe		= 1 << 22,
 };
 
 enum {

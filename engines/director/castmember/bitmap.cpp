@@ -255,7 +255,13 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
-	copyStretchImg(widget->getSurface()->surfacePtr(), bbox, pal);
+	copyStretchImg(
+		_ditheredImg ? _ditheredImg : &_picture->_surface,
+		widget->getSurface()->surfacePtr(),
+		_initialRect,
+		bbox,
+		pal
+	);
 
 	return widget;
 }
@@ -352,57 +358,6 @@ Graphics::Surface *BitmapCastMember::getDitherImg() {
 
 }
 
-void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox, const byte *pal) {
-	const Graphics::Surface *srcSurf;
-
-	if (_ditheredImg)
-		srcSurf = _ditheredImg;
-	else
-		srcSurf = &_picture->_surface;
-
-	if (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height()) {
-
-		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
-		int scaleY = SCALE_THRESHOLD * _initialRect.height() / bbox.height();
-
-		for (int y = 0, scaleYCtr = 0; y < bbox.height(); y++, scaleYCtr += scaleY) {
-			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
-				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
-					const byte *src = (const byte *)srcSurf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(byte *)surface->getBasePtr(x, y) = *src;
-				}
-			} else {
-				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
-					const void *ptr = srcSurf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					int32 color;
-
-					switch (srcSurf->format.bytesPerPixel) {
-					case 1:
-						{
-							color = *(const byte *)ptr * 3;
-							color = surface->format.RGBToColor(pal[color], pal[color + 1], pal[color + 2]);
-						}
-						break;
-					case 4:
-						color = *(const int32 *)ptr;
-						break;
-					default:
-						error("Unimplemented src bpp: %d", srcSurf->format.bytesPerPixel);
-					}
-
-					*(int32 *)surface->getBasePtr(x, y) = color;
-				}
-			}
-		}
-	} else if (srcSurf->format.bytesPerPixel == g_director->_wm->_pixelformat.bytesPerPixel) {
-		surface->copyFrom(*srcSurf);
-	} else {
-		Graphics::Surface *temp = srcSurf->convertTo(g_director->_wm->_pixelformat, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
-		surface->copyFrom(*temp);
-		delete temp;
-	}
-}
-
 bool BitmapCastMember::isModified() {
 	if (CastMember::isModified()) {
 		// Let's us use "setChanged" when changing the picture through Lingo
@@ -444,7 +399,12 @@ void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	Graphics::Surface tmp;
 	tmp.create(bbox.width(), bbox.height(), g_director->_pixelformat);
 
-	copyStretchImg(&tmp, bbox);
+	copyStretchImg(
+		_ditheredImg ? _ditheredImg : &_picture->_surface,
+		&tmp,
+		_initialRect,
+		bbox
+	);
 
 	_noMatte = true;
 

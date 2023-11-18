@@ -73,6 +73,13 @@ struct CachedFile {
 		"WOLFGANG.dat",	// It needs an empty file
 			(const byte *)"", 0
 	},
+	{ "teamxtreme1", Common::kPlatformWindows,
+		// In Operation: Weather Disaster, the game will try and check if the
+		// save file exists with getNthFileNameInFolder before attempting to
+		// read it with FileIO (which uses the save data store).
+		"WINDOWS/TX1SAVES",
+			(const byte *)"", 0
+	},
 	{ "teamxtreme2", Common::kPlatformWindows,
 		// In Operation: Eco-Nightmare, the game will try and check if the
 		// save file exists with getNthFileNameInFolder before attempting to

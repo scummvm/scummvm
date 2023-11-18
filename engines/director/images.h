@@ -26,6 +26,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class Rect;
 }
 
 namespace Graphics {
@@ -79,6 +80,8 @@ private:
 	uint16 _version;
 	uint16 _pitch;
 };
+
+void copyStretchImg(Graphics::Surface *srcSurface, Graphics::Surface *targetSurface, const Common::Rect &srcRect, const Common::Rect &targetRect, const byte *pal = 0);
 
 } // End of namespace Director
 

@@ -361,8 +361,8 @@ const char *Lingo::field2str(int id) {
 	warning("Lingo::getTheEntity(): Unprocessed getting entity %s", entity2str(entity));
 
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
-	if (debugChannelSet(3, kDebugLingoExec)) {
-		debugC(3, kDebugLingoExec, "Lingo::getTheEntity(%s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field));
+	if (debugChannelSet(3, kDebugLingoThe | kDebugLingoExec)) {
+		debugC(3, kDebugLingoThe | kDebugLingoExec, "Lingo::getTheEntity(%s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field));
 	}
 
 	Datum d;
@@ -921,8 +921,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	warning("Lingo::setTheEntity: Attempt to set read-only entity %s", entity2str(entity));
 
 void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
-	if (debugChannelSet(3, kDebugLingoExec)) {
-		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
+	if (debugChannelSet(3, kDebugLingoThe | kDebugLingoExec)) {
+		debugC(3, kDebugLingoThe | kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
 	Movie *movie = _vm->getCurrentMovie();
