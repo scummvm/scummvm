@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 19:28+0000\n"
+"POT-Creation-Date: 2023-11-18 05:59+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5271,7 +5271,7 @@ msgstr ""
 #: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "원본 저장/불러오기 화면 사용"
 
@@ -5281,7 +5281,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 #: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용합니다"
 
@@ -9597,11 +9597,11 @@ msgstr ""
 "선형 필터링이 활성화되면 전체 화면에서 백그라운드 그래픽이 더 부드럽게 표시됩"
 "니다. 다만 디테일이 조금 낮아집니다."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
+#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "폰트 안티 앨리어싱 활성화"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:133
+#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 
@@ -9895,11 +9895,11 @@ msgstr "USA 버전 사용"
 msgid "Enable the USA specific version flags"
 msgstr "USA 버전 플래그를 활성화합니다"
 
-#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
 msgid "Enable high resolution"
 msgstr "고해상도 사용"
 
-#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
 msgid "Enable a higher resolution for the game"
 msgstr "게임의 고해상도 지원을 활성화합니다"
 
@@ -10063,71 +10063,71 @@ msgctxt "Options menu"
 msgid "Voices: German"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:55
+#: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr "프레임 스킵 활성화"
 
-#: engines/ultima/metaengine.cpp:56
+#: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "게임이 너무 느린 경우 애니메이션 프레임을 건너뛸 수 있게 합니다."
 
-#: engines/ultima/metaengine.cpp:66
+#: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
 msgstr "프레임 제한 활성화"
 
-#: engines/ultima/metaengine.cpp:67
+#: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "게임 속도를 제한해 너무 빨라지지 않게 합니다."
 
-#: engines/ultima/metaengine.cpp:77
+#: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
 msgstr "치트 활성화"
 
-#: engines/ultima/metaengine.cpp:78
+#: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr "플레이어를 클릭했을 때 명령어나 메뉴에서 치트를 허용합니다."
 
-#: engines/ultima/metaengine.cpp:99
+#: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
 msgstr "발자국 사운드 재생"
 
-#: engines/ultima/metaengine.cpp:100
+#: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
 msgstr "플레이어가 이동할 때 소리를 재생합니다."
 
-#: engines/ultima/metaengine.cpp:110
+#: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
 msgstr "마우스 위치로 점프를 활성화"
 
-#: engines/ultima/metaengine.cpp:111
+#: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "이동 중이 아닐 때 점프하면 방향 뿐 아니라 마우스 커서를 타겟으로 합니다."
 
-#: engines/ultima/metaengine.cpp:121
+#: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
 msgstr "대체 폰트 사용"
 
-#: engines/ultima/metaengine.cpp:122
+#: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
 msgstr "게임 폰트를 렌더링된 폰트로 교체"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:144
+#: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
 msgstr "Silencer를 따라 카메라 이동"
 
-#: engines/ultima/metaengine.cpp:145
+#: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr "카메라가 미리 지정된 위치에 고정되지 않고 플레이어를 따라 이동합니다."
 
-#: engines/ultima/metaengine.cpp:155
+#: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
 msgstr "항상 크리스마스 에스터에그 활성화"
 
-#: engines/ultima/metaengine.cpp:156
+#: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
 msgstr "연중 언제든지 크리스마스 음악을 활성화하십시오."
 

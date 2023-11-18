@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 19:28+0000\n"
+"POT-Creation-Date: 2023-11-18 05:59+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5336,7 +5336,7 @@ msgstr ""
 #: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Použít původní obrazovky načtení/uložení"
 
@@ -5346,7 +5346,7 @@ msgstr "Použít původní obrazovky načtení/uložení"
 #: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Použít původní obrazovky načtení/uložení místo ze ScummVM"
 
@@ -9583,12 +9583,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
+#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "Povolit cenzuru obsahu"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:133
+#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -9888,12 +9888,12 @@ msgstr ""
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Povolit grafiku ve vysokém rozlišení"
 
-#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Úplný název hry"
@@ -10068,74 +10068,74 @@ msgctxt "Options menu"
 msgid "Voices: German"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:55
+#: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:56
+#: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:66
+#: engines/ultima/metaengine.cpp:74
 #, fuzzy
 msgid "Enable frame limiting"
 msgstr "Povolit cenzuru obsahu"
 
-#: engines/ultima/metaengine.cpp:67
+#: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:77
+#: engines/ultima/metaengine.cpp:85
 #, fuzzy
 msgid "Enable cheats"
 msgstr "Zapnout héliový režim"
 
-#: engines/ultima/metaengine.cpp:78
+#: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:99
+#: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:100
+#: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:110
+#: engines/ultima/metaengine.cpp:118
 #, fuzzy
 msgid "Enable jump to mouse position"
 msgstr "Úplný název hry"
 
-#: engines/ultima/metaengine.cpp:111
+#: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:121
+#: engines/ultima/metaengine.cpp:129
 #, fuzzy
 msgid "Enable font replacement"
 msgstr "Povolit cenzuru obsahu"
 
-#: engines/ultima/metaengine.cpp:122
+#: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:144
+#: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:145
+#: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:155
+#: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:156
+#: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
 msgstr ""
 

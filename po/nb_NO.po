@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 19:28+0000\n"
+"POT-Creation-Date: 2023-11-18 05:59+0000\n"
 "PO-Revision-Date: 2023-06-15 17:40+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5368,7 +5368,7 @@ msgstr ""
 #: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Bruk originale lagre/laste-skjermer"
 
@@ -5378,7 +5378,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 #: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Bruk de opprinnelige Lagre-/Laste-skjermene istedenfor ScummVMs egne"
 
@@ -9761,11 +9761,11 @@ msgstr ""
 "Når lineær filtrering er aktivert, vil grafikken for bakgrunnsbildene være "
 "mer utjevnet i fullskjermsmodus. Dette går på bekostning av enkelte detaljer."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
+#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "Aktiver kantutjevning for font"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:133
+#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Når kantutjevning for font er aktivert, vil tekst fremstå med jevnere kanter."
@@ -10070,11 +10070,11 @@ msgstr "Bruk den amerikanske utgaven"
 msgid "Enable the USA specific version flags"
 msgstr "Bruk versjonsflaggene til den amerikanske utgaven"
 
-#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
 msgid "Enable high resolution"
 msgstr "Aktiver høy oppløsning"
 
-#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
 msgid "Enable a higher resolution for the game"
 msgstr "Aktiver en høyere oppløsning i spillet"
 
@@ -10236,77 +10236,77 @@ msgctxt "Options menu"
 msgid "Voices: German"
 msgstr "Stemmer: Tysk"
 
-#: engines/ultima/metaengine.cpp:55
+#: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr "Aktiver bildedropping"
 
-#: engines/ultima/metaengine.cpp:56
+#: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "Lar spillet hoppe over animasjoner hvis det kjører for sakte."
 
-#: engines/ultima/metaengine.cpp:66
+#: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
 msgstr "Aktiver begrensning av bildefrekvens"
 
-#: engines/ultima/metaengine.cpp:67
+#: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Begrenser hastigheten på spillet for å forhindre at det kjører for fort."
 
-#: engines/ultima/metaengine.cpp:77
+#: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
 msgstr "Aktiver juksefunksjoner"
 
-#: engines/ultima/metaengine.cpp:78
+#: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 "Gjør det mulig å bruke juksefunksjoner via kommandoer og en meny som vises "
 "når du klikker på spilleren."
 
-#: engines/ultima/metaengine.cpp:99
+#: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
 msgstr "Spill av lyden av fottrinn"
 
-#: engines/ultima/metaengine.cpp:100
+#: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
 msgstr "Spiller lyder når spilleren beveger seg."
 
-#: engines/ultima/metaengine.cpp:110
+#: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
 msgstr "Aktiver hopping til plassering av musepeker"
 
-#: engines/ultima/metaengine.cpp:111
+#: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Hopping mens du står stille er rettet mot musepekerens plassering og ikke "
 "bare i retningen du peker."
 
-#: engines/ultima/metaengine.cpp:121
+#: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
 msgstr "Aktiver fonterstatning"
 
-#: engines/ultima/metaengine.cpp:122
+#: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Erstatter spillets tekstfont med en gjengitt font"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:144
+#: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
 msgstr "Kamera følger hovedpersonen"
 
-#: engines/ultima/metaengine.cpp:145
+#: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Kamera følger spillerens bevegelser, fremfor å bruke ferdigsatte "
 "kameraplasseringer."
 
-#: engines/ultima/metaengine.cpp:155
+#: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
 msgstr "Juleinnhold alltid aktivert"
 
-#: engines/ultima/metaengine.cpp:156
+#: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
 msgstr "Aktiver julemusikken til enhver tid på året."
 

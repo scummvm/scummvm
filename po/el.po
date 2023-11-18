@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-17 19:28+0000\n"
+"POT-Creation-Date: 2023-11-18 05:59+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5583,7 +5583,7 @@ msgstr ""
 #: engines/groovie/metaengine.cpp:49 engines/neverhood/dialogs.cpp:47
 #: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:39
 #: engines/toltecs/metaengine.cpp:40 engines/trecision/metaengine.cpp:37
-#: engines/ultima/metaengine.cpp:44 engines/zvision/metaengine.cpp:46
+#: engines/ultima/metaengine.cpp:52 engines/zvision/metaengine.cpp:46
 msgid "Use original save/load screens"
 msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 
@@ -5593,7 +5593,7 @@ msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτω
 #: engines/groovie/metaengine.cpp:50 engines/neverhood/dialogs.cpp:48
 #: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:40
 #: engines/toltecs/metaengine.cpp:41 engines/trecision/metaengine.cpp:38
-#: engines/ultima/metaengine.cpp:45 engines/zvision/metaengine.cpp:47
+#: engines/ultima/metaengine.cpp:53 engines/zvision/metaengine.cpp:47
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Χρήση των αρχικών οθονών αποθήκευσης/φόρτωσης αντί για αυτές του ScummVM"
@@ -10042,11 +10042,11 @@ msgstr ""
 "ομαλά σε λειτουργία πλήρους οθόνης, με αντίτιμο την απώλεια κάποιας "
 "λεπτομέρειας."
 
-#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:132
+#: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
 msgid "Enable font anti-aliasing"
 msgstr "Ενεργοποίηση εξομάλυνσης γραμματοσειράς"
 
-#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:133
+#: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
@@ -10363,11 +10363,11 @@ msgstr "Χρήση της έκδοσης από ΗΠΑ"
 msgid "Enable the USA specific version flags"
 msgstr "Ενεργοποίηση ειδικών ρυθμίσεων που είχε η έκδοση από ΗΠΑ"
 
-#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
 msgid "Enable high resolution"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 
-#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:89
+#: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
 msgid "Enable a higher resolution for the game"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης για το παιχνίδι"
 
@@ -10529,80 +10529,80 @@ msgctxt "Options menu"
 msgid "Voices: German"
 msgstr "Φωνές: Γερμανικά"
 
-#: engines/ultima/metaengine.cpp:55
+#: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
 msgstr "Ενεργοποίηση παράλειψης καρέ"
 
-#: engines/ultima/metaengine.cpp:56
+#: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 "Επιτρέπει στο παιχνίδι να παραλείψει κάποια καρέ animation αν οι επιδόσεις "
 "είναι πολύ χαμηλές."
 
-#: engines/ultima/metaengine.cpp:66
+#: engines/ultima/metaengine.cpp:74
 msgid "Enable frame limiting"
 msgstr "Ενεργοποίηση περιορισμού καρέ"
 
-#: engines/ultima/metaengine.cpp:67
+#: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Περιορίζει την ταχύτητα του παιχνιδιού αποτρέποντας το να \"τρέχει\" "
 "υπερβολικά γρήγορα."
 
-#: engines/ultima/metaengine.cpp:77
+#: engines/ultima/metaengine.cpp:85
 msgid "Enable cheats"
 msgstr "Ενεργοποίηση cheats"
 
-#: engines/ultima/metaengine.cpp:78
+#: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 "Να επιτρέπονται τα cheats με εντολές και ένα μενού όταν γίνεται κλικ πάνω "
 "στον παίκτη."
 
-#: engines/ultima/metaengine.cpp:99
+#: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
 msgstr "Να έχουν ήχο οι πατημασιές"
 
-#: engines/ultima/metaengine.cpp:100
+#: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
 msgstr "Αναπαραγωγή ήχου όταν κινείται ο παίκτης."
 
-#: engines/ultima/metaengine.cpp:110
+#: engines/ultima/metaengine.cpp:118
 msgid "Enable jump to mouse position"
 msgstr "Ενεργοποίηση άλματος στο σημείο του ποντικιού"
 
-#: engines/ultima/metaengine.cpp:111
+#: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Τα άλματα χωρίς φορά (χωρίς πρότερη κίνηση) γίνονται προς το σημείο του "
 "κέρσορα ποντικιού αντί απλά την γενική κατεύθυνση."
 
-#: engines/ultima/metaengine.cpp:121
+#: engines/ultima/metaengine.cpp:129
 msgid "Enable font replacement"
 msgstr "Ενεργοποίηση αντικατάστασης γραμματοσειράς"
 
-#: engines/ultima/metaengine.cpp:122
+#: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Αντικαθιστά γραμματοσειρές του παιχνιδιού με rendered γραμματοσειρές"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:144
+#: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
 msgstr "Η κάμερα ακολουθεί τον Silencer"
 
-#: engines/ultima/metaengine.cpp:145
+#: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Η κάμερα ακολουθεί την κίνηση του παίκτη αντί να καρφώνεται σε "
 "προκαθορισμένες θέσεις."
 
-#: engines/ultima/metaengine.cpp:155
+#: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
 msgstr "Πάντα ενεργό Χριστουγεννιάτικο easter-egg"
 
-#: engines/ultima/metaengine.cpp:156
+#: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
 msgstr ""
 "Να είναι ενεργοποιημένη η Χριστουγεννιάτικη μουσική σε κάθε εποχή του χρόνου."
