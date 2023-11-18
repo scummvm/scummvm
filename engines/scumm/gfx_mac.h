@@ -291,21 +291,21 @@ public:
 	public:
 		MacEditText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
 
-		void getFocus() {}
-		void loseFocus() {}
+		void getFocus() override {}
+		void loseFocus() override {}
 
 		void selectAll();
 
-		bool useBeamCursor() { return true; }
-		bool findWidget(int x, int y) const;
+		bool useBeamCursor() override { return true; }
+		bool findWidget(int x, int y) const override;
 		bool shouldDeferAction() override { return true; }
 
-		void draw(bool drawFocused = false);
+		void draw(bool drawFocused = false) override;
 
-		void handleMouseDown(Common::Event &event);
-		bool handleKeyDown(Common::Event &event);
-		void handleMouseMove(Common::Event &event);
-		void handleMouseHeld();
+		void handleMouseDown(Common::Event &event) override;
+		bool handleKeyDown(Common::Event &event) override;
+		void handleMouseMove(Common::Event &event) override;
+		void handleMouseHeld() override;
 	};
 
 	class MacPicture : public MacWidget {
