@@ -182,6 +182,7 @@ void Actor::initActor(int mode) {
 	_charset = 0;
 	memset(_sound, 0, sizeof(_sound));
 	_targetFacing = _facing;
+	_walkdata.nextDir = -1;
 	_lastValidX = 0;
 	_lastValidY = 0;
 
@@ -544,7 +545,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaYFactor = deltaYFactor;
 
 	if (_vm->_game.version >= 7)
-		_targetFacing = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
+		_walkdata.nextDir = ((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI) + 360) % 360;
 	else
 		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
 
@@ -597,7 +598,7 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 int Actor::actorWalkStep() {
 	_needRedraw = true;
 
-	int nextFacing = (_vm->_game.version < 7) ? updateActorDirection(true) : _targetFacing;
+	int nextFacing = (_vm->_game.version < 7) ? updateActorDirection(true) : _walkdata.nextDir;
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing) {
 			startWalkAnim(_vm->_game.version >= 7 && (_moving & MF_IN_LEG) ? 2 : 1, nextFacing);
@@ -870,11 +871,10 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 }
 
 void Actor::startWalkAnim(int cmd, int angle) {
-	if (angle == -1)
-		angle = _facing;
-
 	if (_vm->_game.version >= 7)
-		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle), false);
+		angle = remapDirection(normalizeAngle(_vm->_costumeLoader->hasManyDirections(_costume), angle == -1 ? _walkdata.nextDir : angle), false);
+	else if (angle == -1)
+		angle = _facing;
 
 	if (_walkScript) {
 		int args[NUM_SCRIPT_LOCAL];
@@ -1616,6 +1616,12 @@ void Actor_v7::turnToDirection(int newdir) {
 
 	newdir = remapDirection((newdir + 360) % 360, false);
 	_moving &= ~MF_TURN;
+
+	byte flags = _vm->getBoxFlags(_walkbox);
+	if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip))
+		newdir = 360 - newdir;
+	if ((flags & kBoxYFlip) || isInClass(kObjectClassYFlip))
+		newdir = 180 - newdir;
 
 	if (newdir != _facing) {
 		_moving |= MF_TURN;
