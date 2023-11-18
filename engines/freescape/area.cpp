@@ -27,6 +27,7 @@
 #include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/objects/global.h"
+#include "freescape/sweepAABB.h"
 
 namespace Freescape {
 
@@ -248,14 +249,21 @@ void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) 
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	float size = 16.0 * 8192.0; // TODO: check if this is max size
+	float distance = 16.0 * 8192.0; // TODO: check if this is max distance
+	float size = 16.0 * 8192.0; // TODO: check if this is the max size
+	Math::AABB boundingBox(ray.getOrigin(), ray.getOrigin());
 	Object *collided = nullptr;
 	for (auto &obj : _drawableObjects) {
-		float objSize = obj->getSize().length();
-		if (!obj->isDestroyed() && !obj->isInvisible() && obj->_boundingBox.isValid() && ray.intersectAABB(obj->_boundingBox) && size >= objSize) {
-			debugC(1, kFreescapeDebugMove, "shot obj id: %d", obj->getObjectID());
-			collided = obj;
-			size = objSize;
+		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			GeometricObject *gobj = (GeometricObject *)obj;
+			Math::Vector3d collidedNormal;
+			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, 8192 * ray.getDirection(), collidedNormal);
+			debug("shot obj id: %d with distance %f", obj->getObjectID(), collidedDistance);
+			if (collidedDistance < distance || (collidedDistance == distance && gobj->getSize().length() < size)) {
+				collided = obj;
+				size = gobj->getSize().length();
+				distance = collidedDistance;
+			}
 		}
 	}
 	return collided;
@@ -272,78 +280,6 @@ ObjectArray Area::checkCollisions(const Math::AABB &boundingBox) {
 		}
 	}
 	return collided;
-}
-
-float lineToPlane(Math::Vector3d const &p, Math::Vector3d const &u,  Math::Vector3d const &v, Math::Vector3d const &n) {
-	float NdotU = n.dotProduct(u);
-	if (NdotU == 0)
-		return INFINITY;
-
-	return n.dotProduct(v - p) / NdotU;
-}
-
-bool between(float x, float a, float b) {
-	return x >= a && x <= b;
-}
-
-float sweepAABB(Math::AABB const &a, Math::AABB const &b, Math::Vector3d const &direction, Math::Vector3d &normal) {
-	Math::Vector3d m = b.getMin() - a.getMax();
-	Math::Vector3d mh = a.getSize() + b.getSize();
-
-	float h = 1.0;
-	float s = 0.0;
-	Math::Vector3d zero;
-
-	// X min
-	s = lineToPlane(zero, direction, m, Math::Vector3d(-1, 0, 0));
-	if (s >= 0 && direction.x() > 0 && s < h && between(s * direction.y(), m.y(), m.y()+mh.y()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
-		h = s;
-		normal = Math::Vector3d(-1, 0, 0);
-	}
-
-	// X max
-	m.x() = m.x() + mh.x();
-	s = lineToPlane(zero, direction, m, Math::Vector3d(1, 0, 0));
-	if (s >= 0 && direction.x() < 0 && s < h && between(s * direction.y(), m.y(), m.y() + mh.y()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
-		h = s;
-		normal = Math::Vector3d(1, 0, 0);
-	}
-
-	m.x() = m.x() - mh.x();
-	// Y min
-	s = lineToPlane(zero, direction, m, Math::Vector3d(0, -1, 0));
-	if (s >= 0 && direction.y() > 0 && s < h && between(s * direction.x(), m.x(), m.x() + mh.x()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
-		h = s;
-		normal = Math::Vector3d(0, -1, 0);
-	}
-
-	// Y max
-	m.y() = m.y() + mh.y();
-	s = lineToPlane(zero, direction, m, Math::Vector3d(0, 1, 0));
-	if (s >= 0 && direction.y() < 0 && s < h && between(s * direction.x(), m.x(), m.x() + mh.x()) && between(s * direction.z(), m.z(), m.z() + mh.z())) {
-		h = s;
-		normal = Math::Vector3d(0, 1, 0);
-	}
-
-	m.y() = m.y() - mh.y();
-
-	// Z min
-	s = lineToPlane(zero, direction, m, Math::Vector3d(0, 0, -1));
-	if (s >= 0 && direction.z() > 0 && s < h && between(s * direction.x(), m.x() , m.x() + mh.x()) && between(s * direction.y(), m.y(), m.y() + mh.y())) {
-		h = s;
-		normal = Math::Vector3d(0, 0, -1);
-	}
-
-	// Z max
-	m.z() = m.z() + mh.z();
-	s = lineToPlane(zero, direction, m, Math::Vector3d(0, 0, 1));
-	if (s >= 0 && direction.z() < 0 && s < h && between(s * direction.x(), m.x(), m.x() + mh.x()) && between(s * direction.y(), m.y(), m.y() + mh.y())) {
-		h = s;
-		normal = Math::Vector3d(0, 0, 1);
-	}
-
-	//debug("%f", h);
-	return h;
 }
 
 extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight);

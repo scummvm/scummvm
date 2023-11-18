@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	objects/group.o \
 	objects/sensor.o \
 	scr.o \
+	sweepAABB.o \
 	sound.o \
 	ui.o
 
