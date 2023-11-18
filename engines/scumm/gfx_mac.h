@@ -187,8 +187,11 @@ public:
 		virtual void setValue(int value);
 		int getValue() const { return _value; }
 
+		Common::String getText() { return _text; }
+
 		virtual bool useBeamCursor() { return false; }
 		virtual bool findWidget(int x, int y) const;
+		virtual bool shouldDeferAction() { return false; }
 
 		virtual void draw(bool drawFocused = false) = 0;
 
@@ -293,12 +296,11 @@ public:
 		void getFocus() {}
 		void loseFocus() {}
 
-		Common::String getText() { return _text; }
-
 		void selectAll();
 
 		bool useBeamCursor() { return true; }
 		bool findWidget(int x, int y) const;
+		bool shouldDeferAction() override { return true; }
 
 		void draw(bool drawFocused = false);
 
@@ -510,7 +512,7 @@ public:
 		bool isVisible() const { return _visible; }
 
 		void show();
-		int runDialog();
+		int runDialog(Common::Array<int> &deferredActionIds);
 		void updateCursor();
 
 		MacWidget *getWidget(int nr) const { return _widgets[nr]; }
@@ -645,7 +647,6 @@ public:
 	const Common::String name() const { return "Indy"; }
 
 	Graphics::Surface _textArea;
-	MacGui::MacEditText *_saveGameEditText = nullptr;
 
 	const Graphics::Font *getFontByScummId(int32 id);
 
