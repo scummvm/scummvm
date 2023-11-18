@@ -27,13 +27,21 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/translation.h"
+#ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
+#endif
+#ifdef ENABLE_ULTIMA4
 #include "ultima/ultima4/ultima4.h"
 #include "ultima/ultima4/metaengine.h"
+#endif
+#ifdef ENABLE_ULTIMA6
 #include "ultima/nuvie/metaengine.h"
 #include "ultima/nuvie/nuvie.h"
+#endif
+#ifdef ENABLE_ULTIMA8
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/metaengine.h"
+#endif
 
 #include "ultima/metaengine.h"
 
@@ -174,24 +182,30 @@ const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const
 Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	switch (gd->gameId) {
-#ifndef RELEASE_BUILD
+#ifdef ENABLE_ULTIMA1
 	case Ultima::GAME_ULTIMA1:
 		*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
 		break;
 #endif
+#ifdef ENABLE_ULTIMA4
 	case Ultima::GAME_ULTIMA4:
 		*engine = new Ultima::Ultima4::Ultima4Engine(syst, gd);
 		break;
+#endif
+#ifdef ENABLE_ULTIMA6
 	case Ultima::GAME_ULTIMA6:
 	case Ultima::GAME_MARTIAN_DREAMS:
 	case Ultima::GAME_SAVAGE_EMPIRE:
 		*engine = new Ultima::Nuvie::NuvieEngine(syst, gd);
 		break;
+#endif
+#ifdef ENABLE_ULTIMA8
 	case Ultima::GAME_ULTIMA8:
 	case Ultima::GAME_CRUSADER_REG:
 	case Ultima::GAME_CRUSADER_REM:
 		*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
 		break;
+#endif
 
 	default:
 		return Common::kUnsupportedGameidError;
@@ -206,9 +220,11 @@ int UltimaMetaEngine::getMaximumSaveSlot() const {
 SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
 
+#ifdef ENABLE_ULTIMA6
 	Common::String gameId = getGameId(target);
 	if (gameId == "ultima6" || gameId == "ultima6_enh")
 		Ultima::Nuvie::MetaEngine::listSaves(saveList);
+#endif
 
 	return saveList;
 }
@@ -216,6 +232,7 @@ SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	SaveStateDescriptor desc = AdvancedMetaEngine::querySaveMetaInfos(target, slot);
 	if (!desc.isValid() && slot > 0) {
+#ifdef ENABLE_ULTIMA8
 		Common::String gameId = getGameId(target);
 		if (gameId == "ultima8") {
 			Common::String filename = getSavegameFile(slot, target);
@@ -223,18 +240,25 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 			if (!Ultima::Ultima8::MetaEngine::querySaveMetaInfos(filename, desc))
 				return SaveStateDescriptor();
 		}
+#endif
 	}
 
 	return desc;
 }
 
 Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
+#if defined(ENABLE_ULTIMA4) || defined(ENABLE_ULTIMA8)
 	const Common::String gameId = getGameId(target);
+#endif
+
+#ifdef ENABLE_ULTIMA4
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
+#endif
+#ifdef ENABLE_ULTIMA8
 	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
 		return Ultima::Ultima8::MetaEngine::initKeymaps(gameId);
-
+#endif
 	return Common::KeymapArray();
 }
 

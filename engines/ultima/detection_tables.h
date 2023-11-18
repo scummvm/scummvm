@@ -32,7 +32,7 @@ namespace Ultima {
 #define GUI_OPTIONS_SAVAGE_EMPIRE  GUIO0()
 
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
-#ifndef RELEASE_BUILD
+#ifdef ENABLE_ULTIMA1
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -85,6 +85,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 #endif
 
+#ifdef ENABLE_ULTIMA4
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -114,7 +115,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Ultima VI
 	{
 		{
@@ -297,7 +300,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA8
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
 		{
@@ -626,7 +631,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Martian Dreams
 	{
 		{
@@ -747,6 +754,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };
