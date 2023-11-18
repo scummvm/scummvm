@@ -263,7 +263,7 @@ void MacGui::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color c
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
 }
 
-int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, int deltax) const {
+int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
 	if (text.empty())
 		return 0;
 
@@ -284,38 +284,44 @@ int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color 
 	// Word-wrap text
 
 	Common::StringArray lines;
-	int start = 0;
 	int maxLineWidth = 0;
-	int lineWidth = 0;
-	int lastSpace = -1;
 
-	for (uint i = 0; i < text.size(); i++) {
-		if (text[i] == ' ')
-			lastSpace = i;
+	if (wordWrap) {
+		int start = 0;
+		int lineWidth = 0;
+		int lastSpace = -1;
 
-		lineWidth += font->getCharWidth(text[i]);
+		for (uint i = 0; i < text.size(); i++) {
+			if (text[i] == ' ')
+				lastSpace = i;
 
-		if (lineWidth > w) {
-			if (lastSpace > start)
-				i = lastSpace;
+			lineWidth += font->getCharWidth(text[i]);
 
-			if (lineWidth > maxLineWidth)
-				maxLineWidth = lineWidth;
+			if (lineWidth > w) {
+				if (lastSpace > start)
+					i = lastSpace;
 
-			lines.push_back(text.substr(start, i - start));
-			lineWidth = 0;
+				if (lineWidth > maxLineWidth)
+					maxLineWidth = lineWidth;
 
-			if (lastSpace > start)
-				start = i + 1;
-			else
-				start = i;
+				lines.push_back(text.substr(start, i - start));
+				lineWidth = 0;
+
+				if (lastSpace > start)
+					start = i + 1;
+				else
+					start = i;
+			}
 		}
+
+		lines.push_back(text.substr(start));
+
+		if (lineWidth > maxLineWidth)
+			maxLineWidth = lineWidth;
+	} else {
+		lines.push_back(text);
+		maxLineWidth = font->getStringWidth(text);
 	}
-
-	lines.push_back(text.substr(start));
-
-	if (lineWidth > maxLineWidth)
-		maxLineWidth = lineWidth;
 
 	// Draw the text. Disabled text is implemented as a filter on top of
 	// the already drawn text.
@@ -528,7 +534,7 @@ void MacGui::MacStaticText::draw(bool drawFocused) {
 	debug(1, "MacGui::MacStaticText: Drawing text %d (_fullRedraw = %d, drawFocused = %d, _value = %d)", _id, _fullRedraw, drawFocused, _value);
 
 	_window->innerSurface()->fillRect(_bounds, _bg);
-	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, _bg, Graphics::kTextAlignLeft, 1);
+	drawText(_text, _bounds.left, _bounds.top, _bounds.width(), _fg, _bg, Graphics::kTextAlignLeft, _wordWrap, 1);
 	_window->markRectAsDirty(_bounds);
 
 	_redraw = false;
@@ -3038,6 +3044,9 @@ bool MacGui::runOkCancelDialog(Common::String text) {
 
 	window->setDefaultWidget(0);
 	window->addSubstitution(text);
+
+	MacStaticText *widget = (MacStaticText *)window->getWidget(2);
+	widget->setWordWrap(true);
 
 	// When quitting, the default action is to quit
 	bool ret = true;

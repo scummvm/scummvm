@@ -163,7 +163,7 @@ public:
 		Common::String _text;
 		int _value = 0;
 
-		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, int deltax = 0) const;
+		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
 	public:
@@ -236,12 +236,15 @@ public:
 	private:
 		Color _fg = kBlack;
 		Color _bg = kWhite;
+		bool _wordWrap = false;
 
 	public:
 		MacStaticText(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, true) {}
 
 		void getFocus() {}
 		void loseFocus() {}
+
+		void setWordWrap(bool wordWrap) { _wordWrap = wordWrap; }
 
 		void setText(Common::String text) {
 			if (text != _text) {
@@ -510,6 +513,7 @@ public:
 		int runDialog();
 		void updateCursor();
 
+		MacWidget *getWidget(int nr) const { return _widgets[nr]; }
 		void setDefaultWidget(int nr) { _defaultWidget = _widgets[nr]; }
 		MacWidget *getDefaultWidget() const { return _defaultWidget; }
 
