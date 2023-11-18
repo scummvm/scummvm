@@ -995,7 +995,14 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyPressed &= !isSegaCD && !isNES;
 
 		if (restartKeyPressed) {
-			queryRestart();
+			if (_macGui) {
+				if (_macGui->runRestartDialog()) {
+					restart();
+				}
+			} else {
+				queryRestart();
+			}
+
 			return;
 		}
 
