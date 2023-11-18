@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-18 05:59+0000\n"
-"PO-Revision-Date: 2023-11-03 23:02+0000\n"
-"Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
+"PO-Revision-Date: 2023-11-18 16:41+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -31,27 +31,21 @@ msgid "Features compiled in:"
 msgstr "Tähän versioon käännetyt ominaisuudet:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Pelin tunniste ei ole tuettu"
+msgstr "ei tuettu"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Pois päältä"
+msgstr "pois päältä"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Pois päältä"
+msgstr "päällä"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Tuetut prosessorilaajennukset:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -384,20 +378,16 @@ msgid "Failed to load JSON file"
 msgstr "JSON-tiedoston lataaminen ei onnistunut"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "Lataa freeware-pelejä ScummVM:lle"
+msgstr "Lataa freeware-pelejä ja demoja"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Haetaan DLC:itä..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Lataa"
+msgstr "Kaikki lataukset"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -476,16 +466,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Latausnopeus: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Lataa pelejä"
+msgstr "Parhaillaan ladattavat pelit"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Lataa"
+msgstr "Jonossa olevat lataukset"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1097,6 +1083,24 @@ msgid ""
 "affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) through affiliate referral "
 "links.\n"
 msgstr ""
+"## Mistä pelejä saa\n"
+"\n"
+"Löydät [wikistämme](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) listan peleistä ja mistä niitä voi ostaa.\n"
+"\n"
+"Voit myös ladata valikoiman [freeware-pelejä](https://scummvm.org/games) "
+"sekä [demoja](https://www.scummvm.org/demos/) nettisivuiltamme \n"
+"\n"
+"Muiden (out of print) pelien osalta voit koittaa Amazonia, eBay:tä, Game "
+"Trading Zone:a ja muita vastaavia sivustoja. Varo viallisia pelejä ja "
+"laittomia kopioita.\n"
+"\n"
+"ScummVM-tiimi ei suosittele mitään tiettyä pelimyyjää, mutta projekti saa "
+"siivun jokaisesta [GOG.com:ista](https://www.gog.com/"
+"?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) ja [ZOOM-"
+"Platform:ista](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) ostetusta pelistä affiliate referral-linkkien avulla."
+"\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1166,7 +1170,7 @@ msgstr "Alusta"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Vuosi"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1394,10 +1398,8 @@ msgstr "Alusta ei tiedossa"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Tuntematon virhe"
+msgstr "Tuntematon vuosi"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1610,16 +1612,12 @@ msgid "Shader Path:"
 msgstr "Sävytinkansio:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Lataa pelejä"
+msgstr "Lataa sävyttimiä"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Tarkista sävytinpakettien päivitykset"
+msgstr "Tarkista sävytinpakettien päivitykset scummvm.org-sivustolta"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2073,16 +2071,12 @@ msgstr ""
 "tiedostojen ja kansioiden valintaan."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Lataa"
+msgstr "Lataa ikoneita"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Tarkista ikonipakettien päivitykset"
+msgstr "Tarkista ikonipakettien päivitykset scummvm.org-sivustolta"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -3821,7 +3815,7 @@ msgstr "SDL-pinta"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (pakotettu 8bpp-tila)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -4526,41 +4520,31 @@ msgid ""
 msgstr ""
 "## Kosketusohjaustilat\n"
 "Kosketusohjaustilaa voidaan vaihtaa napauttamalla tai napsauttamalla "
-"oikeassa yläkulmassa olevaa ohjaimen kuvaketta.\n"
+"oikeassa yläkulmassa olevaa ohjaimen kuvaketta\n"
 "### Suora hiiri \n"
-"\n"
 "\n"
 "Kosketusohjaus on suoraa. Osoitin hyppää siihen kohtaan, jossa sormi "
 "koskettaa näyttöä (oletus valikoissa).\n"
 "\n"
-"\n"
 "  ![Suora hiiritila](mouse.png \"Suora hiiritila\"){w=10em}\n"
 "\n"
-"\n"
 "### Kosketusalustan emulointi \n"
-"\n"
 "\n"
 "Kosketusohjaimet ovat epäsuoria, kuten kannettavan tietokoneen "
 "kosketusalustassa.\n"
 "\n"
-"\n"
 "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
 "\n"
-"\n"
 "### Gamepad-emulointi \n"
-"\n"
 "\n"
 "Sormet on asetettava näytön vasempaan ja oikeaan alareunaan, jotta voidaan "
 "emuloida suuntaohjainta ja toimintopainikkeita.\n"
 "\n"
-"\n"
 "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
-"\n"
 "\n"
 "Voit valita haluamasi kosketustilan valikoita, 2D-pelejä ja 3D-pelejä varten "
 "valitsemalla **Globaalit asetukset > Taka-aste > Valitse haluttu "
 "kosketusmoodi**.\n"
-"\n"
 "\n"
 "## Kosketustoiminnot\n"
 "\n"
@@ -6483,37 +6467,27 @@ msgstr "Ammu"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Nouse/Lennä ylös"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Lennä alas"
+msgstr "Laskeudu/Lennä alas"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Vaihda komento"
+msgstr "Vaihda tilaa"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Vasemmalle"
+msgstr "Kierrä vasemmalle"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Oikealle"
+msgstr "Kierrä oikealle"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Valikko"
+msgstr "Infovalikko"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -8130,33 +8104,34 @@ msgstr "Käännä näkymää automaattisesti hiiren saavuttaessa reunan."
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Korjaa softlockit"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Korjaa tapaukset joissa aiempi toiminta estää pysyvästi pelissä etenemisen."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Korjaa pikkuviat"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Korjaa pieniä ärsyttäviä asioita."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Pidennetty ajastin"
+msgstr "Pidennä loppupelin ajastinta"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Enemmän aikaa viimeisen pulman ratkaisuun. Tämä on HeR Interactive:n "
+"virallinen korjaus."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8764,51 +8739,55 @@ msgstr "Ekspertti"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Parannukset:"
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Käytä alkuperäisiä valikkoja"
+msgstr "Korjaa alkuperäiset viat"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Korjaa viat jotka olivat alkuperäisessä pelijulkaisussa, sekä huomattavat "
+"virheet äänessä/kuvassa."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Audiovisuaaliset parannukset"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Vikoihin liittymättömiä äänien ja grafiikan hienosäätöjä (e.g. versioiden "
+"välinen johdonmukaisuus)."
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Käytä palautettua sisältöä"
+msgstr "Palautettu sisältö"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Palauttaa dialogeja, grafiikkaa sekä audioelementtejä jotka leikattiin "
+"alkuperäisestä pelijulkaisusta."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "UI/UX Modernisaatiohienosäätöjä"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Aktivoi joitain moderneja mukavuuksia; e.g. poistaa Sam&Max:in tekaistun "
+"äänienlatusruudun sekä tekee varhaisista pelitallennusmenuista nopeampia."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
@@ -9684,6 +9663,8 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Toteuttamaton koodipolku äänimoottorissa,\n"
+"ole hyvä ja ilmoita ongelma osoitteessa https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
