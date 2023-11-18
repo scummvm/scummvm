@@ -58,6 +58,12 @@ struct Box {
 			   pz >= _z && pz < _z + _zd;
 	}
 
+	// Check to see if a 2d point is within the XY of the Box
+	bool containsXY(int32 px, int32 py) const {
+		return px > _x - _xd && px <= _x &&
+			   py > _y - _yd && py <= _y;
+	}
+
 	// Check to see if the box is below a point
 	bool isBelow(int32 px, int32 py, int32 pz) const {
 		return px > _x - _xd && px <= _x &&
