@@ -58,7 +58,8 @@ static inline __m256i simd4BppTo2Bpp(__m256i pixels) {
 	x = _mm256_or_si256(x, _mm256_slli_epi32(_mm256_srli_epi32(_mm256_and_si256(pixels, _mm256_set1_epi32(0x00ff0000)), 16+3), 11));
 	x = _mm256_slli_epi32(x, 16);
 	x = _mm256_srai_epi32(x, 16);
-	return _mm256_packs_epi32(x, _mm256_setzero_si256());
+	x = _mm256_packs_epi32(x, _mm256_setzero_si256());
+	return _mm256_permute4x64_epi64(x, _MM_SHUFFLE(3, 1, 2, 0));
 }
 
 static inline __m256i rgbBlendSIMD2Bpp(__m256i srcCols, __m256i destCols, __m256i alphas) {
