@@ -193,8 +193,11 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 
 	fillZBuffer(0);
 
-	for (uint y1 = y; y1 < _winHeight + y; y1++) {
-		for (uint x1 = x; x1 < _winWidth + x; x1++) {
+	int w = MIN<uint>(_zBuffer->width, _winWidth + x);
+	int h = MIN<uint>(_zBuffer->height, _winHeight + y);
+
+	for (uint y1 = y; y1 < h; y1++) {
+		for (uint x1 = x; x1 < w; x1++) {
 
 			uint8 z = 0;
 
