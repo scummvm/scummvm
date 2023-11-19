@@ -766,6 +766,15 @@ bool HEMixer::mixerStartSpoolingChannel(
 
 		_mixerChannels[channel].lastReadPosition += initialReadCount;
 
+		// Freddi Fish 4 has some unhandled headers inside its spooled
+		// music files which were leftovers from the development process.
+		// These are 32 bytes blocks, so we can just skip them... (#13102)
+		if (READ_BE_UINT32(data) == MKTAG('S', 'R', 'F', 'S')) {
+			sampleFileIOHandle.seek(_mixerChannels[channel].initialSpoolingFileOffset, SEEK_SET);
+			sampleFileIOHandle.seek(32, SEEK_CUR);
+			sampleFileIOHandle.read(data, initialReadCount);
+		}
+
 		byte *dataTmp = data;
 		int rampUpSampleCount = 64;
 		for (int i = 0; i < rampUpSampleCount; i++) {
