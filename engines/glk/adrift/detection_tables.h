@@ -37,15 +37,15 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "adriftmasparty",     "ADRIFTMAS Party" },
 	{ "adriftorama",        "ADRIFT-O-RAMA" },
 	{ "adriftproject",      "The ADRIFT Project: Classified" },
-	{ "advent350",          "Adventure" },
-	{ "adventurepostman",   "The Adventures of Postman Matt (and his black and white cat)" },
+	{ "adv350_adrift",      "Adventure, 350 Point Colossal Cave" },
+	{ "adventurepostman",   "The Adventures of Postman Matt" },
 	{ "adventurestrikes",   "Adventure Strikes When You Least Expect It" },
 	{ "adventurethumper",   "Adventures of Thumper: Wonder Wombat" },
 	{ "afp",                "Another Friday Party" },
 	{ "agent4fmars",        "Agent 4-F from Mars" },
 	{ "akari",              "A Day in the Life 3: Akari's Story" },
 	{ "akron",              "Akron" },
-	{ "albertlost",         "Albert is Lost!: An Adventure in Real Life" },
+	{ "albertlost",         "Albert Is Lost!: An Adventure in Real Life" },
 	{ "albridgemanor",      "Albridge Manor" },
 	{ "alchemist",          "The Alchemist" },
 	{ "alexis",             "Alexis: Dalskee" },
@@ -59,8 +59,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "amnesiakid",         "Amnesia Kid" },
 	{ "amy",                "Amy and the Raging Hormones" },
 	{ "angel",              "The Angel, the Devil and the Human" },
-	{ "aquarius1",          "The Doomed World of Aquarius" },
-	{ "aquarius2",          "The Doomed World of Aquarius" },
+	{ "aquarius1",          "The Doomed World of Aquarius - Part I" },
+	{ "aquarius2",          "The Doomed World of Aquarius - Part II" },
 	{ "aram",               "Alice's Restaurant Anti-Massacree Adventure" },
 	{ "archiebdaych1",      "Archie's Birthday - Chapter 1: Reggie's Gift" },
 	{ "armour",             "Armour" },
@@ -89,7 +89,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "bellesmeres",        "Belles-Mères" },
 	{ "beythilda",          "Beythilda the Night Witch" },
 	{ "bfhouse",            "Burtainian Fly's House" },
-	{ "bigspyfiction",      "The Big Spy Fiction: Comedy Mashup Game" },
+	{ "bigspyfictionch1",   "The Big Spy Fiction: Comedy Mashup Game - Part I" },
+	{ "bigspyfictionch2",   "The Big Spy Fiction: Comedy Mashup Game - Part II" },
+	{ "bigspyfictionch3",   "The Big Spy Fiction: Comedy Mashup Game - Part III" },
 	{ "blacksheep",         "Black Sheep's Gold" },
 	{ "blob",               "Overriding Get" },
 	{ "blood",              "Fire in the Blood" },
@@ -112,7 +114,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "canyouguess",        "Can You Guess?" },
 	{ "canyoustandup",      "Can You Stand Up?" },
 	{ "captive",            "Captive Universe" },
-	{ "cardemo",            "Car" },
+	{ "cardemo_an",         "Car (by Anonymous)" },
+	{ "cardemo_sm",         "Car (by Stewart McAbney)" },
 	{ "cards",              "Playing Cards" },
 	{ "castlequest",        "Castle Quest" },
 	{ "catintree",          "The Cat in the Tree" },
@@ -186,7 +189,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "dead",               "A Dead Room" },
 	{ "deadman",            "The Dead Man" },
 	{ "deadreckon_adrift",  "Dead Reckoning" },
-	{ "deathbedcash",       "Moving Items after an NPC die" },
+	{ "deathbedcash",       "Moving Items After an NPC Die" },
 	{ "deathdoor",          "Death's Door" },
 	{ "decisions",          "Decisions" },
 	{ "delivery",           "The Delivery" },
@@ -227,12 +230,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "enc1",               "Encounter 1: Tim's Mom" },
 	{ "enc2",               "Encounter 2: The Study Group" },
 	{ "enigmaadrift",       "Enigma Creature" },
-	{ "escapecamelot",      "Escape from Camelot" },
-	{ "escapefromsouth",    "Tom Ceader: Escape From The South" },
-	{ "escapehouse2",       "The Escape from the House 2" },
+	{ "escapecamelot",      "Escape From Camelot" },
+	{ "escapefromsouth",    "Tom Ceader: Escape From the South" },
+	{ "escapehouse2",       "Escape From the House 2" },                                                                // ADRIFT5
 	{ "escapetofreedom",    "Escape to Freedom" },
 	{ "etnyadrift",         "Escape to New York" },
-	{ "eveningwithecod",    "An Evening with the Evil Chicken of Doom" },
+	{ "eveningwithecod",    "An Evening With the Evil Chicken of Doom" },
 	{ "event",              "Event" },
 	{ "expendableitems",    "Expendable Items" },
 	{ "expsystem",          "Experience System" },
@@ -249,7 +252,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "frustrated",         "Frustrated Interviewee" },
 	{ "fugitive",           "The Fugitive" },
 	{ "fullcircle",         "Full Circle" },
-	{ "funhouse",           "The Funhouse" },
+	{ "funhouse",           "FunHouse" },
 	{ "g7056",              "G7056" },
 	{ "gallows",            "Showtime at the Gallows" },
 	{ "gammagals",          "The Gamma Gals" },
@@ -260,7 +263,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "go",                 "Go!" },
 	{ "golddragon",         "Howard. Oblivion. Part 1: Gold Dragon" },
 	{ "goldilocksbreakent", "Goldilocks: Breaking & Entering" },
-	{ "goldilocksfox",      "Goldilocks is a FOX!" },
+	{ "goldilocksfox",      "Goldilocks Is a FOX!" },
 	{ "golfadrift",         "Golf" },
 	{ "golfball",           "Golfball" },
 	{ "gosha",              "Gosha Adventure" },
@@ -279,14 +282,15 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "hcw",                "How to Conquer the World" },
 	{ "hellinahamper",      "To Hell in a Hamper" },
 	{ "heretoday",          "Here Today, Tomorrow, Next Week!" },
-	{ "heroesadrift",       "Heroes are Interesting Things to Be" },
+	{ "heroesadrift",       "Heroes Are Interesting Things to Be..." },
 	{ "hhorror",            "House of Horror" },
 	{ "hhouse",             "The Haunted House" },
 	{ "hintsl",             "Hint System Library" },
 	{ "holdbreath",         "Hold Breath" },
 	{ "hornetsnest",        "The Star Trek Chain Reaction: The Hornets' Nest" },
 	{ "hotelfuego",         "Hotel con Fuego" },
-	{ "houseadrift",        "House" },
+	{ "house_jp",           "House (by Joe Powell)" },
+	{ "house_mp",           "House (by Matt Wiltshire)" },
 	{ "housedeath",         "House of Death" },
 	{ "houseofthedamned",   "House of the Damned" },
 	{ "howdidi",            "How Did I Get Into This?" },
@@ -296,7 +300,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "hungry",             "Hungry" },
 	{ "huntung",            "Hunting Ground" },
 	{ "hyperbs",            "HYPER Battle System" },
-	{ "hypertag",           "Locked Door with Water Trap" },
+	{ "hypertag",           "Locked Door With Water Trap" },
 	{ "iachini",            "A Day at the Iachini House" },
 	{ "icecream",           "Ice Cream" },
 	{ "igor",               "Igor" },
@@ -307,7 +311,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "impulso",            "Impulso" },
 	{ "infospace",          "Info Space" },
 	{ "inmemory",           "In Memory" },
-	{ "input",              "Question/Input" },
+	{ "input_col",          "Question/Input: Colour" },
+	{ "input_age",          "Question/Input: Age" },
 	{ "insidejob",          "Inside Job" },
 	{ "interrogate",        "Interrogate" },
 	{ "inthemind",          "In the Mind of the Master" },
@@ -315,13 +320,13 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "inverness",          "Inverness Castle" },
 	{ "invert",             "Invert's Road Trip" },
 	{ "invisible",          "Invisible Visible" },
-	{ "inyourhome",         "WIP: More Test Runs" },
-	{ "irvinequik",         "Irvine Quik & the Search for the Fish of Traglea" },
+	{ "inyourhome",         "In Your Home" },                                                                           // ADRIFT5
+	{ "irvinequik",         "Irvine Quik & The Search for the Fish of Traglea" },
 	{ "isle",               "The Isle" },
 	{ "isummon",            "I Summon Thee!" },
 	{ "jacarandajim",       "Jacaranda Jim" },
-	{ "jason2",             "Jason Evans 2" },
-	{ "jason3",             "Jason Evans 3" },
+	{ "jason2",             "Jason Evans 2: Misunderstood" },
+	{ "jason3",             "Jason Evans 3: Jason's Return" },
 	{ "jason4",             "Jason Evans 4" },
 	{ "jasonevans",         "Jason Evans 1" },
 	{ "jgrim",              "Jonathan Grimshaw: Space Tourist" },
@@ -375,8 +380,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "monsterisland",      "Monster Island" },
 	{ "monstermirror",      "The Monster in the Mirror" },
 	{ "monsters",           "Monsters" },
-	{ "morely",             "The Murder of Jack Morely" },
-	{ "morning",            "A Morning with a Headache" },
+	{ "morning",            "A Morning With a Headache" },
 	{ "morpheus",           "The Cave of Morpheus" },
 	{ "mortality",          "Mortality" },
 	{ "mould",              "The Potter and the Mould" },
@@ -386,7 +390,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "msl1",               "Mystery’s Static Library #1" },
 	{ "mudergreatfalls",    "Murder in Great Falls" },
 	{ "mudmonster",         "Mud Monster" },
-	{ "murdererhadleft",    "What The Murderer Had Left" },
+	{ "murdererhadleft",    "What the Murderer Had Left" },                                                             // ADRIFT5
 	{ "murders",            "The Merry Murders" },
 	{ "mustescape",         "Must Escape!" },
 	{ "mymindsmishmash",    "My Mind's Mishmash" },
@@ -432,13 +436,13 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "percytheviking",     "The Saga of Percy the Viking" },
 	{ "phoenixdestiny",     "Phoenix Destiny" },
 	{ "phonebooth",         "Pick Up the Phone Booth and Cry" },
-	{ "picture",            "Conversation with a Picture" },
+	{ "picture",            "Conversation With a Picture" },
 	{ "pkgirl",             "The PK Girl" },
-	{ "plagueredux",        "The Plague" },
+	{ "plagueredux",        "The Plague Redux" },
 	{ "platinum",           "Generator Platinum" },
 	{ "plunder",            "Pirate's Plunder!" },
 	{ "poker",              "Poker Game" },
-	{ "praxis",             "from the Files of Sigmund Sigmund Praxis, Guerrilla Therapist" },
+	{ "praxis",             "...from the Files of Sigmund Sigmund Praxis, Guerrilla Therapist" },
 	{ "professional",       "Professional" },
 	{ "professorvonwitt",   "Professor von Witt's Fabulous Flying Machine" },
 	{ "projectactually",    "A Place" },
@@ -448,10 +452,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "puzzlebox",          "The Puzzle Box" },
 	{ "questforfood",       "Quest for Food" },
 	{ "quiatuedana",        "Qui a tué Dana ?" },
-	{ "rachelbadday",       "Rachel has a bad day" },
-	{ "radioactive",        "That Crazy Radioactive Monkey!" },
+	{ "rachelbadday",       "Rachel Has a Bad Day" },
 	{ "raiders",            "Raiders of Sheppey" },
-	{ "rain0",              "Rain Module" },
+	{ "rainm1",             "Rain Sample #1" },
+	{ "rainm2",             "Rain Sample #2" },
+	{ "rainm3",             "Rain Sample #3" },
+	{ "rainm4",             "Rain Sample #4" },
 	{ "randomnumber",       "Random Number Generator" },
 	{ "random",             "Random" },
 	{ "randomscattering",   "Random Scattering" },
@@ -486,11 +492,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "seatdemo",           "Seated Character" },
 	{ "secondchance",       "Second Chance" },
 	{ "secretoflostworld",  "The Secret of the Lost World" },
-	{ "seekandenjoyr",      "Seek and Enjoy" },
+	{ "seekandenjoy",       "Seek and Enjoy" },
 	{ "selmaswill",         "Selma's Will" },
 	{ "sentor",             "Sentor" },
 	{ "sere",               "SERE: Survive, Evade, Resist, Escape" },
-	{ "seriespasswords",    "Series Passwords" },
+	{ "seriespasswordsg1",  "Series Passwords: Game #1" },
+	{ "seriespasswordsg2",  "Series Passwords: Game #2" },
 	{ "severance",          "Severance Battle System" },
 	{ "seymourstuidquest",  "Seymour's Stoopid Quest" },
 	{ "shablon",            "Shablon" },
@@ -512,7 +519,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "snowdrift",          "Snowdrift" },
 	{ "solitaryadrift",     "Four Walls and a Toilet" },
 	{ "sommeril",           "Sommeril" },
-	{ "sophia",             "Sophia" },
+	{ "sommerilse",         "Sommeril SE" },
+	{ "sophia",             "Sophia or Wisdom Defined" },                                                               // ADRIFT5
 	{ "sophie",             "Sophie's Adventure" },
 	{ "sorcereradrift",     "The Sorcerer" },
 	{ "spaceboy2",          "The Adventure of Space Boy! Volume II" },
@@ -535,7 +543,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "strange",            "The Strange Adventure" },
 	{ "sunempire",          "Sun Empire: Quest for the Founders" },
 	{ "superliam",          "Super Liam 1: A Hero Is Born" },
-	{ "suzygotherpowers",   "How Suzy got her Powers" },
+	{ "suzygotherpowers",   "How Suzy Got Her Powers" },
 	{ "swordincane",        "Sword Concealed in Cane" },
 	{ "sword",              "Sword" },
 	{ "talking",            "Conversation Tree Sample" },
@@ -578,8 +586,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "togetyou",           "We Are Coming to Get You!" },
 	{ "tohell",             "To Hell and Beyond" },
 	{ "tomdickharry",       "Tom Dick and Harry" },
-	{ "toolkit",            "Toolkit" },
-	{ "topaz",              "Topaz" },
+	{ "toolkitdice",        "Toolkit - Dice Module" },
+	{ "toolkitcalc",        "Toolkit - Calculator Module" },
+	{ "toolkitgame",        "Toolkit - Game Module" },
 	{ "tophat",             "Top Hat" },
 	{ "toronto",            "A Day in Toronto" },
 	{ "townofazra",         "Town of Azra" },
@@ -602,7 +611,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "urbandragon",        "Urban Dragon" },
 	{ "vagabond",           "Vagabond" },
 	{ "vague",              "Vague" },
-	{ "vampireconscience",  "The Vampire with a Conscience" },
+	{ "vampireconscience",  "The Vampire With a Conscience" },
 	{ "vandk",              "Villains and Kings" },
 	{ "vendetta",           "Vendetta" },
 	{ "veteranknowledge",   "Veteran Knowledge" },
@@ -618,7 +627,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "weirdstuff",         "And Then the Weird Stuff Started..." },
 	{ "whatever",           "Whatever Happened to Uncle Grumble?" },
 	{ "wheel",              "The Wheels Must Turn" },
-	{ "whereami",           "Where am I?" },
+	{ "whereami",           "Where Am I?" },
 	{ "whitesingularity",   "The White Singularity" },
 	{ "without",            "Without a Clue" },
 	{ "wizardplayground",   "Wizards Playground" },
@@ -634,10 +643,10 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "wumpusrun",          "The Wumpus Run" },
 	{ "xycanthus",          "Doomed Xycanthus" },
 	{ "yadfa",              "Yet Another Damn Fantasy Adventure" },
-	{ "yeh",                "The Quest" },
-	{ "yonastoundcastle",   "Yon Astounding Castle! of some sort" },
+	{ "yeh",                "The Quest (by BoyBiz)" },
+	{ "yonastoundcastle",   "Yon Astounding Castle! of Some Sort" },
 	{ "zanoza",             "Zanoza Bill - Zolotaya likhoradka - Bilet v Vankuver" },
-	{ "zombiesadrift",      "Zombies Are Cool, But Not So Cool When They're Eating Your Head" },
+	{ "zac",                "Zombies Are Cool, But Not So Cool When They're Eating Your Head" },
 	{ "zombiewalk",         "Bringing Dead NPC Back to Life" },
 	{ "zomelec",            "Zomelec" },
 
@@ -656,7 +665,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1h_jasonvssalm",     "Jason vs. Salm" },                                                         //    4th Place
 	{ "1h_1hrgame",         "A Masochist's Heaven" },                                                   //    5th Place
 	{ "1h_microbewillie",   "Microbe Willie vs. The Rat" },                                             //    6th Place
-	{ "1h_amonkeytoomany",  "A Monkey too many" },                                                      //    7th Place
+	{ "1h_amonkeytoomany",  "A Monkey Too Many" },                                                      //    7th Place
 	{ "1h_princess1",       "The Princess in the Tower" },                                              //    8th Place
 	{ "1h_chicken",         "The Evil Chicken of Doom!" },                                              //    9th Place
 
@@ -710,8 +719,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	// 2nd Three Hour Comp 2004
 	{ "3h_buriedalive",     "Buried Alive" },                                                           //    1st Place
 	{ "3h_veteran",         "Veteran Experience" },                                                     //    2nd Place
-	{ "3h_togetyou",        "We are coming to get you!" },                                              //    3rd Place
-	{ "3h_confession",      "The Murder of Jack Morely" },                                              //    4th Place
+	{ "3h_togetyou",        "We Are Coming to Get You!" },                                              //    3rd Place
+	{ "3h_morely",          "The Murder of Jack Morely" },                                              //    4th Place
 	{ "3h_sandl",           "Snakes and Ladders" },                                                     //    5th Place
 	{ "3h_zac",             "Zombies Are Cool, But Not So Cool When They're Eating Your Head" },        //    6th Place
 
@@ -730,7 +739,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "ec08_r2dc",          "Return to Dracula's Castle II: Revenge of Dracula's Castle" },             //    1st Place
 	{ "ec08_foresthouse3",  "For3st House: Sacrifice" },                                                //    2nd Place
 	{ "ec08_salutations",   "Salutations" },                                                            //    3rd Place
-	{ "ec08_hiker",         "Conversation with a Hitchhiker" },                                         //    4th Place
+	{ "ec08_hiker",         "Conversation With a Hitchhiker" },                                         //    4th Place
 	{ "ec08_blast",         "Blast" },                                                                  //    5th Place
 	{ "ec08_delsol",        "DeL SoL MADNESS" },                                                        //    6th Place
 
@@ -804,7 +813,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "sp04_shardsmemory",  "Shards of Memory" },                                                       //    1st Place
 	{ "sp04_dragonshrine",  "The Curse of DragonShrine" },                                              //    2nd Place
 	{ "sp04_waxworx",       "Wax Worx" },                                                               //    3rd Place
-	{ "sp04_sommeril",      "A Day at the Seaside" },                                                   //    4th Place
+	{ "sp04_sommeril",      "Sommeril" },                                                               //    4th Place
 
 	// InsideADRIFT Summer Comp 2004
 	{ "su04_chooseyourown", "Choose Your Own..." },                                                     //    1st Place
@@ -929,7 +938,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "tc_melancholy",      "Melancholy Blood: Act 1" },                                                //    2nd Place
 
 	// Writing Challenges Comp 2006
-	{ "wri_jgrim",          "Jonathan Grim Space Tourist: Ren" },                                       //    1st Place
+	{ "wri_jgrim",          "Jonathan Grimshaw: Space Tourist" },                                       //    1st Place
 	{ "wri_toomuchexer",    "Too Much Exercise" },                                                      //    2nd Place
 	{ "wri_glumfiddle",     "Glum Fiddle" },                                                            //    3rd Place
 	{ "wri_manoverboard",   "Man Overboard!!!" },                                                       //    4th Place
@@ -966,10 +975,10 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "lazaitch",           "The Lost Labyrinth of Lazaitch" },
 	{ "lmk",                "Land of the Mountain King" },
 	{ "museumheist",        "Museum Heist" },
-	{ "noblecrook1",        "Noble Crook, episode 1" },
-	{ "noblecrook2",        "Noble Crook, episode 2" },
-	{ "noblecrook3",        "Noble Crook, episode 3" },
-	{ "noblecrook4",        "Noble Crook, episode 4" },
+	{ "noblecrook1",        "Noble Crook - Episode 1" },
+	{ "noblecrook2",        "Noble Crook - Episode 2" },
+	{ "noblecrook3",        "Noble Crook - Episode 3" },
+	{ "noblecrook4",        "Noble Crook - Episode 4" },
 	{ "penrhyn",            "Penrhyn: Burning Skies" },
 	{ "rbr",                "Run, Bronwynn, Run!" },
 	{ "royalpuzzle",        "The Royal Puzzle" },
@@ -982,13 +991,13 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "socc",               "The Spectre of Castle Coris" },
 	{ "sonofcamelot",       "Son of Camelot" },
 	{ "sorryforyourloss",   "Sorry for Your Loss" },
-	{ "spacedetective1",    "Space Detective, episode 1" },
-	{ "spacedetective2",    "Space Detective, episode 2" },
-	{ "spacedetective3",    "Space Detective, episode 3" },
-	{ "spacedetective4",    "Space Detective, episode 4" },
-	{ "spacedetective5",    "Space Detective, episode 5" },
-	{ "spacedetective6",    "Space Detective, episode 6" },
-	{ "spacedetective7",    "Space Detective, episode 7" },
+	{ "spacedetective1",    "Space Detective - Episode 1" },
+	{ "spacedetective2",    "Space Detective - Episode 2" },
+	{ "spacedetective3",    "Space Detective - Episode 3" },
+	{ "spacedetective4",    "Space Detective - Episode 4" },
+	{ "spacedetective5",    "Space Detective - Episode 5" },
+	{ "spacedetective6",    "Space Detective - Episode 6" },
+	{ "spacedetective7",    "Space Detective - Episode 7" },
 	{ "starshipquest",      "Starship Quest" },
 	{ "stoneofwisdom",      "Stone of Wisdom" },
 	{ "symphonica",         "Symphonica 64" },
@@ -996,14 +1005,13 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "tcom2",              "The Cave of Morpheus 2" },
 	{ "tcots",              "The Call of the Shaman" },
 	{ "tee",                "The Euripedes Enigma" },
-	{ "temperamentum",      "Temperamentum" },
-	{ "thegardenparty",     "The Garden Party" },
-	{ "thewayhome",         "The Way Home: Episode 2 of the Bash Saga" },
+	{ "temperamentum",      "Temperamentum" },                                                                          // ADRIFT5
+	{ "thewayhome",         "Bash Saga 2: The Way Home" },
 	{ "tingalan",           "Tingalan" },
 	{ "tlc",                "The Lost Children" },
 	{ "ttp",                "The Tartarus Project" },
 	{ "treasurehunt",       "Treasure Hunt in the Amazon" },
-	{ "tributereturntocos", "Tribute Return to CoS" },
+	{ "tributereturntocos", "Tribute: Return to CoS" },
 	{ "wwiiee",             "WWII Elevator Escape" },
 
 	{ nullptr, nullptr }
