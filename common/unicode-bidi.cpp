@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/ustr.h"
 #include "common/unicode-bidi.h"
 #include "common/textconsole.h"
