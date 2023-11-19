@@ -41,7 +41,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "adventurepostman",   "The Adventures of Postman Matt" },
 	{ "adventurestrikes",   "Adventure Strikes When You Least Expect It" },
 	{ "adventurethumper",   "Adventures of Thumper: Wonder Wombat" },
-	{ "afp",                "Another Friday Party" },
+	{ "afp",                "Another Friday Party" },                                                                   // NOT_FOUND
 	{ "akari",              "A Day in the Life 3: Akari's Story" },
 	{ "akron",              "Akron" },
 	{ "albertlost",         "Albert Is Lost!: An Adventure in Real Life" },
@@ -64,7 +64,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "archiebdaych1",      "Archie's Birthday - Chapter 1: Reggie's Gift" },
 	{ "armour",             "Armour" },
 	{ "ascot",              "The Ascot" },
-	{ "asylumadrift",       "Asylum" },
+	{ "asylum_ms",          "Asylum (by Mel S)" },
 	{ "athylon",            "The Tunnels of Athylon" },
 	{ "attack",             "Attack" },
 	{ "average",            "The Average Life" },
@@ -80,7 +80,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "basement",           "Escape the Basement From Hell" },
 	{ "bcl",                "Big City Laundry" },
 	{ "bdw",                "Brain Dead Weekend" },
-	{ "bedlamadrift",       "Bedlam" },
+	{ "bedlam_mw",          "Bedlam (by Mark Whitmore)" },
 	{ "beerisntenough",     "When Beer Isn't Enough" },
 	{ "beethro",            "Beethro’s Text Adventure" },
 	{ "bethere",            "Be There!" },
@@ -94,7 +94,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "blob",               "Overriding Get" },
 	{ "blood",              "Fire in the Blood" },
 	{ "bloodrelatives",     "Blood Relatives" },  // Broken
-	{ "blueskyadrift",      "Blue Sky" },
+	{ "bluesky_un",         "Blue Sky (by The Unknown Norwegian)" },
 	{ "bobbobsly",          "The Adventures of Bob Bobsly" },
 	{ "bombthreat",         "Bomb Threat" },
 	{ "bookbuilding",       "Book Building" },
@@ -110,8 +110,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "canyouguess",        "Can You Guess?" },
 	{ "canyoustandup",      "Can You Stand Up?" },
 	{ "captive",            "Captive Universe" },
-	{ "cardemo_an",         "Car (by Anonymous)" },
-	{ "cardemo_sm",         "Car (by Stewart McAbney)" },
+	{ "car_an",             "Car (by Anonymous)" },
+	{ "car_sm",             "Car (by Stewart McAbney)" },
 	{ "cards",              "Playing Cards" },
 	{ "castlequest",        "Castle Quest" },
 	{ "cat",                "The Cat" },
@@ -216,12 +216,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "emotions",           "Basic Emotions Change" },
 	{ "enc1",               "Encounter 1: Tim's Mom" },
 	{ "enc2",               "Encounter 2: The Study Group" },
-	{ "enigmaadrift",       "Enigma Creature" },
+	{ "enigmacreature",     "Enigma Creature" },
 	{ "escapecamelot",      "Escape From Camelot" },
 	{ "escapefromsouth",    "Tom Ceader: Escape From the South" },
 	{ "escapehouse2",       "Escape From the House 2" },                                                                // ADRIFT5
 	{ "escapetofreedom",    "Escape to Freedom" },
-	{ "etnyadrift",         "Escape to New York" },
+	{ "etny",               "Escape to New York" },
 	{ "eveningwithecod",    "An Evening With the Evil Chicken of Doom" },
 	{ "event",              "Event" },
 	{ "expendableitems",    "Expendable Items" },
@@ -232,7 +232,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "findandy1",          "Find Andy: Part 1" },
 	{ "fineday4reap",       "A Fine Day for Reaping" },
 	{ "firstarise",         "The First to Arise" },
-	{ "firstdayadrift",     "First Day" },
+	{ "firstday",           "First Day" },
 	{ "first",              "The Book of Fistandantalus" },
 	{ "foresthouse",        "Forest House" },
 	{ "fox",                "Fox" },
@@ -244,13 +244,13 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "gammagals",          "The Gamma Gals" },
 	{ "gateway",            "Gateway: Guardian Child" },
 	{ "ghoster",            "Ghoster" },
-	{ "ghosttownadrift",    "Ghost Town" },
+	{ "ghosttown_fi",       "Ghost Town (by Finn)" },
 	{ "gmylm",              "Give Me Your Lunch Money" },
 	{ "go",                 "Go!" },
 	{ "golddragon",         "Howard. Oblivion. Part 1: Gold Dragon" },
 	{ "goldilocksbreakent", "Goldilocks: Breaking & Entering" },
 	{ "goldilocksfox",      "Goldilocks Is a FOX!" },
-	{ "golfadrift",         "Golf" },
+	{ "golf"      ,         "Golf" },
 	{ "golfball",           "Golfball" },
 	{ "gosha",              "Gosha Adventure" },
 	{ "gps",                "GPS" },
@@ -263,12 +263,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "gumball",            "Gumball Machine" },
 	{ "guysguys",           "Guys, Guys" },
 	{ "halloweenhijinks",   "Halloween Hijinks" },
-	{ "hammurabiadrift",    "Hammurabi" },
+	{ "hammurabi_rm",       "Hammurabi (by Ron Moore)" },
 	{ "hangover",           "Hangover" },
 	{ "hcw",                "How to Conquer the World" },
 	{ "hellinahamper",      "To Hell in a Hamper" },
 	{ "heretoday",          "Here Today, Tomorrow, Next Week!" },
-	{ "heroesadrift",       "Heroes Are Interesting Things to Be..." },
+	{ "heroes",             "Heroes Are Interesting Things to Be..." },
 	{ "hhorror",            "House of Horror" },
 	{ "hhouse",             "The Haunted House" },
 	{ "hintsl",             "Hint System Library" },
@@ -337,8 +337,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "lockedout",          "Locked Out" },
 	{ "longjourneyhome",    "The Long Journey Home" },
 	{ "loopthrough",        "Loop Through Objects" },
-	{ "lostadrift",         "Lost" },
 	{ "lostcoastlines",     "The Lost Coastline" },
+	{ "lost_em",            "Lost (by Eric Mayer)" },
 	{ "lostmines",          "The Lost Mines" },
 	{ "losttomb",           "The Lost Tomb" },
 	{ "loveforreal",        "Love for Real" },
@@ -347,11 +347,10 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "makeshiftmagician",  "The Makeshift Magician" },
 	{ "mammoth",            "Mammoth Vacuum Button of Death" },
 	{ "marmalade",          "Marmalade Skies" },
-	{ "maroonedadrift",     "Marooned" },
+	{ "marooned_bd",        "Marooned (by Bruce Davis)" },
 	{ "mattshouse",         "Matt's House" },
 	{ "mcl",                "Character Library #1" },
-	{ "meadrift",           "X Me" },
-	{ "mhpquestadrift",     "Quest for the Magic Healing Plant" },
+	{ "mhpquest_adrift",    "Quest for the Magic Healing Plant" },
 	{ "microwaveman",       "Microwave Man!" },
 	{ "mikes",              "The Life of Mike" },
 	{ "missingpersona",     "Missing Person" },
@@ -383,7 +382,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "namiki",             "A Day in the Life 2: Namiki" },
 	{ "nastyescape",        "The Nasty Escape" },
 	{ "nat01",              "Nathaniel Peck: Missing Necklace" },
-	{ "neighboursfromhell", "Neighbours From Hell" },
+	{ "nem",                "The Nem Rehsif" },                                                                         // !!!
 	{ "newbie",             "Newbie" },
 	{ "newrooms",           "News Rooms" },
 	{ "newton",             "Newton" },
@@ -411,7 +410,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "paperrack",          "Newspaper Rack" },
 	{ "partytomurder",      "A Party to Murder" },
 	{ "passages",           "The Passages" },
-	{ "pathwayadrift",      "Pathway to Destruction" },
+	{ "pathway_adrift",     "Pathway to Destruction" },
 	{ "phoenixdestiny",     "Phoenix Destiny" },
 	{ "phonebooth",         "Pick Up the Phone Booth and Cry" },
 	{ "picture",            "Conversation With a Picture" },
@@ -454,7 +453,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "rockyraccoon",       "Rocky Raccoon" },
 	{ "ronforest",          "Forest on the Norm" },
 	{ "rontoxic",           "Toxically Earth" },
-	{ "roomdescdemo",       "Changing Room Description" },
+	{ "roomdesc",           "Changing Room Description" },
 	{ "roomentrytask",      "Run Task on Room Entry" },
 	{ "rtcountdown",        "Realtime Countdown" },
 	{ "sand",               "Sand" },
@@ -464,7 +463,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "schoolproject",      "My School Social Studies Project" },
 	{ "score",              "To Score or Not to Score" },
 	{ "screensavers",       "The Screen Savers on Planet X" },
-	{ "seatdemo",           "Seated Character" },
+	{ "seat",               "Seated Character" },
 	{ "secondchance",       "Second Chance" },
 	{ "secretoflostworld",  "The Secret of the Lost World" },
 	{ "seekandenjoy",       "Seek and Enjoy" },
@@ -503,7 +502,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "spooked2",           "Spooked!: The Haunted Horror House" },
 	{ "spotbother",         "A Spot to Bother" },
 	{ "stalker",            "Stalker" },
-	{ "standingdemo",       "Stand on Stool to Examine" },
+	{ "standing",           "Stand on Stool to Examine" },
 	{ "stardust",           "S Tar Dus T" },
 	{ "station",            "Station XIII" },
 	{ "stodw4",             "The Strange Tale of Dr Wilkins" },
@@ -528,7 +527,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "texevil",            "Textident Evil" },
 	{ "annihilofthink3",    "The Annihilation of Think.com 3" },
 	{ "theawakeners",       "The Awakeners" },
-	{ "theclockadrift",     "The Clock" },
+	{ "theclock_sm",        "The Clock (by Stewart J. McAbney)" },
 	{ "thecrash",           "The Crash" },
 	{ "thedarkriver",       "The Dark River" },
 	{ "thedayprogram",      "The Day Program" },
@@ -541,6 +540,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "thesorcerer",        "The Sorcerer" },
 	{ "thesuccessor",       "The Successor" },
 	{ "thetest",            "The Test" },
+	{ "thetimemachine",     "The Time Machine (by Richard Anderson)" },
 	{ "thevirtualhuman",    "The Virtual Human" },
 	{ "thewill",            "The Will" },
 	{ "tictactoe",          "Tic-Tac-Toe" },
@@ -558,12 +558,12 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "toolkitgame",        "Toolkit - Game Module" },
 	{ "tophat",             "Top Hat" },
 	{ "toronto",            "A Day in Toronto" },
-	{ "tq3",                "The Quest" },
+	{ "tq3",                "The Quest (by Chris Moody)" },
 	{ "trackingdevice2",    "Tracking Device 2" },
 	{ "tra",                "The Timmy Reid Adventure" },
 	{ "tree",               "Conversation Tree" },
 	{ "trickortreat",       "Trick or Treat" },
-	{ "trolladrift",        "Troll!" },
+	{ "troll",              "Troll!" },
 	{ "trouserpress",       "Trouserpress" },
 	{ "twentyone",          "Twenty-One!" },
 	{ "twilight",           "The Twilight" },
@@ -593,7 +593,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "whitesingularity",   "The White Singularity" },
 	{ "without",            "Without a Clue" },
 	{ "wizardplayground",   "Wizards Playground" },
-	{ "wonderlandadrift",   "Welcome to Wonderland" },
+	{ "welcwonderland",     "Welcome to Wonderland" },
 	{ "woodsaredark",       "The Woods Are Dark" },
 	{ "trackingdevice",     "Tracking Device" },
 	{ "world",              "The World According to CBN" },
@@ -601,6 +601,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "wrecked",            "Wrecked" },
 	{ "wumpushunt",         "Wumpus Hunt" },
 	{ "wumpusrun",          "The Wumpus Run" },
+	{ "xme",                "X Me" },
 	{ "xycanthus",          "Doomed Xycanthus" },
 	{ "yadfa",              "Yet Another Damn Fantasy Adventure" },
 	{ "yeh",                "The Quest (by BoyBiz)" },
@@ -614,8 +615,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "a5icblankwall",      "The Blank Wall" },
 	{ "a5icorganic",        "Organic" },
 	{ "a5icshatteredmem",   "Shattered Memory" },
-	{ "a5ictrappedadrift",  "Trapped" },
 	{ "a5icheadcase",       "Head Case" },
+	{ "a5ictrapped_adrift", "Trapped" },                                                                                // ADRIFT5
 	{ "a5icaxeofkolt",      "The Axe of Kolt" },
 
 	// 1st One Hour Comp 2002
@@ -657,14 +658,14 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1h_wreckage",        "SE: Wreckage" },                                                           //    5th Place
 	{ "1h_ecod3",           "An Evening with the Evil Chicken of Doom" },                               //    6th Place
 	{ "1h_trabula",         "Get Treasure for Trabula" },                                               //    7th Place
-	{ "1h_agent4f",         "Agent 4-F from Mars" },                                                    //    8th Place
+	{ "1h_agent4fmars",     "Agent 4-F from Mars" },                                                    //    8th Place
 	{ "1h_cah",             "Cruel and Hilarious Punishment!" },                                        //    9th Place
 	{ "1h_thecatinthetree", "The Cat in the Tree" },                                                    //   10th Place
 	{ "1h_adriftmaze",      "The Adrift Maze" },                                                        //   11th Place
 	{ "1h_undefined",       "Undefined" },                                                              //   12th Place
 	{ "1h_woof",            "Woof" },                                                                   //   13th Place
 	{ "1h_icecream",        "Ice Cream" },                                                              //   14th Place
-	{ "1h_shreddem",        "Shred 'em" },                                                              //   15th Place
+	{ "1h_shredem",         "Shred 'em" },                                                              //   15th Place
 	{ "1h_spam",            "SPAM" },                                                                   //   16th Place
 
 	// 1st Three Hour Comp 2004
@@ -673,8 +674,8 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "3h_zombiecow",       "Zombie Cow" },                                                             //    3rd Place
 	{ "3h_lostsouls",       "Lost Souls" },                                                             //    4th Place
 	{ "3h_theamulet",       "The Amulet" },                                                             //    5th Place
-	{ "3h_shadricktravels", "Shadrick's Travels" },                                                     //    6th Place
-	{ "3h_annihilofthink",  "Annihilation of Think.com" },                                              //    7th Place
+	{ "3h_shadrick1",       "Shadrick's Travels" },                                                     //    6th Place
+	{ "3h_annihilofthink",  "The Annihilation of Think.com" },                                          //    7th Place
 
 	// 2nd Three Hour Comp 2004
 	{ "3h_buriedalive",     "Buried Alive" },                                                           //    1st Place
@@ -731,9 +732,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "ec_perspectives",    "Perspectives" },                                                           //    3rd Place
 
 	// Finish the Game Comp 2005
-	{ "ftg_pathwayadrift",  "Pathway to Destruction" },                                                 //    1st Place
+	{ "ftg_pathway_adrift", "Pathway to Destruction" },                                                 //    1st Place
 	{ "ftg_takeone",        "Take One" },                                                               //    2nd Place
-	{ "ftg_demonhunter",    "The Demon Hunter" },                                                       //    3rd Place
+	{ "ftg_demonhunter2",   "The Demon Hunter" },                                                       //    3rd Place
 	{ "ftg_hunter",         "The Hunter" },                                                             //    4th Place
 	{ "ftg_shadow",         "Shadow of the Past" },                                                     //    5th Place
 	{ "ftg_shadowjack",     "Jack of Shadows" },                                                        //    6th Place
@@ -757,7 +758,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "goy_paint",          "Paint!!!" },                                                               //    1st Place
 	{ "goy_shardsmemory",   "Shards of Memory" },                                                       //    2nd Place
 	{ "goy_waxworx",        "Wax Worx" },                                                               //    3rd Place
-	{ "goy_shadrikundgrd",  "Shadrack's Underground Adventure" },                                       //    4th Place
+	{ "goy_shadrick2",      "Shadrick's Underground Adventures" },                                      //    4th Place
 	{ "goy_dragonshrine",   "The Curse of DragonShrine" },                                              //    5th Place
 	{ "goy_darkness",       "Darkness" },                                                               //    6th Place
 
@@ -777,7 +778,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	// InsideADRIFT Summer Comp 2004
 	{ "su04_chooseyourown", "Choose Your Own..." },                                                     //    1st Place
-	{ "su04_shadrikundgrd", "Shadrack's Underground Adventure" },                                       //    2nd Place
+	{ "su04_shadrick2",     "Shadrick's Underground Adventures" },                                      //    2nd Place
 	{ "su04_darkhavenmyst", "The Mystery of the Darkhaven Caves" },                                     //    3rd Place
 	{ "su04_adriftproject", "The ADRIFT Project" },                                                     //    4th Place
 	{ "su04_tick2nowhere",  "Ticket to No Where" },                                                     //    5th Place
@@ -792,7 +793,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	// InsideADRIFT Summer Comp 2005
 	{ "su05_target",        "Target" },                                                                 //    1st Place
-	{ "su05_lca",           "Lights, Camera, Action!" },                                                //    2nd Place
+	{ "su05_lights",        "Lights, Camera, Action!" },                                                //    2nd Place
 	{ "su05_cibass",        "Can It Be All So Simple?" },                                               //    3rd Place
 	{ "su05_mustescape",    "Must Escape!" },                                                           //    4th Place
 	{ "su05_regrets",       "Regrets" },                                                                //    5th Place
@@ -823,7 +824,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "ic05_murdermansion", "Murder Mansion" },                                                         //    3rd Place
 	{ "ic05_zacksmackfoot", "Zack Smackfoot" },                                                         //    4th Place
 	{ "ic05_outline",       "Outline" },                                                                //    5th Place
-	{ "ic05_escape",        "Must Escape!" },                                                           //    6th Place
+	{ "ic05_mustescape",    "Must Escape!" },                                                           //    6th Place
 	{ "ic05_rift",          "Rift" },                                                                   //    7th Place
 	{ "ic05_p2p",           "Point 2 Point" },                                                          //    8th Place
 
@@ -928,7 +929,7 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "jabberwocky",        "Jabberwocky: The Untold Story" },
 	{ "jacd",               "Just Another Christmas Day" },
 	{ "jaft",               "Just Another Fairy Tale" },
-	{ "labyrinthadrift",    "The Leviathan Labyrinth" },
+	{ "levilabyrinth",      "The Leviathan Labyrinth" },
 	{ "lazaitch",           "The Lost Labyrinth of Lazaitch" },
 	{ "lmk",                "Land of the Mountain King" },
 	{ "museumheist",        "Museum Heist" },
@@ -1015,7 +1016,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("armour", "050731", "e42a5cde88dbb8dd07df855c785a9564", 279),
 	DT_ENTRY1("ascot", "090730", "01ed200d7aec907aa84ad4007c5b296b", 24494),
 	DT_ENTRY1("ascot", "090731", "878ebf802cab7ad9e0d2ff54be096266", 24332),
-	DT_ENTRY1("asylumadrift", "030906", "5d03f29f530701db4dc096b9e7307ae4", 44503),
+	DT_ENTRY1("asylum_ms", "030906", "5d03f29f530701db4dc096b9e7307ae4", 44503),
 	DT_ENTRY1("athylon", "030524", "431cfbc8a19c86c40cb9e4e57a733926", 6456),
 	DT_ENTRY1("attack", "040128/Demo", "c26f50555e90b95772402c6517ca8614", 1391),
 	DT_ENTRY1("average", "011223", "bc4d0db4a6b95136bdb92aae623b7786", 11350),
@@ -1034,8 +1035,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("bariscebik", "120128", "d63d310e2b2fe4ab7ea6bc74c136b8e0", 14634),
 	DT_ENTRY1("barneysproblem", "040115", "3fe45352a6c0d7bb0bdbf4f9c08afba7", 66055),
 	DT_ENTRY1("basement", "010703", "bd037c5c85b73880caa75a65f6efcfca", 3237),
-	DT_ENTRY1("bedlamadrift", "011202", "a86a6d6f3c54e787aafd9f9a8c9bef86", 21344),
-	DT_ENTRY1("blueskyadrift", "020811", "32104bad81f6502654cf100bb5edd0e1", 30629),
+	DT_ENTRY1("bedlam_mw", "011202", "a86a6d6f3c54e787aafd9f9a8c9bef86", 21344),
+	DT_ENTRY1("bluesky_un", "020811", "32104bad81f6502654cf100bb5edd0e1", 30629),
 	DT_ENTRY1("bcl", "100419", "14bfd0a8a53e95d23f8a5dcb3a79ae90", 8088),
 	DT_ENTRY1("bdw", "110828", "85540c66a7a48a518572fb34bef5c1f8", 9723),
 	DT_ENTRY1("beerisntenough", "030214", "98248a8e65a36f6d0fb98111255a85dc", 14070),
@@ -1060,8 +1061,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("campwindylake", "020619", "33ea1f1fea9998472e9c352ea6e1c1d8", 114698),
 	DT_ENTRY1("canidoit", "051027", "072f42e0a6d340e12885cae34e14bfd7", 5161),
 	DT_ENTRY1("captive", "010321", "11409953b0f0042e9a36fabd8c46363f", 74568),
-	DT_ENTRY1("cardemo_an", "021025/Demo", "24ce042d41969aae4eff41b980174ffb", 525),
-	DT_ENTRY1("cardemo_sm", "021125/Demo", "970643c6a2eaeb20b42706759b334ba1", 1027),
+	DT_ENTRY1("car_an", "021025/Demo", "24ce042d41969aae4eff41b980174ffb", 525),
+	DT_ENTRY1("car_sm", "021125/Demo", "970643c6a2eaeb20b42706759b334ba1", 1027),
 	DT_ENTRY1("cards", "060821", "a4b8feeb2deea9f8c7abeb77a1af7586", 2422),
 	DT_ENTRY1("castlequest", "000910", "485e9c1c15fb40b9da9f5bb865b36854", 14777),
 	DT_ENTRY1("cat", "030610/Demo", "b45b97920aab576f37fdc9ef7e13825a", 588),
@@ -1097,7 +1098,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("cluelessbob", "050516", "b3015b3ef35ecb99909d1e91f1b7e4cd", 35109),
 	DT_ENTRY1("cobl", "050717", "09b2348c28d18b31b14da4305be38a61", 22995),
 	DT_ENTRY1("colony", "010128", "3cc46c5c44e1e853c6e8aeca4f3624db", 14781),
-	DT_ENTRY1("coloromcadrift", "120202", "6b8d8f115a89c99f785156a9b5802bc2", 12681),
+	DT_ENTRY1("coloromc_adrift", "120202", "6b8d8f115a89c99f785156a9b5802bc2", 12681),
 	DT_ENTRY1("com", "070924/Demo", "e376e159e41d8a46883d543b7f0acc90", 2221),
 	DT_ENTRY1("combat", "021017/Demo", "69ce1c3cebc83b928ebc9d423cecab53", 1481),
 	DT_ENTRY1("combat", "030220/Demo", "f4b54ddd2d9aa2db4c390ba772a5420d", 3422),
@@ -1152,7 +1153,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("disambtest", "100531/v2", "0102b5e347eb57f3376df4b018d6cb71", 587),
 	DT_ENTRY1("display", "020507", "beab90b4f3078113f981b4f7413f46b0", 1635),
 	DT_ENTRYL1("dolg", Common::RU_RUS, "040312", "7f00a84a881593e1e61943520641dfb4", 377103),
-	DT_ENTRY1("dontgoadrift", "120202", "f192abcc4e1f04787a7f1fde2ad05385", 13789),
+	DT_ENTRY1("dontgo_adrift", "120202", "f192abcc4e1f04787a7f1fde2ad05385", 13789),
 	DT_ENTRY1("door2", "041201/Demo", "8b2e10db0ed489b59a74618c2e2aeaa0", 434),
 	DT_ENTRY1("doortest", "020705/Demo", "f7842f2b8c90ce1217e8077cf09574ef", 805),
 	DT_ENTRY1("doortoutopia", "021017", "9e727b8ad5b9c62d712d4a302083f6d8", 15432),
@@ -1175,14 +1176,14 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("emotions", "040719/Demo", "c634a5e84887ae043589060efd4aca43", 1044),
 	DT_ENTRY1("enc1", "020605", "d297f4376e5ba5b05985ca12a60d8671", 101668),
 	DT_ENTRY1("enc2", "040730", "4bd8ebd78a0a227510f62f2074e60ee5", 120335),
-	DT_ENTRY1("enigmaadrift", "020918", "8cac4426368204e34bf2316d86d35353", 10627),
+	DT_ENTRY1("enigmacreature", "020918", "8cac4426368204e34bf2316d86d35353", 10627),
 	DT_ENTRY1("escapecamelot", "090805", "aa00c4cd06c40e303de81208e38723c4", 240667),
 	DT_ENTRY1("escapefromsouth", "001125", "3a742c4bb03442749a4f89dc12e0eef1", 15407),
 	DT_ENTRY1("escapefromsouth", "030524", "5b2608a2b7963ce2ba117dd361c91936", 4648),
 	DT_ENTRY1("escapetofreedom", "050616", "a7edcb289eb8177a143a96912ec55393", 18171),
 	DT_ENTRY1("escapetofreedom", "061112", "41b58982572f1275831ce2a9367135f2", 18156),
-	DT_ENTRY1("etnyadrift", "050930", "8a376d5bdf833fa79614271d05dd36a8", 59531),
-	DT_ENTRY1("etnyadrift", "051117", "990c0e2390d197ebcae1109e5534c433", 59583),
+	DT_ENTRY1("etny", "050930", "8a376d5bdf833fa79614271d05dd36a8", 59531),
+	DT_ENTRY1("etny", "051117", "990c0e2390d197ebcae1109e5534c433", 59583),
 	DT_ENTRY1("eveningwithecod", "040301", "bd783057274a626868b052915bad2a2c", 10870),
 	DT_ENTRY1("eveningwithecod", "040325", "736f0276c4028ccd972d391f0b30ab14", 3937),
 	DT_ENTRY1("event", "061021/Demo", "7b9b2c949b584c838dc950454c3ee43c", 561),
@@ -1195,7 +1196,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("findandy1", "100309", "ca1aeba91f2d17dff959f73da8b48f03", 27512645),
 	DT_ENTRY1("first", "000915", "a44aac0441648f68a85e1cbaef4c5e53", 12213),
 	DT_ENTRY1("firstarise", "040105", "d9d205cb6bcedbd159c826287b71a4e6", 13390),
-	DT_ENTRY1("firstdayadrift", "010725", "00e1d28a1357484d3baf7a7e5de0bf9d", 13892),
+	DT_ENTRY1("firstday", "010725", "00e1d28a1357484d3baf7a7e5de0bf9d", 13892),
 	DT_ENTRY1("foresthouse", "070903", "e22e9f6dcc7870a82280dd4ca9ea87f2", 6269),
 	DT_ENTRY1("foresthouse", "080630", "fc3b75ac5b5a6e13d415dd8049de99ad", 9476),
 	DT_ENTRY1("fox", "010905", "1923d86c2614a35653c1a5234078f8fa", 28216),
@@ -1208,8 +1209,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("gammagals", "020619", "db813e61ded3e7f642d437ef1e77d0b3", 277834),
 	DT_ENTRY1("gateway", "010614", "b641bd132791bd847e9cc1aaa879e19f", 81139),
 	DT_ENTRY1("ghoster", "041027", "23ef182c934ba46bbda93c8290d6cdd8", 8031),
-	DT_ENTRY1("ghosttownadrift", "090421", "cfbe1e8099cdc9850aa006593bf46489", 30205598),
-	DT_ENTRY1("ghosttownadrift", "090523", "60c11a24853dec5e6a292914c6b4f7f2", 30205645),
+	DT_ENTRY1("ghosttown_fi", "090421", "cfbe1e8099cdc9850aa006593bf46489", 30205598),
+	DT_ENTRY1("ghosttown_fi", "090523", "60c11a24853dec5e6a292914c6b4f7f2", 30205645),
 	DT_ENTRY1("gmylm", "090929", "f757a3642284738d51b7540c1fe24409", 29488),
 	DT_ENTRY1("gmylm", "100704", "67b61f16ca39d8abc9eb770385ef0e50", 15194757),
 	DT_ENTRY1("go", "010408", "ea447aa7dea7164abad03517bc678367", 34724),
@@ -1217,7 +1218,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("goldilocksbreakent", "080209", "0800e11d1a3c54bd56fe57f21cf2b2f5", 8398),
 	DT_ENTRY1("goldilocksfox", "020916", "12e596065ae94d3f86a67acb4de2aae7", 56539),
 	DT_ENTRY1("goldilocksfox", "021219", "ed0d92c4d4e2c0936bf7686404f52204", 56572),
-	DT_ENTRY1("golfadrift", "040927/Demo", "bf75533058a1d9a2cab18eb9561ae92b", 752),
+	DT_ENTRY1("golf", "040927/Demo", "bf75533058a1d9a2cab18eb9561ae92b", 752),
 	DT_ENTRY1("golfball", "040926/Demo", "7b9b9e70f50d6b230d37f6595f1f0186", 230),
 	DT_ENTRY1("gosha", "050320", "11abaedb5650bcc47cbb4daed44a36f8", 5625),
 	DT_ENTRY1("gps", "060621/Demo", "5e9b07bdd5272ea6914b40d2adbca77d", 3259),
@@ -1231,13 +1232,13 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("guysguys", "100513", "baaca4f89c5107be250d5894bc440601", 11162),
 	DT_ENTRY1("halloweenhijinks", "031026", "14694f7b9cef4baeb0f958500119d2ff", 68052),
 	DT_ENTRY1("halloweenhijinks", "031031", "d82508a70cf2a46e81042fb433ea49a5", 68060),
-	DT_ENTRY1("hammurabiadrift", "040131", "1d84182e20c95959d1b9045f116cf548", 2960),
+	DT_ENTRY1("hammurabi_rm", "040131", "1d84182e20c95959d1b9045f116cf548", 2960),
 	DT_ENTRY1("hangover", "090623", "610c83cbe9d9e1353ebc444a769c85a9", 33933),
 	DT_ENTRY1("hcw", "140523", "327dfec3d8f0b63ff5b05a552ee946ca", 82659),
 	DT_ENTRY1("hellinahamper", "030428", "0af4c4b3b1bdd38db22a484c72885210", 80183),
 	DT_ENTRY1("hellinahamper", "030802", "810247344fddc9a812bf6283b4826093", 80183),
 	DT_ENTRY1("heretoday", "011121", "9d3f74bbe250156eafecf9d8b8f43cc2", 4856),
-	DT_ENTRY1("heroesadrift", "020920", "26a4eb30b9497ba6dbd57e21309e1901", 5483),
+	DT_ENTRY1("heroes", "020920", "26a4eb30b9497ba6dbd57e21309e1901", 5483),
 	DT_ENTRY1("hhorror", "020226", "68a77ba6e6fee7ed74cbe0b737446b12", 51820),
 	DT_ENTRY1("hhouse", "000627", "c29c27f23dd1ba32e3df8e055bbe4b7c", 42874),
 	DT_ENTRY1("hhouse", "030524", "8531a2ad7b8457bab1179c9cc652e9b1", 11132),
@@ -1307,7 +1308,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("lock2", "021107/Demo", "5526da113101cd964a6d92853ba57610", 313),
 	DT_ENTRY1("lockedout", "060930", "745360aa69f555882d3737b366b983b4", 22292),
 	DT_ENTRY1("longjourneyhome", "010703", "c16c9e02c4a3248b25cb4f6c1ada0646", 59124),
-	DT_ENTRY1("lostadrift", "010330", "904b80ebf94df890ad7c26e454b6a612", 42596),
+	DT_ENTRY1("lost_em", "010330", "904b80ebf94df890ad7c26e454b6a612", 42596),
 	DT_ENTRY1("lostcoastlines", "021001", "55ca67bed8541e0343f7462605570129", 990831),
 	DT_ENTRY1("lostmines", "020603", "08719eb487b62aa0072344ddabdb3ccd", 37088),
 	DT_ENTRY1("losttomb", "010220", "3a6cb8ca1c9de79161a65ecb6a40fedd", 56336),
@@ -1317,13 +1318,12 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("makeshiftmagician", "060211", "022e92887a488baefc0bd868ed76f22c", 10862),
 	DT_ENTRY1("mammoth", "111222", "84037b03ff0dee65e800b64d4229e325", 4290),
 	DT_ENTRY1("marmalade", "050607", "89669a0e1c82045b1a2fc0d8a2e5be5b", 15549),
-	DT_ENTRY1("maroonedadrift", "000930", "5e3e0435c98a0a915a98d5b1b080522c", 50516),
-	DT_ENTRY1("maroonedadrift", "020916", "6856af3da4f2821124115d16a610d20e", 12287),
+	DT_ENTRY1("marooned_bd", "000930", "5e3e0435c98a0a915a98d5b1b080522c", 50516),
+	DT_ENTRY1("marooned_bd", "020916", "6856af3da4f2821124115d16a610d20e", 12287),
 	DT_ENTRY1("mattshouse", "010623", "39c67a455f68d1b01eadd9fe0563bfa0", 33429),
 	DT_ENTRY1("mattshouse", "020529", "0116c0272509776b59767f4619af3759", 7127),
 	DT_ENTRY1("mcl", "020921", "7cdfb44d05ae773c758fecdb88f4a1e5", 5952),
-	DT_ENTRY1("meadrift", "060202/Demo", "8b68328f70fdeb13d3d66e92915e6407", 1499),
-	DT_ENTRY1("mhpquestadrift", "020303", "b3fe34b0d01f6486245eb15643417ce0", 17143),
+	DT_ENTRY1("mhpquest_adrift", "020303", "b3fe34b0d01f6486245eb15643417ce0", 17143),
 	DT_ENTRY1("microwaveman", "050306", "45adefa528c0da90dea695ca5b4e5373", 1943),
 	DT_ENTRY1("mikes", "050306", "b19a80fb6e82b571b4efbf5099df63e1", 5552),
 	DT_ENTRY1("missingpersona", "071031", "751cedd28b92d205f2f2aa1d2c5d483c", 63928),
@@ -1384,8 +1384,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("paperrack", "060402/Demo", "c29c3672b67da01bc0e8c949e2cdc42f", 261),
 	DT_ENTRY1("partytomurder", "020928", "bd2d6d3202ff772173220b9acdf613cf", 39180),
 	DT_ENTRY1("passages", "030226", "524ca347d623936586c68536a3b4d0d3", 85728),
-	DT_ENTRY1("pathwayadrift", "060521", "1ac0787c4948e540a04ccdb1f8c156f7", 20935),
-	DT_ENTRY1("pathwayadrift", "061224", "73cc920942af7d162538ead0d118f34c", 20926),
+	DT_ENTRY1("pathway_adrift", "060521", "1ac0787c4948e540a04ccdb1f8c156f7", 20935),
+	DT_ENTRY1("pathway_adrift", "061224", "73cc920942af7d162538ead0d118f34c", 20926),
 	DT_ENTRY1("phoenixdestiny", "010817", "6a271aae0ed4f9e99e5ea9dc14b402a5", 121059),
 	DT_ENTRY1("phonebooth", "020802", "25f4977d7b8df28322df945809826f43", 1372),
 	DT_ENTRY1("picture", "041128", "cffa045b7364b531473d2eb69fea2931", 2257),
@@ -1431,7 +1431,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRYL1("ronforest", Common::DE_DEU, "020326", "d445d58bc4737003f70edc4b34cc04a6", 7972),
 	DT_ENTRY1("rontoxic", "020413", "d12fd2d5fb22c16de740c7556ec5eadc", 51225),
 	DT_ENTRYL1("rontoxic", Common::DE_DEU, "020412", "453daa2ec43a6dcc795a02debcd562d6", 60110),
-	DT_ENTRY1("roomdescdemo", "050107/Demo", "5ebaf1afec17a97eb42845f1af6c1aec", 592),
+	DT_ENTRY1("roomdesc", "050107/Demo", "5ebaf1afec17a97eb42845f1af6c1aec", 592),
 	DT_ENTRY1("roomentrytask", "060115", "49bb4299a979614b3bc185c4b0c5821b", 341),
 	DT_ENTRY1("rtcountdown", "050402/Demo", "41b3bf0e121d113da727542a7f888500", 440),
 	DT_ENTRY1("sand", "030127/Demo", "aec1b0b5bf5611facca3bbc93ef2f03d", 579),
@@ -1441,7 +1441,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("sceneofthecrime", "a8a094b145523c622e65ab6897727f2d", 68054),
 	DT_ENTRY1("score", "040320", "f97e463fe05c17e4fc59606ea7884f1a", 24186),
 	DT_ENTRY1("screensavers", "010716", "cc11d1576475aa78366c4c8416f67e3e", 80870),
-	DT_ENTRY1("seatdemo", "060728/Demo", "f3aad262fdef15ca48ae80f80a1b79e1", 706),
+	DT_ENTRY1("seat", "060728/Demo", "f3aad262fdef15ca48ae80f80a1b79e1", 706),
 	DT_ENTRY1("secondchance", "0505??", "3a3c30b7ab715a6dab7114a5cfb89cd2", 139093),
 	DT_ENTRY1("secretoflostworld", "01????", "fcadd63ccfa96b38a20f2a850c6ed21b", 49842),
 	DT_ENTRY1("seekandenjoy", "110522", "069596f2641e03f6bfcaf3bf8181eaf4", 9573160),
@@ -1482,7 +1482,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("spooked2", "06????", "8255dca87623d0641828b3aaa9be2a08", 17320),
 	DT_ENTRY1("spotbother", "0512??", "ffc3b255381b0315ee2210a309706508", 113076),
 	DT_ENTRY1("stalker", "010819", "8130b5b37d050d6fcbdf1af5c56c39d0", 7934),
-	DT_ENTRY1("standingdemo", "050727/Demo", "87918bb50bc4dea047b443fd8d90a94a", 564),
+	DT_ENTRY1("standing", "050727/Demo", "87918bb50bc4dea047b443fd8d90a94a", 564),
 	DT_ENTRY1("stardust", "061002", "caa5cdc48e4f23bad3a6893b5fd2b2a4", 35343),
 	DT_ENTRY1("stardust", "061012", "0d0a2aa60004be9b02b1a212b3cd582e", 42463),
 	DT_ENTRY1("station", "020510", "efdac6169c91e2b70fa1b63f0abdb237", 10823),
@@ -1508,7 +1508,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("annihilofthink3", "050510", "d277ea444f279f6f6fe25c4686c14bfd", 11401),
 	DT_ENTRY1("thedarkriver", "081112", "bde0f0f135bcf33212c9d19d7ea2f645", 3547),
 	DT_ENTRY1("thedarkriver", "100928", "63788f315bc11fe476eb2f53b5c57258", 4158),
-	DT_ENTRY1("theclockadrift", "021122", "90ba998e679618644ae747d798f6a832", 881),
+	DT_ENTRY1("theclock_sm", "021122", "90ba998e679618644ae747d798f6a832", 881),
 	DT_ENTRY1("thecrash", "050221", "6fcf1713c0b5bb8472f842f1805daf7a", 4509),
 	DT_ENTRY1("thehole", "060908", "9d7449170ff3d6d8139a641d47e307ca", 5198),
 	DT_ENTRY1("thelabexperiment", "020918", "6218d1a6ba705799bb863e9136a139c2", 3009),
@@ -1542,7 +1542,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("trackingdevice2", "041011/Demo", "a330535c4b5024a3ad49b48a8011c533", 441),
 	DT_ENTRY1("tree", "020617/Demo", "d9310c133da963b1162579b70cd7d49d", 3778),
 	DT_ENTRY1("trickortreat", "1707??", "060156357075cedaca65904ebacdad70", 66556),
-	DT_ENTRY1("trolladrift", "020215", "5a9d7d4fea2f12bc010acadeff9dee01", 68742),
+	DT_ENTRY1("troll", "020215", "5a9d7d4fea2f12bc010acadeff9dee01", 68742),
 	DT_ENTRY1("trouserpress", "080203/Demo", "a28dfdee50b5af4b9c26a1d0f3c4ad8c", 508),
 	DT_ENTRY1("twentyone", "091027", "a08597706f81b58c331940c1aa7be126", 92778),
 	DT_ENTRY1("twilight", "001104", "ab5ddd461c1fb2065d26fcfdf4baa5aa", 71377),
@@ -1581,7 +1581,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("without", "0803?\?/v1", "2310f8d0ae20b048e28ea703a4819097", 117307),
 	DT_ENTRY1("without", "0803?\?/v2", "e660b79c7fde567ff7515e70654fa9f7", 117288),
 	DT_ENTRY1("wizardplayground", "050209", "c75d4ccce821284710dd757abe86b78a", 18585),
-	DT_ENTRY1("wonderlandadrift", "030524", "845497c0a1617f724382e4f85f14dedd", 7381),
+	DT_ENTRY1("welcwonderland", "030524", "845497c0a1617f724382e4f85f14dedd", 7381),
 	DT_ENTRY1("woodsaredark", "030914", "4acae86746292076b90fa6fa73ea76d0", 71216),
 	DT_ENTRY1("trackingdevice", "040620/Demo", "22866fbcae738e66d212ccd91069089a", 895),
 	DT_ENTRY1("world", "0708??", "155da95d704d262db3de6afd95d90023", 23152),
@@ -1627,7 +1627,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("nycholiday", "616722d93cff001d234a6e2c2c284b73", 19514),
 	DT_ENTRY1("os", "140529", "dbdf2e91125a057eab5fa044023c28e3", 22244),
 	DT_ENTRY0("projectactually", "178324d32fb2bf27e2c14bf84190e9a5", 25559),
-	DT_ENTRY1("readinginmayadrift", "120108", "ba8a12e79520234e31622f141c99cafd", 13434),
+	DT_ENTRY1("readingmay_adrift", "120108", "ba8a12e79520234e31622f141c99cafd", 13434),
 	DT_ENTRY0("savethekitten", "3ce730972fc402d46c46b38546599c5f", 19957),
 	DT_ENTRY1("schoolproject", "130607", "01aca4dc431d0661adcdef1f1b87bf2b", 19822),
 	DT_ENTRY1("skybreak", "1910?\?/v1", "5d2f34b91ff26546e7b1da18914d649c", 1132198),
@@ -1683,7 +1683,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("jabberwocky", "1101?\?/v1", "aaa98f426d20c156d427faf95424becb", 48574),
 	DT_ENTRY1("jaft", "2010?\?/v1", "0c754a07c00d9701b36f68703f1a58bd", 2018252),
 	DT_ENTRY1("jaft", "2010?\?/v2", "ca12aa24867b9eb43aab1ad972dec202", 2018188),
-	DT_ENTRY1("labyrinthadrift", "03????", "be233d835a3f821e757b122539544bbf", 298592),
+	DT_ENTRY1("levilabyrinth", "03????", "be233d835a3f821e757b122539544bbf", 298592),
 	DT_ENTRY1("lazaitch", "1912??", "055df9090ae88991a66a8be045534e65", 298502),
 	DT_ENTRY1("lmk", "1710?\?/v1", "6b5ade214129491afcebc0e280eb22da", 10600962),
 	DT_ENTRY1("lmk", "1710?\?/v2", "c46e80c58bf0e343c1d0b8fb6be90f40", 10601042),
@@ -1762,7 +1762,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("a5icblankwall", "1209?\?/Intro", "7b2490ab9015632eb546185c936b53d0", 44799),
 	DT_ENTRY1("a5icorganic", "1209?\?/Intro", "7d3cce3b62f3d7773c8a567e45d5fada", 22738),
 	DT_ENTRY1("a5icshatteredmem", "1209?\?/Intro", "f37a962adfe504a4e1ff3badd4e26745", 33266),
-	DT_ENTRY1("a5ictrappedadrift", "1209?\?/Intro", "d80b609f3d25caa6e66fbb887bb387a1", 14495),
+	DT_ENTRY1("a5ictrapped_adrift", "1209?\?/Intro", "d80b609f3d25caa6e66fbb887bb387a1", 14495),
 	DT_ENTRY1("a5icheadcase", "1209?\?/Intro", "81cdf1d83cd6f88aafb8ac4d77585fb7", 45980),
 	DT_ENTRY1("a5icaxeofkolt", "1209?\?/Intro", "85bfd8637e8758c36ffd0659448f8087", 71534),
 
@@ -1896,7 +1896,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("ec_perspectives", "091209", "c1fdcd8c811a892186c7d7ca6e070f44", 8043),
 
 	// Finish the Game Comp 2005
-	DT_ENTRY1("ftg_pathwayadrift", "050922", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
+	DT_ENTRY1("ftg_pathway_adrift", "050922", "bcf1f61393c1b8123a98ee4879ffd8a6", 20896),
 	DT_ENTRY1("ftg_takeone", "050917", "114caad9308b7adf9e15267a11f12632", 9547),
 	DT_ENTRY1("ftg_demonhunter2", "050920", "2af5b32810e6960881122732f48d3ccf", 18644),
 	DT_ENTRY1("ftg_hunter", "050924", "d7af67a0753910bf32ec233e538ad659", 23531),
@@ -2048,7 +2048,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("1r_msmobius", "030304", "81cfc7e042294e71c60a264a2fbb3f2d", 23225),
 	DT_ENTRY1("1r_insanity", "030213", "c57c140cc9331a60695a3f90fba8fb9a", 12660),
 	DT_ENTRY1("1r_everything", "030227", "44a5b102675bcbc48c04c269301d0cd3", 20065),
-	DT_ENTRY1("1r_iadrift", "030213", "4e7e5beab23931f6f574c13cbde8c535", 5164),
+	DT_ENTRY1("1r_i", "030213", "4e7e5beab23931f6f574c13cbde8c535", 5164),
 	DT_ENTRY1("1r_trappedgirl", "030227", "61e1c14dddef8d3b6804c47b2072d9c4", 17235),
 	DT_ENTRY1("1r_dreamland", "030211", "4eb8715f7a8f30c7e9baabae999b1148", 6508),
 	DT_ENTRY1("1r_dreamland", "030301", "684cd1932e909105b7898953792c4065", 2422),
