@@ -173,6 +173,8 @@ MapWindow::MapWindow(Configuration *cfg, Map *m): GUI_Widget(NULL, 0, 0, 0, 0) {
 
 	lighting_update_required = true;
 
+	game_started = false;
+
 	set_interface();
 }
 
@@ -614,7 +616,6 @@ bool MapWindow::in_window(uint16 x, uint16 y, uint8 z) {
 void MapWindow::update() {
 	GameClock *clock = game->get_clock();
 	Events *event = game->get_event();
-	static bool game_started = false; // set to true on the first update()
 	static uint32 last_update_time = clock->get_ticks();
 	uint32 update_time = clock->get_ticks();
 
