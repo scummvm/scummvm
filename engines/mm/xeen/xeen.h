@@ -97,9 +97,13 @@ class XeenEngine : public MMEngine {
 	struct ExtendedOptions {
 		bool _showItemCosts;
 		bool _durableArmor;
+		bool _showHpSpBars;
 
-		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {
-		}
+		ExtendedOptions() :
+			_showItemCosts(false),
+			_durableArmor(false),
+			_showHpSpBars(false)
+		{}
 	};
 private:
 	/**

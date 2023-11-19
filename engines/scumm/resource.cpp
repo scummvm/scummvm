@@ -706,7 +706,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 			        "while trying to load res (%s,%d) in room %d at %d+%d in file %s",
 			        tag2str(tag), tag2str(_res->_types[type]._tag),
 					nameOfResType(type), idx, roomNr,
-					_fileOffset, fileOffs, _fileHandle->getName());
+			                _fileOffset, fileOffs, _fileHandle->getDebugName().c_str());
 		}
 
 		size = _fileHandle->readUint32BE();
@@ -839,8 +839,12 @@ byte ResourceManager::Resource::getResourceCounter() const {
 byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", nameOfResType(type), idx, size);
 
-	if (!validateResource("allocating", type, idx))
+	_vm->_insideCreateResource++; // For the HE sound engine
+
+	if (!validateResource("allocating", type, idx)) {
+		_vm->_insideCreateResource--;
 		return nullptr;
+	}
 
 	if (_vm->_game.version <= 2) {
 		// Nuking and reloading a resource can be harmful in some
@@ -865,6 +869,9 @@ byte *ResourceManager::createResource(ResType type, ResId idx, uint32 size) {
 	_types[type][idx]._address = ptr;
 	_types[type][idx]._size = size;
 	setResourceCounter(type, idx, 1);
+
+	_vm->_insideCreateResource--;
+
 	return ptr;
 }
 
@@ -1041,6 +1048,12 @@ bool ResourceManager::isModified(ResType type, ResId idx) const {
 	if (!validateResource("isModified", type, idx))
 		return false;
 	return _types[type][idx].isModified();
+}
+
+bool ResourceManager::isOffHeap(ResType type, ResId idx) const {
+	if (!validateResource("isOffHeap", type, idx))
+		return false;
+	return _types[type][idx].isOffHeap();
 }
 
 bool ResourceManager::Resource::isModified() const {
@@ -1754,7 +1767,7 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	// immediately overwritten. This probably affects all CD versions, so we
 	// just have to add further patches as they are reported.
 
-	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && _enableEnhancements) {
+	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && enhancementEnabled(kEnhRestoredContent)) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
 	} else
 

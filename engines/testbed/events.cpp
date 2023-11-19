@@ -264,6 +264,48 @@ TestExitStatus EventTests::mouseEvents() {
 	return passed;
 }
 
+TestExitStatus EventTests::doubleClickTime() {
+	Testsuite::clearScreen();
+
+	uint32 dclickTime = g_system->getDoubleClickTime();
+
+	if (dclickTime == 0) {
+		if (Testsuite::handleInteractiveInput("Double-click time returned 0, meaning it isn't configurable on this operating system.\nIs that correct ?", "Yes", "No", kOptionLeft)) {
+			Testsuite::logDetailedPrintf("Unsupported double-click time check failed");
+			return kTestFailed;
+		}
+	}
+
+	Common::String info = "Testing double click time detection.\n "
+						  "This should report the correct double-click time for the system";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : double click time\n");
+		return kTestSkipped;
+	}
+
+	info = Common::String::format("Double-click time was reported as: %u msec\nDoes this seem correct?", static_cast<unsigned int>(dclickTime));
+
+	if (Testsuite::handleInteractiveInput(info, "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Double-click time failed");
+		return kTestFailed;
+	}
+
+	if (Testsuite::handleInteractiveInput("Do you want to test for detecting configuration changes?\nIf so, change the OS double-click time now, then click 'Yes'", "Yes", "No", kOptionLeft)) {
+		dclickTime = g_system->getDoubleClickTime();
+
+		info = Common::String::format("Double-click time was reported as: %u msec\nDoes this seem correct?", static_cast<unsigned int>(dclickTime));
+
+		if (Testsuite::handleInteractiveInput(info, "Yes", "No", kOptionRight)) {
+			Testsuite::logDetailedPrintf("Double-click time reconfiguration failed");
+			return kTestFailed;
+		}
+	}
+
+
+	return kTestPassed;
+}
+
 TestExitStatus EventTests::kbdEvents() {
 
 	Testsuite::clearScreen();
@@ -330,6 +372,7 @@ TestExitStatus EventTests::showMainMenu() {
 
 EventTestSuite::EventTestSuite() {
 	addTest("MouseEvents", &EventTests::mouseEvents);
+	addTest("DoubleClickTime", &EventTests::doubleClickTime);
 	addTest("KeyboardEvents", &EventTests::kbdEvents);
 	addTest("MainmenuEvent", &EventTests::showMainMenu);
 }

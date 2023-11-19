@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE // atari-graphics.h's unordered_set
+
 #include "backends/events/atari/atari-events.h"
 
 #include <mint/osbind.h>

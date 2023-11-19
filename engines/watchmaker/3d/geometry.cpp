@@ -654,7 +654,7 @@ void t3dCreateProceduralSky(void) {
 	tab = new uint8[MaxSetDimX * MaxSetDimY * 3]{};
 
 	if (!SkySurface)  // rReleaseBitmapDirect( SkySurface );
-		SkySurface = (gTexture *)rCreateSurface(256, 256, rTEXTURESURFACE);
+		SkySurface = (gTexture *)rCreateSurfaceP(256, 256, rTEXTURESURFACE);
 
 	p = (unsigned short *)rLockSurfaceDirect(SkySurface, (unsigned int *)&pitch);
 	pitch /= 2;
@@ -3280,14 +3280,11 @@ void ProcessMaterialList(void) {
  *                  SortMesh
  * --------------------------------------------------*/
 static int SortMesh(const void *element1, const void *element2) {
-	t3dMESH **mm1, **mm2;
-	t3dMESH *m1, *m2;
+	const t3dMESH * const *mm1 = (const t3dMESH * const *)(element1);
+	const t3dMESH * const *mm2 = (const t3dMESH * const *)(element2);
 
-	mm1 = (t3dMESH **)(element1);
-	mm2 = (t3dMESH **)(element2);
-
-	m1 = *mm1;
-	m2 = *mm2;
+	const t3dMESH *m1 = *mm1;
+	const t3dMESH *m2 = *mm2;
 
 	/*  DebugLogWindow("%s",m1->Name);
 	    DebugLogWindow("%s",m2->Name);

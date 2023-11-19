@@ -85,7 +85,7 @@ def parseSTX(theme_file, def_file, subcount):
 	return subcount
 
 def buildDefTheme(themeName):
-	def_file = open("default.inc", "w")
+	def_file = open("default.inc", mode="w", newline="\n")
 
 	if not os.path.isdir(themeName):
 		print ("Cannot open default theme dir.")

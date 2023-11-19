@@ -135,6 +135,7 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptTaffyPatron::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -144,12 +145,12 @@ bool AIScriptTaffyPatron::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptTaffyPatron::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		_animationState = 0;
 		_animationFrame = 0;
 		break;
 
-	case 2:
+	case kAnimationModeRun:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
@@ -160,6 +161,7 @@ bool AIScriptTaffyPatron::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptTaffyPatron::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

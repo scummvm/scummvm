@@ -62,6 +62,8 @@ struct StripTable {
 	int zrun[120];		// FIXME: Why only 120 here?
 };
 
+static const byte bitMasks[9] = { 0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF };
+
 enum {
 	kNoDelay = 0,
 	// This should actually be 3 in all games using it;
@@ -1262,7 +1264,7 @@ void ScummEngine::restoreCharsetBg() {
 		_charset->_str.left = -1;
 		_charset->_left = -1;
 
-		if (_macScreen && _game.id == GID_INDY3 && _charset->_textScreenID == kTextVirtScreen) {
+		if (_macGui && _game.id == GID_INDY3 && _charset->_textScreenID == kTextVirtScreen) {
 			mac_undrawIndy3TextBox();
 			return;
 		}
@@ -1664,7 +1666,8 @@ void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 }
 
 void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
-	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
+	int factor = _isIndy4Jap ? 0 : 8;
+	if (x >= 0 && y >= 0 && _screenWidth + factor > x && _screenHeight > y) {
 		if (useBackbuffer)
 			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
 		else
@@ -2221,7 +2224,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// FM-TOWNS release.  We take care not to apply this palette change to the
 	// text or inventory, as they still require the original colors.
 	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
-		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->_enableEnhancements) {
+		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 		if (_roomPalette[11] == 11 && _roomPalette[86] == 86)
 			_roomPalette[11] = 86;
 		if (_roomPalette[13] == 13 && _roomPalette[80] == 80)
@@ -2244,7 +2247,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_vm->_currentRoom == 36 &&
 			vs->number == kMainVirtScreen &&
 			y == 8 && x >= 7 && x <= 30 && height == 88 &&
-			_vm->_enableEnhancements) {
+			_vm->enhancementEnabled(kEnhVisualChanges)) {
 		_roomPalette[47] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
@@ -2265,7 +2268,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_vm->_currentRoom == 11 &&
 			vs->number == kMainVirtScreen &&
 			y == 24 && x >= 28 && x <= 52 && height == 56 &&
-			_vm->_enableEnhancements) {
+			_vm->enhancementEnabled(kEnhVisualChanges)) {
 		_roomPalette[1] = 15;
 
 		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
@@ -2471,25 +2474,27 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	// The following few lines more or less duplicate decompressBitmap(), only
 	// for an area spanning multiple strips. In particular, the codecs 13 & 14
 	// in decompressBitmap call drawStripHE()
-	_decomp_shr = code % 10;
-	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
 	switch (code) {
-	case 134:
-	case 135:
-	case 136:
-	case 137:
-	case 138:
+	case BMCOMP_NMAJMIN_H4:
+	case BMCOMP_NMAJMIN_H5:
+	case BMCOMP_NMAJMIN_H6:
+	case BMCOMP_NMAJMIN_H7:
+	case BMCOMP_NMAJMIN_H8:
+		_decomp_shr = code - BMCOMP_NMAJMIN_H0; // Bits per pixel
+		_decomp_mask = bitMasks[_decomp_shr];
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
-	case 144:
-	case 145:
-	case 146:
-	case 147:
-	case 148:
-		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
+	case BMCOMP_NMAJMIN_HT4:
+	case BMCOMP_NMAJMIN_HT5:
+	case BMCOMP_NMAJMIN_HT6:
+	case BMCOMP_NMAJMIN_HT7:
+	case BMCOMP_NMAJMIN_HT8:
+		_decomp_shr = code - BMCOMP_NMAJMIN_HT0; // Bits per pixel
+		_decomp_mask = bitMasks[_decomp_shr];
+		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, false);
 		break;
-	case 150:
+	case BMCOMP_SOLID_COLOR_FILL:
 		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h, vs->format.bytesPerPixel);
 		break;
 	default:
@@ -2663,121 +2668,121 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
 
 	switch (code) {
-	case 1:
+	case BMCOMP_RAW256:
 		drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 2:
+	case BMCOMP_TOWNS_2:
 		unkDecode8(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
-	case 3:
+	case BMCOMP_TOWNS_3:
 		unkDecode9(dst, dstPitch, src, numLinesToProcess);       /* Ender - Zak256/Indy256 */
 		break;
 
-	case 4:
+	case BMCOMP_TOWNS_4:
 		unkDecode10(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
-	case 7:
+	case BMCOMP_TOWNS_7:
 		unkDecode11(dst, dstPitch, src, numLinesToProcess);      /* Ender - Zak256/Indy256 */
 		break;
 
-	case 8:
+	case BMCOMP_TRLE8BIT:
 		// Used in 3DO versions of HE games
 		transpStrip = true;
 		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 9:
+	case BMCOMP_RLE8BIT:
 		drawStrip3DO(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 10:
+	case BMCOMP_PIX32:
 		// Used in Amiga version of Monkey Island 1
 		drawStripEGA(dst, dstPitch, src, numLinesToProcess);
 		break;
 
-	case 14:
-	case 15:
-	case 16:
-	case 17:
-	case 18:
+	case BMCOMP_ZIGZAG_V4:
+	case BMCOMP_ZIGZAG_V5:
+	case BMCOMP_ZIGZAG_V6:
+	case BMCOMP_ZIGZAG_V7:
+	case BMCOMP_ZIGZAG_V8:
 		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 24:
-	case 25:
-	case 26:
-	case 27:
-	case 28:
+	case BMCOMP_ZIGZAG_H4:
+	case BMCOMP_ZIGZAG_H5:
+	case BMCOMP_ZIGZAG_H6:
+	case BMCOMP_ZIGZAG_H7:
+	case BMCOMP_ZIGZAG_H8:
 		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 34:
-	case 35:
-	case 36:
-	case 37:
-	case 38:
+	case BMCOMP_ZIGZAG_VT4:
+	case BMCOMP_ZIGZAG_VT5:
+	case BMCOMP_ZIGZAG_VT6:
+	case BMCOMP_ZIGZAG_VT7:
+	case BMCOMP_ZIGZAG_VT8:
 		transpStrip = true;
 		drawStripBasicV(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 44:
-	case 45:
-	case 46:
-	case 47:
-	case 48:
+	case BMCOMP_ZIGZAG_HT4:
+	case BMCOMP_ZIGZAG_HT5:
+	case BMCOMP_ZIGZAG_HT6:
+	case BMCOMP_ZIGZAG_HT7:
+	case BMCOMP_ZIGZAG_HT8:
 		transpStrip = true;
 		drawStripBasicH(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 64:
-	case 65:
-	case 66:
-	case 67:
-	case 68:
-	case 104:
-	case 105:
-	case 106:
-	case 107:
-	case 108:
+	case BMCOMP_MAJMIN_H4:
+	case BMCOMP_MAJMIN_H5:
+	case BMCOMP_MAJMIN_H6:
+	case BMCOMP_MAJMIN_H7:
+	case BMCOMP_MAJMIN_H8:
+	case BMCOMP_RMAJMIN_H4:
+	case BMCOMP_RMAJMIN_H5:
+	case BMCOMP_RMAJMIN_H6:
+	case BMCOMP_RMAJMIN_H7:
+	case BMCOMP_RMAJMIN_H8:
 		drawStripComplex(dst, dstPitch, src, numLinesToProcess, false);
 		break;
 
-	case 84:
-	case 85:
-	case 86:
-	case 87:
-	case 88:
-	case 124:
-	case 125:
-	case 126:
-	case 127:
-	case 128:
+	case BMCOMP_MAJMIN_HT4:
+	case BMCOMP_MAJMIN_HT5:
+	case BMCOMP_MAJMIN_HT6:
+	case BMCOMP_MAJMIN_HT7:
+	case BMCOMP_MAJMIN_HT8:
+	case BMCOMP_RMAJMIN_HT4:
+	case BMCOMP_RMAJMIN_HT5:
+	case BMCOMP_RMAJMIN_HT6:
+	case BMCOMP_RMAJMIN_HT7:
+	case BMCOMP_RMAJMIN_HT8:
 		transpStrip = true;
 		drawStripComplex(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
-	case 134:
-	case 135:
-	case 136:
-	case 137:
-	case 138:
+	case BMCOMP_NMAJMIN_H4:
+	case BMCOMP_NMAJMIN_H5:
+	case BMCOMP_NMAJMIN_H6:
+	case BMCOMP_NMAJMIN_H7:
+	case BMCOMP_NMAJMIN_H8:
 		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, false);
 		break;
 
-	case 143: // Triggered by Russian water
-	case 144:
-	case 145:
-	case 146:
-	case 147:
-	case 148:
+	case BMCOMP_CUSTOM_RU_TR: // Triggered by Russian water
+	case BMCOMP_NMAJMIN_HT4:
+	case BMCOMP_NMAJMIN_HT5:
+	case BMCOMP_NMAJMIN_HT6:
+	case BMCOMP_NMAJMIN_HT7:
+	case BMCOMP_NMAJMIN_HT8:
 		transpStrip = true;
 		drawStripHE(dst, dstPitch, src, 8, numLinesToProcess, true);
 		break;
 
-	case 149:
+	case BMCOMP_TPIX256:
 		drawStripRaw(dst, dstPitch, src, numLinesToProcess, true);
 		break;
 
@@ -4201,6 +4206,11 @@ void ScummEngine::transitionEffect(int a) {
 	int delay, numOfIterations;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
 
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformAmiga) {
+		// No transitions in the Amiga version of Maniac Mansion, verified on WinUAE.
+		return;
+	}
+
 	if (VAR_FADE_DELAY == 0xFF) {
 		if (_game.platform == Common::kPlatformC64) {
 			delay = kC64Delay;
@@ -4213,17 +4223,21 @@ void ScummEngine::transitionEffect(int a) {
 		delay = VAR(VAR_FADE_DELAY);
 	}
 
-	// Amiga handles timing a whole frame at a time
-	// instead of using quarter frames; the following
+	// Older Amiga games handle transition timing a whole frame
+	// at a time instead of using quarter frames; the following
 	// code gives my best approximation of that behavior
-	// and the resulting timing
+	// and the resulting timing.
 	if (_game.platform == Common::kPlatformAmiga) {
-		int amigaRest = (delay % 4);
-		delay = (delay / 4);
-		if (amigaRest > 0) {
-			delay += 1;
+		if (_game.id == GID_ZAK) {
+			delay = kPictureDelay;
+		} else {
+			int amigaRest = (delay % 4);
+			delay = (delay / 4);
+			if (amigaRest > 0) {
+				delay += 1;
+			}
+			delay *= 10;
 		}
-		delay *= 10;
 	}
 
 	// V3+ games have the number of iterations hardcoded; we also

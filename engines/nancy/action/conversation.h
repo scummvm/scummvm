@@ -28,10 +28,20 @@
 namespace Nancy {
 namespace Action {
 
-// The base class for conversations, with no video data
+// The base class for conversations, with no video data. Contains the following:
+// - a base sound for the NPC's speech and its caption (mandatory)
+// - a list of possible player responses, also with sounds and captions (optional)
+// Captions are displayed in the Textbox, and player responses are also selectable there.
+// Captions are hypertext; meaning, they contain extra data related to the text (see misc/hypertext.h)
+// A conversation will auto-advance to a next scene when no responses are available; the next scene
+// can either be described within the Conversation data, or can be whatever's pushed onto the scene "stack".
+// Also supports branching scenes depending on a condition, though that is only used in older games.
+// Player responses can also be conditional; the original engine had special-purpose "infocheck"
+// functions, two per character ID, which were used to evaluate those conditions. We replace that with
+// the data bundled inside nancy.dat (see devtools/create_nancy).
 class ConversationSound : public RenderActionRecord {
 public:
-	ConversationSound() : RenderActionRecord(8) {}
+	ConversationSound();
 	virtual ~ConversationSound();
 
 	void init() override;
@@ -87,6 +97,10 @@ protected:
 	Common::String getRecordTypeName() const override { return "ConversationSound"; }
 	bool isViewportRelative() const override { return true; }
 
+	// Functions for reading captions are virtual to allow easier support for the terse Conversation variants
+	virtual void readCaptionText(Common::SeekableReadStream &stream);
+	virtual void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response);
+
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalDialogue();
 	void addGoodbye();
@@ -108,6 +122,8 @@ protected:
 
 	bool _hasDrawnTextbox = false;
 	int16 _pickedResponse = -1;
+
+	const byte _noResponse;
 };
 
 // Conversation with an AVF video. Originally called PlayPrimaryVideoChan0
@@ -132,26 +148,15 @@ protected:
 	AVFDecoder _decoder;
 };
 
+class ConversationCelLoader;
+
 // Conversation with separate cels for the body and head of the character.
 // Cels are separate images bundled inside a .cal file
 class ConversationCel : public ConversationSound {
+	friend class ConversationCelLoader;
 public:
-	struct Cel {
-		Graphics::ManagedSurface bodySurf;
-		Common::Rect bodySrc;
-		Common::Rect bodyDest;
-		Graphics::ManagedSurface headSurf;
-		Common::Rect headSrc;
-		Common::Rect headDest;
-	};
-
-	class HeadCel : public RenderObject {
-	public:
-		HeadCel() : RenderObject(9) {}
-		bool isViewportRelative() const override { return true; }
-	};
-
 	ConversationCel() {}
+	virtual ~ConversationCel();
 
 	void init() override;
 	void registerGraphics() override;
@@ -159,22 +164,65 @@ public:
 
 	void readData(Common::SeekableReadStream &stream) override;
 
-	bool isVideoDonePlaying() override;
+protected:
+	Common::String getRecordTypeName() const override { return "ConversationCel"; }
+	
+	struct Cel {
+		Graphics::ManagedSurface surf;
+		Common::Rect src;
+		Common::Rect dest;
+	};
 
-	Common::Array<Cel> _cels;
+	class RenderedCel : public RenderObject {
+		friend class ConversationCel;
+	public:
+		RenderedCel() : RenderObject(9) {}
+		bool isViewportRelative() const override { return true; }
+	};
+
+	static const byte kCelOverrideTreeRectsOff	= 1;
+	static const byte kCelOverrideTreeRectsOn	= 2;
+
+	bool isVideoDonePlaying() override;
+	Cel &loadCel(const Common::String &name, const Common::String &treeName);
+
+	Common::Array<Common::Array<Common::String>> _celNames;
+	Common::Array<Common::String> _treeNames;
+
 	uint16 _frameTime = 0;
 	uint _videoFormat = kLargeVideoFormat;
 	uint16 _firstFrame = 0;
 	uint16 _lastFrame = 0;
 
-	uint _curFrame = 0; 
+	Common::Array<byte> _drawingOrder;
+	Common::Array<byte> _overrideTreeRects;
+
+	Common::Array<Common::Rect> _overrideRectSrcs;
+	Common::Array<Common::Rect> _overrideRectDests;
+
+	uint _curFrame = 0;
 	uint32 _nextFrameTime = 0;
 
-	// We use the built-in RenderObject for the body
-	HeadCel _headRObj;
+	Common::Array<RenderedCel> _celRObjects;
 
+	Common::HashMap<Common::String, Cel> _celCache;
+	Common::SharedPtr<ConversationCelLoader> _loaderPtr;
+};
+
+class ConversationSoundT : public ConversationSound {
 protected:
-	Common::String getRecordTypeName() const override { return "ConversationCel"; }
+	Common::String getRecordTypeName() const override { return "ConversationSoundT"; }
+
+	void readCaptionText(Common::SeekableReadStream &stream) override;
+	void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) override;
+};
+
+class ConversationCelT : public ConversationCel {
+protected:
+	Common::String getRecordTypeName() const override { return "ConversationCelT"; }
+
+	void readCaptionText(Common::SeekableReadStream &stream) override;
+	void readResponseText(Common::SeekableReadStream &stream, ResponseStruct &response) override;
 };
 
 } // End of namespace Action

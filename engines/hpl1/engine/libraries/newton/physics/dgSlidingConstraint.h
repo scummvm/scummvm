@@ -26,7 +26,7 @@
 //template<class T> class dgPool;
 
 class dgSlidingConstraint;
-typedef dgUnsigned32(dgApi *dgSlidingJointAcceleration)(const dgSlidingConstraint &hinge, dgJointCallBackParam *param);
+typedef dgUnsigned32(dgApi *dgSlidingJointAcceleration)(const NewtonJoint *const slider, NewtonHingeSliderUpdateDesc *const desc);
 
 class dgSlidingConstraint: public dgBilateralConstraint {
 public:

@@ -50,6 +50,7 @@ public:
 
 	// Default paths
 	Common::String getDefaultIconsPath() override;
+	Common::Path getDefaultDLCsPath() override;
 	Common::String getScreenshotsPath() override;
 
 protected:
@@ -61,6 +62,8 @@ protected:
 	AudioCDManager *createAudioCDManager() override;
 
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
+
+	uint32 getOSDoubleClickTime() const override;
 
 private:
 	bool _isPortable;

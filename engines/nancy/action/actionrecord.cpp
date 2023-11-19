@@ -19,10 +19,19 @@
  *
  */
 
+#include "common/stack.h"
+#include "engines/nancy/detection.h"
 #include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {
+
+void DependencyRecord::reset() {
+	satisfied = false;
+	for (auto &child : children) {
+		child.reset();
+	}
+}
 
 void ActionRecord::finishExecution() {
 	switch (_execType) {
@@ -30,20 +39,24 @@ void ActionRecord::finishExecution() {
 		_isDone = true;
 		_state = kBegin;
 		break;
-	case kRepeating:
+	case kRepeating: {
 		_isDone = false;
 		_isActive = false;
 		_state = kBegin;
 
-		for (uint i = 0; i < _dependencies.size(); ++i) {
-			_dependencies[i].satisfied = false;
-		}
+		_dependencies.reset();
 
 		break;
+	}
 	default:
 		_state = kBegin;
 		break;
 	}
+}
+
+void Unimplemented::execute() {
+	debugC(Nancy::kDebugActionRecord, "Unimplemented or changed ActionRecord type %u", _type);
+	_isDone = true;
 }
 
 } // End of namespace Action

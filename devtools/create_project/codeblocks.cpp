@@ -97,7 +97,7 @@ StringList getFeatureLibraries(const BuildSetup &setup) {
 }
 
 void CodeBlocksProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-										   const StringList &includeList, const StringList &excludeList) {
+										   const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
@@ -210,9 +210,9 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	}
 
 	if (!modulePath.empty())
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix + '/' + modulePath);
 	else
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
+		addFilesToProject(moduleDir, project, includeList, excludeList, pchIncludeRoot, pchDirs, pchExclude, setup.filePrefix);
 
 
 	project << "\t\t<Extensions>\n"
@@ -249,13 +249,14 @@ void CodeBlocksProvider::writeDefines(const StringList &defines, std::ofstream &
 }
 
 void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-												const std::string &objPrefix, const std::string &filePrefix) {
+												const std::string &objPrefix, const std::string &filePrefix,
+												const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) {
 
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
 
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/', pchIncludeRoot, pchDirs, pchExclude);
 		} else {
 			std::string name, ext;
 			splitFilename(node->name, name, ext);

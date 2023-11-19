@@ -29,6 +29,7 @@
 @implementation MouseController {
 #ifdef __IPHONE_14_0
 	GCMouse *_mouse;
+	CGFloat _dxReminder, _dyReminder;
 #endif
 }
 
@@ -45,6 +46,9 @@
 												   object:nil];
 	}
 
+	_dxReminder = 0.0;
+	_dyReminder = 0.0;
+
 	return self;
 }
 
@@ -54,18 +58,24 @@
 	_mouse = (GCMouse*)notification.object;
 
 	_mouse.mouseInput.mouseMovedHandler = ^(GCMouseInput * _Nonnull mouse, float deltaX, float deltaY) {
-		CGPoint newPosition = [[self view] pointerPosition];
-		newPosition.x += deltaX;
-		newPosition.y += 0-deltaY;
-		[self handlePointerMoveTo:newPosition];
+		CGFloat scaledDeltaX = deltaX * [[self view] contentScaleFactor] + _dxReminder;
+		CGFloat scaledDeltaY = deltaY * [[self view] contentScaleFactor] + _dyReminder;
+		// Add any reminding delta values to be summed up and get the integer part of the delta
+		int dx = (int)(scaledDeltaX);
+		int dy = (int)(scaledDeltaY);
+		// Save the new reminders
+		_dxReminder = scaledDeltaX - (CGFloat)dx;
+		_dyReminder = scaledDeltaY - (CGFloat)dy;
+
+		[[self view] addEvent:InternalEvent(kInputMouseDelta, -dx, dy)];
 	};
 
 	_mouse.mouseInput.leftButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-		[self handleMouseButtonAction:kGameControllerMouseButtonLeft isPressed:pressed at:[[self view] pointerPosition]];
+		[[self view] addEvent:InternalEvent(pressed ? kInputMouseLeftButtonDown : kInputMouseLeftButtonUp, 0, 0)];
 	};
 
 	_mouse.mouseInput.rightButton.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {
-		[self handleMouseButtonAction:kGameControllerMouseButtonRight isPressed:pressed at:[[self view] pointerPosition]];
+		[[self view] addEvent:InternalEvent(pressed ? kInputMouseRightButtonDown : kInputMouseRightButtonUp, 0, 0)];
 	};
 #endif
 }

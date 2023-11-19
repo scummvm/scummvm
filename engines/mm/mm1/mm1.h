@@ -43,6 +43,14 @@ private:
 
 	void setupNormal();
 	bool setupEnhanced();
+protected:
+	/**
+	 * Returns true if the game should quit
+	 */
+	bool shouldQuit() const override {
+		return MMEngine::shouldQuit();
+	}
+
 public:
 	Globals _globals;
 	Sound *_sound = nullptr;
@@ -59,6 +67,9 @@ public:
 		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 	}
 	int getRandomNumber(int maxNumber) {
+		if (maxNumber < 2)
+			maxNumber = 2;
+
 		return getRandomNumber(1, maxNumber - 1);
 	}
 

@@ -1634,7 +1634,6 @@ void Sound::playVoice(int index, int actor) {
 #ifdef USE_VORBIS
 		Audio::AudioStream *audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 		if (audioStream == nullptr) {
-			delete stream;
 			return;
 		}
 
@@ -1654,7 +1653,6 @@ void Sound::playVoice(int index, int actor) {
 #ifdef USE_MAD
 		Audio::AudioStream *audioStream = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
 		if (audioStream == nullptr) {
-			delete stream;
 			return;
 		}
 

@@ -75,6 +75,8 @@ void Events::runGame() {
 			drawElements();
 			_screen->update();
 		}
+
+		quitFlag |= shouldQuit();
 	}
 
 	delete _screen;

@@ -442,6 +442,26 @@ fi
 
 
 ###########
+# Ultima 8 engine
+###########
+
+echo_n "Checking ultima8.dat..."
+
+fileDate=`git log -1 dists/engine-data/ultima8.dat | grep Date | sed 's/Date: //'`
+
+num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima8 | wc -l`
+
+if [ "$num_lines" -ne "0" ]; then
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima8; zip -r9 ../../../dists/engine-data/ultima8.dat .'${NC}"
+
+  failPlus
+else
+  echoOk
+fi
+
+
+
+###########
 # Totals
 ###########
 

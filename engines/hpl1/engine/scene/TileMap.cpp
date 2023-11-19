@@ -265,8 +265,6 @@ void cTileMap::AddTileLayerFront(cTileLayer *apLayer) {
 //-----------------------------------------------------------------------
 
 void cTileMap::RenderTileData(cTile *apTile, int alLayer) {
-	static int count = 0;
-
 	cTileDataNormal *pData = static_cast<cTileDataNormal *>(apTile->GetTileData());
 	if (pData == NULL)
 		return;
@@ -279,8 +277,6 @@ void cTileMap::RenderTileData(cTile *apTile, int alLayer) {
 											_obj,
 											NULL, apTile->GetPositionPtr());
 	mpGraphics->GetRenderer2D()->AddObject(_obj2);
-
-	count++;
 }
 
 //-----------------------------------------------------------------------

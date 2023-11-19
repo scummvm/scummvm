@@ -126,6 +126,7 @@ protected:
 
 	uint32 durationToSamples(uint16 duration);
 	int noteToPitchModifier(byte note, Instrument *instrument);
+	void overrideChannelMask(int newMask);
 };
 
 } // End of namespace Scumm

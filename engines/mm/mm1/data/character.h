@@ -437,7 +437,8 @@ struct Character : public PrimaryAttributes {
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;
 
-	AttributePair _age;
+	byte _age = 0;
+	int _ageDayCtr = 0;
 	AttributePair16 _sp;
 	AttributePair _spellLevel;
 	AttributePair _ac;
@@ -469,6 +470,16 @@ struct Character : public PrimaryAttributes {
 	bool _canAttack = false;
 	int _nonCombatSpell = -1;
 	int _combatSpell = -1;
+
+	/**
+	 * Get the selected combat/noncombat spell number
+	 */
+	int spellNumber() const;
+
+	/**
+	 * Sets the selected spell
+	 */
+	void setSpellNumber(int spellNum);
 
 	Character();
 

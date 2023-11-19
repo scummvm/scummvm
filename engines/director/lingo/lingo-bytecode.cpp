@@ -27,16 +27,13 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
-#include "director/util.h"
 #include "director/window.h"
 #include "director/castmember/castmember.h"
 #include "director/castmember/script.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-bytecode.h"
-#include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -214,6 +211,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x06, 0x20, kTheSprite,			kTheScoreColor,		true, kTEAItemId },
 	{ 0x06, 0x21, kTheSprite,			kTheLoc,			true, kTEAItemId },
 	{ 0x06, 0x22, kTheSprite,			kTheRect,			true, kTEAItemId },
+	{ 0x06, 0x23, kTheSprite,			kTheMemberNum,		true, kTEAItemId },
 
 	{ 0x07, 0x01, kTheBeepOn,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x02, kTheButtonStyle,		kTheNOField,		true, kTEANOArgs },
@@ -254,6 +252,8 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x08, 0x01, kThePerFrameHook,		kTheNOField,		true, kTEANOArgs },
 	{ 0x08, 0x02, kTheCastMembers,		kTheNumber,			false, kTEANOArgs },
 	{ 0x08, 0x03, kTheMenus,			kTheNumber,			false, kTEANOArgs },
+	{ 0x08, 0x04, kTheCastlibs,			kTheNumber,			false, kTEANOArgs }, // D5
+	{ 0x08, 0x05, kTheXtras,			kTheNumber,			false, kTEANOArgs }, // D5
 
 	{ 0x09, 0x01, kTheCast,				kTheName,			true, kTEAItemId },
 	{ 0x09, 0x02, kTheCast,				kTheText,			true, kTEAItemId },
@@ -312,8 +312,8 @@ void Lingo::initBytecode() {
 	bool bailout = false;
 
 	// Build reverse hashmap
-	for (FuncHash::iterator it = _functions.begin(); it != _functions.end(); ++it)
-		list[(inst)it->_key] = true;
+	for (auto &it : _functions)
+		list[(inst)it._key] = true;
 
 	for (LingoV4Bytecode *op = lingoV4; op->opcode; op++) {
 		_lingoV4[op->opcode] = op;
@@ -353,11 +353,15 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 				warning("BUILDBOT: findVarV4: no call frame");
 				return res;
 			}
-			if (id.asInt() % 6 != 0) {
-				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (not divisible by 6)", id.asInt(), varType);
+			int stride = 6;
+			if (g_director->getVersion() >= 500) {
+				stride = 8;
+			}
+			if (id.asInt() % stride != 0) {
+				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (not divisible by %d)", id.asInt(), varType, stride);
 				return res;
 			}
-			int varIndex = id.asInt() / 6;
+			int varIndex = id.asInt() / stride;
 			Common::Array<Common::String> *varNames = (varType == 4)
 				? callstack.back()->sp.argNames
 				: callstack.back()->sp.varNames;
@@ -620,13 +624,18 @@ void LC::cb_thepush() {
 			g_lingo->push(g_lingo->_state->me.u.obj->getProp(name));
 			return;
 		}
-		warning("cb_thepush: me object has no property '%s'", name.c_str());
+
+		if (name == "me") {
+			// Special case: push the me object itself
+			g_lingo->push(g_lingo->_state->me);
+			return;
+		}
+
+		warning("cb_thepush: me object has no property '%s', type: %d", name.c_str(), g_lingo->_state->me.type);
 	} else {
-		warning("cb_thepush: no me object");
+		g_lingo->lingoError("cb_thepush: no me object");
 	}
-	Datum result;
-	result.type = VOID;
-	g_lingo->push(result);
+	g_lingo->pushVoid();
 }
 
 void LC::cb_thepush2() {
@@ -724,6 +733,12 @@ void LC::cb_v4theentitypush() {
 		case kTEAItemId:
 			{
 				Datum id = g_lingo->pop();
+				if (entity == kTheCast && g_director->getVersion() >= 500) {
+					// For "the member", D5 and above have a lib ID followed by a member ID
+					// Pre-resolve them here.
+					CastMemberID resolved = g_lingo->resolveCastMember(g_lingo->pop(), id, kCastTypeAny);
+					id = Datum(resolved);
+				}
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
@@ -824,6 +839,11 @@ void LC::cb_v4theentitynamepush() {
 	id.u.s = nullptr;
 	id.type = VOID;
 
+	if (!g_lingo->_theEntities.contains(name)) {
+		warning("BUILDBOT: cb_v4theentitynamepush: missing the entity %s", name.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
 	TheEntity *entity = g_lingo->_theEntities[name];
 
 	debugC(3, kDebugLingoExec, "cb_v4theentitynamepush: %s", name.c_str());
@@ -1215,17 +1235,20 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					break;
 				}
 
-				// Floats are stored as an "80 bit IEEE Standard 754 floating
-				// point number (Standard Apple Numeric Environment [SANE] data type
-				// Extended).
-				if (length != 10) {
-					error("Constant float expected to be 10 bytes");
-					break;
-				}
-				uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
-				uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
+				if (length == 10) {
+					// Floats are stored as an "80 bit IEEE Standard 754 floating
+					// point number (Standard Apple Numeric Environment [SANE] data type
+					// Extended).
+					uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
+					uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
 
-				constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
+					constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
+				} else if (length == 8) {
+					constant.u.f = READ_BE_FLOAT64(&constsStore[pointer]);
+				} else {
+					error("Constant float expected to be 8 or 10 bytes but got %d", length);
+				}
+
 			}
 			break;
 		default:
@@ -1610,9 +1633,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 
 	if (!_assemblyContext->isFactory()) {
 		// Register this context's functions with the containing archive.
-		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+		for (auto &it : _assemblyContext->_functionHandlers) {
+			if (!_assemblyArchive->functionHandlers.contains(it._key)) {
+				_assemblyArchive->functionHandlers[it._key] = it._value;
 			}
 		}
 	}
@@ -1634,7 +1657,7 @@ void LingoArchive::addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lc
 	ScriptContext *ctx = g_lingo->_compiler->compileLingoV4(stream, lctxIndex, this, archName, version);
 	if (ctx) {
 		lctxContexts[lctxIndex] = ctx;
-		*ctx->_refCount += 1;
+		ctx->incRefCount();
 	}
 }
 

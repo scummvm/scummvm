@@ -77,6 +77,9 @@ protected:
 	//! The font used in the shape viewer
 	uint32 _fontNo;
 
+	bool _showGrid;
+	bool _mirrored;
+
 	int32 _shapeW, _shapeH, _shapeX, _shapeY;
 };
 

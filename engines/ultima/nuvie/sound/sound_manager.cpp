@@ -24,7 +24,7 @@
 #include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/sound/sound_manager.h"
 #include "ultima/nuvie/sound/adplug/emu_opl.h"
-#include "ultima/nuvie/sound/song_adplug.h"
+#include "ultima/nuvie/sound/song_filename.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
@@ -34,8 +34,12 @@
 #include "ultima/nuvie/sound/pc_speaker_sfx_manager.h"
 #include "ultima/nuvie/sound/towns_sfx_manager.h"
 #include "ultima/nuvie/sound/custom_sfx_manager.h"
+#include "ultima/nuvie/files/u6_lzw.h"
+
 #include "audio/mixer.h"
+
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -55,7 +59,21 @@ static const ObjSfxLookup u6_obj_lookup_tbl[] = {
 	{OBJ_U6_WATER_WHEEL, NUVIE_SFX_WATER_WHEEL}
 };
 
-
+// This is the default MT-32 instrument mapping specified in MIDI.DAT
+const SoundManager::SongMT32InstrumentMapping SoundManager::DEFAULT_MT32_INSTRUMENT_MAPPING[12] = {
+	{'1', "ultima.m",	{{1,  25}, {2,  50}, {3,  24}, {4,  27}, {-1,  0}}},
+	{'2', "bootup.m",	{{1,  37}, {2,  38}, {-1,  0}}},
+	{'3', "intro.m",	{{1,  61}, {2,  60}, {3,  55}, {4, 117}, {5, 117}, {-1,  0}}},
+	{'4', "create.m",	{{1,   6}, {2,   1}, {3,  33}, {-1,  0}}},
+	{'5', "forest.m",	{{1,  59}, {2,  60}, {-1,  0}}},
+	{'6', "hornpipe.m",	{{1,  87}, {2,  60}, {3,  59}, {-1,  0}}},
+	{'7', "engage.m",	{{1,  49}, {2,  26}, {3,  18}, {4,  16}, {-1,  0}}},
+	{'8', "stones.m",	{{1,   6}, {2,  32}, {-1,  0}}},
+	{'9', "dungeon.m",	{{1,  37}, {2, 113}, {3,  55}, {-1,  0}}},
+	{'0', "brit.m",		{{1,  12}, {-1,  0}}},
+	{'-', "gargoyle.m",	{{1,  38}, {2,   5}, {-1,  0}}},
+	{'=', "end.m",		{{1,  38}, {2,  12}, {3,  50}, {4,  94}, {-1,  0}}}
+};
 
 bool SoundManager::g_MusicFinished;
 
@@ -76,11 +94,34 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	m_SfxManager = NULL;
 
 	opl = NULL;
+
+	_midiDriver = nullptr;
+	_mt32MidiDriver = nullptr;
+	_midiParser = nullptr;
+	_deviceType = MT_NULL;
+	_musicData = nullptr;
+	_mt32InstrumentMapping = nullptr;
 }
 
 SoundManager::~SoundManager() {
 	// Stop all mixing
 	_mixer->stopAll();
+
+	musicPause();
+
+	if (_midiDriver) {
+		_midiDriver->setTimerCallback(nullptr, nullptr);
+		_midiDriver->close();
+	}
+
+	Common::StackLock lock(_musicMutex);
+
+	if (_midiParser) {
+		delete _midiParser;
+	}
+	if (_midiDriver) {
+		delete _midiDriver;
+	}
 
 	//thanks to wjp for this one
 	while (!m_Songs.empty()) {
@@ -110,37 +151,11 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 	Std::string music_cfg_file; //full path and filename to music.cfg
 	Std::string sound_dir;
 	Std::string sfx_style;
-	bool val;
 
 	m_Config = config;
 
-	m_Config->value("config/mute", val, false);
-	audio_enabled = !val;
 	m_Config->value("config/GameType", game_type);
 	m_Config->value("config/audio/stop_music_on_group_change", stop_music_on_group_change, true);
-
-	/*  if(audio_enabled == false) // commented out to allow toggling
-	     {
-	      music_enabled = false;
-	      sfx_enabled = false;
-	      music_volume = 0;
-	      sfx_volume = 0;
-	      mixer = NULL;
-	      return false;
-	     }*/
-
-	m_Config->value("config/music_mute", val, false);
-	music_enabled = !val;
-	m_Config->value("config/sfx_mute", val, false);
-	sfx_enabled = !val;
-
-	int volume;
-
-	m_Config->value("config/music_volume", volume, Audio::Mixer::kMaxChannelVolume);
-	music_volume = clamp(volume, 0, 255);
-
-	m_Config->value("config/sfx_volume", volume, Audio::Mixer::kMaxChannelVolume);
-	sfx_volume = clamp(volume, 0, 255);
 
 	config_key = config_get_game_key(config);
 	config_key.append("/music");
@@ -154,42 +169,82 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 	config_key.append("/sounddir");
 	config->value(config_key, sound_dir, "");
 
-	if (game_type == NUVIE_GAME_U6) { // FM-Towns speech
-		config->value("config/speech_mute", val, false);
-		speech_enabled = !val;
-	} else {
-		speech_enabled = false;
-	}
-
 	if (!initAudio()) {
 		return false;
 	}
 
-//  if(music_enabled)  // commented out to allow toggling
-	{
-		if (music_style == "native") {
-			if (game_type == NUVIE_GAME_U6)
-				LoadNativeU6Songs(); //FIX need to handle MD & SE music too.
-		} else if (music_style == "custom")
-			LoadCustomSongs(sound_dir);
-		else
-			DEBUG(0, LEVEL_WARNING, "Unknown music style '%s'\n", music_style.c_str());
+	if (music_style == "native") {
+		if (game_type == NUVIE_GAME_U6)
+			LoadNativeU6Songs(); //FIX need to handle MD & SE music too.
+	} else if (music_style == "custom")
+		LoadCustomSongs(sound_dir);
+	else
+		DEBUG(0, LEVEL_WARNING, "Unknown music style '%s'\n", music_style.c_str());
 
-		musicPlayFrom("random");
-	}
+	musicPlayFrom("random");
 
-//  if(sfx_enabled)  // commented out to allow toggling
-	{
-		//LoadObjectSamples(sound_dir);
-		//LoadTileSamples(sound_dir);
-		LoadSfxManager(sfx_style);
-	}
+	//LoadObjectSamples(sound_dir);
+	//LoadTileSamples(sound_dir);
+	LoadSfxManager(sfx_style);
 
 	return true;
 }
 
 bool SoundManager::initAudio() {
-	opl = new CEmuopl(_mixer->getOutputRate(), true, true);
+	assert(!_midiDriver);
+
+	int devFlags = MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32;
+	if (game_type == NUVIE_GAME_U6)
+		// CMS, Tandy and SSI are only supported by Ultima 6 DOS.
+		devFlags |= MDT_CMS | MDT_PCJR | MDT_C64;
+
+	// Check the type of device that the user has configured.
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
+	_deviceType = MidiDriver::getMusicType(dev);
+
+	if (_deviceType == MT_GM && ConfMan.getBool("native_mt32"))
+		_deviceType = MT_MT32;
+
+	switch (_deviceType) {
+	case MT_ADLIB:
+		_midiDriver = new MidiDriver_M_AdLib();
+		break;
+	case MT_MT32:
+	case MT_GM:
+		_midiDriver = _mt32MidiDriver = new MidiDriver_M_MT32();
+		// TODO Parse MIDI.DAT
+		_mt32InstrumentMapping = DEFAULT_MT32_INSTRUMENT_MAPPING;
+		break;
+	case MT_CMS:
+	case MT_PCJR:
+	case MT_C64:
+	default:
+		// TODO Implement these
+		_midiDriver = new MidiDriver_NULL_Multisource();
+		break;
+	}
+	_midiDriver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+
+	// TODO Only Ultima 6 M format is supported.
+	_midiParser = new MidiParser_M(0);
+	_midiParser->property(MidiParser::mpDisableAutoStartPlayback, true);
+
+	// Open the MIDI driver(s).
+	int returnCode = _midiDriver->open();
+	if (returnCode != 0) {
+		warning("SoundManager::initAudio - Failed to open M music driver - error code %d.", returnCode);
+		return false;
+	}
+
+	syncSoundSettings();
+
+	// Connect the driver and the parser.
+	_midiParser->setMidiDriver(_midiDriver);
+	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
+	_midiDriver->setTimerCallback(_midiParser, &_midiParser->timerCallback);
+
+	//opl = new CEmuopl(_mixer->getOutputRate(), true, true);
+
 	return true;
 }
 
@@ -197,46 +252,55 @@ bool SoundManager::LoadNativeU6Songs() {
 	Song *song;
 
 	string filename;
+	string fileId;
 
-	config_get_path(m_Config, "brit.m", filename);
-	song = new SongAdPlug(_mixer, opl);
+	fileId = "brit.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
 // loadSong(song, filename.c_str());
-	loadSong(song, filename.c_str(), "Rule Britannia");
+	loadSong(song, filename.c_str(), fileId.c_str(), "Rule Britannia");
 	groupAddSong("random", song);
 
-	config_get_path(m_Config, "forest.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Wanderer (Forest)");
+	fileId = "forest.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Wanderer (Forest)");
 	groupAddSong("random", song);
 
-	config_get_path(m_Config, "stones.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Stones");
+	fileId = "stones.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Stones");
 	groupAddSong("random", song);
 
-	config_get_path(m_Config, "ultima.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Ultima VI Theme");
+	fileId = "ultima.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Ultima VI Theme");
 	groupAddSong("random", song);
 
-	config_get_path(m_Config, "engage.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Engagement and Melee");
+	fileId = "engage.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Engagement and Melee");
 	groupAddSong("combat", song);
 
-	config_get_path(m_Config, "hornpipe.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Captain Johne's Hornpipe");
+	fileId = "hornpipe.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Captain Johne's Hornpipe");
 	groupAddSong("boat", song);
 
-	config_get_path(m_Config, "gargoyle.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Audchar Gargl Zenmur");
+	fileId = "gargoyle.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Audchar Gargl Zenmur");
 	groupAddSong("gargoyle", song);
 
-	config_get_path(m_Config, "dungeon.m", filename);
-	song = new SongAdPlug(_mixer, opl);
-	loadSong(song, filename.c_str(), "Dungeon");
+	fileId = "dungeon.m";
+	config_get_path(m_Config, fileId, filename);
+	song = new SongFilename();
+	loadSong(song, filename.c_str(), fileId.c_str(), "Dungeon");
 	groupAddSong("dungeon", song);
 
 	return true;
@@ -268,8 +332,10 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 
 		song = (Song *)SongExists(token2);
 		if (song == NULL) {
+			// Note: the base class Song does not have an implementation for
+			// Init, so loading custom songs does not work.
 			song = new Song;
-			if (!loadSong(song, filename.c_str()))
+			if (!loadSong(song, filename.c_str(), token2))
 				continue; //error loading song
 		}
 
@@ -282,8 +348,8 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 	return true;
 }
 
-bool SoundManager::loadSong(Song *song, const char *filename) {
-	if (song->Init(filename)) {
+bool SoundManager::loadSong(Song *song, const char *filename, const char *fileId) {
+	if (song->Init(filename, fileId)) {
 		m_Songs.push_back(song);       //add it to our global list
 		return true;
 	} else {
@@ -294,9 +360,9 @@ bool SoundManager::loadSong(Song *song, const char *filename) {
 }
 
 // (SB-X)
-bool SoundManager::loadSong(Song *song, const char *filename, const char *title) {
-	if (loadSong(song, filename) == true) {
-		song->SetName(title);
+bool SoundManager::loadSong(Song *song, const char *filename, const char *fileId, const char *title) {
+	if (loadSong(song, filename, fileId) == true) {
+		song->SetTitle(title);
 		return true;
 	}
 	return false;
@@ -480,6 +546,8 @@ bool SoundManager::LoadSfxManager(string sfx_style) {
 }
 
 void SoundManager::musicPlayFrom(string group) {
+	Common::StackLock lock(_musicMutex);
+
 	if (!music_enabled || !audio_enabled)
 		return;
 	if (m_CurrentGroup != group) {
@@ -490,25 +558,55 @@ void SoundManager::musicPlayFrom(string group) {
 }
 
 void SoundManager::musicPause() {
-//Mix_PauseMusic();
-	if (m_pCurrentSong != NULL) {
-		m_pCurrentSong->Stop();
+	Common::StackLock lock(_musicMutex);
+
+	if (m_pCurrentSong != NULL && _midiParser->isPlaying()) {
+		_midiParser->stopPlaying();
 	}
 }
 
 /* don't call if audio or music is disabled */
 void SoundManager::musicPlay() {
-// Mix_ResumeMusic();
+	Common::StackLock lock(_musicMutex);
 
-// (SB-X) Get a new song if stopped.
+	if (m_pCurrentSong != NULL && _midiParser->isPlaying()) {
+		// Already playing a song.
+		return;
+	}
+
+	// (SB-X) Get a new song if stopped.
 	if (m_pCurrentSong == NULL)
 		m_pCurrentSong = RequestSong(m_CurrentGroup);
 
 	if (m_pCurrentSong != NULL) {
-		m_pCurrentSong->Play();
-		m_pCurrentSong->SetVolume(music_volume);
-	}
+		DEBUG(0, LEVEL_INFORMATIONAL, "assigning new song! '%s'\n", m_pCurrentSong->GetName().c_str());
 
+		// TODO Only Ultima 6 LZW format is supported.
+		uint32 decompressed_filesize;
+		U6Lzw lzw;
+
+		_musicData = lzw.decompress_file(m_pCurrentSong->GetName(), decompressed_filesize);
+
+		bool result = _midiParser->loadMusic(_musicData, decompressed_filesize);
+		if (result) {
+			_midiDriver->deinitSource(0);
+
+			if (_mt32MidiDriver) {
+				for (int i = 0; i < 12; i++) {
+					if (!strcmp(m_pCurrentSong->GetId().c_str(), DEFAULT_MT32_INSTRUMENT_MAPPING[i].filename)) {
+						_mt32MidiDriver->setInstrumentAssignments(DEFAULT_MT32_INSTRUMENT_MAPPING[i].instrumentMapping);
+						break;
+					}
+				}
+			}
+
+			result = _midiParser->startPlaying();
+			g_MusicFinished = false;
+		}
+		if (!result) {
+			DEBUG(0, LEVEL_ERROR, "play failed!\n");
+		}
+	}
 }
 
 void SoundManager::musicPlay(const char *filename, uint16 song_num) {
@@ -518,8 +616,10 @@ void SoundManager::musicPlay(const char *filename, uint16 song_num) {
 		return;
 
 	config_get_path(m_Config, filename, path);
-	SongAdPlug *song = new SongAdPlug(_mixer, opl);
-	song->Init(path.c_str(), song_num);
+	SongFilename *song = new SongFilename();
+	song->Init(path.c_str(), filename, song_num);
+
+	Common::StackLock lock(_musicMutex);
 
 	musicStop();
 	m_pCurrentSong = song;
@@ -529,8 +629,14 @@ void SoundManager::musicPlay(const char *filename, uint16 song_num) {
 
 // (SB-X) Stop the current song so a new song will play when resumed.
 void SoundManager::musicStop() {
+	Common::StackLock lock(_musicMutex);
+
 	musicPause();
 	m_pCurrentSong = NULL;
+	if (_musicData) {
+		delete _musicData;
+		_musicData = nullptr;
+	}
 }
 
 Std::list < SoundManagerSfx >::iterator SoundManagerSfx_find(Std::list < SoundManagerSfx >::iterator first, Std::list < SoundManagerSfx >::iterator last, const SfxIdType &value) {
@@ -660,25 +766,12 @@ void SoundManager::update_map_sfx() {
 
 void SoundManager::update() {
 	if (music_enabled && audio_enabled && g_MusicFinished) {
-		g_MusicFinished = false;
-		if (m_pCurrentSong != NULL) {
-			m_pCurrentSong->Stop();
-		}
+		Common::StackLock lock(_musicMutex);
 
-		if (m_CurrentGroup.length() > 0)
-			m_pCurrentSong = SoundManager::RequestSong(m_CurrentGroup);
-
-		if (m_pCurrentSong) {
-			DEBUG(0, LEVEL_INFORMATIONAL, "assigning new song! '%s'\n", m_pCurrentSong->GetName().c_str());
-			if (!m_pCurrentSong->Play(false)) {
-				DEBUG(0, LEVEL_ERROR, "play failed!\n");
-			}
-			m_pCurrentSong->SetVolume(music_volume);
-		}
+		musicStop();
+		musicPlay();
 	}
-
 }
-
 
 Sound *SoundManager::SongExists(string name) {
 	Std::list < Sound * >::iterator it;
@@ -777,6 +870,24 @@ bool SoundManager::playSfx(uint16 sfx_id, bool async) {
 	}
 
 	return false;
+}
+
+void SoundManager::syncSoundSettings() {
+	set_audio_enabled(
+		!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
+	set_sfx_enabled(
+		!ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute"));
+	// TODO Music is disabled for SE and MD for now
+	set_music_enabled(game_type == NUVIE_GAME_U6 && 
+		(!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute")));
+	set_speech_enabled(game_type == NUVIE_GAME_U6 && 
+		(!ConfMan.hasKey("speech_mute") || !ConfMan.getBool("speech_mute")));
+
+	set_sfx_volume(ConfMan.hasKey("sfx_volume") ? clamp(ConfMan.getInt("sfx_volume"), 0, 255) : 255);
+	set_music_volume(ConfMan.hasKey("music_volume") ? clamp(ConfMan.getInt("music_volume"), 0, 255) : 255);
+
+	if (_midiDriver)
+		_midiDriver->syncSoundSettings();
 }
 
 void SoundManager::set_audio_enabled(bool val) {

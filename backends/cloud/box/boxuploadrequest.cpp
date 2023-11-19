@@ -34,7 +34,7 @@ namespace Box {
 
 #define BOX_API_FILES "https://upload.box.com/api/2.0/files"
 
-BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, Common::String path, Common::String localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
+BoxUploadRequest::BoxUploadRequest(BoxStorage *storage, const Common::String &path, const Common::String &localPath, Storage::UploadCallback callback, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb), _storage(storage), _savePath(path), _localPath(localPath), _uploadCallback(callback),
 	_workingRequest(nullptr), _ignoreCallback(false) {
 	start();
@@ -60,19 +60,19 @@ void BoxUploadRequest::start() {
 
 void BoxUploadRequest::resolveId() {
 	//check whether such file already exists
-	Storage::UploadCallback innerCallback = new Common::Callback<BoxUploadRequest, Storage::UploadResponse>(this, &BoxUploadRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<BoxUploadRequest, Networking::ErrorResponse>(this, &BoxUploadRequest::idResolveFailedCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<BoxUploadRequest, const Storage::UploadResponse &>(this, &BoxUploadRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<BoxUploadRequest, const Networking::ErrorResponse &>(this, &BoxUploadRequest::idResolveFailedCallback);
 	_workingRequest = _storage->resolveFileId(_savePath, innerCallback, innerErrorCallback);
 }
 
-void BoxUploadRequest::idResolvedCallback(Storage::UploadResponse response) {
+void BoxUploadRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	_resolvedId = response.value.id();
 	upload();
 }
 
-void BoxUploadRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
+void BoxUploadRequest::idResolveFailedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
@@ -107,8 +107,8 @@ void BoxUploadRequest::upload() {
 	if (_resolvedId != "")
 		url += "/" + _resolvedId;
 	url += "/content";
-	Networking::JsonCallback callback = new Common::Callback<BoxUploadRequest, Networking::JsonResponse>(this, &BoxUploadRequest::uploadedCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<BoxUploadRequest, Networking::ErrorResponse>(this, &BoxUploadRequest::notUploadedCallback);
+	Networking::JsonCallback callback = new Common::Callback<BoxUploadRequest, const Networking::JsonResponse &>(this, &BoxUploadRequest::uploadedCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<BoxUploadRequest, const Networking::ErrorResponse &>(this, &BoxUploadRequest::notUploadedCallback);
 	Networking::CurlJsonRequest *request = new BoxTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 
@@ -127,12 +127,12 @@ void BoxUploadRequest::upload() {
 	_workingRequest = ConnMan.addRequest(request);
 }
 
-void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
+void BoxUploadRequest::uploadedCallback(const Networking::JsonResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	Networking::CurlJsonRequest *rq = (Networking::CurlJsonRequest *)response.request;
+	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
 	if (rq) {
 		const Networking::NetworkReadStream *stream = rq->getNetworkReadStream();
 		if (stream) {
@@ -145,7 +145,7 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 		warning("BoxUploadRequest: looks like an error (bad HTTP code)");
 
 	//check JSON and show warnings if it's malformed
-	Common::JSONValue *json = response.value;
+	const Common::JSONValue *json = response.value;
 	if (json == nullptr) {
 		error.response = "Failed to parse JSON, null passed!";
 		finishError(error);
@@ -211,7 +211,7 @@ void BoxUploadRequest::uploadedCallback(Networking::JsonResponse response) {
 	delete json;
 }
 
-void BoxUploadRequest::notUploadedCallback(Networking::ErrorResponse error) {
+void BoxUploadRequest::notUploadedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback) return;
 	finishError(error);
@@ -221,7 +221,7 @@ void BoxUploadRequest::handle() {}
 
 void BoxUploadRequest::restart() { start(); }
 
-void BoxUploadRequest::finishUpload(StorageFile file) {
+void BoxUploadRequest::finishUpload(const StorageFile &file) {
 	Request::finishSuccess();
 	if (_uploadCallback)
 		(*_uploadCallback)(Storage::UploadResponse(this, file));

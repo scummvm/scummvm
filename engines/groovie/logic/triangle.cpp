@@ -167,7 +167,7 @@ int8 TriangleGame::sub03(int8 player) {
 			pos = pickedMoves[_random.getRandomNumber(max - 1)];
 		else {
 			warning("TriangleGame: Undefined behaviour");
-			pos = tempMoves[0]; // This is uninitalized in this branch
+			pos = 0; // tempMoves is uninitalized in this branch, so just return 0
 		}
 	}
 

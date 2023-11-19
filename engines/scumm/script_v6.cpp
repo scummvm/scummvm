@@ -658,7 +658,16 @@ void ScummEngine_v6::o6_le() {
 
 void ScummEngine_v6::o6_ge() {
 	int a = pop();
-	push(pop() >= a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Reduce sprints
+	// required to reach top speed
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 &&
+		_currentRoom == 3 && vm.slot[_currentScript].number == 2095 && readVar(399) == 1) {
+		a -= 1;  // If sprint counter (b) is higher than a, runner gets 1 extra speed
+	}
+#endif
+	push(b >= a);
 }
 
 void ScummEngine_v6::o6_add() {
@@ -680,7 +689,23 @@ void ScummEngine_v6::o6_div() {
 	int a = pop();
 	if (a == 0)
 		error("division by zero");
-	push(pop() / a);
+	int b = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: Allow full sprinting while
+	// running half-speed on a popup
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 3 &&
+		vm.slot[_currentScript].number == 2095 && readVar(399) == 1 && a == 2) {
+		// Normally divides speed by two here
+		int runnerIdx = readVar(0x4000);
+		int runnerReSprint = readArray(344, runnerIdx, 1);
+		// But if the runner is sprinting, don't divide by two
+		if (runnerReSprint > 1) {
+			push(b);
+			return;
+		}
+	}
+#endif
+	push(b / a);
 }
 
 void ScummEngine_v6::o6_land() {
@@ -862,7 +887,7 @@ void ScummEngine_v6::o6_startScript() {
 	// This also happens with the original interpreters and with the remaster.
 	if (_game.id == GID_TENTACLE && _roomResource == 13 &&
 		vm.slot[_currentScript].number == 21 && script == 106 &&
-		args[0] == 91 && _enableEnhancements) {
+		args[0] == 91 && enhancementEnabled(kEnhRestoredContent)) {
 		return;
 	}
 
@@ -880,7 +905,7 @@ void ScummEngine_v6::o6_startScript() {
 	// This fix checks for this situation happening (and only this one), and makes a call
 	// to a soundKludge operation like script 29 would have done.
 	if (_game.id == GID_CMI && _currentRoom == 19 &&
-		vm.slot[_currentScript].number == 168 && script == 118 && _enableEnhancements) {
+		vm.slot[_currentScript].number == 168 && script == 118 && enhancementEnabled(kEnhAudioChanges)) {
 		int list[16] = { 4096, 1278, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		_sound->soundKludge(list, 2);
 	}
@@ -890,7 +915,7 @@ void ScummEngine_v6::o6_startScript() {
 	// stopping and starting their speech. This was a script bug in the original
 	// game, which would also block the "That was informative" reaction from Sam.
 	if (_game.id == GID_SAMNMAX && _roomResource == 59 &&
-		vm.slot[_currentScript].number == 201 && script == 48 && _enableEnhancements) {
+		vm.slot[_currentScript].number == 201 && script == 48 && enhancementEnabled(kEnhRestoredContent)) {
 		o6_breakHere();
 	}
 
@@ -921,6 +946,66 @@ void ScummEngine_v6::o6_startScriptQuick2() {
 	int script;
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+	// Mod for Backyard Baseball 2001 online competitive play: change effect of
+	// pitch location on hit quality
+	if (ConfMan.getBool("enable_competitive_mods") && _game.id == GID_BASEBALL2001 && _currentRoom == 4 && script == 2085 && readVar(399) == 1) {
+		int zone = _roomVars[2];
+		int stance = readVar(447);
+		int handedness = _roomVars[0];
+		int hitQuality = -2;
+		if (stance == 2) {  // Batter is in a squared stance
+			switch (zone) {
+			case 25:
+				hitQuality = 3;
+				break;
+			case 18: case 24: case 26: case 32:
+				hitQuality = 2;
+				break;
+			case 10: case 11: case 12: case 17: case 19: case 23: case 27: case 31: case 33: case 38: case 39: case 40:
+				hitQuality = 1;
+				break;
+			case 4: case 16: case 20: case 30: case 34: case 46:
+				hitQuality = 0;
+				break;
+			case 3: case 5: case 9: case 13: case 15: case 21: case 22: case 28: case 29: case 35: case 37: case 41: case 45: case 47:
+				hitQuality = -1;
+				break;
+			default:
+				break;
+			}
+			push(hitQuality);
+			return;
+		}
+		if (
+			(handedness == 2 && stance == 1)  // Left-handed batter in open stance
+			|| (handedness == 1 && stance == 3)  // Right-handed batter in closed stance
+		) {
+			zone  = ((zone - 1) / 7) * 7 + (6 - ((zone - 1) % 7)) + 1;  // "Flip" zone horizontally across center
+		}
+		switch (zone) {
+		case 24:
+			hitQuality = 3;
+			break;
+		case 17: case 23: case 25: case 31:
+			hitQuality = 2;
+			break;
+		case 9: case 10: case 16: case 18: case 22: case 26: case 30: case 32: case 37: case 38:
+			hitQuality = 1;
+			break;
+		case 3: case 11: case 15: case 19: case 29: case 33: case 39: case 45:
+			hitQuality = 0;
+			break;
+		case 2: case 4: case 8: case 12: case 20: case 27: case 34: case 36: case 40: case 44: case 46:
+			hitQuality = -1;
+			break;
+		default:
+			break;
+		}
+		push(hitQuality);
+		return;
+	}
+#endif
 	runScript(script, 0, 1, args);
 }
 
@@ -1043,6 +1128,11 @@ void ScummEngine_v6::o6_cursorCommand() {
 			} else {
 				obj = popRoomAndObj(&room);
 			}
+
+			// Post-load fix for broken SAMNMAX savegames (see bug no. 14467)
+			if (_game.id == GID_SAMNMAX && obj == 0 && room == 93)
+				break;
+
 			setCursorFromImg(obj, room, 1);
 			break;
 		}
@@ -1154,7 +1244,7 @@ void ScummEngine_v6::o6_startSound() {
 		_imuseDigital->startSfx(pop(), 64);
 	else
 #endif
-		_sound->addSoundToQueue(pop(), offset);
+		_sound->startSound(pop(), offset);
 }
 
 void ScummEngine_v6::o6_stopSound() {
@@ -1165,7 +1255,7 @@ void ScummEngine_v6::o6_startMusic() {
 	if (_game.version >= 7)
 		error("o6_startMusic() It shouldn't be called here for imuse digital");
 
-	_sound->addSoundToQueue(pop());
+	_sound->startSound(pop());
 }
 
 void ScummEngine_v6::o6_stopObjectScript() {
@@ -1210,7 +1300,7 @@ void ScummEngine_v6::o6_loadRoom() {
 	// WORKAROUND bug #13378: During Sam's reactions to Max beating up the
 	// scientist in the intro, we sometimes have to slow down animations
 	// artificially. This is where we speed them back up again.
-	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && _enableEnhancements) {
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && enhancementEnabled(kEnhTimingChanges)) {
 		int actors[] = { 2, 3, 10 };
 
 		for (int i = 0; i < ARRAYSIZE(actors); i++) {
@@ -1336,7 +1426,7 @@ void ScummEngine_v6::o6_animateActor() {
 	int act = pop();
 
 	if (_game.id == GID_SAMNMAX && _roomResource == 35 && vm.slot[_currentScript].number == 202 &&
-		act == 4 && anim == 14 && _enableEnhancements) {
+		act == 4 && anim == 14 && enhancementEnabled(kEnhMinorBugFixes)) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
 		// Before starting animation 14 of the fisherman, make sure he isn't
 		// talking anymore, otherwise the fishing line may appear twice when Max
@@ -1348,7 +1438,7 @@ void ScummEngine_v6::o6_animateActor() {
 	}
 
 	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
-		act == 2 && anim == 249 && _enableEnhancements) {
+		act == 2 && anim == 249 && enhancementEnabled(kEnhMinorBugFixes)) {
 		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
 		// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
 		// properly removed from the scene by the script, but not the combined actor
@@ -1462,6 +1552,12 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 				// Opponent's team
 				rnd = readArray(749, 0, vm.localvar[_currentScript][1]);
 			}
+		}
+		// Mod for Backyard Football online competitive play: allow all 38 backyard kids and pros
+		// to be drafted in an online game. This controls how many kids are shown in the bleachers
+		// when drafting. Without this mod, a random selection of between 31 and 35 kids are shown.
+		if (_game.id == GID_FOOTBALL && readVar(465) == 1 && _currentRoom == 5 && vm.slot[_currentScript].number == 2107) {
+			rnd = 38;
 		}
 	}
 #endif
@@ -1629,7 +1725,7 @@ void ScummEngine_v6::o6_beginOverride() {
 	//
 	// To amend this, we intercept this exact script override and we force the playback of sound 2277,
 	// which is the iMUSE sequence which would have been played after the dialogue.
-	if (_enableEnhancements && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
+	if (enhancementEnabled(kEnhAudioChanges) && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
 		_sound->isSoundRunning(2275) != 0 && (_scriptPointer - _scriptOrgPointer) == 0x1A) {
 		int list[16] = {0x1001, 2277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		_sound->soundKludge(list, 2);
@@ -1938,7 +2034,7 @@ void ScummEngine_v6::o6_actorOps() {
 		// chattering teeth, but yet when he comes back he's not wearing them
 		// during this cutscene.
 		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
-			a->_number == 8 && i == 53 && _enableEnhancements) {
+			a->_number == 8 && i == 53 && enhancementEnabled(kEnhVisualChanges)) {
 			i = 69;
 		}
 		a->setActorCostume(i);
@@ -2058,7 +2154,9 @@ void ScummEngine_v6::o6_actorOps() {
 		break;
 	case SO_ACTOR_FACE:										/* set direction */
 		a->_moving &= ~MF_TURN;
-		a->setDirection(pop());
+		j = pop();
+		a->turnToDirection(j);
+		a->setDirection(j);
 		break;
 	case SO_ACTOR_TURN:										/* turn to direction */
 		a->turnToDirection(pop());
@@ -2455,6 +2553,7 @@ void ScummEngine_v6::o6_systemOps() {
 		pauseGame();
 		break;
 	case SO_QUIT:
+		_quitFromScriptCmd = true;
 		quitGame();
 		break;
 	default:
@@ -2556,7 +2655,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// will feel off -- so we can't use the _forcedWaitForMessage trick.
 	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
 		&& getOwner(70) != 2 && !readVar(0x8000 + 67) && !readVar(0x8000 + 39) && readVar(0x8000 + 12) == 1
-		&& !getClass(126, 6) && _enableEnhancements) {
+		&& !getClass(126, 6) && enhancementEnabled(kEnhRestoredContent)) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
 			o6_breakHere();
@@ -2571,7 +2670,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// a talkActor opcode.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
 			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2
-			&& _enableEnhancements) {
+			&& enhancementEnabled(kEnhMinorBugFixes)) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		return;
 	}
@@ -2582,7 +2681,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// hasn't been properly replaced... Fixed in the 2017 remaster, though.
 	if (_game.id == GID_FT && _language == Common::FR_FRA
 		&& _roomResource == 7 && vm.slot[_currentScript].number == 77
-		&& _actorToPrintStrFor == 1 && _enableEnhancements) {
+		&& _actorToPrintStrFor == 1 && enhancementEnabled(kEnhTextLocFixes)) {
 		const int len = resStrLen(_scriptPointer) + 1;
 		if (len == 93 && memcmp(_scriptPointer + 16 + 18, "piano-low-kick", 14) == 0) {
 			byte *tmpBuf = new byte[len - 14 + 3];
@@ -2608,7 +2707,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// no stable offset for all the floppy, CD and translated versions, and
 	// no easy way to only target the impacted lines.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
-		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && _enableEnhancements) {
+		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && enhancementEnabled(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;
 
@@ -2626,7 +2725,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && _enableEnhancements) {
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && enhancementEnabled(kEnhRestoredContent)) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
@@ -2645,7 +2744,7 @@ void ScummEngine_v6::o6_talkActor() {
 	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
 		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
 		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
-		&& _scummVars[269] == 3 && getState(388) == 2 && _enableEnhancements) {
+		&& _scummVars[269] == 3 && getState(388) == 2 && enhancementEnabled(kEnhRestoredContent)) {
 		_forcedWaitForMessage = true;
 		_scriptPointer--;
 

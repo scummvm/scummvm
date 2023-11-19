@@ -539,6 +539,7 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptFreeSlotA::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -547,7 +548,7 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptFreeSlotA::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if ((unsigned int)(_animationState - 1) > 1) {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -556,7 +557,7 @@ bool AIScriptFreeSlotA::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
@@ -598,6 +599,10 @@ bool AIScriptFreeSlotA::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 7;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptFreeSlotA::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

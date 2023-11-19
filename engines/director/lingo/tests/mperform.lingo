@@ -1,0 +1,25 @@
+abc(mNew)
+abc(callPerform)
+
+factory abc
+method mnew
+  put "init"
+
+method callMe
+  put "Am i called?"
+  return "a1"
+
+method callMe2
+  put "Am i called2?"
+
+method callMe3
+  put "Am I called3?"
+
+method callPerform
+  put "stepped into matFrame"
+  set retval to me(mPerform, "callMe")
+  me(mPerform, "callMe2")
+  me(mPerform, "callMe3")
+  put "returned" && retval
+
+  scummvmAssertEqual(retval, "a1")

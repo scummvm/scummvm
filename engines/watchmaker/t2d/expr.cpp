@@ -271,7 +271,7 @@ bool SilbRecon(char *Text, int tp, int LastVis, int NewSilb, int *CurrentSilb) {
 			if ((i != 0) && ((tp == TextLen) || ((tolower(Text[tp]) < 'a') || (tolower(Text[tp]) > 'z')))) Equal = TRUE;
 			break;
 
-		case 0xA3: // '£' // TODO: Create a proper constant for the Pound symbol.
+		case (char)0xA3: // '£' // TODO: Create a proper constant for the Pound symbol.
 			if ((i == 0) && (tp > 0) && (Vocale(Text[tp - 1]))) Equal = TRUE;
 			if ((i != 0) && (Vocale(Text[tp]))) {
 				Equal = TRUE;
@@ -751,22 +751,20 @@ int VisemaRecon(int32 n) {
 
 //Restituisce il visema corrispondente a un determinato tempo
 int32 VisemaTimeRecon(int32 Time) {
-	int i;
-	static bool Partito = FALSE;
-
 	if (Time < 0) return 0;
 	if (!VisemaInitialized) return 0;
 
+#ifdef PROVAMODE
+	static bool Partito = FALSE;
 	if (Time == 0) Partito = FALSE;
 
-#ifdef PROVAMODE
 	if ((!Partito) && (Time > 0)) {
 		Partito = TRUE;
 		StartSound(wPROVA);
 	}
 #endif
 
-	for (i = 0; i < NumVis; i++) {
+	for (int i = 0; i < NumVis; i++) {
 		if ((Time >= VisemaBufTimeLeng(VisemaBuf, i)) && (Time < VisemaBufTimeLeng(VisemaBuf, i + 1)))
 			return VisemaBuf[i].Visema;
 	}

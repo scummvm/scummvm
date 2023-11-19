@@ -499,18 +499,42 @@
 namespace Watchmaker {
 
 struct t2dBUTTON {
-	uint8 on = 0;                                                                               // on/off
+	uint8 on;                                                                                   // on/off
 	struct SRect lim;                                                                           // limiti del bottone
-	int32 tnum = 0;                                                                            // numero bitmap col tooltip
+	int32 tnum;                                                                                 // numero bitmap col tooltip
+
+	t2dBUTTON() {
+		reset();
+	}
+
+	void reset() {
+		on = 0;
+		lim.reset();
+		tnum = 0;
+	}
 };
 
 struct t2dWINDOW {
-	int32 px = 0, py = 0;                                                                      // poszione finestra
-	int32 sy = 0;                                                                              // scroll interno finestra
-	struct SDDBitmap bm[T2D_MAX_BITMAPS_IN_WIN] = {};                                           // bitmaps ordinate
-	struct SDDText text[T2D_MAX_TEXTS_IN_WIN] = {};                                             // testi
-	t2dBUTTON bt[T2D_MAX_BUTTONS_IN_WIN] = {};                                                  // bottoni ordinati
-	bool NOTSTRETCHED = false;
+	int32 px, py;                                                                               // poszione finestra
+	int32 sy;                                                                                   // scroll interno finestra
+	struct SDDBitmap bm[T2D_MAX_BITMAPS_IN_WIN];                                                // bitmaps ordinate
+	struct SDDText text[T2D_MAX_TEXTS_IN_WIN];                                                  // testi
+	t2dBUTTON bt[T2D_MAX_BUTTONS_IN_WIN];                                                       // bottoni ordinati
+	bool NOTSTRETCHED;
+
+	t2dWINDOW() {
+		reset();
+	}
+
+	void reset() {
+		px = 0;
+		py = 0;
+		sy = 0;
+		for (uint i = 0; i < ARRAYSIZE(bm); i++) bm[i].reset();
+		for (uint i = 0; i < ARRAYSIZE(text); i++) text[i].reset();
+		for (uint i = 0; i < ARRAYSIZE(bt); i++) bt[i].reset();
+		NOTSTRETCHED = false;
+	}
 };
 
 struct PDALogS {

@@ -24,6 +24,7 @@
 
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/mutex.h"
 #include "common/stack.h"
 #include "common/events.h"
 
@@ -88,7 +89,9 @@ enum {
 	kWMMode32bpp				= (1 << 8),
 	kWMNoScummVMWallpaper		= (1 << 9),
 	kWMModeWin95				= (1 << 10),
-	kWMModeForceMacFontsInWin95 = (1 << 11) // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeForceMacFontsInWin95 = (1 << 11), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeNoCursorOverride     = (1 << 12),
+	kWMModeForceMacBorder       = (1 << 13),
 };
 
 }
@@ -203,6 +206,7 @@ public:
 	 * @return Pointer to a new empty menu.
 	 */
 	MacMenu *addMenu();
+	void addMenu(int id, MacMenu *menu);
 
 	void removeMenu();
 	void activateMenu();
@@ -291,9 +295,25 @@ public:
 	 */
 	void setActiveWidget(MacWidget *widget);
 
+	/**
+	 * Similar to setActiveWidget but in this case no action including animation
+	 * hover, etc can work until a window is locked.
+	 * Anything outside this window will not respond to user.
+	 * @param widget Pointer to the widget to lock, nullptr for no widget
+	 */
+	void setLockedWidget(MacWidget *widget);
+
+	/**
+	 * Sets a background window, which is always active, this window cannot be
+	 * deactivated by clicking outside it, ie it is always in background.
+	 * @param window Pointer to the widget to background, nullptr for no widget
+	 */
+	void setBackgroundWindow(MacWindow *window);
+
 	MacPatterns  &getBuiltinPatterns() { return _builtinPatterns; }
 
 	MacWidget *getActiveWidget() { return _activeWidget; }
+	MacWidget *getLockedWidget() { return _lockedWidget; }
 
 	Common::Rect getScreenBounds() { return _screen ? _screen->getBounds() : _screenDims; }
 
@@ -342,8 +362,8 @@ public:
 	void cleanupDataBundle();
 	void cleanupDesktopBmp();
 
-	BorderOffsets getBorderOffsets(byte windowType);
-	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
+	BorderOffsets getBorderOffsets(uint32 windowType);
+	Common::SeekableReadStream *getBorderFile(uint32 windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
 
 	void setTextInClipboard(const Common::U32String &str);
@@ -371,6 +391,7 @@ public:
 	Common::String getMenuItemName(MacMenuItem *menuItem);
 	int getMenuItemAction(MacMenuItem *menuItem);
 	MacMenu *getMenu();
+	MacMenu *getMenu(int id);
 
 public:
 	MacFontManager *_fontMan;
@@ -405,7 +426,7 @@ private:
 	void adjustDimensions(const Common::Rect &clip, const Common::Rect &dims, int &adjWidth, int &adjHeight);
 
 public:
-	TransparentSurface *_desktopBmp;
+	Surface *_desktopBmp;
 	ManagedSurface *_desktop;
 	PixelFormat _pixelformat;
 
@@ -414,6 +435,7 @@ public:
 	Common::Rect _screenDims;
 
 private:
+	Common::Mutex _mutex;
 	Common::List<BaseMacWindow *> _windowStack;
 	Common::HashMap<uint, BaseMacWindow *> _windows;
 
@@ -439,11 +461,13 @@ private:
 	void *_engineR;
 	void (*_redrawEngineCallback)(void *engine);
 
-	MacCursorType _tempType;
+	MacCursorType _tempType = kMacCursorArrow;
 	Common::Stack<MacCursorType> _cursorTypeStack;
-	Cursor *_cursor;
+	Cursor *_cursor = nullptr;
 
 	MacWidget *_activeWidget;
+	MacWidget *_lockedWidget;
+	MacWindow *_backgroundWindow;
 
 	PauseToken *_screenCopyPauseToken;
 
@@ -455,6 +479,8 @@ private:
 
 	Common::U32String _clipboard;
 };
+
+const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len);
 
 } // End of namespace Graphics
 

@@ -86,9 +86,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_hangers.push_back(hng);
 
-	int x = 75;
-
-	for (int i = 1; x < 300; i++, x += 75) {
+	for (int x = 75; x < 300; x += 75) {
 		StaticANIObject *ani = new StaticANIObject(hanger);
 
 		ani->show1(x + hanger->_ox, hanger->_oy, MV_VSN_CYCLE2, 0);

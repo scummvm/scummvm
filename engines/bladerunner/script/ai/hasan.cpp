@@ -356,6 +356,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptHasan::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -392,6 +393,7 @@ bool AIScriptHasan::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptHasan::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

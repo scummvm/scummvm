@@ -39,7 +39,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 	}
 
 	void test_multisection_ini_file() {
-		static const unsigned char inistr[] = "[s]\nabc=1\ndef=xyz\n#comment=no\n[empty]\n\n[s2]\n abc = 2  ";
+		static const unsigned char inistr[] = "[s]\nabc=1\ndef=xyz\n#comment=no\n[empty]\n\n[s2]\n abc = 2  \n ; comment=no";
 		Common::MemoryReadStream ms(inistr, sizeof(inistr));
 		Common::INIFile inifile;
 		bool result = inifile.loadFromStream(ms);

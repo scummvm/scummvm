@@ -85,7 +85,7 @@ void Lightning::run() {
 	switch (_state) {
 	case kNotRunning: {
 		// Check if the endgame has started
-		if (NancySceneState.getEventFlag(82)) {
+		if (NancySceneState.getEventFlag(82, g_nancy->_true)) {
 			uint16 sceneID = NancySceneState.getSceneInfo().sceneID;
 
 			// Check if we're inside an appropriate scene
@@ -96,7 +96,7 @@ void Lightning::run() {
 				(sceneID > 326 && sceneID < 334) ||
 				(sceneID > 341 && sceneID < 1726) ||
 				(sceneID > 1731)) {
-				
+
 				beginLightning(2, 22, 65);
 			}
 		}

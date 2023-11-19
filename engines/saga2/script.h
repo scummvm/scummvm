@@ -56,13 +56,13 @@ struct scriptCallFrame {
 
 	//  ID of object who's method is being called (which can be the same
 	//  as one of the other objects below).
-	ObjectID        invokedObject;
+	ObjectID        invokedObject = Nothing;
 	ActiveItemID    invokedTAI;
 
 	//  ID of the objects in the interaction.
-	ObjectID        enactor,                // actor who caused interaction
-	                directObject,           // the object being acted on
-	                indirectObject;         // the object being used
+	ObjectID        enactor = Nothing,        // actor who caused interaction
+	                directObject = Nothing,   // the object being acted on
+	                indirectObject = Nothing; // the object being used
 	// with the other one
 	ActiveItemID    directTAI,              // the tile activity instance
 	                // being used
@@ -70,16 +70,16 @@ struct scriptCallFrame {
 	// upon which the object is being
 	// used
 
-	int16           responseType;           // used with knowledge package
+	int16           responseType = -1;      // used with knowledge package
 
-	int16           methodNum;              // which method being invoked
+	int16           methodNum = -1;         // which method being invoked
 
 	//  Misc fields used in passing parameters to scripts.
-	int16           idNum;                  // a misc. id number
-	int16           value;                  // a misc. parameter value
+	int16           idNum = 0;              // a misc. id number
+	int16           value = 0;              // a misc. parameter value
 	TilePoint       coords;                 // a misc. tilepoint
 
-	int16           returnVal;              // return value of script
+	int16           returnVal = 0;          // return value of script
 };
 
 //  Standard return codes from scripts in the "returnVal" field

@@ -365,6 +365,7 @@ public:
 	void sort();
 	void unsort();
 };
+
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_SCREEN_ITEM32_H

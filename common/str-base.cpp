@@ -106,14 +106,8 @@ TEMPLATE BASESTRING::BaseString(const value_type *str) : _size(0), _str(_storage
 	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
-	} else {
-		uint32 len = 0;
-		const value_type *s = str;
-		while (*s++) {
-			++len;
-		}
-		initWithValueTypeStr(str, len);
-	}
+	} else
+		initWithValueTypeStr(str, cStrLen(str));
 }
 
 TEMPLATE BASESTRING::BaseString(const value_type *str, uint32 len) : _size(0), _str(_storage) {
@@ -472,6 +466,13 @@ TEMPLATE void BASESTRING::deleteLastChar() {
 		deleteChar(_size - 1);
 }
 
+TEMPLATE void BASESTRING::chop(uint32 len) {
+	uint32 newSize = _size - MIN(_size, len);
+
+	_str[newSize] = 0;
+	_size = newSize;
+}
+
 TEMPLATE void BASESTRING::erase(uint32 p, uint32 len) {
 	if (len == 0)
 		return;
@@ -719,20 +720,36 @@ TEMPLATE void BASESTRING::wordWrap(const uint32 maxLength) {
 #endif
 
 TEMPLATE void BASESTRING::toLowercase() {
-	makeUnique();
-	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] > 0 && _str[i] < 128) {
-			_str[i] = tolower(_str[i]);
-		}
-	}
+	toCase(tolower);
 }
 
 TEMPLATE void BASESTRING::toUppercase() {
-	makeUnique();
-	for (uint32 i = 0; i < _size; ++i) {
-		if (_str[i] > 0 && _str[i] < 128) {
-			_str[i] = toupper(_str[i]);
+	toCase(toupper);
+}
+
+TEMPLATE void BASESTRING::toCase(int (*caseChangeFunc)(int)) {
+	uint32 sz = _size;
+	T *buf = _str;
+
+	uint32 i = 0;
+	for ( ; i < sz; ++i) {
+		value_type ch = buf[i];
+		if (ch > 0 && ch < 128) {
+			value_type newCh = static_cast<value_type>(caseChangeFunc(buf[i]));
+			if (ch != newCh) {
+				makeUnique();
+				buf = _str;
+				buf[i] = newCh;
+				i++;
+				break;
+			}
 		}
+	}
+
+	for (; i < sz; ++i) {
+		value_type ch = buf[i];
+		if (ch > 0 && ch < 128)
+			buf[i] = static_cast<value_type>(caseChangeFunc(ch));
 	}
 }
 
@@ -742,22 +759,36 @@ TEMPLATE void BASESTRING::trim() {
 	if (_size == 0)
 		return;
 
+	uint numLeading = 0;
+	while (numLeading < _size) {
+		if (isSpace(_str[numLeading]))
+			numLeading++;
+		else
+			break;
+	}
+
+	uint numTrailing = 0;
+	if (numLeading != _size) {
+		while (numTrailing < _size) {
+			if (isSpace(_str[_size - 1 - numTrailing]))
+				numTrailing++;
+			else
+				break;
+		}
+	}
+
+	if (numLeading == 0 && numTrailing == 0)
+		return;
+
 	makeUnique();
 
-	// Trim trailing whitespace
-	while (_size >= 1 && isSpace(_str[_size - 1]))
-		--_size;
-	_str[_size] = 0;
+	uint newSize = _size - numLeading - numTrailing;
 
-	// Trim leading whitespace
-	value_type *t = _str;
-	while (isSpace(*t))
-		t++;
+	if (numLeading > 0)
+		memmove(_str, _str + numLeading, newSize);
 
-	if (t != _str) {
-		_size -= t - _str;
-		memmove(_str, t, (_size + 1) * sizeof(_str[0]));
-	}
+	_str[newSize] = 0;
+	_size = newSize;
 }
 #endif
 
@@ -827,6 +858,14 @@ TEMPLATE uint BASESTRING::getUnsignedValue(uint pos) const {
 	return ((uint)_str[pos]) << shift >> shift;
 }
 
+TEMPLATE uint32 BASESTRING::cStrLen(const value_type *str) {
+	uint32 len = 0;
+	while (str[len])
+		len++;
+
+	return len;
+}
+
 // Hash function for strings, taken from CPython.
 TEMPLATE uint BASESTRING::hash() const {
 	uint hashResult = getUnsignedValue(0) << 7;
@@ -834,6 +873,11 @@ TEMPLATE uint BASESTRING::hash() const {
 		hashResult = (1000003 * hashResult) ^ getUnsignedValue(i);
 	}
 	return hashResult ^ _size;
+}
+
+template<>
+uint32 BaseString<char>::cStrLen(const value_type *str) {
+	return static_cast<uint32>(strlen(str));
 }
 
 template class BaseString<char>;

@@ -23,8 +23,10 @@
 #define NANCY_STATE_SCENE_H
 
 #include "common/singleton.h"
+#include "common/queue.h"
 
 #include "engines/nancy/commontypes.h"
+#include "engines/nancy/puzzledata.h"
 
 #include "engines/nancy/action/actionmanager.h"
 
@@ -65,13 +67,6 @@ class Clock;
 
 namespace State {
 
-struct SceneInfo {
-	uint16 sceneID = 0;
-	uint16 frameID = 0;
-	uint16 verticalOffset = 0;
-	uint16 paletteID = 0;
-};
-
 // The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
@@ -80,38 +75,32 @@ class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::NancyEngine;
 
 public:
-	enum GameStateChange : byte {
-		kHelpMenu = 1 << 0,
-		kMainMenu = 1 << 1,
-		kSaveLoad = 1 << 2,
-		kReloadSave = 1 << 3,
-		kSetupMenu = 1 << 4,
-		kCredits = 1 << 5,
-		kMap = 1 << 6
-	};
-
-	struct SceneSummary { // SSUM
+	struct SceneSummary {
+		// SSUM and TSUM
+		// Default values set to match those applied when loading from a TSUM chunk
 		Common::String description;
 		Common::String videoFile;
-		//
-		uint16 videoFormat;
+		
+		uint16 videoFormat = kLargeVideoFormat;
 		Common::Array<Common::String> palettes;
-		Common::String audioFile;
 		SoundDescription sound;
-		//
-		byte panningType;
-		uint16 numberOfVideoFrames;
-		uint16 soundPanPerFrame;
-		uint16 totalViewAngle;
-		uint16 horizontalScrollDelta;
-		uint16 verticalScrollDelta;
-		uint16 horizontalEdgeSize;
-		uint16 verticalEdgeSize;
-		Time slowMoveTimeDelta;
-		Time fastMoveTimeDelta;
-		//
+		
+		byte panningType = kPan360;
+		uint16 numberOfVideoFrames = 0;
+		uint16 degreesPerRotation = 18;
+		uint16 totalViewAngle = 0;
+		uint16 horizontalScrollDelta = 1;
+		uint16 verticalScrollDelta = 10;
+		uint16 horizontalEdgeSize = 15;
+		uint16 verticalEdgeSize = 15;
+		Time slowMoveTimeDelta = 400;
+		Time fastMoveTimeDelta = 66;
+		
+		// Sound start vectors, used in nancy3 and up
+		Math::Vector3d listenerPosition;
 
 		void read(Common::SeekableReadStream &stream);
+		void readTerse(Common::SeekableReadStream &stream);
 	};
 
 	Scene();
@@ -122,31 +111,39 @@ public:
 	void onStateEnter(const NancyState::NancyState prevState) override;
 	bool onStateExit(const NancyState::NancyState nextState) override;
 
-	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, byte continueSceneSound, int8 paletteID = -1);
+	// Used when winning/losing game
+	void setDestroyOnExit() { _destroyOnExit = true; }
+
+	bool isRunningAd() { return _isRunningAd; }
+
 	void changeScene(const SceneChangeDescription &sceneDescription);
-	void pushScene();
-	void popScene();
-
-	void pauseSceneSpecificSounds();
-	void unpauseSceneSpecificSounds();
-
+	void pushScene(int16 itemID = -1);
+	void popScene(bool inventory = false);
+	
 	void setPlayerTime(Time time, byte relative);
 	Time getPlayerTime() const { return _timers.playerTime; }
+	Time getTimerTime() const { return _timers.timerIsActive ? _timers.timerTime : 0; }
 	byte getPlayerTOD() const;
 
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
 	void setHeldItem(int16 id);
-	byte hasItem(int16 id) const { return _flags.items[id]; }
+	void setNoHeldItem();
+	byte hasItem(int16 id) const;
+	byte getItemDisabledState(int16 id) const { return _flags.disabledItems[id]; }
+	void setItemDisabledState(int16 id, byte state) { _flags.disabledItems[id] = state; }
 
-	void setEventFlag(int16 label, byte flag = kEvOccurred);
+	void installInventorySoundOverride(byte command, const SoundDescription &sound, const Common::String &caption, uint16 itemID);
+	void playItemCantSound(int16 itemID = -1, bool notHoldingSound = false);
+
+	void setEventFlag(int16 label, byte flag);
 	void setEventFlag(FlagDescription eventFlag);
-	bool getEventFlag(int16 label, byte flag = kEvOccurred) const;
+	bool getEventFlag(int16 label, byte flag) const;
 	bool getEventFlag(FlagDescription eventFlag) const;
 
-	void setLogicCondition(int16 label, byte flag = kLogUsed);
-	bool getLogicCondition(int16 label, byte flag = kLogUsed) const;
+	void setLogicCondition(int16 label, byte flag);
+	bool getLogicCondition(int16 label, byte flag) const;
 	void clearLogicConditions();
 
 	void setDifficulty(uint difficulty) { _difficulty = difficulty; }
@@ -167,43 +164,43 @@ public:
 
 	void synchronize(Common::Serializer &serializer);
 
-	void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
-
 	UI::FullScreenImage &getFrame() { return _frame; }
 	UI::Viewport &getViewport() { return _viewport; }
 	UI::Textbox &getTextbox() { return _textbox; }
 	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::Clock *getClock();
 
 	Action::ActionManager &getActionManager() { return _actionManager; }
 
-	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
-	SceneInfo &getNextSceneInfo() { return _sceneState.nextScene; }
+	SceneChangeDescription &getSceneInfo() { return _sceneState.currentScene; }
+	SceneChangeDescription &getNextSceneInfo() { return _sceneState.nextScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
 	void setActiveConversation(Action::ConversationSound *activeConversation);
 	Action::ConversationSound *getActiveConversation();
+
+	Graphics::ManagedSurface &getLastScreenshot() { return _lastScreenshot; }
 
 	// The Vampire Diaries only;
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 
 	// Used from nancy2 onwards
 	void specialEffect(byte type, uint16 fadeToBlackTime, uint16 frameTime);
+	void specialEffect(byte type, uint16 totalTime, uint16 fadeToBlackTime, Common::Rect rect);
 
-	// Game-specific data that needs to be saved/loaded
-	SliderPuzzleState *_sliderPuzzleState;
-	RippedLetterPuzzleState *_rippedLetterPuzzleState;
-	TowerPuzzleState *_towerPuzzleState;
-	RiddlePuzzleState *_riddlePuzzleState;
+	// Get the persistent data for a given puzzle type
+	PuzzleData *getPuzzleData(const uint32 tag);
 
 private:
 	void init();
-	void load();
+	void load(bool fromSaveFile = false);
 	void run();
 	void handleInput();
 
 	void initStaticData();
 
 	void clearSceneData();
+	void clearPuzzleData();
 
 	enum State {
 		kInit,
@@ -214,12 +211,13 @@ private:
 
 	struct SceneState {
 		SceneSummary summary;
-		SceneInfo currentScene;
-		SceneInfo nextScene;
-		SceneInfo pushedScene;
-		bool isScenePushed;
-
-		uint16 continueSceneSound = kLoadSceneSound;
+		SceneChangeDescription currentScene;
+		SceneChangeDescription nextScene;
+		SceneChangeDescription pushedScene;
+		bool isScenePushed = false;
+		SceneChangeDescription pushedInvScene;
+		int16 pushedInvItemID = -1;
+		bool isInvScenePushed = false;
 	};
 
 	struct Timers {
@@ -234,16 +232,24 @@ private:
 
 	struct PlayFlags {
 		struct LogicCondition {
-			byte flag = kLogNotUsed;
+			LogicCondition();
+			byte flag;
 			Time timestamp;
 		};
 
 		LogicCondition logicConditions[30];
 		Common::Array<byte> eventFlags;
-		uint16 sceneHitCount[2001];
+		Common::HashMap<uint16, uint16> sceneCounts;
 		Common::Array<byte> items;
+		Common::Array<byte> disabledItems;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;
+	};
+
+	struct InventorySoundOverride {
+		bool isDefault = false; // When true, other fields are ignored
+		SoundDescription sound;
+		Common::String caption;
 	};
 
 	// UI
@@ -259,7 +265,9 @@ private:
 	UI::ViewportOrnaments *_viewportOrnaments;
 	UI::TextboxOrnaments *_textboxOrnaments;
 	UI::InventoryBoxOrnaments *_inventoryBoxOrnaments;
-	UI::Clock *_clock;
+	RenderObject *_clock;
+
+	Common::Rect _mapHotspot;
 
 	// General data
 	SceneState _sceneState;
@@ -270,18 +278,25 @@ private:
 	int16 _lastHintCharacter;
 	int16 _lastHintID;
 	NancyState::NancyState _gameStateRequested;
+	Common::HashMap<uint16, InventorySoundOverride> _inventorySoundOverrides;
 
 	Misc::Lightning *_lightning;
-	Misc::SpecialEffect *_specialEffect;
+	Common::Queue<Misc::SpecialEffect> _specialEffects;
 
-	Common::Rect _mapHotspot;
+	Common::HashMap<uint32, PuzzleData *> _puzzleData;
 
 	Action::ActionManager _actionManager;
 	Action::ConversationSound *_activeConversation;
 
-	State _state;
+	// Contains a screenshot of the Scene state from the last time it was exited
+	Graphics::ManagedSurface _lastScreenshot;
 
-	bool _shouldClearTextbox = true;
+	RenderObject _hotspotDebug;
+
+	bool _destroyOnExit;
+	bool _isRunningAd;
+
+	State _state;
 };
 
 #define NancySceneState Nancy::State::Scene::instance()

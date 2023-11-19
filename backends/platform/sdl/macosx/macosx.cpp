@@ -261,6 +261,16 @@ Common::String OSystem_MacOSX::getDefaultIconsPath() {
 	return defaultIconsPath;
 }
 
+Common::Path OSystem_MacOSX::getDefaultDLCsPath() {
+	const Common::Path defaultDLCsPath(getAppSupportPathMacOSX() + "/DLCs");
+
+	if (!Posix::assureDirectoryExists(defaultDLCsPath.toString())) {
+		return Common::Path();
+	}
+
+	return defaultDLCsPath;
+}
+
 Common::String OSystem_MacOSX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	const Common::String path = OSystem_SDL::getScreenshotsPath();

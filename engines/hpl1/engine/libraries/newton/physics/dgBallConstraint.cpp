@@ -224,7 +224,7 @@ dgUnsigned32 dgBallConstraint::JacobianDerivative(dgContraintDescritor &params) 
 	dgMatrix matrix1;
 
 	if (m_jointUserCallback) {
-		m_jointUserCallback(*this, params.m_timestep);
+		m_jointUserCallback(reinterpret_cast<NewtonJoint *>(this), params.m_timestep);
 	}
 
 	dgVector angle(CalculateGlobalMatrixAndAngle(matrix0, matrix1));

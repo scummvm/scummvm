@@ -24,7 +24,6 @@
 
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/bash.h"
-#include "mm/mm1/views/title.h"
 #include "mm/mm1/views_enh/character_info.h"
 #include "mm/mm1/views_enh/character_inventory.h"
 #include "mm/mm1/views_enh/character_select.h"
@@ -54,20 +53,28 @@
 #include "mm/mm1/views_enh/who_will_try.h"
 #include "mm/mm1/views_enh/won_game.h"
 #include "mm/mm1/views_enh/interactions/access_code.h"
+#include "mm/mm1/views_enh/interactions/alamar.h"
 #include "mm/mm1/views_enh/interactions/alien.h"
 #include "mm/mm1/views_enh/interactions/arenko.h"
 #include "mm/mm1/views_enh/interactions/arrested.h"
 #include "mm/mm1/views_enh/interactions/chess.h"
+#include "mm/mm1/views_enh/interactions/dog_statue.h"
 #include "mm/mm1/views_enh/interactions/ghost.h"
 #include "mm/mm1/views_enh/interactions/giant.h"
 #include "mm/mm1/views_enh/interactions/gypsy.h"
 #include "mm/mm1/views_enh/interactions/hacker.h"
 #include "mm/mm1/views_enh/interactions/ice_princess.h"
 #include "mm/mm1/views_enh/interactions/inspectron.h"
+#include "mm/mm1/views_enh/interactions/keeper.h"
 #include "mm/mm1/views_enh/interactions/leprechaun.h"
 #include "mm/mm1/views_enh/interactions/lion.h"
+#include "mm/mm1/views_enh/interactions/lord_archer.h"
+#include "mm/mm1/views_enh/interactions/lord_ironfist.h"
+#include "mm/mm1/views_enh/interactions/orango.h"
 #include "mm/mm1/views_enh/interactions/prisoners.h"
 #include "mm/mm1/views_enh/interactions/resistances.h"
+#include "mm/mm1/views_enh/interactions/ruby.h"
+#include "mm/mm1/views_enh/interactions/scummvm.h"
 #include "mm/mm1/views_enh/interactions/statue.h"
 #include "mm/mm1/views_enh/interactions/trivia.h"
 #include "mm/mm1/views_enh/interactions/volcano_god.h"
@@ -80,6 +87,12 @@
 #include "mm/mm1/views_enh/locations/training.h"
 #include "mm/mm1/views_enh/spells/cast_spell.h"
 #include "mm/mm1/views_enh/spells/spellbook.h"
+#include "mm/mm1/views_enh/spells/detect_magic.h"
+#include "mm/mm1/views_enh/spells/duplication.h"
+#include "mm/mm1/views_enh/spells/fly.h"
+#include "mm/mm1/views_enh/spells/location.h"
+#include "mm/mm1/views_enh/spells/recharge_item.h"
+#include "mm/mm1/views_enh/spells/teleport.h"
 
 namespace MM {
 namespace MM1 {
@@ -88,19 +101,27 @@ namespace ViewsEnh {
 struct Dialogs {
 private:
 	ViewsEnh::Interactions::AccessCode _accessCode;
+	ViewsEnh::Interactions::Alamar _alamar;
 	ViewsEnh::Interactions::Alien _alien;
 	ViewsEnh::Interactions::Arenko _arenko;
 	ViewsEnh::Interactions::Arrested _arrested;
 	ViewsEnh::Interactions::Chess _chess;
+	ViewsEnh::Interactions::DogStatue _dogStatue;
 	ViewsEnh::Interactions::Ghost _ghost;
 	ViewsEnh::Interactions::Giant _giant;
 	ViewsEnh::Interactions::Gypsy _gypsy;
 	ViewsEnh::Interactions::Hacker _hacker;
 	ViewsEnh::Interactions::IcePrincess _icePrincess;
 	ViewsEnh::Interactions::Inspectron _inspectron;
+	ViewsEnh::Interactions::Keeper _keeper;
 	ViewsEnh::Interactions::Leprechaun _leprechaun;
 	ViewsEnh::Interactions::Lion _lion;
+	ViewsEnh::Interactions::LordArcher _lordArcher;
+	ViewsEnh::Interactions::LordIronfist _lordIronfist;
+	ViewsEnh::Interactions::Orango _orango;
 	ViewsEnh::Interactions::Resistances _resistances;
+	ViewsEnh::Interactions::Ruby _ruby;
+	ViewsEnh::Interactions::ScummVM _scummVM;
 	ViewsEnh::Interactions::Statue _statue;
 	ViewsEnh::Interactions::Trivia _trivia;
 	ViewsEnh::Interactions::VolcanoGod _volcanoGod;
@@ -122,6 +143,12 @@ private:
 	ViewsEnh::Locations::Training _training;
 	ViewsEnh::Spells::CastSpell _castSpell;
 	ViewsEnh::Spells::Spellbook _spellbook;
+	ViewsEnh::Spells::DetectMagic _detectMagic;
+	ViewsEnh::Spells::Duplication _duplicateItem;
+	ViewsEnh::Spells::Fly _fly;
+	ViewsEnh::Spells::Location _location;
+	ViewsEnh::Spells::RechargeItem _rechargeItem;
+	ViewsEnh::Spells::Teleport _teleport;
 	ViewsEnh::CharacterInfo _characterInfo;
 	ViewsEnh::CharacterInfoCombat _characterInfoCombat;
 	ViewsEnh::CharacterInventory _characterInventory;

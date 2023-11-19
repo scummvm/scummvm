@@ -39,10 +39,6 @@ public:
 		FileWorkMode WorkMode;
 	};
 
-	// definition of function called when file closes
-	typedef std::function<void(const CloseNotifyArgs &args)> FFileCloseNotify;
-
-	static FFileCloseNotify FileCloseNotify;
 	// Represents an open file object
 	// The constructor may raise std::runtime_error if
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)

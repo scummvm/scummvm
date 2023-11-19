@@ -31,7 +31,7 @@
 #include "common/keyboard.h"
 #include "common/macresman.h"
 #include "common/util.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 
@@ -160,8 +160,10 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 	byte *uncompressedBuffer = new byte[wiseFile.uncompressedLength];
 	setupFile.seek(wiseFile.start);
 	setupFile.read(compressedBuffer, wiseFile.end - wiseFile.start - 4);
-	if (Common::GzioReadStream::deflateDecompress(uncompressedBuffer, wiseFile.uncompressedLength,
-					   compressedBuffer, wiseFile.end - wiseFile.start - 4) != (int)wiseFile.uncompressedLength) {
+
+	uint dstLen = wiseFile.uncompressedLength;
+	if (!Common::inflateZlibHeaderless(uncompressedBuffer, &dstLen,
+					   compressedBuffer, wiseFile.end - wiseFile.start - 4) || dstLen != wiseFile.uncompressedLength) {
 		debug("wise inflate failed");
 		delete[] compressedBuffer;
 		delete[] uncompressedBuffer;

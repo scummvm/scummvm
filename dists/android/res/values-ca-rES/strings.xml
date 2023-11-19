@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">D\'acord</string>
+  <string name="quit">Surt</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Cancel·la</string>
+  <string name="customkeyboardview_keycode_delete">Suprimeix</string>
+  <string name="customkeyboardview_keycode_enter">Intro</string>
+</resources>

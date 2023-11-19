@@ -43,7 +43,10 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-extern AGS_INLINE int is_valid_object(int obtest);
+extern AGS_INLINE bool is_valid_object(int obj_id);
+// Asserts the object ID is valid in the current room,
+// if not then prints a warning to the log; returns assertion result
+bool    AssertObject(const char *apiname, int obj_id);
 int     Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2);
 ScriptObject *GetObjectAtScreen(int xx, int yy);
 ScriptObject *GetObjectAtRoom(int x, int y);
@@ -104,6 +107,10 @@ int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);
+// TODO: pick out some kind of "animation" struct
+// Tests if the standard animate parameters are in valid range, if not then clamps them and
+// reports a script warning.
+void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction);
 // General view animation algorithm: find next loop and frame, depending on anim settings;
 // loop and frame values are passed by reference and will be updated;
 // returns whether the animation should continue.

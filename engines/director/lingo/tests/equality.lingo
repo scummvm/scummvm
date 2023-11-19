@@ -6,13 +6,39 @@ scummvmAssert("test" = "test")
 scummvmAssert(#test = #test)
 set string = the text of field 1
 scummvmAssert(field 1 = string)
-scummvmAssert(0 <> "")
+scummvmAssert(0 = "")
 scummvmAssert(1 <> cast 1)
 scummvmAssert("test" <> #test)
 
--- Comparison between string and ints parses the int as string
-scummvmAssert("string" > 0)
-scummvmAssert("1string" < 2)
+-- If string parses as a float, coerce to float
+scummvmAssert("2000" > 25)
+scummvmAssert(25 < "2000")
+scummvmAssert("2000.5" > 25)
+scummvmAssert(25 < "2000.5")
+scummvmAssert("20e5" > 25)
+scummvmAssert(25 < "20e5")
+scummvmAssert("      2000" > 25)
+scummvmAssert(25 < "      2000")
+scummvmAssert("2000" > 2.5)
+scummvmAssert(25 < "2000")
+scummvmAssert("2000.5" > 2.5)
+scummvmAssert(2.5 < "2000.5")
+scummvmAssert("20e5" > 2.5)
+scummvmAssert(2.5 < "20e5")
+scummvmAssert("      2000" > 2.5)
+scummvmAssert(2.5 < "      2000")
+
+-- If a string doesn't parse as a float, coerce the number to a string
+scummvmAssert("2/" < 20)
+scummvmAssert(20 > "2/")
+scummvmAssert("2000 e" < 25)
+scummvmAssert(25 > "2000 e")
+
+-- Two strings, treat with normal string ordering rules
+scummvmAssert("2000" <> "2000.0")
+scummvmAssert("2000" < "25")
+scummvmAssert("abc" < "abcd")
+scummvmAssert("abc" < "def")
 
 -- Mimic an object
 scummvmAssert("<Object:#FileIO" > 0)
@@ -21,9 +47,9 @@ scummvmAssert("<Object:#FileIO" > 0)
 scummvmAssert(not (#test <= 0))
 
 -- Picture comparisons are always false, even between the exact same cast.
-set a to the picture of cast 1
-scummvmAssert(a <> a)
-scummvmAssert(a <> the picture of cast 1)   -- always false
+-- set a to the picture of cast 1
+-- scummvmAssert(a <> a)
+-- scummvmAssert(a <> the picture of cast 1)   -- always false
 
 -- String comparison
 scummvmAssert("a" > "A")
@@ -32,9 +58,3 @@ scummvmAssert("a" <= "Bubba")
 scummvmAssert("z" > "Z")
 scummvmAssert("abba" > "Abba")
 
--- This behaviour was fixed by 8.5
-set save to the scummvmVersion
-set the scummvmVersion to 850
-scummvmAssert("a" <= "Z")
-scummvmAssert("a" <= "A")
-set the scummvmVersion to save

@@ -485,6 +485,7 @@ bool Music::playMusic(const Common::String &name) {
 		Common::File *digitalMusicFile = new Common::File();
 		if (!digitalMusicFile->open(digitalMusicName)) {
 			warning("playMusic: can not open 3DO music '%s'", digitalMusicName.c_str());
+			delete digitalMusicFile;
 			return false;
 		}
 

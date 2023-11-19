@@ -103,6 +103,12 @@ ThemeEval &ThemeEval::addWidget(const Common::String &name, const Common::String
 									typeH == -1 ? h : typeH,
 									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
 									getVar("Globals.TabWidget.Tab.Height", 0));
+	else if (type == "ScrollContainerWidget")
+		widget = new ThemeLayoutScrollContainerWidget(_curLayout.top(), name,
+									typeW == -1 ? w : typeW,
+									typeH == -1 ? h : typeH,
+									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign,
+									getVar("Globals.Scrollbar.Width", 0));
 	else
 		widget = new ThemeLayoutWidget(_curLayout.top(), name,
 									typeW == -1 ? w : typeW,

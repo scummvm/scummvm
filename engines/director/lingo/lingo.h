@@ -22,14 +22,6 @@
 #ifndef DIRECTOR_LINGO_LINGO_H
 #define DIRECTOR_LINGO_LINGO_H
 
-#include "common/hash-ptr.h"
-#include "common/hash-str.h"
-#include "common/str-array.h"
-#include "common/queue.h"
-#include "common/rect.h"
-
-#include "director/types.h"
-
 namespace Audio {
 class AudioStream;
 }
@@ -74,6 +66,8 @@ struct FuncDesc {
 };
 
 typedef Common::HashMap<void *, FuncDesc *> FuncHash;
+
+typedef Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MethodHash;
 
 struct BuiltinProto {
 	const char *name;
@@ -177,6 +171,8 @@ struct Datum {	/* interpreter stack type */
 	bool isRef() const;
 	bool isVarRef() const;
 	bool isCastRef() const;
+	bool isArray() const;
+	bool isNumeric() const;
 
 	const char *type2str(bool ilk = false) const;
 
@@ -329,6 +325,9 @@ public:
 
 	int getMenuNum();
 	int getMenuItemsNum(Datum &d);
+	int getXtrasNum();
+	int getCastlibsNum();
+	int getMembersNum();
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
@@ -389,7 +388,7 @@ public:
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib, CastType type);
 	void exposeXObject(const char *name, Datum obj);
 
-	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
+	int getAlignedType(const Datum &d1, const Datum &d2, bool equality);
 
 	Common::String formatAllVars();
 	void printAllVars();
@@ -458,6 +457,7 @@ public:
 	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
 	Datum getTheDate(int field);
 	Datum getTheTime(int field);
+	Datum getTheDeskTopRectList();
 
 private:
 	Common::StringArray _entityNames;

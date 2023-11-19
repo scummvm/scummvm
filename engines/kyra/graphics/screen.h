@@ -49,10 +49,10 @@ struct ScreenDim {
 	uint16 sy;
 	uint16 w;
 	uint16 h;
-	uint16 unk8;
-	uint16 unkA;
-	uint16 unkC;
-	uint16 unkE;
+	uint16 col1;
+	uint16 col2;
+	uint16 line;
+	uint16 column;
 };
 
 /**
@@ -66,6 +66,7 @@ public:
 	 */
 	enum Type {
 		kASCII = 0,
+		kJIS_X0201,
 		kSJIS,
 		kBIG5,
 		kJohab
@@ -365,6 +366,8 @@ private:
 	void processColorMap() override;
 };
 
+#ifdef ENABLE_LOL
+
 class ChineseOneByteFontLoL final : public ChineseFont {
 public:
 	ChineseOneByteFontLoL(int pitch) : ChineseFont(pitch, 8, 14, 8, 16, 0, 0) { _pixelColorShading = false; }
@@ -386,6 +389,8 @@ private:
 	uint32 getFontOffset(uint16 c) const override;
 	void processColorMap() override;
 };
+
+#endif
 
 class ChineseOneByteFontHOF final : public ChineseFont {
 public:
@@ -716,6 +721,7 @@ public:
 
 	void setTextMarginRight(int x) { _textMarginRight = x; }
 	uint16 _textMarginRight;
+	bool _overdrawMargin;
 
 	const ScreenDim *_curDim;
 

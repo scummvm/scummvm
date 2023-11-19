@@ -51,7 +51,7 @@ bool ReadPlayerController::keyPressed(int key) {
 }
 
 int ReadPlayerController::getPlayer() {
-	return _value - '1';
+	return _value == 27 ? -1 : _value - '1';
 }
 
 int ReadPlayerController::waitFor() {

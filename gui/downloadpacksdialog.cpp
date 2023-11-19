@@ -68,9 +68,9 @@ struct DialogState {
 	void downloadList();
 	void proceedDownload();
 
-	void downloadListCallback(Networking::DataResponse response);
-	void downloadFileCallback(Networking::DataResponse response);
-	void errorCallback(Networking::ErrorResponse error);
+	void downloadListCallback(const Networking::DataResponse &response);
+	void downloadFileCallback(const Networking::DataResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
 
 private:
 	bool takeOneFile();
@@ -79,8 +79,8 @@ private:
 
 void DialogState::downloadList() {
 	Networking::SessionRequest *rq = session.get(Common::String::format("https://downloads.scummvm.org/frs/icons/%s", listfname), "",
-		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadListCallback),
-		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback),
+		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadListCallback),
+		new Common::Callback<DialogState, const Networking::ErrorResponse &>(this, &DialogState::errorCallback),
 		true);
 
 	rq->start();
@@ -88,6 +88,7 @@ void DialogState::downloadList() {
 
 void DialogState::proceedDownload() {
 	startTime = lastUpdate = g_system->getMillis();
+	g_system->taskStarted(OSystem::kDataPackDownload);
 	takeOneFile();
 }
 
@@ -103,14 +104,14 @@ bool DialogState::takeOneFile() {
 	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
 
 	Networking::SessionRequest *rq = session.get(url, localFile,
-		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadFileCallback),
-		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback));
+		new Common::Callback<DialogState, const Networking::DataResponse &>(this, &DialogState::downloadFileCallback),
+		new Common::Callback<DialogState, const Networking::ErrorResponse &>(this, &DialogState::errorCallback));
 
 	rq->start();
 	return true;
 }
 
-void DialogState::downloadListCallback(Networking::DataResponse r) {
+void DialogState::downloadListCallback(const Networking::DataResponse &r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 	Common::MemoryReadStream stream(response->buffer, response->len);
 
@@ -135,13 +136,14 @@ void DialogState::downloadListCallback(Networking::DataResponse r) {
 		dialog->sendCommand(kListDownloadFinishedCmd, 0);
 }
 
-void DialogState::downloadFileCallback(Networking::DataResponse r) {
+void DialogState::downloadFileCallback(const Networking::DataResponse &r) {
 	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
 
 	downloadedSize += response->len;
 	if (response->eos) {
 		if (!takeOneFile()) {
 			state = kDownloadComplete;
+			g_system->taskFinished(OSystem::kDataPackDownload);
 			if (dialog)
 				dialog->sendCommand(kDownloadEndedCmd, 0);
 			return;
@@ -154,9 +156,10 @@ void DialogState::downloadFileCallback(Networking::DataResponse r) {
 	}
 }
 
-void DialogState::errorCallback(Networking::ErrorResponse error) {
+void DialogState::errorCallback(const Networking::ErrorResponse &error) {
 	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
 
+	g_system->taskFinished(OSystem::kDataPackDownload);
 	if (dialog)
 		dialog->setError(message);
 }
@@ -395,11 +398,11 @@ void DownloadPacksDialog::calculateList() {
 
 	// Scan all files in iconspath and remove present and incomplete ones from the
 	// donwloaded files list
-	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+	Common::FSDirectory iconDir(iconsPath);
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, _packsglob);
+	iconDir.listMatchingMembers(iconFiles, _packsglob);
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
@@ -410,8 +413,6 @@ void DownloadPacksDialog::calculateList() {
 		if (g_state->fileHash.contains(fname) && size == g_state->fileHash[fname])
 			g_state->fileHash.erase(fname);
 	}
-
-	delete iconDir;
 
 	// Now calculate the size of the missing files
 	g_state->totalSize = 0;
@@ -440,11 +441,11 @@ void DownloadPacksDialog::clearCache() {
 		return;
 	}
 
-	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+	Common::FSDirectory iconDir(iconsPath);
 
 	Common::ArchiveMemberList iconFiles;
 
-	iconDir->listMatchingMembers(iconFiles, _packsglob);
+	iconDir.listMatchingMembers(iconFiles, _packsglob);
 	int totalSize = 0;
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {

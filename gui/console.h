@@ -68,8 +68,8 @@ public:
 
 protected:
 	enum {
-		kBufferSize   = 32768,
 		kCharsPerLine = 128,
+		kBufferSize   = kCharsPerLine * 1024,
 
 		kHistorySize  = 20
 	};
@@ -144,6 +144,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleOtherEvent(const Common::Event &evt) override;
 
 	int printFormat(int dummy, MSVC_PRINTF const char *format, ...) GCC_PRINTF(3, 4);
 	int vprintFormat(int dummy, const char *format, va_list argptr);
@@ -165,6 +166,7 @@ public:
 
 	void setPrompt(Common::String prompt);
 	void resetPrompt();
+	void clearBuffer();
 
 protected:
 	inline char &buffer(int idx) {

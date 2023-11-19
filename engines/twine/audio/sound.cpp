@@ -55,7 +55,10 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	const int32 camZ = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
 	int32 distance = getDistance3D(camX, camY, camZ, x, y, z);
 	distance = _engine->_collision->boundRuleThree(0, distance, 10000, 255);
-	const byte targetVolume = CLIP<byte>(255 - distance, 0, 255);
+	byte targetVolume = 0;
+	if (distance < 255) {
+		targetVolume = 255 - distance;
+	}
 	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[channelIdx], targetVolume);
 }
 
@@ -104,6 +107,8 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 		setSamplePosition(channelIdx, x, y, z);
 		// save the actor index for the channel so we can check the position
 		samplesPlayingActors[channelIdx] = actorIdx;
+	} else {
+		samplesPlayingActors[channelIdx] = -1;
 	}
 
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];

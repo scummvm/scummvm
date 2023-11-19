@@ -22,6 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_ATARI_SUPERBLITTER_H
 #define BACKENDS_GRAPHICS_ATARI_SUPERBLITTER_H
 
+#ifdef USE_SUPERVIDEL
+
 #include <mint/cookie.h>
 #include <mint/falcon.h>
 
@@ -29,11 +31,22 @@
 #define SV_VERSION	((volatile long*)0x8001007C)
 
 inline static bool hasSuperVidel() {
-	static bool hasSuperVidel = VgetMonitor() == MON_VGA && Getcookie(C_SupV, NULL) == C_FOUND;
+	// this works also on the TT
+	static bool hasSuperVidel = Getcookie(C_SupV, NULL) == C_FOUND && VgetMonitor() == MON_VGA;
 	return hasSuperVidel;
 }
 
 static int superVidelFwVersion = hasSuperVidel() ? *SV_VERSION & 0x01ff : 0;
+
+#else
+
+constexpr bool hasSuperVidel() {
+	return false;
+}
+
+constexpr int superVidelFwVersion = 0;
+
+#endif	// USE_SUPERVIDEL
 
 void lockSuperBlitter();
 void unlockSuperBlitter();

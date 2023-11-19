@@ -1389,7 +1389,7 @@ public:
 	tUIntList mlstIndices;
 };
 
-typedef Hpl1::Std::map<cVector3f, cVertexIndices> tVtxIdxMap;
+typedef Common::StableMap<cVector3f, cVertexIndices> tVtxIdxMap;
 typedef tVtxIdxMap::iterator tVtxIdxMapIt;
 
 //////////////////////////////////////////////////////

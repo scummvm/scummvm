@@ -83,7 +83,6 @@ void OSystem_Win32::init() {
 #if defined(USE_JPEG)
 	initializeJpegLibraryForWin95();
 #endif
-
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
@@ -275,6 +274,24 @@ Common::String OSystem_Win32::getDefaultIconsPath() {
 	return Win32::tcharToString(iconsPath);
 }
 
+Common::Path OSystem_Win32::getDefaultDLCsPath() {
+	TCHAR dlcsPath[MAX_PATH];
+
+	if (_isPortable) {
+		Win32::getProcessDirectory(dlcsPath, MAX_PATH);
+		_tcscat(dlcsPath, TEXT("\\DLCs\\"));
+	} else {
+		// Use the Application Data directory of the user profile
+		if (!Win32::getApplicationDataDirectory(dlcsPath)) {
+			return Common::Path();
+		}
+		_tcscat(dlcsPath, TEXT("\\DLCs\\"));
+		CreateDirectory(dlcsPath, nullptr);
+	}
+
+	return Common::Path(Win32::tcharToString(dlcsPath));
+}
+
 Common::String OSystem_Win32::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	Common::String screenshotsPath = ConfMan.get("screenshotpath");
@@ -456,14 +473,13 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i, ++count)
-		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(*i, this)));
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(*i, *this)));
 
 	return count;
 }
 
 const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
@@ -503,6 +519,10 @@ void OSystem_Win32::addSysArchivesToSearchSet(Common::SearchSet &s, int priority
 
 AudioCDManager *OSystem_Win32::createAudioCDManager() {
 	return createWin32AudioCDManager();
+}
+
+uint32 OSystem_Win32::getOSDoubleClickTime() const {
+	return GetDoubleClickTime();
 }
 
 // libjpeg-turbo uses SSE instructions that error on at least some Win95 machines.

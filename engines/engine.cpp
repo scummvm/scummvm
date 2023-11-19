@@ -459,6 +459,12 @@ void initGraphics3d(int width, int height) {
 		g_system->setFeatureState(OSystem::kFeatureVSync, ConfMan.getBool("vsync")); // TODO: Replace this with initCommonGFX()
 		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str()); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
+
+	if (!splash && !GUI::GuiManager::instance()._launched) {
+		Common::Event event;
+		(void)g_system->getEventManager()->pollEvent(event);
+		splashScreen();
+	}
 }
 
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
@@ -640,7 +646,7 @@ void Engine::saveAutosaveIfEnabled() {
 	}
 
 	_lastAutosaveTime = _system->getMillis();
-	
+
 	if (!saveFlag) {
 		// Set the next autosave interval to be in 5 minutes, rather than whatever
 		// full autosave interval the user has selected

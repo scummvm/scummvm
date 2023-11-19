@@ -183,7 +183,7 @@ Common::String Client::path() const { return _reader.path(); }
 
 Common::String Client::query() const { return _reader.query(); }
 
-Common::String Client::queryParameter(Common::String name) const { return _reader.queryParameter(name); }
+Common::String Client::queryParameter(const Common::String &name) const { return _reader.queryParameter(name); }
 
 Common::String Client::anchor() const { return _reader.anchor(); }
 

@@ -114,7 +114,7 @@ int HagArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 		for (i = hagIndex._entries.begin(); i != hagIndex._entries.end(); ++i) {
 			list.push_back(Common::ArchiveMemberList::value_type(
-				new Common::GenericArchiveMember((*i)._resourceName, this)));
+				new Common::GenericArchiveMember((*i)._resourceName, *this)));
 			++members;
 		}
 	}
@@ -127,7 +127,7 @@ const Common::ArchiveMemberPtr HagArchive::getMember(const Common::Path &path) c
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::Path &path) const {

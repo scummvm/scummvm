@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Lopeta</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Peruuta</string>
+  <string name="customkeyboardview_keycode_delete">Poista</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

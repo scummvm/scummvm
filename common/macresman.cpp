@@ -194,11 +194,10 @@ SeekableReadStream *MacResManager::openAppleDoubleWithAppleOrOSXNaming(Archive& 
 		stream = archive.createReadStreamForMember(newPath);
 
 		if (!stream) {
-			Common::FSNode *fsn = new Common::FSNode(newPath);
-			if (fsn && fsn->exists())
-				stream = fsn->createReadStream();
-			else
-				delete fsn;
+			Common::FSNode fsn(newPath);
+			if (fsn.exists()) {
+				stream = fsn.createReadStream();
+			}
 		}
 
 		if (stream) {
@@ -252,14 +251,18 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 
 	// Maybe file is in MacBinary but without .bin extension?
 	// Check it here
-	SeekableReadStream *rawStream = archive.createReadStreamForMember(fileName);
-	if (rawStream && isMacBinary(*rawStream)) {
-		rawStream->seek(0);
-		if (loadFromMacBinary(rawStream)) {
+	stream = archive.createReadStreamForMember(fileName);
+	if (stream && isMacBinary(*stream)) {
+		stream->seek(0);
+		if (loadFromMacBinary(stream)) {
 			_baseFileName = fileName;
 			return true;
 		}
 	}
+
+	bool fileExists = (stream != nullptr);
+
+	delete stream;
 
 	// Then try for AppleDouble using Apple's naming
 	// As they are created silently from plain files (e.g. from a macbinary) they are pretty low quality often.
@@ -270,12 +273,20 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	}
 	delete stream;
 
+	// Try alternate stream
+	stream = archive.createReadStreamForMemberAltStream(fileName, AltStreamType::MacResourceFork);
+	if (stream && loadFromRawFork(stream)) {
+		_baseFileName = fileName;
+		return true;
+	}
+	delete stream;
+
+
 #ifdef MACOSX
 	// Check the actual fork on a Mac computer. It's even worse than __MACOSX as
 	// it's present on any HFS(+) and appears even after copying macbin on HFS(+).
 	const ArchiveMemberPtr archiveMember = archive.getMember(fileName);
-	const Common::FSNode *plainFsNode = dynamic_cast<const Common::FSNode *>(archiveMember.get());
-	if (plainFsNode) {
+	if (archiveMember.get()) {
 		// This could be a MacBinary file that still has a
 		// resource fork; if it is, it needs to get opened as MacBinary
 		// and not treated as raw.
@@ -286,9 +297,8 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		}
 		delete stream;
 
-		String fullPath = plainFsNode->getPath() + "/..namedfork/rsrc";
-		FSNode resFsNode = FSNode(fullPath);
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
+		Path fullPath = archiveMember.get()->getPathInArchive().join("/..namedfork/rsrc");
+		SeekableReadStream *macResForkRawStream = archive.createReadStreamForMember(fullPath);
 		if (!isMacBinaryFile && macResForkRawStream && loadFromRawFork(macResForkRawStream)) {
 			_baseFileName = fileName;
 			return true;
@@ -298,9 +308,8 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	}
 #endif
 
-	if (rawStream) { // No non-empty resource fork found.
+	if (fileExists) { // No non-empty resource fork found, but the file still exists
 		_baseFileName = fileName;
-		delete rawStream;
 		_stream = nullptr;
 		return true;
 	}
@@ -311,6 +320,15 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 
 SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName) {
 	return openFileOrDataFork(fileName, SearchMan);
+}
+
+SeekableReadStream * MacResManager::openDataForkFromMacBinary(SeekableReadStream *inStream, DisposeAfterUse::Flag disposeAfterUse) {
+	if (!inStream || !isMacBinary(*inStream)) {
+		return nullptr;
+	}
+	inStream->seek(MBI_DFLEN);
+	uint32 dataSize = inStream->readUint32BE();
+	return new SeekableSubReadStream(inStream, MBI_INFOHDR, MBI_INFOHDR + dataSize, disposeAfterUse);
 }
 
 SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Archive &archive) {
@@ -383,15 +401,15 @@ bool MacResManager::getFileFinderInfo(const Path &fileName, Archive &archive, Ma
 
 bool MacResManager::getFileFinderInfo(const Path &fileName, Archive &archive, MacFinderInfo &outFinderInfo, MacFinderExtendedInfo &outFinderExtendedInfo) {
 	// Our preference is as following:
-	// .finf -> AppleDouble in .rsrc -> MacBinary with .bin -> MacBinary without .bin -> AppleDouble in ._
+	// Alt stream -> AppleDouble in .rsrc -> MacBinary with .bin -> MacBinary without .bin -> AppleDouble in ._
 	// -> AppleDouble in __MACOSX -> No finder info
 	// If you compare with open there are following differences:
 	// * We add .finf. It has only finder info
 	// * We skip raw .rsrc as it lack finder info
 	// * Actual finder info on OSX isn't implemented yet
 
-	// Prefer standalone .finf files first (especially since this can avoid decompressing entire files from slow archive formats like StuffIt Installer)
-	Common::ScopedPtr<SeekableReadStream> stream(archive.createReadStreamForMember(fileName.append(".finf")));
+	// Prefer alt stream first (especially since this can avoid decompressing entire files from slow archive formats like StuffIt Installer)
+	Common::ScopedPtr<SeekableReadStream> stream(archive.createReadStreamForMemberAltStream(fileName, AltStreamType::MacFinderInfo));
 	if (stream) {
 		MacFinderInfoData finfoData;
 		MacFinderExtendedInfoData fxinfoData;

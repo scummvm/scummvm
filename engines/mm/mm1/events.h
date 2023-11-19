@@ -270,6 +270,11 @@ protected:
 	void processEvent(Common::Event &ev);
 
 	/**
+	 * Returns true if the game should quit
+	 */
+	virtual bool shouldQuit() const = 0;
+
+	/**
 	 * Overrides events we want to only go to the focused view
 	 */
 	#define MESSAGE(NAME) \

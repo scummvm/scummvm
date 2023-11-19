@@ -42,28 +42,28 @@ void TeSceneWarp::close() {
 }
 
 const TeSceneWarp::Animation *TeSceneWarp::getAnimation(const Common::String &name) {
-	for (auto &anim : _animations)
+	for (const auto &anim : _animations)
 		if (anim._name == name)
 			return &anim;
 	return nullptr;
 }
 
 const TeSceneWarp::Exit *TeSceneWarp::getExit(const Common::String &linkedWarp) {
-	for (auto &exit : _exits)
+	for (const auto &exit : _exits)
 		if (exit._linkedWarp == linkedWarp)
 			return &exit;
 	return nullptr;
 }
 
 const TeSceneWarp::Object *TeSceneWarp::getObject(const Common::String &name) {
-	for (auto &object : _objects)
+	for (const auto &object : _objects)
 		if (object._name == name)
 			return &object;
 	return nullptr;
 }
 
 const TeSceneWarp::WarpEvent *TeSceneWarp::getWarpEvent(const Common::String &name) {
-	for (auto &warpEvent : _warpEvents)
+	for (const auto &warpEvent : _warpEvents)
 		if (warpEvent._name == name)
 			return &warpEvent;
 	return nullptr;
@@ -78,8 +78,10 @@ bool TeSceneWarp::load(const Common::String &name, TeWarp *warp, bool flag) {
 	TeSceneWarpXmlParser parser(this, flag);
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(name);
-	parser.loadFile(node);
-	parser.parse();
+	if (!parser.loadFile(node))
+		error("TeSceneWarp::load: failed to load data from %s", name.c_str());
+	if (!parser.parse())
+		error("TeSceneWarp::load: failed to parse data from %s", name.c_str());
 
 	if (flag) {
 		// Line 357 ~ 426, plus other fixups

@@ -69,6 +69,8 @@ public:
 	void detectClashes() const;
 
 	uint getMD5Bytes() const override;
+
+	void dumpDetectionEntries() const override final {}
 };
 
 namespace Glk {

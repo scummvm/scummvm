@@ -43,17 +43,17 @@ class GoogleDriveListDirectoryByIdRequest: public Networking::Request {
 	Common::String _date;
 
 	void start();
-	void makeRequest(Common::String pageToken);
-	void responseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
+	void makeRequest(const Common::String &pageToken);
+	void responseCallback(const Networking::JsonResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
 	void finishListing(Common::Array<StorageFile> &files);
 public:
-	GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, Common::String id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
-	virtual ~GoogleDriveListDirectoryByIdRequest();
+	GoogleDriveListDirectoryByIdRequest(GoogleDriveStorage *storage, const Common::String &id, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb);
+	~GoogleDriveListDirectoryByIdRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace GoogleDrive

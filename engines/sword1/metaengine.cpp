@@ -24,6 +24,7 @@
 
 #include "sword1/sword1.h"
 #include "sword1/control.h"
+#include "sword1/logic.h"
 #include "sword1/obsolete.h"
 
 #include "common/savefile.h"
@@ -182,7 +183,6 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 namespace Sword1 {
 
 Common::Error SwordEngine::loadGameState(int slot) {
-	_systemVars.forceRestart = false;
 	_systemVars.controlPanelMode = CP_NORMAL;
 	_control->restoreGameFromFile(slot);
 	reinitialize();
@@ -202,7 +202,7 @@ Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc, b
 }
 
 bool SwordEngine::canSaveGameStateCurrently() {
-	return (mouseIsActive() && !_control->isPanelShown());
+	return (mouseIsActive() && !_control->isPanelShown() && Logic::_scriptVars[SCREEN] != 91);
 }
 
 } // End of namespace Sword1

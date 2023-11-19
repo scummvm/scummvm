@@ -26,7 +26,7 @@ namespace BladeRunner {
 enum kCT01Loops {
 	kCT01LoopInshotFromCT12WithSpinner = 0, //   0 -  14
 	kCT01LoopInshot                    = 1, //  15 - 194
-	kCT01LoopMainLoop                  = 2, // 195 - 255
+	kCT01LoopMainLoop                  = 2, // 195 - 255 (plays up to 254 due to a bug fix)
 	kCT01LoopDoorAnim                  = 4, // 256 - 315
 	kCT01LoopOutshot                   = 5, // 316 - 435
 	kCT01LoopInshotFromCT12NoSpinner   = 6, // 436 - 450
@@ -483,14 +483,14 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	) {
 		int v3 = Random_Query(0, 6);
 		if (v3 == 0) {
-			Overlay_Play("ct01spnr", 0, false, true, 0);
+			Overlay_Play("CT01SPNR", 0, false, true, 0);
 			if (Random_Query(0, 1)) {
 				Ambient_Sounds_Play_Sound(kSfxSPIN2B, Random_Query(33, 50), 0, 0, 0);
 			} else {
 				Ambient_Sounds_Play_Sound(kSfxSPIN2A, Random_Query(33, 50), 0, 0, 0);
 			}
 		} else if (v3 == 1) {
-			Overlay_Play("ct01spnr", 1, false, true, 0);
+			Overlay_Play("CT01SPNR", 1, false, true, 0);
 			if (Random_Query(0, 1)) {
 				Ambient_Sounds_Play_Sound(kSfxSPIN3A, Random_Query(33, 50), 0, 0, 0);
 			} else {

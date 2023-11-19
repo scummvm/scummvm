@@ -576,8 +576,9 @@ Common::SharedPtr<TextureData> createTextureFromSurface(Graphics::Surface &surfa
 }
 
 //*********************************************************************************************
-gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int LoaderFlags) {
-	bool        bAlpha = FALSE, bUseAlternate = FALSE;
+gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int _LoaderFlags) {
+	//bool        bAlpha = FALSE
+	bool bUseAlternate = FALSE;
 	gTexture    *texture = nullptr;
 	int32      pos = 0;
 	char        AlternateName[500] {};
@@ -761,7 +762,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	texture->RealDimX = dwWidth;
 	texture->RealDimY = dwHeight;
 
-	if (LoaderFlags & rSURFACEHALF) {
+	if (_LoaderFlags & rSURFACEHALF) {
 		warning("Half-res loading not implemented");
 #if 0
 		LPDIRECTDRAWSURFACE7    surf;

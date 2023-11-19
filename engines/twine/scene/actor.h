@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "twine/parser/anim.h"
+#include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
 
@@ -139,6 +140,7 @@ private:
 	bool _brickCausesDamage = false;
 
 	EntityData _entityData;
+
 public:
 	StaticFlagsStruct _staticFlags;
 	DynamicFlagsStruct _dynamicFlags;
@@ -164,6 +166,7 @@ public:
 
 	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
+	BodyType _saveGenBody = BodyType::btNormal; // lba2
 	AnimationTypes _genAnim = AnimationTypes::kAnimNone;
 	AnimationTypes _nextGenAnim = AnimationTypes::kStanding;
 	AnimationTypes _ptrAnimAction = AnimationTypes::kAnimNone;
@@ -176,13 +179,13 @@ public:
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
 	int32 _beta = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
-	int32 _speed = 40; // speed of movement
+	int32 _speed = 40; // SRot - speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
-	int32 _cropLeft = 0;
-	int32 _cropTop = 0;
-	int32 _cropRight = 0;
-	int32 _cropBottom = 0;
+	int32 _cropLeft = 0;      // Info
+	int32 _cropTop = 0;       // Info1
+	int32 _cropRight = 0;     // Info2
+	int32 _cropBottom = 0;    // Info3
 	int32 _followedActor = 0; // same as info3
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
@@ -198,6 +201,7 @@ public:
 	int32 _moveScriptSize = 0;
 
 	int32 _offsetLife = 0;
+	int32 _saveOffsetLife = 0; // lba2
 	uint8 *_lifeScript = nullptr;
 	int32 _lifeScriptSize = 0;
 
@@ -213,7 +217,7 @@ public:
 	 * actor id we are standing on
 	 */
 	int32 _carryBy = -1;
-	int32 _zone = -1;
+	int32 _zoneSce = -1;
 
 	int32 _animStepBeta = 0;
 	IVec3 _animStep;
@@ -261,8 +265,6 @@ private:
 	/** Hero 3D entity for protopack behaviour */
 	EntityData _heroEntityPROTOPACK;
 
-	void initSpriteActor(int32 actorIdx);
-
 	/**
 	 * Initialize 3D actor body
 	 * @param bodyIdx 3D actor body index
@@ -272,10 +274,13 @@ private:
 
 	void loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index);
 
+	void copyInterAnim(const BodyData &src, BodyData &dest);
+
 public:
 	Actor(TwinEEngine *engine);
 
 	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
+	HeroBehaviourType _saveHeroBehaviour = HeroBehaviourType::kNormal; // SaveComportementHero (lba2)
 	/** Hero auto aggressive mode */
 	bool _combatAuto = true;
 	/** Previous Hero behaviour */
@@ -298,6 +303,8 @@ public:
 
 	/** Hero anim for behaviour menu */
 	int16 _heroAnimIdx[4];
+
+	void initSpriteActor(int32 actorIdx);
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();
@@ -330,7 +337,7 @@ public:
 	 * Reset actor
 	 * @param actorIdx actor index to init
 	 */
-	void resetActor(int16 actorIdx);
+	void initObject(int16 actorIdx);
 
 	/**
 	 * Process hit actor

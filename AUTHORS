@@ -144,6 +144,9 @@ ScummVM Team
     Composer:
        Alyssa Milburn
 
+    Crab:
+       Kartik Agarwala
+
     CruisE:
        Paul Gilbert
        Vincent Hamm                   - (retired)
@@ -316,6 +319,7 @@ ScummVM Team
     MM (Xeen):
        Paul Gilbert
        Benoit Pierre
+       TheDrakeRaider                 - (M&M1 Gfx Mod)
        David Goldsmith                - (Xeen analysis)
        Matt Taylor                    - (Xeen analysis)
 
@@ -423,6 +427,7 @@ ScummVM Team
        Ludvig Strigeus                - (retired)
 
     SCUMM HE:
+       Andrea Boscarino               - Digital audio
        Jonathan Gray                  - (retired)
        Travis Howell
        Gregory Montoir                - (retired)
@@ -458,6 +463,7 @@ ScummVM Team
 
     Sword1:
        Fabio Battaglia                - PSX version support
+       Andrea Boscarino               - Palette fading, menus, audio
        Thierry Crozat                 - Mac version support
        Robert Goeffringmann           - (retired)
 
@@ -567,6 +573,9 @@ ScummVM Team
     WAGE:
        Eugene Sandulenko
 
+    Watchmaker:
+       Einar Johan Troan Somaen;
+
     Wintermute:
        Gunnar Birke                   - Wintermute 3D
        Einar Johan T. Somaaen
@@ -665,6 +674,9 @@ ScummVM Team
 
     Raspberry Pi:
        Manuel Alfayate
+
+    Libretro:
+       Giovanni Cascione
 
   Other subsystems
   ----------------

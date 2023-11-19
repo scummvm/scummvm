@@ -29,6 +29,10 @@ namespace Tetraedge {
 Notifier::Notifier() {
 }
 
+static const char *notifyLayoutName() {
+	return g_engine->gameIsAmerzone() ? "notify" : "notifier";
+}
+
 void Notifier::launchNextnotifier() {
 	TeCurveAnim2<Te3DObject2, TeColor> *colorAnim = _gui.colorLinearAnimation("fadeIn");
 	assert(colorAnim);
@@ -52,25 +56,32 @@ void Notifier::launchNextnotifier() {
 	if (_notifierDataArray.empty())
 		return;
 
-	TeVariant textformat = _gui.value("textFormat");
-	Common::String formattedName = Common::String::format(textformat.toString().c_str(), _notifierDataArray[0]._name.c_str());
+	Common::String textformat = _gui.value("textFormat").toString();
+	Common::String formattedName;
+	if (!textformat.empty())
+		formattedName = Common::String::format(textformat.c_str(), _notifierDataArray[0]._name.c_str());
+	else
+		formattedName = _notifierDataArray[0]._name;
 
 	TeITextLayout *text = _gui.textLayout("text");
 	text->setText(formattedName);
 
 	if (!_notifierDataArray[0]._imgpath.empty()) {
+		assert(!g_engine->gameIsAmerzone());
 		_gui.spriteLayoutChecked("image")->load(_notifierDataArray[0]._imgpath);
 	}
 
-	_gui.layoutChecked("notifier")->setVisible(true);
+	_gui.layoutChecked(notifyLayoutName())->setVisible(true);
 
 	colorAnim = _gui.colorLinearAnimation("fadeIn");
 	colorAnim->_callbackObj = _gui.layoutChecked("sprite");
 	colorAnim->play();
 
-	colorAnim = _gui.colorLinearAnimation("fadeInImage");
-	colorAnim->_callbackObj = _gui.layoutChecked("image");
-	colorAnim->play();
+	if (!g_engine->gameIsAmerzone()) {
+		colorAnim = _gui.colorLinearAnimation("fadeInImage");
+		colorAnim->_callbackObj = _gui.layoutChecked("image");
+		colorAnim->play();
+	}
 
 	_notifierDataArray.remove_at(0);
 }
@@ -78,10 +89,8 @@ void Notifier::launchNextnotifier() {
 void Notifier::load() {
 	const char *luaPath = g_engine->gameIsAmerzone() ? "GUI/Notify.lua" : "menus/Notifier.lua";
 	_gui.load(luaPath);
-	const char *layoutName = g_engine->gameIsAmerzone() ? "notify" : "notifier";
-	TeLayout *notifierLayout = _gui.layoutChecked(layoutName);
-	Game *game = g_engine->getGame();
-	game->addNoScale2Child(notifierLayout);
+	TeLayout *notifierLayout = _gui.layoutChecked(notifyLayoutName());
+	g_engine->getGame()->addNoScale2Child(notifierLayout);
 	notifierLayout->setVisible(false);
 
 	TeCurveAnim2<Te3DObject2, TeColor> *fadeIn = _gui.colorLinearAnimation("fadeIn");
@@ -99,15 +108,17 @@ bool Notifier::onFadeInFinished() {
 	colorAnim->_callbackObj = _gui.layout("sprite");
 	colorAnim->play();
 
-	colorAnim = _gui.colorLinearAnimation("visibleImage");
-	colorAnim->_callbackObj = _gui.layout("image");
-	colorAnim->play();
+	if (!g_engine->gameIsAmerzone()) {
+		colorAnim = _gui.colorLinearAnimation("visibleImage");
+		colorAnim->_callbackObj = _gui.layout("image");
+		colorAnim->play();
+	}
 
 	return false;
 }
 
 bool Notifier::onFadeOutFinished() {
-	TeLayout *notifierLayout = _gui.layout("notifier");
+	TeLayout *notifierLayout = _gui.layoutChecked(notifyLayoutName());
 	notifierLayout->setVisible(false);
 	launchNextnotifier();
 	return false;
@@ -118,9 +129,11 @@ bool Notifier::onVisibleFinished() {
 	colorAnim->_callbackObj = _gui.layout("sprite");
 	colorAnim->play();
 
-	colorAnim = _gui.colorLinearAnimation("fadeOutImage");
-	colorAnim->_callbackObj = _gui.layout("image");
-	colorAnim->play();
+	if (!g_engine->gameIsAmerzone()) {
+		colorAnim = _gui.colorLinearAnimation("fadeOutImage");
+		colorAnim->_callbackObj = _gui.layout("image");
+		colorAnim->play();
+	}
 	return false;
 }
 
@@ -131,7 +144,7 @@ void Notifier::push(const Common::String &name, const Common::String &imgpath) {
 }
 
 void Notifier::unload() {
-	TeLayout *layout = _gui.layout("notifier");
+	TeLayout *layout = _gui.layoutChecked(notifyLayoutName());
 	g_engine->getGame()->removeNoScale2Child(layout);
 	_gui.unload();
 }

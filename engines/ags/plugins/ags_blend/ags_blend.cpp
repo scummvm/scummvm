@@ -351,8 +351,6 @@ void AGSBlend::Blur(ScriptMethodParams &params) {
 	delete[] Dest;
 	delete[] Temp;
 	_engine->ReleaseBitmapSurface(src);
-	delete srclongbuffer;
-	delete srccharbuffer;
 
 	params._result = 0;
 }

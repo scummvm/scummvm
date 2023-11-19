@@ -38,6 +38,7 @@ public:
 	~InstallShieldV3() override;
 
 	bool open(const Common::String &filename);
+	bool open(const Common::FSNode &node);
 	void close();
 	bool isOpen() const { return _stream != nullptr; }
 
@@ -46,6 +47,7 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	char getPathSeparator() const override;
 
 private:
 	struct FileEntry {
@@ -53,6 +55,8 @@ private:
 		uint32 compressedSize;
 		uint32 offset;
 	};
+
+	bool read();
 
 	Common::SeekableReadStream *_stream;
 

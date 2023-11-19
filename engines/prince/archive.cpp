@@ -139,7 +139,7 @@ int PtcArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int matches = 0;
 
 	for (FileMap::const_iterator it = _items.begin(); it != _items.end(); ++it) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(it->_key, *this)));
 		matches++;
 	}
 
@@ -151,7 +151,7 @@ const Common::ArchiveMemberPtr PtcArchive::getMember(const Common::Path &path) c
 	if (!_items.contains(name)) {
 		Common::ArchiveMemberPtr();
 	}
-	return Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::Path &path) const {

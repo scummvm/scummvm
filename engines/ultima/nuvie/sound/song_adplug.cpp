@@ -41,7 +41,7 @@ SongAdPlug::SongAdPlug(Audio::Mixer *m, CEmuopl *o) {
 SongAdPlug::~SongAdPlug() {
 }
 
-bool SongAdPlug::Init(const char *filename, uint16 song_num) {
+bool SongAdPlug::Init(const char *filename, const char *fileId, uint16 song_num) {
 	if (filename == NULL)
 		return false;
 

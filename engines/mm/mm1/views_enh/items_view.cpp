@@ -167,7 +167,7 @@ void ItemsView::notEnoughGold() {
 void ItemsView::displayMessage(const Common::String &msg) {
 	SoundMessage infoMsg(msg, ALIGN_MIDDLE);
 	infoMsg._delaySeconds = 3;
-	infoMsg._timeoutCallback = []() {
+	infoMsg._callback = []() {
 		ItemsView *view = static_cast<ItemsView *>(g_events->focusedView());
 		view->timeout();
 	};

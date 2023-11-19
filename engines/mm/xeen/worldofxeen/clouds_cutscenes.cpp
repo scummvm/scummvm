@@ -689,6 +689,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	WAIT(5);
 
 	Graphics::ManagedSurface savedBg;
+	savedBg.create(screen.w, screen.h, screen.format);
 	savedBg.blitFrom(screen);
 
 	// Close up of King Roland
@@ -768,6 +769,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 
 	// Zooming into the mirror
 	screen.freePages();
+	savedBg.create(screen.w, screen.h, screen.format);
 	savedBg.blitFrom(screen);
 
 	const int XLIST3[9] = { 0, -5, -10, -15, -24, -30, -39, -50, -59 };

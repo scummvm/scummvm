@@ -40,6 +40,13 @@ public:
 	virtual MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const = 0;
 };
 
+class IMiniscriptInstructionParserFeedback {
+public:
+	virtual ~IMiniscriptInstructionParserFeedback();
+
+	virtual uint registerGlobalGUIDIndex(uint32 guid) = 0;
+};
+
 class MiniscriptReferences {
 public:
 	struct LocalRef {
@@ -50,15 +57,24 @@ public:
 		Common::WeakPtr<RuntimeObject> resolution;
 	};
 
-	explicit MiniscriptReferences(const Common::Array<LocalRef> &localRefs);
+	struct GlobalRef {
+		GlobalRef();
+
+		uint32 guid;
+		Common::WeakPtr<RuntimeObject> resolution;
+	};
+
+	explicit MiniscriptReferences(const Common::Array<LocalRef> &localRefs, const Common::Array<GlobalRef> &globalRefs);
 
 	void linkInternalReferences(ObjectLinkingScope *scope);
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 	Common::WeakPtr<RuntimeObject> getRefByIndex(uint index) const;
+	Common::WeakPtr<RuntimeObject> getGlobalRefByIndex(uint index) const;
 
 private:
 	Common::Array<LocalRef> _localRefs;
+	Common::Array<GlobalRef> _globalRefs;
 
 };
 

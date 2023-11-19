@@ -52,7 +52,10 @@ MODULE_OBJS := \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	shared/std/string.o \
+	shared/std/string.o
+
+ifdef ENABLE_ULTIMA1
+MODULE_OBJS += \
 	ultima0/core/resources.o \
 	ultima0/game.o \
 	ultima0/resources.o \
@@ -132,7 +135,11 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_player.o \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
-	ultima1/game.o \
+	ultima1/game.o
+endif
+
+ifdef ENABLE_ULTIMA4
+MODULE_OBJS += \
 	ultima4/controllers/alpha_action_controller.o \
 	ultima4/controllers/camp_controller.o \
 	ultima4/controllers/combat_controller.o \
@@ -219,7 +226,11 @@ MODULE_OBJS := \
 	ultima4/views/tileview.o \
 	ultima4/views/view.o \
 	ultima4/metaengine.o \
-	ultima4/ultima4.o \
+	ultima4/ultima4.o
+endif
+
+ifdef ENABLE_ULTIMA6
+MODULE_OBJS += \
 	nuvie/metaengine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \
@@ -334,10 +345,14 @@ MODULE_OBJS := \
 	nuvie/script/script_cutscene.o \
 	nuvie/sound/adlib_sfx_manager.o \
 	nuvie/sound/custom_sfx_manager.o \
+	nuvie/sound/mididrv_m_adlib.o \
+	nuvie/sound/mididrv_m_mt32.o \
+	nuvie/sound/midiparser_m.o \
 	nuvie/sound/origin_fx_adib_driver.o \
 	nuvie/sound/pc_speaker_sfx_manager.o \
 	nuvie/sound/song.o \
 	nuvie/sound/song_adplug.o \
+	nuvie/sound/song_filename.o \
 	nuvie/sound/sound_manager.o \
 	nuvie/sound/towns_sfx_manager.o \
 	nuvie/sound/adplug/adplug_player.o \
@@ -376,7 +391,11 @@ MODULE_OBJS := \
 	nuvie/views/sun_moon_ribbon.o \
 	nuvie/views/sun_moon_strip_widget.o \
 	nuvie/views/view.o \
-	nuvie/views/view_manager.o \
+	nuvie/views/view_manager.o
+endif
+
+ifdef ENABLE_ULTIMA8
+MODULE_OBJS += \
 	ultima8/metaengine.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
@@ -429,7 +448,6 @@ MODULE_OBJS := \
 	ultima8/graphics/shape_frame.o \
 	ultima8/graphics/shape_info.o \
 	ultima8/graphics/skf_player.o \
-	ultima8/graphics/soft_render_surface.o \
 	ultima8/graphics/type_flags.o \
 	ultima8/graphics/wpn_ovlay_dat.o \
 	ultima8/graphics/xform_blend.o \
@@ -538,6 +556,7 @@ MODULE_OBJS := \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
 	ultima8/world/snap_process.o \
+	ultima8/world/sort_item.o \
 	ultima8/world/split_item_process.o \
 	ultima8/world/sprite_process.o \
 	ultima8/world/super_sprite_process.o \
@@ -580,6 +599,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o \
 	ultima8/world/actors/u8_avatar_mover_process.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ULTIMA), DYNAMIC_PLUGIN)

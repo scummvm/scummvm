@@ -266,7 +266,7 @@ void CDROMXObj::m_playTrack(int nargs) {
 	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	int track = g_lingo->pop().asInt();
-	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
+	g_director->_system->getAudioCDManager()->play(track - 1, -1, 0, 0);
 	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
@@ -289,7 +289,7 @@ void CDROMXObj::m_playName(int nargs) {
 		warning("CDROMXObj::m_playName: track number failed to parse (provided string was %s)", track.c_str());
 	}
 
-	g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
+	g_director->_system->getAudioCDManager()->play(trackNumI - 1, -1, 0, 0);
 	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 

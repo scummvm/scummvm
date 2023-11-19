@@ -49,6 +49,8 @@ const char *RearWindowXObj::fileNames[] = {
 	"Backdrop",
 	"RearWindow",
 	"RearWindow.Xobj",
+	"RearWindow XObj",
+	"RW.XOB",
 	"winXObj",
 	nullptr
 };

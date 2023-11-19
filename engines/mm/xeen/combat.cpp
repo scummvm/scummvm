@@ -1441,7 +1441,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		int monsterResist = getMonsterResistence(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
-			_pow[_attackDurationCtr]._elemFrame = XeenItem::getElementalCategory(_weaponElemMaterial);
+			_pow[_attackDurationCtr]._elemFrame = XeenItem::getElementalCategory(_weaponElemMaterial) + 1;
 			_pow[_attackDurationCtr]._elemScale = getDamageScale(monsterResist);
 		} else if (rangeType != RT_HIT) {
 			_pow[_attackDurationCtr]._elemFrame = 0;

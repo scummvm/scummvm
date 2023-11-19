@@ -31,17 +31,11 @@ CharacterSelect::CharacterSelect() : PartyView("CharacterSelect") {
 	_bounds = Common:: Rect(225, 144, 320, 200);
 }
 
-bool CharacterSelect::msgFocus(const FocusMessage &msg) {
-	_currCharacter = g_globals->_currCharacter;
-	g_globals->_currCharacter = nullptr;
-	return PartyView::msgFocus(msg);
-}
-
 void CharacterSelect::draw() {
 	ScrollView::draw();
 
 	_fontReduced = true;
-	writeString(STRING["enhdialogs.character_select.title"]);
+	writeString(0, 0, STRING["enhdialogs.character_select.title"]);
 }
 
 bool CharacterSelect::msgAction(const ActionMessage &msg) {
@@ -55,19 +49,17 @@ bool CharacterSelect::msgAction(const ActionMessage &msg) {
 	}
 }
 
-bool CharacterSelect::msgGame(const GameMessage &msg) {
-	if (msg._name == "UPDATE") {
-		close();
+bool CharacterSelect::canSwitchToChar(Character *dst) {
+	close();
 
-		int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
-		g_globals->_currCharacter = _currCharacter;
+	// Signal the character that was selected
+	int charNum = g_globals->_party.indexOf(dst);
+	g_events->send(g_events->focusedView()->getName(),
+		GameMessage("CHAR_SELECTED", charNum));
 
-		g_events->send(g_events->focusedView()->getName(),
-			GameMessage("CHAR_SELECTED", charNum));
-		return true;
-	}
-
-	return true;
+	// Return false, because we don't want the character that was
+	// selected to be actually switched to
+	return false;
 }
 
 } // namespace ViewsEnh

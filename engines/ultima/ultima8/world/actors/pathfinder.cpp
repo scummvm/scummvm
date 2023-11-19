@@ -280,11 +280,11 @@ static void drawbox(const Item *item) {
 	x3 = (d.width() / 2) + (ix - iy + yd) / 4;
 	y3 = (d.height() / 2) + (ix + iy - yd) / 8 - iz;
 
-	screen->Fill32(0xFF0000FF, x0 - 1, y0 - 1, 3, 3);
+	screen->fill32(TEX32_PACK_RGB(0x00, 0x00, 0xFF), x0 - 1, y0 - 1, 3, 3);
 
-	screen->DrawLine32(0xFF00FF00, x0, y0, x1, y1);
-	screen->DrawLine32(0xFF00FF00, x0, y0, x2, y2);
-	screen->DrawLine32(0xFF00FF00, x0, y0, x3, y3);
+	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x1, y1);
+	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x2, y2);
+	screen->drawLine32(TEX32_PACK_RGB(0x00, 0xFF, 0x00), x0, y0, x3, y3);
 }
 
 static void drawdot(int32 x, int32 y, int32 Z, int size, uint32 rgb) {
@@ -331,7 +331,7 @@ static void drawedge(const PathNode *from, const PathNode *to, uint32 rgb) {
 	x1 = (d.width() / 2) + (cx - cy) / 4;
 	y1 = (d.height() / 2) + (cx + cy) / 8 - cz;
 
-	screen->DrawLine32(rgb, x0, y0, x1, y1);
+	screen->drawLine32(rgb, x0, y0, x1, y1);
 }
 
 static void drawpath(PathNode *to, uint32 rgb, bool done) {
@@ -342,12 +342,12 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 		drawedge(n1, n2, rgb);
 
 		if (done && n1 == to)
-			drawdot(n1->state._x, n1->state._y, n1->state._z, 2, 0xFFFF0000);
+			drawdot(n1->state._x, n1->state._y, n1->state._z, 2, TEX32_PACK_RGB(0xFF, 0x00, 0x00));
 		else
-			drawdot(n1->state._x, n1->state._y, n1->state._z, 1, 0xFFFFFFFF);
+			drawdot(n1->state._x, n1->state._y, n1->state._z, 1, TEX32_PACK_RGB(0xFF, 0xFF, 0xFF));
 
 
-		drawdot(n2->state._x, n2->state._y, n2->state._z, 2, 0xFFFFFFFF);
+		drawdot(n2->state._x, n2->state._y, n2->state._z, 2, TEX32_PACK_RGB(0xFF, 0xFF, 0xFF));
 
 		n1 = n2;
 		n2 = n1->parent;
@@ -401,12 +401,12 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	if (_actor->getObjId() == _visualDebugActor) {
 		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
-		drawpath(newnode, 0xFFFFFF00, done);
+		drawpath(newnode, TEX32_PACK_RGB(0xFF, 0xFF, 0x00), done);
 		screen->EndPainting();
 		g_system->delayMillis(50);
 		if (!done) {
 			screen->BeginPainting();
-			drawpath(newnode, 0xFFB0B000, done);
+			drawpath(newnode, TEX32_PACK_RGB(0xB0, 0xB0, 0x00), done);
 			screen->EndPainting();
 		}
 	}
@@ -513,7 +513,7 @@ bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 		if (_targetItem)
 			drawbox(_targetItem);
 		else
-			drawdot(_targetX, _targetY, _targetZ, 2, 0xFF0000FF);
+			drawdot(_targetX, _targetY, _targetZ, 2, TEX32_PACK_RGB(0x00, 0x00, 0xFF));
 		screen->EndPainting();
 	}
 #endif

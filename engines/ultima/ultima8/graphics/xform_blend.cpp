@@ -19,7 +19,6 @@
  *
  */
 
-#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
 
 namespace Ultima {

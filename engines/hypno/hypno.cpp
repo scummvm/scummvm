@@ -422,17 +422,17 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 }
 
 void HypnoEngine::loadPalette(const Common::String &fname) {
-	Common::File *file = new Common::File();
+	Common::File file;
 	Common::String path = convertPath(fname);
 	if (!_prefixDir.empty())
 		path = _prefixDir + "/" + path;
 
-	if (!file->open(path))
+	if (!file.open(path))
 		error("unable to find palette file %s", path.c_str());
 
 	debugC(1, kHypnoDebugMedia, "Loading palette from %s", path.c_str());
-	byte *videoPalette = (byte *)malloc(file->size());
-	file->read(videoPalette, file->size());
+	byte *videoPalette = (byte *)malloc(file.size());
+	file.read(videoPalette, file.size());
 	g_system->getPaletteManager()->setPalette(videoPalette + 8, 0, 256);
 }
 

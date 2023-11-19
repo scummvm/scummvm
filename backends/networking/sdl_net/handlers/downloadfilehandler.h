@@ -29,9 +29,9 @@ namespace Networking {
 class DownloadFileHandler: public FilesBaseHandler {
 public:
 	DownloadFileHandler();
-	virtual ~DownloadFileHandler();
+	~DownloadFileHandler() override;
 
-	virtual void handle(Client &client);
+	void handle(Client &client) override;
 };
 
 } // End of namespace Networking

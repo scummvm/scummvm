@@ -59,7 +59,7 @@ int LoadExternalText(Init *init, char *et) {
 		if ((line[0] == '/') && (line[1] == '/')) continue;
 
 		if ((len = strlen(line)) > 260)
-			return ParseError("ExternalText: line too long! curlen %d (MAX 250)\n%s", line - 10, line);
+			return ParseError("ExternalText: line too long! curlen %d (MAX 250)\n%s", len - 10, line);
 
 		if (len < 2) continue;
 

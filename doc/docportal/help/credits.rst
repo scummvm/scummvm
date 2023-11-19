@@ -342,6 +342,15 @@ Composer
    * - Alyssa Milburn
      -
 
+Crab
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Kartik Agarwala
+     -
+
 CruisE
 ^^^^^^
 
@@ -792,6 +801,8 @@ MM (Xeen)
      -
    * - Benoit Pierre
      -
+   * - TheDrakeRaider
+     - (M&M1 Gfx Mod)
    * - David Goldsmith
      - (Xeen analysis)
    * - Matt Taylor
@@ -1065,6 +1076,8 @@ SCUMM HE
 .. list-table::
    :widths: 35 65
 
+   * - Andrea Boscarino
+     - Digital audio
    * - Jonathan Gray
      - (retired)
    * - Travis Howell
@@ -1156,6 +1169,8 @@ Sword1
 
    * - Fabio Battaglia
      - PSX version support
+   * - Andrea Boscarino
+     - Palette fading, menus, audio
    * - Thierry Crozat
      - Mac version support
    * - Robert Göffringmann
@@ -1425,6 +1440,15 @@ WAGE
    :widths: 35 65
 
    * - Eugene Sandulenko
+     -
+
+Watchmaker
+^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Einar Johan Troan Somaen;
      -
 
 Wintermute
@@ -1697,6 +1721,15 @@ Raspberry Pi
    :widths: 35 65
 
    * - Manuel Alfayate
+     -
+
+Libretro
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Giovanni Cascione
      -
 
 Other subsystems

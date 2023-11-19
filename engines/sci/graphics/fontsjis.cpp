@@ -41,6 +41,7 @@ GfxFontSjis::GfxFontSjis(GfxScreen *screen, GuiResourceId resourceId)
 }
 
 GfxFontSjis::~GfxFontSjis() {
+	delete _commonFont;
 }
 
 GuiResourceId GfxFontSjis::getResourceId() {

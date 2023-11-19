@@ -22,6 +22,8 @@
 #ifndef VCRUISE_TEXTPARSER_H
 #define VCRUISE_TEXTPARSER_H
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/str.h"
 #include "common/memstream.h"
 
@@ -69,6 +71,7 @@ private:
 	void expectTokenInternal(Common::String &outToken, const Common::String &blamePath, TextParserState &outState);
 
 	static bool isDelimiter(char c);
+	static bool isCompoundDelimiter(char c1, char c2);
 	static bool isWhitespace(char c);
 
 	TextParserState _state;

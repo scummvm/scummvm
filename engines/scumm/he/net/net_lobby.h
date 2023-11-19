@@ -138,7 +138,7 @@ protected:
 	void handleFileData(Common::String filename, Common::String data);
 
 	void setIcon(int icon);
-	void sendGameResults(int userId, int arrayIndex, int unknown);
+	void sendGameResults(int userId, int arrayIndex, int lastFlag);
 
 	void getPopulation(int areaId, int unknown);
 	void handlePopulation(int areaId, int population);

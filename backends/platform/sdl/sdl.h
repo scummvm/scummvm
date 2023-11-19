@@ -89,9 +89,11 @@ public:
 	MixerManager *getMixerManager() override;
 	Common::TimerManager *getTimerManager() override;
 	Common::SaveFileManager *getSavefileManager() override;
+	uint32 getDoubleClickTime() const override;
 
 	// Default paths
 	virtual Common::String getDefaultIconsPath();
+	virtual Common::Path getDefaultDLCsPath();
 	virtual Common::String getScreenshotsPath();
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
@@ -187,6 +189,9 @@ protected:
 	bool setGraphicsMode(int mode, uint flags) override;
 	int getGraphicsMode() const override;
 #endif
+
+	virtual uint32 getOSDoubleClickTime() const { return 0; }
+	virtual const char * const *buildHelpDialogData() override;
 };
 
 #endif

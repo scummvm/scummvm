@@ -108,6 +108,8 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	void enableShaderControls(bool enabled);
+
 	virtual void setupGraphicsTab();
 	void updateScaleFactors(uint32 tag);
 
@@ -121,6 +123,7 @@ protected:
 
 	StaticTextWidget *_shader;
 	ButtonWidget *_shaderClearButton;
+	ButtonWidget *_updateShadersButton = nullptr;
 
 private:
 
@@ -278,6 +281,10 @@ protected:
 	ButtonWidget	 *_themePathClearButton;
 	StaticTextWidget *_iconPath;
 	ButtonWidget	 *_iconPathClearButton;
+#ifdef USE_DLC
+	StaticTextWidget *_dlcPath;
+	ButtonWidget	 *_dlcPathClearButton;
+#endif
 	StaticTextWidget *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
@@ -304,6 +311,7 @@ protected:
 	CheckboxWidget *_useSystemDialogsCheckbox;
 	CheckboxWidget *_guiReturnToLauncherAtExit;
 	CheckboxWidget *_guiConfirmExit;
+	CheckboxWidget *_guiDisableBDFScaling;
 
 	void addGUIControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
@@ -357,8 +365,8 @@ protected:
 	void setupCloudTab();
 	void shiftWidget(Widget *widget, const char *widgetName, int32 xOffset, int32 yOffset);
 
-	void storageSavesSyncedCallback(Cloud::Storage::BoolResponse response);
-	void storageErrorCallback(Networking::ErrorResponse response);
+	void storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response);
+	void storageErrorCallback(const Networking::ErrorResponse &response);
 #endif // USE_LIBCURL
 
 #ifdef USE_SDL_NET

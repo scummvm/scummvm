@@ -61,6 +61,8 @@ bool AIScriptGeneralDoll::Update() {
 
 void AIScriptGeneralDoll::TimerExpired(int timer) {
 	if (timer == kActorTimerAIScriptCustomTask2) {
+		// TODO A BUG? McCoy dies here too (it's in original this way also)
+		// This is untriggered, so it could be leftover or debug code
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Change_Animation_Mode(kActorGeneralDoll, kAnimationModeDie);
 		AI_Countdown_Timer_Reset(kActorGeneralDoll, kActorTimerAIScriptCustomTask2);
@@ -337,6 +339,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptGeneralDoll::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -346,7 +349,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState == 1) {
 			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
@@ -355,12 +358,12 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
@@ -374,6 +377,10 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 4;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGeneralDoll::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

@@ -210,10 +210,13 @@ void FontRenderer::renderMultiLineText(int16 x, int16 y, const Common::String &o
 	// divide the text in several lines
 	// based on number of characters or size of lines.
 	byte text[1024];
+	memset(text, 0, 1024);
 	Common::strlcpy((char *)text, origText.c_str(), 1024);
 
 	byte *lines[16];
+	memset(lines, 0, 16 * sizeof(byte *));
 	int32 lineSize[16];
+	memset(lineSize, 0, 16 * sizeof(int32));
 	int32 numLines = 0;
 
 	byte *it = text;

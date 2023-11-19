@@ -49,6 +49,7 @@ namespace Video {
  * Decoder for MPEG Program Stream videos.
  * Video decoder used in engines:
  *  - zvision
+ *  - mtropolis
  */
 class MPEGPSDecoder : public VideoDecoder {
 public:

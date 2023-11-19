@@ -665,6 +665,9 @@ void AmazonEngine::startChapter(int chapter) {
 			_scripts->cmdRetPos();
 		}
 	}
+
+	delete _establish;
+	_establish = nullptr;
 }
 
 

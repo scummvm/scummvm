@@ -139,7 +139,6 @@ void Map05::special09() {
 		},
 		[]() {
 			Map05 &map = *static_cast<Map05 *>(g_maps->_currentMap);
-			g_events->close();
 			map[MAP_47] = 1;
 			map[MAP_33] = 4;
 			map[MAP_MAX_MONSTERS] = 10;

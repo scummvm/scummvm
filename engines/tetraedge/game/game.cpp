@@ -68,9 +68,23 @@ Game::~Game() {
 };
 
 void Game::addNoScale2Child(TeLayout *layout) {
-	if (_noScaleLayout2 && layout) {
-		_noScaleLayout2->addChild(layout);
+	if (!layout)
+		return;
+
+	if (!g_engine->gameIsAmerzone()) {
+		if (_noScaleLayout2) {
+			_noScaleLayout2->addChild(layout);
+		}
+	} else {
+		// No _noScaleLayout in Amerzone, just use front
+		g_engine->getApplication()->frontLayout().addChild(layout);
 	}
+}
+
+void Game::closeDialogs() {
+	_documentsBrowser.hideDocument();
+	_documentsBrowser.leave();
+	_inventory.leave();
 }
 
 /*static*/
@@ -160,7 +174,6 @@ bool Game::onAnswered(const Common::String &val) {
 	_luaScript.execute("OnAnswered", val);
 	return false;
 }
-
 
 bool Game::onInventoryButtonValidated() {
 	_inventoryMenu.enter();
@@ -327,6 +340,9 @@ bool Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 		return true;
 	} else {
 		warning("Failed to load movie %s", vidPath.c_str());
+		// Ensure the correct finished event gets called anyway.
+		videoSpriteLayout->_tiledSurfacePtr->setLoadedPath(vidPath);
+		onVideoFinished();
 		return false;
 	}
 }
@@ -377,9 +393,16 @@ void Game::playSound(const Common::String &name, int repeats, float volume) {
 }
 
 void Game::removeNoScale2Child(TeLayout *layout) {
-	if (!_noScaleLayout2 || !layout)
+	if (!layout)
 		return;
-	_noScaleLayout2->removeChild(layout);
+
+	if (!g_engine->gameIsAmerzone()) {
+		if (_noScaleLayout2)
+			_noScaleLayout2->removeChild(layout);
+	} else {
+		// No _noScaleLayout in Amerzone, just use front
+		g_engine->getApplication()->frontLayout().removeChild(layout);
+	}
 }
 
 void Game::resumeMovie() {
@@ -457,7 +480,12 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 	// the inventory item count.  We use a large version number which would never
 	// be the inventory count.
 	//
-	if (!s.syncVersion(1000))
+	// Version history:
+	//  1000 - original sybeira 1/2 data
+	//  1001 - added document browser information for Amerzone, currently unused
+	//         in syberia but synced anyway for simplicity.
+	//
+	if (!s.syncVersion(1001))
 		error("Save game version too new: %d", s.getVersion());
 
 	if (s.getVersion() < 1000) {
@@ -467,7 +495,15 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 		inventory().syncState(s);
 	}
 
-	inventory().cellphone()->syncState(s);
+	if (s.getVersion() > 1000)
+		documentsBrowser().syncState(s);
+
+	if (!g_engine->gameIsAmerzone())
+		inventory().cellphone()->syncState(s);
+
+	// Some of these other values are not needed for Amerzone, but we can safely
+	// save/load them as they're just empty.
+
 	// dialog2().syncState(s); // game saves this here, but doesn't actually save anything
 	_luaContext.syncState(s);
 	s.syncString(_currentZone);
@@ -486,7 +522,10 @@ Common::Error Game::syncGame(Common::Serializer &s) {
 	s.syncString(mpath);
 	if (s.isLoading())
 		_videoMusic.load(mpath);
-	s.syncString(_scene._character->walkModeStr());
+	if (!g_engine->gameIsAmerzone()) {
+		assert(_scene._character);
+		s.syncString(_scene._character->walkModeStr());
+	}
 	s.syncAsByte(_firstInventory);
 	s.syncAsByte(app->tutoActivated());
 

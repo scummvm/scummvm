@@ -19,8 +19,6 @@
  *
  */
 
- // Console module header file
-
 #ifndef SCI_CONSOLE_H
 #define SCI_CONSOLE_H
 
@@ -53,11 +51,11 @@ private:
 	// General
 	bool cmdHelp(int argc, const char **argv);
 	// Kernel
-//	bool cmdClasses(int argc, const char **argv);	// TODO
 	bool cmdOpcodes(int argc, const char **argv);
 	bool cmdSelector(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelFunctions(int argc, const char **argv);
+	bool cmdKernelCall(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);
 	// Parser
 	bool cmdSuffixes(int argc, const char **argv);
@@ -167,6 +165,7 @@ private:
 	bool cmdScriptSaid(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdVMVars(int argc, const char **argv);
+	bool cmdLocalVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);

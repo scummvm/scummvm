@@ -26,6 +26,7 @@ namespace Director {
 
 class PopUpMenuXObject : public Object<PopUpMenuXObject> {
 public:
+	int _menuId;
 	PopUpMenuXObject(ObjectType objType);
 };
 

@@ -124,7 +124,7 @@ cBoundingVolume cVertexBufferVBO::CreateBoundingVolume() {
 
 	int lNum = cMath::Log2ToInt((int)eVertexFlag_Position);
 
-	bv.AddArrayPoints(&(mvVertexArray[lNum][0]), GetVertexNum());
+	bv.AddArrayPoints(mvVertexArray[lNum].data(), GetVertexNum());
 	bv.CreateFromPoints(kvVertexElements[cMath::Log2ToInt(eVertexFlag_Position)]);
 
 	return bv;
@@ -172,7 +172,7 @@ bool cVertexBufferVBO::Compile(tVertexCompileFlag aFlags) {
 			glBindBuffer(GL_ARRAY_BUFFER, mvArrayHandle[i]);
 
 			glBufferData(GL_ARRAY_BUFFER, mvVertexArray[i].size() * sizeof(float),
-						 &(mvVertexArray[i][0]), usageType);
+						 mvVertexArray[i].data(), usageType);
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -184,7 +184,7 @@ bool cVertexBufferVBO::Compile(tVertexCompileFlag aFlags) {
 	GL_CHECK(glGenBuffers(1, (GLuint *)&mlElementHandle));
 	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mlElementHandle));
 	GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexNum() * sizeof(unsigned int),
-						  &mvIndexArray[0], usageType));
+						  mvIndexArray.data(), usageType));
 	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 	// Log("VBO compile done!\n");
@@ -211,7 +211,7 @@ void cVertexBufferVBO::UpdateData(tVertexFlag aTypes, bool abIndices) {
 						 NULL, usageType); // Clear memory
 
 			glBufferData(GL_ARRAY_BUFFER, mvVertexArray[i].size() * sizeof(float),
-						 &(mvVertexArray[i][0]), usageType);
+						 mvVertexArray[i].data(), usageType);
 		}
 	}
 	GL_CHECK_FN();
@@ -225,7 +225,7 @@ void cVertexBufferVBO::UpdateData(tVertexFlag aTypes, bool abIndices) {
 		//	NULL, usageType);
 
 		GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndexNum() * sizeof(unsigned int),
-							  &mvIndexArray[0], usageType));
+							  mvIndexArray.data(), usageType));
 
 		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	}
@@ -375,13 +375,13 @@ void cVertexBufferVBO::UnBind() {
 float *cVertexBufferVBO::GetArray(tVertexFlag aType) {
 	int idx = cMath::Log2ToInt((int)aType);
 
-	return &mvVertexArray[idx][0];
+	return mvVertexArray[idx].data();
 }
 
 //-----------------------------------------------------------------------
 
 unsigned int *cVertexBufferVBO::GetIndices() {
-	return &mvIndexArray[0];
+	return mvIndexArray.data();
 }
 
 //-----------------------------------------------------------------------
@@ -417,7 +417,7 @@ iVertexBuffer *cVertexBufferVBO::CreateCopy(eVertexBufferUsageType aUsageType) {
 			pVtxBuff->ResizeArray(kvVertexFlags[i], (int)mvVertexArray[i].size());
 
 			memcpy(pVtxBuff->GetArray(kvVertexFlags[i]),
-				   &mvVertexArray[i][0], mvVertexArray[i].size() * sizeof(float));
+				   mvVertexArray[i].data(), mvVertexArray[i].size() * sizeof(float));
 		}
 	}
 

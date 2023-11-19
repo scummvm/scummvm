@@ -234,7 +234,7 @@ public:
 	int16 aadGetStatus();
 	void set_string_end_func(void (*strFunc)(int16 diaNr, int16 strNr, int16 personNr, int16 mode));
 	void aad_search_dia(int16 diaNr, char **ptr);
-	int16 aad_get_zeilen(char *str, int16 *txtLen);
+	int16 aadGetTxtLen(char *str);
 
 	bool startDialogCloseup(int16 diaNr);
 	void stopDialogCloseup();

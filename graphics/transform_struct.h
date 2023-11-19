@@ -35,6 +35,12 @@ enum TSpriteBlendMode {
 	NUM_BLEND_MODES
 };
 
+enum AlphaType {
+	ALPHA_OPAQUE = 0,
+	ALPHA_BINARY = 1,
+	ALPHA_FULL = 2
+};
+
 /**
  @brief The possible flipping parameters for the blit method.
  */

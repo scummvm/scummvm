@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 #
 
-my_module_version = "1.60"
-my_module_name = "extracTextResource"
+MY_MODULE_VERSION = "1.70"
+MY_MODULE_NAME = "extracTextResource"
 
 # Template for EXTRA.TRE sheet's values ((row 2 and below)
 EXTRAC_TEXT_RESOURCE_TUPLE_LIST = [
@@ -35,7 +35,7 @@ class extracTextResource:
 
 	def printExtracTemplate(self):
 		for (idTre, textTre) in EXTRAC_TEXT_RESOURCE_TUPLE_LIST:
-			print "%s\t%s" % (idTre, textTre)
+			print ("%s\t%s" % (idTre, textTre))
 		return
 
 	def getExtracEntriesList(self):
@@ -43,12 +43,12 @@ class extracTextResource:
 
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
+	print ("[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	traceModeEnabled = False
 	excrTRInstance = extracTextResource(traceModeEnabled)
 	excrTRInstance.printExtracTemplate()
 
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print ("[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION))
 	pass

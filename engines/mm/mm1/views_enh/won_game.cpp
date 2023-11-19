@@ -34,7 +34,7 @@ WonGame::WonGame() : ScrollView("WonGame") {
 void WonGame::draw() {
 	ScrollView::draw();
 	writeLine(0, STRING["maps.map18.gates"], ALIGN_MIDDLE);
-	writeLine(1, STRING["maps.map18.congratulations"], ALIGN_MIDDLE);
+	writeLine(2, STRING["maps.map18.congratulations"], ALIGN_MIDDLE);
 	Sound::sound(SOUND_3);
 }
 
@@ -44,6 +44,11 @@ bool WonGame::msgKeypress(const KeypressMessage &msg) {
 }
 
 bool WonGame::msgAction(const ActionMessage &msg) {
+	close();
+	return true;
+}
+
+bool WonGame::msgMouseDown(const MouseDownMessage &msg) {
 	close();
 	return true;
 }

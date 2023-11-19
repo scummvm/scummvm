@@ -29,7 +29,7 @@
 #include "ngi/gameloader.h"
 
 #include "common/memstream.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace NGI {
 
@@ -577,7 +577,9 @@ void Picture::draw(int x, int y, int style, int angle) {
 	case 1: {
 		//flip
 		const Dims dims = getDimensions();
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
+		Bitmap *flipped = _bitmap->flipVertical();
+		flipped->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
+		delete flipped;
 		break;
 	}
 	case 2:
@@ -712,7 +714,7 @@ Bitmap::Bitmap(const Bitmap &src) {
 	_width = src._width;
 	_height = src._height;
 	_flipping = src._flipping;
-	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
+	_surface = new Graphics::ManagedSurface();
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	_surface->copyFrom(*src._surface);
 }
@@ -749,7 +751,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 }
 
 void Bitmap::decode(byte *pixels, const Palette &palette) {
-	_surface = new Graphics::TransparentSurface, Graphics::SurfaceDeleter();
+	_surface = new Graphics::ManagedSurface();
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
@@ -781,9 +783,9 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	if (y1 < 0)
 		y1 = 0;
 
-	int alphac = TS_ARGB(alpha, 0xff, 0xff, 0xff);
+	uint32 alphac = MS_ARGB(alpha, 0xff, 0xff, 0xff);
 
-	_surface->blit(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	_surface->blendBlitTo(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
@@ -946,7 +948,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 
 	g_nmi->_origFormat.colorToRGB(color, r, g, b);
 
-	uint32 c = TS_ARGB(0xff, r, g, b);
+	uint32 c = MS_ARGB(0xff, r, g, b);
 
 	for (int i = 0; i < len; i++)
 		*dest++ = c;
@@ -969,7 +971,7 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palett
 	for (int i = 0; i < len; i++) {
 		g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
-		*dest++ = TS_ARGB(0xff, r, g, b);
+		*dest++ = MS_ARGB(0xff, r, g, b);
 	}
 }
 
@@ -997,7 +999,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
 				g_nmi->_origFormat.colorToRGB(palette.pal[*src] & 0xffff, r, g, b);
-				*dest = TS_ARGB(0xff, r, g, b);
+				*dest = MS_ARGB(0xff, r, g, b);
 			}
 
 			dest++;
@@ -1009,7 +1011,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, cons
 		for (int i = 0; i < len; i++) {
 			if (*src16 != 0) {
 				g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
-				*dest = TS_ARGB(0xff, r, g, b);
+				*dest = MS_ARGB(0xff, r, g, b);
 			}
 
 			dest++;
@@ -1042,14 +1044,14 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bo
 		for (int i = 0; i < len; i++) {
 			g_nmi->_origFormat.colorToRGB(palette.pal[*src++] & 0xffff, r, g, b);
 
-			*dest++ = TS_ARGB(0xff, r, g, b);
+			*dest++ = MS_ARGB(0xff, r, g, b);
 		}
 	} else {
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
 			g_nmi->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
-			*dest++ = TS_ARGB(0xff, r, g, b);
+			*dest++ = MS_ARGB(0xff, r, g, b);
 		}
 	}
 }

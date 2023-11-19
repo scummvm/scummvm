@@ -65,6 +65,8 @@ public:
 	bool hasDefaultSave();
 	bool hasAnySave();
 
+	Common::Error loadMostRecentSave();
+
 protected:
 	void pauseEngineIntern(bool pause) override;
 

@@ -31,11 +31,18 @@ enum GameType {
 	kGameTypeVampire = 1,
 	kGameTypeNancy1 = 2,
 	kGameTypeNancy2 = 3,
-	kGameTypeNancy3 = 4
+	kGameTypeNancy3 = 4,
+	kGameTypeNancy4 = 5,
+	kGameTypeNancy5 = 6,
+	kGameTypeNancy6 = 7,
+	kGameTypeNancy7 = 8,
+	kGameTypeNancy8 = 9,
+	kGameTypeNancy9 = 10
 };
 
 enum NancyGameFlags {
-	GF_COMPRESSED = 1 << 0
+	GF_COMPRESSED 		= 1 << 0,
+	GF_PLG_BYTE_IN_BSUM	= 1 << 1
 };
 
 struct NancyGameDescription {
@@ -46,8 +53,22 @@ struct NancyGameDescription {
 enum NancyDebugChannels {
 	kDebugEngine		= 1 << 0,
 	kDebugActionRecord	= 1 << 1,
-	kDebugScene			= 1 << 2
+	kDebugScene			= 1 << 2,
+	kDebugSound			= 1 << 3,
+	kDebugVideo			= 1 << 4
 };
+
+// Settings found in the original engine
+#define GAMEOPTION_PLAYER_SPEECH		GUIO_GAMEOPTIONS1
+#define GAMEOPTION_CHARACTER_SPEECH		GUIO_GAMEOPTIONS2
+#define GAMEOPTION_AUTO_MOVE			GUIO_GAMEOPTIONS3
+
+// Patch settings, general
+#define GAMEOPTION_FIX_SOFTLOCKS		GUIO_GAMEOPTIONS4
+#define GAMEOPTION_FIX_ANNOYANCES		GUIO_GAMEOPTIONS5
+
+// Patch settings, specific to each game
+#define GAMEOPTION_NANCY2_TIMER			GUIO_GAMEOPTIONS6
 
 } // End of namespace Nancy
 

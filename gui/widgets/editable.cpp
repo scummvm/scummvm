@@ -85,6 +85,7 @@ void EditableWidget::setEditString(const Common::U32String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
+	clearSelection();
 	setCaretPos(caretVisualPos(str.size()));
 	markAsDirty();
 }
@@ -260,6 +261,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			deleteIndex--;
 			_editString.deleteChar(deleteIndex);
 			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
 			dirty = true;
 
 			sendCommand(_cmd, 0);
@@ -284,6 +286,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		if (deleteIndex < (int)_editString.size()) {
 			_editString.deleteChar(deleteIndex);
 			setCaretPos(caretVisualPos(deleteIndex));
+			_selCaretPos = -1;
+			_selOffset = 0;
 			dirty = true;
 
 			sendCommand(_cmd, 0);
@@ -293,12 +297,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
-		// Move caret to end
-		setCaretPos(caretVisualPos(_editString.size()));
-		if (state.hasFlags(Common::KBD_SHIFT))
-			setSelectionOffset(_editString.size() - _selCaretPos);
-		else
-			clearSelection();
+		moveCaretToEnd(state.hasFlags(Common::KBD_SHIFT));
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -343,92 +342,10 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
-		// Move caret to start
-		setCaretPos(caretVisualPos(0));
-		if (state.hasFlags(Common::KBD_SHIFT))
-			setSelectionOffset(0 - _selCaretPos);
-		else
-			clearSelection();
+		moveCaretToStart(state.hasFlags(Common::KBD_SHIFT));
 		forcecaret = true;
 		dirty = true;
 		break;
-
-	case Common::KEYCODE_v:
-		if (state.flags & Common::KBD_CTRL) {
-			if (g_system->hasTextInClipboard()) {
-				Common::U32String text = g_system->getTextFromClipboard();
-				if (_selOffset != 0) {
-					int selBegin = _selCaretPos;
-					int selEnd = _selCaretPos + _selOffset;
-					if (selBegin > selEnd)
-						SWAP(selBegin, selEnd);
-					_editString.replace(selBegin, selEnd - selBegin, text);
-					setCaretPos(caretVisualPos(selBegin));
-					const int logicalPosition = caretLogicalPos();
-					setCaretPos(caretVisualPos(logicalPosition + text.size()));
-					clearSelection();
-				} else {
-					for (uint32 i = 0; i < text.size(); ++i) {
-					const int logicalPosition = caretLogicalPos();
-					if (tryInsertChar(text[i], logicalPosition))
-						setCaretPos(caretVisualPos(logicalPosition + 1));
-					}
-				}
-				dirty = true;
-			}
-		} else {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-		}
-		break;
-
-	case Common::KEYCODE_c:
-		if (state.flags & Common::KBD_CTRL) {
-			if (!getEditString().empty()) {
-				int selBegin = _selCaretPos;
-				int selEnd = _selCaretPos + _selOffset;
-				if (selBegin > selEnd)
-					SWAP(selBegin, selEnd);
-				const Common::U32String selected(getEditString().begin() + selBegin, getEditString().begin() + selEnd);
-				g_system->setTextInClipboard(selected);
-			}
-		} else {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-		}
-		break;
-
-#ifdef MACOSX
-	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
-	//
-	// These shortcuts go back a long time for command line programs. As
-	// for edit fields in GUIs, they are supported natively on macOS,
-	// which is why I enabled these shortcuts there.
-	// On other systems (Windows, Gnome), Ctrl-A by default means
-	// "select all", which is why I didn't enable the shortcuts there
-	// for now, to avoid potential confusion.
-	//
-	// But since we don't support text selection, and since at least Gnome
-	// can be configured to also support ctrl-a and ctrl-e, we may want
-	// to extend this code to other targets, maybe even all. I'll leave
-	// this to other porters to decide, though.
-	case Common::KEYCODE_a:
-	case Common::KEYCODE_e:
-		if (state.flags & Common::KBD_CTRL) {
-			if (state.keycode == Common::KEYCODE_a) {
-				// Move caret to start
-				dirty = setCaretPos(0);
-				forcecaret = true;
-			} else if (state.keycode == Common::KEYCODE_e) {
-				// Move caret to end
-				dirty = setCaretPos(_editString.size());
-				forcecaret = true;
-			}
-			clearSelection();
-			break;
-		} else {
-			defaultKeyDownHandler(state, dirty, forcecaret, handled);
-		}
-		break;
-#endif
 
 	default:
 		defaultKeyDownHandler(state, dirty, forcecaret, handled);
@@ -452,7 +369,7 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 			if (selBegin > selEnd)
 				SWAP(selBegin, selEnd);
 			_editString.replace(selBegin, selEnd - selBegin, Common::U32String(state.ascii));
-			if(_editString.size() > 0)
+			if (_editString.size() > 0)
 				selBegin++;
 			setCaretPos(caretVisualPos(selBegin));
 			_selCaretPos = -1;
@@ -469,6 +386,132 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 	} else {
 		handled = false;
 	}
+}
+
+void EditableWidget::moveCaretToStart(bool shiftPressed) {
+	if (shiftPressed) {
+		if (_selCaretPos < 0)
+			_selCaretPos = _caretPos;
+
+		setSelectionOffset(0 - _selCaretPos);
+	} else {
+		clearSelection();
+	}
+	// Move caret to start
+	setCaretPos(caretVisualPos(0));
+}
+
+void EditableWidget::moveCaretToEnd(bool shiftPressed) {
+	if (_shiftPressed) {
+		if (_selCaretPos < 0)
+			_selCaretPos = _caretPos;
+
+		setSelectionOffset(_editString.size() - _selCaretPos);
+	} else {
+		clearSelection();
+	}
+
+	// Move caret to end
+	setCaretPos(caretVisualPos(_editString.size()));
+}
+
+void EditableWidget::handleOtherEvent(const Common::Event &evt) {
+	bool dirty = false;
+	bool forcecaret = false;
+
+	if (!isEnabled())
+		return;
+
+	// First remove caret
+	if (_caretVisible)
+		drawCaret(true);
+
+	switch (evt.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		switch (evt.customType) {
+		case kActionHome:
+			moveCaretToStart(false);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionShiftHome:
+			moveCaretToStart(true);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionEnd:
+			moveCaretToEnd(false);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionShiftEnd:
+			moveCaretToEnd(true);
+			forcecaret = true;
+			dirty = true;
+			break;
+		case kActionCut:
+			if (!getEditString().empty() && _selOffset != 0) {
+				int selBegin = _selCaretPos;
+				int selEnd = _selCaretPos + _selOffset;
+				if (selBegin > selEnd)
+					SWAP(selBegin, selEnd);
+				const Common::U32String selected(getEditString().begin() + selBegin, getEditString().begin() + selEnd);
+				g_system->setTextInClipboard(selected);
+
+				_editString.erase(selBegin, selEnd - selBegin);
+				setCaretPos(caretVisualPos(selBegin));
+				_selCaretPos = -1;
+				_selOffset = 0;
+				dirty = true;
+			}
+			break;
+
+		case kActionCopy:
+			if (!getEditString().empty()) {
+				int selBegin = _selCaretPos;
+				int selEnd = _selCaretPos + _selOffset;
+				if (selBegin > selEnd)
+					SWAP(selBegin, selEnd);
+				const Common::U32String selected(getEditString().begin() + selBegin, getEditString().begin() + selEnd);
+				g_system->setTextInClipboard(selected);
+			}
+			break;
+
+		case kActionPaste:
+			if (g_system->hasTextInClipboard()) {
+				Common::U32String text = g_system->getTextFromClipboard();
+				if (_selOffset != 0) {
+					int selBegin = _selCaretPos;
+					int selEnd = _selCaretPos + _selOffset;
+					if (selBegin > selEnd)
+						SWAP(selBegin, selEnd);
+					_editString.replace(selBegin, selEnd - selBegin, text);
+					setCaretPos(caretVisualPos(selBegin));
+					const int logicalPosition = caretLogicalPos();
+					setCaretPos(caretVisualPos(logicalPosition + text.size()));
+					clearSelection();
+				} else {
+					for (uint32 i = 0; i < text.size(); ++i) {
+						const int logicalPosition = caretLogicalPos();
+						if (tryInsertChar(text[i], logicalPosition))
+								setCaretPos(caretVisualPos(logicalPosition + 1));
+					}
+				}
+				dirty = true;
+			}
+			break;
+		default:
+			break;
+	}
+	default:
+		break;
+	}
+
+	if (dirty)
+		markAsDirty();
+
+	if (forcecaret)
+		makeCaretVisible();
 }
 
 int EditableWidget::getCaretOffset() const {

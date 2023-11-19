@@ -36,7 +36,7 @@ namespace Tetraedge {
 bool TeWarp::debug = false;
 
 TeWarp::TeWarp() : _visible1(false), _loaded(false), _preloaded(false),
-	_numAnims(0), _someXVal(0), _someYVal(0), _someMeshX(0), _someMeshY(0),
+	_someXVal(0), _someYVal(0), _someMeshX(0), _someMeshY(0),
 	_renderWarpBlocs(true), _xCount(0), _yCount(0), _clickedPickMesh(nullptr),
 	_clickedAnimData(nullptr), _markersActive(true) {
 }
@@ -129,7 +129,7 @@ void TeWarp::checkObjectEvents() {
 			TePickMesh &pickMesh = animData._frameDatas[animData._curFrameNo]._pickMesh;
 			TeVector3f32 intersectPt;
 			float intersectLen;
-			if (pickMesh.flag() && pickMesh.intersect(mouseRay, intersectPt, intersectLen)) {
+			if (pickMesh.enabled() && pickMesh.intersect(mouseRay, intersectPt, intersectLen)) {
 				_markerValidatedSignal.call(pickMesh.name());
 				break;
 			}
@@ -165,7 +165,7 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		}
 		foundId = anim->_markerIds[0];
 	}
-	assert(foundId >= 0 && foundId < _warpMarkers.size());
+	assert(foundId >= 0 && foundId < (long)_warpMarkers.size());
 
 	TeWarpMarker *warpMarker = _warpMarkers[foundId];
 	// The game uses TeSprite, but we use the layout system instead.
@@ -190,14 +190,15 @@ void TeWarp::configMarker(const Common::String &objname, int markerImgNo, long m
 		btnUp->play();
 		warpMarker->marker()->visible(true);
 		// Ensure markers appear below menus and videos.
+		frontLayout.removeChild(&warpMarker->marker()->button());
 		frontLayout.addChildBefore(&warpMarker->marker()->button(), frontLayout.child(0));
 	}
 }
 
 TeWarp::AnimData *TeWarp::findAnimation(const Common::String &objname) {
-	for (uint i = 0; i < _numAnims; i++) {
-		if (_loadedAnimData[i]._name == objname)
-			return _loadedAnimData.data() + i;
+	for (auto &anim : _loadedAnimData) {
+		if (anim._name == objname)
+			return &anim;
 	}
 	return nullptr;
 }
@@ -216,9 +217,9 @@ TeWarp::Exit *TeWarp::findExit(const Common::String &objname, bool flag) {
 	return nullptr;
 }
 
-bool TeWarp::hasObjectOrAnim(const Common::String &objname) {
-	for (uint i = 0; i < _numAnims; i++) {
-		if (_loadedAnimData[i]._name == objname)
+bool TeWarp::hasObjectOrAnim(const Common::String &objname) const {
+	for (const auto &anim : _loadedAnimData) {
+		if (anim._name == objname)
 			return true;
 	}
 	return false;
@@ -240,6 +241,9 @@ void TeWarp::load(const Common::String &path, bool flag) {
 		return;
 	_warpPath = path;
 
+	if (path.empty())
+		error("Empty TeWarp path!");
+
 	TeCore *core = g_engine->getCore();
 	Common::FSNode node = core->findFile(_warpPath);
 	if (!node.isReadable()) {
@@ -258,46 +262,56 @@ void TeWarp::load(const Common::String &path, bool flag) {
 	_texEncodingType = _file.readPascalString();
 	_xCount = _file.readUint32LE();
 	_yCount = _file.readUint32LE();
-	_numAnims = _file.readUint32LE();
+	uint32 numAnims = _file.readUint32LE();
 	_someXVal = _file.readUint32LE();
 	_someYVal = _file.readUint32LE();
 	_someMeshX = _file.readUint32LE();
 	_someMeshY = _file.readUint32LE();
+	if (_xCount > 1000 || _yCount > 1000 || numAnims > 1000)
+		error("Improbable values in TeWarp data xCount %d yCount %d numAnims %d", _xCount, _yCount, numAnims);
 	_warpBlocs.resize(_xCount * _yCount * 6);
 	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
 		TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
+		// TODO: This is strange, surely we only need to set the offset and create the bloc
+		// once but the code seems to do it xCount * yCount times..
 		for (uint j = 0; j < _xCount * _yCount; j++) {
-			unsigned short offx = _file.readUint16LE();
-			unsigned short offy = _file.readUint16LE();
-			unsigned int blocTexOffset = _file.readUint32LE();
+			uint xoff = _file.readUint16LE();
+			uint yoff = _file.readUint16LE();
+			if (xoff > 1000 || yoff > 1000)
+				error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
+			uint32 blocTexOffset = _file.readUint32LE();
 			_warpBlocs[i].setTextureFileOffset(globalTexDataOffset + blocTexOffset);
-			TeVector2s32 offset(offx, offy);
-			_warpBlocs[i].create(face, _xCount, _yCount, offset);
+			_warpBlocs[i].create(face, _xCount, _yCount, TeVector2s32(xoff, yoff));
 		}
 	}
-	_loadedAnimData.resize(_numAnims);
-	_putAnimData.reserve(_numAnims);
-	for (uint i = 0; i < _numAnims; i++) {
+	_loadedAnimData.resize(numAnims);
+	_putAnimData.reserve(numAnims);
+	for (uint i = 0; i < numAnims; i++) {
 		char aname[5];
 		_file.read(aname, 4);
 		aname[4] = '\0';
 		_loadedAnimData[i]._name = aname;
 		uint numFrames = _file.readUint32LE();
+		if (numFrames > 1000)
+			error("TeWarp::load: Improbable frame count %d", numFrames);
 		byte numSomething = _file.readByte();
 		_loadedAnimData[i]._frameDatas.resize(numFrames);
 		for (uint j = 0; j < numFrames; j++) {
 			FrameData &frameData = _loadedAnimData[i]._frameDatas[j];
 			frameData._loadedTexCount = 0;
-			frameData._numWarpBlocs = 0;
 			Common::Array<TeWarpBloc> warpBlocs;
 			for (uint k = 0; k < numSomething; k++) {
 				uint blocCount = _file.readUint32LE();
+				if (blocCount > 1000)
+					error("TeWarp::load: Improbable bloc count %d", blocCount);
 				if (blocCount) {
 					TeWarpBloc::CubeFace face = static_cast<TeWarpBloc::CubeFace>(_file.readByte());
-					warpBlocs.resize(frameData._numWarpBlocs + blocCount);
+					warpBlocs.resize(blocCount);
 					for (auto &warpBloc : warpBlocs) {
 						uint xoff = _file.readUint16LE();
 						uint yoff = _file.readUint16LE();
+						if (xoff > 10000 || yoff > 10000)
+							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
 						uint32 texDataOff = _file.readUint32LE();
 						warpBloc.setTextureFileOffset(globalTexDataOffset + texDataOff);
 						warpBloc.create(face, _someXVal, _someYVal, TeVector2s32(xoff, yoff));
@@ -305,15 +319,19 @@ void TeWarp::load(const Common::String &path, bool flag) {
 							warpBloc.color(TeColor(255, 0, 0, 255));
 					}
 					uint meshSize = _file.readUint32LE();
+					if (meshSize > 1000)
+						error("TeWarp::load: Improbable meshSize %d", meshSize);
 					TePickMesh tmpMesh;
 					tmpMesh.setName(aname);
 					tmpMesh.nbTriangles(meshSize * 2);
 					for (uint m = 0; m < meshSize; m++) {
 						uint xoff = _file.readUint16LE();
 						uint yoff = _file.readUint16LE();
+						if (xoff > 10000 || yoff > 10000)
+							error("TeWarp::load: Improbable offsets %d, %d", xoff, yoff);
 						addQuadToPickMesh(tmpMesh, m * 2, face, TeVector2s32(xoff, yoff), _someMeshX, _someMeshY);
 					}
-					tmpMesh.setFlag(true);
+					tmpMesh.setEnabled(true);
 					if (frameData._pickMesh.name().empty()) {
 						frameData._pickMesh = tmpMesh;
 					} else {
@@ -321,8 +339,8 @@ void TeWarp::load(const Common::String &path, bool flag) {
 					}
 				}
 			}
-			frameData._warpBlocs.resize(frameData._numWarpBlocs);
-			for (int k = 0; k < frameData._numWarpBlocs; k++) {
+			frameData._warpBlocs.resize(warpBlocs.size());
+			for (uint k = 0; k < frameData._warpBlocs.size(); k++) {
 				frameData._warpBlocs[k] = warpBlocs[k];
 			}
 		}
@@ -343,12 +361,12 @@ bool TeWarp::onMouseLeftDown(const Common::Point &pt) {
 	_clickedAnimData = nullptr;
 
 	bool hitAnimData = false;
-	FrameData *frameData = nullptr;
-	for (auto &animData : _loadedAnimData) {
+	const FrameData *frameData = nullptr;
+	for (const auto &animData : _loadedAnimData) {
 		frameData = &(animData._frameDatas[animData._curFrameNo]);
 		TeVector3f32 interesctPt;
 		float intersectDist;
-		if (frameData->_pickMesh.flag() && frameData->_pickMesh.intersect(mouseRay, interesctPt, intersectDist)) {
+		if (frameData->_pickMesh.enabled() && frameData->_pickMesh.intersect(mouseRay, interesctPt, intersectDist)) {
 			_clickedAnimData = &animData;
 			hitAnimData = true;
 			break;
@@ -358,13 +376,13 @@ bool TeWarp::onMouseLeftDown(const Common::Point &pt) {
 	if (!hitAnimData) {
 		_clickedPickMesh = TeRayIntersection::getMesh(mouseRay, _pickMeshes2, FLT_MAX, 0, nullptr);
 		if (_clickedPickMesh) {
-			Exit *exit = findExit(_clickedPickMesh->name(), true);
+			const Exit *exit = findExit(_clickedPickMesh->name(), true);
 			_warpMarkers[exit->_markerId]->marker()->button().setEnable(false);
 		}
 		return false;
 	}
 
-	AnimData *data = findAnimation(frameData->_pickMesh.name());
+	const AnimData *data = findAnimation(frameData->_pickMesh.name());
 	for (auto &markerId : data->_markerIds) {
 		_warpMarkers[markerId]->marker()->button().setEnable(false);
 	}
@@ -384,10 +402,11 @@ void TeWarp::putObject(const Common::String &name, bool enable) {
 				break;
 			}
 		}
+		animData._enabled = true;
 		if (!alreadyAdded)
 			_putAnimData.push_back(&animData);
 		for (auto &frameData : animData._frameDatas) {
-			frameData._pickMesh.setFlag(enable);
+			frameData._pickMesh.setEnabled(enable);
 		}
 		found = true;
 	}
@@ -398,10 +417,10 @@ void TeWarp::putObject(const Common::String &name, bool enable) {
 void TeWarp::update() {
 	if (!_visible1 || !_file.isOpen())
 		return;
-	Application *app = g_engine->getApplication();
-	_frustum.update(app->mainWindowCamera());
-	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
-		_warpBlocs[i].loadTexture(_file, _texEncodingType);
+	//Application *app = g_engine->getApplication();
+	_frustum.update(_camera);
+	for (auto &bloc : _warpBlocs) {
+		bloc.loadTexture(_file, _texEncodingType);
 	}
 
 	for (auto &anim : _loadedAnimData) {
@@ -424,7 +443,7 @@ void TeWarp::update() {
 				anim._frameDatas[lastFrame]._loadedTexCount = 0;
 			}
 		}
-		anim._frameDatas[anim._curFrameNo];
+		anim._frameDatas[anim._curFrameNo].loadTextures(_frustum, _file, _texEncodingType);
 	}
 }
 
@@ -434,7 +453,7 @@ void TeWarp::sendExit(TeWarp::Exit &exit) {
 	mesh->setName(exit._linkedWarpPath);
 	mesh->nbTriangles(exit._warpBlockList.size() * 2);
 	uint trinum = 0;
-	for (auto &block : exit._warpBlockList) {
+	for (const auto &block : exit._warpBlockList) {
 		addQuadToPickMesh(*mesh, trinum, block._face, block._offset, block._x, block._y);
 		trinum += 2;
 	}
@@ -475,7 +494,7 @@ void TeWarp::startAnimationPart(const Common::String &name, int x, int startFram
 		animData._endFrameNo = endFrame;
 		for (auto &frameData : animData._frameDatas) {
 			// TODO: Is this setting the right thing?
-			frameData._pickMesh.setFlag(flag);
+			frameData._pickMesh.setEnabled(flag);
 		}
 		
 		animData._timer.start();
@@ -493,8 +512,8 @@ void TeWarp::setColor(const TeColor &col) {
 }
 
 void TeWarp::setMouseLeftUpForMakers() {
-	for (auto &marker : _warpMarkers) {
-		marker->marker()->button().setEnable(true);
+	for (auto &warpMarker : _warpMarkers) {
+		warpMarker->marker()->button().setEnable(true);
 	}
 }
 
@@ -536,28 +555,19 @@ void TeWarp::render() {
 	renderer->pushMatrix();
 
 	if (_renderWarpBlocs) {
-		for (uint i = 0; i < _xCount * _yCount * 6; i++) {
-			_warpBlocs[i].render();
+		for (auto &bloc : _warpBlocs) {
+			bloc.render();
 		}
 	}
 
-	TeVector3f32 vertexes[6];
-	for (uint i = 0; i < _putAnimData.size(); i++) {
-		AnimData *animData = _putAnimData[i];
+	for (AnimData *animData : _putAnimData) {
 		if (!animData->_enabled)
 			continue;
-		for (uint j = 0; j < animData->_frameDatas.size(); j++) {
-			FrameData &frameData = animData->_frameDatas[j];
-			for (uint k = 0; k < frameData._warpBlocs.size(); k++) {
-				TeWarpBloc &bloc = frameData._warpBlocs[k];
-				vertexes[0] = bloc.vertex(0);
-				vertexes[1] = bloc.vertex(1);
-				vertexes[2] = bloc.vertex(3);
-				vertexes[3] = bloc.vertex(1);
-				vertexes[4] = bloc.vertex(2);
-				vertexes[5] = bloc.vertex(3);
-				if (_frustum.triangleIsIn(vertexes) && _frustum.triangleIsIn(vertexes + 3)) {
-					bloc.render();
+		for (FrameData &frameData : animData->_frameDatas) {
+			for (TeWarpBloc &b : frameData._warpBlocs) {
+				if (_frustum.isTriangleInside(b.vertex(0), b.vertex(1), b.vertex(3))
+						|| _frustum.isTriangleInside(b.vertex(1), b.vertex(2), b.vertex(3))) {
+					b.render();
 				}
 			}
 		}
@@ -603,7 +613,7 @@ void TeWarp::takeObject(const Common::String &name) {
 			}
 		}
 		for (auto &frame : animData._frameDatas) {
-			frame._pickMesh.setFlag(false);
+			frame._pickMesh.setEnabled(false);
 		}
 		found = true;
 	}
@@ -612,6 +622,8 @@ void TeWarp::takeObject(const Common::String &name) {
 }
 
 void TeWarp::unload() {
+	// Not done in original but can happen if user clicks really fast.
+	g_engine->getInputMgr()->_mouseLDownSignal.remove(this, &TeWarp::onMouseLeftDown);
 	unloadTextures();
 	_xCount = 0;
 	_yCount = 0;
@@ -633,12 +645,9 @@ void TeWarp::unload() {
 }
 
 void TeWarp::unloadTextures() {
-	for (uint i = 0; i < _xCount * _yCount * 6; i++) {
-		_warpBlocs[i].unloadTexture();
+	for (auto &bloc : _warpBlocs) {
+		bloc.unloadTexture();
 	}
-
-	if (_numAnims)
-		error("TODO: Finish TeWarp::unloadTextures");
 
 	for (auto &animData : _loadedAnimData) {
 		for (auto &frameData : animData._frameDatas) {
@@ -658,20 +667,10 @@ void TeWarp::updateCamera(const TeVector3f32 &screen) {
 }
 
 void TeWarp::FrameData::loadTextures(const TeFrustum &frustum, Common::File &file, const Common::String &fileType) {
-	TeVector3f32 triangle1[3];
-	TeVector3f32 triangle2[3];
-	for (int b = 0; b < _numWarpBlocs; b++) {
-		TeWarpBloc &bloc = _warpBlocs[b];
-		if (bloc.isLoaded())
-			continue;
-		triangle1[0] = bloc.vertex(0);
-		triangle1[1] = bloc.vertex(1);
-		triangle1[2] = bloc.vertex(3);
-		triangle2[0] = bloc.vertex(1);
-		triangle2[1] = bloc.vertex(2);
-		triangle2[2] = bloc.vertex(3);
-		if (frustum.triangleIsIn(triangle1) || frustum.triangleIsIn(triangle2)) {
-			bloc.loadTexture(file, fileType);
+	for (auto &b : _warpBlocs) {
+		if (!b.isLoaded() && (frustum.isTriangleInside(b.vertex(0), b.vertex(1), b.vertex(3))
+				|| frustum.isTriangleInside(b.vertex(1), b.vertex(2), b.vertex(3)))) {
+			b.loadTexture(file, fileType);
 		}
 	}
 }

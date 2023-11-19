@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_info.h"
+#include "mm/mm1/views_enh/scroll_popup.h"
 #include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -60,9 +61,13 @@ const CharacterInfo::IconPos CharacterInfo::ICONS[CHAR_ICONS_COUNT] = {
 	{ 46, 277, 99 }
 };
 
+bool CharacterInfo::AttributeView::msgFocus(const FocusMessage &msg) {
+	ScrollPopup::msgFocus(msg);
+	g_events->send("GameParty", GameMessage("CHAR_HIGHLIGHT", (int)true));
+	return true;
+}
 
-CharacterInfo::CharacterInfo() :
-		PartyView("CharacterInfo"), _statInfo("ScrollText") {
+CharacterInfo::CharacterInfo() : PartyView("CharacterInfo") {
 	_bounds = Common::Rect(0, 0, 320, 146);
 	_statInfo.setReduced(true);
 
@@ -82,10 +87,13 @@ CharacterInfo::CharacterInfo() :
 
 bool CharacterInfo::msgFocus(const FocusMessage &msg) {
 	_viewIcon.load("view.icn");
-	_cursorCell = 0;
+
+	// Don't reset selection after having viewed an attribute
+	if (dynamic_cast<ScrollPopup *>(msg._priorView) == nullptr)
+		_cursorCell = 0;
+
 	showCursor(true);
 	delayFrames(CURSOR_BLINK_FRAMES);
-
 	return PartyView::msgFocus(msg);
 }
 
@@ -146,7 +154,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		addView("Exchange");
 		break;
 	case Common::KEYCODE_q:
-		addView("QuickRef");
+		replaceView("QuickRef");
 		break;
 	default:
 		break;
@@ -251,15 +259,15 @@ void CharacterInfo::drawStats() {
 		c._might._current, c._intelligence._current,
 		c._personality._current, c._endurance._current,
 		c._speed._current, c._accuracy._current,
-		c._luck._current, c._age._base, c._level._current,
-		c._ac._current, c._hp, c._sp._current, 0,
+		c._luck._current, c._age, c._level._current,
+		c._ac._current, c._hpCurrent, c._sp._current, 0,
 		c._exp, c._gold, c._gems
 	};
 	const uint BASE[16] = {
 		c._might._base, c._intelligence._base,
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
-		c._luck._base, c._age._base, c._level._base,
+		c._luck._base, c._age, c._level._base,
 		c._ac._current, c._hp, c._sp._base, 0,
 		c._exp, c._gold, c._gems
 	};
@@ -272,7 +280,6 @@ void CharacterInfo::drawStats() {
 		if (i < 10)
 			pt.x += 8 + (CURR[i] < 10 ? 8 : 0);
 
-		setTextColor(c.statColor(CURR[i], BASE[i]));
 
 		if (i == 16) {
 			// Food
@@ -283,6 +290,7 @@ void CharacterInfo::drawStats() {
 			setTextColor(15);
 			writeString(pt.x, pt.y, str);
 		} else {
+			setTextColor(c.statColor(CURR[i], BASE[i]));
 			writeNumber(pt.x, pt.y, CURR[i]);
 		}
 	}
@@ -322,6 +330,13 @@ void CharacterInfo::timeout() {
 	delayFrames(CURSOR_BLINK_FRAMES);
 }
 
+void CharacterInfo::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+
+	_cursorCell = 0;
+	redraw();
+}
+
 void CharacterInfo::showAttribute(int attrNum) {
 	// Switch the cursor to the selected attribute
 	showCursor(false);
@@ -345,6 +360,12 @@ void CharacterInfo::showAttribute(int attrNum) {
 	int attrib = REDUCED_TO_EXPANDED(attrNum);
 	assert(attrib < 20);
 
+	if (attrib == 12) {
+		// Show active party spells
+		g_events->addView("Protect");
+		return;
+	}
+
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
 		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 44);
 	_statInfo.setBounds(bounds);
@@ -355,14 +376,14 @@ void CharacterInfo::showAttribute(int attrNum) {
 		c._might._current, c._intelligence._current,
 		c._personality._current, c._endurance._current,
 		c._speed._current, c._accuracy._current,
-		c._luck._current, c._age._base, c._level._current,
-		c._ac._current, c._hp, c._sp._current
+		c._luck._current, c._age, c._level._current,
+		c._ac._current, c._hpCurrent, c._sp._current
 	};
 	const uint BASE[12] = {
 		c._might._base, c._intelligence._base,
 		c._personality._base, c._endurance._base,
 		c._speed._base, c._accuracy._base,
-		c._luck._base, c._age._base, c._level._base,
+		c._luck._base, c._age, c._level._base,
 		c._ac._current, c._hp, c._sp._base
 	};
 	const char *TITLES[12] = {
@@ -389,6 +410,12 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.addText("/", 2, 0, ALIGN_MIDDLE);
 		_statInfo.addText(Common::String::format("%u", BASE[attrib]),
 			2, 0, ALIGN_LEFT, xc + 8);
+
+	} else if (attrib == 15) {
+		// Experience
+		_statInfo.addLine(STRING["enhdialogs.character.stats.experience"], ALIGN_MIDDLE);
+		_statInfo.addLine(Common::String::format("%u", c._exp), ALIGN_MIDDLE);
+
 	} else if (attrib >= 16 && attrib <= 18) {
 		bounds.bottom -= 8;
 		_statInfo.setBounds(bounds);
@@ -407,84 +434,13 @@ void CharacterInfo::showAttribute(int attrNum) {
 		_statInfo.addLine(Common::String::format("%u %s",
 			value, STRING["enhdialogs.character.long.on_hand"].c_str()),
 			ALIGN_MIDDLE);
+	} else {
+		// Condition
+		Common::String conditionStr = c.getConditionString();
+
+		_statInfo.addLine(STRING["enhdialogs.character.stats.condition"], ALIGN_MIDDLE);
+		_statInfo.addLine(conditionStr, ALIGN_MIDDLE);
 	}
-
-	/*
-	case 15:
-		// Experience
-		stat1 = c.getCurrentExperience();
-		stat2 = c.experienceToNextLevel();
-		msg = Common::String::format(Res.EXPERIENCE_TEXT,
-			Res.STAT_NAMES[attrib], stat1,
-			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
-		);
-		bounds.setHeight(43);
-		break;
-
-	case 19:
-	{
-		// Conditions
-		Common::String lines[20];
-		const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
-		int total = 0;
-		for (int condition = CURSED; condition <= ERADICATED; ++condition) {
-			if (c._conditions[condition]) {
-				if (condition >= UNCONSCIOUS) {
-					lines[condition] = Common::String::format("\n\t020%s",
-						_tmpConditions[condition]);
-				} else {
-					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						_tmpConditions[condition], c._conditions[condition]);
-				}
-
-				++total;
-			}
-		}
-
-		Condition condition = c.worstCondition();
-		if (condition == NO_CONDITION) {
-			lines[0] = Common::String::format("\n\t020%s", Res.GOOD);
-			++total;
-		}
-
-		if (party._blessed) {
-			lines[16] = Common::String::format(Res.BLESSED, party._blessed);
-			++total;
-		}
-		if (party._powerShield) {
-			lines[17] = Common::String::format(Res.POWER_SHIELD, party._powerShield);
-			++total;
-		}
-		if (party._holyBonus) {
-			lines[18] = Common::String::format(Res.HOLY_BONUS, party._holyBonus);
-			++total;
-		}
-		if (party._heroism) {
-			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
-			++total;
-		}
-
-		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
-			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
-			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),
-			lines[11].c_str(), lines[12].c_str(), lines[13].c_str(),
-			lines[14].c_str(), lines[15].c_str(), lines[16].c_str(),
-			lines[17].c_str(), lines[18].c_str(), lines[19].c_str()
-		);
-
-		bounds.top -= ((total - 1) / 2) * 8;
-		bounds.setHeight(total * 9 + 26);
-		if (bounds.bottom >= SCREEN_HEIGHT)
-			bounds.moveTo(bounds.left, SCREEN_HEIGHT - bounds.height() - 1);
-		break;
-	}
-
-	default:
-		break;
-	}
-	*/
 
 	_statInfo.addView();
 }

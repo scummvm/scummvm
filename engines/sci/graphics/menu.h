@@ -83,7 +83,7 @@ public:
 	~GfxMenu();
 
 	void reset();
-	void kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr);
+	void kernelAddEntry(const Common::String &title, Common::String content, reg_t contentVmPtr);
 	void kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	reg_t kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
 
@@ -131,4 +131,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_MENU_H

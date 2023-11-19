@@ -45,6 +45,9 @@ public:
 	Common::SeekableReadStream *createReadStream() const override {
 		return _member->createReadStream();
 	}
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override {
+		return nullptr;
+	}
 	Common::String getName() const override {
 		Common::String name = _member->getName();
 		assert(name.hasPrefixIgnoreCase(_innerfolder));
@@ -53,6 +56,8 @@ public:
 	Common::U32String getDisplayName() const override {
 		return _member->getDisplayName();
 	}
+	Common::String getFileName() const override { return getName(); }
+	Common::Path getPathInArchive() const override { return getName(); }
 };
 
 /**
@@ -197,7 +202,7 @@ const Common::ArchiveMemberPtr DataArchive::getMember(const Common::Path &path) 
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *DataArchive::createReadStreamForMember(const Common::Path &path) const {
@@ -219,7 +224,7 @@ const Common::ArchiveMemberPtr DataArchiveProxy::getMember(const Common::Path &p
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *DataArchiveProxy::createReadStreamForMember(const Common::Path &path) const {

@@ -70,6 +70,7 @@ const char *FlushXObj::fileNames[] = {
 	"FlushEvents",
 	"FlushXObj",
 	"Johnny",
+	"Johnny.XObj",
 	"Toilet",
 	nullptr
 };

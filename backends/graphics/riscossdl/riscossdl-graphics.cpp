@@ -24,6 +24,17 @@
 #if defined(RISCOS) && defined(SDL_BACKEND)
 
 #include "backends/graphics/riscossdl/riscossdl-graphics.h"
+#include "common/translation.h"
+
+static OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{"surfacesdl", _s("SDL Surface"),                    GFX_SURFACESDL},
+	{"palettesdl", _s("SDL Surface (forced 8bpp mode)"), GFX_PALETTESDL},
+	{nullptr, nullptr, 0}
+};
+
+const OSystem::GraphicsMode *RISCOSSdlGraphicsManager::getSupportedGraphicsModes() const {
+	return s_supportedGraphicsModes;
+}
 
 bool RISCOSSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	if (f == OSystem::kFeatureVSync)
@@ -33,6 +44,7 @@ bool RISCOSSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 
 void RISCOSSdlGraphicsManager::initGraphicsSurface() {
 	Uint32 flags = 0;
+	int bpp = 0;
 
 	if (_videoMode.fullscreen)
 		flags |= SDL_FULLSCREEN;
@@ -44,8 +56,22 @@ void RISCOSSdlGraphicsManager::initGraphicsSurface() {
 		flags |= SDL_SWSURFACE;
 	}
 
-	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16, flags);
+	switch (_videoMode.mode) {
+	case GFX_SURFACESDL:
+		bpp = 16;
+		flags |= SDL_ANYFORMAT;
+		break;
+	case GFX_PALETTESDL:
+		bpp = 8;
+		flags |= SDL_HWPALETTE;
+		break;
+	default:
+		break;
+	}
+
+	_hwScreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, bpp, flags);
 	_isDoubleBuf = flags & SDL_DOUBLEBUF;
+	_isHwPalette = flags & SDL_HWPALETTE;
 }
 
 #endif

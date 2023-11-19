@@ -112,7 +112,8 @@ void MYMIDI::set_panning(int newPanning) {
 }
 
 void MYMIDI::set_speed(int new_speed) {
-	warning("TODO: MYMIDI::set_speed");
+	if (new_speed != 1000)  // default
+		warning("TODO: MYMIDI::set_speed=%d", new_speed);
 	_speed = new_speed;
 }
 

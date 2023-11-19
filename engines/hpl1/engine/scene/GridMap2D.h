@@ -31,7 +31,7 @@
 #include "common/array.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -80,7 +80,7 @@ private:
 
 /////////// GRID ////////////
 
-typedef Hpl1::Std::map<int, cGrid2DObject *> tGrid2DObjectMap;
+typedef Common::StableMap<int, cGrid2DObject *> tGrid2DObjectMap;
 typedef tGrid2DObjectMap::iterator tGrid2DObjectMapIt;
 
 class cGrid2D {

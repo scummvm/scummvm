@@ -34,6 +34,7 @@ void MiyooMiniGraphicsManager::initGraphicsSurface() {
 					 _realHwScreen->format->Bmask,
 					 _realHwScreen->format->Amask);
 	_isDoubleBuf = false;
+	_isHwPalette = false;
 }
 
 void MiyooMiniGraphicsManager::unloadGFXMode() {

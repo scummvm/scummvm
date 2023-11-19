@@ -62,8 +62,8 @@ private:
 	float Combine(ePhysicsMaterialCombMode aMode, float afX, float afY);
 
 	static int BeginContactCallback(const NewtonMaterial *material,
-									const NewtonBody *apBody1, const NewtonBody *apBody2, int);
-	static void ProcessContactCallback(const NewtonJoint *joint, float, int);
+									const NewtonBody *apBody1, const NewtonBody *apBody2, int32);
+	static void ProcessContactCallback(const NewtonJoint *joint, float, int32);
 
 	NewtonWorld *mpNewtonWorld;
 

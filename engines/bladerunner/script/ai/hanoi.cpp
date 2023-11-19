@@ -643,6 +643,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptHanoi::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -766,6 +767,10 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 	case 78:
 		_animationState = 6;
 		_animationFrame = 16;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptHanoi::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

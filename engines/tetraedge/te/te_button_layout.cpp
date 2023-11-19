@@ -119,7 +119,7 @@ void TeButtonLayout::load(const Common::String &upImg, const Common::String &dow
 	TeSpriteLayout *downSprite = nullptr;
 	if (downImg.size()) {
 		downSprite = new TeSpriteLayout();
-		if (!downSprite->load(upImg))
+		if (!downSprite->load(downImg))
 			warning("Failed to load button down img %s", downImg.c_str());
 	}
 	setDownLayout(downSprite);

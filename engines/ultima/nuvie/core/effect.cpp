@@ -1141,6 +1141,7 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 		}
 		++p;
 	}
+	(void)colored; // Fix warning about unused variable
 	// all but two lines colored
 	if (colored_total >= (pixel_count - fade_width * 2) || fade_iterations > FADE_EFFECT_MAX_ITERATIONS) { // fill the rest
 		if (fade_to >= 0)

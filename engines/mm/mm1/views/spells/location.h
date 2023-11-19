@@ -32,11 +32,6 @@ namespace Spells {
 class Location : public SpellView {
 public:
 	/**
-	 * Show the view
-	 */
-	static void show();
-public:
-	/**
 	 * Constructor
 	 */
 	Location();
@@ -52,9 +47,9 @@ public:
 	void draw() override;
 
 	/**
-	 * Keypress handler
+	 * Action handler
 	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Spells

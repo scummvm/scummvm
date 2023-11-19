@@ -28,12 +28,6 @@
 
 namespace Watchmaker {
 
-enum class FontKind {
-	Standard,
-	Computer,
-	PDA
-};
-
 struct SFont {
 	uint16 *table = nullptr;
 	int32 color[MAX_FONT_COLORS] = {};

@@ -247,7 +247,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_keyRepeatTimeLast = 0;
 	_keyRepeatTimeDelay = 0;
 
-	_activeCustomEvents->clear();
+	_activeCustomEvents.clear();
 	_customEventRepeatTimeLast = 0;
 	_customEventRepeatTimeDelay = 0;
 
@@ -352,6 +352,12 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 
 Common::Error BladeRunnerEngine::run() {
 	Common::Array<Common::String> missingFiles;
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "base");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd3");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cd4");
 	if (!_isNonInteractiveDemo && !checkFiles(missingFiles)) {
 		Common::String missingFileStr = "";
 		for (uint i = 0; i < missingFiles.size(); ++i) {
@@ -558,15 +564,9 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 	bool hasHdFrames = Common::File::exists("HDFRAMES.DAT");
 
 	if (!hasHdFrames) {
-		requiredFiles.clear();
-		requiredFiles.push_back("CDFRAMES1.DAT");
-		requiredFiles.push_back("CDFRAMES2.DAT");
-		requiredFiles.push_back("CDFRAMES3.DAT");
-		requiredFiles.push_back("CDFRAMES4.DAT");
-
-		for (uint i = 0; i < requiredFiles.size(); ++i) {
-			if (!Common::File::exists(requiredFiles[i])) {
-				missingFiles.push_back(requiredFiles[i]);
+		for (uint i = 1; i <= 4; ++i) {
+			if (!Common::File::exists(Common::String::format("CDFRAMES%d.DAT", i)) && !Common::File::exists(Common::String::format("CD%d/CDFRAMES.DAT", i))) {
+				missingFiles.push_back(Common::String::format("CD%d/CDFRAMES.DAT", i));
 			}
 		}
 	}
@@ -1552,12 +1552,12 @@ void BladeRunnerEngine::handleEvents() {
 					// fall through
 				case kMpDeleteSelectedSvdGame:
 					if (isAllowedRepeatedCustomEvent(event)
-					    && _activeCustomEvents->size() < kMaxCustomConcurrentRepeatableEvents) {
-						if (_activeCustomEvents->empty()) {
+					    && _activeCustomEvents.size() < kMaxCustomConcurrentRepeatableEvents) {
+						if (_activeCustomEvents.empty()) {
 							_customEventRepeatTimeLast = _time->currentSystem();
 							_customEventRepeatTimeDelay = kKeyRepeatInitialDelay;
 						}
-						_activeCustomEvents->push_back(event);
+						_activeCustomEvents.push_back(event);
 					}
 					handleCustomEventStart(event);
 					break;
@@ -1612,12 +1612,12 @@ void BladeRunnerEngine::handleEvents() {
 	// Some of those may lead to their own internal gameTick() loops (which will call handleEvents()).
 	// Thus, we need to get a new timeNow value here to ensure we're not comparing with a stale version.
 	uint32 timeNow = _time->currentSystem();
-	if (!_activeCustomEvents->empty()
+	if (!_activeCustomEvents.empty()
 	    && (timeNow - _customEventRepeatTimeLast >= _customEventRepeatTimeDelay)) {
 		_customEventRepeatTimeLast = timeNow;
 		_customEventRepeatTimeDelay = kKeyRepeatSustainDelay;
-		uint16 aceSize = _activeCustomEvents->size();
-		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+		uint16 aceSize = _activeCustomEvents.size();
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents.begin(); it != _activeCustomEvents.end(); it++) {
 			// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway,
 			// but maybe it's good to set it for consistency
 			it->kbdRepeat = true;
@@ -1630,7 +1630,7 @@ void BladeRunnerEngine::handleEvents() {
 			// TODO This is probably an indication that this could be reworked
 			//      as something cleaner and safer.
 			//      Or event repetition could be handled by the keymapper code (outside the engine code)
-			if (aceSize != _activeCustomEvents->size()) {
+			if (aceSize != _activeCustomEvents.size()) {
 				break;
 			}
 		}
@@ -1756,18 +1756,18 @@ void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keym
 
 	if (getEventManager()->getKeymapper() != nullptr
 	    && getEventManager()->getKeymapper()->getKeymap(keymapperId) != nullptr
-		&& !_activeCustomEvents->empty()) {
+		&& !_activeCustomEvents.empty()) {
 
 		Common::Keymap::ActionArray actionsInKm = getEventManager()->getKeymapper()->getKeymap(keymapperId)->getActions();
 		for (Common::Keymap::ActionArray::iterator kmIt = actionsInKm.begin(); kmIt != actionsInKm.end(); ++kmIt) {
-			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents->begin(); actIt != _activeCustomEvents->end(); ++actIt) {
+			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents.begin(); actIt != _activeCustomEvents.end(); ++actIt) {
 				if ((actIt->type != Common::EVENT_INVALID) && (actIt->customType == (*kmIt)->event.customType)) {
-					_activeCustomEvents->erase(actIt);
+					_activeCustomEvents.erase(actIt);
 					// When erasing an element from an array, erase(iterator pos)
 					// will return an iterator pointing to the next element in the array.
 					// Thus, we should check if we reached the end() here, to avoid moving
 					// the iterator in the next loop repetition to an invalid memory location.
-					if (actIt == _activeCustomEvents->end()) {
+					if (actIt == _activeCustomEvents.end()) {
 						break;
 					}
 				}
@@ -1777,10 +1777,10 @@ void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keym
 }
 
 void BladeRunnerEngine::handleCustomEventStop(Common::Event &event) {
-	if (!_activeCustomEvents->empty()) {
-		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+	if (!_activeCustomEvents.empty()) {
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents.begin(); it != _activeCustomEvents.end(); it++) {
 			if ((it->type != Common::EVENT_INVALID) && (it->customType == event.customType)) {
-				_activeCustomEvents->erase(it);
+				_activeCustomEvents.erase(it);
 				break;
 			}
 		}

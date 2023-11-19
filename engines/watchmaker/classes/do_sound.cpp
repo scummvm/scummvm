@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-
 #include "watchmaker/classes/do_sound.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/types.h"
@@ -87,7 +85,7 @@ bool StartSpeech(WGame &game, int32 n) {
 
 	if (game.gameOptions.speech_on == FALSE) return true;
 
-	sprintf(CurSound.name, "%ss%04d.wav", game.workDirs._speechDir.c_str(), n);
+	snprintf(CurSound.name, SOUND_NAME_LEN, "%ss%04d.wav", game.workDirs._speechDir.c_str(), n);
 
 	CurSound.lIndex = MAX_SOUNDS + n;
 	CurSound.dwLooped = FALSE;
@@ -140,7 +138,7 @@ bool StartSound(WGame &game, int32 index) {
 
 	if (game.gameOptions.sound_on == FALSE) return TRUE;
 
-	sprintf(CurSound.name, "%s%s", game.workDirs._wavDir.c_str(), init.Sound[index].name);
+	snprintf(CurSound.name, SOUND_NAME_LEN, "%s%s", game.workDirs._wavDir.c_str(), init.Sound[index].name);
 	CurSound.lIndex = index;
 	CurSound.dwLooped = (init.Sound[index].flags & SOUND_LOOP);
 	CurSound.flMinDistance = init.Sound[index].MinDist * METER2UNIT;
@@ -269,7 +267,7 @@ bool StartStepSound(WGame &game, t3dV3F *pos, uint8 side) {
 	if (index == wNULL)
 		return FALSE;
 
-	sprintf(CurSound.name, "%s%s", game.workDirs._wavDir.c_str(), init.Sound[index].name);
+	snprintf(CurSound.name, SOUND_NAME_LEN, "%s%s", game.workDirs._wavDir.c_str(), init.Sound[index].name);
 	CurSound.lIndex = index;
 	CurSound.dwLooped = (init.Sound[index].flags & SOUND_LOOP);
 	CurSound.flMinDistance = init.Sound[index].MinDist * METER2UNIT;
@@ -334,7 +332,7 @@ bool PlayMusic(int32 index, uint32 FadeOutTime, uint32 FadeInTime) {
 	        (Music[index].vol[CurSubMusic] != mGetAllVolume())) {
 		if (!mSetAllVolume((BYTE)Music[index].vol[CurSubMusic])) return FALSE;
 	}
-	sprintf(FileName, "%s%s", WmMidiDir, Music[index].name[CurSubMusic]);
+	snprintf(FileName, MAX_PATH, "%s%s", WmMidiDir, Music[index].name[CurSubMusic]);
 	if (!mLoadMusic(FileName)) {
 		if (CurPlayIndex == -1) return TRUE;
 		mInstantFadeOut(NULL, FadeOutTime);

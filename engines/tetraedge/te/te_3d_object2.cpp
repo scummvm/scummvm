@@ -145,13 +145,14 @@ void Te3DObject2::removeChild(Te3DObject2 *child) {
 		_children[i]->setParent(nullptr);
 		_children.remove_at(i);
 		_childListChangedSignal.call();
-	} else {
+	} /*else {
+		// Print a warning?
+		// This happens on every scene change so this is a bit too noisy.
 		Common::String cname("nullptr");
 		if (child)
 			cname = child->name();
-		// This happens on every scene change so this is a bit too noisy.
-		// debug("Request to remove child (%s) which is not a child of this (%s).", cname.c_str(), name().c_str());
-	}
+		debug("Request to remove child (%s) which is not a child of this (%s).", cname.c_str(), name().c_str());
+	}*/
 }
 
 bool Te3DObject2::onWorldVisibleChangedSlot() {

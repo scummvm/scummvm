@@ -27,6 +27,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/graphics/render_surface.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/audio/music_process.h"
 
 namespace Ultima {
@@ -43,7 +44,9 @@ CruDemoGump::CruDemoGump(Common::SeekableReadStream *bmprs, uint32 flags, int32 
 {
 	Image::BitmapDecoder decoder;
 	_background = RenderSurface::CreateSecondaryRenderSurface(640, 480);
-	_background->Fill32(0xFF000000, 0, 0, 640, 480); // black background
+
+	uint32 color = TEX32_PACK_RGB(0, 0, 0);
+	_background->fill32(color, 0, 0, 640, 480); // black background
 
 	if (decoder.loadStream(*bmprs)) {
 		// This does an extra copy via the ManagedSurface, but it's a once-off.

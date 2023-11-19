@@ -184,10 +184,16 @@ void Cursor::readFromResource(Datum resourceId) {
 				break;
 		}
 
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
-			readSuccessful = readFromArchive(it->_value, resourceId.asInt());
+		for (auto &it : g_director->_allOpenResFiles) {
+			readSuccessful = readFromArchive(g_director->_allSeenResFiles[it], resourceId.asInt());
 			if (readSuccessful)
 				break;
+		}
+
+		// Cursors can be located in the main archive, which may not
+		// be in _allOpenResFiles
+		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformMacintosh) {
+			readSuccessful = readFromArchive(g_director->getMainArchive(), resourceId.asInt());
 		}
 
 		// TODO: figure out where to read custom cursor in windows platform

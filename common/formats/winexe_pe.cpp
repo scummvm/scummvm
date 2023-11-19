@@ -49,6 +49,9 @@ void PEResources::clear() {
 bool PEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	clear();
 
+	_exe = stream;
+	_disposeFileHandle = disposeFileHandle;
+
 	if (!stream)
 		return false;
 
@@ -94,9 +97,6 @@ bool PEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag 
 		clear();
 		return false;
 	}
-
-	_exe = stream;
-	_disposeFileHandle = disposeFileHandle;
 
 	Section &resSection = _sections[".rsrc"];
 	parseResourceLevel(resSection, resSection.offset, 0);

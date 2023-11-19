@@ -29,7 +29,6 @@
 #include "ags/lib/std/limits.h"
 #include "ags/lib/std/list.h"
 #include "ags/lib/std/map.h"
-#include "ags/lib/std/math.h"
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/mutex.h"
 #include "ags/lib/std/queue.h"

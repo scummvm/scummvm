@@ -86,7 +86,7 @@ class GfxView;
  */
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
+	GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxCompare *compare, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
 	bool isFastCastEnabled() {
@@ -124,6 +124,7 @@ private:
 	EngineState *_s;
 	ScriptPatcher *_scriptPatcher;
 	GfxCache *_cache;
+	GfxCompare *_compare;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
@@ -139,4 +140,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_ANIMATE_H

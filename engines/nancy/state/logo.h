@@ -60,6 +60,7 @@ private:
 	State _state;
 	uint _startTicks;
 	UI::FullScreenImage _logoImage;
+	UI::FullScreenImage _partnerLogoImage;
 	SoundDescription _msnd;
 	Video::AVIDecoder _tvdVideoDecoder;
 	RenderObject _videoObj;

@@ -248,7 +248,6 @@ void sceneHandler08_airMoves() {
 	if (g_nmi->_aniMan->isIdle() && !(g_nmi->_aniMan->_flags & 0x100)) {
 		int x = g_nmi->_aniMan->_ox;
 		int y = g_nmi->_aniMan->_oy;
-		Common::Point point;
 
 		if (703 - g_nmi->_aniMan->getSomeXY().y - y < 150) {
 			if (g_nmi->_aniMan->_statics) {
@@ -345,7 +344,6 @@ void sceneHandler08_sitDown() {
 }
 
 void sceneHandler08_calcFlight() {
-	Common::Point point;
 	int y = g_vars->scene08_manOffsetY + g_nmi->_aniMan->_oy;
 
 	g_nmi->_aniMan->setOXY(g_nmi->_aniMan->_ox, y);

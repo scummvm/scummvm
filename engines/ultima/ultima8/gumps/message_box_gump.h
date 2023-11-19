@@ -28,6 +28,7 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
+#include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -63,9 +64,9 @@ public:
 	//! \param titleColour The colour to be displayed behind the title bar
 	//! \param buttons Array of button names to be displayed. Default is "Ok"
 	//! \return Pid of process that will have the result when finished
-	static ProcId Show(Std::string title, Std::string message, uint32 titleColour = 0xFF30308F, Std::vector<Std::string> *buttons = 0);
+	static ProcId Show(Std::string title, Std::string message, uint32 titleColour, Std::vector<Std::string> *buttons = 0);
 	static ProcId Show(Std::string title, Std::string message, Std::vector<Std::string> *buttons) {
-		return Show(title, message, 0xFF30308F, buttons);
+		return Show(title, message, TEX32_PACK_RGB(0x30, 0x30, 0x8F), buttons);
 	}
 
 	void ChildNotify(Gump *child, uint32 msg) override;

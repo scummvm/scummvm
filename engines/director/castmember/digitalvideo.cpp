@@ -31,7 +31,6 @@
 #include "director/movie.h"
 #include "director/window.h"
 #include "director/castmember/digitalvideo.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -99,14 +98,18 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	_filename = path;
 	_video = new Video::QuickTimeDecoder();
 
-	Common::String path1 = pathMakeRelative(path);
+	Common::Path location = findPath(path);
+	if (location.empty()) {
+		warning("DigitalVideoCastMember::loadVideo(): unable to resolve path %s", path.c_str());
+		return false;
+	}
 
-	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), path1.c_str());
-	bool result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
+	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), location.toString().c_str());
+	bool result = _video->loadFile(location);
 	if (!result) {
 		delete _video;
 		_video = new Video::AVIDecoder();
-		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
+		result = _video->loadFile(location);
 		if (!result) {
 		    warning("DigitalVideoCastMember::loadVideo(): format not supported, skipping");
 		    delete _video;
@@ -215,9 +218,14 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		if (_lastFrame) {
 			_lastFrame->free();
 			delete _lastFrame;
+			_lastFrame = nullptr;
 		}
 
-		_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		if (frame->getPixels()) {
+			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
+		} else {
+			warning("DigitalVideoCastMember::createWidget(): frame has no pixel data");
+		}
 	}
 	if (_lastFrame)
 		widget->getSurface()->blitFrom(*_lastFrame);
@@ -242,7 +250,7 @@ uint DigitalVideoCastMember::getDuration() {
 	if (!_video || !_video->isVideoLoaded()) {
 		Common::String path = getCast()->getVideoPath(_castId);
 		if (!path.empty())
-			loadVideo(pathMakeRelative(path));
+			loadVideo(path);
 
 		_duration = getMovieTotalTime();
 	}
@@ -322,6 +330,14 @@ Common::String DigitalVideoCastMember::formatInfo() {
 		_enableVideo, _enableSound,
 		_looping, _crop, _center, _showControls
 	);
+}
+
+Common::Point DigitalVideoCastMember::getRegistrationOffset() {
+	return Common::Point(_initialRect.width() / 2, _initialRect.height() / 2);
+}
+
+Common::Point DigitalVideoCastMember::getRegistrationOffset(int16 width, int16 height) {
+	return Common::Point(width / 2, height / 2);
 }
 
 bool DigitalVideoCastMember::hasField(int field) {

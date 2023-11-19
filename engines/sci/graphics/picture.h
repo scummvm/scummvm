@@ -57,7 +57,9 @@ public:
 
 private:
 	void initData(GuiResourceId resourceId);
+#if 0
 	void reset();
+#endif
 	void drawSci11Vga();
 	void drawCelData(const SciSpan<const byte> &inbuffer, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX, int16 pictureY, bool isEGA);
 	void drawVectorData(const SciSpan<const byte> &data);
@@ -95,4 +97,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_PICTURE_H

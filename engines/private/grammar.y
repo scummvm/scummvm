@@ -87,7 +87,7 @@ int PRIVATE_wrap() {
 %token<s> NAME
 %token<sym> STRING NUM
 %type <inst> body if startp cond end expr statements statement fcall value
-%token LTE GTE NEQ EQ FALSETOK TRUETOK NULLTOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK
+%token LTE GTE NEQ EQ FALSETOK TRUETOK NULLTOK IFTOK ELSETOK RECT GOTOTOK DEBUGTOK EMITCODEONTOK EMITCODEOFFTOK RESETIDTOK DEFINETOK SETTINGTOK RANDOMTOK
 %type<narg> params
 
 %%
@@ -96,8 +96,11 @@ lines:   line lines
        | line
        ;
 
-line:     DEBUGTOK '{' debug '}'	     { /* Not used in the game */ }
-	| DEFINETOK NAME '{' define '}'      { g_private->maps.installAll($NAME); }
+line: DEBUGTOK '{' debug '}' { /* Not used in the game */ }
+	| EMITCODEONTOK { /* Unclear what this is */ }
+	| EMITCODEOFFTOK { /* Unclear what this is */ }
+	| RESETIDTOK { /* Unclear what this is */ }
+	| DEFINETOK NAME '{' define '}' { g_private->maps.installAll($NAME); }
 	| SETTINGTOK NAME '{' statements '}' { g_setts->save($NAME);
 					       g_setts->init(); }
 	;

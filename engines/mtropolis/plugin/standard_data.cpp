@@ -32,7 +32,7 @@ CursorModifier::CursorModifier() : haveRemoveWhen(false) {
 }
 
 DataReadErrorCode CursorModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 0 && prefix.plugInRevision != 1)
+	if (prefix.plugInRevision != 0 && prefix.plugInRevision != 1 && prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!applyWhen.load(reader))

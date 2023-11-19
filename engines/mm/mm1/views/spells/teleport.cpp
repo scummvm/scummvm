@@ -27,13 +27,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void Teleport::show() {
-	UIElement *teleport = dynamic_cast<Teleport *>(g_events->findView("Teleport"));
-	assert(teleport);
-
-	teleport->open();
-}
-
 Teleport::Teleport() : SpellView("Teleport") {
 	_bounds = getLineBounds(20, 24);
 }
@@ -77,18 +70,24 @@ bool Teleport::msgKeypress(const KeypressMessage &msg) {
 		_squares = msg.keycode - Common::KEYCODE_0;
 		_mode = CAST;
 		redraw();
-
-	} else if (_mode == CAST && msg.keycode == Common::KEYCODE_RETURN) {
-		teleport();
 	}
 
 	return true;
 }
 
 bool Teleport::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ESCAPE) {
+	switch (msg._action) {
+	case KEYBIND_ESCAPE:
 		close();
 		return true;
+
+	case KEYBIND_SELECT:
+		if (_mode == CAST)
+			teleport();
+		return true;
+
+	default:
+		break;
 	}
 
 	return false;

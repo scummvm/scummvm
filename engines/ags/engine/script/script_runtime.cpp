@@ -103,7 +103,7 @@ void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, un
 void ccNotifyScriptStillAlive() {
 	ccInstance *cur_inst = ccInstance::GetCurrentInstance();
 	if (cur_inst)
-		cur_inst->flags |= INSTF_RUNNING;
+		cur_inst->NotifyAlive();
 }
 
 void ccSetDebugHook(new_line_hook_type jibble) {

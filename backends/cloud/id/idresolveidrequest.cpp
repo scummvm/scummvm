@@ -25,7 +25,7 @@
 namespace Cloud {
 namespace Id {
 
-IdResolveIdRequest::IdResolveIdRequest(IdStorage *storage, Common::String path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive):
+IdResolveIdRequest::IdResolveIdRequest(IdStorage *storage, const Common::String &path, Storage::UploadCallback cb, Networking::ErrorCallback ecb, bool recursive):
 	Networking::Request(nullptr, ecb),
 	_requestedPath(path), _storage(storage), _uploadCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -52,18 +52,18 @@ void IdResolveIdRequest::start() {
 	listNextDirectory(StorageFile(_currentDirectoryId, 0, 0, true));
 }
 
-void IdResolveIdRequest::listNextDirectory(StorageFile fileToReturn) {
+void IdResolveIdRequest::listNextDirectory(const StorageFile &fileToReturn) {
 	if (_currentDirectory.equalsIgnoreCase(_requestedPath)) {
 		finishFile(fileToReturn);
 		return;
 	}
 
-	Storage::FileArrayCallback callback = new Common::Callback<IdResolveIdRequest, Storage::FileArrayResponse>(this, &IdResolveIdRequest::listedDirectoryCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<IdResolveIdRequest, Networking::ErrorResponse>(this, &IdResolveIdRequest::listedDirectoryErrorCallback);
+	Storage::FileArrayCallback callback = new Common::Callback<IdResolveIdRequest, const Storage::FileArrayResponse &>(this, &IdResolveIdRequest::listedDirectoryCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<IdResolveIdRequest, const Networking::ErrorResponse &>(this, &IdResolveIdRequest::listedDirectoryErrorCallback);
 	_workingRequest = _storage->listDirectoryById(_currentDirectoryId, callback, failureCallback);
 }
 
-void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
+void IdResolveIdRequest::listedDirectoryCallback(const Storage::FileArrayResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -91,7 +91,7 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 
 	///debug(9, "IdResolveIdRequest: searching for '%s' in '%s'", currentLevelName.c_str(), _currentDirectory.c_str());
 
-	Common::Array<StorageFile> &files = response.value;
+	const Common::Array<StorageFile> &files = response.value;
 	bool found = false;
 	for (uint32 i = 0; i < files.size(); ++i) {
 		if ((files[i].isDirectory() || lastLevel) && files[i].name().equalsIgnoreCase(currentLevelName)) {
@@ -114,7 +114,7 @@ void IdResolveIdRequest::listedDirectoryCallback(Storage::FileArrayResponse resp
 	}
 }
 
-void IdResolveIdRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
+void IdResolveIdRequest::listedDirectoryErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -125,7 +125,7 @@ void IdResolveIdRequest::handle() {}
 
 void IdResolveIdRequest::restart() { start(); }
 
-void IdResolveIdRequest::finishFile(StorageFile file) {
+void IdResolveIdRequest::finishFile(const StorageFile &file) {
 	Request::finishSuccess();
 	if (_uploadCallback)
 		(*_uploadCallback)(Storage::UploadResponse(this, file));

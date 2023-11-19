@@ -234,19 +234,7 @@ void NuvieEngine::syncSoundSettings() {
 	if (!_soundManager)
 		return;
 
-	_soundManager->set_audio_enabled(
-		!ConfMan.hasKey("mute") || !ConfMan.getBool("mute"));
-	_soundManager->set_sfx_enabled(
-		!ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute"));
-	_soundManager->set_music_enabled(
-		!ConfMan.hasKey("music_mute") || !ConfMan.getBool("music_mute"));
-	_soundManager->set_speech_enabled(
-		!ConfMan.hasKey("speech_mute") || !ConfMan.getBool("speech_mute"));
-
-	_soundManager->set_sfx_volume(ConfMan.hasKey("sfx_volume") ?
-		ConfMan.getInt("sfx_volume") : 255);
-	_soundManager->set_music_volume(ConfMan.hasKey("music_volume") ?
-		ConfMan.getInt("music_volume") : 255);
+	_soundManager->syncSoundSettings();
 }
 
 bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {

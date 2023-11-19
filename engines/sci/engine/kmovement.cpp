@@ -344,8 +344,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 		// Now call client::canBeHere/client::cantBehere to check for collisions
 		bool collision = false;
-		reg_t cantBeHere = NULL_REG;
-
 		// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
 		//  get a collision otherwise. Resetting the result was always done in SSCI
 		s->r_acc = NULL_REG;
@@ -353,7 +351,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 			invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 			if (!s->r_acc.isNull())
 				collision = true;
-			cantBeHere = s->r_acc;
 		} else {
 			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 			if (s->r_acc.isNull())

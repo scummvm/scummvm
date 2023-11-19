@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">OK</string>
+  <string name="quit">Esci</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Annulla</string>
+  <string name="customkeyboardview_keycode_delete">Elimina</string>
+  <string name="customkeyboardview_keycode_shift">Tasto Maiusc</string>
+  <string name="customkeyboardview_keycode_enter">Invio</string>
+</resources>

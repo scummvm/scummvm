@@ -37,7 +37,7 @@ TePickMesh *getMesh(const Math::Ray ray, const Common::Array<TePickMesh *> &pick
 	TePickMesh *bestMesh = nullptr;
 
 	for (auto *mesh : pickMeshes) {
-		if (!mesh->flag())
+		if (!mesh->enabled())
 			continue;
 		for (uint i = 0; i < mesh->nTriangles(); i++) {
 			TeVector3f32 v1;

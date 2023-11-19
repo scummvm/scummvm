@@ -288,7 +288,7 @@ public:
 	 *
 	 * @return The number of bytes written into the stream.
 	 */
-	uint32 writeStream(SeekableReadStream *stream);
+	uint32 writeStream(ReadStream *stream);
 
 	/**
 	 * Write the given string to the stream.

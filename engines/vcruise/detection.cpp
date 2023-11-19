@@ -28,20 +28,28 @@
 
 #include "vcruise/detection.h"
 
-static const PlainGameDescriptor vCruiseGames[] = {
+static const PlainGameDescriptor g_vcruiseGames[] = {
 	{"reah", "Reah: Face the Unknown"},
 	{"schizm", "Schizm: Mysterious Journey"},
 	{nullptr, nullptr}
+};
+
+static const char *g_vcruiseDirectoryGlobs[] = {
+	"Sfx",
+	"Log",
+	"Waves-12",
+	"Waves-22",
+	nullptr
 };
 
 #include "vcruise/detection_tables.h"
 
 class VCruiseMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), vCruiseGames) {
-		_guiOptions = GUIO1(GAMEOPTION_LAUNCH_DEBUG);
-		_maxScanDepth = 1;
-		_directoryGlobs = nullptr;
+	VCruiseMetaEngineDetection() : AdvancedMetaEngineDetection(VCruise::gameDescriptions, sizeof(VCruise::VCruiseGameDescription), g_vcruiseGames) {
+		_guiOptions = GUIO4(GAMEOPTION_FAST_ANIMATIONS, GAMEOPTION_INCREASE_DRAG_DISTANCE, GAMEOPTION_LAUNCH_DEBUG, GAMEOPTION_SKIP_MENU);
+		_maxScanDepth = 3;
+		_directoryGlobs = g_vcruiseDirectoryGlobs;
 		_flags = kADFlagCanPlayUnknownVariants;
 	}
 
@@ -62,43 +70,41 @@ public:
 
 		VCruise::VCruiseGameID gameID = reinterpret_cast<const VCruise::VCruiseGameDescription *>(adGame.desc)->gameID;
 
-		if (gameID == VCruise::GID_REAH) {
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-		} else if (gameID == VCruise::GID_SCHIZM) {
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_USA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_GRB));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EL_GRC));
-			game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+		if ((adGame.desc->flags & VCruise::VCRUISE_GF_FORCE_LANGUAGE) == 0) {
+			if (gameID == VCruise::GID_REAH) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+			} else if (gameID == VCruise::GID_SCHIZM) {
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_USA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_GRB));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::NL_NLD));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::PL_POL));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EL_GRC));
+				game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::RU_RUS));
+
+				// Steam version languages
+				if (adGame.desc->flags & VCruise::VCRUISE_GF_STEAM_LANGUAGES) {
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::BG_BUL));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_TWN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::JA_JPN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::HU_HUN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::ZH_CHN));
+					game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::CS_CZE));
+				}
+			}
 		}
 
 		return game;
 	}
-
-	/*
-	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
-		Common::String guiOptions = AdvancedMetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
-
-		if (domain.hasPrefix("reah")) {
-			guiOptions += " lang_Dutch lang_French lang_Italian lang_German lang_Polish lang_Spanish";
-		} else if (domain.hasPrefix("schizm")) {
-			guiOptions += " lang_Dutch lang_French lang_Italian lang_German lang_Greek lang_Polish lang_Russian lang_Spanish";
-		}
-
-		return guiOptions;
-	}
-	*/
 };
 
 REGISTER_PLUGIN_STATIC(VCRUISE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, VCruiseMetaEngineDetection);

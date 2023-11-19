@@ -80,22 +80,28 @@ bool MacWindowBorder::hasBorder(uint32 flags) {
 }
 
 void MacWindowBorder::disableBorder() {
-	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
-	noborder->create(3, 3, noborder->getSupportedPixelFormat());
-	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
-	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
+	const byte palette[] = {
+		255, 0,   255,
+		0,   0,   0
+	};
+
+	Graphics::ManagedSurface *noborder = new Graphics::ManagedSurface();
+	noborder->create(3, 3, Graphics::PixelFormat::createFormatCLUT8());
+	noborder->setPalette(palette, 0, 2);
+	noborder->setTransparentColor(0);
 
 	for (int y = 0; y < 3; y++)
 		for (int x = 0; x < 3; x++)
-			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
+			*((byte *)noborder->getBasePtr(x, y)) = noborderData[y][x];
 
 	setBorder(noborder, kWindowBorderActive);
 
-	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+	Graphics::ManagedSurface *noborder2 = new Graphics::ManagedSurface();
+	noborder2->copyFrom(*noborder);
 	setBorder(noborder2, 0);
 }
 
-void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int titlePos) {
+void MacWindowBorder::addBorder(ManagedSurface *source, uint32 flags, int titlePos) {
 	if (flags >= kWindowBorderMaxFlag) {
 		warning("Accessing non-existed border type");
 		return;
@@ -216,22 +222,32 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 
 void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
 	Image::BitmapDecoder bmpDecoder;
-	Graphics::Surface *source;
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
-
 	bmpDecoder.loadStream(file);
-	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-	surface->create(source->w, source->h, _window->_wm->_pixelformat);
-	surface->copyFrom(*source);
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface();
+	surface->copyFrom(*bmpDecoder.getSurface());
+	surface->setPalette(bmpDecoder.getPalette(), bmpDecoder.getPaletteStartIndex(),
+	                    bmpDecoder.getPaletteColorCount());
 
-	source->free();
-	delete source;
+	if (surface->format.isCLUT8()) {
+		const byte *palette = bmpDecoder.getPalette();
+		for (int i = 0; i < bmpDecoder.getPaletteColorCount(); i++) {
+			if (palette[0] == 255 && palette[1] == 0 && palette[2] == 255) {
+				surface->setTransparentColor(bmpDecoder.getPaletteStartIndex() + i);
+				break;
+			}
+			palette += 3;
+		}
+	} else {
+		const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		surface->convertToInPlace(requiredFormat_4byte);
+		surface->setTransparentColor(surface->format.RGBToColor(255, 0, 255));
+	}
 
 	setBorder(surface, flags, offsets);
 }
 
-void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo, int ro, int to, int bo) {
+void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags, int lo, int ro, int to, int bo) {
 	BorderOffsets offsets;
 	offsets.left = lo;
 	offsets.right = ro;
@@ -244,8 +260,7 @@ void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 fl
 	setBorder(surface, flags, offsets);
 }
 
-void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets) {
-	surface->applyColorKey(255, 0, 255, false);
+void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets) {
 	addBorder(surface, flags, offsets.titlePos);
 
 	if ((flags & kWindowBorderActive) && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
@@ -276,7 +291,6 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, 
 		return;
 	}
 
-	TransparentSurface srf;
 	NinePatchBitmap *src = _border[flags];
 
 	if (!src) {
@@ -294,12 +308,7 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, 
 		setTitle(_title, destination.w, wm);
 	}
 
-	srf.create(destination.w, destination.h, destination.format);
-	srf.fillRect(Common::Rect(srf.w, srf.h), wm->_colorGreen2);
-
-	src->blit(srf, 0, 0, srf.w, srf.h, NULL, 0, wm);
-	destination.transBlitFrom(srf, wm->_colorGreen2);
-	srf.free();
+	src->blit(destination, 0, 0, destination.w, destination.h, wm);
 
 	if (flags & kWindowBorderTitle)
 		drawTitle(&destination, wm, src->getTitleOffset());

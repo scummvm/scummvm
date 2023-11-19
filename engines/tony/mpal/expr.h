@@ -71,10 +71,10 @@ typedef struct {
 	byte _type;          // Object Type (see enum ExprListTypes)
 
 	union {
-		int _num;        // Identifier (if type == ELT_NUMBER)
+		int32 _num;      // Identifier (if type == ELT_NUMBER)
 		char *_name;     // Variable name (if type == ELT_VAR)
 		MpalHandle _son; // Handle expressions (if type == ELT_PARENTH)
-		byte *_pson;     // Handle lockato (if type == ELT_PARENTH2)
+		void *_pson;     // Handle lockato (if type == ELT_PARENTH2)
 	} _val;
 
 	byte _symbol;        // Mathematic symbols (see #define OP_*)
@@ -114,7 +114,7 @@ const byte *parseExpression(const byte *lpBuf, const Common::UnalignedPtr<MpalHa
  * @param h					Handle to the expression
  * @returns		Numeric value
  */
-int evaluateExpression(MpalHandle h);
+int32 evaluateExpression(MpalHandle h);
 
 /**
  * Compare two mathematical expressions together

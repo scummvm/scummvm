@@ -438,6 +438,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptBulletBob::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -564,6 +565,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 	default:
 		_animationState = 0;
 		_animationFrame = 0;
+		debugC(6, kDebugAnimation, "AIScriptBulletBob::ChangeAnimationMode(%d) - Target mode is treated as default, state and frame are set to 0", mode);
 		break;
 	}
 	return true;

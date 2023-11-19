@@ -31,11 +31,11 @@ namespace Data {
 namespace MTI {
 
 // Known Muppet Treasure Island custom modifiers:
-// Shanghai - ???
+// Shanghai - Shanghai minigame tile randomizer
 
 struct ShanghaiModifier : public PlugInModifierData {
-	PlugInTypeTaggedValue unknown1Event;  // Probably "Enable When"
-	PlugInTypeTaggedValue unknown2VarRef; // VarRef (Probably tile set)
+	PlugInTypeTaggedValue resetWhen;  // Reset When
+	PlugInTypeTaggedValue tileSetVar; // VarRef
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
@@ -48,6 +48,14 @@ struct PrintModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown3Bool;
 	PlugInTypeTaggedValue filePath;
 	PlugInTypeTaggedValue unknown4Bool;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct SampleModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue videoNumber;
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

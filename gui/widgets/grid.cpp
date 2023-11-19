@@ -119,7 +119,7 @@ void GridItemWidget::drawWidget() {
 			r.translate(0, kLineHeight);
 		}
 	} else {
-		g_gui.theme()->drawManagedSurface(Common::Point(_x, _y), _thumbGfx);
+		g_gui.theme()->drawManagedSurface(Common::Point(_x + _grid->_thumbnailMargin, _y + _grid->_thumbnailMargin), _thumbGfx);
 	}
 
 	// Draw Platform Icon
@@ -405,6 +405,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_minGridYSpacing = 0;
 	_isTitlesVisible = 0;
 	_scrollBarWidth = 0;
+	_thumbnailMargin = 0;
 
 	_scrollWindowPaddingX = 0;
 	_scrollWindowPaddingY = 0;
@@ -598,15 +599,13 @@ void GridWidget::sortGroups() {
 	calcInnerHeight();
 	markGridAsInvalid();
 
-	_scrollBar->checkBounds(_scrollBar->_currentPos);
-	_scrollPos = _scrollBar->_currentPos;
+	scrollBarRecalc();
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
 
 	assignEntriesToItems();
-	scrollBarRecalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
@@ -681,6 +680,8 @@ void GridWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Com
 }
 
 void GridWidget::reloadThumbnails() {
+	const int thumbnailWidth = MAX(_thumbnailWidth - 2 * _thumbnailMargin, 0);
+	const int thumbnailHeight = MAX(_thumbnailHeight - 2 * _thumbnailMargin, 0);
 	for (Common::Array<GridItemInfo *>::iterator iter = _visibleEntryList.begin(); iter != _visibleEntryList.end(); ++iter) {
 		GridItemInfo *entry = *iter;
 		if (entry->thumbPath.empty())
@@ -701,7 +702,7 @@ void GridWidget::reloadThumbnails() {
 			}
 
 			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, _thumbnailHeight, true));
+				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, thumbnailWidth, thumbnailHeight, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 
 				if (path != entry->thumbPath) {
@@ -966,6 +967,11 @@ void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
 
+	// Recompute thumbnail size
+	int oldThumbnailHeight = _thumbnailHeight;
+	int oldThumbnailWidth = _thumbnailWidth;
+	int oldThumbnailMargin = _thumbnailMargin;
+
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 
@@ -975,14 +981,11 @@ void GridWidget::reflowLayout() {
 	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
 	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	_thumbnailMargin = g_gui.xmlEval()->getVar("Globals.Grid.ThumbnailMargin", 0);
 
 	_scrollWindowPaddingX = _minGridXSpacing;
 	_scrollWindowPaddingY = _minGridYSpacing;
 	_gridYSpacing = _minGridYSpacing;
-
-	// Recompute thumbnail size
-	int oldThumbnailHeight = _thumbnailHeight;
-	int oldThumbnailWidth = _thumbnailWidth;
 
 	int availableWidth = _scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth;
 	_thumbnailWidth = availableWidth / _itemsPerRow - _minGridXSpacing;
@@ -999,7 +1002,9 @@ void GridWidget::reflowLayout() {
 	_extraIconWidth = _thumbnailWidth;
 	_extraIconHeight = _thumbnailHeight;
 
-	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
+	if ((oldThumbnailHeight != _thumbnailHeight) ||
+		(oldThumbnailWidth != _thumbnailWidth) ||
+		(oldThumbnailMargin != _thumbnailMargin)) {
 		unloadSurfaces(_extraIcons);
 		unloadSurfaces(_platformIcons);
 		unloadSurfaces(_languageIcons);

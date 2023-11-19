@@ -27,7 +27,7 @@
 namespace Gob {
 
 SaveLoad_Geisha::SaveFile SaveLoad_Geisha::_saveFiles[] = {
-	{"save.inf", kSaveModeSave, nullptr, "savegame"}
+	{"save.inf", kSaveModeSave, nullptr, "savegame"},
 };
 
 

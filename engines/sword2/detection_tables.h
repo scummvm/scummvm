@@ -302,6 +302,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{	// TRAC report #14550
+		"sword2",
+		"Novy Disk",
+		AD_ENTRY2s("general.clu", "60d17ec7eb80fec561e1278ff5a32faa", 7093894,
+				   "docks.clu",   "b39246fbb5b955a29f9a207c69bfc318", 20262263),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword2",
 		"",

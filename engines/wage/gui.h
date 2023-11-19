@@ -136,6 +136,8 @@ public:
 	void disableUndo();
 	void disableAllMenus();
 	void enableNewGameMenus();
+	void enableSave();
+	void enableRevert();
 
 	bool processSceneEvents(WindowClick click, Common::Event &event);
 	void executeMenuCommand(int action, Common::String &text);

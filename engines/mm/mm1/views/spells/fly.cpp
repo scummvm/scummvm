@@ -27,14 +27,6 @@ namespace MM1 {
 namespace Views {
 namespace Spells {
 
-void Fly::show(FlyCallback callback) {
-	Fly *fly = dynamic_cast<Fly *>(g_events->findView("Fly"));
-	assert(fly);
-
-	fly->_callback = callback;
-	fly->open();
-}
-
 Fly::Fly() : SpellView("Fly") {
 	_bounds = getLineBounds(21, 24);
 }
@@ -78,12 +70,6 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 		_mode = CAST;
 		_yIndex = msg.keycode - Common::KEYCODE_1;
 		redraw();
-
-	} else if (_mode == CAST && msg.keycode == Common::KEYCODE_RETURN) {
-		// Spell was cast
-		close();
-		int mapIndex = _yIndex * 5 + _xIndex;
-		_callback(mapIndex);
 	}
 
 	return true;
@@ -92,8 +78,14 @@ bool Fly::msgKeypress(const KeypressMessage &msg) {
 bool Fly::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE) {
 		close();
-		_callback(-1);
+		fly(-1);
 		return true;
+
+	} else if (_mode == CAST && msg._action == KEYBIND_SELECT) {
+		// Spell was cast
+		close();
+		int mapIndex = _yIndex * 5 + _xIndex;
+		fly(mapIndex);
 	}
 
 	return false;

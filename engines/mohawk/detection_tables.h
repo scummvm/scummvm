@@ -1072,7 +1072,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"harryhh",
-			"",
+			"v1.1",
 			AD_ENTRY1("HARRY.512", "8d786f0998f27e44603a2202d6786c25"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1106,7 +1106,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"harryhh",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("HARRY.512", "39d11399796dfa36d3f631d2d87e8b85"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1259,7 +1259,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"greeneggs",
-			"",
+			"32-bit",
 			AD_ENTRY1("GREEN32.LB", "5df8438138186f89e71299d7b4f88d06"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1320,8 +1320,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"seussabc",
-			"",
+			"32-bit",
 			AD_ENTRY1("ABC32.LB", "1d56a9351974a7a70ace5274a4570b72"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// ZOOM-platform
+	{
+		{
+			"seussabc",
+			"",
+			AD_ENTRY1s("ABC32.LB", "436d08cbf0eb6573f0abffddac0da70d", 4032),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1475,7 +1491,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("TORTOISE.512", "e9ec7a6bc6b451c9e85e5b4f072d5143"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -1677,6 +1693,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// From European Arthur's Teacher Trouble CD [English, German, French]
+	{
+		{
+			"tortoise",
+			"Demo",
+			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		GF_DEMO,
+		"TORTB.EXE"
+	},
+
 	{
 		{
 			"tortoise",
@@ -1728,7 +1760,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthur",
-			"",
+			"Super Living Books",
 			AD_ENTRY1("PAGES.512", "cd995d20d0d7b4642476fd76044b4e5b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -3175,7 +3207,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"beardark",
-			"",
+			"32-bit",
 			AD_ENTRY1("DARK32.LB", "28abbf5498aeb29e78e5e0dec969ebe2"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -3299,6 +3331,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// ZOOM platform
+	{
+		{
+			"stellaluna",
+			"32-bit",
+			AD_ENTRY1s("STELLA32.LB", "ca8562a79f63485680e21191f5865fd7", 4336),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From aluff in bug#5711
 	{
 		{
@@ -3322,6 +3370,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"sheila",
 			"",
 			AD_ENTRY1("SHEILA.LB", "c28a60f615a46384d9a8941fc5c89d63"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// ZOOM platform
+	{
+		{
+			"sheila",
+			"",
+			AD_ENTRY1s("SHEILA32.LB", "334f3da1ed0b610506bec551be67c62b", 24997),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

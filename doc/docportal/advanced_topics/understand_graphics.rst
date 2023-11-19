@@ -20,8 +20,6 @@ Graphics modes
 
 Most platforms have either one or two available graphics modes. The most common ones are OpenGL and SDL Surface.
 
-To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`.
-
 OpenGL graphics mode
 *************************************
 
@@ -40,6 +38,8 @@ The original game graphics are upscaled using different graphical filters, which
 If the game originally ran at a resolution of 320x200—which is typical for most SCUMM games—then using a graphics mode with a scale factor of 2x yields 640x400 graphics. A 3x scale factor yields 960x600.
 
 There is always a speed penalty when using a scaler other than Normal 1x.
+
+To cycle forwards or backwards between graphical filters, press :kbd:`Ctrl + Alt` and :kbd:`0` or :kbd:`9` (respectively).
 
 .. figure:: ../images/graphics/graphics_mode/1x.png
 

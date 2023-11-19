@@ -33,9 +33,12 @@ public:
 
 	virtual void initSurface() = 0;
 	virtual void deinitSurface() = 0;
+	virtual void resizeSurface() = 0;
 
 	virtual Common::Point getMousePosition() = 0;
 	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
+
+	virtual void syncVirtkeyboardState(bool virtkeybd_on) = 0;
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
@@ -71,6 +74,7 @@ public:
 
 	virtual void initSurface() override;
 	virtual void deinitSurface() override;
+	virtual void resizeSurface() override;
 
 	virtual AndroidCommonGraphics::State getState() const override;
 	virtual bool setState(const AndroidCommonGraphics::State &state) override;
@@ -97,6 +101,8 @@ protected:
 	bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
 	void refreshScreen() override;
+
+	void syncVirtkeyboardState(bool virtkeybd_on) override;
 
 private:
 	OpenGL::Surface *_touchcontrols;

@@ -274,7 +274,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			/* int writelength; -- unused atm */
 
-			if (xfer && (Common::isDigit(xfer) || xfer == '-' || xfer == '=')) {
+			if (Common::isDigit(xfer) || xfer == '-' || xfer == '=') {
 				char *destp;
 
 				if (xfer == '0')

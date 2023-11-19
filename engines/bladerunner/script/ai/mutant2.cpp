@@ -505,6 +505,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptMutant2::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -514,7 +515,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptMutant2::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState >= 3 && _animationState <= 4) {
 			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
@@ -523,21 +524,23 @@ bool AIScriptMutant2::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		// fall through
-	case 7:
+	case kAnimationModeCombatWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
 
-	case 2:
+	case kAnimationModeRun:
 		// fall through
-	case 8:
+	case kAnimationModeCombatRun:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
 
 	case 3:
+		// fall through
+	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
@@ -557,12 +560,6 @@ bool AIScriptMutant2::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 12:
-		_animationState = 3;
-		_animationFrame = 0;
-		_resumeIdleAfterFramesetCompletesFlag = false;
-		break;
-
 	case 21:
 		// fall through
 	case 22:
@@ -579,6 +576,10 @@ bool AIScriptMutant2::ChangeAnimationMode(int mode) {
 	case 88:
 		_animationState = 7;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMutant2ShotDead) - 1;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMutant2::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

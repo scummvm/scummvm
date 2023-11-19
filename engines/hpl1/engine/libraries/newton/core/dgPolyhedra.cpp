@@ -3557,7 +3557,7 @@ void dgPolyhedra::ConvexPartition(const dgFloat64 *const vertex,
 		DeleteDegenerateFaces(vertex, strideInBytes, dgFloat32(1.0e-5f));
 
 		if (GetCount()) {
-			dgInt32 removeCount = 0;
+			//dgInt32 removeCount = 0;
 			dgInt32 stride = dgInt32(strideInBytes / sizeof(dgFloat64));
 
 			dgInt32 polygon[1024 * 8];
@@ -3664,14 +3664,14 @@ void dgPolyhedra::ConvexPartition(const dgFloat64 *const vertex,
 							if (isConvex) {
 								for (dgInt32 j = 0; j < diagonalCount; j++) {
 									dgEdge *const diagonal = diagonalsPool[j];
-									removeCount++;
+									//removeCount++;
 									flatFace.DeleteEdge(diagonal);
 								}
 							} else {
 								for (dgInt32 j = 0; j < diagonalCount; j++) {
 									dgEdge *const diagonal = diagonalsPool[j];
 									if (!IsEssensialDiagonal(diagonal, normal, vertex, stride)) {
-										removeCount++;
+										//removeCount++;
 										flatFace.DeleteEdge(diagonal);
 									}
 								}

@@ -35,15 +35,9 @@ class ZipFile;
 class IDataSource;
 
 class SavegameReader {
-	struct FileEntry {
-		uint _offset;
-		uint _size;
-		FileEntry() : _offset(0), _size(0) {}
-	};
 private:
 	ExtendedSavegameHeader _header;
-	Common::HashMap<Common::String, FileEntry> _index;
-	Common::SeekableReadStream *_file;
+	Common::Archive *_archive;
 	uint32 _version;
 public:
 	explicit SavegameReader(Common::SeekableReadStream *rs, bool metadataOnly = false);

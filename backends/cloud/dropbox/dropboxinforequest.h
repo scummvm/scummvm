@@ -39,16 +39,16 @@ class DropboxInfoRequest: public Networking::Request {
 	bool _ignoreCallback;
 
 	void start();
-	void userResponseCallback(Networking::JsonResponse response);
-	void quotaResponseCallback(Networking::JsonResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-	void finishInfo(StorageInfo info);
+	void userResponseCallback(const Networking::JsonResponse &response);
+	void quotaResponseCallback(const Networking::JsonResponse &response);
+	void errorCallback(const Networking::ErrorResponse &error);
+	void finishInfo(const StorageInfo &info);
 public:
 	DropboxInfoRequest(DropboxStorage *storage, Storage::StorageInfoCallback cb, Networking::ErrorCallback ecb);
-	virtual ~DropboxInfoRequest();
+	~DropboxInfoRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 };
 
 } // End of namespace Dropbox

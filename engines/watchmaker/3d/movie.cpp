@@ -54,6 +54,15 @@ gMovie::gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *te
 	for (int i = 0; i < _numFrames; i++) {
 		_frameOffsets[i] = _stream->readUint32LE();
 	}
+
+	_startTime = 0;
+}
+
+gMovie::~gMovie() {
+	delete[] _frameOffsets;
+	delete[] _buffer;
+	delete[] _surfaceBuffer;
+	delete _frameStream;
 }
 
 Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName, Texture *texture) {

@@ -78,6 +78,11 @@ public:
 	 * Execute an engine keymap release action
 	 */
 	static void releaseAction(KeybindingAction keyAction);
+
+	/**
+	 * Return meta information from the specified save state for saves that do not have ExtendedSavegameHeader
+	 */
+	static bool querySaveMetaInfos(const Common::String &filename, SaveStateDescriptor &desc);
 };
 
 } // End of namespace Ultima8

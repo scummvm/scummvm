@@ -95,6 +95,8 @@ namespace FileIO {
 	void m_writeChar(int nargs);
 	void m_writeString(int nards);
 
+	void m_setOverrideDrive(int nargs);
+
 } // End of namespace FileIO
 
 } // End of namespace Director

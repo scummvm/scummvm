@@ -134,7 +134,7 @@ void doPlayer(WGame &game) {
 			if (Player)
 				Player->Walk.NumPathNodes = Player->Walk.CurrentStep = Player->Walk.NumSteps = bNotSkippableWalk = 0;
 
-			if ((!bDialogActive) || (TimeWalk == CurPlayer + ocDARRELL) || (TimeWalk == ocBOTH))
+			if ((!bDialogActive) || (TimeWalk == CurPlayer + ocDARRELL) || (TimeWalk == ocCURPLAYER))
 				_vm->_messageSystem.addWaitingMsgs(MP_WAIT_ACT);
 
 			if (TheMessage->event == ME_PLAYERGOTOEXAMINE)
@@ -434,8 +434,7 @@ void ChangePlayer(WGame &game, uint8 oc) {
 	if (Player && t3dCurRoom) {
 		Player->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 		Player->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-		if (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel])
-			Player->Mesh->Trasl.y = Player->Pos.y = CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+		Player->Mesh->Trasl.y = Player->Pos.y = CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
 	}
 
 //	Inizia il Fade

@@ -560,7 +560,7 @@ static void print_stack(int16 *_stackBase, int16 *stack) {
 	debugC(3, kDebugScripts, "]");
 }
 
-#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - _codeSeg - 1), (pc - _codeSeg - 1), #x)
+#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x)
 #define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, *stack)
 #define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *stack)
 #define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *addr)

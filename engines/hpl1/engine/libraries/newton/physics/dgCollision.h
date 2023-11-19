@@ -22,14 +22,6 @@
 #ifndef AFX_DGCOLLISION_H__57E159CE_6B6F_42DE_891C_1F6C38EB9D29__INCLUDED_
 #define AFX_DGCOLLISION_H__57E159CE_6B6F_42DE_891C_1F6C38EB9D29__INCLUDED_
 
-#ifdef _WIN32
-//	#define DG_INLINE_FUNTION inline
-#define DG_INLINE_FUNTION DG_INLINE
-//	#define DG_INLINE_FUNTION __forceinline
-#else
-#define DG_INLINE_FUNTION inline
-#endif
-
 #include "dgBody.h"
 #include "hpl1/engine/libraries/newton/core/dg.h"
 

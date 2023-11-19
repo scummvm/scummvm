@@ -143,13 +143,19 @@ void LocalWebserver::start(bool useMinimalMode) {
 	if (numused == -1) {
 		error("LocalWebserver: SDLNet_AddSocket: %s\n", SDLNet_GetError());
 	}
+
+	if (_timerStarted)
+		g_system->taskStarted(OSystem::kLocalServer);
+
 	_handleMutex.unlock();
 }
 
 void LocalWebserver::stop() {
 	_handleMutex.lock();
-	if (_timerStarted)
+	if (_timerStarted) {
 		stopTimer();
+		g_system->taskFinished(OSystem::kLocalServer);
+	}
 
 	if (_serverSocket) {
 		SDLNet_TCP_Close(_serverSocket);
@@ -170,7 +176,7 @@ void LocalWebserver::stop() {
 
 void LocalWebserver::stopOnIdle() { _stopOnIdle = true; }
 
-void LocalWebserver::addPathHandler(Common::String path, BaseHandler *handler) {
+void LocalWebserver::addPathHandler(const Common::String &path, BaseHandler *handler) {
 	if (_pathHandlers.contains(path))
 		warning("LocalWebserver::addPathHandler: path already had a handler");
 	_pathHandlers[path] = handler;
@@ -400,7 +406,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 #endif
 }
 
-void LocalWebserver::setClientGetHandler(Client &client, Common::String response, long code, const char *mimeType) {
+void LocalWebserver::setClientGetHandler(Client &client, const Common::String &response, long code, const char *mimeType) {
 	byte *data = new byte[response.size()];
 	memcpy(data, response.c_str(), response.size());
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
@@ -415,14 +421,14 @@ void LocalWebserver::setClientGetHandler(Client &client, Common::SeekableReadStr
 	client.setHandler(handler);
 }
 
-void LocalWebserver::setClientRedirectHandler(Client &client, Common::String response, Common::String location, const char *mimeType) {
+void LocalWebserver::setClientRedirectHandler(Client &client, const Common::String &response, const Common::String &location, const char *mimeType) {
 	byte *data = new byte[response.size()];
 	memcpy(data, response.c_str(), response.size());
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
 	setClientRedirectHandler(client, stream, location, mimeType);
 }
 
-void LocalWebserver::setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, Common::String location, const char *mimeType) {
+void LocalWebserver::setClientRedirectHandler(Client &client, Common::SeekableReadStream *responseStream, const Common::String &location, const char *mimeType) {
 	GetClientHandler *handler = new GetClientHandler(responseStream);
 	handler->setResponseCode(302); //redirect
 	handler->setHeader("Location", location);
@@ -440,7 +446,7 @@ int hexDigit(char c) {
 }
 }
 
-Common::String LocalWebserver::urlDecode(Common::String value) {
+Common::String LocalWebserver::urlDecode(const Common::String &value) {
 	Common::String result = "";
 	uint32 size = value.size();
 	for (uint32 i = 0; i < size; ++i) {
@@ -476,7 +482,7 @@ bool isQueryUnreserved(char c) {
 }
 }
 
-Common::String LocalWebserver::urlEncodeQueryParameterValue(Common::String value) {
+Common::String LocalWebserver::urlEncodeQueryParameterValue(const Common::String &value) {
 	//OK chars = alphanum | "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
 	//reserved for query are ";", "/", "?", ":", "@", "&", "=", "+", ","
 	//that means these must be encoded too or otherwise they could malform the query

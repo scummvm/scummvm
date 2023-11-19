@@ -24,10 +24,8 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
-#include "common/config-manager.h"
 
 #include "director/director.h"
-#include "director/detection.h"
 
 namespace Director {
 
@@ -41,6 +39,10 @@ const char *DirectorEngine::getGameId() const {
 
 Common::Platform DirectorEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
+}
+
+uint32 DirectorEngine::getGameFlags() const {
+	return _gameDescription->desc.flags;
 }
 
 uint16 DirectorEngine::getDescriptionVersion() const {

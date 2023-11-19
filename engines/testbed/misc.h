@@ -51,6 +51,7 @@ TestExitStatus testDateTime();
 TestExitStatus testTimers();
 TestExitStatus testMutexes();
 TestExitStatus testOpenUrl();
+TestExitStatus testImageAlbum();
 // add more here
 
 } // End of namespace MiscTests
@@ -71,7 +72,7 @@ public:
 		return "Misc";
 	}
 	const char *getDescription() const override {
-		return "Miscellaneous: Timers/Mutexes/Datetime/openUrl";
+		return "Miscellaneous: Timers/Mutexes/Datetime/openUrl/ImageAlbum";
 	}
 };
 

@@ -153,6 +153,8 @@ static const Myst3GameDescription gameDescriptions[] = {
 		kLocMulti2 // CHS, English
 	},
 
+	// Japanese DVD release (1.24) (TRAC report #14298)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "5c18c9c124ff92d2b95ae5d128228f7b", "DVD", kLocMulti2)
 
 	// DVD releases (1.27)
 	MYST3ENTRY_DVD(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kLocMulti6)

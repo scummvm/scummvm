@@ -75,7 +75,7 @@ void TextDisplayer_SegaCD::printShadedText(const char *str, int x, int y, int te
 	if (y == -1)
 		y = s->sy;
 	if (textColor == -1)
-		textColor = s->unk8;
+		textColor = s->col1;
 	if (shadowColor == -1)
 		shadowColor = 0;
 	if (pitchW == -1)
@@ -89,11 +89,11 @@ void TextDisplayer_SegaCD::printShadedText(const char *str, int x, int y, int te
 	if (!screenUpdate)
 		return;
 
-	if (s->unkE) {
+	if (s->column) {
 		for (int i = 0; i < (pitchH >> 3); ++i)
-			_screen->sega_loadTextBufferToVRAM(i * (pitchW << 2), ((s->unkC & 0x7FF) + i * s->unkE) << 5, pitchW << 2);
+			_screen->sega_loadTextBufferToVRAM(i * (pitchW << 2), ((s->line & 0x7FF) + i * s->column) << 5, pitchW << 2);
 	} else {
-		_screen->sega_loadTextBufferToVRAM(0, (s->unkC & 0x7FF) << 5, (pitchW * pitchH) >> 1);
+		_screen->sega_loadTextBufferToVRAM(0, (s->line & 0x7FF) << 5, (pitchW * pitchH) >> 1);
 	}
 }
 
@@ -102,9 +102,9 @@ int TextDisplayer_SegaCD::clearDim(int dim) {
 	_curDim = dim;
 	_curPosY = _curPosX = 0;
 	const ScreenDim *s = &_dimTable[dim];
-	_renderer->memsetVRAM((s->unkC & 0x7FF) << 5, s->unkA, (s->w * s->h) >> 1);
-	_screen->sega_clearTextBuffer(s->unkA);
-	memset(_msgRenderBuffer, s->unkA, _msgRenderBufferSize);
+	_renderer->memsetVRAM((s->line & 0x7FF) << 5, s->col2, (s->w * s->h) >> 1);
+	_screen->sega_clearTextBuffer(s->col2);
+	memset(_msgRenderBuffer, s->col2, _msgRenderBufferSize);
 	return res;
 }
 
@@ -191,7 +191,7 @@ uint8 TextDisplayer_SegaCD::fetchCharacter(char *dest, const char *&src) {
 
 void TextDisplayer_SegaCD::linefeed() {
 	copyTextBufferLine(_screen->getFontHeight(), 0, (_dimTable[_curDim].h & ~7) - _screen->getFontHeight(), _dimTable[_curDim].w >> 3);
-	clearTextBufferLine(_screen->getFontHeight(), _screen->getFontHeight(), _dimTable[_curDim].w >> 3, _dimTable[_curDim].unkA);
+	clearTextBufferLine(_screen->getFontHeight(), _screen->getFontHeight(), _dimTable[_curDim].w >> 3, _dimTable[_curDim].col2);
 }
 
 void TextDisplayer_SegaCD::clearTextBufferLine(uint16 y, uint16 lineHeight, uint16 pitch, uint8 col) {

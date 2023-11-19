@@ -20,9 +20,11 @@
  */
 
 #include "ags/shared/core/platform.h"
-//include <string.h>
-#include "ags/shared/debugging/assert.h"
-#include "ags/shared/util/alignedstream.h"
+//#include <string.h>
+//#include "ags/shared/debugging/assert.h"
+// File not present??
+#include "common/scummsys.h"
+#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/file.h"
 
 namespace AGS3 {
@@ -62,7 +64,8 @@ void Test_File() {
 
 	out->WriteInt16(10);
 	out->WriteInt64(-20202);
-	String::WriteString("test.tmp", out);
+	//String::WriteString("test.tmp", out);
+	String("test.tmp").Write(out);
 	String very_long_string;
 	very_long_string.FillString('a', 10000);
 	very_long_string.Write(out);

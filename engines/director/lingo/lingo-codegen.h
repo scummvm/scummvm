@@ -22,7 +22,6 @@
 #ifndef DIRECTOR_LINGO_LINGO_CODEGEN_H
 #define DIRECTOR_LINGO_LINGO_CODEGEN_H
 
-#include "director/types.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 
@@ -130,6 +129,7 @@ private:
 public:
 	// lingo-preprocessor.cpp
 	Common::U32String codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, uint32 flags);
+	MethodHash prescanMethods(const Common::U32String &code);
 
 	// lingo-patcher.cpp
 	Common::U32String patchLingoCode(const Common::U32String &line, LingoArchive *archive, ScriptType type, CastMemberID id, int linenumber);

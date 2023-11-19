@@ -27,9 +27,12 @@
 #include "common/ptr.h"
 #include "common/compression/stuffit.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/formats/winexe.h"
 
 #include "engines/util.h"
+
+#include "gui/message.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
@@ -103,6 +106,27 @@ void MTropolisEngine::handleEvents() {
 }
 
 Common::Error MTropolisEngine::run() {
+#if !defined(USE_MPEG2)
+	if (_gameDescription->desc.flags & MTGF_WANT_MPEG_VIDEO) {
+		GUI::MessageDialog dialog(
+			_("This game requires MPEG video support for some\n"
+			  "content but MPEG video support was not compiled in.\n"
+			  "The game will still play, but MPEG videos will not work."),
+			_("OK"));
+		dialog.runModal();
+	}
+#endif
+#if !defined(USE_MAD)
+	if (_gameDescription->desc.flags & MTGF_WANT_MPEG_AUDIO) {
+		GUI::MessageDialog dialog(
+			_("This game requires MPEG audio support for some\n"
+			  "content but MPEG audio support was not compiled in.\n"
+			  "The game will still play, but some audio will not work."),
+			_("OK"));
+		dialog.runModal();
+	}
+#endif
+
 	int preferredWidth = 1024;
 	int preferredHeight = 768;
 
@@ -137,21 +161,22 @@ Common::Error MTropolisEngine::run() {
 			preferredHeight = 360;
 			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
 		}
-	}
-
-	if (_gameDescription->gameID == GID_MTI) {
+	} else if (_gameDescription->gameID == GID_MTI) {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode8Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		HackSuites::addMTIQuirks(*_gameDescription, _runtime->getHacks());
-	}
-
-	if (_gameDescription->gameID == GID_SPQR) {
+	} else if (_gameDescription->gameID == GID_SPQR) {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
+	} else if (_gameDescription->gameID == GID_UNIT) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode32Bit;
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 	}
 

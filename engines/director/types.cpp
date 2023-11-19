@@ -20,7 +20,6 @@
  */
 
 #include "common/array.h"
-#include "common/str.h"
 #include "director/types.h"
 
 namespace Director {
@@ -30,7 +29,10 @@ const char *scriptTypes[] = {
 	"CastScript",
 	"MovieScript",
 	"EventScript",
-	"TestScript"
+	"TestScript",
+	"ScriptType5",
+	"ScriptType6",
+	"ParentScript",
 };
 
 const char *scriptType2str(ScriptType scr) {
@@ -59,13 +61,15 @@ const char *castTypes[] = {
 	"digitalVideo",
 	"script",
 	"RTE",
+	"???",
+	"transition",
 };
 
 const char *castType2str(CastType type) {
 	if (type == kCastTypeAny)
 		return "any";
 
-	if (type <= kCastRTE)
+	if (type <= kCastTransition)
 		return castTypes[type];
 
 	warning("BUILDBOT: Unknown castType: %d", type);

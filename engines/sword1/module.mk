@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	menu.o \
 	metaengine.o \
 	mouse.o \
-	music.o \
 	objectman.o \
 	resman.o \
 	router.o \

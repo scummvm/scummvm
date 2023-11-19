@@ -439,20 +439,20 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		array2.push_back(5);
 		array2.push_back(9);
 
-		TS_ASSERT_EQUALS(array1.size(), 3);
+		TS_ASSERT_EQUALS(array1.size(), 3u);
 		TS_ASSERT_EQUALS(array1[0], -3);
 		TS_ASSERT_EQUALS(array1[1], 163);
 		TS_ASSERT_EQUALS(array1[2], 17);
-		TS_ASSERT_EQUALS(array2.size(), 2);
+		TS_ASSERT_EQUALS(array2.size(), 2u);
 		TS_ASSERT_EQUALS(array2[0], 5);
 		TS_ASSERT_EQUALS(array2[1], 9);
 
 		array1.swap(array2);
 
-		TS_ASSERT_EQUALS(array1.size(), 2);
+		TS_ASSERT_EQUALS(array1.size(), 2u);
 		TS_ASSERT_EQUALS(array1[0], 5);
 		TS_ASSERT_EQUALS(array1[1], 9);
-		TS_ASSERT_EQUALS(array2.size(), 3);
+		TS_ASSERT_EQUALS(array2.size(), 3u);
 		TS_ASSERT_EQUALS(array2[0], -3);
 		TS_ASSERT_EQUALS(array2[1], 163);
 		TS_ASSERT_EQUALS(array2[2], 17);

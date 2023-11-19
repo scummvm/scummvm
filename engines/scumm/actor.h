@@ -151,6 +151,7 @@ protected:
 		int32 deltaXFactor, deltaYFactor;
 		uint16 xfrac, yfrac;
 		uint16 xAdd, yAdd;
+		int32 nextDir;
 
 		void reset() {
 			dest.x = dest.y = 0;
@@ -166,6 +167,7 @@ protected:
 			yfrac = 0;
 			xAdd = 0;
 			yAdd = 0;
+			nextDir = 0;
 		}
 	};
 
@@ -220,7 +222,7 @@ public:
 
 	virtual void setDirection(int direction);
 	void faceToObject(int obj);
-	void turnToDirection(int newdir);
+	virtual void turnToDirection(int newdir);
 	virtual void walkActor();
 	void drawActorCostume(bool hitTestMode = false);
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
@@ -358,6 +360,19 @@ public:
 protected:
 	bool isPlayer() override;
 	void prepareDrawActorCostume(BaseCostumeRenderer *bcr) override;
+};
+
+class Actor_v7 final : public Actor {
+public:
+	Actor_v7(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+
+	void initActor(int mode) override;
+	void walkActor() override;
+	void turnToDirection(int newdir) override;
+	void startAnimActor(int frame) override;
+
+private:
+	int updateActorDirection();
 };
 
 enum ActorV0MiscFlags {

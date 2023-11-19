@@ -19,17 +19,19 @@
  *
  */
 
+#include "common/events.h"
+
 #include "graphics/macgui/macbutton.h"
-#include "graphics/macgui/mactext.h"
+#include "graphics/macgui/mactextwindow.h"
 
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/sprite.h"
 #include "director/window.h"
 #include "director/castmember/text.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -233,6 +235,41 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = macFont.getId();
 }
 
+bool textWindowCallback(Graphics::WindowClick click, Common::Event &event, void *ptr) {
+	return g_director->getCurrentMovie()->processEvent(event);
+}
+
+Graphics::MacWidget *TextCastMember::createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont) {
+	Graphics::MacWidget *widget = nullptr;
+
+	if (_textType == kTextTypeScrolling) {
+		Graphics::MacTextWindow *window = (Graphics::MacTextWindow *)g_director->_wm->addTextWindow(macFont, getForeColor(), getBackColor(), _initialRect.width(),
+														  getAlignment(), nullptr, false);
+		// Set callback so that we can process events like mouse clicks
+		window->setCallback(textWindowCallback, window);
+		// Set widget to this window!
+		widget = window;
+
+		// Set configuration
+		window->setBorderType(Graphics::kWindowBorderMacOSNoBorderScrollbar);
+		window->enableScrollbar(true);
+		// window->setMode(Graphics::kWindowModeDynamicScrollbar);
+		window->move(bbox.left, bbox.top);
+		window->resize(dims.width(), dims.height());
+		window->setEditable(false);
+		window->setSelectable(false);
+		window->appendText(_ftext);
+		window->draw(true);
+	} else {
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
+		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
+		((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
+		((Graphics::MacText *)widget)->draw();
+	}
+
+	return widget;
+}
+
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
@@ -254,15 +291,12 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		if (_textType == kTextTypeAdjustToFit) {
 			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
-		} else if (_textType == kTextTypeFixed){
+		} else if (_textType == kTextTypeFixed) {
 			// use initialRect to create widget for fixed style text, this maybe related to version.
 			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MAX<int>(dims.bottom, dims.top + _initialRect.height());
 		}
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
-		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
-		((Graphics::MacText *)widget)->draw();
+		widget = createWindowOrWidget(bbox, channel, dims, macFont);
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
 		if (channel->_sprite->_editable) {
@@ -356,6 +390,9 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 }
 
 Common::String TextCastMember::formatInfo() {
+	// need to pull the data from the STXT resource before the
+	// debug output will be visible
+	load();
 	Common::String format = formatStringForDump(_ptext.encode());
 
 	return Common::String::format(
@@ -365,7 +402,7 @@ Common::String TextCastMember::formatInfo() {
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
 		getForeColor(), getBackColor(),
-		_editable, format.c_str()
+		_editable, formatStringForDump(format).c_str()
 	);
 }
 
@@ -376,11 +413,20 @@ void TextCastMember::load() {
 	if (!_cast->_loadedStxts)
 		return;
 
-	uint stxtid;
-	if (_cast->_version >= kFileVer400 && _children.size() > 0)
-		stxtid = _children[0].index;
-	else
+	uint stxtid = 0;
+	if (_cast->_version >= kFileVer400) {
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('S', 'T', 'X', 'T')) {
+				stxtid = it.index;
+				break;
+			}
+		}
+		if (!stxtid) {
+			warning("TextCastMember::load(): No STXT resource found in %d children", _children.size());
+		}
+	} else {
 		stxtid = _castId;
+	}
 
 	if (_cast->_loadedStxts->contains(stxtid)) {
 		const Stxt *stxt = _cast->_loadedStxts->getVal(stxtid);

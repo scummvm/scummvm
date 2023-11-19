@@ -19,6 +19,7 @@
  *
  */
 
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
@@ -784,6 +785,16 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 		if (_animationFrame == 11) {
 			Actor_Combat_AI_Hit_Attempt(kActorZuben);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			if (Game_Flag_Query(kFlagCT07ZubenAttack)
+			    && !Game_Flag_Query(kFlagMcCoyShotAtZuben)) {
+				// We re-use the flag that indicates that McCoy shot at Zuben,
+				// even though here it's Zuben who hits McCoy.
+				// This should be fine, since it serves the same purpose:
+				// McCoy can no longer spare Zuben if he holsters his gun.
+				Game_Flag_Set(kFlagMcCoyShotAtZuben);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -1025,7 +1036,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationZubenBashOnDoor;
 		++_animationFrame;
 		if (_animationFrame == 5) {
-			Overlay_Play("ct02over", 1, false, true, 0);
+			Overlay_Play("CT02OVER", 1, false, true, 0);
 		}
 		if (_animationFrame == 6) {
 			Sound_Play(kSfxMTLDOOR2, 40, 0, 0, 50);
@@ -1054,6 +1065,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 
 	default:
 		*animation = kModelAnimationZubenWalking;
+		debugC(6, kDebugAnimation, "AIScriptZuben::UpdateAnimation() - Current _animationState (%d) is default (walking)", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1247,6 +1259,10 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		Actor_Set_Targetable(kActorZuben, false);
 		_animationState = 14;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptZuben::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

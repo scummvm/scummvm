@@ -715,7 +715,8 @@ void String::Reverse() {
 void String::ReverseUTF8() {
 	if (_len <= 1)
 		return; // nothing to reverse if 1 char or less
-	// TODO: may this be optimized to not alloc new buffer? or dont care
+	// TODO: may this be optimized to not alloc new buffer?
+	// otherwise, allocate a proper String data buf and replace existing
 	char *newstr = new char[_len + 1];
 	for (char *fw = _cstr, *fw2 = _cstr + 1,
 		*bw = _cstr + _len - 1, *bw2 = _cstr + _len;
@@ -734,6 +735,7 @@ void String::ReverseUTF8() {
 	}
 	newstr[_len] = 0;
 	SetString(newstr);
+	delete[] newstr;
 }
 
 void String::SetAt(size_t index, char c) {

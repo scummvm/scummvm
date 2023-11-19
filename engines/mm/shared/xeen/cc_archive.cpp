@@ -146,7 +146,7 @@ const Common::ArchiveMemberPtr BaseCCArchive::getMember(const Common::Path &path
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(Common::String(name), *this));
 }
 
 int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {

@@ -31,6 +31,7 @@ enum TheEntityType {
 	kTheBeepOn,
 	kTheButtonStyle,
 	kTheCast,
+	kTheCastlibs,
 	kTheCastMembers,
 	kTheCenterStage,
 	kTheChars,
@@ -44,6 +45,7 @@ enum TheEntityType {
 	kTheCommandDown,
 	kTheControlDown,
 	kTheDate,
+	kTheDeskTopRectList,
 	kTheDoubleClick,
 	kTheExitLock,
 	kTheField,
@@ -142,9 +144,11 @@ enum TheEntityType {
 	kTheTraceLoad,
 	kTheTraceLogFile,
 	kTheUpdateMovieEnabled,
+	kTheVideoForWindowsPresent,
 	kTheWindow,
 	kTheWindowList,
 	kTheWords,
+	kTheXtras,
 	kTheMaxTheEntityType		// This must be always last
 };
 
@@ -184,6 +188,7 @@ enum TheFieldType {
 	kTheLocV,
 	kTheLong,
 	kTheLoop,
+	kTheMemberNum,
 	kTheModal,
 	kTheModified,
 	kTheMoveableSprite,

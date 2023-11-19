@@ -23,10 +23,10 @@
 
 namespace Networking {
 
-ErrorResponse::ErrorResponse(Request *rq, Common::String resp):
+ErrorResponse::ErrorResponse(Request *rq, const Common::String &resp):
 	request(rq), interrupted(false), failed(true), response(resp), httpResponseCode(-1) {}
 
-ErrorResponse::ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode):
+ErrorResponse::ErrorResponse(Request *rq, bool interrupt, bool failure, const Common::String &resp, long httpCode):
 	request(rq), interrupted(interrupt), failed(failure), response(resp), httpResponseCode(httpCode) {}
 
 Request::Request(DataCallback cb, ErrorCallback ecb):
@@ -62,7 +62,7 @@ RequestState Request::state() const { return _state; }
 
 Common::String Request::date() const { return ""; }
 
-void Request::finishError(ErrorResponse error, RequestState state) {
+void Request::finishError(const ErrorResponse &error, RequestState state) {
 	_state = state;
 	if (_errorCallback)
 		(*_errorCallback)(error);

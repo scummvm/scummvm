@@ -32,6 +32,7 @@
 #include <limits.h>
 #include <math.h>
 #include <new>
+#include <limits>
 
 #ifndef RONIN_TIMER_ACCESS
 #define Timer ronin_Timer

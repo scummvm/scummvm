@@ -34,7 +34,7 @@
 #include "common/formats/quicktime.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Common {
 
@@ -140,7 +140,7 @@ void QuickTimeParser::init() {
 void QuickTimeParser::initParseTable() {
 	static const ParseTable p[] = {
 		{ &QuickTimeParser::readDefault, MKTAG('d', 'i', 'n', 'f') },
-		{ &QuickTimeParser::readLeaf,    MKTAG('d', 'r', 'e', 'f') },
+		{ &QuickTimeParser::readDREF,    MKTAG('d', 'r', 'e', 'f') },
 		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
 		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
 		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
@@ -180,6 +180,9 @@ int QuickTimeParser::readDefault(Atom atom) {
 	int err = 0;
 
 	a.offset = atom.offset;
+
+	if (_fd->eos() || _fd->err() || (_fd->pos() == _fd->size()))
+		return -1;
 
 	while(((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
 		a.size = atom.size;
@@ -232,6 +235,9 @@ int QuickTimeParser::readDefault(Atom atom) {
 			uint32 start_pos = _fd->pos();
 			err = (this->*_parseTable[i].func)(a);
 
+			if (!err && (_fd->eos() || _fd->err()))
+				err = -1;
+
 			uint32 left = a.size - _fd->pos() + start_pos;
 
 			if (left > 0) // skip garbage at atom end
@@ -265,7 +271,6 @@ int QuickTimeParser::readMOOV(Atom atom) {
 }
 
 int QuickTimeParser::readCMOV(Atom atom) {
-#ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
 	if (_fd->readUint32BE() != MKTAG('d', 'c', 'o', 'm'))
@@ -290,7 +295,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 
 	// Uncompress the data
 	unsigned long dstLen = uncompressedSize;
-	if (!uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
+	if (!inflateZlib(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
 		free(compressedData);
 		free(uncompressedData);
@@ -311,10 +316,6 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	_fd = oldStream;
 
 	return err;
-#else
-	warning ("zlib not found, cannot read QuickTime cmov atom");
-	return -1;
-#endif
 }
 
 int QuickTimeParser::readMVHD(Atom atom) {
@@ -797,6 +798,76 @@ int QuickTimeParser::readSMI(Atom atom) {
 	return 0;
 }
 
+int QuickTimeParser::readDREF(Atom atom) {
+	if (atom.size > 1) {
+		Track *track = _tracks.back();
+
+		uint32 endPos = _fd->pos() + atom.size;
+		_fd->readUint32BE(); // version + flags
+		uint32 entries = _fd->readUint32BE();
+		for (uint32 i = 0; i < entries && _fd->pos() < endPos; i++) {
+			uint32 size = _fd->readUint32BE();
+			uint32 next = _fd->pos() + size - 4;
+			if (next > endPos) {
+				warning("DREF chunk overflows atom bounds");
+				return 1;
+			}
+			uint32 type = _fd->readUint32BE();
+			_fd->readUint32BE(); // version + flags
+			if (type == MKTAG('a', 'l', 'i', 's')) {
+				if (size < 150) {
+					_fd->seek(next, SEEK_SET);
+					continue;
+				}
+
+				// Macintosh alias record
+				_fd->seek(10, SEEK_CUR);
+
+				uint8 volumeSize = MIN((uint8)27, _fd->readByte());
+				track->volume = _fd->readString('\0', volumeSize);
+				_fd->seek(27 - volumeSize, SEEK_CUR);
+				_fd->seek(12, SEEK_CUR);
+
+				uint8 filenameSize = MIN((uint8)63, _fd->readByte());
+				track->filename = _fd->readString('\0', filenameSize);
+				_fd->seek(63 - filenameSize, SEEK_CUR);
+				_fd->seek(16, SEEK_CUR);
+				debug(5, "volume: %s, filename: %s", track->volume.c_str(), track->filename.c_str());
+
+				track->nlvlFrom = _fd->readSint16BE();
+				track->nlvlTo = _fd->readSint16BE();
+				_fd->seek(16, SEEK_CUR);
+				debug(5, "nlvlFrom: %d, nlvlTo: %d", track->nlvlFrom, track->nlvlTo);
+
+				for (int16 subType = 0; subType != -1 && _fd->pos() < endPos;) {
+					subType = _fd->readSint16BE();
+					uint16 subTypeSize = _fd->readUint16BE();
+					subTypeSize += subTypeSize & 1 ? 1 : 0;
+					if (subType == 2) { // Absolute path
+						track->path = _fd->readString('\0', subTypeSize);
+						if (track->path.substr(0, volumeSize) == track->volume) {
+							track->path = track->path.substr(volumeSize);
+						}
+						debug(5, "path: %s", track->path.c_str());
+					} else if (subType == 0) {
+						track->directory = _fd->readString('\0', subTypeSize);
+						debug(5, "directory: %s", track->directory.c_str());
+					} else {
+						_fd->seek(subTypeSize, SEEK_CUR);
+					}
+				}
+			} else {
+				warning("Unknown DREF type %s", tag2str(type));
+				_fd->seek(next, SEEK_SET);
+			}
+		}
+
+		_fd->seek(endPos, SEEK_SET);
+	}
+
+	return 0;
+}
+
 void QuickTimeParser::close() {
 	for (uint32 i = 0; i < _tracks.size(); i++)
 		delete _tracks[i];
@@ -825,14 +896,35 @@ void QuickTimeParser::flattenEditLists() {
 	//
 	// Other players seem to just play the audio track chunks consecutively without the
 	// 30-sample skips, which produces the correct results, not sure why.
-
+	//
+	//
+	// We also need to account for mixed silent and non-silent tracks.  In Obsidian's
+	// Japanese localization, the vidbot that you talk to at the end of the maze (asset
+	// 4375) has a brief silent edit followed by the actual audio track.  If we
+	// collapse the audio track into the silent edit, then it causes the entire track
+	// to be silent.
 	for (Track *track : _tracks) {
-		if (track->editList.size()) {
-			EditListEntry &lastEntry = track->editList.back();
-			EditListEntry &firstEntry = track->editList.front();
-			firstEntry.trackDuration = (lastEntry.timeOffset + lastEntry.trackDuration);
+		if (track->editList.size() >= 2) {
+			Common::Array<EditListEntry> newEdits;
 
-			track->editList.resize(1);
+			for (const EditListEntry &curEdit : track->editList) {
+				if (newEdits.size() == 0) {
+					newEdits.push_back(curEdit);
+					continue;
+				}
+
+				EditListEntry &prevEdit = newEdits.back();
+				bool prevIsSilent = (prevEdit.mediaTime == -1);
+				bool currentIsSilent = (curEdit.mediaTime == -1);
+
+				if (prevIsSilent != currentIsSilent) {
+					newEdits.push_back(curEdit);
+					continue;
+				} else
+					prevEdit.trackDuration += curEdit.trackDuration;
+			}
+
+			track->editList = Common::move(newEdits);
 		}
 	}
 }
@@ -867,6 +959,8 @@ QuickTimeParser::Track::Track() {
 	frameCount = 0;
 	duration = 0;
 	mediaDuration = 0;
+	nlvlFrom = -1;
+	nlvlTo = -1;
 }
 
 QuickTimeParser::Track::~Track() {

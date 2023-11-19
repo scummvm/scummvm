@@ -66,7 +66,7 @@ private:
 	float mfRadius;
 };
 
-typedef Hpl1::Std::multimap<int, cGameTrigger *, Common::Greater<int> > tGameTriggerMap;
+typedef Common::MultiMap<int, cGameTrigger *, Common::Greater<int> > tGameTriggerMap;
 typedef tGameTriggerMap::iterator tGameTriggerMapIt;
 
 //----------------------------------------

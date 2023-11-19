@@ -50,9 +50,9 @@ int playMovie(int fileNumber) {
 
 
 	Common::SeekableReadStream *stream = g_sludge->_resMan->getData();
-	Common::SeekableSubReadStream video(stream, stream->pos(), stream->pos() + fsize);
+	Common::SeekableSubReadStream *video = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + fsize);
 
-	if (decoder.loadStream(&video))
+	if (decoder.loadStream(video))
 		movieIsPlaying = kMoviePlaying;
 
 	decoder.start();

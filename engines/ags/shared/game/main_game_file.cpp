@@ -750,7 +750,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	//-------------------------------------------------------------------------
 	{
 		AlignedStream align_s(in, Shared::kAligned_Read);
-		game.GameSetupStructBase::ReadFromFile(&align_s);
+		game.GameSetupStructBase::ReadFromFile(&align_s, data_ver);
 	}
 
 	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename);
@@ -859,7 +859,7 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 void PreReadGameData(GameSetupStruct &game, Stream *in, GameDataVersion data_ver) {
 	{
 		AlignedStream align_s(in, Shared::kAligned_Read);
-		_GP(game).ReadFromFile(&align_s);
+		_GP(game).ReadFromFile(&align_s, data_ver);
 	}
 	// Discard game messages we do not need here
 	delete[] _GP(game).load_messages;

@@ -21,8 +21,7 @@
 #ifndef SLUDGE_SPRITES_H
 #define SLUDGE_SPRITES_H
 
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Sludge {
 
@@ -96,13 +95,6 @@ struct SpriteDisplay {
 	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false, byte trans = 255) :
 			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free), transparency(trans) {
 	}
-};
-
-// All sprites are sorted into different "layers" (up to 16) according to their relative y position to z-buffer zones
-typedef Common::List<SpriteDisplay *> SpriteLayer;
-struct SpriteLayers {
-	int numLayers;
-	SpriteLayer layer[16];
 };
 
 } // End of namespace Sludge

@@ -27,7 +27,7 @@
 namespace Toon {
 
 Hotspots::Hotspots(ToonEngine *vm) : _vm(vm) {
-	_items = NULL;
+	_items = nullptr;
 	_numItems = 0;
 }
 

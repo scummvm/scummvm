@@ -258,11 +258,25 @@ void WetEngine::runMainMenu(Code *code) {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
+			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_LEFT && idx > 0) {
+				if (!g_system->hasFeature(OSystem::kFeatureTouchscreen))
+					event.mouse = Common::Point(0, 0);
+
+				if (idx == 1 && (subDamp.contains(event.mouse) || subSoaked.contains(event.mouse))) {
+					if (subDamp.contains(event.mouse)) {
+						playSound("sound/no_rapid.raw", 1, 11025);
+						idx--;
+					} else if (subSoaked.contains(event.mouse)) {
+						playSound("sound/no_rapid.raw", 1, 11025);
+						idx++;
+					}
+				} else if (idx == 1 && subWet.contains(event.mouse)) {
+					//  Nothing
+				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_LEFT) && idx > 0) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx--;
-				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT && idx < 2) {
+				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_RIGHT) && idx < 2) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx++;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN)
@@ -314,6 +328,8 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 			return "NOM :";
 		case Common::ES_ESP:
 			return "NOMBRE :";
+		case Common::KO_KOR:
+			return "\xb7\xa1\x9f\x71\xb7\xb3\x9d\x62:";
 		default:
 			return "ENTER NAME :";
 		}

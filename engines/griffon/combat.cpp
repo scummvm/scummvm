@@ -730,7 +730,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 			rcDest.setWidth(16);
 			rcDest.setHeight(16);
 
-			_tiles[curTileL]->blit(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+			_tiles[curTileL]->blendBlitTo(*_mapBg, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
 		// firehydra sword chest

@@ -44,10 +44,10 @@ class GetClientHandler: public ClientHandler {
 
 public:
 	GetClientHandler(Common::SeekableReadStream *stream);
-	virtual ~GetClientHandler();
+	~GetClientHandler() override;
 
-	virtual void handle(Client *client);
-	void setHeader(Common::String name, Common::String value);
+	void handle(Client *client) override;
+	void setHeader(const Common::String &name, const Common::String &value);
 	void setResponseCode(long code);
 };
 

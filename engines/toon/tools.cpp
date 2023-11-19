@@ -65,6 +65,11 @@ uint32 decompressLZSS(byte *src, byte *dst, int dstsize) {
 			bitbuf >>= 1;
 		}
 	}
+
+	if (len == -1 && dstsize == 0) {
+		return (dstp - dst);
+	}
+
 	len += dstsize;
 	if (len < 0)
 		return 0;

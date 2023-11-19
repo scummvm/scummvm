@@ -64,7 +64,7 @@ const Common::ArchiveMemberPtr ResourceArchive::getMember(const Common::Path &pa
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *ResourceArchive::createReadStreamForMember(const Common::Path &path) const {

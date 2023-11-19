@@ -106,8 +106,7 @@ void Map30::special03() {
 
 			for (uint i = 0; i < g_globals->_party.size(); ++i) {
 				Character &c = g_globals->_party[i];
-				c._age._current = c._age._base =
-					MAX((int)c._age._base - 20, 18);
+				c._age = MAX((int)c._age - 20, 18);
 			}
 
 			g_maps->_currentMap->none160();

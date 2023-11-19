@@ -329,20 +329,30 @@ void SceneScriptUG18::PlayerWalkedIn() {
 		if (Game_Flag_Query(kFlagUG18GuzzaScene)) {
 			switch (Global_Variable_Query(kVariableUG18StateOfGuzzaCorpse)) {
 			case kUG18GuzzaCorpseFloatsDown:
-				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseStuckInPipes);
-				// same logic as using the BB06OVER for doll explosion case in BB06
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
+				// Same logic as using the BB06OVER for doll explosion case in BB06.
+				// (queuing only works on top of a loop that is repeating)
+				// Note that in the current engine implementation the last queued loop
+				// is also supposed to be repeating, which is the case for most queued loops cases.
+				// If it should not, like here, some special case is required for it in VQAPlayer::update(),
+				// see use of _specialUG18DoNotRepeatLastLoop.
+				// Here loop 2 is the last queued loop (queued explicitly in VQAPlayer::update())
+				// which *should not* be repeated more than once.
 				Overlay_Play("UG18OVR2", 0, true, true,  0);
 				Overlay_Play("UG18OVR2", 1, true, false, 0);
 				break;
-			case kUG18GuzzaCorpseStuckInPipes:
-				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
-				Overlay_Play("UG18OVR2", 1, true, true,  0);
-				Overlay_Play("UG18OVR2", 2, false, false, 0);
-				break;
+
+//			case kUG18GuzzaCorpseStuckInPipes:
+//				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
+//				Overlay_Play("UG18OVR2", 1, true, true,  0);
+//				Overlay_Play("UG18OVR2", 2, false, false, 0);
+//				break;
+
 			case kUG18GuzzaCorpseDissolves:
 				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaNoCorpse);
 				Overlay_Remove("UG18OVR2");
 				break;
+
 			default:
 				break;
 			}

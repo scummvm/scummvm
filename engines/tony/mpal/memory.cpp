@@ -36,7 +36,7 @@ namespace MPAL {
  * @return					Returns a MemoryItem instance for the new block
  */
 MpalHandle MemoryManager::allocate(uint32 size, uint flags) {
-	MemoryItem *newItem = (MemoryItem *)malloc(sizeof(MemoryItem) + size);
+	MemoryItem *newItem = (MemoryItem *)malloc(sizeof(MemoryItem) - sizeof(byte[1]) + size);
 	newItem->_id = BLOCK_ID;
 	newItem->_size = size;
 	newItem->_lockCount = 0;
@@ -102,7 +102,7 @@ void MemoryManager::destroyItem(MpalHandle handle) {
 /**
  * Locks an item for access
  */
-byte *MemoryManager::lockItem(MpalHandle handle) {
+void *MemoryManager::lockItem(MpalHandle handle) {
 	MemoryItem *item = (MemoryItem *)handle;
 	assert(item->_id == BLOCK_ID);
 	++item->_lockCount;

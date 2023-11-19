@@ -21,6 +21,10 @@
 
 #include "backends/platform/ios7/ios7_keyboard.h"
 #include "common/keyboard.h"
+#include "common/config-manager.h"
+#ifdef __IPHONE_14_0
+#include <GameController/GameController.h>
+#endif
 
 @interface UITextInputTraits
 - (void)setAutocorrectionType:(int)type;
@@ -49,6 +53,7 @@
 	softKeyboard = keyboard;
 
 	[self setAutocorrectionType:UITextAutocorrectionTypeNo];
+	[self setSpellCheckingType:UITextSpellCheckingTypeNo];
 	[self setAutocapitalizationType:UITextAutocapitalizationTypeNone];
 	[self setEnablesReturnKeyAutomatically:NO];
 #if TARGET_OS_IOS
@@ -68,11 +73,13 @@
 
 	toolbar = [[UITabBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	toolbar.barTintColor = keyboard.backgroundColor;
-	toolbar.tintColor = keyboard.tintColor;
+	toolbar.tintColor = [UIColor grayColor];
 	toolbar.translucent = NO;
 	toolbar.delegate = self;
 
 	toolbar.items = @[
+		// Keyboard layout button
+		[[[UITabBarItem alloc] initWithTitle:@"123" image:nil tag:0] autorelease],
 		// GMM button
 		[[[UITabBarItem alloc] initWithTitle:@"\u2630" image:nil tag:1] autorelease],
 		// Escape key
@@ -131,7 +138,7 @@
 	scrollView.showsHorizontalScrollIndicator = false;
 	toolbar.autoresizingMask = UIViewAutoresizingNone;
 	[scrollView addSubview:toolbar];
-	self.inputAccessoryView = scrollView;
+	self.inputAccessoryView = nil;
 
 #endif
 	return self;
@@ -155,24 +162,19 @@
  * the textField. To be able to handle the cases where the user wants to
  * delete existing texts when the textField is empty the inputView has
  * to implement the UITextInput protocol function deleteBackward that is
- * called every time the backward key is pressed. */
+ * called every time the backward key is pressed.
+ * Propagate all delete callbacks to the backend.
+ */
 -(void)deleteBackward {
-	if ([self hasText]) {
-		/* If the textField has text the backward key presses will be
-		 * forwarded to the EventManager in the delegate function
-		 * textField:shouldChangeTextInRange:replacementText:
-		 * call the super class to delete characters in the textField */
-		[super deleteBackward];
-	} else {
-		/* Forward the key press to the EventManager also in the cases
-		 * where the textField is empty to remove prefilled characters
-		 * in dialogs. */
-		[softKeyboard handleKeyPress:'\b'];
-	}
+	[softKeyboard handleKeyPress:'\b'];
+	[super deleteBackward];
 }
 
 -(void)selectUITabBarItem:(UITapGestureRecognizer *)recognizer {
 	switch ([[toolbar selectedItem] tag]) {
+	case 0:
+		[self switchKeyboardLayout];
+		break;
 	case 1:
 		[self mainMenuKey];
 		break;
@@ -247,24 +249,21 @@
 }
 
 - (void)attachAccessoryView {
-	self.inputAccessoryView.hidden = NO;
-	// Alternatively we could add/remove instead of show/hide the inpute accessory view
-//	self.inputAccessoryView = scrollView;
-//	[self reloadInputViews];
 	// We need at least a width of 1024 pt for the toolbar. If we add more buttons this may need to be increased.
-	toolbar.frame = CGRectMake(0, 0, MAX(1024, [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
+	toolbar.frame = CGRectMake(0, 0, MAX(CGFloat(1024), [[UIScreen mainScreen] bounds].size.width), toolbar.frame.size.height);
 	toolbar.bounds = toolbar.frame;
 	toolbar.selectedItem = nil;
+	self.inputAccessoryView = toolbar;
 #if TARGET_OS_IOS
 	scrollView.contentSize = toolbar.frame.size;
+	self.inputAccessoryView = scrollView;
 #endif
+	[self reloadInputViews];
 }
 
 - (void)detachAccessoryView {
-	self.inputAccessoryView.hidden = YES;
-	// Alternatively we could add/remove instead of show/hide the inpute accessory view
-//	self.inputAccessoryView = nil;
-//	[self reloadInputViews];
+	self.inputAccessoryView = nil;
+	[self reloadInputViews];
 }
 
 - (void) setWantsPriority: (UIKeyCommand*) keyCommand {
@@ -388,19 +387,137 @@
 	[softKeyboard handleKeyPress:Common::KEYCODE_RETURN];
 }
 
+- (void) switchKeyboardLayout {
+	if ([self keyboardType] == UIKeyboardTypeDefault) {
+		[self setKeyboardType:UIKeyboardTypeNumberPad];
+		[[toolbar selectedItem] setTitle:@"abc"];
+	} else {
+		[self setKeyboardType:UIKeyboardTypeDefault];
+		[[toolbar selectedItem] setTitle:@"123"];
+	}
+
+	[self reloadInputViews];
+}
 @end
 
 
-@implementation SoftKeyboard
+@implementation SoftKeyboard {
+	BOOL _keyboardVisible;
+	CGFloat _inputAccessoryHeight;
+}
+
+#if TARGET_OS_IOS
+- (void)resizeParentFrame:(NSNotification*)notification keyboardDidShow:(BOOL)didShow
+{
+	NSDictionary* userInfo = [notification userInfo];
+	CGRect keyboardFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+	keyboardFrame = [self.superview convertRect:keyboardFrame fromView:nil];
+
+	// Base the new frame size on the current parent frame size
+	CGRect newFrame = self.superview.frame;
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			if (didShow) {
+				// The inputAccessoryView is hidden by setting it to nil. Then when
+				// receving the UIKeyboardDidHideNotification the height will be 0.
+				// Remember the height of the inputAccessoryView when it's presented
+				// so the main frame can be resized back to the proper size.
+				_inputAccessoryHeight = inputView.inputAccessoryView.frame.size.height;
+			}
+			newFrame.size.height += (_inputAccessoryHeight) * (didShow ? -1 : 1);
+		} else {
+			newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+		}
+	} else {
+		newFrame.size.height += (keyboardFrame.size.height) * (didShow ? -1 : 1);
+	}
+
+	// Resize with a fancy animation
+	NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+	[UIView animateWithDuration:rate.floatValue animations:^{
+		self.superview.frame = newFrame;
+	}];
+}
+
+- (void)keyboardDidShow:(NSNotification*)notification
+{
+	// NotificationCenter might notify multiple times
+	// when keyboard did show because the accessoryView
+	// affect the keyboard height. However since we use
+	// UIKeyboardFrameEndUserInfoKey to get the keyboard
+	// it will always have the same value. Make sure to
+	// only handle one notification.
+	if (!_keyboardVisible) {
+		[self resizeParentFrame:notification keyboardDidShow:YES];
+		_keyboardVisible = YES;
+	}
+}
+
+- (void)keyboardDidHide:(NSNotification*)notification
+{
+	// NotificationCenter will only call this once
+	// when keyboard did hide.
+	[self resizeParentFrame:notification keyboardDidShow:NO];
+	_keyboardVisible = NO;
+}
+
+- (void)keyboardDidConnect:(NSNotification*)notification
+{
+	[inputView becomeFirstResponder];
+}
+
+- (void)keyboardDidDisconnect:(NSNotification*)notification
+{
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if (GCKeyboard.coalescedKeyboard == nil) {
+			[inputView endEditing:YES];
+		}
+	}
+}
+#endif
 
 - (id)initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:frame];
+
+#if TARGET_OS_IOS
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	 selector:@selector(keyboardDidShow:)
+	 name:UIKeyboardDidShowNotification
+	 object:nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	 selector:@selector(keyboardDidHide:)
+	 name:UIKeyboardDidHideNotification
+	 object:nil];
+#endif
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		 selector:@selector(keyboardDidConnect:)
+		 name:GCKeyboardDidConnectNotification
+	     object:nil];
+
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		 selector:@selector(keyboardDidDisconnect:)
+		 name:GCKeyboardDidDisconnectNotification
+	     object:nil];
+	}
+
 	inputDelegate = nil;
 	inputView = [[TextInputHandler alloc] initWithKeyboard:self];
 	inputView.delegate = self;
 	inputView.clearsOnBeginEditing = YES;
+	inputView.keyboardType = UIKeyboardTypeDefault;
 	[inputView layoutIfNeeded];
+	_keyboardVisible = NO;
+	_inputAccessoryHeight = 0.0f;
 
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		// If already connected to a HW keyboard, start
+		// monitoring key presses
+		if (GCKeyboard.coalescedKeyboard != nil) {
+			[inputView becomeFirstResponder];
+		}
+	}
 	return self;
 }
 
@@ -410,19 +527,15 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text {
-	unichar c;
 	if (text.length) {
-		c = [text characterAtIndex:0];
+		[inputDelegate handleKeyPress:[text characterAtIndex:0]];
 	}
-	else {
-		c = '\b';
-	}
-	[inputDelegate handleKeyPress:c];
 	return YES;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-	[inputView attachAccessoryView];
+	if (ConfMan.getBool("keyboard_fn_bar"))
+		[inputView attachAccessoryView];
 }
 - (void)textFieldDidEndEditing:(UITextField *)textField {
 	[inputView detachAccessoryView];
@@ -445,10 +558,28 @@
 }
 
 - (void)showKeyboard {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if ([inputView isFirstResponder] &&
+			GCKeyboard.coalescedKeyboard != nil) {
+			if (ConfMan.getBool("keyboard_fn_bar")) {
+				[inputView attachAccessoryView];
+			}
+			return;
+		}
+	}
 	[inputView becomeFirstResponder];
 }
 
 - (void)hideKeyboard {
+	if (@available(iOS 14.0, tvOS 14.0, *)) {
+		if ([inputView isFirstResponder] &&
+			GCKeyboard.coalescedKeyboard != nil) {
+			if (!ConfMan.getBool("keyboard_fn_bar")) {
+				[inputView detachAccessoryView];
+			}
+			return;
+		}
+	}
 	[inputView endEditing:YES];
 }
 

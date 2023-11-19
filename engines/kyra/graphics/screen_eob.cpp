@@ -139,8 +139,14 @@ bool Screen_EoB::init() {
 			enableHiColorMode(true);
 			setFontStyles(FID_SJIS_FNT, Font::kStyleFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
-		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
-			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+		} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+			if (_vm->game() == GI_EOB1) {
+				_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+			} else {
+				const char *const *tbl = _vm->staticres()->loadStrings(kEoB2Ascii2SjisTables2, temp);
+				assert(temp > 1);
+				_fonts[FID_SJIS_FNT] = new SJISFontEoB2PC98(_sjisFontShared, /*12,*/ tbl[0], tbl[1]);
+			}
 		}
 
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
@@ -202,11 +208,12 @@ void Screen_EoB::setClearScreenDim(int dim) {
 
 void Screen_EoB::clearCurDim() {
 	static const uint8 amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
-	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->unkA] : _use16ColorMode ? 0 : _curDim->unkA);
+	if (_curDim)
+		fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->col2] : _use16ColorMode ? 0 : _curDim->col2);
 }
 
 void Screen_EoB::clearCurDimOvl(int pageNum) {
-	if (pageNum > 1 || !_useOverlays)
+	if (pageNum > 1 || !_useOverlays || !_curDim)
 		return;
 	addDirtyRect(_curDim->sx << 3, _curDim->sy, _curDim->w << 3, _curDim->h);
 	clearOverlayRect(pageNum, _curDim->sx << 3, _curDim->sy, _curDim->w << 3, _curDim->h);
@@ -304,7 +311,7 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol, int pitch) {
 	if (_isSegaCD && shadowCol) {
 		printText(string, x + 1, y + 1, shadowCol, 0, pitch);
-	} else if (!_isSegaCD && _vm->gameFlags().lang != Common::JA_JPN) {
+	} else if (!_isSegaCD && !_use16ColorMode && !_useHiColorScreen && (_fonts[_currentFont]->getType() == Font::kASCII || _fonts[_currentFont]->getType() == Font::kBIG5)) {
 		printText(string, x - 1, y, shadowCol, col2);
 		printText(string, x, y + 1, shadowCol, 0);
 		printText(string, x - 1, y + 1, shadowCol, 0);
@@ -1708,12 +1715,21 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 		fnt = nullptr;
 	}
 
-	if (fontId == FID_SJIS_SMALL_FNT) {
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
-			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
-		else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+	if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->game() == GI_EOB2) {
+		if (fontId == FID_SJIS_SMALL_FNT) {
+			const char *const *tbl = _vm->staticres()->loadStrings(kEoB2Ascii2SjisTables2, temp);
+			assert(temp > 1);
+			fnt = new PC98Font(12, true, 2, _vm->staticres()->loadRawData(kEoB2FontConvertTbl, temp), tbl[0], tbl[1]);
+		} else {
+			fnt = new PC98Font(12, false, 1);
+		}
+	} else if (fontId == FID_SJIS_SMALL_FNT) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontLookupTbl, temp));
+		} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
 			fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
 				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
+		}
 	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
 	} else if (_isSegaCD) {
@@ -1721,7 +1737,7 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 			_vm->staticres()->loadRawData(kEoB1CharWidthTable1, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable2, temp), _vm->staticres()->loadRawData(kEoB1CharWidthTable3, temp));
 	} else if (fontId == FID_CHINESE_FNT && _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::ZH_TWN) {
 		// We wrap all fonts in Big5 support but FID_CHINESE additionally attempts to match height
-		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+		OldDOSFont *ofnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12, false);
 		ofnt->loadPCBIOSTall();
 		fnt = new ChineseTwoByteFontEoB(_big5, ofnt);
 		fnt->setColorMap(_textColorsMap);
@@ -1977,7 +1993,7 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
 
-OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor) : _renderMode(mode), _shadowColor(shadowColor), _colorMap8bit(0), _colorMap16bit(0) {
+OldDOSFont::OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters) : _renderMode(mode), _shadowColor(shadowColor), _remapCharacters(remapCharacters), _numGlyphsMax(128), _useOverlay(false), _scaleV(1), _colorMap8bit(0), _colorMap16bit(0) {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
@@ -2045,11 +2061,11 @@ bool OldDOSFont::load(Common::SeekableReadStream &file) {
 	if (file.size() - 2 != READ_LE_UINT16(_data))
 		return false;
 
-	_width = _data[0x103];
-	_height = _data[0x102];
+	_width = _data[_numGlyphsMax * 2 + 3];
+	_height = _data[_numGlyphsMax * 2 + 2];
 	_numGlyphs = (READ_LE_UINT16(_data + 2) / 2) - 2;
 
-	_bitmapOffsets = (uint16 *)(_data + 2);
+	_bitmapOffsets = (uint16*)(_data + 2);
 
 	for (int i = 0; i < _numGlyphs; ++i)
 		_bitmapOffsets[i] = READ_LE_UINT16(&_bitmapOffsets[i]);
@@ -2074,9 +2090,13 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color2 = _colorMap8bit[0];
 
 	if (_style == kStyleLeftShadow) {
-		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
-		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
-		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);
+		byte *dst2 = dst;
+		for (int i = 0; i < _scaleV; ++i) {
+			drawCharIntern(c, dst2 + pitch * _scaleV, pitch * _scaleV, 1, _shadowColor, 0);
+			drawCharIntern(c, dst2 - 1, pitch * _scaleV, 1, _shadowColor, 0);
+			drawCharIntern(c, dst2 - 1 + pitch * _scaleV, pitch * _scaleV, 1, _shadowColor, 0);
+			dst2 += pitch;
+		}
 	}
 
 	if (bpp == 2) {
@@ -2084,7 +2104,10 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 		color2 = _colorMap16bit[0];
 	}
 
-	drawCharIntern(c, dst, pitch, bpp, color1, color2);
+	for (int i = 0; i < _scaleV; ++i) {
+		drawCharIntern(c, dst, pitch * _scaleV, bpp, color1, color2);
+		dst += pitch;
+	}
 }
 
 void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const {
@@ -2092,7 +2115,8 @@ void OldDOSFont::drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col
 		0x0000, 0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00, 0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
 	};
 
-	c = convert(c);
+	if (_remapCharacters)
+		c = convert(c);
 
 	if (c >= _numGlyphs)
 		return;
@@ -2249,7 +2273,10 @@ void OldDOSFont::unload() {
 }
 
 uint16 ChineseTwoByteFontEoB::translateBig5(uint16 in) const {
-	if (in < 0x80)
+	// The original explicitly turns the braces '<' and '>' into '"'.
+	if (in == '<' || in == '>')
+		return '\"';
+	else if (in < 0x80)
 		return in;
 	in = ((in & 0xff00) >> 8) | ((in & 0xff) << 8);
 	if (_big5->hasGlyphForBig5Char(in))
@@ -2264,7 +2291,7 @@ int ChineseTwoByteFontEoB::getCharWidth(uint16 c) const {
 
 int ChineseTwoByteFontEoB::getCharHeight(uint16 c) const {
 	uint16 t = translateBig5(c);
-	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight() + 1;
+	return (t < 0x80) ? _singleByte->getCharHeight(t) : _big5->getFontHeight();
 }
 
 void ChineseTwoByteFontEoB::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {

@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views_enh/dead.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
@@ -34,6 +35,9 @@ bool Dead::msgFocus(const FocusMessage &msg) {
 	g_globals->_party.clear();
 	g_globals->_roster.load();
 	g_globals->_activeSpells.clear();
+
+	// Play the Xeen death sound
+	g_engine->_sound->playSound("xeenlaff.voc");
 
 	return true;
 }

@@ -24,6 +24,8 @@
 
 namespace Common {
 class String;
+class FSNode;
+class Path;
 }
 
 namespace Director {
@@ -33,21 +35,24 @@ char *numToCastNum(int num);
 
 bool isAbsolutePath(Common::String &path);
 
+Common::Path toSafePath(Common::String &path);
 Common::String convertPath(Common::String &path);
 
 Common::String unixToMacPath(const Common::String &path);
 
 Common::String getPath(Common::String path, Common::String cwd);
 
-bool testPath(Common::String &path, bool directory = false);
+Common::Path resolveFSPath(Common::String &path, Common::Path &base, bool directory);
+Common::Path resolvePath(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPath(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path resolvePartialPathWithFuzz(Common::String &path, Common::Path &base, bool directory, const char **exts);
+Common::Path findPath(Common::String &path, bool currentFolder = true, bool searchPaths = true, bool directory = false, const char **exts = nullptr);
+Common::Path findMoviePath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
+Common::Path findAudioPath(Common::String &path, bool currentFolder = true, bool searchPaths = true);
 
-Common::String pathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false);
-
-Common::String wrappedPathMakeRelative(Common::String path, bool recursive = true, bool addexts = true, bool directory = false, bool absolute = false);
 
 bool hasExtension(Common::String filename);
-
-Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath);
 
 Common::String getFileName(Common::String path);
 
@@ -94,6 +99,9 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId);
 int charToNum(Common::u32char_type_t ch);
 Common::u32char_type_t numToChar(int num);
 int compareStrings(const Common::String &s1, const Common::String &s2);
+
+// Our implementation of strstr() with Director character order
+const char *d_strstr(const char *str, const char *substr);
 
 Common::String encodePathForDump(const Common::String &path);
 

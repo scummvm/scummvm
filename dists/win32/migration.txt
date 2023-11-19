@@ -9,10 +9,12 @@ COPYING.MKV.txt
 COPYING.OFL.txt
 COPYING.TINYGL
 COPYING.GLAD
+CatharonLicense.txt
 COPYING.txt
 COPYRIGHT.txt
 access.dat
 achievements.dat
+classicmacfonts.dat
 cryo.dat
 cryomni3d.dat
 drascula.dat
@@ -58,6 +60,7 @@ toon.dat
 tony.dat
 translations.dat
 ultima.dat
+ultima8.dat
 wintermute.zip
 unins000.dat
 unins000.exe

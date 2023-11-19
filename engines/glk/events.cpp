@@ -410,7 +410,7 @@ void Events::setCursor(CursorId cursorId) {
 			const Surface &s = _cursors[cursorId];
 			const int TRANSPARENT = s.format.RGBToColor(TRANSPARENT_RGB, TRANSPARENT_RGB, TRANSPARENT_RGB);
 
-			CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s._hotspot.x, s._hotspot.y, TRANSPARENT, true, &s.format);
+			CursorMan.replaceCursor(s, s._hotspot.x, s._hotspot.y, TRANSPARENT, true);
 		}
 
 		_cursorId = cursorId;

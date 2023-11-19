@@ -28,6 +28,8 @@
 #include "common/str.h"
 #include "common/rect.h"
 
+#include "graphics/renderer.h"
+
 #include "engines/grim/material.h"
 
 namespace Graphics {
@@ -265,6 +267,8 @@ public:
 
 	virtual void createSpecialtyTexture(uint id, const uint8 *data, int width, int height);
 	virtual void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) = 0;
+
+	Graphics::RendererType type;
 
 	static Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up);
 	static Math::Matrix4 makeProjMatrix(float fov, float nclip, float fclip);

@@ -51,6 +51,9 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
 	g_paletteLookup = new Graphics::PaletteLookup;
+
+	_isPeril = !strcmp(_desc->gameId, kPeril);
+	_isPerilDemo = _isPeril  && (_desc->flags & ADGF_DEMO);
 }
 
 PinkEngine::~PinkEngine() {
@@ -183,7 +186,7 @@ void PinkEngine::load(Archive &archive) {
 	_modules.deserialize(archive);
 }
 
-void PinkEngine::initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile) {
+void PinkEngine::initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile) {
 	if (_module)
 		removeModule();
 
@@ -230,7 +233,7 @@ void PinkEngine::removeModule() {
 	for (uint i = 0; i < _modules.size(); ++i) {
 		if (_module == _modules[i]) {
 			_pdaMgr.close();
-			_modules[i] = new ModuleProxy(_module->getName());
+			_modules[i] = new ModuleProxy(Common::String(_module->getName()));
 			delete _module;
 			_module = nullptr;
 			break;
@@ -314,7 +317,11 @@ void PinkEngine::pauseEngineIntern(bool pause) {
 }
 
 bool PinkEngine::isPeril() const {
-	return !strcmp(_desc->gameId, kPeril);
+	return _isPeril;
+}
+
+bool PinkEngine::isPerilDemo() const {
+	return _isPerilDemo;
 }
 
 }

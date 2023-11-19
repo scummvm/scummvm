@@ -25,7 +25,7 @@
 namespace Cloud {
 namespace Id {
 
-IdListDirectoryRequest::IdListDirectoryRequest(IdStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
+IdListDirectoryRequest::IdListDirectoryRequest(IdStorage *storage, const Common::String &path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive):
 	Networking::Request(nullptr, ecb),
 	_requestedPath(path), _requestedRecursive(recursive), _storage(storage), _listDirectoryCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -51,12 +51,12 @@ void IdListDirectoryRequest::start() {
 	_ignoreCallback = false;
 
 	//find out that directory's id
-	Storage::UploadCallback innerCallback = new Common::Callback<IdListDirectoryRequest, Storage::UploadResponse>(this, &IdListDirectoryRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::idResolveErrorCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<IdListDirectoryRequest, const Storage::UploadResponse &>(this, &IdListDirectoryRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdListDirectoryRequest, const Networking::ErrorResponse &>(this, &IdListDirectoryRequest::idResolveErrorCallback);
 	_workingRequest = _storage->resolveFileId(_requestedPath, innerCallback, innerErrorCallback);
 }
 
-void IdListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
+void IdListDirectoryRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -69,7 +69,7 @@ void IdListDirectoryRequest::idResolvedCallback(Storage::UploadResponse response
 	listNextDirectory();
 }
 
-void IdListDirectoryRequest::idResolveErrorCallback(Networking::ErrorResponse error) {
+void IdListDirectoryRequest::idResolveErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -87,12 +87,12 @@ void IdListDirectoryRequest::listNextDirectory() {
 	_currentDirectory = _directoriesQueue.back();
 	_directoriesQueue.pop_back();
 
-	Storage::FileArrayCallback callback = new Common::Callback<IdListDirectoryRequest, Storage::FileArrayResponse>(this, &IdListDirectoryRequest::listedDirectoryCallback);
-	Networking::ErrorCallback failureCallback = new Common::Callback<IdListDirectoryRequest, Networking::ErrorResponse>(this, &IdListDirectoryRequest::listedDirectoryErrorCallback);
+	Storage::FileArrayCallback callback = new Common::Callback<IdListDirectoryRequest, const Storage::FileArrayResponse &>(this, &IdListDirectoryRequest::listedDirectoryCallback);
+	Networking::ErrorCallback failureCallback = new Common::Callback<IdListDirectoryRequest, const Networking::ErrorResponse &>(this, &IdListDirectoryRequest::listedDirectoryErrorCallback);
 	_workingRequest = _storage->listDirectoryById(_currentDirectory.id(), callback, failureCallback);
 }
 
-void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse response) {
+void IdListDirectoryRequest::listedDirectoryCallback(const Storage::FileArrayResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -100,7 +100,7 @@ void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse 
 		_date = response.request->date();
 
 	for (uint32 i = 0; i < response.value.size(); ++i) {
-		StorageFile &file = response.value[i];
+		StorageFile file = response.value[i];
 		Common::String path = _currentDirectory.path();
 		if (path.size() && path.lastChar() != '/' && path.lastChar() != '\\')
 			path += '/';
@@ -115,7 +115,7 @@ void IdListDirectoryRequest::listedDirectoryCallback(Storage::FileArrayResponse 
 	listNextDirectory();
 }
 
-void IdListDirectoryRequest::listedDirectoryErrorCallback(Networking::ErrorResponse error) {
+void IdListDirectoryRequest::listedDirectoryErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -130,7 +130,7 @@ void IdListDirectoryRequest::restart() { start(); }
 
 Common::String IdListDirectoryRequest::date() const { return _date; }
 
-void IdListDirectoryRequest::finishListing(Common::Array<StorageFile> &files) {
+void IdListDirectoryRequest::finishListing(const Common::Array<StorageFile> &files) {
 	Request::finishSuccess();
 	if (_listDirectoryCallback)
 		(*_listDirectoryCallback)(Storage::ListDirectoryResponse(this, files));

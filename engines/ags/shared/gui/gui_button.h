@@ -58,6 +58,15 @@ enum LegacyButtonAlignment {
 	kLegacyButtonAlign_BottomRight = 8,
 };
 
+// Defines button placeholder mode; the mode is set
+// depending on special tags found in button text
+enum GUIButtonPlaceholder {
+	kButtonPlace_None,
+	kButtonPlace_InvItemStretch,
+	kButtonPlace_InvItemCenter,
+	kButtonPlace_InvItemAuto
+};
+
 class GUIButton : public GUIObject {
 public:
 	GUIButton();
@@ -66,6 +75,7 @@ public:
 	const String &GetText() const;
 	bool IsImageButton() const;
 	bool IsClippingImage() const;
+	GUIButtonPlaceholder GetPlaceholder() const;
 
 	// Operations
 	Rect CalcGraphicRect(bool clipped) override;
@@ -107,15 +117,6 @@ private:
 	void DrawText(Bitmap *ds, int x, int y, bool draw_disabled);
 	void DrawTextButton(Bitmap *ds, int x, int y, bool draw_disabled);
 	void PrepareTextToDraw();
-
-	// Defines button placeholder mode; the mode is set
-	// depending on special tags found in button text
-	enum GUIButtonPlaceholder {
-		kButtonPlace_None,
-		kButtonPlace_InvItemStretch,
-		kButtonPlace_InvItemCenter,
-		kButtonPlace_InvItemAuto
-	};
 
 	// Text property set by user
 	String _text;

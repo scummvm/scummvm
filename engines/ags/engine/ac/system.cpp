@@ -351,7 +351,7 @@ RuntimeScriptValue Sc_System_SaveConfigToFile(const RuntimeScriptValue *params, 
 
 RuntimeScriptValue Sc_System_Log(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF_PURE(Sc_System_Log, 2);
-	Debug::Printf(kDbgGroup_Script, (MessageType)params[0].IValue, scsf_buffer);
+	Debug::Printf(kDbgGroup_Script, (MessageType)params[0].IValue, "%s", scsf_buffer);
 	return RuntimeScriptValue((int32_t)0);
 }
 

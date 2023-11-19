@@ -39,6 +39,7 @@ GfxFontKorean::GfxFontKorean(GfxScreen *screen, GuiResourceId resourceId)
 }
 
 GfxFontKorean::~GfxFontKorean() {
+	delete _commonFont;
 }
 
 GuiResourceId GfxFontKorean::getResourceId() {

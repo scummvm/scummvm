@@ -73,7 +73,7 @@ private:
 		&Map38::special18
 	};
 public:
-	Map38() : Map(38, "qvl2", 0x703, 3) {}
+	Map38() : Map(38, "qvl2", 0x703, 3, "Wizard's Lair 2") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

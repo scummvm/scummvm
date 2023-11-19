@@ -69,7 +69,7 @@ int CurlSocket::ready() {
 	return waitOnSocket(_socket, 1, 0);
 }
 
-bool CurlSocket::connect(Common::String url) {
+bool CurlSocket::connect(const Common::String &url) {
 	_easy = curl_easy_init();
 	if (_easy) {
 		curl_easy_setopt(_easy, CURLOPT_URL, url.c_str());
@@ -83,9 +83,9 @@ bool CurlSocket::connect(Common::String url) {
 #if defined NINTENDO_SWITCH || defined PSP2
 		curl_easy_setopt(_easy, CURLOPT_SSL_VERIFYPEER, 0);
 #endif
-		const char *caCertPath = ConnMan.getCaCertPath();
-		if (caCertPath) {
-			curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath);
+		Common::String caCertPath = ConnMan.getCaCertPath();
+		if (!caCertPath.empty()) {
+			curl_easy_setopt(_easy, CURLOPT_CAINFO, caCertPath.c_str());
 		}
 
 		CURLcode res = curl_easy_perform(_easy);
@@ -168,7 +168,7 @@ size_t CurlSocket::recv(void *data, int maxLen) {
 		return nread;
 	}
 
-	debug(1, "libcurl: Received %llu bytes", (unsigned long long)nread);
+	debug(3, "libcurl: Received %llu bytes", (unsigned long long)nread);
 	return nread;
 }
 

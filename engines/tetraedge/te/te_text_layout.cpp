@@ -26,6 +26,8 @@
 #include "tetraedge/te/te_renderer.h"
 #include "tetraedge/te/te_text_layout.h"
 #include "tetraedge/te/te_text_layout_xml_parser.h"
+#include "tetraedge/te/te_font3.h"
+#include "tetraedge/te/te_font2.h"
 
 namespace Tetraedge {
 
@@ -55,17 +57,17 @@ void TeTextLayout::draw() {
 
 }
 
-static TeFont3::AlignStyle _alignNameToEnum(const Common::String &name) {
+static TeIFont::AlignStyle _alignNameToEnum(const Common::String &name) {
 	if (name == "left")
-		return TeFont3::AlignLeft;
+		return TeIFont::AlignLeft;
 	else if (name == "right")
-		return TeFont3::AlignRight;
+		return TeIFont::AlignRight;
 	else if (name == "justify")
-		return TeFont3::AlignJustify;
+		return TeIFont::AlignJustify;
 	else if (name =="center")
-		return TeFont3::AlignCenter;
+		return TeIFont::AlignCenter;
 	warning("Unknown text align style: %s", name.c_str());
-	return TeFont3::AlignLeft;
+	return TeIFont::AlignLeft;
 }
 
 void TeTextLayout::setText(const Common::String &val) {
@@ -116,10 +118,14 @@ void TeTextLayout::setText(const Common::String &val) {
 	if (parser.fontSize())
 		_baseFontSize = parser.fontSize();
 
-	if (parser.fontFile().size()) {
+	if (!parser.fontFile().empty()) {
 		Common::Path fontPath(parser.fontFile());
 		Common::FSNode fontNode = g_engine->getCore()->findFile(fontPath);
-		TeIntrusivePtr<TeFont3> font = g_engine->getResourceManager()->getResource<TeFont3>(fontNode);
+		TeIntrusivePtr<TeIFont> font;
+		if (parser.fontFile().hasSuffixIgnoreCase(".ttf"))
+			font = g_engine->getResourceManager()->getResource<TeFont3>(fontNode).get();
+		else
+			font = g_engine->getResourceManager()->getResource<TeFont2>(fontNode).get();
 		//font->load(fontPath); // lazy load this later.
 		_base.setFont(0, font);
 	}

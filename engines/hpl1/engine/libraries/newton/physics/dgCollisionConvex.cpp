@@ -677,8 +677,8 @@ dgVector dgCollisionConvex::CalculateVolumeIntegral(
 	if (buoyancyPlane) {
 		dgPlane globalPlane;
 		// if (buoyancyPlane (GetUserData(), context, globalMatrix, globalPlane)) {
-		if (buoyancyPlane((void *)(intptr_t)SetUserDataID(), context, globalMatrix,
-		                  globalPlane)) {
+		if (buoyancyPlane((intptr_t)SetUserDataID(), context, &globalMatrix.m_front.m_x,
+						  &globalPlane.m_x)) {
 			globalPlane = globalMatrix.UntransformPlane(globalPlane);
 			cg = CalculateVolumeIntegral(globalPlane);
 		}
@@ -1618,7 +1618,7 @@ dgFloat32 dgCollisionConvex::RayCast(const dgVector &localP0,
 #define DG_AREA (DG_LEN * DG_LEN)
 #define DG_VOL (DG_AREA * DG_LEN)
 
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 

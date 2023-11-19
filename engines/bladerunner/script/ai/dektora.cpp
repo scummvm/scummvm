@@ -1138,6 +1138,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptDektora::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -1497,6 +1498,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptDektora::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

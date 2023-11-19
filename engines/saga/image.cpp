@@ -139,6 +139,7 @@ bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuff
 			byte *uncompressed = Common::PowerPackerStream::unpackBuffer(RLE_data_ptr + 4, RLE_data_len - 4, uncompressed_len);
 			if (uncompressed == nullptr || (int) uncompressed_len != pitch * hdr.height) {
 				warning("Uncompressed size mismatch: %d vs %d", uncompressed_len, pitch * hdr.height);
+				delete[] uncompressed;
 				return false;
 			}
 			if (isAGA() && pitch == hdr.width) {
@@ -149,8 +150,10 @@ bool SagaEngine::decodeBGImage(const ByteArray &imageData, ByteArray &outputBuff
 				for (int y = 0; y < hdr.height; y++)
 					memcpy(outputBuffer.getBuffer() + y * hdr.width, uncompressed + y * pitch, hdr.width);
 			} else {
-				if (!unbankAmiga(outputBuffer, uncompressed, uncompressed_len, hdr.height, hdr.width, bitnum))
+				if (!unbankAmiga(outputBuffer, uncompressed, uncompressed_len, hdr.height, hdr.width, bitnum)) {
+					delete[] uncompressed;
 					return false;
+				}
 			}
 			delete[] uncompressed;
 		} else {

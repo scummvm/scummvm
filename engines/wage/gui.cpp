@@ -64,10 +64,10 @@ namespace Wage {
 static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuHighLevel, "File",	0, 0, false },
 	{ kMenuHighLevel, "Edit",	0, 0, false },
-	{ kMenuFile, "New",			kMenuActionNew, 0, false },
+	{ kMenuFile, "New",			kMenuActionNew, 0, true },
 	{ kMenuFile, "Open...",		kMenuActionOpen, 0, true },
-	{ kMenuFile, "Close",		kMenuActionClose, 0, true },
-	{ kMenuFile, "Save",		kMenuActionSave, 0, true },
+	{ kMenuFile, "Close",		kMenuActionClose, 0, false },
+	{ kMenuFile, "Save",		kMenuActionSave, 0, false },
 	{ kMenuFile, "Save as...",	kMenuActionSaveAs, 0, true },
 	{ kMenuFile, "Revert",		kMenuActionRevert, 0, false },
 	{ kMenuFile, "Quit",		kMenuActionQuit, 0, true },
@@ -266,18 +266,34 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 	case kMenuActionAbout:
 		_engine->aboutDialog();
 		break;
+
 	case kMenuActionNew:
+		_engine->_restartRequested = true;
+		break;
+
 	case kMenuActionClose:
+		// This is a no-op as we do not let new game to be opened
+		break;
+
 	case kMenuActionRevert:
-	case kMenuActionQuit:
-		warning("STUB: executeMenuCommand: action: %d", action);
+		if (_engine->_defaultSaveSlot != -1) {
+			_engine->_isGameOver = false;
+			_engine->loadGameState(_engine->_defaultSaveSlot);
+		}
 		break;
 
 	case kMenuActionOpen:
 		_engine->scummVMSaveLoadDialog(false);
 		break;
 
+	case kMenuActionQuit:
+		_engine->saveDialog();
+		break;
+
 	case kMenuActionSave:
+		_engine->saveGame();
+		break;
+
 	case kMenuActionSaveAs:
 		_engine->scummVMSaveLoadDialog(true);
 		break;
@@ -398,6 +414,14 @@ void Gui::enableNewGameMenus() {
 	_menu->enableCommand(kMenuFile, kMenuActionNew, true);
 	_menu->enableCommand(kMenuFile, kMenuActionOpen, true);
 	_menu->enableCommand(kMenuFile, kMenuActionQuit, true);
+}
+
+void Gui::enableSave() {
+	_menu->enableCommand(kMenuFile, kMenuActionSave, true);
+}
+
+void Gui::enableRevert() {
+	_menu->enableCommand(kMenuFile, kMenuActionRevert, true);
 }
 
 } // End of namespace Wage

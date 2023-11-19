@@ -1066,7 +1066,7 @@ void AGOSEngine::stopAnimate(uint16 a) {
 void AGOSEngine::waitForSync(uint a) {
 	const uint maxCount = (getGameType() == GType_SIMON1) ? 1000 : 2500;
 
-	if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && (getFeatures() & GF_TALKIE)) {
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_TALKIE)) {
 		if (a != 200) {
 			uint16 tmp = _lastVgaWaitFor;
 			_lastVgaWaitFor = 0;

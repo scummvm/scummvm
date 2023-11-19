@@ -32,12 +32,15 @@ struct MetadataGame {
 	Common::String engine_id;
 	Common::String company_id;
 	Common::String moby_id;
+	Common::String zoom_id;
+	Common::String year;
 	Common::String datafiles;
 	Common::String series_id;
 
 	MetadataGame() {}
-	MetadataGame(const Common::String i, const Common::String n, const Common::String eid, const Common::String cid, const Common::String mid, const Common::String df, const Common::String sid)
-		: id(i), name(n), engine_id(eid), company_id(cid), moby_id(mid), datafiles(df), series_id(sid) {}
+	MetadataGame(const Common::String i, const Common::String n, const Common::String eid, const Common::String cid,
+		const Common::String mid, const Common::String df, const Common::String sid, const Common::String zid, const Common::String yr)
+		: id(i), name(n), engine_id(eid), company_id(cid), year(yr), moby_id(mid), datafiles(df), zoom_id(zid), series_id(sid) {}
 };
 
 struct MetadataEngine {
@@ -90,11 +93,13 @@ protected:
 				XML_PROP(engine_id, true)
 				XML_PROP(company_id, true)
 				XML_PROP(moby_id, true)
+				XML_PROP(year, false)
 				XML_PROP(datafiles, true)
 				XML_PROP(wikipedia_page, true)
 				XML_PROP(series_id, true)
 				XML_PROP(steam_id, false)
 				XML_PROP(gog_id, false)
+				XML_PROP(zoom_id, false)
 				XML_PROP(additional_stores, false)
 			KEY_END() // game end
 		KEY_END() // games end

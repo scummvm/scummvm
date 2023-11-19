@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">确认</string>
+  <string name="quit">離開</string>
+  <string name="customkeyboardview_keycode_cancel">取消</string>
+</resources>

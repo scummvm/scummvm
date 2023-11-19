@@ -283,7 +283,6 @@ Common::Error DragonsEngine::run() {
 	delete _sound;
 	delete _strPlayer;
 
-	debug("Ok");
 	return Common::kNoError;
 }
 

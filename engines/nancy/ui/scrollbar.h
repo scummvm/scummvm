@@ -33,6 +33,7 @@ namespace UI {
 class Scrollbar : public RenderObject {
 public:
 	Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
+	Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, Graphics::ManagedSurface &srcSurf, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
 	virtual ~Scrollbar() = default;
 
 	void init() override;
@@ -42,6 +43,7 @@ public:
 	void resetPosition();
 	float getPos() const { return _currentPosition; }
 
+    void setPosition(float pos);
 	void calculatePosition();
 
 	Common::Point _startPosition;

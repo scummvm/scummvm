@@ -39,7 +39,10 @@ class LabEntry : public Common::ArchiveMember {
 public:
 	LabEntry(const Common::String &name, uint32 offset, uint32 len, Lab *parent);
 	Common::String getName() const override { return _name; }
+	Common::String getFileName() const override { return _name; }
+	Common::Path getPathInArchive() const override { return _name; }
 	Common::SeekableReadStream *createReadStream() const override;
+	Common::SeekableReadStream *createReadStreamForAltStream(Common::AltStreamType altStreamType) const override { return nullptr; }
 	friend class Lab;
 };
 

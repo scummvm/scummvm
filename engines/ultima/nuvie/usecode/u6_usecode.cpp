@@ -2328,9 +2328,9 @@ bool U6UseCode::use_sextant(Obj *obj, UseCodeEvent ev) {
 
 	location = player->get_actor()->get_location();
 
-//only use sextant on surface level.
-	if (location.z == 0) {
-		x = location.x / 8;
+//only use sextant on surface level or in the gargoyle underworld.
+	if (location.z == 0 || location.z == 5) {
+		x = location.x / (location.z ? 2 : 8);
 		if (x > 38) {
 			lon = 'E';
 			x -= 38;
@@ -2339,7 +2339,7 @@ bool U6UseCode::use_sextant(Obj *obj, UseCodeEvent ev) {
 			lon = 'W';
 		}
 
-		y = location.y / 8;
+		y = location.y / (location.z ? 2 : 8);
 		if (y > 45) {
 			lat = 'S';
 			y -= 45;

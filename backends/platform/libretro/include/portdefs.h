@@ -25,6 +25,7 @@
 #include <limits.h>
 #include <math.h>
 #include <new>
+#include <limits>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>

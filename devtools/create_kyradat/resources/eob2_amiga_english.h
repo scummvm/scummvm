@@ -893,7 +893,7 @@ static const char *const kEoB2MainMenuStringsAmigaEnglish[5] = {
 	"START A NEW PARTY\r",
 	"TRANSFER EOB I PARTY\r",
 	"RUN INTRODUCTION\r",
-	"FORMAT SAVE GAME DISK\r"
+	"EXIT TO DOS\r"
 };
 
 static const StringListProvider kEoB2MainMenuStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB2MainMenuStringsAmigaEnglish), kEoB2MainMenuStringsAmigaEnglish };

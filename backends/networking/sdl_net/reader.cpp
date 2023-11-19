@@ -151,7 +151,7 @@ bool Reader::readBlockHeadersIntoStream(Common::WriteStream *stream) {
 }
 
 namespace {
-void readFromThatUntilLineEnd(const char *cstr, Common::String needle, Common::String &result) {
+void readFromThatUntilLineEnd(const char *cstr, const Common::String &needle, Common::String &result) {
 	const char *position = strstr(cstr, needle.c_str());
 
 	if (position) {
@@ -233,7 +233,7 @@ void Reader::parseFirstLine(const Common::String &headersToParse) {
 	if (bad) _isBadRequest = true;
 }
 
-void Reader::parsePathQueryAndAnchor(Common::String pathToParse) {
+void Reader::parsePathQueryAndAnchor(const Common::String &pathToParse) {
 	//<path>[?query][#anchor]
 	bool readingPath = true;
 	bool readingQuery = false;
@@ -524,7 +524,7 @@ Common::String Reader::path() const { return _path; }
 
 Common::String Reader::query() const { return _query; }
 
-Common::String Reader::queryParameter(Common::String name) const { return _queryParameters.getValOrDefault(name); }
+Common::String Reader::queryParameter(const Common::String &name) const { return _queryParameters.getValOrDefault(name); }
 
 Common::String Reader::anchor() const { return _anchor; }
 

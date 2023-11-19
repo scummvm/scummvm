@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define ANSWER_OFFSET 477
+
 void Map39::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 19; ++i) {
@@ -137,6 +139,32 @@ void Map39::special14() {
 
 void Map39::special18() {
 	send(SoundMessage(STRING["maps.wall_painted"]));
+}
+
+void Map39::riddleAnswered(const Common::String &answer) {
+	Common::String properAnswer;
+
+	for (int i = 0; i < 12 && _data[ANSWER_OFFSET + i]; ++i)
+		properAnswer += _data[ANSWER_OFFSET + i] - 64;
+
+	if (answer.equalsIgnoreCase(properAnswer)) {
+		g_maps->clearSpecial();
+		Sound::sound(SOUND_3);
+		redrawGame();
+
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			g_globals->_party[i]._flags[5] |= CHARFLAG5_20;
+		}
+
+		g_globals->_treasure._items[2] = CRYSTAL_KEY_ID;
+		g_events->addAction(KEYBIND_SEARCH);
+
+	} else {
+		g_maps->_mapPos.x = 9;
+		updateGame();
+
+		send(InfoMessage(STRING["maps.map39.ruby2"]));
+	}
 }
 
 } // namespace Maps

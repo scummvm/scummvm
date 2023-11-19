@@ -48,6 +48,10 @@ struct function {
 	operator _Fty &() {
 		return *_fn;
 	}
+
+	operator bool() const {
+		return _fn != nullptr;
+	}
 };
 
 } // namespace std

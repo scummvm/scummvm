@@ -431,7 +431,9 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorLucy, 360, 13);
 		Actor_Says(kActorMcCoy, 1710, 13);
 
-		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) { // cut feature? if this is set lucy will not run into hf04
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
+			// TODO A cut feature? if this is set lucy will not run into hf04
+			// Also this dialogue takes place in HF03 script too, but with different animations
 			Actor_Says(kActorLucy, 940, 13);
 			Actor_Says(kActorMcCoy, 6780, 12);
 			Actor_Says(kActorLucy, 950, 12);
@@ -460,6 +462,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorLucy, 370, 14);
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WalkAway);
 
+		// TODO A bug? Should this be here after Lucy walks away? (It's this way in original)
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyRanAway);
 			Game_Flag_Set(kFlagLucyRanAway);
@@ -721,6 +724,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptLucy::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -843,6 +847,10 @@ bool AIScriptLucy::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = kLucyStateDie;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptLucy::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

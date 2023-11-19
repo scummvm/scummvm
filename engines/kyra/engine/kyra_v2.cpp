@@ -110,6 +110,10 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 		_lang = 3;
 		break;
 
+	case Common::PL_POL:
+		_lang = 4;
+		break;
+
 	default:
 		warning("unsupported language, switching back to English");
 		_lang = 0;

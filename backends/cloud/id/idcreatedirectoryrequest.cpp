@@ -26,7 +26,7 @@
 namespace Cloud {
 namespace Id {
 
-IdCreateDirectoryRequest::IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
+IdCreateDirectoryRequest::IdCreateDirectoryRequest(IdStorage *storage, const Common::String &parentPath, const Common::String &directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb):
 	Networking::Request(nullptr, ecb),
 	_requestedParentPath(parentPath), _requestedDirectoryName(directoryName), _storage(storage), _boolCallback(cb),
 	_workingRequest(nullptr), _ignoreCallback(false) {
@@ -53,8 +53,8 @@ void IdCreateDirectoryRequest::start() {
 	if (prefix.size() > 7)
 		prefix.erase(7);
 	if (prefix.equalsIgnoreCase("ScummVM")) {
-		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, Storage::BoolResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryCallback);
-		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback);
+		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, const Storage::BoolResponse &>(this, &IdCreateDirectoryRequest::createdBaseDirectoryCallback);
+		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback);
 		_workingRequest = _storage->createDirectory("ScummVM", callback, failureCallback);
 		return;
 	}
@@ -62,7 +62,7 @@ void IdCreateDirectoryRequest::start() {
 	resolveId();
 }
 
-void IdCreateDirectoryRequest::createdBaseDirectoryCallback(Storage::BoolResponse response) {
+void IdCreateDirectoryRequest::createdBaseDirectoryCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -71,7 +71,7 @@ void IdCreateDirectoryRequest::createdBaseDirectoryCallback(Storage::BoolRespons
 	resolveId();
 }
 
-void IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback(Networking::ErrorResponse error) {
+void IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -82,8 +82,8 @@ void IdCreateDirectoryRequest::createdBaseDirectoryErrorCallback(Networking::Err
 
 void IdCreateDirectoryRequest::resolveId() {
 	//check whether such folder already exists
-	Storage::UploadCallback innerCallback = new Common::Callback<IdCreateDirectoryRequest, Storage::UploadResponse>(this, &IdCreateDirectoryRequest::idResolvedCallback);
-	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::idResolveFailedCallback);
+	Storage::UploadCallback innerCallback = new Common::Callback<IdCreateDirectoryRequest, const Storage::UploadResponse &>(this, &IdCreateDirectoryRequest::idResolvedCallback);
+	Networking::ErrorCallback innerErrorCallback = new Common::Callback<IdCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &IdCreateDirectoryRequest::idResolveFailedCallback);
 	Common::String path = _requestedParentPath;
 	if (_requestedParentPath != "")
 		path += "/";
@@ -91,7 +91,7 @@ void IdCreateDirectoryRequest::resolveId() {
 	_workingRequest = _storage->resolveFileId(path, innerCallback, innerErrorCallback);
 }
 
-void IdCreateDirectoryRequest::idResolvedCallback(Storage::UploadResponse response) {
+void IdCreateDirectoryRequest::idResolvedCallback(const Storage::UploadResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -102,7 +102,7 @@ void IdCreateDirectoryRequest::idResolvedCallback(Storage::UploadResponse respon
 	finishCreation(false);
 }
 
-void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse error) {
+void IdCreateDirectoryRequest::idResolveFailedCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -119,8 +119,8 @@ void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse
 				break;
 			}
 
-		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, Storage::BoolResponse>(this, &IdCreateDirectoryRequest::createdDirectoryCallback);
-		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, Networking::ErrorResponse>(this, &IdCreateDirectoryRequest::createdDirectoryErrorCallback);
+		Storage::BoolCallback callback = new Common::Callback<IdCreateDirectoryRequest, const Storage::BoolResponse &>(this, &IdCreateDirectoryRequest::createdDirectoryCallback);
+		Networking::ErrorCallback failureCallback = new Common::Callback<IdCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &IdCreateDirectoryRequest::createdDirectoryErrorCallback);
 		_workingRequest = _storage->createDirectoryWithParentId(parentId, _requestedDirectoryName, callback, failureCallback);
 		return;
 	}
@@ -128,7 +128,7 @@ void IdCreateDirectoryRequest::idResolveFailedCallback(Networking::ErrorResponse
 	finishError(error);
 }
 
-void IdCreateDirectoryRequest::createdDirectoryCallback(Storage::BoolResponse response) {
+void IdCreateDirectoryRequest::createdDirectoryCallback(const Storage::BoolResponse &response) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;
@@ -137,7 +137,7 @@ void IdCreateDirectoryRequest::createdDirectoryCallback(Storage::BoolResponse re
 	finishCreation(response.value);
 }
 
-void IdCreateDirectoryRequest::createdDirectoryErrorCallback(Networking::ErrorResponse error) {
+void IdCreateDirectoryRequest::createdDirectoryErrorCallback(const Networking::ErrorResponse &error) {
 	_workingRequest = nullptr;
 	if (_ignoreCallback)
 		return;

@@ -262,7 +262,7 @@ private:
 */
 class OldDOSFont : public Font {
 public:
-	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor, bool remapCharacters = true);
 	~OldDOSFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
@@ -270,6 +270,7 @@ public:
 	Type getType() const override { return kASCII; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
+	bool usesOverlay() const override { return _useOverlay; }
 	int getCharWidth(uint16 c) const override;
 	void setColorMap(const uint8 *src) override;
 	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
@@ -287,11 +288,16 @@ protected:
 	int _numGlyphs;
 	uint8 _shadowColor;
 
+	uint16 _numGlyphsMax;
+	bool _useOverlay;
+	int _scaleV;
+
 private:
 	void drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const;
 	virtual uint16 convert(uint16 c) const;
 	Common::RenderMode _renderMode;
 	const uint16 *_colorMap16bit;
+	bool _remapCharacters;
 
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
@@ -383,19 +389,34 @@ private:
 	uint16 convert(uint16 c) const;
 	const uint16 *_convTable1, *_convTable2;
 	bool _defaultConv;
-	/*uint8 _shadowColor;*/
+};
+
+/**
+* SJIS Font variant used in EOB II PC-98. It converts 1-byte characters into 2-byte characters.
+*/
+class SJISFontEoB2PC98 : public SJISFont {
+public:
+	SJISFontEoB2PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const char *convTable1, const char *convTable2);
+	~SJISFontEoB2PC98() override {}
+	int getCharWidth(uint16 c) const override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	uint16 convert(uint16 c) const;
+	const char *_convTable1, *_convTable2;
+	//bool _defaultConv;
 };
 
 /**
 * OldDOSFont variant used in EOB I PC-98. It uses the same drawing routine, but has a different loader. It contains
-* ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the SJIS overlay.
+* ASCII and Katakana characters in JIS X 0201 and requires several conversion tables to display these. It gets drawn on the hires overlay.
 */
 class Font12x12PC98 : public OldDOSFont{
 public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
 	~Font12x12PC98() override;
 	bool usesOverlay() const override { return true; }
-	Type getType() const override { return kSJIS; }
+	Type getType() const override { return kJIS_X0201; }
 	int getHeight() const override { return _height >> 1; }
 	int getWidth() const override { return _width >> 1; }
 	int getCharWidth(uint16 c) const override { return _width >> 1; };
@@ -405,6 +426,32 @@ private:
 	uint16 convert(uint16 c) const override;
 	const uint16 *_convTable1, *_convTable2;
 	uint16 *_bmpOffs;
+};
+
+/**
+* OldDOSFont variant used in EOB II PC-98 which supports twice the number of characters. Some font files may include kana characters. The font supports
+* weird vertical scaling and can be drawn on the hires overlay.
+*/
+class PC98Font : public OldDOSFont {
+public:
+	PC98Font(uint8 shadowColor, bool useOverlay, int scaleV, const uint8 *convTable1 = 0, const char *convTable2 = 0, const char *convTable3 = 0);
+	~PC98Font() override {}
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _outputHeight; }
+	int getWidth() const override { return _outputWidth; }
+	int getCharWidth(uint16 c) const override { return _outputWidth; };
+	Type getType() const override { return _type; }
+
+private:
+	uint16 convert(uint16 c) const override;
+	uint16 makeTwoByte(uint16 c) const;
+
+	const uint8 *_convTable1;
+	const char *_convTable2, *_convTable3;
+
+	int _outputHeight;
+	int _outputWidth;
+	const Type _type;
 };
 
 /**

@@ -636,7 +636,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		if (!_saveList[selItem].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
 			_saveList[selItem] = desc;
 
-		isDeletable = desc.getDeletableFlag() && _delSupport;
+		isDeletable = _saveList[selItem].getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag() ||
 			_saveList[selItem].getWriteProtectedFlag();
 		isLocked = desc.getLocked();
@@ -1145,6 +1145,8 @@ void SaveLoadChooserGrid::hideButtons() {
 void SaveLoadChooserGrid::updateSaves() {
 	hideButtons();
 
+	bool isWriteProtected = false;
+
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
@@ -1159,10 +1161,10 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + desc.getDescription());
+		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + _saveList[i].getDescription());
 
 		Common::U32String tooltip(_("Name: "));
-		tooltip += desc.getDescription();
+		tooltip += _saveList[i].getDescription();
 
 		if (_saveDateSupport) {
 			const Common::U32String &saveDate = desc.getSaveDate();
@@ -1191,7 +1193,9 @@ void SaveLoadChooserGrid::updateSaves() {
 		// In save mode we disable the button, when it's write protected.
 		// TODO: Maybe we should not display it at all then?
 		// We also disable and description the button if slot is locked
-		if ((_saveMode && desc.getWriteProtectedFlag()) || desc.getLocked()) {
+		isWriteProtected = desc.getWriteProtectedFlag() ||
+			_saveList[i].getWriteProtectedFlag();
+		if ((_saveMode && isWriteProtected) || desc.getLocked()) {
 			curButton.button->setEnabled(false);
 		} else {
 			curButton.button->setEnabled(true);

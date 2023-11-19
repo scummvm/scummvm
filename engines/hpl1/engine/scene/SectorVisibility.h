@@ -117,7 +117,7 @@ private:
 	cSectorVisibilityContainer *mpContainer;
 };
 
-typedef Hpl1::Std::map<cSector *, cSectorVisibility *> tSectorVisibilityMap;
+typedef Common::StableMap<cSector *, cSectorVisibility *> tSectorVisibilityMap;
 typedef tSectorVisibilityMap::iterator tSectorVisibilityMapIt;
 
 //----------------------------------------------------

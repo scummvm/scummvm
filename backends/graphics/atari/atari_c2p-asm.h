@@ -31,10 +31,21 @@ extern "C" {
  * Optimized for surface-to-surface copy with the same pitch.
  *
  * @param pChunky chunky buffer start
- * @param pChunkyEnd chunky buffer end (including the last byte)
+ * @param pChunkyEnd chunky buffer end (past-the-end iterator)
  * @param pScreen bitplane screen start
  */
 void asm_c2p1x1_8(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
+
+/**
+ * Chunky to planar conversion routine. Converts a chunky (byte) buffer into eight bitplanes.
+ * Optimized for surface-to-surface copy with the double screen pitch (typically 320x480).
+ *
+ * @param pChunky chunky buffer start
+ * @param pChunkyEnd chunky buffer end (past-the-end iterator)
+ * @param pScreen bitplane screen start
+ * @param screenPitch bitplane screen width (in bytes)
+ */
+void asm_c2p1x1_8_tt(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen, uint32 screenPitch);
 
 /**
  * Chunky to planar conversion routine. Converts a chunky (byte) buffer into eight bitplanes.
@@ -48,6 +59,29 @@ void asm_c2p1x1_8(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
  * @param screenPitch bitplane screen width (in bytes)
  */
 void asm_c2p1x1_8_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
+
+/**
+ * Chunky to planar conversion routine. Converts a chunky (byte) buffer into four bitplanes.
+ * Optimized for surface-to-surface copy with the same pitch.
+ *
+ * @param pChunky chunky buffer start
+ * @param pChunkyEnd chunky buffer end (past-the-end iterator)
+ * @param pScreen bitplane screen start
+ */
+void asm_c2p1x1_4(const byte *pChunky, const byte *pChunkyEnd, byte *pScreen);
+
+/**
+ * Chunky to planar conversion routine. Converts a chunky (byte) buffer into four bitplanes.
+ * Optimized for arbitrary rectangle position and dimension (16px aligned).
+ *
+ * @param pChunky chunky buffer at rectangle's [X1, Y1] position
+ * @param pChunkyEnd chunky buffer at rectangle's [X2, Y2] position (included)
+ * @param chunkyWidth rectangle width
+ * @param chunkyPitch chunky buffer width (in bytes)
+ * @param pScreen bitplane screen at rectangle's [X1, Y1] position
+ * @param screenPitch bitplane screen width (in bytes)
+ */
+void asm_c2p1x1_4_rect(const byte *pChunky, const byte *pChunkyEnd, uint32 chunkyWidth, uint32 chunkyPitch, byte *pScreen, uint32 screenPitch);
 
 }
 

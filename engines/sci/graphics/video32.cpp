@@ -121,6 +121,21 @@ bool VideoPlayer::endHQVideo() {
 	return false;
 }
 
+void VideoPlayer::setSubtitlePosition() const {
+	const int16 overlayHeight = g_system->getOverlayHeight(),
+				overlayWidth = g_system->getOverlayWidth(),
+				drawHeight = _drawRect.height(),
+				drawWidth = _drawRect.width();
+	_subtitles.setBBox(
+		Common::Rect(
+			(_drawRect.left + 20) * overlayWidth / drawWidth,
+			(_drawRect.bottom - 80) * overlayHeight / drawHeight,
+			(_drawRect.right - 20)  * overlayWidth / drawWidth,
+			(_drawRect.bottom - 10) * overlayHeight / drawHeight
+		)
+	);
+}
+
 VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, const uint32 maxSleepMs) {
 	// Flushing all the keyboard and mouse events out of the event manager keeps
 	// events queued from before the start of playback from accidentally
@@ -130,6 +145,16 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 	_decoder->start();
 
 	EventFlags stopFlag = kEventFlagNone;
+
+	if (_subtitles.isLoaded()) {
+		setSubtitlePosition();
+		_subtitles.setColor(0xff, 0xff, 0xff);
+		_subtitles.setFont("FreeSans.ttf");
+
+		g_system->clearOverlay();
+		g_system->showOverlay(false);
+	}
+
 	for (;;) {
 		if (!_needsUpdate) {
 			g_sci->sleep(MIN(_decoder->getTimeToNextFrame(), maxSleepMs));
@@ -177,6 +202,11 @@ VideoPlayer::EventFlags VideoPlayer::playUntilEvent(const EventFlags flags, cons
 		// them will not make it into the hardware buffer until the next tick
 		g_sci->_gfxFrameout->updateScreen();
 	}
+
+	if (_subtitles.isLoaded()) {
+		g_system->hideOverlay();
+	}
+	_subtitles.close();
 
 	return stopFlag;
 }
@@ -268,6 +298,10 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	g_system->copyRectToScreen(convertedFrame->getPixels(), convertedFrame->pitch, _drawRect.left, _drawRect.top, _drawRect.width(), _drawRect.height());
 	g_sci->_gfxFrameout->updateScreen();
+
+	if (_subtitles.isLoaded())
+		setSubtitlePosition();
+	_subtitles.drawSubtitle(_decoder->getTime(), true);
 
 	if (freeConvertedFrame) {
 		convertedFrame->free();
@@ -613,6 +647,11 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 		if (flags & kOpenFlagMute) {
 			_decoder->setVolume(0);
 		}
+
+		// Try load fan-made SRT subtitles for current video
+		Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
+		_subtitles.loadSRTFile(subtitlesName.c_str());
+
 		return kIOSuccess;
 	}
 
@@ -1179,6 +1218,10 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
 	}
 
+	// Try load fan-made SRT subtitles for current video
+	Common::String subtitlesName = Common::String::format("%s.srt", fileName.c_str());
+	_subtitles.loadSRTFile(subtitlesName.c_str());
+
 	_status = kDuckOpen;
 }
 
@@ -1193,9 +1236,7 @@ void DuckPlayer::play(const int lastFrameNo) {
 		return;
 	}
 
-	if (_status != kDuckPlaying) {
-		_status = kDuckPlaying;
-	}
+	_status = kDuckPlaying;
 
 	if (lastFrameNo != -1) {
 		_decoder->setEndFrame(lastFrameNo);

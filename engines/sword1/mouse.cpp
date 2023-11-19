@@ -39,7 +39,7 @@ Mouse::Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_resMan = pResMan;
 	_objMan = pObjMan;
 	_system = system;
-	_currentPtr = NULL;
+	_currentPtr = nullptr;
 }
 
 Mouse::~Mouse() {
@@ -71,12 +71,10 @@ void Mouse::controlPanel(bool on) { // true on entering cpanel, false when leavi
 	if (on) {
 		savedPtrId = _currentPtrId;
 		_mouseOverride = true;
-		setLuggage(0, 0);
 		setPointer(MSE_POINTER, 0);
 	} else {
 		_currentPtrId = savedPtrId;
 		_mouseOverride = false;
-		setLuggage(_currentLuggageId, 0);
 		setPointer(_currentPtrId, 0);
 	}
 }
@@ -84,6 +82,10 @@ void Mouse::controlPanel(bool on) { // true on entering cpanel, false when leavi
 void Mouse::useLogicAndMenu(Logic *pLogic, Menu *pMenu) {
 	_logic = pLogic;
 	_menu = pMenu;
+}
+
+void Mouse::useScreenMutex(Common::Mutex *mutex) {
+	_screenAccessMutex = mutex;
 }
 
 void Mouse::addToList(int id, Object *compact) {
@@ -139,7 +141,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	//-
 	int32 touchedId = 0;
 	uint16 clicked = 0;
-	if (y > 40) {
+	if ((y > 40 && _inTopMenu) || !_inTopMenu) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
 				if ((_objList[cnt].compact->o_priority == priority) &&
@@ -155,7 +157,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		if (touchedId != (int)Logic::_scriptVars[SPECIAL_ITEM]) { //the mouse collision situation has changed in one way or another
 			Logic::_scriptVars[SPECIAL_ITEM] = touchedId;
 			if (_getOff) { // there was something else selected before, run its get-off script
-				_logic->runMouseScript(NULL, _getOff);
+				_logic->runMouseScript(nullptr, _getOff);
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
@@ -169,10 +171,25 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		Logic::_scriptVars[SPECIAL_ITEM] = 0;
 	if (_state & MOUSE_DOWN_MASK) {
 		if (_inTopMenu) {
-			if (Logic::_scriptVars[SECOND_ITEM])
-				_logic->runMouseScript(NULL, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
-			if (Logic::_scriptVars[MENU_LOOKING])
-				_logic->cfnPresetScript(NULL, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
+			if (Logic::_scriptVars[SECOND_ITEM]) {
+				if (Logic::_scriptVars[GEORGE_DOING_REST_ANIM] == 1) {
+					Logic::_scriptVars[GEORGE_DOING_REST_ANIM] = 0;
+				} else if (Logic::_scriptVars[GEORGE_WALKING]) {
+					Logic::_scriptVars[GEORGE_WALKING] = 2;
+				}
+
+				_logic->runMouseScript(nullptr, _menu->_objectDefs[Logic::_scriptVars[SECOND_ITEM]].useScript);
+			}
+
+			if (Logic::_scriptVars[MENU_LOOKING]) {
+				if (Logic::_scriptVars[GEORGE_DOING_REST_ANIM] == 1) {
+					Logic::_scriptVars[GEORGE_DOING_REST_ANIM] = 0;
+				} else if (Logic::_scriptVars[GEORGE_WALKING]) {
+					Logic::_scriptVars[GEORGE_WALKING] = 2;
+				}
+
+				_logic->cfnPresetScript(nullptr, -1, PLAYER, SCR_menu_look, 0, 0, 0, 0);
+			}
 		}
 
 		Logic::_scriptVars[MOUSE_BUTTON] = _state & MOUSE_DOWN_MASK;
@@ -191,11 +208,11 @@ uint16 Mouse::testEvent() {
 void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 	if (_currentPtr) {
 		free(_currentPtr);
-		_currentPtr = NULL;
+		_currentPtr = nullptr;
 	}
 
 	if (ptrId) {
-		MousePtr *lugg = NULL;
+		MousePtr *lugg = nullptr;
 		MousePtr *ptr = (MousePtr *)_resMan->openFetchRes(ptrId);
 		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
 		uint16 ptrSizeX = _resMan->getLEUint16(ptr->sizeX);
@@ -311,7 +328,9 @@ void Mouse::animate() {
 		uint8 *ptrData = (uint8 *)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
 
+		_screenAccessMutex->lock();
 		CursorMan.replaceCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY, 255);
+		_screenAccessMutex->unlock();
 
 		_activeFrame = _frame;
 	}

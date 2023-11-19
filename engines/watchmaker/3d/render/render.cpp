@@ -48,8 +48,8 @@ unsigned int NumBatchBlocksSky = 0;
  *              Comparazione per BB
  * --------------------------------------------------*/
 int cmpbb(const void *a, const void *b) {
-	gBatchBlock *v1 = (gBatchBlock *)a;
-	gBatchBlock *v2 = (gBatchBlock *)b;
+	const gBatchBlock *v1 = (const gBatchBlock *)a;
+	const gBatchBlock *v2 = (const gBatchBlock *)b;
 
 	if (v1->Texture2 < v2->Texture2) return -1;
 	else if (v1->Texture2 > v2->Texture2) return 1;
@@ -398,7 +398,7 @@ void RenderGeometry(void) {
 bool rRenderScene(void) {
 	unsigned int    i, j;
 	bool            hres;
-	static unsigned int dwFrameCount = 0;
+	//static unsigned int dwFrameCount = 0;
 
 	g_renderer->setRenderState(RenderState::LIGHT, false);
 	g_renderer->setRenderState(RenderState::CLIP, true);
@@ -560,7 +560,7 @@ bool rRenderScene(void) {
 //	NumBatchBlocksLightmaps=0;
 	NumBatchBlocksSky = 0;
 
-	dwFrameCount++;
+	//dwFrameCount++;
 
 	return TRUE;
 	// End the scene.

@@ -1239,9 +1239,7 @@ void Chip::GenerateBlock2( Bitu total, Bit32s* output ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
 		memset(output, 0, sizeof(Bit32s) * samples);
-		int count = 0;
 		for( Channel* ch = chan; ch < chan + 9; ) {
-			count++;
 			ch = (ch->*(ch->synthHandler))( this, samples, output );
 		}
 		total -= samples;
@@ -1253,9 +1251,7 @@ void Chip::GenerateBlock3( Bitu total, Bit32s* output  ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
 		memset(output, 0, sizeof(Bit32s) * samples * 2);
-		int count = 0;
 		for( Channel* ch = chan; ch < chan + 18; ) {
-			count++;
 			ch = (ch->*(ch->synthHandler))( this, samples, output );
 		}
 		total -= samples;

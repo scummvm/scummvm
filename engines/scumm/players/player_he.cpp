@@ -134,7 +134,7 @@ int Player_HE::getMusicTimer() {
 }
 
 void Player_HE::loadAdLibBank() {
-	ScummFile file;
+	ScummFile file(_vm);
 	Common::String drvName;
 	char entryName[14];
 	uint32 tag, entrySize, fileSize;

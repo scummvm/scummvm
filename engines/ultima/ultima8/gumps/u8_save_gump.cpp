@@ -139,7 +139,7 @@ void U8SaveGump::InitGump(Gump *newparent, bool take_focus) {
 				// load
 				Gump *widget = new TextWidget(xbase, entryheight + 4 + 40 * yi,
 				                              _descriptions[i], true, entryfont,
-				                              95);
+											  95, 38 - entryheight);
 				widget->InitGump(this, false);
 			}
 		}

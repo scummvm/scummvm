@@ -21,6 +21,7 @@
 #include "common/file.h"
 
 #include "freescape/freescape.h"
+#include "freescape/games/driller/driller.h"
 #include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
@@ -118,9 +119,16 @@ void DrillerEngine::loadAssetsAmigaDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'driller' file");
 
-	loadFonts(&file, 0xa30);
-	loadMessagesFixedSize(&file, 0x3960, 14, 20);
-	loadGlobalObjects(&file, 0x3716, 8);
+	if (_variant & GF_AMIGA_MAGAZINE_DEMO) {
+		loadFonts(&file, 0xa62);
+		loadMessagesFixedSize(&file, 0x3df0, 14, 20);
+		loadGlobalObjects(&file, 0x3ba6, 8);
+		_demoMode = false;
+	} else {
+		loadFonts(&file, 0xa30);
+		loadMessagesFixedSize(&file, 0x3960, 14, 20);
+		loadGlobalObjects(&file, 0x3716, 8);
+	}
 
 	file.close();
 	file.open("soundfx");
@@ -145,7 +153,8 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 	int score = _gameStateVars[k8bitVariableScore];
 	Common::String coords;
 
-	if (!isDemo()) { // It seems demos will not include the complete font?
+	// It seems that some demos will not include the complete font
+	if (!isDemo() || (_variant & GF_AMIGA_MAGAZINE_DEMO) || (_variant & GF_ATARI_MAGAZINE_DEMO)) {
 		drawStringInSurface("x", 37, 18, white, transparent, surface, 82);
 		coords = Common::String::format("%04d", 2 * int(_position.x()));
 		for (int i = 0; i < 4; i++)
@@ -194,25 +203,25 @@ void DrillerEngine::drawAmigaAtariSTUI(Graphics::Surface *surface) {
 
 	if (shield >= 0) {
 		Common::Rect shieldBar;
-		shieldBar = Common::Rect(11, 178, 76 - (k8bitMaxShield - shield), 184);
+		shieldBar = Common::Rect(11, 178, 76 - (_maxShield - shield), 184);
 		surface->fillRect(shieldBar, brown);
 
-		shieldBar = Common::Rect(11, 179, 76 - (k8bitMaxShield - shield), 183);
+		shieldBar = Common::Rect(11, 179, 76 - (_maxShield - shield), 183);
 		surface->fillRect(shieldBar, brownish);
 
-		shieldBar = Common::Rect(11, 180, 76 - (k8bitMaxShield - shield), 182);
+		shieldBar = Common::Rect(11, 180, 76 - (_maxShield - shield), 182);
 		surface->fillRect(shieldBar, yellow);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
-		energyBar = Common::Rect(11, 186, 75 - (k8bitMaxEnergy - energy), 192);
+		energyBar = Common::Rect(11, 186, 75 - (_maxEnergy - energy), 192);
 		surface->fillRect(energyBar, brown);
 
-		energyBar = Common::Rect(11, 187, 75 - (k8bitMaxEnergy - energy), 191);
+		energyBar = Common::Rect(11, 187, 75 - (_maxEnergy - energy), 191);
 		surface->fillRect(energyBar, brownish);
 
-		energyBar = Common::Rect(11, 188, 75 - (k8bitMaxEnergy - energy), 190);
+		energyBar = Common::Rect(11, 188, 75 - (_maxEnergy - energy), 190);
 		surface->fillRect(energyBar, yellow);
 	}
 }

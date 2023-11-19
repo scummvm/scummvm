@@ -62,6 +62,28 @@ void pauseFunction(LoadedFunction *fun) {
 	}
 }
 
+void printStack(VariableStack *ptr) {
+	if (ptr == NULL)
+		debugN("<empty stack>");
+
+	while (ptr != NULL) {
+		ptr->thisVar.debugPrint();
+		ptr = ptr->next;
+	}
+
+	debug("%s", "");
+}
+
+void printLocals(Variable *localVars, int count) {
+	if (count == 0)
+		debugN("<none>");
+
+	for (int i = 0; i < count; i++)
+		localVars[i].debugPrint();
+
+	debug("%s", "");
+}
+
 void restartFunction(LoadedFunction *fun) {
 	fun->next = allRunningFunctions;
 	allRunningFunctions = fun;
@@ -195,7 +217,20 @@ bool continueFunction(LoadedFunction *fun) {
 		advanceNow = true;
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
-		debugC(1, kSludgeDebugStackMachine, "Executing command line %i : %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
+
+		if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+			debugN("  Stack before: ");
+			printStack(fun->stack);
+
+			debugN("  Reg before: ");
+			fun->reg.debugPrint();
+			debug("%s", "");
+
+			debugN(" Locals before: ");
+			printLocals(fun->localVars, fun->numLocals);
+		}
+
+		debugC(1, kSludgeDebugStackMachine, "Executing command function %d line %i: %s(%s)", fun->originalNumber, fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
 		if (numBIFNames) {
 			setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function", (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
@@ -621,8 +656,22 @@ bool continueFunction(LoadedFunction *fun) {
 			return fatal(ERROR_UNKNOWN_CODE);
 		}
 
-		if (advanceNow)
+		if (advanceNow) {
+			if (debugChannelSet(kSludgeDebugStackMachine, -1)) {
+				debugN("  Stack after: ");
+
+				printStack(fun->stack);
+
+				debugN("  Reg after: ");
+				fun->reg.debugPrint();
+				debug("%s", "");
+
+				debugN(" Locals after: ");
+				printLocals(fun->localVars, fun->numLocals);
+			}
+
 			fun->runThisLine++;
+		}
 
 	}
 	return true;

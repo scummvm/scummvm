@@ -400,6 +400,7 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_isOpen(false),
 		_accuracyMode(ACCURACY_MODE_SB16_WIN95),
 		_allocationMode(ALLOCATION_MODE_DYNAMIC),
+		_instrumentWriteMode(INSTRUMENT_WRITE_MODE_NOTE_ON),
 		_rhythmModeIgnoreNoteOffs(false),
 		_defaultChannelVolume(0),
 		_noteSelect(NOTE_SELECT_MODE_0),
@@ -690,8 +691,10 @@ void MidiDriver_ADLIB_Multisource::noteOn(uint8 channel, uint8 note, uint8 veloc
 		activeNote->instrumentId = instrument.instrumentId;
 		activeNote->instrumentDef = instrument.instrumentDef;
 
-		// Write out the instrument definition, volume and panning.
-		writeInstrument(oplChannel, instrument);
+		if (_instrumentWriteMode == INSTRUMENT_WRITE_MODE_NOTE_ON) {
+			// Write out the instrument definition, volume and panning.
+			writeInstrument(oplChannel, instrument);
+		}
 
 		// Calculate and write frequency and block and write key on bit.
 		writeFrequency(oplChannel, instrument.instrumentDef->rhythmType);
@@ -762,6 +765,41 @@ void MidiDriver_ADLIB_Multisource::controlChange(uint8 channel, uint8 controller
 void MidiDriver_ADLIB_Multisource::programChange(uint8 channel, uint8 program, uint8 source) {
 	// Just set the MIDI program value; this event does not affect active notes.
 	_controlData[source][channel].program = program;
+
+	if (_instrumentWriteMode == INSTRUMENT_WRITE_MODE_PROGRAM_CHANGE && !(_rhythmMode && channel == MIDI_RHYTHM_CHANNEL)) {
+		InstrumentInfo instrument = determineInstrument(channel, source, 0);
+
+		if (!instrument.instrumentDef || instrument.instrumentDef->isEmpty()) {
+			// Instrument definition contains no data.
+			return;
+		}
+
+		_activeNotesMutex.lock();
+
+		// Determine the OPL channel to use and the active note data to update.
+		uint8 oplChannel = 0xFF;
+		ActiveNote *activeNote = nullptr;
+		// Allocate a melodic OPL channel.
+		oplChannel = allocateOplChannel(channel, source, instrument.instrumentId);
+		if (oplChannel != 0xFF) {
+			activeNote = &_activeNotes[oplChannel];
+			if (activeNote->noteActive) {
+				// Turn off the note currently playing on this OPL channel or
+				// rhythm instrument.
+				writeKeyOff(oplChannel, instrument.instrumentDef->rhythmType);
+			}
+
+			// Update the active note data.
+			activeNote->channel = channel;
+			activeNote->source = source;
+			activeNote->instrumentId = instrument.instrumentId;
+			activeNote->instrumentDef = instrument.instrumentDef;
+
+			writeInstrument(oplChannel, instrument);
+		}
+
+		_activeNotesMutex.unlock();
+	}
 }
 
 void MidiDriver_ADLIB_Multisource::channelAftertouch(uint8 channel, uint8 pressure, uint8 source) {

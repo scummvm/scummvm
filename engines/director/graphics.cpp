@@ -108,59 +108,61 @@ const Common::Rect &DirectorEngine::getTileRect(int num) {
 }
 
 void DirectorEngine::loadDefaultPalettes() {
-	_loadedPalettes[kClutSystemMac] = PaletteV4(kClutSystemMac, macPalette, 256);
-	_loadedPalettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbowPalette, 256);
-	_loadedPalettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscalePalette, 256);
-	_loadedPalettes[kClutPastels] = PaletteV4(kClutPastels, pastelsPalette, 256);
-	_loadedPalettes[kClutVivid] = PaletteV4(kClutVivid, vividPalette, 256);
-	_loadedPalettes[kClutNTSC] = PaletteV4(kClutNTSC, ntscPalette, 256);
-	_loadedPalettes[kClutMetallic] = PaletteV4(kClutMetallic, metallicPalette, 256);
-	_loadedPalettes[kClutSystemWin] = PaletteV4(kClutSystemWin, winPalette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemMac, -1)] = PaletteV4(CastMemberID(kClutSystemMac, -1), macPalette, 256);
+	_loadedPalettes[CastMemberID(kClutRainbow, -1)] = PaletteV4(CastMemberID(kClutRainbow, -1), rainbowPalette, 256);
+	_loadedPalettes[CastMemberID(kClutGrayscale, -1)] = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscalePalette, 256);
+	_loadedPalettes[CastMemberID(kClutPastels, -1)] = PaletteV4(CastMemberID(kClutPastels, -1), pastelsPalette, 256);
+	_loadedPalettes[CastMemberID(kClutVivid, -1)] = PaletteV4(CastMemberID(kClutVivid, -1), vividPalette, 256);
+	_loadedPalettes[CastMemberID(kClutNTSC, -1)] = PaletteV4(CastMemberID(kClutNTSC, -1), ntscPalette, 256);
+	_loadedPalettes[CastMemberID(kClutMetallic, -1)] = PaletteV4(CastMemberID(kClutMetallic, -1), metallicPalette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemWin, -1)] = PaletteV4(CastMemberID(kClutSystemWin, -1), winPalette, 256);
+	_loadedPalettes[CastMemberID(kClutSystemWinD5, -1)] = PaletteV4(CastMemberID(kClutSystemWinD5, -1), winD5Palette, 256);
 
-	_loaded16Palettes[kClutSystemMac] = PaletteV4(kClutSystemMac, mac16Palette, 16);
-	_loaded16Palettes[kClutRainbow] = PaletteV4(kClutRainbow, rainbow16Palette, 16);
-	_loaded16Palettes[kClutGrayscale] = PaletteV4(kClutGrayscale, grayscale16Palette, 16);
-	_loaded16Palettes[kClutPastels] = PaletteV4(kClutPastels, pastels16Palette, 16);
-	_loaded16Palettes[kClutVivid] = PaletteV4(kClutVivid, vivid16Palette, 16);
-	_loaded16Palettes[kClutNTSC] = PaletteV4(kClutNTSC, ntsc16Palette, 16);
-	_loaded16Palettes[kClutMetallic] = PaletteV4(kClutMetallic, metallic16Palette, 16);
-	_loaded16Palettes[kClutSystemWin] = PaletteV4(kClutSystemWin, win16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemMac, -1)] = PaletteV4(CastMemberID(kClutSystemMac, -1), mac16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutRainbow, -1)] = PaletteV4(CastMemberID(kClutRainbow, -1), rainbow16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutGrayscale, -1)] = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutPastels, -1)] = PaletteV4(CastMemberID(kClutPastels, -1), pastels16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutVivid, -1)] = PaletteV4(CastMemberID(kClutVivid, -1), vivid16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutNTSC, -1)] = PaletteV4(CastMemberID(kClutNTSC, -1), ntsc16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutMetallic, -1)] = PaletteV4(CastMemberID(kClutMetallic, -1), metallic16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemWin, -1)] = PaletteV4(CastMemberID(kClutSystemWin, -1), win16Palette, 16);
+	_loaded16Palettes[CastMemberID(kClutSystemWinD5, -1)] = PaletteV4(CastMemberID(kClutSystemWinD5, -1), winD516Palette, 16);
 
-	_loaded4Palette = PaletteV4(kClutGrayscale, grayscale4Palette, 4);
+	_loaded4Palette = PaletteV4(CastMemberID(kClutGrayscale, -1), grayscale4Palette, 4);
 }
 
-PaletteV4 *DirectorEngine::getPalette(int id) {
+PaletteV4 *DirectorEngine::getPalette(const CastMemberID &id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::getPalette(): Palette %d not found", id);
+		warning("DirectorEngine::getPalette(): Palette %s not found, hash %x", id.asString().c_str(), id.hash());
 		return nullptr;
 	}
 
 	return &_loadedPalettes[id];
 }
 
-void DirectorEngine::addPalette(int id, byte *palette, int length) {
-	if (id < 0) {
-		warning("DirectorEngine::addPalette(): Negative palette ids reserved for default palettes");
+void DirectorEngine::addPalette(CastMemberID &id, byte *palette, int length) {
+	if (id.castLib < 0) {
+		warning("DirectorEngine::addPalette(): Negative cast library ids reserved for default palettes");
 		return;
 	} else if (_loadedPalettes.contains(id)) {
 		delete[] _loadedPalettes[id].palette;
 	}
 
+	debugC(3, kDebugLoading, "DirectorEngine::addPalette(): Registered palette %s of size %d, hash: %x", id.asString().c_str(), length, id.hash());
+
 	_loadedPalettes[id] = PaletteV4(id, palette, length);
 }
 
-bool DirectorEngine::setPalette(int id) {
-	if (id == 0) {
+bool DirectorEngine::setPalette(const CastMemberID &id) {
+	if (id.isNull()) {
 		// Palette id of 0 is unused
-		return false;
-	} else if (!_loadedPalettes.contains(id)) {
-		warning("setPalette(): no palette with matching id %d", id);
 		return false;
 	}
 
-	PaletteV4 pal = _loadedPalettes[id];
-	setPalette(pal.palette, pal.length);
-
+	PaletteV4 *pal = getPalette(id);
+	if (!pal)
+		return false;
+	setPalette(pal->palette, pal->length);
 	return true;
 }
 
@@ -208,8 +210,8 @@ void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
 }
 
 void DirectorEngine::clearPalettes() {
-	for (Common::HashMap<int, PaletteV4>::iterator it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
-		if (it->_value.id > 0)
+	for (auto it = _loadedPalettes.begin(); it != _loadedPalettes.end(); ++it) {
+		if (it->_value.id.castLib > 0)
 			delete[] it->_value.palette;
 	}
 }
@@ -397,7 +399,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 			*dst = src == (int)p->colorBlack ? p->backColor : *dst;
 		} else {
 			// AND dst palette index with the inverse of src.
-			// Originally designed for 1-bit mode so that 
+			// Originally designed for 1-bit mode so that
 			// black pixels would be invisible until they were
 			// over a black background, showing as white.
 			*dst = *dst & ~src;
@@ -631,6 +633,10 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 	Common::Rect srfClip = srf->getBounds();
 	bool failedBoundsCheck = false;
 
+	// For blit efficiency, surfaces passed here need to be the same
+	// format as the window manager. Most of the time this is
+	// the job of BitmapCastMember::createWidget.
+
 	srcPoint.y = abs(srcRect.top - destRect.top);
 	for (int i = 0; i < destRect.height(); i++, srcPoint.y++) {
 		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
@@ -673,44 +679,6 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 				destRect.left, destRect.top, destRect.right, destRect.bottom);
 	}
 
-}
-
-void DirectorPlotData::inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask) {
-	if (!srf)
-		return;
-
-	// TODO: Determine why colourization causes problems in Warlock
-	if (sprite == kTextSprite)
-		applyColor = false;
-
-	int scaleX = SCALE_THRESHOLD * srcRect.width() / destRect.width();
-	int scaleY = SCALE_THRESHOLD * srcRect.height() / destRect.height();
-
-	srcPoint.y = abs(srcRect.top - destRect.top);
-
-	for (int i = 0, scaleYCtr = 0; i < destRect.height(); i++, scaleYCtr += scaleY, srcPoint.y++) {
-		if (d->_wm->_pixelformat.bytesPerPixel == 1) {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((byte *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		} else {
-			srcPoint.x = abs(srcRect.left - destRect.left);
-			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
-
-			for (int xCtr = 0, scaleXCtr = 0; xCtr < destRect.width(); xCtr++, scaleXCtr += scaleX, srcPoint.x++) {
-				if (!mask || !(*msk++)) {
-				(d->getInkDrawPixel())(destRect.left + xCtr, destRect.top + i,
-										preprocessColor(*((int *)srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), this);
-				}
-			}
-		}
-	}
 }
 
 } // End of namespace Director

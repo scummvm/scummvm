@@ -22,8 +22,8 @@
 #include "common/compression/vise.h"
 #include "common/macresman.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "director/director.h"
-#include "graphics/macgui/macfontmanager.h"
 
 namespace Director {
 
@@ -83,14 +83,27 @@ struct CachedFile {
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
+struct SaveFilePath {
+	const char *target;
+	Common::Platform platform;
+	const char *path;
+} const saveFilePaths[] = {
+	{ "darkeye", Common::kPlatformWindows, "SAVEDDKY/" },
+	{ nullptr, Common::kPlatformUnknown, nullptr },
+};
+
+
 static void quirkLimit15FPS() {
 	g_director->_fpsLimit = 15;
 }
 
-static void quirk640x480Desktop() {
-    g_director->_wmMode &= ~Graphics::kWMModeNoDesktop;
-    g_director->_wmWidth = 640;
-    g_director->_wmHeight = 480;
+static void quirkHollywoodHigh() {
+	// Hollywood High demo has a killswitch that stops playback
+	// if the year is after 1996.
+	g_director->_forceDate.tm_year = 1996 - 1900;
+	g_director->_forceDate.tm_mon = 0;
+	g_director->_forceDate.tm_mday = 1;
+	g_director->_forceDate.tm_wday = 0;
 }
 
 static void quirkLzone() {
@@ -105,8 +118,19 @@ static void quirkMcLuhanWin() {
 	fontMan->loadWindowsFont("MCLUHAN/SYSTEM/MCL1N___.FON");
 }
 
+static void quirkTrekTechWin() {
+	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
+	fontMan->loadWindowsFont("TREKCON4.FON");
+}
+
+static void quirkTrekGuideTNGWin() {
+	Graphics::MacFontManager *fontMan = g_director->_wm->_fontMan;
+	fontMan->loadWindowsFont("OMNI2/TREKENCY.FON");
+	fontMan->loadWindowsFont("OMNI2/TREKOMNI.FON");
+}
+
+
 static void quirkPipCatalog() {
-	// Pippin game that uses Unix path separators rather than Mac
 	g_director->_dirSeparator = '/';
 }
 
@@ -145,30 +169,31 @@ struct Quirk {
 	void (*quirk)();
 } quirks[] = {
 	// Eastern Mind sets the score to play back at a high frame rate,
-	// however the developers were using slow hardware, so some 
+	// however the developers were using slow hardware, so some
 	// animations play back much faster than intended.
 	// Limit the score framerate to be no higher than 15fps.
 	{ "easternmind", Common::kPlatformMacintosh, &quirkLimit15FPS },
 	{ "easternmind", Common::kPlatformWindows, &quirkLimit15FPS },
 
-	// Rodem expects to be able to track the mouse cursor outside the
-	// window, which is impossible in ScummVM. Giving it a virtual
-	// desktop allows it to work like it would have on the original OS.
-	{ "henachoco05", Common::kPlatformMacintosh, &quirk640x480Desktop },
-	{ "henachoco05", Common::kPlatformWindows, &quirk640x480Desktop },
-    // Kids Box opens with a 320x150 splash screen before switching to
-    // a full screen 640x480 game window. If desktop mode is off, ScummVM
-    // will pick a game window that fits the splash screen and then try
-    // to squish the full size game window into it.
-    // It runs in 640x480; clipping it to this size ensures the main
-    // game window takes up the full screen, and only the splash is windowed.
-    { "kidsbox", Common::kPlatformMacintosh, &quirk640x480Desktop },
+	// Wrath of the Gods has shooting gallery minigames which are
+	// clocked to 60fps; in reality this is far too fast to be playable.
+	{ "wrath", Common::kPlatformMacintosh, &quirkLimit15FPS },
+	{ "wrath", Common::kPlatformWindows, &quirkLimit15FPS },
+
+	{ "hollywoodhigh", Common::kPlatformWindows, &quirkHollywoodHigh },
+
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
-	{ "mamauta1", Common::kPlatformMacintosh, &quirk640x480Desktop },
-	{ "mamauta1", Common::kPlatformWindows, &quirk640x480Desktop },
+
 	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhanWin },
 	{ "mcluhan", Common::kPlatformMacintosh, &quirkMcLuhanMac },
+
+	// Star Trek titles install fonts into the system
+	{ "trektech", Common::kPlatformWindows, &quirkTrekTechWin },
+	{ "trekguidetng", Common::kPlatformWindows, &quirkTrekGuideTNGWin },
+
+	// Pippin game that uses Unix path separators rather than Mac
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
+
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 
@@ -194,6 +219,24 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 
 				debugC(1, kDebugLoading, "Added file '%s' of size %d to the file cache", f->fileName, size);
 			}
+	}
+
+	for (auto f = saveFilePaths; f->target != nullptr; f++) {
+		if (f->platform == Common::kPlatformUnknown || f->platform == platform)
+			if (!strcmp(f->target, target)) {
+				// Inject files from the save game storage into the path
+				Common::SaveFileManager *saves = g_system->getSavefileManager();
+				// As save games are name-mangled by FileIO, demangle them here
+				Common::String prefix = g_director->getTargetName() + '-' + '*';
+				for (auto &it : saves->listSavefiles(prefix.c_str())) {
+					Common::String demangled = f->path + it.substr(prefix.size() - 1);
+					if (demangled.hasSuffixIgnoreCase(".txt")) {
+						demangled = demangled.substr(0, demangled.size() - 4);
+					}
+					list.push_back(CachedArchive::InputEntry(demangled, nullptr, 0));
+				}
+			}
+
 	}
 
 	if (!list.empty()) {
@@ -234,7 +277,7 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int count = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		++count;
 	}
 
@@ -246,7 +289,7 @@ const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::Path &path
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Common::Path &path) const {

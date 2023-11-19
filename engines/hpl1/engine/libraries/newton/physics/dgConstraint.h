@@ -43,7 +43,7 @@ class dgWorld;
 class dgConstraint;
 class dgBilateralBounds;
 
-typedef void (dgApi *ConstraintsForceFeeback)(const dgConstraint &me, dgFloat32 timestep, dgInt32 threadIndex);
+typedef void(dgApi *ConstraintsForceFeedback)(const NewtonJoint *const userJoint, dFloat timestep, int32 threadIndex);
 
 class dgConstraintInfo {
 public:
@@ -163,7 +163,7 @@ enum dgConstraintID {
 	dgUnknownConstraintId
 };
 
-typedef void (dgApi *OnConstraintDestroy)(dgConstraint &me);
+typedef void(dgApi *OnConstraintDestroy)(const NewtonJoint *const me);
 
 DG_MSC_VECTOR_ALIGMENT
 class dgConstraint {
@@ -215,7 +215,7 @@ protected:
 
 	virtual void JointVelocityCorrection(const dgJointAccelerationDecriptor &params) = 0;
 
-	void SetUpdateFeedbackFunction(ConstraintsForceFeeback function);
+	void SetUpdateFeedbackFunction(ConstraintsForceFeedback function);
 	void InitPointParam(dgPointParam &param, dgFloat32 stiffness, const dgVector &p0Global, const dgVector &p1Global) const;
 
 
@@ -226,7 +226,7 @@ protected:
 	dgBody *m_body1;
 	dgBodyMasterListRow::dgListNode *m_link0;
 	dgBodyMasterListRow::dgListNode *m_link1;
-	ConstraintsForceFeeback m_updaFeedbackCallback;
+	ConstraintsForceFeedback m_updaFeedbackCallback;
 	dgUnsigned32 m_dynamicsLru;
 
 	dgUnsigned32 m_index            : 16;
@@ -265,7 +265,7 @@ inline dgConstraint::dgConstraint() {
 inline dgConstraint::~dgConstraint() {
 }
 
-inline void dgConstraint::SetUpdateFeedbackFunction(ConstraintsForceFeeback function) {
+inline void dgConstraint::SetUpdateFeedbackFunction(ConstraintsForceFeedback function) {
 	m_updaFeedbackCallback = function;
 }
 

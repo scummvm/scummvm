@@ -37,6 +37,10 @@ public:
 
 	void resetScumm() override;
 
+	// Used by MacGui
+	void clearSeriesIQPoints();
+	void updateIQPoints();
+
 protected:
 	const byte _GUIPalette[13]    = {0x00, 0x01, 0x0B, 0x03, 0x00, 0x0B, 0x0B, 0x03, 0x01, 0x00, 0x01, 0x0B, 0x09};
 	const byte _GUIPaletteCGA[13] = {0x00, 0x03, 0x0B, 0x03, 0x00, 0x0B, 0x0B, 0x0F, 0x03, 0x00, 0x0B, 0x0B, 0x05};
@@ -56,7 +60,6 @@ protected:
 	void loadVars();
 	void saveIQPoints();
 	void loadIQPoints(byte *ptr, int size);
-	void updateIQPoints();
 
 	int getBannerColor(int bannerId) override;
 	void setUpMainMenuControls() override;

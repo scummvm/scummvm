@@ -19,10 +19,15 @@
  *
  */
 
+#ifndef SCI_GRAPHICS_SCIFX_H
+#define SCI_GRAPHICS_SCIFX_H
+
 namespace Sci {
 
 void setupCustomPaletteMods(GfxScreen *screen);
 void doCustomViewPalette(GfxScreen *screen, GuiResourceId view, int16 loop, int16 cel);
 void doCustomPicPalette(GfxScreen *screen, GuiResourceId pic);
 
-}
+} // End of namespace Sci
+
+#endif // SCI_GRAPHICS_SCIFX_H

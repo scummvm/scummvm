@@ -163,7 +163,7 @@ void GraphicManager::loadMouse(byte which) {
 	mask.free();
 	f.close();
 
-	CursorMan.replaceCursor(cursor.getPixels(), 16, 32, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
+	CursorMan.replaceCursor(cursor, kMouseHotSpots[which]._horizontal, kMouseHotSpots[which]._vertical * 2, 255, false);
 	cursor.free();
 }
 
@@ -1034,7 +1034,7 @@ void GraphicManager::drawSprite(AnimationType *sprite, byte picnum, int16 x, int
 	for (int j = 0; j < sprite->_yLength; j++) {
 		for (int i = 0; i < sprite->_xLength; i++) {
 			if ((x + i < _surface.w) && (y + j < _surface.h)) {
-				if (((*sprite->_sil[picnum])[j][i / 8] >> ((7 - i % 8)) & 1) == 0)
+				if (((*sprite->_sil[picnum])[j][i / 8] >> (7 - (i % 8)) & 1) == 0)
 					*(byte *)_surface.getBasePtr(x + i, y + j) = 0;
 			}
 		}

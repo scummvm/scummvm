@@ -22,7 +22,6 @@
 #include "base/plugins.h"
 
 #include "common/fs.h"
-#include "common/gui_options.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"

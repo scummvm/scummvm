@@ -222,6 +222,12 @@ void SceneScriptUG15::PlayerWalkedIn() {
 		if (!Game_Flag_Query(kFlagUG15RatShot)) {
 			Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Prepare);
 		}
+		if (_vm->_cutContent && Random_Query(1, 5) == 5) {
+			Overlay_Play("UG15OVER", 0, false, true, 0);
+		}
+	} else if (_vm->_cutContent && Random_Query(1, 3) == 1) {
+			// Show the roach more "often" if McCoy is on the back area of this scene
+			Overlay_Play("UG15OVER", 0, false, true, 0);
 	}
 }
 

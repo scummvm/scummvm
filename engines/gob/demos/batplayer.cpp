@@ -42,7 +42,7 @@ bool BATPlayer::playStream(Common::SeekableReadStream &bat) {
 	while (!bat.err() && !bat.eos()) {
 		Common::String line = bat.readLine();
 
-		// Interpret
+		// Interpret (SLIDE V1.00)
 		if (lineStartsWith(line, "slide ")) {
 			playVideo(line.c_str() + 6);
 			clearScreen();

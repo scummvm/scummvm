@@ -55,7 +55,7 @@ bool SoundSubfolder::hasFile(const Common::Path &path) const {
 int SoundSubfolder::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
 	for (Common::StringMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
 		++total;
 	}
 
@@ -67,7 +67,7 @@ const Common::ArchiveMemberPtr SoundSubfolder::getMember(const Common::Path &pat
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *SoundSubfolder::createReadStreamForMember(const Common::Path &path) const {
@@ -123,7 +123,7 @@ int SoundZip::listMembers(Common::ArchiveMemberList &list) const {
 	int total = 0;
 
 	for (Common::StringMap::iterator i = _filenames.begin(); i != _filenames.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember((*i)._key, *this)));
 		++total;
 	}
 
@@ -135,7 +135,7 @@ const Common::ArchiveMemberPtr SoundZip::getMember(const Common::Path &path) con
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 
 }
 

@@ -22,20 +22,12 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/file.h"
-#include "common/hashmap.h"
 #include "common/hash-ptr.h"
-#include "common/hash-str.h"
-#include "common/rect.h"
-#include "common/str-array.h"
 
-#include "engines/engine.h"
-#include "graphics/pixelformat.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/types.h"
 #include "director/util.h"
-#include "director/debugger.h"
 #include "director/detection.h"
 
 namespace Common {
@@ -58,10 +50,12 @@ namespace Director {
 class Archive;
 class MacArchive;
 class Cast;
+class Debugger;
 class DirectorSound;
 class Lingo;
 class Movie;
 class Window;
+struct Picture;
 class Score;
 class Channel;
 class CastMember;
@@ -92,6 +86,12 @@ enum {
 	kDebugXObj			= 1 << 21,
 };
 
+enum {
+	GF_DESKTOP = 1 << 0,
+	GF_640x480 = 1 << 1,
+	GF_32BPP   = 1 << 2,
+};
+
 struct MovieReference {
 	Common::String movie;
 	Common::String frameS;
@@ -112,12 +112,12 @@ struct StartOptions {
 };
 
 struct PaletteV4 {
-	int id;
+	CastMemberID id;
 	byte *palette;
 	int length;
 
-	PaletteV4(int i, byte *p, int l) : id(i), palette(p), length(l) {}
-	PaletteV4() : id(0), palette(nullptr), length(0) {}
+	PaletteV4(CastMemberID i, byte *p, int l) : id(i), palette(p), length(l) {}
+	PaletteV4() : id(), palette(nullptr), length(0) {}
 };
 
 struct MacShape {
@@ -157,8 +157,10 @@ public:
 	void setVersion(uint16 version);
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
+	uint32 getGameFlags() const;
 	Common::String getTargetName() { return _targetName; }
 	const char *getExtra();
+	Common::String getRawEXEName() const;
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
 	void parseOptions();
@@ -179,16 +181,16 @@ public:
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
 
-	void addPalette(int id, byte *palette, int length);
-	bool setPalette(int id);
+	void addPalette(CastMemberID &id, byte *palette, int length);
+	bool setPalette(const CastMemberID &id);
 	void setPalette(byte *palette, uint16 count);
 	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
-	PaletteV4 *getPalette(int id);
+	PaletteV4 *getPalette(const CastMemberID &id);
 	void loadDefaultPalettes();
 
-	const Common::HashMap<int, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
-	const Common::HashMap<int, PaletteV4> &getLoaded16Palettes() { return _loaded16Palettes; }
+	const Common::HashMap<CastMemberID, PaletteV4> &getLoadedPalettes() { return _loadedPalettes; }
+	const Common::HashMap<CastMemberID, PaletteV4> &getLoaded16Palettes() { return _loaded16Palettes; }
 	const PaletteV4 &getLoaded4Palette() { return _loaded4Palette; }
 
 	const Common::FSNode *getGameDataDir() const { return &_gameDataDir; }
@@ -210,6 +212,15 @@ public:
 	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
+	Archive *openArchive(const Common::Path &movie);
+	void addArchiveToOpenList(const Common::Path &path);
+	Archive *loadEXE(const Common::Path &movie);
+	Archive *loadEXEv3(Common::SeekableReadStream *stream);
+	Archive *loadEXEv4(Common::SeekableReadStream *stream);
+	Archive *loadEXEv5(Common::SeekableReadStream *stream);
+	Archive *loadEXEv7(Common::SeekableReadStream *stream);
+	Archive *loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
+	Archive *loadMac(const Common::Path &movie);
 
 	bool desktopEnabled();
 
@@ -229,6 +240,7 @@ public:
 	Graphics::PixelFormat _pixelformat;
 
 	uint32 _debugDraw = 0;
+	int _defaultVolume = 255;
 
 public:
 	int _colorDepth;
@@ -242,9 +254,12 @@ public:
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
-	// Opened Resource Files that were opened by OpenResFile
-	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	// Owner of all Archive objects.
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _allSeenResFiles;
+	// Handles to resource files that were opened by OpenResFile.
+	Common::HashMap<Common::Path, Archive *, Common::Path::IgnoreCaseAndMac_Hash, Common::Path::IgnoreCaseAndMac_EqualsTo> _openResFiles;
+	// List of all currently open resource files
+	Common::List<Common::Path> _allOpenResFiles;
 
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
 
@@ -259,7 +274,11 @@ public:
 	uint32 _wmMode;
 	uint16 _wmWidth;
 	uint16 _wmHeight;
+	CastMemberID _lastPalette;
+
+	// used for quirks
 	byte _fpsLimit;
+	TimeDate _forceDate;
 
 private:
 	byte _currentPalette[768];
@@ -276,8 +295,8 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 	PatternTile _builtinTiles[kNumBuiltinTiles];
 
-	Common::HashMap<int, PaletteV4> _loadedPalettes;
-	Common::HashMap<int, PaletteV4> _loaded16Palettes;
+	Common::HashMap<CastMemberID, PaletteV4> _loadedPalettes;
+	Common::HashMap<CastMemberID, PaletteV4> _loaded16Palettes;
 	PaletteV4 _loaded4Palette;
 
 	Graphics::ManagedSurface *_surface;
@@ -319,7 +338,6 @@ struct DirectorPlotData {
 	uint32 preprocessColor(uint32 src);
 	void inkBlitShape(Common::Rect &srcRect);
 	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
-	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
 		colorWhite = d->_wm->_colorWhite;

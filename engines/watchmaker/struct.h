@@ -417,6 +417,13 @@ struct SRect {
 	int32  x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	constexpr SRect() = default;
 	constexpr SRect(int32 _x1, int32 _y1, int32 _x2, int32 _y2): x1(_x1), y1(_y1), x2(_x2), y2(_y2) {}
+
+	void reset() {
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 0;
+	}
 };
 
 struct SD3DRect {
@@ -433,22 +440,46 @@ struct SD3DBitmap {
 	int32 rtype = 0;
 };
 struct SDDBitmap {
-	int32 tnum = 0;
-	int32 px = 0, py = 0, ox = 0, oy = 0, dx = 0, dy = 0;
+	int32 tnum;
+	int32 px, py, ox, oy, dx, dy;
+
+	SDDBitmap() {
+		reset();
+	}
+
+	void reset() {
+		tnum =0;
+		px = 0;
+		py = 0;
+		ox = 0;
+		oy = 0;
+		dx = 0;
+		dy = 0;
+	}
 };
 
-enum class FontKind;
 struct SDDText {
-	SDDText() = default;
+	SDDText() {
+		reset();
+	}
+
 	SDDText(const char *_text, FontKind _font, FontColor _color, int32 _tnum) : font(_font),
 																			color(_color),
 																			tnum(_tnum) {
 		Common::strlcpy(this->text, _text, sizeof(this->text));
 	}
-	char text[MAX_STRING_LEN] = {};
-	FontKind font; // TODO: Move elsewhere so we can initalize
+
+	void reset() {
+		for(uint i = 0; i < ARRAYSIZE(text); i++) text[i] = '\0';
+		font = FontKind::Standard;
+		color = FontColor::WHITE_FONT;
+		tnum = 0;
+	}
+
+	char text[MAX_STRING_LEN];
+	FontKind font;
 	FontColor color;
-	int32 tnum = 0;
+	int32 tnum;
 };
 
 struct SScript {
@@ -480,8 +511,20 @@ struct message {
 		int32 lparam[3] = {}; // long parameter
 		t3dF32 fparam[3]; // float parameter
 	};
+
 	message() = default;
 	message(EventClass _classe, uint8 _event, uint16 _flags) : classe(_classe), event(_event), flags(_flags) {}
+
+	void reset() {
+		classe = MC_IDLE;
+		event = 0;
+		flags = 0;
+		bparam = 0;
+		wparam1 = 0;
+		wparam2 = 0;
+		for (uint i = 0; i < ARRAYSIZE(lparam); i++) lparam[i] = 0;
+		// fparam cleared as union with lparam i.e. shared memory
+	}
 };
 
 struct pqueue {
@@ -524,7 +567,7 @@ struct STitoliCoda {
 
 struct SRoomInfo {
 	char name[64] = {};            //nome della stanza
-	char fullstring[64 + 16] = {}; //stringa con ora
+	char fullstring[64 + 16 + 1] = {}; //stringa con ora
 	int32 px = 0, py = 0;         //posizione
 	int32 dx = 0, dy = 0;         //dimensione totale
 	int32 _dx = 0, _dy = 0;       //dimensione della stringa attuale

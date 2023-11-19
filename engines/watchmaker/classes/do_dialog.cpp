@@ -19,9 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-
 #include "watchmaker/classes/do_dialog.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/define.h"
@@ -58,7 +55,6 @@ int32 ic1, ic2;
 void doDialog(WGame &game) {
 	Init &init = game.init;
 	struct SItemCommand *ic;
-	char str[T3D_NAMELEN];
 	uint8 r;
 
 	switch (TheMessage->event) {
@@ -80,7 +76,7 @@ void doDialog(WGame &game) {
 		//faccio apparire la scritta di descrizione della stanza di Darrell
 		if ((TheMessage->wparam1 == dR000) && bShowRoomDescriptions) {
 			t3dCurTime = 240;
-			strcpy(RoomInfo.name, "");
+			RoomInfo.name[0] = '\0';
 			UpdateRoomInfo(game);
 		}
 
@@ -187,8 +183,7 @@ void doDialog(WGame &game) {
 				Character[ic->param1]->Flags &= ~T3D_CHARACTER_HIDE;
 				break;
 			case IC_CHANGE_ROOM:
-				sprintf(str, "%s.t3d", init.Room[ic->param1].name);
-				ChangeRoom(game, str, 0, aNULL);
+				ChangeRoom(game, Common::String::format("%s.t3d", init.Room[ic->param1].name), 0, aNULL);
 				break;
 			case IC_EXPRESSION:
 				if (Character[ic->param1])
@@ -344,9 +339,9 @@ void doDialog(WGame &game) {
 			ForcedCamera = 0;
 			bCutCamera = false;
 			bAllowCalcCamera = false;
-			CameraTargetObj = ocBOTH;
+			CameraTargetObj = ocCURPLAYER;
 			CameraTargetBone = 0;
-			TimeWalk = ocBOTH;
+			TimeWalk = ocCURPLAYER;
 			TimeAnim = aNULL;
 			bPlayerInAnim = false;
 			if (NextDlg != dNULL)

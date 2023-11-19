@@ -1282,9 +1282,7 @@ void RobotDecoder::frameNowVisible() {
 		_audioList.submitDriverMax();
 	}
 
-	if (_previousFrameNo != _currentFrameNo) {
-		_previousFrameNo = _currentFrameNo;
-	}
+	_previousFrameNo = _currentFrameNo;
 
 	if (!_syncFrame && _hasAudio && getTickCount() >= _checkAudioSyncTime) {
 		RobotAudioStream::StreamState status;

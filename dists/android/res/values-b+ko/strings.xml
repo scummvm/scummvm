@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">확인</string>
+  <string name="quit">종료</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">취소</string>
+  <string name="customkeyboardview_keycode_delete">삭제</string>
+  <string name="customkeyboardview_keycode_shift">시프트 키</string>
+  <string name="customkeyboardview_keycode_enter">Enter</string>
+</resources>

@@ -1186,17 +1186,17 @@ int32 ScriptFunc::sys_Cmd_Remove_Scene_Anim(EMCState *state) {
 	sceneAnim->_active = false;
 	_vm->getAnimationManager()->removeInstance(sceneAnim->_animInstance);
 	delete sceneAnim->_animation;
-	sceneAnim->_animation = NULL;
+	sceneAnim->_animation = nullptr;
 
 	// see if one character shares this instance
 	for (int32 c = 0; c < 32; c++) {
 		if (_vm->getCharacter(c) && _vm->getCharacter(c)->getAnimationInstance() == sceneAnim->_originalAnimInstance) {
-			_vm->getCharacter(c)->setAnimationInstance(NULL);
+			_vm->getCharacter(c)->setAnimationInstance(nullptr);
 		}
 	}
 	delete sceneAnim->_originalAnimInstance;
-	sceneAnim->_originalAnimInstance = NULL;
-	sceneAnim->_animInstance = NULL;
+	sceneAnim->_originalAnimInstance = nullptr;
+	sceneAnim->_animInstance = nullptr;
 	return 0;
 }
 

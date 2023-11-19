@@ -36,14 +36,14 @@ namespace CloudTests {
 bool waitForCallback();
 bool waitForCallbackMore();
 const char *getRemoteTestPath();
-void infoCallback(Cloud::Storage::StorageInfoResponse response);
-void directoryListedCallback(Cloud::Storage::FileArrayResponse response);
-void directoryCreatedCallback(Cloud::Storage::BoolResponse response);
-void fileUploadedCallback(Cloud::Storage::UploadResponse response);
-void fileDownloadedCallback(Cloud::Storage::BoolResponse response);
-void directoryDownloadedCallback(Cloud::Storage::FileArrayResponse response);
-void savesSyncedCallback(Cloud::Storage::BoolResponse response);
-void errorCallback(Networking::ErrorResponse response);
+void infoCallback(const Cloud::Storage::StorageInfoResponse &response);
+void directoryListedCallback(const Cloud::Storage::FileArrayResponse &response);
+void directoryCreatedCallback(const Cloud::Storage::BoolResponse &response);
+void fileUploadedCallback(const Cloud::Storage::UploadResponse &response);
+void fileDownloadedCallback(const Cloud::Storage::BoolResponse &response);
+void directoryDownloadedCallback(const Cloud::Storage::FileArrayResponse &response);
+void savesSyncedCallback(const Cloud::Storage::BoolResponse &response);
+void errorCallback(const Networking::ErrorResponse &response);
 
 TestExitStatus testInfo();
 TestExitStatus testDirectoryListing();

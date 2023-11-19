@@ -109,7 +109,7 @@ void PlaySecondaryVideo::updateGraphics() {
 
 			if (lastAnimationFrame > -1 &&
 					(_decoder.atEnd() ||
-					 _decoder.getCurFrame() == lastAnimationFrame + (_decoder.getRate().getNumerator() > 0 ? 1 : -1))) {
+					 _decoder.getCurFrame() == lastAnimationFrame)) {
 				if (_hoverState == kNoHover) {
 					_decoder.seekToFrame(_loopFirstFrame);
 				} else {
@@ -178,7 +178,7 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream, ser.getVersion() == kGameTypeVampire);
 	ser.skip(1, kGameTypeNancy1);
 
-	uint16 numVideoDescs;
+	uint16 numVideoDescs = 0;
 	ser.syncAsUint16LE(numVideoDescs);
 	_videoDescs.resize(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {

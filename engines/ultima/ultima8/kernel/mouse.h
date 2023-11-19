@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-const unsigned int DOUBLE_CLICK_TIMEOUT = 200;
-
 enum MouseButtonState {
 	MBS_DOWN = 0x1,
 	MBS_HANDLED = 0x2		// Mousedown event handled
@@ -58,20 +56,14 @@ struct MButton {
 		_state &= ~state;
 	}
 
-	bool curWithinDblClkTimeout() {
-		uint32 now = g_system->getMillis();
-		return now - _curDown <= DOUBLE_CLICK_TIMEOUT;
+	//! True if the current state is unhandled and past the double click timeout.
+	bool isUnhandledPastTimeout(uint32 now, uint32 timeout) {
+		return !isState(MBS_HANDLED) && _curDown > 0 && (now - _curDown) > timeout;
 	}
 
-	bool lastWithinDblClkTimeout() {
-		uint32 now = g_system->getMillis();
-		return now - _lastDown <= DOUBLE_CLICK_TIMEOUT;
-	}
-
-	//! A convenience function - true if the current state is down, unhandled, and within the double click timeout.
-	bool isUnhandledDoubleClick() {
-		return isState(MBS_DOWN) && !isState(MBS_HANDLED) &&
-				(_curDown - _lastDown) <= DOUBLE_CLICK_TIMEOUT;
+	//! True if the current state is unhandled and within the double click timeout.
+	bool isUnhandledDoubleClick(uint32 timeout) {
+		return !isState(MBS_HANDLED) && _lastDown > 0 && (_curDown - _lastDown) <= timeout;
 	}
 
 };
@@ -211,6 +203,8 @@ public:
 		x = _draggingOffset.x;
 		y = _draggingOffset.y;
 	}
+
+	uint32 getDoubleClickTime() const;
 
 	void handleDelayedEvents();
 

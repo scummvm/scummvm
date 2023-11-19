@@ -20,7 +20,6 @@
  */
 
 #include "graphics/transform_struct.h"
-#include "graphics/transparent_surface.h"
 
 namespace Graphics {
 

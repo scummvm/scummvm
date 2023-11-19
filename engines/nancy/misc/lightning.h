@@ -35,14 +35,14 @@ public:
 
 	void beginLightning(int16 distance, uint16 pulseTime, int16 rgbPercent);
 	void endLightning();
-	
+
 	void run();
 
 private:
 	void handlePulse(bool on);
 	void handleThunder();
 
-	bool _isRunning = false;
+	//bool _isRunning = false;
 	LightningState _state = kNotRunning;
 
 	int16 _minRGBPercent = 0;

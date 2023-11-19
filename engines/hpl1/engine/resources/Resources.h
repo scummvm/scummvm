@@ -29,7 +29,7 @@
 #define HPL_RESOURCES_H
 
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 #include "hpl1/engine/graphics/GPUProgram.h"
 
@@ -88,7 +88,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::Std::map<tString, iEntity2DLoader *> tEntity2DLoaderMap;
+typedef Common::StableMap<tString, iEntity2DLoader *> tEntity2DLoaderMap;
 typedef tEntity2DLoaderMap::iterator tEntity2DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -106,7 +106,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::Std::map<tString, iArea2DLoader *> tArea2DLoaderMap;
+typedef Common::StableMap<tString, iArea2DLoader *> tArea2DLoaderMap;
 typedef tArea2DLoaderMap::iterator tArea2DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -125,7 +125,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::Std::map<tString, iEntity3DLoader *> tEntity3DLoaderMap;
+typedef Common::StableMap<tString, iEntity3DLoader *> tEntity3DLoaderMap;
 typedef tEntity3DLoaderMap::iterator tEntity3DLoaderMapIt;
 
 //-------------------------------------------------------
@@ -143,7 +143,7 @@ protected:
 	tString msName;
 };
 
-typedef Hpl1::Std::map<tString, iArea3DLoader *> tArea3DLoaderMap;
+typedef Common::StableMap<tString, iArea3DLoader *> tArea3DLoaderMap;
 typedef tArea3DLoaderMap::iterator tArea3DLoaderMapIt;
 
 //-------------------------------------------------------

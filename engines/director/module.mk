@@ -5,8 +5,8 @@ MODULE_OBJS = \
 	cast.o \
 	channel.o \
 	cursor.o \
-	director.o \
 	debugger.o \
+	director.o \
 	events.o \
 	fonts.o \
 	frame.o \
@@ -36,6 +36,7 @@ MODULE_OBJS = \
 	castmember/shape.o \
 	castmember/sound.o \
 	castmember/text.o \
+	castmember/transition.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \
@@ -43,9 +44,9 @@ MODULE_OBJS = \
 	lingo/lingo-codegen.o \
 	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
-	lingo/lingo-mci.o \
 	lingo/lingo-gr.o \
 	lingo/lingo-lex.o \
+	lingo/lingo-mci.o \
 	lingo/lingo-object.o \
 	lingo/lingo-patcher.o \
 	lingo/lingo-preprocessor.o \
@@ -58,13 +59,17 @@ MODULE_OBJS = \
 	lingo/xlibs/batqt.o \
 	lingo/xlibs/blitpict.o \
 	lingo/xlibs/cdromxobj.o \
+	lingo/xlibs/colorxobj.o \
+	lingo/xlibs/consumer.o \
 	lingo/xlibs/darkenscreen.o \
 	lingo/xlibs/developerStack.o \
 	lingo/xlibs/dialogsxobj.o \
+	lingo/xlibs/dirutil.o \
 	lingo/xlibs/dpwavi.o \
 	lingo/xlibs/dpwqtw.o \
 	lingo/xlibs/draw.o \
 	lingo/xlibs/ednox.o \
+	lingo/xlibs/eventq.o \
 	lingo/xlibs/fedracul.o \
 	lingo/xlibs/feimasks.o \
 	lingo/xlibs/feiprefs.o \
@@ -81,7 +86,9 @@ MODULE_OBJS = \
 	lingo/xlibs/jitdraw3.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/maniacbg.o \
 	lingo/xlibs/memoryxobj.o \
+	lingo/xlibs/misc.o \
 	lingo/xlibs/miscx.o \
 	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
@@ -93,6 +100,8 @@ MODULE_OBJS = \
 	lingo/xlibs/prefpath.o \
 	lingo/xlibs/printomatic.o \
 	lingo/xlibs/qtmovie.o \
+	lingo/xlibs/qtvr.o \
+	lingo/xlibs/quicktime.o \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
@@ -104,6 +113,7 @@ MODULE_OBJS = \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \
+	lingo/xlibs/wininfo.o \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
 	lingo/xlibs/yasix.o

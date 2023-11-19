@@ -56,6 +56,17 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
+AGS_INLINE bool is_valid_object(int obj_id) {
+	return (obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj);
+}
+
+bool AssertObject(const char *apiname, int obj_id) {
+	if ((obj_id >= 0) && (static_cast<uint32_t>(obj_id) < _G(croom)->numobj))
+		return true;
+	debug_script_warn("%s: invalid object id %d (range is 0..%d)", apiname, obj_id, _G(croom)->numobj - 1);
+	return false;
+}
+
 int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
 	return AreObjectsColliding(objj->id, obj2->id);
 }
@@ -74,11 +85,6 @@ ScriptObject *GetObjectAtRoom(int x, int y) {
 	return &_G(scrObj)[hsnum];
 }
 
-AGS_INLINE int is_valid_object(int obtest) {
-	if ((obtest < 0) || (static_cast<uint32_t>(obtest) >= _G(croom)->numobj)) return 0;
-	return 1;
-}
-
 void Object_Tint(ScriptObject *objj, int red, int green, int blue, int saturation, int luminance) {
 	SetObjectTint(objj->id, red, green, blue, saturation, luminance);
 }
@@ -88,16 +94,6 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
-	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) { // Previous version of SetView had negative loop and frame mean "use latest values"
-		auto &obj = _G(objs)[objj->id];
-		if (loop < 0) loop = obj.loop;
-		if (frame < 0) frame = obj.frame;
-		const int vidx = view - 1;
-		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
-		loop = Math::Clamp(loop, 0, (int)_GP(views)[vidx].numLoops - 1);
-		frame = Math::Clamp(frame, 0, (int)_GP(views)[vidx].loops[loop].numFrames - 1);
-	}
-
 	SetObjectFrame(objj->id, view, loop, frame);
 }
 
@@ -122,21 +118,8 @@ int Object_GetBaseline(ScriptObject *objj) {
 
 void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
 	int blocking, int direction, int sframe, int volume = 100) {
-	if (direction == FORWARDS)
-		direction = 0;
-	else if (direction == BACKWARDS)
-		direction = 1;
-	if (blocking == BLOCKING)
-		blocking = 1;
-	else if (blocking == IN_BACKGROUND)
-		blocking = 0;
 
-	if ((repeat < 0) || (repeat > 1))
-		quit("!Object.Animate: invalid repeat value");
-	if ((blocking < 0) || (blocking > 1))
-		quit("!Object.Animate: invalid blocking value");
-	if ((direction < 0) || (direction > 1))
-		quit("!Object.Animate: invalid direction");
+	ValidateViewAnimParams("Object.Animate", repeat, blocking, direction);
 
 	AnimateObjectImpl(objj->id, loop, delay, repeat, direction, blocking, sframe, volume);
 }
@@ -459,14 +442,20 @@ void Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufe
 }
 
 const char *Object_GetTextProperty(ScriptObject *objj, const char *property) {
+	if (!AssertObject("Object.GetTextProperty", objj->id))
+		return nullptr;
 	return get_text_property_dynamic_string(_GP(thisroom).Objects[objj->id].Properties, _G(croom)->objProps[objj->id], property);
 }
 
 bool Object_SetProperty(ScriptObject *objj, const char *property, int value) {
+	if (!AssertObject("Object.SetProperty", objj->id))
+		return false;
 	return set_int_property(_G(croom)->objProps[objj->id], property, value);
 }
 
 bool Object_SetTextProperty(ScriptObject *objj, const char *property, const char *value) {
+	if (!AssertObject("Object.SetTextProperty", objj->id))
+		return false;
 	return set_text_property(_G(croom)->objProps[objj->id], property, value);
 }
 
@@ -553,6 +542,31 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 	if (aa < 0) return 0;
 	RunObjectInteraction(aa, mood);
 	return 1;
+}
+
+void ValidateViewAnimParams(const char *apiname, int &repeat, int &blocking, int &direction) {
+	if (blocking == BLOCKING)
+		blocking = 1;
+	else if (blocking == IN_BACKGROUND)
+		blocking = 0;
+
+	if (direction == FORWARDS)
+		direction = 0;
+	else if (direction == BACKWARDS)
+		direction = 1;
+
+	if ((repeat < 0) || (repeat > 1)) {
+		debug_script_warn("%s: invalid repeat value %d, will treat as REPEAT (1).", apiname, repeat);
+		repeat = 1;
+	}
+	if ((blocking < 0) || (blocking > 1)) {
+		debug_script_warn("%s: invalid blocking value %d, will treat as BLOCKING (1)", apiname, blocking);
+		blocking = 1;
+	}
+	if ((direction < 0) || (direction > 1)) {
+		debug_script_warn("%s: invalid direction value %d, will treat as BACKWARDS (1)", apiname, direction);
+		direction = 1;
+	}
 }
 
 // General view animation algorithm: find next loop and frame, depending on anim settings

@@ -45,6 +45,7 @@ public:
 
 	bool parserCallback_document(ParserNode *node) { return true; };
 	bool parserCallback_Object(ParserNode *node);
+	bool handleUnknownKey(ParserNode *node) override;
 
 public:
 	Common::HashMap<Common::String, Inventory::InventoryObjectData> _objects;

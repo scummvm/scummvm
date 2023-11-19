@@ -18,9 +18,6 @@
 		android:name="android.hardware.wifi"
 		android:required="false" />
 	<uses-feature
-		android:name="android.hardware.screen.landscape"
-		android:required="false" />
-	<uses-feature
 		android:name="android.hardware.touchscreen"
 		android:required="false" />
 	<uses-feature
@@ -49,8 +46,8 @@
 			android:name=".SplashActivity"
 			android:exported="true"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
-			android:screenOrientation="landscape"
+			android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout"
+			android:resizeableActivity="true"
 			android:theme="@style/SplashTheme"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -58,16 +55,15 @@
 
 				<category android:name="android.intent.category.LAUNCHER" />
 				<category android:name="tv.ouya.intent.category.GAME" />
-				<category android:name="android.intent.category.LEANBACK_LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity
 			android:name=".ScummVMActivity"
 			android:exported="false"
 			android:banner="@drawable/leanback_icon"
-			android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
+			android:configChanges="orientation|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout"
+			android:resizeableActivity="true"
 			android:launchMode="singleInstance"
-			android:screenOrientation="landscape"
 			android:theme="@style/AppTheme"
 			android:windowSoftInputMode="adjustResize">
 		</activity>

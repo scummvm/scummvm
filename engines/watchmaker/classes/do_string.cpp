@@ -19,10 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
-
 #include "watchmaker/classes/do_string.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/message.h"
@@ -213,13 +209,13 @@ void doString(WGame &game) {
 void ShowObjName(Init &init, int32 ob) {
 	if (bUseWith & UW_ON) {
 		if (bUseWith & UW_USEDI)
-			sprintf(UWStr, "Use %s with ", ObjName[init.InvObj[UseWith[USED]].name]);
+			snprintf(UWStr, 100, "Use %s with ", ObjName[init.InvObj[UseWith[USED]].name]);
 		else
-			sprintf(UWStr, "Use %s with ", ObjName[init.Obj[UseWith[USED]].name]);
+			snprintf(UWStr, 100, "Use %s with ", ObjName[init.Obj[UseWith[USED]].name]);
 
 		if ((UseWith[USED] != ob) || (bUseWith & UW_USEDI))
 			if (ObjName[init.Obj[ob].name] != nullptr)
-				strcat(UWStr, ObjName[init.Obj[ob].name]);
+				Common::strlcat(UWStr, ObjName[init.Obj[ob].name], 100);
 		Text(DEFAULT_TEXT_X, DEFAULT_TEXT_Y, DEFAULT_TEXT_DX, UWStr);
 	} else if (!ob || !init.Obj[ob].name)
 		ClearText();
@@ -233,13 +229,13 @@ void ShowObjName(Init &init, int32 ob) {
 void ShowInvObjName(Init &init, int32 obj) {
 	if (bUseWith & UW_ON) {
 		if (bUseWith & UW_USEDI)
-			sprintf(UWStr, "Use %s with ", ObjName[init.InvObj[UseWith[USED]].name]);
+			snprintf(UWStr, 100, "Use %s with ", ObjName[init.InvObj[UseWith[USED]].name]);
 		else
-			sprintf(UWStr, "Use %s with ", ObjName[init.Obj[UseWith[USED]].name]);
+			snprintf(UWStr, 100, "Use %s with ", ObjName[init.Obj[UseWith[USED]].name]);
 
 		if ((UseWith[USED] != obj) || !(bUseWith & UW_USEDI))
 			if (ObjName[init.InvObj[obj].name] != nullptr)
-				strcat(UWStr, ObjName[init.InvObj[obj].name]);
+				Common::strlcat(UWStr, ObjName[init.InvObj[obj].name], 100);
 		Text(DEFAULT_TEXT_X, DEFAULT_TEXT_Y, DEFAULT_TEXT_DX, UWStr);
 	} else //if ( !obj )
 		ClearText();

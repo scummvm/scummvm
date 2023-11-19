@@ -237,7 +237,7 @@ Common::String CloudManager::getStorageLastSync(uint32 index) {
 	return _storages[index].lastSyncDate;
 }
 
-void CloudManager::setStorageUsername(uint32 index, Common::String name) {
+void CloudManager::setStorageUsername(uint32 index, const Common::String &name) {
 	if (index >= _storages.size())
 		return;
 	_storages[index].username = name;
@@ -251,14 +251,14 @@ void CloudManager::setStorageUsedSpace(uint32 index, uint64 used) {
 	save();
 }
 
-void CloudManager::setStorageLastSync(uint32 index, Common::String date) {
+void CloudManager::setStorageLastSync(uint32 index, const Common::String &date) {
 	if (index >= _storages.size())
 		return;
 	_storages[index].lastSyncDate = date;
 	save();
 }
 
-void CloudManager::connectStorage(uint32 index, Common::String code, Networking::ErrorCallback cb) {
+void CloudManager::connectStorage(uint32 index, const Common::String &code, Networking::ErrorCallback cb) {
 	freeStorages();
 
 	switch (index) {
@@ -309,7 +309,7 @@ void CloudManager::connectStorage(uint32 index, Networking::JsonResponse codeFlo
 }
 
 bool CloudManager::connectStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb) {
-	Common::JSONValue *json = (Common::JSONValue *)codeFlowJson.value;
+	const Common::JSONValue *json = codeFlowJson.value;
 	if (json == nullptr || !json->isObject()) {
 		return false;
 	}
@@ -381,7 +381,7 @@ void CloudManager::disconnectStorage(uint32 index) {
 }
 
 
-Networking::Request *CloudManager::listDirectory(Common::String path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+Networking::Request *CloudManager::listDirectory(const Common::String &path, Storage::ListDirectoryCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
 	if (storage) {
 		return storage->listDirectory(path, callback, errorCallback, recursive);
@@ -393,7 +393,7 @@ Networking::Request *CloudManager::listDirectory(Common::String path, Storage::L
 	return nullptr;
 }
 
-Networking::Request *CloudManager::downloadFolder(Common::String remotePath, Common::String localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
+Networking::Request *CloudManager::downloadFolder(const Common::String &remotePath, const Common::String &localPath, Storage::FileArrayCallback callback, Networking::ErrorCallback errorCallback, bool recursive) {
 	Storage *storage = getCurrentStorage();
 	if (storage) {
 		return storage->downloadFolder(remotePath, localPath, callback, errorCallback, recursive);
@@ -514,7 +514,7 @@ void CloudManager::showCloudDisabledIcon() {
 
 ///// DownloadFolderRequest-related /////
 
-bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) const {
+bool CloudManager::startDownload(const Common::String &remotePath, const Common::String &localPath) const {
 	Storage *storage = getCurrentStorage();
 	if (storage)
 		return storage->startDownload(remotePath, localPath);

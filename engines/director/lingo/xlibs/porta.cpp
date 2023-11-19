@@ -20,6 +20,7 @@
  */
 
 #include "director/director.h"
+#include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/porta.h"
 
 /*************************************

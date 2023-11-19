@@ -275,6 +275,7 @@ protected:
 	bool cmdDebugFlagsList(int argc, const char **argv);
 	bool cmdDebugFlagEnable(int argc, const char **argv);
 	bool cmdDebugFlagDisable(int argc, const char **argv);
+	bool cmdClearLog(int argc, const char **argv);
 	bool cmdExecFile(int argc, const char **argv);
 
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER

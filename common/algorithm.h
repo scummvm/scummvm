@@ -390,6 +390,74 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 	}
 }
 
+/**
+ * Removes all elements that are equal to value from the range [first, last).
+ * This function is the equivalent of std::remove.
+ * 
+ * @param[in] first Iterator to the first position to be examined.
+ * @param[in] last  Iterator to the last position.
+ * @param[in] val   Value to be removed.
+ * @return          An iterator to the new end of the range.
+ */
+template<class It, class T>
+It remove(It first, It last, const T& val) {
+	first = find(first, last, val);
+	if (first != last) {
+		It i = first;
+		while (++i != last) {
+			if (!(*i == val)) {
+				*first = move(*i);
+				first++;
+			}
+		}
+	}
+	return first;
+}
+
+/**
+ * Returns an iterator to the first item in the range [first, last) for which comp(item, val)
+ * (item < val by default) is false, or last if no such item is found.
+ * Items in the range [first, last) need to be partitioned by comp(item, val), that is,
+ * all items for which comp(item, val) is true (items that are less than val)
+ * come before all items for which the expression is false (items that are bigger than or
+ * equal to val). A sorted range conforms to the requirement.
+ *
+ * This function is the equivalent of std::lower_bound for random access iterators.
+ */
+template<typename RandomIt, typename V, typename Comp = Less<V> >
+RandomIt lowerBound(RandomIt first, RandomIt last, const V &val, Comp comp = {}) {
+	while (first < last) {
+		const RandomIt mid = first + distance(first, last) / 2;
+		if (comp(*mid, val))
+			first = mid + 1;
+		else
+			last = mid;
+	}
+	return first;
+}
+
+/**
+ * Returns an iterator to the first item in the range [first, last) for which comp(val, item)
+ * (val < item by default) is true, or last if no such item is found.
+ * Items in the range [first, last) need to be partitioned by !comp(val, item), that is,
+ * all items for which !comp(val, item) is true (items that are less than or equal to val),
+ * come before all items for which the expression is false (items that are greater than val).
+ * A sorted range conforms to the requirement.
+ *
+ * This function is the equivalent of std::upper_bound for random access iterators.
+ */
+template<typename RandomIt, typename V, typename Comp = Less<V> >
+RandomIt upperBound(RandomIt first, RandomIt last, const V &val, Comp comp = {}) {
+	while (first < last) {
+		const RandomIt mid = first + distance(first, last) / 2;
+		if (!comp(val, *mid))
+			first = mid + 1;
+		else
+			last = mid;
+	}
+	return first;
+}
+
 /** @} */
 
 } // End of namespace Common

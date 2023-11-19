@@ -255,6 +255,7 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptFishDealer::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 
@@ -312,6 +313,7 @@ bool AIScriptFishDealer::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptFishDealer::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		return true;
 	}
 

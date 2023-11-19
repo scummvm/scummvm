@@ -523,17 +523,17 @@ Perform math/logic operation on two operands
 uint16 mathOp(byte op, uint16 op1, uint16 op2) {
 	if (op & MATHOP_CMP) {
 		if (op & MATHOP_EQ)
-			if (op1 == op2) return ~0;
+			if (op1 == op2) return 0xffff;
 		if (op & MATHOP_B)
-			if (op1 < op2) return ~0;
+			if (op1 < op2) return 0xffff;
 		if (op & MATHOP_A)
-			if (op1 > op2) return ~0;
+			if (op1 > op2) return 0xffff;
 		if (op & MATHOP_NEQ)
-			if (op1 != op2) return ~0;
+			if (op1 != op2) return 0xffff;
 		if (op & MATHOP_LE)
-			if ((int16)op1 <= (int16)op2) return ~0;
+			if ((int16)op1 <= (int16)op2) return 0xffff;
 		if (op & MATHOP_GE)
-			if ((int16)op1 >= (int16)op2) return ~0;
+			if ((int16)op1 >= (int16)op2) return 0xffff;
 		return 0;
 	} else {
 		if (op & MATHOP_ADD)
@@ -3262,7 +3262,7 @@ uint16 CMD_4_EnergyLevel(void) {
 	popDirtyRects(DirtyRectBubble);
 
 	cur_dlg_index = 0;
-	ifgm_flag2 = ~0;
+	ifgm_flag2 = 0xff;
 
 	if (script_byte_vars.psy_energy != 0)
 		anim = 41 + (script_byte_vars.psy_energy / 16);

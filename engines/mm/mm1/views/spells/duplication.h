@@ -23,30 +23,20 @@
 #define MM1_VIEWS_SPELLS_DUPLICATION_H
 
 #include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/game/duplication.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-class Duplication : public SpellView {
+class Duplication : public SpellView, public MM1::Game::Duplication {
 private:
-	enum Mode {
-		SELECT_ITEM, CAST
-	};
-	Mode _mode = SELECT_ITEM;
-	char _direction = '\0';
-	int _squares = 0;
+	enum Mode { SELECT_ITEM, CAST };
+	//Mode _mode = SELECT_ITEM;
+	//char _direction = '\0';
+	//int _squares = 0;
 
-	/**
-	 * Handle the Duplicationing
-	 */
-	void duplicate();
-public:
-	/**
-	 * Show the view
-	 */
-	static void show();
 public:
 	/**
 	 * Constructor

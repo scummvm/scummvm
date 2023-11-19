@@ -303,14 +303,17 @@ bool AIScriptGenericWalkerB::UpdateAnimation(int *animation, int *frame) {
 		// probably for debug purposes
 		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding))
-		{
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding)) {
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);
 			_animationState = kGenericWalkerBStatesIdle;
 			deltaX = 0.0f;
 			deltaZ = 0.0f;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerB::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -331,6 +334,10 @@ bool AIScriptGenericWalkerB::ChangeAnimationMode(int mode) {
 	case kAnimationModeWalk:
 		_animationState = kGenericWalkerBStatesWalk;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptGenericWalkerB::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

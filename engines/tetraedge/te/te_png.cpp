@@ -27,7 +27,7 @@
 
 namespace Tetraedge {
 
-TePng::TePng(const Common::String &extn) {
+TePng::TePng(const Common::String &extn) : _height(0) {
 	if (extn == "png#anim") {
 		_nbFrames = 8;
 		_frameRate = 8.0f;
@@ -63,6 +63,9 @@ bool TePng::load(Common::SeekableReadStream &stream) {
 		return false;
 
 	_loadedSurface = png.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	_height = _loadedSurface->h;
+
 	return true;
 }
 

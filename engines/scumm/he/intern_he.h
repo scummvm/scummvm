@@ -69,7 +69,7 @@ public:
 	Common::Rect _actorClipOverride;	// HE specific
 
 	int _heTimers[16];
-	uint32 _pauseStartTime;
+	uint32 _pauseStartTime = 0;
 
 	int getHETimer(int timer);
 	void setHETimer(int timer);
@@ -127,6 +127,7 @@ protected:
 	void o60_rename();
 	void o60_writeFile();
 	void o60_soundOps();
+	void o60_isSoundRunning();
 	void o60_seekFilePos();
 	void o60_localizeArrayToScript();
 	void o60_redimArray();
@@ -135,8 +136,10 @@ protected:
 
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
+	friend class SoundHE;
 
-protected:
+public:
+	// Used in akos.cpp
 	enum HESndFlags {
 		HE_SND_LOOP = 1,
 		HE_SND_APPEND = 2,
@@ -148,6 +151,8 @@ protected:
 		HE_SND_PAN = 128
 	};
 
+
+protected:
 	enum SubOpType {
 		SO_SOFT = 9,
 		SO_IMAGE_LOADED = 18,
@@ -192,7 +197,9 @@ protected:
 	byte *_heV7RoomOffsets;
 	uint32 *_heV7RoomIntOffsets;
 
-	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq, _heSndPan, _heSndVol;
+	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags,
+		_heSndFrequency, _heSndFrequencyShift, _heSndPan, _heSndVol;
+	bool _heSndStartNewSoundFlag;
 
 	int _numStoredFlObjects;
 	ObjectData *_storedFlObjects;
@@ -373,7 +380,7 @@ protected:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-	int _stringLength;
+	int _stringLength = 1;
 	byte _stringBuffer[4096];
 
 	WizParameters _wizParams;
@@ -490,7 +497,8 @@ protected:
 
 class ScummEngine_v80he : public ScummEngine_v72he {
 protected:
-	int32 _heSndResId, _curSndId, _sndPtrOffs, _sndTmrOffs, _sndDataSize;
+	int32 _heSndResId = 0;
+
 	enum SubOpType {
 		SO_CURSOR_IMAGE = 19,
 		SO_CURSOR_COLOR_IMAGE = 20,
@@ -513,8 +521,6 @@ protected:
 	void initCharset(int charset) override;
 
 	void clearDrawQueues() override;
-
-	void createSound(int snd1id, int snd2id);
 
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);

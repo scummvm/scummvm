@@ -43,7 +43,7 @@
 { // Supplied by Collector9 in bug report #5611
 	{
 		"urban",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "6ce3d878178932053267237ec4843ce1", 1252518),
 		EN_USA,
 		kPlatformDOS,
@@ -57,7 +57,7 @@
 { // Supplied by gamin in the forums
 	{
 		"urban",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "b991ed1d31c793e560edefdb349882ef", 1276408),
 		FR_FRA,
 		kPlatformDOS,
@@ -99,7 +99,7 @@
 { // Supplied by alex86r in bug report #5690
 	{
 		"urban",
-		"",
+		"v1.01",
 		AD_ENTRY1s("intro.stk", "4e4a3c017fe5475353bf94c455fe3efd", 1253448),
 		IT_ITA,
 		kPlatformDOS,

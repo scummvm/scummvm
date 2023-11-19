@@ -889,7 +889,9 @@ void ScummEngine_v8::o8_actorOps() {
 		break;
 	case SO_ACTOR_FACE:		// Make actor face angle
 		a->_moving &= ~MF_TURN;
-		a->setDirection(pop());
+		j = pop();
+		a->turnToDirection(j);
+		a->setDirection(j);
 		break;
 	case SO_ACTOR_TURN:		// Turn actor
 		a->turnToDirection(pop());
@@ -1052,6 +1054,7 @@ void ScummEngine_v8::o8_systemOps() {
 		restart();
 		break;
 	case SO_QUIT:		// Quit game
+		_quitFromScriptCmd = true;
 		quitGame();
 		break;
 	default:
@@ -1198,6 +1201,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			// Create an artificial CTRL-C keyPress
 			_keyPressed = Common::KEYCODE_c;
 			_keyPressed.flags |= Common::KBD_CTRL;
+			_quitFromScriptCmd = true;
 		} else {
 			if (ConfMan.getBool("confirm_exit"))
 				confirmExitDialog();

@@ -127,7 +127,6 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
 	freeMemory(_characterSpriteBuf);
-	free(nullptr);
 }
 
 void Globals::setConfig() {

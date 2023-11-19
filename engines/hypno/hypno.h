@@ -427,6 +427,9 @@ public:
 
 private:
 	Common::String getLocalizedString(const Common::String name);
+	uint16 getNextChar(const Common::String &str, uint32 &c);
+	void drawGlyph(const Common::BitArray &font, int x, int y, int bitoffset, int width, int height, int pitch, uint32 color, bool invert);
+	void drawKoreanChar(uint16 chr, int &curx, int y, uint32 color);
 	void runMainMenu(Code *code);
 	void runLevelMenu(Code *code);
 	void runCheckLives(Code *code);
@@ -447,6 +450,7 @@ private:
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
+	Common::BitArray _fontg9a;
 	Common::Array<uint32> _c40SegmentPath;
 	Common::Array<uint32> _c40SegmentNext;
 	int _c40SegmentIdx;

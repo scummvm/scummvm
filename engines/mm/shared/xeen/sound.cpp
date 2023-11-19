@@ -25,6 +25,7 @@
 #include "common/config-manager.h"
 #include "mm/shared/xeen/sound.h"
 #include "mm/shared/xeen/sound_driver_adlib.h"
+#include "mm/xeen/xeen.h"
 #include "mm/mm.h"
 
 namespace MM {
@@ -215,12 +216,13 @@ void Sound::playSong(const Common::String &name, int param) {
 	Common::File mf;
 	if (mf.open(name)) {
 		playSong(mf);
-	} else {
 #ifdef ENABLE_XEEN
+	} else if (dynamic_cast<MM::Xeen::XeenEngine *>(g_engine)) {
 		File f(name, _musicSide);
-#else
-		File f(name);
+		playSong(f);
 #endif
+	} else {
+		File f(name);
 		playSong(f);
 	}
 }

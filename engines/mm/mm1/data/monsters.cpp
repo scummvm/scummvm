@@ -19,13 +19,30 @@
  *
  */
 
+#include "common/file.h"
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/gfx/dta.h"
 #include "mm/mm1/gfx/screen_decoder.h"
-#include "common/file.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
+
+static const uint16 PALETTE[76] = {
+	0xf470, 0xf420, 0xfe20, 0xf630, 0xf420, 0xf620, 0xf460, 0xf6e0,
+	0xf510, 0xfe40, 0xf420, 0xf410, 0xfd50, 0xfc90, 0xf430, 0xfc30,
+	0xf770, 0xfc30, 0xf420, 0xf430, 0xf420, 0xf490, 0xf110, 0xf4e0,
+	0xf430, 0xfd60, 0xf430, 0xfc20, 0xf2a0, 0xf470, 0xf4e0, 0xf250,
+	0xf430, 0xf320, 0xfee0, 0xf420, 0xf220, 0xf420, 0xfdd0, 0xf420,
+	0xf620, 0xfc20, 0xfc10, 0xf520, 0xf420, 0xf220, 0xf420, 0xfa50,
+	0xfe20, 0xf620, 0xf470, 0xf420, 0xfe10, 0xf4e0, 0xfe40, 0xf140,
+	0xf290, 0xf410, 0xf520, 0xf410, 0xfc10, 0xf120, 0xf420, 0xfe10,
+	0xf520, 0xf4a0, 0xfe60, 0xfe60, 0xf620, 0xf620, 0xfce0, 0xf420,
+	0xfc20, 0xfc20, 0xfd90, 0xf420
+};
+
+Monsters::Monsters() : _monPix(MONPIX_DTA) {
+}
 
 bool Monsters::load() {
 	Common::File f;
@@ -63,18 +80,19 @@ bool Monsters::load() {
 	return true;
 }
 
-Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
-	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
+Graphics::ManagedSurface Monsters::getMonsterImage(int imgNum) {
+	Common::SeekableReadStream *entry = _monPix.load(imgNum);
 	entry->skip(2);
 
 	// Decode the image
 	Graphics::ManagedSurface img;
 	Gfx::ScreenDecoder decoder;
-	// TODO: Figure out if the indexes are map-dependant
-	decoder._indexes[0] = 0;
-	decoder._indexes[1] = 2;
-	decoder._indexes[2] = 4;
-	decoder._indexes[3] = 15;
+
+	uint pal = PALETTE[imgNum];
+	decoder._indexes[0] = pal & 0xf;
+	decoder._indexes[1] = (pal >> 4) & 0xf;
+	decoder._indexes[2] = (pal >> 8) & 0xf;
+	decoder._indexes[3] = (pal >> 12) & 0xf;
 
 	if (!decoder.loadStream(*entry, 104, 96))
 		error("Failed decoding monster image");

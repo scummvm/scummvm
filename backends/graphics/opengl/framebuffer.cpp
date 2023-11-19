@@ -178,7 +178,7 @@ void Backbuffer::activateInternal() {
 #endif
 }
 
-void Backbuffer::setDimensions(uint width, uint height) {
+bool Backbuffer::setSize(uint width, uint height) {
 	// Set viewport dimensions.
 	_viewport[0] = 0;
 	_viewport[1] = 0;
@@ -211,6 +211,7 @@ void Backbuffer::setDimensions(uint width, uint height) {
 		applyViewport();
 		applyProjectionMatrix();
 	}
+	return true;
 }
 
 //

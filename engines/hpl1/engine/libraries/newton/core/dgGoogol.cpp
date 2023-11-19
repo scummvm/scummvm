@@ -19,8 +19,9 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "dgStdafx.h"
 #include "dgGoogol.h"
+#include "dgStdafx.h"
+#include "hpl1/debug.h"
 
 dgGoogol::dgGoogol(void) :
 	m_sign(0), m_exponent(0) {
@@ -37,9 +38,6 @@ dgGoogol::dgGoogol(dgFloat64 value) :
 
 	memset(m_mantissa, 0, sizeof(m_mantissa));
 	m_mantissa[0] = (dgInt64(dgFloat64(dgUnsigned64(1) << 62) * mantissa));
-
-	// it looks like GCC have problems with this
-	NEWTON_ASSERT(m_mantissa[0] >= 0);
 }
 
 dgGoogol::~dgGoogol(void) {
@@ -338,27 +336,8 @@ dgGoogol dgGoogol::operator-=(const dgGoogol &A) {
 }
 
 dgGoogol dgGoogol::Floor() const {
-	if (m_exponent < 1) {
-		return dgGoogol(0.0);
-	}
-	dgInt32 bits = m_exponent + 2;
-	dgInt32 start = 0;
-	while (bits >= 64) {
-		bits -= 64;
-		start++;
-	}
-
-	dgGoogol tmp(*this);
-	for (dgInt32 i = DG_GOOGOL_SIZE - 1; i > start; i--) {
-		tmp.m_mantissa[i] = 0;
-	}
-	dgUnsigned64 mask = (-1LL) << (64 - bits);
-	tmp.m_mantissa[start] &= mask;
-	if (m_sign) {
-		NEWTON_ASSERT(0);
-	}
-
-	return tmp;
+	// removed to silence warning
+	HPL1_UNIMPLEMENTED(dgGoogol::Floor);
 }
 
 #ifdef _DEBUG

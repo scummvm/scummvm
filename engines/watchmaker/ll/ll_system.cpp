@@ -123,6 +123,8 @@ int t3dAccessFile(char *name) {
 
 bool t3dGetFileDate(uint32 *date, uint32 *time, const char *name) {
 	warning("TODO: t3dGetFileDate is currently super-inefficient: %s", name);
+	*date = 0;
+	*time = 0;
 	return checkFileExists(name);
 }
 

@@ -163,12 +163,12 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 	}
 	case kcZONE:
 		debugCN(3, kDebugLevels::kDebugScripts, "zone(");
-		engine->_scene->_currentScriptValue = ctx.actor->_zone;
+		engine->_scene->_currentScriptValue = ctx.actor->_zoneSce;
 		break;
 	case kcZONE_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "zone_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zone;
+		engine->_scene->_currentScriptValue = engine->_scene->getActor(actorIdx)->_zoneSce;
 		break;
 	}
 	case kcBODY:
@@ -206,7 +206,7 @@ static ReturnType processLifeConditions(TwinEEngine *engine, LifeScriptContext &
 		int32 flagIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "flag_cube(%i, ", flagIdx);
 		conditionValueSize = ReturnType::RET_U8;
-		engine->_scene->_currentScriptValue = engine->_scene->_sceneFlags[flagIdx];
+		engine->_scene->_currentScriptValue = engine->_scene->_listFlagCube[flagIdx];
 		break;
 	}
 	case kcCONE_VIEW: {
@@ -1020,13 +1020,13 @@ int32 ScriptLife::lSET_FLAG_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 flagValue = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_FLAG_CUBE(%i, %i)", (int)flagIdx, (int)flagValue);
 
-	engine->_scene->_sceneFlags[flagIdx] = flagValue;
+	engine->_scene->_listFlagCube[flagIdx] = flagValue;
 
 	return 0;
 }
 
 /**
- * Set a new behaviour for the current actor. (Paramter = Comportament number)
+ * Set a new behaviour for the current actor. (Parameter = Comportament number)
  * @note Opcode @c 0x20
  * @note Was only used in the lba editor
  */
@@ -1091,7 +1091,7 @@ int32 ScriptLife::lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_dynamicFlags.bIsDead = 1;
 	otherActor->_body = -1;
-	otherActor->_zone = -1;
+	otherActor->_zoneSce = -1;
 	otherActor->setLife(0);
 
 	return 0;
@@ -1106,7 +1106,7 @@ int32 ScriptLife::lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_actor->processActorCarrier(ctx.actorIdx);
 	ctx.actor->_dynamicFlags.bIsDead = 1;
 	ctx.actor->_body = -1;
-	ctx.actor->_zone = -1;
+	ctx.actor->_zoneSce = -1;
 	ctx.actor->setLife(0);
 
 	return 0;
@@ -1530,17 +1530,6 @@ int32 ScriptLife::lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Play Midis (Parameter = Midis Index)
- * @note Opcode @c 0x41
- */
-int32 ScriptLife::lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 midiIdx = ctx.stream.readByte();
-	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::PLAY_MIDI(%i)", (int)midiIdx);
-	return 0;
-}
-
-/**
  * To increment the clover box current value.
  * @note Opcode @c 0x42
  */
@@ -1628,7 +1617,7 @@ int32 ScriptLife::lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
 	penguin->_dynamicFlags.bIsDead = 1;
 	penguin->_body = -1;
-	penguin->_zone = -1;
+	penguin->_zoneSce = -1;
 	return 0;
 }
 
@@ -1857,26 +1846,6 @@ int32 ScriptLife::lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 /**
- * Turn on bubbles while actors talk.
- * @note Opcode @c 0x59
- */
-int32 ScriptLife::lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_ON()");
-	engine->_text->_showDialogueBubble = true;
-	return 0;
-}
-
-/**
- * Turn off bubbles while actors talk.
- * @note Opcode @c 0x5A
- */
-int32 ScriptLife::lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::BUBBLE_OFF()");
-	engine->_text->_showDialogueBubble = false;
-	return 0;
-}
-
-/**
  * The actor will ask something with choices to choose. (Parameter = Actor Index, Parameter = Text Index in the current Text Bank)
  * @note Opcode @c 0x5B
  */
@@ -1995,16 +1964,6 @@ int32 ScriptLife::lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_sceneHero->_beta = engine->_actor->_previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
-}
-
-/**
- * Stop the current played midi.
- * @note Opcode @c 0x63
- */
-int32 ScriptLife::lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	debugC(3, kDebugLevels::kDebugScripts, "LIFE::MIDI_OFF()");
-	engine->_music->stopMidiMusic();
-	return 0;
 }
 
 /**

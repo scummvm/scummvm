@@ -228,16 +228,20 @@ U32String punycode_decode(const String &src1) {
 		return src1;
 
 	String src(&src1.c_str()[4]); // Skip the prefix for simplification
-	int srclen = src.size();
+	uint srclen = src.size();
 
 	// Ensure that the input contains only ASCII characters.
-	for (int si = 0; si < srclen; si++) {
+	for (uint si = 0; si < srclen; si++) {
 		if (src[si] & 0x80) {
 			return src1;
 		}
 	}
 
 	size_t di = src.findLastOf('-');
+
+	// If we have no '-', the entire string is non-ASCII character insertions.
+	if (di == String::npos)
+		di = 0;
 
 	Common::String tail;
 
@@ -262,14 +266,14 @@ U32String punycode_decode(const String &src1) {
 		bool noncode = false;
 
 		// Scan string to the end for illegal characters
-		for (int i = di + 1; i < srclen; i++) {
+		for (uint i = di + 1; i < srclen; i++) {
 			if (!((src[i] >= '0' && src[i] <= '9') || (src[i] >= 'a' && src[i] <= 'z'))) {
 				noncode = true;
 				break;
 			}
 		}
 
-		if (noncode) {
+		if (noncode && di < srclen) {
 			tail = String(src.c_str() + di) + tail;
 			src = String(src.c_str(), di);
 			srclen = src.size();
@@ -287,10 +291,6 @@ U32String punycode_decode(const String &src1) {
 		}
 	}
 
-	// If we have no '-', the entire string is non-ASCII character insertions.
-	if (di == String::npos)
-		di = 0;
-
 	U32String dst;
 
 	for (size_t i = 0; i < di; i++) {
@@ -302,7 +302,7 @@ U32String punycode_decode(const String &src1) {
 	size_t n = INITIAL_N;
 	size_t bias = INITIAL_BIAS;
 
-	for (int si = b + (b > 0 ? 1 : 0); si < srclen; di++) {
+	for (int si = b + (b > 0 ? 1 : 0); si < (int)srclen; di++) {
 		size_t org_i = i;
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {

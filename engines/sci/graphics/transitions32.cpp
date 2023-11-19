@@ -35,7 +35,8 @@ static int dissolveSequences[2][20] = {
 	/* SCI2.1mid+ */ { 0, 0, 3, 6, 12, 20, 48, 96, 184, 272, 576, 1280, 3232, 6912, 13568, 24576, 46080, 73728, 132096, 466944 }
 };
 static int16 divisionsDefaults[2][16] = {
-	/* SCI2.1early- */ { 1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 40, 40, 101, 101 },
+	// the last element in SCI2.1early was added after LSL6 and PQ4
+	/* SCI2.1early- */ { 1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 40, 40, 101, 101, 2 },
 	/* SCI2.1mid+ */   { 1, 20, 20, 20, 20, 10, 10, 10, 10, 20, 20,  6, 10, 101, 101, 2 }
 };
 
@@ -733,9 +734,11 @@ bool GfxTransitions32::processIrisIn(PlaneShowStyle &showStyle) {
 	return processWipe(1, showStyle);
 }
 
+#if 0
 void GfxTransitions32::processDissolveNoMorph(PlaneShowStyle &showStyle) {
 	error("DissolveNoMorph is not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 }
+#endif
 
 inline int bitWidth(int number) {
 	int width = 0;

@@ -207,7 +207,6 @@ void CharStop(int32 oc) {
  * --------------------------------------------------*/
 void CharSetPosition(int32 oc, uint8 pos, const char *room) {
 	t3dBODY *OldCurRoom = t3dCurRoom;
-	int32 i;
 	t3dCHARACTER *Char = Character[oc];
 	t3dV3F tmp;
 
@@ -267,8 +266,9 @@ void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 
 
 	Char->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 	Char->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 
 	Char->Mesh->Flags |= T3D_MESH_DEFAULTANIM;
 	t3dVectCopy(&Char->Pos, &Char->Mesh->Trasl);
@@ -310,8 +310,9 @@ void FixPos(int32 oc) {
 	t3dCHARACTER *Ch = Character[oc];
 	t3dMESH *mesh = Ch->Mesh;
 
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 	mesh->Trasl.y = CurFloorY;
 	t3dVectCopy(&Ch->Pos, &mesh->Trasl);
 	t3dVectInit(&Ch->Dir, 0.0f, 0.0f, -1.0f);
@@ -493,15 +494,21 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 	w->WalkSteps[w->NumSteps++].curp = w->CurPanel;
 
 	// arrotonda la fine
-	if ((w->NumSteps > 2) && ((angle = lastangle) != (lastangle = w->WalkSteps[w->NumSteps - 2].Angle))) {
-		approx = angle - lastangle;
-		if (approx > T3D_PI) approx = -T3D_PI * 2 + approx;
-		else if (approx < -T3D_PI) approx = T3D_PI * 2 + approx;
-		approx /= 4.0f;
+	if ((w->NumSteps > 2)) {
+		// FIXME: The following code should be checked for correct intended logic as
+		//        it's previous form had sequence point issues.
+		angle = lastangle;
+		lastangle = w->WalkSteps[w->NumSteps - 2].Angle;
+		if (angle != lastangle) {
+			approx = angle - lastangle;
+			if (approx > T3D_PI) approx = -T3D_PI * 2 + approx;
+			else if (approx < -T3D_PI) approx = T3D_PI * 2 + approx;
+			approx /= 4.0f;
 
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 1.0f;
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 2.0f;
-		if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 3.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 1.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 2.0f;
+			if (--LastStep > 0) w->WalkSteps[LastStep].Angle = angle - approx * 3.0f;
+		}
 	}
 	if (LastStep < 0) LastStep = 0;
 	lastangle = w->WalkSteps[0].Angle;
@@ -594,8 +601,9 @@ bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint
 
 	Char->Walk.Panel = t3dCurRoom->Panel[t3dCurRoom->CurLevel];
 	Char->Walk.PanelNum = t3dCurRoom->NumPanels[t3dCurRoom->CurLevel];
-	if ((t3dCurRoom) && (&t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel]))
+	if (t3dCurRoom) {
 		CurFloorY = t3dCurRoom->PanelHeight[t3dCurRoom->CurLevel];
+	}
 
 	for (i = 0; i < T3D_MAX_CHARACTERS; i++) {
 //		Se il personaggio non e' nascosto e ha pannelli, li aggiunge
@@ -741,7 +749,7 @@ uint8 CharNextFrame(WGame &game, int32 oc) {
 			PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
 		}
 		an = Char->Walk.WalkSteps[Char->Walk.NumSteps].Act;
-		memset(&Char->Walk.WalkSteps[0], 0, sizeof(Char->Walk.WalkSteps));
+		Char->Walk.WalkSteps[0].reset();
 		Char->Walk.NumSteps = 0;
 		if (an) StartAnim(game, an);
 		return false;

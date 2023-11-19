@@ -296,9 +296,41 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES3,
 		GAME_VER_NONE
 	},
-	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Original release
 		{
-			"hires4", "",
+			"hires4", "On-Line Systems [A]",
+			{
+				{ "ulyssesa", 0, "fac225127a35cf2596d41e91647a532c", 143360 },
+				{ "ulyssesb", 1, "793a01392a094d5e2988deab5510e9fc", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_V1_0
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Version 1.1
+		{
+			"hires4", "On-Line Systems [B]",
+			{
+				{ "ulyssesa", 0, "420f515e64612d21446ede8078055f0e", 143360 },
+				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_V1_1
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Green Valley Publishing - Version 0.0
+		{
+			"hires4", "Green Valley [A]",
 			{
 				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
 				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
@@ -310,7 +342,23 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			DEFAULT_OPTIONS
 		},
 		GAME_TYPE_HIRES4,
-		GAME_VER_NONE
+		GAME_VER_HR4_LNG
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Green Valley Publishing - Version 1.1
+		{
+			"hires4", "Green Valley [B]",
+			{
+				{ "ulyssesa", 0, "35b6dce492c893327796645f481737ca", 143360 },
+  				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES4,
+		GAME_VER_HR4_LNG
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{

@@ -226,7 +226,7 @@ struct GameState {
 	int   next_screen_transition = 0;
 	int   gamma_adjustment = 0;
 	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
-	short inv_backwards_compatibility = 0;
+	short inv_backwards_compatibility = 0;  // tells to use legacy inv_* variables
 	std::vector<int> gui_draw_order; // used only for hit detection now
 	std::vector<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms = 0;
@@ -385,9 +385,9 @@ struct GameState {
 	// Serialization
 	//
 	void ReadQueuedAudioItems_Aligned(Shared::Stream *in);
-	void ReadCustomProperties_v340(Shared::Stream *in);
-	void WriteCustomProperties_v340(Shared::Stream *out) const;
-	void ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
+	void ReadCustomProperties_v340(Shared::Stream *in, GameDataVersion data_ver);
+	void WriteCustomProperties_v340(Shared::Stream *out, GameDataVersion data_ver) const;
+	void ReadFromSavegame(Shared::Stream *in, GameDataVersion data_ver, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
 	void WriteForSavegame(Shared::Stream *out) const;
 	void FreeProperties();
 	void FreeViewportsAndCameras();

@@ -36,6 +36,7 @@
 #include "gui/message.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "scumm/akos.h"
 #include "scumm/charset.h"
@@ -45,6 +46,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/smush/smush_player.h"
@@ -120,7 +122,6 @@ struct dbgChannelDesc {
 
 const char *const insaneKeymapId = "scumm-insane";
 
-
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	: Engine(syst),
 	  _game(dr.game),
@@ -180,6 +181,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	memset(_string, 0, sizeof(_string));
 	for (uint i = 0; i < ARRAYSIZE(_virtscr); i++) {
 		_virtscr[i].clear();
+	}
+
+
+	if (_game.platform == Common::kPlatformAmiga) {
+		ConfMan.registerDefault("amiga_pal_system", false);
+		if (ConfMan.hasKey("amiga_pal_system", _targetName)) {
+			_isAmigaPALSystem = ConfMan.getBool("amiga_pal_system");
+		}
 	}
 
 	setTimerAndShakeFrequency();
@@ -388,11 +397,21 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	assert(!_mainMenuDialog);
 	_mainMenuDialog = new ScummMenuDialog(this);
 #endif
+
+	_isIndy4Jap = _game.id == GID_INDY4 &&
+				  (_game.platform == Common::kPlatformMacintosh || _game.platform == Common::kPlatformDOS) &&
+				  _language == Common::JA_JPN;
 }
 
 
 ScummEngine::~ScummEngine() {
 	delete _musicEngine;
+
+	// Delete the sound object earlier than the actors
+	// for HE games, since in SoundHE::stopAllSounds() we
+	// try dereferencing actors to stop the speaking chore.
+	if (_game.heversion != 0)
+		delete _sound;
 
 	_mixer->stopAll();
 
@@ -413,13 +432,15 @@ ScummEngine::~ScummEngine() {
 	for (int i = 0; i < 20; i++)
 		if (_2byteMultiFontPtr[i])
 			delete _2byteMultiFontPtr[i];
+	delete _macFontManager;
 	delete _charset;
 	delete _messageDialog;
 	delete _pauseDialog;
 	delete _versionDialog;
 	delete _fileHandle;
 
-	delete _sound;
+	if (_game.heversion == 0)
+		delete _sound;
 
 	delete _costumeLoader;
 	delete _costumeRenderer;
@@ -454,10 +475,7 @@ ScummEngine::~ScummEngine() {
 		delete _macScreen;
 	}
 
-	if (_macIndy3TextBox) {
-		_macIndy3TextBox->free();
-		delete _macIndy3TextBox;
-	}
+	delete _macGui;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
@@ -648,9 +666,11 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	_heSndOffset = 0;
 	_heSndChannel = 0;
 	_heSndFlags = 0;
-	_heSndSoundFreq = 0;
+	_heSndFrequency = 0;
+	_heSndFrequencyShift = 0;
 	_heSndPan = 0;
 	_heSndVol = 0;
+	_heSndStartNewSoundFlag = false;
 
 	_numStoredFlObjects = 0;
 	_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
@@ -703,11 +723,6 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v72he(syst, dr) {
-	_heSndResId = 0;
-	_curSndId = 0;
-	_sndPtrOffs = 0;
-	_sndTmrOffs = 0;
-	_sndDataSize = 0;
 
 	VAR_PLATFORM_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
@@ -905,12 +920,22 @@ Common::Error ScummEngine::init() {
 		}
 	}
 
-
 	ConfMan.registerDefault("original_gui", true);
 	if (ConfMan.hasKey("original_gui", _targetName)) {
 		_useOriginalGUI = ConfMan.getBool("original_gui");
 	}
-	_enableEnhancements = ConfMan.getBool("enable_enhancements");
+
+	// Register original bug fixes as defaults...
+	ConfMan.registerDefault("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1);
+	if (!ConfMan.hasKey("enhancements", _targetName)) {
+		if (ConfMan.hasKey("enable_enhancements", _targetName) && ConfMan.getBool("enable_enhancements", _targetName)) {
+			// Was the "enable_enhancements" key previously set to true?
+			// Convert it to a full activation of the enhancement flags then!
+			ConfMan.setInt("enhancements", kEnhGameBreakingBugFixes | kEnhGrp1 | kEnhGrp2 | kEnhGrp3 | kEnhGrp4);
+		}
+	}
+
+	_activeEnhancements = (int32)ConfMan.getInt("enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
@@ -1042,7 +1067,7 @@ Common::Error ScummEngine::init() {
 			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
-			_fileHandle = new ScummFile();
+			_fileHandle = new ScummFile(this);
 			_containerFile = _filenamePattern.pattern;
 
 
@@ -1096,11 +1121,11 @@ Common::Error ScummEngine::init() {
 			if (!indexFile || indexFile->id != _game.id) {
 				error("Couldn't find index file description for Steam version");
 			} else {
-				_fileHandle = new ScummSteamFile(*indexFile);
+				_fileHandle = new ScummSteamFile(this, *indexFile);
 			}
 		} else {
 			// Regular access, no container file involved
-			_fileHandle = new ScummFile();
+			_fileHandle = new ScummFile(this);
 		}
 	}
 
@@ -1140,17 +1165,14 @@ Common::Error ScummEngine::init() {
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
-					_macIndy3TextBox = new Graphics::Surface();
-					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
+					_macGui = new MacIndy3Gui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
-"be disabled."), _("OK"));
-				dialog.runModal();
+				return Common::Error(Common::kReadingFailed, _(
+"This game requires the 'Indy' Macintosh executable for its fonts."));
 			}
 
 		} else if (_game.id == GID_LOOM) {
@@ -1168,15 +1190,14 @@ Common::Error ScummEngine::init() {
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+					_macGui = new MacLoomGui(this, macResourceFile);
 					break;
 				}
 			}
 
 			if (macResourceFile.empty()) {
-				GUI::MessageDialog dialog(_(
-"Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
-"versions of font and cursor will be disabled."), _("OK"));
-				dialog.runModal();
+				return Common::Error(Common::kReadingFailed, _(
+"This game requires the 'Loom' Macintosh executable for its music and fonts."));
 			}
 		} else if (_game.id == GID_MONKEY) {
 			// Try both with and without underscore in the
@@ -1202,9 +1223,11 @@ Common::Error ScummEngine::init() {
 			}
 		}
 
-		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW) {
+		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW)
 			_renderMode = Common::kRenderDefault;
-		}
+
+		if (_macGui)
+			_macGui->initialize();
 	}
 
 	// Initialize backend
@@ -1306,19 +1329,32 @@ Common::Error ScummEngine::init() {
 	if (!ConfMan.hasKey("talkspeed", _targetName))
 		setTalkSpeed(_defaultTextSpeed);
 
+	_setupIsComplete = true;
+
 	syncSoundSettings();
 
 	return Common::kNoError;
 }
 
 void ScummEngine::setupScumm(const Common::String &macResourceFile) {
+	// TODO: This may be the wrong place for it
+	// Enhancements used to be all or nothing, but now there are different
+	// types of them.
+	if (ConfMan.hasKey("enable_enhancements")) {
+		if (!ConfMan.hasKey("enhancements")) {
+			ConfMan.setInt("enhancements", ConfMan.getBool("enable_enhancements") ? kEnhGameBreakingBugFixes | kEnhGrp1 : 0);
+		}
+		ConfMan.removeKey("enable_enhancements", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+	}
+
 	Common::String macInstrumentFile;
 	Common::String macFontFile;
 
 	if (_game.platform == Common::kPlatformMacintosh) {
 		if (_game.id == GID_INDY3) {
 			macFontFile = macResourceFile;
-		} if (_game.id == GID_LOOM) {
+		} else if (_game.id == GID_LOOM) {
 			macInstrumentFile = macResourceFile;
 			macFontFile = macResourceFile;
 			_macCursorFile = macResourceFile;
@@ -1381,7 +1417,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 	// Create the sound manager
 	if (_game.heversion > 0)
-		_sound = new SoundHE(this, _mixer);
+		_sound = new SoundHE(this, _mixer, &_resourceAccessMutex);
 	else
 		_sound = new Sound(this, _mixer, useReplacementAudioTracks);
 
@@ -1455,7 +1491,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	}
 
 	// Skip the sound pre-loading
-	if (_game.id == GID_SAMNMAX && _bootParam == 0 && _enableEnhancements) {
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && enhancementEnabled(kEnhUIUX)) {
 		_bootParam = -1;
 	}
 
@@ -1515,8 +1551,8 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	// COMI demo is excluded from the count since it appears it can't be compressed
 	// DIG demo uses raw VOC files for speech instead of a MONSTER.SOU file
 	if ((_game.id == GID_CMI || _game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
-		BundleDirCache *ch = new BundleDirCache();
-		BundleMgr *bnd = new BundleMgr(ch);
+		BundleDirCache *ch = new BundleDirCache(this);
+		BundleMgr *bnd = new BundleMgr(this, ch);
 		filesAreCompressed |= bnd->isExtCompBun(_game.id);
 		delete bnd;
 		delete ch;
@@ -1581,9 +1617,10 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 #endif
 		if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
-		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty())
+		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty()) {
+			_macFontManager = new Graphics::MacFontManager(0, Common::Language::UNK_LANG);
 			_charset = new CharsetRendererMac(this, macFontFile);
-		else
+		} else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 7) {
@@ -1661,8 +1698,9 @@ void ScummEngine::resetScumm() {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	}
 
-	if (_macIndy3TextBox) {
-		_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
+	if (_macGui) {
+		_macGui->clearTextArea();
+		_macGui->reset();
 	}
 
 	if (_game.version == 0) {
@@ -1707,6 +1745,8 @@ void ScummEngine::resetScumm() {
 			_actors[i] = new Actor_v2(this, i);
 		else if (_game.version == 3)
 			_actors[i] = new Actor_v3(this, i);
+		else if (_game.version >= 7)
+			_actors[i] = new Actor_v7(this, i);
 		else if (_game.heversion != 0)
 			_actors[i] = new ActorHE(this, i);
 		else
@@ -2220,6 +2260,9 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 }
 
 void ScummEngine::syncSoundSettings() {
+	if (!_setupIsComplete)
+		return;
+
 	if (isUsingOriginalGUI() && _game.version > 6) {
 		int guiTextStatus = 0;
 		if (ConfMan.getBool("speech_mute")) {
@@ -2297,7 +2340,7 @@ void ScummEngine::syncSoundSettings() {
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
 	// rather than VAR_SUBTITLES
-	if (_game.id == GID_BASEBALL2003) {
+	if (_scummVars && _game.id == GID_BASEBALL2003) {
 		_scummVars[632] = ConfMan.getBool("subtitles");
 	}
 
@@ -2373,7 +2416,7 @@ Common::Error ScummEngine::go() {
 		// custom names for save states. We do this in order to avoid
 		// lag and/or lose keyboard inputs.
 
-		if (_enableEnhancements) {
+		if (enhancementEnabled(kEnhUIUX)) {
 			// INDY3:
 			if (_game.id == GID_INDY3 && _currentRoom == 14) {
 				delta = 3;
@@ -2403,7 +2446,20 @@ Common::Error ScummEngine::go() {
 		waitForTimer(delta * 4);
 
 		// Run the main loop
-		scummLoop(delta);
+		if (!isPaused()) {
+			scummLoop(delta);
+
+			// The Mac GUI is updated after the engine has had a
+			// chance to update the screen. That way, it can draw
+			// things over the regular graphics, if needed.
+
+			if (_macGui)
+				_macGui->update(delta);
+
+			if (_game.heversion >= 60) {
+				((SoundHE *)_sound)->feedMixer();
+			}
+		}
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2438,6 +2494,10 @@ void ScummEngine::waitForTimer(int quarterFrames) {
 		uint32 screenUpdateTimerStart = _system->getMillis();
 		towns_updateGfx();
 #endif
+
+		if (_macGui)
+			_macGui->updateWindowManager();
+
 		_system->updateScreen();
 		cur = _system->getMillis();
 
@@ -2513,13 +2573,20 @@ void ScummEngine::setTimerAndShakeFrequency() {
 		default:
 			_shakeTimerRate = _timerFrequency = 240.0;
 		}
-	} else if (_game.platform == Common::kPlatformAmiga) {
-		_shakeTimerRate = _timerFrequency = AMIGA_NTSC_VBLANK_RATE;
+	} else if (_game.platform == Common::kPlatformAmiga && _game.id != GID_MONKEY_VGA) {
+		_shakeTimerRate = _timerFrequency = _isAmigaPALSystem ? AMIGA_PAL_VBLANK_RATE : AMIGA_NTSC_VBLANK_RATE;
 	}
 }
 
 double ScummEngine::getTimerFrequency() {
 	return _timerFrequency;
+}
+
+double ScummEngine::getAmigaMusicTimerFrequency() {
+	// Similarly to MI1, LOOM in PAL mode operates at 50Hz but the audio engine
+	// compensates the speed factor to play music at the correct speed.
+	// We simply feed the NTSC speed to the Paula audio engine to account for that.
+	return _game.id == GID_LOOM ? AMIGA_NTSC_VBLANK_RATE : _timerFrequency;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
@@ -2636,7 +2703,7 @@ load_game:
 	}
 
 	if (_game.heversion >= 80) {
-		((SoundHE *)_sound)->processSoundCode();
+		((SoundHE *)_sound)->handleSoundFrame();
 	}
 
 	if (_game.version < 8) {
@@ -2796,7 +2863,12 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		if (_game.version == 8 && VAR_GAME_LOADED != 0xFF)
 			VAR(VAR_GAME_LOADED) = 0;
 
+		// Launch the pre-save/load script for SAMNMAX, to properly save the cursor...
+		if (_game.version == 6 && VAR_PRE_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
+
 		Common::String filename;
+
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success) {
@@ -2820,13 +2892,11 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
 				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : GAME_PROPER_LOAD;
-
-			// If we are here, it means that we are loading a game from the ScummVM menu;
-			// let's call the exit save/load script (only used in v6) to restore the cursor
-			// properly.
-			if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
-				runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 		}
+
+		// ... and finally launch the post-save/load script for SAMNMAX, to restore the cursor.
+		if (_game.version == 6 && VAR_POST_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 		if (!success) {
 			Common::U32String buf = Common::U32String::format(errMsg, filename.c_str());
@@ -2848,6 +2918,271 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
+void ScummEngine_v0::terminateSaveMenuScript() {
+	// Stop the script which handles the save menu strings
+	stopScript(128);
+
+	// Terminate the cutscene state
+	o_endCutscene();
+
+	// Stop code for all the objects in the save screen
+	stopObjectCode();
+}
+
+void ScummEngine_v2::terminateSaveMenuScript() {
+	if (_game.id == GID_MANIAC) {
+		if (_game.version == 1 && _game.platform != Common::kPlatformNES) {
+			// Clear state 08 for objects 182 and 193
+			int obj[] = {182, 193};
+
+			for (int i = 0; i < ARRAYSIZE(obj); i++) {
+				putState(obj[i], getState(obj[i]) & ~kObjectState_08);
+				markObjectRectAsDirty(obj[i]);
+				clearDrawObjectQueue();
+			}
+		}
+
+		// Stop the script which handles the save menu strings
+		stopScript(133);
+
+		if (_game.version == 2 || _game.platform == Common::kPlatformNES) {
+			// Restart if needed
+			if (readVar(164) == 0) {
+				restart();
+			}
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_ZAK) {
+		// Stop the script which handles the save menu strings
+		stopScript(8);
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Save actor 1 costume in VAR(1), and if it's costume 30, run script 108
+		Actor *a = derefActor(1, "terminateSaveMenuScript");
+		if (a) {
+			VAR(1) = a->_costume;
+			if (VAR(1) == 30)
+				runScript(108, false, false, nullptr);
+		}
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	}
+}
+
+void ScummEngine_v3::terminateSaveMenuScript() {
+	if (_game.id == GID_ZAK) {
+		// Restore variables
+		runScript(204, false, false, nullptr);
+
+		// Stop the script which handles the save screen strings
+		stopScript(203);
+
+		// Restore the verbs (adapted from o5_saveRestoreVerbs(), SO_RESTORE_VERBS)
+		int a = 1;
+		int b = 125;
+		int c = 4;
+		int slot, slot2;
+		while (a <= b) {
+			slot = getVerbSlot(a, c);
+			if (slot) {
+				slot2 = getVerbSlot(a, 0);
+				if (slot2)
+					killVerb(slot2);
+				slot = getVerbSlot(a, c);
+				_verbs[slot].saveid = 0;
+				drawVerb(slot, 0);
+				verbMouseOver(0);
+			}
+			a++;
+		}
+
+		// Restore VAR_VERB_SCRIPT with whatever value was in local variable 3
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4003);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 10; i < 24; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		loadPtrToResource(rtString, 9, nullptr);
+		loadPtrToResource(rtString, 8, nullptr);
+		loadPtrToResource(rtString, 33, nullptr);
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Restore the previous sound
+		if (readVar(305)) {
+			_sound->startSound(readVar(305));
+		}
+
+		// Show the cursor
+		_cursor.state = 1;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut = 1;
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_INDY3) {
+		// Restore variables
+		runScript(204, false, false, nullptr);
+		runScript(206, false, false, nullptr);
+
+		// Stop the script which handles the save screen strings
+		stopScript(203);
+
+		// Restore VAR_VERB_SCRIPT with whatever value was in local variable 4
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4004);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 10; i < 24; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		loadPtrToResource(rtString, 9, nullptr);
+		loadPtrToResource(rtString, 8, nullptr);
+		loadPtrToResource(rtString, 33, nullptr);
+
+		// Indy3 VGA only: draw a black box
+		if ((_game.features & GF_OLD256) && _game.platform != Common::kPlatformFMTowns)
+			drawBox(0, 160, 319, 190, 0);
+
+		// Restore the verbs (adapted from o5_saveRestoreVerbs(), SO_RESTORE_VERBS)
+		int a = 1;
+		int b = 125;
+		int c = 4;
+		int slot, slot2;
+		while (a <= b) {
+			slot = getVerbSlot(a, c);
+			if (slot) {
+				slot2 = getVerbSlot(a, 0);
+				if (slot2)
+					killVerb(slot2);
+				slot = getVerbSlot(a, c);
+				_verbs[slot].saveid = 0;
+				drawVerb(slot, 0);
+				verbMouseOver(0);
+			}
+			a++;
+		}
+
+		// Re-stop script 203 (probably an oversight in the script)
+		stopScript(203);
+
+		// Restore the previous sound
+		if (readVar(0x4007)) {
+			_sound->startSound(readVar(0x4007));
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// If local variable 0 and the override flag are set, chain script 119
+		if (readVar(0x4000)) {
+			if (VAR(VAR_OVERRIDE)) {
+				int cur = _currentScript;
+
+				vm.slot[cur].number = 0;
+				vm.slot[cur].status = ssDead;
+				_currentScript = 0xFF;
+
+				runScript(119, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, nullptr);
+			}
+		}
+
+		// Show the cursor
+		_cursor.state = 1;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut = 1;
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	} else if (_game.id == GID_LOOM) {
+		if (_game.platform == Common::kPlatformFMTowns)
+			// Stop the script which handles the save screen strings
+			stopScript(202);
+
+		// Set VAR(VAR_VERB_SCRIPT) to local variable 2
+		VAR(VAR_VERB_SCRIPT) = readVar(0x4002);
+
+		// Reallocate some strings (in the same order as the script does)
+		for (int i = 9; i < 21; i++) {
+			loadPtrToResource(rtString, i, nullptr);
+		}
+
+		// Stop the script which handles the save screen strings
+		// (in FM-Towns case this will be a duplicate call)
+		stopScript(202);
+
+		if (_game.platform == Common::kPlatformFMTowns) {
+			// Set bit 14 of VAR(214) to 0
+			writeVar(0x8d6e, 0);
+		} else {
+			// Set bit 13 of VAR(214) to 0
+			writeVar(0x8d6d, 0);
+		}
+
+		// Set variable 100 to 0
+		VAR(100) = 0;
+
+		if (_game.platform == Common::kPlatformFMTowns) {
+			// Set the states of objects 909, 908, 903 and 904 to 0
+			int obj[] = {909, 908, 903, 904};
+			for (int i = 0; i < ARRAYSIZE(obj); i++) {
+				putState(obj[i], 0);
+				markObjectRectAsDirty(obj[i]);
+				if (_bgNeedsRedraw)
+					clearDrawObjectQueue();
+			}
+		}
+
+		// Terminate the cutscene state
+		endCutscene();
+
+		// Launch sound restore script
+		if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+			int soundArgs[NUM_SCRIPT_LOCAL];
+			memset(soundArgs, 0, sizeof(soundArgs));
+			soundArgs[0] = VAR(163);
+			runScript(38, false, false, soundArgs);
+		}
+
+		// Show the cursor
+		_cursor.state = 1;
+		verbMouseOver(0);
+
+		// Enable user interaction
+		_userPut = 1;
+
+		// Chain script 5 (or 6 for FM-Towns)
+		int chainedArgs[NUM_SCRIPT_LOCAL];
+		int cur = _currentScript;
+		int scriptToChain = _game.platform == Common::kPlatformFMTowns ? 6 : 5;
+
+		chainedArgs[0] = 0;
+		vm.slot[cur].number = 0;
+		vm.slot[cur].status = ssDead;
+		_currentScript = 0xFF;
+
+		runScript(scriptToChain, vm.slot[cur].freezeResistant, vm.slot[cur].recursive, chainedArgs);
+
+		// Stop code for all the objects in the save screen
+		stopObjectCode();
+	}
+}
+
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
 	if (isUsingOriginalGUI() && _saveLoadFlag == 0 && !_loadFromLauncher)
 		return;
@@ -2863,74 +3198,100 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
 
 		if (_game.id == GID_LOOM) {
-			// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
-			// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
-			// call without displaying that screen) which will also makes some necessary follow-up operations. We
-			// simply try to achieve that manually. It fixes bugs #6011 and #13369.
-			// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
-			// variables in place), so that all the operations get triggered properly.
-			// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
-			// it wouldn't work otherwise, anyway.
-			int args[NUM_SCRIPT_LOCAL];
-			memset(args, 0, sizeof(args));
+			if (_currentRoom == 70) {
+				// If we are in the menu room (70), it means that we've saved
+				// the game from the original save menu and we are attempting
+				// to load it either from ScummVM launcher or from the GMM.
+				// This means that we have to terminate the menu script gracefully.
+				//
+				// Note that these post-load operations and the post-load fixes in the
+				// "else" block below work on totally different assumptions:
+				//
+				// - The formers assume that we saved the game from the original menu,
+				//   that we are loading it from GMM/launcher, and that we have to progress
+				//   the script in order to bring it to its post-load termination state.
+				//
+				// - The latters assume that we are loading a game which was saved within
+				//   GMM/launcher to begin with, so the post-load fixes are aimed at executing
+				//   only some of these operations (since we're not in the save room anyway).
+				updateScriptPtr();
+				getScriptBaseAddress();
+				resetScriptPointer();
 
-			uint saveLoadVar = 100;
-			if (_game.platform == Common::kPlatformMacintosh)
-				saveLoadVar = 105;
-			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
-				saveLoadVar = 150;
+				terminateSaveMenuScript();
+			} else {
+				// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
+				// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
+				// call without displaying that screen) which will also makes some necessary follow-up operations. We
+				// simply try to achieve that manually. It fixes bugs #6011 and #13369.
+				// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
+				// variables in place), so that all the operations get triggered properly.
+				// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
+				// it wouldn't work otherwise, anyway.
+				int args[NUM_SCRIPT_LOCAL];
+				memset(args, 0, sizeof(args));
 
-			// Run this hack only under conditions where the original save script could actually be executed.
-			// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
-			if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
-				uint16 prevFlag = VAR(214) & 0x6000;
-				beginCutscene(args);
-				uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
-				if (Actor *a = derefActor(VAR(VAR_EGO))) {
-					// This is used to restore the correct camera position.
-					VAR(171) = a->_walkbox;
-					VAR(172) = a->getRealPos().x;
-					VAR(173) = a->getRealPos().y;
+				uint saveLoadVar = 100;
+				if (_game.platform == Common::kPlatformMacintosh)
+					saveLoadVar = 105;
+				else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
+					saveLoadVar = 150;
+
+				// Run this hack only under conditions where the original save script could actually be executed.
+				// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
+				if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
+					uint16 prevFlag = VAR(214) & 0x6000;
+					beginCutscene(args);
+					uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
+					if (Actor *a = derefActor(VAR(VAR_EGO))) {
+						// This is used to restore the correct camera position.
+						VAR(171) = a->_walkbox;
+						VAR(172) = a->getRealPos().x;
+						VAR(173) = a->getRealPos().y;
+					}
+					startScene(70, nullptr, 0);
+					VAR(saveLoadVar) = 0;
+					VAR(214) &= ~blockVerbsFlag;
+					endCutscene();
+
+					if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+						// Sound restore script. Unlike other versions which handle this
+						// inside the usual entry scripts, FM-Towns calls this from the save script.
+						memset(args, 0, sizeof(args));
+						args[0] = VAR(163);
+						runScript(38, false, false, args);
+					}
+
+					restoreFMTownsSounds = false;
+
+				} else if (VAR(saveLoadVar) == 2) {
+					// This is our old hack. If verbs should be shown restore them.
+					byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
+					args[0] = 2;
+					runScript(restoreScript, 0, 0, args);
+					// Reset two variables, similiar to what the save script would do, to avoid minor glitches
+					// of the verb image on the right of the distaff (image remainung blank when moving the
+					// mouse cursor over an object, bug #13369).
+					VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
 				}
-				startScene(70, nullptr, 0);
-				VAR(saveLoadVar) = 0;
-				VAR(214) &= ~blockVerbsFlag;
-				endCutscene();
-
-				if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
-					// Sound restore script. Unlike other versions which handle this
-					// inside the usual entry scripts, FM-Towns calls this from the save script.
-					memset(args, 0, sizeof(args));
-					args[0] = VAR(163);
-					runScript(38, false, false, args);
-				}
-
-				restoreFMTownsSounds = false;
-
-			} else if (VAR(saveLoadVar) == 2) {
-				// This is our old hack. If verbs should be shown restore them.
-				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
-				args[0] = 2;
-				runScript(restoreScript, 0, 0, args);
-				// Reset two variables, similiar to what the save script would do, to avoid minor glitches
-				// of the verb image on the right of the distaff (image remainung blank when moving the
-				// mouse cursor over an object, bug #13369).
-				VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
 			}
-
 		} else {
-			if (_game.platform == Common::kPlatformNES) {
+			if (_game.platform == Common::kPlatformNES && _currentRoom != 50) {
 				// WORKAROUND: Original save/load script ran this script
 				// after game load, and o2_loadRoomWithEgo() does as well
-				// this script starts character-dependent music
+				// this script starts character-dependent music.
+				//
+				// (This will not be run if the current room is the save room,
+				// as terminateSaveMenuScript() will be gracefully handling that)
+				//
 				// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
 				if (_game.platform == Common::kPlatformNES) {
 					runScript(5, 0, 0, nullptr);
 					if (VAR(224))
-						_sound->addSoundToQueue(VAR(224));
+						_sound->startSound(VAR(224));
 				}
 
-			} else if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
+			} else if (_game.platform != Common::kPlatformMacintosh) {
 				// MM and ZAK (v1/2)
 				int saveLoadRoom = 50;
 				int saveLoadVar = 21;
@@ -2944,8 +3305,24 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 					saveLoadVar = 115;
 				}
 
-				// Only execute this if the original would even allow saving in that situation
-				if (VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 && !(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+				if (_currentRoom == saveLoadRoom) {
+					// If we are in the menu room, it means that we've saved
+					// the game from the original save menu and we are attempting
+					// to load it either from ScummVM launcher or from the GMM.
+					// This means that we have to terminate the menu script gracefully.
+
+					// Just as noted above, when handling post-load fixes for LOOM:
+					// these post-load operations work on different assumptions from
+					// the ones necessary for the post-load fixes on the "else if" block.
+					updateScriptPtr();
+					getScriptBaseAddress();
+					resetScriptPointer();
+
+					terminateSaveMenuScript();
+				} else if (_game.platform != Common::kPlatformC64 &&
+					VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 &&
+					!(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+					// Only execute this if the original would even allow saving in that situation
 					int args[NUM_SCRIPT_LOCAL];
 					memset(args, 0, sizeof(args));
 					beginCutscene(args);
@@ -3041,9 +3418,9 @@ void ScummEngine_v6::scummLoop_handleSaveLoad() {
 	// saved within the original GUI) that the cursor can remain invisible until
 	// an event changes it. The original save dialog calls the exit save/load script
 	// to reinstate the cursor correctly, so we do that manually for this edge case.
-	if (_loadFromLauncher && VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0) {
+	if (_loadFromLauncher && VAR_POST_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0) {
 		_loadFromLauncher = false;
-		runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
+		runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, nullptr);
 	}
 
 	ScummEngine::scummLoop_handleSaveLoad();
@@ -3222,7 +3599,7 @@ int ScummEngine_v60he::getHETimer(int timer) {
 }
 
 void ScummEngine_v60he::setHETimer(int timer) {
-	assertRange(1, timer, 15, "setHETimer: Timer");
+	assertRange(1, timer, ARRAYSIZE(_heTimers) - 1, "setHETimer: Timer");
 	_heTimers[timer] = _system->getMillis();
 }
 
@@ -3316,6 +3693,10 @@ bool ScummEngine::isUsingOriginalGUI() {
 		return false;
 
 	return _useOriginalGUI;
+}
+
+bool ScummEngine::isMessageBannerActive() {
+	return _messageBannerActive;
 }
 
 void ScummEngine::runBootscript() {
@@ -3418,7 +3799,7 @@ bool ScummEngine::startManiac() {
 void ScummEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
 		// Pause sound & video
-		if (_sound) {
+		if (_sound && canPauseSoundsDuringSave()) {
 			_oldSoundsPaused = _sound->_soundsPaused;
 			_sound->pauseSounds(true);
 		}
@@ -3435,7 +3816,7 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		_system->updateScreen();
 
 		// Resume sound & video
-		if (_sound)
+		if (_sound && canPauseSoundsDuringSave())
 			_sound->pauseSounds(_oldSoundsPaused);
 	}
 }

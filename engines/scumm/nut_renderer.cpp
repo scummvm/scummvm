@@ -101,7 +101,7 @@ void NutRenderer::codec21(byte *dst, const byte *src, int width, int height, int
 }
 
 void NutRenderer::loadFont(const char *filename) {
-	ScummFile file;
+	ScummFile file(_vm);
 	_vm->openFile(file, filename);
 	if (!file.isOpen()) {
 		error("NutRenderer::loadFont() Can't open font file: %s", filename);
@@ -458,9 +458,6 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 		return 0;
 
 	const byte *src = _vm->get2byteCharPtr(chr);
-
-	if (width <= 0 || height <= 0)
-		return 0;
 
 	if (minY) {
 		src += ((minY * _vm->_2byteWidth) >> 3);

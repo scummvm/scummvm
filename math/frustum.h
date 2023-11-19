@@ -28,12 +28,14 @@
 
 namespace Math {
 
+/* A volume defined by 6 planes */
 class Frustum {
 public:
 	Frustum();
 
 	void setup(const Math::Matrix4 &matrix);
 	bool isInside(const Math::AABB &aabb) const;
+	bool isTriangleInside(const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2) const;
 
 private:
 	Math::Plane _planes[6];

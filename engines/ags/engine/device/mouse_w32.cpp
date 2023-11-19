@@ -156,7 +156,8 @@ void Mouse::UpdateGraphicArea() {
 
 void Mouse::SetMovementControl(bool flag) {
 	ControlEnabled = false;
-	warning("movement control not supported, mouse control can't be enabled");
+	if (flag)
+		warning("movement control not supported, mouse control can't be enabled");
 	ags_clear_mouse_movement();
 }
 

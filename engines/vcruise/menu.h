@@ -27,6 +27,7 @@
 
 namespace Graphics {
 
+class Font;
 struct Surface;
 class ManagedSurface;
 
@@ -54,13 +55,18 @@ public:
 	virtual Graphics::ManagedSurface *getMenuSurface() const = 0;
 	virtual bool hasDefaultSave() const = 0;
 	virtual bool hasAnySave() const = 0;
+	virtual bool isInGame() const = 0;
 	virtual Common::Point getMouseCoordinate() const = 0;
 	virtual void restartGame() const = 0;
 	virtual void goToCredits() const = 0;
 	virtual void changeMenu(MenuPage *newPage) const = 0;
 	virtual void quitGame() const = 0;
+	virtual void quitToMenu() const = 0;
 	virtual bool canSave() const = 0;
 	virtual bool reloadFromCheckpoint() const = 0;
+	virtual void setMusicMute(bool muted) const = 0;
+
+	virtual void drawLabel(Graphics::ManagedSurface *surface, const Common::String &labelID, const Common::Rect &contentRect) const = 0;
 };
 
 class MenuPage {
@@ -78,11 +84,11 @@ protected:
 	const MenuInterface *_menuInterface;
 };
 
-MenuPage *createMenuReahMain();
-MenuPage *createMenuReahHelp();
-MenuPage *createMenuReahSound();
-MenuPage *createMenuReahQuit();
-MenuPage *createMenuReahPause();
+MenuPage *createMenuMain(bool isSchizm);
+MenuPage *createMenuHelp(bool isSchizm);
+MenuPage *createMenuSound(bool isSchizm);
+MenuPage *createMenuQuit(bool isSchizm);
+MenuPage *createMenuPause(bool isSchizm);
 
 } // End of namespace VCruise
 

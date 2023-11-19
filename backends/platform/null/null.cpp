@@ -77,7 +77,7 @@ typedef void (*sighandler_t)(int);
 
 class OSystem_NULL : public ModularMixerBackend, public ModularGraphicsBackend, Common::EventSource {
 public:
-	OSystem_NULL();
+	OSystem_NULL(bool silenceLogs);
 	virtual ~OSystem_NULL();
 
 	virtual void initBackend();
@@ -101,9 +101,11 @@ private:
 #elif defined(WIN32)
 	DWORD _startTime;
 #endif
+	bool _silenceLogs;
 };
 
-OSystem_NULL::OSystem_NULL() {
+OSystem_NULL::OSystem_NULL(bool silenceLogs) :
+	_silenceLogs(silenceLogs) {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(__MORPHOS__)
@@ -228,6 +230,9 @@ void OSystem_NULL::quit() {
 }
 
 void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
+	if (_silenceLogs)
+		return;
+
 	FILE *output = 0;
 
 	if (type == LogMessageType::kInfo || type == LogMessageType::kDebug)
@@ -244,13 +249,13 @@ void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	s.add("gui/themes", new Common::FSDirectory("gui/themes", 4), priority);
 }
 
-OSystem *OSystem_NULL_create() {
-	return new OSystem_NULL();
+OSystem *OSystem_NULL_create(bool silenceLogs) {
+	return new OSystem_NULL(silenceLogs);
 }
 
 #ifndef NULL_DRIVER_USE_FOR_TEST
 int main(int argc, char *argv[]) {
-	g_system = OSystem_NULL_create();
+	g_system = OSystem_NULL_create(false);
 	assert(g_system);
 
 	// Invoke the actual ScummVM main entry point:
@@ -262,7 +267,8 @@ int main(int argc, char *argv[]) {
 
 #else /* USE_NULL_DRIVER */
 
-OSystem *OSystem_NULL_create() {
+OSystem *OSystem_NULL_create(bool silenceLogs) {
+	(void)silenceLogs;
 	return NULL;
 }
 

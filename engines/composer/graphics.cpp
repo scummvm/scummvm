@@ -813,6 +813,8 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 	if (width > 0 && height > 0) {
 		sprite._surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		decompressBitmap(type, stream, (byte *)sprite._surface.getPixels(), size, width, height);
+		// sprite is BMP-style (bottom-up), so flip it
+		sprite._surface.flipVertical(Common::Rect(width, height));
 	} else {
 		// there are some sprites (e.g. a -998x-998 one in Gregory's title screen)
 		// which have an invalid size, but the original engine doesn't notice for
@@ -828,22 +830,17 @@ bool ComposerEngine::initSprite(Sprite &sprite) {
 }
 
 void ComposerEngine::drawSprite(const Sprite &sprite) {
-	int x = sprite._pos.x;
-	int y = sprite._pos.y;
+	Common::Rect srcRect(sprite._surface.w, sprite._surface.h);
+	Common::Rect dstRect(
+		sprite._pos.x,
+		sprite._pos.y,
+		sprite._pos.x + sprite._surface.w,
+		sprite._pos.y + sprite._surface.h);
 
-	// incoming data is BMP-style (bottom-up), so flip it
-	byte *pixels = (byte *)_screen.getPixels();
-	for (int j = 0; j < sprite._surface.h; j++) {
-		if (j + y < 0)
-			continue;
-		if (j + y >= _screen.h)
-			break;
-		const byte *in = (const byte *)sprite._surface.getBasePtr(0, sprite._surface.h - j - 1);
-		byte *out = pixels + ((j + y) * _screen.w) + x;
-		for (int i = 0; i < sprite._surface.w; i++)
-			if ((x + i >= 0) && (x + i < _screen.w) && in[i])
-				out[i] = in[i];
-	}
+	if (!_screen.clip(srcRect, dstRect))
+		return;
+
+	_screen.copyRectToSurfaceWithKey(sprite._surface, dstRect.left, dstRect.top, srcRect, 0x00);
 }
 
 } // End of namespace Composer

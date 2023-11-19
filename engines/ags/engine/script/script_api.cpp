@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/runtime_script_value.h"
@@ -205,10 +204,6 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 						if (_G(loaded_game_file_version) < kGameVersion_320) {
 							// explicitly put "(null)" into the placeholder
 							p = "(null)";
-						} else if (ConfMan.get("gameid") == "dustbowl") {
-							// WORKAROUND: Prevent crash in DustBowl character creation screen
-							// uses stubbed GetUserName in Steam AGS plugin
-							p = "Player";
 						} else {
 							cc_error("!ScriptSprintf: formatting argument %d is expected to be a string, but it is a null pointer", arg_idx + 1);
 							return "";

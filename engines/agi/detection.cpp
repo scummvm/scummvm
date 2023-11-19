@@ -88,7 +88,9 @@ class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 
 public:
 	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
-		_guiOptions = GUIO1(GUIO_NOSPEECH);
+		_guiOptions = GUIO_NOSPEECH GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN
+			GUIO_RENDERAMIGA GUIO_RENDERAPPLE2GS GUIO_RENDERATARIST GUIO_RENDERMACINTOSH;
+
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
 	}
@@ -110,7 +112,6 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
-	Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const override;
 };
 
 ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
@@ -279,34 +280,6 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 	}
 
 	return ADDetectedGame();
-}
-
-Common::String AgiMetaEngineDetection::parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const {
-	Common::String result = MetaEngineDetection::parseAndCustomizeGuiOptions(optionsString, domain);
-	Common::String renderOptions;
-
-	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", domain));
-	const Common::String gid = ConfMan.get("gameid", domain);
-
-	renderOptions = GUIO_RENDEREGA GUIO_RENDERCGA GUIO_RENDERHERCAMBER GUIO_RENDERHERCGREEN
-		GUIO_RENDERAMIGA GUIO_RENDERAPPLE2GS GUIO_RENDERATARIST GUIO_RENDERMACINTOSH;
-
-	switch (platform) {
-	case Common::kPlatformDOS:
-		if (gid.contains("AGI256") || gid.contains("256 Colors"))
-			renderOptions += GUIO_RENDERVGA;
-		break;
-	default:
-		break;
-	}
-
-	for (Common::String::const_iterator i = renderOptions.begin(); i != renderOptions.end(); ++i) {
-		// If the render option is already part of the string (specified in the detection tables) we don't add it again.
-		if (!result.contains(*i))
-			result += *i;
-	}
-
-	return result;
 }
 
 REGISTER_PLUGIN_STATIC(AGI_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, AgiMetaEngineDetection);

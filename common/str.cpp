@@ -638,6 +638,7 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, const char *
 	const char *p = nullptr;
 	const char *q = nullptr;
 	bool escaped = false;
+	bool noExclusions = (wildcardExclusions == nullptr || !*wildcardExclusions);
 
 	for (;;) {
 		if (wildcardExclusions && strchr(wildcardExclusions, *str)) {
@@ -662,8 +663,8 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, const char *
 				p = nullptr;
 				q = nullptr;
 			}
-			// If pattern ended with * -> match
-			if (!*pat)
+			// If pattern ended with * and there are no exclusions -> match
+			if (!*pat && noExclusions)
 				return true;
 			break;
 

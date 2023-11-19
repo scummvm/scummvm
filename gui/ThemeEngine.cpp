@@ -68,10 +68,6 @@ struct TextDrawData {
 	const Graphics::Font *_fontPtr;
 };
 
-struct TextColorData {
-	int r, g, b;
-};
-
 struct WidgetDrawData {
 	/** List of all the steps needed to draw this widget */
 	Common::List<Graphics::DrawStep> _steps;
@@ -132,20 +128,20 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 
 	{kDDButtonIdle,                 "button_idle",      kDrawLayerBackground,   kDDNone},
 	{kDDButtonHover,                "button_hover",     kDrawLayerForeground,   kDDButtonIdle},
-	{kDDButtonDisabled,             "button_disabled",  kDrawLayerBackground,   kDDNone},
+	{kDDButtonDisabled,             "button_disabled",  kDrawLayerForeground,   kDDButtonIdle},
 	{kDDButtonPressed,              "button_pressed",   kDrawLayerForeground,   kDDButtonIdle},
 
 	{kDDDropDownButtonIdle,         "dropdown_button_idle",          kDrawLayerBackground, kDDNone},
 	{kDDDropDownButtonHoverLeft,    "dropdown_button_hover_left",    kDrawLayerForeground, kDDDropDownButtonIdle},
 	{kDDDropDownButtonHoverRight,   "dropdown_button_hover_right",   kDrawLayerForeground, kDDDropDownButtonIdle},
-	{kDDDropDownButtonDisabled,     "dropdown_button_disabled",      kDrawLayerForeground, kDDNone},
+	{kDDDropDownButtonDisabled,     "dropdown_button_disabled",      kDrawLayerForeground, kDDDropDownButtonIdle},
 	{kDDDropDownButtonPressedLeft,  "dropdown_button_pressed_left",  kDrawLayerForeground, kDDDropDownButtonIdle},
 	{kDDDropDownButtonPressedRight, "dropdown_button_pressed_right", kDrawLayerForeground, kDDDropDownButtonIdle},
 
 	{kDDDropDownButtonIdleRTL,			"dropdown_button_idle_rtl",				kDrawLayerBackground, kDDNone},
 	{kDDDropDownButtonHoverLeftRTL,		"dropdown_button_hover_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
 	{kDDDropDownButtonHoverRightRTL,	"dropdown_button_hover_right_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
-	{kDDDropDownButtonDisabledRTL,		"dropdown_button_disabled_rtl",			kDrawLayerForeground, kDDNone},
+	{kDDDropDownButtonDisabledRTL,		"dropdown_button_disabled_rtl",			kDrawLayerForeground, kDDDropDownButtonIdleRTL},
 	{kDDDropDownButtonPressedLeftRTL,	"dropdown_button_pressed_left_rtl",		kDrawLayerForeground, kDDDropDownButtonIdleRTL},
 	{kDDDropDownButtonPressedRightRTL,	"dropdown_button_pressed_right_rtl",	kDrawLayerForeground, kDDDropDownButtonIdleRTL},
 
@@ -234,10 +230,8 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_cursorHotspotX = _cursorHotspotY = 0;
 	_cursorWidth = _cursorHeight = 0;
 	_cursorTransparent = 255;
-#ifndef USE_RGB_COLOR
 	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_cursorPalSize = 0;
-#endif
 
 	// We prefer files in archive bundles over the common search paths.
 	_themeFiles.add("default", &SearchMan, 0, false);
@@ -400,9 +394,8 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
-#ifndef USE_RGB_COLOR
-			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
-#endif
+			if (_cursorPalSize)
+				CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		}
 	}
@@ -780,6 +773,8 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 			_widgets[i]->calcBackgroundOffset();
 		}
 	}
+
+	debug(6, "Finished loading theme %s", themeId.c_str());
 }
 
 void ThemeEngine::unloadTheme() {
@@ -1293,13 +1288,24 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-						  const Common::Array<Common::U32String> &tabs, int active, bool rtl) {
+						  const Common::Array<Common::U32String> &tabs, int active, bool rtl,
+						  ThemeEngine::TextAlignVertical alignV) {
 	if (!ready())
 		return;
 
 	assert(tabs.size() == tabWidths.size());
 
-	drawDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
+	int y1 = r.top;
+	int y2 = r.top + tabHeight;
+	uint32 vFlag = 0;
+
+	if (alignV == ThemeEngine::kTextAlignVBottom) {
+		y1 = r.bottom;
+		y2 = r.bottom + tabHeight;
+		vFlag = 1;
+	}
+
+	drawDD(kDDTabBackground, Common::Rect(r.left, y1, r.right, y2));
 
 	const int numTabs = (int)tabs.size();
 	int width = 0;
@@ -1327,18 +1333,18 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 		}
 
 
-		Common::Rect tabRect(r.left + width, r.top, r.left + width + tabWidths[current], r.top + tabHeight);
-		drawDD(kDDTabInactive, tabRect);
+		Common::Rect tabRect(r.left + width, y1, r.left + width + tabWidths[current], y2);
+		drawDD(kDDTabInactive, tabRect, (vFlag << 31));
 		drawDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[current], false, false,
 		           convertTextAlignH(_widgets[kDDTabInactive]->_textAlignH, rtl), _widgets[kDDTabInactive]->_textAlignV);
 		width += tabWidths[current];
 	}
 
 	if (activePos >= 0) {
-		Common::Rect tabRect(r.left + activePos, r.top, r.left + activePos + tabWidths[active], r.top + tabHeight);
-		const uint16 tabLeft = activePos;
+		Common::Rect tabRect(r.left + activePos, y1, r.left + activePos + tabWidths[active], y2);
+		const uint16 tabLeft = activePos & 0x7FFF; // Keep only 15 bits
 		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
-		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
+		drawDD(kDDTabActive, tabRect, (vFlag << 31) | (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
 		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
 	}
@@ -1566,20 +1572,26 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	_cursorWidth = cursor->w;
 	_cursorHeight = cursor->h;
 
-#ifdef USE_RGB_COLOR
-	_cursorFormat = cursor->format;
-	_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
+	_cursorTransparent = 255;
+	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_cursorPalSize = 0;
 
-	// Allocate a new buffer for the cursor
-	delete[] _cursor;
-	_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
-	assert(_cursor);
-	Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
-	                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
-	                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+	if (_system->hasFeature(OSystem::kFeatureCursorAlpha)) {
+		_cursorFormat = cursor->format;
+		_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
 
-	_useCursor = true;
-#else
+		// Allocate a new buffer for the cursor
+		delete[] _cursor;
+		_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
+		assert(_cursor);
+		Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
+		                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
+		                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+
+		_useCursor = true;
+		return true;
+	}
+
 	if (!_system->hasFeature(OSystem::kFeatureCursorPalette))
 		return true;
 
@@ -1639,11 +1651,12 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 			const int index = colorToIndex[col];
 			_cursor[y * _cursorWidth + x] = index;
 		}
+
+		src += cursor->pitch - cursor->w * cursor->format.bytesPerPixel;
 	}
 
 	_useCursor = true;
 	_cursorPalSize = colorsFound;
-#endif
 
 	return true;
 }
@@ -1679,6 +1692,13 @@ TextData ThemeEngine::getTextData(DrawData ddId) const {
 
 TextColor ThemeEngine::getTextColor(DrawData ddId) const {
 	return _widgets[ddId] ? _widgets[ddId]->_textColorId : kTextColorMAX;
+}
+
+TextColorData *ThemeEngine::getTextColorData(TextColor color) const {
+	if (color >= kTextColorMAX)
+		color = kTextColorNormal;
+
+	return _textColors[color];
 }
 
 DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
@@ -1773,8 +1793,12 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 #ifdef USE_TRANSLATION
 	allowNonScalable = TransMan.currentIsBuiltinLanguage();
 #endif
-	if (!font && allowNonScalable)
+	if (!font && allowNonScalable) {
 		font = loadFont(filename, fontName);
+
+		if (!ConfMan.getBool("gui_disable_fixed_font_scaling"))
+			font = Graphics::BdfFont::scaleFont((const Graphics::BdfFont *)font, pointsize);
+	}
 
 	// If the font is successfully loaded store it in the font manager.
 	if (font) {
@@ -2094,9 +2118,8 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 
 void ThemeEngine::showCursor() {
 	if (_useCursor) {
-#ifndef USE_RGB_COLOR
-		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-#endif
+		if (_cursorPalSize)
+			CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
 		CursorMan.showMouse(true);
 	}
@@ -2104,9 +2127,8 @@ void ThemeEngine::showCursor() {
 
 void ThemeEngine::hideCursor() {
 	if (_useCursor) {
-#ifndef USE_RGB_COLOR
-		CursorMan.popCursorPalette();
-#endif
+		if (_cursorPalSize)
+			CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
 }

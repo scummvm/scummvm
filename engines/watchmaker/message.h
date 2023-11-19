@@ -57,7 +57,7 @@ namespace Watchmaker {
 #define ME_MRIGHTPRESSED        7
 
 // SYSTEM
-enum class EventClass {
+enum EventClass {
 	MC_IDLE = 0,
 	MC_MOUSE = 1,
 	MC_SYSTEM = 2,

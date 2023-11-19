@@ -74,15 +74,15 @@ void GriffonEngine::eventText(const char *stri) {
 	int pause_ticks = _ticks + 500;
 	int b_ticks = _ticks;
 
-	_videoBuffer->blit(*_videoBuffer3);
-	_videoBuffer->blit(*_videoBuffer2);
+	_videoBuffer->blendBlitTo(*_videoBuffer3);
+	_videoBuffer->blendBlitTo(*_videoBuffer2);
 
 	do {
 		g_system->getEventManager()->pollEvent(_event);
 
 		if ((_event.type == Common::EVENT_KEYDOWN || _event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && pause_ticks < _ticks)
 			break;
-		_videoBuffer2->blit(*_videoBuffer);
+		_videoBuffer2->blendBlitTo(*_videoBuffer);
 
 		int fr = 192;
 
@@ -91,9 +91,9 @@ void GriffonEngine::eventText(const char *stri) {
 		if (fr > 192)
 			fr = 192;
 
-		_windowImg->setAlpha(fr, true);
+		_windowImg->surfacePtr()->setAlpha(fr, true);
 
-		_windowImg->blit(*_videoBuffer);
+		_windowImg->blendBlitTo(*_videoBuffer);
 		if (pause_ticks < _ticks)
 			drawString(_videoBuffer, stri, x, 15, 0);
 
@@ -119,12 +119,12 @@ void GriffonEngine::eventText(const char *stri) {
 		g_system->delayMillis(10);
 	} while (1);
 
-	_videoBuffer3->blit(*_videoBuffer);
+	_videoBuffer3->blendBlitTo(*_videoBuffer);
 
 	_itemTicks = _ticks + 210;
 }
 
-void GriffonEngine::drawLine(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
+void GriffonEngine::drawLine(Graphics::ManagedSurface *buffer, int x1, int y1, int x2, int y2, int col) {
 	int xdif = x2 - x1;
 	int ydif = y2 - y1;
 
@@ -143,14 +143,14 @@ void GriffonEngine::drawLine(Graphics::TransparentSurface *buffer, int x1, int y
 	}
 }
 
-void GriffonEngine::drawString(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col) {
+void GriffonEngine::drawString(Graphics::ManagedSurface *buffer, const char *stri, int xloc, int yloc, int col) {
 	int l = strlen(stri);
 
 	for (int i = 0; i < l; i++) {
 		rcDest.left = xloc + i * 8;
 		rcDest.top = yloc;
 
-		_fontChr[stri[i] - 32][col]->blit(*buffer, rcDest.left, rcDest.top);
+		_fontChr[stri[i] - 32][col]->blendBlitTo(*buffer, rcDest.left, rcDest.top);
 	}
 }
 

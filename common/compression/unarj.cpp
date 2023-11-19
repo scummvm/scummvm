@@ -775,7 +775,7 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 
 	ArjHeadersMap::const_iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(it->_value[0]._header->filename, this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(Common::String(it->_value[0]._header->filename), *this)));
 		matches++;
 	}
 
@@ -787,7 +787,7 @@ const ArchiveMemberPtr ArjArchive::getMember(const Path &path) const {
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
-	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+	return ArchiveMemberPtr(new GenericArchiveMember(name, *this));
 }
 
 Common::SharedArchiveContents ArjArchive::readContentsForPath(const Common::String& name) const {

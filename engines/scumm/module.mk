@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	gfx_mac.o \
 	gfx_towns.o \
 	gfx.o \
+	he/mixer_he.o \
 	he/resource_he.o \
 	he/script_v60he.o \
 	he/script_v70he.o \

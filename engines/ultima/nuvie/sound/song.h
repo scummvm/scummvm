@@ -30,7 +30,10 @@ namespace Nuvie {
 class Song : public Sound {
 public:
 
-	virtual bool Init(const char *filename) {
+	virtual bool Init(const char *filename, const char *fileId) {
+		return false;
+	}
+	virtual bool Init(const char *path, const char *fileId, uint16 songnum) {
 		return false;
 	}
 	bool Play(bool looping = false) override {
@@ -46,8 +49,8 @@ public:
 		return false;
 	}
 
-	void SetName(const char *name) {
-		if (name) m_Filename = name;    // SB-X
+	void SetTitle(const char *title) {
+		if (title) m_Title = title;    // SB-X
 	}
 private:
 

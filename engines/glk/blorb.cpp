@@ -50,7 +50,7 @@ bool Blorb::hasFile(const Common::Path &path) const {
 
 int Blorb::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_chunks[idx]._filename, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_chunks[idx]._filename, *this)));
 	}
 
 	return (int)_chunks.size();
@@ -61,7 +61,7 @@ const Common::ArchiveMemberPtr Blorb::getMember(const Common::Path &path) const 
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Path &path) const {

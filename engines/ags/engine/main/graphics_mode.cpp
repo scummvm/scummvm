@@ -524,7 +524,7 @@ bool graphics_mode_set_render_frame(const FrameScaleDef &frame) {
 	if (_G(gfxDriver)->GetDisplayMode().IsWindowed())
 		_GP(SavedWindowedSetting).Frame = frame;
 	else
-		_GP(SavedWindowedSetting).Frame = frame;
+		_GP(SavedFullscreenSetting).Frame = frame;
 	graphics_mode_update_render_frame();
 	return true;
 }

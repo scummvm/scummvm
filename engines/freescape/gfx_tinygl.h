@@ -47,7 +47,7 @@ public:
 	Vertex *_verts;
 
 	virtual void init() override;
-	virtual void clear(uint8 r, uint8 g, uint8 b) override;
+	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual void positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest) override;
 	virtual void updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) override;
@@ -60,7 +60,10 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
 
 	virtual void renderSensorShoot(byte color, const Math::Vector3d sensor, const Math::Vector3d player, const Common::Rect viewPort) override;
-	virtual void renderPlayerShoot(byte color, const Common::Point position, const Common::Rect viewPort) override;
+	virtual void renderPlayerShootBall(byte color, const Common::Point position, int frame, const Common::Rect viewPort) override;
+	virtual void renderPlayerShootRay(byte color, const Common::Point position, const Common::Rect viewPort) override;
+	virtual void renderCrossair(const Common::Point crossairPosition) override;
+
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) override;
 
 	virtual void flipBuffer() override;

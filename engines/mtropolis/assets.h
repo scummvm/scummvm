@@ -106,7 +106,7 @@ class CachedMToon {
 public:
 	CachedMToon();
 
-	bool loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size);
+	bool loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size, uint hackFlags);
 
 	void optimize(Runtime *runtime);
 
@@ -141,10 +141,10 @@ private:
 	void decompressQuickTimeFrame(const Common::Array<uint8> &data, size_t frameIndex);
 
 	template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
-	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef);
+	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef, uint hackFlags);
 
 	template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp);
+	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp, bool isKeyFrame, uint hackFlags);
 
 	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;
@@ -156,6 +156,8 @@ private:
 	Graphics::PixelFormat _rleOptimizedFormat;
 
 	Common::SharedPtr<MToonMetadata> _metadata;
+
+	uint _hackFlags;
 };
 
 struct AudioMetadata {
@@ -228,6 +230,17 @@ private:
 	Common::Array<int> _damagedFrames;
 };
 
+class AVIMovieAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::AVIMovieAsset &data);
+	AssetType getAssetType() const override;
+
+	const Common::String &getExtFileName() const;
+
+private:
+	Common::String _extFileName;
+};
+
 class CachedImage {
 public:
 	CachedImage();
@@ -281,10 +294,12 @@ private:
 
 struct MToonAsset : public Asset {
 public:
+	MToonAsset();
+
 	bool load(AssetLoaderContext &context, const Data::MToonAsset &data);
 	AssetType getAssetType() const override;
 
-	const Common::SharedPtr<CachedMToon> &loadAndCacheMToon(Runtime *runtime);
+	const Common::SharedPtr<CachedMToon> &loadAndCacheMToon(Runtime *runtime, uint hackFlags);
 
 private:
 	uint32 _frameDataPosition;

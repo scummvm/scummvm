@@ -34,8 +34,6 @@ namespace ViewsEnh {
  * Dialog for choosing a character target
  */
 class CharacterSelect : public PartyView {
-private:
-	Character *_currCharacter = nullptr;
 protected:
 	/**
 	 * Return true if a character should be selected by default
@@ -43,14 +41,18 @@ protected:
 	virtual bool selectCharByDefault() const override {
 		return false;
 	}
+
+	/**
+	 * Returns true if the destination character can be switched to
+	 */
+	bool canSwitchToChar(Character *dst) override;
+
 public:
 	CharacterSelect();
 	virtual ~CharacterSelect() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
 };
 
 } // namespace ViewsEnh

@@ -23,18 +23,14 @@
 #define MM1_VIEWS_SPELLS_DETECT_MAGIC_H
 
 #include "mm/mm1/views/spells/spell_view.h"
+#include "mm/mm1/game/detect_magic.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Spells {
 
-class DetectMagic : public SpellView {
-public:
-	/**
-	 * Show the view
-	 */
-	static void show();
+class DetectMagic : public SpellView, public MM1::Game::DetectMagic {
 public:
 	/**
 	 * Constructor
@@ -52,9 +48,9 @@ public:
 	void draw() override;
 
 	/**
-	 * Keypress handler
+	 * Action handler
 	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Spells

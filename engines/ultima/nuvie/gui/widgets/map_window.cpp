@@ -285,13 +285,13 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 	if (game->is_orig_style()) {
 		clip_rect.left = area.left + 8;
 		clip_rect.setWidth((win_width - 1) * 16);
-		clip_rect.setHeight((win_height - 1) * 16);
 
-		if (game_type == NUVIE_GAME_U6)
+		if (game_type == NUVIE_GAME_U6) {
 			clip_rect.top = area.top + 8;
-		else {
+			clip_rect.setHeight((win_height - 1) * 16);
+		} else {
 			clip_rect.top = area.top + 16;
-			clip_rect.bottom -= 16;
+			clip_rect.setHeight((win_height - 2) * 16);
 		}
 	} else {
 		clip_rect.left = game->get_game_x_offset();
@@ -2403,8 +2403,8 @@ void MapWindow::drawAnims(bool top_anims) {
 void MapWindow::update_mouse_cursor(uint32 mx, uint32 my) {
 	Events *event = game->get_event();
 	int wx = 0, wy = 0;
-	sint16 rel_x, rel_y;
-	uint8 mptr; // mouse-pointer is set here in get_movement_direction()
+	sint16 rel_x = 0, rel_y = 0;
+	uint8 mptr = 0; // mouse-pointer is set here in get_movement_direction()
 
 	if (event->get_mode() != MOVE_MODE && event->get_mode() != INPUT_MODE)
 		return;

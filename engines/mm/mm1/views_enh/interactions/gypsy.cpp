@@ -42,7 +42,7 @@ bool Gypsy::msgFocus(const FocusMessage &msg) {
 
 void Gypsy::viewAction() {
 	// When already showing Gypsy, any click/key will close view
-	if (_lines.empty())
+	if (_charSelected)
 		close();
 }
 
@@ -62,6 +62,7 @@ void Gypsy::charSwitched(Character *priorChar) {
 	);
 	addText(line);
 
+	_charSelected = true;
 	redraw();
 }
 

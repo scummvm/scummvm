@@ -41,18 +41,18 @@ class FolderDownloadRequest: public Networking::Request, public GUI::CommandSend
 	uint64 _downloadedBytes, _totalBytes, _wasDownloadedBytes, _currentDownloadSpeed;
 
 	void start();
-	void directoryListedCallback(Storage::ListDirectoryResponse response);
-	void directoryListedErrorCallback(Networking::ErrorResponse error);
-	void fileDownloadedCallback(Storage::BoolResponse response);
-	void fileDownloadedErrorCallback(Networking::ErrorResponse error);
+	void directoryListedCallback(const Storage::ListDirectoryResponse &response);
+	void directoryListedErrorCallback(const Networking::ErrorResponse &error);
+	void fileDownloadedCallback(const Storage::BoolResponse &response);
+	void fileDownloadedErrorCallback(const Networking::ErrorResponse &error);
 	void downloadNextFile();
 	void finishDownload(Common::Array<StorageFile> &files);
 public:
-	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, Common::String remoteDirectoryPath, Common::String localDirectoryPath, bool recursive);
-	virtual ~FolderDownloadRequest();
+	FolderDownloadRequest(Storage *storage, Storage::FileArrayCallback callback, Networking::ErrorCallback ecb, const Common::String &remoteDirectoryPath, const Common::String &localDirectoryPath, bool recursive);
+	~FolderDownloadRequest() override;
 
-	virtual void handle();
-	virtual void restart();
+	void handle() override;
+	void restart() override;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

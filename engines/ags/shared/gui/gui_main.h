@@ -238,7 +238,8 @@ void MarkForTranslationUpdate();
 void MarkForFontUpdate(int font);
 // Mark labels that acts as special text placeholders for redraw
 void MarkSpecialLabelsForUpdate(GUILabelMacro macro);
-// Mark inventory windows for redraw, optionally only ones linked to given character
+// Mark inventory windows for redraw, optionally only ones linked to given character;
+// also marks buttons with inventory icon mode
 void MarkInventoryForUpdate(int char_id, bool is_player);
 
 // Parses the string and returns combination of label macro flags
@@ -254,6 +255,10 @@ HError ReadGUI(Stream *in, bool is_savegame = false);
 void WriteGUI(Stream *out);
 // Converts legacy GUIVisibility into appropriate GUIMain properties
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
+
+// Rebuilds GUIs, connecting them to the child controls in memory.
+// WARNING: the data is processed in the global arrays (guis, guibuts, and so on)
+HError RebuildGUI();
 }
 
 } // namespace Shared

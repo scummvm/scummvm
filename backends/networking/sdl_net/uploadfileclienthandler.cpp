@@ -30,7 +30,7 @@
 
 namespace Networking {
 
-UploadFileClientHandler::UploadFileClientHandler(Common::String parentDirectoryPath):
+UploadFileClientHandler::UploadFileClientHandler(const Common::String &parentDirectoryPath):
 	_state(UFH_READING_CONTENT), _headersStream(nullptr), _contentStream(nullptr),
 	_parentDirectoryPath(parentDirectoryPath), _uploadedFiles(0) {}
 
@@ -88,7 +88,7 @@ void UploadFileClientHandler::handle(Client *client) {
 }
 
 namespace {
-void readFromThatUntilDoubleQuote(const char *cstr, Common::String needle, Common::String &result) {
+void readFromThatUntilDoubleQuote(const char *cstr, const Common::String &needle, Common::String &result) {
 	const char *position = strstr(cstr, needle.c_str());
 
 	if (position) {
@@ -187,7 +187,7 @@ void UploadFileClientHandler::handleBlockContent(Client *client) {
 	}
 }
 
-void UploadFileClientHandler::setErrorMessageHandler(Client &client, Common::String message) {
+void UploadFileClientHandler::setErrorMessageHandler(Client &client, const Common::String &message) {
 	HandlerUtils::setFilesManagerErrorMessageHandler(client, message);
 	_state = UFH_ERROR;
 }

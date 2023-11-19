@@ -79,7 +79,6 @@ private:
 	 */
 	FSNode(AbstractFSNode *realNode);
 
-	String getRealName() const;
 public:
 	/**
 	 * Flag to tell listDir() which kind of files to list.
@@ -107,8 +106,7 @@ public:
 	 * used (usually the root directory).
 	 */
 	explicit FSNode(const Path &path);
-
-	virtual ~FSNode() {}
+	~FSNode();
 
 	/**
 	 * Compare the name of this node to the name of another. Directories
@@ -157,7 +155,7 @@ public:
 	 *
 	 * @return The display name.
 	 */
-	virtual U32String getDisplayName() const;
+	U32String getDisplayName() const override;
 
 	/**
 	 * Return a string representation of the name of the file. This can be
@@ -167,7 +165,33 @@ public:
 	 *
 	 * @return The file name.
 	 */
-	virtual String getName() const;
+	String getName() const override;
+
+	/**
+	 * Return a string representation of the name of the file.
+	 *
+	 * @return The file name.
+	 */
+	String getFileName() const override;
+
+	/**
+	 * Return a string representation of the name of the file.  Since FSNode
+	 * parents are always the parent FSDirectory, this will not return a full
+	 * path, only the file name.
+	 *
+	 * @return The file name.
+	 */
+	Common::Path getPathInArchive() const override;
+
+	/**
+	 * Return a string representation of the name of the file, without any
+	 * Punycode transformation. This can be used e.g. by detection code that
+	 * relies on matching the name of a given file. However, it is *not*
+	 * suitable for use with fopen / File::open, nor should it be archived.
+	 *
+	 * @return The file name.
+	 */
+	virtual String getRealName() const;
 
 	/**
 	 * Return a string representation of the file that is suitable for
@@ -198,7 +222,13 @@ public:
 	 * Or even replace isDirectory by a getType() method that can return values like
 	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
-	bool isDirectory() const;
+	bool isDirectory() const override;
+
+	/**
+	 * Adds the immediate children of this FSNode to a list, optionally matching a pattern.
+	 * Has no effect if this FSNode is not a directory.
+	 */
+	void listChildren(Common::ArchiveMemberList &childList, const char *pattern = nullptr) const override;
 
 	/**
 	 * Indicate whether the object referred by this node can be read from or not.
@@ -231,9 +261,19 @@ public:
 	 * referred by this node. This assumes that the node actually refers
 	 * to a readable file. If this is not the case, 0 is returned.
 	 *
-	 * @return Pointer to the stream object, 0 in case of a failure.
+	 * @return Pointer to the stream object, nullptr in case of a failure.
 	 */
-	virtual SeekableReadStream *createReadStream() const;
+	SeekableReadStream *createReadStream() const override;
+
+	/**
+	 * Create a SeekableReadStream instance corresponding to an alternate stream
+	 * of the file referred by this node. This assumes that the node actually
+	 * refers to a readable file and the alternate stream exists.  If either is
+	 * not the case, nullptr is returned.
+	 *
+	 * @return Pointer to the stream object, nullptr in case of a failure.
+	 */
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override;
 
 	/**
 	 * Create a WriteStream instance corresponding to the file
@@ -374,6 +414,11 @@ public:
 	 * is needed for success.
 	 */
 	bool hasFile(const Path &path) const override;
+
+	/**
+	 * Check if a specified subpath is a directory.
+	 */
+	bool isPathDirectory(const Path &path) const override;
 
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.

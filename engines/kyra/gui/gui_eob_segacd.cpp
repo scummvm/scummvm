@@ -346,7 +346,7 @@ void EoBEngine::gui_drawSpellbook() {
 		printSpellbookString(&_tempPattern[(i + 1) * 12], _openBookSpellList[d], (i == _openBookSpellSelectedItem) ? 0x6223 : 0x63C9);
 	}
 
-	r->fillRectWithTiles(0, 10, 15, 12, 6, 0, true, false, _tempPattern);
+	r->fillRectWithTiles(0, 10, 15, 12, 7, 0, true, false, _tempPattern);
 	r->render(Screen_EoB::kSegaRenderPage, 10, 15, 12, 7);
 
 	// The original SegaCD version actually doesn't disable the spell book after use but closes it instead.
@@ -972,7 +972,7 @@ void GUI_EoB_SegaCD::restParty_updateRestTime(int hours, bool init) {
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 5120);
 	r->fillRectWithTiles(0, 1, 4, 20, 2, 0x6000);
 	r->fillRectWithTiles(0, 1, 6, 20, 6, 0x6283, true);
-	r->render(0, 0, 0, 22, 16);
+	r->render(0, 0, 0, 22, 17);
 	_screen->updateScreen();
 	_vm->delay(160);
 }

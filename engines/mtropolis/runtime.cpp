@@ -705,15 +705,15 @@ bool DynamicListContainer<void>::compareEqual(const DynamicListContainerBase &ot
 DynamicListContainerBase *DynamicListContainer<void>::clone() const {
 	return new DynamicListContainer<void>(*this);
 }
-DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+DynamicList::DynamicList() : _type(DynamicValueTypes::kUnspecified), _container(nullptr) {
 }
 
-DynamicList::DynamicList(const DynamicList &other) : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+DynamicList::DynamicList(const DynamicList &other) : _type(DynamicValueTypes::kUnspecified), _container(nullptr) {
 	initFromOther(other);
 }
 
 DynamicList::~DynamicList() {
-	clear();
+	destroyContainer();
 }
 
 DynamicValueTypes::DynamicValueType DynamicList::getType() const {
@@ -832,14 +832,13 @@ Common::Array<ObjectReference> &DynamicList::getObjectReference() {
 
 bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	if (_type != value.getType()) {
-		if (_container != nullptr && _container->getSize() != 0) {
+		if (_container) {
 			DynamicValue converted;
 			if (!value.convertToType(_type, converted))
 				return false;
 			return setAtIndex(index, converted);
 		} else {
-			clear();
-			changeToType(value.getType());
+			createContainerAndSetType(value.getType());
 			return _container->setAtIndex(index, value);
 		}
 	} else {
@@ -850,7 +849,7 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 void DynamicList::deleteAtIndex(size_t index) {
 	if (_container != nullptr) {
 		size_t size = _container->getSize();
-		if (size < _container->getSize()) {
+		if (index < _container->getSize()) {
 			for (size_t i = index + 1; i < size; i++) {
 				DynamicValue valueToMove;
 				_container->getAtIndex(i, valueToMove);
@@ -863,9 +862,7 @@ void DynamicList::deleteAtIndex(size_t index) {
 }
 
 void DynamicList::truncateToSize(size_t sz) {
-	if (sz == 0)
-		clear();
-	else if (_container)
+	if (_container)
 		_container->truncateToSize(sz);
 }
 
@@ -888,6 +885,13 @@ size_t DynamicList::getSize() const {
 		return _container->getSize();
 }
 
+void DynamicList::forceType(DynamicValueTypes::DynamicValueType type) {
+	if (_type != type) {
+		destroyContainer();
+		createContainerAndSetType(type);
+	}
+}
+
 bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kFloat) {
 		double rounded = floor(value.getFloat() + 0.5);
@@ -906,7 +910,7 @@ bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &valu
 
 DynamicList &DynamicList::operator=(const DynamicList &other) {
 	if (this != &other) {
-		clear();
+		destroyContainer();
 		initFromOther(other);
 	}
 
@@ -958,7 +962,7 @@ void DynamicList::createWriteProxyForIndex(size_t index, DynamicValueWriteProxy 
 	proxy.pod.ptrOrOffset = index;
 }
 
-bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
+bool DynamicList::createContainerAndSetType(DynamicValueTypes::DynamicValueType type) {
 	switch (type) {
 	case DynamicValueTypes::kInvalid:
 		// FIXME: Set _container as per kNull case?
@@ -1002,9 +1006,11 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	case DynamicValueTypes::kWriteProxy:
 		// FIXME
 		break;
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		// FIXME: Set _container as per kNull case?
 		break;
+	default:
+		error("List was set to an invalid type");
 	}
 
 	_type = type;
@@ -1012,19 +1018,19 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	return true;
 }
 
-void DynamicList::clear() {
-	_type = DynamicValueTypes::kEmpty;
+void DynamicList::destroyContainer() {
 	if (_container)
 		delete _container;
 	_container = nullptr;
+	_type = DynamicValueTypes::kUnspecified;
 }
 
 void DynamicList::initFromOther(const DynamicList &other) {
 	assert(_container == nullptr);
-	assert(_type == DynamicValueTypes::kEmpty);
+	assert(_type == DynamicValueTypes::kUnspecified);
 
-	if (other._type != DynamicValueTypes::kEmpty) {
-		changeToType(other._type);
+	if (other._type != DynamicValueTypes::kUnspecified) {
+		createContainerAndSetType(other._type);
 		_container->setFrom(*other._container);
 	}
 }
@@ -1527,7 +1533,7 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 void DynamicValue::clear() {
 	switch (_type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		_value.destruct<uint64, &ValueUnion::asUnset>();
 		break;
 	case DynamicValueTypes::kInteger:
@@ -1671,7 +1677,7 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 
 	switch (other._type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kEmpty:
+	case DynamicValueTypes::kUnspecified:
 		clear();
 		_type = other._type;
 		break;
@@ -2766,8 +2772,9 @@ MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptTh
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	bool addToReturnList = (_opInt & 0x01) != 0;
-	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, addToReturnList));
+	bool addToReturnList = (_opInt & 0x02) != 0;
+	bool addToDest = (_opInt & 0x01) != 0;
+	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, addToDest, addToReturnList));
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -2973,7 +2980,16 @@ MiniscriptInstructionOutcome AssetManagerInterface::writeRefAttribute(Miniscript
 void StructuralHooks::onCreate(Structural *structural) {
 }
 
-void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
+void StructuralHooks::onPostActivate(Structural *structural) {
+}
+
+void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
+}
+
+void StructuralHooks::onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped, Graphics::ManagedSurface *lastSurf) {
+}
+
+void StructuralHooks::onHidden(Structural *structural, bool &visible) {
 }
 
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
@@ -3752,18 +3768,24 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 
 		switch (stackTop.propagationStage) {
 		case PropagationStack::kStageCheckAndSendCommand:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendCommand;
 			break;
 		case PropagationStack::kStageCheckAndSendToStructural:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendToStructuralSelf;
 			break;
 		case PropagationStack::kStageCheckAndSendToModifier:
-			if (_root.expired())
+			if (_root.expired()) {
+				_terminated = true;
 				return kVThreadReturn;
+			}
 			stackTop.propagationStage = PropagationStack::kStageSendToModifier;
 			break;
 		case PropagationStack::kStageSendToModifier: {
@@ -4233,11 +4255,11 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	  _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	  _displayWidth(1024), _displayHeight(768), _realTime(0), _realTimeBase(0), _playTime(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
+	  _lastFrameCursor(nullptr), _lastFrameMouseVisible(false), _defaultCursor(new DefaultCursorGraphic()),
 	  _cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	  _forceCursorRefreshOnce(true), _autoResetCursor(false), _haveModifierOverrideCursor(false), _haveCursorElement(false), _sceneGraphChanged(false), _isQuitting(false),
 	  _collisionCheckTime(0), /*_elementCursorUpdateTime(0), */_defaultVolumeState(true), _activeSceneTransitionEffect(nullptr), _sceneTransitionStartTime(0), _sceneTransitionEndTime(0),
-	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0)
+	  _sharedSceneWasSetExplicitly(false), _modifierOverrideCursorID(0), _subtitleRenderer(subRenderer), _multiClickStartTime(0), _multiClickInterval(500), _multiClickCount(0), _numMouseBlockers(0)
 {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
@@ -4335,6 +4357,8 @@ bool Runtime::runFrame() {
 						DispatchKeyTaskData *taskData = _vthread->pushTask("Runtime::dispatchKeyTask", this, &Runtime::dispatchKeyTask);
 						taskData->dispatch = dispatch;
 					}
+
+					_project->onKeyboardEvent(this, *static_cast<KeyboardInputEvent *>(evt.get()));
 				}
 				break;
 			case kOSEventTypeMouseDown:
@@ -4378,11 +4402,10 @@ bool Runtime::runFrame() {
 		if (_forceCursorRefreshOnce) {
 			_forceCursorRefreshOnce = false;
 
-			_mouseOverObject.reset();
-
 			UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask", this, &Runtime::updateMousePositionTask);
 			taskData->x = _cachedMousePosition.x;
 			taskData->y = _cachedMousePosition.y;
+			continue;
 		}
 
 		if (_queuedProjectDesc) {
@@ -4932,6 +4955,13 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
 					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
+
+					for (uint i = 1; i < _sceneStack.size(); i++) {
+						if (_sceneStack[i].scene == _activeMainScene) {
+							_sceneStack.remove_at(i);
+							break;
+						}
+					}
 
 					_activeMainScene = sceneReturn.scene;
 
@@ -5509,6 +5539,11 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 				if (RuntimeObject *obj = payload.getObject().object.lock().get())
 					valueStr += Common::String::format(" %x", obj->getStaticGUID());
 				break;
+			case DynamicValueTypes::kLabel:
+				valueStr = Common::String::format("Label(%u,%u)", static_cast<uint>(payload.getLabel().superGroupID), static_cast<uint>(payload.getLabel().id));
+				if (const Common::String *labelName = _project->findNameOfLabel(payload.getLabel()))
+					valueStr = valueStr + "[\"" + (*labelName) + "\"]";
+				break;
 			default:
 				valueStr = "<BAD TYPE> (this is a bug!)";
 				break;
@@ -5672,9 +5707,11 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 	int32 bestLayer = INT32_MIN;
 	bool bestDirect = false;
 
-	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
-		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
+	if (_numMouseBlockers == 0) {
+		for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
+			const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
+			recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
+		}
 	}
 
 	Common::SharedPtr<Structural> newMouseOver;
@@ -5899,10 +5936,6 @@ void Runtime::setVolume(double volume) {
 	mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
 	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
 	mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
-}
-
-ProjectPlatform Runtime::getPlatform() const {
-	return _platform;
 }
 
 void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
@@ -6284,6 +6317,15 @@ void Runtime::setGlobalPalette(const Palette &palette) {
 		setSceneGraphDirty();
 
 	_globalPalette = palette;
+}
+
+void Runtime::addMouseBlocker() {
+	_numMouseBlockers++;
+}
+
+void Runtime::removeMouseBlocker() {
+	assert(_numMouseBlockers > 0);
+	_numMouseBlockers--;
 }
 
 void Runtime::checkBoundaries() {
@@ -6814,10 +6856,10 @@ KeyboardEventSignaller::KeyboardEventSignaller() {
 KeyboardEventSignaller::~KeyboardEventSignaller() {
 }
 
-void KeyboardEventSignaller::onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+void KeyboardEventSignaller::onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) {
 	const size_t numReceivers = _receivers.size();
 	for (size_t i = 0; i < numReceivers; i++) {
-		_receivers[i]->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+		_receivers[i]->onKeyboardEvent(runtime, keyEvt);
 	}
 }
 
@@ -6875,13 +6917,14 @@ Project::Segment::Segment() : weakStream(nullptr) {
 Project::StreamDesc::StreamDesc() : streamType(kStreamTypeUnknown), segmentIndex(0), size(0), pos(0) {
 }
 
-Project::AssetDesc::AssetDesc() : typeCode(0), id(0) {
+Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(0) {
 }
 
 Project::Project(Runtime *runtime)
 	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
-	  _keyboardEventSignaller(new KeyboardEventSignaller()) {
+	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0),
+	  _platform(kProjectPlatformUnknown) {
 }
 
 Project::~Project() {
@@ -6911,6 +6954,7 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	_resources = desc.getResources();
 	_cursorGraphics = desc.getCursorGraphics();
 	_subtitles = desc.getSubtitles();
+	_platform = desc.getPlatform();
 
 	debug(1, "Loading new project...");
 
@@ -6927,6 +6971,7 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
 	size_t numSegments = desc.getSegments().size();
+	debug(1, "Loading %d segments", (int)numSegments);
 	_segments.resize(numSegments);
 
 	for (size_t i = 0; i < numSegments; i++) {
@@ -6948,15 +6993,24 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 		_isBigEndian = true;
 		_projectFormat = Data::kProjectFormatMacintosh;
 	} else {
-		error("Unrecognized project segment header");
+		warning("Unrecognized project segment header (startValue: %d)", startValue);
+		_projectFormat = Data::kProjectFormatWindows;
 	}
 
 	Common::SeekableSubReadStreamEndian stream(baseStream, 2, baseStream->size(), _isBigEndian);
-	if (stream.readUint32() != 0xaa55a5a5 || stream.readUint32() != 0 || stream.readUint32() != 14) {
-		error("Unrecognized project segment header");
+	const uint32 magic = stream.readUint32();
+	const uint32 hdr1 = stream.readUint32();
+	const uint32 hdr2 = stream.readUint32();
+	if (magic != 0xaa55a5a5 || (hdr1 != 0 && hdr1 != 0x2000000) || hdr2 != 14) {
+		error("Unrecognized project segment header (%x, %x, %d)", magic, hdr1, hdr2);
 	}
 
-	Data::DataReader reader(2, stream, _projectFormat);
+	if (hdr1 == 0)
+		_projectEngineVersion = Data::kProjectEngineVersion1;
+	else
+		_projectEngineVersion = Data::kProjectEngineVersion2;
+
+	Data::DataReader reader(2, stream, _projectFormat, _projectEngineVersion);
 
 	Common::SharedPtr<Data::DataObject> dataObject;
 	Data::loadDataObject(_plugInRegistry.getDataLoaderRegistry(), reader, dataObject);
@@ -6983,11 +7037,11 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 		StreamDesc &streamDesc = _streams[i];
 		const Data::ProjectCatalog::StreamDesc &srcStream = catalog->streams[i];
 
-		if (!strcmp(srcStream.streamType, "assetStream"))
+		if (!strcmp(srcStream.streamType, "assetStream") || !strcmp(srcStream.streamType, "assetstream"))
 			streamDesc.streamType = kStreamTypeAsset;
-		else if (!strcmp(srcStream.streamType, "bootStream"))
+		else if (!strcmp(srcStream.streamType, "bootStream") || !strcmp(srcStream.streamType, "bootstream"))
 			streamDesc.streamType = kStreamTypeBoot;
-		else if (!strcmp(srcStream.streamType, "sceneStream"))
+		else if (!strcmp(srcStream.streamType, "sceneStream") || !strcmp(srcStream.streamType, "scenestream"))
 			streamDesc.streamType = kStreamTypeScene;
 		else
 			streamDesc.streamType = kStreamTypeUnknown;
@@ -7031,7 +7085,10 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
+
+	if (getRuntime()->getHacks().mtiHispaniolaDamagedStringHack && scene->getName() == "C01b : Main Deck Helm Kidnap")
+		reader.setPermitDamagedStrings(true);
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
@@ -7156,7 +7213,7 @@ void Project::forceLoadAsset(uint32 assetID, Common::Array<Common::SharedPtr<Ass
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
@@ -7277,8 +7334,8 @@ Common::SharedPtr<PlayMediaSignaller> Project::notifyOnPlayMedia(IPlayMediaSigna
 	return _playMediaSignaller;
 }
 
-void Project::onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
-	_keyboardEventSignaller->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+void Project::onKeyboardEvent(Runtime *runtime, const KeyboardInputEvent &keyEvt) {
+	_keyboardEventSignaller->onKeyboardEvent(runtime, keyEvt);
 }
 
 Common::SharedPtr<KeyboardEventSignaller> Project::notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver) {
@@ -7316,7 +7373,7 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
 
 	ChildLoaderStack loaderStack;
 	AssetDefLoaderContext assetDefLoader;
@@ -7376,6 +7433,7 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 				} break;
 			case Data::DataObjectTypes::kStreamHeader:
 			case Data::DataObjectTypes::kUnknown19:
+			case Data::DataObjectTypes::kUnknown2B:
 				// Ignore
 				break;
 			default:
@@ -7396,6 +7454,14 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 const SubtitleTables &Project::getSubtitles() const {
 	return _subtitles;
+}
+
+MTropolisVersions::MTropolisVersion Project::guessVersion() const {
+	return _guessedVersion;
+}
+
+ProjectPlatform Project::getPlatform() const {
+	return _platform;
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
@@ -7448,6 +7514,14 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 				_assetNameToID[assetDesc.name] = assetDesc.id;
 		}
 	}
+
+	if (assetCatalog.getRevision() <= 2)
+		_guessedVersion = MTropolisVersions::kMTropolisVersion1_0;
+	else if (assetCatalog.getRevision() <= 4)
+		_guessedVersion = MTropolisVersions::kMTropolisVersion1_1;
+	else
+		_guessedVersion = MTropolisVersions::kMTropolisVersion2_0;
+
 }
 
 void Project::loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {
@@ -7731,7 +7805,13 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 				uint32 guid = element->getStaticGUID();
 				const Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> > &hooksMap = getRuntime()->getHacks().structuralHooks;
 				Common::HashMap<uint32, Common::SharedPtr<StructuralHooks> >::const_iterator hooksIt = hooksMap.find(guid);
-				if (hooksIt != hooksMap.end()) {
+				if (hooksIt == hooksMap.end()) {
+					Common::SharedPtr<StructuralHooks> defaultStructuralHooks = getRuntime()->getHacks().defaultStructuralHooks;
+					if (defaultStructuralHooks) {
+						element->setHooks(defaultStructuralHooks);
+						defaultStructuralHooks->onCreate(element.get());
+					}
+				} else {
 					element->setHooks(hooksIt->_value);
 					hooksIt->_value->onCreate(element.get());
 				}
@@ -8000,7 +8080,6 @@ void VisualElementRenderProperties::clearDirty() {
 	_isDirty = false;
 }
 
-/*
 VisualElementRenderProperties &VisualElementRenderProperties::operator=(const VisualElementRenderProperties &other) {
 	_inkMode = other._inkMode;
 	_shape = other._shape;
@@ -8017,10 +8096,10 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 
 	return *this;
 }
-*/
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _layer(0) {
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0)), _contentsDirty(true), _directToScreen(false), _visible(false), _visibleByDefault(true), _layer(0),
+	  _topLeftBevelShading(0), _bottomRightBevelShading(0), _interiorShading(0), _bevelSize(0) {
 }
 
 bool VisualElement::isVisual() const {
@@ -8085,6 +8164,10 @@ VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::Share
 	if (Event(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
 		if (_visible) {
 			_visible = false;
+
+			if (_hooks)
+				_hooks->onHidden(this, _visible);
+
 			runtime->setSceneGraphDirty();
 		}
 
@@ -8262,6 +8345,9 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "centerposition") {
 		result.setPoint(getCenterPosition());
 		return true;
+	} else if (attrib == "size") {
+		result.setPoint(Common::Point(_rect.width(), _rect.height()));
+		return true;
 	} else if (attrib == "width") {
 		result.setInt(_rect.right - _rect.left);
 		return true;
@@ -8288,6 +8374,9 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetPosition, &VisualElement::scriptWriteRefPositionAttribute>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "size") {
+		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetSize, &VisualElement::scriptWriteRefSizeAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "centerposition") {
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition, &VisualElement::scriptWriteRefCenterPositionAttribute>::create(this, writeProxy);
@@ -8395,6 +8484,9 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Common::Point &init
 		if (targetPoint.y > maxY)
 			targetPoint.y = maxY;
 
+		if (_hooks)
+			_hooks->onSetPosition(runtime, this, Common::Point(_rect.left, _rect.top), targetPoint);
+
 		offsetTranslate(targetPoint.x - _rect.left, targetPoint.y - _rect.top, false);
 	}
 }
@@ -8423,6 +8515,17 @@ const VisualElementRenderProperties &VisualElement::getRenderProperties() const 
 
 const Common::WeakPtr<GraphicModifier> &VisualElement::getPrimaryGraphicModifier() const {
 	return _primaryGraphicModifier;
+}
+
+void VisualElement::setShading(int16 topLeftBevelShading, int16 bottomRightBevelShading, int16 interiorShading, uint32 bevelSize) {
+	if (_topLeftBevelShading != topLeftBevelShading || _bottomRightBevelShading != bottomRightBevelShading || _interiorShading != interiorShading || _bevelSize != bevelSize) {
+		_topLeftBevelShading = topLeftBevelShading;
+		_bottomRightBevelShading = bottomRightBevelShading;
+		_interiorShading = interiorShading;
+		_bevelSize = bevelSize;
+
+		_contentsDirty = true;
+	}
 }
 
 bool VisualElement::needsRender() const {
@@ -8506,7 +8609,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 		Common::Point destPoint = value.getPoint();
 
 		if (_hooks)
-			_hooks->onSetPosition(thread->getRuntime(), this, destPoint);
+			_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), destPoint);
 
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.top;
@@ -8529,7 +8632,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(asInteger, _rect.top);
 	if (_hooks)
-		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), updatedPoint);
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;
 
@@ -8546,7 +8649,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(_rect.left, asInteger);
 	if (_hooks)
-		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, Common::Point(_rect.left, _rect.top), updatedPoint);
 
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;
@@ -8598,12 +8701,37 @@ MiniscriptInstructionOutcome VisualElement::scriptSetCenterPositionY(MiniscriptT
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome VisualElement::scriptSetSize(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (value.getType() == DynamicValueTypes::kPoint) {
+		Common::Point pt = value.getPoint();
+
+		if (_rect.bottom - _rect.top != asInteger || _rect.right - _rect.left != asInteger) {
+			_rect.right = _rect.left + pt.x;
+			_rect.bottom = _rect.top + pt.y;
+
+			thread->getRuntime()->setSceneGraphDirty();
+		}
+	} else {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = thread->getRuntime()->debugGetDebugger())
+			debugger->notify(kDebugSeverityError, "'size' value wasn't a point");
+#endif
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetWidth(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	_rect.right = _rect.left + asInteger;
+	if (_rect.right - _rect.left != asInteger) {
+		_rect.right = _rect.left + asInteger;
+
+		thread->getRuntime()->setSceneGraphDirty();
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -8613,7 +8741,11 @@ MiniscriptInstructionOutcome VisualElement::scriptSetHeight(MiniscriptThread *th
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	_rect.bottom = _rect.top + asInteger;
+	if (_rect.bottom - _rect.top != asInteger) {
+		_rect.bottom = _rect.top + asInteger;
+
+		thread->getRuntime()->setSceneGraphDirty();
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -8658,6 +8790,18 @@ MiniscriptInstructionOutcome VisualElement::scriptWriteRefCenterPositionAttribut
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "y") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionY, true>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptWriteRefSizeAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth, true>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "y") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight, true>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -8719,6 +8863,195 @@ VisualElement *VisualElement::recursiveFindItemWithLayer(VisualElement *element,
 	}
 
 	return nullptr;
+}
+
+void VisualElement::renderShading(Graphics::Surface &surf) const {
+	uint32 bevelSize = _bevelSize;
+	uint32 w = surf.w;
+	uint32 h = surf.h;
+
+	uint32 maxHBevel = (w + 1) / 2;
+	uint32 maxVBevel = (h + 1) / 2;
+
+	if (bevelSize > maxHBevel)
+		bevelSize = maxHBevel;
+	if (bevelSize > maxVBevel)
+		bevelSize = maxVBevel;
+
+	uint32 rMask = surf.format.ARGBToColor(0, 255, 0, 0);
+	uint32 gMask = surf.format.ARGBToColor(0, 0, 255, 0);
+	uint32 bMask = surf.format.ARGBToColor(0, 0, 0, 255);
+
+	byte bytesPerPixel = surf.format.bytesPerPixel;
+
+	if (_topLeftBevelShading != 0) {
+		bool isBrighten = (_topLeftBevelShading > 0);
+
+		uint32 rAdd = quantizeShading(rMask, _topLeftBevelShading);
+		uint32 gAdd = quantizeShading(gMask, _topLeftBevelShading);
+		uint32 bAdd = quantizeShading(bMask, _topLeftBevelShading);
+
+		// Top bar
+		for (uint y = 0; y < bevelSize; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), w - y, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Left bar
+		uint leftBarEndY = h + 1 - bevelSize;
+		for (uint y = bevelSize; y < leftBarEndY; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), bevelSize, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Lower diagonal
+		for (uint y = leftBarEndY; y < h; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(0, y), bevelSize - 1 - (y - leftBarEndY), rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+	}
+
+	if (_bottomRightBevelShading != 0) {
+		bool isBrighten = (_bottomRightBevelShading > 0);
+
+		uint32 rAdd = quantizeShading(rMask, _bottomRightBevelShading);
+		uint32 gAdd = quantizeShading(gMask, _bottomRightBevelShading);
+		uint32 bAdd = quantizeShading(bMask, _bottomRightBevelShading);
+
+		// Upper diagonal
+		for (uint y = 1; y < bevelSize; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(w - y, y), y, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		uint rightBarEndY = h - bevelSize;
+		if (rightBarEndY < bevelSize)
+			rightBarEndY = bevelSize;
+
+		uint rightBarX = w - bevelSize;
+		if (rightBarX < bevelSize)
+			rightBarX = bevelSize;
+
+		// Right bar
+		for (uint y = bevelSize; y < rightBarEndY; y++)
+			renderShadingScanlineDynamic(surf.getBasePtr(rightBarX, y), w - rightBarX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+
+		// Bottom bar
+		for (uint y = rightBarEndY; y < h; y++) {
+			uint bottomBarStartX = bevelSize - (y - rightBarEndY);
+			renderShadingScanlineDynamic(surf.getBasePtr(bottomBarStartX, y), w - bottomBarStartX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+		}
+	}
+
+	if (_interiorShading != 0) {
+		uint32 startX = bevelSize;
+		uint32 endX = w - bevelSize;
+		uint32 startY = bevelSize;
+		uint32 endY = h - bevelSize;
+
+		if (startX < endX && startY < endY) {
+			bool isBrighten = (_bottomRightBevelShading > 0);
+
+			uint32 rAdd = quantizeShading(rMask, _bottomRightBevelShading);
+			uint32 gAdd = quantizeShading(gMask, _bottomRightBevelShading);
+			uint32 bAdd = quantizeShading(bMask, _bottomRightBevelShading);
+
+			for (uint y = startY; y < endY; y++)
+				renderShadingScanlineDynamic(surf.getBasePtr(startX, y), endX - startX, rMask, rAdd, gMask, gAdd, bMask, bAdd, isBrighten, bytesPerPixel);
+		}
+	}
+}
+
+uint32 VisualElement::quantizeShading(uint32 mask, int16 shading) {
+	uint32 absShading = (shading < 0) ? static_cast<int32>(-shading) : static_cast<int32>(shading);
+
+	if ((mask & 0xff) == 0) {
+		// Nothing in the low bytes, so shift down to avoid upper bits overflow
+		return ((mask >> 8) * absShading) & mask;
+	}
+
+	// Something was in the low bits, so avoid lower bits underflow instead
+	return ((mask * absShading) >> 8) & mask;
+}
+
+void VisualElement::renderShadingScanlineDynamic(void *data, size_t numElements, uint32 rMask, uint32 rAdd, uint32 gMask, uint32 gAdd, uint32 bMask, uint32 bAdd, bool isBrighten, byte bytesPerPixel) {
+	if (isBrighten) {
+		switch (bytesPerPixel) {
+		case 2:
+			renderBrightenScanline<uint16>(static_cast<uint16 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		case 4:
+			renderBrightenScanline<uint32>(static_cast<uint32 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (bytesPerPixel) {
+		case 2:
+			renderDarkenScanline<uint16>(static_cast<uint16 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		case 4:
+			renderDarkenScanline<uint32>(static_cast<uint32 *>(data), numElements, rMask, rAdd, gMask, gAdd, bMask, bAdd);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+template<class TElement>
+void VisualElement::renderBrightenScanline(TElement *element, size_t numElements, TElement rMask, TElement rAdd, TElement gMask, TElement gAdd, TElement bMask, TElement bAdd) {
+	TElement rLimit = rMask - rAdd;
+	TElement gLimit = gMask - gAdd;
+	TElement bLimit = bMask - bAdd;
+
+	while (numElements > 0) {
+		TElement v = *element;
+
+		if ((v & rMask) > rLimit)
+			v |= rMask;
+		else
+			v += rAdd;
+
+		if ((v & gMask) > gLimit)
+			v |= gMask;
+		else
+			v += gAdd;
+
+		if ((v & bMask) > bLimit)
+			v |= bMask;
+		else
+			v += bAdd;
+
+		*element = v;
+
+		numElements--;
+		element++;
+	}
+}
+
+template<class TElement>
+void VisualElement::renderDarkenScanline(TElement *element, size_t numElements, TElement rMask, TElement rSub, TElement gMask, TElement gSub, TElement bMask, TElement bSub) {
+	TElement rZero = ~rMask;
+	TElement gZero = ~gMask;
+	TElement bZero = ~bMask;
+
+	while (numElements > 0) {
+		TElement v = *element;
+
+		if ((v & rMask) < rSub)
+			v &= rZero;
+		else
+			v -= rSub;
+
+		if ((v & gMask) < gSub)
+			v &= gZero;
+		else
+			v -= gSub;
+
+		if ((v & bMask) < bSub)
+			v &= bZero;
+		else
+			v -= bSub;
+
+		*element = v;
+
+		numElements--;
+		element++;
+	}
 }
 
 bool NonVisualElement::isVisual() const {
@@ -9099,6 +9432,15 @@ DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<VariableModifier::WriteProxyInterface>::getInstance();
 	return proxy;
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void VariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	Modifier::debugInspect(report);
+
+	if (report->declareStatic("storage"))
+		report->declareStaticContents(Common::String::format("%p", static_cast<void *>(_storage.get())));
+}
+#endif
 
 MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
 	if (!static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest))

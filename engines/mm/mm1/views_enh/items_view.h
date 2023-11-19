@@ -71,6 +71,14 @@ protected:
 	 */
 	virtual void itemSelected() = 0;
 
+	/**
+	 * Clear the buttons list
+	 */
+	void clearButtons() {
+		_btnText.clear();
+		PartyView::clearButtons();
+	}
+
 public:
 	ItemsView(const Common::String &name);
 	virtual ~ItemsView() {}

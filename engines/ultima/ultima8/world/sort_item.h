@@ -27,6 +27,8 @@
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/misc/box.h"
 
+//#define SORTITEM_OCCLUSION_EXPERIMENTAL 1
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -47,7 +49,7 @@ struct SortItem {
 			_syTop(0), _sxBot(0), _syBot(0),_fbigsq(false), _flat(false),
 			_occl(false), _solid(false), _draw(false), _roof(false),
 			_noisy(false), _anim(false), _trans(false), _fixed(false),
-			_land(false), _occluded(false), _clipped(false), _sprite(false),
+			_land(false), _occluded(false), _sprite(false),
 			_invitem(false) { }
 
 	SortItem                *_next;
@@ -93,6 +95,13 @@ struct SortItem {
 	int32   _sxBot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
 	int32   _syBot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
 
+#ifdef SORTITEM_OCCLUSION_EXPERIMENTAL
+	SortItem *_xAdjoin; // Item sharing a right x edge with the left x edge - used for occlusion
+	SortItem *_yAdjoin; // Item sharing a near y edge with the far y edge - used for occlusion
+	uint16 _groupNum;   // Identifier for a member of an occlusion group
+#endif // SORTITEM_OCCLUSION_EXPERIMENTAL
+
+
 	bool    _fbigsq : 1;         // Needs 1 bit  0
 	bool    _flat : 1;           // Needs 1 bit  1
 	bool    _occl : 1;           // Needs 1 bit  2
@@ -108,7 +117,6 @@ struct SortItem {
 	bool 	_invitem : 1;        // Crusader inventory item, should appear above other things
 
 	bool    _occluded : 1;       // Set true if occluded
-	bool  	_clipped : 1;        // Clipped to RenderSurface
 
 	int32   _order;      // Rendering _order. -1 is not yet drawn
 
@@ -218,7 +226,18 @@ struct SortItem {
 	// Functions
 
 	// Set worldspace bounds and calculate screenspace at center point
-	inline void setBoxBounds(const Box &box, int32 sx, int32 sy);
+	void setBoxBounds(const Box &box, int32 sx, int32 sy);
+
+	inline Box getBoxBounds() const {
+		Box box;
+		box._x = _x;
+		box._y = _y;
+		box._z = _z;
+		box._xd = _x - _xLeft;
+		box._yd = _y - _yFar;
+		box._zd = _zTop - _z;
+		return box;
+	}
 
 	// Check if the given point is inside the screenpace bounds.
 	inline bool contains(int32 sx, int32 sy) const;
@@ -230,7 +249,7 @@ struct SortItem {
 	inline bool occludes(const SortItem &si2) const;
 
 	// Screenspace check to see if this is below si2. Assumes this overlaps si2
-	inline bool below(const SortItem &si2) const;
+	bool below(const SortItem &si2) const;
 
 	// Comparison for the sorted lists
 	inline bool listLessThan(const SortItem &si2) const {
@@ -246,36 +265,6 @@ struct SortItem {
 
 	Common::String dumpInfo() const;
 };
-
-inline void SortItem::setBoxBounds(const Box& box, int32 sx, int32 sy) {
-	_x = box._x;
-	_y = box._y;
-	_z = box._z;
-	_xLeft = _x - box._xd;
-	_yFar = _y - box._yd;
-	_zTop = _z + box._zd;
-
-	// Screenspace bounding box left extent    (LNT x coord)
-	_sxLeft = (_xLeft - _y) / 4 - sx;
-	// Screenspace bounding box right extent   (RFT x coord)
-	_sxRight = (_x - _yFar) / 4 - sx;
-
-	// Screenspace bounding box top x coord    (LFT x coord)
-	_sxTop = (_xLeft - _yFar) / 4 - sx;
-	// Screenspace bounding box top extent     (LFT y coord)
-	_syTop = (_xLeft + _yFar) / 8 - _zTop - sy;
-
-	// Screenspace bounding box bottom x coord (RNB x coord)
-	_sxBot = (_x - _y) / 4 - sx;
-	// Screenspace bounding box bottom extent  (RNB y coord)
-	_syBot = (_x + _y) / 8 - _z - sy;
-
-	// Screenspace rect - replace with shape frame calculations
-	_sr.left = _sxLeft;
-	_sr.top = _syTop;
-	_sr.right = _sxRight;
-	_sr.bottom = _syBot;
-}
 
 inline bool SortItem::contains(int32 sx, int32 sy) const {
 	if (!_sr.contains(sx, sy))
@@ -384,147 +373,6 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 
 	return right_res && left_res && bot_right_res && bot_left_res &&
 		top_right_res && top_left_res;
-}
-
-inline bool SortItem::below(const SortItem &si2) const {
-	const SortItem &si1 = *this;
-
-	if (si1._sprite != si2._sprite)
-		return si1._sprite < si2._sprite;
-
-	// Clearly in z and lower is non-flat?
-	if (si1._z < si2._z && si1._zTop <= si2._z)
-		return true;
-
-	if (si1._z > si2._z && si1._z >= si2._zTop)
-		return false;
-
-	// Clearly in y?
-	if (si1._y <= si2._yFar)
-		return true;
-	if (si1._yFar >= si2._y)
-		return false;
-
-	// Clearly in x?
-	if (si1._x <= si2._xLeft)
-		return true;
-	if (si1._xLeft >= si2._x)
-		return false;
-
-	// Overlapping z-bottom check
-	// If an object's base (z-bottom) is higher another's, it should be rendered after.
-	// This check must be on the z-bottom and not the z-top because two objects with the
-	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1._z != si2._z)
-		return si1._z < si2._z;
-
-	// Are overlapping in all 3 dimensions if we come here
-
-	// Inv items always drawn after
-	if (si1._invitem != si2._invitem)
-		return si1._invitem < si2._invitem;
-
-	// Flat always gets drawn before
-	if (si1._flat != si2._flat)
-		return si1._flat > si2._flat;
-
-	// Specialist handling for same location
-	if (si1._x == si2._x && si1._y == si2._y) {
-		// Trans always gets drawn after
-		if (si1._trans != si2._trans)
-			return si1._trans < si2._trans;
-	}
-
-	// Specialist z flat handling
-	if (si1._flat && si2._flat) {
-		// Trans always gets drawn after
-		if (si1._trans != si2._trans)
-			return si1._trans < si2._trans;
-
-		// Animated always gets drawn after
-		if (si1._anim != si2._anim)
-			return si1._anim < si2._anim;
-
-		// Draw always gets drawn first
-		if (si1._draw != si2._draw)
-			return si1._draw > si2._draw;
-
-		// Solid always gets drawn first
-		if (si1._solid != si2._solid)
-			return si1._solid > si2._solid;
-
-		// Occludes always get drawn first
-		if (si1._occl != si2._occl)
-			return si1._occl > si2._occl;
-
-		// Large flats squares get drawn first
-		if (si1._fbigsq != si2._fbigsq)
-			return si1._fbigsq > si2._fbigsq;
-	}
-
-	// Disabled: Land always gets drawn first
-	//if (si1._land != si2._land)
-	//	return si1._land > si2._land;
-
-	// Land always gets drawn before roof
-	if (si1._land && si2._land && si1._roof != si2._roof)
-		return si1._roof < si2._roof;
-
-	// Roof always gets drawn first
-	if (si1._roof != si2._roof)
-		return si1._roof > si2._roof;
-
-	// Partial in X + Y front
-	if (si1._x + si1._y != si2._x + si2._y)
-		return (si1._x + si1._y < si2._x + si2._y);
-
-	// Partial in X + Y back
-	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
-		return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
-
-	// Partial in y?
-	if (si1._y != si2._y)
-		return si1._y < si2._y;
-
-	// Partial in x?
-	if (si1._x != si2._x)
-		return si1._x < si2._x;
-
-	// Just sort by shape number
-	if (si1._shapeNum != si2._shapeNum)
-		return si1._shapeNum < si2._shapeNum;
-
-	// And then by _frame
-	return si1._frame < si2._frame;
-}
-
-Common::String SortItem::dumpInfo() const {
-	Common::String info = Common::String::format("%u:%u (%d, %d, %d) (%d, %d, %d): ",
-								_shapeNum, _frame, _xLeft, _yFar, _z, _x, _y, _zTop);
-	if (_sprite)
-		info += "sprite ";
-	if (_flat)
-		info += "flat ";
-	if (_anim)
-		info += "anim ";
-	if (_trans)
-		info += "trans ";
-	if (_draw)
-		info += "draw ";
-	if (_solid)
-		info += "solid ";
-	if (_occl)
-		info += "occl ";
-	if (_fbigsq)
-		info += "fbigsq ";
-	if (_roof)
-		info += "roof ";
-	if (_land)
-		info += "land ";
-	if (_noisy)
-		info += "noisy ";
-
-	return info;
 }
 
 } // End of namespace Ultima8

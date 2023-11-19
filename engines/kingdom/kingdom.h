@@ -151,6 +151,7 @@ namespace Kingdom {
 		bool _iconsClosed;
 		bool _oldIconsClosed;
 		int _pMovie;
+		bool _demoMovieSkipped;
 		bool _keyActive;
 		bool _iconRedraw;
 		bool _quit;

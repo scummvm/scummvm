@@ -106,6 +106,31 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData[] = {
 		true,
 		4, 0,
 		"D U   S A L U T "
+	},
+	// Hebrew
+	{
+		31,
+		kGameFlag281,
+		431,
+		3,
+		{{0, false}, {1, false}, {2, false}},
+		9,
+		{
+			{'\xE5', 585,  58},
+			{'\xE4', 218,  58},
+			{'\xEC', 134,  87},
+			{'\xE4', 465, 138},
+			{'\xE0',  64, 154},
+			{'\xF2', 523, 203},
+			{'\xE9', 511, 219},
+			{'\xF9',  91, 234},
+			{'\0',     0,   0},
+			{'\0',     0,   0},
+			{'\0',     0,   0}
+		},
+		false,
+		12, 0,
+		"\xE4 \xF2 \xE5 \xF9 \xE9 \xE4   \xEC \xE0 "
 	}
 };
 

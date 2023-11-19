@@ -92,6 +92,8 @@ public:
 	void setRawText(const Common::String &text);
 
 private:
+	Graphics::MacWidget *createWindowOrWidget(Common::Rect &bbox, Channel *channel, Common::Rect dims, Graphics::MacFont *macFont);
+
 	uint32 _bgcolor;
 	uint32 _fgcolor;
 };

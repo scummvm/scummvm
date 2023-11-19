@@ -82,7 +82,7 @@ int HPFArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int numMembers = 0;
 
 	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 		numMembers++;
 	}
 
@@ -94,7 +94,7 @@ const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::Path &path) c
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::Path &path) const {

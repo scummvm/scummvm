@@ -29,8 +29,16 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-Map::Map(uint index, const Common::String &name, uint16 id, byte defaultSection) :
+Map::Map(uint index, const Common::String &name, uint16 id,
+		byte defaultSection, const char *desc) :
 		_mapIndex(index), _name(name), _id(id), _defaultSection(defaultSection) {
+	_description = desc ? Common::String(desc) : _name;
+	_description.setChar(toupper(_description[0]), 0);
+	if (_description.hasPrefix("Area")) {
+		_description.setChar(toupper(_description[4]), 4);
+		_description.insertChar(' ', 4);
+	}
+
 	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
 	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
 	Common::fill(&_visited[0], &_visited[MAP_SIZE], 0);

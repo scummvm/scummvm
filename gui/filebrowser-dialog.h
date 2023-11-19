@@ -38,7 +38,7 @@ enum {
 
 class FileBrowserDialog : public Dialog {
 public:
-	FileBrowserDialog(const char *title, const char *fileExtension, int mode, const char *fileMask = NULL);
+	FileBrowserDialog(const char *title, const char *fileExtension, int mode, const char *fileMask = NULL, const char *initialFilename = NULL);
 
 	void open() override;
 

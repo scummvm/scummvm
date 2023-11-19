@@ -102,6 +102,31 @@ static const PuzzleBoard::PuzzleData puzzleKeyHidesToData[] = {
 		true,
 		4, 0,
 		"L A   C L E F "
+	},
+	// Hebrew
+	{
+		56,
+		kGameFlag283,
+		503,
+		3,
+		{{5, false}, {6, false}, {7, false}},
+		10,
+		{
+			{'\xE7', 593,  58},
+			{'\xEE',  65,  59},
+			{'\xF4', 591,  91},
+			{'\xE0', 203, 106},
+			{'\xE4', 466, 122},
+			{'\xE1',  62, 123},
+			{'\xE9', 468, 155},
+			{'\xFA', 201, 170},
+			{'\xEE', 253, 203},
+			{'\xE7', 210, 218},
+			{'\0',     0,   0},
+		},
+		true,
+		10, 0,
+		"\xE7 \xFA \xF4 \xEE \xE4   \xE0 \xE9 \xE1 \xE7 \xEE "
 	}
 };
 

@@ -49,11 +49,6 @@ enum KeyCodes {
 
 uint32 timeGetTime();
 
-struct SYSTEMTIME {
-	uint32 hour, minutes, seconds, day, month, year;
-};
-
-void GetLocalTime(SYSTEMTIME *);
 void ResetDIKbd();
 void CopyFile(char *src, char *dst, bool noOverwrite);
 } // End of namespace Watchmaker

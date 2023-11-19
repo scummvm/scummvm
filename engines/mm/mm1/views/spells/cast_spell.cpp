@@ -61,8 +61,10 @@ bool CastSpell::msgGame(const GameMessage &msg) {
 	return true;
 }
 
-bool CastSpell::msgUnfocus(const UnfocusMessage &msg) {
-	_state = SELECT_SPELL;
+bool CastSpell::msgFocus(const FocusMessage &msg) {
+	if (dynamic_cast<TextEntry *>(msg._priorView) == nullptr)
+		_state = SELECT_SPELL;
+
 	return true;
 }
 
@@ -78,12 +80,26 @@ void CastSpell::setState(State state) {
 }
 
 void CastSpell::draw() {
+	clearSurface();
+	if (_state == NONE)
+		return;
+
+	escToGoBack(0);
+	writeString(7, 0, STRING["dialogs.character.cast_spell"]);
+	if (_state >= SELECT_NUMBER) {
+		writeChar(' ');
+		writeNumber(_spellLevel);
+		writeString(19, 1, STRING["dialogs.character.number"]);
+	}
+
+	if (_state > SELECT_NUMBER) {
+		writeChar(' ');
+		writeNumber(_spellNumber);
+	}
+
 	switch (_state) {
 	case SELECT_SPELL:
-		clearSurface();
-		escToGoBack(0);
-		writeString(7, 0, STRING["dialogs.character.cast_spell"]);
-
+		_state = NONE;
 		_textEntry.display(27, 20, 1, true,
 			[]() {
 				CastSpell *view =
@@ -99,9 +115,7 @@ void CastSpell::draw() {
 		break;
 
 	case SELECT_NUMBER:
-		clearLines(1, 1);
-		writeString(19, 1, STRING["dialogs.character.number"]);
-
+		_state = NONE;
 		_textEntry.display(27, 21, 1, true,
 			[]() {
 				CastSpell *view =
@@ -127,6 +141,12 @@ void CastSpell::draw() {
 		writeString(24, 4, STRING["spells.enter_to_cast"]);
 		break;
 
+	case ENDING:
+		clearSurface();
+		writeString(_spellResultX, 1, _spellResult);
+		delaySeconds(3);
+		break;
+
 	default:
 		break;
 	}
@@ -150,6 +170,7 @@ void CastSpell::spellNumberEntered(uint num) {
 		return;
 	}
 
+	_spellNumber = num;
 	setSpell(g_globals->_currCharacter, _spellLevel, num);
 	if (!canCast()) {
 		spellDone();
@@ -196,7 +217,7 @@ void CastSpell::performSpell(Character *chr) {
 	c._gems = MAX(c._gems - _requiredGems, 0);
 
 	if (!isMagicAllowed()) {
-		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
+		spellDone(STRING["spells.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
 		switch (Game::SpellsParty::cast(_spellIndex, chr)) {
@@ -212,7 +233,7 @@ void CastSpell::performSpell(Character *chr) {
 
 		default:
 			// Spell done, but don't display done message
-			if (isInCombat())
+			if (isFocused())
 				close();
 			break;
 		}
@@ -235,11 +256,10 @@ void CastSpell::spellDone(const Common::String &msg, int xp) {
 		g_events->focusedView()->send(gameMsg);
 
 	} else {
-		_state = ENDING;
 		Sound::sound(SOUND_2);
-		clearSurface();
-		writeString(xp, 1, msg);
-		delaySeconds(3);
+		_spellResult = msg;
+		_spellResultX = xp;
+		setState(ENDING);
 	}
 }
 

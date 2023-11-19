@@ -46,17 +46,17 @@ class OneDriveListDirectoryRequest: public Networking::Request {
 
 	void start();
 	void listNextDirectory();
-	void listedDirectoryCallback(Networking::JsonResponse response);
-	void listedDirectoryErrorCallback(Networking::ErrorResponse error);
-	void makeRequest(Common::String url);
-	void finishListing(Common::Array<StorageFile> &files);
+	void listedDirectoryCallback(const Networking::JsonResponse &response);
+	void listedDirectoryErrorCallback(const Networking::ErrorResponse &error);
+	void makeRequest(const Common::String &url);
+	void finishListing(const Common::Array<StorageFile> &files);
 public:
-	OneDriveListDirectoryRequest(OneDriveStorage *storage, Common::String path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
-	virtual ~OneDriveListDirectoryRequest();
+	OneDriveListDirectoryRequest(OneDriveStorage *storage, const Common::String &path, Storage::ListDirectoryCallback cb, Networking::ErrorCallback ecb, bool recursive = false);
+	~OneDriveListDirectoryRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace OneDrive

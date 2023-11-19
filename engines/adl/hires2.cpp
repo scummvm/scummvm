@@ -72,34 +72,16 @@ void HiResBaseEngine::init() {
 	stream.reset(_disk->createReadStream(0x19, 0x0, 0x00, 25, 13));
 	Common::StringArray exeStrings;
 	extractExeStrings(*stream, 0x1566, exeStrings);
-
-	if (exeStrings.size() < 11)
-		error("Failed to load strings from executable");
+	mapExeStrings(exeStrings);
 
 	// Heuristic to test for early versions that differ slightly
 	// Later versions have two additional strings for "INIT DISK"
 	const bool oldEngine = exeStrings.size() < 13;
 
-	// Read parser messages
-	_strings.verbError = exeStrings[2];
-	_strings.nounError = exeStrings[3];
-	_strings.enterCommand = exeStrings[4];
-
 	if (!oldEngine) {
 		stream.reset(_disk->createReadStream(0x19, 0x7, 0xd7));
 		_strings_v2.time = readString(*stream, 0xff);
 	}
-
-	// Read line feeds
-	_strings.lineFeeds = exeStrings[0];
-
-	// Read opcode strings
-	_strings_v2.saveInsert = exeStrings[5];
-	_strings_v2.saveReplace = exeStrings[6];
-	_strings_v2.restoreInsert = exeStrings[7];
-	_strings_v2.restoreReplace = exeStrings[8];
-	_strings.playAgain = exeStrings[9];
-	_strings.pressReturn = exeStrings[10];
 
 	// Load global picture data
 	stream.reset(_disk->createReadStream(0x19, 0xa, 0x80, 0));

@@ -140,7 +140,7 @@ void Encounter::draw() {
 		setDisplayArea(true);
 		drawGraphic(enc._monsterImgNum);
 
-		setBounds(Common::Rect(160, 10, 310, 140));
+		setBounds(Common::Rect(168, 10, 310, 140));
 		Graphics::ManagedSurface monArea = getSurface();
 		monArea.clear();
 
@@ -148,9 +148,9 @@ void Encounter::draw() {
 		setReduced(true);
 		setTextColor(4);
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
-			writeString(12, 4 + i * 8,
+			writeString(12, i * 8,
 				Common::String::format("%c)", 'A' + i), ALIGN_RIGHT);
-			writeString(18, 4 + i * 8, enc._monsterList[i]._name.c_str());
+			writeString(18, i * 8, enc._monsterList[i]._name.c_str());
 		}
 	}
 
@@ -354,6 +354,7 @@ void Encounter::surrender() {
 	} else {
 		g_maps->_mapPos.x = map[Maps::MAP_SURRENDER_X];
 		g_maps->_mapPos.y = map[Maps::MAP_SURRENDER_Y];
+		g_maps->visitedTile();
 
 		// Randomly remove food, gems, or gold from the party
 		int val = getRandomNumber(200);

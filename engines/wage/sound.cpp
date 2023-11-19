@@ -113,8 +113,45 @@ void WageEngine::playSound(Common::String soundName) {
 	}
 }
 
+static void soundTimer(void *refCon) {
+	Scene *scene = (Scene *)refCon;
+	WageEngine *engine = (WageEngine *)g_engine;
+
+	g_system->getTimerManager()->removeTimerProc(&soundTimer);
+
+	if (engine->_world->_player->_currentScene != scene)
+		return;
+
+	if (engine->_soundQueue.empty()) {
+		if (scene->_soundType == Scene::PERIODIC && 0) {
+			engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
+
+			uint32 nextRun = 60000 / scene->_soundFrequency;
+			g_system->getTimerManager()->installTimerProc(&soundTimer, nextRun * 1000, scene, "WageEngine::soundTimer");
+		} else if (scene->_soundType == Scene::RANDOM || 1) {
+			for (int i = 0; i < scene->_soundFrequency * 5; i++)
+				engine->_soundQueue.push_back(g_system->getMillis() + engine->_rnd->getRandomNumber(60000));
+
+			Common::sort(engine->_soundQueue.begin(), engine->_soundQueue.end());
+
+			int nextRun = engine->_soundQueue.front();
+			engine->_soundQueue.pop_front();
+
+			g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
+		} else {
+			warning("updateSoundTimerForScene: Unknown sound type %d", scene->_soundType);
+		}
+	} else {
+		int nextRun = engine->_soundQueue.front();
+		engine->_soundQueue.pop_front();
+
+		g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
+
+		engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
+	}
+}
+
 void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
-	//warning("STUB: WageEngine::updateSoundTimerForScene()");
 	if (_world->_player->_currentScene != scene)
 			return;
 
@@ -128,26 +165,8 @@ void WageEngine::updateSoundTimerForScene(Scene *scene, bool firstTime) {
 			return;
 		}
 
-		warning("STUB: updateSoundTimerForScene: sound: '%s', %s", soundName.c_str(),
-				scene->_soundType == Scene::PERIODIC ? "PERIODIC" : "RANDOM");
-
-#if 0
-		soundTimer = new Timer();
-		switch (scene.getSoundType()) {
-		case Scene.PERIODIC:
-			if (firstTime)
-				soundTimer.schedule(new PlaySoundTask(scene, sound), 0);
-			int delay = 60000 / scene.getSoundFrequency();
-			soundTimer.schedule(new PlaySoundTask(scene, sound), delay);
-			soundTimer.schedule(new UpdateSoundTimerTask(scene), delay + 1);
-			break;
-		case Scene.RANDOM:
-			for (int i = 0; i < scene.getSoundFrequency(); i++)
-				soundTimer.schedule(new PlaySoundTask(scene, sound), (int)(Math.random() * 60000));
-			soundTimer.schedule(new UpdateSoundTimerTask(scene), 60000);
-			break;
-		}
-#endif
+		// Launch the process
+		soundTimer(scene);
 	}
 
 }

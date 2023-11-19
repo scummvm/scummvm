@@ -55,20 +55,16 @@ bool Exchange::msgAction(const ActionMessage &msg) {
 	return PartyView::msgAction(msg);
 }
 
-bool Exchange::msgGame(const GameMessage &msg) {
-	if (msg._name == "UPDATE") {
-		int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
+void Exchange::charSwitched(Character *priorChar) {
+	PartyView::charSwitched(priorChar);
+	int charNum = g_globals->_party.indexOf(g_globals->_currCharacter);
 
-		if (charNum != _srcCharacter) {
-			// Swap the two characters
-			SWAP(g_globals->_party[charNum], g_globals->_party[_srcCharacter]);
-		}
-
-		close();
-		return true;
+	if (charNum != _srcCharacter) {
+		// Swap the two characters
+		SWAP(g_globals->_party[charNum], g_globals->_party[_srcCharacter]);
 	}
 
-	return PartyView::msgGame(msg);
+	close();
 }
 
 } // namespace ViewsEnh

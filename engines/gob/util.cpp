@@ -538,9 +538,9 @@ void Util::cleanupStr(char *str) {
 	Common::strcat_s(buf, trStr2);
 	Common::strcat_s(buf, trStr3);
 
-	// Translating "wrong" characters
+	// Translating "wrong" characters (removing diacritics, converting to lower case)
 	for (size_t i = 0; i < strlen(str); i++)
-		str[i] = buf[MIN<int>(str[i] - 32, 32)];
+		str[i] = buf[MAX<int>(str[i] - 32, 32)];
 
 	// Trim spaces left
 	while (str[0] == ' ')

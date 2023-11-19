@@ -170,7 +170,7 @@ void ControlOn() {
  */
 void ControlOff() {
 	if (TinselVersion <= 1) {
-		Control(CONTROL_ON);
+		Control(CONTROL_OFF);
 		return;
 	}
 

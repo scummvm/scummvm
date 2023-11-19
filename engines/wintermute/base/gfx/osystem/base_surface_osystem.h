@@ -29,7 +29,7 @@
 #define WINTERMUTE_BASE_SURFACESDL_H
 
 #include "graphics/surface.h"
-#include "graphics/transparent_surface.h" // for Graphics::AlphaType
+#include "graphics/transform_struct.h" // for Graphics::AlphaType
 
 #include "engines/wintermute/base/gfx/base_surface.h"
 

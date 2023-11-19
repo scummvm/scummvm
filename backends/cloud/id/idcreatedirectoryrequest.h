@@ -41,21 +41,21 @@ class IdCreateDirectoryRequest: public Networking::Request {
 	Common::String _date;
 
 	void start();
-	void createdBaseDirectoryCallback(Storage::BoolResponse response);
-	void createdBaseDirectoryErrorCallback(Networking::ErrorResponse error);
+	void createdBaseDirectoryCallback(const Storage::BoolResponse &response);
+	void createdBaseDirectoryErrorCallback(const Networking::ErrorResponse &error);
 	void resolveId();
-	void idResolvedCallback(Storage::UploadResponse response);
-	void idResolveFailedCallback(Networking::ErrorResponse error);
-	void createdDirectoryCallback(Storage::BoolResponse response);
-	void createdDirectoryErrorCallback(Networking::ErrorResponse error);
+	void idResolvedCallback(const Storage::UploadResponse &response);
+	void idResolveFailedCallback(const Networking::ErrorResponse &error);
+	void createdDirectoryCallback(const Storage::BoolResponse &response);
+	void createdDirectoryErrorCallback(const Networking::ErrorResponse &error);
 	void finishCreation(bool success);
 public:
-	IdCreateDirectoryRequest(IdStorage *storage, Common::String parentPath, Common::String directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
-	virtual ~IdCreateDirectoryRequest();
+	IdCreateDirectoryRequest(IdStorage *storage, const Common::String &parentPath, const Common::String &directoryName, Storage::BoolCallback cb, Networking::ErrorCallback ecb);
+	~IdCreateDirectoryRequest() override;
 
-	virtual void handle();
-	virtual void restart();
-	virtual Common::String date() const;
+	void handle() override;
+	void restart() override;
+	Common::String date() const override;
 };
 
 } // End of namespace Id

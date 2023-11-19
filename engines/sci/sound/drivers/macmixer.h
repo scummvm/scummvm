@@ -216,10 +216,9 @@ int Mixer_Mac<T>::readBuffer(int16 *data, const int numSamples) {
 
 	const int stereoFactor = isStereo() ? 2 : 1;
 	int len = numSamples / stereoFactor;
-	int step;
 
 	do {
-		step = len;
+		int step = len;
 		if (step > ufracToUint(_nextTick))
 			step = ufracToUint(_nextTick);
 

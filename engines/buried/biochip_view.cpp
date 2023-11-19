@@ -475,7 +475,7 @@ bool EvidenceBioChipViewWindow::rebuildMainPrebuffer() {
 
 			if (frame) {
 				byte transparentColor = _vm->isTrueColor() ? 255 : 248;
-				_vm->_gfx->opaqueTransparentBlit(&_preBuffer, _evidence[i].left, _evidence[i].top, 203, 34, frame, 2, 2, 0, transparentColor, transparentColor, transparentColor);
+				_vm->_gfx->keyBlit(&_preBuffer, _evidence[i].left, _evidence[i].top, 203, 34, frame, 2, 2, transparentColor, transparentColor, transparentColor);
 			}
 		}
 	}
@@ -562,11 +562,11 @@ void InterfaceBioChipViewWindow::onPaint() {
 
 	if (_caret) {
 		if (_vm->isDemo()) {
-			_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 12, absoluteRect.top + 112, 20, 35, _caret, 0, 0, 0, 255, 255, 255);
+			_vm->_gfx->keyBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 12, absoluteRect.top + 112, 20, 35, _caret, 0, 0, 255, 255, 255);
 		} else {
 			// For whatever reason, the Spanish version has to be different.
 			int dy = (_vm->getLanguage() == Common::ES_ESP) ? 115 : 97;
-			_vm->_gfx->opaqueTransparentBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 14, absoluteRect.top + dy, 15, 30, _caret, 0, 0, 0, 248, _vm->isTrueColor() ? 252 : 248, 248);
+			_vm->_gfx->keyBlit(_vm->_gfx->getScreen(), absoluteRect.left + _transLocation + 14, absoluteRect.top + dy, 15, 30, _caret, 0, 0, 248, _vm->isTrueColor() ? 252 : 248, 248);
 		}
 	}
 }

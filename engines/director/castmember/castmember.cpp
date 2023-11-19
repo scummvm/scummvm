@@ -23,7 +23,6 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
-#include "director/lingo/lingo.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
@@ -70,6 +69,20 @@ void CastMember::setModified(bool modified) {
 	_modified = modified;
 	if (modified)
 		_isChanged = true;
+}
+
+Common::Rect CastMember::getBbox() {
+	Common::Rect result(_initialRect);
+	Common::Point offset = getRegistrationOffset();
+	result.moveTo(-offset.x, -offset.y);
+	return result;
+}
+
+Common::Rect CastMember::getBbox(int16 currentWidth, int16 currentHeight) {
+	Common::Rect result(currentWidth, currentHeight);
+	Common::Point offset = getRegistrationOffset(currentWidth, currentHeight);
+	result.moveTo(-offset.x, -offset.y);
+	return result;
 }
 
 bool CastMember::hasProp(const Common::String &propName) {

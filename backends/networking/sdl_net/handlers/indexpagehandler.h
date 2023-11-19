@@ -31,10 +31,10 @@ class LocalWebserver;
 class IndexPageHandler: public BaseHandler, public GUI::CommandSender {
 public:
 	IndexPageHandler();
-	virtual ~IndexPageHandler();
+	~IndexPageHandler() override;
 
-	virtual void handle(Client &client);
-	virtual bool minimalModeSupported();
+	void handle(Client &client) override;
+	bool minimalModeSupported() override;
 };
 
 } // End of namespace Networking

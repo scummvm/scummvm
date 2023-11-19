@@ -36,7 +36,8 @@ enum {
 
 enum GameFeature {
 	GF_NONE = 0,
-	GF_ENHANCED = 1
+	GF_ENHANCED = 1,
+	GF_GFX_PACK = 2
 };
 
 struct MightAndMagicGameDescription {
@@ -48,6 +49,7 @@ struct MightAndMagicGameDescription {
 
 #define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
 #define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
+#define GAMEOPTION_SHOW_HP_SP_BARS	GUIO_GAMEOPTIONS3
 
 } // namespace MM
 

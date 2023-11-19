@@ -85,6 +85,9 @@ public:
 	static bool is_highlightItems() {
 		return _highlightItems;
 	}
+	static void toggleFootpads() {
+		_showFootpads = !_showFootpads;
+	}
 
 	void        RenderSurfaceChanged() override;
 
@@ -96,6 +99,7 @@ protected:
 	int32 _draggingPos[3];
 
 	static bool _highlightItems;
+	static bool _showFootpads;
 };
 
 } // End of namespace Ultima8

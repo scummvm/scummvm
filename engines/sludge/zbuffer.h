@@ -25,9 +25,12 @@ namespace Sludge {
 
 struct ZBufferData {
 //	bool loaded;
+	uint width, height;
 	int numPanels;
 	int panel[16];
 	int originalNum;
+
+	uint8 *tex;
 	Graphics::Surface *sprites;
 };
 

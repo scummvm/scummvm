@@ -29,12 +29,6 @@
 @interface GameController : NSObject
 
 typedef enum {
-	kGameControllerMouseButtonLeft = 0,
-	kGameControllerMouseButtonRight,
-	kGameControllerMouseButtonMiddle,
-} GameControllerMouseButton;
-
-typedef enum {
 	kGameControllerJoystickLeft = 0,
 	kGameControllerJoystickRight
 } GameControllerJoystick;
@@ -45,8 +39,7 @@ typedef enum {
 
 - (id)initWithView:(iPhoneView *)v;
 
-- (void)handlePointerMoveTo:(CGPoint)point;
-- (void)handleMouseButtonAction:(GameControllerMouseButton)button isPressed:(bool)pressed at:(CGPoint)point;
+- (CGPoint)getLocationInView:(UITouch *)touch;
 - (void)handleJoystickAxisMotionX:(int)x andY:(int)y forJoystick:(GameControllerJoystick)joystick;
 - (void)handleJoystickButtonAction:(int)button isPressed:(bool)pressed;
 

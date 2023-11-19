@@ -37,17 +37,27 @@ enum VCruiseGameFlag {
 	VCRUISE_GF_WANT_MP3			= (1 << 0),
 	VCRUISE_GF_WANT_OGG_VORBIS	= (1 << 1),
 	VCRUISE_GF_NEED_JPEG		= (1 << 2),
+	VCRUISE_GF_GENTEE_PACKAGE	= (1 << 3),
+	
+	VCRUISE_GF_STEAM_LANGUAGES	= (1 << 4),
+	VCRUISE_GF_FORCE_LANGUAGE	= (1 << 5),
 };
 
 struct VCruiseGameDescription {
 	ADGameDescription desc;
 
 	VCruiseGameID gameID;
+
+	// Specifying the language in the ADGameDescription causes AD to fail to detect the game as a match,
+	// so we have to specify it as UNK_LANG and specify the default language here.
+	Common::Language defaultLanguage;
 };
 
 
 #define GAMEOPTION_LAUNCH_DEBUG					GUIO_GAMEOPTIONS1
 #define GAMEOPTION_FAST_ANIMATIONS				GUIO_GAMEOPTIONS2
+#define GAMEOPTION_SKIP_MENU					GUIO_GAMEOPTIONS3
+#define GAMEOPTION_INCREASE_DRAG_DISTANCE		GUIO_GAMEOPTIONS4
 
 
 } // End of namespace VCruise

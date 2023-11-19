@@ -644,7 +644,7 @@ void FindPath(int32 oc, t3dCAMERA *Camera) {
 
 		if (((inters   & 1) && (w->CurPanel < 0) && (w->OldPanel < 0)) ||
 		        ((w->CurPanel < 0) && (w->NumPathNodes >= 1) && (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, (double)w->CurX, (double)w->CurZ))) ||
-		        ((inters - 1 & 1) && (w->CurPanel < 0) && (w->NumPathNodes >= 2) &&
+		        (((inters - 1) & 1) && (w->CurPanel < 0) && (w->NumPathNodes >= 2) &&
 		         (!(FindAttachedPanel(oc, w->PathNode[w->NumPathNodes - 2].curp, w->PathNode[w->NumPathNodes - 1].curp)) ||
 		          (PointInside(oc, w->PathNode[w->NumPathNodes - 1].curp, (double)w->CurX, (double)w->CurZ))))) {
 			w->CurPanel = w->PathNode[w->NumPathNodes - 1].curp;
@@ -798,6 +798,7 @@ void ForceAnimInBounds(int32 oc) {
 			}
 		}
 	}
+	(void)inters;
 }
 
 } // End of namespace Watchmaker

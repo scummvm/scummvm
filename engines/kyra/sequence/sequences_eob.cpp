@@ -2473,7 +2473,7 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	r->loadToVRAM(scrollTable, 0x400, 0xD800);
 
 	Common::SeekableReadStreamEndian *containerAlt = _sres->loadContainer("CREDIT") ? 0 : _res->createEndianAwareReadStream("CREDIT");
-	Common::SeekableReadStreamEndian *in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, 0, 35840, true) : _sres->resStreamEndian(1);
+	Common::SeekableReadStreamEndian *in = containerAlt ? new Common::SeekableReadStreamEndianWrapper(new Common::SeekableSubReadStream(containerAlt, 0, 35840), true, DisposeAfterUse::YES) : _sres->resStreamEndian(1);
 	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
 
@@ -2491,8 +2491,7 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 		updateScrollState(scrollTable, 320);
 		r->loadToVRAM(scrollTable, 0x400, 0xD800);
 		_screen->sega_selectPalette(i == 3 && _flags.lang == Common::EN_ANY ? 59 : 50, 0, true);
-
-		in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, i * 35840, (i + 1) * 35840, true) : _sres->resStreamEndian(i);
+		in = containerAlt ? new Common::SeekableReadStreamEndianWrapper(new Common::SeekableSubReadStream(containerAlt, i * 35840, (i + 1) * 35840), true, DisposeAfterUse::YES) : _sres->resStreamEndian(i);
 		r->loadStreamToVRAM(in, 32, !containerAlt);
 		delete in;
 
@@ -2539,8 +2538,7 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	r->memsetVRAM(0xD800, 0, 0x400);
 	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
-
-	in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, last * 35840, (last + 1) * 35840, true) : _sres->resStreamEndian(last);
+	in = containerAlt ? new Common::SeekableReadStreamEndianWrapper(new Common::SeekableSubReadStream(containerAlt, last * 35840, (last + 1) * 35840), true, DisposeAfterUse::YES) : _sres->resStreamEndian(last);
 	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
 	delete containerAlt;

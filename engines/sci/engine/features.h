@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_INCLUDE_FEATURES_H
-#define SCI_INCLUDE_FEATURES_H
+#ifndef SCI_ENGINE_FEATURES_H
+#define SCI_ENGINE_FEATURES_H
 
 #include "sci/resource/resource.h"
 #include "sci/engine/seg_manager.h"
@@ -304,7 +304,7 @@ public:
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
-	bool autoDetectLofsType(Common::String gameSuperClassName, int methodNum);
+	bool autoDetectLofsType(const Common::String& gameSuperClassName, int methodNum);
 	bool autoDetectGfxFunctionsType(int methodNum = -1);
 	bool autoDetectSoundType();
 	bool autoDetectMoveCountType();
@@ -330,4 +330,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_INCLUDE_ENGINE_H
+#endif // SCI_ENGINE_FEATURES_H

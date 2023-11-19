@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/singleton.h"
+#include "common/error.h"
 
 namespace Common {
 
@@ -42,9 +43,19 @@ namespace Common {
  * @{
  */
 
+class ArchiveMember;
 class FSNode;
 class SeekableReadStream;
 
+enum class AltStreamType {
+	Invalid,
+
+	MacFinderInfo,
+	MacResourceFork,
+};
+
+typedef SharedPtr<ArchiveMember> ArchiveMemberPtr; /*!< Shared pointer to an archive member. */
+typedef List<ArchiveMemberPtr> ArchiveMemberList;  /*!< List of archive members. */
 
 /**
  * The ArchiveMember class is an abstract interface to represent elements inside
@@ -56,14 +67,31 @@ class SeekableReadStream;
  */
 class ArchiveMember {
 public:
-	virtual ~ArchiveMember() { }
+	virtual ~ArchiveMember();
 	virtual SeekableReadStream *createReadStream() const = 0; /*!< Create a read stream. */
-	virtual String getName() const = 0; /*!< Get the name of the archive member. */
-	virtual U32String getDisplayName() const { return getName(); } /*!< Get the display name of the archive member. */
+	virtual SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const = 0; /*!< Create a read stream of an alternate stream. */
+
+	/**
+	* @deprecated Get the name of the archive member.  This may be a file name or a full path depending on archive type.
+	 *            DEPRECATED: Use getFileName or getPathInArchive instead, which always returns one or the other.
+	 */
+	virtual String getName() const = 0;
+
+	virtual Path getPathInArchive() const = 0; /*!< Get the full path of the archive member relative to the containing archive root. */
+	virtual String getFileName() const = 0; /*!< Get the file name of the archive member relative to its containing directory within the archive. */
+	virtual bool isDirectory() const; /*!< Checks if the ArchiveMember is a directory. */
+	virtual void listChildren(ArchiveMemberList &childList, const char *pattern = nullptr) const; /*!< Adds the immediate children of this archive member to childList, optionally matching a pattern. */
+	virtual U32String getDisplayName() const; /*!< Get the display name of the archive member. */
 };
 
-typedef SharedPtr<ArchiveMember> ArchiveMemberPtr; /*!< Shared pointer to an archive member. */
-typedef List<ArchiveMemberPtr> ArchiveMemberList; /*!< List of archive members. */
+struct ArchiveMemberDetails {
+	ArchiveMemberPtr arcMember;
+	Common::String arcName;
+
+	ArchiveMemberDetails(const ArchiveMemberPtr &arcMember_, const Common::String &_arcName) : arcMember(arcMember_), arcName(_arcName) {
+	}
+};
+typedef List<ArchiveMemberDetails> ArchiveMemberDetailsList; /*!< List of archive members with the name of the archive they belong to */
 
 /**
  * Compare two archive member operators @p a and @p b and return which of them is higher.
@@ -86,12 +114,21 @@ class Archive;
  * is destroyed.
  */
 class GenericArchiveMember : public ArchiveMember {
-	const Archive *_parent;
-	const String _name;
 public:
-	GenericArchiveMember(const String &name, const Archive *parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
-	String getName() const; /*!< Get the name of a generic archive member. */
-	SeekableReadStream *createReadStream() const; /*!< Create a read stream. */
+	GenericArchiveMember(const Common::String &pathStr, const Archive &parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
+	GenericArchiveMember(const Common::Path &path, const Archive &parent); /*!< Create a generic archive member that belongs to the @p parent archive. */
+
+	String getName() const override;        /*!< Get the name of a generic archive member. */
+	Path getPathInArchive() const override;       /*!< Get the full path of the archive member relative to the containing archive root. */
+	String getFileName() const override; /*!< Get the file name of the archive member relative to its containing directory within the archive. */
+	SeekableReadStream *createReadStream() const override; /*!< Create a read stream. */
+	SeekableReadStream *createReadStreamForAltStream(AltStreamType altStreamType) const override; /*!< Create a read stream of an alternate stream. */
+	bool isDirectory() const override;
+	void listChildren(ArchiveMemberList &childList, const char *pattern) const override;
+
+private:
+	const Archive &_parent;
+	const Common::Path _path;
 };
 
 
@@ -107,9 +144,14 @@ public:
 	/**
 	 * Check if a member with the given @p name is present in the Archive.
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
-	 * replacement.
+	 * replacement.  This returns "true" for both files and directories.
 	 */
 	virtual bool hasFile(const Path &path) const = 0;
+
+	/**
+	 * Check if a member with the given @p name exists and is a directory.
+	 */
+	virtual bool isPathDirectory(const Path &path) const;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to the list.
@@ -144,6 +186,14 @@ public:
 	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
 
 	/**
+	 * Create a stream bound to an alternate stream of a member with the specified
+	 * name in the archive. If no member with this name exists, 0 is returned.
+	 *
+	 * @return The newly created input stream.
+	 */
+	virtual SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const;
+
+	/**
 	 * For most archives: same as previous. For SearchSet see SearchSet
 	 * documentation.
 	 */
@@ -154,7 +204,12 @@ public:
 	/**
 	 * Dump all files from the archive to the given directory
 	 */
-	void dumpArchive(String destPath);
+	Common::Error dumpArchive(String destPath);
+
+	/**
+	 * Returns the separator used by internal paths in the archive
+	 */
+	virtual char getPathSeparator() const;
 };
 
 class MemcachingCaseInsensitiveArchive;
@@ -214,6 +269,7 @@ class MemcachingCaseInsensitiveArchive : public Archive {
 public:
 	MemcachingCaseInsensitiveArchive(uint32 maxStronglyCachedSize = 512) : _maxStronglyCachedSize(maxStronglyCachedSize) {}
 	SeekableReadStream *createReadStreamForMember(const Path &path) const;
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, Common::AltStreamType altStreamType) const;
 
 	virtual String translatePath(const Path &path) const {
 		// Most of users of this class implement DOS-like archives.
@@ -221,10 +277,28 @@ public:
 		return normalizePath(path.toString('\\'), '\\');
 	}
 
-	virtual SharedArchiveContents readContentsForPath(const String& translatedPath) const = 0;
+	virtual SharedArchiveContents readContentsForPath(const String &translatedPath) const = 0;
+	virtual SharedArchiveContents readContentsForPathAltStream(const String &translatedPath, AltStreamType altStreamType) const;
 
 private:
-	mutable HashMap<String, SharedArchiveContents, IgnoreCase_Hash, IgnoreCase_EqualTo> _cache;
+	struct CacheKey {
+		CacheKey();
+
+		String path;
+		AltStreamType altStreamType;
+	};
+
+	struct CacheKey_EqualTo {
+		bool operator()(const CacheKey &x, const CacheKey &y) const;
+	};
+
+	struct CacheKey_Hash {
+		uint operator()(const CacheKey &x) const;
+	};
+
+	SeekableReadStream *createReadStreamForMemberImpl(const Path &path, bool isAltStream, Common::AltStreamType altStreamType) const;
+
+	mutable HashMap<CacheKey, SharedArchiveContents, CacheKey_Hash, CacheKey_EqualTo> _cache;
 	uint32 _maxStronglyCachedSize;
 };
 
@@ -345,16 +419,26 @@ public:
 	void setPriority(const String& name, int priority);
 
 	bool hasFile(const Path &path) const override;
+	bool isPathDirectory(const Path &path) const override;
 	int listMatchingMembers(ArchiveMemberList &list, const Path &pattern, bool matchPathComponents = false) const override;
+	int listMatchingMembers(ArchiveMemberDetailsList &list, const Path &pattern, bool matchPathComponents = false) const;
 	int listMembers(ArchiveMemberList &list) const override;
 
 	const ArchiveMemberPtr getMember(const Path &path) const override;
+
+	const ArchiveMemberPtr getMember(const Path &path, Archive **container) const;
 
 	/**
 	 * Implement createReadStreamForMember from the Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
 	SeekableReadStream *createReadStreamForMember(const Path &path) const override;
+
+	/**
+	 * Implement createReadStreamForMemberAltStream from the Archive base class. The current policy is
+	 * opening the first file encountered that matches the name.
+	 */
+	SeekableReadStream *createReadStreamForMemberAltStream(const Path &path, AltStreamType altStreamType) const override;
 
 	/**
 	 * Similar to above but exclude matches from archives before starting and starting itself.

@@ -23,6 +23,7 @@
  *
  * USED IN:
  * Majestic-mac
+ * chopsuey-mac
  *
  *************************************/
 
@@ -57,6 +58,7 @@ const char *PalXObj::xlibName = "FixPalette";
 const char *PalXObj::fileNames[] = {
 	"PalXObj",
 	"FixPalette",
+	"FixPaletteXObj",
 	nullptr
 };
 

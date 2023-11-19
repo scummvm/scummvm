@@ -77,4 +77,13 @@ void AABB::transform(const Math::Matrix4 &matrix) {
 	}
 }
 
+bool AABB::collides(const AABB &aabb) {
+	return (getMax().x() > aabb.getMin().x() &&
+			getMin().x() < aabb.getMax().x() &&
+			getMax().y() > aabb.getMin().y() &&
+			getMin().y() < aabb.getMax().y() &&
+			getMax().z() > aabb.getMin().z() &&
+			getMin().z() < aabb.getMax().z());
+}
+
 }

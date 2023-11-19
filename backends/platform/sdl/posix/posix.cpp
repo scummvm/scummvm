@@ -260,6 +260,29 @@ Common::String OSystem_POSIX::getDefaultIconsPath() {
 	return Common::String::format("%s/%s", prefix, iconsPath.c_str());
 }
 
+Common::Path OSystem_POSIX::getDefaultDLCsPath() {
+	Common::Path dlcsPath;
+
+	// On POSIX systems we follow the XDG Base Directory Specification for
+	// where to store files. The version we based our code upon can be found
+	// over here: https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	const char *prefix = getenv("XDG_CACHE_HOME");
+	if (prefix == nullptr || !*prefix) {
+		prefix = getenv("HOME");
+		if (prefix == nullptr) {
+			return Common::String();
+		}
+
+		dlcsPath = ".cache/";
+	}
+	dlcsPath = dlcsPath.join(Common::Path("scummvm/dlcs"));
+	if (!Posix::assureDirectoryExists(dlcsPath.toString(), prefix)) {
+		return Common::Path();
+	}
+
+	return dlcsPath;
+}
+
 Common::String OSystem_POSIX::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
 	const Common::String path = OSystem_SDL::getScreenshotsPath();
@@ -289,14 +312,21 @@ Common::String OSystem_POSIX::getScreenshotsPath() {
 
 void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 #ifdef DATA_PATH
-	const char *snap = getenv("SNAP");
-	if (snap) {
-		Common::String dataPath = Common::String(snap) + DATA_PATH;
+	const char *path = nullptr;
+	if (!path) {
+		path = getenv("SNAP");
+	}
+	if (!path) {
+		path = getenv("APPDIR");
+	}
+	if (path) {
+		Common::Path dataPath(path);
+		dataPath.joinInPlace(DATA_PATH);
 		Common::FSNode dataNode(dataPath);
 		if (dataNode.exists() && dataNode.isDirectory()) {
 			// This is the same priority which is used for the data path (below),
 			// but we insert this one first, so it will be searched first.
-			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+			s.add(dataNode.getPath(), new Common::FSDirectory(dataNode, 4), priority);
 		}
 	}
 #endif

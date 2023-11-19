@@ -20,8 +20,10 @@
  */
 
 #include "common/path.h"
-#include "common/punycode.h"
+
 #include "common/hash-str.h"
+#include "common/list.h"
+#include "common/punycode.h"
 
 const char ESCAPER = '/';
 const char ESCAPE_SLASH = '+';
@@ -242,6 +244,64 @@ Path Path::join(const char *str, char separator) const {
 	Path temp(*this);
 	temp.joinInPlace(str, separator);
 	return temp;
+}
+
+Path Path::normalize() const {
+	if (empty()) {
+		return Path();
+	}
+
+	Common::String::const_iterator cur = _str.begin();
+	const Common::String::const_iterator end = _str.end();
+
+	Common::Path result;
+
+	// If there is a leading slash, preserve that:
+	if (cur != end &&
+	    *cur == ESCAPER &&
+	    *(cur + 1) == ESCAPE_SEPARATOR) {
+		result._str += DIR_SEPARATOR;
+		cur += 2;
+		// Skip over multiple leading slashes, so "//" equals "/"
+		while (cur != end && *cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR)
+			cur += 2;
+	}
+
+	// Scan for path components till the end of the String
+	List<String> comps;
+	while (cur != end) {
+		Common::String::const_iterator start = cur;
+
+		// Scan till the next path separator resp. the end of the string
+		while (!(*cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR) && cur != end)
+			cur++;
+
+		const String component(start, cur);
+
+		if (component.empty() || component == ".") {
+			// Skip empty components and dot components
+		} else if (!comps.empty() && component == ".." && comps.back() != "..") {
+			// If stack is non-empty and top is not "..", remove top
+			comps.pop_back();
+		} else {
+			// Add the component to the stack
+			comps.push_back(component);
+		}
+
+		// Skip over separator chars
+		while (cur != end && *cur == ESCAPER && *(cur + 1) == ESCAPE_SEPARATOR)
+			cur += 2;
+	}
+
+	// Finally, assemble all components back into a path
+	while (!comps.empty()) {
+		result._str += comps.front();
+		comps.pop_front();
+		if (!comps.empty())
+			result._str += DIR_SEPARATOR;
+	}
+
+	return result;
 }
 
 StringArray Path::splitComponents() const {

@@ -124,7 +124,7 @@ bool Pics::hasFile(const Common::Path &path) const {
 
 int Pics::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_index[idx]._filename, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(_index[idx]._filename, *this)));
 	}
 
 	return (int)_index.size();
@@ -135,7 +135,7 @@ const Common::ArchiveMemberPtr Pics::getMember(const Common::Path &path) const {
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &path) const {

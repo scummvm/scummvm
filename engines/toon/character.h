@@ -90,7 +90,7 @@ public:
 	virtual AnimationInstance *getAnimationInstance();
 	virtual void setAnimationInstance(AnimationInstance *instance);
 	virtual void save(Common::WriteStream *stream);
-	virtual void load(Common::ReadStream *stream);
+	virtual void load(Common::ReadStream *stream, int32 saveGameVersion);
 	virtual void stopWalk();
 	virtual void stopSpecialAnim();
 	virtual void updateIdle();

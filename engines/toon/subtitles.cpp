@@ -33,6 +33,10 @@ SubtitleRenderer::SubtitleRenderer(ToonEngine *vm) : _vm(vm) {
 }
 
 SubtitleRenderer::~SubtitleRenderer() {
+	if (_subSurface) {
+		_subSurface->free();
+		delete _subSurface;
+	}
 }
 
 
@@ -71,8 +75,8 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	Common::String ext("tss");
 	subfile.replace(subfile.size() - ext.size(), ext.size(), ext);
 
-	Common::SeekableReadStream *file = _vm->resources()->openFile(subfile);
-	if (!file) {
+	Common::ScopedPtr<Common::SeekableReadStream> subsStream(_vm->resources()->openFile(subfile));
+	if (subsStream == nullptr) {
 		return false;
 	}
 
@@ -80,8 +84,8 @@ bool SubtitleRenderer::load(const Common::String &video) {
 	int lineNo = 0;
 
 	_tw.clear();
-	while (!file->eos() && !file->err()) {
-		line = file->readLine();
+	while (!subsStream->eos() && !subsStream->err()) {
+		line = subsStream->readLine();
 
 		lineNo++;
 		if (line.empty() || line[0] == '#') {

@@ -116,7 +116,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 
 			redraw();
 
-		} else if (msg.flags == 0) {
+		} else {
 			// View character
 			g_globals->_currCharacter = &g_globals->_roster[charNum];
 			_characterView.addView();

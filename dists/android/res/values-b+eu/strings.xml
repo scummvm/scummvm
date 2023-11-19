@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">Ados</string>
+  <string name="quit">Irten</string>
+  <string name="customkeyboardview_keycode_alt">Alt</string>
+  <string name="customkeyboardview_keycode_cancel">Utzi</string>
+  <string name="customkeyboardview_keycode_delete">Ezabatu</string>
+  <string name="customkeyboardview_keycode_enter">Sartu</string>
+</resources>

@@ -68,8 +68,9 @@ public:
 	Common::String getName() const { return _name; }
 	int getCharWidth(uint32 chr) const;
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
-	int getStyle();
+	int getStyle() const;
 
+	static WinFont *scaleFont(const WinFont *src, int newSize);
 private:
 	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
 

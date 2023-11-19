@@ -27,6 +27,10 @@
 
 namespace Common {
 
+enum {
+	kTempBufSize = 65536
+};
+
 uint32 WriteStream::writeStream(ReadStream *stream, uint32 dataSize) {
 	void *buf = malloc(dataSize);
 	dataSize = stream->read(buf, dataSize);
@@ -36,8 +40,21 @@ uint32 WriteStream::writeStream(ReadStream *stream, uint32 dataSize) {
 	return dataSize;
 }
 
-uint32 WriteStream::writeStream(SeekableReadStream *stream) {
-	return writeStream(stream, stream->size());
+uint32 WriteStream::writeStream(ReadStream *stream) {
+	uint32 ret = 0;
+
+	void *buf = malloc(kTempBufSize);
+	assert(buf);
+
+	uint32 readSize, writeSize;
+	do {
+		readSize = stream->read(buf, kTempBufSize);
+		writeSize = write(buf, readSize);
+		ret += writeSize;
+	} while(readSize == kTempBufSize && writeSize == readSize);
+
+	free(buf);
+	return ret;
 }
 
 void WriteStream::writeString(const String &str) {

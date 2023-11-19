@@ -97,6 +97,7 @@ bool AIScriptBaker::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptBaker::ChangeAnimationMode(int mode) {
+	debugC(6, kDebugAnimation, "AIScriptBaker::ChangeAnimationMode(%d) - Animation mode change is not supported", mode);
 	return true;
 }
 

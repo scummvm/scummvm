@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="ok">אישור</string>
+  <string name="quit">יציאה</string>
+  <string name="customkeyboardview_keycode_alt">אלט</string>
+  <string name="customkeyboardview_keycode_cancel">ביטול</string>
+  <string name="customkeyboardview_keycode_delete">מחיקה</string>
+  <string name="customkeyboardview_keycode_shift">Shift</string>
+  <string name="customkeyboardview_keycode_enter">להיכנס</string>
+</resources>

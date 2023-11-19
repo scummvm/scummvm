@@ -48,12 +48,12 @@ class cGameEntityScript : public iSerializable {
 	tString msScriptFunc;
 };
 
-typedef Hpl1::Std::map<tString, cGameEntityScript *> tGameEntityScriptMap;
+typedef Common::StableMap<tString, cGameEntityScript *> tGameEntityScriptMap;
 typedef tGameEntityScriptMap::iterator tGameEntityScriptMapIt;
 
 //-----------------------------------------
 
-typedef Hpl1::Std::map<tString, int> tGameEntityVarMap;
+typedef Common::StableMap<tString, int> tGameEntityVarMap;
 typedef tGameEntityVarMap::iterator tGameEntityVarMapIt;
 
 //------------------------------------------

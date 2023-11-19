@@ -127,6 +127,7 @@ Common::Error EoBEngine::init() {
 	if (_flags.platform == Common::kPlatformPC98) {
 		_screen->modifyScreenDim(28, 0x0A, 0xA4, 0x15, 0x18);
 		_screen->modifyScreenDim(12, 0x01, 0x04, 0x14, 0x9A);
+		_txt->setColorMapping(-1, 12, 0);
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->modifyScreenDim(27, 0x00, 0x02, 0x11, 0x03);
 		_screen->modifyScreenDim(28, 0x07, 0xA0, 0x17, 0x24);
@@ -172,8 +173,7 @@ Common::Error EoBEngine::init() {
 }
 
 #define loadSpritesAndEncodeToShapes(resID, resOffset, shapeBuffer, numShapes, width, height) \
-	shapeBuffer = new const uint8 *[numShapes]; \
-	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	shapeBuffer = new const uint8*[numShapes](); \
 	in = _sres->resData(resID); \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numShapes, width, height, 3); \
 	delete[] in
@@ -181,7 +181,7 @@ Common::Error EoBEngine::init() {
 #define loadSpritesAndMergeToSingleShape(resID, resOffset, singleShape, numSprites, spriteWidth, spriteHeight) \
 	in = _sres->resData(resID); \
 	{ \
-	const uint8 **shapeBuffer = new const uint8 *[numSprites]; \
+	const uint8 **shapeBuffer = new const uint8*[numSprites]; \
 	_screen->sega_encodeShapesFromSprites(shapeBuffer, in + (resOffset), numSprites, spriteWidth, spriteHeight, 3, false); \
 	releaseShpArr(shapeBuffer, numSprites); \
 	_screen->sega_getRenderer()->render(Screen_EoB::kSegaInitShapesPage, -1, -1, -1, -1, true); \
@@ -194,8 +194,7 @@ Common::Error EoBEngine::init() {
 	delete[] in
 
 #define loadAndConvertShapes(resID, resOffset, shapeBuffer, numShapes, width, height, size) \
-	shapeBuffer = new const uint8 *[numShapes]; \
-	memset(shapeBuffer, 0, numShapes * sizeof(uint8*)); \
+	shapeBuffer = new const uint8*[numShapes](); \
 	in = _sres->resData(resID); \
 	for (int ii = 0; ii < numShapes; ++ii) \
 		shapeBuffer[ii] = _screen->sega_convertShape(in + (resOffset) + ii * size, width, height, 3); \
@@ -205,7 +204,7 @@ void EoBEngine::loadItemsAndDecorationsShapes() {
 	if (_flags.platform != Common::kPlatformSegaCD) {
 		EoBCoreEngine::loadItemsAndDecorationsShapes();
 		if (_flags.platform == Common::kPlatformPC98) {
-			_blueItemIconShapes = new const uint8 * [_numItemIconShapes];
+			_blueItemIconShapes = new const uint8*[_numItemIconShapes];
 			_screen->loadShapeSetBitmap("DETECT", 5, 3);
 			for (int i = 0; i < _numItemIconShapes; i++)
 				_blueItemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10);
@@ -569,7 +568,6 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 
 	seq_segaRestoreAfterSequence();
 	setLevelPalettes(_currentLevel);
-	_levelCurTrack = -1;
 	if (_flags.platform == Common::kPlatformSegaCD)
 		snd_playLevelScore();
 }
@@ -993,6 +991,16 @@ void EoBEngine::snd_loadAmigaSounds(int level, int) {
 	_sound->loadSoundFile(Common::String::format("LEVELSAM%d.CPS", level));
 
 	_amigaCurSoundFile = level;
+}
+
+void EoBEngine::snd_playLevelScore() {
+	if (_flags.platform == Common::kPlatformPC98) {
+		snd_playSong(_currentLevel + 1);
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		static const uint8 levelTracksSegaCD[13] = { 7, 7, 7, 7, 6, 6, 6, 4, 4, 4, 5, 5, 10 };
+		_levelCurTrack = levelTracksSegaCD[_currentLevel];
+		snd_playSong(_levelCurTrack);
+	}
 }
 
 void EoBEngine::snd_updateLevelScore() {

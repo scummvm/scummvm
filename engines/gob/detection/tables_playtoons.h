@@ -29,7 +29,7 @@
 {
 	{
 		"playtoons1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
@@ -44,7 +44,7 @@
 {
 	{
 		"playtoons1",
-		"Pack mes histoires anim\xE9""es",
+		"Pack mes histoires animées",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
@@ -74,7 +74,7 @@
 { // Supplied by scoriae in the forums
 	{
 		"playtoons1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "archi.stk",		"00d8274519dfcf8a0d8ae3099daea0f8", 5532135),
 		EN_ANY,
@@ -200,10 +200,10 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
-{ // Version 1.002. Bug #7052
+{ // Bug #7052
 	{
 		"playtoons2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		FR_FRA,
@@ -248,7 +248,7 @@
 { // Supplied by scoriae in the forums
 	{
 		"playtoons2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "spirou.stk",	"993737f112ca6a9b33c814273280d832", 9825760),
 		EN_ANY,
@@ -266,7 +266,7 @@
 {
 	{
 		"playtoons3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
@@ -281,7 +281,7 @@
 {
 	{
 		"playtoons3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "chato.stk",		"8fc8d0da5b3e758908d1d7298d497d0b", 6041026),
 		EN_ANY,
@@ -296,7 +296,7 @@
 {
 	{
 		"playtoons3",
-		"Pack mes histoires anim\xE9""es",
+		"Pack mes histoires animées",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
@@ -344,7 +344,7 @@
 {
 	{
 		"playtoons4",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"b7f5afa2dc1b0f75970b7c07d175db1b", 24340406,
 				   "manda.stk",		"92529e0b927191d9898a34c2892e9a3a", 6485072),
 		FR_FRA,
@@ -374,7 +374,7 @@
 { //Supplied by goodoldgeorg in bug report #4390
 	{
 		"playtoons4",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "manda.stk",		"69a79c9f61b2618e482726f2ff68078d", 6499208),
 		EN_ANY,
@@ -392,7 +392,7 @@
 {
 	{
 		"playtoons5",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
 				   "wakan.stk",		"f493bf82851bc5ba74d57de6b7e88df8", 5520153),
 		FR_FRA,
@@ -407,7 +407,7 @@
 { // Supplied by indy4fan in bug report #13099. Orig title: "Der Stein von Wakan"
 	{
 		"playtoons5",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
 				   "wakan.stk",		"5518139580becd8c49bbfbdd4f49187a", 5523417),
 		DE_DEU,
@@ -425,7 +425,7 @@
 {
 	{
 		"playtnck1",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"906d67b3e438d5e95ec7ea9e781a94f3", 3000320),
 		FR_FRA,
@@ -443,7 +443,7 @@
 {
 	{
 		"playtnck2",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"74eeb075bd2cb47b243349730264af01", 3213312),
 		FR_FRA,
@@ -461,7 +461,7 @@
 {
 	{
 		"playtnck3",
-		"",
+		"v1.002",
 		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
 				   "dan.itk",		"9a8f62809eca5a52f429b5b6a8e70f8f", 2861056),
 		FR_FRA,

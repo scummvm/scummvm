@@ -97,7 +97,7 @@ void SoundPC98_EoB::playTrack(uint8 track) {
 }
 
 void SoundPC98_EoB::haltTrack() {
-	if (!_musicEnabled || !_ready)
+	if (!_ready)
 		return;
 	playTrack(0);
 }

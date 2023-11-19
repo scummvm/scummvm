@@ -334,13 +334,13 @@ Common::Error GrimEngine::run() {
 	// Currently, this requires the data fork to be standalone
 	if (getGameType() == GType_MONKEY4) {
 		if (SearchMan.hasFile("Monkey Island 4 Installer")) {
-			Common::Archive *archive = Common::createStuffItArchive("Monkey Island 4 Installer");
+			Common::Archive *archive = Common::createStuffItArchive("Monkey Island 4 Installer", true);
 
 			if (archive)
 				SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
 		}
 		if (SearchMan.hasFile("EFMI Installer")) {
-			Common::Archive *archive = Common::createStuffItArchive("EFMI Installer");
+			Common::Archive *archive = Common::createStuffItArchive("EFMI Installer", true);
 
 			if (archive)
 				SearchMan.add("EFMI Installer", archive, 0, true);
@@ -1722,6 +1722,10 @@ bool GrimEngine::isCutsceneEnabled(uint32 number) const {
 void GrimEngine::enableCutscene(uint32 number) {
 	assert (number < kNumCutscenes);
 	_cutsceneEnabled[number] = true;
+}
+
+Graphics::RendererType GrimEngine::getRendererType() {
+	return g_driver->type;
 }
 
 void GrimEngine::setSaveMetaData(const char *meta1, int meta2, const char *meta3) {

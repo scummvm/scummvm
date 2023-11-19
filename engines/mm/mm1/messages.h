@@ -128,10 +128,9 @@ typedef void (*YNCallback)();
 typedef void (*KeyCallback)(const Common::KeyState &keyState);
 struct InfoMessage : public Message {
 	LineArray _lines;
-	YNCallback _yCallback = nullptr;
-	YNCallback _nCallback = nullptr;
+	YNCallback _callback = nullptr;		// Callback for timeouts and Y of Y/N queries
+	YNCallback _nCallback = nullptr;	// Callback for N in Y/N queries
 	KeyCallback _keyCallback = nullptr;
-	YNCallback &_timeoutCallback = _yCallback;
 	bool _largeMessage = false;
 	bool _sound = false;
 	int _delaySeconds = 0;
@@ -158,8 +157,6 @@ struct InfoMessage : public Message {
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
 		KeyCallback keyCallback);
-
-	InfoMessage &operator=(const InfoMessage &src);
 };
 
 struct SoundMessage : public InfoMessage {

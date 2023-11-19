@@ -695,6 +695,7 @@ protected:
 	void o7_setCursorToLoadFromExec();
 	void o7_freeMult();
 	void o7_loadMultObject();
+	void o7_getFreeMem(OpFuncParams &params);
 	void o7_displayWarning();
 	void o7_logString();
 	void o7_moveGoblin();
@@ -743,7 +744,7 @@ private:
 	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
 	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
 
-	bool setCurrentCDPath(const Common::FSNode &dir);
+	bool setCurrentCDPath(const Common::String &dir);
 	Common::Array<uint32> getAdibou2InstalledApplications();
 };
 

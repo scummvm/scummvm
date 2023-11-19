@@ -69,7 +69,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	}
 
 	if (cycle == 0)
-		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_DEFAULT_SCRIPT_PRIORITY) : 1;
 
 	slot = getScriptSlot();
 
@@ -118,7 +118,7 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 		return;
 
 	if (cycle == 0)
-		cycle = (_game.heversion >= 90) ? VAR(VAR_SCRIPT_CYCLE) : 1;
+		cycle = (_game.heversion >= 90) ? VAR(VAR_DEFAULT_SCRIPT_PRIORITY) : 1;
 
 	s = &vm.slot[slot];
 	s->number = object;
@@ -586,20 +586,6 @@ int ScummEngine::readVar(uint var) {
 
 #if defined(USE_ENET) && defined(USE_LIBCURL)
 			if (ConfMan.getBool("enable_competitive_mods")) {
-				// Mod for Backyard Baseball 2001 online competitive play: increase hit quality
-				// for pitches on the inside corners
-				if (_game.id == GID_BASEBALL2001 &&
-					_currentRoom == 4 && vm.slot[_currentScript].number == 2085 &&  // The script that calculates hit quality
-					readVar(399) == 1 &&  // Check that we're playing online
-					var == 2 &&  // Reading room variable 2, which is the zone that the ball is pitched to
-					readVar(447) == 1  // And the batter is in an open stance
-				) {
-					if (_roomVars[0] == 1 && (_roomVars[var] == 9 || _roomVars[var] == 37)) {  // Right-handed batter
-						return _roomVars[var] + 1;
-					} else if (_roomVars[0] == 2 && (_roomVars[var] == 13 || _roomVars[var] == 41)) {  // Left-handed batter
-						return _roomVars[var] - 1;
-					}
-				}
 				// Mod for Backyard Baseball 2001 online competitive play: don't give powerups for double plays
 				// Return true for this variable, which dictates whether powerups are disabled, but only in this script
 				// that detects double plays (among other things)
@@ -649,6 +635,32 @@ int ScummEngine::readVar(uint var) {
 			assertRange(0, var, 25, "local variable (reading)");
 		else
 			assertRange(0, var, 20, "local variable (reading)");
+#if defined(USE_ENET) && defined(USE_LIBCURL)
+		// Mod for Backyard Baseball 2001 online competitive play: change impact of
+		// batter's power stat on hit power
+		if (ConfMan.getBool("enable_competitive_mods")) {
+			if (_game.id == GID_BASEBALL2001 &&
+				_currentRoom == 4 && vm.slot[_currentScript].number == 2090  // The script that calculates hit power
+				&& readVar(399) == 1  // Check that we're playing online
+				&& var == 2  // Local var for batter's hitting power stat
+			) {
+				int swingType = vm.localvar[_currentScript][0];
+				int powerStat, powerStatModified;
+				switch (swingType) {
+				case 2:  // Line drive or grounder swing
+					powerStat = vm.localvar[_currentScript][var];
+					powerStatModified = 20 + powerStat * 4 / 5;
+					return powerStatModified;
+				case 1:  // Power swing
+					powerStat = vm.localvar[_currentScript][var];
+					powerStatModified = 20 + powerStat * 7 / 10;;
+					return powerStatModified;
+				default:
+					break;
+				}
+			}
+		}
+#endif
 		return vm.localvar[_currentScript][var];
 	}
 
@@ -701,7 +713,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// Any modifications here depend on knowing if the script will
 		// set the timer value back to something sensible afterwards.
 
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && _enableEnhancements) {
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
 			if (value == 1 && _language == Common::DE_DEU)
 				value = 4;
@@ -721,7 +733,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// throughout the intro. This does not apply to the VGA talkie
 		// version, because there the fire isn't animated.
 
-		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && _enableEnhancements) {
+		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a = derefActorSafe(4, "writeVar");
 			if (a) {
 				a->setAnimSpeed((value == 0) ? 6 : 0);
@@ -729,23 +741,6 @@ void ScummEngine::writeVar(uint var, int value) {
 		}
 
 		_scummVars[var] = value;
-
-		// Unlike the PC version, the Macintosh version of Loom appears
-		// to hard-code the drawing of the practice mode box. This is
-		// handled by script 27 in both versions, but whereas the PC
-		// version draws the notes, the Mac version just sets
-		// variables 50 and 54.
-		//
-		// In this script, the variables are set to the same value but
-		// it appears that only variable 50 is cleared when the box is
-		// supposed to disappear. I don't know what the purpose of
-		// variable 54 is.
-
-		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
-			if (VAR(128) == 0 && var == 50) {
-				mac_drawLoomPracticeMode();
-			}
-		}
 
 		if ((_varwatch == (int)var || _varwatch == 0) && _currentScript < NUM_SCRIPT_SLOT) {
 			if (vm.slot[_currentScript].number < 100)
@@ -854,78 +849,11 @@ void ScummEngine::stopObjectCode() {
 
 void ScummEngine::runInventoryScript(int i) {
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
-		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-			inventoryScriptIndy3Mac();
-		} else {
-			int args[NUM_SCRIPT_LOCAL];
-			memset(args, 0, sizeof(args));
-			args[0] = i;
-			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
-		}
+		int args[NUM_SCRIPT_LOCAL];
+		memset(args, 0, sizeof(args));
+		args[0] = i;
+		runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 	}
-}
-
-void ScummEngine::inventoryScriptIndy3Mac() {
-	int slot;
-
-	// VAR(67) controls the scroll offset of the inventory in Indy3 for Macintosh.
-	// The inventory consists of two columns with three items visible in each,
-	// so a maximum of six items are visible at once.
-
-	// The scroll offset must be non-negative and if there are six or less items
-	// in the inventory, the inventory is fixed in the top position.
-	const int invCount = getInventoryCount(VAR(VAR_EGO));
-	if (VAR(67) < 0 || invCount <= 6) {
-		VAR(67) = 0;
-	}
-
-	// If there are more than six items in the inventory, clamp the scroll position
-	// to be at most invCount-6, rounded up to the next even integer.
-	bool scrolledToBottom = false;
-	if (invCount > 6 && VAR(67) >= invCount - 6) {
-		VAR(67) = invCount - 6;
-		// Odd number of inventory items? -> increment VAR(67) to make it even
-		if (invCount & 1) {
-			VAR(67)++;
-		}
-		scrolledToBottom = true;
-	}
-
-	// Now update var 83 till 89 to contain the inventory IDs of the
-	// corresponding inventory slots.
-	// Also setup fake verbs for the inventory
-	byte tmp[6] = { 0xFF, 0x06, 0x52, 0x00, 0x00, 0x00 };
-	for (int j = 1; j < 7; j++) {
-		int tmpA = (VAR(67) + j);
-		int tmpB = findInventory(VAR(VAR_EGO), tmpA);
-		VAR(82 + j) = tmpB;
-
-		// Setup fake verb
-		tmp[2] = 0x52 + j;
-		slot = getVerbSlot(100 + j, 0);
-		loadPtrToResource(rtVerb, slot, tmp);
-
-		VerbSlot *vs = &_verbs[slot];
-		vs->type = kTextVerbType;
-		vs->imgindex = 0;
-		vs->curmode = 1;
-		drawVerb(slot, 0);
-	}
-
-	// Enable up arrow if there are more than six items and we are not already
-	// scrolled all the way up.
-	slot = getVerbSlot(107, 0);
-	_verbs[slot].curmode = (invCount > 6 && VAR(67)) ? 1 : 0;
-	drawVerb(slot, 0);
-
-	// Enable down arrow if there are more than six items and we are not already
-	// scrolled all the way down.
-	slot = getVerbSlot(108, 0);
-	_verbs[slot].curmode = (invCount > 6 && !scrolledToBottom) ? 1 : 0;
-	drawVerb(slot, 0);
-
-	// Redraw!
-	verbMouseOver(0);
 }
 
 void ScummEngine::freezeScripts(int flag) {
@@ -989,7 +917,7 @@ void ScummEngine::runAllScripts() {
 		vm.slot[i].didexec = false;
 
 	_currentScript = 0xFF;
-	int numCycles = (_game.heversion >= 90) ? VAR(VAR_NUM_SCRIPT_CYCLES) : 1;
+	int numCycles = (_game.heversion >= 90) ? VAR(VAR_LAST_SCRIPT_PRIORITY) : 1;
 
 	for (int cycle = 1; cycle <= numCycles; cycle++) {
 		for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
@@ -1048,7 +976,7 @@ void ScummEngine::runExitScript() {
 	//
 	// The same sound effect is also used in the underwater cavern (room
 	// 33), so we do the same fade out as in that room's exit script.
-	if (_game.id == GID_DIG && _currentRoom == 44 && _enableEnhancements) {
+	if (_game.id == GID_DIG && _currentRoom == 44 && enhancementEnabled(kEnhAudioChanges)) {
 		int scriptCmds[] = { 14, 215, 0x600, 0, 30, 0, 0, 0 };
 		_sound->soundKludge(scriptCmds, ARRAYSIZE(scriptCmds));
 	}
@@ -1470,21 +1398,6 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 
 	// Macintosh version of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
-		if (clickArea == kVerbClickArea && (val >= 101 && val <= 108)) {
-			if (val == 107) {
-				VAR(67) -= 2;
-				inventoryScriptIndy3Mac();
-				return;
-			} else if (val == 108) {
-				VAR(67) += 2;
-				inventoryScriptIndy3Mac();
-				return;
-			} else {
-				args[0] = kInventoryClickArea;
-				args[1] = VAR(82 + (val - 100));
-			}
-		}
-
 		// Clicks are handled differently in Indy3 mac: param 2 of the
 		// input script is set to 0 for normal clicks, and to 1 for double clicks.
 		// The EGA DOS version of Loom also checks that the second click happens
@@ -1498,26 +1411,8 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 		_lastInputScriptTime = time;
 	}
 
-	if (verbScript) {
-		// It seems that script 18 expects to be called twice: Once
-		// with parameter 1 (kVerbClickArea) to clear all the verbs,
-		// and once with 3 (kInventoryClickArea) to print the "Take
-		// this <something>" message.
-		//
-		// In the 256-color DOS version, this is all done in the same
-		// call to the script.
-		//
-		// Should this workaround apply to other input scripts
-		// as well? I don't know.
-		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verbScript == 18 && val >= 101 && val <= 106) {
-			args[0] = kVerbClickArea;
-			runScript(verbScript, 0, 0, args);
-
-			args[0] = kInventoryClickArea;
-			runScript(verbScript, 0, 0, args);
-		} else
-			runScript(verbScript, 0, 0, args);
-	}
+	if (verbScript)
+		runScript(verbScript, 0, 0, args);
 }
 
 void ScummEngine::decreaseScriptDelay(int amount) {

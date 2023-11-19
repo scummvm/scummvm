@@ -72,6 +72,7 @@ Movie::Movie(ToonEngine *vm , ToonstruckSmackerDecoder *decoder) {
 
 Movie::~Movie() {
 	delete _decoder;
+	delete _subtitle;
 }
 
 void Movie::init() const {

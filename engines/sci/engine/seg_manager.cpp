@@ -185,7 +185,7 @@ void SegManager::deallocate(SegmentId seg) {
 
 bool SegManager::isHeapObject(reg_t pos) const {
 	const Object *obj = getObject(pos);
-	if (obj == nullptr || (obj && obj->isFreed()))
+	if (obj == nullptr || obj->isFreed())
 		return false;
 	Script *scr = getScriptIfLoaded(pos.getSegment());
 	return !(scr && scr->isMarkedAsDeleted());
@@ -455,14 +455,11 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	offset = table->allocEntry();
 
 	reg_t addr = make_reg(_hunksSegId, offset);
-	Hunk *h = &table->at(offset);
+	Hunk &h = table->at(offset);
 
-	if (!h)
-		return NULL_REG;
-
-	h->mem = malloc(size);
-	h->size = size;
-	h->type = hunk_type;
+	h.mem = malloc(size);
+	h.size = size;
+	h.type = hunk_type;
 
 	return addr;
 }
@@ -1139,14 +1136,14 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 	SegmentId segmentId = getScriptSegment(script_nr);
 	Script *scr = getScript(segmentId);
 	reg_t reg = make_reg(segmentId, oldScriptHeader ? 2 : 0);
-	int objType, objLength = 0;
+	int objLength = 0;
 
 	// Make a pass over the object in order to uninstantiate all superclasses
 
-	do {
+	while (true) {
 		reg.incOffset(objLength); // Step over the last checked object
 
-		objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset()));
+		int objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset()));
 		if (!objType)
 			break;
 		objLength = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.getOffset() + 2));
@@ -1173,8 +1170,7 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 		} // if object or class
 
 		reg.incOffset(-4); // Step back on header
-
-	} while (objType != 0);
+	}
 }
 
 } // End of namespace Sci

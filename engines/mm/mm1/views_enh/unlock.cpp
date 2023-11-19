@@ -39,10 +39,9 @@ bool Unlock::msgGame(const GameMessage &msg) {
 
 	byte walls = g_maps->_currentWalls & g_maps->_forwardMask;
 
-	if (!(g_maps->_currentState & 0x55 & g_maps->_forwardMask) || !walls) {
-		g_globals->_party.checkPartyDead();
-		return true;
-	}
+	bool canUnlock = true;
+	if (!(g_maps->_currentState & 0x55 & g_maps->_forwardMask) || !walls)
+		canUnlock = false;
 
 	int offset;
 	if (!(walls & 0x55)) {
@@ -53,12 +52,15 @@ bool Unlock::msgGame(const GameMessage &msg) {
 		offset = 2;
 	}
 
-	if (g_maps->_currentMap->dataByte(30 + offset) != 1) {
-		g_globals->_party.checkPartyDead();
-		return true;
+	if (g_maps->_currentMap->dataByte(30 + offset) != 1)
+		canUnlock = false;
+
+	if (canUnlock) {
+		WhoWillTry::display(charSelected);
+	} else {
+		g_events->send(InfoMessage(STRING["dialogs.unlock.none"]));
 	}
 
-	WhoWillTry::display(charSelected);
 	return true;
 }
 

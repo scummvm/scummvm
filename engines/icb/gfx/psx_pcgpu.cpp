@@ -34,7 +34,7 @@
 namespace ICB {
 
 // Defaults for the OT list
-#define UNLINKED_ADDR (void *)(0xDEADBEAF)
+#define UNLINKED_ADDR (reinterpret_cast<void *>(static_cast<uintptr>(0xDEADBEAF)))
 #define UNLINKED_LEN (0x6666)
 
 // For storing user data in the OT entry e.g. texture pointer

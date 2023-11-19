@@ -39,7 +39,7 @@
 
 #include "common/array.h"
 #include "hpl1/engine/scene/AnimationState.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 

@@ -164,6 +164,12 @@ enum FontColor {
 	MAX_FONT_COLORS = 9
 };
 
+enum class FontKind {
+	Standard,
+	Computer,
+	PDA
+};
+
 #define MAX_GOPHERS                 3
 
 } // End of namespace Watchmaker

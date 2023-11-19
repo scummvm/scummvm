@@ -89,4 +89,17 @@ bool Frustum::isInside(const Math::AABB &aabb) const {
 	return true;
 }
 
+bool Frustum::isTriangleInside(const Math::Vector3d &v0, const Math::Vector3d &v1, const Math::Vector3d &v2) const {
+	for (int i = 0; i < 6; ++i) {
+		const Plane &plane = _planes[i];
+		// Inside if any point is above the plane. On the plane is in
+		if (plane.getSignedDistance(v0) < 0.0f
+				&& plane.getSignedDistance(v1) < 0.0f
+				&& plane.getSignedDistance(v2) < 0.0f)
+			return false;
+	}
+	return true;
+}
+
+
 }

@@ -21,13 +21,11 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.7.0.5
+2.7.1
 
 *** Release notes:
-- Unterstützung für sicheren Dateizugriff auf SD-Karten
-- Verbesserte Controller-Unterstützung
-- Das ScummVM-Log kann jetzt in den globalen Einstellungen eingesehen werden
-- Die Unterstützung für 3D-Spiele entspricht jetzt den Desktop-Versionen von ScummVM
-- Zwischen dem Joystick-, Touchpad- und Maus-Steuerungsmodus kann jetzt nahtlos umgeschaltet werden
+- Mehrere an uns gemeldete App-Abstürze wurden behoben
+- Unterstützung für Multitouch-Gesten wurde verbessert
+- Zusätzlich beinhaltet diese Version alle Korrekturen und Verbesserungen der Desktop-Version
 
-Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.7.0/ReleaseNotes.html
+Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.7.1/ReleaseNotes.html

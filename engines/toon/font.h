@@ -52,6 +52,12 @@ struct GlyphDimensions {
 	uint8 width;
 	uint8 heightOffset; // # lines from top
 	uint8 height;
+
+	GlyphDimensions() {
+		width = 0;
+		heightOffset = 0;
+		height = 0;
+	}
 };
 
 // The font format used by the English demo.

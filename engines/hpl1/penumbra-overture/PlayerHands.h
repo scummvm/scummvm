@@ -151,7 +151,7 @@ public:
 
 //------------------------------------------------
 
-typedef Hpl1::Std::map<tString, iHudModel *> tHudModelMap;
+typedef Common::StableMap<tString, iHudModel *> tHudModelMap;
 typedef tHudModelMap::iterator tHudModelMapIt;
 
 //------------------------------------------------

@@ -19,12 +19,13 @@ dialogs:
 		weapons: "weapons     price"
 		misc: "misc       price"
 		backpack: "backpack     price"
-		thankyou: "thank you!"
+		thankyou: "Thank you!"
 	character:
 		legend1: "'q' quick ref     'c' cast    'r' remove"
 		legend2: " # view other     'd' discard 's' share"
 		legend3: "                  'e' equip   't' trade"
 		legend4: "'esc' to go back  'g' gather  'u' use"
+		discard: "discard which item: 'a'-'f'?"
 		equip: "equip which item: 'a'-'f'?"
 		remove: "remove which item: '1'-'6'?"
 		which: "which item: 'a'-'f'?"
@@ -104,6 +105,8 @@ dialogs:
 		option1: "'C'.......Create New Characters"
 		option2: "'V'.......View All Characters"
 		option3: "'#'.......Go to Town"
+		option3e1: "'1' to '5'"
+		option3e2: "Go to Town"
 		copyright1: "Copr. 1986,1987-Jon Van Caneghem"
 		copyright2: "All Rights Reserved"
 		scummvm: "Enhanced version provided by ScummVM"
@@ -188,13 +191,13 @@ dialogs:
 			7: "a gray minotaur"			
 		messages:
 			0: "Services rendered, secrets unfold\nthe brothers together\nlead to treasures untold\n\nfive towns you must travel\nfor this quest to unravel"
-			1: "Seek the wizard ranalou\nin his lair at the korin bluffs\nsix castles he will send you to\nbut doom will be quite tough!\ncruelty and kindness\nmeasured throughout\njudgement day is then sought out"
-			2: "One by water, one by land\none by air, and one by sand\nthe wheel of luck\nwill favorably pay, the more of these\nmenacing beasts you slay!\nalthough wishes may come true\nall the beasts will become anew"
-			3: "There are many dungeons like me\nfind the right pair\nand you'll discover the key\nthe ancient seer og has lost his sight\nthe idols will help to end his plight"
-			4: "In honor of corak...\n\nfor his mapping expedition\nof the land of varn and rediscovery\nof the lost town of dusk"
-			5: "In honor of gala...\n\nfor her brave attempt to work with the\nsavages of the volcanic isles"
+			1: "Seek the wizard Ranalou\nin his lair at the Korin Bluffs\nsix castles he will send you to\nbut Doom will be quite tough!\ncruelty and kindness\nmeasured throughout\njudgement day is then sought out"
+			2: "One by water, one by land\none by air, and one by sand\nthe wheel of luck\nwill favorably pay, the more of these\nmenacing beasts you slay!\nAlthough wishes may come true\nall the beasts will become anew"
+			3: "There are many dungeons like me\nfind the right pair\nand you'll discover the key\nthe ancient seer Og has lost his sight\nthe idols will help to end his plight"
+			4: "In honor of Corak...\n\nfor his mapping expedition\nof the land of Varn and rediscovery\nof the lost town of Dusk"
+			5: "In honor of Gala...\n\nfor her brave attempt to work with the\nsavages of the Volcanic Isles"
 			6: "In memory of a time long ago...\n\nbefore the days when the towns\nmoved underground, dragons were\nfew and far between"
-			7: "This beast once roamed the\nenchanted forest and now rules\na great fortress there"
+			7: "This beast once roamed the\nEnchanted Forest and now rules\na great fortress there"
 	tavern:
 		drink: "a) Have a drink\r"
 		tip: "b) Tip bartender\r"
@@ -278,6 +281,7 @@ dialogs:
 	unlock:
 		success: "Success!"
 		failed: "Unlock failed!"
+		none: "Unlock: No door present"
 	view_characters:
 		title: "View all characters"
 		legend1: "'a'-'%c' to view a character"
@@ -320,20 +324,20 @@ dialogs:
 		not_enough_sp: "Not enough spell points"
 		backpack_full: "Backpack is full"
 	spells:
-		detect_charges: "magic (charges)"
-		fly_to_x: "fly to (a-e): "
+		detect_charges: "Magic (charges)"
+		fly_to_x: "Fly to (A-E): "
 		fly_to_y: "(1-4): "
-		location_loc: "location: "
-		location_town: "in town"
+		location_loc: "Location: "
+		location_town: "In town"
 		location_castle: "in castle"
-		location_outdoors: "outdoors"
-		location_unknown: "unknown"
+		location_outdoors: "Outdoors"
+		location_unknown: "Unknown"
 		location_under: "0' under"
-		location_sector: "map sector: "
-		location_surface_x: "surface: x="
-		location_inside_x: "inside: x="
-		location_facing: "facing: "
-		teleport_dir: "direction (n,e,s,w): "
+		location_sector: "Map sector: "
+		location_surface_x: "Surface: "
+		location_inside_x: "Inside: "
+		location_facing: "Facing: "
+		teleport_dir: "Direction (N,E,S,W): "
 		teleport_squares: "# of squares (0-9): "
 	encounter:
 		title: " Encounter! "
@@ -374,7 +378,7 @@ dialogs:
 		and_goes_down: "and goes down!!!"
 		goes_down: "goes down!!!"
 		dies: "dies!"
-		defeating1: "! for defeating the monsters !"
+		defeating1: "! For defeating the monsters !"
 		defeating2: "!   each survivor receives   !"
 		xp: "experience points."
 		regenerate: "some monsters regenerate!"
@@ -559,6 +563,8 @@ enhdialogs:
 		remove: "Remove"
 		discard: "Discard"
 		use: "Use"
+		charge: "Charge"
+		copy: "Copy"
 		buttons:
 		buttons:
 			weapons: "\x01""37Weap"
@@ -575,6 +581,8 @@ enhdialogs:
 			discard: "\x01""37Disc"
 			trade: "\x01""37Trade"		
 			use: "\x01""37Use"
+			charge: "\x01""37Charg"
+			copy: "\x01""37Copy"
 	location:
 		store: "Store"
 		options: "options"
@@ -586,6 +594,7 @@ enhdialogs:
 		south: "South"
 		east: "East"
 		west: "West"
+		disabled: "Mapping is currently unavailable here"
 	market:
 		title: "Market"
 		buy_food: "Buy food"
@@ -737,10 +746,10 @@ spells:
 	monsters_destroyed: "Some monsters were destroyed!"
 	casts_spell: "casts a spell:"
 
-	enter_to_cast: "'enter' to cast"
-	cast_on_char: "cast on: '1'-'%d'?"
-	cast_on_monster: "cast on: 'a'-'%c'?"
-	which_town: "which town (1-5)?"
+	enter_to_cast: "'Enter' to cast"
+	cast_on_char: "Cast on: '1'-'%d'?"
+	cast_on_monster: "Cast on: 'a'-'%c'?"
+	which_town: "Which town (1-5)?"
 
 	info:
 		hp: "hp = "
@@ -872,6 +881,7 @@ spells:
 		46: "Prismatic Light"
 monster_spells:
 	casts: "casts "
+	takes: "takes "
 	fails_to_cast: "fails to cast a spell"
 	not_affected: "is not affected!"
 	breathes: "breathes"
@@ -906,6 +916,7 @@ monster_spells:
 	energy: "energy"
 	swarm: "swarm"
 	breathes: "breathes "
+	points: "points"
 monster_actions:
 	and: "!and "
 	causes_aging: "causes rapid aging"
@@ -948,6 +959,8 @@ maps:
 	passage_outside2: "Passage outside, exit (Y/N)?"
 	accept: "Accept"
 	decline: "Decline"
+	yes: "\x01""37Yes"
+	no: "\x01""37No"
 
 	desert:
 		its_hot: "It's hot... "
@@ -1520,7 +1533,7 @@ maps:
 		inspectron3: "\"Return not until thy quest is complete\""
 		inspectron4: "\"Sorry, but since you are currently\nquested, i can't engage your services.\""
 		inspectron5: "Well done, quest complete! +%u exp"
-		message: "Etched in silver, message a reads:\natis-19-31ud54aeupi1"
+		message: "Etched in silver, message A reads:\natis-19-31ud54aeupi1"
 		slide: "A slide!"
 		vault: "Empty vault, alarm!"
 	emap35:
@@ -1572,49 +1585,66 @@ maps:
 		face1: "Inset in the wall, a stone face\nyells: \"My brain hurts!\""
 		face2: "Inset in the wall, a stone face\nspeaks: \"I would pay highly for a green\nhandled, pearl encrusted abelnuski.\""
 		face3: "Inset in the wall, a stone face\nspeaks: \"I see all, hear all,\nknow nothing...\""
-		face4: "Inset in the wall, a stone face\nproclaims: \"Okrim is watching.\nhe studies your weaknesses!\""
+		face4: "Inset in the wall, a stone face\nproclaims: \"Okrim is watching.\nHe studies your weaknesses!\""
 		ringing: "A strange ringing sound startles\nthe party. You are teleported!"
+	emap38:
+		message4: "Etched in gold, message 4 reads:\nOf-be-has-true-knowledge-plane-\na-level-to-reality-it"
 
 	map39:
 		message6: "Etched in gold, message 6 reads:\nbook-done.-a-self-that-from-key-you-\nbe-to-seems"
 		ruby1: "In the center of the room, a huge ruby\nstands atop a pedestal. hexagonally\nshaped, it glows rhythmically!\nMesmerized by its light, you hear:\nGlass that glitters, rubies that glow\nWhen i twinkle, I cast a rainbow\nWhat am i? :> ..............."
-		ruby2: "Wrong!  a bright flash..."
+		ruby2: "Wrong!  A bright flash..."
 		door_repels: "A silver door repels you!"
 		door_glows: "A silver door, your silver key glows!"
 		stairs_up: "Stairs to surface, take them (Y/N)?"
+	emap39:
+		message6: "Etched in gold, message 6 reads:\nBook-done.-A-self-that-from-\nkey-you-be-to-seems"
+		title: "Ruby"
+		ruby1: "In the center of the room, a huge hexagonal ruby stands glowing atop a pedestal. You hear: Glass that glitters, rubies that glow when i twinkle, I cast a rainbow.\nWhat am i?"
 
 	map40:
 		message2: "Etched in gold, message 2 reads:\nOne,-riddles-value-you-you-5-card-must-\nclaimed.-dreams,-..."
-		archer: "\"I am lord archer, the raven,\ni take from those who have and give to\nthose who have not! submit (Y/N)?\""
+		archer: "\"I am lord archer, the raven,\nI take from those who have and give to\nthose who have not! submit (Y/N)?\""
 		giants: "Giants hurl boulders!"
 		button: "A button on the wall, push it (Y/N)?"
-		squish: "Squish! the party is impaled on a wall\nof spears!"
-		boulder: "A boulder says:\"there should be 5 tests\""
+		squish: "Squish! The party is impaled on a wall\nof spears!"
+		boulder: "A boulder says:\"There should be 5 tests\""
 		test1: "The first test"
 		test2: "The second test"
 		test3: "The third test"
 		test4: "The fourth test"
 		conveyor_belt: "Conveyor belt..."
+	emap40:
+		message2: "Etched in gold, message 2 reads:\nOne,-riddles-value-you-you-\n5-card-must-claimed.-Dreams,-..."
+		boulder: "A boulder says: \"There should be 5 tests\""
+		title: "Lord Archer"
+		archer: "\"I am Lord Archer, the Raven.\nI take from those who have and give to those who have not! Submit (Y/N)?\""
 
 	map41:
 		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-be-from-6th-\nfrustrations!-the-to-in"
 		dung: "Minotaur dung slushes beneath you!"
 		sign1: "The enchanted chamber"
 		sign2: "Cleptomian guild, do not disturb!"
-		sign3: "The council of strength is in session"
-		sign4: "The uglies club - members only!"
+		sign3: "The Council of Strength is in session"
+		sign4: "The Uglies Club - Members only!"
 		sign5: "Specimen tank - keep closed"
 		stairs_up: "Spiralling stairs go up,take them (Y/N)?"
 		tapestry1: "A tapestry on the wall depicts a gray\nminotaur stomping on a group of knights."
 		tapestry2: "A tapestry on the wall depicts\na kingdom ruled by minotaurs"
+	emap41:
+		message3: "Etched in gold, message 3 reads:\nFor-tasks-and-rating.-Be-from-\n6th-frustrations!-The-to-in"
+		stairs_up: "Spiralling stairs go up, take them (Y/N)?"
 
 	map42:
-		message9: "etched in gold, message 9 reads:\nSuccessful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,"
+		message9: "Etched in gold, message 9 reads:\nSuccessful-that-training,-the-worthy-\nthe-visit-yet-inner-reality,-order,"
 		defeated: "The master of this stronghold\nhas been defeated!"
 		sign1: "Enter the maze of the minotaur...\nif you dare!"
 		statue1: "Standing atop a pedestal in the center\nof the room is a statue of a small sable\nand white dog. "
-		statue2: "It comes to life and\nspeaks,\"Congratulations, you've\ncompleted a major quest (+10000 exp)\nremember b.j.!\""
+		statue2: "It comes to life and\nspeaks,\"Congratulations, you've\ncompleted a major quest (+10000 exp)\nRemember B.J.!\""
 		statue3: "Desecrate it (Y/N)?"
+	emap42:
+		title: "Dog Statue"
+		message9: "Etched in gold, message 9 reads:\nSuccessful-that-training,-the-\nworthy-the-visit-yet-inner-\nreality,-order,"
 
 	map43:
 		exit: "Exit castle, (Y/N)?"
@@ -1622,11 +1652,11 @@ maps:
 		tower: "The tower"
 		throne_room: "Throne room"
 		ironfist1: "Lord Ironfist speaks:\n"
-		ironfist2: "\"Your services are needed!\" accept(Y/N)?"
+		ironfist2: "\"Your services are needed!\" Accept(Y/N)?"
 		ironfist3: "\"Return not until thy quest is complete\""
 		ironfist4: "\"Sorry, but since you are currently\nquested, i can't engage your services.\""
 		ironfist5: "Well done, quest complete! +%u exp"
-		message_b: "Etched in silver, message b reads:\nrstia-,e1,;/11rn;/m-"
+		message_b: "Etched in silver, message B reads:\nrstia-,e1,;/11rn;/m-"
 		guards: "Castle guards exclaim,\n\"No merchants pass! Begone peasants.\""
 		quests:
 			1: "Find the stronghold in ravens wood"
@@ -1636,6 +1666,9 @@ maps:
 			5: "Find the shipwreck of the jolly raven"
 			6: "Defeat the pirate ghost ship anarchist"
 			7: "Defeat the stronghold in ravens wood"
+	emap43:
+		title: "Lord Ironfist"
+		ironfist2: "\"Your services are needed!\" Accept (Y/N)?"
 
 	map44:
 		message_f: "Etched in silver, message F reads:\ntstst,e1,d-ds15a1drh"
@@ -1652,13 +1685,17 @@ maps:
 		walls: "The Walls Glow Ominously"
 		message: "Etched in stone:\n\"28 days out. No food, low on supplies.\nWe fear the worst yet we continue-Corak"
 		passage: "A cavernous passage, take it (Y/N)?"
+	emap45:
+		message8: "Etched in gold, message 8 reads:\nThe-are-quests,-increases-\nidentify,-apply.-locations,-end-\nattained-my-sequel"
 
 	map46:
 		shakes: "The ground shakes!"
 		clerics: "Clerics of the South just below-Corak"
+	emap46:
+		clerics: "Clerics of the South just below. Corak"
 
 	map47:
-		message5: "Etched in gold, message 5 reads:\nsCoop:-the-discoveries-your-to-return-\nthe-your-for-dreams-is"
+		message5: "Etched in gold, message 5 reads:\nScoop:-the-discoveries-your-to-return-\nthe-your-for-dreams-is"
 		gong: "Covered with cryptic symbols, a large\nbrass gong hangs from the ceiling.\nStrike it (Y/N)?"
 		tones:
 			1: "A loud tone resounds\nthroughout the room!"
@@ -1670,18 +1707,24 @@ maps:
 		poof: "Poof!"
 		painting: "On the right wall is a painting of a\nbox,on the left a painting of a curtain."
 		door_number: "Door number %c"
+	emap47:
+		message5: "Etched in gold, message 5 reads:\nScoop:-the-discoveries-your-to-\nreturn-the-your-for-dreams-is"
+		painting: "On the right wall is a painting of a box, on the left a painting of a curtain."
 
 	map48:
 		orango1: "A strange alien being in a shimmering\nsilver jumpsuit proclaims, \"This is a\nsoul maze and you are its prisoner!\nTo escape, you must find your captor's\nname hidden within these walls.\"\n\nanswer:>"
 		orango2: "Keep looking!"
-		orango3: "Agent orango seventeen reporting:\nImposter xx21a7-3 voided!\nStarphase 5281.6 at 120-varn-161 pod #41\nYou are now rank 1 and eligible for\ntransfer. Find inner sanctum for new\nassignment. The walls begin to fade...\n(press space)"
+		orango3: "Agent Orango seventeen reporting:\nImposter xx21a7-3 voided!\nStarphase 5281.6 at 120-varn-161 pod #41\nYou are now rank 1 and eligible for\ntransfer. Find inner sanctum for new\nassignment. The walls begin to fade...\n(press space)"
+	emap48:
+		title: "Strange Alien"
+		orango1: "A strange alien being in a silver jumpsuit proclaims, \"This is a soul maze and you are its prisoner!\nTo escape, you must find your captor's name hidden within these walls.\""
 
 	map49:
 		chute: "A chute..."
 		catapult: "A catapult ejects you from the tower!"
-		message_e: "Etched in silver, message e reads:\noei/:1-33-1ek5;d-et,"
-		alamar1: "The omnipotent king alamar speaks,\n\n"
-		alamar2: "\"Varnlings, i quest thee to find the\nCrypt of Carmenca. away with you...\""
+		message_e: "Etched in silver, message E reads:\noei/:1-33-1ek5;d-et,"
+		alamar1: "The omnipotent King Alamar speaks,\n\n"
+		alamar2: "\"Varnlings, I quest thee to find the\nCrypt of Carmenca. Away with you...\""
 		alamar3: "\"My saviors, you're always welcome here!\nYou should find the inner sanctum...\nLive long and prosper.\""
 		alamar4: "\"You've discovered my true identity!\nInto the soul maze you go...\""
 		guards1: "Castle guards exclaim,\n\"No Merchants Pass! begone peasants.\""
@@ -1690,22 +1733,31 @@ maps:
 		trap: "Singe! Acid trap."
 		explosion: "Boom! A fiery explosion."
 		throne_room: "Throne room"
+	emap49:
+		king_alamar: "King Alamar"
+		sheltem: "Imposter King Alamar"
 
 	map50:
 		message7: "Etched in gold, message 7 reads:\nThese-and-that-must-can-different-\nshall-have-from-a-jvc"
-		sign1: "Club dead...\nthe antidote to humanization!"
-		sign2: "Temple of the old order"
+		sign1: "Club Dead...\nThe antidote to humanization!"
+		sign2: "Temple of the Old Order"
 		sign3: "Glass room"
 		sign4: "Ruby room"
 		sign5: "Twinkle room"
 		sign6: "Rainbow room"
 		grate: "The crystal grate repels you!"
+	emap50:
+		message7: "Etched in gold, message 7 reads:\nThese-and-that-must-can-\ndifferent-shall-have-from-a-jvc"
 
 	map51:
 		substance: "Without experimental substance\nthere is no hope...poof!"
+	emap51:
+		substance: "Without experimental substance there is no hope... Poof!"
 
 	map52:
 		summoned: "You have been summoned...poof!"
+	emap52:
+		summoned: "You have been summoned... Poof!"
 
 	map53:
 		sign: "Danger! Dungeon under construction."
@@ -1723,3 +1775,14 @@ maps:
 		keeper3: "In a serene voice, the data keeper says,\n\"Welcome to your inner sanctum\nVarnlings! I am very pleased that you've\nmade it this far. You are to be\ncommended. I've been monitoring your\nprogress.\" Turning to the strange\nmechanical device, he inserts a flat\nobject into a slot. Your party's current\nperformance total=%u"
 		keeper4: "\"You are not yet worthy for transfer.   Return after defeating the imposter.\""
 		keeper5: "Excellent rating! this is a rare        occasion, for only a privileged few are given the opportunity for transfer to\nanother V.A.R.N. (Vehicular Astropod\nResearch Nacelle). Return now to the\nInn of Sorpigal for rest and celebration\nthen continue on to your new assignment at the Gates To Another World...\"       (+50000 exp for your accomplishment!)\n----------------------------------------\nPlease send your performance total to\nNew World Computing, Inc.\n  P. O. Box 2068  Van Nuys, CA  91404"
+	emap54:
+		keeper: "Keeper"
+		keeper2: "In a serene voice, the data keeper says, \"Welcome to your inner sanctum Varnlings! I am very pleased that you've made it this far. You are to be commended. I've been monitoring your\nprogress.\""
+		keeper3: "Turning to the strange mechanical device, he inserts a flat object into a slot. Your party's current performance total=%u."
+		keeper4: "\"You are not yet worthy for transfer. Return after defeating the imposter.\""
+		keeper5: "Excellent rating! this is a rare occasion, for only a privileged few are given the opportunity for transfer to another V.A.R.N. (Vehicular Astropod\nResearch Nacelle)."
+		keeper6: "Return now to the\nInn of Sorpigal for rest and celebration then continue on to your new assignment at the Gates To Another World...\" (+50000 exp for your accomplishment!)"
+
+	emap55:
+		title: "ScummVM"
+		message: "Well done! I didn't think anyone would ever find this secret map. You deserve a hefty reward. +10000 Gold, +1000 Gems each"

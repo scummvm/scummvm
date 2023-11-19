@@ -383,6 +383,7 @@ bool AIScriptMoraji::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptMoraji::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -455,6 +456,10 @@ bool AIScriptMoraji::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		_animationState = 13;
 		_animationFrame = -1;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptMoraji::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

@@ -96,7 +96,7 @@ void Regen(WGame &game) {
 #endif
 	upn = 0;
 	memset(refresh, 0, sizeof(refresh));
-	memset(UpdateRect, 0, sizeof(UpdateRect));
+	for (uint32 i = 0; i < ARRAYSIZE(UpdateRect); i++) UpdateRect[i].reset();
 	// I take the Extends of what the engine drew
 	rGetExtends(&ext.x1, &ext.y1, &ext.x2, &ext.y2);
 	// 1 - Compare each element of PaintRect to all OlPaintRect elements
@@ -187,8 +187,9 @@ void Regen(WGame &game) {
 			}
 		}
 
-		if (!found)
-			memset(p, 0, sizeof(struct SRect));
+		if (!found) {
+			if (p) p->reset();
+		}
 	}
 
 	// 4 - Copy on screen only the UpdateRects by stretching them.
@@ -215,8 +216,8 @@ void Regen(WGame &game) {
 	auto windowInfo = game._renderer->getScreenInfos();
 	if (ext.x1 < 0) ext.x1 = 0;
 	if (ext.y1 < 0) ext.y1 = 0;
-	if (ext.x2 > windowInfo.width) ext.x2 = windowInfo.width;
-	if (ext.y2 > windowInfo.height) ext.y2 = windowInfo.height;
+	if (ext.x2 > (int32)windowInfo.width) ext.x2 = windowInfo.width;
+	if (ext.y2 > (int32)windowInfo.height) ext.y2 = windowInfo.height;
 #ifdef DEBUG_REGEN
 	DebugFile("Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2 - ext.x1, ext.y2 - ext.y1);
 //	DebugLogWindow( "Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2-ext.x1, ext.y2-ext.y1 );
@@ -235,7 +236,7 @@ void Regen(WGame &game) {
  *                  ResetScreenBuffer
  * --------------------------------------------------*/
 void ResetScreenBuffer() {
-	memset(OldPaintRect, 0, sizeof(OldPaintRect));
+	for (uint i = 0; i < ARRAYSIZE(OldPaintRect); i++) OldPaintRect[i].reset();
 
 	if (!rClearBuffers(rCLEARSCREENBUFFER | rCLEARZBUFFER))
 		warning("Unable to clear screenbuffer");
@@ -334,7 +335,7 @@ void Add3DStuff(WGame &game) {
 	//DisplayDDBitmap( TrecLogo, 800-10-rGetBitmapRealDimX(TrecLogo),0, 0,0, 0,0 );
 	if (bShowInfo) {
 		//display version
-		uint32 date, time, d, m, yy, h, min;
+		uint32 date = 0, time = 0, d = 0, m = 0, yy = 0, h = 0, min = 0;
 		t3dForceNOFastFile(1);
 		if (t3dGetFileDate(&date, &time, "wm.exe ")) {
 			d = date - (date / 100) * 100;

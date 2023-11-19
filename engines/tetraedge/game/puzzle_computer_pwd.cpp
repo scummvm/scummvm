@@ -37,6 +37,7 @@ PuzzleComputerPwd::PuzzleComputerPwd() : _nDigits(0) {
 void PuzzleComputerPwd::enter() {
 	_gui.load("GUI/PuzzleComputerPwd.lua");
 	g_engine->getApplication()->frontLayout().addChild(_gui.layoutChecked("puzzleComputerPassword"));
+	_gui.layoutChecked("background")->setRatioMode(TeILayout::RATIO_MODE_NONE);
 	_gui.spriteLayoutChecked("background")->setVisible(true);
 	_gui.buttonLayoutChecked("button0")->setEnable(true);
 	_gui.buttonLayoutChecked("button1")->setEnable(true);

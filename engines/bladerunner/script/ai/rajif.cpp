@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
@@ -110,6 +110,7 @@ bool AIScriptRajif::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 }
 
 bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (_animationState <= 1) {
 		if (_animationState > 0) {
 			*animation = kModelAnimationRajifWithGunIdle;
@@ -117,7 +118,8 @@ bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRajifWithGunIdle)) {
 				_animationFrame = 0;
 			}
-		} else { // bug in original. Both branches are equal
+		} else {
+			// bug in original. Both branches are equal. Also _animationState for Rajif is always 0.
 			*animation = kModelAnimationRajifWithGunIdle;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRajifWithGunIdle)) {
@@ -125,6 +127,21 @@ bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 	}
+#else
+	switch (_animationState) {
+	case 0:
+		*animation = kModelAnimationRajifWithGunIdle;
+		++_animationFrame;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRajifWithGunIdle)) {
+			_animationFrame = 0;
+		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptRajif::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	*frame = _animationFrame;
 
@@ -132,9 +149,15 @@ bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptRajif::ChangeAnimationMode(int mode) {
-	if (!mode) {
+	switch (mode) {
+	case kAnimationModeIdle:
 		_animationState = 0;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptRajif::ChangeAnimationMode(%d) - Target mode is not supported", mode);
+		break;
 	}
 	return true;
 }

@@ -23,12 +23,30 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/events.h"
+#include "common/config-manager.h"
 #include "backends/platform/ios7/ios7_gamepad_controller.h"
 #include "backends/platform/ios7/ios7_video.h"
+#include "backends/platform/ios7/ios7_app_delegate.h"
 #include <GameController/GameController.h>
 
 @implementation GamepadController {
 	GCController *_controller;
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_virtualControllerThumbstick;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_virtualControllerDpad;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_currentController;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configDpad;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configThumbstick;
+#endif
+#endif
+	int _currentDpadXValue;
+	int _currentDpadYValue;
 }
 
 @dynamic view;
@@ -42,7 +60,99 @@
 												 name:@"GCControllerDidConnectNotification"
 											   object:nil];
 
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	if (@available(iOS 15.0, *)) {
+		// Configure a simple game controller with dPad and A and B buttons
+		_configDpad = [[GCVirtualControllerConfiguration alloc] init];
+		_configDpad.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_configThumbstick = [[GCVirtualControllerConfiguration alloc] init];
+		_configThumbstick.elements = [[NSSet alloc] initWithObjects:GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
+		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
+		_currentController = _virtualControllerThumbstick;
+	}
+#endif
+#endif
+	_currentDpadXValue = 0;
+	_currentDpadYValue = 0;
 	return self;
+}
+
+// Undocumented way to retreive the GCControllerView.
+// Drill down the layer structure to get the GCControllerView.
+// The view layers for iPhones are:
+// - TransitionView
+//   - DropShadowView
+//     - LayoutContainerView
+//       - ContainerView
+// iPads have an additional layer under the ContainerView
+#if TARGET_OS_IOS
+- (BOOL)setGCControllerViewProperties:(NSArray<UIView*>*)subviews {
+	BOOL stop = NO;
+	for (UIView *view in subviews) {
+		if ([[view classForCoder] isEqual:NSClassFromString(@"GCControllerView")]) {
+			// Set the frame alpha to the user specified value
+			// to make the virtual controller more transparent
+			view.alpha = ((float)ConfMan.getInt("gamepad_controller_opacity") / 10.0);
+
+			// Since the iOS7 view controller frame is adjusted for the safe area, the same
+			// has to be done for the gamepad controller view. One could think that subviews
+			// would adjust automatically but it seems that the gamepad controller buttons
+			// can be positioned outside the device screen if not adjusting manually.
+			if (@available(iOS 11.0, *)) {
+				UIEdgeInsets insets = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
+				UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
+
+				// Set anchor point to lower right corner
+				view.layer.anchorPoint = CGPointMake(1, 1);
+
+				// Specify the position of the view layer from the anchor point
+				if (orientation == UIInterfaceOrientationLandscapeLeft) {
+					view.layer.position = CGPointMake(view.frame.size.width, view.layer.position.y);
+				} else if (orientation == UIInterfaceOrientationLandscapeRight) {
+					// When a device with e.g. a sensor bar is rotated so the sensor bar
+					// is to the left, we can adjust the anchor point a bit more to the left
+					// to make the left thumb buttons be at the same distance from the screen
+					// border.
+					view.layer.position = CGPointMake(view.frame.size.width - insets.left, view.layer.position.y);
+				}
+			}
+			stop = YES;
+		} else {
+			// Keep drilling
+			stop = [self setGCControllerViewProperties:view.subviews];
+		}
+		if (stop) {
+			break;
+		}
+	}
+	return stop;
+}
+#endif
+
+- (void)virtualController:(bool)connect {
+#if TARGET_OS_IOS
+#ifdef __IPHONE_15_0
+	if (@available(iOS 15.0, *)) {
+		GCVirtualController *controller = ConfMan.getInt("gamepad_controller_directional_input") == kDirectionalInputThumbstick ? _virtualControllerThumbstick : _virtualControllerDpad;
+		if (_currentController != controller) {
+			[_currentController disconnect];
+		}
+
+		if (connect) {
+			[controller connectWithReplyHandler:^(NSError * _Nullable error) {
+				[self setGCControllerViewProperties:[[[UIApplication sharedApplication] keyWindow] subviews]];
+			}];
+			_currentController = controller;
+		}
+		else {
+			[_currentController disconnect];
+			[self setIsConnected:NO];
+		}
+	}
+#endif
+#endif
 }
 
 - (void)controllerDidConnect:(NSNotification *)notification {
@@ -89,6 +199,41 @@
 
 			// Apple's Y values are reversed from ScummVM's
 			[self handleJoystickAxisMotionX:x andY:0-y forJoystick:kGameControllerJoystickRight];
+		};
+
+		_controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
+			// Negative values are left/down, positive are right/up, 0 is no press
+			// Change xValue to only be -1, 0, or 1
+			xValue = xValue < 0.f ? -1.f : xValue > 0.f ? 1.f : 0.f;
+			if (xValue != _currentDpadXValue) {
+				if (_currentDpadXValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_LEFT isPressed:false];
+				} else if (_currentDpadXValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_RIGHT isPressed:false];
+				}
+				if (xValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_LEFT isPressed:true];
+				} else if (xValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_RIGHT isPressed:true];
+				}
+				_currentDpadXValue = xValue;
+			}
+
+			// Change yValue to only be -1, 0, or 1
+			yValue = yValue < 0.f ? -1.f : yValue > 0.f ? 1.f : 0.f;
+			if (yValue != _currentDpadYValue) {
+				if (_currentDpadYValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_DOWN isPressed:false];
+				} else if (_currentDpadYValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_UP isPressed:false];
+				}
+				if (yValue < 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_DOWN isPressed:true];
+				} else if (yValue > 0) {
+					[self handleJoystickButtonAction:Common::JOYSTICK_BUTTON_DPAD_UP isPressed:true];
+				}
+				_currentDpadYValue = yValue;
+			}
 		};
 
 		_controller.extendedGamepad.buttonA.valueChangedHandler = ^(GCControllerButtonInput * _Nonnull button, float value, BOOL pressed) {

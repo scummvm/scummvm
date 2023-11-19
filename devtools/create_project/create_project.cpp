@@ -303,10 +303,20 @@ int main(int argc, char *argv[]) {
 			setup.useWindowsUnicode = true;
 		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
 			setup.useWindowsUnicode = false;
+		} else if (!std::strcmp(argv[i], "--use-windows-subsystem")) {
+			setup.useWindowsSubsystem = true;
 		} else if (!std::strcmp(argv[i], "--use-xcframework")) {
 			setup.useXCFramework = true;
 		} else if (!std::strcmp(argv[i], "--vcpkg")) {
 			setup.useVcpkg = true;
+		} else if (!std::strcmp(argv[i], "--libs-path")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--libs-path\"!\n";
+				return -1;
+			}
+			std::string libsDir = unifyPath(argv[++i]);
+			removeTrailingSlash(libsDir);
+			setup.libsDir = libsDir;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -405,6 +415,7 @@ int main(int argc, char *argv[]) {
 		// the files, according to the target.
 		setup.defines.push_back("MACOSX");
 		setup.defines.push_back("IPHONE");
+		setup.defines.push_back("SCUMMVM_NEON");
 	} else if (projectType == kProjectMSVC || projectType == kProjectCodeBlocks) {
 		setup.defines.push_back("WIN32");
 		backendWin32 = true;
@@ -588,6 +599,8 @@ int main(int argc, char *argv[]) {
 		// 4610 (object 'class' can never be instantiated - user-defined constructor required)
 		//   "correct" but harmless (as is 4510)
 		//
+		// 4324 (structure was padded due to alignment specifier)
+		//
 		////////////////////////////////////////////////////////////////////////////
 
 		globalWarnings.push_back("4068");
@@ -597,6 +610,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
 		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4324");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
@@ -741,7 +755,10 @@ void displayHelp(const char *exe) {
 	        "                            (default: true)\n"
 	        " --use-windows-ansi         Use Windows ANSI APIs\n"
 	        "                            (default: false)\n"
-	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built SCUMMVM_LIBS\n"
+	        " --use-windows-subsystem    Use Windows subsystem instead of Console\n"
+	        " --libs-path path           Specify the path of pre-built libraries instead of using the\n"
+			"                            " LIBS_DEFINE " environment variable\n "
+	        " --vcpkg                    Use vcpkg-provided libraries instead of pre-built libraries\n"
 	        "                            (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
@@ -1305,6 +1322,55 @@ void splitPath(const std::string &path, std::string &dir, std::string &file) {
 	file = (sep == std::string::npos) ? std::string() : path.substr(sep + 1);
 }
 
+bool calculatePchPaths(const std::string &sourceFilePath, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude, char separator, std::string &outPchIncludePath, std::string &outPchFilePath, std::string &outPchFileName) {
+	std::string compareName, extensionName;
+	splitFilename(sourceFilePath, compareName, extensionName);
+
+	// Is this file excluded?
+	if (std::find(pchExclude.begin(), pchExclude.end(), compareName) != pchExclude.end())
+		return false;
+
+	size_t lastDelimiter = sourceFilePath.find_last_of(separator);
+	if (lastDelimiter == std::string::npos)
+		lastDelimiter = 0;
+
+	std::string pchDirectory = sourceFilePath.substr(0, lastDelimiter);
+
+	if (std::find(pchDirs.begin(), pchDirs.end(), pchDirectory) == pchDirs.end())
+		return false;
+
+	// This file uses a PCH
+	if (pchDirectory.size() < pchIncludeRoot.size() || pchDirectory.substr(0, pchIncludeRoot.size()) != pchIncludeRoot) {
+		error("PCH prefix for file '" + sourceFilePath + "' wasn't located under PCH include root '" + pchIncludeRoot + "'");
+	}
+
+	size_t pchDirNamePos = pchDirectory.find_last_of(separator);
+	if (pchDirNamePos == std::string::npos)
+		pchDirNamePos = 0;
+	else
+		pchDirNamePos++;
+
+	std::string pchFileName = pchDirectory.substr(pchDirNamePos) + "_pch.h";
+
+	std::string pchPath = (pchDirectory + separator + pchFileName);
+
+	// Convert to the local file prefix
+	std::string includePath = pchPath.substr(pchIncludeRoot.size());
+
+	if (separator != '/') {
+		for (std::string::iterator ch = includePath.begin(), chEnd = includePath.end(); ch != chEnd; ++ch) {
+			if (*ch == separator)
+				*ch = '/';
+		}
+	}
+
+	outPchIncludePath = includePath;
+	outPchFilePath = pchPath;
+	outPchFileName = pchFileName;
+
+	return true;
+}
+
 std::string basename(const std::string &fileName) {
 	const std::string::size_type slash = fileName.find_last_of('/');
 	if (slash == std::string::npos)
@@ -1572,7 +1638,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	createWorkspace(setup);
 
-	StringList in, ex;
+	StringList in, ex, pchDirs, pchEx;
 
 	// Create project files
 	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
@@ -1581,11 +1647,13 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		// Retain the files between engines if we're creating a single project
 		in.clear();
 		ex.clear();
+		pchDirs.clear();
+		pchEx.clear();
 
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
-		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
-		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createProjectFile(i->first, i->second, setup, moduleDir, in, ex, setup.srcDir + targetFolder, pchDirs, pchEx);
 	}
 
 	// Create engine-detection submodules.
@@ -1609,37 +1677,40 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		}
 
 		for (std::vector<std::string>::const_iterator i = detectionModuleDirs.begin(), end = detectionModuleDirs.end(); i != end; ++i) {
-			createModuleList(*i, setup.defines, setup.testDirs, in, ex, true);
+			StringList tempPchDirs, tempSchEx;	// No PCH for detection
+			createModuleList(*i, setup.defines, setup.testDirs, in, ex, tempPchDirs, tempSchEx, true);
 		}
 
-		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex);
+		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex, "", StringList(), StringList());
 	}
 
 	if (!setup.devTools) {
 		// Last but not least create the main project file.
 		in.clear();
 		ex.clear();
+		pchDirs.clear();
+		pchEx.clear();
 		// File list for the Project file
-		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/formats", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/common/lua", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex);
-		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex);
+		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/compression", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/formats", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/common/lua", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/engines", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/graphics", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/gui", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/audio", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/video", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/image", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
+		createModuleList(setup.srcDir + "/math", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 
 		if (getFeatureBuildState("mt32emu", setup.features))
-			createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex);
+			createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 
 		if (setup.tests) {
-			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex);
+			createModuleList(setup.srcDir + "/test", setup.defines, setup.testDirs, in, ex, pchDirs, pchEx);
 		} else {
 			// Resource files
 			addResourceFiles(setup, in, ex);
@@ -1657,13 +1728,14 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.MKV");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.TINYGL");
 			in.push_back(setup.srcDir + "/LICENSES/COPYING.GLAD");
+			in.push_back(setup.srcDir + "/LICENSES/CatharonLicense.txt");
 			in.push_back(setup.srcDir + "/COPYRIGHT");
 			in.push_back(setup.srcDir + "/NEWS.md");
 			in.push_back(setup.srcDir + "/README.md");
 		}
 
 		// Create the main project file.
-		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
+		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex, setup.srcDir + '/', pchDirs, pchEx);
 	}
 
 	// Create other misc. build files
@@ -1759,7 +1831,7 @@ std::string ProjectProvider::createUUID(const std::string &name) const {
 	}
 
 	// Hash project name
-	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), name.length(), 0)) {
+	if (!CryptHashData(hHash, (const BYTE *)name.c_str(), (DWORD)name.length(), 0)) {
 		CryptDestroyHash(hHash);
 		CryptReleaseContext(hProv, 0);
 		error("CryptHashData failed");
@@ -1812,15 +1884,16 @@ std::string ProjectProvider::getLastPathComponent(const std::string &path) {
 
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ostream &projectFile,
 										const StringList &includeList, const StringList &excludeList,
+										const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude,
 										const std::string &filePrefix) {
 	FileNode *files = scanFiles(dir, includeList, excludeList);
 
-	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/');
+	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/', pchIncludeRoot, pchDirs, pchExclude);
 
 	delete files;
 }
 
-void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, bool forDetection) const {
+void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &testDirs, StringList &includeList, StringList &excludeList, StringList &pchDirs, StringList &pchExclude, bool forDetection) const {
 	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
@@ -1930,6 +2003,68 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 						// has not yet been added to the include list.
 						excludeList.push_back(filename);
 					}
+					++i;
+				}
+			}
+		} else if (*i == "MODULE_PCH_DIRS") {
+			if (tokens.size() < 3)
+				error("Malformed MODULE_PCH_DIRS definition in " + moduleMkFile);
+			++i;
+
+			// This is not exactly correct, for example an ":=" would usually overwrite
+			// all already added files, but since we do only save the files inside
+			// includeList or excludeList currently, we couldn't handle such a case easily.
+			// (includeList and excludeList should always preserve their entries, not added
+			// by this function, thus we can't just clear them on ":=" or "=").
+			// But hopefully our module.mk files will never do such things anyway.
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed MODULE_PCH_DIRS definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					std::string filename = moduleDir;
+					if ((*i) != ".")
+						filename += "/" + unifyPath(*i);
+
+					if (shouldInclude.top())
+						pchDirs.push_back(filename);
+
+					++i;
+				}
+			}
+		} else if (*i == "MODULE_PCH_EXCLUDE") {
+			if (tokens.size() < 3)
+				error("Malformed MODULE_PCH_EXCLUDE definition in " + moduleMkFile);
+			++i;
+
+			// This is not exactly correct, for example an ":=" would usually overwrite
+			// all already added files, but since we do only save the files inside
+			// includeList or excludeList currently, we couldn't handle such a case easily.
+			// (includeList and excludeList should always preserve their entries, not added
+			// by this function, thus we can't just clear them on ":=" or "=").
+			// But hopefully our module.mk files will never do such things anyway.
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed MODULE_PCH_EXCLUDE definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+
+					if (shouldInclude.top())
+						pchExclude.push_back(filename);
+
 					++i;
 				}
 			}

@@ -32,10 +32,10 @@ protected:
 	SessionRequest *_request;
 
 public:
-	Session(Common::String prefix = "");
+	Session(const Common::String &prefix = Common::String());
 	~Session();
 
-	SessionRequest *get(Common::String url, Common::String localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
+	SessionRequest *get(const Common::String &url, const Common::String &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
 	/**
 	 * @brief Gracefully close the session
 	 *

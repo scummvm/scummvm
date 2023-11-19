@@ -291,7 +291,15 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 		}
 		cmdLine += "bin/&quot; ";
 	} else {
-		cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
+		std::string libsPath;
+		if (setup.libsDir.empty())
+			libsPath = "%" LIBS_DEFINE "%";
+		else
+			libsPath = convertPathToWin(setup.libsDir);
+
+		cmdLine += " &quot;";
+		cmdLine += libsPath;
+		cmdLine += "/lib/";
 		cmdLine += getMSVCArchName(arch);
 		cmdLine += "/$(Configuration)&quot; ";
 	}

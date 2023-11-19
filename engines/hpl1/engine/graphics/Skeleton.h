@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 
@@ -40,7 +40,7 @@ class cBone;
 typedef Common::Array<cBone *> tBoneVec;
 typedef tBoneVec::iterator tBoneVecIt;
 
-typedef Hpl1::Std::map<tString, int> tBoneIdxNameMap;
+typedef Common::StableMap<tString, int> tBoneIdxNameMap;
 typedef tBoneIdxNameMap::iterator tBoneIdxNameMapIt;
 
 class cSkeleton {

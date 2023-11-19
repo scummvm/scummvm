@@ -359,7 +359,8 @@ void SdlGraphicsManager::saveScreenshot() {
 			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
 
 #ifdef USE_OSD
-		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+		if (!ConfMan.getBool("disable_saved_screenshot_osd"))
+			displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
 #endif
 	} else {
 		if (screenshotsPath.empty())
@@ -476,15 +477,17 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	act->setCustomBackendActionEvent(kActionDecreaseScaleFactor);
 	keymap->addAction(act);
 
-	act = new Action("FLTN", _("Switch to the next scaler"));
-	act->addDefaultInputMapping("C+A+0");
-	act->setCustomBackendActionEvent(kActionNextScaleFilter);
-	keymap->addAction(act);
+	if (hasFeature(OSystem::kFeatureScalers)) {
+		act = new Action("FLTN", _("Switch to the next scaler"));
+		act->addDefaultInputMapping("C+A+0");
+		act->setCustomBackendActionEvent(kActionNextScaleFilter);
+		keymap->addAction(act);
 
-	act = new Action("FLTP", _("Switch to the previous scaler"));
-	act->addDefaultInputMapping("C+A+9");
-	act->setCustomBackendActionEvent(kActionPreviousScaleFilter);
-	keymap->addAction(act);
+		act = new Action("FLTP", _("Switch to the previous scaler"));
+		act->addDefaultInputMapping("C+A+9");
+		act->setCustomBackendActionEvent(kActionPreviousScaleFilter);
+		keymap->addAction(act);
+	}
 
 	return keymap;
 }

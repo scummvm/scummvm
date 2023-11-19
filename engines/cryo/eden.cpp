@@ -6591,8 +6591,8 @@ void EdenGame::loadgame(char *name) {
 #define OFSIN(val, base, typ) do { if ((void*)(val) != NULLPTR)   (val) = (typ*)((char*)(val) + (size_t)(base)); else (val) = 0; } while (false)
 
 void EdenGame::syncGlobalPointers(Common::Serializer s) {
-	uint32 dialogIdx, nextDialogIdx, narratorDialogIdx, lastDialogIdx, tapeIdx, nextRoomIconIdx, roomIdx;
-	uint32 citaAreaFirstRoomIdx, areaIdx, lastAreaIdx, curAreaIdx, characterIdx, roomCharacterIdx;
+	uint32 dialogIdx = 0, nextDialogIdx = 0, narratorDialogIdx = 0, lastDialogIdx = 0, tapeIdx = 0, nextRoomIconIdx = 0, roomIdx = 0;
+	uint32 citaAreaFirstRoomIdx = 0, areaIdx = 0, lastAreaIdx = 0, curAreaIdx = 0, characterIdx = 0, roomCharacterIdx = 0;
 
 	if (s.isSaving()) {
 		IDXOUT(_globals->_dialogPtr, _gameDialogs, Dialog, dialogIdx);
@@ -6687,7 +6687,7 @@ void EdenGame::syncGlobalValues(Common::Serializer s) {
 	s.syncAsByte(_globals->_endGameFlag);
 	s.syncAsByte(_globals->_lastInfo);
 
-	byte autoDialog;
+	byte autoDialog = 0;
 	if (s.isSaving())
 		autoDialog = _globals->_autoDialog ? 1 : 0;
 	s.syncAsByte(autoDialog);
@@ -6806,7 +6806,7 @@ void EdenGame::syncGlobalValues(Common::Serializer s) {
 }
 
 void EdenGame::syncCitadelRoomPointers(Common::Serializer s) {
-	uint32 citadelRoomIdx;
+	uint32 citadelRoomIdx = 0;
 	for (int i = 0; i < 12; i++) {
 		if (s.isSaving()) {
 			IDXOUT(_areasTable[i]._citadelRoomPtr, _gameRooms, Room, citadelRoomIdx);
@@ -6818,10 +6818,10 @@ void EdenGame::syncCitadelRoomPointers(Common::Serializer s) {
 }
 
 void EdenGame::syncTapePointers(Common::Serializer s) {
-	int persoIdx;
+	int persoIdx = 0;
 
 	for (int i = 0; i < 16; i++) {
-		int index, subIndex;
+		int index = 0, subIndex = 0;
 		if (s.isSaving()) {
 			index = NULLPTR;
 			char *closerPtr = nullptr;

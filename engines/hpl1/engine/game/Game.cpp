@@ -93,7 +93,7 @@ cSetupVarContainer::cSetupVarContainer() {
 //-----------------------------------------------------------------------
 
 void cSetupVarContainer::AddString(const tString &asName, const tString &asValue) {
-	Hpl1::Std::map<tString, tString>::value_type val(asName, asValue);
+	Common::StableMap<tString, tString>::value_type val(asName, asValue);
 	m_mapVars.insert(val);
 }
 
@@ -110,7 +110,7 @@ void cSetupVarContainer::AddBool(const tString &asName, bool abValue) {
 //-----------------------------------------------------------------------
 
 const tString &cSetupVarContainer::GetString(const tString &asName) {
-	Hpl1::Std::map<tString, tString>::iterator it = m_mapVars.find(asName);
+	Common::StableMap<tString, tString>::iterator it = m_mapVars.find(asName);
 	if (it == m_mapVars.end())
 		return msBlank;
 	else

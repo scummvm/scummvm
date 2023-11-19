@@ -33,11 +33,11 @@ namespace Trecision {
 class TrecisionEngine;
 
 struct StackText {
-	uint16 _x;
-	uint16 _y;
-	uint16 _textColor;
+	uint16 _x = 0;
+	uint16 _y = 0;
+	uint16 _textColor = 0;
 	Common::String _text;
-	bool _clear;
+	bool _clear = false;
 };
 
 class TextManager {

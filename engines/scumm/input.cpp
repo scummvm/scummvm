@@ -27,6 +27,7 @@
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
@@ -104,6 +105,14 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 #endif
 
 void ScummEngine::parseEvent(Common::Event event) {
+	// Handle Macintosh events before scaling the mouse coordinates.
+	//
+	// TODO: Don't allow menu while message banner is active. Don't allow
+	// message banner while menu is active.
+
+	if (_macGui && _macGui->handleEvent(event))
+		return;
+
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (event.customType >= kScummActionCount) {
@@ -181,14 +190,16 @@ void ScummEngine::parseEvent(Common::Event event) {
 		// remap keypad keys to always have a corresponding ASCII value.
 		// Normally, keypad keys would only have an ASCII value when
 		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
-		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+
+		if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed = event.kbd;
 			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
 		}
 
-		if (event.kbd.ascii >= 512) {
+		if (_keyPressed.ascii >= 512) {
 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 		} else {
-			_keyDownMap[event.kbd.ascii] = false;
+			_keyDownMap[_keyPressed.ascii] = false;
 
 			// Due to some weird bug with capslock key pressed
 			// generated keydown event is for lower letter but
@@ -270,6 +281,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 	case Common::EVENT_QUIT:
+	{
 		// Some backends send a key stroke event and the quit
 		// event which was triggered by the keystroke. Clear the key.
 		clearClickedStatus();
@@ -284,7 +296,21 @@ void ScummEngine::parseEvent(Common::Event event) {
 				getEventManager()->resetQuit();
 				getEventManager()->resetReturnToLauncher();
 				if (!_messageBannerActive) {
-					queryQuit(exitType);
+					if (_macGui) {
+						if (!(ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) ||
+							_macGui->runQuitDialog()) {
+							_quitByGUIPrompt = true;
+							if (exitType) {
+								Common::Event fakeEvent;
+								fakeEvent.type = Common::EVENT_RETURN_TO_LAUNCHER;
+								getEventManager()->pushEvent(fakeEvent);
+							} else {
+								quitGame();
+							}
+						}
+					} else {
+						queryQuit(exitType);
+					}
 					_closeBannerAndQueryQuitFlag = false;
 				} else {
 					_closeBannerAndQueryQuitFlag = true;
@@ -295,6 +321,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			}
 		}
 		break;
+	}
 	default:
 		break;
 	}
@@ -968,7 +995,14 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		restartKeyPressed &= !isSegaCD && !isNES;
 
 		if (restartKeyPressed) {
-			queryRestart();
+			if (_macGui) {
+				if (_macGui->runRestartDialog()) {
+					restart();
+				}
+			} else {
+				queryRestart();
+			}
+
 			return;
 		}
 
@@ -1057,7 +1091,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
 			} while (ks.ascii == '+' || ks.ascii == '-');
 
-			if (_game.version > 6)
+			if (_game.version > 6 || _game.platform == Common::Platform::kPlatformFMTowns)
 				clearBanner();
 
 			pt.clear();
@@ -1128,6 +1162,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			// We don't have original menus for Mac versions of LOOM and INDY3, so let's just open the GMM...
 			openMainMenuDialog();
 			return;
+		}
+
+		if (enhancementEnabled(kEnhUIUX) && _game.id == GID_LOOM &&
+			mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_d && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+			// Drafts menu
+			showDraftsInventory();
 		}
 
 		if (snapScrollKeyEnabled) {
@@ -1269,16 +1309,16 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		mainmenuKeyEnabled = true;
 
 	if (mainmenuKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
-		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
+		if (VAR_PRE_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_PRE_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 		openMainMenuDialog();		// Display global main menu
 
 		// reload options
 		_enableAudioOverride = ConfMan.getBool("audio_override");
 
-		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
-			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
+		if (VAR_POST_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+			runScript(VAR(VAR_POST_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 	} else if (restartKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 		confirmRestartDialog();
@@ -1288,7 +1328,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else if (talkstopKeyEnabled && lastKeyHit.ascii == '.') {
 		_talkDelay = 0;
-		if (_sound->_sfxMode & 2)
+		if (_sound->_digiSndMode & DIGI_SND_MODE_TALKIE)
 			stopTalk();
 
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.hasFlags(0))) {

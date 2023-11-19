@@ -21,7 +21,7 @@
 
 #include "common/array.h"
 #include "common/compression/clickteam.h"
-#include "common/compression/gzio.h"
+#include "common/compression/deflate.h"
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/substream.h"
@@ -384,12 +384,12 @@ ClickteamInstaller* ClickteamInstaller::openPatch(Common::SeekableReadStream *st
 			}
 			uint32 uncompressedPayloadLen = READ_LE_UINT32(compressedPayload);
 			byte *uncompressedPayload = new byte[uncompressedPayloadLen];
-			int32 ret = Common::GzioReadStream::clickteamDecompress(uncompressedPayload,
-										uncompressedPayloadLen,
-										compressedPayload + 4,
-										compressedPayloadLen - 4);
+			bool ret = inflateClickteam(uncompressedPayload,
+			                             uncompressedPayloadLen,
+			                             compressedPayload + 4,
+			                             compressedPayloadLen - 4);
 			delete[] compressedPayload;
-			if (ret < 0) {
+			if (!ret) {
 				warning("Decompression error for tag 0x%04x", tagId);
 				continue;
 			}
@@ -474,7 +474,7 @@ int ClickteamInstaller::listMembers(ArchiveMemberList &list) const {
 	for (Common::HashMap<Common::String, ClickteamFileDescriptor, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::const_iterator i = _files.begin(), end = _files.end();
 	     i != end; ++i) {
 		if (!i->_value._isReferenceMissing) {
-			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, *this)));
 			++members;
 		}
 	}
@@ -491,7 +491,7 @@ const ArchiveMemberPtr ClickteamInstaller::getMember(const Path &path) const {
 	if (el._isReferenceMissing)
 		return nullptr;
 
-	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, this));
+	return Common::SharedPtr<Common::ArchiveMember>(new GenericArchiveMember(el._fileName, *this));
 }
 
 Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Common::String& translated) const {
@@ -547,7 +547,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 				return Common::SharedArchiveContents();
 			}
 
-			uncompressedPatchStream.reset(GzioReadStream::openClickteam(compressedPatchStream, patchUncompressedSize, DisposeAfterUse::YES));
+			uncompressedPatchStream.reset(wrapClickteamReadStream(compressedPatchStream, DisposeAfterUse::YES, patchUncompressedSize));
 		} else {
 			uncompressedPatchStream.reset(new Common::SafeSeekableSubReadStream(
 							      _stream.get(), patchStart, patchStart + patchCompressedSize));
@@ -566,7 +566,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 				return Common::SharedArchiveContents();
 			}
 
-			uncompressedLiteralsStream.reset(GzioReadStream::openClickteam(compressedLiteralsStream, literalsUncompressedSize, DisposeAfterUse::YES));
+			uncompressedLiteralsStream.reset(wrapClickteamReadStream(compressedLiteralsStream, DisposeAfterUse::YES, literalsUncompressedSize));
 		} else {
 			uncompressedLiteralsStream.reset(new Common::SafeSeekableSubReadStream(
 								 _stream.get(), literalsStart, literalsStart + literalsCompressedSize));
@@ -587,7 +587,7 @@ Common::SharedArchiveContents ClickteamInstaller::readContentsForPath(const Comm
 			return Common::SharedArchiveContents();
 		}
 
-		Common::ScopedPtr<Common::SeekableReadStream> uncStream(GzioReadStream::openClickteam(subStream, desc._uncompressedSize, DisposeAfterUse::YES));
+		Common::ScopedPtr<Common::SeekableReadStream> uncStream(wrapClickteamReadStream(subStream, DisposeAfterUse::YES, desc._uncompressedSize));
 		if (!uncStream) {
 			warning("Decompression error");
 			return Common::SharedArchiveContents();

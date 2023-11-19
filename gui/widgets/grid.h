@@ -157,6 +157,7 @@ public:
 	int				_gridItemWidth;
 	int				_gridXSpacing;
 	int				_gridYSpacing;
+	int				_thumbnailMargin;
 
 	bool			_isTitlesVisible;
 

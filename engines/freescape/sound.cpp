@@ -38,7 +38,8 @@ void FreescapeEngine::playSound(int index, bool sync) {
 		_syncSound = sync;
 		return;
 	}
-	waitForSounds();
+	if (_syncSound)
+		waitForSounds();
 	switch (index) {
 	case 1:
 		if (_usePrerecordedSounds) {
@@ -239,6 +240,11 @@ void FreescapeEngine::playMusic(const Common::String filename) {
 }
 
 void FreescapeEngine::playSoundFx(int index, bool sync) {
+	if (_soundsFx.size() == 0) {
+		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
+		return;
+	}
+
 	int size = _soundsFx[index]->size;
 	int sampleRate = _soundsFx[index]->sampleRate;
 	byte *data = _soundsFx[index]->data;
@@ -262,8 +268,13 @@ void FreescapeEngine::stopAllSounds() {
 }
 
 void FreescapeEngine::waitForSounds() {
-	while (!_speaker->endOfStream())
-		g_system->delayMillis(10);
+	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+		while (_mixer->isSoundIDActive(-1))
+			g_system->delayMillis(10);
+	else {
+		while (!_speaker->endOfStream())
+			g_system->delayMillis(10);
+	}
 }
 
 bool FreescapeEngine::isPlayingSound() {

@@ -46,6 +46,7 @@
 #include "watchmaker/ll/ll_sound.h"
 #include "watchmaker/ll/ll_system.h"
 #include "watchmaker/renderer.h"
+#include "common/system.h"
 
 namespace Watchmaker {
 
@@ -281,11 +282,10 @@ void RefreshUpdate(Init &init) {
 }
 
 void ScrollLog(Init &init, int Add) {
-	int LastPos, Sign, i;
+	int Sign, i;
 
 	if (Add == 0) return;
 
-	LastPos = CurrentLogPos;
 	Sign = abs(Add) / Add;
 
 	for (i = 0; i < abs(Add); i++) {
@@ -314,12 +314,12 @@ void ScrollLog(Init &init, int Add) {
 }
 
 
-void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int PDAScrollLine, int IndentX) {
+void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int _PDAScrollLine, int IndentX) {
 	t2dWINDOW *w = &t2dWin[T2D_WIN_PDA_LOG];
 	int j;
 
 	//Data
-	if ((!(init.PDALog[i].flags & PDA_MENU)) && ((i != CurrentLogPos) || (PDAScrollLine == 0))) {
+	if ((!(init.PDALog[i].flags & PDA_MENU)) && ((i != CurrentLogPos) || (_PDAScrollLine == 0))) {
 		strcpy(w->text[T2D_TEXT_PDA_LOG_DATA_START + (*CurDate)].text, init.PDALog[i].info.c_str());
 		w->bm[T2D_BM_PDA_LOG_DATA_START + (*CurDate)].py = T2D_PDA_LOG_YI + (*RealLine) * 15;
 		w->bm[T2D_BM_PDA_LOG_DATA_START + (*CurDate)].tnum &= ~T2D_BM_OFF;
@@ -328,7 +328,7 @@ void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int 
 
 	//Testo
 	for (j = 0; j <= init.PDALog[i].lines; j++) {
-		if ((i == CurrentLogPos) && (j < PDAScrollLine)) continue;
+		if ((i == CurrentLogPos) && (j < _PDAScrollLine)) continue;
 
 		if (j == init.PDALog[i].lines) {
 			(*RealLine)++;
@@ -363,7 +363,7 @@ void WriteLog(Init &init, int i, int *CurDate, int *CurLine, int *RealLine, int 
 #define PDA_LAST_LINE   2
 
 
-int RefreshLogMenu(Init &init, int *Log, int *NumLog, int PDAScrollLine) {
+int RefreshLogMenu(Init &init, int *Log, int *NumLog, int _PDAScrollLine) {
 	int i;
 	int CurDate = 0, CurLine = 0, RealLine = 0;
 	t2dWINDOW *w = &t2dWin[T2D_WIN_PDA_LOG];
@@ -373,7 +373,7 @@ int RefreshLogMenu(Init &init, int *Log, int *NumLog, int PDAScrollLine) {
 
 		CurrentPDALogs[(*NumLog)++] = &init.PDALog[PDALogSorted[*Log].PDALogInd];
 
-		WriteLog(init, PDALogSorted[*Log].PDALogInd, &CurDate, &CurLine, &RealLine, PDAScrollLine, PDALogSorted[*Log].IndentX);
+		WriteLog(init, PDALogSorted[*Log].PDALogInd, &CurDate, &CurLine, &RealLine, _PDAScrollLine, PDALogSorted[*Log].IndentX);
 
 		if (!(init.PDALog[PDALogSorted[*Log].PDALogInd].flags & PDA_MENU)) init.PDALog[PDALogSorted[*Log].PDALogInd].flags &= ~PDA_UPDATE;
 
@@ -1273,7 +1273,6 @@ void doT2DMouse(WGame &game) {
 	char Name[MAX_PATH];
 	//Variabili per gestione scrolling
 	int32 StartY = 0, DimY = 0;
-	SYSTEMTIME sysTime;
 	char Text[1000];
 	int16 mouse_x, mouse_y;
 	Init &init = game.init;
@@ -1354,7 +1353,7 @@ void doT2DMouse(WGame &game) {
 			}*/
 		}
 
-		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) |
+		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) ||
 		        (T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_EMAIL_VIEWER)) {
 			GetDDBitmapExtends(renderer, &t, &w->bm[a]);
 
@@ -2892,7 +2891,7 @@ void doT2DMouse(WGame &game) {
 							for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
 								int afret;
 
-								sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+								snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
 
 								t3dForceNOFastFile(1);
 								afret = t3dAccessFile(Name);
@@ -2907,12 +2906,15 @@ void doT2DMouse(WGame &game) {
 
 						if (optionsSlot == -1) break; //Spazi finiti
 
-						GetLocalTime(&sysTime);
-						sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.hour, sysTime.minutes,
-						        sysTime.seconds, sysTime.day, sysTime.month, sysTime.year);
+						{
+							TimeDate sysTime;
+							g_system->getTimeAndDate(sysTime);
+							snprintf(Text, 1000, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.tm_hour, sysTime.tm_min,
+									sysTime.tm_sec, sysTime.tm_mday, sysTime.tm_mon, sysTime.tm_year);
+						}
 						if (DataSave(Text, (uint8) optionsSlot)) {
-							sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
-							sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
+							snprintf(Text, 1000, "%stemp.tmp", game.workDirs._gameDir.c_str());
+							snprintf(Name, MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
 							CopyFile(Text, Name, FALSE);
 						} else {
 							DebugLogFile("DataSave(slot %d) Failed. Quitting ...", optionsSlot);
@@ -2926,7 +2928,7 @@ void doT2DMouse(WGame &game) {
 					case T2D_BT_OPTIONS_LOAD:
 						bShowOnlyLoadWindow = 0;
 						i = Saves[optionsCurPos + optionsWhat].NFile;
-						sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
+						snprintf(Name, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
 						if (!DataLoad(game, "", (uint8) i)) {
 							DebugLogFile("DataLoad(slot %d) Failed. Quitting ...", i);
 							CloseSys(game);
@@ -4410,14 +4412,14 @@ void doT2D(WGame &game) {
 			w->text[T2D_TEXT_PDA_MAIN_TIME].font = FontKind::PDA;
 			w->text[T2D_TEXT_PDA_MAIN_TIME].color = GREEN_FONT;
 			if (t3dCurTime >= 1300) {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime - 1200);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime - 1200);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[2] = ':';
 				strcat(w->text[T2D_TEXT_PDA_MAIN_TIME].text, " PM");
 			} else {
-				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime);
+				snprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, T2D_MAX_TEXTS_IN_WIN, "%04d", t3dCurTime);
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[5] = 0;
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[4] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[3];
 				w->text[T2D_TEXT_PDA_MAIN_TIME].text[3] = w->text[T2D_TEXT_PDA_MAIN_TIME].text[2];
@@ -5089,7 +5091,7 @@ void doT2D(WGame &game) {
 			                        t2dWin[i].bt[j].tnum = 0;
 			                    }*/
 		}
-		memset(t2dWin, 0, sizeof(t2dWin));
+		for (uint k = 0; k < ARRAYSIZE(t2dWin); k++) t2dWin[k].reset();
 		memset(WinActive, 0, sizeof(WinActive));
 
 		switch (bT2DActive) {
@@ -5454,8 +5456,8 @@ void CaricaSaves(WGame &game) {
 	t3dForceNOFastFile(1);
 
 	for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
-		sprintf(DataFile, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
-		sprintf(GfxFile,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(DataFile, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+		snprintf(GfxFile,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), i + 1);
 
 //		se non facessi cosi' la funzione t3dOpenFile() non trovando il file sparerebbe mille warning
 		if (!t3dAccessFile(DataFile)) continue;
@@ -5540,8 +5542,8 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 
 		if (Pos >= NSaves) break;
 
-		sprintf(DataFileName, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
-		sprintf(GfxFileName,  "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(DataFileName, MAX_PATH, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
+		snprintf(GfxFileName,  MAX_PATH, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), Saves[Pos].NFile);
 
 		t3dForceNOFastFile(1);
 		if (!t3dAccessFile(DataFileName)) {
@@ -5561,7 +5563,7 @@ void RefreshSaveImg(WGame &game, int Pos, uint8 Type) {
 		w->bm[T2D_BM_OPTIONS_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 
 		//Aggiorna la descrizione
-		sprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
+		snprintf(w->text[T2D_TEXT_OPTIONS_SAVE_START + i].text, T2D_MAX_TEXTS_IN_WIN, "%02d:%02d %02d/%02d/%04d", Saves[Pos].Hour, Saves[Pos].Min, Saves[Pos].Day, Saves[Pos].Month, Saves[Pos].Year);
 		w->bm[T2D_BM_OPTIONS_TEXT_SAVE_START + i].tnum &= ~T2D_BM_OFF;
 		strcpy(optionsSaves[i], DataFileName);
 

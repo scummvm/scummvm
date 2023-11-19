@@ -65,8 +65,6 @@ Common::String SciTTS::getMessage(const Common::String &text) {
 	// KQ6 or spaces in KQ5, so that a calligraphic first letter is drawn instead.
 	if (_curMessage.size() > 0 && text.size() > 0 && text.hasSuffix(_curMessage.substr(1)))
 		message = _curMessage;
-	else
-		message = text;
 
 	// Strip color code characters in SCI1.1
 	if (getSciVersion() == SCI_VERSION_1_1) {

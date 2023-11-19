@@ -197,10 +197,8 @@ void Screen::clear() {
 
 void Screen::drawWideScreenBars(int16 barSize) const {
 	if (barSize > 0) {
-		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
-		_vm->_system->unlockScreen();
-		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
-		_vm->_system->unlockScreen();
+		_vm->_system->fillScreen(Common::Rect(0, 0, 640, barSize), 0);
+		_vm->_system->fillScreen(Common::Rect(0, 480 - barSize, 640, 480), 0);
 	}
 }
 

@@ -30,7 +30,7 @@ SaveLoad_v2::SaveFile SaveLoad_v2::_saveFiles[] = {
 	{  "cat.inf", kSaveModeSave, nullptr, "savegame"},
 	{  "cat.cat", kSaveModeSave, nullptr, "savegame"}, // Alternative file
 	{ "save.inf", kSaveModeSave, nullptr, "temporary sprite"},
-	{ "bloc.inf", kSaveModeSave, nullptr, "notes"}
+	{ "bloc.inf", kSaveModeSave, nullptr, "notes"},
 };
 
 

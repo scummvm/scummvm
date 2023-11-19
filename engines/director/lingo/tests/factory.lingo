@@ -6,6 +6,28 @@ set notAMethod = 0
 scummvmAssertError aim2(notAMethod) -- should error
 aim2("notAMethod") -- should run fallback handler
 
+-- method call syntax without parens
+GrammarFactory mSetStatusToArg "foo"
+scummvmAssertEqual status "foo"
+GrammarFactory mSetStatusToArg2 "foo", "bar"
+scummvmAssertEqual status "bar"
+
+-- method call syntax with parens and a comma
+GrammarFactory(mSetStatusToArg, "foo")
+scummvmAssertEqual status "foo"
+GrammarFactory(mSetStatusToArg2, "foo", "bar")
+scummvmAssertEqual status "bar"
+scummvmAssertEqual GrammarFactory(mReturnArg, "foo") "foo"
+scummvmAssertEqual GrammarFactory(mReturnArg2, "foo", "bar") "bar"
+
+-- method call syntax with parens and no comma
+GrammarFactory(mSetStatusToArg "foo")
+scummvmAssertEqual status "foo"
+GrammarFactory(mSetStatusToArg2 "foo", "bar")
+scummvmAssertEqual status "bar"
+scummvmAssertEqual GrammarFactory(mReturnArg "foo") "foo"
+scummvmAssertEqual GrammarFactory(mReturnArg2 "foo", "bar") "bar"
+
 --
 macro AimGun2
 global aim1
@@ -106,3 +128,16 @@ set the locH of sprite 3 to KillLoc
 on aim2 test
     put "fallback worked!"
 end
+
+--
+factory GrammarFactory
+method mSetStatusToArg arg
+    global status
+    set status = arg
+method mSetStatusToArg2 arg1, arg2
+    global status
+    set status = arg2
+method mReturnArg arg
+    return arg
+method mReturnArg2 arg1, arg2
+    return arg2

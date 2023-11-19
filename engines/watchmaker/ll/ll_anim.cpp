@@ -888,8 +888,10 @@ void ProcessATF(WGame &game, int32 an, int32 atf) {
 		break;
 	case ATFM_INCFRAME:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, +1, 1);
+		break;
 	case ATFM_DECFRAME:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, -1, 1);
+		break;
 	case ATFM_START_MOVIE:
 		SetMeshMaterialMovieFrame(h->sub[in - 1].ptr, 0, 1);
 		ChangeMeshMaterialFlag(h->sub[in - 1].ptr, -1, T3D_MATERIAL_MOVIEPAUSED);
@@ -1439,7 +1441,7 @@ void StartAnim(WGame &game, int32 an) {
 	h->flags = 0;
 	h->CurFrame = 0;
 	h->LastFrame = -3;
-	h->LoopStart = -1;
+	h->LoopStart = (uint16)-1;
 	h->LoopEnd = 0;
 	h->LoopMask = 0;
 	for (a = 0; a < MAX_SUBANIMS; a++) {
@@ -1691,8 +1693,9 @@ void ContinueAnim(Init &init, int32 an) {
 void StopObjAnim(WGame &game, int32 obj) {
 	if (!obj) return;
 
-	if ((obj == ocCURPLAYER) || (obj == ocBOTH))
+	if (obj == ocCURPLAYER) {
 		obj = ocDARRELL + CurPlayer;
+	}
 
 	Init &init = game.init;
 //	Se esiste gia' un'animazione sullo stesso oggetto base, la termina

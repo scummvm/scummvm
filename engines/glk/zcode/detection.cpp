@@ -54,8 +54,18 @@ GameDescriptor ZCodeMetaEngine::findGame(const char *gameId) {
 		}
 	}
 	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd = *pd;
+			/*
+			 * Tested against ScummVM 2.8.0git, following entries are confirmed not to be playable
+			 */
+			if (!strcmp(gameId, "bureaucrocy_zcode") ||
+				!strcmp(gameId, "scopa") ||
+				!strcmp(gameId, "sunburst"))
+				gd._supportLevel = kUnstableGame;
+
+			return gd;
+		}
 	}
 
 	return GameDescriptor::empty();

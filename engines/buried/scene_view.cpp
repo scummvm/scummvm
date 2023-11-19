@@ -1182,7 +1182,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		break;
 	case 2: // Push left
 		for (int i = 0; i < DIB_FRAME_WIDTH; i += stripSize) {
-			curBackground->move(-stripSize, 0, curBackground->h);
+			curBackground->move(-static_cast<int>(stripSize), 0, curBackground->h);
 
 			for (int j = 0; j < curBackground->h; j++)
 				memcpy(curBackground->getBasePtr(curBackground->w - (int)stripSize, j), newBackground->getBasePtr(i, j), stripSize * newBackground->format.bytesPerPixel);
@@ -1193,7 +1193,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		break;
 	case 3: // Push up
 		for (int i = 0; i < DIB_FRAME_HEIGHT; i += stripSize) {
-			curBackground->move(0, -stripSize, curBackground->h);
+			curBackground->move(0, -static_cast<int>(stripSize), curBackground->h);
 
 			for (uint j = 0; j < stripSize; j++)
 				memcpy(curBackground->getBasePtr(0, curBackground->h - stripSize + j), newBackground->getBasePtr(0, i + j), newBackground->w * newBackground->format.bytesPerPixel);
@@ -1450,6 +1450,9 @@ bool SceneViewWindow::getCurrentSceneLocation(Location &location) {
 }
 
 bool SceneViewWindow::playSynchronousAnimation(int animationID) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1475,7 +1478,7 @@ bool SceneViewWindow::playSynchronousAnimation(int animationID) {
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
@@ -1555,6 +1558,9 @@ bool SceneViewWindow::playSynchronousAnimationExtern(int animationID) {
 }
 
 bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, int top) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1582,7 +1588,7 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
@@ -1622,6 +1628,9 @@ bool SceneViewWindow::playPlacedSynchronousAnimation(int animationID, int left, 
 }
 
 bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left, int top, int right, int bottom) {
+	if (!_currentScene)
+		return false;
+
 	TempCursorChange cursorChange(kCursorWait);
 
 	Common::Array<AnimEvent> animDatabase = getAnimationDatabase(_currentScene->_staticData.location.timeZone, _currentScene->_staticData.location.environment);
@@ -1652,7 +1661,7 @@ bool SceneViewWindow::playClippedSynchronousAnimation(int animationID, int left,
 	if (_globalFlags.bcTranslateEnabled == 1 && animDatabase[i].audioStreamCount > 1)
 		animationMovie->setAudioTrack(2);
 
-	if (_currentScene && _currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
+	if (_currentScene->movieCallback(this, animationMovie.get(), animationID, MOVIE_START) == SC_FALSE)
 		return false;
 
 	animationMovie->seekToFrame(animDatabase[i].startFrame);
@@ -2343,7 +2352,7 @@ void SceneViewWindow::onPaint() {
 
 		// If we have a sprite, update the prebuffer with it now
 		if (_currentSprite.image && _useSprite)
-			_vm->_gfx->opaqueTransparentBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, 0, _currentSprite.redTrans, _currentSprite.greenTrans, _currentSprite.blueTrans);
+			_vm->_gfx->keyBlit(_preBuffer, _currentSprite.xPos, _currentSprite.yPos, _currentSprite.width, _currentSprite.height, _currentSprite.image, 0, 0, _currentSprite.transColor);
 
 		// Update the screen
 		_vm->_gfx->blit(_preBuffer, _rect.left, _rect.top);

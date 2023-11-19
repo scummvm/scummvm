@@ -189,4 +189,8 @@ bool Player_V3M::getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &
 	return true;
 }
 
+void Player_V3M::overrideQuality(bool lowQuality) {
+	overrideChannelMask(lowQuality ? 01 : 0x1E);
+}
+
 } // End of namespace Scumm

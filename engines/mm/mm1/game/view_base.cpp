@@ -55,6 +55,11 @@ darkness:
 		_isDark = true;
 	}
 
+	// Refresh the view immediately, so things like the minimap will
+	// update before special actions run
+	g_events->redraw();
+	g_events->drawElements();
+
 	// Encounter checks
 	g_globals->_encounters._encounterType = NORMAL_SURPRISED;
 	if (maps._currentState & Maps::CELL_SPECIAL) {
@@ -71,9 +76,6 @@ darkness:
 	} else {
 		g_globals->_party.checkPartyDead();
 	}
-
-	// Flag to redraw the screen
-	g_events->redraw();
 }
 
 bool ViewBase::msgAction(const ActionMessage &msg) {

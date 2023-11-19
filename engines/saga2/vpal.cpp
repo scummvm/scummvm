@@ -218,8 +218,9 @@ bool PaletteManager::updatePalette() {
 			assertCurrentPalette();
 
 			g_system->updateScreen();
-			g_system->delayMillis(10);
 		}
+		g_system->delayMillis(10);
+
 		return true;
 	}
 }

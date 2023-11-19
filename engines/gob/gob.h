@@ -35,9 +35,15 @@
 /**
  * This is the namespace of the Gob engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Supported
  *
  * Games using this engine:
+ * - Adi 2
+ * - Adi 4
+ * - Adi 5
+ * - Adibou 1
+ * - Adibou 2
+ * - Adibou 3
  * - Gobliiins
  * - Gobliins 2
  * - Goblins 3
@@ -204,8 +210,10 @@ public:
 	bool hasAdLib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool is640x400() const;
 	bool is640x480() const;
 	bool is800x600() const;
+	bool is16Colors() const;
 	bool isTrueColor() const;
 	bool isDemo() const;
 

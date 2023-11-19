@@ -296,6 +296,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptPhotographer::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -355,6 +356,7 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptPhotographer::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

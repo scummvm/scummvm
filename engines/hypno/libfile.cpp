@@ -110,7 +110,7 @@ int LibFile::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr LibFile::getMember(const Common::Path &path) const {
 	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, *this));
 }
 
 Common::SeekableReadStream *LibFile::createReadStreamForMember(const Common::Path &path) const {

@@ -51,7 +51,15 @@
 // %glr-parser
 
 %{
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_fread
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getc
 
 #include "common/endian.h"
 #include "common/hash-str.h"
@@ -137,7 +145,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
 %token tCHAR tCHARS tITEM tITEMS tLINE tLINES tWORD tWORDS
 %token tABBREVIATED tABBREV tABBR tLONG tSHORT
-%token tDATE tLAST tMENU tMENUS tMENUITEM tMENUITEMS tNUMBER tTHE tTIME
+%token tDATE tLAST tMENU tMENUS tMENUITEM tMENUITEMS tNUMBER tTHE tTIME tXTRAS tCASTLIBS
 %token tSOUND tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
@@ -300,12 +308,10 @@ CMDID: tVARID
 	| tABBREV		{ $$ = new Common::String("abbrev"); }
 	| tABBR			{ $$ = new Common::String("abbr"); }
 	| tAFTER		{ $$ = new Common::String("after"); }
-	| tAND			{ $$ = new Common::String("and"); }
 	| tBEFORE		{ $$ = new Common::String("before"); }
 	| tCAST			{ $$ = new Common::String("cast"); }
 	| tCHAR			{ $$ = new Common::String("char"); }
 	| tCHARS		{ $$ = new Common::String("chars"); }
-	| tCONTAINS		{ $$ = new Common::String("contains"); }
 	| tDATE			{ $$ = new Common::String("date"); }
 	| tDELETE		{ $$ = new Common::String("delete"); }
 	| tDOWN			{ $$ = new Common::String("down"); }
@@ -324,13 +330,10 @@ CMDID: tVARID
 	| tMENU			{ $$ = new Common::String("menu"); }
 	| tMENUITEM		{ $$ = new Common::String("menuItem"); }
 	| tMENUITEMS	{ $$ = new Common::String("menuItems"); }
-	| tMOD			{ $$ = new Common::String("mod"); }
 	| tMOVIE		{ $$ = new Common::String("movie"); }
 	| tNEXT			{ $$ = new Common::String("next"); }
-	| tNOT			{ $$ = new Common::String("not"); }
 	| tNUMBER		{ $$ = new Common::String("number"); }
 	| tOF			{ $$ = new Common::String("of"); }
-	| tOR			{ $$ = new Common::String("or"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
 	| tREPEAT		{ $$ = new Common::String("repeat"); }
 	| tSCRIPT		{ $$ = new Common::String("script"); }
@@ -338,7 +341,6 @@ CMDID: tVARID
 	| tSHORT		{ $$ = new Common::String("short"); }
 	| tSOUND		{ $$ = new Common::String("sound"); }
 	| tSPRITE		{ $$ = new Common::String("sprite"); }
-	| tSTARTS		{ $$ = new Common::String("starts"); }
 	| tTHE			{ $$ = new Common::String("the"); }
 	| tTIME			{ $$ = new Common::String("time"); }
 	| tTO			{ $$ = new Common::String("to"); }
@@ -436,7 +438,7 @@ cmdargs: /* empty */									{
 		args->push_back($expr);
 		$$ = args; }
 	| expr ',' nonemptyexprlist[args] trailingcomma		{
-		// This matches `cmd args, ...)
+		// This matches `cmd arg, ...)
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	| expr expr_nounarymath trailingcomma				{
@@ -454,13 +456,24 @@ cmdargs: /* empty */									{
 		// This matches `cmd()`
 		$$ = new NodeList; }
 	| '(' expr ',' ')' {
-		// This matches `cmd(args,)`
+		// This matches `cmd(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		$$ = args; }
 	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')' {
-		// This matches `cmd(args, ...)`
+		// This matches `cmd(arg, ...)`
 		$args->insert_at(0, $expr);
+		$$ = $args; }
+	| '(' var[method] expr_nounarymath trailingcomma ')'	{
+		// This matches `obj(method arg)`
+		NodeList *args = new NodeList;
+		args->push_back($method);
+		args->push_back($expr_nounarymath);
+		$$ = args; }
+	| '(' var[method] expr_nounarymath ',' nonemptyexprlist[args] trailingcomma ')'	{
+		// This matches `obj(method arg, ...)`
+		$args->insert_at(0, $expr_nounarymath);
+		$args->insert_at(0, $method);
 		$$ = $args; }
 	;
 
@@ -540,7 +553,13 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
 	;
 
-endif: /* empty */	{ warning("LingoCompiler::parse: no end if"); }
+endif: /* empty */	{
+		LingoCompiler *compiler = g_lingo->_compiler;
+		warning("LingoCompiler::parse: no end if at line %d col %d in %s id: %d",
+			compiler->_linenumber, compiler->_colnumber, scriptType2str(compiler->_assemblyContext->_scriptType),
+			compiler->_assemblyContext->_id);
+
+		}
 	| tENDIF '\n' ;
 
 loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
@@ -617,6 +636,17 @@ simpleexpr_nounarymath:
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' ')'					{ $$ = new FuncNode($ID, new NodeList); }
 	| ID '(' nonemptyexprlist[args] trailingcomma ')'	{ $$ = new FuncNode($ID, $args); }
+	| ID '(' var[method] expr_nounarymath trailingcomma ')'	{
+		// This matches `obj(method arg)`
+		NodeList *args = new NodeList;
+		args->push_back($method);
+		args->push_back($expr_nounarymath);
+		$$ = new FuncNode($ID, args); }
+	| ID '(' var[method] expr_nounarymath ',' nonemptyexprlist[args] trailingcomma ')'	{
+		// This matches `obj(method arg, ...)`
+		$args->insert_at(0, $expr_nounarymath);
+		$args->insert_at(0, $method);
+		$$ = new FuncNode($ID, $args); }
 	| '(' expr ')'					{ $$ = $expr; } ;
 	| var
 	| chunk
@@ -675,12 +705,12 @@ refargs: simpleexpr								{
 		// This matches `ref()`
 		$$ = new NodeList; }
 	| '(' expr ',' ')' {
-		// This matches `ref(args,)`
+		// This matches `ref(arg,)`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		$$ = args; }
 	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')'	{
-		// This matches `ref(args, ...)`
+		// This matches `ref(arg, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	;
@@ -720,6 +750,8 @@ thenumberof:
 	| tTHE tNUMBER tOF tLINES inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfLines, $simpleexpr); }
 	| tTHE tNUMBER tOF tMENUITEMS inof menu		{ $$ = new TheNumberOfNode(kNumberOfMenuItems, $menu); }
 	| tTHE tNUMBER tOF tMENUS					{ $$ = new TheNumberOfNode(kNumberOfMenus, nullptr); }
+	| tTHE tNUMBER tOF tXTRAS					{ $$ = new TheNumberOfNode(kNumberOfXtras, nullptr); } // D5
+	| tTHE tNUMBER tOF tCASTLIBS				{ $$ = new TheNumberOfNode(kNumberOfCastlibs, nullptr); } // D5
 	;
 
 inof: tIN | tOF ;

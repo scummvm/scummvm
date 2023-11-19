@@ -165,18 +165,13 @@ public:
 	/** Returns the number of bytes used for MD5-based detection, or 0 if not supported. */
 	virtual uint getMD5Bytes() const = 0;
 
-	/**
-	 * The default version of this method will just parse the options string from
-	 * the config manager. However it also allows the meta engine to post process
-	 * result and add/remove other options as needed.
-	 *
-	 * @param optionsString		Options string that from the config manager.
-	 * @param domain			Domain of the current target.
-	 *
-	 * @return    The fully processed options string that is usable by the GUI.
-	 *
-	 */
-	virtual Common::String parseAndCustomizeGuiOptions(const Common::String &optionsString, const Common::String &domain) const;
+	/** Returns the number of game variants or -1 if unknown */
+	virtual int getGameVariantCount() const {
+		return -1;
+	}
+
+	/** Returns formatted data from game descriptor for dumping into a file */
+	virtual void dumpDetectionEntries() const = 0;
 
 	/**
 	 * Return a list of engine specified debug channels
@@ -554,6 +549,17 @@ public:
 	 * This is used when failing to read the header from a savegame file.
 	 */
 	static void fillDummyHeader(ExtendedSavegameHeader *header);
+
+	/**
+	 * Decode the date from a savegame header into a calendar date.  The month and day are both 1-based.
+	 */
+	static void decodeSavegameDate(const ExtendedSavegameHeader *header, uint16 &outYear, uint8 &outMonth, uint8 &outDay);
+
+	/**
+	 * Decode the time from a savegame header into a wall clock time.
+	 */
+	static void decodeSavegameTime(const ExtendedSavegameHeader *header, uint8 &outHour, uint8 &outMinute);
+
 	/**
 	 * Read the extended savegame header from the given savegame file.
 	 */

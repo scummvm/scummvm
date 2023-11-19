@@ -265,6 +265,10 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptTyrellGuard::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 
 	*frame = _animationFrame;
@@ -373,6 +377,10 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationFrame = 0;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptTyrellGuard::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 	return true;

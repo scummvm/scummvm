@@ -45,6 +45,9 @@ public:
 	void updateGraphics() override;
 	void handleInput(NancyInput &input);
 
+	// Used to disable the UI clock when a scene can change the in-game time (e.g. SetPlayerClock)
+	void lockClock(bool val) { _locked = val; }
+
 	void drawClockHands();
 
 protected:
@@ -65,13 +68,31 @@ protected:
 		uint32 _timeToKeepOpen;
 	};
 
-	CLOK *_clockData;
+	const CLOK *_clockData;
 	ClockAnim _animation;
 
 	// Used for gargoyle eyes in TVD, inside of watch in nancy2 and up
 	RenderObject _staticImage;
 
 	Time _playerTime;
+	bool _locked;
+};
+
+// Separate class since it's not actually a clock, and is non-interactable. Instead, this shows which
+// in-game day it currently is, and also displays a countdown during the endgame
+class Nancy5Clock : public RenderObject {
+public:
+	Nancy5Clock() : RenderObject(10) {}
+	virtual ~Nancy5Clock() = default;
+
+	void init() override;
+	void updateGraphics() override;
+
+private:
+	int32 _currentDay = -1;
+	int32 _countdownProgress = -1;
+
+	const CLOK *_clockData = nullptr;
 };
 
 } // End of namespace UI

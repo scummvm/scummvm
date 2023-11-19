@@ -27,6 +27,7 @@
 #include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/objects/global.h"
+#include "freescape/sweepAABB.h"
 
 namespace Freescape {
 
@@ -93,6 +94,7 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	} compareObjects;
 
 	Common::sort(_drawableObjects.begin(), _drawableObjects.end(), compareObjects);
+	_lastTick = 0;
 }
 
 Area::~Area() {
@@ -222,24 +224,46 @@ void Area::resetArea() {
 }
 
 
-void Area::draw(Freescape::Renderer *gfx) {
+void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks) {
+	bool runAnimation = animationTicks != _lastTick;
 	assert(_drawableObjects.size() > 0);
 	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
-			obj->draw(gfx);
+			if (obj->getType() != ObjectType::kGroupType)
+				obj->draw(gfx);
+			else {
+				drawGroup(gfx, (Group *)obj, runAnimation);
+			}
 		}
 	}
+	_lastTick = animationTicks;
+}
+
+void Area::drawGroup(Freescape::Renderer *gfx, Group* group, bool runAnimation) {
+	if (runAnimation) {
+		group->run();
+		group->draw(gfx);
+		group->step();
+	} else
+		group->draw(gfx);
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	float size = 16.0 * 8192.0; // TODO: check if this is max size
+	float distance = 16.0 * 8192.0; // TODO: check if this is max distance
+	float size = 16.0 * 8192.0; // TODO: check if this is the max size
+	Math::AABB boundingBox(ray.getOrigin(), ray.getOrigin());
 	Object *collided = nullptr;
 	for (auto &obj : _drawableObjects) {
-		float objSize = obj->getSize().length();
-		if (!obj->isDestroyed() && !obj->isInvisible() && obj->_boundingBox.isValid() && ray.intersectAABB(obj->_boundingBox) && size >= objSize) {
-			debugC(1, kFreescapeDebugMove, "shot obj id: %d", obj->getObjectID());
-			collided = obj;
-			size = objSize;
+		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			GeometricObject *gobj = (GeometricObject *)obj;
+			Math::Vector3d collidedNormal;
+			float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, 8192 * ray.getDirection(), collidedNormal);
+			debug("shot obj id: %d with distance %f", obj->getObjectID(), collidedDistance);
+			if (collidedDistance < distance || (collidedDistance == distance && gobj->getSize().length() < size)) {
+				collided = obj;
+				size = gobj->getSize().length();
+				distance = collidedDistance;
+			}
 		}
 	}
 	return collided;
@@ -256,6 +280,40 @@ ObjectArray Area::checkCollisions(const Math::AABB &boundingBox) {
 		}
 	}
 	return collided;
+}
+
+extern Math::AABB createPlayerAABB(Math::Vector3d const position, int playerHeight);
+
+Math::Vector3d Area::resolveCollisions(const Math::Vector3d &lastPosition_, const Math::Vector3d &newPosition_, int playerHeight) {
+	Math::Vector3d position = newPosition_;
+	Math::Vector3d lastPosition = lastPosition_;
+	Math::AABB boundingBox = createPlayerAABB(lastPosition, playerHeight);
+
+	float epsilon = 1.5;
+	int i = 0;
+	while (true) {
+		float distance = 1.0;
+		Math::Vector3d normal;
+		Math::Vector3d direction = position - lastPosition;
+
+		for (auto &obj : _drawableObjects) {
+			if (!obj->isDestroyed() && !obj->isInvisible()) {
+				GeometricObject *gobj = (GeometricObject *)obj;
+				Math::Vector3d collidedNormal;
+				float collidedDistance = sweepAABB(boundingBox, gobj->_boundingBox, direction, collidedNormal);
+				if (collidedDistance < distance) {
+					distance = collidedDistance;
+					normal = collidedNormal;
+				}
+			}
+		}
+		position = lastPosition + distance * direction + epsilon * normal;
+		if (distance >= 1.0)
+			break;
+		i++;
+		assert(i <= 5);
+	}
+	return position;
 }
 
 bool Area::checkInSight(const Math::Ray &ray, float maxDistance) {
@@ -341,8 +399,8 @@ void Area::addFloor() {
 		ObjectType::kCubeType,
 		id,
 		0,                             // flags
-		Math::Vector3d(0, -1, 0),      // Position
-		Math::Vector3d(4128, 1, 4128), // size
+		Math::Vector3d(-4128, -1, -4128),      // Position
+		Math::Vector3d(4128 * 4, 1, 4128 * 4), // size
 		gColors,
 		nullptr,
 		FCLInstructionVector());
@@ -364,6 +422,18 @@ void Area::addStructure(Area *global) {
 
 		addObjectFromArea(id, global);
 	}
+}
+
+void Area::changeObjectID(uint16 objectID, uint16 newObjectID) {
+	assert(!objectWithID(newObjectID));
+	Object *obj = objectWithID(objectID);
+	assert(obj);
+	obj->_objectID = newObjectID;
+	_addedObjects.erase(objectID);
+	_addedObjects[newObjectID] = obj;
+
+	(*_objectsByID).erase(objectID);
+	(*_objectsByID)[newObjectID] = obj;
 }
 
 } // End of namespace Freescape

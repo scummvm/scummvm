@@ -213,12 +213,20 @@ bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
 }
 
+bool GobEngine::is640x400() const {
+	return (_features & kFeatures640x400) != 0;
+}
+
 bool GobEngine::is640x480() const {
 	return (_features & kFeatures640x480) != 0;
 }
 
 bool GobEngine::is800x600() const {
 	return (_features & kFeatures800x600) != 0;
+}
+
+bool GobEngine::is16Colors() const {
+	return (_features & kFeatures16Colors) != 0;
 }
 
 bool GobEngine::isTrueColor() const {
@@ -609,7 +617,6 @@ Common::Error GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeAdibou2:
-	case kGameTypeAdi2:
 	case kGameTypeAdi4:
 		_init     = new Init_v7(this);
 		_video    = new Video_v6(this);
@@ -623,6 +630,7 @@ Common::Error GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeAdibou1:
+	case kGameTypeAdi2:
 		_init     = new Init_v2(this);
 		_video    = new Video_v2(this);
 		_inter    = new Inter_Adibou1(this);
@@ -697,6 +705,10 @@ Common::Error GobEngine::initGraphics() {
 	} else if (is640x480()) {
 		_width  = 640;
 		_height = 480;
+		_mode   = 0x18;
+	} else if (is640x400()) {
+		_width  = 640;
+		_height = 400;
 		_mode   = 0x18;
 	} else {
 		_width  = 320;

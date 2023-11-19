@@ -45,10 +45,10 @@ class Request;
  */
 
 template<typename T> struct Response {
-	Request *request;
+	const Request *request;
 	T value;
 
-	Response(Request *rq, T v) : request(rq), value(v) {}
+	Response(const Request *rq, T v) : request(rq), value(v) {}
 };
 
 /**
@@ -77,13 +77,13 @@ struct ErrorResponse {
 	Common::String response;
 	long httpResponseCode;
 
-	ErrorResponse(Request *rq, Common::String resp);
-	ErrorResponse(Request *rq, bool interrupt, bool failure, Common::String resp, long httpCode);
+	ErrorResponse(Request *rq, const Common::String &resp);
+	ErrorResponse(Request *rq, bool interrupt, bool failure, const Common::String &resp, long httpCode);
 };
 
 typedef Response<void *> DataResponse;
-typedef Common::BaseCallback<DataResponse> *DataCallback;
-typedef Common::BaseCallback<ErrorResponse> *ErrorCallback;
+typedef Common::BaseCallback<const DataResponse &> *DataCallback;
+typedef Common::BaseCallback<const ErrorResponse &> *ErrorCallback;
 
 /**
  * RequestState is used to indicate current Request state.
@@ -148,7 +148,7 @@ protected:
 	uint32 _retryInSeconds;
 
 	/** Sets FINISHED state and calls the _errorCallback with given error. */
-	virtual void finishError(ErrorResponse error, RequestState state = FINISHED);
+	virtual void finishError(const ErrorResponse &error, RequestState state = FINISHED);
 
 	/** Sets FINISHED state. Implementations might extend it if needed. */
 	virtual void finishSuccess();

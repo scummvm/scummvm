@@ -96,6 +96,8 @@
 #include "backends/fs/android/android-fs-factory.h"
 #endif
 
+#include "gui/dump-all-dialogs.h"
+
 static bool launcherDialog() {
 
 	// Discard any command line options. Those that affect the graphics
@@ -103,13 +105,19 @@ static bool launcherDialog() {
 	// blindly be passed to the first game launched from the launcher.
 	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
+	// If the backend does not allow quitting, loop on the launcher until a game is started
+	bool noQuit = g_system->hasFeature(OSystem::kFeatureNoQuit);
+	bool status = true;
+	do {
 #if defined(__DC__)
-	DCLauncherDialog dlg;
+		DCLauncherDialog dlg;
 #else
-	GUI::LauncherChooser dlg;
-	dlg.selectLauncher();
+		GUI::LauncherChooser dlg;
+		dlg.selectLauncher();
 #endif
-	return (dlg.runModal() != -1);
+		status = (dlg.runModal() != -1);
+	} while (noQuit && nullptr == ConfMan.getActiveDomain());
+	return status;
 }
 
 static const Plugin *detectPlugin() {
@@ -641,25 +649,24 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		if (!ConfMan.getGameDomains().empty()) {
 			GUI::MessageDialog alert(_(
 				// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-				"In this new version of ScummVM Android, significant changes were made to "
+				"In this new version of ScummVM for Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
 				"Operating System.\n"
 				"If you find that your existing added games or custom paths no longer work, "
-				"please edit those paths and this time use the SAF system to browse to the "
-				"desired locations.\n"
-				"To do that:\n"
+				"please edit those paths:"
 				"\n"
-				"  1. For each game whose data is not found, go to the \"Paths\" tab in "
-				"the \"Game Options\" and change the \"Game path\"\n"
-				"  2. Inside the ScummVM file browser, use \"Go Up\" until you reach "
-				"the \"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-				"  3. Choose that, then browse and select the \"parent\" folder for your "
-				"games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
-				"  4. Then, a new folder \"myGames\" will appear on the \"root\" folder "
-				"of the ScummVM browser.\n"
-				"  5. Browse through this folder to your game data.\n"
+				"  1. From the Launcher, go to **Game Options > Paths**."
+				" Select **Game Path** or **Extra Path**, as appropriate. \n"
+				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder"
+				"which has the **<Add a new folder>** option.\n"
+				"  3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder"
+				"containing all your game folders. For example, **SD Card > ScummVMgames** \n"
+				"  4. Select **Use this folder**. \n"
+				"  5. Select **Allow** to give ScummVM permission to access the folder. \n"
+				"  6. In the ScummVM file browser, double-tap to browse through your added folder."
+				"Select the folder containing the game's files, then tap **Choose**. \n"
 				"\n"
-				"Steps 2 and 3 need to be done only once for all of your games."
+				"Repeat steps 1 and 6 for each game."
 				), _("Ok"),
 				// I18N: A button caption to dismiss amessage and read it later
 				_("Read Later"), Graphics::kTextAlignLeft);
@@ -669,18 +676,22 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		} else {
 			GUI::MessageDialog alert(_(
 				// I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-				"In this new version of ScummVM Android, significant changes were made to "
+				"In this new version of ScummVM for Android, significant changes were made to "
 				"the file access system to allow support for modern versions of the Android "
 				"Operating System.\n"
-				"Thus, you need to set up SAF in order to be able to add the games.\n"
+				"To add a game:\n"
 				"\n"
-				"  1. Inside the ScummVM file browser, use \"Go Up\" until you reach "
-				"the \"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-				"  2. Choose that, then browse and select the \"parent\" folder for your "
-				"games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder\".\n"
-				"  3. Then, a new folder \"myGames\" will appear on the \"root\" folder "
-				"of the ScummVM browser.\n"
-				"  4. Browse through this folder to your game data."
+				"  1. Select **Add Game...** from the launcher. \n"
+				"  2. Inside the ScummVM file browser, select **Go Up** until you reach the root folder"
+				"which has the **<Add a new folder>** option.\n"
+				"  3. Double-tap **<Add a new folder>**. In your device's file browser, navigate to the folder"
+				"containing all your game folders. For example, **SD Card > ScummVMgames** \n"
+				"  4. Select **Use this folder**. \n"
+				"  5. Select **Allow** to give ScummVM permission to access the folder. \n"
+				"  6. In the ScummVM file browser, double-tap to browse through your added folder."
+				"Select the sub-folder containing the game's files, then tap **Choose**."
+				"\n"
+				"Repeat steps 1 and 6 for each game."
 				), _("Ok"),
 				// I18N: A button caption to dismiss a message and read it later
 				_("Read Later"), Graphics::kTextAlignLeft);
@@ -698,6 +709,42 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	CloudMan.init();
 	CloudMan.syncSaves();
 #endif
+
+#if 0
+	GUI::dumpAllDialogs();
+#endif
+
+// Print out CPU extension info
+// Separate block to keep the stack clean
+	{
+		Common::String extensionSupportString[3] = { "not supported", "disabled", "enabled" };
+
+		byte sse2Support = 0;
+		byte avx2Support = 0;
+		byte neonSupport = 0;
+
+#ifdef SCUMMVM_SSE2
+		++sse2Support;
+		if (g_system->hasFeature(OSystem::kFeatureCpuSSE2))
+			++sse2Support;
+#endif
+#ifdef SCUMMVM_AVX2
+		++avx2Support;
+		if (g_system->hasFeature(OSystem::kFeatureCpuAVX2))
+			++avx2Support;
+#endif
+#ifdef SCUMMVM_NEON
+		++neonSupport;
+		if (g_system->hasFeature(OSystem::kFeatureCpuNEON))
+			++neonSupport;
+#endif
+
+		debug(0, "CPU extensions:");
+		debug(0, "SSE2(%s) AVX2(%s) NEON(%s)",
+			extensionSupportString[sse2Support].c_str(),
+			extensionSupportString[avx2Support].c_str(),
+			extensionSupportString[neonSupport].c_str());
+	}
 
 	// Unless a game was specified, show the launcher dialog
 	if (nullptr == ConfMan.getActiveDomain())

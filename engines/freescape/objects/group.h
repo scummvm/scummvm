@@ -22,23 +22,47 @@
 #ifndef FREESCAPE_GROUP_H
 #define FREESCAPE_GROUP_H
 
+#include "freescape/gfx.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {
 
+struct AnimationOpcode {
+	AnimationOpcode(uint16 opcode_) {
+		opcode = opcode_;
+	}
+	uint16 opcode;
+	Math::Vector3d position;
+	Common::String conditionSource;
+	FCLInstructionVector condition;
+};
+
 class Group : public Object {
 public:
-	Group(uint16 objectID_,
-		const Math::Vector3d &origin_,
-		const Math::Vector3d &rotation_) {
-		_objectID = objectID_;
-		_origin = origin_;
-		_rotation = rotation_;
-	}
+	Group(uint16 objectID_, uint16 flags_,
+		const Common::Array<uint16> objectIds_,
+		const Common::Array<AnimationOpcode *> operations);
+	~Group();
+	void linkObject(Object *obj);
+	void assemble(int index);
+	void step();
+	void run();
+	void run(int index);
+	void reset();
+
+	Common::Array<Object *> _objects;
+	Common::Array<Math::Vector3d> _origins;
+	Common::Array<AnimationOpcode *> _operations;
+	Common::Array<uint16> _objectIds;
+	int _scale;
+	int _step;
+	bool _active;
+	bool _finished;
 
 	ObjectType getType() override { return ObjectType::kGroupType; };
-	void draw(Freescape::Renderer *gfx) override { error("cannot render Group"); };
-	void scale(int factor) override { warning("cannot scale Group"); };
+	bool isDrawable() override { return true; }
+	void draw(Renderer *gfx) override;
+	void scale(int scale_) override { _scale = scale_; };
 	Object *duplicate() override { error("cannot duplicate Group"); };
 };
 

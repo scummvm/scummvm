@@ -186,7 +186,7 @@ void IMuseDigiTriggersHandler::processTriggers(int soundId, char *marker) {
 		_trigs[l].sound = 0;
 
 		debug(5, "IMuseDigiTriggersHandler::processTriggers(): executing trigger for soundId %d and marker '%s'", soundId, marker);
-		if (_trigs[l].opcode == 0) {
+		if (_trigs[l].opcode == DIMUSE_C_SCRIPT_CALLBACK) {
 			// Call the script callback (a function which sets _stoppingSequence to 1)
 			_engine->scriptTriggerCallback(_textBuffer);
 		} else {
@@ -259,7 +259,9 @@ void IMuseDigiTriggersHandler::loop() {
 		_defers[l].counter--;
 
 		if (_defers[l].counter == 1) {
-			if (_defers[l].opcode != 0) {
+			if (_defers[l].opcode == DIMUSE_C_SCRIPT_CALLBACK) {
+				_engine->scriptTriggerCallback(_trigs[l].text);
+			} else {
 				if (_defers[l].opcode < 30) {
 					_engine->cmdsHandleCmd(_trigs[l].opcode, nullptr,
 						_trigs[l].a, _trigs[l].b,
@@ -268,8 +270,6 @@ void IMuseDigiTriggersHandler::loop() {
 						_trigs[l].g, _trigs[l].h,
 						_trigs[l].i, _trigs[l].j);
 				}
-			} else {
-				_engine->scriptTriggerCallback(_trigs[l].text);
 			}
 		}
 	}
@@ -282,7 +282,8 @@ int IMuseDigiTriggersHandler::countPendingSounds(int soundId) {
 			continue;
 
 		int opcode = _trigs[l].opcode;
-		if ((opcode == 8 && _trigs[l].a == soundId) || (opcode == 26 && _trigs[l].b == soundId)) {
+		if ((opcode == DIMUSE_C_START_SND && _trigs[l].a == soundId) ||
+			(opcode == DIMUSE_C_SWITCH_STREAM && _trigs[l].b == soundId)) {
 			r++;
 		}
 	}
@@ -292,7 +293,8 @@ int IMuseDigiTriggersHandler::countPendingSounds(int soundId) {
 			continue;
 
 		int opcode = _defers[l].opcode;
-		if ((opcode == 8 && _defers[l].a == soundId) || (opcode == 26 && _defers[l].b == soundId)) {
+		if ((opcode == DIMUSE_C_START_SND && _defers[l].a == soundId) ||
+			(opcode == DIMUSE_C_SWITCH_STREAM && _defers[l].b == soundId)) {
 			r++;
 		}
 	}

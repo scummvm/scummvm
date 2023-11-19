@@ -879,13 +879,9 @@ void doSystem(WGame &game) {
 
 			strcpy(RoomInfo.name, game.getCurRoom().desc);
 
-			if (t3dCurTime >= 1300) {
-				time = t3dCurTime - 1200;
-				sprintf(RoomInfo.fullstring, "%s, %d.%02dpm", RoomInfo.name, time / 100, time - (time / 100) * 100);
-			} else {
-				time = t3dCurTime;
-				sprintf(RoomInfo.fullstring, "%s, %d.%02dam", RoomInfo.name, time / 100, time - (time / 100) * 100);
-			}
+			time = t3dCurTime;
+			if (time >= 1300) time -= 1200;
+			snprintf(RoomInfo.fullstring, sizeof(RoomInfo.fullstring), "%s, %2d.%02dam", RoomInfo.name, time / 100, time - (time / 100) * 100);
 
 			rGetScreenInfos((unsigned int *)&width, (unsigned int *)&height, (unsigned int *)&bpp);
 			game._fonts.getTextDim(RoomInfo.fullstring, RoomInfo.f, &RoomInfo.dx, &RoomInfo.dy);
@@ -931,9 +927,10 @@ void doSystem(WGame &game) {
 				break;
 			case EFFECT_ROOMINFO:
 				if ((RoomInfo.t_next_letter > TheMessage->wparam1) && ((*RoomInfo.letter_ptr) != '\0')) {
-					char name_backup[64];
+					constexpr int nameSize = ARRAYSIZE(RoomInfo.fullstring);
+					char name_backup[nameSize] = {};
 
-					strcpy(name_backup, RoomInfo.fullstring);
+					Common::strlcpy(name_backup, RoomInfo.fullstring, nameSize - 1);
 					*(RoomInfo.letter_ptr + 1) = '\0';
 
 					game._renderer->clearBitmap(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);

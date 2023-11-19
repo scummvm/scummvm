@@ -24,6 +24,7 @@
 
 #include "sword1/sworddefs.h"
 #include "sword1/object.h"
+#include "common/mutex.h"
 
 namespace Sword1 {
 
@@ -75,6 +76,7 @@ public:
 	void fnStartMenu();
 	void fnEndMenu();
 	void checkTopMenu();
+	void setToTargetState();
 	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 
 private:
@@ -101,6 +103,8 @@ private:
 
 	static const byte _fadeEffectTop[64];
 	static const byte _fadeEffectBottom[64];
+
+	Common::Mutex _menuMutex;
 };
 
 } // End of namespace Sword1

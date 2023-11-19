@@ -32,7 +32,7 @@ public:
 	TTsynonym();
 	TTsynonym(const TTsynonym *src);
 	TTsynonym(int mode, const char *str, FileHandle file);
-	TTsynonym(int mode, TTstring *str);
+	TTsynonym(int mode, const TTstring &str);
 
 	/**
 	 * Copies data from one synonym to another

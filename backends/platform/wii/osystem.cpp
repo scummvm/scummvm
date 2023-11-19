@@ -176,7 +176,9 @@ bool OSystem_Wii::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode) ||
 			(f == kFeatureAspectRatioCorrection) ||
 			(f == kFeatureCursorPalette) ||
-			(f == kFeatureOverlaySupportsAlpha);
+			(f == kFeatureCursorAlpha) ||
+			(f == kFeatureOverlaySupportsAlpha) ||
+			(f == kFeatureTouchscreen);
 }
 
 void OSystem_Wii::setFeatureState(Feature f, bool enable) {
@@ -190,10 +192,7 @@ void OSystem_Wii::setFeatureState(Feature f, bool enable) {
 		break;
 	case kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
-		if (_texMouse.palette && !enable) {
-			memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
-			_cursorPaletteDirty = true;
-		}
+		updateMousePalette();
 		break;
 	default:
 		break;

@@ -64,7 +64,6 @@ void BaseBackend::initBackend() {
 	if (!_audiocdManager)
 		_audiocdManager = new DefaultAudioCDManager();
 #endif
-
 	OSystem::initBackend();
 }
 
@@ -72,6 +71,13 @@ void BaseBackend::fillScreen(uint32 col) {
 	Graphics::Surface *screen = lockScreen();
 	if (screen)
 		screen->fillRect(Common::Rect(screen->w, screen->h), col);
+	unlockScreen();
+}
+
+void BaseBackend::fillScreen(const Common::Rect &r, uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen)
+		screen->fillRect(r, col);
 	unlockScreen();
 }
 

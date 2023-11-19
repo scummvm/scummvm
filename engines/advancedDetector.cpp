@@ -19,6 +19,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -30,6 +32,8 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/compression/installshield_cab.h"
+#include "common/compression/installshieldv3_archive.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
 #include "gui/message.h"
@@ -377,7 +381,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Clear md5 cache before each detection starts, just in case.
-	MD5Man.clear();
+	ADCacheMan.clear();
 
 	// Run the detector on this
 	ADDetectedGames matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
@@ -409,6 +413,9 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 		return Common::kNoGameDataFoundError;
 
 	DetectedGame gameDescriptor = toDetectedGame(agdDesc);
+
+	// Detection is done, no need to keep archives in memory anymore
+	ADCacheMan.clearArchives();
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
@@ -511,7 +518,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 /* Singleton Cache Storage for MD5 */
 
 namespace Common {
-	DECLARE_SINGLETON(MD5CacheManager);
+	DECLARE_SINGLETON(AdvancedDetectorCacheManager);
 }
 
 
@@ -530,6 +537,8 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 			case 't':
 				ret = (MD5Properties)(ret | kMD5Tail);
 				break;
+			case 'A':
+				ret = (MD5Properties)(ret | kMD5Archive);
 			}
 		return ret;
 	}
@@ -545,22 +554,55 @@ static MD5Properties gameFileToMD5Props(const ADGameFileDescription *fileEntry, 
 	return ret;
 }
 
+Common::String md5PropToGameFile(MD5Properties flags) {
+	Common::String res;
+
+	switch (flags & kMD5MacMask) {
+	case kMD5MacDataFork: 
+		res = "d";
+		break;
+
+	case kMD5MacResOrDataFork:
+		res = "m";
+		break;
+
+	case kMD5MacResFork:
+		res = "r";
+		break;
+
+	default:
+		break;
+    }
+
+	if (flags & kMD5Tail)
+		res += "t";
+
+	if (flags & kMD5Archive)
+		res += "A";
+
+	return res;
+}
+
 static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps);
 
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, MD5Properties md5prop, const Common::String &fname, FileProperties &fileProps) const {
-	Common::String hashname = Common::String::format("%s:%s:%d", md5PropToCachePrefix(md5prop), fname.c_str(), _md5Bytes);
+	Common::String hashname = md5PropToCachePrefix(md5prop);
+		hashname += ':';
+		hashname += fname;
+		hashname += ':';
+		hashname += Common::String::format("%d", _md5Bytes);
 
-	if (MD5Man.contains(hashname)) {
-		fileProps.md5 = MD5Man.getMD5(hashname);
-		fileProps.size = MD5Man.getSize(hashname);
+	if (ADCacheMan.containsMD5(hashname)) {
+		fileProps.md5 = ADCacheMan.getMD5(hashname);
+		fileProps.size = ADCacheMan.getSize(hashname);
 		return true;
 	}
 
 	bool res = getFilePropertiesIntern(_md5Bytes, allFiles, md5prop, fname, fileProps);
 
 	if (res) {
-		MD5Man.setMD5(hashname, fileProps.md5);
-		MD5Man.setSize(hashname, fileProps.size);
+		ADCacheMan.setMD5(hashname, fileProps.md5);
+		ADCacheMan.setSize(hashname, fileProps.size);
 	}
 
 	return res;
@@ -607,23 +649,122 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 			return false;
 	}
 
-	if (!allFiles.contains(fname))
-		return false;
+	Common::ScopedPtr<Common::SeekableReadStream> testFile;
 
-	Common::File testFile;
+	if (md5prop & kMD5Archive) {
+		// The desired file is inside an archive
 
-	if (!testFile.open(allFiles[fname]))
-		return false;
+		// First, split the file string
+		Common::StringTokenizer tok(fname, ":");
+		Common::String archiveType = tok.nextToken();
+		Common::String archiveName = tok.nextToken();
+		Common::String fileName = tok.nextToken();
 
-	if (md5prop & kMD5Tail) {
-		if (testFile.size() > md5Bytes)
-			testFile.seek(-(int64)md5Bytes, SEEK_END);
+		if (!allFiles.contains(archiveName))
+			return false;
+
+		// Check if archive has already been opened and is stored in cache
+		Common::Archive *archive = ADCacheMan.getArchive(allFiles[archiveName]);
+
+		if (!archive) {
+			// Archive not in cache. Find the appropriate type based on the type string,
+			// open the archive, and add it to the cache 
+			if (archiveType.equals("is")) {
+				// InstallShield (v4 and up)
+				archive = Common::makeInstallShieldArchive(allFiles[archiveName]);
+				ADCacheMan.addArchive(allFiles[archiveName], archive);
+				if (!archive)
+					return false;
+			} else if (archiveType.equals("is3")) {
+				// InstallShield v3
+				archive = new Common::InstallShieldV3();
+				if (((Common::InstallShieldV3 *)archive)->open(allFiles[archiveName])) {
+					ADCacheMan.addArchive(allFiles[archiveName], archive);
+				} else {
+					delete archive;
+					return false;
+				}
+			} else {
+				debugC(3, kDebugGlobalDetection, "WARNING: Archive type string '%s' not recognized", archiveType.c_str());
+				return false;
+			}
+		}
+
+		// Look for file with matching name inside the archive
+		testFile.reset(archive->createReadStreamForMember(fileName));
+		if (!testFile) {
+			return false;
+		}
+	} else {
+		if (!allFiles.contains(fname))
+			return false;
+
+		testFile.reset(new Common::File());
+		if (!((Common::File *)testFile.get())->open(allFiles[fname]))
+			return false;
 	}
 
-	fileProps.size = testFile.size();
-	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
+	if (md5prop & kMD5Tail) {
+		if (testFile->size() > md5Bytes)
+			testFile->seek(-(int64)md5Bytes, SEEK_END);
+	}
+
+	fileProps.size = testFile->size();
+	fileProps.md5 = Common::computeStreamMD5AsString(*testFile.get(), md5Bytes);
 	fileProps.md5prop = (MD5Properties) (md5prop & kMD5Tail);
 	return true;
+}
+
+// Add backslash before double quotes (") and backslashes themselves (\)
+Common::String escapeString(const char *string) {
+	if (string == nullptr)
+		return "";
+
+	Common::String res = "";
+
+	for (int i = 0; string[i] != '\0'; i++) {
+		if (string[i] == '"' || string[i] == '\\')
+			res += "\\";
+
+		res += string[i];
+	}
+
+	return res;
+}
+
+void AdvancedMetaEngineDetection::dumpDetectionEntries() const {
+	const byte *descPtr;
+
+	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
+		auto g = ((const ADGameDescription *)descPtr);
+		const PlainGameDescriptor *gameDesc = findPlainGameDescriptor(g->gameId, _gameIds);
+		const char *title = "";
+		if (gameDesc != 0)
+			title = gameDesc->description;
+
+		printf("game (\n");
+		printf("\tname \"%s\"\n", escapeString(g->gameId).c_str());
+		printf("\ttitle \"%s\"\n", escapeString(title).c_str());
+		printf("\textra \"%s\"\n", escapeString(g->extra).c_str());
+		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(g->language)).c_str());
+		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(g->platform)).c_str());
+		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
+		printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
+
+		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+			const char *fname = fileDesc->fileName;
+			int64 fsize = fileDesc->fileSize;
+			Common::String md5 = fileDesc->md5;
+			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
+			Common::String md5Prefix = md5PropToGameFile(md5prop);
+			Common::String key = md5;
+			if (md5Prefix != "" && md5.find(':') == Common::String::npos)
+				key = md5Prefix + ':' + md5;
+
+			printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(fsize), _md5Bytes, key.c_str());
+		}
+		printf(")\n\n"); // Closing for 'game ('
+	}
 }
 
 ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) {
@@ -646,7 +787,9 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
 			Common::String fname = fileDesc->fileName;
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(md5prop), fname.c_str());
+			Common::String key = md5PropToCachePrefix(md5prop);
+				key += ':';
+				key += fname;
 
 			if (filesProps.contains(key))
 				continue;
@@ -695,7 +838,9 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(md5prop), tstr.c_str());
+			Common::String key = md5PropToCachePrefix(md5prop);
+				key += ':';
+				key += tstr;
 
 			if (!filesProps.contains(key) || filesProps[key].size == -1) {
 				allFilesPresent = false;
@@ -847,8 +992,14 @@ static const char *grayList[] = {
 	"demo",
 	"data",
 	"data.z",
-	"data1.cab",
 	"data.cab",
+	"data1.hdr",
+	"data1.cab",
+	"data2.cab",
+	"data3.cab",
+	"data4.cab",
+	"data5.cab",
+	"Double-click me",
 	"engine.exe",
 	"install.exe",
 	"play.exe",
@@ -1013,6 +1164,30 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' is not present in gameids", g->gameId, getName());
 		} else {
 			idsMap[g->gameId]++;
+		}
+
+		// Perform sanity checks for entries with files inside archives
+		for (const ADGameFileDescription &fileDesc : ((const ADGameDescription *)descPtr)->filesDescriptions) {
+			if (fileDesc.fileName == nullptr && fileDesc.md5 == nullptr) {
+				break;
+			}
+
+			if (gameFileToMD5Props(&fileDesc, ((const ADGameDescription *)descPtr)->flags) & kMD5Archive) {
+				Common::StringTokenizer tok(fileDesc.fileName, ":");
+				uint numTokens = 0;
+
+				while (!tok.empty()) {
+					if (tok.nextToken().empty()) {
+						break;
+					}
+					++numTokens;
+				}
+
+				// We need exactly three tokens: <archive type> : <archive name> : <file name>
+				if (numTokens != 3) {
+					debug(0, "WARNING: Detection entry '%s' for gameId '%s' in engine '%s' is invalid", fileDesc.fileName, g->gameId, getName());
+				}
+			}
 		}
 	}
 

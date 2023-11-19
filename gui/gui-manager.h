@@ -36,6 +36,7 @@ class OSystem;
 
 namespace Graphics {
 class Font;
+class MacWindowManager;
 }
 
 namespace Common {
@@ -44,6 +45,16 @@ namespace Common {
 }
 
 namespace GUI {
+
+enum {
+	kActionEnd,
+	kActionShiftEnd,
+	kActionHome,
+	kActionShiftHome,
+	kActionCopy,
+	kActionCut,
+	kActionPaste,
+};
 
 enum {
 	kIconsSetLoadedCmd  = 'icns'
@@ -88,6 +99,7 @@ public:
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
 	Common::Keymap *getKeymap() const;
 	void scheduleTopDialogRedraw();
+	void scheduleFullRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
@@ -104,6 +116,8 @@ public:
 	int16 getGUIHeight() const { return _baseHeight; }
 	float getScaleFactor() const { return _scaleFactor; }
 	void computeScaleFactor();
+
+	bool useLowResGUI() const { return _baseWidth <= 320; }
 
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
@@ -142,6 +156,8 @@ public:
 
 	void displayTopDialogOnly(bool mode);
 
+	Graphics::MacWindowManager *getWM();
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -177,6 +193,8 @@ protected:
 	Common::SearchSet _iconsSet;
 	bool _iconsSetChanged;
 
+	Graphics::MacWindowManager *_wm = nullptr;
+
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {
 		MousePos() : x(-1), y(-1), count(0) { time = 0; }
@@ -193,8 +211,8 @@ protected:
 	} _lastTooltipShown;
 
 	// mouse cursor state
-	int		_cursorAnimateCounter;
-	int		_cursorAnimateTimer;
+	uint32	_cursorAnimateCounter;
+	uint32	_cursorAnimateTimer;
 	byte	_cursor[2048];
 
 	// delayed deletion of GuiObject
@@ -214,6 +232,8 @@ protected:
 	void closeTopDialog();
 
 	void redraw();
+	void redrawInternalTopDialogOnly();
+	void redrawInternal();
 
 	void setupCursor();
 	void animateCursor();

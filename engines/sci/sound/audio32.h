@@ -19,8 +19,9 @@
  *
  */
 
-#ifndef SCI_AUDIO32_H
-#define SCI_AUDIO32_H
+#ifndef SCI_SOUND_AUDIO32_H
+#define SCI_SOUND_AUDIO32_H
+
 #include "audio/audiostream.h"     // for AudioStream, SeekableAudioStream (...
 #include "audio/mixer.h"           // for Mixer, SoundHandle
 #include "audio/rate.h"            // for Audio::st_volume_t, RateConverter
@@ -655,4 +656,5 @@ public:
 };
 
 } // End of namespace Sci
-#endif
+
+#endif // SCI_SOUND_AUDIO32_H

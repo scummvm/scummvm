@@ -135,7 +135,7 @@ public:
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
 		#endif
-		#if defined(__ANDROID__)
+		#if defined(USE_SONIVOX)
 		LINK_PLUGIN(EAS)
 		#endif
 		LINK_PLUGIN(ADLIB)
@@ -724,7 +724,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32
 	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
 	// Clear md5 cache before each detection starts, just in case.
-	MD5Man.clear();
+	ADCacheMan.clear();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
@@ -740,6 +740,9 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32
 			candidates.push_back(engineCandidates[i]);
 		}
 	}
+
+	// Close all archives that were opened during detection
+	ADCacheMan.clearArchives();
 
 	return DetectionResults(candidates);
 }
@@ -892,12 +895,19 @@ void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const
 	if (!domain->contains("engineid")) {
 		upgradeTargetForEngineId(target);
 	} else {
-		if (domain->getVal("engineid").equals("fullpipe")) {
+		Common::String engineId = domain->getVal("engineid");
+
+		if (engineId.equals("fullpipe")) {
 			domain->setVal("engineid", "ngi");
 
 			debug("Upgrading engineid from 'fullpipe' to 'ngi'");
 
 			ConfMan.flushToDisk();
+
+		} else if (engineId.equals("xeen")) {
+			domain->setVal("engineid", "mm");
+
+			debug("Upgrading engineid from 'xeen' to 'mm'");
 		}
 	}
 }
@@ -942,7 +952,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 		// Clear md5 cache before detection starts
-		MD5Man.clear();
+		ADCacheMan.clear();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",

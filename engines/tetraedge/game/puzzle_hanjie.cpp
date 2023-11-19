@@ -31,7 +31,7 @@ static const char *BG_NAMES[] = {"Amenta", "Croix", "Echelle", "Sang", "Trident"
 
 PuzzleHanjie::PuzzleHanjie() : _exitButton(nullptr), _entered(false), _foregroundSprite(nullptr), _backgroundNo(0) {
 	ARRAYCLEAR(_sprites);
-	ARRAYCLEAR(_expectedVals, 0);
+	ARRAYCLEAR(_expectedVals, false);
 }
 
 void PuzzleHanjie::wakeUp() {
@@ -72,7 +72,7 @@ void PuzzleHanjie::wakeUp() {
 		if (splitData.size() != 7)
 			error("Invalid puzzle data for %s: %s", key.c_str(), data.c_str());
 		for (uint col = 0; col < 7; col++) {
-			_expectedVals[row * 7 + col] = (splitData[col] == "1" ? 1 : 0);
+			_expectedVals[row * 7 + col] = (splitData[col] == "1");
 		}
 	}
 
@@ -96,6 +96,14 @@ void PuzzleHanjie::sleep() {
 	AmerzoneGame *game = dynamic_cast<AmerzoneGame *>(g_engine->getGame());
 	assert(game);
 	game->warpY()->setVisible(true, false);
+}
+
+bool PuzzleHanjie::isSolved() {
+	for (uint i = 0; i < ARRAYSIZE(_expectedVals); i++) {
+		if (_expectedVals[i] != _sprites[i]->visible())
+			return false;
+	}
+	return true;
 }
 
 bool PuzzleHanjie::onExitButton() {

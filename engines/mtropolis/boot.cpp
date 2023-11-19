@@ -27,7 +27,6 @@
 #include "common/compression/vise.h"
 #include "common/formats/winexe.h"
 #include "common/compression/installshieldv3_archive.h"
-#include "common/compression/zlib.h"
 
 #include "graphics/maccursor.h"
 #include "graphics/wincursor.h"
@@ -243,7 +242,7 @@ void ObsidianGameDataHandler::unpackMacRetailInstaller(Common::Array<Common::Sha
 		error("Obsidian Installer has no data fork");
 
 	// Not counted/persisted because the StuffIt archive owns the stream.  It will also delete it if createStuffItArchive fails.
-	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream));
+	_installerArchive.reset(Common::createStuffItArchive(installerDataForkStream, true));
 	installerDataForkStream = nullptr;
 
 	persistentResources.push_back(PersistentResource<Common::Archive>::wrap(_installerArchive));
@@ -507,8 +506,10 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 		debug(1, "Unpacking files...");
 
 		for (const MacVISE3InstallerUnpackRequest &request : unpackRequests) {
+			Common::Path requestPath(request.fileName, ':');
+
 			Common::MacFinderInfo finfo;
-			if (!Common::MacResManager::getFileFinderInfo(request.fileName, *archive, finfo))
+			if (!Common::MacResManager::getFileFinderInfo(requestPath, *archive, finfo))
 				error("Couldn't get Finder info for file '%s'", request.fileName);
 
 			FileIdentification ident;
@@ -519,14 +520,14 @@ void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<
 
 			if (request.extractResources) {
 				Common::SharedPtr<Common::MacResManager> resMan(new Common::MacResManager());
-				if (!resMan->open(request.fileName, *archive))
+				if (!resMan->open(requestPath, *archive))
 					error("Failed to open Mac res manager for file '%s'", request.fileName);
 
 				ident.resMan = resMan;
 			}
 
 			if (request.extractData)
-				ident.stream.reset(archive->createReadStreamForMember(request.fileName));
+				ident.stream.reset(archive->createReadStreamForMember(requestPath));
 
 			files.push_back(ident);
 		}
@@ -884,6 +885,23 @@ const ManifestSubtitlesDef obsidianRetailEnSubtitlesDef = {
 	"subtitles_modifier_mapping_obsidian_en.csv"
 };
 
+const ManifestFile mtiRetailMacFiles[] = {
+	{"mPlayer PPC", MTFT_PLAYER},
+	{"Group3.rPP", MTFT_EXTENSION},
+	{"MTIKit.rPP", MTFT_EXTENSION},
+	{"xn--MTI1-8b7a", MTFT_MAIN},
+	{"MTI2", MTFT_ADDITIONAL},
+	{"MTI3", MTFT_ADDITIONAL},
+	{"MTI4", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *mtiRetailMacDirectories[] = {
+	"MPlayer PPC",
+	"MPlayer PPC/Resource",
+	nullptr
+};
+
 const ManifestFile mtiRetailWinFiles[] = {
 	{"MTPLAY32.EXE", MTFT_PLAYER},
 	{"GROUP3.R95", MTFT_EXTENSION},
@@ -902,7 +920,8 @@ const ManifestFile mtiRetailWinFiles[] = {
 	{"8.AVI", MTFT_VIDEO},
 	{"9.AVI", MTFT_VIDEO},
 	{"10.AVI", MTFT_VIDEO},
-	{nullptr, MTFT_AUTO}};
+	{nullptr, MTFT_AUTO}
+};
 
 const ManifestFile mtiDemoWinFiles[] = {
 	{"MTIWIN95.EXE", MTFT_PLAYER},
@@ -1004,6 +1023,20 @@ const ManifestFile sttgsDemoWinFiles[] = {
 	{"MTPLAY95.EXE", MTFT_PLAYER},
 	{"Trektriv.mpl", MTFT_MAIN},
 	{nullptr, MTFT_AUTO}
+};
+
+const ManifestFile unitWinFiles[] = {
+	{"UNIT32.EXE", MTFT_PLAYER},
+	{"DATA.MFX", MTFT_MAIN},
+	{"CURSORS.C32", MTFT_EXTENSION},
+	{"BASIC.X32", MTFT_SPECIAL},
+	{"EXTRAS.R32", MTFT_SPECIAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *unitWinDirectories[] = {
+	"MPLUGINS",
+	nullptr
 };
 
 const Game games[] = {
@@ -1119,6 +1152,14 @@ const Game games[] = {
 		nullptr,
 		GameDataHandlerFactory<ObsidianGameDataHandler>::create
 	},
+	// Muppet Treasure Island - Retail - Macintosh - Multiple languages
+	{
+		MTBOOT_MTI_RETAIL_MAC,
+		mtiRetailMacFiles,
+		mtiRetailMacDirectories,
+		nullptr,
+		GameDataHandlerFactory<MTIGameDataHandler>::create
+	},
 	// Muppet Treasure Island - Retail - Windows - Multiple languages
 	{
 		MTBOOT_MTI_RETAIL_WIN,
@@ -1180,6 +1221,14 @@ const Game games[] = {
 		MTBOOT_STTGS_DEMO_WIN,
 		sttgsDemoWinFiles,
 		nullptr,
+		nullptr,
+		GameDataHandlerFactory<STTGSGameDataHandler>::create
+	},
+	// Unit: Rebooted
+	{
+		MTBOOT_UNIT_REBOOTED_WIN,
+		unitWinFiles,
+		unitWinDirectories,
 		nullptr,
 		GameDataHandlerFactory<STTGSGameDataHandler>::create
 	},

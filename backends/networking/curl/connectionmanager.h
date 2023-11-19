@@ -89,7 +89,7 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 
 public:
 	ConnectionManager();
-	virtual ~ConnectionManager();
+	~ConnectionManager() override;
 
 	/**
 	 * All libcurl transfers are going through this ConnectionManager.
@@ -114,12 +114,12 @@ public:
 	Request *addRequest(Request *request, RequestCallback callback = nullptr);
 
 	/** Return URL-encoded version of given string. */
-	Common::String urlEncode(Common::String s) const;
+	Common::String urlEncode(const Common::String &s) const;
 
 	static uint32 getCloudRequestsPeriodInMicroseconds();
 
 	/** Return the path to the CA certificates bundle. */
-	static const char *getCaCertPath();
+	static Common::String getCaCertPath();
 };
 
 /** Shortcut for accessing the connection manager. */

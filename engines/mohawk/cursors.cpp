@@ -122,7 +122,7 @@ void MystCursorManager::setCursor(uint16 id) {
 		} else {
 			transparentColor = 255;
 		}
-		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, transparentColor);
+		CursorMan.replaceCursor(*surface, hotspotX, hotspotY, transparentColor);
 
 		// We're using the screen palette for the original game, but we need
 		// to use this for any 8bpp cursor in ME.
@@ -130,7 +130,7 @@ void MystCursorManager::setCursor(uint16 id) {
 			CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
+		CursorMan.replaceCursor(*surface, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false);
 	}
 }
 

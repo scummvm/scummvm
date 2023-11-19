@@ -41,6 +41,16 @@ GameDescriptor GlulxMetaEngine::findGame(const char *gameId) {
 		if (!strcmp(gameId, pd->gameId)) {
 			GameDescriptor gd = *pd;
 			gd._supportLevel = kTestingGame;
+
+			/*
+			 * Tested against ScummVM 2.8.0git, following entries are confirmed not to be playable
+			 */
+			if (!strcmp(gameId, "glkebook") ||
+				!strcmp(gameId, "if01_aafn") ||
+				!strcmp(gameId, "if01_sittm") ||
+				!strcmp(gameId, "if14_transparent"))
+				gd._supportLevel = kUnstableGame;
+
 			return gd;
 		}
 	}

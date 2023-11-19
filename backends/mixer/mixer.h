@@ -55,6 +55,11 @@ public:
 	 */
 	virtual int resumeAudio() = 0;
 
+	/**
+	 * Returns true if this is a null device and won't output any audio.
+	 */
+	virtual bool isNullDevice() const { return false; }
+
 protected:
 	/** The mixer implementation */
 	Audio::MixerImpl *_mixer;

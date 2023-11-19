@@ -23,6 +23,7 @@
 #define SWORD1_SCREEN_H
 
 #include "sword1/sworddefs.h"
+#include "common/mutex.h"
 
 class OSystem;
 
@@ -63,19 +64,23 @@ struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background
 #define BORDER_GREEN 3
 #define BORDER_PURPLE 4
 #define BORDER_BLACK 5
+#define TEXT_WHITE 6
 
+class SwordEngine;
 class ResMan;
 class ObjectMan;
 class Text; // Text objects use sprites that are created internally at run-time
 			// the buffer belongs to Text, so we need a reference here.
 
 class Screen {
+	friend class Text;
 public:
-	Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
+	Screen(OSystem *system, SwordEngine *vm, ResMan *pResMan, ObjectMan *pObjMan);
 	~Screen();
 	void clearScreen();
 	void useTextManager(Text *pTextMan);
 	void draw();
+	void initFadePaletteServer();
 
 	void quitScreen();
 	void newScreen(uint32 screen);
@@ -83,31 +88,56 @@ public:
 	void setScrolling(int16 offsetX, int16 offsetY);
 	void addToGraphicList(uint8 listId, uint32 objId);
 
-	void fadeDownPalette();
-	void fadeUpPalette();
-	void fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp);
-	bool stillFading();
-	void fullRefresh();
+	void startFadePaletteDown(int speed);
+	void startFadePaletteUp(int speed);
+	void fadePalette();
+	void fnSetPalette(uint8 start, uint16 length, uint32 id);
+	void fnSetFadeTargetPalette(uint8 start, uint16 length, uint32 id, int singleColor = -1);
+	int16 stillFading();
+	void fullRefresh(bool soft = false);
+	void setNextFadeOutToBlack();
 
 	bool showScrollFrame();
 	void updateScreen();
-	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = NULL, int8 fadeStatus = 0);
+	void showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const byte *fadeMask = nullptr, int8 fadeStatus = 0);
 
 	void fnSetParallax(uint32 screen, uint32 resId);
 	void fnFlash(uint8 color);
-	void fnBorder(uint8 color);
 
 	static void decompressHIF(uint8 *src, uint8 *dest);
 
+	void printDebugLine(uint8 *ascii, uint8 first, int x, int y);
+
+	// Functions used by the router debug visualization routines
+	void plotLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
+	void plotPoint(int32 x, int32 y, uint8 color);
+	void bresenhamLine(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color);
+
+	Common::Mutex _screenAccessMutex; // To coordinate actions between the main thread and the palette fade thread
+
 private:
-	// for router debugging
-	void drawLine(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void vline(uint16 x, uint16 y1, uint16 y2);
-	void hline(uint16 x1, uint16 x2, uint16 y);
-	void bsubline_1(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_2(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_3(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
-	void bsubline_4(uint16 x1, uint16 y1, uint16 x2, uint16 y2);
+	// The original values are 6-bit RGB numbers, so they have to be shifted,
+	// except for white, which for some reason has to stay unshifted in order
+	// to work correctly.
+	const uint8 _white[3]  = {      63,      63,      63 };
+	const uint8 _red[3]    = { 63 << 2, 0  << 2, 0  << 2 };
+	const uint8 _blue[3]   = { 0  << 2, 0  << 2, 63 << 2 };
+	const uint8 _yellow[3] = { 63 << 2, 63 << 2, 0  << 2 };
+	const uint8 _green[3]  = { 0  << 2, 63 << 2, 0  << 2 };
+	const uint8 _purple[3] = { 32 << 2, 0  << 2, 32 << 2 };
+	const uint8 _black[3]  = { 0  << 2, 0  << 2, 0  << 2 };
+	//const uint8 _grey[3]   = { 32 << 2, 32 << 2, 32 << 2 };
+
+	struct PaletteFadeInfo {
+		int16 paletteStatus;
+		int16 paletteIndex;
+		int16 paletteCount;
+		int16 fadeCount;
+		uint8 srcPalette[256 * 3];
+		uint8 dstPalette[256 * 3];
+	};
+
+	PaletteFadeInfo _paletteFadeInfo;
 
 	void verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight);
 	void blitBlockClear(uint16 x, uint16 y, uint8 *data);
@@ -125,11 +155,11 @@ private:
 	void decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest);
 	void decompressTony(uint8 *src, uint32 compSize, uint8 *dest);
 	void fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest);
-	void fadePalette();
 
 	void flushPsxCache();
 
 	OSystem *_system;
+	SwordEngine *_vm;
 	ResMan *_resMan;
 	ObjectMan *_objMan;
 	Text *_textMan;
@@ -158,10 +188,9 @@ private:
 
 	uint8 _targetPalette[256 * 3];
 	uint8 _currentPalette[256 * 3]; // for fading
-	uint8 _fadingStep;
-	int8  _fadingDirection; // 1 for fade up, -1 for fade down
-	bool _isBlack; // if the logic already faded down the palette, this is set to show the
-	               // mainloop that no further fading is necessary.
+	uint8 _zeroPalette[256 * 3];
+
+	bool _forceNextFadeOutToBlack = false;
 };
 
 } // End of namespace Sword1

@@ -152,6 +152,7 @@ void rReleaseBitmap(int i);
 void rReleaseBitmapDirect(gTexture *b);
 void rSetLoaderFlags(unsigned int NewLoaderFlags);
 int rCreateSurface(unsigned int dimx, unsigned int dimy, unsigned char flags);
+void *rCreateSurfaceP(unsigned int dimx, unsigned int dimy, unsigned char flags);
 char   *rGetBitmapName(unsigned int id);
 void rSetBitmapName(unsigned int id, const char *s);
 unsigned char *rLockSurface(int surf, unsigned int *pitch);

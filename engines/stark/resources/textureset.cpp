@@ -140,6 +140,8 @@ Gfx::TextureSet *TextureSet::readOverrideDdsArchive() {
 	for (Common::ArchiveMemberList::const_iterator it = files.begin(); it != files.end(); it++) {
 		const Common::String &name = (*it)->getName();
 
+		debugC(kDebugModding, "Attempting to load texture %s", name.c_str());
+
 		Common::SeekableReadStream *ddsStream = (*it)->createReadStream();
 		if (!ddsStream) {
 			warning("Unable to open %s for reading in %s", (*it)->getName().c_str(), archiveName.c_str());
@@ -168,6 +170,15 @@ Gfx::TextureSet *TextureSet::readOverrideDdsArchive() {
 		// Remove the .dds extension, add .bmp to match the names
 		// used by the models.
 		Common::String textureName = Common::String(name.c_str(), name.size() - 4);
+
+		// Fix for loading one of Emma's textures in mods caused by inconsistent zip filename encoding
+		//  The original game uses a 1 byte character (\xe6 which is ae in CP1252)
+		//	\x91 is ae in CP437 and CP850 which is used by some compression utilities
+		//	\xc3\xa6 is the UTF-8 2-byte representation
+		// Both get converted to the game's original encoding here
+		if (textureName == "pupp\x91r" || textureName == "pupp\xc3\xa6r") {
+			textureName = "pupp\xe6r";
+		}
 
 		textureSet->addTexture(textureName + ".bmp", texture);
 

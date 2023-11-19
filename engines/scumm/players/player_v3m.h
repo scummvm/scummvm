@@ -45,6 +45,7 @@ public:
 
 	bool loadMusic(const byte *ptr) override;
 	bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) override;
+	void overrideQuality(bool lowQuality);
 };
 
 } // End of namespace Scumm

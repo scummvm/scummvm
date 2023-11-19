@@ -34,7 +34,7 @@ FilesAjaxPageHandler::~FilesAjaxPageHandler() {}
 
 namespace {
 
-Common::String encodeDoubleQuotesAndSlashes(Common::String s) {
+Common::String encodeDoubleQuotesAndSlashes(const Common::String &s) {
 	Common::String result = "";
 	for (uint32 i = 0; i < s.size(); ++i)
 		if (s[i] == '"') {

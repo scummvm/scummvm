@@ -177,6 +177,11 @@ public:
 	void changeMap(uint16 id, byte section);
 
 	/**
+	 * Mark a tile as visited
+	 */
+	void visitedTile();
+
+	/**
 	 * Disables the special state of the current cell
 	 * This is primiarily used for disabling cells
 	 * that trigger combat after the first time

@@ -40,10 +40,6 @@ namespace UI {
 
 class Viewport : public Nancy::RenderObject {
 public:
-	static const byte kPanNone		= 0;
-	static const byte kPan360		= 1;
-	static const byte kPanLeftRight	= 2;
-
 	Viewport() :
 		RenderObject(6),
 		_movementLastFrame(0),
@@ -51,7 +47,9 @@ public:
 		_currentFrame(0),
 		_videoFormat(kLargeVideoFormat),
 		_stickyCursorPos(-1, -1),
-		_panningType(kPanNone) {}
+		_panningType(kPanNone),
+		_decoder(AVFDecoder::kLoadBidirectional),
+		_autoMove(false) {}
 
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
@@ -97,6 +95,8 @@ protected:
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
 	Common::Point _stickyCursorPos;
+
+	bool _autoMove;
 };
 
 } // End of namespace UI

@@ -33,7 +33,7 @@ public:
 	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
-	virtual void resize(int w, int h, bool inner = false) override;
+	virtual void resize(int w, int h) override;
 	void setDimensions(const Common::Rect &r) override;
 
 	virtual bool processEvent(Common::Event &event) override;
@@ -48,6 +48,7 @@ public:
 	void appendText(const Common::U32String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void clearText();
+	void setMarkdownText(const Common::U32String &str);
 
 	void setEditable(bool editable) { _editable = editable; _mactext->setEditable(editable); }
 	void setSelectable(bool selectable) { _selectable = selectable; }
@@ -64,6 +65,7 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 	int getTextHeight() { return _mactext->getTextHeight(); }
+	int getMouseLine(int x, int y);
 
 	/**
 	 * if we want to draw the text which color is not black, then we need to set _textColorRGB

@@ -300,6 +300,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 									mEventPressTime = -1;
 									mKeyRepeatedCount = -1;
 								}
+
+								@Override
+								public void onConfigurationChanged(Configuration newConfig) {
+									// Reload keyboard to adapt to the new size
+									ChangeKeyboard();
+								}
 							}
 
 							final BuiltInKeyboardView builtinKeyboard = new BuiltInKeyboardView(ScummVMActivity.this, null);
@@ -406,7 +412,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										KeyEvent.ACTION_UP,
 										key,
 										builtinKeyboard.mKeyRepeatedCount,
-										compiledMetaState);
+										compiledMetaState, 0, 0, KeyEvent.FLAG_SOFT_KEYBOARD);
 
 									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 									builtinKeyboard.resetEventAndTimestamps();
@@ -470,7 +476,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										KeyEvent.ACTION_DOWN,
 										key,
 										builtinKeyboard.mKeyRepeatedCount,
-										compiledMetaState);
+										compiledMetaState, 0, 0, KeyEvent.FLAG_SOFT_KEYBOARD);
 
 									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 								}
@@ -484,6 +490,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							_videoLayout.addView(_screenKeyboard, sKeyboardLayout);
 							_videoLayout.bringChildToFront(_screenKeyboard);
 						}
+						_scummvm.syncVirtkeyboardState(true);
 					}
 				});
 			} else {
@@ -504,10 +511,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 						//Log.d(ScummVM.LOG_TAG, "showScreenKeyboardWithoutTextInputField - captureMouse(true)");
 						_main_surface.captureMouse(true);
 						//_main_surface.showSystemMouseCursor(false);
+						_scummvm.syncVirtkeyboardState(false);
 					}
 				});
 			}
-			// TODO Do we need to inform native ScummVM code of keyboard shown state?
 //			_main_surface.nativeScreenKeyboardShown( keyboardWithoutTextInputShown ? 1 : 0 );
 		}
 	}
@@ -782,6 +789,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		@Override
 		protected int getTouchMode() {
 			return _events.getTouchMode();
+		}
+
+		@Override
+		protected void setOrientation(final int orientation) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					setRequestedOrientation(orientation);
+				}
+			});
 		}
 
 		@Override

@@ -69,7 +69,7 @@ bool MpsInstaller::hasFile(const Common::Path &path) const {
 
 int MpsInstaller::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator i = _files.begin(), end = _files.end(); i != end; ++i) {
-		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
 	}
 
 	return _files.size();
@@ -80,7 +80,7 @@ const Common::ArchiveMemberPtr MpsInstaller::getMember(const Common::Path &path)
 	if (!_files.contains(translated))
 		return nullptr;
 
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_files.getVal(translated)._fileName, *this));
 }
 
 Common::SharedArchiveContents MpsInstaller::readContentsForPath(const Common::String& translated) const {

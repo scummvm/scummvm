@@ -54,7 +54,7 @@ private:
 		&Map43::special08
 	};
 public:
-	Map43() : Map(43, "whitew", 0xa11, 3) {}
+	Map43() : Map(43, "whitew", 0xa11, 3, "Castle White Wolf") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

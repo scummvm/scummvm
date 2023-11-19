@@ -69,7 +69,7 @@ private:
 		&Map01::special16
 	};
 public:
-	Map01() : MapTown(1, "portsmit", 0xc03, 1) {}
+	Map01() : MapTown(1, "portsmit", 0xc03, 1, "Portsmith") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

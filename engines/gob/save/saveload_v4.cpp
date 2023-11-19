@@ -38,7 +38,7 @@ SaveLoad_v4::SaveFile SaveLoad_v4::_saveFiles[] = {
 	{ "save6.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 6
 	{ "save7.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 7
 	{ "save8.tmp", kSaveModeSave, nullptr, "savegame screen properties"}, // Slot 8
-	{ "save9.tmp", kSaveModeSave, nullptr, "savegame screen properties"}  // Slot 9
+	{ "save9.tmp", kSaveModeSave, nullptr, "savegame screen properties"},  // Slot 9
 };
 
 

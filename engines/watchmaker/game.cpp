@@ -211,6 +211,7 @@ WGame::~WGame() {
 	delete sdl;
 	delete _meshModifiers;
 	delete _roomManager;
+	delete _rnd;
 	_vm = nullptr;
 }
 
@@ -587,7 +588,7 @@ void WGame::LoadMisc() {
 	//TrecLogo = LoadDDBitmap( "TrecLogo.tga", rSURFACESTRETCH );
 
 	for (i = 1; i < 85; i++) {
-		snprintf(str, 20, "I%0#3d.tga", i);
+		snprintf(str, 20, "I%03d.tga", i);
 		IconsPics[i] = LoadDDBitmap(*this, str, rSURFACESTRETCH);
 	}
 

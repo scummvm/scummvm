@@ -175,7 +175,7 @@ bool InGameScene::addMarker(const Common::String &markerName, const Common::Stri
 float InGameScene::angularDistance(float a1, float a2) {
 	float result = a2 - a1;
 	if (result >= -M_PI && result > M_PI) {
-		result = result + -(M_PI * 2);
+		result = result - (M_PI * 2);
 	} else {
 		result = result + (M_PI * 2);
 	}
@@ -688,7 +688,7 @@ bool InGameScene::load(const Common::FSNode &sceneNode) {
 		return false;
 
 	close();
-	_loadedPath = sceneNode.getPath();
+	_loadedPath = sceneNode.getParent().getPath();
 	Common::File scenefile;
 	if (!scenefile.open(sceneNode))
 		return false;
@@ -1026,7 +1026,7 @@ bool InGameScene::loadObjectMaterials(const Common::String &name) {
 		if (obj._name.empty())
 			continue;
 
-		Common::Path mpath = _loadedPath.getParent().join(name).join(obj._name + ".png");
+		Common::Path mpath = _loadedPath.join(name).join(obj._name + ".png");
 		if (img.load(core->findFile(mpath))) {
 			Te3DTexture *tex = Te3DTexture::makeInstance();
 			tex->load(img);
@@ -1682,9 +1682,19 @@ void InGameScene::update() {
 			}
 		}
 		if (_character->charLookingAt()) {
-			TeVector3f32 targetpos = _character->charLookingAt()->_model->position();
-			if (g_engine->gameType() == TetraedgeEngine::kSyberia2)
-				targetpos = targetpos * _character->lastHeadBoneTrans();
+			Character *targetc = _character->charLookingAt();
+			TeVector3f32 targetpos;
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia)
+				targetpos = targetc->_model->position();
+			else
+				targetpos = targetc->_model->worldTransformationMatrix() * targetc->lastHeadBoneTrans();
+
+			//
+			// Note: The below general code for NPCs is different in Syberia 2,
+			// and uses c->charLookingAtOffset(), but the player look-at code
+			// is the same in both games and always adds 17 for "tall" characters.
+			//
+
 			if (_character->lookingAtTallThing())
 				targetpos.y() += 17;
 			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
@@ -1699,13 +1709,15 @@ void InGameScene::update() {
 		}
 	}
 	for (Character *c : _characters) {
-		if (c->charLookingAt()) {
-			TeVector3f32 targetpos = c->charLookingAt()->_model->position();
+		Character *targetc = c->charLookingAt();
+		if (targetc) {
+			TeVector3f32 targetpos;
 			if (g_engine->gameType() == TetraedgeEngine::kSyberia) {
+				targetpos = targetc->_model->position();
 				if (c->lookingAtTallThing())
 					targetpos.y() += 17;
 			} else {
-				targetpos = targetpos * c->lastHeadBoneTrans();
+				targetpos = targetc->_model->worldTransformationMatrix() * targetc->lastHeadBoneTrans();
 			}
 			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
 					getHeadVerticalRotation(c, targetpos));
@@ -1714,6 +1726,12 @@ void InGameScene::update() {
 				headRot.setX((float)M_PI_2);
 			else if (hangle < -90)
 				headRot.setX((float)-M_PI_2);
+
+			if (g_engine->gameType() == TetraedgeEngine::kSyberia2) {
+				if (c->lookingAtTallThing())
+					headRot.setY(headRot.getY() + c->charLookingAtOffset());
+			}
+
 			c->setHeadRotation(headRot);
 			c->setHasAnchor(true);
 		}
@@ -1764,7 +1782,7 @@ void InGameScene::update() {
 		if (obj->_rotateTime >= 0) {
 			float time = MIN((float)(obj->_rotateTimer.getTimeFromStart() / 1000000.0), obj->_rotateTime);
 			TeVector3f32 rot = (obj->_rotateAmount * (time / obj->_rotateTime));
-			TeQuaternion rotq = TeQuaternion::fromEuler(rot);
+			TeQuaternion rotq = TeQuaternion::fromEulerDegrees(rot);
 			obj->model()->setRotation(obj->_rotateStart * rotq);
 		}
 	}

@@ -36,10 +36,9 @@ class GameMessages : public ScrollText {
 		bool msgKeypress(const KeypressMessage &msg) override;
 	};
 private:
-	YNCallback _yCallback = nullptr;
+	YNCallback _callback = nullptr;
 	YNCallback _nCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
-	YNCallback &_timeoutCallback = _yCallback;
 	YesNo _yesNo;
 public:
 	GameMessages();

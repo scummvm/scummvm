@@ -77,6 +77,7 @@ void GfxText16::SetFont(GuiResourceId fontId) {
 	_ports->_curPort->fontHeight = _font->getHeight();
 }
 
+#if 0
 void GfxText16::ClearChar(int16 chr) {
 	if (_ports->_curPort->penMode != 1)
 		return;
@@ -87,24 +88,24 @@ void GfxText16::ClearChar(int16 chr) {
 	rect.right = rect.left + GetFont()->getCharWidth(chr);
 	_paint16->eraseRect(rect);
 }
+#endif
 
 // This internal function gets called as soon as a '|' is found in a text. It
 // will process the encountered code and set new font/set color.
 // Returns textcode character count.
 int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing) {
-	const char *textCode = text;
-	int16 textCodeSize = 0;
-	char curCode;
-	signed char curCodeParm;
-
 	// Find the end of the textcode
-	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
+	const char *textCode = text;
+	int16 textCodeSize = 1;
+	while ((*text != 0) && (*text++ != 0x7C)) {
+		textCodeSize++;
+	}
 
 	// possible TextCodes:
 	//  c -> sets textColor to current port pen color
 	//  cX -> sets textColor to _textColors[X-1]
-	curCode = textCode[0];
-	curCodeParm = strtol(textCode+1, nullptr, 10);
+	char curCode = textCode[0];
+	signed char curCodeParm = strtol(textCode+1, nullptr, 10);
 	if (!Common::isDigit(textCode[1])) {
 		curCodeParm = -1;
 	}
@@ -377,18 +378,18 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 }
 
 void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
-	uint16 curChar;
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 
-	textWidth = 0; textHeight = 0;
-	bool escapedNewLine = false;
+	textWidth = 0;
+	textHeight = 0;
 
 	GetFont();
 	if (_font) {
+		bool escapedNewLine = false;
 		text += from;
 		while (len--) {
-			curChar = (*(const byte *)text++);
+			uint16 curChar = (*(const byte *)text++);
 			if (_font->isDoubleByte(curChar)) {
 				curChar |= (*(const byte *)text++) << 8;
 				len--;
@@ -433,9 +434,12 @@ void GfxText16::StringWidth(const Common::String &str, GuiResourceId orgFontId, 
 	Width(str.c_str(), 0, str.size(), orgFontId, textWidth, textHeight, true);
 }
 
+#if 0
 void GfxText16::ShowString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Show(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
+#endif
+
 void GfxText16::DrawString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Draw(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
@@ -443,9 +447,8 @@ void GfxText16::DrawString(const Common::String &str, GuiResourceId orgFontId, i
 int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
-	int16 charCount;
 	int16 maxTextWidth = 0, textWidth;
-	int16 totalHeight = 0, textHeight;
+	int16 textHeight;
 
 	if (fontId != -1)
 		SetFont(fontId);
@@ -474,12 +477,13 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplit
 		if (g_sci->getLanguage() == Common::KO_KOR)
 			SwitchToFont1001OnKorean(curTextPos, languageSplitter);
 
+		int16 totalHeight = 0;
 		while (*curTextPos) {
 			// We need to check for Shift-JIS every line
 			if (g_sci->getLanguage() == Common::JA_JPN)
 				SwitchToFont900OnSjis(curTextPos, languageSplitter);
 
-			charCount = GetLongest(curTextPos, rect.right, fontId);
+			int16 charCount = GetLongest(curTextPos, rect.right, fontId);
 			if (charCount == 0)
 				break;
 			Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, false);
@@ -497,19 +501,17 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplit
 
 // returns maximum font height used
 void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
-	uint16 curChar, charWidth;
-	Common::Rect rect;
-
 	GetFont();
 	if (!_font)
 		return;
 
+	Common::Rect rect;
 	rect.top = _ports->_curPort->curTop;
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	text += from;
 	bool escapedNewLine = false;
 	while (len--) {
-		curChar = (*(const byte *)text++);
+		uint16 curChar = (*(const byte *)text++);
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)text++) << 8;
 			len--;
@@ -534,8 +536,8 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 				break;
 			}
 			// fall through
-		default:
-			charWidth = _font->getCharWidth(curChar);
+		default: {
+			uint16 charWidth = _font->getCharWidth(curChar);
 			// clear char
 			if (_ports->_curPort->penMode == 1) {
 				rect.left = _ports->_curPort->curLeft;
@@ -545,6 +547,7 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 			// CharStd
 			_font->draw(curChar, _ports->_curPort->top + _ports->_curPort->curTop, _ports->_curPort->left + _ports->_curPort->curLeft, _ports->_curPort->penClr, _ports->_curPort->greyedOutput);
 			_ports->_curPort->curLeft += charWidth;
+		}
 		}
 	}
 }
@@ -562,7 +565,7 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 
 // Draws a text in rect.
 void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
-	int16 textWidth, maxTextWidth, textHeight, charCount;
+	int16 textWidth, maxTextWidth, textHeight;
 	int16 offset = 0;
 	int16 hline = 0;
 	GuiResourceId previousFontId = GetFontId();
@@ -597,7 +600,7 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 				doubleByteMode = true;
 		}
 
-		charCount = GetLongest(curTextPos, rect.width(), fontId);
+		int16 charCount = GetLongest(curTextPos, rect.width(), fontId);
 		if (charCount == 0)
 			break;
 		Width(curTextLine, 0, charCount, fontId, textWidth, textHeight, true);
@@ -693,7 +696,9 @@ void GfxText16::DrawString(const Common::String &textOrig) {
 // we need to have a separate status drawing code
 //  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
 void GfxText16::DrawStatus(const Common::String &strOrig) {
-	uint16 curChar, charWidth;
+	GetFont();
+	if (!_font)
+		return;
 
 	Common::String str;
 	if (!g_sci->isLanguageRTL())
@@ -705,21 +710,18 @@ void GfxText16::DrawStatus(const Common::String &strOrig) {
 	uint16 textLen = str.size();
 	Common::Rect rect;
 
-	GetFont();
-	if (!_font)
-		return;
-
 	rect.top = _ports->_curPort->curTop;
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	while (textLen--) {
-		curChar = *text++;
+		uint16 curChar = *text++;
 		switch (curChar) {
 		case 0:
 			break;
-		default:
-			charWidth = _font->getCharWidth(curChar);
+		default: {
+			uint16 charWidth = _font->getCharWidth(curChar);
 			_font->draw(curChar, _ports->_curPort->top + _ports->_curPort->curTop, _ports->_curPort->left + _ports->_curPort->curLeft, _ports->_curPort->penClr, _ports->_curPort->greyedOutput);
 			_ports->_curPort->curLeft += charWidth;
+		}
 		}
 	}
 }
@@ -906,7 +908,7 @@ void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId,
 	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
 
 	if (_macFontManager->usesSystemFonts() && 
-		g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
+		_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		// QFG1VGA and LSL6 make this adjustment when the large font is used.
 		*textHeight -= (lineCount + 1);
 	}
@@ -925,7 +927,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 	// Use the large font in hires mode, otherwise use the small font
 	const Graphics::Font *font;
 	uint16 scale;
-	if (g_sci->_gfxScreen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
+	if (_screen->getUpscaledHires() == GFX_SCREEN_UPSCALED_640x400) {
 		font = _macFontManager->getLargeFont(sciFontId);
 		scale = 2;
 	} else {
@@ -934,7 +936,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 	}
 
 	if (color == -1) {
-		color = g_sci->_gfxPorts->_curPort->penClr;
+		color = _ports->_curPort->penClr;
 	}
 
 	rect.left *= scale;
@@ -944,7 +946,7 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 
 	// Draw each line of text
 	int16 maxWidth = rect.width();
-	int16 y = (g_sci->_gfxPorts->_curPort->top * scale) + rect.top;
+	int16 y = (_ports->_curPort->top * scale) + rect.top;
 	for (uint i = 0; i < text.size(); ++i) {
 		int16 lineWidth;
 		int16 lineCharCount = macGetLongest(text, i, font, maxWidth, &lineWidth);
@@ -960,10 +962,10 @@ void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlign
 		}
 
 		// Draw each character in the line
-		int16 x = (g_sci->_gfxPorts->_curPort->left * scale) + rect.left + offset;
+		int16 x = (_ports->_curPort->left * scale) + rect.left + offset;
 		for (int16 j = 0; j < lineCharCount; ++j) {
 			char ch = text[i + j];
-			g_sci->_gfxScreen->putMacChar(font, x, y, ch, color);
+			_screen->putMacChar(font, x, y, ch, color);
 			x += font->getCharWidth(ch);
 		}
 

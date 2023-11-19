@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_vsprintf
-
 #include "watchmaker/init/nl_parse.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -39,7 +37,7 @@ int ParseError(const char *ln, ...) {
 		ErrorFunc();
 
 	va_start(ap, ln);
-	vsprintf(err, ln, ap);
+	vsnprintf(err, J_MAXSTRLEN, ln, ap);
 	va_end(ap);
 	warning("%s", err);
 	return 0;

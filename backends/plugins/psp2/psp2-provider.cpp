@@ -45,6 +45,7 @@ void *forceLinkFunctions[] = {
 	(void *)fminf,
 	(void *)frexpf,
 	(void *)getc,
+	(void *)log2f,
 	(void *)mbstowcs,
 	// Select the double version
 	(void *)(double (*)(double))nearbyint,

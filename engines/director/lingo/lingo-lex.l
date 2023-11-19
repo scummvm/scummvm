@@ -30,7 +30,15 @@
 %{
 
 #define YY_NO_UNISTD_H
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_fwrite
+#define FORBIDDEN_SYMBOL_EXCEPTION_fread
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdin
+#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
+#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_getc
 
 #include "common/str.h"
 
@@ -169,6 +177,7 @@ after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
+castlibs	{ count(); return tCASTLIBS; }	// D5
 char		{ count(); return tCHAR; }		// D3
 chars		{ count(); return tCHARS; }
 contains	{ count(); return tCONTAINS; }
@@ -267,6 +276,7 @@ with		{ count(); return tWITH; }
 within		{ count(); return tWITHIN; }
 word		{ count(); return tWORD; }
 words		{ count(); return tWORDS; }
+xtras		{ count(); return tXTRAS; } // D5
 
 [<][>]			{ count(); return tNEQ; }
 [>][=]			{ count(); return tGE; }

@@ -259,13 +259,14 @@ bool Console::Cmd_List(int argc, const char **argv) {
 
 bool Console::Cmd_Print(int argc, const char **argv) {
 	if (argc == 2) {
-		Error error = Error(SUCCESS, OK, 0);
+		Error *error = nullptr;
 		Common::String temp = CONTROLLER->readValue(argv[1], &error);
-		if (error.getErrorLevel() == SUCCESS) {
+		if (error == nullptr) {
 			debugPrintf("%s = %s \n", argv[1], temp.c_str());
 			return true;
 		} else {
-			printError(argv[0], error);
+			printError(argv[0], *error);
+			delete error;
 			return true;
 		}
 	} else {

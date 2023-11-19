@@ -54,6 +54,12 @@ enum ProjectFormat {
 	kProjectFormatNeutral,
 };
 
+enum ProjectEngineVersion {
+	kProjectEngineVersionUnknown,
+	kProjectEngineVersion1,
+	kProjectEngineVersion2,
+};
+
 enum DataReadErrorCode {
 	kDataReadErrorNone = 0,
 
@@ -88,6 +94,7 @@ enum DataObjectType : uint {
 	kAssetCatalog							= 0xd,
 	kGlobalObjectInfo						= 0x17,
 	kUnknown19								= 0x19,
+	kUnknown2B								= 0x2b,
 
 	kProjectStructuralDef					= 0x2,
 	kSectionStructuralDef					= 0x3,
@@ -100,6 +107,7 @@ enum DataObjectType : uint {
 	kSoundElement							= 0xa,
 	kTextLabelElement						= 0x15,
 
+	kAVIMovieElement						= 0x25,
 	kAliasModifier							= 0x27,
 	kChangeSceneModifier					= 0x136,
 	kReturnModifier							= 0x140,
@@ -148,6 +156,7 @@ enum DataObjectType : uint {
 	kImageAsset								= 0xe,
 	kMToonAsset								= 0xf,
 	kTextAsset								= 0x1f,
+	kAVIMovieAsset							= 0x24,
 
 	kAssetDataChunk							= 0xffff,
 };
@@ -172,7 +181,7 @@ namespace StructuralFlags {
 
 class DataReader {
 public:
-	DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat);
+	DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat, ProjectEngineVersion projectEngineVersion);
 
 	bool readU8(uint8 &value);
 	bool readU16(uint16 &value);
@@ -206,14 +215,21 @@ public:
 	inline int64 tellGlobal() const { return _globalPosition + tell(); }
 
 	ProjectFormat getProjectFormat() const;
+	ProjectEngineVersion getProjectEngineVersion() const;
 	bool isBigEndian() const;
+	bool isV2Project() const;
+
+	void setPermitDamagedStrings(bool permit);
 
 private:
 	bool checkErrorAndReset();
 
 	Common::SeekableReadStreamEndian &_stream;
 	ProjectFormat _projectFormat;
+	ProjectEngineVersion _projectEngineVersion;
 	int64 _globalPosition;
+
+	bool _permitDamagedStrings;
 };
 
 struct Rect {
@@ -535,6 +551,16 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct Unknown2B : public DataObject {
+	Unknown2B();
+
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct StructuralDef : public DataObject {
 	StructuralDef();
 
@@ -748,7 +774,7 @@ protected:
 };
 
 struct MovieElement : public StructuralDef {
-	MovieElement();
+	explicit MovieElement(bool avi);
 
 	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Loop + Alternate, Paused
 	uint32 sizeIncludingTag;
@@ -771,6 +797,8 @@ struct MovieElement : public StructuralDef {
 	uint8 unknown13[4];
 
 	Common::String name;
+
+	bool isAVI;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -875,6 +903,7 @@ struct BehaviorModifier : public DataObject {
 	uint32 unknown4;
 	uint16 unknown5;
 	uint32 unknown6;
+	uint32 unknown8; // revision 2 only.
 	Point editorLayoutPosition;
 	uint16 lengthOfName;
 	uint16 numChildren;
@@ -922,6 +951,7 @@ struct MiniscriptProgram {
 	Common::Array<Attribute> attributes;
 
 	ProjectFormat projectFormat;
+	ProjectEngineVersion projectEngineVersion;
 	bool isBigEndian;
 
 	bool load(DataReader &reader);
@@ -936,6 +966,7 @@ struct TypicalModifierHeader {
 	uint32 guid;
 	uint8 unknown3[6];
 	uint32 unknown4;
+	uint32 unknown5;  // V2 header only
 	Point editorLayoutPosition;
 	uint16 lengthOfName;
 
@@ -1840,6 +1871,21 @@ struct MovieAsset : public DataObject {
 	bool haveMacPart;
 	bool haveWinPart;
 	PlatformPart platform;
+
+	Common::String extFileName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct AVIMovieAsset : public DataObject {
+	AVIMovieAsset();
+
+	uint8 unknown1[12];
+	uint32 assetID;
+	uint8 unknown2[4];
+	uint16 extFileNameLength;
+	uint8 unknown3[60];
 
 	Common::String extFileName;
 

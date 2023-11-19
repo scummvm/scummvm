@@ -24,10 +24,16 @@
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
+enum {
+	GFX_PALETTESDL = 1
+};
+
+
 class RISCOSSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	RISCOSSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window) : SurfaceSdlGraphicsManager(sdlEventSource, window) {}
 
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	bool hasFeature(OSystem::Feature f) const override;
 	void initGraphicsSurface() override;
 };

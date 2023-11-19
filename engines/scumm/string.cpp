@@ -29,6 +29,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/gfx_mac.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
@@ -70,7 +71,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 			vm.slot[_currentScript].number == 203 &&
 			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
 			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG) &&
-			_enableEnhancements) {
+			enhancementEnabled(kEnhMinorBugFixes)) {
 			return;
 		}
 
@@ -82,7 +83,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// In the italian CD version, the whole scene is sped up to
 		// keep up with Sam's speech. We compensate for this by slowing
 		// down the other animations.
-		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && enhancementEnabled(kEnhTimingChanges)) {
 			Actor *a;
 
 			if (_language == Common::DE_DEU && strcmp(_game.variant, "Floppy") != 0) {
@@ -129,11 +130,11 @@ void ScummEngine::debugMessage(const byte *msg) {
 	}
 
 	if (buffer[0] == 0xFF && buffer[1] == 10) {
-		uint32 a, b;
+		uint32 offset, length;
 		int channel = 0;
 
-		a = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+		offset = buffer[2] | (buffer[3] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+		length = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
 		// Sam and Max uses a caching system, printing empty messages
 		// and setting VAR_V6_SOUNDMODE beforehand. See patch #8051.
@@ -141,7 +142,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 			channel = VAR(VAR_V6_SOUNDMODE);
 
 		if (channel != 2)
-			_sound->talkSound(a, b, 1, channel);
+			_sound->talkSound(offset, length, DIGI_SND_MODE_SFX, channel);
 	}
 }
 
@@ -173,8 +174,8 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 
 
 bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
-	uint32 talk_sound_a = 0;
-	uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	uint32 digiTalkieLength = 0;
 	int color, frme, c = 0, oldy;
 	bool endLoop = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
@@ -214,7 +215,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			// one or more embedded "wait" codes. Rather than
 			// relying on the calculated talk delay, hard-code
 			// better ones.
-			if (_game.id == GID_SAMNMAX && _enableEnhancements && isScriptRunning(65)) {
+			if (_game.id == GID_SAMNMAX && enhancementEnabled(kEnhTimingChanges) && isScriptRunning(65)) {
 				typedef struct {
 					const char *str;
 					const int16 talkDelay;
@@ -419,17 +420,17 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			break;
 		case 10:
 			// Note the similarity to the code in debugMessage()
-			talk_sound_a = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
-			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
+			digiTalkieOffset = buffer[0] | (buffer[1] << 8) | (buffer[4] << 16) | (buffer[5] << 24);
+			digiTalkieLength = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
 #ifdef ENABLE_HE
-				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+				((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 #else
-				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+				((SoundHE *)_sound)->playVoice(digiTalkieOffset, digiTalkieLength);
 #endif
 			} else {
-				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
+				_sound->talkSound(digiTalkieOffset, digiTalkieLength, DIGI_SND_MODE_TALKIE);
 			}
 			_haveActorSpeechMsg = false;
 			break;
@@ -464,10 +465,10 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 #ifdef ENABLE_HE
 bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 	const int charsetCode = (_game.heversion >= 80) ? 127 : 64;
-	uint32 talk_sound_a = 0;
-	//uint32 talk_sound_b = 0;
+	uint32 digiTalkieOffset = 0;
+	uint32 digiTalkieLength = 0;
 	int i, c = 0;
-	char value[32];
+	char value[4096];
 	bool endLoop = false;
 	bool endText = false;
 	byte *buffer = _charsetBuffer + _charsetBufPos;
@@ -487,7 +488,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
+			digiTalkieOffset = atoi(value);
 			i = 0;
 			c = *buffer++;
 			while (c != charsetCode) {
@@ -496,8 +497,8 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			digiTalkieLength = atoi(value);
+			((SoundHE *)_sound)->playVoice(_localizer ? _localizer->mapTalk(digiTalkieOffset) : digiTalkieOffset, digiTalkieLength);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -518,9 +519,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 				i++;
 			}
 			value[i] = 0;
-			talk_sound_a = atoi(value);
-			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+			((SoundHE *)_sound)->playVoiceFile(value);
 			break;
 		case 119:
 			_haveMsg = 0xFF;
@@ -575,24 +574,7 @@ bool ScummEngine::newLine() {
 	} else if (!(_game.platform == Common::kPlatformFMTowns) && _string[0].height) {
 		_nextTop += _string[0].height;
 	} else {
-		if (_game.platform == Common::kPlatformSegaCD && _useCJKMode) {
-			// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
-			// the font height, but instead relies on the actual string height.
-			// If the string contains at least a 2 byte character, then we signal it with
-			// a flag, so that getFontHeight() can yield the correct result.
-			for (int i = 0; _charsetBuffer[i]; i++) {
-				// Handle the special 0xFAFD character, which actually is a 0x20 space char.
-				if (_charsetBuffer[i] == 0xFD && _charsetBuffer[i + 1] == 0xFA) {
-					i++;
-					continue;
-				}
-
-				if (is2ByteCharacter(_language, _charsetBuffer[i])) {
-					_segaForce2ByteCharHeight = true;
-					break;
-				}
-			}
-
+		if ((_game.platform == Common::kPlatformSegaCD || _isIndy4Jap) && _useCJKMode) {
 			_nextTop += _charset->getFontHeight();
 		} else {
 			bool useCJK = _useCJKMode;
@@ -607,8 +589,6 @@ bool ScummEngine::newLine() {
 		// FIXME: is this really needed?
 		_charset->_disableOffsX = true;
 	}
-
-	_segaForce2ByteCharHeight = false;
 
 	return true;
 }
@@ -844,13 +824,15 @@ void ScummEngine_v2::drawSentence() {
 
 void ScummEngine::CHARSET_1() {
 	Actor *a;
-	if (_game.heversion >= 70 && _haveMsg == 3) {
+	if (_game.heversion >= 60 && _haveMsg == 3) {
 		stopTalk();
 		return;
 	}
 
 	if (!_haveMsg)
 		return;
+
+	_force2ByteCharHeight = false;
 
 	if (_game.version >= 4 && _game.version <= 6) {
 		// Do nothing while the camera is moving
@@ -926,10 +908,10 @@ void ScummEngine::CHARSET_1() {
 	    (_game.version == 7 && _haveMsg != 1)) {
 
 		if (_game.heversion >= 60) {
-			if (_sound->isSoundRunning(1) == 0)
+			if (_sound->isSoundRunning(HSND_TALKIE_SLOT) == 0)
 				stopTalk();
 		} else {
-			if ((_sound->_sfxMode & 2) == 0)
+			if ((_sound->_digiSndMode & DIGI_SND_MODE_TALKIE) == 0)
 				stopTalk();
 		}
 		return;
@@ -1126,7 +1108,7 @@ void ScummEngine::CHARSET_1() {
 	if (_isRTL)
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
-	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
+	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 
 	while (handleNextCharsetCode(a, &c)) {
@@ -1159,7 +1141,7 @@ void ScummEngine::CHARSET_1() {
 
 		if (createTextBox) {
 			if (!_keepText)
-				mac_createIndy3TextBox(a);
+				_macGui->initTextAreaForActor(a, _charset->getColor());
 			createTextBox = false;
 			drawTextBox = true;
 		}
@@ -1169,6 +1151,19 @@ void ScummEngine::CHARSET_1() {
 				byte *buffer = _charsetBuffer + _charsetBufPos;
 				c += *buffer++ * 256; //LE
 				_charsetBufPos = buffer - _charsetBuffer;
+
+				// The JAP Sega CD version of Monkey Island 1 doesn't just calculate
+				// the font height, but instead relies on the actual string height.
+				// If the string contains at least a 2 byte character, then we signal it with
+				// a flag, so that getFontHeight() can yield the correct result.
+				// It has been verified on the disasm for Indy4 Japanese DOS/V and Mac that
+				// this is the correct behavior for the latter game as well.
+				// Monkey Island 1 seems to have an exception for the 0xFAFD character, which
+				// is a space character with a two byte character height and width, but those
+				// dimensions apparently are never used, and the 0x20 character is used instead.
+				if (_game.platform != Common::kPlatformSegaCD || c != 0xFAFD) {
+					_force2ByteCharHeight = true;
+				}
 			}
 		}
 		if (_game.version <= 3) {
@@ -1177,7 +1172,7 @@ void ScummEngine::CHARSET_1() {
 		} else {
 			if (_game.features & GF_16BIT_COLOR) {
 				// HE games which use sprites for subtitles
-			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
+			} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundInUse(HSND_TALKIE_SLOT)) {
 				// Special case for HE games
 			} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 				// Special case for Loom (CD), since it only uses CD audio.for sound
@@ -1233,39 +1228,14 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
-	// HACK: Correct positions of text in books in Indy3 Mac.
-	// See also bug #8759. Not needed when using the Mac font.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1 && !_macScreen) {
-		if (_currentRoom == 75) {
-			// Grail Diary Page 1 (Library)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 22;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 90) {
-			// Grail Diary Page 2 (Catacombs - Engravings)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 21;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-		} else if (_currentRoom == 69) {
-			// Grail Diary Page 3 (Catacombs - Music)
-			if (_charset->_startLeft < 160)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
-			else if (_charset->_startLeft < 200)
-				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
-		} else if (_currentRoom == 74) {
-			// Biplane Manual
-			_charset->_startLeft = _charset->_left = _string[a].xpos - 35;
-		}
-	}
-
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
 	fontHeight = _charset->getFontHeight();
 
-	if (_game.version >= 4) {
+	// Disabled in HE games starting from Freddi1 because
+	// of issues when writing a savegame name containing spaces...
+	if (_game.version >= 4 && _game.heversion < 70) {
 		// trim from the right
 		byte *tmp = buf;
 		space = nullptr;
@@ -1392,6 +1362,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_nextTop = _charset->_top;
 	}
 
+	// From disasm: this is used to let a yellow bar appear
+	// in the bottom of the screen during dialog choices which
+	// are longer than the screen width.
+	if (_isIndy4Jap)
+		_scummVars[78] = _charset->_left;
+
 	_string[a].xpos = _charset->_str.right;
 
 	if (_game.heversion >= 60) {
@@ -1508,7 +1484,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 					// uses `startAnim(7)` for this.
 					if (_game.id == GID_SAMNMAX && _currentRoom == 52 && vm.slot[_currentScript].number == 102 &&
 						chr == 9 && readVar(0x8000 + 95) != 0 && (VAR(171) == 997 || VAR(171) == 998) &&
-						dst[-2] == 8 && _enableEnhancements) {
+						dst[-2] == 8 && enhancementEnabled(kEnhMinorBugFixes)) {
 						dst[-2] = 7;
 					}
 
@@ -1524,8 +1500,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 			}
 		} else {
 			if ((chr != '@') || (_game.version >= 7 && is2ByteCharacter(_language, lastChr)) ||
-				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
-				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
+				(_language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;
 			}
 			lastChr = chr;
@@ -1539,7 +1514,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	// WORKAROUND bug #12249 (occurs also in original): Missing actor animation in German versions of SAMNMAX
 	// Adding the missing startAnim(14) animation escape sequence while copying the text fixes it.
 	if (_game.id == GID_SAMNMAX && _currentRoom == 56 && vm.slot[_currentScript].number == 200 &&
-		_language == Common::DE_DEU && _enableEnhancements) {
+		_language == Common::DE_DEU && enhancementEnabled(kEnhMinorBugFixes)) {
 		// 0xE5E6 is the CD version, 0xE373 is for the floppy version
 		if (vm.slot[_currentScript].offs == 0xE5E6 || vm.slot[_currentScript].offs == 0xE373) {
 			*dst++ = 0xFF;
@@ -1798,6 +1773,10 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 }
 
 
+bool ScummEngine::hasLocalizer() {
+	return _localizer != nullptr;
+}
+
 #pragma mark -
 #pragma mark --- Charset initialisation ---
 #pragma mark -
@@ -1846,7 +1825,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 		ScummEngine::loadLanguageBundle();
 		return;
 	}
-	ScummFile file;
+	ScummFile file(this);
 	int32 size;
 
 	if (_game.id == GID_DIG) {
@@ -2009,7 +1988,7 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 		_sound->stopTalkSound();
 		_imuseDigital->stopSound(kTalkSoundID);
 		_imuseDigital->startVoice(kTalkSoundID, pointerStr.c_str(), _actorToPrintStrFor);
-		_sound->talkSound(0, 0, 2);
+		_sound->talkSound(0, 0, DIGI_SND_MODE_TALKIE);
 	}
 }
 
@@ -2137,7 +2116,7 @@ void ScummEngine::loadLanguageBundle() {
 		return;
 	}
 
-	ScummFile file;
+	ScummFile file(this);
 	openFile(file, "korean.trs");
 
 	if (!file.isOpen()) {

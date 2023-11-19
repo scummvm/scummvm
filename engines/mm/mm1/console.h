@@ -95,6 +95,16 @@ protected:
 	 */
 	bool cmdSpecial(int argc, const char **argv);
 
+	/**
+	 * Add a specific view
+	 */
+	bool cmdView(int argc, const char **argv);
+
+	/**
+	 * Dump the roster in the original roster.dat format
+	 */
+	bool cmdDumpRoster(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override {}

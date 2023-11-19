@@ -33,6 +33,7 @@
 #include "sci/video/robot_decoder.h" // for RobotDecoder
 #include "sci/sound/audio32.h"    // for Audio32::kMaxVolume
 #include "video/avi_decoder.h"    // for AVIDecoder::setVolume
+#include "video/subtitles.h"      // for Video::Subtitles
 
 namespace Video {
 class AdvancedVMDDecoder;
@@ -168,6 +169,12 @@ protected:
 	void setDrawRect(const int16 x, const int16 y, const int16 width, const int16 height);
 
 	/**
+	 * Sets the subtitle position according to the draw rect and overlay size.
+	 * 
+	 */
+	void setSubtitlePosition() const;
+
+	/**
 	 * The rectangle where the video will be drawn, in screen coordinates.
 	 */
 	Common::Rect _drawRect;
@@ -183,6 +190,11 @@ protected:
 	 * Current frame rendered by playUntilEvent()
 	 */
 	const Graphics::Surface* _currentFrame;
+
+	/**
+	 * Video SRT subtitles used by fan translation projects for phantasmagoria 1 & 2.
+	 */
+	mutable Video::Subtitles _subtitles;
 
 #ifdef USE_RGB_COLOR
 	/**
@@ -805,6 +817,7 @@ private:
 	RobotDecoder _robotPlayer;
 	DuckPlayer _duckPlayer;
 };
+
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_VIDEO32_H

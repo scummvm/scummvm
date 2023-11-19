@@ -127,6 +127,7 @@ void OSystem_3DS::destroy3DSGraphics() {
 
 bool OSystem_3DS::hasFeature(OSystem::Feature f) {
 	return (f == OSystem::kFeatureCursorPalette ||
+	        f == OSystem::kFeatureCursorAlpha ||
 	        f == OSystem::kFeatureFilteringMode ||
 	        f == OSystem::kFeatureOverlaySupportsAlpha ||
 	        f == OSystem::kFeatureKbdMouseSpeed ||

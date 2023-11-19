@@ -55,6 +55,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 
 	_asPtr = nullptr;
 	_quit = false;
+	_demoMovieSkipped = false;
 	_kingartEntries = nullptr;
 
 	_tickCount = 0;
@@ -527,6 +528,9 @@ void KingdomGame::playMovie(int movieNum) {
 				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						skipMovie = true;
+						if (movieNum == 54) {
+							_demoMovieSkipped = true;
+						}
 					}
 				default:
 					break;

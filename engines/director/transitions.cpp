@@ -28,8 +28,6 @@
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/window.h"
-#include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -154,7 +152,7 @@ void Window::stepTransition(TransParams &t, int step) {
 	g_director->draw();
 }
 
-void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, int paletteId) {
+void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, uint8 transChunkSize, TransitionType transType, CastMemberID paletteId) {
 	// Play a transition and return the number of subframes rendered
 	TransParams t;
 
@@ -174,7 +172,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 	t.targetPal = g_director->getPalette();
 	t.targetPalLength = g_director->getPaletteColorCount();
 
-	if (paletteId) {
+	if (!paletteId.isNull()) {
 		PaletteV4 *target = g_director->getPalette(paletteId);
 		if (target) {
 			t.targetPal = target->palette;
@@ -200,8 +198,8 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 
 		clipRect = *_dirtyRects.begin();
 
-		for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
-			clipRect.extend(*i);
+		for (auto &i : _dirtyRects)
+			clipRect.extend(i);
 
 		// Ensure we redraw any other sprites intersecting the non-clip area.
 		_dirtyRects.clear();
@@ -255,7 +253,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 		return;
 
 	case kTransAlgoZoom:
-		transZoom(t, clipRect, &nextFrame);
+		transZoom(t, clipRect, &currentFrame, &nextFrame);
 		debugC(2, kDebugImages, "Window::playTransition(): type: %d, duration: %d, chunkSize: %d, steps: %d, stepDuration: %d, xpos: %d, ypos: %d, xStepSize: %d, yStepSize: %d, stripSize: %d", t.type, t.duration, t.chunkSize, t.steps, t.stepDuration, t.xpos, t.ypos, t.xStepSize, t.yStepSize, t.stripSize);
 		debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
 		return;
@@ -1062,17 +1060,25 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 	}
 }
 
-void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *nextFrame) {
+void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *currentFrame, Graphics::ManagedSurface *nextFrame) {
 	Common::Rect r = clipRect;
 	uint w = clipRect.width();
 	uint h = clipRect.height();
+	t.steps >>= 1;
+	t.xStepSize <<= 1;
+	t.yStepSize <<= 1;
+	t.steps += 1;
 
-	t.steps += 2;
-
-	Graphics::MacPlotData pd(_composeSurface, nullptr, &g_director->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
+	DirectorPlotData pd(g_director, kLineTopBottomSprite, kInkTypeReverse, 0, _wm->_colorWhite, _wm->_colorBlack);
+	pd.destRect = clipRect;
+	pd.dst = _composeSurface;
 
 	for (uint16 i = 1; i < t.steps; i++) {
 		uint32 startTime = g_system->getMillis();
+
+		// FIXME: figure out the bounding box of the drawn bits
+		_composeSurface->copyRectToSurface(*currentFrame, clipRect.left, clipRect.top, clipRect);
+
 		for (int s = 2; s >= 0; s--) {
 			if (i - s < 0 || i - s > t.steps - 2)
 				continue;
@@ -1087,27 +1093,33 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 				r.moveTo(t.xStepSize * (i - s), t.yStepSize * (i - s));
 			}
 
-			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    0xffff, _wm->getDrawPixel(), &pd);
-			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
-			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
-			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, 0xffff, _wm->getDrawPixel(), &pd);
+			Graphics::drawLine(r.left,  r.top,    r.right, r.top,    _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
+			Graphics::drawLine(r.right, r.top,    r.right, r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
+			Graphics::drawLine(r.left,  r.bottom, r.right, r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
+			Graphics::drawLine(r.left,  r.top,    r.left,  r.bottom, _wm->_colorBlack, g_director->getInkDrawPixel(), &pd);
 		}
 
 		r.setHeight(t.yStepSize * i * 2);
 		r.setWidth(t.xStepSize * i * 2);
 		r.moveTo(w / 2 - t.xStepSize * i, h / 2 - t.yStepSize * i);
 
-		g_lingo->executePerFrameHook(t.frame, i);
+		if (_vm->processEvents(true)) {
+			exitTransition(t, i, nextFrame, clipRect);
+			break;
+		}
+
+		stepTransition(t, i);
 
 		uint32 endTime = g_system->getMillis();
 		int diff = (int)t.stepDuration - (int)(endTime - startTime);
 		g_director->delayMillis(MAX(0, diff));
 
-		if (_vm->processEvents(true)) {
-			exitTransition(t, i, nextFrame, clipRect);
-			break;
-		}
+		g_lingo->executePerFrameHook(t.frame, i);
 	}
+
+	render(true, _composeSurface);
+	_contentIsDirty = true;
+	g_director->draw();
 }
 
 void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
@@ -1205,8 +1217,10 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		t.steps = 1;
 	}
 
-	t.stepDuration = t.duration / t.steps;
+	if (debugChannelSet(-1, kDebugFast))
+		t.steps = 1;
 
+	t.stepDuration = t.duration / t.steps;
 }
 
 } // End of namespace Director

@@ -173,6 +173,10 @@ void ModularGraphicsBackend::fillScreen(uint32 col) {
 	_graphicsManager->fillScreen(col);
 }
 
+void ModularGraphicsBackend::fillScreen(const Common::Rect &r, uint32 col) {
+	_graphicsManager->fillScreen(r, col);
+}
+
 void ModularGraphicsBackend::updateScreen() {
 #ifdef ENABLE_EVENTRECORDER
 	g_system->getMillis();		// force event recorder to update the tick count

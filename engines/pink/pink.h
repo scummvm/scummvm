@@ -122,6 +122,7 @@ public:
 	void changeScene();
 
 	bool isPeril() const;
+	bool isPerilDemo() const;
 
 	void setVariable(Common::String &variable, Common::String &value);
 	bool checkValueOfVariable(const Common::String &variable, const Common::String &value) const;
@@ -147,7 +148,7 @@ private:
 
 	bool loadCursors();
 
-	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
+	void initModule(const Common::String moduleName, const Common::String pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
 	void removeModule();
 
@@ -176,6 +177,8 @@ private:
 	PDAMgr _pdaMgr;
 
 	const ADGameDescription *_desc;
+	bool _isPeril;
+	bool _isPerilDemo;
 };
 
 WARN_UNUSED_RESULT bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skipThumbnail = true);

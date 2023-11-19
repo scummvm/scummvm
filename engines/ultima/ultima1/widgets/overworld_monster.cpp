@@ -67,7 +67,7 @@ void OverworldMonster::attackParty() {
 	Point playerPos = _map->_playerWidget->_position;
 	Point diff = playerPos - _position;
 	Point delta(SGN(diff.x), SGN(diff.y));
-	Point tempDiff;
+	//Point tempDiff;
 	//int maxDistance = attackDistance();
 	Shared::Maps::MapTile mapTile;
 	//Shared::Character &c = *_game->_party;

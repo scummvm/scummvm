@@ -179,7 +179,7 @@ uint32 MovieManager::drawFrame(uint32 surface_id) {
 	}
 
 	// For access to buffer
-	int16 pitch;
+	int32 pitch;
 	uint8 *surface_address;
 
 	// Lock the surface

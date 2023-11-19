@@ -87,20 +87,18 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerVar("gc_interval",		&engine->_gamestate->scriptGCInterval);
 	registerVar("simulated_key",		&g_debug_simulated_key);
 	registerVar("track_mouse_clicks",	&g_debug_track_mouse_clicks);
-	// FIXME: This actually passes an enum type instead of an integer but no
-	// precaution is taken to assure that all assigned values are in the range
-	// of the enum type. We should handle this more carefully...
-	registerVar("script_abort_flag",	(int *)&_engine->_gamestate->abortScriptProcessing);
 	registerCmd("speed_throttle",   WRAP_METHOD(Console, cmdSpeedThrottle));
 
 	// General
 	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
 	// Kernel
-//	registerCmd("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	registerCmd("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	registerCmd("selector",			WRAP_METHOD(Console, cmdSelector));
 	registerCmd("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	registerCmd("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("kernfunctions",		WRAP_METHOD(Console, cmdKernelFunctions));
+	registerCmd("functions",		WRAP_METHOD(Console, cmdKernelFunctions));	// alias
+	registerCmd("kerncall", 		WRAP_METHOD(Console, cmdKernelCall));
+	registerCmd("kc",				WRAP_METHOD(Console, cmdKernelCall));	// alias
 	registerCmd("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	// Parser
 	registerCmd("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
@@ -246,6 +244,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
 	registerCmd("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
 	registerCmd("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
+	registerCmd("locals",				WRAP_METHOD(Console, cmdLocalVars));
+	registerCmd("l",					WRAP_METHOD(Console, cmdLocalVars));				// alias
 	registerCmd("stack",				WRAP_METHOD(Console, cmdStack));
 	registerCmd("st",					WRAP_METHOD(Console, cmdStack));					// alias
 	registerCmd("value_type",			WRAP_METHOD(Console, cmdValueType));
@@ -321,7 +321,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("gc_interval: Number of kernel calls in between garbage collections\n");
 	debugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	debugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
-	debugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
 	debugPrintf("speed_throttle: Displays or changes kGameIsRestarting maximum delay\n");
 	debugPrintf("\n");
 	debugPrintf("Debug flags\n");
@@ -453,6 +452,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" script_said - Shows all said - strings inside a specified script\n");
 	debugPrintf(" vm_varlist / vmvarlist / vl - Shows the addresses of variables in the VM\n");
 	debugPrintf(" vm_vars / vmvars / vv - Displays or changes variables in the VM\n");
+	debugPrintf(" locals / l - Displays or changes local variables in the VM\n");
 	debugPrintf(" stack / st - Lists the specified number of stack elements\n");
 	debugPrintf(" value_type - Determines the type of a value\n");
 	debugPrintf(" view_listnode - Examines the list node at the given address\n");
@@ -617,26 +617,97 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	debugPrintf("Kernel function names in numeric order:\n");
+	debugPrintf("+ denotes Kernel functions with subcommands\n");
 	uint column = 0;
 	for (uint seeker = 0; seeker <  _engine->getKernel()->getKernelNamesSize(); seeker++) {
 		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
 		if (kernelName == "Dummy")
 			continue;
 
+		const KernelFunction &kernelCall = _engine->getKernel()->_kernelFuncs[seeker];
+		const char *subCmdNote = kernelCall.subFunctionCount ? "+" : "";
+		
 		if (argc == 1) {
-			debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+			debugPrintf("%03x: %20s | ", seeker, (kernelName + subCmdNote).c_str());
 			if ((column++ % 3) == 2)
 				debugPrintf("\n");
 		} else {
 			for (int i = 1; i < argc; ++i) {
 				if (kernelName.equalsIgnoreCase(argv[i])) {
-					debugPrintf("%03x: %s\n", seeker, kernelName.c_str());
+					debugPrintf("%03x: %s\n", seeker, (kernelName + subCmdNote).c_str());
 				}
 			}
 		}
 	}
 
 	debugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdKernelCall(int argc, const char **argv) {
+	const int MAX_ARGS_ALLOWED = 20;
+
+	if (argc <= 1) {
+		debugPrintf("Calls a kernel function by name.\n");
+		debugPrintf("(You must ensure you invoke the kernel function with the correct signature.)\n");
+		debugPrintf("Usage: %s <kernel-func-name> <param1> <param2> ... <paramn>\n", argv[0]);
+		debugPrintf("Example 1: %s GameIsRestarting\n", argv[0]);
+		debugPrintf("Example 2: %s Random 3 7\n", argv[0]);
+		debugPrintf("Example 3: %s Memory 6 002a:0012 0x6566\n", argv[0]);
+		return true;
+	}
+
+	const int kern_argc = argc - 2;
+
+	if (kern_argc > MAX_ARGS_ALLOWED) {
+		debugPrintf("No more than %d args allowed for a kernel call, you gave: %d.\n", (int)MAX_ARGS_ALLOWED, kern_argc);
+		return true;
+	}
+
+	Kernel *kernel = _engine->getKernel();
+
+	// Identify kernel call code by name.
+	int kernIdx = kernel->findKernelFuncPos(argv[1]);
+	if (kernIdx == -1) {
+		debugPrintf("No kernel function with name - see command \"kernfunctions\" for a list: %s\n", argv[1]);
+		return true;
+	}
+
+	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernIdx];
+	
+	reg_t kernArgArr[MAX_ARGS_ALLOWED];
+
+	for (int i = 0; i < kern_argc; i++) {
+		if (parse_reg_t(_engine->_gamestate, argv[2+i], &kernArgArr[i])) {
+			debugPrintf("Invalid address \"%s\" passed.\n", argv[2+i]);
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	reg_t kernResult;
+
+	if (!kernelCall.subFunctionCount) {
+		// Must be a regular kernel function.
+		kernResult = kernelCall.function(_engine->_gamestate, kern_argc, kernArgArr);
+	} else {
+		// Must be a kernel function that supports sub commands.
+
+		// Pull out the first argument register as the sub function id.
+		uint subId = kernArgArr[0].getOffset();
+
+		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
+		if (!kernelSubCall.function) {
+			debugPrintf("Kernel sub function with id:%d does not exist\n", 0);
+			return true;
+		}
+
+		// Pass a pointer to the remaining reg_t args.
+		kernResult = kernelSubCall.function(_engine->_gamestate, kern_argc-1, &(kernArgArr[1]));
+	}	
+
+	debugPrintf("kernel call result is: %04x:%04x\n", PRINT_REG(kernResult));
 
 	return true;
 }
@@ -1210,15 +1281,14 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 
 	debugPrintf("%d SCI1.1-SCI3 scripts found, performing sanity checks...\n", resources.size());
 
-	Resource *script, *heap;
 	Common::List<ResourceId>::iterator itr;
 	for (itr = resources.begin(); itr != resources.end(); ++itr) {
-		script = _engine->getResMan()->findResource(*itr, false);
+		Resource *script = _engine->getResMan()->findResource(*itr, false);
 		if (!script)
 			debugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
 		if (getSciVersion() <= SCI_VERSION_2_1_LATE) {
-			heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
+			Resource *heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
 			if (!heap)
 				debugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
@@ -1553,11 +1623,11 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 				return true;
 			}
 
-			byte buffer[4096];
-			const int samplesToRead = ARRAYSIZE(buffer) / 2;
+			int16 buffer[2048];
+			const int samplesToRead = ARRAYSIZE(buffer);
 			uint bytesWritten = 0;
 			int samplesRead;
-			while ((samplesRead = audioStream->readBuffer((int16 *)buffer, samplesToRead))) {
+			while ((samplesRead = audioStream->readBuffer(buffer, samplesToRead))) {
 				uint bytesToWrite = samplesRead * bytesPerSample;
 				outFile.write(buffer, bytesToWrite);
 				bytesWritten += bytesToWrite;
@@ -1658,6 +1728,12 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("This SCI version does not support this command\n");
+		return true;
+	}
+#endif
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;
 
 	return cmdExit(0, nullptr);
@@ -2975,6 +3051,71 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdLocalVars(int argc, const char **argv) {
+	if (!(2 <= argc && argc <= 4)) {
+		debugPrintf("Displays or changes local variables in the VM\n");
+		debugPrintf("Usage: %s <script> <varnum> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int scriptNumber;
+	if (!parseInteger(argv[1], scriptNumber) || scriptNumber < 0) {
+		debugPrintf("Invalid script: %s\n", argv[1]);
+		return true;
+	}
+
+	// search segment table for script locals
+	Common::Array<reg_t> *locals = nullptr;
+	for (uint i = 0; i < _engine->_gamestate->_segMan->_heap.size(); i++) {
+		SegmentObj *segmentObj = _engine->_gamestate->_segMan->_heap[i];
+		if (segmentObj != nullptr && segmentObj->getType() == SEG_TYPE_LOCALS) {
+			LocalVariables *localVariables = (LocalVariables *)segmentObj;
+			if (localVariables->script_id == scriptNumber) {
+				locals = &localVariables->_locals;
+				break;
+			}
+		}
+	}
+	if (locals == nullptr) {
+		debugPrintf("No locals for script: %d\n", scriptNumber);
+		return true;
+	}
+
+	int varIndex = -1;
+	if (argc >= 3) {
+		if (!parseInteger(argv[2], varIndex) || varIndex < 0) {
+			debugPrintf("Variable number may not be negative\n");
+			return true;
+		}
+		if (varIndex >= (int)locals->size()) {
+			debugPrintf("Maximum variable number for this type is %d (0x%x)\n", locals->size(), locals->size());
+			return true;
+		}
+	}
+
+	if (argc <= 3) {
+		// print script local(s)
+		for (uint i = 0; i < locals->size(); i++) {
+			if (varIndex == -1 || varIndex == (int)i) {
+				reg_t value = (*locals)[i];
+				debugPrintf("local var %d == %04x:%04x", i, PRINT_REG(value));
+				printBasicVarInfo(value);
+				debugPrintf("\n");
+			}
+		}
+	} else {
+		// change script local
+		reg_t *value = &(*locals)[varIndex];
+		if (parse_reg_t(_engine->_gamestate, argv[3], value)) {
+			debugPrintf("Invalid value/address passed.\n");
+			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			debugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
+		}
+	}
+
+	return true;
+}
+
 bool Console::cmdStack(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Lists the specified number of stack elements.\n");
@@ -3300,8 +3441,6 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptObjects(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all objects inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3310,6 +3449,7 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3322,8 +3462,6 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptStrings(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all strings inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3332,6 +3470,7 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3344,8 +3483,6 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptSaid(int argc, const char **argv) {
-	int curScriptNr = -1;
-
 	if (argc < 2) {
 		debugPrintf("Shows all said-strings inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
@@ -3354,6 +3491,7 @@ bool Console::cmdScriptSaid(int argc, const char **argv) {
 		return true;
 	}
 
+	int curScriptNr;
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -3419,8 +3557,8 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 			continue;
 
 		curScriptObj = (Script *)curSegmentObj;
-		debugPrintf("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
-		debugN("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugPrintf("=== SCRIPT %d inside Segment %04x (%dd) ===\n", curScriptObj->getScriptNumber(), curSegmentNr, curSegmentNr);
+		debugN("=== SCRIPT %d inside Segment %04x (%dd) ===\n", curScriptObj->getScriptNumber(), curSegmentNr, curSegmentNr);
 
 		// now print the list
 		scriptOffsetLookupArray = curScriptObj->getOffsetArray();
@@ -3529,14 +3667,12 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
-	int callk_index;
-	char *endptr;
-
 	if (argc == 2) {
 		/* Try to convert the parameter to a number. If the conversion stops
 		   before end of string, assume that the parameter is a function name
 		   and scan the function table to find out the index. */
-		callk_index = strtoul(argv[1], &endptr, 0);
+		char *endptr;
+		int callk_index = strtoul(argv[1], &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
 			for (uint i = 0; i < _engine->getKernel()->getKernelNamesSize(); i++)
@@ -3722,12 +3858,11 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 				uint32 offset = fptr.getOffset();
 				int16 opparams[4];
 				byte extOpcode;
-				byte opcode;
 				uint16 maxJmpOffset = 0;
 
 				for (;;) {
 					offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
-					opcode = extOpcode >> 1;
+					byte opcode = extOpcode >> 1;
 
 					if (opcode == op_callk) {
 						uint16 kFuncNum = opparams[0];
@@ -4034,7 +4169,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	return true;
 }
 
-static bool stringToBreakpointAction(Common::String str, BreakpointAction &action) {
+static bool stringToBreakpointAction(const Common::String &str, BreakpointAction &action) {
 	if (str == "break")
 		action = BREAK_BREAK;
 	else if (str == "log")
@@ -4664,7 +4799,7 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 		} else {
 			flagMask = 0x8000 >> (flagNumber % 16);
 		}
-		
+
 		// set or clear the flag
 		bool already = false;
 		if (op == kGameFlagsSet) {
@@ -4682,7 +4817,7 @@ bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const c
 				globalReg->setOffset(globalValue);
 			}
 		}
-		
+
 		const char *result = (globalValue & flagMask) ? "set" : "clear";
 		debugPrintf("Flag %d is %s%s (global var %d, flag %04x)\n",
 					flagNumber, already ? "already " : "", result, globalNumber, flagMask);
@@ -4899,12 +5034,11 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				if (*endptr)
 					return 1;
 			} else {
-				int val = 0;
 				dest->setSegment(0);
 
 				if (charsCountNumber == charsCount) {
 					// Only numbers in input, assume decimal value
-					val = strtol(str, &endptr, 10);
+					int val = strtol(str, &endptr, 10);
 					if (*endptr)
 						return 1; // strtol failed?
 					dest->setOffset(val);
@@ -4912,7 +5046,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				} else {
 					// We also got letters, check if there were only hexadecimal letters and '0x' at the start or 'h' at the end
 					if ((charsForceHex) && (!charsCountObject)) {
-						val = strtol(str, &endptr, 16);
+						int val = strtol(str, &endptr, 16);
 						if ((*endptr != 'h') && (*endptr != 0))
 							return 1;
 						dest->setOffset(val);
@@ -4970,6 +5104,8 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 			if (dest->isNull())
 				return 1;
 		}
+
+		(void)charsCountLetter; // Shut "unused variable" warning
 	}
 	if (offsetStr) {
 		int val = strtol(offsetStr, &endptr, 16);

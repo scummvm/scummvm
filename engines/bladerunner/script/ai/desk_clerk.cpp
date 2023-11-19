@@ -288,6 +288,10 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		}
 		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptDeskClerk::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 
 	*frame = _animationFrame;
@@ -374,6 +378,10 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptDeskClerk::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

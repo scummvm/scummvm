@@ -159,12 +159,13 @@ void AccessEngine::initialize() {
 		// - The MCGA version, in the CDROM folder
 		// - The VESA version, in the TDROM folder
 		// We use the hires version.
-		const Common::FSNode cdromDir = gameDataDir.getChild("tdrom");
+
+		// Use forward slash for the folders separator, as documented for SearchSet::addSubDirectoryMatching()
+		const Common::String subfolderMatchPrefix = "tdrom/";
 
 		for (int idx = 0; idx < 15; ++idx) {
-			Common::String folder = (idx == 0) ? "game" :
-				Common::String::format("chap%.2d", idx);
-			SearchMan.addSubDirectoryMatching(cdromDir, folder);
+			Common::String folder = subfolderMatchPrefix + ((idx == 0) ? "game" : Common::String::format("chap%.2d", idx));
+			SearchMan.addSubDirectoryMatching(gameDataDir, folder);
 		}
 	}
 

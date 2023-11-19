@@ -54,7 +54,7 @@ namespace Tinsel {
  * only saves/loads those which are valid for the version of the savegame
  * which is being loaded/saved currently.
  */
-#define CURRENT_VER 3
+#define CURRENT_VER 4
 
 //----------------- EXTERN FUNCTIONS --------------------
 
@@ -337,8 +337,15 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp, 
 		s.syncAsSint32LE(sd.SavedScrollFocus);
 		for (int i = 0; i < numSystemVars; ++i)
 			s.syncAsSint32LE(sd.SavedSystemVars[i]);
-		for (int i = 0; i < MAX_SOUNDREELS; ++i)
+
+		int numReels = s.getVersion() >= 4 ? MAX_SOUNDREELS : 5;
+		for (int i = 0; i < numReels; ++i)
 			syncSoundReel(s, sd.SavedSoundReels[i]);
+		// For old saves we zero the remaining sound reels
+		if (s.isLoading() && numReels < MAX_SOUNDREELS) {
+			const auto reelSize = sizeof sd.SavedSoundReels[0];
+			memset(&sd.SavedSoundReels[numReels], 0, reelSize * (MAX_SOUNDREELS - numReels));
+		}
 	}
 }
 
@@ -519,6 +526,7 @@ static bool DoRestore() {
 		return false;
 	}
 
+	s.setVersion(hdr.ver);
 	if (hdr.ver >= 3)
 		_vm->setTotalPlayTime(hdr.playTime);
 	else
@@ -656,6 +664,7 @@ static void DoSave() {
 		return;
 	}
 
+	s.setVersion(hdr.ver);
 	DoSync(s, hdr.numInterpreters, SV_TOPVALID);
 
 	// Write out the special Id for Discworld savegames

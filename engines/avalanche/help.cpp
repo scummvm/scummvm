@@ -167,7 +167,7 @@ bool Help::handleMouse(const Common::Event &event) {
 	mousePos.x = event.mouse.x;
 	mousePos.y = event.mouse.y / 2;
 
-	int index = -1;
+	int index;
 
 	if (event.type == Common::EVENT_LBUTTONUP) { // Clicked *somewhere*...
 		_holdLeft = false;
@@ -178,6 +178,7 @@ bool Help::handleMouse(const Common::Event &event) {
 			index = ((mousePos.y - 13) / 27) - 1;
 	} else { // LBUTTONDOWN or MOUSEMOVE
 		int highlightIs = 0;
+		index = -1;
 
 		// Decide which button we are hovering the cursor over:
 		if ((mousePos.x > 470) && (mousePos.x <= 550) && (((mousePos.y - 13) % 27) <= 20)) { // No click, so highlight.
@@ -208,12 +209,11 @@ bool Help::handleMouse(const Common::Event &event) {
 	if ((index >= 0) && (_buttons[index]._trigger != Common::KEYCODE_INVALID)) {
 		if (_buttons[index]._trigger == Common::KEYCODE_ESCAPE)
 			return true;
-		else {
-			_vm->fadeOut();
-			switchPage(_buttons[index]._whither);
-			_vm->fadeIn();
-			return false;
-		}
+
+		_vm->fadeOut();
+		switchPage(_buttons[index]._whither);
+		_vm->fadeIn();
+		return false;
 	}
 
 	return false;

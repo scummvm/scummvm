@@ -746,6 +746,10 @@ void MarkSpecialLabelsForUpdate(GUILabelMacro macro) {
 }
 
 void MarkInventoryForUpdate(int char_id, bool is_player) {
+	for (auto &btn : _GP(guibuts)) {
+		if (btn.GetPlaceholder() != kButtonPlace_None)
+			btn.MarkChanged();
+	}
 	for (auto &inv : _GP(guiinv)) {
 		if ((char_id < 0) || (inv.CharId == char_id) || (is_player && inv.CharId < 0)) {
 			inv.MarkChanged();
@@ -786,7 +790,8 @@ GUILabelMacro FindLabelMacros(const String &text) {
 	return (GUILabelMacro)macro_flags;
 }
 
-static HError ResortGUI(bool bwcompat_ctrl_zorder = false) {
+HError RebuildGUI() {
+	const bool bwcompat_ctrl_zorder = GameGuiVersion < kGuiVersion_272e;
 	// set up the reverse-lookup array
 	for (auto &gui : _GP(guis)) {
 		HError err = gui.RebuildArray();
@@ -906,7 +911,7 @@ HError ReadGUI(Stream *in, bool is_savegame) {
 			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
-	return ResortGUI(GameGuiVersion < kGuiVersion_272e);
+	return RebuildGUI();
 }
 
 void WriteGUI(Stream *out) {

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCI_MUSIC_H
-#define SCI_MUSIC_H
+#ifndef SCI_SOUND_MUSIC_H
+#define SCI_SOUND_MUSIC_H
 
 #include "common/serializer.h"
 #include "common/mutex.h"
@@ -311,4 +311,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_SOUND_MUSIC_H

@@ -29,6 +29,7 @@ namespace VCruise {
 TextParserState::TextParserState() : _lineNum(1), _col(1), _prevWasCR(false), _isParsingComment(false) {
 }
 
+
 TextParser::TextParser(Common::ReadStream *stream) : _stream(stream), _returnedBufferPos(kReturnedBufferSize) {
 	memset(_returnedBuffer, 0, kReturnedBufferSize);
 }
@@ -97,6 +98,13 @@ bool TextParser::skipWhitespaceAndComments(char &outC, TextParserState &outState
 
 bool TextParser::isDelimiter(char c) {
 	if (c == ',' || c == '=' || c == '[' || c == ']')
+		return true;
+
+	return false;
+}
+
+bool TextParser::isCompoundDelimiter(char c1, char c2) {
+	if (c2 == '=' && (c1 == '=' || c1 == '<' || c1 == '>' || c1 == '!'))
 		return true;
 
 	return false;
@@ -246,18 +254,46 @@ bool TextParser::parseToken(Common::String &outString, TextParserState &outState
 
 	outString += c;
 
-	if (isDelimiter(c))
+	if (c == '\"') {
+		while (readOneChar(c, state)) {
+			if (c == '\n' || c == '\r') {
+				requeue(&c, 1, state);
+				return true;
+			}
+
+			outString += c;
+			if (c == '\"')
+				return true;
+		}
 		return true;
+	}
+
+	if (isDelimiter(c)) {
+		char firstC = c;
+		if (readOneChar(c, state)) {
+			if (isCompoundDelimiter(firstC, c))
+				outString += c;
+			else
+				requeue(&c, 1, state);
+		}
+
+		return true;
+	}
 
 	while (readOneChar(c, state)) {
 		if (isWhitespace(c) || _state._isParsingComment) {
 			requeue(&c, 1, state);
-			return true;
+			break;
+		}
+
+		if (outString.size() == 1 && isCompoundDelimiter(outString[0], c)) {
+			outString += c;
+			break;
 		}
 
 		if (isDelimiter(c)) {
 			requeue(&c, 1, state);
-			return true;
+			break;
 		}
 
 		outString += c;

@@ -19,7 +19,6 @@
  *
  */
 
-#include "ags/lib/std/math.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/gui/gui_inv.h"
 #include "ags/shared/gui/gui_main.h"

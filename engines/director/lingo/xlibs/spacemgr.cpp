@@ -23,6 +23,7 @@
  *
  * USED IN:
  * DEVO Presents: Adventures of the Smart Patrol
+ * The Dark Eye
  *
  **************************************************/
 

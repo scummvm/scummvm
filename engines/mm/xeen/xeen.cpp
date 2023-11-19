@@ -125,6 +125,7 @@ void XeenEngine::loadSettings() {
 
 	_extOptions._showItemCosts = ConfMan.hasKey("ShowItemCosts") && ConfMan.getBool("ShowItemCosts");
 	_extOptions._durableArmor = ConfMan.hasKey("DurableArmor") && ConfMan.getBool("DurableArmor");
+	_extOptions._showHpSpBars = ConfMan.hasKey("ShowHpSpBars") && ConfMan.getBool("ShowHpSpBars");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {

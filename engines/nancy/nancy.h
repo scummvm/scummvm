@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/str.h"
+#include "common/ptr.h"
 
 #include "engines/engine.h"
 
@@ -52,7 +53,7 @@ class Serializer;
  */
 namespace Nancy {
 
-static const int kSavegameVersion = 2;
+static const int kSavegameVersion = 3;
 
 struct NancyGameDescription;
 
@@ -63,6 +64,7 @@ class SoundManager;
 class GraphicsManager;
 class CursorManager;
 class NancyConsole;
+class DeferredLoader;
 
 namespace State {
 class State;
@@ -77,13 +79,13 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
+	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
 	bool hasFeature(EngineFeature f) const override;
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-	bool canSaveAutosaveCurrently() override;
 
 	void secondChance();
 
@@ -91,15 +93,24 @@ public:
 	uint32 getGameFlags() const;
 	const char *getGameId() const;
 	GameType getGameType() const;
+	Common::Language getGameLanguage() const;
 	Common::Platform getPlatform() const;
 
 	const StaticData &getStaticData() const;
+	const EngineData *getEngineData(const Common::String &name) const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }
 	void setToPreviousState();
 
 	void setMouseEnabled(bool enabled);
+
+	void addDeferredLoader(Common::SharedPtr<DeferredLoader> &loaderPtr);
+
+	// The first few games used 1/2 for false/true in
+	// inventory, logic conditions, and event flags
+	const byte _true;
+	const byte _false;
 
 	// Managers
 	ResourceManager *_resource;
@@ -110,20 +121,8 @@ public:
 
 	Common::RandomSource *_randomSource;
 
-	// BOOT chunks data
-	BSUM *_bootSummary;
-	VIEW *_viewportData;
-	INV *_inventoryData;
-	TBOX *_textboxData;
-	MAP *_mapData;
-	HELP *_helpData;
-	CRED *_creditsData;
-	HINT *_hintData;
-	SPUZ *_sliderPuzzleData;
-	CLOK *_clockData;
-	SPEC *_specialEffectData;
-
-	Common::HashMap<Common::String, ImageChunk> _imageChunks;
+	// Used to check whether we need to show the SaveDialog
+	bool _hasJustSaved;
 
 protected:
 	Common::Error run() override;
@@ -141,8 +140,7 @@ private:
 	State::State *getStateObject(NancyState::NancyState state) const;
 	void destroyState(NancyState::NancyState state) const;
 
-	void preloadCals(const IFF &boot);
-
+	void preloadCals();
 	void readDatFile();
 
 	Common::Error synchronize(Common::Serializer &serializer);
@@ -150,6 +148,8 @@ private:
 	bool isCompressed();
 
 	StaticData _staticData;
+	Common::HashMap<Common::String, EngineData *> _engineData;
+
 	const byte _datFileMajorVersion;
 	const byte _datFileMinorVersion;
 
@@ -157,9 +157,12 @@ private:
 	OSystem *_system;
 
 	const NancyGameDescription *_gameDescription;
+
+	Common::Array<Common::WeakPtr<DeferredLoader>> _deferredLoaderObjects;
 };
 
 extern NancyEngine *g_nancy;
+#define GetEngineData(s) (const s*)g_nancy->getEngineData(#s);
 
 } // End of namespace Nancy
 

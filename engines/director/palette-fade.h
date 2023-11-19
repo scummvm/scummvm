@@ -163,4 +163,10 @@ static int kFadeColorFrames[30] = {
 	5, 4, 3, 3, 2, 2, 2, 1, 1, 1
 };
 
-static int fadeColorWait = 30;
+static int kFadeColorFramesD5[30] = {
+	494, 478, 460, 444, 426, 409, 392, 375, 358, 340,
+	323, 306, 289, 272, 254, 238, 220, 203, 186, 168,
+	152, 134, 117, 100, 83, 66, 48, 32, 14, 1
+};
+
+static int kFadeColorWait = 30;

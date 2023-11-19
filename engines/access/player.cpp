@@ -98,7 +98,7 @@ Player::~Player() {
 }
 
 void Player::load() {
-	int dataCount = _vm->_playerDataCount;
+	uint8 dataCount = _vm->_playerDataCount;
 	_walkOffRight = new int[dataCount];
 	_walkOffLeft = new int[dataCount];
 	_walkOffUp = new int[dataCount];

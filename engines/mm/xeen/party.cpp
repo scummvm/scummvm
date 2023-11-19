@@ -1385,7 +1385,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		}
 
 		// Create the item and it's category
-		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 0 : 12);
+		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 0 : MAKE_ITEM_SPECIAL_EVENT);
 		XeenItem &srcItem = tempChar._items[itemCat][0];
 		XeenItem *trItems = _treasure[itemCat];
 

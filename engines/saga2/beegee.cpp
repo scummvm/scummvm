@@ -213,7 +213,6 @@ void setAreaSound(const TilePoint &) {
 				regn.min = baseCoords - ((AudVec * r) << kPlatShift); ///kTileUVSize;
 				MetaTileIterator    mIter(g_vm->_currentMapNum, regn);
 				int i = 0;
-				int j = 0;
 
 				TilePoint       dist = AudVec * r << (kPlatShift + 1);
 				dist = dist << 4;
@@ -223,7 +222,6 @@ void setAreaSound(const TilePoint &) {
 				while (mt) {
 					i++;
 					if (getSound(mt)) {
-						j++;
 						TilePoint thisDist = mtPos - baseCoords;
 						if (thisDist.magnitude() < dist.magnitude()) {
 							dist = thisDist;

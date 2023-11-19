@@ -48,12 +48,27 @@ void SoundCastMember::load() {
 	if (_loaded)
 		return;
 
-	uint32 tag = MKTAG('S', 'N', 'D', ' ');
-	uint16 sndId = (uint16)(_castId + _cast->_castIDoffset);
+	uint32 tag = 0;
+	uint16 sndId = 0;
 
-	if (_cast->_version >= kFileVer400 && _children.size() > 0) {
-		sndId = _children[0].index;
-		tag = _children[0].tag;
+	if (_cast->_version < kFileVer400) {
+		tag = MKTAG('S', 'N', 'D', ' ');
+		sndId = (uint16)(_castId + _cast->_castIDoffset);
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+		for (auto &it : _children) {
+			if (it.tag == MKTAG('s', 'n', 'd', ' ') || it.tag == MKTAG('S', 'N', 'D', ' ')) {
+				sndId = it.index;
+				tag = it.tag;
+				break;
+			}
+		}
+		if (!sndId) {
+			warning("SoundCastMember::load(): No snd resource found in %d children, falling back to D3", _children.size());
+			tag = MKTAG('S', 'N', 'D', ' ');
+			sndId = (uint16)(_castId + _cast->_castIDoffset);
+		}
+	} else {
+		warning("STUB: SoundCastMember::SoundCastMember(): Sounds not yet supported for version %d", _cast->_version);
 	}
 
 	Common::SeekableReadStreamEndian *sndData = _cast->getResource(tag, sndId);
@@ -66,10 +81,7 @@ void SoundCastMember::load() {
 		// audio file is linked, load from the filesystem
 		CastMemberInfo *ci = _cast->getCastMemberInfo(_castId);
 		if (ci) {
-			Common::String filename = ci->fileName;
-
-			if (!ci->directory.empty())
-				filename = ci->directory + g_director->_dirSeparator + ci->fileName;
+			Common::String filename = ci->directory + g_director->_dirSeparator + ci->fileName;
 
 			debugC(2, kDebugLoading, "****** Loading file '%s', cast id: %d", filename.c_str(), sndId);
 			AudioFileDecoder *audio = new AudioFileDecoder(filename);

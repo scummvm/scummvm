@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -35,6 +36,19 @@
 #include "twine/twine.h"
 
 namespace TwinE {
+
+int32 Screens::mapLba2Palette(int32 palIndex) {
+	static const int32 palettes[] {
+		RESSHQR_MAINPAL,
+		-1, // TODO: current palette
+		RESSHQR_BLACKPAL,
+		RESSHQR_ECLAIRPAL
+	};
+	if (palIndex < 0 || palIndex >= ARRAYSIZE(palettes)) {
+		return -1;
+	}
+	return palettes[palIndex];
+}
 
 bool Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);

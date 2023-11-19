@@ -57,4 +57,5 @@ public:
 };
 
 } // End of namespace Sci
-#endif
+
+#endif // SCI_SOUND_SYNC_H

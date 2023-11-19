@@ -11,10 +11,10 @@ import android.view.InputDevice;
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.Collections;
+//import java.util.Comparator;
+//import java.util.List;
 
 // A class that extends the basic ScummVMEventsBase, supporting Android APIs > HONEYCOMB_MR1 (API 12)
 public class ScummVMEventsModern extends ScummVMEventsBase {
@@ -64,10 +64,10 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		mHandler.clear();
 	}
 
-	private ScummVMEventsModernHandler mHandler = new ScummVMEventsModernHandler(this);
-	private float[] repeatingCenteredAxisValuesArray = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+	private final ScummVMEventsModernHandler mHandler = new ScummVMEventsModernHandler(this);
+	private final float[] repeatingCenteredAxisValuesArray = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
-	// auxilliary movement axis bitflags
+	// auxiliary movement axis bitflags
 	// Also repeated (and used) in android's events.cpp (JE_JOYSTICK case)
 	private static final int AXIS_X_bf        = 0x01; // (0x01 << 0)
 	private static final int AXIS_Y_bf        = 0x02; // (0x01 << 1)
@@ -89,18 +89,14 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 		// bounding the joystick axis center.
 		if (range != null) {
 			final float axisFlat = range.getFlat();
-			final float axisMin = range.getMin();
-			final float axisRange = range.getRange();
-
-			float axisVal = (historyPos < 0) ? event.getAxisValue( axisId, actionPointerIndex) : event.getHistoricalAxisValue( axisId, actionPointerIndex, historyPos);
-			// Normalize
-			final float value =  (axisVal - axisMin ) / axisRange * 2.0f - 1.0f;
+			final float axisVal = (historyPos < 0) ? event.getAxisValue(range.getAxis(), actionPointerIndex) : event.getHistoricalAxisValue(range.getAxis(), actionPointerIndex, historyPos);
 
 			// Ignore axis values that are within the 'flat' region of the
 			// joystick axis center.
-			if (Math.abs(value) > axisFlat) {
+			if (Math.abs(axisVal) > axisFlat) {
 //				Log.d(ScummVM.LOG_TAG, "JOYSTICK axis: " + MotionEvent.axisToString(axisId) + " id: " + axisId + " - Math.abs(" + value + ") > " + axisFlat + " (flat) - raw val=" + axisVal);
-				return value;
+				// This value is already normalized in [-1.0, 1.0] (for sticks and "hats") or [0.0, 1.0] (for triggers)
+				return axisVal;
 			}
 //			else {
 //				Log.d(ScummVM.LOG_TAG, "JOYSTICK axis: " + MotionEvent.axisToString(axisId) + " id: " + axisId + " - Math.abs(" + value + ") <= " + axisFlat  + "(flat) - raw val=" + axisVal);
@@ -171,7 +167,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 
 		// Calculate the distance(s) to move by - for each supported AXIS
 		// ie. the left control stick, hat switch, the right control stick, or the R/L triggers
-		// NOTE The order of entries in the moveDistanceArray array is important. It corresponds to our auxilliary movement axis bitflags values order 
+		// NOTE The order of entries in the moveDistanceArray array is important. It corresponds to our auxiliary movement axis bitflags values order
 		float[] centeredAxisValuesArray = {getCenteredAxis(event, inputDevice, MotionEvent.AXIS_X, historyPos),
 		                                   getCenteredAxis(event, inputDevice, MotionEvent.AXIS_Y, historyPos),
 		                                   getCenteredAxis(event, inputDevice, MotionEvent.AXIS_HAT_X, historyPos) * JOYSTICK_AXIS_HAT_SCALE,
@@ -192,18 +188,18 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 			currX = centeredAxisValuesArray[i];
 			absCurrX = Math.abs(currX);
 
-			// 0-6 we deal with x-axis, y-axis together for LEFT STICK, HAT (DPAD), RIGHT STICK.
+			// 0 - 5 (ie. 4+1) we deal with x-axis, y-axis together for LEFT STICK, HAT (DPAD), RIGHT STICK.
 			if (i < 5) {
 				currY = centeredAxisValuesArray[i+1];
 				absCurrY = Math.abs(currY);
 			}
-			// TODO Make this limit dependant on the ConfMan joystick_deadzone setting -- but avoid using frequenct JNI to get the value
+			// TODO Make this limit dependant on the ConfMan joystick_deadzone setting -- but avoid using frequent JNI to get the value
 			//      The virtual mouse already uses joystick_deadzone to handle input, along with the "kbdmouse_speed". (see backends/keymapper/virtual-mouse.cpp)
 			//      PSP also uses joystick_deadzone for its input so maybe we could do something similar. (see backends/platform/psp/input.cpp).
 			//      If this filtering goes to the native side (eg. in backends/platform/android/events.cpp) we'll still need to somehow update the repeating-axis bitflag.
 			if (absCurrX < 0.209f
-			    && (i >= 5 || absCurrY < 0.209f)) {
-				// When on all the axis for the current contol (or the only axis) we have negligible movement that could still be greater than "flat" range,
+			    && (i >= 6 || absCurrY < 0.209f)) {
+				// When on all the axis for the current control (or the only axis) we have negligible movement that could still be greater than "flat" range,
 				// we do extra filter to stop repetition in order to avoid cases when Android does not send onGenericMotionEvent()
 				// for small x or y (while abs is still greater than range.getflat())!
 				// In such case we would end up with a slow moving "mouse" cursor - so we need this extra filter.
@@ -211,7 +207,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 				// If previously we had movement on at least one of the axis for the current control (or the only axis),
 				// then stop movement, reset values to 0 and clear pertinent repeating axis bitflags.
 				if ((prevRepeatingAxisIdBitFlags & (0x01 <<  i)) != 0
-				    || (i >= 5 && (prevRepeatingAxisIdBitFlags & (0x01 << (i+1))) != 0)) {
+				    || (i < 5 && (prevRepeatingAxisIdBitFlags & (0x01 << (i+1))) != 0)) {
 //					if (i < 5) {
 //						Log.d(ScummVM.LOG_TAG, "JOYSTICK " + axisBitFlagIndexToString[i] + ", " + axisBitFlagIndexToString[i+1] + "- pushEvent(): STOPPED: x=" + (int)(currX * 100) + " y=" + (int)(currY * 100));
 //					} else {
@@ -219,19 +215,19 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 //					}
 					// do the move, then signal the joystick has returned to center pos
 					stoppingMovementAxisIdBitFlags = 0;
-					repeatingCenteredAxisValuesArray[i]   = currX;
-					stoppingMovementAxisIdBitFlags |= (0x01 <<  i);
+					repeatingCenteredAxisValuesArray[i] = currX;
+					stoppingMovementAxisIdBitFlags |= (0x01 << i);
 					if (i < 5) {
 						repeatingCenteredAxisValuesArray[i+1] = currY;
-						stoppingMovementAxisIdBitFlags |= (0x01 <<  (i+1));
+						stoppingMovementAxisIdBitFlags |= (0x01 << (i+1));
 					}
 					repeatMove(stoppingMovementAxisIdBitFlags, true);
 
-					repeatingCenteredAxisValuesArray[i]   = 0.0f;
-					repeatingAxisIdBitFlags &= ~(0x01 <<  i);
+					repeatingCenteredAxisValuesArray[i] = 0.0f;
+					repeatingAxisIdBitFlags &= ~(0x01 << i);
 					if (i < 5) {
 						repeatingCenteredAxisValuesArray[i+1] = 0.0f;
-						repeatingAxisIdBitFlags &= ~(0x01 <<  (i+1));
+						repeatingAxisIdBitFlags &= ~(0x01 << (i+1));
 					}
 					// This return-to-zero (center pos) is sent as an explicit extra event, so it's considered "movement" on the axis
 					repeatMove(stoppingMovementAxisIdBitFlags, true);
@@ -244,8 +240,8 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 //					Log.d(ScummVM.LOG_TAG, "JOYSTICK " + axisBitFlagIndexToString[i] + "- update movement: x= " + (int)(currX * 100));
 //				}
 				// We update the axis values (for controls like sticks or hats we update both pertinent axis values here)
-				// and set the respsective repetition bit flag(s).
-				repeatingCenteredAxisValuesArray[i]   = currX; // X AXIS
+				// and set the respective repetition bit flag(s).
+				repeatingCenteredAxisValuesArray[i] = currX; // X AXIS
 				repeatingAxisIdBitFlags |= (0x01 <<  i);
 				if (i < 5) {
 					repeatingCenteredAxisValuesArray[i+1] = currY; // Y AXIS
@@ -274,7 +270,7 @@ public class ScummVMEventsModern extends ScummVMEventsBase {
 			 || (event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) != 0)) {
 			switch(event.getActionMasked()) {
 			case MotionEvent.ACTION_MOVE:
-				InputDevice inputDevice = event.getDevice();
+				//InputDevice inputDevice = event.getDevice();
 				//Log.d(ScummVM.LOG_TAG, "JOYSTICK GENERIC MOTION: MOVE, Devname=" + inputDevice.getName() + " pid=" + inputDevice.getProductId() + " vid=" + inputDevice.getVendorId());
 				// NOTE In Android 12 (on some early version patch) support for PS5's DualSense broke, and the key mappings are messed up.
 				// This was fixed in another Android 12 patch, but not all devices got that. (eg Redmi 9 Pro does not have this update)

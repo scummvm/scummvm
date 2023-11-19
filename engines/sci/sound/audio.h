@@ -20,8 +20,8 @@
  */
 
 /* Sound engine */
-#ifndef SCI_AUDIO_H
-#define SCI_AUDIO_H
+#ifndef SCI_SOUND_AUDIO_H
+#define SCI_SOUND_AUDIO_H
 
 #include "sci/engine/vm_types.h"
 #include "audio/mixer.h"
@@ -92,4 +92,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_AUDIO_H
+#endif // SCI_SOUND_AUDIO_H

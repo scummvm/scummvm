@@ -33,7 +33,9 @@ namespace Graphics {
 namespace FreeType {
 
 extern FT_Error Init_FreeType(FT_Library *alibrary);
+extern FT_Error Init_FreeType_With_Mem(FT_Library *alibrary, FT_Memory *amem);
 extern FT_Error Done_FreeType(FT_Library library);
+extern FT_Error Done_FreeType_With_Mem(FT_Library library, FT_Memory mem);
 extern FT_Error Load_Glyph(FT_Face face, FT_UInt glyph_index, FT_Int32 load_flags);
 extern FT_Error Get_Glyph(FT_GlyphSlot slot, FT_Glyph *aglyph);
 extern FT_Error Glyph_Copy(FT_Glyph source, FT_Glyph *target);

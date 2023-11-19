@@ -122,6 +122,8 @@ private:
 public:
 	Movements(TwinEEngine *engine);
 
+	void setActionNormal(bool actionNormal);
+
 	void update();
 
 	/**
@@ -187,6 +189,10 @@ public:
 
 	void doDir(int32 actorIdx);
 };
+
+inline void Movements::setActionNormal(bool actionNormal) {
+	_actionNormal = actionNormal;
+}
 
 inline bool Movements::shouldExecuteAction() const {
 	return _actionNormal;

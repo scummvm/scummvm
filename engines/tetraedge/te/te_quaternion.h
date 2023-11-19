@@ -69,6 +69,13 @@ public:
 		return retval;
 	}
 
+	static TeQuaternion fromEulerDegrees(const TeVector3f32 &euler) {
+		const float xdeg = (float)(euler.x() * M_PI / 180.0);
+		const float ydeg = (float)(euler.y() * M_PI / 180.0);
+		const float zdeg = (float)(euler.z() * M_PI / 180.0);
+		return fromEuler(TeVector3f32(xdeg, ydeg, zdeg));
+	}
+
 	TeMatrix4x4 toTeMatrix() const {
 		const TeMatrix4x4 retval = toMatrix();
 		return retval.transpose();

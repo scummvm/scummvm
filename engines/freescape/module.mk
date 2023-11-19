@@ -6,6 +6,8 @@ MODULE_OBJS := \
 	demo.o \
 	freescape.o \
 	games/castle.o \
+	games/dark/amiga.o \
+	games/dark/cpc.o \
 	games/dark/dark.o \
 	games/dark/dos.o \
 	games/dark/zx.o \
@@ -16,18 +18,22 @@ MODULE_OBJS := \
 	games/driller/dos.o \
 	games/driller/driller.o \
 	games/driller/zx.o \
-	games/eclipse.o \
+	games/eclipse/dos.o \
+	games/eclipse/eclipse.o \
+	games/eclipse/cpc.o \
+	games/eclipse/zx.o \
 	games/palettes.o \
 	gfx.o \
+	loaders/8bitImage.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
 	language/instruction.o \
 	metaengine.o \
 	movement.o \
-	neo.o \
 	objects/geometricobject.o \
+	objects/group.o \
 	objects/sensor.o \
-	scr.o \
+	sweepAABB.o \
 	sound.o \
 	ui.o
 

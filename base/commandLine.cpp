@@ -49,6 +49,10 @@
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
+#ifdef SDL_BACKEND
+#include "backends/platform/sdl/sdl-sys.h"
+#endif
+
 namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
@@ -61,10 +65,6 @@ static const char USAGE_STRING[] =
 	"Try '%s --help' for more options.\n"
 ;
 
-#ifdef SDL_BACKEND
-#include "backends/platform/sdl/sdl-sys.h"
-#endif
-
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 static const char HELP_STRING1[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
@@ -76,6 +76,8 @@ static const char HELP_STRING1[] =
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of supported engines and exit\n"
 	"  --list-all-engines       Display list of all detection engines and exit\n"
+	"  --dump-all-detection-entries Create a DAT file containing MD5s from detection entries of all engines\n"
+	"  --stats                  Display statistics about engines and games and exit\n"
 	"  --list-debugflags=engine Display list of engine specified debugflags\n"
 	"                           if engine=global or engine is not specified, then it will list global debugflags\n"
 	"  --list-all-debugflags    Display list of all engine specified debugflags\n"
@@ -89,8 +91,8 @@ static const char HELP_STRING1[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
-	"  --engine=ID              In combination with --list-games or --list-all-games only lists\n"
-	"                           games for this engine.\n"
+	"  --engine=ID              In combination with --list-games, --list-all-games, --list-targets, or --stats only\n"
+	"                           lists games for this engine. Multiple engines can be listed separated by a coma.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
@@ -319,7 +321,7 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
-	ConfMan.registerDefault("gm_device", "null");
+	ConfMan.registerDefault("gm_device", "auto");
 	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);
@@ -362,6 +364,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("joystick_num", 0);
 	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
+	ConfMan.registerDefault("disable_sdl_audio", false);
 
 	ConfMan.registerDefault("disable_display", false);
 	ConfMan.registerDefault("record_mode", "none");
@@ -619,6 +622,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-all-engines")
 			END_COMMAND
 
+			DO_LONG_COMMAND("dump-all-detection-entries")
+			END_COMMAND
+
+			DO_LONG_COMMAND("stats")
+			END_COMMAND
+
 			DO_COMMAND('a', "add")
 			END_COMMAND
 
@@ -811,8 +820,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				}
 			END_OPTION
 
+#ifdef SDL_BACKEND
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
 			END_OPTION
+
+			DO_LONG_OPTION_BOOL("disable-sdl-audio")
+			END_OPTION
+#endif
 
 			DO_LONG_OPTION_BOOL("multi-midi")
 			END_OPTION
@@ -981,6 +995,11 @@ unknownOption:
 /** List all available game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames(const Common::String &engineID) {
 	const bool all = engineID.empty();
+	Common::StringArray engines;
+	if (!all) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
 
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -993,7 +1012,7 @@ static void listGames(const Common::String &engineID) {
 			continue;
 		}
 
-		if (all || (p->getName() == engineID)) {
+		if (all || Common::find(engines.begin(), engines.end(), p->getName()) != engines.end()) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
 				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v->gameId).c_str(), v->description);
@@ -1005,6 +1024,11 @@ static void listGames(const Common::String &engineID) {
 /** List all known game IDs, i.e. all games which can be detected. */
 static void listAllGames(const Common::String &engineID) {
 	const bool any = engineID.empty();
+	Common::StringArray engines;
+	if (!any) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
 
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -1013,7 +1037,7 @@ static void listAllGames(const Common::String &engineID) {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		if (any || (metaEngine.getName() == engineID)) {
+		if (any || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
 				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getName(), v->gameId).c_str(), v->description);
@@ -1052,7 +1076,14 @@ static void listAllEngines() {
 }
 
 /** List all targets which are configured in the config file. */
-static void listTargets() {
+static void listTargets(const Common::String &engineID) {
+	const bool any = engineID.empty();
+	Common::StringArray engines;
+	if (!any) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
+
 	printf("Target               Description                                           \n"
 	       "-------------------- ------------------------------------------------------\n");
 
@@ -1065,24 +1096,101 @@ static void listTargets() {
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getValOrDefault("description"));
+		Common::String engine;
+		if (!any)
+			engine = iter->_value.getValOrDefault("engineid");
 
 		// If there's no description, fallback on the default description.
-		if (description.empty()) {
+		if (description.empty() || (!any && engine.empty())) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(name);
-			if (!g.description.empty())
+			if (description.empty() && !g.description.empty())
 				description = g.description;
+			if (!any && engine.empty() && !g.engineId.empty())
+				engine = g.engineId;
 		}
 		// If there's still no description, we cannot come up with one. Insert some dummy text.
 		if (description.empty())
 			description = "<Unknown game>";
 
-		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
+		if (any || Common::find(engines.begin(), engines.end(), engine) != engines.end())
+			targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
 	}
 
 	Common::sort(targets.begin(), targets.end());
 
 	for (Common::Array<Common::String>::const_iterator i = targets.begin(), end = targets.end(); i != end; ++i)
 		printf("%s\n", i->c_str());
+}
+
+static void printStatistics(const Common::String &engineID) {
+	const bool summary = engineID.empty();
+	const bool all = engineID == "all";
+	Common::StringArray engines;
+	if (!summary && !all) {
+		Common::StringTokenizer tokenizer(engineID, ",");
+		engines = tokenizer.split();
+	}
+
+	printf("Engines         Games         Variants      Added targets\n"
+	       "--------------- ------------- ------------- -------------\n");
+
+	int targetCount = 0;
+	Common::HashMap<Common::String, int> engineTargetCount;
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	for (Common::ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+		if (!summary) {
+			Common::String engine(iter->_value.getValOrDefault("engineid"));
+			if (engine.empty()) {
+				QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
+				if (!g.engineId.empty())
+					engine = g.engineId;
+			}
+			if (!all && Common::find(engines.begin(), engines.end(), engine) == engines.end())
+				continue;
+			Common::HashMap<Common::String, int>::iterator engineIter = engineTargetCount.find(engine);
+			if (engineIter == engineTargetCount.end())
+				engineTargetCount[engine] = 1;
+			else
+				++(engineIter->_value);
+		}
+		++targetCount;
+	}
+
+	bool approximation = false;
+	int engineCount = 0, gameCount = 0, variantCount = 0;
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		if (summary || all || Common::find(engines.begin(), engines.end(), metaEngine.getName()) != engines.end()) {
+			PlainGameList list = metaEngine.getSupportedGames();
+			++engineCount;
+			gameCount += list.size();
+			int variants = metaEngine.getGameVariantCount();
+			if (variants == -1) {
+				approximation = true;
+				variantCount += list.size();
+			} else
+				variantCount += variants;
+			if (!summary) {
+				int targets = 0;
+				Common::HashMap<Common::String, int>::const_iterator engineIter = engineTargetCount.find(metaEngine.getName());
+				if (engineIter != engineTargetCount.end())
+					targets = engineIter->_value;
+				if (variants != -1)
+					printf("%-15s %13d %13d %13d\n", metaEngine.getName(), list.size(), variants, targets);
+				else
+					printf("%-15s %13d %13s %13d\n", metaEngine.getName(), list.size(), "?", targets);
+			}
+		}
+	}
+	if (engines.size() != 1) {
+		if (!summary)
+			printf("--------------- ------------- ------------- -------------\n");
+		if (approximation)
+			printf("%15d %13d %12d+ %13d\n", engineCount, gameCount, variantCount, targetCount);
+		else
+			printf("%15d %13d %13d %13d\n", engineCount, gameCount, variantCount, targetCount);
+	}
 }
 
 static void printDebugFlags(const DebugChannelDef *debugChannels) {
@@ -1318,6 +1426,21 @@ static void listAudioDevices() {
 		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
 			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
 		}
+	}
+}
+
+/** Dump MD5s from detection entries into STDOUT */
+static void dumpAllDetectionEntries() {
+	const PluginList &plugins = EngineMan.getPlugins();
+
+	printf("scummvm (\n");
+	printf("\tauthor \"scummvm\"\n");
+	printf("\tversion \"%s\"\n", gScummVMVersion);
+	printf(")\n\n");
+
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		metaEngine.dumpDetectionEntries();
 	}
 }
 
@@ -1742,7 +1865,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// --list-games). This must be done after the config file and the plugins
 	// have been loaded.
 	if (command == "list-targets") {
-		listTargets();
+		listTargets(settings["engine"]);
 		return cmdDoExit;
 	} else if (command == "list-all-debugflags") {
 		listAllEngineDebugFlags();
@@ -1761,6 +1884,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return cmdDoExit;
 	} else if (command == "list-all-engines") {
 		listAllEngines();
+		return cmdDoExit;
+	} else if (command == "dump-all-detection-entries") {
+		dumpAllDetectionEntries();
+		return cmdDoExit;
+	} else if (command == "stats") {
+		printStatistics(settings["engine"]);
 		return cmdDoExit;
 #ifdef ENABLE_EVENTRECORDER
 	} else if (command == "list-records") {

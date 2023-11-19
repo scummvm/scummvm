@@ -19,52 +19,16 @@
  *
  */
 
-#include "ags/lib/std/math.h"
-#include "ags/shared/core/types.h"
-
 #ifndef AGS_STD_LIMITS_H
 #define AGS_STD_LIMITS_H
+
+#include "common/scummsys.h"
 
 namespace AGS3 {
 namespace std {
 
-class _Num_base {
-};
-
-template <class _Ty>
-class numeric_limits : public _Num_base {
-public:
-	static constexpr _Ty(min)() {
-		return _Ty();
-	}
-
-	static constexpr _Ty(max)() {
-		return _Ty();
-	}
-};
-
-template <>
-class numeric_limits<float> {
-public:
-	static constexpr float quiet_undefined() {
-		return FLOAT_UNASSIGNED;
-	}
-};
-
-template <>
-class numeric_limits<uint16_t> {
-public:
-	static constexpr uint16_t quiet_undefined() {
-		return 0;
-	}
-
-	static constexpr uint16_t min() {
-		return 0;
-	}
-	static constexpr uint16_t max() {
-		return UINT16_MAX;
-	}
-};
+template<class T>
+using numeric_limits = ::std::numeric_limits<T>;
 
 } // namespace std
 } // namespace AGS3

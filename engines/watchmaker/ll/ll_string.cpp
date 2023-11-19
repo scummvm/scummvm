@@ -168,66 +168,64 @@ void PaintText(WGame &game) {
 
 	if (bTitoliCodaStatic || bTitoliCodaScrolling)  return;
 
-	if (TheString.text) {
-		if (bDialogActive) {
-			obj = init.Anim[TimeAnim].obj;
-			if (obj == ocCURPLAYER)
-				Player->Mesh->ExpressionFrame = VisemaTimeRecon(TheTime - LastTextTime);
-			else if ((obj >= ocDARRELL) && (obj <= ocLASTCHAR) && (obj) && (Character[obj]->Mesh))
-				Character[obj]->Mesh->ExpressionFrame = VisemaTimeRecon(TheTime - LastTextTime);
-		}
+	if (bDialogActive) {
+		obj = init.Anim[TimeAnim].obj;
+		if (obj == ocCURPLAYER)
+			Player->Mesh->ExpressionFrame = VisemaTimeRecon(TheTime - LastTextTime);
+		else if ((obj >= ocDARRELL) && (obj <= ocLASTCHAR) && (obj) && (Character[obj]->Mesh))
+			Character[obj]->Mesh->ExpressionFrame = VisemaTimeRecon(TheTime - LastTextTime);
+	}
 
-		lines = (uint16)CheckText(game._fonts, (uint16)game._renderer->rFitY((int32)TheString.dx), TheString.text);
-		for (i = 0; i < lines; i++) {
-			dx = (TheString.dx - (TextLen(game._fonts, TextLines[i], 0) * SCREEN_RES_X) / game._renderer->rFitX(SCREEN_RES_X)) / 2;
-			obj = init.Anim[TimeAnim].obj;
-			color = WHITE_FONT;
-			if ((obj >= ocCUOCO) && (obj <= ocCURPLAYER)) {
-				switch (obj) {
-				case ocNOTAIO:
-				case ocSUPERVISORE:
-				case ocCUOCO:
-					color = RED_FONT;
-					break;
-				case ocVALENCIA:
-				case ocCHIRURGO:
-				case ocGIARDINIERE:
-					color = GREEN_FONT;
-					break;
-				case ocKRENN:
-				case ocOROLOGIAIO:
-				case ocVICTORIA:
-					color = CYAN_FONT;
-					break;
-				case ocMOORE:
-				case ocMOOREBUCATO:
-				case ocDUKES:
-				case ocTRADUTTORE:
-				case ocCUSTODE:
-					color = MAGENTA_FONT;
-					break;
-				case ocCORONA:
-				case ocMOGLIESUPERVISORE:
-				case ocMOGLIE_KIMONO:
-				case ocSERVETTA:
-					color = YELLOW_FONT;
-					break;
-				case ocVECCHIO:
-				case ocCACCIATORE:
-				case ocCACCIATOREMALPRESO:
-				case ocDOMESTICA:
-					color = GRAY_FONT;
-					break;
-				case ocDARRELL:
-				case ocDARRELLALETTO:
-				case ocCURPLAYER:
-				default:
-					color = WHITE_FONT;
-					break;
-				}
+	lines = (uint16)CheckText(game._fonts, (uint16)game._renderer->rFitY((int32)TheString.dx), TheString.text);
+	for (i = 0; i < lines; i++) {
+		dx = (TheString.dx - (TextLen(game._fonts, TextLines[i], 0) * SCREEN_RES_X) / game._renderer->rFitX(SCREEN_RES_X)) / 2;
+		obj = init.Anim[TimeAnim].obj;
+		color = WHITE_FONT;
+		if ((obj >= ocCUOCO) && (obj <= ocCURPLAYER)) {
+			switch (obj) {
+			case ocNOTAIO:
+			case ocSUPERVISORE:
+			case ocCUOCO:
+				color = RED_FONT;
+				break;
+			case ocVALENCIA:
+			case ocCHIRURGO:
+			case ocGIARDINIERE:
+				color = GREEN_FONT;
+				break;
+			case ocKRENN:
+			case ocOROLOGIAIO:
+			case ocVICTORIA:
+				color = CYAN_FONT;
+				break;
+			case ocMOORE:
+			case ocMOOREBUCATO:
+			case ocDUKES:
+			case ocTRADUTTORE:
+			case ocCUSTODE:
+				color = MAGENTA_FONT;
+				break;
+			case ocCORONA:
+			case ocMOGLIESUPERVISORE:
+			case ocMOGLIE_KIMONO:
+			case ocSERVETTA:
+				color = YELLOW_FONT;
+				break;
+			case ocVECCHIO:
+			case ocCACCIATORE:
+			case ocCACCIATOREMALPRESO:
+			case ocDOMESTICA:
+				color = GRAY_FONT;
+				break;
+			case ocDARRELL:
+			case ocDARRELLALETTO:
+			case ocCURPLAYER:
+			default:
+				color = WHITE_FONT;
+				break;
 			}
-			game._renderer->_2dStuff.displayDDText(TextLines[i], FontKind::Standard, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
 		}
+		game._renderer->_2dStuff.displayDDText(TextLines[i], FontKind::Standard, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
 	}
 }
 

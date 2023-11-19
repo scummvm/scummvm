@@ -120,26 +120,34 @@ const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 	if (!frame)
 		return nullptr;
 
-	Graphics::Surface *copy;
-	if (frame->format == g_system->getScreenFormat()) {
-		copy = new Graphics::Surface();
-		copy->copyFrom(*frame);
-	} else {
-		copy = frame->convertTo(g_system->getScreenFormat());
+	if (_tempFrame) {
+		_tempFrame->free();
+		delete _tempFrame;
+		_tempFrame = nullptr;
 	}
 
 	if (_cacheEnabled) {
-		addFrameToCache(frameIndex, copy);
-	} else {
-		if (_tempFrame) {
-			_tempFrame->free();
-			delete _tempFrame;
+		Graphics::Surface *copy;
+
+		if (frame->format == g_system->getScreenFormat()) {
+			copy = new Graphics::Surface();
+			copy->copyFrom(*frame);
+		} else {
+			copy = frame->convertTo(g_system->getScreenFormat());
 		}
 
-		_tempFrame = copy;
+		addFrameToCache(frameIndex, copy);
+		_lastFrame = copy;
+	} else {
+		if (frame->format == g_system->getScreenFormat()) {
+			_lastFrame = frame;
+		} else {
+			_lastFrame = _tempFrame = frame->convertTo(g_system->getScreenFormat());
+		}
 	}
 
-	return copy;
+	_lastFrameIndex = frameIndex;
+	return _lastFrame;
 }
 
 Graphics::Surface *AVIFrames::getFrameCopy(int frameIndex) {

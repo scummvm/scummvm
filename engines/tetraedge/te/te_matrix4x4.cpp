@@ -159,7 +159,6 @@ TeVector3f32 TeMatrix4x4::operator*(const TeVector3f32 &mul) const {
 			 (d[2] * x + d[6] * y + d[10] * z + d[14]) / w);
 }
 
-
 Common::String TeMatrix4x4::toString() const {
 	const float *data = getData();
 	return Common::String::format("[[%.03f %.03f %.03f %.03f]  [%.03f %.03f %.03f %.03f]  [%.03f %.03f %.03f %.03f]  [%.03f %.03f %.03f %.03f]]",
@@ -169,6 +168,12 @@ Common::String TeMatrix4x4::toString() const {
 								  data[3], data[7], data[11], data[15]);
 }
 
+Math::Matrix<4, 4> TeMatrix4x4::toScummVMMatrix() const {
+	const TeMatrix4x4 trans = transpose();
+	Math::Matrix<4, 4> retval;
+	retval.setData(trans.getData());
+	return retval;
+}
 
 TeMatrix4x4 TeMatrix4x4::transpose() const {
 	TeMatrix4x4 ret;
@@ -181,7 +186,6 @@ TeMatrix4x4 TeMatrix4x4::transpose() const {
 	}
 	return ret;
 }
-
 
 bool TeMatrix4x4::inverse() {
 	TeMatrix4x4 invMatrix;

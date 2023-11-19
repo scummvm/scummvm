@@ -30,6 +30,7 @@
 #include "engines/nancy/state/credits.h"
 
 #include "common/events.h"
+#include "common/config-manager.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Credits);
@@ -68,7 +69,7 @@ bool Credits::onStateExit(const NancyState::NancyState nextState) {
 }
 
 void Credits::init() {
-	_creditsData = g_nancy->_creditsData;
+	_creditsData = GetEngineData(CRED);
 	assert(_creditsData);
 
 	_background.init(_creditsData->imageName);
@@ -100,9 +101,11 @@ void Credits::run() {
 		g_nancy->_sound->stopSound(_creditsData->sound);
 		g_nancy->setMouseEnabled(true);
 		_fullTextSurface.free();
-		
-		// We don't yet support the original menus, so we close the game and go back to the launcher
-		// g_nancy->setState(NancyState::kMainMenu);
+
+		if (!ConfMan.hasKey("original_menus") || ConfMan.getBool("original_menus")) {
+			g_nancy->setState(NancyState::kMainMenu);
+			return;
+		}
 
 		Common::Event ev;
 		ev.type = Common::EVENT_RETURN_TO_LAUNCHER;

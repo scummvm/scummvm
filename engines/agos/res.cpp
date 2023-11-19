@@ -31,7 +31,7 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace AGOS {
 
@@ -62,7 +62,6 @@ uint32 AGOSEngine::readUint32Wrapper(const void *src) {
 }
 
 void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize) {
-#ifdef USE_ZLIB
 		Common::File in;
 		in.open(srcName);
 		if (in.isOpen() == false)
@@ -76,7 +75,7 @@ void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, u
 				error("decompressData: Read failed");
 
 			unsigned long decompressedSize = dstSize;
-			if (!Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize))
+			if (!Common::inflateZlib(dst, &decompressedSize, srcBuffer, srcSize))
 				error("decompressData: Zlib uncompress error");
 			free(srcBuffer);
 		} else {
@@ -84,9 +83,6 @@ void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, u
 				error("decompressData: Read failed");
 		}
 		in.close();
-#else
-	error("Zlib support is required for Amiga and Macintosh versions");
-#endif
 }
 
 void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &srcSize, uint32 &dstSize) {

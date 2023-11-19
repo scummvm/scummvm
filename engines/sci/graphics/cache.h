@@ -62,4 +62,4 @@ private:
 
 } // End of namespace Sci
 
-#endif
+#endif // SCI_GRAPHICS_CACHE_H

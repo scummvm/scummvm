@@ -27,13 +27,13 @@
 namespace Networking {
 
 class ResourceHandler: public BaseHandler {
-	static const char *determineMimeType(Common::String &filename);
+	static const char *determineMimeType(const Common::String &filename);
 public:
 	ResourceHandler();
-	virtual ~ResourceHandler();
+	~ResourceHandler() override;
 
-	virtual void handle(Client &client);
-	virtual bool minimalModeSupported();
+	void handle(Client &client) override;
+	bool minimalModeSupported() override;
 };
 
 } // End of namespace Networking

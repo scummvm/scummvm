@@ -143,6 +143,18 @@ public:
 	 */
 	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false);
 
+	/**
+	 * @brief This method creates a map from the given palette
+	 *        that can be used by crossBlitMap().
+	 *
+	 * @param palette   the palette data, in interleaved RGB format
+	 * @param len       the number of palette entries to be read
+	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 *
+	 * @return the created map, or nullptr if one isn't needed.
+	 */
+	uint32 *createMap(const byte *srcPalette, uint len, bool useNaiveAlg = false);
+
 private:
 	byte _palette[256 * 3];
 	uint _paletteSize;

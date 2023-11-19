@@ -48,7 +48,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 
-#include "common/compression/zlib.h"
+#include "common/compression/deflate.h"
 
 namespace Scumm {
 
@@ -182,7 +182,7 @@ public:
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
 	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
-	ScummFile theFile;
+	ScummFile theFile(vm);
 
 	vm->openFile(theFile, file);
 	if (!theFile.isOpen()) {
@@ -800,7 +800,6 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	}
 }
 
-#ifdef USE_ZLIB
 void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	if (_skipNext) {
 		_skipNext = false;
@@ -814,7 +813,7 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
 	byte *fobjBuffer = (byte *)malloc(decompressedSize);
-	if (!Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
+	if (!Common::inflateZlib(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4))
 		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
 	free(chunkBuffer);
 
@@ -829,7 +828,6 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	free(fobjBuffer);
 }
-#endif
 
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
@@ -877,11 +875,9 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('F','O','B','J'):
 			handleFrameObject(subSize, b);
 			break;
-#ifdef USE_ZLIB
 		case MKTAG('Z','F','O','B'):
 			handleZlibFrameObject(subSize, b);
 			break;
-#endif
 		case MKTAG('P','S','A','D'):
 			if (!_compressedFileMode) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
@@ -1023,7 +1019,7 @@ void SmushPlayer::parseNextFrame() {
 		if (_seekFile.size() > 0) {
 			delete _base;
 
-			ScummFile *tmp = new ScummFile();
+			ScummFile *tmp = new ScummFile(_vm);
 			if (!g_scumm->openFile(*tmp, _seekFile))
 				error("SmushPlayer: Unable to open file %s", _seekFile.c_str());
 			_base = tmp;
@@ -1190,7 +1186,7 @@ void SmushPlayer::unpause() {
 
 void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 startFrame) {
 	// Verify the specified file exists
-	ScummFile f;
+	ScummFile f(_vm);
 	_vm->openFile(f, filename);
 	if (!f.isOpen()) {
 		warning("SmushPlayer::play() File not found %s", filename);

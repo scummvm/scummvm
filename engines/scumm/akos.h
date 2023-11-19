@@ -47,7 +47,7 @@ public:
 	void costumeDecodeData(Actor *a, int frame, uint useMask) override;
 
 	//void animateLimb(int limb, int f);
-	bool hasManyDirections(int id) {
+	bool hasManyDirections(int id) override {
 		loadCostume(id);
 		return hasManyDirections();
 	}

@@ -30,36 +30,36 @@ namespace Box {
 
 class BoxStorage: public Id::IdStorage {
 	/** This private constructor is called from loadFromConfig(). */
-	BoxStorage(Common::String token, Common::String refreshToken, bool enabled);
+	BoxStorage(const Common::String &token, const Common::String &refreshToken, bool enabled);
 
 	/** Constructs StorageInfo based on JSON response from cloud. */
-	void infoInnerCallback(StorageInfoCallback outerCallback, Networking::JsonResponse json);
+	void infoInnerCallback(StorageInfoCallback outerCallback, const Networking::JsonResponse &json);
 
-	void createDirectoryInnerCallback(BoolCallback outerCallback, Networking::JsonResponse response);
+	void createDirectoryInnerCallback(BoolCallback outerCallback, const Networking::JsonResponse &response);
 
 protected:
 	/**
 	 * @return "box"
 	 */
-	virtual Common::String cloudProvider();
+	Common::String cloudProvider() override;
 
 	/**
 	 * @return kStorageBoxId
 	 */
-	virtual uint32 storageIndex();
+	uint32 storageIndex() override;
 
-	virtual bool needsRefreshToken();
+	bool needsRefreshToken() override;
 
-	virtual bool canReuseRefreshToken();
+	bool canReuseRefreshToken() override;
 
 public:
 	/** This constructor uses OAuth code flow to get tokens. */
-	BoxStorage(Common::String code, Networking::ErrorCallback cb);
+	BoxStorage(const Common::String &code, Networking::ErrorCallback cb);
 
 	/** This constructor extracts tokens from JSON acquired via OAuth code flow. */
-	BoxStorage(Networking::JsonResponse codeFlowJson, Networking::ErrorCallback cb);
+	BoxStorage(const Networking::JsonResponse &codeFlowJson, Networking::ErrorCallback cb);
 
-	virtual ~BoxStorage();
+	~BoxStorage() override;
 
 	/**
 	 * Storage methods, which are used by CloudManager to save
@@ -72,47 +72,47 @@ public:
 	 * @note every Storage must write keyPrefix + "type" key
 	 *       with common value (e.g. "Dropbox").
 	 */
-	virtual void saveConfig(Common::String keyPrefix);
+	void saveConfig(const Common::String &keyPrefix) override;
 
 	/**
 	* Return unique storage name.
 	* @returns  some unique storage name (for example, "Dropbox (user@example.com)")
 	*/
-	virtual Common::String name() const;
+	Common::String name() const override;
 
 	/** Public Cloud API comes down there. */
 
-	virtual Networking::Request *listDirectoryById(Common::String id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback);
-	virtual Networking::Request *createDirectoryWithParentId(Common::String parentId, Common::String directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *listDirectoryById(const Common::String &id, ListDirectoryCallback callback, Networking::ErrorCallback errorCallback) override;
+	Networking::Request *createDirectoryWithParentId(const Common::String &parentId, const Common::String &directoryName, BoolCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns UploadStatus struct with info about uploaded file. */
-	virtual Networking::Request *upload(Common::String remotePath, Common::String localPath, UploadCallback callback, Networking::ErrorCallback errorCallback);
-	virtual Networking::Request *upload(Common::String path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *upload(const Common::String &remotePath, const Common::String &localPath, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
+	Networking::Request *upload(const Common::String &path, Common::SeekableReadStream *contents, UploadCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns whether Storage supports upload(ReadStream). */
-	virtual bool uploadStreamSupported();
+	bool uploadStreamSupported() override;
 
 	/** Returns pointer to Networking::NetworkReadStream. */
-	virtual Networking::Request *streamFileById(Common::String path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *streamFileById(const Common::String &path, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns the StorageInfo struct. */
-	virtual Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback);
+	Networking::Request *info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) override;
 
 	/** Returns storage's saves directory path with the trailing slash. */
-	virtual Common::String savesDirectoryPath();
+	Common::String savesDirectoryPath() override;
 
 	/**
 	 * Load token and user id from configs and return BoxStorage for those.
 	 * @return pointer to the newly created BoxStorage or 0 if some problem occurred.
 	 */
-	static BoxStorage *loadFromConfig(Common::String keyPrefix);
+	static BoxStorage *loadFromConfig(const Common::String &keyPrefix);
 
 	/**
 	 * Remove all BoxStorage-related data from config.
 	 */
-	static void removeFromConfig(Common::String keyPrefix);
+	static void removeFromConfig(const Common::String &keyPrefix);
 
-	virtual Common::String getRootDirectoryId();
+	Common::String getRootDirectoryId() override;
 
 	Common::String accessToken() const { return _token; }
 };

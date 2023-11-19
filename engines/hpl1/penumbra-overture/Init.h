@@ -109,6 +109,8 @@ public:
 	bool mbShowIntro;
 	int mlFSAA;
 	eGameDifficulty mDifficulty;
+	// indicates if the game was already started
+	bool _firstStart;
 
 	int mlMaxSoundChannels;
 	int mlStreamUpdateFreq;

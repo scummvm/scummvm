@@ -32,6 +32,10 @@
 }
 
 #if TARGET_OS_IOS
+- (UIInterfaceOrientation)interfaceOrientation;
+
+- (UIInterfaceOrientation)currentOrientation;
+-(void) updateCurrentOrientation;
 -(void) setCurrentOrientation:(UIInterfaceOrientation)orientation;
 #endif
 

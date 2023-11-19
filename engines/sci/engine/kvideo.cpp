@@ -59,13 +59,12 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 	uint16 pitch = videoDecoder.getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
-	uint32 numPixels;
 
 	if (screenWidth == 640 && width <= 320 && height <= 240) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
-		numPixels = width * height * bytesPerPixel;
+		uint32 numPixels = width * height * bytesPerPixel;
 		scaleBuffer->allocate(numPixels, "video scale buffer");
 	}
 
@@ -313,7 +312,7 @@ reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	const Common::String fileName = s->_segMan->getString(argv[0]);
@@ -325,7 +324,7 @@ reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	// argv[0] is a broken x-coordinate
@@ -363,7 +362,7 @@ reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv) {
 	// so just ignore it
 	if (getSciVersion() > SCI_VERSION_2) {
 		++argv;
-		--argc;
+		//--argc;
 	}
 
 	const uint16 frameNo = argv[0].toUint16();

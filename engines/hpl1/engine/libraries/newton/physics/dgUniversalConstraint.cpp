@@ -256,7 +256,7 @@ dgUnsigned32 dgUniversalConstraint::JacobianDerivative(
 		axisParam[1].m_minFriction = DG_MIN_BOUND;
 		axisParam[1].m_maxFriction = DG_MAX_BOUND;
 
-		code = m_jointAccelFnt(*this, axisParam);
+		code = m_jointAccelFnt(reinterpret_cast<NewtonJoint *>(this), reinterpret_cast<NewtonHingeSliderUpdateDesc *>(axisParam));
 		if (code & 1) {
 			if ((axisParam[0].m_minFriction > DG_MIN_BOUND) || (axisParam[0].m_maxFriction < DG_MAX_BOUND)) {
 				params.m_forceBounds[ret].m_low = axisParam[0].m_minFriction;

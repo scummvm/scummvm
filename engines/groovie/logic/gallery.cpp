@@ -57,7 +57,6 @@ const byte GalleryGame::kGalleryLinks[21][10] = {
 	{12, 14, 15, 18, 20,  0,  0,  0,  0,  0 }	// 21
 };
 
-const int kPieceCount = 21;
 enum kGalleryPieceStatus {
 	kPieceUnselected = 0,
 	kPieceSelected = 1

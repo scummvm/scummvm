@@ -34,6 +34,7 @@ public:
 	virtual ~Title() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 };
 
 } // namespace ViewsEnh

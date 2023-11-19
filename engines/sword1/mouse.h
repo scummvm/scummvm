@@ -22,6 +22,7 @@
 #ifndef SWORD1_MOUSE_H
 #define SWORD1_MOUSE_H
 
+#include "common/mutex.h"
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "sword1/sworddefs.h"
@@ -73,6 +74,7 @@ public:
 	void initialize();
 	void addToList(int id, Object *compact);
 	void useLogicAndMenu(Logic *pLogic, Menu *pMenu);
+	void useScreenMutex(Common::Mutex *mutex);
 	void setLuggage(uint32 resID, uint32 rate);
 	void setPointer(uint32 resID, uint32 rate);
 	void animate();
@@ -95,6 +97,7 @@ private:
 	ResMan *_resMan;
 	ObjectMan *_objMan;
 	Common::Point _mouse;
+	Common::Mutex *_screenAccessMutex;
 
 	uint32 _currentPtrId, _currentLuggageId;
 	MousePtr *_currentPtr;

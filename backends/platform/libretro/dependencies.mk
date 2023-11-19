@@ -7,11 +7,11 @@ DEPS_SUBMODULES             := libretro-deps libretro-common
 
 DEPS_FOLDER_libretro-deps   := libretro-deps
 DEPS_URL_libretro-deps      := https://github.com/libretro/libretro-deps
-DEPS_COMMIT_libretro-deps   := e362764d603eb4fa84560f2d009fef091f6d1447
+DEPS_COMMIT_libretro-deps   := c8638d7d317c397c19aa4551038bf648a467ffe6
 
 DEPS_FOLDER_libretro-common := libretro-common
 DEPS_URL_libretro-common    := https://github.com/libretro/libretro-common
-DEPS_COMMIT_libretro-common := 20a43ba79fe6b4ec094b3b20b7bc88f4cfe916fa
+DEPS_COMMIT_libretro-common := 86d5e4128c072255c123d535cae97789023ee54b
 
 submodule_test  = $(if $(shell result=$$($(SCRIPTS_PATH)/configure_submodules.sh $(DEPS_URL_$(1)) $(DEPS_COMMIT_$(1)) $(DEPS_PATH) $(DEBUG_ALLOW_DIRTY_SUBMODULES) $(DEPS_FOLDER_$(1))) ; { [ -z $$result ] || [ ! $$result = 0 ] ; } && printf error),$(1))
 $(info Configuring submodules...)
@@ -43,7 +43,9 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/file/file_path_io.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/vfs/vfs_implementation.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/string/stdstring.o \
 	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/time/rtime.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/streams/file_stream.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/features/features_cpu.o
+
 
 ifeq ($(USE_LIBCO), 1)
 OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/libco/libco.o
@@ -61,7 +63,7 @@ OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-common)/encodings/encoding_utf.
 endif
 
 ######################################################################
-# fluidsynth settings
+# fluidsynth\fluidlite settings
 ######################################################################
 
 ifeq ($(USE_FLUIDSYNTH), 1)
@@ -72,26 +74,27 @@ this_lib_flags := -lfluidsynth
 include $(ROOT_PATH)/sharedlib_test.mk
 ifneq ($(this_lib_available), yes)
 DEFINES += -DUSE_FLUIDLITE
-INCLUDES += -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/include \
-	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src \
+INCLUDES += -I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/include \
+	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src \
 	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libvorbis/include \
 	-I$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/libogg/include
-OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_chan.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_chorus.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_conv.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_defsfont.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_dsp_float.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_gen.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_hash.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_list.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_mod.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_ramsfont.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_rev.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_settings.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_synth.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_sys.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_tuning.o \
-	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidsynth/src/fluid_voice.o
+OBJS_DEPS += $(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_chan.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_chorus.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_conv.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_defsfont.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_dsp_float.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_gen.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_hash.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_list.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_mod.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_ramsfont.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_rev.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_settings.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_synth.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_sys.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_tuning.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_voice.o \
+	$(DEPS_PATH)/$(DEPS_FOLDER_libretro-deps)/fluidlite/src/fluid_init.o
 endif
 endif
 

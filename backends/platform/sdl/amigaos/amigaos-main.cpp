@@ -28,6 +28,10 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
+static void cleanup() {
+	g_system->destroy();
+}
+
 int main(int argc, char *argv[]) {
 
 	// Update support (AmiUpdate):
@@ -63,6 +67,9 @@ int main(int argc, char *argv[]) {
 	g_system = new OSystem_AmigaOS();
 	assert(g_system);
 
+	// Register cleanup function to avoid unfreed signals
+	atexit(cleanup);
+
 	// Pre-initialize the backend.
 	g_system->init();
 
@@ -74,7 +81,8 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem.
-	g_system->destroy();
+	// This is now handled by cleanup() via atexit()
+	//g_system->destroy();
 
 	return res;
 }

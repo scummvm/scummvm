@@ -40,7 +40,7 @@ void Map48::orangoAnswer(const Common::String &answer) {
 	for (int i = 0; i < 15 && _data[ANSWER_OFFSET + i]; ++i)
 		properAnswer += (_data[ANSWER_OFFSET + i] & 0x7f) + 29;
 
-	if (answer.equalsIgnoreCase(properAnswer)) {
+ 	if (answer.equalsIgnoreCase(properAnswer)) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
 			c._flags[13] |= CHARFLAG13_ALAMAR;
@@ -48,7 +48,10 @@ void Map48::orangoAnswer(const Common::String &answer) {
 
 		g_maps->_mapPos = Common::Point(8, 5);
 		g_maps->changeMap(0x604, 1);
-		send(SoundMessage(STRING["maps.map48.orango3"]));
+
+		SoundMessage msg(STRING["maps.map48.orango3"]);
+		msg._largeMessage = true;
+		send(msg);
 
 	} else {
 		g_maps->_mapPos.x++;

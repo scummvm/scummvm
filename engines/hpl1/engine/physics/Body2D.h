@@ -32,7 +32,7 @@
 
 #include "common/list.h"
 #include "hpl1/engine/scene/Entity2D.h"
-#include "hpl1/std/map.h"
+#include "common/stablemap.h"
 
 namespace hpl {
 

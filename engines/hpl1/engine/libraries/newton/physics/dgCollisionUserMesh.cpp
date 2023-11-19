@@ -74,9 +74,9 @@ void dgCollisionUserMesh::GetVertexListIndexList(const dgVector &p0,
         const dgVector &p1, dgGetVertexListIndexList &data) const {
 	if (m_faceInAabb) {
 		return m_faceInAabb(m_userData, &p0[0], &p1[0],
-		                    (const dgFloat32 * const *)&data.m_veterxArray, &data.m_vertexCount,
-		                    &data.m_vertexStrideInBytes, data.m_indexList, data.m_maxIndexCount,
-		                    data.m_userDataList);
+							&data.m_veterxArray, &data.m_vertexCount,
+							&data.m_vertexStrideInBytes, data.m_indexList, data.m_maxIndexCount,
+							data.m_userDataList);
 
 	} else {
 		data.m_triangleCount = 0;
@@ -104,7 +104,7 @@ dgFloat32 dgCollisionUserMesh::RayCast(const dgVector &localP0,
                                        void *const userData) const {
 	dgFloat32 t;
 	dgFloat32 param;
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 
@@ -119,7 +119,7 @@ dgFloat32 dgCollisionUserMesh::RayCast(const dgVector &localP0,
 			data.m_matrix = body->m_collisionWorldMatrix;
 		}
 
-		t = m_rayHitCallBack(data);
+		t = m_rayHitCallBack(reinterpret_cast<NewtonUserMeshCollisionRayHitDesc *>(&data));
 		if ((t < dgFloat32(1.0f)) && (t > dgFloat32(0.0f))) {
 			param = t;
 			contactOut.m_normal = data.m_normal;
@@ -140,7 +140,7 @@ void dgCollisionUserMesh::GetCollidingFaces(dgPolygonMeshDesc *const data) const
 	if (m_collideCallback) {
 		data->m_me = this;
 		data->m_userData = m_userData;
-		m_collideCallback(*data);
+		m_collideCallback(reinterpret_cast<NewtonUserMeshCollisionCollideDesc *>(data));
 	}
 }
 

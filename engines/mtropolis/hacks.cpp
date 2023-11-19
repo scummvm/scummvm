@@ -44,6 +44,7 @@ Hacks::Hacks() {
 	allowAssetsFromOtherScenes = false;
 	mtiVariableReferencesHack = false;
 	mtiSceneReturnHack = false;
+	mtiHispaniolaDamagedStringHack = false;
 }
 
 Hacks::~Hacks() {
@@ -88,10 +89,10 @@ void ObsidianCorruptedAirTowerTransitionFix::onLoaded(Asset *asset, const Common
 
 class ObsidianInventoryWindscreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) override;
 };
 
-void ObsidianInventoryWindscreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
+void ObsidianInventoryWindscreenHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
 	if (pt.y < 480) {
 		// Set direct to screen so it draws over cinematics
 		static_cast<VisualElement *>(structural)->setDirectToScreen(true);
@@ -103,13 +104,13 @@ void ObsidianInventoryWindscreenHooks::onSetPosition(Runtime *runtime, Structura
 
 class ObsidianSecurityFormWidescreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) override;
 
 private:
 	Common::Array<uint32> _hiddenCards;
 };
 
-void ObsidianSecurityFormWidescreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
+void ObsidianSecurityFormWidescreenHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
 	bool cardVisibility = (pt.y > 480);
 
 	// Originally tried manipulating layer order but that's actually not a good solution because
@@ -1022,6 +1023,184 @@ void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks
 	hacks.addSaveLoadMechanismHooks(mechanism);
 }
 
+class MTIMolassesHandler : public IPostEffect {
+public:
+	void setFullScreenSurface(const Graphics::ManagedSurface &srcSurf);
+	void wipeRect(const Common::Rect &rect);
+	void setInitialRect(const Common::Rect &rect);
+
+	void release();
+
+	void renderPostEffect(Graphics::ManagedSurface &surface) const override;
+
+private:
+	Graphics::ManagedSurface _surf;
+	Graphics::ManagedSurface _mask;
+	Common::Rect _initialRect;
+};
+
+void MTIMolassesHandler::setFullScreenSurface(const Graphics::ManagedSurface &srcSurf) {
+	_surf.copyFrom(srcSurf);
+	_mask.create(srcSurf.w, srcSurf.h, Graphics::PixelFormat::createFormatCLUT8());
+	_mask.fillRect(Common::Rect(0, 0, srcSurf.w, srcSurf.h), 0xff);
+
+	wipeRect(_initialRect);
+}
+
+void MTIMolassesHandler::wipeRect(const Common::Rect &rect) {
+	_mask.fillRect(rect, 0);
+}
+
+void MTIMolassesHandler::setInitialRect(const Common::Rect &rect) {
+	_initialRect = rect;
+}
+
+void MTIMolassesHandler::release() {
+	_surf.free();
+	_mask.free();
+}
+
+void MTIMolassesHandler::renderPostEffect(Graphics::ManagedSurface &surface) const {
+	surface.transBlitFrom(_surf, Common::Point(0, 0), _mask);
+}
+
+class MTIMolassesFullscreenHooks : public StructuralHooks {
+public:
+	explicit MTIMolassesFullscreenHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler);
+
+	void onStopPlayingMToon(Structural *structural, bool &hide, bool &stopped, Graphics::ManagedSurface *lastSurf) override;
+
+private:
+	Common::SharedPtr<MTIMolassesHandler> _molassesHandler;
+};
+
+MTIMolassesFullscreenHooks::MTIMolassesFullscreenHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler) : _molassesHandler(molassesHandler) {
+}
+
+void MTIMolassesFullscreenHooks::onStopPlayingMToon(Structural *structural, bool &hide, bool &stopped, Graphics::ManagedSurface *lastSurf) {
+	_molassesHandler->setFullScreenSurface(*lastSurf);
+}
+
+class MTIMolassesSpongeHooks : public StructuralHooks {
+public:
+	explicit MTIMolassesSpongeHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler);
+
+	void onPostActivate(Structural *structural) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) override;
+
+private:
+	Common::SharedPtr<MTIMolassesHandler> _molassesHandler;
+};
+
+MTIMolassesSpongeHooks::MTIMolassesSpongeHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler) : _molassesHandler(molassesHandler) {
+}
+
+void MTIMolassesSpongeHooks::onPostActivate(Structural *structural) {
+	VisualElement *visual = static_cast<VisualElement *>(structural);
+
+	_molassesHandler->setInitialRect(visual->getRelativeRect());
+}
+
+void MTIMolassesSpongeHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
+	const Common::Rect relRect = static_cast<VisualElement *>(structural)->getRelativeRect();
+
+	int16 w = relRect.width();
+	int16 h = relRect.height();
+
+	Common::Rect wipeRect = Common::Rect(pt.x, pt.y, pt.x + w, pt.y + h);
+
+	_molassesHandler->wipeRect(wipeRect);
+}
+
+class MTIMolassesSceneTransitionHooks : public SceneTransitionHooks {
+public:
+	explicit MTIMolassesSceneTransitionHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler);
+
+	void onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) override;
+
+private:
+	Common::SharedPtr<MTIMolassesHandler> _molassesHandler;
+};
+
+MTIMolassesSceneTransitionHooks::MTIMolassesSceneTransitionHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler) : _molassesHandler(molassesHandler) {
+}
+
+void MTIMolassesSceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common::WeakPtr<Structural> &oldScene, const Common::WeakPtr<Structural> &newScene) {
+	Structural *oldScenePtr = oldScene.lock().get();
+	Structural *newScenePtr = newScene.lock().get();
+
+	const char *molassesSceneName = "B01c: Molasses";
+
+	if (oldScenePtr && oldScenePtr->getName() == molassesSceneName)
+		runtime->removePostEffect(_molassesHandler.get());
+	else if (newScenePtr && newScenePtr->getName() == molassesSceneName)
+		runtime->addPostEffect(_molassesHandler.get());
+}
+
+class MTIBuggyAnimationHooks : public StructuralHooks {
+public:
+	void onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) override;
+	void onStopPlayingMToon(Structural *structural, bool &hide, bool &stopped, Graphics::ManagedSurface *lastSurf) override;
+	void onHidden(Structural *structural, bool &visible) override;
+};
+
+void MTIBuggyAnimationHooks::onSetPosition(Runtime *runtime, Structural *structural, const Common::Point &oldPt, Common::Point &pt) {
+	// Cancel out off-screen translation
+	if (pt.x < 0)
+		pt = oldPt;
+}
+
+void MTIBuggyAnimationHooks::onStopPlayingMToon(Structural *structural, bool &visible, bool &stopped, Graphics::ManagedSurface *lastSurf) {
+	// Un-stop
+	visible = true;
+	stopped = false;
+}
+
+void MTIBuggyAnimationHooks::onHidden(Structural *structural, bool &visible) {
+	// Un-hide
+	visible = true;
+}
+
+class MTIStructuralHooks : public StructuralHooks {
+public:
+	explicit MTIStructuralHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler);
+
+	void onPostActivate(Structural *structural) override;
+
+private:
+	Common::SharedPtr<MTIMolassesHandler> _molassesHandler;
+};
+
+MTIStructuralHooks::MTIStructuralHooks(const Common::SharedPtr<MTIMolassesHandler> &molassesHandler) : _molassesHandler(molassesHandler) {
+}
+
+void MTIStructuralHooks::onPostActivate(Structural *structural) {
+	const Common::String &name = structural->getName();
+
+	if (name == "D15_0003.tun") {
+		// Fix for intro not playing in Piggy's secret room.  D15_0003.tun is on layer 7 but treasure layers are on top of it.
+		if (structural->isElement() && static_cast<Element *>(structural)->isVisual())
+			static_cast<VisualElement *>(structural)->setLayer(20);
+	} else if (name == "C01c0005.tun" || name == "C01c0005a.tun" || name == "A06_Xspot.tun" || name == "A08agp01.tun") {
+		// Several animations stop (which hides) and are moved off-screen when they stop, yet for some reason are supposed to
+		// continue to draw.
+		//
+		// Known cases:
+		// - Treasure map in Benbow (A06_Xspot.tun)
+		// - Molasses when leaving Benbow (A08agp01.tun)
+		// - Long John Silver in the life boat when disembarking the Hispaniola (C01c0005.tun and C01c0005a.tun)
+		structural->setHooks(Common::SharedPtr<StructuralHooks>(new MTIBuggyAnimationHooks()));
+	} else if (name == "B01cgp01.tun") {
+		structural->setHooks(Common::SharedPtr<StructuralHooks>(new MTIMolassesFullscreenHooks(_molassesHandler)));
+	} else if (name == "B01c_newsponge.tun") {
+		structural->setHooks(Common::SharedPtr<StructuralHooks>(new MTIMolassesSpongeHooks(_molassesHandler)));
+		structural->getHooks()->onPostActivate(structural);
+	} else if (name == "E01_Beakerfly.tun") {
+		// Beaker flyby in the intro is on layer 4, but the door is on layer 11
+		static_cast<VisualElement *>(structural)->setLayer(12);
+	}
+}
+
 void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// MTI uses a lot of "maintain rate" mToons at 10Hz.  This means their frame timer resets on every frame advance, and
 	// is supposed to ensure that the mToon plays back at a smooth rate regardless of clock jitter.  Unfortunately, it
@@ -1054,6 +1233,15 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 	// scene, which is supposed to activate a scene transtion modifier in the scene that transitions to itself.
 	// This doesn't work because the modifier is gone when the scene is unloaded.
 	hacks.mtiSceneReturnHack = true;
+
+	// Modifier "Scene Started => helmSteered? => Play Character, else Play Char" has a non-null-terminated name,
+	// which causes an integrity check failure when disembarking the Hispaniola.
+	hacks.mtiHispaniolaDamagedStringHack = true;
+
+	Common::SharedPtr<MTIMolassesHandler> molassesHandler(new MTIMolassesHandler());
+
+	hacks.defaultStructuralHooks.reset(new MTIStructuralHooks(molassesHandler));
+	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new MTIMolassesSceneTransitionHooks(molassesHandler)));
 }
 
 } // End of namespace HackSuites

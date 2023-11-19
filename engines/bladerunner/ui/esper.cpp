@@ -1105,7 +1105,7 @@ void ESPER::drawMouse(Graphics::Surface &surface) {
 					_mouseOverScroll = 4;
 				} else if (_mouseOverScroll == 1 && this->_viewport.right == kPhotoWidth - 1) {
 					_mouseOverScroll = 4;
-				} else if (_mouseOverScroll == 2 && this->_viewport.bottom ==  kPhotoHeight - 1) {
+				} else if (_mouseOverScroll == 2 && this->_viewport.bottom == kPhotoHeight - 1) {
 					_mouseOverScroll = 4;
 				} else if (_mouseOverScroll == 3 && this->_viewport.left == 0) {
 					_mouseOverScroll = 4;

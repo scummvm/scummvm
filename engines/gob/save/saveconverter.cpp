@@ -278,8 +278,10 @@ SavePartSprite *SaveConverter::readSprite(Common::SeekableReadStream &stream,
 	delete[] data;
 
 	if (palette)
-		if (!sprite->readPalette(pal))
+		if (!sprite->readPalette(pal)) {
+			delete sprite;
 			return nullptr;
+		}
 
 	return sprite;
 }

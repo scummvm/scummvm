@@ -42,10 +42,12 @@ protected:
 	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) final;
 
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-						   const StringList &includeList, const StringList &excludeList) final;
+						   const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) final;
 
 	void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-								const std::string &objPrefix, const std::string &filePrefix) final;
+								const std::string &objPrefix, const std::string &filePrefix,
+								const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) final;
+
 private:
 	enum {
 		kSettingsAsList        = 0x01,

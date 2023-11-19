@@ -465,12 +465,12 @@ bool Grid::initCellingGrid(int32 index) { // IncrustGrm
 }
 
 bool Grid::drawBrick(int32 index, int32 posX, int32 posY) {
-	return drawBrickSprite(index, posX, posY, _brickTable[index], false);
+	return drawBrickSprite(posX, posY, _brickTable[index], false);
 }
 
 bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) { // AffGraph
 	ptr = ptr + READ_LE_INT32(ptr + index * 4);
-	return drawBrickSprite(index, posX, posY, ptr, true);
+	return drawBrickSprite(posX, posY, ptr, true);
 }
 
 bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteIndex) {
@@ -497,7 +497,7 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 }
 
 // WARNING: Rewrite this function to have better performance
-bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
+bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	if (_engine->_debugGrid->_disableGridRendering) {
 		return false;
 	}

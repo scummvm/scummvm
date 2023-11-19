@@ -808,7 +808,9 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		break;
 
 	case kRoomOutsideNottsPub:
+	case kRoomOutsideDucks:
 		if (ped == 2) {
+			// Shut the door
 			_background->draw(-1, -1, 2);
 			_graphics->refreshBackground();
 			_sequence->startDuckSeq();
@@ -906,15 +908,6 @@ void AvalancheEngine::enterRoom(Room roomId, byte ped) {
 		if (_sittingInPub)
 			_background->draw(-1, -1, 2);
 		_npcFacing = 1; // Port.
-		break;
-
-	case kRoomOutsideDucks:
-		if (ped == 2) {
-			// Shut the door
-			_background->draw(-1, -1, 2);
-			_graphics->refreshBackground();
-			_sequence->startDuckSeq();
-		}
 		break;
 
 	case kRoomDucks:
@@ -1506,7 +1499,7 @@ Common::String AvalancheEngine::getName(People whose) {
 		"Spurge",     "Jacques"
 	};
 
-	static const char lasses[4][15] = {"Arkata", "Geida", "\0xB1", "the Wise Woman"};
+	static const char lasses[4][15] = {"Arkata", "Geida", "\xB1", "the Wise Woman"};
 
 	if (whose <= kPeopleJacques)
 		return Common::String(lads[whose - kPeopleAvalot]);

@@ -19,9 +19,12 @@
  *
  */
 
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/memory.h"
-#include "ags/shared/debugging/assert.h"
+//#include "ags/shared/debugging/assert.h"
+// File not present??
+#include "common/scummsys.h"
 
 namespace AGS3 {
 

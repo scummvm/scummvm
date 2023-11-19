@@ -1,0 +1,3 @@
+target remote 192.168.123.101:5656
+info threads
+bt

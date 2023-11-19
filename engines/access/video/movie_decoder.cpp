@@ -693,11 +693,11 @@ Audio::AudioStream *AccessVIDMovieDecoder::StreamAudioTrack::getAudioStream() co
 }
 
 bool AccessEngine::playMovie(const Common::String &filename, const Common::Point &pos) {
-	AccessVIDMovieDecoder *videoDecoder = new AccessVIDMovieDecoder();
+	AccessVIDMovieDecoder videoDecoder;
 
 	Common::Point framePos(pos.x, pos.y);
 
-	if (!videoDecoder->loadFile(filename)) {
+	if (!videoDecoder.loadFile(filename)) {
 		warning("AccessVIDMoviePlay: could not open '%s'", filename.c_str());
 		return false;
 	}
@@ -705,17 +705,17 @@ bool AccessEngine::playMovie(const Common::String &filename, const Common::Point
 	bool skipVideo = false;
 
 	_events->clearEvents();
-	videoDecoder->start();
+	videoDecoder.start();
 
-	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+	while (!shouldQuit() && !videoDecoder.endOfVideo() && !skipVideo) {
+		if (videoDecoder.needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 
 			if (frame) {
 				_screen->blitFrom(*frame);
 
-				if (videoDecoder->hasDirtyPalette()) {
-					const byte *palette = videoDecoder->getPalette();
+				if (videoDecoder.hasDirtyPalette()) {
+					const byte *palette = videoDecoder.getPalette();
 					g_system->getPaletteManager()->setPalette(palette, 0, 256);
 				}
 
@@ -731,9 +731,6 @@ bool AccessEngine::playMovie(const Common::String &filename, const Common::Point
 				skipVideo = true;
 		}
 	}
-
-	videoDecoder->close();
-	delete videoDecoder;
 
 	return !skipVideo;
 }

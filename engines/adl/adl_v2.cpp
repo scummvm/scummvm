@@ -43,6 +43,27 @@ AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 		_picOnScreen(0),
 		_itemsOnScreen(0) { }
 
+void AdlEngine_v2::mapExeStrings(const Common::StringArray &strings) {
+	if (strings.size() < 11)
+		error("Not enough strings found in executable");
+
+	// Parser messages
+	_strings.verbError = strings[2];
+	_strings.nounError = strings[3];
+	_strings.enterCommand = strings[4];
+
+	// Line feeds
+	_strings.lineFeeds = strings[0];
+
+	// Opcode strings
+	_strings_v2.saveInsert = strings[5];
+	_strings_v2.saveReplace = strings[6];
+	_strings_v2.restoreInsert = strings[7];
+	_strings_v2.restoreReplace = strings[8];
+	_strings.playAgain = strings[9];
+	_strings.pressReturn = strings[10];
+}
+
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
 	_disk = new DiskImage();
@@ -189,6 +210,12 @@ void AdlEngine_v2::printString(const Common::String &str) {
 
 void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 	item.isOnScreen = true;
+
+	if (item.picture == 0 || (uint)(item.picture - 1) >= _itemPics.size()) {
+		warning("Item picture %d not found", item.picture);
+		return;
+	}
+
 	StreamPtr stream(_itemPics[item.picture - 1]->createReadStream());
 	stream->readByte(); // Skip clear opcode
 	_graphics->drawPic(*stream, pos);
@@ -196,7 +223,7 @@ void AdlEngine_v2::drawItem(Item &item, const Common::Point &pos) {
 
 void AdlEngine_v2::loadRoom(byte roomNr) {
 	if (Common::find(_brokenRooms.begin(), _brokenRooms.end(), roomNr) != _brokenRooms.end()) {
-		debug("Warning: attempt to load non-existent room %d", roomNr);
+		warning("Attempt to load non-existent room %d", roomNr);
 		_roomData.description.clear();
 		_roomData.pictures.clear();
 		_roomData.commands.clear();
@@ -308,7 +335,7 @@ void AdlEngine_v2::drawItems() {
 		if (item->region == _state.region && item->room == _state.room && !item->isOnScreen) {
 			if (item->state == IDI_ITEM_DROPPED) {
 				// Draw dropped item if in normal view
-				if (getCurRoom().picture == getCurRoom().curPicture)
+				if (getCurRoom().picture == getCurRoom().curPicture && _itemsOnScreen < _itemOffsets.size())
 					drawItem(*item, _itemOffsets[_itemsOnScreen++]);
 			} else {
 				// Draw fixed item if current view is in the pic list

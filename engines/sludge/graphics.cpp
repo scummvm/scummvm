@@ -63,17 +63,14 @@ void GraphicsManager::init() {
 	// Back drop
 	_backdropExists = false;
 
-	// Sprites
-	_spriteLayers = new SpriteLayers;
-	_spriteLayers->numLayers = 0;
-
 	// Sprite Bank
 	_allLoadedBanks.clear();
 
 	// ZBuffer
 	_zBuffer = new ZBufferData;
 	_zBuffer->originalNum = -1;
-	_zBuffer->sprites = nullptr;
+	_zBuffer->tex = nullptr;
+	_zBufferSurface = nullptr;
 
 	// Colors
 	_currentBlankColour = _renderSurface.format.ARGBToColor(0xff, 0, 0, 0);
@@ -108,13 +105,6 @@ void GraphicsManager::kill() {
 		killMe = _frozenStuff;
 	}
 
-	// kill sprite layers
-	if (_spriteLayers) {
-		killSpriteLayers();
-		delete _spriteLayers;
-		_spriteLayers = nullptr;
-	}
-
 	// kill sprite banks
 	LoadedSpriteBanks::iterator it;
 	for (it = _allLoadedBanks.begin(); it != _allLoadedBanks.end(); ++it) {
@@ -133,6 +123,11 @@ void GraphicsManager::kill() {
 	// kill surfaces
 	if (_renderSurface.getPixels())
 		_renderSurface.free();
+
+	if (_zBufferSurface) {
+		delete[] _zBufferSurface;
+		_zBufferSurface = nullptr;
+	}
 
 	if (_snapshotSurface.getPixels())
 		_snapshotSurface.free();
@@ -153,6 +148,8 @@ void GraphicsManager::kill() {
 bool GraphicsManager::initGfx() {
 	initGraphics(_winWidth, _winHeight, _vm->getScreenPixelFormat());
 	_renderSurface.create(_winWidth, _winHeight, *_vm->getScreenPixelFormat());
+
+	_zBufferSurface = new uint8[_winWidth * _winHeight];
 
 	if (!killResizeBackdrop(_winWidth, _winHeight))
 		return fatal("Couldn't allocate memory for backdrop");

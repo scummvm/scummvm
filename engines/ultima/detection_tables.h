@@ -32,7 +32,7 @@ namespace Ultima {
 #define GUI_OPTIONS_SAVAGE_EMPIRE  GUIO0()
 
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
-#ifndef RELEASE_BUILD
+#ifdef ENABLE_ULTIMA1
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -85,6 +85,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 #endif
 
+#ifdef ENABLE_ULTIMA4
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -114,7 +115,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Ultima VI
 	{
 		{
@@ -137,6 +140,40 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA6
+		},
+		GAME_ULTIMA6,
+		GF_VGA_ENHANCED
+	},
+
+	// Ultima VI - French patch by Docwise Dragon
+	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
+	// Note: Not all user interface elements are translated in ScummVM
+	{
+		{
+			"ultima6",
+			0,
+			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA6
+		},
+		GAME_ULTIMA6,
+		0
+	},
+
+	// Ultima VI - Enhanced - French patch by Docwise Dragon
+	// https://sirjohn.de/en/ultima6/ultima-vi-french-translation-patch/
+	// Note: Not all user interface elements are translated in ScummVM
+	{
+		{
+			"ultima6_enh",
+			0,
+			AD_ENTRY1s("converse.a", "35c95d56737d957db7e72193e810053b", 182937),
+			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_ULTIMA6
@@ -263,7 +300,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA8
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
 		{
@@ -329,6 +368,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			"Gold Edition",
 			AD_ENTRY1s("gusecode.flx", "d69599a46870b66c1b7c02710ed185bd", 1378604),
 			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_ULTIMA8
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
+	// Fan translation patch for GOG version (provided by Condezer0, bug #14484)
+	{
+		{
+			"ultima8",
+			"Gold Edition",
+			AD_ENTRY1s("eusecode.flx", "cd4b330e09efd232360fd476bcc6a1d1", 1285847),
+			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUI_OPTIONS_ULTIMA8
@@ -577,7 +631,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
+#endif
 
+#ifdef ENABLE_ULTIMA6
 	// GOG Martian Dreams
 	{
 		{
@@ -698,6 +754,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };

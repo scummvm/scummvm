@@ -1080,6 +1080,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 	return channelMask;
 }
 
+#if 0
 byte SoundResource::getInitialVoiceCount(byte channel) {
 	if (_soundVersion > SCI_VERSION_0_LATE)
 		return 0; // TODO
@@ -1092,6 +1093,7 @@ byte SoundResource::getInitialVoiceCount(byte channel) {
 	else
 		return data[channel * 2];
 }
+#endif
 
 void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);

@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "mm/mm1/mm1.h"
@@ -51,6 +52,13 @@ MM1Engine::~MM1Engine() {
 }
 
 Common::Error MM1Engine::run() {
+	if (_gameDescription->features & GF_GFX_PACK) {
+		GUIErrorMessage(_("You cannot run the game directly from the Graphics Overhaul Mod. "
+			"Instead, it will automatically be available if you detect the original game "
+			"and select Enhanced mode."));
+		return Common::kNoError;
+	}
+
 	// Initialize graphics mode
 	initGraphics(320, 200);
 
@@ -95,12 +103,12 @@ void MM1Engine::setupNormal() {
 }
 
 bool MM1Engine::setupEnhanced() {
-	if (!Common::File::exists("xeen.cc")) {// || !Common::File::exists("dark.cc")) {
-		GUIErrorMessage(
+	if (!Common::File::exists("xeen.cc")) {
+		GUIErrorMessage(_(
 			"In order to run in Enhanced mode,  please copy xeen.cc "
-			"and dark.cc from a copy of World of Xeen\n"
-			"or Dark Side of Xeen to your Might and Magic 1 game folder"
-		);
+			"from a copy of World of Xeen\n"
+			"or Clouds of Xeen to your Might and Magic 1 game folder"
+		));
 
 		return false;
 	}

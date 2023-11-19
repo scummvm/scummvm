@@ -191,7 +191,7 @@ void OSystem_DS::initGraphics() {
 	_overlay.create(256, 192, _pfABGR1555);
 	_overlayScreen = new DS::Background(&_overlay, 2, false, 0, false);
 	_screen = nullptr;
-#ifndef DISABLE_TEXT_CONSOLE
+#ifdef DISABLE_TEXT_CONSOLE
 	_subScreen = nullptr;
 	_banner = nullptr;
 #endif
@@ -219,7 +219,7 @@ void OSystem_DS::setSubScreen(int32 x, int32 y, int32 sx, int32 sy) {
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
-	return (f == kFeatureCursorPalette) || (f == kFeatureStretchMode) || (f == kFeatureVirtualKeyboard);
+	return (f == kFeatureCursorPalette) || (f == kFeatureCursorAlpha) || (f == kFeatureStretchMode) || (f == kFeatureVirtualKeyboard) || (f == kFeatureTouchscreen);
 }
 
 void OSystem_DS::setFeatureState(Feature f, bool enable) {

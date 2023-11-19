@@ -57,6 +57,10 @@ FastFile::FastFile(const char *path) : _path(path) {
 	}
 }
 
+FastFile::~FastFile() {
+	delete[] _files;
+}
+
 Common::SharedPtr<Common::SeekableReadStream> FastFile::resolve(const char *filename) {
 	Common::String converted = filename;
 	int index = -1;

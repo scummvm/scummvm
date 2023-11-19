@@ -340,8 +340,8 @@ dgFloat32 dgBody::RayCast(const dgLineBox &line, OnRayCastAction filter,
 
 				contactOut.m_normal = m_collisionWorldMatrix.RotateVectorSimd(
 				                          contactOut.m_normal);
-				minT = filter(this, contactOut.m_normal, dgInt32(contactOut.m_userId),
-				              userData, t);
+				minT = filter(reinterpret_cast<const NewtonBody *>(this), &contactOut.m_normal.m_x, dgInt32(contactOut.m_userId),
+							  userData, t);
 			}
 		}
 	} else {
@@ -355,8 +355,8 @@ dgFloat32 dgBody::RayCast(const dgLineBox &line, OnRayCastAction filter,
 				NEWTON_ASSERT(t <= 1.0f);
 				contactOut.m_normal = m_collisionWorldMatrix.RotateVector(
 				                          contactOut.m_normal);
-				minT = filter(this, contactOut.m_normal, dgInt32(contactOut.m_userId),
-				              userData, t);
+				minT = filter(reinterpret_cast<const NewtonBody *>(this), &contactOut.m_normal.m_x, dgInt32(contactOut.m_userId),
+							  userData, t);
 			}
 		}
 	}
@@ -538,7 +538,7 @@ void dgBody::CalcInvInertiaMatrixSimd() {
 void dgBody::UpdateMatrix(dgFloat32 timestep, dgInt32 threadIndex) {
 	if (m_matrixUpdate) {
 		//      m_world->dgGetUserLock_();
-		m_matrixUpdate(*this, m_matrix, threadIndex);
+		m_matrixUpdate(reinterpret_cast<const NewtonBody *>(this), &m_matrix.m_front.m_x, threadIndex);
 		//      m_world->dgReleasedUserLock_();
 	}
 	//  UpdateCollisionMatrix (timestep, threadIndex);

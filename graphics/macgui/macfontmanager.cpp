@@ -524,8 +524,27 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
 			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
-			if (winfont->getFontHeight() != macFont->getSize())
-				warning("MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
+			if (winfont->getFontHeight() != macFont->getSize()) {
+				debug(5, "MacFontManager::getFont(): For font '%s' windows font '%s' is used of a different size %d", macFont->getName().c_str(), winfont->getName().c_str(), winfont->getFontHeight());
+
+				Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), macFont->getSize());
+
+				if (_winFontRegistry.contains(fullFontName)) {
+					// Check if we have generated this earlier, in that case reuse it.
+					font = _winFontRegistry.getVal(fullFontName);
+				} else {
+					// Generate a scaledFont
+					Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
+					if (scaledWinFont) {
+						debug(5, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
+
+						// register font generated for reuse
+						_winFontRegistry.setVal(fullFontName, scaledWinFont);
+
+						font = scaledWinFont;
+					}
+				}
+			}
 		}
 	}
 
@@ -636,7 +655,7 @@ const Common::String MacFontManager::getFontName(uint16 id, int size, int slant,
 	return Common::String::format("%s-%d-%d", n.c_str(), slant | extraSlant, size);
 }
 
-const Common::String MacFontManager::getFontName(MacFont &font) {
+const Common::String MacFontManager::getFontName(const MacFont &font) {
 	return getFontName(font.getId(), font.getSize(), font.getSlant());
 }
 
@@ -792,7 +811,7 @@ void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream
 	// TODO: Handle getSlant() flags
 
 	stream->seek(0);
-	Font *font = Graphics::loadTTFFont(*stream, toFont.getSize());
+	Font *font = Graphics::loadTTFFont(*stream, toFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont).c_str());

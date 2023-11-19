@@ -22,12 +22,13 @@
 #ifndef BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 #define BACKENDS_GRAPHICS_ATARI_SUPERVIDEL_H
 
+#ifdef USE_SUPERVIDEL
+
 #include "backends/graphics/atari/atari-graphics.h"
 
 #include <mint/osbind.h>
 
 #include "backends/graphics/atari/atari-graphics-superblitter.h"
-#include "backends/graphics/atari/videl-resolutions.h"
 #include "common/debug.h"	// error() & warning()
 #include "common/scummsys.h"
 
@@ -45,12 +46,6 @@ public:
 		else
 			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
-		// patch SPSHIFT for SuperVidel's BPS8C
-		for (byte *p : {scp_320x200x8_vga, scp_320x240x8_vga, scp_640x400x8_vga, scp_640x480x8_vga}) {
-			uint16 *p16 = (uint16*)(p + 122 + 30);
-			*p16 |= 0x1000;
-		}
-
 		// using virtual methods so must be done here
 		allocateSurfaces();
 	}
@@ -58,16 +53,6 @@ public:
 	~AtariSuperVidelManager() {
 		// using virtual methods so must be done here
 		freeSurfaces();
-	}
-
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override {
-		static const OSystem::GraphicsMode graphicsModes[] = {
-			{"direct", "Direct rendering", (int)GraphicsMode::DirectRendering},
-			{"single", "Single buffering", (int)GraphicsMode::SingleBuffering},
-			{"triple", "Triple buffering", (int)GraphicsMode::TripleBuffering},
-			{nullptr, nullptr, 0 }
-		};
-		return graphicsModes;
 	}
 
 private:
@@ -83,6 +68,54 @@ private:
 	}
 	AtariMemFree getStRamFreeFunc() const override {
 		return [](void *ptr) { Mfree((uintptr)ptr & 0x00FFFFFF); };
+	}
+
+	void drawMaskedSprite(Graphics::Surface &dstSurface, int dstBitsPerPixel,
+						  const Graphics::Surface &srcSurface, const Graphics::Surface &srcMask,
+						  int destX, int destY,
+						  const Common::Rect &subRect) override {
+		assert(dstBitsPerPixel == 8);
+		assert(subRect.width() % 16 == 0);
+		assert(subRect.width() == srcSurface.w);
+
+		const byte *src = (const byte *)srcSurface.getBasePtr(subRect.left, subRect.top);
+		const uint16 *mask = (const uint16 *)srcMask.getBasePtr(subRect.left, subRect.top);
+		byte *dst = (byte *)dstSurface.getBasePtr(destX, destY);
+
+		const int h = subRect.height();
+		const int w = subRect.width();
+		const int dstOffset = dstSurface.pitch - w;
+
+		for (int j = 0; j < h; ++j) {
+			for (int i = 0; i < w; i += 16, mask++) {
+				const uint16 m = *mask;
+
+				if (m == 0xFFFF) {
+					// all 16 pixels transparentm6
+					src += 16;
+					dst += 16;
+					continue;
+				}
+
+				for (int k = 0; k < 16; ++k) {
+					const uint16 bit = 1 << (15 - k);
+
+					if (m & bit) {
+						// transparent
+						src++;
+						dst++;
+					} else {
+						*dst++ = *src++;
+					}
+				}
+			}
+
+			dst += dstOffset;
+		}
+	}
+
+	Common::Rect alignRect(int x, int y, int w, int h) const override {
+		return Common::Rect(x, y, x + w, y + h);
 	}
 
 	static long hasSvRamBoosted() {
@@ -108,5 +141,7 @@ private:
 		return ret;
 	}
 };
+
+#endif	// USE_SUPERVIDEL
 
 #endif

@@ -38,6 +38,7 @@ namespace VCruise {
 struct ScreenScriptSet;
 struct RoomScriptSet;
 struct ScriptSet;
+struct ITextPreprocessor;
 
 namespace ScriptOps {
 
@@ -145,6 +146,7 @@ enum ScriptOp {
 	kSaveAs,
 	kSave0,
 	kExit,
+	kAllowSaves,
 
 	kAnimName,
 	kValueName,
@@ -155,6 +157,67 @@ enum ScriptOp {
 
 	kCheckValue,	// Check if stack top is equal to arg.  If it is, pop the argument, otherwise leave it on the stack and skip the next instruction.
 	kJump,			// Offset instruction index by arg.
+
+	// Schizm ops
+	kCallFunction,
+	kMusicStop,
+	kMusicPlayScore,
+	kScoreAlways,
+	kScoreNormal,
+	kSndPlay,
+	kSndPlayEx,
+	kSndPlay3D,
+	kSndPlaying,
+	kSndWait,
+	kSndHalt,
+	kSndToBack,
+	kSndStop,
+	kSndStopAll,
+	kSndAddRandom,
+	kSndClearRandom,
+	kVolumeAdd,
+	kVolumeChange,
+	kAnimVolume,
+	kAnimChange,
+	kScreenName,
+	kExtractByte,
+	kInsertByte,
+	kString,
+	kCmpNE,
+	kCmpLE,
+	kCmpGE,
+	kReturn,
+	kSpeech,
+	kSpeechEx,
+	kSpeechTest,
+	kSay,
+	kRandomInclusive,
+	kHeroOut,
+	kHeroGetPos,
+	kHeroSetPos,
+	kHeroGet,
+	kGarbage,
+	kGetRoom,
+	kBitAnd,
+	kBitOr,
+	kAngleGet,
+	kIsCDVersion,
+	kIsDVDVersion,
+	kDisc,
+	kHidePanel,
+	kRotateUpdate,
+	kMul,
+	kDiv,
+	kMod,
+	kGetDigit,
+	kPuzzleInit,
+	kPuzzleCanPress,
+	kPuzzleDoMove1,
+	kPuzzleDoMove2,
+	kPuzzleDone,
+	kPuzzleWhoWon,
+	kFn,
+	kItemHighlightSetTrue,
 
 	kNumOps,
 };
@@ -177,6 +240,7 @@ struct Script {
 typedef Common::HashMap<uint, Common::SharedPtr<Script> > ScriptMap_t;
 typedef Common::HashMap<uint, Common::SharedPtr<ScreenScriptSet> > ScreenScriptSetMap_t;
 typedef Common::HashMap<uint, Common::SharedPtr<RoomScriptSet> > RoomScriptSetMap_t;
+typedef Common::HashMap<Common::String, uint> ScreenNameMap_t;
 
 struct ScreenScriptSet {
 	Common::SharedPtr<Script> entryScript;
@@ -185,14 +249,45 @@ struct ScreenScriptSet {
 
 struct RoomScriptSet {
 	ScreenScriptSetMap_t screenScripts;
+	ScreenNameMap_t screenNames;
 };
 
 struct ScriptSet {
+	ScriptSet();
+
 	RoomScriptSetMap_t roomScripts;
+
+	Common::Array<Common::SharedPtr<Script> > functions;
+	Common::Array<Common::String> functionNames;
 	Common::Array<Common::String> strings;
 };
 
-Common::SharedPtr<ScriptSet> compileLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath);
+struct FunctionDef {
+	Common::String fnName;
+	Common::SharedPtr<Script> func;
+};
+
+// Global state is required for Schizm because its preprocessor defines exist across files.
+// For example, volPortWaves is set in Room01 but used in Room03 and Room20
+struct IScriptCompilerGlobalState {
+	virtual ~IScriptCompilerGlobalState();
+
+	virtual void define(const Common::String &key, uint roomNumber, int32 value) = 0;
+	virtual bool getDefine(const Common::String &str, uint &outRoomNumber, int32 &outValue) const = 0;
+
+	virtual uint getFunctionIndex(const Common::String &fnName) = 0;
+	virtual void setFunction(uint fnIndex, const Common::SharedPtr<Script> &fn) = 0;
+
+	virtual uint getNumFunctions() const = 0;
+	virtual void dumpFunctionNames(Common::Array<Common::String> &fnNames) const = 0;
+	virtual Common::SharedPtr<Script> getFunction(uint fnIndex) const = 0;
+};
+
+Common::SharedPtr<IScriptCompilerGlobalState> createScriptCompilerGlobalState();
+Common::SharedPtr<ScriptSet> compileReahLogicFile(Common::ReadStream &stream, uint streamSize, const Common::String &blamePath);
+void compileSchizmLogicFile(ScriptSet &scriptSet, uint loadAsRoom, uint fileRoom, Common::ReadStream &stream, uint streamSize, const Common::String &blamePath, IScriptCompilerGlobalState *gs);
+bool checkSchizmLogicForDuplicatedRoom(Common::ReadStream &stream, uint streamSize);
+void optimizeScriptSet(ScriptSet &scriptSet);
 
 }
 

@@ -87,12 +87,12 @@ bool Console::Cmd_DumpAnim(int argc, const char **argv) {
 
 	Common::SeekableReadStream *dataFile = animFile.createReadStreamForMember(fileName);
 
-	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::DumpFile outFile;
 	Common::String outName = fileName + ".dump";
-	outFile->open(outName);
-	outFile->writeStream(dataFile, dataFile->size());
-	outFile->finalize();
-	outFile->close();
+	outFile.open(outName);
+	outFile.writeStream(dataFile, dataFile->size());
+	outFile.finalize();
+	outFile.close();
 
 	animFile.close();
 
@@ -114,12 +114,12 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 	Common::SeekableReadStream *dataFile = fileName.hasSuffix(".cr") ? _vm->_dataFile.createReadStreamForCompressedMember(fileName) : _vm->_dataFile.createReadStreamForMember(fileName);
 
-	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::DumpFile outFile;
 	Common::String outName = fileName + ".dump";
-	outFile->open(outName);
-	outFile->writeStream(dataFile, dataFile->size());
-	outFile->finalize();
-	outFile->close();
+	outFile.open(outName);
+	outFile.writeStream(dataFile, dataFile->size());
+	outFile.finalize();
+	outFile.close();
 
 	return true;
 }

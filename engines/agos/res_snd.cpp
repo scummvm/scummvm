@@ -131,17 +131,17 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadMusic(uint16 music, bool forceSimon2Gm) {
+void AGOSEngine::loadMusic(uint16 music, bool forceSimon2GmData, bool useSimon2Remapping) {
 	stopMusic();
 
-	uint16 indexBase = forceSimon2Gm ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
+	uint16 indexBase = forceSimon2GmData ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
 
 	_gameFile->seek(_gameOffsetsPtr[indexBase + music - 1], SEEK_SET);
 	_midi->load(_gameFile);
 
 	// Activate Simon 2 GM to MT-32 remapping if we force GM, otherwise
 	// deactivate it (in case it was previously activated).
-	_midi->setSimon2Remapping(forceSimon2Gm);
+	_midi->setSimon2Remapping(useSimon2Remapping);
 
 	_lastMusicPlayed = music;
 	_nextMusicToPlay = -1;
@@ -240,10 +240,15 @@ void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
 		// and does not restart until the next scene.
 		// We fix this by loading the GM version of track 10 and remapping the
 		// instruments to MT-32.
+		// The 25th Anniversary Editions of the game attempted to fix this
+		// problem by replacing the track 10 MT-32 data with the track 10 GM
+		// data. For these versions, we can just load the MT-32 data. However,
+		// we now have to remap instruments for all subtracks.
 
-		// Reload track 10 and force GM for all subtracks but the first (this
-		// also activates the instrument remapping).
-		loadMusic(10, track > 0);
+		// Reload track 10 using GM data (if necessary) and activate instrument
+		// remapping.
+		bool track10Fix = getFeatures() & GF_MT32_TRACK10_FIX;
+		loadMusic(10, !track10Fix && track > 0, track10Fix || track > 0);
 	}
 
 	_midi->play(track);

@@ -46,6 +46,9 @@ function process_group(){
 # $4 [OPT] target name (prefix for core info file)
 # $5 [OPT] displayed core name (shown in frontend)
 # $6 [OPT] allowed extensions - backup if ScummVM.dat is not available
+# $7 [OPT] target scummvm folder name in frontend system folder
+# $8 [OPT] target extra folder name in scummvm system folder
+# $9 [OPT] target theme folder name in scummvm system folder
 
 # Exit if in parameters are not provided
 if [ -z $1 ] || [ -z $2 ] || [ -z $3 ] ; then
@@ -55,15 +58,15 @@ fi
 [ -z $4 ] && INFO_FILE_PRE=scummvm || INFO_FILE_PRE=$4
 [ -z $5 ] && NICE_NAME=ScummVM || NICE_NAME=$5
 [ -z $6 ] && ALLOWED_EXT=scummvm || ALLOWED_EXT=$6
+[ -z $7 ] && BUNDLE_DIR=scummvm || BUNDLE_DIR="$7"
+[ -z $8 ] && BUNDLE_DATAFILES_DIR="${BUNDLE_DIR}/extra" || BUNDLE_DATAFILES_DIR="${BUNDLE_DIR}/$8"
+[ -z $9 ] && BUNDLE_THEME_DIR="${BUNDLE_DIR}/theme" || BUNDLE_THEME_DIR="${BUNDLE_DIR}/$9"
 
 # Set variables
 BUILD_PATH="$1"
 SCUMMVM_PATH="$2"
 TMP_PATH="${BUILD_PATH}/tmp_data"
 TARGET_PATH="${BUILD_PATH}"
-BUNDLE_DIR="scummvm"
-BUNDLE_DATAFILES_DIR="${BUNDLE_DIR}/extra"
-BUNDLE_THEME_DIR="${BUNDLE_DIR}/theme"
 BUNDLE_ZIP_FILE="${BUNDLE_DIR}.zip"
 BUNDLE_LOCAL_DATAFILES_DIR="${BUILD_PATH}/dist"
 

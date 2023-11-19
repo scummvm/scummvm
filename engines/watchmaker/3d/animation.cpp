@@ -103,7 +103,7 @@ void t3dMatRotXYZ(t3dM3X3F *dest, t3dF32 x, t3dF32 y, t3dF32 z) {
 
 Common::Array<t3dPLIGHT> t3dBODY::getPositionalLight(uint8 pos) {
 	Common::Array<t3dPLIGHT> result;
-	for (auto light : PosLightTable) {
+	for (const auto &light : PosLightTable) {
 		if (light.Num == pos) {
 			result.push_back(light);
 		}
@@ -119,7 +119,7 @@ uint8 GetLightPosition(t3dV3F *dest, uint8 pos) {
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
 	dest->y = CurFloorY;
-	for (auto light : pLights) {
+	for (const auto &light : pLights) {
 		if (light.Pos.x && light.Pos.z) {
 			dest->x = light.Pos.x;
 			dest->z = light.Pos.z;
@@ -139,7 +139,7 @@ uint8 GetLightDirection(t3dV3F *dest, uint8 pos) {
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
 	dest->y = CurFloorY;
-	for (auto light : pLights) {
+	for (const auto &light : pLights) {
 		if (light.Dir.x && light.Dir.z) {
 			dest->x = light.Dir.x;
 			dest->z = light.Dir.x;
@@ -578,6 +578,7 @@ t3dCHARACTER *t3dLoadCharacter(WGame &game, const char *pname, uint16 num) {
 	//Try to load animation
 	if (t3dLoadAnimation(game, pname, b->Mesh, T3D_MESH_DEFAULTANIM) == -1) {
 		warning("t3dLoadCharacter: Error loading %s", pname);
+		delete[] b;
 		return nullptr;
 	}
 	FixupAnim(b->Mesh, 0, "");
@@ -661,7 +662,7 @@ uint8 GetFullLightDirection(t3dV3F *dest, uint8 pos) {
 	if (!pos) return 0;
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
-	for (auto light : pLights) {
+	for (const auto &light : pLights) {
 		if (light.Dir.x && light.Dir.z) {
 			*dest = light.Dir;
 			return pos;

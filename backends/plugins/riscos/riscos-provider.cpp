@@ -51,6 +51,7 @@ void pluginHack() {
 
 	f = tanhf(f);
 	f = logf(f);
+	f = log2f(f);
 	f = log10f(f);
 	f = lroundf(f);
 	f = expf(f);

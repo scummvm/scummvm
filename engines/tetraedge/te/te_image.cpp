@@ -21,6 +21,7 @@
 
 #include "tetraedge/tetraedge.h"
 
+#include "common/endian.h"
 #include "common/rect.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_image.h"
@@ -53,8 +54,13 @@ void TeImage::create() {
 void TeImage::createImg(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 			Format teformat, uint bufxsize, uint bufysize) {
 	_teFormat = teformat;
+#ifdef SCUMM_BIG_ENDIAN
+	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
+									  Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
 	Graphics::PixelFormat pxformat = ((teformat == TeImage::RGB8) ?
 									  Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0) : Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
 
 	Graphics::ManagedSurface::create(xsize, ysize, pxformat);
 	if (teformat == TeImage::RGBA8)

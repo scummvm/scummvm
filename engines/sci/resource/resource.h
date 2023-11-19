@@ -643,7 +643,6 @@ protected:
 	 */
 	bool hasOldScriptHeader();
 
-	void printLRU();
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 
@@ -711,7 +710,9 @@ public:
 	Track *getTrackByType(byte type);
 	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
+#if 0
 	byte getInitialVoiceCount(byte channel);
+#endif
 	byte getSoundPriority() const { return _soundPriority; }
 	bool exists() const { return _resource != nullptr; }
 

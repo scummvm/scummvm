@@ -110,10 +110,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	uint16 celCount = 0;
 	uint16 mirrorBits = 0;
 	uint32 palOffset = 0;
-	uint16 headerSize = 0;
-	uint16 loopSize = 0, celSize = 0;
-	uint loopNo, celNo, EGAmapNr;
-	byte seekEntry;
+	uint loopNo, celNo;
 	bool isEGA = false;
 	bool isCompressed = true;
 	ViewType curViewType = _resMan->getViewType();
@@ -171,6 +168,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				//  with broken mapping tables. I guess those games won't use the mapping, so I rather disable it
 				//  for them
 				if (getSciVersion() == SCI_VERSION_1_EGA_ONLY) {
+					uint EGAmapNr;
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
 						const SciSpan<const byte> mapping = _resource->subspan(palOffset + EGAmapNr * SCI_VIEW_EGAMAPPING_SIZE, SCI_VIEW_EGAMAPPING_SIZE);
 						if (memcmp(mapping.getUnsafeDataAt(0, SCI_VIEW_EGAMAPPING_SIZE), EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
@@ -246,7 +244,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 
 	case kViewVga11: { // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Flags:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
-		headerSize = _resource->getUint16SEAt(0) + 2; // headerSize is not part of the header, so it's added
+		uint16 headerSize = _resource->getUint16SEAt(0) + 2; // headerSize is not part of the header, so it's added
 		assert(headerSize >= 16);
 		const uint8 loopCount = _resource->getUint8At(2);
 		assert(loopCount);
@@ -271,9 +269,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 
 		loopData = _resource->subspan(headerSize);
-		loopSize = _resource->getUint8At(12);
+		uint16 loopSize = _resource->getUint8At(12);
 		assert(loopSize >= 16);
-		celSize = _resource->getUint8At(13);
+		uint16 celSize = _resource->getUint8At(13);
 		assert(celSize >= 32);
 
 		if (palOffset) {
@@ -285,7 +283,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		for (loopNo = 0; loopNo < loopCount; loopNo++) {
 			loopData = _resource->subspan(headerSize + (loopNo * loopSize));
 
-			seekEntry = loopData[0];
+			byte seekEntry = loopData[0];
 			if (seekEntry != 255) {
 				_loop[loopNo].mirrorFlag = true;
 
@@ -713,8 +711,6 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	// Walk through the bitmap and remember all combinations of colors
 	int16 ditheredBitmapColors[DITHERED_BG_COLORS_SIZE];
 	byte color1, color2;
-	byte nextColor1, nextColor2;
-	int16 y, x;
 
 	memset(&ditheredBitmapColors, 0, sizeof(ditheredBitmapColors));
 
@@ -724,12 +720,13 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	int16 checkHeight = height - 1;
 	byte *curPtr = bitmapPtr.getUnsafeDataAt(0, checkHeight * width);
 	const byte *nextPtr = bitmapPtr.getUnsafeDataAt(width, checkHeight * width);
-	for (y = 0; y < checkHeight; y++) {
+	for (int16 y = 0; y < checkHeight; y++) {
 		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
-		nextColor1 = nextPtr[0] << 4; nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
+		byte nextColor1 = nextPtr[0] << 4;
+		byte nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
 		curPtr += 3;
 		nextPtr += 3;
-		for (x = 3; x < width; x++) {
+		for (int16 x = 3; x < width; x++) {
 			color1 = (color1 << 4) | (color2 >> 4);
 			color2 = (color2 << 4) | *curPtr++;
 			nextColor1 = (nextColor1 >> 4) | (nextColor2 << 4);
@@ -764,9 +761,9 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 
 	// We now need to replace color-combinations
 	curPtr = bitmapPtr.getUnsafeDataAt(0, height * width);
-	for (y = 0; y < height; y++) {
+	for (int16 y = 0; y < height; y++) {
 		color = curPtr[0];
-		for (x = 1; x < width; x++) {
+		for (int16 x = 1; x < width; x++) {
 			color = (color << 4) | curPtr[1];
 			if (unditherTable[color]) {
 				// Some color with black? Turn colors around, otherwise it won't

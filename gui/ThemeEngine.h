@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.11"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.13"
 
 class OSystem;
 
@@ -49,7 +49,6 @@ namespace GUI {
 
 struct WidgetDrawData;
 struct TextDrawData;
-struct TextColorData;
 class Dialog;
 class GuiObject;
 class ThemeEval;
@@ -173,6 +172,10 @@ enum TextColor {
 	kTextColorButtonHover,
 	kTextColorButtonDisabled,
 	kTextColorMAX
+};
+
+struct TextColorData {
+	int r, g, b;
 };
 
 class LangExtraFont {
@@ -477,7 +480,8 @@ public:
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-	             const Common::Array<Common::U32String> &tabs, int active, bool rtl = false);
+	             const Common::Array<Common::U32String> &tabs, int active, bool rtl,
+				 ThemeEngine::TextAlignVertical alignV);
 
 	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState);
 
@@ -528,6 +532,7 @@ public:
 	TextData getTextData(DrawData ddId) const;
 	TextColor getTextColor(DrawData ddId) const;
 
+	TextColorData *getTextColorData(TextColor color) const;
 
 	/**
 	 * Interface for ThemeParser class: Parsed DrawSteps are added via this function.
@@ -816,13 +821,12 @@ protected:
 	uint32 _cursorTransparent;
 	byte *_cursor;
 	uint _cursorWidth, _cursorHeight;
-#ifndef USE_RGB_COLOR
+
 	enum {
 		MAX_CURS_COLORS = 255
 	};
 	byte _cursorPal[3 * MAX_CURS_COLORS];
 	byte _cursorPalSize;
-#endif
 
 	Common::Rect _clip;
 };

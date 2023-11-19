@@ -42,6 +42,7 @@ typedef unsigned int uint;
 #include <limits.h>
 #include <math.h>
 #include <new>
+#include <limits>
 
 #include <nds/arm9/sassert.h>
 #undef assert
@@ -54,10 +55,5 @@ typedef unsigned int uint;
 #ifndef STREAM_AUDIO_FROM_DISK
 #define STREAM_AUDIO_FROM_DISK
 #endif
-
-// FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
-// This define changes the mouse-relative motion which doesn't make sense on a touch screen to
-// a more conventional form of input where the menus can be clicked on.
-#define LURE_CLICKABLE_MENUS
 
 #endif

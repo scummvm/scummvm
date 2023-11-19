@@ -42,6 +42,6 @@ bool printObject(reg_t obj);
 
 bool matchKernelBreakpointPattern(const Common::String &pattern, const Common::String &name);
 
-}
+} // End of namespace Sci
 
-#endif
+#endif // SCI_ENGINE_SCRIPTDEBUG_H

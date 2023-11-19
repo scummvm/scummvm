@@ -20,8 +20,8 @@
  */
 
 #include "dgWorld.h"
+#include "hpl1/debug.h"
 #include "hpl1/engine/libraries/newton/core/dg.h"
-
 
 #include "dgCollisionBox.h"
 #include "dgCollisionCapsule.h"
@@ -288,13 +288,7 @@ dgWorld::dgWorld(dgMemoryAllocator *allocator) : // dgThreadHive(),
 
 	m_cpu = dgNoSimdPresent;
 	m_numberOfTheads = 1;
-
-	SetHardwareMode(1);
-	SetThreadsCount(DG_MAXIMUN_THREADS);
-	m_maxTheads = m_numberOfTheads;
-
-	SetHardwareMode(0);
-	SetThreadsCount(1);
+	m_maxTheads = 1;
 
 	dgBroadPhaseCollision::Init();
 	dgCollidingPairCollector::Init();
@@ -350,10 +344,7 @@ void dgWorld::SetFrictionMode(dgInt32 mode) {
 }
 
 void dgWorld::SetHardwareMode(dgInt32 mode) {
-	m_cpu = dgNoSimdPresent;
-	if (mode) {
-		m_cpu = dgGetCpuType();
-	}
+	HPL1_UNIMPLEMENTED(dgWorld::SetHardwareMode);
 }
 
 dgInt32 dgWorld::GetHardwareMode(char *description) const {
@@ -494,7 +485,7 @@ dgBody *dgWorld::CreateBody(dgCollision *const collision,
 
 void dgWorld::DestroyBody(dgBody *const body) {
 	if (body->m_destructor) {
-		body->m_destructor(*body);
+		body->m_destructor(reinterpret_cast<const NewtonBody *>(body));
 	}
 
 	dgBroadPhaseCollision::Remove(body);
@@ -551,12 +542,6 @@ void dgWorld::UpdateCollision() {
 	m_inUpdate++;
 	NEWTON_ASSERT(m_numberOfTheads >= 1);
 
-#ifdef _WIN32
-#ifndef __USE_DOUBLE_PRECISION__
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-#endif
 
 	timestep = dgFloat32(0.0f);
 
@@ -574,12 +559,6 @@ void dgWorld::UpdateCollision() {
 		UpdateContacts(timestep, true);
 	}
 	m_inUpdate--;
-
-#ifdef _WIN32
-#ifndef __USE_DOUBLE_PRECISION__
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
-#endif
 
 	m_perfomanceCounters[m_worldTicks] = m_getPerformanceCount() - ticks;
 }
@@ -605,9 +584,6 @@ void dgWorld::Update(dgFloat32 timestep) {
 // xxx ++;
 
 // m_cpu = dgNoSimdPresent;
-#ifdef _LINUX_VER
-//		m_cpu = dgNoSimdPresent;
-#endif
 
 	NEWTON_ASSERT(m_inUpdate == 0);
 
@@ -620,13 +596,6 @@ void dgWorld::Update(dgFloat32 timestep) {
 
 	m_inUpdate++;
 	NEWTON_ASSERT(m_numberOfTheads >= 1);
-
-#ifdef _WIN32
-#ifndef __USE_DOUBLE_PRECISION__
-	dgUnsigned32 controlWorld = dgControlFP(0xffffffff, 0);
-	dgControlFP(_PC_53, _MCW_PC);
-#endif
-#endif
 
 	if (m_cpu == dgSimdPresent) {
 #ifdef DG_BUILD_SIMD_CODE
@@ -644,13 +613,7 @@ void dgWorld::Update(dgFloat32 timestep) {
 		m_dynamicSolver.UpdateDynamics(this, 0, timestep);
 	}
 	m_inUpdate--;
-
-#ifdef _WIN32
-#ifndef __USE_DOUBLE_PRECISION__
-	dgControlFP(controlWorld, _MCW_PC);
-#endif
-#endif
-
+	
 	if (m_destroyBodyByExeciveForce) {
 		for (dgInt32 i = 0; i < m_destroyeddBodiesPool.m_count; i++) {
 			m_destroyBodyByExeciveForce(m_destroyeddBodiesPool.m_bodies[i],

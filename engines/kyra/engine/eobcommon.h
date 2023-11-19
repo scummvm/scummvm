@@ -834,7 +834,13 @@ protected:
 	Screen::FontId _invFont1;
 	Screen::FontId _invFont2;
 	Screen::FontId _invFont3;
+	Screen::FontId _invFont4;
+	Screen::FontId _invFont5;
+	Screen::FontId _invFont6;
 	Screen::FontId _conFont;
+	Screen::FontId _titleFont;
+	Screen::FontId _bookFont;
+	Screen::FontId _hpStatFont;
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
 	uint8 *_swapShape;
@@ -912,7 +918,7 @@ protected:
 	virtual void seq_segaPausePlayer(bool pause) {}
 	bool checkPassword();
 
-	Common::String convertAsciiToSjis(Common::String str);
+	Common::String makeTwoByteString(const Common::String &str);
 
 	virtual int resurrectionSelectDialogue() = 0;
 	virtual void useHorn(int charIndex, int weaponSlot) {}
@@ -1262,12 +1268,12 @@ protected:
 
 	// sound
 	void snd_playSong(int id, bool loop = true);
-	void snd_playLevelScore();
+	virtual void snd_playLevelScore() = 0;
 	void snd_playSoundEffect(int id, int volume = 0xFF) override;
 	void snd_stopSound();
 	void snd_fadeOut(int del = 160);
 	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
-	virtual void snd_updateLevelScore() {}
+	virtual void snd_updateLevelScore() = 0;
 
 	const char **_amigaSoundMap;
 	const char *const *_amigaLevelSoundList1;
@@ -1277,6 +1283,10 @@ protected:
 
 	// keymap
 	static const char *const kKeymapName;
+
+private:
+	void printStringIntern_statsPage(const char *str, int x, int y, int col);
+	void printStringIntern_spellBook(const char *str, int x, int y, int col1, int col2);
 };
 
 } // End of namespace Kyra

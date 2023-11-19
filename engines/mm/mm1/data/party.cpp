@@ -144,8 +144,15 @@ void Party::synchronize(Common::Serializer &s) {
 	if (s.isLoading())
 		resize(partySize);
 
-	for (int i = 0; i < partySize; ++i)
-		(*this)[i].synchronize(s);
+	for (int i = 0; i < partySize; ++i) {
+		// Sync the common properties
+		Character &c = (*this)[i];
+		c.synchronize(s);
+
+		// Sync extra properties
+		s.syncAsSByte(c._combatSpell);
+		s.syncAsSByte(c._nonCombatSpell);
+	}
 
 	if (s.isLoading())
 		g_globals->_currCharacter = &front();

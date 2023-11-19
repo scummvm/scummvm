@@ -20,7 +20,6 @@
  */
 
 #include "engines/game.h"
-#include "common/gui_options.h"
 #include "common/language.h"
 
 namespace Glk {

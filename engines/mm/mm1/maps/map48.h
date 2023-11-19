@@ -31,7 +31,7 @@ namespace Maps {
 class Map48 : public Map {
 	typedef void (Map48:: *SpecialFn)();
 public:
-	Map48() : Map(48, "demon", 0x412, 3) {}
+	Map48() : Map(48, "demon", 0x412, 3, "Soul Maze") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

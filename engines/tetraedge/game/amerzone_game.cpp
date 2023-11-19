@@ -20,6 +20,7 @@
  */
 
 #include "common/math.h"
+#include "common/savefile.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
@@ -115,8 +116,9 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	TeSceneWarp sceneWarp;
 	sceneWarp.load(sceneXml, _warpY, false);
 
-	_xAngleMin = FLT_MAX;
-	_xAngleMax = FLT_MAX;
+	// NOTE: Original uses FLT_MAX here but that can cause overflows, just use a big number.
+	_xAngleMin = 1e8;
+	_xAngleMax = 1e8;
 	_yAngleMin = 45.0f - _orientationY;
 	_yAngleMax = _orientationY + 55.0f;
 
@@ -131,6 +133,9 @@ bool AmerzoneGame::changeWarp(const Common::String &rawZone, const Common::Strin
 	} else {
         onChangeWarpAnimFinished();
 	}
+
+	_currentZone = rawZone;
+
 	return true;
 }
 
@@ -226,9 +231,17 @@ void AmerzoneGame::initLoadedBackupData() {
 	_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 	Application *app = g_engine->getApplication();
 	if (!_loadName.empty()) {
-		error("TODO: finish AmerzoneGame::initLoadedBackupData for direct load");
+		Common::InSaveFile *saveFile = g_engine->getSaveFileManager()->openForLoading(_loadName);
+		Common::Error result = g_engine->loadGameStream(saveFile);
+		if (result.getCode() == Common::kNoError) {
+			ExtendedSavegameHeader header;
+			if (MetaEngine::readSavegameHeader(saveFile, &header))
+				g_engine->setTotalPlayTime(header.playtime);
+		}
+		changeWarp(_currentZone, "", false);
+	} else {
+		changeWarp(app->firstWarpPath(), app->firstScene(), true);
 	}
-	changeWarp(app->firstWarpPath(), app->firstScene(), true);
 }
 
 void AmerzoneGame::isInDrag(bool inDrag) {
@@ -361,7 +374,7 @@ bool AmerzoneGame::onPuzzleEnterAnimLoadTime() {
 	case 2:
 		_puzzleComputerHydra.setScale(TeVector3f32(1, 1, 0.0001f));
 		_puzzleComputerHydra.setPosition(TeVector3f32(0, 0, zoff));
-		_puzzleComputerHydra.setTargetCoordinates(2, 7, 2);
+		_puzzleComputerHydra.setTargetCoordinates(2, 2, 7);
 		_puzzleComputerHydra.enter();
 		break;
 	case 3:
@@ -525,8 +538,10 @@ void AmerzoneGame::update() {
 				changeSpeedToMouseDirection();
 			}
 			float dragtime = (float)(_dragTimer.timeElapsed() / 1000000.0);
-			setAngleX(_orientationX - _speedX * dragtime);
-			setAngleY(_orientationY + _speedY * dragtime);
+			if (_speedX)
+				setAngleX(_orientationX - _speedX * dragtime);
+			if (_speedY)
+				setAngleY(_orientationY + _speedY * dragtime);
 		}
 	} else {
 		// Compass stuff happens here in the game, but it's
@@ -542,19 +557,13 @@ void AmerzoneGame::update() {
 			_warpY->setMouseLeftUpForMakers();
 	}
 
-	// Rotate x around the Y axis (spinning left/right on the spot)
-	TeQuaternion xRot = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), (float)(_orientationX * M_PI) / 180.0f);
-	// Rotate y around the axis perpendicular to the x rotation
-	// Note: slightly different from original because of the way
-	// rotation works in the Amerzone Tetraedge engine.
-	TeVector3f32 yRotAxis = TeVector3f32(1, 0, 0);
-	xRot.inverse().transform(yRotAxis);
-	TeQuaternion yRot = TeQuaternion::fromAxisAndAngle(yRotAxis, (float)(_orientationY * M_PI) / 180.0f);
+	// Note: _orientation*Y* is rotation around *X* axis, and vice-versa.
+	const TeQuaternion rot = TeQuaternion::fromEulerDegrees(TeVector3f32(_orientationY, _orientationX, 0));
 
 	if (_warpX)
-		_warpX->rotateCamera(xRot * yRot);
+		_warpX->rotateCamera(rot);
 	if (_warpY)
-		_warpY->rotateCamera(xRot * yRot);
+		_warpY->rotateCamera(rot);
 	if (_warpX)
 		_warpX->update();
 	if (_warpY)
@@ -572,6 +581,8 @@ bool AmerzoneGame::onVideoFinished() {
 	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
 	Common::String vidPath = video->_tiledSurfacePtr->loadedPath();
 	video->setVisible(false);
+	video->_tiledSurfacePtr->unload();
+	video->_tiledSurfacePtr->setLoadedPath("");
 	Application *app = g_engine->getApplication();
 	_videoMusic.stop();
 	if (app->musicOn())

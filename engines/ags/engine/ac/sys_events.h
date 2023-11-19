@@ -59,8 +59,7 @@ extern KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_ke
 extern bool ags_keyevent_ready();
 // Queries for the next key event in buffer; returns uninitialized data if none was queued
 extern Common::Event ags_get_next_keyevent();
-// Tells if the key is currently down, provided AGS key;
-// Returns positive value if it's down, 0 if it's not, negative value if the key code is not supported.
+// Tells if the key is currently down, provided AGS key.
 // NOTE: for particular script codes this function returns positive if either of two keys are down.
 extern int ags_iskeydown(eAGSKeyCode ags_key);
 // Simulates key press with the given AGS key

@@ -54,6 +54,7 @@ struct FastArrayHandler {
 	int timesUsed;
 
 	Variable *fastArrayGetByIndex(uint theIndex);
+	void debugPrint();
 };
 
 struct StackHandler {
@@ -63,6 +64,8 @@ struct StackHandler {
 
 	int getStackSize() const;
 	bool getSavedGamesStack(const Common::String &ext);
+
+	void debugPrint();
 };
 
 union VariableData {
@@ -122,6 +125,8 @@ struct Variable {
 	Common::String getTextFromAnyVar() const;
 	bool getBoolean() const;
 	bool getValueType(int &toHere, VariableType vT) const;
+
+	void debugPrint();
 };
 
 struct VariableStack {

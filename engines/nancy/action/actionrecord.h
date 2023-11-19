@@ -39,7 +39,7 @@ struct NancyInput;
 
 namespace Action {
 
-enum struct DependencyType : byte {
+enum struct DependencyType : int16 {
 	kNone							= 0,
 	kInventory						= 1,
 	kEvent							= 2,
@@ -57,25 +57,36 @@ enum struct DependencyType : byte {
 	kTimerGreaterThanDependencyTime	= 14,
 	kDifficultyLevel				= 15,
 	kClosedCaptioning				= 16,
-	kSound							= 17,	// Not implemented
-	kOpenParentheses				= 18,	// Not implemented
-	kCloseParentheses				= 19	// Not implemented
+	kSound							= 17,
+	kOpenParenthesis				= 18,
+	kCloseParenthesis				= 19,
+	kRandom							= 20,
+	kDefaultAR						= 21
 };
 
 // Describes a condition that needs to be fulfilled before the
 // action record can be executed
 struct DependencyRecord {
-	DependencyType type;	// 0x00
-	byte label;				// 0x01
-	byte condition;			// 0x02
-	bool orFlag;			// 0x03
-	int16 hours;			// 0x04
-	int16 minutes;			// 0x06
-	int16 seconds;			// 0x08
-	int16 milliseconds;		// 0x0A
+	DependencyType type = DependencyType::kNone;
+	int16 label 		= -1;
+	int16 condition 	= -1;
+	bool orFlag 		= false;
+	int16 hours 		= -1;
+	int16 minutes 		= -1;
+	int16 seconds 		= -1;
+	int16 milliseconds 	= -1;
 
-	bool satisfied;
+	bool satisfied		= false;
 	Time timeData;
+
+	// Only used for kRandom
+	bool stopEvaluating = false;
+
+	// Used to support the dependency tree structure in nancy3 and up
+	// The only valid field in dependencies with children is the orFlag
+	Common::Array<DependencyRecord> children;
+
+	void reset();
 };
 
 // Describes a single action that will be performed on every update.
@@ -98,7 +109,7 @@ public:
 		_hasHotspot(false),
 		_state(ExecutionState::kBegin),
 		_days(-1),
-		_itemRequired(-1) {}
+		_cursorDependency(nullptr) {}
 	virtual ~ActionRecord() {}
 
 	virtual void readData(Common::SeekableReadStream &stream) = 0;
@@ -110,27 +121,28 @@ public:
 
 protected:
 	void finishExecution();
+	virtual bool canHaveHotspot() const { return false; } // Used for handling kCursorType dependency
 
 	// Used for debugging
 	virtual Common::String getRecordTypeName() const = 0;
 
 public:
-	Common::String _description;					// 0x00
-	byte _type;										// 0x30
-	ExecutionType _execType;						// 0x31
+	Common::String _description;
+	byte _type;
+	ExecutionType _execType;
 	// 0x32 data
-	Common::Array<DependencyRecord> _dependencies;	// 0x36
+	DependencyRecord _dependencies;
 	// 0x3A numDependencies
-	bool _isActive;									// 0x3B
+	bool _isActive;
 	// 0x3C satisfiedDependencies[]
 	// 0x48 timers[]
 	// 0x78 orFlags[]
-	bool _isDone;									// 0x84
-	bool _hasHotspot;								// 0x85
-	Common::Rect _hotspot;							// 0x89
-	ExecutionState _state;							// 0x91
-	int16 _days;									// 0x95
-	int8 _itemRequired;								// 0x97
+	bool _isDone;
+	bool _hasHotspot;
+	Common::Rect _hotspot;
+	ExecutionState _state;
+	int16 _days;
+	DependencyRecord *_cursorDependency;
 };
 
 // Base class for visual ActionRecords
@@ -142,6 +154,13 @@ public:
 	// This makes sure the AR is re-added to the render system
 	// when returning from a different state (e.g. the Help screen)
 	void onPause(bool pause) override { if (!pause) registerGraphics(); }
+};
+
+// Dummy AR for classes that haven't been implemented/don't work in the current game version
+class Unimplemented : public ActionRecord {
+	void execute() override;
+	void readData(Common::SeekableReadStream &stream) override {}
+	Common::String getRecordTypeName() const override { return "Unimplemented"; }
 };
 
 } // End of namespace Action

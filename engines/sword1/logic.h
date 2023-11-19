@@ -47,21 +47,25 @@ class Menu;
 class Router;
 class Screen;
 class Mouse;
-class Music;
+class Control;
 
 class Logic;
 typedef int (Logic::*BSMcodeTable)(Object *, int32, int32, int32, int32, int32, int32, int32);
 
 class Logic {
+	friend class Control;
 public:
-	Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
+	Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Menu *pMenu, OSystem *system, Audio::Mixer *mixer);
 	~Logic();
 	void initialize();
+	void setControlPanelObject(Control *control);
 	void newScreen(uint32 screen);
 	void engine();
 	void updateScreenParams();
 	void runMouseScript(Object *cpt, int32 scriptId);
 	void startPositions(uint32 pos);
+	bool canShowDebugTextNumber();
+	void plotRouteGrid(Object *megaObject);
 
 	static uint32 _scriptVars[NUM_SCRIPT_VARS];
 // public for mouse (menu looking)
@@ -79,11 +83,11 @@ private:
 	Text *_textMan;
 	EventManager *_eventMan;
 	Menu *_menu;
-	Music *_music;
+	Control *_control;
 	uint32 _newScript; // <= ugly, but I can't avoid it.
-	bool _speechRunning, _speechFinished, _textRunning;
-	uint8 _speechClickDelay;
+	uint8 _speechClickDelay = 0;
 	Common::RandomSource _rnd;
+	bool _psxFudgeRandom = false; // Used within fnIdle() and fnRandom() for the PSX version
 
 	int scriptManager(Object *compact, uint32 id);
 	void processLogic(Object *compact, uint32 id);

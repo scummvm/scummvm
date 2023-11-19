@@ -129,7 +129,12 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 	_hadError = false;
 
 	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, archive, type, id, preprocFlags).encode(Common::kUtf8);
+	Common::U32String codePrep = codePreprocessor(code, archive, type, id, preprocFlags);
+
+	// Search the methods
+	mainContext->_methodNames = prescanMethods(codePrep);
+
+	Common::String codeNorm = codePrep.encode(Common::kUtf8);
 	const char *utf8Code = codeNorm.c_str();
 
 	// Parse the Lingo and build an AST
@@ -187,9 +192,9 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		currentFunc.anonymous = anonymous;
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-			if (it->_value == kVarLocal)
-				varNames->push_back(Common::String(it->_key));
+		for (auto &it : *_methodVars) {
+			if (it._value == kVarLocal)
+				varNames->push_back(Common::String(it._key));
 		}
 
 		if (debugChannelSet(1, kDebugCompile)) {
@@ -216,9 +221,9 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 
 	// Register this context's functions with the containing archive.
 	if (_assemblyArchive) {
-		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+		for (auto &it : _assemblyContext->_functionHandlers) {
+			if (!_assemblyArchive->functionHandlers.contains(it._key)) {
+				_assemblyArchive->functionHandlers[it._key] = it._value;
 			}
 		}
 	}
@@ -386,7 +391,7 @@ void LingoCompiler::registerFactory(Common::String &name) {
 			_assemblyArchive->factoryContexts[_assemblyId] = new Common::HashMap<Common::String, ScriptContext *>();
 		}
 		if (!_assemblyArchive->factoryContexts[_assemblyId]->contains(name)) {
-			*_assemblyContext->_refCount += 1;
+			_assemblyContext->incRefCount();
 			(*_assemblyArchive->factoryContexts[_assemblyId])[name] = _assemblyContext;
 		}
 	}
@@ -447,12 +452,12 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	for (uint i = 0; i < node->args->size(); i++) {
 		registerMethodVar(*(*node->args)[i], kVarArgument);
 	}
-	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
-		if (i->_value == kVarGlobal)
-			registerMethodVar(i->_key, kVarGlobal);
+	for (auto &i : *mainMethodVars) {
+		if (i._value == kVarGlobal)
+			registerMethodVar(i._key, kVarGlobal);
 	}
-	for (DatumHash::iterator i = _assemblyContext->_properties.begin(); i != _assemblyContext->_properties.end(); ++i) {
-		registerMethodVar(i->_key, _inFactory ? kVarInstance : kVarProperty);
+	for (auto &i : _assemblyContext->_properties) {
+		registerMethodVar(i._key, _inFactory ? kVarInstance : kVarProperty);
 	}
 
 	COMPILE_LIST(node->stmts);
@@ -469,9 +474,9 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		argNames->push_back(Common::String((*node->args)[i]->c_str()));
 	}
 	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-		if (it->_value == kVarLocal)
-			varNames->push_back(Common::String(it->_key));
+	for (auto &it : *_methodVars) {
+		if (it._value == kVarLocal)
+			varNames->push_back(Common::String(it._key));
 	}
 
 	if (debugChannelSet(1, kDebugCompile)) {
@@ -1404,6 +1409,12 @@ bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
 
 bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 	switch (node->type) {
+	case kNumberOfCastlibs:
+		codeInt(0); // Put dummy id
+		code1(LC::c_theentitypush);
+		codeInt(kTheCastlibs);
+		codeInt(kTheNumber);
+		break;
 	case kNumberOfChars:
 		COMPILE(node->arg);
 		codeFunc("numberOfChars", 1);
@@ -1437,6 +1448,12 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 		codeInt(0); // Put dummy id
 		code1(LC::c_theentitypush);
 		codeInt(kTheMenus);
+		codeInt(kTheNumber);
+		break;
+	case kNumberOfXtras:
+		codeInt(0); // Put dummy id
+		code1(LC::c_theentitypush);
+		codeInt(kTheXtras);
 		codeInt(kTheNumber);
 		break;
 	}

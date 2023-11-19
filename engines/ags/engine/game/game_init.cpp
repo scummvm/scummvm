@@ -152,7 +152,7 @@ void InitAndRegisterDialogOptions() {
 
 // Initializes gui and registers them in the script system
 HError InitAndRegisterGUI(GameSetupStruct &game) {
-	_G(scrGui) = (ScriptGUI *)malloc(sizeof(ScriptGUI) * game.numgui);
+	_G(scrGui) = new ScriptGUI[game.numgui];
 	for (int i = 0; i < game.numgui; ++i) {
 		_G(scrGui)[i].id = -1;
 	}
@@ -417,7 +417,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// NOTE: we must do this before plugin start, because some plugins may
 	// require access to script API at initialization time.
 	//
-	ccSetScriptAliveTimer(10u, 1000u, 150000u);
+	ccSetScriptAliveTimer(1000 / 60u, 1000u, 150000u);
 	ccSetStringClassImpl(&_GP(myScriptStringImpl));
 	setup_script_exports(base_api, compat_api);
 

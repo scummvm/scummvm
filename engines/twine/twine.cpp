@@ -750,6 +750,12 @@ void TwinEEngine::processInventoryAction() {
 		penguin->_pos = _scene->_sceneHero->posObj();
 		penguin->_pos.x += destPos.x;
 		penguin->_pos.z += destPos.y;
+		// TODO: HACK for https://bugs.scummvm.org/ticket/13731
+		// The movement of the meca penguin is different from dos version
+		// the problem is that the value set to 1 even if the penguin is not yet spawned
+		// this might either be a problem with initObject() not being called for the penguin
+		// or some other flaw that doesn't ignore the penguin until spawned
+		penguin->_dynamicFlags.bIsFalling = 0;
 
 		penguin->_beta = _scene->_sceneHero->_beta;
 		debug("penguin angle: %i", penguin->_beta);
@@ -1088,7 +1094,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 				_actor->processActorCarrier(a);
 				actor->_dynamicFlags.bIsDead = 1;
 				actor->_body = -1;
-				actor->_zone = -1;
+				actor->_zoneSce = -1;
 			}
 		}
 

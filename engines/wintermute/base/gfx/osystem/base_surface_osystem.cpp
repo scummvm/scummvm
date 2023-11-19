@@ -33,7 +33,7 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/platform_osystem.h"
 
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transform_tools.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -42,7 +42,7 @@
 #include "common/system.h"
 
 #define TS_COLOR(wmeColor) \
-	TS_ARGB(RGBCOLGetA(wmeColor), RGBCOLGetR(wmeColor), RGBCOLGetG(wmeColor), RGBCOLGetB(wmeColor))
+	MS_ARGB(RGBCOLGetA(wmeColor), RGBCOLGetR(wmeColor), RGBCOLGetG(wmeColor), RGBCOLGetB(wmeColor))
 
 namespace Wintermute {
 

@@ -78,14 +78,12 @@ bool Te3DTexture::load(const Common::FSNode &node) {
 /*static*/
 TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 	//
-	// Note: When we enabled optimized sizes it leaves artifacts around movies
-	// etc unless the render size is exactly 800x600.
+	// Note: When we enable optimized sizes it can leave artifacts around
+	// movies etc unless the render size is exactly 800x600.
 	//
-	// This probably means there is a rounding error somewhere else, just leave
-	// off for now.
+	// There is a workaround to clear some of the texture data in
+	// Te3DTextureOpenGL::load to fix this.
 	//
-	if (g_engine->getDefaultScreenWidth() != 800)
-		return size;
 
 	// The maths here is a bit funky but it just picks the nearest power of 2 (up)
 	int xsize = size._x - 1;

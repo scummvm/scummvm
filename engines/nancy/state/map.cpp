@@ -54,7 +54,7 @@ Map::Map() : _state(kInit),
 			_label(7),
 			_closedLabel(7),
 			_background(0) {
-	_mapData = g_nancy->_mapData;
+	_mapData = GetEngineData(MAP);
 	assert(_mapData);
 }
 
@@ -146,7 +146,10 @@ void Map::setLabel(int labelID) {
 }
 
 void Map::MapViewport::init() {
-	moveTo(g_nancy->_viewportData->screenPosition);
+	auto *viewportData = GetEngineData(VIEW);
+	assert(viewportData);
+
+	moveTo(viewportData->screenPosition);
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
 	RenderObject::init();
@@ -190,7 +193,10 @@ void TVDMap::init() {
 	_ornaments.init();
 	_globe.init();
 
-	Common::Rect textboxScreenPosition = g_nancy->_bootSummary->textboxScreenPosition;
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
+
+	Common::Rect textboxScreenPosition = bootSummary->textboxScreenPosition;
 	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, _mapData->closedLabelSrc);
 
 	Common::Rect closedScreenRect;
@@ -219,7 +225,7 @@ void TVDMap::load() {
 	Map::load();
 
 	// Determine which version of the map will be shown
-	if (NancySceneState.getEventFlag(82, kEvOccurred)) {
+	if (NancySceneState.getEventFlag(82, g_nancy->_true)) {
 		_mapID = 3;										// Storm
 		//
 	} else {
@@ -337,7 +343,7 @@ void TVDMap::MapGlobe::onTrigger() {
 		_gargoyleEyes.setVisible(true);
 		_owner->_viewport.setVisible(true);
 		_owner->_viewport.playVideo();
-		g_system->warpMouse(_owner->_mapData->cursorPosition.x, _owner->_mapData->cursorPosition.y);
+		g_nancy->_cursorManager->warpCursor(_owner->_mapData->cursorPosition);
 		g_nancy->setMouseEnabled(true);
 	} else {
 		_owner->_state = kExit;
@@ -387,8 +393,8 @@ void Nancy1Map::load() {
 	Map::load();
 
 	// Determine which version of the map will be shown
-	if (NancySceneState.getEventFlag(40, kEvOccurred) &&	// Has set up sting
-		NancySceneState.getEventFlag(95, kEvOccurred)) {	// Connie chickens
+	if (NancySceneState.getEventFlag(40, g_nancy->_true) &&	// Has set up sting
+		NancySceneState.getEventFlag(95, g_nancy->_true)) {	// Connie chickens
 		_mapID = 1;		// Night
 
 		_activeLocations[1] = _activeLocations[3] = false;
@@ -400,12 +406,12 @@ void Nancy1Map::load() {
 
 	setLabel(-1);
 	g_nancy->_cursorManager->setCursorItemID(-1);
-	g_system->warpMouse(_mapData->cursorPosition.x, _mapData->cursorPosition.y);
+	g_nancy->_cursorManager->warpCursor(_mapData->cursorPosition);
 
 	if (!g_nancy->_sound->isSoundPlaying(getSound())) {
 		g_nancy->_sound->loadSound(getSound());
 	}
-		
+
 	registerGraphics();
 	_state = kRun;
 }

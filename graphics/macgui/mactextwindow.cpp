@@ -94,12 +94,12 @@ void MacTextWindow::init(bool cursorHandler) {
 	if (_wm->_mode & kWMModeWin95) {
 		// in win95 mode, we set scrollbar as default
 		_hasScrollBar = true;
-		loadWin95Border("Win95BorderScrollbar.bmp", kWindowBorderScrollbar | kWindowBorderActive);
-		loadWin95Border("Win95BorderScrollbar.bmp",kWindowBorderScrollbar);
+		setBorderType(kWinBorderWin95Scrollbar);
+		loadInternalBorder(kWindowBorderScrollbar | kWindowBorderActive);
 	}
 }
 
-void MacTextWindow::resize(int w, int h, bool inner) {
+void MacTextWindow::resize(int w, int h) {
 	if (_composeSurface->w == w && _composeSurface->h == h)
 		return;
 
@@ -171,6 +171,12 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 
 void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont, bool skipAdd) {
 	appendText(Common::U32String(str), macFont, skipAdd);
+}
+
+void MacTextWindow::setMarkdownText(const Common::U32String &str) {
+	_mactext->setMarkdownText(str);
+
+	_contentIsDirty = true;
 }
 
 void MacTextWindow::clearText() {
@@ -363,6 +369,14 @@ Common::U32String MacTextWindow::cutSelection() {
 	return selection;
 }
 
+int MacTextWindow::getMouseLine(int x, int y) {
+	// TODO: Improve the algorithm here, since after long scrolling there is
+	// sometimes error of +2 rows
+	x -= getInnerDimensions().left;
+	y -= getInnerDimensions().top + kConScrollStep;
+	return _mactext->getMouseLine(x, y); 
+}
+
 void MacTextWindow::calcScrollBar() {
 	// since this function only able for the window which has scroll bar
 	// thus, if it doesn't has scrollbar, then we don't have to calc it
@@ -495,6 +509,10 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 	}
 
 	if (click == kBorderInner) {
+		// Call callback for processing any events
+		if (_callback)
+			(*_callback)(click, event, _dataPtr);
+
 		if (!_selectable)
 			return false;
 

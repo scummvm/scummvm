@@ -57,7 +57,8 @@ namespace BladeRunner {
 
 enum DebugLevels {
 	kDebugScript = 1 << 0,
-	kDebugSound = 1 << 1
+	kDebugSound = 1 << 1,
+	kDebugAnimation = 1 << 2
 };
 
 class Actor;
@@ -295,7 +296,7 @@ public:
 	// However, we should probably restrict the active events
 	// (that can be repeated while holding the mapped keys down)
 	// to a maximum of kMaxCustomConcurrentRepeatableEvents
-	ActiveCustomEventsArray _activeCustomEvents[kMaxCustomConcurrentRepeatableEvents];
+	ActiveCustomEventsArray _activeCustomEvents;
 
 	// NOTE We still need keyboard functionality for naming saved games and also for the KIA Easter eggs.
 	//      In KIA keyboard events should be accounted where possible - however some keymaps are still needed

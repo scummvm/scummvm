@@ -211,10 +211,16 @@ Common::String BuriedEngine::getFilePath(uint32 stringID) {
 	// We ignore this.
 	// In the demo, we remove the "BITDATA" prefix because the
 	// binaries are in the same directory.
-	if (isDemo())
-		i += 8;
-	else
+	// The North American demo also has paths that start with
+	// a backslash, while other demos don't.
+	if (isDemo()) {
+		if (path[0] == '\\')
+			i += 9;
+		else
+			i += 8;
+	} else {
 		i += 2;
+	}
 
 	for (; i < path.size(); i++) {
 		if (path[i] == '\\')

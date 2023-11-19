@@ -20,6 +20,7 @@
  */
 
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -97,7 +98,17 @@ String AchievementsManager::getCurrentLang() const {
 
 
 bool AchievementsManager::loadAchievementsData(const char *platform, const char *appId) {
-	Archive *cfgZip = Common::makeZipArchive("achievements.dat");
+	Archive *cfgZip = nullptr;
+
+	if (!cfgZip && ConfMan.hasKey("extrapath")) {
+		Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+		cfgZip = Common::makeZipArchive(extrapath.createReadStreamForMember("achievements.dat"));
+	}
+
+	if (!cfgZip) {
+		cfgZip = Common::makeZipArchive("achievements.dat");
+	}
+
 	if (!cfgZip) {
 		warning("achievements.dat is not found. Achievements messages are unavailable");
 		return false;

@@ -352,11 +352,30 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 }
 
 void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fail) {
+	Common::HashMap<ProcId, bool> procsToSave;
+	Common::Array<ProcId> queue;
+
+	// Create a list of all the processes and their waiting parents that we can't kill.
+	if (_runningProcess) {
+		queue.push_back(_runningProcess->_pid);
+		while (!queue.empty()) {
+			ProcId procToSave = queue.back();
+			queue.pop_back();
+			if (!procsToSave.contains(procToSave)) {
+				Process *p = getProcess(procToSave);
+				if (p) {
+					procsToSave[procToSave] = true;
+					queue.push_back(p->_waiting);
+				}
+			}
+		}
+	}
+
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
 		// Don't kill the running process
-		if (p == _runningProcess)
+		if (procsToSave.contains(p->_pid))
 			continue;
 
 		if ((p->_type != processtype) &&

@@ -81,7 +81,7 @@ int LogicHEbaseball2001::startOfFrame() {
 #ifdef USE_LIBCURL
 	_vm->_lobby->doNetworkOnceAFrame();
 #endif
-	_vm->_net->doNetworkOnceAFrame(0);
+	_vm->_net->doNetworkOnceAFrame(15);
 #endif
 	return 0;
 }
@@ -107,6 +107,10 @@ case OP_NET_INIT:
 #ifdef USE_ENET
 	case OP_NET_REMOTE_START_SCRIPT:
 		netRemoteStartScript(numArgs, args);
+		break;
+
+	case OP_NET_CLOSE_PROVIDER:
+		_vm->_net->closeProvider();
 		break;
 
 	case OP_NET_QUERY_SESSIONS:
@@ -178,27 +182,11 @@ case OP_NET_INIT:
 
 #ifdef USE_ENET
 void LogicHEbaseball2001::netRemoteStartScript(int numArgs, int32 *args) {
-	int priority = PN_PRIORITY_HIGH;
-
-	int targetUserId;
-	if (_vm->_net->_isHost)
-		targetUserId = 2;
-	else
-		targetUserId = 1;
-
-	_vm->_net->remoteStartScript(PN_SENDTYPE_INDIVIDUAL, targetUserId, priority, numArgs - 3, &args[3]);
+	_vm->_net->remoteStartScript(args[0], args[1], args[2], numArgs - 3, &args[3]);
 }
 
 void LogicHEbaseball2001::netRemoteSendArray(int32 *args) {
-	int priority = PN_PRIORITY_HIGH;
-
-	int targetUserId;
-	if (_vm->_net->_isHost)
-		targetUserId = 2;
-	else
-		targetUserId = 1;
-
-	_vm->_net->remoteSendArray(PN_SENDTYPE_INDIVIDUAL, targetUserId, priority, args[3]);
+	_vm->_net->remoteSendArray(args[0], args[1], args[2], args[3]);
 }
 #endif // USE_ENET
 

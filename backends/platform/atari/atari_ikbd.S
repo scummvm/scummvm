@@ -19,215 +19,93 @@
  *
  */
 
-/*
- *	IKBD 6301 interrupt routine
- *
- *	Patrice Mandin
- */
+ #include "symbols.h"
 
-	.globl	_atari_ikbd_init
-	.globl	_atari_ikbd_shutdown
+	.global	SYM(atari_kbdvec)
+	.global	SYM(atari_mousevec)
+	.global	SYM(atari_vkbderr)
 
-	.globl	_g_atari_ikbd_mouse_buttons_state
-	.globl	_g_atari_ikbd_mouse_delta_x
-	.globl	_g_atari_ikbd_mouse_delta_y
+	.extern	SYM(g_atari_ikbd_mouse_buttons_state)
+	.extern	SYM(g_atari_ikbd_mouse_delta_x)
+	.extern	SYM(_atari_ikbd_mouse_delta_y)
 
-	.globl	_g_atari_ikbd_scancodes
-	.globl	_g_atari_ikbd_scancodes_size
-	.globl	_g_atari_ikbb_scancodes_head
+	.extern	SYM(g_atari_ikbd_scancodes)
+	.extern	SYM(g_atari_ikbd_scancodes_mask)
+	.extern	SYM(g_atari_ikbb_scancodes_head)
 
+	.extern	SYM(g_atari_old_kbdvec)
 
 	.text
 
-_atari_ikbd_init:
-	| Disable interrupts
+SYM(atari_kbdvec):
+	tst.w	(vkbderr_count,pc)
+	bne.b	kbdvec_end
 
-	movew	sr,d1
-	movew	#0x2700,sr
+	lea	pressed_keys,a0
+	clr.l	d1
+	move.b	d0,d1
+	bpl.b	key_pressed				| bit 7 cleared
 
-	| Save MFP registers used for keyboard
+key_released:
+	and.b	#0x7f,d1
+	tst.b	(a0,d1.l)				| pressed before?
+	bne.b	key_released_ok
 
-	lea	0xfffffa00:w,a0
-	btst	#6,a0@(0x09)
-	sne	ikbd_ierb
-	btst	#6,a0@(0x15)
-	sne	ikbd_imrb
+	| if we get a sudden release key event,
+	| let the original handler process it
+	move.l	SYM(g_atari_old_kbdvec),a0
+	tst.l	a0
+	beq.b	kbdvec_end
+	jmp	(a0)
 
-	| Set our routine
+key_released_ok:
+	clr.b	(a0,d1.l)				| mark as released
+	bra.b	kbdvec_process
 
-	movel	0x118:w,old_ikbd
-	movel	#ikbd,0x118:w
-	bset	#6,0xfffffa09:w	| IERB
-	bset	#6,0xfffffa15:w	| IMRB
+key_pressed:
+	addq.b	#1,(a0,d1.l)				| mark as pressed
 
-	| Set mouse relative mode
-
-	moveb	#8,0xfffffc02:w
-
-	| Reenable interrupts
-
-	movew	d1,sr
-	rts
-
-_atari_ikbd_shutdown:
-	| Disable interrupts
-
-	movew	sr,d1
-	movew	#0x2700,sr
-
-	| Restore previous MFP registers
-
-	lea	0xfffffa00:w,a0
-
-	bclr	#6,a0@(0x09)
-	tstb	ikbd_ierb
-	beqs	ikbd_restoreierb
-	bset	#6,a0@(0x09)
-ikbd_restoreierb:
-
-	bclr	#6,a0@(0x15)
-	tstb	ikbd_imrb
-	beqs	ikbd_restoreimrb
-	bset	#6,a0@(0x15)
-ikbd_restoreimrb:
-
-	movel	old_ikbd,0x118:w
-
-	| Clear keyboard buffer
-
-	lea	0xfffffc00:w,a0
-ikbd_videbuffer:
-	btst	#0,a0@
-	beqs	ikbd_finbuffer
-	tstb	a0@(0x02)
-	bras	ikbd_videbuffer
-ikbd_finbuffer:
-
-	| Reenable interrupts
-
-	movew	d1,sr
-	rts
-
-	.bss
-
-	.even
-ikbd_ierb:
-	.ds.b	1
-ikbd_imrb:
-	.ds.b	1
-
-/*--- Our custom IKBD vector ---*/
-
-	.text
-	.even
-	.ascii	"XBRA"
-	.ascii	"SCUM"
-old_ikbd:
-	.dc.l	0
-ikbd:
-	moveml	d0-d1/a0,sp@-
-
-	| Check if source is IKBD or MIDI
-
-	btst	#0,0xfffffc00.w
-	beqs	ikbd_oldmidi
-
-	moveb	0xfffffc02:w,d0
-
-	| Not supported packets ?
-
-	| status report
-	cmpb	#0xf6,d0
-	beqs	ikbd_endit_stack
-	| absolute mouse position record
-	cmpb	#0xf7,d0
-	beqs	ikbd_endit_stack
-	| time-of-day
-	cmpb	#0xfc,d0
-	beqs	ikbd_endit_stack
-
-	| Joystick packet ?
-
-	| joystick report (both sticks), joystick 0 event, joystick 1 event
-	cmpb	#0xfd,d0
-	bhss	ikbd_endit_stack
-
-	| Mouse packet ?
-
-	cmpb	#0xf8,d0
-	blos	ikbd_no_mouse
-	cmpb	#0xfc,d0
-	bhss	ikbd_no_mouse
-
-	| Mouse packet, byte #1
-
-ikbd_yes_mouse:
-	andw	#3,d0
-	moveb	d0,_g_atari_ikbd_mouse_buttons_state
-
-	movel	#ikbd_mousex,0x118:w
-	bras	ikbd_endit_stack
-
-	| Keyboard press/release
-
-ikbd_no_mouse:
-	lea	_g_atari_ikbd_scancodes,a0
-	movew	_g_atari_ikbb_scancodes_head,d1
+kbdvec_process:
+	lea	SYM(g_atari_ikbd_scancodes),a0
+	move.w	SYM(g_atari_ikbb_scancodes_head),d1
 
 	| g_atari_ikbd_scancodes[g_atari_ikbb_scancodes_head] = scancode
 
-	moveb	d0,(0.b,a0,d1.w)
+	move.b	d0,(0.b,a0,d1.w)
 
-	addql	#1,d1
-	andw	_g_atari_ikbd_scancodes_mask,d1
-	movew	d1,_g_atari_ikbb_scancodes_head
+	addq.l	#1,d1
+	and.w	SYM(g_atari_ikbd_scancodes_mask),d1
+	move.w	d1,SYM(g_atari_ikbb_scancodes_head)
 
-	| End of interrupt
-
-ikbd_endit_stack:
-	moveml	sp@+,d0-d1/a0
-
-	bclr	#6,0xfffffa11:w
-	rte
-
-	| Call old MIDI interrupt
-
-ikbd_oldmidi:
-	moveml	sp@+,d0-d1/a0
-
-	movel	old_ikbd,sp@-
+kbdvec_end:
 	rts
 
-	| Mouse packet, byte #2
 
-ikbd_mousex:
-	moveml	d0-d1/a0,sp@-
+SYM(atari_vkbderr):
+	addq.w	#1,vkbderr_count
+	rts
 
-	| Check if source is IKBD or MIDI
-	btst	#0,0xfffffc00.w
-	beqs	ikbd_oldmidi
 
-	moveb	0xfffffc02:w,d0
-	extw	d0
-	addw	d0,_g_atari_ikbd_mouse_delta_x
+SYM(atari_mousevec):
+	clr.w	vkbderr_count
 
-	movel	#ikbd_mousey,0x118:w
-	bras	ikbd_endit_stack
+	move.b	(a0)+,SYM(g_atari_ikbd_mouse_buttons_state)
 
-	| Mouse packet, byte #3
+	move.b	(a0)+,d0
+	ext.w	d0
+	add.w	d0,SYM(g_atari_ikbd_mouse_delta_x)
 
-ikbd_mousey:
-	moveml	d0-d1/a0,sp@-
+	move.b	(a0)+,d0
+	ext.w	d0
+	add.w	d0,SYM(g_atari_ikbd_mouse_delta_y)
+	rts
 
-	| Check if source is IKBD or MIDI
+// place it within reach of 32K (PC relative)
+vkbderr_count:
+	dc.w	0
 
-	btst	#0,0xfffffc00.w
-	beqs	ikbd_oldmidi
 
-	moveb	0xfffffc02:w,d0
-	extw	d0
+	.bss
 
-	addw	d0,_g_atari_ikbd_mouse_delta_y
-
-	movel	#ikbd,0x118:w
-	bras	ikbd_endit_stack
+pressed_keys:
+	ds.b	128

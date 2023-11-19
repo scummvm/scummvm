@@ -31,6 +31,7 @@
 #include "common/func.h"
 #include "common/ptr.h"
 #include "common/scummsys.h"
+#include "common/keyboard.h"
 
 #include "engines/engine.h"
 
@@ -286,12 +287,13 @@ protected:
 	virtual Common::String getLine();
 	Common::String inputString(byte prompt = 0) const;
 	byte inputKey(bool showCursor = true) const;
+	void waitKey(uint32 ms = 0, Common::KeyCode keycode = Common::KEYCODE_INVALID) const;
 	virtual void getInput(uint &verb, uint &noun);
 	Common::String getWord(const Common::String &line, uint &index) const;
 
 	virtual Common::String formatVerbError(const Common::String &verb) const;
 	virtual Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
-	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri) const;
+	void loadWords(Common::ReadStream &stream, WordMap &map, Common::StringArray &pri, uint count = 0) const;
 	void readCommands(Common::ReadStream &stream, Commands &commands);
 	void removeCommand(Commands &commands, uint idx);
 	Command &getCommand(Commands &commands, uint idx);

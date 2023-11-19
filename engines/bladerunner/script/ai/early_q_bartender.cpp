@@ -187,6 +187,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptEarlyQBartender::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
 		break;
 	}
 	*frame = _animationFrame;
@@ -227,6 +228,7 @@ bool AIScriptEarlyQBartender::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptEarlyQBartender::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

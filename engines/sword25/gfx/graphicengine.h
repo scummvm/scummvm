@@ -44,7 +44,7 @@
 #include "common/rect.h"
 #include "common/ptr.h"
 #include "common/str.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
@@ -214,8 +214,8 @@ public:
 	 */
 	bool fill(const Common::Rect *fillRectPtr = 0, uint color = BS_RGB(0, 0, 0));
 
-	Graphics::Surface _backSurface;
-	Graphics::Surface *getSurface() { return &_backSurface; }
+	Graphics::ManagedSurface _backSurface;
+	Graphics::ManagedSurface *getSurface() { return &_backSurface; }
 
 	Common::SeekableReadStream *_thumbnail;
 	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }

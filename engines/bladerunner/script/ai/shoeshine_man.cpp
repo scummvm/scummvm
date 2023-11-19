@@ -119,6 +119,26 @@ bool AIScriptShoeshineMan::GoalChanged(int currentGoalNumber, int newGoalNumber)
 }
 
 bool AIScriptShoeshineMan::UpdateAnimation(int *animation, int *frame) {
+	switch(_animationState) {
+	case 0:
+		// fall through
+	case 1:
+		// fall through
+	case 2:
+		// fall through
+	case 3:
+		// fall through
+	case 4:
+		// fall through
+	case 5:
+		// fall through
+	case 6:
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptShoeshineMan::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
+	}
 	return true;
 }
 
@@ -167,6 +187,7 @@ bool AIScriptShoeshineMan::ChangeAnimationMode(int mode) {
 		break;
 
 	default:
+		debugC(6, kDebugAnimation, "AIScriptShoeshineMan::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 

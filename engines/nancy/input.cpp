@@ -34,7 +34,7 @@ void InputManager::processEvents() {
 	using namespace Common;
 	Common::Event event;
 
-	_inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp);
+	_inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp | NancyInput::kRaycastMap);
 	_otherKbdInput.clear();
 
 	while (g_nancy->getEventManager()->pollEvent(event)) {
@@ -71,6 +71,12 @@ void InputManager::processEvents() {
 			case kNancyActionMoveFast:
 				_inputs |= NancyInput::kMoveFastModifier;
 				break;
+			case kNancyActionOpenMainMenu:
+				_inputs |= NancyInput::kOpenMainMenu;
+				break;
+			case kNancyActionShowRaycastMap:
+				_inputs |= NancyInput::kRaycastMap;
+				break;
 			default:
 				break;
 			}
@@ -100,6 +106,12 @@ void InputManager::processEvents() {
 				break;
 			case kNancyActionMoveFast:
 				_inputs &= ~NancyInput::kMoveFastModifier;
+				break;
+			case kNancyActionOpenMainMenu:
+				_inputs &= ~NancyInput::kOpenMainMenu;
+				break;
+			case kNancyActionShowRaycastMap:
+				_inputs &= ~NancyInput::kRaycastMap;
 				break;
 			default:
 				break;
@@ -134,7 +146,7 @@ NancyInput InputManager::getInput() const {
 	} else {
 		ret.eatMouseInput();
 	}
-	
+
 	return ret;
 }
 
@@ -143,7 +155,7 @@ void InputManager::forceCleanInput() {
 	_otherKbdInput.clear();
 }
 
-void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
+void InputManager::initKeymaps(Common::KeymapArray &keymaps, const char *target) {
 	using namespace Common;
 	using namespace Nancy;
 
@@ -193,6 +205,21 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 	act->addDefaultInputMapping("LCTRL");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	mainKeymap->addAction(act);
+
+	act = new Action("MMENU", _("Open main menu"));
+	act->setCustomEngineActionEvent(kNancyActionOpenMainMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_START");
+	mainKeymap->addAction(act);
+	
+	Common::String t(target);
+	if (t.hasPrefix("nancy3") || t.hasPrefix("nancy6")) {
+		act = new Action("RAYCM", _("Show/hide maze map"));
+		act->setCustomEngineActionEvent(kNancyActionShowRaycastMap);
+		act->addDefaultInputMapping("m");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		mainKeymap->addAction(act);
+	}
 
 	keymaps.push_back(mainKeymap);
 }

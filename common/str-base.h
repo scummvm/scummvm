@@ -142,6 +142,9 @@ public:
 	/** Erases the character at the given iterator location */
 	iterator erase(iterator it);
 
+	/** Removes characters from the end of the string */
+	void chop(uint32 len = 1);
+
 	/** Clears the string, making it empty. */
 	void clear();
 
@@ -259,6 +262,10 @@ protected:
 	bool pointerInOwnBuffer(const value_type *str) const;
 
 	uint getUnsignedValue(uint pos) const;
+
+	void toCase(int (*caseChangeFunc)(int));
+
+	static uint32 cStrLen(const value_type *str);
 };
 }
 #endif

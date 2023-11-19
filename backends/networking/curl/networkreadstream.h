@@ -33,7 +33,7 @@ struct curl_slist;
 
 namespace Networking {
 
-class NetworkReadStream: public Common::ReadStream {
+class NetworkReadStream : public Common::ReadStream {
 	CURL *_easy;
 	Common::MemoryReadWriteStream _backingStream;
 	bool _keepAlive;
@@ -52,7 +52,7 @@ class NetworkReadStream: public Common::ReadStream {
 	void initCurl(const char *url, curl_slist *headersList);
 	bool reuseCurl(const char *url, curl_slist *headersList);
 	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
-	void setupFormMultipart(Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles);
+	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::String> &formFiles);
 
 	/**
 	 * Fills the passed buffer with _sendingContentsBuffer contents.
@@ -76,24 +76,24 @@ class NetworkReadStream: public Common::ReadStream {
 	static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
 public:
 	/** Send <postFields>, using POST by default. */
-	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
+	NetworkReadStream(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	/** Send <formFields>, <formFiles>, using POST multipart/form. */
 	NetworkReadStream(
 	    const char *url, curl_slist *headersList,
-	    Common::HashMap<Common::String, Common::String> formFields,
-	    Common::HashMap<Common::String, Common::String> formFiles,
+	    const Common::HashMap<Common::String, Common::String> &formFields,
+	    const Common::HashMap<Common::String, Common::String> &formFiles,
 		bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	/** Send <buffer>, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
-	virtual ~NetworkReadStream();
+	~NetworkReadStream() override;
 
 	/** Send <postFields>, using POST by default. */
-	bool reuse(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
+	bool reuse(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false);
 	/** Send <formFields>, <formFiles>, using POST multipart/form. */
 	bool reuse(
 		const char *url, curl_slist *headersList,
-		Common::HashMap<Common::String, Common::String> formFields,
-		Common::HashMap<Common::String, Common::String> formFiles);
+		const Common::HashMap<Common::String, Common::String> &formFields,
+		const Common::HashMap<Common::String, Common::String> &formFiles);
 	/** Send <buffer>, using POST by default. */
 	bool reuse(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 
@@ -107,7 +107,7 @@ public:
 	 * with N bytes, reading exactly N bytes from the start should *not*
 	 * set eos; only reading *beyond* the available data should set it.
 	 */
-	virtual bool eos() const;
+	bool eos() const override;
 
 	/**
 	 * Read data from the stream. Subclasses must implement this
@@ -121,7 +121,7 @@ public:
 	 * @param dataSize  number of bytes to be read
 	 * @return the number of bytes which were actually read.
 	 */
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	/**
 	 * This method is called by ConnectionManager to indicate

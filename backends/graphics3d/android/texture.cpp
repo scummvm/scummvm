@@ -141,7 +141,6 @@ GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
 	_pixelFormat(pixelFormat),
 	_palettePixelFormat(),
 	_is_game_texture(false) {
-	GLCALL(glGenTextures(1, &_texture_name));
 }
 
 GLESBaseTexture::~GLESBaseTexture() {
@@ -156,6 +155,10 @@ void GLESBaseTexture::release() {
 }
 
 void GLESBaseTexture::reinit() {
+	if (_texture_name) {
+		release();
+	}
+
 	GLCALL(glGenTextures(1, &_texture_name));
 
 	initSize();
@@ -164,6 +167,10 @@ void GLESBaseTexture::reinit() {
 }
 
 void GLESBaseTexture::initSize() {
+	if (!_texture_name) {
+		return;
+	}
+
 	// Allocate room for the texture now, but pixel data gets uploaded
 	// later (perhaps with multiple TexSubImage2D operations).
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
@@ -184,6 +191,10 @@ void GLESBaseTexture::setLinearFilter(bool value) {
 		_glFilter = GL_NEAREST;
 	}
 
+	if (!_texture_name) {
+		return;
+	}
+
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 
 	GLCALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
@@ -191,13 +202,13 @@ void GLESBaseTexture::setLinearFilter(bool value) {
 }
 
 void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
+	if (w == _surface.w && h == _surface.h) {
+		return;
+	}
+
 	_surface.w = w;
 	_surface.h = h;
 	_surface.format = _pixelFormat;
-
-	if (w == _texture_width && h == _texture_height) {
-		return;
-	}
 
 	if (_npot_supported) {
 		_texture_width = _surface.w;
@@ -212,6 +223,10 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 
 void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
                                   const Common::Rect &clip) {
+	if (!_texture_name) {
+		return;
+	}
+
 	if (_all_dirty) {
 		_dirty_rect.top = 0;
 		_dirty_rect.left = 0;
@@ -230,7 +245,7 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h,
 		GLCALL(glTexSubImage2D(GL_TEXTURE_2D, 0,
 		                       _dirty_rect.left, _dirty_rect.top,
 		                       _dirty_rect.width(), _dirty_rect.height(),
-				       _glFormat, _glType, tex));
+		                       _glFormat, _glType, tex));
 	}
 
 

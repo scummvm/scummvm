@@ -265,7 +265,7 @@ dgFloat32 dgCollisionConvexModifier::RayCast(const dgVector &p0,
         OnRayPrecastAction preFilter, const dgBody *const body,
         void *const userData) const {
 	dgFloat32 t;
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 
@@ -285,7 +285,7 @@ dgFloat32 dgCollisionConvexModifier::RayCastSimd(const dgVector &p0,
         OnRayPrecastAction preFilter, const dgBody *const body,
         void *const userData) const {
 	dgFloat32 t;
-	if (PREFILTER_RAYCAST(preFilter, body, this, userData)) {
+	if (PREFILTER_RAYCAST(preFilter, reinterpret_cast<const NewtonBody *>(body), reinterpret_cast<const NewtonCollision *>(this), userData)) {
 		return dgFloat32(1.2f);
 	}
 
@@ -313,7 +313,8 @@ dgVector dgCollisionConvexModifier::CalculateVolumeIntegral(
 	              dgFloat32(-1.0e8f));
 	if (bouyancyPlane) {
 		dgPlane globalPlane;
-		if (bouyancyPlane(GetUserData(), context, globalMatrix, globalPlane)) {
+		// user data is not used
+		if (bouyancyPlane(0, context, &globalMatrix.m_front.m_x, &globalPlane.m_x)) {
 			plane = globalMatrix.UntransformPlane(globalPlane);
 
 			dgVector point(plane.Scale(-plane.m_w));

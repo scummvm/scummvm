@@ -47,6 +47,7 @@ Net::Net(ScummEngine_v90he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) 
 
 	_sessionServerPeer = -1;
 	_sessionServerHost = nullptr;
+	_gotSessions = false;
 	_isRelayingGame = false;
 
 	_numUsers = 0;
@@ -154,7 +155,7 @@ int Net::joinGame(Common::String IP, char *userName) {
 			uint tickCount = 0;
 			while (!_sessions.size()) {
 				serviceBroadcast();
-				// Wait for one minute for response before giving up
+				// Wait for one second for response before giving up
 				tickCount += 5;
 				g_system->delayMillis(5);
 				if (tickCount >= 1000)
@@ -426,7 +427,7 @@ int Net::endSession() {
 		_isShuttingDown = true;
 		// Send out any remaining data from the queue before shutting down.
 		while (_hostDataQueue.size()) {
-			if (_hostDataQueue.size() != _hostDataQueue.size())
+			if (_hostDataQueue.size() != _peerIndexQueue.size())
 				warning("NETWORK: Sizes of data and peer index queues does not match!  Expect some wonky stuff");
 			Common::JSONValue *json = _hostDataQueue.pop();
 			int peerIndex = _peerIndexQueue.pop();
@@ -520,7 +521,7 @@ int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
 
 void Net::setFakeLatency(int time) {
 	_latencyTime = time;
-	debug("NETWORK: Setting Fake Latency to %d ms", _latencyTime);
+	debugC(DEBUG_NETWORK, "NETWORK: Setting Fake Latency to %d ms", _latencyTime);
 	_fakeLatency = true;
 }
 
@@ -741,22 +742,27 @@ int Net::remoteSendData(int typeOfSend, int sendTypeParam, int type, Common::Str
 		// sooo, send all.
 		typeOfSend = PN_SENDTYPE_ALL;
 
+	bool reliable = false;
+	if (priority == PN_PRIORITY_HIGH || typeOfSend == PN_SENDTYPE_ALL_RELIABLE ||
+		typeOfSend == PN_SENDTYPE_ALL_RELIABLE_TIMED)
+		reliable = true;
+
 	// Since I am lazy, instead of constructing the JSON object manually
 	// I'd rather parse it
 	Common::String res = Common::String::format(
 		"{\"cmd\":\"game\",\"from\":%d,\"to\":%d,\"toparam\":%d,"
 		"\"type\":%d, \"reliable\":%s, \"data\":{%s}}",
 		_myUserId, typeOfSend, sendTypeParam, type,
-		priority == PN_PRIORITY_HIGH ? "true" : "false", data.c_str());
+		reliable == true ? "true" : "false", data.c_str());
 
 	debugC(DEBUG_NETWORK, "NETWORK: Sending data: %s", res.c_str());
 	Common::JSONValue *str = Common::JSON::parse(res.c_str());
 	if (_isHost) {
-		// handleGameDataHost(str, sendTypeParam - 1);
 		_hostDataQueue.push(str);
 		_peerIndexQueue.push(sendTypeParam - 1);
-	} else
-		_sessionHost->send(res.c_str(), 0, 0, priority == PN_PRIORITY_HIGH);
+	} else {
+		_sessionHost->send(res.c_str(), 0, 0, reliable);
+	}
 	return defaultRes;
 }
 
@@ -1129,10 +1135,19 @@ void Net::remoteReceiveData() {
 			int userId = -1;
 			if (_addressToUserId.contains(address))
 				userId = _addressToUserId[address];
-			if (userId > -1)
+			if (userId > -1) {
 				debugC(DEBUG_NETWORK, "NETWORK: User %s (%d) has disconnected.", _userIdToName[userId].c_str(), userId);
+				if (_isHost)
+					destroyPlayer(userId);
+			}
 			else
 				debugC(DEBUG_NETWORK, "NETWORK: Connection from %s has disconnected.", address.c_str());
+
+			if (!_isHost) {
+				// Since we've lost connect to our host, it's safe
+				// to shut everything down.
+				closeProvider();
+			}
 
 			if (_gameName == "moonbase") {
 				// TODO: Host migration
@@ -1250,7 +1265,7 @@ void Net::doNetworkOnceAFrame(int msecs) {
 		serviceBroadcast();
 
 	if (_isHost && _hostDataQueue.size()) {
-		if (_hostDataQueue.size() != _hostDataQueue.size())
+		if (_hostDataQueue.size() != _peerIndexQueue.size())
 			warning("NETWORK: Sizes of data and peer index queues does not match!  Expect some wonky stuff");
 		Common::JSONValue *json = _hostDataQueue.pop();
 		int peerIndex = _peerIndexQueue.pop();
@@ -1377,11 +1392,9 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 			_vm->runScript(_vm->VAR(_vm->VAR_NETWORK_RECEIVE_ARRAY_SCRIPT), 1, 0, (int *)_tmpbuffer);
 		}
 		break;
-
 	default:
 		warning("NETWORK: Received unknown network command %d", type);
 	}
-
 }
 
 void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
@@ -1418,6 +1431,8 @@ void Net::handleGameDataHost(Common::JSONValue *json, int peerIndex) {
 		}
 		break;
 	case PN_SENDTYPE_ALL:
+	case PN_SENDTYPE_ALL_RELIABLE:
+	case PN_SENDTYPE_ALL_RELIABLE_TIMED:
 		{
 			// It's for all of us, including the host.
 			// Don't handle data if we're shutting down, or the game will crash.

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/tokenizer.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
@@ -33,38 +35,29 @@
 namespace Nancy {
 namespace UI {
 
-const char Textbox::_CCBeginToken[] = "<i>";
-const char Textbox::_CCEndToken[] = "<o>";
-const char Textbox::_colorBeginToken[] = "<c1>";
-const char Textbox::_colorEndToken[] = "<c0>";
-const char Textbox::_hotspotToken[] = "<h>";
-const char Textbox::_newLineToken[] = "<n>";
-const char Textbox::_tabToken[] = "<t>";
-const char Textbox::_telephoneEndToken[] = "<e>";
-
 Textbox::Textbox() :
 		RenderObject(6),
-		_needsTextRedraw(false),
 		_scrollbar(nullptr),
 		_scrollbarPos(0),
-		_numLines(0),
-		_lastResponseisMultiline(false),
 		_highlightRObj(7),
-		_fontIDOverride(-1) {}
+		_fontIDOverride(-1),
+		_autoClearTime(0) {}
 
 Textbox::~Textbox() {
 	delete _scrollbar;
 }
 
 void Textbox::init() {
-	TBOX *tbox = g_nancy->_textboxData;
+	auto *bsum = GetEngineData(BSUM);
+	assert(bsum);
+
+	auto *tbox = GetEngineData(TBOX);
 	assert(tbox);
 
-	moveTo(g_nancy->_bootSummary->textboxScreenPosition);
-	_highlightRObj.moveTo(g_nancy->_bootSummary->textboxScreenPosition);
-	_fullSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
-	_textHighlightSurface.create(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
-	_textHighlightSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
+	moveTo(bsum->textboxScreenPosition);
+	_highlightRObj.moveTo(bsum->textboxScreenPosition);
+	initSurfaces(tbox->innerBoundingBox.width(), tbox->innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat(),
+		tbox->textBackground, tbox->highlightTextBackground);
 
 	Common::Rect outerBoundingBox = _screenPosition;
 	outerBoundingBox.moveTo(0, 0);
@@ -88,6 +81,10 @@ void Textbox::registerGraphics() {
 }
 
 void Textbox::updateGraphics() {
+	if (_autoClearTime && g_nancy->getTotalPlayTime() > _autoClearTime) {
+		clear();
+	}
+
 	if (_needsTextRedraw) {
 		drawTextbox();
 	}
@@ -125,7 +122,7 @@ void Textbox::handleInput(NancyInput &input) {
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				input.input &= ~NancyInput::kLeftMouseButtonUp;
 				NancySceneState.clearLogicConditions();
-				NancySceneState.setLogicCondition(i);
+				NancySceneState.setLogicCondition(i, g_nancy->_true);
 			}
 
 			break;
@@ -138,198 +135,58 @@ void Textbox::handleInput(NancyInput &input) {
 }
 
 void Textbox::drawTextbox() {
-	using namespace Common;
-
-	TBOX *tbox = g_nancy->_textboxData;
+	auto *tbox = GetEngineData(TBOX);
 	assert(tbox);
 
-	_numLines = 0;
+	Common::Rect textBounds = _fullSurface.getBounds();
+	textBounds.top += tbox->upOffset;
+	textBounds.bottom -= tbox->downOffset;
+	textBounds.left += tbox->leftOffset;
+	textBounds.right -= tbox->rightOffset;
 
-	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride == -1 ? tbox->conversationFontID : _fontIDOverride);
-	const Font *highlightFont = g_nancy->_graphicsManager->getFont(tbox->highlightConversationFontID);
+	const Font *font = g_nancy->_graphicsManager->getFont(_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID);
+	textBounds.top -= font->getFontHeight();
 
-	uint maxWidth = _fullSurface.w - tbox->maxWidthDifference - tbox->borderWidth - 2;
-	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
-
-	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
-		Common::String currentLine = _textLines[lineID];
-
-		uint horizontalOffset = 0;
-		bool hasHotspot = false;
-		Rect hotspot;
-
-		// Erase the begin and end tokens from the line
-		uint32 newLinePos;
-		while (newLinePos = currentLine.find(_CCBeginToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_CCBeginToken) - 1);
-		}
-
-		while (newLinePos = currentLine.find(_CCEndToken), newLinePos != String::npos) {
-			currentLine.erase(newLinePos, ARRAYSIZE(_CCEndToken) - 1);
-		}
-
-		// Replace every newline token with \n
-		while (newLinePos = currentLine.find(_newLineToken), newLinePos != String::npos) {
-			currentLine.replace(newLinePos, ARRAYSIZE(_newLineToken) - 1, "\n");
-		}
-
-		// Simply remove telephone end token
-		if (currentLine.hasSuffix(_telephoneEndToken)) {
-			currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1);
-		}
-
-		// Remove hotspot tokens and mark that we need to calculate the bounds
-		// A single text line should only have one hotspot, but there's at least
-		// one malformed line in TVD that breaks this
-		uint32 hotspotPos, lastHotspotPos = 0;
-		while (hotspotPos = currentLine.find(_hotspotToken), hotspotPos != String::npos) {
-			currentLine.erase(hotspotPos, ARRAYSIZE(_hotspotToken) - 1);
-
-			if (hasHotspot) {
-				// Replace the second hotspot token with a newline to copy the original behavior
-				// Maybe consider fixing the glitch instead of replicating it??
-				currentLine.insertChar('\n', lastHotspotPos);
-			}
-
-			hasHotspot = true;
-			lastHotspotPos = hotspotPos;
-		}
-
-		// Subdivide current line into sublines for proper handling of the tab and color tokens
-		// Assumes the tab token is on a new line
-		while (!currentLine.empty()) {
-			if (currentLine.hasPrefix(_tabToken)) {
-				horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
-				currentLine = currentLine.substr(ARRAYSIZE(_tabToken) - 1);
-			}
-
-			String currentSubstring;
-			_lastResponseisMultiline = false;
-
-			uint32 nextTabPos = currentLine.find(_tabToken);
-			if (nextTabPos != String::npos) {
-				currentSubstring = currentLine.substr(0, nextTabPos);
-				currentLine = currentLine.substr(nextTabPos);
-			} else {
-				currentSubstring = currentLine;
-				currentLine.clear();
-			}
-			
-			Array<Common::String> wrappedLines;
-			uint numColorLines = 0;
-			uint colorLinesWidth = 0;
-
-			// Color token denotes a highlighted section of the dialogue
-			// The russian variant of nancy1 makes all player text colored, so we need to do font wrapping here
-			if (currentSubstring.hasPrefix(_colorBeginToken)) {
-				// Found color string, look for end token
-				uint32 colorEndPos = currentSubstring.find(_colorEndToken);
-
-				Common::String colorSubstring = currentSubstring.substr(ARRAYSIZE(_colorBeginToken) - 1, colorEndPos - ARRAYSIZE(_colorBeginToken) + 1);
-				currentSubstring = currentSubstring.substr(ARRAYSIZE(_colorBeginToken) + ARRAYSIZE(_colorEndToken) + colorSubstring.size() - 2);
-
-				font->wordWrap(colorSubstring, maxWidth, wrappedLines, 0);
-
-				// Draw the color lines
-				for (uint i = 0; i < wrappedLines.size(); ++i) {
-					font->drawString(&_fullSurface, wrappedLines[i], tbox->borderWidth + horizontalOffset, tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);
-					colorLinesWidth = MAX<int16>(colorLinesWidth, font->getStringWidth(wrappedLines[i]));
-					if (i != wrappedLines.size() - 1) {
-						++_numLines;
-						++numColorLines;
-					}
-				}
-				
-				horizontalOffset += font->getStringWidth(wrappedLines.back());
-				wrappedLines.clear();
-			}
-
-			// Do word wrapping on the rest of the text
-			font->wordWrap(currentSubstring, maxWidth, wrappedLines, horizontalOffset);
-
-			if (hasHotspot) {
-				hotspot.left = tbox->borderWidth;
-				hotspot.top = tbox->firstLineOffset - tbox->lineHeight + (_numLines - numColorLines) * lineDist - 1;
-				hotspot.setHeight((wrappedLines.size() + MAX<int16>((numColorLines - 1), 0)) * lineDist - (lineDist - tbox->lineHeight));
-				hotspot.setWidth(0);
-			}
-
-			// Draw the wrapped lines
-			for (uint i = 0; i < wrappedLines.size(); ++i) {
-				font->drawString(&_fullSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 0);
-				if (hasHotspot) {
-					highlightFont->drawString(&_textHighlightSurface, wrappedLines[i], tbox->borderWidth + (i == 0 ? horizontalOffset : 0), tbox->firstLineOffset - highlightFont->getFontHeight() + _numLines * lineDist, maxWidth, 0);
-					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? horizontalOffset : 0)));
-				}
-				++_numLines;
-			}
-
-			// Make sure to adjust the hotspot width if we had a multi-line color string
-			hotspot.setWidth(MAX<int16>(hotspot.width(), colorLinesWidth));
-
-			// Simulate a bug in the original engine where player text longer than
-			// a single line gets a double newline afterwards
-			if ((wrappedLines.size() + numColorLines) > 1 && hasHotspot) {
-				++_numLines;
-				_lastResponseisMultiline = true;
-			}
-
-			horizontalOffset = 0;
-		}
-
-		// Add the hotspot to the list
-		if (hasHotspot) {
-			_hotspots.push_back(hotspot);
-		}
-
-		// Add a new line after every text line
-		++_numLines;
-	}
+	HypertextParser::drawAllText(	textBounds,															// bounds of text within full surface
+									_fontIDOverride != -1 ? _fontIDOverride : tbox->defaultFontID,	// font for basic text
+									tbox->highlightConversationFontID);									// font for highlight text
 
 	setVisible(true);
-	_needsTextRedraw = false;
 }
 
 void Textbox::clear() {
-	_fullSurface.clear();
-	_textHighlightSurface.clear(_textHighlightSurface.getTransparentColor());
-	_textLines.clear();
-	_hotspots.clear();
+	if (_textLines.size()) {
+		HypertextParser::clear();
+		_scrollbar->resetPosition();
+		onScrollbarMove();
+		_fontIDOverride = -1;
+		_needsRedraw = true;
+		_autoClearTime = 0;
+	}
+}
+
+void Textbox::addTextLine(const Common::String &text, uint32 autoClearTime) {
+	HypertextParser::addTextLine(text);
+
+	if (autoClearTime != 0) {
+		// Start a timer, after which the textbox will automatically be cleared.
+		// Currently only used by inventory closed captions
+		_autoClearTime = g_nancy->getTotalPlayTime() + autoClearTime;
+	}
+
 	_scrollbar->resetPosition();
-	_numLines = 0;
-	_fontIDOverride = -1;
 	onScrollbarMove();
-	_needsRedraw = true;
 }
 
-void Textbox::addTextLine(const Common::String &text) {
-	// Scan for the hotspot token and assume the text is the main text if not found
-	_textLines.push_back(text);
+void Textbox::setOverrideFont(const uint fontID) {
+	auto *bsum = GetEngineData(BSUM);
+	assert(bsum);
 
-	_needsTextRedraw = true;
-}
-
-// A text line will often be broken up into chunks separated by nulls, use
-// this function to put it back together as a Common::String
-void Textbox::assembleTextLine(char *rawCaption, Common::String &output, uint size) {
-	for (uint i = 0; i < size; ++i) {
-		// A single line can be broken up into bits, look for them and
-		// concatenate them when we're done
-		if (rawCaption[i] != 0) {
-			Common::String newBit(rawCaption + i);
-			output += newBit;
-			i += newBit.size();
-		}
+	if (fontID >= bsum->numFonts) {
+		error("Requested invalid override font ID %u in Textbox", fontID);
 	}
 
-	// Fix spaces at the end of the string in nancy1
-	output.trim();
-
-	// Scan the text line for doubly-closed tokens; happens in some strings in The Vampire Diaries
-	uint pos = Common::String::npos;
-	while (pos = output.find(">>"), pos != Common::String::npos) {
-		output.replace(pos, 2, ">");
-	}
+	_fontIDOverride = fontID;
 }
 
 void Textbox::onScrollbarMove() {
@@ -352,16 +209,13 @@ void Textbox::onScrollbarMove() {
 }
 
 uint16 Textbox::getInnerHeight() const {
-	TBOX *tbox = g_nancy->_textboxData;
+	// As early as nancy3 this behavior stopped being relevant, as the original
+	// engine always scrolls down to the bottom of the entire inner surface.
+	// However, that makes the scrollbar almost unusable, so I'm not changing this.
+	auto *tbox = GetEngineData(TBOX);
 	assert(tbox);
-	
-	// These calculations are _almost_ correct, but off by a pixel sometimes
-	uint lineDist = tbox->lineHeight + tbox->lineHeight / 4;
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		return _numLines * lineDist + tbox->firstLineOffset + (_lastResponseisMultiline ? - tbox->lineHeight / 2 : 1);
-	} else {
-		return _numLines * lineDist + tbox->firstLineOffset + lineDist / 2 - 1;
-	}
+
+	return _drawnTextHeight + tbox->upOffset + tbox->downOffset;
 }
 
 } // End of namespace UI

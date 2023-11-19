@@ -46,6 +46,11 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 
 	/**
+	 * Return meta information from the specified save state.
+	 */
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+
+	/**
 	 * Initialize keymaps
 	 */
 	Common::KeymapArray initKeymaps(const char *target) const override;

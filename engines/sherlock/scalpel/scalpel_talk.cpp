@@ -199,6 +199,8 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	People &people = *_vm->_people;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
+	int lineHeight = _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
+	int maxLines = _vm->getLanguage() == Common::Language::ZH_TWN ? 3 : 5;
 
 	if (_vm->getLanguage() == Common::DE_DEU)
 		skipBadText(str);
@@ -228,7 +230,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 			_openTalkWindow = true;
 		}
 
-		_yp += 9;
+		_yp += lineHeight;
 	}
 
 	// Find amount of text that will fit on the line
@@ -289,12 +291,12 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	if (str[0] == ' ')
 		++str;
 
-	_yp += _vm->getLanguage() == Common::Language::ZH_TWN ? 16 : 9;
+	_yp += lineHeight;
 	++_line;
 
 	// Certain different conditions require a wait
-	if ((_line == 4 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND] && str[0] != _opcodes[OP_PAUSE] && _speaker != -1) ||
-		(_line == 5 && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
+	if ((_line == (maxLines - 1) && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND] && str[0] != _opcodes[OP_PAUSE] && _speaker != -1) ||
+		(_line == maxLines && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
 		_endStr) {
 		_wait = 1;
 	}

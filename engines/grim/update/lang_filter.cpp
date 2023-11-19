@@ -110,8 +110,7 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr LangFilter::getMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
 }
 
 Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::Path &path) const {

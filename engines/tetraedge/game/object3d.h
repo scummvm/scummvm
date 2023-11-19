@@ -61,7 +61,7 @@ public:
 	float _rotateTime;
 	TeTimer _rotateTimer;
 	TeQuaternion _rotateStart;
-	TeVector3f32 _rotateAmount;
+	TeVector3f32 _rotateAmount; // Rotate vector in degrees
 
 	float _translateTime;
 	TeTimer _translateTimer;

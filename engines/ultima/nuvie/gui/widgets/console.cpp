@@ -83,14 +83,14 @@ void ConsoleAddInfo(const char *format, ...) {
 	va_end(args);
 
 	if (g_console != NULL) {
-		DEBUG(0, LEVEL_INFORMATIONAL, buf);
+		DEBUG(0, LEVEL_INFORMATIONAL, "%s\n", buf);
 		g_console->AddLine(buf);
 	}
 }
 
 void ConsoleAddError(Std::string s) {
 	if (g_console != NULL) {
-		DEBUG(0, LEVEL_ERROR, s.c_str());
+		DEBUG(0, LEVEL_ERROR, "%s\n", s.c_str());
 		g_console->Show();
 		g_console->AddLine("Error: " + s);
 	}
@@ -98,10 +98,11 @@ void ConsoleAddError(Std::string s) {
 
 void ConsoleAddWarning(Std::string s) {
 	if (g_console != NULL) {
-		DEBUG(0, LEVEL_WARNING, s.c_str());
+		DEBUG(0, LEVEL_WARNING, "%s\n", s.c_str());
 		g_console->AddLine("Warning: " + s);
 	}
 }
+
 void ConsolePause() {
 	if (g_console == NULL)
 		return;

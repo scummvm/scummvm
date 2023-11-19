@@ -31,6 +31,8 @@ public:
 	ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	ScriptType _scriptType;
+
+	Common::String formatInfo() override;
 };
 
 } // End of namespace Director

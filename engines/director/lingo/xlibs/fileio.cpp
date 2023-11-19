@@ -89,6 +89,7 @@
 
 #include "gui/filebrowser-dialog.h"
 
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 
@@ -126,6 +127,12 @@ static MethodProto xlibMethods[] = {
 	{ "status",					FileIO::m_status,			 0, 0,	200 },	// D2
 	{ "writeChar",				FileIO::m_writeChar,		 1, 1,	200 },	// D2
 	{ "writeString",			FileIO::m_writeString,		 1, 1,	200 },	// D2
+
+	// Non-standard extensions
+	// - Used by Maniac Sports
+	// II     +mSetOverrideDrive, driveLetter --Set override drive letter ('A' - 'Z') to use when loading linked castmembers.  Use 0x00 to clear override.
+	{ "setOverrideDrive",		FileIO::m_setOverrideDrive,	 1, 1,	300 },	// D3
+
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -222,7 +229,7 @@ void FileIO::m_new(int nargs) {
 		Common::String mask = prefix + "*.txt";
 		dirSeparator = '/';
 
-		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str());
+		GUI::FileBrowserDialog browser(nullptr, "txt", option.equalsIgnoreCase("write") ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), origpath.c_str());
 		if (browser.runModal() <= 0) {
 			g_lingo->push(Datum(kErrorFileNotFound));
 			return;
@@ -244,8 +251,8 @@ void FileIO::m_new(int nargs) {
 		if (!me->_inStream) {
 			// Maybe we're trying to read one of the game files
 			Common::File *f = new Common::File;
-
-			if (!f->open(Common::Path(pathMakeRelative(origpath), g_director->_dirSeparator))) {
+			Common::Path location = findPath(origpath);
+			if (location.empty() || !f->open(location)) {
 				delete f;
 				saveFileError();
 				me->dispose();
@@ -494,7 +501,7 @@ void FileIO::m_fileName(int nargs) {
 		Common::String prefix = g_director->getTargetName() + '-';
 		Common::String res = *me->_filename;
 		if (res.hasPrefix(prefix)) {
-			res = Common::String(&me->_filename->c_str()[prefix.size() + 1]);
+			res = Common::String(&me->_filename->c_str()[prefix.size()]);
 		}
 
 		g_lingo->push(Datum(res));
@@ -525,5 +532,8 @@ void FileIO::m_delete(int nargs) {
 		g_lingo->push(Datum(kErrorFileNotOpen));
 	}
 }
+
+// Non-standard extensions
+XOBJSTUBNR(FileIO::m_setOverrideDrive)
 
 } // End of namespace Director

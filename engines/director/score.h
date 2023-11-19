@@ -22,8 +22,6 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-//#include "graphics/macgui/macwindowmanager.h"
-
 #include "director/cursor.h"
 
 namespace Graphics {
@@ -36,6 +34,7 @@ namespace Graphics {
 
 namespace Common {
 	class ReadStreamEndian;
+	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
 }
 
@@ -74,6 +73,11 @@ public:
 	Movie *getMovie() const { return _movie; }
 
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
+	bool loadFrame(int frame, bool loadCast);
+	bool readOneFrame();
+	void updateFrame(Frame *frame);
+	Frame *getFrameData(int frameNum);
+
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
 	void loadSampleSounds(uint type);
@@ -91,11 +95,13 @@ public:
 	void stopPlay();
 
 	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
-	uint16 getCurrentFrame() { return _currentFrame; }
+	uint16 getCurrentFrameNum() { return _curFrameNumber; }
 	int getNextFrame() { return _nextFrame; }
+	uint16 getFramesNum() { return _numFrames; }
 
-	int getCurrentPalette();
-	int resolvePaletteId(int id);
+	void setPuppetTempo(int16 puppetTempo);
+
+	CastMemberID getCurrentPalette();
 
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
@@ -135,22 +141,34 @@ private:
 	void playQueuedSound();
 
 	void screenShot();
+	bool checkShotSimilarity(const Graphics::Surface *surface1, const Graphics::Surface *surface2);
 
 	bool processImmediateFrameScript(Common::String s, int id);
 	bool processFrozenScripts();
 
 public:
 	Common::Array<Channel *> _channels;
-	Common::Array<Frame *> _frames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 
+	// On demand frames loading
+	uint32 _version;
+	Frame *_currentFrame;
+	uint32 _curFrameNumber;
+	uint32 _numFrames;
+	uint32 _framesVersion;
+	uint32 _numChannels;
+	uint8 _currentTempo;
+	CastMemberID _currentPaletteId;
+
+	uint _firstFramePosition;
+	uint _framesStreamSize;
+	Common::MemoryReadStreamEndian *_framesStream;
+
 	byte _currentFrameRate;
 
-	byte _puppetTempo;
 	bool _puppetPalette;
-	int _lastPalette;
 	int _paletteTransitionIndex;
 	byte _paletteSnapshotBuffer[768];
 
@@ -165,6 +183,7 @@ public:
 	int _activeFade;
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
+	bool _skipTransition;
 
 	int _numChannelsDisplayed;
 
@@ -174,11 +193,9 @@ private:
 	Movie *_movie;
 	Window *_window;
 
-	uint16 _currentFrame;
 	uint16 _nextFrame;
 	int _currentLabel;
 	DirectorSound *_soundManager;
-	int _currentPalette;
 
 	int _previousBuildBotBuild = -1;
 };

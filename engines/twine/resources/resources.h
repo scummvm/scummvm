@@ -40,13 +40,16 @@ namespace TwinE {
 #define RESSHQR_BLANK 2
 #define RESSHQR_SPRITEBOXDATA 3
 #define RESSHQR_SPRITESHADOW 4
-#define RESSHQR_HOLOPAL 5
-#define RESSHQR_HOLOSURFACE 6
-#define RESSHQR_HOLOIMG 7
-#define RESSHQR_HOLOARROWINFO 8
-#define RESSHQR_HOLOTWINMDL 9
-#define RESSHQR_HOLOARROWMDL 10
-#define RESSHQR_HOLOTWINARROWMDL 11
+#define RESSHQR_HOLOPAL 5           // lba1
+#define RESSHQR_HOLOSURFACE 6       // lba1
+#define RESSHQR_HOLOIMG 7           // lba1
+#define RESSHQR_HOLOARROWINFO 8     // lba1
+#define RESSHQR_HOLOTWINMDL 9       // lba1
+#define RESSHQR_HOLOARROWMDL 10     // lba1
+#define RESSHQR_HOLOTWINARROWMDL 11 // lba1
+
+#define RESSHQR_BLACKPAL 9   // lba2
+#define RESSHQR_ECLAIRPAL 10 // lba2
 
 #define RESSHQR_GAMEOVERMDL 21
 
@@ -174,6 +177,7 @@ public:
 	/** Font buffer pointer */
 	int32 _fontBufSize = 0;
 	uint8 *_fontPtr = nullptr;
+	uint8 *_sjisFontPtr = nullptr;
 
 	SpriteData _spriteShadowPtr;
 	SpriteBoundingBoxData _spriteBoundingBox;

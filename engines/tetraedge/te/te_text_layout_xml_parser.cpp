@@ -34,7 +34,12 @@ bool TeTextLayoutXmlParser::parserCallback_color(ParserNode *node) {
 
 bool TeTextLayoutXmlParser::parserCallback_font(ParserNode *node) {
 	_fontFile = node->values["file"];
-	_fontSize = node->values["size"].asUint64();
+	if (node->values.contains("size"))
+		_fontSize = node->values["size"].asUint64();
+	else {
+		warning("default font size to 16");
+		_fontSize = 16;
+	}
 	return true;
 }
 

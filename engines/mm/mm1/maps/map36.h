@@ -61,7 +61,7 @@ private:
 		&Map36::special11
 	};
 public:
-	Map36() : Map(36, "blackrs", 0x508, 3) {}
+	Map36() : Map(36, "blackrs", 0x508, 3, "Castle Blackridge South") {}
 
 	/**
 	 * Handles all special stuff that happens on the map

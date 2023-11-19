@@ -90,6 +90,7 @@ bool INIFile::loadFromSaveFile(const String &filename) {
 }
 
 bool INIFile::loadFromStream(SeekableReadStream &stream) {
+	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 	Section section;
 	KeyValue kv;
 	String comment;
@@ -104,6 +105,13 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 
 		// Read a line
 		String line = stream.readLine();
+
+		// Skip UTF-8 byte-order mark if added by a text editor.
+		if (lineno == 1 && memcmp(line.c_str(), UTF8_BOM, 3) == 0) {
+			line.erase(0, 3);
+		}
+
+		line.trim();
 
 		if (line.size() == 0) {
 			// Do nothing
@@ -156,30 +164,21 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 		} else {
 			// This line should be a line with a 'key=value' pair, or an empty one.
 
-			// Skip leading whitespaces
-			const char *t = line.c_str();
-			while (isSpace(*t))
-				t++;
-
-			// Skip empty lines / lines with only whitespace
-			if (*t == 0)
-				continue;
-
 			// If no section has been set, this config file is invalid!
 			if (section.name.empty()) {
 				error("INIFile::loadFromStream: Key/value pair found outside a section in line %d", lineno);
 			}
 
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
-			const char *p = strchr(t, '=');
+			const char *p = strchr(line.c_str(), '=');
 			if (!p) {
 				if (!_suppressValuelessLineWarning)
-					warning("Config file buggy: Junk found in line %d: '%s'", lineno, t);
-				kv.key = String(t);
+					warning("Config file buggy: Junk found in line %d: '%s'", lineno, line.c_str());
+				kv.key = line;
 				kv.value.clear();
 			}  else {
 				// Extract the key/value pair
-				kv.key = String(t, p);
+				kv.key = String(line.c_str(), p);
 				kv.value = String(p + 1);
 			}
 

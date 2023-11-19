@@ -32,7 +32,7 @@ SaveLoad_v3::SaveFile SaveLoad_v3::_saveFiles[] = {
 	{  "intro.$$$", kSaveModeSave  , nullptr, "temporary sprite"},
 	{   "bloc.inf", kSaveModeSave  , nullptr, "notes"},
 	{   "prot",     kSaveModeIgnore, nullptr, nullptr},
-	{ "config",     kSaveModeIgnore, nullptr, nullptr}
+	{ "config",     kSaveModeIgnore, nullptr, nullptr},
 };
 
 

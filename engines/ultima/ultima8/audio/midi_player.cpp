@@ -62,6 +62,9 @@ MidiPlayer::MidiPlayer() : _parser(nullptr), _transitionParser(nullptr), _playin
 			_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
 			_driver->setTimerCallback(this, &timerCallback);
 			syncSoundSettings();
+		} else {
+			delete _driver;
+			_driver = nullptr;
 		}
 	}
 }
@@ -70,19 +73,16 @@ MidiPlayer::~MidiPlayer() {
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
-		_parser = 0;
 	}
 
 	if (_transitionParser) {
 		_transitionParser->unloadMusic();
 		delete _transitionParser;
-		_transitionParser = 0;
 	}
 
 	if (_driver) {
 		_driver->close();
 		delete _driver;
-		_driver = 0;
 	}
 }
 
@@ -95,7 +95,7 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo) {
 	if (_parser) {
 		_parser->unloadMusic();
 		delete _parser;
-		_parser = 0;
+		_parser = nullptr;
 	}
 
 	if (size < 4)
@@ -117,6 +117,9 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo) {
 }
 
 void MidiPlayer::loadTransitionData(byte* data, size_t size) {
+	if (!_driver)
+		return;
+
 	if (size < 4)
 		error("loadTransitionData() wrong music resource size");
 

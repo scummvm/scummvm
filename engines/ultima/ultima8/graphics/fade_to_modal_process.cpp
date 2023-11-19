@@ -21,6 +21,7 @@
 
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
+#include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 
@@ -45,7 +46,7 @@ void FadeToModalProcess::onWakeUp() {
 		// Jump in now and make sure the fade in is started (ie, we go to black)
 		// before the modal is closed, otherwise a single frame of the thing
 		// behind it will be shown first.
-		_fader = new PaletteFaderProcess(0x00000000, true, 0x7FFF, 30, false);
+		_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0x00, 0x00, 0x00, 0x00), true, 0x7FFF, 30, false);
 		_fader->run();
 	}
 }
@@ -54,7 +55,7 @@ void FadeToModalProcess::run() {
 	switch (_nextState) {
 		case FS_OpenFadeOut:
 		{
-			_fader = new PaletteFaderProcess(0x00000000, false, 0x7FFF, 30, true);
+			_fader = new PaletteFaderProcess(TEX32_PACK_RGBA(0x00, 0x00, 0x00, 0x00), false, 0x7FFF, 30, true);
 			Kernel::get_instance()->addProcess(_fader);
 			_fader->setRunPaused();
 			_nextState = FS_ShowGump;

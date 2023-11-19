@@ -25,6 +25,7 @@
 #include "scumm/bomp.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/sound_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
@@ -413,6 +414,12 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 			xMoveCur = _xMove + (int16)READ_LE_UINT16(p + 0);
 			yMoveCur = _yMove + (int16)READ_LE_UINT16(p + 2);
+
+			// WORKAROUND bug #13532: There is a frame (of Freddi's eye) in US release of Freddi 3 accidentaly being big
+			// and an horizontal line at the bottom, causing this line to appear at the bottom of the screen.
+			// We draw the whole frame one pixel down so it does not appear on screen.
+			if (_vm->_game.id == GID_FREDDI3 && _vm->_language == Common::EN_USA && a->_costume == 258 && (code & AKC_CelMask) == 35 && _vm->enhancementEnabled(kEnhVisualChanges))
+				yMoveCur += 1;
 
 			if (i == extra - 1) {
 				_xMove += lastDx;
@@ -1647,7 +1654,15 @@ void ScummEngine_v6::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case AKQC_StartSound:
-			_sound->addSoundToQueue(param1, 0, -1, 0);
+			if (_game.heversion < 95) {
+				_sound->addSoundToQueue(param1, 0, -1, 0,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			} else {
+				// Later games also set VAR_LAST_SOUND variable
+				_sound->startSound(param1, 0, -1, 0,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			}
+
 			break;
 		case AKQC_StartAnimation:
 			a->startAnimActor(param1);
@@ -1678,18 +1693,19 @@ void ScummEngine_v6::akos_processQueue() {
 
 			break;
 		case AKQC_SoftStartSound:
-			_sound->addSoundToQueue(param1, 0, -1, 4);
+			if (_game.heversion < 95) {
+				_sound->addSoundToQueue(param1, 0, -1, ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			} else {
+				// Later games also set VAR_LAST_SOUND variable
+				_sound->startSound(param1, 0, -1, ScummEngine_v70he::HESndFlags::HE_SND_SOFT_SOUND,
+					HSND_BASE_FREQ_FACTOR, HSND_SOUND_PAN_CENTER, HSND_MAX_VOLUME);
+			}
+
 			break;
 		default:
 			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param1, param2);
 		}
-	}
-
-	if (_game.heversion == 98 && _game.id == GID_FREDDI4 && _actorShouldStopTalking) {
-		Actor *a = derefActor(getTalkingActor(), "ScummEngine_v6::akos_processQueue()");
-		((ActorHE *)a)->_heTalking = false;
-		setTalkingActor(0);
-		_actorShouldStopTalking = false;
 	}
 }
 

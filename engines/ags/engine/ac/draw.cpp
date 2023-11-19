@@ -20,7 +20,6 @@
  */
 
 #include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/math.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
@@ -602,14 +601,17 @@ void mark_object_changed(int objid) {
 
 void reset_objcache_for_sprite(int sprnum, bool deleted) {
 	// Check if this sprite is assigned to any game object, and mark these for update;
-	// if the sprite was deleted, also dispose shared textures
+	// if the sprite was deleted, also mark texture objects as invalid.
+	// IMPORTANT!!: do NOT dispose textures themselves here.
+	// * if the next valid image is of the same size, then the texture will be reused;
+	// * BACKWARD COMPAT: keep last images during room transition out!
 	// room objects cache
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
 			if (_G(objcache)[i].sppic == sprnum)
 				_G(objcache)[i].sppic = -1;
 			if (deleted && ((int)(_GP(actsps)[i].SpriteID) == sprnum))
-				_GP(actsps)[i] = ObjTexture();
+				_GP(actsps)[i].SpriteID = UINT32_MAX; // invalid sprite ref
 		}
 	}
 	// character cache
@@ -617,7 +619,7 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 		if (_GP(charcache)[i].sppic == sprnum)
 			_GP(charcache)[i].sppic = -1;
 		if (deleted && ((int)(_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID) == sprnum))
-			_GP(actsps)[i] = ObjTexture();
+			_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID = UINT32_MAX; // invalid sprite ref
 	}
 }
 
@@ -1850,7 +1852,7 @@ void draw_fps(const Rect &viewport) {
 
 	char fps_buffer[60];
 	// Don't display fps if we don't have enough information (because loop count was just reset)
-	if (!std::isUndefined(_G(fps))) {
+	if (!isnan(_G(fps))) {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: %2.1f / %s", _G(fps), base_buffer);
 	} else {
 		snprintf(fps_buffer, sizeof(fps_buffer), "FPS: --.- / %s", base_buffer);
@@ -2050,7 +2052,7 @@ void put_sprite_list_on_screen(bool in_room) {
 bool GfxDriverSpriteEvtCallback(int evt, int data) {
 	if (_G(displayed_room) < 0) {
 		// if no room loaded, various stuff won't be initialized yet
-		return 1;
+		return false;
 	}
 	return (pl_run_plugin_hooks(evt, data) != 0);
 }

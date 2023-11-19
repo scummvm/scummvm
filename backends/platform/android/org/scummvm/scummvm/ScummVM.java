@@ -62,6 +62,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void setupTouchMode(int oldValue, int newValue);
 	final public native void updateTouch(int action, int ptr, int x, int y);
 
+	final public native void syncVirtkeyboardState(boolean newState);
+
 	final public native String getNativeVersionInfo();
 
 	// Callbacks from C++ peer instance
@@ -78,6 +80,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected Bitmap getBitmapResource(int resource);
 	abstract protected void setTouchMode(int touchMode);
 	abstract protected int getTouchMode();
+	abstract protected void setOrientation(int orientation);
 	abstract protected String getScummVMBasePath();
 	abstract protected String getScummVMConfigPath();
 	abstract protected String getScummVMLogPath();
@@ -109,13 +112,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// SurfaceHolder callback
 	final public void surfaceChanged(SurfaceHolder holder, int format,
 										int width, int height) {
-		// the orientation may reset on standby mode and the theme manager
-		// could assert when using a portrait resolution. so lets not do that.
-		if (height > width) {
-			Log.d(LOG_TAG, String.format(Locale.ROOT, "Ignoring surfaceChanged: %dx%d (%d)",
-											width, height, format));
-			return;
-		}
 
 		PixelFormat pixelFormat = new PixelFormat();
 		PixelFormat.getPixelFormatInfo(format, pixelFormat);
@@ -174,10 +170,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 
 		int res = main(_args);
 
+		destroy();
+
 		deinitEGL();
 		deinitAudio();
-
-		destroy();
 
 		// Don't exit force-ably here!
 		if (_svm_destroyed_callback != null) {
@@ -413,7 +409,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 				score += 10;
 
 			// penalize for wasted bits
-			score -= value - size;
+			if (value > size)
+				score -= value - size;
 
 			return score;
 		}
@@ -437,8 +434,9 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 			score += weightBits(EGL10.EGL_GREEN_SIZE, 6);
 			score += weightBits(EGL10.EGL_BLUE_SIZE, 5);
 			score += weightBits(EGL10.EGL_ALPHA_SIZE, 0);
-			score += weightBits(EGL10.EGL_DEPTH_SIZE, 0);
-			score += weightBits(EGL10.EGL_STENCIL_SIZE, 0);
+			// Prefer 24 bits depth
+			score += weightBits(EGL10.EGL_DEPTH_SIZE, 24);
+			score += weightBits(EGL10.EGL_STENCIL_SIZE, 8);
 
 			return score;
 		}
@@ -534,6 +532,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 						good = false;
 				}
 				if (attr.get(EGL10.EGL_BUFFER_SIZE) < bitsPerPixel)
+					good = false;
+
+				// Force a config with a depth buffer and a stencil buffer when rendering directly on backbuffer
+				if ((attr.get(EGL10.EGL_DEPTH_SIZE) == 0) || (attr.get(EGL10.EGL_STENCIL_SIZE) == 0))
 					good = false;
 
 				int score = attr.weight();

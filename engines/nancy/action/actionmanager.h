@@ -42,6 +42,7 @@ class Scene;
 namespace Action {
 
 class ActionRecord;
+struct DependencyRecord;
 
 // The class that handles ActionRecords and their execution
 class ActionManager {
@@ -51,7 +52,7 @@ class ActionManager {
 public:
 	static const byte kCursInvHolding			= 0;
 	static const byte kCursInvNotHolding		= 1;
-	static const byte kCursInvNotHoldingOffset	= 100;
+	static const byte kCursStandard				= 254;
 
 	ActionManager() {}
 	virtual ~ActionManager() {}
@@ -59,7 +60,9 @@ public:
 	void handleInput(NancyInput &input);
 
 	void processActionRecords();
-	bool addNewActionRecord(Common::SeekableReadStream &inputData);
+	void processDependency(DependencyRecord &dep, ActionRecord &record, bool doNotCheckCursor);
+
+	void addNewActionRecord(Common::SeekableReadStream &inputData);
 	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
 	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
 	void clearActionRecords();
@@ -69,9 +72,16 @@ public:
 	void synchronize(Common::Serializer &serializer);
 
 protected:
-	virtual ActionRecord *createActionRecord(uint16 type);
+	static ActionRecord *createActionRecord(uint16 type, Common::SeekableReadStream *recordStream = nullptr);
+	static ActionRecord *createAndLoadNewRecord(Common::SeekableReadStream &inputData);
+
+	void synchronizeMovieWithSound();
+
+	void debugDrawHotspots();
 
 	Common::Array<ActionRecord *> _records;
+	bool _recordsWereExecuted = false; // Used for kDefaultAR dependency
+	Common::Array<ActionRecord *> _activatedRecordsThisFrame;
 };
 
 } // End of namespace Action

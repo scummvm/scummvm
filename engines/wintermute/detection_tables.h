@@ -1392,6 +1392,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("english.dcp", "e21c7278071cd2ee216ae72d5a39de29", 12008908,
 					"data.dcp", "43ba03f37a0f97249c1e0c3cf7d6f9a9", 167980), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
 
+	// Ghost in the Sheet (aka S.C.A.R.E.) (German)
+	WME_WINENTRY("ghostsheet", "",
+		WME_ENTRY2s("german.dcp", "7fe6c0b28ebdfa55f432805ebc524cc3", 209496295,
+					"data.dcp", "4e4e5fdff0f7a5f4aa5db51c5c7e94d3", 3759113), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_0),
+
 	// Ghost in the Sheet (Italian)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("italiano.dcp", "b258151caddee5ecdaf0fdd3afe62151", 11220994,
@@ -3560,7 +3565,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
 					"xlanguage_zh_s.dcp", "f668735372b0dde4b619c4d9d4678e3c", 8498109), Common::ZH_CHN, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
@@ -3682,7 +3687,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_zh_s.dcp", "fa6a6f5742184676cd7d967b518db52c", 8498109), Common::ZH_CHN, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
@@ -3958,12 +3963,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_sr.dcp", "71f1fc086026bb76137cc9b91c642eff", 8541059), Common::SR_SRB, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_zh_s.dcp", "7a46d2c1bb6a6ed07583e347d4e13d9c", 8498688), Common::ZH_CHN, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "Steam",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,

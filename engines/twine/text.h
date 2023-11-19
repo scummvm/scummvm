@@ -51,7 +51,7 @@ private:
 	 * @param y Y coordinate in screen
 	 * @param character ascii character to display
 	 */
-	void drawCharacter(int32 x, int32 y, uint8 character);
+	void drawCharacter(int32 x, int32 y, uint16 character);
 	/**
 	 * Draw character with shadow
 	 * @param x X coordinate in screen
@@ -59,20 +59,26 @@ private:
 	 * @param character ascii character to display
 	 * @param color character color
 	 */
-	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect& dirtyRect);
+	void drawCharacterShadow(int32 x, int32 y, uint16 character, int32 color, Common::Rect& dirtyRect);
 	void initProgressiveTextBuffer();
 	struct WordSize {
 		int32 inChar = 0;
 		int32 inPixel = 0;
 	};
+	struct LineCharacter {
+		int16 chr = 0;
+		int16 x = 0;
+	};
 	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
+	uint16 getNextChar(const char *&dialogue);
 	void processTextLine();
+	void appendProgressiveTextBuffer(const char *s, int &x, uint &i);
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
 	/**
 	 * @see fadeInCharacters
 	 */
-	void fillFadeInBuffer(int16 x, int16 y, int16 chr);
+	void fillFadeInBuffer(int16 baseX, int16 y, const LineCharacter &chr);
 	/**
 	 * Blend in characters for a text scrolling in
 	 *
@@ -83,14 +89,14 @@ private:
 
 	TextBankId _currentBankIdx = TextBankId::None;
 
-	char _progressiveTextBuffer[256] {'\0'};
+	LineCharacter _progressiveTextBuffer[256];
 	const char *_currentTextPosition = nullptr;
 
-	int32 _dialTextXPos = 0;
+	int32 _dialTextBaseXPos = 0;
 	int32 _dialTextYPos = 0;
 
 	/** Current position of in the buffer of characters that are currently faded in */
-	char *_progressiveTextBufferPtr = nullptr;
+	const LineCharacter *_progressiveTextBufferPtr = nullptr;
 
 	int32 _dialTextBoxCurrentLine = 0;
 	struct BlendInCharacter {
@@ -134,6 +140,9 @@ private:
 
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
+
+	bool _isShiftJIS = false;
+	bool _isVisualRTL = false;
 
 	bool displayText(TextId index, bool showText, bool playVox, bool loop);
 public:
@@ -183,13 +192,14 @@ public:
 	 * @param dialogue ascii text to display
 	 */
 	int32 getTextSize(const char *dialogue);
-	int32 getCharWidth(uint8 chr) const;
-	int32 getCharHeight(uint8 chr) const;
+	int32 getCharWidth(uint16 chr) const;
+	int32 getCharHeight(uint16 chr) const;
 
 	void initDialogueBox();
 	void initInventoryDialogueBox();
 
 	void initText(TextId index);
+	void initLine();
 	void initInventoryText(InventoryItems index);
 	void initItemFoundText(InventoryItems index);
 	void fadeInRemainingChars();

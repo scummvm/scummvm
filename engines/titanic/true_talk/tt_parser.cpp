@@ -762,7 +762,7 @@ int TTparser::considerRequests(TTword *word) {
 	if (!_nodesP || !word)
 		return 0;
 
-	TTconcept *concept = nullptr;
+	TTconcept *conceptP = nullptr;
 	int status = 0;
 	bool flag = false;
 	bool modifierFlag = false;
@@ -900,7 +900,7 @@ int TTparser::considerRequests(TTword *word) {
 					addNode(SEEK_TO);
 				} else {
 					_sentenceConcept->changeConcept(1, &_sentenceConcept->_concept0P, 4);
-					concept = nullptr;
+					conceptP = nullptr;
 					addNode(SEEK_TO);
 				}
 			} else {
@@ -979,10 +979,10 @@ int TTparser::considerRequests(TTword *word) {
 						addToConceptList(word);
 					break;
 				case WC_ADJECTIVE: {
-					TTconcept *conceptP = TTconcept::findByWordClass(_conceptP, WC_THING);
-					if (conceptP) {
-						conceptP->_string2 += ' ';
-						conceptP->_string2 += word->getText();
+					TTconcept *adjConceptP = TTconcept::findByWordClass(_conceptP, WC_THING);
+					if (adjConceptP) {
+						adjConceptP->_string2 += ' ';
+						adjConceptP->_string2 += word->getText();
 					} else {
 						status = processModifiers(8, word);
 					}
@@ -996,11 +996,11 @@ int TTparser::considerRequests(TTword *word) {
 								currP->_field34 = 1;
 						}
 					} else {
-						TTconcept *conceptP = TTconcept::findByWordClass(_conceptP, WC_ACTION);
+						TTconcept *advConceptP = TTconcept::findByWordClass(_conceptP, WC_ACTION);
 
-						if (conceptP) {
-							conceptP->_string2 += ' ';
-							conceptP->_string2 += word->getText();
+						if (advConceptP) {
+							advConceptP->_string2 += ' ';
+							advConceptP->_string2 += word->getText();
 						} else {
 							tempFlag = true;
 						}
@@ -1022,11 +1022,11 @@ int TTparser::considerRequests(TTword *word) {
 
 		case SEEK_NEW_FRAME:
 			if (word->_wordClass == WC_ACTION && word->_id != 104 && word->_id != 107) {
-				if (concept && (_sentenceConcept->_concept5P || _sentenceConcept->_concept2P)) {
+				if (conceptP && (_sentenceConcept->_concept5P || _sentenceConcept->_concept2P)) {
 					TTsentenceConcept *oldNode = _sentenceConcept;
 					oldNode->_field1C = 2;
 					_sentenceConcept = oldNode->addSibling();
-					concept = nullptr;
+					conceptP = nullptr;
 
 					_sentenceConcept->_concept1P = oldNode->_concept1P;
 					_sentenceConcept->_concept5P = oldNode->_concept5P;
@@ -1060,7 +1060,7 @@ int TTparser::considerRequests(TTword *word) {
 		case SET_ACTION:
 			if (_sentence->fn4(1, 104, _sentenceConcept) ||
 					_sentence->fn4(1, 107, _sentenceConcept)) {
-				concept = _sentenceConcept->_concept1P;
+				conceptP = _sentenceConcept->_concept1P;
 				_sentenceConcept->_concept1P = nullptr;
 				addNode(SEEK_NEW_FRAME);
 			}
@@ -1316,7 +1316,7 @@ int TTparser::considerRequests(TTword *word) {
 		nodeP = nextP;
 	}
 
-	delete concept;
+	delete conceptP;
 	return status;
 }
 
@@ -1362,8 +1362,8 @@ int TTparser::processRequests(TTword *word) {
 }
 
 int TTparser::addToConceptList(TTword *word) {
-	TTconcept *concept = new TTconcept(word, ST_UNKNOWN_SCRIPT);
-	addConcept(concept);
+	TTconcept *conceptP = new TTconcept(word, ST_UNKNOWN_SCRIPT);
+	addConcept(conceptP);
 	return 0;
 }
 
@@ -1374,29 +1374,29 @@ void TTparser::addNode(uint tag) {
 	_nodesP = newNode;
 }
 
-int TTparser::addConcept(TTconcept *concept) {
-	if (!concept)
+int TTparser::addConcept(TTconcept *c) {
+	if (!c)
 		return SS_5;
 
 	if (_conceptP)
-		concept->_nextP = _conceptP;
-	_conceptP = concept;
+		c->_nextP = _conceptP;
+	_conceptP = c;
 
 	return SS_VALID;
 }
 
-void TTparser::removeConcept(TTconcept *concept) {
+void TTparser::removeConcept(TTconcept *c) {
 	// If no concept passed, exit immediately
-	if (!concept)
+	if (!c)
 		return;
 
-	if (_conceptP == concept) {
+	if (_conceptP == c) {
 		// Concept specified is the ver ystart of the linked list, so reset head pointer
 		_conceptP = _conceptP->_nextP;
 	} else {
 		// Scan through the linked list, looking for the specific concept
 		for (TTconcept *currP = _conceptP; currP; currP = currP->_nextP) {
-			if (currP->_nextP == concept) {
+			if (currP->_nextP == c) {
 				// Found match, so unlink the next link from the chain
 				currP->_nextP = currP->_nextP->_nextP;
 				break;
@@ -1405,8 +1405,8 @@ void TTparser::removeConcept(TTconcept *concept) {
 	}
 
 	// FInally, delete the concept
-	concept->_nextP = nullptr;
-	delete concept;
+	c->_nextP = nullptr;
+	delete c;
 }
 
 void TTparser::removeNode(TTparserNode *node) {
@@ -1573,26 +1573,26 @@ int TTparser::fn2(TTword *word) {
 }
 
 int TTparser::checkReferent(TTpronoun *pronoun) {
-	TTconcept *concept;
+	TTconcept *conceptP;
 
 	switch (pronoun->getVal()) {
 	case 0:
 		return 0;
 
 	case 1:
-		concept = new TTconcept(_owner->_script, ST_ROOM_SCRIPT);
+		conceptP = new TTconcept(_owner->_script, ST_ROOM_SCRIPT);
 		break;
 
 	case 2:
-		concept = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
+		conceptP = new TTconcept(_sentence->_npcScript, ST_NPC_SCRIPT);
 		break;
 
 	default:
-		concept = new TTconcept(pronoun, (ScriptType)pronoun->getVal());
+		conceptP = new TTconcept(pronoun, (ScriptType)pronoun->getVal());
 		break;
 	}
 
-	addConcept(concept);
+	addConcept(conceptP);
 	return 0;
 }
 
@@ -1603,25 +1603,25 @@ void TTparser::conceptChanged(TTconcept *newConcept, TTconcept *oldConcept) {
 		_currentConceptP = newConcept;
 }
 
-bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
+bool TTparser::checkConcept2(TTconcept *conceptP, int conceptMode) {
 	switch (conceptMode) {
 	case 3:
-		return concept->checkWordId2();
+		return conceptP->checkWordId2();
 
 	case 5:
-		return concept->checkWordClass();
+		return conceptP->checkWordClass();
 
 	case 8:
-		return concept->checkWordId1();
+		return conceptP->checkWordId1();
 
 	case 9:
-		if (concept->checkWordId3())
+		if (conceptP->checkWordId3())
 			return true;
 
 		if (_sentenceConcept->_concept2P) {
-			if (!_sentenceConcept->_concept2P->checkWordId2() || !concept->checkWordId2()) {
+			if (!_sentenceConcept->_concept2P->checkWordId2() || !conceptP->checkWordId2()) {
 				return _sentenceConcept->_concept2P->checkWordClass() &&
-					concept->checkWordClass();
+					conceptP->checkWordClass();
 			}
 		}
 		break;

@@ -174,11 +174,6 @@ protected:
 
 	void pauseEngineIntern(bool pause) override;
 
-	/**
-	 * Returns the data archive folder and version that's required
-	 */
-	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion);
-
 public:
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima8Engine() override;

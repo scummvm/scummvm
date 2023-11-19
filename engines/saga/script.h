@@ -157,29 +157,29 @@ class ScriptThread {
 public:
 	Common::Array<int16> _stackBuf;
 
-	uint16 _stackTopIndex;
-	uint16 _frameIndex;
+	uint16 _stackTopIndex = 0;
+	uint16 _frameIndex = 0;
 
 	uint16 _threadVars[kThreadVarMax];
 
-	byte *_moduleBase;					//
-	uint16 _moduleBaseSize;
+	byte *_moduleBase = 0;					//
+	uint16 _moduleBaseSize = 0;
 
-	byte *_commonBase;					//
-	byte *_staticBase;					//
-	VoiceLUT *_voiceLUT;				//
-	StringsTable *_strings;				//
+	byte *_commonBase = nullptr;			//
+	byte *_staticBase = nullptr;			//
+	VoiceLUT *_voiceLUT = nullptr;			//
+	StringsTable *_strings = nullptr;		//
 
-	int _flags;							// ThreadFlags
-	int _waitType;						// ThreadWaitTypes
-	uint _sleepTime;
-	void *_threadObj;					// which object we're handling
+	int _flags = 0;							// ThreadFlags
+	int _waitType = 0;						// ThreadWaitTypes
+	uint _sleepTime = 0;
+	void *_threadObj = nullptr;				// which object we're handling
 
-	int16 _returnValue;
+	int16 _returnValue = 0;
 
-	uint16 _instructionOffset;			// Instruction offset
+	uint16 _instructionOffset = 0;			// Instruction offset
 
-	int32 _frameWait;
+	int32 _frameWait = 0;
 
 	enum {
 		THREAD_STACK_SIZE = 256

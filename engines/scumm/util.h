@@ -33,7 +33,7 @@ namespace Scumm {
 int newDirToOldDir(int dir);
 int oldDirToNewDir(int dir);
 
-int normalizeAngle(int angle);
+int normalizeAngle(int dirType, int angle);
 int fromSimpleDir(int dirtype, int dir);
 int toSimpleDir(int dirtype, int dir);
 

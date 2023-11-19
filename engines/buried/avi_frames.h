@@ -74,7 +74,7 @@ private:
 	Video::VideoDecoder *_video;
 	bool _cacheEnabled;
 
-	Graphics::Surface *_lastFrame;
+	const Graphics::Surface *_lastFrame;
 	Graphics::Surface *_tempFrame;
 	int _lastFrameIndex;
 };

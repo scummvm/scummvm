@@ -66,4 +66,33 @@ class PathTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(p2.getParent().toString('#'), "par#nt/dir/fil#");
 		TS_ASSERT_EQUALS(p2.getParent().getParent().toString('#'), "par#");
 	}
+
+	void test_normalize() {
+		TS_ASSERT_EQUALS(Common::Path("/", '/').normalize().toString(), "/");
+		TS_ASSERT_EQUALS(Common::Path("/foo/bar", '/').normalize().toString(), "/foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("/foo//bar/", '/').normalize().toString(), "/foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("/foo/./bar", '/').normalize().toString(), "/foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("/foo//./bar//", '/').normalize().toString(), "/foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("/foo//.bar//", '/').normalize().toString(), "/foo/.bar");
+
+		TS_ASSERT_EQUALS(Common::Path("", '/').normalize().toString(), "");
+		TS_ASSERT_EQUALS(Common::Path("foo/bar", '/').normalize().toString(), "foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//bar/", '/').normalize().toString(), "foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("foo/./bar", '/').normalize().toString(), "foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//./bar//", '/').normalize().toString(), "foo/bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//.bar//", '/').normalize().toString(), "foo/.bar");
+
+		TS_ASSERT_EQUALS(Common::Path("..", '/').normalize().toString(), "..");
+		TS_ASSERT_EQUALS(Common::Path("../", '/').normalize().toString(), "..");
+		TS_ASSERT_EQUALS(Common::Path("/..", '/').normalize().toString(), "/..");
+		TS_ASSERT_EQUALS(Common::Path("../bar", '/').normalize().toString(), "../bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//../", '/').normalize().toString(), "");
+		TS_ASSERT_EQUALS(Common::Path("foo/../bar", '/').normalize().toString(), "bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//../bar//", '/').normalize().toString(), "bar");
+		TS_ASSERT_EQUALS(Common::Path("foo//..bar//", '/').normalize().toString(), "foo/..bar");
+
+		TS_ASSERT_EQUALS(Common::Path("foo/../../bar//", '/').normalize().toString(), "../bar");
+		TS_ASSERT_EQUALS(Common::Path("../foo/../bar", '/').normalize().toString(), "../bar");
+		TS_ASSERT_EQUALS(Common::Path("../../foo/bar/", '/').normalize().toString(), "../../foo/bar");
+	}
 };

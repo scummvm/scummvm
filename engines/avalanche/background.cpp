@@ -37,6 +37,9 @@ Background::Background(AvalancheEngine *vm) {
 	_vm = vm;
 	_spriteNum = 0;
 	_nextBell = 0;
+
+	for (int i = 0; i < 40; ++i)
+		_offsets[i] = 0;
 }
 
 Background::~Background() {
@@ -156,9 +159,9 @@ void Background::update() {
 			// Bearing of Avvy from du Lustie.
 			else if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 					direction = 1; // Middle.
-			else if ((angle >= 45) && (angle <= 180))
+			else if (angle <= 180)
 					direction = 2; // Left.
-			else if ((angle >= 181) && (angle <= 314))
+			else if (angle <= 314)
 				direction = 3; // Right.
 
 			if (direction != _vm->_npcFacing) { // du Lustie.
@@ -201,9 +204,9 @@ void Background::update() {
 		uint16 angle = _vm->bearing(4);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 2; // Middle.
-		else if ((angle >= 45) && (angle <= 180))
+		else if (angle <= 180)
 			direction = 6; // Left.
-		else if ((angle >= 181) && (angle <= 314))
+		else if (angle <= 314)
 			direction = 8; // Right.
 
 		if ((_vm->_roomCycles % 60) > 57)
@@ -235,9 +238,9 @@ void Background::update() {
 		uint16 angle = _vm->bearing(1);
 		if ((angle <= 45) || ((angle >= 315) && (angle <= 360)))
 			direction = 4; // Middle.
-		else if ((angle >= 45) && (angle <= 180))
+		else if (angle <= 180)
 			direction = 6; // Left.
-		else if ((angle >= 181) && (angle <= 314))
+		else if (angle <= 314)
 			direction = 8; // Right.
 
 		if ((_vm->_roomCycles % 45) > 42)

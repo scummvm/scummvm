@@ -31,30 +31,46 @@
 
 #include "engines/nancy/ui/viewport.h"
 
+#include "common/config-manager.h"
+
 namespace Nancy {
 namespace UI {
 
 // does NOT put the object in a valid state until loadVideo is called
 void Viewport::init() {
-	moveTo(g_nancy->_viewportData->screenPosition);
+	auto *bootSummary = GetEngineData(BSUM);
+	assert(bootSummary);
 
-	setEdgesSize(	g_nancy->_bootSummary->verticalEdgesSize,
-					g_nancy->_bootSummary->verticalEdgesSize,
-					g_nancy->_bootSummary->horizontalEdgesSize,
-					g_nancy->_bootSummary->horizontalEdgesSize);
+	auto *viewportData = GetEngineData(VIEW);
+	assert(viewportData);
+
+	moveTo(viewportData->screenPosition);
+
+	setEdgesSize(	bootSummary->verticalEdgesSize,
+					bootSummary->verticalEdgesSize,
+					bootSummary->horizontalEdgesSize,
+					bootSummary->horizontalEdgesSize);
 
 	RenderObject::init();
 }
 
 void Viewport::handleInput(NancyInput &input) {
+	const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 	Time systemTime = g_system->getMillis();
 	byte direction = 0;
+
+	if (summary.slowMoveTimeDelta == kNoAutoScroll) {
+		// Individual scenes may disable auto-move even when it's globally turned on
+		_autoMove = false;
+	} else {
+		_autoMove = ConfMan.getBool("auto_move", ConfMan.getActiveDomainName());
+	}
 
 	// Make cursor sticky when scrolling the viewport
 	if (	g_nancy->getGameType() != kGameTypeVampire &&
 			input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton)
 			&& _stickyCursorPos.x > -1) {
-		g_system->warpMouse(_stickyCursorPos.x, _stickyCursorPos.y);
+		g_nancy->_cursorManager->warpCursor(_stickyCursorPos);
 		input.mousePos = _stickyCursorPos;
 	}
 
@@ -114,11 +130,29 @@ void Viewport::handleInput(NancyInput &input) {
 	}
 
 	if (direction) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kMove);
+		if (direction & kLeft) {
+			if (summary.fastMoveTimeDelta == kInvertedNode) {
+				// Support nancy6+ inverted rotation scenes
+				g_nancy->_cursorManager->setCursorType(CursorManager::kInvertedRotateLeft);
+			} else {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kRotateLeft);
+			}
+		} else if (direction & kRight) {
+			if (summary.fastMoveTimeDelta == kInvertedNode) {
+				// Support nancy6+ inverted rotation scenes
+				g_nancy->_cursorManager->setCursorType(CursorManager::kInvertedRotateRight);
+			} else {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kRotateRight);
+			}
+		} else if (direction & kUp) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveUp);
+		} else if (direction & kDown) {
+			g_nancy->_cursorManager->setCursorType(CursorManager::kMoveDown);
+		}
 
 		if (input.input & NancyInput::kRightMouseButton) {
 			direction |= kMoveFast;
-		} else if ((input.input & NancyInput::kLeftMouseButton) == 0) {
+		} else if ((input.input & NancyInput::kLeftMouseButton) == 0 && _autoMove == false) {
 			direction = 0;
 		}
 
@@ -147,7 +181,6 @@ void Viewport::handleInput(NancyInput &input) {
 
 	// Perform the movement
 	if (direction) {
-		const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
 		Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);
 
 		if (systemTime > _nextMovementTime) {
@@ -186,7 +219,7 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	_videoFormat = format;
 
 	enableEdges(kUp | kDown | kLeft | kRight);
-	
+
 	_panningType = panningType;
 
 	setFrame(frameNr);
@@ -205,6 +238,7 @@ void Viewport::setFrame(uint frameNr) {
 	assert(frameNr < _decoder.getFrameCount());
 
 	const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
+	_decoder.seek(frameNr); // Seek to take advantage of caching
 
 	// Format 1 uses quarter-size images, while format 2 uses full-size ones
 	// Videos in TVD are always upside-down

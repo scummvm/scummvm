@@ -94,4 +94,19 @@ byte PaletteLookup::findBestColor(byte cr, byte cg, byte cb, bool useNaiveAlg) {
 	return bestColor;
 }
 
+uint32 *PaletteLookup::createMap(const byte *srcPalette, uint len, bool useNaiveAlg) {
+	if (len <= _paletteSize && memcmp(_palette, srcPalette, len * 3) == 0)
+		return nullptr;
+
+	uint32 *map = new uint32[len];
+	for (uint i = 0; i < len; i++) {
+		byte r = *srcPalette++;
+		byte g = *srcPalette++;
+		byte b = *srcPalette++;
+
+		map[i] = findBestColor(r, g, b, useNaiveAlg);
+	}
+	return map;
+}
+
 } // end of namespace Graphics

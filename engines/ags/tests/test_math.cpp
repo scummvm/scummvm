@@ -20,13 +20,15 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include "ags/shared/debugging/assert.h"
-#include "ags/engine/util/scaling.h"
+//#include "ags/shared/debugging/assert.h"
+// File not present??
+#include "common/scummsys.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
-using namespace AGS::Engine;
+//using namespace AGS::Engine;
 
 void Test_Scaling(int src, int dst) {
 	int x;

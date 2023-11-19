@@ -219,10 +219,12 @@ void EoBCoreEngine::castSpell(int spell, int weaponSlot) {
 		}
 	}
 
-
 	int cs = (_flags.platform == Common::kPlatformSegaCD && _flags.lang == Common::JA_JPN) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1) : -1;
 
 	_txt->printMessage(_magicStrings1[4], -1, c->name, s->name);
+
+	if (_flags.lang == Common::ZH_TWN)
+		_txt->printMessage("\r", -1);
 
 	if (cs != -1)
 		_screen->setFontStyles(_screen->_currentFont, cs);
@@ -245,7 +247,9 @@ void EoBCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 		int od = _screen->curDimIndex();
 		Screen::FontId of = _screen->setFont(_conFont);
 		_screen->setScreenDim(7);
+
 		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
+
 		_screen->setScreenDim(od);
 		_screen->setFont(of);
 	}

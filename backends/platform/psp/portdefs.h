@@ -41,6 +41,7 @@
 #include <limits.h>
 #include <math.h>
 #include <new>
+#include <limits>
 
 #include <pspkernel.h>
 #include <pspdebug.h>

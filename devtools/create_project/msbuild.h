@@ -32,12 +32,13 @@ public:
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-	                       const StringList &includeList, const StringList &excludeList) override;
+						   const StringList &includeList, const StringList &excludeList, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) override;
 
 	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, MSVC_Architecture arch, const std::string &configuration);
 
 	void writeFileListToProject(const FileNode &dir, std::ostream &projectFile, const int indentation,
-	                            const std::string &objPrefix, const std::string &filePrefix) override;
+								const std::string &objPrefix, const std::string &filePrefix,
+								const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude) override;
 
 	void writeReferences(const BuildSetup &setup, std::ofstream &output) override;
 
@@ -61,6 +62,11 @@ private:
 	};
 	typedef std::list<FileEntry> FileEntries;
 
+	struct PCHInfo {
+		std::string file;
+		std::string outputFile;
+	};
+
 	std::list<std::string> _filters; // list of filters (we need to create a GUID for each filter id)
 	FileEntries _compileFiles;
 	FileEntries _includeFiles;
@@ -73,8 +79,12 @@ private:
 
 	void outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action);
 	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
+	void outputCompileFiles(std::ostream &projectFile, const std::string &pchIncludeRoot, const StringList &pchDirs, const StringList &pchExclude, StringList &outPCHFiles);
 
 	void outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix);
+
+	static void createFileNodesFromPCHList(FileNode &dir, const std::string &pathBase, const StringList &pchCompileFiles);
+	static void insertPathIntoDirectory(FileNode &dir, const std::string &path);
 };
 
 } // namespace CreateProjectTool

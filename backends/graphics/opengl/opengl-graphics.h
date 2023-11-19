@@ -101,6 +101,7 @@ public:
 
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override;
 	void fillScreen(uint32 col) override;
+	void fillScreen(const Common::Rect &r, uint32 col) override;
 
 	void updateScreen() override;
 
@@ -149,6 +150,7 @@ protected:
 	 */
 	void notifyContextCreate(
 			ContextType type,
+			Framebuffer *target,
 			const Graphics::PixelFormat &defaultFormat,
 			const Graphics::PixelFormat &defaultFormatAlpha);
 
@@ -339,9 +341,9 @@ protected:
 	Graphics::PixelFormat _defaultFormatAlpha;
 
 	/**
-	 * Render back buffer.
+	 * Render target.
 	 */
-	Backbuffer _backBuffer;
+	Framebuffer *_targetBuffer;
 
 	/**
 	 * The rendering surface for the virtual game screen.

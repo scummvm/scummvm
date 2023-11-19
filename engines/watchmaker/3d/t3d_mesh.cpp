@@ -187,6 +187,10 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 	}
 }
 
+t3dMESH::~t3dMESH() {
+	release();
+}
+
 /* -----------------10/06/99 15.39-------------------
  *                  t3dReleaseAnim
  * --------------------------------------------------*/
@@ -245,7 +249,7 @@ void t3dMESH::release() { // Will eventually be a destructor.
 	delete[] this->SavedVertexBuffer;
 	this->SavedVertexBuffer = nullptr;
 
-	delete[] this->VertsInterpolants;
+	t3dFree(this->VertsInterpolants);
 	this->VertsInterpolants = nullptr;
 
 //		if(mt->VBptr)

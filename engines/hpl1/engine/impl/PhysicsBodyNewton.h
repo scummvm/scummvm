@@ -101,10 +101,10 @@ public:
 	static void SetUseCallback(bool abX) { mbUseCallback = abX; }
 
 private:
-	static int BuoyancyPlaneCallback(const int alCollisionID, void *apContext,
+	static int BuoyancyPlaneCallback(const int32 alCollisionID, void *apContext,
 									 const float *afGlobalSpaceMatrix, float *afGlobalSpacePlane);
-	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int);
-	static void OnUpdateCallback(NewtonBody *apBody, float, int);
+	static void OnTransformCallback(const NewtonBody *apBody, const dFloat *apMatrix, int32);
+	static void OnUpdateCallback(NewtonBody *apBody, float, int32);
 
 	NewtonBody *mpNewtonBody;
 	NewtonWorld *mpNewtonWorld;

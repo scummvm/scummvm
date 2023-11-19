@@ -68,7 +68,6 @@ void InterfaceOn(int ifn) {
 	EndSkippingUntilCharStops();
 
 	if (_GP(guis)[ifn].IsVisible()) {
-		debug_script_log("GUIOn(%d) ignored (already on)", ifn);
 		return;
 	}
 	_GP(guis)[ifn].SetVisible(true);
@@ -83,7 +82,6 @@ void InterfaceOn(int ifn) {
 void InterfaceOff(int ifn) {
 	if ((ifn < 0) | (ifn >= _GP(game).numgui)) quit("!GUIOff: invalid GUI specified");
 	if (!_GP(guis)[ifn].IsVisible()) {
-		debug_script_log("GUIOff(%d) ignored (already off)", ifn);
 		return;
 	}
 	debug_script_log("GUI %d turned off", ifn);

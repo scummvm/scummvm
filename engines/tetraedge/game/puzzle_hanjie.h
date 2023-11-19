@@ -38,6 +38,7 @@ public:
 	void sleep();
 
 private:
+	bool isSolved();
 	bool onExitButton();
 	bool onWinTimer();
 	bool onMouseUp(const Common::Point &pt);
@@ -53,8 +54,7 @@ private:
 	Common::String _bgImg;
 	Common::String _soundBegin;
 	TeSpriteLayout _bgSprite;
-	int _expectedVals[49];
-	// TODO add private members
+	bool _expectedVals[49];
 
 };
 

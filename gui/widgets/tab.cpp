@@ -51,13 +51,13 @@ void TabWidget::recalc() {
 	_titleSpacing = g_gui.xmlEval()->getVar("Globals.TabWidget.TitleSpacing");
 }
 
-TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h, ThemeEngine::TextAlignVertical alignV)
+	: Widget(boss, x, y, w, h), _bodyBackgroundType(ThemeEngine::kDialogBackgroundDefault), _alignV(alignV) {
 	init();
 }
 
-TabWidget::TabWidget(GuiObject *boss, const Common::String &name)
-	: Widget(boss, name), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
+TabWidget::TabWidget(GuiObject *boss, const Common::String &name, ThemeEngine::TextAlignVertical alignV)
+	: Widget(boss, name), _bodyBackgroundType(ThemeEngine::kDialogBackgroundDefault), _alignV(alignV) {
 	init();
 }
 
@@ -73,6 +73,9 @@ void TabWidget::init() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
+
+	if (_alignV == ThemeEngine::kTextAlignVBottom)
+		y = _h - _tabHeight + _butTP;
 
 	Common::String leftArrow = g_gui.useRTL() ? ">" : "<";
 	Common::String rightArrow = g_gui.useRTL() ? "<" : ">";
@@ -266,8 +269,6 @@ void TabWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 }
 
 void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	assert(y < _tabHeight);
-
 	if (x < 0)
 		return;
 
@@ -285,8 +286,13 @@ void TabWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void TabWidget::handleMouseMoved(int x, int y, int button) {
-	if (y < 0 || y >= _tabHeight)
-		return;
+	if (_alignV == ThemeEngine::kTextAlignVBottom) {
+		if (y < _w - _tabHeight || y > _w)
+			return;
+	} else {
+		if (y < 0 || y >= _tabHeight)
+			return;
+	}
 
 	if (x < 0)
 		return;
@@ -424,6 +430,10 @@ void TabWidget::reflowLayout() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
+
+	if (_alignV == ThemeEngine::kTextAlignVBottom)
+		y = _h - _tabHeight + _butTP;
+
 	_navLeft->resize(x, y, _butW, _butH, false);
 	_navRight->resize(x + _butW + 2, y, _butW, _butH, false);
 }
@@ -441,7 +451,7 @@ void TabWidget::drawWidget() {
 			_bodyBackgroundType);
 
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
-				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL));
+				_activeTab - _firstVisibleTab, (g_gui.useRTL() && _useRTL), _alignV);
 }
 
 void TabWidget::draw() {
@@ -470,22 +480,25 @@ bool TabWidget::containsWidget(Widget *w) const {
 
 
 Widget *TabWidget::findWidget(int x, int y) {
-	if (y < _tabHeight) {
-		if (_navButtonsVisible) {
-			if (y >= _butTP && y < _butTP + _butH) {
-				if (x >= _w - _butRP - _butW * 2 - 2 && x < _w - _butRP - _butW - 2)
-					return _navLeft;
-				if (x >= _w - _butRP - _butW &&  x < _w - _butRP)
+	if ((_alignV == ThemeEngine::kTextAlignVBottom && y < _h - _tabHeight) ||
+		(_alignV == ThemeEngine::kTextAlignVTop && y >= _tabHeight)) {
+		// Iterate over all child widgets and find the one which was clicked
+		return Widget::findWidgetInChain(_firstWidget, x, y - _tabHeight);
+	}
+
+	if (_navButtonsVisible) {
+		if ((_alignV == ThemeEngine::kTextAlignVTop && y >= _butTP && y < _butTP + _butH) ||
+			(_alignV == ThemeEngine::kTextAlignVBottom && y >= _h - _butH - _butTP + _tabHeight && y < _h + _tabHeight)) {
+			if (x >= _w - _butRP - _butW * 2 - 2 && x < _w - _butRP - _butW - 2)
+				return _navLeft;
+
+			if (x >= _w - _butRP - _butW &&  x < _w - _butRP)
 					return _navRight;
 			}
 		}
 
-		// Click was in the tab area
-		return this;
-	} else {
-		// Iterate over all child widgets and find the one which was clicked
-		return Widget::findWidgetInChain(_firstWidget, x, y - _tabHeight);
-	}
+	// Click was in the tab area
+	return this;
 }
 
 void TabWidget::computeLastVisibleTab(bool adjustFirstIfRoom) {

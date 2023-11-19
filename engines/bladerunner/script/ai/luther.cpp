@@ -374,6 +374,9 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 
+	default:
+		debugC(6, kDebugAnimation, "AIScriptLuther::UpdateAnimation() - Current _animationState (%d) is not supported", _animationState);
+		break;
 	}
 	*frame = _animationFrame;
 
@@ -452,6 +455,10 @@ bool AIScriptLuther::ChangeAnimationMode(int mode) {
 	case 50:
 		_animationState = 11;
 		_animationFrame = 0;
+		break;
+
+	default:
+		debugC(6, kDebugAnimation, "AIScriptLuther::ChangeAnimationMode(%d) - Target mode is not supported", mode);
 		break;
 	}
 
