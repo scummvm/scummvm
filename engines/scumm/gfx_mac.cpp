@@ -885,9 +885,11 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 	if (c >= 32 && c <= 127) {
 		if (_selectLen != 0)
 			deleteSelection();
-		_text.insertChar(event.kbd.ascii, _caretPos);
-		_caretPos++;
-		setRedraw();
+		if (_text.size() < _maxLength) {
+			_text.insertChar(event.kbd.ascii, _caretPos);
+			_caretPos++;
+			setRedraw();
+		}
 		return true;
 	}
 

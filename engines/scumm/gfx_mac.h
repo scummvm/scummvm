@@ -266,6 +266,10 @@ public:
 
 	class MacEditText : public MacWidget {
 	private:
+		// Max length of a SCUMM saved game name. We could make this
+		// configurable later, if needed.
+		uint _maxLength = 31;
+
 		int _textPos = 1;
 		int _selectLen = 0;
 		int _caretPos = 0;
