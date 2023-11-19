@@ -62,7 +62,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Allow usage of the official Monkey Island 1 Roland MT-32 patch with any
      EGA version, not just the English release.
    - Completely rewritten sound code for all Humongous Entertainment games.
-   - Faithfully implemented Mac GUI for Indiana Jones and the Last Crusade.
+   - Faithfully implemented Mac GUI for Indiana Jones and the Last Crusade,
+     and Loom.
    - Implemented turning around animation when changing direction for Full
      Throttle, The Dig and The Curse of Monkey Island.
    - Added enhancement to Loom: Ctrl+D shows up list of drafts that has been
