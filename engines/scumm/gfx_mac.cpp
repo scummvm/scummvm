@@ -750,9 +750,9 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 		setRedraw();
 }
 
-void MacGui::MacEditText::handleDoubleClick(Common::Event &event) {
+bool MacGui::MacEditText::handleDoubleClick(Common::Event &event) {
 	if (_text.empty())
-		return;
+		return false;
 
 	_selectLen = 0;
 
@@ -806,6 +806,8 @@ void MacGui::MacEditText::handleDoubleClick(Common::Event &event) {
 	_caretPos = startPos;
 	_selectLen = endPos - startPos + 1;
 	setRedraw();
+
+	return false;
 }
 
 bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
@@ -1586,15 +1588,13 @@ void MacGui::MacListBox::handleMouseDown(Common::Event &event) {
 	}
 }
 
-void MacGui::MacListBox::handleDoubleClick(Common::Event &event) {
-	int offset = _slider->getValue();
-
+bool MacGui::MacListBox::handleDoubleClick(Common::Event &event) {
 	for (uint i = 0; i < _textWidgets.size(); i++) {
-		if (_textWidgets[i]->findWidget(event.mouse.x, event.mouse.y)) {
-			debug("Double-clicked on '%s'", _texts[i + offset].c_str());
-			break;
-		}
+		if (_textWidgets[i]->findWidget(event.mouse.x, event.mouse.y))
+			return true;
 	}
+
+	return false;
 }
 
 bool MacGui::MacListBox::handleMouseUp(Common::Event &event) {
@@ -2010,6 +2010,10 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 				// as long as it remains focused it can regain
 				// the highlight by moving the cursor back into
 				// the widget bounds again.
+				//
+				// It's unclear to me if Macs should handle
+				// double clicks on mouse down, mouse up or
+				// both.
 
 				buttonPressed = true;
 				nextMouseRepeat = _system->getMillis() + 40;
@@ -2018,14 +2022,17 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 					_focusedWidget->handleMouseDown(event);
 
 					uint32 now = _system->getMillis();
-
-					if (now - _lastClickTime < 500 && ABS(event.mouse.x - _lastClickPos.x) < 5 && ABS(event.mouse.y - _lastClickPos.y) < 5) {
-						_focusedWidget->handleDoubleClick(event);
-					}
+					bool doubleClick =
+						(now - _lastClickTime < 500 &&
+						ABS(event.mouse.x - _lastClickPos.x) < 5 &&
+						ABS(event.mouse.y - _lastClickPos.y) < 5);
 
 					_lastClickTime = _system->getMillis();
 					_lastClickPos.x = event.mouse.x;
 					_lastClickPos.y = event.mouse.y;
+
+					if (doubleClick && _focusedWidget->handleDoubleClick(event))
+						return _focusedWidget->getId();
 				}
 				break;
 
@@ -3509,7 +3516,7 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0) {
+		if (clicked == 0 || clicked == 3) {
 			saveSlotToHandle =
 				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
 				slotIds[window->getWidgetValue(3)] : -1;
@@ -5272,7 +5279,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	while (!_vm->shouldQuit()) {
 		int clicked = window->runDialog(deferredActionsIds);
 
-		if (clicked == 0) {
+		if (clicked == 0 || clicked == 10) {
 			ret = true;
 			saveSlotToHandle =
 				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;

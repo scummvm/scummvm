@@ -194,7 +194,7 @@ public:
 		virtual void draw(bool drawFocused = false) = 0;
 
 		virtual void handleMouseDown(Common::Event &event) {}
-		virtual void handleDoubleClick(Common::Event &event) {}
+		virtual bool handleDoubleClick(Common::Event &event) { return false; }
 		virtual bool handleMouseUp(Common::Event &event) { return false; }
 		virtual void handleMouseMove(Common::Event &event) {}
 		virtual void handleMouseHeld() {}
@@ -304,7 +304,7 @@ public:
 		void draw(bool drawFocused = false) override;
 
 		void handleMouseDown(Common::Event &event) override;
-		void handleDoubleClick(Common::Event &event) override;
+		bool handleDoubleClick(Common::Event &event) override;
 		bool handleKeyDown(Common::Event &event) override;
 		void handleMouseHeld() override;
 		void handleMouseMove(Common::Event &event) override;
@@ -450,7 +450,7 @@ public:
 		void draw(bool drawFocused = false);
 
 		void handleMouseDown(Common::Event &event);
-		void handleDoubleClick(Common::Event &event);
+		bool handleDoubleClick(Common::Event &event);
 		bool handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
 		void handleMouseHeld();
