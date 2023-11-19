@@ -871,10 +871,8 @@ void PeopleManager::removeOneCharacter(int i) {
 			abortFunction(removePerson->continueAfterWalking);
 		removePerson->continueAfterWalking = NULL;
 
-		_allPeople->remove(removePerson);
 		_vm->_objMan->removeObjectType(removePerson->thisType);
-		delete removePerson;
-		removePerson = nullptr;
+		_allPeople->remove(removePerson);
 	}
 }
 
