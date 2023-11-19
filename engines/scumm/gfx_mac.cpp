@@ -1445,11 +1445,12 @@ void MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	// the exact same spot.
 	int newValue = calculateValueFromPos();
 
-	if (newValue != _value) {
-		eraseHandle();
-		setValue(newValue);
-		drawHandle();
-	}
+	// Even if the value doesn't change, we need to reposition the slider
+	// handle, or it may be left between two values. This is particularly
+	// noticeable for the music quality slider.
+	eraseHandle();
+	setValue(newValue);
+	drawHandle();
 }
 
 void MacGui::MacPictureSlider::handleMouseMove(Common::Event &event) {
