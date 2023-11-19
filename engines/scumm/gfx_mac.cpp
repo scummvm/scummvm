@@ -1994,6 +1994,10 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 
 				_mousePos.x = event.mouse.x;
 				_mousePos.y = event.mouse.y;
+
+				// Update engine mouse position
+				_gui->_vm->_mouse.x = _realMousePos.x / 2;
+				_gui->_vm->_mouse.y = _realMousePos.y / 2;
 			}
 
 			int w;
