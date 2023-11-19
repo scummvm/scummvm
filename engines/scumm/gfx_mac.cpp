@@ -742,77 +742,69 @@ void MacGui::MacEditText::handleMouseDown(Common::Event &event) {
 	int oldSelectLen = _selectLen;
 	int oldCaretPos = _caretPos;
 
-	uint32 now = _window->_system->getMillis();
-	int x = event.mouse.x - _bounds.left;
-
 	_caretPos = getTextPosFromMouse(event.mouse.x, event.mouse.y);
 	_selectLen = 0;
 
-	if (now - _lastClickTime < 500 && ABS(x - _lastClickX) < 5) {
-		_selectLen = 0;
-
-		if (!_text.empty()) {
-			int startPos = _caretPos;
-			int endPos = _caretPos;
-
-			// Check if used clicked past the end of the text
-			if (_caretPos >= (int)_text.size())
-				startPos = endPos = _text.size() - 1;
-
-			if (_text[startPos] == ' ') {
-				while (startPos >= 0) {
-					if (_text[startPos] != ' ') {
-						startPos++;
-						break;
-					}
-					startPos--;
-				}
-
-				while (endPos < (int)_text.size()) {
-					if (_text[endPos] != ' ') {
-						endPos--;
-						break;
-					}
-					endPos++;
-				}
-			} else {
-				while (startPos >= 0) {
-					if (_text[startPos] == ' ') {
-						startPos++;
-						break;
-					}
-					startPos--;
-				}
-
-				while (endPos < (int)_text.size()) {
-					if (_text[endPos] == ' ') {
-						endPos--;
-						break;
-					}
-					endPos++;
-				}
-			}
-
-			if (startPos < 0)
-				startPos = 0;
-
-			if (endPos >= (int)_text.size())
-				endPos = _text.size() - 1;
-
-			_caretPos = startPos;
-			_selectLen = endPos - startPos + 1;
-		}
-
-		_lastClickTime = 0;
-		_lastClickX = 0;
-	} else {
-		_lastClickTime = now;
-		_lastClickX = x;
-		_selectLen = 0;
-	}
-
 	if (_selectLen != oldSelectLen || _caretPos != oldCaretPos)
 		setRedraw();
+}
+
+void MacGui::MacEditText::handleDoubleClick(Common::Event &event) {
+	if (_text.empty())
+		return;
+
+	_selectLen = 0;
+
+	int startPos = _caretPos;
+	int endPos = _caretPos;
+
+	// Check if used clicked past the end of the text
+	if (_caretPos >= (int)_text.size())
+		startPos = endPos = _text.size() - 1;
+
+	if (_text[startPos] == ' ') {
+		while (startPos >= 0) {
+			if (_text[startPos] != ' ') {
+				startPos++;
+				break;
+			}
+			startPos--;
+		}
+
+		while (endPos < (int)_text.size()) {
+			if (_text[endPos] != ' ') {
+				endPos--;
+				break;
+			}
+			endPos++;
+		}
+	} else {
+		while (startPos >= 0) {
+			if (_text[startPos] == ' ') {
+				startPos++;
+				break;
+			}
+			startPos--;
+		}
+
+		while (endPos < (int)_text.size()) {
+			if (_text[endPos] == ' ') {
+				endPos--;
+				break;
+			}
+			endPos++;
+		}
+	}
+
+	if (startPos < 0)
+		startPos = 0;
+
+	if (endPos >= (int)_text.size())
+		endPos = _text.size() - 1;
+
+	_caretPos = startPos;
+	_selectLen = endPos - startPos + 1;
+	setRedraw();
 }
 
 bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
@@ -2006,8 +1998,19 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 				buttonPressed = true;
 				nextMouseRepeat = _system->getMillis() + 40;
 				setFocusedWidget(event.mouse.x, event.mouse.y);
-				if (_focusedWidget)
+				if (_focusedWidget) {
 					_focusedWidget->handleMouseDown(event);
+
+					uint32 now = _system->getMillis();
+
+					if (now - _lastClickTime < 500 && ABS(event.mouse.x - _lastClickPos.x) < 5 && ABS(event.mouse.y - _lastClickPos.y) < 5) {
+						_focusedWidget->handleDoubleClick(event);
+					}
+
+					_lastClickTime = _system->getMillis();
+					_lastClickPos.x = event.mouse.x;
+					_lastClickPos.y = event.mouse.y;
+				}
 				break;
 
 			case Common::EVENT_LBUTTONUP:

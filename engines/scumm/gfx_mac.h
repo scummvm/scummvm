@@ -199,6 +199,7 @@ public:
 		virtual void handleMouseHeld() {}
 		virtual void handleWheelUp() {}
 		virtual void handleWheelDown() {}
+		virtual void handleDoubleClick(Common::Event &event) {}
 		virtual bool handleKeyDown(Common::Event &event) { return false; }
 	};
 
@@ -275,10 +276,6 @@ public:
 		int _caretPos = 0;
 		int _caretX = -1;
 
-		uint32 _lastClickTime = 0;
-
-		int _lastClickX = 0;
-
 		uint32 _nextCaretBlink = 0;
 		bool _caretVisible = true;
 
@@ -305,9 +302,10 @@ public:
 		void draw(bool drawFocused = false) override;
 
 		void handleMouseDown(Common::Event &event) override;
+		void handleDoubleClick(Common::Event &event) override;
 		bool handleKeyDown(Common::Event &event) override;
-		void handleMouseMove(Common::Event &event) override;
 		void handleMouseHeld() override;
+		void handleMouseMove(Common::Event &event) override;
 	};
 
 	class MacPicture : public MacWidget {
@@ -463,6 +461,9 @@ public:
 		int _margin;
 
 		bool _visible = false;
+
+		uint32 _lastClickTime = 0;
+		Common::Point _lastClickPos;
 
 		Graphics::Surface *_beamCursor = nullptr;
 		Common::Point _beamCursorPos;
