@@ -2985,6 +2985,10 @@ MacGui::MacDialogWindow *MacGui::createDialog(int dialogId) {
 			case 16:
 			{
 				// Editable text
+
+				// Adjust for pixel accuracy...
+				r.left -= 1;
+
 				MacGui::MacEditText *editText = window->addEditText(r, "Game file", enabled);
 				editText->selectAll();
 
