@@ -30,9 +30,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Changed default GM device to "auto" for better compatibility.
 
  AGS:
-   - Synced with upstream AGS 3.6.0.51.
+   - Synced with upstream AGS 3.6.0.53.
    - Sped up graphics manipulation on modern hardware with CPU-specific code.
    - Added support for early font rendering, to match the original interpreter.
+   - Added support for playback of transcoded videos in place of unsupported codecs.
+   - Completed implementation of MOD audio playback.
+   - Fixed background music not looping in some games.
+   - Fixed game-breaking bugs in various games (e.g. Strangeland, Chronicle of Innsmouth)
+   - Multiple updates to the game detection tables.
 
  Asylum:
    - Added support for Chinese Sanitarium.
