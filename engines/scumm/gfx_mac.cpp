@@ -488,9 +488,10 @@ void MacGui::MacCheckbox::draw(bool drawFocused) {
 	_fullRedraw = false;
 }
 
-void MacGui::MacCheckbox::handleMouseUp(Common::Event &event) {
+bool MacGui::MacCheckbox::handleMouseUp(Common::Event &event) {
 	_value = _value ? 0 : 1;
 	setRedraw();
+	return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -1206,7 +1207,7 @@ void MacGui::MacSlider::handleMouseDown(Common::Event &event) {
 		redrawHandle(oldValue, _value);
 }
 
-void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
+bool MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 	if (_upArrowPressed) {
 		_upArrowPressed = false;
 		drawUpArrow(true);
@@ -1230,6 +1231,8 @@ void MacGui::MacSlider::handleMouseUp(Common::Event &event) {
 	_handlePos = -1;
 	_clickPos.x = -1;
 	_clickPos.y = -1;
+
+	return false;
 }
 
 void MacGui::MacSlider::handleMouseMove(Common::Event &event) {
@@ -1434,7 +1437,7 @@ void MacGui::MacPictureSlider::handleMouseDown(Common::Event &event) {
 	handleMouseMove(event);
 }
 
-void MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
+bool MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	// Erase the drag rect, since the handle might not end up in
 	// the exact same spot.
 	int newValue = calculateValueFromPos();
@@ -1445,6 +1448,8 @@ void MacGui::MacPictureSlider::handleMouseUp(Common::Event &event) {
 	eraseHandle();
 	setValue(newValue);
 	drawHandle();
+
+	return false;
 }
 
 void MacGui::MacPictureSlider::handleMouseMove(Common::Event &event) {
@@ -1559,9 +1564,7 @@ void MacGui::MacListBox::draw(bool drawFocused) {
 }
 
 void MacGui::MacListBox::handleMouseDown(Common::Event &event) {
-	Common::Point mousePos = _window->getMousePos();
-
-	if (_slider->findWidget(mousePos.x, mousePos.y)) {
+	if (_slider->findWidget(event.mouse.x, event.mouse.y)) {
 		int oldValue = _slider->getValue();
 
 		_sliderFocused = true;
@@ -1576,14 +1579,25 @@ void MacGui::MacListBox::handleMouseDown(Common::Event &event) {
 	int offset = _slider->getValue();
 
 	for (uint i = 0; i < _textWidgets.size(); i++) {
-		if (_textWidgets[i]->findWidget(mousePos.x, mousePos.y)) {
+		if (_textWidgets[i]->findWidget(event.mouse.x, event.mouse.y)) {
 			setValue(i + offset);
 			break;
 		}
 	}
 }
 
-void MacGui::MacListBox::handleMouseUp(Common::Event &event) {
+void MacGui::MacListBox::handleDoubleClick(Common::Event &event) {
+	int offset = _slider->getValue();
+
+	for (uint i = 0; i < _textWidgets.size(); i++) {
+		if (_textWidgets[i]->findWidget(event.mouse.x, event.mouse.y)) {
+			debug("Double-clicked on '%s'", _texts[i + offset].c_str());
+			break;
+		}
+	}
+}
+
+bool MacGui::MacListBox::handleMouseUp(Common::Event &event) {
 	if (_sliderFocused) {
 		int oldValue = _slider->getValue();
 
@@ -1593,6 +1607,8 @@ void MacGui::MacListBox::handleMouseUp(Common::Event &event) {
 		if (_slider->getValue() != oldValue)
 			updateTexts();
 	}
+
+	return false;
 }
 
 void MacGui::MacListBox::handleMouseMove(Common::Event &event) {
@@ -2029,10 +2045,11 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 					updateCursor();
 
 					if (widget->findWidget(event.mouse.x, event.mouse.y)) {
-						clearFocusedWidget();
 						widgetId = widget->getId();
-						widget->handleMouseUp(event);
-						return widgetId;
+						if (widget->handleMouseUp(event)) {
+							clearFocusedWidget();
+							return widgetId;
+						}
 					}
 
 					clearFocusedWidget();
@@ -3493,6 +3510,9 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 		int clicked = window->runDialog(deferredActionsIds);
 
 		if (clicked == 0) {
+			saveSlotToHandle =
+				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
+				slotIds[window->getWidgetValue(3)] : -1;
 			ret = true;
 			break;
 		}
@@ -3503,12 +3523,6 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 		if (clicked == 2) {
 			if (runOkCancelDialog("Are you sure you want to delete the saved game?"))
 				runOkCancelDialog("Deleting savegames is currently unsupported in ScummVM.");
-		}
-
-		if (clicked == 3) {
-			saveSlotToHandle =
-				window->getWidgetValue(3) < ARRAYSIZE(slotIds) ?
-				slotIds[window->getWidgetValue(3)] : -1;
 		}
 	}
 
@@ -5260,16 +5274,13 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 
 		if (clicked == 0) {
 			ret = true;
+			saveSlotToHandle =
+				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
 			break;
 		}
 
 		if (clicked == 2)
 			break;
-
-		if (clicked == 10) {
-			saveSlotToHandle =
-				listBox->getValue() < ARRAYSIZE(slotIds) ? slotIds[listBox->getValue()] : -1;
-		}
 	}
 
 	delete window;

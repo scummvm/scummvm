@@ -194,12 +194,12 @@ public:
 		virtual void draw(bool drawFocused = false) = 0;
 
 		virtual void handleMouseDown(Common::Event &event) {}
-		virtual void handleMouseUp(Common::Event &event) {}
+		virtual void handleDoubleClick(Common::Event &event) {}
+		virtual bool handleMouseUp(Common::Event &event) { return false; }
 		virtual void handleMouseMove(Common::Event &event) {}
 		virtual void handleMouseHeld() {}
 		virtual void handleWheelUp() {}
 		virtual void handleWheelDown() {}
-		virtual void handleDoubleClick(Common::Event &event) {}
 		virtual bool handleKeyDown(Common::Event &event) { return false; }
 	};
 
@@ -215,6 +215,8 @@ public:
 		MacButton(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
 		void draw(bool drawFocused = false);
+
+		bool handleMouseUp(Common::Event &event) { return true; }
 	};
 
 	class MacCheckbox : public MacWidget {
@@ -226,7 +228,7 @@ public:
 
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocused = false);
-		void handleMouseUp(Common::Event &event);
+		bool handleMouseUp(Common::Event &event);
 	};
 
 	// The dialogs add texts as disabled, but we don't want it to be drawn
@@ -382,7 +384,7 @@ public:
 		void redrawHandle(int oldValue, int newValue);
 
 		void handleMouseDown(Common::Event &event);
-		void handleMouseUp(Common::Event &event);
+		bool handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
 		void handleMouseHeld();
 		void handleWheelUp();
@@ -409,7 +411,7 @@ public:
 		void draw(bool drawFocused = false);
 
 		void handleMouseDown(Common::Event &event);
-		void handleMouseUp(Common::Event &event);
+		bool handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
 		void handleWheelUp();
 		void handleWheelDown();
@@ -448,7 +450,8 @@ public:
 		void draw(bool drawFocused = false);
 
 		void handleMouseDown(Common::Event &event);
-		void handleMouseUp(Common::Event &event);
+		void handleDoubleClick(Common::Event &event);
+		bool handleMouseUp(Common::Event &event);
 		void handleMouseMove(Common::Event &event);
 		void handleMouseHeld();
 		void handleWheelUp();
