@@ -219,7 +219,6 @@ public:
 	class MacCheckbox : public MacWidget {
 	private:
 		Common::Rect _hitBounds;
-		//bool _isChecked = false;
 
 	public:
 		MacCheckbox(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled);
@@ -273,7 +272,6 @@ public:
 		int _caretX = -1;
 
 		uint32 _lastClickTime = 0;
-		//uint32 _lastScrollTime = 0;
 
 		int _lastClickX = 0;
 
@@ -395,8 +393,6 @@ public:
 		MacPicture *_handle;
 		int _minX;
 		int _maxX;
-		//int _leftMargin;
-		//int _rightMargin;
 
 		void eraseHandle();
 		void drawHandle();
@@ -405,7 +401,7 @@ public:
 		 MacPictureSlider(MacGui::MacDialogWindow *window, MacPicture *background, MacPicture *handle, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin)
 			: MacSliderBase(window, background->getBounds(), minValue, maxValue, minX + leftMargin, maxX - rightMargin, enabled),
 			_background(background), _handle(handle), _minX(minX),
-			_maxX(maxX)/*, _leftMargin(leftMargin), _rightMargin(rightMargin) */ {}
+			_maxX(maxX) {}
 
 		bool findWidget(int x, int y) const;
 		void draw(bool drawFocused = false);
@@ -485,7 +481,6 @@ public:
 
 		MacWidget *_defaultWidget = nullptr;
 
-		//int _mouseOverWidget = -1;
 		MacWidget *_focusedWidget = nullptr;
 		Common::Point _focusClick;
 		Common::Point _oldMousePos;
