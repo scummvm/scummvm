@@ -196,9 +196,8 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 	int w = MIN<uint>(_zBuffer->width, _winWidth + x);
 	int h = MIN<uint>(_zBuffer->height, _winHeight + y);
 
-	for (uint y1 = y; y1 < h; y1++) {
-		for (uint x1 = x; x1 < w; x1++) {
-
+	for (int y1 = y; y1 < h; y1++) {
+		for (int x1 = x; x1 < w; x1++) {
 			uint8 z = 0;
 
 			if (upsidedown) {
@@ -207,10 +206,8 @@ void GraphicsManager::drawZBuffer(int x, int y, bool upsidedown) {
 				z = (_zBuffer->tex[y1 * _zBuffer->width + x1] + 1) * 2;
 			}
 
-
 			if ( z > _zBufferSurface[(y1 - y) * _winWidth + (x1 - x)])
 				_zBufferSurface[(y1 - y) * _winWidth + (x1 - x)] = z;
-
 		}
 	}
 }
