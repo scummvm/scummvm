@@ -72,6 +72,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      Island 1. Text rendering for this game is now pixel perfect.
    - Implemented complete support for the Macintosh and DOS/V Japanese versions
      of Indiana Jones and the Fate of Atlantis distributed by MicroMouse.
+   - Implemented network multiplayer support for Backyard Football,
+     Backyard Baseball 2001, and Backyard Football 2002.
 
  Sherlock:
    - Added support for Chinese Serrated Scalpel.
