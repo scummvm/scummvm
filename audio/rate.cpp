@@ -76,15 +76,15 @@ private:
 	/** Current sample(s) in the input stream (left/right channel) */
 	st_sample_t _inCurL, _inCurR;
 
-    int copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
-    int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
-    int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	int copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
 
 public:
-    RateConverter_Impl(st_rate_t inputRate, st_rate_t outputRate);
-    virtual ~RateConverter_Impl() {}
+	RateConverter_Impl(st_rate_t inputRate, st_rate_t outputRate);
+	virtual ~RateConverter_Impl() {}
 
-    int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) override;
+	int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) override;
 
 	void setInputRate(st_rate_t inputRate) override { _inRate = inputRate; }
 	void setOutputRate(st_rate_t outputRate) override { _outRate = outputRate; }
@@ -307,7 +307,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream 
 }
 
 RateConverter *makeRateConverter(st_rate_t inRate, st_rate_t outRate, bool inStereo, bool outStereo, bool reverseStereo) {
-    if (inStereo) {
+	if (inStereo) {
 		if (outStereo) {
 			if (reverseStereo)
 				return new RateConverter_Impl<true, true, true>(inRate, outRate);

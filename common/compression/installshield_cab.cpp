@@ -127,7 +127,7 @@ private:
 	FileMap _map;
 	String _baseName;
 	Common::Array<VolumeHeader> _volumeHeaders;
-    bool _useSearchMan;
+	bool _useSearchMan;
 
 	static bool readVolumeHeader(SeekableReadStream *volumeStream, VolumeHeader &inVolumeHeader);
 
@@ -139,20 +139,20 @@ InstallShieldCabinet::InstallShieldCabinet() : _version(0), _useSearchMan(false)
 }
 
 bool InstallShieldCabinet::open(const String *baseName, const FSNode *node) {
-    // Store the base name so we can generate file names
-    if (baseName) {
-        _baseName = *baseName;
-        _useSearchMan = true;
-    } else if (node) {
-        _baseName = node->getPath();
-        _useSearchMan = false;
-    } else {
-        return false;
-    }
+	// Store the base name so we can generate file names
+	if (baseName) {
+		_baseName = *baseName;
+		_useSearchMan = true;
+	} else if (node) {
+		_baseName = node->getPath();
+		_useSearchMan = false;
+	} else {
+		return false;
+	}
 
-    if (_baseName.hasSuffix(".cab") || _baseName.hasSuffix(".hdr")) {
-        _baseName.erase(_baseName.size() - 5, String::npos);
-    }
+	if (_baseName.hasSuffix(".cab") || _baseName.hasSuffix(".hdr")) {
+		_baseName.erase(_baseName.size() - 5, String::npos);
+	}
 
 	uint fileIndex = 0;
 	ScopedPtr<SeekableReadStream> file;
@@ -160,38 +160,38 @@ bool InstallShieldCabinet::open(const String *baseName, const FSNode *node) {
 	// First, open all the .cab files and read their headers
 	uint volume = 1;
 	for (;;) {
-        if (_useSearchMan) {
-            file.reset(SearchMan.createReadStreamForMember(getVolumeName(volume++)));
-            if (!file.get()) {
-                break;
-            }
-        } else {
-            file.reset(new Common::File());
-            if (!((Common::File *)file.get())->open(Common::FSNode(getVolumeName(volume++)))) {
-                break;
-            }
-        }
+		if (_useSearchMan) {
+			file.reset(SearchMan.createReadStreamForMember(getVolumeName(volume++)));
+			if (!file.get()) {
+				break;
+			}
+		} else {
+			file.reset(new Common::File());
+			if (!((Common::File *)file.get())->open(Common::FSNode(getVolumeName(volume++)))) {
+				break;
+			}
+		}
 
 		_volumeHeaders.push_back(VolumeHeader());
 		readVolumeHeader(file.get(), _volumeHeaders.back());
 	}
 
 	// Try to open a header (.hdr) file to get the file list
-    if (_useSearchMan) {
-        file.reset(SearchMan.createReadStreamForMember(getHeaderName()));
-        if (!file) {
-            // No header file is present, file list is in first .cab file
-            file.reset(SearchMan.createReadStreamForMember(getVolumeName(1)));
-        }
-    } else {
-        file.reset(new Common::File());
-        if (!((Common::File *)file.get())->open(Common::FSNode(getHeaderName()))) {
-            // No header file is present, file list is in first .cab file
-            if (!((Common::File *)file.get())->open(Common::FSNode(getVolumeName(1)))) {
-                file.reset(nullptr);
-            }
-        }
-    }
+	if (_useSearchMan) {
+		file.reset(SearchMan.createReadStreamForMember(getHeaderName()));
+		if (!file) {
+			// No header file is present, file list is in first .cab file
+			file.reset(SearchMan.createReadStreamForMember(getVolumeName(1)));
+		}
+	} else {
+		file.reset(new Common::File());
+		if (!((Common::File *)file.get())->open(Common::FSNode(getHeaderName()))) {
+			// No header file is present, file list is in first .cab file
+			if (!((Common::File *)file.get())->open(Common::FSNode(getVolumeName(1)))) {
+				file.reset(nullptr);
+			}
+		}
+	}
 
 	if (!file) {
 		close();
@@ -326,7 +326,7 @@ bool InstallShieldCabinet::open(const String *baseName, const FSNode *node) {
 void InstallShieldCabinet::close() {
 	_baseName.clear();
 	_map.clear();
-    _volumeHeaders.clear();
+	_volumeHeaders.clear();
 	_version = 0;
 }
 
@@ -353,20 +353,20 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 
 	const FileEntry &entry = _map[name];
 
-    if (entry.flags & kObfuscated) {
-        warning("Cannot extract obfuscated file %s", name.c_str());
-        return nullptr;
-    }
+	if (entry.flags & kObfuscated) {
+		warning("Cannot extract obfuscated file %s", name.c_str());
+		return nullptr;
+	}
 
 	ScopedPtr<SeekableReadStream> stream;
-    if (_useSearchMan) {
-        stream.reset(SearchMan.createReadStreamForMember(getVolumeName((entry.volume))));
-    } else {
-        stream.reset(new Common::File());
-        if (!((Common::File *)stream.get())->open(Common::FSNode(getVolumeName((entry.volume))))) {
-            stream.reset(nullptr);
-        }
-    }
+	if (_useSearchMan) {
+		stream.reset(SearchMan.createReadStreamForMember(getVolumeName((entry.volume))));
+	} else {
+		stream.reset(new Common::File());
+		if (!((Common::File *)stream.get())->open(Common::FSNode(getVolumeName((entry.volume))))) {
+			stream.reset(nullptr);
+		}
+	}
 
 	if (!stream) {
 		warning("Failed to open volume for file '%s'", name.c_str());
@@ -387,13 +387,13 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &
 
 		// Then, iterate through the next volumes until we've read all the data for the file
 		while (bytesRead < entry.compressedSize) {
-            if (_useSearchMan) {
-                stream.reset(SearchMan.createReadStreamForMember(getVolumeName((++volume))));
-            } else {
-                if (!((Common::File *)stream.get())->open(Common::FSNode(getVolumeName((++volume))))) {
-                    stream.reset(nullptr);
-                }
-            }
+			if (_useSearchMan) {
+				stream.reset(SearchMan.createReadStreamForMember(getVolumeName((++volume))));
+			} else {
+				if (!((Common::File *)stream.get())->open(Common::FSNode(getVolumeName((++volume))))) {
+					stream.reset(nullptr);
+				}
+			}
 			
 			if (!stream.get()) {
 				warning("Failed to read split file %s", name.c_str());

@@ -75,9 +75,9 @@ static inline int16 clampedAdd(int16& a, int b) {
 */
 class RateConverter {
 public:
-    RateConverter() {}
+	RateConverter() {}
 	virtual ~RateConverter() {}
-    
+
 	/**
 	 * Convert the provided AudioStream to the target sample rate.
 	 * 

@@ -914,7 +914,7 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::atFirstEdit() const {
-    return _curEdit == 0;
+	return _curEdit == 0;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
@@ -922,9 +922,9 @@ bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::beforeCurEdit() const {
-    // We're at the end of the edit once the next frame's time would
-    // bring us past the end of the edit.
-    return getRateAdjustedFrameTime() <= getCurEditTimeOffset();
+	// We're at the end of the edit once the next frame's time would
+	// bring us past the end of the edit.
+	return getRateAdjustedFrameTime() <= getCurEditTimeOffset();
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
