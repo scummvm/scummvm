@@ -2502,10 +2502,13 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 	if (id == 0)
 		return true;
 
-	// Originally, the menu bar would still be visible. I don't know how
-	// to replicate that effect.
+	// This is how we keep the menu bar visible.
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+	menu->closeMenu();
+	menu->setActive(true);
+	menu->setVisible(true);
+	updateWindowManager();
 
-	_windowManager->getMenu()->closeMenu();
 	int saveSlotToHandle = -1;
 	Common::String savegameName;
 
