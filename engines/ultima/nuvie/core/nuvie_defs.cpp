@@ -32,7 +32,7 @@ void u6debug(bool no_header, const DebugLevelType level, const char *format, ...
 	Common::String output = Common::String::vformat(format, va);
 	va_end(va);
 
-	::debug(level, "%s", output.c_str());
+	::debugN(level, "%s", output.c_str());
 }
 
 #endif

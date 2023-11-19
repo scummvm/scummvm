@@ -1282,7 +1282,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 
 		if (num < 256 && spell_list[num] == NULL) {
 			spell_list[num] = new Spell((uint8)num, (const char *)name, (const char *)invocation, re);
-			::debug(1, "num = %d, reagents = %d, name = %s invocation = %s\n", num, re, name, invocation);
+			::debug(1, "num = %d, reagents = %d, name = %s invocation = %s", num, re, name, invocation);
 		}
 
 		lua_pop(L, 1);
