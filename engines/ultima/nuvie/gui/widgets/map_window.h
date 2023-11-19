@@ -146,6 +146,8 @@ class MapWindow: public GUI_Widget {
 
 	bool lighting_update_required;
 
+	bool game_started;
+
 public:
 
 	MapWindow(Configuration *cfg, Map *m);
