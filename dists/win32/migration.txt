@@ -20,6 +20,7 @@ cryomni3d.dat
 drascula.dat
 encoding.dat
 fonts.dat
+fonts-cjk.dat
 freescape.dat
 grim-patch.lab
 gui-icons.dat

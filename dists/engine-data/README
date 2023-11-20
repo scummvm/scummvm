@@ -34,6 +34,11 @@ fonts.dat:
 This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
 our GUI.
 
+fonts-cjk.dat:
+This file contains set of free CJK fonts (or other big ones), used in our GUI and
+some engines. This file is intended to be big, thus, not suitable for ports with
+memory constraints.
+
 grim-patch.lab:
 This file contains set of script patches for Grim Fandango game.
 

@@ -51,6 +51,7 @@ wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #endif
 #ifdef USE_FREETYPE2
 fonts.dat              FILE    "dists/engine-data/fonts.dat"
+fonts-cjk.dat          FILE    "dists/engine-data/fonts-cjk.dat"
 #endif
 
 #if PLUGIN_ENABLED_STATIC(ACCESS)
