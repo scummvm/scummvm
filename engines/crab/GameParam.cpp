@@ -70,7 +70,7 @@ void FilePaths::loadLevel(const Common::String &filename) {
 			Common::String id;
 			loadStr(id, "id", n);
 
-			_level[id] = l;
+			_level[id] = Common::move(l);
 		}
 	}
 }
