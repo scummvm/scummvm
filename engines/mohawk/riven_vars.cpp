@@ -277,6 +277,22 @@ uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
 	return _vars[name];
 }
 
+namespace {
+
+uint32 getTwoRandomDomePositionsRng(Common::RandomSource *rnd, uint min, uint max) {
+	uint first = rnd->getRandomNumberRng(min, max);
+	uint second = rnd->getRandomNumberRng(min, max - 1);
+
+	// Avoid overlap of the two positions
+	if (second >= first) {
+		second++;
+	}
+
+	return 1 << (25 - first) | 1 << (25 - second);
+}
+
+} // End of anonymous namespace
+
 void MohawkEngine_Riven::initVars() {
 	// Most variables just start at 0, it's simpler to do this
 	for (uint32 i = 0; i < ARRAYSIZE(variableNames); i++)
@@ -337,17 +353,14 @@ void MohawkEngine_Riven::initVars() {
 
 	// Randomize the dome combination -- each bit represents a slider position,
 	// the highest bit (1 << 24) represents 1, (1 << 23) represents 2, etc.
+	// The dome combination is not completely random:
+	//  - The first slider position is a random number in the range [2, 10].
+	//  - The second and third slider positions are randomly chosen from the interval [11, 15].
+	//  - The fourth and fifth slider positions are randomly chosen from the interval [16, 24].
 	uint32 &domeCombo = _vars["adomecombo"];
-	for (byte bitsSet = 0; bitsSet < 5;) {
-		uint32 randomBit = 1 << (24 - _rnd->getRandomNumber(24));
-
-		// Don't overwrite a bit we already set, and throw out the bottom five bits being set
-		if (domeCombo & randomBit || (domeCombo | randomBit) == 31)
-			continue;
-
-		domeCombo |= randomBit;
-		bitsSet++;
-	}
+	domeCombo |= 1 << (25 - _rnd->getRandomNumberRng(2, 10));
+	domeCombo |= getTwoRandomDomePositionsRng(_rnd, 11, 15);
+	domeCombo |= getTwoRandomDomePositionsRng(_rnd, 16, 24);
 }
 
 } // End of namespace Mohawk
