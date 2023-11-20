@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-20 04:09+0000\n"
+"POT-Creation-Date: 2023-11-20 13:39+0000\n"
 "PO-Revision-Date: 2023-02-13 09:34+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -9247,19 +9247,19 @@ msgstr "Letět doprava"
 msgid "Fly to lower right"
 msgstr "Letět doprava dolů"
 
-#: engines/scumm/input.cpp:1344
+#: engines/scumm/input.cpp:1348
 msgid "Snap scroll on"
 msgstr "Přichycení při posunování zapnuto"
 
-#: engines/scumm/input.cpp:1346
+#: engines/scumm/input.cpp:1350
 msgid "Snap scroll off"
 msgstr "Přichycení při posunování zapnuto"
 
-#: engines/scumm/input.cpp:1359
+#: engines/scumm/input.cpp:1363
 msgid "Music volume: "
 msgstr "Hlasitost hudby: "
 
-#: engines/scumm/input.cpp:1376
+#: engines/scumm/input.cpp:1380
 msgid "Subtitle speed: "
 msgstr "Rychlost titulků: "
 
