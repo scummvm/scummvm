@@ -35,6 +35,7 @@ CursorManager::CursorManager()  :
 	_curItemID(-1),
 	_curCursorType(kNormal),
 	_curCursorID(0),
+	_lastCursorID(0),
 	_hasItem(false),
 	_numCursorTypes(0),
 	_puzzleExitCursor((g_nancy->getGameType() >= kGameTypeNancy4) ? kMoveBackward : kExit),
@@ -275,24 +276,28 @@ void CursorManager::warpCursor(const Common::Point &pos) {
 }
 
 void CursorManager::applyCursor() {
-	Graphics::ManagedSurface *surf;
-	Common::Rect bounds = _cursors[_curCursorID].bounds;
-	Common::Point hotspot = _cursors[_curCursorID].hotspot;
+	if (_curCursorID != _lastCursorID) {
+		Graphics::ManagedSurface *surf;
+		Common::Rect bounds = _cursors[_curCursorID].bounds;
+		Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
-	if (_hasItem) {
-		surf = &_invCursorsSurface;
+		if (_hasItem) {
+			surf = &_invCursorsSurface;
 
-	} else {
-		surf = &g_nancy->_graphicsManager->_object0;
-	}
+		} else {
+			surf = &g_nancy->_graphicsManager->_object0;
+		}
 
-	Graphics::ManagedSurface temp(*surf, bounds);
+		Graphics::ManagedSurface temp(*surf, bounds);
 
-	CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphicsManager->getTransColor(), false);
-	if (g_nancy->getGameType() == kGameTypeVampire) {
-		byte palette[3 * 256];
-		surf->grabPalette(palette, 0, 256);
-		CursorMan.replaceCursorPalette(palette, 0, 256);
+		CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphicsManager->getTransColor(), false);
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			byte palette[3 * 256];
+			surf->grabPalette(palette, 0, 256);
+			CursorMan.replaceCursorPalette(palette, 0, 256);
+		}
+
+		_lastCursorID = _curCursorID;
 	}
 
 	if (_warpedMousePos.x != -500 && _warpedMousePos.y != -500) {

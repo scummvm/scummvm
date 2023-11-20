@@ -97,6 +97,7 @@ private:
 	CursorType _curCursorType;
 	int16 _curItemID;
 	uint _curCursorID;
+	uint _lastCursorID;
 	bool _hasItem;
 	bool _isInitialized;
 	int _numCursorTypes;
