@@ -205,51 +205,57 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 
 	const byte *pal = _picture->_palette;
 	bool previouslyDithered = _ditheredImg != nullptr;
-	if (_ditheredImg) {
-		_ditheredImg->free();
-		delete _ditheredImg;
-		_ditheredImg = nullptr;
-		_ditheredTargetClut = CastMemberID(0, 0);
-	}
 
-	if (dstBpp == 1) {
-		// ScummVM using 8-bit video
+	// _ditheredImg should contain a cached copy of the bitmap after any expensive
+	// colourspace transformations (e.g. palette remapping or dithering).
+	// We also want to make sure that
+	if (isModified() || (((srcBpp == 1) || (srcBpp > 1 && dstBpp == 1)) && !previouslyDithered)) {
+		if (_ditheredImg) {
+			_ditheredImg->free();
+			delete _ditheredImg;
+			_ditheredImg = nullptr;
+			_ditheredTargetClut = CastMemberID(0, 0);
+		}
 
-		if (srcBpp > 1
-		// At least early directors were not remapping 8bpp images. But in case it is
-		// needed, here is the code
+		if (dstBpp == 1) {
+			// ScummVM using 8-bit video
+
+			if (srcBpp > 1
+			// At least early directors were not remapping 8bpp images. But in case it is
+			// needed, here is the code
 #if 0
-		|| (srcBpp == 1 &&
-			memcmp(g_director->_wm->getPalette(), _img->_palette, _img->_paletteSize))
+			|| (srcBpp == 1 &&
+				memcmp(g_director->_wm->getPalette(), _img->_palette, _img->_paletteSize))
 #endif
-			) {
+				) {
 
-			_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+				_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
-			pal = g_director->_wm->getPalette();
-		} else if (srcBpp == 1) {
-			_ditheredImg = getDitherImg();
+				pal = g_director->_wm->getPalette();
+			} else if (srcBpp == 1) {
+				_ditheredImg = getDitherImg();
+			}
+		} else {
+			// ScummVM using 32-bit video
+			//if (srcBpp > 1 && srcBpp != 4) {
+				// non-indexed surface, convert to 32-bit
+			//	_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
+
+			//} else
+			if (srcBpp == 1) {
+				_ditheredImg = getDitherImg();
+			}
 		}
-	} else {
-		// ScummVM using 32-bit video
-		//if (srcBpp > 1 && srcBpp != 4) {
-			// non-indexed surface, convert to 32-bit
-		//	_ditheredImg = _picture->_surface.convertTo(g_director->_wm->_pixelformat, nullptr, 0, g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
-		//} else
-		if (srcBpp == 1) {
-			_ditheredImg = getDitherImg();
+		Movie *movie = g_director->getCurrentMovie();
+		Score *score = movie->getScore();
+
+		if (_ditheredImg) {
+			debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Dithering cast %d from source palette %s to target palette %s", _castId, _clut.asString().c_str(), score->getCurrentPalette().asString().c_str());
+		} else if (previouslyDithered) {
+			debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Removed dithered image for cast %d, score palette %s matches cast member", _castId, score->getCurrentPalette().asString().c_str());
+
 		}
-	}
-
-	Movie *movie = g_director->getCurrentMovie();
-	Score *score = movie->getScore();
-
-	if (_ditheredImg) {
-		debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Dithering image from source palette %s to target palette %s", _clut.asString().c_str(), score->getCurrentPalette().asString().c_str());
-	} else if (previouslyDithered) {
-		debugC(4, kDebugImages, "BitmapCastMember::createWidget(): Removed dithered image, score palette %s matches cast member", score->getCurrentPalette().asString().c_str());
-
 	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
@@ -384,11 +390,7 @@ bool BitmapCastMember::isModified() {
 		if (castPaletteId.isNull())
 			castPaletteId = cast->_defaultPalette;
 
-		if (currentPaletteId == castPaletteId) {
-			return !_ditheredTargetClut.isNull();
-		} else {
-			return !_ditheredTargetClut.isNull() && _ditheredTargetClut != currentPaletteId;
-		}
+		return !_ditheredTargetClut.isNull() && _ditheredTargetClut != currentPaletteId;
 	}
 	return false;
 }
