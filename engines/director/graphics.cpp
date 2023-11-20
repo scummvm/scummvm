@@ -460,6 +460,28 @@ Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 		return &inkDrawPixel<uint32>;
 }
 
+uint32 DirectorEngine::getColorBlack() {
+	if (_pixelformat.bytesPerPixel == 1)
+		// needs to be the last entry in the palette.
+		// we can't use findBestColor, as it might
+		// pick a different entry that's also black.
+		return 0xff;
+	else
+		// send RGB through findBestColor to avoid endian issues
+		return _wm->findBestColor(0, 0, 0);
+}
+
+uint32 DirectorEngine::getColorWhite() {
+	if (_pixelformat.bytesPerPixel == 1)
+		// needs to be the first entry in the palette.
+		// we can't use findBestColor, as it might
+		// pick a different entry that's also white.
+		return 0x00;
+	else
+		// send RGB through findBestColor to avoid endian issues
+		return _wm->findBestColor(255, 255, 255);
+}
+
 void DirectorPlotData::setApplyColor() {
 	// Director has two ways of rendering an ink setting.
 	// The default is to incorporate the full range of colors in the image.
@@ -632,6 +654,25 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 
 	Common::Rect srfClip = srf->getBounds();
 	bool failedBoundsCheck = false;
+
+	// FAST PATH: if we're not doing any per-pixel ops,
+	// use the stock blitter. Your CPU will thank you.
+	if (!applyColor && !alpha && !ms) {
+		Common::Rect offsetRect(
+			Common::Point(abs(srcRect.left - destRect.left), abs(srcRect.top - destRect.top)),
+			destRect.width(),
+			destRect.height()
+		);
+		offsetRect.clip(srfClip);
+		switch (ink) {
+		case kInkTypeCopy:
+			dst->blitFrom(*srf, offsetRect, destRect);
+			return;
+			break;
+		default:
+			break;
+		}
+	}
 
 	// For blit efficiency, surfaces passed here need to be the same
 	// format as the window manager. Most of the time this is
