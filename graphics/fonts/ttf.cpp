@@ -907,9 +907,29 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 	}
 
 	Common::File f;
+
 	if (!f.open(filename, *archive)) {
 		delete archive;
-		return nullptr;
+
+		// Trying fonts-cjk.dat
+		if (ConfMan.hasKey("extrapath")) {
+			Common::FSDirectory extrapath(ConfMan.get("extrapath"));
+			archiveStream = extrapath.createReadStreamForMember("fonts-cjk.dat");
+		}
+
+		if (!archiveStream) {
+			archiveStream = SearchMan.createReadStreamForMember("fonts-cjk.dat");
+		}
+
+		archive = Common::makeZipArchive(archiveStream);
+		if (!archive) {
+			return nullptr;
+		}
+
+		if (!f.open(filename, *archive)) {
+			delete archive;
+			return nullptr;
+		}
 	}
 
 	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);
