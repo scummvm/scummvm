@@ -49,9 +49,7 @@
 #include "audio/mpu401.h"
 #include "audio/softsynth/emumidi.h"
 #include "gui/message.h"
-#if defined(IPHONE_IOS7)
-#include "backends/platform/ios7/ios7_common.h"
-#endif
+#include "backends/fs/fs-factory.h"
 #ifdef __ANDROID__
 #include "backends/fs/android/android-fs-factory.h"
 #endif
@@ -288,17 +286,10 @@ Common::String MidiDriver_FluidSynth::getSoundFontPath() const {
 		return path;
 
 	// First check if this is a full path
-#if defined(IPHONE_IOS7)
-	// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
-	// with the chroot filesystem. All the path selected by the user are
-	// relative to the Document directory. So, we need to adjust the path to
-	// reflect that.
-	Common::FSNode fileNode(iOS7_getDocumentsDir() + path);
-#else
-	Common::FSNode fileNode(path);
-#endif
+	Common::String fullPath = g_system->getFilesystemFactory()->getSystemFullPath(path);
+	Common::FSNode fileNode(fullPath);
 	if (fileNode.exists())
-		return fileNode.getPath();
+		return fullPath;
 
 	// Then check with soundfontpath
 	if (ConfMan.hasKey("soundfontpath")) {
