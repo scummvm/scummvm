@@ -535,4 +535,11 @@ DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/freescape/shaders/*)
 endif
 endif
 
+# Soundfonts
+DIST_FILES_SOUNDFONTS=
+ifdef USE_FLUIDSYNTH
+DIST_FILES_SOUNDFONTS:=$(addprefix $(srcdir)/dists/soundfonts/,Roland_SC-55.sf2)
+DIST_FILES_DOCS+=$(addprefix $(srcdir)/dists/soundfonts/,COPYRIGHT.Roland_SC-55)
+endif
+
 .PHONY: all clean distclean plugins dist-src clean-toplevel manual

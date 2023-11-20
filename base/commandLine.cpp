@@ -328,6 +328,10 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("enable_unsupported_game_warning", true);
 
+#ifdef USE_FLUIDSYNTH
+	ConfMan.registerDefault("soundfont", "Roland_SC-55.sf2");
+#endif
+
 	// Game specific
 	ConfMan.registerDefault("path", "");
 	ConfMan.registerDefault("platform", Common::kPlatformDOS);
@@ -2132,6 +2136,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 
 	ADD_DEFAULT_PATH("themepath", "gui/themes/")
 	ADD_DEFAULT_PATH("extrapath", "dists/engine-data/")
+	ADD_DEFAULT_PATH("soundfontpath", "dists/soundfonts/")
 #endif
 
 	return false;

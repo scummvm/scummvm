@@ -13,6 +13,9 @@ endif
 ifdef DIST_FILES_ENGINEDATA_BIG
 	cp $(DIST_FILES_ENGINEDATA_BIG) ./switch_release/scummvm/data
 endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) ./switch_release/scummvm/data
+endif
 ifdef DIST_FILES_NETWORKING
 	cp $(DIST_FILES_NETWORKING) ./switch_release/scummvm/data
 endif

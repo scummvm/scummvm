@@ -15,7 +15,7 @@ install-data:
 	$(INSTALL) -d "$(DESTDIR)$(docdir)"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
 	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) "$(DESTDIR)$(datadir)/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG)  $(DIST_FILES_SOUNDFONTS) "$(DESTDIR)$(datadir)/"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/org.scummvm.scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/org.scummvm.scummvm.desktop"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/metainfo"
@@ -74,6 +74,9 @@ ifdef DIST_FILES_NETWORKING
 endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ./dist-generic/scummvm/data
+endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) ./dist-generic/scummvm/data
 endif
 ifdef DIST_FILES_SHADERS
 	mkdir -p ./dist-generic/scummvm/data/shaders
@@ -162,6 +165,9 @@ ifdef DIST_FILES_ENGINEDATA_BIG
 endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/Contents/Resources/
+endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) $(bundle_name)/Contents/Resources/
 endif
 ifneq ($(DIST_FILES_SHADERS),)
 	mkdir -p $(bundle_name)/Contents/Resources/shaders
@@ -297,6 +303,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
 endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) $(bundle_name)/
+endif
 ifneq ($(DIST_FILES_SHADERS),)
 	cp $(DIST_FILES_SHADERS) $(bundle_name)/
 endif
@@ -390,6 +399,9 @@ ifdef DIST_FILES_ENGINEDATA_BIG
 endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
+endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) $(bundle_name)/
 endif
 ifneq ($(DIST_FILES_SHADERS),)
 	cp $(DIST_FILES_SHADERS) $(bundle_name)/

@@ -31,6 +31,10 @@ encoding.dat           FILE    "dists/engine-data/encoding.dat"
 macgui.dat             FILE    "dists/engine-data/macgui.dat"
 classicmacfonts.dat    FILE    "dists/engine-data/classicmacfonts.dat"
 
+#ifdef USE_FLUIDSYNTH
+Roland_SC-55.sf2       FILE    "dists/soundfonts/Roland_SC-55.sf2"
+#endif
+
 // Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(FREESCAPE)
