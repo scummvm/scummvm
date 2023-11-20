@@ -46,12 +46,11 @@ GUI_Dialog::~GUI_Dialog() {
 }
 
 void GUI_Dialog::loadBorderImages() {
-	uint8 i;
 	char filename[15]; // BorderU6_x.bmp\0
 	Std::string datadir = GUI::get_gui()->get_data_dir();
 	Std::string imagefile;
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		Common::sprintf_s(filename, "Border%s_%d.bmp", "U6", i + 1);
 		build_path(datadir, filename, imagefile);
 		border[i] = SDL_LoadBMP(imagefile.c_str());

@@ -94,8 +94,7 @@ void TownsSfxManager::loadSound1Dat() {
 		return;
 	}
 
-	uint8 i;
-	for (i = 0; i < TOWNS_SFX_SOUNDS1_SIZE; i++) {
+	for (int i = 0; i < TOWNS_SFX_SOUNDS1_SIZE; i++) {
 		sounds1_dat[i].buf = lib.get_item(i);
 		sounds1_dat[i].len = lib.get_item_size(i);
 	}

@@ -262,9 +262,6 @@ void PartyView::drag_perform_drop(int x, int y, int message, void *data) {
 void PartyView::Display(bool full_redraw) {
 
 	if (full_redraw || update_display || MD || Game::get_game()->is_original_plus_full_map()) {
-		uint8 i;
-		uint8 hp_text_color;
-		char hp_string[4];
 		uint8 party_size = party->get_party_size();
 		int rowH = 16;
 		if (MD)
@@ -285,13 +282,13 @@ void PartyView::Display(bool full_redraw) {
 		if (end_offset > party_size)
 			end_offset = party_size;
 
-		for (i = row_offset; i < end_offset; i++) {
+		for (uint8 i = row_offset; i < end_offset; i++) {
 			Actor *actor = party->get_actor(i);
 			Tile *actor_tile = tile_manager->get_tile(actor->get_downward_facing_tile_num());
 
 			int x_offset = 8;
 			int y_offset = 18;
-			hp_text_color = 0; //standard text color
+			uint8 hp_text_color = 0; //standard text color
 
 			if (U6)
 				hp_text_color = 0x48; //standard text color
@@ -326,6 +323,7 @@ void PartyView::Display(bool full_redraw) {
 				y_offset = -3;
 			// FIXME: Martian Dreams text is somewhat center aligned
 			font->drawString(screen, actor_name, area.left + x_offset + 24, area.top + y_offset + (i - row_offset) * rowH + 8);
+			char hp_string[4];
 			Common::sprintf_s(hp_string, "%3d", actor->get_hp());
 			hp_text_color = actor->get_hp_text_color();
 			if (SE) {

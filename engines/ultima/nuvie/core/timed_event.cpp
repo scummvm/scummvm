@@ -68,7 +68,6 @@ void TimeQueue::clear() {
  * `evtime'.
  */
 void TimeQueue::add_timer(TimedEvent *tevent) {
-	Std::list<TimedEvent *>::iterator t;
 	if (tq.empty()) {
 		tq.push_front(tevent);
 		return;
@@ -76,7 +75,7 @@ void TimeQueue::add_timer(TimedEvent *tevent) {
 	// in case it's already queued, remove the earlier instance(s)
 	remove_timer(tevent);
 	// add after events with earlier/equal time
-	t = tq.begin();
+	Std::list<TimedEvent *>::iterator t = tq.begin();
 	while (t != tq.end() && (*t)->time <= tevent->time) t++;
 	tq.insert(t, tevent);
 }
@@ -85,8 +84,7 @@ void TimeQueue::add_timer(TimedEvent *tevent) {
 /* Remove timed event from queue.
  */
 void TimeQueue::remove_timer(TimedEvent *tevent) {
-	Std::list<TimedEvent *>::iterator t;
-	t = tq.begin();
+	Std::list<TimedEvent *>::iterator t = tq.begin();
 	while (t != tq.end()) {
 		if (*t == tevent) {
 			t = tq.erase(t);
@@ -629,8 +627,8 @@ bool TimedAdvance::time_passed() const {
 /* Set hour and minute from "HH:MM" string.
  */
 void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring) {
-	char *hour_s = nullptr, *minute_s = nullptr;
-	hour_s = scumm_strdup(timestring.c_str());
+	char *minute_s = nullptr;
+	char *hour_s = scumm_strdup(timestring.c_str());
 	for (uint32 c = 0; c < strlen(hour_s); c++)
 		if (hour_s[c] == ':') { // get minutes
 			minute_s = scumm_strdup(&hour_s[c + 1]);

@@ -94,8 +94,6 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	uint8 count = SpellView::fill_cur_spell_list();
 
 	//load spell images
-	uint8 i;
-	char filename[24]; // spellbook_spell_xxx.bmp\0
 	Std::string datadir = GUI::get_gui()->get_data_dir();
 	Std::string path;
 
@@ -121,7 +119,8 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 
 	set_bg_color_key(0, 0x70, 0xfc);
 
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
+		char filename[24]; // spellbook_spell_xxx.bmp\0
 		Common::sprintf_s(filename, "spellbook_spell_%03d.bmp", cur_spells[i]);
 		build_path(datadir, filename, imagefile);
 		Graphics::ManagedSurface *spell_image = bmp.getSdlSurface32(imagefile);

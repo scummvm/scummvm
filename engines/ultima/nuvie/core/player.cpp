@@ -148,8 +148,7 @@ bool Player::save(NuvieIO *objlist) {
 }
 
 Actor *Player::find_actor() {
-
-	for (uint32 p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
+	for (int p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
 		Actor *theActor = actor_manager->get_actor(p);
 		if (theActor->get_worktype() == 0x02 && theActor->is_immobile() == false) // WT_U6_PLAYER
 			return theActor;

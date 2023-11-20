@@ -136,7 +136,7 @@ bool GameClock::save(NuvieIO *objlist) {
 void GameClock::save_U6_timers(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_U6_TIMERS);
 
-	for (uint8 i = 0; i < num_timers; i++) {
+	for (int i = 0; i < num_timers; i++) {
 		objlist->write1(timers[i]);
 	}
 
@@ -147,7 +147,7 @@ void GameClock::save_U6_timers(NuvieIO *objlist) {
 void GameClock::save_MD_timers(NuvieIO *objlist) {
 	objlist->seek(OBJLIST_OFFSET_MD_BERRY_TIMERS);
 
-	for (uint8 i = 0; i < num_timers - 1; i += 3) {
+	for (int i = 0; i < num_timers - 1; i += 3) {
 		objlist->write1((uint8)(timers[i + 1] << 4) + timers[i]);
 		objlist->write1(timers[i + 2]);
 	}

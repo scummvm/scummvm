@@ -99,10 +99,8 @@ NuvieDir Weather::load_wind(NuvieIO *objlist) {
 		NUVIE_DIR_NW
 	};
 
-	uint8 objlist_wind;
-
 	objlist->seek(OBJLIST_OFFSET_U6_WIND_DIR);
-	objlist_wind = objlist->read1();
+	uint8 objlist_wind = objlist->read1();
 
 	if (objlist_wind > 7) //objlist 0xff = Calm 'C'
 		return NUVIE_DIR_NONE;
@@ -161,9 +159,8 @@ bool Weather::is_moon_visible() const {
 
 	uint8 day = _clock->get_day();
 	uint8 hour = _clock->get_hour();
-	uint8 phase = 0;
 	// trammel (starts 1 hour ahead of sun)
-	phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
+	uint8 phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
 	uint8 posA = ((hour + 1) + 3 * phase) % 24; // advance 3 positions each phase-change
 	if (posA >= 5 && posA <= 19)
 		return true;

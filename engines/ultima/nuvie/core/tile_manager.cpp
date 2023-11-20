@@ -456,7 +456,6 @@ bool TileManager::loadTileFlag() {
 bool TileManager::loadAnimData() {
 	Std::string filename;
 	NuvieIOFileRead file;
-	uint8 i;
 	int gameType;
 	config->value("config/GameType", gameType);
 	config_get_path(config, "animdata", filename);
@@ -469,23 +468,23 @@ bool TileManager::loadAnimData() {
 
 	animdata.number_of_tiles_to_animate = file.read2();
 
-	for (i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		animdata.tile_to_animate[i] = file.read2();
 	}
 
-	for (i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		animdata.first_anim_frame[i] = file.read2();
 	}
 
-	for (i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		animdata.and_masks[i] = file.read1();
 	}
 
-	for (i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		animdata.shift_values[i] = file.read1();
 	}
 
-	for (i = 0; i < 32; i++) { // FIXME: any data on which tiles don't start as animated?
+	for (int i = 0; i < 32; i++) { // FIXME: any data on which tiles don't start as animated?
 		animdata.loop[i] = 0; // loop forwards
 		if ((gameType == NUVIE_GAME_U6 &&
 		        (animdata.tile_to_animate[i] == 862 // Crank

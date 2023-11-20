@@ -74,7 +74,8 @@ Magic::Magic() : event(nullptr), magic_script(nullptr), spellbook_obj(nullptr), 
 }
 
 Magic::~Magic() {
-	for (uint16 index = 0; index < 256; index++) delete(spell[index]);
+	for (int index = 0; index < 256; index++)
+		delete(spell[index]);
 }
 
 bool Magic::init(Events *evt) {
@@ -88,10 +89,9 @@ bool Magic::read_spell_list() {
 
 Obj *Magic::book_equipped() {
 	// book(s) equipped? Maybe should check all locations?
-	Obj *obj = nullptr;
 	Actor *caster = event->player->get_actor();
 
-	obj = caster->inventory_get_readied_object(ACTOR_ARM);
+	Obj *obj = caster->inventory_get_readied_object(ACTOR_ARM);
 	if (obj && obj->obj_n == OBJ_U6_SPELLBOOK)
 		return obj;
 
@@ -269,7 +269,7 @@ bool Magic::cast() {
 	// consume the reagents and magic points; we checked so they must be there.
 	caster->set_magic(caster->get_magic() - spell_level); // add a MAX (0, here?
 
-	for (uint8 shift = 0; shift < 8; shift++) {
+	for (int shift = 0; shift < 8; shift++) {
 		if (1 << shift & spell[index]->reagents) {
 			// FIXME Although we just checked, maybe something is messed up, so we
 			// should probably check that we're not passing nullptr to delete_obj
@@ -286,7 +286,7 @@ bool Magic::cast() {
 
 void Magic::display_spell_incantation(uint8 index) {
 	string incantation_str;
-	for (uint8 i = 0; spell[index]->invocation[i] != '\0'; i++)
+	for (int i = 0; spell[index]->invocation[i] != '\0'; i++)
 		incantation_str += syllable[spell[index]->invocation[i] - Common::KEYCODE_a];
 
 	incantation_str.erase(incantation_str.size() - 1); // get rid of extra space at the end
@@ -307,7 +307,7 @@ void Magic::display_ingredients(uint8 index) {
 		return;
 	}
 	string list;
-	for (uint8 shift = 0; shift < 8; shift++) {
+	for (int shift = 0; shift < 8; shift++) {
 		if (1 << shift & spell[index]->reagents) {
 			list += " ";
 			list += reagent[shift];

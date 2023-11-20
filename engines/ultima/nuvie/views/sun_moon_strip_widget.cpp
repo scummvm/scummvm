@@ -59,8 +59,6 @@ void SunMoonStripWidget::Display(bool full_redraw) {
 
 
 void SunMoonStripWidget::display_surface_strip() {
-	uint8 i;
-	Tile *tile;
 	GameClock *clock = Game::get_game()->get_clock();
 	Weather *weather = Game::get_game()->get_weather();
 	bool eclipse = weather->is_eclipse();
@@ -70,8 +68,8 @@ void SunMoonStripWidget::display_surface_strip() {
 	if (!eclipse)
 		display_moons(clock->get_day(), clock->get_hour());
 
-	for (i = 0; i < 9; i++) {
-		tile = tile_manager->get_tile(352 + i);
+	for (int i = 0; i < 9; i++) {
+		Tile *tile = tile_manager->get_tile(352 + i);
 		screen->blit(area.left + 8 + i * 16, area.top, tile->data, 8, 16, 16, 16, true);
 	}
 
@@ -79,15 +77,12 @@ void SunMoonStripWidget::display_surface_strip() {
 }
 
 void SunMoonStripWidget::display_dungeon_strip() {
-	uint8 i;
-	Tile *tile;
-
-	tile = tile_manager->get_tile(372);
+	Tile *tile = tile_manager->get_tile(372);
 	screen->blit(area.left + 8, area.top, tile->data, 8, 16, 16, 16, true);
 
 	tile = tile_manager->get_tile(373);
 
-	for (i = 1; i < 8; i++) {
+	for (int i = 1; i < 8; i++) {
 		screen->blit(area.left + 8 + i * 16, area.top, tile->data, 8, 16, 16, 16, true);
 	}
 
@@ -138,9 +133,8 @@ void SunMoonStripWidget::display_sun(uint8 hour, uint8 minute, bool eclipse) {
 }
 
 void SunMoonStripWidget::display_moons(uint8 day, uint8 hour, uint8 minute) {
-	uint8 phase = 0;
 	// trammel (starts 1 hour ahead of sun)
-	phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
+	uint8 phase = uint8(nearbyint((day - 1) / TRAMMEL_PHASE)) % 8;
 	Tile *tileA = tile_manager->get_tile((phase == 0) ? 584 : 584 + (8 - phase)); // reverse order in tilelist
 	uint8 posA = ((hour + 1) + 3 * phase) % 24; // advance 3 positions each phase-change
 

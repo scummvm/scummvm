@@ -136,10 +136,8 @@ bool SaveGame::load_new() {
 
 bool SaveGame::load_original() {
 	Std::string path, objlist_filename, objblk_filename;
-	unsigned char *data;
 	char x, y;
 	uint16 len;
-	uint8 i;
 	NuvieIOFileRead objlist_file;
 
 	NuvieIOFileRead *objblk_file = new NuvieIOFileRead();
@@ -150,7 +148,7 @@ bool SaveGame::load_original() {
 	objblk_filename = OBJBLK_FILENAME;
 	len = objblk_filename.length();
 
-	i = 0;
+	uint8 i = 0;
 
 	for (y = 'a'; y < 'i'; y++) {
 		for (x = 'a'; x < 'i'; x++) {
@@ -194,7 +192,7 @@ bool SaveGame::load_original() {
 	if (objlist_file.open(objlist_filename) == false)
 		return false;
 
-	data = objlist_file.readAll();
+	unsigned char *data = objlist_file.readAll();
 
 	objlist.open(data, objlist_file.get_size(), NUVIE_BUF_COPY);
 	free(data);
@@ -356,7 +354,6 @@ bool SaveGame::load(const Common::String &filename) {
 }
 
 bool SaveGame::save(const Common::String &filename, const Common::String &save_description, bool isAutosave) {
-	uint8 i;
 	NuvieIOFileWrite saveFile;
 	GameId gameType = g_engine->getGameId();
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
@@ -378,11 +375,11 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 	obj_manager->save_eggs(&saveFile);
 
 	// Save surface objects
-	for (i = 0; i < 64; i++)
+	for (uint8 i = 0; i < 64; i++)
 		obj_manager->save_super_chunk(&saveFile, 0, i);
 
 	// Save dungeon objects
-	for (i = 0; i < 5; i++)
+	for (uint8 i = 0; i < 5; i++)
 		obj_manager->save_super_chunk(&saveFile, i + 1, 0);
 
 	save_objlist();

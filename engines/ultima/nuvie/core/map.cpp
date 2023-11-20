@@ -45,14 +45,12 @@ Map::Map(const Configuration *cfg) : config(cfg), tile_manager(nullptr),
 }
 
 Map::~Map() {
-	uint8 i;
-
 	if (surface == nullptr)
 		return;
 
 	free(surface);
 
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		free(dungeons[i]);
 
 	if (roof_surface)
@@ -188,14 +186,11 @@ bool Map::is_passable(uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint8 level) {
 }
 
 bool Map::is_boundary(uint16 x, uint16 y, uint8 level) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
+	uint8 *ptr = get_map_data(level);
+	Tile *map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
 
 	if (map_tile->boundary && obj_manager->is_forced_passable(x, y, level) == false)
 		return true;
@@ -207,14 +202,11 @@ bool Map::is_boundary(uint16 x, uint16 y, uint8 level) {
 }
 
 bool Map::is_missile_boundary(uint16 x, uint16 y, uint8 level, Obj *excluded_obj) {
-	uint8 *ptr;
-	Tile *map_tile;
-
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
 
-	ptr = get_map_data(level);
-	map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
+	uint8 *ptr = get_map_data(level);
+	Tile *map_tile = tile_manager->get_tile(ptr[y * get_width(level) + x]);
 
 	if ((map_tile->flags2 & TILEFLAG_MISSILE_BOUNDARY) != 0 && obj_manager->is_forced_passable(x, y, level) == false)
 		return true;
@@ -344,8 +336,6 @@ Actor *Map::get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs) {
 
 const char *Map::look(uint16 x, uint16 y, uint8 level) {
 	unsigned char *ptr;
-	uint16 tile_num;
-	Obj *obj;
 	uint16 qty = 0;
 
 	if (level == 0) {
@@ -355,7 +345,7 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 
 	WRAP_COORD(x, level);
 	WRAP_COORD(y, level);
-	obj = obj_manager->get_obj(x, y, level);
+	Obj *obj = obj_manager->get_obj(x, y, level);
 	if (obj != nullptr && !(obj->status & OBJ_STATUS_INVISIBLE) //only show visible objects.
 	        && !Game::get_game()->get_map_window()->tile_is_black(obj->x, obj->y, obj)) {
 		//      tile = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n)+obj->frame_n);
@@ -363,7 +353,7 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 		//      qty = obj->qty;
 		return obj_manager->look_obj(obj);
 	}
-	tile_num =  ptr[y * get_width(level) + x];
+	uint16 tile_num =  ptr[y * get_width(level) + x];
 	return tile_manager->lookAtTile(tile_num, qty, true);
 }
 
@@ -372,9 +362,6 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	Std::string filename;
 	NuvieIOFileRead map_file;
 	NuvieIOFileRead chunks_file;
-	unsigned char *map_data;
-	unsigned char *map_ptr;
-	unsigned char *chunk_data;
 
 	uint8 i;
 
@@ -389,15 +376,15 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	if (chunks_file.open(filename) == false)
 		return false;
 
-	map_data = map_file.readAll();
+	unsigned char *map_data = map_file.readAll();
 	if (map_data == nullptr)
 		return false;
 
-	chunk_data = chunks_file.readAll();
+	unsigned char *chunk_data = chunks_file.readAll();
 	if (chunk_data == nullptr)
 		return false;
 
-	map_ptr = map_data;
+	unsigned char *map_ptr = map_data;
 
 	surface = (unsigned char *)malloc(1024 * 1024);
 	if (surface == nullptr)
@@ -507,12 +494,11 @@ void Map::set_roof_mode(bool roofs) {
 
 void Map::loadRoofData() {
 	NuvieIOFileRead file;
-	uint16 *ptr;
 	roof_surface = (uint16 *)malloc(1024 * 1024 * 2);
 
 	if (file.open(getRoofDataFilename())) {
 		memset(roof_surface, 0, 1024 * 1024 * 2);
-		ptr = roof_surface;
+		uint16 *ptr = roof_surface;
 		while (!file.is_eof()) {
 			uint16 offset = file.read2();
 			ptr += offset;
@@ -596,11 +582,10 @@ void Map::insertSurfaceSuperChunk(const unsigned char *schunk, const unsigned ch
 
 void Map::insertSurfaceChunk(const unsigned char *chunk, uint16 x, uint16 y) {
 	unsigned char *map_ptr;
-	uint8 i;
 
 	map_ptr = &surface[y * 1024 + x];
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		memcpy(map_ptr, chunk, 8);
 		map_ptr += 1024;
 		chunk += 8;
@@ -627,11 +612,10 @@ void Map::insertDungeonSuperChunk(const unsigned char *schunk, const unsigned ch
 
 void Map::insertDungeonChunk(const unsigned char *chunk, uint16 x, uint16 y, uint8 level) {
 	unsigned char *map_ptr;
-	uint8 i;
 
 	map_ptr = &dungeons[level][y * 256 + x];
 
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		memcpy(map_ptr, chunk, 8);
 		map_ptr += 256;
 		chunk += 8;

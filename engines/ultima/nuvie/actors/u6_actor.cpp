@@ -1351,11 +1351,10 @@ inline void U6Actor::twitch_surrounding_dragon_objs() {
 }
 
 inline void U6Actor::twitch_surrounding_hydra_objs() {
-	uint8 i;
 	Std::list<Obj *>::iterator obj;
+	int i;
 
-//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
-
+	//Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
 	for (i = 0, obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++, i += 4) {
 		if (NUVIE_RAND() % 4 == 0)
 			(*obj)->frame_n = i + (((*obj)->frame_n - i + 1) % 4);

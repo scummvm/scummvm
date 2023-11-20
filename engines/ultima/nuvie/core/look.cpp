@@ -168,9 +168,7 @@ uint16 Look::get_max_len() const {
 }
 
 void Look::print() {
-	uint16 i;
-
-	for (i = 0; i < 2048; i++) {
+	for (int i = 0; i < 2048; i++) {
 		DEBUG(0, LEVEL_DEBUGGING, "%04d :: %s\n", i, look_tbl[i]);
 	}
 

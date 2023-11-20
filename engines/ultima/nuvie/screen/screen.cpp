@@ -151,12 +151,9 @@ bool Screen::set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b) {
 }
 
 bool Screen::rotate_palette(uint8 pos, uint8 length) {
-	uint32 tmp_colour;
-	uint8 i;
+	uint32 tmp_colour = _renderSurface->colour32[pos + length - 1];
 
-	tmp_colour = _renderSurface->colour32[pos + length - 1];
-
-	for (i = length - 1; i > 0; i--)
+	for (int i = length - 1; i > 0; i--)
 		_renderSurface->colour32[pos + i] = _renderSurface->colour32[pos + i - 1];
 
 	_renderSurface->colour32[pos] = tmp_colour;
@@ -526,16 +523,13 @@ inline uint32 Screen::blendpixel32(uint32 p, uint32 p1, uint8 opacity) {
 }
 
 inline bool Screen::blit16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans) {
-	uint16 *pixels;
-	uint16 i, j;
-
-	pixels = (uint16 *)_renderSurface->pixels;
+	uint16 *pixels = (uint16 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
 	if (trans) {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				if (src_buf[j] != 0xff)
 					pixels[j] = (uint16)_renderSurface->colour32[src_buf[j]];
 			}
@@ -543,8 +537,8 @@ inline bool Screen::blit16(uint16 dest_x, uint16 dest_y, const byte *src_buf, ui
 			pixels += _renderSurface->w; //pitch;
 		}
 	} else {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = (uint16)_renderSurface->colour32[src_buf[j]];
 			}
 			src_buf += src_pitch;
@@ -564,8 +558,8 @@ inline bool Screen::blit16WithOpacity(uint16 dest_x, uint16 dest_y, const byte *
 	pixels += dest_y * _renderSurface->w + dest_x;
 
 	if (trans) {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				if (src_buf[j] != 0xff)
 					pixels[j] = blendpixel16(pixels[j], (uint16)_renderSurface->colour32[src_buf[j]], opacity);
 			}
@@ -573,8 +567,8 @@ inline bool Screen::blit16WithOpacity(uint16 dest_x, uint16 dest_y, const byte *
 			pixels += _renderSurface->w; //pitch;
 		}
 	} else {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = blendpixel16(pixels[j], (uint16)_renderSurface->colour32[src_buf[j]], opacity);
 			}
 			src_buf += src_pitch;
@@ -595,8 +589,8 @@ bool Screen::blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 sr
 
 
 	if (trans) {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				if (src_buf[j] != 0xff)
 					pixels[j] = _renderSurface->colour32[src_buf[j]];
 			}
@@ -604,8 +598,8 @@ bool Screen::blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 sr
 			pixels += _renderSurface->w; //pitch;
 		}
 	} else {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = _renderSurface->colour32[src_buf[j]];
 			}
 			src_buf += src_pitch;
@@ -626,8 +620,8 @@ bool Screen::blit32WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf
 
 
 	if (trans) {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				if (src_buf[j] != 0xff)
 					pixels[j] = blendpixel32(pixels[j], _renderSurface->colour32[src_buf[j]], opacity);
 			}
@@ -635,8 +629,8 @@ bool Screen::blit32WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf
 			pixels += _renderSurface->w; //pitch;
 		}
 	} else {
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = blendpixel32(pixels[j], _renderSurface->colour32[src_buf[j]], opacity);
 			}
 			src_buf += src_pitch;
@@ -664,8 +658,8 @@ void Screen::blitbitmap16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uin
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
-	for (i = 0; i < src_h; i++) {
-		for (j = 0; j < src_w; j++) {
+	for (int i = 0; i < src_h; i++) {
+		for (int j = 0; j < src_w; j++) {
 			if (src_buf[j])
 				pixels[j] = (uint16)_renderSurface->colour32[fg_color];
 			else
@@ -686,8 +680,8 @@ void Screen::blitbitmap32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uin
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
-	for (i = 0; i < src_h; i++) {
-		for (j = 0; j < src_w; j++) {
+	for (int i = 0; i < src_h; i++) {
+		for (int j = 0; j < src_w; j++) {
 			if (src_buf[j])
 				pixels[j] = _renderSurface->colour32[fg_color];
 			else
@@ -928,8 +922,8 @@ void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 		x += SHADING_BORDER;
 		y += SHADING_BORDER;
 		//Draw using "original" lighting
-		for (j = 0; j <= rad * 2; j++)
-			for (i = 0; i <= rad * 2; i++) {
+		for (int j = 0; j <= rad * 2; j++)
+			for (int i = 0; i <= rad * 2; i++) {
 				if (x + i - rad < 0 || x + i - rad >= shading_rect.width())
 					continue;
 				if (y + j - rad < 0 || y + j - rad >= shading_rect.height())
@@ -944,8 +938,8 @@ void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
 	//Draw using "smooth" lighting
 	//The x and y are relative to (0,0) of the mapwindow itself, and are absolute coordinates, so are i and j
 	r--;
-	for (i = -globeradius_2[r]; i < globeradius_2[r]; i++)
-		for (j = -globeradius_2[r]; j < globeradius_2[r]; j++) {
+	for (int i = -globeradius_2[r]; i < globeradius_2[r]; i++)
+		for (int j = -globeradius_2[r]; j < globeradius_2[r]; j++) {
 			if ((y + i) - 1 < 0 ||
 			        (x + j) - 1 < 0 ||
 			        (y + i) + 1 > shading_rect.height() ||
@@ -971,8 +965,8 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 
 	if (lighting_style == LIGHTING_STYLE_ORIGINAL) {
 
-		for (j = SHADING_BORDER; j < shading_rect.height() - SHADING_BORDER; j++) {
-			for (i = SHADING_BORDER; i < shading_rect.width() - SHADING_BORDER; i++) {
+		for (int j = SHADING_BORDER; j < shading_rect.height() - SHADING_BORDER; j++) {
+			for (int i = SHADING_BORDER; i < shading_rect.width() - SHADING_BORDER; i++) {
 				if (shading_data[j * shading_rect.width() + i] < 4)
 					blit(x + (i - SHADING_BORDER) * 16, y + (j - SHADING_BORDER) * 16, shading_tile[shading_data[j * shading_rect.width() + i]], 8, 16, 16, 16, true, game->get_map_window()->get_clip_rect());
 			}
@@ -1062,8 +1056,8 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 
 		pixels16 += y * _renderSurface->w + x;
 
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels16[j] = (((unsigned char)(((float)((pixels16[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) |      //R
 				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) |      //G
 				              (((unsigned char)(((float)((pixels16[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);       //B
@@ -1080,8 +1074,8 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 
 		pixels += y * _renderSurface->w + x;
 
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = (((unsigned char)(((float)((pixels[j] & _renderSurface->Rmask) >> _renderSurface->Rshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Rshift) |      //R
 				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Gmask) >> _renderSurface->Gshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Gshift) |      //G
 				            (((unsigned char)(((float)((pixels[j] & _renderSurface->Bmask) >> _renderSurface->Bshift)) * (float)(src_buf[j]) / 255.0f)) << _renderSurface->Bshift);       //B
@@ -1137,8 +1131,8 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 
 	if (_renderSurface->bits_per_pixel == 16) {
 		uint16 *pixels = (uint16 *)new_surface->getPixels();
 
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = (uint16)_renderSurface->colour32[src_buf[j]];
 			}
 			src_buf += src_pitch;
@@ -1147,8 +1141,8 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 
 	} else {
 		uint32 *pixels = (uint32 *)new_surface->getPixels();
 
-		for (i = 0; i < src_h; i++) {
-			for (j = 0; j < src_w; j++) {
+		for (int i = 0; i < src_h; i++) {
+			for (int j = 0; j < src_w; j++) {
 				pixels[j] = _renderSurface->colour32[src_buf[j]];
 			}
 			src_buf += src_pitch;
@@ -1273,8 +1267,8 @@ byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 
 	fmt = &main_surface->format;
 
-	for (y = 0; y < area->height(); y += down_scale) {
-		for (x = 0; x < area->width(); x += down_scale) {
+	for (int y = 0; y < area->height(); y += down_scale) {
+		for (int x = 0; x < area->width(); x += down_scale) {
 			r = 0;
 			g = 0;
 			b = 0;
@@ -1331,8 +1325,8 @@ byte *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
 
 	fmt = &main_surface->format;
 
-	for (y = 0; y < area->height(); y += down_scale) {
-		for (x = 0; x < area->width(); x += down_scale) {
+	for (int y = 0; y < area->height(); y += down_scale) {
+		for (int x = 0; x < area->width(); x += down_scale) {
 			r = 0;
 			g = 0;
 			b = 0;

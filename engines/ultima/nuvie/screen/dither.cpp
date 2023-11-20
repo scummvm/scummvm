@@ -81,14 +81,12 @@ void Dither::set_mode() {
 }
 
 bool Dither::dither_bitmap(unsigned char *src_buf, uint16 src_w, uint16 src_h, bool has_transparency) {
-	uint8 pixel;
-
 	if (!dither || mode == DITHER_NONE)
 		return false;
 
 	for (int y = 0; y < src_h; y++) {
 		for (int x = 0; x < src_w; x++) {
-			pixel = src_buf[y * src_w + x];
+			uint8 pixel = src_buf[y * src_w + x];
 
 			if (has_transparency && pixel == 0xff)
 				continue;

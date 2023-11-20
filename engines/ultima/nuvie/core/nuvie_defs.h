@@ -53,8 +53,6 @@ typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 #define NUVIE_STYLE_ORIG_PLUS_CUTOFF_MAP 2
 #define NUVIE_STYLE_ORIG_PLUS_FULL_MAP   3
 
-#define MAX(x, y)      ((x) > (y) ? (x) : (y))
-#define MIN(x, y)      ((x) < (y) ? (x) : (y))
 #define clamp_min(v, c)  (((v) < (c)) ? (c) : (v))
 #define clamp_max(v, c)  (((v) > (c)) ? (c) : (v))
 #define clamp(v, c1, c2) ( ((v) < (c1)) ? (c1) : (((v) > (c2)) ? (c2) : (v)) )
@@ -134,8 +132,6 @@ extern void u6debug(bool no_header, const DebugLevelType level, const char *form
 
 #define NUVIE_RAND_MAX 0x7fffffff // POSIX: 2^(31)-1
 #define NUVIE_RAND() getRandom(NUVIE_RAND_MAX)
-
-#define nuprint Game::get_game()->get_scroll()->print
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

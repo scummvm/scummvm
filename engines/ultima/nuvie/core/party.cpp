@@ -185,9 +185,8 @@ bool Party::remove_actor(Actor *actor, bool keep_party_flag) {
 	if (defer_removing_dead_members) //we don't want to remove member while inside the Party::follow() method.
 		return true;
 	Game::get_game()->get_event()->set_control_cheat(false);
-	uint8 i;
 
-	for (i = 0; i < num_in_party; i++) {
+	for (int i = 0; i < num_in_party; i++) {
 		if (member[i].actor->id_n == actor->id_n) {
 			if (keep_party_flag == false) {
 				for (int j = 0; j < member[i].actor->get_num_light_sources(); j++)
