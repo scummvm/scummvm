@@ -343,7 +343,7 @@ int MidiDriver_FluidSynth::open() {
 	const bool isUsingInMemorySoundFontData = false;
 #endif
 
-	if (!isUsingInMemorySoundFontData && !ConfMan.hasKey("soundfont")) {
+	if (!isUsingInMemorySoundFontData && ConfMan.get("soundfont").empty()) {
 		GUI::MessageDialog dialog(_("FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI on MIDI tab. Music is off."));
 		dialog.runModal();
 		return MERR_DEVICE_NOT_AVAILABLE;
