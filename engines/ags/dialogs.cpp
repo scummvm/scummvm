@@ -48,6 +48,7 @@ private:
 	GUI::PopUpWidget *_langPopUp;
 	Common::StringArray _traFileNames;
 
+	GUI::CheckboxWidget *_overrideSavesCheckbox;
 	GUI::CheckboxWidget *_forceTextAACheckbox;
 	GUI::CheckboxWidget *_displayFPSCheckbox;
 };
@@ -75,6 +76,9 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 		_langPopUp->appendEntry(traFileName, i++);
 	}
 
+	// Override game save management
+	_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Always use ScummVM save management"), _("Always enable ScummVM's save management and autosaves, even for games that are not fully compatible (NOT RECOMMENDED)"));
+
 	// Force font antialiasing
 	_forceTextAACheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".textAA", _("Force antialiased text"), _("Use antialiasing to draw text even if the game does not ask for it"));
 
@@ -90,6 +94,7 @@ void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	layouts.addWidget("translation_desc", "OptionsLabel");
 	layouts.addWidget("translation", "PopUp").closeLayout();
 
+	layouts.addWidget("savesOvr", "Checkbox");
 	layouts.addWidget("textAA", "Checkbox");
 	layouts.addWidget("displayFPS", "Checkbox");
 
@@ -113,6 +118,14 @@ void AGSOptionsWidget::load() {
 		}
 	}
 	_langPopUp->setSelectedTag(curLangIndex);
+
+	Common::String saveOverride;
+	gameConfig->tryGetVal("save_override", saveOverride);
+	if (!saveOverride.empty()) {
+		bool val;
+		if (parseBool(saveOverride, val))
+			_overrideSavesCheckbox->setState(val);
+	}
 
 	Common::String forceTextAA;
 	gameConfig->tryGetVal("force_text_aa", forceTextAA);
@@ -138,6 +151,7 @@ bool AGSOptionsWidget::save() {
 	else
 		ConfMan.removeKey("translation", _domain);
 
+	ConfMan.setBool("save_override", _overrideSavesCheckbox->getState(), _domain);
 	ConfMan.setBool("force_text_aa", _forceTextAACheckbox->getState(), _domain);
 	ConfMan.setBool("display_fps", _displayFPSCheckbox->getState(), _domain);
 
