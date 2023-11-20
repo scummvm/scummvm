@@ -376,7 +376,7 @@ void MacGui::MacButton::draw(bool drawFocused) {
 	inside.grow(-1);
 	s->fillRect(inside, bg);
 
-	drawCorners(_bounds, corner);
+	drawCorners(_bounds, corner, true);
 
 	const Graphics::Font *font = _window->_gui->getFont(kSystemFont);
 
@@ -394,13 +394,13 @@ void MacGui::MacButton::draw(bool drawFocused) {
 		y1 = bounds.bottom - 1;
 
 		for (int i = 0; i < 3; i++) {
-			s->hLine(x0 + 6, y0 + i, x1 - 6, kBlack);
-			s->hLine(x0 + 6, y1 - i, x1 - 6, kBlack);
-			s->vLine(x0 + i, y0 + 6, y1 - 6, kBlack);
-			s->vLine(x1 - i, y0 + 6, y1 - 6, kBlack);
+			hLine(x0 + 6, y0 + i, x1 - 6, _enabled);
+			hLine(x0 + 6, y1 - i, x1 - 6, _enabled);
+			vLine(x0 + i, y0 + 6, y1 - 6, _enabled);
+			vLine(x1 - i, y0 + 6, y1 - 6, _enabled);
 		}
 
-		drawCorners(bounds, frameCorner);
+		drawCorners(bounds, frameCorner, _enabled);
 	}
 
 	_redraw = false;
@@ -409,9 +409,41 @@ void MacGui::MacButton::draw(bool drawFocused) {
 	_window->markRectAsDirty(bounds);
 }
 
-void MacGui::MacButton::drawCorners(Common::Rect r, CornerLine *corner) {
+void MacGui::MacButton::hLine(int x0, int y0, int x1, bool enabled) {
 	Graphics::Surface *s = _window->innerSurface();
 
+	if (!enabled) {
+		if (x0 > x1)
+			SWAP(x0, x1);
+
+		for (int x = x0; x <= x1; x++) {
+			if (((x + y0) % 2) == 0)
+				s->setPixel(x, y0, kBlack);
+			else
+				s->setPixel(x, y0, kWhite);
+		}
+	} else
+		s->hLine(x0, y0, x1, kBlack);
+}
+
+void MacGui::MacButton::vLine(int x0, int y0, int y1, bool enabled) {
+	Graphics::Surface *s = _window->innerSurface();
+
+	if (!enabled) {
+		if (y0 > y1)
+			SWAP(y0, y1);
+
+		for (int y = y0; y <= y1; y++) {
+			if (((x0 + y) % 2) == 0)
+				s->setPixel(x0, y, kBlack);
+			else
+				s->setPixel(x0, y, kWhite);
+		}
+	} else
+		s->vLine(x0, y0, y1, kBlack);
+}
+
+void MacGui::MacButton::drawCorners(Common::Rect r, CornerLine *corner, bool enabled) {
 	for (int i = 0; corner[i].length >= 0; i++) {
 		if (corner[i].length == 0)
 			continue;
@@ -424,10 +456,10 @@ void MacGui::MacButton::drawCorners(Common::Rect r, CornerLine *corner) {
 		int y0 = r.top + i;
 		int y1 = r.bottom - i - 1;
 
-		s->hLine(x0, y0, x1, kBlack);
-		s->hLine(x2, y0, x3, kBlack);
-		s->hLine(x0, y1, x1, kBlack);
-		s->hLine(x2, y1, x3, kBlack);
+		hLine(x0, y0, x1, enabled);
+		hLine(x2, y0, x3, enabled);
+		hLine(x0, y1, x1, enabled);
+		hLine(x2, y1, x3, enabled);
 	}
 }
 

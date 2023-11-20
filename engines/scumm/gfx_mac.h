@@ -210,7 +210,10 @@ public:
 			int length;
 		};
 
-		void drawCorners(Common::Rect r, CornerLine *corner);
+		void hLine(int x0, int y0, int x1, bool enabled);
+		void vLine(int x0, int y0, int y1, bool enabled);
+		void drawCorners(Common::Rect r, CornerLine *corner, bool enabled);
+
 	public:
 		MacButton(MacGui::MacDialogWindow *window, Common::Rect bounds, Common::String text, bool enabled) : MacWidget(window, bounds, text, enabled) {}
 
