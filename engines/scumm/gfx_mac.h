@@ -459,6 +459,7 @@ public:
 		void handleMouseHeld();
 		void handleWheelUp();
 		void handleWheelDown();
+		bool handleKeyDown(Common::Event &event);
 	};
 
 	class MacDialogWindow {

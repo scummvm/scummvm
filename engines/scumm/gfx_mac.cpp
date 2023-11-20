@@ -1719,6 +1719,49 @@ void MacGui::MacListBox::handleWheel(int distance) {
 	}
 }
 
+bool MacGui::MacListBox::handleKeyDown(Common::Event &event) {
+	if (_texts.size() <= 1 || !_textWidgets[0]->isEnabled())
+		return false;
+
+	if (event.kbd.flags & (Common::KBD_CTRL | Common::KBD_ALT | Common::KBD_META))
+		return false;
+
+	int oldValue = _value;
+
+	switch (event.kbd.keycode) {
+	case Common::KEYCODE_UP:
+		_value = MAX(_value - 1, 0);
+		break;
+
+	case Common::KEYCODE_DOWN:
+		_value = MIN<int>(_value + 1, _texts.size() - 1);
+		break;
+
+	default:
+		break;
+	}
+
+	if (_value != oldValue) {
+		int sliderValue = _slider->getValue();
+		int pageSize = _slider->getPageSize();
+		int newSliderValue = sliderValue;
+
+		if (_value < sliderValue)
+			newSliderValue = _value;
+		else if (_value >= sliderValue + pageSize)
+			newSliderValue = _value - pageSize + 1;
+
+		if (sliderValue != newSliderValue) {
+			_slider->setValue(newSliderValue);
+			_slider->redrawHandle(sliderValue, newSliderValue);
+		}
+
+		updateTexts();
+	}
+
+	return false;
+}
+
 // ---------------------------------------------------------------------------
 // Dialog window
 //
