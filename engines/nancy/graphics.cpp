@@ -108,16 +108,46 @@ void GraphicsManager::draw(bool updateScreen) {
 		}
 	}
 
-	// Redraw all dirty rects
-	for (auto it : _objects) {
-		RenderObject &current = *it;
+	// Perform the actual drawing. This checks for cases where something would be fully obscured,
+	// and skips them (e.g. redrawing the Viewport won't also redraw the background)
+	for (Common::Rect rect : _dirtyRects) {
+		for (RenderObject **it = _objects.begin(); it < _objects.end(); ++it) {
+			RenderObject &current = **it;
 
-		if (!current._isVisible || current.getScreenPosition().isEmpty()) {
-			continue;
-		}
+			if (!current._isVisible || current.getScreenPosition().isEmpty()) {
+				continue;
+			}
 
-		for (Common::Rect rect : _dirtyRects) {
-			if (rect.intersects(current.getScreenPosition())) {
+			bool shouldSkip = false;
+
+			Common::Rect intersection = rect.findIntersectingRect(current.getScreenPosition());
+			if (!intersection.isEmpty()) {
+				// Found an intersecting RenderObject. Loop through the following
+				// RenderObjects, and see if we have another that fully obscures the intersection
+				for (auto it2 = it + 1; it2 < _objects.end(); ++it2) {
+					RenderObject &other = **it2;
+
+					if (!other._isVisible || other.getScreenPosition().isEmpty()) {
+						continue;
+					}
+
+					Common::Rect intersection2 = intersection.findIntersectingRect(other.getScreenPosition());
+					if (intersection == intersection2) {
+						// The entire area that would be drawn is obscured by another RenderObject.
+						// If the obscuring RenderObject is not transparent, we skip drawing current
+
+						if (!other._drawSurface.hasTransparentColor()) {
+							// No transparency, skip current
+							shouldSkip = true;
+							break;
+						}
+					}
+				}
+
+				if (shouldSkip) {
+					continue;
+				}
+
 				blitToScreen(current, rect.findIntersectingRect(current.getScreenPosition()));
 			}
 		}
