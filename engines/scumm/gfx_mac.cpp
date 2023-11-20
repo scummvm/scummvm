@@ -910,6 +910,26 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 		}
 		return true;
 
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_UP:
+		_caretPos = 0;
+
+		if (_selectLen != 0) {
+			_selectLen = 0;
+			setRedraw();
+		}
+		return true;
+
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_DOWN:
+		_caretPos = _text.size();
+
+		if (_selectLen != 0) {
+			_selectLen = 0;
+			setRedraw();
+		}
+		return true;
+
 	case Common::KEYCODE_BACKSPACE:
 		if (_selectLen != 0) {
 			deleteSelection();
