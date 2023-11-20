@@ -1010,9 +1010,20 @@ void Scene::handleInput() {
 	if (_activeConversation != nullptr) {
 		const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
 
-		if (inactiveZone.bottom > input.mousePos.y) {
-			input.mousePos.y = inactiveZone.bottom;
-			g_nancy->_cursorManager->warpCursor(input.mousePos);
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+			Common::Point adjustedMousePos = input.mousePos;
+			adjustedMousePos.y -= cursorHotspot.y;
+
+			if (inactiveZone.bottom > adjustedMousePos.y) {
+				input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
+				g_nancy->_cursorManager->warpCursor(input.mousePos);
+			}
+		} else {
+			if (inactiveZone.bottom > input.mousePos.y) {
+				input.mousePos.y = inactiveZone.bottom;
+				g_nancy->_cursorManager->warpCursor(input.mousePos);
+			}
 		}
 	} else {
 		// Check if player has pressed esc
