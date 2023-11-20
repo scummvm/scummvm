@@ -40,6 +40,8 @@ public:
 	
 	void addVirtualDrive(const Common::String &name, const Common::String &path);
 
+	Common::String getSystemFullPath(const Common::String& path) const override;
+
 private:
 	const Common::String _root;
 	Common::StringMap _virtualDrives;
