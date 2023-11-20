@@ -33,7 +33,7 @@
 template<class T>
 class dgTemplateVector {
 public:
-	dgTemplateVector() : m_x(0), m_y(0), m_z(0), m_w(0) {}
+	constexpr dgTemplateVector() : m_x(0), m_y(0), m_z(0), m_w(0) {}
 	dgTemplateVector(const T *ptr);
 	constexpr dgTemplateVector(T m_x, T m_y, T m_z, T m_w);
 	dgTemplateVector Scale(T s) const;
@@ -85,7 +85,7 @@ class dgBigVector;
 DG_MSC_VECTOR_ALIGMENT
 class dgVector: public dgTemplateVector<dgFloat32> {
 public:
-	dgVector() = default;
+	constexpr dgVector() = default;
 #ifdef DG_BUILD_SIMD_CODE
 	dgVector(const simd_type &val);
 #endif
