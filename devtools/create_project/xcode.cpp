@@ -1150,6 +1150,10 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 			files.push_back("engines/freescape/shaders/freescape_triangle.fragment");
 			files.push_back("engines/freescape/shaders/freescape_triangle.vertex");
 		}
+		if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+			files.push_back("dists/soundfonts/Roland_SC-55.sf2");
+			files.push_back("dists/soundfonts/COPYRIGHT.Roland_SC-55");
+		}
 		files.push_back("icons/scummvm.icns");
 		files.push_back("AUTHORS");
 		files.push_back("COPYING");
