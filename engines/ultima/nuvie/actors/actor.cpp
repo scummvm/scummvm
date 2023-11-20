@@ -700,12 +700,11 @@ uint32 Actor::inventory_count_objects(bool inc_readied_objects) const {
  */
 uint32 Actor::inventory_count_object(uint16 objN) {
 	uint32 qty = 0;
-	U6Link *link = 0;
-	Obj *obj = 0;
+	U6Link *link = nullptr;
 	U6LList *inv = get_inventory_list();
 
 	for (link = inv->start(); link != nullptr; link = link->next) {
-		obj = (Obj *)link->data;
+		Obj *obj = (Obj *)link->data;
 		if (obj)
 			qty += obj->get_total_qty(objN);
 	}
@@ -789,7 +788,6 @@ bool Actor::inventory_add_object(Obj *obj, Obj *container, bool stack) {
 /* Stacks the new object with existing objects if possible.
    Returns a pointer to the new object in inventory. */
 Obj *Actor::inventory_new_object(uint16 objN, uint32 qty, uint8 quality) {
-	Obj *obj = 0;
 	uint8 frameN = 0;
 
 	if (objN >= 1024) {
@@ -797,7 +795,7 @@ Obj *Actor::inventory_new_object(uint16 objN, uint32 qty, uint8 quality) {
 		objN -= frameN * 1024;
 	}
 
-	obj = new Obj;
+	Obj *obj = new Obj;
 	obj->obj_n = objN;
 	obj->frame_n = frameN;
 	obj->quality = quality;

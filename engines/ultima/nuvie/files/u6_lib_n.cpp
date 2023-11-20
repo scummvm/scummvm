@@ -369,7 +369,6 @@ const char *U6Lib_n::get_item_name(uint32 item_number) {
  * Size & uncompressed size is set to source length.
  */
 void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_len) {
-	unsigned char *dcopy = 0;
 	if (item_number >= num_offsets)
 		return;
 // FIXME: need a way to set an item as compressed or uncompressed so we know
@@ -377,7 +376,7 @@ void U6Lib_n::set_item_data(uint32 item_number, unsigned char *src, uint32 src_l
 	items[item_number].size = src_len;
 	items[item_number].uncomp_size = src_len;
 	if (src_len) {
-		dcopy = (unsigned char *)malloc(src_len);
+		unsigned char *dcopy = (unsigned char *)malloc(src_len);
 		memcpy(dcopy, src, src_len);
 		items[item_number].data = dcopy;
 	} else

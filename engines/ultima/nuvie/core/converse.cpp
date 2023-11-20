@@ -449,7 +449,7 @@ void Converse::set_svar(uint8 varnum, const char *set) {
 void Converse::show_portrait(uint8 n) {
 	Game *game = Game::get_game();
 	Actor *actor = (n == npc_num) ? npc : actors->get_actor(n);
-	const char *nameret = 0;
+	const char *nameret = nullptr;
 	if (!actor)
 		return;
 	bool statue = (gametype == NUVIE_GAME_U6 && n >= 189 && n <= 191);

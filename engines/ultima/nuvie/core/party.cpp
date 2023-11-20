@@ -812,7 +812,7 @@ void Party::dismount_from_horses() {
 }
 
 Actor *Party::get_slowest_actor() {
-	Actor *actor = 0;
+	Actor *actor = nullptr;
 	sint8 begin = get_leader();
 	if (begin >= 0) {
 		actor = member[begin].actor;
@@ -858,8 +858,8 @@ bool Party::can_rest(Std::string &err_str) {
 	Actor *pActor = player->get_actor();
 	MapCoord loc = pActor->get_location();
 
-	ActorList *enemies = 0;
-	ActorList *all_actors = 0;
+	ActorList *enemies = nullptr;
+	ActorList *all_actors = nullptr;
 
 	if (is_in_combat_mode()) {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_SE)

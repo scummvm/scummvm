@@ -1400,12 +1400,11 @@ inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
 		return;
 	}
 
-	Std::list<Obj *>::iterator obj = surrounding_objects.begin();
-
-	for (; !surrounding_objects.empty();) {
-		obj_manager->remove_obj_from_map(*obj);
-		delete_obj(*obj);
-		obj = surrounding_objects.erase(obj);
+	while (!surrounding_objects.empty()) {
+		Obj *obj = surrounding_objects.front();
+		obj_manager->remove_obj_from_map(obj);
+		delete_obj(obj);
+		surrounding_objects.pop_front();
 	}
 
 	return;
@@ -1562,10 +1561,9 @@ const char *U6Actor::get_worktype_string(uint32 wt) const {
 Obj *U6Actor::inventory_get_food(Obj *container) {
 	U6UseCode *uc = (U6UseCode *)Game::get_game()->get_usecode();
 	U6LList *inv = container ? container->container : get_inventory_list();
-	U6Link *link = 0;
-	Obj *obj = 0;
+	U6Link *link = nullptr;
 	for (link = inv->start(); link != nullptr; link = link->next) {
-		obj = (Obj *)link->data;
+		Obj *obj = (Obj *)link->data;
 		if (uc->is_food(obj))
 			return obj;
 		if (obj->container) { // search within container

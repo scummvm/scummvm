@@ -285,7 +285,7 @@ bool UseCode::out_of_use_range(Obj *obj, bool check_enemies) {
 		} else
 			return false;
 	} else if (player_loc.distance(obj_loc) > 1) { // only setup for objects that already checked range and blocking limit
-		ActorList *enemies = 0;
+		ActorList *enemies = nullptr;
 
 		if ((enemies = player->get_actor()->find_enemies())) {
 			scroll->display_string("\nOut of range.\n");

@@ -242,7 +242,7 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	Common::Rect fillrect;
 	int th, tw;
 	int tx = 0, ty = 0;
-	char *duptext = 0;
+	char *duptext = nullptr;
 
 	Graphics::ManagedSurface *img = new Graphics::ManagedSurface(area.width(), area.height(),
 		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));

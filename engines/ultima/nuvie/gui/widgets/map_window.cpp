@@ -920,7 +920,7 @@ inline void MapWindow::drawActor(const Actor *actor) {
 	        && (!(actor->obj_flags & OBJ_STATUS_INVISIBLE) || actor->is_in_party() || actor == actor_manager->get_player())
 	        && actor->get_corpser_flag() == false) {
 		Tile *tile = tile_manager->get_tile(actor->get_tile_num() + actor->frame_n);
-		Tile *rtile = 0;
+		Tile *rtile = nullptr;
 
 		if (actor->obj_flags & OBJ_STATUS_INVISIBLE) {
 			rtile = new Tile(*tile);
