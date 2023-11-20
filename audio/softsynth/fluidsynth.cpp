@@ -42,6 +42,7 @@
 #include "common/error.h"
 #include "common/stream.h"
 #include "common/system.h"
+#include "common/archive.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "audio/musicplugin.h"
@@ -110,6 +111,8 @@ protected:
 	void setStr(const char *name, const char *str);
 
 	void generateSamples(int16 *buf, int len) override;
+
+	Common::String getSoundFontPath() const;
 
 public:
 	MidiDriver_FluidSynth(Audio::Mixer *mixer);
@@ -279,6 +282,49 @@ static long SoundFontMemLoader_tell(void *handle) {
 
 #endif // USE_FLUIDLITE
 
+Common::String MidiDriver_FluidSynth::getSoundFontPath() const {
+	Common::String path = ConfMan.get("soundfont");
+	if (path.empty())
+		return path;
+
+	// First check if this is a full path
+#if defined(IPHONE_IOS7)
+	// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
+	// with the chroot filesystem. All the path selected by the user are
+	// relative to the Document directory. So, we need to adjust the path to
+	// reflect that.
+	Common::FSNode fileNode(iOS7_getDocumentsDir() + path);
+#else
+	Common::FSNode fileNode(path);
+#endif
+	if (fileNode.exists())
+		return fileNode.getPath();
+
+	// Then check with soundfontpath
+	if (ConfMan.hasKey("soundfontpath")) {
+		Common::FSNode dirNode(ConfMan.get("soundfontpath"));
+		if (dirNode.exists() && dirNode.isDirectory()) {
+			fileNode = dirNode.getChild(path);
+			if (fileNode.exists())
+				return fileNode.getPath();
+		}
+	}
+
+	// Finally look for it with SearchMan
+	Common::ArchiveMemberDetailsList files;
+	SearchMan.listMatchingMembers(files, path);
+	for (Common::ArchiveMemberDetails file : files) {
+		Common::FSDirectory* dir = dynamic_cast<Common::FSDirectory*>(SearchMan.getArchive(file.arcName));
+		if (!dir)
+			continue;
+		fileNode = dir->getFSNode().getChild(file.arcMember->getPathInArchive().toString());
+		if (fileNode.exists())
+			return fileNode.getPath();
+	}
+
+	return path;
+}
+
 int MidiDriver_FluidSynth::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
@@ -308,7 +354,7 @@ int MidiDriver_FluidSynth::open() {
 	// We can only do this with FluidSynth 2.0
 	if (!isUsingInMemorySoundFontData &&
 			AndroidFilesystemFactory::instance().hasSAF()) {
-		Common::FSNode fsnode(ConfMan.get("soundfont"));
+		Common::FSNode fsnode(getSoundFontPath());
 		_engineSoundFontData = fsnode.createReadStream();
 		isUsingInMemorySoundFontData = _engineSoundFontData != nullptr;
 	}
@@ -438,15 +484,8 @@ int MidiDriver_FluidSynth::open() {
 	} else
 #endif // FS_HAS_STREAM_SUPPORT
 	{
-#if defined(IPHONE_IOS7)
-		// HACK: Due to the sandbox on non-jailbroken iOS devices, we need to deal
-		// with the chroot filesystem. All the path selected by the user are
-		// relative to the Document directory. So, we need to adjust the path to
-		// reflect that.
-		soundfont = iOS7_getDocumentsDir() + ConfMan.get("soundfont");
-#else
-		soundfont = ConfMan.get("soundfont");
-#endif
+//		soundfont = ConfMan.get("soundfont");
+		soundfont = getSoundFontPath();
 	}
 
 	_soundFont = fluid_synth_sfload(_synth, soundfont.c_str(), 1);
