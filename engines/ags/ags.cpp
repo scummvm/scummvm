@@ -168,9 +168,15 @@ Common::Error AGSEngine::run() {
 	if (ConfMan.hasKey("display_fps"))
 		_G(display_fps) = ConfMan.getBool("display_fps") ? AGS3::kFPS_Forced : AGS3::kFPS_Hide;
 
+	Common::String saveOverrideOption;
+	bool saveOverride = false;
+	ConfMan.getActiveDomain()->tryGetVal("save_override", saveOverrideOption);
+	if (!saveOverrideOption.empty())
+		parseBool(saveOverrideOption, saveOverride);
+	_G(noScummAutosave) = (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions"))) && !saveOverride;
+	_G(noScummSaveLoad) = (Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions"))) && !saveOverride;
+
 	_G(saveThumbnail) = !(Common::checkGameGUIOption(GAMEOPTION_NO_SAVE_THUMBNAIL, ConfMan.get("guioptions")));
-	_G(noScummAutosave) = (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions")));
-	_G(noScummSaveLoad) = (Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions")));
 
 	AGS3::ConfigTree startup_opts;
 	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
