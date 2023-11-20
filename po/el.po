@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-20 04:09+0000\n"
-"PO-Revision-Date: 2023-11-01 11:28+0000\n"
+"PO-Revision-Date: 2023-11-20 10:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -30,27 +30,21 @@ msgid "Features compiled in:"
 msgstr "Χαρακτηριστικά που περιλαμβάνονται:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
+msgstr "δεν υποστηρίζεται"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Απενεργοποιημένες"
+msgstr "απενεργοποιημένο"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Απενεργοποιημένες"
+msgstr "ενεργοποιημένο"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Υποστήριξη επεκτάσεων CPU:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -388,21 +382,16 @@ msgid "Failed to load JSON file"
 msgstr "Αποτυχία φόρτωσης του αρχείου JSON"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr ""
-"Μεταφόρτωση δωρεάν (freeware) παιχνιδιών για ελεύθερη χρήση με το ScummVM"
+msgstr "Μεταφόρτωση δωρεάν (freeware) παιχνιδιών και demo"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Προσκόμιση DLC..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Λήψη"
+msgstr "Όλες οι λήψεις"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -482,16 +471,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Ταχύτητα λήψης: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Λήψη Παιχνιδιών"
+msgstr "Ενεργή Λήψη Παιχνιδιών"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Λήψη"
+msgstr "Εκκρεμούσες Λήψεις"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1181,7 +1166,7 @@ msgstr "Πλατφόρμα"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Έτος"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1417,10 +1402,8 @@ msgstr "Δεν ανιχνεύτηκε η πλατφόρμα"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Άγνωστο σφάλμα"
+msgstr "Άγνωστο Έτος"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1637,16 +1620,14 @@ msgid "Shader Path:"
 msgstr "Διαδρομή Σκιαστή:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Λήψη Παιχνιδιών"
+msgstr "Λήψη Σκιαστών"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Έλεγχος για ενημερώσεις των πακέτων από σκιαστές (shaders)"
+msgstr ""
+"Έλεγχος στον ιστότοπο scummvm.org για ενημερώσεις των πακέτων από σκιαστές "
+"(shaders)"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2106,16 +2087,12 @@ msgstr ""
 "αυτού από το ScummVM για την επιλογή αρχείου ή καταλόγου."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Λήψη"
+msgstr "Λήψη Εικονιδιών"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Έλεγχος ενημερώσεων για πακέτα εικονιδίων"
+msgstr "Έλεγχος στον ιστότοπο scummvm.org για ενημερώσεις σε πακέτα εικονιδίων"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -3922,7 +3899,7 @@ msgstr "Επιφάνεια SDL"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "Επιφάνεια SDL (εξαναγκασμένη λειτουργία 8bpp)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -6597,37 +6574,27 @@ msgstr "Πυροβόλησε"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Σήκω/Πέτα ψηλότερα"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Πέταξε κάτω"
+msgstr "Κατέβα/Πέτα χαμηλότερα"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Αλλαγή Εντολής"
+msgstr "Αλλαγή λειτουργίας"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Πλάγια στα Αριστερά"
+msgstr "Περιστροφή Αριστερά"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Πλάγια στα Δεξιά"
+msgstr "Περιστροφή Δεξιά"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Μενού"
+msgstr "Μενού Πληροφοριών"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -8976,33 +8943,33 @@ msgstr "Ειδικός"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Βελτιώσεις:"
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Χρήση αρχικών μενού"
+msgstr "Διόρθωση αρχικών σφαλμάτων"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Διόρθωση σφαλμάτων που υπήρχαν στην αρχική κυκλοφορία, και αισθητά "
+"προβλήματα με εικόνα/ήχο."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Βελτιώσεις ήχου-εικόνας"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Γίνονται ρυθμίσεις για ορισμένα στοιχεία ήχου και εικόνας χωρίς να πρόκειται "
+"για σφάλματα (πχ. αλλαγές για συνέπεια μεταξύ εκδόσεων του παιχνιδιού)."
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
 msgstr "Αποκατεστημένο περιεχόμενο"
 
@@ -9011,16 +8978,21 @@ msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Αποκαθιστά διαλόγους, γραφικά, και στοιχεία ήχου που είχαν αφαιρεθεί στην "
+"αρχική κυκλοφορία."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Ρυθμίσεις για μοντέρνο UI/UX"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Ενεργοποιεί κάποιες μοντέρνες ευκολίες, όπως πχ. την αφαίρεση της ψεύτικης "
+"οθόνης φόρτωσης ήχου στο Sam&Max, και τη βελτίωση αποκρισιμότητας των παλιών "
+"μενού αποθήκευσης."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
@@ -9917,6 +9889,8 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Εντοπίστηκε μη υλοποιημένη διαδρομή κώδικα ανάπτυξης για την μηχανή ήχου,\n"
+"παρακαλούμε να υποβάλετε μια αναφορά στο https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
