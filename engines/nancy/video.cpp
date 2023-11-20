@@ -345,8 +345,19 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 			if (refFrame) {
 				Graphics::copyBlit((byte *)frameInCache.getPixels(), (const byte *)refFrame->getPixels(),
 					frameInCache.pitch, refFrame->pitch, frameInCache.w, frameInCache.h, frameInCache.format.bytesPerPixel);
+
+#ifdef SCUMM_BIG_ENDIAN
+				// Convert from BE back to LE so the decode step below works correctly
+				byte *buf = (byte *)frameInCache.getPixels();
+				if (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel == 2) {
+					for (int i = 0; i < frameInCache.pitch * frameInCache.h / 2; ++i) {
+						((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
+					}
+				}
+#endif
 			}
 		}
+
 		Common::MemoryReadStream decompStr(decompBuf, info.size);
 		decode((byte *)frameInCache.getPixels(), _frameSize, decompStr);
 	}
@@ -355,14 +366,14 @@ const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
 		delete[] decompBuf;
 	}
 
-	#ifdef SCUMM_BIG_ENDIAN
+#ifdef SCUMM_BIG_ENDIAN
 	byte *buf = (byte *)frameInCache.getPixels();
 	if (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel == 2) {
 		for (int i = 0; i < frameInCache.pitch * frameInCache.h / 2; ++i) {
 			((uint16 *)buf)[i] = SWAP_BYTES_16(((uint16 *)buf)[i]);
 		}
 	}
-	#endif
+#endif
 
 	return &frameInCache;
 }
