@@ -1341,7 +1341,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			} else {
 				readMt32Patch(*res);
 			}
-		} else {
+		} else if (_version == SCI_VERSION_0_EARLY) {
 			// Early SCI0 games have the sound bank embedded in the MT-32 driver
 			readMt32DrvData();
 		}
