@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-18 17:56+0000\n"
+"POT-Creation-Date: 2023-11-20 04:09+0000\n"
 "PO-Revision-Date: 2023-11-01 11:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -8836,7 +8836,7 @@ msgstr ""
 "το Quest for Glory 1, πρόθεμα 'qfg2-' για το Quest for Glory 2. Παράδειγμα "
 "αρχείου με το πρόθεμα: 'qfg2-thief.sav'."
 
-#: engines/sci/sound/music.cpp:166
+#: engines/sci/sound/music.cpp:173
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
@@ -8844,7 +8844,7 @@ msgstr ""
 "Ο επιλεγμένος οδηγός ήχου απαιτεί τα ακόλουθα αρχεία:\n"
 "\n"
 
-#: engines/sci/sound/music.cpp:169
+#: engines/sci/sound/music.cpp:176
 msgid ""
 "\n"
 "\n"

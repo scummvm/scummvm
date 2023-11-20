@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-18 17:56+0000\n"
+"POT-Creation-Date: 2023-11-20 04:09+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -8493,13 +8493,13 @@ msgstr ""
 "que se gardasen: \"qfg1-\" para Quest for Glory 1, \"qfg2-\" para Quest for "
 "Glory 2. Exemplo: \"qfg2-thief.sav\"."
 
-#: engines/sci/sound/music.cpp:166
+#: engines/sci/sound/music.cpp:173
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
 
-#: engines/sci/sound/music.cpp:169
+#: engines/sci/sound/music.cpp:176
 msgid ""
 "\n"
 "\n"

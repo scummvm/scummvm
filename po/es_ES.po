@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-18 17:56+0000\n"
+"POT-Creation-Date: 2023-11-20 04:09+0000\n"
 "PO-Revision-Date: 2023-11-16 12:44+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -8752,7 +8752,7 @@ msgstr ""
 "y añadirles un prefijo según el juego: «qfg1-» para Quest for Glory 1 o "
 "«qfg2-» para Quest for Glory 2. Ejemplo: «qfg2-thief.sav»."
 
-#: engines/sci/sound/music.cpp:166
+#: engines/sci/sound/music.cpp:173
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
@@ -8760,7 +8760,7 @@ msgstr ""
 "El controlador de audio seleccionado requiere los siguientes archivos:\n"
 "\n"
 
-#: engines/sci/sound/music.cpp:169
+#: engines/sci/sound/music.cpp:176
 msgid ""
 "\n"
 "\n"
