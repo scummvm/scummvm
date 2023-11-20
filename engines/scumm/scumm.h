@@ -1408,6 +1408,7 @@ protected:
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
 	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
+	void mac_showDraftsInventory();
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
 	const byte *ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const;

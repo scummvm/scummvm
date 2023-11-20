@@ -213,6 +213,32 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	return ks;
 }
 
+void ScummEngine::mac_showDraftsInventory() {
+	_messageBannerActive = true;
+
+	// Draw the drafts inventory
+	MacGui::MacDialogWindow *window = _macGui->drawDraftsInventory();
+
+	// Pause shake effect
+	_shakeTempSavedState = _shakeEnabled;
+	setShake(0);
+
+	// Pause the engine
+	PauseToken pt = pauseEngine();
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+
+	bool leftBtnPressed = false, rightBtnPressed = false;
+	waitForBannerInput(-1, ks, leftBtnPressed, rightBtnPressed);
+
+	delete window;
+
+	// Finally, resume the engine, clear the input state, and restore the charset.
+	pt.clear();
+	clearClickedStatus();
+
+	_messageBannerActive = false;
+}
+
 // ===========================================================================
 // Macintosh GUI
 // ===========================================================================
@@ -3133,6 +3159,97 @@ MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 	Graphics::Surface *s = window->innerSurface();
 	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
 
+	window->show();
+	return window;
+}
+
+MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
+	int base, xPos, textHeight, heightMultiplier, draft, xOffset, inactiveColor,
+		unlockedColor, newDraftColor, titleColor, notesColor, notesWidth;
+
+	char notesBuf[6];
+	const char *names[18] = {
+		"Drafts",
+		"Opening:", "Straw Into Gold:", "Dyeing:",
+		"Night Vision:", "Twisting:", "Sleep:",
+		"Emptying:", "Invisibility:", "Terror:",
+		"Sharpening:", "Reflection:", "Healing:",
+		"Silence:", "Shaping:", "Unmaking:",
+		"Transcendence:",
+		"Unknown:"
+	};
+
+	const char *notes = "cdefgabC";
+
+	// ACT 1: Draw the Mac dialog window
+	MacGui::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
+	const Graphics::Font *font = getFont(kSystemFont);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	// ACT 2: Draw the drafts text
+	//
+	// Drafts are stored in SCUMM global variables; we choose the appropriate
+	// first entry in the variables at which these drafts start.
+	base = 55;
+
+	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
+	unlockedColor = kBlack;
+	inactiveColor = kBlack;
+	newDraftColor = kBlack;
+
+	xOffset = 0;
+	notesWidth = 30;
+
+	for (int i = 0; i < 16; i++) {
+		draft = _vm->_scummVars[base + i * 2];
+
+		// In which row are we rendering our text?
+		heightMultiplier = i < 8 ? i : (i % 8);
+		textHeight = 24;
+
+		// Has the draft been unlocked by the player?
+		titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
+
+		// Has the new draft been used at least once?
+		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+
+		// Has the draft been unlocked? Great: put it in our text buffer
+		// otherwise just prepare to render the "????" string.
+		if (draft & 0x2000) {
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "%c%c%c%c",
+							  notes[draft & 0x0007],
+							  notes[(draft & 0x0038) >> 3],
+							  notes[(draft & 0x01c0) >> 6],
+							  notes[(draft & 0x0e00) >> 9]);
+		} else {
+			notesColor = inactiveColor;
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
+		}
+
+		// Where are we positioning the text?
+		// Left column or right column?
+		xPos = i < 8 ? 40 : 260;
+
+		// Draw the titles of the drafts...
+		if (draft & 0x2000) {
+			font->drawString(s, (char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+		} else {
+			// Draw "Unknown:" as the title of the draft
+			font->drawString(s, (char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+		}
+
+		// Draw the notes of the draft...
+		font->drawString(s, (char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+	}
+
+	// Draw "Drafts" on top of the dialog
+	font->drawString(s, (char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
+
+	// Draw a vertical line to separate the two columns
+	s->drawLine(210, 44, 210, 184, kBlack);
+
+	// Update the screen with all the new stuff!
 	window->show();
 	return window;
 }

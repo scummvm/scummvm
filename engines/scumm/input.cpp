@@ -1167,7 +1167,11 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (enhancementEnabled(kEnhUIUX) && _game.id == GID_LOOM &&
 			mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_d && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 			// Drafts menu
-			showDraftsInventory();
+			if (_macGui) {
+				mac_showDraftsInventory();
+			} else {
+				showDraftsInventory();
+			}
 		}
 
 		if (snapScrollKeyEnabled) {
