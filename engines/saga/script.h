@@ -256,7 +256,7 @@ public:
 		memset(&_waitType, 0xFE, sizeof(_waitType));
 		memset(&_sleepTime, 0xFE, sizeof(_sleepTime));
 		memset(&_threadObj, 0xFE, sizeof(_threadObj));
-		memset(&_returnValue, 0xFE, sizeof(_threadObj));
+		memset(&_returnValue, 0xFE, sizeof(_returnValue));
 		memset(&_frameWait, 0xFE, sizeof(_frameWait));
 
 		_flags = kTFlagNone;
