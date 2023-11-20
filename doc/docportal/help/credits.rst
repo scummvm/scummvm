@@ -478,6 +478,15 @@ DreamWeb
    * - Willem Jan Palenstijn
      -
 
+Efh
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Arnaud Boutonné
+     -
+
 Freescape
 ^^^^^^^^^
 
@@ -2376,6 +2385,12 @@ Icons pack
 .. list-table::
    :widths: 35 65
 
+   * - Stefan Philippsen
+     - Primary contributor and coordination
+   * - Benjamin Funke
+     -
+   * - Daniel Albano
+     -
    * - David Calvert
      -
    * - Eugene Sandulenko
@@ -2390,11 +2405,11 @@ Icons pack
      -
    * - Olly Dean
      -
-   * - Stefan Philippsen
+   * - Walter Agazzi
+     -
+   * - beresk137
      -
    * - Canuma
-     -
-   * - SupSuper
      -
    * - Thunderforge
      -
