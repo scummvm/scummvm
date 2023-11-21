@@ -189,12 +189,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 	MacGui::MacDialogWindow *window = _macGui->drawBanner(bannerMsg);
 
-	// Pause shake effect
-	_shakeTempSavedState = _shakeEnabled;
-	setShake(0);
-
-	// Pause the engine
-	PauseToken pt = pauseEngine();
 	Common::KeyState ks = Common::KEYCODE_INVALID;
 
 	if (waitTime) {
@@ -204,39 +198,11 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 
 	delete window;
 
-	// Finally, resume the engine, clear the input state, and restore the charset.
-	pt.clear();
 	clearClickedStatus();
 
 	_messageBannerActive = false;
 
 	return ks;
-}
-
-void ScummEngine::mac_showDraftsInventory() {
-	_messageBannerActive = true;
-
-	// Draw the drafts inventory
-	MacGui::MacDialogWindow *window = _macGui->drawDraftsInventory();
-
-	// Pause shake effect
-	_shakeTempSavedState = _shakeEnabled;
-	setShake(0);
-
-	// Pause the engine
-	PauseToken pt = pauseEngine();
-	Common::KeyState ks = Common::KEYCODE_INVALID;
-
-	bool leftBtnPressed = false, rightBtnPressed = false;
-	waitForBannerInput(-1, ks, leftBtnPressed, rightBtnPressed);
-
-	delete window;
-
-	// Finally, resume the engine, clear the input state, and restore the charset.
-	pt.clear();
-	clearClickedStatus();
-
-	_messageBannerActive = false;
 }
 
 // ===========================================================================
@@ -1792,6 +1758,13 @@ bool MacGui::MacListBox::handleKeyDown(Common::Event &event) {
 MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
 
+	// Remember if the screen was shaking. We don't use the SCUMM engine's
+	// own _shakeTempSavedState to remember this, because there may be
+	// nested dialogs. They each need their own.
+
+	_shakeWasEnabled = _gui->_vm->_shakeEnabled;
+	_gui->_vm->setShake(0);
+
 	_backup = new Graphics::Surface();
 	_backup->create(bounds.width(), bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
 	_backup->copyRectToSurface(*_from, 0, 0, bounds);
@@ -1854,6 +1827,7 @@ MacGui::MacDialogWindow::~MacDialogWindow() {
 
 	_widgets.clear();
 	_pauseToken.clear();
+	_gui->_vm->setShake(_shakeWasEnabled);
 }
 
 void MacGui::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
@@ -2559,6 +2533,9 @@ void MacGui::initialize() {
 		// TODO: This can be found in the STRS resource
 		Common::String aboutMenuDef = "About " + name() + "...<B;(-";
 
+		if (_vm->_game.id == GID_LOOM)
+			aboutMenuDef += ";Drafts Inventory";
+
 		menu->addStaticMenus(menuSubItems);
 		menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
 
@@ -3226,7 +3203,7 @@ MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 	return window;
 }
 
-MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
+void MacGui::runDraftsInventory() {
 	int base, xPos, textHeight, heightMultiplier, draft, inactiveColor,
 		unlockedColor, newDraftColor, notesColor;
 
@@ -3311,7 +3288,8 @@ MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
 
 	// Update the screen with all the new stuff!
 	window->show();
-	return window;
+	delay();
+	delete window;
 }
 
 void MacGui::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
@@ -3425,6 +3403,10 @@ bool MacLoomGui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	switch (id) {
+	case 101:	// Drafts inventory
+		runDraftsInventory();
+		break;
+
 	case 204:	// Options
 		runOptionsDialog();
 		break;

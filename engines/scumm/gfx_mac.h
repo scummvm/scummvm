@@ -464,6 +464,8 @@ public:
 
 	class MacDialogWindow {
 	private:
+		bool _shakeWasEnabled;
+
 		Common::Rect _bounds;
 		int _margin;
 
@@ -605,7 +607,7 @@ public:
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
 	MacDialogWindow *drawBanner(char *message);
-	MacDialogWindow *drawDraftsInventory();
+	void runDraftsInventory();
 
 	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
