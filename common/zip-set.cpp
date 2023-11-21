@@ -29,13 +29,35 @@ namespace Common {
 
 struct ArchiveMemberListBackComparator {
 	bool operator()(const ArchiveMemberPtr &a, const ArchiveMemberPtr &b) {
-		return a->getName() < b->getName();
+		return a->getName() > b->getName();
 	}
 };
 
 bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *packsMask, const char *packsPath) {
-	Archive *dat = nullptr;
+	Archive *dat;
 	bool changed = false;
+
+	if (!ConfMan.get(packsPath).empty()) {
+		FSDirectory *iconDir = new FSDirectory(ConfMan.get(packsPath));
+		ArchiveMemberList iconFiles;
+
+		iconDir->listMatchingMembers(iconFiles, packsMask);
+		sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
+
+		for (ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			dat = makeZipArchive((*ic)->createReadStream());
+
+			if (dat) {
+				searchSet.add((*ic)->getName(), dat);
+				changed = true;
+				debug(2, "generateZipSet: Loaded pack file: %s", (*ic)->getName().c_str());
+			}
+		}
+
+		delete iconDir;
+	}
+
+	dat = nullptr;
 
 	if (ConfMan.hasKey("themepath")) {
 		FSNode *fs = new FSNode(normalizePath(ConfMan.get("themepath") + "/" + defaultFile, '/'));
@@ -71,28 +93,6 @@ bool generateZipSet(SearchSet &searchSet, const char *defaultFile, const char *p
 		searchSet.add(defaultFile, dat);
 		changed = true;
 		debug(2, "generateZipSet: Loaded pack file: %s", defaultFile);
-	}
-
-	dat = nullptr;
-
-	if (!ConfMan.get(packsPath).empty()) {
-		FSDirectory *iconDir = new FSDirectory(ConfMan.get(packsPath));
-		ArchiveMemberList iconFiles;
-
-		iconDir->listMatchingMembers(iconFiles, packsMask);
-		sort(iconFiles.begin(), iconFiles.end(), ArchiveMemberListBackComparator());
-
-		for (ArchiveMemberList::iterator ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
-			dat = makeZipArchive((*ic)->createReadStream());
-
-			if (dat) {
-				searchSet.add((*ic)->getName(), dat);
-				changed = true;
-				debug(2, "generateZipSet: Loaded pack file: %s", (*ic)->getName().c_str());
-			}
-		}
-
-		delete iconDir;
 	}
 
 	return changed;
