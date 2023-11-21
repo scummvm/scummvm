@@ -117,14 +117,15 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 
 	bool sharp = (_style & TTF_STYLE_SHARP) == TTF_STYLE_SHARP;
 
-	Common::File file;
+	Common::File *file = new Common::File();
 	Graphics::Font *newFont;
-	if (!file.open(Common::Path(newFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(newFontName)) &&
-		!file.open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(liberationFontName)) &&
-		!file.open(Common::Path(freeFontName)) && !_engine->getSearchManager()->openFile(file, Common::Path(freeFontName))) {
+	if (!file->open(Common::Path(newFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(newFontName)) &&
+		!file->open(Common::Path(liberationFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(liberationFontName)) &&
+		!file->open(Common::Path(freeFontName)) && !_engine->getSearchManager()->openFile(*file, Common::Path(freeFontName))) {
 		newFont = Graphics::loadTTFFontFromArchive(liberationFontName, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+		delete file;
 	} else {
-		newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+		newFont = Graphics::loadTTFFont(file, DisposeAfterUse::YES, point, Graphics::kTTFSizeModeCell, 0, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	}
 
 	if (newFont == nullptr) {

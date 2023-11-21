@@ -378,7 +378,6 @@ void FontTTF::restoreState(SaveGame *state) {
 		stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 		loadTTF(fname, stream, size);
 	}
-	delete stream;
 }
 
 void BitmapFont::render(Graphics::Surface &buf, const Common::String &currentLine,
@@ -420,7 +419,7 @@ void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream
 	_filename = filename;
 	_size = size;
 #ifdef USE_FREETYPE2
-	_font = Graphics::loadTTFFont(*data, size);
+	_font = Graphics::loadTTFFont(data, DisposeAfterUse::YES, size);
 #else
 	_font = nullptr;
 #endif

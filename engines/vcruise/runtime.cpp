@@ -1501,9 +1501,11 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, MidiDriver *midiDrv, cons
 
 #ifdef USE_FREETYPE2
 	if (_gameID == GID_AD2044) {
-		Common::File f;
-		if (f.open("gfx/AD2044.TTF"))
-			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
+		Common::File *f = new Common::File();
+		if (f->open("gfx/AD2044.TTF"))
+			_subtitleFontKeepalive.reset(Graphics::loadTTFFont(f, DisposeAfterUse::YES, 16, Graphics::kTTFSizeModeCharacter, 108, 72, Graphics::kTTFRenderModeLight));
+		else
+			delete f;
 	} else
 		_subtitleFontKeepalive.reset(Graphics::loadTTFFontFromArchive("NotoSans-Regular.ttf", 16, Graphics::kTTFSizeModeCharacter, 0, 0, Graphics::kTTFRenderModeLight));
 

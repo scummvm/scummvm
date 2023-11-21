@@ -120,16 +120,16 @@ void Screen::loadFonts(Common::Archive *archive) {
 }
 
 const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, double size, double aspect, int style) {
-	Common::File f;
+	Common::File *f = new Common::File();
 	const char *const FILENAMES[8] = {
 		"GoMono-Regular.ttf", "GoMono-Bold.ttf", "GoMono-Italic.ttf", "GoMono-Bold-Italic.ttf",
 		"NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-Bold-Italic.ttf"
 	};
 
-	if (!f.open(FILENAMES[face], *archive))
+	if (!f->open(FILENAMES[face], *archive))
 		error("Could not load %s from fonts file", FILENAMES[face]);
 
-	return Graphics::loadTTFFont(f, (int)size, Graphics::kTTFSizeModeCharacter);
+	return Graphics::loadTTFFont(f, DisposeAfterUse::YES, (int)size, Graphics::kTTFSizeModeCharacter);
 }
 
 FACES Screen::getFontId(const Common::String &name) {
