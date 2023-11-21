@@ -3227,8 +3227,8 @@ MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 }
 
 MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
-	int base, xPos, textHeight, heightMultiplier, draft, xOffset, inactiveColor,
-		unlockedColor, newDraftColor, titleColor, notesColor, notesWidth;
+	int base, xPos, textHeight, heightMultiplier, draft, inactiveColor,
+		unlockedColor, newDraftColor, notesColor;
 
 	char notesBuf[6];
 	const char *names[18] = {
@@ -3261,9 +3261,6 @@ MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
 	inactiveColor = kBlack;
 	newDraftColor = kBlack;
 
-	xOffset = 0;
-	notesWidth = 30;
-
 	for (int i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
 
@@ -3272,7 +3269,7 @@ MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
 		textHeight = 24;
 
 		// Has the draft been unlocked by the player?
-		titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
+		//int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
 
 		// Has the new draft been used at least once?
 		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
@@ -3296,18 +3293,18 @@ MacGui::MacDialogWindow *MacGui::drawDraftsInventory() {
 
 		// Draw the titles of the drafts...
 		if (draft & 0x2000) {
-			font->drawString(s, (char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+			font->drawString(s, (const char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
 		} else {
 			// Draw "Unknown:" as the title of the draft
-			font->drawString(s, (char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+			font->drawString(s, (const char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
 		}
 
 		// Draw the notes of the draft...
-		font->drawString(s, (char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+		font->drawString(s, (const char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
 	}
 
 	// Draw "Drafts" on top of the dialog
-	font->drawString(s, (char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
+	font->drawString(s, (const char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
 
 	// Draw a vertical line to separate the two columns
 	s->drawLine(210, 44, 210, 184, kBlack);
