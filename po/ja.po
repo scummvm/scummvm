@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-20 13:39+0000\n"
-"PO-Revision-Date: 2023-11-09 08:41+0000\n"
+"PO-Revision-Date: 2023-11-21 07:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -24,34 +24,28 @@ msgstr ""
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr "(%s %sでビルド)"
+msgstr "(%sに%sでビルド)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "コンパイルされた機能："
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "未対応のゲームID"
+msgstr "非対応"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
 msgstr "無効"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "無効"
+msgstr "有効"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU拡張機能サポート:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -384,20 +378,16 @@ msgid "Failed to load JSON file"
 msgstr "JSONファイルのロード失敗"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "フリーゲームをダウンロード"
+msgstr "フリーゲームとデモをダウンロード"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLC取得中..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "ダウンロード"
+msgstr "全てダウンロード"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -475,16 +465,12 @@ msgid "Download speed: %s %S/s"
 msgstr "DL速度：%s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "ゲームをダウンロード"
+msgstr "現在ダウンロード中のゲーム"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "ダウンロード"
+msgstr "ダウンロード待ち"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1162,7 +1148,7 @@ msgstr "機種"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "年"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1388,10 +1374,8 @@ msgstr "検出されない機種"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "不明なエラー"
+msgstr "年(不明)"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1604,16 +1588,12 @@ msgid "Shader Path:"
 msgstr "パス："
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "ゲームをダウンロード"
+msgstr "シェーダーをDL"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "シェーダーパックの更新を確認"
+msgstr "シェーダーパックの更新はscummvm.orgを確認して下さい"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2060,16 +2040,12 @@ msgstr ""
 "ファイルブラウザを使う。"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "ダウンロード"
+msgstr "アイコンをDL"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "アイコンパックの更新を確認"
+msgstr "アイコンパックの更新はscummvm.orgを確認して下さい"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -6421,37 +6397,27 @@ msgstr "射撃"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "上昇/急上昇"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "降下"
+msgstr "降下/急降下"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "コマンドを変更"
+msgstr "モード変更"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "左ステップ"
+msgstr "左回転"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "右ステップ"
+msgstr "右回転"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "メニュー"
+msgstr "インフォ"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
