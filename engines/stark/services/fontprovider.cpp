@@ -134,9 +134,8 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 		bool stemDarkening = StarkSettings->isFontAntialiasingEnabled();
 
 		_font = Common::SharedPtr<Graphics::Font>(
-				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, renderMode, nullptr, stemDarkening)
+				Graphics::loadTTFFont(s, DisposeAfterUse::YES, _scaledHeight, Graphics::kTTFSizeModeCell, 0, renderMode, nullptr, stemDarkening)
 		);
-		delete s;
 	} else {
 		warning("Unable to load the font '%s'", ttfFileName.c_str());
 	}

@@ -70,9 +70,9 @@ void TextManager::init() {
 				uint pos = stringToNumber<uint>(id->value());
 				if (_font.size() <= pos)
 					_font.resize(pos + 1);
-				Common::File file;
-				fileOpen(path->value(), &file);
-				_font[pos] = Graphics::loadTTFFont(file, stringToNumber<int>(size->value()));
+				Common::File *file = new Common::File();
+				fileOpen(path->value(), file);
+				_font[pos] = Graphics::loadTTFFont(file, DisposeAfterUse::YES, stringToNumber<int>(size->value()));
 			}
 		}
 	}

@@ -824,8 +824,7 @@ void RivenGraphics::loadMenuFont() {
 
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fontName);
 	if (stream) {
-		_menuFont = Graphics::loadTTFFont(*stream, fontHeight);
-		delete stream;
+		_menuFont = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, fontHeight);
 	}
 #endif
 

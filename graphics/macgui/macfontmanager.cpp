@@ -811,7 +811,7 @@ void MacFontManager::generateTTFFont(MacFont &toFont, Common::SeekableReadStream
 	// TODO: Handle getSlant() flags
 
 	stream->seek(0);
-	Font *font = Graphics::loadTTFFont(*stream, toFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
+	Font *font = Graphics::loadTTFFont(stream, DisposeAfterUse::NO, toFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont).c_str());

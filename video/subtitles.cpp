@@ -241,13 +241,16 @@ Subtitles::~Subtitles() {
 }
 
 void Subtitles::setFont(const char *fontname, int height) {
-	Common::File file;
-
 	_fontHeight = height;
 
 #ifdef USE_FREETYPE2
-	if (file.open(fontname)) {
-		_font = Graphics::loadTTFFont(file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+	Common::File *file = new Common::File();
+	if (file->open(fontname)) {
+		_font = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+		if (!_font)
+			delete file;
+	} else {
+		delete file;
 	}
 
 	if (!_font) {
