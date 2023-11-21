@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	splash.o \
 	timer.o \
 	XMLDoc.o \
+	TTSHandler.o \
 	ai/moveeffect.o \
 	ai/movement.o \
 	ai/spriteai.o \

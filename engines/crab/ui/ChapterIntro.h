@@ -33,6 +33,7 @@
 
 #include "crab/ui/button.h"
 #include "crab/ui/dialogbox.h"
+#include "crab/TTSHandler.h"
 
 namespace Crab {
 
@@ -42,7 +43,7 @@ class Sprite;
 } // End of namespace anim
 
 namespace ui {
-class ChapterIntro {
+class ChapterIntro : public TTSHandler {
 	// This contains the background image info and start button
 	GameDialogBox _dialog;
 
@@ -66,10 +67,6 @@ public:
 
 	void draw(pyrodactyl::event::Info &info, Common::String &text,
 			  pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state);
-
-	void onEntry(const Common::String &dialog) const;
-	void onExit() const;
-
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

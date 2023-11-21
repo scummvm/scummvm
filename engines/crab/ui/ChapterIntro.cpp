@@ -30,7 +30,6 @@
 
 #include "crab/animation/sprite.h"
 #include "crab/ui/ChapterIntro.h"
-#include "common/text-to-speech.h"
 
 namespace Crab {
 
@@ -66,23 +65,6 @@ void ChapterIntro::draw(pyrodactyl::event::Info &info, Common::String &text,
 		Rect clip = curSp->dialogClip(state);
 		g_engine->_imageManager->draw(_pos.x, _pos.y, curSp->img(), &clip);
 	}
-}
-
-void ChapterIntro::onEntry(const Common::String &dialog) const {
-	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-
-	_ttsMan->enable(true);   // Enable text-to-speech
-	_ttsMan->setPitch(50);   // Set pitch level
-	_ttsMan->setVolume(100); // Set volume level
-	_ttsMan->setRate(20);    // Set speech rate
-	_ttsMan->setVoice(1);
-	_ttsMan->say(dialog);
-}
-
-void ChapterIntro::onExit() const {
-	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-
-	_ttsMan->stop();
 }
 
 } // End of namespace Crab

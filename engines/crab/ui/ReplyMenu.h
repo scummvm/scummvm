@@ -38,12 +38,13 @@
 #include "crab/ui/ImageData.h"
 #include "crab/ui/PersonHandler.h"
 #include "crab/ui/ReplyButton.h"
+#include "crab/TTSHandler.h"
 
 namespace Crab {
 
 namespace pyrodactyl {
 namespace ui {
-class ReplyMenu : public Menu<ReplyButton> {
+class ReplyMenu : public Menu<ReplyButton>, public TTSHandler {
 	// Data about the background image
 	ImageData _bg;
 
