@@ -35,6 +35,7 @@
 #include "crab/event/GameEventInfo.h"
 #include "crab/ui/ProgressBar.h"
 #include "crab/ui/dialogbox.h"
+#include "crab/TTSHandler.h"
 
 namespace Crab {
 
@@ -44,7 +45,7 @@ class Sprite;
 } // End of namespace Sprite
 
 namespace ui {
-class PersonHandler {
+class PersonHandler : public TTSHandler {
 	// The positions of various elements
 	// img = player image position
 	Element _img;
