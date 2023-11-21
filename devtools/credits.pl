@@ -74,6 +74,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&uacute;/u/g;
 	$text =~ s/&#261;/a/g;
+	$text =~ s/&#269;/c/g;
 	$text =~ s/&#321;/L/g;
 	$text =~ s/&#322;/l/g;
 	$text =~ s/&#347;/s/g;
@@ -107,6 +108,7 @@ sub html_entities_to_utf8 {
 	$text =~ s/&oslash;/\xC3\xB8/g;
 	$text =~ s/&uacute;/\xC3\xBA/g;
 	$text =~ s/&#261;/\xC4\x85/g;
+	$text =~ s/&#269;/\xC4\x8D/g;
 	$text =~ s/&#321;/\xC5\x81/g;
 	$text =~ s/&#322;/\xC5\x82/g;
 	$text =~ s/&#347;/\xC5\x9B/g;
@@ -138,6 +140,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oslash;/\\303\\270/g;
 	$text =~ s/&uacute;/\\303\\272/g;
 	$text =~ s/&#261;/\\304\\205/g;
+	$text =~ s/&#269;/\\304\\215/g;
 	$text =~ s/&#321;/\\305\\201/g;
 	$text =~ s/&#322;/\\305\\202/g;
 	$text =~ s/&#347;/\\305\\233/g;
@@ -172,6 +175,7 @@ sub html_entities_to_rtf {
 	$text =~ s/&aring;/\\'8c/g;
 	# The following numerical values are decimal!
 	$text =~ s/&#261;/\\uc0\\u261 /g;
+	$text =~ s/&#269;/\\uc0\\u269 /g;
 	$text =~ s/&#321;/\\uc0\\u321 /g;
 	$text =~ s/&#322;/\\uc0\\u322 /g;
 	$text =~ s/&#347;/\\uc0\\u347 /g;
