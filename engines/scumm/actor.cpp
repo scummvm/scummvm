@@ -182,7 +182,6 @@ void Actor::initActor(int mode) {
 	_charset = 0;
 	memset(_sound, 0, sizeof(_sound));
 	_targetFacing = _facing;
-	_walkdata.nextDir = -1;
 	_lastValidX = 0;
 	_lastValidY = 0;
 
@@ -3868,6 +3867,7 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_walkdata.deltaYFactor, VER(8));
 	s.syncAsUint16LE(_walkdata.xfrac, VER(8));
 	s.syncAsUint16LE(_walkdata.yfrac, VER(8));
+	s.syncAsSint16LE(_walkdata.nextDir, VER(111));
 
 	s.syncAsUint16LE(_walkdata.point3.x, VER(42));
 	s.syncAsUint16LE(_walkdata.point3.y, VER(42));
