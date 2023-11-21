@@ -1489,6 +1489,15 @@ Z-Vision
 Backend Teams
 *************
 
+Atari
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Miro Kropáček
+     -
+
 Android
 ^^^^^^^
 

@@ -551,6 +551,10 @@ begin_credits("Credits");
 
 
 		begin_section("Backend Teams", "backend_teams");
+			begin_section("Atari");
+				add_person("Miro Krop&aacute;&#269;ek", "mikrosk", "");
+			end_section();
+
 			begin_section("Android");
 				add_person("Andre Heider", "dhewg", "");
 				add_person("Angus Lees", "Gus", "");
