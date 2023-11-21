@@ -583,7 +583,7 @@ bool BaseFontTT::initFont() {
 		fallbackFilename = "FreeSans.ttf";
 	}
 
-	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile);
+	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile, true, false);
 	if (!file) {
 		if (Common::String(_fontFile) != "arial.ttf") {
 			warning("%s has no replacement font yet, using FreeSans for now (if available)", _fontFile);
@@ -593,10 +593,8 @@ bool BaseFontTT::initFont() {
 	}
 
 	if (file) {
-		_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
+		_deletableFont = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
-		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = nullptr;
 	}
 
 	// Fallback2: Try load the font from the common fonts archive:

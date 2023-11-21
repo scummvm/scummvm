@@ -117,12 +117,11 @@ void FrotzScreen::loadExtraFonts(Common::Archive *archive) {
 
 	// Add Runic font. It provides cleaner versions of the runic characters in the
 	// character graphics font
-	Common::File f;
-	if (!f.open("NotoSansRunic-Regular.ttf", *archive))
+	Common::File *f = new Common::File();
+	if (!f->open("NotoSansRunic-Regular.ttf", *archive))
 		error("Could not load font");
 
-	_fonts.push_back(Graphics::loadTTFFont(f, g_conf->_propInfo._size, Graphics::kTTFSizeModeCharacter));
-	f.close();
+	_fonts.push_back(Graphics::loadTTFFont(f, DisposeAfterUse::YES, g_conf->_propInfo._size, Graphics::kTTFSizeModeCharacter));
 }
 
 } // End of namespace ZCode

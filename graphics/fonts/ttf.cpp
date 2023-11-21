@@ -99,11 +99,13 @@ public:
 	 */
 	bool isInitialized() const { return _initialized; }
 
-	bool loadFont(const uint8 *file, const int32 face_index, const uint32 size, FT_Face &face);
+	bool loadFont(Common::SeekableReadStream *ttfFile, FT_Stream stream, const int32 face_index, FT_Face &face);
 	void closeFont(FT_Face &face);
 private:
 	FT_Library _library;
 	bool _initialized;
+
+	static unsigned long readCallback(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count);
 };
 
 void shutdownTTF() {
@@ -124,10 +126,19 @@ TTFLibrary::~TTFLibrary() {
 	}
 }
 
-bool TTFLibrary::loadFont(const uint8 *file, const int32 face_index, const uint32 size, FT_Face &face) {
+bool TTFLibrary::loadFont(Common::SeekableReadStream *ttfFile, FT_Stream stream, const int32 face_index, FT_Face &face) {
 	assert(_initialized);
 
-	return (FT_New_Memory_Face(_library, file, size, face_index, &face) == 0);
+	FT_Open_Args args;
+	args.flags = FT_OPEN_STREAM;
+	args.stream = stream;
+
+	stream->read = readCallback;
+	stream->descriptor.pointer = ttfFile;
+	stream->pos = ttfFile->pos();
+	stream->size = ttfFile->size() - stream->pos;
+
+	return (FT_Open_Face(_library, &args, face_index, &face) == 0);
 }
 
 void TTFLibrary::closeFont(FT_Face &face) {
@@ -136,15 +147,20 @@ void TTFLibrary::closeFont(FT_Face &face) {
 	FT_Done_Face(face);
 }
 
+unsigned long TTFLibrary::readCallback(FT_Stream stream, unsigned long offset, unsigned char *buffer, unsigned long count) {
+	Common::SeekableReadStream *ttfFile = (Common::SeekableReadStream *)stream->descriptor.pointer;
+	ttfFile->seek(offset);
+	return ttfFile->read(buffer, count);
+}
+
 class TTFFont : public Font {
 public:
 	TTFFont();
 	~TTFFont() override;
 
-	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-	          uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
-	bool load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool fakeBold, bool fakeItalic,
-	          int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
+	bool load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode,
+	          uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening,
+	          int32 faceIndex = 0, bool fakeBold = false, bool fakeItalic = false);
 
 	int getFontHeight() const override;
 	Common::String getFontName() const override;
@@ -163,10 +179,11 @@ public:
 
 private:
 	bool _initialized;
+	FT_StreamRec_ _stream;
 	FT_Face _face;
 
-	uint8 *_ttfFile;
-	uint32 _size;
+	Common::SeekableReadStream *_ttfFile;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	int _width, _height;
 	int _ascent, _descent;
@@ -201,16 +218,18 @@ private:
 };
 
 TTFFont::TTFFont()
-	: _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
+	: _initialized(false), _stream(), _face(), _ttfFile(0), _width(0), _height(0), _ascent(0),
 	  _descent(0), _glyphs(), _loadFlags(FT_LOAD_TARGET_NORMAL), _renderMode(FT_RENDER_MODE_NORMAL),
-	  _hasKerning(false), _allowLateCaching(false), _fakeBold(false), _fakeItalic(false) {
+	  _hasKerning(false), _allowLateCaching(false), _fakeBold(false), _fakeItalic(false),
+	  _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
 TTFFont::~TTFFont() {
 	if (_initialized) {
 		g_ttf.closeFont(_face);
 
-		delete[] _ttfFile;
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _ttfFile;
 		_ttfFile = 0;
 
 		for (GlyphCache::iterator i = _glyphs.begin(), end = _glyphs.end(); i != end; ++i)
@@ -220,50 +239,21 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-				   uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
-	if (!g_ttf.isInitialized())
-		return false;
 
-	uint32 sizeFile = stream.size();
-	if (!sizeFile)
-		return false;
-
-	uint8 *ttfFile = new uint8[sizeFile];
-	assert(ttfFile);
-
-	if (stream.read(ttfFile, sizeFile) != sizeFile) {
-		delete[] ttfFile;
-		return false;
-	}
-
-	if (!load(ttfFile, sizeFile, 0, false, false, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
-		delete[] ttfFile;
-		return false;
-	}
-
-	// Don't delete ttfFile as it's now owned by the class
-	return true;
-}
-
-bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, bool italic,
-				   int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+bool TTFFont::load(Common::SeekableReadStream *ttfFile, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode,
+				   uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening,
+				   int32 faceIndex, bool bold, bool italic) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
 		return false;
 
-	_size = sizeFile;
-	if (!_size)
-		return false;
-
 	_ttfFile = ttfFile;
 	assert(_ttfFile);
 
-	if (!g_ttf.loadFont(_ttfFile, faceIndex, _size, _face)) {
-		// Don't delete ttfFile as we return fail
-		_ttfFile = 0;
+	_disposeAfterUse = disposeAfterUse;
 
+	if (!g_ttf.loadFont(_ttfFile, &_stream, faceIndex, _face)) {
 		return false;
 	}
 
@@ -879,10 +869,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+Font *loadTTFFont(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int size, TTFSizeMode sizeMode, uint xdpi, uint ydpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
+	if (!font->load(stream, disposeAfterUse, size, sizeMode, xdpi, ydpi, renderMode, mapping, stemDarkening)) {
 		delete font;
 		return 0;
 	}
@@ -906,9 +896,9 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		return nullptr;
 	}
 
-	Common::File f;
+	Common::File *f = new Common::File();
 
-	if (!f.open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
+	if (!f->open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
 		delete archive;
 		archiveStream = nullptr;
 
@@ -924,17 +914,25 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 
 		archive = Common::makeZipArchive(archiveStream);
 		if (!archive) {
+			delete f;
 			return nullptr;
 		}
 
-		if (!f.open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
+		if (!f->open(Common::Path(filename, Common::Path::kNoSeparator), *archive)) {
 			delete archive;
+			delete f;
 			return nullptr;
 		}
 	}
 
-	Font *font = loadTTFFont(f, size, sizeMode, xdpi, ydpi, renderMode, mapping);
+	Font *font = loadTTFFont(f, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi, renderMode, mapping);
+	if (!font) {
+		delete archive;
+		delete f;
+		return nullptr;
+	}
 
+	// HACK: We currently assume that ZipArchive always loads the whole file into memory, so we can delete the archive here.
 	delete archive;
 	return font;
 }
@@ -990,37 +988,22 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 	if (!g_ttf.isInitialized())
 		return nullptr;
 
-	uint8 *bestTTFFile = nullptr;
-	uint32 bestSize = 0;
+	Common::SeekableReadStream *bestTTFFile = nullptr;
 	uint32 bestFaceId = (uint32) -1;
 	uint32 bestPenalty = (uint32) -1;
 
 	for (Common::Array<Common::Path>::const_iterator it = files.begin(); it != files.end(); it++) {
-		Common::File ttf;
-		if (!ttf.open(*it)) {
-			continue;
-		}
-		uint32 sizeFile = ttf.size();
-		if (!sizeFile) {
-			continue;
-		}
-		uint8 *ttfFile = new uint8[sizeFile];
-		assert(ttfFile);
-
-		if (ttf.read(ttfFile, sizeFile) != sizeFile) {
-			delete[] ttfFile;
-			ttfFile = 0;
-
+		Common::File *ttfFile = new Common::File();
+		if (!ttfFile->open(*it)) {
 			continue;
 		}
 
-		ttf.close();
-
+		FT_StreamRec_ stream;
 		FT_Face face;
 
 		// Load face index -1 to get the count
-		if (!g_ttf.loadFont(ttfFile, -1, sizeFile, face)) {
-			delete[] ttfFile;
+		if (!g_ttf.loadFont(ttfFile, &stream, -1, face)) {
+			delete ttfFile;
 			ttfFile = 0;
 
 			continue;
@@ -1031,7 +1014,7 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 		g_ttf.closeFont(face);
 
 		for (FT_Long i = 0; i < num_faces; i++) {
-			if (!g_ttf.loadFont(ttfFile, i, sizeFile, face)) {
+			if (!g_ttf.loadFont(ttfFile, &stream, i, face)) {
 				continue;
 			}
 
@@ -1059,19 +1042,18 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 				// Better font
 				// Cleanup old best font if it's not the same file as the current one
 				if (bestTTFFile != ttfFile) {
-					delete [] bestTTFFile;
+					delete bestTTFFile;
 				}
 
 				bestPenalty = penalty;
 				bestTTFFile = ttfFile;
 				bestFaceId = i;
-				bestSize = sizeFile;
 			}
 		}
 
 		// Don't free the file if it has been elected the best
 		if (bestTTFFile != ttfFile) {
-			delete [] ttfFile;
+			delete ttfFile;
 		}
 		ttfFile = nullptr;
 	}
@@ -1094,10 +1076,10 @@ Font *findTTFace(const Common::Array<Common::Path> &files, const Common::U32Stri
 		ydpi = xdpi;
 	}
 
-	if (!font->load(bestTTFFile, bestSize, bestFaceId, bold, italic, size, sizeMode,
-	                xdpi, ydpi, renderMode, mapping, false)) {
+	if (!font->load(bestTTFFile, DisposeAfterUse::YES, size, sizeMode, xdpi, ydpi,
+	                renderMode, mapping, false, bestFaceId, bold, italic)) {
 		delete font;
-		delete [] bestTTFFile;
+		delete bestTTFFile;
 		return nullptr;
 	}
 

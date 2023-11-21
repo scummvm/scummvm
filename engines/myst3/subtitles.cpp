@@ -97,8 +97,7 @@ void FontSubtitles::loadResources() {
 
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFile);
 	if (s) {
-		_font = Graphics::loadTTFFont(*s, _fontSize * _scale);
-		delete s;
+		_font = Graphics::loadTTFFont(s, DisposeAfterUse::YES, _fontSize * _scale);
 	} else {
 		warning("Unable to load the subtitles font '%s'", ttfFile);
 	}
