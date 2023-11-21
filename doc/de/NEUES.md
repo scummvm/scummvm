@@ -5,7 +5,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Neue Spiele:
    - Unterstützung für die macOS-Versionen von Syberia und Syberia II hinzugefügt.
-   - Unterstützung für The Vampire Diaries und Nancy Drew: Secrets Can Kill hinzugefügt.
+   - Unterstützung für The Vampire Diaries, Nancy Drew: Secrets Can Kill,
+     Nancy Drew: Stay Tuned for Danger, Nancy Drew: Message in a Haunted Mansion,
+     Nancy Drew: Treasure in the Royal Tower und Nancy Drew: The Final Scene hinzugefügt.
    - Unterstützung für Reah: Face the Unknown und Schizm: Mysterious Journey hinzugefügt.
    - Unterstützung für Might and Magic Book One hinzugefügt.
    - Unterstützung für Muppet Tresure Island hinzugefügt.
@@ -28,15 +30,24 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Das Standard-GM-Gerät wurde für eine verbesserte Kompatibilität auf "auto" gesetzt.
 
  AGS:
-   - Code-Basis mit dem offiziellen AGS-Code in Version 3.6.0.51 synchronisiert.
+   - Code-Basis mit dem offiziellen AGS-Code in Version 3.6.0.53 synchronisiert.
    - Beschleunigung der Grafik-Manipulation auf moderner Hardware mit CPU-spezifischem Code.
    - Unterstützung für frühes Font-Rendering hinzugefügt, die dem originalen Interpreter entspricht.
+   - Unterstützung für die Wiedergabe von transcodierten Videos hinzugefügt, die nicht unterstützte
+     Codecs ersetzen können.
+   - Die Wiedergabe von MOD-Audio-Tracks ist jetzt vollständig.
+   - Fehler behoben, der dazu führt, dass die Hintergrundmusik nicht in allen Fällen korrekt wiederholt wird.
+   - Einige Fehler in diversen Spielen (z.B. Strangeland, Chronicle of Innsmouth) korrigiert.
+   - Mehrere Updates der Spiel-Erkennungs-Tabellen.
 
  Asylum:
    - Unterstützung für die chinesische Version von Sanitarium hinzugefügt.
 
  Dragons:
    - Die Copyright-Hinweise und das Hauptmenü werden nun korrekt übersetzt.
+
+ Freescape:
+   - Die Kollisions- und Projektil-Erkennung wurde mittels sweepAABB verbessert.
 
  GrimE:
    - Unterstützung für die chinesische Version von Grim Fandango hinzugefügt.
@@ -54,8 +65,16 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der offizielle Roland MT-32-Patch für Monkey Island 1 kann nun auf allen EGA-Versionen
      und nicht nur der englischen Version angewendet werden.
    - Der Sound-Code für alle Spiele von Humongous Entertainment wurde komplett überarbeitet.
-   - Originalgetreue Nachbildung der Macintosh-Oberfläche für Indiana Jones and the Last Crusade.
+   - Originalgetreue Nachbildung der Macintosh-Oberfläche für Indiana Jones and the Last Crusade und Loom.
    - Korrektur der Charakter-Animation bei Richtungswechseln in Full Throttle, The Dig und The Curse of Monkey Island.
+   - In Loom kann über Strg+D nun eine Liste der bekannten Melodien angezeigt werden.
+   - Fehlerhafte Kanji-Zeichen in der japanischen SegaCD-Version von Monkey Island 1 korrigiert.
+     Die Schrift-Darstellung ist nun pixelgetreu.
+   - Unterstützung für die Macintosh- und DOS/V-Versionen von Indiana Jones and the Fate of Atlantis,
+     die von MicroMouse vertrieben wurden, hinzugefügt.
+   - Unterstützung für Netzwerk-Multiplay-erSpiele für Backyard Football, Backyard Baseball 2001 und
+     Backyard Football 2002 hinzugefügt.
+
 
  Sherlock:
    - Unterstützung für die chinesische Version von Serrated Scalpel hinzugefügt.
