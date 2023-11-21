@@ -66,6 +66,10 @@ public:
 
 	void draw(pyrodactyl::event::Info &info, Common::String &text,
 			  pyrodactyl::anim::Sprite *curSp, const pyrodactyl::people::PersonState &state);
+
+	void onEntry(const Common::String &dialog) const;
+	void onExit() const;
+
 };
 } // End of namespace ui
 } // End of namespace pyrodactyl

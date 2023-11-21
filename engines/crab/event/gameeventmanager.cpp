@@ -163,9 +163,10 @@ void Manager::handleEvents(Info &info, const Common::String &playerId, Common::E
 				if (hud._back.handleEvents(event) == BUAC_LCLICK || hud._pausekey.handleEvents(event))
 					_intro._showTraits = false;
 			} else {
-				if (_intro.handleEvents(event))
+				if (_intro.handleEvents(event)) {
 					_eventMap[info.curLocID()].nextEvent(_activeSeq, info, playerId, result, _endSeq);
-
+					_intro.onExit();
+				}
 				if (_intro._showTraits)
 					_per.Cache(info, level.playerId(), level);
 			}
@@ -287,6 +288,9 @@ void Manager::calcActiveSeq(Info &info, pyrodactyl::level::Level &level, const R
 			break;
 		case EVENT_REPLY:
 			_reply.cache(info, g_engine->_eventStore->_con[_curEvent->_special]);
+			break;
+		case EVENT_SPLASH:
+			_intro.onEntry(_curEvent->_dialog);
 			break;
 		default:
 			break;
