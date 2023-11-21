@@ -46,7 +46,7 @@ enum {
 	ST_SAMPLE_MIN = (-ST_SAMPLE_MAX - 1L)
 };
 
-static inline int16 clampedAdd(int16& a, int b) {
+static inline void clampedAdd(int16& a, int b) {
 	int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
 	val = (a ^ 0x8000) + b;
@@ -64,7 +64,6 @@ static inline int16 clampedAdd(int16& a, int b) {
 #else
 	a = val;
 #endif
-	return (int16)val;
 }
 
 /**
