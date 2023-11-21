@@ -40,7 +40,7 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "acg",                "Adventurer's Consumer Guide" },
 	{ "acmj",               "The Making of ACMJ Game" },
 	{ "adventdoor",         "Advent Door" },
-	{ "adv350_glulx",       "Adventure" },
+	{ "adv350_glulx",       "Adventure, 350 Point Colossal Cave" },
 	{ "adventmirror",       "Advent Mirror" },
 	{ "adventura",          "Adventura" },
 	{ "ailihphilia",        "Ailihphilia" },
