@@ -234,10 +234,9 @@ Common::Error GnapEngine::run() {
 
 #ifdef USE_FREETYPE2
 	Common::SeekableReadStream *stream = _exe->getResource(Common::kWinFont, 2000);
-	_font = Graphics::loadTTFFont(*stream, 24);
+	_font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, 24);
 	if (!_font)
 		warning("Unable to load font");
-	delete stream;
 #else
 	_font = nullptr;
 #endif

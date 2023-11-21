@@ -90,6 +90,7 @@ Font *FontManager::getTTFont(unsigned int fontnum) {
 
 
 Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int pointsize, bool antialiasing) {
+#ifdef USE_FREETYPE2
 	TTFId id;
 	id._filename = filename;
 	id._pointSize = pointsize;
@@ -100,20 +101,21 @@ Graphics::Font *FontManager::getTTF_Font(const Common::Path &filename, int point
 	if (iter != _ttfFonts.end())
 		return iter->_value;
 
-	Common::File fontids;
-	if (!fontids.open(filename)) {
+	Common::File* fontids = new Common::File();
+	if (!fontids->open(filename)) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
+		delete fontids;
 		return nullptr;
 	}
 
-#ifdef USE_FREETYPE2
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
 	Graphics::TTFRenderMode mode = antialiasing ? Graphics::kTTFRenderModeNormal : Graphics::kTTFRenderModeMonochrome;
-	Graphics::Font *font = Graphics::loadTTFFont(fontids, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
+	Graphics::Font *font = Graphics::loadTTFFont(fontids, DisposeAfterUse::YES, pointsize, Graphics::kTTFSizeModeCharacter, 0, 0, mode, 0, false);
 
 	if (!font) {
 		warning("Failed to open TTF: %s", filename.toString().c_str());
+		delete fontids;
 		return nullptr;
 	}
 
