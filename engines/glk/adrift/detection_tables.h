@@ -177,8 +177,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "door2",              "Door and NPC" },
 	{ "doortest",           "Wedge-A-Door" },
 	{ "doortoutopia",       "The Door to Utopia" },
-	{ "doorwithsensor",     "Door with Sensor" },
-	{ "dragondiamond",      "The Dragon Diamond" },
+	{ "doorwithsensor",     "Door With Sensor" },
 	{ "dragonsheart",       "Dragon's Heart" },
 	{ "dragonsphere",       "Dragonsphere" },
 	{ "dreamland",          "Dreamland" },
@@ -582,7 +581,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1h_forum2",          "Forum 2" },                                                                //    5th Place
 	{ "1h_saffire",         "Saffire" },                                                                //    6th Place
 	{ "1h_cbn1",            "The Revenge of Clueless Bob Newbie!" },                                    //    7th Place
-	{ "1h_cbn2",            "The Revenge of Clueless Bob Newbie Part 2: This Time it's Personal" },     //    8th Place
+	{ "1h_cbn2",            "The Revenge of Clueless Bob Newbie Part 2: This Time It's Personal" },     //    8th Place
 	{ "1h_ecod2",           "The Curse of the Ghost of the Evil Chicken of Doom... Returns!" },         //    9th Place
 	{ "1h_asdfa",           "A Short Damn Fantasy Adventure" },                                         //   10th Place
 	{ "1h_crm",             "That Crazy Radioactive Monkey!" },                                         //   11th Place
@@ -789,7 +788,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1r_insanity",        "Escape from Insanity" },                                                   //    4th Place
 	{ "1r_everything",      "Everything Emanuelle" },                                                   //    5th Place
 	{ "1r_iadrift",         "I" },                                                                      //    6th Place
-	{ "1r_trappedgirl",     "Trapped with a Girl" },                                                    //    7th Place
+	{ "1r_trappedgirl",     "Trapped With a Girl" },                                                    //    7th Place
 	{ "1r_dreamland",       "Dreamland" },                                                              //    8th Place
 
 	// Spring Ting 2009
