@@ -49,7 +49,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "alexis",             "Alexis: Dalskee" },
 	{ "alias",              "Alias: Undercover Agent" },
 	{ "allroadsmars",       "All Roads Lead to Mars" },
-	{ "alrhints",           "ALR Hints System" },
 	{ "amazgriswold",       "The Amazing Uncle Griswold" },
 	{ "amaztvcaper",        "The Amazing TV Caper" },
 	{ "americanmoney",      "USA Money Template" },
@@ -787,7 +786,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "1r_msmobius",        "Montahue Scott and the Mobius Belt" },                                     //    3rd Place
 	{ "1r_insanity",        "Escape from Insanity" },                                                   //    4th Place
 	{ "1r_everything",      "Everything Emanuelle" },                                                   //    5th Place
-	{ "1r_iadrift",         "I" },                                                                      //    6th Place
+	{ "1r_i",               "I" },                                                                      //    6th Place
 	{ "1r_trappedgirl",     "Trapped With a Girl" },                                                    //    7th Place
 	{ "1r_dreamland",       "Dreamland" },                                                              //    8th Place
 
@@ -997,7 +996,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("alchemist", "03???\?/v2", "c22b910b9c9703dd190c6bce71532bae", 165297),
 	DT_ENTRY1("alexis", "020330", "d1adc72ae5f19e18e386ec1a3cab7212", 87229),
 	DT_ENTRY1("alias", "020807", "14176ef2af8207d54b6c4ae6a8938046", 9213),
-	DT_ENTRY0("alrhints", "799a0f2f0d9e44fd7542a13638c9f087", 3763),
 	DT_ENTRY1("allroadsmars", "080209", "703cb672f13f7174a37c8d379abe466f", 2006),
 	DT_ENTRY1("amazgriswold", "0505??", "a044a6c6117b98aaa81c4083a2144946", 18992),
 	DT_ENTRY1("amaztvcaper", "060920", "f456b996a5dcb6037e75196406e3c86d", 6187),
