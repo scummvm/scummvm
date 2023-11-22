@@ -36,6 +36,16 @@ namespace Graphics {
 #define DN(...)  ;
 #endif
 
+MacTextCanvas::~MacTextCanvas() {
+	delete _surface;
+	delete _shadowSurface;
+
+	for (auto &t : _text) {
+		delete t.table;
+		delete t.tableSurface;
+	}
+}
+
 // Adds the given string to the end of the last line/chunk
 // while observing the _canvas._maxWidth and keeping this chunk's
 // formatting

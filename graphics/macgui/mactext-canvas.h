@@ -124,10 +124,7 @@ public:
 	MacFontRun _defaultFormatting;
 
 public:
-	~MacTextCanvas() {
-		delete _surface;
-		delete _shadowSurface;
-	}
+	~MacTextCanvas();
 
 	void recalcDims();
 	void reallocSurface();
@@ -205,11 +202,6 @@ struct MacTextLine {
 	 * @note If requested column is too big, returns last character in the line
 	 */
 	uint getChunkNum(int *col);
-
-	~MacTextLine() {
-		delete table;
-		delete tableSurface;
-	}
 };
 
 } // End of namespace Graphics
