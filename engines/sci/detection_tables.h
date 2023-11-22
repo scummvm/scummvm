@@ -206,6 +206,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Inside the Chest / Behind the Developer's Shield
 	// SCI interpreter version 2.000.000
+	// This demo would display a different title and logo depending on which batch
+	// file was run: CHEST.BAT or SHIELD.BAT. The second would use SHIELD.CFG
+	// and include the SHIELD patch directory and change the title.
 	{"chest", "", {
 		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
 		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
