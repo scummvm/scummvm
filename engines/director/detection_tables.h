@@ -1562,6 +1562,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "macos85",			"Mac OS 8.5" },
 	{ "macportable",		"Your Apple Tour of the Macintosh Portable" },
 	{ "mathblasterjr",		"Math Blaster Jr." },
+	{ "mathsworkshop",		"Maths Workshop"},
 	{ "mavisbeacon",		"Mavis Beacon Teaches Typing" },
 	{ "mechwarrior2",		"MechWarrior 2" },
 	{ "meetingmaker",		"Meeting Maker" },
@@ -4643,6 +4644,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("mathblasterjr", "Preview v1.0c", "Math Blst Jr. Pwr Mac", "602e61f10c158183218405dd30a09b3f", 60068, 404),
 
 	MACGAME1("mathtest", "", "mathtest (mac)", "cdb27c916044ae4dceb4b7326063fa03", 301925, 400),
+
+	// Demo version of "Maths Workshop", published by Broderbund (1994-1995)
+	// The full game is not made with Director, but with MOHAWK (eriktorbjorn)
+	WINDEMO1t("mathsworkshop", "Preview", "_MATHDAT.EXE", "5306745f0734b6cbd94e4567a0b5805a", 696931, 400),
 
 	// German title is Max und die Geheimformel
 	// German demo from CD ROM Hits 1995-10
