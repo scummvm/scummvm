@@ -135,7 +135,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_console(nullptr),
 	_tts(nullptr),
 	_rng("sci"),
-	_forceHiresGraphics(false) {
+	_forceHiresGraphics(false),
+	_inErrorString(false) {
 
 	assert(g_sci == nullptr);
 	g_sci = this;
@@ -712,10 +713,19 @@ void SciEngine::runGame() {
 // When `error` is called, this function adds additional SCI engine context to the message
 // to help with bug reporting. It is critical that this function not crash, or else the
 // original error message will be lost and the debugger will be unavailable. This function
-// must not cause a second `error` call, or else it will infinitely recurse and crash with
-// stack overflow. This function must be cautious about the state it inspects, because it
-// can be called at any time during the engine lifecycle.
+// must not cause a second `error` call, or the original error message will also be unavailable,
+// although we detect this to prevent infinite recursion and crashing with a stack overflow.
+// This function must be cautious about the state it inspects, because it can be called at
+// any time during the engine lifecycle.
 void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_output_size) {
+	// safeguard to prevent infinite recursion in case there's a code path that calls `error`.
+	if (_inErrorString) {
+		warning("error called during errorString");
+		Common::strlcpy(buf_output, buf_input, buf_output_size);
+		return;
+	}
+	_inErrorString = true;
+
 	// Detailed context can only be included if VM execution has begun.
 	EngineState *s = _gamestate;
 	if (s != nullptr && !s->_executionStack.empty() && _kernel != nullptr) {
@@ -791,6 +801,7 @@ void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_out
 		// VM not initialized yet, so just copy over the target name and error message.
 		snprintf(buf_output, buf_output_size, "[%s]: %s", _targetName.c_str(), buf_input);
 	}
+	_inErrorString = false;
 }
 
 void SciEngine::exitGame() {
