@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-20 13:39+0000\n"
+"POT-Creation-Date: 2023-11-22 06:04+0000\n"
 "PO-Revision-Date: 2023-05-06 06:43+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5798,8 +5798,8 @@ msgstr ""
 #: engines/mohawk/detection_tables.h:2526
 #: engines/mohawk/detection_tables.h:3628
 #: engines/mohawk/detection_tables.h:3643 engines/myst3/detection.cpp:142
-#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5292
-#: engines/sci/detection_tables.h:5300 engines/stark/detection.cpp:319
+#: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5295
+#: engines/sci/detection_tables.h:5303 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
 #: engines/trecision/detection.cpp:201 engines/zvision/detection_tables.h:129
 msgid "Missing game code"
@@ -8410,11 +8410,11 @@ msgstr "Casio MT-540"
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
-#: engines/sci/detection_tables.h:4528
+#: engines/sci/detection_tables.h:4531
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr "Ez a demó Robot videók implementálatlan verzióját használja"
 
-#: engines/sci/detection_tables.h:4583
+#: engines/sci/detection_tables.h:4586
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Hiányos játék észlelve. Adatokat kell másolnia az összes CD-ről."
 
@@ -8477,7 +8477,7 @@ msgstr ""
 "mûködnek megfelelõen. Kérem, ellenõrizze a konzolt további információkért, "
 "és ellenõrizze, hogy a játékfájljai érvényesek-e."
 
-#: engines/sci/sci.cpp:398
+#: engines/sci/sci.cpp:399
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -8491,7 +8491,7 @@ msgstr ""
 "eredeti játéktól, nem minden esetben látszik megfelelõen, vagy tükrözi a "
 "tényleges beszédet. Ez nem ScummVM hiba - ez probléma a játékban található."
 
-#: engines/sci/sci.cpp:422
+#: engines/sci/sci.cpp:423
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI Utility"
@@ -8513,11 +8513,11 @@ msgstr ""
 "fájlba és helyezze a játék mappába. A javítás nélkül a General MIDI zene "
 "ennél a játéknál torzul."
 
-#: engines/sci/sci.cpp:514
+#: engines/sci/sci.cpp:515
 msgid "Download patch"
 msgstr "Patch letöltése"
 
-#: engines/sci/sci.cpp:515
+#: engines/sci/sci.cpp:516
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -8525,7 +8525,7 @@ msgstr ""
 "(vagy kattints a 'Patch letöltése' gombra. De vedd figyelembe - csak letölt, "
 "onnan folytatnod kell)\n"
 
-#: engines/sci/sci.cpp:522
+#: engines/sci/sci.cpp:523
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -8541,7 +8541,7 @@ msgstr ""
 "- letöltés http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:941
+#: engines/sci/sci.cpp:956
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
