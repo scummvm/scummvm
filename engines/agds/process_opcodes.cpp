@@ -33,7 +33,7 @@
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 
@@ -913,7 +913,7 @@ void Process::loadSaveSlotNamePicture() {
 	uint32 color = _engine->pixelFormat().RGBToColor(255, 0, 255);
 	label->fillRect(label->getRect(), color);
 	font->drawString(label, save? saveSlotName: "", 0, 0, w, color);
-	Graphics::TransparentSurface *transparentLabel = _engine->convertToTransparent(label);
+	Graphics::ManagedSurface *transparentLabel = _engine->convertToTransparent(label);
 	_object->setPicture(transparentLabel);
 	_object->generateRegion();
 
@@ -1162,7 +1162,7 @@ void Process::setObjectTile() {
 		warning("invalid tile size");
 		return;
 	}
-	Graphics::TransparentSurface *surface = _engine->loadFromCache(_tileResource);
+	Graphics::ManagedSurface *surface = _engine->loadFromCache(_tileResource);
 	if (!surface) {
 		warning("picture %d was not loaded", _tileResource);
 		return;
@@ -1173,12 +1173,12 @@ void Process::setObjectTile() {
 	int x = _tileIndex % tw;
 	debug("tile coordinate %dx%d", x, y);
 
-	Graphics::TransparentSurface *tile = new Graphics::TransparentSurface();
+	Graphics::ManagedSurface *tile = new Graphics::ManagedSurface();
 	tile->create(_tileWidth, _tileHeight, surface->format);
-	tile->applyColorKey(0xff, 0, 0xff);
+	tile->surfacePtr()->applyColorKey(0xff, 0, 0xff);
 	Common::Rect srcRect(_tileWidth, _tileHeight);
 	srcRect.translate(x * _tileWidth, y * _tileHeight);
-	surface->blit(*tile, 0, 0, Graphics::FLIP_NONE, &srcRect);
+	surface->blendBlitTo(*tile, 0, 0, Graphics::FLIP_NONE, &srcRect);
 	object->setPicture(tile);
 }
 
@@ -1287,7 +1287,7 @@ void Process::getObjectPictureWidth() {
 	debug("getObjectPictureWidth %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
-		const Graphics::Surface *picture = object->getPicture();
+		const auto *picture = object->getPicture();
 		int value = picture ? picture->w : 0;
 		debug("\t->%d", value);
 		push(value);
@@ -1302,7 +1302,7 @@ void Process::getObjectPictureHeight() {
 	debug("getObjectPictureHeight %s", name.c_str());
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
 	if (object) {
-		const Graphics::Surface *picture = object->getPicture();
+		const auto *picture = object->getPicture();
 		int value = picture ? picture->h : 0;
 		debug("\t->%d", value);
 		push(value);
@@ -1698,7 +1698,7 @@ void Process::fogOnCharacter() {
 	debug("fogOnCharacter %s z: [%d,%d]", name.c_str(), arg1, arg2);
 	Character *character = _engine->currentCharacter();
 	if (character)
-		character->setFog(_engine->convertToTransparent(_engine->loadPicture(name)), arg1, arg2);
+		character->setFog(_engine->loadPicture(name), arg1, arg2);
 }
 
 void Process::setRain() {

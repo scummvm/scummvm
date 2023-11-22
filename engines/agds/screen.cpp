@@ -28,7 +28,7 @@
 #include "agds/patch.h"
 #include "agds/region.h"
 #include "common/system.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 

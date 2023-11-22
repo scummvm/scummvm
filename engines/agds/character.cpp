@@ -33,7 +33,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 #include <math.h>
 
@@ -294,7 +294,7 @@ void Character::reset() {
 	_visible = false;
 }
 
-void Character::setFog(Graphics::TransparentSurface * surface, int minZ, int maxZ) {
+void Character::setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ) {
 	_fog.reset(surface);
 	_fogMinZ = minZ;
 	_fogMaxZ = maxZ;

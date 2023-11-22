@@ -30,7 +30,7 @@
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 
@@ -135,7 +135,7 @@ const Object::StringEntry &Object::getString(uint16 index) const {
 	return _stringTable[index];
 }
 
-void Object::setPicture(Graphics::TransparentSurface *picture) {
+void Object::setPicture(Graphics::ManagedSurface *picture) {
 	_pos = Common::Point();
 	freePicture();
 	_picture = picture;
@@ -188,7 +188,7 @@ void Object::createRotated() {
 		return;
 
 	Graphics::TransformStruct transform(100, 100, 90 * _rotation, _picture->w / 2, _picture->h / 2);
-	_rotatedPicture = getPicture()->rotoscale(transform);
+	_rotatedPicture = new Graphics::ManagedSurface(getPicture()->surfacePtr()->rotoscale(transform));
 }
 
 void Object::alive(bool value)
@@ -227,7 +227,7 @@ Common::Rect Object::getRect() const {
 		warning("getRect called on null picture");
 		return Common::Rect();
 	}
-	Common::Rect rect = picture->getRect();
+	Common::Rect rect = picture->getBounds();
 	rect.moveTo(_pos.x, _pos.y);
 	return rect;
 }
@@ -269,13 +269,13 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Po
 	auto picture = getPicture();
 	if (picture) {
 		Common::Point dst = pos + getPosition();
-		Common::Rect srcRect = picture->getRect();
+		Common::Rect srcRect = picture->getBounds();
 		if (!_srcRect.isEmpty()) {
 			srcRect = _srcRect;
 		}
 		uint32 color = _picture->format.ARGBToColor(_alpha, 255, 255, 255);
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {
-			picture->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
+			picture->blendBlitTo(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 		}
 	}
 

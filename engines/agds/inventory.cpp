@@ -27,7 +27,7 @@
 #include "agds/systemVariable.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 
@@ -173,7 +173,7 @@ ObjectPtr Inventory::find(const Common::Point pos) const {
 		auto & object = entry.object;
 		auto picture = object->getPicture();
 		if (picture) {
-			auto rect = picture->getRect();
+			auto rect = picture->getBounds();
 			rect.moveTo(object->getPosition());
 			if (rect.contains(pos))
 				return object;

@@ -51,7 +51,7 @@
  * - Black Mirror (Windows)
  */
 
-namespace Graphics { struct TransparentSurface; }
+namespace Graphics { struct ManagedSurface; }
 
 namespace AGDS {
 
@@ -185,13 +185,13 @@ public:
 		return _pixelFormat;
 	}
 
-	Graphics::TransparentSurface *loadPicture(const Common::String &name);
+	Graphics::ManagedSurface *loadPicture(const Common::String &name);
 	Graphics::Surface *createSurface(int w, int h);
-	Graphics::TransparentSurface *convertToTransparent(Graphics::Surface *surface); //destroys surface!
+	Graphics::ManagedSurface *convertToTransparent(Graphics::Surface *surface); //destroys surface!
 
 	int loadFromCache(const Common::String & name) const;
-	Graphics::TransparentSurface *loadFromCache(int id) const;
-	int saveToCache(const Common::String &name, Graphics::TransparentSurface *surface);
+	Graphics::ManagedSurface *loadFromCache(int id) const;
+	int saveToCache(const Common::String &name, Graphics::ManagedSurface *surface);
 
 	void loadFont(int id, const Common::String &name, int gw, int gh);
 	Font *getFont(int id) const;
@@ -283,7 +283,7 @@ private:
 	void stopAmbientSound();
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
-	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
+	typedef Common::HashMap<int, Graphics::ManagedSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PictureCacheLookup;
 	typedef Common::Array<Common::String> SystemVariablesListType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
