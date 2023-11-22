@@ -243,7 +243,7 @@ void Logic::processLogic(Object *compact, uint32 id) {
 			logicRet = 1;
 			break;
 		case LOGIC_bookmark:
-			memcpy(&(compact->o_tree.o_script_level), &(compact->o_bookmark.o_script_level), sizeof(ScriptTree));
+			memcpy(&(compact->o_tree), &(compact->o_bookmark), sizeof(ScriptTree));
 			if (id == GMASTER_79) {
 				// workaround for ending script.
 				// GMASTER_79 is not prepared for mega_interact receiving INS_quit
@@ -1101,7 +1101,7 @@ int Logic::fnRestartScript(Object *cpt, int32 id, int32 c, int32 d, int32 e, int
 }
 
 int Logic::fnSetBookmark(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
-	memcpy(&cpt->o_bookmark.o_script_level, &cpt->o_tree.o_script_level, sizeof(ScriptTree));
+	memcpy(&cpt->o_bookmark, &cpt->o_tree, sizeof(ScriptTree));
 	return SCRIPT_CONT;
 }
 
