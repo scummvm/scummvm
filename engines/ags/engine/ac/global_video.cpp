@@ -210,6 +210,8 @@ void pause_sound_if_necessary_and_play_video(const char *name, int flags, VideoS
 					_GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 		}
 	}
+
+	free(filename);
 }
 
 #else
