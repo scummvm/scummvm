@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-22 06:04+0000\n"
-"PO-Revision-Date: 2023-02-12 19:51+0000\n"
+"PO-Revision-Date: 2023-11-23 02:41+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -32,27 +32,21 @@ msgid "Features compiled in:"
 msgstr "תכונות שנבנו:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "מזהה המשחק אינו נתמך"
+msgstr "אינו נתמך"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
 msgstr "כבוי"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "כבוי"
+msgstr "פעיל"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "תמיכה בהרחבות מעבדים:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -122,39 +116,35 @@ msgstr "בחירה"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "אשף התחברות לענן"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "טעינה מהירה"
+msgstr "מצב זריז"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "מצב מהיר"
+msgstr "מצב ידני"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "תתבקשו להריץ את השרת המקומי"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "הפעלת שרת אינטרנט מקומי"
+msgstr "נדרש שרת אינטרנט מקומי"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "מצב זריז: צעד 1"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"במצב זה, על השרת המקומי לרוץ,\n"
+"כך שהדפדפן יוכל להעביר נתונים אל ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3698
 msgid "Stop server"
@@ -178,11 +168,11 @@ msgstr "לא רץ"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "מצב זריז: צעד 2"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "כעת, יש לפתוח את הקישור הזה בדפדפן:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -194,34 +184,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"זה יעביר באופן אוטומטי את הנתונים אל ScummVM,\n"
+"ויתריע אם תתעוררנה בעיות כלשהן."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "כתובת שרת מקומי: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "מצב זריז: הצליח"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "התחברו לחשבון האחסון בענן האישי"
+msgstr "חשבון האחסון בענן האישי מחובר!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "סיום"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "מצב ידני: צעד 1"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. פתחו את הקישור:"
+msgstr "יש לפתוח את הקישור בדפדפן:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -229,14 +217,17 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"כאשר העברת JSON אל ScummVM נכשלת,\n"
+"יש למצוא אותו בסעיף פתרון הבעיות בדף,\n"
+"ולעבור לצעד הבא כאן."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "מצב ידני: צעד 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "העתיקו את קוד JSON מהדפדפן לכאן ולחצו הבא:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
@@ -257,43 +248,37 @@ msgid "Load"
 msgstr "טעינה"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "טען קובץ"
+msgstr "טעינת קוד מקובץ"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "מצב ידני: משהו השתבש"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "אחסון מחובר."
+msgstr "אחסון ענן לא התחבר."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "נא לוודא שקוד JSON הועתק נכונה ולנסות שוב."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "אם זה לא עובד, יש לנסות שוב מהתחלה."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "הודעת שגיאה: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "מצב ידני: הצליח"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "תשתית"
+msgstr "חזרה"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -301,8 +286,6 @@ msgid "Next"
 msgstr "הבא"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
 msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 
@@ -334,15 +317,13 @@ msgid "No"
 msgstr "לא"
 
 #: gui/cloudconnectionwizard.cpp:508
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "יש להמתין עד לסיום פעולת האחסון הנוכחי ולנסות שוב."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "תוכן קוד JSON משובש."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -371,17 +352,13 @@ msgid "OK"
 msgstr "אישור"
 
 #: gui/cloudconnectionwizard.cpp:558
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "קובץ rs שגוי."
+msgstr "קובץ JSON שגוי."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "אינטראקציה"
+msgstr "נקטע."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3392
 msgid ""
@@ -394,28 +371,24 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "בחירת קובץ JSON שהועתק מהאתר scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "העלאת הקובץ נכשלה!"
+msgstr "טעינת קובץ JSON נכשלה"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "הורדת משחקים ברישיון חופשי והדגמות"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "מקבל הרחבות..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "הורדה"
+msgstr "כל ההורדות"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -491,16 +464,12 @@ msgid "Download speed: %s %S/s"
 msgstr "מהירות הורדה: %s%S בשנייה"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "הורדת קבצי משחק"
+msgstr "משחקים בהורדה כעת"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "הורדה"
+msgstr "הורדות ממתינות"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1031,38 +1000,32 @@ msgid "Backspace"
 msgstr "תשתית"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "מחיקת תו"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "מעבר לסוף השורה"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "בחירת SoundFont"
+msgstr "בחירה עד סוף השורה"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "בחירת תיקיה עבור תוספים"
+msgstr "בחירה עד תחילת השורה"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "מעבר לתחילת השורה"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "גזירה"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "העתקה"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1120,21 +1083,17 @@ msgid "Prev"
 msgstr "הקודם"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "שומר משחק ..."
+msgstr "שומר תמונה..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u מתוך %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "שמירת משחק"
+msgstr "שמירת תמונה"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1187,7 +1146,7 @@ msgstr "פלטפורמה"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "שנה"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1243,14 +1202,12 @@ msgid "Global ~O~pts..."
 msgstr "א~פ~שרויות מקיפות..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "הורדת קבצי משחק"
+msgstr "הורדת משחקים"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "הורדת משחקים ברישיון חופשי עבור ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1415,10 +1372,8 @@ msgstr "לא זוהתה פלטפורמה"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "שגיאה לא ידועה"
+msgstr "שנה לא ידועה"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1627,16 +1582,12 @@ msgid "Shader Path:"
 msgstr "נתיב סוכך:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "הורדת קבצי משחק"
+msgstr "הורדת סוככים"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "בדיקת עדכונים של חבילות סוככים"
+msgstr "בדיקת עדכונים של חבילות סוככים באתר scummvm.org"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1960,17 +1911,13 @@ msgid "Default"
 msgstr "ברירת מחדל"
 
 #: gui/options.cpp:2455
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "נתיב משחק:"
+msgstr "נתיב הורדות:"
 
 #: gui/options.cpp:2457
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "נתיב משחק:"
+msgstr "נתיב הורדות:"
 
 #: gui/options.cpp:2465 gui/options.cpp:2467 gui/options.cpp:2468
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1990,14 +1937,12 @@ msgid "ScummVM config path: "
 msgstr "נתיב תצורת ScummVM "
 
 #: gui/options.cpp:2499
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "נתיב תצורת ScummVM "
+msgstr "נתיב יומן ScummVM "
 
 #: gui/options.cpp:2504
 msgid "View"
-msgstr ""
+msgstr "תצוגה"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2514 gui/options.cpp:3279
@@ -2037,10 +1982,8 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "בקשת רשות בעת סגירת ScummVM או יציאה מהמשחק."
 
 #: gui/options.cpp:2559
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "כיבוי נפילה"
+msgstr "כיבוי שינוי קנה מידה מתוקן עבור גופנים"
 
 #: gui/options.cpp:2560
 msgid ""
@@ -2082,16 +2025,12 @@ msgstr ""
 "תיקיה."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "הורדה"
+msgstr "הורדת צלמיות"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "בדיקת עדכונים עבור חבילות צלמיות"
+msgstr "בדיקת עדכונים עבור חבילות צלמיות באתר scummvm.org"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -2111,10 +2050,8 @@ msgid "Seed for initializing all random number generators"
 msgstr "גרעין לאתחול כל מחוללי המספרים האקראיים"
 
 #: gui/options.cpp:2642
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "תפריט ניפוי תקלים"
+msgstr "רמת ניפוי תקלים:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2646 gui/options.cpp:2785
@@ -2124,7 +2061,7 @@ msgstr "ללא"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2652
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (כולם)"
 
 #: gui/options.cpp:2656
 msgid "Enable Discord integration"
@@ -2157,24 +2094,15 @@ msgid "Active cloud storage"
 msgstr "אחסון ענן פעיל"
 
 #: gui/options.cpp:2695
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr "4. האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
+msgstr "האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
 
 #: gui/options.cpp:2697
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr "4. האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
+msgstr "האחסון עדיין לא מופעל. יש לודא כי שם המשתמש נכון ולהפעיל אותו:"
 
 #: gui/options.cpp:2698
 msgid "Enable storage"
@@ -2268,24 +2196,17 @@ msgid "Stop using this storage on this device"
 msgstr "הפסק לת השימוש באחסון זה במכשיר זה"
 
 #: gui/options.cpp:2727
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "אחסון זה עדיין לא מחובר! כדי להתחבר,"
+msgstr "אחסון זה עדיין לא מחובר!"
 
 #: gui/options.cpp:2729
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "אחסון זה עדיין לא מחובר! כדי להתחבר,"
+msgstr "אחסון זה עדיין לא מחובר!"
 
 #: gui/options.cpp:2730
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. התחברו לחשבון"
+msgstr "התחברות"
 
 #: gui/options.cpp:2730
 msgid "Connect your cloud storage account"
@@ -2409,10 +2330,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "בחירת תיקיה עבור ערכות נושא של GUI"
 
 #: gui/options.cpp:3185
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "בחירת תיקיה עבור תוספים"
+msgstr "בחירת תיקיה עבור הורדות"
 
 #: gui/options.cpp:3196
 msgid "Select directory for extra files"
@@ -2713,28 +2632,6 @@ msgstr ""
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "If you find that your existing added games or custom paths no longer "
-#| "work, please edit those paths and this time use the SAF system to browse "
-#| "to the desired locations.\n"
-#| "To do that:\n"
-#| "\n"
-#| "  1. For each game whose data is not found, go to the \"Paths\" tab in "
-#| "the \"Game Options\" and change the \"Game path\"\n"
-#| "  2. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  3. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  4. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  5. Browse through this folder to your game data.\n"
-#| "\n"
-#| "Steps 2 and 3 need to be done only once for all of your games."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2758,20 +2655,19 @@ msgstr ""
 "בגרסה חדשה זו של ScummVM עבור Android, נעשו שינויים משמעותיים למערכת הגישה "
 "לקבצים כדי לתמוך בגרסאות חדשות של מערכת ההפעלה Android.\n"
 "אם המשחקים הקיימים שהוספתם או נתיבים מותאמים מפסיקים לעבוד, נא לערוך נתיבים "
-"אלו והפעם להשתמש במערכת SAF לבחירת המיקומים המבוקשים.\n"
-"כדי לעשות זאת:\n"
+"אלו:\n"
+"1. מהמשגר, עברו אל **אפשרויות משחק->נתיבים**. בחרו **נתיב משחק** או **נתיב "
+"תוספות**, לפי מה שמתאים. \n"
+"2. בתוך דפדפן הקבצים של ScummVM, בחרו בכפתור \"למעלה\" עד שתגיעו לתיקית "
+"\"שורש\" ובה האפשרות **<הוספת תיקיה חדשה>**.\n"
+"3. הקישו פעמיים **<הוספת תיקיה חדשה>**. בדפדפן הקבצים של המכשיר, נווטו אל "
+"התיקיה שמכילה את כל תיקיות המשחקים. למשל **כרטיס  SD > משחקים**.\n"
+"4. בחרו **שימוש בתיקיה זו**.\n"
+"5. לחצו **אפשר** כדי להעניק ל־ScummVM הרשאה לגשת לתיקיה.\n"
+"6. בדפדפן הקבצים של ScummVM, הקישו פעמיים כדי לנווט בתיקיה שהוספתם. בחרו את "
+"התיקיה שמכילה את קובצי המשחק, והקישו **בחירה**.\n"
 "\n"
-"1. לכל משחק שנתוניו לא נמצאו, עברו אל לשוני \"נתיבים\" בתפריט \"אפשרויות משחק"
-"\" ושנו את \"נתיב המשחק\".\n"
-"2. בתוך דפדפן הקבצים של ScummVM, השתמשו בכפתור \"למעלה\" עד שתגיעו לתיקית "
-"\"שורש\" שם תראו את אפשרות \"<הוספת תיקיה חדשה>\".\n"
-"3. בחרו בה, ואז דפדפו ובחרו את תיקית האב עבור תתי התיקיות של המשחקים. למשל, "
-"\"כרטיס SD > משחקים\". לחצו על \"שימוש בתיקיה זו\".\n"
-"4. לאחר מכן, תיקיה חדשה בשם \"משחקים\" תופיע בתיקית \"שורש\" של דפדפן הקבצים "
-"של ScummVM.\n"
-"5. דפדפו בתיקיה זו אל נתוני המשחק.\n"
-"\n"
-"את שלבים 2 ו-3 יש לבצע פעם אחת בעבור כל המשחקים."
+"חזרו על צעדים 1 ו־6 עבור כל משחק."
 
 #: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1269
@@ -2996,29 +2892,27 @@ msgstr ""
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "קובץ תמונת PNG"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "קובץ תמונת JPEG"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "קובץ תמונת QuickDraw PICT"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "קובץ נתונים"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "סגירת ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "מנוע משחק הרפתקה גרפי"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -3033,31 +2927,27 @@ msgstr "יציאה"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "שגיאת קובץ תצורה"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "לא ניתן לקרוא את קובץ התצורה של ScummVM או ליצור חדש!"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "נתיב שמירה:"
+msgstr "שגיאת נתיב שמירה"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "לא ניתן ליצור נתיב שמירה ברירת מחדל או לגשת אליו!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "נתיב צלמיות:"
+msgstr "שגיאת נתיב צלמיות"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "לא ניתן ליצור נתיב ברירת מחדל עבור צלמיות וסוככים או לגשת אליו!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
@@ -3066,10 +2956,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "מקלדת וירטואלית"
+msgstr "מיתוג מקלדת וירטואלית"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3084,7 +2972,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
-msgstr ""
+msgstr "שינוי מצב"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -3096,10 +2984,8 @@ msgid "Enter"
 msgstr "להיכנס"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "סגירה"
+msgstr "סגירת חלון קופץ"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
@@ -3327,12 +3213,11 @@ msgstr ""
 "לפרטים, יש לעיין בקובץ README."
 
 #: engines/engine.cpp:597
-#, fuzzy
 msgid "Skip autosave"
-msgstr "שמירה אוטומטית ריקה"
+msgstr "דילוג על שמירה אוטומטית"
 
 #: engines/engine.cpp:599
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
 "is pending.\n"
@@ -3342,7 +3227,7 @@ msgid ""
 msgstr ""
 "אזהרה: במשבצת השמירה האוטומטית קיימת שמירה בשם %S. ניתן להזיז את השמירה "
 "הקיימת למשבצת חדשה, לדרוס את השמירה הקיימת, או לבטל את השמירה האוטומטית (לא "
-"תשאלו מה לעשות עד להפעלה מחדש)"
+"תשאלו מה לעשות עד להפעלה מחדש)."
 
 #: engines/engine.cpp:609
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -3494,14 +3379,12 @@ msgid "Confirm"
 msgstr "אישור"
 
 #: engines/metaengine.cpp:403
-#, fuzzy
 msgid "Autosave on"
-msgstr "שמירה אוטומטית"
+msgstr "שמירה אוטומטית מופעלת"
 
 #: engines/metaengine.cpp:403
-#, fuzzy
 msgid "Autosave off"
-msgstr "שמירה אוטומטית"
+msgstr "שמירה אוטומטית כבויה"
 
 #: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:179
 msgid "OpenGL"
@@ -4040,10 +3923,8 @@ msgid "D-pad Right"
 msgstr "D-pad ימינה"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad Center"
-msgstr "D-pad שמאלה"
+msgstr "D-pad מרכז"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -4495,10 +4376,8 @@ msgstr "מצב זכוכית מגדלת כבוי"
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:327
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "שליטה"
+msgstr "בקרות מגע"
 
 #: backends/platform/android/android.cpp:1033
 msgid ""
@@ -4572,10 +4451,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1089
 #: backends/platform/ios7/ios7_osys_misc.mm:306
 #: backends/platform/ios7/ios7_osys_misc.mm:350
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "ה~ו~ספת משחק..."
+msgstr "מוסיף משחקים"
 
 #: backends/platform/android/android.cpp:1092
 #, fuzzy
@@ -4697,39 +4574,33 @@ msgstr "במשחקי תלת-ממד"
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:140
 msgid "Select the orientation:"
-msgstr ""
+msgstr "בחירת מנח:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:144
 #: backends/platform/ios7/ios7_options.mm:159
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "קדיחה אוטומטית"
+msgstr "אוטומטית"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 #: backends/platform/ios7/ios7_options.mm:145
 #: backends/platform/ios7/ios7_options.mm:160
 msgid "Portrait"
-msgstr ""
+msgstr "דיוקן"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "בריחה"
+msgstr "נוף"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:152
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "במשחקי דו-ממד"
+msgstr "במשחקים"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4760,10 +4631,8 @@ msgstr "הצגת בקרים על המסך"
 
 #: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "דמוי בקר משחק"
+msgstr "אטימות בקר משחק"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
@@ -6795,10 +6664,8 @@ msgid "Personal Notes"
 msgstr ""
 
 #: engines/hpl1/metaengine.cpp:97
-#, fuzzy
-#| msgid "Fly straight"
 msgid "Flashlight"
-msgstr "טוס ישר"
+msgstr "פנס"
 
 #: engines/hpl1/metaengine.cpp:98
 msgid "Glowstick"
@@ -6856,10 +6723,8 @@ msgstr ""
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
-#, fuzzy
-#| msgid "Remove"
 msgid "Remora"
-msgstr "הסרה"
+msgstr "רמורה"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
@@ -7338,17 +7203,15 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
-#, fuzzy
-#| msgid "Right"
 msgid "Fight"
-msgstr "ימינה"
+msgstr "לחימה"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
 #, fuzzy
 #| msgid "Preferences"
 msgid "Quick Reference"
-msgstr "העדפות"
+msgstr "מבט מהיר"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -7392,10 +7255,8 @@ msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:111
-#, fuzzy
-#| msgid "Search:"
 msgid "Search"
-msgstr "חיפוש:"
+msgstr "חיפוש"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
@@ -8469,14 +8330,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -8486,7 +8339,7 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "לא ניתן לשחק בגרסה זו של אי הקופים, כי Limited Run Games סיפקו קבצים פגומים "
-"עבור DISK04.LEC ו-903.LFL.\n"
+"עבור DISK03.LEC, DISK04.LEC ו-903.LFL.\n"
 "\n"
 "נא ליצור קשר עם התמיכה הטכנית שלהם כדי להשיג קבצים חלופיים, או לחפש ברשת "
 "מדריכים שיסייעו להשיג קבצים תקינים מדמויות KyroFlux ש-Limited Run Games "
@@ -8501,18 +8354,14 @@ msgstr "יצירת משחק שמור חדש"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "תפריט משחק"
+msgstr "שם משחק:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "שם:"
+msgstr "שמכם:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3899
@@ -8704,7 +8553,7 @@ msgstr "החלפת מוזיקה, אפקטים קוליים וקטעי דיבור
 
 #: engines/scumm/dialogs.cpp:1574
 msgid "Multiplayer Server:"
-msgstr ""
+msgstr "שרת משחק מרובה שחקנים:"
 
 #: engines/scumm/dialogs.cpp:1580
 #, fuzzy
@@ -9407,9 +9256,8 @@ msgid "Up Right"
 msgstr "ימינה"
 
 #: engines/scumm/metaengine.cpp:862
-#, fuzzy
 msgid "Switch weapon"
-msgstr "החלפת תווים:"
+msgstr "החלפת נשק"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:876
@@ -10188,10 +10036,8 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:53
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "מעברים:"
+msgstr "הנפשות מהירות"
 
 #: engines/vcruise/metaengine.cpp:54
 #, fuzzy
@@ -10250,10 +10096,8 @@ msgid "Music volume down"
 msgstr "עוצמת מוזיקה למעלה / למטה"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "עוצמת שמע: "
+msgstr "הגברת עוצמת שמע"
 
 #: engines/vcruise/metaengine.cpp:175
 #, fuzzy
