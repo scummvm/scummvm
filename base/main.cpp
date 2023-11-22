@@ -739,8 +739,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			++neonSupport;
 #endif
 
-		debug(0, "CPU extensions:");
-		debug(0, "SSE2(%s) AVX2(%s) NEON(%s)",
+		printf("CPU extensions:\n");
+		printf("SSE2(%s) AVX2(%s) NEON(%s)\n",
 			extensionSupportString[sse2Support].c_str(),
 			extensionSupportString[avx2Support].c_str(),
 			extensionSupportString[neonSupport].c_str());
