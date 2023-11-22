@@ -365,17 +365,6 @@ private:
 	 * or restoring a game re-initializes certain states and continues the loop.
 	 */
 	void runGame();
-
-	/**
-	 * "Uninitializes an initialized SCI game" was the original description.
-	 * This is only called by runGame immediately after calling run_vm.
-	 * It uninitalizes some engine state depending on the abort flag, but it also
-	 * has old TODO comments and doesn't uninitialize the heap. runGame does
-	 * just as much uninitialization after calling this, so maybe exitGame's
-	 * code should just be moved into runGame instead of splitting up the
-	 * re-initialization steps.
-	 */
-	void exitGame();
 	
 	/**
 	 * Initializes the stack to call a method in the game object once the VM starts.

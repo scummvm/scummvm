@@ -677,11 +677,32 @@ void SciEngine::runGame() {
 	do {
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
-		exitGame();
+
+		// Stop audio and sound components, unless loading a game.
+		// EngineState::saveLoadWithSerializer has already handled that.
+		if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
+			if (_audio) { // SCI16
+				_audio->stopAllAudio();
+			}
+			_sync->stop();
+			_soundCmd->clearPlayList();
+		}
+
+		// Clear execution stack
+		_gamestate->_executionStack.clear();
+		_gamestate->xs = nullptr;
+
+		// Close all opened file handles
+		_gamestate->_fileHandles.clear();
+		_gamestate->_fileHandles.resize(5);
 
 		_guestAdditions->sciEngineRunGameHook();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
+			// SCI16 game has been restarted with kRestartGame16.
+			// Reset engine state and prepare the VM to call the play method
+			// on the next iteration, but set the gameIsRestarting flag so
+			// that scripts can detect the restart with kGameIsRestarting.
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
@@ -694,8 +715,10 @@ void SciEngine::runGame() {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_guestAdditions->reset();
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
+			// Game has been restored from within the game or the launcher.
+			// Prepare the VM to call the replay method of the game object
+			// on the next iteration.
 			_gamestate->abortScriptProcessing = kAbortNone;
-			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
 			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
@@ -802,25 +825,6 @@ void SciEngine::errorString(const char *buf_input, char *buf_output, int buf_out
 		snprintf(buf_output, buf_output_size, "[%s]: %s", _targetName.c_str(), buf_input);
 	}
 	_inErrorString = false;
-}
-
-void SciEngine::exitGame() {
-	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
-		_gamestate->_executionStack.clear();
-		if (_audio) {
-			_audio->stopAllAudio();
-		}
-		_sync->stop();
-		_soundCmd->clearPlayList();
-	}
-
-	// TODO Free parser segment here
-
-	// TODO Free scripts here
-
-	// Close all opened file handles
-	_gamestate->_fileHandles.clear();
-	_gamestate->_fileHandles.resize(5);
 }
 
 // Invoked by debugger when a severe error occurs
