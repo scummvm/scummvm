@@ -43,7 +43,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 
 namespace AGDS {
 
@@ -88,7 +88,7 @@ bool AGDSEngine::initGraphics(int w, int h) {
 
 	for (FormatsType::iterator fi = formats.begin(); fi != formats.end(); ++fi) {
 		const Graphics::PixelFormat &format = *fi;
-		if (fi->bytesPerPixel == 4 && format == Graphics::TransparentSurface::getSupportedPixelFormat()) {
+		if (fi->bytesPerPixel == 4 && format == Graphics::BlendBlit::getSupportedPixelFormat()) {
 			debug("found mode %s", format.toString().c_str());
 			_pixelFormat = format;
 			::initGraphics(w, h, &_pixelFormat);
@@ -727,13 +727,13 @@ Common::Error AGDSEngine::run() {
 
 		if (userEnabled()) {
 			if (auto *picture = _currentInventoryObject? _currentInventoryObject->getPicture(): nullptr) {
-				Common::Rect srcRect = picture->getRect();
+				Common::Rect srcRect = picture->getBounds();
 				Common::Point dst = _mouse;
 				dst.x -= srcRect.width() / 2;
 				dst.y -= srcRect.height() / 2;
 				uint32 color = picture->format.ARGBToColor(_currentInventoryObject->alpha(), 255, 255, 255);
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
-					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
+					picture->blendBlitTo(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
 			} else if (auto cursor = (_currentInventoryObject? _currentInventoryObject->getMouseCursor(): AnimationPtr())) {
 				cursor->rotate(_currentInventoryObject->rotation());
@@ -896,7 +896,7 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacter->associate(object);
 }
 
-Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) {
+Graphics::ManagedSurface *AGDSEngine::loadPicture(const Common::String &name) {
 	return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat));
 }
 
@@ -905,7 +905,7 @@ int AGDSEngine::loadFromCache(const Common::String &name) const {
 	return i != _pictureCacheLookup.end() ? i->_value : -1;
 }
 
-int AGDSEngine::saveToCache(const Common::String &name, Graphics::TransparentSurface *surface) {
+int AGDSEngine::saveToCache(const Common::String &name, Graphics::ManagedSurface *surface) {
 	if (!surface)
 		return -1;
 	int id = _pictureCacheId++;
@@ -914,14 +914,14 @@ int AGDSEngine::saveToCache(const Common::String &name, Graphics::TransparentSur
 	return id;
 }
 
-Graphics::TransparentSurface *AGDSEngine::loadFromCache(int id) const {
+Graphics::ManagedSurface *AGDSEngine::loadFromCache(int id) const {
 	PictureCacheType::const_iterator i = _pictureCache.find(id);
 	return (i != _pictureCache.end()) ? i->_value : NULL;
 }
 
 void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
 	debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
-	Graphics::TransparentSurface *surface = loadPicture(name);
+	Graphics::ManagedSurface *surface = loadPicture(name);
 	Font *&font = _fonts[id];
 	delete font;
 	font = new Font(surface, gw, gh);
@@ -940,10 +940,10 @@ Graphics::Surface *AGDSEngine::createSurface(int w, int h) {
 	return surface;
 }
 
-Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
+Graphics::ManagedSurface *AGDSEngine::convertToTransparent(Graphics::Surface *surface) {
 	if (!surface)
 		return NULL;
-	Graphics::TransparentSurface *t = new Graphics::TransparentSurface(*surface, true);
+	Graphics::ManagedSurface *t = new Graphics::ManagedSurface(surface);
 	assert(t->format.bytesPerPixel == 4);
 	uint32* pixels = static_cast<uint32 *>(t->getPixels());
 	uint8 shadowAlpha = 255 * _shadowIntensity / 100;
@@ -968,8 +968,6 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 			*pixels = t->format.ARGBToColor(a, r, g, b);
 		}
 	}
-	surface->free();
-	delete surface;
 	return t;
 }
 

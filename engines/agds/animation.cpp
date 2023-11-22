@@ -25,7 +25,7 @@
 #include "agds/object.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 #include "video/flic_decoder.h"
 
 namespace AGDS {
@@ -122,9 +122,13 @@ void Animation::rescaleCurrentFrame() {
 	freeScaledFrame();
 	if (_rotation != 0) {
 		Graphics::TransformStruct transform(_scale * 100, _scale * 100, 90 * _rotation, _frame->w / 2, _frame->h / 2, Graphics::TSpriteBlendMode::BLEND_NORMAL, Graphics::kDefaultRgbaMod);
-		_scaledFrame = _frame->rotoscale(transform);
+		if (_scaledFrame)
+			delete _scaledFrame;
+		_scaledFrame = new Graphics::ManagedSurface(_frame->surfacePtr()->rotoscale(transform));
 	} else if (_scale != 1) {
-		_scaledFrame = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+		if (_scaledFrame)
+			delete _scaledFrame;
+		_scaledFrame = new Graphics::ManagedSurface(_frame->surfacePtr()->scale(_frame->w * _scale, _frame->h * _scale, true));
 	}
 	auto *frame = _scaledFrame? _scaledFrame: _frame;
 	if (frame) {
@@ -237,13 +241,13 @@ bool Animation::tick() {
 	return true;
 }
 
-void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::TransparentSurface *mask, int maskAlpha) const {
+void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics::ManagedSurface *mask, int maskAlpha) const {
 	dst += _position;
 	auto *frame = _scaledFrame? _scaledFrame: _frame;
 	if (!frame || !_onScreen)
 		return;
 
-	Common::Rect srcRect = frame->getRect();
+	Common::Rect srcRect = frame->getBounds();
 	if (!Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 		return;
 
@@ -278,7 +282,7 @@ void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst, Graphics
 			maskPixels += subMask.pitch;
 		}
 	} else
-		frame->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
+		frame->blendBlitTo(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
 }
 
 uint Animation::width() const {

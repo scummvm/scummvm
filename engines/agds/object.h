@@ -31,7 +31,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
-namespace Graphics { struct Surface; struct TransparentSurface; }
+namespace Graphics { struct Surface; struct ManagedSurface; }
 
 namespace AGDS {
 
@@ -65,8 +65,8 @@ private:
 	bool							_stringTableLoaded;
 	KeyHandlersType					_keyHandlers;
 	UseHandlersType					_useHandlers;
-	Graphics::TransparentSurface *	_picture;
-	Graphics::TransparentSurface *	_rotatedPicture;
+	Graphics::ManagedSurface *	_picture;
+	Graphics::ManagedSurface *	_rotatedPicture;
 	RegionPtr						_region;
 	RegionPtr						_trapRegion;
 	AnimationPtr					_animation;
@@ -155,9 +155,9 @@ public:
 		return _mouseCursor;
 	}
 
-	void setPicture(Graphics::TransparentSurface *);
+	void setPicture(Graphics::ManagedSurface *);
 
-	Graphics::TransparentSurface *getPicture() const {
+	Graphics::ManagedSurface *getPicture() const {
 		return _rotatedPicture? _rotatedPicture: _picture;
 	}
 

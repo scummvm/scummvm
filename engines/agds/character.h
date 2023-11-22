@@ -29,7 +29,7 @@
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; class ReadStream; class WriteStream; }
-namespace Graphics	{ struct Surface; struct TransparentSurface; }
+namespace Graphics	{ struct Surface; struct ManagedSurface; }
 
 namespace AGDS {
 
@@ -40,7 +40,7 @@ class Animation;
 using AnimationPtr = Common::SharedPtr<Animation>;
 
 class Character {
-	using FogPtr = Common::ScopedPtr<Graphics::TransparentSurface>;
+	using FogPtr = Common::ScopedPtr<Graphics::ManagedSurface>;
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
 	AnimationPtr	_animation;
@@ -143,7 +143,7 @@ public:
 	int z() const;
 
 	void reset();
-	void setFog(Graphics::TransparentSurface * surface, int minZ, int maxZ);
+	void setFog(Graphics::ManagedSurface * surface, int minZ, int maxZ);
 };
 
 

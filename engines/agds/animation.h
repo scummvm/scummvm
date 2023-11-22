@@ -27,7 +27,7 @@
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ struct Surface; struct TransparentSurface; }
+namespace Graphics	{ struct Surface; struct ManagedSurface; }
 namespace Video		{ class FlicDecoder; }
 
 namespace AGDS {
@@ -39,8 +39,8 @@ class Animation {
 	AGDSEngine *		_engine;
 	Common::String		_name;
 	Video::FlicDecoder *_flic;
-	Graphics::TransparentSurface *_frame;
-	Graphics::TransparentSurface *_scaledFrame;
+	Graphics::ManagedSurface *_frame;
+	Graphics::ManagedSurface *_scaledFrame;
 	int					_frames;
 	Common::Point		_position;
 	Common::String		_process;
@@ -165,7 +165,7 @@ public:
 	void onScreen(bool onScreen);
 
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
-	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::TransparentSurface *mask = nullptr, int maskAlpha = 0) const;
+	void paint(Graphics::Surface & backbuffer, Common::Point dst, Graphics::ManagedSurface *mask = nullptr, int maskAlpha = 0) const;
 	uint width() const;
 	uint height() const;
 	uint visibleHeight() const {

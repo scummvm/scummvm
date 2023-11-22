@@ -27,19 +27,19 @@
 #include "common/ptr.h"
 
 namespace Graphics {
-	struct TransparentSurface;
+	struct ManagedSurface;
 }
 
 namespace AGDS {
 
 class Font : public Graphics::Font {
-	Common::ScopedPtr<Graphics::TransparentSurface> _surface;
+	Common::ScopedPtr<Graphics::ManagedSurface> _surface;
 	int		_glyphW, _glyphH;
 	int		_cellW, _cellH;
 	uint8	_width[0x100];
 
 public:
-	Font(Graphics::TransparentSurface *surface, int gw, int gh);
+	Font(Graphics::ManagedSurface *surface, int gw, int gh);
 
 	virtual int getFontHeight() const {
 		return _glyphH;
