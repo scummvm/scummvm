@@ -241,7 +241,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	// We need to use Surface::scale, since ManagedSurface _always_ respects the source alpha, and thus skips transparent pixels
 	Graphics::ManagedSurface stretched(cropped.rawSurface().scale(dstRect.width(), dstRect.height()), DisposeAfterUse::YES);
 	BITMAP temp(&stretched);
-	auto optimizedArgs = DrawInnerArgs(this, &temp, srcRect, dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, true);
+	auto optimizedArgs = DrawInnerArgs(this, &temp, stretched.getBounds(), dstRect, skipTrans, srcAlpha, false, false, -1, -1, -1, false);
 	
 #ifdef SCUMMVM_NEON
 	if (_G(simd_flags) & AGS3::Globals::SIMD_NEON) {
