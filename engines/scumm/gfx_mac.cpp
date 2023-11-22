@@ -2667,6 +2667,17 @@ void MacGui::updateWindowManager() {
 
 	bool isActive = _windowManager->isMenuActive();
 
+	bool gameCondition = _vm->_game.id == GID_INDY3 ? _vm->VAR(58) != 0 : true;
+	bool canLoad = _vm->canLoadGameStateCurrently() && gameCondition;
+	bool canSave = _vm->canSaveGameStateCurrently() && gameCondition;
+
+	Graphics::MacMenuItem *gameMenu = _windowManager->getMenu()->getMenuItem("Game");
+	Graphics::MacMenuItem *loadMenu = _windowManager->getMenu()->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = _windowManager->getMenu()->getSubMenuItem(gameMenu, 1);
+
+	loadMenu->enabled = canLoad;
+	saveMenu->enabled = canSave;
+
 	if (isActive) {
 		if (!_menuIsActive) {
 			_cursorWasVisible = CursorMan.showMouse(true);
