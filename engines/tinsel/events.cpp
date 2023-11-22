@@ -421,7 +421,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		"PLR_MENU", "PLR_QUIT", "PLR_PGUP", "PLR_PGDN", "PLR_HOME", "PLR_END",
 		"PLR_DRAG1_START", "PLR_DRAG1_END", "PLR_DRAG2_START", "PLR_DRAG2_END",
 		"PLR_JUMP", "PLR_NOEVENT", "PLR_SAVE", "PLR_LOAD", "PLR_WHEEL_UP",
-		"PLR_WHEEL_DOWN"};
+		"PLR_WHEEL_DOWN", "PLR_INVENTORY", "PLR_NOTEBOOK" };
 	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)",
 		actionList[pEvent], coOrds.x, coOrds.y);
 
