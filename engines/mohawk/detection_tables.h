@@ -1697,9 +1697,9 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"tortoise",
-			"Demo",
+			"English, German and French Demo",
 			AD_ENTRY1("TORTB.LB", "bd6784dc9f6a9c1143ca03230fca3f29"),
-			Common::EN_GRB,
+			Common::UNK_LANG,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
