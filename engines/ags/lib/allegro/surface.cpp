@@ -191,7 +191,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	}
 	BITMAP temp(&flipped);
 
-	auto args = DrawInnerArgs(this, (horizFlip || vertFlip) ? &temp : srcBitmap, srcRect, Common::Rect(dstX, dstY, dstX+1, dstY+1), skipTrans, srcAlpha, false, false, tintRed, tintGreen, tintBlue, false);
+	auto args = DrawInnerArgs(this, (horizFlip || vertFlip) ? &temp : srcBitmap, (horizFlip || vertFlip) ? flipped.getBounds() : srcRect, Common::Rect(dstX, dstY, dstX + 1, dstY + 1), skipTrans, srcAlpha, false, false, tintRed, tintGreen, tintBlue, false);
 	if (!args.shouldDraw) return;
 	if (!args.sameFormat && args.src.format.bytesPerPixel == 1) {
 		if (format.bytesPerPixel == 4)
