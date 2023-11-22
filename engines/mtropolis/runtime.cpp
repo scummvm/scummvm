@@ -4197,6 +4197,13 @@ void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common
 
 
 Palette::Palette() {
+	initDefaultPalette(1);
+}
+
+void Palette::initDefaultPalette(int version) {
+	// NOTE: The "V2" pallete is correct for Unit: Rebooted.
+	// Is it correct for all V2 apps?
+	assert(version == 1 || version == 2);
 	int outColorIndex = 0;
 	for (int rb = 0; rb < 6; rb++) {
 		for (int rg = 0; rg < 6; rg++) {
@@ -4204,9 +4211,15 @@ Palette::Palette() {
 				byte *color = _colors + outColorIndex * 3;
 				outColorIndex++;
 
-				color[0] = 255 - rr * 51;
-				color[1] = 255 - rg * 51;
-				color[2] = 255 - rb * 51;
+				if (version == 1) {
+					color[0] = 255 - rr * 51;
+					color[1] = 255 - rg * 51;
+					color[2] = 255 - rb * 51;
+				} else {
+					color[2] = 255 - rr * 51;
+					color[1] = 255 - rg * 51;
+					color[0] = 255 - rb * 51;
+				}
 			}
 		}
 	}
@@ -4223,7 +4236,7 @@ Palette::Palette() {
 
 			byte intensity = 255 - ri * 17;
 
-			if (ch == 4) {
+			if (ch == 3) {
 				color[0] = color[1] = color[2] = intensity;
 			} else {
 				color[0] = color[1] = color[2] = 0;
@@ -4234,9 +4247,18 @@ Palette::Palette() {
 
 	assert(outColorIndex == 255);
 
-	_colors[255 * 3 + 0] = 0;
-	_colors[255 * 3 + 1] = 0;
-	_colors[255 * 3 + 2] = 0;
+	if (version == 1) {
+		_colors[255 * 3 + 0] = 0;
+		_colors[255 * 3 + 1] = 0;
+		_colors[255 * 3 + 2] = 0;
+	} else {
+		_colors[0 * 3 + 0] = 0;
+		_colors[0 * 3 + 1] = 0;
+		_colors[0 * 3 + 2] = 0;
+		_colors[255 * 3 + 0] = 255;
+		_colors[255 * 3 + 1] = 255;
+		_colors[255 * 3 + 2] = 255;
+	}
 }
 
 Palette::Palette(const ColorRGB8 *colors) {

@@ -1569,6 +1569,8 @@ public:
 	Palette();
 	explicit Palette(const ColorRGB8 *colors);
 
+	void initDefaultPalette(int version);
+
 	const byte *getPalette() const;
 
 	static const uint kNumColors = 256;
