@@ -180,7 +180,8 @@
 	{
 		"adibou2",
 		"ADI Jr.",
-		AD_ENTRY1s("intro.stk", "718a51862406136c28639489a9ba950a", 956350),
+		AD_ENTRY2s("intro.stk", "718a51862406136c28639489a9ba950a", 956350,
+				"intro.inf", "d8710732c9bfe3ca52d3ce5aefc06089", 48),
 		DE_DEU,
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
@@ -245,11 +246,13 @@
 	{
 		"adibou2",
 		"ADIBOO 2",
-		AD_ENTRY1s("intro.stk", "718a51862406136c28639489a9ba950a", 956350),
-		EN_ANY,
+		AD_ENTRY2s("intro.stk", "718a51862406136c28639489a9ba950a", 956350,
+				"intro.inf", "9369aa62939f5f7c11b1e02a45038050", 44),
+		EN_GRB,
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
-		GUIO0()},
+		GUIO0()
+	},
 	kGameTypeAdibou2,
 	kFeatures640x480,
 	0, 0, 0
