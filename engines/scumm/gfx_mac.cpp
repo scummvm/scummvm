@@ -2667,9 +2667,25 @@ void MacGui::updateWindowManager() {
 
 	bool isActive = _windowManager->isMenuActive();
 
-	bool gameCondition = _vm->_game.id == GID_INDY3 ? _vm->VAR(58) != 0 : true;
-	bool canLoad = _vm->canLoadGameStateCurrently() && gameCondition;
-	bool canSave = _vm->canSaveGameStateCurrently() && gameCondition;
+	bool saveCondition = true;
+	bool loadCondition = true;
+
+	if (_vm->_game.id == GID_INDY3) {
+		// Taken from Mac disasm...
+		// The VAR(94) part tells us whether the copy protection has
+		// failed or not, while the VAR(58) part uses bitmasks to enable
+		// or disable saving and loading during normal gameplay.
+		saveCondition = (_vm->VAR(58) & 0x01) && !(_vm->VAR(94) & 0x10);
+		loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
+	} else {
+		// TODO: Complete LOOM with the rest of the proper code from disasm,
+		// for now we only have the copy protection code in place...
+		saveCondition = !(_vm->VAR(221) & 0x4000);
+		loadCondition = !(_vm->VAR(221) & 0x4000);
+	}
+
+	bool canLoad = _vm->canLoadGameStateCurrently() && saveCondition;
+	bool canSave = _vm->canSaveGameStateCurrently() && loadCondition;
 
 	Graphics::MacMenuItem *gameMenu = _windowManager->getMenu()->getMenuItem("Game");
 	Graphics::MacMenuItem *loadMenu = _windowManager->getMenu()->getSubMenuItem(gameMenu, 0);
