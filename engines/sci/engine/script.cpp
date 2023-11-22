@@ -979,12 +979,14 @@ LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
 	} else {
 		LocalVariables *locals;
 
-		if (_localsSegment) {
+		if (!_localsSegment) {
+			locals = new LocalVariables();
+			_localsSegment = segMan->allocSegment(locals);
+		} else {
 			locals = (LocalVariables *)segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS);
 			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != getScriptNumber())
 				error("Invalid script %d locals segment while allocating locals", _nr);
-		} else
-			locals = (LocalVariables *)segMan->allocSegment(new LocalVariables(), &_localsSegment);
+		}
 
 		_localsBlock = locals;
 		locals->script_id = getScriptNumber();

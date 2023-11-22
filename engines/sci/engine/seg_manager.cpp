@@ -109,40 +109,39 @@ SegmentId SegManager::findFreeSegment() const {
 	return seg;
 }
 
-SegmentObj *SegManager::allocSegment(SegmentObj *mem, SegmentId *segid) {
-	// Find a free segment
-	SegmentId id = findFreeSegment();
-	if (segid)
-		*segid = id;
-
-	if (!mem)
+SegmentId SegManager::allocSegment(SegmentObj *mobj) {
+	if (!mobj)
 		error("SegManager: invalid mobj");
 
+	// Find a free segment
+	SegmentId id = findFreeSegment();
+
 	// ... and put it into the (formerly) free segment.
-	if (id >= (int)_heap.size()) {
-		assert(id == (int)_heap.size());
+	if (id >= _heap.size()) {
+		assert(id == _heap.size());
 		_heap.push_back(0);
 	}
-	_heap[id] = mem;
+	_heap[id] = mobj;
 
-	return mem;
+	return id;
 }
 
-Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
+Script *SegManager::allocateScript(int script_nr, SegmentId &segid) {
 	// Check if the script already has an allocated segment. If it
 	// does, return that segment.
-	*segid = _scriptSegMap.getValOrDefault(script_nr, 0);
-	if (*segid > 0) {
-		return (Script *)_heap[*segid];
+	segid = _scriptSegMap.getValOrDefault(script_nr, 0);
+	if (segid > 0) {
+		return (Script *)_heap[segid];
 	}
 
 	// allocate the SegmentObj
-	SegmentObj *mem = allocSegment(new Script(), segid);
+	Script *script = new Script();
+	segid = allocSegment(script);
 
 	// Add the script to the "script id -> segment id" hashmap
-	_scriptSegMap[script_nr] = *segid;
+	_scriptSegMap[script_nr] = segid;
 
-	return (Script *)mem;
+	return script;
 }
 
 SegmentId SegManager::getActualSegment(SegmentId seg) const {
@@ -156,7 +155,7 @@ SegmentId SegManager::getActualSegment(SegmentId seg) const {
 
 void SegManager::deallocate(SegmentId seg) {
 	SegmentId actualSegment = getActualSegment(seg);
-	if (actualSegment < 1 || (uint)actualSegment >= _heap.size())
+	if (actualSegment < 1 || actualSegment >= _heap.size())
 		error("Attempt to deallocate an invalid segment ID");
 
 	SegmentObj *mobj = _heap[actualSegment];
@@ -180,7 +179,7 @@ void SegManager::deallocate(SegmentId seg) {
 	}
 
 	delete mobj;
-	_heap[actualSegment] = NULL;
+	_heap[actualSegment] = nullptr;
 }
 
 bool SegManager::isHeapObject(reg_t pos) const {
@@ -197,23 +196,29 @@ void SegManager::deallocateScript(int script_nr) {
 
 Script *SegManager::getScript(const SegmentId seg) {
 	SegmentId actualSegment = getActualSegment(seg);
-	if (actualSegment < 1 || (uint)actualSegment >= _heap.size()) {
+	if (actualSegment < 1 || actualSegment >= _heap.size()) {
 		error("SegManager::getScript(): seg id %x out of bounds", actualSegment);
 	}
-	if (!_heap[actualSegment]) {
+	SegmentObj *mobj = _heap[actualSegment];
+	if (mobj == nullptr) {
 		error("SegManager::getScript(): seg id %x is not in memory", actualSegment);
 	}
-	if (_heap[actualSegment]->getType() != SEG_TYPE_SCRIPT) {
-		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", actualSegment, _heap[actualSegment]->getType());
+	if (mobj->getType() != SEG_TYPE_SCRIPT) {
+		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", actualSegment, mobj->getType());
 	}
-	return (Script *)_heap[actualSegment];
+	return (Script *)mobj;
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) const {
 	SegmentId actualSegment = getActualSegment(seg);
-	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment] || _heap[actualSegment]->getType() != SEG_TYPE_SCRIPT)
+	if (actualSegment < 1 || actualSegment >= _heap.size()) {
 		return nullptr;
-	return (Script *)_heap[actualSegment];
+	}
+	SegmentObj *mobj = _heap[actualSegment];
+	if (mobj == nullptr || mobj->getType() != SEG_TYPE_SCRIPT) {
+		return nullptr;
+	}
+	return (Script *)mobj;
 }
 
 SegmentId SegManager::findSegmentByType(int type) const {
@@ -225,21 +230,22 @@ SegmentId SegManager::findSegmentByType(int type) const {
 
 SegmentObj *SegManager::getSegmentObj(SegmentId seg) const {
 	SegmentId actualSegment = getActualSegment(seg);
-	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
+	if (actualSegment < 1 || actualSegment >= _heap.size() || !_heap[actualSegment])
 		return nullptr;
 	return _heap[actualSegment];
 }
 
 SegmentType SegManager::getSegmentType(SegmentId seg) const {
 	SegmentId actualSegment = getActualSegment(seg);
-	if (actualSegment < 1 || (uint)actualSegment >= _heap.size() || !_heap[actualSegment])
+	if (actualSegment < 1 || actualSegment >= _heap.size() || !_heap[actualSegment])
 		return SEG_TYPE_INVALID;
 	return _heap[actualSegment]->getType();
 }
 
 SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) const {
 	SegmentId actualSegment = getActualSegment(seg);
-	return getSegmentType(actualSegment) == type ? _heap[actualSegment] : NULL;
+	SegmentType actualSegmentType = getSegmentType(actualSegment);
+	return (actualSegmentType == type) ? _heap[actualSegment] : nullptr;
 }
 
 Object *SegManager::getObject(reg_t pos) const {
@@ -398,12 +404,10 @@ SegmentId SegManager::getScriptSegment(int script_id) const {
 }
 
 SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load, bool applyScriptPatches) {
-	SegmentId segment;
-
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
 		instantiateScript(script_nr, applyScriptPatches);
 
-	segment = getScriptSegment(script_nr);
+	SegmentId segment = getScriptSegment(script_nr);
 
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
@@ -412,20 +416,20 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load, bool 
 	return segment;
 }
 
-DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
-	SegmentObj *mobj = allocSegment(new DataStack(), segid);
-	DataStack *retval = (DataStack *)mobj;
+DataStack *SegManager::allocateStack(int size) {
+	DataStack *stack = new DataStack();
+	allocSegment(stack);
 
-	retval->_entries = (reg_t *)calloc(size, sizeof(reg_t));
-	retval->_capacity = size;
+	stack->_entries = (reg_t *)calloc(size, sizeof(reg_t));
+	stack->_capacity = size;
 
 	// SSCI initializes the stack with "S" characters (uppercase S in SCI0-SCI1,
 	// lowercase s in SCI0 and SCI11) - probably stands for "stack"
 	byte filler = (getSciVersion() >= SCI_VERSION_01 && getSciVersion() <= SCI_VERSION_1_LATE) ? 'S' : 's';
 	for (int i = 0; i < size; i++)
-		retval->_entries[i] = make_reg(0, filler);
+		stack->_entries[i].setOffset(filler);
 
-	return retval;
+	return stack;
 }
 
 void SegManager::freeHunkEntry(reg_t addr) {
@@ -446,13 +450,15 @@ void SegManager::freeHunkEntry(reg_t addr) {
 
 reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	HunkTable *table;
-	int offset;
 
-	if (!_hunksSegId)
-		allocSegment(new HunkTable(), &(_hunksSegId));
-	table = (HunkTable *)_heap[_hunksSegId];
+	if (!_hunksSegId) {
+		table = new HunkTable();
+		_hunksSegId = allocSegment(table);
+	} else {
+		table = (HunkTable *)_heap[_hunksSegId];
+	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	reg_t addr = make_reg(_hunksSegId, offset);
 	Hunk &h = table->at(offset);
@@ -465,26 +471,27 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 }
 
 byte *SegManager::getHunkPointer(reg_t addr) {
-	HunkTable *ht = (HunkTable *)getSegment(addr.getSegment(), SEG_TYPE_HUNK);
+	HunkTable *table = (HunkTable *)getSegment(addr.getSegment(), SEG_TYPE_HUNK);
 
-	if (!ht || !ht->isValidEntry(addr.getOffset())) {
+	if (table == nullptr || !table->isValidEntry(addr.getOffset())) {
 		// Valid SCI behavior, e.g. when loading/quitting
 		return nullptr;
 	}
 
-	return (byte *)ht->at(addr.getOffset()).mem;
+	return (byte *)table->at(addr.getOffset()).mem;
 }
 
 Clone *SegManager::allocateClone(reg_t *addr) {
 	CloneTable *table;
-	int offset;
 
-	if (!_clonesSegId)
-		table = (CloneTable *)allocSegment(new CloneTable(), &(_clonesSegId));
-	else
+	if (!_clonesSegId) {
+		table = new CloneTable();
+		_clonesSegId = allocSegment(table);
+	} else {
 		table = (CloneTable *)_heap[_clonesSegId];
+	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	*addr = make_reg(_clonesSegId, offset);
 	return &table->at(offset);
@@ -492,13 +499,15 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 
 List *SegManager::allocateList(reg_t *addr) {
 	ListTable *table;
-	int offset;
 
-	if (!_listsSegId)
-		allocSegment(new ListTable(), &(_listsSegId));
-	table = (ListTable *)_heap[_listsSegId];
+	if (!_listsSegId) {
+		table = new ListTable();
+		_listsSegId = allocSegment(table);
+	} else {
+		table = (ListTable *)_heap[_listsSegId];
+	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	*addr = make_reg(_listsSegId, offset);
 	return &table->at(offset);
@@ -506,13 +515,15 @@ List *SegManager::allocateList(reg_t *addr) {
 
 Node *SegManager::allocateNode(reg_t *addr) {
 	NodeTable *table;
-	int offset;
 
-	if (!_nodesSegId)
-		allocSegment(new NodeTable(), &(_nodesSegId));
-	table = (NodeTable *)_heap[_nodesSegId];
+	if (!_nodesSegId) {
+		table = new NodeTable();
+		_nodesSegId = allocSegment(table);
+	} else {
+		table = (NodeTable *)_heap[_nodesSegId];
+	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	*addr = make_reg(_nodesSegId, offset);
 	return &table->at(offset);
@@ -895,25 +906,23 @@ Common::String SegManager::getString(reg_t pointer) {
 }
 
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
-	SegmentId seg;
-	SegmentObj *mobj = allocSegment(new DynMem(), &seg);
-	*addr = make_reg(seg, 0);
+	DynMem *dynmem = new DynMem();
+	SegmentId segid = allocSegment(dynmem);
+	*addr = make_reg(segid, 0);
 
-	DynMem &d = *(DynMem *)mobj;
-
-	d._size = size;
+	dynmem->_size = size;
 
 	// Original SCI only zeroed out heap memory on initialize
 	// They didn't do it again for every allocation
 	if (size) {
-		d._buf = (byte *)calloc(size, 1);
+		dynmem->_buf = (byte *)calloc(size, 1);
 	} else {
-		d._buf = nullptr;
+		dynmem->_buf = nullptr;
 	}
 
-	d._description = descr;
+	dynmem->_description = descr;
 
-	return (byte *)(d._buf);
+	return dynmem->_buf;
 }
 
 bool SegManager::freeDynmem(reg_t addr) {
@@ -932,14 +941,15 @@ bool SegManager::freeDynmem(reg_t addr) {
 
 SciArray *SegManager::allocateArray(SciArrayType type, uint16 size, reg_t *addr) {
 	ArrayTable *table;
-	int offset;
 
 	if (!_arraysSegId) {
-		table = (ArrayTable *)allocSegment(new ArrayTable(), &(_arraysSegId));
-	} else
+		table = new ArrayTable();
+		_arraysSegId = allocSegment(table);
+	} else {
 		table = (ArrayTable *)_heap[_arraysSegId];
+	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	*addr = make_reg(_arraysSegId, offset);
 
@@ -987,15 +997,15 @@ bool SegManager::isArray(reg_t addr) const {
 
 SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 originX, const int16 originY, const int16 xResolution, const int16 yResolution, const uint32 paletteSize, const bool remap, const bool gc) {
 	BitmapTable *table;
-	int offset;
 
 	if (!_bitmapSegId) {
-		table = (BitmapTable *)allocSegment(new BitmapTable(), &(_bitmapSegId));
+		table = new BitmapTable();
+		_bitmapSegId = allocSegment(table);
 	} else {
 		table = (BitmapTable *)_heap[_bitmapSegId];
 	}
 
-	offset = table->allocEntry();
+	int offset = table->allocEntry();
 
 	*addr = make_reg(_bitmapSegId, offset);
 	SciBitmap &bitmap = table->at(offset);
@@ -1086,7 +1096,7 @@ int SegManager::instantiateScript(int scriptNum, bool applyScriptPatches) {
 			scr->freeScript(true);
 		}
 	} else {
-		scr = allocateScript(scriptNum, &segmentId);
+		scr = allocateScript(scriptNum, segmentId);
 	}
 
 	scr->load(scriptNum, _resMan, _scriptPatcher, applyScriptPatches);

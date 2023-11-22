@@ -540,7 +540,7 @@ void SciEngine::suggestDownloadGK2SubTitlesPatch() {
 bool SciEngine::initGame() {
 	// Script 0 needs to be allocated here before anything else!
 	int script0Segment = _gamestate->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
-	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE, nullptr);
+	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE);
 
 	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
 	_gamestate->gcCountDown = GC_INTERVAL - 1;
