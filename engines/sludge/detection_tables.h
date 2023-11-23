@@ -33,6 +33,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 	GAME1("verbcoin", "", "Verb Coin.slg", "e39ec315dcbf3a1137481f0a5fe1617d", 980270),
 	GAME1l("verbcoin", "", "Verb Coin.slg", "e39ec315dcbf3a1137481f0a5fe1617d", 980270, Common::DE_DEU, Common::kPlatformUnknown, 1),
 
+	GAME1("parallax", "", "Parallax_demo.slg", "daae3f75c6695bed47e5e633cd406a47", 65881),
+
 	GAME1("robinsrescue", "", "robins_rescue.slg", "16cbf2bf916ed89f9c1b14fab133cf96", 14413769),
 	GAME1("robinsrescue", "v1.0", "Gamedata.slg", "16cbf2bf916ed89f9c1b14fab133cf96", 14413754),
 	GAME1l("robinsrescue", "v1.0", "Gamedata.slg", "16cbf2bf916ed89f9c1b14fab133cf96", 14413754, Common::EN_ANY, Common::kPlatformLinux, 0),
