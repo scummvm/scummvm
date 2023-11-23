@@ -310,7 +310,9 @@ void TextRenderer_v7::drawStringWrap(const char *str, byte *buffer, Common::Rect
 				substrWidths[numSubstrings] = curWidth;
 				substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
 				numSubstrings++;
-				substrStart[numSubstrings] = curPos + 1;
+				// extra check for PVS-Studio (we won't actually ever get close to SCUMM7_MAX_STRINGS)
+				if (numSubstrings < SCUMM7_MAX_STRINGS)
+					substrStart[numSubstrings] = curPos + 1;
 			}
 			curWidth = 0;
 		}
