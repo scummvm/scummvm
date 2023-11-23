@@ -2616,6 +2616,7 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
+	free(buffer);
 }
 
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
