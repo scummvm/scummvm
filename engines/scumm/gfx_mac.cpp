@@ -5476,17 +5476,17 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	// 0 - Open button
 	// 1 - Weird button outside the dialog (folder dropdown?)
 	// 2 - Cancel button
-	// 3 - User item (disk label?)
-	// 4 - Eject button
-	// 5 - Drive button
-	// 6 - User item (file list?)
-	// 7 - User item (scrollbar?)
-	// 8 - User item (line between Desktop and Open buttons?)
-	// 9 - Empty text
-	// 10 - "IQ" picture
-	// 11 - "Episode: ^0" text
-	// 12 - "Series: ^1" text
-	// 13 - "(Indy Quotient)" text
+	// [skipped] - User item (disk label?)
+	// 3 - Eject button
+	// 4 - Drive button
+	// [skipped] - User item (file list?)
+	// [skipped] - User item (scrollbar?)
+	// [skipped] - User item (line between Desktop and Open buttons?)
+	// 5 - Empty text
+	// 6 - "IQ" picture
+	// 7 - "Episode: ^0" text
+	// 8 - "Series: ^1" text
+	// 9 - "(Indy Quotient)" text
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 4000 : 4001);
 
@@ -5528,16 +5528,16 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	//
 	// 0 - Save button
 	// 1 - Cancel button
-	// 2 - "Save as:" text
-	// 3 - User item (disk label?)
-	// 4 - Eject button
-	// 5 - Drive button
-	// 6 - Editable text (save file name)
-	// 7 - User item (file list?)
-	// 8 - "IQ" picture
-	// 9 - "Episode: ^0" text
-	// 10 - "Series: ^1" text
-	// 11 - "(Indy Quotient)" text
+	// 2 - "Save Game File as..." text
+	// [skipped] - User item (disk label?)
+	// 3 - Eject button
+	// 4 - Drive button
+	// 5 - Editable text (save file name)
+	// [skipped] - User item (file list?)
+	// 6 - "IQ" picture
+	// 7 - "Episode: ^0" text
+	// 8 - "Series: ^1" text
+	// 9 - "(Indy Quotient)" text
 
 	MacDialogWindow *window = createDialog((_vm->_renderMode == Common::kRenderMacintoshBW) ? 3998 : 3999);
 
