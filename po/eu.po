@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-22 06:04+0000\n"
+"POT-Creation-Date: 2023-11-23 07:45+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -306,7 +306,7 @@ msgstr ""
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3890
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Bai"
@@ -319,7 +319,7 @@ msgstr "Bai"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3893
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3890
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Ez"
@@ -8497,7 +8497,7 @@ msgid "Your Name:"
 msgstr "Izena:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3899
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3896
 msgid "Host"
 msgstr ""
 
@@ -8509,7 +8509,7 @@ msgid "Querying games..."
 msgstr "Jokoa gordetzen..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3899
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3896
 msgid "Join"
 msgstr ""
 
@@ -9432,7 +9432,7 @@ msgid ""
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3788
+#: engines/scumm/scumm.cpp:3785
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9442,7 +9442,7 @@ msgstr ""
 "fitxategiak 'Maniac' direktorio barruan egon behar dira, Tentacle jokoko "
 "direktorioan, eta jokoa ScummVM-ra gehitu behar da."
 
-#: engines/scumm/scumm.cpp:3899
+#: engines/scumm/scumm.cpp:3896
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Jokoa kargatu edo gorde nahi duzu?"
