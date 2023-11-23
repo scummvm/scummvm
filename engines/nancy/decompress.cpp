@@ -36,16 +36,8 @@ void Decompressor::init(Common::ReadStream &input, Common::WriteStream &output) 
 }
 
 bool Decompressor::readByte(byte &b) {
-	b = _input->readByte();
-
-	if (_input->eos())
-		return false;
-
-	if (_input->err())
-		error("Read error encountered during decompression");
-
-	b -= _val++;
-	return true;
+	b = _input->readByte() - _val++;
+	return !_input->eos();
 }
 
 bool Decompressor::writeByte(byte b) {
@@ -91,7 +83,7 @@ bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStre
 		}
 	}
 
-	if (output.err() || output.pos() != output.size()) {
+	if (input.err() || output.err() || output.pos() != output.size()) {
 		// Workaround for nancy3 file "SLN RollPanOpn.avf", which outputs 2 bytes less than it should
 		if (output.size() - output.pos() <= 2) {
 			return true;
