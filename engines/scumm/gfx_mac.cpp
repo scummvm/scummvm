@@ -5165,6 +5165,9 @@ void MacIndy3Gui::initTextAreaForActor(Actor *a, byte color) {
 		const char *name = (const char *)a->getActorName();
 		int charX = 25;
 
+		if (_vm->_renderMode == Common::kRenderMacintoshBW)
+			color = kWhite;
+
 		for (int i = 0; name[i] && nameWidth < width - 50; i++) {
 			font->drawChar(&_textArea, name[i], charX, 0, color);
 			nameWidth += font->getCharWidth(name[i]);
