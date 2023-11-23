@@ -1923,7 +1923,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "MSWD pt. 1",   "d30e1cae275e7ecfdde92df03a28b309", 249005, 201),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
-	MACGAME1("spelunx", "v1.2", "Spelunx", "3eb3598b7f6bb09de4dd31aca3683d8f", 371154, 200),
+	MACGAME1("spelunx", "v1.2", "Spelunx", "r:3eb3598b7f6bb09de4dd31aca3683d8f", 370898, 200),
 
 	// Original file name is STATUS*Mac 2.0 Demo
 	MACDEMO1("statusmac", "2.0 Demo", "xn--STATUSMac 2.0 Demo-za43f", "cfa68a1bc49251497ebde18e5fc9c217", 742048, 200),
@@ -2515,7 +2515,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("japanart14", "", "xn-- -17t4bh9e390vlr5tbcab1fyg4fl2eb", "276bee761e48a6fd709df77d5c2f60dd", 393777, Common::JA_JPN, 313),
 
 	// German version reported in TRAC #14406
-	MACGAME1("jman", "",	  "Journeyman.16 MB", "r:1ae45c23586b41997ba52e2e7c771c4c", 437743, 300),
+	MACGAME1("jman", "",	  "Journeyman.16 MB", "r:1ae45c23586b41997ba52e2e7c771c4c", 437487, 310),
+	MACGAME1_l("jman", "",	  "Journeyman.16 MB", "r:f5277c53bacd27936158dd3867e587e2", 448397, Common::JA_JPN, 310),
 	MACGAME1("jman", "v1.2",  "Journeyman 16MB",  "r:2ce360c9ea2da80a2c6d1040b0ad92dd", 440902, 313),
 	WINGAME1("jman", "",	  "JMAN.EXE",		  "d:7c8230a804abf9353b05627a675b5ffb", 375282, 300),
 	WINGAME1_l("jman", "v1.1", "JMAN.EXE",		  "t:56feca9681406edc2fd78da501694cb2", 370002, Common::DE_DEU, 300),
