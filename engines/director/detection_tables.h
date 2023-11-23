@@ -2441,15 +2441,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("hoaddams2", "", "AddamsFamilyInt", "7f443f2e63fd497a9ad85b10dc880a91", 1380784, 313),
 
-	MACGAME1("hoangus", "", "Angus IPK", "2ce360c9ea2da80a2c6d1040b0ad92dd", 2029855, 313),
+	MACGAME1("hoangus", "", "Angus IPK", "r:2ce360c9ea2da80a2c6d1040b0ad92dd", 2029599, 313),
 	WINGAME1("hoangus", "", "ANGUS.EXE", "7c8230a804abf9353b05627a675b5ffb", 2383326, 313),
 
-	MACGAME1("hodolores", "", "Dolores Claiborne Interactive", "7f443f2e63fd497a9ad85b10dc880a91", 1475936, 313),
+	MACGAME1("hodolores", "", "Dolores Claiborne Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1475680, 313),
 	WINGAME1("hodolores", "", "DOLRES.EXE", "65d06b5fef155a2473434571aff5bc29", 1671516, 313),
 
-	MACGAME1("hostargate", "", "Stargate Interactive", "7f443f2e63fd497a9ad85b10dc880a91", 1394354, 313),
+	MACGAME1("hostargate", "", "Stargate Interactive", "r:7f443f2e63fd497a9ad85b10dc880a91", 1394098, 313),
 
-	MACGAME1("hothenet", "", "The Net Interactive Kit", "7f443f2e63fd497a9ad85b10dc880a91", 2027385, 313),
+	MACGAME1("hothenet", "", "The Net Interactive Kit", "r:7f443f2e63fd497a9ad85b10dc880a91", 2027129, 313),
 	WINGAME1("hothenet", "", "NET.EXE", "65d06b5fef155a2473434571aff5bc29", 2357523, 313),
 
 	WINGAME1t("hotrekgens", "", "TREK.EXE", "dbf91fa10fef580c7f8e2962c4151d30", 1861869, 310),
