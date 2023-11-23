@@ -167,7 +167,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "crossworldsp4",      "Crossworlds Part 4: Scream For Me" },
 	{ "cumberbund",         "Cumberbund" },
 	{ "cursed",             "Cursed" },
-	{ "cut",                "Cut the Red Wire! No, the Blue Wire!" },
 	{ "cyber1",             "Cyber Warp 1" },
 	{ "cyber2",             "Cyber Warp 2" },
 	{ "cybercow",           "Lair of the Cybercrow" },
@@ -789,6 +788,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "hc_skydiver",        "The Skydiver" },                                                           //   12th Place
 	{ "hc_pilfers",         "Pilfers" },                                                                //   13th Place
 
+	// InsideADRIFT #41
+	{ "cut",                "Cut the Red Wire! No, the Blue Wire!" },
+
 	// InsideADRIFT Game of the Year Comp 2004
 	{ "goy_paint",          "Paint!!!" },                                                               //    1st Place
 	{ "goy_shardsmemory",   "Shards of Memory" },                                                       //    2nd Place
@@ -979,21 +981,16 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "advbackyard",        "An Adventurer's Backyard" },
 	{ "aliendiver",         "Alien Diver" },
 	{ "allthroughthenight", "All Through the Night" },
-	{ "ambassador",         "Ambassador to Dupal" },
 	{ "anno1700",           "Anno 1700" },
 	{ "axeofkolt",          "The Axe of Kolt" },
 	{ "badlands",           "Badlands" },
-	{ "bariscebik",         "Bariscebik" },
 	{ "beginnerscave",      "The Beginner's Cave" },
 	{ "bethere",            "Be There!" },
-	{ "beythilda",          "Beythilda the Night Witch" },
 	{ "birthofphoenix",     "Birth of the Phoenix" },
 	{ "bookbuilding",       "Book Building" },
 	{ "canyouguess",        "Can You Guess?" },
-	{ "canyoustandup",      "Can You Stand Up?" },
 	{ "cccs2808",           "CCCS Virtual Campus" },
 	{ "charloop",           "Character Info Input with Loop" },
-	{ "coloromc_adrift",    "Color of Milk Coffee" },
 	{ "combilib",           "Combined Library" },
 	{ "darkhour",           "The Dark Hour" },
 	{ "ddf",                "The Dwarf of Direwood Forest" },
@@ -1001,10 +998,8 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "dff",                "Die Feuerfaust" },
 	{ "dementophobia",      "Dementophobia" },
 	{ "digitalroots",       "DigitalRoots" },
-	{ "dontgo_adrift",      "Don't Go" },
 	{ "dragondiamond",      "Bash Saga 1: The Dragon Diamond" },
 	{ "dreamspun",          "Dreamspun" },
-	{ "ecod3d",             "The Evil Chicken of Doom 3D" },
 	{ "edithscats",         "Edith's Cats" },
 	{ "escapehouse2",       "Escape From the House 2" },
 	{ "evilqueen",          "Evil Queen" },
@@ -1028,7 +1023,6 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "magneticmoon",       "Magnetic Moon" },
 	{ "ml256",              "Makers Local and the Transdimensional Margarita Blender" },
 	{ "monsterage",         "Monster Age: Trials of Dustorn" },
-	{ "murdererhadleft",    "What the Murderer Had Left" },
 	{ "museumheist",        "Museum Heist" },
 	{ "nastyescape",        "The Nasty Escape" },
 	{ "noblecrook1",        "Noble Crook - Episode 1" },
@@ -1042,7 +1036,6 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "penrhyn",            "Penrhyn: Burning Skies" },
 	{ "projectactually",    "A Place" },
 	{ "rbr",                "Run, Bronwynn, Run!" },
-	{ "readingmay_adrift",  "A Reading in May" },
 	{ "royalpuzzle",        "The Royal Puzzle" },
 	{ "rsp",                "Revenge of the Space Pirates" },
 	{ "rtc",                "Return to Camelot" },
@@ -1103,6 +1096,19 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "ec11_ignisfatuus",   "Ignis Fatuus" },                                                           //    4th Place
 	{ "ec11_thehouse",      "The House" },                                                              //    6th Place
 	{ "ec11_stuckpiggy",    "Stuck Piggy" },                                                            //    7th Place
+
+	// Ectocomp 2012
+	{ "beythilda",          "Beythilda the Night Witch" },                                              //    5th Place
+	{ "ecod3d",             "The Evil Chicken of Doom 3D" },                                            //    6th Place
+
+	// InsideADRIFT #41
+	{ "ambassador",         "Ambassador to Dupal" },
+	{ "bariscebik",         "Bariscebik" },
+	{ "canyoustandup",      "Can You Stand Up?" },
+	{ "coloromc_adrift",    "Color of Milk Coffee" },
+	{ "dontgo_adrift",      "Don't Go" },
+	{ "murdererhadleft",    "What the Murderer Had Left" },
+	{ "readingmay_adrift",  "A Reading in May" },
 
 	// P/o Prune's Mini Comp
 	{ "mc_diffipuzzle",     "A Difficult Puzzle" },                                                     //    1st Place
@@ -1270,7 +1276,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("crossworldsp3", "051210", "f1bc090495051f41ca629c80372084f8", 220578),
 	DT_ENTRY1("crossworldsp4", "070202", "7b04adb511c66fa0b22e256245aad78f", 376908),
 	DT_ENTRY1("cumberbund", "090929", "f96d2e9840d7a1a1d71dfd742ce01803", 1865),
-	DT_ENTRY1("cut", "120202", "0369af54c60f3d25ea2ebfe80579057b", 6102),
 	DT_ENTRY1("cursed", "11???\?/v1", "ebfd66b37cc4f288e94825768c905e8e", 464552),
 	DT_ENTRY1("cursed", "11???\?/v1/Hints", "56b1b8a2ade186686004d3517fbedbc9", 32536),
 	DT_ENTRY1("cursed", "11???\?/v2", "e01017d4bf6462a2aed5129e05e25e1f", 487499),
@@ -1840,23 +1845,18 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("aliendiver", "2005??", "7a746245878dc3a5edafcc851562aa3a", 77266),
 	DT_ENTRY1("aliendiver", "2010??", "6fdb9210b4c42d2d496a63bd04ee14e2", 87904),
 	DT_ENTRY1("allthroughthenight", "1401??", "89dcb84d74f70945780ed9e719401301", 36345976),
-	DT_ENTRY1("ambassador", "120202", "d19a12c2c8c2eff7b3e8da5f3594163a", 29708),
 	DT_ENTRY1("anno1700", "1810?\?/v1", "ec665dafae59aced3bade7c5b64e1e2e", 865004),
 	DT_ENTRY1("anno1700", "1810?\?/v2", "b45b7f7bdb90745c53d5df06ddcfeea2", 880810),
 	DT_ENTRY1("axeofkolt", "12???\?/v1", "e2cb7f32478a69b647bc90e0de158ac9", 901650),
 	DT_ENTRY1("axeofkolt", "12???\?/v2", "c9555483f6706d60bd6b8ea18f7b92ae", 906106),
 	DT_ENTRY1("badlands", "160418/Demo", "5d654bb182e0337937e792af8caf8d5d", 20248),
-	DT_ENTRY1("bariscebik", "120128", "d63d310e2b2fe4ab7ea6bc74c136b8e0", 14634),
 	DT_ENTRY1("beginnerscave", "18????", "44e32fc05411bfa1468e93e1e6e325ee", 30358),
 	DT_ENTRY1("bethere", "191027", "2fd4326a88602c00e6215e167f9b9311", 36384),
-	DT_ENTRY1("beythilda", "1210??", "527c5afe73b34f297d3d6dcfe7039aab", 18349),
 	DT_ENTRY1("birthofphoenix", "1112??", "de798149fc307dbcfb5ccf173f95f24a", 23532),
 	DT_ENTRY1("bookbuilding", "130922/Demo", "84386cfe7bee273b289d6e3b69aae114", 15628),
 	DT_ENTRY1("canyouguess", "189292", "0b305b9014dc44066ec95a816b4fdf4b", 16254),
-	DT_ENTRY1("canyoustandup", "120202", "b02aa7d160a6d1e3e86ce4f3027dd89e", 13425),
 	DT_ENTRY1("cccs2808", "140828", "d779608ca4dd3aab27bac53e7f671b23", 20086),
 	DT_ENTRY1("charloop", "171114/Demo", "e2523c216117855c3ea5b68eb4ad0829", 16824),
-	DT_ENTRY1("coloromc_adrift", "120202", "6b8d8f115a89c99f785156a9b5802bc2", 12681),
 	DT_ENTRY1("combilib", "211026", "3ecc566574e9c1f551e6885c6ef94bbd", 46524),
 	DT_ENTRY1("darkhour", "17????", "75bc2ac4d561ad2a2143bd90a19d1b46", 35184),
 	DT_ENTRY1("ddf", "2109?\?/v1", "58e46de405a7d6b7cc9c924416c8318c", 240970),
@@ -1866,11 +1866,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("digitalroots", "2302??", "b30ec06838f688fc98b899c28f0b7025", 727156),
 	DT_ENTRY1("dff", "160329/v1", "42991208d92645d9ddd07dd8be82d1dc", 565482),
 	DT_ENTRY1("dff", "160329/v2", "8e107f2a3de2686ebac22e2c9b3752cc", 521536),
-	DT_ENTRY1("dontgo_adrift", "120202", "f192abcc4e1f04787a7f1fde2ad05385", 13789),
 	DT_ENTRY1("dragondiamond", "160329", "5ced50484c4bc3806702084c589e3ea1", 41670),
 	DT_ENTRY1("dragondiamond", "220315", "4c92c4f0c578c9d6d309d3169ae8e5b6", 54783),
 	DT_ENTRY1("dreamspun", "200421", "490ff0065ff10268fd53ecd50082b94d", 29140),
-	DT_ENTRY1("ecod3d", "121031", "b727a3df5a8cc75ce98899d01c479b9e", 19904),
 	DT_ENTRY1("edithscats", "161029", "0c6bbf3d292a427182458bd5332f2348", 18316),
 	DT_ENTRY1("escapehouse2", "140904", "d62bd657046d87cc15eb285dc87d3046", 18244),
 	DT_ENTRY1("evilqueen", "17????", "9b74d1a1e66b841069619382a256d34e", 7909064),
@@ -1906,7 +1904,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("magneticmoon", "19???\?/v2", "b435f18684dce693fd64b10ae0df0021", 492630),
 	DT_ENTRY1("ml256", "120531", "68862c0031f1497e32ce26e0654bb07f", 32397),
 	DT_ENTRY1("monsterage", "171219", "00b8e89e5e7421a0ea017707466efe17", 16486),
-	DT_ENTRY1("murdererhadleft", "120117", "f95c63f90f28061a15dbe3bdf0cd4048", 13425),
 	DT_ENTRY1("museumheist", "2005?\?/v1", "3c10249b9d1580ec63ac63ddddb5342d", 2709918),
 	DT_ENTRY1("museumheist", "2005?\?/v2", "c3ea7b30f4ad6736d1f344a95b3343c2", 2711656),
 	DT_ENTRY1("nastyescape", "12022", "24b95325d0602ad7178926a0e0125892", 18008),
@@ -1924,7 +1921,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("projectactually", "178324d32fb2bf27e2c14bf84190e9a5", 25559),
 	DT_ENTRY1("rbr", "17???\?/v1", "88d7babfbc6122dc70e2673dabe93a47", 335894),
 	DT_ENTRY1("rbr", "17???\?/v2", "c095893f61c9f1d8e1d047e148eb4894", 319278),
-	DT_ENTRY1("readingmay_adrift", "120108", "ba8a12e79520234e31622f141c99cafd", 13434),
 	DT_ENTRY1("royalpuzzle", "1703?\?/v1", "5ecced3471bbc0cff671238707d1e980", 41780),
 	DT_ENTRY1("royalpuzzle", "1703?\?/v2", "fe9be5e874d51dd8dd7bb272f8d99ed7", 41708),
 	DT_ENTRY1("rsp", "1911?\?/v1", "ce9d950582fc63a90599e158498a9691", 244356),
@@ -2001,6 +1997,19 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("ec11_ignisfatuus", "1110??", "0414d55fc3984c158804575044809c48", 20575),
 	DT_ENTRY1("ec11_thehouse", "1110??", "338d24e1cabc2c398927599dc89dd986", 21925),
 	DT_ENTRY1("ec11_stuckpiggy","1110??", "bf6d5cd1b5a3865ff610110459d3104f", 18506),
+
+	// Ectocomp 2012
+	DT_ENTRY1("beythilda", "1210??", "527c5afe73b34f297d3d6dcfe7039aab", 18349),
+	DT_ENTRY1("ecod3d", "121031", "b727a3df5a8cc75ce98899d01c479b9e", 19904),
+
+	// InsideADRIFT #41
+	DT_ENTRY1("ambassador", "120202", "d19a12c2c8c2eff7b3e8da5f3594163a", 29708),
+	DT_ENTRY1("bariscebik", "120128", "d63d310e2b2fe4ab7ea6bc74c136b8e0", 14634),
+	DT_ENTRY1("canyoustandup", "120202", "b02aa7d160a6d1e3e86ce4f3027dd89e", 13425),
+	DT_ENTRY1("coloromc_adrift", "120202", "6b8d8f115a89c99f785156a9b5802bc2", 12681),
+	DT_ENTRY1("dontgo_adrift", "120202", "f192abcc4e1f04787a7f1fde2ad05385", 13789),
+	DT_ENTRY1("murdererhadleft", "120117", "f95c63f90f28061a15dbe3bdf0cd4048", 13425),
+	DT_ENTRY1("readingmay_adrift", "120108", "ba8a12e79520234e31622f141c99cafd", 13434),
 
 	// P/o Prune's Mini Comp
 	DT_ENTRY1("mc_diffipuzzle", "2105?\?/v1", "315033c146b17ea767ef6d76529065d6", 54700),
@@ -2155,6 +2164,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("hc_overtheedge", "060806", "d3fcc9f5fd301731610e0b3cd8c9ddd1", 8128),
 	DT_ENTRY1("hc_skydiver", "060729", "57f0c54ab6e8c87904ebfde9d255d6f9", 7631),
 	DT_ENTRY1("hc_pilfers", "060727", "fad35bf79453844ef82f0a9b11d5d6e2", 3727),
+
+	// InsideADRIFT #41
+	DT_ENTRY1("cut", "120202", "0369af54c60f3d25ea2ebfe80579057b", 6102),
 
 	// InsideADRIFT Game of the Year Comp 2004
 	DT_ENTRY1("goy_paint", "040219", "d2bdca626f51b216f400355318c40000", 54899),
