@@ -1186,9 +1186,6 @@ void ScummEngine::CHARSET_1() {
 		_nextLeft = _charset->_left;
 		_nextTop = _charset->_top;
 
-		if (drawTextBox)
-			mac_drawIndy3TextBox();
-
 		if (_game.version <= 2) {
 			_talkDelay += _defaultTextSpeed;
 			VAR(VAR_CHARCOUNT)++;
@@ -1196,6 +1193,9 @@ void ScummEngine::CHARSET_1() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	}
+
+	if (drawTextBox)
+		mac_drawIndy3TextBox();
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
