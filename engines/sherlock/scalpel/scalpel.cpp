@@ -1280,6 +1280,7 @@ bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::P
 
 	if (!videoDecoder->loadFile(filename)) {
 		warning("Scalpel3DOMoviePlay: could not open '%s'", filename.c_str());
+		delete videoDecoder;
 		return false;
 	}
 
