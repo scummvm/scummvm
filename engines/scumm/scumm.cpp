@@ -3285,12 +3285,9 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 				// as terminateSaveMenuScript() will be gracefully handling that)
 				//
 				// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
-				if (_game.platform == Common::kPlatformNES) {
-					runScript(5, 0, 0, nullptr);
-					if (VAR(224))
-						_sound->startSound(VAR(224));
-				}
-
+				runScript(5, 0, 0, nullptr);
+				if (VAR(224))
+					_sound->startSound(VAR(224));
 			} else if (_game.platform != Common::kPlatformMacintosh) {
 				// MM and ZAK (v1/2)
 				int saveLoadRoom = 50;

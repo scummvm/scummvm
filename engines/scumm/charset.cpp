@@ -1742,10 +1742,8 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		// and light gray note names, because apparently the game never
 		// changes them back to light gray once the draft is done?
 
-		if (_vm->_game.id == GID_LOOM) {
-			if (chr >= 16 && chr <= 23 && _color == 7)
-				color = 15;
-		}
+		if (chr >= 16 && chr <= 23 && _color == 7)
+			color = 15;
 	}
 
 	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
