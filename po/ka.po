@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-23 07:45+0000\n"
-"PO-Revision-Date: 2023-10-30 10:26+0000\n"
+"PO-Revision-Date: 2023-11-23 22:41+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -30,22 +30,16 @@ msgid "Features compiled in:"
 msgstr "ჩაშენებული თვისებები:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "თამაშის ID მხარდაჭერილი არაა"
+msgstr "მხარდაჭერილი არაა"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
 msgstr "გამორთულია"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "გამორთულია"
+msgstr "ჩართულია"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
@@ -384,10 +378,8 @@ msgid "Fetching DLCs..."
 msgstr ""
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "გადმოწერა"
+msgstr "ყველა გადმოწერა"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -463,16 +455,12 @@ msgid "Download speed: %s %S/s"
 msgstr "გადმოწერის სიჩქარე: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "გადმოწერეთ თამაშები"
+msgstr "თამაშები, რომლების გადმოწერაც მიმდინარეობს"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "გადმოწერა"
+msgstr "რიგში მყოფი გადმოწერები"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1370,10 +1358,8 @@ msgstr "პლატფორმა ვერ ვიპოვე"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "უცნობი შეცდომა"
+msgstr "უცნობი წელი"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1582,10 +1568,8 @@ msgid "Shader Path:"
 msgstr "შეიდერის ბილიკი:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "გადმოწერეთ თამაშები"
+msgstr "შეიდერების გადმოწერა"
 
 #: gui/options.cpp:1628
 msgid "Check on the scummvm.org website for updates of shader packs"
@@ -2021,16 +2005,12 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "გადმოწერა"
+msgstr "ხატულების გადმოწერა"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "ხატულების განახლების შემოწმება"
+msgstr "ხატულების განახლების შემოწმება scummvm.org-ზე"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -5959,34 +5939,24 @@ msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Move down"
 msgid "Lower/Fly down"
-msgstr "ქვემოთ ჩამოწევა"
+msgstr "ქვემოთ ჩამოწევა/ჩამოფრენა"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "ბრძანების შეცვლა"
+msgstr "რეჟიმის შეცვლა"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Rotate"
 msgid "Rotate Left"
-msgstr "დატრიალება"
+msgstr "მარცხნივ შებრუნება"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Move Right"
 msgid "Rotate Right"
-msgstr "მარჯვნივ გაწევა"
+msgstr "მარჯვნივ შებრუნება"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "მენიუ"
+msgstr "ინფორმაციის მენიუ"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -8030,10 +8000,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "აღდგენილი შემცველობის ჩართვა"
+msgstr "აღდგენილი შემცველობა"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
