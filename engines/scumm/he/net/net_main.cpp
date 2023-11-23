@@ -19,6 +19,7 @@
  *
  */
 
+#include "base/version.h"
 #include "common/config-manager.h"
 
 #include "scumm/he/intern_he.h"
@@ -296,8 +297,8 @@ int Net::createSession(char *name) {
 			_sessionServerPeer = 0;
 			// Create session to the session server.
 			Common::String req = Common::String::format(
-				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d}",
-				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers);
+				"{\"cmd\":\"host_session\",\"game\":\"%s\",\"version\":\"%s\",\"name\":\"%s\",\"maxplayers\":%d,\"scummvm_version\":\"%s\"}",
+				_gameName.c_str(), _gameVersion.c_str(), name, _maxPlayers, gScummVMFullVersion);
 			debugC(DEBUG_NETWORK, "NETWORK: Sending to session server: %s", req.c_str());
 			_sessionHost->send(req.c_str(), _sessionServerPeer);
 		} else {
@@ -599,8 +600,8 @@ int32 Net::updateQuerySessions() {
 	if (_sessionServerHost) {
 		// Get internet-based sessions from the session server.
 		Common::String getSessions = Common::String::format(
-			"{\"cmd\":\"get_sessions\",\"game\":\"%s\",\"version\":\"%s\"}",
-			_gameName.c_str(), _gameVersion.c_str());
+			"{\"cmd\":\"get_sessions\",\"game\":\"%s\",\"version\":\"%s\",\"scummvm_version\":\"%s\"}",
+			_gameName.c_str(), _gameVersion.c_str(), gScummVMFullVersion);
 		_sessionServerHost->send(getSessions.c_str(), 0);
 
 		_gotSessions = false;
@@ -1152,7 +1153,7 @@ void Net::remoteReceiveData() {
 			if (_gameName == "moonbase") {
 				// TODO: Host migration
 				if (!_isHost && _vm->_currentRoom == 2) {
-					_vm->displayMessage(0, "You have been disconnected from the host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end." );
+					_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 					_vm->VAR(253) = 26; // gGameMode = GAME-OVER
 					_vm->runScript(2104, 1, 0, 0); // leave-game
 				}
@@ -1291,7 +1292,7 @@ void Net::handleGameData(Common::JSONValue *json, int peerIndex) {
 				if (paramsArray[0]->asIntegerNumber() == 145 && _fromUserId == 1) {
 					if (!_isHost && _vm->_currentRoom == 2) {
 						// TODO: Host migration
-						_vm->displayMessage(0, "You have been disconnected from the host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
+						_vm->displayMessage(0, "You have been disconnected from the game host.\nNormally, host migration would take place, but ScummVM doesn't do that yet, so this game session will now end.");
 						_vm->VAR(253) = 26; // GAME-OVER
 						_vm->runScript(2104, 1, 0, 0); // leave-game
 						return;
