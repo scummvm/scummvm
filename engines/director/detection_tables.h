@@ -448,11 +448,25 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "travelrama",			"Travelrama USA" },
 	{ "thetreasurehunt",	"The Treasure Hunt" },
 	{ "tweeniesrtp",		"Tweenies: Ready to Play" },
+	{ "vc_automat",			"Vince Collins: The Automaton Makers" },
+	{ "vc_circus",			"Vince Collins: Retina Circus" },
+	{ "vc_explode",			"Vince Collins: Exploding Views" },
+	{ "vc_hawks",			"Vince Collins: Night Hawks" },
+	{ "vc_illusions",		"Vince Collins: Illusions" },
+	{ "vc_instant",			"Vince Collins: Instant Culture" },
+	{ "vc_monet",			"Vince Collins: Show me the Monet!" },
+	{ "vc_race",			"Vince Collins: The Race against Time!" },
+	{ "vc_thrills",			"Vince Collins: Speedway Thrills" },
+	{ "vc_tolstoy",			"Vince Collins: Tolstoy Story" },
+	{ "vc_vieux",			"Vince Collins: Vieux Carré Guide" },
+	{ "vc_whurl",			"Vince Collins: Whurlatron!" },
+	{ "vc_willie",			"Vince Collins: Willie/Nelson Mandala" },
 	{ "vcop",				"Virtual Cop" },
 	{ "vcop1",				"Virtual Cop: Episode One: Good Cop / Bad Cop" },
 	{ "vcop2",				"Virtual Cop: Episode Two: The Angel Returns" },
 	{ "veniceglass",		"Venice Under Glass: A Basil Baker Mystery Adventure" },
 	{ "videocasino",		"Video Casino" },
+	{ "vinceworld",			"VinceWorld" },  // Vince Collins' VinceWorld
 	{ "virusalert3d",		"Virus Alert 3D" },
 	{ "vjg",				"Vegas Jackpot Gold" },
 	{ "vnc",				"Virtual Nightclub" },
@@ -5529,6 +5543,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("ushistory", "", "HISTORY.EXE", "5660e6a7b772b5bf8867627ab0d7a58b", 703629, 404),
 
+	// Animations published on https://www.vinceworld.com
+	WINGAME1("vc_automat", "", "AUTOMAT.EXE", "t:efef781acf04870bbd4fe30e1e87a6bf", 3862613, 404),
+	WINGAME1("vc_circus", "", "CIRCUS.EXE", "t:6d65133d1532732d01cbe061dd3eace4", 3109702, 404),
+	WINGAME1("vc_explode", "", "EXPLODE.EXE", "t:57f4d837f53de2da35c5060335ebda55", 3845779, 404),
+	WINGAME1("vc_hawks", "", "HAWKS.EXE", "t:16e445a37d18a96e0925aa764a2ab40d", 4087219, 404),
+	WINGAME1("vc_illusions", "", "ILLUSION.EXE", "t:c843956912f63788c63f28522a828797", 2883773, 404),
+	WINGAME1("vc_instant", "", "INSTANT.EXE", "t:d86fb4a0a339926bb1fc8c61923681d8", 3180603, 404),
+	WINGAME1("vc_race", "", "THERAT.EXE", "t:2eece4ad2d8cacd72521573b5f66a1d6", 2727080, 404),
+	WINGAME1("vc_tolstoy", "", "TOLSTOY.EXE", "t:5cb4fcbc9566f18a5dcd1cb3f31dad41", 3143274, 404),
+	WINGAME1("vc_vieux", "", "VIEUX.EXE", "t:730cbbb6239f460b84ac81073f58c2a4", 3481032, 404),
+	WINGAME1("vc_whurl", "", "WHURL.EXE", "t:ba67bf685de71d6432e851bc0eb73d8d", 3692209, 404),
+	WINGAME1("vc_willie", "", "WNM.EXE", "t:8fd7da3295a87b864df8f2eca0aa7adc", 2702147, 404),
+
 	// Original Mac fllenames begin with Virtual Cop™
 	MACDEMO1("vcop", "Demo", "Virtual Cop IPK", "ea646eccc9a53f44ce082459d4809a06", 482838, 404),
 	MACGAME1("vcop1", "", "Virtual Cop (8MB)", "0c7bbb4b24823e5ab871cb4c1d6f3710", 483774, 404),
@@ -6897,6 +6924,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("tenroutoshi", "", "xn--jck3b1c9dp66v0cguuvth6e/xn-- for Mac-n00o010bmx4alc3h", "dabaeab8b01bece0610362ff5f8416b3", 108480, Common::JA_JPN, 501),
 	WINGAME1t_l("tenroutoshi", "", "tenrou.exe", "c6bd12ec20e510dd7b6c8a8268999d59", 1411066, Common::JA_JPN, 501),
 
+	// Developed by DeAgostini Multimedia
+	// Should also have a Mac version from the same disc
+	WINGAME1t_l("tesorovenezia", "", "VEN95.EXE", "d28edd9d3e3474feec760c942c410993", 1393935, Common::IT_ITA, 501),
+
 	MACGAME1("texas", "", "Texas Tourism", "ad32f236d2637602b7299e6b748a7571", 705417, 500),
 	WINGAME1t("texas", "", "TEXAS32.EXE", "ac6cf1ba40918db9d7fa1dd837169834", 1410513, 501),
 
@@ -6938,12 +6969,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ursaminorblue", "Hybrid release", "URSA (PPC)", "08166af62693ceab79b28d90d2f6c86b", 106927, Common::JA_JPN, 501),
 	WINGAME1_l("ursaminorblue", "Hybrid release", "START/UMB_32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1405383, Common::JA_JPN, 501),
 
+	// Animations published on https://www.vinceworld.com
+	WINGAME1("vc_monet", "", "MONET.EXE", "t:936fb79a6e10f8f9e0075c0a474bb1b6", 4965847, 500),
+	WINGAME1("vc_thrills", "", "THRILLS.EXE", "t:d6a9f1a493b96bcede752c99a3873d53", 3901313, 500),
+
 	MACGAME1("venetiandeer", "", "Venetian Deer", "1a352eb1a1c0b1e1b6ac041d58c50cbc", 716741, 501),
 	WINGAME1t("venetiandeer", "", "DEER.EXE", "5098878e6a7813b0a2a480d36cd352bc", 952215, 501),
 
-	// Developed by DeAgostini Multimedia
-	// Should also have a Mac version from the same disc
-	WINGAME1t_l("tesorovenezia", "", "VEN95.EXE", "d28edd9d3e3474feec760c942c410993", 1393935, Common::IT_ITA, 501),
+	// Compilation of 30 animations by Vince Collins
+	WINGAME1("vinceworld", "", "VWORLD.EXE", "t:de4b18e68c71a0cdb49b140d588434d6", 93015315, 500),
 
 	MACGAME1("vp2", "", "VPhys2", "cb91232ecece0045461d236d5914c03d", 719261, 500),
 	MACDEMO1("vp2", "Demo", "VP2Demo", "cb91232ecece0045461d236d5914c03d", 719261, 500),
