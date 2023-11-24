@@ -1226,9 +1226,15 @@ void LC::c_or() {
 }
 
 void LC::c_not() {
+	// Not returns true when a variable is undefined or is an int and is zero.
+	Datum res;
 	Datum d = g_lingo->pop();
 
-	Datum res(d.asInt() == 0 ? 1 : 0);
+	if ((d.type == INT && d.u.i == 0) || d.type == VOID) {
+		res = Datum(1);
+	} else {
+		res = Datum(0);
+	}
 
 	g_lingo->push(res);
 }
