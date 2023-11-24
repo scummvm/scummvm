@@ -2679,9 +2679,17 @@ void MacGui::updateWindowManager() {
 		loadCondition = (_vm->VAR(58) & 0x02) && !(_vm->VAR(94) & 0x10);
 	} else {
 		// TODO: Complete LOOM with the rest of the proper code from disasm,
-		// for now we only have the copy protection code in place...
-		saveCondition = !(_vm->VAR(221) & 0x4000);
-		loadCondition = !(_vm->VAR(221) & 0x4000);
+		// for now we only have the copy protection code and a best guess in place...
+		//
+		// Details:
+		// VAR(221) & 0x4000:           Copy protection bit (the only thing I could confirm from the disasm)
+		// VAR(VAR_VERB_SCRIPT) == 5:   Best guess... it prevents saving/loading from e.g. difficulty selection screen
+		// _userPut > 0:                Best guess... it prevents saving/loading during cutscenes
+
+		saveCondition = loadCondition =
+			!(_vm->VAR(221) & 0x4000) &&
+			(_vm->VAR(_vm->VAR_VERB_SCRIPT) == 5) &&
+			(_vm->_userPut > 0);
 	}
 
 	bool canLoad = _vm->canLoadGameStateCurrently() && saveCondition;
