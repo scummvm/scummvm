@@ -47,13 +47,17 @@ void ObjectManager::kill() {
 	_allObjectTypes.clear();
 }
 
-ObjectType *ObjectManager::findObjectType(int i) {
+ObjectType *ObjectManager::findObjectType(int i, bool skipLoad) {
 	ObjectTypeList::iterator it;
 	for (it = _allObjectTypes.begin(); it != _allObjectTypes.end(); ++it) {
 		if ((*it)->objectNum == i) {
 			return (*it);
 		}
 	}
+
+	if (skipLoad)
+		return nullptr;
+
 	return loadObjectType(i);
 }
 

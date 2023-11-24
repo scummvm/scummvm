@@ -122,7 +122,7 @@ struct Variable {
 	int compareVars(const Variable &other) const;
 
 	// General getters
-	Common::String getTextFromAnyVar() const;
+	Common::String getTextFromAnyVar(bool skipLoad = false) const;
 	bool getBoolean() const;
 	bool getValueType(int &toHere, VariableType vT) const;
 
