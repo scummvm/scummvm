@@ -27,10 +27,10 @@ namespace Ultima {
 namespace Nuvie {
 
 /* Widget constructors */
-GUI_Widget:: GUI_Widget(void *data) {
+GUI_Widget::GUI_Widget(void *data) {
 	Init(data, 0, 0, 0, 0);
 }
-GUI_Widget:: GUI_Widget(void *data, int x, int y, int w, int h) {
+GUI_Widget::GUI_Widget(void *data, int x, int y, int w, int h) {
 	Init(data, x, y, w, h);
 }
 
@@ -95,7 +95,7 @@ void GUI_Widget::Hide(void) {
 }
 
 /* Mark the widget as free, so it will be deleted by the GUI */
-void GUI_Widget:: Delete(void) {
+void GUI_Widget::Delete(void) {
 	status = WIDGET_DELETED;
 }
 
@@ -165,18 +165,18 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 }
 
 /* Report status to GUI */
-int GUI_Widget:: Status(void) const {
+int GUI_Widget::Status(void) const {
 	return status;
 }
 
 /* Set the bounds of the widget.
    If 'w' or 'h' is -1, that parameter will not be changed.
  */
-void GUI_Widget:: SetRect(int x, int y, int w, int h) {
+void GUI_Widget::SetRect(int x, int y, int w, int h) {
 	area = Common::Rect(x, y, x + w, y + h);
 }
 
-void GUI_Widget:: SetRect(Common::Rect **bounds) {
+void GUI_Widget::SetRect(Common::Rect **bounds) {
 	int minx, maxx;
 	int miny, maxy;
 	int i, v;
