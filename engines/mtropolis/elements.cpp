@@ -645,7 +645,7 @@ void MovieElement::activate() {
 		Common::SafeSeekableSubReadStream *movieDataStream;
 
 		if (movieAsset->getMovieDataSize() > 0) {
-			qtDecoder->setChunkBeginOffset(movieAsset->getMoovAtomPos());
+			qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
 			movieDataStream = new Common::SafeSeekableSubReadStream(stream, movieAsset->getMovieDataPos(), movieAsset->getMovieDataPos() + movieAsset->getMovieDataSize(), DisposeAfterUse::NO);
 		} else {
 			// If no data size, the movie data is all over the file and the MOOV atom may be after it.
