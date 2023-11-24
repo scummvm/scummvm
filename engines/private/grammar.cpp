@@ -93,7 +93,7 @@ using namespace Gen;
 using namespace Settings;
 
 extern int PRIVATE_lex();
-extern int PRIVATE_parse();
+//extern int PRIVATE_parse();
 
 void PRIVATE_xerror(const char *str) {
 }
