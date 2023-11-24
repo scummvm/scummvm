@@ -58,6 +58,7 @@
 #define OP_NET_UPDATE_PROFILE_ARRAY				2225
 #define OP_NET_LOCATE_PLAYER					2226
 #define OP_NET_GET_POPULATION					2227
+#define OP_NET_SET_POLL_ANSWER					2228
 #define OP_NET_UNKNOWN_2229						2229
 // Used in baseball to get news, poll and banner.
 #define OP_NET_DOWNLOAD_FILE					2238
@@ -138,6 +139,8 @@ protected:
 	void handleFileData(Common::String filename, Common::String data);
 
 	void setIcon(int icon);
+	void setPollAnswer(int pollAnswer);
+
 	void sendGameResults(int userId, int arrayIndex, int lastFlag);
 
 	void getPopulation(int areaId, int unknown);

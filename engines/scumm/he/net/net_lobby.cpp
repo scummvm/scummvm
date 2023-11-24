@@ -274,6 +274,9 @@ int32 Lobby::dispatch(int op, int numArgs, int32 *args) {
 	case OP_NET_GET_POPULATION:
 		getPopulation(args[0], args[1]);
 		break;
+	case OP_NET_SET_POLL_ANSWER:
+		setPollAnswer(args[0]);
+		break;
 	case OP_NET_UNKNOWN_2229:
 		// TODO
 		break;
@@ -566,6 +569,16 @@ void Lobby::setIcon(int icon) {
 	setIconRequest.setVal("cmd", new Common::JSONValue("set_icon"));
 	setIconRequest.setVal("icon", new Common::JSONValue((long long int)icon));
 	send(setIconRequest);
+}
+
+void Lobby::setPollAnswer(int pollAnswer) {
+	if (!_socket)
+		return;
+
+	Common::JSONObject setPollAnswerRequest;
+	setPollAnswerRequest.setVal("cmd", new Common::JSONValue("set_poll_answer"));
+	setPollAnswerRequest.setVal("answer", new Common::JSONValue((long long int)pollAnswer));
+	send(setPollAnswerRequest);
 }
 
 void Lobby::sendGameResults(int userId, int arrayIndex, int lastFlag) {
