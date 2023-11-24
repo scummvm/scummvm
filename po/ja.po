@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-23 07:45+0000\n"
+"POT-Creation-Date: 2023-11-24 01:15+0000\n"
 "PO-Revision-Date: 2023-11-21 07:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -1054,11 +1054,11 @@ msgstr "コピー"
 msgid "???"
 msgstr "???"
 
-#: gui/helpdialog.cpp:53
+#: gui/helpdialog.cpp:37
 msgid "General"
 msgstr "全般"
 
-#: gui/helpdialog.cpp:55
+#: gui/helpdialog.cpp:39
 msgid ""
 "## Where to get the games\n"
 "\n"
