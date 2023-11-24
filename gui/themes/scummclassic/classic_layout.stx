@@ -207,6 +207,18 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'HelpDialog' overlays = 'screen' inset = '32' shading = 'dim'>
+		<layout type = 'vertical' align = 'center' padding = '5, 5, 5, 5'>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 0, 8, 0'>
+				<space/>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
 	<dialog name = 'Browser' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Headline'

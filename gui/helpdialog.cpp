@@ -30,25 +30,9 @@
 namespace GUI {
 
 HelpDialog::HelpDialog()
-	: Dialog(30, 20, 260, 124) {
+	: Dialog("HelpDialog") {
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
-
-	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-
-	_w = screenW * 8 / 10;
-	_h = screenH * 8 / 10;
-
-	// Center the dialog
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;
-
-
-	int tabHeight = _h - (buttonHeight + 10) * 5 / 2;
-
-	TabWidget *tab = new TabWidget(this, 10, 10, _w - 10, tabHeight);
+	TabWidget *tab = new TabWidget(this, "HelpDialog.TabWidget");
 
 	tab->addTab(_("General"), "HelpDialog", false);
 	Common::U32String helpText1 = _(
@@ -68,7 +52,7 @@ HelpDialog::HelpDialog()
 "through affiliate referral links.\n"
 	);
 
-	new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, helpText1);
+	new RichTextWidget(tab, "HelpDialog.TabWidget", helpText1);
 
 
 	// Now add backend-specific tabs if any
@@ -88,7 +72,7 @@ HelpDialog::HelpDialog()
 
 			tab->addTab(tabName, "HelpDialog", false);
 
-			RichTextWidget *rt = new RichTextWidget(tab, 10, 10, _w - 10, tabHeight - buttonHeight - 10, tabText);
+			RichTextWidget *rt = new RichTextWidget(tab, "HelpDialog.TabWidget", tabText);
 
 			if (imagePack)
 				rt->setImageArchive(imagePack);
@@ -97,7 +81,7 @@ HelpDialog::HelpDialog()
 
 	 tab->setActiveTab(0);
 
-	new ButtonWidget(this, _w - buttonWidth - 10, _h - buttonHeight - 10, buttonWidth, buttonHeight, Common::U32String("Close"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "HelpDialog.Close", Common::U32String("Close"), Common::U32String(), kCloseCmd);
 }
 
 void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
