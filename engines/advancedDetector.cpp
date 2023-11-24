@@ -558,7 +558,7 @@ Common::String md5PropToGameFile(MD5Properties flags) {
 	Common::String res;
 
 	switch (flags & kMD5MacMask) {
-	case kMD5MacDataFork: 
+	case kMD5MacDataFork:
 		res = "d";
 		break;
 
@@ -668,7 +668,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 
 		if (!archive) {
 			// Archive not in cache. Find the appropriate type based on the type string,
-			// open the archive, and add it to the cache 
+			// open the archive, and add it to the cache
 			if (archiveType.equals("is")) {
 				// InstallShield (v4 and up)
 				archive = Common::makeInstallShieldArchive(allFiles[archiveName]);
@@ -1054,8 +1054,8 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 		for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			if (strchr(fileDesc->fileName, '/')) {
 				if (!(_flags & kADFlagMatchFullPaths))
-					warning("Path component detected in entry for '%s' in engine '%s' but no kADFlagMatchFullPaths is set",
-						g->gameId, getName());
+					warning("Path component detected in entry for '%s:%s' but no kADFlagMatchFullPaths is set",
+						getName(), g->gameId);
 
 				Common::StringTokenizer tok(fileDesc->fileName, "/");
 
@@ -1082,8 +1082,8 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 
 		// Check if the detection entry have only files from the blacklist
 		if (isEntryGrayListed(g)) {
-			debug(0, "WARNING: Detection entry for '%s' in engine '%s' contains only blacklisted names. Add more files to the entry (%s)",
-				g->gameId, getName(), g->filesDescriptions[0].md5);
+			debug(0, "WARNING: Detection entry for '%s:%s' contains only blacklisted names. Add more files to the entry (%s)",
+				getName(), g->gameId, g->filesDescriptions[0].md5);
 		}
 	}
 
@@ -1151,7 +1151,7 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 
 	for (const PlainGameDescriptor *g = _gameIds; g->gameId; g++) {
 		if (idsMap.contains(g->gameId))
-			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' has duplicates", g->gameId, getName());
+			debug(0, "WARNING: Detection gameId for '%s:%s' has duplicates", getName(), g->gameId);
 
 		idsMap[g->gameId] = 0;
 	}
@@ -1160,7 +1160,7 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 		const ADGameDescription *g = (const ADGameDescription *)descPtr;
 
 		if (!idsMap.contains(g->gameId)) {
-			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' is not present in gameids", g->gameId, getName());
+			debug(0, "WARNING: Detection gameId for '%s:%s' is not present in gameids", getName(), g->gameId);
 		} else {
 			idsMap[g->gameId]++;
 		}
@@ -1184,7 +1184,7 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 
 				// We need exactly three tokens: <archive type> : <archive name> : <file name>
 				if (numTokens != 3) {
-					debug(0, "WARNING: Detection entry '%s' for gameId '%s' in engine '%s' is invalid", fileDesc.fileName, g->gameId, getName());
+					debug(0, "WARNING: Detection entry '%s' for gameId '%s:%s' is invalid", fileDesc.fileName, getName(), g->gameId);
 				}
 			}
 		}
@@ -1192,7 +1192,7 @@ void AdvancedMetaEngineDetection::detectClashes() const {
 
 	for (auto &k : idsMap) {
 		if (k._value == 0 && k._key != getName())
-			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' has no games in the detection table", k._key.c_str(), getName());
+			debug(0, "WARNING: Detection gameId for '%s:%s' has no games in the detection table", getName(), k._key.c_str());
 	}
 }
 
