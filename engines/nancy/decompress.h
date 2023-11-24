@@ -34,9 +34,12 @@ namespace Nancy {
 
 class Decompressor {
 public:
+	Decompressor();
+	~Decompressor();
+
 	// Decompresses data from input until the end of the stream
 	// The output stream must have the right size for the decompressed data
-	bool decompress(Common::ReadStream &input, Common::MemoryWriteStream &output);
+	bool decompress(Common::SeekableReadStream &input, Common::MemoryWriteStream &output);
 
 private:
 	enum {
@@ -44,7 +47,7 @@ private:
 		kBufStart = 4078
 	};
 
-	void init(Common::ReadStream &input, Common::WriteStream &output);
+	void init(Common::SeekableReadStream &input, Common::WriteStream &output);
 	bool readByte(byte &b);
 	bool writeByte(byte b);
 
@@ -52,8 +55,11 @@ private:
 	uint _bufpos;
 	bool _err;
 	byte _val;
-	Common::ReadStream *_input;
 	Common::WriteStream *_output;
+
+	byte *_input;
+	byte *_pos;
+	byte *_end;
 };
 
 } // End of namespace Nancy

@@ -26,18 +26,39 @@
 
 namespace Nancy {
 
-void Decompressor::init(Common::ReadStream &input, Common::WriteStream &output) {
+Decompressor::Decompressor() :
+	_bufpos(0),
+	_err(false),
+	_val(0),
+	_output(nullptr),
+	_input(nullptr),
+	_pos(nullptr),
+	_end(nullptr) {}
+
+Decompressor::~Decompressor() {
+	delete[] _input;
+}
+
+void Decompressor::init(Common::SeekableReadStream &input, Common::WriteStream &output) {
 	memset(_buf, ' ', kBufSize);
 	_bufpos = kBufStart;
 	_err = false;
 	_val = 0;
-	_input = &input;
+
+	// We store the input data in a raw buffer, since we need to check if we're at the end of the
+	// stream on _every_ read byte. This way we avoid doing a vtable lookup per byte, which makes
+	// decompression roughly twice as fast
+	delete[] _input;
+	_input = new byte[input.size()];
+	input.read(_input, input.size());
+	_pos = _input;
+	_end = _input + input.size();
 	_output = &output;
 }
 
 bool Decompressor::readByte(byte &b) {
-	b = _input->readByte() - _val++;
-	return !_input->eos();
+	b = *_pos++ - _val++;
+	return _pos <= _end;
 }
 
 bool Decompressor::writeByte(byte b) {
@@ -47,9 +68,14 @@ bool Decompressor::writeByte(byte b) {
 	return true;
 }
 
-bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStream &output) {
+bool Decompressor::decompress(Common::SeekableReadStream &input, Common::MemoryWriteStream &output) {
 	init(input, output);
 	uint16 bits = 0;
+
+	if (input.err()) {
+		warning("Failed to decompress resource");
+		return false;
+	}
 
 	while (1) {
 		byte b;
@@ -83,7 +109,7 @@ bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStre
 		}
 	}
 
-	if (input.err() || output.err() || output.pos() != output.size()) {
+	if (output.err() || output.pos() != output.size()) {
 		// Workaround for nancy3 file "SLN RollPanOpn.avf", which outputs 2 bytes less than it should
 		if (output.size() - output.pos() <= 2) {
 			return true;

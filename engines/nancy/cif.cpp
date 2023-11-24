@@ -113,7 +113,7 @@ Common::SeekableReadStream *CifFile::createReadStream() const {
 		// Decompress the data into the buffer
 		if (_stream->seek(_info.dataOffset)) {
 			Common::MemoryWriteStream write(buf, _info.size);
-			Common::SubReadStream read(_stream, _info.compressedSize);
+			Common::SeekableSubReadStream read(_stream, _info.dataOffset, _info.dataOffset + _info.compressedSize);
 			Decompressor dec;
 			success = dec.decompress(read, write);
 		} else {
@@ -223,7 +223,7 @@ Common::SeekableReadStream *CifTree::createReadStreamForMember(const Common::Pat
 		// Decompress the data into the buffer
 		if (_stream->seek(info.dataOffset)) {
 			Common::MemoryWriteStream write(buf, info.size);
-			Common::SubReadStream read(_stream, info.compressedSize);
+			Common::SeekableSubReadStream read(_stream, info.dataOffset, info.dataOffset + info.compressedSize);
 			Decompressor dec;
 			success = dec.decompress(read, write);
 		} else {
