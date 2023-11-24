@@ -49,7 +49,7 @@ public:
 	bool init();
 	void kill();
 
-	ObjectType *findObjectType(int i);
+	ObjectType *findObjectType(int i, bool skipLoad = false);
 	ObjectType *loadObjectType(int i);
 	int getCombinationFunction(int a, int b);
 	void removeObjectType(ObjectType *oT);
