@@ -81,14 +81,18 @@ void TownsSfxManager::loadSound1Dat() {
 	config->pathFromValue("config/townsdir", "sounds1.dat", filename);
 	unsigned char *slib32_data = decompressor.decompress_file(filename, slib32_len);
 
-	if (slib32_len == 0)
+	if (slib32_len == 0) {
+		error("Failed to load FM-Towns sound file %s", filename.c_str());
 		return;
+	}
 
 	iobuf.open(slib32_data, slib32_len);
 	free(slib32_data);
 
-	if (!lib.open(&iobuf, 4))
+	if (!lib.open(&iobuf, 4)) {
+		error("Failed to load FM-Towns sound file %s", filename.c_str());
 		return;
+	}
 
 	uint8 i;
 	for (i = 0; i < TOWNS_SFX_SOUNDS1_SIZE; i++) {
