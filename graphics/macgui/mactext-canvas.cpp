@@ -1204,6 +1204,12 @@ void MacTextCanvas::setMaxWidth(int maxWidth, MacFontRun &defaultFormatting) {
 
 	for (uint i = 0; i < _text.size(); i++) {
 		row = i;
+
+		if (_text[i].table) {
+			processTable(i, maxWidth);
+			continue;
+		}
+
 		reshuffleParagraph(&row, &col, _defaultFormatting);
 
 		while (i < _text.size() - 1 && !_text[i].paragraphEnd)

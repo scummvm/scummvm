@@ -303,6 +303,14 @@ void MacText::setMaxWidth(int maxWidth) {
 		return;
 	}
 
+	for (uint i = 0; i < _canvas._text.size(); i++) {
+		if (_canvas._text[i].table) {
+			// TODO
+			debug(0, "MacText::setMaxWidth(): Skipping resize for MacText with tables");
+			return;
+		}
+	}
+
 	// keep the cursor pos
 	int ppos = 0;
 	for (int i = 0; i < _cursorRow; i++)
