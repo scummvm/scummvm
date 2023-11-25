@@ -846,7 +846,7 @@ int ScummEngine::getInternalGUIControlFromCoordinates(int x, int y) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::queryQuit(bool returnToLauncher) {
 	if (isUsingOriginalGUI()) {
-		if (_quitFromScriptCmd) {
+		if (_quitFromScriptCmd && !(_game.version == 8 && _currentRoom == 92)) {
 			_quitByGUIPrompt = true;
 			if (returnToLauncher) {
 				Common::Event event;
