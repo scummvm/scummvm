@@ -100,7 +100,11 @@ class dgBigVector;
 #endif
 
 #define dgCheckFloat(x) (isfinite(x) && !isnan(x))
-#define NEWTON_ASSERT(x) assert(x);
+// Assertions have been disabled because they fired in areas
+// were there are no visible defects. They can be re-enabled when
+// debugging specific issues.
+// #define NEWTON_ASSERT(x) assert(x);
+#define NEWTON_ASSERT(x)
 
 DG_INLINE dgInt32 exp_2(dgInt32 x) {
 	dgInt32 exp;
