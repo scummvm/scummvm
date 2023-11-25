@@ -838,7 +838,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
 	{ "boeboekshaboe",		"Boeboeks: Hop hop haboe!" },
-	{ "boeboekstocht",		"Boeboeks: de toch naar opa Kakadoris" },
+	{ "boeboekstocht",		"Boeboeks: De tocht naar opa Kakadoris" },
 	{ "dtovenaargeheim",	"De Dwaze Tovenaar en het Geheim van het Vermiste Jongetje" },
 	{ "fcdk",				"F.C. De Kampioenen: Op Zoek Naar Neroke" },
 	{ "griezelbus1",		"De Griezelbus 1" },
