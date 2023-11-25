@@ -106,7 +106,6 @@ uint8 Process::next() {
 }
 
 void Process::jump(int16 delta) {
-	debug("jump %+d", delta);
 	_ip += delta;
 }
 
