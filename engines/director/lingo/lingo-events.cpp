@@ -331,7 +331,7 @@ void Movie::queueUserEvent(LEvent event, int targetId) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
-	_vm->setCurrentMovie(this);
+	_vm->setCurrentWindow(this->getWindow());
 	_lingo->processEvents(queue);
 }
 

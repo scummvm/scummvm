@@ -176,8 +176,13 @@ Common::String DirectorEngine::getCurrentAbsolutePath() {
 
 static bool buildbotErrorHandler(const char *msg) { return true; }
 
-void DirectorEngine::setCurrentMovie(Movie *movie) {
-	_currentWindow = movie->getWindow();
+void DirectorEngine::setCurrentWindow(Window *window) {
+	if (_currentWindow == window)
+		return;
+	if (_currentWindow)
+		_currentWindow->decRefCount();
+	_currentWindow = window;
+	_currentWindow->incRefCount();
 }
 
 void DirectorEngine::setVersion(uint16 version) {
@@ -249,7 +254,7 @@ Common::Error DirectorEngine::run() {
 	_wm->setActiveWindow(_stage->getId());
 	setPalette(CastMemberID(kClutSystemMac, -1));
 
-	_currentWindow = _stage;
+	setCurrentWindow(_stage);
 
 	_lingo = new Lingo(this);
 	_lingo->switchStateFromWindow();
@@ -284,7 +289,7 @@ Common::Error DirectorEngine::run() {
 		if (_stage->getCurrentMovie())
 			processEvents();
 
-		_currentWindow = _stage;
+		setCurrentWindow(_stage);
 		g_lingo->switchStateFromWindow();
 		loop = _currentWindow->step();
 
@@ -294,7 +299,7 @@ Common::Error DirectorEngine::run() {
 				if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 					continue;
 
-				_currentWindow = static_cast<Window *>(windowList->arr[i].u.obj);
+				setCurrentWindow(static_cast<Window *>(windowList->arr[i].u.obj));
 				g_lingo->switchStateFromWindow();
 				_currentWindow->step();
 			}

@@ -74,6 +74,14 @@ Window::~Window() {
 		delete _puppetTransition;
 }
 
+void Window::decRefCount() {
+	*_refCount -= 1;
+	if (*_refCount <= 0) {
+		g_director->_wm->removeWindow(this);
+		g_director->_wm->removeMarked();
+	}
+}
+
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	const Graphics::Surface *mask;
 
