@@ -133,11 +133,18 @@ cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
 
 bool cLowLevelGraphicsSDL::Init(int alWidth, int alHeight, int alBpp, int abFullscreen,
 								int alMultisampling, const tString &asWindowCaption) {
-	mvScreenSize.x = alWidth;
-	mvScreenSize.y = alHeight;
+	if (abFullscreen) {
+		int viewportSize[4];
+		GL_CHECK(glGetIntegerv(GL_VIEWPORT, viewportSize));
+		mvScreenSize.x = viewportSize[2];
+		mvScreenSize.y = viewportSize[3];
+	} else {
+		mvScreenSize.x = alWidth;
+		mvScreenSize.y = alHeight;
+	}
 	mlBpp = alBpp;
 	mlMultisampling = alMultisampling;
-	initGraphics3d(alWidth, alHeight);
+	initGraphics3d(mvScreenSize.x, mvScreenSize.y);
 	SetupGL();
 	ShowCursor(false);
 	// CheckMultisampleCaps();
@@ -177,6 +184,7 @@ static void logOGLInfo(const cLowLevelGraphicsSDL &graphics) {
 }
 
 void cLowLevelGraphicsSDL::SetupGL() {
+	GL_CHECK(glViewport(0, 0, mvScreenSize.x, mvScreenSize.y));
 	// Inits GL stuff
 	// Set Shade model and clear color.
 	GL_CHECK(glShadeModel(GL_SMOOTH));
