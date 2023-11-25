@@ -265,7 +265,7 @@ void Room133_136::daemon() {
 		}
 		break;
 
-	case 10028:
+	case kBurlEntersTown:
 		if (player_commands_allowed() && _G(player).walker_visible &&
 				INTERFACE_VISIBLE && !digi_play_state(1)) {
 			Section1::updateDisablePlayer();

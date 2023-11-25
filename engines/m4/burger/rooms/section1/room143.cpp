@@ -1074,7 +1074,7 @@ void Room143::daemon() {
 		}
 		break;
 
-	case 10028:
+	case kBurlEntersTown:
 		if (_G(flags)[kRoadOpened]) {
 			_G(kernel).continue_handling_trigger = true;
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
@@ -1096,7 +1096,7 @@ void Room143::daemon() {
 		}
 		break;
 
-	case 10029:
+	case kBurlGetsFed:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
@@ -1105,11 +1105,11 @@ void Room143::daemon() {
 			intr_freshen_sentence();
 			Section1::walk();
 		} else {
-			kernel_timing_trigger(60, 10029);
+			kernel_timing_trigger(60, kBurlGetsFed);
 		}
 		break;
 
-	case 10030:
+	case kBurlStopsEating:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
@@ -1119,7 +1119,7 @@ void Room143::daemon() {
 		}
 		break;
 
-	case 10031:
+	case kBurlLeavesTown:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
 		} else if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
