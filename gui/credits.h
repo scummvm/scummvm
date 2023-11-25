@@ -55,6 +55,8 @@ static const char *credits[] = {
 "C1""AGS",
 "C0""Paul Gilbert",
 "C0""Thierry Crozat",
+"C0""Walter Agazzi",
+"C2""Maintenance, Game archival",
 "C0""Chris Jones",
 "C2""Creator",
 "C0""Alan Van Drake",
