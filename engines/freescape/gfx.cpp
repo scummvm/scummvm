@@ -175,7 +175,7 @@ void Renderer::setColorMap(ColorMap *colorMap_) {
 		for (int i = 0; i < 15; i++) {
 			byte *entry = (*_colorMap)[i];
 			for (int j = 0; j < 128; j++)
-				_stipples[i][j] = entry[(j / 16) % 4];
+				_stipples[i][j] = entry[(j / 4) % 4];
 		}
 	} else if (_renderMode == Common::kRenderCPC) {
 		fillColorPairArray();
