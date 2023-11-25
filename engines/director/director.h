@@ -170,7 +170,7 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
-	void setCurrentWindow(Window *window) { _currentWindow = window; };
+	void setCurrentWindow(Window *window);
 	Window *getCursorWindow() const { return _cursorWindow; }
 	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;

@@ -120,7 +120,7 @@ public:
 	bool isDisposed() const override { return _disposed; };
 	int *getRefCount() const override { return _refCount; };
 	void incRefCount() const override { *_refCount += 1; };
-	void decRefCount() const override {
+	virtual void decRefCount() const override {
 		*_refCount -= 1;
 		if (*_refCount <= 0)
 			delete this;

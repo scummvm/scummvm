@@ -927,10 +927,12 @@ void Datum::reset() {
 			break;
 		case OBJECT:
 			if (u.obj->getObjType() == kWindowObj) {
-				Window *window = static_cast<Window *>(u.obj);
-				g_director->_wm->removeWindow(window);
-				g_director->_wm->removeMarked();
+				// Window has an override for decRefCount, use it directly
+				*refCount += 1;
+				static_cast<Window *>(u.obj)->decRefCount();
 			} else {
+				// *refCount is copied between the Datum and the Object,
+				// so should be safe to delete the Object
 				delete u.obj;
 			}
 			break;
