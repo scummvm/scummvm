@@ -138,7 +138,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token<s> tVARID tSTRING tSYMBOL
 %token<s> tENDCLAUSE
 %token tCAST tFIELD tSCRIPT tWINDOW
-%token tDELETE tDOWN tELSE tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO
+%token tDELETE tDOWN tELSE tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO tRETURN
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -368,6 +368,7 @@ ID: CMDID
 	| tPLAY			{ $$ = new Common::String("play"); }
 	| tPROPERTY		{ $$ = new Common::String("property"); }
 	| tPUT			{ $$ = new Common::String("put"); }
+	| tRETURN		{ $$ = new Common::String("return"); }
 	| tSET			{ $$ = new Common::String("set"); }
 	| tTELL			{ $$ = new Common::String("tell"); }
 	| tTHEN			{ $$ = new Common::String("then"); }
@@ -424,6 +425,8 @@ proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs, g_lingo->_compi
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
+	| tRETURN '\n'						{ $$ = new ReturnNode(nullptr); }
+	| tRETURN expr '\n'					{ $$ = new ReturnNode($expr); }
 	| tDELETE chunk '\n'				{ $$ = new DeleteNode($chunk); }
 	| tHILITE chunk '\n'				{ $$ = new HiliteNode($chunk); }
 	| tASSERTERROR stmtoneliner			{ $$ = new AssertErrorNode($stmtoneliner); }

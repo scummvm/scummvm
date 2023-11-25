@@ -240,6 +240,7 @@ previous	{ count(); return tPREVIOUS; }
 property	{ count(); return tPROPERTY; }	// D4
 put			{ count(); return tPUT; }
 repeat		{ count(); return tREPEAT; }
+return		{ count(); return tRETURN; }
 script		{ count(); return tSCRIPT; }
 scummvmAssertError	{ count(); return tASSERTERROR; }
 set			{ count(); return tSET; }

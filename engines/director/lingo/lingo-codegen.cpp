@@ -110,11 +110,11 @@ LingoCompiler::LingoCompiler() {
 	_hadError = false;
 }
 
-ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code) {
+ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code, uint32 preprocFlags) {
 	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
 			"***********\n%s\n\n***********", code.encode().c_str());
 
-	return compileLingo(code, nullptr, kNoneScript, CastMemberID(0, 0), "[anonymous]", true);
+	return compileLingo(code, nullptr, kNoneScript, CastMemberID(0, 0), "[anonymous]", true, preprocFlags);
 }
 
 ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous, uint32 preprocFlags) {
@@ -1027,6 +1027,19 @@ bool LingoCompiler::visitExitNode(ExitNode *node) {
 	code1(LC::c_procret);
 	return true;
 }
+
+/* ReturnNode */
+
+bool LingoCompiler::visitReturnNode(ReturnNode *node) {
+	if (node->expr) {
+		COMPILE_REF(node->expr);
+		codeCmd("return", 1);
+	} else {
+		codeCmd("return", 0);
+	}
+	return true;
+}
+
 
 /* TellNode */
 
