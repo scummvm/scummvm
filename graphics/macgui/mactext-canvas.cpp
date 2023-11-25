@@ -1379,7 +1379,8 @@ void MacTextCanvas::debugPrint(const char *prefix) {
 	for (uint i = 0; i < _text.size(); i++) {
 		if (prefix)
 			DN(8, "%s: ", prefix);
-		DN(8, "%2d, %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].firstLineIndent, _text[i].indent);
+		DN(8, "%2d, %c %c fi: %d, i: %d ", i, _text[i].paragraphEnd ? '$' : '.', _text[i].table ? 'T' : ' ',
+					_text[i].firstLineIndent, _text[i].indent);
 
 		for (uint j = 0; j < _text[i].chunks.size(); j++)
 			_text[i].chunks[j].debugPrint();
