@@ -374,7 +374,7 @@ int MidiDriver_FluidSynth::open() {
 
 		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
 		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
-		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
+		double reverbWidth = ConfMan.getInt("fluidsynth_reverb_width") / 10.0;
 		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
 
 #if FS_API_VERSION >= 0x0202

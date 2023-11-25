@@ -390,7 +390,7 @@ void registerDefaults() {
 	// their appropriate values.
 	ConfMan.registerDefault("fluidsynth_chorus_activate", true);
 	ConfMan.registerDefault("fluidsynth_chorus_nr", 3);
-	ConfMan.registerDefault("fluidsynth_chorus_level", 100);
+	ConfMan.registerDefault("fluidsynth_chorus_level", 200);
 	ConfMan.registerDefault("fluidsynth_chorus_speed", 30);
 	ConfMan.registerDefault("fluidsynth_chorus_depth", 80);
 	ConfMan.registerDefault("fluidsynth_chorus_waveform", "sine");
@@ -398,7 +398,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("fluidsynth_reverb_activate", true);
 	ConfMan.registerDefault("fluidsynth_reverb_roomsize", 20);
 	ConfMan.registerDefault("fluidsynth_reverb_damping", 0);
-	ConfMan.registerDefault("fluidsynth_reverb_width", 1);
+	ConfMan.registerDefault("fluidsynth_reverb_width", 5);
 	ConfMan.registerDefault("fluidsynth_reverb_level", 90);
 
 	ConfMan.registerDefault("fluidsynth_misc_interpolation", "4th");
