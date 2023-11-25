@@ -32,7 +32,7 @@ public:
 	LingoCompiler();
 	virtual ~LingoCompiler() {}
 
-	ScriptContext *compileAnonymous(const Common::U32String &code);
+	ScriptContext *compileAnonymous(const Common::U32String &code, uint32 preprocFlags = 0);
 	ScriptContext *compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonyomous = false, uint32 preprocFlags = kLPPNone);
 	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, LingoArchive *archive, const Common::String &archName, uint16 version);
 
@@ -91,6 +91,7 @@ public:
 	virtual bool visitNextRepeatNode(NextRepeatNode *node);
 	virtual bool visitExitRepeatNode(ExitRepeatNode *node);
 	virtual bool visitExitNode(ExitNode *node);
+	virtual bool visitReturnNode(ReturnNode *node);
 	virtual bool visitTellNode(TellNode *node);
 	virtual bool visitWhenNode(WhenNode *node);
 	virtual bool visitDeleteNode(DeleteNode *node);
