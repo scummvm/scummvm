@@ -795,7 +795,7 @@ void Room105::daemon() {
 				break;
 
 			case 49:
-				_val4 = 50;
+				_val3 = 50;
 				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 9);
 				break;
 
@@ -1213,13 +1213,18 @@ void Room105::daemon() {
 
 	case 34:
 		_series8 = series_play("105ag07", 0xe00, 0, -1, 600, -1, 100, 0, 0, 23, 23);
+		ws_hide_walker();
 		series_play_with_breaks(PLAY28, "105wi03", 0x200, 46, 3, 6, 100, 40, 0);
 		break;
 
+	case 35:
+		terminateMachineAndNull(_series8);
+		_series8 = series_play("105ag07", 0xe00, 0, -1, 600, -1, 100, 0, 0, 24, 24);
+		break;
 
 	case 36:
 		terminateMachineAndNull(_series8);
-		_series8 = series_play("105ag07", 0xe00, 0, -1, 600, -1, 100, 0, 0, 24, 24);
+		_series8 = series_play("105ag07", 0xe00, 0, 37, 6, 0, 100, 0, 0, 25, 29);
 		break;
 
 	case 37:
@@ -1233,6 +1238,7 @@ void Room105::daemon() {
 
 	case 39:
 		_series8 = series_play("105ag08", 0xe00, 0, -1, 600, -1, 100, 0, 0, 6, 6);
+		ws_hide_walker();
 		series_play_with_breaks(PLAY24, "105wi02", 0x200, 40, 3, 6, 100, 40, 0);
 		break;
 
@@ -1358,6 +1364,10 @@ void Room105::parser() {
 			if (_G(flags)[V112]) {
 				wilbur_speech("105w011");
 			} else {
+				player_set_commands_allowed(false);
+				_G(flags)[V298] = 1;
+				loadAssets4();
+				ws_hide_walker();
 				series_play_with_breaks(PLAY22, "105wi01", 0xa00, 18, 3);
 			}
 		} else if (player_said("GEAR", "mayor's office")) {
