@@ -1,0 +1,21 @@
+
+-- int
+scummvmAssertEqual(55, value("55"))
+-- float
+scummvmAssertEqual(5.55, value("5.55"))
+-- array
+scummvmAssertEqual([1, 2, 3], value("[1, 2, 3]"))
+-- parray
+scummvmAssertEqual([#a: 1, #b: 2], value("[#a: 1, #b: 2]"))
+
+-- expressions
+scummvmAssertEqual(9, value("3*3"))
+
+-- the kicker; you are allowed to have garbage on the end!!!
+-- if it hits a token it doesn't understand, the parser should try again but stopping just before that token.
+scummvmAssertEqual(9, value("3*3[34]"))
+scummvmAssertEqual([1, 2, 3], value("[1, 2, 3],4]"))
+
+-- if there's no valid expression at all, return void
+set test = value("#")
+scummvmAssert(voidP(test))

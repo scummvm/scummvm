@@ -390,6 +390,7 @@ enum LPPFlag {
 	kLPPNone = 0,
 	kLPPSimple = 1 << 0,
 	kLPPForceD2 = 1 << 1,
+	kLPPTrimGarbage = 1 << 2,
 };
 
 struct CastMemberID {

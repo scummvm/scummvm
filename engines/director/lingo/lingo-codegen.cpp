@@ -139,6 +139,23 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 
 	// Parse the Lingo and build an AST
 	parse(utf8Code);
+	// If it doesn't work, and we have kLPPTrimGarbage enabled,
+	// have another try with the input trimmed to the last valid character.
+	if (!_assemblyAST && (preprocFlags & kLPPTrimGarbage)) {
+		delete _assemblyContext;
+		delete _currentAssembly;
+		delete _methodVars;
+		_assemblyId = id.member;
+		mainContext = _assemblyContext = new ScriptContext(scriptName, type, _assemblyId);
+		_currentAssembly = new ScriptData;
+		_methodVars = new VarTypeHash;
+		mainContext->_methodNames = prescanMethods(codePrep);
+		_linenumber = _colnumber = 1;
+		_hadError = false;
+		codeNorm = codeNorm.substr(0, _bytenumber - 1) + "\n";
+		utf8Code = codeNorm.c_str();
+		parse(utf8Code);
+	}
 	if (!_assemblyAST) {
 		delete _assemblyContext;
 		delete _currentAssembly;
