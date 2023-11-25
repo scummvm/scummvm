@@ -1616,11 +1616,13 @@ void Actor_v7::turnToDirection(int newdir) {
 	newdir = remapDirection((newdir + 360) % 360, false);
 	_moving &= ~MF_TURN;
 
-	byte flags = _vm->getBoxFlags(_walkbox);
-	if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip))
-		newdir = 360 - newdir;
-	if ((flags & kBoxYFlip) || isInClass(kObjectClassYFlip))
-		newdir = 180 - newdir;
+	if (isInCurrentRoom() && !_ignoreBoxes) { 
+		byte flags = _vm->getBoxFlags(_walkbox);
+		if ((flags & kBoxXFlip) || isInClass(kObjectClassXFlip))
+			newdir = 360 - newdir;
+		if ((flags & kBoxYFlip) || isInClass(kObjectClassYFlip))
+			newdir = 180 - newdir;
+	}
 
 	if (newdir != _facing) {
 		_moving |= MF_TURN;
