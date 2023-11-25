@@ -36,8 +36,8 @@ int Screen::ObjectZCompare(const ObjectPtr &a, const ObjectPtr &b) {
 	return b->z() - a->z();
 }
 
-int Screen::AnimationZCompare(const AnimationPtr & a, const AnimationPtr & b) {
-	return b->z() - a->z();
+int Screen::AnimationZCompare(const ScreenAnimationDesc &a, const ScreenAnimationDesc &b) {
+	return b.animation->z() - a.animation->z();
 }
 
 Screen::Screen(AGDSEngine * engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen) :
@@ -117,20 +117,22 @@ bool Screen::add(ObjectPtr object) {
 
 void Screen::add(AnimationPtr animation) {
 	if (animation)
-		_animations.insert(animation);
+		_animations.insert({animation});
 	else
 		warning("Screen: skipping null animation");
 }
 
 
 bool Screen::remove(const AnimationPtr & animation) {
+	if (!animation)
+		return false;
+
 	bool removed = false;
-	for(auto i = _animations.begin(); i != _animations.end(); ) {
-		if (*i != animation)
-			++i;
-		else {
+	for(auto i = _animations.begin(); i != _animations.end(); ++i) {
+		if (i->animation == animation) {
 			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
-			i->reset();
+			i->removed = true;
+			removed = true;
 		}
 	}
 	return removed;
@@ -174,8 +176,9 @@ bool Screen::remove(const Common::String &name) {
 
 AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	for (auto i = _animations.begin(); i != _animations.end(); ++i) {
-		const auto & animation = *i;
-		if (animation && animation->phaseVar() == phaseVar)
+		const auto & desc = *i;
+		const auto & animation = desc.animation;
+		if (!desc.removed && animation->phaseVar() == phaseVar)
 			return animation;
 	}
 	return NULL;
@@ -183,12 +186,12 @@ AnimationPtr Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 
 void Screen::tick() {
 	for(uint i = 0; i < _animations.size(); ) {
-		const auto & animation = _animations.data()[i];
-		if (animation && animation->tick())
+		const auto & desc = _animations.data()[i];
+		const auto & animation = desc.animation;
+		if (!desc.removed && animation->tick())
 			++i;
 		else {
-			if (animation)
-				debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
+			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
 			_animations.erase(_animations.begin() + i);
 		}
 	}
@@ -199,12 +202,12 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 	Character * character = _engine->currentCharacter();
 
 	auto child = _children.begin();
-	auto animation = _animations.begin();
-	while(child != _children.end() || animation != _animations.end() || character) {
+	auto desc = _animations.begin();
+	while(child != _children.end() || desc != _animations.end() || character) {
 		bool child_valid = child != _children.end();
-		bool animation_valid = animation != _animations.end();
-		if (animation_valid && !*animation) {
-			++animation;
+		bool animation_valid = desc != _animations.end();
+		if (animation_valid && desc->removed) {
+			++desc;
 			continue;
 		}
 
@@ -212,8 +215,9 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 		int z = 0;
 		int render_type = -1;
 		if (animation_valid) {
-			if (!z_valid || (*animation)->z() > z) {
-				z = (*animation)->z();
+			const auto & animation = desc->animation;
+			if (!z_valid || animation->z() > z) {
+				z = animation->z();
 				z_valid = true;
 				render_type = 1;
 			}
@@ -246,10 +250,10 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 				break;
 			case 1:
 				//debug("animation z: %d", (*animation)->z());
-				if ((*animation)->scale() < 0)
+				if ((*desc).animation->scale() < 0)
 					basePos = Common::Point();
-				(*animation)->paint(backbuffer, basePos);
-				++animation;
+				(*desc).animation->paint(backbuffer, basePos);
+				++desc;
 				break;
 			case 2:
 				//debug("character z: %d", character->z());

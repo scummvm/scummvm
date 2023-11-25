@@ -46,11 +46,18 @@ using RegionPtr = Common::SharedPtr<Region>;
 struct Patch;
 using PatchPtr = Common::SharedPtr<Patch>;
 
-class Screen {
-	static int ObjectZCompare(const ObjectPtr & a, const ObjectPtr & b);
-	static int AnimationZCompare(const AnimationPtr & a, const AnimationPtr & b);
+struct ScreenAnimationDesc {
+	AnimationPtr animation;
+	bool removed = false;
+	ScreenAnimationDesc(const AnimationPtr &a): animation(a) {
+	}
+};
 
-	using Animations = Common::SortedArray<AnimationPtr, const AnimationPtr &>;
+class Screen {
+	static int ObjectZCompare(const ObjectPtr &a, const ObjectPtr &b);
+	static int AnimationZCompare(const ScreenAnimationDesc &a, const ScreenAnimationDesc &b);
+
+	using Animations = Common::SortedArray<ScreenAnimationDesc, const ScreenAnimationDesc &>;
 	using Children = Common::SortedArray<ObjectPtr, const ObjectPtr &>;
 
 	AGDSEngine *	_engine;

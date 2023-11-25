@@ -145,6 +145,7 @@ public:
 	int z() const {
 		return _z;
 	}
+
 	void rotate(int rotation) {
 		if (_rotation == rotation)
 			return;
