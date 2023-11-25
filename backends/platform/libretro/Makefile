@@ -199,6 +199,7 @@ else ifeq ($(platform), vita)
    DEFINES += -march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard
    DEFINES += -fno-optimize-sibling-calls -mlong-calls -mword-relocations
    DEFINES += -DVITA -DREDUCE_MEMORY_USAGE -DUNCACHED_PLUGINS -DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE
+   USE_LIBCO = 0
    LITE := 1
    STATIC_LINKING = 1
 
