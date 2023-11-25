@@ -124,6 +124,8 @@ AGS
      -
    * - Thierry Crozat
      -
+   * - Walter Agazzi
+     - Maintenance, Game archival
    * - Chris Jones
      - Creator
    * - Alan Van Drake
