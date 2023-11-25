@@ -1124,6 +1124,8 @@ void MacWindowManager::removeMarked() {
 	for (it = _windowsToRemove.begin(); it != _windowsToRemove.end(); it++) {
 		removeFromStack(*it);
 		removeFromWindowList(*it);
+		if (_lockedWidget == *it)
+			_lockedWidget = nullptr;
 		delete *it;
 		_activeWindow = -1;
 		_fullRefresh = true;
