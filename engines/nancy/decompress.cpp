@@ -49,7 +49,7 @@ void Decompressor::init(Common::SeekableReadStream &input, Common::WriteStream &
 	// stream on _every_ read byte. This way we avoid doing a vtable lookup per byte, which makes
 	// decompression roughly twice as fast
 	delete[] _input;
-	_input = new byte[input.size()];
+	_input = new byte[input.size() + 1];
 	input.read(_input, input.size());
 	_pos = _input;
 	_end = _input + input.size();
