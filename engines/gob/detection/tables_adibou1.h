@@ -109,7 +109,7 @@
 {
 	{
 		"adibou1",
-		"",
+		"AJ's World of Discovery",
 		AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
 		EN_GRB,
 		kPlatformDOS,
