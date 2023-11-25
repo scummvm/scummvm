@@ -154,7 +154,7 @@ protected:
 	 * @param   extension  The icon extension
 	 * @return  The icon path (or "" if no icon was found)
 	 */
-	Common::String getIconPath(const Common::String &target, const Common::String &extension) {
+	Common::Path getIconPath(const Common::String &target, const Common::String &extension) {
 		// We first try to look for a iconspath configuration variable then
 		// fallback to the extra path
 		//
@@ -196,7 +196,7 @@ return (path); \
 		}
 #undef TRY_ICON_PATH
 
-		return "";
+		return Common::Path();
 	}
 };
 
