@@ -386,7 +386,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
 		kGameTypeAdi2,
-		kFeatures640x480,
+		kFeatures640x400,
 		"adi2.stk", 0, 0
 	},
 	{ //26
@@ -395,7 +395,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformDOS,
+			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
