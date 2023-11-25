@@ -2004,6 +2004,8 @@ void cMainMenu::SetActive(bool abX) {
 		if (bFirstStart) {
 			SetState(eMainMenuState_FirstStart);
 			mLastState = eMainMenuState_FirstStart;
+
+			mpInit->_firstStart = false;
 		} else {
 			SetState(eMainMenuState_Start);
 			mLastState = eMainMenuState_Start;
