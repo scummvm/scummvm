@@ -222,7 +222,8 @@ void Section1::daemon() {
 		series_unload(_series1);
 		kernel_trigger_dispatch_now(_trigger);
 		break;
-	case 10007:
+
+	case kAdvanceTime:
 		if (_G(flags)[V012] == 2) {
 			term_message("  Harry watches tv at: %d", _G(flags)[GLB_TEMP_3]);
 
