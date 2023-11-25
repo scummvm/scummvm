@@ -199,9 +199,9 @@ void BurgerEngine::global_daemon() {
 		release_trigger_digi_check();
 		break;
 
-	case 10007:
+	case kAdvanceTime:
 		_G(flags).advance_boonsville_time_and_check_schedule(300);
-		kernel_timing_trigger(300, 10007);
+		kernel_timing_trigger(300, kAdvanceTime);
 		break;
 
 	case kNPC_SPEECH_FINISHED:
@@ -323,12 +323,12 @@ void BurgerEngine::global_daemon() {
 		}
 		break;
 
-	case 10017:
+	case kAdvanceHour:
 		if (!player_commands_allowed() && !_G(flags)[V299] && _G(my_walker) &&
 				_G(player).walker_in_this_scene && _G(player).walker_visible)
 			sendWSMessage(0, 0, _G(my_walker), 0, 0, 1);
 
-		kernel_timing_trigger(imath_ranged_rand(900, 1800), 10017);
+		kernel_timing_trigger(imath_ranged_rand(900, 1800), kAdvanceHour);
 		break;
 
 	case kSET_FACING:

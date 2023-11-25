@@ -52,6 +52,7 @@ enum global_triggers {
 	kSERIES_PLAY_BREAK_1 = 10004,
 	kSERIES_PLAY_BREAK_2 = 10005,
 	kRELEASE_TRIGGER_DIGI_CHECK = 10006,	// Used only by release_trigger_digi_check() in global.cpp
+	kAdvanceTime = 10007,
 
 	kNPC_SPEECH_STARTED = 10010,	// NPC talk started
 	kNPC_SPEECH_FINISHED = 10011,	// NPC talk finished
@@ -59,6 +60,7 @@ enum global_triggers {
 	kWILBURS_SPEECH_FINISHED = 10014,
 	kWILBURS_SPEECH_START = 10015,
 	kCHANGE_WILBUR_ANIMATION = 10016,
+	kAdvanceHour = 10017,
 	kSET_FACING = 10018,
 	kSET_DEST = 10019,
 	kSET_COMMANDS_ALLOWED = 10020,

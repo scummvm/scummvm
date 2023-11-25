@@ -28,13 +28,13 @@
 namespace M4 {
 namespace Burger {
 
-struct BoonsvilleRec {
+struct BoonsvilleEvent {
 	int32 _time;
 	int32 _trigger;
 	const char *_text;
 };
 
-static const BoonsvilleRec ARRAY[] = {
+static const BoonsvilleEvent EVENTS[] = {
 	{ 600, -1, "After getting neuro stuff" },
 	{ 2400, -1, "After getting survival stuff" },
 	{ 6000, kBurlEntersTown, "Burl enters town" },
@@ -73,7 +73,7 @@ void Flags::reset() {
 
 int32 Flags::get_boonsville_time_and_display(bool showTime) {
 	if (showTime) {
-		int time = (*this)[BOONSVILLE_TIME];
+		int time = (*this)[kBoonsvilleTime];
 		int seconds = time % 60;
 		time /= 60;
 		int minutes = time % 60;
@@ -82,18 +82,18 @@ int32 Flags::get_boonsville_time_and_display(bool showTime) {
 		term_message("Boonsville time: %d:%d:%d", time, minutes, seconds);
 	}
 
-	return (*this)[BOONSVILLE_TIME];
+	return (*this)[kBoonsvilleTime];
 }
 
 void Flags::set_boonsville_time(int32 time) {
-	(*this)[BOONSVILLE_TIME] = time;
-	(*this)[BOONSVILLE_TIME2] = time - 1;
+	(*this)[kBoonsvilleTime] = time;
+	(*this)[kBoonsvillePriorTime] = time - 1;
 }
 
 bool Flags::advance_boonsville_time_and_check_schedule(int32 time) {
 	if (player_commands_allowed() && _G(player).walker_visible && INTERFACE_VISIBLE) {
-		(*this)[BOONSVILLE_TIME2] = (*this)[BOONSVILLE_TIME];
-		(*this)[BOONSVILLE_TIME] = time;
+		(*this)[kBoonsvillePriorTime] = (*this)[kBoonsvilleTime];
+		(*this)[kBoonsvilleTime] += time;
 		return dispatch_scheduled_boonsville_time_trigger(
 			get_boonsville_time_and_display());
 	} else {
@@ -106,9 +106,9 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 	_G(kernel).trigger_mode = KT_DAEMON;
 	bool result = false;
 
-	for (const BoonsvilleRec *rec = ARRAY; rec->_time; ++rec) {
-		if ((int32)(*this)[BOONSVILLE_TIME2] > rec->_time &&
-				rec->_time <= (int32)(*this)[BOONSVILLE_TIME]) {
+	for (const BoonsvilleEvent *rec = EVENTS; rec->_time; ++rec) {
+		if ((int32)(*this)[kBoonsvillePriorTime] > rec->_time &&
+				rec->_time <= (int32)(*this)[kBoonsvilleTime]) {
 			result = true;
 			term_message("Time for: %s", rec->_text);
 			schedule_boonsville_time();
