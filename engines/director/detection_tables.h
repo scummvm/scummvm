@@ -4662,7 +4662,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Demo version of "Maths Workshop", published by Broderbund (1994-1995)
 	// The full game is not made with Director, but with MOHAWK (eriktorbjorn)
-	WINDEMO1("mathsworkshop", "Preview", "_MATHDAT.EXE", "t:5306745f0734b6cbd94e4567a0b5805a", 696931, 400),
+	WINDEMO1("mathsworkshop", "Preview", "_MATHDAT.EXE", "t:5306745f0734b6cbd94e4567a0b5805a", 696931, 404),
 
 	// German title is Max und die Geheimformel
 	// German demo from CD ROM Hits 1995-10
