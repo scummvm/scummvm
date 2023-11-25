@@ -572,10 +572,10 @@ void LB::b_value(int nargs) {
 	}
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
-	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, kLPPTrimGarbage);
 	if (!sc) {
-		warning("b_value(): Failed to parse expression \"%s\", returning 0", expr.c_str());
-		g_lingo->push(Datum(0));
+		warning("b_value(): Failed to parse expression \"%s\", returning void", expr.c_str());
+		g_lingo->pushVoid();
 		return;
 	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
@@ -3294,6 +3294,8 @@ void LB::b_scummvmassertequal(int nargs) {
 	int result;
 
 	if (d1.type == ARRAY && d2.type == ARRAY) {
+		result = LC::eqData(d1, d2).u.i;
+	} else if (d1.type == PARRAY && d2.type == PARRAY) {
 		result = LC::eqData(d1, d2).u.i;
 	} else {
 		result = (d1 == d2);
