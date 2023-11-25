@@ -239,22 +239,22 @@ void Section1::daemon() {
 
 		_G(kernel).continue_handling_trigger = true;
 		break;
-	case 10028:
+	case kBurlEntersTown:
 		_G(flags)[V000] = _G(flags)[kRoadOpened] ? 1002 : 1003;
 		break;
-	case 10029:
+	case kBurlGetsFed:
 		if (!_G(flags)[kRoadOpened])
 			_G(flags)[V063] = 1;
 		break;
-	case 10030:
+	case kBurlStopsEating:
 		if (_G(flags)[kRoadOpened])
 			_G(flags)[V063] = 0;
 		break;
-	case 10031:
+	case kBurlLeavesTown:
 		if (_G(flags)[kRoadOpened])
 			_G(flags)[V000] = 1004;
 		break;
-	case 10032:
+	case k10032:
 		_G(flags)[V058] = 1;
 		break;
 
