@@ -157,6 +157,10 @@ void Process::loadAnimation() {
 	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(phase-var)": "");
 	auto animation = _engine->loadAnimation(name);
 	if (animation) {
+		if (animation == _processAnimation) {
+			warning("double adding animation, skipped.");
+			return;
+		}
 		setupAnimation(animation);
 		_processAnimation = animation;
 		_engine->getCurrentScreen()->add(animation);

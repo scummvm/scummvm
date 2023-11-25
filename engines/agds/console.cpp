@@ -104,7 +104,8 @@ bool Console::info(int argc, const char **argv) {
 			auto pos = object->getPosition();
 			debugPrintf("object %s [alive: %d] at %d,%d\n", object->getName().c_str(), object->alive(), pos.x, pos.y);
 		}
-		for(auto & animation : screen->animations()) {
+		for(auto & desc : screen->animations()) {
+			auto &animation = desc.animation;
 			auto pos = animation->position();
 			debugPrintf("animation %s (process: %s, %s) at %d,%d,%d, frame: %d\n",
 				animation->phaseVar().c_str(), animation->process().c_str(), animation->paused()? "paused": "running",
