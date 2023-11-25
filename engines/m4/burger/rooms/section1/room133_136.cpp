@@ -244,7 +244,7 @@ void Room133_136::daemon() {
 		player_set_commands_allowed(true);
 		setupSign();
 		setupSignWalkAreas();
-		wilbur_speech("136w0004");
+		wilbur_speech("136w004");
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:
