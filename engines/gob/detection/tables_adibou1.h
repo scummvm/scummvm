@@ -101,7 +101,7 @@
 	},
 	 kGameTypeAdibou1,
 	 kFeaturesAdLib | kFeatures640x400,
-	 0 ,0 , 0
+	 0, 0, 0
 },
 
 // -- DOS VGA Floppy --
