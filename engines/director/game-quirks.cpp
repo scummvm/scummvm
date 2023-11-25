@@ -77,7 +77,7 @@ struct CachedFile {
 		// In Operation: Weather Disaster, the game will try and check if the
 		// save file exists with getNthFileNameInFolder before attempting to
 		// read it with FileIO (which uses the save data store).
-		"WINDOWS/TX1SAVES",
+		"WINDOWS/TXSAVES",
 			(const byte *)"", 0
 	},
 	{ "teamxtreme2", Common::kPlatformWindows,
