@@ -60,7 +60,7 @@ void FreescapeEngine::titleScreen() {
 				break;
 			}
 		}
-
+		_gfx->clear(0, 0, 0, true);
 		drawTitle();
 		_gfx->flipBuffer();
 		g_system->updateScreen();
@@ -227,6 +227,7 @@ void FreescapeEngine::drawFullscreenMessageAndWait(Common::String message) {
 				break;
 			}
 		}
+		_gfx->clear(0, 0, 0, true);
 		drawBorder();
 		if (_currentArea)
 			drawUI();
