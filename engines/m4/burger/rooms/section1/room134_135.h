@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef M4_BURGER_ROOMS_SECTION1_ROOM135_H
-#define M4_BURGER_ROOMS_SECTION1_ROOM135_H
+#ifndef M4_BURGER_ROOMS_SECTION1_ROOM134_135_H
+#define M4_BURGER_ROOMS_SECTION1_ROOM134_135_H
 
 #include "m4/burger/rooms/room.h"
 
@@ -28,7 +28,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-class Room135 : public Room {
+class Room134_135 : public Room {
 private:
 	int _volume = 0;
 	int _val2 = 0;
@@ -63,8 +63,8 @@ private:
 	void loadDigi();
 
 public:
-	Room135() : Room() {}
-	~Room135() override {}
+	Room134_135() : Room() {}
+	~Room134_135() override {}
 
 	void init() override;
 	void daemon() override;

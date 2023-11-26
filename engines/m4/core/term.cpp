@@ -66,7 +66,7 @@ void Term::message(const char *fmt, ...) {
 void Term::vmessage(const char *fmt, va_list va) {
 	if (_mode != MEMORY_MODE) {
 		Common::String msg = Common::String::vformat(fmt, va);
-		debug("%s\n", msg.c_str());
+		debug("%s", msg.c_str());
 
 		if (_file) {
 			_file->writeString(msg);

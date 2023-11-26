@@ -38,7 +38,8 @@ Section1::Section1() : Rooms::Section() {
 	add(106, &_room106);
 	add(120, &_room120);
 	add(133, &_room133_136);
-	add(135, &_room135);
+	add(134, &_room134_135);
+	add(135, &_room134_135);
 	add(136, &_room133_136);
 	add(137, &_room137);
 	add(138, &_room138);
@@ -199,7 +200,7 @@ void Section1::daemon() {
 		_series2 = series_load("110bu02", -1, _G(master_palette));
 		_state1 = 2;
 		kernel_trigger_dispatch_now(1033);
-		digi_play("110bu03", 1, 255, 1034);
+		digi_play("100b003", 1, 255, 1034);
 		break;
 	case 1033:
 		if (_state1 == 2) {

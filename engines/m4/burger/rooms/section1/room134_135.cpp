@@ -19,7 +19,7 @@
  *
  */
 
-#include "m4/burger/rooms/section1/room135.h"
+#include "m4/burger/rooms/section1/room134_135.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
 
@@ -87,7 +87,7 @@ static const seriesPlayBreak PLAY3[] = {
 	PLAY_BREAK_END
 };
 
-void Room135::init() {
+void Room134_135::init() {
 	_volume = 255;
 	_val2 = 0;
 	_odieLoaded = false;
@@ -159,7 +159,7 @@ void Room135::init() {
 	}
 }
 
-void Room135::daemon() {
+void Room134_135::daemon() {
 	int frame;
 
 	switch (_G(kernel).trigger) {
@@ -785,7 +785,7 @@ void Room135::daemon() {
 	}
 }
 
-void Room135::pre_parser() {
+void Room134_135::pre_parser() {
 	if (player_said("fork in the road") && player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(9);
 
@@ -796,7 +796,7 @@ void Room135::pre_parser() {
 		player_hotspot_walk_override(308, 249, 10, -1);
 }
 
-void Room135::parser() {
+void Room134_135::parser() {
 	bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
@@ -851,7 +851,7 @@ void Room135::parser() {
 	_G(player).command_ready = false;
 }
 
-void Room135::conv01() {
+void Room134_135::conv01() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	int who = conv_whos_talking();
 	int node = conv_current_node();
@@ -934,7 +934,7 @@ void Room135::conv01() {
 	}
 }
 
-void Room135::conv02() {
+void Room134_135::conv02() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	int who = conv_whos_talking();
 
@@ -953,7 +953,7 @@ void Room135::conv02() {
 	}
 }
 
-void Room135::conv03() {
+void Room134_135::conv03() {
 	_G(kernel).trigger_mode = KT_PARSE;
 
 	if (_G(kernel).trigger == 35) {
@@ -998,7 +998,7 @@ void Room135::conv03() {
 	}
 }
 
-void Room135::loadOdie() {
+void Room134_135::loadOdie() {
 	static const char *NAMES[30] = {
 		"135od05", "135od05s", "135od06", "135od06s", "135od04",
 		"135od04s", "135od08", "135od08s", "135od09", "135od09s",
@@ -1016,7 +1016,7 @@ void Room135::loadOdie() {
 	}
 }
 
-void Room135::loadDigi() {
+void Room134_135::loadDigi() {
 	if (_name1) {
 		_G(kernel).trigger_mode = KT_PARSE;
 		digi_play(_name1, 1, 255, 35);

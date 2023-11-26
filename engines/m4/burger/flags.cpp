@@ -107,8 +107,8 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 	bool result = false;
 
 	for (const BoonsvilleEvent *rec = EVENTS; rec->_time; ++rec) {
-		if ((int32)(*this)[kBoonsvillePriorTime] > rec->_time &&
-				rec->_time <= (int32)(*this)[kBoonsvilleTime]) {
+		if ((*this)[kBoonsvilleTime] >= rec->_time &&
+				(*this)[kBoonsvillePriorTime] < rec->_time) {
 			result = true;
 			term_message("Time for: %s", rec->_text);
 			schedule_boonsville_time();
@@ -121,7 +121,32 @@ bool Flags::dispatch_scheduled_boonsville_time_trigger(int32 time) {
 }
 
 void Flags::schedule_boonsville_time() {
-	error("TODO: Flags::schedule_boonsville_time()");
+	int theTime = get_boonsville_time_and_display();
+	int hours = theTime / 216000;
+	int minutes = (theTime % 216000) / 3600;
+	int seconds = (theTime % 3600) / 60;
+	bool flag = false;
+
+	term_message("************  Schedule  ************");
+
+	for (const auto& te : EVENTS) {
+		int teHours = te._time / 216000;
+		int teMinutes = (te._time % 216000) / 3600;
+		int teSeconds = (te._time % 3600) / 60;
+
+		if (te._time <= theTime) {
+			term_message("done    %1d:%2d:%2d  %s", teHours, teMinutes, teSeconds, te._text);
+		} else {
+			if (!flag) {
+				term_message("------> %1d:%2d:%2d  Current time", hours, minutes, seconds);
+				flag = true;
+			}
+
+			term_message("pending %1d:%2d:%2d  %s", teHours, teMinutes, teSeconds, te._text);
+		}
+	}
+
+	term_message("************************************");
 }
 
 void Flags::reset1() {
