@@ -714,6 +714,18 @@ void OpenGLSdlGraphics3dManager::hideOverlay() {
 
 	delete _overlayBackground;
 	_overlayBackground = nullptr;
+
+	if (_surfaceRenderer) {
+		// If there is double buffering we need to redraw twice
+		_surfaceRenderer->prepareState();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		_surfaceRenderer->restorePreviousState();
+		updateScreen();
+		_surfaceRenderer->prepareState();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		_surfaceRenderer->restorePreviousState();
+		updateScreen();
+	}
 }
 
 void OpenGLSdlGraphics3dManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
