@@ -150,6 +150,11 @@ public:
 	/** @} */
 
 	/**
+	 * Indicate if a default value has been set for the given key.
+	 */
+	bool                     hasDefault(const String &key) const;
+
+	/**
 	 * Update a configuration entry for the active domain and flush
 	 * the configuration file to disk if the value changed.
 	 */

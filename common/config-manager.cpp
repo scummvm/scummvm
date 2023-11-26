@@ -482,6 +482,10 @@ bool ConfigManager::hasKey(const String &key, const String &domName) const {
 	return domain->contains(key);
 }
 
+bool ConfigManager::hasDefault(const String &key) const {
+	return _defaultsDomain.contains(key);
+}
+
 void ConfigManager::removeKey(const String &key, const String &domName) {
 	Domain *domain = getDomain(domName);
 
