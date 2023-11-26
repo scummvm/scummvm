@@ -450,9 +450,7 @@ void FreescapeEngine::processInput() {
 			case Common::KEYCODE_ESCAPE:
 				drawFrame();
 				_savedScreen = _gfx->getScreenshot();
-				_gfx->setViewport(_fullscreenViewArea);
 				openMainMenuDialog();
-				_gfx->setViewport(_viewArea);
 				_gfx->computeScreenViewport();
 				_savedScreen->free();
 				delete _savedScreen;
