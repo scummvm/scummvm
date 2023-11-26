@@ -279,6 +279,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface) {
 			}
 		}
 
+		_gfx->clear(0, 0, 0, true);
 		drawBorder();
 		if (surface)
 			drawFullscreenSurface(surface);
