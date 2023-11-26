@@ -259,7 +259,7 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	_mode->bitmapName = node->values["bitmap"];
 
-	SeekableReadStream *file = _keyboard->_fileArchive->createReadStreamForMember(_mode->bitmapName);
+	SeekableReadStream *file = _keyboard->_fileArchive->createReadStreamForMember(Common::Path(_mode->bitmapName, '/'));
 	if (!file)
 		return parserError("Bitmap '" + _mode->bitmapName + "' not found");
 
