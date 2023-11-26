@@ -39,7 +39,8 @@ Controls
         One finger tap, Left mouse click
         :ref:`twofinger`, Right mouse click
         :ref:`twofingerdouble`,ESC
-        Two finger swipe (bottom to top), Toggles `Click and drag mode`_
+	One finger press & hold for >0.5s, Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island.
+	Two fingers press & hold for >0.5s, Right mouse button hold and drag, such as for selection from action wheel in Tony Tough.
         Two finger swipe (left to right), Toggles between touch direct mode and touchpad mode.
         Two finger swipe (right to left), Show/hide on-screen control (iOS 15 and later)
         Two finger swipe (top to bottom), Global Main Menu
@@ -51,11 +52,15 @@ Controls
 
 Touch controls
 *******************
-The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**.
+The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**. It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the two possible modes:
 
-    - When touchpad mouse mode is off, the touch controls are direct. The pointer jumps to where the finger touches the screen.
-    - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
+    - Direct mouse, the touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).
+    - Touchpad emulation, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
     - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
+
+The touch mode can be switched at anytime by tapping on the controller icon, next to the menu icon at the top right of the screen.
+
+To display or hide the small controller icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the controller icon.
 
 .. _twofinger:
 
@@ -71,21 +76,16 @@ Two finger double tap
 
 For a two finger double tap, hold one finger down and then double tap with a second finger.
 
-
-Click and drag mode
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
-
-If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again.
-
 Keyboard
 ^^^^^^^^^^^^^^^^^^^^
-If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
+
+If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected the inputs from the external keyboard is enaled by default.
 
 Game controllers
 ^^^^^^^^^^^^^^^^^^^^
+
 If running iOS 14 and later there is support for connected mouses and gamepad controllers using the Apple Game Controller framework. Only "Extended Gamepad Controllers" are supported at the moment. For more information visit https://developer.apple.com/documentation/gamecontroller/gcextendedgamepad
+
 
 Paths
 =======
@@ -99,3 +99,12 @@ Configuration file
 *********************
 
 ``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes.
+
+
+Known issues
+===============
+
+- If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card.
+- If closing the ScummVM application (background mode) and then killing the application (by swiping the application upwards) there is a risk that the ScummVM configuration file becomes corrupted. Make sure not to kill the application to soon after ptting it to background.
+- In rare cases the ScummVM folder is not created in the "Files" application after installing ScummVM. Make sure the ScummVM folder shows up after installation. If not, uninstall the ScummVM, restart the iOS device and reinstall ScummVM.
+- In rare cases the system mouse pointer on iPadOS is not hidden so both the ScummVM arrow mouse pointer and the iPadOS system pointer are seen in parallell. It's usually fixed when restartarting the iPad. 
