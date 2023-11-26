@@ -50,19 +50,20 @@ void Overlay::init() {
 }
 
 void Overlay::handleInput(NancyInput &input) {
-	// For no apparent reason, the original engine handles Overlay input as a special case,
+	// For no apparent reason, from nancy3 on the original engine handles Overlay input as a special case,
 	// rather than simply set the general hotspot inside the ActionRecord struct. Special cases
 	// (a.k.a puzzle types) get handled before regular ActionRecords, which means an Overlay
 	// must take precedence when handling the mouse. Thus, out ActionManager class first iterates
 	// through all records and calls their handleInput() function just to make sure this special
 	// case is handled. This fixes nancy3 scene 7081.
-	if (_hasHotspot) {
-		if (NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+	if (g_nancy->getGameType() >= kGameTypeNancy3) {
+		if (_hasHotspot) {
+			if (NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
+				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				_state = kActionTrigger;
-				if (g_nancy->getGameType() >= kGameTypeNancy3) {
+				if (input.input & NancyInput::kLeftMouseButtonUp) {
+					_state = kActionTrigger;
+
 					// Make sure nothing else gets triggered
 					// This is nancy3 and up, since we actually want to trigger other records in nancy2 (e.g. scene 2541)
 					input.eatMouseInput();
