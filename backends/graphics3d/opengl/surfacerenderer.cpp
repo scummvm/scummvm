@@ -104,6 +104,7 @@ void FixedSurfaceRenderer::prepareState() {
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_SCISSOR_TEST);
 	glDepthMask(GL_FALSE);
 }
 
@@ -239,6 +240,8 @@ void ShaderSurfaceRenderer::prepareState() {
 	_prevStateBlend = glIsEnabled(GL_BLEND);
 	glGetIntegerv(GL_BLEND_SRC_ALPHA, &_prevStateBlendFunc);
 	glGetIntegerv(GL_VIEWPORT, _prevStateViewport);
+	_prevStateScissorTest = glIsEnabled(GL_SCISSOR_TEST);
+	glDisable(GL_SCISSOR_TEST);
 }
 
 void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &dest) {
@@ -259,6 +262,7 @@ void ShaderSurfaceRenderer::render(const TextureGL *tex, const Math::Rect2d &des
 void ShaderSurfaceRenderer::restorePreviousState() {
 	_prevStateDepthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glDepthMask(_prevStateDepthWriteMask);
+	_prevStateScissorTest ? glEnable(GL_SCISSOR_TEST) : glDisable(GL_SCISSOR_TEST);
 	_prevStateBlend ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
 	glBlendFunc(GL_BLEND_SRC_ALPHA, _prevStateBlendFunc);
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
