@@ -478,8 +478,11 @@ void OptionsDialog::build() {
 		if (ConfMan.isKeyTemporary("soundfont")) {
 			_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 		}
-		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
+		if (soundFont.empty()) {
 			_soundFont->setLabel(_c("None", "soundfont"));
+			_soundFontClearButton->setEnabled(false);
+		} else if (!ConfMan.hasKey("soundfont", _domain)) {
+			_soundFont->setLabel(_("Default"));
 			_soundFontClearButton->setEnabled(false);
 		} else {
 			_soundFont->setLabel(soundFont);
@@ -987,7 +990,7 @@ void OptionsDialog::apply() {
 			Common::U32String soundFont(_soundFont->getLabel());
 			if (soundFont != ConfMan.get("soundfont", _domain)) {
 				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
-				if (soundFont.empty() || (soundFont == _c("None", "soundfont")))
+				if (soundFont.empty() || (soundFont == _c("None", "soundfont")) || (soundFont == _("Default")))
 					ConfMan.removeKey("soundfont", _domain);
 				else
 					ConfMan.set("soundfont", soundFont.encode(), _domain);
@@ -1151,7 +1154,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_subSpeedLabel->markAsDirty();
 		break;
 	case kClearSoundFontCmd:
-		_soundFont->setLabel(_c("None", "soundfont"));
+		if (ConfMan.hasDefault("soundfont"))
+			_soundFont->setLabel(_("Default"));
+		else
+			_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
 		break;
 	case kKbdMouseSpeedChanged:
@@ -1307,7 +1313,7 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	_soundFontButton->setEnabled(enabled);
 	_soundFont->setEnabled(enabled);
 
-	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != _c("None", "soundfont")))
+	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != _c("None", "soundfont")) && (_soundFont->getLabel() != _("Default")))
 		_soundFontClearButton->setEnabled(enabled);
 	else
 		_soundFontClearButton->setEnabled(false);
