@@ -178,7 +178,7 @@ public:
 	 * plugins that have files (ie. not static). It doesn't require the plugin
 	 * object to be loaded into memory, unlike getName()
 	 **/
-	virtual const char *getFileName() const { return 0; }
+	virtual Common::Path getFileName() const { return Common::Path(); }
 };
 
 class StaticPlugin : public Plugin {
@@ -362,7 +362,7 @@ protected:
 	bool _isDetectionLoaded;
 
 	PluginManagerUncached() : _isDetectionLoaded(false), _detectionPlugin(nullptr) {}
-	bool loadPluginByFileName(const Common::String &filename);
+	bool loadPluginByFileName(const Common::Path &filename);
 
 public:
 	void init() override;

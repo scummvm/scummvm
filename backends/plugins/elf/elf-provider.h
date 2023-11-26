@@ -49,7 +49,7 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol);
 
 public:
-	ELFPlugin(const Common::String &filename) :
+	ELFPlugin(const Common::Path &filename) :
 		DynamicPlugin(filename),
 		_dlHandle(0),
 		_dso_handle(0) {
@@ -70,7 +70,7 @@ public:
 template<class T>
 class TemplatedELFPlugin : public ELFPlugin {
 public:
-	TemplatedELFPlugin(const Common::String &filename) :
+	TemplatedELFPlugin(const Common::Path &filename) :
 		ELFPlugin(filename) {
 	}
 
