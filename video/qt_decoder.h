@@ -180,9 +180,7 @@ private:
 		uint32 getRateAdjustedFrameTime() const; // media time
 		uint32 getCurEditTimeOffset() const;     // media time
 		uint32 getCurEditTrackDuration() const;  // media time
-		bool atFirstEdit() const;
 		bool atLastEdit() const;
-		bool beforeCurEdit() const;
 		bool endOfCurEdit() const;
 		void checkEditListBounds();
 	};
