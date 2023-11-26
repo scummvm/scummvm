@@ -498,26 +498,7 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	if (endOfTrack())
 		return 0;
 
-	// Playback rate logic, if rate != -1 then seek to our rate adjusted time!
-	if (_decoder->getRate() != 1 && _decoder->getRate() != -1) {
-		seek(_decoder->getTime());
-	}
-
 	if (_reversed) {
-		if (beforeCurEdit()) {
-			_curEdit--;
-
-			if (atFirstEdit()) {
-				return 0;
-			}
-
-			enterNewEditListEntry(false);
-
-			if (isEmptyEdit()) {
-				return 0;
-			}
-		}
-
 		// Subtract one to place us on the frame before the current displayed frame.
 		_curFrame--;
 
