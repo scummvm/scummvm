@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-24 01:15+0000\n"
-"PO-Revision-Date: 2023-11-02 04:41+0000\n"
+"PO-Revision-Date: 2023-11-27 05:41+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -31,27 +31,21 @@ msgid "Features compiled in:"
 msgstr "Característiques compilades:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Identificador de joc no suportat"
+msgstr "no suportat"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Inhabilitat"
+msgstr "inhabilitat"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Inhabilitat"
+msgstr "habilitat"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Suport d'extensions de CPU:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -375,7 +369,7 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Seleccioneu el fitxer JSON copiat del lloc scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
@@ -384,17 +378,15 @@ msgstr "No s'ha pogut carregar el fitxer JSON"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Descarrega jocs lliures i demostracions"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "S'estan recuperant els DLC..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Baixa"
+msgstr "Totes les baixades"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -474,16 +466,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Velocitat de baixada: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Baixa els jocs"
+msgstr "S'estan descarregant jocs"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Baixa"
+msgstr "Baixades pendents"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1027,7 +1015,7 @@ msgstr "Suprimeix el personatge"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Ves al final de la línia"
 
 #: gui/gui-manager.cpp:216
 msgid "Select to end of line"
@@ -1039,15 +1027,15 @@ msgstr "Selecciona fins al començament de la línia"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Ves al començament de la línia"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Retalla"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Copia"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1076,7 +1064,7 @@ msgstr "???"
 
 #: gui/helpdialog.cpp:37
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: gui/helpdialog.cpp:39
 msgid ""
@@ -1111,7 +1099,7 @@ msgstr "Desa la imatge..."
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u de %u"
 
 #: gui/imagealbum-dialog.cpp:377
 msgid "Save Image"
@@ -1168,7 +1156,7 @@ msgstr "Plataforma"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Any"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1229,7 +1217,7 @@ msgstr "Baixa els jocs"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Baixa jocs lliures per a ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1400,10 +1388,8 @@ msgstr "No s'ha detectat la plataforma"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Error desconegut"
+msgstr "Any desconegut"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1614,16 +1600,14 @@ msgid "Shader Path:"
 msgstr "Camí del shader:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Baixa els jocs"
+msgstr "Baixa els \"shaders\""
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Comprova si hi ha actualitzacions dels paquets de \"shader\""
+msgstr ""
+"Comprova al web de scummvm.org si hi ha actualitzacions dels paquets de "
+"\"shader\""
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2039,6 +2023,8 @@ msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"No escalar tipus de lletra de mida fixa a la IGU. Això redueix els "
+"artefactes en pantalles de baixa resolució"
 
 #: gui/options.cpp:2566
 msgid "GUI language:"
@@ -2075,16 +2061,13 @@ msgstr ""
 "per seleccionar un fitxer o carpeta."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Baixa"
+msgstr "Baixa icones"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Comprova si hi ha actualitzacions dels paquets d'icones"
+msgstr ""
+"Comprova al web de scummvm.org si hi ha actualitzacions dels paquets d'icones"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -2932,23 +2915,23 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Fitxer d'imatge de mapa de bits"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "Fitxer d'imatge PNG"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "Fitxer d'imatge JPEG"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "Fitxer d'imatge QuickDraw PICT"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Fitxer de dades"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -3819,7 +3802,7 @@ msgstr "SDL Surface"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "Superfície SDL (mode de 8bpp forçat)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -4687,15 +4670,15 @@ msgstr "Opacitat del comandament de joc"
 
 #: backends/platform/ios7/ios7_options.mm:102
 msgid "Directional button:"
-msgstr ""
+msgstr "Botó direccional:"
 
 #: backends/platform/ios7/ios7_options.mm:104
 msgid "Thumbstick"
-msgstr ""
+msgstr "Joystick de pal"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Dpad"
-msgstr ""
+msgstr "Creueta"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Show keyboard function bar"
@@ -4864,19 +4847,19 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | Surt (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | Surt (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1037
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | Surt (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1038
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | Surt (other platforms)\n"
 
 #: backends/platform/sdl/sdl.cpp:1041
 msgid ""
@@ -5996,7 +5979,7 @@ msgstr "Bloqueja"
 
 #: engines/crab/input/input.cpp:169 engines/twine/metaengine.cpp:445
 msgid "Accept"
-msgstr ""
+msgstr "Accepta"
 
 #: engines/crab/input/input.cpp:186
 msgid "Previous"
@@ -6004,27 +5987,27 @@ msgstr "Anterior"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "Resposta 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "Resposta 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "Resposta 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "Resposta 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "Resposta 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "Resposta 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
 msgid "Next Page"
@@ -6056,7 +6039,7 @@ msgstr "Inventari"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
-msgstr ""
+msgstr "Característiques"
 
 #: engines/crab/input/input.cpp:266
 msgid "Quick Save"
@@ -6190,7 +6173,7 @@ msgstr "El jugador no pot caure sobre les vores"
 
 #: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverteix l'eix Y en el ratolí"
 
 #: engines/freescape/metaengine.cpp:105
 msgid "Use alternative camera controls"
@@ -6209,41 +6192,31 @@ msgstr "Mou a la dreta"
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:60 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
-msgstr ""
+msgstr "Dispara"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Ascendeix/Vola amunt"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Vola avall"
+msgstr "Descendeix/Vola avall"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Canvia l'ordre"
+msgstr "Canvia el mode"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Mou a l'esquerra"
+msgstr "Gira cap a l'esquerra"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Mou a la dreta"
+msgstr "Gira cap a la dreta"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menú"
+msgstr "Menú d'informació"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -6682,7 +6655,7 @@ msgstr "Habilita els trucs originals"
 
 #: engines/hypno/metaengine.cpp:34
 msgid "Allow cheats using the C key."
-msgstr ""
+msgstr "Permet fer trucs utilitzant la tecla C."
 
 #: engines/hypno/metaengine.cpp:44
 msgid "Enable infinite health cheat"
@@ -6691,6 +6664,7 @@ msgstr "Activa el truc de salut infinita"
 #: engines/hypno/metaengine.cpp:45
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
+"La salut del jugador mai disminuirà (excepte en les pantalles «game over»)."
 
 #: engines/hypno/metaengine.cpp:55
 msgid "Enable infinite ammo cheat"
@@ -6698,15 +6672,15 @@ msgstr "Activa el truc de munició infinita"
 
 #: engines/hypno/metaengine.cpp:56
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "La munició del jugador mai disminuirà."
 
 #: engines/hypno/metaengine.cpp:66
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Desbloqueja tots els nivells"
 
 #: engines/hypno/metaengine.cpp:67
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Tots els nivells estaran disponibles per jugar."
 
 #: engines/hypno/metaengine.cpp:77
 msgid "Enable restored content"
@@ -6715,16 +6689,18 @@ msgstr "Habilita el contingut restaurat"
 #: engines/hypno/metaengine.cpp:78
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
+"Afegeix contingut addicional que no està habilitat en la implementació "
+"original."
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:89
 msgid "Fire"
-msgstr ""
+msgstr "Dispara"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
 msgid "Arm"
-msgstr ""
+msgstr "Armar"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:113
@@ -6738,21 +6714,25 @@ msgstr "Pas lateral"
 
 #: engines/kyra/detection_tables.h:75
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Manca el codi de joc i/o els recursos específics del llenguatge."
 
 #: engines/kyra/detection_tables.h:76
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Manca el codi de joc específic de l'idioma i/o els recursos per a aquesta "
+"traducció de fans."
 
 #: engines/kyra/detection_tables.h:78
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr ""
+"La demostració reprodueix animacions senzilles sense utilitzar el motor de "
+"Westwood."
 
 #: engines/kyra/detection_tables.h:1369
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "Heu afegit el joc incorrectament. Afegiu la carpeta arrel del joc."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1385
@@ -6760,6 +6740,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Heu afegit el joc incorrectament. El fitxer GAME.DAT és una imatge ISO i cal "
+"extreure'n els fitxers de dades del joc."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -6813,7 +6795,7 @@ msgstr "Suggereix els noms de les partides desades"
 
 #: engines/kyra/metaengine.cpp:120
 msgid "Autogenerated naming suggestions for savegames"
-msgstr ""
+msgstr "Genera automàticament suggeriments de noms per a les partides desades"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/metaengine.cpp:134
@@ -6827,11 +6809,11 @@ msgstr "Activa la barra gràfica dels punts d'impacte"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/metaengine.cpp:147
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Intercanvia els botons de lluita L/R"
 
 #: engines/kyra/metaengine.cpp:148
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Botó esquerre per atacar, botó dret per recollir objectes"
 
 #: engines/kyra/metaengine.cpp:241
 msgid "Lands of Lore support is not compiled in"
@@ -7741,10 +7723,8 @@ msgid "Fix various minor annoyances."
 msgstr ""
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Temporitzador ampliat"
+msgstr "Amplia el temporitzador del final"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
@@ -8308,10 +8288,8 @@ msgid "Enhancements:"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Utilitza els menús originals"
+msgstr "Correcció dels errors originals"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
@@ -8330,10 +8308,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Habilita el contingut restaurat"
+msgstr "Contingut restaurat"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
