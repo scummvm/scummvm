@@ -446,7 +446,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "realtime",           "Real Time!" },
 	{ "rechargablelantern", "Rechargable Lantern w/ Turn Counter" },
 	{ "relatives",          "Relatives" },
-	{ "renuntio",           "Renuntio" },
 	{ "report",             "Report Espionage" },
 	{ "respawningmonsters", "Respawning Monsters" },
 	{ "restart",            "Restart" },
@@ -1016,6 +1015,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "elascensor",         "El Ascensor" },
 	{ "impulso",            "Impulso" },
 	{ "n3reloj",            "La Hija del Relojero" },
+	{ "nano",               "Nano" },
+	{ "renuntio",           "Renuntio" },
+	{ "vardock",            "Vardock Bates" },
 
 	// Russian games
 	{ "akronr",             "Akron" },
@@ -1063,6 +1065,7 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "inyourhome",         "In Your Home" },
 	{ "isummon",            "I Summon Thee!" },
 	{ "jabberwocky",        "Jabberwocky: The Untold Story" },
+	{ "jacd",               "Just Another Christmas Day" },
 	{ "layers",             "Clothing Layers" },
 	{ "loopthrough",        "Loop Through Objects" },
 	{ "ml256",              "Makers Local and the Transdimensional Margarita Blender" },
@@ -1490,7 +1493,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("invert", "0209182", "bd15b1b68ca064a23c9986d0b5c9a354", 1941),
 	DT_ENTRY1("invisible", "020829/Demo", "bb85a3e2d4cf8b70e197591bd5b8aa48", 340),
 	DT_ENTRY1("isle", "070808", "cb3bc0c6ddaf702cb4fe288894563eec", 1436),
-	DT_ENTRY1("jacarandajim", "021111", "1755731d0bb0ce234d6160ec50b2d431", 109571),
+	DT_ENTRY1("jacarandajim", "11???\?/v1", "1755731d0bb0ce234d6160ec50b2d431", 109571),
+	DT_ENTRY1("jacarandajim", "11???\?/v2", "78e0de68825eea88995d7490adb6c062", 79146),
 	DT_ENTRY1("janeysdiary", "040213", "70c3a86f4c2143c71e9fc7d36b907430", 33448),
 	DT_ENTRY1("jason2", "011021", "c8bcbb6eeb4dfc303bb19d85fb8cd5c4", 21091),
 	DT_ENTRY1("jason3", "020207", "0e05e75dd85c60d1b675d175dfc45430", 12923),
@@ -1590,6 +1594,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("ovaloffice", "040329", "070b9aad43f654fd2f1794a3b78f9eb0", 21350),
 	DT_ENTRY1("overtheedge", "060925/v1", "3dbca4d6fb60f6e9945e383f230e205f", 14760),
 	DT_ENTRY1("overtheedge", "060925/v2", "4b2c0ff495bd9b2bb3ef46e3300fd11a", 14927),
+	DT_ENTRY1("overtheedge", "060925/v3", "a6bb780b231c31a9e01455d0424acdca", 14937),
+	DT_ENTRY1("overtheedge", "061022", "9c7bfb9252ac80597ef125c95d58a54b", 14771),
 	DT_ENTRY1("overtheedge", "070113/v1", "80f8e3f00c0390b7b0e3e83de5e1fb1c", 14764),
 	DT_ENTRY1("overtheedge", "070113/v2", "2e98a67cc74e551975f0953f4c979394", 14906),
 	DT_ENTRY1("panic", "020416", "904ef60ba74852dcf17f347e2680a082", 198625),
@@ -1868,12 +1874,14 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("grandpa", "21???\?/v1", "999e88229f0cfb59cce87de0e8af6f59", 9372808),
 	DT_ENTRY1("grandpa", "21???\?/v2", "a213dabff7f75307ffad0a053c119746", 9372916),
 	DT_ENTRY1("grandpa", "21???\?/v3", "ce027321ed2d8ecd28a17e7dfea89ac8", 9374112),
-	DT_ENTRY1("grandpa", "21???\?/v4", "816f17ff20bbd973641f17c22162c94e", 64633),
+	DT_ENTRY1("grandpa", "21???\?/v4", "1ab4f92e67d6374e691bef31338188ea", 9360542),
+	DT_ENTRY1("grandpa", "21???\?/v5", "816f17ff20bbd973641f17c22162c94e", 64633),
 	DT_ENTRY1("hintsl", "220717/Demo", "1084481cfdb745b72497def3f42d4e7b", 58005),
 	DT_ENTRY1("inyourhome", "160327/Demo", "0040d880903b8a7fe6795e8680a7bbbf", 18280),
 	DT_ENTRY1("isummon", "200420", "9bdc97bb90db1bcd6cfdbfcb26bb59ce", 58467),
 	DT_ENTRY1("jabberwocky", "1101?\?/v1", "f2b9a4ed9f19bffb735bbe7c4c25751a", 48674),
 	DT_ENTRY1("jabberwocky", "1101?\?/v2", "aaa98f426d20c156d427faf95424becb", 48574),
+	DT_ENTRY1("jacd", "1110??", "28ae6ee45f1d2980765d3e9645f0b269", 54256),
 	DT_ENTRY1("layers", "140713", "aea348f66c8f2e2fba08d7a15451f33f", 17787),
 	DT_ENTRY1("loopthrough", "200415/Demo", "44d20d05134108ab5143aab2a13f8fd6", 24056),
 	DT_ENTRY1("ml256", "120531", "68862c0031f1497e32ce26e0654bb07f", 32397),
@@ -1898,7 +1906,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("schoolproject", "130607", "01aca4dc431d0661adcdef1f1b87bf2b", 19822),
 	DT_ENTRY1("seymourstuidquest", "11????", "61f4e155b958c1c652f12ed4216ee10d", 12623),
 	DT_ENTRY1("snowdrift", "1707??", "27409a216a03756bb13ca0984922e219", 25254),
-	DT_ENTRY1("soc", "1210??", "16b43395e647605562c04e5e8954d907", 474850),
+	DT_ENTRY1("soc", "1210?\?/v1", "16b43395e647605562c04e5e8954d907", 474850),
+	DT_ENTRY1("soc", "1210?\?/v2", "7b3e9e45edc75202b3f586d0ca8dddde", 474380),
 	DT_ENTRY1("socc", "1511?\?/v1", "7fd4574ae646b8e052eb6513a1e7ece5", 513520),
 	DT_ENTRY1("socc", "1511?\?/v2", "3cbcffb47f0a81ac15201276d9f83d2a", 576250),
 	DT_ENTRY1("sophia", "21????", "53ff34729255845adad73eb8d133ef7c", 1242046),
@@ -2185,6 +2194,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// IFComp 2001
 	DT_ENTRY1("if01_tcom1", "01????", "61364f96ffdfd01e878f1a33557aff93", 37422),
 	DT_ENTRY1("if01_tcom2", "01????", "b22abbff746998051e06bfa9a8083432", 67783),
+	DT_ENTRY1("if01_mysterymanor", "010914", "c3ca694117fbf7b655f3b7d729d94048", 74498),
 	DT_ENTRY1("if01_mysterymanor", "020919", "4262cee0ad7ff3062aa08ac69b980625", 24879),
 	DT_ENTRY1("if01_thetest", "010923", "61a6f178f646c6158c0557ae4257b20d", 22465),
 
@@ -2261,6 +2271,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("if18_6silvbullets", "1810??", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
 	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v1", "f414f8b8aa9bfaf3256a1d2b6c887921", 80444),
 	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v2", "c9014e44b756c2e795179eacddb83805", 93416),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v3", "3213343c8468514cd644e3b7f843b8ec", 92122),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v4", "32fa7e8331ae01ed2d9a7092d05a0e00", 92044),
 	DT_ENTRY1("if18_anno1700", "1810?\?/v1", "ec665dafae59aced3bade7c5b64e1e2e", 865004),
 	DT_ENTRY1("if18_anno1700", "1810?\?/v2", "b45b7f7bdb90745c53d5df06ddcfeea2", 880810),
 
@@ -2275,6 +2287,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 
 	// IFComp 2022
 	DT_ENTRY1("if22_lostcstlines", "221001", "55ca67bed8541e0343f7462605570129", 990831),
+	DT_ENTRY1("if22_lostcstlines", "22????", "6d4b421bc366bb2b76cd31277ae461d9", 2201112),
 
 	// InsideADRIFT #41
 	DT_ENTRY1("i41_cut", "120202", "0369af54c60f3d25ea2ebfe80579057b", 6102),
@@ -2288,6 +2301,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY1("goy_shadrick2", "040831", "6c39ed75d19b60ee7b806edb97725d43", 113424),
 	DT_ENTRY1("goy_dragonshrine", "040412", "604250027cfd8cfd1fb0d231085e40e5", 636932),
 	DT_ENTRY1("goy_darkness", "041214", "6047363499d5eb666c341139d0eb532a", 24847),
+	DT_ENTRY1("goy_darkness", "050107", "af7b3452fdb40f121f2a6be2fa81e4f8", 25203),
 
 	// InsideADRIFT Game of the Year Comp 2007
 	DT_ENTRY1("goy_fineday4reap", "071119", "ff47d5fa749d52e18c1d488b83d1d45e", 96834),
@@ -2479,7 +2493,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRYL1("elascensor", Common::ES_ESP, "081208", "30494599eb5c012b677fec49fa0766a8", 3219428),
 	DT_ENTRYL1("impulso", Common::ES_ESP, "050531", "c53f5ac48c9a831ce18a611301b5cb1b", 22214),
 	DT_ENTRYL1("n3reloj", Common::ES_ESP, "021115", "0a65561670b4df68c1a47decd012cd7c", 17966),
+	DT_ENTRYL1("nano", Common::ES_ESP, "080331", "f8fc86237a302999112b451b97992797", 21775),
 	DT_ENTRYL1("renuntio", Common::ES_ESP, "040107", "feb81a137ac9641008dced9ff706449f", 48764),
+	DT_ENTRYL1("vardock", Common::ES_ESP, "080902", "a20d1dcd26e8d1c1a981f97691c5e424", 2928980),
 
 	// Russian games
 	DT_ENTRYL1("akronr", Common::RU_RUS, "121119", "9ee9af6f08091f7e3c7c0043f99e378f", 31744),
