@@ -34,10 +34,10 @@ protected:
 
 	virtual VoidFunc findSymbol(const char *symbol) = 0;
 
-	const Common::String _filename;
+	const Common::Path _filename;
 
 public:
-	DynamicPlugin(const Common::String &filename) :
+	DynamicPlugin(const Common::Path &filename) :
 		_filename(filename) {}
 
 	virtual bool loadPlugin() {
@@ -100,8 +100,8 @@ public:
 		delete _pluginObject;
 	}
 
-	virtual const char *getFileName() const {
-		return _filename.c_str();
+	virtual Common::Path getFileName() const override {
+		return _filename;
 	}
 };
 

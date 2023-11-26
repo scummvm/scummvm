@@ -68,7 +68,7 @@ protected:
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func = dlsym(_dlHandle, symbol);
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
+			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -83,19 +83,19 @@ protected:
 	void checkDisc(const DiscLabel &);
 
 public:
-	DCPlugin(const Common::String &filename)
+	DCPlugin(const Common::Path &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
 		DiscLabel original;
 		checkDisc(_label);
-		drawPluginProgress(_filename);
-		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
+		drawPluginProgress(_filename.toString(Common::Path::kNativeSeparator));
+		_dlHandle = dlopen(_filename.toString(Common::Path::kNativeSeparator).c_str(), RTLD_LAZY);
 
 		if (!_dlHandle) {
 			checkDisc(original);
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			warning("Failed loading plugin '%s' (%s)", _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 			return false;
 		}
 
@@ -112,7 +112,7 @@ public:
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (dlclose(_dlHandle) != 0)
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
+				warning("Failed unloading plugin '%s' (%s)", _filename.toString(Common::Path::kNativeSeparator).c_str(), dlerror());
 			_dlHandle = 0;
 		}
 	}

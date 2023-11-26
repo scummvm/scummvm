@@ -43,13 +43,13 @@ protected:
 	VoidFunc findSymbol(const char *symbol) override {
 		FARPROC func = GetProcAddress((HMODULE)_dlHandle, symbol);
 		if (!func)
-			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str());
 
 		return (void (*)())func;
 	}
 
 public:
-	Win32Plugin(const Common::String &filename)
+	Win32Plugin(const Common::Path &filename)
 		: DynamicPlugin(filename), _dlHandle(0) {}
 
 	bool loadPlugin() override {
@@ -59,10 +59,10 @@ public:
 		free(tFilename);
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
+			warning("Failed loading plugin '%s' (error code %d)", _filename.toString(Common::Path::kNativeSeparator).c_str(), (int32) GetLastError());
 			return false;
 		} else {
-			debug(1, "Success loading plugin '%s', handle %p", _filename.c_str(), _dlHandle);
+			debug(1, "Success loading plugin '%s', handle %p", _filename.toString(Common::Path::kNativeSeparator).c_str(), _dlHandle);
 		}
 
 		return DynamicPlugin::loadPlugin();
@@ -72,9 +72,9 @@ public:
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))
-				warning("Failed unloading plugin '%s'", _filename.c_str());
+				warning("Failed unloading plugin '%s'", _filename.toString(Common::Path::kNativeSeparator).c_str());
 			else
-				debug(1, "Success unloading plugin '%s'", _filename.c_str());
+				debug(1, "Success unloading plugin '%s'", _filename.toString(Common::Path::kNativeSeparator).c_str());
 			_dlHandle = 0;
 		}
 	}
