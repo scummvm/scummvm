@@ -510,6 +510,8 @@ public:
 	void setParentDialog(Dialog *parentDialog) { _parentDialog = parentDialog; }
 	void setDomain(const Common::String &domain) { _domain = domain; }
 
+	uint16 getWidth() const override;
+
 protected:
 	enum {
 		/** The command that gets sent when the scroll container needs to reflow its contents */
