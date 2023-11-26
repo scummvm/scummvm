@@ -1089,6 +1089,10 @@ OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::St
 OptionsContainerWidget::~OptionsContainerWidget() {
 }
 
+uint16 OptionsContainerWidget::getWidth() const {
+	return _scrollContainer ? _scrollContainer->getWidth() : _w;
+}
+
 void OptionsContainerWidget::reflowLayout() {
 	Widget::reflowLayout();
 
