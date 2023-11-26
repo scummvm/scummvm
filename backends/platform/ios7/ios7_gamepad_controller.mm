@@ -65,9 +65,9 @@
 	if (@available(iOS 15.0, *)) {
 		// Configure a simple game controller with dPad and A and B buttons
 		_configDpad = [[GCVirtualControllerConfiguration alloc] init];
-		_configDpad.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_configDpad.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputRightThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, GCInputLeftShoulder, GCInputRightShoulder, nil];
 		_configThumbstick = [[GCVirtualControllerConfiguration alloc] init];
-		_configThumbstick.elements = [[NSSet alloc] initWithObjects:GCInputLeftThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		_configThumbstick.elements = [[NSSet alloc] initWithObjects:GCInputLeftThumbstick, GCInputRightThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, GCInputLeftShoulder, GCInputRightShoulder, nil];
 		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
 		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
 		_currentController = _virtualControllerThumbstick;
