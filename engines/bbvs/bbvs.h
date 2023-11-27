@@ -252,6 +252,12 @@ public:
 	bool isLoogieDemo() const;
 	bool isLoogieAltDemo() const;
 
+	/**
+	 * Disable support for ScummVM autosaves.
+	 * This engine automatically saves to slot zero on every room change.
+	 * The Continue button on the main menu loads this save.
+	 */
+	int getAutosaveSlot() const override { return -1; }
 private:
 	Graphics::PixelFormat _pixelFormat;
 
