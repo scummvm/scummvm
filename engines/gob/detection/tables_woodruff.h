@@ -113,7 +113,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		EN_GRB,
 		kPlatformDOS,
@@ -127,7 +127,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		DE_DEU,
 		kPlatformDOS,
@@ -141,7 +141,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		FR_FRA,
 		kPlatformDOS,
@@ -155,7 +155,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.01",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		IT_ITA,
 		kPlatformDOS,
@@ -169,7 +169,7 @@
 {
 	{
 		"woodruff",
-		"",
+		"v1.00",
 		AD_ENTRY1s("intro.stk", "b50fee012a5abcd0ac2963e1b4b56bec", 20298108),
 		ES_ESP,
 		kPlatformDOS,
