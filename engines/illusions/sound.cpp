@@ -53,8 +53,15 @@ void MusicPlayer::play(uint32 musicId, bool looping, int16 volume, int16 pan) {
 		}
 		Common::String filename = Common::String::format("%08x.wav", _musicId);
 		Common::File *fd = new Common::File();
-		fd->open(filename);
-		Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(fd, DisposeAfterUse::YES), looping ? 0 : 1);
+		if (!fd->open(filename)) {
+			delete fd;
+			error("MusicPlayer::play() Could not open %s", filename.c_str());
+		}
+		Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
+		if (wavStream == nullptr) {
+			error("MusicPlayer::play() Could not load %s", filename.c_str());
+		}
+		Audio::AudioStream *audioStream = Audio::makeLoopingAudioStream(wavStream, looping ? 0 : 1);
 		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream, -1, volume, pan);
 	}
 }
@@ -254,8 +261,14 @@ void VoicePlayer::stopCueing() {
 void VoicePlayer::start(int16 volume, int16 pan) {
 	Common::String filename = Common::String::format("%s.wav", _voiceName.c_str());
 	Common::File *fd = new Common::File();
-	fd->open(filename);
+	if (!fd->open(filename)) {
+		delete fd;
+		error("VoicePlayer::start() Could not open %s", filename.c_str());
+	}
 	Audio::AudioStream *audioStream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
+	if (audioStream == nullptr) {
+		error("VoicePlayer::start() Could not load %s", filename.c_str());
+	}
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, audioStream, -1, volume, pan);
 	_voiceStatus = 4;
 }
@@ -312,9 +325,12 @@ void Sound::load() {
 	Common::File *fd = new Common::File();
 	if (!fd->open(filename)) {
 		delete fd;
-		error("SoundMan::loadSound() Could not load %s", filename.c_str());
+		error("Sound::load() Could not open %s", filename.c_str());
 	}
 	_stream = Audio::makeWAVStream(fd, DisposeAfterUse::YES);
+	if (_stream == nullptr) {
+		warning("Sound::load() Could not load %s", filename.c_str());
+	}
 }
 
 void Sound::unload() {
