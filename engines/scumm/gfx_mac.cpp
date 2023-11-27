@@ -3238,95 +3238,6 @@ MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 	return window;
 }
 
-void MacGui::runDraftsInventory() {
-	int base, xPos, textHeight, heightMultiplier, draft, inactiveColor,
-		unlockedColor, newDraftColor, notesColor;
-
-	char notesBuf[6];
-	const char *names[18] = {
-		"Drafts",
-		"Opening:", "Straw Into Gold:", "Dyeing:",
-		"Night Vision:", "Twisting:", "Sleep:",
-		"Emptying:", "Invisibility:", "Terror:",
-		"Sharpening:", "Reflection:", "Healing:",
-		"Silence:", "Shaping:", "Unmaking:",
-		"Transcendence:",
-		"Unknown:"
-	};
-
-	const char *notes = "cdefgabC";
-
-	// ACT 1: Draw the Mac dialog window
-	MacGui::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
-	const Graphics::Font *font = getFont(kSystemFont);
-
-	Graphics::Surface *s = window->innerSurface();
-
-	// ACT 2: Draw the drafts text
-	//
-	// Drafts are stored in SCUMM global variables; we choose the appropriate
-	// first entry in the variables at which these drafts start.
-	base = 55;
-
-	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
-	unlockedColor = kBlack;
-	inactiveColor = kBlack;
-	newDraftColor = kBlack;
-
-	for (int i = 0; i < 16; i++) {
-		draft = _vm->_scummVars[base + i * 2];
-
-		// In which row are we rendering our text?
-		heightMultiplier = i < 8 ? i : (i % 8);
-		textHeight = 24;
-
-		// Has the draft been unlocked by the player?
-		//int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
-
-		// Has the new draft been used at least once?
-		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
-
-		// Has the draft been unlocked? Great: put it in our text buffer
-		// otherwise just prepare to render the "????" string.
-		if (draft & 0x2000) {
-			Common::sprintf_s(notesBuf, sizeof(notesBuf), "%c%c%c%c",
-							  notes[draft & 0x0007],
-							  notes[(draft & 0x0038) >> 3],
-							  notes[(draft & 0x01c0) >> 6],
-							  notes[(draft & 0x0e00) >> 9]);
-		} else {
-			notesColor = inactiveColor;
-			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
-		}
-
-		// Where are we positioning the text?
-		// Left column or right column?
-		xPos = i < 8 ? 40 : 260;
-
-		// Draw the titles of the drafts...
-		if (draft & 0x2000) {
-			font->drawString(s, (const char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
-		} else {
-			// Draw "Unknown:" as the title of the draft
-			font->drawString(s, (const char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
-		}
-
-		// Draw the notes of the draft...
-		font->drawString(s, (const char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
-	}
-
-	// Draw "Drafts" on top of the dialog
-	font->drawString(s, (const char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
-
-	// Draw a vertical line to separate the two columns
-	s->drawLine(210, 44, 210, 184, kBlack);
-
-	// Update the screen with all the new stuff!
-	window->show();
-	delay();
-	delete window;
-}
-
 void MacGui::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
 	drawBitmap(_surface, r, bitmap, color);
 }
@@ -3719,6 +3630,95 @@ void MacLoomGui::runAboutDialog() {
 
 	delete lucasFilm;
 	delete loom;
+	delete window;
+}
+
+void MacLoomGui::runDraftsInventory() {
+	int base, xPos, textHeight, heightMultiplier, draft, inactiveColor,
+		unlockedColor, newDraftColor, notesColor;
+
+	char notesBuf[6];
+	const char *names[18] = {
+		"Drafts",
+		"Opening:", "Straw Into Gold:", "Dyeing:",
+		"Night Vision:", "Twisting:", "Sleep:",
+		"Emptying:", "Invisibility:", "Terror:",
+		"Sharpening:", "Reflection:", "Healing:",
+		"Silence:", "Shaping:", "Unmaking:",
+		"Transcendence:",
+		"Unknown:"
+	};
+
+	const char *notes = "cdefgabC";
+
+	// ACT 1: Draw the Mac dialog window
+	MacGui::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
+	const Graphics::Font *font = getFont(kSystemFont);
+
+	Graphics::Surface *s = window->innerSurface();
+
+	// ACT 2: Draw the drafts text
+	//
+	// Drafts are stored in SCUMM global variables; we choose the appropriate
+	// first entry in the variables at which these drafts start.
+	base = 55;
+
+	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
+	unlockedColor = kBlack;
+	inactiveColor = kBlack;
+	newDraftColor = kBlack;
+
+	for (int i = 0; i < 16; i++) {
+		draft = _vm->_scummVars[base + i * 2];
+
+		// In which row are we rendering our text?
+		heightMultiplier = i < 8 ? i : (i % 8);
+		textHeight = 24;
+
+		// Has the draft been unlocked by the player?
+		//int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
+
+		// Has the new draft been used at least once?
+		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+
+		// Has the draft been unlocked? Great: put it in our text buffer
+		// otherwise just prepare to render the "????" string.
+		if (draft & 0x2000) {
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "%c%c%c%c",
+							  notes[draft & 0x0007],
+							  notes[(draft & 0x0038) >> 3],
+							  notes[(draft & 0x01c0) >> 6],
+							  notes[(draft & 0x0e00) >> 9]);
+		} else {
+			notesColor = inactiveColor;
+			Common::sprintf_s(notesBuf, sizeof(notesBuf), "????");
+		}
+
+		// Where are we positioning the text?
+		// Left column or right column?
+		xPos = i < 8 ? 40 : 260;
+
+		// Draw the titles of the drafts...
+		if (draft & 0x2000) {
+			font->drawString(s, (const char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
+		} else {
+			// Draw "Unknown:" as the title of the draft
+			font->drawString(s, (const char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
+		}
+
+		// Draw the notes of the draft...
+		font->drawString(s, (const char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+	}
+
+	// Draw "Drafts" on top of the dialog
+	font->drawString(s, (const char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
+
+	// Draw a vertical line to separate the two columns
+	s->drawLine(210, 44, 210, 184, kBlack);
+
+	// Update the screen with all the new stuff!
+	window->show();
+	delay();
 	delete window;
 }
 

@@ -607,7 +607,6 @@ public:
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
 	MacDialogWindow *drawBanner(char *message);
-	void runDraftsInventory();
 
 	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
@@ -628,6 +627,8 @@ public:
 
 	void resetAfterLoad();
 	void update(int delta);
+
+	void runDraftsInventory();
 
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
