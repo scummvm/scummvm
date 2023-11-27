@@ -94,7 +94,7 @@ void SafeDialPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_numInbetweens = (_imageName2.size() ? 1 : 0);
 
-	uint16 num = 20;
+	uint16 num = 10;
 	if (g_nancy->getGameType() >= kGameTypeNancy4) {
 		num = stream.readUint16LE();
 		_enableWraparound = stream.readByte();
