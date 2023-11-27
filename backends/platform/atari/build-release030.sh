@@ -47,7 +47,7 @@ ${PLATFORM}-nm -C dist-generic/scummvm/scummvm.ttp | grep -vF ' .L' | grep ' [Tt
 ${PLATFORM}-strip -s dist-generic/scummvm/scummvm.ttp
 
 # remove unused files
-rm -f dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/{gui-icons,achievements,macgui,shaders}.dat
+rm -f dist-generic/scummvm/data/*.zip dist-generic/scummvm/data/{classicmacfonts,achievements,encoding,gui-icons,macgui,shaders}.dat
 
 # readme.txt
 cp ../backends/platform/atari/readme.txt dist-generic/scummvm
