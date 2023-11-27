@@ -825,25 +825,6 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	// IFComp 2012
 	{ "if12_irvinequik",    "Irvine Quik & The Search for the Fish of Traglea" },                       //   18th Place
 
-	// IFComp 2017
-	{ "if17_lmk",           "Land of the Mountain King" },                                              //   58th Place
-	{ "if17_temperamentum", "Temperamentum" },                                                          //   72th Place
-
-	// IFComp 2018
-	{ "if18_6silvbullets",  "Six Silver Bullets" },                                                     //   31th Place
-	{ "if18_stoneofwisdom", "Stone of Wisdom" },                                                        //   44th Place
-	{ "if18_anno1700",      "Anno 1700" },                                                              //   61th Place
-
-	// IFComp 2019
-	{ "if19_treasurehunt",  "Treasure Hunt in the Amazon" },                                            //    3rd Place
-
-	// IFComp 2020
-	{ "if20_jaft",          "Just Another Fairy Tale" },                                                //   84th Place
-	{ "if20_rtcc",          "Return to Castle Coris" },                                                 //   86th Place
-
-	// IFComp 2022
-	{ "if22_lostcstlines",  "Lost Coastline" },                                                         //   28th Place
-
 	// InsideADRIFT #41
 	{ "i41_cut",            "Cut the Red Wire! No, the Blue Wire!" },
 
@@ -1157,6 +1138,25 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 
 	// IFComp 2011
 	{ "if11_rtc",           "Return to Camelot" },                                                      //   30th Place
+
+	// IFComp 2017
+	{ "if17_lmk",           "Land of the Mountain King" },                                              //   58th Place
+	{ "if17_temperamentum", "Temperamentum" },                                                          //   72th Place
+
+	// IFComp 2018
+	{ "if18_6silvbullets",  "Six Silver Bullets" },                                                     //   31th Place
+	{ "if18_stoneofwisdom", "Stone of Wisdom" },                                                        //   44th Place
+	{ "if18_anno1700",      "Anno 1700" },                                                              //   61th Place
+
+	// IFComp 2019
+	{ "if19_treasurehunt",  "Treasure Hunt in the Amazon" },                                            //    3rd Place
+
+	// IFComp 2020
+	{ "if20_jaft",          "Just Another Fairy Tale" },                                                //   84th Place
+	{ "if20_rtcc",          "Return to Castle Coris" },                                                 //   86th Place
+
+	// IFComp 2022
+	{ "if22_lostcstlines",  "Lost Coastline" },                                                         //   28th Place
 
 	// InsideADRIFT #41
 	{ "i41_ambassador",     "Ambassador to Dupal" },
@@ -1996,6 +1996,34 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// IFComp 2011
 	DT_ENTRY1("if11_rtc", "1110??", "58729d1f54ca2311d7ff584f223c6396", 149000),
 
+	// IFComp 2017
+	DT_ENTRY1("if17_lmk", "1710?\?/v1", "6b5ade214129491afcebc0e280eb22da", 10600962),
+	DT_ENTRY1("if17_lmk", "1710?\?/v2", "c46e80c58bf0e343c1d0b8fb6be90f40", 10601042),
+	DT_ENTRY1("if17_lmk", "1710?\?/v3", "a2907b5e4c64937222282fc564d9f7d3", 10600484),
+	DT_ENTRY1("if17_temperamentum", "1710??", "c23c52ca0c2652edf94f3c6ea24c48f5", 17986940),
+
+	// IFComp 2018
+	DT_ENTRY1("if18_6silvbullets", "1810??", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v1", "f414f8b8aa9bfaf3256a1d2b6c887921", 80444),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v2", "c9014e44b756c2e795179eacddb83805", 93416),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v3", "3213343c8468514cd644e3b7f843b8ec", 92122),
+	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v4", "32fa7e8331ae01ed2d9a7092d05a0e00", 92044),
+	DT_ENTRY1("if18_anno1700", "1810?\?/v1", "ec665dafae59aced3bade7c5b64e1e2e", 865004),
+	DT_ENTRY1("if18_anno1700", "1810?\?/v2", "b45b7f7bdb90745c53d5df06ddcfeea2", 880810),
+
+	// IFComp 2019
+	DT_ENTRY1("if19_treasurehunt", "1910??", "f3c35c9b3f4051897d7c891e8e33e779", 25371192),
+
+	// IFComp 2020
+	DT_ENTRY1("if20_jaft", "2010?\?/v1", "0c754a07c00d9701b36f68703f1a58bd", 2018252),
+	DT_ENTRY1("if20_jaft", "2010?\?/v2", "ca12aa24867b9eb43aab1ad972dec202", 2018188),
+	DT_ENTRY1("if20_rtcc", "2010?\?/v1", "c79ed07084f08890c2ec4912c353ed34", 300308),
+	DT_ENTRY1("if20_rtcc", "2010?\?/v2", "0e4ed541ed65b7ea207b31a50c471c28", 333916),
+
+	// IFComp 2022
+	DT_ENTRY1("if22_lostcstlines", "221001", "55ca67bed8541e0343f7462605570129", 990831),
+	DT_ENTRY1("if22_lostcstlines", "22????", "6d4b421bc366bb2b76cd31277ae461d9", 2201112),
+
 	// InsideADRIFT #41
 	DT_ENTRY1("i41_ambassador", "120202", "d19a12c2c8c2eff7b3e8da5f3594163a", 29708),
 	DT_ENTRY1("i41_bariscebik", "120128", "d63d310e2b2fe4ab7ea6bc74c136b8e0", 14634),
@@ -2260,34 +2288,6 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// IFComp 2012
 	DT_ENTRY1("if12_irvinequik", "120929", "213092ee3387a2b9eecf0ca93cd7a0be", 195043),
 	DT_ENTRY1("if12_irvinequik", "121103", "a05651907f191f5f4ab9fb9ff51fd80d", 195059),
-
-	// IFComp 2017
-	DT_ENTRY1("if17_lmk", "1710?\?/v1", "6b5ade214129491afcebc0e280eb22da", 10600962),
-	DT_ENTRY1("if17_lmk", "1710?\?/v2", "c46e80c58bf0e343c1d0b8fb6be90f40", 10601042),
-	DT_ENTRY1("if17_lmk", "1710?\?/v3", "a2907b5e4c64937222282fc564d9f7d3", 10600484),
-	DT_ENTRY1("if17_temperamentum", "1710??", "c23c52ca0c2652edf94f3c6ea24c48f5", 17986940),
-
-	// IFComp 2018
-	DT_ENTRY1("if18_6silvbullets", "1810??", "e0f6170b5cbde7005609e68d8a25ddd3", 376934),
-	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v1", "f414f8b8aa9bfaf3256a1d2b6c887921", 80444),
-	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v2", "c9014e44b756c2e795179eacddb83805", 93416),
-	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v3", "3213343c8468514cd644e3b7f843b8ec", 92122),
-	DT_ENTRY1("if18_stoneofwisdom", "1810?\?/v4", "32fa7e8331ae01ed2d9a7092d05a0e00", 92044),
-	DT_ENTRY1("if18_anno1700", "1810?\?/v1", "ec665dafae59aced3bade7c5b64e1e2e", 865004),
-	DT_ENTRY1("if18_anno1700", "1810?\?/v2", "b45b7f7bdb90745c53d5df06ddcfeea2", 880810),
-
-	// IFComp 2019
-	DT_ENTRY1("if19_treasurehunt", "1910??", "f3c35c9b3f4051897d7c891e8e33e779", 25371192),
-
-	// IFComp 2020
-	DT_ENTRY1("if20_jaft", "2010?\?/v1", "0c754a07c00d9701b36f68703f1a58bd", 2018252),
-	DT_ENTRY1("if20_jaft", "2010?\?/v2", "ca12aa24867b9eb43aab1ad972dec202", 2018188),
-	DT_ENTRY1("if20_rtcc", "2010?\?/v1", "c79ed07084f08890c2ec4912c353ed34", 300308),
-	DT_ENTRY1("if20_rtcc", "2010?\?/v2", "0e4ed541ed65b7ea207b31a50c471c28", 333916),
-
-	// IFComp 2022
-	DT_ENTRY1("if22_lostcstlines", "221001", "55ca67bed8541e0343f7462605570129", 990831),
-	DT_ENTRY1("if22_lostcstlines", "22????", "6d4b421bc366bb2b76cd31277ae461d9", 2201112),
 
 	// InsideADRIFT #41
 	DT_ENTRY1("i41_cut", "120202", "0369af54c60f3d25ea2ebfe80579057b", 6102),
