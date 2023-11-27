@@ -209,7 +209,7 @@ void OpenGLRenderer::renderCrossair(const Common::Point crossairPosition) {
 
 	useColor(255, 255, 255);
 
-	glLineWidth(8); // It will not work in every OpenGL implementation since the
+	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
 					 // spec doesn't require support for line widths other than 1
 	glEnableClientState(GL_VERTEX_ARRAY);
 	copyToVertexArray(0, Math::Vector3d(crossairPosition.x - 3, crossairPosition.y, 0));

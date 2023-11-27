@@ -176,7 +176,6 @@ void OpenGLShaderRenderer::renderSensorShoot(byte color, const Math::Vector3d se
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
 	glDrawArrays(GL_LINES, 0, 2);
-	glDisableClientState(GL_VERTEX_ARRAY);
 	glLineWidth(1);
 
 	glDisable(GL_BLEND);
@@ -261,7 +260,7 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point crossairPosition) 
 
 	useColor(255, 255, 255);
 
-	glLineWidth(8); // It will not work in every OpenGL implementation since the
+	glLineWidth(MAX(2, g_system->getWidth() / 192)); // It will not work in every OpenGL implementation since the
 					 // spec doesn't require support for line widths other than 1
 
 	copyToVertexArray(0, Math::Vector3d(remap(crossairPosition.x - 3, _screenW), remap(_screenH - crossairPosition.y, _screenH), 0));
