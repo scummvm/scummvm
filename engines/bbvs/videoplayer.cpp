@@ -35,6 +35,13 @@ void BbvsEngine::playVideo(int videoNum) {
 	else
 		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
 
+	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
+	if (!videoDecoder->loadFile(videoFilename)) {
+		delete videoDecoder;
+		warning("Unable to open video %s", videoFilename.c_str());
+		return;
+	}
+
 	// Set the correct video mode
 	initGraphics(320, 240, nullptr);
 	if (_system->getScreenFormat().bytesPerPixel == 1) {
@@ -43,13 +50,6 @@ void BbvsEngine::playVideo(int videoNum) {
 	}
 
 	debug(0, "Screen format: %s", _system->getScreenFormat().toString().c_str());
-
-	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
-	if (!videoDecoder->loadFile(videoFilename)) {
-		delete videoDecoder;
-		warning("Unable to open video %s", videoFilename.c_str());
-		return;
-	}
 
 	videoDecoder->start();
 
