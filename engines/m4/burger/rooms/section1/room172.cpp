@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_POLLY_ANIMATION = 1
+};
+
 static const char *SAID[][4] = {
 	{ "AUNT POLLY",    "172w001", "172w002", "172w002" },
 	{ "PARLOUR",       "172w002", nullptr,   nullptr   },
@@ -99,25 +103,25 @@ void Room172::init() {
 	case 171:
 		if (!_G(flags)[V092] && !_G(flags)[V091]) {
 			player_set_commands_allowed(false);
-			series_load("172aplt");
-			series_load("172aplts");
+			series_load("172ap1t");
+			series_load("172ap1ts");
 			series_load("172ap02t");
 			digi_preload("172p906");
 
-			_val1 = 4;
-			kernel_trigger_dispatch_now(1);
+			_pollyShould = 4;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			ws_demand_location(300, 325, 3);
-			ws_walk(368, 359, 0, -1, 2);
+			ws_walk(368, 359, nullptr, -1, 2);
 
 		} else {
 			ws_demand_location(11, 296, 3);
-			ws_walk(156, 297, 0, -1, -1);
+			ws_walk(156, 297, nullptr, -1, -1);
 		}
 		break;
 
 	case 173:
 		ws_demand_location(171, 254, 3);
-		ws_walk(250, 270, 0, -1, -1);
+		ws_walk(250, 270, nullptr, -1, -1);
 		break;
 
 	default:
@@ -128,8 +132,8 @@ void Room172::init() {
 	hotspot_set_active("AUNT POLLY", false);
 
 	if (_G(flags)[V092]) {
-		_val1 = 15;
-		kernel_trigger_dispatch_now(1);
+		_pollyShould = 15;
+		kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		_walk1 = intr_add_no_walk_rect(357, 311, 639, 353, 356, 354);
 		hotspot_set_active("AUNT POLLY", true);
 	} else {
@@ -141,46 +145,47 @@ void Room172::init() {
 			inv_player_has("SOAPY WATER")) {
 		hotspot_set_active("CARROT JUICE ", false);
 	} else {
-		_series3.show("172jug", 0x700);
+		_jug.show("172jug", 0x700);
 	}
 }
 
 void Room172::daemon() {
 	switch (_G(kernel).trigger) {
-	case 1:
-		switch (_val1) {
+	case kCHANGE_POLLY_ANIMATION:
+		switch (_pollyShould) {
 		case 4:
-			_val1 = 5;
-			series_play_with_breaks(PLAY2, "172ap01", 0x600, 1, 3, 8);
-			digi_play("172p906", 2, 255, 1);
+			_pollyShould = 5;
+			series_play_with_breaks(PLAY2, "172ap01", 0x600, kCHANGE_POLLY_ANIMATION, 3, 8);
+			digi_play("172p906", 2, 255, kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 5:
 			_G(flags)[V092] = 1;
 			hotspot_set_active("AUNT POLLY", true);
-			_val1 = 7;
+			_pollyShould = 7;
 			_series5.play("172ap1t", 0x400, 4, -1, 6);
 			break;
 
 		case 6:
 			freeSeries5();
-			_val1 = 8;
-			npc_say("172p907", 1, "172ap1t", 0x400, true);
+			_pollyShould = 8;
+			npc_say("172p907", kCHANGE_POLLY_ANIMATION, "172ap1t", 0x400, true);
 			break;
 
 		case 7:
 			digi_unload("172p906");
 			freeSeries5();
 			_series5.show("172ap1t", 0x400);
-			wilbur_speech("172w902", 1);
+			_pollyShould = 6;
+			wilbur_speech("172w902", kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 8:
 			_G(flags)[V091] = true;
 			terminateMachineAndNull(_series1);
 			terminateMachineAndNull(_series1s);
-			_val1 = 9;
-			series_play_with_breaks(PLAY3, "172ap02", 0x400, 1, 3, 8);
+			_pollyShould = 9;
+			series_play_with_breaks(PLAY3, "172ap02", 0x400, kCHANGE_POLLY_ANIMATION, 3, 8);
 			break;
 
 		case 9:
@@ -191,14 +196,14 @@ void Room172::daemon() {
 
 		case 10:
 			freeSeries7();
-			_val1 = 11;
-			series_play_with_breaks(PLAY4, "172ap02", 0x400, 1, 3, 8);
+			_pollyShould = 11;
+			series_play_with_breaks(PLAY4, "172ap02", 0x400, kCHANGE_POLLY_ANIMATION, 3, 8);
 			break;
 
 		case 11:
 			freeSeries7();
-			_val1 = 14;
-			npc_say(conv_sound_to_play(), 1, "172ap02", 0x400, 1, 31, 35);
+			_pollyShould = 14;
+			npc_say(kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 			break;
 
 		case 12:
@@ -206,8 +211,8 @@ void Room172::daemon() {
 			_G(flags)[V298] = 1;
 			freeSeries7();
 			_series5.terminate();
-			_val1 = 15;
-			npc_say(conv_sound_to_play(), 1, "172ap02", 0x400, 1, 31, 35);
+			_pollyShould = 15;
+			npc_say(kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 			break;
 
 		case 13:
@@ -230,8 +235,8 @@ void Room172::daemon() {
 
 		case 16:
 			freeSeries7();
-			_val1 = 17;
-			series_play_with_breaks(PLAY6, "172ap02", 0x400, 1, 3, 8);
+			_pollyShould = 17;
+			series_play_with_breaks(PLAY6, "172ap02", 0x400, kCHANGE_POLLY_ANIMATION, 3, 8);
 			break;
 
 		case 17:
@@ -240,8 +245,8 @@ void Room172::daemon() {
 			_series1 = series_show("172fud2", 0x700);
 			_series1s = series_show("172fuds", 0x701);
 			intr_remove_no_walk_rect(_walk1);
-			_val1 = 18;
-			series_play_with_breaks(PLAY7, "172ap03", 0x600, 1, 3, 8);
+			_pollyShould = 18;
+			series_play_with_breaks(PLAY7, "172ap03", 0x600, kCHANGE_POLLY_ANIMATION, 3, 8);
 			break;
 
 		case 18:
@@ -255,7 +260,7 @@ void Room172::daemon() {
 		break;
 
 	case 2:
-		_series3.terminate();
+		_jug.terminate();
 		break;
 
 	case 3:
@@ -273,13 +278,13 @@ void Room172::daemon() {
 
 		if (_G(flags)[V092]) {
 			freeSeries7();
-			_val1 = 15;
+			_pollyShould = 15;
 		} else {
 			_G(flags)[V088] = 1;
-			_val1 = 16;
+			_pollyShould = 16;
 		}
 
-		kernel_trigger_dispatch_now(1);
+		kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		_G(flags)[V298] = 0;
 		_G(flags)[V299] = 0;
 		break;
@@ -288,8 +293,8 @@ void Room172::daemon() {
 		switch (_G(wilbur_should)) {
 		case 1:
 			_convName = _G(flags)[V087] ? "172p903" : "172p902";
-			_val1 = 12;
-			kernel_trigger_dispatch_now(1);
+			_pollyShould = 12;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
 		case 2:
@@ -346,8 +351,8 @@ void Room172::parser() {
 	} else if (player_said("TAKE", "CARROT JUICE ")) {
 		if (_G(flags)[V092]) {
 			_convName = "172p950";
-			_val1 = 12;
-			kernel_trigger_dispatch_now(1);
+			_pollyShould = 12;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		} else {
 			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
@@ -360,8 +365,8 @@ void Room172::parser() {
 		kernel_trigger_dispatch_now(3);
 	} else if (player_said("AUNT POLLY") && player_said_any("PHONE BILL", "CARROT JUICE")) {
 		_convName = imath_rand_bool(2) ? "172p901" : "172904";
-		_val1 = 12;
-		kernel_trigger_dispatch_now(1);
+		_pollyShould = 12;
+		kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 	} else if (player_said("MICROWAVE")) {
 		parserAction("172w004");
 	} else if (player_said("GEAR", "REFRIGERATOR")) {
@@ -375,8 +380,8 @@ void Room172::parser() {
 	} else if (player_said("TAKE", "JUICER")) {
 		if (_G(flags)[V092]) {
 			_convName = imath_rand_bool(2) ? "172p905a" : "172p905b";
-			_val1 = 12;
-			kernel_trigger_dispatch_now(1);
+			_pollyShould = 12;
+			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 		} else {
 			wilbur_speech("172w033");
 		}
@@ -390,8 +395,8 @@ void Room172::parser() {
 void Room172::parserAction(const char *name) {
 	if (_G(flags)[V092]) {
 		_convName = "172p950";
-		_val1 = 12;
-		kernel_trigger_dispatch_now(1);
+		_pollyShould = 12;
+		kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 	} else {
 		wilbur_speech(name);
 	}
@@ -428,22 +433,22 @@ void Room172::conv41() {
 
 			switch (node) {
 			case 0:
-				_val1 = 4;
-				kernel_trigger_dispatch_now(1);
+				_pollyShould = 4;
+				kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 				break;
 
 			case 2:
 				switch (entry) {
 				case 0:
-					_val1 = 10;
-					kernel_trigger_dispatch_now(1);
+					_pollyShould = 10;
+					kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 					break;
 
 				case 1:
 					freeSeries7();
 					_G(flags)[V092] = 0;
-					_val1 = 14;
-					npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+					_pollyShould = 14;
+					npc_say(sound, kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 					break;
 
 				default:
@@ -453,14 +458,14 @@ void Room172::conv41() {
 
 			case 3:
 				freeSeries7();
-				_val1 = 13;
-				npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+				_pollyShould = 13;
+				npc_say(sound, kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 				break;
 
 			default:
 				freeSeries7();
-				_val1 = 14;
-				npc_say(sound, 1, "172ap02", 0x400, 1, 31, 35);
+				_pollyShould = 14;
+				npc_say(sound, kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 				break;
 			}
 		}
