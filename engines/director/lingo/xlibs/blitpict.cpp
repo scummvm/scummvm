@@ -19,71 +19,98 @@
  *
  */
 
-/*************************************
- *
- * USED IN:
- * teamxtreme1-win
- * teamxtreme2-win
- *
- *************************************/
-
-/*
- *  -- BlitPict effects factory. 29Jun94 RNB
- * BlitPict
- * I                mNew                --Creates a new instance of the XObject
- * X                mDispose            --Disposes of XObject instance
- * S                mName               --Returns the XObject name (BlitPict)
- * I                mStatus             --Returns an integer status code
- * SI               mError, code        --Returns an error string
- * S                mLastError          --Returns last error string
- * SSIIIII          mInit               --Initializer
- * SOIIII           mCopy               --Initializes from an existing object
- * IIIIIOIIIIIIII   mDraw               --Draws to a destinitation
- * IIIIIIIIIIII     mSparkle            --Draws a sparkle from a bitmap
- */
+#include "common/system.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-utils.h"
 #include "director/lingo/xlibs/blitpict.h"
 
+/**************************************************
+ *
+ * USED IN:
+ * teamxtreme1
+ * teamxtreme2
+ *
+ **************************************************/
+
+/*
+-- BlitPict effects factory. 29Jun94 RNB
+BlitPict
+I                mNew                --Creates a new instance of the XObject
+X                mDispose            --Disposes of XObject instance
+S                mName               --Returns the XObject name (BlitPict)
+I                mStatus             --Returns an integer status code
+SI               mError, code        --Returns an error string
+S                mLastError          --Returns last error string
+SSIIIII          mInit               --Initializer
+SOIIII           mCopy               --Initializes from an existing object
+IIIIIOIIIIIIII   mDraw               --Draws to a destinitation
+IIIIIIIIIIII     mSparkle            --Draws a sparkle from a bitmap
+ */
 
 namespace Director {
 
-// The name is different from the obj filename.
-const char *BlitPict::xlibName = "BlitPict";
-const char *BlitPict::fileNames[] = {
-	"BlitPict",
+const char *BlitPictXObj::xlibName = "blitpict";
+const char *BlitPictXObj::fileNames[] = {
+	"blitpict",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",		BlitPict::m_new,			 0, 0,	400 },	// D4
+	{ "new",				BlitPictXObj::m_new,		 0, 0,	400 },
+	{ "dispose",				BlitPictXObj::m_dispose,		 0, 0,	400 },
+	{ "name",				BlitPictXObj::m_name,		 0, 0,	400 },
+	{ "status",				BlitPictXObj::m_status,		 0, 0,	400 },
+	{ "error",				BlitPictXObj::m_error,		 1, 1,	400 },
+	{ "lastError",				BlitPictXObj::m_lastError,		 0, 0,	400 },
+	{ "init",				BlitPictXObj::m_init,		 6, 6,	400 },
+	{ "copy",				BlitPictXObj::m_copy,		 5, 5,	400 },
+	{ "draw",				BlitPictXObj::m_draw,		 13, 13,	400 },
+	{ "sparkle",				BlitPictXObj::m_sparkle,		 11, 11,	400 },
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
-void BlitPict::open(int type) {
+BlitPictXObject::BlitPictXObject(ObjectType ObjectType) :Object<BlitPictXObject>("BlitPictXObj") {
+	_objType = ObjectType;
+}
+
+void BlitPictXObj::open(int type) {
 	if (type == kXObj) {
 		BlitPictXObject::initMethods(xlibMethods);
 		BlitPictXObject *xobj = new BlitPictXObject(kXObj);
 		g_lingo->exposeXObject(xlibName, xobj);
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
 }
 
-void BlitPict::close(int type) {
+void BlitPictXObj::close(int type) {
 	if (type == kXObj) {
 		BlitPictXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
 }
 
-
-BlitPictXObject::BlitPictXObject(ObjectType ObjectType) : Object<BlitPictXObject>("BlitPict") {
-	_objType = ObjectType;
-}
-
-void BlitPict::m_new(int nargs) {
+void BlitPictXObj::m_new(int nargs) {
+	if (nargs != 0) {
+		warning("BlitPictXObj::m_new: expected 0 arguments");
+		g_lingo->dropStack(nargs);
+	}
 	g_lingo->push(g_lingo->_state->me);
 }
 
-} // End of namespace Director
+XOBJSTUBNR(BlitPictXObj::m_dispose)
+XOBJSTUB(BlitPictXObj::m_name, "")
+XOBJSTUB(BlitPictXObj::m_status, 0)
+XOBJSTUB(BlitPictXObj::m_error, "")
+XOBJSTUB(BlitPictXObj::m_lastError, "")
+XOBJSTUB(BlitPictXObj::m_init, "")
+XOBJSTUB(BlitPictXObj::m_copy, "")
+XOBJSTUB(BlitPictXObj::m_draw, 0)
+XOBJSTUB(BlitPictXObj::m_sparkle, 0)
+
+}
