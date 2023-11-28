@@ -309,6 +309,7 @@ MODULE_OBJS += \
 	nuvie/gui/widgets/map_window.o \
 	nuvie/keybinding/keys.o \
 	nuvie/keybinding/key_actions.o \
+	nuvie/menus/asset_viewer_dialog.o \
 	nuvie/menus/audio_dialog.o \
 	nuvie/menus/cheats_dialog.o \
 	nuvie/menus/gameplay_dialog.o \

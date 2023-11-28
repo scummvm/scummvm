@@ -304,6 +304,10 @@ bool U6Shape::load_WoU_background(const Configuration *config, nuvie_game_t game
  *
  * Returns raw data representing the shape or nullptr on failure.
  */
+const unsigned char *U6Shape::get_data() const {
+	return raw;
+}
+
 unsigned char *U6Shape::get_data() {
 	return raw;
 }
@@ -381,7 +385,7 @@ bool U6Shape::blit(U6Shape *shp, uint16 x, uint16 y) {
 	if (shp == nullptr)
 		return false;
 
-	unsigned char *src_data = shp->get_data();
+	const unsigned char *src_data = shp->get_data();
 	uint16 src_w = 0, src_h = 0;
 
 	shp->get_size(&src_w, &src_h);

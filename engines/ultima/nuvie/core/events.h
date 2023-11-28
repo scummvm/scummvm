@@ -197,6 +197,7 @@ private:
 	Magic *magic;
 	KeyBinder *keybinder;
 	GUI_Dialog *gamemenu_dialog;
+	GUI_Dialog *assetviewer_dialog;
 
 	Common::Event event;
 	EventMode mode, last_mode;
@@ -431,6 +432,7 @@ public:
 	bool input_really_needs_directon() const;
 	void quitDialog();
 	void gameMenuDialog();
+	void assetViewer();
 	bool actor_exists(const Actor *a) const;
 
 	/* FIXME: Some of the above (action) functions can be removed from public, so

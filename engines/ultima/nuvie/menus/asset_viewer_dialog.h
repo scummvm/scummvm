@@ -19,32 +19,50 @@
  *
  */
 
-#ifndef NUVIE_GUI_GUI_TEXT_H
-#define NUVIE_GUI_GUI_TEXT_H
+#ifndef NUVIE_MENUS_ASSET_VIEWER_DIALOG_H
+#define NUVIE_MENUS_ASSET_VIEWER_DIALOG_H
 
-#include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/nuvie/gui/gui_dialog.h"
+#include "ultima/nuvie/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-class GUI_Font;
+#define GAMEMENUDIALOG_CB_DELETE 3
 
-class GUI_Text : public GUI_Widget {
+class GUI;
+class GUI_CallBack;
+class GUI_Button;
+class GUI_Text;
+class U6Shape;
+
+class AssetViewerDialog : public GUI_Dialog {
+	enum ViewMode {
+		TileViewMode,
+		ScreenViewMode,
+	};
+
 protected:
-	uint8 R, G, B;
-	char *text;
-	GUI_Font *font;
-	uint16 max_width; //max line width. No limit if set to 0
-
+	CallBack *callback_object;
+	GUI_Text *_titleTxt, *_infoTxt;
+	int _curIdx, _maxIdx;
+	int _shapeIdx;
+	ViewMode _viewMode;
+	U6Shape *_curShape;
+	Std::string _screenFile;
 public:
-	GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length);
-	GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length = 0);
-	~GUI_Text() override;
+	AssetViewerDialog(CallBack *callback);
+	~AssetViewerDialog() override;
 
-	/* Show the widget  */
 	void Display(bool full_redraw) override;
+	GUI_status close_dialog();
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	void setText(const char *txt);
+private:
+	void updateInfoTxt();
+	void updateShape();
+	bool init();
 };
 
 } // End of namespace Nuvie

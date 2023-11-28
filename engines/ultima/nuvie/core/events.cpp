@@ -46,6 +46,7 @@
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/core/magic.h"
 #include "ultima/nuvie/gui/gui_yes_no_dialog.h"
+#include "ultima/nuvie/menus/asset_viewer_dialog.h"
 #include "ultima/nuvie/menus/game_menu_dialog.h"
 #include "ultima/nuvie/views/inventory_widget.h"
 #include "ultima/nuvie/keybinding/keys.h"
@@ -116,6 +117,7 @@ void Events::clear() {
 	time_queue = game_time_queue = nullptr;
 	showingDialog = false;
 	gamemenu_dialog = nullptr;
+	assetviewer_dialog = nullptr;
 	ignore_timeleft = false;
 	in_control_cheat = false;
 	looking_at_spellbook = false;
@@ -2462,8 +2464,21 @@ void Events::gameMenuDialog() {
 		gui->AddWidget(gamemenu_dialog);
 		gui->lock_input(gamemenu_dialog);
 		keybinder->set_enable_joy_repeat(false);
-	} else
+	} else {
 		cancelAction();
+	}
+}
+
+void Events::assetViewer() {
+	if (mode != MOVE_MODE || view_manager->gumps_are_active())
+		return;
+	showingDialog = true;
+	map_window->set_looking(false);
+	map_window->set_walking(false);
+	assetviewer_dialog = new AssetViewerDialog(this);
+	gui->AddWidget(assetviewer_dialog);
+	gui->lock_input(assetviewer_dialog);
+	keybinder->set_enable_joy_repeat(false);
 }
 
 uint16 Events::callback(uint16 msg, CallBack *caller, void *data) {
@@ -2487,6 +2502,7 @@ uint16 Events::callback(uint16 msg, CallBack *caller, void *data) {
 	case GAMEMENUDIALOG_CB_DELETE :
 		showingDialog = false;
 		gamemenu_dialog = nullptr;
+		assetviewer_dialog = nullptr;
 		keybinder->set_enable_joy_repeat(true);
 		return GUI_YUM;
 	}

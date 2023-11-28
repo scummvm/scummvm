@@ -114,6 +114,7 @@ const Action NuvieActions[] = {
 	{ "INCREASE_DEBUG", ActionIncreaseDebug, "Increase debug", Action::normal_keys, true, INCREASE_DEBUG_KEY },
 	{ "CLOSE_GUMPS", ActionCloseGumps, "Close gumps", Action::normal_keys, true, OTHER_KEY },
 	{ "USE_ITEM", ActionUseItem, "Use item", Action::normal_keys, true, OTHER_KEY },
+	{ "ASSET_VIEWER", ActionAssetViewer, "Open the asset viewer", Action::normal_keys, true, OTHER_KEY },
 	{ "SHOW_EGGS", ActionShowEggs, "Show eggs", Action::cheat_keys, true, OTHER_KEY },
 	{ "TOGGLE_HACKMOVE", ActionToggleHackmove, "Toggle hack move", Action::cheat_keys, true, OTHER_KEY },
 	{ "TOGGLE_EGG_SPAWN", ActionToggleEggSpawn, "Toggle egg spawn", Action::cheat_keys, true, OTHER_KEY },

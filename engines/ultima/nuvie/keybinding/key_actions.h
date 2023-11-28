@@ -89,6 +89,7 @@ void ActionIncreaseDebug(int const *params);
 void ActionCloseGumps(int const *params);
 void ActionUseItem(int const *params);
 
+void ActionAssetViewer(int const *params);
 void ActionShowEggs(int const *params);
 void ActionToggleHackmove(int const *params);
 void ActionToggleEggSpawn(int const *params);

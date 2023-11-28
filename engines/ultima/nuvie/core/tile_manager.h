@@ -180,6 +180,9 @@ public:
 	uint8 get_number_of_animations() const {
 		return animdata.number_of_tiles_to_animate;
 	}
+	uint16 get_numtiles() const {
+		return numTiles;
+	}
 	uint16 get_anim_tile(uint8 anim_index) const {
 		return anim_index < animdata.number_of_tiles_to_animate ? animdata.tile_to_animate[anim_index] : 0;
 	}

@@ -477,6 +477,10 @@ void ActionUseItem(int const *params) {
 	// printf("ActionUseItem obj_n = %d, qual = %d, match_qual = %s, frame_n = %d, match_frame_n = %s\n", obj_n, qual, match_qual ? "true": "false", frame_n, match_frame_n ? "true": "false");
 }
 
+void ActionAssetViewer(int const *params) {
+	EVENT->assetViewer();
+}
+
 void ActionShowEggs(int const *params) {
 	bool show_eggs = !GAME->get_obj_manager()->is_showing_eggs();
 	GAME->get_obj_manager()->set_show_eggs(show_eggs);

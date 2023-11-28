@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
+GUI_Text::GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font, uint16 line_length)
 	: GUI_Widget(nullptr, x, y, 0, 0) {
 	R = r;
 	G = g;
@@ -38,32 +38,38 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, GUI_Font *gui_font,
 }
 
 
-GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
+GUI_Text::GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GUI_Font *gui_font, uint16 line_length)
 	: GUI_Widget(nullptr, x, y, 0, 0), R(r), G(g), B(b), max_width(line_length),
-	  font(gui_font) {
-	text = scumm_strdup(str);
+	  font(gui_font), text(nullptr) {
+	setText(str);
+}
+
+GUI_Text::~GUI_Text() {
+	free(text);
+}
+
+
+/* Show the widget  */
+void GUI_Text::Display(bool full_redraw) {
+	font->setTransparency(true);
+	font->setColoring(R, G, B);
+	font->textOut(surface, area.left, area.top, text, max_width);
+
+	DisplayChildren();
+}
+
+void GUI_Text::setText(const char *txt) {
+	if (text)
+		free(text);
+	text = scumm_strdup(txt);
 	if (text == nullptr)
-		error("GUI_Text: failed to allocate memory for text\n");
+		error("GUI_Text: failed to allocate memory for text");
 
 	int w, h;
 	font->textExtent(text, &w, &h, max_width);
 
 	area.setWidth(w);
 	area.setHeight(h);
-}
-
-GUI_Text::~GUI_Text() {
-	delete[] text;
-}
-
-
-/* Show the widget  */
-void GUI_Text:: Display(bool full_redraw) {
-	font->setTransparency(true);
-	font->setColoring(R, G, B);
-	font->textOut(surface, area.left, area.top, text, max_width);
-
-	DisplayChildren();
 }
 
 } // End of namespace Nuvie
