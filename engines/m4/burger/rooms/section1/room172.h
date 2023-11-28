@@ -32,13 +32,13 @@ class Room172 : public Room {
 private:
 	machine *_series1 = nullptr;
 	machine *_series1s = nullptr;
-	Series _series3;
+	Series _jug;
 	machine *_series4 = nullptr;
 	Series _series5;
 	machine *_series7 = nullptr;
 	noWalkRect *_walk1 = nullptr;
 	const char *_convName = nullptr;
-	int _val1 = 0;
+	int _pollyShould = 0;
 
 	void loadSeries7();
 	void freeSeries5() {
