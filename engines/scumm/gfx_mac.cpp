@@ -3789,7 +3789,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 	prepareSaveLoad(savegameNames, busySlots, slotIds, ARRAYSIZE(busySlots));
 
 	int firstAvailableSlot = -1;
-	for (int i = 0; i < ARRAYSIZE(busySlots); i++) {
+	for (int i = 1; i < ARRAYSIZE(busySlots); i++) { // Skip the autosave slot
 		if (!busySlots[i]) {
 			firstAvailableSlot = i;
 			break;
