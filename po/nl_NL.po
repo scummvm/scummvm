@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-24 01:15+0000\n"
-"PO-Revision-Date: 2023-07-04 16:50+0000\n"
+"PO-Revision-Date: 2023-11-29 00:41+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -32,27 +32,21 @@ msgid "Features compiled in:"
 msgstr "Features meegecompileerd:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Spel-ID niet ondersteund"
+msgstr "niet ondersteund"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Uitgeschakeld"
+msgstr "uitgeschakeld"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Uitgeschakeld"
+msgstr "ingeschakeld"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU extentie ondersteuning:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -254,10 +248,8 @@ msgid "Load"
 msgstr "Laden"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Laad bestand"
+msgstr "Laad code uit bestand"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
@@ -380,28 +372,24 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Selecteer JSON bestand van scummvm.org website"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Bestand uploaden niet gelukt!"
+msgstr "JSON bestand inladen mislukt"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Download Freeware Spellen en Demos"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLCs downloaden..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Download"
+msgstr "Alle Downloads"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -479,16 +467,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Download snelheid: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Spelbestanden downloaden"
+msgstr "Spellen Downloaden"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Download"
+msgstr "Downloads in behandeling"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1019,44 +1003,36 @@ msgid "Right"
 msgstr "Rechts"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Backend"
+msgstr "Backspace"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
-msgstr "Karakter verwijderen"
+msgstr "Karakter Verwijderen"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Ga naar einde regel"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "Selecteer SoundFont"
+msgstr "Selecteer tot einde regel"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Selecteer map voor plugins"
+msgstr "Selecteer van begin regel"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Ga naar begin regel"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Knip"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Kopieer"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1114,21 +1090,17 @@ msgid "Prev"
 msgstr "Vorig"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Spel opslaan..."
+msgstr "Plaatje opslaan..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u van %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Spel Opslaan"
+msgstr "Plaatje Opslaan"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1181,7 +1153,7 @@ msgstr "Platform"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Jaar"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1237,14 +1209,12 @@ msgid "Global ~O~pts..."
 msgstr "Alg. ~O~pties..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Spelbestanden downloaden"
+msgstr "Spellen Downloaden"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Download freeware spellen voor ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1413,10 +1383,8 @@ msgstr "Platform niet gedetecteerd"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Onbekende fout"
+msgstr "Onbekend Jaar"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1629,16 +1597,12 @@ msgid "Shader Path:"
 msgstr "Shader Pad:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "Spelbestanden downloaden"
+msgstr "Shaders Downloaden"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Controleer op updates van shader packs"
+msgstr "Controleer de scummvm.org website op updates van shader packs"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1972,17 +1936,13 @@ msgid "Default"
 msgstr "Standaard"
 
 #: gui/options.cpp:2455
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Spel Pad:"
+msgstr "DLC Pad:"
 
 #: gui/options.cpp:2457
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Spel Pad:"
+msgstr "DLC Pad:"
 
 #: gui/options.cpp:2465 gui/options.cpp:2467 gui/options.cpp:2468
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2051,10 +2011,8 @@ msgstr ""
 "een spel."
 
 #: gui/options.cpp:2559
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Vallen uitschakelen"
+msgstr "Schalen van vaste lettertypes uitschakelen"
 
 #: gui/options.cpp:2560
 msgid ""
@@ -2097,16 +2055,12 @@ msgstr ""
 "een bestand of map te selecteren."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Download"
+msgstr "Download Iconen"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Controleer op updates van icon packs"
+msgstr "Controleer de scummvm.org website op updates van icon packs"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -2425,10 +2379,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "Selecteer map voor GUI startmenu miniaturen"
 
 #: gui/options.cpp:3185
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Selecteer map voor plugins"
+msgstr "Selecteer map voor DLC downloads"
 
 #: gui/options.cpp:3196
 msgid "Select directory for extra files"
@@ -4612,10 +4564,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1089
 #: backends/platform/ios7/ios7_osys_misc.mm:306
 #: backends/platform/ios7/ios7_osys_misc.mm:350
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "Spel ~T~oevoegen..."
+msgstr "Spellen Toevoegen"
 
 #: backends/platform/android/android.cpp:1092
 #, fuzzy
