@@ -177,7 +177,7 @@ struct Datum {	/* interpreter stack type */
 	const char *type2str(bool ilk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
-	CompareResult compareTo(Datum &d) const;
+	uint32 compareTo(Datum &d) const;
 
 	bool operator==(Datum &d) const;
 	bool operator>(Datum &d) const;
