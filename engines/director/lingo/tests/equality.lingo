@@ -58,3 +58,28 @@ scummvmAssert("a" <= "Bubba")
 scummvmAssert("z" > "Z")
 scummvmAssert("abba" > "Abba")
 
+-- Void comparison
+set v1 = value("!")
+set v2 = value("!")
+
+scummvmAssert(v1 = v2)
+scummvmAssert(not(v1 < v2))
+scummvmAssert(not(v1 > v2))
+
+scummvmAssert(v1 = 0)
+scummvmAssert(v1 < 0)
+scummvmAssert(not(v1 > 0))
+
+scummvmAssert(not(v1 = 0.0))
+scummvmAssert(v1 < 0.0)
+scummvmAssert(not(v1 > 0.0))
+
+scummvmAssert(not(v1 = "0"))
+scummvmAssert(v1 < "0")
+scummvmAssert(not(v1 > "0"))
+
+scummvmAssert(not(v1 = "what"))
+scummvmAssert(v1 < "what")
+scummvmAssert(not(v1 > "what"))
+
+

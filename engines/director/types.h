@@ -416,10 +416,10 @@ struct CastMemberID {
 };
 
 enum CompareResult {
-	kCompareLess,
-	kCompareEqual,
-	kCompareGreater,
-	kCompareError
+	kCompareLess	= 1 << 0,
+	kCompareEqual	= 1 << 1,
+	kCompareGreater = 1 << 2,
+	kCompareError	= 1 << 3,
 };
 
 enum DebugDrawModes {
