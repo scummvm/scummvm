@@ -2533,8 +2533,14 @@ void MacGui::initialize() {
 		// TODO: This can be found in the STRS resource
 		Common::String aboutMenuDef = "About " + name() + "...<B;(-";
 
-		if (_vm->_game.id == GID_LOOM)
-			aboutMenuDef += ";Drafts Inventory";
+		if (_vm->_game.id == GID_LOOM) {
+			aboutMenuDef += ";";
+
+			if (!_vm->enhancementEnabled(kEnhUIUX))
+				aboutMenuDef += "(";
+
+			aboutMenuDef += "Drafts Inventory";
+		}
 
 		menu->addStaticMenus(menuSubItems);
 		menu->createSubMenuFromString(0, aboutMenuDef.c_str(), 0);
