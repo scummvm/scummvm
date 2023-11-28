@@ -86,12 +86,13 @@ static Tile placeholder_tile = {
 
 CommandBar::CommandBar() : GUI_Widget(nullptr), game(nullptr), event(nullptr),
 		background(nullptr), font(nullptr), selected_action(-1), offset(0),
-		combat_mode(false), bg_color(0), font_color(0) {
+		combat_mode(false), bg_color(0), font_color(0), active_action_num(-1),
+		lever_up(nullptr), lever_down(nullptr) {
 }
 
 CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
-		background(nullptr), combat_mode(false), bg_color(0),
-		font_color(0) {
+		background(nullptr), combat_mode(false), bg_color(0), active_action_num(-1),
+		font_color(0), lever_up(nullptr), lever_down(nullptr) {
 	Weather *weather;
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off =  game->get_game_y_offset();
@@ -162,8 +163,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
 	wind = "?";
 
 	bg_color = game->get_palette()->get_bg_color();
-	if (game->get_game_type() == NUVIE_GAME_U6)
-		init_buttons();
+	init_buttons();
 
 	weather->add_wind_change_notification_callback((CallBack *)this); //we want to know when the wind direction changes.
 }
@@ -171,6 +171,10 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
 CommandBar::~CommandBar() {
 	if (background)
 		delete background;
+	if (lever_up)
+		delete lever_up;
+	if (lever_down)
+		delete lever_down;
 }
 
 bool CommandBar::init_buttons() {
@@ -195,6 +199,14 @@ bool CommandBar::init_buttons() {
 		icon[8] = &placeholder_tile; // load/save
 		icon[9] = &placeholder_tile; // quick save
 		icon[10] = &placeholder_tile; // quick load
+
+		Std::string filename;
+		Configuration *config = Game::get_game()->get_config();
+		config_get_path(config, "mdscreen.lzc", filename);
+		lever_up = new U6Shape();
+		lever_down = new U6Shape();
+		lever_up->load_from_lzc(filename, 2, 1);
+		lever_down->load_from_lzc(filename, 2, 0);
 	} else { // SE
 		icon[0] = &placeholder_tile; // move
 		icon[1] = &placeholder_tile; // get
@@ -327,7 +339,7 @@ bool CommandBar::try_selected_action(sint8 command_num) {
 		quick_load_num = 11;
 	}
 
-// CommandBarNewUI only commands
+	// CommandBarNewUI only commands
 	if (command_num == save_num) {
 		g_engine->openMainMenuDialog();
 		return false;
@@ -338,7 +350,7 @@ bool CommandBar::try_selected_action(sint8 command_num) {
 	else if (command_num >= save_num)
 		return false;
 
-// original CommandBar commands (also used in CommandBarNewUI)
+	// original CommandBar commands (also used in CommandBarNewUI)
 	if (game->get_game_type() == NUVIE_GAME_U6)
 		mode = U6_mode_tbl[command_num];
 	else if (game->get_game_type() == NUVIE_GAME_MD)
@@ -405,7 +417,7 @@ void CommandBar::Display(bool full_redraw) {
 				scr->fill(9, area.left + selected_action * 16, area.top + 24, 16, 1);
 		} else if (game->get_game_type() == NUVIE_GAME_SE) {
 			if (!game->is_orig_style()) {
-				unsigned char *se_ptr = background->get_data();
+				const unsigned char *se_ptr = background->get_data();
 				se_ptr += ((320 * 178) + 8); // ((bg_w * image_y_off)  + image_x_off)
 				scr->blit(area.left, area.top, se_ptr, 8, 163, 19, 320, true); // drawing command bar icons from background
 			}
@@ -413,14 +425,31 @@ void CommandBar::Display(bool full_redraw) {
 				fill_square(6);
 		} else { // MD
 			if (!game->is_orig_style()) {
-				unsigned char *md_bg_ptr = background->get_data();
+				const unsigned char *md_bg_ptr = background->get_data();
 				md_bg_ptr += ((320 * 163) + 15); // ((bg_w * image_y_off)  + image_x_off)
 				scr->fill(0, area.left, area.top, area.width(), area.height()); // lever slots, text, top, and bottom have transparency so we need to fill in black first
 				scr->blit(area.left, area.top, md_bg_ptr, 8, area.width(), area.height(), 320, true); // drawing command bar icons from background
 				scr->fill(0, area.left, area.top, 1, area.height()); // make left black so it looks better
 				scr->fill(0, area.left + area.width() - 1, area.top, 1, area.height()); // make right black so it looks better
 			}
-			// FIXME code to display the switched levers goes here (the selected action and the current action will be have the lever down)
+
+			//
+			// Display the switched levers. Original MD has lever down for:
+			// * the right-click action (left click is move)
+			// * a current action pressed via lever or keyboard (eg, drop)
+			// * combat lever if in combat mode
+			//
+			// TODO: Switch the right-click action down to match original.
+			//
+			const U6Shape *lever;
+			uint16 w, h;
+			lever_up->get_size(&w, &h);
+			for (int i = 0; i < 7; i++) {
+				lever = (i == active_action_num) ? lever_down : lever_up;
+				scr->blit(area.left + 18 * i + 6, area.top + 6, lever->get_data(), 8, w, h, w);
+			}
+			lever = (combat_mode ? lever_down : lever_up);
+			scr->blit(area.left + 18 * 7 + 6, area.top + 6, lever->get_data(), 8, w, h, w);
 		}
 
 		scr->update(area.left, area.top, area.width(), area.height());
@@ -432,6 +461,29 @@ void CommandBar::display_information() {
 	infostring += " Wind:";
 	infostring += wind;
 	font->drawString(screen, infostring.c_str(), area.left + 8, area.top, font_color, font_color);
+}
+
+void CommandBar::on_new_action(EventMode action) {
+	// This is only really needed on MD, but keep track on others too.
+	const EventMode *modetbl;
+	int modetblsz;
+	if (game->get_game_type() == NUVIE_GAME_U6) {
+		modetbl = U6_mode_tbl;
+		modetblsz = ARRAYSIZE(U6_mode_tbl);
+	} else if (game->get_game_type() == NUVIE_GAME_MD) {
+		modetbl = MD_mode_tbl;
+		modetblsz = ARRAYSIZE(MD_mode_tbl);
+	} else { // SE
+		modetbl = SE_mode_tbl;
+		modetblsz = ARRAYSIZE(SE_mode_tbl);
+	}
+
+	active_action_num = -1;
+	for (int i = 0; i < modetblsz; i++) {
+		if (action == modetbl[i])
+			active_action_num = i;
+	}
+	update_display = true;
 }
 
 uint16 CommandBar::callback(uint16 msg, CallBack *caller, void *data) {

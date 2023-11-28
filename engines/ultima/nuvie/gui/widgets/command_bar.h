@@ -54,7 +54,11 @@ protected:
 	Tile *icon[13];
 	U6Shape *background; // used to display the WoU command bar backgrounds
 
+	U6Shape *lever_up;	  // The lever in the up state (MD only)
+	U6Shape *lever_down;  // The lever in the down state (MD only)
+
 	sint8 selected_action; // underlined icon (-1 = none)
+	sint8 active_action_num; // the last action that was activated (for MD levers)
 	bool combat_mode; // state of combat icon
 	Std::string wind; // wind direction
 	void fill_square(uint8 pal_index);
@@ -88,6 +92,10 @@ public:
 	sint8 get_selected_action() const {
 		return selected_action;
 	}
+
+	// Called when a mode is being changed from here
+	// *or* keyboard - so MD can update levers
+	void on_new_action(EventMode action);
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override {
 		return GUI_PASS;

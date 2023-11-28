@@ -3427,7 +3427,7 @@ bool Events::newAction(EventMode new_mode) {
 	if (game->user_paused())
 		return false;
 	cursor_mode = false;
-// FIXME: make ATTACK_MODE use INPUT_MODE
+	// FIXME: make ATTACK_MODE use INPUT_MODE
 	if (mode == ATTACK_MODE && new_mode == ATTACK_MODE) {
 		close_gumps();
 		doAction();
@@ -3440,6 +3440,10 @@ bool Events::newAction(EventMode new_mode) {
 	// since INPUT_MODE must be set to get input, it wouldn't make sense that
 	// a mode would be requested again to complete the action
 	assert(mode != new_mode);
+
+	CommandBar *commandbar = game->get_command_bar();
+	if (commandbar)
+		commandbar->on_new_action(new_mode);
 
 	// called again (same key pressed twice); equivalent of pressing ENTER so call doAction() to set input
 	if (mode == INPUT_MODE && new_mode == last_mode) {
@@ -3563,6 +3567,10 @@ void Events::endAction(bool prompt) {
 	if (mode == ATTACK_MODE) { // FIXME: make ATTACK_MODE use INPUT_MODE
 		map_window->set_show_cursor(false);
 	}
+
+	// Clear any switches in MD
+	if (game->get_command_bar())
+		game->get_command_bar()->on_new_action(MOVE_MODE);
 
 	// Revert to the previous mode, instead of MOVE_MODE.
 	/* Switching from INPUT_MODE, clear state indicating the type of input
