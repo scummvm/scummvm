@@ -2660,6 +2660,11 @@ bool MacGui::handleMenu(int id, Common::String &name) {
 }
 
 void MacGui::updateWindowManager() {
+	Graphics::MacMenu *menu = _windowManager->getMenu();
+
+	if (!menu)
+		return;
+
 	// We want the arrow cursor for menus. Note that the menu triggers even
 	// when the mouse is invisible, which may or may not be a bug. But the
 	// original did allow you to open the menu with Alt even when the
@@ -2695,9 +2700,9 @@ void MacGui::updateWindowManager() {
 	bool canLoad = _vm->canLoadGameStateCurrently() && saveCondition;
 	bool canSave = _vm->canSaveGameStateCurrently() && loadCondition;
 
-	Graphics::MacMenuItem *gameMenu = _windowManager->getMenu()->getMenuItem("Game");
-	Graphics::MacMenuItem *loadMenu = _windowManager->getMenu()->getSubMenuItem(gameMenu, 0);
-	Graphics::MacMenuItem *saveMenu = _windowManager->getMenu()->getSubMenuItem(gameMenu, 1);
+	Graphics::MacMenuItem *gameMenu = menu->getMenuItem("Game");
+	Graphics::MacMenuItem *loadMenu = menu->getSubMenuItem(gameMenu, 0);
+	Graphics::MacMenuItem *saveMenu = menu->getSubMenuItem(gameMenu, 1);
 
 	loadMenu->enabled = canLoad;
 	saveMenu->enabled = canSave;
