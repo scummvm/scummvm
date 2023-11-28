@@ -419,7 +419,7 @@ void LoadSaveMenu::enterFilename() {
 			if (_enteredString.size()) {
 				_enteredString.deleteLastChar();
 			}
-		} else if (key.keycode == Common::KEYCODE_RETURN) {
+		} else if (key.keycode == Common::KEYCODE_RETURN || key.keycode == Common::KEYCODE_KP_ENTER) {
 			enterKeyPressed = true;
 		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
 			_enteredString += key.ascii;

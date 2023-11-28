@@ -211,7 +211,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 
 				drawText();
 			}
-		} else if (key.keycode == Common::KEYCODE_RETURN) {
+		} else if (key.keycode == Common::KEYCODE_RETURN || key.keycode == Common::KEYCODE_KP_ENTER) {
 			_playerHasHitReturn = true;
 		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
 			if (activeField.size() && activeField.lastChar() == '-') {
