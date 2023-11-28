@@ -352,13 +352,13 @@ void Room171::daemon() {
 			break;
 
 		case 6:
-			npc_say(conv_sound_to_play(), 10001, "171ap01n", 0x2ff, false);
+			npc_say(conv_sound_to_play(), kRESUME_CONVERSATION, "171ap01n", 0x2ff, false);
 			break;
 
 		case 7:
 			digi_stop(2);
 			freeSeries();
-			series_play_with_breaks(PLAY3, "171ap02", 0x300, 10001, 3);
+			series_play_with_breaks(PLAY3, "171ap02", 0x300, kRESUME_CONVERSATION, 3);
 			break;
 
 		case 8:
@@ -383,18 +383,18 @@ void Room171::daemon() {
 			break;
 
 		case 11:
-			npc_say(10001);
+			npc_say(kRESUME_CONVERSATION);
 			break;
 
 		case 12:
 			digi_stop(2);
 			npc_say();
-			series_play_with_breaks(PLAY5, "171ap04", 0x800, 10001, 3);
+			series_play_with_breaks(PLAY5, "171ap04", 0x800, kRESUME_CONVERSATION, 3);
 			break;
 
 		case 13:
 			_pollyShould = 14;
-			npc_say(5, "171ap05", 0x800);
+			npc_say(kCHANGE_POLLY_ANIMATION, "171ap05", 0x800);
 			break;
 
 		case 14:
@@ -407,22 +407,22 @@ void Room171::daemon() {
 		case 15:
 			terminateMachineAndNull(_lid);
 			_pollyShould = 16;
-			series_play_with_breaks(PLAY7, "171ap07", 0, 5, 2);
+			series_play_with_breaks(PLAY7, "171ap07", 0, kCHANGE_POLLY_ANIMATION, 2);
 			break;
 
 		case 16:
-			npc_say(10001, "171ap08", 0, false);
+			npc_say(kRESUME_CONVERSATION, "171ap08", 0, false);
 			break;
 
 		case 17:
 			freeSeries();
 			_pollyShould = 18;
-			series_play_with_breaks(PLAY8, "171ap09", 0, 5, 3);
+			series_play_with_breaks(PLAY8, "171ap09", 0, kCHANGE_POLLY_ANIMATION, 3);
 			break;
 
 		case 18:
 			_pollyShould = 19;
-			series_play_with_breaks(PLAY9, "171ap09", 0x301, 5, 3);
+			series_play_with_breaks(PLAY9, "171ap09", 0x301, kCHANGE_POLLY_ANIMATION, 3);
 			series_show("171plid", 0);
 			break;
 
@@ -439,13 +439,13 @@ void Room171::daemon() {
 
 		case 21:
 			freeSeries();
-			npc_say(10001, "171ap10", 0x700, true, 0, 6);
+			npc_say(kRESUME_CONVERSATION, "171ap10", 0x700, true, 0, 6);
 			break;
 
 		case 22:
 			npc_say(5);
 			_pollyShould = 23;
-			series_play_with_breaks(PLAY10, "171ap10", 0x700, 5, 3);
+			series_play_with_breaks(PLAY10, "171ap10", 0x700, kCHANGE_POLLY_ANIMATION, 3);
 			break;
 
 		case 23:
@@ -471,15 +471,16 @@ void Room171::daemon() {
 			player_update_info();
 
 			if (_flag1 && (_G(player_info).x != 436 || _G(player_info).y != 288))
-				ws_walk(436, 288, 0, 10001, 2);
+				ws_walk(436, 288, 0, kRESUME_CONVERSATION, 2);
 
 			digi_play_loop("171_009", 2, 50);
-			_series.play("171ap11", 0x8ff, 32, 4, 6, -1);
+			_series[0] = series_play("171ap11", 0x8ff, 32, 4, 6, -1);
+			_series[1] = series_play("171ap11", 0x900, 0, -1, 6, -1);
 			break;
 
 		case 28:
 			_pollyShould = 29;
-			npc_say(_digi1, 5, "171ap13", 0x8fe);
+			npc_say(_digi1, kCHANGE_POLLY_ANIMATION, "171ap13", 0x8fe);
 			break;
 
 		case 29:
@@ -490,7 +491,7 @@ void Room171::daemon() {
 
 		case 30:
 			_pollyShould = 32;
-			series_play_with_breaks(PLAY15, "171ap16", 0x8ff, 5, 3);
+			series_play_with_breaks(PLAY15, "171ap16", 0x8ff, kCHANGE_POLLY_ANIMATION, 3);
 			break;
 
 		case 31:
@@ -504,12 +505,12 @@ void Room171::daemon() {
 			break;
 
 		case 33:
-			npc_say(10001, "171ap13", 0x8fe);
+			npc_say(kRESUME_CONVERSATION, "171ap13", 0x8fe);
 			break;
 
 		case 34:
 			_pollyShould = 35;
-			npc_say(5, "171ap13", 0x8fe);
+			npc_say(kCHANGE_POLLY_ANIMATION, "171ap13", 0x8fe);
 			break;
 
 		case 35:
@@ -520,16 +521,16 @@ void Room171::daemon() {
 
 		case 36:
 			_pollyShould = 26;
-			series_play_with_breaks(PLAY12, "171ap12", 0x8ff, 5, 3);
+			series_play_with_breaks(PLAY12, "171ap12", 0x8ff, kCHANGE_POLLY_ANIMATION, 3);
 			break;
 
 		case 37:
-			series_play_with_breaks(PLAY13, "171ap14", 0x8ff, 5, 3);
+			series_play_with_breaks(PLAY13, "171ap14", 0x8ff, kCHANGE_POLLY_ANIMATION, 3);
 			break;
 
 		case 38:
 			_pollyShould = 39;
-			npc_say(5, "171ap13", 0x8fe);
+			npc_say(kCHANGE_POLLY_ANIMATION, "171ap13", 0x8fe);
 			break;
 
 		case 39:
@@ -540,7 +541,7 @@ void Room171::daemon() {
 				terminateMachineAndNull(_series3);
 
 			_pollyShould = 40;
-			series_play_with_breaks(PLAY14, "171ap15", 0x700, 5, 2, 8);
+			series_play_with_breaks(PLAY14, "171ap15", 0x700, kCHANGE_POLLY_ANIMATION, 2, 8);
 			break;
 
 		case 40:
@@ -610,7 +611,7 @@ void Room171::daemon() {
 
 		case 2:
 			disable_player();
-			_G(wilbur_should) = 10001;
+			_G(wilbur_should) = kRESUME_CONVERSATION;
 			series_play_with_breaks(PLAY2, "171wi02", 0xc01, kCHANGE_WILBUR_ANIMATION, 3, 5, 100, 0, -3);
 			break;
 
@@ -625,7 +626,7 @@ void Room171::daemon() {
 			_pollyShould = 28;
 			break;
 
-		case 10001:
+		case kRESUME_CONVERSATION:
 			ws_unhide_walker();
 
 			if (_G(flags)[V092] || _G(flags)[V086])
@@ -793,7 +794,7 @@ void Room171::conv40() {
 		return;
 
 	if (who == 1) {
-		wilbur_speech(conv_sound_to_play(), 10001);
+		wilbur_speech(conv_sound_to_play(), kRESUME_CONVERSATION);
 
 		switch (node) {
 		case 6:
@@ -887,11 +888,6 @@ void Room171::conv40() {
 			kernel_trigger_dispatch_now(kCHANGE_POLLY_ANIMATION);
 			break;
 
-		case 5:
-		case 7:
-			_pollyShould = 34;
-			break;
-
 		case 6:
 			_pollyShould = (entry == 6) ? 33 : 34;
 			break;
@@ -917,6 +913,7 @@ void Room171::conv40() {
 			break;
 
 		default:
+			_pollyShould = 34;
 			break;
 		}
 	}
