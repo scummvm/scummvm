@@ -73,6 +73,10 @@ struct Series {
 		return _series != nullptr;
 	}
 
+	machine *&operator[](uint idx) {
+		return (idx == 0) ? _series : _seriesS;
+	}
+
 	frac16 *regs() const {
 		return _series->myAnim8->myRegs;
 	}
