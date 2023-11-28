@@ -839,6 +839,11 @@ void PCMMusicPlayer::restoreThatTune(void *voidPtr) {
 void PCMMusicPlayer::setMusicSceneDetails(SCNHANDLE hScript,
 		SCNHANDLE hSegment, const char *fileName) {
 
+	// A call to setVol(uint8) later in this method will lock the mixer.
+	// To match the locking order of the audio thread and prevent a deadlock,
+	// we preemptively lock it here first.
+	// See bug #13953
+	Common::StackLock mixerLock(_vm->_mixer->mutex());
 	Common::StackLock lock(_mutex);
 
 	stop();
