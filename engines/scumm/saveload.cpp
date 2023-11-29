@@ -68,7 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 111
+#define CURRENT_VER 112
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -744,6 +744,9 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (_game.features & GF_OLD_BUNDLE)
 		loadCharset(0); // FIXME - HACK ?
 
+	// Save this for later
+	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
+
 	//
 	// Now do the actual loading
 	//
@@ -862,8 +865,18 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	vs->setDirtyRange(0, vs->h);
 	updateDirtyScreen(kMainVirtScreen);
 	updatePalette();
+
+	if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
+		sb -= 20 * 2;
+		sh -= 20 * 2;
+	} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
+		sb += 20 * 2;
+		sh += 20 * 2;
+	}
+
 	initScreens(sb, sh);
 
+	_useMacScreenCorrectHeight = currentSessionUsesCorrection;
 	_completeScreenRedraw = true;
 
 	// Reset charset mask
@@ -1396,6 +1409,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		// WORKAROUND: FM-TOWNS original _screenHeight is 240. if we use trim_fmtowns_to_200_pixels, it's reduced to 200
 		// camera's y is always half of the screen. in order to share save games between the two modes, we need to update the y
 		camera._cur.y = _screenHeight / 2;
+
 	s.syncAsSint16LE(camera._last.x, VER(8));
 	s.syncAsSint16LE(camera._last.y, VER(8));
 	s.syncAsSint16LE(camera._accel.x, VER(8));
@@ -1408,6 +1422,30 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(camera._rightTrigger, VER(8));
 	s.syncAsUint16LE(camera._movingToActor, VER(8));
 	s.syncAsByte(_cameraIsFrozen, VER(108));
+
+	// For Mac versions...
+	bool currentSessionUsesCorrection = _useMacScreenCorrectHeight;
+
+	s.syncAsUint16LE(_screenDrawOffset, VER(112));
+	s.syncAsByte(_useMacScreenCorrectHeight, VER(112));
+
+	// If this is an older version without Mac screen
+	// offset correction, bring it up to date...
+	if (s.isLoading()) {
+		if (s.getVersion() < VER(112)) {
+			// We assume _useMacScreenCorrectHeight == false
+			camera._cur.y += _screenDrawOffset;
+			camera._last.y += _screenDrawOffset;
+		} else {
+			if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
+				camera._cur.y -= _screenDrawOffset;
+				camera._last.y -= _screenDrawOffset;
+			} else if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
+				camera._cur.y += _screenDrawOffset;
+				camera._last.y += _screenDrawOffset;
+			}
+		}
+	}
 
 	s.syncAsByte(_actorToPrintStrFor, VER(8));
 	s.syncAsByte(_charsetColor, VER(8));
@@ -1554,6 +1592,22 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_screenB, VER(8));
 	s.syncAsUint16LE(_screenH, VER(8));
+
+	// Other screen offset corrections for Mac games savestates...
+	if (s.isLoading()) {
+		if (s.getVersion() < VER(112)) {
+			_screenB += _screenDrawOffset;
+			_screenH += _screenDrawOffset;
+		} else {
+			if (currentSessionUsesCorrection && !_useMacScreenCorrectHeight) {
+				_screenB -= _screenDrawOffset;
+				_screenH -= _screenDrawOffset;
+			} else if (!currentSessionUsesCorrection && _useMacScreenCorrectHeight) {
+				_screenB += _screenDrawOffset;
+				_screenH += _screenDrawOffset;
+			}
+		}
+	}
 
 	s.syncAsUint16LE(_NESCostumeSet, VER(47));
 
