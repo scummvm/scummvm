@@ -64,6 +64,8 @@ void GraphicsManager::transitionSnapshotBox() {
 	Graphics::Surface *surf = _snapshotSurface.scale(xScale, yScale);
 
 	_renderSurface.copyRectToSurface(surf->getPixels(), surf->pitch, (_winWidth - xScale) / 2, (_winHeight - yScale) / 2, xScale, yScale);
+
+	delete surf;
 }
 
 //----------------------------------------------------
