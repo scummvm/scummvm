@@ -4420,6 +4420,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1t("it1d", "Demo", "INTHE1ST.EXE", "b6c6fd5d3cdb941f63128e13716c2f68", 2597207, 400),
 	// found on PC Format CD-ROM Collection 19
 	WINDEMO1t("it1d", "Demo", "INTHE1ST.EXE", "685717457c3219012eda7403579f94c9", 2576067, 400),
+	// found on Myst windows CD-ROM from 1996
+	WINDEMO1t("it1d", "Demo", "in1demo.exe", "t:b6c6fd5d3cdb941f63128e13716c2f68", 2597223, 400),
 
 	MACGAME1("iwave", "Issue 1", "!",		  "r:ae7178ba5dd9dcd15fb7a27cd99089b2", 484133, 404),
 	WINGAME1("iwave", "Issue 1", "IWAVE.EXE", "d:67aa1f75dc23e071e5325be04e9738a6", 690955, 404),
