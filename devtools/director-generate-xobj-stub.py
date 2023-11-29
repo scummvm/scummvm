@@ -165,11 +165,12 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	# get resource table
 	file.seek(ne_offset + 0x24, os.SEEK_SET)
 	restable_offset = read_uint16_le(file.read(0x2))
+	resident_names_offset = read_uint16_le(file.read(0x2))
 	file.seek(ne_offset + restable_offset)
 	shift_count = read_uint16_le(file.read(0x2))
 	# read each resource
 	resources = []
-	while True:
+	while file.tell() < ne_offset + resident_names_offset:
 		type_id = read_uint16_le(file.read(0x2)) # should be 0x800a for XMETHTABLE
 		if type_id == 0:
 			break
@@ -192,7 +193,7 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 			entries=entries
 		))
 	resource_names = []
-	while True:
+	while file.tell() < ne_offset + resident_names_offset:
 		length = read_uint8(file.read(0x1))
 		if length == 0:
 			break
@@ -202,7 +203,9 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	print(resources, resource_names)
 
 	xmethtable_exists = "XMETHTABLE" in resource_names
-	resource_names = [x for x in resource_names if x != "XMETHTABLE"]
+	file.seek(ne_offset + resident_names_offset)
+	name_length = read_uint8(file.read(0x1))
+	library_name = file.read(name_length).decode('ASCII')
 
 	# Borland C++ can put the XMETHTABLE token into a weird nonstandard resource
 	for x in filter(lambda d: d["type_id"] == 0x800f, resources):
@@ -212,10 +215,7 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 			xmethtable_exists |= b"XMETHTABLE" in data
 
 	if not xmethtable_exists:
-		raise ValueError("XMETHTABLE not found in the resource table!")
-
-	if len(resource_names) == 0:
-		raise ValueError(f"No names in the resource table!")
+		raise ValueError("XMETHTABLE not found!")
 
 	resources = list(filter(lambda x: x["type_id"] == 0x800a, resources))
 	if len(resources) != 1:
@@ -223,7 +223,6 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	if len(resources[0]["entries"]) != 1:
 		raise ValueError("Expected a single matching resource entry!")
 
-	library_name = resource_names[0]
 	xmethtable_offset = resources[0]["entries"][0]["offset"]
 	xmethtable_length = resources[0]["entries"][0]["length"]
 	print(f"Found XMETHTABLE for XObject library {library_name}!")
@@ -270,9 +269,13 @@ def generate_stubs(xmethtable: list[str], slug: str, name: str, director_version
 		if not e.strip():
 			break
 		elems = e.split()
+		if not elems or elems[0].startswith('--'):
+			continue
 		returnval = elems[0][0]
 		args = elems[0][1:]
 		methname = elems[1].split(",")[0]
+		if methname.startswith('+'):
+			methname = methname[1:]
 		if methname.startswith('m'):
 			methname = methname[1].lower() + methname[2:]
 		meths.append(dict(
