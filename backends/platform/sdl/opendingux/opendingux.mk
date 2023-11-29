@@ -19,9 +19,6 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	$(MKDIR) $(bundle)/engine-data
 	$(CP) $(DIST_FILES_ENGINEDATA) $(bundle)/engine-data/
-ifeq ($(OPENDINGUX_TARGET), rs90)
-	$(CP) $(srcdir)/dists/opendingux/fonts.dat $(bundle)/engine-data/fonts.dat
-endif
 endif
 ifdef DIST_FILES_NETWORKING
 	$(CP) $(DIST_FILES_NETWORKING) $(bundle)/
