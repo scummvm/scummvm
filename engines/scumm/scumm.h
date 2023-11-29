@@ -1277,6 +1277,18 @@ public:
 	int _screenStartStrip = 0, _screenEndStrip = 0;
 	int _screenTop = 0;
 
+	// For Mac versions of 320x200 games:
+	// these versions rendered at 640x480 without any aspect ratio correction;
+	// in order to correctly display the games as they should be, we perform some
+	// offset corrections within the various rendering pipelines.
+	//
+	// The only reason I've made _useMacScreenCorrectHeight toggleable is because
+	// maybe someday the screen correction can be activated or deactivated from the
+	// ScummVM GUI; but currently I'm not taking that responsibility, after all the
+	// work done on ensuring that old savegames translate correctly to the new setting... :-P
+	bool _useMacScreenCorrectHeight = true;
+	int _screenDrawOffset = 0;
+
 	Common::RenderMode _renderMode;
 	uint8 _bytesPerPixel = 1;
 	Graphics::PixelFormat _outputPixelFormat;

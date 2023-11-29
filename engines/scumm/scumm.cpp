@@ -354,6 +354,10 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else if (_game.platform == Common::kPlatformNES) {
 		_screenWidth = 256;
 		_screenHeight = 240;
+	} else if (_useMacScreenCorrectHeight && _game.platform == Common::kPlatformMacintosh && _game.version == 3) {
+		_screenWidth = 320;
+		_screenHeight = 240;
+		_screenDrawOffset = 20;
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
@@ -1163,7 +1167,7 @@ Common::Error ScummEngine::init() {
 
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 
 					_macGui = new MacIndy3Gui(this, macResourceFile);
 					break;
@@ -1189,7 +1193,7 @@ Common::Error ScummEngine::init() {
 
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
-					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 					_macGui = new MacLoomGui(this, macResourceFile);
 					break;
 				}
