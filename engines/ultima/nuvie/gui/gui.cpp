@@ -45,7 +45,6 @@ GUI::GUI(const Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0
 	Graphics::ManagedSurface *sdl_surface;
 
 	gui = this;
-	screen_scale_factor = screen->get_scale_factor();
 
 	sdl_surface = screen->get_sdl_surface();
 
@@ -215,17 +214,6 @@ GUI_status GUI::HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;
-
-	if (screen_scale_factor != 1) {
-		if (Shared::isMouseDownEvent(event->type) || Shared::isMouseUpEvent(event->type)) {
-			event->mouse.x /= screen_scale_factor;
-			event->mouse.y /= screen_scale_factor;
-		}
-		if (event->type == Common::EVENT_MOUSEMOVE) {
-			event->mouse.x /= screen_scale_factor;
-			event->mouse.y /= screen_scale_factor;
-		}
-	}
 
 	if (dragging) { //&& !block_input)
 		if (Shared::isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.

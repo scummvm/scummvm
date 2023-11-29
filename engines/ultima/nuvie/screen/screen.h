@@ -25,7 +25,6 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/screen/surface.h"
-#include "ultima/nuvie/screen/scale.h"
 #include "graphics/screen.h"
 
 namespace Ultima {
@@ -42,12 +41,7 @@ private:
 	const Configuration *config;
 	Graphics::Screen *_rawSurface;
 	RenderSurface *_renderSurface;
-	ScalerRegistry     scaler_reg;     // Scaler Registry
-	const ScalerStruct *scaler;        // Scaler
-	int scaler_index;  // Index of Current Scaler
-	int scale_factor;  // Scale factor
 
-	bool doubleBuffer;
 	bool is_no_darkness;
 	bool non_square_pixels;
 
@@ -70,12 +64,6 @@ public:
 	bool is_non_square_pixels() {
 		return non_square_pixels;
 	}
-	int get_scaler_index() {
-		return scaler_index;
-	}
-	ScalerRegistry *get_scaler_reg() {
-		return &scaler_reg;
-	}
 	bool toggle_darkness_cheat();
 	bool toggle_fullscreen();
 	bool set_fullscreen(bool value);
@@ -85,15 +73,10 @@ public:
 	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = nullptr);
 	void *get_pixels();
 	const byte *get_surface_pixels() {
-		return (_renderSurface->get_pixels());
+		return _renderSurface->get_pixels();
 	}
-	uint16 get_pitch();
 	Graphics::ManagedSurface *create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
 	Graphics::ManagedSurface *create_sdl_surface_8(byte *src_buf, uint16 src_w, uint16 src_h);
-	uint16 get_bpp();
-	int get_scale_factor() const {
-		return scale_factor;
-	}
 	Graphics::ManagedSurface *get_sdl_surface();
 	uint16 get_width() const {
 		return width;
@@ -101,8 +84,6 @@ public:
 	uint16 get_height() const {
 		return height;
 	}
-	uint16 get_translated_x(uint16 x) const;
-	uint16 get_translated_y(uint16 y) const;
 
 	bool fill(uint8 colour_num, uint16 x, uint16 y, sint16 w, sint16 h);
 	void fade(uint16 dest_x, uint16 dest_y, uint16 src_w, uint16 src_h, uint8 opacity, uint8 fade_bg_color = 0);
@@ -136,10 +117,6 @@ public:
 	void update();
 	void update(int x, int y, uint16 w, uint16 h);
 	void preformUpdate();
-	void lock();
-	void unlock();
-
-	bool initScaler();
 
 	byte *copy_area(Common::Rect *area = nullptr, byte *buf = nullptr);
 	byte *copy_area(Common::Rect *area, uint16 down_scale);
@@ -174,19 +151,17 @@ protected:
 
 	inline void blitbitmap32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
-	byte *copy_area16(Common::Rect *area, uint16 down_scale);
-	byte *copy_area32(Common::Rect *area, uint16 down_scale);
+	byte *copy_area16(const Common::Rect *area, uint16 down_scale);
+	byte *copy_area32(const Common::Rect *area, uint16 down_scale);
 
-	byte *copy_area16(Common::Rect *area, byte *buf);
-	byte *copy_area32(Common::Rect *area, byte *buf);
-	void restore_area16(byte *pixels, Common::Rect *area, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
-	void restore_area32(byte *pixels, Common::Rect *area, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
+	byte *copy_area16(const Common::Rect *area, byte *buf);
+	byte *copy_area32(const Common::Rect *area, byte *buf);
+	void restore_area16(byte *pixels, const Common::Rect *area, byte *target = nullptr, const Common::Rect *target_area = nullptr, bool free_src = true);
+	void restore_area32(byte *pixels, const Common::Rect *area, byte *target = nullptr, const Common::Rect *target_area = nullptr, bool free_src = true);
 
 	void set_screen_mode();
 
 private:
-	int get_screen_bpp();
-
 	bool sdl1_toggle_fullscreen();
 };
 

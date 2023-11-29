@@ -49,8 +49,6 @@ protected:
 	/* The display surface */
 	Screen *screen;
 
-	int screen_scale_factor;
-
 	GUI_Font *gui_font;
 	GUI_DragManager *gui_drag_manager;
 

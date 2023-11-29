@@ -338,7 +338,6 @@ MODULE_OBJS += \
 	nuvie/save/save_game.o \
 	nuvie/screen/dither.o \
 	nuvie/screen/game_palette.o \
-	nuvie/screen/scale.o \
 	nuvie/screen/screen.o \
 	nuvie/screen/surface.o \
 	nuvie/script/script.o \

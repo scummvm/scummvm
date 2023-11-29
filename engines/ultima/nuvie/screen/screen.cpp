@@ -23,7 +23,6 @@
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/screen/surface.h"
-#include "ultima/nuvie/screen/scale.h"
 #include "ultima/nuvie/screen/screen.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/gui/widgets/background.h"
@@ -42,10 +41,8 @@ static const sint32 globeradius[]   = { 36, 112, 148, 192, 448 };
 static const sint32 globeradius_2[] = { 18, 56, 74, 96, 224 };
 
 Screen::Screen(const Configuration *cfg) : config(cfg), _rawSurface(nullptr),
-		_renderSurface(nullptr), scaler(nullptr), shading_data(nullptr),
-		scaler_index(0), scale_factor(2), doubleBuffer(false),
-		is_no_darkness(false), non_square_pixels(false), shading_ambient(255),
-		width(320), height(200) {
+		_renderSurface(nullptr), shading_data(nullptr), is_no_darkness(false),
+		non_square_pixels(false), shading_ambient(255), width(320), height(200) {
 	ARRAYCLEAR(shading_tile);
 
 	Std::string str_lighting_style;
@@ -89,15 +86,6 @@ bool Screen::init() {
 
 	width = (uint16)new_width;
 	height = (uint16)new_height;
-
-	config->value("config/video/scale_method", str, "---");
-	scaler_index = scaler_reg.GetIndexForName(str);
-	if (scaler_index == -1) {
-		//config.set("config/video/scale_method","SuperEagle",true);
-		scaler_index = scaler_reg.GetIndexForName("SuperEagle");
-	}
-
-	config->value("config/video/scale_factor", scale_factor, 1);
 
 	config->value("config/video/non_square_pixels", non_square_pixels, false);
 
@@ -161,19 +149,6 @@ bool Screen::rotate_palette(uint8 pos, uint8 length) {
 	return true;
 }
 
-uint16 Screen::get_translated_x(uint16 x) const {
-	if (scale_factor != 1)
-		x /= scale_factor;
-
-	return x;
-}
-
-uint16 Screen::get_translated_y(uint16 y) const {
-	if (scale_factor != 1)
-		y /= scale_factor;
-
-	return y;
-}
 bool Screen::clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect) {
 	uint8 *pixels;
 	uint16 i;
@@ -550,10 +525,7 @@ inline bool Screen::blit16(uint16 dest_x, uint16 dest_y, const byte *src_buf, ui
 }
 
 inline bool Screen::blit16WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity) {
-	uint16 *pixels;
-	uint16 i, j;
-
-	pixels = (uint16 *)_renderSurface->pixels;
+	uint16 *pixels = (uint16 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
@@ -580,10 +552,7 @@ inline bool Screen::blit16WithOpacity(uint16 dest_x, uint16 dest_y, const byte *
 }
 
 bool Screen::blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans) {
-	uint32 *pixels;
-	uint16 i, j;
-
-	pixels = (uint32 *)_renderSurface->pixels;
+	uint32 *pixels = (uint32 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
@@ -611,10 +580,7 @@ bool Screen::blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 sr
 }
 
 bool Screen::blit32WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity) {
-	uint32 *pixels;
-	uint16 i, j;
-
-	pixels = (uint32 *)_renderSurface->pixels;
+	uint32 *pixels = (uint32 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
@@ -651,10 +617,7 @@ void Screen::blitbitmap(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint1
 }
 
 void Screen::blitbitmap16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color) {
-	uint16 *pixels;
-	uint16 i, j;
-
-	pixels = (uint16 *)_renderSurface->pixels;
+	uint16 *pixels = (uint16 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
@@ -673,10 +636,7 @@ void Screen::blitbitmap16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uin
 }
 
 void Screen::blitbitmap32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color) {
-	uint32 *pixels;
-	uint16 i, j;
-
-	pixels = (uint32 *)_renderSurface->pixels;
+	uint32 *pixels = (uint32 *)_renderSurface->pixels;
 
 	pixels += dest_y * _renderSurface->w + dest_x;
 
@@ -902,7 +862,6 @@ void Screen::buildalphamap8() {
 
 
 void Screen::drawalphamap8globe(sint16 x, sint16 y, uint16 r) {
-	sint16 i, j;
 // check shouldn't be needed since items only have 3 intensites
 	//Clamp lighting globe size to 0-4 (5 levels) // 4 - 10 (7 levels) now in orig_style now like original
 //    if( r > NUM_GLOBES && lighting_style != LIGHTING_STYLE_ORIGINAL)
@@ -960,7 +919,6 @@ void Screen::blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect) {
 	if (lighting_style == LIGHTING_STYLE_NONE)
 		return;
 
-	uint16 i, j;
 	Game *game = Game::get_game();
 
 	if (lighting_style == LIGHTING_STYLE_ORIGINAL) {
@@ -1123,7 +1081,6 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_8(byte *src_buf, uint16 src
 
 Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch) {
 	Graphics::ManagedSurface *new_surface;
-	uint16 i, j;
 
 	new_surface = RenderSurface::createSurface(src_w, src_h,
 		_renderSurface->getFormat());
@@ -1154,14 +1111,6 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 
 
 }
 
-uint16 Screen::get_pitch() {
-	return (uint16)_renderSurface->pitch;
-}
-
-uint16 Screen::get_bpp() {
-	return _renderSurface->bits_per_pixel;
-}
-
 void Screen::update() {
 	_rawSurface->markAllDirty();
 	_rawSurface->update();
@@ -1190,35 +1139,7 @@ void Screen::preformUpdate() {
 	_rawSurface->update();
 }
 
-void Screen::lock() {
-// SDL_LockSurface(scaled_surface);
-
-	return;
-}
-
-void Screen::unlock() {
-//SDL_UnlockSurface(scaled_surface);
-
-	return;
-}
-
-bool Screen::initScaler() {
-	Std::string scaler_name;
-
-	return true;
-}
-
-int Screen::get_screen_bpp() {
-	// Get info. about video.
-	Graphics::PixelFormat pf = g_system->getScreenFormat();
-	return pf.bpp();
-}
-
 void Screen::set_screen_mode() {
-	if (scale_factor == 0) scale_factor = 1;
-	scaler = 0;
-	scale_factor = 1;
-
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(width, height, &SCREEN_FORMAT);
 	_rawSurface = new Graphics::Screen(width, height, SCREEN_FORMAT);
@@ -1239,7 +1160,6 @@ bool Screen::set_fullscreen(bool value) {
 	g_system->beginGFXTransaction();
 	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, value);
 	g_system->endGFXTransaction();
-
 	return true;
 }
 
@@ -1251,42 +1171,34 @@ byte *Screen::copy_area(Common::Rect *area, uint16 down_scale) {
 	return copy_area32(area, down_scale);
 }
 
-byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
-	Graphics::PixelFormat *fmt;
+byte *Screen::copy_area16(const Common::Rect *area, uint16 down_scale) {
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
-	byte *dst_pixels = nullptr;
-	byte *ptr;
-	const uint16 *src_pixels;
-	uint32 r, g, b;
-	uint32 ra, ga, ba;
-	uint16 x, y;
-	uint8 x1, y1;
 
-	dst_pixels = new unsigned char[((area->width() / down_scale) * (area->height() / down_scale)) * 3];
-	ptr = dst_pixels;
+	byte *dst_pixels = new unsigned char[((area->width() / down_scale) * (area->height() / down_scale)) * 3];
+	byte *ptr = dst_pixels;
 
-	fmt = &main_surface->format;
+	const Graphics::PixelFormat *fmt = &main_surface->format;
 
 	for (int y = 0; y < area->height(); y += down_scale) {
 		for (int x = 0; x < area->width(); x += down_scale) {
-			r = 0;
-			g = 0;
-			b = 0;
+			uint32 r = 0;
+			uint32 g = 0;
+			uint32 b = 0;
 
-			src_pixels = (const uint16 *)main_surface->getPixels();
+			const uint16 *src_pixels = (const uint16 *)main_surface->getPixels();
 			src_pixels += ((area->top + y) * _renderSurface->w + (area->left + x));
 
-			for (y1 = 0; y1 < down_scale; y1++) {
-				for (x1 = 0; x1 < down_scale; x1++) {
-					ra = *src_pixels & fmt->rMax();
+			for (int y1 = 0; y1 < down_scale; y1++) {
+				for (int x1 = 0; x1 < down_scale; x1++) {
+					uint32 ra = *src_pixels & fmt->rMax();
 					ra >>= fmt->rShift;
 					ra <<= fmt->rLoss;
 
-					ga = *src_pixels & fmt->gMax();
+					uint32 ga = *src_pixels & fmt->gMax();
 					ga >>= fmt->gShift;
 					ga <<= fmt->gLoss;
 
-					ba = *src_pixels & fmt->bMax();
+					uint32 ba = *src_pixels & fmt->bMax();
 					ba >>= fmt->bShift;
 					ba <<= fmt->bLoss;
 
@@ -1309,42 +1221,33 @@ byte *Screen::copy_area16(Common::Rect *area, uint16 down_scale) {
 	return dst_pixels;
 }
 
-byte *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
-	Graphics::PixelFormat *fmt;
+byte *Screen::copy_area32(const Common::Rect *area, uint16 down_scale) {
 	Graphics::ManagedSurface *main_surface = get_sdl_surface();
-	byte *dst_pixels = nullptr;
-	byte *ptr;
-	const uint32 *src_pixels;
-	uint32 r, g, b;
-	uint32 ra, ga, ba;
-	uint16 x, y;
-	uint8 x1, y1;
+	byte *dst_pixels = new unsigned char[((area->width() / down_scale) * (area->height() / down_scale)) * 3];
+	byte *ptr = dst_pixels;
 
-	dst_pixels = new unsigned char[((area->width() / down_scale) * (area->height() / down_scale)) * 3];
-	ptr = dst_pixels;
-
-	fmt = &main_surface->format;
+	const Graphics::PixelFormat *fmt = &main_surface->format;
 
 	for (int y = 0; y < area->height(); y += down_scale) {
 		for (int x = 0; x < area->width(); x += down_scale) {
-			r = 0;
-			g = 0;
-			b = 0;
+			uint32 r = 0;
+			uint32 g = 0;
+			uint32 b = 0;
 
-			src_pixels = (const uint32 *)main_surface->getPixels();
+			const uint32 *src_pixels = (const uint32 *)main_surface->getPixels();
 			src_pixels += ((area->top + y) * _renderSurface->w + (area->left + x));
 
-			for (y1 = 0; y1 < down_scale; y1++) {
-				for (x1 = 0; x1 < down_scale; x1++) {
-					ra = *src_pixels & fmt->rMax();
+			for (int y1 = 0; y1 < down_scale; y1++) {
+				for (int x1 = 0; x1 < down_scale; x1++) {
+					uint32 ra = *src_pixels & fmt->rMax();
 					ra >>= fmt->rShift;
 					ra <<= fmt->rLoss;
 
-					ga = *src_pixels & fmt->gMax();
+					uint32 ga = *src_pixels & fmt->gMax();
 					ga >>= fmt->gShift;
 					ga <<= fmt->gLoss;
 
-					ba = *src_pixels & fmt->bMax();
+					uint32 ba = *src_pixels & fmt->bMax();
 					ba >>= fmt->bShift;
 					ba <<= fmt->bLoss;
 
@@ -1396,13 +1299,13 @@ void Screen::restore_area(byte *pixels, Common::Rect *area,
 }
 
 
-byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
+byte *Screen::copy_area32(const Common::Rect *area, byte *buf) {
 	uint32 *copied = (uint32 *)buf;
 	if (buf == nullptr) {
 		copied = (uint32 *)malloc(area->width() * area->height() * 4);
 	}
 	uint32 *dest = copied;
-	uint32 *src = (uint32 *)_renderSurface->pixels;
+	const uint32 *src = (const uint32 *)_renderSurface->pixels;
 	uint16 src_x_off = ABS(area->left);
 	uint16 src_y_off = ABS(area->top);
 	uint16 src_w = area->width();
@@ -1436,13 +1339,13 @@ byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 		dest += area->width();
 		src += _renderSurface->w;
 	}
-	return ((byte *)copied);
+	return (byte *)copied;
 }
 
 
-void Screen::restore_area32(byte *pixels, Common::Rect *area,
-							byte *target, Common::Rect *target_area, bool free_src) {
-	uint32 *src = (uint32 *)pixels;
+void Screen::restore_area32(byte *pixels, const Common::Rect *area,
+							byte *target, const Common::Rect *target_area, bool free_src) {
+	const uint32 *src = (const uint32 *)pixels;
 	uint32 *dest = (uint32 *)_renderSurface->pixels;
 	dest += area->top * _renderSurface->w + area->left;
 	if (target) { // restore to target instead of screen
@@ -1461,13 +1364,13 @@ void Screen::restore_area32(byte *pixels, Common::Rect *area,
 }
 
 
-byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
+byte *Screen::copy_area16(const Common::Rect *area, byte *buf) {
 	uint16 *copied = (uint16 *)buf;
 	if (buf == nullptr) {
 		copied = (uint16 *)malloc(area->width() * area->height() * 2);
 	}
 	uint16 *dest = copied;
-	uint16 *src = (uint16 *)_renderSurface->pixels;
+	const uint16 *src = (const uint16 *)_renderSurface->pixels;
 	uint16 src_x_off = ABS(area->left);
 	uint16 src_y_off = ABS(area->top);
 	uint16 src_w = area->width();
@@ -1501,13 +1404,13 @@ byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 		dest += area->width();
 		src += _renderSurface->w;
 	}
-	return ((byte *)copied);
+	return (byte *)copied;
 }
 
 
-void Screen::restore_area16(byte *pixels, Common::Rect *area,
-							byte *target, Common::Rect *target_area, bool free_src) {
-	uint16 *src = (uint16 *)pixels;
+void Screen::restore_area16(byte *pixels, const Common::Rect *area,
+							byte *target, const Common::Rect *target_area, bool free_src) {
+	const uint16 *src = (const uint16 *)pixels;
 	uint16 *dest = (uint16 *)_renderSurface->pixels;
 	dest += area->top * _renderSurface->w + area->left;
 	if (target) { // restore to target instead of screen
