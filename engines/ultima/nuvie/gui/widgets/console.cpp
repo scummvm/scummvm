@@ -106,7 +106,7 @@ void ConsolePause() {
 	Common::Event event;
 	bool waiting = true;
 	for (; waiting;) {
-		while (!SDL_PollEvent(&event)) {
+		while (!Events::get()->pollEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_QUIT) {
 				waiting = false;
 				break;

@@ -63,7 +63,7 @@ public:
 		: r(0), g(0), b(0), sdl_color(0) {
 	};
 	void map_color(const Graphics::PixelFormat &format) {
-		sdl_color = SDL_MapRGB(format, r, g, b);
+		sdl_color = format.RGBToColor(r, g, b);
 	};
 
 };

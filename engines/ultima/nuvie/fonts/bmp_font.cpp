@@ -30,17 +30,15 @@ namespace Ultima {
 namespace Nuvie {
 
 BMPFont::BMPFont() : char_w(0), char_h(0), font_width_data(nullptr),
-		sdl_font_data(nullptr), rune_mode(false), dual_font_mode(false) {
+		font_surface(nullptr), rune_mode(false), dual_font_mode(false) {
 }
 
 BMPFont::~BMPFont() {
-	if (sdl_font_data) {
-		SDL_FreeSurface(sdl_font_data);
-	}
+	if (font_surface)
+		delete font_surface;
 
-	if (font_width_data) {
+	if (font_width_data)
 		free(font_width_data);
-	}
 }
 
 bool BMPFont::init(Std::string bmp_filename, bool dual_fontmap) {
@@ -51,12 +49,12 @@ bool BMPFont::init(Std::string bmp_filename, bool dual_fontmap) {
 
 	full_filename += ".bmp";
 
-	sdl_font_data = SDL_LoadBMP(full_filename.c_str());
+	font_surface = SDL_LoadBMP(full_filename.c_str());
 
-	SDL_SetColorKey(sdl_font_data, SDL_TRUE, SDL_MapRGB(sdl_font_data->format, 0, 0x70, 0xfc));
+	font_surface->setTransparentColor(font_surface->format.RGBToColor(0, 0x70, 0xfc));
 
-	char_w = sdl_font_data->w / 16;
-	char_h = sdl_font_data->h / 16;
+	char_w = font_surface->w / 16;
+	char_h = font_surface->h / 16;
 
 	//read font width data. For variable width fonts.
 	full_filename = bmp_filename;
@@ -126,7 +124,7 @@ uint16 BMPFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 	dst.setWidth(char_w);
 	dst.setHeight(char_h);
 
-	SDL_BlitSurface(sdl_font_data, &src, screen->get_sdl_surface(), &dst);
+	SDL_BlitSurface(font_surface, &src, screen->get_sdl_surface(), &dst);
 
 	return getCharWidth(char_num);
 }

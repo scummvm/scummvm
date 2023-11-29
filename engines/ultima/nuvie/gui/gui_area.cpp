@@ -41,9 +41,9 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
 void
 GUI_Area:: SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
-	color = SDL_MapRGB(surface->format, R, G, B);
+	color = surface->format.RGBToColor(R, G, B);
 	if (useFrame)
-		frameColor = SDL_MapRGB(surface->format, fR, fG, fB);
+		frameColor = surface->format.RGBToColor(fR, fG, fB);
 }
 
 /* Show the widget  */

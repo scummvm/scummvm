@@ -96,12 +96,12 @@ void GUI_ScrollBar::loadButtons() {
 void GUI_ScrollBar::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
 
-	slider_highlight_c = SDL_MapRGB(surface->format, SLIDER_HIGHLIGHT_R, SLIDER_HIGHLIGHT_G, SLIDER_HIGHLIGHT_B);
-	slider_shadow_c = SDL_MapRGB(surface->format, SLIDER_SHADOW_R, SLIDER_SHADOW_G, SLIDER_SHADOW_B);
-	slider_base_c = SDL_MapRGB(surface->format, SLIDER_BASE_R, SLIDER_BASE_G, SLIDER_BASE_B);
+	slider_highlight_c = surface->format.RGBToColor(SLIDER_HIGHLIGHT_R, SLIDER_HIGHLIGHT_G, SLIDER_HIGHLIGHT_B);
+	slider_shadow_c = surface->format.RGBToColor(SLIDER_SHADOW_R, SLIDER_SHADOW_G, SLIDER_SHADOW_B);
+	slider_base_c = surface->format.RGBToColor(SLIDER_BASE_R, SLIDER_BASE_G, SLIDER_BASE_B);
 
-	track_border_c = SDL_MapRGB(surface->format, TRACK_BORDER_R, TRACK_BORDER_G, TRACK_BORDER_B);
-	track_base_c = SDL_MapRGB(surface->format, TRACK_BASE_R, TRACK_BASE_G, TRACK_BASE_B);
+	track_border_c = surface->format.RGBToColor(TRACK_BORDER_R, TRACK_BORDER_G, TRACK_BORDER_B);
+	track_base_c = surface->format.RGBToColor(TRACK_BASE_R, TRACK_BASE_G, TRACK_BASE_B);
 }
 
 void GUI_ScrollBar::set_slider_length(float percentage) {

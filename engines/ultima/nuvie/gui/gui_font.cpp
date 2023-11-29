@@ -40,7 +40,9 @@ GUI_Font::GUI_Font(uint8 fontType) : _wData(nullptr) {
 	} else
 		temp = GUI_DefaultFont();
 
-	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
+	_fontStore = new Graphics::ManagedSurface(temp->w, temp->h, temp->format);
+	_fontStore->blitFrom(*temp);
+
 	_charH = _fontStore->h / 16;
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::YES;
@@ -48,7 +50,7 @@ GUI_Font::GUI_Font(uint8 fontType) : _wData(nullptr) {
 }
 
 /* open named BMP file */
-GUI_Font::GUI_Font(char *name) {
+GUI_Font::GUI_Font(const char *name) {
 	_fontStore = SDL_LoadBMP(name);
 	if (_fontStore != nullptr) {
 		_charH = _fontStore->h / 16;
@@ -71,17 +73,6 @@ GUI_Font::GUI_Font(Graphics::ManagedSurface *bitmap) {
 	_charH = _fontStore->h / 16;
 	_charW = _fontStore->w / 16;
 	_disposeFont = DisposeAfterUse::NO;
-	setTransparency(true);
-	_wData = nullptr;
-}
-
-/* copy constructor */
-GUI_Font::GUI_Font(GUI_Font &font) {
-	Graphics::ManagedSurface *temp = font._fontStore;
-	_fontStore = SDL_ConvertSurface(temp, temp->format, SDL_SWSURFACE);
-	_charH = _fontStore->h / 16;
-	_charW = _fontStore->w / 16;
-	_disposeFont = DisposeAfterUse::YES;
 	setTransparency(true);
 	_wData = nullptr;
 }
@@ -121,14 +112,12 @@ void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, u
 
 /* put the text onto the given surface using the preset mode and colors */
 void GUI_Font::textOut(Graphics::ManagedSurface *context, int x, int y, const char *text, int line_wrap) {
-	int i;
-	int j;
 	uint8 ch;
 	Common::Rect src(_charW, _charH - 1);
 	Common::Rect dst(_charW, _charH - 1);
 
-	i = 0;
-	j = 0;
+	int i = 0;
+	int j = 0;
 	while ((ch = text[i])) { // single "=" is correct!
 		if (line_wrap && j == line_wrap) {
 			j = 0;

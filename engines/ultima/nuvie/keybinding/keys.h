@@ -141,7 +141,7 @@ public:
 
 private:
 	void ParseText(char *text, int len);
-	void ParseLine(char *line);
+	void ParseLine(const char *line);
 	void FillParseMaps();
 
 	joy_axes_pairs get_axes_pair(int axis) const;

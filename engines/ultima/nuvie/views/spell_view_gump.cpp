@@ -105,12 +105,9 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	datadir = path;
 
 	Std::string imagefile;
-
-	SDL_FreeSurface(bg_image);
-
-	//build_path(datadir, "", spellbookdir);
-
 	build_path(datadir, "spellbook_bg.bmp", imagefile);
+
+	delete bg_image;
 	bg_image = bmp.getSdlSurface32(imagefile);
 	if (bg_image == nullptr) {
 		DEBUG(0, LEVEL_ERROR, "Failed to load spellbook_bg.bmp from '%s' directory\n", datadir.c_str());
@@ -138,7 +135,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 			dst.setHeight(13);
 
 			SDL_BlitSurface(spell_image, nullptr, bg_image, &dst);
-			SDL_FreeSurface(spell_image);
+			delete spell_image;
 			printSpellQty(cur_spells[i], dst.left + ((spell < 5) ? 50 : 48), dst.top);
 		}
 	}

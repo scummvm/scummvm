@@ -452,13 +452,13 @@ static void skipspace(string &s) {
 }
 
 
-void KeyBinder::ParseLine(char *line) {
+void KeyBinder::ParseLine(const char *line) {
 	size_t i;
 	Common::KeyState k;
 	ActionType a;
 	k.keycode = Common::KEYCODE_INVALID;
 	k.flags = 0;
-	string s = line, u;
+	string s = line;
 	string d, keycode;
 	bool show;
 
@@ -468,8 +468,8 @@ void KeyBinder::ParseLine(char *line) {
 	if (s.empty() || s.hasPrefix("#"))
 		return;
 
-	u = s;
-	u = Std::to_uppercase(u);
+	string u = s;
+	u.toUppercase();
 
 	// get key
 	while (!s.empty() && !Common::isSpace(s[0])) {
@@ -530,8 +530,7 @@ void KeyBinder::ParseLine(char *line) {
 	s.erase(0, i);
 	t = Std::to_uppercase(t);
 
-	ParseActionMap::iterator action_index;
-	action_index = _actions.find(t);
+	ParseActionMap::iterator action_index = _actions.find(t);
 	if (action_index != _actions.end()) {
 		a.action = (const Action *)(*action_index)._value;
 	} else {
@@ -616,9 +615,7 @@ void KeyBinder::LoadFromFileInternal(const char *filename) {
 }
 
 void KeyBinder::LoadFromFile(const char *filename) {
-
 	Flush();
-
 	ConsoleAddInfo("Loading keybindings from file %s", filename);
 	LoadFromFileInternal(filename);
 }

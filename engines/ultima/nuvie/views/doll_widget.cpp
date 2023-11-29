@@ -147,11 +147,11 @@ bool DollWidget::init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager 
 
 void DollWidget::free_doll_shapes() {
 	if (actor_doll) {
-		SDL_FreeSurface(actor_doll);
+		delete actor_doll;
 		actor_doll = nullptr;
 	}
 	if (doll_bg) {
-		SDL_FreeSurface(doll_bg);
+		delete doll_bg;
 		doll_bg = nullptr;
 	}
 	if (md_doll_shp) {
@@ -162,8 +162,8 @@ void DollWidget::free_doll_shapes() {
 
 void DollWidget::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
-		uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		uint32 bg_color_key = image->format.RGBToColor(0xf1, 0x0f, 0xc4);
+		image->setTransparentColor(bg_color_key);
 	}
 }
 

@@ -982,8 +982,10 @@ void FadeEffect::delete_self() {
 		delete viewport;
 		if (fade_dir == FADE_IN) // overlay should be empty now, so just delete it
 			map_window->set_overlay(nullptr);
-		if (fade_from)
-			SDL_FreeSurface(fade_from);
+		if (fade_from) {
+			delete fade_from;
+			fade_from = nullptr;
+		}
 
 		current_fade = nullptr;
 	}
@@ -1245,7 +1247,7 @@ FadeObjectEffect::FadeObjectEffect(Obj *obj, FadeDirection dir) {
 //        obj_manager->remove_obj(fade_obj);
 		game->get_map_window()->updateBlacking();
 	}
-	SDL_FreeSurface(capture);
+	delete capture;
 
 	game->pause_user();
 }
@@ -1271,7 +1273,7 @@ VanishEffect::VanishEffect(bool pause_user)
 //                                 new FadeEffect(FADE_PIXELATED, FADE_OUT, capture, 0, 0, 128000));
 	effect_manager->watch_effect(this, /* call me */
 	                             new FadeEffect(FADE_PIXELATED, FADE_OUT, capture));
-	SDL_FreeSurface(capture);
+	delete capture;
 
 	if (input_blocked == VANISH_WAIT)
 		game->pause_user();

@@ -89,9 +89,9 @@ GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
 GUI_Button::~GUI_Button() {
 	if (freebutton) {
 		if (button)
-			SDL_FreeSurface(button);
+			delete button;
 		if (button2)
-			SDL_FreeSurface(button2);
+			delete button2;
 	}
 	if (freefont)
 		delete buttonFont;
@@ -112,9 +112,9 @@ void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, 
 
 	if (freebutton) {
 		if (button)
-			SDL_FreeSurface(button);
+			delete button;
 		if (button2)
-			SDL_FreeSurface(button2);
+			delete button2;
 		if (flatbutton) {
 			button = CreateTextButtonImage(BUTTON2D_UP, text, alignment);
 			button2 = CreateTextButtonImage(BUTTON2D_DOWN, text, alignment);
@@ -148,7 +148,7 @@ void GUI_Button:: Display(bool full_redraw) {
 	}
 	if (!enabled) {
 		uint8 *pointer;
-		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);
+		int pixel = surface->format.RGBToColor(0, 0, 0);
 		uint8 bytepp = surface->format.bytesPerPixel;
 
 		for (int y = 0; y < area.height(); y += 2) {
@@ -250,10 +250,10 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	if (img == nullptr)
 		return nullptr;
 
-	uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
-	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
-	uint32 color3 = SDL_MapRGB(img->format, BF_R, BF_G, BF_B);
-	uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
+	uint32 color1 = img->format.RGBToColor(BL_R, BL_G, BL_B);
+	uint32 color2 = img->format.RGBToColor(BS_R, BS_G, BS_B);
+	uint32 color3 = img->format.RGBToColor(BF_R, BF_G, BF_B);
+	uint32 color4 = img->format.RGBToColor(BI2_R, BI2_G, BI2_B);
 
 
 	buttonFont->setColoring(0, 0, 0);

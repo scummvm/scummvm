@@ -41,8 +41,8 @@ GUI_Dialog::~GUI_Dialog() {
 	if (backingstore)
 		free(backingstore);
 
-	for (int i = 0; i < 8; i++)
-		SDL_FreeSurface(border[i]);
+	for (int i = 0; i < ARRAYSIZE(border); i++)
+		delete border[i];
 }
 
 void GUI_Dialog::loadBorderImages() {
@@ -63,16 +63,13 @@ void GUI_Dialog::loadBorderImages() {
 /* Map the color to the display */
 void GUI_Dialog::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
-	bg_color = SDL_MapRGB(surface->format, R, G, B);
+	bg_color = surface->format.RGBToColor(R, G, B);
 }
 
 /* Show the widget  */
 void
-GUI_Dialog:: Display(bool full_redraw) {
+GUI_Dialog::Display(bool full_redraw) {
 	int i;
-	Common::Rect framerect;
-	Common::Rect src, dst;
-
 	if (old_x != area.left || old_y != area.top) {
 		if (backingstore) {
 			screen->restore_area(backingstore, &backingstore_rect, nullptr, nullptr, false);
@@ -87,12 +84,13 @@ GUI_Dialog:: Display(bool full_redraw) {
 		old_y = area.top;
 	}
 
-	framerect = area;
+	Common::Rect framerect = area;
 	framerect.grow(-8);
 	SDL_FillRect(surface, &framerect, bg_color);
 
 // Draw border corners
 
+	Common::Rect dst;
 	dst = area;
 	dst.setWidth(8);
 	dst.setHeight(8);
@@ -133,6 +131,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 	}
 
 	if (i < area.left + area.width() - 8) { // draw partial border images
+		Common::Rect src;
 		src.left = 0;
 		src.top = 0;
 		src.setWidth(area.left + area.width() - 8 - i);
@@ -169,6 +168,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 	}
 
 	if (i < area.top + area.height() - 8) { // draw partial border images
+		Common::Rect src;
 		src.left = 0;
 		src.top = 0;
 		src.setWidth(8);
@@ -213,13 +213,11 @@ GUI_status GUI_Dialog::MouseUp(int x, int y, Shared::MouseButton button) {
 }
 
 GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
-	int dx, dy;
-
 	if (!drag)
 		return GUI_PASS;
 
-	dx = x - button_x;
-	dy = y - button_y;
+	int dx = x - button_x;
+	int dy = y - button_y;
 
 	button_x = x;
 	button_y = y;

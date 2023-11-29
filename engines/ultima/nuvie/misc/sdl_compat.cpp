@@ -36,15 +36,6 @@ uint32 SDL_GetTicks() {
 	return g_system->getMillis();
 }
 
-void SDL_FreeSurface(Graphics::ManagedSurface *&s) {
-	delete s;
-	s = nullptr;
-}
-
-uint32 SDL_MapRGB(const Graphics::PixelFormat &format, byte r, byte g, byte b) {
-	return format.RGBToColor(r, g, b);
-}
-
 int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 		Graphics::ManagedSurface *dst, Common::Rect *dstrect) {
 	Common::Rect srcRect = srcrect ? *srcrect : Common::Rect(0, 0, src->w, src->h);
@@ -76,38 +67,11 @@ Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 
 	const Graphics::Surface *src = decoder.getSurface();
 	Screen *const screen = Game::get_game()->get_screen();
-	assert (screen);
+	assert(screen);
 	Graphics::ManagedSurface *const screenSurface = screen->get_sdl_surface();
-	assert (screenSurface);
+	assert(screenSurface);
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, screenSurface->format);
 	dest->blitFrom(*src, decoder.getPalette());
-
-	return dest;
-}
-
-int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
-	if (flag)
-		surface->setTransparentColor(key);
-	else
-		surface->clearTransparentColor();
-
-	return 0;
-}
-
-int SDL_WaitEvent(Common::Event *event) {
-	while (!Events::get()->pollEvent(*event))
-		g_system->delayMillis(5);
-	return 0;
-}
-
-int SDL_PollEvent(Common::Event *event) {
-	return Events::get()->pollEvent(*event);
-}
-
-Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
-		const Graphics::PixelFormat &fmt, uint32 flags) {
-	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, fmt);
-	dest->blitFrom(*src);
 
 	return dest;
 }

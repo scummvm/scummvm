@@ -401,7 +401,7 @@ void TimedPartyMove::change_location() {
 			// start fade-to
 			effect_mgr->watch_effect(this, /* call me */
 			                         new FadeEffect(FADE_PIXELATED, FADE_OUT, mapwindow_capture));
-			SDL_FreeSurface(mapwindow_capture);
+			delete mapwindow_capture;
 
 			Game::get_game()->pause_anims();
 			wait_for_effect = 1;

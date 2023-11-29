@@ -150,9 +150,8 @@ MapWindow::~MapWindow() {
 	set_overlay(nullptr); // free
 	free(tmp_map_buf);
 	delete anim_manager;
-	if (roof_tiles) {
-		SDL_FreeSurface(roof_tiles);
-	}
+	if (roof_tiles)
+		delete roof_tiles;
 }
 
 bool MapWindow::init(TileManager *tm, ObjManager *om, ActorManager *am) {
@@ -2500,7 +2499,7 @@ Graphics::ManagedSurface *MapWindow::get_overlay() {
 /* Set the overlay surface. The current overlay is deleted if necessary. */
 void MapWindow::set_overlay(Graphics::ManagedSurface *surfpt) {
 	if (overlay && (overlay != surfpt))
-		SDL_FreeSurface(overlay);
+		delete overlay;
 	overlay = surfpt;
 }
 
@@ -2559,7 +2558,7 @@ void MapWindow::set_roof_mode(bool roofs) {
 			loadRoofTiles();
 	} else {
 		if (roof_tiles) {
-			SDL_FreeSurface(roof_tiles);
+			delete roof_tiles;
 			roof_tiles = nullptr;
 		}
 	}
@@ -2569,7 +2568,7 @@ void MapWindow::loadRoofTiles() {
 	const Std::string imagefile = map->getRoofTilesetFilename();
 	roof_tiles = SDL_LoadBMP(imagefile.c_str());
 	if (roof_tiles) {
-		SDL_SetColorKey(roof_tiles, SDL_TRUE, SDL_MapRGB(roof_tiles->format, 0, 0x70, 0xfc));
+		roof_tiles->setTransparentColor(roof_tiles->format.RGBToColor(0, 0x70, 0xfc));
 	}
 }
 

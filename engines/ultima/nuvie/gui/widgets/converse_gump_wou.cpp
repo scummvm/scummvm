@@ -89,7 +89,7 @@ ConverseGumpWOU::ConverseGumpWOU(const Configuration *cfg, Font *f, Screen *s)
 
 ConverseGumpWOU::~ConverseGumpWOU() {
 	if (bg_image)
-		SDL_FreeSurface(bg_image);
+		delete bg_image;
 }
 
 void ConverseGumpWOU::set_talking(bool state, Actor *actor) {

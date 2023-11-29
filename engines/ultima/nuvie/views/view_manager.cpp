@@ -536,8 +536,8 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 	} else {
 		build_path(getDollDataDirString(), filename, imagefile);
 	}
-	if (avatar_doll != nullptr)
-		SDL_FreeSurface(avatar_doll);
+	if (avatar_doll)
+		delete avatar_doll;
 	NuvieBmpFile bmp;
 	avatar_doll = bmp.getSdlSurface32(imagefile);
 	if (avatar_doll == nullptr)
@@ -549,8 +549,8 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 	char filename[17]; //actor_nn_nnn.bmp\0
 	Std::string imagefile;
 
-	if (actor_doll != nullptr)
-		SDL_FreeSurface(actor_doll);
+	if (actor_doll)
+		delete actor_doll;
 
 	Common::sprintf_s(filename, "actor_%s_%03d.bmp", get_game_tag(Game::get_game()->get_game_type()), actor_num);
 	if (orig) {

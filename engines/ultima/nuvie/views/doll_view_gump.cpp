@@ -47,7 +47,7 @@ DollViewGump::~DollViewGump() {
 	if (font)
 		delete font;
 	if (actor_doll)
-		SDL_FreeSurface(actor_doll);
+		delete actor_doll;
 }
 
 bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Actor *a, Font *f, Party *p, TileManager *tm, ObjManager *om) {
@@ -133,8 +133,8 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 
 void DollViewGump::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
-		bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		bg_color_key = image->format.RGBToColor(0xf1, 0x0f, 0xc4);
+		image->setTransparentColor(bg_color_key);
 	}
 }
 

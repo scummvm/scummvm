@@ -26,6 +26,7 @@
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_types.h"
 #include "ultima/nuvie/keybinding/keys.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -326,16 +327,17 @@ void GUI::Run(GUI_IdleProc idle, int once, int multitaskfriendly) {
 
 ///////////////////////////////////////////////////////////////// Polling is time consuming - instead:
 		if (multitaskfriendly && (idle == nullptr)) {
-			SDL_WaitEvent(&event);
+			while (!Events::get()->pollEvent(event))
+				g_system->delayMillis(5);
 			HandleEvent(&event);
 		} else
 /////////////////////////////////////////////////////////////////
 			/* Handle events, or run idle functions */
-			if (SDL_PollEvent(&event)) {
+			if (Events::get()->pollEvent(event)) {
 				/* Handle all pending events */
 				do {
 					HandleEvent(&event);
-				} while (SDL_PollEvent(&event));
+				} while (Events::get()->pollEvent(event));
 			} else {
 				if (idle != nullptr) {
 					HandleStatus(idle());

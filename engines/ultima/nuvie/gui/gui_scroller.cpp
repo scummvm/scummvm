@@ -42,7 +42,7 @@ GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b
 /* Map the color to the display */
 void GUI_Scroller::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
-	bg_color = SDL_MapRGB(surface->format, R, G, B);
+	bg_color = surface->format.RGBToColor(R, G, B);
 }
 
 int GUI_Scroller::AddWidget(GUI_Widget *widget) {

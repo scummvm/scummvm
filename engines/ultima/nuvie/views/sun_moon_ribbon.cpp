@@ -74,11 +74,11 @@ void SunMoonRibbon::loadBgImage(uint8 num) {
 	build_path(datadir, filename, imagefile);
 
 	if (bg_data)
-		SDL_FreeSurface(bg_data);
+		delete bg_data;
 	bg_data = bmp.getSdlSurface32(imagefile);
 
-	uint32 bg_color_key = SDL_MapRGB(bg_data->format, 0xb3, 0x94, 0x78);
-	SDL_SetColorKey(bg_data, SDL_TRUE, bg_color_key);
+	uint32 bg_color_key = bg_data->format.RGBToColor(0xb3, 0x94, 0x78);
+	bg_data->setTransparentColor(bg_color_key);
 }
 
 void SunMoonRibbon::Display(bool full_redraw) {
