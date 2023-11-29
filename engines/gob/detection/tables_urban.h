@@ -143,7 +143,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeUrban,
-	kFeatures640x480 | kFeaturesTrueColor | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesTrueColor | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 2
 },
 

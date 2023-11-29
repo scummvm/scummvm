@@ -514,7 +514,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesNonInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -528,7 +528,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -542,7 +542,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -556,7 +556,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 { // Supplied by Dark-Star on #scummvm
@@ -570,7 +570,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 { // Supplied by Dark-Star on #scummvm
@@ -584,7 +584,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 { // Supplied by Dark-Star on #scummvm
@@ -598,7 +598,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob3,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 

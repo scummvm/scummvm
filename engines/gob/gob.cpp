@@ -213,6 +213,14 @@ bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
 }
 
+bool GobEngine::isNonInteractiveDemo() const {
+	return (_features & kFeaturesNonInteractiveDemo) != 0;
+}
+
+bool GobEngine::isInteractiveDemo() const {
+	return (_features & kFeaturesInteractiveDemo) != 0;
+}
+
 bool GobEngine::is640x400() const {
 	return (_features & kFeatures640x400) != 0;
 }

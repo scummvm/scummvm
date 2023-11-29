@@ -665,7 +665,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,
-	kFeaturesNone,
+	kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -679,7 +679,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,
-	kFeaturesNone,
+	kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 { // Supplied by goodoldgeorg in bug report #4324
@@ -693,7 +693,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,
-	kFeaturesNone,
+	kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {

@@ -450,7 +450,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesNonInteractiveDemo,
 	"demo.stk", "demo.tot", 0
 },
 {
@@ -464,7 +464,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeLostInTime,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesNonInteractiveDemo,
 	"demo.stk", "demo.tot", 0
 },
 // -- Pirated! Do not re-add nor un-tag! --

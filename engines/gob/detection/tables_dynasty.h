@@ -138,7 +138,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeDynasty,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesNonInteractiveDemo,
 	0, 0, 0
 },
 {	// Non-interactive
@@ -152,7 +152,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeDynasty,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesNonInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -211,7 +211,7 @@
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)	
 	},
 	kGameTypeDynastyWood,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	"demo.scn", 0, 1
 },
 

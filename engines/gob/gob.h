@@ -216,6 +216,8 @@ public:
 	bool is16Colors() const;
 	bool isTrueColor() const;
 	bool isDemo() const;
+	bool isNonInteractiveDemo() const;
+	bool isInteractiveDemo() const;
 
 	bool hasResourceSizeWorkaround() const;
 

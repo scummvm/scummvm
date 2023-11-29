@@ -271,7 +271,7 @@
 		GUIO0()
 	},
 	kGameTypeAdibou2,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -286,7 +286,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeAdibou2,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -301,7 +301,7 @@
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdibou2,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 9
 },
 {
@@ -316,7 +316,7 @@
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdibou2,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 10
 },
 {

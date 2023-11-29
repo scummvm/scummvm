@@ -634,7 +634,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob2,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesNonInteractiveDemo,
 	0, "usa.tot", 0
 },
 {
@@ -648,7 +648,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob2,
-	kFeaturesAdLib,
+	kFeaturesAdLib | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -662,7 +662,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob2,
-	kFeaturesNone,
+	kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 { // Supplied by polluks in bug report #3628
@@ -676,7 +676,7 @@
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob2,
-	kFeaturesNone,
+	kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 

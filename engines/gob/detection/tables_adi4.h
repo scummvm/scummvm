@@ -200,7 +200,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesInteractiveDemo,
 	0, 0, 0
 },
 {
@@ -214,7 +214,7 @@
 		GUIO1(GUIO_NOASPECT)
 	},
 	kGameTypeAdi4,
-	kFeatures640x480,
+	kFeatures640x480 | kFeaturesNonInteractiveDemo,
 	0, 0, 0
 },
 

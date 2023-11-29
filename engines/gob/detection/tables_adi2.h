@@ -209,7 +209,7 @@
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 1
 },
 {
@@ -229,7 +229,7 @@
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 1
 },
 {
@@ -248,7 +248,7 @@
 	  	GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
 	kGameTypeAdi2,
-	kFeatures640x480 | kFeaturesSCNDemo,
+	kFeatures640x480 | kFeaturesSCNDemo | kFeaturesNonInteractiveDemo,
 	0, 0, 1
 },
 		  
