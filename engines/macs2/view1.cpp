@@ -59,6 +59,20 @@ void View1::draw() {
 			}
 		}
 	}
+
+	// Draw the border part
+	uint16 borderX = 100;
+	uint16 borderY = 50;
+	for (int x = 0; x < g_engine->_borderWidth; x++) {
+		for (int y = 0; y < g_engine->_borderHeight; y++) {
+			uint8 val = g_engine->_borderData[y * g_engine->_borderWidth + x];
+			if (val != 0) {
+				s.setPixel(borderX + x, borderY + y, val);
+			}
+		}
+	}
+
+
 	
 	
 	//for (int i = 0; i < 100; ++i)

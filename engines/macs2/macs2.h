@@ -36,6 +36,7 @@
 
 #include "macs2/detection.h"
 #include "macs2/events.h"
+#include <common/memstream.h>
 
 namespace Macs2 {
 
@@ -69,6 +70,15 @@ public:
 	char _charASCII;
 	uint16 _charWidth;
 	uint16 _charHeight;
+
+	byte* _borderData;
+	uint16 _borderWidth;
+	uint16 _borderHeight;
+
+	Common::MemoryReadStream* _scriptStream;
+	byte* _scriptData;
+
+	
 
 	uint32 getFeatures() const;
 
