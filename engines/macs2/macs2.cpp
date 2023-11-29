@@ -115,8 +115,21 @@ void Macs2Engine::readResourceFile() {
 
 	
 	file.read(_charData, _charWidth * _charHeight);
-	
-	
+
+	// Load the data for a border part
+	file.seek(0x64C6);
+
+	_borderWidth = file.readUint16LE();
+	_borderHeight = file.readUint16LE();
+	_borderData = new byte[_borderWidth * _borderHeight];
+	file.read(_borderData, _borderWidth * _borderHeight);
+
+	// Load the script
+	file.seek(0x000A3B98);
+	uint16 scriptLength = file.readUint16LE();
+	_scriptData = new byte[scriptLength];
+	file.read(_scriptData, scriptLength);
+	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -125,6 +138,17 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 Macs2Engine::~Macs2Engine() {
+}
+
+void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
+	// TODO: Change to a proper end condition
+	for (;;) {
+		// Read an opcode (would be 0037:9F07)
+		byte opcode1 = stream->readByte();
+
+		// Read another value - TODO: Not sure yet what this does
+		byte val1 = stream->readByte();
+	}
 }
 
 uint32 Macs2Engine::getFeatures() const {
