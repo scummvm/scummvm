@@ -163,7 +163,7 @@ void Room172::daemon() {
 			_G(flags)[V092] = 1;
 			hotspot_set_active("AUNT POLLY", true);
 			_pollyShould = 7;
-			_series5.play("172ap1t", 0x400, 4, -1, 6);
+			_series5.play("172ap1t", 0x400, 4, -1, 6, -1);
 			break;
 
 		case 6:
@@ -212,7 +212,7 @@ void Room172::daemon() {
 			freeSeries7();
 			_series5.terminate();
 			_pollyShould = 15;
-			npc_say(kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
+			npc_say(_convName, kCHANGE_POLLY_ANIMATION, "172ap02", 0x400, true, 31, 35);
 			break;
 
 		case 13:
