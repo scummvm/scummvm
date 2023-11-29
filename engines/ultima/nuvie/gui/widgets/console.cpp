@@ -49,7 +49,7 @@ void Console::AddLine(const Std::string &line) {
 
 	if (status == WIDGET_VISIBLE) {
 		gui->Display();
-		screen->preformUpdate();
+		screen->performUpdate();
 	}
 }
 

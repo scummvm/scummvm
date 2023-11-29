@@ -1541,7 +1541,7 @@ void ScriptCutscene::update() {
 		}
 	}
 	gui->Display();
-	screen->preformUpdate();
+	screen->performUpdate();
 	sound_manager->update();
 	wait();
 }

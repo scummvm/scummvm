@@ -34,10 +34,10 @@ namespace Nuvie {
 
 extern uint32 SDL_GetTicks();
 extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
-extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
+extern uint32 SDL_MapRGB(const Graphics::PixelFormat &format, byte r, byte g, byte b);
 extern int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
-extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
+extern int SDL_FillRect(Graphics::ManagedSurface *surf, const Common::Rect *rect, uint color);
 extern Graphics::ManagedSurface *SDL_LoadBMP(const char *filename);
 extern int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key);
 extern int SDL_WaitEvent(Common::Event *event);

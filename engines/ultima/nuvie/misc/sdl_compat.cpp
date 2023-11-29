@@ -41,7 +41,7 @@ void SDL_FreeSurface(Graphics::ManagedSurface *&s) {
 	s = nullptr;
 }
 
-uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b) {
+uint32 SDL_MapRGB(const Graphics::PixelFormat &format, byte r, byte g, byte b) {
 	return format.RGBToColor(r, g, b);
 }
 
@@ -60,7 +60,7 @@ int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *src
 	return 0;
 }
 
-int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color) {
+int SDL_FillRect(Graphics::ManagedSurface *surf, const Common::Rect *rect, uint color) {
 	surf->fillRect(rect ? *rect : Common::Rect(0, 0, surf->w, surf->h), color);
 	return 0;
 }

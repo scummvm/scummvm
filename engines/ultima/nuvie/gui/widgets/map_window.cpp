@@ -681,7 +681,7 @@ void MapWindow::createLightOverlay() {
 	else if (weather->is_eclipse())  //solar eclipse
 		a = cur_min_brightness;
 	else if (h == 19) { //Dusk -- Smooth transition between 255 and min_brightness during first 59 minutes
-		if (screen->get_lighting_style() == LIGHTING_STYLE_SMOOTH) {
+		if (screen->get_lighting_style() == LightingSmooth) {
 			dawn_or_dusk = true;
 			a = 255 - (uint8)((255.0f - cur_min_brightness) * (float)clock->get_minute() / 59.0f);
 		} else {
@@ -690,7 +690,7 @@ void MapWindow::createLightOverlay() {
 				a = cur_min_brightness;
 		}
 	} else if (h == 5) { //Dawn -- Smooth transition between min_brightness and 255 during first 59 minutes
-		if (screen->get_lighting_style() == LIGHTING_STYLE_SMOOTH) {
+		if (screen->get_lighting_style() == LightingSmooth) {
 			dawn_or_dusk = true;
 			a = cur_min_brightness + (255.0f - cur_min_brightness) * (float)clock->get_minute() / 59.0f;
 		} else {
@@ -708,10 +708,10 @@ void MapWindow::createLightOverlay() {
 
 	bool party_light_source;
 	// smooth seems to need an enormous range in order to have smooth transitions
-	if (a < (screen->get_lighting_style() == LIGHTING_STYLE_SMOOTH ? 248 : 81) &&
+	if (a < (screen->get_lighting_style() == LightingSmooth ? 248 : 81) &&
 	        (game->get_party()->has_light_source() || clock->get_timer(GAMECLOCK_TIMER_U6_LIGHT) != 0)) { //FIXME U6 specific
 		party_light_source = true;
-		if (screen->get_lighting_style() == LIGHTING_STYLE_SMOOTH) {
+		if (screen->get_lighting_style() == LightingSmooth) {
 			if (!dawn_or_dusk) // preserve a when dusk or dawn so we have the correct opacity
 				a = cur_min_brightness;
 		} else

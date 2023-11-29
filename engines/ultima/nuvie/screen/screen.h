@@ -30,11 +30,13 @@
 namespace Ultima {
 namespace Nuvie {
 
-#define LIGHTING_STYLE_NONE 0
-#define LIGHTING_STYLE_SMOOTH 1
-#define LIGHTING_STYLE_ORIGINAL 2
-
 class Configuration;
+
+enum LightingStyle {
+	LightingNone,
+	LightingSmooth,
+	LightingOriginal
+};
 
 class Screen {
 private:
@@ -61,22 +63,18 @@ public:
 	bool init();
 
 	bool is_fullscreen() const;
-	bool is_non_square_pixels() {
+	bool is_non_square_pixels() const {
 		return non_square_pixels;
 	}
 	bool toggle_darkness_cheat();
 	bool toggle_fullscreen();
 	bool set_fullscreen(bool value);
-	bool set_palette(uint8 *palette);
+	bool set_palette(const uint8 *palette);
 	bool set_palette_entry(uint8 idx, uint8 r, uint8 g, uint8 b);
 	bool rotate_palette(uint8 pos, uint8 length);
 	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = nullptr);
-	void *get_pixels();
-	const byte *get_surface_pixels() {
-		return _renderSurface->get_pixels();
-	}
-	Graphics::ManagedSurface *create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
-	Graphics::ManagedSurface *create_sdl_surface_8(byte *src_buf, uint16 src_w, uint16 src_h);
+	Graphics::ManagedSurface *create_sdl_surface_from(const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
+	Graphics::ManagedSurface *create_sdl_surface_8(const byte *src_buf, uint16 src_w, uint16 src_h);
 	Graphics::ManagedSurface *get_sdl_surface();
 	uint16 get_width() const {
 		return width;
@@ -99,13 +97,12 @@ public:
 	void drawalphamap8globe(sint16 x, sint16 y, uint16 radius);
 	void blitalphamap8(sint16 x, sint16 y, Common::Rect *clip_rect);
 
-	int get_lighting_style() const {
+	LightingStyle get_lighting_style() const {
 		return lighting_style;
 	}
-	int get_old_lighting_style() const {
+	LightingStyle get_old_lighting_style() const {
 		return old_lighting_style;    // return the lighting_style before cheats applied
 	}
-	void set_lighting_style(int lighting);
 
 	uint8 get_ambient() const {
 		return shading_ambient;
@@ -116,12 +113,12 @@ public:
 
 	void update();
 	void update(int x, int y, uint16 w, uint16 h);
-	void preformUpdate();
+	void performUpdate();
 
-	byte *copy_area(Common::Rect *area = nullptr, byte *buf = nullptr);
-	byte *copy_area(Common::Rect *area, uint16 down_scale);
+	byte *copy_area(const Common::Rect *area = nullptr, byte *buf = nullptr);
+	byte *copy_area(const Common::Rect *area, uint16 down_scale);
 
-	void restore_area(byte *pixels, Common::Rect *area = nullptr, byte *target = nullptr, Common::Rect *target_area = nullptr, bool free_src = true);
+	void restore_area(byte *pixels, const Common::Rect *area = nullptr, byte *target = nullptr, const Common::Rect *target_area = nullptr, bool free_src = true);
 
 	void draw_line(int sx, int sy, int ex, int ey, uint8 color);
 
@@ -130,7 +127,7 @@ public:
 	void set_non_square_pixels(bool value);
 
 protected:
-	int lighting_style, old_lighting_style;
+	LightingStyle lighting_style, old_lighting_style;
 	bool fill16(uint8 colour_num, uint16 x, uint16 y, sint16 w, sint16 h);
 
 	bool fill32(uint8 colour_num, uint16 x, uint16 y, sint16 w, sint16 h);
@@ -160,9 +157,6 @@ protected:
 	void restore_area32(byte *pixels, const Common::Rect *area, byte *target = nullptr, const Common::Rect *target_area = nullptr, bool free_src = true);
 
 	void set_screen_mode();
-
-private:
-	bool sdl1_toggle_fullscreen();
 };
 
 } // End of namespace Nuvie

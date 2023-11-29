@@ -46,16 +46,12 @@ GUI_Console::~GUI_Console() {
 /* Map the color to the display */
 void GUI_Console::SetDisplay(Screen *s) {
 	GUI_Widget::SetDisplay(s);
-	bg_color->map_color(surface);
+	bg_color->map_color(surface->format);
 }
 
 /* Show the widget  */
 void GUI_Console:: Display(bool full_redraw) {
-	Common::Rect framerect;
-
-	framerect = area;
-
-	SDL_FillRect(surface, &framerect, bg_color->sdl_color);
+	SDL_FillRect(surface, &area, bg_color->sdl_color);
 
 	uint16 i = 0;
 	for (const Std::string &s : data) {

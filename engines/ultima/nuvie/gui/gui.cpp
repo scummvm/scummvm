@@ -42,14 +42,9 @@ GUI::GUI(const Configuration *c, Screen *s) : config(c), screen(s), numwidgets(0
 		maxwidgets(0), widgets(nullptr), display(1), running(0), dragging(false),
 		full_redraw(true), focused_widget(nullptr), locked_widget(nullptr),
 		block_input(false) {
-	Graphics::ManagedSurface *sdl_surface;
-
 	gui = this;
-
-	sdl_surface = screen->get_sdl_surface();
-
 	selected_color = new GUI_Color(10, 10, 50);
-	selected_color->map_color(sdl_surface);
+	selected_color->map_color(screen->get_sdl_surface()->format);
 
 	gui_font = new GUI_Font();
 	gui_drag_manager = new GUI_DragManager(screen);

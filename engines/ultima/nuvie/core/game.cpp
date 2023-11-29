@@ -620,7 +620,7 @@ void Game::play() {
 		gui->Display();
 		if (cursor) cursor->display();
 
-		screen->preformUpdate();
+		screen->performUpdate();
 		sound_manager->update();
 		event->wait();
 	}
@@ -665,7 +665,7 @@ void Game::update_once_display() {
 	gui->Display();
 	if (cursor) cursor->display();
 
-	screen->preformUpdate();
+	screen->performUpdate();
 	sound_manager->update();
 	event->wait();
 }
