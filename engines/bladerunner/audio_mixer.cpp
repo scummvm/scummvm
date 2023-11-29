@@ -136,17 +136,16 @@ int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::
 	_channels[channel].timeStarted = _vm->_time->currentSystem();
 	_channels[channel].trackDurationMs = trackDurationMs;
 
-	Audio::AudioStream *audioStream = stream;
-
-	if (loop) {
-		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
-	}
-
 	if (!_vm->_mixer->isReady()) {
 		_channels[channel].sentToMixer = false;
 		return channel;
 	}
 	_channels[channel].sentToMixer = true;
+
+	Audio::AudioStream *audioStream = stream;
+	if (loop) {
+		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
+	}
 
 	// Note: 127 (multiplier for pan) is the max (abs) balance value (see common/mixer.cpp)
 	_vm->_mixer->playStream(type,
