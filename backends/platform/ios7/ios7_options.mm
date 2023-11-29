@@ -68,6 +68,7 @@ private:
 	GUI::StaticTextWidget *_gamepadControllerOpacityLabel;
 	GUI::StaticTextWidget *_gamepadControllerDirectionalInputDesc;
 	GUI::PopUpWidget *_gamepadControllerDirectionalInputPopUp;
+	GUI::CheckboxWidget *_gamepadControllerMinimalLayoutCheckbox;
 
 	GUI::CheckboxWidget *_keyboardFnBarCheckbox;
 #if TARGET_OS_IOS
@@ -103,6 +104,7 @@ IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name
 	_gamepadControllerDirectionalInputPopUp = new GUI::PopUpWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerLeftButtonPopUp");
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Thumbstick"), kDirectionalInputThumbstick);
 	_gamepadControllerDirectionalInputPopUp->appendEntry(_("Dpad"), kDirectionalInputDpad);
+	_gamepadControllerMinimalLayoutCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerMinimalLayout", _("Use minimal gamepad layout"));
 
 	_keyboardFnBarCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.KeyboardFunctionBar", _("Show keyboard function bar"));
 
@@ -191,6 +193,7 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	            .addWidget("GamepadControllerOpacitySlider", "Slider")
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
+	            .addWidget("GamepadControllerMinimalLayout", "Checkbox")
 	            .addWidget("KeyboardFunctionBar", "Checkbox");
 
 #if TARGET_OS_IOS
@@ -352,6 +355,7 @@ void IOS7OptionsWidget::load() {
 	_gamepadControllerOpacitySlider->setValue(ConfMan.getInt("gamepad_controller_opacity", _domain));
 	_gamepadControllerOpacityLabel->setValue(_gamepadControllerOpacitySlider->getValue());
 	_gamepadControllerDirectionalInputPopUp->setSelectedTag(loadDirectionalInput("gamepad_controller_directional_input", !inAppDomain, kDirectionalInputThumbstick));
+	_gamepadControllerMinimalLayoutCheckbox->setState(ConfMan.getBool("gamepad_controller_minimal_layout", _domain));
 
 	_keyboardFnBarCheckbox->setState(ConfMan.getBool("keyboard_fn_bar", _domain));
 
@@ -380,6 +384,7 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.setBool("gamepad_controller", _gamepadControllerCheckbox->getState(), _domain);
 		ConfMan.setInt("gamepad_controller_opacity", _gamepadControllerOpacitySlider->getValue(), _domain);
 		ConfMan.setInt("gamepad_controller_directional_input", _gamepadControllerDirectionalInputPopUp->getSelectedTag(), _domain);
+		ConfMan.setBool("gamepad_controller_minimal_layout", _gamepadControllerMinimalLayoutCheckbox->getState(), _domain);
 
 		ConfMan.setBool("keyboard_fn_bar", _keyboardFnBarCheckbox->getState(), _domain);
 
@@ -401,6 +406,7 @@ bool IOS7OptionsWidget::save() {
 		ConfMan.removeKey("gamepad_controller", _domain);
 		ConfMan.removeKey("gamepad_controller_opacity", _domain);
 		ConfMan.removeKey("gamepad_controller_directional_input", _domain);
+		ConfMan.removeKey("gamepad_controller_minimal_layout", _domain);
 
 #if TARGET_OS_IOS
 		if (inAppDomain) {
@@ -427,7 +433,7 @@ bool IOS7OptionsWidget::hasKeys() {
 	bool hasKeys = ConfMan.hasKey("gamepad_controller", _domain) ||
 	ConfMan.hasKey("gamepad_controller_opacity", _domain) ||
 	ConfMan.hasKey("gamepad_controller_directional_input", _domain) ||
-
+	ConfMan.hasKey("gamepad_controller_minimal_layout", _domain) ||
 	ConfMan.hasKey("touch_mode_menus", _domain) ||
 	ConfMan.hasKey("touch_mode_2d_games", _domain) ||
 	ConfMan.hasKey("touch_mode_3d_games", _domain);
@@ -455,12 +461,14 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 		_gamepadControllerOpacityDesc->setEnabled(e);
 		_gamepadControllerOpacitySlider->setEnabled(e);
 		_gamepadControllerOpacityLabel->setEnabled(e);
+		_gamepadControllerMinimalLayoutCheckbox->setEnabled(e);
 	} else {
 		_gamepadControllerCheckbox->setEnabled(false);
 		_gamepadControllerDirectionalInputPopUp->setEnabled(false);
 		_gamepadControllerOpacityDesc->setEnabled(false);
 		_gamepadControllerOpacitySlider->setEnabled(false);
 		_gamepadControllerOpacityLabel->setEnabled(false);
+		_gamepadControllerMinimalLayoutCheckbox->setEnabled(false);
 	}
 #endif /* __IPHONE_15_0  */
 #else /* TARGET_OS_IOS */
@@ -470,6 +478,7 @@ void IOS7OptionsWidget::setEnabled(bool e) {
 	_gamepadControllerOpacityDesc->setEnabled(false);
 	_gamepadControllerOpacitySlider->setEnabled(false);
 	_gamepadControllerOpacityLabel->setEnabled(false);
+	_gamepadControllerMinimalLayoutCheckbox->setEnabled(false);
 #endif /* TARGET_OS_IOS */
 
 	_keyboardFnBarCheckbox->setEnabled(e);
@@ -503,6 +512,7 @@ void OSystem_iOS7::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("gamepad_controller", false);
 	ConfMan.registerDefault("gamepad_controller_opacity", 6);
 	ConfMan.registerDefault("gamepad_controller_directional_input", kDirectionalInputThumbstick);
+	ConfMan.registerDefault("gamepad_controller_minimal_layout", false);
 
 	ConfMan.registerDefault("touch_mode_menus", "direct");
 	ConfMan.registerDefault("touch_mode_2d_games", "touchpad");
