@@ -2541,8 +2541,18 @@ void LB::b_puppetSound(int nargs) {
 		} else {
 			// Two-argument puppetSound is undocumented in D4.
 			// It is however documented in the D5 Lingo dictionary.
-			CastMemberID castMember = g_lingo->pop().asMemberID();
-			int channel = g_lingo->pop().asInt();
+			Datum arg2 = g_lingo->pop();
+			Datum arg1 = g_lingo->pop();
+			int channel = 1;
+			CastMemberID castMember;
+			if (arg1.type == STRING) {
+				// Apparently if the first argument is a string, it will be evaluated as per the 1-arg case
+				castMember = arg1.asMemberID(kCastSound);
+			} else {
+				// FIXME: Figure out how to deal with multilib in D5+
+				castMember = arg2.asMemberID(kCastSound);
+				channel = arg1.asInt();
+			}
 			sound->setPuppetSound(castMember, channel);
 
 			// The D4 two-arg variant of puppetSound plays
