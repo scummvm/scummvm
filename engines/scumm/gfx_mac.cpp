@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/macresman.h"
 #include "common/config-manager.h"
+#include "common/ustr.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
@@ -230,6 +231,11 @@ MacGui::MacWidget::MacWidget(MacGui::MacDialogWindow *window, Common::Rect bound
 		_visible = false;
 }
 
+Common::String MacGui::MacWidget::getText() const {
+	Common::String temp = Common::U32String(_text, Common::kMacRoman).encode(Common::kUtf8);
+	return temp;
+}
+
 bool MacGui::MacWidget::findWidget(int x, int y) const {
 	return _enabled && _bounds.contains(x, y);
 }
@@ -253,6 +259,40 @@ void MacGui::MacWidget::setValue(int value) {
 
 void MacGui::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
+}
+
+int MacGui::MacWidget::toMacRoman(int unicode) {
+	if (unicode >= 32 && unicode <= 127)
+		return unicode;
+
+	if (unicode < 160 || unicode > 255)
+		return 0;
+
+	const byte macRoman[] = {
+		0xCA, 0xC1, 0xA2, 0xA3, 0xDB, 0xB4, 0x00, 0xA4, // 160-167
+		0xAC, 0xA9, 0xBB, 0xC7, 0xC2, 0x00, 0xA8, 0xF8, // 168-175
+		0xA1, 0xB1, 0x00, 0x00, 0xAB, 0xB5, 0xA6, 0xE1, // 176-183
+		0xFC, 0x00, 0xBC, 0xC8, 0x00, 0x00, 0x00, 0xC0, // 184-191
+		0xCB, 0xE7, 0xE5, 0xCC, 0x80, 0x81, 0xAE, 0x82, // 192-199
+		0xE9, 0x83, 0xE6, 0xE8, 0xED, 0xEA, 0xEB, 0xEC, // 200-207
+		0x00, 0x84, 0xF1, 0xEE, 0xEF, 0xCD, 0x85, 0x00, // 208-215
+		0xAF, 0xF4, 0xF2, 0xF3, 0x86, 0x00, 0x00, 0xA7, // 216-223
+		0x88, 0x87, 0x89, 0x8B, 0x8A, 0x8C, 0xBE, 0x8D, // 224-231
+		0x8F, 0x8E, 0x90, 0x91, 0x93, 0x92, 0x94, 0x95, // 232-239
+		0x00, 0x96, 0x98, 0x97, 0x99, 0x9B, 0x9A, 0xD6, // 240-247
+		0xBF, 0x9D, 0x9C, 0x9E, 0x9F, 0x00, 0x00, 0xD8  // 248-255
+	};
+
+	int roman = macRoman[unicode - 160];
+
+	// These characters were defined in the Mac Roman character table I
+	// found, but they are apparently not present in older fonts like
+	// Chicago?
+
+	if (roman >= 0xD9)
+		roman = 0;
+
+	return roman;
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
@@ -519,7 +559,8 @@ bool MacGui::MacCheckbox::handleMouseUp(Common::Event &event) {
 }
 
 // ---------------------------------------------------------------------------
-// Static text widget
+// Static text widget. Text is encoded as MacRoman, so any outside strings
+// (e.g.save file names or hard-coded texts) have to be re-encoded.
 // ---------------------------------------------------------------------------
 
 void MacGui::MacStaticText::draw(bool drawFocused) {
@@ -538,6 +579,9 @@ void MacGui::MacStaticText::draw(bool drawFocused) {
 
 // ---------------------------------------------------------------------------
 // Editable text widget
+//
+// Text is encoded as MacRoman, and has to be re-encoded before handed over
+// to the outside world.
 //
 // The current edit position is stored in _caretPos. This holds the character
 // the caret is placed right after, so 0 is the first character.
@@ -651,7 +695,7 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 		caretX = _textPos - 1;
 
 		for (int i = 0; i < _caretPos; i++)
-			caretX += _font->getCharWidth(_text[i]);
+			caretX += _font->getCharWidth((byte)_text[i]);
 
 		int delta = 0;
 
@@ -698,7 +742,7 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 
 		for (int i = 0; i < (int)_text.size() && x < _textSurface.w; i++) {
 			Color color = kBlack;
-			int charWidth = _font->getCharWidth(_text[i]);
+			int charWidth = _font->getCharWidth((byte)_text[i]);
 
 			if (x + charWidth >= 0) {
 				if (_selectLen != 0 && i >= selectStart && i <= selectEnd) {
@@ -711,7 +755,7 @@ void MacGui::MacEditText::draw(bool drawFocused) {
 				} else
 					lastCharSelected = false;
 
-				_font->drawChar(&_textSurface, _text[i], x, y, color);
+				_font->drawChar(&_textSurface, (byte)_text[i], x, y, color);
 				firstChar = false;
 			}
 
@@ -919,13 +963,13 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 		break;
 	}
 
-	int c = event.kbd.ascii;
+	int c = toMacRoman(event.kbd.ascii);
 
-	if (c >= 32 && c <= 127) {
+	if (c > 0) {
 		if (_selectLen != 0)
 			deleteSelection();
 		if (_text.size() < _maxLength) {
-			_text.insertChar(event.kbd.ascii, _caretPos);
+			_text.insertChar(c, _caretPos);
 			_caretPos++;
 			setRedraw();
 		}
@@ -3185,7 +3229,8 @@ void MacGui::prepareSaveLoad(Common::StringArray &savegameNames, bool *availSlot
 			slotIds[saveCounter] = i;
 			saveCounter++;
 			if (_vm->getSavegameName(i, name)) {
-				savegameNames.push_back(Common::String::format("%s", name.c_str()));
+				Common::String temp = Common::U32String(name, _vm->getDialogCodePage()).encode(Common::kMacRoman);
+				savegameNames.push_back(temp);
 			} else {
 				// The original printed "WARNING... old savegame", but we do support old savegames :-)
 				savegameNames.push_back(Common::String::format("%s", "WARNING: wrong save version"));

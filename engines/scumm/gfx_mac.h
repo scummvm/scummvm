@@ -161,6 +161,8 @@ public:
 		Common::String _text;
 		int _value = 0;
 
+		int toMacRoman(int unicode);
+
 		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 
@@ -185,7 +187,7 @@ public:
 		virtual void setValue(int value);
 		int getValue() const { return _value; }
 
-		Common::String getText() { return _text; }
+		Common::String getText() const;
 
 		virtual bool useBeamCursor() { return false; }
 		virtual bool findWidget(int x, int y) const;
