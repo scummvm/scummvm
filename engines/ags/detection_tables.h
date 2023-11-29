@@ -271,6 +271,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ashinaredwitch", "Ashina: The Red Witch" },
 	{ "astroloco", "Astroloco: Worst Contact" },
 	{ "atotk", "A Tale Of Two Kingdoms" },
+	{ "azazelxmas", "Azazel's Christmas Fable" },
 	{ "avcsurvivalguide", "AVC's Survival Guide / Guía de supervivencia en CAV" },
 	{ "beekeeperpicnic", "The Beekeeper's Picnic" },
 	{ "beer", "Beer!" },
@@ -403,6 +404,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "theterribleoldman", "The Terrible Old Man" },
 	{ "timegentlemenplease", "Time Gentlemen, Please!" },
 	{ "unavowed", "Unavowed" },
+	{ "unlikelyprometheus", "The Unlikely Prometheus" },
 	{ "untilihaveyou", "Until I Have You" },
 	{ "waitingfortheloop", "Waiting For the Loop" },
 	{ "welcometosunnymunarvagir", "Welcome to Sunny Munarvagir" },
@@ -1140,6 +1142,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dragonsfang", "Dragon's Fang" },
 	{ "dragonslayers", "The Dragon Slayers" },
 	{ "dragontales", "Dragon Tales" },
+	{ "dragoonjourney", "Dragoon's Journey" },
 	{ "drawnflame", "Drawn to the Flame" },
 	{ "drchuckles", "Dr. Chuckles' Miniature World Of Madness" },
 	{ "dreadmacfarlane", "Dread Mac Farlane" },
@@ -3271,7 +3274,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "unkhour_nmhour1", "Unnamed Hour Game - NMHOUR1" },
 	{ "unlabeledtape", "The Unlabeled Videotape" },
 	{ "unlicensedkill", "Unlicensed to Kill" },
-	{ "unlikelyprometheus", "The Unlikely Prometheus" },
 	{ "unprintablemagenta", "The unprintable Magenta" },
 	{ "unprofe", "Un Profe" },
 	{ "unraveling", "The Tapestry - Chapter 1: The Unraveling" },
@@ -3306,6 +3308,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "virmachina", "VIRMACHINA" },
 	{ "virtualpiano", "Virtual Piano" },
 	{ "vivarium", "Vivarium" },
+	{ "vizita", "Vizita" },
 	{ "vorezkor", "The VorezKor Hack" },
 	{ "voxinrama", "Vox in Rama" },
 	{ "voyagesfuturo", "Les Voyages de Futuro" },
@@ -3313,6 +3316,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "voodoodave", "Voodoo Dave and the Tablecloth Mystery" },
 	{ "vrrontour", "VR Reality-on-the-Norm Tour " },
 	{ "wagesofdarkness", "The Wages of Darkness" },
+	{ "waguogambo", "Wagu Ogambo" },
 	{ "waitingboyfriend", "Waiting For Your Boyfriend Simulator" },
 	{ "wakeup", "Wake Up" },
 	{ "walkcyclegen", "SSH's Walkcycle Generator" },
@@ -3943,6 +3947,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 54144779),  // v2.0 updated
 	GAME_ENTRY_EN_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
+	GAME_ENTRY_EN_STEAM("azazelxmas", "Azazels_Christmas_Fable.exe", "46fcfdc2aa113c05f3ba95ad356e1a63", 408594796),
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
 	GAME_ENTRY_GOG("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556521058), // Eng-Deu v1.1
@@ -4242,6 +4247,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243795250),  // Win v2.0
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "7a2ea9a4824badcacb5c779ff98b380f", 1243797801),  // Win v2.0.1
 	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "ccae5c3eb855450efe79830f4fa2855f", 1243799719),  // Win v2.0.1 hotfix
+	GAME_ENTRY_EN_STEAM("perfecttides", "perfecttides.exe", "ccae5c3eb855450efe79830f4fa2855f", 1243799760),  // Win v2.0.1 28/11/23 update
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201066930),  // Mac
 	GAME_ENTRY_EN_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201068548),  // Mac v1.0.2
 	GAME_ENTRY("perfidiouspetrolstation", "NancyATPPS.exe", "be858e83311d4f1b49e05b933b92f0a9", 28085287),  // Eng-Deu
@@ -4434,6 +4440,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_GOG("unavowed", "Unavowed.exe", "52c411caa3bfb65788ed8768ceaa0c30", 1756042001), // Linux/Windows v.1.0.2 (GOG v1.4)
 	GAME_ENTRY_EN_GOG("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617816924), // Linux/Windows v.1.1.0 (GOG v2.0)
 	GAME_ENTRY_EN_GOG("unavowed", "unavowed.ags", "f311000c476689a6e77d25f002f412db", 1617819092), // Linux/Windows v.1.1.0 updated (GOG v2.0.1)
+	GAME_ENTRY_EN_STEAM("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 129124983),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	GAME_ENTRY_EN_STEAM("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537),
 	GAME_ENTRY_EN("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
@@ -5895,6 +5902,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("dragonscale", "DS.exe", "64fcaf7da0b257ea831f89c54be0ad72", 1366698),
 	GAME_ENTRY_EN("dragonslayers", "Slayers.exe", "3128b9f90e2f954ba704414ae854d10b", 6914586),
 	GAME_ENTRY_EN("dragontales", "dragont.exe", "465f972675db2da6040518221af5b0ba", 9240132),
+	GAME_ENTRY_EN("dragoonjourney", "DragoonsJourney.exe", "ba989a02e5392a9a7550fee72629c02f", 120122456),
 	GAME_ENTRY_EN("drawnflame", "Drawn to the Flame.exe", "7971a7c02d414dc8cb33b6ec36080b91", 51616597),  // Windows
 	GAME_ENTRY_EN("drawnflame", "Drawn to the Flame.ags", "11ef599203105c5094f587c805871fb4", 49119557),  // Linux
 	GAME_ENTRY_EN("drchuckles", "Dr Chuckles.exe", "07b30f9606f5dfde84cb66e926f7cc74", 615657195),
@@ -8465,7 +8473,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("unkhour_nmhour1", "nmhour1.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1377323),
 	GAME_ENTRY_EN("unlabeledtape", "cv.exe", "465f972675db2da6040518221af5b0ba", 1502178),
 	GAME_ENTRY_EN("unlicensedkill", "UTK.exe", "0564de07d3fd5c16e6947a647061913c", 10766019),
-	GAME_ENTRY_EN("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 56868120),
+	GAME_ENTRY_EN_PLATFORM("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 56868120, "GameJam Build"),
 	GAME_ENTRY_EN("unprintablemagenta", "Magenta.exe", "615e73fc1874e92d60a1996c2330ea36", 113259258),
 	GAME_ENTRY_LANG("unprofe", "Un Profe.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3465541, Common::ES_ESP),
 	GAME_ENTRY_EN("unraveling", "unraveling.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2927577),
@@ -8509,6 +8517,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("virmachina", "Cyber.ags", "82a1293d6e986bed1d207351bf855182", 22029096),
 	GAME_ENTRY_EN("virtualpiano", "Synth.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1419081),
 	GAME_ENTRY_EN("vivarium", "Vivarium.exe", "e5744908aea934a7adfe301a27c71168", 77505388),
+	GAME_ENTRY_EN("vizita", "Vizita.ags", "cdcb14d867fabaf7571b9951b34775ad", 903382075),
+	GAME_ENTRY_PLATFORM("vizita", "Vizita Romanian.ags", "dad6359d89eb3096b6710ad9cc287d1a", 900793616, "Romanian"),
 	GAME_ENTRY_EN("voxinrama", "voxinrama.ags", "fcf753ad836899ef4b8f120310252d07", 47620042),  // itch.io client
 	GAME_ENTRY_LANG("voyagesfuturo", "AtelierRAB.exe", "495d45fb8adfd49690ae3b97921feec6", 1818625248, Common::FR_FRA),  // Windows
 	GAME_ENTRY_LANG("voyagesfuturo", "AtelierRAB.ags", "6550012348b11be9ef0063c4720fb9bf", 1816144592, Common::FR_FRA),  // Linux
@@ -8517,6 +8527,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLATFORM("vrrontour", "Virtual Reality.exe", "f8e8f781a4a95c2bfea5f54b085df550", 10327680, "v08"),
 	GAME_ENTRY_EN("wagesofdarkness", "wages_of_darkness.exe", "615e73fc1874e92d60a1996c2330ea36", 26997472),
 	GAME_ENTRY_EN_PLATFORM("wagesofdarkness", "wages_of_darkness.exe", "82da2565c456dcfb265ded6fe3189c0b", 20873104, "MAGS"),
+	GAME_ENTRY_EN("waguogambo", "Wagu.ags", "6620245ab6ad49c2fdf032dc824acac1", 2984010),
 	GAME_ENTRY_EN("waitingboyfriend", "1983.exe", "495d45fb8adfd49690ae3b97921feec6", 2591438),
 	GAME_ENTRY_EN("wakeup", "Wakeup.exe", "60289244201d5cde2ac388c2d43ec8cd", 9249285),
 	GAME_ENTRY_EN("wallardgromoid", "plannedday.exe", "82da2565c456dcfb265ded6fe3189c0b", 122212233),
