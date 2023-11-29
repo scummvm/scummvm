@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_BURL_ANIMATION = 9
+};
+
 static const char *SAID1[][4] = {
 	{ "ISLAND",    nullptr,   "999w011", "999w011" },
 	{ "ROCK",      "144W004", "999w011", "999w011" },
@@ -119,8 +123,8 @@ void Room139_144::init() {
 	case 139:
 		player_set_commands_allowed(false);
 		ws_demand_location(470, 269, 8);
-		_val3 = 1;
-		_val4 = 3;
+		_burlShould = 1;
+		_burlMode = 3;
 		kernel_trigger_dispatch_now(9);
 		break;
 
@@ -139,8 +143,8 @@ void Room139_144::init() {
 	}
 
 	if (_G(game).previous_room != 139 && _G(flags)[V000] == 1002) {
-		_val3 = _val4 = 3;
-		kernel_trigger_dispatch_now(9);
+		_burlShould = _burlMode = 3;
+		kernel_trigger_dispatch_now(kCHANGE_BURL_ANIMATION);
 	}
 
 	if (_G(flags)[V112]) {
@@ -184,7 +188,7 @@ void Room139_144::daemon() {
 
 	case 6:
 		player_set_commands_allowed(true);
-		_val3 = 3;
+		_burlShould = 3;
 		break;
 
 	case 7:
@@ -202,25 +206,25 @@ void Room139_144::daemon() {
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1013);
 		break;
 
-	case 9:
-		switch (_val4) {
+	case kCHANGE_BURL_ANIMATION:
+		switch (_burlMode) {
 		case 3:
-			switch (_val3) {
+			switch (_burlShould) {
 			case 1:
-				_val3 = 2;
+				_burlShould = 2;
 				series_play("144bu01s", 0x301, 0, -1, 8);
 				digi_preload("144b003d");
 				digi_preload_stream_breaks(SERIES2);
-				series_stream_with_breaks(SERIES2, "144bu01", 8, 0x300, 9);
+				series_stream_with_breaks(SERIES2, "144bu01", 8, 0x300, kCHANGE_BURL_ANIMATION);
 				break;
 
 			case 2:
 				digi_unload_stream_breaks(SERIES2);
 				player_set_commands_allowed(true);
 				randomDigi();
-				_val3 = 3;
+				_burlShould = 3;
 
-				series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+				series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
 				series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
 				break;
 
@@ -236,7 +240,7 @@ void Room139_144::daemon() {
 						break;
 
 					case 3:
-						_val3 = 41;
+						_burlShould = 41;
 						break;
 
 					case 4:
@@ -252,25 +256,25 @@ void Room139_144::daemon() {
 					switch (imath_ranged_rand(1, 4)) {
 					case 1:
 						randomDigi();
-						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 16, 24);
+						series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 10, 0, 100, 0, 0, 16, 24);
 						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 16, 24);
 						break;
 
 					case 2:
 						randomDigi();
-						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 26, 35);
+						series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 10, 0, 100, 0, 0, 26, 35);
 						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 26, 35);
 						break;
 
 					case 3:
 						randomDigi();
-						series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 37, 40);
+						series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 10, 0, 100, 0, 0, 37, 40);
 						series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 37, 40);
 						break;
 
 					case 4:
-						_val3 = 7;
-						series_play("144bu06", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 12);
+						_burlShould = 7;
+						series_play("144bu06", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 12);
 						series_play("144bu06s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 12);
 						break;
 
@@ -278,7 +282,7 @@ void Room139_144::daemon() {
 						break;
 					}
 				} else {
-					series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, _val2, _val2);
+					series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, _val2, _val2);
 					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, _val2, _val2);
 				}
 				break;
@@ -286,14 +290,14 @@ void Room139_144::daemon() {
 			case 4:
 			case 5:
 				digi_play("144b002", 2);
-				series_play("144bu06", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 2);
+				series_play("144bu06", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 2);
 				series_play("144bu06s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 2);
 				break;
 
 			case 7:
 				digi_change_volume(2, 0);
-				_val4 = 7;
-				series_play("144bu07", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 2);
+				_burlMode = 7;
+				series_play("144bu07", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 2);
 				series_play("144bu07s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 2);
 				break;
 
@@ -303,32 +307,32 @@ void Room139_144::daemon() {
 			break;
 
 		case 4:
-			switch (_val3) {
+			switch (_burlShould) {
 			case 4:
-				series_play("144bu08", 0x300, 0, 9, 10, 0, 100, 0, 0, 3, 3);
+				series_play("144bu08", 0x300, 0, kCHANGE_BURL_ANIMATION, 10, 0, 100, 0, 0, 3, 3);
 				series_play("144bu08s", 0x301, 0, -1, 10, 0, 100, 0, 0, 3, 3);
 				break;
 
 			case 5:
-				_val4 = 5;
-				series_play("144bu08", 0x300, 0, 9, 4, 0, 100, 0, 0, 4, 7);
+				_burlMode = 5;
+				series_play("144bu08", 0x300, 0, kCHANGE_BURL_ANIMATION, 4, 0, 100, 0, 0, 4, 7);
 				series_play("144bu08s", 0x301, 0, -1, 4, 0, 100, 0, 0, 4, 7);
 				break;
 
 			default:
 				digi_play("144b002", 2);
-				_val4 = 3;
-				_val3 = 2;
-				series_play("144bu08", 0x300, 2, 9, 7, 0, 100, 0, 0, 0, 3);
+				_burlMode = 3;
+				_burlShould = 2;
+				series_play("144bu08", 0x300, 2, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 3);
 				series_play("144bu08s", 0x301, 2, -1, 7, 0, 100, 0, 0, 0, 3);
 				break;
 			}
 			break;
 
 		case 5:
-			if (_val3 == 5) {
+			if (_burlShould == 5) {
 				frame = imath_ranged_rand(0, 2);
-				series_play("144bu09", 0x300, 0, 9, 4, 0, 100, 0, 0, frame, frame);
+				series_play("144bu09", 0x300, 0, kCHANGE_BURL_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				series_play("144bu09s", 0x301, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 
 				if (_digi1) {
@@ -337,33 +341,33 @@ void Room139_144::daemon() {
 					_digi1 = nullptr;
 				}
 			} else {
-				_val4 = 4;
-				series_play("144bu08", 0x300, 2, 9, 7, 0, 100, 0, 0, 4, 7);
+				_burlMode = 4;
+				series_play("144bu08", 0x300, 2, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 4, 7);
 				series_play("144bu08s", 0x301, 2, -1, 7, 0, 100, 0, 0, 4, 7);				
 			}
 			break;
 
 		case 6:
-			_val4 = 4;
-			series_play("144bu08", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 3);
+			_burlMode = 4;
+			series_play("144bu08", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 3);
 			series_play("144bu08s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 3);
 			break;
 
 		case 7:
-			if (_val3 == 7) {
+			if (_burlShould == 7) {
 				if (imath_ranged_rand(1, 10) == 1) {
 					randomDigi();
-					_val4 = 3;
-					_val3 = 3;
-					series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+					_burlMode = 3;
+					_burlShould = 3;
+					series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
 					series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
 				} else {
-					series_play("144bu03", 0x300, 0, 9, 10, 0, 100, 0, 0, 0, 0);
+					series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 					series_play("144bu03s", 0x301, 0, -1, 10, 0, 100, 0, 0, 0, 0);
 				}
 			} else {
-				_val4 = 3;
-				series_play("144bu03", 0x300, 0, 9, 7, 0, 100, 0, 0, 0, 15);
+				_burlMode = 3;
+				series_play("144bu03", 0x300, 0, kCHANGE_BURL_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
 				series_play("144bu03s", 0x301, 0, -1, 7, 0, 100, 0, 0, 0, 15);
 			}
 			break;
@@ -466,7 +470,7 @@ void Room139_144::conv31() {
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {
-			_val3 = 4;
+			_burlShould = 4;
 			conv_resume();
 		} else if (who == 1) {
 			conv_resume();
@@ -474,7 +478,7 @@ void Room139_144::conv31() {
 		}
 	} else if (conv_sound_to_play()) {
 		if (who <= 0) {
-			_val3 = 5;
+			_burlShould = 5;
 			_digi1 = conv_sound_to_play();
 		} else if (who == 1) {
 			wilbur_speech(conv_sound_to_play(), 1);
