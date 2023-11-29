@@ -34,8 +34,8 @@ private:
 	const char *_digi1 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
+	int _burlShould = 0;
+	int _burlMode = 0;
 
 	void preloadDigi();
 	void randomDigi();
