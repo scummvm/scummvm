@@ -129,6 +129,7 @@ cLowLevelGraphicsSDL::~cLowLevelGraphicsSDL() {
 	for (int i = 0; i < MAX_TEXTUREUNITS; i++)
 		hplFree(mpTexCoordArray[i]);
 	hplDelete(_gammaCorrectionProgram);
+	hplDelete(_screenBuffer);
 }
 
 bool cLowLevelGraphicsSDL::Init(int alWidth, int alHeight, int alBpp, int abFullscreen,
