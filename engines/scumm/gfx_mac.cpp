@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/enc-internal.h"
 #include "common/macresman.h"
 #include "common/config-manager.h"
 #include "common/ustr.h"
@@ -259,40 +260,6 @@ void MacGui::MacWidget::setValue(int value) {
 
 void MacGui::MacWidget::drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const {
 	_window->_gui->drawBitmap(_window->innerSurface(), r, bitmap, color);
-}
-
-int MacGui::MacWidget::toMacRoman(int unicode) {
-	if (unicode >= 32 && unicode <= 127)
-		return unicode;
-
-	if (unicode < 160 || unicode > 255)
-		return 0;
-
-	const byte macRoman[] = {
-		0xCA, 0xC1, 0xA2, 0xA3, 0xDB, 0xB4, 0x00, 0xA4, // 160-167
-		0xAC, 0xA9, 0xBB, 0xC7, 0xC2, 0x00, 0xA8, 0xF8, // 168-175
-		0xA1, 0xB1, 0x00, 0x00, 0xAB, 0xB5, 0xA6, 0xE1, // 176-183
-		0xFC, 0x00, 0xBC, 0xC8, 0x00, 0x00, 0x00, 0xC0, // 184-191
-		0xCB, 0xE7, 0xE5, 0xCC, 0x80, 0x81, 0xAE, 0x82, // 192-199
-		0xE9, 0x83, 0xE6, 0xE8, 0xED, 0xEA, 0xEB, 0xEC, // 200-207
-		0x00, 0x84, 0xF1, 0xEE, 0xEF, 0xCD, 0x85, 0x00, // 208-215
-		0xAF, 0xF4, 0xF2, 0xF3, 0x86, 0x00, 0x00, 0xA7, // 216-223
-		0x88, 0x87, 0x89, 0x8B, 0x8A, 0x8C, 0xBE, 0x8D, // 224-231
-		0x8F, 0x8E, 0x90, 0x91, 0x93, 0x92, 0x94, 0x95, // 232-239
-		0x00, 0x96, 0x98, 0x97, 0x99, 0x9B, 0x9A, 0xD6, // 240-247
-		0xBF, 0x9D, 0x9C, 0x9E, 0x9F, 0x00, 0x00, 0xD8  // 248-255
-	};
-
-	int roman = macRoman[unicode - 160];
-
-	// These characters were defined in the Mac Roman character table I
-	// found, but they are apparently not present in older fonts like
-	// Chicago?
-
-	if (roman >= 0xD9)
-		roman = 0;
-
-	return roman;
 }
 
 int MacGui::MacWidget::drawText(Common::String text, int x, int y, int w, Color fg, Color bg, Graphics::TextAlign align, bool wordWrap, int deltax) const {
@@ -963,7 +930,7 @@ bool MacGui::MacEditText::handleKeyDown(Common::Event &event) {
 		break;
 	}
 
-	int c = toMacRoman(event.kbd.ascii);
+	int c = _window->_gui->toMacRoman(event.kbd.ascii);
 
 	if (c > 0) {
 		if (_selectLen != 0)
@@ -2487,10 +2454,42 @@ void MacGui::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines,
 
 MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(_vm->_system), _surface(_vm->_macScreen), _resourceFile(resourceFile) {
 	_fonts.clear();
+
+	// kMacRomanConversionTable is a conversion table from Mac Roman
+	// 128-255 to unicode. What we need, however, is a mapping from
+	// unicode 160-255 to Mac Roman.
+
+	for (int i = 0; i < ARRAYSIZE(_unicodeToMacRoman); i++)
+		_unicodeToMacRoman[i] = 0;
+
+	for (int i = 0; i < ARRAYSIZE(Common::kMacRomanConversionTable); i++) {
+		int unicode = Common::kMacRomanConversionTable[i];
+
+		if (unicode >= 160 && unicode <= 255)
+			_unicodeToMacRoman[unicode - 160] = 128 + i;
+	}
 }
 
 MacGui::~MacGui() {
 	delete _windowManager;
+}
+
+int MacGui::toMacRoman(int unicode) const {
+	if (unicode >= 32 && unicode <= 127)
+		return unicode;
+
+	if (unicode < 160 || unicode > 255)
+		return 0;
+
+	int macRoman = _unicodeToMacRoman[unicode - 160];
+
+	// These characters are defined in Mac Roman, but apparently not
+	// present in older fonts like Chicago?
+
+	if (macRoman >= 0xD9 && macRoman != 0xF0)
+		macRoman = 0;
+
+	return macRoman;
 }
 
 void MacGui::setPalette(const byte *palette, uint size) {

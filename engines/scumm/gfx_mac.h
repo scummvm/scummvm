@@ -51,6 +51,8 @@ protected:
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _gameFontId = -1;
 
+	byte _unicodeToMacRoman[95];
+
 	enum Color {
 		kBlack = 0,
 		kBlue = 1,
@@ -160,8 +162,6 @@ public:
 
 		Common::String _text;
 		int _value = 0;
-
-		int toMacRoman(int unicode);
 
 		int drawText(Common::String text, int x, int y, int w, Color fg = kBlack, Color bg = kWhite, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool wordWrap = false, int deltax = 0) const;
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
@@ -577,6 +577,8 @@ public:
 	Graphics::Surface *surface() { return _surface; }
 
 	virtual const Common::String name() const = 0;
+
+	int toMacRoman(int unicode) const;
 
 	void setPalette(const byte *palette, uint size);
 	virtual bool handleEvent(Common::Event &event);
