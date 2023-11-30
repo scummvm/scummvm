@@ -36,13 +36,21 @@
 	API_AVAILABLE(ios(15.0))
 	GCVirtualController *_virtualControllerThumbstick;
 	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_virtualControllerMiniThumbstick;
+	API_AVAILABLE(ios(15.0))
 	GCVirtualController *_virtualControllerDpad;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualController *_virtualControllerMiniDpad;
 	API_AVAILABLE(ios(15.0))
 	GCVirtualController *_currentController;
 	API_AVAILABLE(ios(15.0))
 	GCVirtualControllerConfiguration *_configDpad;
 	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configMiniDpad;
+	API_AVAILABLE(ios(15.0))
 	GCVirtualControllerConfiguration *_configThumbstick;
+	API_AVAILABLE(ios(15.0))
+	GCVirtualControllerConfiguration *_configMiniThumbstick;
 #endif
 #endif
 	int _currentDpadXValue;
@@ -65,11 +73,36 @@
 	if (@available(iOS 15.0, *)) {
 		// Configure a simple game controller with dPad and A and B buttons
 		_configDpad = [[GCVirtualControllerConfiguration alloc] init];
-		_configDpad.elements = [[NSSet alloc] initWithObjects:GCInputDirectionPad, GCInputRightThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, GCInputLeftShoulder, GCInputRightShoulder, nil];
+		_configMiniDpad = [[GCVirtualControllerConfiguration alloc] init];
 		_configThumbstick = [[GCVirtualControllerConfiguration alloc] init];
-		_configThumbstick.elements = [[NSSet alloc] initWithObjects:GCInputLeftThumbstick, GCInputRightThumbstick, GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, GCInputLeftShoulder, GCInputRightShoulder, nil];
+		_configMiniThumbstick = [[GCVirtualControllerConfiguration alloc] init];
+
+		NSArray<NSString *> *_commonElements = [[NSArray alloc] initWithObjects: GCInputButtonA, GCInputButtonB, GCInputButtonX, GCInputButtonY, nil];
+		NSArray<NSString *> *_additionalElements = [[NSArray alloc] initWithObjects: GCInputRightThumbstick, GCInputLeftShoulder, GCInputRightShoulder, nil];
+
+		NSMutableSet<NSString *> *_fullSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects: GCInputLeftThumbstick, nil];
+		[_fullSetElementsThumbstick addObjectsFromArray:_commonElements];
+		[_fullSetElementsThumbstick addObjectsFromArray:_additionalElements];
+	
+		NSMutableSet<NSString *> *_miniSetElementsThumbstick = [[NSMutableSet alloc] initWithObjects:GCInputLeftThumbstick,  nil];
+		[_miniSetElementsThumbstick addObjectsFromArray:_commonElements];
+
+		NSMutableSet<NSString *> *_fullSetElementsDpad = [[NSMutableSet alloc] initWithObjects: GCInputDirectionalDpad, nil];
+		[_fullSetElementsDpad addObjectsFromArray:_commonElements];
+		[_fullSetElementsDpad addObjectsFromArray:_additionalElements];
+
+		NSMutableSet<NSString *> *_miniSetElementsDpad = [[NSMutableSet alloc] initWithObjects:GCInputDirectionalDpad,  nil];
+		[_miniSetElementsDpad addObjectsFromArray:_commonElements];
+
+		_configThumbstick.elements = _fullSetElementsThumbstick;
+		_configMiniThumbstick.elements = _miniSetElementsThumbstick;
+		_configDpad.elements = _fullSetElementsDpad;
+		_configMiniDpad.elements = _miniSetElementsDpad;
+
 		_virtualControllerThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configThumbstick];
+		_virtualControllerMiniThumbstick = [[GCVirtualController alloc] initWithConfiguration:_configMiniThumbstick];
 		_virtualControllerDpad = [[GCVirtualController alloc] initWithConfiguration:_configDpad];
+		_virtualControllerMiniDpad = [[GCVirtualController alloc] initWithConfiguration:_configMiniDpad];
 		_currentController = _virtualControllerThumbstick;
 	}
 #endif
@@ -135,7 +168,17 @@
 #if TARGET_OS_IOS
 #ifdef __IPHONE_15_0
 	if (@available(iOS 15.0, *)) {
-		GCVirtualController *controller = ConfMan.getInt("gamepad_controller_directional_input") == kDirectionalInputThumbstick ? _virtualControllerThumbstick : _virtualControllerDpad;
+		GCVirtualController *controller;
+		switch (ConfMan.getInt("gamepad_controller_directional_input")) {
+		case kDirectionalInputThumbstick:
+			controller = ConfMan.getBool("gamepad_controller_minimal_layout") ? _virtualControllerMiniThumbstick : _virtualControllerThumbstick;
+			break;
+		case kDirectionalInputDpad:
+		default:
+			controller = ConfMan.getBool("gamepad_controller_minimal_layout") ? _virtualControllerMiniDpad : _virtualControllerDpad;
+			break;
+		}
+
 		if (_currentController != controller) {
 			[_currentController disconnect];
 		}
