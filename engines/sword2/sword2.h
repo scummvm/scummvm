@@ -198,6 +198,8 @@ public:
 
 	int32 _gameCycle;
 
+	bool _isKorTrs;
+
 #if RIGHT_CLICK_CLEARS_LUGGAGE
 	bool heldIsInInventory();
 #endif
