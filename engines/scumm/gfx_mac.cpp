@@ -3080,6 +3080,13 @@ MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWind
 		bounds.moveTo((640 - bounds.width()) / 2, 27);
 	}
 
+	// Adjust the dialog to the actual screen size. This is slightly
+	// wasteful since we've already adjusted the dialog coordinates for
+	// 640x400 pixels, but that may not be a bad thing if we want to keep
+	// support for that resolution later.
+
+	bounds.translate(0, 2 * _vm->_screenDrawOffset);
+
 	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
