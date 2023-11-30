@@ -20,525 +20,582 @@
  */
 
 
-#include "common/debug.h"
-#include "common/textconsole.h"
-
-#include "sword1/memman.h"
-#include "sword1/resman.h"
-#include "sword1/sword1.h"
-#include "sword1/swordres.h"
-
-#include "gui/message.h"
-
 namespace Sword1 {
-void guiFatalError(char *msg) {
-	// Displays a dialog on-screen before terminating the engine.
-	// TODO: We really need to setup a special palette for cases when
-	// the engine is erroring before setting one... otherwise invisible cursor :)
 
-	GUI::MessageDialog dialog(msg);
-	dialog.runModal();
-	error("%s", msg);
-}
+static const ADGameDescription gameDescriptions[] = {
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY4s("clusters/scripts.clu",  "9f6de3bea49a1ef4d8b1b020c41c950e", 1070644,
+				   "clusters/swordres.rif", "bc01bc995f23e46bb076f66ba5c516c4", 58388,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2696228,
+				   "smackshi/intro.smk",    "f50d773c362d03a52a6a4d541d09449c", 13298480),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
-#define MAX_PATH_LEN 260
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "clusters/swordres.rif", "3786c6850e51ecbadb65bbedb5395664", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3186195,
+				   "smackshi/intro.smk",    "95071cd6c12c10c9a30f45a70384cf05", 13448344),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
-ResMan::ResMan(const char *fileName, bool isMacFile) {
-	_openCluStart = _openCluEnd = nullptr;
-	_openClus = 0;
-	_isBigEndian = isMacFile;
-	_memMan = new MemMan();
-	loadCluDescript(fileName);
-}
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY4s("clusters/scripts.clu",  "9f6de3bea49a1ef4d8b1b020c41c950e", 1070644,
+				   "clusters/swordres.rif", "babe2ab6c352bdeb0fc256a94c934bb8", 58388,
+				   "clusters/text.clu",     "5d5bf40629364115da603da378e9d4c9", 2685487,
+				   "smackshi/intro.smk",    "f50d773c362d03a52a6a4d541d09449c", 13298480),
+		Common::PT_BRA,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
-ResMan::~ResMan() {
-#if 0
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
-		Clu *cluster = _prj.clu[clusCnt];
-		if (cluster) {
-			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
-				Grp *group = cluster->grp[grpCnt];
-				if (group) {
-					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++) {
-						if (group->resHandle[resCnt].cond == MEM_DONT_FREE) {
-							warning("ResMan::~ResMan: Resource %02X.%04X.%02X is still open",
-							        clusCnt + 1, grpCnt, resCnt);
-						}
-					}
-				}
-			}
-		}
-	}
-	debug(0, "ResMan closed\n");
-#endif
-	flush();
-	freeCluDescript();
-	delete _memMan;
-}
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY4s("clusters/scripts.clm",  "6b6d9a32668e6f0285318dbe33f167fe", 1088468,
+				   "clusters/swordres.rif", "6b579d7cd94756f5c1e362a9b61f94a3", 59788,
+				   "speech/speech.clu",     "36919b35067bf56b68ad538732a618c2", 45528200,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
-void ResMan::loadCluDescript(const char *fileName) {
-	// The cluster description file is always little endian (even on the mac version, whose cluster files are big endian)
-	Common::File file;
-	file.open(fileName);
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY3s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif", "5bd8928071b91830be6fbcdb7f59786d", 59788,
+				   "english/speech.inf",   "57f6d6949262cd63fc0378dd2375c819", 1662),
+		Common::EN_ANY,
+		Common::kPlatformPSX,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
-	if (!file.isOpen()) {
-		char msg[512];
-		Common::sprintf_s(msg, "Couldn't open CLU description '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
-		guiFatalError(msg);
-	}
+	{
+		"sword1",
+		"Demo",
+		AD_ENTRY3s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif", "5bd8928071b91830be6fbcdb7f59786d", 59788,
+				   "italian/speech.inf",   "af982fbfd4fdd39ea7108dc8f77cf1b3", 1652),
+		Common::IT_ITA,
+		Common::kPlatformPSX,
+		ADGF_DEMO,
+		GUIO0()
+	},
 
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "clusters/swordres.rif", "08d4942cf7c904182a31a1d5333244f3", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "6689aa8f84cb0387b292481d2a2428b4", 13076700),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	_prj.noClu = file.readUint32LE();
-	_prj.clu = new Clu[_prj.noClu]();
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_GRB,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	uint32 *cluIndex = (uint32 *)malloc(_prj.noClu * 4);
-	file.read(cluIndex, _prj.noClu * 4);
+	{ // Korean fan translation
+		"sword1",
+		"",
+		AD_ENTRY6s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268,
+				   "bs1k.fnt",              NULL,                               1222000,
+				   "korean.clu",            NULL,                               -1),
+		Common::KO_KOR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++)
-		if (cluIndex[clusCnt]) {
-			Clu *cluster = _prj.clu + clusCnt;
-			file.read(cluster->label, MAX_LABEL_SIZE);
+	{ // 25th Anniversary rerelease
+		"sword1",
+		"25th Anniversary",
+		AD_ENTRY4s("scripts.clu",        "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "swordres.rif",       "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "text.clu",           "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk", "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_GRB,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-			cluster->file = nullptr;
-			cluster->noGrp = file.readUint32LE();
-			cluster->grp = new Grp[cluster->noGrp];
-			cluster->nextOpen = nullptr;
-			memset(cluster->grp, 0, cluster->noGrp * sizeof(Grp));
-			cluster->refCount = 0;
+	{
+		"sword1",
+		"Rerelease",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_GRB,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-			uint32 *grpIndex = (uint32 *)malloc(cluster->noGrp * 4);
-			file.read(grpIndex, cluster->noGrp * 4);
+	{
+		"sword1",
+		"GOG.com",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193159,
+				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7420364),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-			for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++)
-				if (grpIndex[grpCnt]) {
-					Grp *group = cluster->grp + grpCnt;
-					group->noRes = file.readUint32LE();
-					group->resHandle = new MemHandle[group->noRes];
-					group->offset = new uint32[group->noRes];
-					group->length = new uint32[group->noRes];
-					uint32 *resIdIdx = (uint32 *)malloc(group->noRes * 4);
-					file.read(resIdIdx, group->noRes * 4);
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "clusters/swordres.rif", "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "d602a28f5f5c583bf9870a23a94a9bc5", 13525168),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-					for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++) {
-						if (resIdIdx[resCnt]) {
-							group->offset[resCnt] = file.readUint32LE();
-							group->length[resCnt] = file.readUint32LE();
-							_memMan->initHandle(group->resHandle + resCnt);
-						} else {
-							group->offset[resCnt] = 0xFFFFFFFF;
-							group->length[resCnt] = 0;
-							_memMan->initHandle(group->resHandle + resCnt);
-						}
-					}
-					free(resIdIdx);
-				}
-			free(grpIndex);
-		}
-	free(cluIndex);
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "clusters/swordres.rif", "665b7ed64c13013ec4a8bcd101a1e862", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3188750,
+				   "smackshi/intro.smk",    "d602a28f5f5c583bf9870a23a94a9bc5", 13525168),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	if (_prj.clu[3].grp[5].noRes == 29)
-		for (uint8 cnt = 0; cnt < 29; cnt++)
-			_srIdList[cnt] = 0x04050000 | cnt;
-}
+	{
+		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "swordres.rif",          "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "fe087447e0e525e371cf10cfabf589eb", 14524000),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::freeCluDescript() {
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087984,
+				   "clusters/swordres.rif", "c7df52094d590b568a4ed35b70390d9e", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "78e3ba96f33be8c2ef8feb46724cfef5", 11537716),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
-		Clu *cluster = _prj.clu + clusCnt;
-		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
-			Grp *group = cluster->grp + grpCnt;
-			if (group->resHandle != nullptr) {
-				for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
-					_memMan->freeNow(group->resHandle + resCnt);
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "d1d0e958aeef9b1375b55df8f8831f26", 13281776),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-				delete[] group->resHandle;
-				delete[] group->offset;
-				delete[] group->length;
-			}
-		}
-		delete[] cluster->grp;
-		delete cluster->file;
-	}
-	delete[] _prj.clu;
-}
+	{
+		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "swordres.rif",          "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 2705446,
+				   "smackshi/intro.smk",    "d1d0e958aeef9b1375b55df8f8831f26", 13281776),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::flush() {
-	Common::StackLock lock(_resourceAccessMutex);
-	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
-		Clu *cluster = _prj.clu + clusCnt;
-		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {
-			Grp *group = cluster->grp + grpCnt;
-			for (uint32 resCnt = 0; resCnt < group->noRes; resCnt++)
-				if (group->resHandle[resCnt].cond != MEM_FREED) {
-					_memMan->setCondition(group->resHandle + resCnt, MEM_CAN_FREE);
-					group->resHandle[resCnt].refCount = 0;
-				}
-		}
-		if (cluster->file) {
-			cluster->file->close();
-			delete cluster->file;
-			cluster->file = nullptr;
-			cluster->refCount = 0;
-		}
-	}
-	_openClus = 0;
-	_openCluStart = _openCluEnd = nullptr;
-	// the memory manager cached the blocks we asked it to free, so explicitly make it free them
-	_memMan->flush();
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "clusters/swordres.rif", "08d4942cf7c904182a31a1d5333244f3", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "95071cd6c12c10c9a30f45a70384cf05", 13448344),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void *ResMan::fetchRes(uint32 id) {
-	MemHandle *memHandle = resHandle(id);
+	{ // Alternate version
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "clusters/swordres.rif", "08d4942cf7c904182a31a1d5333244f3", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "a8c6a8770cb4b2669f4263ece8830985", 13293740),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	if (!memHandle) {
-		warning("fetchRes:: resource %d out of bounds", id);
-		return nullptr;
-	}
-	if (!memHandle->data)
-		error("fetchRes:: resource %d is not open", id);
-	return memHandle->data;
-}
+	{
+		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088232,
+				   "swordres.rif",          "08d4942cf7c904182a31a1d5333244f3", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3193923,
+				   "smackshi/intro.smk",    "a8c6a8770cb4b2669f4263ece8830985", 13293740),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void *ResMan::openFetchRes(uint32 id) {
-	resOpen(id);
-	return fetchRes(id);
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3188725,
+				   "smackshi/intro.smk",    "83060041aa155d802e51b7211b62ea2f", 13525252),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::dumpRes(uint32 id) {
-	char outn[30];
-	Common::sprintf_s(outn, "DUMP%08X.BIN", id);
-	Common::DumpFile outf;
-	if (outf.open(outn)) {
-		resOpen(id);
-		MemHandle *memHandle = resHandle(id);
-		if (memHandle) {
-			outf.write(memHandle->data, memHandle->size);
-			outf.close();
-		}
-		resClose(id);
-	}
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3188725,
+				   "smackshi/intro.smk",    "83060041aa155d802e51b7211b62ea2f", 13525252),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-Header *ResMan::lockScript(uint32 scrID) {
-	if (!_scriptList[scrID / ITM_PER_SEC])
-		error("Script id %d not found", scrID);
-	scrID = _scriptList[scrID / ITM_PER_SEC];
-#ifdef SCUMM_BIG_ENDIAN
-	openScriptResourceBigEndian(scrID);
-#else
-	openScriptResourceLittleEndian(scrID);
-#endif
-	MemHandle *handle = resHandle(scrID);
-	if (!handle)
-		error("Script resource handle %d not found", scrID);
-	return (Header *)handle->data;
-}
+	{
+		"sword1",
+		"Steam",
+		AD_ENTRY4s("scripts.clu",           "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif",          "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 3188725,
+				   "smackshi/intro.smk",    "939643be076c73068f47ce0fd6c27183", 13305080),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::unlockScript(uint32 scrID) {
-	resClose(_scriptList[scrID / ITM_PER_SEC]);
-}
+	{
+		"sword1",
+		"English speech",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "clusters/swordres.rif", "34c111f224e75050a523dc758c71d54e", 60612,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3164478,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::PT_PRT,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void *ResMan::cptResOpen(uint32 id) {
-#ifdef SCUMM_BIG_ENDIAN
-	openCptResourceBigEndian(id);
-#else
-	openCptResourceLittleEndian(id);
-#endif
-	MemHandle *handle = resHandle(id);
-	return handle != nullptr ? handle->data : nullptr;
-}
+	{
+		"sword1",
+		"TecToy",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "clusters/swordres.rif", "34c111f224e75050a523dc758c71d54e", 60612,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3164478,
+				   "smackshi/intro.smk",    "4a7343c3d59526dcab04be7a6af3943a", 13238300),
+		Common::PT_BRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::resOpen(uint32 id) {  // load resource ID into memory
-	Common::StackLock lock(_resourceAccessMutex);
-	MemHandle *memHandle = resHandle(id);
+	{
+		"sword1",
+		"English speech",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "ba6f881c3ace6408880c8e07cd8a1dfe", 59788,
+				   "clusters/text.clu",     "0c0f9eadf20a497834685ccb3ba53a3f", 397478,
+				   "video/intro.smk",       "d07ba8a1be7d8a47de50cc4eac2bc243", 13082688),
+		Common::HE_ISR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	if (!memHandle)
-		return;
-	if (memHandle->cond == MEM_FREED) { // memory has been freed
-		uint32 size = resLength(id);
-		_memMan->alloc(memHandle, size);
-		Common::File *clusFile = resFile(id);
-		assert(clusFile);
-		clusFile->seek(resOffset(id));
-		clusFile->read(memHandle->data, size);
-		if (clusFile->err() || clusFile->eos()) {
-			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
-		}
-	} else
-		_memMan->setCondition(memHandle, MEM_DONT_FREE);
+	{
+		"sword1",
+		"English speech",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "88c0793a4fa908083b00f6677c545f78", 58916,
+				   "clusters/text.clu",     "7d9e47533fde5333dc310bfd73eaeb5c", 2666944,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	memHandle->refCount++;
-	if (memHandle->refCount > 20) {
-		debug(1, "%d references to id %d. Guess there's something wrong.", memHandle->refCount, id);
-	}
-}
+	{
+		"sword1",
+		"English speech and DXA cutscenes",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "04a41fc5783d18a8958d41aa9a3823af", 59788,
+				   "clusters/text.clu",     "b9e7b3e342569be68738e4681f2adeff", 3164267,
+				   "intro.dxa",             nullptr, -1),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::resClose(uint32 id) {
-	Common::StackLock lock(_resourceAccessMutex);
-	MemHandle *handle = resHandle(id);
-	if (!handle)
-		return;
-	if (!handle->refCount) {
-		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d", id);
-	} else {
-		handle->refCount--;
-		if (!handle->refCount)
-			_memMan->setCondition(handle, MEM_CAN_FREE);
-	}
-}
+	{
+		"sword1",
+		"English speech",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
+				   "clusters/text.clu",     "cf6a85c2d60386a3c978f0c6fbb377bd", 3193159,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::HU_HUN,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-FrameHeader *ResMan::fetchFrame(void *resourceData, uint32 frameNo) {
-	uint8 *frameFile = (uint8 *)resourceData;
-	uint8 *idxData = frameFile + sizeof(Header);
-	if (_isBigEndian) {
-		if (frameNo >= READ_BE_UINT32(idxData))
-			error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
-		frameFile += READ_BE_UINT32(idxData + (frameNo + 1) * 4);
-	} else {
-		if (frameNo >= READ_LE_UINT32(idxData))
-			error("fetchFrame:: frame %d doesn't exist in resource.", frameNo);
-		frameFile += READ_LE_UINT32(idxData + (frameNo + 1) * 4);
-	}
-	return (FrameHeader *)frameFile;
-}
+	{
+		"sword1",
+		"English speech",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3199652,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::CS_CZE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-Common::File *ResMan::resFile(uint32 id) {
-	Clu *cluster = _prj.clu + ((id >> 24) - 1);
-	if (cluster->file == nullptr) {
-		_openClus++;
-		if (_openCluEnd == nullptr) {
-			_openCluStart = _openCluEnd = cluster;
-		} else {
-			_openCluEnd->nextOpen = cluster;
-			_openCluEnd = cluster;
-		}
-		cluster->file = new Common::File();
-		char fileName[36];
-		// Supposes that big endian means mac cluster file and little endian means PC cluster file.
-		// This works, but we may want to separate the file name from the endianess or try .CLM extension if opening.clu file fail.
-		if (_isBigEndian)
-			Common::sprintf_s(fileName, "%s.CLM", _prj.clu[(id >> 24) - 1].label);
-		else
-			Common::sprintf_s(fileName, "%s.CLU", _prj.clu[(id >> 24) - 1].label);
-		cluster->file->open(fileName);
-		if (!cluster->file->isOpen()) {
-			char msg[512];
-			Common::sprintf_s(msg, "Couldn't open game cluster file '%s'\n\nIf you are running from CD, please ensure you have read the ScummVM documentation regarding multi-cd games.", fileName);
-			guiFatalError(msg);
-		}
-		while (_openClus > MAX_OPEN_CLUS) {
-			assert(_openCluStart);
-			Clu *closeClu = _openCluStart;
-			_openCluStart = _openCluStart->nextOpen;
+	{
+		"sword1",
+		"English speech and DXA cutscenes",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "clusters/swordres.rif", "239bdd76c405bad0f804a8ae5df4adb0", 59788,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3199652,
+				   "intro.dxa",             nullptr, -1),
+		Common::CS_CZE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-			if (closeClu->file)
-				closeClu->file->close();
-			delete closeClu->file;
-			closeClu->file = nullptr;
-			closeClu->nextOpen = nullptr;
+	{
+		"sword1",
+		"Akella",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "e7021abec62dd774010d1f432ef9f03a", 58916,
+				   "clusters/text.clu",     "524706e42583f6c23a5a7ae3e1784068", 2683625,
+				   "smackshi/intro.smk",    "ef3ae780668c087fae00ed9c46c2eb35", 13386716),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-			_openClus--;
-		}
-	}
-	return cluster->file;
-}
+	{
+		"sword1",
+		"Mediahauz",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "7a6e896064c8d2ee266e961549487204", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3198686,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-MemHandle *ResMan::resHandle(uint32 id) {
-	if ((id >> 16) == 0x0405)
-		id = _srIdList[id & 0xFFFF];
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
+	{
+		"sword1",
+		"Novy Disk",
+		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088292,
+				   "clusters/swordres.rif", "b5d9ddbe26d453415a43596f86452435", 59788,
+				   "clusters/text.clu",     "8392ae2af0a8bec1dca511b2fedddc4c", 3178811,
+				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7420364),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	// There is a known case of reading beyond array boundaries when trying to use
-	// portuguese subtitles (cluster file 2, group 6) with a version that does not
-	// contain subtitles for this languages (i.e. has only 6 languages and not 7).
-	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
-		return nullptr;
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clm",  "6b6d9a32668e6f0285318dbe33f167fe", 1088468,
+				   "clusters/swordres.rif", "6b579d7cd94756f5c1e362a9b61f94a3", 59788,
+				   "smackshi/credits.smk",  "eacbc81d3ef88628d3710abbbcdc9aa0", 17300736,
+				   "smackshi/intro.smk",    "6689aa8f84cb0387b292481d2a2428b4", 13076700),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	return &(_prj.clu[cluster].grp[group].resHandle[id & 0xFFFF]);
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clm",  "6b6d9a32668e6f0285318dbe33f167fe", 1088468,
+				   "clusters/swordres.rif", "6b579d7cd94756f5c1e362a9b61f94a3", 59788,
+				   "smackshi/credits.smk",  "9a3fe9cb76bc7ca8a9987c173befb90d", 16315740,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
+		Common::EN_GRB,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-uint32 ResMan::resLength(uint32 id) {
-	if ((id >> 16) == 0x0405)
-		id = _srIdList[id & 0xFFFF];
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("clusters/scripts.clm",  "6b6d9a32668e6f0285318dbe33f167fe", 1088468,
+				   "clusters/swordres.rif", "6b579d7cd94756f5c1e362a9b61f94a3", 59788,
+				   "smackshi/credits.smk",  "0e4eb849d60baab975130efd35f15ace", 17528016,
+				   "smackshi/intro.smk",    "d602a28f5f5c583bf9870a23a94a9bc5", 13525168),
+		Common::FR_FRA,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
-		return 0;
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "swordres.rif", "a810e6dc5c8e636151a3e1370d41d138", 59788,
+				   "credits.dat",  "2ec14f1f262cdd2c87dd95acced9e2f6", 3312,
+				   "speech.inf",   "ed14c2a235cf5388ac3b5f29db129837", 21310),
+		Common::EN_USA,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	return _prj.clu[cluster].grp[group].length[id & 0xFFFF];
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "swordres.rif", "a810e6dc5c8e636151a3e1370d41d138", 59788,
+				   "credits.dat",  "69349710eef6b653ed2c02643ed6c4a0", 2799,
+				   "speech.inf",   "ed14c2a235cf5388ac3b5f29db129837", 21310),
+		Common::EN_GRB,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-uint32 ResMan::resOffset(uint32 id) {
-	if ((id >> 16) == 0x0405)
-		id = _srIdList[id & 0xFFFF];
-	uint8 cluster = (uint8)((id >> 24) - 1);
-	uint8 group = (uint8)(id >> 16);
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu" , "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "swordres.rif", "a810e6dc5c8e636151a3e1370d41d138", 59788,
+				   "credits.dat",  "0b119d49f27260e6115504c135b9bb19", 2382,
+				   "speech.inf",   "2ccb9be1a3d8d0e33d6efd6a12a24320", 21450),
+		Common::FR_FRA,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
-		return 0;
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088468,
+				   "swordres.rif", "a810e6dc5c8e636151a3e1370d41d138", 59788,
+				   "credits.dat",  "c4f84aaa17f80fb549a5c8a867a9836a", 2382,
+				   "speech.inf",   "403fb61f9de6ce6cb374edd9985066ae", 21304),
+		Common::DE_DEU,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-	return _prj.clu[cluster].grp[group].offset[id & 0xFFFF];
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif", "5bd8928071b91830be6fbcdb7f59786d", 59788,
+				   "credits.dat",  "949806fa3eaa4ff3a6c19ee4b5caa9f5", 2823,
+				   "speech.inf",   "1165f01823e4d2df72fcc5b592a4960e", 21374),
+		Common::IT_ITA,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::openCptResourceBigEndian(uint32 id) {
-	bool needByteSwap = false;
-	if (!_isBigEndian) {
-		// Cluster files are in little endian fomat.
-		// If the resource are not in memory anymore, and therefore will be read
-		// from disk, they will need to be byte swaped.
-		MemHandle *memHandle = resHandle(id);
-		if (memHandle)
-			needByteSwap = (memHandle->cond == MEM_FREED);
-	}
-	resOpen(id);
-	if (needByteSwap) {
-		MemHandle *handle = resHandle(id);
-		if (!handle)
-			return;
-		uint32 totSize = handle->size;
-		uint32 *data = (uint32 *)((uint8 *)handle->data + sizeof(Header));
-		totSize -= sizeof(Header);
-		if (totSize & 3)
-			error("Illegal compact size for id %d: %d", id, totSize);
-		totSize /= 4;
-		for (uint32 cnt = 0; cnt < totSize; cnt++) {
-			*data = READ_LE_UINT32(data);
-			data++;
-		}
-	}
-}
+	{
+		"sword1",
+		"",
+		AD_ENTRY4s("scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1088372,
+				   "swordres.rif", "5bd8928071b91830be6fbcdb7f59786d", 59788,
+				   "credits.dat",  "cd97e8f5006d91914904b3bfdb0ff588", 2412,
+				   "speech.inf",   "d4558d96ce696a906b086c2b44ffb301", 21342),
+		Common::ES_ESP,
+		Common::kPlatformPSX,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 
-void ResMan::openCptResourceLittleEndian(uint32 id) {
-	bool needByteSwap = false;
-	if (_isBigEndian) {
-		// Cluster files are in big endian fomat.
-		// If the resource are not in memory anymore, and therefore will be read
-		// from disk, they will need to be byte swaped.
-		MemHandle *memHandle = resHandle(id);
-		if (memHandle)
-			needByteSwap = (memHandle->cond == MEM_FREED);
-	}
-	resOpen(id);
-	if (needByteSwap) {
-		MemHandle *handle = resHandle(id);
-		if (!handle)
-			return;
-		uint32 totSize = handle->size;
-		uint32 *data = (uint32 *)((uint8 *)handle->data + sizeof(Header));
-		totSize -= sizeof(Header);
-		if (totSize & 3)
-			error("Illegal compact size for id %d: %d", id, totSize);
-		totSize /= 4;
-		for (uint32 cnt = 0; cnt < totSize; cnt++) {
-			*data = READ_BE_UINT32(data);
-			data++;
-		}
-	}
-}
-
-void ResMan::openScriptResourceBigEndian(uint32 id) {
-	bool needByteSwap = false;
-	if (!_isBigEndian) {
-		// Cluster files are in little endian fomat.
-		// If the resource are not in memory anymore, and therefore will be read
-		// from disk, they will need to be byte swaped.
-		MemHandle *memHandle = resHandle(id);
-		if (memHandle)
-			needByteSwap = (memHandle->cond == MEM_FREED);
-	}
-	resOpen(id);
-	if (needByteSwap) {
-		MemHandle *handle = resHandle(id);
-		if (!handle)
-			return;
-		// uint32 totSize = handle->size;
-		Header *head = (Header *)handle->data;
-		head->comp_length = FROM_LE_32(head->comp_length);
-		head->decomp_length = FROM_LE_32(head->decomp_length);
-		head->version = FROM_LE_16(head->version);
-		uint32 *data = (uint32 *)((uint8 *)handle->data + sizeof(Header));
-		uint32 size = handle->size - sizeof(Header);
-		if (size & 3)
-			error("Odd size during script endian conversion. Resource ID =%d, size = %d", id, size);
-		size >>= 2;
-		for (uint32 cnt = 0; cnt < size; cnt++) {
-			*data = READ_LE_UINT32(data);
-			data++;
-		}
-	}
-}
-
-void ResMan::openScriptResourceLittleEndian(uint32 id) {
-	bool needByteSwap = false;
-	if (_isBigEndian) {
-		// Cluster files are in big endian fomat.
-		// If the resource are not in memory anymore, and therefore will be read
-		// from disk, they will need to be byte swaped.
-		MemHandle *memHandle = resHandle(id);
-		if (memHandle)
-			needByteSwap = (memHandle->cond == MEM_FREED);
-	}
-	resOpen(id);
-	if (needByteSwap) {
-		MemHandle *handle = resHandle(id);
-		if (!handle)
-			return;
-		// uint32 totSize = handle->size;
-		Header *head = (Header *)handle->data;
-		head->comp_length = FROM_BE_32(head->comp_length);
-		head->decomp_length = FROM_BE_32(head->decomp_length);
-		head->version = FROM_BE_16(head->version);
-		uint32 *data = (uint32 *)((uint8 *)handle->data + sizeof(Header));
-		uint32 size = handle->size - sizeof(Header);
-		if (size & 3)
-			error("Odd size during script endian conversion. Resource ID =%d, size = %d", id, size);
-		size >>= 2;
-		for (uint32 cnt = 0; cnt < size; cnt++) {
-			*data = READ_BE_UINT32(data);
-			data++;
-		}
-	}
-}
-
-uint32 ResMan::getDeathFontId() {
-	// At some point in the releases (as evidenced by the disasms of all
-	// known executables, and by the source code in our possession), Revolution
-	// changed the resource offsets for some files. I have tried EVERYTHING to
-	// try and discern which file we are dealing with and spectacularly failed.
-	// The only choice which seems to work correctly is to check the file size,
-	// as the newer GENERAL.CLU file is bigger. Sorry.
-	if (SwordEngine::isPsx())
-		return SR_FONT;
-
-	Common::File fp;
-	if (fp.open(SwordEngine::isMac() ? "GENERAL.CLM" : "GENERAL.CLU")) {
-		fp.seek(0, SEEK_END);
-		int64 fileSize = fp.pos();
-
-		if (SwordEngine::_systemVars.realLanguage == Common::RU_RUS) {
-			switch (fileSize) {
-			case 6081261: // Akella
-				return SR_DEATHFONT;
-			case 6354790: // Mediahauz
-				return SR_FONT;
-			case 6350630: // Novy Disk
-				return SR_DEATHFONT_ALT;
-			default:
-				warning("ResMan::getDeathFontId(): Unrecognized version of russian GENERAL.CLU, size %d", (int)fileSize);
-				break;
-			}
-
-			return SR_FONT;
-		} else if (fileSize < 6295679) {
-			return SR_DEATHFONT;
-		} else {
-			return SR_DEATHFONT_ALT;
-		}
-	}
-
-	return 0;
-}
+	AD_TABLE_END_MARKER
+};
 
 } // End of namespace Sword1
