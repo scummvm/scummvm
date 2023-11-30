@@ -3087,6 +3087,8 @@ MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWind
 
 	bounds.translate(0, 2 * _vm->_screenDrawOffset);
 
+	bounds.translate(0, 2 * _vm->_screenDrawOffset);
+
 	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
@@ -3342,7 +3344,7 @@ MacLoomGui::MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm
 	// The practice box can be moved, but this is its default position on
 	// a large screen, and it's not saved.
 
-	_practiceBoxPos = Common::Point(215, 376);
+	_practiceBoxPos = Common::Point(215, 376 + 2 * _vm->_screenDrawOffset);
 }
 
 MacLoomGui::~MacLoomGui() {
@@ -4225,8 +4227,14 @@ bool MacLoomGui::handleEvent(Common::Event &event) {
 			// Also, things get weird if you move the box into the
 			// menu hotzone, so don't allow that.
 
+			int maxY = _surface->h - _practiceBox->h - 2 * _vm->_screenDrawOffset;
+			int minY = 2 * _vm->_screenDrawOffset;
+
+			if (_vm->isUsingOriginalGUI() && minY < 23)
+				minY = 23;
+
 			newX = CLIP(newX, 0, _surface->w - _practiceBox->w);
-			newY = CLIP(newY, _vm->isUsingOriginalGUI() ? 23 : 0, _surface->h - _practiceBox->h);
+			newY = CLIP(newY, minY, maxY);
 
 			// For some reason, X coordinates can only change in
 			// increments of 16 pixels. As an enhancement, we allow
