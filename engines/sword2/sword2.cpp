@@ -84,6 +84,8 @@ Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_gameSpeed = 1;
 
 	_gmmLoadSlot = -1; // Used to manage GMM Loading
+
+	_isKorTrs = gameDesc->language == Common::KO_KOR;
 }
 
 Sword2Engine::~Sword2Engine() {
@@ -204,8 +206,6 @@ Common::Error Sword2Engine::run() {
 	_fontRenderer = new FontRenderer(this);
 	_sound = new Sound(this);
 	_mouse = new Mouse(this);
-	
-	_fontRenderer->loadTranslations();
 
 	registerDefaultSettings();
 	readSettings();
