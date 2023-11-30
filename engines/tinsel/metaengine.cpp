@@ -20,6 +20,8 @@
  */
 
 #include "common/savefile.h"
+#include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -29,6 +31,21 @@
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::
 
 #include "tinsel/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_CROP_HEIGHT_480_TO_432,
+		{
+			_s("Remove Black Bars"),
+			_s("The game originally renders at 640x432 which is then presented letterboxed at 640x480. Enabling this option removes the forced letterbox effect, so that the game fits better on screens with an aspect ratio wider than 4:3."),
+			"crop_black_bars",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 namespace Tinsel {
 
@@ -77,6 +94,9 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 
 	// TODO: Add getSavegameFile(). See comments in loadGameState and removeSaveState
+	
+	void registerDefaultSettings(const Common::String &target) const override;
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -196,6 +216,14 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(listSlot, Tinsel::LE_NAME));
 	Tinsel::setNeedLoad();
 	Tinsel::getList(g_system->getSavefileManager(), target);
+}
+
+void TinselMetaEngine::registerDefaultSettings(const Common::String &target) const {
+	ConfMan.registerDefault("crop_black_bars", false); // show the black bars by default (original behaviour)
+}
+
+const ADExtraGuiOptionsMap *TinselMetaEngine::getAdvancedExtraGuiOptions() const {
+	return optionsList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TINSEL)

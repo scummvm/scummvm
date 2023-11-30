@@ -625,6 +625,7 @@ static const TinselGameDescription gameDescriptions[] = {
 
 	// ==== Discworld 2 entries ===============================================
 	// Note: All Discworld 2 versions are CD only, therefore we don't add the ADGF_CD flag
+#define DISCWORLD2_GUIOPTIONS GUIO2(GUIO_NOASPECT, GAMEOPTION_CROP_HEIGHT_480_TO_432)
 
 	{	// English Discworld 2 demo
 		{
@@ -635,7 +636,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -652,7 +653,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -669,7 +670,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -686,7 +687,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -703,7 +704,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -724,7 +725,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -744,7 +745,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -765,7 +766,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOASPECT)
+			DISCWORLD2_GUIOPTIONS
 		},
 		GID_DW2,
 		0,
@@ -776,6 +777,7 @@ static const TinselGameDescription gameDescriptions[] = {
 	// ==== Discworld Noir entries ===============================================
 	// Note: All Discworld Noir versions are CD only, therefore we don't add the ADGF_CD flag
 
+#define NOIR_GUIOPTIONS GUIO1(GAMEOPTION_CROP_HEIGHT_480_TO_432)
 	{ // Discworld Noir, Windows 3CD version
 		{
 			"noir",
@@ -785,7 +787,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
-			GUIO0()
+			NOIR_GUIOPTIONS
 
 		},
 		GID_NOIR,
@@ -803,7 +805,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_DEMO,
-			GUIO0()
+			NOIR_GUIOPTIONS
 		},
 		GID_NOIR,
 		0,

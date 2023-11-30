@@ -26,6 +26,9 @@
 
 namespace Tinsel {
 
+// (Optionally) remove the "baked-in" letterboxing in Discworld 2/Noir.
+#define GAMEOPTION_CROP_HEIGHT_480_TO_432      GUIO_GAMEOPTIONS1
+
 enum TinselGameID {
 	GID_DW1 = 0,
 	GID_DW2 = 1,

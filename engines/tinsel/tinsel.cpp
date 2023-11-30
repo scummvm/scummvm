@@ -1030,6 +1030,8 @@ Common::Error TinselEngine::run() {
 	if (getGameID() == GID_NOIR) {
 		int width = 640;
 		int height = 480;
+		if (ConfMan.getBool("crop_black_bars"))
+			height = 432;
 
 		Graphics::PixelFormat noirFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
@@ -1037,11 +1039,10 @@ Common::Error TinselEngine::run() {
 
 		_screenSurface.create(width, 432, noirFormat);
 	} else if (getGameID() == GID_DW2) {
-#ifndef DW2_EXACT_SIZE
-		initGraphics(640, 480);
-#else
-		initGraphics(640, 432);
-#endif
+		if (ConfMan.getBool("crop_black_bars"))
+			initGraphics(640, 432);
+		else
+			initGraphics(640, 480);
 		_screenSurface.create(640, 432, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		initGraphics(320, 200);
