@@ -2,14 +2,22 @@ MODULE := engines/ultima
 
 MODULE_OBJS := \
 	metaengine.o \
+	shared/conf/xml_node.o \
+	shared/conf/xml_tree.o \
+	shared/core/file.o \
+	shared/engine/ultima.o \
+	shared/engine/data_archive.o \
+	shared/engine/debugger.o \
+	shared/engine/events.o \
+	shared/std/string.o
+
+ifdef ENABLE_ULTIMA1
+MODULE_OBJS += \
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
-	shared/conf/xml_node.o \
-	shared/conf/xml_tree.o \
 	shared/core/base_object.o \
 	shared/core/character.o \
-	shared/core/file.o \
 	shared/core/lzw.o \
 	shared/core/map.o \
 	shared/core/message_target.o \
@@ -24,10 +32,6 @@ MODULE_OBJS := \
 	shared/early/game.o \
 	shared/early/game_base.o \
 	shared/early/ultima_early.o \
-	shared/engine/ultima.o \
-	shared/engine/data_archive.o \
-	shared/engine/debugger.o \
-	shared/engine/events.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
@@ -52,10 +56,6 @@ MODULE_OBJS := \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
 	shared/maps/creature.o \
-	shared/std/string.o
-
-ifdef ENABLE_ULTIMA1
-MODULE_OBJS += \
 	ultima0/core/resources.o \
 	ultima0/game.o \
 	ultima0/resources.o \
