@@ -2085,7 +2085,7 @@ void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
 	// This avoids color issues when loading savegames that have been saved with a different ScummVM port
 	// that uses a different 16bit color mode than the ScummVM port which is currently used.
 #ifdef USE_RGB_COLOR
-	if (_game.platform == Common::kPlatformPCEngine && s.isLoading()) {
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && s.isLoading()) {
 		for (int i = 0; i < 256; ++i)
 			_16BitPalette[i] = get16BitColor(_currentPalette[i * 3 + 0], _currentPalette[i * 3 + 1], _currentPalette[i * 3 + 2]);
 	}
