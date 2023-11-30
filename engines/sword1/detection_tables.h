@@ -125,7 +125,22 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
-	{ // 25th Anniversary rerelease / Steam DLC for Director's Cut
+	{ // Korean fan translation
+		"sword1",
+		"",
+		AD_ENTRY6s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268,
+				   "bs1k.fnt",              NULL,                               1222000,
+				   "korean.clu",            NULL,                               -1),
+		Common::KO_KOR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	{ // 25th Anniversary rerelease
 		"sword1",
 		"25th Anniversary",
 		AD_ENTRY4s("scripts.clu",        "72b10193714e8c6e4daca51791c0db0c", 1087240,
@@ -236,32 +251,6 @@ static const ADGameDescription gameDescriptions[] = {
 				   "swordres.rif",          "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
 				   "text.clu",              "76f93f5feecc8915435105478f3c6615", 2705446,
 				   "smackshi/intro.smk",    "d1d0e958aeef9b1375b55df8f8831f26", 13281776),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-
-	{ // German DVD Trilogy collection
-		"sword1",
-		"",
-		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
-				   "clusters/swordres.rif", "b0ae5a47aba74dc0acb3442d4c84b225", 58916,
-				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
-				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7397543),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-
-	{ // GOG.com version + german translation
-		"sword1",
-		"GOG.com",
-		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
-				   "clusters/swordres.rif", "5463362dc77b6efc36e46ac84998bd2f", 59788,
-				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2705446,
-				   "video/intro.dxa",       "e27cd33593c08b66e8d20fbc40938789", 7397543),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -470,19 +459,6 @@ static const ADGameDescription gameDescriptions[] = {
 				   "clusters/swordres.rif", "7a6e896064c8d2ee266e961549487204", 58916,
 				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3198686,
 				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268),
-		Common::RU_RUS,
-		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
-		GUIO0()
-	},
-
-	{ // Alternate version, from a DVD collection containing both BS1 and BS2
-		"sword1",
-		"Mediahauz",
-		AD_ENTRY4s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
-				   "clusters/swordres.rif", "7a6e896064c8d2ee266e961549487204", 58916,
-				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 3198686,
-				   "smackshi/intro.smk",    "432215e04bb74ad823e033bc774f97d7", 14098520),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
