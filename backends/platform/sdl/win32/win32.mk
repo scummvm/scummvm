@@ -26,16 +26,15 @@ win32-data: all
 	cp $(srcdir)/LICENSES/COPYING.ISC $(WIN32PATH)/COPYING.ISC.txt
 	cp $(srcdir)/LICENSES/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
 	cp $(srcdir)/LICENSES/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
-	cp $(srcdir)/LICENSES/COPYING.MKV $(WIN32PATH)/COPYING.MKV.txt
 	cp $(srcdir)/LICENSES/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
 	cp $(srcdir)/LICENSES/COPYING.GLAD $(WIN32PATH)/COPYING.GLAD.txt
-	cp $(srcdir)/LICENSES/CatharonLicense.txt $(WIN32PATH)/CatharonLicense.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/es/InicioRapido $(WIN32PATH)/doc/es/InicioRapido.txt
 	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
 	cp $(srcdir)/doc/it/GuidaRapida $(WIN32PATH)/doc/it/GuidaRapida.txt
+	cp $(srcdir)/doc/ko/�����ϱ� $(WIN32PATH)/doc/ko/�����ϱ�.txt
 	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/da/HurtigStart $(WIN32PATH)/doc/da/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
