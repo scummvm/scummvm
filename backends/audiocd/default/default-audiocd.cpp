@@ -152,8 +152,9 @@ bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int durat
 	} else {
 		warning("Playing from frame %i", startFrame);
 	}
+	int firstFrame = track->indices[0] == -1 ? track->indices[1] : track->indices[0];
 
-	return play(track->number, numLoops, startFrame - track->indices[0], duration, onlyEmulate);
+	return play(track->number, numLoops, startFrame - firstFrame, duration, onlyEmulate);
 }
 
 void DefaultAudioCDManager::stop() {
