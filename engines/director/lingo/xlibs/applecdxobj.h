@@ -58,6 +58,10 @@ void m_setOutPoint(int nargs);
 void m_playCue(int nargs);
 void m_playSegment(int nargs);
 void m_readPos(int nargs);
+void m_getFirstTrack(int nargs);
+void m_getLastTrack(int nargs);
+void m_getFirstFrame(int nargs);
+void m_getLastFrame(int nargs);
 void m_eject(int nargs);
 
 } // End of namespace AppleCDXObj

@@ -109,6 +109,10 @@ static MethodProto xlibMethods[] = {
 	{ "ReadStatus",				AppleCDXObj::m_readStatus,	0,	0,	400 },	// D4
 	{ "GetValue",				AppleCDXObj::m_getValue,	0,	0,	400 },	// D4
 	{ "Eject",    				AppleCDXObj::m_eject,		0,	0,	400 },	// D4
+	{ "GetFirstTrack",    				AppleCDXObj::m_getFirstTrack,		0,	0,	400 },	// D4
+	{ "GetLastTrack",    				AppleCDXObj::m_getLastTrack,		0,	0,	400 },	// D4
+	{ "GetFirstFrame",    				AppleCDXObj::m_getFirstFrame,		1,	1,	400 },	// D4
+	{ "GetLastFrame",    				AppleCDXObj::m_getLastFrame,		1,	1,	400 },	// D4
 	{ "SetInPoint",    				AppleCDXObj::m_setInPoint,		1,	1,	400 },	// D4
 	{ "SetOutPoint",    				AppleCDXObj::m_setOutPoint,		1,	1,	400 },	// D4
 	{ "PlayCue",    				AppleCDXObj::m_playCue,		0,	0,	400 },	// D4
@@ -210,6 +214,97 @@ void AppleCDXObj::m_readPos(int nargs) {
 		if (track != nullptr) {
 			me->_returnValue = track->indices[0];
 		}
+	}
+}
+
+void AppleCDXObj::m_getFirstTrack(int nargs) {
+	AppleCDXObject *me = static_cast<AppleCDXObject *>(g_lingo->_state->me.u.obj);
+
+	if (me->_cue) {
+		Common::Array<Common::CueSheet::CueTrack> tracks = me->_cue->tracks();
+		// If we have a set of tracks parsed, return the first track's number
+		int index;
+		if (tracks.size() >= 1) {
+			index = tracks[0].number;
+		} else {
+			index = 1;
+		}
+		debug(5, "AppleCDXObj::m_getFirstTrack: returning %i", index);
+		g_lingo->push(Datum(index));
+	} else {
+		// If we don't have a TOC, just assume the first track is 1
+		debug(5, "AppleCDXObj::m_getFirstTrack: returning default");
+		g_lingo->push(Datum(1));
+	}
+}
+
+void AppleCDXObj::m_getLastTrack(int nargs) {
+	AppleCDXObject *me = static_cast<AppleCDXObject *>(g_lingo->_state->me.u.obj);
+
+	if (me->_cue) {
+		Common::Array<Common::CueSheet::CueTrack> tracks = me->_cue->tracks();
+		// If we have a set of tracks parsed, return the final track's number
+		int index;
+		if (tracks.size() >= 1) {
+			index = tracks.back().number;
+		} else {
+			index = 1;
+		}
+		debug(5, "AppleCDXObj::m_getLastTrack: returning %i", index);
+	} else {
+		// If we don't have a TOC, just assume the last track is 1
+		debug(5, "AppleCDXObj::m_getLastTrack: returning default");
+		g_lingo->push(Datum(1));
+	}
+}
+
+void AppleCDXObj::m_getFirstFrame(int nargs) {
+	AppleCDXObject *me = static_cast<AppleCDXObject *>(g_lingo->_state->me.u.obj);
+	int trackNum = g_lingo->pop().asInt();
+
+	if (me->_cue) {
+		Common::CueSheet::CueTrack *track = me->_cue->getTrack(trackNum);
+
+		// We use index 1 here because index 0 is typically the
+		// pregap, and we don't want to describe the first sector of the
+		// pregap as being the first sector of the track. Most discs
+		// will have only two indices, and the second index is where the
+		// actual track begins.
+		int index = track->indices.size() > 1 ? track->indices[1] : track->indices[0];
+		debug(5, "AppleCDXObj::m_getFirstFrame(%i): returning %i", trackNum, index);
+		g_lingo->push(Datum(index));
+	} else {
+		// If we don't have a TOC, just provide a stub value
+		debug(5, "AppleCDXObj::m_getFirstFrame(%i): returning default", trackNum);
+		g_lingo->push(Datum(0));
+	}
+}
+
+// Currently calculated based on the start of the next track, since
+// cuesheets don't contain the duration of a song.
+void AppleCDXObj::m_getLastFrame(int nargs) {
+	AppleCDXObject *me = static_cast<AppleCDXObject *>(g_lingo->_state->me.u.obj);
+	int trackNum = g_lingo->pop().asInt();
+
+	if (me->_cue) {
+		// We look for the pregap of the next track, if there is one.
+		// TODO opening the actual audio track and getting its length
+		// in sectors would produce a more accurate result for the final track
+		Common::CueSheet::CueTrack *track = me->_cue->getTrack(trackNum + 1);
+		int index;
+		if (track) {
+			// Don't use the pregap if there is no pregap
+			index = track->indices[0] == -1 ? track->indices[1] : track->indices[0];
+		} else {
+			debug(5, "AppleCDXObj::m_getLastFrame(%i): no track at trackNum %i, setting index to 0", trackNum, trackNum + 1);
+			index = 0;
+		}
+		debug(5, "AppleCDXObj::m_getLastFrame(%i): returning %i", trackNum, index);
+		g_lingo->push(Datum(index));
+	} else {
+		// If we don't have a TOC, just provide a stub value
+		debug(5, "AppleCDXObj::m_getLastFrame(%i): returning default", trackNum);
+		g_lingo->push(Datum(0));
 	}
 }
 
