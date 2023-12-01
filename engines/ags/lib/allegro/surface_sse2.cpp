@@ -518,9 +518,11 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	if (!Scale && xCtrWidth % 4 != 0) {
+	/*if (!Scale && xCtrWidth % 4 != 0) {
 		--yCtrHeight;
-	}
+	}*/
+
+	const int secondToLast = xCtrWidth - 4;
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
 	const byte *srcP = (const byte *)args.src.getBasePtr(
@@ -531,12 +533,23 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 
 		if (!Scale) {
 			// If we are not scaling the image
-			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart; xCtr < xCtrWidth; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
+			int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart;
+			for (; xCtr < secondToLast; destX += 4, xCtr += 4, xCtrBpp += SrcBytesPerPixel*4) {
 				byte *destPtr = &destP[destX * DestBytesPerPixel];
-				// Skip pixels that are beyond the row
-				__m128i skipMask = _mm_cmpgt_epi32(_mm_add_epi32(_mm_add_epi32(_mm_set1_epi32(xCtr), addIndexes), _mm_set1_epi32(1)), xCtrWidthSIMD);
-				drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, skipMask);
+				drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>(destPtr, srcP, tint, alphas, maskedAlphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_set1_epi32(0));
 			}
+
+			byte *destPtr = &destP[destX * DestBytesPerPixel];
+			__m128i srcCols = _mm_setzero_si128();
+			__m128i destCols = _mm_setzero_si128();
+			memcpy(&srcCols, srcP + xDir * xCtrBpp, (xCtrWidth - xCtr) * SrcBytesPerPixel);
+			memcpy(&destCols, destPtr, (xCtrWidth - xCtr) * DestBytesPerPixel);
+
+			// Skip pixels that are beyond the row
+			// __m128i skipMask = _mm_cmpgt_epi32(_mm_add_epi32(_mm_add_epi32(_mm_set1_epi32(xCtr), addIndexes), _mm_set1_epi32(1)), xCtrWidthSIMD);
+			drawPixelSIMD<DestBytesPerPixel, SrcBytesPerPixel>((byte *)&destCols, (byte *)&srcCols, tint, alphas, maskedAlphas, transColors, xDir, 0, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_set1_epi32(0));
+			memcpy(destPtr, &destCols, (xCtrWidth - xCtr) * DestBytesPerPixel);
+
 			// Goto next row in source and destination image
 			destP += args.destArea.pitch;
 			srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
@@ -591,7 +604,7 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	// Get the last x values of the last row
 	int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart;
 	// We have a picture that is a multiple of 4, so no extra pixels to draw
-	if (xCtrWidth % 4 == 0) return;
+	/*if (xCtrWidth % 4 == 0)*/ return;
 	// Drawing the last few not scaled pixels here.
 	// Same as the loop above but now we check if we are going to overflow,
 	// and thus we don't need to mask out pixels that go over the row.
@@ -688,9 +701,11 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	if (args.yStart + yCtrHeight > args.destArea.h) {
 		yCtrHeight = args.destArea.h - args.yStart;
 	}
-	if (!Scale && xCtrWidth % 8 != 0) {
+	/*if (!Scale && xCtrWidth % 8 != 0) {
 		--yCtrHeight;
-	}
+	}*/
+
+	const int secondToLast = xCtrWidth - 8;
 
 	byte *destP = (byte *)args.destArea.getBasePtr(0, destY);
 	const byte *srcP = (const byte *)args.src.getBasePtr(
@@ -700,12 +715,24 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 		__m128i xCtrWidthSIMD = _mm_set1_epi16(xCtrWidth); // This is the width of the row
 		if (!Scale) {
 			// If we are not scaling the image
-			for (int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart; xCtr < xCtrWidth; destX += 8, xCtr += 8, xCtrBpp += 16) {
+			int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart;
+			for (; xCtr < secondToLast; destX += 8, xCtr += 8, xCtrBpp += 16) {
 				byte *destPtr = &destP[destX * 2];
-				// Skip pixels that are beyond the row
-				__m128i skipMask = _mm_cmpgt_epi16(_mm_add_epi16(_mm_add_epi16(_mm_set1_epi16(xCtr), addIndexes), _mm_set1_epi16(1)), xCtrWidthSIMD);
-				drawPixelSIMD2Bpp(destPtr, srcP, tint, alphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, skipMask);
+				drawPixelSIMD2Bpp(destPtr, srcP, tint, alphas, transColors, xDir, xCtrBpp, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_set1_epi16(0));
 			}
+
+			byte *destPtr = &destP[destX * 2];
+			__m128i srcCols = _mm_setzero_si128();
+			__m128i destCols = _mm_setzero_si128();
+			const int copySize = (xCtrWidth - xCtr) * 2;
+			memcpy(&srcCols, srcP + xDir * xCtrBpp, copySize);
+			memcpy(&destCols, destPtr, copySize);
+
+			// Skip pixels that are beyond the row
+			// __m128i skipMask = _mm_cmpgt_epi16(_mm_add_epi16(_mm_add_epi16(_mm_set1_epi16(xCtr), addIndexes), _mm_set1_epi16(1)), xCtrWidthSIMD);
+			drawPixelSIMD2Bpp((byte *)&destCols, (byte *)&srcCols, tint, alphas, transColors, xDir, 0, args.srcAlpha, args.skipTrans, args.horizFlip, args.useTint, _mm_set1_epi16(0));
+			memcpy(destPtr, &destCols, copySize);
+
 			// Goto next row in source and destination image
 			destP += args.destArea.pitch;
 			srcP += args.vertFlip ? -args.src.pitch : args.src.pitch;
@@ -760,7 +787,7 @@ static void drawInner2Bpp(BITMAP::DrawInnerArgs &args) {
 	}
 
 	// We have a picture that is a multiple of 8, so no extra pixels to draw
-	if (xCtrWidth % 8 == 0) return;
+	/*if (xCtrWidth % 8 == 0)*/ return;
 	// Get the last x values of the last row
 	int xCtr = xCtrStart, xCtrBpp = xCtrBppStart, destX = args.xStart;
 	// Drawing the last few not scaled pixels here.
