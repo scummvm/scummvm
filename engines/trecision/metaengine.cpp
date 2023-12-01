@@ -68,7 +68,13 @@ void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	// We are referencing g_engine here, but this should be safe, as this
 	// method is only used while the engine is running.
 	// TODO: Is there a better way to do this?
-	thumb.copyFrom(((Trecision::TrecisionEngine *)g_engine)->_thumbnail);
+
+	Trecision::TrecisionEngine *engine = (Trecision::TrecisionEngine *)g_engine;
+
+	if (engine->_controlPanelSave)
+		thumb.copyFrom(engine->_thumbnail);
+	else
+		MetaEngine::getSavegameThumbnail(thumb);
 }
 
 SaveStateDescriptor TrecisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

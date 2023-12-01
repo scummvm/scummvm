@@ -243,6 +243,7 @@ public:
 	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
+	bool _controlPanelSave = false;
 
 	uint16 _curRoom;
 	uint16 _oldRoom;
