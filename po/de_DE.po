@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-24 01:15+0000\n"
-"PO-Revision-Date: 2023-12-01 19:33+0000\n"
+"PO-Revision-Date: 2023-12-01 20:57+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -31,16 +31,12 @@ msgid "Features compiled in:"
 msgstr "Verfügbare Funktionen:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Spiel-ID nicht unterstützt"
+msgstr "nicht unterstützt"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Ausgeschaltet"
+msgstr "deaktiviert"
 
 #: gui/about.cpp:118
 msgid "enabled"
@@ -386,20 +382,16 @@ msgid "Failed to load JSON file"
 msgstr "Fehler beim Laden der JSON-Datei"
 
 #: gui/dlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download freeware games for ScummVM"
 msgid "Download Freeware Games and Demos"
-msgstr "Freeware-Spiele für ScummVM herunterladen"
+msgstr "Freeware-Spiele und Demos herunterladen"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
 msgstr "Lade DLCs..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Herunterladen"
+msgstr "Alle Downloads"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -481,16 +473,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Download-Geschwindigkeit: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download Games"
 msgid "Currently Downloading Games"
-msgstr "Spiele herunterladen"
+msgstr "Spiele werden heruntergeladen"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Herunterladen"
+msgstr "Ausstehende Downloads"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1037,20 +1025,16 @@ msgid "Go to end of line"
 msgstr "Ans Ende der Zeile springen"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "SoundFont auswählen"
+msgstr "Bis zum Ende der Zeile auswählen"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Verzeichnis für Plugins auswählen"
+msgstr "Bis zum Beginn der Zeile auswählen"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Zum Beginn der Zeile springen"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
@@ -1179,7 +1163,7 @@ msgstr "Plattform"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Jahr"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1410,10 +1394,8 @@ msgstr "Plattform nicht erkannt"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1268 gui/launcher.cpp:1464
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Unbekannter Fehler"
+msgstr "Unbekanntes Jahr"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
@@ -1623,16 +1605,12 @@ msgid "Shader Path:"
 msgstr "Shader-Pfad:"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Download Games"
 msgid "Download Shaders"
-msgstr "Spiele herunterladen"
+msgstr "Shader herunterladen"
 
 #: gui/options.cpp:1628
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Suche nach aktualisierten Shader-Packs"
+msgstr "Prüft die scummvm.org-Webseite auf Aktualisierungen für Shader-Packs"
 
 #: gui/options.cpp:1635 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -2093,16 +2071,12 @@ msgstr ""
 "betriebssystemeigenen Dateimanager anstelle des ScummVM-eigenen Auswahlmenüs."
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Herunterladen"
+msgstr "Icons herunterladen"
 
 #: gui/options.cpp:2614
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Suche nach aktualisierten Icon-Packs"
+msgstr "Prüft die scummvm.org-Webseite auf Aktualisierungen für Icon-Packs"
 
 #: gui/options.cpp:2621
 msgid "Autosave:"
@@ -3865,7 +3839,7 @@ msgstr "SDL Surface"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (8bpp-Modus wird erzwungen)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -6328,37 +6302,27 @@ msgstr "Schießen"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Nach oben fliegen"
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
 msgstr "Nach unten fliegen"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Befehl anpassen"
+msgstr "Modus ändern"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Nach links rutschen"
+msgstr "Nach links drehen"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Nach rechts rutschen"
+msgstr "Nach rechts drehen"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Menü"
+msgstr "Info-Menü"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7989,10 +7953,8 @@ msgid "Fast move modifier"
 msgstr "Modifikator für schnelle Bewegung"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Tastatur zeigen/verbergen"
+msgstr "Labyrinth-Karte anzeigen/verbergen"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -8028,33 +7990,35 @@ msgstr ""
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Softlocks korrigieren"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Sofern du etwas übersehen hast, was deinen Spiel-Fortschritt verhindert, "
+"kannst du dennoch weiterspielen."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Unannehmlichkeiten korrigieren"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Behebt einige kleine Unannehmlichkeiten."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Erweiterter Timer"
+msgstr "Endspiel-Timer erweitern"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Du bekommst etwas mehr Zeit, um das letzte Puzzle zu lösen. Dies ist ein "
+"offizieller Patch von HeR Interactive."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8687,51 +8651,56 @@ msgstr "Experte"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Verbesserungen:"
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Originale Menüs verwenden"
+msgstr "Fehler im Originalspiel korrigieren"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Behebt einige Fehler, die in dem Originalspiel enthalten sind, darunter auch "
+"einige Grafik- und Audio-Fehler."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Audio-visuelle Verbesserungen"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Führt einige Anpassungen an bestimmten Audio- und Grafik-Elementen durch, "
+"die beispielsweise typisch für eine bestimmte Platform sind."
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Wiederhergestellte Inhalte aktivieren"
+msgstr "Wiederhergestellter Inhalt"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Stellt Dialoge, Grafiken und Audio-Elemente wieder her, die ursprünglich "
+"nicht im Original-Spiel enthalten waren."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Moderne UI/UX-Anpassungen"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Aktiviert einige moderne Komfortfunktionen. Dabei wird beispielsweise der "
+"Sound-Ladebildschirm in Sam&Max deaktiviert. Die frühen Speicher-Menüs "
+"reagieren zügiger."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
@@ -9124,10 +9093,8 @@ msgid "play C major on distaff"
 msgstr "spiele hohes C auf Stab"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Inventar anzeigen"
+msgstr "Melodie-Inventar anzeigen"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
@@ -9627,6 +9594,9 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"Ein nicht implementierter Entwicklungs-Codezweig wurde innerhalb der Sound-"
+"Engine gefunden.\n"
+"Bitte erstelle ein Ticket unter https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
