@@ -3087,8 +3087,6 @@ MacGui::MacDialogWindow *MacGui::createWindow(Common::Rect bounds, MacDialogWind
 
 	bounds.translate(0, 2 * _vm->_screenDrawOffset);
 
-	bounds.translate(0, 2 * _vm->_screenDrawOffset);
-
 	return new MacDialogWindow(this, _system, _surface, bounds, style);
 }
 
@@ -3310,7 +3308,7 @@ bool MacGui::runRestartDialog() {
 
 MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
 	MacGui::MacDialogWindow *window = createWindow(
-		Common::Rect(70, 189 - 2 * _vm->_screenDrawOffset, 570, 211 - 2 * _vm->_screenDrawOffset),
+		Common::Rect(70, 189, 570, 211),
 		kStyleRounded);
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
