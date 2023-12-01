@@ -375,6 +375,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pyst2",				"Driven: The Sequel to Pyst" },
 	{ "pystmake",			"The Making of Pyst" },
 	{ "quantumgate2",		"The Vortex: Quantum Gate II" },
+	{ "quizwiz",			"Quiz Wiz: Cyber Trivia" },
 	{ "rainbowfish1",		"Rainbow Fish: The most beautiful fish in the ocean!" },
 	{ "rainbowfish2",		"Rainbow Fish and the Whale" },
 	{ "realpool",			"RealPool" },
@@ -5216,6 +5217,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("quantumgate2", "Demo",	 "xn--2bk1b4a0bo8jve", "b7e69c37b7355022d400c14aa97c5d54", 484067, Common::JA_JPN, 404),
 	WINDEMO1t_l("quantumgate2", "Demo",	 "VORTEX.EXE", "11627f883100bb7cf5bb232a2322941f", 739889, Common::JA_JPN, 404),
 
+	// setup.exe also uses Director 4, "0ad9c4590a735038aacd476d1c28773d", 1991514, 404
+	WINGAME2t("quizwiz", "", "QUIZWIZ/QUIZWIZ.EXE", "6b516459c00cbed66594e187e4d126a6", 742008,
+							 "COMFILES/QUIZWIZ/QUIZWIZ.DBF", "340ae483a12d1323252d9d404ffa4e79", 32598, 404),
+
 	MACDEMO1_l("racingdays", "Demo", "Racing Days World", "fbe75e9140b23cf5bb2f5fd6f7ce8e88", 481803, Common::JA_JPN, 404),
 	MACDEMO1_l("racingdays", "Demo", "Racing Days World", "0d5f13d9321d36c23b63f229460928b4", 481803, Common::JA_JPN, 404),
 	MACDEMO1_l("racingdays", "Demo v1.01", "Racing Days World 1.01", "fbe75e9140b23cf5bb2f5fd6f7ce8e88", 481803, Common::JA_JPN, 404),
@@ -5632,7 +5637,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"000.MOV", "92db07a408eca6bc0ebc230e31e6caa4", 461940, Common::JA_JPN, 402),
 
 	MACGAME1("wallobee3", "", "Lost Lionardo", "cdb27c916044ae4dceb4b7326063fa03", 303961, 400),
-	WINGAME1("wallobee3", "", "LIONARDO.EXE", "51de9e2a40f06d96ca59fcf37c6f297a", 775449, 400),
+	WINGAME1("wallobee3", "", "LIONARDO.EXE", "t:c898ccf2029afbb03888d75a9c2463a8", 775449, 400),
 
 	MACGAME1("wallobee4", "", "Secret of the Sphinx", "1682231de376e5465240f6e4a7952072", 291988, 403),
 	WINGAME1t("wallobee4", "", "SPHINX.EXE", "3d6137ab4553d7e86c1773b081d2b04b", 829780, 403),
