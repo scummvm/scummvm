@@ -1586,6 +1586,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mindbrain",			"The Lost Mind of Dr. Brain" },
 	{ "mothergoosehires",	"Mixed-Up Mother Goose Deluxe" },
 	{ "mousebasics",		"Mouse Basics" },
+	{ "mmaction",			"MacroMind Action!" },
 	{ "msaccess",			"Microsoft Access" },
 	{ "msarcade",			"Microsoft Arcade" },
 	{ "msartgallery",		"Microsoft Art Gallery" },
@@ -2695,6 +2696,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9juj9b8hb1942h", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
 	// Decomposed variant of the above filename
 	MACDEMO1_l("mipeterwolf", "Demo", "xn--o9j5ete2cvkb7839i", "f5277c53bacd27936158dd3867e587e2", 394644, Common::JA_JPN, 311),
+
+	WINDEMO2("mmaction", "Demo", "ACTDEMO.EXE", "t:cd18880c7cc91c559128dbf620188e39", 1421279,
+								 "EXECUTE.ME",	"t:7465ceafd2d7cd6171e8e8b144adc8b9", 858, 300),
 
 	// Samplers from Apple CD-ROM Titles Sampler
 	MACDEMO1("mmbeethoven",  "B/W Sampler", "Beethoven Sampler", "a14cf35ca1856928da5ff8c207cd7c97", 1776701, 311),
