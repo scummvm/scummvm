@@ -4430,6 +4430,9 @@ void MacIndy3Gui::VerbWidget::undraw() {
 // and conversation options.
 // ---------------------------------------------------------------------------
 
+MacIndy3Gui::Button::Button(int x, int y, int width, int height) : VerbWidget(x, y + 2 * Widget::_vm->_screenDrawOffset, width, height) {
+}
+
 void MacIndy3Gui::Button::reset() {
 	MacIndy3Gui::VerbWidget::reset();
 	_text.clear();
@@ -4569,7 +4572,7 @@ void MacIndy3Gui::Button::draw() {
 // the scrollbar.
 // ---------------------------------------------------------------------------
 
-MacIndy3Gui::Inventory::Inventory(int x, int y, int width, int height) : MacIndy3Gui::VerbWidget(x, y, width, height) {
+MacIndy3Gui::Inventory::Inventory(int x, int y, int width, int height) : MacIndy3Gui::VerbWidget(x, y + 2 * Widget::_vm->_screenDrawOffset, width, height) {
 	x = _bounds.left + 6;
 	y = _bounds.top + 6;
 
@@ -5114,35 +5117,35 @@ MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
 	Widget::_surface = _surface;
 	Widget::_gui = this;
 
-	_widgets[  1] = new Button(137, 312 + 2 * (_vm->_screenDrawOffset),  68, 18); // Open
-	_widgets[  2] = new Button(137, 332 + 2 * (_vm->_screenDrawOffset),  68, 18); // Close
-	_widgets[  3] = new Button( 67, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // Give
-	_widgets[  4] = new Button(277, 332 + 2 * (_vm->_screenDrawOffset),  68, 18); // Turn on
-	_widgets[  5] = new Button(277, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // Turn off
-	_widgets[  6] = new Button( 67, 312 + 2 * (_vm->_screenDrawOffset),  68, 18); // Push
-	_widgets[  7] = new Button( 67, 332 + 2 * (_vm->_screenDrawOffset),  68, 18); // Pull
-	_widgets[  8] = new Button(277, 312 + 2 * (_vm->_screenDrawOffset),  68, 18); // Use
-	_widgets[  9] = new Button(137, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // Look at
-	_widgets[ 10] = new Button(207, 312 + 2 * (_vm->_screenDrawOffset),  68, 18); // Walk to
-	_widgets[ 11] = new Button(207, 332 + 2 * (_vm->_screenDrawOffset),  68, 18); // Pick up
-	_widgets[ 12] = new Button(207, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // What is
-	_widgets[ 13] = new Button(347, 312 + 2 * (_vm->_screenDrawOffset),  68, 18); // Talk
-	_widgets[ 14] = new Button( 97, 312 + 2 * (_vm->_screenDrawOffset), 121, 18); // Never mind.
-	_widgets[ 32] = new Button(347, 332 + 2 * (_vm->_screenDrawOffset),  68, 18); // Travel
-	_widgets[ 33] = new Button(347, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // To Indy
-	_widgets[ 34] = new Button(347, 352 + 2 * (_vm->_screenDrawOffset),  68, 18); // To Henry
-	_widgets[ 90] = new Button( 67, 292 + 2 * (_vm->_screenDrawOffset), 507, 18); // Travel 1
-	_widgets[ 91] = new Button( 67, 312 + 2 * (_vm->_screenDrawOffset), 507, 18); // Travel 2
-	_widgets[ 92] = new Button( 67, 332 + 2 * (_vm->_screenDrawOffset), 507, 18); // Travel 3
-	_widgets[100] = new Button( 67, 292 + 2 * (_vm->_screenDrawOffset), 348, 18); // Sentence
-	_widgets[101] = new Inventory(417, 292 + 2 * (_vm->_screenDrawOffset), 157, 78);
-	_widgets[119] = new Button(324, 312 + 2 * (_vm->_screenDrawOffset),  91, 18); // Take this:
-	_widgets[120] = new Button( 67, 292 + 2 * (_vm->_screenDrawOffset), 507, 18); // Converse 1
-	_widgets[121] = new Button( 67, 312 + 2 * (_vm->_screenDrawOffset), 507, 18); // Converse 2
-	_widgets[122] = new Button( 67, 332 + 2 * (_vm->_screenDrawOffset), 507, 18); // Converse 3
-	_widgets[123] = new Button( 67, 352 + 2 * (_vm->_screenDrawOffset), 507, 18); // Converse 4
-	_widgets[124] = new Button( 67, 352 + 2 * (_vm->_screenDrawOffset), 151, 18); // Converse 5
-	_widgets[125] = new Button(423, 352 + 2 * (_vm->_screenDrawOffset), 151, 18); // Converse 6
+	_widgets[  1] = new Button(137, 312,  68, 18); // Open
+	_widgets[  2] = new Button(137, 332,  68, 18); // Close
+	_widgets[  3] = new Button( 67, 352,  68, 18); // Give
+	_widgets[  4] = new Button(277, 332,  68, 18); // Turn on
+	_widgets[  5] = new Button(277, 352,  68, 18); // Turn off
+	_widgets[  6] = new Button( 67, 312,  68, 18); // Push
+	_widgets[  7] = new Button( 67, 332,  68, 18); // Pull
+	_widgets[  8] = new Button(277, 312,  68, 18); // Use
+	_widgets[  9] = new Button(137, 352,  68, 18); // Look at
+	_widgets[ 10] = new Button(207, 312,  68, 18); // Walk to
+	_widgets[ 11] = new Button(207, 332,  68, 18); // Pick up
+	_widgets[ 12] = new Button(207, 352,  68, 18); // What is
+	_widgets[ 13] = new Button(347, 312,  68, 18); // Talk
+	_widgets[ 14] = new Button( 97, 312, 121, 18); // Never mind.
+	_widgets[ 32] = new Button(347, 332,  68, 18); // Travel
+	_widgets[ 33] = new Button(347, 352,  68, 18); // To Indy
+	_widgets[ 34] = new Button(347, 352,  68, 18); // To Henry
+	_widgets[ 90] = new Button( 67, 292, 507, 18); // Travel 1
+	_widgets[ 91] = new Button( 67, 312, 507, 18); // Travel 2
+	_widgets[ 92] = new Button( 67, 332, 507, 18); // Travel 3
+	_widgets[100] = new Button( 67, 292, 348, 18); // Sentence
+	_widgets[101] = new Inventory(417, 292, 157, 78);
+	_widgets[119] = new Button(324, 312,  91, 18); // Take this:
+	_widgets[120] = new Button( 67, 292, 507, 18); // Converse 1
+	_widgets[121] = new Button( 67, 312, 507, 18); // Converse 2
+	_widgets[122] = new Button( 67, 332, 507, 18); // Converse 3
+	_widgets[123] = new Button( 67, 352, 507, 18); // Converse 4
+	_widgets[124] = new Button( 67, 352, 151, 18); // Converse 5
+	_widgets[125] = new Button(423, 352, 151, 18); // Converse 6
 
 	for (auto &it: _widgets)
 		it._value->setVerbid(it._key);
