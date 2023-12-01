@@ -1669,7 +1669,15 @@ void Runtime::scriptOpAnimChange(ScriptArg_t arg) {
 void Runtime::scriptOpScreenName(ScriptArg_t arg) {
 	const Common::String &scrName = _scriptSet->strings[arg];
 
-	uint roomNumber = _roomNumber;
+	uint roomNumber = 0;
+
+	if (_gameID == GID_SCHIZM) {
+		error("Screen numbers should be preprocessed in Schizm");
+
+		// ... absent that error, we would do roomNumber = _loadedRoomNumber probably.
+		// See the comment in optimizeScriptSet for explanation.
+	}
+
 	if (roomNumber < _roomDuplicationOffsets.size())
 		roomNumber -= _roomDuplicationOffsets[roomNumber];
 

@@ -1425,6 +1425,15 @@ void optimizeScriptSet(ScriptSet &scriptSet) {
 
 	Common::Array<Script *> scriptCheckQueue;
 
+	ScreenNameMap_t screenNames;
+
+	// Find all screen names.
+	// There is one duplicate: START exists in room 1 and room 63.  In that case, we want to use the latter ID.
+	for (const RoomScriptSetMap_t::Node &rsNode : scriptSet.roomScripts) {
+		for (const ScreenNameMap_t::Node &snNode : rsNode._value->screenNames)
+			screenNames[snNode._key] = snNode._value;
+	}
+
 	for (const RoomScriptSetMap_t::Node &rsNode : scriptSet.roomScripts) {
 		for (const ScreenScriptSetMap_t::Node &ssNode : rsNode._value->screenScripts) {
 			if (ssNode._value->entryScript)
@@ -1453,6 +1462,23 @@ void optimizeScriptSet(ScriptSet &scriptSet) {
 					instr.arg = newIndex;
 				} else
 					instr.arg = funcIDIt->_value;
+			} else if (instr.op == ScriptOps::kScreenName) {
+				// In a few places, the screen number being transitioned to isn't valid in the target room.
+				//
+				// fnKOLEJKA_PRACOWNIA in room 61 and fnKOLEJKA_CIEMNO in room 62 both execute animF ops after changing room number,
+				// but reference a screen ID in the current room.  They then execute another animF op in the new room, which changes
+				// to a valid screen number.
+				//
+				// The way this appears to work is that screen IDs are applied based on the loaded room script
+				// instead of the active room.  We compensate for this by just resolving the screen name here.
+				const Common::String &screenNameStr = scriptSet.strings[instr.arg];
+
+				ScreenNameMap_t::const_iterator snIt = screenNames.find(screenNameStr);
+				if (snIt != screenNames.end()) {
+					instr.op = ScriptOps::kNumber;
+					instr.arg = snIt->_value;
+				} else
+					error("Couldn't resolve screen name %s to number", screenNameStr.c_str());
 			} else if (opArgIsStringIndex(instr.op)) {
 				uint strID = instr.arg;
 
