@@ -88,7 +88,14 @@ bool INIFile::loadFromSaveFile(const String &filename) {
 	delete loadFile;
 	return status;
 }
-
+bool INIFile::isAscii(const String& str) {
+    for (char c : str) {
+        if (c < 32 || c > 126) {
+            return false;
+        }
+    }
+    return true;
+}
 bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 	Section section;
@@ -112,9 +119,10 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 		}
 
 		line.trim();
+		// Check for lines containing control characters and ignore them
 
-		if (line.size() == 0) {
-			// Do nothing
+		if (line.size() == 0 || !isAscii(line)) {
+			// If there is no string in a line or have non-ascii then it will ignore it
 		} else if (line[0] == '#' || line[0] == ';' || line.hasPrefix("//")) {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value

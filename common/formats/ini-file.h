@@ -125,6 +125,8 @@ public:
 	void	setKey(const String &key, const String &section, const String &value); /*!< Assign a @p value to a @p key in a @p section. */
 	void	removeKey(const String &key, const String &section); /*!< Remove a @p key from this @p section. */
 
+	bool    isAscii(const String &filename); /*!< Checks if the given string consists of ASCII characters */
+
 	const SectionList getSections() const { return _sections; } /*!< Get a list of sections in this INI file. */
 	const SectionKeyList getKeys(const String &section) const; /*!< Get a list of keys in a @p section. */
 
