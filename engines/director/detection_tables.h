@@ -1478,6 +1478,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "davidsonps",			"Davidson Product Sampler" },
 	{ "dewarswl",			"DeWar's \"White Label\"" },
 	{ "disneyint",			"Disney Interactive presents Learning & Creativity Sampler Volume I" },
+	{ "disney97",			"Disney's 1997-98 Software Sampler" },
 	{ "disneylearning",		"Disney Interactive Learning Sampler" },
 	{ "dkmm2",				"Dorling Kindersley Multimedia Sampler Disc 2" },
 	{ "edmark",				"Edmark Demo" },
@@ -3948,7 +3949,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("fishwish", "", "Willy, der Zauberfisch", "ab2bda961c62f9deb2c1ba297d0a1ea9", 501559, Common::DE_DEU, 404),
 	WINGAME2t_l("fishwish", "",	 "WILLY.EXE",	 	 "8b96b5ebd1e11d431e08971a2e3b6053", 2503499,
 								 "EDATA/BUMPER.DIR", "8576a2bab07feb9f7055bfd5ceb3b2c4", 307048, Common::DE_DEU, 404),
-	WINGAME1_l("fishwish", "",	 "WENSVIS.EXE",	 "50004a80942bafec52bbde5c09674bf9", 696993, Common::NL_NLD, 404),
+	WINGAME1_l("fishwish", "",	 "WENSVIS.EXE",	 "t:00f0a44e802160a22a28ef855942b91c", 696993, Common::NL_NLD, 404),
 	WINDEMO1("fishwish", "Demo", "FISHWISH.EXE", "04e5006ccbb86e4ba2d866ce9a5f69ae", 696845, 404),
 
 	MACGAME2("fprpbaxter", "", "bigplayer", "07710cabdfcf6d9fba4205dce062399c", 642187,
@@ -4049,7 +4050,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("ggmd", "",   "KMDGM.EXE",	   "d:c45bac8f730cae2e2a174dbc14deff7b", 690021, 404),
 	WINGAME2_l("ggmd", "", "MAUSJAGD.EXE", "d:04d63d66464bce6356f9d70d83487838", 1302352,
 						   "SHARED.DXR",   "d:15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
-	WINGAME1_l("ggmd", "", "MUIZEN.EXE",   "d:97f8977dae92d12cc8f9c7deff5e8f8d", 1483435, Common::NL_NLD, 404),
+	WINGAME1_l("ggmd", "", "MUIZEN.EXE",   "t:0cf81ec84222d6327312c359a0b62ef8", 1483435, Common::NL_NLD, 404),
 
 	MACGAME1("ggmdmaze", "", "MouseMaze/Mouse Maze",	 "r:17efee018a660458fae80de4364021ac", 482610, 404),
 	MACGAME1_l("ggmdmaze", "", "Muizen Doolhof/Doolhof", "r:17efee018a660458fae80de4364021ac", 482610, Common::NL_NLD, 404),
@@ -4060,13 +4061,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("ggmdpics", "", "Galerij",	  "r:ea646eccc9a53f44ce082459d4809a06", 483518, Common::NL_NLD, 404),
 	WINGAME2_l("ggmdpics", "", "GALLERY.EXE", "d:c476512cadbbcffc6af5cfee8670f8f7", 5099674,
 							   "SHARED.DXR",  "d:15f0add56f03a01a98b076f4792608f6", 389060, Common::DE_DEU, 404),
-	WINGAME1_l("ggmdpics", "", "GALERIJ.EXE", "d:c476512cadbbcffc6af5cfee8670f8f7", 5099674, Common::NL_NLD, 404),
+	WINGAME1_l("ggmdpics", "", "GALERIJ.EXE", "t:2da81921254de95b529ed116c96d5982", 5099674, Common::NL_NLD, 404),
 
 	MACGAME1("ggmdsuper", "", "SuperGame/SuperGame",	 "r:17efee018a660458fae80de4364021ac", 482610, 404),
 	MACGAME1_l("ggmdsuper", "", "Super Spel/Super Spel", "r:17efee018a660458fae80de4364021ac", 482610, Common::NL_NLD, 404),
 	WINGAME1("ggmdsuper", "", "SUPER/SUPRGAME.EXE",		 "d:5da9f151d28659d83cb381ceca7493f1", 740518, 404),
-	WINGAME2_l("ggmdsuper", "", "SUPER/SUPER.EXE",		 "d:5da9f151d28659d83cb381ceca7493f1", 740518,
-								"SUPER/GGMDMENU.DXR",	 "d:019cea5d103d926591e3845b9516997b", 283120, Common::NL_NLD, 404),
+	WINGAME2_l("ggmdsuper", "", "SUPER/SUPER.EXE",		 "t:a6c100af1d14b0726d374f4ca825d3f4", 740518,
+								"SUPER/GGMDMENU.DXR",	 "t:353fdc8da02a82fbe17e4bb1bbe639b7", 283120, Common::NL_NLD, 404),
 
 	MACGAME1("gigglecity", "",	   "Infinity City",		 "e6833f1ce3b022f0128e4c80a55bcd46", 285282, 404),
 	WINGAME2("gigglecity", "",	   "INFINITY.EXE",		 "07b919509db761c7910f5677216b588d", 3228770,
@@ -4133,6 +4134,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gusbuds", "",		"MMV Product Demos for PowerMac", "r:692f6732b6d7deaa00c9b3df57bb30ce", 60068, 404),
 	WINGAME1("gusbuds", "",		"MMVDEMOS.EXE",					  "d:71d4ad9e9dc92a81561476d4d9813492", 692037, 404),
 
+	WINGAME1_l("guscarn", "", "PRETPARK.EXE", "t:d0babe1503cdec2b3c45674f91911c13", 690553, Common::NL_NLD, 404),
 	MACDEMO1("guscarn", "Demo", "Carnival Demo 4 you", "r:67f572196550aedb1f9523d782022be0", 481226, 404),
 
 	MACDEMO1("gusolis", "Demo", "Cyberopolis DEMO", "r:77f4098988d5386794d1530065f514cd", 303961, 404),
@@ -7225,6 +7227,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Other engines include MediaStation ASB and Bill Appleton's DreamFactory
 	MACGAME1("disneyint", "", "DIeduSLVppc", "0096dc69d72faeb63ec7dbbb96899fac", 113411, 600),
 	WINGAME1("disneyint", "", "DIEdu32.exe", "a593079aecf5bd938ce75264cac24b2d", 1510321, 600),
+
+	MACGAME1("disney97", "", "Sampler PPC", "r:41fa2186d635be3094403c75b5f44d4b", 115419, 600),
+	WINGAME1("disney97", "", "SAMP32.EXE", "t:2f87d92076446eaee551d3937e458f86", 1791900, 600),
 
 	WINGAME1("dsteps", "", "dsteps.exe", "t:b5a55743e8931e6cbfbdefb3b6d39403", 2187456, 600),
 
