@@ -790,8 +790,7 @@ private:
 		Common::String _text;
 
 	public:
-
-		Button(int x, int y, int width, int height) : VerbWidget(x, y, width, height) {}
+		Button(int x, int y, int width, int height);
 
 		bool handleEvent(Common::Event &event);
 
