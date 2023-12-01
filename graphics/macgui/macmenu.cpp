@@ -1001,7 +1001,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	_screen.clear(_wm->_colorGreen);
+	_screen.clear(_wm->_colorBlack);
 
 	bool shouldUseDesktopArc = !(_wm->_mode & kWMModeWin95) || (_wm->_mode & kWMModeForceMacBorder);
 	drawFilledRoundRect(&_screen, r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite);
