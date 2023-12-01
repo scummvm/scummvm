@@ -115,7 +115,8 @@ const char *MovUtilsXObj::fileNames[] = {
 
 static MethodProto xlibMethods[] = {
 	{ "new",			MovUtilsXObj::m_new,			0,	0,	400 },	// D4
-	{ "getSystemPath",	MovUtilsXObj::m_getsystempath,	0,	0,	400 },	// D4
+	{ "GetWindowsPath",	MovUtilsXObj::m_getWindowsPath,	0,	0,	400 },	// D4
+	{ "getSystemPath",	MovUtilsXObj::m_getSystemPath,	0,	0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -147,7 +148,14 @@ void MovUtilsXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
-void MovUtilsXObj::m_getsystempath(int nargs) {
+void MovUtilsXObj::m_getSystemPath(int nargs) {
+	g_lingo->dropStack(nargs);
+	// An empty string ensures this just maps to the root of
+	// ScummVM's save data path.
+	g_lingo->push(Datum(""));
+}
+
+void MovUtilsXObj::m_getWindowsPath(int nargs) {
 	g_lingo->dropStack(nargs);
 	// An empty string ensures this just maps to the root of
 	// ScummVM's save data path.
