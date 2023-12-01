@@ -2043,6 +2043,23 @@ void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	}
 }
 
+void MacGui::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
+	Graphics::Surface *s = innerSurface();
+
+	Color color[2];
+
+	if (_gui->_vm->_renderMode == Common::kRenderMacintoshBW) {
+		color[0] = kBlack;
+		color[1] = kWhite;
+	} else {
+		color[0] = kDarkGray;
+		color[1] = kLightGray;
+	}
+
+	for (int x = x0; x <= x1; x++)
+		s->setPixel(x, y, color[x & 1]);
+}
+
 void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
@@ -3789,8 +3806,7 @@ bool MacLoomGui::runOpenDialog(int &saveSlotToHandle) {
 	window->addButton(Common::Rect(254, 104, 334, 124), "Cancel", true);
 	window->addButton(Common::Rect(254, 59, 334, 79), "Delete", true);
 
-	Graphics::Surface *s = window->innerSurface();
-	s->hLine(253, 91, 334, kBlack);
+	window->drawDottedHLine(253, 91, 334);
 
 	bool availSlots[100];
 	int slotIds[100];
@@ -3860,7 +3876,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	s->frameRect(Common::Rect(14, 161, 232, 183), kBlack);
 
-	s->hLine(253, 115, 334, kBlack);
+	window->drawDottedHLine(253, 115, 334);
 
 	font->drawString(s, "Save Game File as...", 14, 143, 218, kBlack, Graphics::kTextAlignLeft, 4);
 

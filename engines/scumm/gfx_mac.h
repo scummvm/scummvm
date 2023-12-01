@@ -564,6 +564,7 @@ public:
 		static void plotPattern(int x, int y, int pattern, void *data);
 		static void plotPatternDarkenOnly(int x, int y, int pattern, void *data);
 
+		void drawDottedHLine(int x0, int y, int x1);
 		void fillPattern(Common::Rect r, uint16 pattern);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y);
 		void drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect clipRect);
