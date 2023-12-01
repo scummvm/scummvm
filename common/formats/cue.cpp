@@ -298,8 +298,11 @@ void CueSheet::parseTracksContext(const char *line) {
 		int indexNum = atoi(nexttok(s, &s).c_str());
 		int frames = parseMSF(nexttok(s, &s).c_str());
 
-		for (int i = (int)_tracks[_currentTrack].indices.size(); i <= indexNum; i++)
-			_tracks[_currentTrack].indices.push_back(0);
+		for (int i = (int)_tracks[_currentTrack].indices.size(); i <= indexNum; i++) {
+			// -1 indicates "no index" to let callers guard against
+			// interpreting these as real values
+			_tracks[_currentTrack].indices.push_back(-1);
+		}
 
 		_tracks[_currentTrack].indices[indexNum] = frames;
 
@@ -353,15 +356,32 @@ CueSheet::CueTrack *CueSheet::getTrack(int tracknum) {
 CueSheet::CueTrack *CueSheet::getTrackAtFrame(int frame) {
 	for (uint i = 0; i < _tracks.size(); i++) {
 		// Inside pregap
-		if (frame >= _tracks[i].indices[0] && frame < _tracks[i].indices.back()) {
-			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (pregap)", i);
+		if (_tracks[i].indices[0] >= 0 && frame >= _tracks[i].indices[0] && frame < _tracks[i].indices.back()) {
+			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (pregap)", _tracks[i].number);
 			return &_tracks[i];
 		}
 
-		// Between index 1 and the start of the subsequent track
-		if (i < _tracks.size() && frame > _tracks[i].indices.back() && frame < _tracks[i+1].indices[0]) {
-			debug(5, "CueSheet::getTrackAtFrame: Returning track %i (inside content)", i);
-			return &_tracks[i];
+		// Between index 1 and the start of the subsequent track.
+		// Index 0 of the next track is the start of its pregap.
+		// For tracks which have pregaps, we want to use that as the
+		// frame to determine the edge of the track; otherwise, we'll
+		// need to use the start of index 1, eg the start of the track.
+		if (i+1 < _tracks.size()) {
+			int nextIndex;
+			CueSheet::CueTrack nextTrack = _tracks[i+1];
+			// If there's more than one index, *and* index 0 looks
+			// nullish, use index 1
+			if (nextTrack.indices.size() > 1 && nextTrack.indices[0] == -1) {
+				nextIndex = nextTrack.indices[1];
+			// Otherwise, use index 0
+			} else {
+				nextIndex = nextTrack.indices[0];
+			}
+
+			 if (frame >= _tracks[i].indices.back() && frame < nextIndex) {
+				debug(5, "CueSheet::getTrackAtFrame: Returning track %i (inside content)", _tracks[i].number);
+				return &_tracks[i];
+			}
 		}
 	}
 
