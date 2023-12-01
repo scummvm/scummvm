@@ -479,9 +479,9 @@ static void drawInner4BppWithConv(BITMAP::DrawInnerArgs &args) {
 	const int xDir = args.horizFlip ? -1 : 1;
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-	__m128i tint = _mm_sll_epi32(_mm_set1_epi32(args.srcAlpha), _mm_set1_epi32(24));
-	tint = _mm_or_si128(tint, _mm_sll_epi32(_mm_set1_epi32(args.tintRed), _mm_set1_epi32(16)));
-	tint = _mm_or_si128(tint, _mm_sll_epi32(_mm_set1_epi32(args.tintGreen), _mm_set1_epi32(8)));
+    __m128i tint = _mm_slli_epi32(_mm_set1_epi32(args.srcAlpha), 24);
+	tint = _mm_or_si128(tint, _mm_slli_epi32(_mm_set1_epi32(args.tintRed), 16));
+	tint = _mm_or_si128(tint, _mm_slli_epi32(_mm_set1_epi32(args.tintGreen), 8));
 	tint = _mm_or_si128(tint, _mm_set1_epi32(args.tintBlue));
 	__m128i maskedAlphas = _mm_set1_epi32(args.alphaMask);
 	__m128i transColors = _mm_set1_epi32(args.transColor);
