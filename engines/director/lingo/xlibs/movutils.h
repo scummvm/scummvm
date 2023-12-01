@@ -40,7 +40,8 @@ void close(int type);
 
 void m_new(int nargs);
 void m_clear(int nargs);
-void m_getsystempath(int nargs);
+void m_getSystemPath(int nargs);
+void m_getWindowsPath(int nargs);
 
 } // End of namespace MovUtilsXObj
 
