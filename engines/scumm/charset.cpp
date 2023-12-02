@@ -237,7 +237,7 @@ void ScummEngine::loadKorFont() {
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	if (_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine)
+	if (!isScummvmKorTarget() && (_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine))
 		return nullptr;
 
 	switch (_language) {
@@ -529,7 +529,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 		}
 
 		if (_vm->_useCJKMode) {
-			if (_vm->_game.platform == Common::kPlatformFMTowns) {
+			if (_vm->_language == Common::JA_JPN && _vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
 					// This strange character conversion is the exact way the original does it here.
 					// This is the only way to get an accurate text formatting in the MI1 intro.
@@ -641,7 +641,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			lastspace = pos - 1;
 
 		if (_vm->_useCJKMode) {
-			if (_vm->_game.platform == Common::kPlatformFMTowns) {
+			if (_vm->_language == Common::JA_JPN && _vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
 					// This strange character conversion is the exact way the original does it here.
 					// This is the only way to get an accurate text formatting in the MI1 intro.
@@ -1539,7 +1539,7 @@ int CharsetRendererTownsV3::getDrawHeightIntern(uint16 chr) {
 }
 
 void CharsetRendererTownsV3::setDrawCharIntern(uint16 chr) {
-	_sjisCurChar = (_vm->_useCJKMode && chr > 127) ? chr : 0;
+	_sjisCurChar = (!_vm->isScummvmKorTarget() && _vm->_useCJKMode && chr > 127) ? chr : 0;
 }
 #endif
 
