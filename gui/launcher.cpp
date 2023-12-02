@@ -654,7 +654,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	Common::FSNode dir(path);
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-		MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
+		Common::U32String msg(_("ScummVM couldn't open the specified directory!"));
+#ifdef __ANDROID__
+		msg += Common::U32String("\n\n");
+		msg += _("Did you add this directory to the SAF? Press the help button [?] on the top for detailed instructions");
+#endif
+		MessageDialog alert(msg);
 		alert.runModal();
 		return true;
 	}
@@ -673,7 +678,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	int idx;
 	if (candidates.empty()) {
 		// No game was found in the specified directory
-		MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
+		Common::U32String msg(_("ScummVM could not find any game in the specified directory!"));
+#ifdef __ANDROID__
+		msg += Common::U32String("\n\n");
+		msg += _("Did you add this directory to the SAF? Press the help button [?] on the top for detailed instructions");
+#endif
+		MessageDialog alert(msg);
 		alert.runModal();
 		idx = -1;
 		return false;
