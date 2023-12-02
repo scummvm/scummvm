@@ -285,7 +285,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blackwell5", "The Blackwell Epiphany" },
 	{ "captaindisaster", "Captain Disaster in: Death Has A Million Stomping Boots" },
 	{ "captaindisasterriskara", "Captain Disaster and The Two Worlds of Riskara" },
-	{ "captainhook", "Captain Hook and the Lost Girl" },
 	{ "castleagony", "Castle Agony" },
 	{ "castledornstein", "Castle Dornstein" },
 	{ "charnelhousetrilogy", "The Charnel House Trilogy" },
@@ -692,6 +691,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "barnrunner5p1", "Barn Runner 5: The Forever Friday (Part 1)" },
 	{ "barnrunner5p2", "Barn Runner 5: The Forever Friday (Part 2)" },
 	{ "barnrunner5p3", "Barn Runner 5: The Forever Friday (Part 3)" },
+	{ "barnrunner5p5", "Barn Runner 5: The Forever Friday (Part 5)" },
 	{ "barnrunnerbake1", "Barn Runner Bake Sale 1: The Rich Dame Who Cut The Cheese" },
 	{ "barnrunnerhall1", "Barn Runner Halloween 1: Fully Automatic Mojo" },
 	{ "barnrunnervalentine1", "Barn Runner Valentine 1: Pucker Factor" },
@@ -866,6 +866,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "captaincringe", "Chronicles of Captain Cringe" },
 	{ "captaindisastermoon", "Captain Disaster In: The Dark Side of the Moon" },
 	{ "captaindownes", "Captain Downes and the Pirate Princess" },
+	{ "captainhook", "Captain Hook and the Lost Girl" },
 	{ "captainskull", "The Astonishing Captain Skull" },
 	{ "carrotbobinzxspeccyworld", "Carrot Bob in ZX Spectrum world" },
 	{ "cartenstein", "Cartenstein" },
@@ -1154,6 +1155,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dreamcatadv", "Dreamcat Adventure: Jenseits von Traum und Zeit" },  // Beyond Dream and Time
 	{ "dreamdiary", "Dream Diary Quest" },
 	{ "dreamer", "Little Dreamer" },
+	{ "dreamscapess", "Dreamscape: Silent Serenade" },
 	{ "dreamsofwintermass", "Dreams of Winter Mass" },
 	{ "dreamwithindream", "The Dream within A Dream" },
 	{ "dreamychristmas", "Create your own adventure game: Your dreamy Christmas" },
@@ -2436,6 +2438,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "platformerius", "Platformerius - The Ninja Incident!" },
 	{ "platformhorde", "Platform Horde" },
 	{ "playitagain", "Play It Again: An Improv Point And Click Adventure" },
+	{ "playoflife", "The Play of Life" },
 	{ "playxylo", "Play Xylophone & Singing Cat" },
 	{ "pledgequest1", "Pledge Quest I: The SpaceVenture Adventure" },
 	{ "pledgequest2", "Pledge Quest II: Noodle Shop of Horrors" },
@@ -2942,6 +2945,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "talesofchickenry", "Tales of Chickenry" },
 	{ "talesofjayvin", "Tales of Jayvin" },
 	{ "talesofotubania", "Tales of Otubania" },
+	{ "taoep1", "Tao - Episode 1: Le Grand Tournoi" },
 	{ "taospacetime", "Tao Through Space and Time" },
 	{ "tarthenia", "Tarthenia" },
 	{ "tasteblood", "Taste the blood of darkness" },
@@ -3398,6 +3402,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "worldisweird", "The World is Weird" },
 	{ "worldoftoto", "The World of Toto" },
 	{ "worldofwarcraftquest", "World of Warcraft: The IMBA Quest" },
+	{ "worldscollide", "Worlds Literally Collide" },
 	{ "wormholech1", "Wormhole - Capítulo 1" },
 	{ "wrathofthesolonoids", "Doctor Who: Wrath of the Solonoids" },
 	{ "wrecked", "Wrecked" },
@@ -5346,6 +5351,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("barnrunner5p2", "barn runner 5-2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 200696384),  // v1.2
 	GAME_ENTRY_EN("barnrunner5p3", "Barn Runner 5-3.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 236158866),
 	GAME_ENTRY_EN("barnrunner5p3", "Barn Runner 5-3.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 236159803),  // v1.2
+	GAME_ENTRY_EN("barnrunner5p5", "Barn Runner 5-5.exe", "beb4cc3da02c78321e80af92b834938c", 293046932),
 	GAME_ENTRY_EN("barnrunnerbake1", "BR Bake Sale 1.exe", "18b284c22010850f79bc5c20054a70c4", 29716432),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52243988),
 	GAME_ENTRY_EN("barnrunnerhall1", "BR Halloween 1.exe", "18b284c22010850f79bc5c20054a70c4", 52252562),  //v1.3
@@ -5555,6 +5561,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("captaindownes", "Captain Downes.exe", "78dd4ca028ee0156b6a093d6d780aa65", 32770340),  // Windows Eng-Swe
 	GAME_ENTRY("captaindownes", "Captain Downes.ags", "01c5914ae83d39dab345f2f70dd3e4ee", 30285588),  // Linux Eng-Swe
 	GAME_ENTRY("captaindownes", "ac2game.dat", "01c5914ae83d39dab345f2f70dd3e4ee", 30285588),  // Mac Eng-Swe
+	GAME_ENTRY("captainhook", "CaptainHookAndTheLostGirl.exe", "776a62db4387dc68be92ef9933399fd5", 8731939),  // Win En-Fr
+	GAME_ENTRY("captainhook", "CaptainHookAndTheLostGirl.ags", "f057e9513fd792aa6b60c6e0555b3577", 5625615),  // Linux En-Fr
 	GAME_ENTRY_EN("captainskull", "The Astonishing Captain Skull.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 21319808),
 	GAME_ENTRY_EN("carrotbobinzxspeccyworld", "carrotbob.exe", "949f7440e3692b7366c2029979dee9a0", 914509),
 	GAME_ENTRY_EN("cartenstein", "Ludum Dare 41.ags", "8c15c837060a65decd61d3a99c78a15c", 1655510),  // Linux
@@ -5918,6 +5926,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_PLATFORM("dreamdiary", "Dream Diary Quest.exe", "1608e6ba3e7965580fe36e547635c0ac", 7320344, "Prototype 0.002"),
 	GAME_ENTRY_EN_PLATFORM("dreamdiary", "Dream Diary Quest.exe", "1608e6ba3e7965580fe36e547635c0ac", 6924791, "Prototype 0.003"),
 	GAME_ENTRY_EN("dreamer", "LittleDreamer.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 62151801),
+	GAME_ENTRY_EN("dreamscapess", "mags112023.exe", "328a715c0a826cad7d6824c6e76b52d5", 16052012),  // Win
+	GAME_ENTRY_EN("dreamscapess", "mags112023.ags", "b1f7e54ebdc65fb602f55b9a735a935c", 12897048),  // Linux
 	GAME_ENTRY_EN("dreamsofwintermass", "Dreams of Winter Mass.exe", "1608e6ba3e7965580fe36e547635c0ac", 3305143),
 	GAME_ENTRY_EN("dreamwithindream", "dream.exe", "0500aacb6c176d47ac0f8158f055db83", 4635389),
 	GAME_ENTRY_EN("dressedforafight", "ladyfighterv2.exe", "7cebde856d22620450989e3b1d7896b1", 580950783),
@@ -7445,6 +7455,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("plasticmines", "plasticmines.exe", "7971a7c02d414dc8cb33b6ec36080b91", 35136616),
 	GAME_ENTRY_EN("platformhorde", "Platform Horde.exe", "49157a0ea75b960eded4d0811a71d3e9", 14991450),
 	GAME_ENTRY_EN("playitagain", "playit.exe", "f18443f98fd61d2c655e76a17f7da905", 12379664),
+	GAME_ENTRY_EN("playoflife", "The Play of Life.ags", "88dfc0fd903fe42c86337ed47fe21d20", 43332985),
 	GAME_ENTRY_EN("playxylo", "Xylophone For Kids.exe", "237e51bb11691ef8ec09e23ae307fcc7", 249211663),
 	GAME_ENTRY_EN("pledgequest1", "svpromo.exe", "82da2565c456dcfb265ded6fe3189c0b", 3239155),
 	GAME_ENTRY_EN("pledgequest2", "pledgequest2.exe", "615e73fc1874e92d60a1996c2330ea36", 27872703),
@@ -7767,6 +7778,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG_PLATFORM("shailaofthesith", "Shaila_old.exe", "a524cbb1c51589903c4043b98917f1d9", 68426311, Common::FR_FRA, "v1.0"),
 	GAME_ENTRY_LANG("shailaofthesith", "Shai-la du Sith.exe", "615e73fc1874e92d60a1996c2330ea36", 76407314, Common::FR_FRA),
 	GAME_ENTRY("shailaofthesith", "Shaila_of_the_Sith.exe", "a524cbb1c51589903c4043b98917f1d9", 76170347),  // En-Fr
+	GAME_ENTRY_LANG("shailaofthesith", "Shai-la du Sith.ags", "409edb13aaf4eaa5389e94b350ba51f0", 62229433, Common::FR_FRA),  // itch.io updated
 	GAME_ENTRY_EN("shamrockhg", "Shamrock  Graduation.exe", "7ddb9e776648faed5a51170d087074e9", 7255712),
 	GAME_ENTRY_EN("shapeshift", "Shafeshift for cheese by Adipson.exe", "0241777c2537fc5d077c05cde10bfa9f", 211164349),
 	GAME_ENTRY_EN("shapevillage", "Shape Village.exe", "7825fa980fcd058caadaf6d3377b1f78", 13575497),
@@ -8054,6 +8066,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("talesofjayvin", "Tales of Jayvin.exe", "615e73fc1874e92d60a1996c2330ea36", 885298865),  // Windows
 	GAME_ENTRY_EN("talesofjayvin", "ac2game.dat", "615e73fc1874e92d60a1996c2330ea36", 885298865),  // Mac
 	GAME_ENTRY_EN("talesofotubania", "TalesOfOtubania.exe", "344bdaaf19f8ed676fa02e3ed7b4d52a", 2626344),
+	GAME_ENTRY_LANG("taoep1", "Tao.ags", "a5e4a3d0d857cb69b1df110e719a53ab", 295135618, Common::FR_FRA),
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047, Common::FR_FRA),  // Win French
 	GAME_ENTRY_LANG("taospacetime", "Tao through space and time AGS.ags", "50e4bd3554f1b1d5bf9b7b7c83920c8b", 33452975, Common::FR_FRA),  // Linux French
 	GAME_ENTRY("taospacetime", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35931108),  // Win   En-Fr
@@ -8630,6 +8643,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.ags", "03bf57f3cf0974e210dacd00ec7ba574", 135938736),
 	GAME_ENTRY_EN("worldoftoto", "WorldOfToto.exe", "2f2bc0b9c539d20529c0e343315d5f65", 139047620),
 	GAME_ENTRY("worldofwarcraftquest", "IMBA.exe", "3a96a134156aeccee37daae9a7d5232d", 31743641),  //En-De
+	GAME_ENTRY_EN("worldscollide", "Worlds Literally Collide.ags", "e78364c4e480cb710ab21e3bc629c882", 9606492),
 	GAME_ENTRY_LANG("wormholech1", "WH1.exe", "0564de07d3fd5c16e6947a647061913c", 294320191, Common::ES_ESP),
 	GAME_ENTRY_EN("wrathofthesolonoids", "verb.exe", "0500aacb6c176d47ac0f8158f055db83", 3582078),
 	GAME_ENTRY_EN("wrecked", "AGS_Wrecked.exe", "310def5b0f0e3b1ec1e1f0198011c17c", 171806325),
