@@ -24,6 +24,7 @@
  * USED IN:
  * Classical Cats
  * The Daedalus Encounter
+ * Refixion II
  *
  *************************************/
 
@@ -99,25 +100,26 @@ namespace Director {
 const char *AppleCDXObj::xlibName = "AppleCD";
 const char *AppleCDXObj::fileNames[] = {
 	"AppleCD",
+	"AppleCD XObj",
 	0
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",					AppleCDXObj::m_new,			0,	0,	400 },	// D4
-	{ "Service",				AppleCDXObj::m_service,		0,	0,	400 },	// D4
-	{ "Still",				AppleCDXObj::m_still,		0,	0,	400 },	// D4
-	{ "ReadStatus",				AppleCDXObj::m_readStatus,	0,	0,	400 },	// D4
-	{ "GetValue",				AppleCDXObj::m_getValue,	0,	0,	400 },	// D4
-	{ "Eject",    				AppleCDXObj::m_eject,		0,	0,	400 },	// D4
-	{ "GetFirstTrack",    				AppleCDXObj::m_getFirstTrack,		0,	0,	400 },	// D4
-	{ "GetLastTrack",    				AppleCDXObj::m_getLastTrack,		0,	0,	400 },	// D4
-	{ "GetFirstFrame",    				AppleCDXObj::m_getFirstFrame,		1,	1,	400 },	// D4
-	{ "GetLastFrame",    				AppleCDXObj::m_getLastFrame,		1,	1,	400 },	// D4
-	{ "SetInPoint",    				AppleCDXObj::m_setInPoint,		1,	1,	400 },	// D4
-	{ "SetOutPoint",    				AppleCDXObj::m_setOutPoint,		1,	1,	400 },	// D4
-	{ "PlayCue",    				AppleCDXObj::m_playCue,		0,	0,	400 },	// D4
-	{ "PlaySegment",    				AppleCDXObj::m_playSegment,		0,	0,	400 },	// D4
-	{ "ReadPos",    				AppleCDXObj::m_readPos,		0,	0,	400 },	// D4
+	{ "new",					AppleCDXObj::m_new,			0,	0,	300 },	// D3
+	{ "Service",				AppleCDXObj::m_service,		0,	0,	300 },	// D4
+	{ "Still",				AppleCDXObj::m_still,		0,	0,	300 },	// D3
+	{ "ReadStatus",				AppleCDXObj::m_readStatus,	0,	0,	300 },	// D3
+	{ "GetValue",				AppleCDXObj::m_getValue,	0,	0,	300 },	// D3
+	{ "Eject",    				AppleCDXObj::m_eject,		0,	0,	300 },	// D3
+	{ "GetFirstTrack",    				AppleCDXObj::m_getFirstTrack,		0,	0,	300 },	// D3
+	{ "GetLastTrack",    				AppleCDXObj::m_getLastTrack,		0,	0,	300 },	// D3
+	{ "GetFirstFrame",    				AppleCDXObj::m_getFirstFrame,		1,	1,	300 },	// D3
+	{ "GetLastFrame",    				AppleCDXObj::m_getLastFrame,		1,	1,	300 },	// D3
+	{ "SetInPoint",    				AppleCDXObj::m_setInPoint,		1,	1,	300 },	// D3
+	{ "SetOutPoint",    				AppleCDXObj::m_setOutPoint,		1,	1,	300 },	// D3
+	{ "PlayCue",    				AppleCDXObj::m_playCue,		0,	0,	300 },	// D3
+	{ "PlaySegment",    				AppleCDXObj::m_playSegment,		0,	0,	300 },	// D3
+	{ "ReadPos",    				AppleCDXObj::m_readPos,		0,	0,	300 },	// D3
     { nullptr, nullptr, 0, 0, 0 }
 };
 
