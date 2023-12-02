@@ -502,6 +502,21 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	{ // Korean fan translation
+		"sword1",
+		"",
+		AD_ENTRY6s("clusters/scripts.clu",  "72b10193714e8c6e4daca51791c0db0c", 1087240,
+				   "clusters/swordres.rif", "d21d6321ee2dbb2d7d7ca2d2a940c34a", 58916,
+				   "clusters/text.clu",     "76f93f5feecc8915435105478f3c6615", 2704592,
+				   "smackshi/intro.smk",    "d82a7869ace8fcecaa519c04c4bfc483", 13233268,
+				   "bs1k.fnt",              NULL,                               1222000,
+				   "korean.clu",            NULL,                               -1),
+		Common::KO_KOR,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	{
 		"sword1",
 		"",

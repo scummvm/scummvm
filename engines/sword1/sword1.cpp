@@ -93,7 +93,8 @@ Common::Error SwordEngine::init() {
 	checkCdFiles();
 
 	debug(5, "Starting resource manager");
-	_resMan = new ResMan("swordres.rif", _systemVars.platform == Common::kPlatformMacintosh);
+	_resMan = new ResMan("swordres.rif", _systemVars.platform == Common::kPlatformMacintosh,
+		Common::parseLanguage(ConfMan.get("language")) == Common::KO_KOR);
 	debug(5, "Starting object manager");
 	_objectMan = new ObjectMan(_resMan);
 	_mouse = new Mouse(_system, _resMan, _objectMan);

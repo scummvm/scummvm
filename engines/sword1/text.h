@@ -58,7 +58,10 @@ public:
 private:
 	uint16 analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *info);
 	uint16 charWidth(uint8 ch);
+	uint16 wCharWidth(uint8 hi, uint8 lo);
 	uint16 copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen);
+	uint16 copyWChar(uint8 hi, uint8 lo, uint8 *sprPtr, uint16 sprWidth, uint8 pen);
+	bool isKoreanChar(uint8 hi, uint8 lo);
 
 	uint8 *_font;
 	uint8 _textCount;

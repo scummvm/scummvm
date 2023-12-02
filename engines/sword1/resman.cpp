@@ -43,10 +43,11 @@ void guiFatalError(char *msg) {
 
 #define MAX_PATH_LEN 260
 
-ResMan::ResMan(const char *fileName, bool isMacFile) {
+ResMan::ResMan(const char *fileName, bool isMacFile, bool isKorean) {
 	_openCluStart = _openCluEnd = nullptr;
 	_openClus = 0;
 	_isBigEndian = isMacFile;
+	_isKorTrs = isKorean;
 	_memMan = new MemMan();
 	loadCluDescript(fileName);
 }
@@ -139,6 +140,25 @@ void ResMan::loadCluDescript(const char *fileName) {
 	if (_prj.clu[3].grp[5].noRes == 29)
 		for (uint8 cnt = 0; cnt < 29; cnt++)
 			_srIdList[cnt] = 0x04050000 | cnt;
+
+	if (_isKorTrs) {
+		Common::File *cluFile = new Common::File();
+		cluFile->open("korean.clu");
+		if (cluFile->isOpen()) {
+			for (uint32 resCnt = 0, resOffset = 0; resCnt < _prj.clu[2].grp[0].noRes; resCnt++) {
+				Header header;
+				cluFile->read(&header, sizeof(Header));
+				_prj.clu[2].grp[0].offset[resCnt] = resOffset;
+				_prj.clu[2].grp[0].length[resCnt] = header.comp_length;
+				resOffset += header.comp_length;
+				cluFile->seek(header.decomp_length, SEEK_CUR);
+			}
+			cluFile->close();
+			Common::strcpy_s(_prj.clu[2].label, "korean");
+		} else {
+			_isKorTrs = false;
+		}
+	}
 }
 
 void ResMan::freeCluDescript() {
@@ -255,14 +275,40 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 	if (!memHandle)
 		return;
 	if (memHandle->cond == MEM_FREED) { // memory has been freed
-		uint32 size = resLength(id);
-		_memMan->alloc(memHandle, size);
-		Common::File *clusFile = resFile(id);
-		assert(clusFile);
-		clusFile->seek(resOffset(id));
-		clusFile->read(memHandle->data, size);
-		if (clusFile->err() || clusFile->eos()) {
-			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
+		if (id == GAME_FONT && _isKorTrs) {
+			// Load Korean Font
+			uint32 size = resLength(id);
+			uint32 korFontSize = 0;
+			Common::File *korFontFile = NULL;
+
+			korFontFile = new Common::File();
+			korFontFile->open("bs1k.fnt");
+			if (korFontFile->isOpen()) {
+				korFontSize = korFontFile->size();
+			}
+			_memMan->alloc(memHandle, size + korFontSize);
+			Common::File *clusFile = resFile(id);
+			assert(clusFile);
+			clusFile->seek(resOffset(id));
+			clusFile->read(memHandle->data, size);
+			if (clusFile->err() || clusFile->eos()) {
+				error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
+			}
+
+			if (korFontSize > 0) {
+				korFontFile->read((uint8 *)memHandle->data + size, korFontSize);
+				korFontFile->close();
+			}
+		} else {
+			uint32 size = resLength(id);
+			_memMan->alloc(memHandle, size);
+			Common::File *clusFile = resFile(id);
+			assert(clusFile);
+			clusFile->seek(resOffset(id));
+			clusFile->read(memHandle->data, size);
+			if (clusFile->err() || clusFile->eos()) {
+				error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
+			}
 		}
 	} else
 		_memMan->setCondition(memHandle, MEM_DONT_FREE);
