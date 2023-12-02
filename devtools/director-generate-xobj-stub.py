@@ -161,7 +161,72 @@ def read_uint8(data: bytes) -> int:
 def read_uint16_le(data: bytes) -> int:
 	return struct.unpack('<H', data)[0]
 
-def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[str]]:
+def read_uint16_be(data: bytes) -> int:
+	return struct.unpack('>H', data)[0]
+
+def read_uint32_le(data: bytes) -> int:
+	return struct.unpack('<L', data)[0]
+
+def read_uint32_be(data: bytes) -> int:
+	return struct.unpack('>L', data)[0]
+
+def extract_xmethtable_macbinary(file: BinaryIO, resource_offset: int, xobj_id: int|None = None) -> tuple[str, str, list[str]]:
+	file.seek(resource_offset)
+	resource_data_offset = read_uint32_be(file.read(4))
+	resource_map_offset = read_uint32_be(file.read(4))
+	resource_data_size = read_uint32_be(file.read(4))
+	resource_map_size = read_uint32_be(file.read(4))
+	file.seek(resource_offset + resource_map_offset + 24)
+	type_list_offset = read_uint16_be(file.read(2))
+	name_list_offset = read_uint16_be(file.read(2))
+	file.seek(resource_offset + resource_map_offset + type_list_offset)
+	type_count = read_uint16_be(file.read(2))
+	types = {}
+	for _ in range(type_count + 1):
+		key = file.read(4)
+		types[key] = (read_uint16_be(file.read(2)) + 1, read_uint16_be(file.read(2)))
+	if b'XCOD' in types:
+		print('Found XCOD resources!')
+		file.seek(resource_offset + resource_map_offset + type_list_offset + types[b'XCOD'][1])
+		resources = []
+		for _ in range(types[b'XCOD'][0]):
+			id = read_uint16_be(file.read(2))
+			name_offset = read_uint16_be(file.read(2))
+			file.read(1)
+			data_offset = (read_uint8(file.read(1)) << 16) + read_uint16_be(file.read(2))
+			file.read(4)
+			resources.append((id, data_offset, name_offset))
+		xobj = {}
+		for id, data_offset, name_offset in resources:
+			xobj[id] = {}
+			if name_offset != 0xffff:
+				file.seek(resource_offset + resource_map_offset + name_list_offset + name_offset)
+				name_size = read_uint8(file.read(1))
+				xobj[id]["name"] = file.read(name_size).decode("macroman")
+			else:
+				xobj[id]["name"] = "<unknown>"
+			file.seek(resource_offset + resource_data_offset + data_offset)
+			size = read_uint32_be(file.read(4)) - 12
+			file.read(12)
+			xobj[id]["xmethtable"] = []
+			while size > 0:
+				count = read_uint8(file.read(1))
+				if count == 0:
+					break
+				xobj[id]["xmethtable"].append(file.read(count).decode('macroman'))
+				size -= 1 + count
+		if xobj_id is None or xobj_id not in xobj:
+			print("Please re-run with one of the following XOBJ resource IDs:")
+			for id, data in xobj.items():
+				print(f"{id} - {data['name']}")
+			raise ValueError("Need to specify XOBJ resource ID")
+		for entry in xobj[xobj_id]["xmethtable"]:
+			print(entry)
+		return (xobj[xobj_id]["name"], xobj[xobj_id]["name"].lower(), xobj[xobj_id]["xmethtable"])
+
+	raise ValueError("No XCOD resources found!")
+
+def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, str, list[str]]:
 	# get resource table
 	file.seek(ne_offset + 0x24, os.SEEK_SET)
 	restable_offset = read_uint16_le(file.read(0x2))
@@ -205,7 +270,7 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	xmethtable_exists = "XMETHTABLE" in resource_names
 	file.seek(ne_offset + resident_names_offset)
 	name_length = read_uint8(file.read(0x1))
-	library_name = file.read(name_length).decode('ASCII')
+	file_name = file.read(name_length).decode('ASCII')
 
 	# Borland C++ can put the XMETHTABLE token into a weird nonstandard resource
 	for x in filter(lambda d: d["type_id"] == 0x800f, resources):
@@ -217,21 +282,22 @@ def extract_xmethtable_win16(file: BinaryIO, ne_offset: int) -> tuple[str, list[
 	if not xmethtable_exists:
 		raise ValueError("XMETHTABLE not found!")
 
+
 	resources = list(filter(lambda x: x["type_id"] == 0x800a, resources))
 	if len(resources) != 1:
 		raise ValueError("Expected a single matching resource type entry!")
-	if len(resources[0]["entries"]) != 1:
-		raise ValueError("Expected a single matching resource entry!")
 
 	xmethtable_offset = resources[0]["entries"][0]["offset"]
 	xmethtable_length = resources[0]["entries"][0]["length"]
-	print(f"Found XMETHTABLE for XObject library {library_name}!")
+	print(f"Found XMETHTABLE for XObject library {file_name}!")
 	file.seek(xmethtable_offset, os.SEEK_SET)
 	xmethtable_raw = file.read(xmethtable_length)
 	xmethtable = [entry.decode('iso-8859-1') for entry in xmethtable_raw.strip(b"\x00").split(b"\x00")]
 	for entry in xmethtable:
 		print(entry)
-	return library_name, xmethtable
+	library_name = xmethtable[1]
+	xmethtable[1] = "--" + library_name
+	return library_name, file_name, xmethtable
 
 
 def extract_xmethtable_win32(file: BinaryIO, pe_offset: int) -> tuple[str, list[str]]:
@@ -245,7 +311,7 @@ def extract_xmethtable_win32(file: BinaryIO, pe_offset: int) -> tuple[str, list[
 
 	return ("", [])
 
-def extract_xmethtable(path: str):
+def extract_xmethtable(path: str, resid: int) -> tuple[str, str, list[str]]:
 	with open(path, 'rb') as file:
 		magic = file.read(0x2)
 		if magic == b'MZ':
@@ -258,14 +324,23 @@ def extract_xmethtable(path: str):
 				return extract_xmethtable_win16(file, header_offset)
 			elif magic == b'PE':
 				raise ValueError("No support yet for extracting from Win32 DLLs")
+		file.seek(0)
+		header = file.read(124)
+		if len(header) == 124 and header[0] == 0 and header[74] == 0 and header[82] == 0 and header[122] in [129, 130] and header[123] in [129, 130]:
+			print("Found MacBinary!")
+
+			data_size = read_uint32_be(header[83:87])
+			resource_size = read_uint32_be(header[87:91])
+			resource_offset = 128 + data_size + ((128 - (data_size % 128)) if (data_size % 128) else 0)
+			print(f"resource offset: {resource_offset}")
+			return extract_xmethtable_macbinary(file, resource_offset, resid)
+
 	raise ValueError("Unknown filetype")
 
 
 def generate_stubs(xmethtable: list[str], slug: str, name: str, director_version: int=400, dry_run=False) -> None:
-	entries = xmethtable[2:]
-
 	meths = []
-	for e in entries:
+	for e in xmethtable:
 		if not e.strip():
 			break
 		elems = e.split()
@@ -335,15 +410,16 @@ def main() -> None:
 		description="Extract the method table from a Macromedia Director XObject/XLib and generate method stubs."
 	)
 	parser.add_argument("XOBJ_FILE", help="XObject/XLib file to test")
+	parser.add_argument("--resid", help="XOBJ resource ID (for MacBinary)", type=int, default=None)
 	parser.add_argument("--slug", help="Slug to use for files (e.g. {slug}.cpp, {slug}.h)")
 	parser.add_argument("--name", help="Base name to use for classes (e.g. {name}XObj, {name}XObject)")
 	parser.add_argument("--version", metavar="VER", help="Minimum Director version (default: 400)", default="400")
 	parser.add_argument("--dry-run", help="Test only, don't write files", action='store_true')
 	args = parser.parse_args()
 
-	library_name, xmethtable = extract_xmethtable(args.XOBJ_FILE)
-	slug = args.slug or library_name.lower()
-	name = args.name or xmethtable[1]
+	library_name, file_name, xmethtable = extract_xmethtable(args.XOBJ_FILE, args.resid)
+	slug = args.slug or file_name
+	name = args.name or library_name
 	generate_stubs(xmethtable, slug, name, args.version, args.dry_run)
 
 
