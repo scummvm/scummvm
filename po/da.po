@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-11-24 01:15+0000\n"
+"POT-Creation-Date: 2023-12-02 23:22+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -575,7 +575,7 @@ msgstr ""
 msgid "shader packs"
 msgstr ""
 
-#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:698
+#: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:708
 msgid "Pick the game:"
 msgstr "Vælg spillet:"
 
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:233 gui/launcher.cpp:883
+#: gui/launcher.cpp:233 gui/launcher.cpp:893
 msgid "Group:"
 msgstr ""
 
@@ -1309,12 +1309,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Tilføj flere..."
 
-#: gui/launcher.cpp:301 gui/launcher.cpp:853 gui/shaderbrowser-dialog.cpp:62
+#: gui/launcher.cpp:301 gui/launcher.cpp:863 gui/shaderbrowser-dialog.cpp:62
 #: gui/shaderbrowser-dialog.cpp:98
 msgid "Search in game list"
 msgstr "Søg i spilliste"
 
-#: gui/launcher.cpp:305 gui/launcher.cpp:874 gui/shaderbrowser-dialog.cpp:66
+#: gui/launcher.cpp:305 gui/launcher.cpp:884 gui/shaderbrowser-dialog.cpp:66
 #: gui/shaderbrowser-dialog.cpp:108
 msgid "Search:"
 msgstr "Søg:"
@@ -1355,53 +1355,59 @@ msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunne ikke finde en motor, istand til at afvikle det valgte spil!"
 
-#: gui/launcher.cpp:676
+#: gui/launcher.cpp:660 gui/launcher.cpp:684
+msgid ""
+"Did you add this directory to the SAF? Press the help button [?] on the top "
+"for detailed instructions"
+msgstr ""
+
+#: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunne ikke finde noget spil i den angivne mappe!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:692
+#: gui/launcher.cpp:702
 msgid "Unknown variant"
 msgstr "Ukendt variant"
 
-#: gui/launcher.cpp:923 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:933 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Liste visning"
 
-#: gui/launcher.cpp:924 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:934 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Gitter visning"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1096
 msgid "~S~tart"
 msgstr "~S~tart"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1096
 msgid "Start selected game"
 msgstr "Start det valgte spil"
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1099
 msgid "~L~oad..."
 msgstr "Ind~l~æs ..."
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1099
 msgid "Load saved game for selected game"
 msgstr "Indlæs gemte spil for det valgte spil"
 
-#: gui/launcher.cpp:1091
+#: gui/launcher.cpp:1101
 msgid "Record..."
 msgstr "Optag ..."
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1107
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~I~ndstillinger ..."
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1107
 msgid "Change game options"
 msgstr "Ændr spilindstillinger"
 
-#: gui/launcher.cpp:1097
+#: gui/launcher.cpp:1107
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
@@ -1409,49 +1415,49 @@ msgstr "~I~ndstillinger ..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1385
+#: gui/launcher.cpp:1199 gui/launcher.cpp:1395
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Ukendt variant"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1402
+#: gui/launcher.cpp:1216 gui/launcher.cpp:1412
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Ukendt forfatter"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1223 gui/launcher.cpp:1419
+#: gui/launcher.cpp:1233 gui/launcher.cpp:1429
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1237 gui/launcher.cpp:1433
+#: gui/launcher.cpp:1247 gui/launcher.cpp:1443
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1251 gui/launcher.cpp:1447
+#: gui/launcher.cpp:1261 gui/launcher.cpp:1457
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1268 gui/launcher.cpp:1464
+#: gui/launcher.cpp:1278 gui/launcher.cpp:1474
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "Ukendt fejl"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
 #, fuzzy
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1620
+#: gui/launcher.cpp:1630
 msgid "Icons per row:"
 msgstr ""
 
