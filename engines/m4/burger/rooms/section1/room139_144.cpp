@@ -240,7 +240,7 @@ void Room139_144::daemon() {
 						break;
 
 					case 3:
-						_burlShould = 41;
+						_val2 = 41;
 						break;
 
 					case 4:
