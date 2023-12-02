@@ -401,6 +401,18 @@ void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream
 #else
 	_font = nullptr;
 #endif
+	_isUnicode = false;
+}
+
+void FontTTF::loadTTFFromArchive(const Common::String &filename, int size) {
+	_filename = filename;
+	_size = size;
+#ifdef USE_FREETYPE2
+	_font = Graphics::loadTTFFontFromArchive(filename, size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeLight);
+#else
+	_font = nullptr;
+#endif
+	_isUnicode = true;
 }
 
 void FontTTF::render(Graphics::Surface &surface, const Common::String &currentLine, const Graphics::PixelFormat &pixelFormat, uint32 blackColor, uint32 color, uint32 colorKey) const {
@@ -408,7 +420,10 @@ void FontTTF::render(Graphics::Surface &surface, const Common::String &currentLi
 	Common::Rect bbox = _font->getBoundingBox(currentLine);
 	surface.create(bbox.right, bbox.bottom, pixelFormat);
 	surface.fillRect(Common::Rect(0, 0, bbox.right, bbox.bottom), colorKey);
-	_font->drawString(&surface, currentLine, 0, 0, bbox.right, 0xFFFFFFFF);
+	if (_isUnicode)
+		_font->drawString(&surface, currentLine.decode(Common::CodePage::kUtf8), 0, 0, bbox.right, 0xFFFFFFFF);
+	else
+		_font->drawString(&surface, currentLine, 0, 0, bbox.right, 0xFFFFFFFF);
 #endif
 }
 

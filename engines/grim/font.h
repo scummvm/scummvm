@@ -127,6 +127,7 @@ private:
 class FontTTF : public Font, public PoolObject<FontTTF> {
 public:
 	void loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size);
+	void loadTTFFromArchive(const Common::String &filename, int size);
 
 	static int32 getStaticTag() { return MKTAG('T', 'T', 'F', ' '); }
 	int getPoolId() const override { return getId(); }
@@ -146,6 +147,7 @@ public:
 
 private:
 	Graphics::Font *_font;
+	bool _isUnicode;
 	int _size;
 };
 
