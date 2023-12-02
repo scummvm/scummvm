@@ -29,7 +29,8 @@ namespace Burger {
 namespace Rooms {
 
 enum {
-	kCHANGE_TRUFFLES_ANIMATION = 6
+	kCHANGE_TRUFFLES_ANIMATION = 6,
+	kCHANGE_ELMO_ANIMATION = 7
 };
 
 static const char *SAID[][4] = {
@@ -180,8 +181,8 @@ void Room141::init() {
 		digi_preload("20n01013", 140);
 		digi_preload("20n01014", 140);
 
-		_val1 = 14;
-		_val2 = 14;
+		_elmoMode = 14;
+		_elmoShould = 14;
 		kernel_trigger_dispatch_now(7);
 	}
 
@@ -255,7 +256,7 @@ void Room141::daemon() {
 
 			case 5:
 				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
-				_val2 = 42;
+				_elmoShould = 42;
 				break;
 
 			case 6:
@@ -414,28 +415,27 @@ void Room141::daemon() {
 		}
 		break;
 
-	case 7:
-		switch (_val1) {
+	case kCHANGE_ELMO_ANIMATION:
+		switch (_elmoMode) {
 		case 14:
-			switch (_val2) {
+			switch (_elmoShould) {
 			case 14:
-				series_play("140pe01", 0xa00, 0, 7, 6, 0, 100, 0, 0, 1, 1);
-				series_play("140pe01s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 1, 1);
+				Series::series_play("140pe01", 0xa00, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 1, 1);
 				break;
 
 			case 15:
-				_val2 = 16;
-				series_play_with_breaks(PLAY2, "140pe01", 0x500, 7, 3);
+				_elmoShould = 16;
+				series_play_with_breaks(PLAY2, "140pe01", 0x500, kCHANGE_ELMO_ANIMATION, 3);
 				break;
 
 			case 16:
-				_val2 = 17;
-				series_play_with_breaks(PLAY3, "140pe02", 0x500, 7, 3);
+				_elmoShould = 17;
+				series_play_with_breaks(PLAY3, "140pe02", 0x500, kCHANGE_ELMO_ANIMATION, 3);
 				break;
 
 			case 17:
-				_val2 = _val1 = 18;
-				kernel_trigger_dispatch_now(7);
+				_elmoShould = _elmoMode = 18;
+				kernel_trigger_dispatch_now(kCHANGE_ELMO_ANIMATION);
 				conv_resume_curr();
 				break;
 
@@ -445,120 +445,103 @@ void Room141::daemon() {
 			break;
 
 		case 18:
-			switch (_val2) {
+			switch (_elmoShould) {
 			case 18:
-				series_play("140pe03", 0x500, 0, 7, 10, 0, 100, 0, 0, 0, 0);
-				series_play("140pe03s", 0x501, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140pe03", 0x500, 0, kCHANGE_ELMO_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 19:
-				series_play("140pe05", 0x500, 0, 7, 6, 0, 100, 0, 0, 1, 1);
-				series_play("140pe05s", 0x501, 0, -1, 6, 0, 100, 0, 0, 1, 1);
+				Series::series_play("140pe05", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 1, 1);
 				break;
 
 			case 20:
 				frame = imath_ranged_rand(0, 4);
-				series_play("140pe04", 0x500, 0, 7, 5, 0, 100, 0, 0, frame, frame);
-				series_play("140pe04s", 0x501, 0, -1, 5, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140pe04", 0x500, 0, kCHANGE_ELMO_ANIMATION, 5, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 21:
-				_val2 = 22;
-				series_play("140pe06", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 3);
-				series_play("140pe06s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 3);
+				_elmoShould = 22;
+				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 22:
-				_val2 = 23;
-				series_play("140pe06", 0x500, 0, 7, 50, 0, 100, 0, 0, 3, 3);
-				series_play("140pe06s", 0x501, 0, -1, 50, 0, 100, 0, 0, 3, 3);
+				_elmoShould = 23;
+				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 50, 0, 100, 0, 0, 3, 3);
 				break;
 
 			case 23:
-				_val2 = 18;
-				series_play("140pe06", 0x500, 0, 7, 6, 0, 100, 0, 0, 5, 7);
-				series_play("140pe06s", 0x501, 0, -1, 6, 0, 100, 0, 0, 5, 7);
+				_elmoShould = 18;
+				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 5, 7);
 				break;
 
 			case 24:
-				_val2 = 24;
-				series_play("140pe06", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 5);
-				series_play("140pe06s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 5);
+				_elmoShould = 24;
+				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 				kernel_timing_trigger(60, 19);
 				break;
 
 			case 25:
-				_val2 = 26;
-				series_play("140pe08", 0x500, 0, 7, 3, 0, 100, 0, 0, 0, 7);
-				series_play("140pe08s", 0x501, 0, -1, 3, 0, 100, 0, 0, 0, 7);
+				_elmoShould = 26;
+				Series::series_play("140pe08", 0x500, 0, kCHANGE_ELMO_ANIMATION, 3, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 26:
-				_val1 = _val2 = 27;
-				series_play("140pe08", 0x500, 0, 7, 10, 0, 100, 0, 0, 10, 10);
-				series_play("140pe08s", 0x501, 0, -1, 10, 0, 100, 0, 0, 10, 10);
+				_elmoMode = _elmoShould = 27;
+				Series::series_play("140pe08", 0x500, 0, kCHANGE_ELMO_ANIMATION, 10, 0, 100, 0, 0, 10, 10);
 				conv_resume_curr();
 				break;
 
 			default:
-				_val1 = 27;
-				series_play("140pe08", 0x500, 0, 7, 3, 0, 100, 0, 0, 0, 7);
-				series_play("140pe08s", 0x501, 0, -1, 3, 0, 100, 0, 0, 0, 7);
+				_elmoMode = 27;
+				Series::series_play("140pe08", 0x500, 0, kCHANGE_ELMO_ANIMATION, 3, 0, 100, 0, 0, 0, 7);
 				break;
 			}
 			break;
 
 		case 24:
-			if (_val2 == 24) {
+			if (_elmoShould == 24) {
 				if (imath_ranged_rand(1, 8) == 1) {
 					digi_play("140_003", 1, 200);
-					series_play("140pe07", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 5);
-					series_play("140pe07s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 5);
+					Series::series_play("140pe07", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 5);
 				} else {
-					series_play("140pe03", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 0);
-					series_play("140pe03s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+					Series::series_play("140pe03", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				}
 			}
 			break;
 
 		case 27:
-			switch (_val2) {
+			switch (_elmoShould) {
 			case 18:
 			case 19:
 			case 20:
 			case 24:
 			case 39:
-				_val1 = 18;
-				series_play("140pe15", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 7);
-				series_play("140pe15s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 7);
+				_elmoMode = 18;
+				Series::series_play("140pe15", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 27:
-				series_play("140pe08", 0x500, 0, 7, 10, 0, 100, 0, 0, 10, 10);
-				series_play("140pe08s", 0x501, 0, -1, 10, 0, 100, 0, 0, 10, 10);
+				Series::series_play("140pe08", 0x500, 0, kCHANGE_ELMO_ANIMATION, 10, 0, 100, 0, 0, 10, 10);
 				break;
 
 			case 28:
 				frame = imath_ranged_rand(8, 10);
-				series_play("140pe08", 0x500, 0, 7, 4, 0, 100, 0, 0, frame, frame);
-				series_play("140pe08s", 0x501, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140pe08", 0x500, 0, kCHANGE_ELMO_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 29:
-				_val1 = 29;
-				series_play("140pe11", 0x500, 0, 7, 4, 0, 100, 0, 0, 0, 3);
-				series_play("140pe11s", 0x501, 0, -1, 4, 0, 100, 0, 0, 0, 3);
+				_elmoMode = 29;
+				Series::series_play("140pe11", 0x500, 0, kCHANGE_ELMO_ANIMATION, 4, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 31:
-				series_play("140pe14", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 7);
-				series_play("140pe14s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 7);
+				Series::series_play("140pe14", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 32:
 				series_load("141pe24");
 				terminateMachineAndNull(_series1);
-				_val2 = 33;
+				_elmoShould = 33;
 
 				digi_preload("141_002");
 				digi_preload("141_003");
@@ -569,116 +552,104 @@ void Room141::daemon() {
 				break;
 
 			case 33:
-				_val2 = 45;
-				_val1 = 45;
-				series_play("141pe24", 0xf00, 0, 7, 6, 0, 100, 0, 0, 0, 0);
+				_elmoShould = 45;
+				_elmoMode = 45;
+				series_play("141pe24", 0xf00, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				conv_resume_curr();
 				break;
 
 			case 34:
-				_val2 = 35;
-				series_play("140pe13", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 0);
-				series_play("140pe13s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+				_elmoShould = 35;
+				series_play("140pe13", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 35:
-				_val2 = 36;
-				series_play("140pe13", 0x500, 0, 7, 120, 0, 100, 0, 0, 1, 1);
-				series_play("140pe13s", 0x501, 0, -1, 120, 0, 100, 0, 0, 1, 1);
+				_elmoShould = 36;
+				Series::series_play("140pe13", 0x500, 0, kCHANGE_ELMO_ANIMATION, 120, 0, 100, 0, 0, 1, 1);
 				conv_resume_curr();
 				break;
 
 			case 36:
-				_val2 = 27;
-				series_play("140pe13", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 0);
-				series_play("140pe13s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+				_elmoShould = 27;
+				Series::series_play("140pe13", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				conv_resume_curr();
 				break;
 
 			default:
-				_val1 = 40;
-				series_play("140pe16", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 40);
-				series_play("140pe16s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				_elmoMode = 40;
+				Series::series_play("140pe16", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 40);
 				break;
 			}
 			break;
 
 		case 29:
-			if (_val2 == 29) {
+			if (_elmoShould == 29) {
 				frame = imath_ranged_rand(4, 6);
-				series_play("140pe11", 0x500, 0, 7, 4, 0, 100, 0, 0, frame, frame);
-				series_play("140pe11s", 0x501, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140pe11", 0x500, 0, kCHANGE_ELMO_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				_val1 = 27;
-				series_play("140pe11", 0x500, 0, 7, 6, 0, 100, 0, 0, 7, 9);
-				series_play("140pe11s", 0x501, 0, -1, 6, 0, 100, 0, 0, 7, 9);
+				_elmoMode = 27;
+				Series::series_play("140pe11", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 7, 9);
 			}
 			break;
 
 		case 40:
-			switch(_val2) {
+			switch(_elmoShould) {
 			case 38:
-				series_play("140pe17", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 0);
-				series_play("140pe17s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140pe17", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				conv_resume_curr();
 				break;
 
 			case 40:
-				series_play("140pe17", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 0);
-				series_play("140pe17s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140pe17", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 41:
 				frame = imath_ranged_rand(0, 4);
-				series_play("140pe18", 0x500, 0, 7, 4, 0, 100, 0, 0, frame, frame);
-				series_play("140pe18s", 0x501, 0, -1, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140pe18", 0x500, 0, kCHANGE_ELMO_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 42:
-				_val2 = 40;
+				_elmoShould = 40;
 				_trufflesShould = 6;
-				series_play_with_breaks(PLAY5, "140pe20", 0x500, 7, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY5, "140pe20", 0x500, kCHANGE_ELMO_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 43:
-				_val2 = 40;
-				series_play("140pe19", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 7);
-				series_play("140pe19s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 7);
+				_elmoShould = 40;
+				Series::series_play("140pe19", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 44:
-				_val1 = _val2 = 27;
-				series_play("140pe21", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 4);
-				series_play("140pe21s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				_elmoMode = _elmoShould = 27;
+				Series::series_play("140pe21", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 
 			default:
-				_val2 = 27;
-				series_play("140pe21", 0x500, 0, 7, 6, 0, 100, 0, 0, 0, 4);
-				series_play("140pe21s", 0x501, 0, -1, 6, 0, 100, 0, 0, 0, 4);
+				_elmoShould = 27;
+				Series::series_play("140pe21", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
 
 		case 45:
-			switch (_val2) {
+			switch (_elmoShould) {
 			case 45:
-				series_play("141pe24", 0xf00, 0, 7, 10, 0, 100, 0, 0, 0, 3);
+				series_play("141pe24", 0xf00, 0, kCHANGE_ELMO_ANIMATION, 10, 0, 100, 0, 0, 0, 3);
 				break;
 
 			case 46:
 				frame = imath_ranged_rand(0, 3);
-				series_play("141pe24", 0xf00, 0, 7, 6, 0, 100, 0, 0, frame, frame);
+				series_play("141pe24", 0xf00, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 47:
-				_val2 = 45;
-				series_play_with_breaks(PLAY4, "140pe25", 0x500, 7, 3, 6, 100, 0, 0);
+				_elmoShould = 45;
+				series_play_with_breaks(PLAY4, "140pe25", 0x500, kCHANGE_ELMO_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			case 48:
-				_val2 = 49;
+				_elmoShould = 49;
 				digi_preload_stream_breaks(SERIES2);
 				series_stream_with_breaks(SERIES2, "141pe26", 6, 0x100, 7);
 				_G(flags)[V112] = 1;
@@ -817,7 +788,7 @@ void Room141::daemon() {
 
 	case 11:
 		_trufflesShould = 1;
-		_val2 = 27;
+		_elmoShould = 27;
 		conv_resume_curr();
 		break;
 
@@ -826,7 +797,7 @@ void Room141::daemon() {
 		break;
 
 	case 13:
-		_val2 = 15;
+		_elmoShould = 15;
 		conv_load_and_prepare("conv20", 22);
 		conv_export_value_curr(1, _G(flags)[V000] == 1002 ? 1 : 0);
 		conv_export_value_curr(inv_player_has("deed") ? 1 : 0, 2);
@@ -945,33 +916,33 @@ void Room141::conv20() {
 			if (node == 4 && entry == 0) {
 				conv_resume_curr();
 			} else if (node == 15 && entry == 1) {
-				_val2 = 43;
+				_elmoShould = 43;
 			} else if (node == 16) {
 				_trufflesShould = 5;
 			} else if (node != 0) {
 				if (node == 20 && (entry == 2 || entry == 3)) {
-					_val2 = 40;
+					_elmoShould = 40;
 					conv_resume_curr();
 				} else if (node == 20 && entry == 1) {
-					_val2 = 43;
+					_elmoShould = 43;
 				} else if (node == 20 && entry == 6) {
-					_val2 = 38;
+					_elmoShould = 38;
 				} else if (node == 20 && entry == 7) {
 					_trufflesShould = 8;
-					_val2 = 32;
+					_elmoShould = 32;
 				} else if (node == 20 && entry == 8) {
-					_val2 = 45;
+					_elmoShould = 45;
 					conv_resume_curr();
 				} else if (node == 20 && entry == 9) {
-					_val2 = 48;
+					_elmoShould = 48;
 					conv_resume_curr();
 				} else if (node == 6 && entry == 1) {
-					_val2 = 27;
+					_elmoShould = 27;
 					conv_resume_curr();
 				} else if (node == 4 && (entry == 0 || entry == 4)) {
-					_val2 = 25;
+					_elmoShould = 25;
 				} else if (node == 6 && entry == 3) {
-					_val2 = 31;
+					_elmoShould = 31;
 					_val6 = 55;
 					conv_resume_curr();
 				} else if (node == 7 ||
@@ -982,7 +953,7 @@ void Room141::conv20() {
 						(node == 10 && entry == 1) ||
 						(node == 9)) {
 					digi_preload("140_003");
-					_val2 = 24;
+					_elmoShould = 24;
 					conv_resume_curr();
 
 				} else if ((node == 4 && (entry == 2 || entry == 5 || entry == 10 || entry == 11)) ||
@@ -990,11 +961,11 @@ void Room141::conv20() {
 						(node == 18 && entry == 1) ||
 						(node == 19 && (entry == 2 || entry == 3))) {
 					_val6 = 55;
-					_val2 = (_val1 == 27 || _val1 == 40) ? 27 : 18;
+					_elmoShould = (_elmoMode == 27 || _elmoMode == 40) ? 27 : 18;
 					conv_resume_curr();
 
 				} else {
-					_val2 = (_val1 == 27 || _val1 == 40) ? 27 : 18;
+					_elmoShould = (_elmoMode == 27 || _elmoMode == 40) ? 27 : 18;
 					conv_resume_curr();
 
 				}
@@ -1006,10 +977,10 @@ void Room141::conv20() {
 			} else if (node == 20 && entry == 5) {
 				_val6 = 58;
 			} else if ((node == 6 && entry == 1) || (node == 8 && entry == 3)) {
-				_val2 = 25;
+				_elmoShould = 25;
 				_val6 = 52;
 			} else if ((node == 4 && entry == 0) || (node == 20 && entry == 0)) {
-				_val2 = 21;
+				_elmoShould = 21;
 				_val6 = 52;
 			} else {
 				_val6 = (node == 14) ? 55 : 52;
@@ -1023,27 +994,27 @@ void Room141::conv20() {
 
 			if (node != 0) {
 				if (node == 1 || node == 2) {
-					_val2 = 20;
+					_elmoShould = 20;
 					digi_unload("20n01011");
 					digi_unload("20n01012");
 					digi_unload("20n01013");
 					digi_unload("20n01014");
 				} else if (node == 6 && entry == 1) {
-					_val2 = 28;
+					_elmoShould = 28;
 				} else if (node == 20 && entry == 4) {
-					_val2 = 28;
+					_elmoShould = 28;
 				} else if (node == 20 && (entry == 2 || entry == 3 || entry == 7)) {
-					_val2 = 41;
+					_elmoShould = 41;
 				} else if (node == 20 && (entry == 8 || entry == 9)) {
-					_val2 = 46;
+					_elmoShould = 46;
 				} else if (node == 13 || node == 16) {
-					_val2 = 41;
+					_elmoShould = 41;
 				} else if (node == 11 && entry == 5) {
-					_val2 = 20;
+					_elmoShould = 20;
 				} else if (node == 6 && (entry == 2 || entry == 3)) {
-					_val2 = 28;
+					_elmoShould = 28;
 				} else {
-					_val2 = (_val1 == 27) ? 28 : 20;
+					_elmoShould = (_elmoMode == 27) ? 28 : 20;
 				}
 			}
 		} else if (who == 1) {
