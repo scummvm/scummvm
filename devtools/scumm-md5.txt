@@ -159,7 +159,7 @@ indy3	Indiana Jones and the Last Crusade
 
 	f3c4ed6101b4c26c762b2dfb16b1481d	6295	fr	DOS	VGA	VGA	Fan translation	atp-fr.com, v0.9a
 	cb8feea195746e042368e2b738766d8b	-1	ko	DOS	VGA	VGA	Fan translation	ScummVM-Kor
-	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation	
+	275786f0f6894d1fe1ab5f1d103bb814	6295	ru	DOS	VGA	VGA	Fan translation
 
 loom	Loom
 	4dc780f1bc587a193ce8a97652791438	5748	en	Amiga	EGA	EGA	-	Antti Leimi, Andrea Petrucci
@@ -470,6 +470,7 @@ football2002	Backyard Football 2002
 
 soccer	Backyard Soccer
 	701246819d1a70573f41bf33fc19214f	-1	en	All	-	-	-	sev
+	55923e34363c8ec6541368101d84a3bf	67178	gb	Windows	-	-	-	Sarah Onfy
 
 SoccerMLS	Backyard Soccer MLS Edition
 	bfdf584b01503f0762baded581f6a0a2	-1	en	Windows	-	-	-	sev
@@ -578,6 +579,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
 	f5228b0cc1c19e6ea8268ba2eeb61f60	9800	fr	Windows	HE 73	Demo	-	Mevi
 	cf4ef315214c7d8cdab6302cdb7e50db	9800	de	Windows	HE 73	Demo	-	Joachim Eberhard
+	b6b286246b05c147e3f8b15505b1648c	9800	jp	Windows	HE 73	Demo	-	Sarah Onfy
 
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	65305	fr	All	HE 80	-	-	gist974, ThierryFR
@@ -590,6 +592,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	en	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	65489	ru	Windows	HE 100	Updated	-	sev
+	b6a7f83e77e33879f669d4cc5f28403c	65305	jp	Windows	HE 80	-	-	Sarah Onfy
 
 	c20848f53c2d48bfacdc840993843765	27298	nl	All	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
