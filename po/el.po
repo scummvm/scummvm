@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-11-24 01:15+0000\n"
-"PO-Revision-Date: 2023-11-20 10:40+0000\n"
+"PO-Revision-Date: 2023-12-02 10:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -8273,33 +8273,35 @@ msgstr ""
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Αποφυγή softlocks"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Διορθώνει περιπτώσεις όπου αν σας διέφυγε κάτι νωρίτερα στο παιχνίδι, αυτό "
+"σας μπλοκάρει από το να προχωρήσετε παρακάτω."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Διόρθωση μικροπροβλημάτων"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Διορθώνει διάφορα μικρά θέματα."
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Επαυξημένο χρονόμετρο"
+msgstr "Αύξηση χρονομέτρου στον τελικό γρίφο"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Δίνει λίγο περισσότερο χρόνο στον παίκτη πριν αποτύχει στο τελικό γρίφο. "
+"Πρόκειται για μια επίσημη διόρθωση από την HeR Interactive."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
