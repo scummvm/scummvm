@@ -32,8 +32,8 @@ class Room141 : public Room {
 private:
 	machine *_series1 = nullptr;
 	machine *_series2 = nullptr;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _elmoMode = 0;
+	int _elmoShould = 0;
 	int _trufflesMode = 0;
 	int _trufflesShould = 0;
 	int _val5 = 0;
