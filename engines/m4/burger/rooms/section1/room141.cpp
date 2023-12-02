@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_TRUFFLES_ANIMATION = 6
+};
+
 static const char *SAID[][4] = {
 	{ "TRUFFLES", "141W002", "141W003", "141W003" },
 	{ "ISLAND",   "141W004", "141W003", "141W003" },
@@ -183,8 +187,8 @@ void Room141::init() {
 
 	if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 		_series2 = series_play("141wave", 0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
-		_val3 = 9;
-		_val4 = 9;
+		_trufflesMode = 9;
+		_trufflesShould = 9;
 		_val5 = 52;
 		_val6 = 52;
 
@@ -193,12 +197,12 @@ void Room141::init() {
 		_val6 = 50;
 
 		if (_G(flags)[V112]) {
-			_val3 = 1;
-			_val4 = 8;
+			_trufflesMode = 1;
+			_trufflesShould = 8;
 		} else {
-			_val3 = 1;
-			_val4 = 1;
-			_val7 = 0;
+			_trufflesMode = 1;
+			_trufflesShould = 1;
+			_trufflesFrame = 0;
 		}
 	}
 
@@ -212,11 +216,12 @@ void Room141::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 1:
+		_flag2 = true;
 		digi_play("141_002", 2, 200, 2);
 		break;
 
 	case 2:
-		digi_play_loop("141_003", 2, 200);
+		digi_play_loop("141_003", 2, 200, -1);
 		break;
 
 	case 3:
@@ -224,7 +229,7 @@ void Room141::daemon() {
 		break;
 
 	case 4:
-		_val8 = 0;
+		_flag2 = false;
 		break;
 
 	case 5:
@@ -232,45 +237,39 @@ void Room141::daemon() {
 		player_set_commands_allowed(true);
 		break;
 
-	case 6:
-		switch (_val3) {
+	case kCHANGE_TRUFFLES_ANIMATION:
+		switch (_trufflesMode) {
 		case 1:
-			switch (_val4) {
+			switch (_trufflesShould) {
 			case 1:
 				_flag1 = true;
 
 				if (imath_ranged_rand(1, 8) == 1) {
-					_val3 = 2;
-					_val7 = 0;
-					series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 1, 1);
-					series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 1, 1);
-
+					_trufflesMode = 2;
+					_trufflesFrame = 0;
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 1, 1);
 				} else {
-					series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-					series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				}
 				break;
 
 			case 5:
-				series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-				series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				_val2 = 42;
 				break;
 
 			case 6:
-				series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-				series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 7:
 				digi_play("140t002", 2, 255, 11);
-				series_play("140tr02", 0xa00, 0, 6, 8, 0, 100, 0, 0, 0, 4);
-				series_play("140tr02s", 0xa01, 0, -1, 8, 0, 100, 0, 0, 0, 4);
+				Series::series_play("140tr02", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 8, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 8:
-				_val3 = 9;
-				_val4 = 9;
+				_trufflesMode = 9;
+				_trufflesShould = 9;
 				series_play_with_breaks(PLAY1, "140tr03", 0xa00, 6, 3, 6, 100, 0, 0);
 				break;
 
@@ -280,86 +279,76 @@ void Room141::daemon() {
 			break;
 
 		case 2:
-			if (_val4 == 1) {
+			if (_trufflesShould == 1) {
 				playRandom();
 
 				if (imath_ranged_rand(1, 3) == 1) {
-					if (--_val7 <= 1)
-						_val7 = 3;
+					if (--_trufflesFrame <= 1)
+						_trufflesFrame = 3;
 
 				} else {
-					if (++_val7 >= 6) {
-						_val7 = 5;
-						_val3 = 4;
+					if (++_trufflesFrame >= 6) {
+						_trufflesFrame = 5;
+						_trufflesMode = 4;
 					}
-					if (_val7 < 1)
-						_val7 = 1;
+					if (_trufflesFrame < 1)
+						_trufflesFrame = 1;
 				}
 
-				series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, _val7, _val7);
-				series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, _val7, _val7);
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, _trufflesFrame, _trufflesFrame);
 
 			} else {
-				_val3 = 4;
-				series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 6, 6);
-				series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 6, 6);
+				_trufflesMode = 4;
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 6, 6);
 			}
 			break;
 
 		case 3:
-			if (_val4 == 1) {
+			if (_trufflesShould == 1) {
 				if (imath_ranged_rand(1, 15) == 1) {
 					digi_stop(2);
-					_val3 = 1;
-					series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-					series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+					_trufflesMode = 1;
+					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
 				} else {
 					playRandom();
 					frame = imath_ranged_rand(7, 8);
-					series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, frame, frame);
-					series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, frame, frame);
+					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, frame, frame);
 				}
 			} else {
 				digi_stop(2);
-				_val3 = 1;
-				series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-				series_play("140tr01s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+				_trufflesMode = 1;
+				Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 4:
-			_val3 = 3;
-			series_play("140tr01", 0xa00, 0, 6, 6, 0, 100, 0, 0, 9, 11);
-			series_play("140tr01s", 0xa01, 0, -1, 6, 0, 100, 0, 0, 9, 11);
+			_trufflesMode = 3;
+			Series::series_play("140tr01", 0xa00, 0, 6, 6, 0, 100, 0, 0, 9, 11);
 			break;
 
 		case 7:
-			if (_val4 == 7) {
+			if (_trufflesShould == 7) {
 				frame = imath_ranged_rand(5, 6);
-				series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
-				series_play("140tr02s", 0xa01, 0, -1, 7, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
-				series_play("140tr02s", 0xa01, 0, -1, 7, 0, 100, 0, 0, 7, 8);
+				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
 			}
 			break;
 
 		case 9:
-			switch (_val4) {
+			switch (_trufflesShould) {
 			case 10:
 				digi_play("140t002", 2, 255, 12);
-				_val3 = 10;
-				series_play("140tr06", 0xa00, 0, 6, 8, 0, 100, 0, 0, 0, 4);
-				series_play("140tr06s", 0xa01, 0, -1, 8, 0, 100, 0, 0, 0, 4);
+				_trufflesMode = 10;
+				Series::series_play("140tr06", 0xa00, 0, 6, 8, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 12:
 				digi_play(Common::String::format("140t004%c", 'a' + imath_ranged_rand(0, 3)).c_str(),
 					2, 255, 10);
-				_val3 = 12;
-				series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, 0, 3);
-				series_play("140tr07s", 0xa01, 0, -1, 7, 0, 100, 0, 0, 0, 3);
+				_trufflesMode = 12;
+				Series::series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, 0, 3);
 
 				if (player_said("gear", "dock") || player_said("try to dock")) {
 					kernel_timing_trigger(90, 16);
@@ -370,62 +359,53 @@ void Room141::daemon() {
 				if (imath_ranged_rand(1, 10) == 1) {
 					_flag1 = true;
 					playRandom();
-					_val3 = 11;
-					series_play("140tr05", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 2);
-					series_play("140tr05s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 2);
+					_trufflesMode = 11;
+					Series::series_play("140tr05", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION,10, 0, 100, 0, 0, 0, 2);
 
 				} else {
-					series_play("140tr04", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
-					series_play("140tr04s", 0xa01, 0, -1, 10, 0, 100, 0, 0, 0, 0);
+					Series::series_play("140tr04", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				}
 				break;
 			}
 			break;
 
 		case 10:
-			if (_val4 == 10) {
+			if (_trufflesShould == 10) {
 				frame = imath_ranged_rand(5, 6);
-				series_play("140tr06", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
-				series_play("140tr06s", 0xa01, 0, -1, 7, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140tr06", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				series_play("140tr06", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
-				series_play("140tr06s", 0xa01, 0, -1, 7, 0, 100, 0, 0, 7, 8);
+				Series::series_play("140tr06", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 7, 8);
 			}
 			break;
 
 		case 11:
-			if (_val4 == 11) {
+			if (_trufflesShould == 11) {
 				if (imath_ranged_rand(1, 10) == 1) {
-					if (!_val8)
+					if (!_flag2)
 						digi_stop(2);
 
-					_val3 = 9;
-					series_play("140tr05", 0xa00, 2, 6, 10, 0, 100, 0, 0, 0, 2);
-					series_play("140tr05s", 0xa01, 2, -1, 10, 0, 100, 0, 0, 0, 2);
+					_trufflesMode = 9;
+					Series::series_play("140tr05", 0xa00, 2, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 2);
 				} else {
 					playRandom();
 					frame = imath_ranged_rand(3, 5);
-					series_play("140tr05", 0xa00, 0, 6, 10, 0, 100, 0, 0, frame, frame);
-					series_play("140tr05s", 0xa01, 0, -1, 10, 0, 100, 0, 0, frame, frame);
+					Series::series_play("140tr05", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION,10, 0, 100, 0, 0, frame, frame);
 				}
 			} else {
-				_val3 = 9;
-				series_play("140tr05", 0xa00, 2, 6, 7, 0, 100, 0, 0, 0, 2);
-				series_play("140tr05s", 0xa01, 2, -1, 7, 0, 100, 0, 0, 0, 2);
+				_trufflesMode = 9;
+				Series::series_play("140tr05", 0xa00, 2, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 0, 2);
 			}
 			break;
 
 		case 12:
-			if (_val4 == 12) {
+			if (_trufflesShould == 12) {
 				frame = imath_ranged_rand(4, 6);
-				series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
-				series_play("140tr07s", 0xa01, 0, -1, 7, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140tr07", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				_val3 = 9;
-				series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
-				series_play("140tr07s", 0xa01, 0, -1, 7, 0, 100, 0, 0, 7, 8);
+				_trufflesMode = 9;
+				Series::series_play("140tr07", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 7, 8);
 			}
 			break;
 
@@ -657,7 +637,7 @@ void Room141::daemon() {
 
 			case 42:
 				_val2 = 40;
-				_val4 = 6;
+				_trufflesShould = 6;
 				series_play_with_breaks(PLAY5, "140pe20", 0x500, 7, 3, 6, 100, 0, 0);
 				break;
 
@@ -719,14 +699,14 @@ void Room141::daemon() {
 			switch (_val6) {
 			case 50:
 				_val6 = 51;
-				_val8 = 1;
+				_flag2 = 1;
 				digi_preload_stream_breaks(&SERIES4[0]);
 				series_stream_with_breaks(&SERIES4[0], _G(flags)[V000] == 1002 ? "141wi01" : "140wi01",
 					6, 0xf00, 8);
 				break;
 
 			case 51:
-				_val8 = 0;
+				_flag2 = 0;
 				_series2 = series_play(_G(flags)[V000] == 1002 ? "141wave" : "140wave",
 					0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 				_val6 = 52;
@@ -755,7 +735,7 @@ void Room141::daemon() {
 
 			case 55:
 				terminateMachineAndNull(_series2);
-				_val8 = 1;
+				_flag2 = 1;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					10, 0xf00, 18);
@@ -763,7 +743,7 @@ void Room141::daemon() {
 
 			case 56:
 				terminateMachineAndNull(_series2);
-				_val8 = 1;
+				_flag2 = 1;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					6, 0xf00, 18);
@@ -830,19 +810,19 @@ void Room141::daemon() {
 		break;
 
 	case 10:
-		_val4 = 9;
+		_trufflesShould = 9;
 		if (!player_said("gear", "dock") && !player_said("try to dock"))
 			_G(walker).wilbur_said(SAID);
 		break;
 
 	case 11:
-		_val4 = 1;
+		_trufflesShould = 1;
 		_val2 = 27;
 		conv_resume_curr();
 		break;
 
 	case 12:
-		_val4 = 9;
+		_trufflesShould = 9;
 		break;
 
 	case 13:
@@ -861,11 +841,11 @@ void Room141::daemon() {
 		break;
 
 	case 14:
-		_val4 = 7;
+		_trufflesShould = 7;
 		break;
 
 	case 15:
-		_val4 = 10;
+		_trufflesShould = 10;
 		break;
 
 	case 16:
@@ -910,7 +890,7 @@ void Room141::parser() {
 		_val6 = 62;
 
 	} else if (player_said("gear", "dock") || player_said("try to dock")) {
-		_val4 = 12;
+		_trufflesShould = 12;
 
 	} else if (inv_player_has(_G(player).verb) &&
 			player_said_any("cabin", "garden", "trough", "sign")) {
@@ -921,7 +901,7 @@ void Room141::parser() {
 
 	} else if (player_said("take") && !inv_player_has(_G(player).noun)) {
 		if (player_said("trough") || player_said("sign")) {
-			_val4 = 12;
+			_trufflesShould = 12;
 
 		} else if (!_G(walker).wilbur_said(SAID)) {
 			goto check_exit;
@@ -930,7 +910,7 @@ void Room141::parser() {
 	} else if (player_said("gear") && !inv_player_has(_G(player).noun)) {
 		if (player_said("cabin") || player_said("garden") ||
 				player_said("trough") || player_said("sign")) {
-			_val4 = 12;
+			_trufflesShould = 12;
 
 		} else if (!_G(walker).wilbur_said(SAID)) {
 			goto check_exit;
@@ -967,7 +947,7 @@ void Room141::conv20() {
 			} else if (node == 15 && entry == 1) {
 				_val2 = 43;
 			} else if (node == 16) {
-				_val4 = 5;
+				_trufflesShould = 5;
 			} else if (node != 0) {
 				if (node == 20 && (entry == 2 || entry == 3)) {
 					_val2 = 40;
@@ -977,7 +957,7 @@ void Room141::conv20() {
 				} else if (node == 20 && entry == 6) {
 					_val2 = 38;
 				} else if (node == 20 && entry == 7) {
-					_val4 = 8;
+					_trufflesShould = 8;
 					_val2 = 32;
 				} else if (node == 20 && entry == 8) {
 					_val2 = 45;
@@ -1078,7 +1058,7 @@ void Room141::conv20() {
 }
 
 void Room141::playRandom() {
-	if (_flag1 && !_val8) {
+	if (_flag1 && !_flag2) {
 		_flag1 = false;
 		digi_play(Common::String::format("140t001%c", 'a' + imath_ranged_rand(0, 5)).c_str(),
 			2, 100, 9);
