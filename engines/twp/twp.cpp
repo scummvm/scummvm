@@ -19,14 +19,22 @@
  *
  */
 
+#include <vector>
+#include <vector>
+#include <filesystem>
+#include <fstream>
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/console.h"
+#include "twp/vm.h"
+#include "twp/ggpack.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/file.h"
+#include "image/png.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 
@@ -34,8 +42,10 @@ namespace Twp {
 
 TwpEngine *g_engine;
 
-TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Twp") {
+TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
+	: Engine(syst),
+	  _gameDescription(gameDesc),
+	  _randomSource("Twp") {
 	g_engine = this;
 }
 
@@ -52,9 +62,48 @@ Common::String TwpEngine::getGameId() const {
 }
 
 Common::Error TwpEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
+	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	initGraphics(1280, 720, &fmt);
 	_screen = new Graphics::Screen();
+
+	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
+	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x5B, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
+
+	Common::File f;
+	f.open("ThimbleweedPark.ggpack1");
+
+	GGPackDecoder pack;
+	pack.open(&f, key);
+
+	GGPackEntryReader r;
+	r.open(pack, "RaySheet.png");
+
+	Image::PNGDecoder d;
+	d.loadStream(r);
+	const Graphics::Surface *surface = d.getSurface();
+
+	GGPackEntryReader r2;
+	r2.open(pack, "RaySheet.json");
+	Common::Array<char> data(r2.size());
+	r2.read(&data[0], r2.size());
+	Common::String s(&data[0], r2.size());
+
+	Common::JSONValue *jRay = Common::JSON::parse(s.c_str());
+	const Common::JSONObject &jRayObj = jRay->asObject();
+	const Common::JSONObject &jFrames = jRayObj["frames"]->asObject();
+	const Common::JSONObject &jFrame = jFrames["bstand_body1"]->asObject();
+	const Common::JSONObject &jRect = jFrame["frame"]->asObject();
+
+	int x = (int)jRect["x"]->asIntegerNumber();
+	int y = (int)jRect["y"]->asIntegerNumber();
+	int w = (int)jRect["w"]->asIntegerNumber();
+	int h = (int)jRect["h"]->asIntegerNumber();
+	Common::Rect rect(x, y, x + w, y + h);
+
+	Vm v;
+	v.exec("print(\"Hello world \"+random(-2.7,8.6));\ncreateObject(\"RaySheet\",[\"bstand_body1\"]);");
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -64,25 +113,16 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
+	_screen->copyRectToSurface(*surface, 1280 / 2, 720 / 2, rect);
+
 	_screen->update();
 
 	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
 	Common::Event e;
-	int offset = 0;
-
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 
-		// Cycle through a simple palette
-		++offset;
-		for (int i = 0; i < 256; ++i)
-			pal[i * 3 + 1] = (i + offset) % 256;
-		g_system->getPaletteManager()->setPalette(pal, 0, 256);
 		_screen->update();
 
 		// Delay for a bit. All events loops should have a delay
