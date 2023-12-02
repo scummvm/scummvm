@@ -30,7 +30,8 @@ namespace Rooms {
 
 enum {
 	kCHANGE_TRUFFLES_ANIMATION = 6,
-	kCHANGE_ELMO_ANIMATION = 7
+	kCHANGE_ELMO_ANIMATION = 7,
+	kCHANGE_WILBUR_ANIMATION = 8
 };
 
 static const char *SAID[][4] = {
@@ -190,12 +191,12 @@ void Room141::init() {
 		_series2 = series_play("141wave", 0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 		_trufflesMode = 9;
 		_trufflesShould = 9;
-		_val5 = 52;
-		_val6 = 52;
+		_wilburMode = 52;
+		_wilburShould = 52;
 
 	} else {
-		_val5 = 52;
-		_val6 = 50;
+		_wilburMode = 52;
+		_wilburShould = 50;
 
 		if (_G(flags)[V112]) {
 			_trufflesMode = 1;
@@ -207,8 +208,8 @@ void Room141::init() {
 		}
 	}
 
-	kernel_trigger_dispatch_now(8);
-	kernel_trigger_dispatch_now(6);
+	kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+	kernel_trigger_dispatch_now(kCHANGE_TRUFFLES_ANIMATION);
 	digi_play_loop("144_001", 3, 180);
 }
 
@@ -234,7 +235,7 @@ void Room141::daemon() {
 		break;
 
 	case 5:
-		_val6 = 52;
+		_wilburShould = 52;
 		player_set_commands_allowed(true);
 		break;
 
@@ -664,23 +665,23 @@ void Room141::daemon() {
 		}
 		break;
 
-	case 8:
-		switch (_val5) {
+	case kCHANGE_WILBUR_ANIMATION:
+		switch (_wilburMode) {
 		case 52:
-			switch (_val6) {
+			switch (_wilburShould) {
 			case 50:
-				_val6 = 51;
+				_wilburShould = 51;
 				_flag2 = 1;
 				digi_preload_stream_breaks(&SERIES4[0]);
 				series_stream_with_breaks(&SERIES4[0], _G(flags)[V000] == 1002 ? "141wi01" : "140wi01",
-					6, 0xf00, 8);
+					6, 0xf00, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 51:
 				_flag2 = 0;
 				_series2 = series_play(_G(flags)[V000] == 1002 ? "141wave" : "140wave",
 					0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
-				_val6 = 52;
+				_wilburShould = 52;
 				kernel_trigger_dispatch_now(8);
 
 				if (_G(flags)[V112])
@@ -689,19 +690,19 @@ void Room141::daemon() {
 
 			case 52:
 				series_play(_G(flags)[V000] == 1002 ? "141wi02" : "140wi02",
-					0x200, 0, 8, 30, 0, 100, 0, 0, 0, 0);
+					0x200, 0, kCHANGE_WILBUR_ANIMATION, 30, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 53:
 				frame = imath_ranged_rand(0, 4);
 				series_play(_G(flags)[V000] == 1002 ? "141wi02" : "140wi02",
-					0x200, 0, 8, 4, 0, 100, 0, 0, frame, frame);
+					0x200, 0, kCHANGE_WILBUR_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 54:
-				_val6 = 52;
+				_wilburShould = 52;
 				series_play(_G(flags)[V000] == 1002 ? "141wi02" : "140wi02",
-					0x200, 0, 8, 6, 0, 100, 0, 0, 9, 11);
+					0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 9, 11);
 				break;
 
 			case 55:
@@ -721,32 +722,32 @@ void Room141::daemon() {
 				break;
 
 			case 57:
-				_val6 = 52;
-				series_play_with_breaks(PLAY7, "141wi02", 0x200, 8, 2, 7, 100, 0, 0);
+				_wilburShould = 52;
+				series_play_with_breaks(PLAY7, "141wi02", 0x200, kCHANGE_WILBUR_ANIMATION, 2, 7, 100, 0, 0);
 				break;
 
 			case 58:
 				digi_preload("100_023");
-				_val6 = 59;
-				series_play("141wi05", 0x200, 0, 8, 6, 0, 100, 0, 0, 0, 12);
+				_wilburShould = 59;
+				series_play("141wi05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 12);
 				break;
 
 			case 59:
-				_val6 = 60;
-				series_play("141wi05", 0x200, 0, 8, 6, 0, 100, 0, 0, 13, 18);
+				_wilburShould = 60;
+				series_play("141wi05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 13, 18);
 				digi_play("100_023", 2, 255);
 				break;
 
 			case 60:
 				digi_stop(2);
-				_val5 = _val6 = 58;
+				_wilburMode = _wilburShould = 58;
 				kernel_trigger_dispatch_now(8);
 				conv_resume_curr();
 				break;
 
 			case 62:
-				_val6 = 52;
-				series_play_with_breaks(PLAY6, "141wi06", 0x200, 8, 2, 6, 100, 0, 0);
+				_wilburShould = 52;
+				series_play_with_breaks(PLAY6, "141wi06", 0x200, kCHANGE_WILBUR_ANIMATION, 2, 6, 100, 0, 0);
 				break;
 
 			default:
@@ -755,18 +756,18 @@ void Room141::daemon() {
 			break;
 
 		case 58:
-			if (_val6 == 58) {
-				series_play("141wi05", 0x200, 0, 8, 10, 0, 100, 0, 0, 18, 18);
+			if (_wilburShould == 58) {
+				series_play("141wi05", 0x200, 0, kCHANGE_WILBUR_ANIMATION, 10, 0, 100, 0, 0, 18, 18);
 			} else {
-				_val5 = 61;
-				series_play("141wi05", 0x200, 2, 8, 6, 0, 100, 0, 0, 0, 18);
+				_wilburMode = 61;
+				series_play("141wi05", 0x200, 2, kCHANGE_WILBUR_ANIMATION, 6, 0, 100, 0, 0, 0, 18);
 				digi_play("100_023", 2, 255);
 			}
 			break;
 
 		case 61:
-			_val5 = 52;
-			kernel_trigger_dispatch_now(8);
+			_wilburMode = 52;
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			digi_stop(2);
 			digi_unload("100_023");
 			break;
@@ -832,7 +833,7 @@ void Room141::daemon() {
 		break;
 
 	case 19:
-		_val6 = 56;
+		_wilburShould = 56;
 		break;
 
 	case 20:
@@ -841,7 +842,7 @@ void Room141::daemon() {
 
 	case kWILBUR_SPEECH_STARTED:
 		_G(kernel).continue_handling_trigger = 1;
-		_val6 = 53;
+		_wilburShould = 53;
 		break;
 
 	default:
@@ -858,7 +859,7 @@ void Room141::parser() {
 
 	} else if (player_said("whistle") && player_said_any("GEAR", "WILBUR")) {
 		player_set_commands_allowed(false);
-		_val6 = 62;
+		_wilburShould = 62;
 
 	} else if (player_said("gear", "dock") || player_said("try to dock")) {
 		_trufflesShould = 12;
@@ -895,7 +896,7 @@ void Room141::parser() {
 check_exit:
 	if (player_said("exit") || (player_said("hanlon's point") && lookFlag)) {
 		player_set_commands_allowed(false);
-		_val6 = 55;
+		_wilburShould = 55;
 
 	} else {
 		return;
@@ -943,7 +944,7 @@ void Room141::conv20() {
 					_elmoShould = 25;
 				} else if (node == 6 && entry == 3) {
 					_elmoShould = 31;
-					_val6 = 55;
+					_wilburShould = 55;
 					conv_resume_curr();
 				} else if (node == 7 ||
 						(node == 4 && (entry == 1 || entry == 6 || entry == 7 || entry == 9)) ||
@@ -960,7 +961,7 @@ void Room141::conv20() {
 						(node == 15 && entry == 5) ||
 						(node == 18 && entry == 1) ||
 						(node == 19 && (entry == 2 || entry == 3))) {
-					_val6 = 55;
+					_wilburShould = 55;
 					_elmoShould = (_elmoMode == 27 || _elmoMode == 40) ? 27 : 18;
 					conv_resume_curr();
 
@@ -972,25 +973,25 @@ void Room141::conv20() {
 			}
 		} else if (who == 1) {
 			if (node == 20 && entry == 1) {
-				_val6 = 57;
+				_wilburShould = 57;
 				conv_resume_curr();
 			} else if (node == 20 && entry == 5) {
-				_val6 = 58;
+				_wilburShould = 58;
 			} else if ((node == 6 && entry == 1) || (node == 8 && entry == 3)) {
 				_elmoShould = 25;
-				_val6 = 52;
+				_wilburShould = 52;
 			} else if ((node == 4 && entry == 0) || (node == 20 && entry == 0)) {
 				_elmoShould = 21;
-				_val6 = 52;
+				_wilburShould = 52;
 			} else {
-				_val6 = (node == 14) ? 55 : 52;
+				_wilburShould = (node == 14) ? 55 : 52;
 				conv_resume_curr();
 			}
 		}
 	} else if (conv_sound_to_play()) {
 		if (who <= 0) {
 			if (node == 20 && entry == 7)
-				_val6 = 52;
+				_wilburShould = 52;
 
 			if (node != 0) {
 				if (node == 1 || node == 2) {
@@ -1018,7 +1019,7 @@ void Room141::conv20() {
 				}
 			}
 		} else if (who == 1) {
-			_val6 = 53;
+			_wilburShould = 53;
 		}
 
 		digi_play(conv_sound_to_play(), 1, 255, 21, 140);
