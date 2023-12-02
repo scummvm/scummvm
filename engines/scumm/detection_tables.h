@@ -844,6 +844,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "soccer", "soccer", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "soccer", "Soccer", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "soccer", "FOOTBALL", kGenHEPC, Common::EN_GRB, Common::kPlatformWindows, 0 },
 
 	{ "socks", "socks", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
