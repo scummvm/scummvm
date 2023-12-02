@@ -36,8 +36,8 @@ private:
 	int _elmoShould = 0;
 	int _trufflesMode = 0;
 	int _trufflesShould = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _wilburMode = 0;
+	int _wilburShould = 0;
 	int _trufflesFrame = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
