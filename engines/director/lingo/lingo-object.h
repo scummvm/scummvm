@@ -42,8 +42,8 @@ public:
 	virtual ObjectType getObjType() const = 0;
 	virtual bool isDisposed() const = 0;
 	virtual int *getRefCount() const = 0;
-	virtual void incRefCount() const = 0;
-	virtual void decRefCount() const = 0;
+	virtual void incRefCount() = 0;
+	virtual void decRefCount() = 0;
 	virtual int getInheritanceLevel() const = 0;
 
 	virtual void setName(const Common::String &name) = 0;
@@ -119,8 +119,8 @@ public:
 	ObjectType getObjType() const override { return _objType; };
 	bool isDisposed() const override { return _disposed; };
 	int *getRefCount() const override { return _refCount; };
-	void incRefCount() const override { *_refCount += 1; };
-	virtual void decRefCount() const override {
+	void incRefCount() override { *_refCount += 1; };
+	virtual void decRefCount() override {
 		*_refCount -= 1;
 		if (*_refCount <= 0)
 			delete this;
