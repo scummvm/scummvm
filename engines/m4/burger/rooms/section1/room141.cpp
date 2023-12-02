@@ -473,6 +473,7 @@ void Room141::daemon() {
 			case 23:
 				_elmoShould = 18;
 				Series::series_play("140pe06", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 5, 7);
+				conv_resume_curr();
 				break;
 
 			case 24:
@@ -619,6 +620,7 @@ void Room141::daemon() {
 			case 43:
 				_elmoShould = 40;
 				Series::series_play("140pe19", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
+				conv_resume_curr();
 				break;
 
 			case 44:
