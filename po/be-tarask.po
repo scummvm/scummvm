@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-03 16:17+0000\n"
+"POT-Creation-Date: 2023-12-03 20:51+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -313,7 +313,7 @@ msgstr "Іншае сховішча працуе цяпер. Ці хочаце �
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3890
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3894
 #: engines/toon/toon.cpp:1531
 msgid "Yes"
 msgstr "Так"
@@ -326,7 +326,7 @@ msgstr "Так"
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:360
 #: engines/kyra/gui/saveload_eob.cpp:598 engines/kyra/gui/saveload_eob.cpp:631
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3890
+#: engines/sci/graphics/controls32.cpp:929 engines/scumm/scumm.cpp:3894
 #: engines/toon/toon.cpp:1531
 msgid "No"
 msgstr "Не"
@@ -357,9 +357,9 @@ msgstr ""
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
 #: engines/mtropolis/mtropolis.cpp:125 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:75
-#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1221
-#: engines/scumm/scumm.cpp:1589 engines/scumm/scumm.cpp:2064
-#: engines/scumm/scumm.cpp:2080 engines/sky/compact.cpp:140
+#: engines/sci/graphics/controls32.cpp:926 engines/scumm/scumm.cpp:1225
+#: engines/scumm/scumm.cpp:1593 engines/scumm/scumm.cpp:2068
+#: engines/scumm/scumm.cpp:2084 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:563
 #: engines/sword1/animation.cpp:571 engines/sword1/control.cpp:2797
 #: engines/sword1/logic.cpp:1732 engines/sword2/animation.cpp:426
@@ -633,9 +633,9 @@ msgstr "Мова гульні. Гэта не ператворыць ангель
 #: backends/platform/android/options.cpp:150
 #: backends/platform/android/options.cpp:151
 #: backends/platform/android/options.cpp:179
-#: backends/platform/ios7/ios7_options.mm:130
-#: backends/platform/ios7/ios7_options.mm:131
-#: backends/platform/ios7/ios7_options.mm:156 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:132
+#: backends/platform/ios7/ios7_options.mm:133
+#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
 msgid "<default>"
 msgstr "<стандартна>"
 
@@ -4485,7 +4485,7 @@ msgstr "Рэжым люпы адлучаны"
 
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#: backends/platform/ios7/ios7_osys_misc.mm:327
+#: backends/platform/ios7/ios7_osys_misc.mm:323
 #, fuzzy
 #| msgid "Control"
 msgid "Touch Controls"
@@ -4561,8 +4561,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/android.cpp:1089
-#: backends/platform/ios7/ios7_osys_misc.mm:306
-#: backends/platform/ios7/ios7_osys_misc.mm:350
+#: backends/platform/ios7/ios7_osys_misc.mm:302
+#: backends/platform/ios7/ios7_osys_misc.mm:346
 #, fuzzy
 #| msgid "~A~dd Game..."
 msgid "Adding Games"
@@ -4607,28 +4607,28 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/options.cpp:131
-#: backends/platform/ios7/ios7_options.mm:163
+#: backends/platform/ios7/ios7_options.mm:165
 msgid "Show On-screen control"
 msgstr "Паказваць кіраваньне на экране"
 
 #: backends/platform/android/options.cpp:132
-#: backends/platform/ios7/ios7_options.mm:110
+#: backends/platform/ios7/ios7_options.mm:112
 msgid "Choose the preferred touch mode:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:134
 #: backends/platform/android/options.cpp:165
-#: backends/platform/ios7/ios7_options.mm:115
-#: backends/platform/ios7/ios7_options.mm:142
+#: backends/platform/ios7/ios7_options.mm:117
+#: backends/platform/ios7/ios7_options.mm:144
 msgid "In menus"
 msgstr "У мэню"
 
 #: backends/platform/android/options.cpp:136
 #: backends/platform/android/options.cpp:154
 #: backends/platform/android/options.cpp:155
-#: backends/platform/ios7/ios7_options.mm:117
-#: backends/platform/ios7/ios7_options.mm:134
-#: backends/platform/ios7/ios7_options.mm:135
+#: backends/platform/ios7/ios7_options.mm:119
+#: backends/platform/ios7/ios7_options.mm:136
+#: backends/platform/ios7/ios7_options.mm:137
 #: backends/platform/ios7/ios7_osys_events.cpp:344
 #, fuzzy
 msgid "Touchpad emulation"
@@ -4637,9 +4637,9 @@ msgstr "Эмуляцыя ТВ"
 #: backends/platform/android/options.cpp:137
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
-#: backends/platform/ios7/ios7_options.mm:118
-#: backends/platform/ios7/ios7_options.mm:137
-#: backends/platform/ios7/ios7_options.mm:138
+#: backends/platform/ios7/ios7_options.mm:120
+#: backends/platform/ios7/ios7_options.mm:139
+#: backends/platform/ios7/ios7_options.mm:140
 #: backends/platform/ios7/ios7_osys_events.cpp:346
 #, fuzzy
 msgid "Direct mouse"
@@ -4653,45 +4653,45 @@ msgid "Gamepad emulation"
 msgstr "Эмуляцыя ТВ"
 
 #: backends/platform/android/options.cpp:144
-#: backends/platform/ios7/ios7_options.mm:124
+#: backends/platform/ios7/ios7_options.mm:126
 msgid "In 2D games"
 msgstr "У 2D гульнях"
 
 #: backends/platform/android/options.cpp:146
-#: backends/platform/ios7/ios7_options.mm:126
+#: backends/platform/ios7/ios7_options.mm:128
 msgid "In 3D games"
 msgstr "У 3D гульнях"
 
 #: backends/platform/android/options.cpp:163
-#: backends/platform/ios7/ios7_options.mm:140
+#: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
 msgstr ""
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
-#: backends/platform/ios7/ios7_options.mm:144
-#: backends/platform/ios7/ios7_options.mm:159
+#: backends/platform/ios7/ios7_options.mm:146
+#: backends/platform/ios7/ios7_options.mm:161
 msgid "Automatic"
 msgstr ""
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
-#: backends/platform/ios7/ios7_options.mm:145
-#: backends/platform/ios7/ios7_options.mm:160
+#: backends/platform/ios7/ios7_options.mm:147
+#: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
 msgstr ""
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
-#: backends/platform/ios7/ios7_options.mm:146
-#: backends/platform/ios7/ios7_options.mm:161
+#: backends/platform/ios7/ios7_options.mm:148
+#: backends/platform/ios7/ios7_options.mm:163
 #, fuzzy
 #| msgid "Escape"
 msgid "Landscape"
 msgstr "Выйсьці"
 
 #: backends/platform/android/options.cpp:175
-#: backends/platform/ios7/ios7_options.mm:152
+#: backends/platform/ios7/ios7_options.mm:154
 #, fuzzy
 #| msgid "In 2D games"
 msgid "In games"
@@ -4719,31 +4719,35 @@ msgstr "Апаратнае павялічэньне (хутка, але нізк
 msgid "Software scale (good quality, but slower)"
 msgstr "Праграмнае павялічэньне (высокая якасьць, але марудна)"
 
-#: backends/platform/ios7/ios7_options.mm:96
+#: backends/platform/ios7/ios7_options.mm:97
 #, fuzzy
 #| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
 msgstr "Паказваць кіраваньне на экране"
 
-#: backends/platform/ios7/ios7_options.mm:97
 #: backends/platform/ios7/ios7_options.mm:98
+#: backends/platform/ios7/ios7_options.mm:99
 #, fuzzy
 msgid "Gamepad opacity"
 msgstr "Эмуляцыя ТВ"
 
-#: backends/platform/ios7/ios7_options.mm:102
+#: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:104
+#: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
 msgstr ""
 
-#: backends/platform/ios7/ios7_options.mm:105
+#: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
 msgstr ""
 
 #: backends/platform/ios7/ios7_options.mm:107
+msgid "Use minimal gamepad layout"
+msgstr ""
+
+#: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
 msgstr ""
 
@@ -4751,8 +4755,10 @@ msgstr ""
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
-"controller icon in the upper right corner or by swiping two fingers from "
-"left to right.\n"
+"controller icon in the upper right corner, by swiping two fingers from left "
+"to right or in the global settings From the Launcher, go to **Global Options "
+"> Backend > Choose the preferred touch mode**. It's possible to configure "
+"the touch mode for three situations (ScummVM menus, 2D games and 3D games).\n"
 "\n"
 "### Direct mouse \n"
 "\n"
@@ -4772,24 +4778,20 @@ msgid ""
 "\n"
 "## Touch actions \n"
 "\n"
-"### One finger tap \n"
-"\n"
-"Tap one finger to perform a left mouse click\n"
-"### Two fingers tap\n"
-"\n"
-"Tap two fingers to perform a right mouse click\n"
-"\n"
-"### One finger long press\n"
-"\n"
-"Touch and hold one finger for at least 0.5 seconds to perform a left mouse "
-"button hold and drag, such as for selection from action wheel in Curse of "
-"Monkey Island.\n"
-"\n"
-"### Two fingers long press\n"
-"\n"
-"Touch and hold two fingers for at least 0.5 seconds to perform a right mouse "
-"button hold and drag, such as for selection from action wheel in Tony "
-"Tough.\n"
+"| Gesture           | Action            \n"
+"| ------------------|-------------------\n"
+"| `One finger tap`  | Left mouse click  \n"
+"| `Two fingers tap` | Right mouse click \n"
+"| `Two fingers double tap` | ESC \n"
+"| `One finger press & hold for >0.5s` | Left mouse button hold and drag, "
+"such as for selection from action wheel in Curse of Monkey Island \n"
+"| `Two fingers press & hold for >0.5s` | Right mouse button hold and drag, "
+"such as for selection from action wheel in Tony Tough \n"
+"| `Two fingers swipe (left to right)` | Toggles between the touch modes \n"
+"| `Two fingers swipe (right to left)` | Toggles virtual controller (>iOS "
+"15) \n"
+"| `Two fingers swipe (top to bottom)` | Access Global Main Menu in games \n"
+"| `Pinch (zoom in/out)` | Enables/disables keyboard \n"
 "\n"
 "### Virtual Gamepad \n"
 "\n"
@@ -4818,7 +4820,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:309
+#: backends/platform/ios7/ios7_osys_misc.mm:305
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4839,7 +4841,7 @@ msgid ""
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:330
+#: backends/platform/ios7/ios7_osys_misc.mm:326
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -4861,7 +4863,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:353
+#: backends/platform/ios7/ios7_osys_misc.mm:349
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5396,7 +5398,7 @@ msgstr "Аднавіць"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Хуткія заладаваньне ці захаваньне не падтрымліваюцца ў гэтай лякацыі"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2888
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2892
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -5407,7 +5409,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2875
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2879
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -5418,7 +5420,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2908
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2912
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -8569,7 +8571,7 @@ msgid "Your Name:"
 msgstr "Назва:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3896
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3900
 msgid "Host"
 msgstr ""
 
@@ -8581,7 +8583,7 @@ msgid "Querying games..."
 msgstr "Захаваньне гульні…"
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3896
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:3900
 msgid "Join"
 msgstr ""
 
@@ -9475,16 +9477,16 @@ msgstr ""
 "Карэкцыя прапорцыяў экрану можа быць дасягнута асячэньнем разрознасьці да "
 "320x200 на картцы „рухавік“."
 
-#: engines/scumm/scumm.cpp:1175
+#: engines/scumm/scumm.cpp:1179
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1200
+#: engines/scumm/scumm.cpp:1204
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1220
+#: engines/scumm/scumm.cpp:1224
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -9492,7 +9494,7 @@ msgstr ""
 "Ня выйшла знайсьці выканальны файл 'Monkey Island' Macintosh, каб\n"
 "прачытаць інструмэнты. Музыка будзе адлучана."
 
-#: engines/scumm/scumm.cpp:1586
+#: engines/scumm/scumm.cpp:1590
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -9502,7 +9504,7 @@ msgstr ""
 "больш не падтрымліваецца для гэтай гульні, гук будзе адлучаны.\n"
 "Калі ласка, скапіюйце гульню з арыґінальных носьбітаў бяз сьціску."
 
-#: engines/scumm/scumm.cpp:2062
+#: engines/scumm/scumm.cpp:2066
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -9511,13 +9513,13 @@ msgstr ""
 "Для роднага падтрыманьня MIDI трэ Roland Upgrade ад LucasArts,\n"
 "але бракуе %s. Выкарыстоўвайце AdLib замест."
 
-#: engines/scumm/scumm.cpp:2078
+#: engines/scumm/scumm.cpp:2082
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3785
+#: engines/scumm/scumm.cpp:3789
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -9527,7 +9529,7 @@ msgstr ""
 "Maniac Mansion мусяць быць у тэчцы 'Maniac' унутры тэчкі гульні Day of the "
 "Tentacle, а гульня мусіць быць даданая ў ScummVM."
 
-#: engines/scumm/scumm.cpp:3896
+#: engines/scumm/scumm.cpp:3900
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Ці хочаце вы захаваць або заладаваць гульню?"
