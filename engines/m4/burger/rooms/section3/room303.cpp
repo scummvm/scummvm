@@ -508,7 +508,7 @@ void Room303::doDaemon(int trigger) {
 			}
 
 			_val6 = _G(flags)[V122] ? 33 : 31;
-			_val9 = 10;
+			_triggers[1] = 10;
 			series_play_with_breaks(PLAY1, "303wi4b", 0x100, 1, 3);
 			break;
 
@@ -520,7 +520,7 @@ void Room303::doDaemon(int trigger) {
 			kernel_trigger_dispatch_now(11);
 
 			_val6 = 34;
-			_val9 = 10;
+			_triggers[1] = 10;
 			_val8 = (_val5 > 0 && _val5 < 15) ? 28 : 29;
 			series_play_with_breaks(PLAY3, "303wi4b", 0x100, 1, 3);
 			break;
@@ -531,8 +531,8 @@ void Room303::doDaemon(int trigger) {
 			kernel_trigger_dispatch_now(11);
 			_G(wilbur_should) = 10001;
 			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
+			_triggers[1] = 10;
 			_val6 = 34;
-			_val9 = 10;
 			series_play_with_breaks(PLAY4, "303wi4a", 0x100, 1, 3);
 			break;
 
@@ -543,7 +543,7 @@ void Room303::doDaemon(int trigger) {
 			_G(wilbur_should) = 10001;
 			_triggers[0] = kCHANGE_WILBUR_ANIMATION;
 			_val6 = _G(flags)[V122] ? 32 : 30;
-			_val9 = 10;
+			_triggers[1] = 10;
 			series_play_with_breaks(PLAY5, "303wi4a", 0x100, 1, 3);
 			break;
 

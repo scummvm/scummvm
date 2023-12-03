@@ -62,7 +62,6 @@ private:
 	int _val6 = 0;
 	int _val7 = 0;
 	int _val8 = 0;
-	int _val9 = 0;
 
 	void frontYard();
 	void doDaemon(int trigger);
