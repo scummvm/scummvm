@@ -47,9 +47,10 @@ HelpDialog::HelpDialog()
 "\n"
 "The ScummVM team does not recommend any individual supplier of games,"
 "however the project does get a cut from every purchase on "
-"[GOG.com](https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d) and "
 "[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) "
 "through affiliate referral links.\n"
+"\n"
+"Additionally, some games that are not available on ZOOM-Platform can be found on GOG.com.\n"
 	);
 
 	new RichTextWidget(tab, "HelpDialog.TabWidget", helpText1);
