@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-03 16:17+0000\n"
-"PO-Revision-Date: 2023-11-17 01:03+0000\n"
+"PO-Revision-Date: 2023-12-03 18:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -218,14 +218,17 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"В разі, якщо буде помилка передачі JSON кода дл ScummVM,\n"
+"ви можете знайти його в розділі Troubleshooting на веб-сторінці,\n"
+"і тоді ви зможете перейти до наступного кроку."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Ручний режим: Крок 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Скопіюйте сюди JSON-код з перегладача та натисніть Далі:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
@@ -246,43 +249,37 @@ msgid "Load"
 msgstr "Завантажити"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Завантажити файл"
+msgstr "Завантажити код з файлу"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Ручний режим: Помилка обробки"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Хмарне середовище підключено."
+msgstr "Хмарне середовище не було залучено."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Переконайтеся, що JSON-код було скопійовано вірно, та спробуйте знову."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Якщо це не спрацює, спробуйте знову спочатку."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Помилка: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Ручний режим: Завершено"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Бекенд"
+msgstr "Назад"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -290,10 +287,8 @@ msgid "Next"
 msgstr "Наступний"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "Інше хмарне середовище вже є активним. Чи ви хочете припинити процес?"
+msgstr "Інше хмарне середовище вже є активним. Чи ви хочете його викмкути?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -331,7 +326,7 @@ msgstr "Заждіть, поки поточне середовище закін�
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "Невірний формат JSON-коду."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -360,17 +355,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:558
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Невірний файл rs."
+msgstr "Невірний JSON-код."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Взаємодія"
+msgstr "Перервано."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
