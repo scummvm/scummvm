@@ -1193,9 +1193,9 @@ void increment_turn(void) {
 	creatloop(i)
 	if (creature[i].location == loc + first_room && creature[i].hostile &&
 	        creature[i].timethresh > 0) {
-		parse_rec tmpcreat; /* Used for creature messages */
-		make_parserec(i + first_creat, &tmpcreat);
-		curr_creat_rec = &tmpcreat;
+		parse_rec *tmpcreat = nullptr; /* Used for creature messages */
+		make_parserec(i + first_creat, tmpcreat);
+		curr_creat_rec = tmpcreat;
 
 		if (++creature[i].timecounter >= creature[i].timethresh) {
 			/* Creature attacks */
