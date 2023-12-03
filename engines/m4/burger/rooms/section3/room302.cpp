@@ -526,7 +526,7 @@ void Room302::daemon() {
 }
 
 void Room302::pre_parser() {
-	if (player_said_any("BACKYARD", "BACKYARD ") && player_said_any("LOOK AT", "GEAR", "ENTER"))
+	if (player_said_any("BACKYARD", "BACKYARD ") && !player_said_any("LOOK AT", "GEAR", "ENTER"))
 		player_set_facing_hotspot();
 }
 
