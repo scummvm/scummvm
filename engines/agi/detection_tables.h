@@ -838,9 +838,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME("sq2", "2.0C/A 5.25\"/ST", "bd71fe54869e86945041700f1804a651", 0x2917, GID_SQ2),
 
-	// Space Quest 2 (3.5") 2.0C [AGI 2.917]
+	// Space Quest 2 (PC 3.5") 2.0C [AGI 2.917]
 	// TRAC #14287
-	GAME("sq2", "2.0C 3.5\"", "b394eaae1dfe4203378e02641178959c", 0x2917, GID_SQ2),
+	GAME_PS("sq2", "2.0C 3.5\"", "b394eaae1dfe4203378e02641178959c", 426, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 5.25") 2.0C [AGI 2.917]
 	// TRAC #14286
