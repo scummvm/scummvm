@@ -62,24 +62,15 @@ public:
 	bool stopRequest;
 };
 
-class Scene {
-public:
-	Common::Array<Entity> entities;
-	Common::Array<Thread*> threads;
-	GGPackDecoder pack;
-};
-
 class Vm {
 public:
 	Vm();
 	~Vm();
 
-	void setScene(Scene* scene);
 	void exec(const SQChar *code);
 
 private:
 	HSQUIRRELVM v;
-	Scene* _scene;
 };
 } // End of namespace Twp
 

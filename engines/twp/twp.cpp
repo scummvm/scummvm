@@ -74,8 +74,7 @@ Common::Error TwpEngine::run() {
 	Common::File f;
 	f.open("ThimbleweedPark.ggpack1");
 
-	Scene scene;
-	scene.pack.open(&f, key);
+	pack.open(&f, key);
 
 	const SQChar *code = R"(
 	function bounceImage() {
@@ -105,7 +104,6 @@ Common::Error TwpEngine::run() {
 	})";
 
 	Vm v;
-	v.setScene(&scene);
 	v.exec(code);
 
 	// Set the engine's debugger console
@@ -124,8 +122,8 @@ Common::Error TwpEngine::run() {
 		}
 
 		// update threads
-		for (int i = 0; i < scene.threads.size(); i++) {
-			Thread *thread = scene.threads[i];
+		for (int i = 0; i < threads.size(); i++) {
+			Thread *thread = threads[i];
 			if (thread->update(deltaTimeMs)) {
 				// TODO: delete it
 			}
@@ -133,8 +131,8 @@ Common::Error TwpEngine::run() {
 
 		// update screen
 		_screen->clear(0xFF808080);
-		for (int i = 0; i < scene.entities.size(); i++) {
-			Entity &ett = scene.entities[i];
+		for (int i = 0; i < entities.size(); i++) {
+			Entity &ett = entities[i];
 			_screen->transBlitFrom(ett.surface, ett.rect, Common::Point(ett.x, ett.y));
 		}
 		_screen->update();
