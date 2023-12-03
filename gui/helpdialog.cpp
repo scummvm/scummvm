@@ -40,7 +40,7 @@ HelpDialog::HelpDialog()
 "\n"
 "Visit [our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games) for a list of games and where to purchase them.\n"
 "\n"
-"Alternatively, download a selection of [freeware games](https://scummvm.org/games) and [demos](https://www.scummvm.org/demos/) from our website \n"
+"Alternatively, download a selection of [freeware games](https://scummvm.org/games) and [demos](https://www.scummvm.org/demos/) from our website.\n"
 "\n"
 "For other (out of print) games, try Amazon, eBay, Game Trading Zone or other auction "
 "sites. Beware of faulty games and illegal game copies.\n"
