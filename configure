@@ -4999,6 +4999,15 @@ if test "$_dynamic_modules" = yes ; then
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
 fi
 
+if test "$_detection_features_static" = no ; then
+	if test "$_dynamic_modules" = no ; then
+		echo "Inconsistency detected: dynamic detection plugin enabled while static plugins are requested."
+		echo "   ...forcing detection plugin to be static too. Add --enable-plugins if you really want it"
+
+		_detection_features_static=yes
+	fi
+fi
+
 #
 # Set up a define for detection to be used as static or not
 #
