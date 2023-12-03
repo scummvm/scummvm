@@ -255,6 +255,12 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	if (gameId == "ultima4" || gameId == "ultima4_enh")
 		return Ultima::Ultima4::MetaEngine::initKeymaps();
 #endif
+#ifdef ENABLE_ULTIMA6
+	if (gameId == "ultima6" || gameId == "ultima6_enh"
+			|| gameId == "martiandreams" || gameId == "martiandreams_enh"
+			|| gameId == "savageempire" || gameId == "savageempire_enh")
+		return Ultima::Nuvie::MetaEngine::initKeymaps(gameId);
+#endif
 #ifdef ENABLE_ULTIMA8
 	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
 		return Ultima::Ultima8::MetaEngine::initKeymaps(gameId);

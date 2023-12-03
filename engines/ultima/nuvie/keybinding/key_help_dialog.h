@@ -19,24 +19,30 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA6_META_ENGINE
-#define ULTIMA_ULTIMA6_META_ENGINE
+#ifndef NUVIE_KEYHELP_DIALOG_H
+#define NUVIE_KEYHELP_DIALOG_H
 
-#include "engines/savestate.h"
-#include "backends/keymapper/keymapper.h"
+#include "gui/dialog.h"
+#include "common/str.h"
+#include "common/str-array.h"
+
+namespace GUI {
+	class CommandSender;
+}
 
 namespace Ultima {
 namespace Nuvie {
 
-enum {
-	ORIGINAL_SAVE_SLOT = 1
+/**
+ * Key help dialog - just a rich text and a close button.
+ */
+class KeyHelpDialog : public GUI::Dialog {
+public:
+	KeyHelpDialog(const Common::U32String &helpStr);
+
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
-class MetaEngine {
-public:
-	static void listSaves(SaveStateList &saveList);
-	static Common::KeymapArray initKeymaps(const Common::String &gameId);
-};
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

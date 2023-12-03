@@ -359,6 +359,11 @@ bool Events::handleEvent(const Common::Event *event_) {
 	case Common::EVENT_QUIT:
 		return false;
 
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		keybinder->handleScummVMBoundEvent(event_);
+		break;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 	default:
 		break;
 	}

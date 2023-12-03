@@ -19,26 +19,28 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA6_META_ENGINE
-#define ULTIMA_ULTIMA6_META_ENGINE
-
-#include "engines/savestate.h"
-#include "backends/keymapper/keymapper.h"
+#include "ultima/nuvie/keybinding/key_help_dialog.h"
+#include "common/translation.h"
+#include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
+#include "gui/widget.h"
+#include "gui/widgets/richtext.h"
 
 namespace Ultima {
 namespace Nuvie {
 
-enum {
-	ORIGINAL_SAVE_SLOT = 1
-};
+KeyHelpDialog::KeyHelpDialog(const Common::U32String &helpTxt)
+	: GUI::Dialog("HelpDialog") {
+	new GUI::RichTextWidget(this, "HelpDialog.TabWidget", helpTxt);
+	new GUI::ButtonWidget(this, "HelpDialog.Close", Common::U32String("Close"), Common::U32String(), GUI::kCloseCmd);
+}
 
-class MetaEngine {
-public:
-	static void listSaves(SaveStateList &saveList);
-	static Common::KeymapArray initKeymaps(const Common::String &gameId);
-};
+void KeyHelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+		case GUI::kCloseCmd:
+			close();
+	}
+}
 
 } // End of namespace Nuvie
 } // End of namespace Ultima
-
-#endif

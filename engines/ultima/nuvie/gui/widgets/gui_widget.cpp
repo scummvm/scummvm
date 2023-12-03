@@ -165,7 +165,7 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 }
 
 /* Report status to GUI */
-int GUI_Widget::Status(void) const {
+WIDGET_status GUI_Widget::Status(void) const {
 	return status;
 }
 

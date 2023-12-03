@@ -36,23 +36,17 @@ enum joy_axes_pairs {
 	AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR
 };
 
-struct str_int_pair {
-	const char *str;
-	int  num;
-};
-
-const int c_maxparams = 1;
-
 struct Action;
 struct ActionType {
 	const Action *action;
-	int params[c_maxparams];
+	int param;
 };
 
 typedef Common::HashMap<uint32, ActionType> KeyMap;
 
 typedef Common::HashMap<Common::String, Common::KeyCode> ParseKeyMap;
-typedef Common::HashMap<Common::String, const void *> ParseActionMap;
+typedef Common::HashMap<Common::String, const Action *> ParseActionMap;
+typedef Common::HashMap<uint32, ActionType> ParseHashedActionMap;
 
 class Configuration;
 
@@ -62,10 +56,9 @@ class KeyBinder {
 private:
 	KeyMap _bindings;
 
-	Std::vector<Std::string> _keyHelp;
-	Std::vector<Std::string> _cheatHelp;
 	ParseKeyMap _keys;
 	ParseActionMap _actions;
+	ParseHashedActionMap _actionsHashed;
 	int16 _joyAxisPositions[8];
 
 	bool repeat_hat, joy_repeat_enabled; // repeat hat instead of axis when hat is found
@@ -81,7 +74,7 @@ public:
 	~KeyBinder();
 	/* Add keybinding */
 	void AddKeyBinding(Common::KeyCode sym, byte mod, const Action *action,
-	                   int nparams, int *params);
+	                   int nparams, int param);
 
 	/* Delete keybinding */
 //	void DelKeyBinding(Common::KeyCode sym, int mod); // unused
@@ -89,14 +82,13 @@ public:
 	/* Other methods */
 	void Flush() {
 		_bindings.clear();
-		_keyHelp.clear();
-		_cheatHelp.clear();
 	}
 	ActionType get_ActionType(const Common::KeyState &key);
 	ActionKeyType GetActionKeyType(ActionType a);
 	bool DoAction(ActionType const &a) const;
 	KeyMap::iterator get_sdlkey_index(const Common::KeyState &key);
 	bool HandleEvent(const Common::Event *event);
+	bool handleScummVMBoundEvent(const Common::Event *event);
 
 	void LoadFromFile(const char *filename);
 	void LoadGameSpecificKeys();
@@ -146,6 +138,7 @@ private:
 
 	joy_axes_pairs get_axes_pair(int axis) const;
 	Common::KeyCode get_key_from_joy_button(uint8 button);
+	Common::Array<Common::U32String> buildKeyHelp() const;
 };
 
 } // End of namespace Nuvie

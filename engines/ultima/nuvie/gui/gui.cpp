@@ -28,6 +28,8 @@
 #include "ultima/nuvie/keybinding/keys.h"
 #include "common/system.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Ultima {
 namespace Nuvie {
 
@@ -122,10 +124,13 @@ bool GUI::removeWidget(GUI_Widget *widget) {
 
 void GUI::CleanupDeletedWidgets(bool redraw) {
 	/* Garbage collection */
-	if (locked_widget && locked_widget->Status() == WIDGET_DELETED)
-		locked_widget = 0;
+	if (locked_widget && locked_widget->Status() == WIDGET_DELETED) {
+		locked_widget = nullptr;
+		// Re-enable the global keymapper
+		g_system->getEventManager()->getKeymapper()->setEnabled(true);
+	}
 	if (focused_widget && focused_widget->Status() == WIDGET_DELETED)
-		focused_widget = 0;
+		focused_widget = nullptr;
 
 	for (int i = 0; i < numwidgets;) {
 		if (widgets[i]->Status() == WIDGET_DELETED) {
@@ -383,9 +388,13 @@ bool GUI::set_focus(GUI_Widget *widget) {
 }
 
 void GUI::lock_input(GUI_Widget *widget) {
-	for (int i = 0; i < numwidgets; ++i)
-		if (!widget || (widgets[i] == widget)) // must be managed by GUI
+	for (int i = 0; i < numwidgets; ++i) {
+		if (!widget || (widgets[i] == widget)) {// must be managed by GUI
 			locked_widget = widget;
+			// Disable the keymapper so direct keys can go into the input
+			g_system->getEventManager()->getKeymapper()->setEnabled(locked_widget == nullptr);
+		}
+	}
 }
 
 Std::string GUI::get_data_dir() const {

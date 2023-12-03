@@ -49,7 +49,7 @@ protected:
 	int offset_x, offset_y; /* original offsets to parent */
 
 	/* Flag -- whether or not the widget should be freed */
-	int status;
+	WIDGET_status status;
 
 	/* should we redraw this widget */
 	bool update_display;
@@ -108,7 +108,7 @@ public:
 	void moveToFront();
 	virtual void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
 
-	virtual int  Status(void) const;  /* Reports status to GUI */
+	virtual WIDGET_status Status(void) const;  /* Reports status to GUI */
 
 	/* Set the bounds of the widget.
 	   If 'w' or 'h' is -1, that parameter will not be changed.
