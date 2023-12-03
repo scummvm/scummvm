@@ -107,7 +107,7 @@ struct HardwareInputTypeIdComparator {
 	}
 };
 
-Array<HardwareInput> Keymap::getActionMapping(Action *action) const {
+Array<HardwareInput> Keymap::getActionMapping(const Action *action) const {
 	Array<HardwareInput> inputs;
 
 	for (HardwareActionMap::iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
