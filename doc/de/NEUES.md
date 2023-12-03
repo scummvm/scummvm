@@ -63,6 +63,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Mohawk:
    - Die Genauigkeit der Code-Erzeugung für die Domes wurde erheblich verbessert und entspricht nun dem Original.
 
+ Private:
+   - Unterstützung für die japanische Windows-Version hinzugefügt.
+
  SCUMM:
    - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
    - Der offizielle Roland MT-32-Patch für Monkey Island 1 kann nun auf allen EGA-Versionen
@@ -106,6 +109,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Sword2:
    - Unterstützung für die chinesische Übersetzung hinzugefügt.
+
+ Tinsel:
+   - Fehler behoben, der dazu geführt hat, dass keine Tonbänder mehr verfügbar sind.
 
  Twine:
    - Unterstützung für die japanische Übersetzung hinzugefügt.
