@@ -1222,7 +1222,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 			break;
 	}
 
-	Datum r;
+	Datum r("");
 	Common::Array<Common::String> fileNameList;
 
 	// First, mix in any files injected from the quirks
