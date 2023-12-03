@@ -250,7 +250,7 @@ _s("Touch Controls"),
 "ios-help.zip",
 _s(
 "## Touch control modes\n"
-"The touch control mode can be changed by tapping or clicking on the controller icon in the upper right corner, by swiping two fingers from left to right or in the global settings From the Launcher, go to **Global Options > BackenChoose the preferred touch mode. It’s possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games).\n"
+"The touch control mode can be changed by tapping or clicking on the controller icon in the upper right corner, by swiping two fingers from left to right or in the global settings From the Launcher, go to **Global Options > Backend > Choose the preferred touch mode**. It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games).\n"
 "\n"
 "### Direct mouse \n"
 "\n"
