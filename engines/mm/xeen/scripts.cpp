@@ -456,7 +456,7 @@ bool Scripts::cmdNPC(ParamsIterator &params) {
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
-	if (LocationMessage::show(portrait, _message, map._events._text[textNum],
+	if (LocationMessage::showMessage(portrait, _message, map._events._text[textNum],
 			confirm)) {
 		_lineNum = lineNum;
 		return false;

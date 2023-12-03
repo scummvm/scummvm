@@ -374,7 +374,7 @@ private:
 
 	void loadButtons();
 public:
-	static bool show(int portrait, const Common::String &name,
+	static bool showMessage(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);
 };
 
