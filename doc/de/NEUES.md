@@ -60,6 +60,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für die chinesische Version von EOB2 hinzugefügt.
    - Unterstützung für die PC-98-Version von EAB2 hinzugefügt.
 
+ Mohawk:
+   - Die Genauigkeit der Code-Erzeugung für die Domes wurde erheblich verbessert und entspricht nun dem Original.
+
  SCUMM:
    - Unterstützung für die entpackten RuSCUMM-Patches für russische Übersetzungen hinzugefügt.
    - Der offizielle Roland MT-32-Patch für Monkey Island 1 kann nun auf allen EGA-Versionen

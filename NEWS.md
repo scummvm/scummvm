@@ -59,6 +59,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Chinese EOB2.
    - Added support for the PC-98 version of EOB2.
 
+ Mohawk:
+   - Greatly improved the accurary of the code generation for the Domes in
+     Riven: The Sequel to Myst to match the original game.
+
  Private:
    - Added support for the Japanese Windows release.
 
