@@ -44,6 +44,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_PSX_AUDIO_DATA_OVERRIDE,
+		{
+			_s("Use PSX Audio Data"),
+			_s("I have put the PSX audio data in my Discworld PC data folder, please make it work."),
+			"psx_audio_data",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -220,6 +231,7 @@ void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 
 void TinselMetaEngine::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("crop_black_bars", false); // show the black bars by default (original behaviour)
+	ConfMan.registerDefault("psx_audio_data", false);
 }
 
 const ADExtraGuiOptionsMap *TinselMetaEngine::getAdvancedExtraGuiOptions() const {

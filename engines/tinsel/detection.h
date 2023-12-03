@@ -28,6 +28,8 @@ namespace Tinsel {
 
 // (Optionally) remove the "baked-in" letterboxing in Discworld 2/Noir.
 #define GAMEOPTION_CROP_HEIGHT_480_TO_432      GUIO_GAMEOPTIONS1
+// Discworld 1: (Optionally) use the PSX audio data with the PC DOS version(s).
+#define GAMEOPTION_PSX_AUDIO_DATA_OVERRIDE     GUIO_GAMEOPTIONS2
 
 enum TinselGameID {
 	GID_DW1 = 0,

@@ -32,6 +32,7 @@
 
 #include "common/endian.h"
 #include "common/memstream.h"
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "audio/mixer.h"
@@ -45,6 +46,8 @@
 #include "gui/message.h"
 
 namespace Tinsel {
+
+#define TinselV1PSXAudio (TinselV1PSX || ConfMan.getBool("psx_audio_data") || (_soundMode == kXAADPCMMode))
 
 extern LANGUAGE g_sampleLanguage;
 
@@ -103,7 +106,10 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
-	if (TinselV1PSX) {
+	if (TinselV1PSXAudio) {
+		if (!TinselV1PSX) {
+			//warning("PSX Audio Data override.\n");
+		}
 		// Read the stream and create a XA ADPCM audio stream
 		Audio::AudioStream *xaStream = Audio::makeXAStream(_sampleStream.readStream(sampleLen), 44100);
 
@@ -540,6 +546,10 @@ void SoundManager::openSampleFiles() {
 		case MKTAG('F','L','A','C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
+			break;
+		case MKTAG('P','S','X',' '):
+			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected Playstation ADPCM sound-data");
+			_soundMode = kXAADPCMMode;
 			break;
 		default:
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected original sound-data");
