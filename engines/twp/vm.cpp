@@ -41,7 +41,6 @@
 
 namespace Twp {
 
-static Scene *gScene = nullptr;
 static HSQUIRRELVM gVm = nullptr;
 
 static SQObjectPtr sqObj(HSQUIRRELVM v, const char *value) {
@@ -83,7 +82,7 @@ static SQRESULT getArray(HSQUIRRELVM v, int i, Common::Array<Common::String> &ar
 }
 
 static Thread *thread(HSQUIRRELVM v) {
-	return *Common::find_if(gScene->threads.begin(), gScene->threads.end(), [&](Thread *t) {
+	return *Common::find_if(g_engine->threads.begin(), g_engine->threads.end(), [&](Thread *t) {
 		return t->threadObj._unVal.pThread == v;
 	});
 }
@@ -182,19 +181,17 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	// TODO: share resources load png to surface
 	GGPackEntryReader r;
-	r.open(gScene->pack, sheet + ".png");
+	r.open(g_engine->pack, sheet + ".png");
 	Image::PNGDecoder d;
 	d.loadStream(r);
 	const Graphics::Surface *surface = d.getSurface();
 
 	// load sheet json
 	GGPackEntryReader r2;
-	r2.open(gScene->pack, sheet + ".json");
+	r2.open(g_engine->pack, sheet + ".json");
 	Common::Array<char> data(r2.size());
 	r2.read(&data[0], r2.size());
 	Common::String s(&data[0], r2.size());
-
-	debug(s.c_str());
 
 	// TODO: change to load each frame
 	Common::JSONValue *json = Common::JSON::parse(s.c_str());
@@ -221,7 +218,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 	sq_addref(gVm, &e.obj);
 	sq_pop(v, 1);
 
-	gScene->entities.push_back(e);
+	g_engine->entities.push_back(e);
 
 	sq_pushobject(v, e.obj);
 
@@ -280,7 +277,7 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 		sq_pop(v, 1); // pop name
 	sq_pop(v, 1);     // pop closure
 
-	gScene->threads.push_back(t);
+	g_engine->threads.push_back(t);
 
 	debug("create thread %s", t->name.c_str());
 
@@ -307,7 +304,7 @@ static SQInteger objectAt(HSQUIRRELVM v) {
 	SQObjectPtr id;
 	_table(o)->Get(sqObj(v, "_id"), id);
 
-	Entity *ett = Common::find_if(gScene->entities.begin(), gScene->entities.end(), [&](Entity &e) {
+	Entity *ett = Common::find_if(g_engine->entities.begin(), g_engine->entities.end(), [&](Entity &e) {
 		SQObjectPtr id2;
 		_table(e.obj)->Get(sqObj(v, "_id"), id2);
 		return _integer(id) == _integer(id2);
@@ -386,8 +383,7 @@ static void printfunc(HSQUIRRELVM v, const SQChar *s, ...) {
 	debug("TWP: %s", buf);
 }
 
-Vm::Vm()
-	: _scene(nullptr) {
+Vm::Vm() {
 	gVm = v = sq_open(1024);
 	sq_setcompilererrorhandler(v, errorHandler);
 	sq_newclosure(v, aux_printerror, 0);
@@ -412,20 +408,14 @@ Vm::Vm()
 }
 
 Vm::~Vm() {
-	if(_scene) {
-		for (int i = 0; i < _scene->threads.size(); i++) {
-			delete _scene->threads[i];
-		}
+	for (int i = 0; i < g_engine->threads.size(); i++) {
+		delete g_engine->threads[i];
 	}
 	sq_close(v);
 }
 
 void Vm::exec(const SQChar *code) {
 	sqExec(v, code);
-}
-
-void Vm::setScene(Scene *scene) {
-	gScene = _scene = scene;
 }
 
 Thread::Thread() : paused(false), waitTime(0), numFrames(0), stopRequest(false) {

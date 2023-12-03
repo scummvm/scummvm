@@ -22,6 +22,7 @@
 #ifndef TWP_H
 #define TWP_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
@@ -33,8 +34,8 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
-
 #include "twp/detection.h"
+#include "twp/vm.h"
 
 namespace Twp {
 
@@ -49,6 +50,10 @@ protected:
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
+	Common::Array<Entity> entities;
+	Common::Array<Thread*> threads;
+	GGPackDecoder pack;
+
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TwpEngine() override;
