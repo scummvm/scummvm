@@ -474,6 +474,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426]
 	GAME("kq2", "2.2 1987-05-07 5.25\"/3.5\"", "b944c4ff18fb8867362dc21cc688a283", 0x2917, GID_KQ2),
 
+	// King's Quest 2 (PC 5.25"/3.5") 2.2 [AGI 2.426] with fanmade Spanish translation
+	// TRAC #14604
+	GAME_LPS("kq2", "2.2 1987-05-07 5.25\"/3.5\"", "252354b72d7062228cfe1b6f8211c761", 543, Common::ES_ESP, 0x2917, GID_KQ2, Common::kPlatformDOS),
+
 	// King's Quest 2 (Russian)
 	GAME_LPS("kq2", "", "35211c574ececebdc723b23e35f99275", 543, Common::RU_RUS, 0x2917, GID_KQ2, Common::kPlatformDOS),
 
