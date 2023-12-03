@@ -579,7 +579,7 @@ void Room141::daemon() {
 
 			default:
 				_elmoMode = 40;
-				Series::series_play("140pe16", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 40);
+				Series::series_play("140pe16", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
@@ -629,7 +629,7 @@ void Room141::daemon() {
 				break;
 
 			default:
-				_elmoShould = 27;
+				_elmoMode = 27;
 				Series::series_play("140pe21", 0x500, 0, kCHANGE_ELMO_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
