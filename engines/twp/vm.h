@@ -22,17 +22,64 @@
 #ifndef TWPVM_H
 #define TWPVM_H
 
-#include "squirrel/squirrel.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
+#include "twp/squirrel/squirrel.h"
+#include "twp/ggpack.h"
 
 namespace Twp {
+class Entity {
+public:
+	HSQOBJECT obj;
+	Graphics::ManagedSurface surface;
+	Common::Rect rect;
+	int x;
+	int y;
+};
+
+class Thread {
+public:
+	Thread();
+	~Thread();
+
+	bool call();
+	bool update(float elapsed);
+	void suspend();
+	void resume();
+	bool isDead();
+	bool isSuspended();
+
+public:
+	uint64 id;
+	Common::String name;
+    bool global;
+	HSQOBJECT obj, threadObj, envObj, closureObj;
+	Common::Array<HSQOBJECT> args;
+	bool paused;
+	float waitTime;
+	int numFrames;
+	bool stopRequest;
+};
+
+class Scene {
+public:
+	Common::Array<Entity> entities;
+	Common::Array<Thread*> threads;
+	GGPackDecoder pack;
+};
+
 class Vm {
 public:
 	Vm();
 	~Vm();
+
+	void setScene(Scene* scene);
 	void exec(const SQChar *code);
 
 private:
 	HSQUIRRELVM v;
+	Scene* _scene;
 };
 } // End of namespace Twp
 

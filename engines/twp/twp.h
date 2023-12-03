@@ -61,11 +61,9 @@ public:
 	Common::String getGameId() const;
 
 	/**
-	 * Gets a random number
+	 * Gets the random source
 	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
+	Common::RandomSource& getRandomSource() { return _randomSource; }
 
 	bool hasFeature(EngineFeature f) const override {
 		return

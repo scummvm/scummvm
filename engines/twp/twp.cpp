@@ -64,7 +64,7 @@ Common::String TwpEngine::getGameId() const {
 Common::Error TwpEngine::run() {
 	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	initGraphics(1280, 720, &fmt);
-	_screen = new Graphics::Screen();
+	_screen = new Graphics::Screen(1280, 720, fmt);
 
 	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
 	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
@@ -74,36 +74,39 @@ Common::Error TwpEngine::run() {
 	Common::File f;
 	f.open("ThimbleweedPark.ggpack1");
 
-	GGPackDecoder pack;
-	pack.open(&f, key);
+	Scene scene;
+	scene.pack.open(&f, key);
 
-	GGPackEntryReader r;
-	r.open(pack, "RaySheet.png");
+	const SQChar *code = R"(
+	function bounceImage() {
+		local image = createObject("RaySheet", ["fstand_head1"]);
+		local x = random(100, 1180);
+		local y = random(100, 620);
 
-	Image::PNGDecoder d;
-	d.loadStream(r);
-	const Graphics::Surface *surface = d.getSurface();
+		do {
+			local steps = random(100, 150);
+			local end_x = random(0, 1180);
+			local end_y = random(0, 620);
 
-	GGPackEntryReader r2;
-	r2.open(pack, "RaySheet.json");
-	Common::Array<char> data(r2.size());
-	r2.read(&data[0], r2.size());
-	Common::String s(&data[0], r2.size());
+			local dx = (end_x - x) / steps;
+			local dy = (end_y - y) / steps;
 
-	Common::JSONValue *jRay = Common::JSON::parse(s.c_str());
-	const Common::JSONObject &jRayObj = jRay->asObject();
-	const Common::JSONObject &jFrames = jRayObj["frames"]->asObject();
-	const Common::JSONObject &jFrame = jFrames["bstand_body1"]->asObject();
-	const Common::JSONObject &jRect = jFrame["frame"]->asObject();
+			for (local i = 0; i < steps; i++) {
+				x += dx;
+				y += dy;
+				objectAt(image, x, y);
+				breaktime(0.01);
+			}
+		} while (1);
+	}
 
-	int x = (int)jRect["x"]->asIntegerNumber();
-	int y = (int)jRect["y"]->asIntegerNumber();
-	int w = (int)jRect["w"]->asIntegerNumber();
-	int h = (int)jRect["h"]->asIntegerNumber();
-	Common::Rect rect(x, y, x + w, y + h);
+	for (local i = 1; i <= 100; i++) {
+		startthread(bounceImage);
+	})";
 
 	Vm v;
-	v.exec("print(\"Hello world \"+random(-2.7,8.6));\ncreateObject(\"RaySheet\",[\"bstand_body1\"]);");
+	v.setScene(&scene);
+	v.exec(code);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -113,21 +116,32 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	_screen->copyRectToSurface(*surface, 1280 / 2, 720 / 2, rect);
-
-	_screen->update();
-
 	// Simple event handling loop
 	Common::Event e;
 	while (!shouldQuit()) {
+		const uint deltaTimeMs = 10;
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 
+		// update threads
+		for (int i = 0; i < scene.threads.size(); i++) {
+			Thread *thread = scene.threads[i];
+			if (thread->update(deltaTimeMs)) {
+				// TODO: delete it
+			}
+		}
+
+		// update screen
+		_screen->clear(0xFF808080);
+		for (int i = 0; i < scene.entities.size(); i++) {
+			Entity &ett = scene.entities[i];
+			_screen->transBlitFrom(ett.surface, ett.rect, Common::Point(ett.x, ett.y));
+		}
 		_screen->update();
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		g_system->delayMillis(10);
+		g_system->delayMillis(deltaTimeMs);
 	}
 
 	return Common::kNoError;
