@@ -259,12 +259,12 @@ ScummVM is an open-source project created, maintained and constantly improved by
       </form>
       <br>
 
-Another way to support us is to buy your games from GOG.com using the ScummVM Affiliate link.
+Another way to support us is to buy your games from ZOOM-Platform.com using the ScummVM Affiliate link.
 
 .. raw:: html
 
-      <a href="https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d">
-            <img src="GOG_button_small.png" width="126" height="46" alt="GOG.com games">
+      <a href="https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53">
+            <img src="ZOOM_button_small.png" width="126" height="46" alt="ZOOM-Platform.com games">
       </a>
 
 
