@@ -327,6 +327,10 @@ void Sections::game_control_cycle() {
 				_cameraShiftAmount -= screen->x1;
 			}
 		}
+
+		// Ensure the screen is updated
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 
 	_GI().cancel_sentence();
