@@ -546,6 +546,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME3("kq4", "2.2 1988-09-27 3.5\"", "kq4dir", "7470b3aeb49d867541fc66cc8454fb7d", 0x3086, GID_KQ4),
 
+	// King's Quest 4 (PC 5.25") 2.2 9/27/88 [AGI 3.002.086]
+	// TRAC #13734
+	GAME3_PS("kq4", "2.2 1988-09-27 5.25\"", "kq4dir", "106219d71140823f6bec1d9747128796", 2786, 0x3086, 0, GID_KQ4, Common::kPlatformDOS),
+
 	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
 
