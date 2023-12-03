@@ -842,7 +842,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq2", "2.0F 1989-01-05 3.5\"", "28add5125484302d213911df60d2aded", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (PC 5.25") 2.0F [AGI 2.936]
-	GAME("sq2", "2.0F 1989-01-05 3.5\"", "bb5a44d0bea416f2cd4c3385eaa21af4", 0x2936, GID_SQ2),
+	GAME("sq2", "2.0F 1989-01-05 5.25\"", "bb5a44d0bea416f2cd4c3385eaa21af4", 0x2936, GID_SQ2),
 
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
