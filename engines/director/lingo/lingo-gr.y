@@ -75,7 +75,6 @@
 #include "director/lingo/lingo-the.h"
 
 extern int yylex();
-extern int yyparse();
 
 using namespace Director;
 

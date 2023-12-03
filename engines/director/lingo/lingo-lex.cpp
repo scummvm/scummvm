@@ -803,7 +803,6 @@ char *yytext;
 
 using namespace Director;
 
-int yyparse();
 static const char *inputbuffer;
 static uint inputlen;
 
