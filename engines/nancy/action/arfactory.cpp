@@ -32,6 +32,7 @@
 
 #include "engines/nancy/action/puzzle/assemblypuzzle.h"
 #include "engines/nancy/action/puzzle/bballpuzzle.h"
+#include "engines/nancy/action/puzzle/bulpuzzle.h"
 #include "engines/nancy/action/puzzle/bombpuzzle.h"
 #include "engines/nancy/action/puzzle/collisionpuzzle.h"
 #include "engines/nancy/action/puzzle/cubepuzzle.h"
@@ -312,6 +313,8 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new PeepholePuzzle();
 	case 217:
 		return new MouseLightPuzzle();
+	case 218:
+		return new BulPuzzle();
 	case 219:
 		return new BBallPuzzle();
 	case 220:
