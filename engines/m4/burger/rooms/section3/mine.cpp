@@ -132,6 +132,8 @@ const Rectangle Mine::FADE_DOWN_INFO[MAX_SCENE_TYPES][4] = {
 		0,   0,   0,   0,      0,   0,   0,   0,      0,   0,   0,   0,    470,   0, 639, 270   // 319
 };
 
+int16 Mine::_entranceDoor;
+
 void MineRoom::clear() {
 	roomNumber = 0;
 	scene_id = 0;
@@ -165,6 +167,10 @@ void Mine::init() {
 	_G(kernel).call_daemon_every_loop = true;
 	_mineCtr = 0;
 
+	const int32 &mineRoomIndex = _G(flags)[kMineRoomIndex];
+	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get this mine room info
+	_presentSceneID = _mineRoomInfo.scene_id;		// Set the scene ID
+
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
 		player_set_commands_allowed(true);
@@ -176,10 +182,6 @@ void Mine::init() {
 		kernel_trigger_dispatch_now(301);
 		break;
 	}
-
-	const int32 &mineRoomIndex = _G(flags)[kMineRoomIndex];
-	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get this mine room info
-	_presentSceneID = _mineRoomInfo.scene_id;		// Set the scene ID
 }
 
 void Mine::daemon() {
@@ -209,8 +211,8 @@ void Mine::daemon() {
 
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		} else if (_G(game).room_id != 305) {
-			if (!_G(flags)[V137]) {
-				_G(flags)[V137] = 1;
+			if (!_G(flags)[kEnteredMine]) {
+				_G(flags)[kEnteredMine] = 1;
 				_G(wilbur_should) = _G(flags)[V111] ? 402 : 401;
 			} else if (!imath_rand_bool(3)) {
 				_G(wilbur_should) = 10002;
