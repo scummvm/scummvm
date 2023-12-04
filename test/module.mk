@@ -36,7 +36,12 @@ ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 endif
 
 ifeq ($(ENABLE_ULTIMA), STATIC_PLUGIN)
-	TESTS += $(srcdir)/test/engines/ultima/*/*/*.h
+ifdef ENABLE_ULTIMA1
+	TESTS += $(srcdir)/test/engines/ultima/shared/*/*.h
+endif
+ifdef ENABLE_ULTIMA8
+	TESTS += $(srcdir)/test/engines/ultima/ultima8/*/*.h
+endif
 	TEST_LIBS += engines/ultima/libultima.a
 endif
 
