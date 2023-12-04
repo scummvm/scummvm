@@ -170,7 +170,7 @@ Room302::Room302() : Section3Room() {
 void Room302::init() {
 	setupDigi();
 
-	if (!_G(flags)[V111]) {
+	if (!_G(flags)[kTrufflesInMine]) {
 		static const char *NAMES[12] = {
 			"302t001a", "302t001b", "302t001c", "302t001d", "302t001e",
 			"302t001f", "302t001g", "302t001h", "302t002", "302t003",
@@ -183,7 +183,7 @@ void Room302::init() {
 	player_set_commands_allowed(false);
 	pal_cycle_init(112, 127, 6, -1, -1);
 
-	if (_G(flags)[V111]) {
+	if (_G(flags)[kTrufflesInMine]) {
 		hotspot_set_active("TRUFFLES", false);
 	} else if (_G(flags)[V112]) {
 		series_load("302tr01");
@@ -350,7 +350,7 @@ void Room302::daemon() {
 
 		case 28:
 			hotspot_set_active("truffles", false);
-			_G(flags)[V111] = 1;
+			_G(flags)[kTrufflesInMine] = 1;
 			_G(wilbur_should) = 8;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			series_play_with_breaks(PLAY8, "302tr01", 0x900, -1, 3);
@@ -507,7 +507,7 @@ void Room302::daemon() {
 			player_set_commands_allowed(true);
 			_G(wilbur_should) = 10002;
 
-			if (_G(flags)[V111]) {
+			if (_G(flags)[kTrufflesInMine]) {
 				_G(flags)[V002] = 1;
 				wilbur_speech("300w059");
 			}

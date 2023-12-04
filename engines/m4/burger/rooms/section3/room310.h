@@ -42,7 +42,7 @@ private:
 	machine *_series2 = nullptr;
 	noWalkRect *_walk1 = nullptr;
 	int _val1 = 0;
-	int _val2 = 0;
+	int _trufflesShould = 0;
 
 protected:
 	const char *getDigi() override {

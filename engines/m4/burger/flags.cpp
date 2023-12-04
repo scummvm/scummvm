@@ -256,7 +256,7 @@ void Flags::reset3() {
 	}
 
 	(*this)[V107] = 0;
-	(*this)[V111] = 0;
+	(*this)[kTrufflesInMine] = 0;
 	inv_move_object("BURGER MORSEL", NOWHERE);
 
 	(*this)[V117] = 0;
@@ -276,7 +276,7 @@ void Flags::reset3() {
 
 	(*this)[V134] = 0;
 	(*this)[V140] = 0;
-	(*this)[V144] = 0;
+	(*this)[kTrufflesRanAway] = 0;
 	(*this)[V145] = 0;
 }
 

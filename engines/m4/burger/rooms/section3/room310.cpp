@@ -26,6 +26,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_TRUFFLES_ANIMATION = 3
+};
+
 const char *Room310::SAID[][4] = {
 	{ "TUNNEL",   "310w002", "310w003",  nullptr   },
 	{ "PROBE",    "310w004",  nullptr,   nullptr   },
@@ -55,23 +59,28 @@ const seriesPlayBreak Room310::PLAY2[] = {
 	{ 10, 16, nullptr,    2,   0,    -1,    0, 0, nullptr,  0 },
 	{ 17, 21, nullptr,    2,   0,    -1,    0, 0, nullptr,  0 },
 	{  0,  0, nullptr,    2,   0,    -1, 2048, 0, nullptr,  0 },
+	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room310::PLAY3[] = {
 	{ 15, 29, nullptr, 2, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room310::PLAY4[] = {
 	{ 6, -1, nullptr, 1, 0, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room310::PLAY5[] = {
 	{ 30, 36, nullptr,   2,   0, -1, 0, 0, nullptr, 0 },
 	{ 37, 51, "300_002", 2, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room310::PLAY6[] = {
 	{ 52, 56, "300_001", 2, 255, -1, 0, 0, nullptr, 0 },
+	PLAY_BREAK_END
 };
 
 int32 Room310::_state1;
@@ -90,10 +99,10 @@ void Room310::init() {
 	_val1 = 7;
 	kernel_trigger_dispatch_now(1);
 
-	if (!_G(flags)[V144] && _G(flags)[V111]) {
+	if (!_G(flags)[kTrufflesRanAway] && _G(flags)[kTrufflesInMine]) {
 		_walk1 = intr_add_no_walk_rect(360, 265, 515, 293, 359, 294);
-		_val2 = 12;
-		kernel_trigger_dispatch_now(3);
+		_trufflesShould = 12;
+		kernel_trigger_dispatch_now(kCHANGE_TRUFFLES_ANIMATION);
 	} else {
 		hotspot_set_active("TRUFFLES", false);
 	}
@@ -155,19 +164,19 @@ void Room310::daemon() {
 
 	case 2:
 		_series1.terminate();
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_TRUFFLES_ANIMATION);
 		break;
 
-	case 3:
-		switch (_val2) {
+	case kCHANGE_TRUFFLES_ANIMATION:
+		switch (_trufflesShould) {
 		case 12:
-			_series1.show("310tr01", 0xb00);
-			_val2 = (imath_ranged_rand(1, 4) == 1) ? 13 : 12;
+			_series1.show("310tr01", 0xb00, 0, -1, -1, 18);
+			_trufflesShould = (imath_ranged_rand(1, 4) == 1) ? 13 : 12;
 			kernel_timing_trigger(30, 2);
 			break;
 
 		case 13:
-			_val2 = 12;
+			_trufflesShould = 12;
 			_val1 = 8;
 			series_play_with_breaks(PLAY1, "310tr01", 0xb00, 3, 3);
 			_state1 = imath_ranged_rand(1, 4);
@@ -177,16 +186,23 @@ void Room310::daemon() {
 			term_message("Truffles goes to snarl at Wilbur!");
 			_G(flags)[V145] = 1;
 			_G(wilbur_should) = 4;
-			_val2 = 15;
+			_trufflesShould = 15;
 			series_play_with_breaks(PLAY2, "310tr02", 0xb00, 3, 3);
 			_state1 = imath_ranged_rand(1, 4);
 			break;
 
 		case 15:
 			player_set_commands_allowed(true);
-			wilbur_speech(_G(flags)[V142] ? "310w007" : "310w006");
-			_val2 = 12;
-			kernel_trigger_dispatch_now(12);
+
+			if (!_G(flags)[V142]) {
+				_G(flags)[V142] = 1;
+				wilbur_speech("310w006");
+			} else {
+				wilbur_speech("310w007");
+			}
+
+			_trufflesShould = 12;
+			kernel_trigger_dispatch_now(kCHANGE_TRUFFLES_ANIMATION);
 			break;
 
 		case 16:
@@ -194,7 +210,7 @@ void Room310::daemon() {
 			hotspot_set_active("TRUFFLES", false);
 			hotspot_set_active("GROUND ", false);
 			intr_remove_no_walk_rect(_walk1);
-			series_play("310tr04", 0xb00);
+			series_play("310tr03", 0xb00);
 			break;
 
 		default:
@@ -203,7 +219,7 @@ void Room310::daemon() {
 		break;
 
 	case 10008:
-		_val2 = 16;
+		_trufflesShould = 16;
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:
@@ -275,11 +291,11 @@ void Room310::daemon() {
 void Room310::pre_parser() {
 	Mine::pre_parser();
 
-	if (player_said("GEAR", "PROBE") && (!_G(flags)[V111] || _G(flags)[V144] == 1)) {
+	if (player_said("GEAR", "PROBE") && (!_G(flags)[kTrufflesInMine] || _G(flags)[kTrufflesRanAway] == 1)) {
 		_G(wilbur_should) = 6;
 		player_hotspot_walk_override(293, 288, 3, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
-	} else if (!_G(flags)[V144]) {
+	} else if (!_G(flags)[kTrufflesRanAway]) {
 		HotSpotRec *hotspot = hotspot_which(_G(click_x), _G(click_y));
 		assert(hotspot);
 
@@ -300,12 +316,12 @@ void Room310::parser() {
 		// Already handled
 	} else if (player_said("GEAR", "PROBE") || player_said("TAKE", "PROBE")) {
 		term_message("truffles in mine %d    truffles ran away %d",
-			_G(flags)[V111], _G(flags)[V144]);
+			_G(flags)[kTrufflesInMine], _G(flags)[kTrufflesRanAway]);
 
-		if (_G(flags)[V111] == 1 && !_G(flags)[V144]) {
+		if (_G(flags)[kTrufflesInMine] == 1 && !_G(flags)[kTrufflesRanAway]) {
 			term_message("Wilbur pissed off truffles!");
 			player_set_commands_allowed(false);
-			_val2 = 14;
+			_trufflesShould = 14;
 		}
 	} else if (player_said("LOOK AT", "TRUFFLES")) {
 		_G(wilbur_should) = 5;
@@ -313,6 +329,8 @@ void Room310::parser() {
 	} else {
 		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms

@@ -632,7 +632,7 @@ void BurgerEngine::testDone3() {
 	_G(flags)[V108] = 1;
 	_G(flags)[V109] = 1;
 	_G(flags)[V110] = 1;
-	_G(flags)[V111] = 1;
+	_G(flags)[kTrufflesInMine] = 1;
 	_G(flags)[V112] = 1;
 	_G(flags)[V115] = 5;
 	_G(flags)[V116] = 1;
@@ -648,7 +648,7 @@ void BurgerEngine::testDone3() {
 	_G(flags)[V130] = 1;
 	_G(flags)[V134] = 1;
 	_G(flags)[V140] = 1;
-	_G(flags)[V144] = 1;
+	_G(flags)[kTrufflesRanAway] = 1;
 	_G(flags)[V145] = 1;
 }
 
