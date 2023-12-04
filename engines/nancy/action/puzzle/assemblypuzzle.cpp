@@ -39,13 +39,16 @@ void AssemblyPuzzle::init() {
 
 	for (uint i = 0; i < _pieces.size(); ++i) {
 		Piece &piece = _pieces[i];
-		piece.curRotation = 0;
+		piece.curRotation = piece.placed ? piece.correctRotation : 0;
 		piece._drawSurface.create(_image, piece.srcRects[piece.curRotation]);
 		piece.setVisible(true);
 		piece.setTransparent(true);
-		piece.moveTo(piece.placed ? piece.destRects[0] : piece.startRect);
+		piece.moveTo(piece.placed ? piece.destRects[piece.curRotation] : piece.startRect);
 		piece.setZ(_z + i + _pieces.size());
 	}
+
+	rotateBase(true);
+	rotateBase(false);
 }
 
 void AssemblyPuzzle::registerGraphics() {
@@ -55,6 +58,9 @@ void AssemblyPuzzle::registerGraphics() {
 }
 
 void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
+	_puzzleState = (AssemblyPuzzleData *)NancySceneState.getPuzzleData(AssemblyPuzzleData::getTag());
+	assert(_puzzleState);
+
 	readFilename(stream, _imageName);
 
 	uint16 numPieces = stream.readUint16LE();
@@ -74,6 +80,10 @@ void AssemblyPuzzle::readData(Common::SeekableReadStream &stream) {
 		piece.correctRotation = stream.readUint16LE();
 		piece.layer = stream.readUint16LE();
 		piece.placed = stream.readUint16LE();
+
+		if (_puzzleState->solvedPuzzle) {
+			piece.placed = true;
+		}
 	}
 	stream.skip((12 - numPieces) * 150);
 
@@ -137,6 +147,7 @@ void AssemblyPuzzle::execute() {
 		}
 
 		if (_completed) {
+			_puzzleState->solvedPuzzle = true;
 			NancySceneState.changeScene(_solveScene._sceneChange);
 		} else {
 			_exitScene.execute();

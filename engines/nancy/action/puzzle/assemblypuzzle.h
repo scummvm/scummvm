@@ -26,6 +26,9 @@
 #include "engines/nancy/misc/mousefollow.h"
 
 namespace Nancy {
+
+class AssemblyPuzzleData;
+
 namespace Action {
 
 // Minigame where the player is provided with the broken pieces of something
@@ -91,6 +94,8 @@ protected:
 	int _curRotation = 0;
 	uint _layersAssembled = 0;
 	bool _completed = false;
+	
+	AssemblyPuzzleData *_puzzleState = nullptr;
 };
 
 } // End of namespace Action

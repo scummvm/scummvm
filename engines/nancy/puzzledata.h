@@ -93,6 +93,20 @@ struct SoundEqualizerPuzzleData : public PuzzleData {
 	Common::Array<byte> sliderValues;
 };
 
+// Contains a single bool indicating whether the puzzle was solved
+struct SimplePuzzleData : public PuzzleData {
+	SimplePuzzleData();
+	virtual ~SimplePuzzleData() {}
+
+	virtual void synchronize(Common::Serializer &ser);
+
+	bool solvedPuzzle;
+};
+
+struct AssemblyPuzzleData : public SimplePuzzleData {
+	static constexpr uint32 getTag() { return MKTAG('A', 'S', 'M', 'B'); }
+};
+
 struct JournalData : public PuzzleData {
 	JournalData() {}
 	virtual ~JournalData() {}
