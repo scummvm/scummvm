@@ -103,7 +103,7 @@ void Section3::daemon() {
 		switch (_G(wilbur_should)) {
 		case 3001:
 			player_update_info();
-			_G(flags)[V124] = 1;
+			_G(flags)[kDrunkCarrotJuice] = 1;
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			_G(wilbur_should) = 3002;

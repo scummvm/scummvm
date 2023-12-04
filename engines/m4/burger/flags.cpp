@@ -260,13 +260,13 @@ void Flags::reset3() {
 	inv_move_object("BURGER MORSEL", NOWHERE);
 
 	(*this)[V117] = 0;
-	(*this)[V124] = 0;
+	(*this)[kDrunkCarrotJuice] = 0;
 	(*this)[V118] = 3001;
 	(*this)[V119] = 0;
 	(*this)[V120] = 0;
 	(*this)[V121] = 3001;
 	(*this)[V122] = 0;
-	(*this)[V124] = 0;
+	(*this)[kDrunkCarrotJuice] = 0;
 
 	inv_move_object("JUG", 303);
 	inv_move_object("DISTILLED CARROT JUICE", NOWHERE);
