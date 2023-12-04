@@ -94,6 +94,16 @@ bool Trade::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+void Trade::abortFunc() {
+	g_events->close();
+}
+
+void Trade::enterFunc(const Common::String &str) {
+	Trade *view = static_cast<Trade *>(g_events->focusedView());
+	int amount = atoi(str.c_str());
+	view->amountEntered(amount);
+}
+
 void Trade::setMode(TradeMode mode) {
 	_mode = mode;
 
@@ -111,16 +121,7 @@ void Trade::setMode(TradeMode mode) {
 	default:
 		// How much
 		draw();
-		_textEntry.display(70, 157, 5, true,
-			[]() {
-				g_events->close();
-			},
-			[](const Common::String &str) {
-				Trade *view = static_cast<Trade *>(g_events->focusedView());
-				int amount = atoi(str.c_str());
-				view->amountEntered(amount);
-			}
-		);
+		_textEntry.display(70, 157, 5, true, abortFunc, enterFunc);
 	}
 }
 

@@ -550,6 +550,18 @@ bool CreateCharacters::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+void CreateCharacters::abortFunc() {
+	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
+	view->setState(SELECT_CLASS);
+}
+
+void CreateCharacters::enterFunc(const Common::String &name) {
+	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
+
+	view->_newChar._name = name;
+	view->setState(SAVE_PROMPT);
+}
+
 void CreateCharacters::setState(State state) {
 	_state = state;
 
@@ -569,20 +581,7 @@ void CreateCharacters::setState(State state) {
 
 	if (_state == SELECT_NAME) {
 		draw();
-		_textEntry.display(160, 110, 15, false,
-			[]() {
-				CreateCharacters *view = static_cast<CreateCharacters *>(
-					g_events->focusedView());
-				view->setState(SELECT_CLASS);
-			},
-			[](const Common::String &name) {
-				CreateCharacters *view = static_cast<CreateCharacters *>(
-					g_events->focusedView());
-
-				view->_newChar._name = name;
-				view->setState(SAVE_PROMPT);
-			}
-		);
+		_textEntry.display(160, 110, 15, false, abortFunc, enterFunc);
 	} else {
 		redraw();
 	}

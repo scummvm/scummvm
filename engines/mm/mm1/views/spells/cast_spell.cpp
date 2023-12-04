@@ -79,6 +79,21 @@ void CastSpell::setState(State state) {
 	draw();
 }
 
+void CastSpell::abortFunc() {
+	CastSpell *view = (CastSpell *)g_events->focusedView();
+	view->close();
+}
+
+void CastSpell::enterSpellLevelFunc(const Common::String &text) {
+	CastSpell *view = (CastSpell *)g_events->focusedView();
+	view->spellLevelEntered(atoi(text.c_str()));
+}
+
+void CastSpell::enterSpellNumberFunc(const Common::String &text) {
+	CastSpell *view = (CastSpell *)g_events->focusedView();
+	view->spellNumberEntered(atoi(text.c_str()));
+}
+
 void CastSpell::draw() {
 	clearSurface();
 	if (_state == NONE)
@@ -100,34 +115,12 @@ void CastSpell::draw() {
 	switch (_state) {
 	case SELECT_SPELL:
 		_state = NONE;
-		_textEntry.display(27, 20, 1, true,
-			[]() {
-				CastSpell *view =
-					(CastSpell *)g_events->focusedView();
-				view->close();
-			},
-			[](const Common::String &text) {
-				CastSpell *view =
-					(CastSpell *)g_events->focusedView();
-				view->spellLevelEntered(atoi(text.c_str()));
-			}
-			);
+		_textEntry.display(27, 20, 1, true, abortFunc, enterSpellLevelFunc);
 		break;
 
 	case SELECT_NUMBER:
 		_state = NONE;
-		_textEntry.display(27, 21, 1, true,
-			[]() {
-				CastSpell *view =
-					(CastSpell *)g_events->focusedView();
-				view->close();
-			},
-			[](const Common::String &text) {
-				CastSpell *view =
-					(CastSpell *)g_events->focusedView();
-				view->spellNumberEntered(atoi(text.c_str()));
-			}
-			);
+		_textEntry.display(27, 21, 1, true, abortFunc, enterSpellNumberFunc);
 		break;
 
 	case SELECT_CHAR:

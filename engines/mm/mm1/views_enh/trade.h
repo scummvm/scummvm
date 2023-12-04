@@ -36,6 +36,8 @@ private:
 	TradeMode _mode = TRADE_OPTIONS;
 	Shared::Xeen::SpriteResource _btnIcons;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &str);
 
 	/**
 	  * Set the display mode

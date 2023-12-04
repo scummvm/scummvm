@@ -32,6 +32,16 @@ InteractionQuery::InteractionQuery(const Common::String &name,
 		_maxChars(maxChars) {
 }
 
+void InteractionQuery::abortFunc() {
+	auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
+	view->answerEntry("");
+}
+
+void InteractionQuery::enterFunc(const Common::String &answer) {
+	auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
+	view->answerEntry(answer);
+}
+
 bool InteractionQuery::msgFocus(const FocusMessage &msg) {
 	Interaction::msgFocus(msg);
 	_showEntry = dynamic_cast<TextEntry *>(msg._priorView) == nullptr;
@@ -47,16 +57,7 @@ void InteractionQuery::draw() {
 	int xp = 30; // (_innerBounds.width() / 2) - (_maxChars * 8 / 2);
 	int yp = (8 + _lines.size()) * 9 - 5;
 
-	_textEntry.display(xp, yp, _maxChars, false,
-		[]() {
-			auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
-			view->answerEntry("");
-		},
-		[](const Common::String &answer) {
-			auto *view = static_cast<InteractionQuery *>(g_events->focusedView());
-			view->answerEntry(answer);
-		}
-	);
+	_textEntry.display(xp, yp, _maxChars, false, abortFunc, enterFunc);
 }
 
 void InteractionQuery::answerEntry(const Common::String &answer) {
