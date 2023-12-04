@@ -399,7 +399,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 namespace Agi {
 
-bool AgiBase::canLoadGameStateCurrently() {
+bool AgiBase::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!(getGameType() == GType_PreAGI)) {
 		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
 			if (!_noSaveLoadAllowed) {
@@ -417,7 +417,7 @@ bool AgiBase::canLoadGameStateCurrently() {
 	return false;
 }
 
-bool AgiBase::canSaveGameStateCurrently() {
+bool AgiBase::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (getGameID() == GID_BC) // Technically in Black Cauldron we may save anytime
 		return true;
 

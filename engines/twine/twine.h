@@ -238,8 +238,8 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;

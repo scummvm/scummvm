@@ -33,11 +33,11 @@ Common::String EfhEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%03d.SAV", slot);
 }
 
-bool EfhEngine::canLoadGameStateCurrently() {
+bool EfhEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool EfhEngine::canSaveGameStateCurrently() {
+bool EfhEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _saveAuthorized;
 }
 

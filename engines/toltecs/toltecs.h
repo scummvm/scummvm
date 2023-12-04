@@ -211,8 +211,8 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	void savegame(const char *filename, const char *description);

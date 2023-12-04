@@ -251,11 +251,11 @@ Common::Error DreamWebEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-bool DreamWebEngine::canLoadGameStateCurrently() {
+bool DreamWebEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return false;
 }
 
-bool DreamWebEngine::canSaveGameStateCurrently() {
+bool DreamWebEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return false;
 }
 

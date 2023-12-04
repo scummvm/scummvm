@@ -357,7 +357,7 @@ bool StarkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool StarkEngine::canLoadGameStateCurrently() {
+bool StarkEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
@@ -424,7 +424,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool StarkEngine::canSaveGameStateCurrently() {
+bool StarkEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Disallow saving when there is no level loaded or when a script is running
 	// or when the save & load menu is currently displayed
 	return StarkGlobal->getLevel() && StarkGlobal->getCurrent() && StarkUserInterface->isInteractive() && !StarkUserInterface->isInSaveLoadMenuScreen();

@@ -575,7 +575,7 @@ Common::Error Sword2Engine::saveGameState(int slot, const Common::String &desc, 
 		return Common::kUnknownError;
 }
 
-bool Sword2Engine::canSaveGameStateCurrently() {
+bool Sword2Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	bool canSave = true;
 
 	// No save if dead
@@ -605,7 +605,7 @@ Common::Error Sword2Engine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool Sword2Engine::canLoadGameStateCurrently() {
+bool Sword2Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	bool canLoad = true;
 
 	// No load if mouse is disabled

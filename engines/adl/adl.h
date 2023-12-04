@@ -263,7 +263,7 @@ protected:
 	// Engine
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override;
 	int getAutosaveSlot() const override { return 15; }
 
@@ -466,7 +466,7 @@ private:
 	// Engine
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	// Text input
 	byte convertKey(uint16 ascii) const;

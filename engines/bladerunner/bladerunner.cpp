@@ -267,7 +267,7 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 		f == kSupportsSavingDuringRuntime;
 }
 
-bool BladeRunnerEngine::canLoadGameStateCurrently() {
+bool BladeRunnerEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&
@@ -307,7 +307,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool BladeRunnerEngine::canSaveGameStateCurrently() {
+bool BladeRunnerEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&

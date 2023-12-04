@@ -325,7 +325,7 @@ void AvalancheEngine::synchronize(Common::Serializer &sz) {
 
 }
 
-bool AvalancheEngine::canSaveGameStateCurrently() {
+bool AvalancheEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_animationsEnabled && _alive);
 }
 
@@ -366,7 +366,7 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	return true;
 }
 
-bool AvalancheEngine::canLoadGameStateCurrently() {
+bool AvalancheEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_animationsEnabled);
 }
 

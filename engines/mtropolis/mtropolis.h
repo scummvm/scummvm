@@ -73,7 +73,7 @@ public:
 
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave) override;
 	bool canSaveAutosaveCurrently() override;
-	bool canSaveGameStateCurrently() override;	
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;	
 
 public:
 	void handleEvents();

@@ -279,8 +279,8 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 

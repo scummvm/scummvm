@@ -138,7 +138,7 @@ bool MM1Engine::setupEnhanced() {
 	return true;
 }
 
-bool MM1Engine::canSaveGameStateCurrently() {
+bool MM1Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!g_events)
 		return false;
 
@@ -147,7 +147,7 @@ bool MM1Engine::canSaveGameStateCurrently() {
 		dynamic_cast<ViewsEnh::Game *>(view) != nullptr;
 }
 
-bool MM1Engine::canLoadGameStateCurrently() {
+bool MM1Engine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!g_events)
 		return false;
 

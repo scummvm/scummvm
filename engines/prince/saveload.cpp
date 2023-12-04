@@ -113,7 +113,7 @@ WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in,
 	return true;
 }
 
-bool PrinceEngine::canSaveGameStateCurrently() {
+bool PrinceEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (_mouseFlag && _mouseFlag != 3) {
 		if (_mainHero->_visible) {
 			// 29 - Basement
@@ -128,7 +128,7 @@ bool PrinceEngine::canSaveGameStateCurrently() {
 	return false;
 }
 
-bool PrinceEngine::canLoadGameStateCurrently() {
+bool PrinceEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (_mouseFlag && _mouseFlag != 3) {
 		if (_mainHero->_visible) {
 			// 29 - Basement

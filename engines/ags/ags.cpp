@@ -288,12 +288,12 @@ Common::FSNode AGSEngine::getGameFolder() {
 	return Common::FSNode(ConfMan.get("path"));
 }
 
-bool AGSEngine::canLoadGameStateCurrently() {
+bool AGSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
 	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }
 
-bool AGSEngine::canSaveGameStateCurrently() {
+bool AGSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
 	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }

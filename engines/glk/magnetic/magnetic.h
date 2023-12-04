@@ -1385,14 +1385,14 @@ public:
 	/**
 	 * The Magnetic engine currently doesn't support loading savegames from the GMM
 	 */
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return false;
 	}
 
 	/**
 	 * The Magnetic engine currently doesn't support saving games from the GMM
 	 */
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return false;
 	}
 

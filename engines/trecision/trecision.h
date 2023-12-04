@@ -169,8 +169,8 @@ public:
 	bool isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
 	bool isAmiga() const { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
-	bool canSaveGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return canPlayerInteract() && _curRoom != kRoomIntro; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return canPlayerInteract() && _curRoom != kRoomIntro; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool syncGameStream(Common::Serializer &ser);

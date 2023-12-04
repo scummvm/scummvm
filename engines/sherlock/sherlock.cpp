@@ -289,11 +289,11 @@ void SherlockEngine::synchronize(Serializer &s) {
 		s.syncAsByte(_flags[idx]);
 }
 
-bool SherlockEngine::canLoadGameStateCurrently() {
+bool SherlockEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canLoadSave;
 }
 
-bool SherlockEngine::canSaveGameStateCurrently() {
+bool SherlockEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _canLoadSave;
 }
 

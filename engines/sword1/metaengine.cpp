@@ -191,7 +191,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 	return Common::kNoError;    // TODO: return success/failure
 }
 
-bool SwordEngine::canLoadGameStateCurrently() {
+bool SwordEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (mouseIsActive() && !_control->isPanelShown()); // Disable GMM loading when game panel is shown
 }
 
@@ -201,7 +201,7 @@ Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc, b
 	return Common::kNoError;    // TODO: return success/failure
 }
 
-bool SwordEngine::canSaveGameStateCurrently() {
+bool SwordEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (mouseIsActive() && !_control->isPanelShown() && Logic::_scriptVars[SCREEN] != 91);
 }
 

@@ -753,7 +753,7 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 	return foundMatch;
 }
 
-bool MohawkEngine_Riven::canLoadGameStateCurrently() {
+bool MohawkEngine_Riven::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (isGameVariant(GF_DEMO)) {
 		return false;
 	}
@@ -765,7 +765,7 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool MohawkEngine_Riven::canSaveGameStateCurrently() {
+bool MohawkEngine_Riven::canSaveGameStateCurrently(Common::U32String *msg) {
 	return canLoadGameStateCurrently() && isGameStarted();
 }
 

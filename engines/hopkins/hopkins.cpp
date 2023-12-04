@@ -77,14 +77,14 @@ HopkinsEngine::~HopkinsEngine() {
 /**
  * Returns true if it is currently okay to restore a game
  */
-bool HopkinsEngine::canLoadGameStateCurrently() {
+bool HopkinsEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
-bool HopkinsEngine::canSaveGameStateCurrently() {
+bool HopkinsEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl
 		&& _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
 }
