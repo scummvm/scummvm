@@ -121,6 +121,7 @@ public:
 	virtual ~Mine() {}
 
 	void preload() override;
+	void init() override;
 	void daemon() override;
 	void pre_parser() override;
 	void parser() override;

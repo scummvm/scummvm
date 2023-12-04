@@ -187,7 +187,7 @@ void Room305::daemon() {
 			break;
 
 		case 108:
-			mine_travel_link(FRONT);
+			mine_travel_link(BACK);
 			break;
 
 		default:
@@ -220,7 +220,7 @@ void Room305::parser() {
 	} else if (player_said("ENTER", "MINE") || player_said("ENTER", "DARKNESS")) {
 		player_set_commands_allowed(false);
 
-		if (!_G(flags)[V124]) {
+		if (!_G(flags)[kDrunkCarrotJuice]) {
 			player_set_commands_allowed(true);
 			wilbur_speech("305w004");
 		} else {
@@ -229,7 +229,7 @@ void Room305::parser() {
 			if (_G(flags)[V137]) {
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
-				wilbur_speech("305w005");
+				wilbur_speech("305w005", kCHANGE_WILBUR_ANIMATION);
 			}
 		}
 	} else if (player_said("DISTILLED CARROT JUICE", "GENERATOR")) {

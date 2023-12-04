@@ -247,7 +247,7 @@ void BurgerEngine::global_daemon() {
 			player_update_info(_G(my_walker), &_G(player_info));
 			ws_hide_walker(_G(my_walker));
 			_G(wilbur_should) = 10012;
-			series_play_with_breaks(PLAY_BREAKS2, "999wbj", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
+			series_play_with_breaks(PLAY_BREAKS2, "999wcj", _G(player_info).depth, kCHANGE_WILBUR_ANIMATION, 3, 6,
 				_G(player_info).scale, _G(player_info).x, _G(player_info).y);
 			break;
 		case 10005:
@@ -643,7 +643,7 @@ void BurgerEngine::testDone3() {
 	_G(flags)[V121] = 3003;
 	_G(flags)[V122] = 1;
 	_G(flags)[V123] = 1;
-	_G(flags)[V124] = 1;
+	_G(flags)[kDrunkCarrotJuice] = 1;
 	_G(flags)[V129] = 1;
 	_G(flags)[V130] = 1;
 	_G(flags)[V134] = 1;

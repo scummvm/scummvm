@@ -152,18 +152,47 @@ void Mine::preload() {
 	_G(player).shadow_type = 0;
 }
 
-void Mine::daemon() {
-	switch (_G(kernel).trigger) {
-	case 301: {
-		const EntranceInfo &ei = ENTRANCE_INFO[_presentSceneID][_entranceDoor];
-		ws_demand_location(ei.offscreen_x, ei.offscreen_y, ei.enter_facing);
+void Mine::init() {
+	setupDigi();
+
+	if (_G(flags)[V111]) {
+		for (int i = 0; i < 6; ++i)
+			digi_preload(Common::String::format("300t001%c", 'a' + i));
+	}
+
+	_fade_down_rect_active = false;
+	set_palette_brightness(30);
+	_G(kernel).call_daemon_every_loop = true;
+	_mineCtr = 0;
+
+	switch (_G(game).previous_room) {
+	case KERNEL_RESTORING_GAME:
+		player_set_commands_allowed(true);
+		break;
+
+	default:
+		player_set_commands_allowed(false);
+		ws_demand_location(-50, 200);
+		kernel_trigger_dispatch_now(301);
 		break;
 	}
 
+	const int32 &mineRoomIndex = _G(flags)[kMineRoomIndex];
+	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get this mine room info
+	_presentSceneID = _mineRoomInfo.scene_id;		// Set the scene ID
+}
+
+void Mine::daemon() {
+	switch (_G(kernel).trigger) {
+	case 301:
 	case 302: {
-		const EntranceInfo &ei = ENTRANCE_INFO[_mineRoomInfo.roomNumber][_entranceDoor];
-		ws_demand_location(ei.offscreen_x, ei.offscreen_y, ei.enter_facing);
+		const EntranceInfo &ei = ENTRANCE_INFO[_presentSceneID][_entranceDoor];
+
+		if (_G(kernel).trigger == 301)
+			ws_demand_location(ei.offscreen_x, ei.offscreen_y, ei.enter_facing);
+
 		player_set_commands_allowed(false);
+		ws_walk(ei.home_x, ei.home_y, nullptr, 303, ei.home_facing);
 		break;
 	}
 
@@ -329,27 +358,27 @@ void Mine::daemon() {
 			}
 			break;
 
-		case kCALLED_EACH_LOOP:
-			if (_fade_down_rect_active) {
-				player_update_info();
-
-				if (_G(player_info).x >= _fade_down_rect.x1 &&
-						_G(player_info).x <= _fade_down_rect.x2 &&
-						_G(player_info).y >= _fade_down_rect.y1 &&
-						_G(player_info).y <= _fade_down_rect.y2) {
-					if (player_commands_allowed()) {
-						pal_fade_set_start(100);
-						pal_fade_init(_G(kernel).first_fade, 255, 0, 40, -1);
-					}
-
-					player_set_commands_allowed(false);
-				}
-			}
-			break;
-
 		default:
 			_G(kernel).continue_handling_trigger = true;
 			break;
+		}
+		break;
+
+	case kCALLED_EACH_LOOP:
+		if (_fade_down_rect_active) {
+			player_update_info();
+
+			if (_G(player_info).x >= _fade_down_rect.x1 &&
+				_G(player_info).x <= _fade_down_rect.x2 &&
+				_G(player_info).y >= _fade_down_rect.y1 &&
+				_G(player_info).y <= _fade_down_rect.y2) {
+				if (player_commands_allowed()) {
+					pal_fade_set_start(100);
+					pal_fade_init(_G(kernel).first_fade, 255, 0, 40, -1);
+				}
+
+				player_set_commands_allowed(false);
+			}
 		}
 		break;
 
@@ -361,6 +390,7 @@ void Mine::daemon() {
 
 void Mine::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
+	_fade_down_rect_active = false;
 
 	if (player_said("tunnel") && player_said_any("walk through", "GEAR")) {
 		if (_G(click_y) > 300)
