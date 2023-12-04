@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/savestate.h"
 
@@ -95,7 +96,14 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 }
 
 bool PetkaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	if (isDemo() || !_qsystem)
+	if (isDemo()) {
+		if (msg)
+			*msg = _("This game does not support saving");
+
+		return false;
+	}
+
+	if (!_qsystem)
 		return false;
 
 	Interface *panel = _qsystem->_panelInterface.get();
@@ -108,7 +116,14 @@ bool PetkaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 }
 
 bool PetkaEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return !isDemo() && _qsystem;
+	if (isDemo()) {
+		if (msg)
+			*msg = _("This game does not support loading");
+
+		return false;
+	}
+
+	return _qsystem;
 }
 
 int PetkaEngine::getSaveSlot() {
@@ -149,4 +164,3 @@ Common::String generateSaveName(int slot, const char *gameId) {
 }
 
 }
-
