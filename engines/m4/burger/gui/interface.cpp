@@ -84,7 +84,7 @@ void Interface::show() {
 void Interface::setup() {
 	_interfaceBox = new InterfaceBox(RectClass(0, 0, SCREEN_WIDTH - 1, 105));
 	_inventory = new GUI::Inventory(RectClass(188, 22, 539, 97), _sprite, 9, 1, 39, 75, 3);
-	_textField = new TextField(200, 1, 450, 21);
+	_textField = new TextField(200, 1, 470, 21);
 	_btnTake = new ButtonClass(RectClass(60, 35, 92, 66), "take", 4, 3, 3, 4, 5, INTERFACE_SPRITES);
 	_btnManipulate = new ButtonClass(RectClass(105, 35, 137, 66), "manipulate", 7, 6, 6, 7, 8, INTERFACE_SPRITES);
 	_btnHandle = new ButtonClass(RectClass(15, 35, 47, 66), "handle", 5, 0, 0, 1, 2, INTERFACE_SPRITES);
