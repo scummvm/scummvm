@@ -141,7 +141,7 @@ void Room303::init() {
 
 	if (_G(flags)[V117]) {
 		_series2 = series_load("303ft_on");
-		_series3 = series_play("303ft_on", 0xd00);
+		_series3 = series_play("303ft_on", 0xd00, 0, -1, 0, -1);
 		_val3 = 2;
 	} else {
 		_series2 = series_load("303ft");
@@ -643,10 +643,10 @@ void Room303::pre_parser() {
 		player_hotspot_walk_override(409, 312, 3, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
 	} else {
-		if (player_said("FRONT YARD") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
+		if (player_said("FRONT YARD") && !player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
 			player_set_facing_hotspot();
 
-		if (player_said("FRONT YARD ") && player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
+		if (player_said("FRONT YARD ") && !player_said_any("LOOK AT", "WALK TO", "GEAR", "ENTER"))
 			player_set_facing_hotspot();
 	}
 }
