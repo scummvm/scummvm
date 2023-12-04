@@ -157,7 +157,7 @@ void Mine::preload() {
 void Mine::init() {
 	setupDigi();
 
-	if (_G(flags)[V111]) {
+	if (_G(flags)[kTrufflesInMine]) {
 		for (int i = 0; i < 6; ++i)
 			digi_preload(Common::String::format("300t001%c", 'a' + i));
 	}
@@ -213,10 +213,10 @@ void Mine::daemon() {
 		} else if (_G(game).room_id != 305) {
 			if (!_G(flags)[kEnteredMine]) {
 				_G(flags)[kEnteredMine] = 1;
-				_G(wilbur_should) = _G(flags)[V111] ? 402 : 401;
+				_G(wilbur_should) = _G(flags)[kTrufflesInMine] ? 402 : 401;
 			} else if (!imath_rand_bool(3)) {
 				_G(wilbur_should) = 10002;
-			} else if (!_G(flags)[V111]) {
+			} else if (!_G(flags)[kTrufflesInMine]) {
 				_G(wilbur_should) = 404;
 			} else {
 				_G(wilbur_should) = inv_player_has("WHISTLE") ? 406 : 405;
@@ -244,7 +244,7 @@ void Mine::daemon() {
 			break;
 
 		default:
-			if (_G(flags)[V111] && !_G(flags)[V144])
+			if (_G(flags)[kTrufflesInMine] && !_G(flags)[kTrufflesRanAway])
 				kernel_timing_trigger(15, 305);
 			break;
 		}
@@ -306,22 +306,22 @@ void Mine::daemon() {
 
 			switch (_G(game).room_id) {
 			case 305:
-				if (_G(flags)[V111]) {
+				if (_G(flags)[kTrufflesInMine]) {
 					_G(flags)[V002] = 1;
 					wilbur_speech("300w060");
 				}
 				break;
 
 			case 310:
-				if (_G(flags)[V111] && !_G(flags)[V144]) {
-					_G(flags)[V144] = 1;
+				if (_G(flags)[kTrufflesInMine] && !_G(flags)[kTrufflesRanAway]) {
+					_G(flags)[kTrufflesRanAway] = 1;
 				} else {
 					wilbur_speech("300w069");
 				}
 				break;
 
 			default:
-				if (!_G(flags)[V111] && _G(flags)[V144]) {
+				if (!_G(flags)[kTrufflesInMine] && _G(flags)[kTrufflesRanAway]) {
 					// Truffles is too far away
 					wilbur_speech("300w061");
 				} else if (!_G(flags)[V148]) {

@@ -95,7 +95,7 @@ void Section3::daemon() {
 		break;
 
 	case 10008:
-		if (!_G(flags)[V111])
+		if (!_G(flags)[kTrufflesInMine])
 			kernel_timing_trigger(15, 3008);
 		break;
 
@@ -127,7 +127,7 @@ void Section3::daemon() {
 			player_set_commands_allowed(true);
 			_G(wilbur_should) = 10002;
 
-			if (_G(flags)[V111]) {
+			if (_G(flags)[kTrufflesInMine]) {
 				_G(flags)[V002] = 1;
 				wilbur_speech("300w060");
 			}
