@@ -414,6 +414,10 @@ bool AgiBase::canLoadGameStateCurrently(Common::U32String *msg) {
 			}
 		}
 	}
+
+	if (msg)
+		*msg = _("This game does not support loading");
+
 	return false;
 }
 
@@ -432,6 +436,10 @@ bool AgiBase::canSaveGameStateCurrently(Common::U32String *msg) {
 			}
 		}
 	}
+
+	if (msg)
+		*msg = _("This game does not support saving");
+
 	return false;
 }
 
