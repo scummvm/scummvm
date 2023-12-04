@@ -251,14 +251,6 @@ Common::Error DreamWebEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-bool DreamWebEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return false;
-}
-
-bool DreamWebEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return false;
-}
-
 Common::Language DreamWebEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
