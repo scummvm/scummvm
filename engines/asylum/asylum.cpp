@@ -669,15 +669,25 @@ void AsylumEngine::checkAchievements() {
 // Save/Load
 //////////////////////////////////////////////////////////////////////////
 bool AsylumEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return (!checkGameVersion("Demo")
-		&& (_handler == _scene || _handler == _menu)
-		&& !speech()->getSoundResourceId());
+	if (checkGameVersion("Demo")) {
+		if (msg)
+			*msg = _("This game does not support loading");
+
+		return false;
+	}
+
+	return ((_handler == _scene || _handler == _menu) && !speech()->getSoundResourceId());
 }
 
 bool AsylumEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return (!checkGameVersion("Demo")
-		&& (_handler == _scene)
-		&& !speech()->getSoundResourceId());
+	if (checkGameVersion("Demo")) {
+		if (msg)
+			*msg = _("This game does not support saving");
+
+		return false;
+	}
+
+	return ((_handler == _scene) && !speech()->getSoundResourceId());
 }
 
 bool AsylumEngine::canSaveAutosaveCurrently() {
