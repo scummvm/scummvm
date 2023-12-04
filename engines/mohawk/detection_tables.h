@@ -1250,6 +1250,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// from herb via Discord
+	// Living Books Player v1.7J
+	// Do not use GType_LIVINGBOOKSV1, otherwise Option button on title causes script error
+	// Also contains English and Spanish, but title and options will still be Japanese
+	{
+        {
+			"harryhh",
+			"",
+			AD_ENTRY1s("BookOutline", "1780f04a72fbae2eee7ac796aa51c630", 3622),
+			Common::JA_JPN,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		"ハリー君とおばけやしき"
+	},
+
 	{
 		{
 			"carmentq",
