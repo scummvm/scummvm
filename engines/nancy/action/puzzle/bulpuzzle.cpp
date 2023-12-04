@@ -157,9 +157,9 @@ void BulPuzzle::updateGraphics() {
 			_needsRedraw = true;
 		}
 
-		if (g_nancy->_sound->isSoundPlaying(_rollSound)  ||
-			g_nancy->_sound->isSoundPlaying(_resetSound) ||
-			g_nancy->_sound->isSoundPlaying(_passSound)) {
+		if (g_nancy->_sound->isSoundPlaying(_rollSound) ||
+			g_nancy->_sound->isSoundPlaying(_passSound) ||
+			g_nancy->_sound->isSoundPlaying(_resetSound)) {
 				return;
 		}
 

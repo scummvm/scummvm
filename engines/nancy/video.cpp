@@ -272,7 +272,7 @@ bool AVFDecoder::AVFVideoTrack::decode(byte *outBuf, uint32 frameSize, Common::R
 	return true;
 }
 
-const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr)  {
+const Graphics::Surface *AVFDecoder::AVFVideoTrack::decodeFrame(uint frameNr) {
 	if (frameNr < _frameCache.size() && _frameCache[frameNr].getPixels()) {
 		// Frame is cached, return a pointer to it
 		return &_frameCache[frameNr];

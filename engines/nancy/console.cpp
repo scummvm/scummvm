@@ -681,7 +681,7 @@ bool NancyConsole::Cmd_scanForActionRecordType(int argc, const char **argv) {
 		insertVal = s.asUint64();
 
 		if (insertVal != 0 || s.firstChar() == '0') {
-			if (i % 2)  {
+			if (i % 2) {
 				if (insertVal > 255) {
 					debugPrintf("Invalid input: %u is a byte, value cannot be over 255!\n", (uint32)insertVal);
 					return true;

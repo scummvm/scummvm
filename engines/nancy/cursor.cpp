@@ -30,7 +30,7 @@
 
 namespace Nancy {
 
-CursorManager::CursorManager()  :
+CursorManager::CursorManager() :
 	_isInitialized(false),
 	_curItemID(-1),
 	_curCursorType(kNormal),

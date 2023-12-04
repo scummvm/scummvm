@@ -43,7 +43,7 @@ public:
 	void resetPosition();
 	float getPos() const { return _currentPosition; }
 
-    void setPosition(float pos);
+	void setPosition(float pos);
 	void calculatePosition();
 
 	Common::Point _startPosition;

@@ -38,7 +38,7 @@ class RaycastPuzzle : public RenderActionRecord {
 	friend class RaycastDeferredLoader;
 	friend class RaycastLevelBuilder;
 public:
-	RaycastPuzzle()  : RenderActionRecord(7), _map(7) {}
+	RaycastPuzzle() : RenderActionRecord(7), _map(7) {}
 	~RaycastPuzzle() override {}
 
 	void init() override;

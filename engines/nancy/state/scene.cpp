@@ -132,7 +132,7 @@ Scene::Scene() :
 		_isRunningAd(false),
 		_hotspotDebug(50) {}
 
-Scene::~Scene()  {
+Scene::~Scene() {
 	delete _helpButton;
 	delete _menuButton;
 	delete _viewportOrnaments;
@@ -336,7 +336,7 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
 	}
 }
 
-void Scene::setHeldItem(int16 id)  {
+void Scene::setHeldItem(int16 id) {
 	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
 }
 

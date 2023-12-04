@@ -160,7 +160,7 @@ void NancyEngine::errorString(const char *buf_input, char *buf_output, int buf_o
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {
-	return  (f == kSupportsReturnToLauncher) ||
+	return	(f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime) ||
 			(f == kSupportsChangingOptionsDuringRuntime) ||

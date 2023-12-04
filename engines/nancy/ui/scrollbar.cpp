@@ -30,7 +30,7 @@ namespace Nancy {
 namespace UI {
 
 Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
-    Scrollbar(zOrder, srcBounds, g_nancy->_graphicsManager->_object0, topPosition, scrollDistance, isVertical) {}
+	Scrollbar(zOrder, srcBounds, g_nancy->_graphicsManager->_object0, topPosition, scrollDistance, isVertical) {}
 
 Scrollbar::Scrollbar(uint16 zOrder, const Common::Rect &srcBounds, Graphics::ManagedSurface &srcSurf, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
 		RenderObject(zOrder),
@@ -112,7 +112,7 @@ void Scrollbar::handleInput(NancyInput &input) {
 }
 
 void Scrollbar::setPosition(float pos) {
-    _currentPosition = pos;
+	_currentPosition = pos;
 	if (_isVertical) {
 		moveTo(Common::Point(_screenPosition.left, _startPosition.y + (_maxDist * pos)));
 	} else {

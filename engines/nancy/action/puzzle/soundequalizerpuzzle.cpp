@@ -40,18 +40,18 @@ public:
 		Scrollbar(zOrder, srcBounds, srcSurf, topPosition, scrollDistance, isVertical) {}
 	virtual ~ViewportScrollbar() = default;
 
-    bool handleInput(NancyInput &input) {
-        if (_screenPosition.contains(input.mousePos)) {
-        	input.input &= (~NancyInput::kRightMouseButtonUp);
+	bool handleInput(NancyInput &input) {
+		if (_screenPosition.contains(input.mousePos)) {
+			input.input &= (~NancyInput::kRightMouseButtonUp);
 
-        	Scrollbar::handleInput(input);
+			Scrollbar::handleInput(input);
 
-		    g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
+			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 			return true;
-        }
+		}
 
 		return false;
-    }
+	}
 };
 
 SoundEqualizerPuzzle::~SoundEqualizerPuzzle() {

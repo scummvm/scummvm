@@ -221,7 +221,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			"nancy3", nullptr,
 			{
 				{ "data1.hdr", 0, "9da72fec24e1ca4f8f6b563bbdab3276", 237686 },
-  				{ "data1.cab", 0, "a7a259e45ae643aed63fa958531cc318", 3473219 },
+				{ "data1.cab", 0, "a7a259e45ae643aed63fa958531cc318", 3473219 },
 				{ "data2.cab", 0, "cb709fba73605814f9dda823b1cfaf85", 433625036 },
 				{ "is:data1.cab:ciftree.dat", 0, "A:6b379f9d8edfb2d439062122e08f785c", 16161148 },
 				AD_LISTEND
@@ -322,7 +322,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			"nancy4", nullptr,
 			{
 				{ "data1.hdr", 0, "694d11d7ebdf2c96cd395f4baf938c10", 256535 },
-  				{ "data1.cab", 0, "9c9c9c60c5344e877e033e54564c6e6e", 4892300 },
+				{ "data1.cab", 0, "9c9c9c60c5344e877e033e54564c6e6e", 4892300 },
 				{ "data2.cab", 0, "05ef8fac76a227f829479719f40522b5", 458917888 },
 				{ "data3.cab", 0, "9b266564726664befe1770754150f5d8", 65795720 },
 				{ "is:data1.cab:ciftree.dat", 0, "A:a1090497f5fefce17494804bd1d624e1", 9991442 },
@@ -370,7 +370,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 				{ "data1.hdr", 0, "0db3fb5bc002eb875eebb872969a22ca", 278505 },
 				{ "data1.cab", 0, "b5d2d218ded5683b5ca2eafcdc1ed76e", 1720654 },
 				{ "data2.cab", 0, "d379a879fb23b3013f78537927ac6cfe", 548761463 },
-  				{ "is:data1.cab:ciftree.dat", 0, "A:21fa81f322595c3100d8d58d100852d5", 8187692 },
+				{ "is:data1.cab:ciftree.dat", 0, "A:21fa81f322595c3100d8d58d100852d5", 8187692 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,

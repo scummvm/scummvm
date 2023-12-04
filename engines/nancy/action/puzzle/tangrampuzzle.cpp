@@ -383,7 +383,7 @@ void TangramPuzzle::redrawBuffer(const Common::Rect &rect) {
 		memset(dest, -1, rect.width());
 	}
 
-	for (uint z = _z + 1; z < _z  + _tiles.size(); ++z) {
+	for (uint z = _z + 1; z < _z + _tiles.size(); ++z) {
 		for (uint i = 0; i < _tiles.size() - 1; ++i) {
 			Tile &tile = _tiles[i];
 			if (tile._z == z) {

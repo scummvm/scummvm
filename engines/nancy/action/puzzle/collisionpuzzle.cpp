@@ -484,7 +484,7 @@ void CollisionPuzzle::drawGrid() {
 				dest.x += (cellRect.width() - _horizontalWallSrc.width()) / 2;
 				dest.y = cellRect.bottom - 1 + _lineWidth / 6;
 
-				if (_lineWidth != 6) {  // Improvement
+				if (_lineWidth != 6) { // Improvement
 					++dest.y;
 				}
 
@@ -496,7 +496,7 @@ void CollisionPuzzle::drawGrid() {
 					continue;
 				}
 
-				if (_lineWidth == 6) {  // Improvement
+				if (_lineWidth == 6) { // Improvement
 					dest.x -= 1;
 				} else {
 					dest.x += 1;

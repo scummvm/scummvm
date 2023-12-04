@@ -754,14 +754,14 @@ void SoundManager::soundEffectMaintenance(uint16 channelID, bool force) {
 				Math::Quaternion quat;
 				switch (chan.effectData->rotateMoveAxis) {
 				case kRotateAroundX:
-				   quat = Math::Quaternion::xAxis(360.0 / chan.effectData->numMoveSteps);
-				   break;
+					quat = Math::Quaternion::xAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
 				case kRotateAroundY:
-				   quat = Math::Quaternion::yAxis(360.0 / chan.effectData->numMoveSteps);
-				   break;
+					quat = Math::Quaternion::yAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
 				case kRotateAroundZ:
-				   quat = Math::Quaternion::zAxis(360.0 / chan.effectData->numMoveSteps);
-				   break;
+					quat = Math::Quaternion::zAxis(360.0 / chan.effectData->numMoveSteps);
+					break;
 				} 
 
 				quat.transform(chan.position);
