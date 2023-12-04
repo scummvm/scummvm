@@ -66,13 +66,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(), kPlayCmd, 'P');
 
-	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), Common::U32String(), kLoadCmd);
-	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
-	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
-
-	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(), kSaveCmd);
-	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
-	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
+	new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), Common::U32String(), kLoadCmd);
+	new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), Common::U32String(), kSaveCmd);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), Common::U32String(), kOptionsCmd);
 
@@ -152,11 +147,6 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 }
 
 void MainMenuDialog::reflowLayout() {
-	if (_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime))
-		_loadButton->setEnabled(_engine->canLoadGameStateCurrently());
-	if (_engine->hasFeature(Engine::kSupportsSavingDuringRuntime))
-		_saveButton->setEnabled(_engine->canSaveGameStateCurrently());
-
 	// Overlay size might have changed since the construction of the dialog.
 	// Update labels when it might be needed
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
@@ -198,6 +188,24 @@ void MainMenuDialog::reflowLayout() {
 }
 
 void MainMenuDialog::save() {
+	if (!_engine->hasFeature(Engine::kSupportsSavingDuringRuntime)) {
+		GUI::MessageDialog dialog(_("This game does not support saving from the menu. Use in-game interface"));
+		dialog.runModal();
+
+		return;
+	}
+
+	Common::U32String msg;
+	if (!_engine->canSaveGameStateCurrently(&msg)) {
+		if (msg.empty())
+			msg = _("This game cannot be saved at this time. Please try again later");
+
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+
+		return;
+	}
+
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
@@ -221,6 +229,24 @@ void MainMenuDialog::save() {
 }
 
 void MainMenuDialog::load() {
+	if (!_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime)) {
+		GUI::MessageDialog dialog(_("This game does not support loading from the menu. Use in-game interface"));
+		dialog.runModal();
+
+		return;
+	}
+
+	Common::U32String msg;
+	if (!_engine->canLoadGameStateCurrently(&msg)) {
+		if (msg.empty())
+			msg = _("This game cannot be loaded at this time. Please try again later");
+
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+
+		return;
+	}
+
 	int slot = _loadDialog->runModalWithCurrentTarget();
 
 	_engine->setGameToLoadSlot(slot);
