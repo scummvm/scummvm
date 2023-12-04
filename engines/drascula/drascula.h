@@ -325,9 +325,9 @@ public:
 	void syncSoundSettings() override;
 
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;

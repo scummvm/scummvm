@@ -78,7 +78,7 @@ Common::Error ScummEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool ScummEngine::canLoadGameStateCurrently() {
+bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
 
@@ -141,7 +141,7 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 	return Common::kNoError;
 }
 
-bool ScummEngine::canSaveGameStateCurrently() {
+bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
 

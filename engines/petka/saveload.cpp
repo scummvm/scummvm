@@ -94,7 +94,7 @@ Common::Error PetkaEngine::saveGameState(int slot, const Common::String &desci, 
 	return Common::kNoError;
 }
 
-bool PetkaEngine::canSaveGameStateCurrently() {
+bool PetkaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (isDemo() || !_qsystem)
 		return false;
 
@@ -107,7 +107,7 @@ bool PetkaEngine::canSaveGameStateCurrently() {
 	return prev == _qsystem->_mainInterface.get() && (curr == saveLoad || curr == panel);
 }
 
-bool PetkaEngine::canLoadGameStateCurrently() {
+bool PetkaEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !isDemo() && _qsystem;
 }
 

@@ -911,7 +911,7 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 	_game->writeSaveInfo(ws);
 }
 
-bool Ultima8Engine::canSaveGameStateCurrently() {
+bool Ultima8Engine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Can't save when avatar in stasis during cutscenes
 	if (_avatarInStasis || _cruStasis)
 		return false;

@@ -444,8 +444,8 @@ private:
 
 	// Common engine overrides
 	void pauseEngineIntern(bool pause) override;
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override { return _gameMode == kGameModePlay; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _gameMode == kGameModePlay; }
 	int getAutosaveSlot() const override { return 4; }
 	bool hasFeature(EngineFeature f) const override;
 

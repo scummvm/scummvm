@@ -153,9 +153,9 @@ protected:
 	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 	template <typename T>
 	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
-	bool canLoadGameStateCurrently() override { return true; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 	Common::Error loadGameState(int slot) override;
-	bool canSaveGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 public:

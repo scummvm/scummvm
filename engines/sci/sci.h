@@ -146,8 +146,8 @@ public:
 	Console *getSciDebugger();
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	void syncSoundSettings() override; ///< from ScummVM to the game
 	void updateSoundMixerVolumes();
 	uint32 getTickCount();

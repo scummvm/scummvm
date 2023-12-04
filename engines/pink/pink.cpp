@@ -295,11 +295,11 @@ void PinkEngine::setCursor(uint cursorIndex) {
 	CursorMan.showMouse(true);
 }
 
-bool PinkEngine::canLoadGameStateCurrently() {
+bool PinkEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool PinkEngine::canSaveGameStateCurrently() {
+bool PinkEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 

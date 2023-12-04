@@ -341,11 +341,11 @@ Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &de
 	return Common::kNoError;
 }
 
-bool WintermuteEngine::canSaveGameStateCurrently() {
+bool WintermuteEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool WintermuteEngine::canLoadGameStateCurrently() {
+bool WintermuteEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 

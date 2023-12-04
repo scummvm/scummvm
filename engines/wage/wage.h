@@ -133,8 +133,8 @@ public:
 
 	Common::Error run() override;
 
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	const char *getGameFile() const;
 	void processTurn(Common::String *textInput, Designed *clickInput);

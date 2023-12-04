@@ -929,7 +929,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool AdlEngine::canLoadGameStateCurrently() {
+bool AdlEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canRestoreNow;
 }
 
@@ -1016,7 +1016,7 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc, boo
 	return Common::kNoError;
 }
 
-bool AdlEngine::canSaveGameStateCurrently() {
+bool AdlEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_canSaveNow)
 		return false;
 

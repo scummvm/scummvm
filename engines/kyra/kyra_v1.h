@@ -356,8 +356,8 @@ protected:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _isSaveAllowed; }
 	int getAutosaveSlot() const override { return 999; }
 
 	const char *getSavegameFilename(int num);

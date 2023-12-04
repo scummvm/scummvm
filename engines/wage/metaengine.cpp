@@ -79,11 +79,11 @@ int WageMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 namespace Wage {
 
-bool WageEngine::canLoadGameStateCurrently() {
+bool WageEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 
-bool WageEngine::canSaveGameStateCurrently() {
+bool WageEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 

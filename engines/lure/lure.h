@@ -129,10 +129,10 @@ public:
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
 };

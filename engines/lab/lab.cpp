@@ -213,11 +213,11 @@ Common::Error LabEngine::saveGameState(int slot, const Common::String &desc, boo
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 
-bool LabEngine::canLoadGameStateCurrently() {
+bool LabEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_introPlaying;
 }
 
-bool LabEngine::canSaveGameStateCurrently() {
+bool LabEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_introPlaying;
 }
 

@@ -226,7 +226,7 @@ Common::Error DMEngine::loadGameState(int slot) {
 	return Common::kNoGameDataFoundError;
 }
 
-bool DMEngine::canLoadGameStateCurrently() {
+bool DMEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canLoadFromGMM;
 }
 

@@ -121,12 +121,12 @@ public:
 	/**
 	* Returns true if it is currently okay to restore a game
 	*/
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	* Returns true if it is currently okay to save the game
 	*/
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Handles loading a game via the GMM
