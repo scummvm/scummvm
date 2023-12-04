@@ -322,6 +322,7 @@ void Mine::daemon() {
 
 			default:
 				if (!_G(flags)[V111] && _G(flags)[V144]) {
+					// Truffles is too far away
 					wilbur_speech("300w061");
 				} else if (!_G(flags)[V148]) {
 					_G(flags)[V148] = 1;
@@ -345,16 +346,20 @@ void Mine::daemon() {
 					default:
 						break;
 					}
+
+					_previousDistance = _treasureDistance;
 				} else {
 					_treasureDistance = getTreasureDistance();
 
-					if (_treasureDistance < _treasureThreshold) {
+					if (_treasureDistance < _previousDistance) {
 						wilbur_speech("300w068");
-					} else if (_treasureDistance == _treasureThreshold) {
+					} else if (_treasureDistance == _previousDistance) {
 						wilbur_speech("300w067");
 					} else {
 						wilbur_speech("300w066");
 					}
+
+					_previousDistance = _treasureDistance;
 				}
 				break;
 			}

@@ -269,7 +269,7 @@ void Sections::get_walker() {
 void Sections::game_control_cycle() {
 	int32 status;
 
-	while (_G(game).new_room == _G(game).room_id && _G(kernel).going) {
+	while (_G(game).new_room == _G(game).room_id && _G(kernel).going && !_G(kernel).force_restart) {
 		krn_pal_game_task();
 
 		ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &status);
