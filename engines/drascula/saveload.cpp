@@ -194,7 +194,7 @@ Common::Error DrasculaEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool DrasculaEngine::canLoadGameStateCurrently() {
+bool DrasculaEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
 }
 
@@ -203,7 +203,7 @@ Common::Error DrasculaEngine::saveGameState(int slot, const Common::String &desc
 	return Common::kNoError;
 }
 
-bool DrasculaEngine::canSaveGameStateCurrently() {
+bool DrasculaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
 }
 

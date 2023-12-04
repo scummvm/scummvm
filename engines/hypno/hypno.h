@@ -144,9 +144,9 @@ public:
 	bool cursorMask(Common::Point);
 
 	virtual void loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty);
-	bool canLoadGameStateCurrently() override { return (isDemo() ? false : true); }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return (isDemo() ? false : true); }
 	bool canSaveAutosaveCurrently() override { return false; }
-	bool canSaveGameStateCurrently() override { return (isDemo() ? false : true); }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return (isDemo() ? false : true); }
 	Common::String _checkpoint;
 
 	Common::String _prefixDir;

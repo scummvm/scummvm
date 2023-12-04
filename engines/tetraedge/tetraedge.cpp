@@ -151,11 +151,11 @@ bool TetraedgeEngine::isGameDemo() const {
 	return (_gameDescription->flags & ADGF_DEMO) != 0;
 }
 
-bool TetraedgeEngine::canLoadGameStateCurrently() {
+bool TetraedgeEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _game && _application && !_application->mainMenu().isEntered();
 }
 
-bool TetraedgeEngine::canSaveGameStateCurrently() {
+bool TetraedgeEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return canSaveAutosaveCurrently() && !_application->isLockCursor();
 }
 

@@ -57,8 +57,8 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	bool canSaveAutosaveCurrently() override;
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	void initializePath(const Common::FSNode &gamePath) override;
 

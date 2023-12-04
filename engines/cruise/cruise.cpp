@@ -200,7 +200,7 @@ Common::Error CruiseEngine::loadGameState(int slot) {
 	return loadSavegameData(slot);
 }
 
-bool CruiseEngine::canLoadGameStateCurrently() {
+bool CruiseEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return playerMenuEnabled != 0;
 }
 
@@ -208,7 +208,7 @@ Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc, 
 	return saveSavegameData(slot, desc);
 }
 
-bool CruiseEngine::canSaveGameStateCurrently() {
+bool CruiseEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (playerMenuEnabled != 0) && (userEnabled != 0);
 }
 

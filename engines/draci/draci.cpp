@@ -452,7 +452,7 @@ Common::Error DraciEngine::loadGameState(int slot) {
 	return loadSavegameData(slot, this);
 }
 
-bool DraciEngine::canLoadGameStateCurrently() {
+bool DraciEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
@@ -461,7 +461,7 @@ Common::Error DraciEngine::saveGameState(int slot, const Common::String &desc, b
 	return saveSavegameData(slot, desc, *this);
 }
 
-bool DraciEngine::canSaveGameStateCurrently() {
+bool DraciEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
 		(_game->getLoopSubstatus() == kOuterLoop);
 }

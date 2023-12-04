@@ -334,11 +334,11 @@ bool VCruiseEngine::canSaveAutosaveCurrently() {
 	return _runtime->canSave(false);
 }
 
-bool VCruiseEngine::canSaveGameStateCurrently() {
+bool VCruiseEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _runtime->canSave(false);
 }
 
-bool VCruiseEngine::canLoadGameStateCurrently() {
+bool VCruiseEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _runtime->canLoad();
 }
 

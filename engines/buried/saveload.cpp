@@ -47,11 +47,11 @@ namespace Buried {
 
 #define SAVEGAME_CURRENT_VERSION 1
 
-bool BuriedEngine::canLoadGameStateCurrently() {
+bool BuriedEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !isDemo() && _mainWindow && !_yielding;
 }
 
-bool BuriedEngine::canSaveGameStateCurrently() {
+bool BuriedEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !isDemo() && _mainWindow && !_yielding && ((FrameWindow *)_mainWindow)->isGameInProgress();
 }
 

@@ -260,10 +260,10 @@ Common::Error TinselEngine::saveGameState(int slot, const Common::String &desc, 
 }
 #endif
 
-bool TinselEngine::canLoadGameStateCurrently() { return !_bmv->MoviePlaying(); }
+bool TinselEngine::canLoadGameStateCurrently(Common::U32String *msg) { return !_bmv->MoviePlaying(); }
 
 #if 0
-bool TinselEngine::canSaveGameStateCurrently() { return isCursorShown(); }
+bool TinselEngine::canSaveGameStateCurrently(Common::U32String *msg) { return isCursorShown(); }
 #endif
 
 } // End of namespace Tinsel

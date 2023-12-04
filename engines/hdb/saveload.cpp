@@ -31,7 +31,7 @@
 
 namespace HDB {
 
-bool HDBGame::canSaveGameStateCurrently() {
+bool HDBGame::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_gameState == GAME_PLAY && !_ai->cinematicsActive());
 }
 
@@ -82,7 +82,7 @@ Common::Error HDBGame::saveGameState(int slot, const Common::String &desc, bool 
 	return Common::kNoError;
 }
 
-bool HDBGame::canLoadGameStateCurrently() {
+bool HDBGame::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _gameState == GAME_PLAY;
 }
 

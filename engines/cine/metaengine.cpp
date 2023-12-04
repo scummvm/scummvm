@@ -340,11 +340,11 @@ Common::String CineEngine::getSaveStateName(int slot) const {
 	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
 }
 
-bool CineEngine::canLoadGameStateCurrently() {
+bool CineEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return (!disableSystemMenu && !inMenu);
 }
 
-bool CineEngine::canSaveGameStateCurrently() {
+bool CineEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (allowPlayerInput && !disableSystemMenu && !inMenu);
 }
 

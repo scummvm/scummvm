@@ -119,7 +119,7 @@ bool MutationOfJBEngine::hasFeature(Engine::EngineFeature f) const {
 	return false;
 }
 
-bool MutationOfJBEngine::canLoadGameStateCurrently() {
+bool MutationOfJBEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _game->loadSaveAllowed();
 }
 
@@ -142,7 +142,7 @@ Common::Error MutationOfJBEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool MutationOfJBEngine::canSaveGameStateCurrently() {
+bool MutationOfJBEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _game->loadSaveAllowed();
 }
 

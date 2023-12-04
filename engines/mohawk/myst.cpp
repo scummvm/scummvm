@@ -1080,7 +1080,7 @@ bool MohawkEngine_Myst::isInteractive() const {
 	return !_stack->isScriptRunning() && !_waitingOnBlockingOperation;
 }
 
-bool MohawkEngine_Myst::canLoadGameStateCurrently() {
+bool MohawkEngine_Myst::canLoadGameStateCurrently(Common::U32String *msg) {
 	bool isInMenu = _stack->getStackId() == kMenuStack;
 
 	if (!isInMenu) {
@@ -1101,7 +1101,7 @@ bool MohawkEngine_Myst::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool MohawkEngine_Myst::canSaveGameStateCurrently() {
+bool MohawkEngine_Myst::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!canLoadGameStateCurrently()) {
 		return false;
 	}

@@ -3771,11 +3771,11 @@ void ToonEngine::pauseEngineIntern(bool pause) {
 	}
 }
 
-bool ToonEngine::canSaveGameStateCurrently() {
+bool ToonEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return !_gameState->_inMenu && !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
 }
 
-bool ToonEngine::canLoadGameStateCurrently() {
+bool ToonEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_gameState->_inMenu && !_gameState->_inInventory && !_gameState->_inConversation && !_gameState->_inCutaway && !_gameState->_mouseHidden && !_moviePlayer->isPlaying();
 }
 

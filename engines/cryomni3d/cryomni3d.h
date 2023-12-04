@@ -95,8 +95,8 @@ public:
 	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return _canLoadSave; }
-	bool canSaveGameStateCurrently() override { return _canLoadSave; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return _canLoadSave; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return _canLoadSave; }
 
 	void setCanLoadSave(bool canLoadSave) { _canLoadSave = canLoadSave; }
 	static const uint kSaveDescriptionLen = 20;

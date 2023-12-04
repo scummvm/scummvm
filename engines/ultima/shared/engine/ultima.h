@@ -117,7 +117,7 @@ public:
 	/**
 	 * Indicates whether a game state can be loaded.
 	 */
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return canLoadGameStateCurrently(false);
 	}
 
@@ -130,7 +130,7 @@ public:
 	/**
 	 * Indicates whether a game state can be saved.
 	 */
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return canSaveGameStateCurrently(false);
 	}
 };

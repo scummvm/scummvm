@@ -154,8 +154,8 @@ private:
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
 	bool hasFeature(EngineFeature f) const override;
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Language getLanguage() const;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
