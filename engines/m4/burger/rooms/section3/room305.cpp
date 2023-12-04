@@ -72,7 +72,7 @@ void Room305::init() {
 	pal_cycle_init(96, 111, 6, -1, -1);
 	_G(flags)[kMineRoomIndex] = 0;
 
-	if (_G(flags)[V134] && !_G(flags)[V135] && !_G(flags)[V137]) {
+	if (_G(flags)[V134] && !_G(flags)[V135] && !_G(flags)[kEnteredMine]) {
 		hotspot_set_active("DARKNESS", true);
 		hotspot_set_active("MINE", false);
 	} else {
@@ -178,7 +178,7 @@ void Room305::daemon() {
 
 		case 106:
 			_G(wilbur_should) = 10001;
-			wilbur_speech(_G(flags)[V137] ? "305w013" : "305w012", kCHANGE_WILBUR_ANIMATION);
+			wilbur_speech(_G(flags)[kEnteredMine] ? "305w013" : "305w012", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 107:
@@ -226,7 +226,7 @@ void Room305::parser() {
 		} else {
 			_G(wilbur_should) = 108;
 
-			if (_G(flags)[V137]) {
+			if (_G(flags)[kEnteredMine]) {
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			} else {
 				wilbur_speech("305w005", kCHANGE_WILBUR_ANIMATION);
