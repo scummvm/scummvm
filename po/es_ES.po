@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-03 21:13+0000\n"
-"PO-Revision-Date: 2023-12-04 04:41+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2023-12-04 13:46+0000\n"
+"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -4870,9 +4870,8 @@ msgid "Dpad"
 msgstr "Cruceta"
 
 #: backends/platform/ios7/ios7_options.mm:107
-#, fuzzy
 msgid "Use minimal gamepad layout"
-msgstr "Utilizar controles mínimos de mando"
+msgstr "Utilizar mínima distribución de controles"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
