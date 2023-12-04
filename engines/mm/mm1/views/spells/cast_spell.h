@@ -38,6 +38,9 @@ class CastSpell : public SpellView, public MM1::Game::SpellCasting {
 private:
 	State _state = SELECT_SPELL;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterSpellLevelFunc(const Common::String &text);
+	static void enterSpellNumberFunc(const Common::String &text);
 	int _spellLevel = -1;
 	int _spellNumber = -1;
 	Common::String _spellResult;

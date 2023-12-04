@@ -49,6 +49,8 @@ private:
 	int _tradeWith = -1;
 	TransferKind _tradeKind = TK_GEMS;
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &text);
 private:
 	/**
 	 * Discards the item at the given index
@@ -84,7 +86,6 @@ private:
 	 * Using an item outside of combat
 	 */
 	void nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped);
-
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
 	virtual ~CharacterInfo() {}

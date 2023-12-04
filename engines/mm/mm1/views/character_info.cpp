@@ -406,23 +406,22 @@ void CharacterInfo::howMuchEntered(uint amount) {
 	redraw();
 }
 
+void CharacterInfo::abortFunc() {
+	CharacterInfo *view = (CharacterInfo *)g_events->focusedView();
+	view->howMuchAborted();
+}
+
+void CharacterInfo::enterFunc(const Common::String &text) {
+	CharacterInfo *view = (CharacterInfo *)g_events->focusedView();
+	view->howMuchEntered(atoi(text.c_str()));
+}
+
 void CharacterInfo::tradeHowMuch() {
 	clearLines(20, 24);
 	escToGoBack(0);
 	writeString(10, 20, STRING["dialogs.character.how_much"]);
 
-	_textEntry.display(20, 20, 5, true,
-		[]() {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->howMuchAborted();
-		},
-		[](const Common::String &text) {
-			CharacterInfo *view =
-				(CharacterInfo *)g_events->focusedView();
-			view->howMuchEntered(atoi(text.c_str()));
-		}
-	);
+	_textEntry.display(20, 20, 5, true, abortFunc, enterFunc);
 }
 
 void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {

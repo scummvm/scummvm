@@ -184,6 +184,20 @@ void Map12::polyhedron(unsigned char side1, unsigned char side2) {
 	send(SoundMessage(msg));
 }
 
+void Map12::keyCallbackSpinPolyhedronTwo() {
+	static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(0);
+	g_maps->_currentMap->updateGame();
+}
+
+void Map12::keyCallbackSpinPolyhedronOne(const Common::KeyState &ks) {
+	if (ks.keycode >= Common::KEYCODE_0 && ks.keycode <= Common::KEYCODE_9) {
+		g_events->close();
+		Map12 &map = *static_cast<Map12 *>(g_maps->_currentMap);
+		map.spinPolyhedron(ks.ascii | 0x80);
+		map.none160();
+	}
+}
+
 void Map12::setPolyhedron(int polyIndex) {
 	_polyIndex = polyIndex;
 
@@ -191,27 +205,9 @@ void Map12::setPolyhedron(int polyIndex) {
 		Common::String msg = Common::String::format(
 			STRING["maps.map12.polyhedron2"].c_str(),
 			_data[SELECTIONS + polyIndex]);
-		send(SoundMessage(
-			msg,
-			[]() {
-				static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(0);
-				g_maps->_currentMap->updateGame();
-			}
-		));
-
+		send(SoundMessage(msg, keyCallbackSpinPolyhedronTwo));
 	} else {
-		send(SoundMessage(
-			STRING["maps.map12.polyhedron1"],
-			[](const Common::KeyState &ks) {
-				if (ks.keycode >= Common::KEYCODE_0 &&
-						ks.keycode <= Common::KEYCODE_9) {
-					g_events->close();
-					Map12 &map = *static_cast<Map12 *>(g_maps->_currentMap);
-					map.spinPolyhedron(ks.ascii | 0x80);
-					map.none160();
-				}	
-			}
-		));
+		send(SoundMessage(STRING["maps.map12.polyhedron1"], keyCallbackSpinPolyhedronOne));
 	}
 }
 

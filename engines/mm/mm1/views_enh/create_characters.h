@@ -65,6 +65,8 @@ class CreateCharacters : public ScrollView {
 
 private:
 	TextEntry _textEntry;
+	static void abortFunc();
+	static void enterFunc(const Common::String &name);
 	Shared::Xeen::SpriteResource _icons;
 	State _state = SELECT_CLASS;
 	NewCharacter _newChar;
