@@ -743,7 +743,7 @@ void BurgerEngine::wilburTeleported() {
 
 	case 5:
 		if (_G(flags)[V185] < MAX_INT)
-			_G(flags)[V100]++;
+			_G(flags)[V185]++;
 		break;
 
 	case 6:
