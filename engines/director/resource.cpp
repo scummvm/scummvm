@@ -34,6 +34,7 @@
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
+#include "director/util.h"
 #include "director/window.h"
 
 namespace Director {
@@ -328,10 +329,8 @@ Archive *DirectorEngine::loadEXE(const Common::Path &movie) {
 			return nullptr;
 		}
 
-		if (result)
+		if (result) {
 			result->setPathName(movie.toString(g_director->_dirSeparator));
-		else {
-			delete exeStream;
 		}
 
 		return result;
@@ -415,17 +414,25 @@ Archive *DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 			return result;
 
 		warning("DirectorEngine::loadEXEv3(): Failed to load RIFF from EXE");
+		// ownership of stream is passed to result, which will clean it up
 		delete result;
 		result = nullptr;
 	}
 
+	Common::String fullPathStr = directoryName + mmmFileName;
+	fullPathStr = convertPath(fullPathStr);
+	Common::Path fullPath = findMoviePath(fullPathStr);
+	if (fullPath.empty()) {
+		warning("DirectorEngine::loadEXEv3(): Could not find '%s'", fullPathStr.c_str());
+		return nullptr;
+	}
+	// The EXE is kicking us to a different movie on startup;
+	// and we want to treat it as a proper movie change
+	// (instead of pretending that the EXE is this movie) so that
+	// elements like the search path are correct.
+	getCurrentWindow()->setNextMovie(fullPathStr);
+	// Return an empty archive to avoid "Game data not found".
 	result = createArchive();
-
-	if (!result->openFile(mmmFileName)) {
-		warning("DirectorEngine::loadEXEv3(): Could not open '%s'", mmmFileName.c_str());
-		delete result;
-		result = nullptr;
-	}
 	return result;
 }
 
@@ -434,6 +441,7 @@ Archive *DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 
 	if (ver != MKTAG('P', 'J', '9', '3')) {
 		warning("DirectorEngine::loadEXEv4(): Invalid projector tag found in v4 EXE [%s]", tag2str(ver));
+		delete stream;
 		return nullptr;
 	}
 
@@ -456,6 +464,7 @@ Archive *DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
 
 	if (ver != MKTAG('P', 'J', '9', '5')) {
 		warning("DirectorEngine::loadEXEv5(): Invalid projector tag found in v5 EXE [%s]", tag2str(ver));
+		delete stream;
 		return nullptr;
 	}
 
@@ -480,6 +489,7 @@ Archive *DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
 
 	if (ver != MKTAG('P', 'J', '0', '0') && ver != MKTAG('P', 'J', '0', '1')) {
 		warning("DirectorEngine::loadEXEv7(): Invalid projector tag found in v7 EXE [%s]", tag2str(ver));
+		delete stream;
 		return nullptr;
 	}
 
