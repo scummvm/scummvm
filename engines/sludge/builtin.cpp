@@ -824,8 +824,10 @@ builtIn(anim) {
 
 	// Only remaining parameter is the file number
 	int fileNumber;
-	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE))
+	if (!fun->stack->thisVar.getValueType(fileNumber, SVT_FILE)) {
+		delete ba;
 		return BR_ERROR;
+	}
 	trimStack(fun->stack);
 
 	// Load the required sprite bank
