@@ -24,13 +24,12 @@
 
 #include "common/formats/ini-file.h"
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima8/misc/istring.h"
 #include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Common::HashMap<istring, Std::string, Common::IgnoreCase_Hash> KeyMap;
+typedef Common::HashMap<Std::string, Std::string, Common::IgnoreCase_Hash> KeyMap;
 
 class ConfigFileManager {
 public:
@@ -38,7 +37,7 @@ public:
 	~ConfigFileManager();
 
 	struct ConfigFile {
-		istring _category;
+		Std::string _category;
 		Common::INIFile _iniFile;
 	};
 
@@ -51,30 +50,30 @@ public:
 	//! \param root The name of the root node in the file
 	//! \param readonly If true, don't write to this file's tree (or the file)
 	//! \return true if successful
-	bool readConfigFile(Std::string fname, const istring &category);
+	bool readConfigFile(Std::string fname, const Std::string &category);
 
 	//! clear everything
 	void clear();
 
 	//! clear everything in a root
-	void clearRoot(const istring &category);
+	void clearRoot(const Std::string &category);
 
 	//! get value
-	bool get(const istring &category, const istring &section, const istring &key, Std::string &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, Std::string &ret);
 	//! get value
-	bool get(const istring &category, const istring &section, const istring &key, int &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret);
 	//! get value
-	bool get(const istring &category, const istring &section, const istring &key, bool &ret);
+	bool get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret);
 
 	//! list all sections
 	//! \param category The config category to list all sections in
 	//! \return the sections. They have no guaranteed order.
-	Std::vector<istring> listSections(const istring &category);
+	Std::vector<Std::string> listSections(const Std::string &category);
 	//! list all key-value pairs in the given section.
 	//! \param category The config category for the section to list
 	//! \param section The section to list
 	//! \return the key-value pairs. They have no guaranteed order.
-	KeyMap listKeyValues(const istring &category, const istring &section);
+	KeyMap listKeyValues(const Std::string &category, const Std::string &section);
 
 private:
 	Std::vector<ConfigFile *> _configFiles;

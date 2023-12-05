@@ -41,7 +41,7 @@ SpeechFlex::SpeechFlex(Common::SeekableReadStream *rs) : SoundFlex(rs) {
 		unsigned int slen = 0;
 		while (off + slen < size && cbuf[off + slen])
 			slen++;
-		istring str(cbuf + off, slen);
+		Std::string str(cbuf + off, slen);
 		off += slen + 1;
 
 		TabsToSpaces(str, 1);
@@ -61,7 +61,7 @@ SpeechFlex::~SpeechFlex(void) {
 
 int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 								  uint32 start, uint32 &end) const {
-	Std::vector<istring>::const_iterator it;
+	Std::vector<Std::string>::const_iterator it;
 	int i = 1;
 
 	Std::string text = phrase.substr(start);
@@ -76,7 +76,7 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	//debug(MM_INFO, "Looking for string: \"%s\"", text.c_str());
 
 	for (it = _phrases.begin(); it != _phrases.end(); ++it) {
-		if (text.find(it->c_str()) == 0) {
+		if (text.hasPrefixIgnoreCase(*it)) {
 			//debug(MM_INFO, "Found: %d", i);
 			end = (*it).size() + start + pos1;
 			if (end >= start + pos2)

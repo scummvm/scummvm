@@ -43,7 +43,7 @@ ConfigFileManager::~ConfigFileManager() {
 	_configFileManager = nullptr;
 }
 
-bool ConfigFileManager::readConfigFile(string fname, const istring &category) {
+bool ConfigFileManager::readConfigFile(string fname, const Std::string &category) {
 	Common::SeekableReadStream *f = FileSystem::get_instance()->ReadFile(fname);
 	if (!f) return false;
 
@@ -70,11 +70,11 @@ void ConfigFileManager::clear() {
 	_configFiles.clear();
 }
 
-void ConfigFileManager::clearRoot(const istring &category) {
+void ConfigFileManager::clearRoot(const Std::string &category) {
 	Std::vector<ConfigFile *>::iterator i = _configFiles.begin();
 
 	while (i != _configFiles.end()) {
-		if ((*i)->_category == category) {
+		if (category.equalsIgnoreCase((*i)->_category)) {
 			delete(*i);
 			i = _configFiles.erase(i);
 		} else {
@@ -83,10 +83,10 @@ void ConfigFileManager::clearRoot(const istring &category) {
 	}
 }
 
-bool ConfigFileManager::get(const istring &category, const istring &section, const istring &key, string &ret) {
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, string &ret) {
 	Std::vector<ConfigFile*>::reverse_iterator i;
 	for (i = _configFiles.rbegin(); i != _configFiles.rend(); ++i) {
-		if ((*i)->_category == category) {
+		if (category.equalsIgnoreCase((*i)->_category)) {
 			if ((*i)->_iniFile.getKey(key, section, ret)) {
 				return true;
 			}
@@ -97,7 +97,7 @@ bool ConfigFileManager::get(const istring &category, const istring &section, con
 }
 
 
-bool ConfigFileManager::get(const istring &category, const istring &section, const istring &key, int &ret) {
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, int &ret) {
 	string stringval;
 	if (!get(category, section, key, stringval))
 		return false;
@@ -106,7 +106,7 @@ bool ConfigFileManager::get(const istring &category, const istring &section, con
 	return true;
 }
 
-bool ConfigFileManager::get(const istring &category, const istring &section, const istring &key, bool &ret) {
+bool ConfigFileManager::get(const Std::string &category, const Std::string &section, const Std::string &key, bool &ret) {
 	string stringval;
 	if (!get(category, section, key, stringval))
 		return false;
@@ -115,12 +115,12 @@ bool ConfigFileManager::get(const istring &category, const istring &section, con
 	return true;
 }
 
-Std::vector<istring> ConfigFileManager::listSections(const istring &category) {
-	Std::vector<istring> sections;
+Std::vector<Std::string> ConfigFileManager::listSections(const Std::string &category) {
+	Std::vector<Std::string> sections;
 	Std::vector<ConfigFile*>::const_iterator i;
 
 	for ( i = _configFiles.begin(); i != _configFiles.end(); ++i) {
-		if ((*i)->_category == category) {
+		if (category.equalsIgnoreCase((*i)->_category)) {
 			Common::INIFile::SectionList sectionList = (*i)->_iniFile.getSections();
 			Common::INIFile::SectionList::const_iterator j;
 			for (j = sectionList.begin(); j != sectionList.end(); ++j) {
@@ -132,13 +132,13 @@ Std::vector<istring> ConfigFileManager::listSections(const istring &category) {
 	return sections;
 }
 
-KeyMap ConfigFileManager::listKeyValues(const istring &category, const istring &section) {
+KeyMap ConfigFileManager::listKeyValues(const Std::string &category, const Std::string &section) {
 	KeyMap values;
 	Std::vector<ConfigFile*>::const_iterator i;
 
 	for (i = _configFiles.begin(); i != _configFiles.end(); ++i) {
 		const ConfigFile *c = *i;
-		if (c->_category == category && c->_iniFile.hasSection(section)) {
+		if (category.equalsIgnoreCase((*i)->_category) && c->_iniFile.hasSection(section)) {
 			Common::INIFile::SectionKeyList keys = c->_iniFile.getKeys(section);
 			Common::INIFile::SectionKeyList::const_iterator j;
 			for (j = keys.begin(); j != keys.end(); ++j) {

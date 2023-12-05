@@ -193,8 +193,8 @@ FrameID GameData::translate(FrameID f) {
 	// TODO: allow translations to be in another shapeflex
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	istring category = "language";
-	istring section;
+	Std::string category = "language";
+	Std::string section;
 
 	switch (f._flexId) {
 	case GUMPS:
@@ -207,7 +207,7 @@ FrameID GameData::translate(FrameID f) {
 	char buf[100];
 	Common::sprintf_s(buf, "%d,%d", f._shapeNum, f._frameNum);
 
-	istring key = buf;
+	Std::string key = buf;
 	Std::string trans;
 	if (!config->get(category, section, key, trans)) {
 		return f;

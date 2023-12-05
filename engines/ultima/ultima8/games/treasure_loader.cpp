@@ -45,7 +45,7 @@ void TreasureLoader::loadDefaults() {
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
-		const istring &key = defaultiter->_key;
+		const Std::string &key = defaultiter->_key;
 		const Std::string &val = defaultiter->_value;
 		bool ok = internalParse(val, ti, true);
 		if (ok) {

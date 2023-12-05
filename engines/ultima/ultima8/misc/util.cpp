@@ -19,8 +19,8 @@
  *
  */
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/util.h"
-#include "ultima/ultima8/misc/istring.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -102,8 +102,6 @@ template<class T> void TrimSpaces(T &str) {
 }
 
 template void TrimSpaces<Std::string>(Std::string &str);
-template void TrimSpaces<istring>(istring &str);
-
 
 template<class T> void TabsToSpaces(T &str, unsigned int n) {
 	T repl(n, ' ');
@@ -113,8 +111,6 @@ template<class T> void TabsToSpaces(T &str, unsigned int n) {
 }
 
 template void TabsToSpaces<Std::string>(Std::string &str, unsigned int n);
-template void TabsToSpaces<istring>(istring &str, unsigned int n);
-
 
 template<class T> void SplitString(const T &args, char sep,
 								   Std::vector<T> &argv) {
@@ -139,10 +135,6 @@ template<class T> void SplitString(const T &args, char sep,
 
 
 template void SplitString<Std::string>(const Std::string &args, char sep, Std::vector<Std::string> &argv);
-template void SplitString<istring>(const istring &args, char sep, Std::vector<istring> &argv);
-
-
-
 
 template<class T> void SplitStringKV(const T &args, char sep,
 									 Std::vector<Common::Pair<T, T> > &argv) {
@@ -172,7 +164,6 @@ template<class T> void SplitStringKV(const T &args, char sep,
 }
 
 template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Common::Pair<Std::string, Std::string> > &argv);
-template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Common::Pair<istring, istring> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima
