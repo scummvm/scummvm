@@ -56,8 +56,20 @@ bool InstallShieldV3::open(const Common::FSNode &node) {
 	return read();
 }
 
+bool InstallShieldV3::open(Common::SeekableReadStream *stream) {
+	close();
+
+	if (stream == nullptr)
+		return false;
+
+	_stream = stream;
+
+	return read();
+}
+
 void InstallShieldV3::close() {
-	delete _stream; _stream = nullptr;
+	delete _stream;
+	_stream = nullptr;
 	_map.clear();
 }
 

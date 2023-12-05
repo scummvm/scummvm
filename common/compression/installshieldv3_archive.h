@@ -39,6 +39,7 @@ public:
 
 	bool open(const Common::String &filename);
 	bool open(const Common::FSNode &node);
+	bool open(Common::SeekableReadStream *stream);
 	void close();
 	bool isOpen() const { return _stream != nullptr; }
 
