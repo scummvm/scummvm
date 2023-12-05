@@ -51,7 +51,7 @@ protected:
 	Common::HashMap<int, const Graphics::Font *> _fonts;
 	int _gameFontId = -1;
 
-	byte _unicodeToMacRoman[95];
+	byte _unicodeToMacRoman[96];
 
 	enum Color {
 		kBlack = 0,
