@@ -138,11 +138,11 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int duration, bool onlyEmulate,
 		Audio::Mixer::SoundType soundType, const char *cuesheet) {
 
-	Common::File *cuefile = new Common::File();
-	if (!cuefile->open(cuesheet)) {
+	Common::File cuefile;
+	if (!cuefile.open(cuesheet)) {
 		return false;
 	}
-	Common::String cuestring = cuefile->readString(0, cuefile->size());
+	Common::String cuestring = cuefile.readString(0, cuefile.size());
 	Common::CueSheet cue(cuestring.c_str());
 
 	Common::CueSheet::CueTrack *track = cue.getTrackAtFrame(startFrame);
