@@ -135,7 +135,7 @@ void Room174::daemon() {
 			break;
 
 		case 4:
-			disable_player();
+			enable_player();
 			inv_give_to_player("LAXATIVE");
 			hotspot_set_active("LAXATIVE ", false);
 			break;
