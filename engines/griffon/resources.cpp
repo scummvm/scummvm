@@ -1101,7 +1101,7 @@ void GriffonEngine::loadItemImgs() {
 		temp->blendBlitTo(*_itemImg[i], 0, 0, Graphics::FLIP_NONE, &rcSrc);
 	}
 
-	temp->free();
+	delete temp;
 }
 
 void GriffonEngine::loadFont() {
@@ -1128,7 +1128,7 @@ void GriffonEngine::loadFont() {
 			font->blendBlitTo(*_fontChr[i2][f], rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 		}
 
-	font->free();
+	delete font;
 }
 
 void GriffonEngine::loadTiles() {
