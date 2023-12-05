@@ -477,9 +477,8 @@ void AGOSEngine::delay(uint amount) {
 					}
 				} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 					if (event.kbd.keycode == Common::KEYCODE_a) {
-						GUI::Dialog *_aboutDialog;
-						_aboutDialog = new GUI::AboutDialog();
-						_aboutDialog->runModal();
+						GUI::AboutDialog aboutDialog;
+						aboutDialog.runModal();
 					} else if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode = !_fastMode;
 					}
