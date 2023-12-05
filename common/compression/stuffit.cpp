@@ -975,7 +975,7 @@ static void SIT13_CreateTree(struct SIT13Data *s, Common::BitStream8LSB *bits, s
 bool StuffItArchive::decompress13(Common::SeekableReadStream *src, byte *dst, uint32 uncompressedSize) const {
 	Common::MemoryWriteStream out(dst, uncompressedSize);
 
-	Common::BitStream8LSB *bits = new Common::BitStream8LSB(src);
+	Common::BitStream8LSB bits(src);
 
 	uint32 i, j;
 
@@ -990,7 +990,7 @@ bool StuffItArchive::decompress13(Common::SeekableReadStream *src, byte *dst, ui
 		s->Buffer4[i].freq = -1;
 	}
 
-	j = bits->getBits<8>();
+	j = bits.getBits<8>();
 	i = j>>4;
 	if(i > 5)
 		return false;
@@ -1003,15 +1003,15 @@ bool StuffItArchive::decompress13(Common::SeekableReadStream *src, byte *dst, ui
 	}
 	else
 	{
-		SIT13_CreateTree(s, bits, s->Buffer3, 0x141);
+		SIT13_CreateTree(s, &bits, s->Buffer3, 0x141);
 		if(j&8)
 			memcpy(s->Buffer3b, s->Buffer3, 0x1000*sizeof(struct SIT13Buffer));
 		else
-			SIT13_CreateTree(s, bits, s->Buffer3b, 0x141);
+			SIT13_CreateTree(s, &bits, s->Buffer3b, 0x141);
 		j = (j&7)+10;
-		SIT13_CreateTree(s, bits, s->Buffer2, j);
+		SIT13_CreateTree(s, &bits, s->Buffer2, j);
 	}
-	return SIT13_Extract(s, bits, out);
+	return SIT13_Extract(s, &bits, out);
 }
 
 #define OUTPUT_VAL(x) \
