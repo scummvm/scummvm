@@ -19,6 +19,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Dark Side.
    - Added support for Kingdom: The Far Reaches.
    - Added support for Escape From Hell.
+   - Added support for Wrath of the Gods, Gadget: Invention, Travel and Adventure,
+     The Dark Eye, and 4 other Director titles.
 
  New platforms:
    - Added libretro new shiny port.
