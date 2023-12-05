@@ -582,7 +582,7 @@ public:
 	int toMacRoman(int unicode) const;
 
 	void setPalette(const byte *palette, uint size);
-	virtual bool handleEvent(Common::Event &event);
+	virtual bool handleEvent(Common::Event event);
 
 	static void menuCallback(int id, Common::String &name, void *data);
 	virtual void initialize();
@@ -613,7 +613,6 @@ public:
 	MacDialogWindow *createDialog(int dialogId);
 	MacDialogWindow *drawBanner(char *message);
 
-	void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
 };
 
@@ -624,7 +623,7 @@ public:
 
 	const Common::String name() const { return "Loom"; }
 
-	bool handleEvent(Common::Event &event);
+	bool handleEvent(Common::Event event);
 
 	const Graphics::Font *getFontByScummId(int32 id);
 
@@ -689,7 +688,7 @@ public:
 	void reset();
 	void resetAfterLoad();
 	void update(int delta);
-	bool handleEvent(Common::Event &event);
+	bool handleEvent(Common::Event event);
 
 protected:
 	bool getFontParams(FontId fontId, int &id, int &size, int &slant) const;
@@ -703,6 +702,9 @@ protected:
 	bool runIqPointsDialog();
 
 private:
+	int _verbGuiTop = 0;
+	Graphics::Surface _verbGuiSurface;
+
 	bool _visible = false;
 
 	bool _leftButtonIsPressed = false;
@@ -760,10 +762,10 @@ private:
 		byte translateChar(byte c) const;
 
 		// Primitives
-		void fill(Common::Rect r) const;
+		void fill(Common::Rect r);
 		void drawBitmap(Common::Rect r, const uint16 *bitmap, Color color) const;
 		void drawShadowBox(Common::Rect r) const;
-		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor) const;
+		void drawShadowFrame(Common::Rect r, Color shadowColor, Color fillColor);
 
 		void markScreenAsDirty(Common::Rect r) const;
 	};
@@ -895,7 +897,7 @@ private:
 	void show();
 	void hide();
 
-	void fill(Common::Rect r) const;
+	void fill(Common::Rect r);
 
 	void markScreenAsDirty(Common::Rect r);
 	void copyDirtyRectsToScreen();
