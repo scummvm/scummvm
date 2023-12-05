@@ -41,7 +41,7 @@ private:
 	Series _series1;
 	machine *_series2 = nullptr;
 	noWalkRect *_walk1 = nullptr;
-	int _val1 = 0;
+	int _probeShould = 0;
 	int _trufflesShould = 0;
 
 protected:

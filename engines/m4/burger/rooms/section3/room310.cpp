@@ -27,6 +27,7 @@ namespace Burger {
 namespace Rooms {
 
 enum {
+	kCHANGE_PROBE_ANIMATION = 1,
 	kCHANGE_TRUFFLES_ANIMATION = 3
 };
 
@@ -96,8 +97,8 @@ void Room310::init() {
 	set_palette_brightness(48, 127, 30);
 	digi_preload("601_007");
 
-	_val1 = 7;
-	kernel_trigger_dispatch_now(1);
+	_probeShould = 7;
+	kernel_trigger_dispatch_now(kCHANGE_PROBE_ANIMATION);
 
 	if (!_G(flags)[kTrufflesRanAway] && _G(flags)[kTrufflesInMine]) {
 		_walk1 = intr_add_no_walk_rect(360, 265, 515, 293, 359, 294);
@@ -130,31 +131,33 @@ void Room310::daemon() {
 	_G(kernel).continue_handling_trigger = false;
 
 	switch (_G(kernel).trigger) {
-	case 1:
-		switch (_val1) {
+	case kCHANGE_PROBE_ANIMATION:
+		switch (_probeShould) {
 		case 7:
 			_series2 = series_play("310prob", 0xb00, 0, -1, 6, -1, 100, 0, 0, 0, 17);
 			break;
 
 		case 8:
-			_val1 = 7;
+			_probeShould = 7;
 			terminateMachineAndNull(_series2);
-			series_play_with_breaks(PLAY3, "310prob", 0xb00, 1, 2);
+			series_play_with_breaks(PLAY3, "310prob", 0xb00, kCHANGE_PROBE_ANIMATION, 2);
 			break;
 
 		case 9:
-			_val1 = 10;
+			_probeShould = 10;
 			terminateMachineAndNull(_series2);
-			series_play_with_breaks(PLAY5, "310prob", 0xb00, 1, 2);
+			series_play_with_breaks(PLAY5, "310prob", 0xb00, kCHANGE_PROBE_ANIMATION, 2);
 			break;
 
 		case 10:
-			_val1 = 11;
-			series_play_with_breaks(PLAY6, "310prob", 0xb00, 1, 2, 3);
+			_probeShould = 11;
+			series_play_with_breaks(PLAY6, "310prob", 0xb00, kCHANGE_PROBE_ANIMATION, 2, 3);
 			break;
 
 		case 11:
 			series_show("310prob", 0xb00, 0, -1, -1, 60);
+			_G(wilbur_should) = 2;
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		default:
@@ -177,7 +180,7 @@ void Room310::daemon() {
 
 		case 13:
 			_trufflesShould = 12;
-			_val1 = 8;
+			_probeShould = 8;
 			series_play_with_breaks(PLAY1, "310tr01", 0xb00, 3, 3);
 			_state1 = imath_ranged_rand(1, 4);
 			break;
@@ -227,8 +230,8 @@ void Room310::daemon() {
 		case 1:
 			ws_hide_walker();
 			_general.play("310wi01", 0xb00, 16, -1, 6, 0, 100, 0, 0, 0, 5);
-			_val1 = 9;
-			kernel_trigger_dispatch_now(1);
+			_probeShould = 9;
+			kernel_trigger_dispatch_now(kCHANGE_PROBE_ANIMATION);
 			break;
 
 		case 2:
