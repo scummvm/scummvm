@@ -596,8 +596,8 @@ void DirectorSound::playFPlaySound() {
 
 	Common::SeekableReadStreamEndian *sndData = archive->getResource(tag, id);
 	if (sndData != nullptr) {
-		SNDDecoder *ad = new SNDDecoder();
-		ad->loadStream(*sndData);
+		SNDDecoder ad;
+		ad.loadStream(*sndData);
 		delete sndData;
 
 		Audio::AudioStream *as;
@@ -610,7 +610,7 @@ void DirectorSound::playFPlaySound() {
 
 		// FPlay is controlled by Lingo, not the score, like a puppet,
 		// so we'll get the puppet version of the stream.
-		as = ad->getAudioStream(looping, true);
+		as = ad.getAudioStream(looping, true);
 
 		if (!as) {
 			warning("DirectorSound:playFPlaySound: failed to get audio stream");
@@ -621,7 +621,6 @@ void DirectorSound::playFPlaySound() {
 		_currentSoundName = sndName;
 
 		playStream(*as, 1);
-		delete ad;
 	}
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
