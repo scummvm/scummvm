@@ -24,9 +24,9 @@
 #include "macs2/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
@@ -36,6 +36,11 @@
 namespace Macs2 {
 
 Macs2Engine *g_engine;
+
+Graphics::Surface* Macs2Engine::readRLEImage(int64 offs, Common::File& file)
+{
+	return nullptr;
+}
 
 void Macs2Engine::readResourceFile() {
 	Common::File file;
@@ -160,6 +165,13 @@ void Macs2Engine::readResourceFile() {
 	_scriptData = new byte[scriptLength];
 	file.read(_scriptData, scriptLength);
 	_scriptStream = new Common::MemoryReadStream(_scriptData, scriptLength);
+
+	// Try executing the script
+	ExecuteScript(_scriptStream);
+
+	// Load the background map
+	auto map = readRLEImage(0x0024BD9B, file);
+
 }
 
 Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -178,6 +190,11 @@ void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
 
 		// Read another value - TODO: Not sure yet what this does
 		byte val1 = stream->readByte();
+
+		debug("Script read (byte): %.2x at offset %.4x\n", opcode1, stream->pos());
+			
+		debug("Script read (byte): %.2x at offset %.4x\n", val1, stream->pos());
+		break;
 	}
 }
 
