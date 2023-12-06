@@ -52,8 +52,8 @@ static const char *SAID[][4] = {
 const WilburMatch Room142::MATCH[] = {
 	{ "GEAR", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
 	{ "LOOK AT", "PARKING LOT", 9, &_G(flags)[V000], 1003, &_val1, 18 },
-	{ "GEAR", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
-	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[V058], 0, &_val2, 13 },
+	{ "GEAR", "PARKING LOT", 5, &_G(flags)[kTourBusAtDiner], 0, &_val2, 13 },
+	{ "LOOK AT", "PARKING LOT", 5, &_G(flags)[kTourBusAtDiner], 0, &_val2, 13 },
 	{ "GEAR", "ICE BOX", kCHANGE_WILBUR_ANIMATION, &_G(flags)[kIceBoxOpened], 0, &Vars::_wilbur_should, 1 },
 	{ "TAKE", "FANBELT", kCHANGE_WILBUR_ANIMATION, nullptr, 0, &Vars::_wilbur_should, 9 },
 	{ "GEAR", "BACK DOOR", 6, nullptr, 0, nullptr, 0 },
@@ -234,7 +234,7 @@ void Room142::init() {
 
 	hotspot_set_active("TOUR BUS", false);
 
-	if (_G(flags)[V058]) {
+	if (_G(flags)[kTourBusAtDiner]) {
 		_series4 = series_show("142ba01", 0xf00, 0, -1, -1, 21);
 		hotspot_set_active("TOUR BUS", true);
 	}
@@ -495,7 +495,7 @@ void Room142::daemon() {
 		}
 		break;
 
-	case 10028:
+	case kBurlEntersTown:
 		if (!_G(flags)[kRoadOpened]) {
 			if (_series2) {
 				terminateMachineAndNull(_series2);
@@ -503,7 +503,7 @@ void Room142::daemon() {
 			}
 			if (_series4) {
 				terminateMachineAndNull(_series4);
-				_G(flags)[V058] = 0;
+				_G(flags)[kTourBusAtDiner] = 0;
 			}
 
 			_G(flags)[V000] = 1003;
@@ -529,7 +529,7 @@ void Room142::daemon() {
 		}
 		break;
 
-	case 10031:
+	case kBurlLeavesTown:
 		if (_G(flags)[V000] == 1002) {
 			_G(kernel).continue_handling_trigger = true;
 
@@ -557,19 +557,19 @@ void Room142::daemon() {
 				_val1 = 19;
 				series_play_with_breaks(PLAY8, "142bu03", 0xd00, 9, 3);
 			} else {
-				kernel_timing_trigger(15, 10031);
+				kernel_timing_trigger(15, kBurlLeavesTown);
 			}
 		}
 		break;
 
-	case 10032:
+	case kBandEntersTown:
 		if (_series2) {
 			terminateMachineAndNull(_series2);
 			_G(flags)[V000] = _G(flags)[kRoadOpened] ? 1002 : 1004;
 		}
 
-		if (!_G(flags)[V058]) {
-			_G(flags)[V058] = 1;
+		if (!_G(flags)[kTourBusAtDiner]) {
+			_G(flags)[kTourBusAtDiner] = 1;
 			digi_preload("142_006");
 			digi_play("142_006", 3, 255, 4);
 			series_play_with_breaks(PLAY14, "142ba01", 0xf00, -1, 2);
@@ -639,7 +639,7 @@ void Room142::pre_parser() {
 				checkAction();
 				_G(kernel).call_daemon_every_loop = true;
 				_G(player).command_ready = false;
-			} else if (player_said("PARKING LOT") && _G(flags)[V058]) {
+			} else if (player_said("PARKING LOT") && _G(flags)[kTourBusAtDiner]) {
 				checkAction();
 				_G(kernel).call_daemon_every_loop = true;
 				_G(player).command_ready = false;
@@ -689,7 +689,7 @@ void Room142::checkAction() {
 	if (player_said_any("GEAR", "LOOK AT", "GO TO")) {
 		if (player_said("MAIN STREET")) {
 			_actionType = 1;
-		} else if (_G(flags)[V058] && (player_said("PARKING LOT") ||
+		} else if (_G(flags)[kTourBusAtDiner] && (player_said("PARKING LOT") ||
 				player_said("GO TO", "TOUR BUS"))) {
 			_actionType = 2;
 		}

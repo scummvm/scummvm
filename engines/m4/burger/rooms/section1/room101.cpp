@@ -816,7 +816,7 @@ void Room101::daemon15() {
 
 		_G(flags)[V039] = 0;
 		_G(flags)[kRoadOpened] = 0;
-		_G(flags)[V058] = 0;
+		_G(flags)[kTourBusAtDiner] = 0;
 	}
 
 	_G(flags)[V063] = 0;
@@ -831,7 +831,7 @@ void Room101::daemon18() {
 		inv_give_to_player("laxative");
 		inv_give_to_player("amplifier");
 		_G(flags)[V067] = 1;
-		_G(flags)[V058] = 1;
+		_G(flags)[kTourBusAtDiner] = 1;
 		_G(flags).set_boonsville_time(19200);
 	}
 }

@@ -43,8 +43,8 @@ static const BoonsvilleEvent EVENTS[] = {
 	{ 19200, -1, "After getting language stuff" },
 	{ 13200, kBurlStopsEating, "Burl stops eating" },
 	{ 22800, -1, "After getting logic stuff" },
-	{ 15000, 10031, "Burl leaves town" },
-	{ 18600, 10031, "Band enters town" },
+	{ 15000, kBurlLeavesTown, "Burl leaves town" },
+	{ 18600, kBandEntersTown, "Band enters town" },
 	{ 33600, 10022, "Abduction time" },
 	{ 55200, 10023, "Nero timeout" },
 	{ 166800, 10023, "Survival timeout" },
@@ -188,7 +188,7 @@ void Flags::reset1() {
 	inv_move_object("keys", 138);
 
 	(*this)[V112] = 0;
-	(*this)[V058] = 0;
+	(*this)[kTourBusAtDiner] = 0;
 	(*this)[kIceBoxOpened] = 0;
 	(*this)[V245] = 10027;
 

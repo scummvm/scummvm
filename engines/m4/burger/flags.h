@@ -90,7 +90,7 @@ enum {
 	V055 =  55,
 	V056 =  56,
 	V057 =  57,
-	V058 =  58,
+	kTourBusAtDiner =  58,
 	kIceBoxOpened =  59,
 	V060 =  60,
 	V061 =  61,

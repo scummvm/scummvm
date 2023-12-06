@@ -72,7 +72,7 @@ enum global_triggers {
 	kBurlGetsFed = 10029,
 	kBurlStopsEating = 10030,
 	kBurlLeavesTown = 10031,
-	k10032 = 10032,
+	kBandEntersTown = 10032,
 
 	kCALLED_EACH_LOOP = 32764,
 
