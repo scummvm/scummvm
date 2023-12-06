@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-03 21:13+0000\n"
-"PO-Revision-Date: 2023-11-08 23:41+0000\n"
-"Last-Translator: illusion01 <prathamesh.jakkula.01042005@gmail.com>\n"
+"PO-Revision-Date: 2023-12-06 11:05+0000\n"
+"Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -1281,35 +1281,39 @@ msgstr ""
 
 #: gui/launcher.cpp:415
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "यह डायरेक्टरी अभी तक उपयोग नहीं की जा सकती, इसे डाउनलोड किया जा रहा है!"
 
 #: gui/launcher.cpp:426
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
+"क्या आप वाकई मास गेम डिटेक्टर चलाना चाहते हैं? यह संभावना है कि यह बड़ी "
+"संख्या में खेल जोड़ सकता है।"
 
 #: gui/launcher.cpp:456
 msgid "Do you really want to remove this game configuration?"
-msgstr ""
+msgstr "क्या आप वाकई इस खेल कॉन्फ़िगरेशन को हटाना चाहते हैं?"
 
 #: gui/launcher.cpp:498
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "क्या आप सहेजे गए खेल को लोड करना चाहते हैं?"
 
 #: gui/launcher.cpp:555
 msgid "This game does not support loading games from the launcher."
-msgstr ""
+msgstr "यह गेम लॉन्चर से गेम लोड करने का समर्थन नहीं करता है|"
 
 #: gui/launcher.cpp:559
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr ""
+msgstr "स्कमवीएम ने चयनित खेल को चलाने के लिए कोई इंजन नहीं मिला!"
 
 #: gui/launcher.cpp:660 gui/launcher.cpp:684
 msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"क्या आपने इस डायरेक्टरी को एसएफ में जोड़ा है? विस्तृत निर्देशों के लिए ऊपर "
+"हेल्प बटन [?] दबाएं"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
