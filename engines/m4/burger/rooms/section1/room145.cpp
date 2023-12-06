@@ -588,7 +588,7 @@ void Room145::daemon() {
 				break;
 
 			case 2:
-				playRandomDigi2();
+				playRandomDigi1();
 				break;
 
 			default:

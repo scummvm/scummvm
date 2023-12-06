@@ -249,15 +249,15 @@ void Section1::daemon() {
 			_G(flags)[V063] = 1;
 		break;
 	case kBurlStopsEating:
-		if (_G(flags)[kRoadOpened])
+		if (!_G(flags)[kRoadOpened])
 			_G(flags)[V063] = 0;
 		break;
 	case kBurlLeavesTown:
-		if (_G(flags)[kRoadOpened])
+		if (!_G(flags)[kRoadOpened])
 			_G(flags)[V000] = 1004;
 		break;
-	case k10032:
-		_G(flags)[V058] = 1;
+	case kBandEntersTown:
+		_G(flags)[kTourBusAtDiner] = 1;
 		break;
 
 	default:
