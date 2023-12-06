@@ -94,7 +94,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern, b
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
-	String patternString = pattern.toString();
+	String patternString = pattern.toString(getPathSeparator());
 	int matches = 0;
 
 	char pathSepString[2] = {getPathSeparator(), '\0'};
