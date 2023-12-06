@@ -72,7 +72,21 @@ void View1::draw() {
 		}
 	}
 
+	// And the highlight part
+	borderX = 150;
+	borderY = 100;
+	for (int x = 0; x < g_engine->_borderHighlightWidth; x++) {
+		for (int y = 0; y < g_engine->_borderHighlightHeight; y++) {
+			uint8 val = g_engine->_borderHighlightData[y * g_engine->_borderHighlightWidth + x];
+			if (val != 0) {
+				s.setPixel(borderX + x, borderY + y, val);
+			}
+		}
+	}
 
+	DrawSprite(200, 50, g_engine->_flagWidths[0], g_engine->_flagHeights[0], g_engine->_flagData[0], s);
+	DrawSprite(200, 100, g_engine->_flagWidths[1], g_engine->_flagHeights[1], g_engine->_flagData[1], s);
+	DrawSprite(200, 150, g_engine->_flagWidths[2], g_engine->_flagHeights[2], g_engine->_flagData[2], s);
 	
 	
 	//for (int i = 0; i < 100; ++i)
@@ -93,6 +107,18 @@ bool View1::tick() {
 	//	redraw();
 
 	return true;
+}
+
+void View1::DrawSprite(uint16 x, uint16 y, uint16 width, uint16 height, byte* data, Graphics::ManagedSurface& s)
+{
+	for (int currentX = 0; currentX < width; currentX++) {
+		for (int currentY = 0; currentY < height; currentY++) {
+			uint8 val = data[currentY * width + currentX];
+			if (val != 0) {
+				s.setPixel(x + currentX, y + currentY, val);
+			}
+		}
+	}
 }
 
 } // namespace Macs2
