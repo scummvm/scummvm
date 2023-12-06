@@ -30,6 +30,7 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
+#include "common/file.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
 #include "graphics/screen.h"
@@ -57,6 +58,8 @@ protected:
 		return Engine::shouldQuit();
 	}
 
+	Graphics::Surface* readRLEImage(int64 offs, Common::File& file);
+
 	void readResourceFile();
 
 public:
@@ -82,6 +85,8 @@ public:
 	byte** _flagData;
 	uint16* _flagWidths;
 	uint16* _flagHeights;
+
+	byte* mapData;
 
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
