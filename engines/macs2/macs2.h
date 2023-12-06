@@ -75,10 +75,19 @@ public:
 	uint16 _borderWidth;
 	uint16 _borderHeight;
 
+	byte* _borderHighlightData;
+	uint16 _borderHighlightWidth;
+	uint16 _borderHighlightHeight;
+
+	byte** _flagData;
+	uint16* _flagWidths;
+	uint16* _flagHeights;
+
 	Common::MemoryReadStream* _scriptStream;
 	byte* _scriptData;
 
-	
+	void ExecuteScript(Common::MemoryReadStream* stream);
+
 
 	uint32 getFeatures() const;
 

@@ -44,7 +44,7 @@ void Macs2Engine::readResourceFile() {
 
 	file.seek(0x23BE09);
 
-	
+
 	// file.read(data, 320 * 240);
 
 	// uint8 b0 = data[0];
@@ -57,7 +57,7 @@ void Macs2Engine::readResourceFile() {
 
 	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
 	// try to RLE something which would be better not RLE encoded.
-	
+
 	for (int y = 0; y < 200; y++) {
 		// TODO: Use the proper read function, it seems to be available
 		file.read(lengthData, 2);
@@ -113,7 +113,7 @@ void Macs2Engine::readResourceFile() {
 	_charHeight = file.readUint16LE();
 	_charData = new byte[_charWidth * _charHeight];
 
-	
+
 	file.read(_charData, _charWidth * _charHeight);
 
 	// Load the data for a border part
@@ -123,6 +123,36 @@ void Macs2Engine::readResourceFile() {
 	_borderHeight = file.readUint16LE();
 	_borderData = new byte[_borderWidth * _borderHeight];
 	file.read(_borderData, _borderWidth * _borderHeight);
+
+	// And the highlight part
+	file.seek(0x6962);
+
+	_borderHighlightWidth = file.readUint16LE();
+	_borderHighlightHeight = file.readUint16LE();
+	_borderHighlightData = new byte[_borderHighlightWidth * _borderHighlightHeight];
+	file.read(_borderHighlightData, _borderHighlightWidth * _borderHighlightHeight);
+
+	// The flag animation frames
+	file.seek(0x00250D47);
+	_flagData = new byte * [3];
+	_flagWidths = new uint16[3];
+	_flagHeights = new uint16[3];
+	_flagWidths[0] = file.readUint16LE();
+	_flagHeights[0] = file.readUint16LE();
+	_flagData[0] = new byte[_flagWidths[0] * _flagHeights[0]];
+	file.read(_flagData[0], _flagWidths[0] * _flagHeights[0]);
+
+	file.seek(0x00250B3C);
+	_flagWidths[1] = file.readUint16LE();
+	_flagHeights[1] = file.readUint16LE();
+	_flagData[1] = new byte[_flagWidths[1] * _flagHeights[1]];
+	file.read(_flagData[1], _flagWidths[1] * _flagHeights[1]);
+
+	file.seek(0x00250931);
+	_flagWidths[2] = file.readUint16LE();
+	_flagHeights[2] = file.readUint16LE();
+	_flagData[2] = new byte[_flagWidths[2] * _flagHeights[2]];
+	file.read(_flagData[2], _flagWidths[2] * _flagHeights[2]);
 
 	// Load the script
 	file.seek(0x000A3B98);
