@@ -153,6 +153,10 @@ AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("A
 	}
 }
 
+AppleCDXObject::~AppleCDXObject() {
+	delete _cue;
+}
+
 void AppleCDXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
