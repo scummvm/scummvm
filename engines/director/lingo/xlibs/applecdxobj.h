@@ -31,6 +31,7 @@ namespace Director {
 class AppleCDXObject : public Object<AppleCDXObject> {
 public:
 	AppleCDXObject(ObjectType objType);
+	~AppleCDXObject() override;
 	int _inpoint;
 	int _outpoint;
 	// Instead of immediately returning values, methods which return
