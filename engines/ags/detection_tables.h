@@ -3218,6 +3218,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "totti2", "Good Evening Totti" },
 	{ "tradeforward", "Trade it forward" },
 	{ "trancepacific", "Trance-Pacific" },
+	{ "trappedbalcony", "Trapped On The Balcony" },
 	{ "trappedhell1", "Trapped with Hell" },
 	{ "trappedhell2", "Trapped with Hell: Cruising" },
 	{ "trappedinabuilding", "Trapped in a building" },
@@ -4266,6 +4267,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603175), // v2.6
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979604026), // v3
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 981119316), // v3.0a
+	GAME_ENTRY_GOG("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341456), // v3.5a
 	GAME_ENTRY_GOG("primordia", "agsgame.dat", "22313e59c3233001488c26f18c80cc08", 973495830), // Linux
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976474850), // Mac
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347), // Mac v2.7a
@@ -4275,6 +4277,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678),  // with Ita translation
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766),
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 981119056),  // Hun-Tur translation release
+	GAME_ENTRY_STEAM("primordia", "primordia.ags", "fe4f46407ac736cf0e6badf96cef4ee5", 866341196),  // v3.6
 	GAME_ENTRY_STEAM("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475938),  // Mac
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
@@ -5302,6 +5305,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("augustlonging", "The long August longing.exe", "5db720fe7ddec76ff9829c5b21905201", 18038972),
 	GAME_ENTRY_EN("aunaturel", "au naturel.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8499426),
 	GAME_ENTRY_EN("authorsim", "AuthorSim2023.ags", "4f2894049816e5c03648bc01da6728a8", 3386519),
+	GAME_ENTRY_EN("authorsim", "AuthorSim2023.ags", "7cd8a7566f4be2600a3843770c448482", 3493740),  // v1.2
 	GAME_ENTRY_EN("automation", "automation.exe", "c16204dc8aa338e3199b2c62da0b33f4", 3943320),
 	GAME_ENTRY_EN_PLATFORM("automation", "automation.exe", "c16204dc8aa338e3199b2c62da0b33f4", 3942321, "OROW"),
 	GAME_ENTRY("averyspecialdog", "dog.exe", "465f972675db2da6040518221af5b0ba", 2120544),  // En-De
@@ -8413,6 +8417,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("tradeforward", "Trade it forward.exe", "776a62db4387dc68be92ef9933399fd5", 160811438),  //v1.1
 	GAME_ENTRY("trancepacific", "MAGS Sep 2007.exe", "f120690b506dd63cd7d1112ea6af2f77", 6007305),  // En-Fr-It
 	GAME_ENTRY_EN_PLATFORM("trancepacific", "MAGS Sep 2007.exe", "f120690b506dd63cd7d1112ea6af2f77", 5999008, "MAGS"),  //v1.02
+	GAME_ENTRY("trappedbalcony", "TrappedOnTheBalcony.exe", "733a619770a4f3673e28773b2c3f0fd9", 29228892),  // Eng-Esp
 	GAME_ENTRY_EN("trappedhell1", "phycho.exe", "0500aacb6c176d47ac0f8158f055db83", 697557),
 	GAME_ENTRY_EN("trappedhell2", "richphycho2.exe", "0500aacb6c176d47ac0f8158f055db83", 715802),
 	GAME_ENTRY("trappedinabuilding", "T I A B.exe", "722c8bd17ace161f1bba2d9d92806eaf", 2406330),  //v1 Eng-Norsk
