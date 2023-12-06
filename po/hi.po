@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-03 21:13+0000\n"
-"PO-Revision-Date: 2023-12-06 11:05+0000\n"
+"PO-Revision-Date: 2023-12-06 11:16+0000\n"
 "Last-Translator: Aditya Mohan <adityamurali003@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
@@ -2305,6 +2305,11 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"चेतावनी: ऑटोसेव सक्षम था। कुछ आपके खेलों में पहले से मौजूद सेव की गई गेम्स "
+"ऑटोसेव स्लॉट पर हैं। आप इसे या तो नए स्लॉट्स में स्थानांतरित कर सकते हैं, "
+"ऑटोसेव को अक्षम कर सकते हैं, या इसे नजरअंदाज कर सकते हैं (जब ऑटोसेव सेव को "
+"ओवरराइट करने के लिए होगा, तब आपको सूचित किया जाएगा)।\n"
+"खेलों की सूची:\n"
 
 #: gui/options.cpp:2863
 msgid ""
@@ -3182,6 +3187,11 @@ msgid ""
 "needed.\n"
 "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."
 msgstr ""
+"चेतावनी: ऑटोसेव स्लॉट में एक सहेजी गई गेम नामक %S है, और एक ऑटोसेव प्रलंबित "
+"है।\n"
+"कृपया इस सहेजी गई गेम को एक नए स्लॉट में स्थानांतरित करें, या यदि यह और आवश्"
+"यक नहीं है, तो इसे हटा दें।\n"
+"विकल्पनी, आप ऑटोसेव को छोड़ सकते हैं (5 मिनट में फिर से पूछा जाएगा)।"
 
 #: engines/engine.cpp:609
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -6207,6 +6217,11 @@ msgid ""
 "version (i.e. dvd-box or jewelcase):\n"
 "%s"
 msgstr ""
+"गेम डेटा फ़ाइल %s दूषित हो सकती है.\n"
+"यदि आप यह सुनिश्चित हैं कि ऐसा नहीं है, तो कृपया ScummVM टीम को निम्नलिखित को"
+"ड सहित निम्नलिखित जानकारी प्रदान करें, जिसमें फ़ाइल का नाम, भाषा, और आपके गे"
+"म संस्करण का विवरण (उदाहरण के लिए, डीवीडी-बॉक्स या ज्यूवेलकेस):\n"
+"%s"
 
 #: engines/grim/md5check.cpp:610
 #, c-format
@@ -7580,6 +7595,12 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM ने पाया है कि आपके पास Nippon Safes के लिए पुराने सेव किए गए खेल हैं "
+"जिन्हें पुनर्नामकरण किया जाना चाहिए।\n"
+"पुराने नाम अब समर्थित नहीं हैं, इसलिए आप अगर इन्हें परिवर्तित नहीं करते हैं "
+"तो आप अपने खेलों को लोड करने में सक्षम नहीं होंगे।\n"
+"\n"
+"उन्हें अब परिवर्तित करने के लिए OK दबाएं, अन्यथा आपसे अगली बार पूछा जाएगा।\n"
 
 #: engines/parallaction/saveload.cpp:315
 msgid "ScummVM successfully converted all your saved games."
@@ -9038,7 +9059,7 @@ msgstr ""
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
-msgstr ""
+msgstr "सॉफ़्टवेयर रेंडरर मॉडेड एसेट्स का समर्थन नहीं करता है"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
@@ -9074,7 +9095,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
+msgstr "'%s' इंजन डेटा फ़ाइल का गलत संस्करण मिला। %d की आशा थी लेकिन %d मिला।"
 
 #: engines/supernova/supernova.cpp:486
 #, c-format
