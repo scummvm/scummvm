@@ -36,6 +36,7 @@
 #include "graphics/screen.h"
 #include "twp/detection.h"
 #include "twp/vm.h"
+#include "twp/resmanager.h"
 
 namespace Twp {
 
@@ -53,6 +54,7 @@ public:
 	Common::Array<Entity> entities;
 	Common::Array<Thread*> threads;
 	GGPackDecoder pack;
+	ResManager resManager;
 
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);

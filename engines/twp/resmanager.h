@@ -19,60 +19,27 @@
  *
  */
 
-#ifndef TWPVM_H
-#define TWPVM_H
+#ifndef TWP_RESMANAGER_H
+#define TWP_RESMANAGER_H
 
-#include "common/array.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
-#include "twp/squirrel/squirrel.h"
-#include "twp/ggpack.h"
+#include "common/str.h"
+#include "common/hashmap.h"
 #include "twp/gfx.h"
 
 namespace Twp {
-class Entity {
+
+class ResManager {
 public:
-	HSQOBJECT obj;
-	Texture* texture;
-	Common::Rect rect;
-	int x;
-	int y;
-};
+	ResManager() {}
 
-class Thread {
-public:
-	Thread();
-	~Thread();
-
-	bool call();
-	bool update(float elapsed);
-	void suspend();
-	void resume();
-	bool isDead();
-	bool isSuspended();
-
-public:
-	uint64 id;
-	Common::String name;
-    bool global;
-	HSQOBJECT obj, threadObj, envObj, closureObj;
-	Common::Array<HSQOBJECT> args;
-	bool paused;
-	float waitTime;
-	int numFrames;
-	bool stopRequest;
-};
-
-class Vm {
-public:
-	Vm();
-	~Vm();
-
-	void exec(const SQChar *code);
+	Texture *texture(const Common::String &name);
 
 private:
-	HSQUIRRELVM v;
-};
-} // End of namespace Twp
+	void loadTexture(const Common::String &name);
 
-#endif // TWPVM_H
+private:
+	Common::HashMap<Common::String, Texture> _textures; // textures cache
+};
+} // namespace Twp
+
+#endif
