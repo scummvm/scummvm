@@ -28,6 +28,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	vm.o \
 	ggpack.o \
+	gfx.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

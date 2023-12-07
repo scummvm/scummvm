@@ -28,6 +28,7 @@
 #include "twp/console.h"
 #include "twp/vm.h"
 #include "twp/ggpack.h"
+#include "twp/gfx.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -37,6 +38,7 @@
 #include "image/png.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace Twp {
 
@@ -62,9 +64,10 @@ Common::String TwpEngine::getGameId() const {
 }
 
 Common::Error TwpEngine::run() {
-	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 0, 8, 16, 24);
-	initGraphics(1280, 720, &fmt);
-	_screen = new Graphics::Screen(1280, 720, fmt);
+	const int screenWidth = 1280;
+	const int screenHeight = 720;
+	initGraphics3d(screenWidth, screenHeight);
+	_screen = new Graphics::Screen(screenWidth, screenHeight);
 
 	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
 	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
@@ -99,9 +102,18 @@ Common::Error TwpEngine::run() {
 		} while (1);
 	}
 
-	for (local i = 1; i <= 100; i++) {
+	for (local i = 1; i <= 200; i++) {
 		startthread(bounceImage);
 	})";
+
+	GGPackEntryReader r;
+	r.open(g_engine->pack, "RaySheet.png");
+	Image::PNGDecoder d;
+	d.loadStream(r);
+	const Graphics::Surface *surface = d.getSurface();
+
+	Texture texture;
+	texture.load(*surface);
 
 	Vm v;
 	v.exec(code);
@@ -114,6 +126,9 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
+	Gfx gfx;
+	gfx.init();
+	gfx.camera(screenWidth, screenHeight);
 	// Simple event handling loop
 	Common::Event e;
 	while (!shouldQuit()) {
@@ -130,12 +145,12 @@ Common::Error TwpEngine::run() {
 		}
 
 		// update screen
-		_screen->clear(0xFF808080);
+		gfx.clear(Color(0.8f, 0.8f, 0.8f));
 		for (int i = 0; i < entities.size(); i++) {
 			Entity &ett = entities[i];
-			_screen->transBlitFrom(ett.surface, ett.rect, Common::Point(ett.x, ett.y));
+			gfx.drawSprite(Math::Vector2d(ett.x, ett.y), ett.rect, texture);
 		}
-		_screen->update();
+		g_system->updateScreen();
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
