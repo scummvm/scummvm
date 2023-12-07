@@ -28,6 +28,11 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_DRUMZ_ANIMATION = 2,
+	kCHANGE_ROXY_ANIMATION = 4,
+	kCHANGE_VIPE_ANIMATION = 5
+};
 const char *Room145::SAID[][4] = {
 	{ "TOUR BUS",      "145w001", "145w002", "145w003" },
 	{ "INSTRUMENTS",   "145w005", "145w006", "145w006" },
@@ -234,20 +239,20 @@ void Room145::init() {
 	} else {
 		loadDrum();
 		_walk1 = intr_add_no_walk_rect(140, 295, 240, 325, 139, 326);
-		_val1 = 19;
-		kernel_trigger_dispatch_now(2);
+		_drumzState = 19;
+		kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 	}
 
 	loadRx();
 
 	_walk2 = intr_add_no_walk_rect(423, 308, 540, 340, 541, 341);
 	_val2 = 101;
-	_val3 = 33;
-	kernel_trigger_dispatch_now(4);
+	_roxyState = 33;
+	kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 
 	_walk3 = intr_add_no_walk_rect(341, 326, 480, 365, 481, 366);
-	_val4 = 43;
-	kernel_trigger_dispatch_now(5);
+	_vipeState = 43;
+	kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 
 	if (inv_player_has("AMPLIFIER")) {
 		hotspot_set_active("AMPLIFIER ", false);
@@ -293,23 +298,23 @@ void Room145::daemon() {
 		}
 		break;
 
-	case 2:
-		switch (_val1) {
+	case kCHANGE_DRUMZ_ANIMATION:
+		switch (_drumzState) {
 		case 19:
 			if (!digi_play_state(2))
 				digi_play_loop("145_003", 2, 125, -1);
 
-			_val1 = getRandomState();
+			_drumzState = getRandomState();
 			series_play_with_breaks(PLAY5, "145dz01", 0xa01, 2, 3);
 			break;
 
 		case 20:
-			_val1 = 23;
+			_drumzState = 23;
 			series_play_with_breaks(PLAY6, "145dz02", 0xa01, 2, 3);
 			break;
 
 		case 21:
-			_val1 = 23;
+			_drumzState = 23;
 			series_play_with_breaks(PLAY7, "145dz03", 0xa01, 2, 3);
 			break;
 
@@ -317,18 +322,18 @@ void Room145::daemon() {
 			if (!_state2)
 				digi_stop(2);
 
-			_val1 = 23;
+			_drumzState = 23;
 			series_play_with_breaks(PLAY8, "145dz04", 0xa01, 2, 3);
 			break;
 
 		case 23:
 			kernel_trigger_dispatch_now(10001);
-			_val1 = getRandomState();
+			_drumzState = getRandomState();
 			kernel_trigger_dispatch_now(2);
 			break;
 
 		case 24:
-			_val1 = getRandomState();
+			_drumzState = getRandomState();
 			series_play_with_breaks(PLAY9, "145dz05", 0xa01, 2, 3);
 			break;
 
@@ -336,19 +341,19 @@ void Room145::daemon() {
 			if (!_state2)
 				digi_stop(2);
 
-			_val1 = getRandomState();
+			_drumzState = getRandomState();
 			series_play_with_breaks(PLAY10, "145dz06", 0xa01, 2, 3);
 			break;
 
 		case 26:
-			_val1 = 27;
+			_drumzState = 27;
 			series_play_with_breaks(PLAY11, "145dz05", 0xa01, 2, 3);
 			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 27:
-			_val1 = getRandomState();
+			_drumzState = getRandomState();
 			series_play_with_breaks(PLAY12, "145dz06", 0xa01, 2, 3);
 			break;
 
@@ -357,7 +362,7 @@ void Room145::daemon() {
 				digi_stop(2);
 
 			_G(wilbur_should) = 5;
-			_val1 = 29;
+			_drumzState = 29;
 			series_play_with_breaks(PLAY13, "145dz08", 0xa01, 2, 3);
 			break;
 
@@ -377,37 +382,37 @@ void Room145::daemon() {
 		}
 		break;
 
-	case 4:
-		_val5 = _val3;
+	case kCHANGE_ROXY_ANIMATION:
+		_val5 = _roxyState;
 
-		switch (_val3) {
+		switch (_roxyState) {
 		case 30:
 			_rx.terminate();
-			_val3 = 31;
+			_roxyState = 31;
 			series_play_with_breaks(PLAY15, "145rx01", 0x900, 4, 3, 6, 100, 0, 0);
 			break;
 
 		case 31:
 			_duration = imath_ranged_rand(180, 360);
-			_val3 = 32;
+			_roxyState = 32;
 			_rx.show("145rx01", 0x900, 0, 4, _duration);
 			break;
 
 		case 32:
 			_rx.terminate();
-			_val3 = 33;
+			_roxyState = 33;
 			series_play_with_breaks(PLAY16, "145rx01", 0x900, 4, 3);
 			break;
 
 		case 33:
 			if (_val2 == 101) {
 				_duration = imath_ranged_rand(180, 360);
-				_val3 = 30;
+				_roxyState = 30;
 				_rx.show("145rx01", 0x900, 0, 4, _duration, 3);
 			} else if (_val2 == 17) {
 				playRandomDigi2();
 			} else {
-				_val3 = 35;
+				_roxyState = 35;
 				kernel_trigger_dispatch_now(4);
 			}
 			break;
@@ -416,7 +421,7 @@ void Room145::daemon() {
 			digi_unload(_digiName2);
 			_state2 = 0;
 			_val2 = 101;
-			_val3 = 33;
+			_roxyState = 33;
 			kernel_trigger_dispatch_now(4);
 			break;
 
@@ -424,15 +429,15 @@ void Room145::daemon() {
 			switch (_val2) {
 			case 0:
 				player_set_commands_allowed(false);
-				_val3 = 36;
+				_roxyState = 36;
 				break;
 
 			case 15:
-				_val3 = 37;
+				_roxyState = 37;
 				break;
 
 			case 100:
-				_val3 = 40;
+				_roxyState = 40;
 				break;
 
 			default:
@@ -445,13 +450,13 @@ void Room145::daemon() {
 
 		case 36:
 			kernel_trigger_dispatch_now(9);
-			_val3 = 40;
+			_roxyState = 40;
 			kernel_trigger_dispatch_now(4);
 			break;
 
 		case 37:
 			_state2 = 1;
-			_val3 = 38;
+			_roxyState = 38;
 			series_play_with_breaks(PLAY18, "145rx04", 0x900, 4, 3);
 			break;
 
@@ -483,13 +488,13 @@ void Room145::daemon() {
 
 			digi_preload(_digiName1);
 			digi_play(_digiName1, 2, 125, -1);
-			_val3 = 42;
+			_roxyState = 42;
 			kernel_timing_trigger(120, 4);
 			break;
 
 		case 39:
 			_rx.terminate();
-			_val3 = 40;
+			_roxyState = 40;
 			kernel_trigger_dispatch_now(4);
 			kernel_trigger_dispatch_now(10001);
 			break;
@@ -501,7 +506,7 @@ void Room145::daemon() {
 		case 41:
 			_val2 = 101;
 			_rx.terminate();
-			_val3 = 33;
+			_roxyState = 33;
 			series_play_with_breaks(PLAY19, "145rx02", 0x900, 4, 3);
 			break;
 
@@ -509,7 +514,7 @@ void Room145::daemon() {
 			digi_unload(_digiName1);
 			_state2 = 0;
 			_rx.terminate();
-			_val3 = 41;
+			_roxyState = 41;
 			series_play_with_breaks(PLAY20, "145rx06", 0x900, 4, 3);
 			break;
 
@@ -518,11 +523,11 @@ void Room145::daemon() {
 		}
 		break;
 
-	case 5:
-		switch (_val4) {
+	case kCHANGE_VIPE_ANIMATION:
+		switch (_vipeState) {
 		case 39:
 			_vp.terminate();
-			_val4 = 40;
+			_vipeState = 40;
 			kernel_trigger_dispatch_now(5);
 			kernel_trigger_dispatch_now(10001);
 			break;
@@ -544,7 +549,7 @@ void Room145::daemon() {
 				_val2 = 100;
 				resetRoxy();
 				_vp.terminate();
-				_val4 = 45;
+				_vipeState = 45;
 				series_play_with_breaks(PLAY21, "145vp02", 0x300, 5, 3);
 			} else {
 				kernel_timing_trigger(15, 5);
@@ -552,19 +557,19 @@ void Room145::daemon() {
 			break;
 
 		case 45:
-			_val4 = 46;
+			_vipeState = 46;
 			series_play_with_breaks(PLAY22, "145vp06", 0x300, 5, 3);
 			break;
 
 		case 46:
 			kernel_trigger_dispatch_now(8);
-			_val4 = 40;
+			_vipeState = 40;
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 47:
 			_vp.terminate();
-			_val4 = 43;
+			_vipeState = 43;
 			series_play_with_breaks(PLAY23, "145vp02", 0x300, 5, 3);
 			break;
 
@@ -628,16 +633,16 @@ void Room145::daemon() {
 		break;
 
 	case 11:
-		_val4 = 47;
+		_vipeState = 47;
 		kernel_trigger_dispatch_now(5);
-		_val3 = 41;
+		_roxyState = 41;
 		kernel_trigger_dispatch_now(4);
 		break;
 
 	case 12:
 		_G(flags)[V073] = 1;
 		player_set_commands_allowed(true);
-		_val3 = 41;
+		_roxyState = 41;
 		kernel_trigger_dispatch_now(4);
 		break;
 
@@ -650,7 +655,7 @@ void Room145::daemon() {
 		switch (_G(wilbur_should)) {
 		case 1:
 			player_set_commands_allowed(false);
-			_val1 = 26;
+			_drumzState = 26;
 			break;
 
 		case 2:
@@ -669,7 +674,7 @@ void Room145::daemon() {
 			break;
 
 		case 4:
-			_val1 = 28;
+			_drumzState = 28;
 			break;
 
 		case 5:
@@ -707,7 +712,7 @@ void Room145::daemon() {
 			if (_state2) {
 				kernel_timing_trigger(15, kCHANGE_WILBUR_ANIMATION);
 			} else {
-				_val4 = 44;
+				_vipeState = 44;
 				kernel_trigger_dispatch_now(5);
 			}
 			break;
@@ -872,23 +877,23 @@ void Room145::conv23() {
 			case 2:
 				switch (entry) {
 				case 0:
-					_val1 = 20;
+					_drumzState = 20;
 					break;
 				case 1:
-					_val1 = 21;
+					_drumzState = 21;
 					break;
 				case 2:
 				case 3:
-					_val1 = 22;
+					_drumzState = 22;
 					break;
 				case 4:
-					_val1 = 21;
+					_drumzState = 21;
 					break;
 				case 5:
-					_val1 = 20;
+					_drumzState = 20;
 					break;
 				case 6:
-					_val1 = 20;
+					_drumzState = 20;
 					break;
 				case 7:
 					conv_resume_curr();
@@ -899,7 +904,7 @@ void Room145::conv23() {
 				break;
 
 			case 5:
-				_val1 = 20;
+				_drumzState = 20;
 				break;
 
 			default:
@@ -911,14 +916,14 @@ void Room145::conv23() {
 
 void Room145::loadVp4() {
 	_vp.terminate();
-	_val4 = 39;
+	_vipeState = 39;
 	digi_play(conv_sound_to_play(), 1, 255, 5);
 	_vp.play("145vp04", 0x300, 4, -1);
 }
 
 void Room145::loadRx4() {
 	_rx.terminate();
-	_val3 = 39;
+	_roxyState = 39;
 	digi_play(conv_sound_to_play(), 1, 255, 4);
 	_rx.play("145rx04", 0x900, 4, -1);
 }
@@ -947,13 +952,13 @@ void Room145::resetRoxy() {
 	switch (_val5) {
 	case 31:
 		_rx.terminate();
-		_val3 = 32;
+		_roxyState = 32;
 		kernel_trigger_dispatch_now(4);
 		break;
 
 	case 33:
 		_rx.terminate();
-		_val3 = 33;
+		_roxyState = 33;
 		kernel_trigger_dispatch_now(4);
 		break;
 
@@ -980,9 +985,9 @@ void Room145::playRandomDigi2() {
 		"145r917", "145r918", "145r919"
 	};
 
-	_digiName1 = NAMES[imath_ranged_rand(0, 12)];
-	_val3 = 34;
-	digi_preload(_digiName1);
+	_digiName2 = NAMES[imath_ranged_rand(0, 12)];
+	_roxyState = 34;
+	digi_preload(_digiName2);
 	npc_say(_digiName2, 4, "145rx01", 0x900, 1, 3, 7, 2);
 }
 

@@ -69,10 +69,10 @@ private:
 	const char *_digiName2 = nullptr;
 	bool _flag1 = false;
 	int _duration = 0;
-	int _val1 = 0;
+	int _drumzState = 0;
 	int _val2 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
+	int _roxyState = 0;
+	int _vipeState = 0;
 	int _val5 = 0;
 
 	void loadDrum();
