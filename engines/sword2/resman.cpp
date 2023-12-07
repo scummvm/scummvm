@@ -230,6 +230,9 @@ bool ResourceManager::init() {
 				return false;
 			}
 
+			// Use korean.clu instead of TEXT.CLU
+			if (_vm->_isKorTrs && !scumm_stricmp(_resFiles[i].fileName, "TEXT.CLU"))
+				strcpy_s(_resFiles[i].fileName, 20, "korean.clu");
 			_resFiles[i].cd = cdInf[j].cd;
 		}
 	}
@@ -308,12 +311,38 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 		debug(6, "res len %d", len);
 
-		// Ok, we know the length so try and allocate the memory.
-		_resList[res].ptr = _vm->_memory->memAlloc(len, res);
-		_resList[res].size = len;
-		_resList[res].refCount = 0;
+		if (res == ENGLISH_SPEECH_FONT_ID && _vm->_isKorTrs) {
+			// Load Korean Font
+			uint32 korFontSize = 0;
+			Common::File *korFontFile = NULL;
 
-		file->read(_resList[res].ptr, len);
+			korFontFile = new Common::File();
+			korFontFile->open("bs2k.fnt");
+			if (korFontFile->isOpen()) {
+				korFontSize = korFontFile->size();
+			}
+
+			// Ok, we know the length so try and allocate the memory.
+			_resList[res].ptr = _vm->_memory->memAlloc(len + korFontSize, res);
+			_resList[res].size = len + korFontSize;
+			_resList[res].refCount = 0;
+
+			file->read(_resList[res].ptr, len);
+
+			if (korFontSize > 0) {
+				korFontFile->read(_resList[res].ptr + len, korFontSize);
+				korFontFile->close();
+			}
+
+			len += korFontSize;
+		} else {
+			// Ok, we know the length so try and allocate the memory.
+			_resList[res].ptr = _vm->_memory->memAlloc(len, res);
+			_resList[res].size = len;
+			_resList[res].refCount = 0;
+
+			file->read(_resList[res].ptr, len);
+		}
 
 		debug(3, "Loaded resource '%s' (%d) from '%s' on CD %d (%d)", fetchName(_resList[res].ptr), res, _resFiles[cluFileNum].fileName, getCD(), _resFiles[cluFileNum].cd);
 
