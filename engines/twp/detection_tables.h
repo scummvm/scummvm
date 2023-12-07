@@ -31,8 +31,8 @@ const ADGameDescription gameDescriptions[] = {
 		"twp",
 		nullptr,
 		AD_ENTRY1s("ThimbleweedPark.ggpack1", "6180145221d18e9e9caac6459e840579", 502661439),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
+		Common::UNK_LANG,
+		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
