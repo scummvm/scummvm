@@ -106,15 +106,6 @@ Common::Error TwpEngine::run() {
 		startthread(bounceImage);
 	})";
 
-	GGPackEntryReader r;
-	r.open(g_engine->pack, "RaySheet.png");
-	Image::PNGDecoder d;
-	d.loadStream(r);
-	const Graphics::Surface *surface = d.getSurface();
-
-	Texture texture;
-	texture.load(*surface);
-
 	Vm v;
 	v.exec(code);
 
@@ -148,7 +139,7 @@ Common::Error TwpEngine::run() {
 		gfx.clear(Color(0.8f, 0.8f, 0.8f));
 		for (int i = 0; i < entities.size(); i++) {
 			Entity &ett = entities[i];
-			gfx.drawSprite(Math::Vector2d(ett.x, ett.y), ett.rect, texture);
+			gfx.drawSprite(Math::Vector2d(ett.x, ett.y), ett.rect, *ett.texture);
 		}
 		g_system->updateScreen();
 

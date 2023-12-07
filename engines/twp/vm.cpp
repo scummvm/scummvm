@@ -179,13 +179,6 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	debug("Create object: %s, %u", sheet.c_str(), frames.size());
 
-	// TODO: share resources load png to surface
-	GGPackEntryReader r;
-	r.open(g_engine->pack, sheet + ".png");
-	Image::PNGDecoder d;
-	d.loadStream(r);
-	const Graphics::Surface *surface = d.getSurface();
-
 	// load sheet json
 	GGPackEntryReader r2;
 	r2.open(g_engine->pack, sheet + ".json");
@@ -206,7 +199,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	// TODO: create an entity
 	Entity e;
-	e.surface.copyFrom(*surface);
+	e.texture = g_engine->resManager.texture(sheet + ".png");
 	e.rect = Common::Rect(x, y, x + w, y + h);
 
 	static int gId = 3000;

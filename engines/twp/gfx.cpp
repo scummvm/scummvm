@@ -24,6 +24,8 @@
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
 
+namespace Twp {
+
 static Texture gEmptyTexture;
 
 #ifdef DEBUG
@@ -394,4 +396,5 @@ void Gfx::drawSprite(Math::Vector2d pos, Common::Rect textRect, Texture &texture
 void Gfx::camera(float w, float h) {
 	_cameraSize = Math::Vector2d(w, h);
 	_mvp = ortho(0.f, w, 0.f, h, -1.f, 1.f);
+}
 }

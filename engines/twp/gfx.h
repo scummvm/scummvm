@@ -29,6 +29,8 @@
 #include "math/vector2d.h"
 #include "math/matrix4.h"
 
+namespace Twp {
+
 struct Color {
 	union {
 		float v[4];
@@ -128,5 +130,6 @@ private:
 	Textures _textures;
 	Texture* _texture;
 };
+}
 
 #endif

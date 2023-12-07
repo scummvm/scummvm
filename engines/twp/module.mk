@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	vm.o \
 	ggpack.o \
 	gfx.o \
+	resmanager.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
