@@ -70,7 +70,7 @@ private:
 	bool _flag1 = false;
 	int _duration = 0;
 	int _drumzState = 0;
-	int _val2 = 0;
+	int _roxyTalkTo = 0;
 	int _roxyState = 0;
 	int _vipeState = 0;
 	int _val5 = 0;
@@ -83,7 +83,7 @@ private:
 	void loadVp4();
 	void loadRx4();
 	void loadSeries1();
-	int getRandomState() const;
+	int getRandomDrumzState() const;
 	void resetRoxy();
 	void playRandomDigi1();
 	void playRandomDigi2();
