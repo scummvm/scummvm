@@ -564,7 +564,7 @@ void Section5::takeGizmo(RGB8 *pal) {
 }
 
 bool Section5::checkFlags() {
-	return _G(flags)[V197] && _G(flags)[V200] == 5003 &&
+	return _G(flags)[V197] && _G(flags)[kStairsBorkState] == 5003 &&
 		_G(flags)[V210] == 5002 && _G(flags)[V218] == 5003 &&
 		_G(flags)[V223] == 2 && _G(flags)[V227] != 0;
 }

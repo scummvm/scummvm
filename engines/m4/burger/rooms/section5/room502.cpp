@@ -27,6 +27,12 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kBORK_ON_FAN = 5000,
+	kBORK_SLIDING_DOWN = 5001,
+	kBORK_CLIMBING_STAIRS = 5002
+};
+
 const Section5Room::BorkPoint Room502::BORK_TABLE[] = {
 	{ 386, 44 }, { 368, 62 }, { 343, 80 }, { 314, 109 }, { 298, 123 },
 	{ 279, 143 }, { 255, 166 }, { 255, 166 }, { 252, 166 }, { 249, 168 },
@@ -329,7 +335,7 @@ void Room502::init() {
 void Room502::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val6);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _destTrigger);
 		break;
 
 	case 5:
@@ -414,7 +420,7 @@ void Room502::daemon() {
 		break;
 
 	case 8:
-		if (_G(flags)[V200] == 5001) {
+		if (_G(flags)[kStairsBorkState] == kBORK_SLIDING_DOWN) {
 			player_update_info();
 
 			if (_G(player_info).x < 242 && _G(player_info).y < 265) {
@@ -490,10 +496,10 @@ void Room502::daemon() {
 		break;
 
 	case 11:
-		if (_G(flags)[V200] != 5003) {
+		if (_G(flags)[kStairsBorkState] != 5003) {
 			player_update_info();
 
-			if ((_G(player_info).x < 242 || _G(player_info).y > 265) &&
+			if ((_G(player_info).x > 242 || _G(player_info).y > 265) &&
 					!_flag1 && !digi_play_state(1)) {
 				_flag1 = true;
 				loadSeries3();
@@ -516,9 +522,9 @@ void Room502::daemon() {
 			break;
 
 		case 27:
-			_G(flags)[V200] = 5000;
+			_G(flags)[kStairsBorkState] = kBORK_ON_FAN;
 			_G(flags)[V186] = 0;
-			_walker1.terminate();
+			_borkStairs.terminate();
 			_val7 = imath_rand_bool(3) ? 29 : 28;
 
 			kernel_timing_trigger(imath_ranged_rand(240, 360), 11);
@@ -527,48 +533,48 @@ void Room502::daemon() {
 		case 28:
 			_val8 = 0;
 			kernel_trigger_dispatch_now(14);
-			_G(flags)[V200] = 5001;
+			_G(flags)[kStairsBorkState] = kBORK_SLIDING_DOWN;
 			_G(flags)[V186] = 1;
 			kernel_trigger_dispatch_now(8);
 			_val4 = 32;
-			_walker1.play("502bkst", 0xc00, 16, 13, 6, 0, 100, 0, 0, 0, 8);
+			_borkStairs.play("502bkst", 0xc00, 16, 13, 6, 0, 100, 0, 0, 0, 8);
 			break;
 
 		case 29:
 			_val8 = 0;
 			kernel_trigger_dispatch_now(14);
-			_G(flags)[V200] = 5001;
+			_G(flags)[kStairsBorkState] = kBORK_SLIDING_DOWN;
 			_G(flags)[V186] = 1;
 			kernel_trigger_dispatch_now(8);
 			_val4 = 30;
-			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 0, 8);
+			_borkStairs.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 0, 8);
 			break;
 
 		case 30:
 			kernel_trigger_dispatch_now(22);
 			_val4 = 31;
-			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 9, 18);
+			_borkStairs.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 9, 18);
 			break;
 
 		case 31:
 			_val8 = 1;
 			kernel_trigger_dispatch_now(14);
 			_val4 = 32;
-			_walker1.play("502bkst", 0xc00, 0, 13, 6, 2, 100, 0, 0, 19, 22);
+			_borkStairs.play("502bkst", 0xc00, 0, 13, 6, 2, 100, 0, 0, 19, 22);
 			break;
 
 		case 32:
 			digi_stop(2);
 			digi_unload("502_007");
-			_walker1.terminate();
+			_borkStairs.terminate();
 			_val4 = 33;
-			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 23, 32);
+			_borkStairs.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 23, 32);
 			break;
 
 		case 33:
-			_G(flags)[V200] = 5002;
+			_G(flags)[kStairsBorkState] = kBORK_CLIMBING_STAIRS;
 			_val4 = 20;
-			_walker1.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 33, 44);
+			_borkStairs.play("502bkst", 0xc00, 0, 13, 6, 0, 100, 0, 0, 33, 44);
 			digi_preload("502_006");
 			digi_play("502_006", 2);
 			break;
@@ -662,7 +668,7 @@ void Room502::daemon() {
 		break;
 
 	case 21:
-		if ((_G(flags)[V200] == 5000 || _G(flags)[V200] == 5003) &&
+		if ((_G(flags)[kStairsBorkState] == 5000 || _G(flags)[kStairsBorkState] == 5003) &&
 			!_flag1 && !digi_play_state(1)) {
 			_flag1 = true;
 			kernel_trigger_dispatch_now(22);
@@ -678,7 +684,7 @@ void Room502::daemon() {
 		break;
 
 	case 23:
-		if (_G(flags)[V200] == 5000 || _G(flags)[V200] == 5003)
+		if (_G(flags)[kStairsBorkState] == 5000 || _G(flags)[kStairsBorkState] == 5003)
 			_flag1 = false;
 
 		_series2 = series_show("502spark", 0xc00);
@@ -706,7 +712,7 @@ void Room502::daemon() {
 			ws_demand_location(237, 235);
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			_val6 = 5009;
+			_destTrigger = 5009;
 			series_play_with_breaks(PLAY1, "502wi02", 0xc01, 1, 3, 5);
 			break;
 
@@ -751,10 +757,10 @@ void Room502::daemon() {
 			break;
 
 		case 9:
-			if (_G(flags)[V200] == 5003) {
+			if (_G(flags)[kStairsBorkState] == 5003) {
 				_G(wilbur_should) = 10001;
 			} else {
-				_G(flags)[V200] = 5003;
+				_G(flags)[kStairsBorkState] = 5003;
 				_val2 = 19;
 				_G(wilbur_should) = 1;
 			}
@@ -806,14 +812,14 @@ void Room502::pre_parser() {
 
 void Room502::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool railing = player_said("RAILING") && _G(flags)[V200] == 5003;
+	bool railing = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
 	bool takeKindling = player_said("KINDLING ") && player_said("TAKE");
 	bool gearKindling = player_said("KINDLING ") && player_said("GEAR");
 	bool fireplace = player_said("FIREPLACE") && _G(flags)[V198] != 0;
 
 	if (player_said("LOOK AT", "FRONT DOOR") && _G(flags)[V195]) {
 		wilbur_speech("502w004");
-	} else if (player_said("LOOK AT STAIRS") && _G(flags)[V200] == 5003) {
+	} else if (player_said("LOOK AT STAIRS") && _G(flags)[kStairsBorkState] == 5003) {
 		wilbur_speech("502w008");
 	} else if (railing && player_said("LOOK AT")) {
 		wilbur_speech("502w015");
@@ -837,7 +843,7 @@ void Room502::parser() {
 		wilbur_speech("502w025");
 	} else if (fireplace && player_said("RUBBER DUCK")) {
 		wilbur_speech("502w030");
-	} else if (player_said("GEAR", "WINDOW") && _G(flags)[V200] == 5003) {
+	} else if (player_said("GEAR", "WINDOW") && _G(flags)[kStairsBorkState] == 5003) {
 		wilbur_speech("502w026");
 	} else if ((player_said("LOOK AT") || player_said("GEAR")) &&
 			player_said("PHONE JACK") && _G(flags)[V197] != 0) {
@@ -850,7 +856,7 @@ void Room502::parser() {
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("KITCHEN") && player_said_any("LOOK AT", "GEAR")) {
-		_val6 = 5007;
+		_destTrigger = 5007;
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 3;
@@ -939,7 +945,7 @@ void Room502::setup1() {
 }
 
 void Room502::setup2() {
-	if (_G(flags)[V200] == 5003) {
+	if (_G(flags)[kStairsBorkState] == 5003) {
 		_val5 = 36;
 		kernel_trigger_dispatch_now(17);
 		kernel_trigger_dispatch_now(18);

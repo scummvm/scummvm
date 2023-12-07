@@ -287,7 +287,7 @@ void Flags::reset4() {
 	(*this)[V197] = 0;
 	(*this)[V198] = 0;
 	(*this)[V199] = 0;
-	(*this)[V200] = 5000;
+	(*this)[kStairsBorkState] = 5000;
 
 	inv_move_object("KINDLING", 502);
 	inv_move_object("BURNING KINDLING", 502);

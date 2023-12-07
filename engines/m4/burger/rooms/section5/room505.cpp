@@ -126,7 +126,7 @@ void Room505::init() {
 		break;
 	}
 
-	if (_G(flags)[V200] == 5003) {
+	if (_G(flags)[kStairsBorkState] == 5003) {
 		kernel_trigger_dispatch_now(7);
 	} else {
 		series_load("505bk01");
@@ -149,7 +149,7 @@ void Room505::daemon() {
 		break;
 
 	case 2:
-		if (_G(flags)[V200] == 5000) {
+		if (_G(flags)[kStairsBorkState] == 5000) {
 			player_update_info();
 
 			if (_G(player_info).y > 280 && _G(player_info).y < 300) {
@@ -177,16 +177,16 @@ void Room505::daemon() {
 		switch (_val1) {
 		case 4:
 			_G(flags)[186] = 0;
-			_walker1.terminate();
+			_borkStairs.terminate();
 			_val3 = 5;
 			kernel_timing_trigger(imath_ranged_rand(240, 360), 3);
 			break;
 
 		case 5:
 			_G(flags)[V186] = 1;
-			_G(flags)[V200] = 5000;
+			_G(flags)[kStairsBorkState] = 5000;
 			_val1 = 6;
-			_walker1.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 0, 2);
+			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 0, 2);
 			break;
 
 		case 6:
@@ -194,28 +194,28 @@ void Room505::daemon() {
 			kernel_trigger_dispatch_now(5);
 			kernel_trigger_dispatch_now(2);
 			_val1 = 7;
-			_walker1.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 3, 9);
+			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 3, 9);
 			break;
 
 		case 7:
 			terminateMachineAndNull(_series1);
 			_val1 = 8;
-			_walker1.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 10, 24);
+			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 10, 24);
 			_val4 = 1;
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 8:
 			_val1 = 9;
-			_walker1.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 25, 24);
+			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 25, 24);
 			_val4 = 2;
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 9:
-			_G(flags)[V200] = 5001;
+			_G(flags)[kStairsBorkState] = 5001;
 			_val1 = 4;
-			_walker1.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 27, 31);
+			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 27, 31);
 			_val4 = 3;
 			kernel_trigger_dispatch_now(5);
 			break;
@@ -300,9 +300,9 @@ void Room505::pre_parser() {
 
 void Room505::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool railingFlag = player_said("RAILING") && _G(flags)[V200] == 5003;
+	bool railingFlag = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
 
-	if (player_said("LOOK AT", "STAIRS") && _G(flags)[V200] == 5003) {
+	if (player_said("LOOK AT", "STAIRS") && _G(flags)[kStairsBorkState] == 5003) {
 		wilbur_speech("505w002");
 	} else if (railingFlag && player_said("LOOK AT")) {
 		wilbur_speech("505w005");
