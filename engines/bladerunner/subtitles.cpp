@@ -258,8 +258,8 @@ void Subtitles::init(void) {
 		_useUTF8 = false;
 	} else if (_subtitlesInfo.fontType == Subtitles::kSubtitlesFontTypeTTF) {
 #if defined(USE_FREETYPE2)
-		Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(_subtitlesInfo.fontName));
-		_font = Graphics::loadTTFFont(*stream, 18);
+		Common::SeekableReadStream *stream = _vm->getResourceStream(_subtitlesInfo.fontName);
+		_font = Graphics::loadTTFFont(stream, DisposeAfterUse::YES, 18);
 		_useUTF8 = true;
 #else
 		warning("Subtitles require a TTF font but this ScummVM build doesn't support it.");
