@@ -344,6 +344,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149]
 	GAME3("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "6a285235745f69b4b421403659497216", 0x3149, GID_GOLDRUSH),
 
+	// Gold Rush! (PC 3.5") 2.01 12/22/88 [AGI 3.002.149] with fanmade Spanish translation
+	GAME_LVFPN("goldrush", "2.01 1988-12-22 3.5\"", "grdir", "64ef3b1949c262b92694381cb36d79b9", 3080, Common::ES_ESP, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// Gold Rush!  2.01 12/22/88 - pirated copy, according to https://bugs.scummvm.org/ticket/3220
 	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "3ae052117feb483f01a9017025fbb366", 2399, GID_GOLDRUSH),
 	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "1ef85c37fcf7224f9731f20f169c8c53", 2399, GID_GOLDRUSH),
