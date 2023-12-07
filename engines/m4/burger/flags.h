@@ -234,7 +234,7 @@ enum {
 	V198 = 198,
 	V199 = 199,
 
-	V200 = 200,
+	kStairsBorkState = 200,
 	V201 = 201,
 	V202 = 202,
 	kBORK_STATE = 203,

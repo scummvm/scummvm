@@ -138,7 +138,7 @@ static void gizmo_digi_daemon(int trigger) {
 		break;
 
 	case 5005:
-		if (_G(flags)[V200] == 5003)
+		if (_G(flags)[kStairsBorkState] == 5003)
 			gizmo_digi_play("510w019", 255, _GIZMO(roomFlags)[13]);
 		else
 			gizmo_digi_play("510w018", 255, _GIZMO(roomFlags)[12]);

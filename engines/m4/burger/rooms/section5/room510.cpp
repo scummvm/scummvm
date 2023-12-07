@@ -172,7 +172,7 @@ void Room510::parser() {
 				wilbur_speech("510w017");
 			}
 		} else if (player_said("PURPLE BUTTON")) {
-			wilbur_speech(_G(flags)[V200] != 5003 ? "510w018" : "510w019");
+			wilbur_speech(_G(flags)[kStairsBorkState] != 5003 ? "510w018" : "510w019");
 		} else if (player_said("PINK BUTTON")) {
 			wilbur_speech("510w020");
 		} else {

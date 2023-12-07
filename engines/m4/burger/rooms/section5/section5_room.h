@@ -35,7 +35,7 @@ protected:
 		int16 _y;
 	};
 	const BorkPoint *_borkTable = nullptr;
-	Series _walker1;
+	Series _borkStairs;
 	HotSpotRec _borkHotspot;
 	int _borkThreshold = 0;
 	bool _initFlag = false;
