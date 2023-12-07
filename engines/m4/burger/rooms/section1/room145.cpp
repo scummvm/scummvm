@@ -55,7 +55,7 @@ const WilburMatch Room145::MATCH[] = {
 	{ "TALK", "ROXY", 10016, 0, 0, &Vars::_wilbur_should, 11 },
 	{ "AMPLIFIER", "ROXY", 1, 0, 0, &_state1, 15 },
 	{ nullptr, "ROXY", 1, 0, 0, &_state1, 17 },
-	{ "TALK" , "DRUMZ", 10, 0, 0, 0, 0 }, 
+	{ "TALK" , "DRUMZ", kSPEAK_TO_DRUMZ, 0, 0, 0, 0 }, 
 	{ "LAXATIVE" , "DRUMZ", 10016, 0, 0, &Vars::_wilbur_should, 3 },
 	{ nullptr, "DRUMZ", 1, 0, 0, &_state1, 16 },
 	{ "TALK" , "VIPE", 10016, 0, 0, &Vars::_wilbur_should, 10 },
@@ -63,8 +63,8 @@ const WilburMatch Room145::MATCH[] = {
 	{ nullptr, "VIPE", 1, 0, 0, &_state1, 16 },
 	{ "AMPLIFIER" , "INSTRUMENTS", 1, 0, 0, &_state1, 13 },
 	{ nullptr, "INSTRUMENTS", 1, 0, 0, &_state1, 14 },
-	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[V067], 0, &Vars::_wilbur_should, 1 },
-	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[V067], 1, &Vars::_wilbur_should, 8 },
+	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[kDrumzFled], 0, &Vars::_wilbur_should, 1 },
+	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[kDrumzFled], 1, &Vars::_wilbur_should, 8 },
 	{ nullptr, "AMPLIFIER ", 1, 0, 0, &_state1, 14 },
 	{ nullptr, "MAP", 1, 0, 0, &_state1, 18 },
 	WILBUR_MATCH_END
@@ -237,7 +237,7 @@ void Room145::init() {
 
 	kernel_timing_trigger(600, 7);
 
-	if (_G(flags)[V067]) {
+	if (_G(flags)[kDrumzFled]) {
 		series_show("145drum", 0xa01);
 		hotspot_set_active("DRUMZ", false);
 	} else {
@@ -374,7 +374,7 @@ void Room145::daemon() {
 			hotspot_set_active("DRUMZ", false);
 			intr_remove_no_walk_rect(_walk1);
 
-			_G(flags)[V067] = 1;
+			_G(flags)[kDrumzFled] = 1;
 			series_play_with_breaks(PLAY14, "145dz08", 0, -1, 3);
 			series_show("145drum", 0xa01);
 			_G(wilbur_should) = 6;
@@ -391,7 +391,7 @@ void Room145::daemon() {
 
 		switch (_roxyState) {
 		case 30:
-			_rx.terminate();
+			_roxy.terminate();
 			_roxyState = 31;
 			series_play_with_breaks(PLAY15, "145rx01", 0x900, kCHANGE_ROXY_ANIMATION, 3, 6, 100, 0, 0);
 			break;
@@ -399,11 +399,11 @@ void Room145::daemon() {
 		case 31:
 			_duration = imath_ranged_rand(180, 360);
 			_roxyState = 32;
-			_rx.show("145rx01", 0x900, 0, 4, _duration);
+			_roxy.show("145rx01", 0x900, 0, 4, _duration);
 			break;
 
 		case 32:
-			_rx.terminate();
+			_roxy.terminate();
 			_roxyState = 33;
 			series_play_with_breaks(PLAY16, "145rx01", 0x900, kCHANGE_ROXY_ANIMATION, 3);
 			break;
@@ -412,7 +412,7 @@ void Room145::daemon() {
 			if (_roxyTalkTo == 101) {
 				_duration = imath_ranged_rand(180, 360);
 				_roxyState = 30;
-				_rx.show("145rx01", 0x900, 0, kCHANGE_ROXY_ANIMATION, _duration, 3);
+				_roxy.show("145rx01", 0x900, 0, kCHANGE_ROXY_ANIMATION, _duration, 3);
 			} else if (_roxyTalkTo == 17) {
 				playRandomDigi2();
 			} else {
@@ -465,7 +465,7 @@ void Room145::daemon() {
 			break;
 
 		case 38:
-			_rx.show("145rx04", 0x900);
+			_roxy.show("145rx04", 0x900);
 
 			switch (_state3) {
 			case 1:
@@ -497,19 +497,19 @@ void Room145::daemon() {
 			break;
 
 		case 39:
-			_rx.terminate();
+			_roxy.terminate();
 			_roxyState = 40;
 			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			kernel_trigger_dispatch_now(10001);
 			break;
 
 		case 40:
-			_rx.show("145rx04", 0x900);
+			_roxy.show("145rx04", 0x900);
 			break;
 
 		case 41:
 			_roxyTalkTo = 101;
-			_rx.terminate();
+			_roxy.terminate();
 			_roxyState = 33;
 			series_play_with_breaks(PLAY19, "145rx02", 0x900, kCHANGE_ROXY_ANIMATION, 3);
 			break;
@@ -517,7 +517,7 @@ void Room145::daemon() {
 		case 42:
 			digi_unload(_digiName1);
 			_state2 = 0;
-			_rx.terminate();
+			_roxy.terminate();
 			_roxyState = 41;
 			series_play_with_breaks(PLAY20, "145rx06", 0x900, kCHANGE_ROXY_ANIMATION, 3);
 			break;
@@ -530,19 +530,19 @@ void Room145::daemon() {
 	case kCHANGE_VIPE_ANIMATION:
 		switch (_vipeState) {
 		case 39:
-			_vp.terminate();
+			_viper.terminate();
 			_vipeState = 40;
 			kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 			kernel_trigger_dispatch_now(10001);
 			break;
 
 		case 40:
-			_vp.show("145vp04", 0x300);
+			_viper.show("145vp04", 0x300);
 			break;
 
 		case 43:
 			player_set_commands_allowed(true);
-			_vp.show("145vp02", 0x300);
+			_viper.show("145vp02", 0x300);
 			break;
 
 		case 44:
@@ -552,11 +552,11 @@ void Room145::daemon() {
 			if (_roxyTalkTo == 101) {
 				_roxyTalkTo = 100;
 				resetRoxy();
-				_vp.terminate();
+				_viper.terminate();
 				_vipeState = 45;
 				series_play_with_breaks(PLAY21, "145vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			} else {
-				kernel_timing_trigger(15, 5);
+				kernel_timing_trigger(15, kCHANGE_VIPE_ANIMATION);
 			}
 			break;
 
@@ -566,13 +566,13 @@ void Room145::daemon() {
 			break;
 
 		case 46:
-			kernel_trigger_dispatch_now(8);
+			kernel_trigger_dispatch_now(kSPEAK_TO_VIPE);
 			_vipeState = 40;
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 			break;
 
 		case 47:
-			_vp.terminate();
+			_viper.terminate();
 			_vipeState = 43;
 			series_play_with_breaks(PLAY23, "145vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			break;
@@ -623,6 +623,7 @@ void Room145::daemon() {
 	case kSPEAK_TO_ROXY:
 		conv_load_and_prepare("conv22", 12);
 		conv_export_pointer_curr(&_G(flags)[V073], 0);
+		conv_play_curr();
 		break;
 
 	case kSPEAK_TO_DRUMZ:
@@ -746,7 +747,7 @@ void Room145::daemon() {
 void Room145::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (!_G(flags)[V067] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
+	if (!_G(flags)[kDrumzFled] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
 			_G(player).walk_y >= 295 && _G(player).walk_y <= 325)
 		player_walk_to(139, 326);
 
@@ -818,7 +819,7 @@ void Room145::conv21() {
 			case 2:
 			case 7:
 			case 12:
-				loadVp4();
+				viperSpeaking();
 				break;
 
 			case 3:
@@ -827,22 +828,22 @@ void Room145::conv21() {
 			case 6:
 			case 8:
 			case 11:
-				loadRx4();
+				roxySpeaking();
 				break;
 
 			case 9:
 				if (entry <= 0) {
-					loadRx4();
+					roxySpeaking();
 				} else if (entry == 2) {
-					loadVp4();
+					viperSpeaking();
 				}
 				break;
 
 			case 10:
 				if (entry <= 0) {
-					loadVp4();
+					viperSpeaking();
 				} else if (entry == 1) {
-					loadRx4();
+					roxySpeaking();
 				}
 				break;
 
@@ -861,7 +862,7 @@ void Room145::conv22() {
 		if (who == 1)
 			wilbur_speech(sound, 10001);
 		else
-			loadRx4();
+			roxySpeaking();
 	}
 }
 
@@ -916,18 +917,18 @@ void Room145::conv23() {
 	}
 }
 
-void Room145::loadVp4() {
-	_vp.terminate();
+void Room145::viperSpeaking() {
+	_viper.terminate();
 	_vipeState = 39;
 	digi_play(conv_sound_to_play(), 1, 255, 5);
-	_vp.play("145vp04", 0x300, 4, -1);
+	_viper.play("145vp04", 0x300, 4, -1., 6, -1);
 }
 
-void Room145::loadRx4() {
-	_rx.terminate();
+void Room145::roxySpeaking() {
+	_roxy.terminate();
 	_roxyState = 39;
 	digi_play(conv_sound_to_play(), 1, 255, 4);
-	_rx.play("145rx04", 0x900, 4, -1);
+	_roxy.play("145rx04", 0x900, 4, -1, 6, -1);
 }
 
 void Room145::loadSeries1() {
@@ -953,13 +954,13 @@ int Room145::getRandomDrumzState() const {
 void Room145::resetRoxy() {
 	switch (_val5) {
 	case 31:
-		_rx.terminate();
+		_roxy.terminate();
 		_roxyState = 32;
 		kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 		break;
 
 	case 33:
-		_rx.terminate();
+		_roxy.terminate();
 		_roxyState = 33;
 		kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 		break;

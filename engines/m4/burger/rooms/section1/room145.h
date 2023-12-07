@@ -63,8 +63,8 @@ private:
 	noWalkRect *_walk2 = nullptr;
 	noWalkRect *_walk3 = nullptr;
 	machine *_amplifier = nullptr;
-	Series _vp;
-	Series _rx;
+	Series _viper;
+	Series _roxy;
 	const char *_digiName1 = nullptr;
 	const char *_digiName2 = nullptr;
 	bool _flag1 = false;
@@ -80,8 +80,8 @@ private:
 	void conv21();
 	void conv22();
 	void conv23();
-	void loadVp4();
-	void loadRx4();
+	void viperSpeaking();
+	void roxySpeaking();
 	void loadSeries1();
 	int getRandomDrumzState() const;
 	void resetRoxy();

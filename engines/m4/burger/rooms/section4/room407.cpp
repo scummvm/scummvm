@@ -579,7 +579,7 @@ void Room407::daemon() {
 void Room407::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (!_G(flags)[V067] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
+	if (!_G(flags)[kDrumzFled] && _G(player).walk_x >= 140 && _G(player).walk_x <= 240 &&
 		_G(player).walk_y >= 295 && _G(player).walk_y <= 325)
 		player_walk_to(139, 326);
 

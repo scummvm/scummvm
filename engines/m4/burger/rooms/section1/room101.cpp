@@ -830,7 +830,7 @@ void Room101::daemon18() {
 	if (_G(flags)[V220] || _G(flags)[kFourthTestPassed]) {
 		inv_give_to_player("laxative");
 		inv_give_to_player("amplifier");
-		_G(flags)[V067] = 1;
+		_G(flags)[kDrumzFled] = 1;
 		_G(flags)[kTourBusAtDiner] = 1;
 		_G(flags).set_boonsville_time(19200);
 	}
