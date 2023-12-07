@@ -707,6 +707,7 @@ void Room145::daemon() {
 			break;
 
 		case 9:
+			enable_player();
 			hotspot_set_active("AMPLIFIER ", false);
 			inv_give_to_player("AMPLIFIER");
 			break;
@@ -734,6 +735,7 @@ void Room145::daemon() {
 			break;
 
 		default:
+			_G(kernel).continue_handling_trigger = true;
 			break;
 		}
 		break;
