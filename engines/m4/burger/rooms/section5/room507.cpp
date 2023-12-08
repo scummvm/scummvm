@@ -245,10 +245,12 @@ void Room507::init() {
 
 	case 505:
 		ws_demand_location(610, 280, 1);
+		player_set_commands_allowed(true);
 
 		if (player_been_here(507)) {
 			ws_walk(343, 323, nullptr, -1);
 		} else {
+			// There's a bork in my tub
 			_val1 = 12;
 			ws_walk(343, 323, nullptr, 3);
 		}
@@ -540,7 +542,7 @@ void Room507::daemon() {
 		break;
 
 	case 10:
-		_series2 = series_show("5070flush", 0xf00);
+		_series2 = series_show("507flush", 0xf00);
 		break;
 
 	case 11:

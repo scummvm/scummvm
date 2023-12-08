@@ -145,7 +145,7 @@ void Room505::init() {
 void Room505::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val2);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _destTrigger);
 		break;
 
 	case 2:
@@ -268,7 +268,7 @@ void Room505::daemon() {
 		case 2:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			_val2 = 5006;
+			_destTrigger = 5006;
 			kernel_timing_trigger(30, 1);
 			series_play_with_breaks(PLAY2, "505wi02", 0xc00, -1, 3);
 			break;
@@ -311,13 +311,13 @@ void Room505::parser() {
 	} else if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
 	} else if (player_said("WILBUR'S ROOM") && player_said_any("GEAR", "ENTER", "LOOK AT")) {
-		_val2 = 5010;
+		_destTrigger = 5010;
 		kernel_trigger_dispatch_now(1);
-	} else if (player_said("LOOK AT", "BATHROOM") && player_said("GEAR", "BATHROOM")) {
-		_val2 = 5011;
+	} else if (player_said("LOOK AT", "BATHROOM") || player_said("GEAR", "BATHROOM")) {
+		_destTrigger = 5011;
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("LOOK AT", "AUNT POLLY'S ROOM") || player_said("GEAR", "AUNT POLLY'S ROOM")) {
-		_val2 = 5013;
+		_destTrigger = 5013;
 		kernel_trigger_dispatch_now(1);
 	} else if (player_said("GEAR", "STAIRS")) {
 		_G(wilbur_should) = 2;
