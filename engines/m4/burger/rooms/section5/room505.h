@@ -36,7 +36,7 @@ private:
 	static const seriesPlayBreak PLAY2[];
 	char _bork[8], _lookAt[8];
 	int _val1 = 0;
-	int _val2 = 0;
+	int _destTrigger = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	machine *_series1 = nullptr;
