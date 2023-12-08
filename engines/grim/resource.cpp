@@ -392,6 +392,29 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 			result->loadTTF(font, stream, s);
 			return result;
 		}
+	} else if (g_grim->getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR) {
+		Common::String name = filename + ".txt";
+		stream = openNewStreamFile(name, true);
+		if (stream) {
+			Common::String line = stream->readLine();
+			Common::String font;
+			Common::String size;
+			for (uint i = 0; i < line.size(); ++i) {
+				if (line[i] == ' ') {
+					font = Common::String(line.c_str(), i);
+					size = Common::String(line.c_str() + i + 1, line.size() - i - 2);
+				}
+			}
+
+			int s = atoi(size.c_str());
+			delete stream;
+			stream = openNewStreamFile(font.c_str(), true);
+			FontTTF *result = new FontTTF();
+			result->loadTTF(filename, stream, s);
+			delete stream;
+
+			return result;
+		}
 	}
 
 	stream = openNewStreamFile(filename.c_str(), true);
