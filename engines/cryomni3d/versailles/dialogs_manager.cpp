@@ -354,21 +354,20 @@ uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
 void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 	Common::Path videoPath(_engine->getFilePath(kFileTypeDialAnim, video));
 
-	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(g_system->getScreenFormat());
+	Video::HNMDecoder videoDecoder(g_system->getScreenFormat());
 
-	if (!videoDecoder->loadFile(videoPath)) {
+	if (!videoDecoder.loadFile(videoPath)) {
 		warning("Failed to open movie file %s/%s", video.c_str(), videoPath.toString().c_str());
-		delete videoDecoder;
 		return;
 	}
 
 	// Preload first frame to draw questions on it
-	const Graphics::Surface *firstFrame = videoDecoder->decodeNextFrame();
+	const Graphics::Surface *firstFrame = videoDecoder.decodeNextFrame();
 	_lastImage.create(firstFrame->w, firstFrame->h, firstFrame->format);
 	_lastImage.blitFrom(*firstFrame);
 
-	if (videoDecoder->hasDirtyPalette()) {
-		const byte *palette = videoDecoder->getPalette();
+	if (videoDecoder.hasDirtyPalette()) {
+		const byte *palette = videoDecoder.getPalette();
 		_engine->setupPalette(palette, 0, 256);
 	}
 }

@@ -163,11 +163,11 @@ Common::Error ZVision::ZVision::saveGameState(int slot, const Common::String &de
 	return Common::kNoError;
 }
 
-bool ZVision::ZVision::canLoadGameStateCurrently() {
+bool ZVision::ZVision::canLoadGameStateCurrently(Common::U32String *msg) {
 	return !_videoIsPlaying;
 }
 
-bool ZVision::ZVision::canSaveGameStateCurrently() {
+bool ZVision::ZVision::canSaveGameStateCurrently(Common::U32String *msg) {
 	Location currentLocation = _scriptManager->getCurrentLocation();
 	return !_videoIsPlaying && currentLocation.world != 'g' && !(currentLocation.room == 'j' || currentLocation.room == 'a');
 }

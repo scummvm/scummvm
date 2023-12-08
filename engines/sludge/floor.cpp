@@ -184,9 +184,11 @@ bool FloorManager::setFloor(int fileNum) {
 	// Now build the movement martix
 
 	_currentFloor->matrix = new int *[_currentFloor->numPolygons];
-	int **distanceMatrix = new int *[_currentFloor->numPolygons];
-
 	if (!checkNew(_currentFloor->matrix))
+		return false;
+
+	int **distanceMatrix = new int *[_currentFloor->numPolygons];
+	if (!checkNew(distanceMatrix))
 		return false;
 
 	for (i = 0; i < _currentFloor->numPolygons; i++) {

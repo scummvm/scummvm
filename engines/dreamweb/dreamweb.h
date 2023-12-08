@@ -119,9 +119,6 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
-
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state

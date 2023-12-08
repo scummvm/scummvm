@@ -598,7 +598,7 @@ void ImmortalEngine::printCertificate() {
 }
 
 bool ImmortalEngine::isSavedKing() {
-	if ((_gameFlags & kSavedKing) == 1) {
+	if ((_gameFlags & kSavedKing) == kSavedKing) {
 		return true;
 	} else {
 		return false;
@@ -606,7 +606,7 @@ bool ImmortalEngine::isSavedKing() {
 }
 
 bool ImmortalEngine::isSavedAna() {
-	if ((_gameFlags & kSavedAna) == 1) {
+	if ((_gameFlags & kSavedAna) == kSavedAna) {
 		return true;
 	} else {
 		return false;

@@ -25,6 +25,7 @@
 #define GLK_MAGNETIC_MAGNETIC
 
 #include "common/scummsys.h"
+#include "common/translation.h"
 #include "glk/glk_api.h"
 #include "glk/magnetic/magnetic_types.h"
 #include "glk/magnetic/magnetic_defs.h"
@@ -1385,14 +1386,20 @@ public:
 	/**
 	 * The Magnetic engine currently doesn't support loading savegames from the GMM
 	 */
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
+		if (msg)
+			*msg = _("This game does not support loading from the menu. Use in-game interface");
+
 		return false;
 	}
 
 	/**
 	 * The Magnetic engine currently doesn't support saving games from the GMM
 	 */
-	bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
+		if (msg)
+			*msg = _("This game does not support saving from the menu. Use in-game interface");
+
 		return false;
 	}
 

@@ -142,18 +142,17 @@ void ResMan::loadCluDescript(const char *fileName) {
 			_srIdList[cnt] = 0x04050000 | cnt;
 
 	if (_isKorTrs) {
-		Common::File *cluFile = new Common::File();
-		cluFile->open("korean.clu");
-		if (cluFile->isOpen()) {
+		Common::File cluFile;
+		cluFile.open("korean.clu");
+		if (cluFile.isOpen()) {
 			for (uint32 resCnt = 0, resOffset = 0; resCnt < _prj.clu[2].grp[0].noRes; resCnt++) {
 				Header header;
-				cluFile->read(&header, sizeof(Header));
+				cluFile.read(&header, sizeof(Header));
 				_prj.clu[2].grp[0].offset[resCnt] = resOffset;
 				_prj.clu[2].grp[0].length[resCnt] = header.comp_length;
 				resOffset += header.comp_length;
-				cluFile->seek(header.decomp_length, SEEK_CUR);
+				cluFile.seek(header.decomp_length, SEEK_CUR);
 			}
-			cluFile->close();
 			Common::strcpy_s(_prj.clu[2].label, "korean");
 		} else {
 			_isKorTrs = false;
@@ -279,12 +278,11 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 			// Load Korean Font
 			uint32 size = resLength(id);
 			uint32 korFontSize = 0;
-			Common::File *korFontFile = NULL;
+			Common::File korFontFile;
 
-			korFontFile = new Common::File();
-			korFontFile->open("bs1k.fnt");
-			if (korFontFile->isOpen()) {
-				korFontSize = korFontFile->size();
+			korFontFile.open("bs1k.fnt");
+			if (korFontFile.isOpen()) {
+				korFontSize = korFontFile.size();
 			}
 			_memMan->alloc(memHandle, size + korFontSize);
 			Common::File *clusFile = resFile(id);
@@ -296,8 +294,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 			}
 
 			if (korFontSize > 0) {
-				korFontFile->read((uint8 *)memHandle->data + size, korFontSize);
-				korFontFile->close();
+				korFontFile.read((uint8 *)memHandle->data + size, korFontSize);
 			}
 		} else {
 			uint32 size = resLength(id);

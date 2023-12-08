@@ -82,7 +82,7 @@ public:
 			   (f == kSupportsArbitraryResolutions);
 	};
 
-	bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
 

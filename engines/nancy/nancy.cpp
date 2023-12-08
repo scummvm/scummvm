@@ -119,11 +119,11 @@ Common::Error NancyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	return synchronize(ser);
 }
 
-bool NancyEngine::canLoadGameStateCurrently() {
+bool NancyEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return canSaveGameStateCurrently();
 }
 
-bool NancyEngine::canSaveGameStateCurrently() {
+bool NancyEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// TODO also disable during secondary movie
 	return State::Scene::hasInstance() &&
 			NancySceneState._state == State::Scene::kRun &&

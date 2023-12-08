@@ -1548,10 +1548,9 @@ MacGui::MacListBox::MacListBox(MacGui::MacDialogWindow *window, Common::Rect bou
 
 	int numSlots = MIN<int>(pageSize, texts.size());
 
-	MacStaticText *tmp;
 	for (int i = 0; i < numSlots; i++) {
 		Common::Rect r(_bounds.left + 1, _bounds.top + 1 + 16 * i, _bounds.right - 16, _bounds.top + 1 + 16 * (i + 1));
-		tmp = new MacStaticText(window, r, texts[i], enabled);
+		MacStaticText *tmp = new MacStaticText(window, r, texts[i], enabled);
 		if (contentUntouchable)
 			tmp->setEnabled(false);
 		_textWidgets.push_back(tmp);
@@ -3711,9 +3710,6 @@ void MacLoomGui::runAboutDialog() {
 }
 
 void MacLoomGui::runDraftsInventory() {
-	int base, xPos, textHeight, heightMultiplier, draft, inactiveColor,
-		unlockedColor, newDraftColor, notesColor;
-
 	char notesBuf[6];
 	const char *names[18] = {
 		"Drafts",
@@ -3738,25 +3734,25 @@ void MacLoomGui::runDraftsInventory() {
 	//
 	// Drafts are stored in SCUMM global variables; we choose the appropriate
 	// first entry in the variables at which these drafts start.
-	base = 55;
+	int base = 55;
 
 	// TODO: Can these be drawn in different styles? (e.g. Checkerboard)
-	unlockedColor = kBlack;
-	inactiveColor = kBlack;
-	newDraftColor = kBlack;
+	Color unlockedColor = kBlack;
+	Color inactiveColor = kBlack;
+	Color newDraftColor = kBlack;
 
 	for (int i = 0; i < 16; i++) {
-		draft = _vm->_scummVars[base + i * 2];
+		int draft = _vm->_scummVars[base + i * 2];
 
 		// In which row are we rendering our text?
-		heightMultiplier = i < 8 ? i : (i % 8);
-		textHeight = 24;
+		int heightMultiplier = i < 8 ? i : (i % 8);
+		int textHeight = 24;
 
 		// Has the draft been unlocked by the player?
 		//int titleColor = (draft & 0x2000) ? unlockedColor : inactiveColor;
 
 		// Has the new draft been used at least once?
-		notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
+		int notesColor = (draft & 0x4000) ? unlockedColor : newDraftColor;
 
 		// Has the draft been unlocked? Great: put it in our text buffer
 		// otherwise just prepare to render the "????" string.
@@ -3773,25 +3769,25 @@ void MacLoomGui::runDraftsInventory() {
 
 		// Where are we positioning the text?
 		// Left column or right column?
-		xPos = i < 8 ? 40 : 260;
+		int xPos = i < 8 ? 40 : 260;
 
 		// Draw the titles of the drafts...
 		if (draft & 0x2000) {
-			font->drawString(s, (const char *)names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
+			font->drawString(s, names[i + 1], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor); // FIXME: titleColor, not notesColor?
 		} else {
 			// Draw "Unknown:" as the title of the draft
-			font->drawString(s, (const char *)names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft); // FIXME: titleColor, not notesColor?
+			font->drawString(s, names[17], xPos - 20, 24 + textHeight * heightMultiplier, s->w, notesColor); // FIXME: titleColor, not notesColor?
 		}
 
 		// Draw the notes of the draft...
-		font->drawString(s, (const char *)notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor, Graphics::kTextAlignLeft);
+		font->drawString(s, notesBuf, xPos + 100, 24 + textHeight * heightMultiplier, s->w, notesColor);
 	}
 
 	// Draw "Drafts" on top of the dialog
-	font->drawString(s, (const char *)names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
+	font->drawString(s, names[0], 0, 4, s->w, kBlack, Graphics::kTextAlignCenter);
 
 	// Draw a vertical line to separate the two columns
-	s->drawLine(210, 44, 210, 184, kBlack);
+	s->vLine(210, 44, 184, kBlack);
 
 	// Update the screen with all the new stuff!
 	window->show();

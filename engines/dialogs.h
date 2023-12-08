@@ -67,8 +67,6 @@ protected:
 	GUI::GraphicsWidget  *_logo;
 
 	GUI::ButtonWidget    *_returnToLauncherButton;
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
 	GUI::ButtonWidget    *_helpButton;
 
 	GUI::Dialog          *_aboutDialog;

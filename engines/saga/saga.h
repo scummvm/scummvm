@@ -623,8 +623,8 @@ public:
 	const Common::Rect &getDisplayClip() const { return _displayClip;}
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	const GameDisplayInfo &getDisplayInfo();
 
 	int getLanguageIndex();

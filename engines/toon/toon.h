@@ -212,8 +212,8 @@ public:
 	void doMagnifierEffect();
 	void drawCustomText(int16 x, int16 y, const char *line, Graphics::Surface *frame, byte color);
 	bool showConversationText() const;
-	bool canSaveGameStateCurrently() override;
-	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	void pauseEngineIntern(bool pause) override;
 	void syncSoundSettings() override;
 

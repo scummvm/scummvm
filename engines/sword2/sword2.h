@@ -162,9 +162,9 @@ public:
 
 	// GMM Loading/Saving
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	uint32 _features;
 

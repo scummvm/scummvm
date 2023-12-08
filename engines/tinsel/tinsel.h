@@ -139,7 +139,7 @@ protected:
 #if 0
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 #endif
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 #if 0
 	bool canSaveGameStateCurrently();
 #endif

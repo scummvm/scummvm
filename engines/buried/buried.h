@@ -142,8 +142,8 @@ public:
 	void showPoints();
 
 	// Save/Load
-	bool canLoadGameStateCurrently() override;
-	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::String getSaveStateName(int slot) const override {
 		return Common::String::format("buried.%03d", slot);
 	}

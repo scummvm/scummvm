@@ -449,7 +449,7 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc, boo
 	return res ? Common::kNoError : Common::kWritingFailed;
 }
 
-bool SciEngine::canLoadGameStateCurrently() {
+bool SciEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 #ifdef ENABLE_SCI32
 	const Common::String &guiOptions = ConfMan.get("guioptions");
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -464,7 +464,7 @@ bool SciEngine::canLoadGameStateCurrently() {
 	return !_gamestate->executionStackBase;
 }
 
-bool SciEngine::canSaveGameStateCurrently() {
+bool SciEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return
 		_features->canSaveFromGMM() &&
 		!_gamestate->executionStackBase &&

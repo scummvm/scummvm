@@ -2911,7 +2911,7 @@ void DreamWebEngine::clearChanges() {
 	_vars._exFramePos = 0;
 	_vars._exTextPos = 0;
 
-	memset(_exFrames._frames, 0xFF, kFrameBlocksize);
+	memset(_exFrames._frames, 0xFF, kGraphicsFileFrameSize * sizeof(Frame));
 	memset(_exFrames._data, 0xFF, kExframeslen);
 	memset(_exData, 0xFF, sizeof(_exData));
 	memset(_exText._offsetsLE, 0xFF, 2*(kNumexobjects+2));

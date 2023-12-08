@@ -3406,11 +3406,11 @@ void ToucheEngine::updatePalette() {
 	_system->getPaletteManager()->setPalette(_paletteBuffer, 0, 256);
 }
 
-bool ToucheEngine::canLoadGameStateCurrently() {
+bool ToucheEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
 }
 
-bool ToucheEngine::canSaveGameStateCurrently() {
+bool ToucheEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
 }
 

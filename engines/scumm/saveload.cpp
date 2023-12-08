@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -78,7 +79,7 @@ Common::Error ScummEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool ScummEngine::canLoadGameStateCurrently() {
+bool ScummEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
 
@@ -92,8 +93,12 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	//
 	// Except the earliest HE Games (3DO and initial DOS version of
 	// puttputt), which didn't offer scripted load/save screens.
-	if (_game.heversion >= 62)
+	if (_game.heversion >= 62) {
+		if (msg)
+			*msg = _("This game does not support loading from the menu. Use in-game interface");
+
 		return false;
+	}
 
 	// COMI always disables saving/loading (to tell the truth:
 	// the main menu) via its scripts, thus we need to make an
@@ -141,7 +146,7 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, b
 	return Common::kNoError;
 }
 
-bool ScummEngine::canSaveGameStateCurrently() {
+bool ScummEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	if (!_setupIsComplete)
 		return false;
 
@@ -160,8 +165,12 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	//
 	// Except the earliest HE Games (3DO and initial DOS version of
 	// puttputt), which didn't offer scripted load/save screens.
-	if (_game.heversion >= 62)
+	if (_game.heversion >= 62) {
+		if (msg)
+			*msg = _("This game does not support saving from the menu. Use in-game interface");
+
 		return false;
+	}
 
 #ifdef ENABLE_SCUMM_7_8
 	// COMI always disables saving/loading (to tell the truth:

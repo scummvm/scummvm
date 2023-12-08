@@ -145,12 +145,16 @@ AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("A
 	_outpoint = 0;
 	_cue = nullptr;
 
-	Common::File *cuefile = new Common::File();
-	if (cuefile->open("disc.cue")) {
-		Common::String cuestring = cuefile->readString(0, cuefile->size());
+	Common::File cuefile;
+	if (cuefile.open("disc.cue")) {
+		Common::String cuestring = cuefile.readString(0, cuefile.size());
 
 		_cue = new Common::CueSheet(cuestring.c_str());
 	}
+}
+
+AppleCDXObject::~AppleCDXObject() {
+	delete _cue;
 }
 
 void AppleCDXObj::m_new(int nargs) {

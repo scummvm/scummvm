@@ -659,7 +659,7 @@ bool SupernovaEngine::quitGameDialog() {
 }
 
 
-bool SupernovaEngine::canLoadGameStateCurrently() {
+bool SupernovaEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _allowLoadGame;
 }
 
@@ -667,7 +667,7 @@ Common::Error SupernovaEngine::loadGameState(int slot) {
 	return (loadGame(slot) ? Common::kNoError : Common::kReadingFailed);
 }
 
-bool SupernovaEngine::canSaveGameStateCurrently() {
+bool SupernovaEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false
 	return _allowSaveGame && _gm->canSaveGameStateCurrently();
 }

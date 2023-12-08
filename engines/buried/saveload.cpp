@@ -47,12 +47,26 @@ namespace Buried {
 
 #define SAVEGAME_CURRENT_VERSION 1
 
-bool BuriedEngine::canLoadGameStateCurrently() {
-	return !isDemo() && _mainWindow && !_yielding;
+bool BuriedEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	if (isDemo()) {
+		if (msg)
+			*msg = _("This game does not support loading");
+
+		return false;
+	}
+
+	return _mainWindow && !_yielding;
 }
 
-bool BuriedEngine::canSaveGameStateCurrently() {
-	return !isDemo() && _mainWindow && !_yielding && ((FrameWindow *)_mainWindow)->isGameInProgress();
+bool BuriedEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (isDemo()) {
+		if (msg)
+			*msg = _("This game does not support saving");
+
+		return false;
+	}
+
+	return _mainWindow && !_yielding && ((FrameWindow *)_mainWindow)->isGameInProgress();
 }
 
 void BuriedEngine::checkForOriginalSavedGames() {
@@ -117,7 +131,7 @@ void BuriedEngine::convertSavedGame(Common::String oldFile, Common::String newFi
 		warning("Saved game %s is using an unsupported format, skipping", oldFile.c_str());
 		return;
 	}
-	
+
 	// Set necessary properties from the old save
 	Common::Serializer inS(inFile, nullptr);
 	Common::Error res = syncSaveData(inS, location, flags, inventoryItems);

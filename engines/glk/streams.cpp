@@ -1429,18 +1429,18 @@ frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 	case fileusage_SavedGame: {
 		if (fmode == filemode_Write) {
 			// Select a savegame slot
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
 
-			int slot = dialog->runModalWithCurrentTarget();
+			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {
-				Common::String desc = dialog->getResultString();
+				Common::String desc = dialog.getResultString();
 				return createRef(slot, desc, usage, rock);
 			}
 		} else if (fmode == filemode_Read) {
 			// Load a savegame slot
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
 
-			int slot = dialog->runModalWithCurrentTarget();
+			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {
 				return createRef(slot, "", usage, rock);
 			}

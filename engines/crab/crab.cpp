@@ -179,7 +179,7 @@ Common::Error CrabEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
-bool CrabEngine::canSaveGameStateCurrently() {
+bool CrabEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _screenSettings->_inGame;
 }
 

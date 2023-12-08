@@ -497,11 +497,11 @@ Common::Error AccessEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-bool AccessEngine::canLoadGameStateCurrently() {
+bool AccessEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
 }
 
-bool AccessEngine::canSaveGameStateCurrently() {
+bool AccessEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
 }
 

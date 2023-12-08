@@ -211,11 +211,11 @@ Common::Error PegasusEngine::run() {
 	return Common::kNoError;
 }
 
-bool PegasusEngine::canLoadGameStateCurrently() {
+bool PegasusEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _loadAllowed && !isDemo();
 }
 
-bool PegasusEngine::canSaveGameStateCurrently() {
+bool PegasusEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _saveAllowed && !isDemo() && g_neighborhood;
 }
 

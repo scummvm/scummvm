@@ -397,7 +397,7 @@ void GroovieEngine::syncSoundSettings() {
 		mute ? 0 : ConfMan.getInt("speech_volume"));
 }
 
-bool GroovieEngine::canLoadGameStateCurrently() {
+bool GroovieEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	// TODO: verify the engine has been initialized
 	if (isDemo())
 		return false;
@@ -407,7 +407,7 @@ bool GroovieEngine::canLoadGameStateCurrently() {
 		return false;
 }
 
-bool GroovieEngine::canSaveGameStateCurrently() {
+bool GroovieEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	// TODO: verify the engine has been initialized
 	if (isDemo())
 		return false;

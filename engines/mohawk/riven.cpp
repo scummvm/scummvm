@@ -279,11 +279,11 @@ void MohawkEngine_Riven::processInput() {
 				} else if (!isGameVariant(GF_25TH)) {
 					openMainMenuDialog();
 				}
-					
+
 				if (!isGameVariant(GF_DEMO) && hasGameEnded()) {
 					// Attempt to autosave before exiting
 					saveAutosaveIfEnabled();
-				}	
+				}
 				break;
 			case kRivenActionPlayIntroVideos:
 				// Play the intro videos in the demo
@@ -753,8 +753,11 @@ bool MohawkEngine_Riven::isZipVisitedCard(const Common::String &hotspotName) con
 	return foundMatch;
 }
 
-bool MohawkEngine_Riven::canLoadGameStateCurrently() {
+bool MohawkEngine_Riven::canLoadGameStateCurrently(Common::U32String *msg) {
 	if (isGameVariant(GF_DEMO)) {
+		if (msg)
+			*msg = _("This game does not support loading");
+
 		return false;
 	}
 
@@ -765,8 +768,15 @@ bool MohawkEngine_Riven::canLoadGameStateCurrently() {
 	return true;
 }
 
-bool MohawkEngine_Riven::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently() && isGameStarted();
+bool MohawkEngine_Riven::canSaveGameStateCurrently(Common::U32String *msg) {
+	if (isGameVariant(GF_DEMO)) {
+		if (msg)
+			*msg = _("This game does not support saving");
+
+		return false;
+	}
+
+	return canLoadGameStateCurrently(msg) && isGameStarted();
 }
 
 bool MohawkEngine_Riven::hasGameEnded() const {

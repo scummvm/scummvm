@@ -755,14 +755,14 @@ void VoyeurEngine::showEndingNews() {
 /**
  * Returns true if it is currently okay to restore a game
  */
-bool VoyeurEngine::canLoadGameStateCurrently() {
+bool VoyeurEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _voyeurArea == AREA_APARTMENT;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
-bool VoyeurEngine::canSaveGameStateCurrently() {
+bool VoyeurEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _voyeurArea == AREA_APARTMENT;
 }
 

@@ -106,10 +106,10 @@ public:
 	const char *getCopyrightString() const;
 
 	void synchronize(Common::Serializer &sz);
-	bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool saveGame(const int16 slot, const Common::String &desc);
-	bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error loadGameState(int slot) override;
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
