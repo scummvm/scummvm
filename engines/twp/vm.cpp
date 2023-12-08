@@ -180,27 +180,12 @@ static SQInteger createObject(HSQUIRRELVM v) {
 	debug("Create object: %s, %u", sheet.c_str(), frames.size());
 
 	// load sheet json
-	GGPackEntryReader r2;
-	r2.open(g_engine->pack, sheet + ".json");
-	Common::Array<char> data(r2.size());
-	r2.read(&data[0], r2.size());
-	Common::String s(&data[0], r2.size());
-
-	// TODO: change to load each frame
-	Common::JSONValue *json = Common::JSON::parse(s.c_str());
-	const Common::JSONObject &jRect = json->asObject()["frames"]->asObject()[frames[0]]->asObject()["frame"]->asObject();
-
-	int x = (int)jRect["x"]->asIntegerNumber();
-	int y = (int)jRect["y"]->asIntegerNumber();
-	int w = (int)jRect["w"]->asIntegerNumber();
-	int h = (int)jRect["h"]->asIntegerNumber();
-
-	delete json;
+	SpriteSheet* spritesheet = g_engine->resManager.spriteSheet(sheet + ".json");
 
 	// TODO: create an entity
 	Entity e;
 	e.texture = g_engine->resManager.texture(sheet + ".png");
-	e.rect = Common::Rect(x, y, x + w, y + h);
+	e.rect = spritesheet->frameTable[frames[0]].frame;
 
 	static int gId = 3000;
 	sq_newtable(v);

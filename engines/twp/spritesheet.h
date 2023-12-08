@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,31 +20,29 @@
  *
  */
 
-#ifndef TWP_RESMANAGER_H
-#define TWP_RESMANAGER_H
+#ifndef TWP_SPRITESHEET_H
+#define TWP_SPRITESHEET_H
 
-#include "common/str.h"
 #include "common/hashmap.h"
-#include "twp/gfx.h"
-#include "twp/spritesheet.h"
+#include "common/rect.h"
+#include "common/stream.h"
+#include "math/vector2d.h"
 
 namespace Twp {
 
-class ResManager {
-public:
-	ResManager() {}
-
-	Texture *texture(const Common::String &name);
-	SpriteSheet *spriteSheet(const Common::String& name);
-
-private:
-	void loadTexture(const Common::String &name);
-	void loadSpriteSheet(const Common::String &name);
-
-private:
-	Common::HashMap<Common::String, Texture> _textures;
-	Common::HashMap<Common::String, SpriteSheet> _spriteSheets;
+struct SpriteSheetFrame {
+  Common::String name;
+  Common::Rect frame;
+  Common::Rect spriteSourceSize;
+  Math::Vector2d sourceSize;
 };
-} // namespace Twp
 
-#endif
+struct SpriteSheet {
+	Common::HashMap<Common::String, SpriteSheetFrame> frameTable;
+
+	void parseSpriteSheet(const Common::String& contents);
+};
+
+}
+
+#endif // TWP_SPRITESHEET_H
