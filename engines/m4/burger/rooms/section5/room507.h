@@ -68,7 +68,7 @@ private:
 	int _val4 = 0;
 	int _val5 = 0;
 	int _val6 = 0;
-	int _val7 = 0;
+	int _itemNum = 0;
 	int _val8 = 0;
 	int _val9 = 0;
 
