@@ -62,4 +62,25 @@ Texture *ResManager::texture(const Common::String& name) {
 	}
 	return &_textures[key];
 }
+
+void ResManager::loadSpriteSheet(const Common::String& name) {
+	GGPackEntryReader r;
+	r.open(g_engine->pack, name);
+
+	// read all contents
+	Common::Array<char> data(r.size());
+	r.read(&data[0], r.size());
+
+	Common::String s(&data[0], r.size());
+	_spriteSheets[name].parseSpriteSheet(s);
+}
+
+SpriteSheet *ResManager::spriteSheet(const Common::String& name) {
+	Common::String key = getKey(name.c_str());
+	if (!_spriteSheets.contains(key)) {
+		loadSpriteSheet(key.c_str());
+	}
+	return &_spriteSheets[key];
+}
+
 }
