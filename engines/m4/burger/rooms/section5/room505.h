@@ -35,7 +35,7 @@ private:
 	static const seriesPlayBreak PLAY1[];
 	static const seriesPlayBreak PLAY2[];
 	char _bork[8], _lookAt[8];
-	int _val1 = 0;
+	int _borkState = 0;
 	int _destTrigger = 0;
 	int _val3 = 0;
 	int _val4 = 0;

@@ -28,10 +28,10 @@ namespace Burger {
 namespace Rooms {
 
 const char *Room505::SAID[][4] = {
-	{ "WILBUR'S ROOM", nullptr,   "500w001", nullptr },
-	{ "BATHROOM",      nullptr,   "500w001", nullptr },
+	{ "WILBUR'S ROOM", nullptr,   "500w001", nullptr   },
+	{ "BATHROOM",      nullptr,   "500w001", nullptr   },
 	{ "AUNT POLLY'S ROOM", nullptr, "500w001", nullptr },
-	{ "STAIRS",        nullptr,   "505w001", "500w001" },
+	{ "STAIRS",        "505w001", "500w001", nullptr   },
 	{ "STAIRWAY BORK", "505w003", "500w002", "500w002" },
 	{ "RAILING",       "505w004", nullptr,   "505w006" },
 	{ "WINDOW",        "500w003", nullptr,   "500w004" },
@@ -132,7 +132,7 @@ void Room505::init() {
 		series_load("505bk01");
 		series_load("505bk01s");
 		_borkTable = BORK;
-		_val1 = 7;
+		_borkState = 7;
 		_G(flags)[V186] = 1;
 		kernel_trigger_dispatch_now(4);
 		kernel_trigger_dispatch_now(2);
@@ -166,7 +166,7 @@ void Room505::daemon() {
 		player_update_info();
 
 		if (_G(player_info).y > 300) {
-			_val1 = _val3;
+			_borkState = _val3;
 			kernel_trigger_dispatch_now(4);
 		} else {
 			kernel_timing_trigger(15, 3);
@@ -174,9 +174,9 @@ void Room505::daemon() {
 		break;
 
 	case 4:
-		switch (_val1) {
+		switch (_borkState) {
 		case 4:
-			_G(flags)[186] = 0;
+			_G(flags)[V186] = 0;
 			_borkStairs.terminate();
 			_val3 = 5;
 			kernel_timing_trigger(imath_ranged_rand(240, 360), 3);
@@ -185,7 +185,7 @@ void Room505::daemon() {
 		case 5:
 			_G(flags)[V186] = 1;
 			_G(flags)[kStairsBorkState] = 5000;
-			_val1 = 6;
+			_borkState = 6;
 			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 0, 2);
 			break;
 
@@ -193,20 +193,20 @@ void Room505::daemon() {
 			_val4 = 0;
 			kernel_trigger_dispatch_now(5);
 			kernel_trigger_dispatch_now(2);
-			_val1 = 7;
+			_borkState = 7;
 			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 3, 9);
 			break;
 
 		case 7:
 			terminateMachineAndNull(_series1);
-			_val1 = 8;
+			_borkState = 8;
 			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 10, 24);
 			_val4 = 1;
 			kernel_trigger_dispatch_now(5);
 			break;
 
 		case 8:
-			_val1 = 9;
+			_borkState = 9;
 			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 25, 24);
 			_val4 = 2;
 			kernel_trigger_dispatch_now(5);
@@ -214,7 +214,7 @@ void Room505::daemon() {
 
 		case 9:
 			_G(flags)[kStairsBorkState] = 5001;
-			_val1 = 4;
+			_borkState = 4;
 			_borkStairs.play("505bk01", 0xbff, 0, 4, 6, 0, 100, 0, 0, 27, 31);
 			_val4 = 3;
 			kernel_trigger_dispatch_now(5);

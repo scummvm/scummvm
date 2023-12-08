@@ -415,7 +415,7 @@ void Room507::daemon() {
 		case 19:
 			_val2 = 24;
 			_triggers[0] = 6;
-			_val7 = 1;
+			_itemNum = 1;
 			_val8 = 11;
 			_state1 = imath_ranged_rand(1, 2);
 			_state2 = imath_ranged_rand(1, 2);
@@ -546,7 +546,7 @@ void Room507::daemon() {
 		break;
 
 	case 11:
-		switch (_val7) {
+		switch (_itemNum) {
 		case 0:
 			inv_give_to_player("RUBBER DUCKY");
 			terminateMachineAndNull(_series1);
@@ -592,7 +592,7 @@ void Room507::daemon() {
 		case 2:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
-			_val7 = 0;
+			_itemNum = 0;
 			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY2, "507wi01", 0xa00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
@@ -632,7 +632,7 @@ void Room507::daemon() {
 
 		case 8:
 			_G(flags)[V224] = 1;
-			_val7 = 2;
+			_itemNum = 2;
 			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY4, "507wi04", 0x8ff, 11, 3);
 			break;
@@ -659,6 +659,7 @@ void Room507::daemon() {
 		case 11:
 			player_set_commands_allowed(false);
 			ws_hide_walker();
+			_itemNum = 3;
 			_G(wilbur_should) = 10001;
 			series_play_with_breaks(PLAY8, "507wi06", 0xd00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
