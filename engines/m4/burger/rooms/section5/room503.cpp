@@ -891,10 +891,10 @@ void Room503::pre_parser() {
 			}
 		}
 
-		if (player_said("PARLOUR") && player_said_any("ENTER", "LOOK AT", "GEAR"))
+		if (player_said("PARLOUR") && !player_said_any("ENTER", "LOOK AT", "GEAR"))
 			player_set_facing_hotspot();
 
-		if (player_said("BASEMENT") && player_said_any("ENTER", "LOOK AT", "GEAR"))
+		if (player_said("BASEMENT") && !player_said_any("ENTER", "LOOK AT", "GEAR"))
 			player_set_facing_hotspot();
 		return;
 	}

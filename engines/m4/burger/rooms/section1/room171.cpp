@@ -665,7 +665,7 @@ void Room171::pre_parser() {
 	if (!player_said("GEAR") && player_said("FRONT DOOR")) {
 		player_set_facing_at(94, 281);
 
-	} else if (player_said_any("GEAR", "LOOK AT") && player_said("KITCHEN")) {
+	} else if (!player_said_any("GEAR", "LOOK AT") && player_said("KITCHEN")) {
 		player_set_facing_at(601, 296);
 
 	} else if (player_said("GEAR", "FRONT DOOR")) {

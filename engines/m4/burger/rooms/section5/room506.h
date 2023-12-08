@@ -48,7 +48,7 @@ private:
 	int _loopCount = 0;
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _destTrigger = 0;
 	int _val4 = 0;
 
 	void loadSeries();

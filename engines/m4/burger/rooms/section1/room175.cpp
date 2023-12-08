@@ -127,15 +127,13 @@ void Room175::daemon() {
 }
 
 void Room175::pre_parser() {
-	if (player_said_any("GEAR", "LOOK AT")) {
+	if (!player_said_any("GEAR", "LOOK AT")) {
 		if (player_said("BATHROOM"))
 			player_set_facing_at(194, 301);
 
 		if (player_said("WILBUR'S ROOM"))
 			player_set_facing_at(126, 343);
 	}
-
-
 }
 
 void Room175::parser() {

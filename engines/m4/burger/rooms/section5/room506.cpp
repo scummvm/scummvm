@@ -210,7 +210,7 @@ void Room506::daemon() {
 		break;
 
 	case 3:
-		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _val3);
+		pal_fade_init(_G(kernel).first_fade, 255, 0, 30, _destTrigger);
 		break;
 
 	case 4:
@@ -381,7 +381,7 @@ void Room506::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 
-			_val3 = 5012;
+			_destTrigger = 5012;
 			kernel_timing_trigger(180, 3);
 			series_play_with_breaks(PLAY1, "506wi01", 0x800, -1, 3);
 			break;
@@ -426,7 +426,7 @@ void Room506::daemon() {
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 
-			_val3 = 5006;
+			_destTrigger = 5006;
 			_triggers[0] = 3;
 			_triggers[1] = kCHANGE_WILBUR_ANIMATION;
 			_G(wilbur_should) = 8;
@@ -459,7 +459,7 @@ void Room506::pre_parser() {
 		_G(wilbur_should) = 7;
 		player_hotspot_walk_override(409, 311, 4, kCHANGE_WILBUR_ANIMATION);
 		_G(player).command_ready = false;
-	} else if (player_said("HALLWAY") && player_said_any("LEAVE", "LOOK AT", "GEAR")) {
+	} else if (player_said("HALLWAY") && !player_said_any("LEAVE", "LOOK AT", "GEAR")) {
 		player_set_facing_hotspot();
 	}
 }
@@ -489,7 +489,7 @@ void Room506::parser() {
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 	} else if (player_said("HALLWAY") && player_said_any("LEAVE", "LOOK AT", "GEAR")) {
-		_val3 = 5009;
+		_destTrigger = 5009;
 		kernel_trigger_dispatch_now(3);
 	} else {
 		return;

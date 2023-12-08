@@ -293,8 +293,8 @@ void Room505::daemon() {
 void Room505::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if ((player_said("WILBUR'S ROOM") || player_said("BATHROOM") || player_said("AUNT POLLY'S ROOM")) &&
-			player_said_any("ENTER", "LOOK AT", "GEAR"))
+	if (player_said_any("WILBUR'S ROOM", "BATHROOM", "AUNT POLLY'S ROOM") &&
+			!player_said_any("ENTER", "LOOK AT", "GEAR"))
 		player_set_facing_hotspot();
 }
 
@@ -330,6 +330,8 @@ void Room505::parser() {
 	} else {
 		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 } // namespace Rooms

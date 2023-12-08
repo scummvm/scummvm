@@ -328,7 +328,7 @@ void Room172::pre_parser() {
 			_G(player).walk_y >= 311 && _G(player).walk_y <= 353)
 		player_hotspot_walk_override(356, 332, 3);
 
-	if (player_said_any("GEAR", "LOOK AT")) {
+	if (!player_said_any("GEAR", "LOOK AT")) {
 		if (player_said("PARLOUR"))
 			player_set_facing_at(84, 300);
 
