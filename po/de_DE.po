@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-03 21:20+0000\n"
+"PO-Revision-Date: 2023-12-08 13:23+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3240,15 +3240,16 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
-"Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
+"Für dieses Spiel wird das Speichern aus dem Menü heraus nicht unterstützt. "
+"Bitte verwende die Spiele-Oberfläche"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
 msgstr ""
+"Dieses Spiel kann zum aktuellen Zeitpunkt nicht gespeichert werden. Bitte "
+"versuche es später noch einmal"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3261,15 +3262,16 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
-"Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
+"Für dieses Spiel wird das Laden aus dem Menü heraus nicht unterstützt. Bitte "
+"verwende die Spiele-Oberfläche"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr ""
+"Dieses Spiel kann zum aktuellen Zeitpunkt nicht geladen werden. Bitte "
+"versuche es später noch einmal"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -5635,18 +5637,14 @@ msgstr "Geschwindigkeitsmenü hinzufügen (Ähnlich der PC-Version)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Dieses Spiel kann keine Spielstände laden"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Dieses Spiel kann keine Spielstände speichern"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
