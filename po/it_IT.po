@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-04 12:19+0000\n"
+"PO-Revision-Date: 2023-12-08 12:19+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3242,16 +3242,14 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
-"Questo gioco non supporta il caricamento di salvataggi dalla schermata di "
-"avvio."
+"Questo gioco non permette di salvare dal menù globale. Per favore, usa le "
+"funzionalità interne del gioco"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
-msgstr ""
+msgstr "Non è possibile salvare in questo momento. Riprova più tardi"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3264,16 +3262,14 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
-"Questo gioco non supporta il caricamento di salvataggi dalla schermata di "
-"avvio."
+"Questo gioco non permette di caricare dal menù globale. Per favore, usa le "
+"funzionalità interne del gioco"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
-msgstr ""
+msgstr "Non è possibile caricare in questo momento. Riprova più tardi"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -5659,18 +5655,14 @@ msgstr ""
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Questo gioco non è supportato."
+msgstr "Questo gioco non supporta il caricamento dei salvataggi"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Questo gioco non è supportato."
+msgstr "Questo gioco non supporta la creazione dei salvataggi"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
