@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-03 21:13+0000\n"
+"POT-Creation-Date: 2023-12-08 11:27+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -95,7 +95,7 @@ msgstr "Subir"
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
-#: engines/buried/saveload.cpp:69 engines/cine/saveload.cpp:863
+#: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:863
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -247,7 +247,7 @@ msgid "Paste code from clipboard"
 msgstr "Colar código da área de transferência"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
-#: engines/dialogs.cpp:98 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:93 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
@@ -351,7 +351,7 @@ msgstr ""
 #: engines/engine.cpp:550 engines/engine.cpp:573
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
-#: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:69
+#: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
 #: engines/director/lingo/lingo-builtins.cpp:1885
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:660 engines/mtropolis/mtropolis.cpp:115
@@ -577,7 +577,7 @@ msgstr ""
 msgid "Pick the game:"
 msgstr "Escolha o jogo:"
 
-#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:274
+#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:300
 msgid "Game"
 msgstr "Jogo"
 
@@ -673,11 +673,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Substituir configurações gerais de gráficos"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:2218 engines/dialogs.cpp:315
+#: gui/editgamedialog.cpp:212 gui/options.cpp:2218 engines/dialogs.cpp:341
 msgid "Keymaps"
 msgstr "Atalhos"
 
-#: gui/editgamedialog.cpp:219 gui/options.cpp:2225 engines/dialogs.cpp:322
+#: gui/editgamedialog.cpp:219 gui/options.cpp:2225 engines/dialogs.cpp:348
 msgid "Backend"
 msgstr "Sistema"
 
@@ -690,7 +690,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Substituir configurações gerais de sistema"
 
-#: gui/editgamedialog.cpp:238 gui/options.cpp:2239 engines/dialogs.cpp:290
+#: gui/editgamedialog.cpp:238 gui/options.cpp:2239 engines/dialogs.cpp:316
 msgid "Audio"
 msgstr "Áudio"
 
@@ -793,11 +793,11 @@ msgctxt "lowres"
 msgid "Save Path:"
 msgstr "J. Guardados:"
 
-#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:337
+#: gui/editgamedialog.cpp:338 engines/dialogs.cpp:363
 msgid "Achievements"
 msgstr "Proezas"
 
-#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:341
+#: gui/editgamedialog.cpp:342 engines/dialogs.cpp:367
 msgid "Statistics"
 msgstr "Estatísticas"
 
@@ -969,7 +969,7 @@ msgstr "Interface"
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:159 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
-#: engines/mohawk/riven.cpp:843
+#: engines/mohawk/riven.cpp:853
 msgid "Interact"
 msgstr "Interagir"
 
@@ -1220,7 +1220,7 @@ msgid "Help"
 msgstr "Ajuda"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:266 engines/dialogs.cpp:95
+#: gui/launcher.cpp:266 engines/dialogs.cpp:90
 msgid "~Q~uit"
 msgstr "~S~air"
 
@@ -1311,7 +1311,7 @@ msgstr "Pesquisar na lista de jogos"
 msgid "Search:"
 msgstr "Pesquisa:"
 
-#: gui/launcher.cpp:316 engines/dialogs.cpp:98 engines/engine.cpp:915
+#: gui/launcher.cpp:316 engines/dialogs.cpp:93 engines/engine.cpp:915
 #: engines/mm/xeen/saves.cpp:259 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:736
@@ -3145,32 +3145,32 @@ msgstr "~V~oltar"
 msgid "~L~oad"
 msgstr "~C~arregar"
 
-#: engines/dialogs.cpp:73 backends/platform/3ds/options-dialog.cpp:45
+#: engines/dialogs.cpp:70 backends/platform/3ds/options-dialog.cpp:45
 msgid "~S~ave"
 msgstr "~G~uardar"
 
-#: engines/dialogs.cpp:77
+#: engines/dialogs.cpp:72
 msgid "~O~ptions"
 msgstr "~O~pções"
 
-#: engines/dialogs.cpp:82
+#: engines/dialogs.cpp:77
 msgid "~H~elp"
 msgstr "~A~juda"
 
-#: engines/dialogs.cpp:86
+#: engines/dialogs.cpp:81
 msgid "~A~bout"
 msgstr "~S~obre"
 
-#: engines/dialogs.cpp:89 engines/dialogs.cpp:165
+#: engines/dialogs.cpp:84 engines/dialogs.cpp:155
 msgid "~R~eturn to Launcher"
 msgstr "~M~enu principal"
 
-#: engines/dialogs.cpp:91 engines/dialogs.cpp:167
+#: engines/dialogs.cpp:86 engines/dialogs.cpp:157
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~M~enu"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:94 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3190,7 +3190,7 @@ msgstr "~M~enu"
 msgid "Save game:"
 msgstr "Guardar jogo:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:944 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:94 engines/engine.cpp:944 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3213,7 +3213,7 @@ msgstr "Guardar jogo:"
 msgid "Save"
 msgstr "Guardar"
 
-#: engines/dialogs.cpp:129
+#: engines/dialogs.cpp:124
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -3222,7 +3222,18 @@ msgstr ""
 "Desculpe, de momento este jogo não fornece ajuda. Consulte o ficheiro README "
 "para informações básicas e instruções em como obter assistência."
 
-#: engines/dialogs.cpp:212 engines/pegasus/pegasus.cpp:417
+#: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
+#: engines/scumm/saveload.cpp:170
+#, fuzzy
+#| msgid "This game does not support loading games from the launcher."
+msgid "This game does not support saving from the menu. Use in-game interface"
+msgstr "Este jogo não permite carregar jogos a partir do menu principal."
+
+#: engines/dialogs.cpp:201
+msgid "This game cannot be saved at this time. Please try again later"
+msgstr ""
+
+#: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -3231,11 +3242,22 @@ msgstr ""
 "Não foi possível guardar o jogo (%s)! Por favor consulte o ficheiro README "
 "para informações básicas e instruções em como obter assistência."
 
-#: engines/dialogs.cpp:352
+#: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
+#: engines/scumm/saveload.cpp:98
+#, fuzzy
+#| msgid "This game does not support loading games from the launcher."
+msgid "This game does not support loading from the menu. Use in-game interface"
+msgstr "Este jogo não permite carregar jogos a partir do menu principal."
+
+#: engines/dialogs.cpp:242
+msgid "This game cannot be loaded at this time. Please try again later"
+msgstr ""
+
+#: engines/dialogs.cpp:378
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:353
+#: engines/dialogs.cpp:379
 msgid "~C~ancel"
 msgstr "~C~ancelar"
 
@@ -3427,7 +3449,7 @@ msgstr "Clique direito"
 #: engines/metaengine.cpp:77 engines/crab/input/input.cpp:261
 #: engines/grim/grim.cpp:535 engines/hdb/metaengine.cpp:258
 #: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
-#: engines/mohawk/riven.cpp:866 engines/sky/metaengine.cpp:125
+#: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:125
 #: engines/twine/metaengine.cpp:231 engines/wintermute/keymapper_tables.h:1608
 msgid "Pause"
 msgstr "Pausa"
@@ -3438,7 +3460,7 @@ msgstr "Menu do jogo"
 
 #: engines/metaengine.cpp:90 engines/grim/grim.cpp:518
 #: engines/grim/grim.cpp:614 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:837 engines/wintermute/keymapper_tables.h:220
+#: engines/mohawk/riven.cpp:847 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5330,6 +5352,22 @@ msgstr ""
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
+#: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
+#: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
+#: engines/petka/saveload.cpp:121
+#, fuzzy
+#| msgid "This game is not supported."
+msgid "This game does not support loading"
+msgstr "Este jogo não é suportado."
+
+#: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
+#: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
+#: engines/petka/saveload.cpp:101
+#, fuzzy
+#| msgid "This game is not supported."
+msgid "This game does not support saving"
+msgstr "Este jogo não é suportado."
+
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
@@ -5886,7 +5924,7 @@ msgstr "Seguir em frente"
 msgid "Allow cutscenes to be skipped"
 msgstr "Permite saltar diálogos e filmes"
 
-#: engines/buried/saveload.cpp:66
+#: engines/buried/saveload.cpp:80
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -5903,7 +5941,7 @@ msgstr ""
 "Clique OK para converter agora, caso contrário verá esta mensagem da próxima "
 "vez que iniciar o jogo.\n"
 
-#: engines/buried/saveload.cpp:165 engines/mtropolis/saveload.cpp:158
+#: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
 #: engines/vcruise/vcruise.cpp:314
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
@@ -7462,21 +7500,21 @@ msgstr "Suporte para CSTime não está disponível"
 msgid "The game is paused. Press any key to continue."
 msgstr "Jogo em Pausa. Carregue em qualquer tecla para continuar."
 
-#: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:825
+#: engines/mohawk/myst.cpp:554 engines/mohawk/riven.cpp:835
 #: engines/nancy/input.cpp:209
 #, fuzzy
 msgid "Open main menu"
 msgstr "~M~enu principal"
 
-#: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:849
+#: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
 msgid "Load game state"
 msgstr "Carregar estado do jogo"
 
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:854
+#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
 msgid "Save game state"
 msgstr "Guardar estado do jogo"
 
-#: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:859
+#: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
 msgstr "Mostrar menu de Opções"
 
@@ -7561,46 +7599,46 @@ msgstr ""
 msgid "You are missing the following required Riven data files:\n"
 msgstr "Estão em falta os seguintes ficheiros necessários Riven:\n"
 
-#: engines/mohawk/riven.cpp:871
+#: engines/mohawk/riven.cpp:881
 msgid "Move forward"
 msgstr "Avançar"
 
-#: engines/mohawk/riven.cpp:877
+#: engines/mohawk/riven.cpp:887
 msgid "Move forward left"
 msgstr "Avançar para a esquerda"
 
-#: engines/mohawk/riven.cpp:881
+#: engines/mohawk/riven.cpp:891
 msgid "Move forward right"
 msgstr "Avançar para a direita"
 
-#: engines/mohawk/riven.cpp:885
+#: engines/mohawk/riven.cpp:895
 msgid "Move backwards"
 msgstr "Retroceder"
 
-#: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:161
+#: engines/mohawk/riven.cpp:901 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
 #: engines/wintermute/keymapper_tables.h:2223
 msgid "Turn left"
 msgstr "Virar à esquerda"
 
-#: engines/mohawk/riven.cpp:897 engines/wintermute/keymapper_tables.h:167
+#: engines/mohawk/riven.cpp:907 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
 #: engines/wintermute/keymapper_tables.h:2230
 msgid "Turn right"
 msgstr "Virar à direita"
 
-#: engines/mohawk/riven.cpp:903
+#: engines/mohawk/riven.cpp:913
 #, fuzzy
 msgid "Look up"
 msgstr "Olhar para Cima"
 
-#: engines/mohawk/riven.cpp:908
+#: engines/mohawk/riven.cpp:918
 msgid "Look down"
 msgstr "Olhar para baixo"
 
-#: engines/mohawk/riven.cpp:914
+#: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
 msgstr ""
 
