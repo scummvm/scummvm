@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-04 21:41+0000\n"
+"PO-Revision-Date: 2023-12-08 14:18+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1330,7 +1330,8 @@ msgstr "Voulez-vous charger le jeu ?"
 #: gui/launcher.cpp:555
 msgid "This game does not support loading games from the launcher."
 msgstr ""
-"Le chargement de sauvegarde depuis le lanceur n'est pas supporté pour ce jeu."
+"Le chargement de sauvegarde depuis le lanceur n'est pas pris en charge pour "
+"ce jeu."
 
 #: gui/launcher.cpp:559
 msgid "ScummVM could not find any engine capable of running the selected game!"
@@ -2234,11 +2235,15 @@ msgstr "<jamais>"
 #: gui/options.cpp:2715
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "Les sauvegardes sont synchronisées automatiquement."
+msgstr ""
+"Les sauvegardes sont synchronisées automatiquement au lancement, après avoir "
+"sauvegardé ou lors d'un chargement."
 
 #: gui/options.cpp:2717
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr "Les sauvegardes sont synchronisées automatiquement."
+msgstr ""
+"Les sauvegardes sont synchronisées automatiquement, après avoir sauvegardé "
+"ou lors d'un chargement."
 
 #: gui/options.cpp:2718
 msgid "Sync now"
@@ -3261,15 +3266,16 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
-"Le chargement de sauvegarde depuis le lanceur n'est pas supporté pour ce jeu."
+"La sauvegarde depuis le menu n'est pas prise en charge pour ce jeu. Utilisez "
+"l'interface du jeu"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
 msgstr ""
+"Cette partie ne peut pas être sauvegardée pour le moment. Merci de réessayez "
+"ultérieurement"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3282,15 +3288,16 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
-"Le chargement de sauvegarde depuis le lanceur n'est pas supporté pour ce jeu."
+"Le chargement de sauvegarde depuis le menu n'est pas pris en charge pour ce "
+"jeu. Utilisez l'interface du jeu"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr ""
+"Cette partie ne peut pas être chargée pour le moment. Merci de réessayez "
+"ultérieurement"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -5669,18 +5676,14 @@ msgstr "Ajoute un menu de vitesse (similaire à celui de la version PC)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Ce jeu n'est pas supporté."
+msgstr "Le chargement de sauvegarde n'est pas pris en charge pour ce jeu"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Ce jeu n'est pas supporté."
+msgstr "La sauvegarde n'est pas prise en charge pour ce jeu"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
