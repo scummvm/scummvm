@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-11-23 22:41+0000\n"
+"PO-Revision-Date: 2023-12-08 21:24+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -3072,14 +3072,10 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid ""
-#| "This game is not supported for the following reason:\n"
-#| "\n"
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
-"ეს თამაში მხარდაჭერილი არაა შემდეგი მიზეზით:\n"
-"\n"
+"ამ თამაშს მენიუდან ჩატვირთვის მხარდაჭერა არ გააჩნია. გამოიყენეთ თამაშშიდა "
+"ინტერფესი"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -5134,18 +5130,14 @@ msgstr ""
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "ეს თამაში მხარდაჭერილი არაა."
+msgstr "ამ თამაშს ჩატვირთვის მხარდაჭერა არ გააჩნია"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "ეს თამაში მხარდაჭერილი არაა."
+msgstr "ამ თამაშს შენახვის მხარდაჭერა არ გააჩნია"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
