@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-05-06 06:43+0000\n"
+"PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -31,27 +31,21 @@ msgid "Features compiled in:"
 msgstr "Lefordított összetevõk:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Játék id nem támogatott"
+msgstr "nem támogatott"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Letiltva"
+msgstr "letiltva"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Letiltva"
+msgstr "engedélyezve"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "CPU bővítmények támogatása:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -121,19 +115,15 @@ msgstr "Választ"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Felhőkapcsolat varázsló"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Gyorstöltés"
+msgstr "Gyors mód"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Gyors mód"
+msgstr "Manuális mód"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
@@ -145,7 +135,7 @@ msgstr "Helyi Webszerver szolgáltatás szükséges"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Gyors mód: 1. lépés"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
@@ -177,11 +167,11 @@ msgstr "Nem fut"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Gyors mód: 2. lépés"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Most nyisd meg a hivatkozást a böngésződben:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -193,34 +183,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Az adatokat automatikusan továbbítja a ScummVM-nek,\n"
+"és figyelmezteti Önt, ha bármi hiba történt."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Helyi Webszerver címe: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Gyors mód: Sikeres"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Csatlakozás a felhõtároló fiókodhoz"
+msgstr "A felhőtárhelyed csatlakoztatva lett!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Befejez"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Manuális Mód: 1. lépés"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Nyisd meg ezt a linket:"
+msgstr "Nyisd meg a linket a böngésződben:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -234,7 +222,7 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Manuális Mód: 2. lépés"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
@@ -259,20 +247,16 @@ msgid "Load"
 msgstr "Betöltés"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Fájl betöltése"
+msgstr "Kód betöltése fájlból"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Manuális Mód: Valami hiba történt"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Tároló csatlakoztatva."
+msgstr "Felhőtárhely nem volt csatlakoztatva."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
@@ -285,18 +269,16 @@ msgstr "Ha ez nem működik, próbáld újra az elejétől."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Hibaüzenet: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Manuális Mód: Sikeres"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Háttér"
+msgstr "Vissza"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -375,10 +357,8 @@ msgstr "Helytelen JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Interakció"
+msgstr "Megszakított."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
@@ -391,28 +371,24 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Válaszd ki a scummvm.org webhelyről másolt JSON fájlt"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Nem sikerült feltölteni a fájlt!"
+msgstr "Nem sikerült betölteni a JSON fájlt"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Ingyenes játékok és bemutatók letöltése"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "DLC-k lekérése..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Letöltés"
+msgstr "Minden Letöltés"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -492,16 +468,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Letöltési sebesség: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Játék fájlok letöltése"
+msgstr "Jelenleg játékok letöltése folyik"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Letöltés"
+msgstr "Függőben lévő letöltések"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1032,44 +1004,36 @@ msgid "Right"
 msgstr "Jobb"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Háttér"
+msgstr "Backspace"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
-msgstr "Karakter törlés"
+msgstr "Karakter törlése"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Menj a sor végére"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "SoundFont kiválasztás"
+msgstr "Válassza ki a sor végéig"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Plugin mappa kiválasztása"
+msgstr "Válassza ki a sor elejéhez"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Ugrás a sor elejére"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Kivág"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Másol"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1122,27 +1086,44 @@ msgid ""
 "Additionally, some games that are not available on ZOOM-Platform can be "
 "found on GOG.com.\n"
 msgstr ""
+"## Hol lehet beszerezni a játékokat\n"
+"\n"
+"Látogasd meg [Wikinket](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) a játékok listájához és a vásárlási "
+"helyekhez.\n"
+"\n"
+"Alternatív megoldásként letölthet egy válogatott [ingyenes játékot] "
+"(https://scummvm.org/games) és [demókat] (https://www.scummvm.org/demos/) a "
+"webhelyünkről.\n"
+"\n"
+"Más (elfogyott) játékok esetén próbáld ki az Amazon, az eBay, a Game Trading "
+"Zone vagy más aukciós oldalakat. Óvakodjon a hibás játékoktól és az "
+"illegális játékmásolatoktól.\n"
+"\n"
+"A ScummVM csapata nem ajánl egyetlen játékszállítót sem, a projekt azonban "
+"minden [ZOOM-Platformon] történő vásárlásból kedvezményt kap (https://www."
+"zoom-platform.com/?affiliate=c049516c-9c4c-42d6- 8649-92ed870e8b53) kapcsolt "
+"vállalkozási hivatkozásokon keresztül.\n"
+"\n"
+"Ezenkívül néhány olyan játék, amely nem érhető el a ZOOM-Platformon, "
+"megtalálható a GOG.com oldalon.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
 msgstr "Elõzõ"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Játék mentés..."
+msgstr "Kép mentése..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u a %u ból"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Játék mentés"
+msgstr "Kép mentése"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1195,7 +1176,7 @@ msgstr "Platform"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Év"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1251,14 +1232,12 @@ msgid "Global ~O~pts..."
 msgstr "Globális ~O~pc..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Játék fájlok letöltése"
+msgstr "Játékok letöltése"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Ingyenes játékok letöltése ScummVM-hez"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1350,6 +1329,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Hozzáadta ezt a könyvtárat a SAF-hez? Nyomja meg a felül található súgó [?] "
+"gombot a részletes útmutatásért"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1432,10 +1413,8 @@ msgstr "Platform nincs észlelve"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1278 gui/launcher.cpp:1474
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Ismeretlen hiba"
+msgstr "Ismeretlen Év"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
@@ -1645,16 +1624,12 @@ msgid "Shader Path:"
 msgstr "Shader Mappa:"
 
 #: gui/options.cpp:1634
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "Játék fájlok letöltése"
+msgstr "Shaderek letöltése"
 
 #: gui/options.cpp:1634
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Ellenőrizd a shader csomagok frissítését"
+msgstr "Nézd meg a scummvm.org webhelyen a shader csomagok frissítéseit"
 
 #: gui/options.cpp:1641 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1987,17 +1962,13 @@ msgid "Default"
 msgstr "Alapértelmezett"
 
 #: gui/options.cpp:2461
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Játék Mappa:"
+msgstr "DLC Mappa:"
 
 #: gui/options.cpp:2463
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Játék Mappa:"
+msgstr "DLC Mappa:"
 
 #: gui/options.cpp:2471 gui/options.cpp:2473 gui/options.cpp:2474
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2062,16 +2033,17 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Kérjen megerősítést ha bezárja a ScummVM-et vagy ha kilép a játékból."
 
 #: gui/options.cpp:2565
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Leesés tiltása"
+msgstr "A rögzített betűméretezés tiltása"
 
 #: gui/options.cpp:2566
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Ne skálázza fel a rögzített méretű betűtípusokat a grafikus felhasználói "
+"felületen. Ez csökkenti a műtermékek számát az alacsony felbontású "
+"képernyőkön"
 
 #: gui/options.cpp:2572
 msgid "GUI language:"
@@ -2108,16 +2080,12 @@ msgstr ""
 "fájl vagy könyvtár kiválasztásához."
 
 #: gui/options.cpp:2620
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Letöltés"
+msgstr "Ikonok Letöltése"
 
 #: gui/options.cpp:2620
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Ellenőrizd az ikon csomagok frissítését"
+msgstr "Az ikoncsomagok frissítéseit a scummvm.org webhelyen találja"
 
 #: gui/options.cpp:2627
 msgid "Autosave:"
@@ -2183,28 +2151,17 @@ msgid "Active cloud storage"
 msgstr "Aktív felhõ tároló"
 
 #: gui/options.cpp:2701
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
-"engedélyezd:"
+"A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és engedélyezd:"
 
 #: gui/options.cpp:2703
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és "
-"engedélyezd:"
+"A tároló még nem engedélyezett. Ellenõrizd a felhasználóneved és engedélyezd:"
 
 #: gui/options.cpp:2704
 msgid "Enable storage"
@@ -2302,24 +2259,17 @@ msgid "Stop using this storage on this device"
 msgstr "Hagyd abba a tároló használatát ezen az eszközön"
 
 #: gui/options.cpp:2733
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
+msgstr "A tároló még nincs csatlakoztatva!"
 
 #: gui/options.cpp:2735
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "A tároló még nincs csatlakoztatva! A kapcsolódáshoz,"
+msgstr "A tároló még nincs csatlakoztatva!"
 
 #: gui/options.cpp:2736
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Kapcsolódás"
+msgstr "Kapcsolódás"
 
 #: gui/options.cpp:2736
 msgid "Connect your cloud storage account"
@@ -2447,10 +2397,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "Válaszd ki a GUI bélyegképeinek könyvtárát"
 
 #: gui/options.cpp:3191
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Plugin mappa kiválasztása"
+msgstr "Válaszd ki a DLC-letöltések könyvtárát"
 
 #: gui/options.cpp:3202
 msgid "Select directory for extra files"
@@ -2754,28 +2702,6 @@ msgstr "Hibás konfigurációs fájlformátum. felülírjam?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "If you find that your existing added games or custom paths no longer "
-#| "work, please edit those paths and this time use the SAF system to browse "
-#| "to the desired locations.\n"
-#| "To do that:\n"
-#| "\n"
-#| "  1. For each game whose data is not found, go to the \"Paths\" tab in "
-#| "the \"Game Options\" and change the \"Game path\"\n"
-#| "  2. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  3. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  4. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  5. Browse through this folder to your game data.\n"
-#| "\n"
-#| "Steps 2 and 3 need to be done only once for all of your games."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2797,27 +2723,26 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
-"A ScummVM Android új verziójában jelentős változtatásokat hajtottak végre a "
-"fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android operációs "
-"rendszer modern verzióinak támogatását.\n"
-"Ha úgy találja, hogy a meglévő hozzáadott játékai vagy egyéni útvonalai már "
-"nem működnek, kérjük, szerkessze ezeket az útvonalakat, és ezúttal a SAF "
-"rendszer segítségével tallózzon a kívánt helyekre.\n"
-"Ezeket tedd:\n"
+"A ScummVM for Android új verziójában jelentős változtatásokat hajtottak "
+"végre a fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android "
+"operációs rendszer modern verzióinak támogatását.\n"
+"Ha úgy találja, hogy a meglévő hozzáadott játékai vagy egyéni elérési utak "
+"már nem működnek, kérjük, szerkessze ezeket az útvonalakat:\n"
+"   1. Az Indítóban lépjen a **Játékbeállítások > Útvonalak** elemre. "
+"Válassza a **Játék elérési út** vagy **Extra Path** lehetőséget.\n"
+"   2. A ScummVM fájlböngészőben válassza a **Go Up** lehetőséget, amíg el "
+"nem éri az **<Új mappa hozzáadása>** opciót tartalmazó gyökérmappát.\n"
+"   3. Koppintson duplán az **<Új mappa hozzáadása>** elemre. Az eszköz "
+"fájlböngészőjében keresse meg az összes játékmappát tartalmazó mappát. "
+"Például **SD-kártya > ScummVMgames**\n"
+"   4. Válassza a **Használja ezt a mappát**.\n"
+"   5. Válassza az **Engedélyezés** lehetőséget, hogy engedélyt adjon a "
+"ScummVM-nek a mappa elérésére.\n"
+"   6. A ScummVM fájlböngészőben koppintson duplán a hozzáadott mappában való "
+"böngészéshez. Válassza ki a játék fájljait tartalmazó mappát, majd "
+"koppintson a **Kiválasztás** elemre.\n"
 "\n"
-"  1. Minden olyan játék esetében, amelynek adatai nem találhatók, lépj a "
-"„Játékbeállítások” „Útvonalak” fülre, és módosítsd a „Játék elérési útját”.\n"
-"  2. A ScummVM fájlböngészőn belül használd a \"Go Up\" gombot, amíg el nem "
-"éred a \"gyökér\" mappát, ahol megjelenik az \"<Új mappa hozzáadása>\" "
-"opció.\n"
-"  3. Válaszd ezt, majd tallózz és válaszd ki a \"szülő\" mappát a játékok "
-"almappáihoz, pl. \"SD-kártya > myGames\". Kattints a \"Mappa használata\" "
-"gombra.\n"
-"  4. Ezután egy új \"myGames\" mappa jelenik meg a ScummVM böngésző \"root\" "
-"mappájában.\n"
-"  5. Böngéssz ebben a mappában a játék adataihoz.\n"
-"\n"
-"A 2. és 3. lépést az összes játéknál csak egyszer kell elvégezni."
+"Ismételje meg az 1. és 6. lépést minden játéknál."
 
 #: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1269
@@ -2834,21 +2759,6 @@ msgstr "Később elolvas"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2868,20 +2778,24 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
-"A ScummVM Android új verziójában jelentős változtatásokat hajtottak végre a "
-"fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android operációs "
-"rendszer modern verzióinak támogatását.\n"
-"Ezért a játékok hozzáadásához be kell állítania a SAF-et.\n"
+"A ScummVM for Android új verziójában jelentős változtatásokat hajtottak "
+"végre a fájlhozzáférési rendszerben, hogy lehetővé tegyék az Android "
+"operációs rendszer modern verzióinak támogatását.\n"
+"Játék hozzáadása:\n"
 "\n"
-"  1. A ScummVM fájlböngészőn belül használd a \"Go Up\" gombot, amíg el nem "
-"éred a \"gyökér\" mappát, ahol megjelenik az \"<Új mappa hozzáadása>\" "
-"opció.\n"
-"  2. Válaszd ezt, majd tallózz és válaszd ki a \"szülő\" mappát a játékok "
-"almappáihoz, pl. \"SD-kártya > myGames\". Kattints a \"Mappa használata\" "
-"gombra.\n"
-"  3. Ezután egy új \"myGames\" mappa jelenik meg a ScummVM böngésző \"root\" "
-"mappájában.\n"
-"  4. Böngéssz ebben a mappában a játék adataihoz."
+"   1. Válassza a **Játék hozzáadása...** lehetőséget az indítóban.\n"
+"   2. A ScummVM fájlböngészőben válassza a **Go Up** lehetőséget, amíg el "
+"nem éri az **<Új mappa hozzáadása>** opciót tartalmazó gyökérmappát.\n"
+"   3. Koppintson duplán az **<Új mappa hozzáadása>** elemre. Az eszköz "
+"fájlböngészőjében keresse meg az összes játékmappát tartalmazó mappát. "
+"Például **SD-kártya > ScummVMgames**\n"
+"   4. Válassza a **Használja ezt a mappát**.\n"
+"   5. Válassza az **Engedélyezés** lehetőséget, hogy engedélyt adjon a "
+"ScummVM-nek a mappa elérésére.\n"
+"   6. A ScummVM fájlböngészőben koppintson duplán a hozzáadott mappában való "
+"böngészéshez. Válassza ki a játék fájljait tartalmazó almappát, majd "
+"koppintson a **Kiválasztás** elemre.\n"
+"Ismételje meg az 1. és 6. lépést minden játéknál."
 
 #: base/main.cpp:829
 msgid "Error running game:"
@@ -3041,33 +2955,31 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Bitmap képfájl"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "PNG képfájl"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "JPEG képfájl"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "QuickDraw PICT képfájl"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Adatfájl"
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "ScummVM bezárása"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Grafikus kalandjáték motor"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -3082,43 +2994,43 @@ msgstr "Kilépés"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Konfigurációs fájl hiba"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
+"Nem lehet olvasni a ScummVM konfigurációs fájlt, vagy nem lehet újat "
+"létrehozni!"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Mentés Mappa:"
+msgstr "Mentési útvonal hiba"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Nem lehet létrehozni vagy elérni az alapértelmezett mentési útvonalat!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Ikon Útvonal:"
+msgstr "Ikon útvonal hiba"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
 msgstr ""
+"Nem lehet létrehozni vagy elérni az alapértelmezett ikonokat és árnyékolók "
+"elérési útját!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Nem érhető el a globálisan beállított mentési útvonal! Kérjük, állítsa "
+"vissza az alapértelmezett beállításokat a ScummVM beállítások közül"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Virtuális billentyûzet"
+msgstr "Virtuális billentyűzet váltása"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3129,13 +3041,11 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Kész"
 
 #: dists/android.strings.xml.cpp:46
-#, fuzzy
-#| msgid "Exchange"
 msgid "Mode change"
-msgstr "Csere"
+msgstr "Mód csere"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -3147,10 +3057,8 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Bezár"
+msgstr "Felugró ablak bezárása"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
