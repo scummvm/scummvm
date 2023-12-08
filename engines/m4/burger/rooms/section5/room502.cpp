@@ -806,7 +806,7 @@ void Room502::daemon() {
 void Room502::pre_parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (player_said("KITCHEN") && player_said_any("LOOK AT", "GEAR"))
+	if (player_said("KITCHEN") && !player_said_any("LOOK AT", "GEAR"))
 		player_set_facing_hotspot();
 }
 

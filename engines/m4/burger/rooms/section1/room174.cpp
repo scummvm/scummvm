@@ -153,7 +153,7 @@ void Room174::daemon() {
 }
 
 void Room174::pre_parser() {
-	if (player_said("HALLWAY") && player_said_any("GEAR", "LOOK AT"))
+	if (player_said("HALLWAY") && !player_said_any("GEAR", "LOOK AT"))
 		player_set_facing_at(522, 287);
 }
 
