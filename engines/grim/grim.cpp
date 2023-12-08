@@ -274,6 +274,12 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 #endif
 			0;
 
+	// For Grim Fandango, Korean fan translation can only use OpenGL renderer
+	if (getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR) {
+		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
+		availableRendererTypes &= ~Graphics::kRendererTypeTinyGL;
+	}
+
 	// For Grim Fandango, OpenGL renderer without shaders is preferred if available
 	if (desiredRendererType == Graphics::kRendererTypeDefault &&
 		(availableRendererTypes & Graphics::kRendererTypeOpenGL) &&

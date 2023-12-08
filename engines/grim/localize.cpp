@@ -40,6 +40,7 @@ Localizer::Localizer() {
 	bool isFrench = g_grim->getGameLanguage() == Common::FR_FRA;
 	bool isItalian = g_grim->getGameLanguage() == Common::IT_ITA;
 	bool isSpanish = g_grim->getGameLanguage() == Common::ES_ESP;
+	bool isKorean = g_grim->getGameLanguage() == Common::KO_KOR;	// Korean Fan Translation
 	bool isTranslatedGrimDemo = (isGerman || isFrench || isItalian || isSpanish) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
 
@@ -54,6 +55,8 @@ Localizer::Localizer() {
 			filename = Common::String("grim.") + g_grim->getLanguagePrefix() + Common::String(".tab"); // TODO: Detect based on language.
 		} else if (isTranslatedGrimDemo) {
 			filename = "language.tab";
+		} else if (isKorean) {
+			filename = "grim.ko.tab";
 		} else {
 			filename = "grim.tab";
 		}
