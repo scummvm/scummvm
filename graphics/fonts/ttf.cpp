@@ -912,6 +912,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		delete archive;
 
 		// Trying fonts-cjk.dat
+		archiveStream = nullptr;
 		if (ConfMan.hasKey("extrapath")) {
 			Common::FSDirectory extrapath(ConfMan.get("extrapath"));
 			archiveStream = extrapath.createReadStreamForMember("fonts-cjk.dat");
