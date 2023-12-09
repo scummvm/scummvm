@@ -224,7 +224,7 @@ void Room504::init() {
 	kernel_trigger_dispatch_now(9);
 
 	if (inv_object_is_here("DIRTY SOCK") && _G(flags)[V210] != 5002) {
-		_series1 = series_show("504SOCK", 0xf00);
+		_sock = series_show("504SOCK", 0xf00);
 	} else {
 		hotspot_set_active("DIRTY SOCK ", false);
 	}
@@ -457,15 +457,15 @@ void Room504::daemon() {
 		break;
 
 	case 10:
-		switch (_val7) {
+		switch (_sockState) {
 		case 36:
-			terminateMachineAndNull(_series1);
+			terminateMachineAndNull(_sock);
 			hotspot_set_active("DIRTY SOCK ", false);
 			inv_give_to_player("DIRTY SOCK");
 			break;
 
 		case 37:
-			_series1 = series_show("504SOCK", 0xf00);
+			_sock = series_show("504SOCK", 0xf00);
 			hotspot_set_active("DIRTY SOCK ", true);
 			inv_move_object("DIRTY SOCK", NOWHERE);
 			break;
@@ -512,6 +512,7 @@ void Room504::daemon() {
 
 		case 5:
 			_G(wilbur_should) = 10001;
+			_sockState = 36;
 			player_set_commands_allowed(false);
 			ws_hide_walker();
 			series_play_with_breaks(PLAY8, "504wi06", 0x200, kCHANGE_WILBUR_ANIMATION, 3);
