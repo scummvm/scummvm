@@ -587,7 +587,7 @@ bool Inventory::need_left() const {
 }
 
 bool Inventory::need_right() const {
-	if ((_num_cells - _scroll - MAX_BUTTONS) > 0)
+	if ((_num_cells - _scroll - MAX_INVENTORY) > 0)
 		return true;
 
 	return false;
@@ -680,6 +680,8 @@ void Inventory::draw(GrBuff *myBuffer) {
 	for (cell_iter = 0; (cell_iter + _scroll < _num_cells) && (cell_iter < MAX_INVENTORY); cell_iter++) {
 		int16 left = (int16)(_x1 + cell_pos_x(cell_iter));
 		int16 top = (int16)(_y1 + cell_pos_y(cell_iter));
+		int16 leftOffset = left + _cell_w;
+		int16 topOffset = top + _cell_h;
 
 		if (_must_redraw1 == cell_iter || _must_redraw2 == cell_iter || _must_redraw_all) {
 			// This does the button update....
@@ -688,7 +690,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 
 			// Draw icon here
 			gr_color_set(__BLACK);
-			gr_buffer_rect_fill(myBuff, left, top, _cell_w + 1, _cell_h + 1);
+			gr_buffer_rect_fill(myBuff, left, top, leftOffset - left, topOffset - top);
 			series_show_frame(_sprite, _items[cell_iter + _scroll]._cell, myBuff,
 				left + (_cell_w - 31) / 2, top + (_cell_h - 31) / 2);
 
@@ -705,7 +707,7 @@ void Inventory::draw(GrBuff *myBuffer) {
 	}
 
 	// Draw inventory slot frames
-	for (cell_iter = 0; cell_iter < 9; ++cell_iter) {
+	for (cell_iter = 0; cell_iter < MAX_INVENTORY; ++cell_iter) {
 		series_show_frame(_sprite, 67, myBuff, cell_iter * 39 + 188, 22);
 		series_show_frame(_sprite, 68, myBuff, cell_iter * 39 + 188, 92);
 	}
