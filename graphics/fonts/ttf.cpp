@@ -910,6 +910,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 
 	if (!f.open(filename, *archive)) {
 		delete archive;
+		archiveStream = nullptr;
 
 		// Trying fonts-cjk.dat
 		if (ConfMan.hasKey("extrapath")) {
