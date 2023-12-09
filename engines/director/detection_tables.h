@@ -2036,6 +2036,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("chopsuey", "", "Chop8", "01be45e7241194dad07938e7059b88e3", 481254, 404),
 	WINGAME1("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 404),
 
+	MACGAME1t_l("classicalcats", "", "CLSSCATS", "7156b03e18d1002bd1d214449e5301c1", 299156, Common::JA_JPN, 403),
+
 	WINGAME1t_l("easternmind", "", "TONG_NOU.EXE", "5d8fe6160e5cde5a9fd0cfa6a8ed7901", 741471, Common::JA_JPN, 404),
 	MACGAME1("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483490, 404),
 	WINGAME1("easternmind", "", "ESTRNMND.EXE", "2597cfb5466d193b5a18fc7b0e3a3fa5", 685789, 404),
@@ -3653,8 +3655,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 									   "PREVIEW.MOV", "7d33c9b1fa93092499e29305f9b3a414", 5698025, 403),
 	WINDEMO2t("circus", "Looping Demo", "PREVIEW.EXE", "edeb117e306c77f1496631ff9d6f1cbb", 686139,
 										"PREVIEW.MOV", "2975f81df0e3540567f6e9460ba831f1", 5698025, 400),
-
-	MACGAME1t_l("classicalcats", "", "CLSSCATS", "7156b03e18d1002bd1d214449e5301c1", 299156, Common::JA_JPN, 403),
 
 	// Product catalog - does not correspond to any single game
 	// Mac version found on Blockbuster Video Guide to Movies & Videos
