@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
 "PO-Revision-Date: 2023-12-09 16:54+0000\n"
-"Last-Translator: SkiffPL <skiff@windowslive.com>\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -36,25 +36,21 @@ msgid "Features compiled in:"
 msgstr "Wkompilowane funkcje:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "niewspierane"
 
 #: gui/about.cpp:118
-#, fuzzy
 msgid "disabled"
-msgstr "Wyłączona grafika"
+msgstr "wyłączone"
 
 #: gui/about.cpp:118
-#, fuzzy
 msgid "enabled"
-msgstr "Wyłączona grafika"
+msgstr "włączone"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Wspierane rozszerzenia CPU:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -388,16 +384,15 @@ msgstr "Nie udało się wczytać pliku JSON"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
-msgstr ""
+msgstr "Pobierz gry i dema freeware"
 
 #: gui/dlcsdialog.cpp:52
 msgid "Fetching DLCs..."
-msgstr ""
+msgstr "Pobieranie DLC..."
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
 msgid "All Downloads"
-msgstr "Pobierz"
+msgstr "Wszystkie pobrane"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -477,15 +472,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Prędkość pobierania: %s  %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Pobierz pliki gry"
+msgstr "Obecnie pobierane gry"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
 msgid "Pending Downloads"
-msgstr "Pobierz"
+msgstr "Oczekujące na pobranie"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1074,7 +1066,7 @@ msgstr "???"
 
 #: gui/helpdialog.cpp:37
 msgid "General"
-msgstr ""
+msgstr "Ogólne"
 
 #: gui/helpdialog.cpp:39
 msgid ""
@@ -1167,7 +1159,7 @@ msgstr "wg platformy"
 #: gui/launcher.cpp:119
 msgctxt "year"
 msgid "Year"
-msgstr ""
+msgstr "Rok"
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
@@ -1401,10 +1393,8 @@ msgstr "Nieznana platforma"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1278 gui/launcher.cpp:1474
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Nieznany błąd"
+msgstr "Nieznany rok"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
@@ -1613,10 +1603,8 @@ msgid "Shader Path:"
 msgstr "Ścieżka shaderów:"
 
 #: gui/options.cpp:1634
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "Pobierz pliki gry"
+msgstr "Pobierz shadery"
 
 #: gui/options.cpp:1634
 #, fuzzy
@@ -2076,9 +2064,8 @@ msgstr ""
 "otwierania plików i katalogów."
 
 #: gui/options.cpp:2620
-#, fuzzy
 msgid "Download Icons"
-msgstr "Pobierz"
+msgstr "Pobierz ikony"
 
 #: gui/options.cpp:2620
 #, fuzzy
