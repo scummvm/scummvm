@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-06-15 17:40+0000\n"
-"Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
+"PO-Revision-Date: 2023-12-09 20:45+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -149,12 +149,12 @@ msgid "Quick Mode: Step 1"
 msgstr "Hurtigmodus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:210
-#, fuzzy
-#| msgid "In this mode, Local Webserver must be running,"
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
-msgstr "Local Webserver må kjøre i denne modusen,"
+msgstr ""
+"I denne modus må Local Webserver kjøres slik at din nettleser kan "
+"videresende data til ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3704
 msgid "Stop server"
@@ -190,12 +190,12 @@ msgid "Open URL"
 msgstr "Åpne URL"
 
 #: gui/cloudconnectionwizard.cpp:270
-#, fuzzy
-#| msgid "It will automatically pass the data to ScummVM,"
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
-msgstr "Den videresender automatisk data til ScummVM,"
+msgstr ""
+"Den videresender automatisk data til ScummVM,\n"
+"og varsler om det skulle forekomme feil."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
@@ -227,16 +227,16 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Når JSON-kode ikke sendes til ScummVM, søk feilen i Troubleshooting-delen av "
+"siden og gå till neste steg her."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
 msgstr "Manuell modus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:359
-#, fuzzy
-#| msgid "Copy JSON code from browser here and press Next:"
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr "Kopier JSON-kode fra nettleser hit og trykk på Neste:"
+msgstr "Kopier JSON-koden fra nettleser hit og trykk på Neste:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
@@ -257,10 +257,8 @@ msgid "Load"
 msgstr "Åpne"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Last fil"
+msgstr "Last kildekode fra fil"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
@@ -277,10 +275,8 @@ msgid "Make sure the JSON code was copied correctly and retry."
 msgstr "Sørg for at JSON-koden ble kopiert riktig og prøv på nytt."
 
 #: gui/cloudconnectionwizard.cpp:385
-#, fuzzy
-#| msgid "It it doesn't work, try from the beginning."
 msgid "If that doesn't work, try again from the beginning."
-msgstr "Hvis den ikke virker, start på nytt."
+msgstr "Hvis det ikke virker, start på nytt."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
@@ -301,10 +297,8 @@ msgid "Next"
 msgstr "Neste"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "En annen lagringsmåte er aktiv. Ønsker du å avbryte den?"
+msgstr "Et annet fillager er aktivt. Ønsker du å avbryte det?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -341,10 +335,8 @@ msgstr "Vent til gjeldende lagringsmåte fullfører og prøv igjen."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
-#, fuzzy
-#| msgid "JSON code contents is malformed."
 msgid "JSON code contents are malformed."
-msgstr "Innholdet i JSON-koden er feilaktig."
+msgstr "Innholdet i JSON-koden er feilutformet."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -392,14 +384,12 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Velg JSON-filen som kopieres fra scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Kunne ikke laste opp fil!"
+msgstr "Kunne ikke laste opp JSON-filen"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -1254,14 +1244,12 @@ msgid "Global ~O~pts..."
 msgstr "Globale ~i~nnst..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Last ned spillfiler"
+msgstr "Last ned spill"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Last ned gratisspill til ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1991,10 +1979,8 @@ msgid "Default"
 msgstr "Standard"
 
 #: gui/options.cpp:2461
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Filbane for spill:"
+msgstr "DLC-filbane for spill:"
 
 #: gui/options.cpp:2463
 #, fuzzy
@@ -2067,16 +2053,16 @@ msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Be om tillatelse ved avslutting av ScummVM eller spill."
 
 #: gui/options.cpp:2565
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Skru av fall"
+msgstr "Skru av skalering på fast font"
 
 #: gui/options.cpp:2566
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Ikke oppskaler faste fonter i GUI. Dette reduserer artefakter på lavoppløste "
+"skjermer"
 
 #: gui/options.cpp:2572
 msgid "GUI language:"
@@ -2438,10 +2424,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "Velg mappe for ikoner til grensesnitt-oppstarteren"
 
 #: gui/options.cpp:3191
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Velg mappe for tilleggsmoduler"
+msgstr "Velg mappe for DLC-tillegg"
 
 #: gui/options.cpp:3202
 msgid "Select directory for extra files"
@@ -3031,7 +3015,7 @@ msgstr "TB"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Bitmap billedfil"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
@@ -3047,7 +3031,7 @@ msgstr ""
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Datafil"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -3074,39 +3058,35 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Lesning eller opprettelse av ScummVM konfigurasjonsfil feilet"
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Filbane for lagringsdata:"
+msgstr "Feil i lagringsfilbane"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Åpning eller opprettelse av standard lagringsfilbane feilet!"
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Filbane for ikoner:"
+msgstr "Feil i filbane til ikoner"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Åpning eller opprettelse av standard ikon- og shaders-filbane feilet!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Åpning eller opprettelse av den globalt definerte lagringsfilbanen feilet. "
+"Vennligst gå tilbake til standard i ScummVM instillinger"
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Virtuelt tastatur"
+msgstr "Aktiver virtuelt tastatur"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3120,10 +3100,8 @@ msgid "Done"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:46
-#, fuzzy
-#| msgid "Exchange"
 msgid "Mode change"
-msgstr "Bytt"
+msgstr "Modusvalg"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -3135,16 +3113,16 @@ msgid "Enter"
 msgstr "Enter"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Lukk"
+msgstr "Lukk popup"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Vennligst velg rotnivå for ditt eksterne (fysiske) SD-kort. Dette er "
+"nødvendig for at ScummVM får tillgang til denne filbanen: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
@@ -4648,11 +4626,8 @@ msgstr ""
 #: backends/platform/android/android.cpp:1089
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Add Game..."
 msgid "Adding Games"
-msgstr "Legg til spill..."
+msgstr "Legg til spill"
 
 #: backends/platform/android/android.cpp:1092
 #, fuzzy
@@ -4782,33 +4757,27 @@ msgstr ""
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Automatisk drilling"
+msgstr "Automatisk"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
-msgstr ""
+msgstr "Portrett"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Escape"
+msgstr "Landskap"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "I 2D-spill"
+msgstr "I spill"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4862,7 +4831,7 @@ msgstr ""
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Vis funskjonstaster"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:252
 msgid ""
@@ -5626,41 +5595,27 @@ msgstr ""
 "skje at enkelte spor ikke vil spilles riktig."
 
 #: engines/agos/midi.cpp:316
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Kunne ikke finne definisjonsfilene %s og %s for AdLib-instrumenter.\n"
-"Uten disse filene vil ikke musikken kunne høres ut som den gjorde i "
-"originalspillet."
+"Kunne ikke finne definisjonsfilen %s for AdLib-instrumenter.\n"
+"Uten disse filene vil ikke musikken høres ut som i originalspillet."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"Kunne ikke finne definisjonsfilene %s og %s for AdLib-instrumenter.\n"
-"Uten disse filene vil ikke musikken kunne høres ut som den gjorde i "
-"originalspillet."
+"Kunne ikke finne definisjonsfilene %s for AdLib-instrumenter.\n"
+"Uten disse filene vil ikke lydeffektene lyde som de gjorde i originalspillet."
 
 #: engines/agos/midi.cpp:453
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
@@ -6180,10 +6135,8 @@ msgstr ""
 "på nytt og opprett et nytt lagret spill."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Samhandle"
+msgstr "Konverser/Interager"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -6201,42 +6154,38 @@ msgid "Accept"
 msgstr "Godta"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~F~orrige"
+msgstr "Forrige"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "Svar 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "Svar 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "Svar 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "Svar 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "Svar 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "Svar 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
 msgid "Next Page"
 msgstr "Neste side"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "Forrige side"
 
@@ -6245,10 +6194,8 @@ msgid "Map"
 msgstr "Koble"
 
 #: engines/crab/input/input.cpp:246
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Vis journal"
+msgstr "Journal"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
@@ -6264,17 +6211,13 @@ msgstr "Utstyrsliste"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
-msgstr ""
+msgstr "Egenskaper"
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
 msgstr "Hurtiglagring"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
 msgstr "Hurtiglasting"
 
@@ -6420,13 +6363,11 @@ msgstr "Spilleren kan ikke falle over kanter"
 
 #: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverter misens Y-akse"
 
 #: engines/freescape/metaengine.cpp:105
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Bruk en alternativ palett"
+msgstr "Bruk alternativ kamerastyring"
 
 #: engines/freescape/movement.cpp:48 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -7239,14 +7180,7 @@ msgid "Choose Spell"
 msgstr "Velg Trolldom"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -7257,7 +7191,7 @@ msgid ""
 msgstr ""
 "Følgende opprinnelige lagrede spill funnet i filbanen til spillet:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Vil du bruke dette lagrede spillet med ScummVM?\n"
 "\n"
@@ -7432,14 +7366,12 @@ msgstr ""
 "Rustning knuser ikke før en karakter er på -80 HP (fremfor knappe -10 HP)"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Aktiver hit point-bar grafer"
+msgstr "Aktiver Hit-point-bar"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "Erstatt farvet sten med stolper for treffpoeng og besvergelsespoeng."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -7575,6 +7507,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Du kan ikke kjøre spillet direkte fra Graphics Overhaul Mod. Det vil derimot "
+"automatisk bli tilgjengelig hvis du detekterer originalspillet og velger "
+"Enhanced mode."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -8006,32 +7941,24 @@ msgid "An error occurred while writing the save game"
 msgstr "En feil oppstod under skrivingen av det lagrede spillet."
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Musikken til dette spillet krever MP3-støtte, som ikke har blitt inkludert i "
-"kompileringen.\n"
-"Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
+"Spillet fordrer MPEG videostøtte for enkelte filer\n"
+"men MPEG videostøtte er ikke med i kompileringen.\n"
+"Spillet vil kunne fungere, men MPEG-videoer vil ikke fungere."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Musikken til dette spillet krever MP3-støtte, som ikke har blitt inkludert i "
-"kompileringen.\n"
-"Du kan fortsatt spille spillet, men du kan ikke høre noe musikk."
+"Spillet fordrer MPEG audiostøtte for enkelte filer\n"
+"men MPEG audiostøtte er ikke med i kompileringen.\n"
+"Spillet vil kunne fungere, men MPEG-lydfiler vil ikke fungere."
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
@@ -8111,10 +8038,8 @@ msgid ""
 msgstr "Aktiver NPC-tale. Virker kun om tale er aktivert i lydinnstillingene."
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "Automatisk lagring"
+msgstr "Automatisk flytt"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
@@ -10411,7 +10336,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Utøket klikksensitivitet"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -10429,78 +10354,56 @@ msgid "Speeds up animations."
 msgstr "Øker hastigheten på animasjoner."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Åpne hovedmeny"
+msgstr "Hopp over hovedmeny"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "Starter et nytt spill ved åpning i stedet for å gå til hovedmenyen."
 
 #: engines/vcruise/metaengine.cpp:124
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Vis/Skjul Infoskjerm"
+msgstr "Vis hjelpeskjerm"
 
 #: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Lagre spill"
 
 #: engines/vcruise/metaengine.cpp:139
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Åpne 3DS-innstillinger"
+msgstr "Åpne lydinnstillinger"
 
 #: engines/vcruise/metaengine.cpp:144
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Avslutt spill"
 
 #: engines/vcruise/metaengine.cpp:155
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Veksle fullskjerm"
+msgstr "Skru miskk på/av"
 
 #: engines/vcruise/metaengine.cpp:160
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Volum for spesielle lydeffekter"
+msgstr "Skru musikk på/av"
 
 #: engines/vcruise/metaengine.cpp:165
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Musikkvolum opp/ned"
+msgstr "Musikkvolum ned"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Musikkvolum: "
+msgstr "Musikkvolum opp"
 
 #: engines/vcruise/metaengine.cpp:175
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Volum for spesielle lydeffekter"
+msgstr "Lydeffekter volum ned"
 
 #: engines/vcruise/metaengine.cpp:180
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Volum for spesielle lydeffekter"
+msgstr "Lydeffekter volum opp"
 
 #: engines/vcruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Øker hastigheten på animasjoner."
+msgstr "Hopp over gjeldende animasjon"
 
 #: engines/vcruise/vcruise.cpp:83
 msgid "This game requires JPEG support, which was not compiled in."
