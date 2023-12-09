@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,34 +19,36 @@
  *
  */
 
-#ifndef TWP_SPRITESHEET_H
-#define TWP_SPRITESHEET_H
+#ifndef TWP_ROOM_H
+#define TWP_ROOM_H
 
-#include "common/hashmap.h"
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/stream.h"
 #include "math/vector2d.h"
 
 namespace Twp {
 
-struct SpriteSheetMetadata {
-	Common::String image;
+class Layer {
+public:
+ 	Common::Array<Common::String> names;
+    Math::Vector2d parallax;
+    int zsort;
 };
 
-struct SpriteSheetFrame {
-	Common::String name;
-	Common::Rect frame;
-	Common::Rect spriteSourceSize;
-	Math::Vector2d sourceSize;
-};
+class Room {
+public:
+	void load(Common::SeekableReadStream &s);
 
-struct SpriteSheet {
-	Common::HashMap<Common::String, SpriteSheetFrame> frameTable;
-	SpriteSheetMetadata meta;
-
-	void parseSpriteSheet(const Common::String &contents);
+public:
+	Common::String name;			// Name of the room
+	Common::String sheet;			// Name of the spritesheet to use
+	Math::Vector2d roomSize;		// Size of the room
+	int fullscreen;				// Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
+	int height;					// Height of the room (what else ?)
+	Common::Array<Layer> layers;	// Parallax layers of a room
 };
 
 } // namespace Twp
 
-#endif // TWP_SPRITESHEET_H
+#endif

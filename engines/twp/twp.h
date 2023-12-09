@@ -37,6 +37,7 @@
 #include "twp/detection.h"
 #include "twp/vm.h"
 #include "twp/resmanager.h"
+#include "twp/room.h"
 
 namespace Twp {
 
@@ -55,6 +56,7 @@ public:
 	Common::Array<Thread*> threads;
 	GGPackDecoder pack;
 	ResManager resManager;
+	Common::Array<Room> rooms;
 
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);

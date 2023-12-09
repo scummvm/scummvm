@@ -44,6 +44,23 @@ namespace Twp {
 
 TwpEngine *g_engine;
 
+static Math::Vector2d getScreenSize(const Room &room) {
+	switch (room.height) {
+	case 128:
+		return {320, 180};
+	case 172:
+		return {428, 240};
+	case 256:
+		return {640, 360};
+	default:
+		return {room.roomSize.getX(), (float)room.height};
+	}
+}
+
+static bool cmpLayer(const Layer &l1, const Layer &l2) {
+	return l1.zsort > l2.zsort;
+}
+
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
@@ -80,7 +97,8 @@ Common::Error TwpEngine::run() {
 	pack.open(&f, key);
 
 	const SQChar *code = R"(
-	function bounceImage() {
+		function
+		bounceImage() {
 		local image = createObject("RaySheet", ["fstand_head1"]);
 		local x = random(100, 1180);
 		local y = random(100, 620);
@@ -106,6 +124,12 @@ Common::Error TwpEngine::run() {
 		startthread(bounceImage);
 	})";
 
+	GGPackEntryReader r;
+	r.open(g_engine->pack, "MainStreet.wimpy");
+
+	Room room;
+	room.load(r);
+
 	Vm v;
 	v.exec(code);
 
@@ -117,6 +141,7 @@ Common::Error TwpEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
+	Math::Vector2d pos;
 	Gfx gfx;
 	gfx.init();
 	gfx.camera(screenWidth, screenHeight);
@@ -124,7 +149,30 @@ Common::Error TwpEngine::run() {
 	Common::Event e;
 	while (!shouldQuit()) {
 		const uint deltaTimeMs = 10;
+		const int dx = 4;
+		const int dy = 4;
 		while (g_system->getEventManager()->pollEvent(e)) {
+			switch (e.type) {
+			case Common::EVENT_KEYDOWN:
+				switch (e.kbd.keycode) {
+				case Common::KEYCODE_LEFT:
+					pos.setX(pos.getX() - dx);
+					break;
+				case Common::KEYCODE_RIGHT:
+					pos.setX(pos.getX() + dx);
+					break;
+				case Common::KEYCODE_UP:
+					pos.setY(pos.getY() + dy);
+					break;
+				case Common::KEYCODE_DOWN:
+					pos.setY(pos.getY() - dy);
+					break;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
 		}
 
 		// update threads
@@ -136,10 +184,33 @@ Common::Error TwpEngine::run() {
 		}
 
 		// update screen
-		gfx.clear(Color(0.8f, 0.8f, 0.8f));
+		Math::Vector2d screenSize = getScreenSize(room);
+		gfx.camera(screenSize.getX(), screenSize.getY());
+		gfx.clear(Color(0, 0, 0));
+
+		// draw room
+		SpriteSheet *ss = resManager.spriteSheet(room.sheet);
+		Texture *texture = resManager.texture(ss->meta.image);
+		Common::sort(room.layers.begin(), room.layers.end(), cmpLayer);
+		for (int i = 0; i < room.layers.size(); i++) {
+			float x = 0;
+			const Layer &layer = room.layers[i];
+			for (int j = 0; j < layer.names.size(); j++) {
+				const Common::String &name = layer.names[j];
+				const SpriteSheetFrame &frame = ss->frameTable[name];
+				Math::Matrix4 m;
+				m.translate(Math::Vector3d(x - pos.getX(), -pos.getY(), 0));
+				gfx.drawSprite(frame.frame, *texture, Color(), m);
+				x += frame.frame.width();
+			}
+		}
+
+		// draw entities
 		for (int i = 0; i < entities.size(); i++) {
 			Entity &ett = entities[i];
-			gfx.drawSprite(Math::Vector2d(ett.x, ett.y), ett.rect, *ett.texture);
+			Math::Matrix4 m;
+			m.translate(Math::Vector3d(ett.x - pos.getX(), ett.y - pos.getY(), 0));
+			gfx.drawSprite(ett.rect, *ett.texture, Color(), m);
 		}
 		g_system->updateScreen();
 

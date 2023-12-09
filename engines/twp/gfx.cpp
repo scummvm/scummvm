@@ -258,7 +258,9 @@ void Gfx::clear(Color color) {
 }
 
 Math::Matrix4 Gfx::getFinalTransform(Math::Matrix4 trsf) {
-	return _mvp * trsf;
+	Math::Matrix4 t(trsf);
+	t.transpose();
+	return t * _mvp;
 }
 
 void Gfx::noTexture() {
@@ -295,7 +297,8 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 		GL_CHECK(glBindTexture(GL_TEXTURE_2D, _texture->id));
 		GL_CHECK(glUniform1i(0, 0));
 
-		_shader.setUniform("u_transform", getFinalTransform(trsf));
+		Math::Matrix4 m = getFinalTransform(trsf);
+		_shader.setUniform("u_transform", m);
 		GL_CHECK(glDrawArrays((GLenum)primitivesType, 0, v_size));
 
 		glUseProgram(0);
@@ -353,11 +356,11 @@ void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::
 	drawPrimitives(GL_TRIANGLES, vertices, v_size, indices, i_size, trsf);
 }
 
-void Gfx::drawQuad(Math::Vector2d pos, Math::Vector2d size, Color color, Math::Matrix4 trsf) {
+void Gfx::drawQuad(Math::Vector2d size, Color color, Math::Matrix4 trsf) {
 	float w = size.getX();
 	float h = size.getY();
-	float x = pos.getX();
-	float y = pos.getY();
+	float x = 0;
+	float y = 0;
 	Vertex vertices[] = {
 		Vertex{.pos = {x + w, y + h}, .texCoords = {1, 0}, .color = color},
 		Vertex{.pos = {x + w, y}, .texCoords = {1, 1}, .color = color},
@@ -370,7 +373,7 @@ void Gfx::drawQuad(Math::Vector2d pos, Math::Vector2d size, Color color, Math::M
 	draw(vertices, 4, quadIndices, 6, trsf);
 }
 
-void Gfx::drawSprite(Math::Vector2d pos, Common::Rect textRect, Texture &texture, Color color, Math::Matrix4 trsf, bool flipX, bool flipY) {
+void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math::Matrix4 trsf, bool flipX, bool flipY) {
 	float l = textRect.left / (float)texture.width;
 	float r = textRect.right / (float)texture.width;
 	float t = textRect.top / (float)texture.height;
@@ -380,6 +383,7 @@ void Gfx::drawSprite(Math::Vector2d pos, Common::Rect textRect, Texture &texture
 	if (flipY)
 		SWAP(t, b);
 
+	Math::Vector2d pos;
 	Vertex vertices[] = {
 		{.pos = {pos.getX() + textRect.width(), pos.getY() + textRect.height()}, .texCoords = {r, t}, .color = color},
 		{.pos = {pos.getX() + textRect.width(), pos.getY()}, .texCoords = {r, b}, .color = color},

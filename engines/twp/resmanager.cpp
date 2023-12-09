@@ -65,7 +65,7 @@ Texture *ResManager::texture(const Common::String& name) {
 
 void ResManager::loadSpriteSheet(const Common::String& name) {
 	GGPackEntryReader r;
-	r.open(g_engine->pack, name);
+	r.open(g_engine->pack, name + ".json");
 
 	// read all contents
 	Common::Array<char> data(r.size());

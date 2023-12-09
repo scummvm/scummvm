@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	gfx.o \
 	resmanager.o \
 	spritesheet.o \
+	room.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
