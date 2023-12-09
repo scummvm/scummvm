@@ -239,6 +239,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "checkerhaunt",       "A Checkered Haunting" },
 	{ "cheesedoff_zcode",   "Cheesed Off!" },
 	{ "cheeseshop",         "Cheeseshop" },
+	{ "chengara",           "Chengara" },
 	{ "cheshirecat_zcode",  "Save the Cheshire Cat!" },
 	{ "chico",              "Chico and I Ran" },
 	{ "childsplay",         "Child’s Play" },
@@ -246,6 +247,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "christminster",      "Christminster" },
 	{ "cia",                "C.I.A. Adventure" },
 	{ "classchallenge",     "Class Challenge" },
+	{ "classroom",          "The Classroom Done" },
 	{ "cleanair",           "Clean Air" },
 	{ "cliffedge",          "Edge of the Cliff" },
 	{ "cockandbull",        "A Cock and Bull Story" },
@@ -288,6 +290,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "dayishothitler",     "The Day I Shot Hitler" },
 	{ "dd4",                "Dutch Dapper IV: The Final Voyage" },
 	{ "dday",               "D-Day" },
+	{ "deadmen",            "Down Among the Dead Men" },
 	{ "deadmeat",           "Dead Meat in the Pit" },
 	{ "deadreckon_zcode",   "Dead Reckoning" },
 	{ "death",              "Death to my Enemies" },
@@ -399,6 +402,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "gowest",             "Go West" },
 	{ "greaterthan",        "> by @" },
 	{ "greatpancake",       "The Great Pancake Detectives - Case #27" },
+	{ "greenblood",         "Green Blood" },
 	{ "greenrain",          "A Green Rain" },
 	{ "greensboro",         "Greensboro Sit-In" },
 	{ "growingup",          "Growing Up" },
@@ -414,6 +418,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "hauntedhouse",       "Haunted House" },
 	{ "hauntings",          "Hauntings" },
 	{ "headcase",           "Head Case" },
+	{ "heartice",           "Heart of Ice" },
 	{ "heidi",              "Heidi" },
 	{ "heist",              "Heist: The Crime of the Century" },
 	{ "heliopause",         "Hoist Sail for the Heliopause and Home" },
@@ -423,6 +428,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "hibernated1",        "Hibernated 1 - This Place is Death (Director's Cut)" },
 	{ "hiddennazi",         "The Game Formerly Known as Hidden Nazi Mode" },
 	{ "hiddenverbiage",     "Hidden Verbiage" },
+	{ "hideseek",           "Hide Seek" },
 	{ "hidepachyderm",      "Hide a Pachyderm!" },
 	{ "hippoelmstr_zcode",  "Hippo on Elm Street" },
 	{ "hipponewyear",       "And a Hippo New Year" },
@@ -519,9 +525,11 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "magicmuffin",        "Magic Muffin - The Desert" },
 	{ "makeitgood",         "Make it Good" },
 	{ "mansion",            "Mansion" },
+	{ "mapa_zcode",         "El Mapa" },
 	{ "martyquest",         "Back to the Future - Marty Quest" },
 	{ "medusa",             "Medusa" },
 	{ "meetingrobb",        "Meeting Robb Sherwin" },
+	{ "mehplace_zcode",     "The Meh Place" },
 	{ "memorylane",         "Memory Lane" },
 	{ "mercurytrucking",    "The Mercury Trucking Company" },
 	{ "mercy",              "Mercy" },
@@ -545,7 +553,10 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "mortlakemanor",      "Mortlake Manor" },
 	{ "motelcalifornia",    "Motel California" },
 	{ "mountain",           "Mountain" },
-	{ "mousequest",         "Mouse Quest Chapter 1 - The Arrival of Winter" },
+	{ "mousequest",         "Mouse Quest - Chapter 1: The Arrival of Winter" },
+	{ "mousequest2",        "Mouse Quest - Chapter 2: Down the Coble Creek" },
+	{ "mousequest3",        "Mouse Quest - Chapter 3: The Council of Mice" },
+	{ "mousequest4",        "Mouse Quest - Chapter 4: The Forgotten Hero" },
 	{ "mrscrabtree",        "Mrs. Crabtree's Geography Class" },
 	{ "mst3k1",             "Mystery Science Theater 3000 Presents 'Detective'" },
 	{ "mst3k2",             "Mystery Science Theater 3000 Presents 'A Fable'" },
@@ -563,6 +574,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "myunclegeorge",      "My Uncle George" },
 	{ "nameless",           "Endless, Nameless" },
 	{ "nascarexperience",   "The Realistic Nascar eXperience" },
+	{ "necklace",           "Necklace of Skulls" },
 	{ "nemeanlion",         "The Nemean Lion" },
 	{ "nemesismacana",      "Nemesis Macana" },
 	{ "neverplayed_zcode",  "So, You've Never Played a Text Adventure Before, Huh?" },
@@ -662,7 +674,6 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "rota",               "The Reliques of Tolti-Aph" },
 	{ "rpn",                "RPN" },
 	{ "rtdoom",             "Return to Doom" },
-	{ "sabotage",           "Sabotage" },
 	{ "safe_zcode",         "Safe" },
 	{ "samegame",           "SameGame, Another Episode in the Z-Machine Abuse Saga" },
 	{ "samhain",            "Samhain: Pick Up the Jack O' Lantern and Die" },
@@ -729,7 +740,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "sunburst",           "Sunburst: A C64 Science Fiction Adventure Game" },
 	{ "sundayafternoon",    "Sunday Afternoon" },
 	{ "surfboard",          "Surfboard" },
-	{ "survive",            "Survive" },
+	{ "survive_zcode",      "Survive" },
 	{ "sutwin",             "The Space Under the Window" },
 	{ "suvehnux",           "Suveh Nux" },
 	{ "swineback",          "Swineback Ridge" },
@@ -2380,54 +2391,54 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "verdeterre",         "Le Butin du Capitaine Verdeterre" },
 	{ "vindaloofr",         "Vindaloo" },
 
-	// French games: French Comp 2005
+	// French Comp 2005 (French)
 	{ "frc_cercledesgros",  "Le Cercle des Gros Geeks Disparus" },                                      //    1st Place
 	{ "frc_dreamlands",     "Echappee Belle Dans Les Contrees du Reve" },                               //    2nd Place
 	{ "frc_templedefeu",    "Le Temple de Feu" },                                                       //    3rd Place
 
-	// French games: French Comp 2006
+	// French Comp 2006 (French)
 	{ "frc_citeeaux",       "La Cité des Eaux" },                                                       //    1st Place
 	{ "frc_sarvegne",       "Sarvegne" },                                                               //    2nd Place
 
-	// French games: French Comp 2007
+	// French Comp 2007 (French)
 	{ "frc_heuresduvent",   "Heures Du Vent" },                                                         //    1st Place
 	{ "frc_divinebonace",   "Divine Bonace" },                                                          //    2nd Place
 	{ "frc_brrr",           "Brrr!" },                                                                  //    3rd Place
 	{ "frc_ilephare_zcode", "L'Ile du Phare Abandonné" },                                               //    5th Place
 
-	// French games: French Comp 2008
+	// French Comp 2008 (French)
 	{ "frc_brume",          "Brume" },                                                                  //    1st Place
 	{ "frc_lettresvolees",  "Les Lettres Volées" },                                                     //    2nd Place
 	{ "frc_louplachevre",   "Le Loup, la Chèvre, et la Salade" },                                       //    4th Place
 
-	// French games: French Comp 2009
+	// French Comp 2009 (French)
 	{ "frc_catapole",       "Catapole" },                                                               //    1st Place
 	{ "frc_chambresyrion",  "La Chambre de Syrion" },                                                   //    2nd Place
 	{ "frc_mechants",       "Les Méchants Meurent au Moins deux Fois" },                                //    3rd Place
 
-	// French games: French Comp 2011
+	//French Comp 2011 (French)
 	{ "frc_aventureszeus",  "Les Aventures de Zeus" },                                                  //    1st Place
 	{ "frc_dardenfer",      "Dard d'Enfer" },                                                           //    2nd Place
 	{ "frc_terreciel",      "Entre Terre et Ciel" },                                                    //    3rd Place
 	{ "frc_astrologue",     "La Grande Prédiction ou l'Astrologue Etourdi" },                           //    4th Place
 	{ "frc_homelandsec",    "Homeland Security" },                                                      //    5th Place
 
-	// French games: French Comp 2013
+	// French Comp 2013 (French)
 	{ "frc_lifeonmarsfr",   "Life on Mars?" },                                                          //    1st Place
 	{ "frc_sourcedezig",    "La Source de Zig" },                                                       //    3rd Place
 	{ "frc_trac",           "Trac" },                                                                   //    4th Place
 
-	// French games: French Comp 2015
+	// French Comp 2015 (French)
 	{ "frc_envol",          "L'Envol" },                                                                //    1st Place
 
-	// French games: French Comp 2016
+	// French Comp 2016 (French)
 	{ "frc_tipelau",        "Tipelau" },                                                                //    2nd Place
 	{ "frc_diamantblanc",   "Le Diamant Blanc" },                                                       //    3rd Place
 
-	// French games: French Comp 2018
+	// French Comp 2018 (French)
 	{ "frc_exil",           "L'Exil" },                                                                 //    5th Place
 
-	// French games: French Comp 2021
+	// French Comp 2021 (French)
 	{ "frc_donjon",          "Le Donjon de BatteMan" },                                                 //      Entrant
 	{ "frc_stationspatial",  "Station Spatiale S16: Prologue" },                                        //      Entrant
 
@@ -2454,48 +2465,48 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "wasserhasser",       "Wasser-Hasser" },
 	{ "wichtel",            "Wichtel" },
 
-	// German games: Textfire Grand Prix 2002
+	// Textfire Grand Prix 2002 (German)
 	{ "tgp_eden",           "Eden" },                                                                   //    1st Place
 	{ "tgp_bewerbung",      "Die Bewerbung" },                                                          //    3rd Place
 	{ "tgp_seite",          "Mein Leben für Seite Drei" },                                              //    4th Place
 
-	// German games: Textfire Grand Prix 2003
+	// Textfire Grand Prix 2003 (German)
 	{ "tgp_linear",         "Linear" },                                                                 //    1st Place
 
-	// German games: Textfire Grand Prix 2004
+	// Textfire Grand Prix 2004 (German)
 	{ "tgp_jazteg",         "Jazz auf Tegemis" },                                                       //    1st Place
 	{ "tgp_spater",         "Zwei Jahre später" },                                                      //    4th Place
 	{ "tgp_unterwelt",      "Unterwelt" },                                                              //    5th Place
 	{ "tgp_die5",           "Die 5 Kammer" },                                                           //    8th Place
 	{ "tgp_dichter",        "Dichter" },                                                                //    9th Place
 
-	// German games: Textfire Grand Prix 2005
+	// Textfire Grand Prix 2005 (German)
 	{ "tgp_kopialbuch",     "Das Kopialbuch" },                                                         //    1st Place
 
-	// German games: Textfire Grand Prix 2006
+	// Textfire Grand Prix 2006 (German)
 	{ "tgp_felleisen",      "Das Felleisen" },                                                          //    1st Place
 	{ "tgp_pmason",         "P. Mason und der Schlitzerhans und die Busenkathi" },                      //    2nd Place
 
-	// German games: Textfire Grand Prix 2010
+	// Textfire Grand Prix 2010 (German)
 	{ "tgp_hausaufgabe",    "Die Hausaufgabe" },                                                        //    3rd Place
 	{ "tgp_absturzmomente", "Absturzmomente" },                                                         //    4th Place
 
-	// German games: Textfire Grand Prix 2011
+	// Textfire Grand Prix 2011 (German)
 	{ "tgp_gorgonir",       "Gorgonir" },                                                               //    2nd Place
 	{ "tgp_ausgerechnet",   "Ausgerechnet Mamph Pamph!" },                                              //    4th Place
 
-	// German games: IF Grand Prix 2015
+	// IF Grand Prix 2015 (German)
 	{ "tgp_dieakte",        "Die Akte Paul Bennet" },                                                   //    1st Place
 	{ "tgp_lilie",          "Die Schwarze Lilie" },                                                     //    1st Place
 
-	// German games: IF Grand Prix 2016
+	// IF Grand Prix 2016 (German)
 	{ "tgp_emilia",         "Der Tag an dem Emilia W. Verschwand" },                                    //    3rd Place
 
-	// German games: IF Grand Prix 2022
+	// IF Grand Prix 2022 (German)
 	{ "tgp_schief",         "Schief" },                                                                 //    1st Place
 	{ "tgp_dieerstenacht",  "Die Erste Nacht" },                                                        //    2nd Place
 
-	// German games: IF Grand Prix 2023
+	// IF Grand Prix 2023 (German)
 	{ "tgp_fischstaebchen", "Fischstaebchen" },                                                         //    3rd Place
 	{ "tgp_gennorden",      "Gen Norden" },                                                             //    4th Place
 
@@ -2528,7 +2539,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "lazyjones",          "Lazy Jones e il Meritato Riposo" },
 	{ "littlefalls_zcode",  "Little Falls" },
 	{ "lucifinanza_zcode",  "Luci della Finanza" },
-	{ "marconi",            "Visita al Marconi" },
+	{ "marconi_zcode",      "Visita al Marconi" },
 	{ "noalpitour",         "No Alpitour" },
 	{ "noavventura",        "Non Sarà un'Avventura" },
 	{ "oldwest1",           "Pecos Town, Old West Episode I" },
@@ -2558,14 +2569,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "zombie",             "Uno Zombie a Deadville" },
 	{ "zorkita",            "Zork I: Il Grande Impero Sotterraneo" },
 
-	// Italian games: Marmellata d'Avventura 2018
+	// Marmellata d'Avventura 2018 (Italian)
 	{ "ma_lastprigioniero", "I Cinque Feudi" },
 	{ "ma_skepto",          "Skepto!" },
 	{ "ma_dejavu_zcode",    "Déjà Vu" },
 	{ "ma_lazystranocaso",  "Lazy Jones e lo Strano Caso" },
 	{ "ma_pilastri",        "Sigehao - I Quattro Pilastri" },
 
-	// Italian games: Marmellata d'Avventura 2019
+	// Marmellata d'Avventura 2019 (Italian)
 	{ "ma_salagamescastle", "La Sala dei Giochi del Castello del Signore di Ylourgne in Averoigne" },
 	{ "ma_tesorosalagames", "Il Tesoro della Sala Giochi" },
 	{ "ma_lazysalagiochi",  "Lazy Jones e la Sala Giochi" },
@@ -2582,11 +2593,12 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "zenin",              "Zenin na Begu" },
 
 	// Spanish games
-	{ "abismo",             "El Abismo" },
-	{ "acuario",            "Acuario" },
+	{ "abismo_zcode",       "El Abismo" },
+	{ "acuario_zcode",      "Acuario" },
 	{ "adso",               "Adso de Melk" },
 	{ "alicia",             "A Trves del Espejo" },
 	{ "anillo",             "El Anillo" },
+	{ "anillo3",            "Anillo III" },
 	{ "avent",              "Aventurilandia" },
 	{ "aventura",           "Aventura" },
 	{ "bicho",              "El Bicho" },
@@ -2598,32 +2610,39 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "cronicasparaiso",    "Cronicas del Paraiso" },
 	{ "cruzado",            "El Cruzado" },
 	{ "cueva",              "La Oscura Cueva" },
+	{ "dagon_zcode",        "Dagon" },
 	{ "despert",            "El Despertar" },
 	{ "draculasp",          "Dracula: Episodio 1, La Primera Noche" },
 	{ "ecss",               "es.comp.sistemas.sinclair" },
 	{ "edaylobo",           "Eda y el Lobo" },
 	{ "elcontinente",       "El Continente" },
 	{ "ellibro",            "El Libro" },
+	{ "elpuzzle",           "El Puzzle" },
 	{ "encierro",           "Encierro" },
 	{ "ergotdelima_zcode",  "Ergot de Lima" },
-	{ "estacion",           "Secuestro" },
+	{ "estacion_zcode",     "Secuestro" },
 	{ "excessus",           "Excessus" },
 	{ "forrajeo",           "Forrajeo" },
 	{ "fotopia",            "Fotopia" },
 	{ "geo",                "Geo" },
 	{ "gorron",             "El Gorron del Tren" },
-	{ "hampa",              "Historias del Hampa" },
+	{ "hampa_zcode",        "Historias del Hampa" },
 	{ "heredar",            "Heredar!" },
 	{ "heresville",         "Heresville" },
 	{ "imposibl",           "Imposible" },
 	{ "islamisteriosa",     "La Isla Misteriosa" },
 	{ "juguete",            "Jugueteria" },
 	{ "laberinto",          "Un Laberinto Acordado" },
+	{ "latorre_zcode",      "La Torre" },
+	{ "laverja",            "La Verja" },
+	{ "legion",             "Legin de las Tinieblas" },
 	{ "logicinv",           "Lógica Inversa" },
 	{ "maquina",            "Maquina" },
 	{ "marsmenace",         "Mars Menace From Outer Space" },
 	{ "memorias_zcode",     "Memorias de reXXe" },
 	{ "mpdroidone",         "Operacion MPDroid1" },
+	{ "nada",               "La Nada" },
+	{ "pantalla",           "Pantallas y Más Pantallas..." },
 	{ "paraiso",            "Llave Hacia el Paraíso" },
 	{ "perseo",             "Perseo y Andromeda" },
 	{ "peso",               "Una Cuestión de Peso" },
@@ -2636,6 +2655,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "redencionmomificad", "Redención Momificada" },
 	{ "reflejos",           "Reflejos Blancos" },
 	{ "regalo",             "El Regalo de Gorbag" },
+	{ "relojes_zcode",      "Un Lugar en Ninguna Parte Pero en Algún Momento" },
 	{ "roleando",           "Roleando" },
 	{ "saee",               "Saee" },
 	{ "sgw_zcode",          "Test Para SGW" },
@@ -2647,16 +2667,17 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "tribu",              "La TrIbU" },
 	{ "varenna",            "Varenna Quest I: El Castillo de la Rosa Negra" },
 	{ "waxworksspa",        "Adventura de Misterio #11: Museo de Cera" },
+	{ "werewolf",           "Lobos y Aldeanos" },
 	{ "zipi",               "Zipi" },
 	{ "zna",                "Zna No es una Aventura" },
 
-	// Spanish games: Ectocomp 2017 - Le Grand Guignol
+	// Ectocomp 2017 - Le Grand Guignol (Spanish)
 	{ "ec17_decolor",       "Decolor" },                                                                //    3rd Place
 
-	// Spanish games: Ectocomp 2022 - Le Grand Guignol
+	// Ectocomp 2022 - Le Grand Guignol (Spanish)
 	{ "ec22_estadop_zcode", "Estado Profundo" },                                                        //    2nd Place
 
-	// Spanish games: Premios Hispanos 2000
+	// Premios Hispanos 2000 (Spanish)
 	{ "ph00_abalanzate",    "Abalanzate" },
 	{ "ph00_alemanes",      "Golpe a Los Nazis" },
 	{ "ph00_aparato",       "El Aparato" },
@@ -2674,7 +2695,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph00_torre",         "Misterio en la Torre" },
 	{ "ph00_tokland",       "La Isla de Tokland" },
 
-	// Spanish games: Premios Hispanos 2001
+	// Premios Hispanos 2001 (Spanish)
 	{ "ph01_aciegas",       "A Ciegas" },
 	{ "ph01_celos",         "Un Asunto de Celos" },
 	{ "ph01_ch3ch2oh",      "CH3-CH2-OH" },
@@ -2685,7 +2706,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph01_ocaso",         "Ocaso Mortal I: The Bug" },
 	{ "ph01_segapark",      "Aventurero en el Segapark" },
 
-	// Spanish games: Premios Hispanos 2002
+	// Premios Hispanos 2002 (Spanish)
 	{ "ph02_asesinato",     "Asesinato en el Continental" },
 	{ "ph02_aveces",        "A Veces..." },
 	{ "ph02_cv",            "Curriculum Vitae" },
@@ -2701,7 +2722,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph02_sombras",       "Sombras de Moria" },
 	{ "ph02_ultimohogar",   "Misterio en el Ultimo Hogar" },
 
-	// Spanish games: Premios Hispanos 2003
+	// Premios Hispanos 2003 (Spanish)
 	{ "ph03_aluzine",       "Aluzine" },
 	{ "ph03_array",         "Array" },
 	{ "ph03_castillo",      "El Castillo de los Lamentos" },
@@ -2714,14 +2735,14 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph03_otrpalab",      "En Otras Palabras" },
 	{ "ph03_rural",         "La Aventura Rural" },
 
-	// Spanish games: Premios Hispanos 2004
+	// Premios Hispanos 2004 (Spanish)
 	{ "ph04_islas",         "El Archipielago" },
 	{ "ph04_lamansion",     "La Mansion" },
 	{ "ph04_navidad",       "Una Pequena Historia de Navidad" },
 	{ "ph04_oculta",        "La Cara Oculta de la Luna" },
 	{ "ph04_remi",          "ReminiscenciaRol" },
 
-	// Spanish games: Premios Hispanos 2005
+	// Premios Hispanos 2005 (Spanish)
 	{ "ph05_castilsilenco", "El Castillo del Silencio" },
 	{ "ph05_pozo",          "Al Fondo del Pozo" },
 	{ "ph05_elprotector",   "El Protector" },
@@ -2730,7 +2751,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph05_trono",         "El Trono de Inglaterra" },
 	{ "ph05_romanfredo",    "Romanfredo" },
 
-	// Spanish games: Premios Hispanos 2006
+	// Premios Hispanos 2006 (Spanish)
 	{ "ph06_draculasp2",    "Dracula: Episodio 2, La Llegada" },
 	{ "ph06_elgatocheko",   "El Gato Cheko" },
 	{ "ph06_goteras",       "Goteras" },
@@ -2738,7 +2759,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph06_regreso",       "El Regreso" },
 	{ "ph06_resaca",        "Resaca" },
 
-	// Spanish games: into Premios Hispanos 2007
+	// Premios Hispanos 2007 (Spanish)
 	{ "ph07_030307",        "Unidad 030307" },
 	{ "ph07_afuera",        "Afuera" },
 	{ "ph07_aod",           "Antes o Despuses" },
@@ -2751,7 +2772,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph07_mausoleo",      "Yuriko in the Mausoleo" },
 	{ "ph07_umami",         "El Día del Umami" },
 
-	// Spanish games: Premios Hispanos 2008
+	// Premios Hispanos 2008 (Spanish)
 	{ "ph08_diana_zcode",   "Diana" },
 	{ "ph08_emmy",          "Museo Poetico Emmy" },
 	{ "ph08_gambito",       "El Gambito Slagar" },
@@ -2765,7 +2786,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph08_sonrisas",      "Sonrisas... Y Lagrimas" },
 	{ "ph08_venenaverbo",   "Venenarius Verborum" },
 
-	// Spanish games: Premios Hispanos 2009
+	// Premios Hispanos 2009 (Spanish)
 	{ "ph09_amanda",        "Amanda" },
 	{ "ph09_gorbag",        "El Regalo de Gorbag" },
 	{ "ph09_hhorcus_zcode", "Homo Homini Orcus" },
@@ -2774,9 +2795,9 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "ph09_megara",        "Los Placeres de Megara" },
 	{ "ph09_panajo",        "Pan de Ajo" },
 	{ "ph09_sm6ascenso",    "Serie Minúscula #6: El Ascenso de Kunelar" },
-	{ "ph09_visitantes",    "Visitantes" },
+	{ "ph09_visit_zcode",   "Visitantes" },
 
-	// Spanish games: Premios Hispanos 2010
+	// Premios Hispanos 2010 (Spanish)
 	{ "ph10_azul",          "Azul Fuerte" },
 	{ "ph10_lpc_zcode",     "La Pequena Cerillera" },
 	{ "ph10_modusvivendi",  "Modus Vivendi" },
@@ -3958,6 +3979,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cheesedoff_zcode", "160724", "f22a5e611479057236e0a8af31b62e70", 448080),
 	ENTRY0("cheeseshop", "021230/v1", "88329068474b92abf4b4363c177f6971", 85504),
 	ENTRY0("cheeseshop", "021230/v2", "cbf746a948b66ae8d2a65e52134654b4", 85504),
+	ENTRY0("chengara", "090621", "1ae7fc0b20586b7ff76b4d4340dd3abc", 222720),
 	ENTRY0("cheshirecat_zcode", "140803", "69dced03ab92e1efeae0ea4a496743d5", 78848),
 	ENTRY0("cheshirecat_zcode", "141012", "0a8c570fb7499bcc35109fdf7320132b", 79872),
 	ENTRY0("cheshirecat_zcode", "150918/z5", "97f1096761d27951a1715c627390b6ba", 76800),
@@ -3967,7 +3989,9 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("cia", "961218", "2cdacedf416e7a575de47412e1d164f8", 54784),
 	ENTRY0("classchallenge", "190724", "d6caad7ab6a6964f0526f5b4c7a41316", 163840),
 	ENTRY0("classchallenge", "201112", "cf1cc6017a784a8f52daaaa7c617772a", 163840),
+	ENTRY0("classroom", "210320", "ee18db643cc029257dfe838d56aa5f86", 321536),
 	ENTRY0("cleanair", "190608", "3e5a972edf102956f6973c9fc7a8d388", 410302),
+	ENTRY0("cleanair", "220825", "a988a1fd11f394316632c1759b2eb4a5", 414916),
 	ENTRY0("cliffedge", "111030", "2bcba042a3b56fb010c9ab0e64cecad5", 324608),
 	ENTRY0("cockandbull", "170401", "6036a188e9def979678697ce7be14171", 895024),
 	ENTRY0("clockwork", "200725", "e7a388799d227c9b8b114a4b398b500a", 40344),
@@ -4023,6 +4047,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("dayinlife", "080406", "ad0b46d14e3a8d577a58f0d93d700f4f", 173558),
 	ENTRY0("dd4", "030207", "c5921ad782bc25cbd7e3f8c8b1412a4a", 163328),
 	ENTRY0("dday", "110720", "897fbdf9cb2468b09c30961524d36ae5", 266364),
+	ENTRY0("deadmen", "200825", "d6d9516a7f2ca84d3397df54504ceb68", 230340),
 	ENTRY0("deadmeat", "170527", "c0f127f032ade1f46267028371e68e5b", 252374),
 	ENTRY0("deadmeat", "170617", "beed7ee4185f9ddf31f3b94db8ff4ec0", 252374),
 	ENTRY0("deadreckon_zcode", "030730", "1232dc599a00548bcc2d6453a01c5e50", 87040),
@@ -4152,6 +4177,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("gowest", "120425", "2c1e329d9cde395785f8323a740a361e", 251988),
 	ENTRY0("greatpancake", "180117", "9f4e359b40bc53631937c2c44ee5082c", 264268),
 	ENTRY0("greaterthan", "100415", "f7e6e82cda24f2e6f8f06f74323aa19f", 232844),
+	ENTRY0("greenblood", "200825", "3a0b9d06df3ccbca6e2bdfcefa8a8c35", 184936),
 	ENTRY0("greenrain", "100611", "f28e8e500d4fbc94d59f5bfdb9cf7f4d", 275516),
 	ENTRY0("greensboro", "080712", "dd7bd20aa69092b009f9f5503c01f124", 141714),
 	ENTRY0("growingup", "110825", "9bada495ce70bfcae2566f01b844d20a", 267720),
@@ -4168,6 +4194,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("hauntedhouse", "170103", "6d1a6caced27d901c09896ac74de6022", 400078),
 	ENTRY0("hauntings", "111109", "931b910ab47044e8792c4d5adc5163e3", 225792),
 	ENTRY0("headcase", "230310", "d05d6cef1edfa94fe52b76f25477b7f7", 613492),
+	ENTRY0("heartice", "200825", "68b954b47816ee47297cf1a51f816f51", 232408),
 	ENTRY0("heidi", "051112", "0b13ec8dec91b35662a62c7a60b54ddb", 83456),
 	ENTRY0("heist", "990217", "d37eab3288f34d5673f72d8697835e8e", 358400),
 	ENTRY0("heliopause", "100703", "423b5192b31eb0705a928b3900b6b208", 389388),
@@ -4177,6 +4204,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("hibernated1", "220625", "6b64251594ac07e042bde09689a388c1", 94208),
 	ENTRY0("hibernated1", "220814/z3", "a97e01c8d4545660ff4522bf2640f3af", 91136),
 	ENTRY0("hibernated1", "220814/z5", "df80b9e7979960cab74ac95fe290eb3f", 94208),
+	ENTRY0("hideseek", "210409", "a3a8cedd516bd3bf37b1cb3922709a07", 321536),
 	ENTRY0("hiddennazi", "100911", "93521e3903e1fa63cfb7ababebd4c3e1", 367570),
 	ENTRY0("hiddenverbiage", "181127", "736af995f8cb87601fe170695efa7180", 477130),
 	ENTRY0("hidepachyderm", "140705", "5e46b32c2897c46097b379f2eef7f5fa", 215040),
@@ -4244,6 +4272,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("kennykoala", "220501/z3", "064f6ee27d2716e5056d27b77eb232a4", 74752),
 	ENTRY0("kennykoala", "220501/z5", "467939dbb4493db7c91cc98b4c25d3f7", 77312 ),
 	ENTRY0("kentishplover", "200118", "d06991d44cdedc0ce4cbf17b3aa79f76", 162816),
+	ENTRY0("kentishplover", "200119", "07d9e4de03a8b80200d0e9124e162f57", 162304),
 	ENTRY0("kentishplover", "200213", "2c93242398a841ad069e81fa3b2c80f1", 163328),
 	ENTRY0("kidnapsea", "110608", "ddcf23cb530746544e0f416337dcf6bc", 191488),
 	ENTRY0("kierkegaardsspider", "120413", "19f457515033fd938856e6507b8a6bc1", 254414),
@@ -4295,11 +4324,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("makeitgood", "091227", "061af5747715511a5ac5a3476278a914", 495616),
 	ENTRY0("mansion", "010505", "cb310588d3ebdfe419b16ed29f5bc8df", 107008),
 	ENTRY0("mansion", "220406", "0bef5d345f25200423aa4828ab6e15c6", 108544),
-	ENTRY0("marconi", "150606", "5bd573961828acb20766ed203d373f60", 137728),
+	ENTRY0("mapa_zcode", "010711", "57e67b50fe180f9073da28548bd73a5f", 70144),
+	ENTRY0("marconi_zcode", "150606", "5bd573961828acb20766ed203d373f60", 137728),
 	ENTRY0("martyquest", "120430", "80b274b7feb7c19ee0aeba85dac0d688", 268272),
 	ENTRY0("medusa", "030314", "f9e93b13a6f940ef0d25cfef559e36c8", 109056),
 	ENTRY0("meetingrobb", "190928", "b3fb96f61f8c5a01f637cdbfe582612e", 464290),
 	ENTRY0("meetingrobb", "191002", "9eb2560176aaaaa2f7fd820944891ec3", 464290),
+	ENTRY0("mehplace_zcode", "?????\?/zblorb/v1", "407a01a7709a13dad6582c212ced97f4", 456130),
+	ENTRY0("mehplace_zcode", "?????\?/zblorb/v2", "32aef84c45a635f3014e67a34ffcf217", 459714),
 	ENTRY0("memorylane", "230311/z3", "34a1ce5f414e01c3e0a97c723cbca4d0", 104960),
 	ENTRY0("memorylane", "230311/z5", "33ca0166735982befe7ca3569df99389", 108544),
 	ENTRY0("mercy", "980217", "865d53d9764636ddf1bcaa2b703673a6", 97792),
@@ -4324,7 +4356,10 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("mortlakemanor", "120304", "80d317fd404451e436e9c36de5445de8", 261632),
 	ENTRY0("motelcalifornia", "110329", "67a1855ce59354e8eeff4f2a684811bc", 331712),
 	ENTRY0("mountain", "030317", "b84bb15597f7aa53ae407e2d996c0c6c", 103424),
-	ENTRY0("mousequest", "100509", "2993b235743e6a6a4d69063e80c187d9", 325062),
+	ENTRY0("mousequest", "????", "2993b235743e6a6a4d69063e80c187d9", 325062),
+	ENTRY0("mousequest2", "????", "32531caa725d44ddbbe720b05a364a11", 323014),
+	ENTRY0("mousequest3", "????", "4820cc5cf2aa9dbdc1c660146cdcf79e", 352198),
+	ENTRY0("mousequest4", "????", "8480dd58a0c6b3e0dae916f2aa8b19a2", 439238),
 	ENTRY0("mrscrabtree", "130225", "3ce7aebc7cdad846e1bdc8f46823f4b3", 235520),
 	ENTRY0("mst3k1", "000715", "0a0748937d23bf380cd139de874df32d", 141312),
 	ENTRY0("mst3k2", "981104", "55dc31376ee9e99700e4ad144c5670af", 83456),
@@ -4344,6 +4379,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("myunclegeorge", "090714", "dbdf7f0ea10c10ae2654d58e6ab9d1a4", 179090),
 	ENTRY0("nameless", "131206", "197a58d317be0e6060c490bd40baf8a1", 472064),
 	ENTRY0("nascarexperience", "130827", "d45dc3ab1f9898cf85a09854db0a6b17", 152576),
+	ENTRY0("necklace", "200825", "61cd8722a6030361c09e317189e27cd7", 217972),
 	ENTRY0("nemeanlion", "081113", "c298fdabefb085ca297f0f0917e2fd4e", 77824),
 	ENTRY0("nemesismacana", "120503/z8", "8f5ab052cc4f4f808a40add1be324c3b", 356352),
 	ENTRY0("nemesismacana", "120503/zblorb", "d24a6aaa2d9430b668fb7bda7caf9b42", 397226),
@@ -4529,7 +4565,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("sunburst", "070222", "9f1eee6db8dce7cfb803e5c430fe942a", 65532),
 	ENTRY0("sundayafternoon", "121213", "73d9c96d54922bcd58781aff41e449ed", 347136),
 	ENTRY0("surfboard", "201027", "b3e4c1784465d78111b3eda7b7969647", 180224),
-	ENTRY0("survive", "120116", "5391b23b5d02a9ff853ef93f76bb73f6", 89088),
+	ENTRY0("survive_zcode", "120116", "5391b23b5d02a9ff853ef93f76bb73f6", 89088),
 	ENTRY0("sutwin", "970402", "b4fe3b29aab816470906ce3ae0613ba4", 31744),
 	ENTRY0("suvehnux", "150314", "c085af56acb090e7e4c8af6f69ed216f", 248320),
 	ENTRY0("swineback", "060422", "853342a5b088a2998201123b0c5faa73", 111104),
@@ -5255,8 +5291,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("if14_15minutes", "140929", "794388850a60ce63f181efb194519bee", 402308),
 	ENTRY0("if14_15minutes", "141021", "8f99e176b2fd4387219b808515c75d0e", 402308),
 	ENTRY0("if14_teaceremony", "140918", "f8b04f52fc3294539405893474413e16", 268352),
-	ENTRY0("if14_enigmasd", "140929", "3e2bfc7b4a45cb0bf3936cb7b164ee17", 414884),
-	ENTRY0("if14_enigmasd", "141020", "5f933e199785495bc884d003a4579b9b", 415396),
+	ENTRY0("if14_enigma_sd", "140929", "3e2bfc7b4a45cb0bf3936cb7b164ee17", 414884),
+	ENTRY0("if14_enigma_sd", "141020", "5f933e199785495bc884d003a4579b9b", 415396),
 	ENTRY0("if14_blacklily", "140926", "16e3dee79b000c19e3f211af3bea9266", 188364),
 	ENTRY0("if14_blacklily", "150318", "f74981accbff8eaa36e07bb175640ea2", 199124),
 	ENTRY0("if14_tower", "140912", "9e4e1ffe01254b8f45f22c79d664cbb2", 390132),
@@ -5799,6 +5835,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("shd_everythinggame", "150418/zblorb", "130aa6031169e969258ef8e6e1105f52", 1490056),
 	ENTRY0("shd_headingeast", "150507", "ee6869fc4d02966a7ebc7681ae751dc2", 109568),
 	ENTRY0("shd_seeksorrow", "150505", "0e37bd629858f51e2c83649973170dec", 1362330),
+	ENTRY0("shd_seeksorrow", "160505", "e985ee4cff0da7f034cc76fdf5a65f6e", 1365918),
 	ENTRY0("shd_seeksorrow", "160602", "6108059cd52dc1aba9112b554d6aee0f", 1365918),
 
 	// SmoochieComp 2001
@@ -6417,54 +6454,54 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("verdeterre", "150805", "a2bd16f0dbf5cae8cf90ce71c4c71fb4", 1402584, Common::FR_FRA),
 	ENTRY1("vindaloofr", "021001", "95642b4ec28e36f1e250d343c1342bba", 98816, Common::FR_FRA),
 
-	// French games: French Comp 2005
+	// French Comp 2005 (French)
 	ENTRY1("frc_cercledesgros", "051008", "091a9ab30302eb20d421ccbd0c530439", 128512, Common::FR_FRA),
 	ENTRY1("frc_dreamlands", "050908", "79cecc22e3f020a3ccc23912122785d4", 79872, Common::FR_FRA),
 	ENTRY1("frc_templedefeu", "080317", "ce4d11a46341d6307f4cd2bb303d1c74", 134656, Common::FR_FRA),
 
-	// French games: French Comp 2006
+	// French Comp 2006 (French)
 	ENTRY1("frc_citeeaux", "061024", "aec85f8500c931d478d43bb25d75cf90", 159232, Common::FR_FRA),
 	ENTRY1("frc_sarvegne", "081227", "5f6b489cd12c151e4bf67822a5d22b8a", 239104, Common::FR_FRA),
 
-	// French games: French Comp 2007
+	// French Comp 2007 (French)
 	ENTRY1("frc_heuresduvent", "080220", "5b9470352594bb79edee84ecc0134e4e", 337920, Common::FR_FRA),
 	ENTRY1("frc_divinebonace", "070711", "a09271e95d3720d1e8016600b7871906", 103936, Common::FR_FRA),
 	ENTRY1("frc_brrr", "070709", "8657c6e47832ce1a1a976fc1107e16fc", 73216, Common::FR_FRA),
 	ENTRY1("frc_ilephare_zcode", "071220/z5", "b9a70f4bbebbcdca4c52baa6dbac143f", 102912, Common::FR_FRA),
 
-	// French games: French Comp 2008
+	// French Comp 2008 (French)
 	ENTRY1("frc_brume", "100424", "b661a3f9a2f9a3700c6cfee216063615", 152576, Common::FR_FRA),
 	ENTRY0("frc_lettresvolees", "081227", "2590cafc6a7b22b40bd3765c16a0e3d0", 250880),
 	ENTRY1("frc_louplachevre", "081121", "473a02087280f01a81e4ee4035249ed5", 98304, Common::FR_FRA),
 
-	// French games: French Comp 2009
+	// French Comp 2009 (French)
 	ENTRY1("frc_catapole", "100114", "e326f5ab2f236791b5b8f122d75bdb7d", 156672, Common::FR_FRA),
 	ENTRY1("frc_chambresyrion", "100111", "7db1461b938e392ced1d36747525437d", 123392, Common::FR_FRA),
 	ENTRY1("frc_mechants", "100117", "0d580033a9b180484ea6c8bbc2b6106b", 270848, Common::FR_FRA),
 
-	// French games: French Comp 2011
+	// French Comp 2011 (French)
 	ENTRY1("frc_aventureszeus", "120122", "bef1f77e9dfd65d7d39350e3c50b40ce", 91136, Common::FR_FRA),
 	ENTRY1("frc_dardenfer", "120822", "fea4fe5607327d8f0c15c88b65ac5d9a", 275968, Common::FR_FRA),
 	ENTRY1("frc_terreciel", "120122", "cf24a28bea8bb8f80e006acebbef8e33", 245248, Common::FR_FRA),
 	ENTRY1("frc_astrologue", "120122", "4259e9bb2a97152e454ba8feda4f9a04", 198656, Common::FR_FRA),
 	ENTRY1("frc_homelandsec", "120124", "ea70cf57b134c45c2234c976d06d1948", 155136, Common::FR_FRA),
 
-	// French games: French Comp 2013
+	// French Comp 2013 (French)
 	ENTRY1("frc_lifeonmarsfr", "140108", "8ef2f4e9dfe63bcce9ff7726cdcca7ea", 163840, Common::FR_FRA),
 	ENTRY1("frc_sourcedezig", "140102", "675d4956a12d6a23cf2a7d491e13cbff", 88064, Common::FR_FRA),
 	ENTRY1("frc_trac", "131213", "5db3d7270a0b2c7b8dab1672b2f24b8c", 334848, Common::FR_FRA),
 
-	// French games: French Comp 2015
+	// French Comp 2015 (French)
 	ENTRY1("frc_envol", "150201", "5aa75d7b333fdb69c71601d95d2def30", 157696, Common::FR_FRA),
 
-	// French games: French Comp 2016
+	// French Comp 2016 (French)
 	ENTRY1("frc_tipelau", "160104", "e4c8b0d99ceab57393db70b64dcd49c4", 173568, Common::FR_FRA),
 	ENTRY1("frc_diamantblanc", "160103", "d349be5b008ee06ad93bb7342d5ffbea", 167936, Common::FR_FRA),
 
-	// French games: French Comp 2018
+	// French Comp 2018 (French)
 	ENTRY1("frc_exil", "180114", "ff9628e84c46771168b5be5a9e23acd9", 107520, Common::FR_FRA),
 
-	// French games: French Comp 2021
+	// French Comp 2021 (French)
 	ENTRY1("frc_donjon", "210110", "923d5ef805cb1ab6ecaef82e35750b7f", 201728, Common::FR_FRA),
 	ENTRY1("frc_stationspatial", "210110", "6b9e23599bb921aaf4fc744d80e193f5", 130048, Common::FR_FRA),
 
@@ -6498,51 +6535,51 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("wasserhasser", "140105/zblorb", "1d332f660aec117a4460d0555a2b30f6", 165336, Common::DE_DEU),
 	ENTRY1("wichtel", "021006", "f52166e02c6bd5e0311145683f415ef5", 88576, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2002
+	// Textfire Grand Prix 2002 (German)
 	ENTRY1("tgp_eden", "020401/z5", "cac7c7f917cc93824f41efa96bf77e57", 120320, Common::DE_DEU),
 	ENTRY1("tgp_eden", "020401/zblorb", "73a6cf485aa833ca895b0f860493cfce", 221618, Common::DE_DEU),
 	ENTRY1("tgp_bewerbung", "020429", "5b2a90b66bfcf4564b37dab92afe846a", 114688, Common::DE_DEU),
 	ENTRY1("tgp_seite", "020330", "7f1bcab47897d5bbed1351aea77e6f56", 169984, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2003
+	// Textfire Grand Prix 2003 (German)
 	ENTRY1("tgp_linear", "030331", "427dd13d669e139f31011da42cdd6c6c", 116736, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2004
+	// Textfire Grand Prix 2004 (German)
 	ENTRY1("tgp_jazteg", "040522", "6635a44223e0017418acdeb0c78a9c7a", 192000, Common::DE_DEU),
 	ENTRY1("tgp_spater", "040330", "1dc330438f4f064b5bbc22e3f80d1c2c", 84208, Common::DE_DEU),
 	ENTRY1("tgp_unterwelt", "040330", "606d95b5e66ccdeb54febbbf2de7c60c", 92160, Common::DE_DEU),
 	ENTRY1("tgp_die5", "200304", "2a2139d806fc179c98cf8633f671559f", 121344, Common::DE_DEU),
 	ENTRY1("tgp_dichter", "040222", "ea4afef4907aa5d232fe61168ceca08d", 13808, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2005
+	// Textfire Grand Prix 2005 (German)
 	ENTRY1("tgp_kopialbuch", "050330", "3e4b21e39f57ad741fae18b4836e1d64", 151040, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2006
+	// Textfire Grand Prix 2006 (German)
 	ENTRY1("tgp_felleisen", "060331", "51b62cb229fde3719ddc616f450ba1e2", 131072, Common::DE_DEU),
 	ENTRY1("tgp_pmason", "060329", "7c7ec84f10d40a90f76685558abaf81c", 138240, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2010
+	// Textfire Grand Prix 2010 (German)
 	ENTRY1("tgp_hausaufgabe", "100405", "74a0227fcee105fed02e7458ab8a4e51", 199168, Common::DE_DEU),
 	ENTRY1("tgp_absturzmomente", "100405", "eac3e7f2a6eff119dd4141dc1af7608e", 283542, Common::DE_DEU),
 
-	// German games: Textfire Grand Prix 2011
+	// Textfire Grand Prix 2011 (German)
 	ENTRY1("tgp_gorgonir", "110330", "7b1f7c22b6fb7aceb630958e19c76e54", 542304, Common::DE_DEU),
 	ENTRY1("tgp_ausgerechnet", "110403", "5c4cc7e4689850d0726423cb4d14f6d0", 158720, Common::DE_DEU),
 
-	// German games: IF Grand Prix 2015
+	// IF Grand Prix 2015 (German)
 	ENTRY1("tgp_dieakte", "141113", "a4e9bc0f32e66c521e21373ec67e7b8f", 264704, Common::DE_DEU),
 	ENTRY1("tgp_dieakte", "150514", "f85adc48c759f62636cb435f2fc7dbee", 279040, Common::DE_DEU),
 	ENTRY1("tgp_lilie", "150318", "645bb70a097de033452216d5ef85c8dd", 241256, Common::DE_DEU),
 
-	// German games: IF Grand Prix 2016
+	// IF Grand Prix 2016 (German)
 	ENTRY1("tgp_emilia", "160401", "bb5872728bbc705c3dbaee32e2629d7c", 161280, Common::DE_DEU),
 
-	// German games: IF Grand Prix 2022
+	// IF Grand Prix 2022 (German)
 	ENTRY1("tgp_schief", "220401", "8e74eeb93f60b63ec4eee8a7db80880b", 515794, Common::DE_DEU),
 	ENTRY1("tgp_schief", "220404", "78aaa2553d490488b96bda6abe9a7aa7", 516306, Common::DE_DEU),
 	ENTRY1("tgp_dieerstenacht", "220326", "c9a1532c6122c33ac40fd4cf19f41dbb", 104412, Common::DE_DEU),
 
-	// German games: IF Grand Prix 2023
+	// IF Grand Prix 2023 (German)
 	ENTRY1("tgp_fischstaebchen", "230401", "6c07ebfdcfe23bfcac98cc2a8fdf2c48", 869242, Common::DE_DEU),
 	ENTRY1("tgp_gennorden", "230331", "dcc67e5b97f6aaf5f0c7e90a3c62f128", 208896, Common::DE_DEU),
 
@@ -6619,6 +6656,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("zazie", "990506", "74f0a21352b3f6f52e94309e5a02feaf", 114688, Common::IT_ITA),
 	ENTRY1("zazie", "030113", "906b9a3e02b2080ce7f06595c8bdcbb3", 89600, Common::IT_ITA),
 	ENTRY1("zenfactorspa", "100524", "22373bcd74d843ce647c4bd7b6a4404b", 288256, Common::IT_ITA),
+	ENTRY1("zigamusita_zcode", "160227", "016f92fcf0125765da1ed8b3d8863fab", 98816, Common::IT_ITA),
 	ENTRY1("zigamusita_zcode", "200426/z5", "72ef8669029dce42ec1e1f73ef66fa3c", 98816, Common::IT_ITA),
 	ENTRY1("zombie", "180601", "aa5956094aa8e909f63679a67fb52b14", 134144, Common::IT_ITA),
 	ENTRY1("zombie", "180820", "19a1369039b5226f86323ab19e7aea96", 135168, Common::IT_ITA),
@@ -6626,14 +6664,14 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("zorkita", "000031", "3d85a97ddfc1fb0f6bfbf1cb00b4df7b", 192512, Common::IT_ITA),
 	ENTRY1("zorkita", "v6/000031", "be15759f2273cdaf124dbc40436244b0", 192512, Common::IT_ITA),
 
-	// Italian games: Marmellata d'Avventura 2018
+	// Marmellata d'Avventura 2018 (Italian)
 	ENTRY1("ma_lastprigioniero", "180723", "e658aef675c3b44a5027f52b49d53abb", 199168, Common::IT_ITA),
 	ENTRY1("ma_skepto", "989484", "b1642bac5df936d0d6e56e141a4fd120", 145408, Common::IT_ITA),
 	ENTRY1("ma_dejavu_zcode", "180331/z5", "2fdfccb2539bf6d73ea5b86fe1cb7e81", 116224, Common::IT_ITA),
 	ENTRY1("ma_lazystranocaso", "180331", "6d78774d7c8cc30f8bed2e33458e7fc5", 175616, Common::IT_ITA),
 	ENTRY1("ma_pilastri", "180330", "ff72f757570e2a9d0675507c05a6bf69", 75776, Common::IT_ITA),
 
-	// Italian games: Marmellata d'Avventura 2019
+	// Marmellata d'Avventura 2019 (Italian)
 	ENTRY1("ma_salagamescastle", "191222", "6285d40140396eb6b45a3900d4e79577", 239616, Common::IT_ITA),
 	ENTRY1("ma_tesorosalagames", "191210", "bce5e94aa0667c83a869f9a71774086f", 137216, Common::IT_ITA),
 	ENTRY1("ma_lazysalagiochi", "191215", "f8f5030501e6640dbfef11c850967e93", 114176, Common::IT_ITA),
@@ -6650,12 +6688,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("zenin", "070628", "bda2d35eb0614374d02bae623d3a22ec", 90112, Common::SK_SVK),
 
 	// Spanish games
-	ENTRY1("abismo", "022001", "d99185503ef97dcad3a3bb10d6063b76", 94208, Common::ES_ESP),
-	ENTRY1("acuario", "120122", "b0439b17a37760be2d12579e4fc5cb75", 116224, Common::ES_ESP),
+	ENTRY1("abismo_zcode", "022001", "d99185503ef97dcad3a3bb10d6063b76", 94208, Common::ES_ESP),
+	ENTRY1("acuario_zcode", "120122", "b0439b17a37760be2d12579e4fc5cb75", 116224, Common::ES_ESP),
 	ENTRY1("adv", "971209", "2c38b40ffbc8c29fff29acbbefa317e8", 126976, Common::ES_ESP),
 	ENTRY1("adso", "010806", "260d3c709d4efe5538a1f10e725172c6", 116224, Common::ES_ESP),
 	ENTRY1("alicia", "980703", "5070504a35d51bdd7f09c67330170d8c", 65536, Common::ES_ESP),
 	ENTRY1("anillo", "990610", "e071a84c1348e49ccd339be6329ea4e0", 75776, Common::ES_ESP),
+	ENTRY1("anillo3", "15????", "046c9f3c20f190637ff9d1fd94abbcb4", 96256, Common::ES_ESP),
 	ENTRY1("avent", "961111", "7d3f5a62df58d20631f2f38623c26810", 76288, Common::ES_ESP),
 	ENTRY1("aventura", "971209", "5bee30fdf0d157186a3336ac2a977913", 128000, Common::ES_ESP),
 	ENTRY1("bicho", "000402", "b82fba5bce71304bd2545b3c5a987b3b", 61952, Common::ES_ESP),
@@ -6669,6 +6708,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("cruzado", "990610", "d872429765f5c378b35bbb4cd44d7fba", 65024, Common::ES_ESP),
 	ENTRY1("cueva", "150301/z5", "e0a6f6e6949944b7793f2822af687f2f", 74752, Common::ES_ESP),
 	ENTRY1("cueva", "150301/zblorb", "fb45c478ca1c30151186a7703a1040fc", 76172, Common::ES_ESP),
+	ENTRY1("dagon_zcode", "09????", "69f01d02b13d7d873970848da5da0e6e", 190464, Common::ES_ESP),
 	ENTRY1("despert", "980909", "f6c469e0931c9f18f149e1b6da484436", 129536, Common::ES_ESP),
 	ENTRY1("despert", "990519", "2d2bb65c166c24f89dc30be8021309b7", 128000, Common::ES_ESP),
 	ENTRY1("draculasp", "020709", "8466396cd5c66595fee8803f442e2e88", 100352, Common::ES_ESP),
@@ -6677,10 +6717,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("edaylobo", "020714", "5a7733503f33e5c63922e04086fef93b", 79360, Common::ES_ESP),
 	ENTRY1("elcontinente", "080402", "6dd46c1e1f58734017f3775b31aac455", 161792, Common::ES_ESP),
 	ENTRY1("ellibro", "030923", "33a3b35529ab33713913f8b92cc8ad8a", 109568, Common::ES_ESP),
+	ENTRY1("elpuzzle", "00???\?/Corrupt", "4285418449df52fff8192db61969280e", 229976, Common::ES_ESP),
 	ENTRY1("encierro", "010101", "083514ce5d9718020083ddd00d85e279", 247808, Common::ES_ESP),
 	ENTRY1("ergotdelima_zcode", "170616/z8", "c0b8265d11c2bb2dd6dd62801fb7ed73", 382464, Common::ES_ESP),
 	ENTRY1("ergotdelima_zcode", "170616/zblorb", "0bcc4c1c8cc24165cb8f02f17f00682d", 606834, Common::ES_ESP),
-	ENTRY1("estacion", "080126", "2a8d4eb4c600ce76f05f03cf862a9328", 92672, Common::ES_ESP),
+	ENTRY1("estacion_zcode", "080126", "2a8d4eb4c600ce76f05f03cf862a9328", 92672, Common::ES_ESP),
 	ENTRY1("excessus", "990610", "5bb56f1cf94a376fb34bfaf9c07791f1", 58880, Common::ES_ESP),
 	ENTRY1("forrajeo", "010101", "d86123253ae4b35570013dd87e48036a", 108032, Common::ES_ESP),
 	ENTRY1("fotopia", "991213", "bb067cca7cd769c20e7bb5dc9ed09c65", 214016, Common::ES_ESP),
@@ -6689,7 +6730,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("gorron", "001127", "74a82670f409c93607e72860552ddda2", 104960, Common::ES_ESP),
 	ENTRY1("gorron", "001205", "639f4ab6b26cc6b6e2023fa848f00d92", 74240, Common::ES_ESP),
 	ENTRY1("gorron", "020726", "67a7a86523a72c85b9cc0a0cf730ee75", 80896, Common::ES_ESP),
-	ENTRY1("hampa", "120621", "7db989262feb3c36e5e6b46eeab7447a", 277504, Common::ES_ESP),
+	ENTRY1("hampa_zcode", "120621/z8", "7db989262feb3c36e5e6b46eeab7447a", 277504, Common::ES_ESP),
 	ENTRY1("heredar", "980907", "d63cdbaf4f65a1fd6bca4f1c14317b38", 56832, Common::ES_ESP),
 	ENTRY1("heresville", "990610", "6b8c930f5b874e0c5a629b6385b0fb30", 70144, Common::ES_ESP),
 	ENTRY1("heresville", "001025", "7d4dfdf7911b926a44c66a355faddf8e", 71168, Common::ES_ESP),
@@ -6700,9 +6741,24 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("islamisteriosa", "120113", "56ce52bdf2d9a51786a4b38cf5cc3725", 236544, Common::ES_ESP),
 	ENTRY1("juguete", "010529", "28b197d2889a7f6c7c8a00c5d8f6c605", 107520, Common::ES_ESP),
 	ENTRY1("laberinto", "081027", "968500b509f1da10153186dfb3d89a37", 164352, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "001031", "7b993efc82e58225d06f86eeb4a62812", 91648, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "001101", "0dda3de17af3eba86fb81fc1d5c926ea", 92672, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329", "d4ea29e86a8ca925951224c74a00be0f", 70144, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329/v1", "f3583ab9b0eaa47d5153133a628a0666", 70144, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329/v2", "39226e9f683f48e6b99895b9a230a577", 70656, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329/v3", "498ce02c038595577c56c4c57f6319f9", 70656, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329/v4", "dfba87a9e0e6f2701d79a37dda9fc36b", 71168, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "010329/v5", "5bf372c65c8abb3d2cded008147e5630", 71168, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "020530/v1", "b29230110159ad197c88e22e482865bf", 94720, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "020530/v2", "4e5fce18a37f427ae22a1804318febc3", 95232, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "020530/v3", "ffa4d3d6701b228ee95f626d101b9fcb", 98816, Common::ES_ESP),
+	ENTRY1("latorre_zcode", "050702/z5", "e81e82829e35a4d6956ebfc9b883968f", 100352, Common::ES_ESP),
+	ENTRY1("laverja", "070416", "283e88358e58bde90c5a00e593642fbb", 64000, Common::ES_ESP),
+	ENTRY1("legion", "??????", "c7ee0051f293b520aad4c46e5530f783", 169004, Common::ES_ESP),
 	ENTRY1("logicinv", "000809", "0c02dd96b334038619a7a7346ae34a47", 61952, Common::ES_ESP),
 	ENTRY1("logicinv", "000909", "e7225635756c1e4a6a2c990bb8709345", 61952, Common::ES_ESP),
 	ENTRY1("maquina", "980915", "3229392e8493a2ba08efd3ce53d27ee3", 59392, Common::ES_ESP),
+	ENTRY1("marsmenace", "160109", "9d31cc5e05145d355fe7650a723eaa77", 422400, Common::ES_ESP),
 	ENTRY1("marsmenace", "160210", "c2804882005d945917d765b32c6d39ec", 427008, Common::ES_ESP),
 	ENTRY1("memorias_zcode", "000824", "e0af9b9bbef7ff5f9d1281e32e2db488", 65024, Common::ES_ESP),
 	ENTRY1("memorias_zcode", "010325", "91ab4377ff9ced804949d3e854ab431e", 137216, Common::ES_ESP),
@@ -6710,6 +6766,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("memorias_zcode", "140726", "25881186f8b84b888fcaae67724d1557", 365568, Common::ES_ESP),
 	ENTRY1("memorias_zcode", "150220", "6796107900bad430d8531c44f306ddbc", 460312, Common::ES_ESP),
 	ENTRY1("mpdroidone", "170820", "ea6bf4230bf6f267f76e191d84fb9804", 353792, Common::ES_ESP),
+	ENTRY1("nada", "010924/Corrupt", "66e0ed01d50e7082e56cffda54fd2d6b", 79872, Common::ES_ESP),
+	ENTRY1("pantalla", "060205", "c7b85db26b1bf03d9e0cc58bcc89758f", 64512, Common::ES_ESP),
 	ENTRY1("paraiso", "000214", "28abb3f35a041ea425b9ec3e93086440", 68096, Common::ES_ESP),
 	ENTRY1("perseo", "150428", "5242114f236e71848be5f6c92fdcb6ef", 26624, Common::ES_ESP),
 	ENTRY1("peso", "981021", "db6fa2c6d6e9d385e0625f9b66c84f6b", 65536, Common::ES_ESP),
@@ -6721,10 +6779,11 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("pyramid", "150427", "7b0f878f298d131024568d9364cf54e7", 29184, Common::ES_ESP),
 	ENTRY1("quenoche", "031015", "0085e1d917110642a700551536770d8d", 101376, Common::ES_ESP),
 	ENTRY1("quovadis", "031110/Demo", "fdebdc9b5ff49977ecec03c9d6800e9c", 63488, Common::ES_ESP),
+	ENTRY1("raro", "000402", "dcbe2202d09a7f5b7dfd6ffb96438fd4", 58880, Common::ES_ESP),
 	ENTRY1("redencionmomificad", "161212", "4e1370baee1a5713a792998f8ff5ce93", 117760, Common::ES_ESP),
 	ENTRY1("reflejos", "010101", "7edc3b30022e97978ea93ef5c22edccd", 144384, Common::ES_ESP),
-	ENTRY1("raro", "000402", "dcbe2202d09a7f5b7dfd6ffb96438fd4", 58880, Common::ES_ESP),
 	ENTRY1("regalo", "100104", "8d7ea3a09f39d1d2de103e5117ad3224", 336064, Common::ES_ESP),
+	ENTRY1("relojes_zcode", "040509/z5", "da0c9341ef8b15f726a18c22bf78877c", 66048, Common::ES_ESP),
 	ENTRY1("roleando", "071221", "09f5aaad79cbb12084241d8d26199ea6", 124416, Common::ES_ESP),
 	ENTRY1("saee", "000721", "d37e0681b1bc1ebbf001d1a37cbd355c", 29696, Common::ES_ESP),
 	ENTRY1("saee", "010308", "0ad5c5a78ea37c53bb614f4bc6f7754f", 31232, Common::ES_ESP),
@@ -6739,17 +6798,18 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("tuuli", "180501", "9382d5a2886dd7681203128a183ebae3", 671650, Common::ES_ESP),
 	ENTRY1("varenna", "190399", "2b984b69649ff9de6c13438e4fb81172", 174592, Common::ES_ESP),
 	ENTRY1("waxworksspa", "140301", "d0de29f4f375f6ce12539f9f26800ae3", 31232, Common::ES_ESP),
+	ENTRY1("werewolf", "99????", "40010f97d191c074f55e045c0a780d0f", 126464, Common::ES_ESP),
 	ENTRY1("zipi", "990707", "98067b8edc5edadf54c66c4becfa8a3c", 9728, Common::ES_ESP),
 	ENTRY1("zna", "000803", "8e6da0f9124591a68d736e3d1036ec98", 59392, Common::ES_ESP),
 	ENTRY1("zna", "001122", "d4652457908490465a0a4b17965cc695", 64000, Common::ES_ESP),
 
-	// Spanish games: Ectocomp 2017 - Le Grand Guignol
+	// Ectocomp 2017 - Le Grand Guignol (Spanish)
 	ENTRY1("ec17_decolor", "171106", "d6fb4727e8ee20d22dbbe17d5673c878", 104960, Common::ES_ESP),
 
-	// Spanish games: Ectocomp 2022 - Le Grand Guignol
+	// Ectocomp 2022 - Le Grand Guignol (Spanish)
 	ENTRY1("ec22_estadop_zcode", "230428", "7da49889125934b46036a89de3e6d3b3", 474158, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2000
+	// Premios Hispanos 2000 (Spanish)
 	ENTRY1("ph00_abalanzate", "001116", "d235b2e983f74f6176aea5b1d1418a78", 79872, Common::ES_ESP),
 	ENTRY1("ph00_alemanes", "000405", "859f5aaec930da12b42e5dbfe42723e9", 82432, Common::ES_ESP),
 	ENTRY1("ph00_aparato", "000428", "46c40135d29e3fda669d974bb1b76b20", 63488, Common::ES_ESP),
@@ -6776,7 +6836,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph00_torre", "000208/v2", "a132c528864576ef5df1ee46c76a5c61", 126464, Common::ES_ESP),
 	ENTRY1("ph00_tokland", "001130", "7f5c796474c250f418a47fa9285e3116", 139776, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2001
+	// Premios Hispanos 2001 (Spanish)
 	ENTRY1("ph01_aciegas", "010927", "6825eaa8b9a2cc73293329bfacee1311", 78848, Common::ES_ESP),
 	ENTRY1("ph01_celos", "010403", "6f4dc34a02fe5eb872ffe99faa06fb79", 69632, Common::ES_ESP),
 	ENTRY1("ph01_ch3ch2oh", "010912", "1a4a689b28c4a17c69e7f8e662a63801", 66048, Common::ES_ESP),
@@ -6792,7 +6852,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph01_ocaso", "020215/v2", "6b47826cde5cb4bb7777bcb735dd76cc", 164352, Common::ES_ESP),
 	ENTRY1("ph01_segapark", "010506", "2d02fd8559b885868aac6a4adcc09198", 75776, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2002
+	// Premios Hispanos 2002 (Spanish)
 	ENTRY1("ph02_asesinato", "020222", "988085754ca9b41f7ade080d9b9262ff", 79872, Common::ES_ESP),
 	ENTRY1("ph02_aveces", "021024", "3e0c409d60bda50121c47094e30cd24c", 81920, Common::ES_ESP),
 	ENTRY1("ph02_aveces", "030218", "b4232196474c2dc8ae992779e2f5deae", 80384, Common::ES_ESP),
@@ -6811,7 +6871,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph02_sombras", "021127", "72b83812567f8a4c9cd523b6a09a9c65", 121856, Common::ES_ESP),
 	ENTRY1("ph02_ultimohogar", "021225", "45edda9ec6eb400f409681d3f2b052d4", 122368, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2003
+	// Premios Hispanos 2003 (Spanish)
 	ENTRY1("ph03_aluzine", "122103", "8d974b6777b04a288db409bfc777bd22", 78336, Common::ES_ESP),
 	ENTRY1("ph03_array", "040107", "8a8e81e62d5762329bfa3d5c7a503d87", 74752, Common::ES_ESP),
 	ENTRY1("ph03_castillo", "031122", "0c6b8c77106dba58e81223c5d5c1da5f", 95744, Common::ES_ESP),
@@ -6828,7 +6888,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph03_otrpalab", "010102", "1df1630200c6e9a631bb71af494c7d81", 67072, Common::ES_ESP),
 	ENTRY1("ph03_rural", "031104", "ef441ece688cbeef11eef548d0c54aa1", 105472, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2004
+	// Premios Hispanos 2004 (Spanish)
 	ENTRY1("ph04_islas", "050531", "3d7cee978d4f69e41e8af1a8ccda2b9d", 369152, Common::ES_ESP),
 	ENTRY1("ph04_lamansion", "010103/v1", "332cf78fb9eb0a0a60895bf85b73a7f8", 138752, Common::ES_ESP),
 	ENTRY1("ph04_lamansion", "010103/v2", "0acd4655161f834b562b5560353877bd", 138752, Common::ES_ESP),
@@ -6837,7 +6897,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph04_remi", "040801", "8c724781c9356c5c94d2ccfe7dd38aba", 102400, Common::ES_ESP),
 	ENTRY1("ph04_remi", "050107", "9c91d2d67a112caa5f51aae4dfc6d4f9", 102912, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2005
+	// Premios Hispanos 2005 (Spanish)
 	ENTRY1("ph05_bardo", "050918", "7fbedef94068625973d94d672549f0ab", 156672, Common::ES_ESP),
 	ENTRY1("ph05_castilsilenco", "031205", "09ef4bbe2455f592941c817cd17cd865", 77824, Common::ES_ESP),
 	ENTRY1("ph05_elprotector", "010103/v1", "3189852634dcc62258c4e3af727bac46", 154624, Common::ES_ESP),
@@ -6850,7 +6910,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph05_trono", "060105/z5", "27576046399a460904d06942d534549c", 198656, Common::ES_ESP),
 	ENTRY1("ph05_trono", "060105/zblorb", "87bfb28edc44caf30706f3643277ce51", 200052, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2006
+	// Premios Hispanos 2006 (Spanish)
 	ENTRY1("ph06_draculasp2", "060331", "eec7853595240864f25c34da9083ca8b", 108032, Common::ES_ESP),
 	ENTRY1("ph06_draculasp2", "080819", "4de47380bf5d802f295a487eaf1499c6", 123392, Common::ES_ESP),
 	ENTRY1("ph06_elgatocheko", "061106", "3e668bdd0359ea7bdd6953f063ad0aaf", 110080, Common::ES_ESP),
@@ -6861,13 +6921,13 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph06_regreso", "060704", "21565444255a18e57988d983a283962b", 114176, Common::ES_ESP),
 	ENTRY1("ph06_resaca", "060713", "868eb485714fbc34358bff2dfa9335d0", 152576, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2007
+	// Premios Hispanos 2007 (Spanish)
 	ENTRY1("ph07_030307", "070303", "1483dca6052bb366ac32ef4901064b11", 143872, Common::ES_ESP),
 	ENTRY1("ph07_afuera", "010101", "9ed80d0b530f38cce7a7b2c0f1b6ccd9", 116224, Common::ES_ESP),
 	ENTRY1("ph07_aod", "071128", "6e486ac2bc483fab7bb713fa9e954e46", 178176, Common::ES_ESP),
 	ENTRY1("ph07_boxman", "071223", "a1c807338a3a5db6a26d3a27004a54cb", 71680, Common::ES_ESP),
 	ENTRY1("ph07_boxman", "080205", "384ea944adc4be83396c5368a3ba5ed9", 71680, Common::ES_ESP),
-	ENTRY1("ph07_edc_zcode", "070831", "3c4b4c9963fbcf69d858f6d16d9b584b", 126464, Common::ES_ESP),
+	ENTRY1("ph07_edc_zcode", "070831/z5", "3c4b4c9963fbcf69d858f6d16d9b584b", 126464, Common::ES_ESP),
 	ENTRY1("ph07_faro07", "070803", "54fdad7789f03d4c7644835bd295ad1f", 94208, Common::ES_ESP),
 	ENTRY1("ph07_htec_zcode", "071222", "64cf677261e13fb9fa6e071c3c864ae0", 222816, Common::ES_ESP),
 	ENTRY1("ph07_htec_zcode", "111128", "1e4369aae046805529ca8b490c9e5774", 394904, Common::ES_ESP),
@@ -6878,11 +6938,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph07_mausoleo", "071223", "a4356d2f89052328323a3dd2ce069658", 164864, Common::ES_ESP),
 	ENTRY1("ph07_umami", "070807", "86a045a71db97910e78ba402b33c5c7d", 80384, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2008
+	// Premios Hispanos 2008 (Spanish)
 	ENTRY1("ph08_diana_zcode", "080806", "2b117f98896856713a418bcd782be568", 107008, Common::ES_ESP),
 	ENTRY1("ph08_emmy", "080915", "92890016648bbfe1290f71d9a903afc9", 79872, Common::ES_ESP),
 	ENTRY1("ph08_gambito", "081202", "6ea6121f1891d46fe8cc957ef8939d68", 235990 , Common::ES_ESP),
 	ENTRY1("ph08_mushahierba", "081021", "2d28f401d63f163e5d34115fec07df72", 207240, Common::ES_ESP),
+	ENTRY1("ph08_pincoya", "010101", "a453de0f39d10cd9eb3ca028457b2b1a", 167424, Common::ES_ESP),
 	ENTRY1("ph08_pincoya", "010102", "bafb201726dd331308cdf34ec1e478cb", 168960, Common::ES_ESP),
 	ENTRY1("ph08_pronto", "080720", "a48b81b1c97d6074e3679659f9dce23a", 270826, Common::ES_ESP),
 	ENTRY1("ph08_sm1pesadilla", "080430", "79f8cb30a31146e08465acd9038ba7e6", 604046, Common::ES_ESP),
@@ -6895,7 +6956,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph08_venenaverbo", "160516", "0a89f0ad5b3df50ff6f32d961cce2c00", 192512, Common::ES_ESP),
 	ENTRY1("ph08_venenaverbo", "160517", "1c7c3ce13621f78e7cf6752a2b0fc58b", 192512, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2009
+	// Premios Hispanos 2009 (Spanish)
 	ENTRY1("ph09_amanda", "091110/z5", "11b63cb4c4ca11b86e835c1b00f9c5ae", 132096, Common::ES_ESP),
 	ENTRY1("ph09_amanda", "091110/zblorb", "c373f508436b06081cd76039dc17582e", 342504, Common::ES_ESP),
 	ENTRY1("ph09_gorbag", "100104", "581e67f731d6b1d0d40bfc38cb531bf9", 199168, Common::ES_ESP),
@@ -6907,11 +6968,12 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY1("ph09_megara", "091204/z5", "94b7019ed62d257344ef39727011c250", 214016, Common::ES_ESP),
 	ENTRY1("ph09_megara", "091204/zblorb", "6798f8acb0c0c60d1026a1e9a6469b55", 472716, Common::ES_ESP),
 	ENTRY1("ph09_panajo", "010102", "3969bf7b2dd00b342e6c0b4ec797919a", 124416, Common::ES_ESP),
+	ENTRY1("ph09_panajo", "010102", "3969bf7b2dd00b342e6c0b4ec797919a", 124416, Common::ES_ESP),
 	ENTRY1("ph09_sm6ascenso", "090409/z5", "108dd4e7623634e6ff7ca976118dfa29", 220672, Common::ES_ESP),
 	ENTRY1("ph09_sm6ascenso", "090409/zblorb", "352b9bb39f2fff76b409025670169a98", 380434, Common::ES_ESP),
-	ENTRY1("ph09_visitantes", "091130", "d8e7c7376b11f022e109069e4ad3b22a", 87040, Common::ES_ESP),
+	ENTRY1("ph09_visit_zcode", "091130/z5", "d8e7c7376b11f022e109069e4ad3b22a", 87040, Common::ES_ESP),
 
-	// Spanish games: Premios Hispanos 2010
+	// Premios Hispanos 2010 (Spanish)
 	ENTRY1("ph10_azul", "101223/z5", "a9b6daf1a3b3da110d1d17c1587feeef", 260096, Common::ES_ESP),
 	ENTRY1("ph10_azul", "101223/zblorb", "f6b9cd8892425e7cb97465baf950b602", 362332, Common::ES_ESP),
 	ENTRY1("ph10_lpc_zcode", "101213/z5", "b4e747ef59bf719b2edecf6b3796883f", 110592, Common::ES_ESP),
@@ -7619,6 +7681,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("theultimatum", "190429", "fb639da6d478a4fbf98e7d665898128d", 158720),
 	ENTRY0("theuntoldstory", "200725", "d8be5eb87abdb0fb4f38a02fe51dc5bd", 158208),
 	ENTRY0("thevirtgrandnation", "201103", "d213d8213d5816463fac57157e89c4e7", 175104),
+	ENTRY0("thewallet", "210501", "671b69cc29a54377beaae50f9cd9cd7f", 328704),
 	ENTRY0("thewallet", "210519", "375f70bb3b6451233751446035a18521", 165888),
 	ENTRY0("thewizardcrystal", "150620", "b0a6cd566dce360e5b0ae33c601d9ce0", 164352),
 	ENTRY0("thewizardslair", "150619", "a61b54e81e5b3b3898773546748aa874", 164352),
