@@ -51,6 +51,9 @@ void SpriteSheet::parseSpriteSheet(const Common::String &contents) {
 		parseFrame(it->_key, it->_value->asObject(), frameTable[it->_key]);
 	}
 
+	const Common::JSONObject& jMeta = json->asObject()["meta"]->asObject();
+	meta.image = jMeta["image"]->asString();
+
 	delete json;
 }
 

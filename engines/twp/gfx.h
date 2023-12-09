@@ -115,18 +115,21 @@ public:
 	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 transf = Math::Matrix4());
 	void drawLines(Vertex* vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
 	void draw(Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 trsf = Math::Matrix4());
-	void drawQuad(Math::Vector2d pos, Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
-	void drawSprite(Math::Vector2d pos, Common::Rect textRect, Texture& texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
+	void drawQuad(Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
+	void drawSprite(Common::Rect textRect, Texture& texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 
 	void noTexture();
 	Math::Matrix4 getFinalTransform(Math::Matrix4 trsf);
+
+public:
+	Math::Vector2d _cameraPos;
 
 private:
 	uint32 _vbo, _ebo;
 	Shader _shader;
 	Color _color;
 	Math::Matrix4 _mvp;
-	Math::Vector2d _cameraSize, _cameraPos;
+	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture* _texture;
 };

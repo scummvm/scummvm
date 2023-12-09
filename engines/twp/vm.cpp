@@ -180,7 +180,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 	debug("Create object: %s, %u", sheet.c_str(), frames.size());
 
 	// load sheet json
-	SpriteSheet* spritesheet = g_engine->resManager.spriteSheet(sheet + ".json");
+	SpriteSheet* spritesheet = g_engine->resManager.spriteSheet(sheet);
 
 	// TODO: create an entity
 	Entity e;
