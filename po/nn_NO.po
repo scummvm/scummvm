@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2022-10-02 04:37+0000\n"
-"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
+"PO-Revision-Date: 2023-12-09 22:05+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nn/>\n"
 "Language: nn_NO\n"
@@ -120,103 +120,100 @@ msgstr "Vel"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Rettleing for kopling til skyteneste"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
 msgid "Quick mode"
-msgstr "Klikkmodus"
+msgstr "Hurtigmodus"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Rask modus"
+msgstr "Manuell modus"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Vil spørja deg om å køyre lokal tenar"
 
 #: gui/cloudconnectionwizard.cpp:189
 msgid "Requires the Local Webserver feature"
-msgstr ""
+msgstr "Krev att lokal tenarfunksjon køyres"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Hurtigmodus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"Denne modus krev at lokal tenar køyrer slik at nettlesaren vidaresender data "
+"til ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3704
-#, fuzzy
 msgid "Stop server"
-msgstr "Teinar:"
+msgstr "Steng tenar:"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:2744
-#, fuzzy
 msgid "Run server"
-msgstr "Teinar:"
+msgstr "Køyr tenar:"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:3705
-#, fuzzy
 msgid "Stop local webserver"
-msgstr "Teinar:"
+msgstr "Steng lokal tenar:"
 
 #: gui/cloudconnectionwizard.cpp:240 gui/options.cpp:2744
 msgid "Run local webserver"
-msgstr ""
+msgstr "Køyr lokal tenar"
 
 #: gui/cloudconnectionwizard.cpp:248 gui/options.cpp:2745 gui/options.cpp:3712
-#, fuzzy
 msgid "Not running"
-msgstr "Feil under køyring av spel:"
+msgstr "Køyr ikkje"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Hurtigmodus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Opne lenken i nettlesaren:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
 msgid "Open URL"
-msgstr "Åpne URL"
+msgstr "Opne URL"
 
 #: gui/cloudconnectionwizard.cpp:270
 msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Vil automatisk sende data til ScumVM,\n"
+"og gje varsel ved feil."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Lokal tenaradresse: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Hurtigmodus: Vellukka"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
 msgid "Your cloud storage has been connected!"
-msgstr ""
+msgstr "Kopling av skytenesta var vellukka!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Klar"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Manuell modus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:322
 msgid "Open this link in your browser:"
-msgstr ""
+msgstr "Opne lenken i nettlesaren:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -224,24 +221,26 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"Når JSON-kode ikje sendast vidare til ScummVM,\n"
+"leit opp dette på problemløysingsdelen av sida,\n"
+" og gå til neste steg her."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Manuell modus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Kopier JSON-koden fra nettlesaren hit og trykk Neste:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
-#, fuzzy
 msgid "Paste"
-msgstr "Rask modus"
+msgstr "Lim inn"
 
 #: gui/cloudconnectionwizard.cpp:361
 msgid "Paste code from clipboard"
-msgstr ""
+msgstr "Lim in kode fra utklippstavle"
 
 #: gui/cloudconnectionwizard.cpp:362 gui/launcher.cpp:316
 #: engines/dialogs.cpp:93 engines/engine.cpp:915 engines/mm/xeen/saves.cpp:259
@@ -253,40 +252,37 @@ msgid "Load"
 msgstr "Åpne"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Last fil"
+msgstr "Last kode fra fil"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Manuell modus: Noko gjekk gale"
 
 #: gui/cloudconnectionwizard.cpp:383
 msgid "Cloud storage was not connected."
-msgstr ""
+msgstr "Nettskylagring vart ikkje kopla."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Prøyv att etter å ha sjekka att JSON-koden blei kopiert rett."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Viss dette ikkje virker, gjør om frå start."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Feilmelding: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Manuell modus: Vellukka"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
 msgid "Back"
-msgstr "Backend"
+msgstr "Attende"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -295,7 +291,7 @@ msgstr "Neste"
 
 #: gui/cloudconnectionwizard.cpp:499
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr ""
+msgstr "Ein anna lagringsteneste arbeider nett no. Vill du abryta han?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -326,12 +322,12 @@ msgstr "Nei"
 
 #: gui/cloudconnectionwizard.cpp:508
 msgid "Wait until current Storage finishes and try again."
-msgstr ""
+msgstr "Vent till pågående lagringsteneste er klar og prøv igjen."
 
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON-koden er feil utforma."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -361,30 +357,30 @@ msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:558
 msgid "Incorrect JSON."
-msgstr ""
+msgstr "Feil i JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
 msgid "Interrupted."
-msgstr "Interpolering:"
+msgstr "Avbroten"
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Lukkast ikkje opne URL!\n"
+"Naviger fram till sida manuellt."
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Vel JSON-fil kopiert fra scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
 msgid "Failed to load JSON file"
-msgstr "Klarte ikkje slette fil."
+msgstr "Klarte ikkje opne JSON-fil."
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -405,9 +401,8 @@ msgid "Download"
 msgstr "Last ned"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Vel mappe med speldata"
+msgstr "Vel mappe for lagring av speldata"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:99
 #: gui/dump-all-dialogs.cpp:122 gui/editgamedialog.cpp:543 gui/launcher.cpp:313
@@ -425,26 +420,25 @@ msgstr "Til: "
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
 #: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
 #: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
-#, fuzzy
 msgid "Cancel download"
-msgstr "Avbryt"
+msgstr "Avbryt nedlasting"
 
 #: gui/downloaddialog.cpp:65
-#, fuzzy
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Avbryt"
+msgstr "Avbryt nedlasting"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
 #: gui/downloadpacksdialog.cpp:281
 msgid "Hide"
-msgstr ""
+msgstr "Skjul"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Begrensa oppkopling, ynskjer du å bruka koplinga til nedlasting av filer?"
 
 #: gui/downloaddialog.cpp:136 gui/launcher.cpp:657
 msgid "ScummVM couldn't open the specified directory!"
@@ -454,7 +448,7 @@ msgstr "ScummVM kunne ikkje åpne den velde mappa!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr ""
+msgstr "Kan ikkje skapa nedlastingsmappe - den valde mappa inneheld samme namn."
 
 #: gui/downloaddialog.cpp:151
 #, c-format
@@ -462,17 +456,19 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" finnst allereide i den valde mappa.\n"
+"Ynskjer du å nedlaste filer till den mappa?"
 
 #: gui/downloaddialog.cpp:214 gui/downloaddlcsdialog.cpp:70
 #: gui/downloadpacksdialog.cpp:367
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "Lasta ned %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Søk fullført!"
+msgstr "Nedlastingshastighet: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
 #, fuzzy
@@ -492,9 +488,9 @@ msgstr "FEIL %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Lastar spel..."
+msgstr "Lastar %S lista..."
 
 #: gui/downloadpacksdialog.cpp:203
 #, fuzzy
@@ -502,19 +498,19 @@ msgid "Clear Cache"
 msgstr "Tøm verdi"
 
 #: gui/downloadpacksdialog.cpp:254
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Lastar spel..."
+msgstr "Lastar %S lista... %d verdier"
 
 #: gui/downloadpacksdialog.cpp:264
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr ""
+msgstr "Har funne %d nye pakker, %s %S"
 
 #: gui/downloadpacksdialog.cpp:290
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
+msgstr "Nedlasting ferdig, lasta ned %d pakker, %s %S"
 
 #. I18N: Close dialog button
 #: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
@@ -528,13 +524,13 @@ msgstr "Steng"
 
 #: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "Feilmelding: Ingen filsti for ikoner valgt"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
 #, c-format
 msgid "No new %S available"
-msgstr ""
+msgstr "Ingen nye %S tilgjengelege"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -542,6 +538,8 @@ msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
+"Du kommer til å slette  %s %S med data, du slettar tidlegare nedlasta %S. "
+"Ynskjer du å helde fram?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -830,6 +828,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Synkronisering av lagra spel fungerar ikkje om du ikkje vel standardmappe. "
+"Vill du synkronisera lagra spel vel du standardmappa."
 
 #: gui/editgamedialog.cpp:613
 msgid "This game ID is already taken. Please choose another one."
@@ -926,11 +926,11 @@ msgstr "Linjær"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Fourth-order"
-msgstr ""
+msgstr "Fjerdeordens"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Seventh-order"
-msgstr ""
+msgstr "Sjuandeordens"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:150 backends/keymapper/remap-widget.cpp:324
@@ -949,15 +949,14 @@ msgstr ""
 
 #: gui/gui-manager.cpp:155 gui/options.cpp:2275
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:159 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolering:"
+msgstr "Interager"
 
 #: gui/gui-manager.cpp:170 engines/metaengine.cpp:115
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
@@ -1018,9 +1017,8 @@ msgid "Right"
 msgstr "Høgre"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
 msgid "Backspace"
-msgstr "Backend"
+msgstr "Tilbaketast"
 
 #: gui/gui-manager.cpp:200
 #, fuzzy
@@ -1029,31 +1027,27 @@ msgstr "Slett"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Gå til linjeslutt"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "Vel SoundFont"
+msgstr "Vel till linjeslutt"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Vel ei mappe for plugins"
+msgstr "Vel till linjestart"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Gå til linjestart"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Klipp"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Kopier"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1120,12 +1114,11 @@ msgstr "Lagrar spel..."
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u av %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
 msgid "Save Image"
-msgstr "Lagra spel:"
+msgstr "Lagre spel"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1135,15 +1128,14 @@ msgstr "Ingen"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:107
-#, fuzzy
 msgctxt "group"
 msgid "First letter"
-msgstr "Neste"
+msgstr "Første bokstav"
 
 #: gui/launcher.cpp:107
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Bokstav"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:109
@@ -1183,15 +1175,15 @@ msgstr ""
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
-msgstr ""
+msgstr "Gruppér etter"
 
 #: gui/launcher.cpp:233 gui/launcher.cpp:893
 msgid "Group:"
-msgstr ""
+msgstr "Gruppe:"
 
 #: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Vel grupperingskriterie"
 
 #. I18N: This keymap opens KIA's HELP tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -1200,7 +1192,7 @@ msgstr ""
 #: gui/launcher.cpp:262 backends/platform/sdl/macosx/appmenu_osx.mm:262
 #: engines/bladerunner/metaengine.cpp:321 engines/zvision/metaengine.cpp:226
 msgid "Help"
-msgstr ""
+msgstr "Hjelp"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
 #: gui/launcher.cpp:266 engines/dialogs.cpp:90
@@ -1235,13 +1227,12 @@ msgid "Global ~O~pts..."
 msgstr "Globale ~i~nnst..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
 msgid "Download Games"
-msgstr "Last fil:"
+msgstr "Last ned spill"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Last ned gratisspill til ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1250,7 +1241,7 @@ msgstr "~L~egg til spel..."
 
 #: gui/launcher.cpp:283
 msgid "Add games to the list"
-msgstr ""
+msgstr "Legg til spill i listen"
 
 #: gui/launcher.cpp:283
 msgctxt "lowres"
