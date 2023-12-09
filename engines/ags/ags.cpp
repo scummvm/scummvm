@@ -175,6 +175,8 @@ Common::Error AGSEngine::run() {
 		parseBool(saveOverrideOption, saveOverride);
 	_G(noScummAutosave) = (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions"))) && !saveOverride;
 	_G(noScummSaveLoad) = (Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions"))) && !saveOverride;
+	if (_G(noScummSaveLoad))
+		_G(noScummAutosave) = true;
 
 	_G(saveThumbnail) = !(Common::checkGameGUIOption(GAMEOPTION_NO_SAVE_THUMBNAIL, ConfMan.get("guioptions")));
 
