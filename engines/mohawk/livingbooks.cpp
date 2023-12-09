@@ -289,9 +289,13 @@ void MohawkEngine_LivingBooks::pauseEngineIntern(bool pause) {
 	MohawkEngine::pauseEngineIntern(pause);
 
 	if (pause) {
-		_video->pauseVideos();
+		if (_video != nullptr) {
+			_video->pauseVideos();
+		}
 	} else {
-		_video->resumeVideos();
+		if (_video != nullptr) {
+			_video->resumeVideos();
+		}
 		_system->updateScreen();
 	}
 }
