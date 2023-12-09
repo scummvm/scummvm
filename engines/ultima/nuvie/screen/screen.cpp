@@ -1078,7 +1078,7 @@ void Screen::update(int x, int y, uint16 w, uint16 h) {
 		h = height - y;
 
 	// Get the subarea, which internally adds a dirty rect for the given area
-	_rawSurface->getSubArea(Common::Rect(x, y, x + width, y + height));
+	_rawSurface->getSubArea(Common::Rect(x, y, x + w, y + h));
 }
 
 void Screen::performUpdate() {
