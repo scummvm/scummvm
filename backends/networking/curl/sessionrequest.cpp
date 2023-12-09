@@ -153,6 +153,10 @@ void SessionRequest::reuse(const Common::String &url, const Common::String &loca
 }
 
 void SessionRequest::handle() {
+	if (_state != PROCESSING) {
+		return;
+	}
+
 	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
@@ -221,6 +225,8 @@ void SessionRequest::close() {
 }
 
 void SessionRequest::abortRequest() {
+	_state = FINISHED;
+
 	if (_localFile) {
 		_localFile->close();
 		delete _localFile;
@@ -228,7 +234,6 @@ void SessionRequest::abortRequest() {
 
 		// TODO we need to remove file, but there is no API
 	}
-	_state = FINISHED;
 }
 
 bool SessionRequest::complete() {
