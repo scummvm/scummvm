@@ -51,7 +51,7 @@ public:
 	const Common::String &getFilename() const { return _filename; }
 
 	// for Korean Translate
-	int32 getWCharKernedWidth(unsigned char hi, unsigned char lo) const { return getCharKernedWidth(hi) + getCharKernedWidth(lo); }
+	int32 getWCharKernedWidth(byte hi, byte char lo) const { return getCharKernedWidth(hi) + getCharKernedWidth(lo); }
 	bool isKoreanChar(const byte hi, const byte lo) const { return (hi >= 0xB0 && hi <= 0xC8 && lo >= 0xA1 && lo <= 0xFE); }
 
 	static Font *getByFileName(const Common::String& fileName);
@@ -149,7 +149,7 @@ public:
 	void restoreState(SaveGame *state);
 
 	// for Korean Translate
-	int32 getWCharKernedWidth(unsigned char hi, unsigned char lo) const { return _font->getCharWidth(Common::convertUHCToUCS(hi, lo)); }
+	int32 getWCharKernedWidth(byte hi, byte lo) const { return _font->getCharWidth(Common::convertUHCToUCS(hi, lo)); }
 
 private:
 	Graphics::Font *_font;
