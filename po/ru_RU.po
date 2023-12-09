@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-09 16:29+0000\n"
+"PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -276,10 +276,8 @@ msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Бэкенд"
+msgstr "Назад"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -287,10 +285,8 @@ msgid "Next"
 msgstr "Следующий"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "Сейчас работает ещё одно хранилище. Вы хотите остановить его?"
+msgstr "Сейчас работает другое хранилище. Вы хотите остановить его?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -320,8 +316,6 @@ msgid "No"
 msgstr "Нет"
 
 #: gui/cloudconnectionwizard.cpp:508
-#, fuzzy
-#| msgid "Wait until current Storage finishes up and try again."
 msgid "Wait until current Storage finishes and try again."
 msgstr "Подождите, пока текущее хранилище завершит работу, и попробуйте снова."
 
@@ -357,17 +351,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:558
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Некорректный файл rs."
+msgstr "Некорректный JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Взаимодействие"
+msgstr "Прервано."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
@@ -384,10 +374,8 @@ msgstr ""
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
-#| msgid "Failed to upload the file!"
 msgid "Failed to load JSON file"
-msgstr "Не удалось загрузить файл!"
+msgstr "Не удалось загрузить JSON файл"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -398,10 +386,8 @@ msgid "Fetching DLCs..."
 msgstr ""
 
 #: gui/dlcsdialog.cpp:60
-#, fuzzy
-#| msgid "Download"
 msgid "All Downloads"
-msgstr "Скачать"
+msgstr "Все загрузки"
 
 #: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
 msgid "Download"
@@ -481,16 +467,12 @@ msgid "Download speed: %s %S/s"
 msgstr "Скорость загрузки: %s %S/с"
 
 #: gui/downloaddlcsdialog.cpp:41
-#, fuzzy
-#| msgid "Download game files"
 msgid "Currently Downloading Games"
-msgstr "Скачать файлы игры"
+msgstr "Сейчас скачиваю игры"
 
 #: gui/downloaddlcsdialog.cpp:55
-#, fuzzy
-#| msgid "Download"
 msgid "Pending Downloads"
-msgstr "Скачать"
+msgstr "Отложенные загрузки"
 
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
@@ -1024,14 +1006,10 @@ msgid "Right"
 msgstr "Вправо"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Бэкенд"
+msgstr "Backspace"
 
 #: gui/gui-manager.cpp:200
-#, fuzzy
-#| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Удалить символ"
 
@@ -1040,16 +1018,12 @@ msgid "Go to end of line"
 msgstr ""
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "Выберите SoundFont"
+msgstr "Выделить до конца строки"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Выберите каталог с плагинами"
+msgstr "Выделить с начала строки"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
@@ -1120,10 +1094,8 @@ msgid "Prev"
 msgstr "Предыдущий"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Сохраняю игру..."
+msgstr "Сохранить изображение..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
@@ -1131,10 +1103,8 @@ msgid "%u of %u"
 msgstr ""
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
-#| msgid "Save Game"
 msgid "Save Image"
-msgstr "Сохранить игру"
+msgstr "Сохранить изображение"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1243,10 +1213,8 @@ msgid "Global ~O~pts..."
 msgstr "~Н~астр..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Скачать файлы игры"
+msgstr "Скачать игры"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
@@ -1343,8 +1311,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
-"Добавили ли вы этот каталог в SAF? Нажмите кнопку помощи [?] в верху окна "
-"для подробных инструкций"
+"Добавили ли вы эту папку в SAF? Нажмите кнопку помощи [?] в верху окна для "
+"подробных инструкций"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
@@ -1427,10 +1395,8 @@ msgstr "Платформа не определена"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1278 gui/launcher.cpp:1474
-#, fuzzy
-#| msgid "Unknown error"
 msgid "Unknown Year"
-msgstr "Неизвестная ошибка"
+msgstr "Год неизвестен"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
@@ -1639,16 +1605,12 @@ msgid "Shader Path:"
 msgstr "Путь к шейдеру:"
 
 #: gui/options.cpp:1634
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Shaders"
-msgstr "Скачать файлы игры"
+msgstr "Скачать шейдеры"
 
 #: gui/options.cpp:1634
-#, fuzzy
-#| msgid "Check for updates of shader packs"
 msgid "Check on the scummvm.org website for updates of shader packs"
-msgstr "Проверяет обновления пакетов шейдеров"
+msgstr "Проверяет обновления пакетов шейдеров на сайте scummvm.org"
 
 #: gui/options.cpp:1641 backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Fullscreen mode"
@@ -1984,17 +1946,13 @@ msgid "Default"
 msgstr "По умолчанию"
 
 #: gui/options.cpp:2461
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Путь к игре:"
+msgstr "Путь к DLC:"
 
 #: gui/options.cpp:2463
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Путь к игре:"
+msgstr "Путь к DLC:"
 
 #: gui/options.cpp:2471 gui/options.cpp:2473 gui/options.cpp:2474
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2063,10 +2021,8 @@ msgstr ""
 "Запрашивать подтверждение во время закрытия ScummVM или выхода из игры."
 
 #: gui/options.cpp:2565
-#, fuzzy
-#| msgid "Disable falling"
 msgid "Disable fixed font scaling"
-msgstr "Запретить падение"
+msgstr "Выключить масшатибрование некоторых шрифтов"
 
 #: gui/options.cpp:2566
 msgid ""
@@ -2110,16 +2066,12 @@ msgstr ""
 "файлов ScummVM."
 
 #: gui/options.cpp:2620
-#, fuzzy
-#| msgid "Download"
 msgid "Download Icons"
-msgstr "Скачать"
+msgstr "Скачать иконки"
 
 #: gui/options.cpp:2620
-#, fuzzy
-#| msgid "Check for updates of icon packs"
 msgid "Check on the scummvm.org website for updates of icon packs"
-msgstr "Проверяет обновления пакетов иконок"
+msgstr "Проверяет обновления пакетов иконок на сайте scummvm.org"
 
 #: gui/options.cpp:2627
 msgid "Autosave:"
@@ -2185,27 +2137,18 @@ msgid "Active cloud storage"
 msgstr "Активное облачное хранилище"
 
 #: gui/options.cpp:2701
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Хранилище ещё не включено. Проверьте правильность имени пользователя и "
+"Хранилище ещё не включено. Проверьте правильность имени пользователя и "
 "включите его:"
 
 #: gui/options.cpp:2703
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Хранилище ещё не включено. Проверьте правильность имени пользователя и "
+"Хранилище ещё не включено. Проверьте правильность имени пользователя и "
 "включите его:"
 
 #: gui/options.cpp:2704
@@ -2311,24 +2254,17 @@ msgid "Stop using this storage on this device"
 msgstr "Прекратить использование этого хранилища на данном устройстве"
 
 #: gui/options.cpp:2733
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Это хранилище ещё не подключено! Чтобы подключить,"
+msgstr "Это хранилище ещё не подключено!"
 
 #: gui/options.cpp:2735
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "Это хранилище ещё не подключено! Чтобы подключить,"
+msgstr "Это хранилище ещё не подключено!"
 
 #: gui/options.cpp:2736
-#, fuzzy
-#| msgid "3. Connect"
 msgid "Connect"
-msgstr "3. Подключитесь"
+msgstr "Подключиться"
 
 #: gui/options.cpp:2736
 msgid "Connect your cloud storage account"
@@ -2454,10 +2390,8 @@ msgid "Select directory for GUI launcher thumbnails"
 msgstr "Выберите каталог для иконок для GUI"
 
 #: gui/options.cpp:3191
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Выберите каталог с плагинами"
+msgstr "Выберите каталог для DLC загрузок"
 
 #: gui/options.cpp:3202
 msgid "Select directory for extra files"
@@ -2761,27 +2695,6 @@ msgstr "Неверный формат файла конфигурации. Пе�
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM for Android, significant changes were made "
-#| "to the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "If you find that your existing added games or custom paths no longer "
-#| "work, please edit those paths:\n"
-#| "  1. From the Launcher, go to **Game Options > Paths**. Select **Game "
-#| "Path** or **Extra Path**, as appropriate. \n"
-#| "  2. Inside the ScummVM file browser, select **Go Up** until you reach "
-#| "the root folderwhich has the **<Add a new folder>** option.\n"
-#| "  3. Double-tap **<Add a new folder>**. In your device's file browser, "
-#| "navigate to the foldercontaining all your game folders. For example, **SD "
-#| "Card > ScummVMgames** \n"
-#| "  4. Select **Use this folder**. \n"
-#| "  5. Select **Allow** to give ScummVM permission to access the folder. \n"
-#| "  6. In the ScummVM file browser, double-tap to browse through your added "
-#| "folder.Select the folder containing the game's files, then tap "
-#| "**Choose**. \n"
-#| "\n"
-#| "Repeat steps 1 and 6 for each game."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2808,10 +2721,9 @@ msgstr ""
 "Android.\n"
 "Если вы обнаружите, что игры, которые вы уже добавили, или другие пути, "
 "которые определили, больше не работают, пожалуйста, отредактируйте эти пути:"
-"D\n"
 "\n"
-"  1. В списке игр, перейдите на \"Опции игры > Пути\". Выберите \"Путь к игре"
-"\" или \"Доп. путь\", что подходит больше.\n"
+"  1. В списке игр, перейдите на \"Опции игры > Пути\". Выберите \"Путь к "
+"игре\" или \"Доп. путь\", что подходит больше.\n"
 "  2. В браузере файлов ScummVM, используйте кнопку \"Вверх\", пока не "
 "достигнете \"корневой\" папки, там будет пункт \"<Добавить новую папку>\".\n"
 "  3. Дважды ткните в \"<Добавить новую папку>\". В файловом навигаторе "
@@ -2820,8 +2732,8 @@ msgstr ""
 "  4. Выберите \"Использовать эту папку\".\n"
 "  5. Выберите \"Разрешить\", чтобы дать ScummVM права доступа к этой папке.\n"
 "  6. В браузере файлов ScummVM, дважды ткните во вновь добавленную папку. "
-"Выберите папку, где лежат файлы конкретной игры, затем ткните в \"Выбрать"
-"\".\n"
+"Выберите папку, где лежат файлы конкретной игры, затем ткните в \"Выбрать\"."
+"\n"
 "\n"
 "Повторите шаги 1 и 6 для каждой игры."
 
@@ -2840,21 +2752,6 @@ msgstr "Читать позже"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2877,16 +2774,20 @@ msgstr ""
 "В этой версии ScummVM для Anrdoid были сделаны значительные изменения с "
 "доступом к файлам, что позволило добавить поддержку современных версий ОС "
 "Android.\n"
-"Поэтому вам нужно настроить подсистему SAF, чтобы вы могли добавлять игры.\n"
+"Чтобы добавить игру:\n"
 "\n"
-"  1. В браузере файлов ScummVM, используйте кнопку \"Вверх\", пока не "
-"достигнете \"корневой\" папки, там будет пункт \"<Добавить новую папку>.\n"
-"  2. Выберите этот пункт, затем найдите \"корневую\" папку, где лежат все "
-"файлы ваших игр, например \"SD Card > myGames\". Выберите \"Использовать эту "
-"папку\".\n"
-"  3. После этого новая папка \"myGames\" появится в \"корневой\" папке в "
-"браузере файлов ScummVM.\n"
-"  4. Используйте эту папку для перехода к данным ваших игр."
+"  1. Выберите \"Добавить игру...\" из основного экрана.\n"
+"  2. В браузере файлов ScummVM, используйте кнопку \"Вверх\", пока не "
+"достигнете \"корневой\" папки, там будет пункт \"<Добавить новую папку>\".\n"
+"  3. Дважды ткните в \"<Добавить новую папку>\". В файловом навигаторе "
+"вашего устройства перейдите в папку, где лежат все файлы ваших игр, например "
+"\"SD Card > ScummVMgames\".\n"
+"  4. Выберите \"Использовать эту папку\".\n"
+"  5. Выберите \"Разрешить\", чтобы дать ScummVM права доступа к этой папке.\n"
+"  6. В браузере файлов ScummVM, дважды ткните во вновь добавленную папку. "
+"Выберите папку, где лежат файлы конкретной игры, затем ткните в \"Выбрать\"."
+"\n"
+"Повторите шаги 1 и 6 для каждой игры."
 
 #: base/main.cpp:829
 msgid "Error running game:"
@@ -3065,10 +2966,8 @@ msgid "Data File"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:30
-#, fuzzy
-#| msgid "Quit ScummVM"
 msgid "ScummVM"
-msgstr "Завершить ScummVM"
+msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
@@ -3094,20 +2993,16 @@ msgid "Unable to read ScummVM config file or create a new one!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:36
-#, fuzzy
-#| msgid "Save Path:"
 msgid "Save Path Error"
-msgstr "Сохранения игр:"
+msgstr "Ошибка пути сохранения"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:38
-#, fuzzy
-#| msgid "Icon Path:"
 msgid "Icons Path Error"
-msgstr "Путь к иконкам:"
+msgstr "Ошибка пути к иконкам"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
@@ -3120,10 +3015,8 @@ msgid ""
 msgstr ""
 
 #: dists/android.strings.xml.cpp:41
-#, fuzzy
-#| msgid "Virtual keyboard"
 msgid "Toggle virtual keyboard"
-msgstr "Виртуальная клавиатура"
+msgstr "Переключить виртуальную клавиатуру"
 
 #: dists/android.strings.xml.cpp:42 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -3137,10 +3030,8 @@ msgid "Done"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:46
-#, fuzzy
-#| msgid "Exchange"
 msgid "Mode change"
-msgstr "Обменять"
+msgstr "Сменить режим"
 
 #: dists/android.strings.xml.cpp:47
 msgid "Shift"
@@ -3152,10 +3043,8 @@ msgid "Enter"
 msgstr "Ввод"
 
 #: dists/android.strings.xml.cpp:49
-#, fuzzy
-#| msgid "Close"
 msgid "Close popup"
-msgstr "Закрыть"
+msgstr "Закрыть выпадающий список"
 
 #: dists/android.strings.xml.cpp:50
 msgid ""
@@ -3312,7 +3201,7 @@ msgstr ""
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Эта игра не поддерживает сохранение игр через меню. Используйте интерфейс "
-"внутри игры."
+"внутри игры"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
@@ -3332,7 +3221,7 @@ msgstr ""
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
 "Эта игра не поддерживает загрузку сохранений через меню. Используйте "
-"интерфейс внутри игры."
+"интерфейс внутри игры"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -4587,10 +4476,8 @@ msgstr "Режим увеличения выключен"
 #: backends/platform/android/android.cpp:1030
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "Управление"
+msgstr "Управление касанием"
 
 #: backends/platform/android/android.cpp:1033
 msgid ""
@@ -4664,27 +4551,10 @@ msgstr ""
 #: backends/platform/android/android.cpp:1089
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid "Adding Games"
-msgstr "~Д~обавить игру..."
+msgstr "Добавление игр"
 
 #: backends/platform/android/android.cpp:1092
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4721,19 +4591,6 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
-"В этой версии ScummVM для Anrdoid были сделаны значительные изменения с "
-"доступом к файлам, что позволило добавить поддержку современных версий ОС "
-"Android.\n"
-"Поэтому вам нужно настроить подсистему SAF, чтобы вы могли добавлять игры.\n"
-"\n"
-"  1. В браузере файлов ScummVM, используйте кнопку \"Вверх\", пока не "
-"достигнете \"корневой\" папки, там будет пункт \"<Добавить новую папку>.\n"
-"  2. Выберите этот пункт, затем найдите \"корневую\" папку, где лежат все "
-"файлы ваших игр, например \"SD Card > myGames\". Выберите \"Использовать эту "
-"папку\".\n"
-"  3. После этого новая папка \"myGames\" появится в \"корневой\" папке в "
-"браузере файлов ScummVM.\n"
-"  4. Используйте эту папку для перехода к данным ваших игр."
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -4797,10 +4654,8 @@ msgstr ""
 #: backends/platform/android/options.cpp:182
 #: backends/platform/ios7/ios7_options.mm:146
 #: backends/platform/ios7/ios7_options.mm:161
-#, fuzzy
-#| msgid "Automatic drilling"
 msgid "Automatic"
-msgstr "Автоматическое сверление"
+msgstr "Автоматическое"
 
 #: backends/platform/android/options.cpp:168
 #: backends/platform/android/options.cpp:183
@@ -4813,17 +4668,13 @@ msgstr ""
 #: backends/platform/android/options.cpp:184
 #: backends/platform/ios7/ios7_options.mm:148
 #: backends/platform/ios7/ios7_options.mm:163
-#, fuzzy
-#| msgid "Escape"
 msgid "Landscape"
-msgstr "Клавиша Esc"
+msgstr "Горизонтальный"
 
 #: backends/platform/android/options.cpp:175
 #: backends/platform/ios7/ios7_options.mm:154
-#, fuzzy
-#| msgid "In 2D games"
 msgid "In games"
-msgstr "В 2D играх"
+msgstr "В играх"
 
 #. I18N: This button opens a list of all folders added for Android Storage Attached Framework
 #: backends/platform/android/options.cpp:189
@@ -4847,17 +4698,13 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Программное масштабирование (высокое качество, но медленнее)"
 
 #: backends/platform/ios7/ios7_options.mm:97
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Показать экранное управление"
+msgstr "Показать геймпад-управление (iOS 15 или новее)"
 
 #: backends/platform/ios7/ios7_options.mm:98
 #: backends/platform/ios7/ios7_options.mm:99
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Эмуляция гейм-пада"
+msgstr "Прозрачность гейм-пада"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
@@ -5490,7 +5337,7 @@ msgstr "Эта игра не поддерживает загрузку сохр�
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 msgid "This game does not support saving"
-msgstr "Эта игра не поддерживает сохранения."
+msgstr "Эта игра не поддерживает сохранение"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -5636,48 +5483,36 @@ msgstr ""
 "некоторые треки будут сыграны неверно."
 
 #: engines/agos/midi.cpp:316
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the music will not sound the same as the original game."
 msgstr ""
-"Не могу найти файлы с инструментами Adlib\n"
-"%s и %s. Ьез этих фвйлов\n"
+"Не могу найти файл с инструментами Adlib\n"
+"%s. Без этога файла\n"
 "музыка не будет звучать как в оригинальной игре."
 
 #: engines/agos/midi.cpp:374
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s. Without this file,\n"
 "the sound effects will not sound the same as the original game."
 msgstr ""
-"Не могу найти файлы с инструментами Adlib\n"
-"%s и %s. Ьез этих фвйлов\n"
-"музыка не будет звучать как в оригинальной игре."
+"Не могу найти файл с инструментами Adlib\n"
+"%s. Без этога фвйла\n"
+"звуковые эффекты не будут звучать как в оригинальной игре."
 
 #: engines/agos/midi.cpp:453
-#, fuzzy, c-format
-#| msgid ""
-#| "Could not find AdLib instrument definition files\n"
-#| "%s and %s. Without these files,\n"
-#| "the music will not sound the same as the original game."
+#, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
 "%s or %s. Without one of these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
 "Не могу найти файлы с инструментами Adlib\n"
-"%s и %s. Ьез этих фвйлов\n"
+"%s или %s. Без этих файлов\n"
 "музыка не будет звучать как в оригинальной игре."
 
 #: engines/ags/dialogs.cpp:59
@@ -6180,10 +6015,8 @@ msgstr ""
 "самого начала, с новыми сохранениями."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Interact"
 msgid "Talk/Interact"
-msgstr "Взаимодействие"
+msgstr "Говорить/Взаимодействовать"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -6201,10 +6034,8 @@ msgid "Accept"
 msgstr "Принять"
 
 #: engines/crab/input/input.cpp:186
-#, fuzzy
-#| msgid "~P~revious"
 msgid "Previous"
-msgstr "~П~ред"
+msgstr "Предыдущий"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
@@ -6235,8 +6066,6 @@ msgid "Next Page"
 msgstr "Следующая страница"
 
 #: engines/crab/input/input.cpp:226
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous Page"
 msgstr "Предыдущая страница"
 
@@ -6245,10 +6074,8 @@ msgid "Map"
 msgstr "Назначить"
 
 #: engines/crab/input/input.cpp:246
-#, fuzzy
-#| msgid "Show journal"
 msgid "Journal"
-msgstr "Показать журнал"
+msgstr "Журнал"
 
 #. I18N: Action in In Cold Blood
 #: engines/crab/input/input.cpp:251 engines/dragons/metaengine.cpp:149
@@ -6267,14 +6094,10 @@ msgid "Traits"
 msgstr ""
 
 #: engines/crab/input/input.cpp:266
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quick Save"
-msgstr "Быстрое сохнарение"
+msgstr "Быстрое сохранение"
 
 #: engines/crab/input/input.cpp:271
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick Load"
 msgstr "Быстрая загрузка"
 
@@ -6414,10 +6237,8 @@ msgid "Invert Y-axis on mouse"
 msgstr ""
 
 #: engines/freescape/metaengine.cpp:105
-#, fuzzy
-#| msgid "Use an alternative palette"
 msgid "Use alternative camera controls"
-msgstr "Использовать альтернативную палитру"
+msgstr "Использовать альтернативное управление камерой"
 
 #: engines/freescape/movement.cpp:48 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -6439,34 +6260,24 @@ msgid "Rise/Fly up"
 msgstr ""
 
 #: engines/freescape/movement.cpp:72
-#, fuzzy
-#| msgid "Fly down"
 msgid "Lower/Fly down"
-msgstr "Лететь вниз"
+msgstr "Снижаться/Лететь вниз"
 
 #: engines/freescape/movement.cpp:76
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change mode"
-msgstr "Изменить команду"
+msgstr "Изменить режим"
 
 #: engines/freescape/movement.cpp:81
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Rotate Left"
-msgstr "Стрейф влево"
+msgstr "Вращение влево"
 
 #: engines/freescape/movement.cpp:85
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Rotate Right"
-msgstr "Стрейф вправо"
+msgstr "Вращение вправо"
 
 #: engines/freescape/movement.cpp:89
-#, fuzzy
-#| msgid "Menu"
 msgid "Info Menu"
-msgstr "Меню"
+msgstr "Инфо-меню"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -7225,14 +7036,7 @@ msgid "Choose Spell"
 msgstr "Выбрать заклинание"
 
 #: engines/kyra/gui/saveload_eob.cpp:598
-#, fuzzy, c-format
-#| msgid ""
-#| "The following original saved game file has been found in your game path:\n"
-#| "\n"
-#| "%s %s\n"
-#| "\n"
-#| "Do you wish to use this saved game file with ScummVM?\n"
-#| "\n"
+#, c-format
 msgid ""
 "The following original saved game file has been found in your game path:\n"
 "\n"
@@ -7241,10 +7045,9 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Следующий файл сохранения из оригинальной игры был найден в игровой "
-"директории:\n"
+"Следующий файл сохранения из оригинальной игры был найден в игровой папке:\n"
 "\n"
-"%s %s\n"
+"%s %S\n"
 "\n"
 "Вы хотите использовать это сохранение в ScummVM?\n"
 "\n"
@@ -7420,10 +7223,8 @@ msgstr ""
 "Броня не будет ломаться до тех пор, пока у героя на станет -80HP, а не -10HP"
 
 #: engines/mm/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Hitpoint bars"
-msgstr "Включить отображение полосок здоровья"
+msgstr "Полоски здоровья"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
@@ -7537,10 +7338,8 @@ msgid "Might and Magic 1 - Menus"
 msgstr "Might and Magic 1 - Меню"
 
 #: engines/mm/mm1/metaengine.cpp:138
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Minimal Keys"
-msgstr "Might and Magic 1 - Меню"
+msgstr "Might and Magic 1 - Минимальные клавиши"
 
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
@@ -7986,30 +7785,24 @@ msgid "An error occurred while writing the save game"
 msgstr "Возникла ошибка при записи сохранения игры"
 
 #: engines/mtropolis/mtropolis.cpp:112
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG video support for some\n"
 "content but MPEG video support was not compiled in.\n"
 "The game will still play, but MPEG videos will not work."
 msgstr ""
-"Музыка в этой игре требует поддержку MP3, которая не была скомпилирована.\n"
-"Игра запустится, но без музыки."
+"Эта игра требует поддержку MPEG видео для роликов,\n"
+"но MPEG отсутвует в сборке.\n"
+"Игра запустится, но MPEG видео не будут работать."
 
 #: engines/mtropolis/mtropolis.cpp:122
-#, fuzzy
-#| msgid ""
-#| "Music for this game requires MP3 support, which was not compiled in.\n"
-#| "The game will still play, but will not have any music."
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
 "The game will still play, but some audio will not work."
 msgstr ""
-"Музыка в этой игре требует поддержку MP3, которая не была скомпилирована.\n"
-"Игра запустится, но без музыки."
+"Эта игра требует поддержку MPEG аудио для роликов,\n"
+"но MPEG аудио отсутвует в сборке.\n"
+"Игра запустится, но некоторые звуки не будут работать."
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
@@ -8064,10 +7857,8 @@ msgid "Fast move modifier"
 msgstr "Переключатель быстрого режима"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Show/hide keyboard"
 msgid "Show/hide maze map"
-msgstr "Показать/убрать клавиатуру"
+msgstr "Показать/убрать карту лабиринта"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -8092,10 +7883,8 @@ msgstr ""
 "настройках Аудио."
 
 #: engines/nancy/metaengine.cpp:60
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto Move"
-msgstr "Автосохранение"
+msgstr "Автоперемещение"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
@@ -8120,10 +7909,8 @@ msgid "Fix various minor annoyances."
 msgstr ""
 
 #: engines/nancy/metaengine.cpp:93
-#, fuzzy
-#| msgid "Extended timer"
 msgid "Extend endgame timer"
-msgstr "Продлённый таймер"
+msgstr "Продлить таймер конца игры"
 
 #: engines/nancy/metaengine.cpp:94
 msgid ""
@@ -8647,14 +8434,6 @@ msgstr ""
 "\n"
 
 #: engines/scumm/detection_internal.h:384
-#, fuzzy
-#| msgid ""
-#| "This version of Monkey Island can't be played, because Limited Run Games "
-#| "provided corrupted DISK04.LEC and 903.LFL files.\n"
-#| "\n"
-#| "Please contact their technical support for replacement files, or look "
-#| "online for some guides which can help you recover valid files from the "
-#| "KryoFlux dumps that Limited Run Games also provided."
 msgid ""
 "This version of Monkey Island can't be played, because Limited Run Games "
 "provided corrupted DISK03.LEC, DISK04.LEC and 903.LFL files.\n"
@@ -8664,7 +8443,7 @@ msgid ""
 "dumps that Limited Run Games also provided."
 msgstr ""
 "Эта версия Monkey Island не работает, потому что Limited Run Games "
-"предоставила поломанные файлы DISK04.LEC и 903.LFL.\n"
+"предоставила поломанные файлы DISK03.LEC, DISK04.LEC и 903.LFL.\n"
 "\n"
 "Пожалуйста, обратитесь в их техническую поддержку за заменой этих файлов или "
 "поищите онлайн-руководства, которые помогут вам извлечь эти файлы из дампов "
@@ -8672,25 +8451,19 @@ msgstr ""
 
 #. I18N: Creates new online session for multiplayer
 #: engines/scumm/dialog-createsession.cpp:37
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Create a new game session"
-msgstr "Создать новую запись игры"
+msgstr "Создать новую сессию игры"
 
 #. I18N: Name of the online game session
 #: engines/scumm/dialog-createsession.cpp:40
-#, fuzzy
-#| msgid "Game menu"
 msgid "Game Name:"
-msgstr "Меню игры"
+msgstr "Название игры:"
 
 #. I18N: The user's name for online
 #: engines/scumm/dialog-createsession.cpp:44
 #: engines/scumm/dialog-sessionselector.cpp:60
-#, fuzzy
-#| msgid "Name:"
 msgid "Your Name:"
-msgstr "Название:"
+msgstr "Ваше имя:"
 
 #. I18N: Button, start hosting online multiplayer game
 #: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:3900
@@ -8761,10 +8534,8 @@ msgid "Enhancements:"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1131
-#, fuzzy
-#| msgid "Use original menus"
 msgid "Fix original bugs"
-msgstr "Использовать оригинальные меню"
+msgstr "Исправить оригинальные ошибки"
 
 #: engines/scumm/dialogs.cpp:1132
 msgid ""
@@ -8783,10 +8554,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1139
-#, fuzzy
-#| msgid "Enable restored content"
 msgid "Restored content"
-msgstr "Включить восстановленный контент"
+msgstr "Восстановленный контент"
 
 #: engines/scumm/dialogs.cpp:1140
 msgid ""
@@ -8945,10 +8714,8 @@ msgid "Save / Load dialog"
 msgstr "Диалог записи / чтения"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
-#| msgid "Select shader"
 msgid "Selection screen"
-msgstr "Выберите шейдер"
+msgstr "Экран выбора"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
@@ -9194,10 +8961,8 @@ msgid "play C major on distaff"
 msgstr "играть до мажор на прялке"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Shows the drafts inventory"
-msgstr "Показать инвентарь"
+msgstr "Показать инвентарь узоров"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
@@ -10412,78 +10177,56 @@ msgid "Speeds up animations."
 msgstr "Ускоряет анимацию."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Skip main menu"
-msgstr "Открыть главное меню"
+msgstr "Пропустить главное меню"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:124
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Показать/Спрятать инфоэкран"
+msgstr "Показать экран помощи"
 
 #: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Сохранить игру"
 
 #: engines/vcruise/metaengine.cpp:139
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Открыть настройки 3DS"
+msgstr "Открыть настройки звука"
 
 #: engines/vcruise/metaengine.cpp:144
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
 msgstr "Выйти из игры"
 
 #: engines/vcruise/metaengine.cpp:155
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Переключение на весь экран"
+msgstr "Вкл/выкл музыку"
 
 #: engines/vcruise/metaengine.cpp:160
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Громкость специальных звуковых эффектов"
+msgstr "Вкл/выкл звуковые эффекты"
 
 #: engines/vcruise/metaengine.cpp:165
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Громкость музыки увеличить / уменьшить"
+msgstr "Уменьшить громкость музыки"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Громк. музыки: "
+msgstr "Увеличить громкость музыки"
 
 #: engines/vcruise/metaengine.cpp:175
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Громкость специальных звуковых эффектов"
+msgstr "Уменьшить громкость звуковых эффектов"
 
 #: engines/vcruise/metaengine.cpp:180
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Громкость специальных звуковых эффектов"
+msgstr "Увеличить громкость звуковых эффектов"
 
 #: engines/vcruise/metaengine.cpp:185
-#, fuzzy
-#| msgid "Speeds up animations."
 msgid "Skip current animation"
-msgstr "Ускоряет анимацию."
+msgstr "Пропустить текущую анимацию"
 
 #: engines/vcruise/vcruise.cpp:83
 msgid "This game requires JPEG support, which was not compiled in."
