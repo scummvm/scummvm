@@ -218,11 +218,11 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 	for (uint i = 0; i < msg.size(); i++) {
 		message += msg[i];
 		currLine += msg[i];
-		if (i < msg.size()-1 && g_grim->getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR && _font->isKoreanChar(msg[i], msg[i+1])) {
+		if (i < msg.size() - 1 && g_grim->getGameType() == GType_GRIM && g_grim->getGameLanguage() == Common::KO_KOR && _font->isKoreanChar(msg[i], msg[i + 1])) {
 			isMultiByte = true;
-			message += msg[i+1];
-			currLine += msg[i+1];
-			lineWidth += _font->getWCharKernedWidth(msg[i], msg[i+1]);
+			message += msg[i + 1];
+			currLine += msg[i + 1];
+			lineWidth += _font->getWCharKernedWidth(msg[i], msg[i + 1]);
 			i++;
 		} else {
 			isMultiByte = false;
@@ -232,12 +232,12 @@ void TextObject::setupTextReal(S msg, Common::String (*convert)(const S &s)) {
 		if (currLine.size() > 1 && lineWidth > maxWidth) {
 			if (isMultiByte) {
 				// Remove 2byte code
-				lineWidth -= _font->getWCharKernedWidth(msg[i-1], msg[i]);
+				lineWidth -= _font->getWCharKernedWidth(msg[i - 1], msg[i]);
 				message.deleteLastChar();
 				message.deleteLastChar();
 				currLine.deleteLastChar();
 				currLine.deleteLastChar();
-				i-=2;
+				i -= 2;
 			} else {
 				if (currLine.contains(' ')) {
 					while (currLine.lastChar() != ' ' && currLine.size() > 1) {
