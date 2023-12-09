@@ -19,66 +19,15 @@
  *
  */
 
-#include "gfx.h"
+#include "twp/gfx.h"
 #include "common/debug.h"
+#include "graphics/opengl/debug.h"
 #include "graphics/opengl/context.h"
 #include "graphics/opengl/system_headers.h"
 
 namespace Twp {
 
 static Texture gEmptyTexture;
-
-#ifdef DEBUG
-	#define GL_CHECK(expr)                           \
-		do {                                         \
-			(expr);                                  \
-			checkGLError(__FILE__, __LINE__, #expr); \
-		} while (false)
-	#define GL_CHECK0()                           \
-		do {                                      \
-			checkGLError(__FILE__, __LINE__, ""); \
-		} while (false)
-#else
-	#define GL_CHECK(expr) (expr)
-	#define GL_CHECK0()
-#endif
-
-static void checkGLError(const char *filename, int line, const char *info) {
-	int err = glGetError();
-	if (err != GL_NO_ERROR) {
-		const char *name = nullptr;
-		const char *desc = nullptr;
-		switch (err) {
-		case GL_INVALID_ENUM:
-			name = "GL_INVALID_ENUM";
-			desc = "An unacceptable value is specified for an enumerated argument.";
-			break;
-		case GL_INVALID_VALUE:
-			name = "GL_INVALID_VALUE";
-			desc = "A numeric argument is out of range.";
-			break;
-		case GL_INVALID_OPERATION:
-			name = "GL_INVALID_OPERATION";
-			desc = "The specified operation is not allowed in the current state.";
-			break;
-		case GL_INVALID_FRAMEBUFFER_OPERATION:
-			name = "GL_INVALID_FRAMEBUFFER_OPERATION";
-			desc = "The command is trying to render to or read from the framebuffer while the currently bound framebuffer is not framebuffer complete.";
-			break;
-		case GL_OUT_OF_MEMORY:
-			name = "GL_OUT_OF_MEMORY";
-			desc = "There is not enough memory left to execute the command.";
-			break;
-		default:
-			break;
-		}
-		if (name) {
-			debug("%s: %s at %s:%d(%s)", name, desc, filename, line, info);
-		} else {
-			debug("Code %d at %s:%d(%s)", err, filename, line, info);
-		}
-	}
-}
 
 Math::Matrix4 ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
 	Math::Matrix4 result;
@@ -91,28 +40,6 @@ Math::Matrix4 ortho(float left, float right, float bottom, float top, float zNea
 	m[14] = -(zFar + zNear) / (zFar - zNear);
 	m[15] = 1;
 	return result;
-}
-
-struct Use {
-public:
-	Use(GLint program) : _prev(0), program(program) {
-		glGetIntegerv(GL_CURRENT_PROGRAM, &_prev);
-		if (_prev != program)
-			glUseProgram(program);
-	}
-
-	~Use() {
-		if (_prev != program)
-			glUseProgram(_prev);
-	}
-
-private:
-	GLint _prev, program;
-};
-
-static Use use(GLint program) {
-	Use use(program);
-	return use;
 }
 
 static GLint getFormat(int channels) {
@@ -138,18 +65,21 @@ void Texture::load(const Graphics::Surface &surface) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, surface.format.bytesPerPixel);
-	GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, getFormat(surface.format.bytesPerPixel), width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+	GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, getFormat(surface.format.bytesPerPixel), width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
 }
 
 void Texture::bind(const Texture *pTexture) {
 	if (pTexture && pTexture->id) {
-		GL_CHECK(glBindTexture(GL_TEXTURE_2D, pTexture->id));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, pTexture->id));
 	} else {
-		GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 	}
 }
 
 Shader::Shader() {
+}
+
+Shader::~Shader() {
 }
 
 void Shader::init(const char *vertex, const char *fragment) {
@@ -159,17 +89,17 @@ void Shader::init(const char *vertex, const char *fragment) {
 	if (fragment) {
 		_fragment = loadShader(fragment, GL_FRAGMENT_SHADER);
 	}
-	GL_CHECK(program = glCreateProgram());
-	GL_CHECK(glAttachShader(program, _vertex));
-	GL_CHECK(glAttachShader(program, _fragment));
-	GL_CHECK(glLinkProgram(program));
+	GL_CALL(program = glCreateProgram());
+	GL_CALL(glAttachShader(program, _vertex));
+	GL_CALL(glAttachShader(program, _fragment));
+	GL_CALL(glLinkProgram(program));
 }
 
 uint32 Shader::loadShader(const char *code, uint32 shaderType) {
 	uint32 result;
-	GL_CHECK(result = glCreateShader(shaderType));
-	GL_CHECK(glShaderSource(result, 1, &code, nullptr));
-	GL_CHECK(glCompileShader(result));
+	GL_CALL(result = glCreateShader(shaderType));
+	GL_CALL(glShaderSource(result, 1, &code, nullptr));
+	GL_CALL(glCompileShader(result));
 	statusShader(result);
 	return result;
 }
@@ -187,14 +117,17 @@ void Shader::statusShader(uint32 shader) {
 
 int Shader::getUniformLocation(const char *name) {
 	int loc;
-	GL_CHECK(loc = glGetUniformLocation(program, name));
+	GL_CALL(loc = glGetUniformLocation(program, name));
 	return loc;
 }
 
 void Shader::setUniform(const char *name, Math::Matrix4 value) {
-	use(program);
+	GLint prev;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &prev);
+	glUseProgram(program);
 	int loc = getUniformLocation(name);
-	GL_CHECK(glUniformMatrix4fv(loc, 1, GL_FALSE, value.getData()));
+	GL_CALL(glUniformMatrix4fv(loc, 1, GL_FALSE, value.getData()));
+	glUseProgram(prev);
 }
 
 Gfx::Gfx() : _vbo(0), _ebo(0) {
@@ -210,7 +143,7 @@ void Gfx::init() {
 	empty.setPixels(pixels);
 	gEmptyTexture.load(empty);
 	const char *vsrc = R"(#version 110
-	uniform mat4 u_transform;
+		uniform mat4 u_transform;
 	attribute vec2 a_position;
 	attribute vec4 a_color;
 	attribute vec2 a_texCoords;
@@ -229,25 +162,25 @@ void Gfx::init() {
 		vec4 tex_color = texture2D(u_texture, v_texCoords);
 		gl_FragColor = v_color * tex_color;
 	})";
-	_shader.init(vsrc, fsrc);
+	_defaultShader.init(vsrc, fsrc);
+	_shader = &_defaultShader;
 	_mvp = ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f);
 
-	GL_CHECK(glGenBuffers(1, &_vbo));
-	GL_CHECK(glGenBuffers(1, &_ebo));
-	GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-	GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
-	GLint p, c, t, tex, tr;
-	GL_CHECK(p = glGetAttribLocation(_shader.program, "a_position"));
-	GL_CHECK(c = glGetAttribLocation(_shader.program, "a_color"));
-	GL_CHECK(t = glGetAttribLocation(_shader.program, "a_texCoords"));
-	GL_CHECK(tex = glGetUniformLocation(_shader.program, "u_texture"));
-	GL_CHECK(tr = glGetUniformLocation(_shader.program, "u_transform"));
-	GL_CHECK(glVertexAttribPointer(p, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-	GL_CHECK(glEnableVertexAttribArray(p));
-	GL_CHECK(glVertexAttribPointer(c, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-	GL_CHECK(glEnableVertexAttribArray(c));
-	GL_CHECK(glVertexAttribPointer(t, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
-	GL_CHECK(glEnableVertexAttribArray(c));
+	GL_CALL(glGenBuffers(1, &_vbo));
+	GL_CALL(glGenBuffers(1, &_ebo));
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+	GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
+	GL_CALL(_posLoc = glGetAttribLocation(_defaultShader.program, "a_position"));
+	GL_CALL(_colLoc = glGetAttribLocation(_defaultShader.program, "a_color"));
+	GL_CALL(_texCoordsLoc = glGetAttribLocation(_defaultShader.program, "a_texCoords"));
+	GL_CALL(_texLoc = glGetUniformLocation(_defaultShader.program, "u_texture"));
+	GL_CALL(_trsfLoc = glGetUniformLocation(_defaultShader.program, "u_transform"));
+	GL_CALL(glVertexAttribPointer(_posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
+	GL_CALL(glEnableVertexAttribArray(_posLoc));
+	GL_CALL(glVertexAttribPointer(_colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
+	GL_CALL(glEnableVertexAttribArray(_colLoc));
+	GL_CALL(glVertexAttribPointer(_texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
+	GL_CALL(glEnableVertexAttribArray(_texCoordsLoc));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -265,7 +198,7 @@ Math::Matrix4 Gfx::getFinalTransform(Math::Matrix4 trsf) {
 
 void Gfx::noTexture() {
 	_texture = &gEmptyTexture;
-	GL_CHECK(glBindTexture(GL_TEXTURE_2D, gEmptyTexture.id));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, gEmptyTexture.id));
 }
 
 void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
@@ -276,37 +209,37 @@ void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
 void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf) {
 	if (v_size > 0) {
 		// set blending
-		GL_CHECK(glEnable(GL_BLEND));
-		GL_CHECK(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
-		GL_CHECK(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+		GL_CALL(glEnable(GL_BLEND));
+		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
+		GL_CALL(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
-		GL_CHECK(glUseProgram(_shader.program));
+		GL_CALL(glUseProgram(_shader->program));
 
-		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-		GL_CHECK(glEnableVertexAttribArray(0));
-		GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-		GL_CHECK(glEnableVertexAttribArray(2));
-		GL_CHECK(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-		GL_CHECK(glEnableVertexAttribArray(1));
-		GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+		GL_CALL(glEnableVertexAttribArray(_posLoc));
+		GL_CALL(glVertexAttribPointer(_posLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
+		GL_CALL(glEnableVertexAttribArray(_colLoc));
+		GL_CALL(glVertexAttribPointer(_colLoc, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
+		GL_CALL(glEnableVertexAttribArray(_texCoordsLoc));
+		GL_CALL(glVertexAttribPointer(_texCoordsLoc, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
 
-		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-		GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
 
-		GL_CHECK(glActiveTexture(GL_TEXTURE0));
-		GL_CHECK(glBindTexture(GL_TEXTURE_2D, _texture->id));
-		GL_CHECK(glUniform1i(0, 0));
+		GL_CALL(glActiveTexture(GL_TEXTURE0));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+		GL_CALL(glUniform1i(0, 0));
 
 		Math::Matrix4 m = getFinalTransform(trsf);
-		_shader.setUniform("u_transform", m);
-		GL_CHECK(glDrawArrays((GLenum)primitivesType, 0, v_size));
+		_shader->setUniform("u_transform", m);
+		GL_CALL(glDrawArrays((GLenum)primitivesType, 0, v_size));
 
 		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		GL_CHECK(glDisableVertexAttribArray(0));
-		GL_CHECK(glDisableVertexAttribArray(1));
-		GL_CHECK(glDisableVertexAttribArray(2));
+		GL_CALL(glDisableVertexAttribArray(0));
+		GL_CALL(glDisableVertexAttribArray(1));
+		GL_CALL(glDisableVertexAttribArray(2));
 
 		glDisable(GL_BLEND);
 	}
@@ -315,38 +248,39 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf) {
 	if (i_size > 0) {
 		// set blending
-		GL_CHECK(glEnable(GL_BLEND));
-		GL_CHECK(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
-		GL_CHECK(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+		GL_CALL(glEnable(GL_BLEND));
+		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
+		GL_CALL(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 
-		GL_CHECK(glUseProgram(_shader.program));
+		GL_CALL(glUseProgram(_shader->program));
 
-		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
 
-		GL_CHECK(glEnableVertexAttribArray(0));
-		GL_CHECK(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
-		GL_CHECK(glEnableVertexAttribArray(2));
-		GL_CHECK(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
-		GL_CHECK(glEnableVertexAttribArray(1));
-		GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
+		GL_CALL(glEnableVertexAttribArray(0));
+		GL_CALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0));
+		GL_CALL(glEnableVertexAttribArray(2));
+		GL_CALL(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(2 * sizeof(float))));
+		GL_CALL(glEnableVertexAttribArray(1));
+		GL_CALL(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(6 * sizeof(float))));
 
-		GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
-		GL_CHECK(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
-		GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
-		GL_CHECK(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * i_size, indices, GL_STREAM_DRAW));
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _vbo));
+		GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * v_size, vertices, GL_STREAM_DRAW));
+		GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo));
+		GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * i_size, indices, GL_STREAM_DRAW));
 
-		GL_CHECK(glActiveTexture(GL_TEXTURE0));
-		GL_CHECK(glBindTexture(GL_TEXTURE_2D, _texture->id));
-		GL_CHECK(glUniform1i(0, 0));
+		GL_CALL(glActiveTexture(GL_TEXTURE0));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+		GL_CALL(glUniform1i(0, 0));
 
-		_shader.setUniform("u_transform", getFinalTransform(trsf));
-		GL_CHECK(glDrawElements(primitivesType, i_size, GL_UNSIGNED_INT, NULL));
+		_shader->setUniform("u_transform", getFinalTransform(trsf));
+		_shader->applyUniforms();
+		GL_CALL(glDrawElements(primitivesType, i_size, GL_UNSIGNED_INT, NULL));
 
 		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		GL_CHECK(glDisableVertexAttribArray(0));
-		GL_CHECK(glDisableVertexAttribArray(1));
-		GL_CHECK(glDisableVertexAttribArray(2));
+		GL_CALL(glDisableVertexAttribArray(0));
+		GL_CALL(glDisableVertexAttribArray(1));
+		GL_CALL(glDisableVertexAttribArray(2));
 
 		glDisable(GL_BLEND);
 	}
@@ -390,15 +324,19 @@ void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math:
 		{.pos = {pos.getX(), pos.getY()}, .texCoords = {l, b}, .color = color},
 		{.pos = {pos.getX(), pos.getY() + textRect.height()}, .texCoords = {l, t}, .color = color}};
 	_texture = &texture;
-	GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture.id));
+	GL_CALL(glBindTexture(GL_TEXTURE_2D, texture.id));
 	uint32 quadIndices[] = {
 		0, 1, 3,
 		1, 2, 3};
 	draw(vertices, 4, quadIndices, 6, trsf);
 }
 
-void Gfx::camera(float w, float h) {
-	_cameraSize = Math::Vector2d(w, h);
-	_mvp = ortho(0.f, w, 0.f, h, -1.f, 1.f);
+void Gfx::camera(Math::Vector2d size) {
+	_cameraSize = size;
+	_mvp = ortho(0.f, size.getX(), 0.f, size.getY(), -1.f, 1.f);
 }
+
+void Gfx::use(Shader *shader) {
+	_shader = shader ? shader : &_defaultShader;
 }
+} // namespace Twp
