@@ -1663,6 +1663,9 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	case Common::ES_ESP:
 		_gameVariant = 4;
 		break;
+	case Common::HE_ISR:
+		_gameVariant = 5;
+		break;
 	default:
 		// 0 - english
 		_gameVariant = 0;
