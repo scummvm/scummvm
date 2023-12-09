@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-09 20:25+0000\n"
-"Last-Translator: SkiffPL <skiff@windowslive.com>\n"
+"PO-Revision-Date: 2023-12-09 22:05+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -2944,7 +2944,7 @@ msgstr "Błąd pliku konfiguracyjnego"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr "Nie można odczytać  lub utworzyć pliku konfiguracyjnego ScummVM!"
+msgstr "Nie można odczytać lub utworzyć pliku konfiguracyjnego ScummVM!"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
@@ -3240,10 +3240,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Wygląda na to, że uruchamiasz grę bezpośrednio z płyty CD,\n"
-"co powodować pewne problemy.\n"
-"Stąd zalecane jest skopiowanie plików gry na twardy dysk.\n"
-"Dalsze informacje są dostępne w dokementacji (audio CD)."
+"Wygląda na to, że uruchamiasz grę bezpośrednio \n"
+"z płyty CD, co powodować pewne problemy.\n"
+"Stąd zalecane jest skopiowanie plików gry\n"
+"na twardy dysk. Dalsze informacje są dostępne w\n"
+"dokementacji (audio CD)."
 
 #: engines/engine.cpp:569
 msgid ""
@@ -3254,9 +3255,10 @@ msgid ""
 "See the documentation (CD audio) for details."
 msgstr ""
 "Gra zawiera na swojej płycie ścieżki audio.\n"
-"Aby słyszeć muzykę, należy je skopiować na dysk\n"
-"za pomocą odpowiedniego rippera CD audio.\n"
-"Dalsze informacje są dostępne w dokumentacji (audio CD)."
+"Aby słyszeć muzykę, należy je skopiować\n"
+"na dysk za pomocą odpowiedniego rippera\n"
+"CD audio. Dalsze informacje są dostępne\n"
+"w dokumentacji (audio CD)."
 
 #: engines/engine.cpp:597
 msgid "Skip autosave"
@@ -3610,7 +3612,7 @@ msgid ""
 "Failed to download %u files."
 msgstr ""
 "Pobieranie ukończone.\n"
-"Nieudane pobrania plików: %u"
+"Nieudane pobrania plików: %u."
 
 #: backends/cloud/storage.cpp:354
 msgid "Download complete."
@@ -4020,7 +4022,7 @@ msgstr "Prawy Analog Y"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
-msgstr "Kapturek  X"
+msgstr "Kapturek X"
 
 #: backends/keymapper/hardware-input.cpp:282
 msgid "Hat Y"
@@ -5646,7 +5648,7 @@ msgid ""
 "the music will not sound the same as the original game."
 msgstr ""
 "Nie można znaleźć pliku definicji instrumentu AdLib\n"
-"%S. Bez tego pliku\n"
+"%s. Bez tego pliku\n"
 "muzyka nie będzie brzmiała tak samo jak w oryginalnej grze."
 
 #: engines/agos/midi.cpp:374
@@ -5946,7 +5948,7 @@ msgstr "skróty tylko dla KIA"
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:210
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Chodzenie  / Patrzenie / Rozmowa / Wybór / Strzał"
+msgstr "Chodzenie / Patrzenie / Rozmowa / Wybór / Strzał"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6303,7 +6305,7 @@ msgstr ""
 "Pliki STR i XA należy wyodrębniać wyłącznie specjalną metodą. Resztę należy "
 "normalnie skopiować z płyty CD z grą.\n"
 "\n"
-"  Zobacz %s"
+" Zobacz %s"
 
 #: engines/dragons/metaengine.cpp:137
 msgid "Action"
@@ -7844,7 +7846,9 @@ msgstr "Odtwarzaj filmy wprowadzające"
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr "Eksploracja poza ten punkt dostępna jest tylko w pełnej wersji gry."
+msgstr ""
+"Eksploracja poza ten punkt dostępna jest tylko w\n"
+"pełnej wersji gry."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:428
 msgid ""
@@ -7991,7 +7995,7 @@ msgstr "Przeglądarka obrazów"
 #: engines/mutationofjb/util.cpp:32
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Nie można znaleźć pliku danych silnika '%s'."
+msgstr "Nie można znaleźć pliku danych silnika '%s'"
 
 #: engines/myst3/detection.cpp:181 engines/myst3/detection.cpp:195
 msgid "PS2 version is not yet supported"
@@ -8475,8 +8479,7 @@ msgstr "Wersja zapisu gry to %d. Maksymalna, wspierana wersja to %0d"
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
-"Ten zapis gry został utworzony w innej wersji gry. Nie można go wczytać."
+msgstr "Ten zapis gry został utworzony w innej wersji gry. Nie można go wczytać"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
@@ -9527,12 +9530,13 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1224
+#, fuzzy
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Nie znaleziono pliku wykonywalnego \"Monkey Island\". Muzyka będzie "
-"wyłączona."
+"Nie znaleziono pliku wykonywalnego \"Monkey Island\".\n"
+"Muzyka będzie wyłączona."
 
 #: engines/scumm/scumm.cpp:1590
 msgid ""
@@ -9857,7 +9861,7 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
 "Użyj angielskich głosów zamiast niemieckich dla każdego języka poza "
-"niemieckim."
+"niemieckim"
 
 #: engines/tetraedge/metaengine.cpp:32
 #, fuzzy
