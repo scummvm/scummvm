@@ -28,9 +28,9 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"

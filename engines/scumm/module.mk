@@ -39,6 +39,11 @@ MODULE_OBJS := \
 	imuse/drivers/pcspk.o \
 	input.o \
 	ks_check.o \
+	macgui/macgui.o \
+	macgui/macgui_dialogwindow.o \
+	macgui/macgui_indy3.o \
+	macgui/macgui_loom.o \
+	macgui/macgui_widgets.o \
 	metaengine.o \
 	midiparser_ro.o \
 	object.o \

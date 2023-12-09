@@ -29,12 +29,12 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/localizer.h"
 #endif
+#include "scumm/macgui/macgui.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v2.h"

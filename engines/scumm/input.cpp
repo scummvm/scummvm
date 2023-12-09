@@ -27,7 +27,6 @@
 
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
@@ -35,6 +34,7 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #endif
+#include "scumm/macgui/macgui.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v6.h"
