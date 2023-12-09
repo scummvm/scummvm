@@ -146,7 +146,7 @@ void Sword2Engine::runStart(int start) {
 	// Restarting - stop sfx, music & speech!
 
 	_sound->clearFxQueue(true);
-	_logic->fnStopMusic(NULL);
+	_logic->fnStopMusic(nullptr);
 	_sound->unpauseSpeech();
 	_sound->stopSpeech();
 
@@ -171,7 +171,7 @@ void Sword2Engine::runStart(int start) {
 
 	// Make sure there's a mouse, in case restarting while mouse not
 	// available
-	_logic->fnAddHuman(NULL);
+	_logic->fnAddHuman(nullptr);
 }
 
 } // End of namespace Sword2

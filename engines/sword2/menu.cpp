@@ -310,16 +310,16 @@ int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	if (_icons[menu][pocket]) {
 		_iconCount--;
 		free(_icons[menu][pocket]);
-		_icons[menu][pocket] = NULL;
+		_icons[menu][pocket] = nullptr;
 		clearIconArea(menu, pocket, &r);
 		_vm->_screen->updateRect(&r);
 	}
 
 	// Only put the icon in the pocket if it is not NULL
-	if (icon != NULL) {
+	if (icon != nullptr) {
 		_iconCount++;
 		_icons[menu][pocket] = (byte *)malloc(menuIconWidth * RDMENU_ICONDEEP);
-		if (_icons[menu][pocket] == NULL)
+		if (_icons[menu][pocket] == nullptr)
 			return RDERR_OUTOFMEMORY;
 		memcpy(_icons[menu][pocket], icon, menuIconWidth * RDMENU_ICONDEEP);
 	}

@@ -80,7 +80,7 @@ bool MoviePlayer::load(const char *name) {
 	if (_vm->shouldQuit())
 		return false;
 
-	_textSurface = NULL;
+	_textSurface = nullptr;
 
 	Common::String filename;
 	switch (_decoderType) {
@@ -135,7 +135,7 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 
 	bool terminated = !playVideo();
 
-	closeTextObject(_currentMovieText, NULL, 0);
+	closeTextObject(_currentMovieText, nullptr, 0);
 
 	if (terminated) {
 		_vm->_sound->stopMovieSounds();
@@ -195,7 +195,7 @@ void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint1
 		MovieText *text = &_movieTexts[index];
 
 		free(text->_textMem);
-		text->_textMem = NULL;
+		text->_textMem = nullptr;
 
 		if (_textSurface) {
 			if (screen) {
@@ -226,7 +226,7 @@ void MoviePlayer::closeTextObject(uint32 index, Graphics::Surface *screen, uint1
 			}
 
 			_vm->_screen->deleteSurface(_textSurface);
-			_textSurface = NULL;
+			_textSurface = nullptr;
 		}
 	}
 }
@@ -297,7 +297,7 @@ void MoviePlayer::performPostProcessing(Graphics::Surface *screen, uint16 pitch)
 	if (_currentMovieText < _numMovieTexts) {
 		text = &_movieTexts[_currentMovieText];
 	} else {
-		text = NULL;
+		text = nullptr;
 	}
 
 	if (text && frame == text->_startFrame) {
@@ -425,7 +425,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 #else
 		GUI::MessageDialog dialog(_("PSX cutscenes found but ScummVM has been built without RGB color support"), _("OK"));
 		dialog.runModal();
-		return NULL;
+		return nullptr;
 #endif
 	}
 
@@ -455,7 +455,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 #else
 		GUI::MessageDialog dialog(_("MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"), _("OK"));
 		dialog.runModal();
-		return NULL;
+		return nullptr;
 #endif
 	}
 
@@ -468,7 +468,7 @@ MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, OSystem *system
 	} else
 		warning("Cutscene '%s' not found", name);
 
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Sword2

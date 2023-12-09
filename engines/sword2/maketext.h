@@ -115,7 +115,7 @@ private:
 public:
 	FontRenderer(Sword2Engine *vm) : _vm(vm) {
 		for (int i = 0; i < MAX_text_blocs; i++)
-			_blocList[i].text_mem = NULL;
+			_blocList[i].text_mem = nullptr;
 	}
 
 	~FontRenderer() {

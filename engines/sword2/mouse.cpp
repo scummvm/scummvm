@@ -86,8 +86,8 @@ Mouse::Mouse(Sword2Engine *vm) {
 	_playerActivityDelay = 0;
 	_realLuggageItem = 0;
 
-	_mouseAnim.data = NULL;
-	_luggageAnim.data = NULL;
+	_mouseAnim.data = nullptr;
+	_luggageAnim.data = nullptr;
 
 	// For the menus
 	_totalTemp = 0;
@@ -107,7 +107,7 @@ Mouse::Mouse(Sword2Engine *vm) {
 
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < RDMENU_MAXPOCKETS; j++) {
-			_icons[i][j] = NULL;
+			_icons[i][j] = nullptr;
 			_pocketStatus[i][j] = 0;
 		}
 
@@ -452,7 +452,7 @@ void Mouse::systemMenuMouse() {
 		pars[1] = FX_LOOP;
 		_vm->_logic->fnPlayMusic(pars);
 	} else
-		_vm->_logic->fnStopMusic(NULL);
+		_vm->_logic->fnStopMusic(nullptr);
 }
 
 void Mouse::dragMouse() {
@@ -829,7 +829,7 @@ void Mouse::normalMouse() {
 		// off too
 
 		noHuman();
-		_vm->_logic->fnFadeDown(NULL);
+		_vm->_logic->fnFadeDown(nullptr);
 
 		// Tell the walker
 
@@ -942,7 +942,7 @@ uint32 Mouse::chooseMouse() {
 		}
 
 		for (; i < 15; i++)
-			setMenuIcon(RDMENU_BOTTOM, (uint8) i, NULL);
+			setMenuIcon(RDMENU_BOTTOM, (uint8) i, nullptr);
 
 		showMenu(RDMENU_BOTTOM);
 		setMouse(NORMAL_MOUSE_ID);
@@ -1107,7 +1107,7 @@ void Mouse::setMouse(uint32 res) {
 		_vm->_resman->closeResource(res);
 	} else {
 		// blank cursor
-		setMouseAnim(NULL, 0, 0);
+		setMouseAnim(nullptr, 0, 0);
 	}
 }
 
@@ -1121,7 +1121,7 @@ void Mouse::setLuggage(uint32 res) {
 		setLuggageAnim(icon, len);
 		_vm->_resman->closeResource(res);
 	} else
-		setLuggageAnim(NULL, 0);
+		setLuggageAnim(nullptr, 0);
 }
 
 void Mouse::setObjectHeld(uint32 res) {
@@ -1492,7 +1492,7 @@ void Mouse::pauseEngine(bool pause) {
 		// we are allowed to clear the luggage this way.
 
 		clearPointerText();
-		setLuggageAnim(NULL, 0);
+		setLuggageAnim(nullptr, 0);
 		setMouse(0);
 		setMouseTouching(1);
 	} else {
@@ -1650,7 +1650,7 @@ int32 Mouse::animateMouse() {
 
 int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 	free(_mouseAnim.data);
-	_mouseAnim.data = NULL;
+	_mouseAnim.data = nullptr;
 
 	if (ma)	{
 		if (mouseFlash == RDMOUSE_FLASH)
@@ -1696,7 +1696,7 @@ int32 Mouse::setMouseAnim(byte *ma, int32 size, int32 mouseFlash) {
 
 int32 Mouse::setLuggageAnim(byte *ma, int32 size) {
 	free(_luggageAnim.data);
-	_luggageAnim.data = NULL;
+	_luggageAnim.data = nullptr;
 
 	if (ma)	{
 		Common::MemoryReadStream readS(ma, size);

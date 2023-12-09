@@ -299,7 +299,7 @@ private:
 
 public:
 	ObjectHub() {
-		_addr = NULL;
+		_addr = nullptr;
 	}
 
 	static int size() {

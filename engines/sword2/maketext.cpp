@@ -214,7 +214,7 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 				w = charWidth(ch, fontRes) + _charSpacing;
 				l = 1;
 			}
-				
+
 			wordWidth += w;
 			wordLength += l;
 			pos += l;
@@ -248,7 +248,7 @@ uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint
 					// The word spills over to the next line, i.e.
 					// no separating space.
 					line[lineNo].skipSpace = true;
-					
+
 					lineNo++;
 
 					assert(lineNo < MAX_LINES);
@@ -440,7 +440,7 @@ byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 
 
 				continue;
 			}
-			byte *charPtr = NULL;
+			byte *charPtr = nullptr;
 			if (isKoreanChar(ch, *currTxtLine, fontRes)) {
 				charPtr = findWChar(ch, *currTxtLine++, charSet);
 				j++;
@@ -845,7 +845,7 @@ void FontRenderer::printTextBlocs() {
 void FontRenderer::killTextBloc(uint32 bloc_number) {
 	bloc_number--;
 	free(_blocList[bloc_number].text_mem);
-	_blocList[bloc_number].text_mem = NULL;
+	_blocList[bloc_number].text_mem = nullptr;
 }
 
 // Resource 3258 contains text from location script for 152 (install, save &

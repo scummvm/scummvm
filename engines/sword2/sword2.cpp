@@ -65,15 +65,15 @@ Sword2Engine::Sword2Engine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
-	_memory = NULL;
-	_resman = NULL;
-	_sound = NULL;
-	_screen = NULL;
-	_mouse = NULL;
-	_logic = NULL;
-	_fontRenderer = NULL;
+	_memory = nullptr;
+	_resman = nullptr;
+	_sound = nullptr;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_logic = nullptr;
+	_fontRenderer = nullptr;
 	_isRTL = Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR;
-	_debugger = NULL;
+	_debugger = nullptr;
 
 	_keyboardEvent.pending = false;
 	_mouseEvent.pending = false;
@@ -176,14 +176,14 @@ Common::Error Sword2Engine::run() {
 	// Get some falling RAM and put it in your pocket, never let it slip
 	// away
 
-	_debugger = NULL;
-	_sound = NULL;
-	_fontRenderer = NULL;
-	_screen = NULL;
-	_mouse = NULL;
-	_logic = NULL;
-	_resman = NULL;
-	_memory = NULL;
+	_debugger = nullptr;
+	_sound = nullptr;
+	_fontRenderer = nullptr;
+	_screen = nullptr;
+	_mouse = nullptr;
+	_logic = nullptr;
+	_resman = nullptr;
+	_memory = nullptr;
 
 	initGraphics(640, 480);
 	_screen = new Screen(this, 640, 480);
@@ -301,7 +301,7 @@ Common::Error Sword2Engine::run() {
 				case Common::KEYCODE_c:
 					if (!_logic->readVar(DEMO) && !_mouse->isChoosing()) {
 						ScreenInfo *screenInfo = _screen->getScreenInfo();
-						_logic->fnPlayCredits(NULL);
+						_logic->fnPlayCredits(nullptr);
 						screenInfo->new_palette = 99;
 					}
 					break;
@@ -397,7 +397,7 @@ bool Sword2Engine::checkForMouseEvents() {
 
 MouseEvent *Sword2Engine::mouseEvent() {
 	if (!_mouseEvent.pending)
-		return NULL;
+		return nullptr;
 
 	_mouseEvent.pending = false;
 	return &_mouseEvent;
@@ -405,7 +405,7 @@ MouseEvent *Sword2Engine::mouseEvent() {
 
 KeyboardEvent *Sword2Engine::keyboardEvent() {
 	if (!_keyboardEvent.pending)
-		return NULL;
+		return nullptr;
 
 	_keyboardEvent.pending = false;
 	return &_keyboardEvent;

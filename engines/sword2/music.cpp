@@ -93,17 +93,17 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		}
 
 		if (soundMode == 0)
-			return NULL;
+			return nullptr;
 
 		fh->file.open(filename);
 		fh->fileType = soundMode;
 		if (!fh->file.isOpen()) {
 			warning("BS2 getAudioStream: Failed opening file '%s'", filename);
-			return NULL;
+			return nullptr;
 		}
 		if (fh->fileSize != fh->file.size()) {
 			free(fh->idxTab);
-			fh->idxTab = NULL;
+			fh->idxTab = nullptr;
 		}
 	} else
 		alreadyOpen = true;
@@ -147,7 +147,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		warning("getAudioStream: Could not find %s ID %d! Possibly the wrong file", base, id);
 		if (!alreadyOpen)
 			fh->file.close();
-		return NULL;
+		return nullptr;
 	}
 
 	fh->file.seek(pos, SEEK_SET);
@@ -177,7 +177,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		}
 #endif
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -301,7 +301,7 @@ MusicInputStream::MusicInputStream(int cd, SoundFileHandle *fh, uint32 musicId, 
 
 MusicInputStream::~MusicInputStream() {
 	delete _decoder;
-	_decoder = NULL;
+	_decoder = nullptr;
 }
 
 int MusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -455,7 +455,7 @@ int Sound::readBuffer(int16 *buffer, const int numSamples) {
 	for (i = 0; i < MAXMUS; i++) {
 		if (_music[i] && _music[i]->readyToRemove()) {
 			delete _music[i];
-			_music[i] = NULL;
+			_music[i] = nullptr;
 		}
 	}
 
@@ -558,7 +558,7 @@ void Sound::stopMusic(bool immediately) {
 		if (_music[i]) {
 			if (immediately) {
 				delete _music[i];
-				_music[i] = NULL;
+				_music[i] = nullptr;
 			} else
 				_music[i]->fadeDown();
 		}
@@ -610,7 +610,7 @@ int32 Sound::streamCompMusic(uint32 musicId, bool loop) {
 		}
 
 		delete _music[primary];
-		_music[primary] = NULL;
+		_music[primary] = nullptr;
 	}
 
 	// Pick the available music stream. If no music is playing it doesn't
@@ -757,7 +757,7 @@ int32 Sound::playCompSpeech(uint32 speechId, uint8 vol, int8 pan) {
 	int cd = _vm->_resman->getCD();
 	SoundFileHandle *fh = (cd == 1) ? &_speechFile[0] : &_speechFile[1];
 
-	Audio::AudioStream *input = getAudioStream(fh, "speech", cd, speechId, NULL);
+	Audio::AudioStream *input = getAudioStream(fh, "speech", cd, speechId, nullptr);
 
 	if (!input)
 		return RDERR_INVALIDID;

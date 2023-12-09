@@ -72,7 +72,7 @@ void Sword2Engine::fetchPalette(byte *screenFile, byte *palBuffer) {
 
 byte *Sword2Engine::fetchPaletteMatchTable(byte *screenFile) {
 
-	if (isPsx()) return NULL;
+	if (isPsx()) return nullptr;
 
 	MultiScreenHeader mscreenHeader;
 
@@ -128,7 +128,7 @@ byte *Sword2Engine::fetchLayerHeader(byte *screenFile, uint16 layerNo) {
  */
 
 byte *Sword2Engine::fetchShadingMask(byte *screenFile) {
-	if (isPsx()) return NULL;
+	if (isPsx()) return nullptr;
 
 	MultiScreenHeader mscreenHeader;
 
@@ -191,8 +191,8 @@ byte *Sword2Engine::fetchBackgroundParallaxLayer(byte *screenFile, int layer) {
 
 		// Manage cache for background psx parallaxes
 		if (!_screen->getPsxScrCacheStatus(0)) { // This parallax layer is not present
-			return NULL;
-		} else if (psxParallax != NULL) { // Parallax layer present, and already in cache
+			return nullptr;
+		} else if (psxParallax != nullptr) { // Parallax layer present, and already in cache
 			return psxParallax;
 		} else { // Present, but not cached
 			uint32 locNo = _logic->getLocationNum();
@@ -246,7 +246,7 @@ byte *Sword2Engine::fetchForegroundParallaxLayer(byte *screenFile, int layer) {
 
 		// Manage cache for psx parallaxes
 		if (!_screen->getPsxScrCacheStatus(2)) { // This parallax layer is not present
-			return NULL;
+			return nullptr;
 		} else if (psxParallax) { // Parallax layer present and cached
 			return psxParallax;
 		} else { // Present, but still not cached
@@ -305,7 +305,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 
 	if (!file.open("screens.clu")) {
 		GUIErrorMessage("Broken Sword II: Cannot open screens.clu");
-		return NULL;
+		return nullptr;
 	}
 
 	file.seek(location * 4, SEEK_SET);
@@ -313,7 +313,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 
 	if (screenOffset == 0) { // We don't have screen data for this location number.
 		file.close();
-		return NULL;
+		return nullptr;
 	}
 
 	// Get to the beginning of PSXScreensEntry
@@ -369,18 +369,18 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 	uint32 plxSize;
 
 	if (level > 1)
-		return NULL;
+		return nullptr;
 
 	if (!file.open("screens.clu")) {
 		GUIErrorMessage("Broken Sword II: Cannot open screens.clu");
-		return NULL;
+		return nullptr;
 	}
 
 	file.seek(location * 4, SEEK_SET);
 	screenOffset = file.readUint32LE();
 
 	if (screenOffset == 0) // There is no screen here
-		return NULL;
+		return nullptr;
 
 	// Get to the beginning of PSXScreensEntry
 	file.seek(screenOffset + ResHeader::size(), SEEK_SET);
@@ -406,7 +406,7 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 	}
 
 	if (plxXres == 0 || plxYres == 0 || plxSize == 0) // This screen has no parallax data.
-		return NULL;
+		return nullptr;
 
 	debug(2, "fetchPsxParallax() -> %s parallax, xRes: %u, yRes: %u", (level == 0) ? "Background" : "Foreground", plxXres, plxYres);
 

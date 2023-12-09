@@ -420,7 +420,7 @@ public:
 	void displayMsg(byte *text, int time);
 
 	int32 createSurface(SpriteInfo *s, byte **surface);
-	void drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect = NULL);
+	void drawSurface(SpriteInfo *s, byte *surface, Common::Rect *clipRect = nullptr);
 	void deleteSurface(byte *surface);
 	int32 drawSprite(SpriteInfo *s);
 
@@ -445,7 +445,7 @@ public:
 	void splashScreen();
 
 	// Some sprites are compressed in HIF format
-	static uint32 decompressHIF(byte *src, byte *dst, uint32 *skipData = NULL);
+	static uint32 decompressHIF(byte *src, byte *dst, uint32 *skipData = nullptr);
 	// This is used to resize psx sprites back to original resolution
 	static void resizePsxSprite(byte *dst, byte *src, uint16 destW, uint16 destH);
 	// Some sprites are divided into 254 pixel wide stripes, this recomposes them

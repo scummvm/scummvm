@@ -571,7 +571,7 @@ int32 Screen::initializeBackgroundLayer(byte *parallax) {
 			_blockSurfaces[_layer][i]->transparent = block_is_transparent;
 
 		} else
-			_blockSurfaces[_layer][i] = NULL;
+			_blockSurfaces[_layer][i] = nullptr;
 	}
 
 	free(memchunk);
@@ -676,7 +676,7 @@ int32 Screen::initializePsxBackgroundLayer(byte *parallax) {
 			_blockSurfaces[_layer][tileIndex]->transparent = block_is_transparent;
 
 		} else
-			_blockSurfaces[_layer][tileIndex] = NULL;
+			_blockSurfaces[_layer][tileIndex] = nullptr;
 
 		if (posY == _yBlocks[_layer] - 1) {
 			stripeNumber++;
@@ -822,7 +822,7 @@ int32 Screen::initializePsxParallaxLayer(byte *parallax) {
 
 			_blockSurfaces[_layer][tileIndex]->transparent = block_is_transparent;
 		} else
-			_blockSurfaces[_layer][tileIndex] = NULL;
+			_blockSurfaces[_layer][tileIndex] = nullptr;
 	}
 
 	_layer++;
@@ -846,7 +846,7 @@ void Screen::closeBackgroundLayer() {
 				if (_blockSurfaces[i][j])
 					free(_blockSurfaces[i][j]);
 			free(_blockSurfaces[i]);
-			_blockSurfaces[i] = NULL;
+			_blockSurfaces[i] = nullptr;
 		}
 	}
 

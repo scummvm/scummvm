@@ -359,7 +359,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 		pars[1] = FX_LOOP;
 		_logic->fnPlayMusic(pars);
 	} else
-		_logic->fnStopMusic(NULL);
+		_logic->fnStopMusic(nullptr);
 
 	return SR_OK;
 }

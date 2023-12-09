@@ -114,7 +114,7 @@ int32 Logic::fnRegisterMouse(int32 *params) {
 	// params:	0 pointer to ObjectMouse or 0 for no write to mouse
 	//		  list
 
-	_vm->_mouse->registerMouse(decodePtr(params[0]), NULL);
+	_vm->_mouse->registerMouse(decodePtr(params[0]), nullptr);
 	return IR_CONT;
 }
 
@@ -2035,7 +2035,7 @@ int32 Logic::fnAddWalkGrid(int32 *params) {
 	// DON'T EVER KILL GEORGE!
 	if (readVar(ID) != CUR_PLAYER_ID) {
 		// Need to call this in case it wasn't called in script!
-		fnAddToKillList(NULL);
+		fnAddToKillList(nullptr);
 	}
 
 	_router->addWalkGrid(params[0]);
@@ -2134,7 +2134,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
 
 	// don't want to carry on streaming game music when cutscene starts!
-	fnStopMusic(NULL);
+	fnStopMusic(nullptr);
 
 	// pause sfx during sequence
 	_vm->_sound->pauseFx();
@@ -2150,7 +2150,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	_sequenceTextLines = 0;
 
 	delete _moviePlayer;
-	_moviePlayer = NULL;
+	_moviePlayer = nullptr;
 
 	// unpause sound fx again, in case we're staying in same location
 	_vm->_sound->unpauseFx();

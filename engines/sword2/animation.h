@@ -53,7 +53,7 @@ struct MovieText {
 	bool _played;
 
 	void reset() {
-		_textMem = NULL;
+		_textMem = nullptr;
 		_speechId = 0;
 		_played = false;
 	}
