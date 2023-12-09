@@ -232,7 +232,7 @@ bool ResourceManager::init() {
 
 			// Use korean.clu instead of TEXT.CLU
 			if (_vm->_isKorTrs && !scumm_stricmp(_resFiles[i].fileName, "TEXT.CLU"))
-				strcpy_s(_resFiles[i].fileName, 20, "korean.clu");
+				Common::strcpy_s(_resFiles[i].fileName, 20, "korean.clu");
 			_resFiles[i].cd = cdInf[j].cd;
 		}
 	}
