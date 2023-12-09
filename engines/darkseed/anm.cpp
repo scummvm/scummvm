@@ -19,46 +19,27 @@
  *
  */
 
-#ifndef DARKSEED_IMG_H
-#define DARKSEED_IMG_H
+#include "anm.h"
+#include "common/debug.h"
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
 namespace Darkseed {
-
-class Img {
-private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
-public:
-	bool load(const Common::String &filename);
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
-
-	Common::Array<uint8> &getPixels();
-	uint16 getX() const {
-		return x;
+bool Anm::load(const Common::String &filename) {
+	if(!file.open(filename)) {
+		return false;
 	}
-	uint16 getY() const {
-		return y;
-	}
-	uint16 getWidth() const {
-		return width;
-	}
-	uint16 getHeight() const {
-		return height;
-	}
+	numRecords = file.readUint16LE();
+	assetOffset = file.readUint16LE();
 
-private:
-	bool unpackRLE(Common::SeekableReadStream &readStream, Common::Array<uint8> &buf);
-	void unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset);
-};
+	return true;
+}
 
+bool Anm::getImg(uint16 index, Img &img) {
+	file.seek(4 + index * 2);
+	int offset = file.readUint16LE();
+	file.seek((offset*16) + (4 + numRecords * 2));
+	img.loadWithoutPosition(file);
+	debug("Loaded %d (%d,%d) (%d,%d) %x", index, img.getX(), img.getY(), img.getWidth(), img.getHeight(), 0);
+
+	return false;
+}
 } // namespace Darkseed
-
-#endif // DARKSEED_IMG_H

@@ -20,6 +20,7 @@
  */
 
 #include "img.h"
+#include "common/debug.h"
 #include "common/file.h"
 
 namespace Darkseed {
@@ -29,35 +30,80 @@ bool Img::load(const Common::String &filename) {
 	if(!file.open(filename)) {
 		return false;
 	}
-	int fIdx = 0;
-	uint16 size = file.readUint16LE();
-	fIdx += 2;
+	bool ret = load(file);
+	file.close();
+	if (ret) {
+		debug("Loaded %s (%d,%d) (%d,%d) %x", filename.c_str(), x, y, width, height, mode);
+	}
+	return ret;
+}
+
+bool Img::load(Common::SeekableReadStream &readStream) {
+	Common::Array<uint8> unpackedData;
+	unpackRLE(readStream, unpackedData);
+	x = READ_UINT16(&unpackedData.data()[0]);
+	y = READ_UINT16(&unpackedData.data()[2]);
+	unpackPlanarData(unpackedData, 4);
+	return true;
+}
+
+bool Img::loadWithoutPosition(Common::SeekableReadStream &readStream) {
+	Common::Array<uint8> unpackedData;
+	unpackRLE(readStream, unpackedData);
+	x = 0;
+	y = 0;
+	unpackPlanarData(unpackedData, 0);
+	return false;
+}
+
+bool Img::unpackRLE(Common::SeekableReadStream &readStream, Common::Array<byte> &buf) {
+	uint16 size = readStream.readUint16LE();
 	uint16 idx = 0;
-	pixels.resize(size+1);
+	buf.resize(size+1);
 
 	while (idx <= size) {
-		uint8 byte = file.readByte();
-		assert(!file.err());
-		fIdx++;
+		uint8 byte = readStream.readByte();
+		assert(!readStream.err());
 		if (byte & 0x80) {
 			uint8 count = byte & 0x7f;
 			count++;
-			byte = file.readByte();
-			fIdx++;
+			byte = readStream.readByte();
 			for (int i = 0; i < count; i++) {
-				pixels[idx + i] = byte;
+				buf[idx + i] = byte;
 			}
 			idx += count;
 		} else {
 			uint8 count = byte + 1;
 			for (int i = 0; i < count; i++) {
-				pixels[idx + i] = file.readByte();
-				fIdx++;
+				buf[idx + i] = readStream.readByte();
 			}
 			idx += count;
 		}
 	}
+
 	return true;
 }
+
+void Img::unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset) {
+	height = READ_UINT16(&planarData.data()[headerOffset]);
+	width = READ_UINT16(&planarData.data()[headerOffset + 2]) * 8;
+	mode = planarData.data()[headerOffset + 4];
+//	assert(mode == 0xff);
+	pixels.resize(width * height, 0);
+	for (int py=0; py < height; py++) {
+		for (int plane = 0; plane < 4; plane++) {
+			for (int px=0; px < width; px++) {
+				int bitPos = (7 - (px % 8));
+				int planeBit = (planarData[(headerOffset + 5) + (px/8) + (width/8)*plane + py * (width/8)*4] & (1 << bitPos)) >> bitPos;
+				pixels[px + py * width] |= planeBit << (3 - plane);
+			}
+		}
+	}
+}
+
+Common::Array<uint8> &Img::getPixels() {
+	return pixels;
+}
+
 
 } // namespace Darkseed

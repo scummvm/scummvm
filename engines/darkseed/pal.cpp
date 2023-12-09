@@ -19,46 +19,26 @@
  *
  */
 
-#ifndef DARKSEED_IMG_H
-#define DARKSEED_IMG_H
+#include "pal.h"
+#include "darkseed.h"
+#include "graphics/palette.h"
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
 namespace Darkseed {
 
-class Img {
-private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
-public:
-	bool load(const Common::String &filename);
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
+#define DARKSEED_NUM_PAL_ENTRIES 16
+#define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
+bool Pal::load(const Common::String &filename) {
+	Common::File file;
+	file.open(filename);
+	uint32 bytesRead = file.read(palData, DARKSEED_PAL_SIZE);
+	assert(bytesRead == DARKSEED_PAL_SIZE);
 
-	Common::Array<uint8> &getPixels();
-	uint16 getX() const {
-		return x;
+	for (int i=0; i < DARKSEED_PAL_SIZE; i++) {
+		palData[i] = palData[i] << 2;
 	}
-	uint16 getY() const {
-		return y;
-	}
-	uint16 getWidth() const {
-		return width;
-	}
-	uint16 getHeight() const {
-		return height;
-	}
+	g_system->getPaletteManager()->setPalette(palData, 0, DARKSEED_NUM_PAL_ENTRIES);
 
-private:
-	bool unpackRLE(Common::SeekableReadStream &readStream, Common::Array<uint8> &buf);
-	void unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset);
-};
+	return false;
+}
 
 } // namespace Darkseed
-
-#endif // DARKSEED_IMG_H

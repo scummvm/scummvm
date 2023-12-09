@@ -20,6 +20,7 @@
  */
 
 #include "darkseed/darkseed.h"
+#include "anm.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
@@ -30,6 +31,8 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "img.h"
+#include "pal.h"
+#include "titlefont.h"
 
 namespace Darkseed {
 
@@ -53,13 +56,21 @@ Common::String DarkseedEngine::getGameId() const {
 }
 
 Common::Error DarkseedEngine::run() {
-	// Initialize 320x200 paletted graphics mode
 	initGraphics(640, 350);
 	_screen = new Graphics::Screen();
 	_tosText = new TosText();
 	_tosText->load();
-	Img img;
-	img.load("art/left00.img");
+	Img left00Img;
+	left00Img.load("art/left00.img");
+	Img left01Img;
+	left01Img.load("art/left01.img");
+
+	Anm lettersAnm;
+	lettersAnm.load("art/letters.anm");
+	Img letterD;
+	lettersAnm.getImg(6, letterD);
+	Img letterD1;
+	lettersAnm.getImg(7, letterD1);
 
 	// Set the engine's debugger console
 	setDebugger(new Console(_tosText));
@@ -70,10 +81,22 @@ Common::Error DarkseedEngine::run() {
 		(void)loadGameState(saveSlot);
 
 	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	_screen->update();
+//	for (int i = 0; i < 100; ++i)
+//		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
+//	Pal::load("art/ship.pal");
+//	_screen->copyRectToSurface(left00Img.getPixels().data(), left00Img.getWidth(), left00Img.getX(), left00Img.getY(), left00Img.getWidth(), left00Img.getHeight());
+//	_screen->copyRectToSurface(left01Img.getPixels().data(), left01Img.getWidth(), left01Img.getX(), left01Img.getY(), left01Img.getWidth(), left01Img.getHeight());
 
+	Pal housePalette;
+	housePalette.load("art/house.pal");
+	TitleFont titleFont;
+	titleFont.displayString(0x44, 0xa0, "DEVELOPING NEW WAYS TO AMAZE");
+	Img house;
+//	house.load("art/bdoll0.img");
+//		_screen->copyRectToSurface(house.getPixels().data(), house.getWidth(), house.getX(), house.getY(), house.getWidth(), house.getHeight());
+//	_screen->copyRectToSurfaceWithKey(letterD.getPixels().data(), letterD.getWidth(), 24, 24, letterD.getWidth(), letterD.getHeight(), 0);
+//	_screen->copyRectToSurfaceWithKey(letterD1.getPixels().data(), letterD1.getWidth(), 24+1, 24, letterD1.getWidth(), letterD1.getHeight(), 0);
+	_screen->update();
 	// Simple event handling loop
 	byte pal[256 * 3] = { 0 };
 	Common::Event e;
@@ -84,10 +107,10 @@ Common::Error DarkseedEngine::run() {
 		}
 
 		// Cycle through a simple palette
-		++offset;
-		for (int i = 0; i < 256; ++i)
-			pal[i * 3 + 1] = (i + offset) % 256;
-		g_system->getPaletteManager()->setPalette(pal, 0, 256);
+//		++offset;
+//		for (int i = 0; i < 256; ++i)
+//			pal[i * 3 + 1] = (i + offset) % 256;
+//		g_system->getPaletteManager()->setPalette(pal, 0, 256);
 		_screen->update();
 
 		// Delay for a bit. All events loops should have a delay
@@ -107,6 +130,16 @@ Common::Error DarkseedEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+void DarkseedEngine::fadeOut() {
+}
+
+void DarkseedEngine::fadeIn() {
+
+}
+
+void DarkseedEngine::fadeInner(int startValue, int endValue, int increment) {
+
 }
 
 } // End of namespace Darkseed
