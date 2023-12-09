@@ -448,7 +448,8 @@ msgstr "ScummVM kunne ikkje åpne den velde mappa!"
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
-msgstr "Kan ikkje skapa nedlastingsmappe - den valde mappa inneheld samme namn."
+msgstr ""
+"Kan ikkje skapa nedlastingsmappe - den valde mappa inneheld samme namn."
 
 #: gui/downloaddialog.cpp:151
 #, c-format

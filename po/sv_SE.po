@@ -2144,7 +2144,8 @@ msgstr "Aktivera Discord integration"
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr "Visa information om spel du spelar på Discord, om Discord-klienten kör."
+msgstr ""
+"Visa information om spel du spelar på Discord, om Discord-klienten kör."
 
 #: gui/options.cpp:2673 gui/updates-dialog.cpp:85
 msgid "Update check:"
