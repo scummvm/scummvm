@@ -979,6 +979,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 
 	// French games
 	{ "bellesmeres",        "Belles-Mères" },
+	{ "enquete",            "Enquête à Hauts Risques" },
 	{ "largo",              "Largo Winch" },
 	{ "lesfeux",            "Les Feux de l'Enfer" },
 	{ "quiatuedana",        "Qui a tué Dana ?" },
@@ -2475,6 +2476,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 
 	// French games
 	DT_ENTRYL1("bellesmeres", Common::FR_FRA, "130318", "3d556ba5448b4bce8e7b0ee818bd1e79", 73972744),
+	DT_ENTRYL1("enquete", Common::FR_FRA, "160906", "56157297a33db4855bf2a6eb2b06ef38", 156919),
 	DT_ENTRYL1("largo", Common::FR_FRA, "061022", "2544ee9502a97511b27fee722508bd2c", 282396),
 	DT_ENTRYL1("lesfeux", Common::FR_FRA, "050928", "b3534d72ce3d2a5bd40d1b0d922419a4", 54162),
 	DT_ENTRYL1("quiatuedana", Common::FR_FRA, "050928", "d22079f4b173d33272bb5f3e97f71aae", 20034),
