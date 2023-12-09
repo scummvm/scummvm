@@ -89,6 +89,9 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(locationDirNotVisited_SP) / sizeof(char *);
 	writeTextArray(outFile, locationDirNotVisited_SP, nbrElem);
 
+	nbrElem = sizeof(locationDirNotVisited_HE) / sizeof(char *);
+	writeTextArray(outFile, locationDirNotVisited_HE, nbrElem);
+
 	// Write locationDirVisited
 	nbrElem = sizeof(locationDirVisited_EN) / sizeof(char *);
 	writeTextArray(outFile, locationDirVisited_EN, nbrElem);
@@ -105,6 +108,9 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(locationDirVisited_SP) / sizeof(char *);
 	writeTextArray(outFile, locationDirVisited_SP, nbrElem);
 
+	nbrElem = sizeof(locationDirVisited_HE) / sizeof(char *);
+	writeTextArray(outFile, locationDirVisited_HE, nbrElem);
+
 	// Write specialInfoLine
 	nbrElem = sizeof(specialInfoLine_EN) / sizeof(char *);
 	writeTextArray(outFile, specialInfoLine_EN, nbrElem);
@@ -120,6 +126,9 @@ int main(int argc, char *argv[]) {
 
 	nbrElem = sizeof(specialInfoLine_SP) / sizeof(char *);
 	writeTextArray(outFile, specialInfoLine_SP, nbrElem);
+
+	nbrElem = sizeof(specialInfoLine_HE) / sizeof(char *);
+	writeTextArray(outFile, specialInfoLine_HE, nbrElem);
 
 	// Not yet handled: miscTexts, endingLine and exitLine. Are they useful?
 
