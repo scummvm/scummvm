@@ -29,6 +29,7 @@
 #include "twp/vm.h"
 #include "twp/ggpack.h"
 #include "twp/gfx.h"
+#include "twp/lighting.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -144,7 +145,8 @@ Common::Error TwpEngine::run() {
 	Math::Vector2d pos;
 	Gfx gfx;
 	gfx.init();
-	gfx.camera(screenWidth, screenHeight);
+
+	Lighting lighting;
 	// Simple event handling loop
 	Common::Event e;
 	while (!shouldQuit()) {
@@ -185,8 +187,9 @@ Common::Error TwpEngine::run() {
 
 		// update screen
 		Math::Vector2d screenSize = getScreenSize(room);
-		gfx.camera(screenSize.getX(), screenSize.getY());
+		gfx.camera(screenSize);
 		gfx.clear(Color(0, 0, 0));
+		gfx.use(&lighting);
 
 		// draw room
 		SpriteSheet *ss = resManager.spriteSheet(room.sheet);
@@ -199,13 +202,17 @@ Common::Error TwpEngine::run() {
 				const Common::String &name = layer.names[j];
 				const SpriteSheetFrame &frame = ss->frameTable[name];
 				Math::Matrix4 m;
-				m.translate(Math::Vector3d(x - pos.getX(), -pos.getY(), 0));
+				Math::Vector3d t1 = Math::Vector3d(x - pos.getX() * layer.parallax.getX(), -pos.getY() * layer.parallax.getY(), 0);
+				Math::Vector3d t2 = Math::Vector3d(frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f);
+				m.translate(t1+t2);
+				lighting.setSpriteSheetFrame(frame, *texture);
 				gfx.drawSprite(frame.frame, *texture, Color(), m);
 				x += frame.frame.width();
 			}
 		}
 
 		// draw entities
+		gfx.use(NULL);
 		for (int i = 0; i < entities.size(); i++) {
 			Entity &ett = entities[i];
 			Math::Matrix4 m;

@@ -81,10 +81,12 @@ struct TextureSlot {
 class Shader {
 public:
 	Shader();
+	virtual ~Shader();
 
 	void init(const char *vertex, const char *fragment);
 
 	void setUniform(const char *name, Math::Matrix4 value);
+	virtual void applyUniforms() {}
 
 private:
 	uint32 loadShader(const char *code, uint32 shaderType);
@@ -108,7 +110,8 @@ public:
 
 	void init();
 
-	void camera(float w, float h);
+	void camera(Math::Vector2d size);
+	void use(Shader* shader);
 
 	void clear(Color color);
 	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, Math::Matrix4 transf = Math::Matrix4());
@@ -118,20 +121,22 @@ public:
 	void drawQuad(Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
 	void drawSprite(Common::Rect textRect, Texture& texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 
-	void noTexture();
+private:
 	Math::Matrix4 getFinalTransform(Math::Matrix4 trsf);
+	void noTexture();
 
 public:
 	Math::Vector2d _cameraPos;
 
 private:
 	uint32 _vbo, _ebo;
-	Shader _shader;
-	Color _color;
+	Shader _defaultShader;
+	Shader* _shader;
 	Math::Matrix4 _mvp;
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture* _texture;
+	int32 _posLoc, _colLoc, _texCoordsLoc, _texLoc, _trsfLoc;
 };
 }
 
