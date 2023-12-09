@@ -301,15 +301,13 @@ bool SaveGame::check_version(NuvieIOFileRead *loadfile, uint16 gameType) {
 
 bool SaveGame::load(const Common::String &filename) {
 	uint8 i;
-	uint32 objlist_size;
 	uint32 bytes_read;
 	NuvieIOFileRead loadFile;
-	unsigned char *data;
 	GameId gameType = g_engine->getGameId();
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
-	if (!loadFile.open(saveFile))
+	if (!saveFile || !loadFile.open(saveFile))
 		return false;
 
 	ConsoleAddInfo("Loading Game: %s", filename.c_str());
@@ -339,8 +337,8 @@ bool SaveGame::load(const Common::String &filename) {
 		obj_manager->load_super_chunk(&loadFile, i + 1, 0);
 	}
 
-	objlist_size = loadFile.read4();
-	data = loadFile.readBuf(objlist_size, &bytes_read);
+	uint32 objlist_size = loadFile.read4();
+	unsigned char *data = loadFile.readBuf(objlist_size, &bytes_read);
 
 	objlist.open(data, objlist_size, NUVIE_BUF_COPY);
 
