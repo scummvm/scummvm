@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.os.Process;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
@@ -1093,9 +1094,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			_scummvm.setPause(false);
 			try {
 				// 1s timeout
-				_scummvm_thread.join(1000);
+				_scummvm_thread.join(2000);
 			} catch (InterruptedException e) {
 				Log.i(ScummVM.LOG_TAG, "Error while joining ScummVM thread", e);
+			}
+
+			// Our join failed: kill ourselves to not have two ScummVM running at the same time
+			if (_scummvm_thread.isAlive()) {
+				Process.killProcess(Process.myPid());
 			}
 
 			_finishing = false;
