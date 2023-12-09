@@ -679,7 +679,7 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 		if (stream.err() || stream.eos()) {
 			for (int j = 0; j < i; ++j)
-				delete[] bitmaps[i];
+				delete[] bitmaps[j];
 			delete[] bitmaps;
 			return nullptr;
 		}
