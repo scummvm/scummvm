@@ -21,8 +21,8 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/gfx_mac.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/macgui/macgui.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"

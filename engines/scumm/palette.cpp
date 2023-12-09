@@ -33,7 +33,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/util.h"
 #include "scumm/charset.h"
-#include "scumm/gfx_mac.h"
+#include "scumm/macgui/macgui.h"
 
 namespace Scumm {
 
