@@ -633,7 +633,7 @@ void OpenGLGraphicsManager::renderCursor() {
 }
 
 void OpenGLGraphicsManager::updateScreen() {
-	if (!_gameScreen) {
+	if (!_gameScreen || !_pipeline) {
 		return;
 	}
 
