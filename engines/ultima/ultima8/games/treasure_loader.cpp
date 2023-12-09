@@ -205,7 +205,8 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
 		return false;
-	int t1, t2;
+	int t1 = 0
+	int t2 = 0;
 	bool ok = true;
 	ok = ok && parseInt(val.substr(0, pos), t1);
 	ok = ok && parseInt(val.substr(pos + 1), t2);
