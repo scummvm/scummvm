@@ -207,9 +207,10 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 		return false;
 	int t1, t2;
 	bool ok = true;
-	ok &= parseInt(val.substr(0, pos), t1);
-	ok &= parseInt(val.substr(pos + 1), t2);
-	if (ok && t1 <= t2 && t1 >= 0 && t2 >= 0) {
+	ok = ok && parseInt(val.substr(0, pos), t1);
+	ok = ok && parseInt(val.substr(pos + 1), t2);
+	ok = ok && (t1 <= t2 && t1 >= 0 && t2 >= 0);
+	if (ok) {
 		min = t1;
 		max = t2;
 	}
