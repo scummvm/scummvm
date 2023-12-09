@@ -493,8 +493,10 @@ const char *Converse::npc_name(uint8 num) {
 		num = load_conv(get_script_num(num)); // get idx number; won't actually reload file
 		temp_script = new ConvScript(src, num);
 		s_pt = temp_script->get_buffer();
-		if (!s_pt)
+		if (!s_pt) {
+			delete temp_script;
 			return nullptr;
+		}
 
 		// read name up to LOOK section, convert "_" to "."
 		uint32 c;
