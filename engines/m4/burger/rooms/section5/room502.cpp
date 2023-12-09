@@ -401,7 +401,7 @@ void Room502::daemon() {
 		case 17:
 			player_set_commands_allowed(true);
 			_G(wilbur_should) = 10001;
-			wilbur_speech("502w010");
+			wilbur_speech("502w010", kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 18:
@@ -411,7 +411,7 @@ void Room502::daemon() {
 
 		case 19:
 			_val4 = 34;
-			wilbur_speech("500w047");
+			wilbur_speech("500w047", 13);
 			break;
 
 		default:
