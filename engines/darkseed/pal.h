@@ -19,46 +19,24 @@
  *
  */
 
-#ifndef DARKSEED_IMG_H
-#define DARKSEED_IMG_H
+#ifndef DARKSEED_PAL_H
+#define DARKSEED_PAL_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
+#include "common/str.h"
 namespace Darkseed {
 
-class Img {
-private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
+#define DARKSEED_NUM_PAL_ENTRIES 16
+#define DARKSEED_PAL_SIZE DARKSEED_NUM_PAL_ENTRIES * 3
+
+
+class Pal {
+public:
+	byte palData[DARKSEED_PAL_SIZE];
+
 public:
 	bool load(const Common::String &filename);
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
-
-	Common::Array<uint8> &getPixels();
-	uint16 getX() const {
-		return x;
-	}
-	uint16 getY() const {
-		return y;
-	}
-	uint16 getWidth() const {
-		return width;
-	}
-	uint16 getHeight() const {
-		return height;
-	}
-
-private:
-	bool unpackRLE(Common::SeekableReadStream &readStream, Common::Array<uint8> &buf);
-	void unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset);
 };
 
 } // namespace Darkseed
 
-#endif // DARKSEED_IMG_H
+#endif // DARKSEED_PAL_H

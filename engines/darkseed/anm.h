@@ -19,46 +19,25 @@
  *
  */
 
-#ifndef DARKSEED_IMG_H
-#define DARKSEED_IMG_H
+#ifndef DARKSEED_ANM_H
+#define DARKSEED_ANM_H
 
 #include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
+#include "img.h"
 namespace Darkseed {
 
-class Img {
+class Anm {
 private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
+//	Common::Array<Img> frames;
+	Common::File file;
+	uint16 numRecords = 0;
+	uint16 assetOffset = 0;
+
 public:
 	bool load(const Common::String &filename);
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
-
-	Common::Array<uint8> &getPixels();
-	uint16 getX() const {
-		return x;
-	}
-	uint16 getY() const {
-		return y;
-	}
-	uint16 getWidth() const {
-		return width;
-	}
-	uint16 getHeight() const {
-		return height;
-	}
-
-private:
-	bool unpackRLE(Common::SeekableReadStream &readStream, Common::Array<uint8> &buf);
-	void unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset);
+	bool getImg(uint16 index, Img &img);
 };
 
 } // namespace Darkseed
 
-#endif // DARKSEED_IMG_H
+#endif // DARKSEED_ANM_H

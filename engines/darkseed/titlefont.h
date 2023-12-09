@@ -19,46 +19,22 @@
  *
  */
 
-#ifndef DARKSEED_IMG_H
-#define DARKSEED_IMG_H
+#ifndef DARKSEED_TITLEFONT_H
+#define DARKSEED_TITLEFONT_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
-#include "common/file.h"
+#include "anm.h"
 namespace Darkseed {
 
-class Img {
+class TitleFont {
 private:
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	byte mode;
-	Common::Array<uint8> pixels;
+	Anm letters;
+
 public:
-	bool load(const Common::String &filename);
-	bool load(Common::SeekableReadStream &readStream);
-	bool loadWithoutPosition(Common::SeekableReadStream &readStream);
+	TitleFont();
+	void displayString(uint16 x, uint16 y, const Common::String &text);
 
-	Common::Array<uint8> &getPixels();
-	uint16 getX() const {
-		return x;
-	}
-	uint16 getY() const {
-		return y;
-	}
-	uint16 getWidth() const {
-		return width;
-	}
-	uint16 getHeight() const {
-		return height;
-	}
-
-private:
-	bool unpackRLE(Common::SeekableReadStream &readStream, Common::Array<uint8> &buf);
-	void unpackPlanarData(Common::Array<uint8> &planarData, uint16 headerOffset);
 };
 
 } // namespace Darkseed
 
-#endif // DARKSEED_IMG_H
+#endif // DARKSEED_TITLEFONT_H

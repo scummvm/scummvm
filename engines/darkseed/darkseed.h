@@ -97,6 +97,12 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	void fadeIn();
+	void fadeOut();
+private:
+	void fadeInner(int startValue, int endValue, int increment);
+
 };
 
 extern DarkseedEngine *g_engine;
