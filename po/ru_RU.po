@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2023-12-03 00:30+0000\n"
+"PO-Revision-Date: 2023-12-09 16:29+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -31,27 +31,21 @@ msgid "Features compiled in:"
 msgstr "Включённые в сборку опции:"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "not supported"
-msgstr "Game id не поддерживается"
+msgstr "не поддерживается"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "disabled"
-msgstr "Выключены"
+msgstr "выключено"
 
 #: gui/about.cpp:118
-#, fuzzy
-#| msgid "Disabled"
 msgid "enabled"
-msgstr "Выключены"
+msgstr "включено"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
 #: gui/about.cpp:142
 msgid "CPU extensions support:"
-msgstr ""
+msgstr "Поддержка расширений процессоров:"
 
 #: gui/about.cpp:155
 msgid "Available engines:"
@@ -121,39 +115,35 @@ msgstr "Выбрать"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Пошаговое подключение к облаку"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
-#| msgid "Quick load"
 msgid "Quick mode"
-msgstr "Быстрая загрузка"
+msgstr "Быстрый режим"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Быстрый режим"
+msgstr "Ручной режим"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Вам будет нужно включить локальный веб-сервер"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "Запускает локальный веб-сервер"
+msgstr "Требует включенный локальный веб-сервер"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Быстрый режим: Шаг 1"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"В этом режиме должен быть запущен локальный веб-сервер,\n"
+"чтобы ваш браузер мог передать данные в ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3704
 msgid "Stop server"
@@ -177,11 +167,11 @@ msgstr "Не запущен"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Быстрый режим: Шаг 2"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Теперь откройте эту сслыку в вашем браузере:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -193,34 +183,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Он автоматически передаст данные в ScummVM\n"
+"и в случае необходимости сообщит о возникших ошибках."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Адрес локального веб-сервера: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Быстрый режим: Успешное завершение"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Подключить вашу учётную запись в облачном хранилище"
+msgstr "Ваше облачном хранилище было подключено!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Завершить"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Ручной режим: Шаг 1"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Откройте эту ссылку:"
+msgstr "Откройте эту ссылку в вашем браузере:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -228,14 +216,17 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"В случае неуспешной передачи JSON-кода в ScummVM,\n"
+"вы сможете его найти в секции Troubleshooting на этой странице,\n"
+"и затем сможете перейти к следующему шагу."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Ручной режим: Шаг 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Скопируйте JSON-код из браузера сюда и нажмите Далее:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
@@ -256,20 +247,16 @@ msgid "Load"
 msgstr "Загрузить"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Загрузить файл"
+msgstr "Загрузить код из файла"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Ручной режим: Произошла ошибка"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
-#| msgid "Storage connected."
 msgid "Cloud storage was not connected."
-msgstr "Хранилище подключено."
+msgstr "Облачное хранилище не было подключено."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
@@ -3322,10 +3309,10 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "Эта игра не поддерживает загрузку сохранённых игр через главное меню."
+msgstr ""
+"Эта игра не поддерживает сохранение игр через меню. Используйте интерфейс "
+"внутри игры."
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
@@ -3342,10 +3329,10 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "Эта игра не поддерживает загрузку сохранённых игр через главное меню."
+msgstr ""
+"Эта игра не поддерживает загрузку сохранений через меню. Используйте "
+"интерфейс внутри игры."
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -5496,18 +5483,14 @@ msgstr "Добавить меню скорости (как в PC-версии)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Эта игра не поддерживается."
+msgstr "Эта игра не поддерживает загрузку сохранений"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Эта игра не поддерживается."
+msgstr "Эта игра не поддерживает сохранения."
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -8820,6 +8803,8 @@ msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Активирует некоторые современные подходы, т.е. не показывает экраны загрузки "
+"в Sam&Max и делает меню сохранений более быстрыми."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
