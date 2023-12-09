@@ -297,24 +297,30 @@ Common::FSNode AGSEngine::getGameFolder() {
 }
 
 bool AGSEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	if (ConfMan.get("gameid") == "strangeland") {
-		*msg = _("This game does not support loading from the menu. Use in-game interface");
-		return false;
+	if (msg) {
+		if (ConfMan.get("gameid") == "strangeland") {
+			*msg = _("This game does not support loading from the menu. Use in-game interface");
+			return false;
+		}
+		if (_G(noScummSaveLoad))
+			*msg = _("To preserve the original experience, this game should be loaded using the in-game interface.\nYou can, however, override this setting in Game Options.");
 	}
-	if (_G(noScummSaveLoad))
-		*msg = _("To preserve the original experience, this game should be loaded using the in-game interface.\nYou can, however, override this setting in Game Options.");
+
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
 		   !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
 		   !_G(noScummSaveLoad);
 }
 
 bool AGSEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	if (ConfMan.get("gameid") == "strangeland") {
-		*msg = _("This game does not support saving from the menu. Use in-game interface");
-		return false;
+	if (msg) {
+		if (ConfMan.get("gameid") == "strangeland") {
+			*msg = _("This game does not support saving from the menu. Use in-game interface");
+			return false;
+		}
+		if (_G(noScummSaveLoad))
+			*msg = _("To preserve the original experience, this game should be saved using the in-game interface.\nYou can, however, override this setting in Game Options.");
 	}
-	if (_G(noScummSaveLoad))
-		*msg = _("To preserve the original experience, this game should be saved using the in-game interface.\nYou can, however, override this setting in Game Options.");
+
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
 		   !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions) &&
 		   !_G(noScummSaveLoad);
@@ -328,6 +334,13 @@ Common::Error AGSEngine::loadGameState(int slot) {
 Common::Error AGSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	(void)AGS3::save_game(slot, desc.c_str());
 	return Common::kNoError;
+}
+
+int AGSEngine::getAutosaveSlot() const {
+	if (!g_engine || !_G(noScummAutosave))
+		return 0;
+	else
+		return -1;
 }
 
 void AGSEngine::GUIError(const Common::String &msg) {

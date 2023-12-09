@@ -163,6 +163,11 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
+	 * Returns autosave slot (-1 if unavailable)
+	 */
+	int getAutosaveSlot() const override;
+
+	/**
 	 * Synchronize user volume settings
 	 */
 	void syncSoundSettings() override;
