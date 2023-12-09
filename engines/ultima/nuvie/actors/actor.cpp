@@ -1881,6 +1881,7 @@ bool Actor::morph(uint16 objN) {
 	actor_obj->obj_n = objN;
 	actor_obj->frame_n = 0;
 	init_from_obj(actor_obj);
+	delete actor_obj;
 	set_dead_flag(false);
 	set_direction(old_dir); // FIXME: this should get saved through init_from_obj()
 	return true;
