@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-08 11:27+0000\n"
-"PO-Revision-Date: 2022-11-29 23:05+0000\n"
+"PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -122,38 +122,35 @@ msgstr "Välj"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "Molntjänstvägledaren"
 
 #: gui/cloudconnectionwizard.cpp:183
-#, fuzzy
 msgid "Quick mode"
-msgstr "Klickläge"
+msgstr "Snabbmodus"
 
 #: gui/cloudconnectionwizard.cpp:184
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Manual mode"
-msgstr "Snabbläge"
+msgstr "Manuell modus"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "Frågar dig om att köra lokal webbserver"
 
 #: gui/cloudconnectionwizard.cpp:189
-#, fuzzy
-#| msgid "Run local webserver"
 msgid "Requires the Local Webserver feature"
-msgstr "Starta lokal webbserver"
+msgstr "Förutsätter att lokal webbserver körs"
 
 #: gui/cloudconnectionwizard.cpp:205
 msgid "Quick Mode: Step 1"
-msgstr ""
+msgstr "Snabbmodus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:210
 msgid ""
 "In this mode, the Local Webserver must be running,\n"
 "so your browser can forward data to ScummVM"
 msgstr ""
+"I denna modus måste lokal webbserver köras,\n"
+"så att din nätläsare kan vidarebefordra data till ScummVM"
 
 #: gui/cloudconnectionwizard.cpp:239 gui/options.cpp:3704
 msgid "Stop server"
@@ -177,11 +174,11 @@ msgstr "Ej aktiv"
 
 #: gui/cloudconnectionwizard.cpp:263
 msgid "Quick Mode: Step 2"
-msgstr ""
+msgstr "Snabbmodus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:267
 msgid "Now, open this link in your browser:"
-msgstr ""
+msgstr "Öppna denna länken i din webbläsare:"
 
 #: gui/cloudconnectionwizard.cpp:268 gui/cloudconnectionwizard.cpp:323
 #: gui/message.cpp:246 gui/message.cpp:250
@@ -193,34 +190,32 @@ msgid ""
 "It will automatically pass the data to ScummVM,\n"
 "and warn you should there be any errors."
 msgstr ""
+"Den vill automatiskt skicka data till ScummVM,\n"
+"och varna vid evenetuella fel."
 
 #: gui/cloudconnectionwizard.cpp:283
 msgid "Local Webserver address: "
-msgstr ""
+msgstr "Lokal webbserveradress: "
 
 #: gui/cloudconnectionwizard.cpp:299
 msgid "Quick Mode: Success"
-msgstr ""
+msgstr "Snabbmodus: Lyckad koppling"
 
 #: gui/cloudconnectionwizard.cpp:303 gui/cloudconnectionwizard.cpp:404
-#, fuzzy
-#| msgid "Connect your cloud storage account"
 msgid "Your cloud storage has been connected!"
-msgstr "Anslut ditt molnlagerkonto"
+msgstr "Ditt molnlager har kopplats upp!"
 
 #: gui/cloudconnectionwizard.cpp:304 gui/cloudconnectionwizard.cpp:405
 msgid "Finish"
-msgstr ""
+msgstr "Avslut"
 
 #: gui/cloudconnectionwizard.cpp:317
 msgid "Manual Mode: Step 1"
-msgstr ""
+msgstr "Manuell modus: Steg 1"
 
 #: gui/cloudconnectionwizard.cpp:322
-#, fuzzy
-#| msgid "1. Open this link:"
 msgid "Open this link in your browser:"
-msgstr "1. Öppna den här länken:"
+msgstr "Öppna denna länk i din webbläsare:"
 
 #: gui/cloudconnectionwizard.cpp:325
 msgid ""
@@ -228,14 +223,17 @@ msgid ""
 "find it on the Troubleshooting section of the page,\n"
 "and go to the next step here."
 msgstr ""
+"När den inte lyckas skicka JSON-koden till ScummVM,\n"
+"hitta felet på felsökningsdelen av sidan,\n"
+"och gå till nästa steg."
 
 #: gui/cloudconnectionwizard.cpp:354
 msgid "Manual Mode: Step 2"
-msgstr ""
+msgstr "Manuell modus: Steg 2"
 
 #: gui/cloudconnectionwizard.cpp:359
 msgid "Copy the JSON code from the browser here and press Next:"
-msgstr ""
+msgstr "Kopiera JSON-koden från webbläsaren hit och tryck Nästa:"
 
 #: gui/cloudconnectionwizard.cpp:361 gui/gui-manager.cpp:252
 #: gui/gui-manager.cpp:267
@@ -256,42 +254,37 @@ msgid "Load"
 msgstr "Ladda"
 
 #: gui/cloudconnectionwizard.cpp:362
-#, fuzzy
-#| msgid "Load file"
 msgid "Load code from file"
-msgstr "Ladda fil"
+msgstr "Ladda kod från fil"
 
 #: gui/cloudconnectionwizard.cpp:379
 msgid "Manual Mode: Something went wrong"
-msgstr ""
+msgstr "Manuell modus: Något gick fel"
 
 #: gui/cloudconnectionwizard.cpp:383
-#, fuzzy
 msgid "Cloud storage was not connected."
-msgstr "%s lageranslutningsguide"
+msgstr "Molnlagret blev inte uppkopplat."
 
 #: gui/cloudconnectionwizard.cpp:384
 msgid "Make sure the JSON code was copied correctly and retry."
-msgstr ""
+msgstr "Säkerställ att JSON-koden blev kopierad rätt og försök igen."
 
 #: gui/cloudconnectionwizard.cpp:385
 msgid "If that doesn't work, try again from the beginning."
-msgstr ""
+msgstr "Om detta inte hjälper, starta om från början."
 
 #: gui/cloudconnectionwizard.cpp:386
 msgid "Error message: "
-msgstr ""
+msgstr "Felmeddelande: "
 
 #: gui/cloudconnectionwizard.cpp:400
 msgid "Manual Mode: Success"
-msgstr ""
+msgstr "Manuell modus: Lyckad uppkoppling"
 
 #: gui/cloudconnectionwizard.cpp:428 gui/dlcsdialog.cpp:59
 #: gui/downloaddlcsdialog.cpp:60 engines/crab/input/input.cpp:175
-#, fuzzy
-#| msgid "Backend"
 msgid "Back"
-msgstr "Backend"
+msgstr "Tillbaka"
 
 #: gui/cloudconnectionwizard.cpp:436 gui/imagealbum-dialog.cpp:102
 #: gui/saveload-dialog.cpp:829 engines/crab/input/input.cpp:181
@@ -299,10 +292,8 @@ msgid "Next"
 msgstr "Nästa"
 
 #: gui/cloudconnectionwizard.cpp:499
-#, fuzzy
-#| msgid "Another Storage is working now. Do you want to interrupt it?"
 msgid "Another Storage is working right now. Do you want to interrupt it?"
-msgstr "En annan lagring är aktiv. Vill du avbryta den?"
+msgstr "En annan lagring är aktiv just nu. Vill du avbryta den?"
 
 #: gui/cloudconnectionwizard.cpp:499 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
@@ -340,7 +331,7 @@ msgstr "Vänta tills det nuvarande lagret är färdigt och försök igen."
 #. I18N: JSON is name of the format, this message is displayed if user entered something incorrect to the text field
 #: gui/cloudconnectionwizard.cpp:536
 msgid "JSON code contents are malformed."
-msgstr ""
+msgstr "JSON-koden innehåller fel."
 
 #: gui/cloudconnectionwizard.cpp:557 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:353 gui/editrecorddialog.cpp:67
@@ -369,17 +360,13 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/cloudconnectionwizard.cpp:558
-#, fuzzy
-#| msgid "Incorrect rs file."
 msgid "Incorrect JSON."
-msgstr "Felaktig rs fil."
+msgstr "Felaktig JSON."
 
 #. I18N: error message displayed on 'Manual Mode: Failure' step of 'Cloud Connection Wizard', describing that storage connection process was interrupted
 #: gui/cloudconnectionwizard.cpp:565
-#, fuzzy
-#| msgid "Interact"
 msgid "Interrupted."
-msgstr "Använd"
+msgstr "Avbruten."
 
 #: gui/cloudconnectionwizard.cpp:615 gui/options.cpp:3398
 msgid ""
@@ -392,13 +379,12 @@ msgstr ""
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:631
 msgid "Select JSON file copied from scummvm.org site"
-msgstr ""
+msgstr "Välj JSON-fil kopierad från scummvm.org"
 
 #. I18N: JSON is a file format name
 #: gui/cloudconnectionwizard.cpp:637
-#, fuzzy
 msgid "Failed to load JSON file"
-msgstr "Kunde inte radera filen."
+msgstr "Kunde inte ladda JSON-filen"
 
 #: gui/dlcsdialog.cpp:41
 msgid "Download Freeware Games and Demos"
@@ -487,9 +473,9 @@ msgid "Downloaded %s %S / %s %S"
 msgstr "Laddade ner %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S/s"
-msgstr "Nedladdningshastighet: %s %S"
+msgstr "Nedladdningshastighet: %s %S/s"
 
 #: gui/downloaddlcsdialog.cpp:41
 #, fuzzy
@@ -510,19 +496,18 @@ msgstr "FEL %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list..."
-msgstr "Laddar ned ikon-lista..."
+msgstr "Laddar ned %S lista..."
 
 #: gui/downloadpacksdialog.cpp:203
-#, fuzzy
 msgid "Clear Cache"
-msgstr "Töm sökfältet"
+msgstr "Radera lagrade filer"
 
 #: gui/downloadpacksdialog.cpp:254
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading %S list... %d entries"
-msgstr "Laddar ned ikon-lista... %d poster"
+msgstr "Laddar ned %S lista... %d filer"
 
 #: gui/downloadpacksdialog.cpp:264
 #, c-format
@@ -550,9 +535,9 @@ msgstr "FEL: Ingen icon sökväg satt"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:427
-#, fuzzy, c-format
+#, c-format
 msgid "No new %S available"
-msgstr "Inga nya icon packet tillgängliga"
+msgstr "Inga nya %S tillgängliga"
 
 #: gui/downloadpacksdialog.cpp:463
 #, c-format
@@ -560,6 +545,8 @@ msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
 "%S. Do you want to proceed?"
 msgstr ""
+"Du kommer att radera %s %S med data, alla tidigare %S. Önskar du att "
+"fortsätta?"
 
 #: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
 msgid "Proceed"
@@ -567,11 +554,11 @@ msgstr "Fortsätt"
 
 #: gui/dump-all-dialogs.cpp:103 gui/options.cpp:3242
 msgid "icon packs"
-msgstr ""
+msgstr "ikonpaket"
 
 #: gui/dump-all-dialogs.cpp:107 gui/options.cpp:3253
 msgid "shader packs"
-msgstr ""
+msgstr "shader-paket"
 
 #: gui/dump-all-dialogs.cpp:126 gui/launcher.cpp:708
 msgid "Pick the game:"
@@ -1036,10 +1023,8 @@ msgid "Right"
 msgstr "Höger"
 
 #: gui/gui-manager.cpp:194
-#, fuzzy
-#| msgid "Backend"
 msgid "Backspace"
-msgstr "Backend"
+msgstr "Baksteg"
 
 #: gui/gui-manager.cpp:200
 #, fuzzy
@@ -1049,31 +1034,27 @@ msgstr "Radera tecken"
 
 #: gui/gui-manager.cpp:206
 msgid "Go to end of line"
-msgstr ""
+msgstr "Gå till linjeslut"
 
 #: gui/gui-manager.cpp:216
-#, fuzzy
-#| msgid "Select SoundFont"
 msgid "Select to end of line"
-msgstr "Välj SoundFont"
+msgstr "Välj linjeslut"
 
 #: gui/gui-manager.cpp:226
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select to start of line"
-msgstr "Välj katalog för tillägg"
+msgstr "Välj linjestart"
 
 #: gui/gui-manager.cpp:236
 msgid "Go to start of line"
-msgstr ""
+msgstr "Gå till linjestart"
 
 #: gui/gui-manager.cpp:247 gui/gui-manager.cpp:262
 msgid "Cut"
-msgstr ""
+msgstr "Klipp"
 
 #: gui/gui-manager.cpp:257 gui/gui-manager.cpp:272
 msgid "Copy"
-msgstr ""
+msgstr "Kopiera"
 
 #: gui/gui-manager.cpp:278 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
@@ -1132,20 +1113,17 @@ msgid "Prev"
 msgstr "Bakåt"
 
 #: gui/imagealbum-dialog.cpp:127
-#, fuzzy
-#| msgid "Saving game..."
 msgid "Save Image..."
-msgstr "Sparar speldata..."
+msgstr "Spara data..."
 
 #: gui/imagealbum-dialog.cpp:264
 #, c-format
 msgid "%u of %u"
-msgstr ""
+msgstr "%u av %u"
 
 #: gui/imagealbum-dialog.cpp:377
-#, fuzzy
 msgid "Save Image"
-msgstr "Spara spelet:"
+msgstr "Spara data"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:105
@@ -1162,7 +1140,7 @@ msgstr "Första bokstav"
 #: gui/launcher.cpp:107
 msgctxt "group"
 msgid "Initial"
-msgstr ""
+msgstr "Initial"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:109
@@ -1202,7 +1180,7 @@ msgstr ""
 
 #: gui/launcher.cpp:229
 msgid "Select Group by"
-msgstr ""
+msgstr "Välj grupp utifrån"
 
 #: gui/launcher.cpp:233 gui/launcher.cpp:893
 #, fuzzy
@@ -1211,7 +1189,7 @@ msgstr "Gruppera efter:"
 
 #: gui/launcher.cpp:235
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "Välj urvalskriterium för gruppering"
 
 #. I18N: This keymap opens KIA's HELP tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -1258,14 +1236,12 @@ msgid "Global ~O~pts..."
 msgstr "~I~nställningar..."
 
 #: gui/launcher.cpp:276
-#, fuzzy
-#| msgid "Download game files"
 msgid "Download Games"
-msgstr "Ladda ner spelfiler"
+msgstr "Ladda ner spel"
 
 #: gui/launcher.cpp:276
 msgid "Download freeware games for ScummVM"
-msgstr ""
+msgstr "Ladda ner gratisspel till ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
 #: gui/launcher.cpp:283
@@ -1365,9 +1341,8 @@ msgstr "ScummVM kunde inte hitta några spel i den valda katalogen!"
 
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:702
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Okänt fel"
+msgstr "Okänd spelutgåva"
 
 #: gui/launcher.cpp:933 gui/saveload-dialog.cpp:381
 msgid "List view"
@@ -1421,26 +1396,25 @@ msgstr "Okänd motor"
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1216 gui/launcher.cpp:1412
-#, fuzzy
 msgid "Unknown Publisher"
-msgstr "Okänd skapare"
+msgstr "Okänd utgivare"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1233 gui/launcher.cpp:1429
 msgid "No Series"
-msgstr ""
+msgstr "Ingen serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1247 gui/launcher.cpp:1443
 msgid "Language not detected"
-msgstr ""
+msgstr "Språk ej upptäckt"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1261 gui/launcher.cpp:1457
 msgid "Platform not detected"
-msgstr ""
+msgstr "Plattform ej upptäckt"
 
 #. I18N: List group when no year is specified
 #: gui/launcher.cpp:1278 gui/launcher.cpp:1474
@@ -1451,13 +1425,12 @@ msgstr "Okänt fel"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1481 gui/widgets/groupedlist.cpp:81
-#, fuzzy
 msgid "All"
 msgstr "Alt"
 
 #: gui/launcher.cpp:1630
 msgid "Icons per row:"
-msgstr ""
+msgstr "Ikoner per rad:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1647,9 +1620,8 @@ msgid "Scaler:"
 msgstr "Skalning:"
 
 #: gui/options.cpp:1625
-#, fuzzy
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1625 gui/options.cpp:1627 gui/options.cpp:1628
 #, fuzzy
@@ -1657,10 +1629,9 @@ msgid "Specifies path to the shader used for scaling the game screen"
 msgstr "Anger sökvägen till ytterligare data som spelet använder"
 
 #: gui/options.cpp:1627
-#, fuzzy
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Sparsökväg:"
+msgstr "Shader sökväg:"
 
 #: gui/options.cpp:1634
 #, fuzzy
@@ -1700,7 +1671,7 @@ msgstr "3D-rendering för spel:"
 
 #: gui/options.cpp:1668
 msgid "3D Anti-aliasing:"
-msgstr "Kantutjämning i 3D"
+msgstr "Kantutjämning i 3D:"
 
 #: gui/options.cpp:1672 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
@@ -1977,6 +1948,8 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
+"Anger var sparade spel placeras. Rödfärg anger ett temporärt värde som inte "
+"kommer att sparas."
 
 #: gui/options.cpp:2443
 msgid "Theme Path:"
@@ -2003,17 +1976,13 @@ msgid "Default"
 msgstr "Standard"
 
 #: gui/options.cpp:2461
-#, fuzzy
-#| msgid "Game Path:"
 msgid "DLC Path:"
-msgstr "Spelsökväg:"
+msgstr "DLC-sökväg:"
 
 #: gui/options.cpp:2463
-#, fuzzy
-#| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
-msgstr "Spelsökväg:"
+msgstr "DLC-sökväg:"
 
 #: gui/options.cpp:2471 gui/options.cpp:2473 gui/options.cpp:2474
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -2034,14 +2003,12 @@ msgid "ScummVM config path: "
 msgstr "ScummVM inställningar sökväg: "
 
 #: gui/options.cpp:2505
-#, fuzzy
-#| msgid "ScummVM config path: "
 msgid "ScummVM log path: "
-msgstr "ScummVM inställningar sökväg: "
+msgstr "ScummVM loggningssökväg: "
 
 #: gui/options.cpp:2510
 msgid "View"
-msgstr ""
+msgstr "Vy"
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2520 gui/options.cpp:3285
@@ -2070,25 +2037,28 @@ msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
 "(this feature is not supported by all games)."
 msgstr ""
+"Återvänd till spellistan när ett spel avslutas i stället för att avsluta "
+"ScummVM (stöds ej av alla spel)."
 
 #: gui/options.cpp:2558
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Bekräfta innan avslut"
 
 #: gui/options.cpp:2559
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Fråga om tillstånd att lämna ett spel eller avsluta ScummVM."
 
 #: gui/options.cpp:2565
-#, fuzzy
 msgid "Disable fixed font scaling"
-msgstr "Kunde inte spara spelet"
+msgstr "Avaktivera skalering av fasta typsnitt."
 
 #: gui/options.cpp:2566
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Uppskalera inte fasta typsnitt i GUI. Detta reducerar artefakter på skärmar "
+"med låg upplösning."
 
 #: gui/options.cpp:2572
 msgid "GUI language:"
@@ -2146,17 +2116,15 @@ msgstr "Autospara:"
 
 #: gui/options.cpp:2640
 msgid "Random seed:"
-msgstr ""
+msgstr "Tillfällig seed:"
 
 #: gui/options.cpp:2640
 msgid "Seed for initializing all random number generators"
-msgstr ""
+msgstr "Seed för att aktivera alla tillfälliga nummergeneratorer"
 
 #: gui/options.cpp:2648
-#, fuzzy
-#| msgid "Debug Menu"
 msgid "Debug level:"
-msgstr "Felsökningsmeny"
+msgstr "Felsökningsnivå:"
 
 #. I18N: Debug level -1, no messages
 #: gui/options.cpp:2652 gui/options.cpp:2791
@@ -2166,7 +2134,7 @@ msgstr "Ingen"
 #. I18N: Debug level 11, all messages
 #: gui/options.cpp:2658
 msgid "11 (all)"
-msgstr ""
+msgstr "11 (alla)"
 
 #: gui/options.cpp:2662
 msgid "Enable Discord integration"
@@ -2176,7 +2144,7 @@ msgstr "Aktivera Discord integration"
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
-msgstr ""
+msgstr "Visa information om spel du spelar på Discord, om Discord-klienten kör."
 
 #: gui/options.cpp:2673 gui/updates-dialog.cpp:85
 msgid "Update check:"
@@ -2191,37 +2159,27 @@ msgid "Check now"
 msgstr "Kolla nu"
 
 #: gui/options.cpp:2692
-#, fuzzy
 msgid "Active storage:"
-msgstr "Aktivera molnlagring"
+msgstr "Aktivt lager:"
 
 #: gui/options.cpp:2692
 msgid "Active cloud storage"
 msgstr "Aktivera molnlagring"
 
 #: gui/options.cpp:2701
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgctxt "lowres"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Lagring är inte på. Kontrollera att användarnamnet är korrekt och "
-"aktivera det:"
+"Lagring är inte på. Kontrollera att användarnamnet är korrekt och aktivera "
+"det:"
 
 #: gui/options.cpp:2703
-#, fuzzy
-#| msgid ""
-#| "4. Storage is not yet enabled. Verify that username is correct and enable "
-#| "it:"
 msgid ""
 "Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
-"4. Lagring är inte på. Kontrollera att användarnamnet är korrekt och "
-"aktivera det:"
+"Lagring är inte på. Kontrollera att användarnamnet är korrekt och aktivera "
+"det:"
 
 #: gui/options.cpp:2704
 msgid "Enable storage"
@@ -2256,9 +2214,8 @@ msgid "Last sync:"
 msgstr "Senast synkad:"
 
 #: gui/options.cpp:2712
-#, fuzzy
 msgid "When was the last time saved games were synced with this storage"
-msgstr "När sparade data synkades senast för det här lagret"
+msgstr "När sparade data senast synkades för det här lagret"
 
 #: gui/options.cpp:2713 gui/options.cpp:3621
 msgid "<never>"
@@ -2325,18 +2282,13 @@ msgid "Stop using this storage on this device"
 msgstr "Sluta använda den här lagringen på den här enheten"
 
 #: gui/options.cpp:2733
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "This storage is not connected yet! To connect,"
 msgctxt "lowres"
 msgid "This storage is not connected yet!"
-msgstr "Den här lagringen är inte ansluten än! För att ansluta,"
+msgstr "Den här lagringen är inte ansluten än!"
 
 #: gui/options.cpp:2735
-#, fuzzy
-#| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
-msgstr "Den här lagringen är inte ansluten än! För att ansluta,"
+msgstr "Den här lagringen är inte ansluten än!"
 
 #: gui/options.cpp:2736
 #, fuzzy
@@ -2354,9 +2306,8 @@ msgid "/root/ Path:"
 msgstr "/root/-sökväg:"
 
 #: gui/options.cpp:2749 gui/options.cpp:2751 gui/options.cpp:2752
-#, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Bestämmer vilken katalog filhanteraren har åtkomst till"
+msgstr "Bestämmer vilken mapp filhanteraren visar som rotkatalog"
 
 #: gui/options.cpp:2751
 msgid "/root/ Path:"
@@ -2382,7 +2333,7 @@ msgstr "Om du stänger dialogrutan avslutas servern."
 
 #: gui/options.cpp:2765
 msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
+msgstr "Kör server för att hantera filer i webbläsare (inom samma nätverk)"
 
 #: gui/options.cpp:2766
 #, fuzzy
@@ -2402,9 +2353,8 @@ msgid "Ignore"
 msgstr "Ignorera"
 
 #: gui/options.cpp:2853
-#, fuzzy
 msgid "Disable autosave"
-msgstr "Kunde inte spara spelet"
+msgstr "Koppla ur automatisk lagring"
 
 #: gui/options.cpp:2854
 msgid ""
@@ -2414,13 +2364,19 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"VARNING: Automatlagring är inkopplad. Vissa av dina spel har sparat "
+"spelpunkter där automatlagring sparar. Du kan antigen flytta dessa till nya "
+"spelpunkter, koppla ur automatlagring, eller ignorera detta (du vill varnas "
+"när automatlagring försöker överskriva en sparad spelpunkt).\n"
+"Spellista:\n"
 
 #: gui/options.cpp:2863
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "Lägg till spel..."
+msgstr ""
+"\n"
+"Och mera..."
 
 #: gui/options.cpp:2864 engines/engine.cpp:602
 msgid "Move"
@@ -2428,7 +2384,7 @@ msgstr "Flytta"
 
 #: gui/options.cpp:2877
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "VARNING: Flytt av lagrade spelpunkt misslyckades:\n"
 
 #: gui/options.cpp:2972
 msgid "Failed to change cloud storage!"
@@ -2459,15 +2415,12 @@ msgid "Select directory for GUI themes"
 msgstr "Välj katalog för GUI-teman"
 
 #: gui/options.cpp:3180
-#, fuzzy
 msgid "Select directory for GUI launcher thumbnails"
-msgstr "Välj katalog för GUI-teman"
+msgstr "Välj katalog för GUI-spelikoner"
 
 #: gui/options.cpp:3191
-#, fuzzy
-#| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
-msgstr "Välj katalog för tillägg"
+msgstr "Välj katalog för DLC-tillägg"
 
 #: gui/options.cpp:3202
 msgid "Select directory for extra files"
@@ -2482,9 +2435,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Välj katalog för filhanterarens /root/"
 
 #: gui/options.cpp:3407
-#, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "Ett annat lager är aktivt. Vill du avbryta det?"
+msgstr "Ett annat lager är aktivt nu. Vill du avbryta det?"
 
 #: gui/options.cpp:3416
 msgid "Wait until current Storage finishes up and try again."
@@ -2507,16 +2459,17 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"Ett exempelmönster borde visas.\n"
+"Önskar du att behålla dessa inställningar?"
 
 #: gui/options.cpp:3789
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Återställer automatiskt inom %d sekunder"
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Knappa in text"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -2605,7 +2558,7 @@ msgstr "Kör i bakgrunden"
 #: gui/saveload-dialog.cpp:126
 #, c-format
 msgid "%s (%s %S / %s %S, %s / %s files)"
-msgstr ""
+msgstr "%s (%s %S / %s %S, %s / %s filer)"
 
 #: gui/saveload-dialog.cpp:450 gui/saveload-dialog.cpp:630
 msgid "No date saved"
@@ -2658,20 +2611,19 @@ msgstr "Ange en beskrivning för position %d:"
 
 #: gui/shaderbrowser-dialog.cpp:52
 msgid "Choose shader from the list below (or pick a file instead)"
-msgstr ""
+msgstr "Välj shader från listan (eller välj en shader-fil)"
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick file instead..."
-msgstr ""
+msgstr "Välj fil..."
 
 #: gui/shaderbrowser-dialog.cpp:71
 msgid "Pick shader from file system"
-msgstr ""
+msgstr "Välj shader från filsystem."
 
 #: gui/shaderbrowser-dialog.cpp:137
-#, fuzzy
 msgid "Select shader"
-msgstr "Välj ett tema"
+msgstr "Välj shader"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -2769,7 +2721,7 @@ msgstr "Spara"
 
 #: base/main.cpp:603
 msgid "Bad config file format. overwrite?"
-msgstr ""
+msgstr "Fel filformatering av konfigurationsfil. Överskriva?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:652
@@ -2806,7 +2758,7 @@ msgstr "OK"
 #. I18N: A button caption to dismiss a message and read it later
 #: base/main.cpp:672 base/main.cpp:697
 msgid "Read Later"
-msgstr ""
+msgstr "Läs sedan"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
