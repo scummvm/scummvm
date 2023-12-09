@@ -3948,8 +3948,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY_EN_STEAM("alemmoanozira", "Postcards_from_Anozira.exe", "a33691e4a84e2645b4cbe1f681511798", 5567690),
 	GAME_ENTRY_EN("alemmoanozira", "postcards from anozira.exe", "893f31faa33f1219b316894a0cbe7b27", 174781776),
-	GAME_ENTRY_EN_STEAM("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260), // Windows
-	GAME_ENTRY_EN_STEAM("alum", "Alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429197066), // Linux & Mac
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429203260, nullptr), // Windows
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("alum", "Alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 429197066, nullptr), // Linux & Mac
 	GAME_ENTRY_EN("alum", "alum.exe", "6d2f8e80c5f2372b705fdd4cc32f3579", 428902430),
 	GAME_ENTRY_PLATFORM("atotk", "atotk.exe", "68d4f3488a9dcec74584651c0e29e439", 5078719, "Steam/Deluxe"),
 	GAME_ENTRY_PLATFORM("atotk", "atotk.ags", "68d4f3488a9dcec74584651c0e29e439", 5078866, "Steam/Deluxe"), // 2.04 Eng-Hun
@@ -3957,20 +3957,20 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),  // Eng-Ita
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Linux
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  // Original (rollback 0.0) Multilang
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51056669),  // v1.1 (rollback 0.1)
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51089445),  // v1.2
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51063519),  // v1.3 updated
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 54145006),  // v2.0? (rollback 0.2)
-	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 54144779),  // v2.0 updated
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // Original (rollback 0.0) Multilang
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51056669, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.1 (rollback 0.1)
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51089445, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.2
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51063519, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.3 updated
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 54145006, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v2.0? (rollback 0.2)
+	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 54144779, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v2.0 updated
 	GAME_ENTRY_EN_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
 	GAME_ENTRY_EN_STEAM("azazelxmas", "Azazels_Christmas_Fable.exe", "46fcfdc2aa113c05f3ba95ad356e1a63", 408594796),
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
 	GAME_ENTRY_EN_STEAM("beer", "Beer!.ags", "6f201fd7a19869c85f49c7c471d0479a", 5042748), // Linux
-	GAME_ENTRY_GOG("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556521058), // Eng-Deu v1.1
-	GAME_ENTRY_STEAM("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556512803), // Eng-Deu Win
-	GAME_ENTRY_STEAM("beyondowlsgard", "Owlsgard.ags", "ec06f55f20c49b5cb2df6c9e16440aeb", 552945167), // Eng-Deu Linux
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556521058, nullptr), // Eng-Deu v1.1
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("beyondowlsgard", "Owlsgard.exe", "0f647ddfd86c3dad2d68055fab21f091", 556512803, nullptr), // Eng-Deu Win
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("beyondowlsgard", "Owlsgard.ags", "ec06f55f20c49b5cb2df6c9e16440aeb", 552945167, nullptr), // Eng-Deu Linux
 	GAME_ENTRY_EN("blackfriday2", "Autumn of Death - Black Friday II.exe", "5275912e6a5266b64b8cf282ccbf6385", 33128099),  // Windows
 	GAME_ENTRY_EN("blackfriday2", "Autumn of Death - Black Friday II.ags", "8261bc29effd192533a72943237c5c8f", 30551187),  // Linux
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697, nullptr),
@@ -4083,20 +4083,20 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell5", "epiphany.exe", "ee9f05e549e1890a66fa29f174514d83", 247075636, AGSTEAM_WADJETEYE),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("blackwell5", "epiphany.ags", "de7d49da1a1c5e0cd5b01a3c3770921d", 243851040, AGSTEAM_WADJETEYE),  // Linux
 	GAME_ENTRY_EN_STEAM("captaindisaster", "cd-dhamsb-1-0-1.exe", "e2d290f8f21c6a83a9e8c5f3a0425b5e", 150665897),
-	GAME_ENTRY_EN_STEAM("castleagony", "Agony.exe", "387ff720e746ae46e93f463fd58d77a4", 21017019),
+	DETECTION_ENTRY_GUIO("castleagony", "Agony.exe", "387ff720e746ae46e93f463fd58d77a4", 21017019, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("charnelhousetrilogy", "cht.ags", "55c782c9de5a09157ea6aafac90b9cc8", 339257135, nullptr),
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("charnelhousetrilogy", "cht.exe", "29c49db0805500ec14964eb897fc7b02", 341425110, nullptr),
 	GAME_ENTRY_EN("charnelhousetrilogy", "cht.exe", "9ba3d9fbb098a26d7293ad3161c0f270", 341411868),
-	GAME_ENTRY_STEAM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692),
-	GAME_ENTRY_STEAM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "cb7ab3394128c52293417eae5dacf365", 552728591),  // En-It
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692, nullptr),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "cb7ab3394128c52293417eae5dacf365", 552728591, nullptr),  // En-It
 	GAME_ENTRY_EN("conspirocracy", "Conspirocracy.exe", "e137b66b22b1d8dbe4fb78e54f2b3de1", 49080280),  // Fireflower Games
-	GAME_ENTRY_STEAM("contact", "Contact.exe", "b16cdffccf0a9488a2d623ced3b6dfdd", 26395439),  // Eng-Kor
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("contact", "Contact.exe", "b16cdffccf0a9488a2d623ced3b6dfdd", 26395439, nullptr),  // Eng-Kor
 	GAME_ENTRY_STEAM("content", "Content.exe", "1e950496692a009ea163eb276702e008", 29813674),  // Eng-Kor
 	GAME_ENTRY_EN("cosmosquest3", "cq3.exe", "18b284c22010850f79bc5c20054a70c4", 8674790),
 	GAME_ENTRY_EN("cosmosquest4", "cq4.exe", "e3962995a70923a8d5a8f1cf8f932eee", 17062325),
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),  // Multilang
 	GAME_ENTRY_EN("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
-	GAME_ENTRY_EN_STEAM("detectivebhdino", "Detective Boiled-Hard  Case File - Death of the Space Dino Hunter.exe", "4d5d25446373d4df71c6bda77a15230a", 49618396),
+	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("detectivebhdino", "Detective Boiled-Hard  Case File - Death of the Space Dino Hunter.exe", "4d5d25446373d4df71c6bda77a15230a", 49618396, nullptr),
 	GAME_ENTRY_STEAM("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554),  // Multilang
 	GAME_ENTRY_GOG("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772),
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90713626), // Big Box Limited Edition DVD
@@ -4107,9 +4107,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927),
 	GAME_ENTRY_EN_STEAM("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // 1.4
 	GAME_ENTRY_LANG("downfall2009", "downfall.exe", "10212624b951711c4b44f5cb9eecbf0a", 143360, Common::RU_RUS), // GOG
-	GAME_ENTRY_GOG("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750),  // Multilang
-	GAME_ENTRY_STEAM("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590),
-	GAME_ENTRY_STEAM("downfall2016", "Downfall.ags", "7c87b99ce309a46085e40ac1a2b20e75", 224024207), // Linux
+	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 1995812750, nullptr),  // Multilang
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("downfall2016", "downfall.exe", "08b1340f3528feeebce1ecc59cc17907", 224368590, nullptr),
+	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("downfall2016", "Downfall.ags", "7c87b99ce309a46085e40ac1a2b20e75", 224024207, nullptr), // Linux
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484767783, Common::EN_ANY, "GOG.com", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.01
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484767190, Common::EN_ANY, "GOG.com", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.02
 	DETECTION_ENTRY_GUIO("dreamswitchhouse", "Dreams in the Witch House.exe", "160d78e898924f5cb1347b13746cc935", 484783215, Common::EN_ANY, "GOG.com", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), nullptr, ADGF_NO_FLAGS),  // v1.04
