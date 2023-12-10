@@ -67,7 +67,7 @@ private:
 	int _wi01 = -1, _wi01s = -1;
 	int _wi02 = -1, _wi02s = -1;
 	int _digiTrigger = 0;
-	int _val2 = 0;
+	int _stolieShould = 0;
 	int _elmoShould = 0;
 	int _val4 = 0;
 	int _elmoMode = 0;

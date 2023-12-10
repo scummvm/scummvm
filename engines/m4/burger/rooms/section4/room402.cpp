@@ -238,14 +238,14 @@ void Room402::init() {
 
 		if (_G(player).been_here_before) {
 			if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
-				_val2 = 15;
+				_stolieShould = 15;
 			} else {
 				_G(wilbur_should) = 5;
 				kernel_timing_trigger(120, kCHANGE_WILBUR_ANIMATION);
-				_val2 = 15;
+				_stolieShould = 15;
 			}
 		} else {
-			_val2 = 15;
+			_stolieShould = 15;
 
 			if (_G(game).previous_room != KERNEL_RESTORING_GAME) {
 				digi_preload_stream_breaks(SERIES1);
@@ -256,7 +256,7 @@ void Room402::init() {
 				series_load("402pe4n");
 				series_load("402pe4ns");
 
-				_val2 = 16;
+				_stolieShould = 16;
 				_G(wilbur_should) = 2;
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			}
@@ -274,7 +274,7 @@ void Room402::daemon() {
 
 	switch (_G(kernel).trigger) {
 	case 1:
-		_val2 = 15;
+		_stolieShould = 15;
 		if (_stolieSet)
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 
@@ -296,7 +296,7 @@ void Room402::daemon() {
 			break;
 
 		case 7:
-			switch (_val2) {
+			switch (_stolieShould) {
 			case 7:
 				loadDr8();
 				_stolie.play("402dr08", 0x300, 0, kCHANGE_STOLIE_ANIMATION, 60, 0, 100, 0, 0, 75, 75);
@@ -315,7 +315,7 @@ void Room402::daemon() {
 			break;
 
 		case 15:
-			switch (_val2) {
+			switch (_stolieShould) {
 			case 6:
 				_stolieMode = 6;
 				loadDr1();
@@ -324,19 +324,19 @@ void Room402::daemon() {
 
 			case 8:
 				digi_unload_stream_breaks(SERIES1);
-				_val2 = 11;
+				_stolieShould = 11;
 				series_play_with_breaks(PLAY2, "402dr06", 0x300, kCHANGE_STOLIE_ANIMATION, 3);
 				break;
 
 			case 10:
-				_val2 = 8;
+				_stolieShould = 8;
 				digi_preload("402_003");
 				series_play_with_breaks(PLAY1, "402DR10s", 0x300, -1, 2);
 				series_stream_with_breaks(SERIES1, "402dr10", 6, 0x300, kCHANGE_STOLIE_ANIMATION);
 				break;
 
 			case 11:
-				_val2 = 12;
+				_stolieShould = 12;
 				loadPe4();
 				series_play_with_breaks(PLAY3, "402DR11s", 0x301, -1, 2);
 				series_stream_with_breaks(SERIES2, "402dr11", 6, 0x300, kCHANGE_STOLIE_ANIMATION);
@@ -344,7 +344,7 @@ void Room402::daemon() {
 
 			case 12:
 				digi_unload_stream_breaks(SERIES2);
-				_val2 = 13;
+				_stolieShould = 13;
 				loadDr1();
 				Series::series_play("402dr01", 0x300, 0, kCHANGE_STOLIE_ANIMATION, 6, 0, 100, 0, 0, 3, -1);
 				break;
@@ -366,6 +366,7 @@ void Room402::daemon() {
 				Series::series_play("402dr12", 0x300, 0, kCHANGE_STOLIE_ANIMATION, 60, 0, 100, 0, 0, 0, 0);
 				break;
 
+			case 39:
 			case 40:
 				_stolieMode = 39;
 				loadDr1();
@@ -392,7 +393,7 @@ void Room402::daemon() {
 			break;
 
 		case 39:
-			switch (_val2) {
+			switch (_stolieShould) {
 			case 39:
 				freeStolie();
 				_stolieSet = true;
@@ -420,7 +421,7 @@ void Room402::daemon() {
 			break;
 
 		case 40:
-			if (_val2 == 40) {
+			if (_stolieShould == 40) {
 				freeStolie();
 				_stolieSet = true;
 				loadDr2();
@@ -434,7 +435,7 @@ void Room402::daemon() {
 			break;
 
 		case 45:
-			switch (_val2) {
+			switch (_stolieShould) {
 			case 7:
 				freeStolie();
 				_stolieMode = 7;
@@ -745,7 +746,7 @@ void Room402::daemon() {
 	case 20:
 		if (++_val4 == 2) {
 			_val4 = 0;
-			_val2 = 6;
+			_stolieShould = 6;
 			ws_walk(316, 354, 0, -1, 2);
 		}
 		break;
@@ -828,7 +829,7 @@ void Room402::daemon() {
 
 	case 37:
 		freeDr1();
-		_val2 = 15;
+		_stolieShould = 15;
 		_stolieMode = 15;
 		kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 		player_set_commands_allowed(true);
@@ -850,7 +851,7 @@ void Room402::daemon() {
 		case 3:
 			ws_unhide_walker();
 			_G(walker).wilbur_poof();
-			_val2 = 10;
+			_stolieShould = 10;
 			kernel_timing_trigger(30, 22);
 			break;
 
@@ -910,11 +911,11 @@ void Room402::parser() {
 			_newMode = KT_PARSE;
 			_digiTrigger = 2;
 			freeStolie();
-			_val2 = 45;
+			_stolieShould = 45;
 			break;
 
 		case 2:
-			_val2 = 15;
+			_stolieShould = 15;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			kernel_trigger_dispatch_now(1);
 			break;
@@ -1036,7 +1037,7 @@ void Room402::parser() {
 			_digiName = "402s007";
 			_newMode = KT_PARSE;
 			_digiTrigger = 3;
-			_val2 = 40;
+			_stolieShould = 40;
 			break;
 
 		case 3:
@@ -1045,12 +1046,12 @@ void Room402::parser() {
 			_digiTrigger = 4;
 			freeStolie();
 			freeDr2();
-			_val2 = 46;
+			_stolieShould = 46;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			break;
 
 		case 4:
-			_val2 = 47;
+			_stolieShould = 47;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			_G(kernel).trigger_mode = KT_PARSE;
 			wilbur_speech("402w903");
@@ -1060,11 +1061,11 @@ void Room402::parser() {
 			_digiName = "402s009";
 			_newMode = KT_PARSE;
 			_digiTrigger = 6;
-			_val2 = 45;
+			_stolieShould = 45;
 			break;
 
 		case 6:
-			_val2 = 47;
+			_stolieShould = 47;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			_G(kernel).trigger_mode = KT_PARSE;
 			wilbur_speech("402w904");
@@ -1098,17 +1099,17 @@ void Room402::conv84() {
 			_G(kernel).trigger_mode = KT_DAEMON;
 
 			if (node == 3 && entry == 1) {
-				_val2 = 47;
+				_stolieShould = 47;
 				kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			} else if (node == 1 && entry == 1) {
-				_val2 = 39;
+				_stolieShould = 39;
 				kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			} else if (node == 9 && entry == 0) {
-				_val2 = 39;
+				_stolieShould = 39;
 				kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 				term_message("--------------------------------");
 			} else if (node == 9 && entry == 2) {
-				_val2 = 15;
+				_stolieShould = 15;
 				kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 				term_message("HHHHHHHHHHHHHHHHHH");
 			} else if ((node == 1 && entry == 6) ||
@@ -1123,7 +1124,7 @@ void Room402::conv84() {
 				_elmoShould = 47;
 			} else {
 				term_message("xxxxxxxxxxxxxxxxxxxxx");
-				_val2 = 47;
+				_stolieShould = 47;
 				kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			}
 
@@ -1152,25 +1153,25 @@ void Room402::conv84() {
 						(node == 1 && entry == 6) ||
 						(node == 9 && entry == 1)) {
 					if (!(node == 9 && entry == 1))
-						_val2 = 7;
+						_stolieShould = 7;
 
 					if (_stolieMode == 45)
 						_G(kernel).trigger_mode = KT_DAEMON;
 				}
 
 				if (node == 3 && entry == 1) {
-					_val2 = 40;
+					_stolieShould = 40;
 					_G(kernel).trigger_mode = KT_DAEMON;
 					kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 				} else if (node == 6 && entry == 2) {
-					_val2 = 40;
+					_stolieShould = 40;
 				} else if ((node == 1 && entry == 1) || (node == 9 && entry == 0)) {
-					_val2 = 40;
+					_stolieShould = 40;
 
 					if (_stolieMode == 45)
 						_G(kernel).trigger_mode = KT_DAEMON;
 				} else if (node == 9 && entry == 2) {
-					_val2 = 40;
+					_stolieShould = 40;
 					_G(kernel).trigger_mode = KT_DAEMON;
 					kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 				} else if ((node == 1 && entry == 6) ||
@@ -1189,14 +1190,14 @@ void Room402::conv84() {
 						kernel_trigger_dispatch_now(kCHANGE_ELMO_ANIMATION);
 					}
 				} else {
-					_val2 = 45;
+					_stolieShould = 45;
 
 					if (_stolieMode == 45)
 						_G(kernel).trigger_mode = KT_DAEMON;
 				}
 			} else if (who == 1) {
 				if ((node == 1 && entry == 1) || (node == 1 && entry == 3)) {
-					_val2 = 39;
+					_stolieShould = 39;
 
 					if (_stolieMode == 45)
 						_G(kernel).trigger_mode = KT_DAEMON;
