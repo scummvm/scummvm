@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-08 11:27+0000\n"
+"POT-Creation-Date: 2023-12-10 10:47+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: Linus Väinämö Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -74,8 +74,8 @@ msgid "Go up"
 msgstr "Siirry ylös"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:270
-#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2335
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -389,7 +389,7 @@ msgstr "Haetaan DLC:itä..."
 msgid "All Downloads"
 msgstr "Kaikki lataukset"
 
-#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
 msgstr "Lataa"
 
@@ -411,8 +411,8 @@ msgid "To: "
 msgstr "Kohde: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
-#: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
-#: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
+#: gui/downloadpacksdialog.cpp:246 gui/downloadpacksdialog.cpp:256
+#: gui/downloadpacksdialog.cpp:278 gui/downloadpacksdialog.cpp:293
 msgid "Cancel download"
 msgstr "Peruuta lataus"
 
@@ -422,7 +422,7 @@ msgid "Cancel download"
 msgstr "Peruuta lataus"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
-#: gui/downloadpacksdialog.cpp:281
+#: gui/downloadpacksdialog.cpp:282
 msgid "Hide"
 msgstr "Piilota"
 
@@ -455,12 +455,12 @@ msgstr ""
 "Haluatko varmasti ladata tiedostoja tähän hakemistoon?"
 
 #: gui/downloaddialog.cpp:214 gui/downloaddlcsdialog.cpp:70
-#: gui/downloadpacksdialog.cpp:367
+#: gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Ladattu %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:374
 #, c-format
 msgid "Download speed: %s %S/s"
 msgstr "Latausnopeus: %s %S/s"
@@ -479,7 +479,7 @@ msgid "ERROR %d: %s"
 msgstr "VIRHE %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
+#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
 #, c-format
 msgid "Downloading %S list..."
 msgstr "Ladatataan %S listaa..."
@@ -488,23 +488,23 @@ msgstr "Ladatataan %S listaa..."
 msgid "Clear Cache"
 msgstr "Tyhjennä välimuisti"
 
-#: gui/downloadpacksdialog.cpp:254
+#: gui/downloadpacksdialog.cpp:255
 #, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "Ladatataan %S listaa... %d alkiota"
 
-#: gui/downloadpacksdialog.cpp:264
+#: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "Havaittiin %d uutta pakettia, %s %S"
 
-#: gui/downloadpacksdialog.cpp:290
+#: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Lataus valmis, ladattiin %d pakkausta, %s %S"
 
 #. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
+#: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
@@ -513,17 +513,17 @@ msgstr "Lataus valmis, ladattiin %d pakkausta, %s %S"
 msgid "Close"
 msgstr "Sulje"
 
-#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
+#: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
 msgstr "VIRHE: Ikonipolkua ei ole asetettu"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:427
+#: gui/downloadpacksdialog.cpp:428
 #, c-format
 msgid "No new %S available"
 msgstr "Uusia %S ei ole saatavilla"
 
-#: gui/downloadpacksdialog.cpp:463
+#: gui/downloadpacksdialog.cpp:464
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
@@ -532,7 +532,7 @@ msgstr ""
 "Olet poistamassa %s %S dataa, sisältäen kaikki aiemmin ladatut %S. Haluatko "
 "jatkaa?"
 
-#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Jatka"
 

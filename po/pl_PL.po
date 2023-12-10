@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-08 11:27+0000\n"
+"POT-Creation-Date: 2023-12-10 10:47+0000\n"
 "PO-Revision-Date: 2023-12-09 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -79,8 +79,8 @@ msgid "Go up"
 msgstr "W górę"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
-#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:270
-#: gui/downloadpacksdialog.cpp:463 gui/editgamedialog.cpp:352
+#: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
+#: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:352
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2335
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -394,7 +394,7 @@ msgstr "Pobieranie DLC..."
 msgid "All Downloads"
 msgstr "Wszystkie pobrane"
 
-#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:266
+#: gui/dlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:267
 msgid "Download"
 msgstr "Pobierz"
 
@@ -416,8 +416,8 @@ msgid "To: "
 msgstr "Cel: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadpacksdialog.cpp:201
-#: gui/downloadpacksdialog.cpp:245 gui/downloadpacksdialog.cpp:255
-#: gui/downloadpacksdialog.cpp:277 gui/downloadpacksdialog.cpp:292
+#: gui/downloadpacksdialog.cpp:246 gui/downloadpacksdialog.cpp:256
+#: gui/downloadpacksdialog.cpp:278 gui/downloadpacksdialog.cpp:293
 msgid "Cancel download"
 msgstr "Anuluj pobieranie"
 
@@ -427,7 +427,7 @@ msgid "Cancel download"
 msgstr "Anuluj pobieranie"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
-#: gui/downloadpacksdialog.cpp:281
+#: gui/downloadpacksdialog.cpp:282
 msgid "Hide"
 msgstr "Ukryj"
 
@@ -461,12 +461,12 @@ msgstr ""
 "Czy na pewno pobrać pliki do tego katalogu?"
 
 #: gui/downloaddialog.cpp:214 gui/downloaddlcsdialog.cpp:70
-#: gui/downloadpacksdialog.cpp:367
+#: gui/downloadpacksdialog.cpp:368
 #, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "Pobrano %s %S / %s %S"
 
-#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:373
+#: gui/downloaddialog.cpp:220 gui/downloadpacksdialog.cpp:374
 #, c-format
 msgid "Download speed: %s %S/s"
 msgstr "Prędkość pobierania: %s %S/s"
@@ -485,7 +485,7 @@ msgid "ERROR %d: %s"
 msgstr "BŁĄD %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
-#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:244
+#: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
 #, c-format
 msgid "Downloading %S list..."
 msgstr "Pobieranie listy %S..."
@@ -494,23 +494,23 @@ msgstr "Pobieranie listy %S..."
 msgid "Clear Cache"
 msgstr "Wyczyść bufor"
 
-#: gui/downloadpacksdialog.cpp:254
+#: gui/downloadpacksdialog.cpp:255
 #, c-format
 msgid "Downloading %S list... %d entries"
 msgstr "Pobieranie listy %S... %d elementów"
 
-#: gui/downloadpacksdialog.cpp:264
+#: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
 msgstr "Wykryte nowe pakiety: %d, %s %S"
 
-#: gui/downloadpacksdialog.cpp:290
+#: gui/downloadpacksdialog.cpp:291
 #, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
 msgstr "Pobieranie ukończone. Pobrane pakiety: %d, %s-%S"
 
 #. I18N: Close dialog button
-#: gui/downloadpacksdialog.cpp:296 gui/downloadpacksdialog.cpp:387
+#: gui/downloadpacksdialog.cpp:297 gui/downloadpacksdialog.cpp:388
 #: gui/gui-manager.cpp:164 gui/imagealbum-dialog.cpp:131 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:492
 #: engines/scumm/help.cpp:127 engines/scumm/help.cpp:142
@@ -519,17 +519,17 @@ msgstr "Pobieranie ukończone. Pobrane pakiety: %d, %s-%S"
 msgid "Close"
 msgstr "Zamknij"
 
-#: gui/downloadpacksdialog.cpp:394 gui/downloadpacksdialog.cpp:439
+#: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
 msgstr "BŁĄD: nie ustawiono ścieżki do folderu z ikonami"
 
 #. I18N: String like "No new icon packs available"
-#: gui/downloadpacksdialog.cpp:427
+#: gui/downloadpacksdialog.cpp:428
 #, c-format
 msgid "No new %S available"
 msgstr "Brak nowych %S"
 
-#: gui/downloadpacksdialog.cpp:463
+#: gui/downloadpacksdialog.cpp:464
 #, c-format
 msgid ""
 "You are about to remove %s %S of data, deleting all previously downloaded "
@@ -538,7 +538,7 @@ msgstr ""
 "Wybrano usunięcie %s %S z danych, co usunie wcześniej pobrane %S. Czy chcesz "
 "kontynuować?"
 
-#: gui/downloadpacksdialog.cpp:463 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
 msgid "Proceed"
 msgstr "Kontynuuj"
 
