@@ -42,11 +42,6 @@ public:
 	//! \return nullptr on failure
 	Common::SeekableReadStream *ReadFile(const Std::string &vfn);
 
-	//! Open a file as writable. Streamed.
-	//! \param vfn the (virtual) filename
-	//! \return a new writestream, or nullptr on failure
-	Common::WriteStream *WriteFile(const Std::string &vfn);
-
 private:
 	static bool base_to_uppercase(Std::string &str, int count);
 
@@ -58,11 +53,6 @@ private:
 	 */
 	bool rawOpen(Common::SeekableReadStream *&in, const Std::string &fname);
 
-	/**
-	 *	Open a file for writing,
-	 *	Output: false if couldn't open.
-	 */
-	bool rawOpen(Common::WriteStream *&out, const Std::string &fname);
 };
 
 } // End of namespace Ultima8

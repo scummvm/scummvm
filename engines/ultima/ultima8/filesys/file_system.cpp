@@ -57,17 +57,6 @@ Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn) {
 	return readStream;
 }
 
-// Open a streaming file as writeable. Streamed (0 on failure)
-Common::WriteStream *FileSystem::WriteFile(const string &vfn) {
-	string filename = vfn;
-	Common::WriteStream *writeStream;
-
-	if (!rawOpen(writeStream, filename))
-		return nullptr;
-
-	return writeStream;
-}
-
 bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	string name = fname;
 	Common::File *f;
@@ -86,12 +75,6 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 	return false;
 }
 
-
-bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
-	string name = fname;
-
-	return false;
-}
 
 /*
  *  Convert just the last 'count' parts of a filename to uppercase.
