@@ -174,7 +174,9 @@ void AndroidGraphics3dManager::initSurface() {
 
 	assert(!JNI::haveSurface());
 
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	_screenChangeID = JNI::surface_changeid;
 
@@ -274,7 +276,9 @@ void AndroidGraphics3dManager::resizeSurface() {
 	}
 
 	JNI::deinitSurface();
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	_screenChangeID = JNI::surface_changeid;
 
