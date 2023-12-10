@@ -30,6 +30,7 @@
 #include "twp/ggpack.h"
 #include "twp/gfx.h"
 #include "twp/lighting.h"
+#include "twp/font.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
