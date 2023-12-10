@@ -541,6 +541,7 @@ private:
 class BoyzEngine : public HypnoEngine {
 public:
 	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
+	~BoyzEngine();
 	Common::String _name;
 	Common::Array<int> _ids;
 	int _lastLevel;

@@ -84,6 +84,10 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	}
 }
 
+BoyzEngine::~BoyzEngine() {
+	free(_crosshairsPalette);
+}
+
 static const char *selectBoyz = "\
 MENU preload\\slct_boy.smk\n\
 HOTS /BBOX= 19  3   66  199\n\

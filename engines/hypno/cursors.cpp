@@ -157,6 +157,7 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool cent
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 	entry->free();
 	delete entry;
+	free(palette);
 	CursorMan.showMouse(true);
 }
 

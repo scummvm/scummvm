@@ -313,6 +313,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 		byte *array;
 		surf = decodeFrame(name, frameNumber, &array);
 		loadPalette(array, 0, 256);
+		free(array);
 	} else
 		surf = decodeFrame(name, frameNumber);
 

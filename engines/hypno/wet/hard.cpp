@@ -69,6 +69,7 @@ void WetEngine::runLevelMenu(Code *code) {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 20, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	byte black[3] = {0x00, 0x00, 0x00}; // Always red?
 	byte lime[3] = {0x00, 0xFF, 0x00}; // Always red?
 	byte green[3] = {0x2C, 0x82, 0x28}; // Always red?
@@ -137,6 +138,7 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
 	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	Common::Rect subName(21, 10, 169, 24);
 
 	drawImage(*menu, 0, 0, false);

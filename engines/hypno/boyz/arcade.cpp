@@ -155,6 +155,7 @@ void BoyzEngine::showArcadeStats(int territory, const ArcadeStats &data) {
 	drawImage(*stats, 0, 0, true);
 	stats->free();
 	delete stats;
+	free(palette);
 	uint32 enemiesAvailable = data.targetsDestroyed + data.targetsMissed;
 	drawString("scifi08.fgx", Common::String::format("%d", enemiesAvailable), 278, 41, 0, kHypnoColorWhiteOrBlue);
 	uint32 killRatio = enemiesAvailable > 0 ? 100 * data.targetsDestroyed / enemiesAvailable : 0;

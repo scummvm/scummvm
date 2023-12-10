@@ -60,6 +60,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 0, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 
 	drawImage(*menu, 0, 0, false);
 	_name.clear();
@@ -146,6 +147,7 @@ bool BoyzEngine::runExitMenu() {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 8, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	drawImage(*menu, 0, 0, false);
 	Common::Rect yesBox(142, 87, 179, 102);
 	Common::Rect noBox(142, 104, 179, 119);
@@ -210,6 +212,7 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 1, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
 	while (!shouldQuit() && cont) {
@@ -297,6 +300,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 5, &palette);
 	loadPalette(palette, 0, 256);
+	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
 	while (!shouldQuit() && cont) {
