@@ -133,11 +133,24 @@ public:
 	void allowNonEnglishCharacters(); /*!< Allow non-English characters in this INI file. */
 	void suppressValuelessLineWarning(); /*!< Disable warnings for lines that contain only keys. */
 
+	/**
+	 * Requires that every key/value line have a delimiter character.
+	 * Otherwise, lines that don't contain a delimiter are interpreted as
+	 * if the entire line is a key with an empty value. This can cause
+	 * unexpected junk lines to reach engines. (bug #13920)
+	 *
+	 * It may be better if instead this were the default behavior for
+	 * clients to disable if needed, but first we would need to identify
+	 * everything that depends on the current behavior.
+	 */
+	void requireKeyValueDelimiter();
+
 private:
 	String		_defaultSectionName;
 	SectionList _sections;
 	bool _allowNonEnglishCharacters;
 	bool _suppressValuelessLineWarning;
+	bool _requireKeyValueDelimiter;
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;

@@ -53,6 +53,7 @@ bool INIFile::isValidName(const String &name) const {
 INIFile::INIFile() {
 	_allowNonEnglishCharacters = false;
 	_suppressValuelessLineWarning = false;
+	_requireKeyValueDelimiter = false;
 }
 
 void INIFile::clear() {
@@ -174,6 +175,11 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			if (!p) {
 				if (!_suppressValuelessLineWarning)
 					warning("Config file buggy: Junk found in line %d: '%s'", lineno, line.c_str());
+
+				// there is no '=' on this line. skip if delimiter is required.
+				if (_requireKeyValueDelimiter)
+					continue;
+
 				kv.key = line;
 				kv.value.clear();
 			}  else {
@@ -479,6 +485,10 @@ void INIFile::allowNonEnglishCharacters() {
 
 void INIFile::suppressValuelessLineWarning() {
 	_suppressValuelessLineWarning = true;
+}
+
+void INIFile::requireKeyValueDelimiter() {
+	_requireKeyValueDelimiter = true;
 }
 
 } // End of namespace Common
