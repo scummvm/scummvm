@@ -188,12 +188,12 @@ void Room407::init() {
 
 	case 402:
 		ws_demand_location(43, 302);
-		setDest();
+		poofArrive();
 		break;
 
 	case 405:
 		ws_demand_location(578, 296);
-		setDest();
+		poofArrive();
 		break;
 
 	default:

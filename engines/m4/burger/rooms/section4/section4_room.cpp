@@ -27,7 +27,7 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
-void Section4Room::setDest(int ticks) {
+void Section4Room::poofArrive(int ticks) {
 	player_set_commands_allowed(false);
 	player_update_info();
 
@@ -36,7 +36,7 @@ void Section4Room::setDest(int ticks) {
 
 	ws_demand_location(-100, _G(player_dest_y));
 	ws_unhide_walker();
-	kernel_timing_trigger(ticks, kSET_DEST);
+	kernel_timing_trigger(ticks, kPOOF);
 }
 
 void Section4Room::poof(int trigger) {
