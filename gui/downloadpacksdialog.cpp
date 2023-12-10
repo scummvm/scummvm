@@ -237,6 +237,7 @@ void DownloadPacksDialog::close() {
 
 void DownloadPacksDialog::setState(IconProcessState state) {
 	g_state->state = state;
+	_errorText->setLabel(Common::U32String());
 
 	switch (state) {
 	case kDownloadStateNone:
