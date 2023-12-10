@@ -816,12 +816,13 @@ Common::MutexInternal *OSystem_Android::createMutex() {
 void OSystem_Android::quit() {
 	ENTER();
 
+	_audio_thread_exit = true;
+	_timer_thread_exit = true;
+
+	JNI::wakeupForQuit();
 	JNI::setReadyForEvents(false);
 
-	_audio_thread_exit = true;
 	pthread_join(_audio_thread, 0);
-
-	_timer_thread_exit = true;
 	pthread_join(_timer_thread, 0);
 }
 
