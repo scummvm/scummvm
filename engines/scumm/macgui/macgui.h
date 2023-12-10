@@ -37,12 +37,17 @@ class ScummEngine;
 class Actor;
 
 class MacGui {
+public:
+	class MacDialogWindow;
+
 protected:
 	ScummEngine *_vm = nullptr;
 	OSystem *_system = nullptr;
 
 	Graphics::MacWindowManager *_windowManager = nullptr;
 	Graphics::Surface *_surface = nullptr;
+	MacGui::MacDialogWindow *_bannerWindow = nullptr;
+
 	Common::String _resourceFile;
 
 	bool _menuIsActive = false;
@@ -135,8 +140,6 @@ protected:
 	bool runOkCancelDialog(Common::String text);
 
 public:
-	class MacDialogWindow;
-
 	class MacGuiObject {
 	protected:
 		bool _redraw = false;
@@ -611,7 +614,8 @@ public:
 
 	MacDialogWindow *createWindow(Common::Rect bounds, MacDialogWindowStyle style = kStyleNormal);
 	MacDialogWindow *createDialog(int dialogId);
-	MacDialogWindow *drawBanner(char *message);
+	void drawBanner(char *message);
+	void undrawBanner();
 
 	void drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const;
 };

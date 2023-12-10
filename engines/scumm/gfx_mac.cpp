@@ -168,19 +168,17 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
-	MacGui::MacDialogWindow *window = _macGui->drawBanner(bannerMsg);
-
 	Common::KeyState ks = Common::KEYCODE_INVALID;
+
+	_macGui->drawBanner(bannerMsg);
 
 	if (waitTime) {
 		bool leftBtnPressed = false, rightBtnPressed = false;
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
 	}
 
-	delete window;
-
+	_macGui->undrawBanner();
 	clearClickedStatus();
-
 	_messageBannerActive = false;
 
 	return ks;
