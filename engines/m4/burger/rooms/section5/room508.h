@@ -53,10 +53,10 @@ private:
 	machine *_series4 = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _borkState = 0;
 	int _val4 = 0;
 	int _val5 = 0;
-	int _val6 = 0;
+	int _speechNum = 0;
 	bool _flag1 = false;
 	bool _flag2 = false;
 	bool _flag3 = false;

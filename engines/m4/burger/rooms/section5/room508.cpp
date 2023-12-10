@@ -27,6 +27,17 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kWILBUR_SPEECH = 1,
+	kCHANGE_BORK_ANIMATION = 2
+};
+
+enum {
+	kSPEECH_DESTROYING_ROOF = 10,
+	kSPEECH_WONT_LET_ME = 11,
+	kSPEECH_BORK_DESTROYED = 12
+};
+
 const char *Room508::SAID[][4] = {
 	{ "WILBUR'S ROOM",      nullptr,   "500w001", nullptr   },
 	{ "BORK",               "508w003", "500w002", "500w002" },
@@ -169,18 +180,18 @@ void Room508::init() {
 	_state3 = 0;
 	_val2 = 0;
 
-	if (_G(flags)[V198] == 1) {
+	if (_G(flags)[kFireplaceHasFire] == 1) {
 		_series1 = series_play("508SMOKE", 0x500, 0, -1, 6, -1);
 		hotspot_set_active("BORK", false);
 
 		if (!_G(flags)[V227]) {
-			_val3 = 18;
-			kernel_trigger_dispatch_now(2);
+			_borkState = 18;
+			kernel_trigger_dispatch_now(kCHANGE_BORK_ANIMATION);
 		}
 	} else {
 		loadSeries();
 		setup();
-		kernel_trigger_dispatch_now(2);
+		kernel_trigger_dispatch_now(kCHANGE_BORK_ANIMATION);
 	}
 
 	if (inv_player_has("CHRISTMAS LIGHTS") || inv_player_has("CHRISTMAS LIGHTS ")) {
@@ -204,9 +215,9 @@ void Room508::init() {
 		player_set_commands_allowed(true);
 		_G(wilbur_should) = 1;
 
-		if (!player_been_here(508) && !_G(flags)[V198]) {
+		if (!player_been_here(508) && !_G(flags)[kFireplaceHasFire]) {
 			_flag2 = true;
-			_val6 = 10;
+			_speechNum = kSPEECH_DESTROYING_ROOF;
 		}
 
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
@@ -234,15 +245,15 @@ void Room508::init() {
 
 void Room508::daemon() {
 	switch (_G(kernel).trigger) {
-	case 1:
-		switch (_val6) {
-		case 10:
+	case kWILBUR_SPEECH:
+		switch (_speechNum) {
+		case kSPEECH_DESTROYING_ROOF:
 			wilbur_speech("508w001");
 			break;
-		case 11:
+		case kSPEECH_WONT_LET_ME:
 			wilbur_speech("508w001z");
 			break;
-		case 12:
+		case kSPEECH_BORK_DESTROYED:
 			wilbur_speech("508w002");
 			break;
 		default:
@@ -250,12 +261,12 @@ void Room508::daemon() {
 		}
 		break;
 
-	case 2:
-		switch (_val3) {
+	case kCHANGE_BORK_ANIMATION:
+		switch (_borkState) {
 		case 14:
 			setup();
 			_state1 = imath_ranged_rand(1, 4);
-			series_play_with_breaks(PLAY7, "508BK01", 0x200, 2, 3);
+			series_play_with_breaks(PLAY7, "508BK01", 0x200, kCHANGE_BORK_ANIMATION, 3);
 
 			if (_G(flags)[V228] == 0 && _G(flags)[V223] == 0 && _val2 > 3) {
 				kernel_trigger_dispatch_now(3);
@@ -267,32 +278,32 @@ void Room508::daemon() {
 		case 15:
 			setup();
 			_state1 = imath_ranged_rand(1, 4);
-			series_play_with_breaks(PLAY8, "508BK02", 0x200, 2, 3);
+			series_play_with_breaks(PLAY8, "508BK02", 0x200, kCHANGE_BORK_ANIMATION, 3);
 			break;
 
 		case 16:
 			setup();
 			_state1 = imath_ranged_rand(1, 2);
 			_state2 = imath_ranged_rand(1, 4);
-			series_play_with_breaks(PLAY9, "508BK03", 0x200, 2, 3);
+			series_play_with_breaks(PLAY9, "508BK03", 0x200, kCHANGE_BORK_ANIMATION, 3);
 			break;
 
 		case 17:
 			_G(wilbur_should) = 2;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			++_state3;
-			_val6 = 11;
+			_speechNum = 11;
 			setup();
 
 			if (_state3 == 3)
-				_val3 = 19;
+				_borkState = 19;
 
 			_state1 = imath_ranged_rand(1, 3);
-			series_play_with_breaks(PLAY10, "508BK04", 0x200, 2, 3, 6);
+			series_play_with_breaks(PLAY10, "508BK04", 0x200, kCHANGE_BORK_ANIMATION, 3, 6);
 			break;
 
 		case 18:
-			_val6 = 12;
+			_speechNum = kSPEECH_BORK_DESTROYED;
 			_G(flags)[V227] = 1;
 			hotspot_set_active("BORK", false);
 
@@ -401,12 +412,12 @@ void Room508::daemon() {
 		case 4:
 			if (_flag2) {
 				_flag2 = false;
-				kernel_trigger_dispatch_now(1);
+				kernel_trigger_dispatch_now(kWILBUR_SPEECH);
 			}
 
 			_G(wilbur_should) = 4;
 			if (!_flag1) {
-				kernel_trigger_dispatch_now(1);
+				player_set_commands_allowed(true);
 				_flag1 = true;
 			}
 
@@ -689,7 +700,7 @@ void Room508::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("LOOK AT") && player_said_any("CHIMNEY", "CHIMNEY POTS") &&
-			_G(flags)[V198]) {
+			_G(flags)[kFireplaceHasFire]) {
 		wilbur_speech("508w013");
 	} else if (player_said("RUBBER DUCKY", "BORK")) {
 		wilbur_speech("500w042");
@@ -697,6 +708,16 @@ void Room508::parser() {
 		wilbur_speech("500w069");
 	} else if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
+	} else if (player_said("TAKE", "CHRISTMAS LIGHTS  ")) {
+		player_set_commands_allowed(false);
+
+		if (_G(flags)[V227]) {
+			_flag1 = false;
+			_G(wilbur_should) = 3;
+			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+		} else {
+			_borkState = 17;
+		}
 	} else if (player_said("HOLE") && player_said_any("CHRISTMAS LIGHTS ", "CHRISTMAS LIGHTS")) {
 		player_set_commands_allowed(false);
 		_G(wilbur_should) = 7;
@@ -735,13 +756,13 @@ void Room508::setup() {
 	switch (imath_ranged_rand(0, 3)) {
 	case 0:
 	case 1:
-		_val3 = 14;
+		_borkState = 14;
 		break;
 	case 2:
-		_val3 = 15;
+		_borkState = 15;
 		break;
 	case 3:
-		_val3 = 16;
+		_borkState = 16;
 		break;
 	default:
 		break;

@@ -491,7 +491,7 @@ void Section5::daemon() {
 			_G(wilbur_should) = 5002;
 			player_update_info();
 			series_play_with_breaks(PLAY1, "503wi07", _G(player_info).depth,
-				kCHANGE_WILBUR_ANIMATION, 3, _G(player_info).scale,
+				kCHANGE_WILBUR_ANIMATION, 3, 6, _G(player_info).scale,
 				_G(player_info).x, _G(player_info).y);
 			break;
 

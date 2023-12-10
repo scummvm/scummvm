@@ -203,7 +203,7 @@ void Room504::init() {
 		hotspot_set_active("BORK GUTS", true);
 	} else {
 		_val1 = 25;
-		kernel_trigger_dispatch_now(25);
+		kernel_trigger_dispatch_now(5);
 		_G(kernel).call_daemon_every_loop = true;
 		hotspot_set_active("BORK GUTS", false);
 		hotspot_set_active("BORK", true);

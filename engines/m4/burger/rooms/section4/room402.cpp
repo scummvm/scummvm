@@ -1313,8 +1313,8 @@ void Room402::freePe2() {
 
 void Room402::loadPe3() {
 	if (_pe03 == -1) {
-		_pe03 = series_load("403pe03");
-		_pe03s = series_load("403pe03s");
+		_pe03 = series_load("402pe03");
+		_pe03s = series_load("402pe03s");
 	}
 }
 
@@ -1328,8 +1328,8 @@ void Room402::freePe3() {
 
 void Room402::loadPe4() {
 	if (_pe04 == -1) {
-		_pe04 = series_load("404pe04");
-		_pe04s = series_load("404pe04s");
+		_pe04 = series_load("402pe04");
+		_pe04s = series_load("402pe04s");
 	}
 }
 

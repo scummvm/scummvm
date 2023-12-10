@@ -231,7 +231,7 @@ enum {
 	V195 = 195,
 	V196 = 196,
 	V197 = 197,
-	V198 = 198,
+	kFireplaceHasFire = 198,
 	V199 = 199,
 
 	kStairsBorkState = 200,

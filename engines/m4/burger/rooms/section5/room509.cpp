@@ -163,12 +163,12 @@ void Room509::init() {
 		series_load("509wi07");
 		series_load("509wi08");
 
-		series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);			
+		_lights = series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);			
 	} else {
 		hotspot_set_active("CHRISTMAS LIGHTS  ", false);
 	}
 
-	_series2 = series_show("509wire", 0x900);
+	_wire = series_show("509wire", 0x900);
 
 	_initFlag = true;
 	Section5Room::init();
@@ -254,8 +254,9 @@ void Room509::daemon() {
 			ws_hide_walker();
 			_G(wilbur_should) = 2;
 
-			terminateMachineAndNull(_series1);
-			series_play_with_breaks(PLAY1, (_G(flags)[V212] == 5000) ? "509wi03" : "509wi01");
+			terminateMachineAndNull(_lights);
+			series_play_with_breaks(PLAY1, (_G(flags)[V212] == 5000) ? "509wi03" : "509wi01",
+				0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 2:
@@ -291,7 +292,7 @@ void Room509::daemon() {
 
 		case 5:
 			player_set_commands_allowed(false);
-			terminateMachineAndNull(_series2);
+			terminateMachineAndNull(_wire);
 
 			if (_G(flags)[V212] == 5000) {
 				if (_G(flags)[V234]) {
@@ -312,7 +313,7 @@ void Room509::daemon() {
 			_val5 = 2;
 			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
 			_G(wilbur_should) = 8;
-			series_play_with_breaks(PLAY6, "609wi08", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
+			series_play_with_breaks(PLAY6, "509wi08", 0xc00, kCHANGE_WILBUR_ANIMATION, 3);
 			break;
 
 		case 7:
@@ -332,8 +333,8 @@ void Room509::daemon() {
 			inv_move_object("CHRISTMAS LIGHTS", NOWHERE);
 			inv_move_object("CHRISTMAS LIGHTS ", NOWHERE);
 			hotspot_set_active("CHRISTMAS LIGHTS  ", true);
-			_series2 = series_show("509wire", 0x900);
-			_series1 = series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);
+			_wire = series_show("509wire", 0x900);
+			_lights = series_show((_G(flags)[V212] == 5000) ? "509lgt02" : "509lgt01", 0xc00);
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 			break;
 
@@ -409,9 +410,9 @@ void Room509::daemon() {
 			_G(kernel).trigger_mode = KT_PARSE;
 
 			if (_G(flags)[V212] == 5000) {
-				_series1 = series_show("509lgt02", 0xc00);
+				_lights = series_show("509lgt02", 0xc00);
 			} else {
-				_series1 = series_show("509lgt01", 0xc00);
+				_lights = series_show("509lgt01", 0xc00);
 			}
 
 			ws_unhide_walker();
