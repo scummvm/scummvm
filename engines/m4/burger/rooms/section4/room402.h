@@ -66,7 +66,7 @@ private:
 	int _pe04 = -1, _pe04s = -1;
 	int _wi01 = -1, _wi01s = -1;
 	int _wi02 = -1, _wi02s = -1;
-	int _val1 = 0;
+	int _digiTrigger = 0;
 	int _val2 = 0;
 	int _val3 = 0;
 	int _val4 = 0;

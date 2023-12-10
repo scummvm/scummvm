@@ -437,6 +437,7 @@ void Room402::daemon() {
 				_stolie.play("402dr08", 0x300, 0, 2, 6, 0, 100, 0, 0, 72, 75);
 				break;
 
+			case 45:
 			case 46:
 				freeStolie();
 				_stolieSet = true;
@@ -623,7 +624,7 @@ void Room402::daemon() {
 			case 47:
 				loadPe3();
 				_series2Set = true;
-				Series::series_play("402pe03", 0x100, 0, -1, 6, -1, 100, 0, 0, 15, 15);
+				_series2.play("402pe03", 0x100, 0, -1, 6, -1, 100, 0, 0, 15, 15);
 				break;
 
 			default:
@@ -902,7 +903,7 @@ void Room402::parser() {
 		case 1:
 			_digiName = "402s006";
 			_newMode = KT_PARSE;
-			_val1 = 2;
+			_digiTrigger = 2;
 			freeStolie();
 			_val2 = 45;
 			break;
@@ -948,6 +949,8 @@ void Room402::parser() {
 	} else if (player_said("TALK TO", "stolie")) {
 		player_set_commands_allowed(false);
 		conv_load_and_prepare("conv84", 1);
+		conv_export_pointer_curr(&Flags::_flags[V157], 0);
+		conv_play_curr();
 	} else if (player_said("TALK TO", "elmo")) {
 		if (_G(flags)[V158]) {
 			switch (_G(kernel).trigger) {
@@ -992,7 +995,7 @@ void Room402::parser() {
 			case 1:
 				_digiName = "402p501";
 				_newMode = KT_PARSE;
-				_val1 = 2;
+				_digiTrigger = 2;
 				_val3 = 45;
 				break;
 
@@ -1019,7 +1022,7 @@ void Room402::parser() {
 			freeDr2();
 			_digiName = "402p902";
 			_newMode = KT_PARSE;
-			_val1 = 2;
+			_digiTrigger = 2;
 			_val3 = 45;
 			break;
 
@@ -1027,14 +1030,14 @@ void Room402::parser() {
 			_val3 = 41;
 			_digiName = "402s007";
 			_newMode = KT_PARSE;
-			_val1 = 3;
+			_digiTrigger = 3;
 			_val2 = 40;
 			break;
 
 		case 3:
 			_digiName = "402s008";
 			_newMode = KT_PARSE;
-			_val1 = 4;
+			_digiTrigger = 4;
 			freeStolie();
 			freeDr2();
 			_val2 = 46;
@@ -1051,7 +1054,7 @@ void Room402::parser() {
 		case 5:
 			_digiName = "402s009";
 			_newMode = KT_PARSE;
-			_val1 = 6;
+			_digiTrigger = 6;
 			_val2 = 45;
 			break;
 
@@ -1135,7 +1138,7 @@ void Room402::conv84() {
 			if (who <= 0) {
 				_digiName = sound;
 				_newMode = KT_PARSE;
-				_val1 = 6;
+				_digiTrigger = 6;
 
 				if (node == 1 && entry == 0)
 					kernel_timing_trigger(180, 21);
@@ -1205,7 +1208,8 @@ void Room402::conv84() {
 void Room402::playDigiName() {
 	if (_digiName) {
 		_G(kernel).trigger_mode = _newMode;
-		digi_play(_digiName, 1, 255, _val1);
+		digi_play(_digiName, 1, 255, _digiTrigger);
+		_digiName = nullptr;
 	}
 }
 
