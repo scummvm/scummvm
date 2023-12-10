@@ -471,7 +471,7 @@ void Room406::init() {
 			}
 		} else {
 			_val2 = 22;
-			kernel_trigger_dispatch_now(22);
+			kernel_trigger_dispatch_now(1);
 		}
 	}
 
@@ -513,7 +513,7 @@ void Room406::init() {
 
 	case 402:
 		ws_demand_location(44, 310);
-		setDest();
+		poofArrive();
 		break;
 
 	case 404:
@@ -523,7 +523,7 @@ void Room406::init() {
 
 	case 405:
 		ws_demand_location(460, 346);
-		setDest();
+		poofArrive();
 		break;
 
 	default:
@@ -554,6 +554,8 @@ void Room406::daemon() {
 			default:
 				break;
 			}
+
+			kernel_timing_trigger(15, 2);
 			break;
 
 		case 23:
@@ -612,6 +614,8 @@ void Room406::daemon() {
 		default:
 			break;
 		}
+
+		_val2 = 0;
 		break;
 
 	case 5:
@@ -883,10 +887,10 @@ void Room406::daemon() {
 					_val1 = 55;
 					break;
 				case 3:
-					_val3 = 53;
+					_val1 = 53;
 					break;
 				case 4:
-					_val4 = 54;
+					_val1 = 54;
 					break;
 				default:
 					break;
