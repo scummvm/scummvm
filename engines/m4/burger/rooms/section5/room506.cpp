@@ -451,6 +451,8 @@ void Room506::daemon() {
 }
 
 void Room506::pre_parser() {
+	_G(kernel).trigger_mode = KT_DAEMON;
+
 	if (player_said("AMPLIFIER", "TELEVISION") && _G(flags)[V218] != 5003) {
 		_G(wilbur_should) = 4;
 		player_hotspot_walk_override(456, 245, 8, kCHANGE_WILBUR_ANIMATION);
@@ -484,7 +486,7 @@ void Room506::parser() {
 		player_set_commands_allowed(false);
 		_val2 = 15;
 		++_state2;
-	} else if (player_said_any("ROOF", "WINDOW") && !player_said_any("ENTER", "GEAR") &&
+	} else if (player_said_any("ROOF", "WINDOW") && player_said_any("ENTER", "GEAR") &&
 			_G(flags)[V219]) {
 		_G(wilbur_should) = 2;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);

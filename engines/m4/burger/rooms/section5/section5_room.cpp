@@ -52,7 +52,7 @@ void Section5Room::init() {
 
 	switch (_G(game).room_id) {
 	case 502:
-		if (_G(flags)[V198])
+		if (_G(flags)[kFireplaceHasFire])
 			Section5::_digiName = "500_002";
 		break;
 

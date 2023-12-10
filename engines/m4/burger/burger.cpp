@@ -675,7 +675,7 @@ void BurgerEngine::testDone4() {
 	_G(flags)[V195] = 1;
 	_G(flags)[V196] = 0;
 	_G(flags)[V197] = 1;
-	_G(flags)[V198] = 1;
+	_G(flags)[kFireplaceHasFire] = 1;
 	_G(flags)[V199] = 1;
 	_G(flags)[kStairsBorkState] = 5003;
 	_G(flags)[kBORK_STATE] = 16;

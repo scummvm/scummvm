@@ -325,7 +325,7 @@ void Room502::init() {
 
 	series_show("502logs", 0xc00);
 
-	if (_G(flags)[V198])
+	if (_G(flags)[kFireplaceHasFire])
 		kernel_trigger_dispatch_now(19);
 
 	_flag1 = true;
@@ -658,9 +658,9 @@ void Room502::daemon() {
 		break;
 
 	case 19:
-		_G(flags)[V198] = 1;
+		_G(flags)[kFireplaceHasFire] = 1;
 		digi_play_loop("500_002", 3, 125);
-		series_play("502fire", 0xc00, 4);
+		series_play("502fire", 0xc00, 4, -1, 6, -1);
 		break;
 
 	case 20:
@@ -815,7 +815,7 @@ void Room502::parser() {
 	bool railing = player_said("RAILING") && _G(flags)[kStairsBorkState] == 5003;
 	bool takeKindling = player_said("KINDLING ") && player_said("TAKE");
 	bool gearKindling = player_said("KINDLING ") && player_said("GEAR");
-	bool fireplace = player_said("FIREPLACE") && _G(flags)[V198] != 0;
+	bool fireplace = player_said("FIREPLACE") && _G(flags)[kFireplaceHasFire] != 0;
 
 	if (player_said("LOOK AT", "FRONT DOOR") && _G(flags)[V195]) {
 		wilbur_speech("502w004");
@@ -827,14 +827,14 @@ void Room502::parser() {
 		wilbur_speech("502w017");
 	} else if (takeKindling && inv_player_has("kindling")) {
 		wilbur_speech("502w019");
-	} else if (takeKindling && _G(flags)[V198]) {
+	} else if (takeKindling && _G(flags)[kFireplaceHasFire]) {
 		wilbur_speech("502w020");
 	} else if (gearKindling && inv_player_has("KINDLING")) {
 		wilbur_speech("502w022");
-	} else if (gearKindling && _G(flags)[V198]) {
+	} else if (gearKindling && _G(flags)[kFireplaceHasFire]) {
 		wilbur_speech("502w020");
 	} else if (player_said("KINDLING") && player_said("FIREPLACE")) {
-		wilbur_speech(_G(flags)[V198] ? "500w063" : "500w062");
+		wilbur_speech(_G(flags)[kFireplaceHasFire] ? "500w063" : "500w062");
 	} else if (player_said("KINDLING") && player_said("WIRES")) {
 		wilbur_speech("500w065");
 	} else if (fireplace && player_said("LOOK AT")) {
@@ -868,7 +868,7 @@ void Room502::parser() {
 		_val3 = 26;
 		++_state4;
 	} else if (player_said("TAKE", "KINDLING ")) {
-		if (!_G(flags)[V198] && !inv_player_has("KINDLING")) {
+		if (!_G(flags)[kFireplaceHasFire] && !inv_player_has("KINDLING")) {
 			_G(wilbur_should) = 10;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}

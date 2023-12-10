@@ -140,8 +140,9 @@ int32 series_play_with_breaks(const seriesPlayBreak list[], const char *name, fr
 		if (!(_G(seriesPlayers)[slot].in_use))	break;
 	}
 
-	if (slot >= MAX_SERIES_PLAYERS) {  // no free slots
-		term_message("**** all _G(seriesPlayers)s are in use!");
+	if (slot >= MAX_SERIES_PLAYERS) {
+		// No free slots
+		term_message("**** all seriesPlayers are in use!");
 		return -1;
 	}
 

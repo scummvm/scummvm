@@ -41,8 +41,8 @@ private:
 	static const seriesPlayBreak PLAY8[];
 	static int32 _state1;
 	static int32 _state2;
-	machine *_series1 = nullptr;
-	machine *_series2 = nullptr;
+	machine *_lights = nullptr;
+	machine *_wire = nullptr;
 	int _val1 = 0;
 	int _val2 = 0;
 	int _val3 = 0;

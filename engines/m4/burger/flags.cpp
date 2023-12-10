@@ -285,7 +285,7 @@ void Flags::reset4() {
 	(*this)[V234] = 0;
 	(*this)[V196] = 0;
 	(*this)[V197] = 0;
-	(*this)[V198] = 0;
+	(*this)[kFireplaceHasFire] = 0;
 	(*this)[V199] = 0;
 	(*this)[kStairsBorkState] = 5000;
 
