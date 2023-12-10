@@ -632,7 +632,7 @@ public class ScummVMEventsBase implements
 									float distanceX, float distanceY) {
 		_handler.removeMessages(MSG_LONG_TOUCH_EVENT);
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
-		if (_touchMode != TOUCH_MODE_GAMEPAD) {
+		if (_touchMode != TOUCH_MODE_GAMEPAD && e1 != null) {
 			// typical use:
 			// - move mouse cursor around (most traditional point and click games)
 			// - mouse look (eg. Myst 3)
