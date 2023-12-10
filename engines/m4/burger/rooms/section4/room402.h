@@ -68,10 +68,10 @@ private:
 	int _wi02 = -1, _wi02s = -1;
 	int _digiTrigger = 0;
 	int _val2 = 0;
-	int _val3 = 0;
+	int _elmoShould = 0;
 	int _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _elmoMode = 0;
+	int _stolieMode = 0;
 
 	void conv84();
 	void playDigiName();
