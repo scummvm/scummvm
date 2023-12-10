@@ -28,8 +28,7 @@
 #include "scumm/scumm_v4.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
-#include "scumm/macgui/macgui.h"
-#include "scumm/macgui/macgui_internal.h"
+#include "scumm/macgui/macgui_impl.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 
@@ -875,7 +874,7 @@ void MacIndy3Gui::Inventory::ScrollButton::draw() {
 // ---------------------------------------------------------------------------
 
 MacIndy3Gui::MacIndy3Gui(ScummEngine *vm, Common::String resourceFile) :
-	MacGui(vm, resourceFile), _visible(false) {
+	MacGuiImpl(vm, resourceFile), _visible(false) {
 
 	Common::Rect verbGuiArea(640, 112);
 	verbGuiArea.translate(0, 288 + 2 * _vm->_screenDrawOffset);
@@ -976,7 +975,7 @@ const Graphics::Font *MacIndy3Gui::getFontByScummId(int32 id) {
 }
 
 bool MacIndy3Gui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
-	if (MacGui::getFontParams(fontId, id, size, slant))
+	if (MacGuiImpl::getFontParams(fontId, id, size, slant))
 		return true;
 
 	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
@@ -1077,7 +1076,7 @@ void MacIndy3Gui::printCharToTextArea(int chr, int x, int y, int color) {
 }
 
 bool MacIndy3Gui::handleMenu(int id, Common::String &name) {
-	if (MacGui::handleMenu(id, name))
+	if (MacGuiImpl::handleMenu(id, name))
 		return true;
 
 	Common::StringArray substitutions;
@@ -1372,7 +1371,7 @@ bool MacIndy3Gui::runOpenDialog(int &saveSlotToHandle) {
 	Common::StringArray savegameNames;
 	prepareSaveLoad(savegameNames, availSlots, slotIds, ARRAYSIZE(availSlots));
 
-	MacGui::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
+	MacGuiImpl::MacListBox *listBox = window->addListBox(Common::Rect(14, 41, 248, 187), savegameNames, true);
 
 	// When quitting, the default action is to not open a saved game
 	bool ret = false;
@@ -1455,7 +1454,7 @@ bool MacIndy3Gui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
 				// Edit text widget
 				if (deferredActionsIds[i] == 5) {
-					MacGui::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
+					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
 
 					// Disable "Save" button when text is empty
 					window->getWidget(0)->setEnabled(!wid->getText().empty());
@@ -1740,7 +1739,7 @@ void MacIndy3Gui::drawVerbs() {
 }
 
 bool MacIndy3Gui::handleEvent(Common::Event event) {
-	if (MacGui::handleEvent(event))
+	if (MacGuiImpl::handleEvent(event))
 		return true;
 
 	bool isPauseEvent = event.type == Common::EVENT_KEYDOWN &&

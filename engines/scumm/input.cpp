@@ -1168,7 +1168,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_d && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
 			// Drafts menu
 			if (_macGui) {
-				((MacLoomGui *)_macGui)->runDraftsInventory();
+				_macGui->runDraftsInventory();
 			} else {
 				showDraftsInventory();
 			}

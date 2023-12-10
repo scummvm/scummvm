@@ -33,8 +33,7 @@
 
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
-#include "scumm/macgui/macgui.h"
-#include "scumm/macgui/macgui_internal.h"
+#include "scumm/macgui/macgui_impl.h"
 #include "scumm/players/player_v3m.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
@@ -45,7 +44,7 @@ namespace Scumm {
 // The Mac Loom GUI. This one is pretty simple.
 // ===========================================================================
 
-MacLoomGui::MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGui(vm, resourceFile) {
+MacLoomGui::MacLoomGui(ScummEngine *vm, Common::String resourceFile) : MacGuiImpl(vm, resourceFile) {
 	// The practice box can be moved, but this is its default position on
 	// a large screen, and it's not saved.
 
@@ -70,7 +69,7 @@ const Graphics::Font *MacLoomGui::getFontByScummId(int32 id) {
 }
 
 bool MacLoomGui::getFontParams(FontId fontId, int &id, int &size, int &slant) const {
-	if (MacGui::getFontParams(fontId, id, size, slant))
+	if (MacGuiImpl::getFontParams(fontId, id, size, slant))
 		return true;
 
 	// Loom uses only font size 13 for in-game text, but size 12 is used
@@ -131,7 +130,7 @@ void MacLoomGui::setupCursor(int &width, int &height, int &hotspotX, int &hotspo
 }
 
 bool MacLoomGui::handleMenu(int id, Common::String &name) {
-	if (MacGui::handleMenu(id, name))
+	if (MacGuiImpl::handleMenu(id, name))
 		return true;
 
 	switch (id) {
@@ -435,7 +434,7 @@ void MacLoomGui::runDraftsInventory() {
 	const char *notes = "cdefgabC";
 
 	// ACT 1: Draw the Mac dialog window
-	MacGui::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
+	MacGuiImpl::MacDialogWindow *window = createWindow(Common::Rect(110, 20, 540, 252));
 	const Graphics::Font *font = getFont(kSystemFont);
 
 	Graphics::Surface *s = window->innerSurface();
@@ -580,7 +579,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 
 	window->addListBox(Common::Rect(14, 9, 217, 139), savegameNames, true, true);
 
-	MacGui::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
+	MacGuiImpl::MacEditText *editText = window->addEditText(Common::Rect(16, 164, 229, 180), "Game file", true);
 
 	Graphics::Surface *s = window->innerSurface();
 	const Graphics::Font *font = getFont(kSystemFont);
@@ -616,7 +615,7 @@ bool MacLoomGui::runSaveDialog(int &saveSlotToHandle, Common::String &name) {
 			for (uint i = 0; i < deferredActionsIds.size(); i++) {
 				// Edit text widget
 				if (deferredActionsIds[i] == 4) {
-					MacGui::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
+					MacGuiImpl::MacWidget *wid = window->getWidget(deferredActionsIds[i]);
 
 					// Disable "Save" button when text is empty
 					window->getWidget(0)->setEnabled(!wid->getText().empty());
@@ -858,7 +857,7 @@ void MacLoomGui::update(int delta) {
 }
 
 bool MacLoomGui::handleEvent(Common::Event event) {
-	if (MacGui::handleEvent(event))
+	if (MacGuiImpl::handleEvent(event))
 		return true;
 
 	if (!_practiceBox || _vm->_userPut <= 0)

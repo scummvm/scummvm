@@ -29,7 +29,7 @@
 
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
-#include "scumm/macgui/macgui.h"
+#include "scumm/macgui/macgui_impl.h"
 
 namespace Scumm {
 
@@ -40,7 +40,7 @@ namespace Scumm {
 // drawing area (about and pause). It can not be dragged.
 // ---------------------------------------------------------------------------
 
-MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
+MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, Graphics::Surface *from, Common::Rect bounds, MacDialogWindowStyle style) : _gui(gui), _system(system), _from(from), _bounds(bounds) {
 	_pauseToken = _gui->_vm->pauseEngine();
 
 	// Remember if the screen was shaking. We don't use the SCUMM engine's
@@ -68,7 +68,7 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 	r.grow(-1);
 	s->fillRect(r, kWhite);
 
-	if (style == MacGui::kStyleNormal) {
+	if (style == MacGuiImpl::kStyleNormal) {
 		int growths[] = { 1, -3, -1 };
 
 		for (int i = 0; i < ARRAYSIZE(growths); i++) {
@@ -79,7 +79,7 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 			s->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
 			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
 		}
-	} else if (style == MacGui::kStyleRounded) {
+	} else if (style == MacGuiImpl::kStyleRounded) {
 		r.grow(1);
 
 		for (int i = 0; i < 2; i++) {
@@ -96,7 +96,7 @@ MacGui::MacDialogWindow::MacDialogWindow(MacGui *gui, OSystem *system, Graphics:
 	}
 }
 
-MacGui::MacDialogWindow::~MacDialogWindow() {
+MacGuiImpl::MacDialogWindow::~MacDialogWindow() {
 	if (!CursorMan.isVisible())
 		CursorMan.showMouse(true);
 
@@ -115,14 +115,14 @@ MacGui::MacDialogWindow::~MacDialogWindow() {
 	_gui->_vm->setShake(_shakeWasEnabled);
 }
 
-void MacGui::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
+void MacGuiImpl::MacDialogWindow::copyToScreen(Graphics::Surface *s) const {
 	if (s) {
 		_from->copyRectToSurface(*s, _bounds.left, _bounds.top, Common::Rect(_bounds.width(), _bounds.height()));
 	}
 	_system->copyRectToScreen(_from->getBasePtr(_bounds.left, _bounds.top), _from->pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 }
 
-void MacGui::MacDialogWindow::show() {
+void MacGuiImpl::MacDialogWindow::show() {
 	_visible = true;
 	copyToScreen();
 	_dirtyRects.clear();
@@ -130,7 +130,7 @@ void MacGui::MacDialogWindow::show() {
 	_cursorWasVisible = CursorMan.showMouse(true);
 }
 
-void MacGui::MacDialogWindow::setFocusedWidget(int x, int y) {
+void MacGuiImpl::MacDialogWindow::setFocusedWidget(int x, int y) {
 	int nr = findWidget(x, y);
 	if (nr >= 0) {
 		_focusedWidget = _widgets[nr];
@@ -141,7 +141,7 @@ void MacGui::MacDialogWindow::setFocusedWidget(int x, int y) {
 		clearFocusedWidget();
 }
 
-void MacGui::MacDialogWindow::clearFocusedWidget() {
+void MacGuiImpl::MacDialogWindow::clearFocusedWidget() {
 	if (_focusedWidget) {
 		_focusedWidget->loseFocus();
 		_focusedWidget = nullptr;
@@ -150,7 +150,7 @@ void MacGui::MacDialogWindow::clearFocusedWidget() {
 	}
 }
 
-int MacGui::MacDialogWindow::findWidget(int x, int y) const {
+int MacGuiImpl::MacDialogWindow::findWidget(int x, int y) const {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->isEnabled() && _widgets[i]->isVisible() && _widgets[i]->findWidget(x, y))
 			return i;
@@ -159,65 +159,65 @@ int MacGui::MacDialogWindow::findWidget(int x, int y) const {
 	return -1;
 }
 
-MacGui::MacButton *MacGui::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
-	MacGui::MacButton *button = new MacButton(this, bounds, text, enabled);
+MacGuiImpl::MacButton *MacGuiImpl::MacDialogWindow::addButton(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGuiImpl::MacButton *button = new MacButton(this, bounds, text, enabled);
 	_widgets.push_back(button);
 	return button;
 }
 
-MacGui::MacCheckbox *MacGui::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
-	MacGui::MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, enabled);
+MacGuiImpl::MacCheckbox *MacGuiImpl::MacDialogWindow::addCheckbox(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGuiImpl::MacCheckbox *checkbox = new MacCheckbox(this, bounds, text, enabled);
 	_widgets.push_back(checkbox);
 	return checkbox;
 }
 
-MacGui::MacStaticText *MacGui::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled) {
-	MacGui::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled);
+MacGuiImpl::MacStaticText *MacGuiImpl::MacDialogWindow::addStaticText(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGuiImpl::MacStaticText *staticText = new MacStaticText(this, bounds, text, enabled);
 	_widgets.push_back(staticText);
 	return staticText;
 }
 
-MacGui::MacEditText *MacGui::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
-	MacGui::MacEditText *editText = new MacEditText(this, bounds, text, enabled);
+MacGuiImpl::MacEditText *MacGuiImpl::MacDialogWindow::addEditText(Common::Rect bounds, Common::String text, bool enabled) {
+	MacGuiImpl::MacEditText *editText = new MacEditText(this, bounds, text, enabled);
 	_widgets.push_back(editText);
 	return editText;
 }
 
-MacGui::MacPicture *MacGui::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
-	MacGui::MacPicture *picture = new MacPicture(this, bounds, id, false);
+MacGuiImpl::MacPicture *MacGuiImpl::MacDialogWindow::addPicture(Common::Rect bounds, int id, bool enabled) {
+	MacGuiImpl::MacPicture *picture = new MacPicture(this, bounds, id, false);
 	_widgets.push_back(picture);
 	return picture;
 }
 
-MacGui::MacSlider *MacGui::MacDialogWindow::addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled) {
-	MacGui::MacSlider *slider = new MacSlider(this, Common::Rect(x, y, x + 16, y + h), minValue, maxValue, pageSize, enabled);
+MacGuiImpl::MacSlider *MacGuiImpl::MacDialogWindow::addSlider(int x, int y, int h, int minValue, int maxValue, int pageSize, bool enabled) {
+	MacGuiImpl::MacSlider *slider = new MacSlider(this, Common::Rect(x, y, x + 16, y + h), minValue, maxValue, pageSize, enabled);
 	_widgets.push_back(slider);
 	return slider;
 }
 
-MacGui::MacPictureSlider *MacGui::MacDialogWindow::addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
+MacGuiImpl::MacPictureSlider *MacGuiImpl::MacDialogWindow::addPictureSlider(int backgroundId, int handleId, bool enabled, int minX, int maxX, int minValue, int maxValue, int leftMargin, int rightMargin) {
 	MacPicture *background = (MacPicture *)_widgets[backgroundId];
 	MacPicture *handle = (MacPicture *)_widgets[handleId];
 
 	background->setVisible(false);
 	handle->setVisible(false);
 
-	MacGui::MacPictureSlider *slider = new MacPictureSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
+	MacGuiImpl::MacPictureSlider *slider = new MacPictureSlider(this, background, handle, enabled, minX, maxX, minValue, maxValue, leftMargin, rightMargin);
 	_widgets.push_back(slider);
 	return slider;
 }
 
-void MacGui::MacDialogWindow::markRectAsDirty(Common::Rect r) {
+void MacGuiImpl::MacDialogWindow::markRectAsDirty(Common::Rect r) {
 	_dirtyRects.push_back(r);
 }
 
-MacGui::MacListBox *MacGui::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable) {
-	MacGui::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled, contentUntouchable);
+MacGuiImpl::MacListBox *MacGuiImpl::MacDialogWindow::addListBox(Common::Rect bounds, Common::StringArray texts, bool enabled, bool contentUntouchable) {
+	MacGuiImpl::MacListBox *listBox = new MacListBox(this, bounds, texts, enabled, contentUntouchable);
 	_widgets.push_back(listBox);
 	return listBox;
 }
 
-void MacGui::MacDialogWindow::drawBeamCursor() {
+void MacGuiImpl::MacDialogWindow::drawBeamCursor() {
 	int x0 = _beamCursorPos.x - _beamCursorHotspotX;
 	int y0 = _beamCursorPos.y - _beamCursorHotspotY;
 	int x1 = x0 + _beamCursor->w;
@@ -269,7 +269,7 @@ void MacGui::MacDialogWindow::drawBeamCursor() {
 	_system->copyRectToScreen(_beamCursor->getBasePtr(srcX, srcY), _beamCursor->pitch, x0, y0, x1 - x0, y1 - y0);
 }
 
-void MacGui::MacDialogWindow::undrawBeamCursor() {
+void MacGuiImpl::MacDialogWindow::undrawBeamCursor() {
 		int x0 = _beamCursorPos.x - _beamCursorHotspotX;
 		int y0 = _beamCursorPos.y - _beamCursorHotspotY;
 		int x1 = x0 + _beamCursor->w;
@@ -285,7 +285,7 @@ void MacGui::MacDialogWindow::undrawBeamCursor() {
 		_system->copyRectToScreen(screen->getBasePtr(x0, y0), screen->pitch, x0, y0, x1 - x0, y1 - y0);
 }
 
-void MacGui::MacDialogWindow::update(bool fullRedraw) {
+void MacGuiImpl::MacDialogWindow::update(bool fullRedraw) {
 	for (uint i = 0; i < _widgets.size(); i++) {
 		if (_widgets[i]->isVisible())
 			_widgets[i]->draw();
@@ -317,7 +317,7 @@ void MacGui::MacDialogWindow::update(bool fullRedraw) {
 	}
 }
 
-void MacGui::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
+void MacGuiImpl::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 	Graphics::Surface *s = innerSurface();
 
 	Color color[2];
@@ -334,7 +334,7 @@ void MacGui::MacDialogWindow::drawDottedHLine(int x0, int y, int x1) {
 		s->setPixel(x, y, color[x & 1]);
 }
 
-void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
+void MacGuiImpl::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	for (int y = r.top; y < r.bottom; y++) {
 		for (int x = r.left; x < r.right; x++) {
 			int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
@@ -345,7 +345,7 @@ void MacGui::MacDialogWindow::fillPattern(Common::Rect r, uint16 pattern) {
 	markRectAsDirty(r);
 }
 
-int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
+int MacGuiImpl::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 	// The first time the function is called, show the dialog and redraw
 	// all widgets completely.
 
@@ -593,7 +593,7 @@ int MacGui::MacDialogWindow::runDialog(Common::Array<int> &deferredActionIds) {
 	return -1;
 }
 
-void MacGui::MacDialogWindow::updateCursor() {
+void MacGuiImpl::MacDialogWindow::updateCursor() {
 	int mouseOverWidget = findWidget(_mousePos.x, _mousePos.y);
 	bool useBeamCursor = (mouseOverWidget >= 0 && _widgets[mouseOverWidget]->useBeamCursor());
 
@@ -614,12 +614,12 @@ void MacGui::MacDialogWindow::updateCursor() {
 	}
 }
 
-void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
+void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y) {
 	_innerSurface.copyRectToSurface(*sprite, x, y, Common::Rect(sprite->w, sprite->h));
 	markRectAsDirty(Common::Rect(x, y, x + sprite->w, y + sprite->h));
 }
 
-void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
+void MacGuiImpl::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x, int y, Common::Rect(clipRect)) {
 	Common::Rect subRect(sprite->w, sprite->h);
 
 	if (x < clipRect.left) {
@@ -646,8 +646,8 @@ void MacGui::MacDialogWindow::drawSprite(const Graphics::Surface *sprite, int x,
 	}
 }
 
-void MacGui::MacDialogWindow::plotPixel(int x, int y, int color, void *data) {
-	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
+void MacGuiImpl::MacDialogWindow::plotPixel(int x, int y, int color, void *data) {
+	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	s->setPixel(x, y, color);
 }
@@ -657,13 +657,13 @@ void MacGui::MacDialogWindow::plotPixel(int x, int y, int color, void *data) {
 // subtle effect that I suspect it was just doing some different magic, maybe
 // with XOR, but I couldn't get that to work by eye only.
 
-void MacGui::MacDialogWindow::plotPattern(int x, int y, int pattern, void *data) {
+void MacGuiImpl::MacDialogWindow::plotPattern(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
 		0x0000, 0x2828, 0xA5A5, 0xD7D7,
 		0xFFFF,	0xD7D7, 0xA5A5, 0x2828
 	};
 
-	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
+	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
@@ -672,19 +672,19 @@ void MacGui::MacDialogWindow::plotPattern(int x, int y, int pattern, void *data)
 		s->setPixel(x, y, kWhite);
 }
 
-void MacGui::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
+void MacGuiImpl::MacDialogWindow::plotPatternDarkenOnly(int x, int y, int pattern, void *data) {
 	const uint16 patterns[] = {
 		0x0000, 0x2828, 0xA5A5, 0xD7D7, 0xFFFF
 	};
 
-	MacGui::MacDialogWindow *window = (MacGui::MacDialogWindow *)data;
+	MacGuiImpl::MacDialogWindow *window = (MacGuiImpl::MacDialogWindow *)data;
 	Graphics::Surface *s = window->innerSurface();
 	int bit = 0x8000 >> (4 * (y % 4) + (x % 4));
 	if (patterns[pattern] & bit)
 		s->setPixel(x, y, kBlack);
 }
 
-void MacGui::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
+void MacGuiImpl::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
 	if (!lines)
 		return;
 
@@ -730,7 +730,7 @@ void MacGui::MacDialogWindow::drawTexts(Common::Rect r, const TextLine *lines) {
 	}
 }
 
-void MacGui::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
+void MacGuiImpl::MacDialogWindow::drawTextBox(Common::Rect r, const TextLine *lines, int arc) {
 	Graphics::drawRoundRect(r, arc, kWhite, true, plotPixel, this);
 	Graphics::drawRoundRect(r, arc, kBlack, false, plotPixel, this);
 	markRectAsDirty(r);

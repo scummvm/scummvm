@@ -1172,7 +1172,7 @@ Common::Error ScummEngine::init() {
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
 
-					_macGui = new MacIndy3Gui(this, macResourceFile);
+					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
@@ -1197,7 +1197,7 @@ Common::Error ScummEngine::init() {
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, _useMacScreenCorrectHeight ? 480 : 400, Graphics::PixelFormat::createFormatCLUT8());
-					_macGui = new MacLoomGui(this, macResourceFile);
+					_macGui = new MacGui(this, macResourceFile);
 					break;
 				}
 			}
