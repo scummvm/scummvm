@@ -462,6 +462,8 @@ void DownloadPacksDialog::clearCache() {
 
 	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %S of data, deleting all previously downloaded %S. Do you want to proceed?"), size.c_str(), _(sizeUnits).c_str(), _packname.c_str()), _("Proceed"), _("Cancel"));
 	if (dialog.runModal() == ::GUI::kMessageOK) {
+		// Cancel all downloads
+		g_state->session.abortRequest();
 
 		// Build list of previously downloaded icon files
 		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
@@ -476,9 +478,11 @@ void DownloadPacksDialog::clearCache() {
 		g_state->fileHash.clear();
 
 		// Fetch current packs list file and re-trigger downloads
-		g_state->downloadList();
-		calculateList();
+		setState(kDownloadStateList);
 		_cancelButton->setVisible(true);
+		refreshWidgets();
+
+		g_state->downloadList();
 	} else {
 		_clearCacheButton->setEnabled(true);
 	}
