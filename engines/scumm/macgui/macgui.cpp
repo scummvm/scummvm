@@ -59,6 +59,7 @@ MacGui::MacGui(ScummEngine *vm, Common::String resourceFile) : _vm(vm), _system(
 }
 
 MacGui::~MacGui() {
+	delete _bannerWindow;
 	delete _windowManager;
 }
 
@@ -877,17 +878,26 @@ bool MacGui::runRestartDialog() {
 	return runOkCancelDialog("Are you sure you want to restart this game from the beginning?");
 }
 
-MacGui::MacDialogWindow *MacGui::drawBanner(char *message) {
-	MacGui::MacDialogWindow *window = createWindow(
+void MacGui::drawBanner(char *message) {
+	if (_bannerWindow)
+		undrawBanner();
+
+	_bannerWindow = createWindow(
 		Common::Rect(70, 189, 570, 211),
 		kStyleRounded);
 	const Graphics::Font *font = getFont(_vm->_game.id == GID_INDY3 ? kIndy3FontMedium : kLoomFontMedium);
 
-	Graphics::Surface *s = window->innerSurface();
+	Graphics::Surface *s = _bannerWindow->innerSurface();
 	font->drawString(s, (char *)message, 0, 0, s->w, kBlack, Graphics::kTextAlignCenter);
 
-	window->show();
-	return window;
+	_bannerWindow->show();
+}
+
+void MacGui::undrawBanner() {
+	if (_bannerWindow) {
+		delete _bannerWindow;
+		_bannerWindow = nullptr;
+	}
 }
 
 void MacGui::drawBitmap(Graphics::Surface *s, Common::Rect r, const uint16 *bitmap, Color color) const {
