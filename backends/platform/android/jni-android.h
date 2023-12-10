@@ -75,6 +75,7 @@ public:
 	static void detachThread();
 
 	static void setReadyForEvents(bool ready);
+	static void wakeupForQuit();
 
 	static void setWindowCaption(const Common::U32String &caption);
 	static void getDPI(float *values);

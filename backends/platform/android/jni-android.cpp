@@ -222,6 +222,19 @@ void JNI::setReadyForEvents(bool ready) {
 	_ready_for_events = ready;
 }
 
+void JNI::wakeupForQuit() {
+	if (!_system)
+		return;
+
+	if (pause) {
+		pause = false;
+
+		// wake up all threads except the main one as we are run from it
+		for (uint i = 0; i < 2; ++i)
+			sem_post(&pause_sem);
+	}
+}
+
 void JNI::throwByName(JNIEnv *env, const char *name, const char *msg) {
 	jclass cls = env->FindClass(name);
 
