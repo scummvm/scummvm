@@ -338,7 +338,7 @@ bool GraphicsManager::blurScreen() {
 		}
 
 		for (y = 0; y < s_matrixEffectHeight; y++) {
-			delete sourceLine[y];
+			delete[] sourceLine[y];
 		}
 		delete[] sourceLine;
 		sourceLine = NULL;
