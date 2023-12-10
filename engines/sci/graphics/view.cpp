@@ -27,7 +27,6 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
-
 #include "sci/graphics/scifx.h"
 
 namespace Sci {
@@ -36,7 +35,7 @@ GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	_coordAdjuster = g_sci->_gfxCoordAdjuster;
-	initData(resourceId);
+	initData();
 }
 
 GfxView::~GfxView() {
@@ -98,22 +97,11 @@ static const byte ViewInject_KingsQuest6_Both2[] = {
 	0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10
 };
 
-void GfxView::initData(GuiResourceId resourceId) {
-	_resource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), true);
+void GfxView::initData() {
+	_resource = _resMan->findResource(ResourceId(kResourceTypeView, _resourceId), true);
 	if (!_resource) {
-		error("view resource %d not found", resourceId);
+		error("view resource %d not found", _resourceId);
 	}
-
-	SciSpan<const byte> celData, loopData;
-	uint16 celOffset;
-	CelInfo *cel;
-	uint16 celCount = 0;
-	uint16 mirrorBits = 0;
-	uint32 palOffset = 0;
-	uint loopNo, celNo;
-	bool isEGA = false;
-	bool isCompressed = true;
-	ViewType curViewType = _resMan->getViewType();
 
 	_loop.resize(0);
 	_embeddedPal = false;
@@ -128,6 +116,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	// new views include more colors. Users could manually adjust old views to
 	// make them look better (like removing dithered colors that aren't caught
 	// by our undithering or even improve the graphics overall).
+	ViewType curViewType = _resMan->getViewType();
 	if (curViewType == kViewEga) {
 		if (_resource->getUint8At(1) == 0x80) {
 			curViewType = kViewVga;
@@ -136,21 +125,23 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 	}
 
+	bool isEGA = false;
 	switch (curViewType) {
 	case kViewEga: // SCI0 (and Amiga 16 colors)
 		isEGA = true;
 		// fall through
 	case kViewAmiga: // Amiga ECS (32 colors)
 	case kViewAmiga64: // Amiga AGA (64 colors)
-	case kViewVga: // View-format SCI1
+	case kViewVga: { // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 
 		_loop.resize(_resource->getUint8At(0));
 		// bit 0x8000 of _resourceData[1] means palette is set
+		bool isCompressed = true;
 		if (_resource->getUint8At(1) & 0x40)
 			isCompressed = false;
-		mirrorBits = _resource->getUint16LEAt(2);
-		palOffset = _resource->getUint16LEAt(6);
+		uint16 mirrorBits = _resource->getUint16LEAt(2);
+		uint16 palOffset = _resource->getUint16LEAt(6);
 
 		if (palOffset && palOffset != 0x100) {
 			// Some SCI0/SCI01 games also have an offset set. It seems that it
@@ -183,25 +174,25 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 		}
 
-		for (loopNo = 0; loopNo < _loop.size(); loopNo++) {
-			loopData = _resource->subspan(_resource->getUint16LEAt(8 + loopNo * 2));
+		for (uint loopNo = 0; loopNo < _loop.size(); loopNo++) {
+			SciSpan<const byte> loopData = _resource->subspan(_resource->getUint16LEAt(8 + loopNo * 2));
 			// CelCount:WORD Unknown:WORD CelOffset0:WORD CelOffset1:WORD...
 
-			celCount = loopData.getUint16LEAt(0);
+			uint16 celCount = loopData.getUint16LEAt(0);
 			_loop[loopNo].cel.resize(celCount);
 			_loop[loopNo].mirrorFlag = mirrorBits & 1 ? true : false;
 			mirrorBits >>= 1;
 
 			// read cel info
-			for (celNo = 0; celNo < celCount; celNo++) {
-				celOffset = loopData.getUint16LEAt(4 + celNo * 2);
-				celData = _resource->subspan(celOffset);
+			for (uint celNo = 0; celNo < celCount; celNo++) {
+				uint16 celOffset = loopData.getUint16LEAt(4 + celNo * 2);
+				SciSpan<const byte> celData = _resource->subspan(celOffset);
 
 				// For VGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE Unknown:BYTE RLEData starts now directly
 				// For EGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
-				cel = &_loop[loopNo].cel[celNo];
+				CelInfo *cel = &_loop[loopNo].cel[celNo];
 				cel->scriptWidth = cel->width = celData.getUint16LEAt(0);
 				cel->scriptHeight = cel->height = celData.getUint16LEAt(2);
 				cel->displaceX = (signed char)celData[4];
@@ -218,7 +209,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				// so it might be collision detection. However, since this requires
 				// extensive work to fix properly for very little gain, this hack
 				// here will suffice until the actual issue is found.
-				if (g_sci->getGameId() == GID_QFG3 && g_sci->isDemo() && resourceId == 39)
+				if (g_sci->getGameId() == GID_QFG3 && g_sci->isDemo() && _resourceId == 39)
 					cel->displaceY = 98;
 
 				if (isEGA) {
@@ -241,6 +232,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 		}
 		break;
+	}
 
 	case kViewVga11: { // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Flags:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
@@ -248,7 +240,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(headerSize >= 16);
 		const uint8 loopCount = _resource->getUint8At(2);
 		assert(loopCount);
-		palOffset = _resource->getUint32SEAt(8);
+		uint32 palOffset = _resource->getUint32SEAt(8);
 
 		// flags is actually a bit-mask
 		//  it seems it was only used for some early sci1.1 games (or even just laura bow 2)
@@ -268,7 +260,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 			break;
 		}
 
-		loopData = _resource->subspan(headerSize);
 		uint16 loopSize = _resource->getUint8At(12);
 		assert(loopSize >= 16);
 		uint16 celSize = _resource->getUint8At(13);
@@ -280,8 +271,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 
 		_loop.resize(loopCount);
-		for (loopNo = 0; loopNo < loopCount; loopNo++) {
-			loopData = _resource->subspan(headerSize + (loopNo * loopSize));
+		for (uint loopNo = 0; loopNo < loopCount; loopNo++) {
+			SciSpan<const byte> loopData = _resource->subspan(headerSize + (loopNo * loopSize));
 
 			byte seekEntry = loopData[0];
 			if (seekEntry != 255) {
@@ -298,16 +289,16 @@ void GfxView::initData(GuiResourceId resourceId) {
 				_loop[loopNo].mirrorFlag = false;
 			}
 
-			celCount = loopData[2];
+			uint16 celCount = loopData[2];
 			_loop[loopNo].cel.resize(celCount);
 
 			const uint32 celDataOffset = loopData.getUint32SEAt(12);
 
 			// read cel info
-			for (celNo = 0; celNo < celCount; celNo++) {
-				celData = _resource->subspan(celDataOffset + celNo * celSize, celSize);
+			for (uint celNo = 0; celNo < celCount; celNo++) {
+				SciSpan<const byte> celData = _resource->subspan(celDataOffset + celNo * celSize, celSize);
 
-				cel = &_loop[loopNo].cel[celNo];
+				CelInfo *cel = &_loop[loopNo].cel[celNo];
 				cel->scriptWidth = cel->width = celData.getInt16SEAt(0);
 				cel->scriptHeight = cel->height = celData.getInt16SEAt(2);
 				cel->displaceX = celData.getInt16SEAt(4);
@@ -346,7 +337,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 995, Loop 13, Cel 0 = "TEXT"
 		// View 995, Loop 13, Cel 1 = "SPEECH"
 		// View 995, Loop 13, Cel 2 = "BOTH" (<- our injected view)
-		if (g_sci->isCD() && resourceId == 995) {
+		if (g_sci->isCD() && _resourceId == 995) {
 			// security checks
 			if (_loop.size() >= 14 &&
 				_loop[13].cel.size() == 2 &&
@@ -368,7 +359,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		// View 947, Loop 9, Cel 1 = "TEXT" (pressed)
 		// View 947, Loop 12, Cel 0 = "BOTH" (not pressed) (<- our injected view)
 		// View 947, Loop 12, Cel 1 = "BOTH" (pressed) (<- our injected view)
-		if (g_sci->isCD() && resourceId == 947) {
+		if (g_sci->isCD() && _resourceId == 947) {
 			// security checks
 			if (_loop.size() == 12 &&
 				_loop[8].cel.size() == 2 &&
@@ -439,15 +430,13 @@ void GfxView::getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 
 }
 
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
-	int16 scaledDisplaceX, scaledDisplaceY;
-	int16 scaledWidth, scaledHeight;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 
 	// Scaling displaceX/Y, Width/Height
-	scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
-	scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
-	scaledWidth = (celInfo->width * scaleX) >> 7;
-	scaledHeight = (celInfo->height * scaleY) >> 7;
+	int16 scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
+	int16 scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
+	int16 scaledWidth = (celInfo->width * scaleX) >> 7;
+	int16 scaledHeight = (celInfo->height * scaleY) >> 7;
 	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
 	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
@@ -457,7 +446,7 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 	outRect.top = outRect.bottom - scaledHeight;
 }
 
-void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap, byte clearColor, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11ViewData) {
+void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap, byte clearColor, int rlePos, int literalPos, ViewType viewType, uint16 width, bool isMacSci11View) {
 	const int pixelCount = celBitmap.size();
 	byte *outPtr = celBitmap.getUnsafeDataAt(0);
 	byte curByte, runLength;
@@ -502,12 +491,14 @@ void unpackCelData(const SciSpan<const byte> &inBuffer, SciSpan<byte> &celBitmap
 	// - Case D: XX == 11 (binary)
 	//   Skip the next YYYYY pixels (i.e. transparency)
 
-	if (literalPos && isMacSci11ViewData) {
+	if (literalPos && isMacSci11View) {
 		// KQ6/Freddy Pharkas/Slater use byte lengths, all others use uint16
 		// The SCI devs must have realized that a max of 255 pixels wide
 		// was not very good for 320 or 640 width games.
-		bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS
-				|| g_sci->getGameId() == GID_SLATER);
+		bool hasByteLengths =
+			g_sci->getGameId() == GID_KQ6 ||
+			g_sci->getGameId() == GID_FREDDYPHARKAS ||
+			g_sci->getGameId() == GID_SLATER;
 
 		// compression for SCI1.1+ Mac
 		while (pixelNr < pixelCount) {
@@ -630,7 +621,8 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, SciSpan<byte> &outPtr) {
 		// code, that they would just put a little snippet of code to swap these colors
 		// in various places around the SCI codebase. We figured that it would be less
 		// hacky to swap pixels instead and run the Mac games with a PC palette.
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1) {
+		bool isMacSci11View = g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1;
+		if (isMacSci11View) {
 			// clearColor is based on PC palette, but the literal data is not.
 			// We flip clearColor here to make it match the literal data. All
 			// these pixels will be flipped back again below.
@@ -640,11 +632,10 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, SciSpan<byte> &outPtr) {
 				clearColor = 0;
 		}
 
-		bool isMacSci11ViewData = g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1;
-		unpackCelData(*_resource, outPtr, clearColor, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11ViewData);
+		unpackCelData(*_resource, outPtr, clearColor, celInfo->offsetRLE, celInfo->offsetLiteral, _resMan->getViewType(), celInfo->width, isMacSci11View);
 
 		// Swap 0 and 0xff pixels for Mac SCI1.1+ games (see above)
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1) {
+		if (isMacSci11View) {
 			for (uint32 i = 0; i < outPtr.size(); i++) {
 				if (outPtr[i] == 0)
 					outPtr[i] = 0xff;
@@ -710,7 +701,6 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 
 	// Walk through the bitmap and remember all combinations of colors
 	int16 ditheredBitmapColors[DITHERED_BG_COLORS_SIZE];
-	byte color1, color2;
 
 	memset(&ditheredBitmapColors, 0, sizeof(ditheredBitmapColors));
 
@@ -721,7 +711,8 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	byte *curPtr = bitmapPtr.getUnsafeDataAt(0, checkHeight * width);
 	const byte *nextPtr = bitmapPtr.getUnsafeDataAt(width, checkHeight * width);
 	for (int16 y = 0; y < checkHeight; y++) {
-		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
+		byte color1 = curPtr[0];
+		byte color2 = (curPtr[1] << 4) | curPtr[2];
 		byte nextColor1 = nextPtr[0] << 4;
 		byte nextColor2 = (nextPtr[2] << 4) | nextPtr[1];
 		curPtr += 3;
@@ -739,13 +730,14 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	// Now compare both dither color tables to find out matching dithered color
 	// combinations
 	bool unditherTable[DITHERED_BG_COLORS_SIZE];
-	byte color, unditherCount = 0;
+	byte unditherCount = 0;
 	memset(&unditherTable, false, sizeof(unditherTable));
-	for (color = 0; color < 255; color++) {
+	for (byte color = 0; color < 255; color++) {
 		if ((ditheredBitmapColors[color] > 5) && (ditheredPicColors[color] > 200)) {
 			// match found, check if colorKey is contained -> if so, we ignore
 			// of course
-			color1 = color & 0x0F; color2 = color >> 4;
+			byte color1 = color & 0x0F;
+			byte color2 = color >> 4;
 			if ((color1 != clearKey) && (color2 != clearKey) && (color1 != color2)) {
 				// so set this and the reversed color-combination for undithering
 				unditherTable[color] = true;
@@ -762,7 +754,7 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 	// We now need to replace color-combinations
 	curPtr = bitmapPtr.getUnsafeDataAt(0, height * width);
 	for (int16 y = 0; y < height; y++) {
-		color = curPtr[0];
+		byte color = curPtr[0];
 		for (int16 x = 1; x < width; x++) {
 			color = (color << 4) | curPtr[1];
 			if (unditherTable[color]) {
@@ -771,7 +763,8 @@ void GfxView::unditherBitmap(SciSpan<byte> &bitmapPtr, int16 width, int16 height
 				byte unditheredColor = color;
 				if ((color & 0xF0) == 0)
 					unditheredColor = (color << 4) | (color >> 4);
-				curPtr[0] = unditheredColor; curPtr[1] = unditheredColor;
+				curPtr[0] = unditheredColor;
+				curPtr[1] = unditheredColor;
 			}
 			curPtr++;
 		}
