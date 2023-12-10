@@ -153,6 +153,9 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game", 0, 2);
 	// CarmenTQ
 	SearchMan.addSubDirectoryMatching(gameDataDir, "95instal", 0, 4);
+
+	// Sheila Rae, the Brave (Europe version) contains a junk line (bug #13920) 
+	_bookInfoFile.requireKeyValueDelimiter();
 }
 
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
