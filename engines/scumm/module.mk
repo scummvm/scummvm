@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	ks_check.o \
 	macgui/macgui.o \
 	macgui/macgui_dialogwindow.o \
+	macgui/macgui_impl.o \
 	macgui/macgui_indy3.o \
 	macgui/macgui_loom.o \
 	macgui/macgui_widgets.o \
