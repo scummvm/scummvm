@@ -91,7 +91,9 @@ void AndroidGraphicsManager::initSurface() {
 	LOGD("initializing 2D surface");
 
 	assert(!JNI::haveSurface());
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -151,7 +153,9 @@ void AndroidGraphicsManager::resizeSurface() {
 
 	// Recreate the EGL surface, context is preserved
 	JNI::deinitSurface();
-	JNI::initSurface();
+	if (!JNI::initSurface()) {
+		error("JNI::initSurface failed");
+	}
 
 	dynamic_cast<OSystem_Android *>(g_system)->getTouchControls().init(
 	    this, JNI::egl_surface_width, JNI::egl_surface_height);
