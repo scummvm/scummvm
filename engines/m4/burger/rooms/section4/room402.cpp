@@ -957,7 +957,7 @@ void Room402::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				_G(kernel).trigger_mode = KT_PARSE;
-				wilbur_speech("402w501");
+				wilbur_speech("402w501", 1);
 				break;
 
 			case 1:
@@ -989,7 +989,7 @@ void Room402::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				_G(kernel).trigger_mode = KT_PARSE;
-				wilbur_speech("402w501");
+				wilbur_speech("402w501", 1);
 				break;
 
 			case 1:
