@@ -31,76 +31,28 @@ using Std::string;
 FileSystem *FileSystem::_fileSystem = nullptr;
 
 FileSystem::FileSystem() {
-	debugN(MM_INFO, "Creating FileSystem...\n");
-
 	_fileSystem = this;
 }
 
 FileSystem::~FileSystem() {
-	debugN(MM_INFO, "Destroying FileSystem...\n");
-
 	_fileSystem = nullptr;
 }
 
 
 // Open a streaming file as readable. Streamed (0 on failure)
 Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn) {
-	Common::SeekableReadStream *readStream;
-	if (!rawOpen(readStream, vfn)) {
-		// Some games have some files in a "data" subdir.
-		string altpath = string::format("data/%s", vfn.c_str());
-		if (!rawOpen(readStream, altpath)) {
-			return nullptr;
-		}
-	}
+	Common::File *f = new Common::File();
+	Common::Path path(vfn);
+	if (f->open(path))
+		return f;
 
-	return readStream;
-}
+	// Some games have some files in a "data" subdir.
+	Common::Path altpath = Common::Path("data").join(path);
+	if (f->open(altpath))
+		return f;
 
-bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
-	string name = fname;
-	Common::File *f;
-
-	int uppercasecount = 0;
-	f = new Common::File();
-	do {
-		if (f->open(name)) {
-			in = f;
-			return true;
-		}
-	} while (base_to_uppercase(name, ++uppercasecount));
-
-	// file not found
 	delete f;
-	return false;
-}
-
-
-/*
- *  Convert just the last 'count' parts of a filename to uppercase.
- *  returns false if there are less than 'count' parts
- */
-
-bool FileSystem::base_to_uppercase(string &str, int count) {
-	if (count <= 0) return true;
-
-	int todo = count;
-	// Go backwards.
-	string::reverse_iterator X;
-	for (X = str.rbegin(); X != str.rend(); ++X) {
-		// Stop at separator.
-		if (*X == '/' || *X == '\\' || *X == ':')
-			todo--;
-		if (todo <= 0)
-			break;
-
-		*X = static_cast<char>(toupper(*X));
-	}
-	if (X == str.rend())
-		todo--; // start of pathname counts as separator too
-
-	// false if it didn't reach 'count' parts
-	return (todo <= 0);
+	return nullptr;
 }
 
 } // End of namespace Ultima8

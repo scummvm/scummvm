@@ -43,16 +43,7 @@ public:
 	Common::SeekableReadStream *ReadFile(const Std::string &vfn);
 
 private:
-	static bool base_to_uppercase(Std::string &str, int count);
-
 	static FileSystem *_fileSystem;
-
-	/**
-	 *	Open a file for reading,
-	 *	Output: false if couldn't open.
-	 */
-	bool rawOpen(Common::SeekableReadStream *&in, const Std::string &fname);
-
 };
 
 } // End of namespace Ultima8
