@@ -153,9 +153,7 @@ void SessionRequest::reuse(const Common::String &url, const Common::String &loca
 }
 
 void SessionRequest::handle() {
-	if (_state != PROCESSING) {
-		return;
-	}
+	// This is called by ConnMan when state is PROCESSING
 
 	if (!_stream) _stream = makeStream();
 
@@ -225,7 +223,8 @@ void SessionRequest::close() {
 }
 
 void SessionRequest::abortRequest() {
-	_state = FINISHED;
+	ErrorResponse error(this, false, true, Common::String::format("Aborted"), -1);
+	finishError(error);
 
 	if (_localFile) {
 		_localFile->close();
