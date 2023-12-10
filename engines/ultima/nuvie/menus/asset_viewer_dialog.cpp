@@ -95,24 +95,24 @@ void AssetViewerDialog::Display(bool full_redraw) {
 
 	if (_viewMode == TileViewMode) {
 		TileManager *tileman = Game::get_game()->get_tile_manager();
-		Screen *screen = Game::get_game()->get_screen();
+		Screen *gameScreen = Game::get_game()->get_screen();
 		const Tile *tile = tileman->get_tile(_curIdx);
 		
 		if (tile) {
-			screen->blit(offset_x + 100, offset_y + 100, tile->data, 8, 16, 16, 16, tile->transparent);
+			gameScreen->blit(offset_x + 100, offset_y + 100, tile->data, 8, 16, 16, 16, tile->transparent);
 			if (tile->dbl_width) {
 				const Tile *left = tileman->get_tile(_curIdx - 1);
-				screen->blit(offset_x + 100 - 16, offset_y + 100, left->data, 8, 16, 16, 16, left->transparent);
+				gameScreen->blit(offset_x + 100 - 16, offset_y + 100, left->data, 8, 16, 16, 16, left->transparent);
 			}
 			if (tile->dbl_height && !tile->dbl_width) {
 				const Tile *top = tileman->get_tile(_curIdx - 1);
-				screen->blit(offset_x + 100, offset_y + 100 - 16, top->data, 8, 16, 16, 16, top->transparent);
+				gameScreen->blit(offset_x + 100, offset_y + 100 - 16, top->data, 8, 16, 16, 16, top->transparent);
 			} else if (tile->dbl_height) {
 				// dbl width and double-height
 				const Tile *topleft = tileman->get_tile(_curIdx - 3);
-				screen->blit(offset_x + 100 - 16, offset_y + 100 - 16, topleft->data, 8, 16, 16, 16, topleft->transparent);
+				gameScreen->blit(offset_x + 100 - 16, offset_y + 100 - 16, topleft->data, 8, 16, 16, 16, topleft->transparent);
 				const Tile *top = tileman->get_tile(_curIdx - 2);
-				screen->blit(offset_x + 100, offset_y + 100 - 16, top->data, 8, 16, 16, 16, top->transparent);
+				gameScreen->blit(offset_x + 100, offset_y + 100 - 16, top->data, 8, 16, 16, 16, top->transparent);
 			}
 		}
 	} else {

@@ -1412,8 +1412,8 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 			if (tokens.size() > 1)
 				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
 
-			for (const Std::string &s : tokens) {
-				*x = ((WOUFont *)font)->drawStringToShape(image->shp, s.c_str(), *x, *y, color);
+			for (const Std::string &ss : tokens) {
+				*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 				*x += new_space;
 			}
 			*y += 8;
@@ -1430,8 +1430,8 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		found = str.findFirstOf(" ", start);
 	}
 
-	for (const Std::string &s : tokens) {
-		*x = ((WOUFont *)font)->drawStringToShape(image->shp, s.c_str(), *x, *y, color);
+	for (const Std::string &ss : tokens) {
+		*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 		*x += space_width;
 	}
 

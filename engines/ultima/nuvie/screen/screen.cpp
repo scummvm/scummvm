@@ -1016,7 +1016,7 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_8(const byte *src_buf, uint
 					break;
 				}
 	} else {
-		uint32 *src = (uint32 *)src_buf;
+		const uint32 *src = (const uint32 *)src_buf;
 		for (int p = 0; p < (src_w * src_h); p++)
 			for (int i = 0; i < 256; i++)
 				if (src[p] == _renderSurface->colour32[i]) {
