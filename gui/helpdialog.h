@@ -29,7 +29,7 @@
 namespace GUI {
 
 class CommandSender;
-class StaticTextWidget;
+class TabWidget;
 
 /**
  * Multitab help dialog
@@ -39,6 +39,10 @@ public:
 	HelpDialog();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+private:
+	void addTabs(const char * const *tabs);
+	TabWidget *_tab;
 };
 
 

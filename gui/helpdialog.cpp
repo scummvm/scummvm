@@ -32,10 +32,12 @@ namespace GUI {
 HelpDialog::HelpDialog()
 	: Dialog("HelpDialog") {
 
-	TabWidget *tab = new TabWidget(this, "HelpDialog.TabWidget");
+	_tab = new TabWidget(this, "HelpDialog.TabWidget");
 
-	tab->addTab(_("General"), "HelpDialog", false);
-	Common::U32String helpText1 = _(
+static const char * const helpTabs[] = {
+_s("General"),
+"",
+_s(
 "## Where to get the games\n"
 "\n"
 "Visit [our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games) for a list of supported games and where they can be purchased.\n"
@@ -51,38 +53,43 @@ HelpDialog::HelpDialog()
 "\n"
 "For other (out of print) games, try Amazon, eBay, Game Trading Zone or other auction "
 "sites. Beware of faulty games and illegal game copies.\n"
-	);
+),
 
-	new RichTextWidget(tab, "HelpDialog.TabWidget", helpText1);
+0,
+	};
 
 
+	addTabs(helpTabs);
 	// Now add backend-specific tabs if any
 	const char * const *backendTabs = g_system->buildHelpDialogData();
 
-	if (backendTabs) {
-		while (*backendTabs) {
-			Common::U32String tabName(_(*backendTabs++));
-			const char *imagePack = nullptr;
+	if (backendTabs)
+		addTabs(backendTabs);
 
-			if (*backendTabs && **backendTabs)
-				imagePack = *backendTabs;
-
-			backendTabs++;
-
-			Common::U32String tabText(_(*backendTabs++));
-
-			tab->addTab(tabName, "HelpDialog", false);
-
-			RichTextWidget *rt = new RichTextWidget(tab, "HelpDialog.TabWidget", tabText);
-
-			if (imagePack)
-				rt->setImageArchive(imagePack);
-		}
-	}
-
-	 tab->setActiveTab(0);
+	_tab->setActiveTab(0);
 
 	new ButtonWidget(this, "HelpDialog.Close", Common::U32String("Close"), Common::U32String(), kCloseCmd);
+}
+
+void HelpDialog::addTabs(const char * const *tabData) {
+	while (*tabData) {
+		Common::U32String tabName(_(*tabData++));
+		const char *imagePack = nullptr;
+
+		if (*tabData && **tabData)
+			imagePack = *tabData;
+
+		tabData++;
+
+		Common::U32String tabText(_(*tabData++));
+
+		_tab->addTab(tabName, "HelpDialog", false);
+
+		RichTextWidget *rt = new RichTextWidget(_tab, "HelpDialog.TabWidget", tabText);
+
+		if (imagePack)
+			rt->setImageArchive(imagePack);
+	}
 }
 
 void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
