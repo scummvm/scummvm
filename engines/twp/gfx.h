@@ -49,6 +49,16 @@ struct Color {
 		rgba.a = alpha;
 	}
 
+	static Color withAlpha(Color c, float alpha = 1.0f) {
+		Color result = c;
+		result.rgba.a = alpha;
+		return result;
+	}
+
+	static Color rgb(int c) {
+  		return Color((uint8)((c >> 16) & 0xFF), (uint8)((c >> 8) & 0xFF), (uint8)(c & 0xFF));
+	}
+
 	static Color create(uint8 red, uint8 green, uint8 blue, uint8 alpha = 0xFF) {
 		return Color(red / 255.f, green / 255.f, blue / 255.f, alpha / 255.f);
 	}
@@ -114,10 +124,10 @@ public:
 	void use(Shader* shader);
 
 	void clear(Color color);
-	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, Math::Matrix4 transf = Math::Matrix4());
-	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 transf = Math::Matrix4());
+	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, Math::Matrix4 transf = Math::Matrix4(), Texture* texture = NULL);
+	void drawPrimitives(uint32 primitivesType, Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 transf = Math::Matrix4(), Texture* texture = NULL);
 	void drawLines(Vertex* vertices, int count, Math::Matrix4 trsf = Math::Matrix4());
-	void draw(Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 trsf = Math::Matrix4());
+	void draw(Vertex* vertices, int v_size, uint32* indices, int i_size, Math::Matrix4 trsf = Math::Matrix4(), Texture* texture = NULL);
 	void drawQuad(Math::Vector2d size, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4());
 	void drawSprite(Common::Rect textRect, Texture& texture, Color color = Color(), Math::Matrix4 trsf = Math::Matrix4(), bool flipX = false, bool flipY = false);
 

@@ -206,8 +206,11 @@ void Gfx::drawLines(Vertex *vertices, int count, Math::Matrix4 trsf) {
 	drawPrimitives(GL_LINE_STRIP, vertices, count, trsf);
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Math::Matrix4 trsf, Texture* texture) {
 	if (v_size > 0) {
+		_texture = texture ? texture: &gEmptyTexture;
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+
 		// set blending
 		GL_CALL(glEnable(GL_BLEND));
 		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
@@ -245,8 +248,11 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, Ma
 	}
 }
 
-void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf) {
+void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture* texture) {
 	if (i_size > 0) {
+		_texture = texture ? texture: &gEmptyTexture;
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, _texture->id));
+
 		// set blending
 		GL_CALL(glEnable(GL_BLEND));
 		GL_CALL(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
@@ -286,8 +292,8 @@ void Gfx::drawPrimitives(uint32 primitivesType, Vertex *vertices, int v_size, ui
 	}
 }
 
-void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf) {
-	drawPrimitives(GL_TRIANGLES, vertices, v_size, indices, i_size, trsf);
+void Gfx::draw(Vertex *vertices, int v_size, uint32 *indices, int i_size, Math::Matrix4 trsf, Texture* texture) {
+	drawPrimitives(GL_TRIANGLES, vertices, v_size, indices, i_size, trsf, texture);
 }
 
 void Gfx::drawQuad(Math::Vector2d size, Color color, Math::Matrix4 trsf) {
@@ -323,12 +329,10 @@ void Gfx::drawSprite(Common::Rect textRect, Texture &texture, Color color, Math:
 		{.pos = {pos.getX() + textRect.width(), pos.getY()}, .texCoords = {r, b}, .color = color},
 		{.pos = {pos.getX(), pos.getY()}, .texCoords = {l, b}, .color = color},
 		{.pos = {pos.getX(), pos.getY() + textRect.height()}, .texCoords = {l, t}, .color = color}};
-	_texture = &texture;
-	GL_CALL(glBindTexture(GL_TEXTURE_2D, texture.id));
 	uint32 quadIndices[] = {
 		0, 1, 3,
 		1, 2, 3};
-	draw(vertices, 4, quadIndices, 6, trsf);
+	draw(vertices, 4, quadIndices, 6, trsf, &texture);
 }
 
 void Gfx::camera(Math::Vector2d size) {

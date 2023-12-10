@@ -35,16 +35,16 @@ Common::String getKey(const char *path) {
 	p = p.substr(0, i);
 	if ((len > 4) && scumm_strnicmp(p.c_str() + 4, "_en", 3) == 0) {
 		// TODO
-		//Common::String lang = prefs(Lang);
+		// Common::String lang = prefs(Lang);
 		Common::String lang = "en";
 		Common::String filename(path, len - 3);
-		const char* ext = path+i;
+		const char *ext = path + i;
 		return Common::String::format("%s_%s%s", filename.c_str(), lang.c_str(), ext);
 	}
 	return path;
 }
 
-void ResManager::loadTexture(const Common::String& name) {
+void ResManager::loadTexture(const Common::String &name) {
 	debug("Load texture %s", name.c_str());
 	GGPackEntryReader r;
 	r.open(g_engine->pack, name);
@@ -55,7 +55,7 @@ void ResManager::loadTexture(const Common::String& name) {
 	_textures[name].load(*surface);
 }
 
-Texture *ResManager::texture(const Common::String& name) {
+Texture *ResManager::texture(const Common::String &name) {
 	Common::String key = getKey(name.c_str());
 	if (!_textures.contains(key)) {
 		loadTexture(key.c_str());
@@ -63,7 +63,7 @@ Texture *ResManager::texture(const Common::String& name) {
 	return &_textures[key];
 }
 
-void ResManager::loadSpriteSheet(const Common::String& name) {
+void ResManager::loadSpriteSheet(const Common::String &name) {
 	GGPackEntryReader r;
 	r.open(g_engine->pack, name + ".json");
 
@@ -75,7 +75,23 @@ void ResManager::loadSpriteSheet(const Common::String& name) {
 	_spriteSheets[name].parseSpriteSheet(s);
 }
 
-SpriteSheet *ResManager::spriteSheet(const Common::String& name) {
+void ResManager::loadFont(const Common::String &name) {
+	if (name == "sayline") {
+		debug("Load font %s", name.c_str());
+		// TODO: Common::String resName = prefs(RetroFonts)? "FontRetroSheet.json": "FontModernSheet.json";
+		_fontModernSheet.load("FontModernSheet");
+		_fonts[name] = &_fontModernSheet;
+	} else if (name == "C64Font") {
+		debug("Load font %s", name.c_str());
+		_fontC64TermSheet.load("FontC64TermSheet");
+		_fonts[name] = &_fontC64TermSheet;
+	} else {
+		// TODO:
+		assert(false);
+	}
+}
+
+SpriteSheet *ResManager::spriteSheet(const Common::String &name) {
 	Common::String key = getKey(name.c_str());
 	if (!_spriteSheets.contains(key)) {
 		loadSpriteSheet(key.c_str());
@@ -83,4 +99,12 @@ SpriteSheet *ResManager::spriteSheet(const Common::String& name) {
 	return &_spriteSheets[key];
 }
 
+Font *ResManager::font(const Common::String &name) {
+	Common::String key = getKey(name.c_str());
+	if (!_fonts.contains(key)) {
+		loadFont(key.c_str());
+	}
+	return _fonts[key];
 }
+
+} // namespace Twp

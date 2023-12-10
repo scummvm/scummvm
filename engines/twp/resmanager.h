@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "twp/gfx.h"
+#include "twp/font.h"
 #include "twp/spritesheet.h"
 
 namespace Twp {
@@ -35,14 +36,20 @@ public:
 
 	Texture *texture(const Common::String &name);
 	SpriteSheet *spriteSheet(const Common::String& name);
+	Font *font(const Common::String& name);
 
 private:
 	void loadTexture(const Common::String &name);
 	void loadSpriteSheet(const Common::String &name);
+	void loadFont(const Common::String &name);
 
 private:
 	Common::HashMap<Common::String, Texture> _textures;
 	Common::HashMap<Common::String, SpriteSheet> _spriteSheets;
+	Common::HashMap<Common::String, Font*> _fonts;
+	GGFont _fontModernSheet;
+	GGFont _fontRetroSheet;
+	GGFont _fontC64TermSheet;
 };
 } // namespace Twp
 

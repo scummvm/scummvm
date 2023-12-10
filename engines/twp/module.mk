@@ -33,6 +33,7 @@ MODULE_OBJS = \
 	spritesheet.o \
 	room.o \
 	lighting.o \
+	font.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
