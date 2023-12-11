@@ -32,8 +32,8 @@ namespace Graphics {
 #define D(...)  debug(__VA_ARGS__)
 #define DN(...)  debugN(__VA_ARGS__)
 #else
-#define D(...)  ;
-#define DN(...)  ;
+#define D(...)  ((void)0)
+#define DN(...) ((void)0)
 #endif
 
 MacTextCanvas::~MacTextCanvas() {
