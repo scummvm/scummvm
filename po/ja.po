@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-10 11:58+0000\n"
+"POT-Creation-Date: 2023-12-10 16:40+0000\n"
 "PO-Revision-Date: 2023-12-05 08:41+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4446,13 +4446,13 @@ msgstr "拡大モードOFF。ドラッグモードを有効にしています...
 msgid "Magnify Mode Off"
 msgstr "拡大モードOFF"
 
-#: backends/platform/android/android.cpp:1030
+#: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
 msgid "Touch Controls"
 msgstr "タッチ操作"
 
-#: backends/platform/android/android.cpp:1033
+#: backends/platform/android/android.cpp:1034
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4581,13 +4581,13 @@ msgstr ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1089
+#: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
 msgid "Adding Games"
 msgstr "ゲームを追加"
 
-#: backends/platform/android/android.cpp:1092
+#: backends/platform/android/android.cpp:1093
 msgid ""
 "## Adding Games \n"
 "\n"

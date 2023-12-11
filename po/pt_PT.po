@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-10 11:58+0000\n"
+"POT-Creation-Date: 2023-12-10 16:40+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4485,7 +4485,7 @@ msgstr "Modo de Ampliação desativado. A mudar para o Modo de Arrastar..."
 msgid "Magnify Mode Off"
 msgstr "Modo de Ampliação desativado"
 
-#: backends/platform/android/android.cpp:1030
+#: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
 #, fuzzy
@@ -4493,7 +4493,7 @@ msgstr "Modo de Ampliação desativado"
 msgid "Touch Controls"
 msgstr "Controlo"
 
-#: backends/platform/android/android.cpp:1033
+#: backends/platform/android/android.cpp:1034
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4562,7 +4562,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1089
+#: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
 #, fuzzy
@@ -4570,7 +4570,7 @@ msgstr ""
 msgid "Adding Games"
 msgstr "~A~dicionar Jogo..."
 
-#: backends/platform/android/android.cpp:1092
+#: backends/platform/android/android.cpp:1093
 msgid ""
 "## Adding Games \n"
 "\n"

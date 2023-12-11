@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-10 11:58+0000\n"
+"POT-Creation-Date: 2023-12-10 16:40+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4505,7 +4505,7 @@ msgstr "Рэжым люпы адлучаны. Перазапуск рэжыму 
 msgid "Magnify Mode Off"
 msgstr "Рэжым люпы адлучаны"
 
-#: backends/platform/android/android.cpp:1030
+#: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
 #, fuzzy
@@ -4513,7 +4513,7 @@ msgstr "Рэжым люпы адлучаны"
 msgid "Touch Controls"
 msgstr "Кіраваньне"
 
-#: backends/platform/android/android.cpp:1033
+#: backends/platform/android/android.cpp:1034
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4582,7 +4582,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1089
+#: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
 #, fuzzy
@@ -4590,7 +4590,7 @@ msgstr ""
 msgid "Adding Games"
 msgstr "~Д~адаць гульню..."
 
-#: backends/platform/android/android.cpp:1092
+#: backends/platform/android/android.cpp:1093
 msgid ""
 "## Adding Games \n"
 "\n"

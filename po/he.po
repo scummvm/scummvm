@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-10 11:58+0000\n"
+"POT-Creation-Date: 2023-12-10 16:40+0000\n"
 "PO-Revision-Date: 2023-11-23 02:41+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4426,13 +4426,13 @@ msgstr "מצב זכוכית מגדלת כבוי. מפעיל מחדש מצב גר
 msgid "Magnify Mode Off"
 msgstr "מצב זכוכית מגדלת כבוי"
 
-#: backends/platform/android/android.cpp:1030
+#: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
 msgid "Touch Controls"
 msgstr "בקרות מגע"
 
-#: backends/platform/android/android.cpp:1033
+#: backends/platform/android/android.cpp:1034
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4501,13 +4501,13 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1089
+#: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
 #: backends/platform/ios7/ios7_osys_misc.mm:346
 msgid "Adding Games"
 msgstr "מוסיף משחקים"
 
-#: backends/platform/android/android.cpp:1092
+#: backends/platform/android/android.cpp:1093
 #, fuzzy
 #| msgid ""
 #| "In this new version of ScummVM Android, significant changes were made to "
