@@ -72,6 +72,15 @@ struct MouseUpMessage : public MouseMessage {
 		MouseMessage(type, pos) {}
 };
 
+struct MouseMoveMessage: public MouseMessage{
+	MouseMoveMessage() : MouseMessage() {}
+	MouseMoveMessage(Button btn, const Common::Point& pos) :
+		MouseMessage(btn, pos) {}
+	MouseMoveMessage(Common::EventType type, const Common::Point& pos) :
+		MouseMessage(type, pos) {}
+};
+
+
 struct GameMessage : public Message {
 	Common::String _name;
 	int _value;
