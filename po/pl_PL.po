@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-10 16:40+0000\n"
-"PO-Revision-Date: 2023-12-11 19:12+0000\n"
+"PO-Revision-Date: 2023-12-11 19:15+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -9673,9 +9673,8 @@ msgid "Up Right"
 msgstr "W prawo"
 
 #: engines/scumm/metaengine.cpp:862
-#, fuzzy
 msgid "Switch weapon"
-msgstr "Zmiana postaci:"
+msgstr "Zmień broń"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:876
@@ -9700,13 +9699,13 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1227
-#, fuzzy
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Nie znaleziono pliku wykonywalnego \"Monkey Island\".\n"
-"Muzyka będzie wyłączona."
+"Nie można znaleźć pliku wykonywalnego \"Monkey Island” dla komputera "
+"Macintosh,\n"
+"z którego można odczytać instrumenty. Muzyka zostanie wyłączona."
 
 #: engines/scumm/scumm.cpp:1593
 msgid ""
@@ -10491,15 +10490,12 @@ msgid ""
 msgstr ""
 
 #: engines/vcruise/metaengine.cpp:53
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Faster animations"
-msgstr "Przejścia:"
+msgstr "Szybsze animacje"
 
 #: engines/vcruise/metaengine.cpp:54
-#, fuzzy
 msgid "Speeds up animations."
-msgstr "Tylko mowa"
+msgstr "Przyspiesza animacje."
 
 #: engines/vcruise/metaengine.cpp:75
 #, fuzzy
@@ -10551,10 +10547,8 @@ msgid "Music volume down"
 msgstr "Zwiększ/zmniejsz głośność muzyki"
 
 #: engines/vcruise/metaengine.cpp:170
-#, fuzzy
-#| msgid "Music volume: "
 msgid "Music volume up"
-msgstr "Głośność muzyki: "
+msgstr "Zwiększ głośność muzyki"
 
 #: engines/vcruise/metaengine.cpp:175
 #, fuzzy
@@ -10597,15 +10591,12 @@ msgstr ""
 "Ten zapis gry został utworzony w innej wersji gry. Nie można go wczytać."
 
 #: engines/vcruise/vcruise.cpp:304
-#, fuzzy
-#| msgid "Failed to read version information from save file"
 msgid "Failed to read version information from save file."
-msgstr "Nie udało się odczytać wersji z pliku stany gry"
+msgstr "Nie udało się odczytać informacji o wersji z pliku zapisu."
 
 #: engines/vcruise/vcruise.cpp:324
-#, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
-msgstr ", błąd podczas montowania udziału"
+msgstr "Wystąpił nieznany błąd podczas próby wczytania zapisanej gry."
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
