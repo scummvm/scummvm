@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-10 16:40+0000\n"
-"PO-Revision-Date: 2023-12-09 22:05+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2023-12-11 17:40+0000\n"
+"Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -1090,6 +1090,26 @@ msgid ""
 "Additionally, some games that are not available on ZOOM-Platform can be "
 "found on GOG.com.\n"
 msgstr ""
+"## Gdzie zdobyć gry\n"
+"\n"
+"Odwiedź [nasze Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games), aby zobaczyć listę gier i miejsc, w "
+"których można je kupić.\n"
+"\n"
+"Można też pobrać [darmowe gry](https://scummvm.org/games) i "
+"[demo](https://www.scummvm.org/demos/) z naszej witryny.\n"
+"\n"
+"W przypadku innych (już niesprzedawanych) gier wypróbuj serwisów aukcyjnych "
+"Amazon, eBay, Game Trading Zone lub innych. Uważaj na wadliwe i nielegalne "
+"kopie gier.\n"
+"\n"
+"Zespół ScummVM nie poleca żadnego indywidualnego dostawcy gier, jednakże "
+"projekt otrzymuje małą część kwoty od każdego zakupu na [platformie "
+"ZOOM](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) za pośrednictwem linków afiliacyjnych.\n"
+"\n"
+"Dodatkowo, niektóre gry, które nie są dostępne na platformie ZOOM, można "
+"znaleźć na GOG.com.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1311,6 +1331,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Czy dodałeś ten katalog do SAF? Naciśnij przycisk pomocy [?] u góry, aby "
+"uzyskać szczegółowe instrukcje"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
@@ -2707,6 +2729,27 @@ msgid ""
 "\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"W nowej wersji ScummVM na Androida wprowadzono znaczące zmiany w systemie "
+"dostępu do plików, aby umożliwić obsługę nowoczesnych wersji systemu "
+"operacyjnego Android.\n"
+"Jeśli okaże się, że istniejące dodane gry lub ścieżki niestandardowe już nie "
+"działają, należy dokonać ich edycji:\n"
+"   1. W programie uruchamiającym wejdź do **Opcje gry > Ścieżki**. Wybierz "
+"odpowiednio **Ścieżka gry** lub **Dodatkowa ścieżka**.\n"
+"   2. W przeglądarce plików ScummVM wybieraj **Przejdź w górę**, aż "
+"dojdziesz do folderu głównego, w którym znajduje się opcja **<Dodaj nowy "
+"folder>**.\n"
+"   3. Naciśnij dwukrotnie **<Dodaj nowy folder>**. W przeglądarce plików na "
+"swoim urządzeniu przejdź do folderu zawierającego wszystkie foldery z grami. "
+"Na przykład **Karta SD > Gry ScummVM**\n"
+"   4. Wybierz opcję **Użyj tego folderu**.\n"
+"   5. Wybierz opcję **Zezwól**, aby nadać ScummVM uprawnienia dostępu do "
+"folderu.\n"
+"   6. W przeglądarce plików ScummVM naciśnij dwukrotnie, aby przeglądać "
+"dodany folder. Wybierz folder zawierający pliki gry, a następnie dotknij "
+"**Wybierz**.\n"
+"\n"
+"Powtórz kroki 1 i 6 dla każdej gry."
 
 #: base/main.cpp:670 base/main.cpp:695
 #: engines/director/lingo/lingo-builtins.cpp:1269
@@ -2742,6 +2785,25 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
+"W nowej wersji ScummVM na Androida wprowadzono znaczące zmiany w systemie "
+"dostępu do plików, aby umożliwić obsługę nowoczesnych wersji systemu "
+"operacyjnego Android.\n"
+"Aby dodać grę:\n"
+"\n"
+"   1. Wybierz **Dodaj grę...** w programie uruchamiającym.\n"
+"   2. W przeglądarce plików ScummVM wybieraj **Przejdź w górę**, aż "
+"dojdziesz do folderu głównego, w którym znajduje się opcja **<Dodaj nowy "
+"folder>**.\n"
+"   3. Naciśnij dwukrotnie **<Dodaj nowy folder>**. W przeglądarce plików na "
+"swoim urządzeniu przejdź do folderu zawierającego wszystkie foldery z grami. "
+"Na przykład **Karta SD > Gry ScummVM**\n"
+"   4. Wybierz opcję **Użyj tego folderu**.\n"
+"   5. Wybierz opcję **Zezwól**, aby nadać ScummVM uprawnienia dostępu do "
+"folderu.\n"
+"   6. W przeglądarce plików ScummVM naciśnij dwukrotnie, aby przeglądać "
+"dodany folder. Wybierz podfolder zawierający pliki gry, a następnie dotknij "
+"**Wybierz**.\n"
+"Powtórz kroki 1 i 6 dla każdej gry."
 
 #: base/main.cpp:829
 msgid "Error running game:"
@@ -3167,7 +3229,7 @@ msgstr "Ta gra nie wspiera wczytywania z launchera."
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
-msgstr ""
+msgstr "W tej chwili nie można zapisać tej gry. Spróbuj ponownie później"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3187,7 +3249,7 @@ msgstr "Ta gra nie wspiera wczytywania z launchera."
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
-msgstr ""
+msgstr "W tej chwili nie można załadować tej gry. Spróbuj ponownie później"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -3805,7 +3867,7 @@ msgstr "Powierzchnia SDL"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "Powierzchnia SDL (wymuszony tryb 8bpp)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -4786,7 +4848,7 @@ msgstr "Przycisk kierunkowy"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "Użyj minimalnego układu gamepada"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
@@ -4860,6 +4922,77 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Tryby sterowania dotykowego\n"
+"Tryb sterowania dotykowego można zmienić dotykając lub klikając ikonę "
+"kontrolera w prawym górnym rogu, przesuwając dwoma palcami od lewej do "
+"prawej lub w ustawieniach globalnych. W programie uruchamiającym przejdź do "
+"**Opcje globalne > Backend > Wybierz preferowany tryb dotykowy**. Możliwe "
+"jest skonfigurowanie trybu dotykowego dla trzech sytuacji (menu ScummVM, gry "
+"2D i gry 3D).\n"
+"\n"
+"### Bezpośrednia mysz\n"
+"\n"
+"Sterowanie dotykowe jest bezpośrednie. Wskaźnik przeskakuje do miejsca, w "
+"którym palec dotyka ekranu (domyślnie w przypadku menu).\n"
+"\n"
+"   ![Tryb bezpośredniej myszy](mouse.png \"Tryb bezpośredniej myszy\""
+"){w=10em}\n"
+"\n"
+"### Emulacja touchpada\n"
+"\n"
+"Sterowanie dotykowe jest pośrednie, jak na touchpadzie laptopa.\n"
+"\n"
+"   ![Tryb touchpada](touchpad.png \"Tryb touchpada\"){w=10em}\n"
+"\n"
+"Aby wybrać preferowany tryb dotykowy dla menu oraz gier 2D i 3D, przejdź do "
+"**Opcje globalne > Backend > Wybierz preferowany tryb dotykowy**.\n"
+"\n"
+"## Akcje dotykowe\n"
+"\n"
+"| Gest | Działanie\n"
+"| ------------------|---------------------------------\n"
+"| `Dotknięcie jednym palcem` | Kliknięcie lewym przyciskiem myszy\n"
+"| `Dotknięcie dwoma palcami` | Kliknij prawym przyciskiem myszy\n"
+"| `Dwukrotne dotknięcie dwoma palcami` | WYJŚCIE\n"
+"| `Naciśnięcie i przytrzymanie jednym palcem przez > 0,5 s` | Kliknięcie, "
+"przytrzymanie i przeciągnięcie lewym przyciskiem myszy, tak jak w przypadku "
+"wyboru z koła akcji w Curse of Monkey Island\n"
+"| `Naciśnięcie i przytrzymanie dwoma palcami przez > 0,5 s` | Kliknięcie, "
+"przytrzymanie i przeciągnięcie prawym przyciskiem myszy, tak jak w przypadku "
+"wyboru z koła akcji w Tony Tough\n"
+"| `Przesunięcie dwoma palcami (od lewej do prawej)` | Przełącza pomiędzy "
+"trybami dotykowymi\n"
+"| `Przesunięcie dwoma palcami (od prawej do lewej)` | Przełącza kontroler "
+"wirtualny (>iOS 15)\n"
+"| `Przesunięcie dwoma palcami (od góry do dołu)` | Dostęp do globalnego menu "
+"głównego w grach\n"
+"| `Ściśnij (powiększ/zmniejsz)` | Włącza/wyłącza klawiaturę\n"
+"\n"
+"### Wirtualny pad do gier\n"
+"\n"
+"Urządzenia z systemem iOS 15 lub nowszym mogą podłączyć wirtualny kontroler "
+"gamepada, przesuwając dwoma palcami od prawej do lewej lub wybierając **"
+"Opcje globalne > Backend**. Przycisk kierunkowy można skonfigurować jako "
+"drążek lub pad kierunkowy.\n"
+"\n"
+"### Globalne menu główne\n"
+"\n"
+"Aby otworzyć globalne menu główne, dotknij ikony menu w prawym górnym rogu "
+"ekranu lub przesuń dwoma palcami w dół.\n"
+"\n"
+"   ![Ikona menu](menu.png \"Ikona menu\"){w=10em}\n"
+"\n"
+"## Wirtualna klawiatura\n"
+"\n"
+"Aby otworzyć wirtualną klawiaturę, naciśnij i przytrzymaj ikonę kontrolera w "
+"prawym górnym rogu ekranu, wykonaj gest rozsuwania (pomniejszenia) lub "
+"dotknij dowolnego edytowalnego pola tekstowego. Aby ukryć klawiaturę "
+"wirtualną, dotknij ponownie ikony kontrolera, wykonaj gest szczypania "
+"(powiększenie) lub dotknij poza polem tekstowym.\n"
+"\n"
+"\n"
+"   ![Ikona klawiatury](keyboard.png \"Ikona klawiatury\"){w=10em}\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:305
 msgid ""
@@ -6811,7 +6944,7 @@ msgstr "Włącz tryb cheatowania"
 
 #: engines/hdb/metaengine.cpp:45
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Informacje o debugowaniu i wybór jego poziomu staną się dostępne"
 
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:179
 msgid "Move up"
@@ -8167,7 +8300,6 @@ msgid "Saving game..."
 msgstr "Zapisywanie stanu gry..."
 
 #: engines/parallaction/saveload.cpp:268
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -8176,17 +8308,17 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM znalazł stare zapisy z Nippon Safes, które należy przekonwertować.\n"
-"Stary format zapisu nie jest już obsługiwany. Nie będziesz mógł wczytać "
-"zapisów, jeśli ich nie przekonwertujesz.\n"
+"ScummVM wykrył stare zapisane gry dla Nippon Safes, których nazwę należy "
+"zmienić.\n"
+"Stare nazwy nie są już obsługiwane, więc nie będziesz mógł załadować gier, "
+"jeśli ich nie skonwertujesz.\n"
 "\n"
-"Naciśnij OK, żeby je teraz przekonwertować. W przeciwnym wypadku zostaniesz "
-"zapytany ponownie przy następnym włączeniu gry.\n"
+"Naciśnij OK, aby je teraz przekonwertować, w przeciwnym razie zostaniesz "
+"zapytany następnym razem.\n"
 
 #: engines/parallaction/saveload.cpp:315
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM pomyślnie przekonwertował wszystkie twoje zapisy."
+msgstr "ScummVM przekonwertował wszystkie zapisy gier."
 
 #: engines/parallaction/saveload.cpp:317
 msgid ""
@@ -8196,13 +8328,13 @@ msgid ""
 "Please report to the team."
 msgstr ""
 "ScummVM wyświetlił ostrzeżenia w oknie konsoli i nie może zagwarantować, że "
-"wszystkie twoje pliki zostały przekonwertowane.\n"
+"wszystkie pliki zostały przekonwertowane.\n"
 "\n"
 "Prosimy o zgłoszenie tego zespołowi."
 
 #: engines/pegasus/pegasus.cpp:2723
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Góra/Przybliż/Ruch naprzód/Otwórz drzwi"
+msgstr "Góra/Przybliż/Ruch do przodu/Otwórz drzwi"
 
 #: engines/pegasus/pegasus.cpp:2731
 msgid "Down/Zoom Out"
@@ -8214,37 +8346,36 @@ msgstr "Akcja/Wybór"
 
 #: engines/pegasus/pegasus.cpp:2773
 msgid "Display/Hide Inventory Tray"
-msgstr "Pokaż/schowaj przedmioty"
+msgstr "Pokaż/Ukryj przedmioty"
 
 #: engines/pegasus/pegasus.cpp:2780
 msgid "Display/Hide Biochip Tray"
-msgstr "Pokaż/schowaj biochipy"
+msgstr "Pokaż/Ukryj biochipy"
 
 #: engines/pegasus/pegasus.cpp:2788
 msgid "Toggle Center Data Display"
-msgstr "Włącz/wyłącz widok danych"
+msgstr "Włącz/Wyłącz widok danych"
 
 #: engines/pegasus/pegasus.cpp:2795
 msgid "Display/Hide Info Screen"
-msgstr "Pokaż/schowaj ekran informacji"
+msgstr "Pokaż/Ukryj ekran informacji"
 
 #: engines/pegasus/pegasus.cpp:2802
 msgid "Display/Hide Pause Menu"
-msgstr "Pokaż/schowaj menu pauzy"
+msgstr "Pokaż/Ukryj menu pauzy"
 
 #: engines/pegasus/pegasus.cpp:2809
-#, fuzzy
 msgid "Toggle Chatty AI"
-msgstr "Tryb szybki"
+msgstr "Włącz/Wyłącz rozmowną SI"
 
 #: engines/pink/gui.cpp:289
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "Ta pozycja menu nie została jeszcze zaimplementowana"
 
 #. I18N: Plumbers is the title of the game. 3DO is the name of platform
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
-msgstr ""
+msgstr "Gra Plumbers na 3DO wymaga obsługi RGB."
 
 #: engines/queen/metaengine.cpp:36
 msgid "Alternative intro"
@@ -8255,35 +8386,31 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Użyj alternatywnego intra (tylko dla wersji CD)"
 
 #: engines/queen/metaengine.cpp:47
-#, fuzzy
 msgid "Improved font"
-msgstr "Okno"
+msgstr "Ulepszona czcionka"
 
 #: engines/queen/metaengine.cpp:48
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "Użyj łatwiejszej do odczytania czcionki"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
-#, fuzzy
 msgid "Windows Trial version is not supported"
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "Wersja próbna systemu Windows nie jest obsługiwana"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:902
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "Wersja próbna systemu macOS nie jest obsługiwana"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:928
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "Wersja próbna systemu Pocket PC nie jest obsługiwana"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
-msgstr "Wsparcie dla gry 'I Have No Mouth' nie wkompilowane"
+msgstr "Obsługa I Have No Mouth nie jest wkompilowana"
 
 #: engines/saga/music.cpp:98
 #, c-format
@@ -8292,19 +8419,23 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"Nie można znaleźć plików definicji instrumentów AdLib\n"
+"%s i %s. Bez tych plików\n"
+"muzyka nie będzie brzmiała tak samo jak w oryginalnej grze."
 
 #: engines/saga/saga.cpp:395
 msgid "Error loading game resources."
-msgstr "Błąd przy odczycie danych gry."
+msgstr "Błąd ładowania zasobów gry."
 
 #: engines/sci/detection_options.h:33
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr "Pomiń dithering EGA (tła w pełnym kolorze)"
+msgstr "Pomiń przebieg ditheringu EGA (pełnokolorowe tła)"
 
 #: engines/sci/detection_options.h:34
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Pomiń dithering w grach EGA, grafika będzie wyświetlana w pełnym kolorze"
+"Pomiń przebieg ditheringu w grach EGA, grafika będzie wyświetlana w pełnych "
+"kolorach"
 
 #: engines/sci/detection_options.h:45
 msgid "Enable high resolution graphics"
@@ -8312,35 +8443,32 @@ msgstr "Włącz grafikę wysokiej rozdzielczości"
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
-msgstr "Włącz grafikę/zawartość wysokiej rozdzielczości"
+msgstr "Włącz grafikę i zawartość w wysokiej rozdzielczości"
 
 #: engines/sci/detection_options.h:57
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Włącz tryb Roland GS"
+msgstr "Włącz wideo z czarnymi liniami"
 
 #: engines/sci/detection_options.h:58
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Rysuj czarne linie na filmikach, żeby zwiększyć ich pozorną ostrość"
+msgstr "Rysuje czarne linie na filmach, aby zwiększyć ich pozorną ostrość"
 
 #: engines/sci/detection_options.h:70
 msgid "Use high-quality video scaling"
-msgstr "Użyj skalowania filmów w wysokiej jakości"
+msgstr "Użyj wysokiej jakości skalowania wideo"
 
 #: engines/sci/detection_options.h:71
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Używa filtrowania dwuliniowego przy skalowaniu obrazu"
+msgstr ""
+"Podczas skalowania filmów używaj interpolacji liniowej, jeśli to możliwe"
 
 #: engines/sci/detection_options.h:83
-#, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Użyj skalowania filmów w wysokiej jakości"
+msgstr "Użyj wysokiej jakości skalowania komórek \"LarryScale\""
 
 #: engines/sci/detection_options.h:84
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
-"Używaj specjalnego, kreskówkowego skalowania do rysowania sprite'ów postaci"
+msgstr "Użyj specjalnego skalera kreskówkowego do rysowania sprite'ów postaci"
 
 #: engines/sci/detection_options.h:119
 msgid "Use CD audio"
@@ -8348,37 +8476,35 @@ msgstr "Użyj CD audio"
 
 #: engines/sci/detection_options.h:120
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Użyj CD audio zamiast muzyki w grze, jeśli jest dostępne"
+msgstr "Używaj CD audio zamiast muzyki w grze, jeśli jest dostępne"
 
 #: engines/sci/detection_options.h:132
 msgid "Use Windows cursors"
-msgstr "Użyj windowsowych kursorów"
+msgstr "Użyj kursorów Windows"
 
 #: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
-"Użyj windowsowych kursorów (mniejsze i monochromatyczne) zamiast DOS-owych"
+"Używaj kursorów systemu Windows (mniejszych i monochromatycznych) zamiast "
+"DOS-owych"
 
 #: engines/sci/detection_options.h:145
 msgid "Use silver cursors"
 msgstr "Użyj srebrnych kursorów"
 
 #: engines/sci/detection_options.h:146
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr ""
-"Użyj alternatywnego zestawu srebrnych kursorów zamiast zwykłych złotych"
+msgstr "Użyj alternatywnego zestawu srebrnych kursorów zamiast zwykłych złotych"
 
 #: engines/sci/detection_options.h:158
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Włącz pływające kursory"
+msgstr "Włącz cenzurę treści"
 
 #: engines/sci/detection_options.h:159
 msgid "Enable the game's built-in optional content censoring"
-msgstr "Włącz opcjonalną, wbudowaną w grę cenzurę zawartości"
+msgstr "Włącz opcjonalną wbudowaną cenzurę treści w grze"
 
 #: engines/sci/detection_options.h:171
 msgid "Upscale videos"
@@ -8386,71 +8512,75 @@ msgstr "Powiększaj filmy"
 
 #: engines/sci/detection_options.h:172
 msgid "Upscale videos to double their size"
-msgstr "Powiększaj filmy dwókrotnie"
+msgstr "Powiększaj filmy, aby podwoić ich rozmiar"
 
 #: engines/sci/detection_options.h:184
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Użyj renderowania RGB"
 
 #: engines/sci/detection_options.h:185
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Użyj renderowania RGB, aby poprawić przejścia między ekranami"
 
 #: engines/sci/detection_options.h:197
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Użyj palet modyfikowanych dla poszczególnych zasobów"
 
 #: engines/sci/detection_options.h:198
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
+"Użyj niestandardowych palet dla poszczególnych zasobów, aby ulepszyć efekty "
+"wizualne"
 
 #: engines/sci/detection_options.h:210
-#, fuzzy
 msgid "Enable bearded musicians"
-msgstr "Włącz pływające kursory"
+msgstr "Włącz brodatych muzyków"
 
 #: engines/sci/detection_options.h:211
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Włącz grafikę, która została wyłączona ze względów prawnych"
 
 #: engines/sci/detection_options.h:239
-#, fuzzy
 msgid "MIDI mode:"
-msgstr "Wzm. MIDI:"
+msgstr "Tryb MIDI:"
 
 #: engines/sci/detection_options.h:240
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"Jeśli używasz zewnętrznych urządzeń MIDI (np. przez USB-MIDI), wybierz tutaj "
+"swoje urządzenie"
 
 #: engines/sci/detection_options.h:245
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "Standardowe (GM/MT-32)"
 
 #: engines/sci/detection_options.h:249
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection_options.h:253
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_options.h:257
 msgid "Casio MT-540"
-msgstr ""
+msgstr "Casio MT-540"
 
 #: engines/sci/detection_options.h:261
 msgid "Casio CT-460 / CSM-1"
-msgstr ""
+msgstr "Casio CT-460 / CSM-1"
 
 #: engines/sci/detection_tables.h:4531
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
+"Niniejsza wersja demonstracyjna wykorzystuje niezaimplementowaną wersję "
+"filmów o Robotach"
 
 #: engines/sci/detection_tables.h:4586
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "Wykryto niekompletną grę. Należy skopiować dane ze wszystkich płyt CD."
 
 #: engines/sci/engine/kfile.cpp:491 engines/sci/metaengine.cpp:369
 msgid "(Autosave)"
@@ -8459,7 +8589,7 @@ msgstr "(Autozapis)"
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr "Użyj zewnętrznego programu by otworzyć plik pomocy gry: %s"
+msgstr "Aby otworzyć plik pomocy gry, użyj zewnętrznej przeglądarki: %s"
 
 #: engines/sci/engine/kmisc.cpp:894
 msgid ""
@@ -8467,32 +8597,35 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"Logika pokera jest zakodowana na stałe w zewnętrznej bibliotece DLL i nie "
+"została jeszcze zaimplementowana. Na razie istnieje fikcyjna logika, w "
+"której działania przeciwnika są wybierane losowo"
 
 #: engines/sci/engine/savegame.cpp:1455
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "Format tego zapisu gry jest przestarzały. Nie można go wczytać"
+msgstr "Format zapisanej gry jest przestarzały i nie można jej wczytać"
 
 #: engines/sci/engine/savegame.cpp:1457
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "Wersja zapisu gry to %d. Maksymalna, wspierana wersja to %0d"
+msgstr "Wersja zapisu gry to %d, maksymalna obsługiwana wersja to %0d"
 
 #: engines/sci/engine/savegame.cpp:1469
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
-"Ten zapis gry został utworzony w innej wersji gry. Nie można go wczytać"
+msgstr "Zapis gry został utworzony w innej wersji gry i nie można go wczytać"
 
 #: engines/sci/graphics/video32.cpp:68
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
+"Nie można odtworzyć wideo %dbpp w systemie z maksymalną głębią kolorów 8bpp"
 
 #: engines/sci/metaengine.cpp:301
 msgid "SCI32 support not compiled in"
-msgstr "Obsługa dla silnika 'SCI32' nie jest wkompilowana"
+msgstr "Obsługa SCI32 nie jest wkompilowana"
 
 #: engines/sci/resource/resource.cpp:858
 msgid ""
@@ -8500,9 +8633,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
-"Wykryto brakujące lub uszkodzone zasoby gry. Niektóre funkcje mogą nie "
-"działać właściwie. Więcej informacji znajdziesz w konsoli. Upewnij się, że "
-"pliki twojej gry są prawidłowe."
+"Wykryto brakujące lub uszkodzone zasoby gry. Niektóre funkcje gry mogą nie "
+"działać poprawnie. Aby uzyskać więcej informacji, zajrzyj do konsoli i "
+"sprawdź, czy pliki gry są prawidłowe."
 
 #: engines/sci/sci.cpp:399
 msgid ""
@@ -8512,11 +8645,11 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
-"Napisy są włączone, ale w grze King's Quest 7 ta opcja nie została ukończona "
-"i wyłączono ją w finalnej wersji gry. ScummVM pozwala na ponowne włączenie "
-"napisów, ale ponieważ zostały one usunięte z oryginalnej gry, nie zawsze "
-"wyświetlają się właściwie lub odpowiadają wypowiadanym kwestiom. To nie jest "
-"błąd w programie ScummVM -- to problem z zasobami gry."
+"Napisy są włączone, ale nie zostały one dokończone w King's Quest 7 i "
+"wyłączono je w pierwotnej wersji gry. ScummVM umożliwia ponowne włączenie "
+"napisów, ale ponieważ były one usunięte z oryginalnej gry, nie zawsze są "
+"wyświetlane poprawnie lub odzwierciedlają rzeczywistą mowę w grze. To nie "
+"jest błąd ScummVM – to problem z zasobami gry."
 
 #: engines/sci/sci.cpp:423
 msgid ""
@@ -8530,25 +8663,27 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
-"Wybrałeś General MIDI, jako źródło dźwięku. Sierra dostarczyła wsparcie dla "
-"General MIDI dla tej gry w \"General MIDI Utility\". Zastosuj ten patch, by "
-"cieszyć się muzyką MIDI W tej grze. Po uzyskaniu, możesz rozpakować "
-"wszystkie pliki *.PAT w folderze dodatków ScummVM, a program automatycznie "
-"doda odpowiedni patch. Możesz też skorzystać z instrukcji w pliku READ.ME "
-"dołączonym do patcha i zmienić nazwę odpowiedniego pliku *.PAT na 4.PAT i "
-"umieścić go w folderze z grą. Bez tego patcha, muzyka General MIDI w tej "
-"grze będzie mocno zniekształcona."
+"Wybrano General MIDI jako urządzenie dźwiękowe. Sierra zapewniła obsługę "
+"posprzedażową General MIDI dla tej gry w swoim „General MIDI Utility”. "
+"Zainstaluj to narzędzie, aby móc cieszyć się muzyką MIDI w tej grze. Po jego "
+"uzyskaniu można rozpakować pliki *.PAT do folderu dodatków ScummVM, a "
+"ScummVM automatycznie doda odpowiednią poprawkę. Alternatywnie można "
+"postępować zgodnie z instrukcjami zawartymi w pliku READ.ME zawartym w "
+"poprawce i zmienić nazwę powiązanego pliku *.PAT na 4.PAT oraz umieścić go w "
+"folderze z grą. Bez tej poprawki muzyka General MIDI w tej grze będzie mocno "
+"zniekształcona."
 
 #: engines/sci/sci.cpp:515
-#, fuzzy
 msgid "Download patch"
-msgstr "Pobierz"
+msgstr "Pobierz poprawkę"
 
 #: engines/sci/sci.cpp:516
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
+"(albo kliknij przycisk „Pobierz poprawkę”. Ale uwaga, spowoduje to tylko "
+"pobranie, resztę operacji trzeba wykonać ręcznie)\n"
 
 #: engines/sci/sci.cpp:523
 msgid ""
@@ -8559,6 +8694,12 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"GK2 ma napisy stworzone przez fanów, dostępne dzięki dobrym ludziom z "
+"SierraHelp.\n"
+"\n"
+"Instalacja:\n"
+"- pobierz http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
+"zip\n"
 
 #: engines/sci/sci.cpp:956
 msgid ""
