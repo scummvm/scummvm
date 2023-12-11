@@ -296,21 +296,13 @@ void Room402::daemon() {
 			break;
 
 		case 7:
-			switch (_stolieShould) {
-			case 7:
+			if (_stolieShould == 7) {
 				loadDr8();
 				_stolie.play("402dr08", 0x300, 0, kCHANGE_STOLIE_ANIMATION, 60, 0, 100, 0, 0, 75, 75);
-				break;
-
-			case 8:
+			} else {
 				_stolieMode = 45;
 				loadDr8();
 				_stolie.play("402dr08", 0x300, 2, kCHANGE_STOLIE_ANIMATION, 6, 0, 100, 0, 0, 72, 75);
-				break;
-
-
-			default:
-				break;
 			}
 			break;
 
@@ -1092,6 +1084,7 @@ void Room402::conv84() {
 	int entry = conv_current_entry();
 	int node = conv_current_node();
 	const char *sound = conv_sound_to_play();
+	_G(kernel).trigger_mode = KT_PARSE;
 
 	switch (_G(kernel).trigger) {
 	case 6:
@@ -1204,7 +1197,7 @@ void Room402::conv84() {
 				}
 
 				_G(kernel).trigger_mode = KT_DAEMON;
-				wilbur_speech(sound, 10001);
+				wilbur_speech(sound, kRESUME_CONVERSATION);
 			}
 		}
 		break;
