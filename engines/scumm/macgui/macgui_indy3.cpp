@@ -29,6 +29,7 @@
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/macgui/macgui_impl.h"
+#include "scumm/macgui/macgui_indy3.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
 

@@ -24,6 +24,8 @@
 #include "scumm/scumm.h"
 #include "scumm/macgui/macgui.h"
 #include "scumm/macgui/macgui_impl.h"
+#include "scumm/macgui/macgui_indy3.h"
+#include "scumm/macgui/macgui_loom.h"
 
 namespace Scumm {
 
