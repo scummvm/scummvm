@@ -2676,7 +2676,7 @@ size_t sd_autolink__email(size_t *rewind_p, SDDataBuffer *link, byte *data, size
 	int nb = 0, np = 0;
 
 	for (rewind = 0; rewind < max_rewind; ++rewind) {
-		byte c = data[-rewind - 1];
+		byte c = *(data - rewind - 1);
 
 		if (Common::isAlnum(c))
 			continue;
@@ -2725,7 +2725,7 @@ size_t sd_autolink__url(size_t *rewind_p, SDDataBuffer *link, byte *data, size_t
 	if (size < 4 || data[1] != '/' || data[2] != '/')
 		return 0;
 
-	while (rewind < max_rewind && Common::isAlpha(data[-rewind - 1]))
+	while (rewind < max_rewind && Common::isAlpha(*(data - rewind - 1)))
 		rewind++;
 
 	if (!sd_autolink_issafe(data - rewind, size + rewind))
