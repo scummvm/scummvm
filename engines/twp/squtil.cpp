@@ -101,6 +101,11 @@ SQRESULT get(HSQUIRRELVM v, int i, Common::String &value) {
 }
 
 template<>
+SQRESULT get(HSQUIRRELVM v, int i, const SQChar* &value) {
+	return sq_getstring(v, i, &value);
+}
+
+template<>
 SQRESULT get(HSQUIRRELVM v, int i, HSQOBJECT &value) {
 	return sq_getstackobj(v, i, &value);
 }
