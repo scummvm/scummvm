@@ -141,9 +141,9 @@ public:
 			finished_tiles(0) {
 	}
 	ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
-	ProjectileEffect(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
+	ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
 
-	void init(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
+	void init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
