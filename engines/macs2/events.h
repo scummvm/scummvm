@@ -234,6 +234,7 @@ public:
 	MESSAGE(Action);
 	MESSAGE(Game);
 	MESSAGE(Value);
+	MESSAGE(MouseMove);
 	#undef MESSAGE
 };
 

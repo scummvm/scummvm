@@ -37,9 +37,58 @@ namespace Macs2 {
 
 Macs2Engine *g_engine;
 
-Graphics::Surface* Macs2Engine::readRLEImage(int64 offs, Common::File& file)
+Graphics::ManagedSurface Macs2Engine::readRLEImage(int64 offs, Common::File& file)
 {
-	return nullptr;
+	file.seek(offs);
+
+	Graphics::ManagedSurface result = new Graphics::Surface();
+	result.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	
+
+	// TODO: Fix length
+	uint8* data = new uint8[1024];
+
+	// TODO: Consider if it can be that the data is more than this. Maybe the tooling of the engine can make bad calls and
+	// try to RLE something which would be better not RLE encoded.
+
+	// TODO: Fix start position
+	for (int y = 0; y < 200; y++) {
+		uint16 length = file.readUint16LE();
+		file.read(data, length);
+		uint16 remainingPixels = 320;
+		uint8* dataPointer = data;
+		uint16 x = 0;
+		while (remainingPixels > 0) {
+			const uint8& value = dataPointer[0];
+			dataPointer++;
+			if (value != 0xF0) {
+				/* if (x >= 320) {
+					// TODO: This happens during loading the map
+					break;
+				}*/
+				result.setPixel(x, y, value);
+				remainingPixels--;
+				x++;
+			}
+			else {
+				// We need to decode the RLE data
+				const uint8& runlength = dataPointer[0];
+				dataPointer++;
+				const uint8& encodedValue = dataPointer[0];
+				dataPointer++;
+				for (int i = 0; i < runlength; i++) {
+					/* if (x >= 320) {
+						// TODO: This happens for loading the map - maybe this code is a bit different?
+						break;
+					} */
+					result.setPixel(x++, y, encodedValue);
+				}
+				remainingPixels -= runlength;
+			}
+		}
+	}
+
+	return result;
 }
 
 void Macs2Engine::readResourceFile() {
@@ -54,8 +103,7 @@ void Macs2Engine::readResourceFile() {
 
 	// uint8 b0 = data[0];
 
-	_bgImageShip = new Graphics::Surface();
-	_bgImageShip->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	_bgImageShip.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 	uint8* lengthData = new uint8[2];
 	uint8* data = new uint8[320];
@@ -75,7 +123,7 @@ void Macs2Engine::readResourceFile() {
 			const uint8& value = dataPointer[0];
 			dataPointer++;
 			if (value != 0xF0) {
-				_bgImageShip->setPixel(x, y, value);
+				_bgImageShip.setPixel(x, y, value);
 				remainingPixels--;
 				x++;
 			}
@@ -86,7 +134,7 @@ void Macs2Engine::readResourceFile() {
 				const uint8& encodedValue = dataPointer[0];
 				dataPointer++;
 				for (int i = 0; i < runlength; i++) {
-					_bgImageShip->setPixel(x++, y, encodedValue);
+					_bgImageShip.setPixel(x++, y, encodedValue);
 				}
 				remainingPixels -= runlength;
 			}
@@ -170,7 +218,9 @@ void Macs2Engine::readResourceFile() {
 	ExecuteScript(_scriptStream);
 
 	// Load the background map
-	auto map = readRLEImage(0x0024BD9B, file);
+	// _map = readRLEImage(0x0024BD9B, file);
+	// _map = readRLEImage(0x00248FCE, file);
+	_map = readRLEImage(0x0024B0DF, file);
 
 }
 
@@ -182,13 +232,49 @@ Macs2Engine::Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 Macs2Engine::~Macs2Engine() {
 }
 
+void Func9F4D(Common::MemoryReadStream * stream) {
+	// Read an opcode (would be 0037:9F07) - [bp-1h]
+	byte opcode = stream->readByte();
+	debug("Script read (byte): %.2x at offset %.4x\n", opcode, stream->pos());
+
+	uint16 value = stream->readUint16BE();
+	debug("Script read (word): %.4x at offset %.4x\n", value, stream->pos());
+
+	if (opcode == 0xFF) {
+		// TODO: Long list of opcode handling here
+		if (opcode == 0x26) {
+			// TODO: Implement this part:
+	/* l0037_A19E:
+		cmp	byte ptr[1014h], 0h
+			jz	0A1B1h
+
+			l0037_A1A5 :
+		mov	word ptr[bp - 4h], 1h
+			mov	word ptr[bp - 2h], 0h
+			jmp	0A1B9h
+
+			l0037_A1B1 :
+		xor ax, ax
+			mov[bp - 4h], ax
+			mov[bp - 2h], ax */
+		}
+	}
+}
+
+
 void Macs2Engine::ExecuteScript(Common::MemoryReadStream* stream) {
+	// Implements roughly 01E7:DB56 and friends
 	// TODO: Change to a proper end condition
+	// TODO: Do some bookkeeping on the pointers into the script
 	for (;;) {
-		// Read an opcode (would be 0037:9F07)
+		
+
+
+
+		// Read an opcode (would be 0037:9F07) - [bp-1h]
 		byte opcode1 = stream->readByte();
 
-		// Read another value - TODO: Not sure yet what this does
+		// Read another value - TODO: Not sure yet what this does - [bp-2h]
 		byte val1 = stream->readByte();
 
 		debug("Script read (byte): %.2x at offset %.4x\n", opcode1, stream->pos());

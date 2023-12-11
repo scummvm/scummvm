@@ -26,27 +26,52 @@
 
 namespace Macs2 {
 
-bool View1::msgFocus(const FocusMessage &msg) {
+	View1::View1() : UIElement("View1") {
+		_backgroundSurface = g_engine->_bgImageShip;
+	}
+
+	bool View1::msgFocus(const FocusMessage &msg) {
 	//Common::fill(&_pal[0], &_pal[256 * 3], 0);
 	// _offset = 128;
 	return true;
 }
 
+	bool View1::msgMouseDown(const MouseDownMessage& msg)
+	{
+		uint32 value = getSurface().getPixel(msg._pos.x, msg._pos.y);
+		g_system->setWindowCaption(Common::String::format("%u,%u: %u", msg._pos.x, msg._pos.y, value));
+		return true;
+	}
+
 bool View1::msgKeypress(const KeypressMessage &msg) {
 	// Any keypress to close the view
-	close();
+	// close();
+	if (msg.ascii == (uint16)'i') {
+		_backgroundSurface = g_engine->_map;
+		redraw();
+	}
+	else if (msg.ascii == (uint16)'m') {
+		_backgroundSurface = g_engine->_bgImageShip;
+		redraw();
+	}
 	return true;
 }
 
 void View1::draw() {
+	g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
+
 	// Draw a bunch of squares on screen
 	Graphics::ManagedSurface s = getSurface();
 
 	/* for (int i = 0; i < 100; i++) {
 		s.setPixel(i, i, i);
 	} */
-	g_system->getPaletteManager()->setPalette(g_engine->_pal, 0, 256);
-	s.blitFrom(g_engine->_bgImageShip);
+	
+	// s.blitFrom(g_engine->_bgImageShip);
+	
+	
+	// s.blitFrom(_backgroundSurface);
+	s.blitFrom(_backgroundSurface);
 
 	// Draw the character
 	uint16 charX = 50;
