@@ -141,13 +141,13 @@ void Room137::init() {
 	}
 
 	if (_G(flags)[V048] < 200) {
-		_mode1 = 27;
+		_deputyShould = 27;
 	} else {
-		_mode1 = _G(flags)[V047] == 2 || _G(flags)[V047] == 3 || _G(flags)[V047] == 4 ? 34 : 27;
+		_deputyShould = _G(flags)[V047] == 2 || _G(flags)[V047] == 3 || _G(flags)[V047] == 4 ? 34 : 27;
 		digi_play("137_003", 1);
 	}
 
-	_mode2 = 27;
+	_deputyMode = 27;
 	kernel_trigger_dispatch_now(kCHANGE_DEPUTY_ANIMATION);
 }
 
@@ -237,6 +237,22 @@ void Room137::daemon() {
 			}
 			break;
 
+		case 10:
+			switch (_sherrifShould) {
+			case 22:
+				series_play("137sh08", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+				break;
+
+			case 23:
+				_sherrifMode = 13;
+				series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
 		case 13:
 			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 6);
@@ -307,29 +323,29 @@ void Room137::daemon() {
 		break;
 
 	case kCHANGE_DEPUTY_ANIMATION:
-		switch (_mode2) {
+		switch (_deputyMode) {
 		case 27:
-			switch (_mode1) {
+			switch (_deputyShould) {
 			case 27:
 				sub1();
 				kernel_timing_trigger(10, kCHANGE_DEPUTY_ANIMATION);
 				break;
 
 			case 29:
-				_mode1 = 30;
+				_deputyShould = 30;
 				series_play("137dp02", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 8, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 30:
 				terminateMachineAndNull(_door);
-				_mode2 = 31;
+				_deputyMode = 31;
 				series_play("137dp03", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 8, 0, 100, 0, 0, 0, 14);
 				digi_play("137_003", 1, 255);
 				break;
 
 			case 34:
 				sub1();
-				_mode1 = 29;
+				_deputyShould = 29;
 				series_play("137dp01", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 60, 0, 100, 0, 0, 6, 6);
 				break;
 
@@ -340,7 +356,7 @@ void Room137::daemon() {
 
 		case 31:
 			if (imath_ranged_rand(1, 20) == 1) {
-				_mode2 = 32;
+				_deputyMode = 32;
 				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 			} else {
 				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 7, 7);
@@ -349,7 +365,7 @@ void Room137::daemon() {
 
 		case 32:
 			if (imath_ranged_rand(1, 20) == 1) {
-				_mode2 = 33;
+				_deputyMode = 33;
 				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, imath_ranged_rand(60, 90),
 					0, 100, 0, 0, 0, 5);
 			} else {
@@ -358,7 +374,7 @@ void Room137::daemon() {
 			break;
 
 		case 33:
-			_mode2 = 31;
+			_deputyMode = 31;
 			series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 6, 7);
 			break;
 
@@ -379,7 +395,7 @@ void Room137::daemon() {
 		unloadAssets();
 
 		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] == 4)
-			_mode1 = 30;
+			_deputyShould = 30;
 
 		_sherrifMode = 5;
 		_sherrifShould = 10;
@@ -404,7 +420,7 @@ void Room137::daemon() {
 		if (_G(player_info).y < 308)
 			_sherrifShould = 10;
 		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] != 4)
-			_mode1 = 30;
+			_deputyShould = 30;
 
 		kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 		break;
@@ -424,22 +440,6 @@ void Room137::daemon() {
 		}
 
 		Section1::updateWalker(227, 309, 11, 13);
-		break;
-
-	case 10:
-		switch (_sherrifShould) {
-		case 22:
-			series_play("137sh08", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
-			break;
-
-		case 23:
-			_sherrifMode = 13;
-			series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
-			break;
-
-		default:
-			break;
-		}
 		break;
 
 	case 11:
