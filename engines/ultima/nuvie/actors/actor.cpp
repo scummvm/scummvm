@@ -56,7 +56,8 @@ Actor::Actor(Map *m, ObjManager *om, GameClock *c)
 	  talk_flags(0), obj_flags(0), body_armor_class(0), readied_armor_class(0),
 	  custom_tile_tbl(nullptr), id_n(0), x(0), y(0), z(0), obj_n(0), frame_n(0),
 	  base_obj_n(0), old_frame_n(0), movement_flags(0), strength(0), dex(0),
-	  intelligence(0), hp(0), level(0), magic(0), combat_mode(0), _clock(c) {
+	  intelligence(0), hp(0), level(0), exp(0), magic(0), combat_mode(0),
+	  _clock(c) {
 	memset(readied_objects, 0, sizeof(readied_objects));
 	clear_error();
 }

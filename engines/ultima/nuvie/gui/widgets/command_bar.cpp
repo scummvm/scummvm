@@ -88,6 +88,8 @@ CommandBar::CommandBar() : GUI_Widget(nullptr), game(nullptr), event(nullptr),
 		background(nullptr), font(nullptr), selected_action(-1), offset(0),
 		combat_mode(false), bg_color(0), font_color(0), active_action_num(-1),
 		lever_up(nullptr), lever_down(nullptr) {
+	for (int i = 0; i < ARRAYSIZE(icon); i++)
+		icon[i] = nullptr;
 }
 
 CommandBar::CommandBar(Game *g) : GUI_Widget(nullptr), game(g),
