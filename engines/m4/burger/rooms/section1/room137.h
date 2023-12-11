@@ -34,8 +34,8 @@ private:
 	bool _flag2 = false;
 	bool _flag3 = false;
 	int _volume = 255;
-	int _mode1 = 0;
-	int _mode2 = 0;
+	int _deputyShould = 0;
+	int _deputyMode = 0;
 	int _sherrifShould = 0;
 	int _sherrifMode = 0;
 	const char *_digi1 = nullptr;
