@@ -288,11 +288,11 @@ void Room133_136::pre_parser() {
 		player_hotspot_walk_override(246, 247, 8);
 
 	if (player_said("old bridge") &&
-			player_said_any("enter", "gear", "look", "look at"))
+			!player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(3);
 
 	if (player_said("town limits") &&
-		player_said_any("enter", "gear", "look", "look at"))
+			!player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(9);
 
 	if (player_said("enter", "construction"))

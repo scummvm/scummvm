@@ -176,6 +176,7 @@ void Room101::init() {
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		break;
 
+	case 134:
 	case 135:
 		// From Old Bridge
 		_G(wilbur_should) = 4;
