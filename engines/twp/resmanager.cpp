@@ -47,7 +47,7 @@ Common::String getKey(const char *path) {
 void ResManager::loadTexture(const Common::String &name) {
 	debug("Load texture %s", name.c_str());
 	GGPackEntryReader r;
-	r.open(g_engine->pack, name);
+	r.open(g_engine->_pack, name);
 	Image::PNGDecoder d;
 	d.loadStream(r);
 	const Graphics::Surface *surface = d.getSurface();
@@ -65,7 +65,7 @@ Texture *ResManager::texture(const Common::String &name) {
 
 void ResManager::loadSpriteSheet(const Common::String &name) {
 	GGPackEntryReader r;
-	r.open(g_engine->pack, name + ".json");
+	r.open(g_engine->_pack, name + ".json");
 
 	// read all contents
 	Common::Array<char> data(r.size());

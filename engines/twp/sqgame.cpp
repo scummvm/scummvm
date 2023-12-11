@@ -19,25 +19,18 @@
  *
  */
 
-#ifndef TWPVM_H
-#define TWPVM_H
-
-#include "twp/squirrel/squirrel.h"
+#include "twp/sqgame.h"
 
 namespace Twp {
 
-class Vm {
-public:
-	Vm();
-	~Vm();
+void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger nparamscheck, const SQChar *typemask) {
+	sq_pushroottable(v);
+	sq_pushstring(v, functionName, -1);
+	sq_newclosure(v, f, 0); // create a new function
+	sq_setparamscheck(v, nparamscheck, typemask);
+	sq_setnativeclosurename(v, -1, functionName);
+	sq_newslot(v, -3, SQFalse);
+	sq_pop(v, 1); // pops the root table
+}
 
-	void exec(const SQChar *code);
-
-	HSQUIRRELVM get() { return v; };
-
-private:
-	HSQUIRRELVM v;
-};
-} // End of namespace Twp
-
-#endif // TWPVM_H
+}

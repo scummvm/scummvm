@@ -34,6 +34,12 @@ MODULE_OBJS = \
 	room.o \
 	lighting.o \
 	font.o \
+	sqgame.o \
+	syslib.o \
+	objlib.o \
+	genlib.o \
+	squtil.o \
+	thread.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
