@@ -238,9 +238,15 @@ void SpriteCache::DisposeOldest() {
 	auto it = std::prev(_mru.end());
 	const auto sprnum = *it;
 	// Safety check: must be a sprite from resources
-	assert(_spriteData[sprnum].IsAssetSprite());
+	// TODO: compare with latest upstream
+	// Commented out the assertion, since it triggers for sprites that are in the list but remapped to the placeholder (sprite 0)
+	// Whispers of a Machine is affected by this issue (see TRAC #14730)
+
+	// assert(_spriteData[sprnum].IsAssetSprite());
+
 	if (!_spriteData[sprnum].IsAssetSprite()) {
-		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SpriteCache::DisposeOldest: in MRU list sprite %d is external or does not exist", sprnum);
+		if (!(_spriteData[sprnum].Flags & SPRCACHEFLAG_REMAPPED))
+			Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SpriteCache::DisposeOldest: in MRU list sprite %d is external or does not exist", sprnum);
 		_mru.erase(it);
 		// std::list::erase() invalidates iterators to the erased item.
 		// But our implementation does not.
