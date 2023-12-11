@@ -122,6 +122,8 @@ public:
 
 	bool open(Common::SeekableReadStream *s, const XorKey& key);
 
+	bool assetExists(const char* asset) { return _entries.contains(asset); }
+
 private:
 	XorKey _key;
 	GGPackEntries _entries;

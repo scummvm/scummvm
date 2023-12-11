@@ -170,7 +170,7 @@ bool TokenReader::readToken(Token &token) {
 GGFont::~GGFont() {}
 
 void GGFont::load(const Common::String &path) {
-	SpriteSheet *spritesheet = g_engine->resManager.spriteSheet(path);
+	SpriteSheet *spritesheet = g_engine->_resManager.spriteSheet(path);
 	int lineHeight = 0;
 	for (auto it = spritesheet->frameTable.begin(); it != spritesheet->frameTable.end(); it++) {
 		const SpriteSheetFrame &frame = it->_value;
@@ -201,9 +201,8 @@ Text::Text(const Common::String &fontName, const Common::String &text, TextHAlig
 void Text::update() {
 	if (_dirty) {
 		_dirty = false;
-		// let (_, name, _) = splitFile(self.font.path);
-		_font = g_engine->resManager.font(_fontName);
-		_texture = g_engine->resManager.texture(_font->getName() + ".png");
+		_font = g_engine->_resManager.font(_fontName);
+		_texture = g_engine->_resManager.texture(_font->getName() + ".png");
 
 		// Reset
 		_vertices.clear();

@@ -22,12 +22,9 @@
 #ifndef TWP_H
 #define TWP_H
 
-#include "common/array.h"
-#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/hash-str.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/util.h"
@@ -38,9 +35,12 @@
 #include "twp/vm.h"
 #include "twp/resmanager.h"
 #include "twp/room.h"
+#include "twp/ggpack.h"
+#include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
+class Thread;
 struct TwpGameDescription;
 
 class TwpEngine : public Engine {
@@ -52,11 +52,12 @@ protected:
 	Common::Error run() override;
 public:
 	Graphics::Screen *_screen = nullptr;
-	Common::Array<Entity> entities;
-	Common::Array<Thread*> threads;
-	GGPackDecoder pack;
-	ResManager resManager;
-	Common::Array<Room> rooms;
+	Common::Array<Object*> _objects;
+	Common::Array<Thread*> _threads;
+	GGPackDecoder _pack;
+	ResManager _resManager;
+	Common::Array<Room> _rooms;
+	Room* _room;
 
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -73,6 +74,8 @@ public:
 	 * Gets the random source
 	 */
 	Common::RandomSource& getRandomSource() { return _randomSource; }
+
+	HSQUIRRELVM getVm() { return _vm.get(); }
 
 	bool hasFeature(EngineFeature f) const override {
 		return
@@ -102,6 +105,13 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	Math::Vector2d roomToScreen(Math::Vector2d pos);
+	Math::Vector2d screenToRoom(Math::Vector2d pos);
+
+private:
+	Gfx _gfx;
+	Vm _vm;
 };
 
 extern TwpEngine *g_engine;

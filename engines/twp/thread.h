@@ -19,25 +19,38 @@
  *
  */
 
-#ifndef TWPVM_H
-#define TWPVM_H
+#ifndef TWP_THREAD_H
+#define TWP_THREAD_H
 
+#include "common/array.h"
+#include "common/str.h"
 #include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
-class Vm {
+class Thread {
 public:
-	Vm();
-	~Vm();
+	Thread();
+	~Thread();
 
-	void exec(const SQChar *code);
+	bool call();
+	bool update(float elapsed);
+	void suspend();
+	void resume();
+	bool isDead();
+	bool isSuspended();
 
-	HSQUIRRELVM get() { return v; };
-
-private:
-	HSQUIRRELVM v;
+public:
+	uint64 id;
+	Common::String name;
+    bool global;
+	HSQOBJECT obj, threadObj, envObj, closureObj;
+	Common::Array<HSQOBJECT> args;
+	bool paused;
+	float waitTime;
+	int numFrames;
+	bool stopRequest;
 };
-} // End of namespace Twp
+}
 
-#endif // TWPVM_H
+#endif

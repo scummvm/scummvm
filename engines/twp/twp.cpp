@@ -19,10 +19,15 @@
  *
  */
 
-#include <vector>
-#include <vector>
-#include <filesystem>
-#include <fstream>
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/stream.h"
+#include "common/file.h"
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "engines/util.h"
+#include "graphics/palette.h"
+#include "graphics/opengl/system_headers.h"
 #include "twp/twp.h"
 #include "twp/detection.h"
 #include "twp/console.h"
@@ -31,33 +36,14 @@
 #include "twp/gfx.h"
 #include "twp/lighting.h"
 #include "twp/font.h"
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/file.h"
-#include "image/png.h"
-#include "engines/util.h"
-#include "graphics/palette.h"
-#include "graphics/opengl/system_headers.h"
+#include "twp/thread.h"
 
 namespace Twp {
 
-TwpEngine *g_engine;
+#define SCREEN_WIDTH	1280
+#define SCREEN_HEIGHT	720
 
-static Math::Vector2d getScreenSize(const Room &room) {
-	switch (room.height) {
-	case 128:
-		return {320, 180};
-	case 172:
-		return {428, 240};
-	case 256:
-		return {640, 360};
-	default:
-		return {room.roomSize.getX(), (float)room.height};
-	}
-}
+TwpEngine *g_engine;
 
 static bool cmpLayer(const Layer &l1, const Layer &l2) {
 	return l1.zsort > l2.zsort;
@@ -83,10 +69,8 @@ Common::String TwpEngine::getGameId() const {
 }
 
 Common::Error TwpEngine::run() {
-	const int screenWidth = 1280;
-	const int screenHeight = 720;
-	initGraphics3d(screenWidth, screenHeight);
-	_screen = new Graphics::Screen(screenWidth, screenHeight);
+	initGraphics3d(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_screen = new Graphics::Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0xAD};
 	// XorKey key{{0x4F, 0xD0, 0xA0, 0xAC, 0x4A, 0x56, 0xB9, 0xE5, 0x93, 0x79, 0x45, 0xA5, 0xC1, 0xCB, 0x31, 0x93}, 0x6D};
@@ -96,7 +80,7 @@ Common::Error TwpEngine::run() {
 	Common::File f;
 	f.open("ThimbleweedPark.ggpack1");
 
-	pack.open(&f, key);
+	_pack.open(&f, key);
 
 	const SQChar *code = R"(
 		function
@@ -127,13 +111,12 @@ Common::Error TwpEngine::run() {
 	})";
 
 	GGPackEntryReader r;
-	r.open(g_engine->pack, "MainStreet.wimpy");
+	r.open(g_engine->_pack, "MainStreet.wimpy");
 
 	Room room;
 	room.load(r);
 
-	Vm v;
-	v.exec(code);
+	_vm.exec(code);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -144,8 +127,7 @@ Common::Error TwpEngine::run() {
 		(void)loadGameState(saveSlot);
 
 	Math::Vector2d pos;
-	Gfx gfx;
-	gfx.init();
+	_gfx.init();
 
 	Lighting lighting;
 	// Simple event handling loop
@@ -179,26 +161,26 @@ Common::Error TwpEngine::run() {
 		}
 
 		// update threads
-		for (int i = 0; i < threads.size(); i++) {
-			Thread *thread = threads[i];
+		for (int i = 0; i < _threads.size(); i++) {
+			Thread *thread = _threads[i];
 			if (thread->update(deltaTimeMs)) {
 				// TODO: delete it
 			}
 		}
 
 		// update screen
-		Math::Vector2d screenSize = getScreenSize(room);
-		gfx.camera(screenSize);
-		gfx.clear(Color(0, 0, 0));
-		gfx.use(&lighting);
+		Math::Vector2d screenSize = room.getScreenSize();
+		_gfx.camera(screenSize);
+		_gfx.clear(Color(0, 0, 0));
+		_gfx.use(&lighting);
 
 		// draw room
-		SpriteSheet *ss = resManager.spriteSheet(room.sheet);
-		Texture *texture = resManager.texture(ss->meta.image);
-		Common::sort(room.layers.begin(), room.layers.end(), cmpLayer);
-		for (int i = 0; i < room.layers.size(); i++) {
+		SpriteSheet *ss = _resManager.spriteSheet(room._sheet);
+		Texture *texture = _resManager.texture(ss->meta.image);
+		Common::sort(room._layers.begin(), room._layers.end(), cmpLayer);
+		for (int i = 0; i < room._layers.size(); i++) {
 			float x = 0;
-			const Layer &layer = room.layers[i];
+			const Layer &layer = room._layers[i];
 			for (int j = 0; j < layer.names.size(); j++) {
 				const Common::String &name = layer.names[j];
 				const SpriteSheetFrame &frame = ss->frameTable[name];
@@ -207,19 +189,19 @@ Common::Error TwpEngine::run() {
 				Math::Vector3d t2 = Math::Vector3d(frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f);
 				m.translate(t1+t2);
 				lighting.setSpriteSheetFrame(frame, *texture);
-				gfx.drawSprite(frame.frame, *texture, Color(), m);
+				_gfx.drawSprite(frame.frame, *texture, Color(), m);
 				x += frame.frame.width();
 			}
 		}
 
-		// draw entities
-		gfx.use(NULL);
-		for (int i = 0; i < entities.size(); i++) {
-			Entity &ett = entities[i];
-			Math::Matrix4 m;
-			m.translate(Math::Vector3d(ett.x - pos.getX(), ett.y - pos.getY(), 0));
-			gfx.drawSprite(ett.rect, *ett.texture, Color(), m);
-		}
+		// TODO: entities
+		_gfx.use(NULL);
+		// for (int i = 0; i < objects.size(); i++) {
+		// 	Object &obj = *objects[i];
+		// 	Math::Matrix4 m;
+		// 	m.translate(Math::Vector3d(obj.x - pos.getX(), obj.y - pos.getY(), 0));
+		// 	_gfx.drawSprite(obj.rect, *obj.texture, Color(), m);
+		// }
 		g_system->updateScreen();
 
 		// Delay for a bit. All events loops should have a delay
@@ -239,6 +221,16 @@ Common::Error TwpEngine::syncGame(Common::Serializer &s) {
 	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
+}
+
+Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
+	Math::Vector2d screenSize = _room->getScreenSize();
+	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx._cameraPos) / screenSize;
+}
+
+Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
+  Math::Vector2d screenSize = _room->getScreenSize();
+  return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx._cameraPos;
 }
 
 } // End of namespace Twp
