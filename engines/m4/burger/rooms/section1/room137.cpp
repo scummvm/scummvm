@@ -28,6 +28,11 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_SHERRIF_ANIMATION = 1,
+	kCHANGE_DEPUTY_ANIMATION = 2
+};
+
 static const char *SAID[][4] = {
 	{ "PATROL CAR",       "137W002", "137W003", "137W004" },
 	{ "TRUNK",            nullptr,   "137W008", "137W008" },
@@ -143,7 +148,7 @@ void Room137::init() {
 	}
 
 	_mode2 = 27;
-	kernel_trigger_dispatch_now(2);
+	kernel_trigger_dispatch_now(kCHANGE_DEPUTY_ANIMATION);
 }
 
 void Room137::daemon() {
@@ -172,59 +177,59 @@ void Room137::daemon() {
 	}
 
 	switch (_G(kernel).trigger) {
-	case 1:
-		switch (_mode4) {
+	case kCHANGE_SHERRIF_ANIMATION:
+		switch (_sherrifMode) {
 		case 5:
-			switch (_mode3) {
+			switch (_sherrifShould) {
 			case 10:
-				_mode3 = 11;
-				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				_sherrifShould = 11;
+				series_play("137sh01", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 17);
 				break;
 
 			case 11:
-				_mode3 = 12;
-				series_play("137sh07", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				_sherrifShould = 12;
+				series_play("137sh07", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 8);
 				break;
 
 			case 12:
 				sub2();
-				_mode3 = 22;
-				_mode4 = 10;
-				kernel_trigger_dispatch_now(1);
+				_sherrifShould = 22;
+				_sherrifMode = 10;
+				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 				break;
 
 			case 14:
-				_mode3 = 15;
-				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				_sherrifShould = 15;
+				series_play("137sh01", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 17);
 				break;
 
 			case 15:
 				sub2();
-				_mode4 = 14;
-				_mode3 = 22;
-				kernel_trigger_dispatch_now(1);
+				_sherrifMode = 14;
+				_sherrifShould = 22;
+				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 				break;
 
 			case 17:
-				_mode3 = 18;
-				series_play("137sh01", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 17);
+				_sherrifShould = 18;
+				series_play("137sh01", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 17);
 				break;
 
 			case 18:
-				_mode3 = 19;
-				series_play("137sh07", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				_sherrifShould = 19;
+				series_play("137sh07", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 8);
 				break;
 
 			case 19:
-				_mode3 = 20;
-				series_play("137sh09", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 8);
+				_sherrifShould = 20;
+				series_play("137sh09", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 8);
 				break;
 
 			case 20:
 				sub2();
-				_mode3 = 22;
-				_mode4 = 17;
-				kernel_trigger_dispatch_now(1);
+				_sherrifShould = 22;
+				_sherrifMode = 17;
+				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 				break;
 
 			default:
@@ -233,9 +238,9 @@ void Room137::daemon() {
 			break;
 
 		case 13:
-			if (_mode3 == 23) {
+			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 6);
-				series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, frame, frame);
+				series_play("137sh08", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = KT_PARSE;
@@ -243,15 +248,15 @@ void Room137::daemon() {
 					_digi1 = nullptr;
 				}
 			} else {
-				_mode4 = 10;
-				series_play("137sh08", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+				_sherrifMode = 10;
+				series_play("137sh08", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 16:
-			if (_mode3 == 23) {
+			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 8);
-				series_play("137sh03", 0x800, 0, 1, 6, 0, 100, 0, 0);
+				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = KT_PARSE;
@@ -259,20 +264,20 @@ void Room137::daemon() {
 					_digi1 = nullptr;
 				}
 			} else {
-				_mode4 = 14;
-				series_play("137sh03", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+				_sherrifMode = 14;
+				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 17:
-			switch (_mode3) {
+			switch (_sherrifShould) {
 			case 22:
-				series_play("137sh09", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+				series_play("137sh09", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				break;
 
 			case 23:
-				_mode4 = 21;
-				series_play("137sh10", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
+				_sherrifMode = 21;
+				series_play("137sh10", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, 0, 0);
 				break;
 
 			default:
@@ -281,9 +286,9 @@ void Room137::daemon() {
 			break;
 
 		case 21:
-			if (_mode3 == 23) {
+			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 5);
-				series_play("137sh10", 0x800, 0, 1, 6, 0, 100, 0, 0, frame, frame);
+				series_play("137sh10", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = KT_PARSE;
@@ -291,8 +296,8 @@ void Room137::daemon() {
 					_digi1 = nullptr;
 				}
 			} else {
-				_mode4 = 17;
-				series_play("137sh10", 0x800, 0, 1, 8, 0, 100, 0, 0, 0, 0);
+				_sherrifMode = 17;
+				series_play("137sh10", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 8, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
@@ -301,31 +306,31 @@ void Room137::daemon() {
 		}
 		break;
 
-	case 2:
+	case kCHANGE_DEPUTY_ANIMATION:
 		switch (_mode2) {
 		case 27:
 			switch (_mode1) {
 			case 27:
 				sub1();
-				kernel_timing_trigger(10, 2);
+				kernel_timing_trigger(10, kCHANGE_DEPUTY_ANIMATION);
 				break;
 
 			case 29:
 				_mode1 = 30;
-				series_play("137dp02", 0x700, 0, 2, 8, 0, 100, 0, 0, 0, 7);
+				series_play("137dp02", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 8, 0, 100, 0, 0, 0, 7);
 				break;
 
 			case 30:
 				terminateMachineAndNull(_door);
 				_mode2 = 31;
-				series_play("137dp03", 0x700, 0, 2, 8, 0, 100, 0, 0, 0, 14);
+				series_play("137dp03", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 8, 0, 100, 0, 0, 0, 14);
 				digi_play("137_003", 1, 255);
 				break;
 
 			case 34:
 				sub1();
 				_mode1 = 29;
-				series_play("137dp01", 0x700, 0, 2, 60, 0, 100, 0, 0, 6, 6);
+				series_play("137dp01", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 60, 0, 100, 0, 0, 6, 6);
 				break;
 
 			default:
@@ -336,25 +341,25 @@ void Room137::daemon() {
 		case 31:
 			if (imath_ranged_rand(1, 20) == 1) {
 				_mode2 = 32;
-				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 0, 0);
+				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 			} else {
-				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 7, 7);
+				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 7, 7);
 			}
 			break;
 
 		case 32:
 			if (imath_ranged_rand(1, 20) == 1) {
 				_mode2 = 33;
-				series_play("137dp04", 0x700, 0, 2, imath_ranged_rand(60, 90),
+				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, imath_ranged_rand(60, 90),
 					0, 100, 0, 0, 0, 5);
 			} else {
-				series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 0, 0);
+				series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 33:
 			_mode2 = 31;
-			series_play("137dp04", 0x700, 0, 2, 10, 0, 100, 0, 0, 6, 7);
+			series_play("137dp04", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 10, 0, 100, 0, 0, 6, 7);
 			break;
 
 		default:
@@ -376,15 +381,15 @@ void Room137::daemon() {
 		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] == 4)
 			_mode1 = 30;
 
-		_mode4 = 5;
-		_mode3 = 10;
+		_sherrifMode = 5;
+		_sherrifShould = 10;
 
 		if (_G(player_info).y > 308) {
-			_mode3 = 14;
+			_sherrifShould = 14;
 			ws_walk(307, 349, 0, -1, 2);
 		}
 
-		kernel_trigger_dispatch_now(1);
+		kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 		break;
 
 	case 6:
@@ -392,16 +397,16 @@ void Room137::daemon() {
 		break;
 
 	case 7:
-		_mode4 = 5;
-		_mode3 = 14;
+		_sherrifMode = 5;
+		_sherrifShould = 14;
 		unloadAssets();
 
 		if (_G(player_info).y < 308)
-			_mode3 = 10;
+			_sherrifShould = 10;
 		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] != 4)
 			_mode1 = 30;
 
-		kernel_trigger_dispatch_now(1);
+		kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 		break;
 
 	case 8:
@@ -422,13 +427,13 @@ void Room137::daemon() {
 		break;
 
 	case 10:
-		switch (_mode3) {
+		switch (_sherrifShould) {
 		case 22:
 			series_play("137sh08", 0x800, 0, 1, 10, 0, 100, 0, 0, 0, 0);
 			break;
 
 		case 23:
-			_mode4 = 13;
+			_sherrifMode = 13;
 			series_play("137sh08", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
 			break;
 
@@ -471,7 +476,7 @@ void Room137::daemon() {
 		break;
 
 	case 14:
-		switch (_mode3) {
+		switch (_sherrifShould) {
 		case 22:
 			if (imath_ranged_rand(1, 30) == 2) {
 				series_play("137sh04", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 14);
@@ -481,12 +486,12 @@ void Room137::daemon() {
 			break;
 
 		case 23:
-			_mode4 = 16;
+			_sherrifMode = 16;
 			series_play("137sh03", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 0);
 			break;
 
 		case 24:
-			_mode3 = 23;
+			_sherrifShould = 23;
 			series_play("137sh05", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 17);
 
 			if (_digi1) {
@@ -496,14 +501,14 @@ void Room137::daemon() {
 			break;
 
 		case 25:
-			_mode3 = 26;
+			_sherrifShould = 26;
 			series_play("137sh06", 0x800, 0, 1, 6, 0, 100, 0, 0, 0, 23);
 			break;
 
 		case 26:
 			conv_resume_curr();
-			_mode3 = 22;
-			kernel_trigger_dispatch_now(1);
+			_sherrifShould = 22;
+			kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
 			break;
 
 		default:
@@ -732,9 +737,9 @@ void Room137::conv15() {
 	if (_G(kernel).trigger == 14) {
 		if (who <= 0) {
 			if (node == 7) {
-				_mode3 = 25;
+				_sherrifShould = 25;
 			} else {
-				_mode3 = 22;
+				_sherrifShould = 22;
 				conv_resume_curr();
 			}
 		} else if (who == 1) {
@@ -744,7 +749,7 @@ void Room137::conv15() {
 		if (who <= 0) {
 			if (node == 3 || node == 9 || node == 12 || node == 13 || node == 19 || node == 11)
 				_flag3 = true;
-			_mode3 = (node == 20 && entry == 1) || (node == 21 && entry == 1) ? 24 : 23;
+			_sherrifShould = (node == 20 && entry == 1) || (node == 21 && entry == 1) ? 24 : 23;
 			_digi1 = conv_sound_to_play();
 
 		} else if (who == 1) {

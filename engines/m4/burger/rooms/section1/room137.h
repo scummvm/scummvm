@@ -36,8 +36,8 @@ private:
 	int _volume = 255;
 	int _mode1 = 0;
 	int _mode2 = 0;
-	int _mode3 = 0;
-	int _mode4 = 0;
+	int _sherrifShould = 0;
+	int _sherrifMode = 0;
 	const char *_digi1 = nullptr;
 	machine *_door = nullptr;
 	machine *_series2 = nullptr;
