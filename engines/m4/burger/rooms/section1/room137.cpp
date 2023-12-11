@@ -116,7 +116,8 @@ void Room137::init() {
 		break;
 	}
 
-	_series1 = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	_door = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+	jawz();
 
 	const char *NAMES[18] = {
 		"137_020", "137_021", "137_022", "137_023", "137_024", "137_025",
@@ -315,7 +316,7 @@ void Room137::daemon() {
 				break;
 
 			case 30:
-				terminateMachineAndNull(_series1);
+				terminateMachineAndNull(_door);
 				_mode2 = 31;
 				series_play("137dp03", 0x700, 0, 2, 8, 0, 100, 0, 0, 0, 14);
 				digi_play("137_003", 1, 255);
@@ -408,7 +409,7 @@ void Room137::daemon() {
 		break;
 
 	case 9:
-		terminateMachineAndNull(_series1);
+		terminateMachineAndNull(_door);
 
 		if (_G(flags)[V046]) {
 			terminateMachineAndNull(_series3);
@@ -462,7 +463,7 @@ void Room137::daemon() {
 
 	case 13:
 		jawz();
-		_series1 = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
+		_door = series_play("137do01", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 		_G(walker).reset_walker_sprites();
 		digi_preload_stream_breaks(SERIES1);
 		series_stream_with_breaks(SERIES1, "137dt01", 0, 0xf00, -1);
@@ -584,6 +585,7 @@ void Room137::daemon() {
 
 		case 6:
 			ws_hide_walker();
+			_G(wilbur_should) = 9;
 			player_set_commands_allowed(false);
 			series_load("137jaws");
 			series_play_with_breaks(PLAY1, "137wi02", 0x100, kCHANGE_WILBUR_ANIMATION,
@@ -663,6 +665,14 @@ void Room137::daemon() {
 	}
 }
 
+void Room137::pre_parser() {
+	if (player_said("KEYS", "PATROL CAR")) {
+		// Convenience added for ScummVM, using keys on the patrol car is
+		// the same as using the keys on the trunk specifically
+		player_hotspot_walk_override(500, 355, 10);
+	}
+}
+
 void Room137::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
@@ -681,7 +691,7 @@ void Room137::parser() {
 		} else {
 			wilbur_speech(inv_object_is_here("JAWZ O' LIFE") ? "137w006" : "137w007");
 		}
-	} else if (player_said("keys", "trunk")) {
+	} else if (player_said("keys", "trunk") || player_said("keys", "patrol car")) {
 		_G(wilbur_should) = 6;
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 
@@ -768,7 +778,7 @@ void Room137::jawz() {
 	} else {
 		_series3 = series_play("137tr02", 0x700, 0, -1, 600, -1, 100, 0, 0, 0, 0);
 		hotspot_set_active("keys", false);
-		hotspot_set_active("trunk", false);
+		hotspot_set_active("trunk ", false);
 		hotspot_set_active("jawz o' life", false);
 	}
 }

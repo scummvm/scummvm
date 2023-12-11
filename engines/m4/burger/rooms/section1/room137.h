@@ -39,7 +39,7 @@ private:
 	int _mode3 = 0;
 	int _mode4 = 0;
 	const char *_digi1 = nullptr;
-	machine *_series1 = nullptr;
+	machine *_door = nullptr;
 	machine *_series2 = nullptr;
 	machine *_series3 = nullptr;
 
@@ -55,6 +55,7 @@ public:
 
 	void init() override;
 	void daemon() override;
+	void pre_parser() override;
 	void parser() override;
 };
 

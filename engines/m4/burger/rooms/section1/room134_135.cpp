@@ -786,10 +786,10 @@ void Room134_135::daemon() {
 }
 
 void Room134_135::pre_parser() {
-	if (player_said("fork in the road") && player_said_any("enter", "gear", "look", "look at"))
+	if (player_said("fork in the road") && !player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(9);
 
-	if (player_said("main street") && player_said_any("enter", "gear", "look", "look at"))
+	if (player_said("main street") && !player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(3);
 
 	if (player_said("take", "baitbox") || player_said("gear", "baitbox"))
