@@ -95,6 +95,8 @@ void Events::processEvent(Common::Event &ev) {
 		//case Common::EVENT_MBUTTONUP:
 		msgMouseUp(MouseUpMessage(ev.type, ev.mouse));
 		break;
+	case Common::EVENT_MOUSEMOVE:
+		msgMouseMove(MouseMoveMessage(ev.type, ev.mouse));
 	default:
 		break;
 	}

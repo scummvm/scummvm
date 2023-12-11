@@ -58,7 +58,7 @@ protected:
 		return Engine::shouldQuit();
 	}
 
-	Graphics::Surface* readRLEImage(int64 offs, Common::File& file);
+	Graphics::ManagedSurface readRLEImage(int64 offs, Common::File& file);
 
 	void readResourceFile();
 
@@ -66,7 +66,8 @@ public:
 	Macs2Engine(OSystem *syst, const ADGameDescription *gameDesc);
 	~Macs2Engine() override;
 
-	struct Graphics::Surface* _bgImageShip;
+	struct Graphics::ManagedSurface _bgImageShip;
+	Graphics::ManagedSurface _map;
 	byte _pal[256 * 3] = { 0 };
 
 	byte* _charData;

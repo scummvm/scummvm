@@ -31,12 +31,15 @@ private:
 	byte _pal[256 * 3] = { 0 };
 	int _offset = 0;
 
+	Graphics::ManagedSurface _backgroundSurface;
+
 public:
-	View1() : UIElement("View1") {}
+	View1();
 	virtual ~View1() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage& msg) override;
 	void draw() override;
 	bool tick() override;
 
