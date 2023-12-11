@@ -2,6 +2,7 @@
 #include "twp/room.h"
 #include "twp/ggpack.h"
 #include "twp/squtil.h"
+#include "twp/font.h"
 
 namespace Twp {
 
@@ -268,6 +269,8 @@ Math::Vector2d Room::getScreenSize() {
 	}
 }
 
+static int gId = 3000;
+
 Object *Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
 	Object *obj = new Object();
 	obj->temporary = true;
@@ -281,7 +284,6 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	sq_pop(v, 1);
 
 	// assign an id
-	static int gId = 3000;
 	setId(obj->table, gId++);
 	Common::String name = frames.size() > 0 ? frames[0] : "noname";
 	setf(obj->table, "name", name);
@@ -312,8 +314,55 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	return obj;
 }
 
+Object *Room::createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign, TextVAlignment vAlign, float maxWidth) {
+	Object *obj = new Object();
+	obj->temporary = true;
+
+	HSQUIRRELVM v = g_engine->getVm();
+
+	// create a table for this object
+	sq_newtable(v);
+	sq_getstackobj(v, -1, &obj->table);
+	sq_addref(v, &obj->table);
+	sq_pop(v, 1);
+
+	// assign an id
+	setId(obj->table, gId++);
+	debug("Create object with new table: %s #%d}", obj->name.c_str(), obj->getId());
+	obj->name = Common::String::format("text#%d: %s", obj->getId(), text.c_str());
+	obj->touchable = false;
+
+	Text txt(fontName, text, hAlign, vAlign, maxWidth);
+
+	// TODO:
+	//   let node = newTextNode(text)
+	//   var v = 0.5f
+	//   case vAlign:
+	//   of tvTop:
+	//     v = 0f
+	//   of tvCenter:
+	//     v = 0.5f
+	//   of tvBottom:
+	//     v = 1f
+	//   case hAlign:
+	//   of thLeft:
+	//     node.setAnchorNorm(vec2(0f, v))
+	//   of thCenter:
+	//     node.setAnchorNorm(vec2(0.5f, v))
+	//   of thRight:
+	//     node.setAnchorNorm(vec2(1f, v))
+	//   obj.node = node
+	//   self.layer(0).objects.add(obj);
+	//   self.layer(0).node.addChild obj.node;
+	//   obj.layer = self.layer(0);
+
+	g_engine->_objects.push_back(obj);
+
+	return obj;
+}
+
 int Object::getId() {
-	SQInteger result=0;
+	SQInteger result = 0;
 	getf(table, "_id", result);
 	return (int)result;
 }
