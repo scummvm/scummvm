@@ -190,8 +190,8 @@ NinePatchBitmap::NinePatchBitmap(Graphics::ManagedSurface *bmp, bool owns_bitmap
 		byte palette[256 * 3];
 		bmp->grabPalette(palette, 0, 256);
 
-		black = -1;
-		white = -1;
+		black = (uint32)-1;
+		white = (uint32)-1;
 
 		for (int j = 0; j < 256; j++) {
 			byte r = palette[(j * 3) + 0];
