@@ -93,7 +93,6 @@ private:
 	void get_walker();
 
 	void game_control_cycle();
-	void parse_player_command_now();
 
 protected:
 	Common::Array<Section *> _sections;
@@ -108,6 +107,7 @@ public:
 	void global_section_constructor();
 	void section_room_constructor();
 	void game_daemon_code();
+	void parse_player_command_now();
 
 	void section_init() {
 		_activeSection->init();

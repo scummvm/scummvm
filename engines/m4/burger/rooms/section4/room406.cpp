@@ -20,12 +20,18 @@
  */
 
 #include "m4/burger/rooms/section4/room406.h"
+#include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
 #include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
+
+enum {
+	kCHANGE_MAYOR_ANIMATION = 11,
+	kCHANGE_DOG_ANIMATION = 12
+};
 
 const char *Room406::SAID[][4] = {
 	{ "PEGLEG",         "406w003", "406w005", "406w005" },
@@ -409,6 +415,7 @@ const seriesPlayBreak Room406::PLAY36[] = {
 	{ 2,  6, nullptr,    0,   0, -1, 0, 0, nullptr,  0 },
 	{ 5,  4, nullptr,    0,   0, -1, 0, 0, nullptr,  0 },
 	{ 5, -1, nullptr,    0,   0, -1, 0, 0, nullptr,  0 },
+	PLAY_BREAK_END
 };
 
 int32 Room406::_state1;
@@ -436,26 +443,26 @@ void Room406::init() {
 		if (_G(game).previous_room == KERNEL_RESTORING_GAME) {
 			switch (_G(flags)[V172]) {
 			case 10023:
-				_val1 = 51;
+				_dogShould = 51;
 				break;
 			case 10024:
-				_val1 = 58;
+				_dogShould = 58;
 				break;
 			case 10025:
-				_val1 = 64;
+				_dogShould = 64;
 				break;
 			default:
 				break;
 			}
 
-			if (_G(flags)[V172] == 10026)
-				kernel_trigger_dispatch_now(12);
+			if (_G(flags)[V172] != 10026)
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 		} else {
-			_val1 = imath_ranged_rand(1, 2) == 1 ? 49 : 50;
+			_dogShould = imath_ranged_rand(1, 2) == 1 ? 49 : 50;
 
 			if (_G(flags)[V172] == 10025) {
-				_val1 = 64;
-				kernel_trigger_dispatch_now(12);
+				_dogShould = 64;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 		}
 	}
@@ -539,15 +546,15 @@ void Room406::daemon() {
 
 		switch (_val2) {
 		case 22:
-			switch (_val1) {
+			switch (_dogShould) {
 			case 49:
 				_state2 = imath_ranged_rand(1, 7);
-				_val1 = 51;
+				_dogShould = 51;
 				series_play_with_breaks(PLAY20, "406dg06", 0x701, 12, 3);
 				break;
 
 			case 50:
-				_val1 = 51;
+				_dogShould = 51;
 				series_play_with_breaks(PLAY21, "406dg07", 0x701, 12, 3);
 				break;
 
@@ -559,7 +566,7 @@ void Room406::daemon() {
 			break;
 
 		case 23:
-			switch (_val1) {
+			switch (_dogShould) {
 			case 49:
 				_state2 = imath_ranged_rand(1, 7);
 				series_play_with_breaks(PLAY20, "406dg06", 0x701, 2, 3);
@@ -604,8 +611,8 @@ void Room406::daemon() {
 			break;
 
 		case 23:
-			_val1 = 51;
-			kernel_trigger_dispatch_now(12);
+			_dogShould = 51;
+			kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			kernel_timing_trigger(300, 9);
 			_state4 = 23;
 			ws_turn_to_face(calc_facing(415, 234), 8);
@@ -739,12 +746,12 @@ void Room406::daemon() {
 			break;
 
 		case 46:
-			_val5 = 68;
+			_mayorShould = 68;
 			wilbur_speech("406w901", 11);
 			break;
 
 		case 47:
-			_val5 = 71;
+			_mayorShould = 71;
 			_state1 = 80;
 			wilbur_speech("406w902", 11);
 			break;
@@ -772,42 +779,45 @@ void Room406::daemon() {
 		_flag3 = true;
 		break;
 
-	case 11:
-		switch (_val5) {
+	case kCHANGE_MAYOR_ANIMATION:
+		switch (_mayorShould) {
 		case 68:
-			_val5 = 69;
-			digi_play("406g002", 1, 255, 11);
+			_mayorShould = 69;
+			digi_play("406g002", 1, 255, kCHANGE_MAYOR_ANIMATION);
 			break;
 
 		case 69:
-			_val5 = 70;
-			series_play_with_breaks(PLAY11, "406mg01", 0x5ff, 11, 3);
+			_mayorShould = 70;
+			series_play_with_breaks(PLAY11, "406mg01", 0x5ff, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 70:
 			_state1 = 79;
-			_val5 = 71;
-			series_play_with_breaks(PLAY12, "406mg03", 0x5ff, 11, 3);
+			_mayorShould = 71;
+			series_play_with_breaks(PLAY12, "406mg03", 0x5ff, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 71:
 			_mg03.terminate();
 
 			switch (_state1) {
+			case 79:
+				_mayorShould = 72;
+				break;
 			case 80:
-				_val5 = 73;
+				_mayorShould = 73;
 				break;
 			case 81:
-				_val5 = 74;
+				_mayorShould = 74;
 				break;
 			case 82:
-				_val5 = 72;
+				_mayorShould = 72;
 				break;
 			default:
 				break;
 			}
 
-			series_play_with_breaks(PLAY13, "406mg04", 0x5ff, 11, 3);
+			series_play_with_breaks(PLAY13, "406mg04", 0x5ff, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 72:
@@ -817,32 +827,32 @@ void Room406::daemon() {
 			break;
 
 		case 73:
-			_val5 = 71;
+			_mayorShould = 71;
 			_state1 = 81;
-			series_play_with_breaks(PLAY14, "406mg05", 0x5ff, 11, 3);
+			series_play_with_breaks(PLAY14, "406mg05", 0x5ff, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 74:
-			_val1 = 67;
+			_dogShould = 67;
 			_mg03.show("406mg03", 0x5ff, 0, -1, -1, 14);
 			break;
 
 		case 75:
 			_mg03.terminate();
-			_val5 = 76;
+			_mayorShould = 76;
 			series_play_with_breaks(PLAY15,
 				_G(flags)[V171] == 4000 ? "406mg06" : "406mg07",
-				0x5ff, 11, 3);
+				0x5ff, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 76:
 			_val6 = 85;
-			_val5 = 77;
+			_mayorShould = 77;
 
 			if (_G(flags)[V171] == 4000)
-				series_play_with_breaks(PLAY16, "405mg06", 0x6fe, 11, 3);
+				series_play_with_breaks(PLAY16, "406mg06", 0x6fe, kCHANGE_MAYOR_ANIMATION, 3);
 			else
-				series_play_with_breaks(PLAY17, "405mg07", 0x6fe, 11, 3);
+				series_play_with_breaks(PLAY17, "406mg07", 0x6fe, kCHANGE_MAYOR_ANIMATION, 3);
 			break;
 
 		case 77:
@@ -853,8 +863,8 @@ void Room406::daemon() {
 				_G(flags)[V171] = 4001;
 
 			setHotspots1();
-			_val5 = 78;
-			series_play_with_breaks(PLAY18, "406mgpof", 0x6fe, 11, 2);
+			_mayorShould = 78;
+			series_play_with_breaks(PLAY18, "406mgpof", 0x6fe, kCHANGE_MAYOR_ANIMATION, 2);
 			_val6 = 77;
 			kernel_trigger_dispatch_now(15);
 			break;
@@ -869,45 +879,45 @@ void Room406::daemon() {
 		}
 		break;
 
-	case 12:
-		switch (_val1) {
+	case kCHANGE_DOG_ANIMATION:
+		switch (_dogShould) {
 		case 51:
 			_G(flags)[V172] = 10023;
 			setHotspots1();
 
 			if (_G(flags)[V173]) {
-				_val1 = 62;
-				kernel_trigger_dispatch_now(12);
+				_dogShould = 62;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
 				switch (imath_ranged_rand(1, 4)) {
 				case 1:
-					_val1 = 51;
+					_dogShould = 51;
 					break;
 				case 2:
-					_val1 = 55;
+					_dogShould = 55;
 					break;
 				case 3:
-					_val1 = 53;
+					_dogShould = 53;
 					break;
 				case 4:
-					_val1 = 54;
+					_dogShould = 54;
 					break;
 				default:
 					break;
 				}
 
-				Series::series_show("406dg15", 0x701, 0, 12, 120, 0);
+				Series::series_show("406dg15", 0x701, 0, kCHANGE_DOG_ANIMATION, 120, 0);
 			}
 			break;
 
 		case 53:
 			_state2 = imath_ranged_rand(1, 7);
-			_val1 = 51;
+			_dogShould = 51;
 
 			if (!digi_play_state(1) && !digi_play_state(2)) {
-				series_play_with_breaks(PLAY23, "406dg08", 0x701, 12, 3);
+				series_play_with_breaks(PLAY23, "406dg08", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				kernel_trigger_dispatch_now(12);
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
@@ -915,45 +925,45 @@ void Room406::daemon() {
 			if (!digi_play_state(1) && !digi_play_state(2)) {
 				_G(flags)[V172] = 10024;
 				_state2 = imath_ranged_rand(1, 3);
-				_val1 = 58;
-				series_play_with_breaks(PLAY24, "406dg10", 0x701, 12, 3);
+				_dogShould = 58;
+				series_play_with_breaks(PLAY24, "406dg10", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				_val1 = 51;
-				kernel_trigger_dispatch_now(12);
+				_dogShould = 51;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
 		case 55:
 			_state2 = imath_ranged_rand(1, 6);
-			_val1 = 51;
+			_dogShould = 51;
 
 			if (!digi_play_state(1) && !digi_play_state(2)) {
-				series_play_with_breaks(PLAY22, "406dg16", 0x701, 12, 3);
+				series_play_with_breaks(PLAY22, "406dg16", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				kernel_trigger_dispatch_now(12);
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
 		case 56:
 			_state2 = imath_ranged_rand(1, 6);
-			_val1 = 58;
+			_dogShould = 58;
 
 			if (!digi_play_state(1) && !digi_play_state(2)) {
-				series_play_with_breaks(PLAY22, "406dg12", 0x701, 12, 3);
+				series_play_with_breaks(PLAY22, "406dg12", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				kernel_trigger_dispatch_now(12);
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
 		case 57:
 			if ((!digi_play_state(1) && !digi_play_state(2)) || _G(flags)[V173]) {
 				_state2 = imath_ranged_rand(1, 3);
-				_val1 = 51;
+				_dogShould = 51;
 				_G(flags)[V172] = 10023;
-				series_play_with_breaks(PLAY25, "406dg14", 0x701, 12, 3);
+				series_play_with_breaks(PLAY25, "406dg14", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				_val1 = 58;
-				kernel_trigger_dispatch_now(12);
+				_dogShould = 58;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
@@ -962,44 +972,44 @@ void Room406::daemon() {
 			setHotspots1();
 
 			if (_G(flags)[V173]) {
-				_val1 = 57;
-				kernel_trigger_dispatch_now(12);
+				_dogShould = 57;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
 				switch (imath_ranged_rand(1, 3)) {
 				case 1:
-					_val1 = 58;
+					_dogShould = 58;
 					break;
 				case 2:
-					_val1 = 57;
+					_dogShould = 57;
 					break;
 				case 3:
-					_val1 = 56;
+					_dogShould = 56;
 					break;
 				default:
 					break;
 				}
 
-				Series::series_show("406dg11", 0x701, 0, 12, 120);
+				Series::series_show("406dg11", 0x701, 0, kCHANGE_DOG_ANIMATION, 120);
 			}
 			break;
 
 		case 59:
 			_state2 = imath_ranged_rand(1, 6);
-			_val1 = 54;
-			series_play_with_breaks(PLAY26, "406dg09", 0x701, 12, 3);
+			_dogShould = 54;
+			series_play_with_breaks(PLAY26, "406dg09", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 60:
 			_state2 = imath_ranged_rand(1, 6);
-			_val1 = 56;
-			series_play_with_breaks(PLAY27, "406dg13", 0x701, 12, 3);
+			_dogShould = 56;
+			series_play_with_breaks(PLAY27, "406dg13", 0x701, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 61:
 			_state2 = imath_ranged_rand(1, 6);
-			_val1 = 64;
+			_dogShould = 64;
 			series_play_with_breaks(PLAY28,
-				_G(flags)[V171] == 4000 ? "406dg04" : "406dg05", 0x6fe, 12, 3);
+				_G(flags)[V171] == 4000 ? "406dg04" : "406dg05", 0x6fe, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 62:
@@ -1010,37 +1020,38 @@ void Room406::daemon() {
 			series_unload(_fishS);
 			_state2 = imath_ranged_rand(1, 4);
 			_state3 = imath_ranged_rand(1, 4);
-			_val1 = 63;
-			series_play_with_breaks(PLAY29, "406dg01", 0x6fe, 12, 3);
+			_dogShould = 63;
+			series_play_with_breaks(PLAY29, "406dg01", 0x6fe, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 63:
 			setupFish();
 			setHotspots1();
-			kernel_trigger_dispatch_now(12);
+			_dogShould = 64;
+			kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			hotspot_set_active("HOLE", false);
 			break;
 
 		case 64:
-			_val1 = imath_ranged_rand(1, 3) == 1 ? 66 : 64;
+			_dogShould = imath_ranged_rand(1, 3) == 1 ? 66 : 64;
 			_state2 = imath_ranged_rand(1, 6);
 
 			if (digi_play_state(2) || _flag3)
 				_state2 = 0;
 
 			_seriesName = _G(flags)[V171] == 4000 ? "406dg02" : "406dg03";
-			series_play_with_breaks(PLAY30, _seriesName, 0x6fe, 12, 3, 10);
+			series_play_with_breaks(PLAY30, _seriesName, 0x6fe, kCHANGE_DOG_ANIMATION, 3, 10);
 			break;
 
 		case 65:
 			_G(wilbur_should) = 21;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-			_val1 = 64;
-			kernel_trigger_dispatch_now(12);
+			_dogShould = 64;
+			kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			break;
 
 		case 66:
-			_val1 = 64;
+			_dogShould = 64;
 			_state2 = imath_ranged_rand(1, 5);
 
 			if (!digi_play_state(1) && !digi_play_state(2)) {
@@ -1050,14 +1061,14 @@ void Room406::daemon() {
 
 				_seriesName = _G(flags)[V171] == 4000 ? "406dg02" : "406dg03";
 				series_play_with_breaks(PLAY[imath_ranged_rand(0, 5)],
-					_seriesName, 0x6fe, 12, 3);
+					_seriesName, 0x6fe, kCHANGE_DOG_ANIMATION, 3);
 			} else {
-				kernel_trigger_dispatch_now(12);
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			}
 			break;
 
 		case 67:
-			_val5 = 75;
+			_mayorShould = 75;
 			kernel_trigger_dispatch_now(11);
 			break;
 
@@ -1102,9 +1113,9 @@ void Room406::daemon() {
 			inv_move_object("FISH", NOWHERE);
 
 			if (_G(flags)[V172] == 10024)
-				_val1 = 57;
+				_dogShould = 57;
 			if (_G(flags)[V172] == 10023)
-				_val1 = 62;
+				_dogShould = 62;
 			break;
 
 		case 85:
@@ -1170,6 +1181,7 @@ void Room406::daemon() {
 			break;
 
 		case 7:
+			player_set_commands_allowed(true);
 			_general.show("406wi04", 0x4fd);
 			inv_give_to_player("HOOK");
 			_G(flags)[V174] = 4003;
@@ -1289,7 +1301,7 @@ void Room406::daemon() {
 		case 20:
 			player_set_commands_allowed(false);
 			_G(flags)[V171] = 4002;
-			_val1 = 65;
+			_dogShould = 65;
 			break;
 
 		case 21:
@@ -1307,13 +1319,13 @@ void Room406::daemon() {
 	case 10008:
 		switch (_G(flags)[V172]) {
 		case 10023:
-			_val1 = 59;
+			_dogShould = 59;
 			break;
 		case 10024:
-			_val1 = 60;
+			_dogShould = 60;
 			break;
 		case 10025:
-			_val1 = 61;
+			_dogShould = 61;
 			break;
 		default:
 			break;
@@ -1349,7 +1361,12 @@ void Room406::pre_parser() {
 				(player_said("HOOK") && player_said_any("YARD", "YARD "))) {
 			_G(wilbur_should) = 8;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+		} else {
+			g_engine->parse_player_command_now();
 		}
+
+		_G(player).command_ready = false;
+
 	} else if (player_said("GATE") && _G(flags)[V172] == 10025) {
 		player_hotspot_walk_override(280, 296, 2);
 	} else if (player_said("GEAR") && player_said_any("WINCH", "LEVER", "LEVER ") && _G(flags)[V175]) {
@@ -1361,9 +1378,11 @@ void Room406::pre_parser() {
 	} else if (player_said("GEAR", "DISC")) {
 		_val4 = 4007;
 		player_hotspot_walk_override(44, 310, -1, 5);
+		_G(player).command_ready = false;
 	} else if (player_said("GEAR", "DISC ")) {
 		_val4 = 4007;
 		player_hotspot_walk_override(460, 346, -1, 5);
+		_G(player).command_ready = false;
 	} else if (player_said("LOOK AT") && player_said_any("JAIL CELL", "JAIL CELL ") && _G(flags)[V174] == 4004) {
 		if (!_flag1) {
 			parseJail();
@@ -1372,6 +1391,8 @@ void Room406::pre_parser() {
 			if (player_said("LOOK AT", "JAIL CELL"))
 				player_hotspot_walk_override(173, 302, 10);
 		}
+
+		_G(player).command_ready = false;
 	} else {
 		if (_G(flags)[V174] == 4002) {
 			if (_G(player).walk_x >= 180 && _G(player).walk_x <= 309 &&
@@ -1411,11 +1432,7 @@ void Room406::pre_parser() {
 					(_hotspot->feet_y == 0x7fff && _G(click_y) > tabooAreaY(_G(click_x))))
 				player_walk_to(_hotspot->feet_x, tabooAreaY(_hotspot->feet_x) + 1);
 		}
-
-		return;
 	}
-
-	_G(player).command_ready = false;
 }
 
 void Room406::parser() {
@@ -1432,12 +1449,12 @@ void Room406::loadSeries() {
 	}
 
 	if (_G(flags)[V172] == 10023 || _G(flags)[V172] == 10024) {
-		if (_val1 == 49) {
+		if (_dogShould == 49) {
 			series_load("406dg06");
 			series_load("406dg06s");
 		}
 
-		if (_val1 == 50) {
+		if (_dogShould == 50) {
 			series_load("406dg07");
 			series_load("406dg07s");
 		}
@@ -1524,8 +1541,8 @@ void Room406::setHotspots3() {
 		break;
 
 	case 4001:
-		hotspot_set_active("HOOK ", true);
-		hotspot_set_active("CHAIN ", true);
+		hotspot_set_active("HOOK  ", true);
+		hotspot_set_active("CHAIN  ", true);
 		hotspot_set_active("LEVER ", true);
 		break;
 

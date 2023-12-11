@@ -291,8 +291,7 @@ void Room402::daemon() {
 			freeDr8();
 			_wi02 = series_load("402wi02");
 			_wi02s = series_load("402wi02s");
-			series_play("402dr04", 0x300, 0, 11, 6, 0, 100, 0, 0, 0, 25);
-			series_play("420dr04s", 0x301, 0, -1, 6, 0, 100, 0, 0, 0, 25);
+			Series::series_play("402dr04", 0x300, 0, 11, 6, 0, 100, 0, 0, 0, 25);
 			break;
 
 		case 7:
@@ -1012,7 +1011,7 @@ void Room402::parser() {
 		case -1:
 			player_set_commands_allowed(false);
 			_G(kernel).trigger_mode = KT_PARSE;
-			wilbur_speech(_G(flags)[V157] ? "402w902" : "402w502");
+			wilbur_speech(_G(flags)[V157] ? "402w902" : "402w502", 1);
 			break;
 
 		case 1:
@@ -1046,7 +1045,7 @@ void Room402::parser() {
 			_stolieShould = 47;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			_G(kernel).trigger_mode = KT_PARSE;
-			wilbur_speech("402w903");
+			wilbur_speech("402w903", 5);
 			break;
 
 		case 5:
@@ -1060,7 +1059,7 @@ void Room402::parser() {
 			_stolieShould = 47;
 			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			_G(kernel).trigger_mode = KT_PARSE;
-			wilbur_speech("402w904");
+			wilbur_speech("402w904", 7);
 			break;
 
 		case 7:
