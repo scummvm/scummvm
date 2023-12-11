@@ -34,6 +34,7 @@
 #include "scumm/scumm.h"
 #include "scumm/detection.h"
 #include "scumm/macgui/macgui_impl.h"
+#include "scumm/macgui/macgui_loom.h"
 #include "scumm/players/player_v3m.h"
 #include "scumm/sound.h"
 #include "scumm/verbs.h"
