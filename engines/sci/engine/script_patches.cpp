@@ -4894,6 +4894,44 @@ static const SciScriptPatcherEntry icemanSignatures[] = {
 // ===========================================================================
 // Island of Dr. Brain
 
+// The robot maze has an edge case that crashes. If the robot collides with an
+//  obstacle then its instructions are reversed. Normally, this returns the
+//  robot to the start. But if the robot dropped an item on the start position
+//  in a previous run, then it will collide with it while reversing. The script
+//  does not expect this second collision.
+//
+// Script 320 places robot instructions on a stack as they execute. When a
+//  collision occurs, the script switches to reverse mode. Instructions are
+//  removed from the stack and their opposites are executed until the Begin
+//  instruction (8) is reached. When entering reverse mode, the stack pointer is
+//  decremented twice to throw away the colliding instruction. The unexpected
+//  second collision causes the stack pointer to decrement twice again. If this
+//  occurs while reversing the first instruction, the stack pointer underflows
+//  and the Begin instruction is skipped. Eventually, the script crashes.
+//
+// We fix this by preventing the stack pointer from decrementing below zero.
+//
+// Applies to: All versions
+// Responsible method: The 14th procedure in script 320. (2acf or 2a50)
+// Fixes bug: #14556
+static const uint16 islandBrainRobotMazeUnderflowSignature[] = {
+	SIG_MAGICDWORD,
+	0xe3, 0x00,                         // -al 00 [ decrement stack pointer ]
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x02,                               // add
+	0x93, 0x00,                         // lali 00 [ acc = stack[stack pointer + 1] ]
+	SIG_END
+};
+
+static const uint16 islandBrainRobotMazeUnderflowPatch[] = {
+	0x83, 0x00,                         // lal 00 [ acc = stack pointer ]
+	0x31, 0x02,                         // bnt 02 [ skip decrement if 0 ]
+	0xe3, 0x00,                         // -al 00 [ decrement stack pointer ]
+	0x93, 0x01,                         // lali 01 [ acc = stack+1[stack pointer] ]
+	PATCH_END
+};
+
 // Narrator lockup fix, see sciNarratorLockupSignature.
 //  Island of Dr. Brain contains an early version of Narrator with the lockup
 //  bug so it requires its own patch.
@@ -4931,6 +4969,7 @@ static const uint16 islandBrainNarratorLockupPatch[] = {
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry islandBrainSignatures[] = {
+	{  true,   320, "robot maze underflow",                        1, islandBrainRobotMazeUnderflowSignature,   islandBrainRobotMazeUnderflowPatch },
 	{  true,   928, "Narrator lockup fix",                         1, islandBrainNarratorLockupSignature,       islandBrainNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
