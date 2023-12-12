@@ -19,6 +19,7 @@
  *
  */
 
+#include "ultima/shared/std/string.h"
 #include "ultima/ultima8/misc/debugger.h"
 
 #include "ultima/ultima8/audio/music_flex.h"

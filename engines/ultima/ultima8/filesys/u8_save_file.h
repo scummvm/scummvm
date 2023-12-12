@@ -22,42 +22,49 @@
 #ifndef ULTIMA8_FILESYS_U8SAVEFILE_H
 #define ULTIMA8_FILESYS_U8SAVEFILE_H
 
-#include "ultima/ultima8/filesys/named_archive_file.h"
+#include "common/archive.h"
+
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class U8SaveFile : public NamedArchiveFile {
+class U8SaveFile : public Common::Archive {
 public:
 	//! create U8SaveFile from datasource; U8SaveFile takes ownership of ds
 	//! and deletes it when destructed
 	explicit U8SaveFile(Common::SeekableReadStream *rs);
 	~U8SaveFile() override;
 
-	bool exists(const Std::string &name) override;
-
-	uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
-
-	uint32 getSize(const Std::string &name) const override;
-
-	uint32 getCount() const override {
-		return _count;
+	//! Check if constructed object is indeed a valid archive
+	bool isValid() const {
+		return _valid;
 	}
+
+	// Common::Archive API implementation
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 	static bool isU8SaveFile(Common::SeekableReadStream *rs);
 
 protected:
 	Common::SeekableReadStream *_rs;
-	uint32 _count;
+	bool _valid;
 
-	Common::HashMap<Common::String, uint32> _indices;
-	Std::vector<uint32> _offsets;
-	Std::vector<uint32> _sizes;
+	struct FileEntry {
+		uint32 _offset;
+		uint32 _size;
+		FileEntry() : _offset(0), _size(0) {}
+	};
+
+	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> U8SaveFileMap;
+	U8SaveFileMap _map;
 
 private:
 	bool readMetadata();
-	bool findIndex(const Std::string &name, uint32 &index) const;
 };
 
 } // End of namespace Ultima8
