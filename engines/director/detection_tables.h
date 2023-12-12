@@ -1515,6 +1515,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sfk",				"Science for Kids Product Demos" },
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
+	{ "tivolas2000",		"Tivola Demo - Sommer 2000" },
 	{ "tlc",				"The Learning Company Sampler" },
 	{ "ubt",				"Under the Big Top" },
 	{ "vygrpresents",		"Voyager Presents" },
@@ -8233,6 +8234,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Copies provided in The Daily Mirror
 	WINGAME2("thematrix", "", "Presentation.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2212124,
 							  "intro.dir",        "ebe2cac80218c4933ecc609cd8ef27cc", 10368479, 700),
+
+	// Tivola demo/sampler disc, Summer 2000, released in Germany
+	WINGAME1_l("tivolas2000", "Sampler", "START32.EXE", "1b8d78ddca650041b8997cac7af3184b", 1675134, Common::DE_DEU, 650),
 
 	// ein Fall für TKKG: Wer stoppt den Feuerteufel? (bilingual DE/EN)
 	MACGAME2("tkkg7", "", "TKKG-Start", "0944b962ebb00f4b5d5149d220f8449b", 113458,
