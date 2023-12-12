@@ -367,6 +367,7 @@ void Room407::daemon() {
 	case kCHANGE_ROXY_ANIMATION:
 		switch (_roxyShould) {
 		case 22:
+			_val4 = 0;
 			_rx = series_show("407rx02", 0x901);
 			break;
 
@@ -386,6 +387,8 @@ void Room407::daemon() {
 			default:
 				break;
 			}
+
+			series_play_with_breaks(PLAY7, "407rx02", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 24:
