@@ -3146,14 +3146,15 @@ static int nscript_map_line_test(lua_State *L) {
 
 /***
 Returns the first point on a line between x,y and x1, y1 where a missile boundary tile is crossed
-If no boundary tiles are crossed on the line then x1, y1 are returned
+Additionally returns the point checked before the hit
+If no boundary tiles are crossed on the line then x1, y1 are returned for both points
 @function map_line_hit_check
 @int x
 @int y
 @int x1
 @int y1
 @int z
-@treturn int,int an x,y coord
+@treturn int,int,int,int x,y coords
 @within map
  */
 static int nscript_map_line_hit_check(lua_State *L) {
@@ -3171,12 +3172,17 @@ static int nscript_map_line_hit_check(lua_State *L) {
 	if (map->lineTest(x, y, x1, y1, level, LT_HitMissileBoundary, result, 0, nullptr, true)) {
 		lua_pushinteger(L, result.hit_x);
 		lua_pushinteger(L, result.hit_y);
+		lua_pushinteger(L, result.pre_hit_x);
+		lua_pushinteger(L, result.pre_hit_y);
 	} else {
+		lua_pushinteger(L, x1);
+		lua_pushinteger(L, y1);
+		// no collision, return starting coordinates again instead of pre_hit_x/y
 		lua_pushinteger(L, x1);
 		lua_pushinteger(L, y1);
 	}
 
-	return 2;
+	return 4;
 }
 
 /***

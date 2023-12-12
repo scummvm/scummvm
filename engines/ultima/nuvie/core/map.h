@@ -68,6 +68,8 @@ public:
 
 	int     hit_x;      // x coord where object / actor was hit
 	int     hit_y;      // y coord where object / actor was hit
+	int     pre_hit_x;
+	int     pre_hit_y;
 	uint8   hit_level;  // map level where object / actor was hit
 	Actor  *hitActor;
 	Obj    *hitObj;
