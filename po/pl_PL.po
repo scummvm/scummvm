@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-10 16:40+0000\n"
-"PO-Revision-Date: 2023-12-11 19:15+0000\n"
+"PO-Revision-Date: 2023-12-12 20:08+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
@@ -8989,35 +8989,41 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1583
 msgid "Enable online competitive mods"
-msgstr ""
+msgstr "Włącz konkurencyjne mody online"
 
 #: engines/scumm/dialogs.cpp:1583
 msgid "Enables custom-made modifications intented for online competitive play."
 msgstr ""
+"Włącza niestandardowe modyfikacje przeznaczone do rywalizacji w trybie "
+"online."
 
 #: engines/scumm/dialogs.cpp:1587
 msgid "Enable connection to Multiplayer Server"
-msgstr ""
+msgstr "Włącz połączenie z serwerem trybu wieloosobowego"
 
 #: engines/scumm/dialogs.cpp:1587
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
+"Umożliwia połączenie z serwerem, który oferuje hostowanie i dołączanie do "
+"gier online dla wielu graczy przez Internet."
 
 #: engines/scumm/dialogs.cpp:1588
 msgid "Host games over LAN"
-msgstr ""
+msgstr "Hostuj gry przez sieć LAN"
 
 #: engines/scumm/dialogs.cpp:1588
 msgid "Allows the game sessions to be discovered over your local area network."
-msgstr ""
+msgstr "Umożliwia wykrywanie sesji gry w sieci lokalnej."
 
 #: engines/scumm/dialogs.cpp:1590
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
 msgstr ""
+"Adres serwera, z którym można się połączyć w celu hostowania sesji gier "
+"online i dołączania do nich."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -9028,9 +9034,8 @@ msgid "Save / Load dialog"
 msgstr "Okno Zapisz / Wczytaj"
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
 msgid "Selection screen"
-msgstr "Wybierz styl"
+msgstr "Ekran wyboru"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip line of text"
@@ -9059,14 +9064,12 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Wczytaj stan gry 1-10"
+msgstr "Wczytaj zapisaną grę 1-10"
 
 #: engines/scumm/help.cpp:82
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "Zapisz stan gry 1-10"
+msgstr "Zapisz grę 1-10"
 
 #: engines/scumm/help.cpp:89
 msgid "Music volume up / down"
@@ -9278,9 +9281,8 @@ msgid "play C major on distaff"
 msgstr "zagraj C-dur na kądzieli"
 
 #: engines/scumm/help.cpp:190
-#, fuzzy
 msgid "Shows the drafts inventory"
-msgstr "Ekwipunek"
+msgstr "Pokazuje ekwipunek"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:218
 msgid "puSh"
@@ -9567,62 +9569,63 @@ msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Wsparcie dla silnika 'SCUMM v7-8' nie jest wkompilowane"
 
 #: engines/scumm/metaengine.cpp:628
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Pokaż etykiety obiektów"
+msgstr "Pokaż linię obiektu"
 
 #: engines/scumm/metaengine.cpp:629
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Pokazuj nazwy obiektów na dole ekranu"
 
 #: engines/scumm/metaengine.cpp:637
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Użyj alternatywnej palety"
+msgstr "Użyj klasycznej palety NES"
 
 #: engines/scumm/metaengine.cpp:638
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "Użyj neutralnej palety kolorów, która ściśle emuluje NES Classic"
 
 #: engines/scumm/metaengine.cpp:646
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Przytnij gry FM-TOWNS do wysokości 200 pikseli"
 
 #: engines/scumm/metaengine.cpp:647
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Przytnij dodatkowe 40 pikseli u dołu ekranu, aby uzyskać standardową "
+"wysokość 200 pikseli, co umożliwi użycie \"korekty proporcji obrazu\""
 
 #: engines/scumm/metaengine.cpp:655
 msgid "Play simplified music"
-msgstr ""
+msgstr "Odtwarzaj uproszczoną muzykę"
 
 #: engines/scumm/metaengine.cpp:656
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Ta muzyka była prawdopodobnie przeznaczona dla komputerów Mac z niższej "
+"półki i wykorzystuje tylko jeden kanał."
 
 #: engines/scumm/metaengine.cpp:664
-#, fuzzy
 msgid "Enable smooth scrolling"
-msgstr "Włącz płynne przewijanie przy chodzeniu"
+msgstr "Włącz płynne przewijanie"
 
 #: engines/scumm/metaengine.cpp:665
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(zamiast normalnego przewijania w krokach co 8 pikseli)"
 
 #: engines/scumm/metaengine.cpp:673
-#, fuzzy
 msgid "Allow semi-smooth scrolling"
-msgstr "Włącz płynne przewijanie przy chodzeniu"
+msgstr "Zezwalaj na półpłynne przewijanie"
 
 #: engines/scumm/metaengine.cpp:674
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
+"Włącza mniej płynne przewijanie podczas szybkiego ruchu kamery w intrze."
 
 #: engines/scumm/metaengine.cpp:701
 msgid ""
@@ -9630,11 +9633,13 @@ msgid ""
 "save/load menu. \t\tUse it together with the \"Ask for confirmation on exit"
 "\" for a more complete experience."
 msgstr ""
+"Zezwól grze na korzystanie z wbudowanego interfejsu graficznego i "
+"oryginalnego menu zapisywania oraz wczytywania. \t\tUżyj go razem z opcją "
+"\"Pytaj o potwierdzenie przy wyjściu”, aby uzyskać pełniejsze wrażenia."
 
 #: engines/scumm/metaengine.cpp:710
-#, fuzzy
 msgid "Enable low latency audio mode"
-msgstr "Włącz tryb helowy"
+msgstr "Włącz tryb dźwięku o niskim opóźnieniu"
 
 #: engines/scumm/metaengine.cpp:711
 msgid ""
@@ -9642,10 +9647,13 @@ msgid ""
 "\tIt is recommended to enable this feature only if you incur in audio "
 "latency issues during normal gameplay."
 msgstr ""
+"Umożliwia grze korzystanie z dźwięku o niskim opóźnieniu kosztem dokładności "
+"dźwięku. \t\tZaleca się włączenie tej funkcji wyłącznie w przypadku "
+"problemów z opóźnieniami dźwięku podczas normalnej rozgrywki."
 
 #: engines/scumm/metaengine.cpp:720
 msgid "Enable the \"A Pirate I Was Meant To Be\" song"
-msgstr ""
+msgstr "Włącz piosenkę \"A Pirate I Was Meant To Be\""
 
 #: engines/scumm/metaengine.cpp:721
 msgid ""
@@ -9653,26 +9661,25 @@ msgid ""
 "Meant To Be\", \t\twhich was cut in international releases. Beware though: "
 "subtitles may not be fully translated."
 msgstr ""
+"Włącz piosenkę \"A Pirate I Was Meant To Be\" na początku trzeciej części "
+"gry, \t\tktóra została wycięta w międzynarodowych wydaniach. Uważaj jednak: "
+"napisy mogą nie być w pełni przetłumaczone."
 
 #: engines/scumm/metaengine.cpp:804
-#, fuzzy
 msgid "Down Left"
-msgstr "Obrót w lewo"
+msgstr "W dół w lewo"
 
 #: engines/scumm/metaengine.cpp:817
-#, fuzzy
 msgid "Down Right"
-msgstr "Obrót w prawo"
+msgstr "W dół w prawo"
 
 #: engines/scumm/metaengine.cpp:837
-#, fuzzy
 msgid "Up Left"
-msgstr "W lewo"
+msgstr "W górę w lewo"
 
 #: engines/scumm/metaengine.cpp:850
-#, fuzzy
 msgid "Up Right"
-msgstr "W prawo"
+msgstr "W górę w prawo"
 
 #: engines/scumm/metaengine.cpp:862
 msgid "Switch weapon"
@@ -9681,7 +9688,7 @@ msgstr "Zmień broń"
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
 #: engines/scumm/metaengine.cpp:876
 msgid "Win the bike fight cheat"
-msgstr ""
+msgstr "Cheat 'wygraj walkę na motocyklu'"
 
 #: engines/scumm/scumm.cpp:291
 msgid ""
@@ -9690,15 +9697,22 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Włączono korektę proporcji obrazu. Jednakże naturalna rozdzielczość FM-TOWNS "
+"wynosi 320x240, co nie pozwala na korekcję proporcji.\n"
+"Korekcję proporcji obrazu można osiągnąć poprzez zmniejszenie rozdzielczości "
+"do 320x200 w zakładce \"silnik”."
 
 #: engines/scumm/scumm.cpp:1182
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
 msgstr ""
+"Ta gra wymaga pliku wykonywalnego \"Indy” Macintosh dla swoich czcionek."
 
 #: engines/scumm/scumm.cpp:1207
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Ta gra wymaga pliku wykonywalnego \"Loom” dla komputerów Macintosh dla "
+"muzyki i czcionek."
 
 #: engines/scumm/scumm.cpp:1227
 msgid ""
@@ -9715,6 +9729,10 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"Wykryto pliki dźwiękowe skompresowane za pomocą narzędzi ScummVM.\n"
+"Kompresja *.BUN/*.SOU nie jest już obsługiwana w tej grze. Dźwięk zostanie "
+"wyłączony.\n"
+"Proszę skopiować grę z oryginalnego nośnika bez kompresji."
 
 #: engines/scumm/scumm.cpp:2069
 #, c-format
@@ -9730,6 +9748,9 @@ msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"Ta konkretna wersja Monkey Island 1 znana jest z brakku niektórych "
+"elementów\n"
+"zasobów dla MT-32. Zostanie użyty AdLib."
 
 #: engines/scumm/scumm.cpp:3792
 msgid ""
@@ -9742,21 +9763,24 @@ msgstr ""
 "\" w katalogu gry Day of the Tentacle, a gra musi być dodana do ScummVM."
 
 #: engines/scumm/scumm.cpp:3903
-#, fuzzy
 msgid "Would you like to host or join a network play session?"
-msgstr "Chcesz wczytać bądź zapisać grę?"
+msgstr "Czy chcesz zorganizować sesję gry sieciowej lub dołączyć do niej?"
 
 #: engines/scumm/he/sound_he.cpp:1555
 msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"W silniku dźwiękowym napotkano niezrealizowaną ścieżkę programistyczną.\n"
+"Proszę zgłosić błąd na stronie https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"W tej wersji AMIGA brakuje następujących plików:\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
@@ -9764,6 +9788,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"Skopiuj te pliki do katalogu danych gry.\n"
+"\n"
 
 #: engines/sherlock/metaengine.cpp:51
 msgid "Pixellated scene transitions"
@@ -9815,26 +9842,23 @@ msgstr "Plik silnika \"sky.cpt\" ma niewłaściwy rozmiar."
 
 #: engines/sky/metaengine.cpp:88
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "Chodzenie / Rozglądanie / Rozmowa"
 
 #: engines/sky/metaengine.cpp:106
-#, fuzzy
 msgid "Skip / Close"
-msgstr "Pomiń linię"
+msgstr "Pomiń / Zamknij"
 
 #: engines/sky/metaengine.cpp:114
 msgid "Open control panel"
-msgstr ""
+msgstr "Otwórz panel sterowania"
 
 #: engines/sky/metaengine.cpp:130
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "Tryb szybki"
+msgstr "Przełącz tryb szybki"
 
 #: engines/sky/metaengine.cpp:135
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "Włącz w trybie bardzo szybkim (*)"
+msgstr "Przełącz tryb naprawdę szybki"
 
 #: engines/sky/metaengine.cpp:154
 msgid "Floppy intro"
@@ -9847,6 +9871,8 @@ msgstr "Użyj intra z wersji dyskietkowej (tylko dla wersji CD)"
 #: engines/sky/metaengine.cpp:233
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
+"UWAGA: Usuwanie slotu automatycznego zapisu nie jest obsługiwane przez ten "
+"silnik"
 
 #: engines/stark/metaengine.cpp:37
 msgid "Load modded assets"
@@ -9854,31 +9880,31 @@ msgstr "Wczytaj zmodyfikowane pliki gry"
 
 #: engines/stark/metaengine.cpp:38
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Włącz wczytywanie zewnętrznych zasobów zastępczych."
 
 #: engines/stark/metaengine.cpp:48
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "Włącz liniowe filtrowanie obrazów tła"
 
 #: engines/stark/metaengine.cpp:49
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"Gdy włączone jest filtrowanie liniowe, grafika tła jest wygłazona w trybie "
+"pełnoekranowym, kosztem niektórych szczegółów."
 
 #: engines/stark/metaengine.cpp:59 engines/ultima/metaengine.cpp:140
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Włącz pływające kursory"
+msgstr "Włącz wygładzanie czcionek"
 
 #: engines/stark/metaengine.cpp:60 engines/ultima/metaengine.cpp:141
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "Po włączeniu wygładzania czcionek tekst jest wygładzony."
 
 #: engines/stark/stark.cpp:106
-#, fuzzy
 msgid "Software renderer does not support modded assets"
-msgstr "Silnik nie wspiera zapisywania stanu gry"
+msgstr "Programowy moduł renderujący nie obsługuje zmodyfikowanych zasobów"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
@@ -9890,25 +9916,34 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"Folder z czcionkami jest wymagany, aby styl tekstu był zgodny z jego "
+"przeznaczeniem. Wiadomo, że w wersji Steam jego brakuje. Czcionki można "
+"pobrać z wersji demonstracyjnej gry."
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"Zaleca się użycie pliku \"gui.ini” w celu uzyskania odpowiednich ustawień "
+"czcionek dla języka gry."
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
 msgstr ""
+"W celu uzyskania przetłumaczonych okien dialogowych potwierdzeń, zaleca się "
+"użycie pliku \"language.ini”."
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
 msgstr ""
+"Do wyświetlania stylizowanych okien dialogowych potwierdzenia zaleca się "
+"użycie pliku \"game.exe”."
 
 #: engines/supernova/supernova.cpp:192
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr "Nie udało się znaleźć plików silnika %s."
+msgstr "Nie można znaleźć tekstu dla języka %s w pliku danych silnika."
 
 #: engines/supernova/supernova.cpp:476
 #, c-format
@@ -9921,33 +9956,35 @@ msgstr ""
 #: engines/supernova/supernova.cpp:486
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "Nie można znaleźć bloku dla części %d"
 
 #: engines/supernova/supernova.cpp:529
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder or the engine data file."
-msgstr "Nie udało się znaleźć plików silnika %s."
+msgstr "Nie można znaleźć \"%s\" w folderze gry lub pliku danych silnika."
 
 #: engines/supernova/supernova.cpp:833
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"Nie udało się zapisać tymczasowego stanu gry. Upewnij się, że katalog "
+"zapisów gry jest ustawiony w ScummVM i że posiada uprawnienia do zapisu."
 
 #: engines/supernova/supernova.cpp:834
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "Nie udało się wczytać stanu gry z pliku."
+msgstr "Nie udało się wczytać tymczasowego stanu gry."
 
 #: engines/supernova/metaengine.cpp:37
-#, fuzzy
 msgid "Improved mode"
-msgstr "Okno"
+msgstr "Tryb ulepszony"
 
 #: engines/supernova/metaengine.cpp:38
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
+"Usuwa niektóre powtarzalne czynności, dodaje możliwość zmiany czasowników za "
+"pomocą klawiatury"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
@@ -9969,7 +10006,6 @@ msgid "Cutscene '%s' not found"
 msgstr "Nie znaleziono przerywnika '%s'"
 
 #: engines/sword1/control.cpp:2795
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -9979,13 +10015,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM znalazł stare zapisy z Broken Sword 1, które należy "
+"ScummVM wykrył stare zapisane gry dla Broken Sword 1, które należy "
 "przekonwertować.\n"
-"Stary format zapisu nie jest już obsługiwany. Nie będziesz mógł wczytać "
-"zapisów, jeśli ich nie przekonwertujesz.\n"
+"Stary format zapisanych gier nie jest już obsługiwany, więc nie będzie można "
+"wczytać stanu gier, jeśli bez konwersji.\n"
 "\n"
-"Naciśnij OK, żeby je teraz przekonwertować. W przeciwnym wypadku zostaniesz "
-"zapytany ponownie przy następnym włączeniu gry.\n"
+"Naciśnij OK, aby je teraz przekonwertować, w przeciwnym razie pytanie pojawi "
+"się ponownie przy następnym uruchomieniu gry.\n"
 
 #: engines/sword1/control.cpp:2981
 #, c-format
@@ -10035,26 +10071,26 @@ msgstr ""
 "niemieckim"
 
 #: engines/tetraedge/metaengine.cpp:32
-#, fuzzy
 msgid "Correct movie aspect ratio"
-msgstr "Korekcja formatu obrazu dla gier 320x200"
+msgstr "Popraw współczynnik proporcji filmów"
 
 #: engines/tetraedge/metaengine.cpp:33
 msgid "Play Syberia cutscenes in 16:9, rather than stretching to full screen"
 msgstr ""
+"Odtwarzaj przerywniki filmowe z Syberii w formacie 16:9, zamiast rozciągać "
+"je na pełny ekran"
 
 #: engines/tetraedge/metaengine.cpp:43
 msgid "Restore missing scenes"
-msgstr ""
+msgstr "Przywróć brakujące sceny"
 
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore some scenes originally in the Windows edition"
-msgstr ""
+msgstr "Przywraca niektóre oryginalne sceny z wersji dla systemu Windows"
 
 #: engines/tinsel/detection_tables.h:481
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "Wersja Saturn CD nie jest jeszcze obsługiwana"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -10098,148 +10134,134 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:44
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Włącz kolizje ze ścianami"
 
 #: engines/twine/metaengine.cpp:45
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Włącza oryginalne obrażenia spowodowane kolizjami ze ścianami"
 
 #: engines/twine/metaengine.cpp:56
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Nie udało się zapisać stanu gry"
+msgstr "Wyłącz menu zapisu"
 
 #: engines/twine/metaengine.cpp:57
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Oryginalna gra miała tylko autozapis. To menu umożliwia zapis w dowolnym "
+"momencie."
 
 #: engines/twine/metaengine.cpp:67
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Włącz tryb helowy"
+msgstr "Włącz tryb debugowania"
 
 #: engines/twine/metaengine.cpp:68
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Włącz tryb helowy"
+msgstr "Włącza tryb debugowania"
 
 #: engines/twine/metaengine.cpp:78
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Włącz publiczność studyjną"
+msgstr "Włącz muzykę audio CD"
 
 #: engines/twine/metaengine.cpp:79
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Włącz oryginalną ścieżkę audio CD"
 
 #: engines/twine/metaengine.cpp:89
-#, fuzzy
 msgid "Enable sound"
-msgstr "Włącz przechowywanie w chmurze"
+msgstr "Włącz dźwięk"
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Pełny tytuł gry"
+msgstr "Włącza dźwięk w grze"
 
 #: engines/twine/metaengine.cpp:100
-#, fuzzy
 msgid "Enable text"
-msgstr "Włącz przechowywanie w chmurze"
+msgstr "Włącz tekst"
 
 #: engines/twine/metaengine.cpp:101
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Pełny tytuł gry"
+msgstr "Włącz tekst dla gry"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable movies"
-msgstr "Włącz Venus"
+msgstr "Włącz fillmy"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Włącz system pomocy Venus"
+msgstr "Włącza przerywniki filmowe w grze"
 
 #: engines/twine/metaengine.cpp:122
-#, fuzzy
 msgid "Enable mouse"
-msgstr "Włącz Venus"
+msgstr "Włącz mysz"
 
 #: engines/twine/metaengine.cpp:123
-#, fuzzy
 msgid "Enable the mouse for the UI"
-msgstr "Pełny tytuł gry"
+msgstr "Włącza mysz dla interfejsu użytkownika"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Use the USA version"
-msgstr ""
+msgstr "Użyj wersji amerykańskiej"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Włącz flagi specyficzne dla wersji USA"
 
 #: engines/twine/metaengine.cpp:144 engines/ultima/metaengine.cpp:96
-#, fuzzy
 msgid "Enable high resolution"
 msgstr "Włącz grafikę wysokiej rozdzielczości"
 
 #: engines/twine/metaengine.cpp:145 engines/ultima/metaengine.cpp:97
-#, fuzzy
 msgid "Enable a higher resolution for the game"
-msgstr "Pełny tytuł gry"
+msgstr "Włącza wyższą rozdzielczość gry"
 
 #: engines/twine/metaengine.cpp:236
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Debuguj następny pokój"
 
 #: engines/twine/metaengine.cpp:241
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Debuguj poprzedni pokój"
 
 #: engines/twine/metaengine.cpp:246
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Debuguj stosowanie siatki komórkowej"
 
 #: engines/twine/metaengine.cpp:251
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Debuguj zwiększanie indeksu siatki komórkowej"
 
 #: engines/twine/metaengine.cpp:256
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Debuguj zmniejszanie indeksu siatki komórkowej"
 
 #: engines/twine/metaengine.cpp:261
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Debuguj kamerę siatkową w górę"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Debuguj kamerę siatkową w dół"
 
 #: engines/twine/metaengine.cpp:271
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Debuguj kamerę siatkową w lewo"
 
 #: engines/twine/metaengine.cpp:277
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Debuguj kamerę siatkową w prawo"
 
 #: engines/twine/metaengine.cpp:282
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Umieść aktora w centrum ekranu"
 
 #: engines/twine/metaengine.cpp:287
-#, fuzzy
 msgid "Debug Menu"
-msgstr "Debugger"
+msgstr "Menu debugowania"
 
 #: engines/twine/metaengine.cpp:292
-#, fuzzy
 msgid "Debug Menu Execute"
-msgstr "Debugger"
+msgstr "Debuguj menu wykonania"
 
 #: engines/twine/metaengine.cpp:297 engines/twine/metaengine.cpp:317
 msgid "Normal Behaviour"
@@ -10247,55 +10269,51 @@ msgstr "Normalne zachowanie"
 
 #: engines/twine/metaengine.cpp:302 engines/twine/metaengine.cpp:322
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Zachowanie atletyczne"
 
 #: engines/twine/metaengine.cpp:307 engines/twine/metaengine.cpp:327
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Zachowanie agresywne"
 
 #: engines/twine/metaengine.cpp:312 engines/twine/metaengine.cpp:332
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Zachowanie dyskretne"
 
 #: engines/twine/metaengine.cpp:337
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "~P~oprzednia"
+msgstr "Akcje zachowania"
 
 #: engines/twine/metaengine.cpp:343
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Zmiana zachowania"
 
 #: engines/twine/metaengine.cpp:355
-#, fuzzy
 msgid "Options Menu"
-msgstr "Opcje"
+msgstr "Menu opcji"
 
 #: engines/twine/metaengine.cpp:367
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Użyj wybrany obiekt"
 
 #: engines/twine/metaengine.cpp:373
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Rzuć magiczną kulę"
 
 #: engines/twine/metaengine.cpp:387
-#, fuzzy
 msgid "Move Backward"
-msgstr "Ruch wstecz"
+msgstr "Ruch do tyłu"
 
 #: engines/twine/metaengine.cpp:408
 msgid "Use Protopack"
-msgstr ""
+msgstr "Użyj Protopacka"
 
 #: engines/twine/metaengine.cpp:413
 msgid "Open Holomap"
-msgstr ""
+msgstr "Otwórz holomapę"
 
 #: engines/twine/metaengine.cpp:426
-#, fuzzy
 msgid "Special Action"
-msgstr "Aktywny"
+msgstr "Akcja specjalna"
 
 #: engines/twine/metaengine.cpp:453 engines/twine/metaengine.cpp:505
 #: engines/twine/metaengine.cpp:521
@@ -10303,158 +10321,146 @@ msgid "Abort"
 msgstr "Anuluj"
 
 #: engines/twine/metaengine.cpp:558
-#, fuzzy
 msgid "Previous location"
-msgstr "~P~oprzednia"
+msgstr "Poprzednia lokacja"
 
 #: engines/twine/metaengine.cpp:563
-#, fuzzy
 msgid "Next location"
-msgstr "~P~oprzednia"
+msgstr "Następna lokacja"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Włącz grafikę wysokiej rozdzielczości"
+msgstr "Wysoka rozdzielczość włączona"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Włącz grafikę wysokiej rozdzielczości"
+msgstr "Wysoka rozdzielczość wyłączona"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "Kolizje ze ścianami włączone"
 
 #: engines/twine/parser/text.cpp:37
-#, fuzzy
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Przesuwanie skokowe wyłączone"
+msgstr "Kolizje ze ścianami wyłączone"
 
 #: engines/twine/parser/text.cpp:38
-#, fuzzy
-#| msgid "Language not detected"
 msgctxt "Options menu"
 msgid "Language selection"
-msgstr "Nie wykryto języka"
+msgstr "Wybór języka"
 
 #: engines/twine/parser/text.cpp:39
 msgctxt "Options menu"
 msgid "Voices: None"
-msgstr ""
+msgstr "Głosy: brak"
 
 #: engines/twine/parser/text.cpp:40
 msgctxt "Options menu"
 msgid "Voices: English"
-msgstr ""
+msgstr "Głosy: angielski"
 
 #: engines/twine/parser/text.cpp:41
 msgctxt "Options menu"
 msgid "Voices: French"
-msgstr ""
+msgstr "Głosy: francuski"
 
 #: engines/twine/parser/text.cpp:42
 msgctxt "Options menu"
 msgid "Voices: German"
-msgstr ""
+msgstr "Głosy: niemiecki"
 
 #: engines/ultima/metaengine.cpp:63
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Włącz pomijanie klatek"
 
 #: engines/ultima/metaengine.cpp:64
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "Włącza pomijanie klatek animacji w grze, jeśli działa ona zbyt wolno."
 
 #: engines/ultima/metaengine.cpp:74
-#, fuzzy
 msgid "Enable frame limiting"
-msgstr "Włącz pływające kursory"
+msgstr "Włącz ograniczenie klatek"
 
 #: engines/ultima/metaengine.cpp:75
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "Ogranicza prędkość gry, aby zapobiec zbyt szybkiemu działaniu."
 
 #: engines/ultima/metaengine.cpp:85
-#, fuzzy
 msgid "Enable cheats"
-msgstr "Włącz tryb helowy"
+msgstr "Włącz cheaty"
 
 #: engines/ultima/metaengine.cpp:86
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "Włącza cheaty po kliknięciu gracza, albo poprzez polecenia."
 
 #: engines/ultima/metaengine.cpp:107
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Odtwarzaj dźwięki kroków"
 
 #: engines/ultima/metaengine.cpp:108
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Odtwarza dźwięk, gdy gracz się porusza."
 
 #: engines/ultima/metaengine.cpp:118
-#, fuzzy
 msgid "Enable jump to mouse position"
-msgstr "Pełny tytuł gry"
+msgstr "Włącz skok do pozycji myszy"
 
 #: engines/ultima/metaengine.cpp:119
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "Przeskakuje do pozycji kursora myszy (nie podczas przesuwania celów)."
 
 #: engines/ultima/metaengine.cpp:129
-#, fuzzy
 msgid "Enable font replacement"
-msgstr "Włącz pływające kursory"
+msgstr "Włącz zamianę czcionek"
 
 #: engines/ultima/metaengine.cpp:130
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Zastępuje czcionki gry czcionkami renderowanymi"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/metaengine.cpp:152
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Kamera porusza się z Silencerem"
 
 #: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "Kamera śledzi ruch gracza, zamiast przeskakiwać do określonych pozycji."
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "Włącz świąteczną muzykę na stałe"
 
 #: engines/ultima/metaengine.cpp:164
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "Włącza świąteczną muzykę o każdej porze roku."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "Nie można znaleźć prawidłowego pliku danych ultima.dat"
 
 #: engines/ultima/nuvie/nuvie.cpp:375
-#, fuzzy, c-format
+#, c-format
 msgid "loading quick save %d"
-msgstr "Szybki zapis w slocie #%d nie powiódł się"
+msgstr "wczytywanie szybkiego zapisu %d"
 
 #: engines/ultima/nuvie/nuvie.cpp:380
-#, fuzzy, c-format
+#, c-format
 msgid "saving quick save %d"
-msgstr "Szybki zapis w slocie #%d nie powiódł się"
+msgstr "szybki zapis %d"
 
 #: engines/ultima/nuvie/metaengine.cpp:38
 msgid "Original Save"
-msgstr ""
+msgstr "Oryginalny zapis"
 
 #: engines/ultima/nuvie/save/save_game.cpp:211
-#, fuzzy
 msgid "Transfer Character"
-msgstr "Zmień postać"
+msgstr "Przenieś postać"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Ultima VIII"
@@ -10462,16 +10468,15 @@ msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/metaengine.cpp:138
 msgid "Crusader"
-msgstr ""
+msgstr "Krzyżowiec"
 
 #: engines/ultima/ultima8/metaengine.cpp:181
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Cheats"
 
 #: engines/ultima/ultima8/metaengine.cpp:196
-#, fuzzy
 msgid "Ultima VIII Debug"
-msgstr "Ultima VIII"
+msgstr "Debugowanie Ultima VIII"
 
 #: engines/ultima/ultima8/games/cru_game.cpp:165
 msgid ""
@@ -10479,10 +10484,13 @@ msgid ""
 "directories have been copied from the CD.  More instructions are on the "
 "wiki: https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 msgstr ""
+"Brak pliku z intrem do gry Crusader – sprawdź, czy z płyty CD zostały "
+"skopiowane katalogi FLICS i SOUND. Więcej instrukcji znajdziesz na wiki: "
+"https://wiki.scummvm.org/index.php?title=Crusader:_No_Remorse."
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Poprawiona czułość kliknięć"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -10490,6 +10498,10 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Umożliwia przesuwanie myszy na niewielką odległość bez anulowania interakcji "
+"związanych z kliknięciem. Jeśli ta opcja jest wyłączona, każdy ruch myszy, "
+"gdy przycisk myszy jest wciśnięty, anuluje interakcję polegającą na "
+"kliknięciu."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -10500,97 +10512,81 @@ msgid "Speeds up animations."
 msgstr "Przyspiesza animacje."
 
 #: engines/vcruise/metaengine.cpp:75
-#, fuzzy
 msgid "Skip main menu"
-msgstr "~P~owrót do launchera"
+msgstr "Pomijaj menu główne"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "Rozpoczyna nową grę po uruchomieniu, zamiast wchodzić do menu głównego."
 
 #: engines/vcruise/metaengine.cpp:124
-#, fuzzy
-#| msgid "Display/Hide Info Screen"
 msgid "Display help screen"
-msgstr "Pokaż/schowaj ekran informacji"
+msgstr "Wyświetl ekran pomocy"
 
 #: engines/vcruise/metaengine.cpp:129 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Zapis gry"
 
 #: engines/vcruise/metaengine.cpp:139
-#, fuzzy
-#| msgid "Open 3DS Settings"
 msgid "Open sound settings"
-msgstr "Otwórz ustawienia 3DS"
+msgstr "Otwórz ustawienia dźwięku"
 
 #: engines/vcruise/metaengine.cpp:144
-#, fuzzy
-#| msgid "Quit Game"
 msgid "Quit game"
-msgstr "Zamknij grę"
+msgstr "Wyjdź z gry"
 
 #: engines/vcruise/metaengine.cpp:155
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle music on/off"
-msgstr "Włącz/wyłącz pełny ekran"
+msgstr "Włącz/wyłącz muzykę"
 
 #: engines/vcruise/metaengine.cpp:160
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Toggle sound effects on/off"
-msgstr "Głośność efektów dźwiękowych"
+msgstr "Włącz/wyłącz efekty dźwiękowe"
 
 #: engines/vcruise/metaengine.cpp:165
-#, fuzzy
-#| msgid "Music volume up / down"
 msgid "Music volume down"
-msgstr "Zwiększ/zmniejsz głośność muzyki"
+msgstr "Zmniejsz głośność muzyki"
 
 #: engines/vcruise/metaengine.cpp:170
 msgid "Music volume up"
 msgstr "Zwiększ głośność muzyki"
 
 #: engines/vcruise/metaengine.cpp:175
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume down"
-msgstr "Głośność efektów dźwiękowych"
+msgstr "Zmniejsz głośność efektów dźwiękowych"
 
 #: engines/vcruise/metaengine.cpp:180
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Sound effect volume up"
-msgstr "Głośność efektów dźwiękowych"
+msgstr "Zwiększ głośność efektów dźwiękowych"
 
 #: engines/vcruise/metaengine.cpp:185
-#, fuzzy
 msgid "Skip current animation"
-msgstr "Tylko mowa"
+msgstr "Pomiń bieżącą animację"
 
 #: engines/vcruise/vcruise.cpp:83
-#, fuzzy
 msgid "This game requires JPEG support, which was not compiled in."
-msgstr "Ta gra wymaga silnika HeroCraft który nie jest zgodny z programem."
+msgstr "Ta gra wymaga obsługi formatu JPEG, który nie został wkompilowany."
 
 #: engines/vcruise/vcruise.cpp:90
 msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Muzyka do tej gry wymaga obsługi Ogg Vorbis, która nie została wkompilowana."
+"\n"
+"Gra będzie działać, ale żadna muzyka nie będzie odtwarzana."
 
 #: engines/vcruise/vcruise.cpp:100
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
+"Muzyka do tej gry wymaga obsługi MP3, która nie została wkompilowana.\n"
+"Gra będzie działać, ale żadna muzyka nie będzie odtwarzana."
 
 #: engines/vcruise/vcruise.cpp:299
-#, fuzzy
 msgid "Failed to load save, the save data appears to be damaged."
-msgstr ""
-"Ten zapis gry został utworzony w innej wersji gry. Nie można go wczytać."
+msgstr "Nie udało się wczytać zapisu, dane zapisu wydają się być uszkodzone."
 
 #: engines/vcruise/vcruise.cpp:304
 msgid "Failed to read version information from save file."
@@ -10618,11 +10614,13 @@ msgstr "Stosuj filtrowanie dwuliniowe do poszczególnych sprite'ów"
 
 #: engines/wintermute/metaengine.cpp:67
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "Wymuś użycie renderera 2D (tylko gry 2D)"
 
 #: engines/wintermute/metaengine.cpp:68
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"To ustawienie zmusza ScummVM do używania renderera 2D podczas uruchamiania "
+"gier 2D"
 
 #: engines/wintermute/metaengine.cpp:112
 msgid "FoxTail support is not compiled in"
@@ -10653,29 +10651,28 @@ msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"Ta gra wymaga obsługi 3D, która nie jest wkompilowana. W związku z tym "
+"prawdopodobnie będzie w całości lub częściowo niegrywalna."
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
 #: engines/wintermute/keymapper_tables.h:2216
-#, fuzzy
 msgid "Walk forward"
-msgstr "Podejdź do"
+msgstr "Idź do przodu"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
 msgid "Walk backward"
-msgstr "Podejdź do"
+msgstr "Idź do tyłu"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
 #: engines/wintermute/keymapper_tables.h:1855
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "Pokaż kontrole na ekranie"
+msgstr "Pokazuj geometrię sceny"
 
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
@@ -10684,9 +10681,8 @@ msgstr "Pokaż kontrole na ekranie"
 #: engines/wintermute/keymapper_tables.h:1103
 #: engines/wintermute/keymapper_tables.h:1231
 #: engines/wintermute/keymapper_tables.h:1255
-#, fuzzy
 msgid "Previous page"
-msgstr "~P~oprzednia"
+msgstr "Poprzednia strona"
 
 #: engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
@@ -10695,9 +10691,8 @@ msgstr "~P~oprzednia"
 #: engines/wintermute/keymapper_tables.h:1110
 #: engines/wintermute/keymapper_tables.h:1236
 #: engines/wintermute/keymapper_tables.h:1260
-#, fuzzy
 msgid "Next page"
-msgstr "Następny"
+msgstr "Następna strona"
 
 #: engines/wintermute/keymapper_tables.h:239
 #: engines/wintermute/keymapper_tables.h:262
@@ -10724,9 +10719,8 @@ msgstr "Następny"
 #: engines/wintermute/keymapper_tables.h:1790
 #: engines/wintermute/keymapper_tables.h:1983
 #: engines/wintermute/keymapper_tables.h:2103
-#, fuzzy
 msgid "Show hints"
-msgstr "Pokaż ukryte pliki"
+msgstr "Pokazuj podpowiedzi"
 
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
@@ -10738,9 +10732,8 @@ msgstr "Pokaż ukryte pliki"
 #: engines/wintermute/keymapper_tables.h:1679
 #: engines/wintermute/keymapper_tables.h:1688
 #: engines/wintermute/keymapper_tables.h:1950
-#, fuzzy
 msgid "Show inventory"
-msgstr "Ekwipunek"
+msgstr "Pokaż ekwipunek"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
@@ -10750,9 +10743,8 @@ msgstr "Ekwipunek"
 #: engines/wintermute/keymapper_tables.h:533
 #: engines/wintermute/keymapper_tables.h:1932
 #: engines/wintermute/keymapper_tables.h:1990
-#, fuzzy
 msgid "GUI variant A"
-msgstr "Nieznany wariant gry"
+msgstr "GUI wariant A"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:339
@@ -10762,132 +10754,116 @@ msgstr "Nieznany wariant gry"
 #: engines/wintermute/keymapper_tables.h:540
 #: engines/wintermute/keymapper_tables.h:1938
 #: engines/wintermute/keymapper_tables.h:1996
-#, fuzzy
 msgid "GUI variant B"
-msgstr "Nieznany wariant gry"
+msgstr "GUI wariant B"
 
 #: engines/wintermute/keymapper_tables.h:283
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "Przycisk anuluj w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:552
 #: engines/wintermute/keymapper_tables.h:1122
-#, fuzzy
 msgid "Phone up button"
-msgstr "Lewy przycisk myszy"
+msgstr "Przycisk w górę w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:294
 #: engines/wintermute/keymapper_tables.h:425
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "Przycisk w dół w telefonie"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:360
-#, fuzzy
 msgid "Alternative action"
-msgstr "Alternatywne intro"
+msgstr "Akcja alternatywna"
 
 #: engines/wintermute/keymapper_tables.h:431
 #: engines/wintermute/keymapper_tables.h:564
 #: engines/wintermute/keymapper_tables.h:1134
-#, fuzzy
 msgid "Phone 0 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk zero w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
 #: engines/wintermute/keymapper_tables.h:1817
-#, fuzzy
 msgid "Phone 1 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 1 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
 #: engines/wintermute/keymapper_tables.h:1822
-#, fuzzy
 msgid "Phone 2 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 2 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
 #: engines/wintermute/keymapper_tables.h:1827
-#, fuzzy
 msgid "Phone 3 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 3 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:451
 #: engines/wintermute/keymapper_tables.h:584
 #: engines/wintermute/keymapper_tables.h:1154
-#, fuzzy
 msgid "Phone 4 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 4 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:456
 #: engines/wintermute/keymapper_tables.h:589
 #: engines/wintermute/keymapper_tables.h:1159
-#, fuzzy
 msgid "Phone 5 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 5 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:594
 #: engines/wintermute/keymapper_tables.h:1164
-#, fuzzy
 msgid "Phone 6 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 6 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:466
 #: engines/wintermute/keymapper_tables.h:599
 #: engines/wintermute/keymapper_tables.h:1169
-#, fuzzy
 msgid "Phone 7 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 7 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:471
 #: engines/wintermute/keymapper_tables.h:604
 #: engines/wintermute/keymapper_tables.h:1174
-#, fuzzy
 msgid "Phone 8 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 8 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:476
 #: engines/wintermute/keymapper_tables.h:609
 #: engines/wintermute/keymapper_tables.h:1179
-#, fuzzy
 msgid "Phone 9 button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk 9 w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:481
 #: engines/wintermute/keymapper_tables.h:614
 #: engines/wintermute/keymapper_tables.h:1184
-#, fuzzy
 msgid "Phone * button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk gwiazdki w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:486
 #: engines/wintermute/keymapper_tables.h:619
 #: engines/wintermute/keymapper_tables.h:1189
-#, fuzzy
 msgid "Phone # button"
-msgstr "Prawy przycisk myszy"
+msgstr "Przycisk # w telefonie"
 
 #: engines/wintermute/keymapper_tables.h:664
 #: engines/wintermute/keymapper_tables.h:1366
 #: engines/wintermute/keymapper_tables.h:1422
-#, fuzzy
 msgid "Show help"
-msgstr "Pokaż wszystkie"
+msgstr "Pokaż pomoc"
 
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
@@ -10900,9 +10876,8 @@ msgstr "Pokaż wszystkie"
 #: engines/wintermute/keymapper_tables.h:1695
 #: engines/wintermute/keymapper_tables.h:1969
 #: engines/wintermute/keymapper_tables.h:2171
-#, fuzzy
 msgid "Scroll up"
-msgstr "Przewiń listę do góry"
+msgstr "Przewiń w górę"
 
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
@@ -10915,25 +10890,22 @@ msgstr "Przewiń listę do góry"
 #: engines/wintermute/keymapper_tables.h:1702
 #: engines/wintermute/keymapper_tables.h:1976
 #: engines/wintermute/keymapper_tables.h:2176
-#, fuzzy
 msgid "Scroll down"
-msgstr "Przewiń listę w dół"
+msgstr "Przewiń w dół"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr ""
+msgstr "Zmień typ cieni"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
-#, fuzzy
 msgid "Volume max"
-msgstr "Głośność"
+msgstr "Maksymalna głośność"
 
 #. I18N: Displays a debug interface with a CLI for various features
 #: engines/wintermute/keymapper_tables.h:706
-#, fuzzy
 msgid "Show debug parser"
-msgstr "Pokaż/ukryj kursor"
+msgstr "Pokaż parser debuggera"
 
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
@@ -10941,9 +10913,8 @@ msgstr "Pokaż/ukryj kursor"
 #: engines/wintermute/keymapper_tables.h:1581
 #: engines/wintermute/keymapper_tables.h:1833
 #: engines/wintermute/keymapper_tables.h:1878
-#, fuzzy
 msgid "Debug print"
-msgstr "Debugger"
+msgstr "Debug print"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
@@ -10953,109 +10924,96 @@ msgstr "Wyjdź"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
-#, fuzzy
 msgid "Light helper window"
-msgstr "Dopasuj do okna"
+msgstr "Lekkie okno pomocnicze"
 
 #: engines/wintermute/keymapper_tables.h:751
-#, fuzzy
 msgid "Run forward"
-msgstr "Ruch naprzód"
+msgstr "Biegnij do przodu"
 
 #: engines/wintermute/keymapper_tables.h:756
-#, fuzzy
 msgid "Run backward"
-msgstr "Ruch naprzód"
+msgstr "Biegnij do tyłu"
 
 #: engines/wintermute/keymapper_tables.h:761
-#, fuzzy
 msgid "Turn left fast"
-msgstr "Obrót w lewo"
+msgstr "Szybki obrót w lewo"
 
 #: engines/wintermute/keymapper_tables.h:766
-#, fuzzy
 msgid "Turn right fast"
-msgstr "Obrót w prawo"
+msgstr "Szybki obrót w prawo"
 
 #. I18N: Displays a blueprint with robot parts
 #: engines/wintermute/keymapper_tables.h:772
-#, fuzzy
 msgid "Show blueprint"
-msgstr "Pokaż etykiety obiektów"
+msgstr "Pokaż projekt"
 
 #: engines/wintermute/keymapper_tables.h:792
 #: engines/wintermute/keymapper_tables.h:1587
 #: engines/wintermute/keymapper_tables.h:1770
 #: engines/wintermute/keymapper_tables.h:1803
 #: engines/wintermute/keymapper_tables.h:2089
-#, fuzzy
 msgid "Next action"
-msgstr "~P~oprzednia"
+msgstr "Następna akcja"
 
 #: engines/wintermute/keymapper_tables.h:799
 #: engines/wintermute/keymapper_tables.h:1595
 #: engines/wintermute/keymapper_tables.h:1777
 #: engines/wintermute/keymapper_tables.h:1810
 #: engines/wintermute/keymapper_tables.h:2097
-#, fuzzy
 msgid "Previous action"
-msgstr "~P~oprzednia"
+msgstr "Poprzednia akcja"
 
 #: engines/wintermute/keymapper_tables.h:826
-#, fuzzy
 msgid "Volume off"
-msgstr "Głośność"
+msgstr "Wyłącz dźwięk"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "Zmień rozmiar czcionki"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Szybkość chodzenia: niska"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Szybkość chodzenia: średnia"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Szybkość chodzenia: wysoka"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1314
 #: engines/wintermute/keymapper_tables.h:1872
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "Przerwij pobieranie"
+msgstr "Anuluj oczekiwanie"
 
 #: engines/wintermute/keymapper_tables.h:965
-#, fuzzy
 msgid "First page"
-msgstr "Wybierz zaklęcie"
+msgstr "Pierwsza strona"
 
 #: engines/wintermute/keymapper_tables.h:970
-#, fuzzy
 msgid "Last page"
-msgstr "Wybierz zaklęcie"
+msgstr "Ostatnia strona"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Szybkość chodzenia: Ultra Super Mega Fast"
 
 #: engines/wintermute/keymapper_tables.h:994
-#, fuzzy
 msgid "Show game credits"
-msgstr "Wyświetl kursor myszy"
+msgstr "Pokaż twórców gry"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "Odtwórz wybrane nagranie muzyczne"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "Wybierz następne nagranie muzyczne"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
@@ -11087,87 +11045,78 @@ msgstr "Odtwórz utwór 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Umiejętność: telekineza"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "Umiejętność: pchnięcie"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Umiejętność: błyskawica"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "Umiejętność: światło"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Umiejętność: wiatr"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Umiejętność: dźwięk"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Umiejętność: esencja"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Umiejętność: egzorcyzm"
 
 #: engines/wintermute/keymapper_tables.h:1200
-#, fuzzy
 msgid "Show hints / Dance move"
-msgstr "Pokaż ukryte pliki"
+msgstr "Pokaż wskazówki / krok taneczny"
 
 #: engines/wintermute/keymapper_tables.h:1207
-#, fuzzy
 msgid "Dance move up"
-msgstr "Przerwij pobieranie"
+msgstr "Taniec ruch w górę"
 
 #: engines/wintermute/keymapper_tables.h:1213
-#, fuzzy
 msgid "Dance move down"
-msgstr "Przerwij pobieranie"
+msgstr "Taniec ruch w dół"
 
 #: engines/wintermute/keymapper_tables.h:1219
-#, fuzzy
 msgid "Dance move left"
-msgstr "Ślizg w prawo"
+msgstr "Taniec ruch w lewo"
 
 #: engines/wintermute/keymapper_tables.h:1225
-#, fuzzy
 msgid "Dance move right"
-msgstr "Ślizg w prawo"
+msgstr "Taniec ruch w prawo"
 
 #: engines/wintermute/keymapper_tables.h:1283
-#, fuzzy
 msgid "Cancel input"
-msgstr "Anuluj"
+msgstr "Anuluj wprowadzanie"
 
 #: engines/wintermute/keymapper_tables.h:1345
-#, fuzzy
 msgid "Toggle subtitles"
-msgstr "Wycisz dźwięk"
+msgstr "Przełącz napisy"
 
 #: engines/wintermute/keymapper_tables.h:1409
-#, fuzzy
 msgid "Hide hints"
-msgstr "Ukryj pozostałe"
+msgstr "Ukryj podpowiedzi"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
 msgid "Shift key"
-msgstr ""
+msgstr "Klawisz Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1566
-#, fuzzy
 msgid "Chapayev's action"
-msgstr "~P~oprzednia"
+msgstr "Akcja Chapayeva"
 
 #: engines/wintermute/keymapper_tables.h:1614
 #: engines/wintermute/keymapper_tables.h:1867
@@ -11177,57 +11126,52 @@ msgstr "Ustawienia"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Odpowiedź 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Odpowiedź 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Odpowiedź 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Odpowiedź 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "Obróć koło wolniej"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "Obróć koło szybciej"
 
 #: engines/wintermute/keymapper_tables.h:1731
-#, fuzzy
 msgid "Zoom out"
-msgstr "Przybliż"
+msgstr "Oddal"
 
 #: engines/wintermute/keymapper_tables.h:1738
-#, fuzzy
 msgid "Zoom in"
 msgstr "Przybliż"
 
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
-#, fuzzy
 msgid "Show journal"
-msgstr "Pokaż wszystkie"
+msgstr "Pokaż dziennik"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
-#, fuzzy
 msgid "Bezier window"
-msgstr "Dopasuj do okna"
+msgstr "Okno Beziera"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
-#, fuzzy
 msgid "Droid's action"
-msgstr "~P~oprzednia"
+msgstr "Akcja droida"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:2009
@@ -11236,9 +11180,8 @@ msgstr "Obrót"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:2035
-#, fuzzy
 msgid "Drop"
-msgstr "~O~puść stronę"
+msgstr "Upuść"
 
 #: engines/wintermute/keymapper_tables.h:2043
 msgid "Player 1: Up"
@@ -11269,15 +11212,13 @@ msgid "Player 2: Down"
 msgstr "Gracz 2: W dół"
 
 #: engines/wintermute/keymapper_tables.h:2078
-#, fuzzy
 msgid "Player 2: Right"
-msgstr "Ślizg w prawo"
+msgstr "Gracz 2 w prawo"
 
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2084
-#, fuzzy
 msgid "Debug FPS"
-msgstr "Podwójna liczba klatek"
+msgstr "Pokaż licznik FPS"
 
 #: engines/wintermute/keymapper_tables.h:2181
 msgid "F1"
@@ -11285,7 +11226,7 @@ msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2186
 msgid "Key i"
-msgstr ""
+msgstr "Klawisz i"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -11325,23 +11266,20 @@ msgid "Use high resolution MPEG video"
 msgstr "Użyj wideo MPEG w wysokiej rozdzielczości"
 
 #: engines/zvision/metaengine.cpp:95
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr "Użyj wideo MPEG z wersji DVD zamiast AVI niższej rozdzielczości"
+msgstr "Użyj wideo MPEG z wersji DVD zamiast AVI o niższej rozdzielczości"
 
 #: engines/zvision/metaengine.cpp:197
-#, fuzzy
 msgid "Look Up"
-msgstr "Spójrz"
+msgstr "Spójrz w górę"
 
 #: engines/zvision/metaengine.cpp:203
-#, fuzzy
 msgid "Look Down"
-msgstr "Oddal"
+msgstr "Spójrz w dół"
 
 #: engines/zvision/metaengine.cpp:238
 msgid "Spellbook"
-msgstr ""
+msgstr "Księga zaklęć"
 
 #: engines/zvision/metaengine.cpp:244
 msgid "Score"
@@ -11349,11 +11287,11 @@ msgstr "Wynik"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
-msgstr ""
+msgstr "Odłóż obiekt"
 
 #: engines/zvision/metaengine.cpp:256
 msgid "Extract coin"
-msgstr ""
+msgstr "Wyodrębnij monetę"
 
 #: engines/zvision/metaengine.cpp:277
 msgid "Preferences"
@@ -11370,6 +11308,14 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"Przed rozpoczęciem tej gry, należy skopiować wymagane czcionki do katalogu "
+"dodatków ScummVM lub do katalogu gry. W systemie Windows potrzebne będą "
+"następujące pliki czcionek z katalogu czcionek systemu Windows: Times New "
+"Roman, Century Schoolbook, Garamond, Courier New i Arial. Alternatywnie "
+"możesz pobrać czcionki Liberation lub pakiet GNU FreeFont. Będą potrzebne "
+"wszystkie czcionki z wybranego pakietu czcionek, odpowiednio np. "
+"LiberationMono, LiberationSans i LiberationSerif lub FreeMono, FreeSans i "
+"FreeSerif."
 
 #~ msgid ""
 #~ "Your game is patched with a fan made script patch. Such patches have been "
