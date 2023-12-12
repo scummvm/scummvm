@@ -750,6 +750,8 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	uint32 count;
 	int xtile = start_x;
 	int ytile = start_y;
+	int xtile_prev = xtile;
+	int ytile_prev = ytile;
 
 
 	if (deltax >= deltay) {
@@ -786,11 +788,16 @@ bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
 	for (uint32 i = 0; i < count; i++) {
 		//  only test for collision if tile coordinates have changed
 		if ((scale_factor_log2 == 0 || x >> scale_factor_log2 != xtile || y >> scale_factor_log2 != ytile)) {
+			xtile_prev = xtile;
+			ytile_prev = ytile;
 			xtile = x >> scale_factor_log2; //  scale back down to tile
 			ytile = y >> scale_factor_log2; //  space if necessary
 			//  test the current location
-			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true))
+			if ((i >= skip) && (testIntersection(xtile, ytile, level, flags, Result, excluded_obj) == true)) {
+				Result.pre_hit_x = xtile_prev;
+				Result.pre_hit_y = ytile_prev;
 				return true;
+			}
 		}
 
 		if (d < 0) {
