@@ -210,7 +210,7 @@ void GroupedListWidget::setSelected(int item) {
 		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && (_selectedItem == -1 || _listIndex[_selectedItem] != item)) {
+	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
 		if (_editMode)
 			abortEditMode();
 
