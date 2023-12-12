@@ -33,7 +33,6 @@ class IDataSource;
 class RawArchive : public Archive {
 public:
 	RawArchive() : Archive() { }
-	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
 	explicit RawArchive(Common::SeekableReadStream *rs) : Archive(rs) { }
 
 	~RawArchive() override;

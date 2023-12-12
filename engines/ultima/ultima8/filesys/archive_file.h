@@ -92,12 +92,6 @@ public:
 	//!  store the indexed entries of this file
 	virtual uint32 getIndexCount() const = 0;
 
-	//! is archive indexed?
-	virtual bool isIndexed() const = 0;
-
-	//! is archive named?
-	virtual bool isNamed() const = 0;
-
 protected:
 	static bool extractIndexFromName(const Std::string &name, uint32 &index);
 

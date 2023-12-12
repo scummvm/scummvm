@@ -34,9 +34,6 @@ public:
 	FontShapeArchive(uint16 id, Palette *pal = 0,
 	                 const ConvertShapeFormat *format = 0)
 		: ShapeArchive(id, pal, format) { }
-	FontShapeArchive(ArchiveFile *af, uint16 id, Palette *pal = 0,
-	                 const ConvertShapeFormat *format = 0)
-		: ShapeArchive(af, id, pal, format) { }
 	FontShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
 	                 const ConvertShapeFormat *format = 0)
 		: ShapeArchive(rs, id, pal, format) { }

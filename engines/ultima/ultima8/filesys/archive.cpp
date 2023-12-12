@@ -37,11 +37,6 @@ Archive::~Archive() {
 	_sources.clear();
 }
 
-
-Archive::Archive(ArchiveFile *af) : _count(0) {
-	addSource(af);
-}
-
 Archive::Archive(Common::SeekableReadStream *rs) : _count(0) {
 	addSource(rs);
 }

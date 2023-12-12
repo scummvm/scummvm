@@ -36,9 +36,6 @@ public:
 	ShapeArchive(uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(), _id(id), _format(format), _palette(pal) { }
-	ShapeArchive(ArchiveFile *af, uint16 id, Palette *pal = 0,
-	             const ConvertShapeFormat *format = 0)
-		: Archive(af), _id(id), _format(format), _palette(pal) { }
 	ShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
 	             const ConvertShapeFormat *format = 0)
 		: Archive(rs), _id(id), _format(format), _palette(pal) { }
