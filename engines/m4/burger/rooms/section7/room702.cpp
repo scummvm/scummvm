@@ -27,6 +27,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_FLUMIX_ANIMATION = 5
+};
+
 static const char *SAID[][4] = {
 	{ "DOOR",          nullptr,    "702W002", nullptr   },
 	{ "FLUMIX",        "702w001z", "702W002", "702W002" },
@@ -45,7 +49,7 @@ void Room702::init() {
 	pal_fade_set_start(0);
 	_flag1 = false;
 	_flag2 = false;
-	_val1 = 1;
+	_flumixMode = 1;
 
 	_series1 = series_load("702FLT01");
 	_series2 = series_load("702FLX02");
@@ -72,7 +76,7 @@ void Room702::daemon() {
 		_G(wilbur_should) = 10;
 		digi_play_loop("700_001", 3, 50, -1, 700);
 		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-		kernel_trigger_dispatch_now(5);
+		kernel_trigger_dispatch_now(kCHANGE_FLUMIX_ANIMATION);
 		kernel_trigger_dispatch_now(6);
 		_G(flags)[V298] = 1;
 		pal_fade_init(0, 255, 100, 30, -1);
@@ -86,32 +90,32 @@ void Room702::daemon() {
 	case 3:
 		_G(flumix_should) = 4;
 		pal_fade_init(_G(kernel).first_fade, 255, 0, 90, -1);
-		kernel_timing_trigger(30, 5);
+		kernel_timing_trigger(30, kCHANGE_FLUMIX_ANIMATION);
 		break;
 
 	case 4:
 		_G(game).new_room = 706;
 		break;
 
-	case 5:
-		switch (_val1) {
+	case kCHANGE_FLUMIX_ANIMATION:
+		switch (_flumixMode) {
 		case 1:
 			switch (_G(flumix_should)) {
 			case 3:
-				_val1 = 2;
+				_flumixMode = 2;
 				break;
 
 			case 4:
 				if (_flag1)
-					terminateMachineAndNull(_series10);
+					terminateMachineAndNull(_flumix);
 
-				_series10 = series_play("702FLX02", 0, 0, 4);
+				_flumix = series_play("702FLX02", 0, 0, 4);
 				break;
 
 			case 5:
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series10 = series_play("702C1FL2", 0, 2, 5);
+				_flumix = series_play("702C1FL2", 0, 2, kCHANGE_FLUMIX_ANIMATION);
 
 				if (imath_ranged_rand(0, 1) == 1) {
 					digi_play("702F003B", 2, 100);
@@ -121,9 +125,9 @@ void Room702::daemon() {
 				break;
 
 			case 6:
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series10 = series_play("702C1FL3", 0, 1, 5);
+				_flumix = series_play("702C1FL3", 0, 1, kCHANGE_FLUMIX_ANIMATION);
 
 				if (imath_ranged_rand(0, 1) == 1) {
 					digi_play("702F003B", 2, 100);
@@ -133,9 +137,9 @@ void Room702::daemon() {
 				break;
 
 			case 7:
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series10 = series_play("702C1FL2", 0, 0, 5);
+				_flumix = series_play("702C1FL2", 0, 0, kCHANGE_FLUMIX_ANIMATION);
 
 				if (imath_ranged_rand(0, 1) == 1) {
 					digi_play("702F003B", 2, 100);
@@ -145,16 +149,16 @@ void Room702::daemon() {
 				break;
 
 			case 8:
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series10 = series_play("702C1FL1", 0, 0, 5);
+				_flumix = series_play("702C1FL1", 0, 0, kCHANGE_FLUMIX_ANIMATION);
 				digi_play("702F003B", 2, 120);
 				break;
 
 			case 9:
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series10 = series_play("702FLT01", 0, 0, 5, 60);
+				_flumix = series_play("702FLT01", 0, 0, kCHANGE_FLUMIX_ANIMATION, 60);
 				break;
 
 			default:
@@ -166,25 +170,25 @@ void Room702::daemon() {
 			switch (_G(flumix_should)) {
 			case 3:
 				if (_flag1)
-					terminateMachineAndNull(_series10);
+					terminateMachineAndNull(_flumix);
 
 				_flag1 = true;
 				_G(flumix_should) = 21;
-				_series10 = series_play("702FLT01", 0, 4);
+				_flumix = series_play("702FLT01", 0, 4, -1, 6, -1);
 				digi_play(conv_sound_to_play(), 1, 255, 5);
 				break;
 
 			case 21:
-				terminateMachineAndNull(_series10);
+				terminateMachineAndNull(_flumix);
 				_flag1 = false;
-				_G(flumix_should) = getRoomVal();
+				_G(flumix_should) = getFlumixShould();
 				kernel_trigger_dispatch_now(5);
 				conv_resume_curr();
 				break;
 
 
 			default:
-				_val1 = 1;
+				_flumixMode = 1;
 				kernel_trigger_dispatch_now(5);
 				break;
 			}
@@ -228,6 +232,10 @@ void Room702::daemon() {
 			break;
 		}
 		break;
+
+	default:
+		_G(kernel).continue_handling_trigger = true;
+		break;
 	}
 }
 
@@ -264,7 +272,7 @@ void Room702::conv82() {
 	if (conv_sound_to_play()) {
 		if (who <= 0) {
 			_G(flumix_should) = 3;
-			kernel_trigger_dispatch_now(5);
+			kernel_trigger_dispatch_now(kCHANGE_FLUMIX_ANIMATION);
 
 		} else if (who == 1) {
 			wilbur_speech(conv_sound_to_play(), 10001);
@@ -272,7 +280,7 @@ void Room702::conv82() {
 	}
 }
 
-int Room702::getRoomVal() {
+int Room702::getFlumixShould() {
 	switch (imath_ranged_rand(1, 12)) {
 	case 1:
 	case 2:

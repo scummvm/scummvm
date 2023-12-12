@@ -36,15 +36,15 @@ private:
 	int _series4 = -1;
 	int _series5 = -1;
 	int _series6 = -1;
-	machine *_series10 = nullptr;
+	machine *_flumix = nullptr;
 	machine *_series11 = nullptr;
 	bool _flag1 = false;
 	bool _flag2 = false;
-	int _val1 = 0;
+	int _flumixMode = 0;
 	int _val2 = 0;
 
 	void conv82();
-	int getRoomVal();
+	int getFlumixShould();
 
 public:
 	Room702() : Room() {
