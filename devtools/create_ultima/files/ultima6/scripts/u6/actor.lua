@@ -1536,7 +1536,7 @@ function actor_attack(attacker, target_x, target_y, target_z, weapon, foe)
 
       if weapon_obj_n == 0x31 then --boomerang
          if attacker.x ~= 0 and attacker.y ~= 0 then --hack to stop return projectile if the avatar has died
-         	projectile(projectile_weapon_tbl[weapon_obj_n][1], target_x, target_y, attacker.x, attacker.y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
+            projectile(projectile_weapon_tbl[weapon_obj_n][1], coll_tiles[1].x, coll_tiles[1].y, attacker.x, attacker.y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
          end
       end
    end
