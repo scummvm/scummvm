@@ -395,7 +395,7 @@ void Room706::daemon() {
 		digi_unload_stream_breaks(SERIES8);
 		digi_preload_stream_breaks(SERIES9);
 		digi_preload("707D_007");
-		series_stream_with_breaks(SERIES9, "70D", 6, 1, 28);
+		series_stream_with_breaks(SERIES9, "707D", 6, 1, 28);
 		pal_fade_init(0, 255, 100, 30, -1);
 		break;
 
@@ -411,7 +411,7 @@ void Room706::daemon() {
 
 	case 30:
 		digi_unload_stream_breaks(SERIES9);
-		digi_preload("909B_005");
+		digi_preload("709B_005");
 		digi_preload_stream_breaks(SERIES10);
 		series_stream_with_breaks(SERIES10, "709B", 6, 1, 31);
 		pal_fade_init(0, 255, 100, 31, -1);
