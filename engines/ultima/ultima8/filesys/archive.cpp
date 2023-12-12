@@ -58,15 +58,15 @@ bool Archive::addSource(ArchiveFile *af) {
 bool Archive::addSource(Common::SeekableReadStream *rs) {
 	ArchiveFile *s = nullptr;
 
-	if (!rs) return false;
+	if (!rs)
+		return false;
 
 	if (FlexFile::isFlexFile(rs)) {
 		s = new FlexFile(rs);
-	} else if (U8SaveFile::isU8SaveFile(rs)) {
-		s = new U8SaveFile(rs);
 	}
 
-	if (!s) return false;
+	if (!s)
+		return false;
 	if (!s->isValid()) {
 		delete s;
 		return false;

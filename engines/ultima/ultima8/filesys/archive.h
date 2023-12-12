@@ -22,8 +22,6 @@
 #ifndef ULTIMA8_FILESYS_ARCHIVE_H
 #define ULTIMA8_FILESYS_ARCHIVE_H
 
-#include "ultima/shared/std/string.h"
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -38,7 +36,7 @@ public:
 	explicit Archive(ArchiveFile *af);
 
 	//! create Archive with a single input source, autodetecting the type
-	//! Will create FlexFile, U8SaveFile or ZipFile; ids will be deleted.
+	//! Will create FlexFile; ids will be deleted.
 	explicit Archive(Common::SeekableReadStream *rs);
 
 	virtual ~Archive();
