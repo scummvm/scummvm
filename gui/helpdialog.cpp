@@ -40,19 +40,19 @@ _s("General"),
 _s(
 "## Where to get the games\n"
 "\n"
-"Visit [our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games) for a list of games and where to purchase them.\n"
+"Visit [our Wiki](https://wiki.scummvm.org/index.php?title=Where_to_get_the_games) for a list of supported games and where they can be purchased.\n"
 "\n"
 "Alternatively, download a selection of [freeware games](https://scummvm.org/games) and [demos](https://www.scummvm.org/demos/) from our website.\n"
 "\n"
-"For other (out of print) games, try Amazon, eBay, Game Trading Zone or other auction "
-"sites. Beware of faulty games and illegal game copies.\n"
-"\n"
-"The ScummVM team does not recommend any individual supplier of games,"
-"however the project does get a cut from every purchase on "
+"The ScummVM team does not recommend any individual supplier of games. "
+"However the project does get a cut from every purchase on "
 "[ZOOM-Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) "
 "through affiliate referral links.\n"
 "\n"
-"Additionally, some games that are not available on ZOOM-Platform can be found on GOG.com.\n"
+"Additionally, some games that are not available on ZOOM-Platform can be found on other suppliers such as GOG.com and Steam.\n"
+"\n"
+"For other (out of print) games, try Amazon, eBay, Game Trading Zone or other auction "
+"sites. Beware of faulty games and illegal game copies.\n"
 ),
 
 0,
