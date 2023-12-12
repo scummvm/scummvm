@@ -50,8 +50,8 @@ private:
 	int32 _vpoof = -1;
 	KernelTriggerType _newMode = (KernelTriggerType)0;
 	int _volume = 0;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _vipeShould = 0;
+	int _vipeMode = 0;
 	int _val3 = 0;
 	int _val4 = 0;
 	int _val5 = 0;

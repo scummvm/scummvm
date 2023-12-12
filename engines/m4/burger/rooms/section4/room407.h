@@ -51,7 +51,7 @@ private:
 	static const seriesPlayBreak PLAY16[];
 	static const seriesPlayBreak PLAY17[];
 	static const seriesPlayBreak PLAY18[];
-	static int32 _state1;
+	static int32 _speechNum;
 	Series _vp02;
 	Series _dz;
 	int _dzS1 = 0, _dzS2 = 0;
@@ -60,10 +60,10 @@ private:
 	Common::String _digiName;
 	bool _flag1 = false;
 	int _val1 = 0;
-	int _val2 = 0;
-	int _val3 = 0;
+	int _drumzShould = 0;
+	int _roxyShould = 0;
 	int _val4 = 0;
-	int _val5 = 0;
+	int _vipeShould = 0;
 	int _digiTrigger = 0;
 
 	void loadSeries();
