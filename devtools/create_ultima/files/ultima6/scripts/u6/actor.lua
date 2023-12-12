@@ -1622,30 +1622,35 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapo
       if map_is_water(target_x,target_y,target_z) == false then
 	      local obj = Obj.new(317); --fire field
           obj.temporary = true
-	      Obj.moveToMap(obj, target_x, target_y, target_z)
+	      Obj.moveToMap(obj, pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z)
       end
 
    elseif weapon_obj_n == 0x24 or weapon_obj_n == 0x25 or weapon_obj_n == 0x26 then
       --spear, throwing axe, dagger
 
-      --remove unreadied throwing weapons from inventory first so weapon stays readied
-      local removal_candidate = nil
-      for inv_obj in actor_inventory(attacker) do
-          if inv_obj.obj_n == weapon_obj_n then
-              removal_candidate = inv_obj
-              if removal_candidate.readied ~= true then
+      -- Only remove thrown weapon from attacker if distance to target is > 1,
+      -- else just skip handling and keep the item
+      if abs(coll_tiles[1].x - attacker.x) > 1 or abs(coll_tiles[1].y - attacker.y) > 1 then
+         --remove unreadied throwing weapons from inventory first so weapon stays readied
+         local removal_candidate = nil
+         for inv_obj in actor_inventory(attacker) do
+            if inv_obj.obj_n == weapon_obj_n then
+               removal_candidate = inv_obj
+               if removal_candidate.readied ~= true then
                   break
-              end
-          end
-      end
-      if removal_candidate ~= nil then
-          Actor.inv_remove_obj(attacker, removal_candidate)
-          if map_is_water(target_x,target_y,target_z) == false then
-              local obj = Obj.new(weapon_obj_n);
-              obj.ok_to_take = true
-              obj.temporary = true
-              Obj.moveToMap(obj, target_x, target_y, target_z)
-          end
+               end
+            end
+         end
+         if removal_candidate ~= nil then
+            Actor.inv_remove_obj(attacker, removal_candidate)
+            -- Do not place thrown weapon if target is an actor
+            if (coll_tiles[1].foe == mil or coll_tiles[1].foe.luatype ~= "actor") and map_is_water(pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z) == false then
+               local obj = Obj.new(weapon_obj_n);
+               obj.ok_to_take = true
+               obj.temporary = true
+               Obj.moveToMap(obj, pre_coll_tiles[1].x, pre_coll_tiles[1].y, pre_coll_tiles[1].z)
+            end
+         end
       end
    elseif weapon_obj_n == 0x29 or weapon_obj_n == 0x2a or weapon_obj_n == 0x32 or weapon_obj_n == 0x36 then
       --bow, crossbow, triple crossbow, magic bow
