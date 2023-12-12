@@ -1597,9 +1597,9 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapo
    -- Projectile animation
    -- TODO: Animation currently does its own collision checking. This should only be done once.
    if weapon_obj_n == 0x32 then --triple crossbow
-      projectile_anim_multi(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, targets, projectile_weapon_tbl[weapon_obj_n][3], 0, projectile_weapon_tbl[weapon_obj_n][2])
+      projectile_anim_multi(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, coll_tiles, projectile_weapon_tbl[weapon_obj_n][3], 0, projectile_weapon_tbl[weapon_obj_n][2])
    else
-      projectile(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, target_x, target_y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
+      projectile(projectile_weapon_tbl[weapon_obj_n][1], attacker.x, attacker.y, coll_tiles[1].x, coll_tiles[1].y, projectile_weapon_tbl[weapon_obj_n][3], projectile_weapon_tbl[weapon_obj_n][4])
    end
 
    if weapon_obj_n == 0x5b then
