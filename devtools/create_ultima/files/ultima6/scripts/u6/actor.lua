@@ -1561,7 +1561,7 @@ function combat_range_weapon_1D5F9(attacker, target_x, target_y, target_z, weapo
 
    --set up targets table
    if weapon_obj_n == 0x32 then --triple crossbow
-      local index = ((attacker.y - target_y + 5) * 11) + (attacker.x - target_x + 5) + 1
+      local index = ((target_y - attacker.y + 5) * 11) + (target_x - attacker.x + 5) + 1
       targets = {
          {x=target_x,
           y=target_y,
