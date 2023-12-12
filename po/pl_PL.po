@@ -10430,7 +10430,8 @@ msgstr "Kamera porusza się z Silencerem"
 #: engines/ultima/metaengine.cpp:153
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr "Kamera śledzi ruch gracza, zamiast przeskakiwać do określonych pozycji."
+msgstr ""
+"Kamera śledzi ruch gracza, zamiast przeskakiwać do określonych pozycji."
 
 #: engines/ultima/metaengine.cpp:163
 msgid "Always enable Christmas easter-egg"
@@ -10517,7 +10518,8 @@ msgstr "Pomijaj menu główne"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr "Rozpoczyna nową grę po uruchomieniu, zamiast wchodzić do menu głównego."
+msgstr ""
+"Rozpoczyna nową grę po uruchomieniu, zamiast wchodzić do menu głównego."
 
 #: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
@@ -10572,8 +10574,8 @@ msgid ""
 "Music for this game requires Ogg Vorbis support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
-"Muzyka do tej gry wymaga obsługi Ogg Vorbis, która nie została wkompilowana."
-"\n"
+"Muzyka do tej gry wymaga obsługi Ogg Vorbis, która nie została "
+"wkompilowana.\n"
 "Gra będzie działać, ale żadna muzyka nie będzie odtwarzana."
 
 #: engines/vcruise/vcruise.cpp:100
