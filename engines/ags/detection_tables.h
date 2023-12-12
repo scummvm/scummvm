@@ -4273,6 +4273,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347), // Mac v2.7a
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976476198), // Mac v3
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 977991488), // Mac v3.0a
+	GAME_ENTRY_GOG("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866341456), // Mac v3.5a
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182),
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678),  // with Ita translation
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766),
