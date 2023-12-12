@@ -349,6 +349,11 @@ int32 DataIO::fileSize(const Common::String &name) {
 }
 
 Common::SeekableReadStream *DataIO::getFile(const Common::String &name) {
+	// Try to open a matching plain file
+	Common::File f;
+	if (f.open(name))
+		return f.readStream(f.size());
+
 	// Try to open the file in the archives
 	File *file = findFile(name);
 	if (file) {
@@ -357,15 +362,22 @@ Common::SeekableReadStream *DataIO::getFile(const Common::String &name) {
 			return data;
 	}
 
-	// Else, try to open a matching plain file
-	Common::File f;
-	if (!f.open(name))
-		return nullptr;
-
-	return f.readStream(f.size());
+	return nullptr;
 }
 
 byte *DataIO::getFile(const Common::String &name, int32 &size) {
+	// Try to open a matching plain file
+	Common::File f;
+	if (f.open(name)) {
+		size = f.size();
+
+		byte *data = new byte[size];
+		if (f.read(data, size) == ((uint32) size))
+			return data;
+
+		delete[] data;
+	}
+
 	// Try to open the file in the archives
 	File *file = findFile(name);
 	if (file) {
@@ -374,20 +386,7 @@ byte *DataIO::getFile(const Common::String &name, int32 &size) {
 			return data;
 	}
 
-	// Else, try to open a matching plain file
-	Common::File f;
-	if (!f.open(name))
-		return nullptr;
-
-	size = f.size();
-
-	byte *data = new byte[size];
-	if (f.read(data, size) != ((uint32) size)) {
-		delete[] data;
-		return nullptr;
-	}
-
-	return data;
+	return nullptr;
 }
 
 DataIO::File *DataIO::findFile(const Common::String &name) {
