@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-10 16:40+0000\n"
-"PO-Revision-Date: 2023-11-27 05:41+0000\n"
+"PO-Revision-Date: 2023-12-12 21:44+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3187,10 +3187,8 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "Aquest joc no suporta la càrrega de partides des del llançador."
+msgstr "Aquest joc no permet desar des del menú. Utilitza la interfície del joc"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
@@ -3207,10 +3205,9 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "Aquest joc no suporta la càrrega de partides des del llançador."
+msgstr ""
+"Aquest joc no permet carregar des del menú. Utilitza la interfície del joc"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
@@ -5329,18 +5326,14 @@ msgstr "Afegeix un menú de velocitat del joc (similar a la versió per a PC)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Aquest joc no és compatible."
+msgstr "Aquest joc no permet carregar"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Aquest joc no és compatible."
+msgstr "Aquesta partida no permet desar"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -10298,12 +10291,12 @@ msgstr "Imprimeix la depuració"
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1849
 msgid "Exit"
-msgstr ""
+msgstr "Surt"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
 msgid "Light helper window"
-msgstr ""
+msgstr "Finestra auxiliar d'il·luminació"
 
 #: engines/wintermute/keymapper_tables.h:751
 msgid "Run forward"
@@ -10348,19 +10341,19 @@ msgstr "Volum desactivat"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "Canvia la mida del tipus de lletra"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Velocitat caminant: Baixa"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Velocitat caminant: Mitjana"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Velocitat caminant: Alta"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1314
@@ -10379,7 +10372,7 @@ msgstr "Última pàgina"
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Velocitat caminant: Ultra Super Mega ràpida"
 
 #: engines/wintermute/keymapper_tables.h:994
 msgid "Show game credits"
@@ -10387,11 +10380,11 @@ msgstr "Mostra els crèdits del joc"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "Reprodueix el registre de música seleccionat"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "Selecciona el següent enregistrament de música"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
@@ -10423,35 +10416,35 @@ msgstr "Toqueu la nota 7: Si"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "Habilitat: Telequinesi"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "Habilitat: Empènyer"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Habilitat: Llampec"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "Habilitat: Llum"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Habilitat: Vent"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Habilitat: So"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "Habilitat: Essència"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "Habilitat: Exorcista"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
@@ -10488,7 +10481,7 @@ msgstr "Amaga els suggeriments"
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1464
 msgid "Shift key"
-msgstr ""
+msgstr "Tecla Majúscules"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
@@ -10500,33 +10493,33 @@ msgstr "Acció de Chapayev"
 #: engines/wintermute/keymapper_tables.h:1867
 #: engines/wintermute/keymapper_tables.h:1963
 msgid "Settings"
-msgstr ""
+msgstr "Configuració"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "Resposta de diàleg 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "Resposta de diàleg 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "Resposta de diàleg 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "Resposta de diàleg 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1645
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "Gira la roda més lentament"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1653
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "Gira la roda més ràpid"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "Zoom out"
@@ -10544,7 +10537,7 @@ msgstr "Mostra el diari"
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
 msgid "Bezier window"
-msgstr ""
+msgstr "Finestra Bézier"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1901
@@ -10619,7 +10612,7 @@ msgstr "Doble FPS"
 
 #: engines/zvision/metaengine.cpp:59
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "Augmenta la velocitat de fotogrames de 30 a 60 FPS"
 
 #: engines/zvision/metaengine.cpp:70
 msgid "Enable Venus"
@@ -10631,11 +10624,11 @@ msgstr "Activa el sistema d'ajuda de Venus"
 
 #: engines/zvision/metaengine.cpp:82
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "Desactiva l'animació mentre es gira"
 
 #: engines/zvision/metaengine.cpp:83
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "Desactiva l'animació en girar en mode panoràmic"
 
 #: engines/zvision/metaengine.cpp:94
 msgid "Use high resolution MPEG video"
@@ -10656,7 +10649,7 @@ msgstr "Mira cap avall"
 
 #: engines/zvision/metaengine.cpp:238
 msgid "Spellbook"
-msgstr ""
+msgstr "Llibre d'encanteris"
 
 #: engines/zvision/metaengine.cpp:244
 msgid "Score"
@@ -10664,11 +10657,11 @@ msgstr "Puntuació"
 
 #: engines/zvision/metaengine.cpp:250
 msgid "Put away object"
-msgstr ""
+msgstr "Deixa l'objecte"
 
 #: engines/zvision/metaengine.cpp:256
 msgid "Extract coin"
-msgstr ""
+msgstr "Extreu la moneda"
 
 #: engines/zvision/metaengine.cpp:277
 msgid "Preferences"
