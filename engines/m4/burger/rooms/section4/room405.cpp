@@ -27,6 +27,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_VIPE_ANIMATION = 15
+};
+
 const char *Room405::SAID[][4] = {
 	{ "VIPE",          nullptr,   "400W001", "400W001" },
 	{ "GUITAR",        "405w003", nullptr,   nullptr   },
@@ -146,9 +150,9 @@ void Room405::init() {
 		hotspot_set_active("vipe", false);
 		hotspot_set_active("guitar", false);
 	} else {
-		_val1 = 39;
-		_val2 = 39;
-		kernel_trigger_dispatch_now(15);
+		_vipeShould = 39;
+		_vipeMode = 39;
+		kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 	}
 
 	if (inv_object_is_here("records")) {
@@ -192,12 +196,12 @@ void Room405::daemon() {
 	case 1:
 	case 4:
 		player_set_commands_allowed(true);
-		_val1 = 39;
+		_vipeShould = 39;
 		break;
 
 	case 2:
 		player_set_commands_allowed(false);
-		_val1 = 49;
+		_vipeShould = 49;
 		break;
 
 	case 3:
@@ -240,93 +244,93 @@ void Room405::daemon() {
 		digi_play("405v513", 1, 255);
 		break;
 
-	case 15:
-		switch (_val2) {
+	case kCHANGE_VIPE_ANIMATION:
+		switch (_vipeMode) {
 		case 39:
-			switch (_val1) {
+			switch (_vipeShould) {
 			case 39:
 				if (imath_ranged_rand(1, 20) == 1) {
-					_val2 = 42;
-					Series::series_play("405vp03", 0x900, 0, 15, 6, 0, 100, 0, 0, 0, 4);
+					_vipeMode = 42;
+					Series::series_play("405vp03", 0x900, 0, kCHANGE_VIPE_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				} else {
-					Series::series_play("405vp01", 0x900, 0, 15, 60, 0, 100, 0, 0, 0, 0);
+					Series::series_play("405vp01", 0x900, 0, kCHANGE_VIPE_ANIMATION, 60, 0, 100, 0, 0, 0, 0);
 				}
 				break;
 
 			case 40:
 				frame = imath_ranged_rand(0, 5);
-				Series::series_play("405vp02", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405vp02", 0x900, 0, kCHANGE_VIPE_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi2();
 				break;
 
 			default:
-				_val2 = 42;
-				Series::series_play("405vp03", 0x900, 0, 15, 6, 0, 100, 0, 0, 0, 4);
+				_vipeMode = 42;
+				Series::series_play("405vp03", 0x900, 0, kCHANGE_VIPE_ANIMATION, 6, 0, 100, 0, 0, 0, 4);
 				break;
 			}
 			break;
 
 		case 41:
-			if (_val1 == 39) {
+			if (_vipeShould == 39) {
 				if (imath_ranged_rand(1, 10) == 1) {
-					Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 5, 6);
+					Series::series_play("405vp07", 0x900, 0, kCHANGE_VIPE_ANIMATION, 10, 0, 100, 0, 0, 5, 6);
 				} else {
-					Series::series_play("405vp07", 0x900, 2, 15, 60, 0, 100, 0, 0, 4, 4);
+					Series::series_play("405vp07", 0x900, 2, kCHANGE_VIPE_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 				}
 			} else {
-				_val2 = 42;
-				Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 5, 6);				
+				_vipeMode = 42;
+				Series::series_play("405vp07", 0x900, 0, kCHANGE_VIPE_ANIMATION, 10, 0, 100, 0, 0, 5, 6);				
 			}
 			break;
 
 		case 42:
-			switch (_val1) {
+			switch (_vipeShould) {
 			case 39:
 				switch (imath_ranged_rand(1, 20)) {
 				case 1:
-					_val2 = 39;
-					Series::series_play("405vp03", 0x900, 2, 15, 10, 0, 100, 0, 0, 0, 4);
+					_vipeMode = 39;
+					Series::series_play("405vp03", 0x900, 2, kCHANGE_VIPE_ANIMATION, 10, 0, 100, 0, 0, 0, 4);
 					break;
 				case 2:
-					_val2 = 41;
-					Series::series_play("405vp07", 0x900, 0, 15, 10, 0, 100, 0, 0, 0, 4);
+					_vipeMode = 41;
+					Series::series_play("405vp07", 0x900, 0, kCHANGE_VIPE_ANIMATION, 10, 0, 100, 0, 0, 0, 4);
 					break;
 
 				default:
-					Series::series_play("405vp03", 0x900, 0, 15, 60, 0, 100, 0, 0, 4, 4);
+					Series::series_play("405vp03", 0x900, 0, kCHANGE_VIPE_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 					break;
 				}
 				break;
 
 			case 43:
-				Series::series_play("405vp03", 0x900, 0, 15, 60, 0, 100, 0, 0, 4, 4);
+				Series::series_play("405vp03", 0x900, 0, kCHANGE_VIPE_ANIMATION, 60, 0, 100, 0, 0, 4, 4);
 				break;
 
 			case 44:
 				frame = imath_ranged_rand(0, 5);
-				Series::series_play("405vp05", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405vp05", 0x900, 0, kCHANGE_VIPE_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				playDigi2();
 				break;
 
 			case 45:
 				frame = imath_ranged_rand(0, 6);
-				Series::series_play("405vp06", 0x900, 0, 15, 4, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405vp06", 0x900, 0, kCHANGE_VIPE_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 49:
 				digi_preload("999_003");
 				_vpoof = series_load("405vpoof");
-				_val1 = 50;
-				Series::series_play("405vp13", 0x900, 0, 15, 7, 0, 100, 0, 0, 0, 16);
+				_vipeShould = 50;
+				Series::series_play("405vp13", 0x900, 0, kCHANGE_VIPE_ANIMATION, 7, 0, 100, 0, 0, 0, 16);
 				break;
 
 			case 50:
-				_val1 = 51;
+				_vipeShould = 51;
 				Series::series_play("405vp13", 0x900, 0, -1, 7, 0, 100, 0, 0, 17, 18);
 
 				_G(flags)[V166] = 1;
 				digi_play("999_003", 1, 255);
-				series_play("405vpoof", 0x500, 0, 15, 7, 0, 70, 40, 40, 0, -1);
+				series_play("405vpoof", 0x500, 0, kCHANGE_VIPE_ANIMATION, 7, 0, 70, 40, 40, 0, -1);
 				_val5 = 2;
 				kernel_trigger_dispatch_now(16);
 				break;
@@ -343,23 +347,68 @@ void Room405::daemon() {
 			break;
 
 		case 46:
-			switch (_val1) {
+			switch (_vipeShould) {
 			case 47:
-				Series::series_play("405vp10", 0x900, 0, 15, 60, 0, 100, 0, 0, 5, 5);
+				Series::series_play("405vp10", 0x900, 0, kCHANGE_VIPE_ANIMATION, 60, 0, 100, 0, 0, 5, 5);
 				break;
 
 			case 48:
 				frame = imath_ranged_rand(0, 6);
-				Series::series_play("405vp11", 0x900, 0, 15, 5, 0, 100, 0, 0, frame, frame);
+				Series::series_play("405vp11", 0x900, 0, kCHANGE_VIPE_ANIMATION, 5, 0, 100, 0, 0, frame, frame);
 				playDigi2();
 				break;
 
 			case 49:
-				_val2 = 42;
-				kernel_trigger_dispatch_now(15);
+				_vipeMode = 42;
+				kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 				break;
 
 			}
+			break;
+
+		case 47:
+			switch (_vipeShould) {
+			case 47:
+				Series::series_play("405vp10", 0x900, 0, kCHANGE_VIPE_ANIMATION,
+					60, 0, 100, 0, 0, 5, 5);
+				break;
+
+			case 48:
+				frame = imath_ranged_rand(0, 6);
+				Series::series_play("405vp11", 0x900, 0, kCHANGE_VIPE_ANIMATION,
+					5, 0, 100, 0, 0, frame, frame);
+				playDigi2();
+				break;
+
+			case 49:
+				_vipeMode = 42;
+				kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
+				break;
+
+			default:
+				break;
+			}
+		default:
+			break;
+		}
+		break;
+
+	case 16:
+		switch (_val5) {
+		case 1:
+			_cat.terminate();
+			_val5 = 3;
+			series_play_with_breaks(PLAY3, "405cat", 0, 16, 3, 9, 100, 0, 0);
+			break;
+
+		case 2:
+			_cat.terminate();
+			_val5 = 3;
+			series_play_with_breaks(PLAY4, "405cat", 0, 16, 3, 6, 100, 0, 0);
+			break;
+
+		case 3:
+			_cat.show("405cat", 0);
 			break;
 
 		default:
@@ -367,35 +416,12 @@ void Room405::daemon() {
 		}
 		break;
 
-		case 16:
-			switch (_val5) {
-			case 1:
-				_cat.terminate();
-				_val5 = 3;
-				series_play_with_breaks(PLAY3, "405cat", 0, 16, 3, 9, 100, 0, 0);
-				break;
-
-			case 2:
-				_cat.terminate();
-				_val5 = 3;
-				series_play_with_breaks(PLAY4, "405cat", 0, 16, 3, 6, 100, 0, 0);
-				break;
-
-			case 3:
-				_cat.show("405cat", 0);
-				break;
-
-			default:
-				break;
-			}
-			break;
-
 	case 17:
 		switch (_val4) {
 		case 4:
 			switch (_val3) {
 			case 4:
-				switch (imath_ranged_rand(1, 15)) {
+				switch (imath_ranged_rand(1, kCHANGE_VIPE_ANIMATION)) {
 				case 1:
 					series_play_with_breaks(PLAY1, "405ve02", 0xf00, 17, 2);
 					break;
@@ -497,12 +523,12 @@ void Room405::daemon() {
 				break;
 
 			case 14:
-				_val3 = 15;
+				_val3 = kCHANGE_VIPE_ANIMATION;
 				digi_preload("405_009");
 				series_play_with_breaks(PLAY2, "405ve16", 0x100, 17, 3);
 				break;
 
-			case 15:
+			case kCHANGE_VIPE_ANIMATION:
 				_val3 = 9;
 				kernel_trigger_dispatch_now(17);
 				break;
@@ -694,7 +720,7 @@ void Room405::daemon() {
 		break;
 
 	case 22:
-		pal_fade_init(15, 255, 100, 0, -1);
+		pal_fade_init(kCHANGE_VIPE_ANIMATION, 255, 100, 0, -1);
 		break;
 
 	case 23:
@@ -737,8 +763,8 @@ void Room405::daemon() {
 		break;
 
 	case 28:
-		_val2 = 47;
-		Series::series_play("405vp10", 0x900, 0, 15, 7, 0, 100, 0, 0, 0, 5);
+		_vipeMode = 47;
+		Series::series_play("405vp10", 0x900, 0, kCHANGE_VIPE_ANIMATION, 7, 0, 100, 0, 0, 0, 5);
 		break;
 
 	case 29:
@@ -761,11 +787,11 @@ void Room405::daemon() {
 		case 25:
 			disable_player();
 			_G(wilbur_should) = 26;
-			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, 15);
+			Series::series_play("405wi01", 0x100, 0, kCHANGE_WILBUR_ANIMATION, 7, 0, 100, 0, 0, 0, kCHANGE_VIPE_ANIMATION);
 			break;
 
 		case 26:
-			_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, 15, 15);
+			_vp03.play("405wi01", 0x100, 0, -1, 600, -1, 100, 0, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_VIPE_ANIMATION);
 			startConv89();
 			break;
 
@@ -836,7 +862,7 @@ void Room405::daemon() {
 		case 37:
 			_G(wilbur_should) = 38;
 			gr_backup_palette();
-			pal_fade_init(_G(kernel).first_fade, 255, 0, 15, kCHANGE_WILBUR_ANIMATION);
+			pal_fade_init(_G(kernel).first_fade, 255, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_WILBUR_ANIMATION);
 			break;
 
 		case 38:
@@ -984,7 +1010,7 @@ void Room405::parser() {
 
 		case 4:
 			term_message("spat 4");
-			_eu02 = series_play("405eu02", 0xf00, 0, -1, 600, -1, 100, 0, 0, 15, 15);
+			_eu02 = series_play("405eu02", 0xf00, 0, -1, 600, -1, 100, 0, 0, kCHANGE_VIPE_ANIMATION, kCHANGE_VIPE_ANIMATION);
 			break;
 
 		default:
@@ -1058,12 +1084,12 @@ void Room405::conv86() {
 
 	if (_G(kernel).trigger == 18) {
 		if (who <= 0) {
-			if (_val2 == 39)
-				_val1 = 39;
-			else if (_val2 == 47)
-				_val1 = 47;
+			if (_vipeMode == 39)
+				_vipeShould = 39;
+			else if (_vipeMode == 47)
+				_vipeShould = 47;
 			else
-				_val1 = 43;
+				_vipeShould = 43;
 
 			conv_resume();
 		} else if (who == 1) {
@@ -1074,12 +1100,12 @@ void Room405::conv86() {
 		}
 	} else if (sound) {
 		if (who <= 0) {
-			if (_val2 == 39)
-				_val1 = 40;
-			else if (_val2 == 47)
-				_val1 = 48;
+			if (_vipeMode == 39)
+				_vipeShould = 40;
+			else if (_vipeMode == 47)
+				_vipeShould = 48;
 			else
-				_val1 = 44;
+				_vipeShould = 44;
 
 			_digiName = sound;
 		} else if (who == 1) {
@@ -1105,12 +1131,12 @@ void Room405::conv89() {
 
 	if (_G(kernel).trigger == 18) {
 		if (who <= 0) {
-			if (_val2 == 39)
-				_val1 = 39;
-			else if (_val2 == 47)
-				_val1 = 47;
+			if (_vipeMode == 39)
+				_vipeShould = 39;
+			else if (_vipeMode == 47)
+				_vipeShould = 47;
 			else
-				_val1 = 43;
+				_vipeShould = 43;
 
 			conv_resume();
 		} else if (who == 1) {
@@ -1122,15 +1148,15 @@ void Room405::conv89() {
 	} else if (sound) {
 		if (who <= 0) {
 			if ((node == 1 && entry == 0) || (node == 2 && entry == 0)) {
-				_val1 = 44;
+				_vipeShould = 44;
 			} else if ((node == 1 && entry == 1) || (node == 2 && entry == 1)) {
-				_val1 = 48;
-			} else if (_val2 == 39) {
-				_val1 = 40;
-			} else if (_val2 == 47) {
-				_val1 = 48;
+				_vipeShould = 48;
+			} else if (_vipeMode == 39) {
+				_vipeShould = 40;
+			} else if (_vipeMode == 47) {
+				_vipeShould = 48;
 			} else {
-				_val1 = 44;
+				_vipeShould = 44;
 			}
 
 			_digiName = sound;
@@ -1155,7 +1181,7 @@ void Room405::conv90() {
 
 	if (_G(kernel).trigger == 18) {
 		if (who <= 0) {
-			_val1 = 39;
+			_vipeShould = 39;
 			conv_resume();
 		} else if (who == 1) {
 			if (_G(player).walker_visible)
@@ -1165,7 +1191,7 @@ void Room405::conv90() {
 		}
 	} else if (sound) {
 		if (who <= 0) {
-			_val1 = 44;
+			_vipeShould = 44;
 			_digiName = sound;
 		} else if (who == 1) {
 			if (_G(player).walker_visible)
@@ -1188,7 +1214,7 @@ void Room405::conv91() {
 
 	if (_G(kernel).trigger == 18) {
 		if (who <= 0) {
-			_val1 = 39;
+			_vipeShould = 39;
 			conv_resume();
 		} else if (who == 1) {
 			if (_G(player).walker_visible)
@@ -1198,7 +1224,7 @@ void Room405::conv91() {
 		}
 	} else if (sound) {
 		if (who <= 0) {
-			_val1 = 44;
+			_vipeShould = 44;
 			_digiName = sound;
 		} else if (who == 1) {
 			if (_G(player).walker_visible)

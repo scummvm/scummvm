@@ -26,6 +26,13 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kWILBUR_SPEECH = 4,
+	kCHANGE_DRUMZ_ANIMATION = 7,
+	kCHANGE_ROXY_ANIMATION = 8,
+	kCHANGE_VIPE_ANIMATION = 9
+};
+
 const char *Room407::SAID[][4] = {
 	{ "TOUR BUS",     "407w001", "407w002", "407w003" },
 	{ "ROXY",         nullptr,   "400w001", "400w001" },
@@ -37,16 +44,16 @@ const char *Room407::SAID[][4] = {
 
 const WilburMatch Room407::MATCH[] = {
 	{ "TALK", "DRUMZ",           11, 0, 0, nullptr, 0 },
-	{ "AMPLIFIER", "DRUMZ",       4, 0, 0, &_state1, 4 },
-	{ nullptr, "DRUMZ",           4, 0, 0, &_state1, 7 },
+	{ "AMPLIFIER", "DRUMZ",       4, 0, 0, &_speechNum, 4 },
+	{ nullptr, "DRUMZ",           4, 0, 0, &_speechNum, 7 },
 	{ "LOOK AT", "ROXY",      10016, 0, 0, &Vars::_wilbur_should, 1 },
 	{ "TALK", "ROXY",         10016, 0, 0, &Vars::_wilbur_should, 2 },
-	{ "AMPLIFIER", "ROXY",        4, 0, 0, &_state1, 4 },
-	{ "DOG COLLAR", "ROXY",       4, 0, 0, &_state1, 5 },
-	{ nullptr, "ROXY",            4, 0, 0, &_state1, 6 },
-	{ "AMPLIFIER", "INSTRUMENTS", 4, 0, 0, &_state1, 8 },
-	{ nullptr, "INSTRUMENTS",     4, 0, 0, &_state1, 9 },
-	{ nullptr, "TOUR BUS",        4, 0, 0, &_state1, 3 },
+	{ "AMPLIFIER", "ROXY",        4, 0, 0, &_speechNum, 4 },
+	{ "DOG COLLAR", "ROXY",       4, 0, 0, &_speechNum, 5 },
+	{ nullptr, "ROXY",            4, 0, 0, &_speechNum, 6 },
+	{ "AMPLIFIER", "INSTRUMENTS", 4, 0, 0, &_speechNum, 8 },
+	{ nullptr, "INSTRUMENTS",     4, 0, 0, &_speechNum, 9 },
+	{ nullptr, "TOUR BUS",        4, 0, 0, &_speechNum, 3 },
 	{ nullptr, nullptr, -1, 0, 0, nullptr, 0 }
 };
 
@@ -146,11 +153,11 @@ const seriesPlayBreak Room407::PLAY18[] = {
 	PLAY_BREAK_END
 };
 
-int32 Room407::_state1;
+int32 Room407::_speechNum;
 
 
 Room407::Room407() : Section4Room() {
-	_state1 = 0;
+	_speechNum = 0;
 }
 
 void Room407::init() {
@@ -172,11 +179,11 @@ void Room407::init() {
 	} else {
 		loadSeries();
 		_walk1 = intr_add_no_walk_rect(140, 295, 240, 325, 139, 326);
-		_val2 = 10;
-		kernel_trigger_dispatch_now(7);
+		_drumzShould = 10;
+		kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 
-		_val3 = 22;
-		kernel_trigger_dispatch_now(8);
+		_roxyShould = 22;
+		kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 
 		if (_G(flags)[V171] == 4003)
 			_vp02.show("407vp02", 0x300);
@@ -222,8 +229,8 @@ void Room407::daemon() {
 		}
 		break;
 
-	case 4:
-		switch (_state1) {
+	case kWILBUR_SPEECH:
+		switch (_speechNum) {
 		case 3:
 			wilbur_speech("400w001");
 			break;
@@ -251,12 +258,16 @@ void Room407::daemon() {
 		break;
 
 	case 5:
-		_val2 = 17;
+		_drumzShould = 17;
 
 		if (_val4) {
 			kernel_timing_trigger(120, 7);
 		} else {
-			_digiName = Common::String::format("407r902%c", 'a' + imath_ranged_rand(1, 25));
+			int rnd = imath_ranged_rand(1, 25);
+			if (rnd >= 16)
+				_digiName = "407r902a";
+			else
+				_digiName = Common::String::format("407r902%c", 'a' + imath_ranged_rand(1, 25));
 
 			_flag1 = true;
 			digi_preload(_digiName);
@@ -269,42 +280,42 @@ void Room407::daemon() {
 		kernel_trigger_dispatch_now(7);
 		break;
 
-	case 7:
-		switch (_val2) {
+	case kCHANGE_DRUMZ_ANIMATION:
+		switch (_drumzShould) {
 		case 10:
 			if (!digi_play_state(2))
 				digi_play_loop("407_001", 2);
 
-			_val2 = getRandomState();
-			series_play_with_breaks(PLAY1, "407dz01", 0xa01, 7, 3);
+			_drumzShould = getRandomState();
+			series_play_with_breaks(PLAY1, "407dz01", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 11:
-			_val2 = 14;
-			series_play_with_breaks(PLAY2, "407dz02", 0xa01, 7, 3);
+			_drumzShould = 14;
+			series_play_with_breaks(PLAY2, "407dz02", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 12:
-			_val2 = 14;
-			series_play_with_breaks(PLAY3, "407dz03", 0xa01, 7, 3);
+			_drumzShould = 14;
+			series_play_with_breaks(PLAY3, "407dz03", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 13:
 			digi_stop(2);
-			_val2 = 14;
-			series_play_with_breaks(PLAY4, "407dz04", 0xa01, 7, 3);
+			_drumzShould = 14;
+			series_play_with_breaks(PLAY4, "407dz04", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 14:
-			_val2 = getRandomState();
-			kernel_trigger_dispatch_now(7);
+			_drumzShould = getRandomState();
+			kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			kernel_trigger_dispatch_now(10001);
 			break;
 
 		case 15:
 			digi_stop(2);
-			_val2 = getRandomState();
-			series_play_with_breaks(PLAY5, "407dz05", 0xa01, 7, 3);
+			_drumzShould = getRandomState();
+			series_play_with_breaks(PLAY5, "407dz05", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 16:
@@ -318,15 +329,15 @@ void Room407::daemon() {
 		case 17:
 			_flag1 = false;
 			freeDz();
-			_val2 = getRandomState();
-			series_play_with_breaks(PLAY6, "407dz06", 0xa01, 7, 3);
+			_drumzShould = getRandomState();
+			series_play_with_breaks(PLAY6, "407dz06", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 18:
 			_flag1 = false;
 			freeDz();
-			_val2 = 19;
-			series_play_with_breaks(PLAY6, "407dz06", 0xa01, 7, 3);
+			_drumzShould = 19;
+			series_play_with_breaks(PLAY6, "407dz06", 0xa01, kCHANGE_DRUMZ_ANIMATION, 3);
 			break;
 
 		case 19:
@@ -334,7 +345,7 @@ void Room407::daemon() {
 				digi_play_loop("407_001", 2);
 
 			conv88();
-			kernel_trigger_dispatch_now(7);
+			kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			break;
 
 		case 20:
@@ -353,8 +364,8 @@ void Room407::daemon() {
 		}
 		break;
 
-	case 8:
-		switch (_val3) {
+	case kCHANGE_ROXY_ANIMATION:
+		switch (_roxyShould) {
 		case 22:
 			_rx = series_show("407rx02", 0x901);
 			break;
@@ -364,13 +375,13 @@ void Room407::daemon() {
 
 			switch (_val4) {
 			case 1:
-				_val3 = 26;
+				_roxyShould = 26;
 				break;
 			case 2:
-				_val3 = 24;
+				_roxyShould = 24;
 				break;
 			case 3:
-				_val3 = 27;
+				_roxyShould = 27;
 				break;
 			default:
 				break;
@@ -390,46 +401,46 @@ void Room407::daemon() {
 
 		case 26:
 			terminateMachineAndNull(_rx);
-			_val3 = 30;
-			series_play_with_breaks(PLAY9, "407rx04", 0x901, 8, 2);
+			_roxyShould = 30;
+			series_play_with_breaks(PLAY9, "407rx04", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 27:
-			_val3 = 28;
-			series_play_with_breaks(PLAY8, "407rx04", 0x901, 8, 2);
+			_roxyShould = 28;
+			series_play_with_breaks(PLAY8, "407rx04", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 28:
-			_val3 = 29;
-			series_play_with_breaks(PLAY10, "407rx02", 0x901, 8, 2);
+			_roxyShould = 29;
+			series_play_with_breaks(PLAY10, "407rx02", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 29:
-			_val3 = 22;
-			kernel_trigger_dispatch_now(8);
+			_roxyShould = 22;
+			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			kernel_trigger_dispatch_now(1);
 			break;
 
 		case 30:
-			_val3 = 31;
-			series_play_with_breaks(PLAY11, "407rx06", 0x901, 8, 2);
+			_roxyShould = 31;
+			series_play_with_breaks(PLAY11, "407rx06", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 31:
-			_val5 = 36;
-			kernel_trigger_dispatch_now(9);
-			_val3 = 32;
-			series_play_with_breaks(PLAY12, "407rx08", 0x901, 8, 2);
+			_vipeShould = 36;
+			kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
+			_roxyShould = 32;
+			series_play_with_breaks(PLAY12, "407rx08", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 32:
-			_val3 = 33;
-			series_play_with_breaks(PLAY13, "407rx08", 0x901, 8, 2);
+			_roxyShould = 33;
+			series_play_with_breaks(PLAY13, "407rx08", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 33:
-			_val3 = 34;
-			series_play_with_breaks(PLAY14, "407rx09", 0x901, 8, 2);
+			_roxyShould = 34;
+			series_play_with_breaks(PLAY14, "407rx09", 0x901, kCHANGE_ROXY_ANIMATION, 2);
 			break;
 
 		case 34:
@@ -443,31 +454,31 @@ void Room407::daemon() {
 		}
 		break;
 
-	case 9:
-		switch (_val5) {
+	case kCHANGE_VIPE_ANIMATION:
+		switch (_vipeShould) {
 		case 35:
 			_vp02.show("407vp02", 0x300);
 			_val4 = 1;
-			_val3 = 23;
-			kernel_trigger_dispatch_now(8);
+			_roxyShould = 23;
+			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
 
 		case 36:
 			_vp02.terminate();
-			_val5 = 37;
-			series_play_with_breaks(PLAY16, "407vp02", 0x300, 9, 3);
+			_vipeShould = 37;
+			series_play_with_breaks(PLAY16, "407vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			break;
 
 		case 37:
-			_val5 = 39;
-			series_play_with_breaks(PLAY17, "407vp03", 0x300, 9, 3);
+			_vipeShould = 39;
+			series_play_with_breaks(PLAY17, "407vp03", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			break;
 
 		case 38:
 			_vp02.terminate();
-			_val2 = 20;
-			_val5 = 35;
-			series_play_with_breaks(PLAY15, "407vp02", 0x300, 9, 3);
+			_drumzShould = 20;
+			_vipeShould = 35;
+			series_play_with_breaks(PLAY15, "407vp02", 0x300, kCHANGE_VIPE_ANIMATION, 3);
 			player_set_facing_at(412, 336);
 			break;
 
@@ -507,8 +518,8 @@ void Room407::daemon() {
 		_G(flags)[V299] = 0;
 		_G(flags)[V180] = 1;
 		terminateMachineAndNull(_rx);
-		_val3 = 28;
-		kernel_trigger_dispatch_now(8);
+		_roxyShould = 28;
+		kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 		break;
 
 	case 13:
@@ -519,8 +530,8 @@ void Room407::daemon() {
 
 	case 14:
 		_G(flags)[V298] = 0;
-		_val2 = 21;
-		_val5 = 40;
+		_drumzShould = 21;
+		_vipeShould = 40;
 		series_play_with_breaks(PLAY18, "407poof", 0x2ff, 4008, 2);
 		_G(flags)[V181] = 1;
 		break;
@@ -532,13 +543,13 @@ void Room407::daemon() {
 
 			if (_flag1) {
 				digi_stop(2);
-				_val2 = 17;
-				kernel_trigger_dispatch_now(7);
+				_drumzShould = 17;
+				kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			}
 
 			_val4 = 3;
-			_val3 = 20;
-			kernel_trigger_dispatch_now(8);
+			_roxyShould = 20;
+			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
 
 		case 2:
@@ -546,13 +557,13 @@ void Room407::daemon() {
 
 			if (_flag1) {
 				digi_stop(2);
-				_val2 = 17;
-				kernel_trigger_dispatch_now(7);
+				_drumzShould = 17;
+				kernel_trigger_dispatch_now(kCHANGE_DRUMZ_ANIMATION);
 			}
 
 			_val4 = 2;
-			_val3 = 23;
-			kernel_trigger_dispatch_now(8);
+			_roxyShould = 23;
+			kernel_trigger_dispatch_now(kCHANGE_ROXY_ANIMATION);
 			break;
 
 		default:
@@ -563,8 +574,8 @@ void Room407::daemon() {
 
 	case kSET_COMMANDS_ALLOWED:
 		if (!_G(flags)[V181] && _G(flags)[V171] == 4003) {
-			_val5 = 38;
-			kernel_timing_trigger(60, 9);
+			_vipeShould = 38;
+			kernel_timing_trigger(60, kCHANGE_VIPE_ANIMATION);
 		} else {
 			player_set_commands_allowed(true);
 		}
@@ -648,23 +659,23 @@ void Room407::conv88() {
 		if (who == 1) {
 			wilbur_speech(sound, 10001);
 		} else if (_flag1) {
-			_val2 = 18;
+			_drumzShould = 18;
 		} else if (node == 1) {
 			switch (entry) {
 			case 0:
 			case 2:
 			case 4:
-				_val2 = 13;
+				_drumzShould = 13;
 				break;
 			case 1:
-				_val2 = 12;
+				_drumzShould = 12;
 				break;
 			case 3:
 			case 5:
-				_val2 = 11;
+				_drumzShould = 11;
 				break;
 			case 6:
-				_val2 = 10;
+				_drumzShould = 10;
 				conv_resume_curr();
 				break;
 			default:
@@ -694,8 +705,8 @@ void Room407::freeDz() {
 void Room407::playConvSound() {
 	terminateMachineAndNull(_rx);
 
-	_val3 = 25;
-	digi_play(conv_sound_to_play(), 1, 255, 8);
+	_roxyShould = 25;
+	digi_play(conv_sound_to_play(), 1, 255, kCHANGE_ROXY_ANIMATION);
 	_rx = series_play("407rx04", 0x901, 4, -1, 6, -1);
 }
 

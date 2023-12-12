@@ -117,12 +117,15 @@ void Room404::daemon() {
 }
 
 void Room404::pre_parser() {
-	if (player_said("IMPOUND YARD") && !player_said("EXIT") &&
-			!player_said("LOOK AT") && !player_said("GEAR")) {
-		player_hotspot_walk_override(320, 346, 5);
-	} else {
-		player_set_commands_allowed(false);
-		kernel_trigger_dispatch_now(1);
+	_G(kernel).trigger_mode = KT_DAEMON;
+
+	if (player_said("IMPOUND YARD")) {
+		if (!player_said_any("EXIT", "LOOK AT", "GEAR")) {
+			player_hotspot_walk_override(320, 346, 5);
+		} else {
+			player_set_commands_allowed(false);
+			kernel_trigger_dispatch_now(1);
+		}
 	}
 }
 
@@ -132,18 +135,20 @@ void Room404::parser() {
 	if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
 	} else if (player_said("IMPOUND YARD")) {
-		if (player_said("TAKE", "QUARTER ")) {
-			_G(wilbur_should) = 1;
-			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-		} else if (player_said("TOILET")) {
-			wilbur_speech("404w004");
-		} else if (player_said("BARS")) {
-			wilbur_speech("404w013");
+		if (player_said_any("EXIT", "LOOK AT", "GEAR")) {
+			kernel_trigger_dispatch_now(4005);
 		} else {
-			return;
+			wilbur_speech("400w001");
 		}
-	} else if (player_said("EXIT") || player_said("LOOK AT") || player_said("GEAR")) {
-		kernel_trigger_dispatch_now(4005);
+	} else if (player_said("TAKE", "QUARTER ")) {
+		_G(wilbur_should) = 1;
+		kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+	} else if (player_said("TOILET")) {
+		wilbur_speech("404w004");
+	} else if (player_said("BARS")) {
+		wilbur_speech("404w013");
+	} else {
+		return;
 	}
 
 	_G(player).command_ready = false;
