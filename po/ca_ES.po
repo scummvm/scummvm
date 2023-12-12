@@ -3188,7 +3188,8 @@ msgstr ""
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "Aquest joc no permet desar des del menú. Utilitza la interfície del joc"
+msgstr ""
+"Aquest joc no permet desar des del menú. Utilitza la interfície del joc"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
