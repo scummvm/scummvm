@@ -22,6 +22,7 @@
 #ifndef SCUMM_MACGUI_MACGUI_INDY3_H
 #define SCUMM_MACGUI_MACGUI_INDY3_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/str.h"
 

@@ -22,6 +22,7 @@
 #ifndef SCUMM_MACGUI_MACGUI_LOOM_H
 #define SCUMM_MACGUI_MACGUI_LOOM_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/str.h"
 

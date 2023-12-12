@@ -20,7 +20,6 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/macgui/macwindowmanager.h"

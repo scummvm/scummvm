@@ -24,6 +24,12 @@
 
 #define TEXT_END_MARKER { 0, 0, kStyleRegular, Graphics::kTextAlignLeft, nullptr }
 
+#include "common/events.h"
+#include "common/hashmap.h"
+#include "common/rect.h"
+#include "common/str.h"
+#include "common/str-array.h"
+
 #include "graphics/font.h"
 
 class OSystem;
