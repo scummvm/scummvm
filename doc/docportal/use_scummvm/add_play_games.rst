@@ -12,7 +12,7 @@ If you haven't had a floppy disc or even a CD in your possession for a while, th
 
 .. tip::
 
-   ScummVM has an affiliate referrer programme with ZOOM-Platform.com, so if you are going to buy a game, please use this `GOG.com <https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53>`_ link to help the project!
+   ScummVM has an affiliate referrer programme with ZOOM-Platform.com, so if you are going to buy a game, please use this `ZOOM-Platform.com <https://www.zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53>`_ link to help the project!
 
 Make sure to check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on the ScummVM website, and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ and `Platform Overview page <https://wiki.scummvm.org/index.php/Platforms/Overview>`_ on the ScummVM wiki before you buy a game, to ensure it can run with ScummVM.
 
