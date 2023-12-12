@@ -34,6 +34,7 @@
 #include "twp/squirrel/sqstdaux.h"
 #include "twp/squirrel/sqfuncproto.h"
 #include "twp/squirrel/sqclosure.h"
+#include "common/debug.h"
 
 namespace Twp {
 
@@ -41,34 +42,6 @@ static Thread *thread(HSQUIRRELVM v) {
 	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](Thread *t) {
 		return t->threadObj._unVal.pThread == v;
 	});
-}
-
-template<typename F>
-static SQInteger breakfunc(HSQUIRRELVM v, const F &func) {
-	Thread *t = thread(v);
-	if (!t)
-		return sq_throwerror(v, "failed to get thread");
-	t->suspend();
-	func(*t);
-	return -666;
-}
-
-// When called in a function started with startthread, execution is suspended for time seconds.
-// It is an error to call breaktime in a function that was not started with startthread.
-//
-// . code-block:: Squirrel
-// for (local x = 1; x < 4; x += 1) {
-//   playSound(soundPhoneRinging)
-//   breaktime(5.0)
-// }
-static SQInteger breaktime(HSQUIRRELVM v) {
-	SQFloat time;
-	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
-		return sq_throwerror(v, "failed to get time");
-	if (time == 0.f)
-		return breakfunc(v, [](Thread &t) { t.numFrames = 1; });
-	else
-		return breakfunc(v, [&](Thread &t) { t.waitTime = time; });
 }
 
 static SQInteger _startthread(HSQUIRRELVM v, bool global) {
@@ -136,6 +109,213 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	return 1;
 }
 
+template<typename F>
+static SQInteger breakfunc(HSQUIRRELVM v, const F &func) {
+	Thread *t = thread(v);
+	if (!t)
+		return sq_throwerror(v, "failed to get thread");
+	t->suspend();
+	func(*t);
+	return -666;
+}
+
+static SQInteger activeController(HSQUIRRELVM v) {
+	warning("TODO: activeController: not implemented");
+	// TODO: change harcoded mouse
+	sq_pushinteger(v, 1);
+	return 1;
+}
+
+static SQInteger addCallback(HSQUIRRELVM v) {
+	warning("TODO: addCallback: not implemented");
+	return 0;
+}
+
+// Registers a folder that assets can appear in.
+//
+// Only used for development builds where the assets are not bundled up.
+// Use in the Boot.nut process.
+// Not necessary for release.
+static SQInteger addFolder(HSQUIRRELVM v) {
+	return 0;
+}
+
+// When called in a function started with startthread, execution is suspended for count frames.
+// It is an error to call breakhere in a function that was not started with startthread.
+// Particularly useful instead of breaktime if you just want to wait 1 frame, since not all machines run at the same speed.
+// . code-block:: Squirrel
+// while(isSoundPlaying(soundPhoneBusy)) {
+//   breakhere(5)
+//}
+static SQInteger breakhere(HSQUIRRELVM v) {
+	warning("TODO: breakhere: not implemented");
+	return 0;
+}
+
+// When called in a function started with startthread, execution is suspended for time seconds.
+// It is an error to call breaktime in a function that was not started with startthread.
+//
+// . code-block:: Squirrel
+// for (local x = 1; x < 4; x += 1) {
+//   playSound(soundPhoneRinging)
+//   breaktime(5.0)
+// }
+static SQInteger breaktime(HSQUIRRELVM v) {
+	SQFloat time;
+	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
+		return sq_throwerror(v, "failed to get time");
+	if (time == 0.f)
+		return breakfunc(v, [](Thread &t) { t.numFrames = 1; });
+	else
+		return breakfunc(v, [&](Thread &t) { t.waitTime = time; });
+}
+
+static SQInteger breakwhileanimating(HSQUIRRELVM v) {
+	warning("TODO: breakwhileanimating: not implemented");
+	return 0;
+}
+
+static SQInteger breakwhilecamera(HSQUIRRELVM v) {
+	warning("TODO: breakwhilecamera: not implemented");
+	return 0;
+}
+
+static SQInteger breakwhilecutscene(HSQUIRRELVM v) {
+	warning("TODO: breakwhilecutscene: not implemented");
+	return 0;
+}
+
+static SQInteger breakwhiledialog(HSQUIRRELVM v) {
+	warning("TODO: breakwhiledialog: not implemented");
+	return 0;
+}
+
+static SQInteger breakwhileinputoff(HSQUIRRELVM v) {
+	warning("TODO: breakwhileinputoff: not implemented");
+	return 0;
+}
+static SQInteger breakwhilerunning(HSQUIRRELVM v) {
+	warning("TODO: breakwhilerunning: not implemented");
+	return 0;
+}
+static SQInteger breakwhiletalking(HSQUIRRELVM v) {
+	warning("TODO: breakwhiletalking: not implemented");
+	return 0;
+}
+static SQInteger breakwhilewalking(HSQUIRRELVM v) {
+	warning("TODO: breakwhilewalking: not implemented");
+	return 0;
+}
+static SQInteger breakwhilesound(HSQUIRRELVM v) {
+	warning("TODO: breakwhilesound: not implemented");
+	return 0;
+}
+
+static SQInteger cutscene(HSQUIRRELVM v) {
+	warning("TODO: cutscene: not implemented");
+	return 0;
+}
+
+static SQInteger cutsceneOverride(HSQUIRRELVM v) {
+	warning("TODO: cutsceneOverride: not implemented");
+	return 0;
+}
+
+static SQInteger dumpvar(HSQUIRRELVM v) {
+	warning("TODO: dumpvar: not implemented");
+	return 0;
+}
+
+static SQInteger exCommand(HSQUIRRELVM v) {
+	warning("TODO: exCommand: not implemented");
+	return 0;
+}
+
+static SQInteger gameTime(HSQUIRRELVM v) {
+	warning("TODO: gameTime: not implemented");
+	return 0;
+}
+
+static SQInteger sysInclude(HSQUIRRELVM v) {
+	warning("TODO: sysInclude: not implemented");
+	return 0;
+}
+
+static SQInteger inputController(HSQUIRRELVM v) {
+	warning("TODO: inputController: not implemented");
+	return 0;
+}
+
+static SQInteger inputHUD(HSQUIRRELVM v) {
+	warning("TODO: inputHUD: not implemented");
+	return 0;
+}
+
+static SQInteger inputOff(HSQUIRRELVM v) {
+	warning("TODO: inputOff: not implemented");
+	return 0;
+}
+
+static SQInteger inputOn(HSQUIRRELVM v) {
+	warning("TODO: inputOn: not implemented");
+	return 0;
+}
+
+static SQInteger inputSilentOff(HSQUIRRELVM v) {
+	warning("TODO: inputSilentOff: not implemented");
+	return 0;
+}
+
+static SQInteger sysInputState(HSQUIRRELVM v) {
+	warning("TODO: sysInputState: not implemented");
+	return 0;
+}
+
+static SQInteger inputVerbs(HSQUIRRELVM v) {
+	warning("TODO: inputVerbs: not implemented");
+	return 0;
+}
+
+static SQInteger isInputOn(HSQUIRRELVM v) {
+	warning("TODO: isInputOn: not implemented");
+	return 0;
+}
+
+static SQInteger logEvent(HSQUIRRELVM v) {
+	warning("TODO: logEvent: not implemented");
+	return 0;
+}
+
+static SQInteger logInfo(HSQUIRRELVM v) {
+	warning("TODO: logInfo: not implemented");
+	return 0;
+}
+
+static SQInteger logWarning(HSQUIRRELVM v) {
+	warning("TODO: logWarning: not implemented");
+	return 0;
+}
+
+static SQInteger microTime(HSQUIRRELVM v) {
+	warning("TODO: microTime: not implemented");
+	return 0;
+}
+
+static SQInteger moveCursorTo(HSQUIRRELVM v) {
+	warning("TODO: moveCursorTo: not implemented");
+	return 0;
+}
+
+static SQInteger removeCallback(HSQUIRRELVM v) {
+	warning("TODO: removeCallback: not implemented");
+	return 0;
+}
+
+static SQInteger setAmbientLight(HSQUIRRELVM v) {
+	warning("TODO: setAmbientLight: not implemented");
+	return 0;
+}
+
 static SQInteger startthread(HSQUIRRELVM v) {
 	return _startthread(v, false);
 }
@@ -144,10 +324,65 @@ static SQInteger startglobalthread(HSQUIRRELVM v) {
 	return _startthread(v, true);
 }
 
-void sqgame_register_syslib(HSQUIRRELVM v) {
-	regFunc(v, startthread, _SC("startthread"), 0, nullptr);
-	regFunc(v, startglobalthread, _SC("startglobalthread"), 0, nullptr);
-	regFunc(v, breaktime, _SC("breaktime"), 0, nullptr);
+static SQInteger stopthread(HSQUIRRELVM v) {
+	warning("TODO: stopthread: not implemented");
+	return 0;
 }
 
+static SQInteger threadid(HSQUIRRELVM v) {
+	warning("TODO: threadid: not implemented");
+	return 0;
 }
+
+static SQInteger threadpauseable(HSQUIRRELVM v) {
+	warning("TODO: threadpauseable: not implemented");
+	return 0;
+}
+
+void sqgame_register_syslib(HSQUIRRELVM v) {
+	regFunc(v, startthread, _SC("startthread"));
+	regFunc(v, startglobalthread, _SC("startglobalthread"));
+	regFunc(v, breaktime, _SC("breaktime"));
+	regFunc(v, activeController, _SC("activeController"));
+	regFunc(v, addCallback, _SC("addCallback"));
+	regFunc(v, addFolder, _SC("addFolder"));
+	regFunc(v, breakhere, _SC("breakhere"));
+	regFunc(v, breaktime, _SC("breaktime"));
+	regFunc(v, breakwhileanimating, _SC("breakwhileanimating"));
+	regFunc(v, breakwhilecamera, _SC("breakwhilecamera"));
+	regFunc(v, breakwhilecutscene, _SC("breakwhilecutscene"));
+	regFunc(v, breakwhiledialog, _SC("breakwhiledialog"));
+	regFunc(v, breakwhileinputoff, _SC("breakwhileinputoff"));
+	regFunc(v, breakwhilerunning, _SC("breakwhilerunning"));
+	regFunc(v, breakwhilesound, _SC("breakwhilesound"));
+	regFunc(v, breakwhiletalking, _SC("breakwhiletalking"));
+	regFunc(v, breakwhilewalking, _SC("breakwhilewalking"));
+	regFunc(v, cutscene, _SC("cutscene"));
+	regFunc(v, cutsceneOverride, _SC("cutsceneOverride"));
+	regFunc(v, dumpvar, _SC("dumpvar"));
+	regFunc(v, exCommand, _SC("exCommand"));
+	regFunc(v, gameTime, _SC("gameTime"));
+	regFunc(v, sysInclude, _SC("include"));
+	regFunc(v, inputController, _SC("inputController"));
+	regFunc(v, inputHUD, _SC("inputHUD"));
+	regFunc(v, inputOff, _SC("inputOff"));
+	regFunc(v, inputOn, _SC("inputOn"));
+	regFunc(v, inputSilentOff, _SC("inputSilentOff"));
+	regFunc(v, sysInputState, _SC("inputState"));
+	regFunc(v, inputVerbs, _SC("inputVerbs"));
+	regFunc(v, isInputOn, _SC("isInputOn"));
+	regFunc(v, logEvent, _SC("logEvent"));
+	regFunc(v, logInfo, _SC("logInfo"));
+	regFunc(v, logWarning, _SC("logWarning"));
+	regFunc(v, microTime, _SC("microTime"));
+	regFunc(v, moveCursorTo, _SC("moveCursorTo"));
+	regFunc(v, removeCallback, _SC("removeCallback"));
+	regFunc(v, setAmbientLight, _SC("setAmbientLight"));
+	regFunc(v, startglobalthread, _SC("startglobalthread"));
+	regFunc(v, startthread, _SC("startthread"));
+	regFunc(v, stopthread, _SC("stopthread"));
+	regFunc(v, threadid, _SC("threadid"));
+	regFunc(v, threadpauseable, _SC("threadpauseable"));
+}
+
+} // namespace Twp
