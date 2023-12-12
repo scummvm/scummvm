@@ -72,13 +72,6 @@ public:
 		return _count;
 	}
 
-	bool isIndexed() const override {
-		return true;
-	}
-	bool isNamed() const override {
-		return false;
-	}
-
 	static bool isFlexFile(Common::SeekableReadStream *rs);
 
 protected:

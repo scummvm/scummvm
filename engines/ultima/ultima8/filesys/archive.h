@@ -32,9 +32,6 @@ public:
 	//! create Archive without any input sources
 	Archive();
 
-	//! create Archive with a single input source
-	explicit Archive(ArchiveFile *af);
-
 	//! create Archive with a single input source, autodetecting the type
 	//! Will create FlexFile; ids will be deleted.
 	explicit Archive(Common::SeekableReadStream *rs);
