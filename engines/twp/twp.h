@@ -47,9 +47,11 @@ class TwpEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
+
 public:
 	Graphics::Screen *_screen = nullptr;
 	Common::Array<Object*> _objects;
@@ -57,7 +59,7 @@ public:
 	GGPackDecoder _pack;
 	ResManager _resManager;
 	Common::Array<Room> _rooms;
-	Room* _room;
+	Room* _room = nullptr;
 
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -76,6 +78,7 @@ public:
 	Common::RandomSource& getRandomSource() { return _randomSource; }
 
 	HSQUIRRELVM getVm() { return _vm.get(); }
+	inline Gfx& getGfx() { return _gfx; }
 
 	bool hasFeature(EngineFeature f) const override {
 		return

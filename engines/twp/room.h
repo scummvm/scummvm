@@ -26,14 +26,21 @@
 #include "common/rect.h"
 #include "common/stream.h"
 #include "math/vector2d.h"
+#include "twp/squirrel/squirrel.h"
+#include "twp/font.h"
 
 namespace Twp {
 
+class Node;
+class Object;
+
 class Layer {
 public:
-	Common::Array<Common::String> names;
-	Math::Vector2d parallax;
-	int zsort;
+	Common::Array<Common::String> _names;
+	Common::Array<Object *> _objects;
+	Math::Vector2d _parallax;
+	int _zsort;
+	Node *_node;
 };
 
 // Represents an area where an actor can or cannot walk
@@ -87,36 +94,82 @@ struct Scaling {
 	Common::String trigger;
 };
 
+class Anim;
 class Room;
+class Node;
+
+enum Facing {
+	FACE_RIGHT = 1,
+	FACE_LEFT = 2,
+	FACE_FRONT = 4,
+	FACE_BACK = 8
+};
+
+class Trigger {
+public:
+	virtual ~Trigger() {}
+	virtual void trig() = 0;
+};
+
 class Object {
 public:
+	Object();
+
 	int getId();
 
+	void setState(int state, bool instant = false);
+	void play(int state, bool loop = false, bool instant = false);
+	// Plays an animation specified by the `state`.
+	void play(const Common::String &state, bool loop = false, bool instant = false);
+	void showLayer(const Common::String &layer, bool visible);
+	Facing getFacing() const;
+	void trig(const Common::String &name);
+
+private:
+	Common::String suffix() const;
+	// Plays an animation specified by the state
+	bool playCore(const Common::String &state, bool loop = false, bool instant = false);
+
 public:
-	HSQOBJECT table;
-	Common::String name;
-	Common::String sheet;
-	Common::String key; // key used to identify this object by script
-	int state;
-	Math::Vector2d usePos;
-	Direction useDir;
-	Common::Rect hotspot;
-	ObjectType objType;
-	Room *room;
-	Common::Array<ObjectAnimation> anims;
-	bool temporary;
-	bool touchable;
+	HSQOBJECT _table;
+	Common::String _name;
+	Common::String _sheet;
+	Common::String _key; // key used to identify this object by script
+	int _state;
+	Math::Vector2d _usePos;
+	Direction _useDir;
+	Common::Rect _hotspot;
+	ObjectType _objType;
+	Room *_room;
+	Common::Array<ObjectAnimation> _anims;
+	bool _temporary;
+	bool _touchable;
+	Node *_node;
+	Anim *_nodeAnim;
+	Layer *_layer;
+	Common::StringArray _hiddenLayers;
+	Common::String _animName;
+	int _animFlags;
+	bool _animLoop;
+	Common::HashMap<Facing, Facing, Common::Hash<int> > _facingMap;
+	Facing _facing;
+	int _facingLockValue;
+	float _fps;
+	Common::HashMap<int, Trigger*> _triggers;
+	Math::Vector2d _talkOffset;
 };
 
 class Room {
 public:
 	void load(Common::SeekableReadStream &s);
 
-	Object* createObject(const Common::String& sheet, const Common::Array<Common::String>& frames);
-	Object *createTextObject(const Common::String& fontName, const Common::String& text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);
+	Object *createObject(const Common::String &sheet, const Common::Array<Common::String> &frames);
+	Object *createTextObject(const Common::String &fontName, const Common::String &text, TextHAlignment hAlign = thLeft, TextVAlignment vAlign = tvCenter, float maxWidth = 0.0f);
 
 	Math::Vector2d getScreenSize();
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
+
+	Layer *layer(int zsort);
 
 public:
 	Common::String _name;              // Name of the room
@@ -124,10 +177,10 @@ public:
 	Math::Vector2d _roomSize;          // Size of the room
 	int _fullscreen;                   // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
 	int _height;                       // Height of the room (what else ?)
-	Common::Array<Layer> _layers;      // Parallax layers of a room
+	Common::Array<Layer *> _layers;    // Parallax layers of a room
 	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
 	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room
-    Scaling _scaling;				  // Defines the scaling of the actor in the room
+	Scaling _scaling;                  // Defines the scaling of the actor in the room
 };
 
 } // namespace Twp

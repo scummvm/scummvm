@@ -121,6 +121,9 @@ public:
 	void init();
 
 	void camera(Math::Vector2d size);
+	Math::Vector2d camera() const;
+	Math::Vector2d cameraPos() const { return _cameraPos; }
+
 	void use(Shader* shader);
 
 	void clear(Color color);
@@ -135,14 +138,12 @@ private:
 	Math::Matrix4 getFinalTransform(Math::Matrix4 trsf);
 	void noTexture();
 
-public:
-	Math::Vector2d _cameraPos;
-
 private:
 	uint32 _vbo, _ebo;
 	Shader _defaultShader;
 	Shader* _shader;
 	Math::Matrix4 _mvp;
+	Math::Vector2d _cameraPos;
 	Math::Vector2d _cameraSize;
 	Textures _textures;
 	Texture* _texture;

@@ -340,6 +340,10 @@ void Gfx::camera(Math::Vector2d size) {
 	_mvp = ortho(0.f, size.getX(), 0.f, size.getY(), -1.f, 1.f);
 }
 
+Math::Vector2d Gfx::camera() const {
+	return _cameraSize;
+}
+
 void Gfx::use(Shader *shader) {
 	_shader = shader ? shader : &_defaultShader;
 }
