@@ -25,6 +25,7 @@
 #include "twp/scenegraph.h"
 #include "twp/twp.h"
 #include "twp/gfx.h"
+#include "twp/object.h"
 
 namespace Twp {
 

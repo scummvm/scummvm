@@ -22,6 +22,7 @@
 #include "twp/twp.h"
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
+#include "twp/object.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
 #include "squirrel/sqobject.h"
