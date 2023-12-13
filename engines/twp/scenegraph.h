@@ -138,6 +138,8 @@ private:
 	Common::Array<SpriteSheetFrame> _frames;
 };
 
+struct ObjectAnimation;
+
 class Anim : public Node {
 public:
 	Anim(Object* obj);

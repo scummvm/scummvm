@@ -49,39 +49,11 @@ public:
 	Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible = true);
 
 public:
-	Common::String name;
+	Common::String _name;
 
 private:
 	Common::Array<Math::Vector2d> _polygon;
 	bool _visible;
-};
-
-enum Direction {
-	dNone = 0,
-	dRight = 1,
-	dLeft = 2,
-	dFront = 4,
-	dBack = 8
-};
-
-enum ObjectType {
-	otNone,
-	otProp,
-	otSpot,
-	otTrigger
-};
-
-struct ObjectAnimation {
-	Common::String name;
-	Common::String sheet;
-	Common::StringArray frames;
-	Common::Array<ObjectAnimation> layers;
-	Common::StringArray triggers;
-	Common::Array<Math::Vector2d> offsets;
-	bool loop;
-	float fps;
-	int flags;
-	int frameIndex;
 };
 
 struct ScalingValue {
@@ -94,69 +66,23 @@ struct Scaling {
 	Common::String trigger;
 };
 
-class Anim;
-class Room;
-class Node;
-
-enum Facing {
-	FACE_RIGHT = 1,
-	FACE_LEFT = 2,
-	FACE_FRONT = 4,
-	FACE_BACK = 8
+struct Light {
+    Color color;
+    Math::Vector2d pos;
+    float brightness;     // light brightness 1.0f...100.f
+    float coneDirection;  // cone direction 0...360.f
+    float coneAngle;      // cone angle 0...360.f
+    float coneFalloff;    // cone falloff 0.f...1.0f
+    float cutOffRadius;   // cutoff raduus
+    float halfRadius;     // cone half radius 0.0f...1.0f
+    bool on;
+    int id;
 };
 
-class Trigger {
-public:
-	virtual ~Trigger() {}
-	virtual void trig() = 0;
-};
-
-class Object {
-public:
-	Object();
-
-	int getId();
-
-	void setState(int state, bool instant = false);
-	void play(int state, bool loop = false, bool instant = false);
-	// Plays an animation specified by the `state`.
-	void play(const Common::String &state, bool loop = false, bool instant = false);
-	void showLayer(const Common::String &layer, bool visible);
-	Facing getFacing() const;
-	void trig(const Common::String &name);
-
-private:
-	Common::String suffix() const;
-	// Plays an animation specified by the state
-	bool playCore(const Common::String &state, bool loop = false, bool instant = false);
-
-public:
-	HSQOBJECT _table;
-	Common::String _name;
-	Common::String _sheet;
-	Common::String _key; // key used to identify this object by script
-	int _state;
-	Math::Vector2d _usePos;
-	Direction _useDir;
-	Common::Rect _hotspot;
-	ObjectType _objType;
-	Room *_room;
-	Common::Array<ObjectAnimation> _anims;
-	bool _temporary;
-	bool _touchable;
-	Node *_node;
-	Anim *_nodeAnim;
-	Layer *_layer;
-	Common::StringArray _hiddenLayers;
-	Common::String _animName;
-	int _animFlags;
-	bool _animLoop;
-	Common::HashMap<Facing, Facing, Common::Hash<int> > _facingMap;
-	Facing _facing;
-	int _facingLockValue;
-	float _fps;
-	Common::HashMap<int, Trigger*> _triggers;
-	Math::Vector2d _talkOffset;
+struct Lights {
+	int _numLights;			// Number of lights
+	Light _lights[50];
+	Color _ambientLight;	// Ambient light color
 };
 
 class Room {
@@ -172,15 +98,21 @@ public:
 	Layer *layer(int zsort);
 
 public:
-	Common::String _name;              // Name of the room
-	Common::String _sheet;             // Name of the spritesheet to use
-	Math::Vector2d _roomSize;          // Size of the room
-	int _fullscreen;                   // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
-	int _height;                       // Height of the room (what else ?)
-	Common::Array<Layer *> _layers;    // Parallax layers of a room
-	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
-	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room
-	Scaling _scaling;                  // Defines the scaling of the actor in the room
+	Common::String _name;               	// Name of the room
+	Common::String _sheet;              	// Name of the spritesheet to use
+	Math::Vector2d _roomSize;           	// Size of the room
+	int _fullscreen;                    	// Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
+	int _height;                        	// Height of the room (what else ?)
+	Common::Array<Layer *> _layers;     	// Parallax layers of a room
+	Common::Array<Walkbox> _walkboxes;  	// Represents the areas where an actor can or cannot walk
+	Common::Array<Scaling> _scalings;   	// Defines the scaling of the actor in the room
+	Scaling _scaling;                   	// Defines the scaling of the actor in the room
+	HSQOBJECT _table;						// Squirrel table representing this room
+	bool _entering;							// Indicates whether or not an actor is entering this room
+	Lights _lights;							// Lights of the room
+	Common::Array<Walkbox> _mergedPolygon;
+	Common::Array<Object*> _triggers;		// Triggers currently enabled in the room
+	bool _pseudo;
 };
 
 } // namespace Twp

@@ -42,6 +42,8 @@ MODULE_OBJS = \
 	thread.o \
 	rectf.o \
 	scenegraph.o \
+	object.o \
+	ids.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

@@ -19,36 +19,40 @@
  *
  */
 
-#ifndef TWP_IDS_H
-#define TWP_IDS_H
-
-#define START_ACTORID    1000
-#define END_ACTORID      2000
-#define START_ROOMID     2000
-#define END_ROOMID       3000
-#define START_OBJECTID   3000
-#define END_OBJECTID     100000
-#define START_LIGHTID    100000
-#define END_LIGHTID      200000
-#define START_SOUNDDEFID 200000
-#define END_SOUNDDEFID   250000
-#define START_SOUNDID    250000
-#define END_SOUNDID      300000
-#define START_THREADID   300000
-#define END_THREADID     8000000
-#define START_CALLBACKID 8000000
-#define END_CALLBACKID   10000000
+#include "ids.h"
 
 namespace Twp {
 
-bool isThread(int id);
-bool isRoom(int id);
-bool isActor(int id);
-bool isObject(int id);
-bool isSound(int id);
-bool isLight(int id);
-bool isCallback(int id);
-
+static inline bool isBetween(int id, int startId, int endId) {
+  return id >= startId && id < endId;
 }
 
-#endif
+bool isThread(int id) {
+  return isBetween(id, START_THREADID, END_THREADID);
+}
+
+bool isRoom(int id) {
+  return isBetween(id, START_ROOMID, END_THREADID);
+}
+
+bool isActor(int id) {
+  return isBetween(id, START_ACTORID, END_ACTORID);
+}
+
+bool isObject(int id) {
+  return isBetween(id, START_OBJECTID, END_OBJECTID);
+}
+
+bool isSound(int id) {
+  return isBetween(id, START_SOUNDID, END_SOUNDID);
+}
+
+bool isLight(int id) {
+  return isBetween(id, START_LIGHTID, END_LIGHTID);
+}
+
+bool isCallback(int id) {
+  return isBetween(id, START_CALLBACKID, END_CALLBACKID);
+}
+
+}
