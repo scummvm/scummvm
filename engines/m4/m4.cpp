@@ -41,6 +41,8 @@
 
 namespace M4 {
 
+#define SAVEGAME_VERSION 1
+
 M4Engine *g_engine;
 
 M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) : Engine(syst),
@@ -151,6 +153,7 @@ Common::Error M4Engine::loadGameStateDoIt(int slot) {
 
 		// We're now at data section, handle it
 		Common::Serializer s(save, nullptr);
+		s.setVersion(1);
 		Common::Error result = syncGame(s);
 
 		delete save;
@@ -182,6 +185,23 @@ Common::InSaveFile *M4Engine::getOriginalSave(int slot) const {
 	}
 
 	return nullptr;
+}
+
+Common::Error M4Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(SAVEGAME_VERSION);
+
+	Common::Serializer s(nullptr, stream);
+	return syncGame(s);
+}
+
+Common::Error M4Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	byte version = stream->readByte();
+	if (version > SAVEGAME_VERSION)
+		error("Tried to load unsupported savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(version);
+	return syncGame(s);
 }
 
 Common::Error M4Engine::syncGame(Common::Serializer &s) {
