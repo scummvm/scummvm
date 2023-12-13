@@ -41,7 +41,7 @@ Archive::Archive(Common::SeekableReadStream *rs) : _count(0) {
 	addSource(rs);
 }
 
-bool Archive::addSource(ArchiveFile *af) {
+bool Archive::addSource(FlexFile *af) {
 	_sources.push_back(af);
 
 	uint32 indexcount = af->getIndexCount();
@@ -51,17 +51,10 @@ bool Archive::addSource(ArchiveFile *af) {
 }
 
 bool Archive::addSource(Common::SeekableReadStream *rs) {
-	ArchiveFile *s = nullptr;
-
 	if (!rs)
 		return false;
 
-	if (FlexFile::isFlexFile(rs)) {
-		s = new FlexFile(rs);
-	}
-
-	if (!s)
-		return false;
+	FlexFile *s = new FlexFile(rs);
 	if (!s->isValid()) {
 		delete s;
 		return false;
@@ -81,7 +74,7 @@ void Archive::uncache() {
 }
 
 uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
-	ArchiveFile *f = findArchiveFile(index);
+	FlexFile *f = findArchiveFile(index);
 	if (!f)
 		return nullptr;
 
@@ -89,13 +82,13 @@ uint8 *Archive::getRawObject(uint32 index, uint32 *sizep) {
 }
 
 uint32 Archive::getRawSize(uint32 index) const {
-	ArchiveFile *f = findArchiveFile(index);
+	FlexFile *f = findArchiveFile(index);
 	if (!f) return 0;
 
 	return f->getSize(index);
 }
 
-ArchiveFile *Archive::findArchiveFile(uint32 index) const {
+FlexFile *Archive::findArchiveFile(uint32 index) const {
 	unsigned int n = _sources.size();
 	for (unsigned int i = 1; i <= n; ++i) {
 		if (_sources[n - i]->exists(index))

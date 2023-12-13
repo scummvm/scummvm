@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class ArchiveFile;
+class FlexFile;
 
 class Archive {
 public:
@@ -39,10 +39,10 @@ public:
 	virtual ~Archive();
 
 	//! add input source.
-	//! ArchiveFile will be deleted on destruction
+	//! FlexFile will be deleted on destruction
 	//! Input sources are used in the reversed order they are added.
 	//! Effect of adding sources after having accessed objects is undef.
-	bool addSource(ArchiveFile *af);
+	bool addSource(FlexFile *af);
 
 	//! add input source, autodetecting the type (as the constructor)
 	bool addSource(Common::SeekableReadStream *rs);
@@ -76,9 +76,9 @@ protected:
 	uint32 getRawSize(uint32 index) const;
 
 private:
-	Std::vector<ArchiveFile *> _sources;
+	Std::vector<FlexFile *> _sources;
 
-	ArchiveFile *findArchiveFile(uint32 index) const;
+	FlexFile *findArchiveFile(uint32 index) const;
 };
 
 } // End of namespace Ultima8
