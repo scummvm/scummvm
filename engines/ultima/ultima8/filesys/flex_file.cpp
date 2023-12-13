@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/filesys/flex_file.h"
 
@@ -79,6 +81,16 @@ uint32 FlexFile::getOffset(uint32 index) {
 	return _rs->readUint32LE();
 }
 
+Common::SeekableReadStream *FlexFile::getDataSource(uint32 index, bool is_text) {
+	uint32 size;
+	uint8 *buf = getObject(index, &size);
+
+	if (!buf)
+		return nullptr;
+
+	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
+}
+
 uint8 *FlexFile::getObject(uint32 index, uint32 *sizep) {
 	if (index >= _count)
 		return nullptr;
@@ -105,10 +117,6 @@ uint32 FlexFile::getSize(uint32 index) const {
 	uint32 length = _rs->readUint32LE();
 
 	return length;
-}
-
-bool FlexFile::nameToIndex(const Std::string &name, uint32 &index) const {
-	return extractIndexFromName(name, index);
 }
 
 } // End of namespace Ultima8
