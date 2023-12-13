@@ -4932,6 +4932,47 @@ static const uint16 islandBrainRobotMazeUnderflowPatch[] = {
 	PATCH_END
 };
 
+// The art puzzle has a script bug that locks up the game.
+//
+// There are three game versions: 1.0, 1.0 with Sierra's patches, and 1.100.
+//  1.100 is the final version and has more fixes. The "Sierra Classics" CD-ROM
+//  contains 1.0 with patches.
+//
+// 1.0 with patches has a script bug that locks up the art puzzle when it resets
+//  after six incorrect guesses. The art script was significantly changed in
+//  the patched version, but the reset code wasn't updated to match. This was
+//  fixed in 1.100.
+//
+// We fix this by updating the patched version with the 1.100 code. The patch
+//  signature uses nearby code to only match against Sierra's patched version
+//  and not the original 1.0 version, where the reset script is correct.
+//
+// Applies to: Version 1.0 with Sierra's patches
+// Responsible method: artScript:changeState (2)
+// Fixes bug: #14543
+static const uint16 islandBrainArtPuzzleLockupSignature[] = {
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
+	0x76,                               // push0
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x015d),           // pushi 015d
+	0x76,                               // push0
+	0x43, 0x02, 0x04,                   // callk SciptID 04 [ (ScriptID 349 0) ]
+	0x4a, 0x04,                         // send 04 [ art dispose: ]
+	SIG_MAGICDWORD,
+	0x35, 0x0f,                         // ldi 0f
+	0xa3, 0x00,                         // sal 00 [ local0 = 15 ]
+	SIG_ADDTOOFFSET(+107),
+	0x93, 0x12,                         // lali 12 [ $12 in patched version, $11 in original ]
+	SIG_END
+};
+
+static const uint16 islandBrainArtPuzzleLockupPatch[] = {
+	0x35, 0xff,                         // ldi ff
+	0xa3, 0x02,                         // sal 02 [ local2 = -1, from version 1.100 ]
+	0x33, 0x0b,                         // jmp 0b
+	PATCH_END
+};
+
 // Narrator lockup fix, see sciNarratorLockupSignature.
 //  Island of Dr. Brain contains an early version of Narrator with the lockup
 //  bug so it requires its own patch.
@@ -4970,6 +5011,7 @@ static const uint16 islandBrainNarratorLockupPatch[] = {
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry islandBrainSignatures[] = {
 	{  true,   320, "robot maze underflow",                        1, islandBrainRobotMazeUnderflowSignature,   islandBrainRobotMazeUnderflowPatch },
+	{  true,   340, "art puzzle lockup",                           1, islandBrainArtPuzzleLockupSignature,      islandBrainArtPuzzleLockupPatch },
 	{  true,   928, "Narrator lockup fix",                         1, islandBrainNarratorLockupSignature,       islandBrainNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
