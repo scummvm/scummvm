@@ -27,6 +27,7 @@ namespace Tetraedge {
 
 TeTheora::TeTheora() : _hitEnd(false) {
 	_decoder = new Video::TheoraDecoder();
+	_decoder->setOutputPixelFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 }
 
 TeTheora::~TeTheora() {
