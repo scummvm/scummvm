@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-12 22:56+0000\n"
-"PO-Revision-Date: 2023-12-09 22:05+0000\n"
+"PO-Revision-Date: 2023-12-13 21:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1092,6 +1092,26 @@ msgid ""
 "For other (out of print) games, try Amazon, eBay, Game Trading Zone or other "
 "auction sites. Beware of faulty games and illegal game copies.\n"
 msgstr ""
+"## Де взяти ігри\n"
+"\n"
+"Відвідайте [нашу Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games), щоб переглянути список підтримуваних ігор "
+"і де їх можна придбати.\n"
+"\n"
+"Крім того, завантажте добірку [безкоштовних ігор](https://scummvm.org/games) "
+"і [демоверсій](https://www.scummvm.org/demos/) з нашого веб-сайту.\n"
+"\n"
+"Команда ScummVM не рекомендує жодного окремого постачальника ігор. Проте "
+"проект отримує відрізок від кожної покупки на [ZOOM-Platform](https://www."
+"zoom-platform.com/?affiliate=c049516c-9c4c-42d6-8649-92ed870e8b53) через "
+"реферальні посилання.\n"
+"\n"
+"Крім того, деякі ігри, недоступні на ZOOM-Platform, можна знайти в інших "
+"постачальників, таких як GOG.com і Steam.\n"
+"\n"
+"Для інших (роздрукованих) ігор спробуйте Amazon, eBay, Game Trading Zone або "
+"інші сайти аукціонів. Остерігайтеся несправних ігор і нелегальних копій ігор."
+"\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -2030,6 +2050,8 @@ msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
+"Не масштабувати шрифти фіксовваної ширини у GUI. Це зменшує візуальні "
+"атрефакти на екранах з низьким розгалуженням"
 
 #: gui/options.cpp:2572
 msgid "GUI language:"
@@ -2945,23 +2967,23 @@ msgstr "ТБ"
 
 #: common/formats/formatinfo.cpp:102
 msgid "Bitmap Image File"
-msgstr ""
+msgstr "Зображення у форматі Bitmap"
 
 #: common/formats/formatinfo.cpp:104
 msgid "PNG Image File"
-msgstr ""
+msgstr "Зображення у форматі PNG"
 
 #: common/formats/formatinfo.cpp:106
 msgid "JPEG Image File"
-msgstr ""
+msgstr "Зображення у форматі JPEG"
 
 #: common/formats/formatinfo.cpp:108
 msgid "QuickDraw PICT Image File"
-msgstr ""
+msgstr "Зображення у форматі QuickDraw PICT"
 
 #: common/formats/formatinfo.cpp:111
 msgid "Data File"
-msgstr ""
+msgstr "Файл даних"
 
 #: dists/android.strings.xml.cpp:30
 msgid "ScummVM"
@@ -2969,7 +2991,7 @@ msgstr "ScummVM"
 
 #: dists/android.strings.xml.cpp:31
 msgid "Graphic adventure game engine"
-msgstr ""
+msgstr "Движок графічних квестів"
 
 #: dists/android.strings.xml.cpp:33
 #: backends/events/default/default-events.cpp:217
@@ -2984,11 +3006,11 @@ msgstr "Вихід"
 
 #: dists/android.strings.xml.cpp:34
 msgid "Config File Error"
-msgstr ""
+msgstr "Помилка файла конфігурації"
 
 #: dists/android.strings.xml.cpp:35
 msgid "Unable to read ScummVM config file or create a new one!"
-msgstr ""
+msgstr "Не вдалося прочитати файл конфігурації ScummVM або створити новий!"
 
 #: dists/android.strings.xml.cpp:36
 msgid "Save Path Error"
@@ -2996,7 +3018,7 @@ msgstr "Помилка шляху зберігання"
 
 #: dists/android.strings.xml.cpp:37
 msgid "Unable to create or access default save path!"
-msgstr ""
+msgstr "Не вдалося створити або дістатися до шляху збереження ігор!"
 
 #: dists/android.strings.xml.cpp:38
 msgid "Icons Path Error"
@@ -3004,13 +3026,15 @@ msgstr "Помилка шляху іконок"
 
 #: dists/android.strings.xml.cpp:39
 msgid "Unable to create or access default icons and shaders path!"
-msgstr ""
+msgstr "Не вдалося створити або дістатися до шляху іконок та шейдерів!"
 
 #: dists/android.strings.xml.cpp:40
 msgid ""
 "Unable to access the globally set save path! Please revert to default from "
 "ScummVM Options"
 msgstr ""
+"Не вдалося дістатися до глобального шляху збереження ігор! Будь-ласка, "
+"поверніться до значень за замовченням в Налаштуваннях ScummVM"
 
 #: dists/android.strings.xml.cpp:41
 msgid "Toggle virtual keyboard"
@@ -3025,7 +3049,7 @@ msgstr "Alt"
 
 #: dists/android.strings.xml.cpp:45
 msgid "Done"
-msgstr ""
+msgstr "Готове"
 
 #: dists/android.strings.xml.cpp:46
 msgid "Mode change"
@@ -3049,10 +3073,12 @@ msgid ""
 "Please select the *root* of your external (physical) SD card. This is "
 "required for ScummVM to access this path: "
 msgstr ""
+"Будь-ласка, оберіть папку *root* (корень) у вашій зовнішній (фізичній) SD-"
+"картці. Це необхідно, щоб ScummVM міг дістатися цієї папки: "
 
 #: dists/android.strings.xml.cpp:51
 msgid "Storage Access Framework Permissions for ScummVM were revoked!"
-msgstr ""
+msgstr "Дозвіл доступу ScummVM до Storage Access Framework було вилучено!"
 
 #. I18N: One line summary as shown in *nix distributions
 #: dists/org.scummvm.scummvm.metainfo.xml.cpp:32
@@ -3203,6 +3229,7 @@ msgstr ""
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
 msgstr ""
+"Ця гра не може бути збережена в цей момент. Будь-ласка, спробуйте пізніше"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3223,6 +3250,7 @@ msgstr ""
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
 msgstr ""
+"Ця гра не може бути завантажена в цей момент. Будь-ласка, спробуйте пізніше"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -3838,7 +3866,7 @@ msgstr "Поверхня SDL"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (8-бітний режим)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -4542,6 +4570,73 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Режими сенсорного керування\n"
+"Режим сенсорного керування можна змінити, торкнувшись або клацнувши значок "
+"контролера у верхньому правому куті\n"
+"### Безпосередня миша\n"
+"\n"
+"Сенсорне управління безпосереднє. Курсор переходить до місця, де палець "
+"торкається екрана (за замовчуванням для меню).\n"
+"\n"
+"   ![Прямий режим миші](mouse.png \"Прямий режим миші\"){w=10em}\n"
+"\n"
+"### Емуляція тачпада\n"
+"\n"
+"Сенсорне управління непряме, як на тачпаді ноутбука.\n"
+"\n"
+"   ![Режим сенсорної панелі](touchpad.png \"Режим сенсорної панелі\"){w=10em}"
+"\n"
+"\n"
+"### Емуляція геймпада\n"
+"\n"
+"Пальці потрібно розташувати в нижньому лівому та правому куті екрана, щоб "
+"імітувати панель керування та кнопки дій.\n"
+"\n"
+"   ![Режим геймпада](gamepad.png \"Режим геймпада\"){w=10em}\n"
+"\n"
+"Щоб вибрати бажаний режим дотику для меню, 2D-ігор і 3D-ігор, перейдіть до **"
+"Глобальні параметри > Backend > Виберіть бажаний режим дотику**.\n"
+"\n"
+"## Дії дотиком\n"
+"\n"
+"### Прокрутка двома пальцями\n"
+"\n"
+"Щоб прокручувати, проведіть двома пальцями вгору або вниз по екрану\n"
+"### Дотик двома пальцями\n"
+"\n"
+"Щоб торкнутися двома пальцями, утримуйте один палець, а потім торкніться "
+"другим пальцем.\n"
+"\n"
+"### Дотик трьома пальцями\n"
+"\n"
+"Щоб виконати натискання трьома пальцями, почніть з утримування одного пальця "
+"та поступово торкайтеся донизу двома іншими пальцями по одному, утримуючи "
+"попередні пальці. Уявіть, що ви нетерпляче постукуєте пальцями по поверхні, "
+"а потім сповільніть цей рух, щоб він був ритмічним, але не надто повільним.\n"
+"\n"
+"### Імерсивний повноекранний режим Sticky\n"
+"\n"
+"Проведіть пальцем від краю, щоб відкрити системні панелі. Вони залишаються "
+"напівпрозорими та зникають через кілька секунд, якщо ви не взаємодієте з "
+"ними.\n"
+"\n"
+"### Глобальне головне меню\n"
+"\n"
+"Щоб відкрити глобальне головне меню, торкніться піктограми меню у верхньому "
+"правому куті екрану.\n"
+"\n"
+"   ![Піктограма меню](menu.png \"Піктограма меню\"){w=10em}\n"
+"\n"
+"## Віртуальна клавіатура\n"
+"\n"
+"Щоб відкрити віртуальну клавіатуру, продовжено натисніть значок управління у "
+"верхньому правому куті екрана або торкніться будь-якого редагованого "
+"текстового поля. Щоб приховати віртуальну клавіатуру, знову торкніться "
+"піктограми управління або торкніться за межами текстового поля.\n"
+"\n"
+"\n"
+"   ![Піктограма Клавіатури](keyboard.png \"Піктограма клавіатури\"){w=10em}\n"
+"\n"
 
 #: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
@@ -4586,6 +4681,41 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
+"## Додавання ігор\n"
+"\n"
+"1. Виберіть **Додати гру...** на панелі запуску.\n"
+"\n"
+"2. У переглядачі файлів ScummVM вибирайте **Вгору**, доки не досягнете "
+"кореневої папки з опцією **<Додати нову папку>**.\n"
+"\n"
+"   ![Коренева система браузера файлів ScummVM](browser-root.png \"Коренева "
+"система браузера файлів ScummVM\"){w=70%}\n"
+"\n"
+"3. Двічі торкніться **<Додати нову папку>**. У файловому браузері вашого "
+"пристрою перейдіть до папки з усіма папками вашої гри. Наприклад, **SD Card "
+"> ScummVMgames**.\n"
+"\n"
+"4. Виберіть **Використовувати цю папку**.\n"
+"\n"
+"   ![Папка для вибору ОС](fs-folder.png \"Папка для вибору ОС\"){w=70%}\n"
+"\n"
+"5. Виберіть **ДОЗВОЛИТИ**, щоб надати ScummVM дозвіл на доступ до папки.\n"
+"\n"
+"   ![Діалогове вікно дозволу доступу від ОС](fs-permission.png \"Дозвіл "
+"доступу від ОС\"){w=70%}\n"
+"\n"
+"6. У переглядачі файлів ScummVM двічі торкніться, щоб переглянути додану "
+"папку. Додайте гру, вибравши підпапку, що містить файли гри, а потім "
+"натисніть **Вибрати**.\n"
+"\n"
+"   ![Додано папку SAF](browser-folder-in-list.png \"Додано папку SAF\""
+"){w=70%}\n"
+"\n"
+"Крок 2 і 3 виконуються лише один раз. Щоб додати більше ігор, повторіть "
+"кроки 1 і 6.\n"
+"\n"
+"Перегляньте нашу [документацію Android](https://docs.scummvm.org/en/latest/"
+"other_platforms/android.html), щоб дізнатися більше.\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -4643,7 +4773,7 @@ msgstr "У 3D іграх"
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Оберіть орієнтацію:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
@@ -4657,7 +4787,7 @@ msgstr "Автоматичне"
 #: backends/platform/ios7/ios7_options.mm:147
 #: backends/platform/ios7/ios7_options.mm:162
 msgid "Portrait"
-msgstr ""
+msgstr "Горизонтальна"
 
 #: backends/platform/android/options.cpp:169
 #: backends/platform/android/options.cpp:184
@@ -4703,23 +4833,23 @@ msgstr "Прозорість геймпаду"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
-msgstr ""
+msgstr "Кнопка напрямку:"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
-msgstr ""
+msgstr "Джойстик"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
-msgstr ""
+msgstr "D-пад"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "Використовувати мінімальний режим геймпаду"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
-msgstr ""
+msgstr "Показати функціональні клавіші клавіатури"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:252
 msgid ""
@@ -4789,6 +4919,76 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Режими сенсорного керування\n"
+"Режим сенсорного керування можна змінити, торкнувшись або клацнувши "
+"піктограму контролера у верхньому правому куті, провівши двома пальцями "
+"зліва направо, або в глобальних налаштуваннях панелі запуску перейдіть до **"
+"Глобальні параметри > Backend > Виберіть потрібний сенсорний режим**. "
+"Сенсорний режим можна налаштувати для трьох ситуацій (меню ScummVM, 2D і 3D "
+"ігри).\n"
+"\n"
+"### Безпосередня миша\n"
+"\n"
+"Сенсорне управління безпосереднє. Курсор переходить до місця, де палець "
+"торкається екрана (за замовчуванням для меню).\n"
+"\n"
+"   ![Прямий режим миші](mouse.png \"Прямий режим миші\"){w=10em}\n"
+"\n"
+"### Емуляція тачпада\n"
+"\n"
+"Сенсорне управління непряме, як на тачпаді ноутбука.\n"
+"\n"
+"   ![Режим сенсорної панелі](touchpad.png \"Режим сенсорної панелі\"){w=10em}"
+"\n"
+"\n"
+"Щоб вибрати бажаний режим дотику для меню, 2D-ігор і 3D-ігор, перейдіть до **"
+"Глобальні параметри > Backend > Виберіть бажаний режим дотику**.\n"
+"\n"
+"## Дії дотиком\n"
+"\n"
+"| Жест | Дія\n"
+"| ------------------|------------------\n"
+"| `Натискання одним пальцем` | Клацніть лівою кнопкою миші\n"
+"| `Торк двома пальцями` | Клацніть правою кнопкою миші\n"
+"| `Двічі торкніться двома пальцями` | ESC\n"
+"| `Натискання одним пальцем і утримання більше 0,5 с` | Утримує та перетягє "
+"ліву кнопку миші, наприклад, для вибору з колеса дій у Curse of Monkey "
+"Island\n"
+"| `Натискання двома пальцями й утримання понад 0,5 с` | Утримує та перетягує "
+"праву кнопку миші, наприклад, для вибору з колеса дій у Tony Tough\n"
+"| `Проведення двома пальцями (зліва направо)` | Перемикання між сенсорними "
+"режимами\n"
+"| `Проведення двома пальцями (справа наліво)` | Перемикає віртуальний "
+"контролер (>iOS 15)\n"
+"| `Проведення двома пальцями (зверху вниз)` | Доступ до глобального "
+"головного меню в іграх\n"
+"| `Щипки (збільшення/зменшення масштабу)` | Вмикає/вимикає клавіатуру\n"
+"\n"
+"### Віртуальний геймпад\n"
+"\n"
+"Пристрої з iOS 15 або новішої версії можуть підключити контролер "
+"віртуального геймпада. Проведіть двома пальцями справа наліво або виберіть **"
+"Глобальні параметри > Backend**. Кнопку напрямку можна налаштувати як "
+"джойстик або D-pad.\n"
+"\n"
+"### Глобальне головне меню\n"
+"\n"
+"Щоб відкрити глобальне головне меню, торкніться піктограми меню у верхньому "
+"правому куті екрана або проведіть двома пальцями вниз.\n"
+"\n"
+"   ![Піктограма меню](menu.png \"Піктограма меню\"){w=10em}\n"
+"\n"
+"## Віртуальна клавіатура\n"
+"\n"
+"Щоб відкрити віртуальну клавіатуру, натисніть і утримуйте піктограму "
+"контролера у верхньому правому куті екрана, зведіть пальці (зменшіть) або "
+"торкніться будь-якого редагованого текстового поля. Щоб приховати віртуальну "
+"клавіатуру, знову торкніться піктограми контролера, виконайте протилежний "
+"жест (збільште масштаб) або торкніться за межами текстового поля.\n"
+"\n"
+"\n"
+"   ![Піктограма Keybpard](keyboard.png \"Піктограма клавіатури\"){w=10em}\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:305
 msgid ""
@@ -4810,6 +5010,23 @@ msgid ""
 "See our [iOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
+"## Додавання ігор\n"
+"\n"
+"1. Скопіюйте необхідні файли гри в програму ScummVM. Є кілька способів "
+"зробити це. Перегляньте нашу [документацію щодо передачі файлів "
+"ігор](https://docs.scummvm.org/en/latest/other_platforms/ios.html"
+"#transferring-game-files), щоб дізнатися більше.\n"
+"\n"
+"2. Виберіть **Додати гру...** на панелі запуску.\n"
+"\n"
+"3. У переглядачі файлів ScummVM двічі торкніться, щоб перейти до доданої "
+"папки. Додайте гру, вибравши підпапку, що містить файли гри, а потім "
+"натисніть **Вибрати**.\n"
+"\n"
+"Щоб додати більше ігор, повторіть наведені вище дії.\n"
+"\n"
+"Перегляньте нашу [документацію iOS](https://docs.scummvm.org/en/latest/"
+"other_platforms/ios.html), щоб дізнатися більше.\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:326
 msgid ""
@@ -4832,6 +5049,24 @@ msgid ""
 "the virtual keyboard, press the Back/Menu button.\n"
 "\n"
 msgstr ""
+"## Дії дотиком\n"
+"\n"
+"### Натисніть Область дотику\n"
+"\n"
+"Натисніть область дотику, щоб виконати клацання лівою кнопкою миші\n"
+"### Відтворення/Пауза\n"
+"\n"
+"Натисніть «Відтворити/Пауза», щоб клацнути правою кнопкою миші\n"
+"\n"
+"### Глобальне головне меню\n"
+"\n"
+"Щоб відкрити глобальне головне меню, натисніть кнопку Назад/Меню.\n"
+"\n"
+"## Віртуальна клавіатура\n"
+"\n"
+"Щоб відкрити віртуальну клавіатуру, натисніть і утримуйте кнопку відтворення/"
+"паузи. Щоб приховати віртуальну клавіатуру, натисніть кнопку Назад/Меню.\n"
+"\n"
 
 #: backends/platform/ios7/ios7_osys_misc.mm:349
 msgid ""
@@ -4853,6 +5088,23 @@ msgid ""
 "See our [tvOS documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/tvos.html) for more information.\n"
 msgstr ""
+"## Додавання ігор\n"
+"\n"
+"1. Скопіюйте необхідні файли гри в програму ScummVM. Є кілька способів "
+"зробити це. Перегляньте нашу [документацію щодо передачі файлів "
+"ігор](https://docs.scummvm.org/en/latest/other_platforms/tvos.html"
+"#transferring-game-files), щоб дізнатися більше.\n"
+"\n"
+"2. Виберіть **Додати гру...** на панелі запуску.\n"
+"\n"
+"3. У браузері файлів ScummVM двічі торкніться, щоб перейти до доданої папки. "
+"Додайте гру, вибравши підпапку, що містить файли гри, а потім натисніть "
+"**Вибрати**.\n"
+"\n"
+"Щоб додати більше ігор, повторіть наведені вище дії.\n"
+"\n"
+"Перегляньте нашу [документацію tvOS](https://docs.scummvm.org/en/latest/"
+"other_platforms/tvos.html), щоб дізнатися більше.\n"
 
 #: backends/platform/maemo/maemo.cpp:157
 msgid "Click Mode"
@@ -4879,22 +5131,37 @@ msgid ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
+"## Гарячі клавіши\n"
+"\n"
+"ScummVM підтримує різноманітні комбінації клавіш і миші в грі, і, починаючи "
+"з версії 2.2.0, їх можна налаштувати вручну на вкладці **Карти клавіш** або "
+"у **файлі конфігурації**.\n"
+"\n"
+"Щоб отримати відомості про елементи керування певною грою, перегляньте "
+"[вікі-запис](https://wiki.scummvm.org/index."
+"php?title=Category:Supported_Games) гри, у яку ви граєте.\n"
+"\n"
+"Ярлики за замовчуванням наведено в таблиці.\n"
+"\n"
+"| Ярлик | Опис\n"
+"| --------------|------------------\n"
+"| `Ctrl+F5` | Відображає глобальне головне меню\n"
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | Вихід (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
-msgstr ""
+msgstr "| `Alt+F4`  | Вихід (Windows)\n"
 
 #: backends/platform/sdl/sdl.cpp:1037
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
-msgstr ""
+msgstr "| `Ctrl+q`  | Вихід (Linux/Unix)\n"
 
 #: backends/platform/sdl/sdl.cpp:1038
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
-msgstr ""
+msgstr "| `Ctrl+z`  | Вихід (інші платформи)\n"
 
 #: backends/platform/sdl/sdl.cpp:1041
 msgid ""
@@ -4913,6 +5180,20 @@ msgid ""
 "opened with a long press of the middle mouse button or wheel.\n"
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
+"| `Ctrl+u` | Вимкнення всіх звуків\n"
+"| `Ctrl+m` | Перемикає захоплення миші\n"
+"| `Ctrl+Alt` і `9` або `0` | Перемикання вперед/назад між графічними "
+"фільтрами\n"
+"| `Ctrl+Alt` і `+` або `-` | Збільшує/зменшує коефіцієнт масштабування\n"
+"| `Ctrl+Alt+a` | Вмикає/вимикає корекцію співвідношення сторін\n"
+"| `Ctrl+Alt+f` | Перемикає між найближчим сусідом і білінійною інтерполяцією "
+"(фільтрування графіки ввімкнено/вимкнено)\n"
+"| `Ctrl+Alt+s` | Цикли між режимами розтягування\n"
+"| `Alt+Enter` | Перемикає повноекранний/віконний режим\n"
+"| `Alt+s` | Робить скріншот\n"
+"| `Ctrl+F7` | Відкриває віртуальну клавіатуру (якщо ввімкнено). Його також "
+"можна відкрити тривалим натисканням середньої кнопки миші або коліщатка.\n"
+"| `Ctrl+Alt+d` | Відкриває налагоджувач ScummVM\n"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Hide ScummVM"
@@ -6034,27 +6315,27 @@ msgstr "Попередній"
 
 #: engines/crab/input/input.cpp:191
 msgid "Reply 1"
-msgstr ""
+msgstr "Відповідь 1"
 
 #: engines/crab/input/input.cpp:196
 msgid "Reply 2"
-msgstr ""
+msgstr "Відповідь 2"
 
 #: engines/crab/input/input.cpp:201
 msgid "Reply 3"
-msgstr ""
+msgstr "Відповідь 3"
 
 #: engines/crab/input/input.cpp:206
 msgid "Reply 4"
-msgstr ""
+msgstr "Відповідь 4"
 
 #: engines/crab/input/input.cpp:211
 msgid "Reply 5"
-msgstr ""
+msgstr "Відповідь 5"
 
 #: engines/crab/input/input.cpp:216
 msgid "Reply 6"
-msgstr ""
+msgstr "Відповідь 6"
 
 #: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:491
 msgid "Next Page"
@@ -6086,7 +6367,7 @@ msgstr "Інвентар"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
-msgstr ""
+msgstr "Риси"
 
 #: engines/crab/input/input.cpp:266
 msgid "Quick Save"
@@ -6228,7 +6509,7 @@ msgstr "Гравець не зможе впасти за краї"
 
 #: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Інвертувати вісь Y миші"
 
 #: engines/freescape/metaengine.cpp:105
 msgid "Use alternative camera controls"
@@ -6251,7 +6532,7 @@ msgstr "Стріляти"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Піднятися/Летіти догори"
 
 #: engines/freescape/movement.cpp:72
 msgid "Lower/Fly down"
@@ -7221,7 +7502,7 @@ msgstr "Cтовпчики здоров'я"
 
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
-msgstr ""
+msgstr "Замінити кольоровий камінь на смужки очок здоров'я та очок заклинань."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -7357,6 +7638,9 @@ msgid ""
 "will automatically be available if you detect the original game and select "
 "Enhanced mode."
 msgstr ""
+"Ви не можете запустити гру безпосередньо з Graphics Overhaul Mod. Натомість "
+"він стане доступним автоматично, якщо ви додасте оригінальну гру та виберете "
+"Розширений режим."
 
 #: engines/mm/mm1/mm1.cpp:108
 msgid ""
@@ -7364,6 +7648,8 @@ msgid ""
 "of Xeen\n"
 "or Clouds of Xeen to your Might and Magic 1 game folder"
 msgstr ""
+"Щоб запустити Розширенийу режим, скопіюйте xeen.cc із копії World of Xeen\n"
+"або Clouds of Xeen у вашу папку гри Might and Magic 1"
 
 #: engines/mm/shared/utils/engine_data.cpp:282
 #: engines/ultima/shared/engine/data_archive.cpp:86
@@ -7800,7 +8086,7 @@ msgstr ""
 
 #: engines/mtropolis/plugin/mti.cpp:549
 msgid "Image Viewer"
-msgstr ""
+msgstr "Переглядач зображень"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -7881,25 +8167,26 @@ msgstr "Автопересування"
 
 #: engines/nancy/metaengine.cpp:61
 msgid "Automatically rotate the viewport when the mouse reaches an edge."
-msgstr ""
+msgstr "Автоматично повертати вікно перегляду, коли миша досягає краю."
 
 #: engines/nancy/metaengine.cpp:71
 msgid "Fix softlocks"
-msgstr ""
+msgstr "Виправити блокування"
 
 #: engines/nancy/metaengine.cpp:72
 msgid ""
 "Fix instances where missing something earlier in the game blocks you from "
 "progressing any further."
 msgstr ""
+"Виправте випадки, коли пропуск чогось раніше в грі блокує подальший прогрес."
 
 #: engines/nancy/metaengine.cpp:82
 msgid "Fix annoyances"
-msgstr ""
+msgstr "Виправити роздратування"
 
 #: engines/nancy/metaengine.cpp:83
 msgid "Fix various minor annoyances."
-msgstr ""
+msgstr "Випраити різні дрібні роздратування."
 
 #: engines/nancy/metaengine.cpp:93
 msgid "Extend endgame timer"
@@ -7910,6 +8197,8 @@ msgid ""
 "Get a little more time before failing the final puzzle. This is an official "
 "patch by HeR Interactive."
 msgstr ""
+"Отримати трохи більше часу, перш ніж провалити останню головоломку. Це "
+"офіційе виправлення від HeR Interactive."
 
 #: engines/neverhood/dialogs.cpp:52
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8244,7 +8533,7 @@ msgstr "Casio MT-540 / CSM-1"
 
 #: engines/sci/detection_tables.h:4531
 msgid "This demo uses an unimplemented version of Robot videos"
-msgstr ""
+msgstr "У цій демо використовується нереалізована версія відео Robot"
 
 #: engines/sci/detection_tables.h:4586
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8520,7 +8809,7 @@ msgstr "Експерт"
 
 #: engines/scumm/dialogs.cpp:1126
 msgid "Enhancements:"
-msgstr ""
+msgstr "Покращення:"
 
 #: engines/scumm/dialogs.cpp:1131
 msgid "Fix original bugs"
@@ -8531,16 +8820,20 @@ msgid ""
 "Fixes bugs which were present in the original release, and noticeable "
 "graphical/audio glitches."
 msgstr ""
+"Виправляє помилки, які були присутні в оригінальній версії, і помітні "
+"графічні/аудіо збої."
 
 #: engines/scumm/dialogs.cpp:1135
 msgid "Audio-visual improvements"
-msgstr ""
+msgstr "Аудіовізуальні покращення"
 
 #: engines/scumm/dialogs.cpp:1136
 msgid ""
 "Makes adjustments not related to bugs for certain audio and graphics "
 "elements (e.g. version consistency changes)."
 msgstr ""
+"Вносить коригування, не пов’язані з помилками, для певних звукових і "
+"графічних елементів (наприклад, робить однакову поведінку для різних версій)."
 
 #: engines/scumm/dialogs.cpp:1139
 msgid "Restored content"
@@ -8551,16 +8844,20 @@ msgid ""
 "Restores dialogs, graphics, and audio elements which were originally cut in "
 "the original release."
 msgstr ""
+"Відновлює діалоги, графіку та аудіоелементи, які були вирізані в "
+"оригінальній версії."
 
 #: engines/scumm/dialogs.cpp:1143
 msgid "Modern UI/UX adjustments"
-msgstr ""
+msgstr "Сучасні налаштування UI/UX"
 
 #: engines/scumm/dialogs.cpp:1144
 msgid ""
 "Activates some modern comforts; e.g it removes the fake sound loading screen "
 "in Sam&Max, and makes early save menus snappier."
 msgstr ""
+"Активує деякі сучасні зручності; наприклад, не показує фальшивий екран "
+"завантаження звуку в Sam&Max і робить оригінальне меню збереження швидшим."
 
 #: engines/scumm/dialogs.cpp:1168 engines/scumm/metaengine.cpp:700
 msgid "Enable the original GUI and Menu"
@@ -9370,12 +9667,14 @@ msgstr ""
 
 #: engines/scumm/scumm.cpp:1182
 msgid "This game requires the 'Indy' Macintosh executable for its fonts."
-msgstr ""
+msgstr "Для цієї гри потрібен виконуваний файл Macintosh «Indy» для шрифтів."
 
 #: engines/scumm/scumm.cpp:1207
 msgid ""
 "This game requires the 'Loom' Macintosh executable for its music and fonts."
 msgstr ""
+"Для цієї гри потрібен виконуваний файл \"Loom\" Macintosh для музики та "
+"шрифтів."
 
 #: engines/scumm/scumm.cpp:1227
 msgid ""
@@ -9432,6 +9731,8 @@ msgid ""
 "Unimplemented development codepath encountered within the sound engine,\n"
 "please file a ticket at https://bugs.scummvm.org."
 msgstr ""
+"У системі звуку виявлено нереалізований кодовий шлях,\n"
+"будь-ласка, надішліть звіт на https://bugs.scummvm.org."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
@@ -10139,7 +10440,7 @@ msgstr ""
 
 #: engines/vcruise/metaengine.cpp:42
 msgid "Improved click sensitivity"
-msgstr ""
+msgstr "Покращена чутливість до кліків"
 
 #: engines/vcruise/metaengine.cpp:43
 msgid ""
@@ -10147,6 +10448,9 @@ msgid ""
 "interactions.  If this is off, any mouse movement while the mouse button is "
 "held cancels a click interaction."
 msgstr ""
+"Дозволяє переміщати мишу на коротку відстань, не скасовуючи взаємодій "
+"клацання. Якщо вимкнено, будь-який рух миші під час утримання кнопки миші "
+"скасовує взаємодію клацання."
 
 #: engines/vcruise/metaengine.cpp:53
 msgid "Faster animations"
@@ -10162,7 +10466,7 @@ msgstr "Пропустити головне меню"
 
 #: engines/vcruise/metaengine.cpp:76
 msgid "Starts a new game upon launching instead of going to the main menu."
-msgstr ""
+msgstr "Починає нову гру після запуску замість переходу в головне меню."
 
 #: engines/vcruise/metaengine.cpp:124
 msgid "Display help screen"
