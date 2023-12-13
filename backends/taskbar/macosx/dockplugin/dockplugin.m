@@ -54,8 +54,8 @@
 
 - (NSMenu*)dockMenu {
 	// Get the list or recent games
-	CFPreferencesAppSynchronize(CFSTR("org.scummvm.scummvm"));
-	NSArray *array = CFPreferencesCopyAppValue(CFSTR("recentGames"), CFSTR("org.scummvm.scummvm"));
+	CFPreferencesAppSynchronize(CFSTR("org.scummvm.app"));
+	NSArray *array = CFPreferencesCopyAppValue(CFSTR("recentGames"), CFSTR("org.scummvm.app"));
 	if (array == nil)
 		return nil;
 
@@ -109,7 +109,7 @@
 - (IBAction) startGame {
 	NSLog(@"Starting Game %@...", game);
 
-	NSString *scummVMPath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.scummvm.scummvm"];
+	NSString *scummVMPath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.scummvm.app"];
 	if (scummVMPath == nil) {
 		NSLog(@"Cannot find ScummVM.app!");
 		return;
