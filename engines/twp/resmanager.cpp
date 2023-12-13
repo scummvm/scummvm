@@ -87,7 +87,7 @@ void ResManager::loadFont(const Common::String &name) {
 		_fonts[name] = &_fontC64TermSheet;
 	} else {
 		// TODO:
-		assert(false);
+		error("Loading font %s not implemented", name.c_str());
 	}
 }
 

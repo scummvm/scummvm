@@ -40,6 +40,8 @@ MODULE_OBJS = \
 	genlib.o \
 	squtil.o \
 	thread.o \
+	rectf.o \
+	scenegraph.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

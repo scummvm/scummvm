@@ -76,7 +76,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	debug("Create object: %s, %u", sheet.c_str(), frames.size());
 	Object *obj = g_engine->_room->createObject(sheet, frames);
-	sq_pushobject(v, obj->table);
+	sq_pushobject(v, obj->_table);
 
 	return 1;
 }
@@ -124,7 +124,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 	}
 	debug("Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
 	Object *obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
-	push(v, obj->table);
+	push(v, obj->_table);
 	return 1;
 }
 
@@ -458,7 +458,7 @@ static SQInteger objectAt(HSQUIRRELVM v) {
 
 	Object **pObj = Common::find_if(g_engine->_objects.begin(), g_engine->_objects.end(), [&](Object *o) {
 		SQObjectPtr id2;
-		_table(o->table)->Get(sqobj(v, "_id"), id2);
+		_table(o->_table)->Get(sqobj(v, "_id"), id2);
 		return id == _integer(id2);
 	});
 

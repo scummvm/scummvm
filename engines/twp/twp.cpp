@@ -45,8 +45,8 @@ namespace Twp {
 
 TwpEngine *g_engine;
 
-static bool cmpLayer(const Layer &l1, const Layer &l2) {
-	return l1.zsort > l2.zsort;
+static bool cmpLayer(const Layer *l1, const Layer *l2) {
+	return l1->_zsort > l2->_zsort;
 }
 
 TwpEngine::TwpEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -82,41 +82,11 @@ Common::Error TwpEngine::run() {
 
 	_pack.open(&f, key);
 
-	const SQChar *code = R"(
-		function
-		bounceImage() {
-		local image = createObject("RaySheet", ["fstand_head1"]);
-		local x = random(100, 1180);
-		local y = random(100, 620);
-
-		do {
-			local steps = random(100, 150);
-			local end_x = random(0, 1180);
-			local end_y = random(0, 620);
-
-			local dx = (end_x - x) / steps;
-			local dy = (end_y - y) / steps;
-
-			for (local i = 0; i < steps; i++) {
-				x += dx;
-				y += dy;
-				objectAt(image, x, y);
-				breaktime(0.01);
-			}
-		} while (1);
-	}
-
-	for (local i = 1; i <= 200; i++) {
-		startthread(bounceImage);
-	})";
-
 	GGPackEntryReader r;
 	r.open(g_engine->_pack, "MainStreet.wimpy");
 
 	Room room;
 	room.load(r);
-
-	_vm.exec(code);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -180,12 +150,12 @@ Common::Error TwpEngine::run() {
 		Common::sort(room._layers.begin(), room._layers.end(), cmpLayer);
 		for (int i = 0; i < room._layers.size(); i++) {
 			float x = 0;
-			const Layer &layer = room._layers[i];
-			for (int j = 0; j < layer.names.size(); j++) {
-				const Common::String &name = layer.names[j];
+			const Layer* layer = room._layers[i];
+			for (int j = 0; j < layer->_names.size(); j++) {
+				const Common::String &name = layer->_names[j];
 				const SpriteSheetFrame &frame = ss->frameTable[name];
 				Math::Matrix4 m;
-				Math::Vector3d t1 = Math::Vector3d(x - pos.getX() * layer.parallax.getX(), -pos.getY() * layer.parallax.getY(), 0);
+				Math::Vector3d t1 = Math::Vector3d(x - pos.getX() * layer->_parallax.getX(), -pos.getY() * layer->_parallax.getY(), 0);
 				Math::Vector3d t2 = Math::Vector3d(frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f);
 				m.translate(t1+t2);
 				lighting.setSpriteSheetFrame(frame, *texture);
@@ -225,12 +195,12 @@ Common::Error TwpEngine::syncGame(Common::Serializer &s) {
 
 Math::Vector2d TwpEngine::roomToScreen(Math::Vector2d pos) {
 	Math::Vector2d screenSize = _room->getScreenSize();
-	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx._cameraPos) / screenSize;
+	return Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) * (pos - _gfx.cameraPos()) / screenSize;
 }
 
 Math::Vector2d TwpEngine::screenToRoom(Math::Vector2d pos) {
   Math::Vector2d screenSize = _room->getScreenSize();
-  return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx._cameraPos;
+  return (pos * screenSize) / Math::Vector2d(SCREEN_WIDTH, SCREEN_HEIGHT) + _gfx.cameraPos();
 }
 
 } // End of namespace Twp
