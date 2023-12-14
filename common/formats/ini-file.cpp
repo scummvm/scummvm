@@ -59,23 +59,23 @@ void INIFile::clear() {
 	_sections.clear();
 }
 
-bool INIFile::loadFromFile(const String &filename, bool strictParser) {
+bool INIFile::loadFromFile(const String &filename) {
 	File file;
 	if (file.open(filename))
-		return loadFromStream(file, strictParser);
+		return loadFromStream(file);
 	else
 		return false;
 }
 
-bool INIFile::loadFromFileOrDataFork(const String &filename, bool strictParser) {
+bool INIFile::loadFromFileOrDataFork(const String &filename) {
 	SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(filename);
 	if (file)
-		return loadFromStream(*file, strictParser);
+		return loadFromStream(*file);
 	else
 		return false;
 }
 
-bool INIFile::loadFromSaveFile(const String &filename, bool strictParser) {
+bool INIFile::loadFromSaveFile(const String &filename) {
 	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
@@ -84,18 +84,17 @@ bool INIFile::loadFromSaveFile(const String &filename, bool strictParser) {
 	if (!(loadFile = saveFileMan->openForLoading(filename)))
 		return false;
 
-	bool status = loadFromStream(*loadFile, strictParser);
+	bool status = loadFromStream(*loadFile);
 	delete loadFile;
 	return status;
 }
 
-bool INIFile::loadFromStream(SeekableReadStream &stream, bool strictParser) {
+bool INIFile::loadFromStream(SeekableReadStream &stream) {
 	static const byte UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 	Section section;
 	KeyValue kv;
 	String comment;
 	int lineno = 0;
-	int nonAsciilineCount = 0;
 	section.name = _defaultSectionName;
 
 	// TODO: Detect if a section occurs multiple times (or likewise, if
@@ -116,9 +115,6 @@ bool INIFile::loadFromStream(SeekableReadStream &stream, bool strictParser) {
 
 		if (line.size() == 0) {
 			// Do nothing
-		} else if (!strictParser && !Common::isPrint(line[0])) {
-			// Non-ASCII character at the beginning of the line, count lines
-			nonAsciilineCount++;
 		} else if (line[0] == '#' || line[0] == ';' || line.hasPrefix("//")) {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value
@@ -202,9 +198,6 @@ bool INIFile::loadFromStream(SeekableReadStream &stream, bool strictParser) {
 			section.keys.push_back(kv);
 		}
 	}
-	if (nonAsciilineCount)
-		warning("loadFromStream(): %d lines with non-ASCII garbage ignored", nonAsciilineCount);
-
 
 	// Save last section
 	if (!section.name.empty())
