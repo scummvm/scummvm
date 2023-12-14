@@ -69,8 +69,14 @@ private:
 	void preloadAssets2();
 	void triggerParser();
 	void play015();
-	int adjustY(int val) const {
-		return (int)((double)val * -1.428571428571429);
+
+	/**
+	 * Gets the X position for the edge of the road, given a Y pos.
+	 * Used for the cutscene where Burl arrives, to determine whether
+	 * he honks the horn at Wilbur to get off the road
+	 */
+	int getRoadEdgeX(int y) const {
+		return (int)((double)(-y + 126) * -1.428571428571429);
 	}
 
 public:
