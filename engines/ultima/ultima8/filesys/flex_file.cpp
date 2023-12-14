@@ -57,11 +57,11 @@ FlexFile::~FlexFile() {
 }
 
 //static
-bool FlexFile::isFlexFile(Common::SeekableReadStream *_rs) {
-	_rs->seek(0);
+bool FlexFile::isFlexFile(Common::SeekableReadStream *rs) {
+	rs->seek(0);
 	int i;
 	char buf[FLEX_HDR_SIZE];
-	_rs->read(buf, FLEX_HDR_SIZE);
+	rs->read(buf, FLEX_HDR_SIZE);
 
 	for (i = 0; i < FLEX_HDR_SIZE; ++i) {
 		if (buf[i] == FLEX_HDR_PAD) break;
