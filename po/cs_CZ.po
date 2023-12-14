@@ -9683,7 +9683,8 @@ msgstr "Nelze najít datové soubory jádra '%s'."
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr "Nalezena data jádra '%s' s nesprávnou verzí. Očekávána %d, ale byla %d."
+msgstr ""
+"Nalezena data jádra '%s' s nesprávnou verzí. Očekávána %d, ale byla %d."
 
 #: engines/supernova/supernova.cpp:486
 #, c-format
