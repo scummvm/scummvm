@@ -116,7 +116,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream, bool strictParser) {
 
 		if (line.size() == 0) {
 			// Do nothing
-		} else if (!strictParser && !Common::isPrint(line[0])) {
+		} else if (strictParser && !Common::isPrint(line[0])) {
 			// Non-ASCII character at the beginning of the line, count lines
 			nonAsciilineCount++;
 		} else if (line[0] == '#' || line[0] == ';' || line.hasPrefix("//")) {
