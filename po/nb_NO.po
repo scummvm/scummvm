@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-13 22:05+0000\n"
-"PO-Revision-Date: 2023-12-14 00:56+0000\n"
+"PO-Revision-Date: 2023-12-14 14:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -127,8 +127,6 @@ msgid "Manual mode"
 msgstr "Manuell modus"
 
 #: gui/cloudconnectionwizard.cpp:187
-#, fuzzy
-#| msgid "Will ask you to run Local Webserver"
 msgid "Will ask you to run the Local Webserver"
 msgstr "Ber deg om å kjøre Local Webserver"
 
@@ -3226,7 +3224,7 @@ msgstr ""
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
-msgstr ""
+msgstr "Spillet kan ikke lagres nå. Prøv igjen senere."
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3239,14 +3237,14 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "Dette spillet støtter ikke lasting av spill fra oppstarteren."
+msgstr ""
+"Dette spillet støtter ikke inlasting fra SCummVM-menyen. Benytt spillets "
+"egen meny."
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
-msgstr ""
+msgstr "Spillet kan ikke lastes in akkurat nå. Prøv igjen senere."
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -3866,7 +3864,7 @@ msgstr "SDL-overflate"
 
 #: backends/graphics/riscossdl/riscossdl-graphics.cpp:31
 msgid "SDL Surface (forced 8bpp mode)"
-msgstr ""
+msgstr "SDL Surface (tvungen 8bpp modus)"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:363
 #, c-format
@@ -4498,10 +4496,8 @@ msgstr "Forstørrelsesmodus av"
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 #: backends/platform/ios7/ios7_osys_misc.mm:323
-#, fuzzy
-#| msgid "Control"
 msgid "Touch Controls"
-msgstr "Kontroll"
+msgstr "Berøringskontroller"
 
 #: backends/platform/android/android.cpp:1034
 msgid ""
@@ -4571,6 +4567,60 @@ msgid ""
 "  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
 "\n"
 msgstr ""
+"## Berøringskontrollmodus\n"
+"Berøringskontrollene kan velges ved å tappe eller klikke på ikonet lengst "
+"opp til høyre \n"
+"### Direktepekende mus \n"
+"Berøringskontrollen er direktevirkende. Pekern hopper til der fingeren "
+"berører skjermen (standardvalg for menyer).\n"
+"\n"
+"  ![Direct mouse mode](mouse.png \"Direct mouse mode\"){w=10em}\n"
+"\n"
+"### Pekeplateemulering \n"
+"Berøringskontrollen er indirekte, som pekeplaten på en bærbar PC.\n"
+"\n"
+"  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em}\n"
+"\n"
+"### Gamepad-emulering \n"
+"Fingrene må plaseres til høyre og venstre på den lavere delen av skjermen "
+"for å emulere retnings- og handlingsknappene på en spillkontroll. \n"
+"\n"
+"  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em}\n"
+"\n"
+"For å velge foretrukken berøringsmodus for menyer, 2D-spill og 3D-spill gå "
+"til Globale instillinger>Backend > Choose the preferred touch mode**.\n"
+"\n"
+"## Berøringshandlinger \n"
+"### Tofingerrulling \n"
+"Sveip ti fingre opp eller ned langs skjermen\n"
+"\n"
+"### Tofingersklikk\n"
+"For å klikke tofingersklikk, hold en finger på skjermen og tapp med den "
+"andre.\n"
+"\n"
+"### Trefingersklikk\n"
+"For å klikke trefingersklikk, hold en finger på skjermen, legg til en finger "
+"til - og hold finger nummer to på skjermen, tapp med den tredje. \n"
+"\n"
+"### Immersiv helskjermsmodus\n"
+"Sveip fra skjermkanten for å få frem verktøylinjene. Disse er halvt "
+"gjennomsiktige og forsvinner etter noen sekunder om du ikke benytter dem.\n"
+"\n"
+"### Global hovedmeny\n"
+"For å åpne den globale hovedmenyen, klikk på menyikonet lengst opp til høyre "
+"på skjermen.\n"
+"\n"
+"  ![Menu icon](menu.png \"Menu icon\"){w=10em}\n"
+"\n"
+"## Virtuelt tastatur\n"
+"Virtuelt tastatur åpnes ved å trykke lenge på berøringskontrollikonet i øvre "
+"høyre hjørne, eller ved å tappe i et redigerbart tekstfelt. For å gå tilbake "
+"til vanlig berøringskontroll klikker du atter lenge på "
+"berøringskontrollikonet i øvre høyre hjørne eller utenfor det redigerbare "
+"tekstfeltet.\n"
+"\n"
+"  ![Keybpard icon](keyboard.png \"Keyboard icon\"){w=10em}\n"
+"\n"
 
 #: backends/platform/android/android.cpp:1090
 #: backends/platform/ios7/ios7_osys_misc.mm:302
@@ -4700,7 +4750,7 @@ msgstr "I 3D-spill"
 #: backends/platform/android/options.cpp:163
 #: backends/platform/ios7/ios7_options.mm:142
 msgid "Select the orientation:"
-msgstr ""
+msgstr "Velg orientering:"
 
 #: backends/platform/android/options.cpp:167
 #: backends/platform/android/options.cpp:182
@@ -4750,33 +4800,29 @@ msgid "Software scale (good quality, but slower)"
 msgstr "Programvareskalering (god kvalitet, men tregere)"
 
 #: backends/platform/ios7/ios7_options.mm:97
-#, fuzzy
-#| msgid "Show On-screen control"
 msgid "Show Gamepad Controller (iOS 15 and later)"
-msgstr "Vis kontroll på skjermen"
+msgstr "Vis Gamepad Controller (iOS 15 og senere)"
 
 #: backends/platform/ios7/ios7_options.mm:98
 #: backends/platform/ios7/ios7_options.mm:99
-#, fuzzy
-#| msgid "Gamepad emulation"
 msgid "Gamepad opacity"
-msgstr "Emulering av håndkontroll"
+msgstr "Håndkontrollens gjennomsiktighet"
 
 #: backends/platform/ios7/ios7_options.mm:103
 msgid "Directional button:"
-msgstr ""
+msgstr "Retningsknapp:"
 
 #: backends/platform/ios7/ios7_options.mm:105
 msgid "Thumbstick"
-msgstr ""
+msgstr "Tommelpinne"
 
 #: backends/platform/ios7/ios7_options.mm:106
 msgid "Dpad"
-msgstr ""
+msgstr "Dpad"
 
 #: backends/platform/ios7/ios7_options.mm:107
 msgid "Use minimal gamepad layout"
-msgstr ""
+msgstr "Benytt minimert gamepad layout"
 
 #: backends/platform/ios7/ios7_options.mm:109
 msgid "Show keyboard function bar"
