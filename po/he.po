@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-13 22:05+0000\n"
-"PO-Revision-Date: 2023-11-23 02:41+0000\n"
+"PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -678,12 +678,12 @@ msgstr "עוצמה"
 
 #: gui/editgamedialog.cpp:257
 msgid "Override global volume settings"
-msgstr "ביטול הגדרות עוצמת שמע מקיפות"
+msgstr "ביטול הגדרות עוצמה מקיפות"
 
 #: gui/editgamedialog.cpp:259
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "ביטול הגדרות עוצמת שמע מקיפות"
+msgstr "ביטול הגדרות עוצמה מקיפות"
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:2254
 msgid "MIDI"
@@ -833,7 +833,7 @@ msgstr "יש להזין שם קובץ לשמירה"
 
 #: gui/filebrowser-dialog.cpp:135
 msgid "Do you really want to overwrite the file?"
-msgstr "האם באמת להחליף את הקובץ?"
+msgstr "האם באמת לדרוס את הקובץ?"
 
 #: gui/fluidsynth-dialog.cpp:68
 msgid "Reverb"
@@ -935,7 +935,7 @@ msgstr "ממשק משתמש"
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853
 msgid "Interact"
-msgstr "אינטראקציה"
+msgstr "פעולה"
 
 #: gui/gui-manager.cpp:170 engines/metaengine.cpp:115
 #: engines/crab/input/input.cpp:95 engines/crab/input/input.cpp:145
@@ -1392,7 +1392,7 @@ msgstr "הכל"
 
 #: gui/launcher.cpp:1630
 msgid "Icons per row:"
-msgstr "צלמיות בשורה:"
+msgstr "סמלים בשורה:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
