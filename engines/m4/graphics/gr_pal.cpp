@@ -28,7 +28,7 @@
 
 namespace M4 {
 
-static const uint8 EGAcolors[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+byte EGAcolors[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 uint8 gr_pal_get_ega_color(uint8 myColor) {
 	return EGAcolors[myColor];
@@ -145,7 +145,6 @@ void gr_pal_interface(RGB8 *fixpal) {
 }
 
 void gr_pal_reset_ega_colors(RGB8 *pal) {
-#ifdef TODO
 	EGAcolors[0] = gr_pal_find_best_match(pal, 0, 0, 0);		//__BLACK
 	EGAcolors[1] = gr_pal_find_best_match(pal, 0, 0, 255);		//__BLUE
 	EGAcolors[2] = gr_pal_find_best_match(pal, 0, 255, 0);		//__GREEN
@@ -162,11 +161,6 @@ void gr_pal_reset_ega_colors(RGB8 *pal) {
 	EGAcolors[13] = gr_pal_find_best_match(pal, 84, 0, 0);		//__PINK
 	EGAcolors[14] = gr_pal_find_best_match(pal, 0, 84, 84);		//__YELLOW
 	EGAcolors[15] = gr_pal_find_best_match(pal, 255, 255, 255);	//__WHITE
-#else
-	// TODO: See if this is really needed. It's better if we can keep the
-	// array as constexpr, since arrays use it's constexpr accessor method
-	warning("TODO: gr_pal_reset_ega_colors");
-#endif
 }
 
 void gr_backup_palette() {
