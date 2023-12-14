@@ -11,3 +11,6 @@ sphinx:
 python:
   install:
     - requirements: doc/docportal/requirements.txt
+
+formats:
+  - pdf
