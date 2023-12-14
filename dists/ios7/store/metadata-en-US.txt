@@ -36,14 +36,13 @@ https://forums.scummvm.org/viewforum.php?f=15 is our web forum where you can dis
 2.8.0pre
 
 *** Release notes (limit is 500 characters):
-Welcome to test the latest beta build of ScummVM for iOS.
-This version is based on master branch commit eb66c63
-It contain a lot of various fixes in different engines (e.g. for Curse of Monkey Island, Nancy Drew games, Director based titles etc).
+This is the first pre-release version of ScummVM 2.8.0 for iOS.
 
-This version contain fixes in the iOS backend for:
-- Music and sound effects doesn't play in later Scumm based games as COMI after app has been in background
-- Enables HW keyboards without having to do the pinch gesture (enable the software keyboard)
-- Fix UI gesture on screen edges
-- Fix long press on external mouse/touchpad
+There have been multiple bug fixes and new features for many of the supported games.
+The iOS port has received some new features as:
+- A default soundfont bundled with the application so users doesn't have to download one, unless they want a different one.
+- More buttons on the virtual controller to allow for more keymappings in games depending on joysticks.
+- A minimal layout of the virtual controller for games that doesn't need that many buttons
+- NEON acceleration in some games (e.g. AGS games)
 
 Happy testing
