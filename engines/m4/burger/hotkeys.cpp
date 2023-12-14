@@ -153,7 +153,7 @@ void Hotkeys::show_version(void *a, void *b) {
 		Dialog_Add_Message(_versionDialog, 10, 15,
 			Common::String::format("Game Version %s - %s ",
 				"Nudibranchs", "May 7, 1996").c_str(), 2);
-		Dialog_Add_Message(_versionDialog, 10, 15,
+		Dialog_Add_Message(_versionDialog, 10, 25,
 			Common::String::format("M4 Library Version %s - %s ",
 				"v1.400 OB", "January 21, 1996").c_str(), 3);
 		Dialog_Add_Message(_versionDialog, 10, 35,
