@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-13 22:05+0000\n"
+"POT-Creation-Date: 2023-12-14 16:17+0000\n"
 "PO-Revision-Date: 2023-12-08 17:19+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -1060,11 +1060,11 @@ msgstr "Másol"
 msgid "???"
 msgstr "???"
 
-#: gui/helpdialog.cpp:37
+#: gui/helpdialog.cpp:38
 msgid "General"
 msgstr "Általános"
 
-#: gui/helpdialog.cpp:39
+#: gui/helpdialog.cpp:41
 #, fuzzy
 #| msgid ""
 #| "## Where to get the games\n"
