@@ -541,7 +541,9 @@ void Score::update() {
 			}
 		}
 		// If another frozen state gets triggered, wait another update() before thawing
-		if (_window->frozenLingoStateCount() > 0)
+		if ((_vm->getVersion() < 400) && _window->frozenLingoStateCount() > 0)
+			return;
+		else if ((_vm->getVersion() >= 400) && _window->frozenLingoStateCount() > count)
 			return;
 	}
 
