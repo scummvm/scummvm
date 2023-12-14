@@ -24,6 +24,7 @@
 #define M4_GUI_HOTKEYS_H
 
 #include "m4/m4_types.h"
+#include "m4/gui/gui_dialog.h"
 
 namespace M4 {
 
@@ -35,8 +36,6 @@ public:
 	static void exit_program(void *, void *);
 	static void cb_F2(void *, void *);
 	static void cb_F3(void *, void *);
-	static void show_version(void *a, void *b);
-	static void version_ok_button(void *a, void *b);
 	static void adv_hyperwalk_to_final_destination(void *a, void *b);
 	static void capture_wrap(void *, void *);
 	static void debug_memory_next_column(void *, void *);

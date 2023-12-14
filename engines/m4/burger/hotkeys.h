@@ -30,17 +30,29 @@ namespace M4 {
 namespace Burger {
 
 struct Hotkeys : public M4::Hotkeys {
+private:
+	static Dialog *_versionDialog;
+
+private:
 	static void t_cb(void *, void *);
 	static void u_cb(void *, void *);
 	static void l_cb(void *, void *);
 	static void a_cb(void *, void *);
 
 	/**
+	 * Show version dialog
+	 */
+	static void show_version(void *a, void *b);
+	static void version_ok_button(void *a, void *b);
+
+public:
+	Hotkeys();
+	virtual ~Hotkeys() {}
+
+	/**
 	 * Called when the Escape key is pressed
 	 */
 	static void escape_key_pressed(void *, void *);
-
-	virtual ~Hotkeys() {}
 
 	void add_hot_keys() override;
 
