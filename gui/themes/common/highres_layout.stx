@@ -33,6 +33,8 @@
 
 		<def var = 'TabWidget.TitleSpacing' value = '10' scalable = 'yes'/>
 
+		<def var = 'RichTextWidget.InnerMargin' value = '10' scalable = 'yes'/>
+
 		<def var = 'Layout.Spacing' value = '4' scalable = 'yes'/>
 
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
