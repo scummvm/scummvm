@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-13 22:05+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
-"Last-Translator: Wesley Chen <wesley930@gmail.com>\n"
+"Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -65,7 +65,7 @@ msgstr "显示具有隐藏属性的文件"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr "上一層"
+msgstr "向上"
 
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
@@ -654,7 +654,7 @@ msgstr "后端"
 
 #: gui/editgamedialog.cpp:222
 msgid "Override global backend settings"
-msgstr "覆盖全局渲染设置"
+msgstr "覆盖全局渲染驅動设置"
 
 #: gui/editgamedialog.cpp:224
 msgctxt "lowres"
@@ -663,7 +663,7 @@ msgstr "覆盖全局渲染设置"
 
 #: gui/editgamedialog.cpp:238 gui/options.cpp:2239 engines/dialogs.cpp:316
 msgid "Audio"
-msgstr "音訊"
+msgstr "音頻"
 
 #: gui/editgamedialog.cpp:241
 msgid "Override global audio settings"
