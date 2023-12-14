@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-14 16:17+0000\n"
+"POT-Creation-Date: 2023-12-14 17:22+0000\n"
 "PO-Revision-Date: 2023-12-08 08:54+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5726,19 +5726,25 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/mohawk/detection_tables.h:882 engines/mohawk/detection_tables.h:897
 #: engines/mohawk/detection_tables.h:912 engines/mohawk/detection_tables.h:927
 #: engines/mohawk/detection_tables.h:941 engines/mohawk/detection_tables.h:956
-#: engines/mohawk/detection_tables.h:1200
-#: engines/mohawk/detection_tables.h:1216
-#: engines/mohawk/detection_tables.h:1231
-#: engines/mohawk/detection_tables.h:1277
-#: engines/mohawk/detection_tables.h:1399
-#: engines/mohawk/detection_tables.h:1414
-#: engines/mohawk/detection_tables.h:1429
-#: engines/mohawk/detection_tables.h:1447
-#: engines/mohawk/detection_tables.h:1462
-#: engines/mohawk/detection_tables.h:2511
-#: engines/mohawk/detection_tables.h:2526
-#: engines/mohawk/detection_tables.h:3628
-#: engines/mohawk/detection_tables.h:3643 engines/myst3/detection.cpp:142
+#: engines/mohawk/detection_tables.h:973 engines/mohawk/detection_tables.h:991
+#: engines/mohawk/detection_tables.h:1005
+#: engines/mohawk/detection_tables.h:1019
+#: engines/mohawk/detection_tables.h:1036
+#: engines/mohawk/detection_tables.h:1054
+#: engines/mohawk/detection_tables.h:1071
+#: engines/mohawk/detection_tables.h:1351
+#: engines/mohawk/detection_tables.h:1367
+#: engines/mohawk/detection_tables.h:1382
+#: engines/mohawk/detection_tables.h:1428
+#: engines/mohawk/detection_tables.h:1550
+#: engines/mohawk/detection_tables.h:1565
+#: engines/mohawk/detection_tables.h:1580
+#: engines/mohawk/detection_tables.h:1598
+#: engines/mohawk/detection_tables.h:1613
+#: engines/mohawk/detection_tables.h:2662
+#: engines/mohawk/detection_tables.h:2677
+#: engines/mohawk/detection_tables.h:3797
+#: engines/mohawk/detection_tables.h:3812 engines/myst3/detection.cpp:142
 #: engines/saga/detection_tables.h:46 engines/sci/detection_tables.h:5295
 #: engines/sci/detection_tables.h:5303 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:210
