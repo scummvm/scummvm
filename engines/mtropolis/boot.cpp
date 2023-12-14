@@ -1612,7 +1612,7 @@ void BootScriptContext::addSubtitles(const Common::String &linesFile, const Comm
 }
 
 void BootScriptContext::addExclusion(const Common::String &virtualPath) {
-	_vfsLayout._exclusions.push_back(virtualPath);
+	_vfsLayout._exclusions.push_back(Common::String(_isMac ? "workspace:" : "workspace/") + virtualPath);
 }
 
 void BootScriptContext::setResolution(uint width, uint height) {
@@ -1641,7 +1641,7 @@ void BootScriptContext::bootObsidianRetailMacEn() {
 	addJunction("Obsidian Data 5", "fs:Obsidian Data 5");
 	addJunction("Obsidian Data 6", "fs:Obsidian Data 6");
 
-	addExclusion("workspace:Obsidian Data 0");
+	addExclusion("Obsidian Data 0");
 
 	addSubtitles("subtitles_lines_obsidian_en.csv", "subtitles_speakers_obsidian_en.csv", "subtitles_asset_mapping_obsidian_en.csv", "subtitles_modifier_mapping_obsidian_en.csv");
 }
@@ -1652,14 +1652,14 @@ void BootScriptContext::bootObsidianRetailMacJp() {
 
 	addArchive(kArchiveTypeStuffIt, "installer", "fs:xn--u9j9ecg0a2fsa1io6k6jkdc2k");
 
-	addJunction("workspace", "installer");
-	addJunction("workspace:Obsidian Data 2", "fs:Obsidian Data 2");
-	addJunction("workspace:Obsidian Data 3", "fs:Obsidian Data 3");
-	addJunction("workspace:Obsidian Data 4", "fs:Obsidian Data 4");
-	addJunction("workspace:Obsidian Data 5", "fs:Obsidian Data 5");
-	addJunction("workspace:Obsidian Data 6", "fs:Obsidian Data 6");
+	addJunction("", "installer");
+	addJunction("Obsidian Data 2", "fs:Obsidian Data 2");
+	addJunction("Obsidian Data 3", "fs:Obsidian Data 3");
+	addJunction("Obsidian Data 4", "fs:Obsidian Data 4");
+	addJunction("Obsidian Data 5", "fs:Obsidian Data 5");
+	addJunction("Obsidian Data 6", "fs:Obsidian Data 6");
 
-	addExclusion("workspace:Obsidian Data 0");
+	addExclusion("Obsidian Data 0");
 }
 
 void BootScriptContext::bootObsidianGeneric() {
@@ -1686,14 +1686,14 @@ void BootScriptContext::bootMTIRetailMac() {
 	addPlugIn(kPlugInMTI);
 	addPlugIn(kPlugInStandard);
 
-	addJunction("workspace:mPlayer PPC", "fs:MPlayer PPC");
-	addJunction("workspace:mPlayer PPC:Resource", "fs:MPlayer PPC:Resource");
-	addJunction("workspace:MTI1", "fs:xn--MTI1-8b7a");
-	addJunction("workspace:MTI2", "fs:MTI2");
-	addJunction("workspace:MTI3", "fs:MTI3");
-	addJunction("workspace:MTI4", "fs:MTI4");
+	addJunction("mPlayer PPC", "fs:MPlayer PPC");
+	addJunction("mPlayer PPC:Resource", "fs:MPlayer PPC:Resource");
+	addJunction("MTI1", "fs:xn--MTI1-8b7a");
+	addJunction("MTI2", "fs:MTI2");
+	addJunction("MTI3", "fs:MTI3");
+	addJunction("MTI4", "fs:MTI4");
 
-	addJunction("workspace:VIDEO", "fs:VIDEO");
+	addJunction("VIDEO", "fs:VIDEO");
 }
 
 void BootScriptContext::bootMTIGeneric() {
