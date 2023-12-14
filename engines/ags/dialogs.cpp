@@ -80,7 +80,7 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	// Override game save management
 	if (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions", domain)) ||
 		Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions", domain))) {
-		_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Force ScummVM save management"), _("Never disable ScummVM save management and autosaves.\nNOTE: This could cause save duplication and other oddities"));
+		_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Enable ScummVM save management"), _("Never disable ScummVM save management and autosaves.\nNOTE: This could cause save duplication and other oddities"));
 	} else
 		_overrideSavesCheckbox = nullptr;
 
