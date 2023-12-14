@@ -298,10 +298,7 @@ void MohawkEngine_LivingBooks::pauseEngineIntern(bool pause) {
 
 void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
 	_bookInfoFile.allowNonEnglishCharacters();
-
-	// WORKAROUND: Sheila FR has garbage in INI file. Running parser in non-strict mode
-	// and ignore non-ASCII characters. Bug #13920
-	if (!_bookInfoFile.loadFromFile(filename, false))
+	if (!_bookInfoFile.loadFromFile(filename))
 		error("Could not open %s as a config file", filename.c_str());
 
 	_title = getStringFromConfig("BookInfo", "title");
