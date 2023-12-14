@@ -270,9 +270,6 @@ void SimpleDataIO<T>::decode(DataFormat dataFormat, const byte *data, T &value) 
 }
 
 template<class T>
-void SimpleDataIO<T>::decode(DataFormat dataFormat, const byte *data, T &value);
-
-template<class T>
 struct DataIO {
 };
 
