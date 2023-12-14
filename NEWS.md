@@ -148,6 +148,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Renamed 'xeen' engine to 'mm' for Might & Magic.
    - Added custom engine option to replace the health gems with HP/SP bars.
 
+ RISC OS port:
+   - Double buffering is now used in full screen mode when V-sync is enabled.
+   - Added support for hardware palettes.
+
 
 #### 2.7.1 "Stan's previously broken swords" (2023-07-31)
 
