@@ -1515,7 +1515,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sfk",				"Science for Kids Product Demos" },
 	{ "sonywalkman",		"Sony Walkman PRD-155SB / PRD-150" },
 	{ "techiescom",			"techies.com Business Card" },
-	{ "tivolas2000",		"Tivola Demo - Sommer 2000" },
+	{ "tivolasummer2000",	"Tivola Demo - Sommer 2000" },
 	{ "tlc",				"The Learning Company Sampler" },
 	{ "ubt",				"Under the Big Top" },
 	{ "vygrpresents",		"Voyager Presents" },
@@ -7797,7 +7797,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
-	WINGAME1_l("tivolas2000", "Sampler", "START32.EXE", "1b8d78ddca650041b8997cac7af3184b", 1675134, Common::DE_DEU, 650),
+	WINGAME1_l("tivolasummer2000", "Sampler", "START32.EXE", "1b8d78ddca650041b8997cac7af3184b", 1675134, Common::DE_DEU, 650),
 
 	// ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
 	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
