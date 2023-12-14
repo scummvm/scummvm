@@ -204,7 +204,7 @@ bool gr_buffer_rect_copy(Buffer *from, Buffer *to, int32 x, int32 y, int32 w, in
 int32 gr_buffer_rect_fill(Buffer *target, int32 x1, int32 y1, int32 w, int32 h) {
 	int32 i;
 	uint8 *start;
-	char color = gr_color_get_current();
+	byte color = gr_color_get_current();
 
 	// if no data, bad.
 	if (!target || !target->data)
