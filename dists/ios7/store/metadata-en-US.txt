@@ -36,5 +36,27 @@ https://forums.scummvm.org/viewforum.php?f=15 is our web forum where you can dis
 2.8.0pre
 
 *** Release notes (limit is 500 characters):
-Let us know if there are any problems with different games. E.g. controls, visuals or other problems.
+Welcome to test a new version of the iOS port of ScummVM
+This version is based from master branch with SHA fb504e0
+
+What's been fixed sine previous version:
+Engine related fixes:
+Crashes in various LucasArts games, e.g The Dig and Full Throttle
+A bunch of new AGS games have been added
+Some Broken Sword 1 improvements
+Nancy Drew fixes
+etc...
+
+iOS port fixes:
+Touch handling has been reworked to use gestures instead
+This will lead to less accidental mouse clicks and there's now real support for dragging the mouse while holding a mouse button.
+A help section has been added on the launcher page (the question mark in the upper left corner)
+Touch mode control button has been added to easily with between touchpad emulation and direct mouse
+A main menu button has been added
+It's now possible to configure different touch mode preferences in menus and games
+The virtual controller can now have a thumbstick directional button instead of dead
+It's possible to with to a numpad keyboard layout, however it's not a PC keyboard layout but a dial numpad layout. That will be changed in the future
+
+Happy testing
+/ScummVM team
 
