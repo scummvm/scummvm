@@ -24,12 +24,22 @@
 #include "m4/burger/gui/game_menu.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/adv_r/other.h"
+#include "m4/platform/keys.h"
 
 namespace M4 {
 namespace Burger {
 
+Dialog *Hotkeys::_versionDialog;
+
+Hotkeys::Hotkeys() {
+	_versionDialog = nullptr;
+}
+
 void Hotkeys::add_hot_keys() {
 	M4::Hotkeys::add_hot_keys();
+
+	AddSystemHotkey(KEY_ALT_V, show_version);
+	AddSystemHotkey(KEY_CTRL_V, show_version);
 
 	AddSystemHotkey('t', t_cb);
 	AddSystemHotkey('u', u_cb);
@@ -132,6 +142,31 @@ void Hotkeys::l_cb(void *, void *) {
 
 void Hotkeys::a_cb(void *, void *) {
 	g_vars->_interface.a_cb();
+}
+
+void Hotkeys::show_version(void *a, void *b) {
+	if (!_versionDialog) {
+		gr_font_set(_G(font_tiny));
+		_versionDialog = DialogCreateAbsolute(190, 35, 510, 105, 242);
+		Dialog_Add_Button(_versionDialog, 115, 52, " OK ", version_ok_button, 1);
+		Dialog_Add_Message(_versionDialog, 10, 5, "Orion Burger", 1);
+		Dialog_Add_Message(_versionDialog, 10, 15,
+			Common::String::format("Game Version %s - %s ",
+				"Nudibranchs", "May 7, 1996").c_str(), 2);
+		Dialog_Add_Message(_versionDialog, 10, 15,
+			Common::String::format("M4 Library Version %s - %s ",
+				"v1.400 OB", "January 21, 1996").c_str(), 3);
+		Dialog_Add_Message(_versionDialog, 10, 35,
+			"Copyright (c) 1996 by Sanctuary Woods Multimedia Corporation", 4);
+
+		Dialog_Configure(_versionDialog, 1, 1, 1);
+		vmng_screen_show(_versionDialog);
+	}
+}
+
+void Hotkeys::version_ok_button(void *a, void *b) {
+	DialogDestroy(_versionDialog);
+	_versionDialog = nullptr;
 }
 
 } // namespace Burger

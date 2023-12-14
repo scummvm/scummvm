@@ -21,6 +21,7 @@
 
 #include "m4/gui/hotkeys.h"
 #include "m4/gui/gui_sys.h"
+#include "m4/gui/gui_vmng_core.h"
 #include "m4/platform/keys.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/vars.h"
@@ -109,8 +110,6 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_F2, cb_F2);
 	AddSystemHotkey(KEY_F3, cb_F3);
 
-	AddSystemHotkey(KEY_ALT_V, show_version);
-	AddSystemHotkey(KEY_CTRL_V, show_version);
 	AddSystemHotkey(KEY_ALT_X, exit_program);
 	AddSystemHotkey(KEY_CTRL_X, exit_program);
 	AddSystemHotkey(KEY_ALT_Q, exit_program);
@@ -173,14 +172,6 @@ void Hotkeys::cb_F2(void *, void *) {
 }
 
 void Hotkeys::cb_F3(void *, void *) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::show_version(void *a, void *b) {
-	warning("TODO: hotkey");
-}
-
-void Hotkeys::version_ok_button(void *a, void *b) {
 	warning("TODO: hotkey");
 }
 

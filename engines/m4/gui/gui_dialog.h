@@ -75,7 +75,7 @@ extern void gui_dialog_shutdown();
 extern Dialog *DialogCreateAbsolute(int32 x1, int32 y1, int32 x2, int32 y2, uint32 scrnFlags);
 extern Dialog *DialogCreate(M4Rect *r, uint32 scrnFlags);
 extern void vmng_Dialog_Destroy(Dialog *d);     //used only by viewmgr.cpp **DO NOT USE
-extern void DialogDestroy(Dialog *d, M4Rect *r);
+extern void DialogDestroy(Dialog *d, M4Rect *r = nullptr);
 extern void Dialog_Refresh(Dialog *d);
 extern void Dialog_Refresh_All();
 extern void Dialog_Resize(Dialog *d, int32 newW, int32 newH);
