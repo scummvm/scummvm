@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-13 22:05+0000\n"
-"PO-Revision-Date: 2022-04-06 04:44+0000\n"
-"Last-Translator: wonst719 <wonst719@gmail.com>\n"
+"PO-Revision-Date: 2023-12-14 14:28+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -22,9 +22,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(빌드 일자: %s)"
+msgstr "(빌드 일자: %s, 컴파일러: %s)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -121,7 +121,7 @@ msgstr "선택"
 
 #: gui/cloudconnectionwizard.cpp:180
 msgid "Cloud Connection Wizard"
-msgstr ""
+msgstr "클라우드 연결 마법사"
 
 #: gui/cloudconnectionwizard.cpp:183
 #, fuzzy
@@ -137,7 +137,7 @@ msgstr "고속 모드"
 
 #: gui/cloudconnectionwizard.cpp:187
 msgid "Will ask you to run the Local Webserver"
-msgstr ""
+msgstr "로컬 웹서버를 실행할지 물어봅니다"
 
 #: gui/cloudconnectionwizard.cpp:189
 #, fuzzy
