@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-14 17:22+0000\n"
-"PO-Revision-Date: 2023-12-08 08:54+0000\n"
+"PO-Revision-Date: 2023-12-14 20:07+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1088,6 +1088,26 @@ msgid ""
 "For other (out of print) games, try Amazon, eBay, Game Trading Zone or other "
 "auction sites. Beware of faulty games and illegal game copies.\n"
 msgstr ""
+"## Waar spellen te verkrijgen\n"
+"\n"
+"Bezoek [onze Wiki](https://wiki.scummvm.org/index."
+"php?title=Where_to_get_the_games) voor een lijst van ondersteunde spellen en "
+"waar die aangeschaft kunnen worden.\n"
+"\n"
+"Of download wat [freeware spellen](https://scummvm.org/games) en "
+"[demos](https://www.scummvm.org/demos/) van onze website.\n"
+"\n"
+"Het ScummVM team heeft geen voorkeur voor specifieke leverancier. Echter "
+"krijgt het project een aandeel van elke aankoop gedaan op [ZOOM-"
+"Platform](https://www.zoom-platform.com/?affiliate=c049516c-9c4c-"
+"42d6-8649-92ed870e8b53) via doorverwijs links.\n"
+"\n"
+"Daarnaast kunnen sommige spellen die niet beschikbaar zijn op het ZOOM-"
+"Platform verkregen worden via andere leveranciers als GOG.com en Steam.\n"
+"\n"
+"Voor andere (niet meer verkochte) spellen, probeer Amazon, Ebay, Game "
+"Trading Zone of andere veilingsites. Wees bedacht op defecte spellen en "
+"illegale kopieën.\n"
 
 #: gui/imagealbum-dialog.cpp:101 gui/saveload-dialog.cpp:832
 msgid "Prev"
@@ -1311,6 +1331,8 @@ msgid ""
 "Did you add this directory to the SAF? Press the help button [?] on the top "
 "for detailed instructions"
 msgstr ""
+"Heeft u deze directory aan SAF toegevoegd? Druk op de help butten [?] "
+"bovenaan voor gedetailleerde instructies"
 
 #: gui/launcher.cpp:681
 msgid "ScummVM could not find any game in the specified directory!"
@@ -2753,21 +2775,6 @@ msgstr "Later Lezen"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
 #: base/main.cpp:679
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2787,19 +2794,22 @@ msgid ""
 "**Choose**.\n"
 "Repeat steps 1 and 6 for each game."
 msgstr ""
-"In deze nieuwe versie van ScummVM Android zijn aanzienlijke aanpassingen "
-"gedaan aan het bestanden toegang systeem om ook moderne versies van het "
-"Android Operating System te ondersteunen.\n"
-"U zult dus SAF moeten instellen om spellen te kunnen toevoegen.\n"
+"In deze nieuwe versie van ScummVM voor Android zijn aanzienlijke "
+"aanpassingen gedaan aan het bestanden toegang systeem om ook moderne versies "
+"van het Android Operating System te ondersteunen.\n"
+"Een spel toevoegen gaat als volgt:\n"
 "\n"
-"1. In de ScummVM bestanden browser, gebruik \"Ga Omhoog\" totdat u de root "
-"map heeft bereikt. Daar zal u de \"<Voeg een niewe map toe>\" optie vinden.\n"
-"2. Kies die, dan blader en selecteer de \"bovenliggende\" map voor uw "
-"spellen subfolders, bijv. \"SD Card > myGames\". Klik op \"Gebruik deze "
-"folder\".\n"
-"3. Daarna zal er een  nieuwe folder \"myGames\" verschijnen in de \"root\" "
-"folder van de ScummVM browser.\n"
-"4. Blader door deze folder naar uw spel data."
+"  1. Kies **Spel Toevoegen...** in hwwr startmenu.\n"
+"  2. Vanuit de ScummVM bestander browser, kies steeds **Ga Omhoog**  tot de "
+"root die de optie **<Nieuwe map toevoegen>** heeft.\n"
+"  3. Dubbel klik **<Nieuwe map toevoegen>**. In de bestanden browser van uw "
+"apparaat, ga naar de folder waar uw spellen staan. Bijvoorbeeld **SD Card > "
+"ScummVMgames** \n"
+"  4. Kies **Gebruik deze map**.\n"
+"  5. Kies **Toestaan** om ScummVM toegang tot de map te geven.\n"
+"  6. In de ScummVM bestanden browser, dubbel klik om door de nieuwe map te "
+"gaan. Selecteer de map met de spel bestanden, en kies dan **Selecteer**.\n"
+"  Herhaal stap 1 en 6 voor elk spel."
 
 #: base/main.cpp:829
 msgid "Error running game:"
@@ -3216,14 +3226,14 @@ msgstr ""
 
 #: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
 #: engines/scumm/saveload.cpp:170
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
-msgstr "Dit spel ondersteunt het laden van spelen vanaf het startmenu niet."
+msgstr ""
+"Dit spel ondersteunt het opslaan van spelen vanaf het menu niet. Gebruik de "
+"functie van het spel zelf"
 
 #: engines/dialogs.cpp:201
 msgid "This game cannot be saved at this time. Please try again later"
-msgstr ""
+msgstr "Dit spel kan nu niet worden opgeslagen. Probeer het later nog eens"
 
 #: engines/dialogs.cpp:220 engines/pegasus/pegasus.cpp:417
 #, c-format
@@ -3237,14 +3247,14 @@ msgstr ""
 
 #: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
 #: engines/scumm/saveload.cpp:98
-#, fuzzy
-#| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
-msgstr "Dit spel ondersteunt het laden van spelen vanaf het startmenu niet."
+msgstr ""
+"Dit spel ondersteunt laden vanuit het menu niet. Gebruik de functie van het "
+"spel zelf"
 
 #: engines/dialogs.cpp:242
 msgid "This game cannot be loaded at this time. Please try again later"
-msgstr ""
+msgstr "Dit spel kan nu niet geladen worden. Probeer het later nog eens"
 
 #: engines/dialogs.cpp:378
 msgid "~O~K"
@@ -4577,21 +4587,6 @@ msgid "Adding Games"
 msgstr "Spellen Toevoegen"
 
 #: backends/platform/android/android.cpp:1093
-#, fuzzy
-#| msgid ""
-#| "In this new version of ScummVM Android, significant changes were made to "
-#| "the file access system to allow support for modern versions of the "
-#| "Android Operating System.\n"
-#| "Thus, you need to set up SAF in order to be able to add the games.\n"
-#| "\n"
-#| "  1. Inside the ScummVM file browser, use \"Go Up\" until you reach the "
-#| "\"root\" folder where you will see the \"<Add a new folder>\" option.\n"
-#| "  2. Choose that, then browse and select the \"parent\" folder for your "
-#| "games subfolders, e.g. \"SD Card > myGames\". Click on \"Use this folder"
-#| "\".\n"
-#| "  3. Then, a new folder \"myGames\" will appear on the \"root\" folder of "
-#| "the ScummVM browser.\n"
-#| "  4. Browse through this folder to your game data."
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4628,19 +4623,40 @@ msgid ""
 "See our [Android documentation](https://docs.scummvm.org/en/latest/"
 "other_platforms/android.html) for more information.\n"
 msgstr ""
-"In deze nieuwe versie van ScummVM Android zijn aanzienlijke aanpassingen "
-"gedaan aan het bestanden toegang systeem om ook moderne versies van het "
-"Android Operating System te ondersteunen.\n"
-"U zult dus SAF moeten instellen om spellen te kunnen toevoegen.\n"
+"## Spellen Toevoegen\n"
 "\n"
-"1. In de ScummVM bestanden browser, gebruik \"Ga Omhoog\" totdat u de root "
-"map heeft bereikt. Daar zal u de \"<Voeg een niewe map toe>\" optie vinden.\n"
-"2. Kies die, dan blader en selecteer de \"bovenliggende\" map voor uw "
-"spellen subfolders, bijv. \"SD Card > myGames\". Klik op \"Gebruik deze "
-"folder\".\n"
-"3. Daarna zal er een  nieuwe folder \"myGames\" verschijnen in de \"root\" "
-"folder van de ScummVM browser.\n"
-"4. Blader door deze folder naar uw spel data."
+"  1. Kies **Spel Toevoegen...** in het startmenu.\n"
+"  \n"
+"  2. Vanuit de ScummVM bestander browser, kies steeds **Ga Omhoog**  tot de "
+"root die de optie **<Nieuwe map toevoegen>** heeft.\n"
+"  \n"
+"    ![ScummVM file browser root](browser-root.png \"ScummVM file browser "
+"root\"){w=70%}\n"
+"    \n"
+"  3. Dubbel klik **<Nieuwe map toevoegen>**. In de bestanden browser van uw "
+"apparaat, ga naar de folder waar uw spellen staan. Bijvoorbeeld **SD Card > "
+"ScummVMgames** \n"
+"  \n"
+"  4. Kies **Gebruik deze map**.\n"
+"  \n"
+"  ![OS selectable folder](fs-folder.png \"OS selectable folder\"){w=70%}\n"
+"  \n"
+"  5. Kies **Toestaan** om ScummVM toegang tot de map te geven.\n"
+"    \n"
+"    ![OS access permission dialog](fs-permission.png \"OS access permission\""
+"){w=70%}\n"
+"    \n"
+"  6. In de ScummVM bestanden browser, dubbel klik om door de nieuwe map te "
+"gaan. Selecteer de map met de spel bestanden, en kies dan **Selecteer**.\n"
+"  \n"
+"    ![SAF folder added](browser-folder-in-list.png \"SAF folder added\""
+"){w=70%}\n"
+"    \n"
+"  Stappen 2 en 3 hoeven slechts eenmaal gedaan te worden, Om meer spellen "
+"toe te voegen herhaal stap 1 en 6.\n"
+"\n"
+"Voor meer info, zie de [Android documentatie](https://docs.scummvm.org/en/"
+"latest/other_platforms/android.html).\n"
 
 #: backends/platform/android/options.cpp:131
 #: backends/platform/ios7/ios7_options.mm:165
@@ -4937,7 +4953,7 @@ msgstr ""
 
 #: backends/platform/sdl/sdl.cpp:1033
 msgid "| `Cmd+q`    | Quit (macOS)\n"
-msgstr ""
+msgstr "| `Cmd+q`    | Stoppen (macOS)\n"
 
 #: backends/platform/sdl/sdl.cpp:1035
 msgid "| `Alt+F4`  | Quit (Windows)\n"
@@ -5385,18 +5401,14 @@ msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 #: engines/agi/metaengine.cpp:419 engines/asylum/asylum.cpp:674
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support loading"
-msgstr "Dit spel wordt niet ondersteund."
+msgstr "Dit spel ondersteundt laden niet"
 
 #: engines/agi/metaengine.cpp:441 engines/asylum/asylum.cpp:685
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
-#, fuzzy
-#| msgid "This game is not supported."
 msgid "This game does not support saving"
-msgstr "Dit spel wordt niet ondersteund."
+msgstr "Dit spel ondersteundt opslaan niet"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:272
@@ -6301,7 +6313,7 @@ msgstr "Speler kan niet van de rand af vallen"
 
 #: engines/freescape/metaengine.cpp:104
 msgid "Invert Y-axis on mouse"
-msgstr ""
+msgstr "Inverteer Y-as op muis"
 
 #: engines/freescape/metaengine.cpp:105
 msgid "Use alternative camera controls"
@@ -6324,7 +6336,7 @@ msgstr "Schiet"
 
 #: engines/freescape/movement.cpp:67
 msgid "Rise/Fly up"
-msgstr ""
+msgstr "Sta op/Vlieg omhoog"
 
 #: engines/freescape/movement.cpp:72
 msgid "Lower/Fly down"
@@ -6669,6 +6681,7 @@ msgstr ""
 #: engines/groovie/metaengine.cpp:98
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
+"Verklein de hotspots aan de linker en rechter kant om puzzels te verlaten"
 
 #: engines/groovie/metaengine.cpp:109
 msgid "Speedrun Mode"
@@ -6676,7 +6689,7 @@ msgstr "Speedrun Modus"
 
 #: engines/groovie/metaengine.cpp:110
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "Beïnvloedt de bediening voor snel doorspoelen van het spel"
 
 #: engines/groovie/metaengine.cpp:144
 msgid "GroovieV2 support is not compiled in"
@@ -7305,6 +7318,7 @@ msgstr "Hitpoints balken"
 #: engines/mm/metaengine.cpp:69
 msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
+"Vervang a gekleurde edelsteen door balken voor hit points en spell points."
 
 #. I18N: ESC key
 #: engines/mm/mm1/metaengine.cpp:41 engines/mm/mm1/metaengine.cpp:47
@@ -7339,12 +7353,12 @@ msgstr "Bekijk Groepslid 6"
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69
 msgid "Cast"
-msgstr ""
+msgstr "Betover"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:71
 msgid "Exchange"
-msgstr ""
+msgstr "Uitwisselen"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:73
@@ -7398,7 +7412,7 @@ msgstr "Zoeken"
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:113
 msgid "Bash"
-msgstr ""
+msgstr "Beuk"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:115 engines/scumm/help.cpp:148
@@ -7424,15 +7438,15 @@ msgstr "Might and Magic 1 - Groep"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
-msgstr ""
+msgstr "Might and Magic 1 - Vechten"
 
 #: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1"
-msgstr ""
+msgstr "Might and Magic 1"
 
 #: engines/mm/mm1/metaengine.cpp:157
 msgid "Might and Magic 1 - Cheats"
-msgstr ""
+msgstr "Might and Magic 1 - Cheats"
 
 #: engines/mm/mm1/mm1.cpp:56
 msgid ""
@@ -7773,7 +7787,7 @@ msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:63
 msgid "Improved music mixing"
-msgstr ""
+msgstr "Beter mixen van muziek"
 
 #: engines/mtropolis/metaengine.cpp:64
 msgid ""
@@ -7788,6 +7802,7 @@ msgstr ""
 #: engines/mtropolis/metaengine.cpp:75
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
+"Slaat het spel automatisch op na het oplossen van puzzels en hoofdstukken."
 
 #: engines/mtropolis/metaengine.cpp:85
 msgid "Enable short transitions"
@@ -7800,7 +7815,7 @@ msgstr ""
 
 #: engines/mtropolis/metaengine.cpp:96
 msgid "Enable subtitles for important sound effects"
-msgstr ""
+msgstr "Toon ondertitles voor belangrijke geluidseffecten"
 
 #: engines/mtropolis/metaengine.cpp:97
 msgid ""
