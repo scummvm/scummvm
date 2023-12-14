@@ -36,27 +36,14 @@ https://forums.scummvm.org/viewforum.php?f=15 is our web forum where you can dis
 2.8.0pre
 
 *** Release notes (limit is 500 characters):
-Welcome to test a new version of the iOS port of ScummVM
-This version is based from master branch with SHA fb504e0
+Welcome to test the latest beta build of ScummVM for iOS.
+This version is based on master branch commit eb66c63
+It contain a lot of various fixes in different engines (e.g. for Curse of Monkey Island, Nancy Drew games, Director based titles etc).
 
-What's been fixed sine previous version:
-Engine related fixes:
-Crashes in various LucasArts games, e.g The Dig and Full Throttle
-A bunch of new AGS games have been added
-Some Broken Sword 1 improvements
-Nancy Drew fixes
-etc...
-
-iOS port fixes:
-Touch handling has been reworked to use gestures instead
-This will lead to less accidental mouse clicks and there's now real support for dragging the mouse while holding a mouse button.
-A help section has been added on the launcher page (the question mark in the upper left corner)
-Touch mode control button has been added to easily with between touchpad emulation and direct mouse
-A main menu button has been added
-It's now possible to configure different touch mode preferences in menus and games
-The virtual controller can now have a thumbstick directional button instead of dead
-It's possible to with to a numpad keyboard layout, however it's not a PC keyboard layout but a dial numpad layout. That will be changed in the future
+This version contain fixes in the iOS backend for:
+- Music and sound effects doesn't play in later Scumm based games as COMI after app has been in background
+- Enables HW keyboards without having to do the pinch gesture (enable the software keyboard)
+- Fix UI gesture on screen edges
+- Fix long press on external mouse/touchpad
 
 Happy testing
-/ScummVM team
-
