@@ -17,6 +17,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Stranga and Cloak and Dagger's AGS games.
    - Added support for Adibou 1.
    - Added support for Dark Side.
+   - Added support for Kingdom: The Far Reaches.
+   - Added support for Escape From Hell.
 
  New platforms:
    - Added libretro new shiny port.
