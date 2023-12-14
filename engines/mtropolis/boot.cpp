@@ -1290,6 +1290,7 @@ void BootScriptContext::bootObsidianRetailMacJp() {
 	addJunction("Obsidian Data 6", "fs:Obsidian Data 6");
 
 	addExclusion("Obsidian Data 0");
+	addExclusion("Obsidian \xc4:Resource:\xcaIgorServer.rPP");	// Steam/ZOOM release wipes this file
 }
 
 void BootScriptContext::bootObsidianGeneric() {
