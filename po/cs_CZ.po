@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-13 22:05+0000\n"
-"PO-Revision-Date: 2023-02-13 09:34+0000\n"
-"Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
+"PO-Revision-Date: 2023-12-14 14:27+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -507,7 +507,7 @@ msgstr "Stáhnout"
 #: gui/downloadpacksdialog.cpp:160
 #, c-format
 msgid "ERROR %d: %s"
-msgstr "Chyba %d: %s"
+msgstr "ERROR %d: %s"
 
 #. I18N: String like "Downloading icon packs list..."
 #: gui/downloadpacksdialog.cpp:189 gui/downloadpacksdialog.cpp:245
@@ -516,9 +516,8 @@ msgid "Downloading %S list..."
 msgstr "Stahování %S..."
 
 #: gui/downloadpacksdialog.cpp:203
-#, fuzzy
 msgid "Clear Cache"
-msgstr "Vyčistit hodnotu"
+msgstr "Vyčistit paměť"
 
 #: gui/downloadpacksdialog.cpp:255
 #, c-format
@@ -528,7 +527,7 @@ msgstr "Stahování seznamu %S... %d položek"
 #: gui/downloadpacksdialog.cpp:265
 #, c-format
 msgid "Detected %d new packs, %s %S"
-msgstr "Zjištěno %d nových balíčků, %s %S"
+msgstr "Nalezeno %d nových souborů, %s%S"
 
 #: gui/downloadpacksdialog.cpp:291
 #, c-format
@@ -547,7 +546,7 @@ msgstr "Zavřít"
 
 #: gui/downloadpacksdialog.cpp:395 gui/downloadpacksdialog.cpp:440
 msgid "ERROR: No icons path set"
-msgstr "CHYBA: Nebyla nastavena cesta k adresáři s ikonami"
+msgstr "ERROR: Není nastavena cesta k ikonám"
 
 #. I18N: String like "No new icon packs available"
 #: gui/downloadpacksdialog.cpp:428
@@ -9681,11 +9680,10 @@ msgid "Unable to locate the text for %s language in engine data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
 #: engines/supernova/supernova.cpp:476
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
-"Nalezena data jádra '%s' s nesprávnou verzí. Očekávána %d.%d, ale byla %d.%d."
+msgstr "Nalezena data jádra '%s' s nesprávnou verzí. Očekávána %d, ale byla %d."
 
 #: engines/supernova/supernova.cpp:486
 #, c-format
