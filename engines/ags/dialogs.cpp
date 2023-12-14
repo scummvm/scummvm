@@ -25,6 +25,7 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "ags/detection.h"
 #include "ags/metaengine.h"
 
 #include "gui/ThemeEval.h"
@@ -77,7 +78,11 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	}
 
 	// Override game save management
-	_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Force ScummVM save management"), _("Never disable ScummVM save management and autosaves.\nNOTE: This could cause save duplication and other oddities"));
+	if (Common::checkGameGUIOption(GAMEOPTION_NO_AUTOSAVE, ConfMan.get("guioptions", domain)) ||
+		Common::checkGameGUIOption(GAMEOPTION_NO_SAVELOAD, ConfMan.get("guioptions", domain))) {
+		_overrideSavesCheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".savesOvr", _("Force ScummVM save management"), _("Never disable ScummVM save management and autosaves.\nNOTE: This could cause save duplication and other oddities"));
+	} else
+		_overrideSavesCheckbox = nullptr;
 
 	// Force font antialiasing
 	_forceTextAACheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".textAA", _("Force antialiased text"), _("Use antialiasing to draw text even if the game does not ask for it"));
@@ -123,7 +128,7 @@ void AGSOptionsWidget::load() {
 	gameConfig->tryGetVal("save_override", saveOverride);
 	if (!saveOverride.empty()) {
 		bool val;
-		if (parseBool(saveOverride, val))
+		if (_overrideSavesCheckbox && parseBool(saveOverride, val))
 			_overrideSavesCheckbox->setState(val);
 	}
 
@@ -151,7 +156,8 @@ bool AGSOptionsWidget::save() {
 	else
 		ConfMan.removeKey("translation", _domain);
 
-	ConfMan.setBool("save_override", _overrideSavesCheckbox->getState(), _domain);
+	if (_overrideSavesCheckbox)
+		ConfMan.setBool("save_override", _overrideSavesCheckbox->getState(), _domain);
 	ConfMan.setBool("force_text_aa", _forceTextAACheckbox->getState(), _domain);
 	ConfMan.setBool("display_fps", _displayFPSCheckbox->getState(), _domain);
 
