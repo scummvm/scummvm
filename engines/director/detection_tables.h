@@ -7786,6 +7786,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
+	// Tivola demo/sampler disc, Summer 2000, released in Germany
+	WINGAME1_l("tivolas2000", "Sampler", "START32.EXE", "1b8d78ddca650041b8997cac7af3184b", 1675134, Common::DE_DEU, 650),
+
 	// ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
 	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
 						  "SCORE.DXR",  "4d3d5b66729e31d35828e40aee85fe39", 10849, 602),
@@ -8224,9 +8227,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Copies provided in The Daily Mirror
 	WINGAME2("thematrix", "", "Presentation.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2212124,
 							  "intro.dir",        "ebe2cac80218c4933ecc609cd8ef27cc", 10368479, 700),
-
-	// Tivola demo/sampler disc, Summer 2000, released in Germany
-	WINGAME1_l("tivolas2000", "Sampler", "START32.EXE", "1b8d78ddca650041b8997cac7af3184b", 1675134, Common::DE_DEU, 650),
 
 	// ein Fall für TKKG: Wer stoppt den Feuerteufel? (bilingual DE/EN)
 	MACGAME2("tkkg7", "", "TKKG-Start", "0944b962ebb00f4b5d5149d220f8449b", 113458,
