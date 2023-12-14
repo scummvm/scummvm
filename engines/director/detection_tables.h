@@ -1783,6 +1783,7 @@ namespace Director {
 #define MACDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO2_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
 #define WINDEMO2t_l(t,e,f1,m1,s1,f2,m2,s2,l,v) GENGAME2t_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,ADGF_DEMO,v)
+#define WINDEMO2f_l(t,e,f1,m1,s1,f2,m2,s2,l,v,fl) GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,Common::kPlatformWindows,(fl|ADGF_NO_FLAGS),v)
 
 static const DirectorGameDescription gameDescriptions[] = {
 	// Execute all *.lingo files in game directory
@@ -6207,12 +6208,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Other versions are D3
 	PIPGAME1("gadget", "", "GADGET", "d7e907d3933869f055ae59774c87f501", 111000, 501),
 
-	MACGAME1("gadgetpaf", "",	"GADGET -Past as Future- (Disc1)", "3b96e0a903130cf68e6f8362bb4d096c", 178907, 501),
-	MACGAME1_l("gadgetpaf", "", "GADGET -Past as Future- (Disc1)", "4b2213a9fb04f390ec074c54b916370d", 113169, Common::JA_JPN, 501),
-	WINGAME2("gadgetpaf", "",	"GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
-								"TEXT_E.Cxt", "5f14330705974a22deb9a12cd8ae6e79", 691046, 501),
-	WINGAME2_l("gadgetpaf", "", "GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
-								"TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501),
+	MACGAME1("gadgetpaf",	"",		 "GADGET -Past as Future- (Disc1)", "3b96e0a903130cf68e6f8362bb4d096c", 178907, 501),
+	MACGAME1_l("gadgetpaf", "",		 "GADGET -Past as Future- (Disc1)", "4b2213a9fb04f390ec074c54b916370d", 113169, Common::JA_JPN, 501),
+	WINGAME2("gadgetpaf",	"",		 "GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
+									 "TEXT_E.Cxt", "5f14330705974a22deb9a12cd8ae6e79", 691046, 501),
+	WINGAME2_l("gadgetpaf", "",		 "GADGET.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411507,
+									 "TEXT_E.Cxt", "056ab5419f65fab51fa50c28ad360e76", 561824, Common::ES_ESP, 501),
+	WINDEMO2f_l("gadgetpaf", "Demo", "GADGET.exe", "t:7e393434e06153a6413baf1b448f440e", 1647502,
+									 "TEXT_E.Cxt", "h:f2efb64dc4e3e1ea705309426fff7824", 152776, Common::ES_ESP, 501, GF_32BPP),
 
 	MACGAME1("gamingmegapac", "", "Gaming MegaPac", "b861188374e80b1184e7f96dcab4fc9b", 719005, 501),
 
