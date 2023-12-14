@@ -105,46 +105,10 @@ public:
 	/** Reset everything stored in this INI file. */
 	void	clear();
 
-	/**
-	 * Load configuration from a file.
-	 *
-	 * @param filename     Name of an INI file to parse
-	 * @param strictParser Do not allow garbage to be present in the file (default true)
-	 *
-	 * @return  True if file was parsed successfully
-	 */
-	bool	loadFromFile(const String &filename, bool strictParser = true);
-
-	/**
-	 * Load configuration from a file in MacBinary format.
-	 *
-	 * @param filename     Name of an INI file to parse
-	 * @param strictParser Do not allow garbage to be present in the file (default true)
-	 *
-	 * @return  True if file was parsed successfully
-	 */
-	bool	loadFromFileOrDataFork(const String &filename, bool strictParser = true);
-
-	/**
-	 * Load configuration from a save file.
-	 *
-	 * @param filename     Name of an INI file to parse
-	 * @param strictParser Do not allow garbage to be present in the file (default true)
-	 *
-	 * @return  True if file was parsed successfully
-	 */
-	bool	loadFromSaveFile(const String &filename, bool strictParser = true);
-
-	/**
-	 * Load configuration from a @ref SeekableReadStream.
-	 *
-	 * @param stream       Name of an stream to parse
-	 * @param strictParser Do not allow garbage to be present in the file (default true)
-	 *
-	 * @return  True if file was parsed successfully
-	 */
-	bool	loadFromStream(SeekableReadStream &stream, bool strictParser = true);
-
+	bool	loadFromFile(const String &filename); /*!< Load configuration from a file. */
+	bool	loadFromFileOrDataFork(const String &filename); /*!< Load configuration from a file in MacBinary format. */
+	bool	loadFromSaveFile(const String &filename); /*!< Load configuration from a save file. */
+	bool	loadFromStream(SeekableReadStream &stream); /*!< Load configuration from a @ref SeekableReadStream. */
 	bool	saveToFile(const String &filename); /*!< Save the current configuration to a file. */
 	bool	saveToSaveFile(const String &filename); /*!< Save the current configuration to a save file. */
 	bool	saveToStream(WriteStream &stream); /*!< Save the current configuration to a @ref WriteStream. */
