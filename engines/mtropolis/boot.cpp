@@ -1078,6 +1078,7 @@ public:
 		kPlugInSPQR,
 		kPlugInStandard,
 		kPlugInObsidian,
+		kPlugInMIDI,
 	};
 
 	enum BitDepth {
@@ -1259,6 +1260,7 @@ void BootScriptContext::setEnhancedBitDepth(BitDepth bitDepth) {
 
 void BootScriptContext::bootObsidianRetailMacEn() {
 	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInMIDI);
 	addPlugIn(kPlugInStandard);
 
 	addArchive(kArchiveTypeStuffIt, "installer", "fs:Obsidian Installer");
@@ -1278,6 +1280,7 @@ void BootScriptContext::bootObsidianRetailMacEn() {
 
 void BootScriptContext::bootObsidianRetailMacJp() {
 	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInMIDI);
 	addPlugIn(kPlugInStandard);
 
 	addArchive(kArchiveTypeStuffIt, "installer", "fs:xn--u9j9ecg0a2fsa1io6k6jkdc2k");
@@ -1295,6 +1298,7 @@ void BootScriptContext::bootObsidianRetailMacJp() {
 
 void BootScriptContext::bootObsidianGeneric() {
 	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInMIDI);
 	addPlugIn(kPlugInStandard);
 
 	addSubtitles("subtitles_lines_obsidian_en.csv", "subtitles_speakers_obsidian_en.csv", "subtitles_asset_mapping_obsidian_en.csv", "subtitles_modifier_mapping_obsidian_en.csv");
@@ -1302,6 +1306,7 @@ void BootScriptContext::bootObsidianGeneric() {
 
 void BootScriptContext::bootObsidianRetailWinDe() {
 	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInMIDI);
 	addPlugIn(kPlugInStandard);
 
 	addArchive(kArchiveTypeInstallShieldV3, "installer", "_SETUP.1");
@@ -1405,7 +1410,8 @@ void BootScriptContext::executeFunction(const Common::String &functionName, cons
 	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
 									  ENUM_BINDING(kPlugInStandard),
 									  ENUM_BINDING(kPlugInObsidian),
-									  ENUM_BINDING(kPlugInSPQR)};
+									  ENUM_BINDING(kPlugInSPQR),
+									  ENUM_BINDING(kPlugInMIDI)};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
 										ENUM_BINDING(kBitDepth8),
@@ -1693,6 +1699,11 @@ Common::SharedPtr<MTropolis::PlugIn> loadStandardPlugIn(const MTropolisGameDescr
 	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
 	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 	return standardPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadMIDIPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> midiPlugIn = PlugIns::createMIDI();
+	return midiPlugIn;
 }
 
 Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescription &gameDesc, Common::Archive &fs, const Common::Path &pluginsLocation) {
@@ -2419,6 +2430,9 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 		switch (plugIn) {
 		case Boot::BootScriptContext::kPlugInStandard:
 			plugIns.push_back(Boot::loadStandardPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInMIDI:
+			plugIns.push_back(Boot::loadMIDIPlugIn(gameDesc));
 			break;
 		case Boot::BootScriptContext::kPlugInObsidian:
 			plugIns.push_back(Boot::loadObsidianPlugIn(gameDesc, *vfs, pluginsLocation));
