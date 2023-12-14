@@ -14,6 +14,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Primordia, Shardlight und Technobabylon hinzugefügt.
    - Unterstützung für Adibou 1 (Adi Jr.) hinzugefügt.
    - Unterstützung für Dark Side hinzugefügt.
+   - Unterstützung für Kingdom: The Far Reaches hinzugefügt.
+   - Unterstützung für Escape From Hell hinzugefügt.
 
  Neue Plattformen:
    - Vollständig erneute Portierung für libretro hinzugefügt.
