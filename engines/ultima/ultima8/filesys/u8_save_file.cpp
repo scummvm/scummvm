@@ -39,10 +39,10 @@ U8SaveFile::~U8SaveFile() {
 }
 
 //static
-bool U8SaveFile::isU8SaveFile(Common::SeekableReadStream *_rs) {
-	_rs->seek(0);
+bool U8SaveFile::isU8SaveFile(Common::SeekableReadStream *rs) {
+	rs->seek(0);
 	char buf[24];
-	_rs->read(buf, 23);
+	rs->read(buf, 23);
 	buf[23] = '\0';
 
 	return (strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);

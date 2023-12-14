@@ -33,7 +33,7 @@ public:
 	~FlexFile();
 
 	//! Check if constructed object is indeed a valid archive
-	virtual bool isValid() const {
+	bool isValid() const {
 		return _valid;
 	}
 
