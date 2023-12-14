@@ -83,9 +83,9 @@ void HelpDialog::addTabs(const char * const *tabData) {
 
 		Common::U32String tabText(_(*tabData++));
 
-		_tab->addTab(tabName, "HelpDialog", false);
+		_tab->addTab(tabName, "HelpContentDialog", false);
 
-		RichTextWidget *rt = new RichTextWidget(_tab, "HelpDialog.TabWidget", tabText);
+		RichTextWidget *rt = new RichTextWidget(_tab, "HelpContentDialog.RichTextWidget", tabText);
 
 		if (imagePack)
 			rt->setImageArchive(imagePack);
