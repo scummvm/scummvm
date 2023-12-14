@@ -227,6 +227,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'HelpContentDialog' overlays = 'Dialog.HelpDialog.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'RichTextWidget'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'Browser' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 0, 4'>
 			<widget name = 'Headline'
