@@ -150,6 +150,23 @@ void RichTextWidget::recalc() {
 	_textHeight = MAX(1, _h - 2 * _innerMargin);
 	_limitH = _textHeight;
 
+	// Workaround: Currently Graphics::MacText::setMaxWidth does not work well.
+	// There is a known limitation that the size is skipped when the text contains table,
+	// and there is also an issue with the font.
+	// So for now we recreate the widget.
+//	if (_txtWnd) {
+//		_txtWnd->setMaxWidth(_textWidth);
+//		if (_surface->w != _textWidth || _surface->h != _textHeight)
+//			_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+//	} else {
+//		createWidget();
+//	}
+	if (!_surface || _surface->w != _textWidth) {
+		delete _txtWnd;
+		createWidget();
+	} else if (_surface->h != _textHeight)
+		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+
 	int h = _txtWnd->getTextHeight();
 
 	if (h <= _limitH) _scrolledY = 0;
@@ -161,8 +178,6 @@ void RichTextWidget::recalc() {
 	_verticalScroll->_singleStep = _h / 4;
 	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
 	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
-
-	_txtWnd->setMaxWidth(_textWidth);
 }
 
 void RichTextWidget::createWidget() {
@@ -183,16 +198,14 @@ void RichTextWidget::createWidget() {
 
 	_txtWnd->setMarkdownText(_text);
 
-	_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
-
-	recalc();
+	if (_surface)
+		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+	else
+		_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
 }
 
 void RichTextWidget::reflowLayout() {
 	Widget::reflowLayout();
-
-	if (!_txtWnd)
-		createWidget();
 
 	recalc();
 
@@ -202,7 +215,7 @@ void RichTextWidget::reflowLayout() {
 
 void RichTextWidget::drawWidget() {
 	if (!_txtWnd)
-		createWidget();
+		recalc();
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
