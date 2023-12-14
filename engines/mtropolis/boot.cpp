@@ -35,6 +35,7 @@
 #include "mtropolis/detection.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/subtitles.h"
+#include "mtropolis/vfs.h"
 
 #include "mtropolis/plugin/mti.h"
 #include "mtropolis/plugin/obsidian.h"
@@ -47,12 +48,13 @@ namespace MTropolis {
 namespace Boot {
 
 class GameDataHandler;
+class BootScriptContext;
 
 struct ManifestSubtitlesDef {
-	const char *linesTablePath;
-	const char *speakerTablePath;
-	const char *assetMappingTablePath;
-	const char *modifierMappingTablePath;
+	Common::String speakerTablePath;
+	Common::String linesTablePath;
+	Common::String assetMappingTablePath;
+	Common::String modifierMappingTablePath;
 };
 
 enum ManifestFileType {
@@ -72,10 +74,7 @@ struct ManifestFile {
 
 struct Game {
 	MTropolisGameBootID bootID;
-	const ManifestFile *manifest;
-	const char **directories;
-	const ManifestSubtitlesDef *subtitlesDef;
-	GameDataHandler *(*gameDataFactory)(const Boot::Game &game, const MTropolisGameDescription &desc);
+	void (BootScriptContext::*bootFunction)();
 };
 
 template<class T>
@@ -105,14 +104,6 @@ struct FileIdentification {
 FileIdentification::FileIdentification() : category(MTFT_AUTO) {
 	macType.value = 0;
 	macCreator.value = 0;
-}
-
-static void initResManForFile(FileIdentification &f) {
-	if (!f.resMan) {
-		f.resMan.reset(new Common::MacResManager());
-		if (!f.resMan->open(f.fileName))
-			error("Failed to open resources of file '%s'", f.fileName.c_str());
-	}
 }
 
 class GameDataHandler {
@@ -176,6 +167,8 @@ public:
 	void categorizeSpecialFiles(Common::Array<FileIdentification> &files) override;
 	void addPlugIns(ProjectDescription &projectDesc, const Common::Array<FileIdentification> &files) override;
 
+	static Common::SharedPtr<MTropolis::PlugIn> loadPlugIn(Common::Archive &fs, const Common::Path &pluginsLocation, bool isMac, bool isRetail, bool isEnglish);
+
 private:
 	bool _isMac;
 	bool _isRetail;
@@ -185,8 +178,8 @@ private:
 
 	void unpackMacRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
 	void unpackGermanWinRetailInstaller(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files);
-	Common::SharedPtr<Obsidian::WordGameData> loadWinWordGameData();
-	Common::SharedPtr<Obsidian::WordGameData> loadMacWordGameData();
+	static Common::SharedPtr<Obsidian::WordGameData> loadWinWordGameData(Common::SeekableReadStream *stream);
+	static Common::SharedPtr<Obsidian::WordGameData> loadMacWordGameData(Common::SeekableReadStream *stream);
 
 	Common::SharedPtr<Common::Archive> _installerArchive;
 };
@@ -330,10 +323,11 @@ void ObsidianGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const 
 	Common::SharedPtr<Obsidian::WordGameData> wgData;
 
 	if (_isRetail && _isEnglish) {
-		if (_isMac)
-			wgData = loadMacWordGameData();
-		else
-			wgData = loadWinWordGameData();
+		if (_isMac) {
+			wgData = loadMacWordGameData(nullptr);
+		} else {
+			wgData = loadWinWordGameData(nullptr);
+		}
 	}
 
 	Common::SharedPtr<Obsidian::ObsidianPlugIn> obsidianPlugIn(new Obsidian::ObsidianPlugIn(wgData));
@@ -344,16 +338,36 @@ void ObsidianGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const 
 	projectDesc.addPlugIn(standardPlugIn);
 }
 
-Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadMacWordGameData() {
-	Common::ArchiveMemberPtr rsgKit = _installerArchive->getMember(Common::Path("RSGKit.rPP"));
-	if (!rsgKit)
-		error("Couldn't find word game file in installer archive");
+Common::SharedPtr<MTropolis::PlugIn> ObsidianGameDataHandler::loadPlugIn(Common::Archive &fs, const Common::Path &pluginsLocation, bool isMac, bool isRetail, bool isEnglish) {
+	Common::SharedPtr<Obsidian::WordGameData> wgData;
 
+	if (isRetail && isEnglish) {
+		if (isMac) {
+			Common::MacResManager resMan;
+
+			Common::SharedPtr<Common::SeekableReadStream> dataStream(resMan.openFileOrDataFork(pluginsLocation.appendComponent("RSGKit.rPP"), fs));
+
+			if (!dataStream)
+				error("Failed to open word game data");
+
+			wgData = loadMacWordGameData(dataStream.get());
+		} else {
+			Common::SharedPtr<Common::SeekableReadStream> stream(fs.createReadStreamForMember(pluginsLocation.appendComponent("RSGKit.r95")));
+
+			if (!stream)
+				error("Failed to open word game data");
+
+			wgData = loadWinWordGameData(stream.get());
+		}
+
+	}
+
+	Common::SharedPtr<Obsidian::ObsidianPlugIn> obsidianPlugIn(new Obsidian::ObsidianPlugIn(wgData));
+	return obsidianPlugIn.staticCast<MTropolis::PlugIn>();
+}
+
+Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadMacWordGameData(Common::SeekableReadStream *stream) {
 	Common::SharedPtr<Obsidian::WordGameData> wgData(new Obsidian::WordGameData());
-
-	Common::SharedPtr<Common::SeekableReadStream> stream(rsgKit->createReadStream());
-	if (!stream)
-		error("Failed to open word game file");
 
 	Obsidian::WordGameLoadBucket buckets[] = {
 		{0, 0},             // 0 letters
@@ -381,19 +395,13 @@ Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadMacWordGa
 		{0x5903C, 0x59053}, // 22 letter
 	};
 
-	if (!wgData->load(stream.get(), buckets, 23, 1, false))
+	if (!wgData->load(stream, buckets, 23, 1, false))
 		error("Failed to load word game data");
 
 	return wgData;
 }
 
-Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadWinWordGameData() {
-	Common::File f;
-	if (!f.open("RSGKit.r95")) {
-		error("Couldn't open word game data file");
-		return nullptr;
-	}
-
+Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadWinWordGameData(Common::SeekableReadStream *stream) {
 	Common::SharedPtr<Obsidian::WordGameData> wgData(new Obsidian::WordGameData());
 
 	Obsidian::WordGameLoadBucket buckets[] = {
@@ -422,7 +430,7 @@ Common::SharedPtr<Obsidian::WordGameData> ObsidianGameDataHandler::loadWinWordGa
 		{0x102D0, 0x102E8}, // 22 letter
 	};
 
-	if (!wgData->load(&f, buckets, 23, 4, true)) {
+	if (!wgData->load(stream, buckets, 23, 4, true)) {
 		error("Failed to load word game data file");
 		return nullptr;
 	}
@@ -550,50 +558,6 @@ void STTGSGameDataHandler::addPlugIns(ProjectDescription &projectDesc, const Com
 	projectDesc.addPlugIn(standardPlugIn);
 }
 
-static bool getMacTypesForMacBinary(const char *fileName, uint32 &outType, uint32 &outCreator) {
-	Common::SharedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(fileName));
-
-	if (!stream)
-		return false;
-
-	byte mbHeader[MBI_INFOHDR];
-	if (stream->read(mbHeader, MBI_INFOHDR) != MBI_INFOHDR)
-		return false;
-
-	if (mbHeader[0] != 0 || mbHeader[74] != 0)
-		return false;
-
-	Common::CRC_BINHEX crc;
-	uint16 checkSum = crc.crcFast(mbHeader, 124);
-
-	if (checkSum != READ_BE_UINT16(&mbHeader[124]))
-		return false;
-
-	outType = MKTAG(mbHeader[65], mbHeader[66], mbHeader[67], mbHeader[68]);
-	outCreator = MKTAG(mbHeader[69], mbHeader[70], mbHeader[71], mbHeader[72]);
-
-	return true;
-}
-
-static uint32 getWinFileEndingPseudoTag(const Common::String &fileName) {
-	byte bytes[4] = {0, 0, 0, 0};
-	size_t numInserts = 4;
-	if (fileName.size() < 4)
-		numInserts = fileName.size();
-
-	for (size_t i = 0; i < numInserts; i++)
-		bytes[i] = static_cast<byte>(invariantToLower(fileName[fileName.size() - numInserts + i]));
-
-	return MKTAG(bytes[0], bytes[1], bytes[2], bytes[3]);
-}
-
-static bool getMacTypesForFile(const char *fileName, uint32 &outType, uint32 &outCreator) {
-	if (getMacTypesForMacBinary(fileName, outType, outCreator))
-		return true;
-
-	return false;
-}
-
 static bool fileSortCompare(const FileIdentification &a, const FileIdentification &b) {
 	// If file names are mismatched then we want the first one to be shorter
 	if (a.fileName.size() > b.fileName.size())
@@ -613,14 +577,17 @@ static bool fileSortCompare(const FileIdentification &a, const FileIdentificatio
 	return aSize < b.fileName.size();
 }
 
-static void loadCursorsMac(FileIdentification &f, CursorGraphicCollection &cursorGraphics) {
-	initResManForFile(f);
+static void loadCursorsMac(Common::Archive &archive, const Common::Path &path, CursorGraphicCollection &cursorGraphics) {
+	Common::MacResManager resMan;
+
+	if (!resMan.open(path, archive))
+		return;
 
 	const uint32 bwType = MKTAG('C', 'U', 'R', 'S');
 	const uint32 colorType = MKTAG('c', 'r', 's', 'r');
 
-	Common::MacResIDArray bwIDs = f.resMan->getResIDArray(bwType);
-	Common::MacResIDArray colorIDs = f.resMan->getResIDArray(colorType);
+	Common::MacResIDArray bwIDs = resMan.getResIDArray(bwType);
+	Common::MacResIDArray colorIDs = resMan.getResIDArray(colorType);
 
 	Common::MacResIDArray bwOnlyIDs;
 	for (Common::MacResIDArray::const_iterator bwIt = bwIDs.begin(), bwItEnd = bwIDs.end(); bwIt != bwItEnd; ++bwIt) {
@@ -643,7 +610,7 @@ static void loadCursorsMac(FileIdentification &f, CursorGraphicCollection &curso
 		const Common::MacResIDArray &resArray = (cti == 0) ? bwOnlyIDs : colorIDs;
 
 		for (size_t i = 0; i < resArray.size(); i++) {
-			Common::SharedPtr<Common::SeekableReadStream> resData(f.resMan->getResource(resType, resArray[i]));
+			Common::SharedPtr<Common::SeekableReadStream> resData(resMan.getResource(resType, resArray[i]));
 			if (!resData) {
 				warning("Failed to open cursor resource");
 				return;
@@ -660,29 +627,17 @@ static void loadCursorsMac(FileIdentification &f, CursorGraphicCollection &curso
 			numCursorsLoaded++;
 		}
 	}
-
-	if (numCursorsLoaded == 0) {
-		// If an extension is in detection, it should either have cursors or be categorized as Special if it has some other use.
-		warning("Expected to find cursors in '%s' but there were none.", f.fileName.c_str());
-	}
 }
 
-static bool loadCursorsWin(FileIdentification &f, CursorGraphicCollection &cursorGraphics) {
-	Common::SharedPtr<Common::SeekableReadStream> stream = f.stream;
+static bool loadCursorsWin(Common::Archive &archive, const Common::Path &path, CursorGraphicCollection &cursorGraphics) {
+	Common::SharedPtr<Common::SeekableReadStream> stream(archive.createReadStreamForMember(path));
 
-	if (!stream) {
-		Common::SharedPtr<Common::File> file(new Common::File());
-		if (!file->open(f.fileName))
-			error("Failed to open file '%s'", f.fileName.c_str());
-
-		stream = file;
-	}
+	if (!stream)
+		error("Failed to open file '%s'", path.toString(archive.getPathSeparator()).c_str());
 
 	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(stream.get()));
-	if (!winRes) {
-		warning("Couldn't load resources from PE file '%s'", f.fileName.c_str());
+	if (!winRes)
 		return false;
-	}
 
 	int numCursorGroupsLoaded = 0;
 	Common::Array<Common::WinResourceID> cursorGroupIDs = winRes->getIDList(Common::kWinGroupCursor);
@@ -704,544 +659,1975 @@ static bool loadCursorsWin(FileIdentification &f, CursorGraphicCollection &curso
 		numCursorGroupsLoaded++;
 	}
 
-	if (numCursorGroupsLoaded == 0) {
-		// If an extension is in detection, it should either have cursors or be categorized as Special if it has some other use.
-		warning("Expected to find cursors in '%s' but there were none.", f.fileName.c_str());
+	return true;
+}
+
+class BootScriptParser {
+public:
+	enum TokenType {
+		kTokenTypeBooleanConstant,
+		kTokenTypeOctalConstant,
+		kTokenTypeHexConstant,
+		kTokenTypeFloatConstant,
+		kTokenTypeDecimalConstant,
+		kTokenTypeIdentifier,
+		kTokenTypePunctuation,
+		kTokenTypeString,
+		kTokenTypeChar,
+	};
+
+	enum ExprType {
+		kExprTypeIdentifier,
+		kExprTypeIntegral,
+		kExprTypeFloat,
+		kExprTypeString,
+		kExprTypeChar,
+		kExprTypePunctuation,
+		kExprTypeBoolean,
+	};
+
+	explicit BootScriptParser(Common::ReadStream &stream);
+
+	bool readToken(Common::String &outToken);
+
+	void expect(const char *token);
+
+	static TokenType classifyToken(const Common::String &token);
+	static ExprType tokenTypeToExprType(TokenType tt);
+
+	static Common::String evalString(const Common::String &token);
+	static uint evalIntegral(const Common::String &token);
+
+private:
+	bool readChar(char &c);
+	void requeueChar(char c);
+
+	void skipLineComment();
+	bool skipBlockComment();
+
+	bool parseNumber(char firstChar, Common::String &outToken);
+	bool parseIdentifier(Common::String &outToken);
+	bool parseQuotedString(char quoteChar, Common::String &outToken);
+	bool parseFloatFractionalPart(Common::String &outToken);	// Parses the part after the '.'
+	bool parseFloatExponentPart(Common::String &outToken); // Parses the part after the 'e'
+	bool parseHexDigits(Common::String &outToken);	// Must parse at least 1
+	bool parseOctalDigits(Common::String &outToken);
+	bool checkFloatSuffix();
+
+	static bool isIdentifierInitialChar(char c);
+	static bool isIdentifierChar(char c);
+	static bool isDigit(char c);
+	static bool isAlpha(char c);
+
+	static uint evalOctalIntegral(const Common::String &token);
+	static uint evalDecimalIntegral(const Common::String &token);
+	static uint evalHexIntegral(const Common::String &token);
+
+	static char evalEscapeSequence(const Common::String &token, uint startPos, uint maxEndPos, uint &outLength);
+	static char evalOctalEscapeSequence(const Common::String &token, uint startPos, uint maxEndPos, uint &outLength);
+	static char evalHexEscapeSequence(const Common::String &token, uint startPos, uint maxEndPos, uint &outLength);
+
+	Common::ReadStream &_stream;
+	char _requeuedChars[2];
+	int _numRequeuedChars;
+	bool _isEOS;
+};
+
+
+BootScriptParser::BootScriptParser(Common::ReadStream &stream) : _stream(stream), _requeuedChars{0, 0}, _numRequeuedChars(0), _isEOS(false) {
+}
+
+bool BootScriptParser::readToken(Common::String &outToken) {
+	// Skip whitespace
+	char firstChar = 0;
+	char secondChar = 0;
+
+	for (;;) {
+		if (!readChar(firstChar))
+			return false;
+
+		if (firstChar == '/') {
+			if (!readChar(secondChar)) {
+				outToken = "/";
+				return true;
+			}
+
+			if (secondChar == '/') {
+				skipLineComment();
+			} else if (secondChar == '*') {
+				if (!skipBlockComment())
+					return false;
+			} else {
+				requeueChar(secondChar);
+				return true;
+			}
+
+			continue;
+		}
+
+		// Ignore whitespace
+		if (firstChar >= 0 && firstChar <= 32)
+			continue;
+
+		if (isDigit(firstChar))
+			return parseNumber(firstChar, outToken);
+
+		if (isIdentifierInitialChar(firstChar)) {
+			requeueChar(firstChar);
+			return parseIdentifier(outToken);
+		}
+
+		if (firstChar == '\'' || firstChar == '\"')
+			return parseQuotedString(firstChar, outToken);
+
+		if (firstChar == '.') {
+			if (readChar(secondChar)) {
+				if (secondChar == '.') {
+					char thirdChar = 0;
+					if (readChar(thirdChar)) {
+						if (thirdChar == '.') {
+							outToken = "...";
+							return true;
+						} else {
+							requeueChar(thirdChar);
+						}
+					}
+				} else if (isDigit(secondChar)) {
+					Common::String fractionalPart;
+					if (!parseFloatFractionalPart(fractionalPart))
+						return false;
+
+					outToken = Common::String('.') + fractionalPart;
+					return true;
+				} else {
+					requeueChar(secondChar);
+				}
+			}
+			outToken = ".";
+			return true;
+		}
+
+		if (firstChar == ':') {
+			if (readChar(secondChar)) {
+				if (secondChar == ':') {
+					outToken = "::";
+					return true;
+				} else {
+					requeueChar(secondChar);
+				}
+			}
+
+			outToken = ":";
+			return true;
+		}
+
+		switch (firstChar) {
+		case '+':
+		case '-':
+		case '=':
+		case '<':
+		case '>':
+		case '|':
+		case '&':
+			if (!readChar(secondChar)) {
+				outToken = Common::String(firstChar);
+				return true;
+			} else if (secondChar == firstChar || secondChar == '=') {
+				char constructedString[2] = {firstChar, secondChar};
+				outToken = Common::String(constructedString, 2);
+				return true;
+			} else {
+				requeueChar(secondChar);
+				outToken = Common::String(firstChar);
+			}
+
+			return true;
+
+		case '*':
+		case '/':
+		case '%':
+		case '!':
+		case '^':
+			if (!readChar(secondChar)) {
+				outToken = Common::String(firstChar);
+				return true;
+			} else if (secondChar == '=') {
+				char constructedString[2] = {firstChar, secondChar};
+				outToken = Common::String(constructedString, 2);
+				return true;
+			} else {
+				requeueChar(secondChar);
+				outToken = Common::String(firstChar);
+			}
+
+			return true;
+		case ',':
+		case ';':
+		case '?':
+		case '[':
+		case ']':
+		case '(':
+		case ')':
+		case '{':
+		case '}':
+			outToken = Common::String(firstChar);
+			return true;
+		default:
+			error("Unrecognized token in boot script: %c", firstChar);
+			return false;
+		};
+	}
+}
+
+void BootScriptParser::expect(const char *expectedToken) {
+	Common::String token;
+	if (!readToken(token))
+		error("Expected '%s' but found EOF", expectedToken);
+
+	if (token != expectedToken)
+		error("Expected '%s' but found '%s'", expectedToken, token.c_str());
+}
+
+BootScriptParser::TokenType BootScriptParser::classifyToken(const Common::String &token) {
+	if (token.size() == 0 || token == "." || token == "...")
+		return kTokenTypePunctuation;
+
+	if (token[0] == '.')
+		return kTokenTypeFloatConstant;
+
+	if (isDigit(token[0])) {
+		if (token.size() > 1 && (token[1] == 'x' || token[1] == 'X'))
+			return kTokenTypeHexConstant;
+
+		for (char c : token) {
+			if (c == '.' || c == 'f' || c == 'F' || c == 'e' || c == 'E')
+				return kTokenTypeFloatConstant;
+		}
+
+		if (token[0] == '0')
+			return kTokenTypeOctalConstant;
+
+		return kTokenTypeDecimalConstant;
+	}
+
+	if (isIdentifierInitialChar(token[0])) {
+		if (token == "true" || token == "false")
+			return kTokenTypeBooleanConstant;
+
+		return kTokenTypeIdentifier;
+	}
+
+	if (token[0] == '\'')
+		return kTokenTypeChar;
+
+	if (token[0] == '\"')
+		return kTokenTypeString;
+
+	return kTokenTypePunctuation;
+}
+
+BootScriptParser::ExprType BootScriptParser::tokenTypeToExprType(BootScriptParser::TokenType tt) {
+	switch (tt) {
+	case kTokenTypeBooleanConstant:
+		return kExprTypeBoolean;
+	case kTokenTypeChar:
+		return kExprTypeChar;
+	case kTokenTypeDecimalConstant:
+	case kTokenTypeOctalConstant:
+	case kTokenTypeHexConstant:
+		return kExprTypeIntegral;
+	case kTokenTypeFloatConstant:
+		return kExprTypeFloat;
+	case kTokenTypeString:
+		return kExprTypeString;
+	default:
+		return kExprTypePunctuation;
+	}
+
+	return kExprTypeString;
+}
+
+Common::String BootScriptParser::evalString(const Common::String &token) {
+	assert(token.size() >= 2);
+	assert(token[0] == '\"');
+	assert(token[token.size() - 1] == '\"');
+
+	uint endPos = token.size() - 1;
+
+	Common::Array<char> chars;
+	chars.resize(token.size() - 2);
+
+	uint numChars = 0;
+
+	for (uint i = 1; i < endPos; i++) {
+		char c = token[i];
+		if (c == '\\') {
+			uint escapeLength = 0;
+
+			c = evalEscapeSequence(token, i + 1, endPos, escapeLength);
+			i += escapeLength;
+		}
+
+		chars[numChars++] = c;
+	}
+
+	if (numChars == 0)
+		return "";
+
+	return Common::String(&chars[0], numChars);
+}
+
+uint BootScriptParser::evalIntegral(const Common::String &token) {
+	if (token.size() == 1)
+		return evalDecimalIntegral(token);
+
+	if (token[1] == 'x' || token[1] == 'X')
+		return evalHexIntegral(token);
+
+	if (token[0] == '0')
+		return evalOctalIntegral(token);
+
+	return evalDecimalIntegral(token);
+}
+
+bool BootScriptParser::readChar(char &c) {
+	if (_numRequeuedChars > 0) {
+		_numRequeuedChars--;
+		c = _requeuedChars[_numRequeuedChars];
+		return true;
+	}
+
+	if (_isEOS)
+		return false;
+
+	if (_stream.read(&c, 1) == 0) {
+		_isEOS = true;
+		return false;
 	}
 
 	return true;
 }
 
+void BootScriptParser::requeueChar(char c) {
+	assert(_numRequeuedChars < sizeof(_requeuedChars));
+	_requeuedChars[_numRequeuedChars++] = c;
+}
+
+void BootScriptParser::skipLineComment() {
+	char ch = 0;
+
+	while (readChar(ch)) {
+		if (ch == '\r') {
+			if (readChar(ch)) {
+				if (ch != '\n')
+					requeueChar(ch);
+			}
+
+			return;
+		}
+
+		if (ch == '\n')
+			return;
+	}
+}
+
+bool BootScriptParser::skipBlockComment() {
+	char ch = 0;
+
+	while (readChar(ch)) {
+		if (ch == '*') {
+			if (readChar(ch)) {
+				if (ch == '/')
+					return true;
+				else
+					requeueChar(ch);
+			}
+		}
+	}
+
+	warning("Unexpected EOF in boot script block comment!");
+	return false;
+}
+
+bool BootScriptParser::parseNumber(char firstChar, Common::String &outToken) {
+	char ch = 0;
+
+	if (firstChar == '0') {
+		bool mightBeOctal = true;
+
+		if (readChar(ch)) {
+			if (ch == 'x' || ch == 'X') {
+				char prefix[2] = {firstChar, ch};
+				Common::String hexDigits;
+				if (!parseHexDigits(hexDigits))
+					return false;
+
+				outToken = Common::String(prefix, 2) + hexDigits;
+				return true;
+			} else if (ch == '.' || ch == 'e' || ch == 'E') {
+				mightBeOctal = false;
+				requeueChar(ch);
+			} else
+				requeueChar(ch);
+		}
+
+		if (mightBeOctal) {
+			Common::String octalDigits;
+			if (!parseOctalDigits(octalDigits))
+				return false;
+
+			outToken = Common::String('0') + octalDigits;
+			return true;
+		}
+	}
+
+	outToken = Common::String(firstChar);
+
+	// Decimal number
+	for (;;) {
+		if (!readChar(ch))
+			return true;
+
+		if (ch >= '0' && ch <= '9') {
+			outToken += ch;
+			continue;
+		}
+
+		if (ch == '.') {
+			outToken += ch;
+
+			Common::String fractionalPart;
+			if (!parseFloatFractionalPart(fractionalPart))
+				return false;
+
+			outToken += fractionalPart;
+			return true;
+		}
+
+		if (ch == 'e' || ch == 'E') {
+			outToken += ch;
+
+			Common::String exponentPart;
+			if (!parseFloatExponentPart(exponentPart))
+				return false;
+
+			outToken += exponentPart;
+			return true;
+		}
+
+		if (isAlpha(ch)) {
+			warning("Invalid floating point constantin boot script");
+			return false;
+		}
+
+		requeueChar(ch);
+		return true;
+	}
+}
+
+bool BootScriptParser::parseIdentifier(Common::String &outToken) {
+	outToken.clear();
+
+	char ch = 0;
+	while (readChar(ch)) {
+		if (isIdentifierChar(ch))
+			outToken += ch;
+		else {
+			requeueChar(ch);
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool BootScriptParser::parseQuotedString(char quoteChar, Common::String &outToken) {
+	outToken = Common::String(quoteChar);
+
+	char ch = 0;
+	while (readChar(ch)) {
+		if (ch == '\r' || ch == '\n')
+			break;
+
+		outToken += ch;
+
+		if (ch == '\\') {
+			if (!readChar(ch))
+				break;
+
+			outToken += ch;
+		} else if (ch == quoteChar)
+			return true;
+	}
+
+	error("Unterminated quoted string/char in boot script");
+
+	return false;
+}
+
+bool BootScriptParser::parseFloatFractionalPart(Common::String &outToken) {
+	for (;;) {
+		char ch = 0;
+		if (!readChar(ch))
+			return true;
+
+		if (ch == 'e' || ch == 'E') {
+			outToken += ch;
+
+			Common::String expPart;
+			if (!parseFloatExponentPart(expPart))
+				return false;
+
+			outToken += expPart;
+			return true;
+		}
+
+		if (isDigit(ch))
+			outToken += ch;
+		else if (ch == 'f' || ch == 'F') {
+			outToken += ch;
+			if (!checkFloatSuffix())
+				return false;
+
+			return true;
+		} else if (isAlpha(ch)) {
+			error("Invalid characters in floating point constant");
+		} else
+			return true;
+	}
+}
+
+bool BootScriptParser::parseFloatExponentPart(Common::String &outToken) {
+	char ch = 0;
+
+	if (!readChar(ch)) {
+		error("Missing digit sequence in floating point constant");
+		return false;
+	}
+
+	if (ch == '-' || ch == '+') {
+		outToken += ch;
+		if (!readChar(ch)) {
+			error("Missing digit sequence in floating point constant");
+			return false;
+		}
+	}
+
+	if (!isDigit(ch)) {
+		error("Missing digit sequence in floating point constant");
+		return false;
+	}
+
+	for (;;) {
+		if (isDigit(ch))
+			outToken += ch;
+		else if (ch == 'f' || ch == 'F') {
+			outToken += ch;
+			if (!checkFloatSuffix())
+				return false;
+
+			return true;
+		} else if (isAlpha(ch)) {
+			error("Invalid characters in floating point constant");
+			return false;
+		} else
+			return true;
+	}
+}
+
+bool BootScriptParser::parseHexDigits(Common::String &outToken) {
+	char ch = 0;
+
+	if (!readChar(ch)) {
+		error("Missing hex digits in boot script constant");
+		return false;
+	}
+		
+	for (;;) {
+		if (isDigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
+			outToken += ch;
+		else if (isAlpha(ch)) {
+			error("Invalid characters in hex constant");
+			return false;
+		} else
+			return true;
+	}
+}
+
+bool BootScriptParser::parseOctalDigits(Common::String &outToken) {
+	char ch = 0;
+
+	for (;;) {
+		if (ch >= '0' && ch <= '7')
+			outToken += ch;
+		else if (isAlpha(ch) || isDigit(ch)) {
+			error("Invalid characters in octal constant");
+			return false;
+		} else
+			return true;
+	}
+}
+
+bool BootScriptParser::checkFloatSuffix() {
+	char ch = 0;
+
+	if (readChar(ch)) {
+		if (isIdentifierChar(ch)) {
+			error("Invalid characters after floating point suffix");
+			return false;
+		}
+
+		requeueChar(ch);
+	}
+
+	return true;
+}
+
+bool BootScriptParser::isIdentifierInitialChar(char c) {
+	return isAlpha(c) || (c == '_');
+}
+
+bool BootScriptParser::isIdentifierChar(char c) {
+	return isDigit(c) || isIdentifierInitialChar(c);
+}
+
+bool BootScriptParser::isDigit(char c) {
+	return c >= '0' && c <= '9';
+}
+
+bool BootScriptParser::isAlpha(char c) {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+uint BootScriptParser::evalOctalIntegral(const Common::String &token) {
+	uint result = 0;
+	uint maxBeforeMul = std::numeric_limits<uint>::max() / 8;
+
+	for (uint i = 0; i < token.size(); i++) {
+		if (result > maxBeforeMul)
+			error("Integer overflow evaluating octal value %s", token.c_str());
+
+		char c = token[i];
+		if (c >= '0' && c <= '7')
+			result = result * 8u + static_cast<uint>(c - '0');
+		else
+			error("Invalid character in octal constant %s", token.c_str());
+	}
+
+	return result;
+}
+
+uint BootScriptParser::evalDecimalIntegral(const Common::String &token) {
+	uint result = 0;
+	uint maxBeforeMul = std::numeric_limits<uint>::max() / 10;
+
+	for (uint i = 0; i < token.size(); i++) {
+		if (result > maxBeforeMul)
+			error("Integer overflow evaluating octal value %s", token.c_str());
+
+		char c = token[i];
+		if (c >= '0' && c <= '9')
+			result = result * 10u + static_cast<uint>(c - '0');
+		else
+			error("Invalid character in octal constant %s", token.c_str());
+	}
+
+	return result;
+}
+
+uint BootScriptParser::evalHexIntegral(const Common::String &token) {
+	uint result = 0;
+	uint maxBeforeMul = std::numeric_limits<uint>::max() / 16;
+
+	for (uint i = 2; i < token.size(); i++) {
+		if (result > maxBeforeMul)
+			error("Integer overflow evaluating octal value %s", token.c_str());
+
+		char c = token[i];
+		if (c >= '0' && c <= '9')
+			result = result * 16u + static_cast<uint>(c - '0');
+		else if (c >= 'a' && c <= 'f')
+			result = result * 16u + static_cast<uint>(c - 'a' + 0xa);
+		else if (c >= 'A' && c <= 'F')
+			result = result * 16u + static_cast<uint>(c - 'A' + 0xA);
+		else
+			error("Invalid character in hex constant %s", token.c_str());
+	}
+
+	return result;
+}
+
+char BootScriptParser::evalEscapeSequence(const Common::String &token, uint startPos, uint maxEndPos, uint &outLength) {
+	if (startPos == maxEndPos)
+		error("Unexpectedly terminated escape sequence in token %s", token.c_str());
+
+	char firstEscapeChar = token[startPos];
+
+	if (firstEscapeChar == 'x') {
+		uint hexLength = 0;
+		char c = evalHexEscapeSequence(token, startPos + 1, maxEndPos, hexLength);
+		outLength = hexLength + 1;
+		return c;
+	}
+
+	if (firstEscapeChar >= '0' && firstEscapeChar <= '7')
+		return evalOctalEscapeSequence(token, startPos, maxEndPos, outLength);
+
+	if (firstEscapeChar == '\'')
+		return '\'';
+	if (firstEscapeChar == '\"')
+		return '\"';
+	if (firstEscapeChar == '\?')
+		return '\?';
+	if (firstEscapeChar == '\\')
+		return '\\';
+	if (firstEscapeChar == '\a')
+		return '\a';
+	if (firstEscapeChar == '\b')
+		return '\b';
+	if (firstEscapeChar == '\f')
+		return '\f';
+	if (firstEscapeChar == '\n')
+		return '\n';
+	if (firstEscapeChar == '\r')
+		return '\r';
+	if (firstEscapeChar == '\t')
+		return '\t';
+	if (firstEscapeChar == '\v')
+		return '\v';
+
+	error("Unknown escape character in %s", token.c_str());
+	return '\0';
+}
+
+char BootScriptParser::evalOctalEscapeSequence(const Common::String &token, uint pos, uint maxEndPos, uint &outLength) {
+	uint length = 0;
+	uint result = 0;
+	while (length < 3 && pos < maxEndPos) {
+		char c = token[pos];
+		if (c < '0' || c > '7')
+			break;
+
+		result = result * 8u + (c - '0');
+		pos++;
+		length++;
+	}
+
+	if (result > 255)
+		error("Overflowed octal character escape in token %s", token.c_str());
+
+	outLength = length;
+	return static_cast<char>(static_cast<unsigned char>(result));
+}
+
+char BootScriptParser::evalHexEscapeSequence(const Common::String &token, uint pos, uint maxEndPos, uint &outLength) {
+	uint length = 0;
+	uint result = 0;
+	while (pos < maxEndPos) {
+		char c = token[pos];
+		if (c >= '0' && c <= '9')
+			result = result * 16u + (c - '0');
+		else if (c >= 'a' && c <= 'f')
+			result = result * 16u + (c - 'a' + 0xa);
+		else if (c >= 'A' && c <= 'F')
+			result = result * 16u + (c - 'A' + 0xA);
+
+		if (result > 255)
+			error("Overflowed octal character escape in token %s", token.c_str());
+
+		pos++;
+		length++;
+	}
+
+	outLength = length;
+	return static_cast<char>(static_cast<unsigned char>(result));
+}
+
+
+class BootScriptContext {
+public:
+	enum PlugIn {
+		kPlugInMTI,
+		kPlugInStandard,
+		kPlugInObsidian,
+	};
+
+	enum BitDepth {
+		kBitDepthAuto,
+
+		kBitDepth8,
+		kBitDepth16,
+		kBitDepth32
+	};
+
+	explicit BootScriptContext(bool isMac);
+
+	void bootObsidianRetailMacEn();
+	void bootObsidianRetailMacJp();
+	void bootObsidianGeneric();
+	void bootObsidianRetailWinDe();
+	void bootMTIRetailMac();
+	void bootMTIGeneric();
+	void bootGeneric();
+	void bootUsingBootScript();
+
+	void finalize();
+
+	const Common::Array<Common::SharedPtr<Common::Archive> > &getPersistentArchives() const;
+	const Common::Array<PlugIn> &getPlugIns() const;
+	const VirtualFileSystemLayout &getVFSLayout() const;
+	const ManifestSubtitlesDef &getSubtitlesDef() const;
+
+	BitDepth getBitDepth() const;
+	BitDepth getEnhancedBitDepth() const;
+	const Common::Point &getResolution() const;
+
+private:
+	enum ArchiveType {
+		kArchiveTypeMacVISE,
+		kArchiveTypeStuffIt,
+		kArchiveTypeInstallShieldV3,
+	};
+
+	struct EnumBinding {
+		const char *name;
+		uint value;
+	};
+
+	void addPlugIn(PlugIn plugIn);
+	void addArchive(ArchiveType archiveType, const Common::String &mountPoint, const Common::String &archivePath);
+	void addJunction(const Common::String &virtualPath, const Common::String &physicalPath);
+	void addSubtitles(const Common::String &linesFile, const Common::String &speakersFile, const Common::String &assetMappingFile, const Common::String &modifierMappingFile);
+	void addExclusion(const Common::String &virtualPath);
+	void setResolution(uint width, uint height);
+	void setBitDepth(BitDepth bitDepth);
+	void setEnhancedBitDepth(BitDepth bitDepth);
+
+	void executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens);
+	
+	void checkParams(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint expectedCount);
+	void parseEnumSized(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, const EnumBinding *bindings, uint numBindings, uint &outValue);
+	void parseString(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, Common::String &outValue);
+	void parseUInt(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, uint &outValue);
+
+	template<uint TSize>
+	void parseEnum(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, const EnumBinding (&bindings)[TSize], uint &outValue) {
+		parseEnumSized(functionName, paramTokens, paramIndex, bindings, TSize, outValue);
+	}
+
+	VirtualFileSystemLayout _vfsLayout;
+	Common::Array<PlugIn> _plugIns;
+
+	ManifestSubtitlesDef _subtitlesDef;
+
+	Common::Array<Common::SharedPtr<Common::Archive> > _persistentArchives;
+	bool _isMac;
+	Common::Point _preferredResolution;
+	BitDepth _bitDepth;
+	BitDepth _enhancedBitDepth;
+};
+
+BootScriptContext::BootScriptContext(bool isMac) : _isMac(isMac), _preferredResolution(0, 0), _bitDepth(kBitDepthAuto), _enhancedBitDepth(kBitDepthAuto) {
+	_vfsLayout._pathSeparator = isMac ? ':' : '/';
+
+	VirtualFileSystemLayout::ArchiveJunction fsJunction;
+	fsJunction._archive = &SearchMan;
+	fsJunction._archiveName = "fs";
+
+	_vfsLayout._archiveJunctions.push_back(fsJunction);
+}
+
+void BootScriptContext::addPlugIn(PlugIn plugIn) {
+	if (Common::find(_plugIns.begin(), _plugIns.end(), plugIn) != _plugIns.end())
+		error("Duplicated plug-in");
+
+	_plugIns.push_back(plugIn);
+}
+
+void BootScriptContext::addArchive(ArchiveType archiveType, const Common::String &mountPoint, const Common::String &archivePath) {
+	for (const VirtualFileSystemLayout::ArchiveJunction &junction : _vfsLayout._archiveJunctions) {
+		Common::String prefix = junction._archiveName + _vfsLayout._pathSeparator;
+
+		if (archivePath.hasPrefixIgnoreCase(prefix)) {
+			Common::Path path(archivePath.substr(prefix.size()), _vfsLayout._pathSeparator);
+
+			Common::SeekableReadStream *stream = nullptr;
+
+			if (_isMac)
+				stream = Common::MacResManager::openFileOrDataFork(path, *junction._archive);
+			else
+				stream = junction._archive->createReadStreamForMember(path);
+
+			if (!stream)
+				error("Couldn't mount archive from path %s", archivePath.c_str());
+
+			Common::Archive *archive = nullptr;
+
+			switch (archiveType) {
+			case kArchiveTypeMacVISE:
+				archive = Common::createMacVISEArchive(stream);
+				break;
+			case kArchiveTypeInstallShieldV3: {
+					Common::InstallShieldV3 *isa = new Common::InstallShieldV3();
+					if (isa->open(stream))
+						archive = isa;
+				}
+				break;
+			case kArchiveTypeStuffIt:
+				archive = Common::createStuffItArchive(stream, false);
+				break;
+			default:
+				error("Unknown archive type");
+			}
+
+			if (!archive)
+				error("Couldn't open archive %s", archivePath.c_str());
+
+			_persistentArchives.push_back(Common::SharedPtr<Common::Archive>(archive));
+
+			VirtualFileSystemLayout::ArchiveJunction newJunction;
+			newJunction._archive = archive;
+			newJunction._archiveName = mountPoint;
+
+			_vfsLayout._archiveJunctions.push_back(newJunction);
+
+			break;
+		}
+	}
+}
+
+void BootScriptContext::addJunction(const Common::String &virtualPath, const Common::String &physicalPath) {
+	VirtualFileSystemLayout::PathJunction pathJunction;
+	pathJunction._srcPath = (virtualPath.size() == 0) ? "workspace" : (Common::String(_isMac ? "workspace:" : "workspace/") + virtualPath);
+	pathJunction._destPath = physicalPath;
+
+	_vfsLayout._pathJunctions.push_back(pathJunction);
+}
+
+void BootScriptContext::addSubtitles(const Common::String &linesFile, const Common::String &speakersFile, const Common::String &assetMappingFile, const Common::String &modifierMappingFile) {
+	_subtitlesDef.linesTablePath = linesFile;
+	_subtitlesDef.assetMappingTablePath = assetMappingFile;
+	_subtitlesDef.speakerTablePath = speakersFile;
+	_subtitlesDef.modifierMappingTablePath = modifierMappingFile;
+}
+
+void BootScriptContext::addExclusion(const Common::String &virtualPath) {
+	_vfsLayout._exclusions.push_back(virtualPath);
+}
+
+void BootScriptContext::setResolution(uint width, uint height) {
+	_preferredResolution = Common::Point(width, height);
+}
+
+void BootScriptContext::setBitDepth(BitDepth bitDepth) {
+	_bitDepth = bitDepth;
+}
+
+void BootScriptContext::setEnhancedBitDepth(BitDepth bitDepth) {
+	_enhancedBitDepth = bitDepth;
+}
+
+void BootScriptContext::bootObsidianRetailMacEn() {
+	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInStandard);
+
+	addArchive(kArchiveTypeStuffIt, "installer", "fs:Obsidian Installer");
+
+	addJunction("", "installer:Obsidian \xc4");
+	addJunction("Obsidian Data 1", "installer:Obsidian Data 1");
+	addJunction("Obsidian Data 2", "fs:Obsidian Data 2");
+	addJunction("Obsidian Data 3", "fs:Obsidian Data 3");
+	addJunction("Obsidian Data 4", "fs:Obsidian Data 4");
+	addJunction("Obsidian Data 5", "fs:Obsidian Data 5");
+	addJunction("Obsidian Data 6", "fs:Obsidian Data 6");
+
+	addExclusion("workspace:Obsidian Data 0");
+
+	addSubtitles("subtitles_lines_obsidian_en.csv", "subtitles_speakers_obsidian_en.csv", "subtitles_asset_mapping_obsidian_en.csv", "subtitles_modifier_mapping_obsidian_en.csv");
+}
+
+void BootScriptContext::bootObsidianRetailMacJp() {
+	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInStandard);
+
+	addArchive(kArchiveTypeStuffIt, "installer", "fs:xn--u9j9ecg0a2fsa1io6k6jkdc2k");
+
+	addJunction("workspace", "installer");
+	addJunction("workspace:Obsidian Data 2", "fs:Obsidian Data 2");
+	addJunction("workspace:Obsidian Data 3", "fs:Obsidian Data 3");
+	addJunction("workspace:Obsidian Data 4", "fs:Obsidian Data 4");
+	addJunction("workspace:Obsidian Data 5", "fs:Obsidian Data 5");
+	addJunction("workspace:Obsidian Data 6", "fs:Obsidian Data 6");
+
+	addExclusion("workspace:Obsidian Data 0");
+}
+
+void BootScriptContext::bootObsidianGeneric() {
+	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInStandard);
+
+	addSubtitles("subtitles_lines_obsidian_en.csv", "subtitles_speakers_obsidian_en.csv", "subtitles_asset_mapping_obsidian_en.csv", "subtitles_modifier_mapping_obsidian_en.csv");
+}
+
+void BootScriptContext::bootObsidianRetailWinDe() {
+	addPlugIn(kPlugInObsidian);
+	addPlugIn(kPlugInStandard);
+
+	addArchive(kArchiveTypeInstallShieldV3, "installer", "_SETUP.1");
+
+	addJunction("workspace/Obsidian.exe", "installer/Group1/Obsidian.exe");
+	addJunction("workspace/Resource/Obsidian.c95", "installer/Group2/Obsidian.c95");
+	addJunction("workspace/Resource/MCURSORS.C95", "installer/Group2/MCURSORS.C95");
+
+	addJunction("workspace", "fs");
+}
+
+void BootScriptContext::bootMTIRetailMac() {
+	addPlugIn(kPlugInMTI);
+	addPlugIn(kPlugInStandard);
+
+	addJunction("workspace:mPlayer PPC", "fs:MPlayer PPC");
+	addJunction("workspace:mPlayer PPC:Resource", "fs:MPlayer PPC:Resource");
+	addJunction("workspace:MTI1", "fs:xn--MTI1-8b7a");
+	addJunction("workspace:MTI2", "fs:MTI2");
+	addJunction("workspace:MTI3", "fs:MTI3");
+	addJunction("workspace:MTI4", "fs:MTI4");
+
+	addJunction("workspace:VIDEO", "fs:VIDEO");
+}
+
+void BootScriptContext::bootMTIGeneric() {
+	addPlugIn(kPlugInMTI);
+	addPlugIn(kPlugInStandard);
+}
+
+void BootScriptContext::bootGeneric() {
+	addPlugIn(kPlugInStandard);
+}
+
+void BootScriptContext::bootUsingBootScript() {
+	const char *bootFileName = _isMac ? MTROPOLIS_MAC_BOOT_SCRIPT_NAME : MTROPOLIS_WIN_BOOT_SCRIPT_NAME;
+
+	Common::File f;
+	if (!f.open(bootFileName))
+		error("Couldn't open boot script '%s'", bootFileName);
+
+	BootScriptParser parser(f);
+
+	Common::String functionName;
+	while (parser.readToken(functionName)) {
+		parser.expect("(");
+
+		Common::Array<Common::String> paramTokens;
+
+		{
+			Common::String paramToken;
+			if (!parser.readToken(paramToken))
+				error("Unexpected EOF or error when reading parameter token");
+
+			if (paramToken != ")") {
+				paramTokens.push_back(paramToken);
+
+				for (;;) {
+					if (!parser.readToken(paramToken))
+						error("Unexpected EOF or error when reading parameter token");
+
+					if (paramToken == ")")
+						break;
+
+					if (paramToken != ",")
+						error("Unexpected token %s while reading parameter list", paramToken.c_str());
+
+					if (!parser.readToken(paramToken))
+						error("Unexpected EOF or error when reading parameter token");
+
+					paramTokens.push_back(paramToken);
+				}
+			}
+		}
+
+		parser.expect(";");
+
+		executeFunction(functionName, paramTokens);
+	}
+}
+
+#define ENUM_BINDING(name) \
+	{ #name, name }
+
+void BootScriptContext::executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens) {
+	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
+									  ENUM_BINDING(kPlugInStandard),
+									  ENUM_BINDING(kPlugInObsidian)};
+
+	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
+										ENUM_BINDING(kBitDepth8),
+										ENUM_BINDING(kBitDepth16),
+										ENUM_BINDING(kBitDepth32)};
+
+	const EnumBinding archiveTypeEnum[] = {ENUM_BINDING(kArchiveTypeMacVISE),
+										   ENUM_BINDING(kArchiveTypeStuffIt),
+										   ENUM_BINDING(kArchiveTypeInstallShieldV3)};
+
+
+	Common::String str1, str2, str3, str4;
+	uint ui1 = 0;
+	uint ui2 = 0;
+
+	if (functionName == "addPlugIn") {
+		checkParams(functionName, paramTokens, 1);
+		parseEnum(functionName, paramTokens, 0, plugInEnum, ui1);
+
+		addPlugIn(static_cast<PlugIn>(ui1));
+	} else if (functionName == "addArchive") {
+		checkParams(functionName, paramTokens, 3);
+		parseEnum(functionName, paramTokens, 0, archiveTypeEnum, ui1);
+		parseString(functionName, paramTokens, 1, str1);
+		parseString(functionName, paramTokens, 2, str2);
+
+		addArchive(static_cast<ArchiveType>(ui1), str1, str2);
+	} else if (functionName == "addJunction") {
+		checkParams(functionName, paramTokens, 2);
+		parseString(functionName, paramTokens, 0, str1);
+		parseString(functionName, paramTokens, 1, str2);
+
+		addJunction(str1, str2);
+	} else if (functionName == "addSubtitles") {
+		checkParams(functionName, paramTokens, 4);
+		parseString(functionName, paramTokens, 0, str1);
+		parseString(functionName, paramTokens, 1, str2);
+		parseString(functionName, paramTokens, 2, str3);
+		parseString(functionName, paramTokens, 3, str4);
+
+		addSubtitles(str1, str2, str3, str4);
+	} else if (functionName == "addExclusion") {
+		checkParams(functionName, paramTokens, 1);
+		parseString(functionName, paramTokens, 0, str1);
+
+		addExclusion(str1);
+	} else if (functionName == "setResolution") {
+		checkParams(functionName, paramTokens, 2);
+		parseUInt(functionName, paramTokens, 0, ui1);
+		parseUInt(functionName, paramTokens, 1, ui2);
+
+		setResolution(ui1, ui2);
+	} else if (functionName == "setBitDepth") {
+		checkParams(functionName, paramTokens, 1);
+		parseEnum(functionName, paramTokens, 0, bitDepthEnum, ui1);
+
+		setBitDepth(static_cast<BitDepth>(ui1));
+	} else if (functionName == "setEnhancedBitDepth") {
+		checkParams(functionName, paramTokens, 1);
+		parseEnum(functionName, paramTokens, 0, bitDepthEnum, ui1);
+
+		setEnhancedBitDepth(static_cast<BitDepth>(ui1));
+	} else {
+		error("Unknown function '%s'", functionName.c_str());
+	}
+}
+
+#undef ENUM_BINDING
+
+void BootScriptContext::checkParams(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint expectedCount) {
+	if (expectedCount != paramTokens.size())
+		error("Expected %u parameters for function %s", paramTokens.size(), functionName.c_str());
+}
+
+void BootScriptContext::parseEnumSized(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, const EnumBinding *bindings, uint numBindings, uint &outValue) {
+	const Common::String &param = paramTokens[paramIndex];
+
+	if (BootScriptParser::classifyToken(param) != BootScriptParser::kTokenTypeIdentifier)
+		error("Expected identifier for parameter %u of function %s", paramIndex, functionName.c_str());
+
+	for (uint i = 0; i < numBindings; i++) {
+		if (param == bindings[i].name) {
+			outValue = bindings[i].value;
+			return;
+		}
+	}
+
+	error("Couldn't resolve enum value %s for parameter %u of function %s", param.c_str(), paramIndex, functionName.c_str());
+}
+
+void BootScriptContext::parseString(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, Common::String &outValue) {
+	const Common::String &param = paramTokens[paramIndex];
+
+	if (BootScriptParser::classifyToken(param) != BootScriptParser::kTokenTypeString)
+		error("Expected string for parameter %u of function %s", paramIndex, functionName.c_str());
+
+	outValue = BootScriptParser::evalString(param);
+}
+
+void BootScriptContext::parseUInt(const Common::String &functionName, const Common::Array<Common::String> &paramTokens, uint paramIndex, uint &outValue) {
+	const Common::String &param = paramTokens[paramIndex];
+
+	BootScriptParser::TokenType tt = BootScriptParser::classifyToken(param);
+
+	if (tt != BootScriptParser::kTokenTypeDecimalConstant && tt != BootScriptParser::kTokenTypeOctalConstant && tt != BootScriptParser::kTokenTypeHexConstant)
+		error("Expected integral constant for parameter %u of function %s", paramIndex, functionName.c_str());
+
+	outValue = BootScriptParser::evalIntegral(param);
+}
+
+void BootScriptContext::finalize() {
+	if (_vfsLayout._pathJunctions.size() == 0) {
+		VirtualFileSystemLayout::PathJunction pathJunction;
+		pathJunction._srcPath = "workspace";
+		pathJunction._destPath = "fs";
+
+		_vfsLayout._pathJunctions.push_back(pathJunction);
+	}
+}
+
+const Common::Array<Common::SharedPtr<Common::Archive> > &BootScriptContext::getPersistentArchives() const {
+	return _persistentArchives;
+}
+
+const Common::Array<BootScriptContext::PlugIn> &BootScriptContext::getPlugIns() const {
+	return _plugIns;
+}
+
+const VirtualFileSystemLayout &BootScriptContext::getVFSLayout() const {
+	return _vfsLayout;
+}
+
+const ManifestSubtitlesDef &BootScriptContext::getSubtitlesDef() const {
+	return _subtitlesDef;
+}
+
+BootScriptContext::BitDepth BootScriptContext::getBitDepth() const {
+	return _bitDepth;
+}
+
+BootScriptContext::BitDepth BootScriptContext::getEnhancedBitDepth() const {
+	return _enhancedBitDepth;
+}
+
+const Common::Point &BootScriptContext::getResolution() const {
+	return _preferredResolution;
+}
+
 namespace Games {
 
-const ManifestFile obsidianRetailMacEnFiles[] = {
-	{"Obsidian Installer", MTFT_SPECIAL},
-	{"Obsidian Data 2", MTFT_ADDITIONAL},
-	{"Obsidian Data 3", MTFT_ADDITIONAL},
-	{"Obsidian Data 4", MTFT_ADDITIONAL},
-	{"Obsidian Data 5", MTFT_ADDITIONAL},
-	{"Obsidian Data 6", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
 
-const ManifestFile obsidianRetailMacJpFiles[] = {
-	{"xn--u9j9ecg0a2fsa1io6k6jkdc2k", MTFT_SPECIAL},
-	{"Obsidian Data 2", MTFT_ADDITIONAL},
-	{"Obsidian Data 3", MTFT_ADDITIONAL},
-	{"Obsidian Data 4", MTFT_ADDITIONAL},
-	{"Obsidian Data 5", MTFT_ADDITIONAL},
-	{"Obsidian Data 6", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoMacEnFiles[] = {
-	{"Obsidian Demo", MTFT_PLAYER},
-	{"Basic.rPP", MTFT_EXTENSION},
-	{"Experimental.rPP", MTFT_EXTENSION},
-	{"Extras.rPP", MTFT_EXTENSION},
-	{"mCursors.cPP", MTFT_EXTENSION},
-	{"mNet.rPP", MTFT_EXTENSION},
-	{"Obsidian.cPP", MTFT_EXTENSION},
-	{"RSGKit.rPP", MTFT_SPECIAL},
-	{"Obs Demo Large w Sega", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianRetailWinEnFiles[] = {
-	{"Obsidian.exe", MTFT_PLAYER},
-	{"Obsidian.c95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"RSGKit.r95", MTFT_SPECIAL},
-	{"Obsidian Data 1.MPL", MTFT_MAIN},
-	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles1[] = {
-	{"OBSIDIAN.EXE", MTFT_PLAYER},
-	{"OBSIDIAN.R95", MTFT_EXTENSION},
-	{"TEXTWORK.R95", MTFT_EXTENSION},
-	{"EXPRMNTL.R95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles2[] = {
-	{"OBSIDIAN.EXE", MTFT_PLAYER},
-	{"OBSIDIAN.R95", MTFT_EXTENSION},
-	{"TEXTWORK.R95", MTFT_EXTENSION},
-	{"EXPRMNTL.R95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"OBSIDI~1.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles3[] = {
-	{"OBSIDIAN DEMO.EXE", MTFT_PLAYER},
-	{"OBSIDIAN1.R95", MTFT_EXTENSION},
-	{"OBSIDIAN2.R95", MTFT_EXTENSION},
-	{"OBSIDIAN3.R95", MTFT_EXTENSION},
-	{"OBSIDIAN4.C95", MTFT_EXTENSION},
-	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles4[] = {
-	{"OBSIDIAN.EXE", MTFT_PLAYER},
-	{"OBSIDIAN.R95", MTFT_EXTENSION},
-	{"TEXTWORK.R95", MTFT_EXTENSION},
-	{"EXPRMNTL.R95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"OBSIDIAN.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles5[] = {
-	{"OBSIDI~1.EXE", MTFT_PLAYER},
-	{"OBSIDIAN.R95", MTFT_EXTENSION},
-	{"TEXTWORK.R95", MTFT_EXTENSION},
-	{"EXPRMNTL.R95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"OBSIDI~1.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles6[] = {
-	{"OBSIDIAN.EXE", MTFT_PLAYER},
-	{"OBSIDIAN.R95", MTFT_EXTENSION},
-	{"TEXTWORK.R95", MTFT_EXTENSION},
-	{"EXPRMNTL.R95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianDemoWinEnFiles7[] = {
-	{"OBSIDIAN DEMO.EXE", MTFT_PLAYER},
-	{"OBSIDIAN1.R95", MTFT_EXTENSION},
-	{"OBSIDIAN2.R95", MTFT_EXTENSION},
-	{"OBSIDIAN3.R95", MTFT_EXTENSION},
-	{"OBSIDIAN4.C95", MTFT_EXTENSION},
-	{"OBSIDIAN DEMO DATA.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianRetailWinDeInstalledFiles[] = {
-	{"Obsidian.exe", MTFT_PLAYER},
-	{"Obsidian.c95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"Obsidian Data 1.MPL", MTFT_MAIN},
-	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianRetailWinDeDiscFiles[] = {
-	{"_SETUP.1", MTFT_SPECIAL},
-	{"Obsidian Data 1.MPL", MTFT_MAIN},
-	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile obsidianRetailWinItFiles[] = {
-	{"Obsidian.exe", MTFT_PLAYER},
-	{"Obsidian.c95", MTFT_EXTENSION},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"RSGKit.r95", MTFT_SPECIAL},
-	{"Obsidian Data 1.MPL", MTFT_MAIN},
-	{"Obsidian Data 2.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 3.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 4.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 5.MPX", MTFT_ADDITIONAL},
-	{"Obsidian Data 6.MPX", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *obsidianRetailWinDirectories[] = {
-	"Obsidian",
-	"Obsidian/RESOURCE",
-	"RESOURCE",
-	nullptr
-};
-
-const ManifestSubtitlesDef obsidianRetailEnSubtitlesDef = {
-	"subtitles_lines_obsidian_en.csv",
-	"subtitles_speakers_obsidian_en.csv",
-	"subtitles_asset_mapping_obsidian_en.csv",
-
-	// Modifier mapping is the same for both Mac and Win retail, since the MIDI GUIDs are all identical.
-	"subtitles_modifier_mapping_obsidian_en.csv"
-};
-
-const ManifestFile mtiRetailMacFiles[] = {
-	{"mPlayer PPC", MTFT_PLAYER},
-	{"Group3.rPP", MTFT_EXTENSION},
-	{"MTIKit.rPP", MTFT_EXTENSION},
-	{"xn--MTI1-8b7a", MTFT_MAIN},
-	{"MTI2", MTFT_ADDITIONAL},
-	{"MTI3", MTFT_ADDITIONAL},
-	{"MTI4", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *mtiRetailMacDirectories[] = {
-	"MPlayer PPC",
-	"MPlayer PPC/Resource",
-	nullptr
-};
-
-const ManifestFile mtiRetailWinFiles[] = {
-	{"MTPLAY32.EXE", MTFT_PLAYER},
-	{"GROUP3.R95", MTFT_EXTENSION},
-	{"MTIKIT.R95", MTFT_EXTENSION},
-	{"MTI1.MPL", MTFT_MAIN},
-	{"MTI2.MPX", MTFT_ADDITIONAL},
-	{"MTI3.MPX", MTFT_ADDITIONAL},
-	{"MTI4.MPX", MTFT_ADDITIONAL},
-	{"1.AVI", MTFT_VIDEO},
-	{"2.AVI", MTFT_VIDEO},
-	{"3.AVI", MTFT_VIDEO},
-	{"4.AVI", MTFT_VIDEO},
-	{"5.AVI", MTFT_VIDEO},
-	{"6.AVI", MTFT_VIDEO},
-	{"7.AVI", MTFT_VIDEO},
-	{"8.AVI", MTFT_VIDEO},
-	{"9.AVI", MTFT_VIDEO},
-	{"10.AVI", MTFT_VIDEO},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile mtiDemoWinFiles[] = {
-	{"MTIWIN95.EXE", MTFT_PLAYER},
-	{"GROUP3.R95", MTFT_EXTENSION},
-	{"MTIKIT.R95", MTFT_EXTENSION},
-	{"MUP_DATA.MPL", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *mtiRetailWinDirectories[] = {
-	"MTPLAY32",
-	"MTPLAY32/RESOURCE",
-	"VIDEO",
-	nullptr
-};
-
-const ManifestFile albert1RetailWinDeFiles[] = {
-	{"Albert.exe",   MTFT_PLAYER},
-	{"album411.MPL", MTFT_MAIN},
-	{"album412.MPX", MTFT_ADDITIONAL},
-	{"BASIC.X95",    MTFT_SPECIAL},
-	{"BITMAP.R95",   MTFT_SPECIAL},
-	{"EXTRAS.R95",   MTFT_SPECIAL},
-	{"ROTATORK.R95", MTFT_SPECIAL},
-	{nullptr, MTFT_AUTO},
-};
-
-const char *albert1RetailWinDeDirectories[] = {
-	"ALBERT",
-	"ALBERT/DATA",
-	"ALBERT/DATA/RESOURCE",
-	"DATA",
-	"DATA/RESOURCE",
-	nullptr
-};
-
-const ManifestFile albert2RetailWinDeFiles[] = {
-	{"reise.exe",    MTFT_PLAYER},
-	{"voyage1.mpl",  MTFT_MAIN},
-	{"voyage2.mpx",  MTFT_ADDITIONAL},
-	{"BASIC.X95",    MTFT_SPECIAL},
-	{"BITMAP.R95",   MTFT_SPECIAL},
-	{"EXTRAS.R95",   MTFT_SPECIAL},
-	{"ROTATORK.R95", MTFT_SPECIAL},
-	{nullptr, MTFT_AUTO},
-};
-
-const char *albert2RetailWinDeDirectories[] = {
-	"REISE",
-	"REISE/DATA",
-	"REISE/DATA/RESOURCE",
-	"DATA",
-	"DATA/RESOURCE",
-	nullptr
-};
-
-const ManifestFile albert3RetailWinDeFiles[] = {
-	{"insel.exe",     MTFT_PLAYER},
-	{"ile_myst1.mpl", MTFT_MAIN},
-	{"ILEMYST2.MPX",  MTFT_ADDITIONAL},
-	{"BASIC.X95",     MTFT_SPECIAL},
-	{"BITMAP.R95",    MTFT_SPECIAL},
-	{"EXTRAS.R95",    MTFT_SPECIAL},
-	{"ROTATORK.R95",  MTFT_SPECIAL},
-	{nullptr, MTFT_AUTO},
-};
-
-const char *albert3RetailWinDeDirectories[] = {
-	"DATA",
-	"DATA/RESOURCE",
-	nullptr
-};
-
-const ManifestFile spqrRetailWinEnFiles[] = {
-	{"SPQR32.EXE", MTFT_PLAYER},
-	{"MCURSORS.C95", MTFT_EXTENSION},
-	{"SPQR.MPL", MTFT_MAIN},
-	{"S_6842.MPX", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *spqrRetailWinDirectories[] = {
-	"RESOURCE",
-	nullptr
-};
-
-const ManifestFile spqrRetailMacEnFiles[] = {
-	{"Install.vct", MTFT_SPECIAL},
-	{"S_6772", MTFT_ADDITIONAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *spqrRetailMacDirectories[] = {
-	"GAME",
-	nullptr
-};
-
-const ManifestFile sttgsDemoWinFiles[] = {
-	{"MTPLAY95.EXE", MTFT_PLAYER},
-	{"Trektriv.mpl", MTFT_MAIN},
-	{nullptr, MTFT_AUTO}
-};
-
-const ManifestFile unitWinFiles[] = {
-	{"UNIT32.EXE", MTFT_PLAYER},
-	{"DATA.MFX", MTFT_MAIN},
-	{"CURSORS.C32", MTFT_EXTENSION},
-	{"BASIC.X32", MTFT_SPECIAL},
-	{"EXTRAS.R32", MTFT_SPECIAL},
-	{nullptr, MTFT_AUTO}
-};
-
-const char *unitWinDirectories[] = {
-	"MPLUGINS",
-	nullptr
-};
 
 const Game games[] = {
+	// Boot script
+	{
+		MTBOOT_USE_BOOT_SCRIPT,
+		&BootScriptContext::bootUsingBootScript
+	},
+
 	// Obsidian - Retail - Macintosh - English
 	{
 		MTBOOT_OBSIDIAN_RETAIL_MAC_EN,
-		obsidianRetailMacEnFiles,
-		nullptr,
-		&obsidianRetailEnSubtitlesDef,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianRetailMacEn
 	},
 	// Obsidian - Retail - Macintosh - Japanese
 	{
 		MTBOOT_OBSIDIAN_RETAIL_MAC_JP,
-		obsidianRetailMacJpFiles,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianRetailMacJp
 	},
 	// Obsidian - Retail - Windows - English
 	{
 		MTBOOT_OBSIDIAN_RETAIL_WIN_EN,
-		obsidianRetailWinEnFiles,
-		obsidianRetailWinDirectories,
-		&obsidianRetailEnSubtitlesDef,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Retail - Windows - German - Installed
 	{
 		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_INSTALLED,
-		obsidianRetailWinDeInstalledFiles,
-		obsidianRetailWinDirectories,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Retail - Windows - German - Disc
 	{
 		MTBOOT_OBSIDIAN_RETAIL_WIN_DE_DISC,
-		obsidianRetailWinDeDiscFiles,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianRetailWinDe
 	},
 	// Obsidian - Retail - Windows - Italian
 	{
 		MTBOOT_OBSIDIAN_RETAIL_WIN_IT,
-		obsidianRetailWinItFiles,
-		obsidianRetailWinDirectories,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Macintosh - English
 	{
 		MTBOOT_OBSIDIAN_DEMO_MAC_EN,
-		obsidianDemoMacEnFiles,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 1
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_1,
-		obsidianDemoWinEnFiles1,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 2
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_2,
-		obsidianDemoWinEnFiles2,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 3
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_3,
-		obsidianDemoWinEnFiles3,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 4
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_4,
-		obsidianDemoWinEnFiles4,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 5
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_5,
-		obsidianDemoWinEnFiles5,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 6
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_6,
-		obsidianDemoWinEnFiles6,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Obsidian - Demo - Windows - English - Variant 7
 	{
 		MTBOOT_OBSIDIAN_DEMO_WIN_EN_7,
-		obsidianDemoWinEnFiles7,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<ObsidianGameDataHandler>::create
+		&BootScriptContext::bootObsidianGeneric
 	},
 	// Muppet Treasure Island - Retail - Macintosh - Multiple languages
 	{
 		MTBOOT_MTI_RETAIL_MAC,
-		mtiRetailMacFiles,
-		mtiRetailMacDirectories,
-		nullptr,
-		GameDataHandlerFactory<MTIGameDataHandler>::create
+		&BootScriptContext::bootMTIRetailMac
 	},
 	// Muppet Treasure Island - Retail - Windows - Multiple languages
 	{
 		MTBOOT_MTI_RETAIL_WIN,
-		mtiRetailWinFiles,
-		mtiRetailWinDirectories,
-		nullptr,
-		GameDataHandlerFactory<MTIGameDataHandler>::create
+		&BootScriptContext::bootMTIGeneric
 	},
 	// Muppet Treasure Island - Demo - Windows
 	{
 		MTBOOT_MTI_DEMO_WIN,
-		mtiDemoWinFiles,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<MTIGameDataHandler>::create
+		&BootScriptContext::bootMTIGeneric
 	},
 	// Uncle Albert's Magical Album - German - Windows
 	{
 		MTBOOT_ALBERT1_WIN_DE,
-		albert1RetailWinDeFiles,
-		albert1RetailWinDeDirectories,
-		nullptr,
-		GameDataHandlerFactory<AlbertGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// Uncle Albert's Fabulous Voyage - German - Windows
 	{
 		MTBOOT_ALBERT2_WIN_DE,
-		albert2RetailWinDeFiles,
-		albert2RetailWinDeDirectories,
-		nullptr,
-		GameDataHandlerFactory<AlbertGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// Uncle Albert's Mysterious Island - German - Windows
 	{
 		MTBOOT_ALBERT3_WIN_DE,
-		albert3RetailWinDeFiles,
-		albert3RetailWinDeDirectories,
-		nullptr,
-		GameDataHandlerFactory<AlbertGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Windows - English
 	{
 		MTBOOT_SPQR_RETAIL_WIN,
-		spqrRetailWinEnFiles,
-		spqrRetailWinDirectories,
-		nullptr,
-		GameDataHandlerFactory<SPQRGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Macintosh - English
 	{
 		MTBOOT_SPQR_RETAIL_MAC,
-		spqrRetailMacEnFiles,
-		spqrRetailMacDirectories,
-		nullptr,
-		GameDataHandlerFactory<SPQRGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// Star Trek: The Game Show - Demo - Windows
 	{
 		MTBOOT_STTGS_DEMO_WIN,
-		sttgsDemoWinFiles,
-		nullptr,
-		nullptr,
-		GameDataHandlerFactory<STTGSGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 	// Unit: Rebooted
 	{
 		MTBOOT_UNIT_REBOOTED_WIN,
-		unitWinFiles,
-		unitWinDirectories,
-		nullptr,
-		GameDataHandlerFactory<STTGSGameDataHandler>::create
+		&BootScriptContext::bootGeneric
 	},
 };
 
 } // End of namespace Games
 
+Common::SharedPtr<MTropolis::PlugIn> loadStandardPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+	static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+	return standardPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescription &gameDesc, Common::Archive &fs, const Common::Path &pluginsLocation) {
+	bool isMac = (gameDesc.desc.platform == Common::kPlatformMacintosh);
+	bool isRetail = ((gameDesc.desc.flags & ADGF_DEMO) == 0);
+	bool isEnglish = (gameDesc.desc.language == Common::EN_ANY);
+
+	return ObsidianGameDataHandler::loadPlugIn(fs, pluginsLocation, isMac, isRetail, isEnglish);
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
+	return mtiPlugIn;
+}
+
+enum PlayerType {
+	kPlayerTypeNone,
+
+	kPlayerTypeWin16,
+	kPlayerTypeWin32,
+
+	kPlayerTypeMac68k,
+	kPlayerTypeMacPPC,
+	kPlayerTypeMacFatBinary,
+};
+
+PlayerType evaluateWinPlayer(Common::ArchiveMember &archiveMember, bool mustBePE) {
+	Common::SharedPtr<Common::SeekableReadStream> stream(archiveMember.createReadStream());
+
+	if (!stream)
+		return kPlayerTypeNone;
+
+	// Largest known mPlayer executable is slightly over 1MB
+	// Smallest known mPlayer executable is 542kb
+	// By excluding ~2MB files we also ignore QT32.EXE QuickTime installers
+	if (stream->size() < 512 * 1024 || stream->size() > 3 * 1024 * 1024 / 2)
+		return kPlayerTypeNone;
+
+	if (!stream->seek(0x3c))
+		return kPlayerTypeNone;
+
+	uint32 peOffset = stream->readUint32LE();
+	if (stream->eos() || stream->err())
+		return kPlayerTypeNone;
+
+	bool isPE = false;
+	if (stream->size() - 4 >= peOffset) {
+		if (stream->seek(peOffset)) {
+			uint32 possiblePEHeader = stream->readUint32LE();
+			if (!stream->eos() && !stream->err() && possiblePEHeader == 0x00004550)
+				isPE = true;
+		}
+	}
+
+	stream->clearErr();
+
+	// If we already found a Win32 player, ignore Win16 players
+	if (mustBePE && !isPE)
+		return kPlayerTypeNone;
+
+	const char *signature = "mTropolis Windows Player";
+	uint signatureLength = strlen(signature);
+
+	if (!stream->seek(0))
+		return kPlayerTypeNone;
+
+	Common::Array<char> fileContents;
+	fileContents.resize(stream->size());
+
+	if (stream->read(&fileContents[0], fileContents.size()) != fileContents.size())
+		return kPlayerTypeNone;
+
+	stream.reset();
+
+	// Look for signature
+	uint lastStartPos = fileContents.size() - signatureLength * (isPE ? 2 : 1);
+
+	for (uint i = 0; i < lastStartPos; i++) {
+		bool isMatch = true;
+
+		for (uint j = 0; j < signatureLength; j++) {
+			if (isPE) {
+				if (fileContents[i + j * 2] != signature[j] || fileContents[i + j * 2 + 1] != '\0') {
+					isMatch = false;
+					break;
+				}
+			} else {
+				if (fileContents[i + j] != signature[j]) {
+					isMatch = false;
+					break;
+				}
+			}
+		}
+
+		if (isMatch)
+			return isPE ? kPlayerTypeWin32 : kPlayerTypeWin16;
+	}
+
+	return kPlayerTypeNone;
+}
+
+void findWindowsPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &resolvedPlayerType) {
+	Common::ArchiveMemberList executableFiles;
+
+	fs.listMatchingMembers(executableFiles, "*.exe", true);
+
+	if (executableFiles.size() == 0)
+		error("No executable files were found");
+
+	Common::ArchiveMemberPtr bestPlayer;
+	PlayerType bestPlayerType = kPlayerTypeNone;
+	uint numPlayersInCategory = 0;
+
+	for (const Common::ArchiveMemberPtr &archiveMember : executableFiles) {
+		PlayerType playerType = evaluateWinPlayer(*archiveMember, bestPlayerType == kPlayerTypeWin32);
+
+		debug(1, "Evaluated possible player executable %s as quality %i", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str(), static_cast<int>(playerType));
+
+		if (playerType > bestPlayerType) {
+			bestPlayerType = playerType;
+			bestPlayer = archiveMember;
+			numPlayersInCategory = 1;
+		} else if (playerType == bestPlayerType)
+			numPlayersInCategory++;
+	}
+
+	if (numPlayersInCategory == 0)
+		error("Couldn't find any mTropolis Player executables");
+
+	if (numPlayersInCategory != 1)
+		error("Found multiple mTropolis Player executables of the same quality");
+
+	resolvedPath = bestPlayer->getPathInArchive();
+	resolvedPlayerType = bestPlayerType;
+}
+
+PlayerType evaluateMacPlayer(Common::Archive &fs, Common::ArchiveMember &archiveMember) {
+	Common::Path path = archiveMember.getPathInArchive();
+
+	Common::MacFinderInfo finderInfo;
+	if (Common::MacResManager::getFileFinderInfo(path, fs, finderInfo)) {
+		if (finderInfo.type[0] != 'A' || finderInfo.type[1] != 'P' || finderInfo.type[2] != 'P' || finderInfo.type[3] != 'L')
+			return kPlayerTypeNone;
+	}
+
+	Common::MacResManager resMan;
+	if (!resMan.open(path, fs))
+		return kPlayerTypeNone;
+
+	if (!resMan.hasResFork())
+		return kPlayerTypeNone;
+
+	Common::ScopedPtr<Common::SeekableReadStream> strStream(resMan.getResource(MKTAG('S', 'T', 'R', '#'), 200));
+	if (!strStream)
+		return kPlayerTypeNone;
+
+	uint8 strInitialBytes[12];
+
+	if (strStream->size() < sizeof(strInitialBytes))
+		return kPlayerTypeNone;
+
+	if (strStream->read(strInitialBytes, sizeof(strInitialBytes)) != sizeof(strInitialBytes))
+		return kPlayerTypeNone;
+
+	if (memcmp(strInitialBytes + 2, "\x09mTropolis", 10))
+		return kPlayerTypeNone;
+
+	bool is68k = resMan.getResIDArray(MKTAG('C', 'O', 'D', 'E')).size() > 0;
+	bool isPPC = resMan.getResIDArray(MKTAG('c', 'f', 'r', 'g')).size() > 0;
+
+	if (is68k) {
+		if (isPPC)
+			return kPlayerTypeMacFatBinary;
+		else
+			return kPlayerTypeMac68k;
+	} else {
+		if (isPPC)
+			return kPlayerTypeMacPPC;
+		else
+			return kPlayerTypeNone;
+	}
+}
+
+void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &resolvedPlayerType) {
+	Common::ArchiveMemberList allFiles;
+
+	fs.listMembers(allFiles);
+
+	Common::ArchiveMemberPtr bestPlayer;
+	PlayerType bestPlayerType = kPlayerTypeNone;
+	uint numPlayersInCategory = 0;
+
+	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+		PlayerType playerType = evaluateMacPlayer(fs, *archiveMember);
+
+		debug(1, "Evaluated possible player executable %s as quality %i", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str(), static_cast<int>(playerType));
+
+		if (playerType > bestPlayerType) {
+			bestPlayerType = playerType;
+			bestPlayer = archiveMember;
+			numPlayersInCategory = 1;
+		} else if (playerType == bestPlayerType)
+			numPlayersInCategory++;
+	}
+
+	if (numPlayersInCategory == 0)
+		error("Couldn't find any mTropolis Player applications");
+
+	if (numPlayersInCategory != 1)
+		error("Found multiple mTropolis Player applications of the same quality");
+
+	if (bestPlayerType == kPlayerTypeMacFatBinary)
+		bestPlayerType = kPlayerTypeMacPPC;
+
+	resolvedPath = bestPlayer->getPathInArchive();
+	resolvedPlayerType = bestPlayerType;
+}
+
+void findWindowsMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+	Common::ArchiveMemberList allFiles;
+	Common::ArchiveMemberList filteredFiles;
+
+	fs.listMembers(allFiles);
+
+	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+		Common::String fileName = archiveMember->getFileName();
+		if (fileName.hasSuffixIgnoreCase(".mpl") || fileName.hasSuffixIgnoreCase(".mfw") || fileName.hasSuffixIgnoreCase(".mfx")) {
+			filteredFiles.push_back(archiveMember);
+			debug(4, "Identified possible main segment file %s", fileName.c_str());
+		}
+	}
+
+	allFiles.clear();
+
+	if (filteredFiles.size() == 0)
+		error("Couldn't find any main segment files");
+
+	if (filteredFiles.size() != 1)
+		error("Found multiple main segment files");
+
+	resolvedPath = filteredFiles.front()->getPathInArchive();
+	resolvedIsV2 = !filteredFiles.front()->getFileName().hasSuffixIgnoreCase(".mpl");
+}
+
+bool getMacFileType(Common::Archive &fs, const Common::Path &path, uint32 &outTag) {
+	Common::MacFinderInfo finderInfo;
+
+	if (!Common::MacResManager::getFileFinderInfo(path, fs, finderInfo))
+		return false;
+
+	outTag = MKTAG(finderInfo.type[0], finderInfo.type[1], finderInfo.type[2], finderInfo.type[3]);
+	return true;
+}
+
+enum SegmentSignatureType {
+	kSegmentSignatureUnknown,
+
+	kSegmentSignatureMacV1,
+	kSegmentSignatureWinV1,
+	kSegmentSignatureMacV2,
+	kSegmentSignatureWinV2,
+	kSegmentSignatureCrossV2,
+};
+
+const uint kSignatureHeaderSize = 10;
+
+SegmentSignatureType identifyStreamBySignature(byte (&header)[kSignatureHeaderSize]) {
+	const byte macV1Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 0, 0, 0, 0};
+	const byte winV1Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 0};
+	const byte macV2Signature[kSignatureHeaderSize] = {0, 0, 0xaa, 0x55, 0xa5, 0xa5, 2, 0, 0, 0};
+	const byte winV2Signature[kSignatureHeaderSize] = {1, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
+	const byte crossV2Signature[kSignatureHeaderSize] = {8, 0, 0xa5, 0xa5, 0x55, 0xaa, 0, 0, 0, 2};
+
+	const byte *signatures[5] = {macV1Signature, winV1Signature, macV2Signature, winV2Signature, crossV2Signature};
+
+	for (int i = 0; i < 5; i++) {
+		const byte *signature = signatures[i];
+
+		if (!memcmp(signature, header, kSignatureHeaderSize))
+			return static_cast<SegmentSignatureType>(i + kSegmentSignatureMacV1);
+	}
+
+	return kSegmentSignatureUnknown;
+}
+
+SegmentSignatureType identifyMacFileBySignature(Common::Archive &fs, const Common::Path &path) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(path, fs));
+
+	if (!stream)
+		return kSegmentSignatureUnknown;
+
+	byte header[kSignatureHeaderSize];
+	if (stream->read(header, kSignatureHeaderSize) != kSignatureHeaderSize)
+		return kSegmentSignatureUnknown;
+
+	stream.reset();
+
+	return identifyStreamBySignature(header);
+}
+
+void findMacMainSegment(Common::Archive &fs, Common::Path &resolvedPath, bool &resolvedIsV2) {
+	Common::ArchiveMemberList allFiles;
+	Common::ArchiveMemberList mfmmFiles;
+	Common::ArchiveMemberList mfmxFiles;
+	Common::ArchiveMemberList mfxmFiles;
+	Common::ArchiveMemberList mfxxFiles;
+
+	Common::ArchiveMemberList filteredFiles;
+
+
+	fs.listMembers(allFiles);
+
+	bool isV2 = false;
+
+	// This is a somewhat tricky scenario because the main segment type may be either MFmx or MFmm, but MFmx
+	// is NOT the main segment for mTropolis 1.x projects.  For those projects, we expect a MFmm.
+	//
+	// MT1 Mac: MFmm[+MFmx]
+	// MT2 Mac: MFmm[+MFxm]
+	// MT2 Cross: MFmx[+MFxx]
+
+	for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+		uint32 fileTag = 0;
+		if (getMacFileType(fs, archiveMember->getPathInArchive(), fileTag)) {
+			switch (fileTag) {
+			case MKTAG('M', 'F', 'm', 'm'):
+				mfmmFiles.push_back(archiveMember);
+				break;
+			case MKTAG('M', 'F', 'm', 'x'):
+				mfmxFiles.push_back(archiveMember);
+				break;
+			case MKTAG('M', 'F', 'x', 'm'):
+				mfxmFiles.push_back(archiveMember);
+				break;
+			case MKTAG('M', 'F', 'x', 'x'):
+				mfxxFiles.push_back(archiveMember);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	if (mfmmFiles.size() > 0)
+		filteredFiles = mfmmFiles;
+	else if (mfxxFiles.size() > 0) {
+		filteredFiles = mfmxFiles;
+		isV2 = true;
+	} else {
+		// No MFmm files and no MFxx files, so if there are MFmx files, they could be the main segment of
+		// a mTropolis 2.x project or additional files belonging to 
+		for (const Common::ArchiveMemberPtr &mfmxFile : mfmxFiles) {
+			SegmentSignatureType signatureType = identifyMacFileBySignature(fs, mfmxFile->getPathInArchive());
+
+			if (signatureType == kSegmentSignatureCrossV2) {
+				filteredFiles.push_back(mfmxFile);
+				isV2 = true;
+			}
+		}
+	}
+
+	if (filteredFiles.size() == 0) {
+		warning("Didn't find main segment by Finder type, inspecting all files manually.  This is slow, you should use a format that preserves Finder info");
+
+		// Didn't find any file that looks like a main segment by type, need to inspect all untagged files by signature.
+		for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
+			Common::Path path = archiveMember->getPathInArchive();
+			uint32 tag = 0;
+
+			if (!getMacFileType(fs, path, tag)) {
+				SegmentSignatureType signatureType = identifyMacFileBySignature(fs, archiveMember->getPathInArchive());
+
+				if (signatureType != kSegmentSignatureUnknown) {
+					filteredFiles.push_back(archiveMember);
+
+					if (signatureType == kSegmentSignatureMacV2 || signatureType == kSegmentSignatureWinV2 || signatureType == kSegmentSignatureCrossV2)
+						isV2 = true;
+				}
+			}
+		}
+	}
+
+	allFiles.clear();
+
+	if (filteredFiles.size() == 0)
+		error("Couldn't find any main segment files");
+
+	if (filteredFiles.size() != 1) {
+		for (const Common::ArchiveMemberPtr &archiveMember : filteredFiles)
+			warning("Possible main segment file: '%s'", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+
+		error("Found multiple main segment files");
+	}
+
+	resolvedPath = filteredFiles.front()->getPathInArchive();
+	resolvedIsV2 = isV2;
+}
+
+bool sortPathFileName(const Common::Path &a, const Common::Path &b) {
+	Common::String aFileName = a.getLastComponent().toString();
+	Common::String bFileName = b.getLastComponent().toString();
+
+	return aFileName.compareToIgnoreCase(bFileName) < 0;
+}
+
+uint32 readEndian32(Common::ReadStream &stream, bool isBE) {
+	return isBE ? stream.readUint32BE() : stream.readUint32LE();
+}
+
+uint16 readEndian16(Common::ReadStream &stream, bool isBE) {
+	return isBE ? stream.readUint16BE() : stream.readUint16LE();
+}
+
+void safeResolveBitDepthAndResolutionFromPresentationSettings(Common::SeekableReadStream &mainSegmentStream, bool isMac, uint8 &outBitDepth, uint16 &outWidth, uint16 &outHeight) {
+	byte header[kSignatureHeaderSize];
+
+	if (mainSegmentStream.read(header, kSignatureHeaderSize) != kSignatureHeaderSize)
+		error("Failed to read main segment header");
+
+	SegmentSignatureType sigType = identifyStreamBySignature(header);
+
+	if (sigType == kSegmentSignatureUnknown)
+		error("Unknown main segment signature");
+
+	bool isBE = (sigType == kSegmentSignatureMacV1 || sigType == kSegmentSignatureMacV2);
+
+	Data::DataReader catReader(kSignatureHeaderSize, mainSegmentStream, isBE ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+
+	uint32 hdrUnknown = 0;
+
+	uint32 phTypeID = 0;
+	uint16 phRevision = 0;
+	uint32 phPersistFlags = 0;
+	uint32 phSizeIncludingTag = 0;
+	uint16 phUnknown1 = 0;
+	uint32 phCatalogPosition = 0;
+
+	if (!catReader.readMultiple(hdrUnknown, phTypeID, phRevision, phPersistFlags, phSizeIncludingTag, phUnknown1, phCatalogPosition) || phTypeID != 1002 || phRevision != 0)
+		error("Failed to read project header from main segment");
+
+	if (!mainSegmentStream.seek(phCatalogPosition))
+		error("Failed to seek to catalog");
+
+	uint32 catTypeID = 0;
+	uint16 catRevision = 0;
+
+	if (!catReader.readMultiple(catTypeID, catRevision) || catTypeID != 1000 || (catRevision != 2 && catRevision != 3))
+		error("Failed to read catalog header");
+
+	uint32 catPersistFlags = 0;
+	uint32 catSizeOfStreamAndSegmentDescs = 0;
+	uint16 catNumStreams = 0;
+	uint16 catUnknown1 = 0;
+	uint16 catUnknown2 = 0;
+	uint16 catNumSegments = 0;
+
+	if (!catReader.readMultiple(catPersistFlags, catSizeOfStreamAndSegmentDescs, catNumStreams, catUnknown1, catUnknown2, catNumSegments))
+		error("Failed to read stream descs from catalog header");
+
+	uint32 bootStreamPos = 0;
+	uint32 bootStreamSize = 0;
+
+	for (uint i = 0; i < catNumStreams; i++) {
+		char streamType[25];
+		streamType[24] = 0;
+
+		uint32 winPosition = 0;
+		uint32 winSize = 0;
+		uint32 macPosition = 0;
+		uint32 macSize = 0;
+
+		mainSegmentStream.read(streamType, 24);
+
+		uint16 segmentIndexPlusOne = readEndian16(mainSegmentStream, isBE);
+
+		if (catRevision >= 3) {
+			macPosition = readEndian32(mainSegmentStream, isBE);
+			macSize = readEndian32(mainSegmentStream, isBE);
+			winPosition = readEndian32(mainSegmentStream, isBE);
+			winSize = readEndian32(mainSegmentStream, isBE);
+		} else {
+			winPosition = macPosition = readEndian32(mainSegmentStream, isBE);
+			winSize = macSize = readEndian32(mainSegmentStream, isBE);
+		}
+
+		if (mainSegmentStream.eos() || mainSegmentStream.err())
+			error("Error reading stream description");
+
+		if (!strcmp(streamType, "bootstream") || !strcmp(streamType, "bootStream")) {
+			bootStreamPos = (isMac ? macPosition : winPosition);
+			bootStreamSize = (isMac ? macSize : winSize);
+
+			if (segmentIndexPlusOne != 1)
+				error("Boot stream isn't in segment 1");
+
+			break;
+		}
+	}
+
+	if (!bootStreamSize)
+		error("Failed to resolve boot stream");
+
+	if (!mainSegmentStream.seek(bootStreamPos))
+		error("Failed to seek to boot stream");
+
+	// NOTE: Endianness switches from isBE to isMac here!
+	Data::DataReader streamReader(bootStreamPos, mainSegmentStream, isMac ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+
+	uint32 shTypeID = 0;
+	uint16 shRevision = 0;
+	uint32 shPersistFlags = 0;
+	uint32 shSizeIncludingTag = 0;
+
+	if (!streamReader.readMultiple(shTypeID, shRevision, shPersistFlags, shSizeIncludingTag) || shTypeID != 1001 || shRevision != 0 || shSizeIncludingTag < 14)
+		error("Failed to read boot stream header");
+
+	if (!mainSegmentStream.skip(shSizeIncludingTag - 14))
+		error("Failed to skip stream header");
+
+	uint32 psTypeID = 0;
+	uint16 psRevision = 0;
+	uint32 psPersistFlags = 0;
+	uint32 psSizeIncludingTag = 0;
+	uint16 psUnknown1 = 0;
+
+	uint32 psResolution = 0;
+	uint16 psBitsPerPixel = 0;
+
+	if (!streamReader.readMultiple(psTypeID, psRevision, psPersistFlags, psSizeIncludingTag, psUnknown1, psResolution, psBitsPerPixel) || psTypeID != 1004 || (psRevision != 2 && psRevision != 3))
+		error("Failed to read presentation settings");
+
+	outHeight = ((psResolution >> 16) & 0xffff);
+	outWidth = (psResolution & 0xffff);
+
+	switch (psBitsPerPixel) {
+	case 1:
+		outBitDepth = 1;
+		break;
+	case 2:
+		outBitDepth = 2;
+		break;
+	case 4:
+		outBitDepth = 4;
+		break;
+	case 8:
+		outBitDepth = 8;
+		break;
+	case 16:
+		outBitDepth = 16;
+		break;
+	case 32:
+		outBitDepth = 32;
+		break;
+	default:
+		error("Unknown bit depth mode in presentation settings");
+	}
+}
+
+void resolveBitDepthAndResolutionFromPresentationSettings(Common::SeekableReadStream &mainSegmentStream, bool isMac, uint8 &outBitDepth, uint16 &outWidth, uint16 &outHeight) {
+	if (!mainSegmentStream.seek(0))
+		error("Couldn't reset main segment stream to start");
+
+	safeResolveBitDepthAndResolutionFromPresentationSettings(mainSegmentStream, isMac, outBitDepth, outWidth, outHeight);
+
+	if (!mainSegmentStream.seek(0))
+		error("Couldn't reset main segment stream to start");
+}
+
 } // End of namespace Boot
 
-Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription &gameDesc) {
-	Common::SharedPtr<ProjectDescription> desc;
+
+
+BootConfiguration::BootConfiguration() : _bitDepth(0), _enhancedBitDepth(0), _width(0), _height(0) {
+}
+
+BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
+	BootConfiguration bootConfig;
+
+	Common::SharedPtr<ProjectDescription> &desc = bootConfig._projectDesc;
 
 	Common::Array<Common::SharedPtr<ProjectPersistentResource>> persistentResources;
+	Common::Array<Common::SharedPtr<PlugIn> > plugIns;
 
 	Common::SharedPtr<Boot::GameDataHandler> gameDataHandler;
 
@@ -1267,358 +2653,208 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 	if (!bootGame)
 		error("Couldn't boot mTropolis game, don't have a file manifest for manifest ID %i", static_cast<int>(gameDesc.bootID));
 
-	if (bootGame->gameDataFactory)
-		gameDataHandler.reset(bootGame->gameDataFactory(*bootGame, gameDesc));
-	else
-		gameDataHandler.reset(new Boot::GameDataHandler(*bootGame, gameDesc));
+	Boot::BootScriptContext bootScriptContext(gameDesc.desc.platform == Common::kPlatformMacintosh);
 
+	void (Boot::BootScriptContext::*bootFunc)() = bootGame->bootFunction;
+	(bootScriptContext.*bootFunc)();
 
-	if (bootGame->subtitlesDef) {
-		linesTablePath = bootGame->subtitlesDef->linesTablePath;
-		speakerTablePath = bootGame->subtitlesDef->speakerTablePath;
-		assetMappingTablePath = bootGame->subtitlesDef->assetMappingTablePath;
-		modifierMappingTablePath = bootGame->subtitlesDef->modifierMappingTablePath;
-	}
+	for (const Common::SharedPtr<Common::Archive> &arc : bootScriptContext.getPersistentArchives())
+		persistentResources.push_back(Boot::PersistentResource<Common::Archive>::wrap(arc));
+
+	bootScriptContext.finalize();
+
+	Common::SharedPtr<VirtualFileSystem> vfs(new VirtualFileSystem(bootScriptContext.getVFSLayout()));
+
+	Common::Path playerLocation;
+	Common::Path mainSegmentLocation;
+	Common::Path mainSegmentDirectory;
+	Common::Path playerDirectory;
+	Common::Path pluginsLocation;
+	Boot::PlayerType playerType = Boot::kPlayerTypeNone;
+	bool isV2Project = false;
+
+	persistentResources.push_back(Boot::PersistentResource<VirtualFileSystem>::wrap(vfs));
 
 	if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
-		Common::Array<Boot::FileIdentification> macFiles;
-
-		debug(1, "Attempting to boot Macintosh game...");
-
-		const Boot::ManifestFile *fileDesc = bootGame->manifest;
-		while (fileDesc->fileName) {
-			const char *fileName = fileDesc->fileName;
-
-			Boot::FileIdentification ident;
-			ident.fileName = fileName;
-			ident.category = static_cast<Boot::ManifestFileType>(fileDesc->fileType);
-			ident.macType.value = 0;
-			ident.macCreator.value = 0;
-			if (ident.category == Boot::MTFT_AUTO && !Boot::getMacTypesForFile(fileName, ident.macType.value, ident.macCreator.value))
-				error("Couldn't determine Mac file type code for file '%s'", fileName);
-
-			macFiles.push_back(ident);
-
-			fileDesc++;
-		}
-
-		gameDataHandler->unpackAdditionalFiles(persistentResources, macFiles);
-		gameDataHandler->categorizeSpecialFiles(macFiles);
-
-		Common::sort(macFiles.begin(), macFiles.end(), Boot::fileSortCompare);
-
-		// File types changed in mTropolis 2.0 in a way that MFmx and MFxm have different meaning than mTropolis 1.0.
-		// So, we need to detect what variety of files we have available:
-		// MT1 Mac: MFmm[+MFmx]
-		// MT2 Mac: MFmm[+MFxm]
-		// MT2 Cross: MFmx[+MFxx]
-		bool haveAnyMFmm = false;
-		bool haveAnyMFmx = false;
-		//bool haveAnyMFxx = false; // Unused
-		bool haveAnyMFxm = false;
-
-		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::MTFT_AUTO) {
-				switch (macFile.macType.value) {
-				case MKTAG('M', 'F', 'm', 'm'):
-					haveAnyMFmm = true;
-					break;
-				case MKTAG('M', 'F', 'm', 'x'):
-					haveAnyMFmx = true;
-					break;
-				case MKTAG('M', 'F', 'x', 'm'):
-					haveAnyMFxm = true;
-					break;
-				case MKTAG('M', 'F', 'x', 'x'):
-					//haveAnyMFxx = true; // Unused
-					break;
-				default:
-					break;
-				};
-			}
-		}
-
-		bool isMT2CrossPlatform = (haveAnyMFmx && !haveAnyMFmm);
-		if (isMT2CrossPlatform && haveAnyMFxm)
-			error("Unexpected combination of player file types");
-
-		// Identify unknown files
-		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::MTFT_AUTO) {
-				switch (macFile.macType.value) {
-				case MKTAG('M', 'F', 'm', 'm'):
-					macFile.category = Boot::MTFT_MAIN;
-					break;
-				case MKTAG('M', 'F', 'm', 'x'):
-					macFile.category = isMT2CrossPlatform ? Boot::MTFT_MAIN : Boot::MTFT_ADDITIONAL;
-					break;
-				case MKTAG('M', 'F', 'x', 'm'):
-				case MKTAG('M', 'F', 'x', 'x'):
-					macFile.category = Boot::MTFT_ADDITIONAL;
-					break;
-				case MKTAG('A', 'P', 'P', 'L'):
-					macFile.category = Boot::MTFT_PLAYER;
-					break;
-				case MKTAG('M', 'F', 'c', 'o'):
-				case MKTAG('M', 'F', 'c', 'r'):
-				case MKTAG('M', 'F', 'X', 'O'):
-					macFile.category = Boot::MTFT_EXTENSION;
-					break;
-				default:
-					error("Failed to categorize input file '%s'", macFile.fileName.c_str());
-					break;
-				};
-			}
-		}
-
-		Boot::FileIdentification *mainSegmentFile = nullptr;
-		Common::Array<Boot::FileIdentification *> segmentFiles;
-
-		int addlSegments = 0;
-
-		// Bin segments
-		for (Boot::FileIdentification &macFile : macFiles) {
-			switch (macFile.category) {
-			case Boot::MTFT_PLAYER:
-				// Case handled below after cursor loading
-				break;
-			case Boot::MTFT_EXTENSION:
-				// Case handled below after cursor loading
-				break;
-			case Boot::MTFT_MAIN:
-				mainSegmentFile = &macFile;
-				break;
-			case Boot::MTFT_ADDITIONAL: {
-					addlSegments++;
-					int segmentID = addlSegments + 1;
-
-					size_t segmentIndex = static_cast<size_t>(segmentID - 1);
-					while (segmentFiles.size() <= segmentIndex)
-						segmentFiles.push_back(nullptr);
-					segmentFiles[segmentIndex] = &macFile;
-				} break;
-			case Boot::MTFT_VIDEO:
-				break;
-			case Boot::MTFT_SPECIAL:
-				break;
-			case Boot::MTFT_AUTO:
-				break;
-			}
-		}
-
-		if (segmentFiles.size() > 0)
-			segmentFiles[0] = mainSegmentFile;
-		else
-			segmentFiles.push_back(mainSegmentFile);
-
-		// Load cursors
-		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
-
-		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::MTFT_PLAYER)
-				Boot::loadCursorsMac(macFile, *cursorGraphics);
-		}
-
-		for (Boot::FileIdentification &macFile : macFiles) {
-			if (macFile.category == Boot::MTFT_EXTENSION)
-				Boot::loadCursorsMac(macFile, *cursorGraphics);
-		}
-
-		// Create the project description
-		desc.reset(new ProjectDescription(isMT2CrossPlatform ? KProjectPlatformCrossPlatform : kProjectPlatformMacintosh));
-
-		for (Boot::FileIdentification *segmentFile : segmentFiles) {
-			if (!segmentFile)
-				error("Missing segment file");
-
-			Common::SharedPtr<Common::SeekableReadStream> dataFork;
-
-			if (segmentFile->stream)
-				dataFork = segmentFile->stream;
-			else {
-				dataFork.reset(Common::MacResManager::openFileOrDataFork(segmentFile->fileName));
-				if (!dataFork)
-					error("Segment file '%s' has no data fork", segmentFile->fileName.c_str());
-			}
-
-			persistentResources.push_back(Boot::PersistentResource<Common::SeekableReadStream>::wrap(dataFork));
-
-			desc->addSegment(0, dataFork.get());
-		}
-
-		gameDataHandler->addPlugIns(*desc, macFiles);
-
-		desc->setCursorGraphics(cursorGraphics);
+		Boot::findMacPlayer(*vfs, playerLocation, playerType);
+		Boot::findMacMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
-		Common::Array<Boot::FileIdentification> winFiles;
-
-		debug(1, "Attempting to boot Windows game...");
-
-		const Boot::ManifestFile *fileDesc = bootGame->manifest;
-		while (fileDesc->fileName) {
-			const char *fileName = fileDesc->fileName;
-
-			Boot::FileIdentification ident;
-			ident.fileName = fileName;
-			ident.category = fileDesc->fileType;
-			ident.macType.value = 0;
-			ident.macCreator.value = 0;
-			winFiles.push_back(ident);
-
-			fileDesc++;
-		}
-
-		gameDataHandler->unpackAdditionalFiles(persistentResources, winFiles);
-		gameDataHandler->categorizeSpecialFiles(winFiles);
-
-		Common::sort(winFiles.begin(), winFiles.end(), Boot::fileSortCompare);
-
-		bool isCrossPlatform = false;
-		bool isWindows = false;
-		bool isMT1 = false;
-		bool isMT2 = false;
-
-		// Identify unknown files
-		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::MTFT_AUTO) {
-				switch (Boot::getWinFileEndingPseudoTag(winFile.fileName)) {
-				case MKTAG('.', 'm', 'p', 'l'):
-					winFile.category = Boot::MTFT_MAIN;
-					isWindows = true;
-					isMT1 = true;
-					if (isMT2)
-						error("Unexpected mix of file platforms");
-					break;
-				case MKTAG('.', 'm', 'p', 'x'):
-					winFile.category = Boot::MTFT_ADDITIONAL;
-					isWindows = true;
-					isMT1 = true;
-					if (isMT2)
-						error("Unexpected mix of file platforms");
-					break;
-
-				case MKTAG('.', 'm', 'f', 'w'):
-					winFile.category = Boot::MTFT_MAIN;
-					if (isMT1 || isCrossPlatform)
-						error("Unexpected mix of file platforms");
-					isWindows = true;
-					isMT2 = true;
-					break;
-
-				case MKTAG('.', 'm', 'x', 'w'):
-					winFile.category = Boot::MTFT_ADDITIONAL;
-					if (isMT1 || isCrossPlatform)
-						error("Unexpected mix of file platforms");
-					isWindows = true;
-					isMT2 = true;
-					break;
-
-				case MKTAG('.', 'm', 'f', 'x'):
-					winFile.category = Boot::MTFT_MAIN;
-					if (isWindows)
-						error("Unexpected mix of file platforms");
-					isCrossPlatform = true;
-					isMT2 = true;
-					break;
-
-				case MKTAG('.', 'm', 'x', 'x'):
-					winFile.category = Boot::MTFT_ADDITIONAL;
-					if (isWindows)
-						error("Unexpected mix of file platforms");
-					isCrossPlatform = true;
-					isMT2 = true;
-					break;
-
-				case MKTAG('.', 'c', '9', '5'):
-				case MKTAG('.', 'e', '9', '5'):
-				case MKTAG('.', 'r', '9', '5'):
-				case MKTAG('.', 'x', '9', '5'):
-					winFile.category = Boot::MTFT_EXTENSION;
-					break;
-
-				case MKTAG('.', 'e', 'x', 'e'):
-					winFile.category = Boot::MTFT_PLAYER;
-					break;
-
-				default:
-					error("Failed to categorize input file '%s'", winFile.fileName.c_str());
-					break;
-				};
-			}
-		}
-
-		Boot::FileIdentification *mainSegmentFile = nullptr;
-		Common::Array<Boot::FileIdentification *> segmentFiles;
-
-		int addlSegments = 0;
-
-		// Bin segments
-		for (Boot::FileIdentification &winFile : winFiles) {
-			switch (winFile.category) {
-			case Boot::MTFT_PLAYER:
-				// Case handled below after cursor loading
-				break;
-			case Boot::MTFT_EXTENSION:
-				// Case handled below after cursor loading
-				break;
-			case Boot::MTFT_MAIN:
-				mainSegmentFile = &winFile;
-				break;
-			case Boot::MTFT_ADDITIONAL: {
-				addlSegments++;
-				int segmentID = addlSegments + 1;
-
-				size_t segmentIndex = static_cast<size_t>(segmentID - 1);
-				while (segmentFiles.size() <= segmentIndex)
-					segmentFiles.push_back(nullptr);
-				segmentFiles[segmentIndex] = &winFile;
-			} break;
-			case Boot::MTFT_VIDEO:
-				break;
-			case Boot::MTFT_SPECIAL:
-				break;
-			case Boot::MTFT_AUTO:
-				break;
-			}
-		}
-
-		if (segmentFiles.size() > 0)
-			segmentFiles[0] = mainSegmentFile;
-		else
-			segmentFiles.push_back(mainSegmentFile);
-
-		// Load cursors
-		Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
-
-		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::MTFT_PLAYER)
-				Boot::loadCursorsWin(winFile, *cursorGraphics);
-		}
-
-		for (Boot::FileIdentification &winFile : winFiles) {
-			if (winFile.category == Boot::MTFT_EXTENSION)
-				Boot::loadCursorsWin(winFile, *cursorGraphics);
-		}
-
-		// Create the project description
-		desc.reset(new ProjectDescription(isCrossPlatform ? KProjectPlatformCrossPlatform : kProjectPlatformWindows));
-
-		for (Boot::FileIdentification *segmentFile : segmentFiles) {
-			if (!segmentFile)
-				error("Missing segment file");
-
-			if (segmentFile->stream) {
-				persistentResources.push_back(Boot::PersistentResource<Common::SeekableReadStream>::wrap(segmentFile->stream));
-				desc->addSegment(0, segmentFile->stream.get());
-			} else {
-				desc->addSegment(0, segmentFile->fileName.c_str());
-			}
-		}
-
-		gameDataHandler->addPlugIns(*desc, winFiles);
-
-		desc->setCursorGraphics(cursorGraphics);
+		Boot::findWindowsPlayer(*vfs, playerLocation, playerType);
+		Boot::findWindowsMainSegment(*vfs, mainSegmentLocation, isV2Project);
 	}
+
+	{
+		Common::StringArray pathComponents = playerLocation.splitComponents();
+		pathComponents.pop_back();
+		playerDirectory = Common::Path::joinComponents(pathComponents);
+
+		pathComponents = mainSegmentLocation.splitComponents();
+		pathComponents.pop_back();
+		mainSegmentDirectory = Common::Path::joinComponents(pathComponents);
+	}
+
+	if (isV2Project)
+		pluginsLocation = playerDirectory.appendComponent("mplugins");
+	else
+		pluginsLocation = playerDirectory.appendComponent("resource");
+
+	{
+		const Boot::ManifestSubtitlesDef &subtitlesDef = bootScriptContext.getSubtitlesDef();
+
+		linesTablePath = subtitlesDef.linesTablePath;
+		speakerTablePath = subtitlesDef.speakerTablePath;
+		assetMappingTablePath = subtitlesDef.assetMappingTablePath;
+		modifierMappingTablePath = subtitlesDef.modifierMappingTablePath;
+	}
+
+	Common::SharedPtr<CursorGraphicCollection> cursorGraphics(new CursorGraphicCollection());
+
+	// Load plug-ins
+	{
+		Common::ArchiveMemberList pluginFiles;
+		Common::Array<Common::Path> pluginPathsSorted;
+
+		const char *plugInSuffix = nullptr;
+
+		switch (playerType) {
+		case Boot::kPlayerTypeMac68k:
+			plugInSuffix = "68";
+			break;
+		case Boot::kPlayerTypeMacPPC:
+			plugInSuffix = "PP";
+			break;
+		case Boot::kPlayerTypeWin32:
+			plugInSuffix = isV2Project ? "32" : "95";
+			break;
+		case Boot::kPlayerTypeWin16:
+			plugInSuffix = isV2Project ? "16" : "31";
+			break;
+		default:
+			error("Unknown player type");
+			break;
+		}
+
+		vfs->listMatchingMembers(pluginFiles, pluginsLocation.appendComponent("*"));
+
+		for (const Common::ArchiveMemberPtr &pluginFile : pluginFiles) {
+			Common::String fileName = pluginFile->getFileName();
+			uint fnameLen = fileName.size();
+
+			if (fnameLen >= 4 && fileName[fnameLen - 4] == '.' && fileName[fnameLen - 2] == plugInSuffix[0] && fileName[fnameLen - 1] == plugInSuffix[1])
+				pluginPathsSorted.push_back(pluginFile->getPathInArchive());
+		}
+
+		// This is possibly not optimal - Sort order on MacOS is based on the MacRoman encoded file name,
+		// and possibly case-sensitive too.  Sort order on Windows is case-insensitive.  However, we don't
+		// want to rely on the filenames having the correct case on the user machine.
+		Common::sort(pluginPathsSorted.begin(), pluginPathsSorted.end(), Boot::sortPathFileName);
+
+		if (gameDesc.desc.platform == Common::kPlatformMacintosh) {
+			Boot::loadCursorsMac(*vfs, playerLocation, *cursorGraphics);
+
+			for (const Common::Path &plugInPath : pluginPathsSorted)
+				Boot::loadCursorsMac(*vfs, plugInPath, *cursorGraphics);
+		} else if (gameDesc.desc.platform == Common::kPlatformWindows) {
+			Boot::loadCursorsWin(*vfs, playerLocation, *cursorGraphics);
+
+			for (const Common::Path &plugInPath : pluginPathsSorted)
+				Boot::loadCursorsWin(*vfs, plugInPath, *cursorGraphics);
+		}
+	}
+
+	// Add ScummVM plug-ins from the boot script
+	for (Boot::BootScriptContext::PlugIn plugIn : bootScriptContext.getPlugIns()) {
+		switch (plugIn) {
+		case Boot::BootScriptContext::kPlugInStandard:
+			plugIns.push_back(Boot::loadStandardPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInObsidian:
+			plugIns.push_back(Boot::loadObsidianPlugIn(gameDesc, *vfs, pluginsLocation));
+			break;
+		case Boot::BootScriptContext::kPlugInMTI:
+			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		default:
+			error("Unknown plug-in ID");
+		}
+	}
+
+	ProjectPlatform projectPlatform = (gameDesc.desc.platform == Common::kPlatformMacintosh) ? kProjectPlatformMacintosh : kProjectPlatformWindows;
+
+	desc.reset(new ProjectDescription(projectPlatform, isV2Project ? kProjectMajorVersion2 : kProjectMajorVersion1, vfs.get(), mainSegmentDirectory));
+	desc->setCursorGraphics(cursorGraphics);
+
+	for (const Common::SharedPtr<PlugIn> &plugIn : plugIns)
+		desc->addPlugIn(plugIn);
+
+	Common::SharedPtr<Common::SeekableReadStream> mainSegmentStream;
+
+	if (gameDesc.desc.platform == Common::kPlatformMacintosh)
+		mainSegmentStream.reset(Common::MacResManager::openFileOrDataFork(mainSegmentLocation, *vfs));
+	else if (gameDesc.desc.platform == Common::kPlatformWindows)
+		mainSegmentStream.reset(vfs->createReadStreamForMember(mainSegmentLocation));
+
+	if (!mainSegmentStream)
+		error("Failed to open main segment");
+
+	persistentResources.push_back(Boot::PersistentResource<Common::SeekableReadStream>::wrap(mainSegmentStream));
+
+	desc->addSegment(0, mainSegmentStream.get());
+	desc->setLanguage(gameDesc.desc.language);
+
+	Common::Point resolution = bootScriptContext.getResolution();
+
+	if (bootScriptContext.getBitDepth() == Boot::BootScriptContext::kBitDepthAuto || resolution.x == 0 || resolution.y == 0) {
+		uint16 width = 0;
+		uint16 height = 0;
+		Boot::resolveBitDepthAndResolutionFromPresentationSettings(*mainSegmentStream, gameDesc.desc.platform == Common::kPlatformMacintosh, bootConfig._bitDepth, width, height);
+
+		if (resolution.x == 0)
+			resolution.x = width;
+
+		if (resolution.y == 0)
+			resolution.y = height;
+	}
+
+	bootConfig._width = resolution.x;
+	bootConfig._height = resolution.y;
+
+	switch (bootScriptContext.getBitDepth()) {
+	case Boot::BootScriptContext::kBitDepthAuto:
+		break;
+	case Boot::BootScriptContext::kBitDepth8:
+		bootConfig._bitDepth = 8;
+		break;
+	case Boot::BootScriptContext::kBitDepth16:
+		bootConfig._bitDepth = 16;
+		break;
+	case Boot::BootScriptContext::kBitDepth32:
+		bootConfig._bitDepth = 32;
+		break;
+	default:
+		error("Invalid bit depth in boot script");
+	};
+
+	switch (bootScriptContext.getEnhancedBitDepth()) {
+	case Boot::BootScriptContext::kBitDepthAuto:
+		bootConfig._enhancedBitDepth = bootConfig._bitDepth;
+		bootConfig._enhancedBitDepth = 32;
+		break;
+	case Boot::BootScriptContext::kBitDepth8:
+		bootConfig._enhancedBitDepth = 8;
+		break;
+	case Boot::BootScriptContext::kBitDepth16:
+		bootConfig._enhancedBitDepth = 16;
+		break;
+	case Boot::BootScriptContext::kBitDepth32:
+		bootConfig._enhancedBitDepth = 32;
+		break;
+	default:
+		error("Invalid bit depth in boot script");
+	};
+
+	if (bootConfig._enhancedBitDepth < bootConfig._bitDepth)
+		bootConfig._enhancedBitDepth = bootConfig._bitDepth;
 
 	Common::SharedPtr<ProjectResources> resources(new ProjectResources());
 	resources->persistentResources = persistentResources;
@@ -1658,9 +2894,9 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 	subTables.modifierMapping = subsModifierMappingTable;
 	subTables.speakers = subsSpeakerTable;
 
-	desc->getSubtitles(subTables);
+	desc->setSubtitles(subTables);
 
-	return desc;
+	return bootConfig;
 }
 
 void bootAddSearchPaths(const Common::FSNode &gameDataDir, const MTropolisGameDescription &gameDesc) {
@@ -1676,16 +2912,6 @@ void bootAddSearchPaths(const Common::FSNode &gameDataDir, const MTropolisGameDe
 
 	if (!bootGame)
 		error("Couldn't boot mTropolis game, don't have a file manifest for manifest ID %i", static_cast<int>(gameDesc.bootID));
-
-	if (!bootGame->directories)
-		return;
-
-	size_t index = 0;
-	while (bootGame->directories[index]) {
-		const char *directoryPath = bootGame->directories[index++];
-
-		SearchMan.addSubDirectoryMatching(gameDataDir, directoryPath);
-	}
 }
 
 } // End of namespace MTropolis

@@ -379,8 +379,8 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 		attributes[i].name = program.attributes[i].name;
 	}
 
-	Common::MemoryReadStreamEndian stream(&program.bytecode[0], program.bytecode.size(), program.isBigEndian);
-	Data::DataReader reader(0, stream, program.projectFormat, program.projectEngineVersion);
+	Common::MemoryReadStream stream(&program.bytecode[0], program.bytecode.size());
+	Data::DataReader reader(0, stream, program.dataFormat);
 
 	Common::Array<InstructionData> rawInstructions;
 	rawInstructions.resize(program.numOfInstructions);
@@ -449,8 +449,8 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 		if (rawInstruction.contents.size() != 0)
 			dataLoc = &rawInstruction.contents[0];
 
-		Common::MemoryReadStreamEndian instrContentsStream(static_cast<const byte *>(dataLoc), rawInstruction.contents.size(), reader.isBigEndian());
-		Data::DataReader instrContentsReader(0, instrContentsStream, reader.getProjectFormat(), reader.getProjectEngineVersion());
+		Common::MemoryReadStream instrContentsStream(static_cast<const byte *>(dataLoc), rawInstruction.contents.size());
+		Data::DataReader instrContentsReader(0, instrContentsStream, reader.getDataFormat());
 
 		if (!rawInstruction.instrFactory->create(&programData[baseOffset + rawInstruction.pdPosition], rawInstruction.flags, instrContentsReader, miniscriptInstructions[i], parserFeedback)) {
 			// Destroy any already-created instructions

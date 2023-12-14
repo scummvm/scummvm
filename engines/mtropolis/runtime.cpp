@@ -21,6 +21,7 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/random.h"
 #include "common/substream.h"
 #include "common/system.h"
@@ -2501,7 +2502,8 @@ Common::SharedPtr<CursorGraphic> CursorGraphicCollection::getGraphicByID(uint32 
 	return nullptr;
 }
 
-ProjectDescription::ProjectDescription(ProjectPlatform platform) : _language(Common::EN_ANY), _platform(platform) {
+ProjectDescription::ProjectDescription(ProjectPlatform platform, ProjectMajorVersion majorVersion, Common::Archive *rootArchive, const Common::Path &projectRootDir)
+	: _language(Common::EN_ANY), _platform(platform), _rootArchive(rootArchive), _projectRootDir(projectRootDir), _majorVersion(majorVersion) {
 }
 
 ProjectDescription::~ProjectDescription() {
@@ -2564,11 +2566,23 @@ ProjectPlatform ProjectDescription::getPlatform() const {
 	return _platform;
 }
 
+ProjectMajorVersion ProjectDescription::getMajorVersion() const {
+	return _majorVersion;
+}
+
+Common::Archive *ProjectDescription::getRootArchive() const {
+	return _rootArchive;
+}
+
+const Common::Path &ProjectDescription::getProjectRootDir() const {
+	return _projectRootDir;
+}
+
 const SubtitleTables &ProjectDescription::getSubtitles() const {
 	return _subtitles;
 }
 
-void ProjectDescription::getSubtitles(const SubtitleTables &subs) {
+void ProjectDescription::setSubtitles(const SubtitleTables &subs) {
 	_subtitles = subs;
 }
 
@@ -2580,6 +2594,10 @@ void SimpleModifierContainer::appendModifier(const Common::SharedPtr<Modifier> &
 	_modifiers.push_back(modifier);
 	if (modifier)
 		modifier->setParent(nullptr);
+}
+
+void SimpleModifierContainer::clear() {
+	_modifiers.clear();
 }
 
 RuntimeObject::RuntimeObject() : _guid(0), _runtimeGUID(0) {
@@ -4334,7 +4352,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 
 Runtime::~Runtime() {
 	// Clear the project first, which should detach any references to other things
-	_project.reset();
+	unloadProject();
 
 	_subtitleRenderer.reset();
 }
@@ -6943,15 +6961,37 @@ Project::AssetDesc::AssetDesc() : typeCode(0), id(0), streamID(0), filePosition(
 }
 
 Project::Project(Runtime *runtime)
-	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
+	: Structural(runtime), _projectFormat(Data::kProjectFormatUnknown),
 	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
 	  _keyboardEventSignaller(new KeyboardEventSignaller()), _guessedVersion(MTropolisVersions::kMTropolisVersion1_0),
-	  _platform(kProjectPlatformUnknown) {
+	  _platform(kProjectPlatformUnknown), _rootArchive(nullptr), _majorVersion(kProjectMajorVersionUnknown) {
 }
 
 Project::~Project() {
+	// Project teardown can be chaotic, we need to get rid of things in an orderly fashion.
+
+	// Remove all modifiers and structural children, which should unhook anything referencing an asset
+	_modifiers.clear();
+	_children.clear();
+
+	// Remove all global modifiers
+	_globalModifiers.clear();
+
+	// Unhook assets assets
+	_assets.clear();
+
+	// Unhook plug-ins
+	_plugIns.clear();
+
+	// Unhook cursor graphics
+	_cursorGraphics.reset();
+
+	// Close all segment streams
 	for (size_t i = 0; i < _segments.size(); i++)
 		closeSegmentStream(i);
+
+	// Last of all, release project resources
+	_resources.reset();
 }
 
 VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
@@ -6977,6 +7017,9 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 	_cursorGraphics = desc.getCursorGraphics();
 	_subtitles = desc.getSubtitles();
 	_platform = desc.getPlatform();
+	_rootArchive = desc.getRootArchive();
+	_projectRootDir = desc.getProjectRootDir();
+	_majorVersion = desc.getMajorVersion();
 
 	debug(1, "Loading new project...");
 
@@ -7008,49 +7051,44 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 
 	if (startValue == 1) {
 		// Windows format
-		_isBigEndian = false;
 		_projectFormat = Data::kProjectFormatWindows;
 	} else if (startValue == 0) {
 		// Mac format
-		_isBigEndian = true;
 		_projectFormat = Data::kProjectFormatMacintosh;
+	} else if (startValue == 8) {
+		// Cross-platform format
+		_projectFormat = Data::kProjectFormatNeutral;
 	} else {
 		warning("Unrecognized project segment header (startValue: %d)", startValue);
 		_projectFormat = Data::kProjectFormatWindows;
 	}
 
-	Common::SeekableSubReadStreamEndian stream(baseStream, 2, baseStream->size(), _isBigEndian);
-	const uint32 magic = stream.readUint32();
-	const uint32 hdr1 = stream.readUint32();
-	const uint32 hdr2 = stream.readUint32();
-	if (magic != 0xaa55a5a5 || (hdr1 != 0 && hdr1 != 0x2000000) || hdr2 != 14) {
+	Common::SeekableSubReadStream stream(baseStream, 2, baseStream->size());
+
+	Data::DataReader catReader(2, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
+
+	uint32 magic = 0;
+	uint32 hdr1 = 0;
+	uint32 hdr2 = 0;
+	if (!catReader.readMultiple(magic, hdr1, hdr2) || magic != 0xaa55a5a5 || (hdr1 != 0 && hdr1 != 0x2000000) || hdr2 != 14) {
 		error("Unrecognized project segment header (%x, %x, %d)", magic, hdr1, hdr2);
 	}
 
-	if (hdr1 == 0)
-		_projectEngineVersion = Data::kProjectEngineVersion1;
-	else
-		_projectEngineVersion = Data::kProjectEngineVersion2;
-
-	Data::DataReader reader(2, stream, _projectFormat, _projectEngineVersion);
-
 	Common::SharedPtr<Data::DataObject> dataObject;
-	Data::loadDataObject(_plugInRegistry.getDataLoaderRegistry(), reader, dataObject);
+	Data::loadDataObject(_plugInRegistry.getDataLoaderRegistry(), catReader, dataObject);
 
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectHeader) {
 		error("Expected project header but found something else");
 	}
 
-	Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
+	Data::loadDataObject(plugInDataLoaderRegistry, catReader, dataObject);
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectCatalog) {
 		error("Expected project catalog but found something else");
 	}
 
 	Data::ProjectCatalog *catalog = static_cast<Data::ProjectCatalog *>(dataObject.get());
 
-	if (catalog->segments.size() != desc.getSegments().size()) {
-		error("Project declared a different number of segments than the project description provided");
-	}
+	_segments.resize(catalog->segments.size());
 
 	debug(1, "Catalog loaded OK, identified %i streams", static_cast<int>(catalog->streams.size()));
 
@@ -7069,8 +7107,8 @@ void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &h
 			streamDesc.streamType = kStreamTypeUnknown;
 
 		streamDesc.segmentIndex = srcStream.segmentIndexPlusOne - 1;
-		streamDesc.size = srcStream.size;
-		streamDesc.pos = srcStream.pos;
+		streamDesc.size = (_platform == kProjectPlatformMacintosh) ? srcStream.macSize : srcStream.winSize;
+		streamDesc.pos = (_platform == kProjectPlatformMacintosh) ? srcStream.macPos : srcStream.winPos;
 	}
 
 	// Locate the boot stream
@@ -7106,8 +7144,8 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural> &scene, ui
 
 	openSegmentStream(segmentIndex);
 
-	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
+	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
+	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
 
 	if (getRuntime()->getHacks().mtiHispaniolaDamagedStringHack && scene->getName() == "C01b : Main Deck Helm Kidnap")
 		reader.setPermitDamagedStrings(true);
@@ -7234,8 +7272,8 @@ void Project::forceLoadAsset(uint32 assetID, Common::Array<Common::SharedPtr<Ass
 
 	openSegmentStream(segmentIndex);
 
-	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
+	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
+	Data::DataReader reader(streamDesc.pos, stream, (_projectFormat == Data::kProjectFormatMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
@@ -7295,13 +7333,43 @@ void Project::openSegmentStream(int segmentIndex) {
 		segment.rcStream.reset();
 		segment.weakStream = segment.desc.stream;
 	} else {
-		Common::File *f = new Common::File();
-		segment.rcStream.reset(f);
-		segment.weakStream = f;
+		Common::Path defaultPath = _projectRootDir.appendComponent(segment.desc.filePath);
 
-		if (!f->open(segment.desc.filePath)) {
-			error("Failed to open segment file %s", segment.desc.filePath.c_str());
+		if (_platform == kProjectPlatformMacintosh)
+			segment.rcStream.reset(Common::MacResManager::openFileOrDataFork(defaultPath, *_rootArchive));
+		else
+			segment.rcStream.reset(_rootArchive->createReadStreamForMember(defaultPath));
+
+		if (!segment.rcStream) {
+			warning("Segment '%s' isn't in the project directory", segment.desc.filePath.c_str());
+
+			Common::ArchiveMemberList memberList;
+			Common::ArchiveMemberPtr locatedMember;
+
+			_rootArchive->listMembers(memberList);
+
+			for (const Common::ArchiveMemberPtr &member : memberList) {
+				if (member->getFileName().equalsIgnoreCase(segment.desc.filePath)) {
+					if (locatedMember)
+						error("Segment '%s' exists multiple times in the workspace, and isn't in the project directory, couldn't disambiguate", segment.desc.filePath.c_str());
+
+					locatedMember = member;
+				}
+			}
+
+			if (!locatedMember)
+				error("Segment '%s' is missing from the workspace", segment.desc.filePath.c_str());
+
+			if (_platform == kProjectPlatformMacintosh)
+				segment.rcStream.reset(Common::MacResManager::openFileOrDataFork(locatedMember->getPathInArchive(), *_rootArchive));
+			else
+				segment.rcStream.reset(locatedMember->createReadStream());
+
+			if (!segment.rcStream)
+				error("Failed to open segment file %s", segment.desc.filePath.c_str());
 		}
+
+		segment.weakStream = segment.rcStream.get();
 	}
 
 	segment.unloadSignaller.reset(new SegmentUnloadSignaller(this, segmentIndex));
@@ -7394,8 +7462,8 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 	size_t segmentIndex = streamDesc.segmentIndex;
 	openSegmentStream(segmentIndex);
 
-	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(streamDesc.pos, stream, _projectFormat, _projectEngineVersion);
+	Common::SeekableSubReadStream stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size);
+	Data::DataReader reader(streamDesc.pos, stream, (_platform == kProjectPlatformMacintosh) ? Data::kDataFormatMacintosh : Data::kDataFormatWindows);
 
 	ChildLoaderStack loaderStack;
 	AssetDefLoaderContext assetDefLoader;
@@ -7452,6 +7520,8 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 					loaderContext.type = ChildLoaderContext::kTypeProject;
 
 					loaderStack.contexts.push_back(loaderContext);
+
+					initAdditionalSegments(def->name);
 				} break;
 			case Data::DataObjectTypes::kStreamHeader:
 			case Data::DataObjectTypes::kUnknown19:
@@ -7690,6 +7760,30 @@ void Project::assignAssets(const Common::Array<Common::SharedPtr<Asset> >& asset
 			for (const Common::SharedPtr<AssetHooks> &hook : hacks.assetHooks)
 				hook->onLoaded(asset.get(), desc->name);
 		}
+	}
+}
+
+void Project::initAdditionalSegments(const Common::String &projectName) {
+	for (uint segmentIndex = 1; segmentIndex < _segments.size(); segmentIndex++) {
+		Segment &segment = _segments[segmentIndex];
+
+		Common::String segmentName = projectName + Common::String::format("%i", static_cast<int>(segmentIndex + 1));
+
+		if (_projectFormat == Data::kProjectFormatNeutral) {
+			segmentName += ".mxx";
+		} else if (_projectFormat == Data::kProjectFormatWindows) {
+			if (_majorVersion == kProjectMajorVersion2)
+				segmentName += ".mxw";
+			else
+				segmentName += ".mpx";
+		} else if (_projectFormat == Data::kProjectFormatMacintosh) {
+			if (_majorVersion == kProjectMajorVersion2)
+				segmentName += ".mxm";
+		}
+
+		// Attempt to find the segment
+		segment.desc.filePath = segmentName;
+		segment.desc.volumeID = segmentIndex;
 	}
 }
 

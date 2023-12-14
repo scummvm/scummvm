@@ -23,6 +23,7 @@
 #define MTROPOLIS_DATA_H
 
 #include "common/array.h"
+#include "common/endian.h"
 #include "common/error.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -46,6 +47,21 @@ namespace Data {
 struct PlugInModifier;
 struct PlugInModifierData;
 
+// Project format and data format are 2 separate things.
+//
+// A cross-platform project can be booted in either Mac or Win mode and contains
+// separate scene streams for Mac and Win.  Which one is loaded depends on what the
+// game platform is loaded as.
+//
+// The following table describes the behavior:
+//
+// Project type          | ProjectFormat | Catalog and asset data format | Scene data format |
+// ------------------------------------------------------------------------------------------|
+// Mac                   | Macintosh     | Macintosh                     | Macintosh         |
+// Win                   | Windows       | Windows                       | Windows           |
+// Cross-Platform as Mac | Neutral       | Windows                       | Macintosh         |
+// Cross-Platform as Win | Neutral       | Windows                       | Windows           |
+
 enum ProjectFormat {
 	kProjectFormatUnknown,
 
@@ -54,10 +70,11 @@ enum ProjectFormat {
 	kProjectFormatNeutral,
 };
 
-enum ProjectEngineVersion {
-	kProjectEngineVersionUnknown,
-	kProjectEngineVersion1,
-	kProjectEngineVersion2,
+enum DataFormat {
+	kDataFormatUnknown,
+
+	kDataFormatMacintosh,
+	kDataFormatWindows,
 };
 
 enum DataReadErrorCode {
@@ -179,9 +196,224 @@ namespace StructuralFlags {
 	};
 } // End of namespace StructuralFlags
 
+template<class T>
+struct SimpleDataIO {
+	static const uint kMaxSize = sizeof(T);
+
+	static uint computeSize(DataFormat dataFormat);
+
+	static void encode(DataFormat dataFormat, byte *data, const T &value);
+	static void decode(DataFormat dataFormat, const byte *data, T &value);
+};
+
+template<class T>
+uint SimpleDataIO<T>::computeSize(DataFormat dataFormat) {
+	return sizeof(T);
+}
+
+template<class T>
+void SimpleDataIO<T>::encode(DataFormat dataFormat, byte *data, const T &value) {
+	const byte *valueBytes = reinterpret_cast<const byte *>(&value);
+	byte *dataBytes = reinterpret_cast<byte *>(data);
+
+	const bool isTargetLE = (dataFormat != kDataFormatMacintosh);
+#ifdef SCUMM_LITTLE_ENDIAN
+	const bool isSystemLE = true;
+#endif
+#ifdef SCUMM_BIG_ENDIAN
+	const bool isSystemLE = false;
+#endif
+
+	const bool requiresSwap = (isSystemLE != isTargetLE);
+
+	byte temp[sizeof(T)];
+
+	if (requiresSwap) {
+		for (uint i = 0; i < sizeof(T); i++)
+			temp[i] = valueBytes[sizeof(T) - 1 - i];
+	} else {
+		for (uint i = 0; i < sizeof(T); i++)
+			temp[i] = valueBytes[i];
+	}
+
+	for (uint i = 0; i < sizeof(T); i++)
+		dataBytes[i] = temp[i];
+}
+
+template<class T>
+void SimpleDataIO<T>::decode(DataFormat dataFormat, const byte *data, T &value) {
+	byte *valueBytes = reinterpret_cast<byte *>(&value);
+	const byte *dataBytes = reinterpret_cast<const byte *>(data);
+
+	const bool isTargetLE = (dataFormat != kDataFormatMacintosh);
+#ifdef SCUMM_LITTLE_ENDIAN
+	const bool isSystemLE = true;
+#endif
+#ifdef SCUMM_BIG_ENDIAN
+	const bool isSystemLE = false;
+#endif
+
+	const bool requiresSwap = (isSystemLE != isTargetLE);
+
+	byte temp[sizeof(T)];
+
+	if (requiresSwap) {
+		for (uint i = 0; i < sizeof(T); i++)
+			temp[i] = dataBytes[sizeof(T) - 1 - i];
+	} else {
+		for (uint i = 0; i < sizeof(T); i++)
+			temp[i] = dataBytes[i];
+	}
+
+	for (uint i = 0; i < sizeof(T); i++)
+		valueBytes[i] = temp[i];
+}
+
+template<class T>
+void SimpleDataIO<T>::decode(DataFormat dataFormat, const byte *data, T &value);
+
+template<class T>
+struct DataIO {
+};
+
+template<>
+struct DataIO<uint8> : public SimpleDataIO<uint8> {
+};
+
+template<>
+struct DataIO<uint16> : public SimpleDataIO<uint16> {
+};
+template<>
+struct DataIO<uint32> : public SimpleDataIO<uint32> {
+};
+template<>
+struct DataIO<uint64> : public SimpleDataIO<uint64> {
+};
+
+template<>
+struct DataIO<int8> : public SimpleDataIO<int8> {
+};
+
+template<>
+struct DataIO<int16> : public SimpleDataIO<int16> {
+};
+template<>
+struct DataIO<int32> : public SimpleDataIO<int32> {
+};
+template<>
+struct DataIO<int64> : public SimpleDataIO<int64> {
+};
+
+template<>
+struct DataIO<char> : public SimpleDataIO<char> {
+};
+
+template<>
+struct DataIO<float> : public SimpleDataIO<float> {
+};
+
+template<>
+struct DataIO<double> : public SimpleDataIO<double> {
+};
+
+template<>
+struct DataIO<Common::XPFloat> {
+	static const uint kMaxSize = 10;
+
+	static uint computeSize(DataFormat dataFormat);
+
+	static void encode(DataFormat dataFormat, byte *data, const Common::XPFloat &value);
+	static void decode(DataFormat dataFormat, const byte *data, Common::XPFloat &value);
+};
+
+template<class T, class... TMore>
+struct DataMultipleIO;
+
+template<class T>
+struct DataMultipleIO<T> {
+	static const uint kMaxSize = DataIO<T>::kMaxSize;
+
+	static uint computeSize(DataFormat dataFormat);
+
+	static void encode(DataFormat dataFormat, byte *data, const T &value);
+	static void decode(DataFormat dataFormat, const byte *data, T &value);
+};
+
+template<class T>
+uint DataMultipleIO<T>::computeSize(DataFormat dataFormat) {
+	return DataIO<T>::computeSize(dataFormat);
+}
+
+template<class T>
+void DataMultipleIO<T>::encode(DataFormat dataFormat, byte *data, const T &value) {
+	return DataIO<T>::encode(dataFormat, data, value);
+}
+
+template<class T>
+void DataMultipleIO<T>::decode(DataFormat dataFormat, const byte *data, T &value) {
+	return DataIO<T>::decode(dataFormat, data, value);
+}
+
+template<class T, uint TSize>
+struct DataMultipleIO<T[TSize]> {
+	static const uint kMaxSize = DataIO<T>::kMaxSize * TSize;
+
+	static uint computeSize(DataFormat dataFormat);
+
+	static void encode(DataFormat dataFormat, byte *data, const T (&value)[TSize]);
+	static void decode(DataFormat dataFormat, const byte *data, T(&value)[TSize]);
+};
+
+template<class T, uint TSize>
+uint DataMultipleIO<T[TSize]>::computeSize(DataFormat dataFormat) {
+	return DataMultipleIO<T>::computeSize(dataFormat) * TSize;
+}
+
+template<class T, uint TSize>
+void DataMultipleIO<T[TSize]>::encode(DataFormat dataFormat, byte *data, const T(&value)[TSize]) {
+	const uint elementSize = DataIO<T>::computeSize(dataFormat);
+	for (uint i = 0; i < TSize; i++)
+		DataMultipleIO<T>::encode(dataFormat, data + elementSize * i, value[i]);
+}
+
+template<class T, uint TSize>
+void DataMultipleIO<T[TSize]>::decode(DataFormat dataFormat, const byte *data, T(&value)[TSize]) {
+	const uint elementSize = DataIO<T>::computeSize(dataFormat);
+	for (uint i = 0; i < TSize; i++)
+		DataMultipleIO<T>::decode(dataFormat, data + elementSize * i, value[i]);
+}
+
+template<class T, class... TMore>
+struct DataMultipleIO {
+	static const uint kMaxSize = DataIO<T>::kMaxSize + DataMultipleIO<TMore...>::kMaxSize;
+
+	static uint computeSize(DataFormat dataFormat);
+
+	static void encode(DataFormat dataFormat, byte *data, const T &firstValue, const TMore &...moreValues);
+	static void decode(DataFormat dataFormat, const byte *data, T &firstValue, TMore &...moreValues);
+};
+
+template<class T, class... TMore>
+uint DataMultipleIO<T, TMore...>::computeSize(DataFormat dataFormat) {
+	return DataMultipleIO<T>::computeSize(dataFormat) + DataMultipleIO<TMore...>::computeSize(dataFormat);
+}
+
+template<class T, class... TMore>
+void DataMultipleIO<T, TMore...>::encode(DataFormat dataFormat, byte *data, const T &firstValue, const TMore &...moreValues) {
+	DataMultipleIO<T>::encode(dataFormat, data, firstValue);
+	DataMultipleIO<TMore...>::encode(dataFormat, data + DataMultipleIO<T>::computeSize(dataFormat), moreValues...);
+}
+
+template<class T, class... TMore>
+void DataMultipleIO<T, TMore...>::decode(DataFormat dataFormat, const byte *data, T &firstValue, TMore &...moreValues) {
+	DataMultipleIO<T>::decode(dataFormat, data, firstValue);
+	DataMultipleIO<TMore...>::decode(dataFormat, data + DataMultipleIO<T>::computeSize(dataFormat), moreValues...);
+}
+
+
 class DataReader {
 public:
-	DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat, ProjectEngineVersion projectEngineVersion);
+	DataReader(int64 globalPosition, Common::SeekableReadStream &stream, DataFormat dataFormat);
 
 	bool readU8(uint8 &value);
 	bool readU16(uint16 &value);
@@ -194,6 +426,9 @@ public:
 	bool readF32(float &value);
 	bool readF64(double &value);
 	bool readPlatformFloat(Common::XPFloat &value);
+
+	template<class... T>
+	bool readMultiple(T &...values);
 
 	bool read(void *dest, size_t size);
 
@@ -214,23 +449,31 @@ public:
 	int64 tell() const;
 	inline int64 tellGlobal() const { return _globalPosition + tell(); }
 
-	ProjectFormat getProjectFormat() const;
-	ProjectEngineVersion getProjectEngineVersion() const;
-	bool isBigEndian() const;
-	bool isV2Project() const;
+	DataFormat getDataFormat() const;
 
 	void setPermitDamagedStrings(bool permit);
 
 private:
 	bool checkErrorAndReset();
 
-	Common::SeekableReadStreamEndian &_stream;
-	ProjectFormat _projectFormat;
-	ProjectEngineVersion _projectEngineVersion;
+	Common::SeekableReadStream &_stream;
+	DataFormat _dataFormat;
 	int64 _globalPosition;
 
 	bool _permitDamagedStrings;
 };
+
+template<class... T>
+bool DataReader::readMultiple(T &...values) {
+	byte buffer[DataMultipleIO<T...>::kMaxSize];
+	const uint actualSize = DataMultipleIO<T...>::computeSize(_dataFormat);
+
+	if (!read(buffer, actualSize))
+		return false;
+
+	DataMultipleIO<T...>::decode(_dataFormat, buffer, values...);
+	return true;
+}
 
 struct Rect {
 	Rect();
@@ -848,8 +1091,10 @@ public:
 
 		char streamType[25];
 		uint16 segmentIndexPlusOne;
-		uint32 size;
-		uint32 pos;
+		uint32 winSize;
+		uint32 winPos;
+		uint32 macSize;
+		uint32 macPos;
 	};
 
 	struct SegmentDesc {
@@ -950,9 +1195,7 @@ struct MiniscriptProgram {
 	Common::Array<LocalRef> localRefs;
 	Common::Array<Attribute> attributes;
 
-	ProjectFormat projectFormat;
-	ProjectEngineVersion projectEngineVersion;
-	bool isBigEndian;
+	DataFormat dataFormat;
 
 	bool load(DataReader &reader);
 };
@@ -972,7 +1215,7 @@ struct TypicalModifierHeader {
 
 	Common::String name;
 
-	bool load(DataReader &reader);
+	bool load(DataReader &reader, bool isV2);
 };
 
 struct MiniscriptModifier : public DataObject {
@@ -1104,7 +1347,7 @@ struct AliasModifier : public DataObject {
 	uint16 aliasIndexPlusOne;
 	uint32 unknown1;
 	uint32 unknown2;
-	uint16 lengthOfName;
+	uint32 lengthOfName;
 	uint32 guid;
 	Point editorLayoutPosition;
 
@@ -1842,6 +2085,7 @@ struct MovieAsset : public DataObject {
 	struct MacPart {
 		uint8 unknown5_1[66];
 		uint8 unknown6[12];
+		uint8 unknown8[4];
 	};
 
 	struct WinPart {

@@ -24,6 +24,9 @@
 
 #include "engines/advancedDetector.h"
 
+#define MTROPOLIS_WIN_BOOT_SCRIPT_NAME "mtropolis_boot_win.txt"
+#define MTROPOLIS_MAC_BOOT_SCRIPT_NAME "mtropolis_boot_mac.txt"
+
 namespace MTropolis {
 
 enum MTropolisGameID {
@@ -36,12 +39,16 @@ enum MTropolisGameID {
 	GID_SPQR				= 6,
 	GID_STTGS				= 7,
 	GID_UNIT				= 8,
+
+	GID_GENERIC				= 9,
 };
 
 // Boot IDs - These can be shared across different variants if the file list and other properties are identical.
 // Cross-reference with the game table in mTropolis engine's boot.cpp
 enum MTropolisGameBootID {
 	MTBOOT_INVALID = 0,
+
+	MTBOOT_USE_BOOT_SCRIPT,
 
 	MTBOOT_OBSIDIAN_RETAIL_MAC_EN,
 	MTBOOT_OBSIDIAN_RETAIL_MAC_JP,
