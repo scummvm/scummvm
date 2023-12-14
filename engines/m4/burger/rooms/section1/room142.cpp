@@ -253,9 +253,9 @@ void Room142::daemon() {
 		terminateMachineAndNull(_series1);
 
 		if (_G(player_info.y) < 285) {
-			Section1::updateWalker(adjustY(_G(player_info).y), 285, 9, 2);
+			Section1::updateWalker(getRoadEdgeX(_G(player_info).y), 285, 9, 2);
 		} else {
-			Section1::updateWalker(adjustY(_G(player_info).y), _G(player_info).y, 9, 2);
+			Section1::updateWalker(getRoadEdgeX(_G(player_info).y), _G(player_info).y, 9, 2);
 		}
 		break;
 
@@ -513,12 +513,14 @@ void Room142::daemon() {
 				digi_preload("100_013");
 				digi_play("100_013", 3, 155);
 				Section1::updateDisablePlayer();
-				preloadAssets2();
+				preloadAssets2(); 
 
-				if (adjustY(_G(player_info).y) > _G(player_info).x ||
+				if (getRoadEdgeX(_G(player_info).y) > _G(player_info).x ||
 						(_G(player_info).x < 298 && _G(player_info).y < 285)) {
+					// Get off the road
 					kernel_timing_trigger(240, 1);
 				} else {
+					// Not on road, so show truck arriving
 					kernel_timing_trigger(240, 3);
 				}
 			} else {
