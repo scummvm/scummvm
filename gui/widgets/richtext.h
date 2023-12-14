@@ -45,9 +45,11 @@ protected:
 	int16 _scrolledX, _scrolledY;
 	int _mouseDownY = 0;
 	int _mouseDownStartY = 0;
+	int _innerMargin;
 	int _scrollbarWidth;
 	uint16 _limitH;
 	int _textWidth;
+	int _textHeight;
 
 	Common::String _imageArchive;
 
