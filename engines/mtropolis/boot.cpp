@@ -1448,6 +1448,7 @@ class BootScriptContext {
 public:
 	enum PlugIn {
 		kPlugInMTI,
+		kPlugInSPQR,
 		kPlugInStandard,
 		kPlugInObsidian,
 	};
@@ -1468,6 +1469,8 @@ public:
 	void bootObsidianRetailWinDe();
 	void bootMTIRetailMac();
 	void bootMTIGeneric();
+	void bootSPQRMac();
+	void bootSPQRWin();
 	void bootGeneric();
 	void bootUsingBootScript();
 
@@ -1701,6 +1704,21 @@ void BootScriptContext::bootMTIGeneric() {
 	addPlugIn(kPlugInStandard);
 }
 
+void BootScriptContext::bootSPQRMac() {
+	addPlugIn(kPlugInSPQR);
+	addPlugIn(kPlugInStandard);
+
+	addArchive(kArchiveTypeMacVISE, "installer", "fs:Install.vct");
+
+	addJunction("", "fs:GAME");
+	addJunction("", "installer");
+}
+
+void BootScriptContext::bootSPQRWin() {
+	addPlugIn(kPlugInSPQR);
+	addPlugIn(kPlugInStandard);
+}
+
 void BootScriptContext::bootGeneric() {
 	addPlugIn(kPlugInStandard);
 }
@@ -1758,7 +1776,8 @@ void BootScriptContext::bootUsingBootScript() {
 void BootScriptContext::executeFunction(const Common::String &functionName, const Common::Array<Common::String> &paramTokens) {
 	const EnumBinding plugInEnum[] = {ENUM_BINDING(kPlugInMTI),
 									  ENUM_BINDING(kPlugInStandard),
-									  ENUM_BINDING(kPlugInObsidian)};
+									  ENUM_BINDING(kPlugInObsidian),
+									  ENUM_BINDING(kPlugInSPQR)};
 
 	const EnumBinding bitDepthEnum[] = {ENUM_BINDING(kBitDepthAuto),
 										ENUM_BINDING(kBitDepth8),
@@ -2021,12 +2040,12 @@ const Game games[] = {
 	// SPQR: The Empire's Darkest Hour - Retail - Windows - English
 	{
 		MTBOOT_SPQR_RETAIL_WIN,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootSPQRWin
 	},
 	// SPQR: The Empire's Darkest Hour - Retail - Macintosh - English
 	{
 		MTBOOT_SPQR_RETAIL_MAC,
-		&BootScriptContext::bootGeneric
+		&BootScriptContext::bootSPQRMac
 	},
 	// Star Trek: The Game Show - Demo - Windows
 	{
@@ -2059,6 +2078,11 @@ Common::SharedPtr<MTropolis::PlugIn> loadObsidianPlugIn(const MTropolisGameDescr
 Common::SharedPtr<MTropolis::PlugIn> loadMTIPlugIn(const MTropolisGameDescription &gameDesc) {
 	Common::SharedPtr<MTropolis::PlugIn> mtiPlugIn(PlugIns::createMTI());
 	return mtiPlugIn;
+}
+
+Common::SharedPtr<MTropolis::PlugIn> loadSPQRPlugIn(const MTropolisGameDescription &gameDesc) {
+	Common::SharedPtr<MTropolis::PlugIn> spqrPlugIn(PlugIns::createSPQR());
+	return spqrPlugIn;
 }
 
 enum PlayerType {
@@ -2172,7 +2196,7 @@ void findWindowsPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerTy
 			numPlayersInCategory++;
 	}
 
-	if (numPlayersInCategory == 0)
+	if (numPlayersInCategory == 0 || bestPlayerType == kPlayerTypeNone)
 		error("Couldn't find any mTropolis Player executables");
 
 	if (numPlayersInCategory != 1)
@@ -2251,7 +2275,7 @@ void findMacPlayer(Common::Archive &fs, Common::Path &resolvedPath, PlayerType &
 			numPlayersInCategory++;
 	}
 
-	if (numPlayersInCategory == 0)
+	if (numPlayersInCategory == 0 || bestPlayerType == kPlayerTypeNone)
 		error("Couldn't find any mTropolis Player applications");
 
 	if (numPlayersInCategory != 1)
@@ -2773,6 +2797,9 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			break;
 		case Boot::BootScriptContext::kPlugInMTI:
 			plugIns.push_back(Boot::loadMTIPlugIn(gameDesc));
+			break;
+		case Boot::BootScriptContext::kPlugInSPQR:
+			plugIns.push_back(Boot::loadSPQRPlugIn(gameDesc));
 			break;
 		default:
 			error("Unknown plug-in ID");
