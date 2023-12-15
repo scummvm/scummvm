@@ -174,8 +174,6 @@ namespace Kingdom {
 		int _tickCount;
 		uint32 _oldTime;
 
-		Common::SeekableReadStream *_rezPointers[510];
-		int _rezSize[510];
 		int _iconPic[7];
 		uint16 _userInput;
 		uint16 _mouseButton;
@@ -188,8 +186,7 @@ namespace Kingdom {
 		void initHelp();
 		void fadeToBlack1();
 		void fadeToBlack2();
-		void loadAResource(int reznum);
-		void releaseAResource(int reznum);
+		Common::SeekableReadStream *loadAResource(int reznum);
 		void showPic(int reznum);
 		void fShowPic(int reznum);
 		void initCursor();
