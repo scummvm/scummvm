@@ -283,6 +283,7 @@ _s(
 "### Virtual Gamepad \n"
 "\n"
 "Devices running iOS 15 or later can connect virtual gamepad controller by swiping two fingers from right to left or through **Global Options > Backend**. The directional button can be configured to either a thumbstick or a dpad.\n"
+"**Note** While the virtual controller is connected it is not possible to perform mouse clicks using tap gestures since they are disabled as long as the virtual controller is visible. Left mouse clicks are performed by pressing the A button. Tap gestures are enabled again when virtual controller is disconnected.\n"
 "\n"
 "### Global Main Menu\n"
 "\n"
