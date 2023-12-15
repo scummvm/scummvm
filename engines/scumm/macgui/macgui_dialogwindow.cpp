@@ -67,7 +67,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 	r.grow(-1);
 	s->fillRect(r, kWhite);
 
-	if (style == MacGuiImpl::kStyleNormal) {
+	if (style == kStyleNormal) {
 		int growths[] = { 1, -3, -1 };
 
 		for (int i = 0; i < ARRAYSIZE(growths); i++) {
@@ -78,7 +78,7 @@ MacGuiImpl::MacDialogWindow::MacDialogWindow(MacGuiImpl *gui, OSystem *system, G
 			s->vLine(r.left, r.top + 1, r.bottom - 2, kBlack);
 			s->vLine(r.right - 1, r.top + 1, r.bottom - 2, kBlack);
 		}
-	} else if (style == MacGuiImpl::kStyleRounded) {
+	} else if (style == kStyleRounded) {
 		r.grow(1);
 
 		for (int i = 0; i < 2; i++) {
