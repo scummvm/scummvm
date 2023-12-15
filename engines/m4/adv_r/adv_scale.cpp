@@ -124,7 +124,7 @@ void scale_editor_cancel() {
 	_G(editors_in_use) &= ~kScaleEditor;
 }
 
-void scale_editor_toggle(void *, void *) {
+void scale_editor_toggle() {
 	if (_G(editors_in_use) & kScaleEditor)
 		scale_editor_cancel();
 	else {

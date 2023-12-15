@@ -40,7 +40,7 @@ struct ADVScale_Globals {
 
 extern void scale_editor_draw();
 extern void scale_editor_cancel();
-extern void scale_editor_toggle(void *, void *);
+extern void scale_editor_toggle();
 
 } // End of namespace M4
 
