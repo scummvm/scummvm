@@ -41,7 +41,7 @@ namespace hpl {
 
 //-----------------------------------------------------------------------
 
-cConfigFile::cConfigFile(tWString asFile) {
+cConfigFile::cConfigFile(const tWString &asFile) {
 	msFile = asFile;
 	mpXmlDoc = hplNew(TiXmlDocument, ());
 	// mpFileSearcher = apFileSearcher;

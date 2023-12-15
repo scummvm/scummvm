@@ -37,7 +37,7 @@ namespace hpl {
 
 class cConfigFile {
 public:
-	cConfigFile(tWString asFile);
+	cConfigFile(const tWString &asFile);
 	~cConfigFile();
 
 	/**
