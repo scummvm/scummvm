@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-15 09:31+0000\n"
-"PO-Revision-Date: 2023-12-13 01:03+0000\n"
+"PO-Revision-Date: 2023-12-15 11:08+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5873,13 +5873,16 @@ msgstr "Langue à utiliser pour les jeux multilingues"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Activer la gestion des sauvegardes de ScummVM"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Ne désactive pas la gestion des sauvegardes de ScummVM pour ce jeu.\n"
+"NOTE : Cela peut entraîner la duplication des sauvegardes et d'autres "
+"anomalies"
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
@@ -5922,6 +5925,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Pour préserver l'expérience originale, ce jeu doit être chargé en utilisant "
+"l'interface du jeu.\n"
+"Vous pouvez toutefois modifier ce paramètre dans les Options du Jeu."
 
 #: engines/ags/ags.cpp:323
 msgid ""
@@ -5929,6 +5935,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Pour préserver l'expérience originale, ce jeu doit être sauvegardé en "
+"utilisant l'interface du jeu.\n"
+"Vous pouvez toutefois modifier ce paramètre dans les Options du Jeu."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
