@@ -32,6 +32,7 @@ void sqgame_register_syslib(HSQUIRRELVM v);
 void sqgame_register_objlib(HSQUIRRELVM v);
 void sqgame_register_genlib(HSQUIRRELVM v);
 void sqgame_register_actorlib(HSQUIRRELVM v);
+void sqgame_register_roomlib(HSQUIRRELVM v);
 
 } // namespace Twp
 #endif
