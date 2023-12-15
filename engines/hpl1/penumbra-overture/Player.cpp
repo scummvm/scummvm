@@ -1137,21 +1137,19 @@ void cPlayer::Update(float afTimeStep) {
 	// LogUpdate("  took %d ms\n",pSystem->GetLowLevel()->GetTime() - lTime);
 	// lTime = pSystem->GetLowLevel()->getTime();
 	// LogUpdate("  Camera pos\n");
-	if (mpCharBody) {
-		float fYAdd = mfCameraHeightAdd + mpHeadMove->GetPos() + mfHeightAdd + mpDeath->GetHeighAdd() +
-					  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().y;
+	float fYAdd = mfCameraHeightAdd + mpHeadMove->GetPos() + mfHeightAdd + mpDeath->GetHeighAdd() +
+				  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().y;
 
-		cVector3f vRight = mpCharBody->GetRight();
-		float fXAdd = mpLean->mfMovement * vRight.x +
-					  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().x;
+	cVector3f vRight = mpCharBody->GetRight();
+	float fXAdd = mpLean->mfMovement * vRight.x +
+				  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().x;
 
-		float fZAdd = mpLean->mfMovement * vRight.z +
-					  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().x;
+	float fZAdd = mpLean->mfMovement * vRight.z +
+				  mpInit->mpEffectHandler->GetShakeScreen()->GetScreenAdd().x;
 
-		// Log("HEadMove: %f HeightAdd %f Death: %f\n",mpHeadMove->GetPos(),mfHeightAdd,mpDeath->GetHeighAdd());
+	// Log("HEadMove: %f HeightAdd %f Death: %f\n",mpHeadMove->GetPos(),mfHeightAdd,mpDeath->GetHeighAdd());
 
-		mpCharBody->SetCameraPosAdd(cVector3f(fXAdd, fYAdd, fZAdd));
-	}
+	mpCharBody->SetCameraPosAdd(cVector3f(fXAdd, fYAdd, fZAdd));
 
 	///////////////////////////
 	// Update state
