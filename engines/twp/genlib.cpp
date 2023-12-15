@@ -216,7 +216,7 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 		pos = Math::Vector2d(x, y);
 		interpolation = (InterpolationKind)im;
 	} else {
-		return sq_throwerror(v, Common::String::format("invalid argument number: %d", numArgs).c_str());
+		return sq_throwerror(v, Common::String::format("invalid argument number: %lld", numArgs).c_str());
 	}
 	Math::Vector2d halfScreen(g_engine->_room->getScreenSize() / 2.f);
 	debug("cameraPanTo: {pos}, dur={duration}, method={interpolation}");
@@ -555,29 +555,7 @@ static SQInteger translate(HSQUIRRELVM v) {
 	return 0;
 }
 
-// TODO: move this function
-static SQInteger defineRoom(HSQUIRRELVM v) {
-	// This command is used during the game's boot process.
-	// `defineRoom` is called once for every room in the game, passing it the room's room object.
-	// If the room has not been defined, it can not be referenced.
-	// `defineRoom` is typically called in the the DefineRooms.nut file which loads and defines every room in the game.
-	HSQOBJECT table;
-	sq_resetobject(&table);
-	if (SQ_FAILED(sq_getstackobj(v, 2, &table)))
-		return sq_throwerror(v, "failed to get room table");
-	Common::String name;
-	sqgetf(v, table, "name", name);
-	if (name.size() == 0)
-		sqgetf(v, table, "background", name);
-	Room *room = g_engine->defineRoom(name, table);
-	debug("Define room: %s", name.c_str());
-	g_engine->_rooms.push_back(room);
-	sqpush(v, room->_table);
-	return 1;
-}
-
 void sqgame_register_genlib(HSQUIRRELVM v) {
-	regFunc(v, defineRoom, _SC("defineRoom"));
 	regFunc(v, activeVerb, _SC("activeVerb"));
 	regFunc(v, adhocalytics, _SC("adhocalytics"));
 	regFunc(v, arrayShuffle, _SC("arrayShuffle"));

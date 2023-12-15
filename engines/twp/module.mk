@@ -46,6 +46,7 @@ MODULE_OBJS = \
 	ids.o \
 	camera.o \
 	actorlib.o \
+	roomlib.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)
