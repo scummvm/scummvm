@@ -31,6 +31,7 @@ void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger 
 void sqgame_register_syslib(HSQUIRRELVM v);
 void sqgame_register_objlib(HSQUIRRELVM v);
 void sqgame_register_genlib(HSQUIRRELVM v);
+void sqgame_register_actorlib(HSQUIRRELVM v);
 
 } // namespace Twp
 #endif
