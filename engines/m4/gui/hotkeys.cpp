@@ -340,7 +340,22 @@ void Hotkeys::teleportCancel(void *, void *) {
 }
 
 void Hotkeys::paint_walk_codes(void *, void *) {
-	warning("TODO: hotkey");
+	Buffer *bgBuff = _G(game_bgBuff)->get_buffer();
+	Buffer *drawBuff = _G(gameDrawBuff)->get_buffer();
+
+	for (int yp = 0; yp < bgBuff->h; ++yp) {
+		const byte *bgLine = gr_buffer_pointer(bgBuff, 0, yp);
+		byte *drawLine = gr_buffer_pointer(drawBuff, 0, yp);
+
+		for (int xp = 0; xp < bgBuff->w; ++xp, ++bgLine, ++drawLine) {
+			if (*bgLine & 0x10)
+				*drawLine = gr_pal_get_ega_color(1);
+		}
+	}
+
+	_G(game_bgBuff)->release();
+	_G(gameDrawBuff)->release();
+	RestoreScreens(0, 0, 639, 479);
 }
 
 void Hotkeys::pal_override(void *, void *) {
