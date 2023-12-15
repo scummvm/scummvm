@@ -1972,6 +1972,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 東脳スタート
 	MACGAME1_l("easternmind", "", "xn--zckm1a5qp59wok6a", "276bee761e48a6fd709df77d5c2f60dd", 394781, Common::JA_JPN, 313),
 
+	// Windows demo version is D4
 	// Pippin version is D5
 	// "Room(306)" application skips the opening cutscenes
 	MACGAME1("gadget", "",			  "GADGET",		"7f443f2e63fd497a9ad85b10dc880a91", 384631, 313),
@@ -1990,8 +1991,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 									  "DATA/GA00.MMM",		"72ffa3d703affdf146ba19cb80e6bdbd", 324390, Common::JA_JPN, 310),
 	// Warning text at the end is in both Japanese and English
 	MACDEMO1("gadget", "Demo", "GADGET",	  "f5277c53bacd27936158dd3867e587e2", 390109, 311),
-	WINDEMO2t("gadget", "Demo", "GADGET.EXE",		 "52a854cc16777395d05aa87859e6be5a", 684203,
-								"DATA/01_HOTEL.DIR", "3287761cea8b676110a197e0c2ec7d31", 9403586, 311),
 
 	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794011, Common::JA_JPN, 311),
 	// Found on Info Mac 5 (1995-01)
@@ -2103,6 +2102,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME2_l("fukuokagoround", "", "Fukuoka Go-Round",  "0c7bbb4b24823e5ab871cb4c1d6f3710", 484167, "shared.dir", "b83bfaec3666b328ec743e074a94115f", 20900286, Common::JA_JPN, 404),
 	WINGAME2t_l("fukuokagoround", "", "FGR.EXE",  "dc2da038ba67c2bd2f5bb31b97261db9", 5293611, "SHARED.DIR", "6bf95a48f366bdf8af3a198c7b723c77", 16038266, Common::JA_JPN, 404),
+
+	// Full game is D3
+	WINDEMO2t("gadget", "Demo", "GADGET.EXE",		 "52a854cc16777395d05aa87859e6be5a", 684203,
+								"DATA/01_HOTEL.DIR", "3287761cea8b676110a197e0c2ec7d31", 9403586, 404),
 
 	// Original filename 'がんばれ！いぬちゃん'
 	MACGAME1_l("ganbareinuchan", "", "xn--n8jp8dzbs1jpcwcg96593c", "411051c134236a9ead0d0d1837aafb5e", 290426, Common::JA_JPN, 402),
