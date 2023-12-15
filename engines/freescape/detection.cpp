@@ -317,7 +317,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	// Cinemaware release
@@ -360,7 +360,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -375,7 +375,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -390,7 +390,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -405,7 +405,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)
 	},
 	{
@@ -417,7 +417,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -429,7 +429,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformZX,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
