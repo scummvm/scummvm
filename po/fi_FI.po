@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-15 09:31+0000\n"
-"PO-Revision-Date: 2023-12-13 22:24+0000\n"
+"PO-Revision-Date: 2023-12-15 11:08+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5788,13 +5788,16 @@ msgstr "Monikielisissä peleissä käytetty kieli"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "ScummVM pelitallennusten hallinta"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Älä koskaan disabloi ScummVM:n pelitallennusten hallintaa ja "
+"automaattitallennuksia.\n"
+"HUOM: Tämä saataa aiheuttaa tallennusten duplikaatiota ja muita omituisuuksia"
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
@@ -5836,6 +5839,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Tämä peli tulisi ladata pelin sisäisestä käyttöliittymästä alkuperäisen "
+"kokemuksen mukaisesti.\n"
+"Voit kuitenkin halutessasi muuttaa tämän pelin asetuksista."
 
 #: engines/ags/ags.cpp:323
 msgid ""
@@ -5843,6 +5849,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Tämä peli tulisi ladata pelin sisäisestä käyttöliittymästä alkuperäisen "
+"kokemuksen mukaisesti.\n"
+"Voit kuitenkin halutessasi muuttaa tämän pelin asetuksista."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
