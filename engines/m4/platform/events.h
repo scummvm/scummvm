@@ -92,6 +92,16 @@ private:
 	 */
 	void handleKeyboardEvent(const Common::Event &ev);
 
+	/**
+	 * Tells if key event refers to one of the mod-keys
+	 */
+	inline bool is_mod_key(const Common::KeyState &ks) {
+		return ks.keycode == Common::KEYCODE_LCTRL || ks.keycode == Common::KEYCODE_RCTRL ||
+			ks.keycode == Common::KEYCODE_LALT || ks.keycode == Common::KEYCODE_RALT ||
+			ks.keycode == Common::KEYCODE_LSHIFT || ks.keycode == Common::KEYCODE_RSHIFT ||
+			ks.keycode == Common::KEYCODE_MODE;
+	}
+
 public:
 	Events();
 	~Events();

@@ -29,15 +29,10 @@
 namespace M4 {
 
 struct Hotkeys {
-protected:
-	virtual void adv_enable_system_hot_keys();
-
-public:
+private:
 	static void exit_program(void *, void *);
-	static void cb_F2(void *, void *);
-	static void cb_F3(void *, void *);
 	static void adv_hyperwalk_to_final_destination(void *a, void *b);
-	static void capture_wrap(void *, void *);
+	static void saveScreenshot(void *, void *);
 	static void debug_memory_next_column(void *, void *);
 	static void debug_memory_prev_column(void *, void *);
 	static void debug_memory_last_column(void *, void *);
@@ -46,11 +41,11 @@ public:
 	static void player_step_down(void *, void *);
 	static void player_step_left(void *, void *);
 	static void player_step_right(void *, void *);
-
 	static void player_jump_up(void *, void *);
 	static void player_jump_down(void *, void *);
 	static void player_jump_left(void *, void *);
 	static void player_jump_right(void *, void *);
+	static void player_step(int xDelta, int yDelta);
 
 	static void term_next_mode(void *, void *);
 
@@ -74,12 +69,18 @@ public:
 	static void paint_walk_codes(void *, void *);
 	static void pal_override(void *, void *);
 
+protected:
+	virtual void adv_enable_system_hot_keys();
+
 public:
 	virtual ~Hotkeys() {}
 
 	virtual void add_hot_keys();
 	void disable_hot_keys();
 	void restore_hot_keys();
+
+	static void saveGame(void *, void *);
+	static void loadGame(void *, void *);
 
 	virtual void toggle_through_cursors() = 0;
 };

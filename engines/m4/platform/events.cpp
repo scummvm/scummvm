@@ -219,6 +219,9 @@ bool Events::util_kbd_check(int32 *parm1) {
 		return false;
 
 	Common::KeyState ks = _pendingKeys.pop();
+	if (is_mod_key(ks))
+		return false;
+
 	*parm1 = ks.keycode | ((ks.flags & 0xf) << 16);
 	return true;
 }
