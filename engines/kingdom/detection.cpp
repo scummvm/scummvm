@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("KINGDEMO.EXE", "2ce478fc13086d0ddb02a2867ba307dc", 167154),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
+		ADGF_DEMO,
 		GUIO0()
 	},
 
@@ -58,7 +58,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("KINGDOM.EXE", "64d3e03b963396ced402f3dc958765c0", 199693),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 
