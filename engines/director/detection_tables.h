@@ -1010,6 +1010,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "henachococd",		"ギャラクレヤン'75 オレニモインゼイクレヤン" }, // Galakureyan'75 Inzeikureyan
 	{ "henachocoexpo",		"イタチョコの野望" }, // Itachoco's Ambition
 	{ "henachocogala",		"スペースギャラクレヤン" }, // Space Galakureyan
+	{ "henachocotaizen",	"iTAletter Shop" }, // bonus application included in the Itachoco Taizen compilations
 	{ "henachocowine2",		"WineはY" }, // Wine is Y; second of two games with the same title
 	{ "hidoiyokun",			"ひどいよくん" }, // Hidoiyo-kun
 	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
@@ -1996,8 +1997,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on Info Mac 5 (1995-01)
 	MACDEMO1_l("henachoco", "Trial Version", "Hena Choco Derby Demo", "f5277c53bacd27936158dd3867e587e2", 1794020, Common::JA_JPN, 311),
 	MACGAME1t_l("henachoco", "", "HenaDerby", "1c78f2b964247e28bfccfa822d020307", 2167247, Common::JA_JPN, 311),
+	MACGAME1t_l("henachoco", "Itachoco Taizen 1 rerelease", "HenaDerby", "c1622573a0506a8cae1f8456a039454c", 2167275, Common::JA_JPN, 311),
 
 	MACGAME1t_l("henachoco02", "", "sai68040", "a4db265ecca5ba55cd588b0334d2f182", 2350313, Common::JA_JPN, 311),
+	MACGAME1t_l("henachoco02", "Itachoco Taizen 2 rerelease", "saitei", "a4db265ecca5ba55cd588b0334d2f182", 2350313, Common::JA_JPN, 311),
 
 	// Original demo filename is ﾑｽﾞｶｼｲﾎﾝｦﾖﾑﾄﾈﾑｸﾅﾙ
 	MACDEMO1_l("henachoco03", "Demo", "xn--oj7cxalkre7cjz1d2agc0e8b1cm", "f5277c53bacd27936158dd3867e587e2", 1058521, Common::JA_JPN, 311),
@@ -2129,12 +2132,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("henachoco03", "", "BOOK.EXE", "8bb2b769cc851916004aac0c887b0db9", 1795813, Common::JA_JPN, 400),
 
+	MACGAME1t_l("henachoco04", "Itachoco Taizen 1 rerelease", "bento-ben", "9a583020911c30d3a4d4ab5952f2a9ae", 294998, Common::JA_JPN, 402),
 	WINGAME1_l("henachoco04", "", "BENTO.EXE", "3a42f519df56d4cecac5e0915cf90f33", 2330381, Common::JA_JPN, 400),
 
 	// Rodem expects to be able to track the mouse cursor outside the
 	// window, which is impossible in ScummVM. Giving it a virtual
 	// desktop allows it to work like it would have on the original OS.
 	MACGAME1f_l("henachoco05", "", "yaken", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
+	MACGAME1f_l("henachoco05", "Itachoco Taizen 2 rerelease", "yaken", "bb5f4d592c872f610291074fbf34376f", 290434, Common::JA_JPN, 402, GF_DESKTOP|GF_640x480),
 	WINGAME1f_l("henachoco05", "", "YAKEN.EXE", "1f9b0ef872de7b84063a53b2a1083c60", 2103629, Common::JA_JPN, 400, GF_DESKTOP|GF_640x480),
 
 	// Same desktop behaviour as Rodem
@@ -4218,12 +4223,21 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("henachoco07", "Episode 3", "xn--jwzs62aih2g", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	MACGAME1_l("henachoco07", "Episode 4", "xn--jwzs62alh2g", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 	MACGAME1_l("henachoco07", "Episode 5", "xn--jwzs62aoh2g", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+	// Itachoco Taizen 1 versions
+	MACGAME1_l("henachoco07", "Episode 1 - Itachoco Taizen 1 rerelease", "xn--4gq141iduj", "e7fbda41649fea1e875ea1e1ae1d60b9", 290434, Common::JA_JPN, 402),
+	MACGAME1_l("henachoco07", "Episode 2 - Itachoco Taizen 1 rerelease", "xn--4kqu10iduj", "e7fbda41649fea1e875ea1e1ae1d60b9", 290434, Common::JA_JPN, 402),
+	MACGAME1_l("henachoco07", "Episode 3 - Itachoco Taizen 1 rerelease", "xn--ehq431iduj", "e7fbda41649fea1e875ea1e1ae1d60b9", 290434, Common::JA_JPN, 402),
+	MACGAME1_l("henachoco07", "Episode 4 - Itachoco Taizen 1 rerelease", "xn--wbsz85fdpk", "e7fbda41649fea1e875ea1e1ae1d60b9", 290434, Common::JA_JPN, 402),
+	MACGAME1_l("henachoco07", "Episode 5 - Itachoco Taizen 1 rerelease", "xn--dlqz00iduj", "e7fbda41649fea1e875ea1e1ae1d60b9", 290434, Common::JA_JPN, 402),
+
 
 	MACGAME1_l("henachoco08", "", "yataideomase", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+	MACGAME1t_l("henachoco08", "Itachoco Taizen 2 rerelease", "yatai-desu-", "7790a354ddbcb7bc8b4e1b1e8433053b", 290434, Common::JA_JPN, 402),
 
 	MACGAME1_l("henachoco09", "", "nisemizi", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
 
 	MACGAME1_l("henachoco11", "", "surowest", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+	MACGAME1t_l("henachoco11", "Henachoco Taizen 2 rerelease", "suropuro", "096d73233cf4896a4bfc4c65651b35c3", 290434, Common::JA_JPN, 402),
 
 	MACGAME1_l("henachocoexpo", "", "iTA-YABOU", "3731a1d809be07929da1f5d691ee3c97", 290426, Common::JA_JPN, 402),
 
@@ -4234,6 +4248,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("henachococd", "", "INKURE.EXE", "0eeb6c11f37605f7e506eab7624cc193", 19324531, Common::JA_JPN, 404),
 
 	MACGAME1_l("henachocogala", "", "galacle", "3731a1d809be07929da1f5d691ee3c97", 290398, Common::JA_JPN, 402),
+	MACGAME1t_l("henachocogala", "Itachoco Taizen 1 rerelease", "galakure-", "432fbbe4d75650580c1314e741e6a583", 290434, Common::JA_JPN, 402),
+
+	MACGAME1t_l("henachocotaizen", "", "LetterShop0.0", "b3fefa664154f160a32a7fdfcc83c047", 292680, Common::JA_JPN, 402),
 
 	// Mac version is D3
 	WINGAME1t("hhouse", "",			"HHOUSE.EXE",  "b0486032820bc6a413dd836650f8b0c3", 3181345, 404),
