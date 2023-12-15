@@ -57,6 +57,7 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_quit = false;
 	_demoMovieSkipped = false;
 	_kingartEntries = nullptr;
+	_kingartCount = 0;
 
 	_tickCount = 0;
 	_oldTime = g_system->getMillis();
@@ -141,6 +142,9 @@ void KingdomGame::initVariables() {
 }
 
 KingdomGame::~KingdomGame() {
+	unloadKingArt();
+
+	delete[] _asPtr;
 	delete _logic;
 	delete _rnd;
 }
@@ -342,6 +346,7 @@ void KingdomGame::loadKingArt() {
 	int size = val / 4;
 	uint32 *kingartIdx = new uint32[size + 1];
 	_kingartEntries = new KingArtEntry[size];
+	_kingartCount = size;
 	kingartIdx[0] = val;
 	for (int i = 1; i < size; i++)
 		kingartIdx[i] = kingartStream->readUint32LE();
@@ -360,6 +365,19 @@ void KingdomGame::loadKingArt() {
 
 	delete kingartStream;
 	delete[] kingartIdx;
+}
+
+void KingdomGame::unloadKingArt() {
+	if (!_kingartEntries)
+		return;
+
+	for (uint32 i = 0; i < _kingartCount; i++) {
+		delete[] _kingartEntries[i]._data;
+	}
+
+	delete[] _kingartEntries;
+	_kingartEntries = 0;
+	_kingartCount = 0;
 }
 
 Common::SeekableReadStream *KingdomGame::loadAResource(int reznum) {
