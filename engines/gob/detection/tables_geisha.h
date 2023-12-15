@@ -110,6 +110,20 @@
 	kFeaturesEGA | kFeaturesAdLib,
 	"disk1.stk", "intro.tot", 0
 },
+{ // Supplied by Hkz
+	{
+		"geisha",
+		"v1.0",
+		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212164),
+		IT_ITA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGeisha,
+	kFeaturesEGA | kFeaturesAdLib,
+	"disk1.stk", "intro.tot", 0
+},
 {
 	{
 		"geisha",
