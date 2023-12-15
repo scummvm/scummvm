@@ -92,7 +92,7 @@ private:
 };
 
 IOS7OptionsWidget::IOS7OptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "IOS7OptionsDialog", false, domain), _enabled(true) {
+		OptionsContainerWidget(boss, name, "IOS7OptionsDialog", true, domain), _enabled(true) {
 
 	_gamepadControllerCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadController", _("Show Gamepad Controller (iOS 15 and later)"));
 	_gamepadControllerOpacityDesc = new GUI::StaticTextWidget(widgetsBoss(), "IOS7OptionsDialog.GamepadControllerOpacity", _("Gamepad opacity"));
@@ -177,25 +177,24 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(0, 0, 0, 0)
+	            .addPadding(16, 16, 16, 16)
 #if TARGET_OS_IOS
 	            .addWidget("OnscreenControl", "Checkbox")
 #endif
 	            .addWidget("GamepadController", "Checkbox")
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-				.addPadding(0, 0, 0, 0)
+				.addPadding(16, 16, 0, 0)
 				.addWidget("GamepadControllerLeftButton", "OptionsLabel")
 				.addWidget("GamepadControllerLeftButtonPopUp", "PopUp")
 			.closeLayout()
 	        .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-	            .addPadding(0, 0, 0, 0)
+	            .addPadding(16, 16, 0, 0)
 	            .addWidget("GamepadControllerOpacity", "OptionsLabel")
 	            .addWidget("GamepadControllerOpacitySlider", "Slider")
 	            .addWidget("GamepadControllerOpacityLabel", "OptionsLabel")
 	        .closeLayout()
 	            .addWidget("GamepadControllerMinimalLayout", "Checkbox")
-	            .addWidget("KeyboardFunctionBar", "Checkbox");
-
+                .addWidget("KeyboardFunctionBar", "Checkbox");
 #if TARGET_OS_IOS
 	layouts.addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
 
@@ -203,19 +202,19 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("TouchModeMenusText", "OptionsLabel")
 			.addWidget("TouchModeMenus", "PopUp")
 			.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-		.addPadding(0, 0, 0, 0)
+		.addPadding(16, 16, 0, 0)
 		.addWidget("TouchMode2DGamesText", "OptionsLabel")
 		.addWidget("TouchMode2DGames", "PopUp")
 		.closeLayout();
 
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-		.addPadding(0, 0, 0, 0)
+		.addPadding(16, 16, 0, 0)
 		.addWidget("TouchMode3DGamesText", "OptionsLabel")
 		.addWidget("TouchMode3DGames", "PopUp")
 		.closeLayout();
@@ -223,13 +222,13 @@ void IOS7OptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	layouts.addWidget("OrientationText", "", -1, layouts.getVar("Globals.Line.Height"));
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("OMenusText", "OptionsLabel")
 			.addWidget("OMenus", "PopUp")
 		.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("OGamesText", "OptionsLabel")
 			.addWidget("OGames", "PopUp")
 		.closeLayout();
