@@ -31,7 +31,7 @@ namespace Burger {
 
 Dialog *Hotkeys::_versionDialog;
 
-Hotkeys::Hotkeys() {
+Hotkeys::Hotkeys() : M4::Hotkeys() {
 	_versionDialog = nullptr;
 }
 
@@ -148,15 +148,15 @@ void Hotkeys::show_version(void *a, void *b) {
 	if (!_versionDialog) {
 		gr_font_set(_G(font_tiny));
 		_versionDialog = DialogCreateAbsolute(190, 35, 510, 105, 242);
-		Dialog_Add_Button(_versionDialog, 115, 52, " OK ", version_ok_button, 1);
-		Dialog_Add_Message(_versionDialog, 10, 5, "Orion Burger", 1);
-		Dialog_Add_Message(_versionDialog, 10, 15,
+		_versionDialog->addButton(115, 52, " OK ", version_ok_button, 1);
+		_versionDialog->addMessage(10, 5, "Orion Burger", 1);
+		_versionDialog->addMessage(10, 15,
 			Common::String::format("Game Version %s - %s ",
 				"Nudibranchs", "May 7, 1996").c_str(), 2);
-		Dialog_Add_Message(_versionDialog, 10, 25,
+		_versionDialog->addMessage(10, 25,
 			Common::String::format("M4 Library Version %s - %s ",
 				"v1.400 OB", "January 21, 1996").c_str(), 3);
-		Dialog_Add_Message(_versionDialog, 10, 35,
+		_versionDialog->addMessage(10, 35,
 			"Copyright (c) 1996 by Sanctuary Woods Multimedia Corporation", 4);
 
 		Dialog_Configure(_versionDialog, 1, 1, 1);
@@ -165,7 +165,7 @@ void Hotkeys::show_version(void *a, void *b) {
 }
 
 void Hotkeys::version_ok_button(void *a, void *b) {
-	DialogDestroy(_versionDialog);
+	_versionDialog->destroy();
 	_versionDialog = nullptr;
 }
 

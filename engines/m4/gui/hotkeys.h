@@ -30,6 +30,9 @@ namespace M4 {
 
 struct Hotkeys {
 private:
+	static Dialog *_teleportDialog;
+
+private:
 	static void exit_program(void *, void *);
 	static void adv_hyperwalk_to_final_destination(void *a, void *b);
 	static void saveScreenshot(void *, void *);
@@ -65,7 +68,11 @@ private:
 	static void dbg_pal_toggle(void *, void *);
 	static void f_io_report(void *, void *);
 	static void scale_editor_toggle(void *, void *);
+
 	static void teleport(void *, void *);
+	static void teleportOk(void *, void *);
+	static void teleportCancel(void *, void *);
+
 	static void paint_walk_codes(void *, void *);
 	static void pal_override(void *, void *);
 
@@ -73,6 +80,7 @@ protected:
 	virtual void adv_enable_system_hot_keys();
 
 public:
+	Hotkeys();
 	virtual ~Hotkeys() {}
 
 	virtual void add_hot_keys();

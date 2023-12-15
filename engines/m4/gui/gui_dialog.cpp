@@ -43,6 +43,79 @@ static void DialogShow(void *s, void *r, void *b, int32 destX, int32 destY);
 static bool Dialog_EventHandler(void *myDialog, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen);
 static bool TextScrn_EventHandler(void *theTextScrn, int32 eventType, int32 parm1, int32 parm2, int32 parm3, bool *currScreen);
 
+void Dialog::destroy() {
+	DialogDestroy(this);
+}
+
+void Dialog::refresh() {
+	Dialog_Refresh(this);
+}
+
+void Dialog::resize(int32 newW, int32 newH) {
+	Dialog_Resize(this, newW, newH);
+}
+
+void Dialog::configure(int32 defaultTag, int32 returnTag, int32 cancelTag) {
+	Dialog_Configure(this, defaultTag, returnTag, cancelTag);
+}
+
+void Dialog::setDefault(int32 tag) {
+	Dialog_SetDefault(this, tag);
+}
+
+bool Dialog::setPressed(int32 tag) {
+	return Dialog_SetPressed(this, tag);
+}
+
+void Dialog::show() {
+	vmng_screen_show(this);
+}
+
+bool Dialog::addMessage(int32 x, int32 y, const char *prompt, int32 tag) {
+	return Dialog_Add_Message(this, x, y, prompt, tag);
+}
+
+bool Dialog::addPicture(int32 x, int32 y, Buffer *myBuff, int32 tag) {
+	return Dialog_Add_Picture(this, x, y, myBuff, tag);
+}
+
+bool Dialog::addButton(int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag) {
+	return Dialog_Add_Button(this, x, y, prompt, cb, tag);
+}
+
+bool Dialog::addRepeatButton(int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag) {
+	return Dialog_Add_RepeatButton(this, x, y, prompt, cb, tag);
+}
+
+bool Dialog::addList(int32 x1, int32 y1, int32 x2, int32 y2, M4CALLBACK cb, int32 tag) {
+	return Dialog_Add_List(this, x1, y1, x2, y2, cb, tag);
+}
+
+bool Dialog::addTextField(int32 x1, int32 y1, int32 x2, const char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength) {
+	return Dialog_Add_TextField(this, x1, y1, x2, defaultPrompt, cb, tag, fieldLength);
+}
+
+void Dialog::registerTextField() {
+	Dialog_RegisterTextField(this);
+}
+
+Item *Dialog::getItem(int32 tag) {
+	return Dialog_Get_Item(this, tag);
+}
+
+void Dialog::changeItemPrompt(const char *newPrompt, Item *myItem, int32 tag) {
+	Dialog_Change_Item_Prompt(this, newPrompt, myItem, tag);
+}
+
+bool Dialog::removeItem(Item *myItem, int32 tag) {
+	return Dialog_Remove_Item(this, myItem, tag);
+}
+
+void Dialog::refreshItem(Item *myItem, int32 tag) {
+	Dialog_Refresh_Item(this, myItem, tag);
+}
+
+
 bool gui_dialog_init() {
 	_GD(listboxSearchStr)[0] = '\0';
 	return true;
@@ -227,7 +300,7 @@ bool Dialog_Add_List(Dialog *d, int32 x1, int32 y1, int32 x2, int32 y2,
 }
 
 bool Dialog_Add_TextField(Dialog *d, int32 x1, int32 y1, int32 x2,
-	char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength) {
+		const char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength) {
 	Item *myItem;
 	if ((myItem = ItemAdd(d->itemList, x1, y1, x2 - x1 + 1, 0, defaultPrompt, tag, TEXTFIELD, cb, fieldLength)) == nullptr) {
 		return false;

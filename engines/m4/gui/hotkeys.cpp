@@ -28,6 +28,12 @@
 
 namespace M4 {
 
+Dialog *Hotkeys::_teleportDialog;
+
+Hotkeys::Hotkeys() {
+	_teleportDialog = nullptr;
+}
+
 void Hotkeys::restore_hot_keys() {
 	AddSystemHotkey(KEY_HOME, saveScreenshot);
 	AddSystemHotkey(KEY_PAGE_UP, debug_memory_next_column);
@@ -305,7 +311,32 @@ void Hotkeys::scale_editor_toggle(void *, void *) {
 }
 
 void Hotkeys::teleport(void *, void *) {
-	warning("TODO: hotkey");
+	if (!_teleportDialog) {
+		gr_font_set(_G(font_tiny));
+		_teleportDialog = DialogCreateAbsolute(260, 150, 385, 200, 61);
+		_teleportDialog->addButton(60, 30, " Teleport ", teleportOk, 1);
+		_teleportDialog->addButton(10, 30, " Cancel ", teleportCancel, 2);
+		_teleportDialog->addTextField(100, 10, gr_font_string_width("MMMM") + 100,
+			"---", nullptr, 3, 3);
+		_teleportDialog->addMessage(10, 12, "Teleport where?", 4);
+		_teleportDialog->configure(3, 1, 2);
+		_teleportDialog->show();
+		pal_override(nullptr, nullptr);
+	}
+}
+
+void Hotkeys::teleportOk(void *, void *) {
+	Item *textField = _teleportDialog->getItem(3);
+	_G(game).setRoom(atoi(textField->prompt));
+	_G(kernel).teleported_in = true;
+
+	_teleportDialog->destroy();
+	_teleportDialog = nullptr;
+}
+
+void Hotkeys::teleportCancel(void *, void *) {
+	_teleportDialog->destroy();
+	_teleportDialog = nullptr;
 }
 
 void Hotkeys::paint_walk_codes(void *, void *) {

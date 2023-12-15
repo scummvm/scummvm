@@ -26,50 +26,45 @@
 namespace M4 {
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("test",   WRAP_METHOD(Console, Cmd_test));
-	registerCmd("room",   WRAP_METHOD(Console, Cmd_room));
-	registerCmd("flag",   WRAP_METHOD(Console, Cmd_flag));
-	registerCmd("item",   WRAP_METHOD(Console, Cmd_item));
-	registerCmd("hyperwalk", WRAP_METHOD(Console, Cmd_hyperwalk));
+	registerCmd("teleport",  WRAP_METHOD(Console, cmdTeleport));
+	registerCmd("global",    WRAP_METHOD(Console, cmdGlobal));
+	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
+	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
 }
 
 Console::~Console() {
 }
 
-bool Console::Cmd_test(int argc, const char **argv) {
-	debugPrintf("Test\n");
-	return true;
-}
-
-bool Console::Cmd_room(int argc, const char **argv) {
+bool Console::cmdTeleport(int argc, const char **argv) {
 	if (argc == 2) {
 		_G(game).setRoom(atol(argv[1]));
+		_G(kernel).teleported_in = true;
 		return false;
 	} else {
-		debugPrintf("room <room number>]\n");
+		debugPrintf("teleport <room number>]\n");
 		return true;
 	}
 }
 
-bool Console::Cmd_flag(int argc, const char **argv) {
+bool Console::cmdGlobal(int argc, const char **argv) {
 	if (!Burger::g_vars) {
 		debugPrintf("Not Orion Burger\n");
 	} else if (argc == 2) {
 		int flagNum = atol(argv[1]);
-		debugPrintf("Flag %d = %d\n", flagNum, Burger::g_vars->_flags[flagNum]);
+		debugPrintf("Global %d = %d\n", flagNum, Burger::g_vars->_flags[flagNum]);
 	} else if (argc == 3) {
 		int flagNum = atol(argv[1]);
 		int flagVal = atol(argv[2]);
 		Burger::g_vars->_flags[flagNum] = flagVal;
-		debugPrintf("Flag set\n");
+		debugPrintf("Global set\n");
 	} else {
-		debugPrintf("Flag <num> [<value>]\n");
+		debugPrintf("Global <num> [<value>]\n");
 	}
 
 	return true;
 }
 
-bool Console::Cmd_item(int argc, const char **argv) {
+bool Console::cmdItem(int argc, const char **argv) {
 	if (argc == 2) {
 		inv_give_to_player(argv[1]);
 		return false;
@@ -79,7 +74,7 @@ bool Console::Cmd_item(int argc, const char **argv) {
 	}
 }
 
-bool Console::Cmd_hyperwalk(int argc, const char **argv) {
+bool Console::cmdHyperwalk(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("hyperwalk [on | off]\n");
 	} else {
