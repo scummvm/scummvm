@@ -3314,8 +3314,8 @@ void cb_SaveLoad_Load(void *, void *theMenu) {
 	// See if we need to reset the ESC, F2, and F3 hotkeys
 	if (_GM(gameMenuFromMain)) {
 		AddSystemHotkey(KEY_ESCAPE, Burger::Hotkeys::escape_key_pressed);
-		AddSystemHotkey(KEY_F2, M4::Hotkeys::cb_F2);
-		AddSystemHotkey(KEY_F3, M4::Hotkeys::cb_F3);
+		AddSystemHotkey(KEY_F2, M4::Hotkeys::saveGame);
+		AddSystemHotkey(KEY_F3, M4::Hotkeys::loadGame);
 	}
 
 	// Start the restore process

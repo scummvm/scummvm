@@ -82,8 +82,8 @@ void Room901::daemon() {
 	case 7:
 	case 56:
 		AddSystemHotkey(KEY_ESCAPE, Hotkeys::escape_key_pressed);
-		AddSystemHotkey(KEY_F2, Hotkeys::cb_F2);
-		AddSystemHotkey(KEY_F3, Hotkeys::cb_F3);
+		AddSystemHotkey(KEY_F2, Hotkeys::saveGame);
+		AddSystemHotkey(KEY_F3, Hotkeys::loadGame);
 
 		_G(game).setRoom(494);
 		break;

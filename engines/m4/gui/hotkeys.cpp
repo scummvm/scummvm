@@ -29,7 +29,7 @@
 namespace M4 {
 
 void Hotkeys::restore_hot_keys() {
-	AddSystemHotkey(KEY_HOME, capture_wrap);
+	AddSystemHotkey(KEY_HOME, saveScreenshot);
 	AddSystemHotkey(KEY_PAGE_UP, debug_memory_next_column);
 	AddSystemHotkey(KEY_PAGE_DOWN, debug_memory_prev_column);
 	AddSystemHotkey(KEY_END, debug_memory_last_column);
@@ -107,8 +107,8 @@ void Hotkeys::disable_hot_keys() {
 }
 
 void Hotkeys::add_hot_keys() {
-	AddSystemHotkey(KEY_F2, cb_F2);
-	AddSystemHotkey(KEY_F3, cb_F3);
+	AddSystemHotkey(KEY_F2, saveGame);
+	AddSystemHotkey(KEY_F3, loadGame);
 
 	AddSystemHotkey(KEY_ALT_X, exit_program);
 	AddSystemHotkey(KEY_CTRL_X, exit_program);
@@ -116,6 +116,8 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_CTRL_Q, exit_program);
 	AddSystemHotkey(KEY_SPACE, adv_hyperwalk_to_final_destination);
 	AddSystemHotkey('f', adv_hyperwalk_to_final_destination);
+
+	restore_hot_keys();
 
 	if (_G(cheating_enabled)) {
 		adv_enable_system_hot_keys();
@@ -125,7 +127,7 @@ void Hotkeys::add_hot_keys() {
 void Hotkeys::adv_enable_system_hot_keys() {
 	term_message("System Cheats On");
 
-	AddSystemHotkey(KEY_HOME, capture_wrap);
+	AddSystemHotkey(KEY_HOME, saveScreenshot);
 	AddSystemHotkey(KEY_PAGE_UP, debug_memory_next_column);
 	AddSystemHotkey(KEY_PAGE_DOWN, debug_memory_prev_column);
 	AddSystemHotkey(KEY_END, debug_memory_last_column);
@@ -167,11 +169,11 @@ void Hotkeys::exit_program(void *, void *) {
 	_G(kernel).going = false;
 }
 
-void Hotkeys::cb_F2(void *, void *) {
+void Hotkeys::saveGame(void *, void *) {
 	warning("TODO: hotkey");
 }
 
-void Hotkeys::cb_F3(void *, void *) {
+void Hotkeys::loadGame(void *, void *) {
 	warning("TODO: hotkey");
 }
 
@@ -183,8 +185,8 @@ void Hotkeys::f_io_report(void *, void *) {
 	warning("TODO: hotkey");
 }
 
-void Hotkeys::capture_wrap(void *, void *) {
-	warning("TODO: hotkey");
+void Hotkeys::saveScreenshot(void *, void *) {
+	g_system->saveScreenshot();
 }
 
 void Hotkeys::debug_memory_next_column(void *, void *) {
@@ -199,34 +201,43 @@ void Hotkeys::debug_memory_last_column(void *, void *) {
 	warning("TODO: hotkey");
 }
 
-void Hotkeys::player_step_up(void *, void *) {}
+void Hotkeys::player_step_up(void *, void *) {
+	player_step(0, -1);
+}
 
 void Hotkeys::player_step_down(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(0, 1);
 }
 
 void Hotkeys::player_step_left(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(-1, 0);
 }
 
 void Hotkeys::player_step_right(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(1, 0);
 }
 
 void Hotkeys::player_jump_up(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(0, -50);
 }
 
 void Hotkeys::player_jump_down(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(0, 50);
 }
 
 void Hotkeys::player_jump_left(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(-50, 0);
 }
 
 void Hotkeys::player_jump_right(void *, void *) {
-	warning("TODO: hotkey");
+	player_step(50, 0);
+}
+
+void Hotkeys::player_step(int xDelta, int yDelta) {
+	player_update_info();
+	_G(player_info).x += xDelta;
+	_G(player_info).y += yDelta;
+	ws_demand_location(_G(player_info).x, _G(player_info).y);
 }
 
 void Hotkeys::term_next_mode(void *, void *) {
