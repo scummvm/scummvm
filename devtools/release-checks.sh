@@ -161,7 +161,7 @@ echo_n "Checking ADGF_TESTING..."
 #   engines/advancedDetector.h:	ADGF_TESTING         = (1u << 19), ///< Flag to designate not yet officially supported games that are fit for public testing.
 #   engines/ags/detection_tables.h:	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING)
 
-git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:\tDETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
+git -P grep ADGF_TESTING | grep -v engines/advancedDetector. | grep -v "engines/ags/detection_tables.h:.DETECTION_ENTRY.ID," | grep -v devtools/release-checks.sh >$TMP
 
 num_lines=`cat $TMP | wc -l`
 
