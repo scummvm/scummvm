@@ -222,7 +222,7 @@ bool Events::util_kbd_check(int32 *parm1) {
 	if (is_mod_key(ks))
 		return false;
 
-	*parm1 = ks.keycode | ((ks.flags & 0xf) << 16);
+	*parm1 = ks.keycode | ((ks.flags & (Common::KBD_CTRL | Common::KBD_ALT)) << 16);
 	return true;
 }
 
