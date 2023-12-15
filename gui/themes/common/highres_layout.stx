@@ -702,8 +702,10 @@
 	</dialog>
 
 	<dialog name = 'GlobalOptions_Backend' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
-			<widget name = 'Container'/>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
@@ -1640,11 +1642,13 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Backend' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'Container'/>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
@@ -1946,8 +1950,10 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Backend' overlays = 'Dialog.GlobalConfig.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
-			<widget name = 'Container'/>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'
+					type = 'ScrollContainerWidget'
+			/>
 		</layout>
 	</dialog>
 
