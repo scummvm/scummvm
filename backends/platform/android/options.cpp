@@ -198,24 +198,24 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 
 	layouts.addDialog(layoutName, overlayedLayout)
 	        .addLayout(GUI::ThemeLayout::kLayoutVertical)
-	            .addPadding(0, 0, 0, 0)
+	            .addPadding(16, 16, 16, 16)
 	            .addWidget("OnScreenControl", "Checkbox")
 	            .addWidget("PreferredTouchModeText", "", -1, layouts.getVar("Globals.Line.Height"));
 
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("TMMenusText", "OptionsLabel")
 			.addWidget("TMMenus", "PopUp")
 		.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("TM2DGamesText", "OptionsLabel")
 			.addWidget("TM2DGames", "PopUp")
 		.closeLayout()
 		.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("TM3DGamesText", "OptionsLabel")
 			.addWidget("TM3DGames", "PopUp")
 		.closeLayout();
@@ -223,13 +223,13 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	layouts.addWidget("OrientationText", "", -1, layouts.getVar("Globals.Line.Height"));
 	if (inAppDomain) {
 		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("OMenusText", "OptionsLabel")
 			.addWidget("OMenus", "PopUp")
 		.closeLayout();
 	}
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
-			.addPadding(0, 0, 0, 0)
+			.addPadding(16, 16, 0, 0)
 			.addWidget("OGamesText", "OptionsLabel")
 			.addWidget("OGames", "PopUp")
 		.closeLayout();
