@@ -36,6 +36,7 @@
 #include "twp/resmanager.h"
 #include "twp/ggpack.h"
 #include "twp/squirrel/squirrel.h"
+#include "twp/camera.h"
 
 namespace Twp {
 
@@ -110,6 +111,9 @@ public:
 	Room* defineRoom(const Common::String& name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
 
+	void cameraAt(Math::Vector2d at);
+	void follow(Object* actor);
+
 	void execNutEntry(HSQUIRRELVM v, const Common::String& entry);
 	void execBnutEntry(HSQUIRRELVM v,const Common::String &entry);
 
@@ -129,7 +133,7 @@ public:
 	Common::Array<Object*> _objects;
 	Common::Array<Thread*> _threads;
 	Object* _actor = nullptr;
-	Object* followActor = nullptr;
+	Object* _followActor = nullptr;
 	Room* _room = nullptr;
 	float _time = 0.f;						// time in seconds
 	Object* _noun1 = nullptr;
@@ -139,6 +143,7 @@ public:
 	int _frameCounter = 0;
 	Lighting* _lighting = nullptr;
 	Scene* _scene = nullptr;
+	Camera _camera;
 
 private:
 	Gfx _gfx;

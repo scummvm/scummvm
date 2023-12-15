@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	scenegraph.o \
 	object.o \
 	ids.o \
+	camera.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWP), DYNAMIC_PLUGIN)

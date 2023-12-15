@@ -23,6 +23,7 @@
 #include "twp/twp.h"
 #include "twp/room.h"
 #include "twp/object.h"
+#include "twp/scenegraph.h"
 #include "twp/squtil.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
@@ -168,8 +169,59 @@ static SQInteger cameraInRoom(HSQUIRRELVM v) {
 // breakwhilewalking(currentActor)
 // cameraPanTo(currentActor, 2.0)
 static SQInteger cameraPanTo(HSQUIRRELVM v) {
-	// TODO: cameraPanTo
-	warning("cameraPanTo not implemented");
+	SQInteger numArgs = sq_gettop(v);
+	Math::Vector2d pos;
+	float duration = 0.f;
+	InterpolationKind interpolation = IK_LINEAR;
+	if (numArgs == 3) {
+		Object *obj = sqobj(v, 2);
+		if (!obj)
+			return sq_throwerror(v, "failed to get object/actor");
+		pos = obj->getUsePos();
+		if (SQ_FAILED(sqget(v, 3, duration)))
+			return sq_throwerror(v, "failed to get duration");
+	} else if (numArgs == 4) {
+		if (sq_gettype(v, 2) == OT_INTEGER) {
+			int x;
+			if (SQ_FAILED(sqget(v, 2, x)))
+				return sq_throwerror(v, "failed to get x");
+			if (SQ_FAILED(sqget(v, 3, duration)))
+				return sq_throwerror(v, "failed to get duration");
+			int im;
+			if (SQ_FAILED(sqget(v, 4, im)))
+				return sq_throwerror(v, "failed to get interpolation method");
+			pos = Math::Vector2d(x, g_engine->getGfx().cameraPos().getY());
+			interpolation = (InterpolationKind)im;
+		} else {
+			Object *obj = sqobj(v, 2);
+			if (SQ_FAILED(sqget(v, 3, duration)))
+				return sq_throwerror(v, "failed to get duration");
+			int im;
+			if (SQ_FAILED(sqget(v, 4, im)))
+				return sq_throwerror(v, "failed to get interpolation method");
+			pos = obj->_node->getAbsPos();
+			interpolation = (InterpolationKind)im;
+		}
+	} else if (numArgs == 5) {
+		int x, y;
+		if (SQ_FAILED(sqget(v, 2, x)))
+			return sq_throwerror(v, "failed to get x");
+		if (SQ_FAILED(sqget(v, 3, y)))
+			return sq_throwerror(v, "failed to get y");
+		if (SQ_FAILED(sqget(v, 4, duration)))
+			return sq_throwerror(v, "failed to get duration");
+		int im;
+		if (SQ_FAILED (sqget(v, 5, im)))
+      return sq_throwerror(v, "failed to get interpolation method");
+		pos = Math::Vector2d(x, y);
+		interpolation = (InterpolationKind)im;
+	} else {
+		return sq_throwerror(v, Common::String::format("invalid argument number: %d", numArgs).c_str());
+	}
+	Math::Vector2d halfScreen(g_engine->_room->getScreenSize() / 2.f);
+	debug("cameraPanTo: {pos}, dur={duration}, method={interpolation}");
+	g_engine->follow(nullptr);
+	g_engine->_camera.panTo(pos - Math::Vector2d(0.f, halfScreen.getY()), duration, interpolation);
 	return 0;
 }
 
