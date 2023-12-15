@@ -389,7 +389,8 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"magictales",
 			"Magic Tales Demo: Baba Yaga, Samurai, Imo",
 			{
-				{"demo.ini", GAME_CONFIGFILE, "ea784af960375834d655eb7281cd4500", -1},
+				{"demo.ini", GAME_CONFIGFILE, "ea784af960375834d655eb7281cd4500", 734},
+				{"ik_demo.rsc", GAME_SCRIPTFILE, "31a2d65c4d22d327b8f5f205ab6e7ea3", 6680135},
 				AD_LISTEND
 			},
 			Common::HE_ISR,
