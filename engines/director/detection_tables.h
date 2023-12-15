@@ -4444,8 +4444,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Horses of Asva demo is found on Czech Super Hry III CD from Future Media International
 	// Japanese demo was distributed by UEP
 	// Original filename of Japanese demo is ２分間デモ
-	MACGAME2("jewels1", "v2.00",		 "Jewels 11 Meg",	"339c89a148c4ff2c5c815c62ac006325", 483666,
-										 "NAVLOAD.Dxr",		"862688a820a7494f8a9edd196e04b5bf", 164, 404),
+	MACGAME2("jewels1", "v2.0.1",		 "Jewels 11 Meg",	"339c89a148c4ff2c5c815c62ac006325", 483666,
+										 "CIPHER/NAVLOAD.Dxr",	"862688a820a7494f8a9edd196e04b5bf", 164, 404),
 	MACGAME1t_l("jewels1", "2.00",		 "Jewels 11 Meg",	"4b3bf99f4e591b71fe79cde05eece71e", 1200512, Common::FR_FRA, 404),
 	MACGAME2_l("jewels1", "",			 "Jewels 11 Meg",	"339c89a148c4ff2c5c815c62ac006325", 483666,
 										 "NAVLOAD.Dxr",		"711211bf062c3cab48ce90870900bc3b", 215, Common::FR_FRA, 404),
@@ -4454,8 +4454,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 										 "NAVLOAD.DXR",		"8c11e4282c40a82107e6638112d7b495", 765030, 404),
 	WINGAME2t_l("jewels1", "v2.00",		 "JEWELS.EXE",		"a3c4be6eb9803f577ed1d80d51e236e1", 800395,
 										 "NAVLOAD.DXR",		"c696b2453b861d51cea75c7398acb5a8", 405050, Common::FR_FRA, 404),
-	WINGAME2("jewels1", "v2.0.1",		 "JEWELS.EXE",		"bb6d81471d166088260090472c6c3a87", 800395,
-										 "NAVLOAD.DXR",		"ff8446121236a1cbfb1fe431fea5bc09", 405042, 404),
+	WINGAME2("jewels1", "v2.0.1",		 "JEWELS.EXE",		"t:a3c4be6eb9803f577ed1d80d51e236e1", 800395,
+										 "CIPHER/NAVLOAD.DXR",	"ff8446121236a1cbfb1fe431fea5bc09", 405042, 404),
 	WINGAME2_l("jewels1", "",			 "JEWELS.EXE",		"bb6d81471d166088260090472c6c3a87", 800395,
 										 "NAVLOAD.DXR",		"e7dfda887f9040bb29ad822717a11cc7", 405236, Common::DE_DEU, 404),
 	WINDEMO2("jewels1", "Horses Demo",	 "HORSE.EXE",		"03bbe56c80fcbca3939ba08407d99f76", 847689,
