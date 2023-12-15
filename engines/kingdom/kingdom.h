@@ -104,6 +104,8 @@ namespace Kingdom {
 		Logic *_logic;
 
 		KingArtEntry *_kingartEntries;
+		uint32 _kingartCount;
+
 		void displayDebugHotSpots();
 
 	public:
@@ -220,6 +222,7 @@ namespace Kingdom {
 		void drawCursor();
 		void cursorType();
 		void loadKingArt();
+		void unloadKingArt();
 		void setCursor(int cursor);
 		int getAKey();
 		int checkMouseMapAS();
