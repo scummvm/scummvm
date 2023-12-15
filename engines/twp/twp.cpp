@@ -469,4 +469,31 @@ void TwpEngine::actorExit() {
 	}
 }
 
+void TwpEngine::execBnutEntry(HSQUIRRELVM v, const Common::String &entry) {
+	GGPackEntryReader reader;
+	reader.open(_pack, entry);
+	GGBnutReader nut;
+	nut.open(&reader);
+	Common::String code = nut.readString();
+	sqexec(v, code.c_str());
+}
+
+void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
+	if (_pack.assetExists(entry.c_str())) {
+		GGPackEntryReader reader;
+		debug("read existing '%s'", entry.c_str());
+		reader.open(_pack, entry);
+		Common::String code = reader.readString();
+		sqexec(v, code.c_str());
+	} else {
+		Common::String newEntry = entry.substr(0, entry.size() - 4) + ".bnut";
+		debug("read existing '%s'", newEntry.c_str());
+		if (_pack.assetExists(newEntry.c_str())) {
+			execBnutEntry(v, newEntry);
+		} else {
+			error("'%s' and '%s' have not been found", entry.c_str(), newEntry.c_str());
+		}
+	}
+}
+
 } // End of namespace Twp

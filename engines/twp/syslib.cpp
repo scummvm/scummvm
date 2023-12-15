@@ -21,6 +21,7 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
+#include "twp/squtil.h"
 #include "twp/thread.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
@@ -236,8 +237,14 @@ static SQInteger gameTime(HSQUIRRELVM v) {
 	return 0;
 }
 
-static SQInteger sysInclude(HSQUIRRELVM v) {
+static SQInteger include(HSQUIRRELVM v) {
 	warning("TODO: sysInclude: not implemented");
+	return 0;
+	const SQChar *filename;
+	if (SQ_FAILED(sqget(v, 2, filename))) {
+		return sq_throwerror(v, "failed to get filename");
+	}
+	g_engine->execNutEntry(v, filename);
 	return 0;
 }
 
@@ -362,7 +369,7 @@ void sqgame_register_syslib(HSQUIRRELVM v) {
 	regFunc(v, dumpvar, _SC("dumpvar"));
 	regFunc(v, exCommand, _SC("exCommand"));
 	regFunc(v, gameTime, _SC("gameTime"));
-	regFunc(v, sysInclude, _SC("include"));
+	regFunc(v, include, _SC("include"));
 	regFunc(v, inputController, _SC("inputController"));
 	regFunc(v, inputHUD, _SC("inputHUD"));
 	regFunc(v, inputOff, _SC("inputOff"));

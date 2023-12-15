@@ -46,21 +46,6 @@ namespace Twp {
 
 static HSQUIRRELVM gVm = nullptr;
 
-static void sqExec(HSQUIRRELVM v, const char *code) {
-	SQInteger top = sq_gettop(v);
-	if (SQ_FAILED(sq_compilebuffer(v, code, strlen(code), "twp", SQTrue))) {
-		sqstd_printcallstack(v);
-		return;
-	}
-	sq_pushroottable(v);
-	if (SQ_FAILED(sq_call(v, 1, SQFalse, SQTrue))) {
-		sqstd_printcallstack(v);
-		sq_pop(v, 1); // removes the closure
-		return;
-	}
-	sq_settop(v, top);
-}
-
 static void errorHandler(HSQUIRRELVM v, const SQChar *desc, const SQChar *source, SQInteger line,
 						 SQInteger column) {
 	debug("TWP: desc %s, source: %s (%lld,%lld)", desc, source, line, column);
@@ -124,6 +109,6 @@ Vm::~Vm() {
 }
 
 void Vm::exec(const SQChar *code) {
-	sqExec(v, code);
+	sqexec(v, code);
 }
 } // namespace Twp

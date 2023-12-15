@@ -263,4 +263,19 @@ void sqcall(const Common::String &name, int numArgs, HSQOBJECT *args) {
 	sqcall(v, sqrootTbl(v), name, numArgs, args);
 }
 
+void sqexec(HSQUIRRELVM v, const char *code) {
+	SQInteger top = sq_gettop(v);
+	if (SQ_FAILED(sq_compilebuffer(v, code, strlen(code), "twp", SQTrue))) {
+		sqstd_printcallstack(v);
+		return;
+	}
+	sq_pushroottable(v);
+	if (SQ_FAILED(sq_call(v, 1, SQFalse, SQTrue))) {
+		sqstd_printcallstack(v);
+		sq_pop(v, 1); // removes the closure
+		return;
+	}
+	sq_settop(v, top);
+}
+
 } // namespace Twp
