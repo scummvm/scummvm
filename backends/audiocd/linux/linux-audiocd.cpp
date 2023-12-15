@@ -246,6 +246,7 @@ void LinuxAudioCDManager::close() {
 		return;
 
 	::close(_fd);
+	_fd = -1;
 	memset(&_tocHeader, 0, sizeof(_tocHeader));
 	_tocEntries.clear();
 }
