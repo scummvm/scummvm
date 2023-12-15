@@ -69,6 +69,9 @@ Common::String TwpEngine::getGameId() const {
 }
 
 void TwpEngine::update(float elapsedMs) {
+	// update camera
+	_camera.update(_room, _followActor, elapsedMs);
+
 	// update threads
 	for (int i = 0; i < _threads.size(); i++) {
 		Thread *thread = _threads[i];
@@ -118,11 +121,12 @@ Common::Error TwpEngine::run() {
 	const SQChar *code = R"(
 	MainStreet <- {
 		background = "MainStreet"
-		enter = function(enter_door) {
-		}
+		enter = function(enter_door) {}
 	}
-	defineRoom(MainStreet);
-	cameraInRoom(MainStreet);
+	defineRoom(MainStreet)
+	cameraInRoom(MainStreet)
+	cameraAt(0,128)
+	cameraPanTo(2820, 128, 5000, 2)
 	)";
 
 	_vm.exec(code);
@@ -355,8 +359,8 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	debug("call enter room function of %s", room->_name.c_str());
 
 	// exit current room
-	// exitRoom(_room);
-	//_fadeEffect.effect = None;
+	exitRoom(_room);
+	// TODO: _fadeEffect.effect = None;
 
 	// sets the current room for scripts
 	sqsetf(sqrootTbl(v), "currentRoom", room->_table);
@@ -365,14 +369,14 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 		_room->_scene->remove();
 	_room = room;
 	_scene->addChild(_room->_scene);
-	//   _room->numLights = 0;
-	//   _room->overlay = Transparent;
-	//   _camera.bounds = rectFromMinMax(vec2(0f,0f), vec2f(room.roomSize));
+	_room->_lights._numLights = 0;
+	// TODO:   _room->overlay = Transparent;
+	//_camera.setBounds(Rectf::fromMinMax(Math::Vector2d(), _room->_roomSize));
 	//   if (_actor)
 	//     _hud.verb = _hud.actorSlot(_actor).verbs[0];
 
-	//   // move current actor to the new room
-	//   var camPos: Vec2f
+	//   TODO: move current actor to the new room
+	Math::Vector2d camPos;
 	//   if not gEngine.actor.isNil:
 	//     self.cancelSentence(nil)
 	//     if not door.isNil:
@@ -383,11 +387,11 @@ void TwpEngine::enterRoom(Room *room, Object *door) {
 	//         gEngine.actor.node.pos = door.getUsePos
 	//       camPos = gEngine.actor.node.pos
 
-	//   self.camera.room = room
-	//   self.camera.at = camPos
+	_camera.setRoom(room);
+	_camera.setAt(camPos);
 
 	//   // call actor enter function and objects enter function
-	//   self.actorEnter()
+	//   actorEnter();
 	//   for layer in room.layers:
 	//     for obj in layer.objects:
 	//       if rawExists(obj.table, "enter"):
@@ -493,6 +497,22 @@ void TwpEngine::execNutEntry(HSQUIRRELVM v, const Common::String &entry) {
 		} else {
 			error("'%s' and '%s' have not been found", entry.c_str(), newEntry.c_str());
 		}
+	}
+}
+
+void TwpEngine::cameraAt(Math::Vector2d at) {
+	_camera.setRoom(_room);
+	_camera.setAt(at);
+}
+
+void TwpEngine::follow(Object *actor) {
+	_followActor = actor;
+	if (actor) {
+		Math::Vector2d pos = actor->_node->getPos();
+		Room *oldRoom = _room;
+		setRoom(actor->_room);
+		if (oldRoom != actor->_room)
+			cameraAt(pos);
 	}
 }
 

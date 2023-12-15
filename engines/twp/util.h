@@ -19,39 +19,26 @@
  *
  */
 
-#ifndef TWP_RECTF_H
-#define TWP_RECTF_H
+#ifndef TWP_UTIL_H
+#define TWP_UTIL_H
 
-#include "common/array.h"
 #include "math/vector2d.h"
 
 namespace Twp {
 
-struct Rectf {
-public:
-	Rectf();
-	Rectf(float x, float y, float w, float h);
+template<typename T>
+T clamp(T x, T a, T b) {
+	if (x < a)
+		return a;
+	if (x > b)
+		return b;
+	return x;
+}
 
-	static Rectf fromPosAndSize(Math::Vector2d pos, Math::Vector2d size);
-	static Rectf fromMinMax(Math::Vector2d min, Math::Vector2d max);
+Math::Vector2d operator*(Math::Vector2d v, float f) {
+	return Math::Vector2d(v.getX() * f, v.getY() * f);
+}
 
-	Rectf operator/(Math::Vector2d v);
-
-	union {
-		float v[4];
-		struct {
-			float x;
-			float y;
-			float w;
-			float h;
-		} r;
-	};
-
-	inline float left() { return r.x; }
-	inline float right() { return r.x + r.w; }
-	inline float top() { return r.y + r.h; }
-	inline float bottom() { return r.y; }
-};
 } // namespace Twp
 
 #endif
