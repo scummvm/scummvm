@@ -34,7 +34,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Synthesis) sound driver.
    - Added YUV422 and YUV444 support to Theora decoder.
    - Implemented specialized CPU routines for graphics blitting for ManagedSurface.
-   - Changed default GM device to "auto" for better compatibility.
+   - General MIDI support is now enabled by default.
 
  AGS:
    - Synced with upstream AGS 3.6.0.53.
