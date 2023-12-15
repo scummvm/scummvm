@@ -87,6 +87,7 @@ void cPreMenu::LoadConfig() {
 	if (pRootElem == NULL) {
 		Error("Couldn't load root from XML document 'config/startup.cfg'\n");
 		hplDelete(pXmlDoc);
+		return;
 	}
 
 	////////////////////////////////////////////////
