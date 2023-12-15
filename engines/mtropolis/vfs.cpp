@@ -171,7 +171,7 @@ int VirtualFileSystem::listMatchingMembers(Common::ArchiveMemberList &list, cons
 
 	Common::ArchiveMemberList::const_iterator it = allNames.begin();
 	for (; it != allNames.end(); ++it) {
-		if ((*it)->getName().matchString(patternString, true, wildcardExclusions)) {
+		if ((*it)->getPathInArchive().toString(_pathSeparator).matchString(patternString, true, wildcardExclusions)) {
 			list.push_back(*it);
 			matches++;
 		}
