@@ -20,6 +20,8 @@
  */
 
 #include "twp/squtil.h"
+#include "twp/room.h"
+#include "twp/object.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
 #include "squirrel/sqobject.h"
@@ -36,27 +38,27 @@
 namespace Twp {
 
 template<>
-void push(HSQUIRRELVM v, int value) {
+void sqpush(HSQUIRRELVM v, int value) {
 	sq_pushinteger(v, value);
 }
 
 template<>
-void push(HSQUIRRELVM v, bool value) {
+void sqpush(HSQUIRRELVM v, bool value) {
 	sq_pushinteger(v, value ? 1 : 0);
 }
 
 template<>
-void push(HSQUIRRELVM v, Common::String value) {
+void sqpush(HSQUIRRELVM v, Common::String value) {
 	sq_pushstring(v, value.c_str(), value.size());
 }
 
 template<>
-void push(HSQUIRRELVM v, HSQOBJECT value) {
+void sqpush(HSQUIRRELVM v, HSQOBJECT value) {
 	sq_pushobject(v, value);
 }
 
 template<>
-HSQOBJECT sqobj(HSQUIRRELVM v, int value) {
+HSQOBJECT sqtoobj(HSQUIRRELVM v, int value) {
 	SQObject o;
 	o._type = OT_INTEGER;
 	o._unVal.nInteger = value;
@@ -64,7 +66,7 @@ HSQOBJECT sqobj(HSQUIRRELVM v, int value) {
 }
 
 template<>
-HSQOBJECT sqobj(HSQUIRRELVM v, const SQChar *value) {
+HSQOBJECT sqtoobj(HSQUIRRELVM v, const SQChar *value) {
 	SQObject o;
 	o._type = OT_STRING;
 	o._unVal.pString = SQString::Create(_ss(v), value);
@@ -72,12 +74,12 @@ HSQOBJECT sqobj(HSQUIRRELVM v, const SQChar *value) {
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, SQInteger &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, SQInteger &value) {
 	return sq_getinteger(v, i, &value);
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, int &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, int &value) {
 	SQInteger itg;
 	SQRESULT result = sq_getinteger(v, i, &itg);
 	value = static_cast<int>(itg);
@@ -85,7 +87,15 @@ SQRESULT get(HSQUIRRELVM v, int i, int &value) {
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, float &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, bool &value) {
+	SQInteger itg;
+	SQRESULT result = sq_getinteger(v, i, &itg);
+	value = itg != 0;
+	return result;
+}
+
+template<>
+SQRESULT sqget(HSQUIRRELVM v, int i, float &value) {
 	SQFloat f;
 	SQRESULT result = sq_getfloat(v, i, &f);
 	value = static_cast<float>(f);
@@ -93,7 +103,7 @@ SQRESULT get(HSQUIRRELVM v, int i, float &value) {
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, Common::String &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, Common::String &value) {
 	const SQChar *s;
 	SQRESULT result = sq_getstring(v, i, &s);
 	value = s;
@@ -101,12 +111,12 @@ SQRESULT get(HSQUIRRELVM v, int i, Common::String &value) {
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, const SQChar* &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, const SQChar *&value) {
 	return sq_getstring(v, i, &value);
 }
 
 template<>
-SQRESULT get(HSQUIRRELVM v, int i, HSQOBJECT &value) {
+SQRESULT sqget(HSQUIRRELVM v, int i, HSQOBJECT &value) {
 	return sq_getstackobj(v, i, &value);
 }
 
@@ -130,7 +140,127 @@ SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::String> &arr) {
 }
 
 void setId(HSQOBJECT &o, int id) {
-	setf(o, "_id", id);
+	sqsetf(o, "_id", id);
+}
+
+bool sqrawexists(HSQOBJECT obj, const Common::String &name) {
+	HSQUIRRELVM v = g_engine->getVm();
+	SQInteger top = sq_gettop(v);
+	sqpush(v, obj);
+	sq_pushstring(v, name.c_str(), -1);
+	if (SQ_SUCCEEDED(sq_rawget(v, -2))) {
+		SQObjectType oType = sq_gettype(v, -1);
+		sq_settop(v, top);
+		return oType != OT_NULL;
+	}
+	sq_settop(v, top);
+	return false;
+}
+
+void sqsetdelegate(HSQOBJECT obj, HSQOBJECT del) {
+	HSQUIRRELVM v = g_engine->getVm();
+	sqpush(v, obj);
+	sqpush(v, del);
+	sq_setdelegate(v, -2);
+	sq_pop(v, 1);
+}
+
+HSQOBJECT sqrootTbl(HSQUIRRELVM v) {
+	HSQOBJECT result;
+	sq_resetobject(&result);
+	sq_pushroottable(v);
+	sq_getstackobj(v, -1, &result);
+	sq_pop(v, 1);
+	return result;
+}
+
+static int getId(HSQOBJECT table) {
+	SQInteger result = 0;
+	sqgetf(table, "_id", result);
+	return (int)result;
+}
+
+Room *sqroom(HSQOBJECT table) {
+	int id = getId(table);
+	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		Room *room = g_engine->_rooms[i];
+		if (getId(room->_table) == id)
+			return room;
+	}
+	return nullptr;
+}
+
+Room *sqroom(HSQUIRRELVM v, int i) {
+	HSQOBJECT table;
+	if (SQ_SUCCEEDED(sqget(v, i, table))) {
+		return sqroom(table);
+	}
+	return nullptr;
+}
+
+Object *sqobj(HSQOBJECT table) {
+	int id = getId(table);
+	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		Room *room = g_engine->_rooms[i];
+		for (int j = 0; j < room->_layers.size(); i++) {
+			Layer *layer = room->_layers[i];
+			for (int k = 0; k < layer->_objects.size(); k++) {
+				Object *obj = layer->_objects[i];
+				if (getId(obj->_table) == id)
+					return obj;
+			}
+		}
+	}
+	return nullptr;
+}
+
+Object *sqobj(HSQUIRRELVM v, int i) {
+	HSQOBJECT table;
+	sq_getstackobj(v, i, &table);
+	return sqobj(table);
+}
+
+int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String &name) {
+	SQInteger top = sq_gettop(v);
+	sqpush(v, obj);
+	sq_pushstring(v, name.c_str(), -1);
+	if (SQ_FAILED(sq_get(v, -2))) {
+		sq_settop(v, top);
+		debug("can't find %s function", name.c_str());
+		return 0;
+	}
+	SQInteger nparams, nfreevars;
+	sq_getclosureinfo(v, -1, &nparams, &nfreevars);
+	debug("%s function found with %lld parameters", name.c_str(), nparams);
+	sq_settop(v, top);
+	return nparams;
+}
+
+static void sqpushfunc(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name) {
+	sq_pushobject(v, o);
+	sq_pushstring(v, name.c_str(), -1);
+	sq_get(v, -2);
+}
+
+static void sqcall(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, int numArgs, HSQOBJECT *args) {
+	SQInteger top = sq_gettop(v);
+	sqpushfunc(v, o, name);
+
+	sq_pushobject(v, o);
+	for (int i = 0; i < numArgs; i++) {
+		sq_pushobject(v, args[i]);
+	}
+	sq_call(v, 1 + numArgs, SQFalse, SQTrue);
+	sq_settop(v, top);
+}
+
+void sqcall(HSQOBJECT o, const Common::String &name, int numArgs, HSQOBJECT *args) {
+	sqcall(g_engine->getVm(), o, name, numArgs, args);
+}
+
+void sqcall(const Common::String &name, int numArgs, HSQOBJECT *args) {
+	HSQUIRRELVM v = g_engine->getVm();
+	sqcall(v, sqrootTbl(v), name, numArgs, args);
 }
 
 } // namespace Twp

@@ -123,6 +123,7 @@ public:
 	void camera(Math::Vector2d size);
 	Math::Vector2d camera() const;
 	Math::Vector2d cameraPos() const { return _cameraPos; }
+	void cameraPos(Math::Vector2d pos) { _cameraPos = pos; }
 
 	void use(Shader* shader);
 

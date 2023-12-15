@@ -21,6 +21,8 @@
 
 #include "twp/sqgame.h"
 #include "twp/twp.h"
+#include "twp/room.h"
+#include "twp/object.h"
 #include "twp/squtil.h"
 #include "twp/squirrel/squirrel.h"
 #include "twp/squirrel/sqvm.h"
@@ -86,7 +88,7 @@ static SQInteger arrayShuffle(HSQUIRRELVM v) {
 
 	sq_newarray(v, 0);
 	for (auto it = arr.begin(); it != arr.end(); it++) {
-		push(v, *it);
+		sqpush(v, *it);
 		sq_arrayappend(v, -2);
 	}
 	return 1;
@@ -97,7 +99,7 @@ static SQInteger assetExists(HSQUIRRELVM v) {
 	const SQChar *filename;
 	if (SQ_FAILED(sq_getstring(v, 2, &filename)))
 		return sq_throwerror(v, "failed to get filename");
-	push(v, g_engine->_pack.assetExists(filename));
+	sqpush(v, g_engine->_pack.assetExists(filename));
 	return 1;
 }
 
@@ -143,8 +145,16 @@ static SQInteger cameraFollow(HSQUIRRELVM v) {
 //      }
 // }
 static SQInteger cameraInRoom(HSQUIRRELVM v) {
-	// TODO: cameraInRoom
-	warning("cameraInRoom not implemented");
+	Room *room = sqroom(v, 2);
+	if (room) {
+		g_engine->setRoom(room);
+	} else {
+		Object *obj = sqobj(v, 2);
+		if (!obj || !obj->_room) {
+			return sq_throwerror(v, "failed to get room");
+		}
+		g_engine->setRoom(obj->_room);
+	}
 	return 0;
 }
 
@@ -175,10 +185,10 @@ static SQInteger cameraPos(HSQUIRRELVM v) {
 // Converts an integer to a char.
 static SQInteger sqChr(HSQUIRRELVM v) {
 	int value;
-	get(v, 2, value);
+	sqget(v, 2, value);
 	Common::String s;
 	s += char(value);
-	push(v, s);
+	sqpush(v, s);
 	return 1;
 }
 
@@ -247,25 +257,25 @@ static SQInteger indialog(HSQUIRRELVM v) {
 
 static SQInteger integer(HSQUIRRELVM v) {
 	float f = 0.f;
-	if (SQ_FAILED(get(v, 2, f)))
+	if (SQ_FAILED(sqget(v, 2, f)))
 		return sq_throwerror(v, "failed to get float value");
-	push(v, static_cast<int>(f));
+	sqpush(v, static_cast<int>(f));
 	return 1;
 }
 
 static SQInteger is_oftype(HSQUIRRELVM v, bool pred(SQObjectType)) {
-	push(v, pred(sq_gettype(v, 2)));
+	sqpush(v, pred(sq_gettype(v, 2)));
 	return 1;
 }
 
 static SQInteger in_array(HSQUIRRELVM v) {
 	HSQOBJECT obj;
 	sq_resetobject(&obj);
-	if (SQ_FAILED(get(v, 2, obj)))
+	if (SQ_FAILED(sqget(v, 2, obj)))
 		return sq_throwerror(v, "Failed to get object");
 	HSQOBJECT arr;
 	sq_resetobject(&arr);
-	if (SQ_FAILED(get(v, 3, arr)))
+	if (SQ_FAILED(sqget(v, 3, arr)))
 		return sq_throwerror(v, "Failed to get array");
 
 	Common::Array<HSQOBJECT> objs;
@@ -284,7 +294,7 @@ static SQInteger in_array(HSQUIRRELVM v) {
 		sq_pushobject(v, *it);
 		if (sq_cmp(v) == 0) {
 			sq_pop(v, 2);
-			push(v, 1);
+			sqpush(v, 1);
 			return 1;
 		}
 		sq_pop(v, 2);
@@ -493,7 +503,29 @@ static SQInteger translate(HSQUIRRELVM v) {
 	return 0;
 }
 
+// TODO: move this function
+static SQInteger defineRoom(HSQUIRRELVM v) {
+	// This command is used during the game's boot process.
+	// `defineRoom` is called once for every room in the game, passing it the room's room object.
+	// If the room has not been defined, it can not be referenced.
+	// `defineRoom` is typically called in the the DefineRooms.nut file which loads and defines every room in the game.
+	HSQOBJECT table;
+	sq_resetobject(&table);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &table)))
+		return sq_throwerror(v, "failed to get room table");
+	Common::String name;
+	sqgetf(v, table, "name", name);
+	if (name.size() == 0)
+		sqgetf(v, table, "background", name);
+	Room *room = g_engine->defineRoom(name, table);
+	debug("Define room: %s", name.c_str());
+	g_engine->_rooms.push_back(room);
+	sqpush(v, room->_table);
+	return 1;
+}
+
 void sqgame_register_genlib(HSQUIRRELVM v) {
+	regFunc(v, defineRoom, _SC("defineRoom"));
 	regFunc(v, activeVerb, _SC("activeVerb"));
 	regFunc(v, adhocalytics, _SC("adhocalytics"));
 	regFunc(v, arrayShuffle, _SC("arrayShuffle"));

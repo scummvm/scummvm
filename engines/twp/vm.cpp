@@ -111,8 +111,9 @@ Vm::Vm() {
 	sqgame_register_genlib(v);
 	sqgame_register_objlib(v);
 
-	SQObject platform = sqobj(v, 666);
-	_table(v->_roottable)->NewSlot(sqobj(v, _SC("PLATFORM")), SQObjectPtr(platform));
+	// TODO: constants
+	SQObject platform = sqtoobj(v, 666);
+	_table(v->_roottable)->NewSlot(sqtoobj(v, _SC("PLATFORM")), SQObjectPtr(platform));
 }
 
 Vm::~Vm() {

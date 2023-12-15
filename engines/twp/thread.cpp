@@ -22,31 +22,30 @@
 #include "twp/twp.h"
 #include "twp/thread.h"
 
-namespace Twp{
+namespace Twp {
 
-Thread::Thread() : paused(false), waitTime(0), numFrames(0), stopRequest(false) {
-}
+Thread::Thread() {}
 
 Thread::~Thread() {
 	HSQUIRRELVM v = g_engine->getVm();
-	for (int i = 0; i < args.size(); i++) {
-		sq_release(v, &args[i]);
+	for (int i = 0; i < _args.size(); i++) {
+		sq_release(v, &_args[i]);
 	}
-	sq_release(v, &threadObj);
-	sq_release(v, &envObj);
-	sq_release(v, &closureObj);
+	sq_release(v, &_threadObj);
+	sq_release(v, &_envObj);
+	sq_release(v, &_closureObj);
 }
 
 bool Thread::call() {
-	HSQUIRRELVM v = threadObj._unVal.pThread;
+	HSQUIRRELVM v = _threadObj._unVal.pThread;
 	// call the closure in the thread
 	SQInteger top = sq_gettop(v);
-	sq_pushobject(v, closureObj);
-	sq_pushobject(v, envObj);
-	for (int i = 0; i < args.size(); i++) {
-		sq_pushobject(v, args[i]);
+	sq_pushobject(v, _closureObj);
+	sq_pushobject(v, _envObj);
+	for (int i = 0; i < _args.size(); i++) {
+		sq_pushobject(v, _args[i]);
 	}
-	if (SQ_FAILED(sq_call(v, 1 + args.size(), SQFalse, SQTrue))) {
+	if (SQ_FAILED(sq_call(v, 1 + _args.size(), SQFalse, SQTrue))) {
 		sq_settop(v, top);
 		return false;
 	}
@@ -54,42 +53,47 @@ bool Thread::call() {
 }
 
 bool Thread::isDead() {
-	SQInteger state = sq_getvmstate(threadObj._unVal.pThread);
-	return stopRequest || state == 0;
+	SQInteger state = sq_getvmstate(_threadObj._unVal.pThread);
+	return _stopRequest || state == 0;
 }
 
 bool Thread::isSuspended() {
-	SQInteger state = sq_getvmstate(threadObj._unVal.pThread);
+	SQInteger state = sq_getvmstate(_threadObj._unVal.pThread);
 	return state != 1;
 }
 
 void Thread::suspend() {
 	// TODO: pauseable
 	if (!isSuspended()) {
-		sq_suspendvm(threadObj._unVal.pThread);
+		sq_suspendvm(_threadObj._unVal.pThread);
 	}
 }
 
 void Thread::resume() {
 	if (!isDead() && isSuspended()) {
-		sq_wakeupvm(threadObj._unVal.pThread, SQFalse, SQFalse, SQTrue, SQFalse);
+		sq_wakeupvm(_threadObj._unVal.pThread, SQFalse, SQFalse, SQTrue, SQFalse);
 	}
 }
 
 bool Thread::update(float elapsed) {
-	if (paused) {
-	} else if (waitTime > 0) {
-		waitTime -= elapsed;
-		if (waitTime <= 0) {
-			waitTime = 0;
+	if (_paused) {
+	} else if (_waitTime > 0) {
+		_waitTime -= elapsed;
+		if (_waitTime <= 0) {
+			_waitTime = 0;
 			resume();
 		}
-	} else if (numFrames > 0) {
-		numFrames -= 1;
-		numFrames = 0;
+	} else if (_numFrames > 0) {
+		_numFrames -= 1;
+		_numFrames = 0;
 		resume();
 	}
 	return isDead();
 }
 
+void Thread::stop() {
+	_stopRequest = true;
+	suspend();
 }
+
+} // namespace Twp

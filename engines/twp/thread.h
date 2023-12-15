@@ -39,17 +39,18 @@ public:
 	void resume();
 	bool isDead();
 	bool isSuspended();
+	void stop();
 
 public:
-	uint64 id;
-	Common::String name;
-    bool global;
-	HSQOBJECT obj, threadObj, envObj, closureObj;
-	Common::Array<HSQOBJECT> args;
-	bool paused;
-	float waitTime;
-	int numFrames;
-	bool stopRequest;
+	uint64 _id=0;
+	Common::String _name;
+    bool _global = false;
+	HSQOBJECT _obj, _threadObj, _envObj, _closureObj;
+	Common::Array<HSQOBJECT> _args;
+	bool _paused=false;
+	float _waitTime = 0.f;
+	int _numFrames = 0;
+	bool _stopRequest = false;
 };
 }
 

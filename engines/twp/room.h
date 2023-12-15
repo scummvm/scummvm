@@ -36,11 +36,15 @@ class Object;
 
 class Layer {
 public:
+	Layer(const Common::String &name, Math::Vector2d parallax, int zsort);
+	Layer(const Common::StringArray &names, Math::Vector2d parallax, int zsort);
+
+public:
 	Common::Array<Common::String> _names;
 	Common::Array<Object *> _objects;
 	Math::Vector2d _parallax;
-	int _zsort;
-	Node *_node;
+	int _zsort = 0;
+	Node *_node = nullptr;
 };
 
 // Represents an area where an actor can or cannot walk
@@ -67,26 +71,30 @@ struct Scaling {
 };
 
 struct Light {
-    Color color;
-    Math::Vector2d pos;
-    float brightness;     // light brightness 1.0f...100.f
-    float coneDirection;  // cone direction 0...360.f
-    float coneAngle;      // cone angle 0...360.f
-    float coneFalloff;    // cone falloff 0.f...1.0f
-    float cutOffRadius;   // cutoff raduus
-    float halfRadius;     // cone half radius 0.0f...1.0f
-    bool on;
-    int id;
+	Color color;
+	Math::Vector2d pos;
+	float brightness;    // light brightness 1.0f...100.f
+	float coneDirection; // cone direction 0...360.f
+	float coneAngle;     // cone angle 0...360.f
+	float coneFalloff;   // cone falloff 0.f...1.0f
+	float cutOffRadius;  // cutoff raduus
+	float halfRadius;    // cone half radius 0.0f...1.0f
+	bool on;
+	int id;
 };
 
 struct Lights {
-	int _numLights;			// Number of lights
+	int _numLights; // Number of lights
 	Light _lights[50];
-	Color _ambientLight;	// Ambient light color
+	Color _ambientLight; // Ambient light color
 };
 
+class Scene;
 class Room {
 public:
+	Room(const Common::String &name, HSQOBJECT &table);
+	~Room();
+
 	void load(Common::SeekableReadStream &s);
 
 	Object *createObject(const Common::String &sheet, const Common::Array<Common::String> &frames);
@@ -96,23 +104,26 @@ public:
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 
 	Layer *layer(int zsort);
+	Object *getObj(const Common::String& key);
 
 public:
-	Common::String _name;               	// Name of the room
-	Common::String _sheet;              	// Name of the spritesheet to use
-	Math::Vector2d _roomSize;           	// Size of the room
-	int _fullscreen;                    	// Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
-	int _height;                        	// Height of the room (what else ?)
-	Common::Array<Layer *> _layers;     	// Parallax layers of a room
-	Common::Array<Walkbox> _walkboxes;  	// Represents the areas where an actor can or cannot walk
-	Common::Array<Scaling> _scalings;   	// Defines the scaling of the actor in the room
-	Scaling _scaling;                   	// Defines the scaling of the actor in the room
-	HSQOBJECT _table;						// Squirrel table representing this room
-	bool _entering;							// Indicates whether or not an actor is entering this room
-	Lights _lights;							// Lights of the room
+	Common::String _name;              // Name of the room
+	Common::String _sheet;             // Name of the spritesheet to use
+	Math::Vector2d _roomSize;          // Size of the room
+	int _fullscreen = 0;               // Indicates if a room is a closeup room (fullscreen=1) or not (fullscreen=2), just a guess
+	int _height = 0;                   // Height of the room (what else ?)
+	Common::Array<Layer *> _layers;    // Parallax layers of a room
+	Common::Array<Walkbox> _walkboxes; // Represents the areas where an actor can or cannot walk
+	Common::Array<Scaling> _scalings;  // Defines the scaling of the actor in the room
+	Scaling _scaling;                  // Defines the scaling of the actor in the room
+	HSQOBJECT _table;                  // Squirrel table representing this room
+	bool _entering = false;            // Indicates whether or not an actor is entering this room
+	Lights _lights;                    // Lights of the room
 	Common::Array<Walkbox> _mergedPolygon;
-	Common::Array<Object*> _triggers;		// Triggers currently enabled in the room
-	bool _pseudo;
+	Common::Array<Object *> _triggers; // Triggers currently enabled in the room
+	bool _pseudo = false;
+	Common::Array<Object *> _objects;
+	Scene* _scene = nullptr;
 };
 
 } // namespace Twp

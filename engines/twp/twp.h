@@ -34,13 +34,16 @@
 #include "twp/detection.h"
 #include "twp/vm.h"
 #include "twp/resmanager.h"
-#include "twp/room.h"
 #include "twp/ggpack.h"
 #include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
+class Lighting;
 class Thread;
+class Scene;
+class Room;
+class Object;
 struct TwpGameDescription;
 
 class TwpEngine : public Engine {
@@ -51,15 +54,6 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-
-public:
-	Graphics::Screen *_screen = nullptr;
-	Common::Array<Object*> _objects;
-	Common::Array<Thread*> _threads;
-	GGPackDecoder _pack;
-	ResManager _resManager;
-	Common::Array<Room> _rooms;
-	Room* _room = nullptr;
 
 public:
 	TwpEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -111,6 +105,37 @@ public:
 
 	Math::Vector2d roomToScreen(Math::Vector2d pos);
 	Math::Vector2d screenToRoom(Math::Vector2d pos);
+
+	void setActor(Object* actor) { _actor = actor; }
+	Room* defineRoom(const Common::String& name, HSQOBJECT table, bool pseudo = false);
+	void setRoom(Room *room);
+
+private:
+	void update(float elapsedMs);
+	void draw();
+	void enterRoom(Room *room, Object *door = nullptr);
+	void exitRoom(Room *nextRoom);
+	void actorExit();
+
+public:
+	Graphics::Screen *_screen = nullptr;
+	GGPackDecoder _pack;
+	ResManager _resManager;
+	Common::Array<Room*> _rooms;
+	Common::Array<Object*> _actors;
+	Common::Array<Object*> _objects;
+	Common::Array<Thread*> _threads;
+	Object* _actor = nullptr;
+	Object* followActor = nullptr;
+	Room* _room = nullptr;
+	float _time = 0.f;						// time in seconds
+	Object* _noun1 = nullptr;
+	Object* _noun2 = nullptr;
+	HSQOBJECT _defaultObj;
+	bool _walkFastState = false;
+	int _frameCounter = 0;
+	Lighting* _lighting = nullptr;
+	Scene* _scene = nullptr;
 
 private:
 	Gfx _gfx;

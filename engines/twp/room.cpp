@@ -164,9 +164,23 @@ static Scaling parseScaling(const Common::JSONArray &jScalings) {
 	return result;
 }
 
+Room::Room(const Common::String &name, HSQOBJECT &table) : _table(table) {
+	setId(_table, newRoomId());
+	_name = name;
+	_scene = new Scene();
+}
+
+Room::~Room() {
+	for (int i = 0; i < _layers.size(); i++) {
+		delete _layers[i];
+	}
+	delete _scene;
+}
+
 void Room::load(Common::SeekableReadStream &s) {
 	GGHashMapDecoder d;
 	Common::JSONValue *value = d.open(&s);
+	debug("Room: %s", value->stringify().c_str());
 	const Common::JSONObject &jRoom = value->asObject();
 
 	_name = jRoom["name"]->asString();
@@ -188,10 +202,7 @@ void Room::load(Common::SeekableReadStream &s) {
 	}
 
 	{
-		Layer *layer = new Layer();
-		layer->_names.push_back(backNames);
-		layer->_zsort = 0;
-		layer->_parallax = Math::Vector2d(1, 1);
+		Layer *layer = new Layer(backNames, Math::Vector2d(1, 1), 0);
 		_layers.push_back(layer);
 	}
 
@@ -199,18 +210,20 @@ void Room::load(Common::SeekableReadStream &s) {
 	if (jRoom.contains("layers")) {
 		const Common::JSONArray &jLayers = jRoom["layers"]->asArray();
 		for (int i = 0; i < jLayers.size(); i++) {
-			Layer *layer = new Layer();
+			Common::StringArray names;
 			const Common::JSONObject &jLayer = jLayers[i]->asObject();
 			if (jLayer["name"]->isArray()) {
 				const Common::JSONArray &jNames = jLayer["name"]->asArray();
 				for (int j = 0; j < jNames.size(); j++) {
-					layer->_names.push_back(jNames[j]->asString());
+					names.push_back(jNames[j]->asString());
 				}
 			} else if (jLayer["name"]->isString()) {
-				layer->_names.push_back(jLayer["name"]->asString());
+				names.push_back(jLayer["name"]->asString());
 			}
-			layer->_parallax = parseParallax(*jLayer["parallax"]);
-			layer->_zsort = jLayer["zsort"]->asIntegerNumber();
+			Math::Vector2d parallax = parseParallax(*jLayer["parallax"]);
+			int zsort = jLayer["zsort"]->asIntegerNumber();
+
+			Layer *layer = new Layer(names, parallax, zsort);
 			_layers.push_back(layer);
 		}
 	}
@@ -233,31 +246,31 @@ void Room::load(Common::SeekableReadStream &s) {
 		const Common::JSONArray &jobjects = jRoom["objects"]->asArray();
 		for (auto it = jobjects.begin(); it != jobjects.end(); it++) {
 			const Common::JSONObject &jObject = (*it)->asObject();
-			Object obj;
-			obj._state = -1;
-			Node *objNode = new Node(obj._key);
-			objNode->_pos = Math::Vector2d(parseVec2(jObject["pos"]->asString()));
-			objNode->_zOrder = jObject["zsort"]->asIntegerNumber();
-			obj._node = objNode;
-			obj._nodeAnim = new Anim(&obj);
-			obj._node->addChild(obj._nodeAnim);
-			obj._key = jObject["name"]->asString();
-			obj._usePos = parseVec2(jObject["usepos"]->asString());
+			Object *obj = new Object();
+			obj->_state = -1;
+			Node *objNode = new Node(obj->_key);
+			objNode->setPos(Math::Vector2d(parseVec2(jObject["pos"]->asString())));
+			objNode->setZSort(jObject["zsort"]->asIntegerNumber());
+			obj->_node = objNode;
+			obj->_nodeAnim = new Anim(obj);
+			obj->_node->addChild(obj->_nodeAnim);
+			obj->_key = jObject["name"]->asString();
+			obj->_usePos = parseVec2(jObject["usepos"]->asString());
 			if (jObject.contains("usedir")) {
-				obj._useDir = parseUseDir(jObject["usedir"]->asString());
+				obj->_useDir = parseUseDir(jObject["usedir"]->asString());
 			} else {
-				obj._useDir = dNone;
+				obj->_useDir = dNone;
 			}
-			obj._hotspot = parseRect(jObject["hotspot"]->asString());
-			obj._objType = toObjectType(jObject);
+			obj->_hotspot = parseRect(jObject["hotspot"]->asString());
+			obj->_objType = toObjectType(jObject);
 			if (jObject.contains("parent"))
 				jObject["parent"]->asString();
-			obj._room = this;
+			obj->_room = this;
 			if (jObject.contains("animations")) {
-				parseObjectAnimations(jObject["animations"]->asArray(), obj._anims);
+				parseObjectAnimations(jObject["animations"]->asArray(), obj->_anims);
 			}
-			obj._layer = layer(0);
-			layer(0)->_objects.push_back(&obj);
+			obj->_layer = layer(0);
+			layer(0)->_objects.push_back(obj);
 		}
 	}
 
@@ -301,6 +314,30 @@ Math::Vector2d Room::getScreenSize() {
 	default:
 		return {_roomSize.getX(), (float)_height};
 	}
+}
+
+Object *Room::getObj(const Common::String &key) {
+	for (int i = 0; i < _layers.size(); i++) {
+		Layer *layer = _layers[i];
+		for (int j = 0; j < layer->_objects.size(); j++) {
+			Object *obj = layer->_objects[j];
+			if (obj->_key == key)
+				return obj;
+		}
+	}
+	return nullptr;
+}
+
+Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {
+	_names.push_back(name);
+	_parallax = parallax;
+	_zsort = zsort;
+}
+
+Layer::Layer(const Common::StringArray &name, Math::Vector2d parallax, int zsort) {
+	_names.push_back(name);
+	_parallax = parallax;
+	_zsort = zsort;
 }
 
 Walkbox::Walkbox(const Common::Array<Math::Vector2d> &polygon, bool visible)

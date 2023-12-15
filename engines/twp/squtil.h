@@ -30,42 +30,42 @@
 namespace Twp {
 
 template<typename T>
-HSQOBJECT sqobj(HSQUIRRELVM v, T value);
+HSQOBJECT sqtoobj(HSQUIRRELVM v, T value);
 
 template<typename T>
-void push(HSQUIRRELVM v, T value);
+void sqpush(HSQUIRRELVM v, T value);
 
 template<typename T>
-SQRESULT get(HSQUIRRELVM v, int index, T &value);
+SQRESULT sqget(HSQUIRRELVM v, int index, T &value);
 
 // set field
 template<typename T>
-void setf(HSQOBJECT &o, const Common::String &key, T obj) {
+void sqsetf(HSQOBJECT o, const Common::String &key, T obj) {
 	HSQUIRRELVM v = g_engine->getVm();
 	SQInteger top = sq_gettop(v);
 	sq_pushobject(v, o);
 	sq_pushstring(v, key.c_str(), -1);
-	push(v, obj);
+	sqpush(v, obj);
 	sq_rawset(v, -3);
 	sq_settop(v, top);
 }
 
 template<typename T>
-void getf(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, T &value) {
+void sqgetf(HSQUIRRELVM v, HSQOBJECT o, const Common::String &name, T &value) {
 	sq_pushobject(v, o);
 	sq_pushstring(v, name.c_str(), -1);
 	if (SQ_FAILED(sq_get(v, -2)))
 		sq_pop(v, 1);
 	else {
-		get(v, -1, value);
+		sqget(v, -1, value);
 		sq_pop(v, 2);
 	}
 }
 
 template<typename T>
-void getf(HSQOBJECT o, const Common::String &name, T &value) {
+void sqgetf(HSQOBJECT o, const Common::String &name, T &value) {
 	HSQUIRRELVM v = g_engine->getVm();
-	getf(v, o, name, value);
+	sqgetf(v, o, name, value);
 }
 
 void setId(HSQOBJECT &o, int id);
@@ -73,19 +73,61 @@ void setId(HSQOBJECT &o, int id);
 void sqgetarray(HSQUIRRELVM v, HSQOBJECT o, Common::Array<Common::String> &arr);
 SQRESULT sqgetarray(HSQUIRRELVM v, int i, Common::Array<Common::String> &arr);
 
-template <typename TFunc>
+template<typename TFunc>
 void sqgetitems(HSQOBJECT o, TFunc func) {
 	HSQUIRRELVM v = g_engine->getVm();
 	sq_pushobject(v, o);
 	sq_pushnull(v);
 	while (SQ_SUCCEEDED(sq_next(v, -2))) {
 		HSQOBJECT obj;
-		get(v, -1, obj);
+		sqget(v, -1, obj);
 		func(obj);
 		sq_pop(v, 2);
 	}
 	sq_pop(v, 2);
 }
+
+template<typename TFunc>
+void sqgetpairs(HSQOBJECT obj, TFunc func) {
+	HSQUIRRELVM v = g_engine->getVm();
+	sq_pushobject(v, obj);
+	sq_pushnull(v);
+	while (SQ_SUCCEEDED(sq_next(v, -2))) {
+		Common::String key;
+		HSQOBJECT o;
+		sqget(v, -1, o);
+		sqget(v, -2, key);
+		func(key, o);
+		sq_pop(v, 2);
+	}
+	sq_pop(v, 2);
+}
+
+template<typename T>
+void sqnewf(HSQOBJECT o, const Common::String &key, T obj) {
+	HSQUIRRELVM v = g_engine->getVm();
+	SQInteger top = sq_gettop(v);
+	sq_pushobject(v, o);
+	sq_pushstring(v, key.c_str(), -1);
+	sqpush(v, obj);
+	sq_newslot(v, -3, SQFalse);
+	sq_settop(v, top);
+}
+
+bool sqrawexists(HSQOBJECT obj, const Common::String &name);
+void sqsetdelegate(HSQOBJECT obj, HSQOBJECT del);
+HSQOBJECT sqrootTbl(HSQUIRRELVM v);
+int sqparamCount(HSQUIRRELVM v, HSQOBJECT obj, const Common::String& name);
+void sqcall(const Common::String &name, int numArgs = 0, HSQOBJECT *args = nullptr);
+void sqcall(HSQOBJECT o, const Common::String& name, int numArgs = 0, HSQOBJECT* args = nullptr);
+
+class Room;
+class Object;
+
+Room *sqroom(HSQOBJECT table);
+Room *sqroom(HSQUIRRELVM v, int i);
+Object *sqobj(HSQOBJECT table);
+Object *sqobj(HSQUIRRELVM v, int i);
 
 } // namespace Twp
 

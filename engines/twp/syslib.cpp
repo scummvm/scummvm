@@ -40,7 +40,7 @@ namespace Twp {
 
 static Thread *thread(HSQUIRRELVM v) {
 	return *Common::find_if(g_engine->_threads.begin(), g_engine->_threads.end(), [&](Thread *t) {
-		return t->threadObj._unVal.pThread == v;
+		return t->_threadObj._unVal.pThread == v;
 	});
 }
 
@@ -49,49 +49,49 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 	SQInteger size = sq_gettop(v);
 
 	Thread *t = new Thread();
-	t->global = global;
+	t->_global = global;
 
 	static uint64 gThreadId = 300000;
 	sq_newtable(v);
 	sq_pushstring(v, _SC("_id"), -1);
 	sq_pushinteger(v, gThreadId++);
 	sq_newslot(v, -3, SQFalse);
-	sq_getstackobj(v, -1, &t->obj);
-	sq_addref(vm, &t->obj);
+	sq_getstackobj(v, -1, &t->_obj);
+	sq_addref(vm, &t->_obj);
 	sq_pop(v, 1);
 
-	sq_resetobject(&t->envObj);
-	if (SQ_FAILED(sq_getstackobj(v, 1, &t->envObj)))
+	sq_resetobject(&t->_envObj);
+	if (SQ_FAILED(sq_getstackobj(v, 1, &t->_envObj)))
 		return sq_throwerror(v, "Couldn't get environment from stack");
-	sq_addref(vm, &t->envObj);
+	sq_addref(vm, &t->_envObj);
 
 	// create thread and store it on the stack
 	sq_newthread(vm, 1024);
-	sq_resetobject(&t->threadObj);
-	if (SQ_FAILED(sq_getstackobj(vm, -1, &t->threadObj)))
+	sq_resetobject(&t->_threadObj);
+	if (SQ_FAILED(sq_getstackobj(vm, -1, &t->_threadObj)))
 		return sq_throwerror(v, "Couldn't get coroutine thread from stack");
-	sq_addref(vm, &t->threadObj);
+	sq_addref(vm, &t->_threadObj);
 
 	for (int i = 0; i < size - 2; i++) {
 		HSQOBJECT arg;
 		sq_resetobject(&arg);
 		if (SQ_FAILED(sq_getstackobj(v, 3 + i, &arg)))
 			return sq_throwerror(v, "Couldn't get coroutine args from stack");
-		t->args.push_back(arg);
+		t->_args.push_back(arg);
 		sq_addref(vm, &arg);
 	}
 
 	// get the closure
-	sq_resetobject(&t->closureObj);
-	if (SQ_FAILED(sq_getstackobj(v, 2, &t->closureObj)))
+	sq_resetobject(&t->_closureObj);
+	if (SQ_FAILED(sq_getstackobj(v, 2, &t->_closureObj)))
 		return sq_throwerror(v, "Couldn't get coroutine thread from stack");
-	sq_addref(vm, &t->closureObj);
+	sq_addref(vm, &t->_closureObj);
 
 	const SQChar *name = nullptr;
 	if (SQ_SUCCEEDED(sq_getclosurename(v, 2)))
 		sq_getstring(v, -1, &name);
 
-	t->name = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(t->closureObj)->_function->_sourcename), _closure(t->closureObj)->_function->_lineinfos->_line);
+	t->_name = Common::String::format("%s %s (%lld)", name == nullptr ? "<anonymous>" : name, _stringval(_closure(t->_closureObj)->_function->_sourcename), _closure(t->_closureObj)->_function->_lineinfos->_line);
 	sq_pop(vm, 1);
 	if (name)
 		sq_pop(v, 1); // pop name
@@ -99,13 +99,13 @@ static SQInteger _startthread(HSQUIRRELVM v, bool global) {
 
 	g_engine->_threads.push_back(t);
 
-	debug("create thread %s", t->name.c_str());
+	debug("create thread %s", t->_name.c_str());
 
 	// call the closure in the thread
 	if (!t->call())
 		return sq_throwerror(v, "call failed");
 
-	sq_pushobject(v, t->obj);
+	sq_pushobject(v, t->_obj);
 	return 1;
 }
 
@@ -165,9 +165,9 @@ static SQInteger breaktime(HSQUIRRELVM v) {
 	if (SQ_FAILED(sq_getfloat(v, 2, &time)))
 		return sq_throwerror(v, "failed to get time");
 	if (time == 0.f)
-		return breakfunc(v, [](Thread &t) { t.numFrames = 1; });
+		return breakfunc(v, [](Thread &t) { t._numFrames = 1; });
 	else
-		return breakfunc(v, [&](Thread &t) { t.waitTime = time; });
+		return breakfunc(v, [&](Thread &t) { t._waitTime = time; });
 }
 
 static SQInteger breakwhileanimating(HSQUIRRELVM v) {
