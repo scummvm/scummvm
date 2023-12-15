@@ -21,7 +21,7 @@
 
 #include "m4/gui/hotkeys.h"
 #include "m4/gui/gui_sys.h"
-#include "m4/gui/gui_vmng_core.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/platform/keys.h"
 #include "m4/adv_r/adv_walk.h"
 #include "m4/vars.h"
@@ -245,19 +245,23 @@ void Hotkeys::term_next_mode(void *, void *) {
 }
 
 void Hotkeys::camera_step_left(void *, void *) {
-	warning("TODO: hotkey");
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), nullptr);
+	MoveScreenDelta(sc, 10, 0);
 }
 
 void Hotkeys::camera_step_right(void *, void *) {
-	warning("TODO: hotkey");
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), nullptr);
+	MoveScreenDelta(sc, -10, 0);
 }
 
 void Hotkeys::camera_jump_left(void *, void *) {
-	warning("TODO: hotkey");
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), nullptr);
+	MoveScreenDelta(sc, 100, 0);
 }
 
 void Hotkeys::camera_jump_right(void *, void *) {
-	warning("TODO: hotkey");
+	ScreenContext *sc = vmng_screen_find(_G(gameDrawBuff), nullptr);
+	MoveScreenDelta(sc, -100, 0);
 }
 
 void Hotkeys::toggle_inv_visible(void *, void *) {
