@@ -686,10 +686,8 @@ void iCharacterBody::Update(float afTimeStep) {
 	// Check for collision.
 	// Might wanna test this for x, y and z independently.
 	mvPosition += vPosAdd;
-
 	cVector3f vNewPos;
-	// vNewPos = mvPosition;
-	if (mvLastPosition.x != mvPosition.x || mvLastPosition.z != mvLastPosition.z) {
+	if (mvLastPosition.x != mvPosition.x || mvLastPosition.z != mvPosition.z) {
 		mpWorld->CheckShapeWorldCollision(&vNewPos, mpBody->GetShape(), cMath::MatrixTranslate(mvPosition), mpBody,
 										  false, true, mpCollideCallbackPush, mbCollideCharacter);
 	} else {
