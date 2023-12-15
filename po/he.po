@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-14 17:22+0000\n"
+"POT-Creation-Date: 2023-12-15 09:31+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -600,7 +600,7 @@ msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורק
 #: backends/platform/android/options.cpp:179
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
-#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -3164,8 +3164,8 @@ msgstr ""
 "מצטערים, מנוע זה אינו מספק כרגע עזרה במשחק. נא לעיין ב-README למידע בסיסי "
 "ולקבלת הוראות כיצד לקבל סיוע נוסף."
 
-#: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
-#: engines/scumm/saveload.cpp:170
+#: engines/dialogs.cpp:192 engines/ags/ags.cpp:319
+#: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
@@ -3184,8 +3184,8 @@ msgstr ""
 "שמירת המשחק (%s) נכשלה! נא לעיין ב-README למידע בסיסי ולקבלת הוראות כיצד "
 "לקבל סיוע נוסף."
 
-#: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
-#: engines/scumm/saveload.cpp:98
+#: engines/dialogs.cpp:233 engines/ags/ags.cpp:304
+#: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
@@ -5503,28 +5503,38 @@ msgstr ""
 "%s וגם %s. ללא קבצים אלה,\n"
 "המוזיקה לא תהיה זהה לזו שמשחק המקורי."
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Game language:"
 msgstr "שפת משחק:"
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Language to use for multilingual games"
 msgstr "שפה עבור משחקים רב-לשוניים"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:83
+msgid "Enable ScummVM save management"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:83
+msgid ""
+"Never disable ScummVM save management and autosaves.\n"
+"NOTE: This could cause save duplication and other oddities"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
 msgstr "אילוץ החלקת עקומות עבור טקסט"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:88
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "שימוש בהחלקת עקומות עבור ציור טקסט גם אם המשחק לא מבקש"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
 msgstr "הצגת מונה תמונות בשניה"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
 msgstr "הצגת הקצב הנוכחי של תמונות בשניה, במהלך המשחק."
 
@@ -5540,6 +5550,20 @@ msgid ""
 "your version of ScummVM yet."
 msgstr ""
 "למשחק שנבחר קובץ נתונים גדול מ2Gb, שעדיין אינו נתמך על ידי גרסת ScummVM זו."
+
+#: engines/ags/ags.cpp:308
+msgid ""
+"To preserve the original experience, this game should be loaded using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
+
+#: engines/ags/ags.cpp:323
+msgid ""
+"To preserve the original experience, this game should be saved using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-14 17:22+0000\n"
+"POT-Creation-Date: 2023-12-15 09:31+0000\n"
 "PO-Revision-Date: 2023-12-13 22:24+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -608,7 +608,7 @@ msgstr ""
 #: backends/platform/android/options.cpp:179
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
-#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -3253,8 +3253,8 @@ msgstr ""
 "Aún no hay ayuda disponible para este juego. Consulta el archivo README para "
 "encontrar información básica e instrucciones para obtener más ayuda."
 
-#: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
-#: engines/scumm/saveload.cpp:170
+#: engines/dialogs.cpp:192 engines/ags/ags.cpp:319
+#: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
 msgid "This game does not support saving from the menu. Use in-game interface"
 msgstr ""
 "Este juego no permite guardar desde el menú. Debes utilizar la interfaz del "
@@ -3275,8 +3275,8 @@ msgstr ""
 "Fallo al guardar la partida (%s). Consulte el archivo README con información "
 "básica y como obtener más ayuda."
 
-#: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
-#: engines/scumm/saveload.cpp:98
+#: engines/dialogs.cpp:233 engines/ags/ags.cpp:304
+#: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
 msgid "This game does not support loading from the menu. Use in-game interface"
 msgstr ""
 "Este juego no permite cargar desde el menú. Debes utilizar la interfaz del "
@@ -5854,31 +5854,41 @@ msgstr ""
 "Sin uno de estos archivos, la música no sonará\n"
 "tal y como lo hace en el juego original."
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Game language:"
 msgstr "Idioma del juego:"
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Language to use for multilingual games"
 msgstr ""
 "Selecciona el idioma a utilizar en los juegos que contengan varios idiomas"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:83
+msgid "Enable ScummVM save management"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:83
+msgid ""
+"Never disable ScummVM save management and autosaves.\n"
+"NOTE: This could cause save duplication and other oddities"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
 msgstr "Forzar textos con suavizado de bordes"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:88
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Muestra los textos con bordes suavizados aunque el juego no utilice este "
 "efecto"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
 msgstr "Mostrar contador de FPS"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
 msgstr "Muestra la velocidad de FPS actual durante la partida."
 
@@ -5897,6 +5907,20 @@ msgid ""
 msgstr ""
 "El juego seleccionado contiene un archivo de datos de un tamaño mayor a 2 Gb "
 "que todavía no admite tu versión de ScummVM."
+
+#: engines/ags/ags.cpp:308
+msgid ""
+"To preserve the original experience, this game should be loaded using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
+
+#: engines/ags/ags.cpp:323
+msgid ""
+"To preserve the original experience, this game should be saved using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"

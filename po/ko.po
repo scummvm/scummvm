@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-14 17:22+0000\n"
+"POT-Creation-Date: 2023-12-15 09:31+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -634,7 +634,7 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: backends/platform/android/options.cpp:179
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
-#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
 msgid "<default>"
 msgstr "<기본값>"
 
@@ -3221,8 +3221,8 @@ msgstr ""
 "이 게임은 현재 게임 내 도움말을 제공하지 않습니다. 기본적인 정보와 추가 지원"
 "을 얻기 위한 방법은 README 파일에서 참조해 주세요."
 
-#: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
-#: engines/scumm/saveload.cpp:170
+#: engines/dialogs.cpp:192 engines/ags/ags.cpp:319
+#: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
@@ -3241,8 +3241,8 @@ msgstr ""
 "게임 (%s)을 저장하는데 실패했습니다! 기본적인 정보와 추가 지원을 얻기 위한 방"
 "법은 README 파일에서 참조해 주세요."
 
-#: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
-#: engines/scumm/saveload.cpp:98
+#: engines/dialogs.cpp:233 engines/ags/ags.cpp:304
+#: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
@@ -5568,29 +5568,39 @@ msgstr ""
 "이 파일들이 없다면,\n"
 "음악은 원래의 게임과 똑같이 들리지 않을 것이다."
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Game language:"
 msgstr "게임 언어:"
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 msgid "Language to use for multilingual games"
 msgstr "다중 언어 게임에서 사용할 언어"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:83
+msgid "Enable ScummVM save management"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:83
+msgid ""
+"Never disable ScummVM save management and autosaves.\n"
+"NOTE: This could cause save duplication and other oddities"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
 msgstr "안티앨리어싱된 텍스트 강제 사용"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:88
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
 msgstr "FPS 표시"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
 msgstr "플레이 중 현재 FPS를 표시합니다."
 
@@ -5608,6 +5618,20 @@ msgid ""
 msgstr ""
 "선택된 게임은 2GB를 초과하는 게임 데이터 파일이 포함되어 있으며, 현재 ScummVM"
 "에서는 지원되지 않습니다."
+
+#: engines/ags/ags.cpp:308
+msgid ""
+"To preserve the original experience, this game should be loaded using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
+
+#: engines/ags/ags.cpp:323
+msgid ""
+"To preserve the original experience, this game should be saved using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"

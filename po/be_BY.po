@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-14 17:22+0000\n"
+"POT-Creation-Date: 2023-12-15 09:31+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -636,7 +636,7 @@ msgstr ""
 #: backends/platform/android/options.cpp:179
 #: backends/platform/ios7/ios7_options.mm:132
 #: backends/platform/ios7/ios7_options.mm:133
-#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:63
+#: backends/platform/ios7/ios7_options.mm:158 engines/ags/dialogs.cpp:65
 msgid "<default>"
 msgstr "<агадана>"
 
@@ -3243,8 +3243,8 @@ msgstr ""
 "да файла README за падрабязнасцямі і ўказаннямі да атрымання далейшай "
 "дапамогі."
 
-#: engines/dialogs.cpp:192 engines/glk/magnetic/magnetic.h:1401
-#: engines/scumm/saveload.cpp:170
+#: engines/dialogs.cpp:192 engines/ags/ags.cpp:319
+#: engines/glk/magnetic/magnetic.h:1401 engines/scumm/saveload.cpp:170
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support saving from the menu. Use in-game interface"
@@ -3263,8 +3263,8 @@ msgstr ""
 "Не атрымалася захаваць гульню (%s)! Звярніцеся да файла README за "
 "падрабязнасцямі і ўказаннямі да атрымання далейшай дапамогі."
 
-#: engines/dialogs.cpp:233 engines/glk/magnetic/magnetic.h:1391
-#: engines/scumm/saveload.cpp:98
+#: engines/dialogs.cpp:233 engines/ags/ags.cpp:304
+#: engines/glk/magnetic/magnetic.h:1391 engines/scumm/saveload.cpp:98
 #, fuzzy
 #| msgid "This game does not support loading games from the launcher."
 msgid "This game does not support loading from the menu. Use in-game interface"
@@ -5580,31 +5580,41 @@ msgid ""
 "the music will not sound the same as the original game."
 msgstr ""
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 #, fuzzy
 msgid "Game language:"
 msgstr "Мова інтэрфейсу:"
 
-#: engines/ags/dialogs.cpp:59
+#: engines/ags/dialogs.cpp:61
 #, fuzzy
 msgid "Language to use for multilingual games"
 msgstr "Гукавая карта AdLib выкарыстоўваецца многімі гульнямі"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:83
+msgid "Enable ScummVM save management"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:83
+msgid ""
+"Never disable ScummVM save management and autosaves.\n"
+"NOTE: This could cause save duplication and other oddities"
+msgstr ""
+
+#: engines/ags/dialogs.cpp:88
 #, fuzzy
 msgid "Force antialiased text"
 msgstr "Са згладжваннем"
 
-#: engines/ags/dialogs.cpp:79
+#: engines/ags/dialogs.cpp:88
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:48
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:48
 #: engines/zvision/metaengine.cpp:221
 msgid "Show FPS"
 msgstr "Паказаць лічыльнік кадраў у секунду"
 
-#: engines/ags/dialogs.cpp:82 engines/grim/metaengine.cpp:49
+#: engines/ags/dialogs.cpp:91 engines/grim/metaengine.cpp:49
 msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
@@ -5619,6 +5629,20 @@ msgstr "Гэта гульня патрабуе рухавічок HeroCraft, я�
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
+msgstr ""
+
+#: engines/ags/ags.cpp:308
+msgid ""
+"To preserve the original experience, this game should be loaded using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
+msgstr ""
+
+#: engines/ags/ags.cpp:323
+msgid ""
+"To preserve the original experience, this game should be saved using the in-"
+"game interface.\n"
+"You can, however, override this setting in Game Options."
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:115
