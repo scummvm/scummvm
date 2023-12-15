@@ -50,7 +50,7 @@ def buildTheme(themeName):
 
 def buildAllThemes():
 	for f in os.listdir('.'):
-		if os.path.isdir(os.path.join('.', f)) and not f[0] == '.' and not f.startswith("common") and not f == "fonts":
+		if os.path.isdir(os.path.join('.', f)) and not f[0] == '.' and not f.startswith("common") and not f == "fonts" and not f == "fonts-cjk":
 			buildTheme(f)
 
 def parseSTX(theme_file, def_file, subcount):
