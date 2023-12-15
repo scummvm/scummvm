@@ -49,7 +49,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("MacOS/Syberia", "d:6951fb8f71fe06f34684564625f73cd8", 10640592),
 		Common::UNK_LANG,
 		Common::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GAMEOPTION_CORRECT_MOVIE_ASPECT, GAMEOPTION_RESTORE_SCENES)
 	},
 
@@ -83,7 +83,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("MacOS/Syberia 2", "d:c447586a3cb3d46d6127b467e7fb9a86", 12021136),
 		Common::UNK_LANG,
 		Common::kPlatformMacintosh,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO1(GAMEOPTION_CORRECT_MOVIE_ASPECT)
 	},
 
