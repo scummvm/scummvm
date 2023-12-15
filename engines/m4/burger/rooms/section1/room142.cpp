@@ -388,7 +388,7 @@ void Room142::daemon() {
 		if (_volume > 0) {
 			term_message("fading truck noise, current volume = %d", _volume);
 			digi_change_volume(1, _volume);
-			kernel_timing_trigger(6, 10);
+			kernel_timing_trigger(6, 11);
 		} else {
 			digi_stop(1);
 			digi_stop(2);
