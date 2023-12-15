@@ -39,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"efh", nullptr, AD_ENTRY1s("escape.exe", "2702f8f713e113a853a925d29aecc709", 147312),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	// Escape From Hell English
@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"efh", nullptr, AD_ENTRY1s("escape.exe", "1ca4ae3f2ea66c30d1ef3e257a86cd05", 141487),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO0()
 	},
 	AD_TABLE_END_MARKER
