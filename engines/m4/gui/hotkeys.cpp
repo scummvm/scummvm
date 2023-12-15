@@ -60,14 +60,14 @@ void Hotkeys::restore_hot_keys() {
 	//AddSystemHotkey( KEY_ALT_B, toggle_inv_visible);
 	AddSystemHotkey(KEY_ALT_C, toggle_commands_allowed);
 	AddSystemHotkey(KEY_ALT_D, debug_memory_dumpcore_to_disk);
+	AddSystemHotkey(KEY_ALT_E, scale_editor_toggle);	// Was Alt-S, but ScummVM reserves that
 	AddSystemHotkey(KEY_ALT_F, dbg_mem_set_search);
 	AddSystemHotkey(KEY_ALT_G, change_global_var);
 	AddSystemHotkey(KEY_ALT_I, cb_MouseDialog);
-	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects); // was O
+	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects);
 	AddSystemHotkey(KEY_ALT_M, debug_memory_toggle);
 	AddSystemHotkey(KEY_ALT_P, dbg_pal_toggle);
 	AddSystemHotkey(KEY_ALT_R, f_io_report);
-	AddSystemHotkey(KEY_ALT_S, scale_editor_toggle);
 	AddSystemHotkey(KEY_ALT_T, teleport);
 	AddSystemHotkey(KEY_ALT_W, paint_walk_codes);
 	AddSystemHotkey(KEY_ALT_Z, pal_override);
@@ -158,14 +158,14 @@ void Hotkeys::adv_enable_system_hot_keys() {
 	AddSystemHotkey(KEY_ALT_B, toggle_inv_visible);
 	AddSystemHotkey(KEY_ALT_C, toggle_commands_allowed);
 	AddSystemHotkey(KEY_ALT_D, debug_memory_dumpcore_to_disk);
+	AddSystemHotkey(KEY_ALT_E, scale_editor_toggle);	// Was Alt-S, but ScummVM reserves that
 	AddSystemHotkey(KEY_ALT_F, dbg_mem_set_search);
 	AddSystemHotkey(KEY_ALT_G, change_global_var);
 	AddSystemHotkey(KEY_ALT_I, (HotkeyCB)cb_MouseDialog);
-	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects); // was O
+	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects);
 	AddSystemHotkey(KEY_ALT_M, debug_memory_toggle);
 	AddSystemHotkey(KEY_ALT_P, dbg_pal_toggle);
 	AddSystemHotkey(KEY_ALT_R, f_io_report);
-	AddSystemHotkey(KEY_ALT_S, scale_editor_toggle);
 	AddSystemHotkey(KEY_ALT_T, teleport);
 	AddSystemHotkey(KEY_ALT_W, paint_walk_codes);
 	AddSystemHotkey(KEY_ALT_Z, pal_override);
@@ -188,7 +188,7 @@ void Hotkeys::adv_hyperwalk_to_final_destination(void *a, void *b) {
 }
 
 void Hotkeys::f_io_report(void *, void *) {
-	warning("TODO: hotkey");
+	// IO file list not available in ScummVM
 }
 
 void Hotkeys::saveScreenshot(void *, void *) {
@@ -307,7 +307,7 @@ void Hotkeys::dbg_pal_toggle(void *, void *) {
 }
 
 void Hotkeys::scale_editor_toggle(void *, void *) {
-	warning("TODO: hotkey");
+	M4::scale_editor_toggle();
 }
 
 void Hotkeys::teleport(void *, void *) {
@@ -359,7 +359,9 @@ void Hotkeys::paint_walk_codes(void *, void *) {
 }
 
 void Hotkeys::pal_override(void *, void *) {
-	warning("TODO: hotkey");
+	gr_pal_interface(_G(master_palette));
+	gr_pal_set(_G(master_palette));
+	Dialog_Refresh_All();
 }
 
 } // End of namespace M4
