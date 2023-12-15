@@ -66,8 +66,8 @@ public:
 	 * \param aString extension (for example ".exe"). If none "" is returned.
 	 * \return
 	 */
-	static tString GetFileExt(tString aString);
-	static tWString GetFileExtW(tWString aString);
+	static tString GetFileExt(const tString &aString);
+	static tWString GetFileExtW(const tWString &aString);
 	/**
 	 * Sets the file extension. "" removes extension, for example "test.exe" -> "test"
 	 * \param aString New string
@@ -82,22 +82,22 @@ public:
 	 * \param aString The Filename
 	 * \return
 	 */
-	static tString GetFileName(tString aString);
-	static tWString GetFileNameW(tWString aString);
+	static tString GetFileName(const tString &aString);
+	static tWString GetFileNameW(const tWString &aString);
 	/**
 	 * Removes the filename from a path
 	 * \param aString
 	 * \return
 	 */
-	static tString GetFilePath(tString aString);
-	static tWString GetFilePathW(tWString aString);
+	static tString GetFilePath(const tString &aString);
+	static tWString GetFilePathW(const tWString &aString);
 	/**
 	 * Sets the path for a file.
 	 * \param aString
 	 * \param aPath New path
 	 * \return
 	 */
-	static tString SetFilePath(tString aString, tString aPath);
+	static tString SetFilePath(const tString &aString, tString aPath);
 	static tWString SetFilePathW(tWString aString, tWString aPath);
 	/**
 	 * Converts a string to lower case.
@@ -114,8 +114,8 @@ public:
 	 * \param asNewChar The char to replace with (one character only!)
 	 * \return
 	 */
-	static tString ReplaceCharTo(tString aString, tString asOldChar, tString asNewChar);
-	static tWString ReplaceCharToW(tWString aString, tWString asOldChar, tWString asNewChar);
+	static tString ReplaceCharTo(tString aString, const tString &asOldChar, const tString &asNewChar);
+	static tWString ReplaceCharToW(tWString aString, const tWString &asOldChar, const tWString &asNewChar);
 
 	/**
 	 *
@@ -124,9 +124,9 @@ public:
 	 * \param asNewString The char to replace with
 	 * \return
 	 */
-	static tString ReplaceStringTo(tString aString, tString asOldString, tString asNewString);
+	static tString ReplaceStringTo(const tString &aString, const tString &asOldString, const tString &asNewString);
 
-	static tString ToString(const char *asString, tString asDefault);
+	static tString ToString(const char *asString, const tString &asDefault);
 	static int ToInt(const char *asString, int alDefault);
 	static bool ToBool(const char *asString, bool abDefault);
 	static float ToFloat(const char *asString, float afDefault);
@@ -184,16 +184,16 @@ public:
 	 * \param aString
 	 * \return
 	 */
-	static tString GetLastChar(tString aString);
-	static tWString GetLastCharW(tWString aString);
+	static tString GetLastChar(const tString &aString);
+	static tWString GetLastCharW(const tWString &aString);
 	/**
 	 * Get the last pos where aChar is found.
 	 * \param aString
 	 * \param aChar
 	 * \return >=0 if string is found else -1
 	 */
-	static int GetLastStringPos(tString aString, tString aChar);
-	static int GetLastStringPosW(tWString aString, tWString aChar);
+	static int GetLastStringPos(const tString &aString, const tString &aChar);
+	static int GetLastStringPosW(const tWString &aString, const tWString &aChar);
 
 	static void UIntStringToArray(unsigned int *apArray, const char *apString, int alSize);
 	static void FloatStringToArray(float *apArray, const char *apString, int alSize);

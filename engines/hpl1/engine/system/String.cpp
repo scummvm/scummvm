@@ -93,7 +93,7 @@ tWString cString::SubW(const tWString &asString, int alStart, int alCount) {
 //-----------------------------------------------------------------------
 
 // Get the file extension of a string
-tString cString::GetFileExt(tString aString) {
+tString cString::GetFileExt(const tString &aString) {
 	int pos = GetLastStringPos(aString, ".");
 
 	if (pos < 0)
@@ -102,7 +102,7 @@ tString cString::GetFileExt(tString aString) {
 		return aString.substr(pos + 1);
 }
 
-tWString cString::GetFileExtW(tWString aString) {
+tWString cString::GetFileExtW(const tWString &aString) {
 	int pos = GetLastStringPosW(aString, Common::U32String("."));
 
 	if (pos < 0)
@@ -124,7 +124,6 @@ tWString cString::ToLowerCaseW(tWString aString) {
 }
 
 //-----------------------------------------------------------------------
-
 // Set the file extension
 tString cString::SetFileExt(tString aString, tString aExt) {
 	if (aExt.substr(0, 1) == ".")
@@ -154,13 +153,13 @@ tWString cString::SetFileExtW(tWString aString, tWString aExt) {
 
 //-----------------------------------------------------------------------
 
-tString cString::SetFilePath(tString aString, tString aPath) {
+tString cString::SetFilePath(const tString &aString, tString aPath) {
 	if (GetLastChar(aPath) != "/" && GetLastChar(aPath) != "\\")
 		aPath += "/";
 
-	aString = GetFileName(aString);
+	auto fileName = GetFileName(aString);
 
-	return aPath + aString;
+	return aPath + fileName;
 }
 
 tWString cString::SetFilePathW(tWString aString, tWString aPath) {
@@ -175,7 +174,7 @@ tWString cString::SetFilePathW(tWString aString, tWString aPath) {
 //-----------------------------------------------------------------------
 
 // Gets the filename in a path
-tString cString::GetFileName(tString aString) {
+tString cString::GetFileName(const tString &aString) {
 	int pos1 = GetLastStringPos(aString, "\\");
 	int pos2 = GetLastStringPos(aString, "/");
 	int pos = pos1 > pos2 ? pos1 : pos2;
@@ -185,7 +184,7 @@ tString cString::GetFileName(tString aString) {
 	else
 		return aString.substr(pos + 1);
 }
-tWString cString::GetFileNameW(tWString aString) {
+tWString cString::GetFileNameW(const tWString &aString) {
 	int pos1 = GetLastStringPosW(aString, _W("\\"));
 	int pos2 = GetLastStringPosW(aString, _W("/"));
 	int pos = pos1 > pos2 ? pos1 : pos2;
@@ -198,7 +197,7 @@ tWString cString::GetFileNameW(tWString aString) {
 
 //-----------------------------------------------------------------------
 
-tString cString::GetFilePath(tString aString) {
+tString cString::GetFilePath(const tString &aString) {
 	if (GetLastStringPos(aString, ".") < 0)
 		return aString;
 
@@ -212,7 +211,7 @@ tString cString::GetFilePath(tString aString) {
 		return aString.substr(0, pos + 1);
 }
 
-tWString cString::GetFilePathW(tWString aString) {
+tWString cString::GetFilePathW(const tWString &aString) {
 	if (GetLastStringPosW(aString, _W(".")) < 0)
 		return aString;
 
@@ -228,7 +227,7 @@ tWString cString::GetFilePathW(tWString aString) {
 
 //-----------------------------------------------------------------------
 
-tString cString::ReplaceCharTo(tString aString, tString asOldChar, tString asNewChar) {
+tString cString::ReplaceCharTo(tString aString, const tString &asOldChar, const tString &asNewChar) {
 	if (asNewChar != "") {
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] == asOldChar[0])
@@ -246,7 +245,7 @@ tString cString::ReplaceCharTo(tString aString, tString asOldChar, tString asNew
 	}
 }
 
-tWString cString::ReplaceCharToW(tWString aString, tWString asOldChar, tWString asNewChar) {
+tWString cString::ReplaceCharToW(tWString aString, const tWString &asOldChar, const tWString &asNewChar) {
 	if (asNewChar != _W("")) {
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] == asOldChar[0])
@@ -266,15 +265,15 @@ tWString cString::ReplaceCharToW(tWString aString, tWString asOldChar, tWString 
 
 //-----------------------------------------------------------------------
 
-tString cString::ReplaceStringTo(tString asString, tString asOldString, tString asNewString) {
+tString cString::ReplaceStringTo(const tString &aString, const tString &asOldString, const tString &asNewString) {
 	tString sNewString = "";
 
-	for (size_t i = 0; i < asString.size(); i++) {
+	for (size_t i = 0; i < aString.size(); i++) {
 		bool bFound = true;
 		// Search for old string
-		if (asString.size() >= i + asOldString.size()) {
+		if (aString.size() >= i + asOldString.size()) {
 			for (size_t j = 0; j < asOldString.size(); ++j) {
-				if (asString[i + j] != asOldString[j]) {
+				if (aString[i + j] != asOldString[j]) {
 					bFound = false;
 					break;
 				}
@@ -290,7 +289,7 @@ tString cString::ReplaceStringTo(tString asString, tString asOldString, tString 
 		}
 		// Just add the character
 		else {
-			sNewString += asString[i];
+			sNewString += aString[i];
 		}
 	}
 	return sNewString;
@@ -299,20 +298,20 @@ tString cString::ReplaceStringTo(tString asString, tString asOldString, tString 
 //-----------------------------------------------------------------------
 
 // gets the last char in the string
-tString cString::GetLastChar(tString aString) {
+tString cString::GetLastChar(const tString &aString) {
 	if (aString.size() == 0)
 		return "";
 	return aString.substr(aString.size() - 1);
 }
 
-tWString cString::GetLastCharW(tWString aString) {
+tWString cString::GetLastCharW(const tWString &aString) {
 	if (aString.size() == 0)
 		return _W("");
 	return aString.substr(aString.size() - 1);
 }
 
 //-----------------------------------------------------------------------
-tString cString::ToString(const char *asString, tString asDefault) {
+tString cString::ToString(const char *asString, const tString &asDefault) {
 	if (asString == NULL)
 		return asDefault;
 
@@ -559,7 +558,7 @@ tStringVec &cString::GetStringVec(const tString &asData, tStringVec &avVec, tStr
 
 /// Helper
 // returns last char in a string
-int cString::GetLastStringPos(tString aString, tString aChar) {
+int cString::GetLastStringPos(const tString &aString, const tString &aChar) {
 	int pos = -1;
 	for (int i = 0; i < (int)aString.size(); i++) {
 		if (aString.substr(i, aChar.size()) == aChar)
@@ -570,7 +569,7 @@ int cString::GetLastStringPos(tString aString, tString aChar) {
 
 /// Helper
 // returns last char in a string
-int cString::GetLastStringPosW(tWString aString, tWString aChar) {
+int cString::GetLastStringPosW(const tWString &aString, const tWString &aChar) {
 	int pos = -1;
 	for (int i = 0; i < (int)aString.size(); i++) {
 		if (aString.substr(i, aChar.size()) == aChar)

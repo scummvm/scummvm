@@ -720,7 +720,7 @@ class cMainMenuWidget_LoadSaveGame : public cMainMenuWidget_Button {
 public:
 	cMainMenuWidget_LoadSaveGame(cInit *apInit, const cVector3f &avPos, const tWString &asText,
 								 cVector2f avFontSize, eFontAlign aAlignment,
-								 tWString asDir, int alNum)
+								 const tWString &asDir, int alNum)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		msDir = asDir;
 		mlNum = alNum;
@@ -747,7 +747,7 @@ class cMainMenuWidget_RemoveSaveGame : public cMainMenuWidget_Button {
 public:
 	cMainMenuWidget_RemoveSaveGame(cInit *apInit, const cVector3f &avPos, const tWString &asText,
 								   cVector2f avFontSize, eFontAlign aAlignment,
-								   tWString asDir, int alNum)
+								   const tWString &asDir, int alNum)
 		: cMainMenuWidget_Button(apInit, avPos, asText, eMainMenuState_LastEnum, avFontSize, aAlignment) {
 		msDir = asDir;
 		mlNum = alNum;
