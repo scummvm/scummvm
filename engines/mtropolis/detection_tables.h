@@ -409,7 +409,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -433,7 +433,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -450,7 +450,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_TESTING | ADGF_DVD | MTGF_WANT_MPEG_VIDEO | MTGF_WANT_MPEG_AUDIO,
+			ADGF_DVD | MTGF_WANT_MPEG_VIDEO | MTGF_WANT_MPEG_AUDIO,
 			GUIO0()
 		},
 		GID_MTI,
@@ -474,7 +474,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -498,7 +498,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		GID_MTI,
@@ -519,7 +519,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_TESTING,
+			ADGF_DEMO,
 			GUIO0()
 		},
 		GID_MTI,
