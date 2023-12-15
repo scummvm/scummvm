@@ -29,11 +29,11 @@ namespace M4 {
 
 class Console : public GUI::Debugger {
 private:
-	bool Cmd_test(int argc, const char **argv);
-	bool Cmd_room(int argc, const char **argv);
-	bool Cmd_flag(int argc, const char **argv);
-	bool Cmd_item(int argc, const char **argv);
-	bool Cmd_hyperwalk(int argc, const char **argv);
+	bool cmdTest(int argc, const char **argv);
+	bool cmdTeleport(int argc, const char **argv);
+	bool cmdGlobal(int argc, const char **argv);
+	bool cmdItem(int argc, const char **argv);
+	bool cmdHyperwalk(int argc, const char **argv);
 
 public:
 	Console();

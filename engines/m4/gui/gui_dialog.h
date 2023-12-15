@@ -42,6 +42,33 @@ struct Dialog {
 	Item *listBottom;
 	Item *cancel_item, *return_item, *default_item;
 	GrBuff *dlgBuffer;
+
+	// General support methods
+	void destroy();
+	void refresh();
+	void resize(int32 newW, int32 newH);
+	void configure(int32 defaultTag, int32 returnTag, int32 cancelTag);
+	void setDefault(int32 tag);
+	bool setPressed(int32 tag);
+	void show();
+
+	// Add methods
+	bool addMessage(int32 x, int32 y, const char *prompt, int32 tag);
+	bool addPicture(int32 x, int32 y, Buffer *myBuff, int32 tag);
+	bool addButton(int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag);
+	bool addRepeatButton(int32 x, int32 y, const char *prompt, M4CALLBACK cb, int32 tag);
+	bool addList(int32 x1, int32 y1, int32 x2, int32 y2, M4CALLBACK cb, int32 tag);
+
+	// Item Fields
+	Item *getItem(int32 tag);
+	void changeItemPrompt(const char *newPrompt, Item *myItem, int32 tag);
+	bool removeItem(Item *myItem, int32 tag);
+	void refreshItem(Item *myItem, int32 tag);
+
+	// Text Fields
+	bool addTextField(int32 x1, int32 y1, int32 x2, const char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength);
+	void registerTextField();
+
 };
 
 struct TextScrn {
@@ -97,8 +124,8 @@ extern bool Dialog_Add_RepeatButton(Dialog *d, int32 x, int32 y, const char *pro
 //LIST TYPE SUPPORT
 extern bool Dialog_Add_List(Dialog *d, int32 x1, int32 y1, int32 x2, int32 y2, M4CALLBACK cb, int32 tag);
 extern bool Dialog_Add_DirList(Dialog *d, int32 x1, int32 y1, int32 x2, int32 y2, M4CALLBACK cb, int32 tag, char *myDir, char *myTypes);
-extern bool Dialog_Change_DirList(Dialog *d, Item *myItem, char *myDir, char *myTypes);
-extern bool Dialog_Add_List_Item(Dialog *d, Item *myItem, char *prompt, int32 tag, int32 listTag, int32 addMode, bool refresh);
+extern bool Dialog_Change_DirList(Dialog *d, Item *myItem, const char *myDir, const char *myTypes);
+extern bool Dialog_Add_List_Item(Dialog *d, Item *myItem, const char *prompt, int32 tag, int32 listTag, int32 addMode, bool refresh);
 extern bool Dialog_Delete_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myListItem, int32 listTag);
 extern bool Dialog_Change_List_Item(Dialog *d, Item *myItem, int32 tag, ListItem *myListItem, int32 listTag, char *newPrompt, int32 newListTag, int32 changeMode, bool refresh);
 extern void Dialog_EmptyListBox(Dialog *d, Item *i, int32 tag);
@@ -112,7 +139,7 @@ extern void Dialog_GetPrevListItem(Dialog *d);
 extern void Dialog_GetNextListItem(Dialog *d);
 
 //TEXTFIELD TYPE SUPPORT
-extern bool Dialog_Add_TextField(Dialog *d, int32 x1, int32 y1, int32 x2, char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength);
+extern bool Dialog_Add_TextField(Dialog *d, int32 x1, int32 y1, int32 x2, const char *defaultPrompt, M4CALLBACK cb, int32 tag, int32 fieldLength);
 extern void Dialog_RegisterTextField(Dialog *d);
 
 //HOTKEY SUPPORT
