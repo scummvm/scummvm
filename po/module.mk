@@ -28,7 +28,7 @@ updatepot:
 	fi;
 
 %.po: $(POTFILE)
-	msgmerge $@ $(POTFILE) -o $@.new
+	msgmerge $@ $(POTFILE) --previous -o $@.new
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
