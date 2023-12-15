@@ -2384,7 +2384,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			plugInSuffix = "68";
 			break;
 		case Boot::kPlayerTypeMacPPC:
-			plugInSuffix = "PP";
+			plugInSuffix = "pp";
 			break;
 		case Boot::kPlayerTypeWin32:
 			plugInSuffix = isV2Project ? "32" : "95";
@@ -2403,7 +2403,7 @@ BootConfiguration bootProject(const MTropolisGameDescription &gameDesc) {
 			Common::String fileName = pluginFile->getFileName();
 			uint fnameLen = fileName.size();
 
-			if (fnameLen >= 4 && fileName[fnameLen - 4] == '.' && fileName[fnameLen - 2] == plugInSuffix[0] && fileName[fnameLen - 1] == plugInSuffix[1])
+			if (fnameLen >= 4 && fileName[fnameLen - 4] == '.' && invariantToLower(fileName[fnameLen - 2]) == plugInSuffix[0] && invariantToLower(fileName[fnameLen - 1]) == plugInSuffix[1])
 				pluginPathsSorted.push_back(pluginFile->getPathInArchive());
 		}
 
