@@ -63,10 +63,9 @@ public:
 	void InitState(iPlayerState *apPrevState) {
 		if (apPrevState) {
 			apPrevState->LeaveState(this);
+			EnterState(apPrevState);
+			mPreviuosState = apPrevState->mType;
 		}
-
-		EnterState(apPrevState);
-		mPreviuosState = apPrevState->mType;
 	}
 
 	//-------------------------------------

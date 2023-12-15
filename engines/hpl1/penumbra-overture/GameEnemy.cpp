@@ -1378,7 +1378,7 @@ void iGameEnemy::UpdateAnimations(float afTimeStep) {
 
 		/////////////////////////////////
 		// Update animation speed
-		if (mbAnimationIsSpeedDependant) {
+		if (mbAnimationIsSpeedDependant && mpCurrentAnimation) {
 			if (ABS(fSpeed) > 0.05f)
 				mpCurrentAnimation->SetSpeed(ABS(fSpeed) * mfMoveAnimSpeedMul);
 			else

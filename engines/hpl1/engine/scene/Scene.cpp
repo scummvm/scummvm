@@ -268,9 +268,8 @@ void cScene::Render(cUpdater *apUpdater, float afFrameTime) {
 
 			if (mpCurrentWorld2D) {
 				mpCurrentWorld2D->Render(pCamera2D);
+				mpGraphics->GetRenderer2D()->RenderObjects(pCamera2D, mpCurrentWorld2D->GetGridMapLights(), mpCurrentWorld2D);
 			}
-
-			mpGraphics->GetRenderer2D()->RenderObjects(pCamera2D, mpCurrentWorld2D->GetGridMapLights(), mpCurrentWorld2D);
 		} else {
 			cCamera3D *pCamera3D = static_cast<cCamera3D *>(mpActiveCamera);
 

@@ -1422,6 +1422,7 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 			// Log("Created body %s!\n",pBody->GetName().c_str());
 		} else {
 			Log("Body creation failed!\n");
+			return nullptr;
 		}
 
 		// Check if it blocks light

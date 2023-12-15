@@ -118,8 +118,7 @@ void cStateMachine::ChangeState(int alId) {
 		return;
 	}
 
-	if (mpCurrentState)
-		mpCurrentState->OnLeaveState(pState->GetId());
+	mpCurrentState->OnLeaveState(pState->GetId());
 	pState->OnEnterState(mpCurrentState == NULL ? -1 : mpCurrentState->GetId());
 
 	mpCurrentState = pState;
