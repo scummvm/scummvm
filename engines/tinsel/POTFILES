@@ -1,2 +1,3 @@
 engines/tinsel/detection_tables.h
+engines/tinsel/metaengine.cpp
 engines/tinsel/saveload.cpp
