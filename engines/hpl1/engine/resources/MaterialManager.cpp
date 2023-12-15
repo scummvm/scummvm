@@ -328,12 +328,6 @@ iMaterial *cMaterialManager::LoadFromFile(const tString &asName, const tString &
 		pTex->SetFrameTime(fFrameTime);
 		pTex->SetAnimMode(animMode);
 
-		if (pTex == NULL) {
-			hplDelete(pDoc);
-			hplDelete(pMat);
-			return NULL;
-		}
-
 		pTex->SetWrapS(wrap);
 		pTex->SetWrapT(wrap);
 
