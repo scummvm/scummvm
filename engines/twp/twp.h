@@ -110,6 +110,9 @@ public:
 	Room* defineRoom(const Common::String& name, HSQOBJECT table, bool pseudo = false);
 	void setRoom(Room *room);
 
+	void execNutEntry(HSQUIRRELVM v, const Common::String& entry);
+	void execBnutEntry(HSQUIRRELVM v,const Common::String &entry);
+
 private:
 	void update(float elapsedMs);
 	void draw();
