@@ -95,6 +95,7 @@ Vm::Vm() {
 	sqgame_register_syslib(v);
 	sqgame_register_genlib(v);
 	sqgame_register_objlib(v);
+	sqgame_register_actorlib(v);
 
 	// TODO: constants
 	SQObject platform = sqtoobj(v, 666);
