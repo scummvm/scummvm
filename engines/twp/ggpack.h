@@ -130,6 +130,20 @@ private:
 	Common::SeekableReadStream *_s;
 };
 
+class GGBnutReader: public Common::ReadStream {
+public:
+	GGBnutReader();
+
+	bool open(Common::SeekableReadStream *s);
+
+	uint32 read(void *dataPtr, uint32 dataSize) override;
+	bool eos() const override;
+
+private:
+	Common::SeekableReadStream *_s = nullptr;
+	int _cursor = 0;
+};
+
 class GGPackEntryReader: public Common::SeekableReadStream {
 public:
 	GGPackEntryReader();

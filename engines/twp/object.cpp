@@ -30,12 +30,15 @@ namespace Twp {
 static int gObjectId = START_OBJECTID;
 
 Object::Object()
-	: _state(-1),
-	  _talkOffset(0, 90) {
+	: _talkOffset(0, 90) {
 	_node = new Node("newObj");
 	_nodeAnim = new Anim(this);
 	_node->addChild(_nodeAnim);
 	sq_resetobject(&_table);
+}
+
+Object::Object(HSQOBJECT o, const Common::String &key)
+	: _talkOffset(0, 90), _table(o), _key(key) {
 }
 
 Object *Room::createObject(const Common::String &sheet, const Common::Array<Common::String> &frames) {
@@ -53,7 +56,7 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 	// assign an id
 	setId(obj->_table, gObjectId++);
 	Common::String name = frames.size() > 0 ? frames[0] : "noname";
-	setf(obj->_table, "name", name);
+	sqsetf(obj->_table, "name", name);
 	obj->_key = name;
 	debug("Create object with new table: %s #%d", obj->_name.c_str(), obj->getId());
 
@@ -69,7 +72,7 @@ Object *Room::createObject(const Common::String &sheet, const Common::Array<Comm
 		obj->_anims.push_back(objAnim);
 	}
 
-	obj->_node->_zOrder = 1;
+	obj->_node->setZSort(1);
 	layer(0)->_objects.push_back(obj);
 	layer(0)->_node->addChild(obj->_node);
 	obj->_layer = layer(0);
@@ -129,24 +132,10 @@ Object *Room::createTextObject(const Common::String &fontName, const Common::Str
 
 int Object::getId() {
 	SQInteger result = 0;
-	getf(_table, "_id", result);
+	sqgetf(_table, "_id", result);
 	return (int)result;
 }
 
-// Changes the `state` of an object, although this can just be a internal state,
-//
-// it is typically used to change the object's image as it moves from it's current state to another.
-// Behind the scenes, states as just simple ints. State0, State1, etc.
-// Symbols like `CLOSED` and `OPEN` and just pre-defined to be 0 or 1.
-// State 0 is assumed to be the natural state of the object, which is why `OPEN` is 1 and `CLOSED` is 0 and not the other way around.
-// This can be a little confusing at first.
-// If the state of an object has multiple frames, then the animation is played when changing state, such has opening the clock.
-// `GONE` is a unique in that setting an object to `GONE` both sets its graphical state to 1, and makes it untouchable.
-// Once an object is set to `GONE`, if you want to make it visible and touchable again, you have to set both:
-//
-// .. code-block:: Squirrel
-// objectState(coin, HERE)
-// objectTouchable(coin, YES)
 void Object::setState(int state, bool instant) {
 	play(state, false, instant);
 	_state = state;
@@ -251,6 +240,127 @@ Common::String Object::suffix() const {
 	case FACE_RIGHT:
 		return "_right";
 	}
+}
+
+void Object::setPop(int count) {
+	_popCount = count;
+	_popElapsed = 0.f;
+}
+
+float Object::popScale() const {
+	return 0.5f + 0.5f * sin(-M_PI / 2.f + _popElapsed * 4.f * M_PI);
+}
+
+int Object::defaultVerbId() {
+	int result = VERB_LOOKAT;
+	if (sqrawexists(_table, "defaultVerb"))
+		sqgetf(_table, "defaultVerb", result);
+	else if (isActor(getId())) {
+		result = sqrawexists(_table, "verbTalkTo") ? VERB_TALKTO : VERB_WALKTO;
+	}
+	return result;
+}
+
+Math::Vector2d Object::getUsePos() {
+	return isActor(getId()) ? _node->getPos() + _node->getOffset() : _node->getPos() + _node->getOffset() + _usePos;
+}
+
+bool Object::touchable() {
+	if (_objType == otNone) {
+		if (_state == GONE) {
+			return false;
+		} else if (_node && !_node->isVisible()) {
+			return false;
+		} else if (sqrawexists(_table, "_touchable")) {
+			bool result;
+			sqgetf(_table, "_touchable", result);
+			return result;
+		} else if (sqrawexists(_table, "initTouchable")) {
+			bool result;
+			sqgetf(_table, "initTouchable", result);
+			return result;
+		} else {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Object::setTouchable(bool value) {
+	if (sqrawexists(_table, "_touchable"))
+		sqsetf(_table, "_touchable", value);
+	else
+		sqnewf(_table, "_touchable", value);
+}
+
+void Object::setIcon(int fps, const Common::StringArray &icons) {
+	_icons = icons;
+	_iconFps = fps;
+	_iconIndex = 0;
+	_iconElapsed = 0.f;
+}
+
+void Object::setIcon(const Common::String &icon) {
+	Common::StringArray icons;
+	icons.push_back(icon);
+	setIcon(0, icons);
+	sqsetf(_table, "icon", icon);
+}
+
+Common::String Object::getIcon() {
+	if (_icons.size() > 0)
+		return _icons[_iconIndex];
+	HSQOBJECT iconTable;
+	sqgetf(_table, "icon", iconTable);
+	if (iconTable._type == OT_NULL) {
+		warning("object table is null");
+		return "";
+	}
+	if (iconTable._type == OT_STRING) {
+		Common::String result = sq_objtostring(&iconTable);
+		setIcon(result);
+		return result;
+	}
+	if (iconTable._type == OT_ARRAY) {
+		int i = 0;
+		int fps = 0;
+		Common::StringArray icons;
+		sqgetitems(iconTable, [&](HSQOBJECT &item) {
+			if (i == 0) {
+				fps = sq_objtointeger(&item);
+			} else {
+				Common::String icon = sq_objtostring(&item);
+				icons.push_back(icon);
+			}
+			i++;
+		});
+		setIcon(fps, icons);
+		return getIcon();
+	}
+	return "";
+}
+
+int Object::getFlags() {
+	int result = 0;
+	if (sqrawexists(_table, "flags"))
+		sqgetf(_table, "flags", result);
+	return result;
+}
+
+void Object::setRoom(Room *room) {
+	if (_room != room) {
+		stopObjectMotors();
+		_room = room;
+	}
+}
+
+void Object::delObject() {
+	_layer->_objects.erase(Common::find(_layer->_objects.begin(), _layer->_objects.end(), this));
+    _node->getParent()->removeChild(_node);
+}
+
+void Object::stopObjectMotors() {
+	debug("TODO: stopObjectMotors");
 }
 
 } // namespace Twp

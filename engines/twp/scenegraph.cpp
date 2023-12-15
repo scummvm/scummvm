@@ -159,8 +159,8 @@ void Node::setSize(Math::Vector2d size) {
 	}
 }
 
-static bool cmpNodes(const Node *x, const Node *y) {
-	return x->getZSort() < y->getZSort();
+static int cmpNodes(const Node *x, const Node *y) {
+	return y->getZSort() < x->getZSort();
 }
 
 void Node::draw(Math::Matrix4 parent) {
@@ -216,10 +216,10 @@ void OverlayNode::drawCore(Math::Matrix4 trsf) {
 	gfx.drawQuad(gfx.camera(), _ovlColor);
 }
 
-ParallaxNode::ParallaxNode(const Math::Vector2d &parallax, const Common::String &textture, const Common::Array<SpriteSheetFrame> &frames)
+ParallaxNode::ParallaxNode(const Math::Vector2d &parallax, const Common::String &sheet, const Common::StringArray &frames)
 	: Node("parallax"),
 	  _parallax(parallax),
-	  _texture(textture),
+	  _sheet(sheet),
 	  _frames(frames) {
 }
 
@@ -234,26 +234,25 @@ Math::Matrix4 ParallaxNode::getTrsf(Math::Matrix4 parentTrsf) {
 	return trsf;
 }
 
-static Common::Rect div(const Common::Rect &r, const Math::Vector2d &v) {
-	return Common::Rect(r.left / v.getX(), r.top / v.getY(), r.width() / v.getX(), r.height() / v.getY());
-}
-
 void ParallaxNode::drawCore(Math::Matrix4 trsf) {
 	Gfx &gfx = g_engine->getGfx();
-	Texture *texture = g_engine->_resManager.texture(_texture);
+	SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
+	Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
 	Math::Matrix4 t = trsf;
+	float x = 0.f;
 	for (int i = 0; i < _frames.size(); i++) {
-		const SpriteSheetFrame &frame = _frames[i];
+		const SpriteSheetFrame &frame = sheet->frameTable[_frames[i]];
 		Math::Matrix4 myTrsf = t;
-		myTrsf.translate(Math::Vector3d(frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f));
-		gfx.drawSprite(div(frame.frame, Math::Vector2d(texture->width, texture->height)), *texture, getColor(), myTrsf);
+		myTrsf.translate(Math::Vector3d(x + frame.spriteSourceSize.left, frame.sourceSize.getY() - frame.spriteSourceSize.height() - frame.spriteSourceSize.top, 0.0f));
+		gfx.drawSprite(frame.frame, *texture, getColor(), myTrsf);
 		t = trsf;
-		t.translate(Math::Vector3d(frame.frame.width(), 0.0f, 0.0f));
+		x += frame.frame.width();
 	}
 }
 
 Anim::Anim(Object *obj)
 	: Node("anim") {
+	_obj = obj;
 	_zOrder = 1000;
 }
 
@@ -265,7 +264,7 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 	_anim = anim;
 	_disabled = false;
 	setName(anim->name);
-	_sheet = anim->sheet;
+	_sheet = anim->sheet.size() == 0 ? _obj->_room->_sheet : anim->sheet;
 	_frames = anim->frames;
 	_frameIndex = instant && _frames.size() > 0 ? _frames.size() - 1 : 0;
 	_frameDuration = 1.0 / _getFps(fps, anim->fps);
@@ -282,53 +281,71 @@ void Anim::setAnim(const ObjectAnimation *anim, float fps, bool loop, bool insta
 }
 
 void Anim::trigSound() {
-  if ((_anim->triggers.size() > 0) && _frameIndex < _anim->triggers.size()) {
-    const Common::String& trigger = _anim->triggers[_frameIndex];
-    if (trigger.size() > 0) {
-      _obj->trig(trigger);
+	if ((_anim->triggers.size() > 0) && _frameIndex < _anim->triggers.size()) {
+		const Common::String &trigger = _anim->triggers[_frameIndex];
+		if (trigger.size() > 0) {
+			_obj->trig(trigger);
+		}
 	}
-  }
 }
 
 void Anim::update(float elapsed) {
-  if (_anim)
-    setVisible(Common::find(_obj->_hiddenLayers.begin(), _obj->_hiddenLayers.end(), _anim->name)==NULL);
-    if (_instant)
-      disable();
-    else if (_frames.size() != 0) {
-      _elapsed += elapsed;
-      if(_elapsed > _frameDuration) {
-        _elapsed = 0;
-        if (_frameIndex < _frames.size() - 1) {
-          _frameIndex++;
-          trigSound();
-		} else if (_loop) {
-          _frameIndex = 0;
-          trigSound();
-		} else {
-          disable();
+	if (_anim)
+		setVisible(Common::find(_obj->_hiddenLayers.begin(), _obj->_hiddenLayers.end(), _anim->name) == NULL);
+	if (_instant)
+		disable();
+	else if (_frames.size() != 0) {
+		_elapsed += elapsed;
+		if (_elapsed > _frameDuration) {
+			_elapsed = 0;
+			if (_frameIndex < _frames.size() - 1) {
+				_frameIndex++;
+				trigSound();
+			} else if (_loop) {
+				_frameIndex = 0;
+				trigSound();
+			} else {
+				disable();
+			}
 		}
-	  }
-      if(_anim->offsets.size() > 0) {
-        Math::Vector2d off = _frameIndex < _anim->offsets.size()? _anim->offsets[_frameIndex]: Math::Vector2d();
-        if(_obj->getFacing() == FACE_LEFT) {
-          off.setX(-off.getX());
+		if (_anim->offsets.size() > 0) {
+			Math::Vector2d off = _frameIndex < _anim->offsets.size() ? _anim->offsets[_frameIndex] : Math::Vector2d();
+			if (_obj->getFacing() == FACE_LEFT) {
+				off.setX(-off.getX());
+			}
+			_offset = off;
 		}
-        _offset = off;
-	  }
 	} else if (_children.size() != 0) {
-      bool disabled = true;
-	  for (int i = 0; i < _children.size(); i++) {
-		Anim* layer = static_cast<Anim*>(_children[i]);
-        layer->update(elapsed);
-        disabled = disabled && layer->_disabled;
-	  }
-      if(disabled) {
-        disable();
-	  }
+		bool disabled = true;
+		for (int i = 0; i < _children.size(); i++) {
+			Anim *layer = static_cast<Anim *>(_children[i]);
+			layer->update(elapsed);
+			disabled = disabled && layer->_disabled;
+		}
+		if (disabled) {
+			disable();
+		}
 	} else {
-      disable();
+		disable();
 	}
 }
+
+void Anim::drawCore(Math::Matrix4 trsf) {
+	if (_frameIndex < _frames.size()) {
+		const Common::String &frame = _frames[_frameIndex];
+		bool flipX = _obj->getFacing() == FACE_LEFT;
+		SpriteSheet *sheet = g_engine->_resManager.spriteSheet(_sheet);
+		const SpriteSheetFrame &sf = sheet->frameTable[frame];
+		Texture *texture = g_engine->_resManager.texture(sheet->meta.image);
+		float x = flipX? -0.5f * (-1.f + sf.sourceSize.getX()) + sf.frame.width() + sf.spriteSourceSize.left: 0.5f * (-1.f + sf.sourceSize.getX()) - sf.spriteSourceSize.left;
+		float y = 0.5f * (sf.sourceSize.getY() + 1.f) - sf.spriteSourceSize.height() - sf.spriteSourceSize.top;
+		Math::Vector3d pos(int(-x), int(y), 0.f);
+		trsf.translate(pos);
+		g_engine->getGfx().drawSprite(sf.frame, *texture, getColor(), trsf, flipX);
+	}
+}
+
+Scene::Scene() : Node("Scene") {}
+Scene::~Scene() {}
 
 } // namespace Twp

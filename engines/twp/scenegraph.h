@@ -62,6 +62,10 @@ public:
 	// Finds a node in its children and returns its position.
 	int find(Node* other);
 
+	// Gets the local position for this node (relative to its parent)
+	void setPos(const Math::Vector2d& pos) { _pos = pos; }
+	Math::Vector2d getPos() const { return _pos; }
+	Math::Vector2d getOffset() const { return _offset; }
 	// Gets the absolute position for this node.
 	Math::Vector2d getAbsPos() const;
 
@@ -75,6 +79,7 @@ public:
 	void setAlpha(float alpha);
 	Color getAlpha() const { return _color.rgba.a; }
 
+	void setZSort(int zsort) { _zOrder = zsort; }
 	virtual int getZSort() const { return _zOrder; }
 	virtual Math::Vector2d getScale() const { return _scale; }
 
@@ -83,10 +88,6 @@ public:
 	virtual Rectf getRect() const;
 
 	void draw(Math::Matrix4 parent = Math::Matrix4());
-
-public:
-	Math::Vector2d _pos;
-	float _zOrder;
 
 protected:
 	virtual void onColorUpdated(Color c) {}
@@ -102,12 +103,14 @@ private:
 
 protected:
 	Common::String _name;
-	Node *_parent;
+	Math::Vector2d _pos;
+	float _zOrder = 0.f;
+	Node *_parent = nullptr;
 	Common::Array<Node *> _children;
 	Math::Vector2d _offset, _shakeOffset, _renderOffset, _anchor, _anchorNorm, _scale, _size;
 	Color _color, _computedColor;
-	bool _visible;
-	float _rotation, _rotationOffset;
+	bool _visible = false;
+	float _rotation = 0.f, _rotationOffset = 0.f;
 };
 
 class OverlayNode final: public Node {
@@ -124,7 +127,7 @@ private:
 
 class ParallaxNode final: public Node {
 public:
-	ParallaxNode(const Math::Vector2d& parallax, const Common::String& texture, const Common::Array<SpriteSheetFrame>& frames);
+	ParallaxNode(const Math::Vector2d& parallax, const Common::String& sheet, const Common::StringArray& frames);
 	virtual ~ParallaxNode();
 
 	Math::Matrix4 getTrsf(Math::Matrix4 parentTrsf) override final;
@@ -134,8 +137,8 @@ protected:
 
 private:
 	Math::Vector2d _parallax;
-	Common::String _texture;
-	Common::Array<SpriteSheetFrame> _frames;
+	Common::String _sheet;
+	Common::StringArray _frames;
 };
 
 struct ObjectAnimation;
@@ -151,6 +154,9 @@ public:
 	void trigSound();
 
 private:
+	virtual void drawCore(Math::Matrix4 trsf) override final;
+
+private:
 	Common::String _sheet;
     const ObjectAnimation* _anim;
     bool _disabled;
@@ -160,6 +166,12 @@ private:
     float _frameDuration;
     bool _loop, _instant;
     Object* _obj;
+};
+
+class Scene: public Node {
+public:
+	Scene();
+	virtual ~Scene() final;
 };
 
 } // End of namespace Twp

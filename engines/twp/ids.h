@@ -39,6 +39,24 @@
 #define START_CALLBACKID 8000000
 #define END_CALLBACKID   10000000
 
+#define FAR_LOOK 		8
+#define VERB_WALKTO 	1
+#define VERB_LOOKAT 	2
+#define VERB_TALKTO 	3
+#define VERB_PICKUP 	4
+#define VERB_OPEN 		5
+#define VERB_CLOSE 		6
+#define VERB_PUSH 		7
+#define VERB_PULL 		8
+#define VERB_GIVE 		9
+#define VERB_USE 		10
+#define VERB_DIALOG 	13
+
+#define GONE 			4
+#define USE_WITH 		2
+#define USE_ON 			4
+#define USE_IN 			32
+
 namespace Twp {
 
 bool isThread(int id);
@@ -48,6 +66,17 @@ bool isObject(int id);
 bool isSound(int id);
 bool isLight(int id);
 bool isCallback(int id);
+
+int newRoomId();
+int newObjId();
+int newActorId();
+int newSoundDefId();
+int newSoundId();
+int newThreadId();
+int newCallbackId();
+int newLightId();
+void setCallbackId(int id);
+int getCallbackId();
 
 }
 

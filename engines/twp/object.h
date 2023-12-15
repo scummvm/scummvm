@@ -79,16 +79,54 @@ class Layer;
 class Object {
 public:
 	Object();
+	Object(HSQOBJECT o, const Common::String& key);
 
 	int getId();
 
+	// Changes the `state` of an object, although this can just be a internal state,
+	//
+	// it is typically used to change the object's image as it moves from it's current state to another.
+	// Behind the scenes, states as just simple ints. State0, State1, etc.
+	// Symbols like `CLOSED` and `OPEN` and just pre-defined to be 0 or 1.
+	// State 0 is assumed to be the natural state of the object, which is why `OPEN` is 1 and `CLOSED` is 0 and not the other way around.
+	// This can be a little confusing at first.
+	// If the state of an object has multiple frames, then the animation is played when changing state, such has opening the clock.
+	// `GONE` is a unique in that setting an object to `GONE` both sets its graphical state to 1, and makes it untouchable.
+	// Once an object is set to `GONE`, if you want to make it visible and touchable again, you have to set both:
+	//
+	// .. code-block:: Squirrel
+	// objectState(coin, HERE)
+	// objectTouchable(coin, YES)
 	void setState(int state, bool instant = false);
+	bool touchable();
+	void setTouchable(bool value);
+
 	void play(int state, bool loop = false, bool instant = false);
 	// Plays an animation specified by the `state`.
 	void play(const Common::String &state, bool loop = false, bool instant = false);
+
 	void showLayer(const Common::String &layer, bool visible);
 	Facing getFacing() const;
 	void trig(const Common::String &name);
+
+	void setPop(int count);
+	int getPop() const { return _popCount; }
+	float popScale() const;
+
+	int defaultVerbId();
+
+	Math::Vector2d getUsePos();
+
+	void setIcon(int fps, const Common::StringArray& icons);
+	void setIcon(const Common::String& icon);
+	Common::String getIcon();
+
+	int getFlags();
+
+	void setRoom(Room* room);
+
+	void delObject();
+	void stopObjectMotors();
 
 private:
 	Common::String suffix() const;
@@ -98,30 +136,52 @@ private:
 public:
 	HSQOBJECT _table;
 	Common::String _name;
-	Common::String _sheet;
-	Common::String _key; // key used to identify this object by script
-	int _state;
-	Math::Vector2d _usePos;
-	Direction _useDir;
+	Common::String _parent;
+	Common::String _sheet;								// Spritesheet to use when a sprite is displayed in the room: "raw" means raw texture, empty string means use room texture
+	Common::String _key;								// key used to identify this object by script
+	Common::String _costumeName, _costumeSheet;
+	int _state = -1;
+	Math::Vector2d _usePos;								// use position
+	Direction _useDir = dNone;
 	Common::Rect _hotspot;
-	ObjectType _objType;
-	Room *_room;
+	ObjectType _objType = otNone;
+	Room *_room = nullptr;
 	Common::Array<ObjectAnimation> _anims;
-	bool _temporary;
-	bool _touchable;
-	Node *_node;
-	Anim *_nodeAnim;
-	Layer *_layer;
+	bool _temporary = false;
+	bool _touchable = false;
+	Node *_node = nullptr;
+	Node *_sayNode = nullptr;
+	Anim *_nodeAnim = nullptr;
+	Layer *_layer = nullptr;
 	Common::StringArray _hiddenLayers;
 	Common::String _animName;
-	int _animFlags;
-	bool _animLoop;
+	int _animFlags = 0;
+	bool _animLoop = false;
 	Common::HashMap<Facing, Facing, Common::Hash<int> > _facingMap;
-	Facing _facing;
-	int _facingLockValue;
-	float _fps;
+	Facing _facing = FACE_FRONT;
+	int _facingLockValue = 0;
+	float _fps = 0.f;
 	Common::HashMap<int, Trigger *> _triggers;
 	Math::Vector2d _talkOffset;
+	Math::Vector2d _walkSpeed;
+	bool _triggerActive = false;
+	bool _useWalkboxes = false;
+	float _volume = 1.f;
+	Color _talkColor;
+	Common::HashMap<Common::String, Common::String> _animNames;
+	bool _lit = false;
+	Object* _owner = nullptr;
+	Common::Array<Object*> _inventory;
+	int _inventoryOffset = 0;
+	Common::StringArray _icons;
+	int _iconFps = 0;
+	int _iconIndex = 0;
+	float _iconElapsed  = 0.f;
+	HSQOBJECT _enter, _leave;
+	int _dependentState = 0;
+    Object* _dependentObj;
+    float _popElapsed = 0.f;
+    int _popCount = 0;
 };
 
 } // namespace Twp

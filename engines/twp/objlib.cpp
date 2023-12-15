@@ -23,6 +23,7 @@
 #include "twp/sqgame.h"
 #include "twp/squtil.h"
 #include "twp/object.h"
+#include "twp/room.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
 #include "squirrel/sqobject.h"
@@ -54,7 +55,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 
 	// get sheet parameter if any
 	if (numArgs == 3) {
-		if (SQ_FAILED(get(v, 2, sheet)))
+		if (SQ_FAILED(sqget(v, 2, sheet)))
 			return sq_throwerror(v, "failed to get sheet");
 		framesIndex = 3;
 	}
@@ -64,7 +65,7 @@ static SQInteger createObject(HSQUIRRELVM v) {
 		switch (sq_gettype(v, framesIndex)) {
 		case OT_STRING: {
 			Common::String frame;
-			get(v, framesIndex, frame);
+			sqget(v, framesIndex, frame);
 			frames.push_back(frame);
 		} break;
 		case OT_ARRAY:
@@ -89,17 +90,17 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 	// Valid values for verticalAlign are ALIGN_TOP|ALIGN_BOTTOM. Valid values for horizonalAlign are ALIGN_LEFT|ALIGN_CENTER|ALIGN_RIGHT.
 	// If the optional horiztonalWidth parameter is present, it will wrap the text to that width.
 	const SQChar *fontName;
-	if (SQ_FAILED(get(v, 2, fontName)))
+	if (SQ_FAILED(sqget(v, 2, fontName)))
 		return sq_throwerror(v, "failed to get fontName");
 	const SQChar *text;
-	if (SQ_FAILED(get(v, 3, text)))
+	if (SQ_FAILED(sqget(v, 3, text)))
 		return sq_throwerror(v, "failed to get text");
 	TextHAlignment thAlign = thCenter;
 	TextVAlignment tvAlign = tvCenter;
 	float maxWidth = 0.0f;
 	if (sq_gettop(v) == 4) {
 		int align;
-		if (SQ_FAILED(get(v, 4, align)))
+		if (SQ_FAILED(sqget(v, 4, align)))
 			return sq_throwerror(v, "failed to get align");
 		uint64 hAlign = align & 0x0000000070000000;
 		uint64 vAlign = align & 0xFFFFFFFFA1000000;
@@ -125,7 +126,7 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 	}
 	debug("Create text %d, %d, max=%f, text=%s", thAlign, tvAlign, maxWidth, text);
 	Object *obj = g_engine->_room->createTextObject(fontName, text, thAlign, tvAlign, maxWidth);
-	push(v, obj->_table);
+	sqpush(v, obj->_table);
 	return 1;
 }
 
@@ -455,11 +456,11 @@ static SQInteger objectAt(HSQUIRRELVM v) {
 	sq_getstackobj(v, 2, &o);
 
 	SQInteger id;
-	getf(o, "_id", id);
+	sqgetf(o, "_id", id);
 
 	Object **pObj = Common::find_if(g_engine->_objects.begin(), g_engine->_objects.end(), [&](Object *o) {
 		SQObjectPtr id2;
-		_table(o->_table)->Get(sqobj(v, "_id"), id2);
+		_table(o->_table)->Get(sqtoobj(v, "_id"), id2);
 		return id == _integer(id2);
 	});
 
