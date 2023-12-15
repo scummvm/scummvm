@@ -1285,16 +1285,6 @@ bool MacMenu::mouseClick(int x, int y) {
 			_wm->activateMenu();
 
 		setActive(true);
-
-		if (_wm->_mode & kWMModalMenuMode) {
-			draw(_wm->_screen);
-			eventLoop();
-
-			// Do not do full refresh as we took care of restoring
-			// the screen. WM is not even aware we were drawing.
-			_wm->setFullRefresh(false);
-		}
-
 		return true;
 	}
 
