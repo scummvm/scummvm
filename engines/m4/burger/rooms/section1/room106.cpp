@@ -28,6 +28,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_DOG_ANIMATION = 3
+};
+
 static const char *SAID[][4] = {
 	{ "GARBAGE CANS",   "106w002", "106w003",  nullptr    },
 	{ "POLICE STATION", "106w004", "106w004z", "106w004z" },
@@ -58,13 +62,13 @@ const WilburMatch Room106::MATCH[] = {
 };
 
 const seriesPlayBreak Room106::PLAY1[] = {
-	{ 0, -1, "106d003a", 2, 255, -1, 0, 0, &_val3, 1 },
-	{ 0, -1, "106d003b", 2, 255, -1, 0, 0, &_val3, 2 },
-	{ 0, -1, "106d003c", 2, 255, -1, 0, 0, &_val3, 3 },
-	{ 0, -1, "106d003d", 2, 255, -1, 0, 0, &_val3, 4 },
-	{ 0, -1, "106d003e", 2, 255, -1, 0, 0, &_val3, 5 },
-	{ 0, -1, "106d003f", 2, 255, -1, 0, 0, &_val3, 6 },
-	{ 0, -1, "106d003g", 2, 255, -1, 0, 0, &_val3, 7 },
+	{ 0, -1, "106d003a", 2, 255, -1, 0, 0, &_dogState, 1 },
+	{ 0, -1, "106d003b", 2, 255, -1, 0, 0, &_dogState, 2 },
+	{ 0, -1, "106d003c", 2, 255, -1, 0, 0, &_dogState, 3 },
+	{ 0, -1, "106d003d", 2, 255, -1, 0, 0, &_dogState, 4 },
+	{ 0, -1, "106d003e", 2, 255, -1, 0, 0, &_dogState, 5 },
+	{ 0, -1, "106d003f", 2, 255, -1, 0, 0, &_dogState, 6 },
+	{ 0, -1, "106d003g", 2, 255, -1, 0, 0, &_dogState, 7 },
 	PLAY_BREAK_END
 };
 
@@ -74,54 +78,54 @@ const seriesPlayBreak Room106::PLAY2[] = {
 };
 
 const seriesPlayBreak Room106::PLAY3[] = {
-	{ 0, -1, "106d001a", 2, 255, -1, 0, -1, &_val3, 1 },
-	{ 0, -1, "106d001b", 2, 255, -1, 0, -1, &_val3, 2 },
-	{ 0, -1, "106d001c", 2, 255, -1, 0, -1, &_val3, 3 },
-	{ 0, -1, "106d001d", 2, 255, -1, 0, -1, &_val3, 4 },
-	{ 0, -1, "106d001e", 2, 255, -1, 0, -1, &_val3, 5 },
-	{ 0, -1, "106d001f", 2, 255, -1, 0, -1, &_val3, 6 },
+	{ 0, -1, "106d001a", 2, 255, -1, 0, -1, &_dogState, 1 },
+	{ 0, -1, "106d001b", 2, 255, -1, 0, -1, &_dogState, 2 },
+	{ 0, -1, "106d001c", 2, 255, -1, 0, -1, &_dogState, 3 },
+	{ 0, -1, "106d001d", 2, 255, -1, 0, -1, &_dogState, 4 },
+	{ 0, -1, "106d001e", 2, 255, -1, 0, -1, &_dogState, 5 },
+	{ 0, -1, "106d001f", 2, 255, -1, 0, -1, &_dogState, 6 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room106::PLAY4[] = {
-	{ 0, -1, "106d002a", 2, 255, -1, 0, -1, &_val3, 1 },
-	{ 0, -1, "106d002b", 2, 255, -1, 0, -1, &_val3, 2 },
-	{ 0, -1, "106d002c", 2, 255, -1, 0, -1, &_val3, 3 },
-	{ 0, -1, "106d002d", 2, 255, -1, 0, -1, &_val3, 4 },
-	{ 0, -1, "106d002e", 2, 255, -1, 0, -1, &_val3, 5 },
-	{ 0, -1, "106d002f", 2, 255, -1, 0, -1, &_val3, 6 },
-	{ 0, -1, "106d002g", 2, 255, -1, 0, -1, &_val3, 7 },
+	{ 0, -1, "106d002a", 2, 255, -1, 0, -1, &_dogState, 1 },
+	{ 0, -1, "106d002b", 2, 255, -1, 0, -1, &_dogState, 2 },
+	{ 0, -1, "106d002c", 2, 255, -1, 0, -1, &_dogState, 3 },
+	{ 0, -1, "106d002d", 2, 255, -1, 0, -1, &_dogState, 4 },
+	{ 0, -1, "106d002e", 2, 255, -1, 0, -1, &_dogState, 5 },
+	{ 0, -1, "106d002f", 2, 255, -1, 0, -1, &_dogState, 6 },
+	{ 0, -1, "106d002g", 2, 255, -1, 0, -1, &_dogState, 7 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room106::PLAY5[] = {
-	{ 0,  4, "106d006a", 2, 255, -1, 0, 0, &_val3,  1 },
-	{ 0,  4, "106d006b", 2, 255, -1, 0, 0, &_val3,  2 },
-	{ 0,  4, "106d006c", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ 0,  4, "106d006a", 2, 255, -1, 0, 0, &_dogState,  1 },
+	{ 0,  4, "106d006b", 2, 255, -1, 0, 0, &_dogState,  2 },
+	{ 0,  4, "106d006c", 2, 255, -1, 0, 0, &_dogState,  3 },
 	{ 5, -1, "106_005",  2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room106::PLAY6[] = {
 	{ 0, 4, "106_005",   2, 255, -1, 0, 0, nullptr, 0 },
-	{ 5, -1, "106d007a", 2, 255, -1, 0, 0, &_val3,  1 },
-	{ 5, -1, "106d007b", 2, 255, -1, 0, 0, &_val3,  2 },
-	{ 5, -1, "106d007c", 2, 255, -1, 0, 0, &_val3,  3 },
+	{ 5, -1, "106d007a", 2, 255, -1, 0, 0, &_dogState,  1 },
+	{ 5, -1, "106d007b", 2, 255, -1, 0, 0, &_dogState,  2 },
+	{ 5, -1, "106d007c", 2, 255, -1, 0, 0, &_dogState,  3 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room106::PLAY7[] = {
-	{ 0, -1, "106d005",  2, 255, -1, 0, 0, &_val3, 1 },
-	{ 0, -1, "106d005b", 2, 255, -1, 0, 0, &_val3, 2 },
-	{ 0, -1, "106d005c", 2, 255, -1, 0, 0, &_val3, 3 },
-	{ 0, -1, "106d005d", 2, 255, -1, 0, 0, &_val3, 4 },
-	{ 0, -1, "106d005e", 2, 255, -1, 0, 0, &_val3, 5 },
-	{ 0, -1, "106d005f", 2, 255, -1, 0, 0, &_val3, 6 },
+	{ 0, -1, "106d005",  2, 255, -1, 0, 0, &_dogState, 1 },
+	{ 0, -1, "106d005b", 2, 255, -1, 0, 0, &_dogState, 2 },
+	{ 0, -1, "106d005c", 2, 255, -1, 0, 0, &_dogState, 3 },
+	{ 0, -1, "106d005d", 2, 255, -1, 0, 0, &_dogState, 4 },
+	{ 0, -1, "106d005e", 2, 255, -1, 0, 0, &_dogState, 5 },
+	{ 0, -1, "106d005f", 2, 255, -1, 0, 0, &_dogState, 6 },
 	PLAY_BREAK_END
 };
 
 int32 Room106::_val1;
-int32 Room106::_val3;
+int32 Room106::_dogState;
 
 void Room106::preload() {
 	_G(player).walker_in_this_scene = _G(game).room_id != 137 &&
@@ -129,7 +133,7 @@ void Room106::preload() {
 }
 
 void Room106::init() {
-	_val3 = 0;
+	_dogState = 0;
 
 	digi_preload("100_001");
 	digi_preload("106_101");
@@ -143,12 +147,12 @@ void Room106::init() {
 	loadSeries();
 
 	if (_G(game).previous_room == -1) {
-		_val2 = _G(flags)[V172] == 10023 ? 9 : 15;
+		_dogShould = _G(flags)[V172] == 10023 ? 9 : 15;
 	} else {
-		_val2 = imath_ranged_rand(1, 2) == 1 ? 5 : 6;
+		_dogShould = imath_ranged_rand(1, 2) == 1 ? 5 : 6;
 	}
 
-	kernel_trigger_dispatch_now(3);
+	kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 	series_show("106gate", 0x4fd);
 	series_show("106gates", 0x4fe);
 	series_show("106tt", 0x600);
@@ -201,30 +205,30 @@ void Room106::daemon() {
 		}
 		break;
 
-	case 3:
-		switch (_val2) {
+	case kCHANGE_DOG_ANIMATION:
+		switch (_dogShould) {
 		case 5:
-			_val3 = imath_ranged_rand(1, 7);
-			_val2 = 7;
-			series_play_with_breaks(PLAY1, "106dg01", 0x501, 3, 3);
+			_dogState = imath_ranged_rand(1, 7);
+			_dogShould = 7;
+			series_play_with_breaks(PLAY1, "106dg01", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 6:
-			_val2 = 7;
-			series_play_with_breaks(PLAY2, "106dg02", 0x501, 3, 3);
+			_dogShould = 7;
+			series_play_with_breaks(PLAY2, "106dg02", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 7:
-			_val3 = imath_ranged_rand(1, 6);
-			_val2 = _G(game).previous_room == 137 || _G(game).previous_room == 138 ? 9 : 8;
-			series_play_with_breaks(PLAY3, "106dg04", 0x501, 3, 3);
+			_dogState = imath_ranged_rand(1, 6);
+			_dogShould = _G(game).previous_room == 137 || _G(game).previous_room == 138 ? 9 : 8;
+			series_play_with_breaks(PLAY3, "106dg04", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 8:
 			_val1 = 1;
 			ws_turn_to_face(calc_facing(415, 234), 2);
-			_val2 = 9;
-			kernel_trigger_dispatch_now(3);
+			_dogShould = 9;
+			kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			break;
 
 		case 9:
@@ -232,75 +236,75 @@ void Room106::daemon() {
 
 			switch (imath_ranged_rand(1, 6)) {
 			case 1:
-				_val2 = 10;
+				_dogShould = 10;
 				break;
 			case 2:
-				_val2 = 11;
+				_dogShould = 11;
 				break;
 			case 3:
-				_val2 = 12;
+				_dogShould = 12;
 				break;
 			default:
-				_val2 = 9;
+				_dogShould = 9;
 				break;
 			}
 
-			series_show("106dg07", 0x501, 0, 3, 120);
+			series_show("106dg07", 0x501, 0, kCHANGE_DOG_ANIMATION, 120);
 			series_show("106dg07s", 0x502, 0, -1, 120);
 			break;
 
 		case 10:
 			if (digi_play_state(1)) {
-				_val2 = 9;
-				kernel_trigger_dispatch_now(3);
+				_dogShould = 9;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
-				_val3 = imath_ranged_rand(1, 7);
-				_val2 = 9;
-				series_play_with_breaks(PLAY4, "106dg05", 0x501, 3, 3);
+				_dogState = imath_ranged_rand(1, 7);
+				_dogShould = 9;
+				series_play_with_breaks(PLAY4, "106dg05", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			}
 			break;
 
 		case 11:
 			if (digi_play_state(1)) {
-				_val2 = 9;
-				kernel_trigger_dispatch_now(3);
+				_dogShould = 9;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
-				_val3 = imath_ranged_rand(1, 3);
-				_val2 = 15;
-				series_play_with_breaks(PLAY5, "106dg07", 0x501, 3, 3);
+				_dogState = imath_ranged_rand(1, 3);
+				_dogShould = 15;
+				series_play_with_breaks(PLAY5, "106dg07", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			}
 			break;
 
 		case 12:
 			if (digi_play_state(1)) {
-				_val2 = 9;
-				kernel_trigger_dispatch_now(3);
+				_dogShould = 9;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
-				_val3 = imath_ranged_rand(1, 6);
-				_val2 = 9;
-				series_play_with_breaks(PLAY3, "106dg04", 0x501, 3, 3);
+				_dogState = imath_ranged_rand(1, 6);
+				_dogShould = 9;
+				series_play_with_breaks(PLAY3, "106dg04", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			}
 			break;
 
 		case 13:
 			if (digi_play_state(1)) {
-				_val2 = 15;
-				kernel_trigger_dispatch_now(3);
+				_dogShould = 15;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
-				_val3 = imath_ranged_rand(1, 6);
-				_val2 = 15;
-				series_play_with_breaks(PLAY3, "106dg09", 0x501, 3, 3);
+				_dogState = imath_ranged_rand(1, 6);
+				_dogShould = 15;
+				series_play_with_breaks(PLAY3, "106dg09", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			}
 			break;
 
 		case 14:
 			if (digi_play_state(1)) {
-				_val2 = 15;
-				kernel_trigger_dispatch_now(3);
+				_dogShould = 15;
+				kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
 			} else {
-				_val3 = imath_ranged_rand(1, 3);
-				_val2 = 9;
-				series_play_with_breaks(PLAY6, "106dg11", 0x501, 3, 3);
+				_dogState = imath_ranged_rand(1, 3);
+				_dogShould = 9;
+				series_play_with_breaks(PLAY6, "106dg11", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			}
 			break;
 
@@ -309,30 +313,30 @@ void Room106::daemon() {
 
 			switch (imath_ranged_rand(1, 4)) {
 			case 1:
-				_val2 = 13;
+				_dogShould = 13;
 				break;
 			case 2:
-				_val2 = 14;
+				_dogShould = 14;
 				break;
 			default:
-				_val2 = 15;
+				_dogShould = 15;
 				break;
 			}
 
-			series_show("106dg07", 0x501, 0, 3, 120, 8);
+			series_show("106dg07", 0x501, 0, kCHANGE_DOG_ANIMATION, 120, 8);
 			series_show("106dg07s", 0x502, 0, -1, 120, 8);
 			break;
 
 		case 16:
-			_val3 = imath_ranged_rand(1, 6);
-			_val2 = 11;
-			series_play_with_breaks(PLAY7, "106dg06", 0x501, 3, 3);
+			_dogState = imath_ranged_rand(1, 6);
+			_dogShould = 11;
+			series_play_with_breaks(PLAY7, "106dg06", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		case 17:
-			_val3 = imath_ranged_rand(1, 6);
-			_val2 = 13;
-			series_play_with_breaks(PLAY7, "106dg10", 0x501, 3, 3);
+			_dogState = imath_ranged_rand(1, 6);
+			_dogShould = 13;
+			series_play_with_breaks(PLAY7, "106dg10", 0x501, kCHANGE_DOG_ANIMATION, 3);
 			break;
 
 		default:
@@ -351,7 +355,7 @@ void Room106::daemon() {
 		break;
 
 	case 10008:
-		_val2 = _G(flags)[V172] == 10023 ? 16 : 17;
+		_dogShould = _G(flags)[V172] == 10023 ? 16 : 17;
 		break;
 
 	default:
@@ -364,7 +368,7 @@ void Room106::pre_parser() {
 	if (player_said("SKY"))
 		player_set_facing_hotspot();
 
-	if (player_said("MAIN STREET") && player_said_any("GEAR", "LOOK AT")) {
+	if (player_said("MAIN STREET") && !player_said_any("GEAR", "LOOK AT")) {
 		player_set_facing_at(-40, 317);
 	}
 }
@@ -372,14 +376,16 @@ void Room106::pre_parser() {
 void Room106::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
-	if (!_G(walker).wilbur_said(SAID)) {
-		if (player_said_any("GEAR", "LOOK AT") && player_said("MAIN STREET")) {
-			disable_player_commands_and_fade_init(1001);
-			_G(player).command_ready = false;
-		} else if (_G(walker).wilbur_match(MATCH)) {
-			_G(player).command_ready = false;
-		}
+	if (_G(walker).wilbur_said(SAID)) {
+		// Already handled
+	} else if (player_said_any("GEAR", "LOOK AT") && player_said("MAIN STREET")) {
+		disable_player_commands_and_fade_init(1001);
+		_G(player).command_ready = false;
+	} else if (!_G(walker).wilbur_match(MATCH)) {
+		return;
 	}
+
+	_G(player).command_ready = false;
 }
 
 void Room106::setHotspots() {

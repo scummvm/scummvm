@@ -41,8 +41,8 @@ class Room106 : public Room {
 private:
 	const char *_digi1 = nullptr;
 	static int32 _val1;
-	int _val2 = 0;
-	static int32 _val3;
+	int _dogShould = 0;
+	static int32 _dogState;
 
 	void setHotspots();
 	void loadSeries();
