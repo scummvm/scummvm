@@ -58,7 +58,7 @@ _s(
 #ifdef USE_CLOUD
 
 _s("Cloud"),
-"cloud_connection.zip",
+"helpdialog.zip",
 _s(
 "## Connecting a cloud service - Quick mode\n"
 "\n"
@@ -82,7 +82,7 @@ _s(
 "\n	"
 "  ![Open the link](open_link.png \"Open the link\"){w=70%}\n"
 "\n"
-"6. In the browser window that opens, select the cloud service to connect. \n"  
+"6. In the browser window that opens, select the cloud service to connect. \n"
 "\n	"
 "  ![Choose the cloud service](cloud_browser.png \"Choose the cloud service\"){w=70%}\n"
 "\n"

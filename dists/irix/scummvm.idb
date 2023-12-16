@@ -26,6 +26,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/encoding.dat encoding.dat scummvm.sw.e
 f 0644 root sys usr/ScummVM/share/scummvm/fonts.dat fonts.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/fonts-cjk.dat fonts-cjk.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/grim-patch.lab grim-patch.lab scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/helpdialog.zip helpdialog.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hugo.dat hugo.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/hadesch_translations.dat hadesch_translations.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe

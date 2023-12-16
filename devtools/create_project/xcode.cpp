@@ -1036,6 +1036,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles(const BuildSetup &setu
 		files.push_back("dists/engine-data/fonts-cjk.dat");
 		files.push_back("dists/engine-data/freescape.dat");
 		files.push_back("dists/engine-data/hadesch_translations.dat");
+		files.push_back("dists/engine-data/helpdialog.zip");
 		files.push_back("dists/engine-data/hugo.dat");
 		files.push_back("dists/engine-data/kyra.dat");
 		files.push_back("dists/engine-data/lure.dat");
