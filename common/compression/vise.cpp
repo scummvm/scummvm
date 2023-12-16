@@ -73,6 +73,7 @@ private:
 		Common::String getName() const override;
 		Common::Path getPathInArchive() const override;
 		Common::String getFileName() const override;
+		bool isInMacArchive() const override;
 
 	private:
 		Common::SeekableReadStream *createReadStreamForDataStream(bool isResFork) const;
@@ -217,6 +218,10 @@ Common::Path MacVISEArchive::ArchiveMember::getPathInArchive() const {
 
 Common::String MacVISEArchive::ArchiveMember::getFileName() const {
 	return _fileDesc->name;
+}
+
+bool MacVISEArchive::ArchiveMember::isInMacArchive() const {
+	return true;
 }
 
 MacVISEArchive::FileDesc::FileDesc() : type{0, 0, 0, 0}, creator{0, 0, 0, 0}, compressedDataSize(0), uncompressedDataSize(0), compressedResSize(0), uncompressedResSize(0), positionInArchive(0) {
