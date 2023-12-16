@@ -31,7 +31,6 @@ namespace Director {
 class AppleCDXObject : public Object<AppleCDXObject> {
 public:
 	AppleCDXObject(ObjectType objType);
-	~AppleCDXObject() override;
 	int _inpoint;
 	int _outpoint;
 	// Instead of immediately returning values, methods which return
@@ -50,6 +49,7 @@ void open(int type);
 void close(int type);
 
 void m_new(int nargs);
+void m_dispose(int nargs);
 void m_still(int nargs);
 void m_service(int nargs);
 void m_readStatus(int nargs);
