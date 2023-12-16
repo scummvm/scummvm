@@ -45,12 +45,12 @@ static const BoonsvilleEvent EVENTS[] = {
 	{ 22800, -1, "After getting logic stuff" },
 	{ 15000, kBurlLeavesTown, "Burl leaves town" },
 	{ 18600, kBandEntersTown, "Band enters town" },
-	{ 33600, 10022, "Abduction time" },
-	{ 55200, 10023, "Nero timeout" },
-	{ 166800, 10023, "Survival timeout" },
-	{ 278400, 10023, "Sensory timeout" },
-	{ 390000, 10023, "Language timeout" },
-	{ 501600, 10023, "Logic timeout" },
+	{ 33600, kAbduction, "Abduction time" },
+	{ 55200, kTestTimeout, "Nero timeout" },
+	{ 166800, kTestTimeout, "Survival timeout" },
+	{ 278400, kTestTimeout, "Sensory timeout" },
+	{ 390000, kTestTimeout, "Language timeout" },
+	{ 501600, kTestTimeout, "Logic timeout" },
 	{ 505200, 10033, "Conclusion" },
 	{ 0, 0, nullptr }
 };

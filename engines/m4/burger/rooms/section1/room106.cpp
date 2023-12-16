@@ -29,7 +29,10 @@ namespace Burger {
 namespace Rooms {
 
 enum {
-	kCHANGE_DOG_ANIMATION = 3
+	kWILBUR_SPEECH = 2,
+	kCHANGE_DOG_ANIMATION = 3,
+	kWILBUR_ARRESTED1 = 4,
+	kWILBUR_ARRESTED2 = 5
 };
 
 static const char *SAID[][4] = {
@@ -55,9 +58,9 @@ static const char *SAID[][4] = {
 };
 
 const WilburMatch Room106::MATCH[] = {
-	{ "JAWZ O' LIFE", "GATE",  2, nullptr, 0, &_val1, 2 },
-	{ "JAWZ O' LIFE", "CHAIN", 2, nullptr, 0, &_val1, 2 },
-	{ "JAWZ O' LIFE", "LOCK",  2, nullptr, 0, &_val1, 2 },
+	{ "JAWZ O' LIFE", "GATE",  2, nullptr, 0, &_speechNum, 2 },
+	{ "JAWZ O' LIFE", "CHAIN", 2, nullptr, 0, &_speechNum, 2 },
+	{ "JAWZ O' LIFE", "LOCK",  2, nullptr, 0, &_speechNum, 2 },
 	WILBUR_MATCH_END
 };
 
@@ -124,7 +127,7 @@ const seriesPlayBreak Room106::PLAY7[] = {
 	PLAY_BREAK_END
 };
 
-int32 Room106::_val1;
+int32 Room106::_speechNum;
 int32 Room106::_dogState;
 
 void Room106::preload() {
@@ -141,7 +144,7 @@ void Room106::init() {
 
 	kernel_trigger_dispatch_now(1);
 	player_set_commands_allowed(false);
-	_val1 = 0;
+	_speechNum = 0;
 
 	setHotspots();
 	loadSeries();
@@ -165,7 +168,8 @@ void Room106::init() {
 		break;
 
 	case 138:
-		digi_play("106_102", 1, 255, 4);
+		// Wilbur was arrested
+		digi_play("106_102", 1, 255, kWILBUR_ARRESTED1);
 		break;
 
 	case KERNEL_RESTORING_GAME:
@@ -186,7 +190,7 @@ void Room106::daemon() {
 		break;
 
 	case 2:
-		switch (_val1) {
+		switch (_speechNum) {
 		case 1:
 			player_set_commands_allowed(true);
 			_G(walker).wilbur_speech_random("106w001a", "106w001b", "106w001c");
@@ -195,10 +199,10 @@ void Room106::daemon() {
 			wilbur_speech("106w014");
 			break;
 		case 3:
-			wilbur_speech("106w501", 5);
+			wilbur_speech("106w501", kWILBUR_ARRESTED2);
 			break;
 		case 4:
-			wilbur_speech("106w500", 10022);
+			wilbur_speech("106w500", kAbduction);
 			break;
 		default:
 			break;
@@ -225,7 +229,7 @@ void Room106::daemon() {
 			break;
 
 		case 8:
-			_val1 = 1;
+			_speechNum = 1;
 			ws_turn_to_face(calc_facing(415, 234), 2);
 			_dogShould = 9;
 			kernel_trigger_dispatch_now(kCHANGE_DOG_ANIMATION);
@@ -344,14 +348,14 @@ void Room106::daemon() {
 		}
 		break;
 
-	case 4:
-		_val1 = 3;
-		digi_play("106s001", 1, 255, 2);
+	case kWILBUR_ARRESTED1:
+		_speechNum = 3;
+		digi_play("106s001", 1, 255, kWILBUR_SPEECH);
 		break;
 
-	case 5:
-		_val1 = 4;
-		digi_play("106_103", 1, 255, 2);
+	case kWILBUR_ARRESTED2:
+		_speechNum = 4;
+		digi_play("106_103", 1, 255, kWILBUR_SPEECH);
 		break;
 
 	case 10008:

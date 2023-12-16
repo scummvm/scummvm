@@ -40,7 +40,7 @@ class Room106 : public Room {
 	static const seriesPlayBreak PLAY7[];
 private:
 	const char *_digi1 = nullptr;
-	static int32 _val1;
+	static int32 _speechNum;
 	int _dogShould = 0;
 	static int32 _dogState;
 
