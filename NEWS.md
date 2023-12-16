@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.8.0 (XXXX-XX-XX)
+#### 2.8.0 (2023-12-30)
 
  New games:
    - Added support for macOS versions of Syberia and Syberia II.
