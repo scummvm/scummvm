@@ -37,6 +37,10 @@ U32String ArchiveMember::getDisplayName() const {
 	return getName();
 }
 
+bool ArchiveMember::isInMacArchive() const {
+	return false;
+}
+
 bool ArchiveMember::isDirectory() const {
 	return false;
 }

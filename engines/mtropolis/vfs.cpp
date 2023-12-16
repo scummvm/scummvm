@@ -235,4 +235,8 @@ Common::U32String VirtualFileSystem::VFSArchiveMember::getDisplayName() const {
 	return _virtualFile->_archiveMember->getDisplayName();
 }
 
+bool VirtualFileSystem::VFSArchiveMember::isInMacArchive() const {
+	return _virtualFile->_archiveMember->isInMacArchive();
+}
+
 } // End of namespace MTropolis
