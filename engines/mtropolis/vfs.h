@@ -92,6 +92,7 @@ private:
 		bool isDirectory() const override;
 		void listChildren(Common::ArchiveMemberList &childList, const char *pattern) const override;
 		Common::U32String getDisplayName() const override;
+		bool isInMacArchive() const override;
 
 	private:
 		const VirtualFile *_virtualFile;

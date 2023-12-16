@@ -73,6 +73,13 @@ private:
 		FileEntryFork resFork;
 	};
 
+	class StuffItArchiveMember : public Common::GenericArchiveMember {
+	public:
+		StuffItArchiveMember(const Common::Path &path, const Common::Archive &archive);
+
+		bool isInMacArchive() const override;
+	};
+
 	Common::SeekableReadStream *_stream;
 
 	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -284,7 +291,7 @@ int StuffItArchive::listMembers(Common::ArchiveMemberList &list) const {
 }
 
 const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::Path &path) const {
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
+	return Common::ArchiveMemberPtr(new StuffItArchiveMember(path, *this));
 }
 
 Common::SharedArchiveContents StuffItArchive::readContentsForPath(const Common::String &name) const {
@@ -1116,6 +1123,14 @@ void StuffItArchive::decompress14(Common::SeekableReadStream *src, byte *dst, ui
 
 
 StuffItArchive::FileEntryFork::FileEntryFork() : uncompressedSize(0), compressedSize(0), offset(0), crc(0), compression(0) {
+}
+
+StuffItArchive::StuffItArchiveMember::StuffItArchiveMember(const Common::Path &path, const Common::Archive &archive)
+	: Common::GenericArchiveMember(path, archive) {
+}
+
+bool StuffItArchive::StuffItArchiveMember::isInMacArchive() const {
+	return true;
 }
 
 Common::Archive *createStuffItArchive(const Common::String &fileName, bool flattenTree) {
