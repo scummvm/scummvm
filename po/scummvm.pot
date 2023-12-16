@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0pre\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2023-12-15 09:31+0000\n"
+"POT-Creation-Date: 2023-12-16 18:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4262,7 +4262,7 @@ msgstr ""
 
 #: backends/platform/android/android.cpp:1031
 #: backends/platform/ios7/ios7_osys_misc.mm:249
-#: backends/platform/ios7/ios7_osys_misc.mm:323
+#: backends/platform/ios7/ios7_osys_misc.mm:324
 msgid "Touch Controls"
 msgstr ""
 
@@ -4336,8 +4336,8 @@ msgid ""
 msgstr ""
 
 #: backends/platform/android/android.cpp:1090
-#: backends/platform/ios7/ios7_osys_misc.mm:302
-#: backends/platform/ios7/ios7_osys_misc.mm:346
+#: backends/platform/ios7/ios7_osys_misc.mm:303
+#: backends/platform/ios7/ios7_osys_misc.mm:347
 msgid "Adding Games"
 msgstr ""
 
@@ -4561,6 +4561,11 @@ msgid ""
 "swiping two fingers from right to left or through **Global Options > "
 "Backend**. The directional button can be configured to either a thumbstick "
 "or a dpad.\n"
+"**Note** While the virtual controller is connected it is not possible to "
+"perform mouse clicks using tap gestures since they are disabled as long as "
+"the virtual controller is visible. Left mouse clicks are performed by "
+"pressing the A button. Tap gestures are enabled again when virtual "
+"controller is disconnected.\n"
 "\n"
 "### Global Main Menu\n"
 "\n"
@@ -4582,7 +4587,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:305
+#: backends/platform/ios7/ios7_osys_misc.mm:306
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -4603,7 +4608,7 @@ msgid ""
 "other_platforms/ios.html) for more information.\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:326
+#: backends/platform/ios7/ios7_osys_misc.mm:327
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -4625,7 +4630,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/ios7/ios7_osys_misc.mm:349
+#: backends/platform/ios7/ios7_osys_misc.mm:350
 msgid ""
 "## Adding Games \n"
 "\n"
