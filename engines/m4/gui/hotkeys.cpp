@@ -271,8 +271,13 @@ void Hotkeys::changeGlobal(void *, void *) {
 
 void Hotkeys::changeGlobalChange(void *, void *) {
 	// Get the global number to change
-	Item *textField = _teleportDialog->getItem(3);
+	Item *textField = _changeGlobalDialog->getItem(3);
 	_globalToChange = atoi(textField->prompt);
+
+	if (!_globalToChange) {
+		changeGlobalCancel(nullptr, nullptr);
+		return;
+	}
 
 	// Destroy the current dialog
 	_changeGlobalDialog->destroy();
@@ -296,7 +301,7 @@ void Hotkeys::changeGlobalChange(void *, void *) {
 }
 
 void Hotkeys::changeGlobalDoChange(void *, void *) {
-	Item *textField = _teleportDialog->getItem(3);
+	Item *textField = _changeGlobalDialog->getItem(3);
 	int globalVal = atoi(textField->prompt);
 
 	if (g_engine->getGameType() == GType_Burger)
