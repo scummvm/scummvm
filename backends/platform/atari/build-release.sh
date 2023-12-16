@@ -19,6 +19,8 @@ then
 	--backend=atari \
 	--host=${PLATFORM} \
 	--enable-release \
+	--disable-png \
+	--disable-enet \
 	--disable-mt32emu \
 	--disable-lua \
 	--disable-nuked-opl \
@@ -31,7 +33,8 @@ then
 	--opengl-mode=none \
 	--enable-verbose-build \
 	--enable-text-console \
-	--disable-engine=director,cine
+	--disable-engine=director,cine \
+	--disable-detection-full
 fi
 
 make -j 16
