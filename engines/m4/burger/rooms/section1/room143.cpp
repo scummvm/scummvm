@@ -343,6 +343,7 @@ void Room143::daemon() {
 		break;
 
 	case 19:
+		// Burl turns to talk to Wilbur
 		_burlShould = 37;
 		break;
 
@@ -846,6 +847,9 @@ void Room143::daemon() {
 				Series::series_play("143bu06", 0xa00, 0, kCHANGE_BURL_ANIMATION, 6, 0, 100, 0, 0, 0, 3);
 				break;
 
+			case 36:
+			case 37:
+			case 38:
 			case 39:
 				_burlMode = 37;
 				Series::series_play("143bu11", 0xa00, 0, kCHANGE_BURL_ANIMATION);
@@ -1159,8 +1163,10 @@ void Room143::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv35")) {
+		// Talking to Vera
 		conv35();
 	} else if (player_said("conv30")) {
+		// Talking to Burl
 		conv30();
 	} else if (money && lookFlag) {
 		wilbur_speech("143w030");
@@ -1174,7 +1180,7 @@ void Room143::parser() {
 	} else if (player_said("talk to", "vera")) {
 		talkToVera();
 	} else if (player_said("talk to", "burl")) {
-		if (player_commands_allowed() || INTERFACE_VISIBLE) {
+		if (player_commands_allowed() || !INTERFACE_VISIBLE) {
 			talkToBurl();
 
 			if (_burlMode != 42 && _burlMode != 43) {
@@ -1437,6 +1443,7 @@ void Room143::conv30() {
 			conv_resume();
 		} else if (who == 1) {
 			sendWSMessage(0x150000, 0, _G(my_walker), 0, nullptr, 1);
+			conv_resume();
 		}
 	} else if (sound) {
 		if (who <= 0) {
