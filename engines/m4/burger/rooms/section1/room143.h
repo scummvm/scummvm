@@ -54,12 +54,12 @@ private:
 	const char *_digiName = nullptr;
 	bool _flag1 = false;
 	int _frame = 0;
-	int _val1 = 0;
-	int _val2 = 0;
+	int _veraShould = 0;
+	int _veraMode = 0;
 	int _val3 = 0;
-	int _val4 = 0;
-	int _val5 = 0;
-	int _val6 = 0;
+	int _catShould = 0;
+	int _burlMode = 0;
+	int _burlShould = 0;
 	KernelTriggerType _digiMode = (KernelTriggerType)0;
 	int _digiTrigger = 0;
 
