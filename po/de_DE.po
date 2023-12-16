@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2023-12-15 09:31+0000\n"
-"PO-Revision-Date: 2023-12-13 17:43+0000\n"
+"PO-Revision-Date: 2023-12-16 06:33+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5836,13 +5836,17 @@ msgstr "Verwendete Sprache in mehrsprachigen Spielen"
 
 #: engines/ags/dialogs.cpp:83
 msgid "Enable ScummVM save management"
-msgstr ""
+msgstr "Aktiviere ScummVM-Spielstand-Verwaltung"
 
 #: engines/ags/dialogs.cpp:83
 msgid ""
 "Never disable ScummVM save management and autosaves.\n"
 "NOTE: This could cause save duplication and other oddities"
 msgstr ""
+"Die Spielstand-Verwaltung von ScummVM sowie Autosaves werden nie deaktiviert."
+"\n"
+"HINWEIS: Diese Option kann zu doppelten Spielständen und anderen "
+"Kuriositäten führen"
 
 #: engines/ags/dialogs.cpp:88
 msgid "Force antialiased text"
@@ -5885,6 +5889,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Um die originale Spiel-Erfahrung zu erhalten, sollte das Spiel nur über die "
+"Spiel-Oberfläche geladen werden.\n"
+"Du kannst diese Einstellung jedoch in den Spieloptionen überschreiben."
 
 #: engines/ags/ags.cpp:323
 msgid ""
@@ -5892,6 +5899,9 @@ msgid ""
 "game interface.\n"
 "You can, however, override this setting in Game Options."
 msgstr ""
+"Um die originale Spiel-Erfahrung zu erhalten, sollte das Spiel nur über die "
+"Spiel-Oberfläche gespeichert werden.\n"
+"Du kannst diese Einstellung jedoch in den Spieloptionen überschreiben."
 
 #: engines/asylum/metaengine.cpp:115
 msgid "Show version"
