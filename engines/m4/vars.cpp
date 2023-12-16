@@ -42,7 +42,6 @@ Vars *g_vars;
 
 Vars::Vars() : _digi(g_engine->_mixer) {
 	g_vars = this;
-	_cheating_enabled = gDebugLevel > 0;
 
 	Common::fill(_sizeMem, _sizeMem + _MEMTYPE_LIMIT, 0);
 	Common::fill(_requests, _requests + _MEMTYPE_LIMIT, 0);
@@ -92,7 +91,7 @@ bool Vars::init() {
 	grab_fonts();
 	gr_font_set(_font_inter);
 
-	if (_cheat_keys_enabled) {
+	if (_cheating_enabled) {
 		if (!dbg_ws_init(_kernel.start_up_with_dbg_ws, _font_tiny_prop, _globals))
 			error_show(FL, 'DWIF', "cheat system");
 	}
