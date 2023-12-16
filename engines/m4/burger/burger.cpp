@@ -350,7 +350,7 @@ void BurgerEngine::global_daemon() {
 		_G(walker).wilbur_unpoof();
 		break;
 
-	case 10022:
+	case kAbduction:
 		if (_G(game).room_id < 200) {
 			_G(wilbur_should) = 10017;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
@@ -359,18 +359,18 @@ void BurgerEngine::global_daemon() {
 		}
 		break;
 
-	case 10023:
+	case kTestTimeout:
 		if (_G(game).room_id < 700) {
 			_G(wilbur_should) = 10018;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 		break;
 
-	case kTELEPROTED1:
-		disable_player_commands_and_fade_init(kTELEPROTED2);
+	case kTELEPORTED1:
+		disable_player_commands_and_fade_init(kTELEPORTED2);
 		break;
 
-	case kTELEPROTED2:
+	case kTELEPORTED2:
 		testDone();
 		break;
 
