@@ -554,8 +554,10 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 		_files.clear();
 		addAsVirtualFiles("-QfG1-", "qfg1-*");
 		addAsVirtualFiles("-QfG1VGA-", "qfg1vga-*");
-		if (QfGImport > 2)
+		if (QfGImport > 2) {
 			addAsVirtualFiles("-QfG2-", "qfg2-*");
+			addAsVirtualFiles("-QfG2 AGDI-", "qfg2agdi-*");
+		}
 		if (QfGImport > 3)
 			addAsVirtualFiles("-QfG3-", "qfg3-*");
 
