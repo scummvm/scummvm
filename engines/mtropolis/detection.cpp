@@ -99,13 +99,10 @@ ADDetectedGame MTropolisMetaEngineDetection::fallbackDetect(const FileMap &allFi
 
 	MTropolis::MTropolisGameDescription *desc = &_globalFallbackDesc;
 
-	const char *scriptName = nullptr;
 	if (foundWin) {
 		desc->desc.platform = Common::kPlatformWindows;
-		scriptName = winBootFileName;
 	} else if (foundMac) {
 		desc->desc.platform = Common::kPlatformMacintosh;
-		scriptName = macBootFileName;
 	}
 
 	if (outExtra) {
