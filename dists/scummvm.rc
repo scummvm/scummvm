@@ -28,6 +28,7 @@ gui-icons.dat          FILE    "gui/themes/gui-icons.dat"
 shaders.dat            FILE    "gui/themes/shaders.dat"
 achievements.dat       FILE    "dists/engine-data/achievements.dat"
 encoding.dat           FILE    "dists/engine-data/encoding.dat"
+helpdialog.zip         FILE    "dists/engine-data/helpdialog.zip"
 macgui.dat             FILE    "dists/engine-data/macgui.dat"
 classicmacfonts.dat    FILE    "dists/engine-data/classicmacfonts.dat"
 

@@ -45,6 +45,9 @@ This file contains set of script patches for Grim Fandango game.
 hadesch_translations.dat:
 This file contains essential data for Hadesch Challenge game.
 
+helpdialog.zip:
+This file contains images for Help Dialog.
+
 hugo.dat:
 This file contains all the hardcoded logic, strings and fonts used by Hugo
 engine. Those information were stored in the original executables.

@@ -25,6 +25,7 @@ freescape.dat
 grim-patch.lab
 gui-icons.dat
 hadesch_translations.dat
+helpdialog.zip
 hugo.dat
 kyra.dat
 lure.dat
