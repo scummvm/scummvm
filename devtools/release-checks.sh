@@ -198,7 +198,7 @@ fileDate=`git log -1 gui/themes/translations.dat | grep Date | sed 's/Date: //'`
 num_lines=`git -P log --oneline "--since=$fileDate" po/ | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Run 'make update-translations'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'make translations-dat'${NC}"
 
   failPlus
 else
@@ -452,7 +452,7 @@ fileDate=`git log -1 dists/engine-data/ultima8.dat | grep Date | sed 's/Date: //
 num_lines=`git -P log --oneline "--since=$fileDate" devtools/create_ultima8 | wc -l`
 
 if [ "$num_lines" -ne "0" ]; then
-  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima8; zip -r9 ../../../dists/engine-data/ultima8.dat .'${NC}"
+  echo -e "$num_lines unprocessed commits. ${RED}Run 'cd devtools/create_ultima8; zip -r9 ../../dists/engine-data/ultima8.dat .'${NC}"
 
   failPlus
 else
