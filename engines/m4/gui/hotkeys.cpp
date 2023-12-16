@@ -31,6 +31,11 @@
 
 namespace M4 {
 
+// Since we include the vars of both games, we need to reset the _G
+// to only point to the common shared variables
+#undef _G
+#define _G(X) (g_vars->_##X)
+
 Dialog *Hotkeys::_changeGlobalDialog;
 int Hotkeys::_globalToChange;
 Dialog *Hotkeys::_teleportDialog;
