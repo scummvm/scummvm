@@ -144,13 +144,12 @@ AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("A
 	_objType = ObjectType;
 	_inpoint = 0;
 	_outpoint = 0;
-	_cue = nullptr;
 
 	Common::File cuefile;
 	if (cuefile.open("disc.cue")) {
 		Common::String cuestring = cuefile.readString(0, cuefile.size());
 
-		_cue = new Common::CueSheet(cuestring.c_str());
+		_cue = Common::SharedPtr<Common::CueSheet>(new Common::CueSheet(cuestring.c_str()));
 	}
 }
 
@@ -160,9 +159,6 @@ void AppleCDXObj::m_new(int nargs) {
 
 void AppleCDXObj::m_dispose(int nargs) {
 	g_director->_system->getAudioCDManager()->stop();
-
-	AppleCDXObject *me = static_cast<AppleCDXObject *>(g_lingo->_state->me.u.obj);
-	delete me->_cue;
 }
 
 void AppleCDXObj::m_still(int nargs) {
