@@ -230,8 +230,10 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		_baseFileName = fileName;
 
 		stream = archive.createReadStreamForMemberAltStream(fileName, AltStreamType::MacResourceFork);
-		if (stream && !loadFromRawFork(stream))
+		if (stream && !loadFromRawFork(stream)) {
+			delete stream;
 			_stream = nullptr;
+		}
 
 		// If the archive member exists, then the file exists, but has no res fork, so we should return true
 		return true;
