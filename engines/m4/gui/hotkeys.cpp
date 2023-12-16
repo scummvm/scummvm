@@ -24,13 +24,20 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/platform/keys.h"
 #include "m4/adv_r/adv_walk.h"
-#include "m4/vars.h"
+#include "m4/burger/burger.h"
+#include "m4/burger/vars.h"
+#include "m4/riddle/riddle.h"
+#include "m4/riddle/vars.h"
 
 namespace M4 {
 
+Dialog *Hotkeys::_changeGlobalDialog;
+int Hotkeys::_globalToChange;
 Dialog *Hotkeys::_teleportDialog;
 
 Hotkeys::Hotkeys() {
+	_globalToChange = 0;
+	_changeGlobalDialog = nullptr;
 	_teleportDialog = nullptr;
 }
 
@@ -84,9 +91,7 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_SPACE, adv_hyperwalk_to_final_destination);
 	AddSystemHotkey('f', adv_hyperwalk_to_final_destination);
 
-	if (_G(cheating_enabled)) {
-		adv_enable_system_hot_keys();
-	}
+	adv_enable_system_hot_keys();
 }
 
 void Hotkeys::adv_enable_system_hot_keys() {
@@ -119,7 +124,7 @@ void Hotkeys::adv_enable_system_hot_keys() {
 	AddSystemHotkey(KEY_ALT_D, debug_memory_dumpcore_to_disk);
 	AddSystemHotkey(KEY_ALT_E, scale_editor_toggle);	// Was Alt-S, but ScummVM reserves that
 	AddSystemHotkey(KEY_ALT_F, dbg_mem_set_search);
-	AddSystemHotkey(KEY_ALT_G, change_global_var);
+	AddSystemHotkey(KEY_ALT_G, changeGlobal);
 	AddSystemHotkey(KEY_ALT_I, toggleInfoDialog);
 	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects);
 	AddSystemHotkey(KEY_ALT_M, debug_memory_toggle);
@@ -245,8 +250,62 @@ void Hotkeys::dbg_mem_set_search(void *, void *) {
 	warning("TODO: hotkey");
 }
 
-void Hotkeys::change_global_var(void *, void *) {
-	warning("TODO: hotkey");
+void Hotkeys::changeGlobal(void *, void *) {
+	if (!_changeGlobalDialog) {
+		gr_font_set(_G(font_tiny));
+		_changeGlobalDialog = DialogCreateAbsolute(250, 120, 450, 220, 242);
+		_changeGlobalDialog->addButton(60, 40, " Change Global Variable ",
+			changeGlobalChange, 1);
+		_changeGlobalDialog->addButton(10, 40, " Cancel ", changeGlobalCancel, 2);
+		_changeGlobalDialog->addTextField(50, 7, gr_font_string_width("MMMMM") + 50,
+			"-----", nullptr, 3, 5);
+		_changeGlobalDialog->configure(3, 1, 2);
+		_changeGlobalDialog->show();
+	}
+}
+
+void Hotkeys::changeGlobalChange(void *, void *) {
+	// Get the global number to change
+	Item *textField = _teleportDialog->getItem(3);
+	_globalToChange = atoi(textField->prompt);
+
+	// Destroy the current dialog
+	_changeGlobalDialog->destroy();
+
+	// Create secondary dialog to get value to set global to
+	int globalVal = (g_engine->getGameType() == GType_Burger) ?
+		Burger::g_vars->_flags[_globalToChange] :
+		Riddle::g_vars->_flags[_globalToChange];
+
+	_changeGlobalDialog = DialogCreateAbsolute(250, 120, 450, 220, 242);
+	_changeGlobalDialog->addButton(60, 40,
+		Common::String::format("Assign new value to #%d ", _globalToChange).c_str(),
+		changeGlobalDoChange, 1);
+	_changeGlobalDialog->addButton(10, 40, " Cancel ", changeGlobalCancel, 2);
+	_changeGlobalDialog->addTextField(50, 7,
+		gr_font_string_width("MMMMM") + 50,
+		Common::String::format("%5d", globalVal).c_str(),
+		nullptr, 3, 5);
+	_changeGlobalDialog->configure(3, 1, 2);
+	_changeGlobalDialog->show();
+}
+
+void Hotkeys::changeGlobalDoChange(void *, void *) {
+	Item *textField = _teleportDialog->getItem(3);
+	int globalVal = atoi(textField->prompt);
+
+	if (g_engine->getGameType() == GType_Burger)
+		Burger::g_vars->_flags[_globalToChange] = globalVal;
+	else
+		Riddle::g_vars->_flags[_globalToChange] = globalVal;
+
+	_changeGlobalDialog->destroy();
+	_changeGlobalDialog = nullptr;
+}
+
+void Hotkeys::changeGlobalCancel(void *, void *) {
+	_changeGlobalDialog->destroy();
+	_changeGlobalDialog = nullptr;
 }
 
 void Hotkeys::toggleInfoDialog(void *, void *) {

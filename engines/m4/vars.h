@@ -117,7 +117,7 @@ public:
 	ConvDisplayData _cdd;
 	Rend_Globals _rend;
 
-	bool _cheating_enabled = true;
+	const bool _cheating_enabled = true;
 
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;

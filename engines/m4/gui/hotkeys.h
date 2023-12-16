@@ -31,6 +31,8 @@ namespace M4 {
 struct Hotkeys {
 private:
 	static Dialog *_teleportDialog;
+	static Dialog *_changeGlobalDialog;
+	static int _globalToChange;
 
 private:
 	static void exit_program(void *, void *);
@@ -61,7 +63,7 @@ private:
 	static void toggle_commands_allowed(void *, void *);
 	static void debug_memory_dumpcore_to_disk(void *, void *);
 	static void dbg_mem_set_search(void *, void *);
-	static void change_global_var(void *, void *);
+
 	static void toggleInfoDialog(void *, void *);
 	static void other_cheat_with_inventory_objects(void *, void *); // was O
 	static void debug_memory_toggle(void *, void *);
@@ -72,6 +74,11 @@ private:
 	static void teleport(void *, void *);
 	static void teleportOk(void *, void *);
 	static void teleportCancel(void *, void *);
+
+	static void changeGlobal(void *, void *);
+	static void changeGlobalCancel(void *, void *);
+	static void changeGlobalChange(void *, void *);
+	static void changeGlobalDoChange(void *, void *);
 
 	static void paint_walk_codes(void *, void *);
 	static void pal_override(void *a = nullptr, void *b = nullptr);
