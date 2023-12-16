@@ -82,6 +82,7 @@ public:
 	virtual bool isDirectory() const; /*!< Checks if the ArchiveMember is a directory. */
 	virtual void listChildren(ArchiveMemberList &childList, const char *pattern = nullptr) const; /*!< Adds the immediate children of this archive member to childList, optionally matching a pattern. */
 	virtual U32String getDisplayName() const; /*!< Get the display name of the archive member. */
+	virtual bool isInMacArchive() const; /*!< Checks if the ArchiveMember is in a Mac archive, in which case resource forks and Finder info can only be loaded via alt streams. */
 };
 
 struct ArchiveMemberDetails {
