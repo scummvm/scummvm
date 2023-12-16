@@ -22,6 +22,8 @@
 #ifndef DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
 #define DIRECTOR_LINGO_XLIBS_APPLECDXOBJ_H
 
+#include "common/ptr.h"
+
 namespace Common {
 	class CueSheet;
 }
@@ -37,7 +39,7 @@ public:
 	// a value store it internally and return it via a subsequent
 	// call to mGetValue.
 	int _returnValue;
-	Common::CueSheet *_cue;
+	Common::SharedPtr<Common::CueSheet> _cue;
 };
 
 namespace AppleCDXObj {
