@@ -85,7 +85,6 @@ public:
 
 	virtual void add_hot_keys();
 	void disable_hot_keys();
-	void restore_hot_keys();
 
 	static void saveGame(void *, void *);
 	static void loadGame(void *, void *);

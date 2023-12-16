@@ -34,45 +34,6 @@ Hotkeys::Hotkeys() {
 	_teleportDialog = nullptr;
 }
 
-void Hotkeys::restore_hot_keys() {
-	AddSystemHotkey(KEY_HOME, saveScreenshot);
-	AddSystemHotkey(KEY_PAGE_UP, debug_memory_next_column);
-	AddSystemHotkey(KEY_PAGE_DOWN, debug_memory_prev_column);
-	AddSystemHotkey(KEY_END, debug_memory_last_column);
-
-	AddSystemHotkey(KEY_ALT_UP, player_step_up);
-	AddSystemHotkey(KEY_ALT_DOWN, player_step_down);
-	AddSystemHotkey(KEY_ALT_LEFT, player_step_left);
-	AddSystemHotkey(KEY_ALT_RIGHT, player_step_right);
-
-	AddSystemHotkey(KEY_CTRL_UP, player_jump_up);
-	AddSystemHotkey(KEY_CTRL_DOWN, player_jump_down);
-	AddSystemHotkey(KEY_CTRL_LEFT, player_jump_left);
-	AddSystemHotkey(KEY_CTRL_RIGHT, player_jump_right);
-
-	AddSystemHotkey(KEY_F4, term_next_mode);
-
-	AddSystemHotkey('[', camera_step_left);
-	AddSystemHotkey(']', camera_step_right);
-	AddSystemHotkey('{', camera_jump_left);
-	AddSystemHotkey('}', camera_jump_right);
-
-	//AddSystemHotkey( KEY_ALT_B, toggle_inv_visible);
-	AddSystemHotkey(KEY_ALT_C, toggle_commands_allowed);
-	AddSystemHotkey(KEY_ALT_D, debug_memory_dumpcore_to_disk);
-	AddSystemHotkey(KEY_ALT_E, scale_editor_toggle);	// Was Alt-S, but ScummVM reserves that
-	AddSystemHotkey(KEY_ALT_F, dbg_mem_set_search);
-	AddSystemHotkey(KEY_ALT_G, change_global_var);
-	AddSystemHotkey(KEY_ALT_I, cb_MouseDialog);
-	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects);
-	AddSystemHotkey(KEY_ALT_M, debug_memory_toggle);
-	AddSystemHotkey(KEY_ALT_P, dbg_pal_toggle);
-	AddSystemHotkey(KEY_ALT_R, f_io_report);
-	AddSystemHotkey(KEY_ALT_T, teleport);
-	AddSystemHotkey(KEY_ALT_W, paint_walk_codes);
-	AddSystemHotkey(KEY_ALT_Z, pal_override);
-}
-
 void Hotkeys::disable_hot_keys() {
 	RemoveSystemHotkey(KEY_HOME);
 	RemoveSystemHotkey(KEY_PAGE_UP);
@@ -122,8 +83,6 @@ void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_CTRL_Q, exit_program);
 	AddSystemHotkey(KEY_SPACE, adv_hyperwalk_to_final_destination);
 	AddSystemHotkey('f', adv_hyperwalk_to_final_destination);
-
-	restore_hot_keys();
 
 	if (_G(cheating_enabled)) {
 		adv_enable_system_hot_keys();

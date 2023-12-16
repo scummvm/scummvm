@@ -118,7 +118,7 @@ public:
 	Rend_Globals _rend;
 
 	bool _cheating_enabled = true;
-	bool _cheat_keys_enabled = false;
+
 	Font *_system_font = nullptr;
 	Font *_font_line = nullptr;
 	Font *_font_tiny_prop = nullptr;
