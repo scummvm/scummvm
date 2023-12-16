@@ -62,7 +62,7 @@ private:
 	static void debug_memory_dumpcore_to_disk(void *, void *);
 	static void dbg_mem_set_search(void *, void *);
 	static void change_global_var(void *, void *);
-	static void cb_MouseDialog(void *, void *);
+	static void toggleInfoDialog(void *, void *);
 	static void other_cheat_with_inventory_objects(void *, void *); // was O
 	static void debug_memory_toggle(void *, void *);
 	static void dbg_pal_toggle(void *, void *);
@@ -74,7 +74,7 @@ private:
 	static void teleportCancel(void *, void *);
 
 	static void paint_walk_codes(void *, void *);
-	static void pal_override(void *, void *);
+	static void pal_override(void *a = nullptr, void *b = nullptr);
 
 protected:
 	virtual void adv_enable_system_hot_keys();

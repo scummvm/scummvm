@@ -120,7 +120,7 @@ void Hotkeys::adv_enable_system_hot_keys() {
 	AddSystemHotkey(KEY_ALT_E, scale_editor_toggle);	// Was Alt-S, but ScummVM reserves that
 	AddSystemHotkey(KEY_ALT_F, dbg_mem_set_search);
 	AddSystemHotkey(KEY_ALT_G, change_global_var);
-	AddSystemHotkey(KEY_ALT_I, (HotkeyCB)cb_MouseDialog);
+	AddSystemHotkey(KEY_ALT_I, toggleInfoDialog);
 	AddSystemHotkey(KEY_ALT_B, other_cheat_with_inventory_objects);
 	AddSystemHotkey(KEY_ALT_M, debug_memory_toggle);
 	AddSystemHotkey(KEY_ALT_P, dbg_pal_toggle);
@@ -249,8 +249,15 @@ void Hotkeys::change_global_var(void *, void *) {
 	warning("TODO: hotkey");
 }
 
-void Hotkeys::cb_MouseDialog(void *, void *) {
-	warning("TODO: hotkey");
+void Hotkeys::toggleInfoDialog(void *, void *) {
+	if (!_G(showMousePos)) {
+		vmng_screen_show(_G(mousePosDialog));
+		_G(showMousePos) = true;
+		pal_override();
+	} else {
+		vmng_screen_hide(_G(mousePosDialog));
+		_G(showMousePos) = false;
+	}
 }
 
 void Hotkeys::other_cheat_with_inventory_objects(void *, void *) {
