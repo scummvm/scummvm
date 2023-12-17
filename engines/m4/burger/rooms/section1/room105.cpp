@@ -312,18 +312,18 @@ void Room105::daemon() {
 				digi_preload("105_011");
 				digi_preload("105_012");
 				_elgusShould = 2;
-				digi_play("105_007", 2, 255, 1);
+				digi_play("105_007", 2, 255, kCHANGE_ELGUS_ANIMATION);
 				digi_change_volume(3, 0);
 				break;
 
 			case 2:
 				_elgusShould = 3;
-				series_play_with_breaks(PLAY14, "105eg01", 0xa00, 1, 3, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY14, "105eg01", 0xa00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
 			case 3:
 				_elgusShould = 5;
-				series_play("105eg02", 0xa00, 0, 1, 10, 0, 100, 0, ZERO, 0, 0);
+				series_play("105eg02", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, ZERO, 0, 0);
 				series_play("105eg02s", 0xa01, 0, -1, 10, 0, 100, 0, ZERO, 0, 0);
 				_flag3 = false;
 				_flag1 = false;
@@ -342,7 +342,7 @@ void Room105::daemon() {
 				switch (imath_ranged_rand(1, 20)) {
 				case 1:
 				case 2:
-					series_play("105eg04", 0xa00, 0, 1, 4, 0, 100, 0, ZERO, 1, 1);
+					series_play("105eg04", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 1, 1);
 					series_play("105eg04s", 0xa01, 0, -1, 4, 0, 100, 0, ZERO, 1, 1);
 					break;
 
@@ -351,7 +351,7 @@ void Room105::daemon() {
 					break;
 
 				default:
-					series_play("105eg04", 0xa00, 0, 1, 30, 0, 100, 0, ZERO, 0, 0);
+					series_play("105eg04", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 30, 0, 100, 0, ZERO, 0, 0);
 					series_play("105eg04s", 0xa01, 0, -1, 30, 0, 100, 0, ZERO, 0, 0);
 					break;
 				}
@@ -365,7 +365,7 @@ void Room105::daemon() {
 
 			case 7:
 				_elgusMode = 7;
-				series_play("105eg05", 0xa00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+				series_play("105eg05", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 0);
 				series_play("105eg05s", 0xa01, 0, -1, 4, 0, 100, 0, ZERO, 0, 0);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -373,7 +373,7 @@ void Room105::daemon() {
 
 			case 8:
 				_elgusMode = 8;
-				series_play("105eg06", 0xa00, 0, 1, 6, 0, 100, 0, ZERO, 0, 1);
+				series_play("105eg06", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 6, 0, 100, 0, ZERO, 0, 1);
 				series_play("105eg06s", 0xa01, 0, -1, 6, 0, 100, 0, ZERO, 0, 1);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -381,7 +381,7 @@ void Room105::daemon() {
 
 			case 9:
 				_elgusShould = 10;
-				series_play_with_breaks(PLAY15, "105eg07", 0xa00, 1, 3, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY15, "105eg07", 0xa00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
 			case 10:
@@ -393,14 +393,14 @@ void Room105::daemon() {
 
 			case 14:
 				_elgusShould = 15;
-				series_play("105eg08", 0xa00, 0, 1, 6, 0, 100, 0, ZERO, 0, 5);
+				series_play("105eg08", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 6, 0, 100, 0, ZERO, 0, 5);
 				series_play("105eg08s", 0xa01, 0, -1, 6, 0, 100, 0, ZERO, 0, 5);
 				break;
 
 			case 15:
 				_elgusShould = 16;
 				_elgusMode = 16;
-				series_play("105eg08", 0xa00, 0, 1, 6, 0, 100, 0, ZERO, 6, 8);
+				series_play("105eg08", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 6, 0, 100, 0, ZERO, 6, 8);
 				series_play("105eg08s", 0xa01, 0, -1, 6, 0, 100, 0, ZERO, 6, 8);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -416,12 +416,12 @@ void Room105::daemon() {
 
 			case 19:
 				_elgusShould = 20;
-				series_play_with_breaks(PLAY19, "105eg11", 0xa00, 1, 3, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY19, "105eg11", 0xa00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
 			case 20:
 				_elgusShould = 21;
-				series_play_with_breaks(PLAY20, "105eg10", 0xa00, 1, 3, 4, 100, 0, ZERO);
+				series_play_with_breaks(PLAY20, "105eg10", 0xa00, kCHANGE_ELGUS_ANIMATION, 3, 4, 100, 0, ZERO);
 				break;
 
 			case 21:
@@ -473,7 +473,7 @@ void Room105::daemon() {
 				terminateMachineAndNull(_series6);
 				terminateMachineAndNull(_series7);
 				_elgusMode = 5;
-				series_play("105eg06", 0xa00, 0, 1, 4, 0, 100, 0, ZERO, 7, 9);
+				series_play("105eg06", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 7, 9);
 				series_play("105eg06s", 0xa01, 0, -1, 4, 0, 100, 0, ZERO, 7, 9);
 			}
 			break;
@@ -494,7 +494,7 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 23:
 				_elgusShould = 24;
-				series_play_with_breaks(PLAY10, "105mg01", 0xf00, 1, 3, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY10, "105mg01", 0xf00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
 			case 24:
@@ -510,10 +510,10 @@ void Room105::daemon() {
 
 			case 25:
 				if (imath_ranged_rand(1, 13) == 1) {
-					series_play("105mg04", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+					series_play("105mg04", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 0);
 					series_play("105mg04s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 0);
 				} else {
-					series_play("105mg02", 0xf00, 0, 1, 10, 0, 100, 0, ZERO, 0, 0);
+					series_play("105mg02", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, ZERO, 0, 0);
 					series_play("105mg02s", 0xf01, 0, -1, 10, 0, 100, 0, ZERO, 0, 0);
 				}
 				break;
@@ -526,7 +526,7 @@ void Room105::daemon() {
 
 			case 27:
 				_elgusMode = 27;
-				series_play("105mg06", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 10, 10);
+				series_play("105mg06", 0xf00, 0, 1, kCHANGE_ELGUS_ANIMATION, 0, 100, 0, ZERO, 10, 10);
 				series_play("105mg06s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 10, 10);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -534,7 +534,7 @@ void Room105::daemon() {
 
 			case 28:
 				_elgusMode = 27;
-				series_play("105mg06", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 9);
+				series_play("105mg06", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 9);
 				series_play("105mg06s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 9);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
@@ -542,30 +542,30 @@ void Room105::daemon() {
 
 			case 29:
 				_elgusMode = 25;
-				series_play("105mg03", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 9);
+				series_play("105mg03", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 9);
 				series_play("105mg03s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 9);
 				break;
 
 			case 30:
 				_elgusMode = 25;
-				series_play("105mg05", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 7);
+				series_play("105mg05", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 7);
 				series_play("105mg05s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 7);
 				break;
 
 			case 31:
 				_elgusMode = 31;
-				series_play("105mg07", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 2);
+				series_play("105mg07", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 2);
 				series_play("105mg07s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 2);
 				break;
 
 			case 32:
 				_elgusMode = 33;
-				series_play_with_breaks(PLAY11, "105mg08", 0xf00, 1, 3, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY11, "105mg08", 0xf00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, ZERO);
 				break;
 
 			case 33:
 				_elgusShould = 34;
-				kernel_timing_trigger(1, 1);
+				kernel_timing_trigger(1, kCHANGE_ELGUS_ANIMATION);
 				break;
 
 			case 34:
@@ -605,7 +605,7 @@ void Room105::daemon() {
 				terminateMachineAndNull(_series7);
 				_elgusMode = 25;
 
-				series_play("105mg02", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+				series_play("105mg02", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 0);
 				series_play("105mg02s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 0, 0);
 			}
 			break;
@@ -620,7 +620,7 @@ void Room105::daemon() {
 				_elgusShould = 32;
 				_elgusMode = 25;
 
-				series_play("105mg07", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 7, 8);
+				series_play("105mg07", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 7, 8);
 				series_play("105mg07s", 0xf01, 0, -1, 4, 0, 100, 0, ZERO, 7, 8);
 			}
 			break;
@@ -629,7 +629,7 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 23:
 				_elgusShould = 24;
-				series_play_with_breaks(PLAY12, "105mg09", 0xf00, 1, 2, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY12, "105mg09", 0xf00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, ZERO);
 				break;
 
 			case 24:
@@ -645,7 +645,7 @@ void Room105::daemon() {
 
 			case 32:
 				_elgusShould = 33;
-				series_play_with_breaks(PLAY13, "105mg14", 0xf00, 1, 2, 6, 100, 0, ZERO);
+				series_play_with_breaks(PLAY13, "105mg14", 0xf00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, ZERO);
 				break;
 
 			case 33:
@@ -678,9 +678,9 @@ void Room105::daemon() {
 
 			case 35:
 				if (imath_ranged_rand(1, 13) == 1) {
-					series_play("105mg11", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 0);
+					series_play("105mg11", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 0);
 				} else {
-					series_play("105mg11", 0xf00, 0, 1, 10, 0, 100, 0, ZERO, 0, 0);
+					series_play("105mg11", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, ZERO, 0, 0);
 				}
 				break;
 
@@ -692,21 +692,21 @@ void Room105::daemon() {
 
 			case 37:
 				_elgusMode = 37;
-				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 16, 16);
+				series_play("105mg12", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 16, 16);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
 				break;
 
 			case 38:
 				_elgusMode = 38;
-				series_play("105mg13", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 10);
+				series_play("105mg13", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 10);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
 				break;
 
 			case 39:
 				_elgusMode = 37;
-				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 0, 15);
+				series_play("105mg12", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 0, 15);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
 				break;
@@ -722,7 +722,7 @@ void Room105::daemon() {
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 35;
-				series_play("105mg12", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 19, 19);
+				series_play("105mg12", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 19, 19);
 			}
 			break;
 
@@ -732,7 +732,7 @@ void Room105::daemon() {
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 35;
-				series_play("105mg13", 0xf00, 0, 1, 4, 0, 100, 0, ZERO, 15, 16);
+				series_play("105mg13", 0xf00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, ZERO, 15, 16);
 			}
 			break;
 
@@ -740,12 +740,12 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 40:
 				_elgusShould = 41;
-				series_play_with_breaks(PLAY1, "105ag01", 0xe00, 1, 2, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY1, "105ag01", 0xe00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, 0);
 				break;
 
 			case 41:
 				_elgusShould = 42;
-				series_play("105ag02", 0xe00, 0, 1, 10, 0, 100, 0, 0, 0, 0);
+				series_play("105ag02", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 
 				if (_G(flags)[V033] == 1) {
 					handleDeed1();
@@ -759,15 +759,15 @@ void Room105::daemon() {
 				case 1:
 				case 2:
 				case 3:
-					series_play_with_breaks(PLAY3, "105ag04", 0xe00, 1, 2, 4, 100, 0, 0);
+					series_play_with_breaks(PLAY3, "105ag04", 0xe00, kCHANGE_ELGUS_ANIMATION, 2, 4, 100, 0, 0);
 					break;
 
 				case 4:
-					series_play_with_breaks(PLAY5, "105ag03", 0xe00, 1, 2, 6, 100, 0, 0);
+					series_play_with_breaks(PLAY5, "105ag03", 0xe00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, 0);
 					break;
 
 				default:
-					series_play("105ag02", 0xe00, 0, 1, 15, 0, 100, 0, 0, 0, 0);
+					series_play("105ag02", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 15, 0, 100, 0, 0, 0, 0);
 					break;
 				}
 				break;
@@ -781,10 +781,10 @@ void Room105::daemon() {
 			case 44:
 				if (imath_ranged_rand(1, 2) == 1) {
 					_elgusMode = 45;
-					series_play("105ag05", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 4);
+					series_play("105ag05", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 4);
 				} else {
 					_elgusMode = 46;
-					series_play("105ag05", 0xe00, 2, 1, 4, 0, 100, 0, 0, 16, 19);
+					series_play("105ag05", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 16, 19);
 				}
 
 				_G(kernel).trigger_mode = KT_PARSE;
@@ -793,14 +793,14 @@ void Room105::daemon() {
 
 			case 47:
 				_elgusMode = 47;
-				series_play("105ag06", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 6);
+				series_play("105ag06", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 6);
 				_G(kernel).trigger_mode = KT_PARSE;
 				digi_play(conv_sound_to_play(), 1, 255, 10);
 				break;
 
 			case 49:
 				_elgusShould = 50;
-				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 9);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 9);
 				break;
 
 			case 50:
@@ -811,12 +811,12 @@ void Room105::daemon() {
 
 			case 51:
 				_elgusMode = 51;
-				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 2);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 2);
 				break;
 
 			case 52:
 				_elgusMode = 52;
-				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 0, 24);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 24);
 				break;
 
 			case 54:
@@ -829,7 +829,7 @@ void Room105::daemon() {
 
 			case 56:
 				_elgusShould = 57;
-				series_play_with_breaks(PLAY8, "105ag09", 0xe00, 1, 2, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY8, "105ag09", 0xe00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, 0);
 				break;
 
 			case 57:
@@ -871,7 +871,7 @@ void Room105::daemon() {
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 42;
-				series_play("105ag05", 0xe00, 2, 1, 4, 0, 100, 0, 0, 0, 4);
+				series_play("105ag05", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 4);
 			}
 			break;
 
@@ -881,21 +881,21 @@ void Room105::daemon() {
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 42;
-				series_play("105ag05", 0xe00, 0, 1, 4, 0, 100, 0, 0, 16, 19);
+				series_play("105ag05", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 16, 19);
 			}
 			break;
 
 		case 47:
 			if (_elgusShould == 47) {
 				if (imath_ranged_rand(1, 10) == 1) {
-					series_play("105ag06", 0xe00, 0, 1, 4, 0, 100, 0, 0, 7, 11);
+					series_play("105ag06", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 7, 11);
 				} else {
 					_series6 = series_play("105ag06", 0xe00, 4, -1, 4, -1, 100, 0, 0, 6, 9);
 				}
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 42;
-				series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 0, 6);
+				series_play("105ag06", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 6);
 			}
 			break;
 
@@ -903,24 +903,24 @@ void Room105::daemon() {
 			if (_elgusShould == 47) {
 				if (imath_ranged_rand(1, 10) == 1) {
 					_elgusMode = 47;
-					series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 7, 11);
+					series_play("105ag06", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 7, 11);
 				} else {
 					_series6 = series_play("105ag06", 0xe00, 4, -1, 4, -1, 100, 0, 0, 12, 15);
 				}
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 42;
-				series_play("105ag06", 0xe00, 2, 1, 4, 0, 100, 0, 0, 16, 18);
+				series_play("105ag06", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 16, 18);
 			}
 			break;
 
 		case 49:
 			if (_elgusShould == 50) {
-				series_play("105ag07", 0xe00, 0, 1, 10, 0, 100, 0, 0, 9, 9);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 10, 0, 100, 0, 0, 9, 9);
 			} else {
 				terminateMachineAndNull(_series6);
 				_elgusMode = 42;
-				series_play_with_breaks(PLAY6, "105ag07", 0xe00, 1, 2, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY6, "105ag07", 0xe00, kCHANGE_ELGUS_ANIMATION, 2, 6, 100, 0, 0);
 			}
 			break;
 
@@ -928,29 +928,29 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 51:
 				frame = imath_ranged_rand(3, 6);
-				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 54:
 				_elgusMode = 42;
 				_elgusShould = 58;
-				series_play_with_breaks(PLAY9, "105ag10", 0xe00, 1, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY9, "105ag10", 0xe00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 
 			default:
 				_elgusMode = 42;
 				_elgusShould = 58;
-				series_play_with_breaks(PLAY8, "105ag14", 0xe00, 1, 3, 6, 100, 0, 0);
+				series_play_with_breaks(PLAY8, "105ag14", 0xe00, kCHANGE_ELGUS_ANIMATION, 3, 6, 100, 0, 0);
 				break;
 			}
 			break;
 
 		case 53:
 			if (_elgusShould == 52) {
-				series_play("105ag07", 0xe00, 0, 1, 4, 0, 100, 0, 0, 29, 29);
+				series_play("105ag07", 0xe00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 29, 29);
 			} else {
 				_elgusMode = 42;
-				series_play("105ag07", 0xe00, 2, 1, 4, 0, 100, 0, 0, 30, 33);
+				series_play("105ag07", 0xe00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 30, 33);
 			}
 			break;
 
@@ -958,13 +958,13 @@ void Room105::daemon() {
 			switch (_elgusShould) {
 			case 59:
 				frame = imath_ranged_rand(0, 1);
-				series_play("105ag12", 0xa00, 0, 1, 40, 0, 100, 0, 0, frame, frame);
+				series_play("105ag12", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 40, 0, 100, 0, 0, frame, frame);
 				series_play("105ag12s", 0xa01, 0, -1, 40, 0, 100, 0, 0, frame, frame);
 				break;
 
 			case 60:
 				_elgusMode = 60;
-				series_play("105ag13", 0xa00, 0, 1, 4, 0, 100, 0, 0, 0, 0);
+				series_play("105ag13", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 0);
 				series_play("105ag13s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 0, 0);
 
 				if (_digi1) {
@@ -976,7 +976,7 @@ void Room105::daemon() {
 
 			case 61:
 				_elgusMode = 61;
-				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, 0, 5);
+				series_play("105ag14", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 5);
 				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 0, 5);
 
 				if (_digi1) {
@@ -994,11 +994,11 @@ void Room105::daemon() {
 		case 60:
 			if (_elgusShould == 60) {
 				frame = imath_ranged_rand(4, 8);
-				series_play("105ag13", 0xa00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("105ag13", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				series_play("105ag13s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 			} else {
 				_elgusMode = 59;
-				series_play("105ag13", 0xa00, 2, 1, 4, 0, 100, 0, 0, 0, 3);
+				series_play("105ag13", 0xa00, 2, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 0, 3);
 				series_play("105ag13s", 0xa01, 2, -1, 4, 0, 100, 0, 0, 0, 3);
 			}
 			break;
@@ -1006,11 +1006,11 @@ void Room105::daemon() {
 		case 61:
 			if (_elgusShould == 61) {
 				frame = imath_ranged_rand(6, 9);
-				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, frame, frame);
+				series_play("105ag14", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 			} else {
 				_elgusMode = 59;
-				series_play("105ag14", 0xa00, 0, 1, 4, 0, 100, 0, 0, 12, 15);
+				series_play("105ag14", 0xa00, 0, kCHANGE_ELGUS_ANIMATION, 4, 0, 100, 0, 0, 12, 15);
 				series_play("105ag14s", 0xa01, 0, -1, 4, 0, 100, 0, 0, 12, 15);
 			}
 			break;
