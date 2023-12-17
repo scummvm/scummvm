@@ -44,8 +44,9 @@ Archive::Archive(Common::SeekableReadStream *rs) : _count(0) {
 bool Archive::addSource(FlexFile *af) {
 	_sources.push_back(af);
 
-	uint32 indexcount = af->getIndexCount();
-	if (indexcount > _count) _count = indexcount;
+	uint32 indexcount = af->getCount();
+	if (indexcount > _count)
+		_count = indexcount;
 
 	return true;
 }
