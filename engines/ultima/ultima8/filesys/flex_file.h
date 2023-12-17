@@ -66,13 +66,6 @@ public:
 		return _entries.size();
 	}
 
-	//! Get the highest index in the file
-	//! Guaranteed to be sufficiently large for a vector that needs to
-	//!  store the indexed entries of this file
-	uint32 getIndexCount() const {
-		return _entries.size();
-	}
-
 	static bool isFlexFile(Common::SeekableReadStream *rs);
 
 protected:
