@@ -29,6 +29,10 @@ namespace M4 {
 namespace Burger {
 namespace Rooms {
 
+enum {
+	kCHANGE_STOLIE_ANIMATION = 3
+};
+
 static const char *SAID1[][4] = {
 	{ "TOWN HALL",   "104W001", "104W002", "104w002" },
 	{ "DOORS",       "104W003", "104W002", nullptr },
@@ -51,8 +55,8 @@ static const seriesPlayBreak PLAY2[] = {
 };
 
 void Room104::init() {
-	_val1 = 0;
-	_val2 = 14;
+	_stolieSleepCtr = 0;
+	_stolieShould = 14;
 	_val3 = 0;
 
 	digi_preload("104_001");
@@ -98,7 +102,7 @@ void Room104::init() {
 
 	digi_play_loop("104_001", 3, 200, -1);
 	_G(flags)[V028] = 1;
-	kernel_trigger_dispatch_now(3);
+	kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 }
 
 void Room104::daemon() {
@@ -123,24 +127,24 @@ void Room104::daemon() {
 		digi_unload("104_005");
 		break;
 
-	case 3:
-		switch (_val2) {
+	case kCHANGE_STOLIE_ANIMATION:
+		switch (_stolieShould) {
 		case 6:
 			_flag1 = false;
-			_val2 = 9;
-			Series::series_play("104dr04", 0x200, 2, 3, 6, 0, 100, 0, 0, 0, 10);
+			_stolieShould = 9;
+			Series::series_play("104dr04", 0x200, 2, kCHANGE_STOLIE_ANIMATION, 6, 0, 100, 0, 0, 0, 10);
 			break;
 
 		case 8:
 			_flag1 = false;
-			_val2 = 13;
-			Series::series_play("104dr04", 0x200, 2, 3, 6, 0, 100, 0, 0, 0, 10);
+			_stolieShould = 13;
+			Series::series_play("104dr04", 0x200, 2, kCHANGE_STOLIE_ANIMATION, 6, 0, 100, 0, 0, 0, 10);
 			break;
 
 		case 9:
 			_flag1 = false;
-			_val2 = 14;
-			Series::series_play("104dr02", 0x200, 0, 3, 6, 0, 100, 0, 0, 0, 7);
+			_stolieShould = 14;
+			Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, 6, 0, 100, 0, 0, 0, 7);
 			break;
 
 		case 10:
@@ -152,25 +156,24 @@ void Room104::daemon() {
 
 		case 12:
 			freeSeries();
-			_val2 = 10;
-			series_play_with_breaks(PLAY1, "104DR03", 0x200, 3, 1);
+			_stolieShould = 10;
+			series_play_with_breaks(PLAY1, "104DR03", 0x200, kCHANGE_STOLIE_ANIMATION, 1);
 			break;
 
 		case 13:
 			_flag1 = false;
-			_val2 = 9;
-			series_play_with_breaks(PLAY2, "104dr01", 0x200, 3, 1);
+			_stolieShould = 9;
+			series_play_with_breaks(PLAY2, "104dr01", 0x200, kCHANGE_STOLIE_ANIMATION, 1);
 			break;
 
 		case 14:
 			if (!digi_play_state(2)) {
 				if (imath_ranged_rand(1, 4) == 1) {
-					_val2 = 15;
-					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 13, 14);
+					_stolieShould = 15;
+					Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, 8, 0, 100, 0, 0, 13, 14);
 					return;
 				}
-
-				_val1 = 0;
+				_stolieSleepCtr = 0;
 
 				switch (getRandom()) {
 				case 1:
@@ -178,7 +181,7 @@ void Room104::daemon() {
 					break;
 				case 2:
 					digi_play("104s100b", 2, 125, -1);
-					_val1 = 100;
+					_stolieSleepCtr = 100;
 					break;
 				case 3:
 					digi_play("104s100c", 2, 125, -1);
@@ -195,12 +198,12 @@ void Room104::daemon() {
 			}
 
 			_flag1 = false;
-			++_val1;
+			++_stolieSleepCtr;
 
 			frame = 0;
-			if (_val1 < 3)
+			if (_stolieSleepCtr < 3)
 				frame = 22;
-			else if (_val1 < 14)
+			else if (_stolieSleepCtr < 14)
 				frame = 23;
 			else {
 				switch (imath_ranged_rand(1, 3)) {
@@ -218,26 +221,27 @@ void Room104::daemon() {
 				}
 			}
 
-			frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
-			Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
+			frameRate = _stolieSleepCtr < 14 ? 15 : imath_ranged_rand(6, 15);
+			Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION,
+				frameRate, 0, 100, 0, 0, frame, frame);
 			break;
 
 		case 15:
 			if (!digi_play_state(2)) {
 				switch (imath_ranged_rand(1, 6)) {
 				case 1:
-					_val2 = 14;
-					Series::series_play("104dr02", 0x200, 2, 3, 8, 0, 100, 0, 0, 13, 14);
+					_stolieShould = 14;
+					Series::series_play("104dr02", 0x200, 2, kCHANGE_STOLIE_ANIMATION, 8, 0, 100, 0, 0, 13, 14);
 					return;
 				case 2:
-					_val2 = 16;
-					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 20, 20);
+					_stolieShould = 16;
+					Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, 8, 0, 100, 0, 0, 20, 20);
 					return;
 				default:
 					break;
 				}
 
-				_val1 = 0;
+				_stolieSleepCtr = 0;
 
 				switch (getRandom()) {
 				case 1:
@@ -245,7 +249,7 @@ void Room104::daemon() {
 					break;
 				case 2:
 					digi_play("104s100b", 2, 125, -1);
-					_val1 = 100;
+					_stolieSleepCtr = 100;
 					break;
 				case 3:
 					digi_play("104s100c", 2, 125, -1);
@@ -262,12 +266,12 @@ void Room104::daemon() {
 			}
 
 			_flag1 = false;
-			++_val1;
+			++_stolieSleepCtr;
 
 			frame = 0;
-			if (_val1 < 3)
+			if (_stolieSleepCtr < 3)
 				frame = 11;
-			else if (_val1 < 14)
+			else if (_stolieSleepCtr < 14)
 				frame = 10;
 			else {
 				switch (imath_ranged_rand(1, 3)) {
@@ -284,16 +288,15 @@ void Room104::daemon() {
 					break;
 				}
 			}
-
-			frameRate = _val1 < 14 ? 15 : imath_ranged_rand(6, 15);
-			Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
+			frameRate = _stolieSleepCtr < 14 ? 15 : imath_ranged_rand(6, 15);
+			Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, frameRate, 0, 100, 0, 0, frame, frame);
 			break;
 
 		case 16:
 			if (!digi_play_state(2)) {
 				if (imath_ranged_rand(1, 4) == 1) {
-					_val2 = 15;
-					Series::series_play("104dr02", 0x200, 0, 3, 8, 0, 100, 0, 0, 20, 20);
+					_stolieShould = 15;
+					Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, 8, 0, 100, 0, 0, 20, 20);
 					break;
 				} else {
 					switch (getRandom()) {
@@ -302,7 +305,7 @@ void Room104::daemon() {
 						break;
 					case 2:
 						digi_play("104s100b", 2, 125, -1);
-						_val1 = 100;
+						_stolieSleepCtr = 100;
 						break;
 					case 3:
 						digi_play("104s100c", 2, 125, -1);
@@ -316,43 +319,43 @@ void Room104::daemon() {
 					default:
 						break;
 					}
-
-					_flag1 = false;
-					++_val1;
-
-					frame = 0;
-					if (_val1 < 3)
-						frame = 16;
-					else if (_val1 < 14)
-						frame = 18;
-					else {
-						switch (getRandom()) {
-						case 1:
-							frame = 15;
-							break;
-						case 2:
-							frame = 17;
-							break;
-						case 3:
-							frame = 19;
-							break;
-						default:
-							break;
-						}
-					}
-
-					frameRate = (_val1 < 14) ? 15 : imath_ranged_rand(6, 15);
-					Series::series_play("104dr02", 0x200, 0, 3, frameRate, 0, 100, 0, 0, frame, frame);
 				}
 			}
+
+			_flag1 = false;
+			++_stolieSleepCtr;
+
+			frame = 0;
+			if (_stolieSleepCtr < 3)
+				frame = 16;
+			else if (_stolieSleepCtr < 14)
+				frame = 18;
+			else {
+				switch (getRandom()) {
+				case 1:
+					frame = 15;
+					break;
+				case 2:
+					frame = 17;
+					break;
+				case 3:
+					frame = 19;
+					break;
+				default:
+					break;
+				}
+			}
+
+			frameRate = (_stolieSleepCtr < 14) ? 15 : imath_ranged_rand(6, 15);
+			Series::series_play("104dr02", 0x200, 0, kCHANGE_STOLIE_ANIMATION, frameRate, 0, 100, 0, 0, frame, frame);
 			break;
 
 		case 17:
 			freeSeries();
 			_flag1 = true;
-			_val2 = 18;
+			_stolieShould = 18;
 			_series1.play("104DR04", 512, 4, -1, 6, -1, 100, 0, 0, 11, 15);
-			digi_play(conv_sound_to_play(), 1, 255, 3);
+			digi_play(conv_sound_to_play(), 1, 255, kCHANGE_STOLIE_ANIMATION);
 			break;
 
 		case 18:
@@ -388,7 +391,7 @@ void Room104::daemon() {
 		case 4:
 		case 7:
 		case 11:
-			_val2 = 6;
+			_stolieShould = 6;
 			break;
 		case 2:
 		case 3:
@@ -397,13 +400,13 @@ void Room104::daemon() {
 		case 8:
 		case 9:
 		case 10:
-			_val2 = 8;
+			_stolieShould = 8;
 			break;
 		default:
 			break;
 		}
 
-		kernel_trigger_dispatch_now(3);
+		kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 		player_set_commands_allowed(true);
 		break;
 
@@ -426,7 +429,7 @@ void Room104::daemon() {
 		case 4:
 			ws_demand_location(0, 326);
 			ws_demand_facing(3);
-			ws_walk(36, 338, 0, -1, 3);
+			ws_walk(36, 338, nullptr, -1, 3);
 			break;
 		default:
 			_G(kernel).continue_handling_trigger = true;
@@ -471,7 +474,7 @@ void Room104::parser() {
 
 				switch (_G(flags)[WAKE_UP_STOLIE_COUNT]) {
 				case 0:
-					_val2 = 12;
+					_stolieShould = 12;
 					_G(walker).wilbur_speech_random("104W100A", "104W100B", "104W100C",
 						"104W100D", "104W100E", "104W100F", "104W100G");
 					break;
@@ -481,7 +484,7 @@ void Room104::parser() {
 					player_set_commands_allowed(true);
 					break;
 				default:
-					_val2 = 10;
+					_stolieShould = 10;
 					break;
 				}
 			} else {
@@ -501,8 +504,8 @@ void Room104::conv() {
 	if (conv_sound_to_play()) {
 		switch (conv_whos_talking()) {
 		case 0:
-			_val2 = 17;
-			kernel_trigger_dispatch_now(3);
+			_stolieShould = 17;
+			kernel_trigger_dispatch_now(kCHANGE_STOLIE_ANIMATION);
 			break;
 		case 1:
 			_G(walker).wilbur_speech(conv_sound_to_play(), 10001);
