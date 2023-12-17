@@ -30,6 +30,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("global",    WRAP_METHOD(Console, cmdGlobal));
 	registerCmd("item",      WRAP_METHOD(Console, cmdItem));
 	registerCmd("hyperwalk", WRAP_METHOD(Console, cmdHyperwalk));
+	registerCmd("digi", WRAP_METHOD(Console, cmdDigi));
 }
 
 Console::~Console() {
@@ -80,6 +81,18 @@ bool Console::cmdHyperwalk(int argc, const char **argv) {
 	} else {
 		_G(hyperwalk) = !strcmp(argv[1], "on");
 		debugPrintf("hyperwalk is now %s\n", _G(hyperwalk) ? "on" : "off");
+	}
+
+	return true;
+}
+
+bool Console::cmdDigi(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("digi <sound name>\n");
+		return true;
+	} else {
+		digi_play(argv[1], 1);
+		return false;
 	}
 
 	return true;

@@ -98,8 +98,8 @@ void Room138::init() {
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
-		if (_G(flags)[V048])
-			_G(flags)[V048] = 1;
+		if (_G(flags)[kPoliceCheckCtr])
+			_G(flags)[kPoliceCheckCtr] = 1;
 		break;
 
 	default:
@@ -270,9 +270,9 @@ void Room138::daemon() {
 				kernel_timing_trigger(120, 7);
 
 				if (!inv_object_is_here("keys"))
-					_G(flags)[V047] = 6;
+					_G(flags)[kPoliceState] = 6;
 
-				_G(flags)[V048] = 200;
+				_G(flags)[kPoliceCheckCtr] = 200;
 				_val5 = 31;
 				kernel_trigger_dispatch_now(2);
 				break;
@@ -287,9 +287,9 @@ void Room138::daemon() {
 				kernel_timing_trigger(120, 7);
 
 				if (inv_object_is_here("keys"))
-					_G(flags)[V047] = 6;
+					_G(flags)[kPoliceState] = 6;
 
-				_G(flags)[V048] = 200;
+				_G(flags)[kPoliceCheckCtr] = 200;
 				_val5 = 33;
 				kernel_trigger_dispatch_now(2);
 				break;
@@ -565,11 +565,11 @@ void Room138::daemon() {
 
 	case 10:
 		digi_play_loop("138_002", 3, 255);
-		_G(flags)[V047] = 4;
+		_G(flags)[kPoliceState] = 4;
 		inv_give_to_player("keys");
 		hotspot_set_active("keys", false);
 		hotspot_set_active("ignition switch", true);
-		_G(flags)[V048]++;
+		_G(flags)[kPoliceCheckCtr]++;
 		kernel_timing_trigger(10, 13);
 		break;
 
@@ -577,8 +577,8 @@ void Room138::daemon() {
 		digi_preload("138_001");
 		digi_play_loop("138_001", 3, 255);
 		_series1 = series_play("138keys", 0xa00, 0, -1, 7, -1, 100, 0, 0, 0, 0);
-		_G(flags)[V047] = 0;
-		_G(flags)[V048] = 0;
+		_G(flags)[kPoliceState] = 0;
+		_G(flags)[kPoliceCheckCtr] = 0;
 		inv_move_object("keys", 138);
 		hotspot_set_active("keys", true);
 		hotspot_set_active("ignition switch", false);
@@ -589,10 +589,10 @@ void Room138::daemon() {
 		break;
 
 	case 13:
-		if (_G(flags)[V048] && player_commands_allowed()) {
-			if (++_G(flags)[V048] >= 200) {
+		if (_G(flags)[kPoliceCheckCtr] && player_commands_allowed()) {
+			if (++_G(flags)[kPoliceCheckCtr] >= 200) {
 				player_set_commands_allowed(false);
-				_G(flags)[V047] = 4;
+				_G(flags)[kPoliceState] = 4;
 				_val6 = 33;
 				_val3 = 23;
 			}
@@ -636,21 +636,21 @@ void Room138::parser() {
 
 	} else if (player_said("gear", "horn")) {
 		player_set_commands_allowed(false);
-		_G(flags)[V047] = 1;
+		_G(flags)[kPoliceState] = 1;
 		_val8 = 10;
 
 	} else if (player_said("gear", "radio")) {
 		player_set_commands_allowed(false);
 
 		if (inv_object_is_here("keys"))
-			_G(flags)[V047] = 2;
+			_G(flags)[kPoliceState] = 2;
 
 		_val8 = 11;
 
 	} else if (player_said("talk to") &&
 			(player_said("sherrif") || player_said("deputy"))) {
 		player_set_commands_allowed(false);
-		_G(flags)[V047] = 3;
+		_G(flags)[kPoliceState] = 3;
 		wilbur_speech("138w610");
 		_val8 = 15;
 

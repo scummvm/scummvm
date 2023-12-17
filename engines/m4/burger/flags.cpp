@@ -180,8 +180,8 @@ void Flags::reset1() {
 	(*this)[V039] = 0;
 	(*this)[kRoadOpened] = 0;
 	(*this)[V046] = 0;
-	(*this)[V047] = 0;
-	(*this)[V048] = 0;
+	(*this)[kPoliceState] = 0;
+	(*this)[kPoliceCheckCtr] = 0;
 	(*this)[V049] = 0;
 
 	inv_move_object("jawz o' life", 137);

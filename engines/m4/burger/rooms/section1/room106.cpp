@@ -167,6 +167,7 @@ void Room106::init() {
 		ws_walk(62, 340, nullptr, 0);
 		break;
 
+	case 137:
 	case 138:
 		// Wilbur was arrested
 		digi_play("106_102", 1, 255, kWILBUR_ARRESTED1);
