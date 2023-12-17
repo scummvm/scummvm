@@ -31,8 +31,8 @@ namespace Rooms {
 class Room105 : public Room {
 private:
 	int _val1 = 0;
-	int _val3 = 0;
-	int _val4 = 0;
+	int _elgusShould = 0;
+	int _elgusMode = 0;
 	KernelTriggerType _savedMode = (KernelTriggerType)0;
 	int _savedTrigger = 0;
 	int _val7 = 0;
