@@ -24,12 +24,26 @@
 #include "twp/room.h"
 #include "twp/object.h"
 #include "twp/squtil.h"
+#include "twp/scenegraph.h"
 #include "twp/squirrel/squirrel.h"
 
 namespace Twp {
 
 static SQInteger addTrigger(HSQUIRRELVM v) {
-	warning("TODO: addTrigger not implemented");
+	SQInteger nArgs = sq_gettop(v);
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	sq_resetobject(&obj->_enter);
+	sq_resetobject(&obj->_leave);
+	if (SQ_FAILED(sqget(v, 3, obj->_enter)))
+		return sq_throwerror(v, "failed to get enter");
+	sq_addref(g_engine->getVm(), &obj->_enter);
+	if (nArgs == 4)
+		if (SQ_FAILED(sqget(v, 4, obj->_leave)))
+			return sq_throwerror(v, "failed to get leave");
+	sq_addref(g_engine->getVm(), &obj->_leave);
+	g_engine->_room->_triggers.push_back(obj);
 	return 0;
 }
 
@@ -39,8 +53,19 @@ static SQInteger clampInWalkbox(HSQUIRRELVM v) {
 }
 
 static SQInteger createLight(HSQUIRRELVM v) {
-	warning("TODO: createLight not implemented");
-	return 0;
+	int color;
+	if (SQ_FAILED(sqget(v, 2, color)))
+		return sq_throwerror(v, "failed to get color");
+	int x;
+	if (SQ_FAILED(sqget(v, 3, x)))
+		return sq_throwerror(v, "failed to get x");
+	int y;
+	if (SQ_FAILED(sqget(v, 4, y)))
+		return sq_throwerror(v, "failed to get y");
+	Light *light = g_engine->_room->createLight(Color::rgb(color), Math::Vector2d(x, y));
+	debug("createLight(%d) -> %d", color, light->id);
+	sqpush(v, light->id);
+	return 1;
 }
 
 static SQInteger enableTrigger(HSQUIRRELVM v) {
@@ -49,7 +74,10 @@ static SQInteger enableTrigger(HSQUIRRELVM v) {
 }
 
 static SQInteger enterRoomFromDoor(HSQUIRRELVM v) {
-	warning("TODO: enterRoomFromDoor not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	g_engine->enterRoom(obj->_room, obj);
 	return 0;
 }
 
@@ -113,19 +141,73 @@ static SQInteger defineRoom(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Creates a new room called name using the specified template.
+//
+// . code-block:: Squirrel
+// for (local room_id = 1; room_id <= HOTEL_ROOMS_PER_FLOOR; room_id++) {
+//     local room = definePseudoRoom("HotelRoomA"+((floor_id*100)+room_id), HotelRoomA)
+//     local door = floor["hotelHallDoor"+room_id]
+//     ...
+// }
 static SQInteger definePseudoRoom(HSQUIRRELVM v) {
-	warning("TODO: definePseudoRoom not implemented");
-	return 0;
+	const SQChar *name;
+	if (SQ_FAILED(sqget(v, 2, name)))
+		return sq_throwerror(v, "failed to get name");
+	HSQOBJECT table;
+	sq_resetobject(&table);
+	// if this is a pseudo room, we have to clone the table
+	// to have a different instance by room
+	if (SQ_FAILED(sq_clone(v, 3)))
+		return sq_throwerror(v, "failed to clone room table");
+	if (SQ_FAILED(sq_getstackobj(v, -1, &table)))
+		return sq_throwerror(v, "failed to get room table");
+
+	Room *room = g_engine->defineRoom(name, table, true);
+	debug("Define pseudo room: %s", name);
+	g_engine->_rooms.push_back(room);
+	sqpush(v, room->_table);
+	return 1;
 }
 
+// Returns the room table for the room specified by the string roomName.
+// Useful for returning specific pseudo rooms where the name is composed of text and a variable.
+//
+// .. code-block:: Squirrel
+// local standardRoom = findRoom("HotelRoomA"+keycard.room_num)
 static SQInteger findRoom(HSQUIRRELVM v) {
-	warning("TODO: findRoom not implemented");
-	return 0;
+	Common::String name;
+	if (SQ_FAILED(sqget(v, 2, name)))
+		return sq_throwerror(v, "failed to get name");
+	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		Room *room = g_engine->_rooms[i];
+		if (room->_name == name) {
+			sqpush(v, room->_table);
+			return 1;
+		}
+	}
+	warning("Room '%s' not found", name.c_str());
+	sq_pushnull(v);
+	return 1;
 }
 
+// Returns an array of all the rooms that are in the game currently.
+//
+// This is useful for testing.
+//
+// .. code-block:: Squirrel
+// local roomArray = masterRoomArray()
+// foreach (room in roomArray) {
+//     enterRoomFromDoor(room)
+//     breaktime(0.10)
+// }
 static SQInteger masterRoomArray(HSQUIRRELVM v) {
-	warning("TODO: masterRoomArray not implemented");
-	return 0;
+	sq_newarray(v, 0);
+	for (int i = 0; i < g_engine->_rooms.size(); i++) {
+		Room *room = g_engine->_rooms[i];
+		sq_pushobject(v, room->_table);
+		sq_arrayappend(v, -2);
+	}
+	return 1;
 }
 
 static SQInteger removeTrigger(HSQUIRRELVM v) {
@@ -133,9 +215,28 @@ static SQInteger removeTrigger(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns an array of all the actors in the specified room.
+//
+// .. code-block:: Squirrel
+// local actorInBookstore = roomActors(BookStore)
+// if (actorInBookstore.len()>1) { ... }
+//
+// local spotters = roomActors(currentRoom)
+// foreach(actor in spotters) { ...}
 static SQInteger roomActors(HSQUIRRELVM v) {
-	warning("TODO: roomActors not implemented");
-	return 0;
+	Room *room = sqroom(v, 2);
+	if (!room)
+		return sq_throwerror(v, "failed to get room");
+
+	sq_newarray(v, 0);
+	for (int i = 0; i < g_engine->_actors.size(); i++) {
+		Object *actor = g_engine->_actors[i];
+		if (actor->_room == room) {
+			sqpush(v, actor->_table);
+			sq_arrayappend(v, -2);
+		}
+	}
+	return 1;
 }
 
 static SQInteger roomEffect(HSQUIRRELVM v) {
@@ -148,8 +249,20 @@ static SQInteger roomFade(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Makes all layers at the specified zsort value in room visible (YES) or invisible (NO).
+// It's also currently the only way to affect parallax layers and can be used for minor animation to turn a layer on and off.
+//
+// .. code-block:: Squirrel
+// roomLayer(GrateEntry, -2, NO)  // Make lights out layer invisible
 static SQInteger roomLayer(HSQUIRRELVM v) {
-	warning("TODO: roomLayer not implemented");
+	Room *r = sqroom(v, 2);
+	int layer;
+	SQInteger enabled;
+	if (SQ_FAILED(sqget(v, 3, layer)))
+		return sq_throwerror(v, "failed to get layer");
+	if (SQ_FAILED(sq_getinteger(v, 4, &enabled)))
+		return sq_throwerror(v, "failed to get enabled");
+	r->layer(layer)->_node->setVisible(enabled != 0);
 	return 0;
 }
 
@@ -164,8 +277,11 @@ static SQInteger roomRotateTo(HSQUIRRELVM v) {
 }
 
 static SQInteger roomSize(HSQUIRRELVM v) {
-	warning("TODO: roomSize not implemented");
-	return 0;
+	Room *room = sqroom(v, 2);
+	if (!room)
+		return sq_throwerror(v, "failed to get room");
+	sqpush(v, room->_roomSize);
+	return 1;
 }
 
 static SQInteger walkboxHidden(HSQUIRRELVM v) {

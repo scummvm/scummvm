@@ -133,7 +133,7 @@ static ObjectAnimation parseObjectAnimation(const Common::JSONObject &jAnim) {
 	if (jAnim.contains("triggers") && jAnim["triggers"]->isArray()) {
 		const Common::JSONArray &jTriggers = jAnim["triggers"]->asArray();
 		for (auto it = jTriggers.begin(); it != jTriggers.end(); it++) {
-			result.triggers.push_back((*it)->asString());
+			result.triggers.push_back((*it)->isString() ? (*it)->asString() : "null");
 		}
 	}
 
@@ -180,7 +180,7 @@ Room::~Room() {
 void Room::load(Common::SeekableReadStream &s) {
 	GGHashMapDecoder d;
 	Common::JSONValue *value = d.open(&s);
-	debug("Room: %s", value->stringify().c_str());
+	// debug("Room: %s", value->stringify().c_str());
 	const Common::JSONObject &jRoom = value->asObject();
 
 	_name = jRoom["name"]->asString();
@@ -326,6 +326,13 @@ Object *Room::getObj(const Common::String &key) {
 		}
 	}
 	return nullptr;
+}
+
+Light *Room::createLight(Color color, Math::Vector2d pos) {
+	Light *result = &_lights._lights[_lights._numLights];
+	result->color = color;
+	result->pos = pos;
+	_lights._numLights++;
 }
 
 Layer::Layer(const Common::String &name, Math::Vector2d parallax, int zsort) {

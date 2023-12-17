@@ -211,8 +211,8 @@ static SQInteger cameraPanTo(HSQUIRRELVM v) {
 		if (SQ_FAILED(sqget(v, 4, duration)))
 			return sq_throwerror(v, "failed to get duration");
 		int im;
-		if (SQ_FAILED (sqget(v, 5, im)))
-      return sq_throwerror(v, "failed to get interpolation method");
+		if (SQ_FAILED(sqget(v, 5, im)))
+			return sq_throwerror(v, "failed to get interpolation method");
 		pos = Math::Vector2d(x, y);
 		interpolation = (InterpolationKind)im;
 	} else {
@@ -284,9 +284,21 @@ static SQInteger frameCounter(HSQUIRRELVM v) {
 }
 
 static SQInteger getUserPref(HSQUIRRELVM v) {
-	// TODO: getUserPref
-	warning("getUserPref not implemented");
-	return 0;
+	Common::String key;
+	if (SQ_FAILED(sqget(v, 2, key))) {
+		return sq_throwerror(v, "failed to get key");
+	}
+	if (g_engine->getPrefs().hasPrefs(key)) {
+		sqpush(v, g_engine->getPrefs().prefsAsJson(key));
+		return 1;
+	}
+	if (sq_gettop(v) == 3) {
+		HSQOBJECT obj;
+		sq_getstackobj(v, 3, &obj);
+		sqpush(v, obj);
+		return 1;
+	}
+	return sq_throwerror(v, "invalid argument in getUserPref");
 }
 
 static SQInteger getPrivatePref(HSQUIRRELVM v) {
@@ -399,10 +411,22 @@ static SQInteger sqrandom(HSQUIRRELVM v) {
 	return 1;
 }
 
+// Returns an array of all the lines of the given `filename`.
 static SQInteger loadArray(HSQUIRRELVM v) {
-	// TODO: loadArray
-	warning("loadArray not implemented");
-	return 0;
+	const SQChar *orgFilename = nullptr;
+	if (SQ_FAILED(sqget(v, 2, orgFilename)))
+		return sq_throwerror(v, "failed to get filename");
+	debug("loadArray: %s", orgFilename);
+	Common::String filename = g_engine->getPrefs().getKey(orgFilename);
+	GGPackEntryReader entry;
+	entry.open(g_engine->_pack, g_engine->_pack.assetExists(filename.c_str()) ? filename : orgFilename);
+	sq_newarray(v, 0);
+	while (!entry.eos()) {
+		Common::String line = entry.readLine();
+		sq_pushstring(v, line.c_str(), -1);
+		sq_arrayappend(v, -2);
+	}
+	return 1;
 }
 
 static SQInteger markAchievement(HSQUIRRELVM v) {
@@ -543,16 +567,33 @@ static SQInteger strreplace(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Splits the string `str` into substrings using a string separator.
 static SQInteger strsplit(HSQUIRRELVM v) {
-	// TODO: strsplit
-	warning("strsplit not implemented");
-	return 0;
+	Common::String str;
+	const SQChar *delimiter;
+	if (SQ_FAILED(sqget(v, 2, str)))
+		return sq_throwerror(v, "Failed to get str");
+	if (SQ_FAILED(sqget(v, 3, delimiter)))
+		return sq_throwerror(v, "Failed to get delimiter");
+	sq_newarray(v, 0);
+	char *s = str.begin();
+	char *tok = strtok(s, delimiter);
+	while (tok) {
+		sq_pushstring(v, tok, -1);
+		sq_arrayappend(v, -2);
+		tok = strtok(NULL, delimiter);
+	}
+	return 1;
 }
 
 static SQInteger translate(HSQUIRRELVM v) {
-	// TODO: translate
-	warning("translate not implemented");
-	return 0;
+	const SQChar *text;
+	if (SQ_FAILED(sqget(v, 2, text)))
+		return sq_throwerror(v, "Failed to get text");
+	Common::String newText = g_engine->getTextDb().getText(text);
+	// debug("translate({text}): {newText}");
+	sqpush(v, newText);
+	return 1;
 }
 
 void sqgame_register_genlib(HSQUIRRELVM v) {

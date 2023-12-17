@@ -27,6 +27,7 @@
 #include "common/str.h"
 #include "math/vector2d.h"
 #include "twp/squirrel/squirrel.h"
+#include "twp/ids.h"
 
 namespace Twp {
 
@@ -43,13 +44,6 @@ enum Direction {
 	dLeft = 2,
 	dFront = 4,
 	dBack = 8
-};
-
-enum Facing {
-	FACE_RIGHT = 1,
-	FACE_LEFT = 2,
-	FACE_FRONT = 4,
-	FACE_BACK = 8
 };
 
 struct ObjectAnimation {
@@ -71,6 +65,17 @@ public:
 	virtual void trig() = 0;
 };
 
+struct VerbId {
+	int id = 0;
+};
+
+struct Sentence {
+    VerbId verb;
+    Object* noun1 = nullptr;
+	Object* noun2 = nullptr;
+	bool enabled = false;
+};
+
 class Anim;
 class Room;
 class Node;
@@ -81,7 +86,7 @@ public:
 	Object();
 	Object(HSQOBJECT o, const Common::String& key);
 
-	int getId();
+	int getId() const;
 
 	// Changes the `state` of an object, although this can just be a internal state,
 	//
@@ -114,19 +119,22 @@ public:
 	float popScale() const;
 
 	int defaultVerbId();
+	void setFacing(Facing facing);
 
 	Math::Vector2d getUsePos();
+	Facing getDoorFacing();
 
 	void setIcon(int fps, const Common::StringArray& icons);
 	void setIcon(const Common::String& icon);
 	Common::String getIcon();
+	bool inInventory();
 
 	int getFlags();
-
+	bool contains(Math::Vector2d pos);
 	void setRoom(Room* room);
-
 	void delObject();
 	void stopObjectMotors();
+	void dependentOn(Object* dependentObj, int state);
 
 private:
 	Common::String suffix() const;
@@ -182,6 +190,7 @@ public:
     Object* _dependentObj;
     float _popElapsed = 0.f;
     int _popCount = 0;
+	Sentence _exec;
 };
 
 } // namespace Twp

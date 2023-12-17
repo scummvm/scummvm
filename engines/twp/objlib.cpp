@@ -24,6 +24,7 @@
 #include "twp/squtil.h"
 #include "twp/object.h"
 #include "twp/room.h"
+#include "twp/scenegraph.h"
 #include "squirrel/squirrel.h"
 #include "squirrel/sqvm.h"
 #include "squirrel/sqobject.h"
@@ -141,8 +142,8 @@ static SQInteger createTextObject(HSQUIRRELVM v) {
 // playObjectSound(randomfrom(soundDrip1, soundDrip2, soundDrip3), radioStudioBucket)
 // deleteObject(drip)
 static SQInteger deleteObject(HSQUIRRELVM v) {
-	// TODO: deleteObject
-	warning("deleteObject not implemented");
+	Object *obj = sqobj(v, 2);
+	obj->delObject();
 	return 0;
 }
 
@@ -158,9 +159,17 @@ static SQInteger deleteObject(HSQUIRRELVM v) {
 //     if (button == Phone.phoneReceiver) {    ... }
 // }
 static SQInteger findObjectAt(HSQUIRRELVM v) {
-	// TODO: findObjectAt
-	warning("findObjectAt not implemented");
-	return 0;
+	int x, y;
+	if (SQ_FAILED(sqget(v, 2, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 3, y)))
+		return sq_throwerror(v, "failed to get y");
+	Object *obj = g_engine->objAt(Math::Vector2d(x, y));
+	if (!obj)
+		sq_pushnull(v);
+	else
+		sqpush(v, obj->_table);
+	return 1;
 }
 
 static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
@@ -169,10 +178,14 @@ static SQInteger isInventoryOnScreen(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Returns true if the object is actually an object and not something else.
+//
+// .. code-block:: Squirrel
+// if (isObject(obj) && objectValidUsePos(obj) && objectTouchable(obj)) {
 static SQInteger isObject(HSQUIRRELVM v) {
-	// TODO: isObject
-	warning("isObject not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	sqpush(v, obj && isObject(obj->getId()));
+	return 1;
 }
 
 static SQInteger jiggleInventory(HSQUIRRELVM v) {
@@ -187,21 +200,82 @@ static SQInteger jiggleObject(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Works exactly the same as playObjectState, but plays the animation as a continuous loop, playing the specified animation.
+//
+// .. code-block:: Squirrel
+// loopObjectState(aStreetFire, 0)
+// loopObjectState(flies, 3)
 static SQInteger loopObjectState(HSQUIRRELVM v) {
-	// TODO: loopObjectState
-	warning("loopObjectState not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	if (sq_gettype(v, 3) == OT_INTEGER) {
+		int index;
+		if (SQ_FAILED(sqget(v, 3, index)))
+			return sq_throwerror(v, "failed to get state");
+		obj->play(index, true);
+	} else if (sq_gettype(v, 3) == OT_STRING) {
+		const SQChar *state;
+		if (SQ_FAILED(sqget(v, 3, state)))
+			return sq_throwerror(v, "failed to get state (string)");
+		obj->play(state, true);
+	} else {
+		return sq_throwerror(v, "failed to get state");
+	}
 	return 0;
 }
 
+// Sets an object's alpha (transparency) in the range of 0.0 to 1.0.
+// Setting an object's color will set it's alpha back to 1.0, ie completely opaque.
+//
+// .. code-block:: Squirrel
+// objectAlpha(cloud, 0.5)
 static SQInteger objectAlpha(HSQUIRRELVM v) {
-	// TODO: objectAlpha
-	warning("objectAlpha not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		float alpha = 0.0f;
+		if (SQ_FAILED(sq_getfloat(v, 3, &alpha)))
+			return sq_throwerror(v, "failed to get alpha");
+		// TODO: if (obj->_alphaTo)
+		//  obj->_alphaTo->disable();
+		obj->_node->setAlpha(alpha);
+	}
 	return 0;
 }
 
 static SQInteger objectAlphaTo(HSQUIRRELVM v) {
 	// TODO: objectAlphaTo
 	warning("objectAlphaTo not implemented");
+	return 0;
+}
+
+static SQInteger objectAt(HSQUIRRELVM v) {
+	HSQOBJECT o;
+	sq_getstackobj(v, 2, &o);
+
+	SQInteger id;
+	sqgetf(o, "_id", id);
+
+	Object **pObj = Common::find_if(g_engine->_objects.begin(), g_engine->_objects.end(), [&](Object *o) {
+		SQObjectPtr id2;
+		_table(o->_table)->Get(sqtoobj(v, "_id"), id2);
+		return id == _integer(id2);
+	});
+
+	if (!pObj)
+		return sq_throwerror(v, "failed to get object");
+
+	// TODO:
+	// Object* obj = *pObj;
+	// SQInteger x, y;
+	// if (SQ_FAILED(sq_getinteger(v, 3, &x)))
+	// 	return sq_throwerror(v, "failed to get x");
+	// if (SQ_FAILED(sq_getinteger(v, 4, &y)))
+	// 	return sq_throwerror(v, "failed to get y");
+	// obj->x = x;
+	// obj->y = y;
+	// debug("Object at: %lld, %lld", x, y);
+
 	return 0;
 }
 
@@ -212,38 +286,103 @@ static SQInteger objectBumperCycle(HSQUIRRELVM v) {
 }
 
 static SQInteger objectCenter(HSQUIRRELVM v) {
-	// TODO: objectCenter
-	warning("objectCenter not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	Math::Vector2d pos = obj->_node->getPos() + obj->_usePos;
+	sqpush(v, pos);
+	return 1;
 }
 
+// Sets an object's color. The color is an int in the form of 0xRRGGBB
+//
+// .. code-block:: Squirrel
+// objectColor(warningSign, 0x808000)
 static SQInteger objectColor(HSQUIRRELVM v) {
 	// TODO: objectColor
-	warning("objectColor not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		int color = 0;
+		if (SQ_FAILED(sqget(v, 3, color)))
+			return sq_throwerror(v, "failed to get color");
+		obj->_node->setColor(Color::rgb(color));
+	}
 	return 0;
 }
 
 static SQInteger objectDependentOn(HSQUIRRELVM v) {
-	// TODO: objectDependentOn
-	warning("objectDependentOn not implemented");
+	Object *child = sqobj(v, 2);
+	if (!child)
+		return sq_throwerror(v, "failed to get child object");
+	Object *parent = sqobj(v, 3);
+	if (!parent)
+		return sq_throwerror(v, "failed to get parent object");
+	int state = 0;
+	if (SQ_FAILED(sqget(v, 4, state)))
+		return sq_throwerror(v, "failed to get state");
+	child->dependentOn(parent, state);
 	return 0;
 }
 
+// Sets how many frames per second (fpsRate) the object will animate at.
+//
+// .. code-block:: Squirrel
+// objectFPS(pigeon1, 15)
 static SQInteger objectFPS(HSQUIRRELVM v) {
-	// TODO: objectFPS
-	warning("objectFPS not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		float fps = 0.0f;
+		if (SQ_FAILED(sqget(v, 3, fps)))
+			return sq_throwerror(v, "failed to get fps");
+		obj->_fps = fps;
+	}
 	return 0;
 }
 
+// Sets if an object is hidden or not. If the object is hidden, it is no longer displayed or touchable.
+//
+// .. code-block:: Squirrel
+// objectHidden(oldRags, YES)
 static SQInteger objectHidden(HSQUIRRELVM v) {
-	// TODO: objectHidden
-	warning("objectHidden not implemented");
+	Object *obj = sqobj(v, 2);
+	if (obj) {
+		int hidden = 0;
+		sqget(v, 3, hidden);
+		debug("Sets object visible %s to %s", obj->_name.c_str(), hidden == 0 ? "true" : "false");
+		obj->_node->setVisible(hidden == 0);
+	}
 	return 0;
 }
 
+// Sets the touchable area of an actor or object.
+// This is a rectangle enclosed by the specified coordinates.
+// We also use this on the postalworker to enlarge his touchable area to make it easier to click on him while he's sorting mail.
+//
+// .. code-block:: Squirrel
+// objectHotspot(willie, 14, 0, 14, 62)         // Willie standing up
+// objectHotspot(willie, -28, 0, 28, 50)        // Willie lying down drunk
 static SQInteger objectHotspot(HSQUIRRELVM v) {
-	// TODO: objectHotspot
-	warning("objectHotspot not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object or actor");
+	if (sq_gettop(v) == 2) {
+		Math::Vector2d pos = obj->_node->getAbsPos();
+		sqpush(v, Rectf::fromPosAndSize(Math::Vector2d(obj->_hotspot.left + pos.getX(), obj->_hotspot.bottom + pos.getY()), Math::Vector2d(obj->_hotspot.width(), obj->_hotspot.height())));
+		return 1;
+	}
+	int left = 0;
+	int top = 0;
+	int right = 0;
+	int bottom = 0;
+	if (SQ_FAILED(sqget(v, 3, left)))
+		return sq_throwerror(v, "failed to get left");
+	if (SQ_FAILED(sqget(v, 4, top)))
+		return sq_throwerror(v, "failed to get top");
+	if (SQ_FAILED(sqget(v, 5, right)))
+		return sq_throwerror(v, "failed to get right");
+	if (SQ_FAILED(sqget(v, 6, bottom)))
+		return sq_throwerror(v, "failed to get bottom");
+	obj->_hotspot = Common::Rect(left, top, right - left + 1, bottom - top + 1);
 	return 0;
 }
 
@@ -355,46 +494,128 @@ static SQInteger objectShader(HSQUIRRELVM v) {
 	return 0;
 }
 
+// Changes the state of an object, although this can just be a internal state,
+//
+// it is typically used to change the object's image as it moves from it's current state to another.
+// Behind the scenes, states as just simple ints. State0, State1, etc.
+// Symbols like CLOSED and OPEN and just pre-defined to be 0 or 1.
+// State 0 is assumed to be the natural state of the object, which is why OPEN is 1 and CLOSED is 0 and not the other way around.
+// This can be a little confusing at first.
+// If the state of an object has multiple frames, then the animation is played when changing state, such has opening the clock.
+// GONE is a unique in that setting an object to GONE both sets its graphical state to 1, and makes it untouchable. Once an object is set to GONE, if you want to make it visible and touchable again, you have to set both:
+//
+// .. code-block:: Squirrel
+// objectState(coin, HERE)
+// objectTouchable(coin, YES)
 static SQInteger objectState(HSQUIRRELVM v) {
-	// TODO: objectState
-	warning("objectState not implemented");
-	return 0;
+	if (sq_gettype(v, 2) == OT_NULL)
+		return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	SQInteger nArgs = sq_gettop(v);
+	if (nArgs == 2) {
+		sqpush(v, obj->_state);
+		return 1;
+	} else if (nArgs == 3) {
+		int state;
+		if (SQ_FAILED(sqget(v, 3, state)))
+			return sq_throwerror(v, "failed to get state");
+		obj->setState(state);
+		return 0;
+	} else {
+		return sq_throwerror(v, "invalid number of arguments");
+	}
 }
 
+// Gets or sets if an object is player touchable.
 static SQInteger objectTouchable(HSQUIRRELVM v) {
-	// TODO: objectTouchable
-	warning("objectTouchable not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	SQInteger nArgs = sq_gettop(v);
+	if (nArgs == 2) {
+		sqpush(v, obj->_touchable);
+		return 1;
+	}
+	if (nArgs == 3) {
+		bool touchable;
+		if (SQ_FAILED(sqget(v, 3, touchable)))
+			return sq_throwerror(v, "failed to get touchable");
+		obj->_touchable = touchable;
+		return 0;
+	}
 }
 
+//  Sets the zsort order of an object, essentially the order in which an object is drawn on the screen.
+// A sort order of 0 is the bottom of the screen.
+// Actors typically have a sort order of their Y position.
+//
+// .. code-block:: Squirrel
+// objectSort(censorBox, 0)   // Will be on top of everything.
 static SQInteger objectSort(HSQUIRRELVM v) {
-	// TODO: objectSort
-	warning("objectSort not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	int zsort;
+	if (SQ_FAILED(sqget(v, 3, zsort)))
+		return sq_throwerror(v, "failed to get zsort");
+	obj->_node->setZSort(zsort);
 	return 0;
 }
 
+// Sets the location an actor will stand at when interacting with this object.
+// Directions are: FACE_FRONT, FACE_BACK, FACE_LEFT, FACE_RIGHT
+//
+// .. code-block:: Squirrel
+// objectUsePos(popcornObject, -13, 0, FACE_RIGHT)
 static SQInteger objectUsePos(HSQUIRRELVM v) {
-	// TODO: objectUsePos
-	warning("objectUsePos not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	int x, y, dir;
+	if (SQ_FAILED(sqget(v, 3, x)))
+		return sq_throwerror(v, "failed to get x");
+	if (SQ_FAILED(sqget(v, 4, y)))
+		return sq_throwerror(v, "failed to get y");
+	if (SQ_FAILED(sqget(v, 5, dir)))
+		return sq_throwerror(v, "failed to get direction");
+	obj->_usePos = Math::Vector2d(x, y);
+	obj->_useDir = (Direction)dir;
 	return 0;
 }
 
+// Returns the x of the object's use position.
+//
+// .. code-block:: Squirrel
+// objectUsePosX(dimeLoc)
 static SQInteger objectUsePosX(HSQUIRRELVM v) {
-	// TODO: objectUsePosX
-	warning("objectUsePosX not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	sqpush(v, obj->getUsePos().getX());
+	return 1;
 }
 
+// Returns the y of the object's use position.
+//
+// .. code-block:: Squirrel
+// objectUsePosY(dimeLoc)
 static SQInteger objectUsePosY(HSQUIRRELVM v) {
-	// TODO: objectUsePosY
-	warning("objectUsePosY not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	sqpush(v, obj->getUsePos().getY());
+	return 1;
 }
 
+// Returns true if the object's use position has been set (ie is not 0,0).
 static SQInteger objectValidUsePos(HSQUIRRELVM v) {
-	// TODO: objectValidUsePos
-	warning("objectValidUsePos not implemented");
-	return 0;
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return sq_throwerror(v, "failed to get object");
+	sqpush(v, obj->_usePos != Math::Vector2d());
+	return 1;
 }
 
 static SQInteger objectValidVerb(HSQUIRRELVM v) {
@@ -415,9 +636,28 @@ static SQInteger pickupReplacementObject(HSQUIRRELVM v) {
 	return 0;
 }
 
+// The only difference between objectState and playObjectState is if they are called during the enter code.
+// objectState will set the image to the last frame of the state's animation, where as, playObjectState will play the full animation.
+//
+// .. code-block:: Squirrel
+// playObjectState(Mansion.windowShutters, OPEN)
 static SQInteger playObjectState(HSQUIRRELVM v) {
-	// TODO: playObjectState
-	warning("playObjectState not implemented");
+	Object *obj = sqobj(v, 2);
+	if (!obj)
+		return 0;
+	if (sq_gettype(v, 3) == OT_INTEGER) {
+		SQInteger index;
+		if (SQ_FAILED(sq_getinteger(v, 3, &index)))
+			return sq_throwerror(v, "failed to get state");
+		obj->play(index);
+	} else if (sq_gettype(v, 3) == OT_STRING) {
+		Common::String state;
+		if (SQ_FAILED(sqget(v, 3, state)))
+			return sq_throwerror(v, "failed to get state");
+		obj->play(state);
+	} else {
+		return sq_throwerror(v, "failed to get state");
+	}
 	return 0;
 }
 
@@ -446,38 +686,10 @@ static SQInteger shakeObject(HSQUIRRELVM v) {
 }
 
 static SQInteger stopObjectMotors(HSQUIRRELVM v) {
-	// TODO: stopObjectMotors
-	warning("stopObjectMotors not implemented");
-	return 0;
-}
-
-static SQInteger objectAt(HSQUIRRELVM v) {
-	HSQOBJECT o;
-	sq_getstackobj(v, 2, &o);
-
-	SQInteger id;
-	sqgetf(o, "_id", id);
-
-	Object **pObj = Common::find_if(g_engine->_objects.begin(), g_engine->_objects.end(), [&](Object *o) {
-		SQObjectPtr id2;
-		_table(o->_table)->Get(sqtoobj(v, "_id"), id2);
-		return id == _integer(id2);
-	});
-
-	if (!pObj)
+	Object *obj = sqobj(v, 2);
+	if (!obj)
 		return sq_throwerror(v, "failed to get object");
-
-	// TODO:
-	// Object* obj = *pObj;
-	// SQInteger x, y;
-	// if (SQ_FAILED(sq_getinteger(v, 3, &x)))
-	// 	return sq_throwerror(v, "failed to get x");
-	// if (SQ_FAILED(sq_getinteger(v, 4, &y)))
-	// 	return sq_throwerror(v, "failed to get y");
-	// obj->x = x;
-	// obj->y = y;
-	// debug("Object at: %lld, %lld", x, y);
-
+	obj->stopObjectMotors();
 	return 0;
 }
 

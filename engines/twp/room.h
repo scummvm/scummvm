@@ -106,6 +106,8 @@ public:
 	Layer *layer(int zsort);
 	Object *getObj(const Common::String& key);
 
+	Light *createLight(Color color, Math::Vector2d pos);
+
 public:
 	Common::String _name;              // Name of the room
 	Common::String _sheet;             // Name of the spritesheet to use

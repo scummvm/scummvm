@@ -38,23 +38,79 @@
 namespace Twp {
 
 template<>
-void sqpush(HSQUIRRELVM v, int value) {
+SQInteger sqpush(HSQUIRRELVM v, int value) {
 	sq_pushinteger(v, value);
+	return 1;
 }
 
 template<>
-void sqpush(HSQUIRRELVM v, bool value) {
+SQInteger sqpush(HSQUIRRELVM v, float value) {
+	sq_pushfloat(v, value);
+	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, bool value) {
 	sq_pushinteger(v, value ? 1 : 0);
+	return 1;
 }
 
 template<>
-void sqpush(HSQUIRRELVM v, Common::String value) {
+SQInteger sqpush(HSQUIRRELVM v, Common::String value) {
 	sq_pushstring(v, value.c_str(), value.size());
+	return 1;
 }
 
 template<>
-void sqpush(HSQUIRRELVM v, HSQOBJECT value) {
+SQInteger sqpush(HSQUIRRELVM v, HSQOBJECT value) {
 	sq_pushobject(v, value);
+	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, Math::Vector2d value) {
+	sq_newtable(v);
+	sq_pushstring(v, "x", -1);
+	sq_pushinteger(v, value.getX());
+	sq_newslot(v, -3, SQFalse);
+	sq_pushstring(v, "y", -1);
+	sq_pushinteger(v, value.getY());
+	sq_newslot(v, -3, SQFalse);
+	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, Rectf value) {
+	sq_newtable(v);
+	sq_pushstring(v, "x1", -1);
+	sq_pushinteger(v, value.left());
+	sq_newslot(v, -3, SQFalse);
+	sq_pushstring(v, "y1", -1);
+	sq_pushinteger(v, value.bottom());
+	sq_newslot(v, -3, SQFalse);
+	sq_pushstring(v, "x2", -1);
+	sq_pushinteger(v, value.right());
+	sq_newslot(v, -3, SQFalse);
+	sq_pushstring(v, "y2", -1);
+	sq_pushinteger(v, value.top());
+	sq_newslot(v, -3, SQFalse);
+	return 1;
+}
+
+template<>
+SQInteger sqpush(HSQUIRRELVM v, Common::JSONValue* node) {
+  if(node->isIntegerNumber()) {
+	return sqpush(v, (int)node->asIntegerNumber());
+  } else if(node->isString()) {
+    return sqpush(v, node->asString());
+  } else if(node->isString()) {
+    return sqpush(v, (float)node->asNumber());
+  } else if(node->isNull()) {
+	sq_pushnull(v);
+	return 1;
+  } else {
+    return sq_throwerror(v, "This kind of node is not supported");
+  }
 }
 
 template<>
@@ -202,10 +258,10 @@ Object *sqobj(HSQOBJECT table) {
 	int id = getId(table);
 	for (int i = 0; i < g_engine->_rooms.size(); i++) {
 		Room *room = g_engine->_rooms[i];
-		for (int j = 0; j < room->_layers.size(); i++) {
-			Layer *layer = room->_layers[i];
+		for (int j = 0; j < room->_layers.size(); j++) {
+			Layer *layer = room->_layers[j];
 			for (int k = 0; k < layer->_objects.size(); k++) {
-				Object *obj = layer->_objects[i];
+				Object *obj = layer->_objects[k];
 				if (getId(obj->_table) == id)
 					return obj;
 			}

@@ -92,6 +92,7 @@ Vm::Vm() {
 	sqstd_register_iolib(v);
 	sq_pop(v, 1);
 
+	sqgame_register_constants(v);
 	sqgame_register_syslib(v);
 	sqgame_register_genlib(v);
 	sqgame_register_objlib(v);

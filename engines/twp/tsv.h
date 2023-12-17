@@ -19,22 +19,26 @@
  *
  */
 
-#ifndef TWP_SQGAME_H
-#define TWP_SQGAME_H
+#ifndef TWP_TSV_H
+#define TWP_TSV_H
 
-#include <stddef.h>
-#include "twp/squirrel/squirrel.h"
+#include "common/hashmap.h"
+#include "common/stream.h"
 
 namespace Twp {
 
-void regFunc(HSQUIRRELVM v, SQFUNCTION f, const SQChar *functionName, SQInteger nparamscheck = 0, const SQChar *typemask = NULL);
-void sqgame_register_constants(HSQUIRRELVM v);
-void sqgame_register_syslib(HSQUIRRELVM v);
-void sqgame_register_objlib(HSQUIRRELVM v);
-void sqgame_register_genlib(HSQUIRRELVM v);
-void sqgame_register_actorlib(HSQUIRRELVM v);
-void sqgame_register_roomlib(HSQUIRRELVM v);
-void sqgame_register_soundlib(HSQUIRRELVM v);
+class TextDb {
+public:
+	void parseTsv(Common::SeekableReadStream& stream);
+	Common::String getText(const Common::String& text);
 
-} // namespace Twp
+private:
+	Common::String getText(int id);
+
+private:
+  Common::HashMap<int, Common::String> _texts;
+};
+
+}
+
 #endif

@@ -103,4 +103,17 @@ int getCallbackId() {
 int newLightId() {
 	return gLightId++;
 }
+
+Facing getOppositeFacing(Facing facing) {
+	switch (facing) {
+	case FACE_FRONT:
+		return FACE_BACK;
+	case FACE_BACK:
+		return FACE_FRONT;
+	case FACE_LEFT:
+		return FACE_RIGHT;
+	case FACE_RIGHT:
+		return FACE_LEFT;
+	}
+}
 }
