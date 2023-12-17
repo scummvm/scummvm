@@ -33,7 +33,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("RESOURCE.MCS", "b8646d5cc2e45442a414220b1a65ba73", 8621636),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		// TODO: Unstable
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
