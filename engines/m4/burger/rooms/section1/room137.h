@@ -32,7 +32,7 @@ class Room137 : public Room {
 private:
 	bool _flag1 = false;
 	bool _flag2 = false;
-	bool _flag3 = false;
+	bool _arrested = false;
 	int _volume = 255;
 	int _deputyShould = 0;
 	int _deputyMode = 0;
@@ -46,8 +46,8 @@ private:
 	void conv15();
 	void unloadAssets();
 	void jawz();
-	void sub1();
-	void sub2();
+	void movementCheck();
+	void startPoliceTalk();
 
 public:
 	Room137() : Room() {}

@@ -30,7 +30,8 @@ namespace Rooms {
 
 enum {
 	kCHANGE_SHERRIF_ANIMATION = 1,
-	kCHANGE_DEPUTY_ANIMATION = 2
+	kCHANGE_DEPUTY_ANIMATION = 2,
+	kSOMEONE_TOOK_KEYS = 4
 };
 
 static const char *SAID[][4] = {
@@ -83,12 +84,12 @@ void Room137::init() {
 	_volume = 255;
 	_flag1 = true;
 	_flag2 = false;
-	_flag3 = false;
+	_arrested = false;
 
 	switch (_G(game).previous_room) {
 	case KERNEL_RESTORING_GAME:
-		if (_G(flags)[V048])
-			_G(flags)[V048] = 1;
+		if (_G(flags)[kPoliceCheckCtr])
+			_G(flags)[kPoliceCheckCtr] = 1;
 		break;
 
 	case 136:
@@ -100,7 +101,7 @@ void Room137::init() {
 	case 138:
 		ws_demand_facing(2);
 
-		if (_G(flags)[V048] >= 200) {
+		if (_G(flags)[kPoliceCheckCtr] >= 200) {
 			ws_demand_location(264, 347);
 			_flag1 = false;
 			digi_preload("137_003");
@@ -112,8 +113,8 @@ void Room137::init() {
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
 		}
 
-		if (_G(flags)[V048] < 200 && _G(flags)[V048] && _G(flags)[V047] == 4)
-			_G(flags)[V047] = 5;
+		if (_G(flags)[kPoliceCheckCtr] < 200 && _G(flags)[kPoliceCheckCtr] && _G(flags)[kPoliceState] == 4)
+			_G(flags)[kPoliceState] = 5;
 		break;
 
 	default:
@@ -132,7 +133,7 @@ void Room137::init() {
 	for (int i = 0; i < 18; ++i)
 		digi_preload(NAMES[i]);
 
-	if (inv_object_in_scene("keys", 138) && _G(flags)[V047] != 2) {
+	if (inv_object_in_scene("keys", 138) && _G(flags)[kPoliceState] != 2) {
 		digi_preload("137_001");
 		digi_play_loop("137_001", 3);
 	} else {
@@ -140,10 +141,10 @@ void Room137::init() {
 		digi_play_loop("137_002", 3);
 	}
 
-	if (_G(flags)[V048] < 200) {
+	if (_G(flags)[kPoliceCheckCtr] < 200) {
 		_deputyShould = 27;
 	} else {
-		_deputyShould = _G(flags)[V047] == 2 || _G(flags)[V047] == 3 || _G(flags)[V047] == 4 ? 34 : 27;
+		_deputyShould = _G(flags)[kPoliceState] == 2 || _G(flags)[kPoliceState] == 3 || _G(flags)[kPoliceState] == 4 ? 34 : 27;
 		digi_play("137_003", 1);
 	}
 
@@ -192,7 +193,7 @@ void Room137::daemon() {
 				break;
 
 			case 12:
-				sub2();
+				startPoliceTalk();
 				_sherrifShould = 22;
 				_sherrifMode = 10;
 				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -204,7 +205,7 @@ void Room137::daemon() {
 				break;
 
 			case 15:
-				sub2();
+				startPoliceTalk();
 				_sherrifMode = 14;
 				_sherrifShould = 22;
 				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -226,7 +227,7 @@ void Room137::daemon() {
 				break;
 
 			case 20:
-				sub2();
+				startPoliceTalk();
 				_sherrifShould = 22;
 				_sherrifMode = 17;
 				kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -327,7 +328,7 @@ void Room137::daemon() {
 		case 27:
 			switch (_deputyShould) {
 			case 27:
-				sub1();
+				movementCheck();
 				kernel_timing_trigger(10, kCHANGE_DEPUTY_ANIMATION);
 				break;
 
@@ -344,7 +345,7 @@ void Room137::daemon() {
 				break;
 
 			case 34:
-				sub1();
+				movementCheck();
 				_deputyShould = 29;
 				series_play("137dp01", 0x700, 0, kCHANGE_DEPUTY_ANIMATION, 60, 0, 100, 0, 0, 6, 6);
 				break;
@@ -387,14 +388,14 @@ void Room137::daemon() {
 		ws_walk(276, 292, 0, -1, 4);
 		break;
 
-	case 4:
+	case kSOMEONE_TOOK_KEYS:
 		digi_play("137_014", 2, 200, 5);
 		break;
 
 	case 5:
 		unloadAssets();
 
-		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] == 4)
+		if (_G(flags)[kPoliceState] != 2 && _G(flags)[kPoliceState] != 3 && _G(flags)[kPoliceState] == 4)
 			_deputyShould = 30;
 
 		_sherrifMode = 5;
@@ -419,7 +420,7 @@ void Room137::daemon() {
 
 		if (_G(player_info).y < 308)
 			_sherrifShould = 10;
-		if (_G(flags)[V047] != 2 && _G(flags)[V047] != 3 && _G(flags)[V047] != 4)
+		if (_G(flags)[kPoliceState] != 2 && _G(flags)[kPoliceState] != 3 && _G(flags)[kPoliceState] != 4)
 			_deputyShould = 30;
 
 		kernel_trigger_dispatch_now(kCHANGE_SHERRIF_ANIMATION);
@@ -517,13 +518,15 @@ void Room137::daemon() {
 		break;
 
 	case 15:
-		if (_flag3) {
+		if (_arrested) {
+			// Arrested
 			inv_move_object("keys", 138);
 			inv_move_object("jawz o' life", 137);
 			_G(flags)[V046] = 0;
 			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1006);
 
 		} else {
+			// Just sent off
 			pal_fade_init(_G(kernel).first_fade, 255, 0, 30, 1009);
 		}
 		break;
@@ -748,7 +751,7 @@ void Room137::conv15() {
 	} else if (conv_sound_to_play()) {
 		if (who <= 0) {
 			if (node == 3 || node == 9 || node == 12 || node == 13 || node == 19 || node == 11)
-				_flag3 = true;
+				_arrested = true;
 			_sherrifShould = (node == 20 && entry == 1) || (node == 21 && entry == 1) ? 24 : 23;
 			_digi1 = conv_sound_to_play();
 
@@ -788,28 +791,28 @@ void Room137::jawz() {
 	}
 }
 
-void Room137::sub1() {
-	if (_G(flags)[V048] && player_commands_allowed()) {
-		++_G(flags)[V048];
+void Room137::movementCheck() {
+	if (_G(flags)[kPoliceCheckCtr] && player_commands_allowed()) {
+		++_G(flags)[kPoliceCheckCtr];
 		player_update_info();
 
 		if (_G(player_info).y < 300 && inv_player_has("keys")) {
-			_G(flags)[V047] = 6;
-			_G(flags)[V048] = 201;
+			_G(flags)[kPoliceState] = 6;
+			_G(flags)[kPoliceCheckCtr] = 201;
 		}
 
 		if (_G(player_info).y < 308 && _G(flags)[V046])
-			_G(flags)[V048] = 201;
+			_G(flags)[kPoliceCheckCtr] = 201;
 
-		if (_G(flags)[V048] >= 200) {
+		if (_G(flags)[kPoliceCheckCtr] >= 200) {
 			player_set_commands_allowed(false);
 			intr_freshen_sentence();
-			_G(flags)[V048] = 0;
+			_G(flags)[kPoliceCheckCtr] = 0;
 			_flag1 = false;
 
-			if (_G(flags)[V042] == 6) {
+			if (_G(flags)[kPoliceState] == 6) {
 				kernel_timing_trigger(100, 3);
-				digi_play("137_013", 2, 200, 4);
+				digi_play("137_013", 2, 200, kSOMEONE_TOOK_KEYS);
 
 			} else if (_G(player_info).x > 460) {
 				ws_walk(307, 349, nullptr, -1, 2);
@@ -819,8 +822,8 @@ void Room137::sub1() {
 				} else {
 					digi_play("137_013", 2, 200, 7);
 				}
-			} else if (_G(flags)[V047] == 1 || _G(flags)[V047] == 2 ||
-					_G(flags)[V047] == 3 || _G(flags)[V047] == 4) {
+			} else if (_G(flags)[kPoliceState] == 1 || _G(flags)[kPoliceState] == 2 ||
+					_G(flags)[kPoliceState] == 3 || _G(flags)[kPoliceState] == 4) {
 				kernel_timing_trigger(30, 7);
 			} else {
 				digi_play("137_013", 2, 200, 7);
@@ -833,10 +836,10 @@ void Room137::sub1() {
 	}
 }
 
-void Room137::sub2() {
+void Room137::startPoliceTalk() {
 	conv_load_and_prepare("conv15", 15);
 
-	switch (_G(flags)[V047]) {
+	switch (_G(flags)[kPoliceState]) {
 	case 1:
 		conv_export_value_curr(0, 0);
 		break;
@@ -849,6 +852,9 @@ void Room137::sub2() {
 		break;
 	case 5:
 		conv_export_value_curr(2, 0);
+		break;
+	case 6:
+		conv_export_value_curr(3, 0);
 		break;
 	default:
 		break;

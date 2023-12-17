@@ -844,8 +844,8 @@ void Room101::daemon20() {
 		_G(flags)[V046] = 0;
 	}
 
-	_G(flags)[V047] = 0;
-	_G(flags)[V048] = 0;
+	_G(flags)[kPoliceState] = 0;
+	_G(flags)[kPoliceCheckCtr] = 0;
 	_G(flags).set_boonsville_time(22800);
 }
 
